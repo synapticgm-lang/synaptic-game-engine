@@ -345,16 +345,28 @@ export function lineHasWrongTimeOfDay(text: string, handedText: string): boolean
   const allowed = engineSlots.length ? engineSlots : [clockSlot];
   const narration = narratorWords((text ?? '').replace(new RegExp(TOK_RE.source, 'g'), ' '));
   for (const [slots, re] of DAY_PART_WORDS) {
+    // Current clock/engine slot's own words are always allowed (including "since dusk" at dusk).
     if (slots.split(' ').some((s) => allowed.includes(s))) continue;
     for (const m of narration.matchAll(re)) {
       const words = narration.slice(0, m.index).split(/\s+/).filter(Boolean);
       const before = words.slice(-2).join(' ').toLowerCase();
       const after = narration.slice((m.index ?? 0) + m[0].length).trim().split(/\s+/)[0]?.toLowerCase() ?? '';
-      // A word with a verb's -ing ending ("their breath evening out") names a time only where a noun stands:
-      // opening a clause, or straight after a determiner or preposition.
+      // "evening" as a verb ("their breath evening out") is not a day-part; "morning" always is.
       const prev = words[words.length - 1]?.toLowerCase() ?? '';
-      if (m[0].toLowerCase().endsWith('ing') && prev && !/[,;:—–]$/.test(prev) && !DETERMINER_RE.test(prev) && !PREPOSITION_RE.test(prev)) continue;
-      if (/\b(?:this|that|last|yesterday|tomorrow|since|every|each|earlier|one|all|whole|before|until|by)\b/.test(before)) continue;
+      if (
+        /^evening$/i.test(m[0]) &&
+        prev &&
+        !/[,;:—–]$/.test(prev) &&
+        !DETERMINER_RE.test(prev) &&
+        !PREPOSITION_RE.test(prev)
+      ) {
+        continue;
+      }
+      // T10N — past hedges ("since morning" / "at dawn") for a slot the clock does not show are inventions.
+      // (Previously `since`/`last`/… skipped the gate entirely and let false history through.)
+      if (/\b(?:this|that|last|yesterday|tomorrow|since|every|each|earlier|one|all|whole|before|until|by)\b/.test(before)) {
+        return true;
+      }
       if (/^(?:the|when|that|before|after|they|he|she|we|i|you|it|jax|of|'s|’s)$/.test(after)) continue;
       return true;
     }
@@ -834,7 +846,8 @@ export function classifyTokenLine(
     return { ok: false, reason: 'carried' };
   }
   if (handedCounts != null && lineOpensOnFactLabel(line.text, handedCounts)) return { ok: false, reason: 'label' };
-  if (handedCounts != null && line.fn !== 'speech' && lineHasWrongTimeOfDay(line.text, handedCounts)) {
+  // Speech may not invent a prior dawn/morning the clock and page never handed (T10N).
+  if (handedCounts != null && lineHasWrongTimeOfDay(line.text, handedCounts)) {
     return { ok: false, reason: 'time' };
   }
   // Spoken words with no speaker would paint as narration.
@@ -866,6 +879,16 @@ export function classifyTokenLine(
       new RegExp(`\\b(?:the|a|an)\\s+@${tok.replace(/^@/, '')}\\b`, 'i').test(line.text)
     ) {
       return { ok: false, reason: 'article-person' };
+    }
+    // Speaker-class used as a place/thing head: "toward the @t7 glow on the skyline" (possessive/clause lost).
+    // Bare "@t7's glow" / "the @t7" at a clause end stay legal.
+    if (tokenUseMatchesClass('speaker', row.klass) && !row.id.startsWith('encounter:')) {
+      const after = line.text.match(
+        new RegExp(`\\b(?:the|a|an)\\s+@${tok.replace(/^@/, '')}\\s+([a-z][a-z'-]+)\\s+([a-z][a-z'-]*)\\b`, 'i')
+      );
+      if (after && PREPOSITION_RE.test(after[2]!)) {
+        return { ok: false, reason: 'person-as-thing' };
+      }
     }
   }
   // A speaker is a person or companion here. A named person here may open with their own name; a role or

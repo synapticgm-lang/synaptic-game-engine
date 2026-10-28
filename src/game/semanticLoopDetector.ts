@@ -403,7 +403,22 @@ function sentenceMatches(a: string, b: string): boolean {
   let inter = 0;
   for (const t of A) if (B.has(t)) inter++;
   const smaller = Math.min(A.size, B.size);
-  return smaller > 0 && inter / smaller >= COLLAGE_CONTAINMENT && inter >= COLLAGE_MIN_INTER;
+  if (smaller > 0 && inter / smaller >= COLLAGE_CONTAINMENT && inter >= COLLAGE_MIN_INTER) return true;
+  // T10N — a shared 6-word run is the same place/leg line reprinted (same reply or cross-turn).
+  return sharesWordRun(a, b, 6);
+}
+/** Consecutive content-word runs of length `n` shared by both sentences. */
+function sharesWordRun(a: string, b: string, n: number): boolean {
+  const words = (s: string) => (s.toLowerCase().match(/[a-z0-9']+/g) ?? []);
+  const aw = words(a);
+  const bw = words(b);
+  if (aw.length < n || bw.length < n) return false;
+  const keys = new Set<string>();
+  for (let i = 0; i + n <= bw.length; i++) keys.add(bw.slice(i, i + n).join(' '));
+  for (let i = 0; i + n <= aw.length; i++) {
+    if (keys.has(aw.slice(i, i + n).join(' '))) return true;
+  }
+  return false;
 }
 function bestSourceBeat(sentence: string, recentBeats: string[]): number {
   if (!isSubstantialSentence(sentence)) return -1;
@@ -616,9 +631,11 @@ export function trimSameBeatRestatements(
     const hits = hitsOf(s).filter(Boolean).sort();
     const hitKey = hits.length ? hits.join('|') : '';
     const restatesPrior = kept.some((k) => sentenceMatches(s, k));
+    // Same-reply place/leg reprint: a long word-run already used, even when Jaccard misses.
+    const sameRun = kept.some((k) => sharesWordRun(s, k, 6));
     const sameMove = move && seenMove;
     const sameHits = !!hitKey && seenHitKeys.has(hitKey);
-    if ((restatesPrior && (event || kept.some((k) => isEvent(k)))) || sameMove || sameHits) {
+    if ((restatesPrior && (event || kept.some((k) => isEvent(k)))) || sameMove || sameHits || sameRun) {
       dropped.push(s);
       continue;
     }
@@ -626,6 +643,7 @@ export function trimSameBeatRestatements(
     if (hitKey) seenHitKeys.add(hitKey);
     kept.push(s);
   }
+  // minKeep 1 (writerTurn T10N) allows a same-reply place/leg collapse to one sentence.
   if (kept.length < minKeep) return { text: draft, dropped: [] };
   if (!dropped.length) return { text: draft, dropped: [] };
   return { text: kept.join(' ').replace(/\s+/g, ' ').trim(), dropped };

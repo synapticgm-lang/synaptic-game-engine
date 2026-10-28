@@ -40,8 +40,14 @@ export function mentionsName(text: string, name: string): boolean {
   const hay = low(text);
   if (!hay) return false;
   if (hay.includes(low(name))) return true;
-  const tokens = low(name).replace(/^(?:the|a|an)\s+/, '').split(/[\s'’-]+/).filter((t) => t.length >= 3 && !/^(?:the|of|and)$/.test(t));
-  return tokens.some((t) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay));
+  const tokens = low(name)
+    .replace(/^(?:the|a|an)\s+/, '')
+    .split(/[\s'’-]+/)
+    .filter((t) => t.length >= 3 && !/^(?:the|of|and)$/.test(t));
+  if (!tokens.length) return false;
+  const hit = (t: string) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay);
+  // Multi-token names need every content token ("Nemi Salt" ≠ "salt-burners" via Salt alone).
+  return tokens.length >= 2 ? tokens.every(hit) : hit(tokens[0]!);
 }
 
 const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'villain']);
