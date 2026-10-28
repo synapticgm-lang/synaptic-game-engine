@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-5-097
+TITLE: The Release Valves
+TEXT: Dust powders your eyelashes as granite splinters drop from the vaulted ceiling like dead teeth, ticking against your shoulders with every heave of the cavern walls. Kneeling beside the rusted release valves, you wedge iron wedges into the groaning slots while cold brine drips steadily down your neck from the fissures above. Your fingers move with rhythmic, practiced economy, aligning the locking pins precisely as she directs through clenched teeth. Trembling grease coats your palms, yet every turn of the bolt feels certain, anchoring the heavy brass mechanism against the impending pressure of the surge. // Silence follows the final satisfying click of the locking arm, and she turns her soot-stained face toward yours, offering a heavy, notched iron wrench that smells faintly of old grease and sea-moss. Her hard gaze softens into an unspoken pact sealed in the damp gloom of the deep shaft.
+EXIT 1: Secure the master release valve
+@@END
+@@SECTION td-5-098
+TITLE: Bracing the Masonry
+TEXT: Overhead masonry shifts with an ominous groan, shedding a cascade of sharp flint chips that patter against your safety hood like hail while the entire structural ribbing bows inward under unimaginable strain. Throwing your weight against the vibrating intake pipe, you drive the master wedge deep into the shearing gap, trying to buy the necessary seconds to seat the final valve seal before the stone header collapses completely. Your muscles scream under the lateral load as the cast iron frame screeches, threatening to shear your fingers against the rough wall at any micro-second.
+CHECK: Wedge the trembling release valve
+@@END
+@@SECTION td-5-099
+TITLE: Crushed and Clamoring
+TEXT: Stone shatters against your shoulder with brutal force, driving you hard into the iron flooring and tearing a ragged strip of skin from your forearm as the heavy lintel drops two inches. Pain flares white and hot down your spine, leaving you gasping for salt-heavy air while warm blood trickles into your sleeve. Scrambling backward from the settling rubble, you clutch your bruised ribs and salvage the scattered tools from the grit, realizing how narrowly you escaped being pinned permanently beneath the foundation.
+EXIT 1: Pull clear of the falling stone
+@@END
+@@SECTION td-5-100
+TITLE: The Iron Keepsake
+TEXT: Stone splinters rain down around your boots, yet you hold your ground against the tremor until the final locking pin slides home with a heavy, satisfying thud into the bronze sleeve. Staggering back from the vibrating housing, you catch your breath in the damp chill of the chamber while she presses a heavy, oil-darkened wrench into your palm without a word. The cold metal feels reassuringly solid against your bruised skin, carrying the undeniable weight of absolute trust forged in the dark shadow of the falling masonry.
+GRANT: Master-work iron wrench
+EXIT 1: Return to the standing mentor
+@@END
+@@SECTION td-5-101
+TITLE: Wrestling the Iron
+TEXT: Breath catches in your throat as leather gloves slip against the slick, grease-smeared brass of the control housing while the massive iron gear hums with a deep, bone-rattling vibration. Steel teeth grind together in the dark bowels of the staircase, echoing like distant thunder through the damp stone corridors as the immense pressure builds behind the sealed floodgates. Planting your boots firmly against the salt-encrusted grating, you reach out to catch her flailing wrist before she can yank the emergency release into the red zone.
+EXIT 1: Grip the shaking brass bar
+@@END
+@@SECTION td-5-102
+TITLE: The Shuddering Shaft
+TEXT: Condensation runs in thick rivulets down the moss-grown masonry walls, catching the weak, yellow glare of the storm lantern and casting dancing, monstrous shadows across the vaulted ceiling. Every bolt in the subterranean framework shrieks in protest as the immense weight of the returning ocean presses against the outer iron doors like a living beast eager to devour the coast. Your boots find precarious traction on the slick metal plating, keeping you balanced as the floor rolls beneath your feet like the deck of a dying schooner.
+EXIT 1: Brace against the vibrating wall
+@@END
+@@SECTION td-5-103
+TITLE: Tugging the Lever
+TEXT: Muscles bunch in your shoulders as you wrench hard against the stubborn iron arm, throwing your entire body weight backward while the stubborn locking pawl refuses to budge from its rusted groove. Veins bulge in your temples and your teeth grind together in a silent snarl as you pit your raw strength against the ancient, locked mechanism of the Tide-engine. The heavy steel bar shudders violently in your white-knuckled grip, hovering right on the razor edge between yielding to your leverage or snapping clean off in your fist.
+CHECK: Yank the jammed iron lever
+@@END
+@@SECTION td-5-104
+TITLE: A Heavy Toll
+TEXT: Iron snaps with a vicious crack, sending you sprawling backward onto the wet stone floor with your knuckles bleeding and a jagged bruise blooming across your jaw where the bucking handle caught you. Ringing bells echo in your ears as you spit copper-tasting blood into the dark grime, struggling back to your feet while your head spins from the sudden, jarring impact. The mechanism remains locked in its stubborn position, mocking your effort and leaving your body aching with a sharp, throbbing reminder of the shaft's raw power.
+EXIT 1: Pick yourself up from the grates
+@@END
+@@SECTION td-5-105
+TITLE: Seizing Control
+TEXT: Steel teeth grind and give way beneath your desperate heave, sliding smoothly into the primary notch with a resounding metallic clang that reverberates through the entire foundation of the Sunken Stair. Gasping for breath, you lock your fingers around the grooved handle and force the massive brass arm down to the floor, feeling the immense hydraulic resistance break as the deep locks finally yield. The shuddering mechanism hums a different, deeper note beneath your palms, acknowledging your undisputed mastery over the rising tide.
+GRANT: Absolute command of the tide
+EXIT 1: Hold the heavy brass bar
+@@END
+@@SECTION td-5-106
+TITLE: The Roar Below
+TEXT: Darkness ahead shimmers with a sudden, violent turbulence as a low, subterranean groan rises through the spiraling stone steps, rattling the iron rivets in their sockets with growing fury. Dust billows from the vaulted arches overhead like a dry grey fog, swallowing the pale yellow glow of the lanterns and leaving only the harsh, metallic smell of hot grease and ancient brine in the air. The very mountain seems to draw a long, shuddering breath around you, preparing for the inevitable cataclysm that waits at the bottom of the world. Heavy vibrations travel up through the soles of your boots, pulsing in time with the hidden heart of the machine.
+EXIT 1: Step through the echoing archway
+@@END

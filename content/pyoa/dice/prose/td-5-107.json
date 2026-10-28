@@ -1,0 +1,96 @@
+{
+ "batch": "td-5-107",
+ "sections": {
+  "td-5-107": {
+   "title": "The Missing Mentor",
+   "text": "Damp air clings to your skin as you step into the lantern-lit alcove and find Orsolya leaning against the cold stone, her fingers stained with grease and salt-crust. You demand to know why she vanished from the lighthouse when the sea died, your voice cracking against the damp masonry. She turns on you with a familiar, terrifying glare, her knuckles white around her iron wrench. In a jagged whisper, she tells you of the first Tidewardens and the pact they forged with the deep, trading innocent blood for eternal calm long before Gullmouth was even timber and stone.\n\nThe confession hangs heavy between you, smelling of old bilge and bitter regret, leaving you to decide how to answer her treason.",
+   "check": "You bravely confront Orsolya about her sudden disappearance, risking her remarkably volatile temper, to learn the devastating truth concerning the ancient Tidewardens' original watery sin.",
+   "grant": "",
+   "exits": [
+    "Demand answers about the ancient betrayal"
+   ]
+  },
+  "td-5-108": {
+   "title": "Rigging the Valves",
+   "text": "Heavy drops of condensation patter against your shoulders as you crouch beside Orsolya in the shadowed recess of the lower bulkhead. Together you wedge the final explosive charge into the hairline fractures of the main release valve, moving in desperate, synchronized silence while the ceiling groans overhead. A shower of loose mortar dust stings your eyes, threatening to bury you both as the foundation shudders under an immense, unseen weight. She meets your gaze through the gloom, sliding a heavy, oil-stained master wrench into your palm with a sharp nod of absolute trust.",
+   "check": "You help her quietly rig the final sabotage on the release valves, risking being crushed by falling masonry, to earn her deepest trust and a master-work wrench.",
+   "grant": "",
+   "exits": [
+    "Secure the master wrench and stand ready"
+   ]
+  },
+  "td-5-109": {
+   "title": "The Tidewarden's Ledger",
+   "text": "Ancient brass gears grind within the colossal automaton's chest as you recite the forgotten clauses of the Third Maritime Charter to its vacant glass eyes. Sparks snap from its rusted collar, threatening to sear your eyebrows as it processes your legal defiance with mechanical fury. Slowly, the grinding halts, and a heavy iron compartment in its chest springs open with a resonant chime. It offers up a massive brass key, encrusted with salt and heavy enough to crack flagstones, acknowledging your mastery over its archaic statutes.",
+   "check": "You debate obscure ancient maritime laws with the weary Tidewarden, risking its mechanical wrath, to earn a heavy brass access key to the lower shafts.",
+   "grant": "",
+   "exits": [
+    "Take the heavy brass access key"
+   ]
+  },
+  "td-5-110": {
+   "title": "Disarming the Charges",
+   "text": "Sweat stings your brow as you peer into the mechanical guts of the primary drive, where Orsolya has lashed a tangle of priming wires to a live detonator. One slip of your salt-numbed fingers will turn this damp vault into a jagged tomb of shrapnel and salt. You pinch the fragile copper filament with your pliers, breathing out a slow, trembling sigh as the firing pin clicks harmlessly home. Slipping the rare, serrated blast-cap into your pocket, you wipe your palms on your canvas trousers and step back from the smoking machinery.",
+   "check": "You carefully disarm the volatile explosive charges she planted on the primary drive, risking a premature detonation, to save the mechanism and pocket a rare blast-cap.",
+   "grant": "",
+   "exits": [
+    "Pocket the blast-cap and look around"
+   ]
+  },
+  "td-5-111": {
+   "title": "Staring Down the Iron",
+   "text": "Water surges over the lower threshold, swirling around your boots as the towering brass automaton raises a massive, rivet-studded fist to flood the chamber entirely. You stand your ground, locking your gaze onto its unblinking optical lenses while the icy brine creeps steadily up your shins. The machine pauses, its internal pressures hissing in hesitation before its towering frame powers down into a sullen, obedient hum. You reach out, snatching the heavy tide-warding lantern from its magnetized bracket before the waters can rise any further.",
+   "check": "You stare down the towering automaton when it threatens to flood the chamber, risking sudden drowning, to assert your absolute authority and claim a tide-warding lantern.",
+   "grant": "",
+   "exits": [
+    "Claim the lantern and press onward"
+   ]
+  },
+  "td-5-112": {
+   "title": "The Drowned Cartography",
+   "text": "Faint phosphorescent lichen traces the jagged lines of ancient sea-lanes scrawled across the weeping stone walls of the shaft. You trace the glowing maps with a trembling finger, letting the complex geometry wash over your mind until your temples throb with a sharp, blinding ache. The fog clears from your thoughts just long enough to reveal the hidden cross-hatch marking Orsolya's bolt-hole beneath the salt-flats. You steady your breathing against the lingering vertigo, certain of where your mentor must be hiding in the dark.",
+   "check": "You decipher the faded navigational charts scrawled on the wet walls, risking severe mental strain, to pinpoint the exact location of your missing mentor.",
+   "grant": "",
+   "exits": [
+    "Memorize the path to her hiding place"
+   ]
+  },
+  "td-5-113": {
+   "title": "Salvaging the Bathysphere",
+   "text": "Iron plates groan and shift violently as you wedge your pry bar into the wreckage of the rusted bathysphere wedged fast between the main drive cogs. A sudden slip could send tons of jagged steel crashing down upon you, crushing bone and canvas alike in the spray of salt. You brace your boots against the slimy bulkhead, heaving with every ounce of muscle until the jammed frame finally yields with a shriek of tortured metal. Reaching into the dark interior, you pull free a pristine, gleaming spool of copper wire untouched by the corrosive brine.",
+   "check": "You carefully dismantle a broken bathysphere lodged between the great gears, risking sudden structural collapse, to salvage a precious spool of pristine copper wire.",
+   "grant": "",
+   "exits": [
+    "Salvage the pristine copper wire"
+   ]
+  },
+  "td-5-114": {
+   "title": "A Fragile Truce",
+   "text": "Shouting echoes off the damp stone as fanatical Drift Pilgrims and hardened guild wreckers raise their rusted blades across the narrow corridor. You step straight into the knife-edge between them, talking fast and low of the rising water that will drown believer and scavenger alike. A sudden dagger flickers near your throat, held by a wild-eyed zealot whose faith has turned to madness, but you do not flinch from the cold steel. The fanatic lowers the blade with a grudging spit, swearing a bitter oath of allegiance to your cause before melting back into the shadows.",
+   "check": "You carefully negotiate a fragile temporary truce between the screaming factions, risking sudden betrayal, to secure a sworn pledge of support from the fanatic Drift Pilgrims.",
+   "grant": "",
+   "exits": [
+    "Secure the pledge from the Pilgrims"
+   ]
+  },
+  "td-5-115": {
+   "title": "The Pilgrims' Vow",
+   "text": "Gray hoods pulled low over hollow eyes, the leaders of the Drift Pilgrims crowd into the echoing alcove, their breath pluming in the chill air. You hold out an open palm, sealing the uneasy pact with a firm grasp on a calloused, salt-encrusted wrist while daggers remain half-drawn in the gloom. They whisper prayers to the sleeping sea, swearing their lives to your command on the condition that the first wave washes clean the sins of the Brineholders. You tuck the signed parchment into your coat, knowing full well the price of their fanatic devotion.",
+   "check": "You carefully negotiate a fragile temporary truce between the screaming factions, risking sudden betrayal, to secure a sworn pledge of support from the fanatic Drift Pilgrims.",
+   "grant": "",
+   "exits": [
+    "Accept the oath and move forward"
+   ]
+  },
+  "td-5-116": {
+   "title": "Breaking the Mercenaries",
+   "text": "Brineholder mercenaries grip their short-swords in the dripping gloom, their eyes fixed on your chest with cold calculation as you step into their path. You do not reach for a weapon; instead, you let a cruel, humorless grin touch your mouth as you name the bounty on their captains back in Gullmouth. A nervous twitch runs through the lead enforcer's shoulder, his blade dipping an inch as doubt eats away at his greed. He drops two heavy iron lockboxes of coin onto the wet flagstones with a dull thud, backing away into the dark with his men close behind.",
+   "check": "You brutally intimidate the Brineholder mercenaries into slowly backing down, risking a fatal stab in the dark, to confiscate their heavy iron lockboxes of coin.",
+   "grant": "",
+   "exits": [
+    "Confiscate the heavy lockboxes of coin"
+   ]
+  }
+ },
+ "missing": []
+}

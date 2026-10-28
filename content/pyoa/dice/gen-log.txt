@@ -417,3 +417,23 @@
 2026-10-28T09:55:10.667Z ask prose td-5-077..td-5-086 items=10 attempt=0
 2026-10-28T09:55:50.122Z done td-5-077: 10/10
 2026-10-28T09:55:50.140Z ask prose td-5-087..td-5-096 items=10 attempt=0
+2026-10-28T09:56:18.387Z   reject td-5-091: grant
+2026-10-28T09:56:18.388Z   reject td-5-096: grant
+2026-10-28T09:56:26.395Z ask prose td-5-087..td-5-096 items=2 attempt=1
+2026-10-28T09:57:11.822Z done td-5-087: 10/10
+2026-10-28T09:57:11.823Z ask prose td-5-097..td-5-106 items=10 attempt=0
+2026-10-28T09:57:49.840Z done td-5-097: 10/10
+2026-10-28T09:57:49.842Z ask prose td-5-107..td-5-116 items=10 attempt=0
+2026-10-28T09:58:22.808Z done td-5-107: 10/10
+2026-10-28T09:58:22.812Z ask prose td-5-117..td-6-004 items=9 attempt=0
+2026-10-28T09:58:46.171Z   reject td-6-003: meta words
+2026-10-28T09:58:54.179Z ask prose td-5-117..td-6-004 items=1 attempt=1
+2026-10-28T09:59:23.173Z done td-5-117: 9/9
+2026-10-28T09:59:23.177Z ask prose td-6-005..td-6-010 items=6 attempt=0
+2026-10-28T09:59:46.303Z   reject td-6-005: missing
+2026-10-28T09:59:46.304Z   reject td-6-006: missing
+2026-10-28T09:59:46.304Z   reject td-6-007: missing
+2026-10-28T09:59:46.304Z   reject td-6-008: missing
+2026-10-28T09:59:46.305Z   reject td-6-009: missing
+2026-10-28T09:59:46.305Z   reject td-6-010: missing
+2026-10-28T09:59:54.322Z ask prose td-6-005..td-6-010 items=6 attempt=1
