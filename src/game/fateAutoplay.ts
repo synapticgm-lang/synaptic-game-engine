@@ -179,6 +179,7 @@ import {
 } from './arcDirector';
 import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
 import { planSceneThreads } from './openThreads';
+import { applyHostilePresentLeave } from './npcMemory';
 import { carryLimitOn, resolveInspirationReroll, withHouseRules } from './rules/houseRules';
 import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
@@ -2297,6 +2298,12 @@ Do NOT print dice notation or CODE ENFORCED.
       places: timelineState.places ?? governed.places,
       npcMemories: timelineState.npcMemories ?? governed.npcMemories,
     };
+    // T10Z — hard handling of someone present: they pull away (scene must respond).
+    const hostileLeave = applyHostilePresentLeave(governed, playerInput);
+    governed = hostileLeave.state;
+    for (const r of hostileLeave.receipts) {
+      if (r && !filteredSystemLog.includes(r)) filteredSystemLog.push(r);
+    }
   }
   // q43-OCD: same shared pad commit as useGame (pad → stamp → replay hash). Writes recentOfferedActions
   // so LitRPG/RPG cooldown and tabletop 08:41 repeat suppression work in fate-autoplay.

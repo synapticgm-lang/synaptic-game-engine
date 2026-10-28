@@ -527,9 +527,10 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   next = next.replace(/\bPact-Hunter(?:\s+Skirmisher)?,\s+/g, '');
   // 02g — capitalized pad token "the Easy" is not a person/object
   next = next.replace(/\bthe Easy\b/g, 'the stall');
-  // 02h — novel CAST tokens Gemini named (Fine / Don / Cup / Now / traveler)
-  next = next.replace(/\bopen the Fine\b/g, 'open your hands');
-  next = next.replace(/\bthe Fine\b/g, 'the stall');
+  // 02h — novel CAST tokens Gemini named (Fine / Don / Cup / Now / traveler).
+  // T10Z — bare "the Fine" only (not "the Fine Pistol" / held loot with a rarity adjective).
+  next = next.replace(/\bopen the Fine\b(?!\s+[A-Za-z])/g, 'open your hands');
+  next = next.replace(/\bthe Fine\b(?!\s+[A-Za-z])/g, 'the stall');
   next = next.replace(/\bthe Don\b/g, 'the vendor');
   next = next.replace(/\bthe Cup\b/g, 'the inn');
   next = next.replace(/\bthe Now\b/g, 'the moment');

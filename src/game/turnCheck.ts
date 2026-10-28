@@ -40,7 +40,7 @@ import {
   WINDOW_NOUN,
 } from './chipRules';
 import { floorPlanIssues } from './floorPlan';
-import { isSystemWindowLabel } from './chromeAuthority';
+import { isCrowdFillerToken, isSystemWindowLabel } from './chromeAuthority';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
@@ -50,7 +50,7 @@ import { roundCombatChips } from './tabletop/combatChips';
 import { checkChipKinds } from './chipCheck';
 import { resolvePlace, dungeonRoomPlace } from './places';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
-import { isRoadLabel, isTripHere } from './travelJourney';
+import { isRoadLabel, isTripHere, roadMeetingOver } from './travelJourney';
 import { placeExits } from './placeRegistry';
 
 export { chipAddressee, listenersOnEmptyText, peopleHere } from './chipLegality';
@@ -277,7 +277,9 @@ export function checkActionFollowed(
     }
   } else if (talkish) {
     // Empty scene: speech to shutters / empty street needs no NPC answer — "nobody answers" is the correct beat.
-    if (peopleHere(before).length > 0) {
+    // T10Z — crowd fillers alone are not listeners (bystanders do not owe an answer).
+    const listeners = peopleHere(before).filter((n) => !isCrowdFillerToken(n));
+    if (listeners.length > 0) {
       const contract = buildIntentContract({ typed: act, resolvedText: act, intent, state: before });
       const cov = checkObligationCoverage(
         { ...contract, obligations: contract.obligations.filter((o) => o.kind === 'talk' || o.kind === 'refuse') },
@@ -287,7 +289,7 @@ export function checkActionFollowed(
         p0.push({ kind: 'ignored-action', detail: `player said "${act.slice(0, 80)}"; nobody answers in the prose` });
       }
     }
-  } else if (socialAct && !quoted && !peopleHere(before).some((p) => mentionsName(text, p))) {
+  } else if (socialAct && !quoted && !peopleHere(before).filter((n) => !isCrowdFillerToken(n)).some((p) => mentionsName(text, p))) {
     p0.push({ kind: 'ignored-action', detail: `player chose "${act.slice(0, 80)}"; nobody here answers in the prose` });
   }
 
@@ -371,7 +373,7 @@ export function brokenLines(prose: string): TurnCheckFlag[] {
  */
 /** A body action, not speech: the talk check does not apply to it. */
 const NON_TALK_ACTION =
-  /^(?:wait|look|inspect|examine|investigate|check|study|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read|flick|spit|kick|toss|throw|slam|spin|pull|push|drag|point|eye|stare)\b/i;
+  /^(?:wait|look|inspect|examine|investigate|check|study|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read|flick|spit|kick|toss|throw|slam|spin|pull|push|drag|point|eye|stare|shake|drop|grab|shove|yank)\b/i;
 
 /**
  * T10Y — addressee-less physical I-acts (flick salt / spit / eye a corner) are not talk turns.
@@ -804,6 +806,12 @@ export function checkChosenChip(before: GameState, chosen: string): TurnCheckFla
   const pick = norm(chosen);
   if (!pick || !roadMeetingPeople(before)) return [];
   if (!chipAddressee(pick) && !/^(?:greet|face|approach|skirt|slip past|hide from|talk your way)\b/i.test(pick)) return [];
+  // T10Z — live journey meeting is the authority. Timeline person tags age out at the 40-cap,
+  // which falsely flagged Approach the camp / Face the champion while the meeting was still open.
+  const enc = before.journey?.encounter;
+  if (enc && !roadMeetingOver(enc)) return [];
+  const listeners = peopleHere(before).filter((n) => !isCrowdFillerToken(n));
+  if (listeners.length > 0) return [];
   const here = low(before.currentLocation);
   if (!here) {
     return [{ kind: 'unrelated-chip', detail: `"${pick}" meets someone on the road, but the prose before it showed nobody` }];

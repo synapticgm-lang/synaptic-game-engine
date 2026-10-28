@@ -25,9 +25,11 @@ import type {
   TimelineFact,
 } from './types';
 import { mentionsName, peopleHere } from './chipLegality';
+import { isCrowdFillerToken } from './chromeAuthority';
 import { presentNpcRecords } from './npcRecords';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
+import { commitTravel, isJourneyUnderway } from './travelJourney';
 
 /**
  * Bible hooks are GM notes shaped `Label: essay` (Secret / Moral anchor / Obstacle…).
@@ -105,8 +107,11 @@ export type { OpenThread, SceneThreadPlan, ThreadKind, ThreadResolution } from '
 
 const STALE_TURNS = 10;
 const BRING_WINDOW = 5;
-/** OPT-5 stall threshold (turnsSinceProgress, circling.stale hold, pressure deadline). */
-export const STALL_N = 5;
+/**
+ * OPT-5 stall threshold (turnsSinceProgress, circling.stale hold, pressure deadline).
+ * T10Z — must fire before fate LOOP STOP (5 no-progress turns) so the planner can move the world.
+ */
+export const STALL_N = 3;
 
 /** Whether the engine record already satisfies this thread's close condition. */
 export function threadResolutionMet(state: GameState, thread: OpenThread): boolean {
@@ -292,7 +297,7 @@ export function stallPressureActive(state: GameState): boolean {
   if (state.engineMode === 'pyoa') return false;
   const turn = state.turn ?? 0;
   const tsp = state.progressGovernor?.turnsSinceProgress ?? 0;
-  if (tsp > STALL_N) return true;
+  if (tsp >= STALL_N) return true;
   const deadline = state.arcDirector?.pressureClock?.deadlineTurn;
   if (deadline != null && turn >= deadline) return true;
   const stale = state.circling?.stale;
@@ -563,6 +568,33 @@ export function planSceneThreads(state: GameState): GameState {
           stallEventId,
           `Stall pressure: new situation — ${floor.quest.name}.`,
         );
+      } else if (
+        isJourneyUnderway(working)
+        && peopleHere(working).filter((n) => !isCrowdFillerToken(n)).length === 0
+        && !working.activeEncounter
+      ) {
+        // T10Z — empty road stall: the world moves on (one Walk on leg). Do not wait for the
+        // typed player to pick Push on while grabbing absent companions (s9301 T123–T127).
+        const advanced = commitTravel(working, 'Walk on');
+        if (advanced.handled) {
+          working = advanced.state;
+          forwardIds.push(`stall-road:${turn}`);
+          stallKind = 'situation';
+          stallEventId = `stall-road-${turn}`;
+          working = appendStallFact(
+            working,
+            stallEventId,
+            advanced.receipt || 'Stall pressure: the road pressed you onward.',
+          );
+        } else if (agendaFired || (working.arcDirector?.pressureClock?.deadlineTurn != null
+          && turn >= (working.arcDirector.pressureClock.deadlineTurn ?? turn + 1))) {
+          stallEventId = `stall-pressure-${turn}`;
+          working = appendStallFact(
+            working,
+            stallEventId,
+            `Stall pressure: pressure clock fired at T${turn}.`,
+          );
+        }
       } else if (agendaFired || (working.arcDirector?.pressureClock?.deadlineTurn != null
         && turn >= (working.arcDirector.pressureClock.deadlineTurn ?? turn + 1))) {
         stallEventId = `stall-pressure-${turn}`;

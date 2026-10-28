@@ -408,13 +408,6 @@ const BASE_NAMES: Record<LootItemCategory, string> = {
   trinket: 'Pendant',
 };
 
-const RARITY_PREFIX: Record<Exclude<Rarity, 'Legendary'>, string> = {
-  Common: 'Worn',
-  Uncommon: 'Fine',
-  Rare: 'Runed',
-  Epic: 'Masterwork',
-};
-
 /** Named Legendaries — each drops once until the pool is exhausted (Hearthstone-style duplicate protection). */
 export const LEGENDARY_POOL: ReadonlyArray<{ name: string; category: LootItemCategory }> = [
   { name: 'Dawnsplitter', category: 'blade' },
@@ -539,7 +532,9 @@ function makeItem(
     const srd = magicItemsAtRarity(finalRarity);
     if (srd.length) return { item: magicItem(pickFrom(srd, rng), id, `Engine loot (${LOOT_PROFILES[profile].label})`), category };
   }
-  if (!name) name = `${RARITY_PREFIX[finalRarity as Exclude<Rarity, 'Legendary'>]} ${BASE_NAMES[category]}`;
+  // T10Z — plain base noun only; rarity lives on `item.rarity` (STATUS `[Uncommon] Pistol`).
+  // Prefixing Fine/Worn made CAST scrub treat "the Fine Pistol" as a mad-lib person token.
+  if (!name) name = BASE_NAMES[category];
   // OPT-6: every generated drop carries itemType + baseValue at source (mode table; tabletop sell still uses SRD half-cost).
   const itemType: ItemType = category === 'armour' ? 'armor' : category === 'focus' || category === 'trinket' ? 'accessory' : 'weapon';
   const fromMode = modeBuyGp(state.engineMode, itemType, finalRarity) ?? 0;
