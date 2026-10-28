@@ -1,0 +1,81 @@
+{
+ "batch": "sg-4-1-4-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-1-4-6": {
+   "title": "The Mud Alcove",
+   "text": "Deep within an alcove carved from ancient, fossilized mud, you press the ceramic Seedkey tight against your chest for a thin measure of warmth while glass-dust hisses and scratches furiously against the stone outside. The wind howls a hollow note through the crannies, threatening to tear the very breath from your lungs if you dare step another inch into the blinding white fury. You hold your smoking coal-lantern low, watching the tiny red glow of the coals fight against the creeping dampness seeping through your wool coat.",
+   "exits": [
+    "Push forward into the storm"
+   ]
+  },
+  "sg-4-1-4-7": {
+   "title": "The Purple Crust",
+   "text": "Across a ribbed pan of iridescent salt-crust, the blinding white light of the gale twists into a bruised, bruised-plum purple that signals the fierce climax of the mirror storm. Jagged shards of flying mica dance in the low air like angry hornets, singing a high-pitched whine that drowns out the steady thrum of your own racing pulse. You crouch low over your copper-rimmed lamp, shielding the brass door with your stiffened sleeve while the ground beneath your boots vibrates from the relentless pressure of the air-wall.",
+   "exits": [
+    "Crawl toward the central rift"
+   ]
+  },
+  "sg-4-1-5-0": {
+   "title": "The Grand Siphon",
+   "text": "At the yawning mouth of the Grand Siphon tube, a howling vortex funnels down into a narrow iron hatch, testing your raw strength to reach the heavy latch against the screaming draft. Every muscle in your arms trembles as you lean into the violent slipstream, fighting the suction that tries to yank your coat clean off your shoulders. Your cold-lantern rattles against your knee like a loose tooth while the metal rim of the hatch shivers under your gloved fingers.",
+   "exits": [
+    "Force your way through the tube",
+    "Retreat from the roaring iron"
+   ]
+  },
+  "sg-4-1-5-1": {
+   "title": "The Stripped Cover",
+   "text": "On the high, windward lip of the central depression, a sudden and violent gust strips the heavy leather cover clean from your lamp, exposing the red-hot coals directly to the blizzard of flying glass. Sparks fly in a frantic flurry as the abrasive dust pelts the exposed metal, threatening to scatter your precious warmth into the freezing void of the Basin. You slam your body over the lantern cage, trying to starve the hungry wind of its target with your own flesh and bone.",
+   "exits": [
+    "Drive ahead into the gale"
+   ]
+  },
+  "sg-4-1-5-2": {
+   "title": "The Battered Station",
+   "text": "Inside the splintered shelter of a battered mirror-station door, you brace your entire weight against the warped iron hinges while the gale hammers furiously on the exterior plates like a fist of solid stone. The wooden frame groans and spits tiny splinters into your hair, threatening to give way under the relentless battering of the dune-storm. Within the dim enclosure, the smell of old grease and stagnant air mixes with the sharp tang of ozone from the grinding glass outside.",
+   "exits": [
+    "Burst through into the interior"
+   ]
+  },
+  "sg-4-1-5-3": {
+   "title": "The Copper Valve",
+   "text": "Beside the massive copper intake valve of Prism, the roaring wind carves a pocket of relative calm where your ember-lamp gutters and dances in the dangerously thin air. The cold metal arches above you like the ribs of a buried leviathan, dripping with beads of condensation that freeze the moment they catch the draft. Your fingers ache with a dull, throbbing numbness as you steady the warm brass handle of your coal-lantern against the trembling ground.",
+   "exits": [
+    "Make for the inner courtyard"
+   ]
+  },
+  "sg-d-4-1": {
+   "title": "The Glass Drop",
+   "text": "Racing recklessly through the roaring heart of the mirror storm without shielding your face or your precious lamp, you stumble blindly into a sheer drop of broken glass and jagged shale. The air leaves your lungs in a sharp gasp as you fall, smashing both your brittle bones and your fragile ember into useless, silent dust upon the cruel floor below.",
+   "exits": []
+  },
+  "sg-4-c2": {
+   "title": "Heart of the Storm",
+   "text": "The storm reaches its roaring apex, screaming across the glass flats with enough force to shatter wood and strip skin, directly threatening to crush your ember-lamp into total darkness. If the coals go out here, the cold will claim your fingers before you ever reach the Vault, leaving the seed-hall locked forever. You can throw your own body around the brass chimney to take the brunt of the flying glass and heat, or you can let the storm take the lantern and trust your frozen feet to find the way through the blind dark.",
+   "exits": [
+    "Shield the lamp with your own body",
+    "Let the storm take the lamp"
+   ]
+  },
+  "sg-4-2-0-0": {
+   "title": "The Basalt Cairn",
+   "text": "Beside a whistling basalt cairn, you carefully coax your wounded, glass-scarred lamp back to a sputtering yellow life while sharp glass-dust scours your raw, chapped knuckles. The air tastes of copper and old salt, biting the back of your throat with every shallow breath you draw in the grey twilight. You adjust the heavy brass damper with trembling fingers, making sure the tiny heap of glowing coals holds firm against the lingering drafts.",
+   "exits": [
+    "Follow the low ridge eastward",
+    "Duck beneath the glass overhang",
+    "Slip past the amber drainage pipe"
+   ]
+  },
+  "sg-4-2-0-1": {
+   "title": "The Bottle-Shard Ditch",
+   "text": "In a dry ditch choked with jagged green bottle-shards, you press the cold ceramic Seedkey tight to your ribs as the howling gale seeks every inch of your remaining breath. The night closes in like a heavy iron lid, dark and starless above the jagged silhouettes of the ruined lens-towers. Your hands are stiff and numb where the wind has scoured them, but the heavy key remains solid and unyielding beneath your palms.",
+   "exits": [
+    "Crawl behind the blue slag arch",
+    "Seek the lee of the bell-jar",
+    "Scramble across the salt-pimple flats"
+   ]
+  }
+ },
+ "missing": []
+}

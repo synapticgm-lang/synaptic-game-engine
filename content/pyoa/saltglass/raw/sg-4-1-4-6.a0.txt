@@ -1,0 +1,57 @@
+Gemini said
+
+@@SECTION sg-4-1-4-6
+TITLE: The Mud Alcove
+TEXT: Deep within an alcove carved from ancient, fossilized mud, you press the ceramic Seedkey tight against your chest for a thin measure of warmth while glass-dust hisses and scratches furiously against the stone outside. The wind howls a hollow note through the crannies, threatening to tear the very breath from your lungs if you dare step another inch into the blinding white fury. You hold your smoking coal-lantern low, watching the tiny red glow of the coals fight against the creeping dampness seeping through your wool coat.
+EXIT 1: Push forward into the storm
+@@END
+@@SECTION sg-4-1-4-7
+TITLE: The Purple Crust
+TEXT: Across a ribbed pan of iridescent salt-crust, the blinding white light of the gale twists into a bruised, bruised-plum purple that signals the fierce climax of the mirror storm. Jagged shards of flying mica dance in the low air like angry hornets, singing a high-pitched whine that drowns out the steady thrum of your own racing pulse. You crouch low over your copper-rimmed lamp, shielding the brass door with your stiffened sleeve while the ground beneath your boots vibrates from the relentless pressure of the air-wall.
+EXIT 1: Crawl toward the central rift
+@@END
+@@SECTION sg-4-1-5-0
+TITLE: The Grand Siphon
+TEXT: At the yawning mouth of the Grand Siphon tube, a howling vortex funnels down into a narrow iron hatch, testing your raw strength to reach the heavy latch against the screaming draft. Every muscle in your arms trembles as you lean into the violent slipstream, fighting the suction that tries to yank your coat clean off your shoulders. Your cold-lantern rattles against your knee like a loose tooth while the metal rim of the hatch shivers under your gloved fingers.
+EXIT 1: Force your way through the tube
+EXIT 2: Retreat from the roaring iron
+@@END
+@@SECTION sg-4-1-5-1
+TITLE: The Stripped Cover
+TEXT: On the high, windward lip of the central depression, a sudden and violent gust strips the heavy leather cover clean from your lamp, exposing the red-hot coals directly to the blizzard of flying glass. Sparks fly in a frantic flurry as the abrasive dust pelts the exposed metal, threatening to scatter your precious warmth into the freezing void of the Basin. You slam your body over the lantern cage, trying to starve the hungry wind of its target with your own flesh and bone.
+EXIT 1: Drive ahead into the gale
+@@END
+@@SECTION sg-4-1-5-2
+TITLE: The Battered Station
+TEXT: Inside the splintered shelter of a battered mirror-station door, you brace your entire weight against the warped iron hinges while the gale hammers furiously on the exterior plates like a fist of solid stone. The wooden frame groans and spits tiny splinters into your hair, threatening to give way under the relentless battering of the dune-storm. Within the dim enclosure, the smell of old grease and stagnant air mixes with the sharp tang of ozone from the grinding glass outside.
+EXIT 1: Burst through into the interior
+@@END
+@@SECTION sg-4-1-5-3
+TITLE: The Copper Valve
+TEXT: Beside the massive copper intake valve of Prism, the roaring wind carves a pocket of relative calm where your ember-lamp gutters and dances in the dangerously thin air. The cold metal arches above you like the ribs of a buried leviathan, dripping with beads of condensation that freeze the moment they catch the draft. Your fingers ache with a dull, throbbing numbness as you steady the warm brass handle of your coal-lantern against the trembling ground.
+EXIT 1: Make for the inner courtyard
+@@END
+@@SECTION sg-d-4-1
+TITLE: The Glass Drop
+TEXT: Racing recklessly through the roaring heart of the mirror storm without shielding your face or your precious lamp, you stumble blindly into a sheer drop of broken glass and jagged shale. The air leaves your lungs in a sharp gasp as you fall, smashing both your brittle bones and your fragile ember into useless, silent dust upon the cruel floor below.
+@@END
+@@SECTION sg-4-c2
+TITLE: Heart of the Storm
+TEXT: The storm reaches its roaring apex, screaming across the glass flats with enough force to shatter wood and strip skin, directly threatening to crush your ember-lamp into total darkness. If the coals go out here, the cold will claim your fingers before you ever reach the Vault, leaving the seed-hall locked forever. You can throw your own body around the brass chimney to take the brunt of the flying glass and heat, or you can let the storm take the lantern and trust your frozen feet to find the way through the blind dark.
+EXIT 1: Shield the lamp with your own body
+EXIT 2: Let the storm take the lamp
+@@END
+@@SECTION sg-4-2-0-0
+TITLE: The Basalt Cairn
+TEXT: Beside a whistling basalt cairn, you carefully coax your wounded, glass-scarred lamp back to a sputtering yellow life while sharp glass-dust scours your raw, chapped knuckles. The air tastes of copper and old salt, biting the back of your throat with every shallow breath you draw in the grey twilight. You adjust the heavy brass damper with trembling fingers, making sure the tiny heap of glowing coals holds firm against the lingering drafts.
+EXIT 1: Follow the low ridge eastward
+EXIT 2: Duck beneath the glass overhang
+EXIT 3: Slip past the amber drainage pipe
+@@END
+@@SECTION sg-4-2-0-1
+TITLE: The Bottle-Shard Ditch
+TEXT: In a dry ditch choked with jagged green bottle-shards, you press the cold ceramic Seedkey tight to your ribs as the howling gale seeks every inch of your remaining breath. The night closes in like a heavy iron lid, dark and starless above the jagged silhouettes of the ruined lens-towers. Your hands are stiff and numb where the wind has scoured them, but the heavy key remains solid and unyielding beneath your palms.
+EXIT 1: Crawl behind the blue slag arch
+EXIT 2: Seek the lee of the bell-jar
+EXIT 3: Scramble across the salt-pimple flats
+@@END
