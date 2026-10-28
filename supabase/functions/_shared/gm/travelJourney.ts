@@ -1,6 +1,7 @@
 /** Edge stub (29z8): road meetings are built on the client (src/game/travelJourney.ts) and arrive in the packet. Lets completedEventPacket and places boot. */
 import type { GameState } from './types.ts';
 import { underwayHereLabel } from './locationName.ts';
+import { plainFromWriterCueSentence } from './writerCueLines.ts';
 
 export function roadMeetingFact(_j: unknown): string { return ''; }
 export function roadMeetingRef(_state: unknown): { display: string; note: string } | null { return null; }
@@ -112,14 +113,12 @@ export function writerEngineResult(fact: string): string {
       out.push(`You took a ${kind}.`);
       continue;
     }
-    // T10B — speech receipts are writer cues, not player story. Same receipt→sentence form as Rest/Travel.
-    const speechHead = 'Speech event: you address ';
-    if (s.startsWith(speechHead)) {
-      const who = (s.endsWith('.') ? s.slice(0, -1) : s).slice(speechHead.length).trim();
-      if (who) out.push(`You spoke to ${who}.`);
+    // T10E — writer cue lines (shared writerCueLines) → plain narration; never player chrome.
+    const cue = plainFromWriterCueSentence(s);
+    if (cue.cue) {
+      if (cue.plain) out.push(cue.plain.endsWith('.') ? cue.plain : `${cue.plain}.`);
       continue;
     }
-    if (/^NPC reaction slot open for the writer\.?$/i.test(s)) continue;
     out.push(s.endsWith('.') ? s : `${s}.`);
   }
   return out.join(' ');
