@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION sg-4-0-2-5
+TITLE: Ridge of Crushed Crystal
+TEXT: Jagged fragments of translucent quartz groan under your boots as you scramble up the towering crystalline ridge, your breath catching in your dry throat. Below you, the full, terrifying expanse of the Mirror Storm wall rolls across the basin like an advancing avalanche of silver grit and roaring wind. Your banked coal-lantern rattles against your ribs, and the cold ceramic shape of the Seedkey presses firmly through your pocket, reminding you of the long miles still remaining before Prism. You must decide your immediate route through the blinding squall before the gale cuts off all remaining passage.
+EXIT 1: Follow the green signal beam toward the north
+EXIT 2: Climb the stranded brickwork of the ancient quay
+EXIT 3: Inspect the dry clay jar in the hollow
+@@END
+@@SECTION sg-4-0-2-6
+TITLE: Flight of the Salt-Fox
+TEXT: A frantic, pale-furred salt-fox darts wildly past your boots, fleeing the atmospheric front that turns the distant horizon into a boiling soup of silver. The howling wind kicks up sharp clouds of silica that bite at your exposed skin, testing your endurance as the temperature drops abruptly. You pull your thick woolen scarf tighter over your nose and press onward, holding tight to your sputtering ember-lamp. Ahead of you, several faint paths diverge through the drifting dust-heaps, each offering a different way deeper into the storm-choked basin.
+EXIT 1: Head toward the old harbor wall
+EXIT 2: Skirt the steaming volcanic chimney
+EXIT 3: Follow the screaming glass-gulls into the murk
+@@END
+@@SECTION sg-4-0-2-7
+TITLE: Cleaning the Lamp Gasket
+TEXT: You pause behind a shattered pillar to scrape the accumulated glass-dust from your lamp gasket, watching the tiny red glow of your banked coals battle against the encroaching gloom. The wind shrieks through the skeletal ruins around you like a chorus of hollow voices, and the weight of the cold Seedkey in your tunic feels heavier with every passing hour. Every breath tastes of alkaline dust and old salt, reminding you that the monsoon's arrival draws closer by the day.
+EXIT 1: Push past the venting basalt chimney
+EXIT 2: Press onward beneath the wheeling gulls
+@@END
+@@SECTION sg-4-0-2-8
+TITLE: The Sunken Observatory Pointer
+TEXT: A rusted iron signpost leans at a sharp angle, pointing toward the sunken observatory of Prism while its lettering has been bitten away by decades of abrasive wind-scour. Fine grains of white crystal whisper across the metal post, creating a constant, eerie hum in the dead air. You adjust the heavy strap of your lantern and check the seal on your water flask, knowing that every league brings you closer to the heart of the dried sea.
+EXIT 1: Wade through the knee-deep silica drift
+EXIT 2: Investigate the skeletal surveyor tripod in the mist
+@@END
+@@SECTION sg-4-0-2-9
+TITLE: Ribs of the Cargo-Skiff
+TEXT: You slide down a steep incline of loose pearl-sand, landing amidst the shattered wooden ribs of an ancient cargo-skiff half-swallowed by the dunes. The salt-bleached timbers offer a brief windbreak against the howling gale, allowing you to catch your breath and check the steady glow of your lamp. Tiny eddies of dust swirl around your ankles like quicksilver as you survey the murky expanse ahead.
+EXIT 1: Follow the screaming gulls through the yellow murk
+EXIT 2: Head toward the skeletal surveyor tripod
+@@END
+@@SECTION sg-4-0-2-10
+TITLE: The Stone Conduit Crawl
+TEXT: A low-slung stone conduit hums with trapped air, providing a cramped crawlspace where the howling gale is reduced to a dull, hungry roar. You crouch low on hands and knees, dragging your lamp carefully behind you as the gritty floor abrades your palms. The air inside smells of ancient lime and damp earth, offering a strange, sheltered respite from the storm outside.
+EXIT 1: Slip down the hidden smuggler drainage
+EXIT 2: Shelter behind the green bottle-glass block
+EXIT 3: Turn back toward the inner basin
+@@END
+@@SECTION sg-4-0-2-11
+TITLE: Abandoned Diver Camp
+TEXT: You encounter a drying rack hung with desiccated kelp ribbons, marking the abandoned campsite of a reckless glass-diver who vanished into the haze. A few rusted tools and an empty salt-kettle lie half-buried in the shifting dust nearby, telling a silent tale of haste and desperation. You secure your lamp against a sudden gust of wind and weigh your next steps carefully in the gathering gloom.
+EXIT 1: Wade through the sparkling silica drift
+EXIT 2: Slip down the hidden smuggler drainage
+EXIT 3: Shelter behind the green bottle-glass block
+@@END
+@@SECTION sg-4-0-2-12
+TITLE: Thermal Updraft and Dust
+TEXT: A sudden thermal updraft lifts a cloud of incandescent dust around your head, searing your throat and testing the resilience of your wool scarf. You shield your eyes with a gauntleted hand, keeping your body hunched low against the blistering heat and swirling grit. The sudden surge of warm air carries the distant, metallic tang of the central basin, urging you forward despite the burning fatigue in your legs.
+EXIT 1: Shelter behind the green bottle-glass block
+EXIT 2: March toward the distant basalt milestone
+@@END
+@@SECTION sg-4-0-3-0
+TITLE: Defaced Customs Gate
+TEXT: You find shelter beneath the leaning arch of an old customs gate, where the carved insignia of the Salt Court has been defaced with fresh black tar. Chunks of fused glass crunch under your boots as you shake the accumulated dust from your cloak and tend to the dying embers of your lantern. The atmosphere hangs heavy with tension, reminding you of the toll-lords' watchful eyes across the basin.
+EXIT 1: Push onward to the final shale rise
+EXIT 2: Turn back toward the broken shelf
+@@END
+@@SECTION sg-4-0-3-1
+TITLE: The Nomad Well-Tender
+TEXT: A nomadic well-tender named Oris calls out from a canvas tent pegged down with millstones, offering a dry rag to wipe your encrusted goggles. The scent of roasted chicory drifts from a small tin pot resting near the tent flap, cutting sharply through the bitter taste of salt in the air. You pause for a brief moment of human warmth before facing the open expanses of the storm-swept basin once more.
+EXIT 1: Climb toward the final shale rise
+@@END
