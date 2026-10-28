@@ -27,13 +27,21 @@ export function pcSaysExactlyCue(said: string): string {
 
 /**
  * Present named addressee → reaction slot. Crowd/aggregate labels are addressed but do not speak
- * as one NPC (no reaction slot). Else empty-scene speech.
+ * as one NPC (no reaction slot). Unnamed talk with people here addresses them — never "empty scene" (T10M).
+ * Else empty-scene speech.
  */
-export function speechAddressCue(who: string | null): string {
+export function speechAddressCue(who: string | null, presentHere: string[] = []): string {
   if (who && isAggregatePersonToken(who)) {
     return `Speech event: you address ${who}. No one present to answer.`;
   }
   if (who) return `Speech event: you address ${who}. NPC reaction slot open for ${who}.`;
+  const here = presentHere.map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+  if (here.length === 1) {
+    return `Speech event: you address ${here[0]}. NPC reaction slot open for ${here[0]}.`;
+  }
+  if (here.length > 1) {
+    return `Speech event: you address the people here. NPC reaction slot open for the people here.`;
+  }
   return `Speech event: you address the empty scene. No one present to answer.`;
 }
 
@@ -45,14 +53,14 @@ export function showActCue(): string {
 export function buildClauseWriterFact(
   clause: string,
   speech: boolean,
-  opts?: { said?: string; addressee?: string | null },
+  opts?: { said?: string; addressee?: string | null; presentHere?: string[] },
 ): string {
   const parts: string[] = [mustNarrateCue(clause)];
   if (speech) {
     const said = (opts?.said ?? '').replace(/\s+/g, ' ').trim();
     const who = opts?.addressee?.trim() || null;
     if (said) parts.push(pcSaysExactlyCue(said));
-    parts.push(speechAddressCue(who));
+    parts.push(speechAddressCue(who, opts?.presentHere ?? []));
   } else {
     parts.push(showActCue());
   }
