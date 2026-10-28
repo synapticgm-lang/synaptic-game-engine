@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-3-052
+TITLE: The Lash of Spray
+TEXT: Heavy gales howl through the stilt-work of Saltspire, whipping salt spray off the empty seabed far below into a blinding, stinging mist. Thick hemp ropes groan under your boots, twisting as the suspension bridge dances violently in the gale. A leather courier's satchel, dropped by a fleeing Brineholder runner, catches on a frayed spar halfway across the plunging span. Every gust threatens to tear your grip from the guide-wires, leaving you swaying above the abyss.
+EXIT 1: Leap toward the fluttering leather
+@@END
+@@SECTION td-3-053
+TITLE: Slipping Cedar Planks
+TEXT: Frost and dried brine coat the cedar planks, making each footfall a treacherous gamble over the gaping void. Below, the dark, bone-strewn floor of the Low stretches toward a distant, mocking horizon where the water ought to be. The satchel swings like a pendulum from a broken knuckle of timber, its brass buckle glinting dully in the gray gloom. The wind shrieks through the timber pylons, demanding you commit before the whole web tears loose.
+EXIT 1: Scramble onward through the howling gale
+@@END
+@@SECTION td-3-054
+TITLE: Grasping the Wind-Torn Span
+TEXT: Water lashes your face as you lunge across the tilting boards, fingers stretching out toward the swinging satchel while the bridge drops sickeningly beneath your weight. The cedar snaps with a wet crack behind you, leaving only a single frayed tether holding your footing to the tier. You must throw your full weight forward and trust your balance to span the remaining gap before the wind pitches you into the open air.
+CHECK: Catch the bag before the drop
+@@END
+@@SECTION td-3-055
+TITLE: Bruised Against the Timbers
+TEXT: The bridge buckled violently, whipping upward and throwing you hard against a jagged timber cross-beam. A sharp, burning ache flares across your ribs, and your left hand drips with dark blood where a splinter bit deep. The satchel slipped from your desperate fingers, tumbling down into the gray shadows of the Low. You pull yourself gasping onto the swaying platform, clutching bruised bones as the storm continues to batter the metal and wood around you.
+EXIT 1: Retreat back toward the middle tier
+@@END
+@@SECTION td-3-056
+TITLE: Seizing the Courier's Prize
+TEXT: Your fingers closed around the wet leather strap just as the tether snapped, hauling the treasure hard against your chest as the bridge leveled out from its violent swing. Breathing hard against the salt-choked air, you worked the brass buckle free to reveal its contents hidden away from the prying eyes of the Brineholder guards. It is a prize hard-won from the gale, tucked safely into your coat as you steady your footing.
+GRANT: Sealed Brineholder dispatch case
+EXIT 1: Return to the swaying bridges
+@@END
+@@SECTION td-3-057
+TITLE: Weaving the Wreckage
+TEXT: Loose lengths of water-logged pine and split staves litter the scaffolding where a storage shed collapsed weeks ago. Down in the narrow cleft between two stilt-supported platforms, a heavy brass grappling hook with salt-caked barbs hangs snagged on a rusted iron bracket. Reaching it requires bridging the gap with whatever scraps you can scavenge from the debris pile before the whole makeshift structure gives way under your weight.
+EXIT 1: Lash the timbers across the void
+@@END
+@@SECTION td-3-058
+TITLE: Testing the Jury-Rigged Span
+TEXT: You wedge a notched beam into a rusted joint, binding the slippery timbers with a length of salted twine salvaged from a discarded net. The improvised bridge sags alarmingly, groaning under the pressure of the salt wind sweeping in from the open seabed. The brass hook waits just beyond your fingertips, dangling over a sheer drop that plunges down to the bleached ribcage of an ancient whale hull far below.
+EXIT 1: Creep out onto the makeshift beam
+@@END
+@@SECTION td-3-059
+TITLE: Balancing on Splintered Wood
+TEXT: Your hands steady the shifting timber path as a sudden gust catches your jacket, threatening to tip the whole precarious bridge into the empty air. The wood groans beneath your knees, fibers parting with a dry snap as you reach down toward the dangling iron prongs. You need a steady hand and absolute precision to lift the hook free without the anchor-beams shearing through completely.
+CHECK: Salvage the hook with steady hands
+@@END
+@@SECTION td-3-060
+TITLE: Collapsing Scaffold
+TEXT: The central beam splintered without warning, pitching you sideways into the rough timber lattice and scraping skin raw from your forearms. Dust and dry rot fill your eyes as the improvised bridge collapses entirely into the darkness below, leaving you hanging by one elbow from a sturdy cross-brace. You haul yourself upward with a grunt, spitting salt, while the prized hook tumbles down to vanish among the wreckage on the seabed.
+EXIT 1: Climb back to safer scaffolding
+@@END
+@@SECTION td-3-061
+TITLE: Securing the Iron Flukes
+TEXT: The knotted twine held fast just long enough for your fingers to wedge under the heavy iron shank and lift the tool free from its rusted prison. It is a solid piece of salvaged gear, its prongs scored with old salt-carvings from the Gullmouth shipwrights who forged it years ago. You sling the heavy rope and iron over your shoulder, feeling the familiar, reassuring weight of proper wrecking tools against your ribs.
+GRANT: Heavy brass grappling hook
+EXIT 1: Return to the swaying bridges
+@@END

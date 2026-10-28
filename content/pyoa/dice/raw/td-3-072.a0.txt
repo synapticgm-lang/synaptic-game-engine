@@ -1,0 +1,57 @@
+Gemini said
+
+@@SECTION td-3-072
+TITLE: The Vent Shafts
+TEXT: Dark, narrow steam vents offer a perilous alternative route upward through the stilt-city, echoing with the distant, frantic moans of trapped gulls // Heat radiates from the rusted iron lining, promising either a quick path toward the Brineholder reservoirs or a slow roasting in the dark.
+EXIT 1: Crawl into the narrow pipe
+EXIT 2: Follow the shifting air currents
+EXIT 3: Pry open the heavy grating
+EXIT 4: Climb toward the upper glass dome
+@@END
+@@SECTION td-3-073
+TITLE: Into the Heat
+TEXT: Rust flakes drift like charred snow down the inside of the iron conduit as you wedge your shoulders against the ribbed metal // Steam hisses from unseen seams ahead, smelling of old grease and boiled salt, and the surrounding plates thrum with a dangerous, rhythmic vibration.
+EXIT 1: Push deeper into the steam
+@@END
+@@SECTION td-3-074
+TITLE: The Searing Flue
+TEXT: Sweat stings your eyes while the metal beneath your palms grows uncomfortably hot, turning every breath into a dry scorch in your throat // A faint amber glow flickers from a jagged service hatch just beyond a bend in the flue.
+EXIT 1: Reach for the rusted latch
+@@END
+@@SECTION td-3-075
+TITLE: Scalding Passage
+TEXT: The narrow pipe narrowing further leaves no room to turn back as a sudden gout of white-hot steam roars from a valve straight at your face // You must force your weight forward through the searing draft before the heat robs you of your senses.
+CHECK: Brace against the boiling steam
+@@END
+@@SECTION td-3-076
+TITLE: Scorch and Smoke
+TEXT: Pain flares white and bright across your forearm as the scalding vapor catches your skin, forcing you to scramble backward in a blind panic // You tumble out of a lower maintenance vent into a pile of discarded sacking, nursing a jagged burn that throbs with every beat of your heart.
+EXIT 1: Drag yourself back to the crossroads
+@@END
+@@SECTION td-3-077
+TITLE: The Armorer's Cache
+TEXT: However narrowly you beat the heat, you tumble out of the flue and tumble straight into a forgotten alcove stacked with discarded Brineholder gear // A heavy iron greave and a coil of oiled leather strapping lie half-buried in the soot, waiting for someone bold enough to take them.
+GRANT: Oiled leather harness
+EXIT 1: Return to the vent junction
+@@END
+@@SECTION td-3-078
+TITLE: The Singing Conduits
+TEXT: Iron ribs groan around you as you crawl deeper into the labyrinth of vents, guided solely by the varying pitch of the drafts whistling through the seams // Every intersection looks identical in the dim, amber-tinted gloom, and the air grows thicker with the tang of ancient bilge.
+EXIT 1: Test the draft in the left shaft
+@@END
+@@SECTION td-3-079
+TITLE: The Labyrinthine Drafts
+TEXT: A sudden chorus of metallic shrieks echoes through the network, making it impossible to tell whether the air is rising from the sea-bed or sinking from the sky // You pause at a four-way junction where the drafts cross and cancel one another out, needing to read the faint dust patterns before choosing a path.
+CHECK: Read the dust and drafts
+@@END
+@@SECTION td-3-080
+TITLE: Turned Around in the Dark
+TEXT: A sudden shift in the pressure sends a cloud of blinding soot into your face, sending you stumbling down a steep, sloping duct that loops right back to where you started // You emerge bruised and disoriented, having lost precious time in the labyrinthine dark.
+EXIT 1: Pick yourself up and try again
+@@END
+@@SECTION td-3-081
+TITLE: The Smuggler's Chart
+TEXT: However narrowly you interpret the whispering drafts, your fingers brush against a scrap of dried parchment wedged behind a loose rivet // Unrolling it reveals a hasty, ink-stained schematic marking every hidden access hatch in this tier of the stilt-city.
+GRANT: Smuggler's vent schematic
+EXIT 1: Return to the vent junction
+@@END
