@@ -225,21 +225,82 @@ function toSimplePast(verb: string): string {
 /**
  * First-person / bare imperative / gerund clause → one third-person past sentence (fallback book body).
  * Subject is the PC display name when known (T10R); never a raw I-paste.
+ * T10AH — curly apostrophes and I am/have/will are one unit (never "Jax'm" / "Jax have");
+ * leading -ly is an adverb, not a verb ("suddenly drop" → "suddenly dropped", not "suddenlied drop").
  */
 export function clauseToThirdPerson(clause: string, subject = 'They'): string {
   let c = (clause ?? '').replace(/\s+/g, ' ').trim().replace(/[.!?]+$/g, '');
   if (!c) return '';
   const who = (subject || 'They').trim() || 'They';
-  // Strip a leading I / I'm so we do not double the subject.
-  c = c.replace(/^(?:I(?:'m| am)?|i)\s+/i, '');
+  // Smart quotes / modifier letter apostrophe → ASCII so I'm / I've / I'll match before bare I.
+  c = c.replace(/[\u2019\u2018\u02BC]/g, "'");
+  // Leading I'm / I've / I'll / I'd / I am / I have / I will keep their tense (do not strip to a bare verb).
+  const leadModal = c.match(/^(?:I'(m|ve|ll|d)|I\s+(am|have|will))\s+(.*)$/i);
+  if (leadModal) {
+    const kind = (leadModal[1] ?? leadModal[2] ?? '').toLowerCase();
+    const rest = (leadModal[3] ?? '').trim();
+    const mid =
+      kind === 'm' || kind === 'am'
+        ? 'was'
+        : kind === 've' || kind === 'have'
+          ? 'had'
+          : 'would';
+    const line = `${who} ${mid}${rest ? ` ${rest}` : ''}`.replace(/\s+/g, ' ').trim();
+    return line.endsWith('.') ? line : `${line}.`;
+  }
+  // Strip a leading bare I so we do not double the subject.
+  c = c.replace(/^(?:I|i)\s+/i, '');
   c = c
     .replace(/\bI'm\b/gi, `${who} was`)
     .replace(/\bI've\b/gi, `${who} had`)
     .replace(/\bI'll\b/gi, `${who} would`)
-    .replace(/\bI\b/g, who)
+    .replace(/\bI'd\b/gi, `${who} would`)
+    .replace(/\bI am\b/gi, `${who} was`)
+    .replace(/\bI have\b/gi, `${who} had`)
+    .replace(/\bI will\b/gi, `${who} would`)
+    .replace(/\bwe(?:'re| are)\b/gi, `${who} was`)
+    .replace(/\bwe've\b/gi, `${who} had`)
+    .replace(/\bwe'll\b/gi, `${who} would`)
+    .replace(/\bwe\b/gi, who)
+    .replace(/\bour\b/gi, 'their')
+    .replace(/\bus\b/gi, 'them')
     .replace(/\bmy\b/gi, 'their')
     .replace(/\bmine\b/gi, 'theirs')
-    .replace(/\bme\b/gi, 'them');
+    .replace(/\bme\b/gi, 'them')
+    // Bare I last — after contractions so "I'm" cannot become "Name'm".
+    .replace(/\bI\b/g, who);
+  // Mid-clause bare I → Name left a present stem ("Name check" / "Name have"): finish the tense.
+  const whoEsc = who.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  c = c.replace(
+    new RegExp(
+      `\\b${whoEsc}\\s+(have|has|am|is|are|do|does|will|check|think|know|want|need|go|come|see|get|take|make|say|tell|hold)\\b`,
+      'gi',
+    ),
+    (_m, v: string) => `${who} ${toSimplePast(v)}`,
+  );
+  // "we hold…" → "Name hold…" — subject is already written; past-tense the next verb (never "Name named …").
+  const alreadyWho = c.match(new RegExp(`^${whoEsc}\\s+([A-Za-z]+)\\b(.*)$`, 'i'));
+  if (alreadyWho) {
+    const verb = alreadyWho[1]!;
+    // Mid-clause conjugator may already have written past (held/had); do not double to helded.
+    const alreadyPast =
+      /ed$/i.test(verb)
+      || /^(?:was|were|had|did|went|came|took|made|said|told|held|kept|left|saw|got|put|ran|slid|asked|checked)$/i.test(
+        verb,
+      );
+    const past = alreadyPast ? verb : toSimplePast(verb);
+    const rest = (alreadyWho[2] ?? '').trim();
+    const line = `${who} ${past}${rest ? ` ${rest}` : ''}`.replace(/\s+/g, ' ').trim();
+    return line.endsWith('.') ? line : `${line}.`;
+  }
+  // Leading -ly adverb + verb ("suddenly drop…") — do not past-tense the adverb.
+  const lyVerb = c.match(/^([A-Za-z]+ly)\s+([A-Za-z]+)\b(.*)$/i);
+  if (lyVerb) {
+    const past = toSimplePast(lyVerb[2]!);
+    const rest = (lyVerb[3] ?? '').trim();
+    const line = `${who} ${lyVerb[1]!.toLowerCase()} ${past}${rest ? ` ${rest}` : ''}`.replace(/\s+/g, ' ').trim();
+    return line.endsWith('.') ? line : `${line}.`;
+  }
   // Gerund / while-gerund adjunct ("staring at Oskar" / "while staring at Oskar") → finite past.
   const gerund = c.match(/^(?:while\s+)?([a-z]+ing)\b(.*)$/i);
   if (gerund) {
@@ -389,8 +450,24 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
   if (!hits.length) return raw;
 
   if (hits[0]!.index > 0) {
-    const head = raw.slice(0, hits[0]!.index).trim().replace(/[.]+$/g, '');
-    if (head) push(head.endsWith('.') ? head : `${head}.`);
+    // T10AH — STATUS ledger glued before Must narrate (Rest: / Encounter budget / Moved within) is not story.
+    const headRaw = raw.slice(0, hits[0]!.index).trim().replace(/[.]+$/g, '');
+    const headParts = headRaw
+      .split(/(?<=[.!?])\s+|;\s+/)
+      .map((p) => p.replace(/\s+/g, ' ').trim())
+      .filter(Boolean);
+    for (const part of headParts) {
+      if (/^(?:Encounter budget:|Combat status:|Exhaustion:|Initiative —|Rounds? \d+|Death save:|XP Gained:|Gold Gained:|Coins\b|Moved within\b|Combat status\b)/i.test(part)) {
+        continue;
+      }
+      if (/^Rest:/i.test(part)) {
+        const low = part.toLowerCase();
+        const kind = low.includes('long rest') ? 'long rest' : low.includes('short rest') ? 'short rest' : 'rest';
+        push(`You took a ${kind}.`);
+        continue;
+      }
+      push(part.endsWith('.') ? part : `${part}.`);
+    }
   }
 
   for (let i = 0; i < hits.length; i++) {

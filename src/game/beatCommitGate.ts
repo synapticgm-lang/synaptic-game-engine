@@ -34,9 +34,12 @@ import {
   beatCarriesForcedAttempt,
   foeHitSentence,
   forcedAttemptSentence,
+  terminalFightBeat,
   terminalFightOutcome,
   type FightPov,
 } from './engineResult';
+import { narratesPcInThirdPerson, pcPov, pcStorySubject } from './narrativePov';
+import { isJourneyUnderway } from './travelJourney';
 import { wrongExitCountProblem, wrongExitPlaceProblem } from './exitCount';
 import { dropsFightRoll, engineFactProblems } from './engineFactGate';
 import {
@@ -278,6 +281,18 @@ export function factClosedViolationReason(state: GameState, text: string): strin
 export function codedSceneMove(state: GameState): string {
   const slots = compilePointerCardSlots(state);
   const loc = (state.currentLocation || slots?.where || 'this room').replace(/\.$/, '');
+  // T10AH — a fight the engine settled this turn is the page, never a vendor/road filler (s9501 T23).
+  const settled = terminalFightOutcome(state.completedEvent?.engineResult);
+  if (settled) {
+    const pov = pcPov(state.character);
+    const third = narratesPcInThirdPerson(pov);
+    return terminalFightBeat(
+      settled,
+      loc,
+      { who: pcStorySubject(pov), him: third ? pov.him : 'you' },
+      isJourneyUnderway(state),
+    );
+  }
   const people = sealedCastNames(state).filter((p) => p && !isUnresolvedDeixisToken(p));
   const present = people[0];
   const foe =
