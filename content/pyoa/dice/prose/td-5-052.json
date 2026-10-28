@@ -1,0 +1,121 @@
+{
+ "batch": "td-5-052",
+ "sections": {
+  "td-5-052": {
+   "title": "The Flooding Atrium",
+   "text": "Frigid salt-spray lashes the cracked flagstones as the first dark tongues of the returning ocean breach the rusted pressure seals. Shivering spectres of the Hollow Choir swarm the crumbling control room, their mournful weeping drowned out by the rising roar of pressurized brine. Every shadow flickers with drowned intent, clawing towards the high gears while the central tide clock ticks with frantic menace. You stand ankle-deep in the surging overflow, forced to choose your path before the chamber goes entirely under.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wade through the freezing ghosts",
+    "Jam the spitting pressure valves",
+    "Listen to the maddening song",
+    "Threaten the central tide clock",
+    "Face the arriving faction delegates"
+   ]
+  },
+  "td-5-053": {
+   "title": "Among the Drowned",
+   "text": "Icy wisps curl around your ankles as you push deeper into the swirling congregation of spectres, ignoring the bone-deep numbness creeping up your shins. The air smells intensely of stagnant weed and ancient copper, thick enough to choke an unseasoned wrecker. Ahead of you, a hollow alcove glows with faint luminescence beneath a cascade of dripping brine. You reach through the freezing mist towards the shape resting in the stone, your fingers brushing against slick stone and encrusted metal.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the coral mask"
+   ]
+  },
+  "td-5-054": {
+   "title": "The Ghostly Gauntlet",
+   "text": "Spectral hands reach from the freezing mist, their long fingers brushing your coat like trailing seaweed as you stride past the wailing congregation. Frost crusts instantly upon your eyelashes, and every breath burns your lungs as though you had swallowed dry salt. You lunge forward through the biting chill toward the recessed alcove where the coral-encrusted breathing mask waits in the gloom. You must steel your spirit against the paralyzing cold before the ghostly horde closes the gap around your shoulders.",
+   "check": "Push through the freezing spectres",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-055": {
+   "title": "Frostbitten Retreat",
+   "text": "Numbness seizes your limbs, and a sudden, violent shudder rattles your teeth as the phantom chill pierces your coat. You stumble backward out of the freezing alcove, gasping for breath as a sharp pain spikes through your ribs like a rusted nail. The ghostly crowd presses in closer, forcing you to retreat empty-handed while the bitter brine claims the ledge. You stagger back into the central atrium, nursing a raw, aching burn across your chest that will leave a pale, scaly scar.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the flooded hall"
+   ]
+  },
+  "td-5-056": {
+   "title": "Salvaged Relic",
+   "text": "Determination hardens your stride against the biting frost, and you wrench the encrusted relic free from the stony recess just as the ghostly fingers graze your collar. The freezing mist recoils from the artifact's pale, pulsing glow, leaving you gasping in the damp air with the prize clutched tightly in your fist. You turn back toward the swirling atrium, your lungs burning but your resolve unbroken by the spectral ordeal.",
+   "check": "",
+   "grant": "Coral breathing mask",
+   "exits": [
+    "Return to the main hall"
+   ]
+  },
+  "td-5-057": {
+   "title": "Valves Under Pressure",
+   "text": "Hissing jets of salt-water shoot horizontally across the narrow chamber, cutting through the gloom like steel wire. You leap over a groaning conduit and skid across the slick iron plates toward the primary intake manifold, where the rusted pressure valves are screaming under the strain. Heavy scrap metal lies scattered across the deck, waiting for someone desperate enough to wedge it into the collapsing machinery before the bulkhead gives way entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wedge the screaming pressure valves"
+   ]
+  },
+  "td-5-058": {
+   "title": "Bracing the Rupture",
+   "text": "Sweat mixes with cold brine on your forehead as you slam a heavy iron gear wedge into the shrieking seam of the primary valve. The metal screeches in protest, bending inward under the colossal weight of the incoming sea while the surrounding rivets pop like dry bone. You lean your entire weight against the makeshift brace, hammering it deeper with a heavy wrench just as the casing begins to fracture.",
+   "check": "Jam the failing pressure valves",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-059": {
+   "title": "Groaning Metal",
+   "text": "A deafening shriek splits the air as the rusted iron wedge snaps in half, sending jagged shrapnel flying past your ear to gouge a deep red furrow into your forearm. Boiling brine sprays across your face, blinding you momentarily and filling your mouth with the taste of old blood and copper. You stumble back, clutching your bleeding arm as water floods around your boots, having bought only a few seconds of hollow safety at a painful cost.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the flooded atrium"
+   ]
+  },
+  "td-5-060": {
+   "title": "Watertight Prize",
+   "text": "Hammering the jagged scrap metal deep into the screaming seam with one decisive blow, you force the straining valve back into its iron housing. The violent hiss subsides into a sullen gurgle, sealing off the worst of the spray and leaving a heavy leather satchel wedged safely within the dry recess behind the manifold. You snatch the pouch from its nook, checking its contents as water laps against your shins.",
+   "check": "",
+   "grant": "Watertight leather satchel",
+   "exits": [
+    "Return to the central atrium"
+   ]
+  },
+  "td-5-061": {
+   "title": "Voices in the Spray",
+   "text": "Eerie melodies ripple through the rising water, carrying the cadence of a thousand drowned voices singing in hollow unison. You press your back against the dripping stone wall, closing your eyes to shut out the swirling phantoms while you strain to isolate the repeating cadence hidden beneath the wails. The song speaks of iron teeth and deep trenches, offering a dangerous glimpse into the ancient language that commands the locks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Listen closer to the chant"
+   ]
+  },
+  "td-5-062": {
+   "title": "The Drowned Cadence",
+   "text": "Water laps higher against your knees, cold and relentless, but you remain motionless amidst the floating debris, letting the strange rhythm wash over your mind. The voices shift from weeping to a rhythmic, mechanical chant, repeating a sequence of harsh, guttural syllables that vibrates directly behind your temples. Every instinct warns you to block your ears, yet the secret architecture of the lock unfolds syllable by syllable within your memory.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Memorize the ancient lock command"
+   ]
+  },
+  "td-5-063": {
+   "title": "Deciphering the Choir",
+   "text": "The chaotic chorus rises to a deafening crescendo, threatening to splinter your thoughts into jagged shards of salt and memory. You bite your tongue until you taste copper, forcing your racing mind to track the hidden pattern within the endless dirge of the drowned. The correct phrase hovers just beyond your grasp in the freezing air, waiting to be snared before the madness takes root.",
+   "check": "Recall the ancient lock command",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-064": {
+   "title": "Shattered Focus",
+   "text": "A piercing shriek echoes inside your skull, driving you to your knees in the swirling water as a wave of vertigo shatters your concentration. You gasp for air, clutching your temples as the haunting song dissolves into a chaotic jumble of meaningless noise, leaving you drained and disoriented. The opportunity slips away into the depths, and a throbbing ache settles behind your eyes that will linger for days.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Fall back to the atrium"
+   ]
+  }
+ },
+ "missing": []
+}

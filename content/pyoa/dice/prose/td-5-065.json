@@ -1,0 +1,113 @@
+{
+ "batch": "td-5-065",
+ "sections": {
+  "td-5-065": {
+   "title": "The Drowned Secret",
+   "text": "Silence follows the shrieking tide-voices as you strain to catch the hidden cadences buried beneath the noise. Your ears bleed salt, but the ancient pattern settles into your memory like iron settling into a groove. The ghostly chorus shifts from malice to instruction, whispering the exact tonal command needed to release the main lock without shattering the gears.\n\nYou rise from the freezing water with the secret locked behind your teeth, knowing precisely how to turn the great machine when the moment arrives.",
+   "check": "",
+   "grant": "The ancient lock command",
+   "exits": [
+    "Step toward the rising tide"
+   ]
+  },
+  "td-5-066": {
+   "title": "The Compass of Bones",
+   "text": "Cold fingers close around the rim of the central tide clock while you press the edge of your heavy scraper against the vibrating brass. The entire chamber holds its breath as the spirits of the Hollow Choir surge forward in a wave of blinding phosphorescence, threatening to tear your mind apart for your audacity.\n\nYou do not blink, holding your ground until the spectral entities recoil from the sheer stubbornness of your threat, leaving behind a small, pulsing compass carved from whale-bone that drifts lazily into your waiting palm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the glowing spectral compass"
+   ]
+  },
+  "td-5-067": {
+   "title": "Testing the Spectral Anchor",
+   "text": "Every muscle in your body tightens as you raise your heavy iron blade toward the pulsing face of the central tide clock. The water whips around your calves, agitated by the howling fury of the drowned dead who swirl within the masonry like smoke trapped in a bottle. You plant your boots firmly against the slick stone, locking your gaze on the trembling pointer that dictates the return of the ocean. With a low growl, you lean your entire weight forward to force the spirit-bound mechanism into submission.",
+   "check": "Threaten the central tide clock",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-068": {
+   "title": "Punishment of the Deep",
+   "text": "The central mechanism bucks violently against your pressure, throwing you backward into the churning brine with a force that knocks the breath from your lungs. Your ribs crack against a protruding bolt of rusted iron, sending a white-hot spike of agony through your chest as you submerge in the freezing water. You scramble back to your surface gasping and coughing up brine, clutching your side where a deep, ugly bruise begins to bloom beneath your soaked woollen tunic.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself toward the chamber"
+   ]
+  },
+  "td-5-069": {
+   "title": "Reluctant Yield",
+   "text": "Pain flares in your bruised limbs, yet you maintain your grip on the vibrating brass until the frantic howling of the Hollow Choir subsides into a sullen, wet rumble. The spirits recognize a will harder than their own, conceding defeat with a long, mournful sigh that ripples across the surface of the rising water. A small, cold object detaches itself from the clock-face and drifts against your chest, settling into the folds of your wet coat.",
+   "check": "",
+   "grant": "Spectral navigation compass",
+   "exits": [
+    "Advance into the main chamber"
+   ]
+  },
+  "td-5-070": {
+   "title": "The Chamber of Rivals",
+   "text": "Heavy iron doors groan open behind you as the dark water spills across the threshold, heralding the arrival of those who have tracked your progress through the sunken shafts. Wealthy Brineholders in oilskin coats push past the dripping archway with leveled pikes, their faces tight with greed and desperation. Close behind them press the fanatic Drift Pilgrims, chanting wild prayers to the absent ocean while clutching rusted harpoons and heavy chains.\n\nBefore you can raise a hand, members of your own Gullmouth wreckers crew scramble from a side tunnel, knives drawn and eyes wild with the fever of the hunt. The control room shrinks into a narrow cage of hostility where every faction converges on the central mechanism, turning the dripping stone chamber into a powder keg waiting for a single spark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the converging rival factions"
+   ]
+  },
+  "td-5-071": {
+   "title": "The Standoff at the Gear",
+   "text": "The air grows thick with the smell of wet wool, fear, and old salt as the armed representatives of three desperate worlds fill the chamber. Across the grease-slicked floor, the Brineholders demand immediate control to secure the water supplies for their high-perched city, while the fanatic Pilgrims howl that the mechanism must remain untouched to appease the sulking sea-god. Your fellow wreckers eye the heavy brass levers with hungry calculations of profit and survival, waiting for your lead. Every weapon in the room is angled toward your chest, and the rising tide laps impatiently against your boots.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Negotiate a fragile temporary truce",
+    "Intimidate the Brineholder mercenaries",
+    "Bar the rusted iron doors",
+    "Wait for Orsolya Venn"
+   ]
+  },
+  "td-5-072": {
+   "title": "Whispering in the Deep",
+   "text": "Raising both hands palms outward, you pitch your voice to cut through the mutual snarling of the factions, appealing to their shared dread of the coming deluge. The Drift Pilgrims pause their chanting, their wild eyes darting toward you as you offer a share of the high ground in exchange for their temporary restraint. You weave promises and warnings with careful breath, playing upon their superstitions until the leader of the fanatics lowers his rusted harpoon an inch. It is a gossamer thread of an agreement, liable to snap at the slightest wrong movement, but it buys you a precious moment of quiet in the roaring chamber.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the sworn pledge"
+   ]
+  },
+  "td-5-073": {
+   "title": "Binding the Pilgrims",
+   "text": "The fanatic leader presses a damp, salt-crusted palm against your own in a binding oath that tastes of copper and old sea-wrack. Around you, the other factions murmur with uneasy suspicion, watching as the Pilgrims step back from the control console to form a protective ring around your position. The temporary alliance holds, though you can feel the twitching tension in the muscles of the men guarding your flanks. You turn your attention back to the massive iron gear, knowing this fragile shield will crumble the second the water touches the ceiling.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the Meridian Gear"
+   ]
+  },
+  "td-5-074": {
+   "title": "Walking the Razor Edge",
+   "text": "Your tongue feels thick as wool while you pitch your voice across the echoing chamber, balancing the desperate demands of the Brineholders against the mad prophecies of the Pilgrims. Every eye is fixed on your face, and the smallest tremble in your tone will invite a dozen blades into your ribs. You lean forward into the damp gloom, measuring the exact distance to the nearest armed opponent while you spin a web of half-truths designed to keep all sides off balance. The air hangs motionless, charged with the threat of sudden violence.",
+   "check": "Negotiate with the rival factions",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-075": {
+   "title": "Shattered Words",
+   "text": "A Brineholder officer spits a foul curse into the damp air, dismissing your careful diplomacy with a sudden, vicious thrust of his pike handle into your shoulder. The fragile peace shatters instantly as shouting erupts from all sides, and you are forced to scramble backward to avoid a flurry of jagged iron. You escape with your life, but the opportunity to reason with the factions is gone, leaving you bruised, winded, and surrounded by hostile enemies who now view you as a primary threat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the shadows"
+   ]
+  },
+  "td-5-076": {
+   "title": "Words of Salt and Iron",
+   "text": "Your gamble pays off as the rival leaders reluctantly lower their weapons, caught off guard by the sheer audacity of your persuasion. The fanatic leader steps forward and presses a heavy iron medallion into your palm, sealing the verbal pact with a token of blood and rust. It is a dangerous alliance forged in the damp dark, but it grants you temporary immunity from the daggers of the faithful as you prepare for the final turn of the gear.",
+   "check": "",
+   "grant": "Token of the Drift Pilgrims",
+   "exits": [
+    "Turn toward the central console"
+   ]
+  }
+ },
+ "missing": []
+}
