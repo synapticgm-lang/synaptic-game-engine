@@ -209,3 +209,7 @@
 2026-10-28T11:27:01.132Z   reject sg-3-2-3-7: words 37
 2026-10-28T11:27:01.132Z   reject sg-3-2-3-8: words 42
 2026-10-28T11:27:01.133Z   reject sg-3-2-3-9: words 42
+2026-10-28T11:27:07.140Z done sg-3-2-3-0: 1/10 model=Flash-Lite MISSING sg-3-2-3-1,sg-3-2-3-2,sg-3-2-3-3,sg-3-2-3-4,sg-3-2-3-5,sg-3-2-3-6,sg-3-2-3-7,sg-3-2-3-8,sg-3-2-3-9
+2026-10-28T11:27:07.141Z ask prose sg-3-2-3-10..sg-3-2-4-3 items=10 attempt=0
+2026-10-28T11:27:38.288Z done sg-3-2-3-10: 10/10 model=Flash-Lite
+2026-10-28T11:27:38.289Z ask prose sg-3-2-4-4..sg-3-out items=10 attempt=0

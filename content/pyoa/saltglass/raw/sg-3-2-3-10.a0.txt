@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION sg-3-2-3-10
+TITLE: The Leaded Crawl
+TEXT: Heavy leaded panes press down from above, forcing you onto your hands and knees in the narrow corridor. Every inch requires a deliberate shift of weight as sharp, jagged edges scrape against the coarse wool of your coat. Your ember-lamp bangs softly against your knee, its banked coals radiating a dull, steady warmth into the cramped gloom. Ahead, the low ceiling splits into divergent paths through the glass rubble. // One route slopes downward into deeper shadow while the other angles toward a glint of grey light.
+EXIT 1: Follow the downward shadow
+EXIT 2: Crawl toward the grey light
+@@END
+@@SECTION sg-3-2-3-11
+TITLE: Plaza of Singing Wires
+TEXT: Vibrating strings of old wind-harps fill the square with a low, bone-shaking subsonic drone that rattles the teeth in your skull. Invisible currents sweep across the open white stone, setting the taut metallic wires humming with an eerie, resonant fury. You press a hand to your jaw to steady the vibration while your boots crunch over fine crystal dust scattered by the gale. The acoustic pressure weighs heavy in the chest, demanding a hasty retreat or a bold sprint across the terrace. // Three distinct pathways branch away from the singing towers into the maze.
+EXIT 1: Run straight across the trembling plaza
+EXIT 2: Slip down the narrow eastern alley
+EXIT 3: Duck into the low southern archway
+@@END
+@@SECTION sg-3-2-3-12
+TITLE: The Brine Pool
+TEXT: Superheated brine bubbles and spits within a sunken basin of fused green slag, venting plumes of acrid, scalding steam into the stagnant air. The white vapor swirls around your ankles, hissing angrily the moment it touches the cold metal base of your ceramic seedkey. Salt crusts the rim of the pool like thick frost, gleaming with an oily iridescent sheen under the dim amber glow of your lantern. // You must choose which side of the steaming pit to skirt before the heat grows too dense to bear.
+EXIT 1: Pick your way along the narrow northern ledge
+@@END
+@@SECTION sg-3-2-3-13
+TITLE: The Diver's Conduit
+TEXT: Pell weaves ahead through the ruined masonry with an easy, fluid grace, knowing precisely which cantilevered streets will hold weight and which will snap under a footfall. Following his wry lead, you drop away from the dangerous upper tiers and slip safely into a cool, shadowed drainage flue lined with smooth tiles. The air here smells faintly of ancient rain and dry moss, offering a welcome respite from the baking glare of the basin. // Several dark conduits branch outward from this sheltered junction into the lower ruins.
+EXIT 1: Follow the green-tiled conduit downward
+EXIT 2: Step through the quartz pillar forest
+EXIT 3: Climb toward the bright surface plaza
+@@END
+@@SECTION sg-3-2-3-14
+TITLE: Gallery of Distorted Glass
+TEXT: Portrait-mirrors line the long corridor, their warped and melted surfaces stretching your tired face into towering, grotesque spectres that follow your every move. The reflections ripple like water behind thick green glass, making your own silhouette look like a stranger drowning in quicksilver. Your ember-lamp casts long, twitching shadows that multiply endlessly in the polished panes, turning the empty gallery into a hall of distorted phantoms. // The passage splits ahead between a forward exit and a way back.
+EXIT 1: Press onward past the shifting mirrors
+EXIT 2: Turn back toward the upper viaducts
+@@END
+@@SECTION sg-3-2-3-15
+TITLE: Mother-of-Pearl Ledge
+TEXT: Iridescent mother-of-pearl glass paves the high ledge, shimmering with pastel shades of pink and sea-green under the washed-out sky. A sudden flurry of wings erupts from a crevice in the wall as a flock of copper-winged desert birds takes flight, startling your pace and sending tiny glass shards clattering into the abyss. You catch your breath against the rock face, watching the metallic birds spiral upward into the hazy distance. // A single path leads forward from the edge of the iridescent shelf.
+EXIT 1: Advance along the pearl-scaled shelf
+@@END
+@@SECTION sg-3-2-4-0
+TITLE: The Fused Wall
+TEXT: Sheer walls of fused window-panes rise like an impassable cliff at the outer boundary of the shard maze, stretching endlessly toward the pale, hazy sky. Multicolored glass blocks have melted together into a smooth, towering barrier that catches the harsh midday glare and throws blinding reflections across the ground. Your boots scuff against the packed salt at the base of the monumental obstruction, searching for any foothold or seam in the ancient construction. // A narrow fissure offers a way up through the towering panes.
+EXIT 1: Scale the jagged seam in the glass wall
+@@END
+@@SECTION sg-3-2-4-1
+TITLE: The Threefold Junction
+TEXT: Three glass-walled alleys converge at a dark, silent junction where a dying signal-lamp casts long, weaving shadows across the smooth mosaic floor. The amber light flickers and stutters within its iron cage, threatening to plunge the crossing into complete darkness at any second. Each path looks identical in the dim, shifting illumination, hiding the true trail beneath overlapping trails of salt and blown sand. // You must choose which shadowed alley to trust before the signal-lamp dies entirely.
+EXIT 1: Take the leftmost glass corridor
+@@END
+@@SECTION sg-3-2-4-2
+TITLE: Ramp of Translucent Slag
+TEXT: Translucent slag coils upward in a spiraling ramp that clings to the skeleton of a hollow tower. Below your boots, the vast white salt flats spread out endlessly, gleaming like a frozen ocean under the glare of the distant sun. Every step lifts you higher above the labyrinth, bringing the vast scale of the dried basin into sharp, lonely perspective. // Several arches and openings branch off from the winding climb.
+EXIT 1: Ascend higher toward the summit terrace
+EXIT 2: Step onto the glass-crater rim path
+EXIT 3: Approach the final ridge precipice
+EXIT 4: Turn back toward the smoky kilns
+@@END
+@@SECTION sg-3-2-4-3
+TITLE: The Ribbed Sky-Bridge
+TEXT: Ribbed crystal spans the dizzying drop between two shattered towers, humming ominously beneath the rising wind of the approaching storm. The transparent span vibrates with every gust, letting you see the sheer, dizzying depth of the empty air straight through the floor beneath your soles. You grip your lamp tightly as the structure flexes, testing your nerve against the rising gale. // The bridge terminates at two distinct archways on the far side.
+EXIT 1: Step toward the gleaming glass-crater
+EXIT 2: Vault across the salvage barricade
+@@END
