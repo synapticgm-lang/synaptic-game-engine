@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
-  FIREWORKS_DEEPSEEK_V41_FLASH,
   OPENROUTER_DEEPSEEK_V41_FLASH,
   PENDING_DEEPSEEK_NOTE,
   TRAINING_JUDGE_MODEL,
@@ -10,11 +9,15 @@ import {
   excludedSourceReason,
   legacyRowProvenance,
   modelLicence,
+  modelProvider,
   pinnedModel,
   rowProvenance,
 } from './modelIds';
 import { readChatCompletion } from './openRouterChat';
 import { parseFateArgs, turnProvenance } from './fateAutoplay';
+
+/** Old recorded Fireworks id — provenance only; never a call pin. */
+const LEGACY_FIREWORKS_DEEPSEEK = 'accounts/fireworks/models/deepseek-v4p1-flash';
 
 const src = (p: string) => readFileSync(resolve(process.cwd(), p), 'utf8');
 
@@ -22,9 +25,10 @@ describe('training setup (15 Oct): pinned model ids', () => {
   it('a call with no model goes out on the pinned MIT DeepSeek, never deepseek-chat', () => {
     expect(pinnedModel('openrouter')).toBe(OPENROUTER_DEEPSEEK_V41_FLASH);
     expect(pinnedModel('openrouter', '  ')).toBe(OPENROUTER_DEEPSEEK_V41_FLASH);
-    expect(pinnedModel('fireworks')).toBe(FIREWORKS_DEEPSEEK_V41_FLASH);
     expect(pinnedModel('openrouter', 'qwen/qwen3-235b-a22b-2507')).toBe('qwen/qwen3-235b-a22b-2507');
     expect(modelLicence(pinnedModel('openrouter')).licence).toBe('MIT');
+    // Read-only: old stored Fireworks ids still classify for provenance.
+    expect(modelProvider(LEGACY_FIREWORKS_DEEPSEEK)).toBe('fireworks');
   });
 
   it('none of the five old fallback sites names deepseek/deepseek-chat', () => {
@@ -66,11 +70,30 @@ describe('training setup: seats and judge', () => {
 describe('training setup: provenance on every row', () => {
   it('writes the five fields at the source from the served id', () => {
     const p = turnProvenance(
-      { writerUsage: { modelId: FIREWORKS_DEEPSEEK_V41_FLASH, tokensIn: 1, tokensOut: 1, tokensCached: 0, modelCalls: 1 }, engineMode: 'dnd' },
+      {
+        writerUsage: {
+          modelId: LEGACY_FIREWORKS_DEEPSEEK,
+          tokensIn: 1,
+          tokensOut: 1,
+          tokensCached: 0,
+          modelCalls: 1,
+        },
+        engineMode: 'dnd',
+      },
       'ignored/model'
     );
-    expect(p).toEqual({ training_ok: true, teacher_model: FIREWORKS_DEEPSEEK_V41_FLASH, provider: 'fireworks', judge_model: null, mode: 'dnd' });
-    expect(turnProvenance({ engineMode: 'rpg' }, TRAINING_SEATS.glm)).toMatchObject({ training_ok: true, teacher_model: TRAINING_SEATS.glm, provider: 'openrouter' });
+    expect(p).toEqual({
+      training_ok: true,
+      teacher_model: LEGACY_FIREWORKS_DEEPSEEK,
+      provider: 'fireworks',
+      judge_model: null,
+      mode: 'dnd',
+    });
+    expect(turnProvenance({ engineMode: 'rpg' }, TRAINING_SEATS.glm)).toMatchObject({
+      training_ok: true,
+      teacher_model: TRAINING_SEATS.glm,
+      provider: 'openrouter',
+    });
   });
 
   it('Claude, GPT, Gemini and the old V3 are never training data; an unknown teacher is not either', () => {
@@ -90,7 +113,10 @@ describe('training setup: provenance on every row', () => {
     });
     expect(legacyRowProvenance({ recordedModel: null, hostedFree: true }).training_ok).toBe('pending');
     expect(legacyRowProvenance({ recordedModel: 'deepseek/deepseek-v4-flash-0731' })).toMatchObject({ training_ok: 'pending', teacher_model: 'deepseek/deepseek-v4-flash-0731' });
-    expect(legacyRowProvenance({ recordedModel: FIREWORKS_DEEPSEEK_V41_FLASH })).toMatchObject({ training_ok: true, provider: 'fireworks' });
+    expect(legacyRowProvenance({ recordedModel: LEGACY_FIREWORKS_DEEPSEEK })).toMatchObject({
+      training_ok: true,
+      provider: 'fireworks',
+    });
     expect(legacyRowProvenance({ recordedModel: 'openai/gpt-5-mini', judgeModel: 'google/gemini-2.5-pro' })).toMatchObject({
       training_ok: false,
       judge_model: 'google/gemini-2.5-pro',
@@ -100,7 +126,7 @@ describe('training setup: provenance on every row', () => {
 
   it('HER (community_mega) is refused with its reason', () => {
     expect(excludedSourceReason('community_mega')).toBe('copyrighted novel chapters');
-    expect(rowProvenance({ teacherModel: FIREWORKS_DEEPSEEK_V41_FLASH, sourceId: 'community_mega' })).toMatchObject({
+    expect(rowProvenance({ teacherModel: LEGACY_FIREWORKS_DEEPSEEK, sourceId: 'community_mega' })).toMatchObject({
       training_ok: false,
       training_note: 'copyrighted novel chapters',
     });

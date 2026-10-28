@@ -3,24 +3,19 @@ import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivi
 import { formatPerspectiveRule, pcPov, resolvePerspective, sentenceRepairSystemPrompt } from '../_shared/gm/narrativePov.ts';
 import { CLAUSE_CHECK_SYS } from '../_shared/gm/clauseCheckPrompt.ts';
 import {
-  FIREWORKS_INFERENCE_BASE,
-  fireworksChatBody,
-  fireworksChatHeaders,
-  FREE_WRITER_FIREWORKS_MODEL,
+  FREE_WRITER_OPENROUTER_MODEL,
   hasHanScript,
   isCutOffFinish,
-  isFireworksWriterModel,
-  normalizeFireworksWriterModel,
   NO_REASONING_HINT,
   openRouterChatBody,
   openRouterChatHeaders,
   readChatCompletion,
   readChatUsage,
+  rejectFireworksServed,
   stripReasoningBlocks,
   sumWriterUsage,
   WRITER_REASK_MAX_TOKENS,
   type ChatCompletionRead,
-  type FireworksReasoningLevel,
 } from '../_shared/gm/openRouterChat.ts';
 import { pinnedModel } from '../_shared/gm/modelIds.ts';
 
@@ -96,34 +91,27 @@ function resolveCredentials(body: GmRequestBody): {
 } {
   const settings = body.settings ?? {};
   let provider = String(settings.aiProvider ?? 'openrouter');
+  // Retired Fireworks provider — never call it; Free / unknown hosted path is OpenRouter.
+  if (provider === 'fireworks') provider = 'openrouter';
   const clientKey = typeof body.clientApiKey === 'string' ? body.clientApiKey.trim() : '';
   const serverOpenRouter = Deno.env.get('OPENROUTER_API_KEY')?.trim() || '';
   const serverGemini = Deno.env.get('GEMINI_API_KEY')?.trim() || '';
-  const serverFireworks = Deno.env.get('FIREWORKS_API_KEY')?.trim() || '';
 
   const tier = String(settings.subscriptionTier ?? '').toLowerCase();
   const kidMode = String(settings.contentMode ?? '') === 'kid';
   const byokNoHosted = tier === 'admin' && !kidMode;
 
-  let model = typeof settings.customModelId === 'string' && settings.customModelId.trim()
-    ? normalizeFireworksWriterModel(settings.customModelId.trim())
-    : undefined;
-
-  // Default Free hosted path is Fireworks — never send the Fireworks slug to OpenRouter.
-  const fireworksRequested =
-    provider === 'fireworks' ||
-    isFireworksWriterModel(model) ||
-    (!model && (tier === 'free' || !tier));
-
-  if (fireworksRequested && !clientKey && !byokNoHosted) {
-    if (!model) model = FREE_WRITER_FIREWORKS_MODEL;
-    return {
-      provider: 'fireworks',
-      apiKey: serverFireworks,
-      model,
-      baseUrl: FIREWORKS_INFERENCE_BASE,
-    };
+  let model =
+    typeof settings.customModelId === 'string' && settings.customModelId.trim()
+      ? settings.customModelId.trim()
+      : undefined;
+  // Old recorded Fireworks slugs must never place a call — remap to the Free OpenRouter DeepSeek.
+  if (model && /^accounts\/fireworks\/|^fireworks\//i.test(model)) {
+    model = FREE_WRITER_OPENROUTER_MODEL;
+    provider = 'openrouter';
   }
+
+  if (!model && (tier === 'free' || !tier)) model = FREE_WRITER_OPENROUTER_MODEL;
 
   let apiKey = clientKey;
   if (!apiKey && !byokNoHosted) {
@@ -131,6 +119,7 @@ function resolveCredentials(body: GmRequestBody): {
     else if (serverOpenRouter) {
       provider = 'openrouter';
       apiKey = serverOpenRouter;
+      if (!model && (tier === 'free' || !tier)) model = FREE_WRITER_OPENROUTER_MODEL;
     } else if (serverGemini) {
       provider = 'gemini';
       apiKey = serverGemini;
@@ -138,6 +127,7 @@ function resolveCredentials(body: GmRequestBody): {
   } else if (!byokNoHosted && (provider === 'gemini' || !apiKey) && !clientKey && serverOpenRouter) {
     provider = 'openrouter';
     apiKey = serverOpenRouter;
+    if (!model && (tier === 'free' || !tier)) model = FREE_WRITER_OPENROUTER_MODEL;
   }
 
   // Prefer OpenRouter when client sent an OR key but provider still says gemini
@@ -145,7 +135,7 @@ function resolveCredentials(body: GmRequestBody): {
     provider = 'openrouter';
   }
 
-  if (provider === 'openrouter' || provider === 'fireworks') model = pinnedModel(provider, model);
+  if (provider === 'openrouter') model = pinnedModel('openrouter', model);
 
   return {
     provider,
@@ -200,9 +190,6 @@ async function callGoogle(
   return { ...read, usage };
 }
 
-const FIREWORKS_REASONING_LEVELS: FireworksReasoningLevel[] = ['none', 'low', null];
-let fireworksReasoningLevel: FireworksReasoningLevel = 'none';
-
 async function callOpenAICompat(
   prompt: string,
   systemPrompt: string,
@@ -212,58 +199,40 @@ async function callOpenAICompat(
   opts: { tokenProse?: boolean; tokenSchema?: Record<string, unknown>; maxTokens: number }
 ): Promise<ChatCompletionRead> {
   const maxTokens = opts.maxTokens;
-  const fireworks = /fireworks\.ai/i.test(baseUrl);
   const openRouter = /openrouter\.ai/i.test(baseUrl);
-  const tokenProse = !!opts?.tokenProse && openRouter && !fireworks;
-  const post = (withSchema: boolean, reasoning: FireworksReasoningLevel = null) =>
+  const tokenProse = !!opts?.tokenProse && openRouter;
+  const post = (withSchema: boolean) =>
     fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
       method: 'POST',
-      headers: fireworks
-        ? fireworksChatHeaders(apiKey)
-        : openRouter
-          ? openRouterChatHeaders(apiKey)
-          : {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${apiKey}`,
-            },
+      headers: openRouter
+        ? openRouterChatHeaders(apiKey)
+        : {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
       body: JSON.stringify(
-        fireworks
-          ? fireworksChatBody(model, systemPrompt, prompt, maxTokens, reasoning)
-          : openRouter
-            ? openRouterChatBody(
-                model,
-                systemPrompt,
-                prompt,
-                maxTokens,
-                withSchema ? { tokenProse: true, n: 2, schema: opts.tokenSchema } : undefined
-              )
-            : {
-                model,
-                messages: [
-                  { role: 'system', content: systemPrompt },
-                  { role: 'user', content: prompt },
-                ],
-                temperature: 0.9,
-                max_tokens: maxTokens,
-              }
+        openRouter
+          ? openRouterChatBody(
+              model,
+              systemPrompt,
+              prompt,
+              maxTokens,
+              withSchema ? { tokenProse: true, n: 2, schema: opts.tokenSchema } : undefined
+            )
+          : {
+              model,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: prompt },
+              ],
+              temperature: 0.9,
+              max_tokens: maxTokens,
+            }
       ),
     });
-  let res: Response;
-  if (fireworks) {
-    // 28l — reasoning off; step down once per level if Fireworks rejects the parameter (it answers 400 or
-    // 404 "Model not found"), and keep the level that worked for this warm instance.
-    const levels = FIREWORKS_REASONING_LEVELS.slice(FIREWORKS_REASONING_LEVELS.indexOf(fireworksReasoningLevel));
-    res = await post(false, levels[0] ?? null);
-    for (const next of levels.slice(1)) {
-      if (res.ok || res.status < 400 || res.status >= 500 || [401, 403, 429].includes(res.status)) break;
-      fireworksReasoningLevel = next;
-      res = await post(false, next);
-    }
-  } else {
-    res = await post(tokenProse);
-    if (!res.ok && tokenProse && res.status !== 429) {
-      res = await post(false);
-    }
+  let res = await post(tokenProse);
+  if (!res.ok && tokenProse && res.status !== 429) {
+    res = await post(false);
   }
   if (res.status === 429) {
     const err = new Error('Rate limit exceeded (429).');
@@ -274,7 +243,8 @@ async function callOpenAICompat(
     const errBody = await res.json().catch(() => ({}));
     throw new Error(errBody?.error?.message ?? `OpenAI-compat error ${res.status}`);
   }
-  return readChatCompletion(await res.json());
+  // Hard reject if OpenRouter somehow served via Fireworks (provider.ignore should prevent this).
+  return rejectFireworksServed(readChatCompletion(await res.json()));
 }
 
 async function callAnthropic(
@@ -358,7 +328,7 @@ Deno.serve(async (req) => {
           String(settings.subscriptionTier ?? '').toLowerCase() === 'admin'
             && String(settings.contentMode ?? '') !== 'kid'
             ? 'Admin BYOK needs an OpenRouter text key. Hosted AI is not included on this tier.'
-            : 'No API key available. Pass clientApiKey or set FIREWORKS_API_KEY (Free) / OPENROUTER_API_KEY (Mid/High) on the edge function.',
+            : 'No API key available. Pass clientApiKey or set OPENROUTER_API_KEY on the edge function.',
       },
       400
     );
@@ -401,8 +371,25 @@ Deno.serve(async (req) => {
 
   // 28w — every model call that answered this turn, for per-turn token logging.
   let calledModel: string | null = null;
-  const callUsage: Array<{ tokensIn: number | null; tokensOut: number | null; tokensCached: number | null; modelCalls: number }> = [];
-  const turnUsage = () => (callUsage.length ? { ...sumWriterUsage(callUsage), modelId: calledModel } : undefined);
+  let servedProvider: string | null = null;
+  let servedModel: string | null = null;
+  const callUsage: Array<{
+    tokensIn: number | null;
+    tokensOut: number | null;
+    tokensCached: number | null;
+    modelCalls: number;
+    servedProvider?: string | null;
+    servedModel?: string | null;
+  }> = [];
+  const turnUsage = () =>
+    callUsage.length
+      ? {
+          ...sumWriterUsage(callUsage),
+          modelId: calledModel,
+          ...(servedProvider ? { servedProvider } : {}),
+          ...(servedModel ? { servedModel } : {}),
+        }
+      : undefined;
 
   try {
     const runOnce = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
@@ -414,10 +401,8 @@ Deno.serve(async (req) => {
         calledModel = model || 'claude-3-5-sonnet-latest';
         return callAnthropic(userPrompt, sys, apiKey, model, maxTokens);
       }
-      const fireworks = provider === 'fireworks' || isFireworksWriterModel(model);
-      const base = fireworks
-        ? FIREWORKS_INFERENCE_BASE
-        : provider === 'openrouter'
+      const base =
+        provider === 'openrouter'
           ? baseUrl?.trim() || 'https://openrouter.ai/api/v1'
           : provider === 'groq'
             ? 'https://api.groq.com/openai/v1'
@@ -426,14 +411,12 @@ Deno.serve(async (req) => {
               : baseUrl?.trim() || 'https://api.openai.com/v1';
       const modelName =
         model ||
-        (fireworks
-          ? FREE_WRITER_FIREWORKS_MODEL
-          : provider === 'openrouter'
-            ? pinnedModel('openrouter')
-            : provider === 'groq'
-              ? 'llama-3.3-70b-versatile'
-              : 'gpt-4o-mini');
-      calledModel = fireworks ? normalizeFireworksWriterModel(modelName) || FREE_WRITER_FIREWORKS_MODEL : modelName;
+        (provider === 'openrouter'
+          ? pinnedModel('openrouter')
+          : provider === 'groq'
+            ? 'llama-3.3-70b-versatile'
+            : 'gpt-4o-mini');
+      calledModel = modelName;
       return callOpenAICompat(userPrompt, sys, apiKey, modelName, base, {
         tokenProse: mode === 'turn',
         tokenSchema: mode === 'turn' ? readTokenSchema(body.tokenSchema) : undefined,
@@ -446,12 +429,18 @@ Deno.serve(async (req) => {
     const tryCall = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
       try {
         const read = await runOnce(sys, maxTokens);
-        if (read.servedModel) calledModel = read.servedModel;
+        if (read.servedModel) {
+          calledModel = read.servedModel;
+          servedModel = read.servedModel;
+        }
+        if (read.servedProvider) servedProvider = read.servedProvider;
         callUsage.push({
           tokensIn: read.usage?.tokensIn ?? null,
           tokensOut: read.usage?.tokensOut ?? null,
           tokensCached: read.usage?.tokensCached ?? null,
           modelCalls: 1,
+          servedProvider: read.servedProvider ?? null,
+          servedModel: read.servedModel ?? null,
         });
         return read;
       } catch (err) {

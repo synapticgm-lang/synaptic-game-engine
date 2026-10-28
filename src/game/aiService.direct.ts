@@ -20,7 +20,8 @@ import {
   openRouterChatBody,
   openRouterChatHeaders,
   packGmCandidateTexts,
-  readChatUsage,
+  readChatCompletion,
+  rejectFireworksServed,
   stripReasoningBlocks,
 } from './openRouterChat';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
@@ -193,13 +194,20 @@ async function callOpenRouter(
   }
   const data = await res.json();
   const cost = (data as { usage?: { cost?: unknown } })?.usage?.cost;
+  const read = rejectFireworksServed(readChatCompletion(data));
   noteWriterUsage({
-    ...readChatUsage(data),
+    ...(read.usage ?? {}),
     modelCalls: 1,
-    modelId: typeof data?.model === 'string' ? data.model : modelName,
+    modelId: read.servedModel ?? modelName,
+    servedProvider: read.servedProvider ?? null,
+    servedModel: read.servedModel ?? null,
     costUsd: typeof cost === 'number' ? cost : null,
   });
-  return packGmCandidateTexts(extractChatCompletionTexts(data)) || extractChatCompletionText(data);
+  if (read.issue === 'fireworks-served') {
+    noteWriterRawIssue('fireworks-served');
+    throw new Error('Writer reply served by Fireworks — blocked.');
+  }
+  return read.text || packGmCandidateTexts(extractChatCompletionTexts(data)) || extractChatCompletionText(data);
 }
 
 async function callAnthropic(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {

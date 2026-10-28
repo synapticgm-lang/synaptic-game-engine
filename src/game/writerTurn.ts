@@ -207,7 +207,7 @@ const UNRESOLVED_NOTE = /Narrative does not resolve the player action|Resolve th
 export function writerTurnIssues(rawIssues: readonly string[], notes: readonly string[]): WriterIssue[] {
   const out = new Set<WriterIssue>();
   for (const r of rawIssues) {
-    if (r === 'empty' || r === 'reasoning-only' || r === 'cut-off') out.add(r);
+    if (r === 'empty' || r === 'reasoning-only' || r === 'cut-off' || r === 'fireworks-served') out.add(r);
   }
   if (notes.some((n) => RECYCLE_NOTE.test(n))) out.add('recycled');
   if (notes.some((n) => UNRESOLVED_NOTE.test(n))) out.add('unresolved');

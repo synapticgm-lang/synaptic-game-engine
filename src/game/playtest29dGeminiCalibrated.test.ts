@@ -25,7 +25,7 @@ describe('playtest29d — Gemini-calibrated prompt diet + soft stakes', () => {
     expect(resolveFreeWriterFailover('deepseek/deepseek-v4-flash-0731')).toBe(
       FREE_WRITER_FAILOVER_OPENROUTER
     );
-    expect(resolveFreeWriterFailover('accounts/fireworks/models/deepseek-v4p1-flash')).toBe(
+    expect(resolveFreeWriterFailover('deepseek/deepseek-v4.1-flash')).toBe(
       FREE_WRITER_FAILOVER_OPENROUTER
     );
     expect(resolveFreeWriterFailover('anthropic/claude-haiku-4.5')).toBeNull();

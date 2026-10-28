@@ -3,12 +3,12 @@
  * Payments not live yet; caps/models are enforced locally / ready for server auth.
  * Illustrated graphic-novel mode: caps reserved; launch is text + memorable Flux art.
  *
- * Hosted OpenRouter ladder vs AID Griffin / F&F “standard” / NovelAI in-house:
- * Free = Gemini 2.5 Flash Lite (latency-stable; was DeepSeek V4 Flash through 26g);
- * Mid = Claude Haiku 4.5; High = Claude Sonnet 4.6. Memorable plates: paywalled
- * (Free week cap 0); Mid/High use Flux.2 Pro. Inventory icons stay Klein.
+ * Hosted OpenRouter ladder: Free = DeepSeek V4.1 Flash; Mid = Claude Haiku 4.5;
+ * High = Claude Sonnet 4.6. Memorable plates: paywalled (Free week cap 0);
+ * Mid/High use Flux.2 Pro. Inventory icons stay Klein.
  */
 import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from './hostedImageModel';
+import { OPENROUTER_DEEPSEEK_V41_FLASH } from './modelIds';
 export type SubscriptionTierId = 'free' | 'mid' | 'high' | 'admin';
 export type TurnPackId =
   | 'text_15'
@@ -236,7 +236,7 @@ export interface TierDefinition {
   id: SubscriptionTierId;
   name: string;
   priceGbp: number;
-  /** Writer model id. Free is a Fireworks slug; Mid/High stay OpenRouter ids. */
+  /** Writer model id (OpenRouter). Free = DeepSeek V4.1 Flash; Mid/High keep their catalog ids. */
   writerOpenRouterId: string;
   writerGeminiId: string;
   textTurnsPerDay: number;
@@ -256,7 +256,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     id: 'free',
     name: 'Free',
     priceGbp: 0,
-    writerOpenRouterId: 'accounts/fireworks/models/deepseek-v4p1-flash',
+    writerOpenRouterId: OPENROUTER_DEEPSEEK_V41_FLASH,
     writerGeminiId: 'gemini-2.5-flash-lite',
     textTurnsPerDay: 12,
     memorableImagesPerWeek: 0,

@@ -47,7 +47,7 @@ function tripWith(tag: string, kinds: RoadEncounter['kind'][]): GameState {
 
 describe('tt-build-roadmeet item 1: served writer model', () => {
   it('records the model id the server returned, in first-seen order; null when none came back', () => {
-    const id = 'accounts/fireworks/models/deepseek-v4p1-flash';
+    const id = 'deepseek/deepseek-v4.1-flash';
     expect(servedWriterModel([{ writerUsage: { modelId: id } }, { writerUsage: { modelId: id } }] as never)).toBe(id);
     expect(servedWriterModel([{ writerUsage: { modelId: 'a' } }, {}, { writerUsage: { modelId: 'b' } }] as never)).toBe('a, b');
     expect(servedWriterModel([{}, { writerUsage: {} }] as never)).toBeNull();

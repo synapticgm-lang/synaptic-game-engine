@@ -1,70 +1,41 @@
 /**
- * OpenRouter / Fireworks / OpenAI-compat chat helpers.
+ * OpenRouter / OpenAI-compat chat helpers.
  * DeepSeek V4 Flash often fills reasoning_* and leaves message.content empty —
  * that used to 502 gm-turn as "no content".
  */
 
-import { FIREWORKS_DEEPSEEK_V41_FLASH } from './modelIds';
+import { OPENROUTER_DEEPSEEK_V41_FLASH } from './modelIds';
 
 type ChatPart = { text?: unknown } | string;
 
-/** Fireworks OpenAI-compat inference (same pipe as synaptic-engine Free). */
-export const FIREWORKS_INFERENCE_BASE = 'https://api.fireworks.ai/inference/v1';
-
-/** Live Free hosted writer. Do not use retired `deepseek-v3p1` (404). */
-export const FREE_WRITER_FIREWORKS_MODEL = FIREWORKS_DEEPSEEK_V41_FLASH;
-
-export function isFireworksWriterModel(modelId: string | null | undefined): boolean {
-  const id = (modelId ?? '').trim().toLowerCase();
-  return id.startsWith('accounts/fireworks/models/') || id.startsWith('fireworks/');
-}
-
-/** Retired Fireworks slug 404s — remap to the live V4 Flash id. */
-export function normalizeFireworksWriterModel(modelId: string | null | undefined): string {
-  const id = (modelId ?? '').trim();
-  if (/deepseek-v3p1/i.test(id)) return FREE_WRITER_FIREWORKS_MODEL;
-  return id;
-}
-
-/** Hosted chat target from model id. OpenRouter ids stay on OpenRouter. */
-export function hostedWriterProvider(modelId: string | null | undefined): 'fireworks' | 'openrouter' {
-  return isFireworksWriterModel(normalizeFireworksWriterModel(modelId)) ? 'fireworks' : 'openrouter';
-}
-
-export function fireworksChatHeaders(apiKey: string): Record<string, string> {
-  return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${apiKey}`,
-  };
-}
+/** Live Free hosted writer = OpenRouter DeepSeek V4.1 Flash (single source with modelIds). */
+export const FREE_WRITER_OPENROUTER_MODEL = OPENROUTER_DEEPSEEK_V41_FLASH;
 
 /**
- * 28l — the writer's thinking pass took 1.3–3.5k tokens (11–30 s) and often left `content` empty.
- * Reasoning off where the provider supports it; `stripReasoningBlocks` covers every other model.
+ * Shared OpenRouter `provider` routing for every writer chat body.
+ * Always excludes Fireworks so OpenRouter cannot route Free (or any) turns there.
  */
-export type FireworksReasoningLevel = 'none' | 'low' | null;
-
-export function fireworksChatBody(
-  model: string,
-  systemPrompt: string,
-  prompt: string,
-  maxTokens: number,
-  reasoning: FireworksReasoningLevel = null
-) {
-  return {
-    model: normalizeFireworksWriterModel(model) || FREE_WRITER_FIREWORKS_MODEL,
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: prompt },
-    ],
-    temperature: 0.9,
-    max_tokens: maxTokens,
-    ...(reasoning ? { reasoning_effort: reasoning } : {}),
+export function openRouterProviderRouting(extra?: {
+  require_parameters?: boolean;
+  allow_fallbacks?: boolean;
+  sort?: string;
+}): Record<string, unknown> {
+  const routing: Record<string, unknown> = {
+    allow_fallbacks: extra?.allow_fallbacks ?? true,
+    sort: extra?.sort ?? 'latency',
+    ignore: ['Fireworks'],
   };
+  if (extra?.require_parameters) routing.require_parameters = true;
+  return routing;
+}
+
+/** True when OpenRouter's completion `provider` field names Fireworks (case-insensitive). */
+export function isFireworksServedProvider(provider: string | null | undefined): boolean {
+  return /fireworks/i.test(String(provider ?? '').trim());
 }
 
 /** Raw writer reply problems, logged per turn for training (never a reason to fail the turn). */
-export type WriterRawIssue = 'empty' | 'reasoning-only' | 'cut-off';
+export type WriterRawIssue = 'empty' | 'reasoning-only' | 'cut-off' | 'fireworks-served';
 
 /** Appended to the system prompt on the single re-ask after an empty / cut-off reply. */
 export const NO_REASONING_HINT =
@@ -110,6 +81,10 @@ export type WriterUsage = {
 export type TurnWriterUsage = WriterUsage & {
   modelCalls: number | null;
   modelId: string | null;
+  /** OpenRouter completion `provider` (e.g. DeepSeek); null when not reported. */
+  servedProvider?: string | null;
+  /** OpenRouter completion `model`; null when not reported (falls back to request modelId). */
+  servedModel?: string | null;
 };
 
 export type ChatCompletionRead = {
@@ -120,7 +95,18 @@ export type ChatCompletionRead = {
   usage?: WriterUsage | null;
   /** The model id the provider says served the reply (`model` on the response); absent when it sent none. */
   servedModel?: string;
+  /** OpenRouter `provider` field on the completion (who actually served); absent when not sent. */
+  servedProvider?: string;
 };
+
+/**
+ * Drop story text when OpenRouter reports Fireworks served the turn (hard writer error).
+ * Usage / served* fields stay so the harness can see which provider answered.
+ */
+export function rejectFireworksServed(read: ChatCompletionRead): ChatCompletionRead {
+  if (!isFireworksServedProvider(read.servedProvider)) return read;
+  return { ...read, text: '', issue: 'fireworks-served' };
+}
 
 function usageCount(raw: unknown): number | null {
   const n = typeof raw === 'number' ? raw : typeof raw === 'string' && raw.trim() ? Number(raw) : NaN;
@@ -133,7 +119,7 @@ function addCounts(...parts: Array<number | null>): number | null {
 }
 
 /**
- * 28w — read the usage block of any provider reply: OpenAI-compatible (OpenRouter / Fireworks / DeepSeek),
+ * 28w — read the usage block of any provider reply: OpenAI-compatible (OpenRouter / DeepSeek),
  * Google `usageMetadata`, Anthropic `usage`. Returns null when there is no usage block at all.
  */
 export function readChatUsage(data: unknown): WriterUsage | null {
@@ -188,12 +174,19 @@ export function sumWriterUsage(
     return total;
   };
   const modelId = [...calls].reverse().find((c) => typeof c?.modelId === 'string' && c.modelId)?.modelId ?? null;
+  const servedProvider =
+    [...calls].reverse().find((c) => typeof c?.servedProvider === 'string' && c.servedProvider)?.servedProvider ??
+    null;
+  const servedModel =
+    [...calls].reverse().find((c) => typeof c?.servedModel === 'string' && c.servedModel)?.servedModel ?? null;
   return {
     tokensIn: field('tokensIn'),
     tokensOut: field('tokensOut'),
     tokensCached: field('tokensCached'),
     modelCalls: field('modelCalls'),
     modelId,
+    ...(servedProvider ? { servedProvider } : {}),
+    ...(servedModel ? { servedModel } : {}),
   };
 }
 
@@ -215,12 +208,17 @@ export function readChatCompletion(data: unknown): ChatCompletionRead {
   if (!text) issue = hadReasoning ? 'reasoning-only' : 'empty';
   else if (isCutOffFinish(first.finish_reason)) issue = 'cut-off';
   const usage = readChatUsage(data);
-  const served = (data as { model?: unknown } | null)?.model;
+  const rec = data && typeof data === 'object' ? (data as { model?: unknown; provider?: unknown }) : null;
+  const served = rec?.model;
+  const servedProvider = rec?.provider;
   return {
     text,
     issue,
     ...(usage ? { usage } : {}),
     ...(typeof served === 'string' && served.trim() ? { servedModel: served.trim() } : {}),
+    ...(typeof servedProvider === 'string' && servedProvider.trim()
+      ? { servedProvider: servedProvider.trim() }
+      : {}),
   };
 }
 
@@ -317,12 +315,12 @@ export function openRouterChatBody(
     // Keep completion tokens in content — thinking-only replies 502'd hosted Free.
     // 28l — DeepSeek writes the beat without a thinking pass (thinking cost 11–30 s per call).
     reasoning: /deepseek/i.test(model) ? { enabled: false } : { effort: 'low', exclude: true },
-    provider: { allow_fallbacks: true, sort: 'latency' },
+    provider: openRouterProviderRouting(),
   };
   if (opts?.tokenProse) {
     // Only providers that honour the schema; one that ignores it would hand back free text as if it were checked.
     // Every parameter sent must then be supported, and reasoning-only models (gpt-5-mini) take no temperature.
-    body.provider = { allow_fallbacks: true, sort: 'latency', require_parameters: true };
+    body.provider = openRouterProviderRouting({ require_parameters: true });
     delete body.temperature;
     const baseSchema = opts.schema ?? {
       type: 'object',

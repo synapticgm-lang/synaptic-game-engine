@@ -1,7 +1,7 @@
 /**
  * Writer escalation policy — Manus Option 10 explicitly disabled (Wave 5 only).
  *
- * Free stays on Fireworks DeepSeek V4 Flash. Mid/High tiers use their OpenRouter
+ * Free stays on OpenRouter DeepSeek V4.1 Flash. Mid/High tiers use their OpenRouter
  * subscription writer only — never auto-escalate on stagnation until John
  * authorizes Wave 5 gates.
  *
@@ -15,19 +15,18 @@ import { effectiveWriterTier } from './testLab';
 /** Manus T7 Option 10 — stagnation-only Mid writer. Default NO after Wave 4. */
 export const STAGNATION_MID_WRITER_ENABLED = false;
 
-/** Cheap open-weight failover when Free Flash Lite returns empty/timeout (OpenRouter). */
+/** Cheap open-weight failover when Free DeepSeek returns empty/timeout (OpenRouter). */
 export const FREE_WRITER_FAILOVER_OPENROUTER = 'meta-llama/llama-3.1-8b-instruct';
 
 /**
- * Resolve Free failover model — never Mid/Sonnet. Returns null if primary is not Free Flash Lite.
+ * Resolve Free failover model — never Mid/Sonnet. Returns null if primary is not Free Flash Lite / DeepSeek.
  */
 export function resolveFreeWriterFailover(primaryModelId: string): string | null {
   const id = primaryModelId.toLowerCase();
   if (
     id.includes('flash-lite') ||
     id.includes('gemini-2.5-flash-lite') ||
-    id.includes('deepseek') ||
-    id.includes('fireworks')
+    id.includes('deepseek')
   ) {
     return FREE_WRITER_FAILOVER_OPENROUTER;
   }

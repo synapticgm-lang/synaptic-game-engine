@@ -233,17 +233,17 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         url: 'https://ai.google.dev',
       },
       {
-        work: 'Fireworks',
-        source: 'Fireworks AI',
-        license: 'Paid / hosted API',
-        usedFor: 'Story writing on hosted Free (DeepSeek V4 Flash)',
-        url: 'https://fireworks.ai',
+        work: 'DeepSeek',
+        source: 'DeepSeek',
+        license: 'MIT (DeepSeek V4.1 Flash weights)',
+        usedFor: 'Story writing on hosted Free (via OpenRouter)',
+        url: 'https://www.deepseek.com',
       },
       {
         work: 'OpenRouter',
         source: 'OpenRouter',
         license: 'Paid / hosted API',
-        usedFor: 'Mid/High story writers, Free Llama failover, and images',
+        usedFor: 'Free DeepSeek writer, Mid/High story writers, Free Llama failover, and images',
         url: 'https://openrouter.ai',
       },
       {

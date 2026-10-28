@@ -9,7 +9,7 @@ import { z } from 'zod';
 export const GmTurnResponseSchema = z.looseObject({
   text: z.string().optional().catch(undefined),
   error: z.string().optional().catch(undefined),
-  rawIssue: z.enum(['empty', 'reasoning-only', 'cut-off']).optional().catch(undefined),
+  rawIssue: z.enum(['empty', 'reasoning-only', 'cut-off', 'fireworks-served']).optional().catch(undefined),
   usage: z.unknown().optional(),
   /** q50-MAP2 — structured places only; never mined from prose. */
   newPlaces: z
