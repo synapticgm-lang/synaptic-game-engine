@@ -34,3 +34,8 @@
 2026-10-28T10:52:30.495Z ask outline r6s0 (51 seeds)
 2026-10-28T10:53:00.620Z done outline r6s0: 51/51 model=Flash-Lite
 2026-10-28T10:53:06.629Z ask outline r6s1 (52 seeds)
+2026-10-28T10:53:31.876Z done outline r6s1: 52/52 model=Flash-Lite
+2026-10-28T10:53:37.890Z ask outline r6s2 (52 seeds)
+2026-10-28T10:54:02.951Z done outline r6s2: 45/52 model=Flash-Lite
+2026-10-28T10:54:08.955Z finished outline run: calls 6
+2026-10-28T10:54:09.393Z ask prose sg-p1..sg-1-0-1-0 items=10 attempt=0
