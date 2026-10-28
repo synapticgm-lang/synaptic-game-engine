@@ -33,14 +33,14 @@
    "title": "Dodging the Kelp Mule",
    "text": "You dodge hard to the left as a nervous pack-mule laden with dried kelp lurches past, leaving Pell behind in the press of townfolk as the limestone walls of Candlemere shrink into the desert glare. The animal's iron bells jangle with a frantic, hollow rhythm that echoes off the low hills. You find yourself alone on the gravel path, the wind carrying the sharp scent of iodine and dry scrub.\n\nPressing onward into the open stretch of the Rim Road, you feel the solitude close around you like a heavy cloak. Every footstep carries you further from the familiar tallow-smoke and stone hearths of home, drawing you deeper into the domain of the Salt Court.",
    "exits": [
-    "Listen to Pell's drover tune echo off limestone",
+    "Listen to a distant drover tune echo off limestone",
     "Watch a tethered donkey rattle its iron ring",
     "Marvel at the preserved whiskers of a dried hare"
    ]
   },
   "sg-1-1-1-4": {
    "title": "The Cistern-House Warning",
-   "text": "Pell catches your elbow with a calloused hand by the moss-grown cistern-house, pulling you back into the shadow of the stone water-trough. He points a sun-darkened finger toward the eastern horizon, where a thick, yellowish salt-squall is rapidly curdling the sky into an angry haze. The wind dies down completely for a breathless heartbeat, replaced by an eerie, heavy stillness that makes the hairs on your arms stand on end.\n\nThe coming blow promises to scour the flats clean of any traveler foolish enough to cross without cover. Pell looks sideways at you, waiting to see how you intend to weather the approaching gale before committing your steps to the open track.",
+   "text": "Pell catches your elbow with a calloused hand by the moss-grown cistern-house, pulling you back into the shadow of the stone water-trough. He points a sun-darkened finger toward the eastern horizon, where a thick, yellowish salt-squall is rapidly curdling the sky into an angry haze. The wind dies down completely for a breathless heartbeat, replaced by an eerie, heavy stillness that makes the hairs on your arms stand on end.\n\nThe coming blow promises to scour the flats clean of any traveller foolish enough to cross without cover. Pell looks sideways at you, waiting to see how you intend to weather the approaching gale before committing your steps to the open track.",
    "exits": [
     "Inspect the wheel-rut gypsum crystals with Pell",
     "Listen to the muffled thrum of a distant salt-mill",

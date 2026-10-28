@@ -1672,7 +1672,7 @@
      "to": "sg-1-1-2-8",
      "intent": "",
      "id": "x0",
-     "label": "Listen to Pell's drover tune echo off limestone"
+     "label": "Listen to a distant drover tune echo off limestone"
     },
     {
      "to": "sg-1-1-2-9",
@@ -1719,7 +1719,7 @@
     }
    ],
    "title": "The Cistern-House Warning",
-   "page": "Pell catches your elbow with a calloused hand by the moss-grown cistern-house, pulling you back into the shadow of the stone water-trough. He points a sun-darkened finger toward the eastern horizon, where a thick, yellowish salt-squall is rapidly curdling the sky into an angry haze. The wind dies down completely for a breathless heartbeat, replaced by an eerie, heavy stillness that makes the hairs on your arms stand on end.\n\nThe coming blow promises to scour the flats clean of any traveler foolish enough to cross without cover. Pell looks sideways at you, waiting to see how you intend to weather the approaching gale before committing your steps to the open track."
+   "page": "Pell catches your elbow with a calloused hand by the moss-grown cistern-house, pulling you back into the shadow of the stone water-trough. He points a sun-darkened finger toward the eastern horizon, where a thick, yellowish salt-squall is rapidly curdling the sky into an angry haze. The wind dies down completely for a breathless heartbeat, replaced by an eerie, heavy stillness that makes the hairs on your arms stand on end.\n\nThe coming blow promises to scour the flats clean of any traveller foolish enough to cross without cover. Pell looks sideways at you, waiting to see how you intend to weather the approaching gale before committing your steps to the open track."
   },
   {
    "id": "sg-1-1-1-5",
