@@ -1,0 +1,92 @@
+{
+ "batch": "td-2-056",
+ "sections": {
+  "td-2-056": {
+   "title": "The Bone Still",
+   "text": "Salt cakes the joints of the merchant's copper still until it resembles a crustacean shell left too long in the sun. You wedge a curved rib bone into the bent feed-pipe, tapping the porous ivory with the heel of your palm until the fit is airtight. A drop of brackish moisture beads at the spout, slow and heavy, before falling clear. The trader hands over a sealed skin of water, heavy and cool against your hip.\n\nThe horizon hums with the distant grinding of the seabed machinery.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the water skin and press onward across the salt flats"
+   ]
+  },
+  "td-2-057": {
+   "title": "Restoring the Filter",
+   "text": "Working by the pale glare of a stranded jellyfish lantern, you scrape the calcified salt from the brass condenser coil using a sharp limpet shell. Every motion must be measured, for a careless slip will crack the brittle wiring salvaged from a sunken galley. The merchant watches your hands with hungry eyes, muttering nervous prayers to the missing sea. When you finally seat the bone valve into place, a clean trickle of clear water flows into the tin cup.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the filled canteen and leave the merchant to his trade"
+   ]
+  },
+  "td-2-058": {
+   "title": "The Fragile Seam",
+   "text": "Brittle ribs of ancient leviathans and green-corroded copper tubing require a surgeon's touch if this leaking still is to hold pressure once more. You balance a wafer-thin bone wedge against the fractured condenser flange, your breath held shallow against the bitter smell of stagnant brine. One clumsy slip with the hammer will splinter the delicate bone strut beyond recall, spilling the merchant's last reserve into the mud. Your fingers twitch as you raise the tiny lead mallet over the fragile joint, measuring the exact force needed to seat the pin without shattering the casing.",
+   "check": "Tap the bone wedge home",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-059": {
+   "title": "A Bitter Patch",
+   "text": "Bone shatters under the clumsy blow, spraying sharp white splinters across the greasy timber and rupturing the primary distillation chamber with a sudden hiss of steam. The merchant curses through chapped lips as precious condensation escapes into the thirsty air, leaving you both empty-handed and short on time. You spend an hour scavenging scrap lead and fat from your kit to bodge a clumsy replacement sleeve that barely holds together under heat.\n\nThe repair is ugly and leaks a steady drip, but it functions well enough to earn you a begrudging half-measure of tepid water and a sour look from the stall-owner.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the sputtering stall behind"
+   ]
+  },
+  "td-2-060": {
+   "title": "The Clean Seal",
+   "text": "Bone shatters not, nor does the ancient copper yield under your precise taps, sliding smoothly into a tight, brine-tight union that hums softly as heat builds within the chamber. Clean droplets begin to bead along the interior capillary tube, falling rhythmically into the collection basin with a clear, metallic chime. The merchant lets out a ragged sigh of relief, shoving a brimming leather flask into your palm with genuine gratitude shining through the grime on his cheeks.\n\nYou pocket the reward and secure your gear against the coming chill of the salt flats.",
+   "check": "",
+   "grant": "Full leather water flask",
+   "exits": [
+    "Step back into the market"
+   ]
+  },
+  "td-2-061": {
+   "title": "Intercepting the Brutes",
+   "text": "Heavy iron-shod boots kick up gray salt dust as three broad-shouldered wreckers from an opposing crew crowd the terrified fish-monger against a ribbed whale-wall. You step directly into their path, blocking the narrow alley between two stranded hulls with your hand resting casually on the hilt of your heavy salvage scraper. The lead thug stops short, smelling of stale ale and old sweat, his scarred lip curling into a cruel grin as he sizes up your lean frame.\n\nWords pass back and forth like grinding stones, neither side willing to give ground in the shadow of the rotting ribs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Draw steel to protect vendor"
+   ]
+  },
+  "td-2-062": {
+   "title": "Staring Down the Pack",
+   "text": "Three burly wreckers from a rival crew block the narrow passage, their iron-studded cudgels dragging lazily through the gray seabed salt as they close in on the cornered vendor. You stand your ground squarely in the middle of the alley, locking your gaze onto the scarred leader's yellowed eyes without a single flicker of doubt. The tension stretches taut as a damp bowstring while the bullies weigh the cost of a messy fight against whatever scraps the merchant has hidden in his coat. You steady your breathing, waiting to see if your cold stare will break their nerve or invite a crushing blow.",
+   "check": "Hold your ground against thugs",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-063": {
+   "title": "Bruised and Defiant",
+   "text": "A heavy iron-capped cudgel catches you across the shoulder before you can duck, sending a shock of white-hot agony down your arm and driving you hard into the damp ribs of a stranded hull. The thugs press their advantage with mocking laughter, raining blows onto your ribs until you manage to sweep the lead brawler's legs out from under him into the foul mud. Scrambling back to your feet with a bruised shoulder and a split lip, you bare your teeth and refuse to yield another inch of the alley.\n\nThe bullies spit into the salt and back away, leaving you battered but the vendor untouched.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Help the shaken merchant up"
+   ]
+  },
+  "td-2-064": {
+   "title": "Breaking the Bullies",
+   "text": "Your unwavering stare and sudden, deliberate shift of weight makes the lead thug hesitate just long enough for doubt to take root in his muddy eyes. Recognizing the cold certainty in your posture, the ruffian spits into the salt and pulls his snarling mates back with a sharp jerk of his scarred chin. The grateful vendor presses a heavy bundle of dried kelp and salted roe into your hands, swearing eternal loyalty to your name across every corner of the Low.\n\nYou tuck the token away, knowing you have earned a dependable friend in a lawless place.",
+   "check": "",
+   "grant": "Loyal merchant ally",
+   "exits": [
+    "Walk away from the stall"
+   ]
+  },
+  "td-2-065": {
+   "title": "The Singing Wastes",
+   "text": "Leaving the foul-smelling bustle of the leviathan carcass far behind, you stride out onto a vast, desolate expanse of pale yellow sand that stretches toward the murky horizon. Underfoot, the sediment begins to shift and tremble, sending a strange, low-frequency hum vibrating straight up through the soles of your boots and into your teeth. It is a mournful, undulating sound like a thousand drowned organs playing beneath the crust of the earth, echoing the sorrow of the vanished tide. Faint silhouettes of wandering pilgrims and half-buried skeletal masts blur through the rising haze of salt dust as you press deeper into the barren flats.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the hum across dunes"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,68 @@
+Gemini said
+
+@@SECTION td-2-099
+TITLE: The Tangled Pool
+TEXT: Coiled strands of frayed hemp and copper wire drift among the calcified ribs of a sunken ketch, offering the raw materials for a snare. Tangled in the kelp below, a mottled reef crab tests the water with twitching feelers, its heavy pincers snapping at the currents of air. Kneeling in the wet silt, fingers loop the discarded twine into a crude but serviceable noose, sliding it steadily toward the twitching shell while avoiding the razor edges of barnacles that encrust the hull timbers.
+EXIT 1: Slip the noose around the claw
+@@END
+@@SECTION td-2-100
+TITLE: Snaring the Shell
+TEXT: Coiled strands of frayed hemp and copper wire drift among the calcified ribs of a sunken ketch, offering the raw materials for a snare. Tangled in the kelp below, a mottled reef crab tests the water with twitching feelers, its heavy pincers snapping at the currents of air. Kneeling in the wet silt, fingers loop the discarded twine into a crude but serviceable noose, sliding it steadily toward the twitching shell while avoiding the razor edges of barnacles that encrust the hull timbers.
+EXIT 1: Haul the captive onto the silt
+@@END
+@@SECTION td-2-101
+TITLE: Reaching the Pincer
+TEXT: Discarded fishing lines twitch among the rotting timbers of a stranded schooner where a massive reef crab scuttles through the brine-pools, its heavy claws clicking against the bleached ribs of the hull. Kneeling in the foul-smelling silt, fingers thread together a makeshift net of stray cordage, sliding the woven mesh closer to the snapping carapace. The beast senses the motion, rearing back with iron-hard nippers poised to strike at the slightest touch. The hands must move with absolute precision, matching the erratic pulse of the seabed before the creature lunges.
+CHECK: Weave and snatch the twitching crab
+@@END
+@@SECTION td-2-102
+TITLE: The Snapped Line
+TEXT: A sudden, violent snap shatters the silence of the wreck-field as the heavy crustacean lunges forward with unexpected fury, burying its crushing nippers deep into the flesh of your wrist. Pain flares white and hot up your forearm, tearing the makeshift net into useless shreds of twine before you can wrench your hand free from the grasping claws. The crab scurries back into the dark recess of the hull, leaving behind a bleeding, ragged gash that throbs with the bitter salt of the low seabed.
+EXIT 1: Bind the wound and push onward
+@@END
+@@SECTION td-2-103
+TITLE: Meat from the Deep
+TEXT: Steady fingers complete the final knot of the cordage just as the giant crab rears up to strike, however narrowly avoiding the crushing snap of its armored nippers. The makeshift net drops over the carapace with a swift twist, tangling the creature's legs in a web of discarded line and hauling it kicking and clicking onto the dry planks. It is a stubborn prize, full of sweet meat and stubborn fight, secured with only a few shallow scratches to show for the struggle.
+GRANT: Fresh crab meat and twine
+EXIT 1: Leave the rotting hull behind
+@@END
+@@SECTION td-2-104
+TITLE: The March of Kelp
+TEXT: A heavy scraping sound cuts across the flat expanse of the seabed, shaking the salt crust beneath your boots. Through the pale mist emerge the Drift Pilgrims, their hunched figures draped in heavy cloaks woven from dried bladderwrack and brine-soaked wool. They move in unison, chanting a low, rhythmic dirge that sounds like waves dragging shingle back into the deep. At the front of the procession, half a dozen robed backs strain against thick hemp ropes tied to an enormous, rusted anchor bearing the crest of an old Gullmouth cutter. They drag the iron dead-weight across the dry mud, seeking the lost tide with every step of their bare, calloused feet. You must slip past their slow, melancholic march or find yourself drawn into the orbit of their prayer.
+EXIT 1: Walk alongside the silent procession
+@@END
+@@SECTION td-2-105
+TITLE: The Pilgrim Encampment
+TEXT: Ragged tents made of patched sailcloth and whale ribs cling to the flank of a rusted hull, forming a temporary sanctuary amidst the endless grey flats. Small cook-fires burn low, smelling of dried dung and charred kelp, while pilgrims murmur prayers to an absent ocean that left them behind. To one side, an elder weeps softly into a basin of dry sand, and paths fork outward toward the horizon, leading past the camp toward distant stilted structures or deeper into the misty wreck-fields. Every shadow here feels watched by people who believe the water will return only when the proper debts are paid.
+EXIT 1: Continue deeper into the salt-flats
+EXIT 2: Defend the camp from wild dogs
+EXIT 3: Carve a wooden offering bowl
+EXIT 4: Undergo the burning salt ritual
+EXIT 5: Approach the stilted trading outpost
+@@END
+@@SECTION td-2-106
+TITLE: Pulling the Iron
+TEXT: Heavy hemp bites hard into raw palms as you take your place among the robed figures, throwing your weight against the thick tow-rope. The rusted anchor catches on a ridge of buried ballast stone, sending a jarring vibration up your spine while the pilgrims beside you hum an unceasing, low-pitched drone. Sweat stings your eyes in the damp air as you heave together, forcing the massive iron fluke to break free from the suction of the grey silt.
+EXIT 1: Keep pace with the dragging crew
+@@END
+@@SECTION td-2-107
+TITLE: Heaving the Anchor
+TEXT: Heavy hemp bites hard into raw palms as you take your place among the robed figures, throwing your weight against the thick tow-rope. The rusted anchor catches on a ridge of buried ballast stone, sending a jarring vibration up your spine while the pilgrims beside you hum an unceasing, low-pitched drone. Sweat stings your eyes in the damp air as you heave together, forcing the massive iron fluke to break free from the suction of the grey silt.
+EXIT 1: Follow the weary anchor-bearers onward
+@@END
+@@SECTION td-2-108
+TITLE: Straining Against the Anchor
+TEXT: The enormous iron anchor catches firmly beneath the ribcage of an ancient sunken brigantine, refusing to budge another inch through the clinging grey silt. The pilgrims lean into their hemp harnesses with desperate, trembling breath, waiting to see if you possess the strength to match their devotion. Stepping up to the primary tow-line, you wrap the coarse rope twice around your bleeding palms, planting your boots deep into the wet mud to brace against the dead weight of the iron. Your muscles knot and strain as you throw your entire body backward, pushing against the unyielding resistance of the seabed.
+CHECK: Heave the anchor from the silt
+@@END
+@@SECTION td-2-109
+TITLE: Broken Muscles
+TEXT: A dull pop echoes in your shoulder as the massive anchor refuses to yield, throwing you violently forward into the abrasive mud and tearing the skin from your knuckles. The pilgrims do not stop their chant, stepping smoothly around your fallen form while you struggle to catch your breath against a searing ache in your ribs. You pick yourself up from the grey mire, bruised and thoroughly humbled by the brute weight of their sacred iron.
+EXIT 1: Pick yourself up and limp onward
+@@END
+@@SECTION td-2-110
+TITLE: The Blessed Muscle
+TEXT: Muscles scream under the sudden strain, however narrowly finding the hidden leverage needed to wrench the massive fluke free from the mud. The anchor leaps forward with a dull thud, sliding smoothly across the scraped seabed as the pilgrims murmur a low word of approval for your labour. One of the robed elders presses a damp, knotted cord into your palm, tying it around your wrist as a mark of safe passage through the salt wastes.
+GRANT: A blessed kelp cord
+EXIT 1: Leave the camp for the stilted outpost
+@@END

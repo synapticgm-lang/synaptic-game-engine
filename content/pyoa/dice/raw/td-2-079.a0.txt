@@ -1,0 +1,55 @@
+Gemini said
+
+@@SECTION td-2-079
+TITLE: The Way Forward
+TEXT: Footprints in the shifting grain resolve into a recognizable pattern through the blinding grit, guiding your boots away from the suffocating sandstone wall. Kneeling in the hollow between two dunes, your fingers brush against smooth polished timber half-buried by the wind. Pulling it free reveals a stout wooden staff scored with old navigation notches, perfectly weighted for steadying your balance on the unstable seabed. // With this reliable length of seasoned ash in hand, the swirling curtain of dust parts enough to show a familiar downward slope leading back toward the main trail.
+GRANT: stout navigation staff
+EXIT 1: Descend the slope toward the singing dunes
+@@END
+@@SECTION td-2-080
+TITLE: Pearls in the Sand
+TEXT: Low, rhythmic humming vibrates through the soles of your boots, carrying an undertone of voices calling your name from just beyond the blowing crests. You force your gaze downward, ignoring the shadows that shift at the edge of your vision like drowning sailors in the brine. Half-buried in a trough of golden drift sits a round, heavy pearl, glowing with a soft, milky luster entirely untouched by the salt-crust of the Low. // Bending quickly to scoop it from the loose silt, you slide the cold sphere into your pocket before the hollow murmurs can find a footing in your thoughts.
+EXIT 1: Follow the trough toward the open basin
+@@END
+@@SECTION td-2-081
+TITLE: The Whispering Crest
+TEXT: Voices swell from the shifting sand, mimicking the exact pitch of Orsolya's warnings when the tide-bell used to crack in the salt-gale. A pale, luminous pearl rests atop the ridge, but the ground beneath it shivers like water over a sinkhole, threatening to slide away into the dark hollows below. // Bracing your shoulders against the rising wind, you focus your breathing and reach out a steady hand to snatch the treasure before the dune collapses.
+CHECK: Keep your nerve against the whispers
+@@END
+@@SECTION td-2-082
+TITLE: Sinking into the Drift
+TEXT: Panic snatches the breath from your throat as the sand gives way beneath your boots, plunging you knee-deep into a boiling slurry of fine quartz and shell-grit. The sudden drop wrenches your ankle sharply against a buried timber rib, sending a hot lance of pain shooting up your leg. You thrash backward with a ragged gasp, tearing your arm free from the suction just as the hollow swallows the spot where you stood. // Nursing the bruised joint and catching your breath in the bitter air, you drag yourself clear of the treacherous slope.
+EXIT 1: Limp away from the treacherous hollow
+@@END
+@@SECTION td-2-083
+TITLE: Salvage from the Slope
+TEXT: Scrambling clear of the treacherous slip, you check the damage to your stride while clutching the smooth, pale pearl retrieved from the edge of the slide. Though your pride takes a sting and your breathing remains shallow from the sudden terror, the prize rests safely in your palm. // Pocketing the cold, luminous stone, you limp back toward the main track where the dunes flatten out into the broader basin.
+GRANT: cold luminous pearl
+EXIT 1: Return to the main dune trail
+@@END
+@@SECTION td-2-084
+TITLE: Flower of the Shallows
+TEXT: Shifting shapes loom through the wind-scoured haze, taking the brief form of old friends and lost debtors calling out from Gullmouth harbour. You stand completely still, letting the phantom voices wash over your skin until the desert air clears to reveal only dry stalks and bleached sand. Nestled directly in your path grows a hardy, violet-petaled stem drinking the salt-mist, completely out of place in the desolate basin. // Snapping the crisp stem at the base, you tuck the resilient blossom safely inside your collar away from the abrasive grit.
+EXIT 1: Push past the weathered ridge ahead
+@@END
+@@SECTION td-2-085
+TITLE: Rooted in the Gale
+TEXT: Phantom figures materialize along the crest of the ridge, stretching out skeletal hands to bar your way with silent accusations. The air grows icy cold, smelling of stale harbour mud and rotting kelp, pressing against your chest with enough weight to stop your heart. // Digging your heels hard into the shifting crust, you stare down the illusion and reach out to pluck the pale desert flower blooming between the phantom fingers.
+CHECK: Master your fear and pluck the flower
+@@END
+@@SECTION td-2-086
+TITLE: Blown Off Course
+TEXT: Terror overwhelms your resolve as the spectral shapes lunge forward, sending you stumbling blindly backward down the steep face of the dune. Your shoulder strikes a jagged outcrop of buried ballast stone, tearing your coat and leaving a dull, throbbing ache across your ribs. You tumble into a hollow of loose silt, coughing up dust while the phantom voices fade away into the howling wind. // Nursing your bruised shoulder, you pick yourself out of the grey sand and check your remaining gear.
+EXIT 1: Crawl out from the stony hollow
+@@END
+@@SECTION td-2-087
+TITLE: Plucked from the Brink
+TEXT: Clinging tightly to the bruised rib with one hand, you stare down at the stubborn violet blossom clenched safely in your other fist, won through sheer stubborn defiance of the desert's tricks. The phantom shapes dissolve into harmless dust motes dancing in the salt-wind as your breathing slows back to a steady rhythm. // Securing the resilient stem within your coat pocket, you regain your footing on the firming ground below the ridge.
+GRANT: resilient salt-flower blossom
+EXIT 1: Continue toward the rocky horizon
+@@END
+@@SECTION td-2-088
+TITLE: The Coral Boundary
+TEXT: The golden sea of dunes finally gives way to a sprawling expanse of jagged, coral-encrusted rock that stretches as far as the grey sky permits. Once submerged beneath fathoms of green water, these massive branching formations now stand bleached and chalky under the sunless day, forming a labyrinth of sharp ridges and deep, shadowed trenches. Salt has crusted every pore of the stony thicket, sparkling dully like crushed glass whenever the wind shifts across the flats. Faint echoes of distant metal grinding drift up from the crevices, reminding you that the path to the Sunken Stair lies somewhere beyond this stony maze. // Navigating the dry reef requires cautious footwork to avoid shredding your boots on the razor-sharp branches.
+EXIT 1: Navigate the bleached coral labyrinth
+@@END

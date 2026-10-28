@@ -1,0 +1,12 @@
+Gemini said
+
+@@SECTION td-2-056
+TITLE: The Bone Still
+TEXT: Salt cakes the joints of the merchant's copper still until it resembles a crustacean shell left too long in the sun. You wedge a curved rib bone into the bent feed-pipe, tapping the porous ivory with the heel of your palm until the fit is airtight. A drop of brackish moisture beads at the spout, slow and heavy, before falling clear. The trader hands over a sealed skin of water, heavy and cool against your hip. // The horizon hums with the distant grinding of the seabed machinery.
+EXIT 1: Secure the water skin and press onward across the salt flats
+@@END
+@@SECTION td-2-057
+TITLE: Restoring the Filter
+TEXT: Working by the pale glare of a stranded jellyfish lantern, you scrape the calcified salt from the brass condenser coil using a sharp limpet shell. Every motion must be measured, for a careless slip will crack the brittle wiring salvaged from a sunken galley. The merchant watches your hands with hungry eyes, muttering nervous prayers to the missing sea. When you finally seat the bone valve into place, a clean trickle of clear water flows into the tin cup.
+EXIT 1: Take the filled canteen and leave the merchant to his trade
+@@END
