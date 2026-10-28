@@ -11,6 +11,7 @@ import { openingCastRecords, presentNpcRecords } from './npcRecords';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { realPresentPeople } from './chromeAuthority';
 import { fuzzyTypedName } from './typedNameMatch';
+import { motiveAnswer } from './npcSheet';
 
 export type SpokenTopic = 'who' | 'want' | 'where';
 
@@ -149,12 +150,18 @@ export function ensureSpokenAnswer(
     if (quotesBy(prose, speaker, alone, others).length) {
       return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
     }
-    // Engine reply beat: named person answered (no invented dialogue).
-    const line = `${capitalize(speaker.label)} answered.`;
+    // T10S — exchange needs content (motive/authored) or honest silence; never "answered" with no words.
+    const own = motiveAnswer(state, [speaker.label]);
+    const line = own?.line ?? `${capitalize(speaker.label)} said nothing.`;
     const body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
     return {
       prose: body ? `${body} ${line}` : line,
-      answer: { status: 'added', speaker: speaker.label, source: 'authored', line },
+      answer: {
+        status: 'added',
+        speaker: speaker.label,
+        source: 'authored',
+        line: own?.spoken?.words ? `"${own.spoken.words}"` : line,
+      },
     };
   }
   if (!who) return { prose, answer: { status: 'nobody-here' } };

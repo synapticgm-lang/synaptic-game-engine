@@ -49,10 +49,16 @@ const STEAL_RE =
   /\b(steal|pickpocket|filch|swipe|palm|lift\s+(?:the|a|an|his|her|their)\b|take\s+(?:the|a|an)\s+\w[\w\s'-]{0,24}\s+from)\b/i;
 const PARLEY_RE =
   /\b(parley|negotiate|talk\s+(?:it|them)\s+down|surrender|truce|bargain|calm\s+(?:them|him|her|the)\b|talk\s+(?:past|your\s+way))\b/i;
+/** Consumption / sample — "take a sip from the cup" is not theft of an object named "sip". */
+const CONSUME_TAKE_RE =
+  /\btake\s+(?:a|an|the|my|your)\s+(?:sip|drink|swig|gulp|bite|taste|puff|drag|whiff|breath)\b/i;
 
 export function looksLikeSteal(text: string, step?: IntentStep | null): boolean {
-  if (step?.action === 'take' && STEAL_RE.test(step.clause ?? text)) return true;
-  if (step?.action === 'take' && /\bfrom\b/i.test(step.clause ?? text)) return true;
+  const clause = step?.clause ?? text;
+  // T10S — verb-noun consumption is not a take/gain of an item.
+  if (CONSUME_TAKE_RE.test(clause) || CONSUME_TAKE_RE.test(text)) return false;
+  if (step?.action === 'take' && STEAL_RE.test(clause)) return true;
+  if (step?.action === 'take' && /\bfrom\b/i.test(clause) && !CONSUME_TAKE_RE.test(clause)) return true;
   return STEAL_RE.test(text);
 }
 
@@ -147,11 +153,19 @@ export function isGuardedQuestItem(state: GameState, item: string): boolean {
 }
 
 function extractStealItem(text: string, step?: IntentStep | null): string {
-  if (step?.target?.trim()) return step.target.trim();
+  if (CONSUME_TAKE_RE.test(text)) return '';
+  if (step?.target?.trim()) {
+    const t = step.target.trim();
+    // Target that is only a consumption measure (sip/drink) is not loot.
+    if (/^(?:sip|drink|swig|gulp|bite|taste|puff|drag|whiff|breath)$/i.test(t)) return '';
+    return t;
+  }
   const m =
     text.match(/\b(?:steal|filch|swipe|palm|pickpocket|lift|take)\s+(?:the|a|an)\s+([^,.!?]{2,40}?)(?:\s+from\b|$)/i)
     ?? text.match(/\b(?:the|a|an)\s+([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,3})\s+from\b/i);
-  return (m?.[1] ?? 'purse').replace(/\s+/g, ' ').trim();
+  const item = (m?.[1] ?? 'purse').replace(/\s+/g, ' ').trim();
+  if (/^(?:sip|drink|swig|gulp|bite|taste|puff|drag|whiff|breath)$/i.test(item)) return '';
+  return item;
 }
 
 function extractWatcher(text: string, step?: IntentStep | null, state?: GameState): string {
@@ -174,6 +188,24 @@ export function resolveStealAttempt(
   rng: () => number = turnRng(state, 'steal'),
 ): StealOutcome {
   const item = extractStealItem(text, step);
+  // No object (e.g. consumption "sip") → not a steal commit.
+  if (!item) {
+    const empty = resolveCheckRecord({
+      label: 'Sleight of Hand',
+      mods: [],
+      dc: 10,
+      auto: 'unwilling',
+    });
+    return {
+      taken: false,
+      noticed: false,
+      guardedHold: false,
+      record: empty,
+      facts: [],
+      receipts: [],
+      state,
+    };
+  }
   const watcher = extractWatcher(text, step, state);
   const dc = passivePerceptionOf(state, watcher);
   const mod = sheetSkill(state, 'Sleight of Hand', 'DEX');

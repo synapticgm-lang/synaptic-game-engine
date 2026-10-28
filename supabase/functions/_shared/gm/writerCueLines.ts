@@ -286,8 +286,9 @@ export function plainFromWriterCueSentence(
   }
   if (/^NPC reaction slot open for /i.test(body)) {
     const name = body.replace(/^NPC reaction slot open for\s+/i, '').trim();
+    // T10S — never "answered" with no content; silence is the honest fallback beat.
     if (name && !/^the (?:people here|empty scene)$/i.test(name)) {
-      return { cue: true, plain: `${name} answered.` };
+      return { cue: true, plain: `${name} said nothing.` };
     }
     return { cue: true, plain: '' };
   }
@@ -429,10 +430,61 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
     }
   }
 
-  // T10R — present addressee with a reaction slot answers (Talk chip / typed quote), not a silent stub.
+  // T10S — present addressee gets a reaction beat. Content comes from the writer's reply (or
+  // motive/authored lines elsewhere). This fallback never claims they "answered" with no words.
   if (!absentAnswer && reactionWho) {
-    push(`${reactionWho} answered.`);
+    push(`${reactionWho} said nothing.`);
   }
 
   return out.join(' ').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * T10S — engine fact shown to a sentence-repair model. Must narrate / PC says / reaction-slot cues
+ * are writer instructions, not story to paste. Feeding their third-person form invited repairs to
+ * copy the player's clauses onto the NPC. Keep only mechanical outcomes (rolls, Took, Attempt…).
+ */
+export function engineFactForRepair(fact: string): string {
+  const raw = (fact ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return '';
+  if (!hasWriterCueChrome(raw)) return raw;
+  const kept: string[] = [];
+  CUE_HEAD.lastIndex = 0;
+  const hits: { index: number; text: string }[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = CUE_HEAD.exec(raw)) != null) {
+    hits.push({ index: m.index, text: m[0]! });
+  }
+  if (!hits.length) return raw;
+  if (hits[0]!.index > 0) {
+    const head = raw.slice(0, hits[0]!.index).trim();
+    if (head) kept.push(head.replace(/[.]+$/g, '').trim());
+  }
+  /** Roll / take outcomes that sit after a cue head must survive for repair — not PC Must-narrate acts. */
+  const peelMechanical = (chunk: string): string => {
+    const found =
+      chunk.match(
+        /\b(?:SUCCESS|FAIL(?:URE)?)\s*(?:\([^)]*\))?|\bTook the\s+[^.]+\.?|\bAttempt(?:ed)?\s+[^.]+\.?/gi,
+      ) ?? [];
+    return found.map((s) => s.replace(/[.]+$/g, '').trim()).filter(Boolean).join(' ');
+  };
+  for (let i = 0; i < hits.length; i++) {
+    const start = hits[i]!.index;
+    const end = i + 1 < hits.length ? hits[i + 1]!.index : raw.length;
+    const span = raw.slice(start, end).trim();
+    const head = hits[i]!.text;
+    const body = span.slice(head.length).trim();
+    // Drop writer-only cues (PC acts / exact say / reaction chrome). Keep mechanical outcomes only.
+    if (/^Must narrate:/i.test(head) || /^The story must show/i.test(head)) {
+      const mech = peelMechanical(body);
+      if (mech) kept.push(mech);
+      continue;
+    }
+    if (/^PC says exactly:/i.test(head)) continue;
+    if (/^Speech event:/i.test(head)) continue;
+    if (/^NPC reaction slot open for /i.test(head)) continue;
+    if (/^No one present to answer/i.test(head)) continue;
+    if (body) kept.push(body.replace(/[.]+$/g, '').trim());
+  }
+  return kept.filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 }

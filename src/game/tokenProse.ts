@@ -20,7 +20,7 @@ import { currentSceneLedger, weaponsNotInHand } from './infoSheet';
 import { playerAsksRepeat } from './semanticLoopDetector';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
-import { aimsAtSelf, npcHoldsPcQuote } from './intentParser';
+import { aimsAtSelf, extractPlayerQuotedSay, npcHoldsPcQuote } from './intentParser';
 import { buildGroundTruthLedger } from './writerInfoLayer';
 import { BAG_WORD, escRe, narrationOf as narratorWords, WORN_OR_BODY } from './engineFactPatterns';
 import { readWireBeat, refEnumOf, TOKEN_USES, type WireLineFn } from './tokenBeatSchema';
@@ -130,6 +130,8 @@ export function parseTokenBeat(raw: string, action = ''): TokenBeat | null {
     const asked = speakers.filter((r) => `-${refSlug(action)}-`.includes(`-${r.id.split(':').pop()}-`));
     const soleSpeaker = speakers.length === 1 ? speakers[0]!.tok : asked.length === 1 ? asked[0]!.tok : '';
     const soleOther = !speakers.length && others.length === 1 ? others[0]!.tok : '';
+    // T10S — the player's own quoted words are never inferred onto the addressed NPC.
+    const pcQuoted = (extractPlayerQuotedSay(action) ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
     const lines: TokenLine[] = [];
     for (const { fn, text, speaker_tok: typed } of wire.lines) {
       // 28g/28h — skip echoed prompt placeholders (... @t1 ... or <placeholder>).
@@ -137,7 +139,21 @@ export function parseTokenBeat(raw: string, action = ''): TokenBeat | null {
       const prev = lines[lines.length - 1];
       const pcSpoke = !!prev && prev.fn !== 'speech' && PC_SPEAKS.test(prev.text);
       const untagged = fn === 'speech' && !namesDeclaredPerson(text, refs);
-      const inferred = untagged ? soleSpeaker || (pcSpoke ? '' : soleOther) : '';
+      const foldQ = (s: string) =>
+        s
+          .replace(/\s+/g, ' ')
+          .trim()
+          .toLowerCase()
+          .replace(/[\u2018\u2019]/g, "'")
+          .replace(/[.,;:!?]+$/g, '');
+      const bareSpeech = foldQ((text ?? '').replace(/^["\u201c]|["\u201d]$/g, ''));
+      const quotedSpans = [...(text ?? '').matchAll(/["\u201c]([^"\u201d]+)["\u201d]/g)].map((m) => foldQ(m[1] ?? ''));
+      const matchesPc = (q: string) =>
+        !!pcQuoted && q.length >= 6 && (pcQuoted === q || pcQuoted.includes(q) || q.includes(pcQuoted));
+      const isPcQuote =
+        matchesPc(bareSpeech) || quotedSpans.some(matchesPc) || npcHoldsPcQuote(text, action, null);
+      // Untagged PC quote keeps no speaker (PC owns it). Do not hand soleOther / addressed NPC the line.
+      const inferred = untagged && !isPcQuote ? soleSpeaker || (pcSpoke ? '' : soleOther) : '';
       // Words that name that person ("that Nell", "Rudd") are about them or to them, not theirs.
       const speaker = typed || (inferred && !namesRefPlainly(text, refs, inferred) ? inferred : '');
       const line: TokenLine = speaker ? { fn, text, speaker_tok: speaker } : { fn, text };
@@ -987,12 +1003,23 @@ const PREPOSITION_RE =
   /^(?:in|on|at|of|to|into|onto|from|with|without|by|for|over|under|through|across|past|toward|towards|behind|beside|near|against|around|between|along|inside|outside)$/i;
 const isDeterminerWord = (w: string) => DETERMINER_RE.test(w.replace(/['’]s$/i, '')) || /['’]s$/i.test(w);
 function hasDeterminerBefore(text: string, offset: number): boolean {
-  const before = text.slice(0, offset);
-  const clause = before.split(/[.,;:!?—–()"“”]/).pop() ?? '';
-  const near = clause.trim().split(/\s+/).filter(Boolean).slice(-3);
-  const cut = near.map((w) => PREPOSITION_RE.test(w)).lastIndexOf(true);
-  if (cut >= 0) return cut < near.length - 1;
-  return near.some(isDeterminerWord);
+  // T10S — only the word(s) immediately before the token count. "their faces while @tN"
+  // used to treat "their" as a determiner for @tN and drop the article on the prop.
+  const before = text.slice(0, offset).trimEnd();
+  const words = before.split(/\s+/).filter(Boolean);
+  if (!words.length) return false;
+  const last = words[words.length - 1]!;
+  if (isDeterminerWord(last)) return true;
+  // "the old @tN" / "a small @tN" — one adjective between determiner and token.
+  if (
+    words.length >= 2
+    && isDeterminerWord(words[words.length - 2]!)
+    && /^[a-z][a-z'-]*$/i.test(last)
+    && !PREPOSITION_RE.test(last)
+  ) {
+    return true;
+  }
+  return false;
 }
 function paintDisplay(row: { display: string; klass?: string }, text: string, offset: number, possessive: string): string {
   const display = row.display;
