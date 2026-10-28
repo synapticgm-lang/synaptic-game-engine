@@ -224,7 +224,7 @@ export { formatNpcMemoriesForPrompt } from './npcRecords';
 const KIND_ACT =
   /\b(help|heal|spare|thank|apologiz|give|share|comfort|protect|honest|kind|offer)\b/i;
 const HARD_ACT =
-  /\b(threaten|refuse|insult|steal|demand|lie|attack|intimidate|shove|rob)\b/i;
+  /\b(threaten|refuse|insult|steal|demand|lie|attack|intimidate|shove|rob|grab|shake|yank)\b/i;
 const CURIOUS_ACT =
   /\b(ask|talk|speak|bargain|negotiat|listen|chat|hang out)\b/i;
 const WALK_ACT =
@@ -232,7 +232,7 @@ const WALK_ACT =
 
 const FREE_ACT =
   /\b(free|release|unlock|untie|unchain|unshackle|rescue|cut (?:\w+ )?loose|break (?:\w+ )?out)\b/i;
-const HARM_ACT = /\b(attack|steal|shove|rob|stab|strike|hit|punch|kick|kill|betray|sell (?:\w+ )?out)\b/i;
+const HARM_ACT = /\b(attack|steal|shove|rob|stab|strike|hit|punch|kick|kill|betray|sell (?:\w+ )?out|grab|shake|yank)\b/i;
 const THREAT_ACT = /\b(threaten|intimidate|demand)\b/i;
 
 /** What the player's action does to the person it targets, for stance: the same verb classes as treatment. */
@@ -265,9 +265,26 @@ function findTargetNpc(memories: NpcMemory[], action: string, presentNames: stri
       }));
   const named = pool.find((m) => hay.includes(m.npcName.toLowerCase()));
   if (named) return named;
+  // T10Z — "grab Sefa's arm" / "shove past Sefa" must hit Sefa Aske (token, not only full name).
+  for (const m of pool) {
+    const parts = m.npcName.toLowerCase().split(/[\s'’-]+/).filter((t) => t.length >= 3);
+    if (parts.some((t) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay))) return m;
+  }
+  for (const p of presentNames) {
+    const pl = p.toLowerCase();
+    if (pl.length >= 3 && new RegExp(`\\b${pl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay)) {
+      return pool.find((m) => m.npcName.toLowerCase() === pl) ?? {
+        npcId: pl,
+        npcName: p,
+        disposition: 'unknown' as const,
+        facts: [] as string[],
+        lastSeenTurn: 0,
+      };
+    }
+  }
   const present = presentNames[0]?.toLowerCase();
   if (present) return pool.find((m) => m.npcName.toLowerCase() === present);
-  return pool[0];
+  return undefined;
 }
 
 /**
@@ -318,6 +335,54 @@ export function recordNpcTreatmentFromAction(
   return Array.from(map.values())
     .sort((a, b) => b.lastSeenTurn - a.lastSeenTurn)
     .slice(0, MAX_NPC_MEMORIES);
+}
+
+/**
+ * T10Z — hard treatment of someone present: they refuse / walk off (engine fact).
+ * Roughing up a present NPC must change the scene (disposition already hostile via
+ * recordNpcTreatmentFromAction); leaving clears present so the road can move on.
+ * SRD 5.2.1 Communicating / social interaction — Hostile attitude; they will not stay to be grabbed.
+ */
+export function applyHostilePresentLeave(
+  state: GameState,
+  playerAction: string,
+): { state: GameState; receipts: string[] } {
+  const treatment = treatmentLabel(playerAction);
+  if (treatment !== 'hard') return { state, receipts: [] };
+  const present = (state.sceneFacts?.present ?? []).filter((n) => n.trim().length > 1);
+  const companions = (state.companions ?? []).map((c) => c.name).filter(Boolean) as string[];
+  const pool = [...present, ...companions];
+  if (!pool.length) return { state, receipts: [] };
+  const target = findTargetNpc(state.npcMemories ?? [], playerAction, pool);
+  if (!target) return { state, receipts: [] };
+  const here = pool.some(
+    (p) =>
+      p.toLowerCase() === target.npcName.toLowerCase()
+      || p.toLowerCase().includes(target.npcName.toLowerCase().split(/\s+/)[0]!)
+      || target.npcName.toLowerCase().includes(p.toLowerCase()),
+  );
+  if (!here) return { state, receipts: [] };
+  const drop = target.npcName.toLowerCase();
+  const nextPresent = present.filter((p) => {
+    const pl = p.toLowerCase();
+    return pl !== drop && !pl.includes(drop.split(/\s+/)[0]!) && !drop.includes(pl);
+  });
+  const base = state.sceneFacts ?? {
+    crowd: 'unknown' as const,
+    noise: 'unknown' as const,
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: state.turn ?? 0,
+  };
+  const receipt = `${target.npcName} pulls away and will not stay to be handled.`;
+  return {
+    state: {
+      ...state,
+      sceneFacts: { ...base, present: nextPresent, updatedTurn: state.turn ?? 0 },
+    },
+    receipts: [receipt],
+  };
 }
 
 function uniqueTopics(topics: string[]): string[] {

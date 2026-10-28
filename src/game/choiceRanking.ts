@@ -33,7 +33,7 @@ export type { CirclingMemory } from './types';
 const REST_TURNS = 4;
 const STUCK_TURNS = 3;
 
-const PROGRESS_RECEIPT = /^(?:XP Gained|Loot:|Gold Gained|Quest|Fight: VICTORY|Parley check:.*success|Dungeon: (?:you moved|you opened|you found|search of .*you found (?!nothing))|Dungeon: .* is cleared|Nudge:)/i;
+const PROGRESS_RECEIPT = /^(?:XP Gained|Loot:|Gold Gained|Quest|Fight: VICTORY|Parley check:.*success|Dungeon: (?:you moved|you opened|you found|search of .*you found (?!nothing))|Dungeon: .* is cleared|Nudge:|.+ pulls away)/i;
 
 /** 29z1 — what a person-facing change looks like on the ledger: memories, answered facts, topics, standing. */
 function socialSignature(state: GameState): string {

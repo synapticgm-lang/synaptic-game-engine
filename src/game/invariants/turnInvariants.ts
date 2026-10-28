@@ -61,6 +61,12 @@ export function checkTurnInvariants(
   const moved =
     (before.currentLocation ?? '') !== (after.currentLocation ?? '')
     || (!!before.journey && !!after.journey && (after.journey.legsDone ?? 0) > (before.journey.legsDone ?? 0));
+  // T10Z — flee / combat fall-back relocates the PC while travelPadBlocked; that is encounter
+  // resolution, not a travel pad being honoured (s9301 T81 Try to flee → Stair Descent).
+  const combatRelocate =
+    /\b(?:try to )?flee\b|\bdisengage\b|\brun away\b|\bescape\b|\bretreat\b/i.test(input)
+    || (!!before.activeEncounter && !after.activeEncounter && moved
+      && !isTravelPad(input) && classifyEdgeType(input) !== 'travel');
 
   // (1) no travel offered or honoured when travelPadBlocked
   if (blocked) {
@@ -70,7 +76,7 @@ export function checkTurnInvariants(
         out.push({ code: 'travel-blocked', severity: 'P0', detail: `travel option offered while travelPadBlocked: "${label}"` });
       }
     }
-    if (moved) {
+    if (moved && !combatRelocate) {
       out.push({ code: 'travel-blocked', severity: 'P0', detail: 'travel honoured while travelPadBlocked (location or journey advanced)' });
     }
   }

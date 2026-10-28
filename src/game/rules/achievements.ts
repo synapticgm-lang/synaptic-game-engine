@@ -68,7 +68,13 @@ export const REWARD_BOX_ID = 'reward-box:';
 const OPENED_BOX_KEY = 'opened:';
 
 export function boxName(tier: BoxTier): string {
+  // Inventory / STATUS may still show the tier; chip + writer prose use plain "reward box" (T10Z).
   return `${tier} Reward Box`;
+}
+
+/** Player chip: plain object label (tier lowercase) — not Title-Case System chrome (T10Z). */
+export function openBoxChip(tier: BoxTier): string {
+  return `Open the ${tier.toLowerCase()} reward box`;
 }
 
 export function rewardBoxItem(a: AchievementDef): Item {
@@ -179,10 +185,6 @@ export function settleTitleChoice(state: GameState, input: string): SystemSettle
   };
 }
 
-export function openBoxChip(tier: BoxTier): string {
-  return `Open the ${boxName(tier)}`;
-}
-
 /** Boxes waiting to be opened, one chip per tier. Opened / already-looted boxes are gone. */
 export function rewardBoxesHeld(state: GameState): Item[] {
   const keys = state.sandboxAwardKeys ?? [];
@@ -228,13 +230,14 @@ export function settleRewardBox(state: GameState, input: string): SystemSettle {
     new Set([...(state.sandboxAwardKeys ?? []), boxOpenedKey(box.id), `${BOX_KEY}${box.id.slice(REWARD_BOX_ID.length)}`])
   );
   const got = loot.items.map((i) => `[${i.rarity}] ${i.name}`);
+  // Writer fact: plain nouns (T10Z) — STATUS receipt keeps rarity tags + box id.
   const plain = loot.items.map((i) => `${i.name} (${i.rarity})`);
   return {
     state: { ...state, inventory, sandboxAwardKeys },
     receipts: [got.length ? `Loot: ${got.join(', ')} (${box.name})` : `Loot: the ${box.name} was empty`],
     fact: got.length
-      ? `The player opened the ${box.name}: ${plain.join(', ')}.`
-      : `The player opened the ${box.name}; it was empty.`,
+      ? `The player opened the reward box: ${plain.join(', ')}.`
+      : `The player opened the reward box; it was empty.`,
     settled: true,
   };
 }

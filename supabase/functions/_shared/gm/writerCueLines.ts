@@ -11,6 +11,7 @@
  */
 
 import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority.ts';
+import { plainItemChromeInText } from './proseItemName.ts';
 
 /** Chrome that must never appear on the player book. */
 export const WRITER_CUE_CHROME =
@@ -21,7 +22,8 @@ export function hasWriterCueChrome(text: string): boolean {
 }
 
 export function mustNarrateCue(clause: string): string {
-  return `Must narrate: ${clause}.`;
+  // T10Z — Fine Pistol / Bronze Reward Box never reach the writer as Title-Case system nouns.
+  return `Must narrate: ${plainItemChromeInText(clause)}.`;
 }
 
 export function pcSaysExactlyCue(said: string): string {
@@ -315,7 +317,7 @@ export function plainFromWriterCueSentence(
   const who = (subject ?? '').trim() || 'They';
 
   if (body.startsWith('Must narrate:')) {
-    const clause = body.slice('Must narrate:'.length).trim();
+    const clause = plainItemChromeInText(body.slice('Must narrate:'.length).trim());
     return { cue: true, plain: clauseToThirdPerson(clause, who) };
   }
   if (/^The story must show this act$/i.test(body)) return { cue: true, plain: '' };

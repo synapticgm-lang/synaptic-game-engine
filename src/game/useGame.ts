@@ -250,6 +250,7 @@ import {
   applyNpcExitToPresent,
   applySocialLedgerTurn,
   mergeNpcMemoriesFromTurn,
+  applyHostilePresentLeave,
   recordNpcTreatmentFromAction,
 } from './npcMemory';
 import { shareTreatmentWithWitnesses } from './npcCrossIntegration';
@@ -4157,6 +4158,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         npcMemoriesTreated
       );
       const npcMemories = witnessShare.npcMemories;
+      // T10Z — hard handling of someone present: they pull away (scene must respond).
+      const hostileLeave = applyHostilePresentLeave(
+        { ...workingState, npcMemories },
+        sanitizedInput,
+      );
+      workingState = hostileLeave.state;
+      for (const r of hostileLeave.receipts) {
+        if (r && !mergedSystemLog.includes(r)) mergedSystemLog.push(r);
+      }
       const resolvedLocation =
         workingState.currentLocation ??
         updates.currentLocation ??

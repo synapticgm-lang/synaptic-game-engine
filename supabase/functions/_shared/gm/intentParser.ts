@@ -994,6 +994,7 @@ function pickFromPool(clause: string, pool: string[]): string | null {
   let best: string | null = null;
   let bestIdx = Infinity;
   const article = new Set(['the', 'a', 'an']);
+  const raw = clause ?? '';
   for (const name of pool) {
     const n = low(name);
     if (n.length < 2) continue;
@@ -1005,17 +1006,25 @@ function pickFromPool(clause: string, pool: string[]): string | null {
     }
     // Prefer a contentful token (not an article) so "the priest" does not match every "the …".
     // T10V — "ask the priest" must hit cast "Ash Court priests" (singular ↔ plural role noun).
+    // T10Z — proper-name fragments (Quill) only when the player wrote them capitalised — lowercase
+    // "quill" (the pen) must not steal Captain Sera Quill's addressee slot.
+    const nameParts = name.split(/\s+/);
     const tokens = n.split(/\s+/).filter((w) => w.length > 2 && !article.has(w));
     for (const tok of tokens) {
+      const poolTok = nameParts.find((w) => low(w) === tok) ?? tok;
+      const properFrag = /^[A-ZÀ-ÖØ-Þ]/.test(poolTok);
       const forms = [tok];
       if (/ies$/i.test(tok) && tok.length > 4) forms.push(tok.replace(/ies$/i, 'y'));
       else if (/s$/i.test(tok) && !/ss$/i.test(tok) && tok.length > 3) forms.push(tok.replace(/s$/i, ''));
       for (const form of forms) {
         const j = wordHit(clause, form);
-        if (j >= 0 && j < bestIdx) {
-          best = name;
-          bestIdx = j;
+        if (j < 0 || j >= bestIdx) continue;
+        if (properFrag) {
+          const span = raw.slice(j, j + form.length);
+          if (!span || !/^[A-ZÀ-ÖØ-Þ]/.test(span)) continue;
         }
+        best = name;
+        bestIdx = j;
       }
     }
   }
@@ -1310,8 +1319,25 @@ export function parsePlayerSteps(
       target = peopleHit ?? pickFromPool(clause, ctx.items) ?? pickFromPool(clause, ctx.places);
       if (peopleHit) addressee = peopleHit;
     } else {
-      addressee = peopleHit;
-      target = peopleHit;
+      // T10Z — physical/other: a held item noun wins over a surname collision ("quill" ≠ Quill).
+      const itemHit = !speechLike ? pickFromPool(clause, ctx.items) : null;
+      if (itemHit && !peopleHit) {
+        target = itemHit;
+        addressee = null;
+      } else if (itemHit && peopleHit) {
+        const itemAt = wordHit(clause, itemHit);
+        const personAt = wordHit(clause, peopleHit);
+        if (itemAt >= 0 && (personAt < 0 || itemAt <= personAt)) {
+          target = itemHit;
+          addressee = null;
+        } else {
+          addressee = peopleHit;
+          target = peopleHit;
+        }
+      } else {
+        addressee = peopleHit;
+        target = peopleHit;
+      }
     }
     if (deal && !addressee) addressee = peopleHit;
     if (say && !addressee) addressee = peopleHit;
