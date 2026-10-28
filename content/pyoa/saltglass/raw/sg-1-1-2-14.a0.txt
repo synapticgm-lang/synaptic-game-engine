@@ -1,0 +1,71 @@
+Gemini said
+
+@@SECTION sg-1-1-2-14
+TITLE: The Salt-Boiler's Chimney
+TEXT: Salt-encrusted hummocks rise around a crooked brick chimney that barely clears the blinding white drifts of the basin floor. Pell points his knuckle toward the soot-stained opening where a fugitive hermit once boiled brine for tax-free crystals. The baked earth here smells faintly of sulfur and stale wood-ash, a lonely marker left behind by men who tried to cheat the toll-lords. // Your boots crunch against the brittle ground while you weigh whether to press deeper into the glare or seek a moment's shelter near the ruin.
+EXIT 1: Let Pell clear the rime from your eyes
+EXIT 2: Step toward the dry stone wall and wild capers
+@@END
+
+@@SECTION sg-1-1-2-15
+TITLE: The Narrow Silt-Banks
+TEXT: Towering ramparts of wind-piled silt close in on either side, pinching the cart-track until it becomes a narrow trench of grey dust and shadow. You walk boot-to-boot with Pell, the two of you kicking up fine clouds of alkaline powder that cling to your woolen trousers. The silence between the high banks feels heavy and enclosed, smelling of ancient dust and sun-baked clay. // A sudden hush falls over the trench as the wind dies completely, leaving only the sound of your own measured breathing.
+EXIT 1: Listen to the singing glass vibrate in the stillness
+@@END
+
+@@SECTION sg-1-1-3-0
+TITLE: The Lime-Kiln Tale
+TEXT: Crumbling white stone forms the hollow shell of an old lime-kiln, its interior stained by centuries of intense heat. Beside the ruined hearth, Pell spins a low-voiced yarn about the Salt Court enforcers who once patrolled these flats demanding molar teeth as collateral for unpaid extraction taxes. The dry air seems to tighten around his words, carrying the ghost-scent of wood smoke and old terror. // Shadows lengthen across the lime-floor, reminding you that the open basin grows unforgiving once the sun dips.
+EXIT 1: Douse the lantern before the ridge-sentries spot you
+EXIT 2: Crouch behind the stacked slate windbreak to think
+EXIT 3: Reach for your tinder-box in the gathering gloom
+@@END
+
+@@SECTION sg-1-1-3-1
+TITLE: The Wheel-Wright's Shack
+TEXT: Weather-beated timber planks lean together at drunken angles to form the skeletal shell of an abandoned wheel-wright's shed. Inside the meager patch of shade, you shrug off your heavy traveling sack to adjust the chafing leather straps across your sore shoulders. Fine salt dust coats the floorboards like drifted snow, undisturbed save for the tracks of desert beetles. // The open basin glares just beyond the doorway, daring you to take the next punishing step into the light.
+EXIT 1: Extinguish the lantern coals before the glass-sentries watch
+@@END
+
+@@SECTION sg-1-1-3-2
+TITLE: The Rider's Passage
+TEXT: Hoofbeats thud against the hardpan just beyond the fence-line, sending a sharp flutter of panic through your ribs. You drop low behind a stacked pile of weathered fence-hurdles, pulling your woolen cloak tight to hide the dull brass of your ember-lamp. Three Salt Court riders trot past on long-legged desert ponies, their brass breastplates flashing cruel amber reflections in the harsh midday glare. // Dust settles slowly over the dry brush once their rhythmic clatter fades into the vast distance.
+EXIT 2: Debate the coming dusk behind the slate windbreak
+EXIT 3: Let Pell tap your lantern casing with a warning
+@@END
+
+@@SECTION sg-1-1-3-3
+TITLE: The Copper Eyelet
+TEXT: Sunlight glints off a tiny scrap of metal half-buried in the alkaline dust near the path. Pell stoops with a practiced creak of his leather jerkin, plucking a small copper shoe-eyelet dropped by some forgotten runner before you. He pockets the trinket with a cynical wink, muttering that every bit of salvage tells a story of someone who walked too fast or packed too light. // The vast white flats stretch onward under an unyielding sky, silent and indifferent to small gains.
+EXIT 1: Crouch behind the stacked slate to check your gear
+EXIT 2: Prepare your tinder-box as the cold evening draft rises
+@@END
+
+@@SECTION sg-1-1-3-4
+TITLE: The Startled Kestrel
+TEXT: Walking entirely alone through the blistering silence, you jump as a brown kestrel erupts from a hollow fence-post with a sharp cry. Its wings beat furiously against the dry air before it catches a thermal and spirals up into the glaring blue dome of the sky. Your heart hammers against your ribs from the sudden shock, leaving you acutely aware of your own isolation on the rim. // The first pale violet shadows begin to stretch long and thin across the white salt.
+EXIT 1: Strike your tinder-box against the deepening evening chill
+EXIT 2: Watch the sand-grouse scatter into the dry gully
+@@END
+
+@@SECTION sg-1-1-3-5
+TITLE: The Tin Flask
+TEXT: Warm metal touches your cracked lips as you unscrew the tin flask and share a meager mouthful of lukewarm water with your guide. Pell wipes his mouth with the back of a calloused hand while his pale eyes sweep the shimmering white flats for mirage-tricks. The taste of tin and flat well-water does little to quench the salt-thirst coating your tongue, but it steadies your legs for the miles ahead. // The horizon wavers and bends under layers of superheated air, blurring the line between salt-crust and sky.
+EXIT 1: Hide your lantern light from the glass-sentries above
+EXIT 2: Reach for your tinder-box as the cold draft stirs
+@@END
+
+@@SECTION sg-1-1-3-6
+TITLE: The Court Decree
+TEXT: A warped plank of cedar nailed to a weathered fence-rail bears the deep-burned brand of the Salt Court, warning all travelers that every dry well within the basin belongs by decree to the toll-lords. The faded words read like a threat carved into wood, reminding you that water here is a crime unless bought with silver or blood. // The track forks ahead, offering a chance to retrace your steps or plunge deeper into the forbidden flats.
+EXIT 1: Reach for your tinder-box as the evening draft rises
+EXIT 2: Listen to Pell tap the iron casing of your lantern
+EXIT 3: Turn back toward the gate-warden and leave the basin
+@@END
+
+@@SECTION sg-1-1-3-7
+TITLE: The Iron Staff
+TEXT: Dust devils spin lazy spirals across the abandoned cart-track while Pell uses his heavy iron-shod staff to test the crust of a suspicious sinkhole yawning nearby. The wood-and-iron pole punches through the hollow crust with a brittle snap, revealing a dark drop where ancient brine once pooled beneath the salt. He steps back with a dry whistle, shaking dust from the iron tip. // The path ahead requires wary footing and a sharp eye for hidden traps in the white expanse.
+EXIT 1: heed Pell's warning about well-thieves and mirror-sentries
+EXIT 2: Check your flint and steel at the trackless crossroads
+@@END

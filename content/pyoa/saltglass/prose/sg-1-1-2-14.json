@@ -1,0 +1,87 @@
+{
+ "batch": "sg-1-1-2-14",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-1-1-2-14": {
+   "title": "The Salt-Boiler's Chimney",
+   "text": "Salt-encrusted hummocks rise around a crooked brick chimney that barely clears the blinding white drifts of the basin floor. Pell points his knuckle toward the soot-stained opening where a fugitive hermit once boiled brine for tax-free crystals. The baked earth here smells faintly of sulfur and stale wood-ash, a lonely marker left behind by men who tried to cheat the toll-lords.\n\nYour boots crunch against the brittle ground while you weigh whether to press deeper into the glare or seek a moment's shelter near the ruin.",
+   "exits": [
+    "Let Pell clear the rime from your eyes",
+    "Step toward the dry stone wall and wild capers"
+   ]
+  },
+  "sg-1-1-2-15": {
+   "title": "The Narrow Silt-Banks",
+   "text": "Towering ramparts of wind-piled silt close in on either side, pinching the cart-track until it becomes a narrow trench of grey dust and shadow. You walk boot-to-boot with Pell, the two of you kicking up fine clouds of alkaline powder that cling to your woolen trousers. The silence between the high banks feels heavy and enclosed, smelling of ancient dust and sun-baked clay.\n\nA sudden hush falls over the trench as the wind dies completely, leaving only the sound of your own measured breathing.",
+   "exits": [
+    "Listen to the singing glass vibrate in the stillness"
+   ]
+  },
+  "sg-1-1-3-0": {
+   "title": "The Lime-Kiln Tale",
+   "text": "Crumbling white stone forms the hollow shell of an old lime-kiln, its interior stained by centuries of intense heat. Beside the ruined hearth, Pell spins a low-voiced yarn about the Salt Court enforcers who once patrolled these flats demanding molar teeth as collateral for unpaid extraction taxes. The dry air seems to tighten around his words, carrying the ghost-scent of wood smoke and old terror.\n\nShadows lengthen across the lime-floor, reminding you that the open basin grows unforgiving once the sun dips.",
+   "exits": [
+    "Douse the lantern before the ridge-sentries spot you",
+    "Crouch behind the stacked slate windbreak to think",
+    "Reach for your tinder-box in the gathering gloom"
+   ]
+  },
+  "sg-1-1-3-1": {
+   "title": "The Wheel-Wright's Shack",
+   "text": "Weather-beated timber planks lean together at drunken angles to form the skeletal shell of an abandoned wheel-wright's shed. Inside the meager patch of shade, you shrug off your heavy traveling sack to adjust the chafing leather straps across your sore shoulders. Fine salt dust coats the floorboards like drifted snow, undisturbed save for the tracks of desert beetles.\n\nThe open basin glares just beyond the doorway, daring you to take the next punishing step into the light.",
+   "exits": [
+    "Extinguish the lantern coals before the glass-sentries watch"
+   ]
+  },
+  "sg-1-1-3-2": {
+   "title": "The Salt Court Riders",
+   "text": "Three riders from the Salt Court trot past on long-legged desert ponies, their brass-trimmed saddles jingling rhythmically against the dry alkali wind. You duck flat behind a stacked pile of weathered fence-hurdles, holding your breath as the heavy scent of boiled mint and oiled leather drifts across the white dust. The lead rider pauses to adjust a silver-plated spyglass, scanning the jagged glass horizon where the Rim Road dips toward the dried seabed. Once the hoofbeats fade into the flat distance, you rise slowly from the grit, dusting off your wool tunic and weighing your next step along the whitening trail.",
+   "exits": [
+    "Slip away toward the slate ridge",
+    "Wait until full dusk before moving"
+   ]
+  },
+  "sg-1-1-3-3": {
+   "title": "The Copper Eyelet",
+   "text": "Sunlight glints off a tiny scrap of metal half-buried in the alkaline dust near the path. Pell stoops with a practiced creak of his leather jerkin, plucking a small copper shoe-eyelet dropped by some forgotten runner before you. He pockets the trinket with a cynical wink, muttering that every bit of salvage tells a story of someone who walked too fast or packed too light.\n\nThe vast white flats stretch onward under an unyielding sky, silent and indifferent to small gains.",
+   "exits": [
+    "Crouch behind the stacked slate to check your gear",
+    "Prepare your tinder-box as the cold evening draft rises"
+   ]
+  },
+  "sg-1-1-3-4": {
+   "title": "The Startled Kestrel",
+   "text": "Walking entirely alone through the blistering silence, you jump as a brown kestrel erupts from a hollow fence-post with a sharp cry. Its wings beat furiously against the dry air before it catches a thermal and spirals up into the glaring blue dome of the sky. Your heart hammers against your ribs from the sudden shock, leaving you acutely aware of your own isolation on the rim.\n\nThe first pale violet shadows begin to stretch long and thin across the white salt.",
+   "exits": [
+    "Strike your tinder-box against the deepening evening chill",
+    "Watch the sand-grouse scatter into the dry gully"
+   ]
+  },
+  "sg-1-1-3-5": {
+   "title": "The Tin Flask",
+   "text": "Warm metal touches your cracked lips as you unscrew the tin flask and share a meager mouthful of lukewarm water with your guide. Pell wipes his mouth with the back of a calloused hand while his pale eyes sweep the shimmering white flats for mirage-tricks. The taste of tin and flat well-water does little to quench the salt-thirst coating your tongue, but it steadies your legs for the miles ahead.\n\nThe horizon wavers and bends under layers of superheated air, blurring the line between salt-crust and sky.",
+   "exits": [
+    "Hide your lantern light from the glass-sentries above",
+    "Reach for your tinder-box as the cold draft stirs"
+   ]
+  },
+  "sg-1-1-3-6": {
+   "title": "The Court Decree",
+   "text": "A warped plank of cedar nailed to a weathered fence-rail bears the deep-burned brand of the Salt Court, warning all travelers that every dry well within the basin belongs by decree to the toll-lords. The faded words read like a threat carved into wood, reminding you that water here is a crime unless bought with silver or blood.\n\nThe track forks ahead, offering a chance to retrace your steps or plunge deeper into the forbidden flats.",
+   "exits": [
+    "Reach for your tinder-box as the evening draft rises",
+    "Listen to Pell tap the iron casing of your lantern",
+    "Turn back toward the gate-warden and leave the basin"
+   ]
+  },
+  "sg-1-1-3-7": {
+   "title": "The Iron Staff",
+   "text": "Dust devils spin lazy spirals across the abandoned cart-track while Pell uses his heavy iron-shod staff to test the crust of a suspicious sinkhole yawning nearby. The wood-and-iron pole punches through the hollow crust with a brittle snap, revealing a dark drop where ancient brine once pooled beneath the salt. He steps back with a dry whistle, shaking dust from the iron tip.\n\nThe path ahead requires wary footing and a sharp eye for hidden traps in the white expanse.",
+   "exits": [
+    "heed Pell's warning about well-thieves and mirror-sentries",
+    "Check your flint and steel at the trackless crossroads"
+   ]
+  }
+ },
+ "missing": []
+}

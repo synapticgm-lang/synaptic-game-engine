@@ -59,3 +59,7 @@
 2026-10-28T10:59:46.252Z ask prose sg-1-1-2-4..sg-1-1-2-13 items=10 attempt=0
 2026-10-28T11:00:15.028Z done sg-1-1-2-4: 10/10 model=Flash-Lite
 2026-10-28T11:00:15.030Z ask prose sg-1-1-2-14..sg-1-1-3-7 items=10 attempt=0
+2026-10-28T11:00:40.414Z   reject sg-1-1-3-2: exit 1 label
+2026-10-28T11:00:46.426Z ask prose sg-1-1-2-14..sg-1-1-3-7 items=1 attempt=1
+2026-10-28T11:01:14.716Z done sg-1-1-2-14: 10/10 model=Flash-Lite
+2026-10-28T11:01:14.717Z ask prose sg-1-1-3-8..sg-1-1-4-1 items=10 attempt=0
