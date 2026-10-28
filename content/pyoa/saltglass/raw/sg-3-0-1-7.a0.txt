@@ -1,0 +1,72 @@
+Gemini said
+
+@@SECTION sg-3-0-1-7
+TITLE: The Milky Quartz Plaza
+TEXT: Shard-dust grinds beneath your boots as you cross an open plaza where the skeletons of ancient trees are preserved entirely in milky quartz. The midday glare bounces off their translucent branches, casting distorted prisms across the cracked flagstones. You adjust the strap of your ember-lamp, feeling the dry heat radiate against your thigh as you weigh the various paths cutting through the silent ruins.
+EXIT 1: Approach the slate desk of the toll-clerk
+EXIT 2: Trade tobacco with the pale hide-map scavenger
+EXIT 3: Present your well-seal to the cautious gate-guard
+EXIT 4: Climb the dangling rope to the shattered balcony
+@@END
+
+@@SECTION sg-3-0-1-8
+TITLE: The Unburdened Maintenance Hatch
+TEXT: Recognizing your unburdened hands and untied debts, an old lens-grinder points out a hidden maintenance hatch that bypasses the toll-fort completely. You carry no heavy loans or creditor's marks upon your skin, leaving your movements entirely your own in this brittle labyrinth. The rusty iron ring of the hatch sits flush with the paving stones, offering an unmonitored drop into the cool sub-levels.
+EXIT 1: Slip behind the hanging copper workshop chains
+EXIT 2: Present your well-seal to the cautious gate-guard
+@@END
+
+@@SECTION sg-3-0-1-9
+TITLE: The Iron Portcullis
+TEXT: A heavy iron portcullis blocks the mouth of the sunken street, guarded by a bored Salt Court bailiff who polishes his brass knuckles with a rag. The metal spikes are coated in a fine layer of white salt crystals that flake off with every passing breeze. You pause before the barrier, watching the bailiff eye your travel-stained pack with professional disinterest.
+EXIT 2: Climb the dangling rope to the shattered balcony
+EXIT 1: Offer tobacco for the hide map
+@@END
+
+@@SECTION sg-3-0-2-0
+TITLE: The Vitrified Spire Stair
+TEXT: You climb a spiral stair of green vitrified brick that winds inside a hollow spire, emerging onto a narrow walkway overlooking a sea of jagged glass. The wind howls softly through the hollow tubes of the surrounding towers, making the entire structure hum with a low, melancholy resonance. Far below, the glittering streets stretch out toward the horizon like shattered mirrors.
+EXIT 1: Descend toward the headless bronze magistrate
+@@END
+
+@@SECTION sg-3-0-2-1
+TITLE: The Roasted Locust Cart
+TEXT: A dust-caked vendor named Vane sells roasted locusts from a bronze brazier, muttering about the strange lights dancing nightly over the central observatory. The scent of woodsmoke and salted insects hangs heavy in the stagnant air around his barrow. He glances at your gear with knowing fatigue while continuing to turn the skewers.
+EXIT 1: Follow your lantern glow to the hidden gear
+EXIT 2: Dodge the sudden shower of falling glass
+@@END
+
+@@SECTION sg-3-0-2-2
+TITLE: The Amethyst Tenement Fissure
+TEXT: You squeeze through a narrow fissure between two leaning glass tenements, feeling the sharp edges of amethyst panes pluck at your travel-worn tunic. The passage is dim and cool, shielded from the relentless glare of the desert sun by the sheer height of the leaning walls. Every movement must be deliberate to avoid snagging your pack or lantern on the razor-sharp quartz projections.
+EXIT 1: Let your lantern beam reveal the hidden bronze
+EXIT 2: Listen to the blind glass-blower's singing bowl
+@@END
+
+@@SECTION sg-3-0-2-3
+TITLE: The Scrap Mirror Handcart
+TEXT: A battered handcart laden with scrap mirrors blocks your route, its wooden wheels jammed tight with fused sand and sharp fragments of green bottle-glass. The tilted surfaces catch fragments of the blinding daylight, throwing fractured flashes of yellow and white across the walls of the nearby ruins. Clearing a path will require careful hands and steady patience.
+EXIT 1: Use your lantern light to uncover the bronze
+EXIT 2: Duck beneath the collapsing upper balcony
+@@END
+
+@@SECTION sg-3-0-2-4
+TITLE: The Cobalt Mosaic Court
+TEXT: You cross a courtyard paved with mosaic tiles of blue cobalt glass that ring like tiny bells under the rhythmic crunch of your heavy boots. The deep azure pattern depicts rolling waves from an era long before the sea dried into salt and fused shards. The open space offers little cover from the piercing sky, urging you toward the shadowed archways on the far side.
+EXIT 1: Seek the blind glass-blower by the brazier
+EXIT 2: Avoid the chained desert hound in the courtyard
+@@END
+
+@@SECTION sg-3-0-2-5
+TITLE: The Dripping Bronze Pipe
+TEXT: A hollow bronze pipe extends from a ruined facade, leaking a steady drip of lukewarm, mineral-heavy water into a chipped stone basin below. The rhythmic plop-plop echoes off the surrounding stone walls like a mockery of the coming monsoon. You cup your hand beneath the meager stream to test its temperature and taste before deciding your next direction.
+EXIT 1: Cross the polished obsidian threshold into the dome
+EXIT 2: Watch the Salt Court tax-collectors by the fountain
+@@END
+
+@@SECTION sg-3-0-2-6
+TITLE: The Glass-Marble Children
+TEXT: A group of children toss polished glass marbles against a leaning wall, pausing their game to stare at the faint orange glow of your hidden lantern. Their faces are smeared with white basin-dust, and their clothes are patched from coarse canvas and salvaged sacking. They whisper among themselves, curious about a traveler carrying fire through the daylight.
+EXIT 1: Pass the tax-collectors drinking by the fountain
+EXIT 2: Squeeze through the jagged weaver's loft window
+@@END
