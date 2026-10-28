@@ -49,12 +49,25 @@ export function isGenericBridgeNarrative(narrative: string): boolean {
   return false;
 }
 
-/** The player spoke to someone: an ask of a nearby person, a talk intent, or a spoken protest. */
+/** The player spoke to someone: an ask of a nearby person, a talk intent, or an explicit speech act. */
 export function isTalkTurn(playerAction: string, intent: PlayerIntent): boolean {
   if (isAskNearbyPerson(playerAction)) return true;
   // 28g — "Wait" / "Ready yourself and watch" are not speech even when the parser tags them as talk.
   const quietAction = /^(?:wait|hold|rest|pause|stay|ready|watch|keep watch)\b/i.test(primaryActionClause(playerAction).trim());
-  return !quietAction && (intent.kind === 'talk' || isSpeechOrProtest(playerAction));
+  if (quietAction) return false;
+  if (intent.kind === 'talk') return true;
+  // T10V — explicit speech only. The broad isSpeechOrProtest "I …" heuristic treated physical
+  // acts (flick / lean / toss) as talk and dumped a motive quote ("she'd said") onto the page.
+  const line = (playerAction ?? '').replace(/\s+/g, ' ').trim();
+  if (/["\u201c]/.test(line)) return true;
+  if (
+    /\b(?:ask|tell|say|said|talk(?:\s+to)?|speak(?:\s+to)?|shout(?:ing)?|yell(?:ing)?|whisper(?:ing)?|call(?:ing)?\s+out|greet(?:ing)?)\b/i.test(
+      line,
+    )
+  ) {
+    return true;
+  }
+  return false;
 }
 
 /**

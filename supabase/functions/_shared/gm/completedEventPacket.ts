@@ -208,7 +208,9 @@ export interface CompletedEventPacket {
    */
   factSheet?: FactSheet;
 }
-const LEDGER_READ_ACTION = /\bpanel\b|\bcheck status\b|^(?:read the device|look inward|ask the world|reach into the pocket)$/i;
+// T10V — "Ping the System for bearings" is a ledger read (System answers with its plate), not an empty room act.
+const LEDGER_READ_ACTION =
+  /\bpanel\b|\bcheck status\b|\bping(?:\s+the)?\s+system\b|\bsystem\b[\s\S]{0,48}\bbearings\b|^(?:read the device|look inward|ask the world|reach into the pocket|ping the system(?:\s+for\s+bearings)?)$/i;
 /** The one test for "the player read the ledger": the packet and the System window both ask it. */
 export function isLedgerReadAction(action: string): boolean {
   return LEDGER_READ_ACTION.test((action ?? '').trim());

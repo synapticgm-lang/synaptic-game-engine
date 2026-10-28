@@ -7,6 +7,8 @@ import {
   fallbackSuggestionForState,
 } from './suggestionValidation.ts';
 import { isSystemStatusChip } from './systemHousing.ts';
+import { isAggregatePersonToken } from './chromeAuthority.ts';
+import { openingCastLabel } from './openingEstablishment.ts';
 import { presentNpcRecords } from './npcRecords.ts';
 import { isJourneyUnderway } from './travelJourney.ts';
 
@@ -477,9 +479,19 @@ export function sheetContextFromState(state?: GameState | null): IntentSheetCont
   // T10G/T10P: listen pool = who is actually here. presentNpcRecords owns road trim
   // (drops inn cast while travelling). sceneFacts.present strings still join when NOT on the
   // road so a cast stamp without a memory row (Vessa) still listens — but never while underway.
+  // T10V — opening card cast (e.g. Ash Court priests / "the priests in this hall") stays in the
+  // listen pool while still HERE so "ask the priest" resolves when harvest left only bystanders.
+  const openingCast = (() => {
+    if (isJourneyUnderway(state) || state.openingEstablishment?.aloneArrival === true) return [] as string[];
+    const label = openingCastLabel(state).replace(/\s+/g, ' ').trim();
+    if (!label || isAggregatePersonToken(label)) return [] as string[];
+    if (/^(?:the panel|the people who pulled you|the people here)$/i.test(label)) return [] as string[];
+    return [label];
+  })();
   const present = [
     ...presentNpcRecords(state).map((m) => m.npcName).filter(Boolean),
     ...(isJourneyUnderway(state) ? [] : state.sceneFacts?.present ?? []),
+    ...openingCast,
     ...(state.activeEncounter?.name ? [state.activeEncounter.name] : []),
   ].filter(Boolean) as string[];
   const people = [
@@ -694,6 +706,14 @@ export function stripUnauthorizedNpcSpeech(
   const slotFold = slotWho ? foldSpeech(slotWho) : '';
 
   const bare = (t: string) => foldSpeech(t).replace(/[.,;:!?]+$/g, '');
+  // T10V — a crowd / "people here" slot is not a single speaker: any person may answer.
+  // Empty-scene "No one present" still drops invented NPC quotes; absence for a named miss does too.
+  const slotIsCrowd =
+    !!slotWho
+    && (isAggregatePersonToken(slotWho)
+      || /^(?:the\s+)?people here$/i.test(slotWho)
+      || /^(?:the\s+)?people who pulled you$/i.test(slotWho));
+  const emptySceneAbsence = noSlot && /empty scene/i.test(fact);
   const drop = (speaker: string, quote: string): boolean => {
     if (isPcSpeaker(speaker, pcFirst)) return false;
     const q = bare(quote);
@@ -702,8 +722,19 @@ export function stripUnauthorizedNpcSpeech(
     if (action.length >= 4 && (bare(action) === q || q === bare(action))) return true;
     // Fragment of the player's own text (not their deliberate quoted say — that goes to givePcTheirQuote).
     if (!pcSaid && q.length >= 6 && bare(action).includes(q)) return true;
-    if (noSlot) return true;
-    if (slotFold) {
+    if (emptySceneAbsence) return true;
+    if (noSlot && !slotIsCrowd) {
+      // Named addressee absent: drop only that person's invented line, keep other present speakers.
+      const sp = foldSpeech(speaker);
+      const absent = fact.match(/Speech event:\s*you address\s+([^.]+)/i)?.[1]?.trim() ?? '';
+      if (absent) {
+        const af = foldSpeech(absent);
+        if (sp === af || af.includes(sp) || sp.includes(af)) return true;
+        return false;
+      }
+      return true;
+    }
+    if (slotFold && !slotIsCrowd) {
       const sp = foldSpeech(speaker);
       if (sp !== slotFold && !slotFold.includes(sp) && !sp.includes(slotFold)) return true;
     }
@@ -967,12 +998,18 @@ function pickFromPool(clause: string, pool: string[]): string | null {
       continue;
     }
     // Prefer a contentful token (not an article) so "the priest" does not match every "the …".
+    // T10V — "ask the priest" must hit cast "Ash Court priests" (singular ↔ plural role noun).
     const tokens = n.split(/\s+/).filter((w) => w.length > 2 && !article.has(w));
     for (const tok of tokens) {
-      const j = wordHit(clause, tok);
-      if (j >= 0 && j < bestIdx) {
-        best = name;
-        bestIdx = j;
+      const forms = [tok];
+      if (/ies$/i.test(tok) && tok.length > 4) forms.push(tok.replace(/ies$/i, 'y'));
+      else if (/s$/i.test(tok) && !/ss$/i.test(tok) && tok.length > 3) forms.push(tok.replace(/s$/i, ''));
+      for (const form of forms) {
+        const j = wordHit(clause, form);
+        if (j >= 0 && j < bestIdx) {
+          best = name;
+          bestIdx = j;
+        }
       }
     }
   }

@@ -32,6 +32,8 @@ import {
   resolveParleyAttempt,
   resolveStealAttempt,
 } from './stealParley';
+import { isLedgerReadAction } from './completedEventPacket';
+import { ledgerChangeFact, ledgerReadChanges, ledgerSheetLine } from './litrpgSystemWindow';
 import { buildClauseWriterFact } from './writerCueLines';
 
 export type TypedFreeTextResult = {
@@ -319,6 +321,30 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
   const bonusOk = bonusActionGranted(state);
   let live = state;
   const hostile = hostileParleyContext(live);
+
+  // T10V — System ping / panel read: the engine's plate answers (location, mark, quest track).
+  // Free text is never rejected; the readout is code-owned, not a writer "nothing happened".
+  if (isLedgerReadAction(raw) && ledgerSheetLine(state)) {
+    const changes = ledgerReadChanges(state);
+    const fact = `${ledgerChangeFact(changes)} System readout: ${ledgerSheetLine(state)}`;
+    const one: StepResolution = {
+      tried: raw.slice(0, 80),
+      done: true,
+      reason: 'system readout',
+      engineResult: fact,
+      economySlot: 'action',
+    };
+    return {
+      receipts: [`done: system readout`],
+      facts: [fact],
+      engineResult: fact,
+      intentRead,
+      stepResults: [one],
+      lastAddressee,
+      economyUsed: economy,
+      state: live,
+    };
+  }
 
   // Fight path with no reader steps yet: still never reject — whole line through round resolver.
   // M6: steal / parley still resolve as engine actions even with an empty reader cut.
