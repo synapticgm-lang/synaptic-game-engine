@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION sg-3-2-3-1
+TITLE: Echoes of the Amphitheatre
+TEXT: Sound rebounds inside the vast hollow bowl of the ruined theatre until your own boots steps multiply into a jeering crowd. Ghostly murmurs drift from empty tiers of fused silicate, mocking your haste and blurring every route forward. You clutch your heavy ember-lamp closer as the air vibrates with false directions.
+EXIT 1: Press toward the sheer outer boundary wall
+EXIT 2: Follow the dim shadow into the narrow alley
+EXIT 3: Climb the spiralling ramp of translucent slag
+@@END
+@@SECTION sg-3-2-3-2
+TITLE: The Iron Span
+TEXT: Heavy rusted chains stretch taut across the yawning drop between two shattered glass spires, humming with the dry desert draft. You inch your boots forward one agonizing span at a time, balancing your weight against the swaying metal while the salt basin glares far below.
+EXIT 1: Slip down toward the weaving shadow of the alley
+EXIT 2: Ascend the spiralling ramp of translucent slag
+EXIT 3: Step onto the humming sky-bridge of ribbed crystal
+@@END
+@@SECTION sg-3-2-3-3
+TITLE: Prism Canopy
+TEXT: A sudden blinding flash from a distant Glasswright signal tower splits the air above, forcing you to dive headfirst into a dark stone alcove beneath dangling clusters of hanging prisms. The brilliant flare paints the jagged shards in brief, searing colors before fading back into the gray salt haze.
+EXIT 1: Face the sheer wall of fused window-panes ahead
+EXIT 2: Seek the lane hidden by the dying signal-lamp
+@@END
+@@SECTION sg-3-2-3-4
+TITLE: The Mercury Vats
+TEXT: Low vats of frozen, silver-bright mercury bubble with sluggish heat, releasing metallic fumes that make your temples throb. You press a cloth against your face and move cautiously among the toxic pools, searching every dim corner for a clean draft of air.
+EXIT 1: Head toward the towering wall of fused window-panes
+EXIT 2: Scale the spiralling ramp of translucent slag
+@@END
+@@SECTION sg-3-2-3-5
+TITLE: The Sliding Slope
+TEXT: Loose salt and tiny, rounded glass beads give way beneath your boots with every exhausting upward stride you take. You slide backward an inch for every two you gain, your muscles burning as you fight for purchase on the shifting incline.
+EXIT 1: Turn back toward the towering wall of fused panes
+EXIT 2: Push upward along the spiralling ramp of slag
+@@END
+@@SECTION sg-3-2-3-6
+TITLE: Chamber of Trapped Twilight
+TEXT: A warped doorway of melted borosilicate yields to your shoulder, admitting you into a circular chamber where the interior walls pulse with a strange, trapped twilight. The air is cool and smells faintly of ozone and ancient oil.
+EXIT 1: Cross the high sky-bridge of ribbed crystal
+EXIT 2: Duck beneath the sagging arch of lead and glass
+@@END
+@@SECTION sg-3-2-3-7
+TITLE: The Ruby Obelisk
+TEXT: A fractured obelisk of ruby glass casts a blood-red shadow across the scorched ground where a dry water skin lies empty and mocking in the heat. You pause to catch your ragged breath beside the shard-strewn pedestal.
+EXIT 1: Tread the high sky-bridge of ribbed crystal
+@@END
+@@SECTION sg-3-2-3-8
+TITLE: The Mirror Balcony
+TEXT: Reflected sunlight leaps like wild hares across the multi-tiered balcony of shattered mirrors, dancing against your tired eyes and blinding you to the drop below. You wave a hand to scatter the dazzling glare and scan the tiers for a clear passage.
+EXIT 1: Descend into the subterranean conduit of green tiles
+EXIT 2: Slip beneath the sagging arch of lead and glass
+@@END
+@@SECTION sg-3-2-3-9
+TITLE: The Jagged Trench
+TEXT: A deep trench filled with upright glass teeth splits the floor, spanned only by a single heavy girder that offers a narrow, trembling lane of safety over the razor-sharp abyss. You steady your breathing before putting your weight onto the cold iron.
+EXIT 1: Cross the high sky-bridge of ribbed crystal
+EXIT 2: Navigate the subterranean conduit of green tiles
+EXIT 3: Take the reckless way
+@@END

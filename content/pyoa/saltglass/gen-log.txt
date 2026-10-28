@@ -188,3 +188,24 @@
 2026-10-28T11:25:09.336Z ask prose sg-3-2-1-2..sg-3-2-2-5 items=10 attempt=0
 2026-10-28T11:25:41.071Z done sg-3-2-1-2: 10/10 model=Flash-Lite
 2026-10-28T11:25:41.072Z ask prose sg-3-2-2-6..sg-3-2-2-15 items=10 attempt=0
+2026-10-28T11:26:12.252Z done sg-3-2-2-6: 10/10 model=Flash-Lite
+2026-10-28T11:26:12.253Z ask prose sg-3-2-3-0..sg-3-2-3-9 items=10 attempt=0
+2026-10-28T11:26:35.025Z   reject sg-3-2-3-1: words 49
+2026-10-28T11:26:35.025Z   reject sg-3-2-3-2: words 46
+2026-10-28T11:26:35.026Z   reject sg-3-2-3-3: words 44
+2026-10-28T11:26:35.026Z   reject sg-3-2-3-4: words 47
+2026-10-28T11:26:35.027Z   reject sg-3-2-3-5: words 43
+2026-10-28T11:26:35.027Z   reject sg-3-2-3-6: words 40
+2026-10-28T11:26:35.027Z   reject sg-3-2-3-7: words 40
+2026-10-28T11:26:35.028Z   reject sg-3-2-3-8: words 39
+2026-10-28T11:26:35.028Z   reject sg-3-2-3-9: words 39
+2026-10-28T11:26:41.033Z ask prose sg-3-2-3-0..sg-3-2-3-9 items=9 attempt=1
+2026-10-28T11:27:01.129Z   reject sg-3-2-3-1: words 51
+2026-10-28T11:27:01.130Z   reject sg-3-2-3-2: words 45
+2026-10-28T11:27:01.130Z   reject sg-3-2-3-3: words 49
+2026-10-28T11:27:01.131Z   reject sg-3-2-3-4: words 42
+2026-10-28T11:27:01.131Z   reject sg-3-2-3-5: words 41
+2026-10-28T11:27:01.132Z   reject sg-3-2-3-6: words 38
+2026-10-28T11:27:01.132Z   reject sg-3-2-3-7: words 37
+2026-10-28T11:27:01.132Z   reject sg-3-2-3-8: words 42
+2026-10-28T11:27:01.133Z   reject sg-3-2-3-9: words 42

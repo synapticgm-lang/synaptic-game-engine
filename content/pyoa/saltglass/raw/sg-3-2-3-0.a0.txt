@@ -1,0 +1,64 @@
+Gemini said
+
+@@SECTION sg-3-2-3-0
+TITLE: The Sea-Green Parapet
+TEXT: Jagged splinters spit from the masonry as a heavy icicle of fused quartz shears off the high cornice, shattering against your heels with a sharp ring of displaced air. You cling to the crumbling parapet of sea-green glass, watching bright dust drift down into the sun-bleached chasm below while your embers shift lazily in their iron cage.
+EXIT 1: Trace the perimeter along the towering glass barrier
+EXIT 2: Ascend the winding ramp toward the broader flats
+@@END
+@@SECTION sg-3-2-3-1
+TITLE: The Whispering Amphitheatre
+TEXT: Ghostly voices bounce against the curved amber tiers of the old hall, mimicking your own hurried breathing and weaving phantom warnings about the looming rains. You press your hands to your ears to shut out the mocking cadence, trying to pick the true path through the maze of sound.
+EXIT 1: Follow the high wall of fused window-panes outward
+EXIT 2: Duck down the intersecting alley lit by a dying signal-lamp
+EXIT 3: Climb the translucent slag ramp to overlook the basin
+@@END
+@@SECTION sg-3-2-3-2
+TITLE: The Rusted Chains
+TEXT: Thick iron links groan beneath your boots, strung high between hollow glass spires that sway ever so slightly in the dry desert draft. You balance carefully with every step across the terrifying gap, keeping your eyes fixed firmly ahead while the salt-encrusted world stretches far below.
+EXIT 1: Slip into the gloom past the weaving shadows of the signal-lamp
+EXIT 2: Scale the spiralling ramp of translucent slag
+EXIT 3: Step onto the ribbed crystal sky-bridge humming in the wind
+@@END
+@@SECTION sg-3-2-3-3
+TITLE: The Prism Canopy
+TEXT: Sharp flashes of mirror-light sweep across the hanging crystal clusters overhead, forcing you to dive headfirst into the shadow of a deep architectural alcove. Your heart thumps against your ribs as the blinding beams rake the empty plaza, searching for trespassers among the ruins.
+EXIT 1: Skirt the edge of the sheer window-pane wall
+EXIT 2: Slip away down the alleyway where the signal-lamp flickers
+@@END
+@@SECTION sg-3-2-3-4
+TITLE: The Mercury Vats
+TEXT: Heavy, silver fumes rise in shimmering ripples from the open vats of frozen metal, stinging your nostrils and making your vision blur at the edges. You tie a dusty rag across your mouth and sweep your gaze desperately across the metallic chamber for a clear way out.
+EXIT 1: Seek refuge against the sheer wall of fused window-panes
+EXIT 2: Head upward along the translucent slag ramp
+@@END
+@@SECTION sg-3-2-3-5
+TITLE: The Glass Bead Slope
+TEXT: Loose glass beads and fine white salt shift treacherously beneath your soles, sliding backward with every exhausting, calf-burning stride you take upward. You lean your weight into the steep incline, driving your heels hard into the glittering gravel to hold your hard-won ground.
+EXIT 1: Veer toward the sheer wall of fused window-panes
+EXIT 2: Push for the top of the translucent slag ramp
+@@END
+@@SECTION sg-3-2-3-6
+TITLE: The Twilight Chamber
+TEXT: Warm, shifting light bleeds from the warped borosilicate walls, pulsing with a captured twilight that smells faintly of old ozone and melted resin. You step cautiously across the undulating floor, watching your shadow stretch and distort against the luminous panels.
+EXIT 1: Cross the vibrating ribbed crystal sky-bridge
+EXIT 2: Duck beneath the sagging archway of lead and glass
+@@END
+@@SECTION sg-3-2-3-7
+TITLE: The Ruby Obelisk
+TEXT: A fractured monolith of deep ruby glass looms over a sun-baked courtyard, casting long crimson shadows across the empty flagstones. Resting at its base, an abandoned water skin lies completely flat and parrid in the searing heat, mocking your thirst.
+EXIT 1: Step onto the humming sky-bridge of ribbed crystal
+@@END
+@@SECTION sg-3-2-3-8
+TITLE: The Shattered Mirror Tier
+TEXT: Dazzling sun-hares skip and dance across the multi-tiered balcony, throwing blinding handfuls of reflected light into your tired eyes. You squint through the glare, dodging the shifting reflections as you search for a stable corridor away from the glare.
+EXIT 1: Descend into the subterranean conduit of green tiles
+EXIT 2: Duck under the sagging arch of lead and glass beads
+@@END
+@@SECTION sg-3-2-3-9
+TITLE: The Jagged Trench
+TEXT: Deep fissures split the ancient floor, exposing a chasm lined with jagged teeth of dark glass that glint hungrily in the shaft of midday sun. A single rusted girder spans the dizzying gap, trembling lightly with the desert wind.
+EXIT 1: Tread carefully across the ribbed crystal sky-bridge
+EXIT 2: Follow the cool draft into the green-tiled conduit
+EXIT 3: Take the reckless way
+@@END
