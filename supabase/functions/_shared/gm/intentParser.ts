@@ -991,32 +991,78 @@ function extractSay(clause: string): string | null {
   return null;
 }
 
+/** Strip PC quoted spans — body names are speech content, not the listener (except vocative). */
+function clauseWithoutQuotedSpeech(clause: string): string {
+  return (clause ?? '')
+    .replace(/"[^"]*"/g, ' ')
+    .replace(/\u201c[^\u201d]*\u201d/g, ' ')
+    .replace(/'[^']*'/g, ' ')
+    .replace(/\u2018[^\u2019]*\u2019/g, ' ')
+    // Unclosed trailing quote (T10R / T10L) — rest of clause is still utterance content.
+    .replace(/["\u201c\u2018][^"\u201d\u2019]*$/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 /**
- * T10L — who the player spoke to: ask/talk-to / possessive listener, not a name that only
- * appears as the topic of the question (`find Commander Rusk`).
+ * Leading vocative in a PC quote (`"Oskar, look…"`) — name + comma/! right after the opener.
+ * Mid-quote names (`who pays Yara`) are topics, not this shape.
  */
-function speechAddressee(clause: string, listenPool: string[]): string | null {
-  const framed = clause.match(
+function leadingQuoteVocative(clause: string, pools: string[][]): string | null {
+  const m = (clause ?? '').match(
+    /["'\u201c\u2018]\s*([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,2})\s*[,!]/,
+  );
+  if (!m?.[1] || /^(?:if|whether|what|who|where|why|how|about)\b/i.test(m[1])) return null;
+  for (const pool of pools) {
+    const hit = pickFromPool(m[1], pool) ?? pickFromPool(`the ${m[1]}`, pool);
+    if (hit) return hit;
+  }
+  return null;
+}
+
+/**
+ * T10L / T10R-fix — who the player spoke to: ask/talk-to / possessive / quote vocative,
+ * not a name that only appears as the topic of the question (`find Commander Rusk`, `who pays Yara`).
+ * Framed address + vocative may resolve against the full roster (absent → absence cue).
+ * Fallback pool hits only people here; quote *body* is never an addressee source.
+ */
+function speechAddressee(
+  clause: string,
+  listenPool: string[],
+  roster: string[] = listenPool,
+): string | null {
+  const addressPools = [listenPool, roster];
+  // Address framing lives outside the PC utterance (T10C: "…to Vessa and say, '…Yara.'").
+  const spokenAt = clauseWithoutQuotedSpeech(clause);
+  const framed = spokenAt.match(
     /\b(?:ask|tell|talk\s+to|speak\s+to|address)\s+(?:the\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,2})/i,
   );
   if (framed?.[1] && !/^(?:if|whether|what|who|where|why|how|about)\b/i.test(framed[1])) {
-    const hit =
-      pickFromPool(framed[1], listenPool) ?? pickFromPool(`the ${framed[1]}`, listenPool);
-    if (hit) return hit;
-  }
-  if (/\b(?:ask|tell|talk|speak)\b/i.test(clause)) {
-    const poss = clause.match(/\b(?:the\s+)?([A-Za-z][\w'-]*)'s\b/i);
-    if (poss?.[1]) {
+    for (const pool of addressPools) {
       const hit =
-        pickFromPool(poss[1], listenPool) ?? pickFromPool(`the ${poss[1]}`, listenPool);
+        pickFromPool(framed[1], pool) ?? pickFromPool(`the ${framed[1]}`, pool);
       if (hit) return hit;
     }
   }
+  if (/\b(?:ask|tell|talk|speak)\b/i.test(spokenAt)) {
+    const poss = spokenAt.match(/\b(?:the\s+)?([A-Za-z][\w'-]*)'s\b/i);
+    if (poss?.[1]) {
+      for (const pool of addressPools) {
+        const hit =
+          pickFromPool(poss[1], pool) ?? pickFromPool(`the ${poss[1]}`, pool);
+        if (hit) return hit;
+      }
+    }
+  }
+  // `"Oskar, look…"` — vocative is the listener; `"…who pays Yara"` is not.
+  const vocative = leadingQuoteVocative(clause, addressPools);
+  if (vocative) return vocative;
   // Drop topic tails so "find Commander Rusk" does not steal the addressee slot.
-  const withoutTopic = clause
+  const withoutTopic = spokenAt
     .replace(/\b(?:find|where(?:\s+(?:to\s+)?find)?|about|regarding|concerning)\s+.+$/i, '')
     .replace(/\bif\s+(?:he|she|they)\s+knows?\b.+$/i, '');
-  return pickFromPool(withoutTopic.trim() || clause, listenPool);
+  // Present listeners only — roster names mentioned as topics must not win the slot.
+  return pickFromPool(withoutTopic.trim() || spokenAt, listenPool);
 }
 
 /** Explicit speech marker — multi-step classification never uses the broad first-person protest heuristic. */
@@ -1130,11 +1176,12 @@ export function parsePlayerSteps(
       || action === 'refuse'
       || !!deal
       || !!say;
-    // T10R — resolve named targets against the full people roster, then presence decides
-    // reaction vs absence (listenPool alone misses "the priest" aimed while underway).
+    // T10R — resolve aimed/physical targets against the full people roster, then presence
+    // decides reaction vs absence (listenPool alone misses "the priest" aimed while underway).
+    // Speech: framed address may use roster; fallback is presence-only and ignores quote topics.
     const roster = [...new Set([...(listenPool ?? []), ...(ctx.people ?? [])])].filter(Boolean);
     const peopleHit = speechLike
-      ? speechAddressee(clause, roster.length ? roster : listenPool)
+      ? speechAddressee(clause, listenPool ?? [], roster.length ? roster : (listenPool ?? []))
       : pickFromPool(clause, roster.length ? roster : listenPool);
     let destination: string | null = null;
     let target: string | null = null;
