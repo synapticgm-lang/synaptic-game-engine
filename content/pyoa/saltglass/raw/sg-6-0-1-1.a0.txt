@@ -1,0 +1,75 @@
+Gemini said
+
+@@SECTION sg-6-0-1-1
+TITLE: The Wheat Vault Corridor
+TEXT: A flickering blue gas-jet casts long, wavering shadows across an arched corridor where carved wheat sheaves line the vaulted ceiling, their stone husks grey with ancient dust. Your banked coal-lantern sputters in the draught, throwing weak orange light against the masonry as you weigh your next step in the quiet dark. // You can press onward through a tight, acoustic service passage or investigate the circular chamber up ahead where brass niches stand empty and waiting.
+EXIT 1: Crawl through the low acoustic vent
+EXIT 2: Enter the circular brass niche chamber
+@@END
+
+@@SECTION sg-6-0-1-2
+TITLE: The Mineral Seep
+TEXT: You squeeze past a collapsed masonry archway where fallen blocks of white sandstone trap a trickle of bitter, mineral-stained water that pools in the hollows of the floor. The air here tastes of wet lime and old iron, heavy with the chill of deep stone. // Two distinct paths diverge beyond the rubble, while a heavy salt-stiffened curtain tempts you toward a side gallery where hidden draughts stir the gloom.
+EXIT 1: Squeeze into the low service vent
+EXIT 2: Pick your way across the ceramic shards
+EXIT 3: Push past the stiff leather curtain
+@@END
+
+@@SECTION sg-6-0-1-3
+TITLE: The Scored Alcove
+TEXT: An iron door hangs ajar on screaming hinges, revealing an empty alcove scored with deep, frantic claw marks from some desperate predecessor who found no way out before the drought took hold. The metallic tang of rust fills your nose as you shine your banked lantern into the shadowed recess. // You can advance toward the circular chamber or risk a hidden floor-drop if you are traveling entirely alone without a companion to distract your eye.
+EXIT 1: Step toward the circular brass chamber
+EXIT 2: Drop through the hairline floor-seal alone
+@@END
+
+@@SECTION sg-6-0-1-4
+TITLE: The Hidden Shortcut
+TEXT: Your glass-burn scar tingles against the chill wall, responding to some latent heat in the dressed stones as a concealed latch swings a panel outward to a hidden shortcut. Dust cascades from the pivot as the dark gap widens, offering a route past the main corridors. // You can step through into the field of broken ceramic shards, risk the concealed floor-drop if you are traveling alone, or slip behind the heavy leather curtain of the side gallery.
+EXIT 1: Tread across the glittering ceramic shards
+EXIT 2: Step through the hairline floor-seal alone
+EXIT 3: Part the stiff leather curtain of the gallery
+@@END
+
+@@SECTION sg-6-0-1-5
+TITLE: The Black Brine Quay
+TEXT: A subterranean cistern of black brine laps against a stone quay, reflecting the weak yellow glow of your banked coal-lantern in oily ripples. The heavy scent of salt and stagnant depth rises from the dark water, untouched by the surface winds for centuries. // You can follow the frozen pipe gallery where ruptured bellies split wide like dry pods, or head toward an old iron sconce holding a grey pillar of ancient wax.
+EXIT 1: Walk among the frozen water-pipes
+EXIT 2: Approach the iron sconce and wax pillar
+@@END
+
+@@SECTION sg-6-0-1-6
+TITLE: The Stained Glass Mosaic
+TEXT: Overhead, a mosaic of stained glass depicts the legendary First Monsoon, its cobalt panels casting a cool, ocean-deep hue over the flagstones beneath your boots. The lead cames binding the colored panes hum faintly whenever a stray subterranean current brushes the ceiling vault. // Ahead lies a crumbling mural of turquoise ceramic flakes or a labyrinth of low brick bulkheads designed to hold back ancient floods.
+EXIT 1: Inspect the crumbling turquoise mural
+EXIT 2: Navigate the low brick flood bulkheads
+@@END
+
+@@SECTION sg-6-0-1-7
+TITLE: The Auditor's Tally
+TEXT: A pile of discarded copper tally sticks clatters under your boot, left behind by salt-tax auditors who never returned from the deep when the wells failed. The dull clink echoes sharply through the high corridor, disturbing only the quiet accumulation of grey dust. // You can examine the iron sconce with its grey wax stub, thread your way through the low brick bulkheads, or follow narrow ventilation shafts where filtered amber light catches floating motes of quartz.
+EXIT 1: Examine the old iron tallow sconce
+EXIT 2: Traverse the maze of brick bulkheads
+EXIT 3: Seek the shafts of filtered amber light
+@@END
+
+@@SECTION sg-6-0-1-8
+TITLE: The Bronze Pipe Crossing
+TEXT: You balance along a narrow bronze pipe spanning a chasm, listening to the hollow groan of subterranean metal shifting in the dark below. Every footstep requires absolute care as your banked lantern swings, casting erratic arcs of light against the far abyss wall. // Across the span, you face a warped cedar door bearing an old warden plaque or the narrow ventilation shafts where amber light filters down.
+EXIT 1: Reach for the warped warden door
+EXIT 2: Follow the shafts of filtered amber light
+@@END
+
+@@SECTION sg-6-0-1-9
+TITLE: The Flaking Mirror
+TEXT: An old mirror-frame hangs crookedly on the damp wall, its silvered backing flaking away to reveal a cold, empty cavity behind the stone where no reflection lingers. Your own tired face appears only as a blurred shadow against the dark glass as you pause to catch your breath. // You can test the warped cedar door of the Pith warden or press toward the shafts of amber light piercing down from above.
+EXIT 1: Try the warped cedar door of the warden
+EXIT 2: Head toward the filtered amber shafts
+@@END
+
+@@SECTION sg-6-0-2-0
+TITLE: The Silt Trench
+TEXT: A stone-lined drainage trench cuts across the floor, carrying a sluggish stream of grey silt toward some unseen sump far below in the heart of Prism. The damp air smells of wet earth and old lime, thick with the silence of the sealed vault. // Three distinct routes open before you: a spiral stair of hollow copper treads, a threshold choked with crunching salt crystals, or an arched gallery humming with distant winds.
+EXIT 1: Ascend the hollow copper spiral stair
+EXIT 2: Wade through the drift of salt crystals
+EXIT 3: Follow the ribbed lead tube gallery
+@@END
