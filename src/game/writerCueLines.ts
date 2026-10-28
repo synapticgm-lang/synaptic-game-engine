@@ -97,7 +97,95 @@ export function buildClauseWriterFact(
   return parts.join(' ');
 }
 
-/** First-person / bare imperative clause → one third-person sentence (fallback book body). */
+/** Irregular / common verb → simple past (fallback book body; not a full conjugator). */
+function toSimplePast(verb: string): string {
+  const v = (verb ?? '').toLowerCase();
+  if (!v) return v;
+  const irreg: Record<string, string> = {
+    am: 'was',
+    is: 'was',
+    are: 'were',
+    have: 'had',
+    has: 'had',
+    do: 'did',
+    does: 'did',
+    go: 'went',
+    goes: 'went',
+    come: 'came',
+    comes: 'came',
+    say: 'said',
+    says: 'said',
+    tell: 'told',
+    tells: 'told',
+    give: 'gave',
+    gives: 'gave',
+    take: 'took',
+    takes: 'took',
+    make: 'made',
+    makes: 'made',
+    leave: 'left',
+    leaves: 'left',
+    keep: 'kept',
+    keeps: 'kept',
+    hold: 'held',
+    holds: 'held',
+    stand: 'stood',
+    stands: 'stood',
+    sit: 'sat',
+    sits: 'sat',
+    get: 'got',
+    gets: 'got',
+    put: 'put',
+    puts: 'put',
+    run: 'ran',
+    runs: 'ran',
+    see: 'saw',
+    sees: 'saw',
+    slide: 'slid',
+    slides: 'slid',
+    rest: 'rested',
+    rests: 'rested',
+    stare: 'stared',
+    stares: 'stared',
+    kick: 'kicked',
+    kicks: 'kicked',
+    slam: 'slammed',
+    slams: 'slammed',
+    toss: 'tossed',
+    tosses: 'tossed',
+    throw: 'threw',
+    throws: 'threw',
+    pick: 'picked',
+    picks: 'picked',
+    grip: 'gripped',
+    grips: 'gripped',
+    face: 'faced',
+    faces: 'faced',
+    ask: 'asked',
+    asks: 'asked',
+    speak: 'spoke',
+    speaks: 'spoke',
+    talk: 'talked',
+    talks: 'talked',
+    step: 'stepped',
+    steps: 'stepped',
+    walk: 'walked',
+    walks: 'walked',
+  };
+  if (irreg[v]) return irreg[v]!;
+  if (v.endsWith('ie')) return `${v.slice(0, -2)}ied`;
+  if (v.endsWith('y') && v.length > 2 && !/[aeiou]y$/i.test(v)) return `${v.slice(0, -1)}ied`;
+  if (v.endsWith('e')) return `${v}d`;
+  if (/[aeiou][bdfglmnprst]$/i.test(v) && !/(?:[aeiou]{2}|[aeiou][lr])$/i.test(v)) {
+    return `${v}${v[v.length - 1]}ed`;
+  }
+  return `${v}ed`;
+}
+
+/**
+ * First-person / bare imperative / gerund clause → one third-person past sentence (fallback book body).
+ * Subject is the PC display name when known (T10R); never a raw I-paste.
+ */
 export function clauseToThirdPerson(clause: string, subject = 'They'): string {
   let c = (clause ?? '').replace(/\s+/g, ' ').trim().replace(/[.!?]+$/g, '');
   if (!c) return '';
@@ -105,17 +193,71 @@ export function clauseToThirdPerson(clause: string, subject = 'They'): string {
   // Strip a leading I / I'm so we do not double the subject.
   c = c.replace(/^(?:I(?:'m| am)?|i)\s+/i, '');
   c = c
-    .replace(/\bI'm\b/gi, `${who} is`)
-    .replace(/\bI've\b/gi, `${who} have`)
-    .replace(/\bI'll\b/gi, `${who} will`)
+    .replace(/\bI'm\b/gi, `${who} was`)
+    .replace(/\bI've\b/gi, `${who} had`)
+    .replace(/\bI'll\b/gi, `${who} would`)
     .replace(/\bI\b/g, who)
     .replace(/\bmy\b/gi, 'their')
     .replace(/\bmine\b/gi, 'theirs')
     .replace(/\bme\b/gi, 'them');
-  // Bare imperative / already third → "They faced the thugs."
+  // Gerund / while-gerund adjunct ("staring at Oskar" / "while staring at Oskar") → finite past.
+  const gerund = c.match(/^(?:while\s+)?([a-z]+ing)\b(.*)$/i);
+  if (gerund) {
+    const past = gerundToPast(gerund[1]!);
+    const rest = (gerund[2] ?? '').trim();
+    const line = `${who} ${past}${rest ? ` ${rest}` : ''}`.replace(/\s+/g, ' ').trim();
+    return line.endsWith('.') ? line : `${line}.`;
+  }
+  // Leading finite verb → past: "slide a coin…" / "Ask Vessa…" / "Face the thugs."
+  const lead = c.match(/^([A-Za-z]+)\b(.*)$/);
+  if (lead) {
+    const past = toSimplePast(lead[1]!);
+    const rest = (lead[2] ?? '').trim();
+    const line = `${who} ${past}${rest ? ` ${rest}` : ''}`.replace(/\s+/g, ' ').trim();
+    return line.endsWith('.') ? line : `${line}.`;
+  }
   const body = c.charAt(0).toLowerCase() + c.slice(1);
   const line = `${who} ${body}`.replace(/\s+/g, ' ').trim();
   return line.endsWith('.') ? line : `${line}.`;
+}
+
+/** -ing form → simple past for adjunct clauses split off by `while`. */
+function gerundToPast(gerund: string): string {
+  const g = gerund.toLowerCase();
+  const known: Record<string, string> = {
+    staring: 'stared',
+    sliding: 'slid',
+    resting: 'rested',
+    tossing: 'tossed',
+    throwing: 'threw',
+    kicking: 'kicked',
+    slamming: 'slammed',
+    gripping: 'gripped',
+    holding: 'held',
+    looking: 'looked',
+    watching: 'watched',
+    waiting: 'waited',
+    sitting: 'sat',
+    standing: 'stood',
+    walking: 'walked',
+    running: 'ran',
+    giving: 'gave',
+    taking: 'took',
+    making: 'made',
+    coming: 'came',
+    going: 'went',
+    leaving: 'left',
+    keeping: 'kept',
+    asking: 'asked',
+    speaking: 'spoke',
+    talking: 'talked',
+    saying: 'said',
+    telling: 'told',
+  };
+  if (known[g]) return known[g]!;
+  // Default: drop -ing and apply simple past (resting→rest→rested already covered).
+  const stem = g.replace(/ing$/i, '');
+  return toSimplePast(stem);
 }
 
 const CUE_HEAD =
@@ -125,51 +267,69 @@ const CUE_HEAD =
  * One sentence from writerEngineResult's ". "-split (legacy single-sentence path).
  * Prefer convertWriterCueFact for full engine facts (handles periods inside Must narrate).
  */
-export function plainFromWriterCueSentence(s: string): { cue: true; plain: string } | { cue: false } {
+export function plainFromWriterCueSentence(
+  s: string,
+  subject?: string,
+): { cue: true; plain: string } | { cue: false } {
   const raw = (s ?? '').trim();
   if (!raw) return { cue: false };
   const body = raw.endsWith('.') ? raw.slice(0, -1) : raw;
+  const who = (subject ?? '').trim() || 'They';
 
   if (body.startsWith('Must narrate:')) {
     const clause = body.slice('Must narrate:'.length).trim();
-    return { cue: true, plain: clauseToThirdPerson(clause) };
+    return { cue: true, plain: clauseToThirdPerson(clause, who) };
   }
   if (/^The story must show this act$/i.test(body)) return { cue: true, plain: '' };
   if (/^No one present to answer$/i.test(body)) {
     return { cue: true, plain: 'No one was there to answer.' };
   }
-  if (/^NPC reaction slot open for /i.test(body)) return { cue: true, plain: '' };
+  if (/^NPC reaction slot open for /i.test(body)) {
+    const name = body.replace(/^NPC reaction slot open for\s+/i, '').trim();
+    if (name && !/^the (?:people here|empty scene)$/i.test(name)) {
+      return { cue: true, plain: `${name} answered.` };
+    }
+    return { cue: true, plain: '' };
+  }
 
   const sayHead = 'PC says exactly: "';
   const sayTail = '" (do not rewrite)';
   if (body.startsWith(sayHead)) {
     const end = body.lastIndexOf(sayTail);
     if (end > sayHead.length) {
-      return { cue: true, plain: `You said, "${body.slice(sayHead.length, end)}".` };
+      // T10R — PC name + past when named; "You said" only for unnamed / second-person.
+      const said = body.slice(sayHead.length, end);
+      if (who && who !== 'They' && who !== 'You') {
+        return { cue: true, plain: `${who} said, "${said}".` };
+      }
+      return { cue: true, plain: `You said, "${said}".` };
     }
     return { cue: true, plain: '' };
   }
 
   const speechHead = 'Speech event: you address ';
   if (body.startsWith(speechHead)) {
-    const who = body.slice(speechHead.length).trim();
-    return { cue: true, plain: who ? `You spoke to ${who}.` : '' };
+    const addr = body.slice(speechHead.length).trim();
+    return { cue: true, plain: addr ? `You spoke to ${addr}.` : '' };
   }
 
   return { cue: false };
 }
 
 /**
- * T10P — convert a full engine-fact string (may contain several cue clauses) to player prose.
+ * T10P/T10R — convert a full engine-fact string (may contain several cue clauses) to player prose.
  * Cuts on cue headers so a period inside "Must narrate: …" cannot leak as raw first-person.
+ * Subject is the PC display name when known (past tense + named acts / quotes).
  */
-export function convertWriterCueFact(fact: string): string {
+export function convertWriterCueFact(fact: string, subject?: string): string {
   const raw = (fact ?? '').replace(/\s+/g, ' ').trim();
   if (!raw) return '';
+  const pc = (subject ?? '').trim() || 'They';
   const out: string[] = [];
   let hadMustNarrate = false;
   let hadExactSay = false;
   let absentAnswer = false;
+  let reactionWho: string | null = null;
 
   const push = (plain: string) => {
     const p = (plain ?? '').replace(/\s+/g, ' ').trim();
@@ -203,8 +363,19 @@ export function convertWriterCueFact(fact: string): string {
       const cut = clause.search(/\bSpeech event:|\bPC says exactly:|\bThe story must show/i);
       const body = (cut >= 0 ? clause.slice(0, cut) : clause).trim().replace(/[.]+$/g, '');
       if (body) {
-        push(clauseToThirdPerson(body));
-        hadMustNarrate = true;
+        // Quotes glued into Must narrate (unclosed player quote) still paint as PC speech.
+        const q = body.match(/["\u201c]([^"\u201d]+)["\u201d]?\s*$/);
+        const act = (q ? body.slice(0, q.index).trim() : body).replace(/[.]+$/g, '').trim();
+        if (act) {
+          push(clauseToThirdPerson(act, pc));
+          hadMustNarrate = true;
+        }
+        if (q?.[1]?.trim()) {
+          const said = q[1].trim().replace(/[.,;:]+$/g, '');
+          if (pc && pc !== 'They' && pc !== 'You') push(`${pc} said, "${said}".`);
+          else push(`You said, "${said}".`);
+          hadExactSay = true;
+        }
       }
       continue;
     }
@@ -213,7 +384,9 @@ export function convertWriterCueFact(fact: string): string {
       const sayTail = '" (do not rewrite)';
       const endQ = span.lastIndexOf(sayTail);
       if (span.toLowerCase().startsWith(sayHead.toLowerCase()) && endQ > sayHead.length) {
-        push(`You said, "${span.slice(sayHead.length, endQ)}".`);
+        const said = span.slice(sayHead.length, endQ);
+        if (pc && pc !== 'They' && pc !== 'You') push(`${pc} said, "${said}".`);
+        else push(`You said, "${said}".`);
         hadExactSay = true;
       }
       continue;
@@ -231,18 +404,34 @@ export function convertWriterCueFact(fact: string): string {
         }
         continue;
       }
+      if (/NPC reaction slot open for /i.test(span)) {
+        const slot = span.match(/NPC reaction slot open for\s+(.+?)(?:\.|$)/i);
+        const slotWho = (slot?.[1] ?? who).replace(/\s+/g, ' ').trim();
+        if (slotWho && !/^the (?:people here|empty scene)$/i.test(slotWho)) {
+          reactionWho = slotWho;
+        }
+      }
       // Act already narrated from Must narrate, or exact say already painted — skip stub "You spoke".
       if (hadMustNarrate || hadExactSay) continue;
       if (who) push(`You spoke to ${who}.`);
       continue;
     }
     if (/^The story must show/i.test(head)) continue;
-    if (/^NPC reaction slot open for /i.test(head)) continue;
+    if (/^NPC reaction slot open for /i.test(head)) {
+      const name = span.replace(/^NPC reaction slot open for\s+/i, '').replace(/\.+$/, '').trim();
+      if (name && !/^the (?:people here|empty scene)$/i.test(name)) reactionWho = name;
+      continue;
+    }
     if (/^No one present to answer/i.test(head)) {
       if (!absentAnswer) push('No one was there to answer.');
       absentAnswer = true;
       continue;
     }
+  }
+
+  // T10R — present addressee with a reaction slot answers (Talk chip / typed quote), not a silent stub.
+  if (!absentAnswer && reactionWho) {
+    push(`${reactionWho} answered.`);
   }
 
   return out.join(' ').replace(/\s+/g, ' ').trim();

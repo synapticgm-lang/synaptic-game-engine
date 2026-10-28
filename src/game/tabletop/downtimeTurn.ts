@@ -42,19 +42,27 @@ export function resolveDowntimeTurn(state: GameState, input: string, rng: Rng = 
 
   // Craft: intent Rest ("Make camp") stays out; else make-action + craftRecipe(item) (E-CR1).
   // Quoted speech is never a craft verb ("make it quicker" inside dialogue) — T10M pick-up/toss.
+  // T10R — a craft turn requires an explicit craft verb AND a makeable object. Bare "make his
+  // tankard rattle" is not crafting (no item → not a craft turn).
   const intent = parsePlayerIntent(line, state);
   const low = line
     .replace(/["“”][^"“”]*["“”]/g, ' ')
     .replace(/['‘’][^'‘’]*['‘’]/g, ' ')
     .toLowerCase();
-  const craftAct = low.includes('craft ') || low.includes('forge ') || low.includes('brew ') || low.includes('scribe ')
-    || low.includes('fletch ') || low.includes('carve ') || low.includes('sew ') || low.includes('weave ') || low.includes('make ');
+  // Explicit craft verbs; `make` alone needs a determiner object (`make a dagger`) so
+  // "make his tankard rattle" never becomes a craft turn (T10R).
+  const craftAct =
+    /\b(?:craft|forge|brew|scribe|fletch|carve|sew|weave|repair)\b/.test(low)
+    || /\bmake\s+(?:a|an|the|some|my|myself)\b/.test(low)
+    || /^\s*make\s+/i.test(low);
   if (intent.kind !== 'rest' && craftAct) {
     const named = craftItemFromInput(line);
-    if (state.activeEncounter || isJourneyUnderway(state)) {
-      return refuse(state, 'Crafting', named ?? 'item', "you can't work here");
-    }
-    if (named) {
+    // No makeable object → not a craft turn (kick/make-noise false positives).
+    if (!named) {
+      // fall through
+    } else if (state.activeEncounter || isJourneyUnderway(state)) {
+      return refuse(state, 'Crafting', named, "you can't work here");
+    } else {
       const recipe = craftRecipe(named);
       if (recipe) return craftItem(state, recipe);
       return {
@@ -63,11 +71,6 @@ export function resolveDowntimeTurn(state: GameState, input: string, rng: Rng = 
         fact: `You look the job over, but ${named} is not something you can craft here. Nothing is spent.`,
       };
     }
-    return {
-      state,
-      receipts: [`Crafting: item — not made (no crafting rule for it); nothing spent`],
-      fact: 'You look the job over, but that is not something you can craft here. Nothing is spent.',
-    };
   }
 
   if (state.activeEncounter) return null;

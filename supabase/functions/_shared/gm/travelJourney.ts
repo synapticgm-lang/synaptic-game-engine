@@ -60,12 +60,15 @@ export function writerTravelFact(receipt: string): string | null {
   return dest ? `Arrived at ${dest}.${time}` : null;
 }
 
-/** Plain Travel: → writer form, then every other receipt label the same way. Not inside "Extended Travel:" (q31-L4). */
-export function writerEngineResult(fact: string): string {
+/**
+ * Plain Travel: → writer form, then every other receipt label the same way. Not inside "Extended Travel:" (q31-L4).
+ * `subject` is the PC display name for Must-narrate → third-person past (T10R).
+ */
+export function writerEngineResult(fact: string, subject?: string): string {
   const travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
   // T10P — cue-heavy facts convert as whole blocks (periods inside Must narrate must not leak).
   if (hasWriterCueChrome(travel)) {
-    const converted = convertWriterCueFact(travel);
+    const converted = convertWriterCueFact(travel, subject);
     if (converted) return converted;
   }
   const parts = travel.split('. ');
@@ -119,7 +122,7 @@ export function writerEngineResult(fact: string): string {
       continue;
     }
     // T10E — writer cue lines (shared writerCueLines) → plain narration; never player chrome.
-    const cue = plainFromWriterCueSentence(s);
+    const cue = plainFromWriterCueSentence(s, subject);
     if (cue.cue) {
       if (cue.plain) out.push(cue.plain.endsWith('.') ? cue.plain : `${cue.plain}.`);
       continue;

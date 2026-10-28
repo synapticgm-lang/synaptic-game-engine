@@ -810,11 +810,32 @@ function splitClauses(text: string): string[] {
       i += 1;
       continue;
     }
+    // T10R — sentence end before a new opening quote starts a speech clause
+    // (`…rattle. "Alright…` / `…table. "Oskar…`), so the quote is not glued into the act.
+    if (ch === '.' || ch === '!' || ch === '?') {
+      const after = raw.slice(i + 1).match(/^\s*(["\u201c\u2018])/);
+      if (after) {
+        push(start, i + 1);
+        i += 1;
+        while (i < raw.length && raw[i] === ' ') i += 1;
+        start = i;
+        continue;
+      }
+    }
     const rest = raw.slice(i);
-    const m = rest.match(/^(?:\s+(?:and then|then|, then|and|while)\s+|[?]+|;+)/i);
+    // Do not split a gerund adjunct off as its own subject-less clause (`while staring at Oskar`).
+    const m = rest.match(/^(?:\s+(?:and then|then|, then|and)\s+|[?]+|;+)/i);
     if (m) {
       push(start, i);
       i += m[0].length;
+      start = i;
+      continue;
+    }
+    // `while` only splits when the next word is not a gerund (finite clause).
+    const whileSplit = rest.match(/^\s+while\s+(?![\w']+ing\b)/i);
+    if (whileSplit) {
+      push(start, i);
+      i += whileSplit[0].length;
       start = i;
       continue;
     }
@@ -954,35 +975,94 @@ function extractSay(clause: string): string | null {
   if (after?.[1]) {
     return extractQuotedSpan(after[1].trim());
   }
+  // T10R — trailing utterance after an act (`…on the table. "Oskar, look…` already split;
+  // same-clause `…lap. "Stop hiding…` without a speech verb still counts when substantial).
+  // Short mention quotes (`not "yet"`) stay out: need ≥3 words or end punctuation / unclosed span.
+  const trailing = t.match(/["\u201c\u2018]([^"\u201d\u2019]*)$/);
+  if (trailing) {
+    const inner = extractQuotedSpan(trailing[0]!);
+    if (inner) {
+      const words = inner.split(/\s+/).filter(Boolean);
+      if (words.length >= 3 || /[.!?…]$/.test(inner) || !/["\u201d\u2019]\s*$/.test(t.slice(trailing.index!))) {
+        return inner;
+      }
+    }
+  }
+  return null;
+}
+
+/** Strip PC quoted spans — body names are speech content, not the listener (except vocative). */
+function clauseWithoutQuotedSpeech(clause: string): string {
+  return (clause ?? '')
+    .replace(/"[^"]*"/g, ' ')
+    .replace(/\u201c[^\u201d]*\u201d/g, ' ')
+    .replace(/'[^']*'/g, ' ')
+    .replace(/\u2018[^\u2019]*\u2019/g, ' ')
+    // Unclosed trailing quote (T10R / T10L) — rest of clause is still utterance content.
+    .replace(/["\u201c\u2018][^"\u201d\u2019]*$/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Leading vocative in a PC quote (`"Oskar, look…"`) — name + comma/! right after the opener.
+ * Mid-quote names (`who pays Yara`) are topics, not this shape.
+ */
+function leadingQuoteVocative(clause: string, pools: string[][]): string | null {
+  const m = (clause ?? '').match(
+    /["'\u201c\u2018]\s*([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,2})\s*[,!]/,
+  );
+  if (!m?.[1] || /^(?:if|whether|what|who|where|why|how|about)\b/i.test(m[1])) return null;
+  for (const pool of pools) {
+    const hit = pickFromPool(m[1], pool) ?? pickFromPool(`the ${m[1]}`, pool);
+    if (hit) return hit;
+  }
   return null;
 }
 
 /**
- * T10L — who the player spoke to: ask/talk-to / possessive listener, not a name that only
- * appears as the topic of the question (`find Commander Rusk`).
+ * T10L / T10R-fix — who the player spoke to: ask/talk-to / possessive / quote vocative,
+ * not a name that only appears as the topic of the question (`find Commander Rusk`, `who pays Yara`).
+ * Framed address + vocative may resolve against the full roster (absent → absence cue).
+ * Fallback pool hits only people here; quote *body* is never an addressee source.
  */
-function speechAddressee(clause: string, listenPool: string[]): string | null {
-  const framed = clause.match(
+function speechAddressee(
+  clause: string,
+  listenPool: string[],
+  roster: string[] = listenPool,
+): string | null {
+  const addressPools = [listenPool, roster];
+  // Address framing lives outside the PC utterance (T10C: "…to Vessa and say, '…Yara.'").
+  const spokenAt = clauseWithoutQuotedSpeech(clause);
+  const framed = spokenAt.match(
     /\b(?:ask|tell|talk\s+to|speak\s+to|address)\s+(?:the\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,2})/i,
   );
   if (framed?.[1] && !/^(?:if|whether|what|who|where|why|how|about)\b/i.test(framed[1])) {
-    const hit =
-      pickFromPool(framed[1], listenPool) ?? pickFromPool(`the ${framed[1]}`, listenPool);
-    if (hit) return hit;
-  }
-  if (/\b(?:ask|tell|talk|speak)\b/i.test(clause)) {
-    const poss = clause.match(/\b(?:the\s+)?([A-Za-z][\w'-]*)'s\b/i);
-    if (poss?.[1]) {
+    for (const pool of addressPools) {
       const hit =
-        pickFromPool(poss[1], listenPool) ?? pickFromPool(`the ${poss[1]}`, listenPool);
+        pickFromPool(framed[1], pool) ?? pickFromPool(`the ${framed[1]}`, pool);
       if (hit) return hit;
     }
   }
+  if (/\b(?:ask|tell|talk|speak)\b/i.test(spokenAt)) {
+    const poss = spokenAt.match(/\b(?:the\s+)?([A-Za-z][\w'-]*)'s\b/i);
+    if (poss?.[1]) {
+      for (const pool of addressPools) {
+        const hit =
+          pickFromPool(poss[1], pool) ?? pickFromPool(`the ${poss[1]}`, pool);
+        if (hit) return hit;
+      }
+    }
+  }
+  // `"Oskar, look…"` — vocative is the listener; `"…who pays Yara"` is not.
+  const vocative = leadingQuoteVocative(clause, addressPools);
+  if (vocative) return vocative;
   // Drop topic tails so "find Commander Rusk" does not steal the addressee slot.
-  const withoutTopic = clause
+  const withoutTopic = spokenAt
     .replace(/\b(?:find|where(?:\s+(?:to\s+)?find)?|about|regarding|concerning)\s+.+$/i, '')
     .replace(/\bif\s+(?:he|she|they)\s+knows?\b.+$/i, '');
-  return pickFromPool(withoutTopic.trim() || clause, listenPool);
+  // Present listeners only — roster names mentioned as topics must not win the slot.
+  return pickFromPool(withoutTopic.trim() || spokenAt, listenPool);
 }
 
 /** Explicit speech marker — multi-step classification never uses the broad first-person protest heuristic. */
@@ -998,6 +1078,8 @@ function clauseHasSpeechMarker(clause: string): boolean {
   ) {
     return true;
   }
+  // T10R — a trailing quoted utterance on an act clause is still speech.
+  if (extractSay(t)) return true;
   return false;
 }
 
@@ -1092,10 +1174,15 @@ export function parsePlayerSteps(
       || action === 'intimidate'
       || action === 'deceive'
       || action === 'refuse'
-      || !!deal;
+      || !!deal
+      || !!say;
+    // T10R — resolve aimed/physical targets against the full people roster, then presence
+    // decides reaction vs absence (listenPool alone misses "the priest" aimed while underway).
+    // Speech: framed address may use roster; fallback is presence-only and ignores quote topics.
+    const roster = [...new Set([...(listenPool ?? []), ...(ctx.people ?? [])])].filter(Boolean);
     const peopleHit = speechLike
-      ? speechAddressee(clause, listenPool)
-      : pickFromPool(clause, listenPool);
+      ? speechAddressee(clause, listenPool ?? [], roster.length ? roster : (listenPool ?? []))
+      : pickFromPool(clause, roster.length ? roster : listenPool);
     let destination: string | null = null;
     let target: string | null = null;
     let addressee: string | null = null;
@@ -1103,13 +1190,17 @@ export function parsePlayerSteps(
       destination = extractDestination(clause, ctx);
     } else if (action === 'use_item' || action === 'take' || action === 'buy') {
       target = pickFromPool(clause, ctx.items) ?? peopleHit;
+      // Aimed-at person on a toss/give/wink still needs the addressee slot for presence.
+      if (peopleHit) addressee = peopleHit;
     } else if (action === 'attack' || action === 'search' || action === 'observe') {
       target = peopleHit ?? pickFromPool(clause, ctx.items) ?? pickFromPool(clause, ctx.places);
+      if (peopleHit) addressee = peopleHit;
     } else {
       addressee = peopleHit;
       target = peopleHit;
     }
     if (deal && !addressee) addressee = peopleHit;
+    if (say && !addressee) addressee = peopleHit;
     draft.push({
       action: deal ? 'deal' : action,
       target,
@@ -1146,12 +1237,13 @@ export function parsePlayerSteps(
       // Carry-over when the player names nobody this clause — only if still here.
       addressee = lastWho;
     }
-    // Absent person: speak to the empty scene (no reaction slot for someone not here).
-    if (addressee && !nameIsPresent(addressee, ctx)) {
-      addressee = null;
+    // T10R — keep an absent named addressee on the step so buildClauseWriterFact can emit
+    // "No one present to answer" (nulling here made pebble/wink/toss invent them as present).
+    // Carry-over only sticks when they are actually here.
+    if (addressee && nameIsPresent(addressee, ctx)) {
+      if (inPlayerText(addressee, text)) lastWho = addressee;
+      else if (onSheet(addressee, ctx) && inPlayerText(addressee, clause)) lastWho = addressee;
     }
-    if (addressee && inPlayerText(addressee, text)) lastWho = addressee;
-    else if (addressee && onSheet(addressee, ctx) && inPlayerText(addressee, clause)) lastWho = addressee;
 
     let action = st.action;
     let unplacedMove = false;

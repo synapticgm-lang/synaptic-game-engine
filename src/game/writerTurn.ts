@@ -472,7 +472,7 @@ export function answerRepairRequest(
     `Known to say: ${known.join(' | ')}`,
     ...(said.length ? [`Already said (say something new): ${said.slice(-4).map((s) => `"${s.slice(0, 100)}"`).join(' ')}`] : []),
     `Your story so far: ${prose.slice(0, 600)}`,
-    `Engine fact: ${writerEngineResult(check.engineFact).trim() || 'Keep only what the scene already established.'}`,
+    `Engine fact: ${writerEngineResult(check.engineFact, pc || undefined).trim() || 'Keep only what the scene already established.'}`,
   ].join('\n');
 }
 /** Missing quoted reply on a talk turn: one repair sentence, else log the miss. */

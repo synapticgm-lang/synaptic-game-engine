@@ -136,8 +136,27 @@ export function ensureSpokenAnswer(
   playerInput: string
 ): { prose: string; answer: SpokenAnswer } {
   const topic = asked(playerInput);
-  if (!topic) return { prose, answer: { status: 'not-asked' } };
   const who = addressee(state, playerInput);
+  // T10R — Talk chip / typed address with someone here still needs an exchange beat when
+  // stripUnauthorizedNpcSpeech dropped the writer's invented NPC line (stub + bare `@`).
+  if (!topic) {
+    const talkChip = /^(?:talk(?:\s+to)?|speak(?:\s+to)?|ask)\b/i.test((playerInput ?? '').trim());
+    const hasQuote = /["\u201c]/.test(playerInput ?? '');
+    if (!talkChip && !hasQuote) return { prose, answer: { status: 'not-asked' } };
+    if (!who) return { prose, answer: { status: 'nobody-here' } };
+    const { speaker, alone } = who;
+    const others = speakersHere(state).filter((s) => s.label !== speaker.label);
+    if (quotesBy(prose, speaker, alone, others).length) {
+      return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
+    }
+    // Engine reply beat: named person answered (no invented dialogue).
+    const line = `${capitalize(speaker.label)} answered.`;
+    const body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
+    return {
+      prose: body ? `${body} ${line}` : line,
+      answer: { status: 'added', speaker: speaker.label, source: 'authored', line },
+    };
+  }
   if (!who) return { prose, answer: { status: 'nobody-here' } };
   const { speaker, alone } = who;
   const others = speakersHere(state).filter((s) => s.label !== speaker.label);

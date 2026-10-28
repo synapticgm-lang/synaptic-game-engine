@@ -820,6 +820,43 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   if (named === 'capital') return 'a name the scene never handed';
   return null;
 }
+/** Bare `@` / incomplete token stub the writer sometimes emits as a hook (T10R s6001). */
+function isBareTokenStub(text: string): boolean {
+  const t = (text ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return true;
+  // Lone `@` or `@t` / `@t12` with nothing else — never a book sentence.
+  if (/^@+$/i.test(t)) return true;
+  if (/^@t\d*$/i.test(t)) return true;
+  return false;
+}
+
+/**
+ * T10R — "the careful driver's hand" invents a person not on the ledger.
+ * Possessive person + body part is only legal when the possessor is a handed name/role.
+ */
+function novelPossessivePerson(
+  text: string,
+  enumRefs: LedgerRef[],
+  knownNames: string[],
+): boolean {
+  const body = text ?? '';
+  const known = [...enumRefs.map((r) => r.display), ...knownNames]
+    .filter(Boolean)
+    .map((n) => n!.toLowerCase());
+  for (const m of body.matchAll(
+    /\bthe\s+((?:[a-z][a-z'-]*\s+){0,2}[a-z][a-z'-]*)'s\s+(hand|hands|lap|eyes|face|arm|arms|shoulder|gaze|fingers)\b/gi,
+  )) {
+    const possessor = (m[1] ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!possessor) continue;
+    const head = possessor.split(/\s+/).pop()!;
+    if (known.some((n) => n === possessor || n.includes(head) || head.includes(n.split(/\s+/).pop()!))) {
+      continue;
+    }
+    return true;
+  }
+  return false;
+}
+
 export function classifyTokenLine(
   line: TokenLine,
   beat: TokenBeat,
@@ -837,11 +874,15 @@ export function classifyTokenLine(
   world?: ReadonlySet<string>
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
+  // T10R — writer hook that is only `@` / `@tN` is never a book sentence.
+  if (isBareTokenStub(line.text)) return { ok: false, reason: 'unbound-tok' };
   // T10O — mid-word truncate from a partial JSON draft ("…distance, q...") is not a finished line.
   // Structural: ends with ellipsis after a short alphabetic stub (1–3 letters), not a deliberate "…".
   if (/\b[a-z]{1,3}\.\.\.\s*$/i.test((line.text ?? '').trim())) {
     return { ok: false, reason: 'truncated' };
   }
+  // T10R — invented possessive person ("the careful driver's hand") not on the ledger.
+  if (novelPossessivePerson(line.text, enumRefs, knownNames)) return { ok: false, reason: 'capital' };
   if (line.fn !== 'speech' && lineVoicesPc(line.text, pcName, playerWords)) return { ok: false, reason: 'pc-voice' };
   if (aimsAtSelf(line.text)) return { ok: false, reason: 'selfHarmMethod' };
   if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };
@@ -996,6 +1037,7 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
     return !used.some((t) => unbound.has(t) || !byTok.get(t)?.display);
   });
   const sentences = lines.map((line) => {
+    if (isBareTokenStub(line.text)) return '';
     const said = line.written ?? (line.spoken && line.speaker_tok ? `@${line.speaker_tok} said, "${line.text}"` : line.text);
     const once = dropTypedNameAfterToken(said, (tok) => byTok.get(tok)?.display);
     let next = once.replace(
@@ -1013,6 +1055,8 @@ export function renderTokenBeat(beat: TokenBeat, enumRefs: LedgerRef[], opts?: {
       }
     );
     for (const display of painted) next = collapseEchoedLabel(next, display);
+    // T10R — stray bare `@` left after a dropped hook line.
+    next = next.replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
     return capitalizeSentenceStarts(tidy(restoreNameCase(next, enumRefs)));
   }).filter((s) => s.length > 0);
   return tidy(sentences.join(' '));
@@ -1039,6 +1083,26 @@ export function collapseEchoedLabel(text: string, display: string): string {
     new RegExp(`\\b((?:the|a|an|their|his|her|your|my|its)\\s+)?${escRe(core)},?\\s+(?:(?:the|a|an)\\s+)?(?=${escRe(core)}(?![\\w'’-]))`, 'gi'),
     (_m, det: string | undefined) => det ?? ''
   );
+  // T10R — "left the shrine on a wayside shrine on the Valespire road": short place noun + "on" + full display.
+  // Shared placeShortForm head ("the shrine") before the painted place collapses to one mention.
+  {
+    const shortNoun = (() => {
+      // Last content word before an "on/at/of/in …" tail inside the place label.
+      const head = core.split(/\s+(?:on|at|of|in|by|near|along)\s+/i)[0] ?? core;
+      const toks = head.split(/\s+/).filter(Boolean);
+      const noun = (toks[toks.length - 1] ?? '').replace(/[^a-z'-]/gi, '');
+      return noun.length >= 3 ? noun.toLowerCase() : '';
+    })();
+    if (shortNoun) {
+      next = next.replace(
+        new RegExp(
+          `\\b(?:the|a|an)\\s+${escRe(shortNoun)}\\s+on\\s+(?=(?:(?:the|a|an)\\s+)?${escRe(core)})`,
+          'gi',
+        ),
+        '',
+      );
+    }
+  }
   if (words.length < 2) return next;
   for (let k = Math.min(words.length - 1, 6); k >= 1; k--) {
     const head = words.slice(0, k).join(' ');
