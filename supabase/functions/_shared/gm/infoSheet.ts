@@ -205,7 +205,17 @@ function nowLine(state: GameState, people: string[]): string {
   const scale = placeScale(state) ?? lockHere ?? 'scale unknown';
   // A road meeting is an event of the trip (ENGINE RESULT), not a head here.
   const meeting = roadMeetingOnBeat(state) ? ' · a meeting on the road' : '';
-  const company = `${people.length ? `with ${people.length} here` : crowdHere(state) ? 'crowd here' : 'alone'}${meeting}`;
+  // T10AN — out-of-range occupants are still in the room (not "alone" / empty).
+  const awayN = activeHereSpot(state)?.awayFrom?.length ?? 0;
+  const company = `${
+    people.length
+      ? `with ${people.length} here`
+      : awayN
+        ? `with ${awayN} out of talking range`
+        : crowdHere(state)
+          ? 'crowd here'
+          : 'alone'
+  }${meeting}`;
   const mode = MODE_LABEL[state.engineMode ?? ''] ?? state.engineMode ?? 'mode unknown';
   return `T${state.turn} · ${place} · ${scale} · ${company} · ${mode}`;
 }

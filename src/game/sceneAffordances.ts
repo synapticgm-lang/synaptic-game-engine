@@ -33,6 +33,7 @@ import { isDying } from './tabletop/roundFight';
 import { originPad } from './rules/rpgOrigin';
 import { travelPadBlocked } from './padUniverse';
 import { capFightChips, FIGHT_CHIP_CAP, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
+import { activeHereSpot, stepCloserChip } from './hereSpot';
 
 export { presentPersonForRoute } from './questRoutes';
 
@@ -184,6 +185,23 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   const openQuest = rpg ? mainSpineQuest(state) : null;
   const openStep =
     openQuest?.objectives?.find((o) => !o.completed)?.description?.trim() ?? '';
+  // T10AN — out of talking range: one Step-closer chip each (Talk/Ask/Read stay off via presentNpcRecords).
+  const awayFrom = activeHereSpot(state)?.awayFrom ?? [];
+  for (let a = 0; a < awayFrom.length; a++) {
+    const name = (awayFrom[a] ?? '').trim();
+    if (!name) continue;
+    const closer = stepCloserChip(name);
+    all.push({
+      label: closer,
+      actionId: `person:spot:${name.toLowerCase().replace(/\s+/g, '-')}:closer`,
+      entityId: `npc:${name}`,
+      slotKind: 'person',
+      slotCategory: 'move',
+      salience: 86 - a,
+      required: true,
+      check: undefined,
+    });
+  }
   // T10Q — one chip family per person entity (canonical record), never title-alias duplicates.
   const seenPersonEntity = new Set<string>();
   for (let i = 0; i < people.length; i++) {
@@ -1321,6 +1339,15 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
     const here = peopleHere(state);
     for (let h = 0; h < here.length; h++) {
       if (mentionsName(here[h]!, who) || mentionsName(who, here[h]!)) return true;
+    }
+    // T10AN — out of talking range stays on present[] / awayFrom (Step closer targets them).
+    const present = state.sceneFacts?.present ?? [];
+    for (let p = 0; p < present.length; p++) {
+      if (mentionsName(present[p]!, who) || mentionsName(who, present[p]!)) return true;
+    }
+    const away = activeHereSpot(state)?.awayFrom ?? [];
+    for (let a = 0; a < away.length; a++) {
+      if (mentionsName(away[a]!, who) || mentionsName(who, away[a]!)) return true;
     }
     return false;
   }

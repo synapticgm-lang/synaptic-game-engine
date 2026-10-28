@@ -62,7 +62,8 @@ describe('Gap 2 — a move inside the place writes a here-spot', () => {
     expect(after.currentLocation).toBe('Mireglass March');
     expect(after.sceneFacts?.hereSpot?.spot).toBe('dry ground');
     expect(after.sceneFacts?.hereSpot?.awayFrom).toEqual(['Ilyra Fen', 'Tekk Reed']);
-    expect(after.sceneFacts?.present).toEqual([]);
+    // T10AN — still present in the place; talking-range filter drops them from hearable lists.
+    expect(after.sceneFacts?.present).toEqual(expect.arrayContaining(['Ilyra Fen', 'Tekk Reed']));
     expect(presentNpcNames(after)).toEqual([]);
     expect(presentNpcRecords(after)).toEqual([]);
     expect(commit.receipt).toMatch(/Moved within Mireglass March: now on dry ground; out of talking range: Ilyra Fen, Tekk Reed/);
@@ -85,7 +86,8 @@ describe('Gap 2 — a move inside the place writes a here-spot', () => {
     const move = movementFact(next, 'Look around');
     expect(move).toMatch(/still on dry ground at Mireglass March/);
     expect(move).toMatch(/Ilyra Fen and Tekk Reed stayed where they were, out of talking range/);
-    expect(formatInfoSheet(next)).toMatch(/· alone ·/);
+    expect(formatInfoSheet(next)).toMatch(/out of talking range/);
+    expect(formatInfoSheet(next)).not.toMatch(/· alone ·/);
   });
 
   it('the move turn itself tells the writer the player moved within the place, not left it', () => {

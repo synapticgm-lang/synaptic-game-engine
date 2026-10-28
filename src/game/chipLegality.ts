@@ -32,6 +32,7 @@ import {
   proseSeatsListener,
   roadMeetingPeople,
 } from './scenePresence';
+import { activeHereSpot, isOutOfTalkingRange, stepCloserChip } from './hereSpot';
 
 export type ChipProblemKind = 'ghost-chip' | 'impossible-chip' | 'unrelated-chip';
 
@@ -212,6 +213,25 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
     return isJourneyUnderway(state) ? null : { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
   }
 
+  // T10AN — talk / Read / Analyze / Ask aimed at someone out of talking range cannot land until closer.
+  if (!/^step closer\b/i.test(label)) {
+    const awayHit = (activeHereSpot(state)?.awayFrom ?? []).find(
+      (n) =>
+        mentionsName(label, n)
+        || (!!addr?.who && (mentionsName(n, addr.who) || mentionsName(addr.who, n)))
+        || (!!addr?.who && isOutOfTalkingRange(state, addr.who) && mentionsName(label, n))
+    );
+    const ranged =
+      awayHit
+      || (addr?.who && isOutOfTalkingRange(state, addr.who) ? addr.who : '');
+    if (ranged) {
+      return {
+        kind: 'ghost-chip',
+        detail: `"${label}" talks to ${ranged}, who is out of talking range`,
+      };
+    }
+  }
+
   if (addr?.kind === 'named' || addr?.kind === 'role') {
     if (!isChromePersonToken(addr.who)) {
       if (matchesLastKillName(addr.who, lastKill) && lastKill?.outcome === 'victory') {
@@ -220,7 +240,14 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
       const ledgerHere = here.some((p) => mentionsName(p, addr.who) || mentionsName(addr.who, p));
       // T10AI — role/crowd/faction chips ("exhausted faces", "Two Crown") need the same presence
       // record as named Talk; empty-room text already stripped opening cast from `here`.
-      if (!ledgerHere && !proseSeats) {
+      // T10AN — out-of-range people are still at the place (present[] / awayFrom), just not hearable.
+      const atPlace =
+        ledgerHere
+        || proseSeats
+        || (activeHereSpot(state)?.awayFrom ?? []).some(
+          (n) => mentionsName(n, addr.who) || mentionsName(addr.who, n)
+        );
+      if (!atPlace) {
         return {
           kind: 'ghost-chip',
           detail: `"${label}" talks to ${addr.who}, who is not here (here: ${here.join(', ') || 'nobody'})`,
@@ -297,11 +324,15 @@ export function legalChips(state: GameState, chips: string[], storyProse?: strin
  * The committed menu, judged in the state the next turn starts in: a talk chip for someone this
  * beat left elsewhere (or for nobody, when nobody is here) is not offered. Pads are built before the
  * beat commits, so presence is only final here.
+ * T10AN — when talk chips drop because the addressee is out of talking range, refill with Step closer.
  */
 export function dropAbsentListenerChips(state: GameState, chips: string[], storyProse?: string): string[] {
   const prose = storyProse ?? lastStory(state);
   const kept = chips.filter((c) => chipProblem(state, c, prose)?.kind !== 'ghost-chip');
-  return kept.length || !chips.length ? kept : ['Inspect the immediate surroundings'];
+  const away = activeHereSpot(state)?.awayFrom ?? [];
+  const closer = away.map(stepCloserChip).filter((c) => !kept.some((k) => low(k) === low(c)));
+  const withCloser = closer.length ? [...closer, ...kept] : kept;
+  return withCloser.length || !chips.length ? withCloser : ['Inspect the immediate surroundings'];
 }
 
 /**

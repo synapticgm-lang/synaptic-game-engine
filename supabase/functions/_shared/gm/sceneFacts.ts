@@ -11,7 +11,7 @@ import {
 } from './vignetteLock.ts';
 import { matchHub, hubsForBibleId } from './outdoorHubs.ts';
 import { applyCardCrowdToFacts, buildSnapshotGist } from './openingPointerCard.ts';
-import { applyFollowersToHereSpot, hereSpotAt } from './hereSpot.ts';
+import { applyFollowersToHereSpot, hereSpotAt, hereSpotOccupants } from './hereSpot.ts';
 import { isJourneyUnderway } from './travelJourney.ts';
 import { proseSaysEmpty } from './chipRules.ts';
 import { mentionsName } from './scenePresence.ts';
@@ -98,6 +98,10 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   const crowdPresent = CROWD.test(text) && !emptied;
 
   const present = new Set(prev?.present ?? []);
+  // T10AN — people the here-spot still holds at this place (incl. out of talking range) stay on the ledger.
+  for (const n of hereSpotOccupants({ sceneFacts: prev, currentLocation: prev?.hereSpot?.place })) {
+    if (n) present.add(n);
+  }
   // T10X — filler bystanders only when no ledger cast/group is already present (else writer reacts at invent).
   const hasLedgerPeople = [...present].some(
     (p) => p && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(p.trim()),
@@ -107,9 +111,15 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   let departed = false;
   if (emptied) {
     const seated = [...present].filter((p) => p && mentionsName(text, p));
+    // T10AN — hereSpot occupants (away or nearby) are still in the room; silence ≠ departure.
+    const spotPeople = [
+      ...(prev?.hereSpot?.awayFrom ?? []),
+      ...(prev?.hereSpot?.nearby ?? []),
+    ].map((n) => n.trim()).filter(Boolean);
     present.clear();
     for (const p of seated) present.add(p);
-    departed = present.size === 0;
+    for (const p of spotPeople) present.add(p);
+    departed = present.size === 0 && spotPeople.length === 0;
   }
 
   let crowd: SceneFacts['crowd'] = prev?.crowd ?? 'unknown';

@@ -516,9 +516,17 @@ export function harvestCrowdIntoSceneFacts(
   // T10AI — honest empty wins over a leftover "crowd" noun ("ask the crowd" when the lane
   // held nobody). Full departure only when no prior present name is still seated in the beat
   // ("no one else" keeps Wren; empty lane with no seated name writes crowdDepartedByRecord).
+  // T10AN — hereSpot away/nearby are still in the room; silence ("no one raised a hand") ≠ leave.
   if (proseSaysEmpty(narrative)) {
     const seated = (base.present ?? []).filter((p) => p && mentionsName(narrative, p));
-    if (!seated.length) {
+    const spotHeld = [
+      ...(base.hereSpot?.awayFrom ?? []),
+      ...(base.hereSpot?.nearby ?? []),
+    ]
+      .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+      .filter(Boolean);
+    const kept = Array.from(new Set([...seated, ...spotHeld]));
+    if (!kept.length) {
       return {
         ...base,
         crowd: 'none',
@@ -530,7 +538,9 @@ export function harvestCrowdIntoSceneFacts(
     }
     return {
       ...base,
-      present: seated,
+      crowd: base.crowd === 'none' ? 'present' : base.crowd,
+      present: kept,
+      crowdCount: base.crowdCount ?? kept.length,
       updatedTurn: turn,
     };
   }

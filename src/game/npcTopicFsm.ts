@@ -5,6 +5,7 @@ import { canonicalizeIntent } from './semanticLoopDetector';
 import { classifyVerb } from './completedEventPacket';
 import { isGiverName, talkStageGiver } from './questGiver';
 import { exactTypedName, fuzzyTypedPhrase } from './typedNameMatch';
+import { isOutOfTalkingRange } from './hereSpot';
 
 export type NpcTopicFsmState = Record<string, string[]>;
 
@@ -88,6 +89,8 @@ export function presentNpcForPads(state: GameState): string[] {
     (p) =>
       p &&
       !/^(they|them|one|press|scattered\s+scale|bystanders?|handlers?|figure\s+\d+)$/i.test(p)
+      // T10AN — pads follow talking range (same rule as presentNpcNames / graph talk edges).
+      && !isOutOfTalkingRange(state, p)
   );
   if (!present.length) return [];
   // Prefer topic-history people first, then the rest — still returns all.

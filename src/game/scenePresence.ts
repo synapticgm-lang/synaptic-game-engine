@@ -8,6 +8,7 @@ import { presentNpcNames } from './npcRelationships';
 import { isChromePersonToken } from './chromeAuthority';
 import * as openingEstablishment from './openingEstablishment';
 import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney';
+import { isOutOfTalkingRange } from './hereSpot';
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
@@ -95,8 +96,11 @@ export function peopleHere(state: GameState): string[] {
   // Opening cast stays at the card place (T10AI). True empty occupancy is crowdDepartedByRecord
   // above (drops cast). Empty-room chips strip cast via listenersOnEmptyText -- do not starve
   // pads / giver / last-resort want when present[] is merely unset (emptySceneFacts).
+  // T10AN — opening cast out of talking range is still at the place but cannot hear talk chips.
   if (openingEstablishment.openingCastStillHere(state)) {
-    openingEstablishment.openingCastNames(state).forEach(add);
+    for (const n of openingEstablishment.openingCastNames(state)) {
+      if (!isOutOfTalkingRange(state, n)) add(n);
+    }
   }
   add(roadMeetingPeople(state));
   return [...out.values()];

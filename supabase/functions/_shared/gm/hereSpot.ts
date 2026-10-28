@@ -20,7 +20,10 @@ const NAMED_SPOT =
 const STEP_BACK = /\b(?:step|move|stand|walk|wade|back)\s+(?:a\s+(?:few|couple\s+of)\s+(?:steps?|paces?)\s+)?back\b|\bstep\s+back\b|\bback\s+(?:away|off)\b/i;
 const MOVE_AWAY = /\b(?:move|moving|step|stepping|walk|walking|wade|wading|get|getting|back)\s+away\b/i;
 const AWAY_FROM_PEOPLE = /\baway\s+from\s+(?:them|him|her|those|these|the\s+(?:two|pair|others|group)|[A-Z][a-z]+)\b/;
-const TOWARD_PEOPLE = /\b(?:to|toward|towards|back\s+to|over\s+to|closer\s+to)\s+(?:them|him|her|the\s+(?:two|pair|others|group))\b/i;
+const TOWARD_PEOPLE =
+  /\b(?:to|toward|towards|back\s+to|over\s+to|closer\s+to)\s+(?:them|him|her|the\s+(?:two|pair|others|group))\b/i;
+/** T10AN — "Step closer to {name}" closes talking range without leaving the place. */
+const STEP_CLOSER = /\b(?:step|move|walk|get)\s+closer\s+to\b/i;
 
 /** Sentences of the line that are not questions ("Should I move away?" is not a move). */
 function statementSentences(line: string): string[] {
@@ -41,6 +44,7 @@ export function withinPlaceSpot(raw: string, sceneText = ''): string | null {
       const spot = named[1].toLowerCase();
       return /bank|shore|edge/.test(spot) ? `the ${spot}` : spot;
     }
+    if (STEP_CLOSER.test(s)) return 'beside them';
     const away = MOVE_AWAY.test(s) || AWAY_FROM_PEOPLE.test(s);
     if (away || STEP_BACK.test(s)) {
       if (WATER.test(line) || WATER.test(sceneText)) return 'dry ground';
@@ -52,7 +56,7 @@ export function withinPlaceSpot(raw: string, sceneText = ''): string | null {
 
 /** People still in talking range after a move to a spot: none when the player walked away, all when he moved toward them. */
 function splitByRange(line: string, people: string[]): { nearby: string[]; awayFrom: string[] } {
-  if (TOWARD_PEOPLE.test(line)) return { nearby: people, awayFrom: [] };
+  if (TOWARD_PEOPLE.test(line) || STEP_CLOSER.test(line)) return { nearby: people, awayFrom: [] };
   const named = people.filter((p) => new RegExp(`\\baway\\s+from\\s+${p.split(/\s+/)[0]}\\b`, 'i').test(line));
   if (named.length) return { nearby: people.filter((p) => !named.includes(p)), awayFrom: named };
   return { nearby: [], awayFrom: people };
@@ -93,18 +97,44 @@ export function hereSpotAt(spot: HereSpot | undefined, place: string | null | un
   return key(spot.place) === key(place) ? spot : undefined;
 }
 
+/** Article-stripped key so "denied-god cult" matches "the denied-god cult". */
+function personKey(name: string): string {
+  return key(name).replace(/^(?:the|a|an)\s+/, '');
+}
+
 /** True when the player walked away from this person inside the current place and they did not follow. */
 export function isOutOfTalkingRange(state: Pick<GameState, 'sceneFacts' | 'currentLocation'>, name: string): boolean {
   const s = activeHereSpot(state);
   if (!s?.awayFrom?.length) return false;
-  const k = key(name);
-  return s.awayFrom.some((a) => key(a) === k);
+  const k = personKey(name);
+  if (!k) return false;
+  return s.awayFrom.some((a) => {
+    const ak = personKey(a);
+    if (ak === k) return true;
+    // Chip addressee often drops the article ("denied-god cult" vs "the denied-god cult").
+    const aTok = ak.split(/[\s'’-]+/).filter((t) => t.length >= 3);
+    const kTok = k.split(/[\s'’-]+/).filter((t) => t.length >= 3);
+    if (!aTok.length || !kTok.length) return false;
+    return aTok.length >= kTok.length
+      ? kTok.every((t) => aTok.includes(t))
+      : aTok.every((t) => kTok.includes(t));
+  });
+}
+
+const NAME_LEAD = /^(?:the|a|an)$/i;
+
+/** Content tokens of a person/group name (skip articles so "the cult" is not restored by every "the"). */
+function addressTokens(name: string): string[] {
+  return key(name)
+    .split(/[\s'’-]+/)
+    .filter((t) => t.length >= 3 && !NAME_LEAD.test(t));
 }
 
 /**
  * T10U — addressing a named person who is still at THIS place pulls them back into talking range.
  * A prior step-back must not leave "No one present to answer" when the player glares/asks them by name
  * and nothing left the scene.
+ * T10AN — match full name or a content token ("cult" / "Ilyra"), never a bare article ("the").
  */
 export function engageAddressedInHereSpot(state: GameState, playerInput: string): GameState {
   const s = activeHereSpot(state);
@@ -112,10 +142,15 @@ export function engageAddressedInHereSpot(state: GameState, playerInput: string)
   const said = key(playerInput);
   if (!said) return state;
   const restored = s.awayFrom.filter((name) => {
-    const first = (name.split(/\s+/)[0] ?? '').toLowerCase();
     const full = key(name);
     if (full.length >= 3 && said.includes(full)) return true;
-    return first.length >= 3 && new RegExp(`\\b${first.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(playerInput);
+    const tokens = addressTokens(name);
+    if (!tokens.length) return false;
+    // Multi-token names need every content token, or any one token ≥4 that appears as a word.
+    if (tokens.length >= 2 && tokens.every((t) => said.includes(t))) return true;
+    return tokens.some(
+      (t) => t.length >= 4 && new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(playerInput)
+    );
   });
   if (!restored.length || !state.sceneFacts) return state;
   const awaySet = new Set(restored.map((n) => key(n)));
@@ -124,10 +159,26 @@ export function engageAddressedInHereSpot(state: GameState, playerInput: string)
     awayFrom: s.awayFrom.filter((n) => !awaySet.has(key(n))),
     nearby: [...s.nearby, ...restored.filter((n) => !s.nearby.some((x) => key(x) === key(n)))],
   };
+  const present = Array.from(
+    new Set([...(state.sceneFacts.present ?? []), ...restored].map((n) => norm(n)).filter(Boolean))
+  );
   return {
     ...state,
-    sceneFacts: { ...state.sceneFacts, hereSpot: next },
+    sceneFacts: { ...state.sceneFacts, hereSpot: next, present },
   };
+}
+
+/** Chip that closes distance to someone still at THIS place but out of talking range. */
+export function stepCloserChip(name: string): string {
+  const n = norm(name);
+  return n ? `Step closer to ${n}` : 'Step closer';
+}
+
+/** Everyone the here-spot still lists at this place (nearby + away), for occupancy truth. */
+export function hereSpotOccupants(state: Pick<GameState, 'sceneFacts' | 'currentLocation'>): string[] {
+  const s = activeHereSpot(state);
+  if (!s) return [];
+  return [...s.nearby, ...s.awayFrom].map(norm).filter(Boolean);
 }
 
 /** After the writer: someone the prose shows following the player is beside him again. */
