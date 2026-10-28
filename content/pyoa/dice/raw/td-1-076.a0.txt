@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION td-1-076
+TITLE: Shattering the Glass
+TEXT: Heavy mahogany panels frame the captains' mess, smelling of dried salt and long-spoiled brandy, where a thick pane of reinforced glass seals off a polished oak cabinet. Inside rests a silver compass gimballed in brass, its needle twitching erratically toward the dry, empty seabed outside rather than any true north. Raising the iron crowbar high above your shoulder, you bring the weighted end crashing down with all your strength against the centre of the pane. Shards burst inward like frozen rain, scattering across the threadbare rug as you reach through the jagged frame to claim your prize.
+EXIT 1: Take the silver compass and leave
+@@END
+@@SECTION td-1-077
+TITLE: Striking the Case
+TEXT: Thick layers of wire-mesh glass protect the ceremonial compass within the officers' mess, daring anyone to claim it without waking the sleeping ghosts of the drowned warship. Gripping the cold iron bar with both hands, you line up your target against the lower corner where the salt-cured wood has warped. Every muscle in your arms coils tight as you prepare to throw your entire weight into a sudden, vicious blow that will either shatter the barrier or bring the entire oak frame crashing down upon your hands.
+CHECK: Strike the reinforced glass casing
+@@END
+@@SECTION td-1-078
+TITLE: The Shattered Wrist
+TEXT: The heavy glass resists the blow with a malicious elasticity, deflecting your iron bar and sending a vicious jolt straight up your forearms that rattles your teeth. Before you can pull back, the upper edge of the frame snaps free, dropping a jagged curtain of wire-bound glass directly across your knuckles and opening a hot, stinging gash. You snatch your hand back with a sharp hiss, clutching your bleeding wrist as the silver compass remains just out of reach behind its ruined barrier.
+EXIT 1: Nursing the fresh crimson gash
+@@END
+@@SECTION td-1-079
+TITLE: The Silver Needle
+TEXT: Thick glass fragments tumble away from the splintered mahogany frame, clattering against the deck plates as you plunge your hand into the dust-lined recess. Your fingers close around the cool, heavy metal of the gimballed casing, dragging the prize free from its velvet bed however narrowly the snapping wire frame tried to catch your sleeve. It is a heavy officer's compass of polished silver, its glass face intact and its erratic needle spinning in wild, desperate circles toward the vacant horizon.
+GRANT: Ceremonial silver compass
+EXIT 1: Return to the stranded galleon deck
+@@END
+@@SECTION td-1-080
+TITLE: The Leviathan Bazaar
+TEXT: Colossal white ribs arch overhead like the vault of an ungodly cathedral, forming a cavernous market inside the stranded carcass of a leviathan where the air tastes of old blubber and stale brine. Stalls are hacked directly into the yellowed bone, draped with rotting sails and illuminated by flickering lanterns fuelled from whale-fat grease. Shouting scavengers, nervous salt-miners, and hooded traders crowd the narrow alley of the beast's throat, hawking rusted winch-teeth, jars of phosphorescent weed, and scraps of copper pulled from the dead seabed. The market hums with a desperate, greedy energy, everyone watching their neighbours for any sign of weakness or sudden wealth.
+EXIT 1: Step deeper into the bone market
+@@END
+@@SECTION td-1-081
+TITLE: The Salt-Scraped Hub
+TEXT: Smoke from tiny dung-fires curls against the high ribs of the whale carcass, scenting the crowded market with an acrid haze that stings the eyes and throat. Every stall offers a new temptation or a hidden trap, from the glint of ambergris traded in the shadows to the quiet whispers of pilgrims mourning the missing sea. You stand at the crossroads of the beast's massive jaw, where multiple narrow paths diverge into the bustling chaos of the seabed bazaar. From here, you must choose where your search for Orsolya and the Meridian Gear leads next.
+EXIT 1: Push deeper into the crowded market
+EXIT 2: Break up a violent merchant brawl
+EXIT 3: Decipher markings in a dead sailor journal
+EXIT 4: Repair a delicate clockwork bird for coin
+EXIT 5: Carve a weighing scale peg for kelp
+EXIT 6: Pass through the mournful pilgrim procession
+@@END
+@@SECTION td-1-082
+TITLE: The Bone-Carver's Bargain
+TEXT: Yellowed scrimshaw teeth and jagged shark jaws litter the cramped stall where an old man with milky eyes polishes a dull green amulet carved from whale ear-bone. He swears by the dry tide that the trinket wards off the cold hum of the Hollow Choir, running a trembling thumb over its notched edges. You lean closer, smelling the rank tallow on his coat, and spot the fresh tool-marks near the suspension hole that prove he cut the protective runes this very morning. Pointing out the clumsy forgery with a dry smirk, you watch his defiant bluster deflate into a grudging surrender.
+EXIT 1: Secure the warding amulet and move on
+@@END
+@@SECTION td-1-083
+TITLE: Weighing the Carver's Lies
+TEXT: Narrowing your eyes at the crude notch in the whale-bone amulet, you turn the trinket over in your palm to test its weight against the old carver's breathless claims. The man watches your fingers like a starving gull, his tongue darting out to wet dry lips as he tries to guess whether you know real Tidewarden scrimshaw from modern shoreline scrap. You have to weigh his greasy desperation against the faint, unsettling vibration humming through the bone before you name your price.
+CHECK: Call out the clumsy forgery
+@@END
+@@SECTION td-1-084
+TITLE: The Flawed Trade
+TEXT: Your challenge misses its mark as the old carver suddenly turns the tables, spinning a tearful tale of his starving grandchildren until shame and exhaustion cloud your judgment. You pay twice what the jagged bone is worth just to escape his weeping pleas, clutching a heavy, useless trinket that feels suspiciously soft and damp in the palm of your hand. The coin pouch feels noticeably lighter at your hip as you slip away from his stall, poorer in silver and richer only in experience.
+EXIT 1: Leave the stall with a lighter purse
+@@END
+@@SECTION td-1-085
+TITLE: The Scrimshaw Charm
+TEXT: Grudgingly conceding defeat under your steady gaze, the old carver mutters a foul curse and shoves the green-stained amulet across the greasy counter for a fraction of his original price. You pocket the carved bone however narrowly he tried to cheat you out of your hard-earned copper, feeling its cold surface settle warmly against your palm. It is a genuine piece of old Tidewarden work, notched with three shallow grooves that feel remarkably steady against the low hum of the seabed.
+EXIT 1: Return to the whale-bone crossroads
+@@END

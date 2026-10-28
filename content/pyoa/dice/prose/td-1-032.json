@@ -1,0 +1,88 @@
+{
+ "batch": "td-1-032",
+ "sections": {
+  "td-1-032": {
+   "title": "Blood on the Net",
+   "text": "Voices crackle like dried kelp beneath the wooden docks where the drying frames cast long, skeletal shadows. Two net-menders stand chest-to-chest, iron fish-knives drawn and glinting with pale salt-crust under the grey Gullmouth sky. Passers-by edge away, muttering into woolen collars, leaving the dispute to fester in the salty air. You step between them with slow, deliberate palms held open, watching the twitch of tendon and knuckle as razor edges hover inches from wet wool.\n\nA scarred local guide named Bran, leaning against a salt-cured piling with a coil of hemp over his shoulder, narrows his eyes and watches how steadily you hold your ground while the steel stays high.",
+   "check": "Hold steady against flashing steel",
+   "grant": "Loyal local guide Bran",
+   "exits": [
+    "Return to the smoky guildhall"
+   ]
+  },
+  "td-1-033": {
+   "title": "The Blade's Edge",
+   "text": "Shrill curses bounce off the salt-limed stones of the net-shed as two grizzled net-menders square off, rusted fish-knives flashing in the damp air. Their frayed tempers threaten to draw a blood-feud right in the heart of Gullmouth when the town can least afford fracture. Stepping directly between the swinging blades, you keep your breathing even and your palms open, fixing the louder antagonist with a steady, unblinking glare that demands quiet. A heavy silence falls over the surrounding onlookers as you reach out an unhurried hand toward the nearest razor-sharp edge.",
+   "check": "Step between the flashing knives",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-034": {
+   "title": "A Slip in the Salt",
+   "text": "Steel catches the dreary grey light, and a sudden, jagged jerk from the older mender bypasses your defences entirely, slicing a deep, burning furrow across your forearm before you can pin his wrist. Blood wells instantly, hot and bright against the brine-caked wool of your sleeve, while the crowd gasps and surges backward in alarm. You stagger against a stack of rotting hemp nets, clutching the stinging wound as the combatants break apart, thoroughly shamed by your sudden spilling of blood. The cost is heavy in both torn flesh and lost time, leaving you throbbing and breathless as you bind the tear with a dirty rag.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Bind your bleeding arm and push onward"
+   ]
+  },
+  "td-1-036": {
+   "title": "The Guildmaster's Table",
+   "text": "Thick oak groans beneath the weight of two straining forearms as the guildmaster's champion grins across the grease-stained tavern table, his muscles bunched like oiled cables. You lock your fingers into his massive grip, planting your boots firmly against the uneven floorboards while the smoky taproom falls silent around the wager. Every eye in Gullmouth watches the sweat bead on your forehead as you throw your weight behind the push, fighting inch by grueling inch against an adversary who has broken better wreckers than you. The contest leaves your arm trembling and your lungs burning with stale ale and salt-dust, but victory remains within your desperate grasp as you shove his knuckles down toward the scarred wood.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim your prize from the tavern keeper"
+   ]
+  },
+  "td-1-037": {
+   "title": "Coils of Hemp",
+   "text": "Coarse hemp rope, tightly braided and dripping with protective pitch, lands with a satisfying thud on the tavern bench before you. The defeated champion rubs his reddened wrist with a wry grimace, tossing you a nod of grudging respect that earns the silent approval of the surrounding scavengers. Slinging the heavy coil over your bruised shoulder, you turn your back on the cheering taproom and step out into the damp, sea-scented gloom of the cliff-town. The endless grey expanse of the Low beckons from beyond the harbour wall, waiting for those prepared to descend its treacherous slopes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step out toward the naked seabed"
+   ]
+  },
+  "td-1-039": {
+   "title": "Broken Sinews",
+   "text": "A sudden, sickening pop echoes through your shoulder joint as the champion surges upward with terrifying brute force, shattering your leverage and slamming your knuckles hard against the splintered oak. Pain flares hot and fierce down your arm, leaving your fingers numb and your pride thoroughly bruised by the heavy defeat. You stumble back from the table, clutching your throbbing wrist while the onlookers jeer and collect their winning copper coins from the bar. The loss costs you dearly in stamina and standing among the guild, forcing you to nurse your aching limb in the shadows of the smoky hall.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to lick your wounds in silence"
+   ]
+  },
+  "td-1-041": {
+   "title": "Hauling the Hidden Cask",
+   "text": "Cool moisture seeps through the rotting staves of the heavy oak cask as you hoist it up the damp stone steps of the cellar, your boots slipping slightly on the slimy moss. Smuggled fresh water is the rarest currency left in Gullmouth, and every drop saved from the Brineholders' monopoly is worth a king's ransom among the net-menders. Dropping the heavy burden with a dull thud onto the flagged floor, you wipe the stinging sweat from your brow and catch the approving eye of the cellar master, who reaches into his grease-stained coat to hand over a small, cold piece of hammered tin.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the damp cellar with your token"
+   ]
+  },
+  "td-1-042": {
+   "title": "Lifting the Dead Weight",
+   "text": "Bracing your knees against the damp masonry of the cellar wall, you slide your arms beneath the bulging belly of the massive water cask and prepare to heave. The wood is slick with condensation, and the dead weight threatens to tear the muscles right out of your lower back as you strain upward against the choking dark. Every breath tastes of stagnant lime and ancient mud while you summon every last scrap of strength to hoist the cargo clear of the stone floor.",
+   "check": "Lift the heavy water cask",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-043": {
+   "title": "A Crushing Slip",
+   "text": "The heavy cask shifts treacherously at the apex of the lift, its sodden weight slipping from your numb fingers and crashing back down onto your boot with a bone-jarring thud. Agony shoots up your shin, leaving you gasping for air in the cramped, freezing dark of the cellar while precious fresh water leaks through a newly cracked stave. You limp out into the dim light of the alley a few minutes later, nursing a swollen foot and a bruised ego while cursing your failing grip.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hobble away from the ruined cellar"
+   ]
+  }
+ },
+ "missing": [
+  "td-1-035",
+  "td-1-038",
+  "td-1-040",
+  "td-1-044"
+ ]
+}

@@ -1,0 +1,66 @@
+Gemini said
+
+@@SECTION td-1-056
+TITLE: Driftwood Sledge Construction
+TEXT: Splintered ribs of a long-dead ketch provide the sturdy spars you need, and you drag them across the crusting silt until you reach the edge of the trembling grey quagmire. Coarse hemp cord from your pouch bites into your palms as you lash the wet planks side by side, building a flat litter broad enough to spread your weight. The ivory spyglass glints half-buried in the sucking mud ten paces out, mocking your reach. You haul the makeshift sledge into position, kneeling upon its center to test the buoyancy of the timber before you push off. //
+EXIT 1: Push across the quagmire
+@@END
+
+@@SECTION td-1-057
+TITLE: Sledge Across Silt
+TEXT: Kneeling upon the trembling timber platform, you drive a pair of notched oars down into the grey paste, feeling the suction tug viciously at the wood. The makeshift sledge groans under your weight, tilting alarmingly as the silt beneath the left plank gives way with a wet sigh and sends a shudder up your arms. You shift your center of gravity, throwing your torso back while your muscles strain to keep the craft horizontal over the rising bubbles of marsh-gas. //
+CHECK: Lash and maneuver the improvised sledge across the mud
+@@END
+
+@@SECTION td-1-058
+TITLE: Sinking into the Gray
+TEXT: The timber tips too far, sliding off the frozen crust and plunging your left arm deep into the cold, foul-smelling mire up to the elbow. You wrench yourself backward with a grunt, abandoning the slipping oars as the silt swallows half your makeshift sledge into the dark underbelly of the Low. Mud coats your sleeve and chills your bones, leaving you bruised and encumbered by heavy, reeking grey grime. Yet you manage to scramble back onto solid ground, clutching the damp wooden spar you managed to salvage. //
+EXIT 1: Crawl away from the mire
+@@END
+
+@@SECTION td-1-059
+TITLE: Reclaiming the Glass
+TEXT: Balanced carefully over the shifting grey expanse, you slide the notched spar forward, letting the flat timber bridge the treacherous suction just long enough for you to hook the brass lanyard. The ivory spyglass slips free from the grip of the mud with a wet pop, landing safely upon the center of your raft before the whole contraption settles deeper into the mire. You haul the sledge back to the firm crust, wiping the salt-crust from the polished lens. //
+GRANT: Ivory spyglass of the Low
+EXIT 1: Return to the salt-flats
+@@END
+
+@@SECTION td-1-060
+TITLE: Shadow Among Pilgrims
+TEXT: Heavy wool cloaks dyed the color of dried kelp sweep past your face as a ragged column of zealots tramps through the salt-hollow, chanting prayers to a tide that abandoned them. Their eyes remain fixed upon the horizon, burning with a frantic fervor that ignores everything else in the ruined seabed. You press your spine flat against the ribcage of an upturned skiff, waiting until the final straggler limps by. Resting on the dark sand where the crowd passed is a small, tarnished bell dropped from a wrist. //
+EXIT 1: Step out from the shadow
+@@END
+
+@@SECTION td-1-061
+TITLE: Silence in the Ranks
+TEXT: A towering pilgrim with eyes wild and salt-caked pauses abruptly within arm's reach, turning his hollow gaze toward the very ribcage where you stand pressed into the gloom. His hand drifts toward a rusted iron censer swinging from his wrist, fingers twitching as though he senses the breath trapped in your throat. You swallow hard, keeping your muscles locked in absolute stillness while the dry wind hums through the hollow whale ribs between you. //
+CHECK: Hold breath and remain unseen
+@@END
+
+@@SECTION td-1-062
+TITLE: Spotted by the Zealous
+TEXT: A sudden twitch of your boot against a loose pebble echoes sharply in the salt-air, drawing the pilgrim's glazed stare straight to your hiding place. He lunges forward with a hoarse shout, striking your shoulder with the heavy iron censer before stumbling onward in his blind march toward the horizon. The blow leaves a deep, throbbing ache across your collarbone and scatters your rations into the dust. You recover your footing in the salt-drifts, nursing your bruised arm as the chant fades away. //
+EXIT 1: Brush the dust from your coat
+@@END
+
+@@SECTION td-1-063
+TITLE: Gathering the Fallen Bronze
+TEXT: Motionless as a carved figurehead, you let the wave of fanatics surge past without a sound, their chanted prayers drowning out the whistling wind. As the last ragged hem disappears into the white dust-haze, you reach down and snatch the small bronze bell from the earth before it can be buried by the shifting sands. Its tongue is silent, muffled by a scrap of greasy leather tied around the clapper. //
+GRANT: Tarnished ritual bell
+EXIT 1: Head back toward the flats
+@@END
+
+@@SECTION td-1-064
+TITLE: The Pawn-Widow's Ledger
+TEXT: A dry rustle of parchment draws your gaze toward the rusted anchor-fluke where the pawn-widow sits huddled in black wool, sorting through heaps of salt-corroded trinkets. Her fingers, long and gray as driftwood, tap a notched tally stick as she watches you approach from the shadows of the wrecked galleon. She names Orsolya with a raspy rasp, recounting how the old keeper traded a brass chronometer for a compass needle that pointed inland rather than out to sea. //
+EXIT 1: Step deeper into the wreckage
+@@END
+
+@@SECTION td-1-065
+TITLE: The Stranded Galleon
+TEXT: Timbers thick as cathedral pillars groan and settle into the jagged coral reef, holding the colossal warship at an impossible tilt above the grey seabed. Scavengers crowd the hull like barnacles, hacking at brass fittings and hauling rope pulleys through smashed gunports while the salt-wind howls through empty rigging. Every dark cabin and rusted hatch promises salvage for those willing to risk the shifting bulkheads and the scavengers who claim them. //
+EXIT 1: Slip past the rival crew
+EXIT 2: Pry open the iron grate
+EXIT 3: Smash the reinforced glass case
+EXIT 4: Approach the leviathan market
+@@END

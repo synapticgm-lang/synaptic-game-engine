@@ -1,0 +1,14 @@
+Gemini said
+
+@@SECTION td-1-051
+TITLE: The Sunken Silver
+TEXT: Thick gray mud cakes your knuckles as you heave the waterlogged chest from the collapsing pit, your muscles straining until the suction finally breaks with a wet, sucking gasp. Inside the salt-crusted lid lies a handful of heavy silver coins minted during the reign of the third Tidewarden, their edges worn smooth by centuries of tides. // You slip the damp currency into your coat pocket alongside a small lead token stamped with the gull-and-harpoon seal of the guild, a tangible proof of your persistence against the shifting earth of the Low.
+GRANT: heavy silver tokens
+EXIT 1: Search among the ribs of the ruined galleon
+@@END
+@@SECTION td-1-055
+TITLE: Across the Ridge
+TEXT: Narrow and treacherous, the ridge of dried silt offers barely enough space for the soles of your boots as you edge across the yawning chasms of black mud, arms held wide to catch any stray gust of salt-laden wind. A few paces further, half-buried in the hardening crust, rests a leather merchant satchel dropped in some forgotten panic. // You pull the stiff straps free from the grip of the drying mire, finding dried salt-fish and a tightly stoppered flask of clean well-water intact within the pouch, untouched by the brackish rot of the seabed.
+GRANT: sealed merchant satchel
+EXIT 1: Head back toward the hardening salt-flats
+@@END

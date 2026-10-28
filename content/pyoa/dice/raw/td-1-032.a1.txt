@@ -1,0 +1,73 @@
+Gemini said
+
+@@SECTION td-1-033
+TITLE: The Blade's Edge
+TEXT: Shrill curses bounce off the salt-limed stones of the net-shed as two grizzled net-menders square off, rusted fish-knives flashing in the damp air. Their frayed tempers threaten to draw a blood-feud right in the heart of Gullmouth when the town can least afford fracture. Stepping directly between the swinging blades, you keep your breathing even and your palms open, fixing the louder antagonist with a steady, unblinking glare that demands quiet. A heavy silence falls over the surrounding onlookers as you reach out an unhurried hand toward the nearest razor-sharp edge.
+CHECK: Step between the flashing knives
+@@END
+
+@@SECTION td-1-034
+TITLE: A Slip in the Salt
+TEXT: Steel catches the dreary grey light, and a sudden, jagged jerk from the older mender bypasses your defences entirely, slicing a deep, burning furrow across your forearm before you can pin his wrist. Blood wells instantly, hot and bright against the brine-caked wool of your sleeve, while the crowd gasps and surges backward in alarm. You stagger against a stack of rotting hemp nets, clutching the stinging wound as the combatants break apart, thoroughly shamed by your sudden spilling of blood. The cost is heavy in both torn flesh and lost time, leaving you throbbing and breathless as you bind the tear with a dirty rag.
+EXIT 1: Bind your bleeding arm and push onward
+@@END
+
+@@SECTION td-1-035
+TITLE: Earning a Rough Shield
+TEXT: Iron pauses inches from your collarbone as your absolute calm shatters the attackers' blind fury, forcing both men to lower their blades with muttered, shamefaced curses. A battered local guide leaning against the salt-cured timber frame spits into the mud, grunting approval at your nerve before stepping forward to clap a heavy, calloused hand on your shoulder. You have bought more than mere peace in the reeking shed; you have secured a reliable shadow for the coming descent into the dark seabed. // GRANT: A tough local guide
+EXIT 1: Leave the shed with your new ally
+@@END
+
+@@SECTION td-1-036
+TITLE: The Guildmaster's Table
+TEXT: Thick oak groans beneath the weight of two straining forearms as the guildmaster's champion grins across the grease-stained tavern table, his muscles bunched like oiled cables. You lock your fingers into his massive grip, planting your boots firmly against the uneven floorboards while the smoky taproom falls silent around the wager. Every eye in Gullmouth watches the sweat bead on your forehead as you throw your weight behind the push, fighting inch by grueling inch against an adversary who has broken better wreckers than you. The contest leaves your arm trembling and your lungs burning with stale ale and salt-dust, but victory remains within your desperate grasp as you shove his knuckles down toward the scarred wood.
+EXIT 1: Claim your prize from the tavern keeper
+@@END
+
+@@SECTION td-1-037
+TITLE: Coils of Hemp
+TEXT: Coarse hemp rope, tightly braided and dripping with protective pitch, lands with a satisfying thud on the tavern bench before you. The defeated champion rubs his reddened wrist with a wry grimace, tossing you a nod of grudging respect that earns the silent approval of the surrounding scavengers. Slinging the heavy coil over your bruised shoulder, you turn your back on the cheering taproom and step out into the damp, sea-scented gloom of the cliff-town. The endless grey expanse of the Low beckons from beyond the harbour wall, waiting for those prepared to descend its treacherous slopes.
+EXIT 1: Step out toward the naked seabed
+@@END
+
+@@SECTION td-1-038
+TITLE: The Iron Grip
+TEXT: Sinews strain to the snapping point as you lock forearms across the scarred tavern table with the guildmaster's towering champion, the wood groaning beneath the pressure. Every muscle in your back knots and burns while the surrounding crowd presses in close, shouting wagers into the smoky air as the contest hangs by a single thread of breath. You lean every ounce of your remaining weight into the plunge, forcing your blood-rush down into your fingers as you try to roll his massive wrist toward the scarred wood.
+CHECK: Force the champion's arm down
+@@END
+
+@@SECTION td-1-039
+TITLE: Broken Sinews
+TEXT: A sudden, sickening pop echoes through your shoulder joint as the champion surges upward with terrifying brute force, shattering your leverage and slamming your knuckles hard against the splintered oak. Pain flares hot and fierce down your arm, leaving your fingers numb and your pride thoroughly bruised by the heavy defeat. You stumble back from the table, clutching your throbbing wrist while the onlookers jeer and collect their winning copper coins from the bar. The loss costs you dearly in stamina and standing among the guild, forcing you to nurse your aching limb in the shadows of the smoky hall.
+EXIT 1: Retreat to lick your wounds in silence
+@@END
+
+@@SECTION td-1-040
+TITLE: The Victor's Coil
+TEXT: Wood splinters under the crushing force of your final, desperate shove, and the champion's massive hand crashes down against the table with a resounding thud. Cheers erupt from the gathered wreckers as you straighten up, rubbing your aching forearm while the tavern keeper slides a thick, resin-coated coil of climbing rope across the boards toward you. The prize is heavy and smells strongly of tar and salt, but it provides the exact lifeline needed for the perilous drops awaiting out on the exposed seabed.
+EXIT 1: Carry your new rope toward the gates
+@@END
+
+@@SECTION td-1-041
+TITLE: Hauling the Hidden Cask
+TEXT: Cool moisture seeps through the rotting staves of the heavy oak cask as you hoist it up the damp stone steps of the cellar, your boots slipping slightly on the slimy moss. Smuggled fresh water is the rarest currency left in Gullmouth, and every drop saved from the Brineholders' monopoly is worth a king's ransom among the net-menders. Dropping the heavy burden with a dull thud onto the flagged floor, you wipe the stinging sweat from your brow and catch the approving eye of the cellar master, who reaches into his grease-stained coat to hand over a small, cold piece of hammered tin.
+EXIT 1: Leave the damp cellar with your token
+@@END
+
+@@SECTION td-1-042
+TITLE: Lifting the Dead Weight
+TEXT: Bracing your knees against the damp masonry of the cellar wall, you slide your arms beneath the bulging belly of the massive water cask and prepare to heave. The wood is slick with condensation, and the dead weight threatens to tear the muscles right out of your lower back as you strain upward against the choking dark. Every breath tastes of stagnant lime and ancient mud while you summon every last scrap of strength to hoist the cargo clear of the stone floor.
+CHECK: Lift the heavy water cask
+@@END
+
+@@SECTION td-1-043
+TITLE: A Crushing Slip
+TEXT: The heavy cask shifts treacherously at the apex of the lift, its sodden weight slipping from your numb fingers and crashing back down onto your boot with a bone-jarring thud. Agony shoots up your shin, leaving you gasping for air in the cramped, freezing dark of the cellar while precious fresh water leaks through a newly cracked stave. You limp out into the dim light of the alley a few minutes later, nursing a swollen foot and a bruised ego while cursing your failing grip.
+EXIT 1: Hobble away from the ruined cellar
+@@END
+
+@@SECTION td-1-044
+TITLE: The Sealed Tin Token
+TEXT: Your boots find purchase on the slick stone, and with one final, roaring heave, the heavy water cask settles squarely onto the upper landing without spilling a single precious drop. The cellar master grunts in grudging approval, sliding a cold, octagonal piece of stamped lead across the splintered workbench as your payment. This small token of safe passage opens doors that are bolted tight against ordinary scavengers, granting you unhindered movement through the guarded alleys of the cliff-town. // GRANT: A stamped lead token
+EXIT 1: Return to the smoky tavern hall
+@@END

@@ -1,0 +1,43 @@
+Gemini said
+
+@@SECTION td-1-066
+TITLE: The Sleeping Deck
+TEXT: Salt-rimed pine creaks beneath your boots as you edge across the quarterdeck of the stranded schooner, keeping your profile low against the salt-bleached rail. Below the companionway, the rival crew from Saltspire lie sprawled in drunken exhaustion, snoring in unison amid empty rum flasks and discarded rope ends. The captain's cabin door hangs half-open on swollen brass hinges, leaking a stale reek of vinegar and old tobacco. Inside, shadows pool thick around the mahogany desk where the prize sits waiting behind glass. // You pause, letting a sudden gust of wind die down against the timbers before you take your next step into the gloom.
+EXIT 1: Slip through the splintered cabin doorway
+@@SECTION td-1-067
+TITLE: Within the Cabin
+TEXT: Dust motes hang suspended in the pale shafts of daylight slicing through the salt-crusted stern windows, illuminating the cluttered interior of the captain's domain. Charts detailing vanished channels and silted harbors curl against the bulkheads, neglected since the sea vanished three days ago. On a velvet-lined shelf beside a copper washbasin, the jar of medicinal leeches rests in murky green brine, stirring sluggishly against the glass. The rival crew's heavy breathing vibrates through the deckboards from the room below, a steady reminder of the small margin between profit and discovery. // You reach out a gloved hand toward the shelf, your fingers hovering inches from the target.
+EXIT 1: Reach out to lift the jar
+@@SECTION td-1-068
+TITLE: The Silent Grasp
+TEXT: Every board beneath your soles feels ready to shriek under the slightest shifting weight as you stretch across the desk to clear the bulkhead shadow. A sleeping guard stirs in the bunk outside, muttering something about a dry harbor and kicking out with a booted heel that thuds hard against the wainscoting. Your muscles lock tight, fighting to maintain balance while your fingertips brush the cold, damp glass of the prize jar. A single misplaced inch will bring the snoring crew to their feet with knives drawn and questions unasked. //
+CHECK: Lift the jar without waking them
+@@SECTION td-1-069
+TITLE: Caught in the Act
+TEXT: Wood groans betray your footing just as your fingers wrap around the jar, sending a sharp crack echoing through the hollow cabin. A heavy curse rings out from the bunk below, followed instantly by the scrape of steel against a belt buckle and angry shouts. You snatch the prize and scramble backward, but a jagged corner of the desk catches your forearm, tearing a jagged red line through your sleeve and skin. You drop through the hatchway and into the shadows of the lower deck, nursing a stinging wound and a bruised pride as the angry shouts fade behind you.
+EXIT 1: Retreat into the salt-flats
+@@SECTION td-1-070
+TITLE: The Plundered Jar
+TEXT: Fortune favors the cautious, however narrowly, and you slip back through the splintered door with the cool glass cylinder secured safely inside your heavy coat. The rival crew's slumber remains undisturbed save for a sleepy grunt that soon fades back into heavy snoring. Out on the open seabed, the pale morning light catches the distant towers of Saltspire gleaming like jagged teeth against the grey horizon. You carry away a prize that could buy passage or buy silence when the local trade begins. // GRANT: Jar of medicinal leeches
+EXIT 1: Return to the stranded galleon
+@@SECTION td-1-071
+TITLE: The Iron Grate
+TEXT: Rusted iron flakes crumble under your boots as you crouch beside the sunken hatchway of the abandoned warship, peering down into the murky blackness of the lower hold. Stagnant bilge water laps against the hull ribs far below, carrying the greasy stench of ancient oil and rotting hemp. Across the gap, the heavy harpoon gun rests lashed to a wooden stanchion, its bronze trigger mechanism gleaming through the gloom like an unblinking eye. A thick iron grate, warped by salt and time, seals the only viable path down to the deck plates where the weapon waits. // You brace your boots against the bulkhead and reach for the rusted bars.
+EXIT 1: Grip the warped iron bars
+@@SECTION td-1-072
+TITLE: Heaving Metal
+TEXT: Seawater has welded the iron frame into the oak decking with a stubborn crust of orange scale and old paint. You wedge a crowbar into the narrow gap between the frame and the rusted hinge, leaning your full weight against the cold steel shaft until your muscles strain. The metal groans with a long, metallic screech that cuts through the whistling wind like a gull's cry across the empty seabed. Below deck, the sound echoes through the cavernous hull, threatening to draw unwanted attention from rival scavengers roaming the wreck-fields. // You pull harder, forcing the stubborn barrier inch by inch.
+EXIT 1: Wrench the grate completely free
+@@SECTION td-1-073
+TITLE: Tearing the Hold
+TEXT: Sinews tighten across your shoulders and back as you pour every ounce of strength into the crowbar, fighting the ancient corrosion holding the iron grate in place. The metal screams louder, vibrating through your palms and threatening to slip from your sweat-slicked grip as the corrosion gives way in sudden, jagged jerks. A massive sheet of rust tears loose, sending a shower of sharp flakes raining down into the flooded hold below. Your footing slips slightly on the greasy deck plating, leaving you balanced on a knife-edge between success and disaster. //
+CHECK: Pry open the rusted grate
+@@SECTION td-1-074
+TITLE: The Iron Snag
+TEXT: The rusted metal bites back before you can clear the gap, snapping the crowbar's tip and throwing you hard against the jagged bulkhead. A sharp pain shoots through your ribs, leaving you gasping for salt air in the damp wind while the heavy grate slams back down with a deafening crash. By the time you manage to clear the obstruction without the tool, your palms are raw and bleeding, and precious time has slipped away into the grey afternoon. You slide down into the gloom of the hold, carrying a fresh ache in your bones and a bitter taste of salt.
+EXIT 1: Descend into the dark hold
+@@SECTION td-1-075
+TITLE: The Heavy Iron
+TEXT: Resistance shatters under your determined heave, however narrowly, and the rusted grate crashes inward to reveal the dark descent below. You drop down onto the slick lower deck, stepping carefully around pools of stagnant bilge until your hands close around the cold bronze stock of the harpoon gun. It is a formidable piece of hardware, oiled and heavy, designed to bring down creatures far larger than men in the deep waters that once covered these flats. You hoist the weapon over your shoulder, feeling the solid weight of potential leverage against the dangers of the Low. // GRANT: Heavy brass harpoon gun
+EXIT 1: Make for the leviathan market
+@@END

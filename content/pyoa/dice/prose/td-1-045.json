@@ -1,0 +1,105 @@
+{
+ "batch": "td-1-045",
+ "sections": {
+  "td-1-045": {
+   "title": "The Customs-Priest at the Gate",
+   "text": "Iron chains drag across the dry cobbles of the sea-gate where the grey water used to lap against the foundation stones. Father Vane stands wrapped in salt-stiffened robes that smell of dead kelp and stale vinegar, his eye sockets hollow beneath a narrow bronze mitre. He blocks the exit with a brass ledger held in skin-tight fingers, demanding the dead-water tax before any living soul sets foot upon the newly exposed seabed. His voice sounds like dry reeds scraping in a winter gale as he insists that the absence of the tide remains taxable under ancient maritime charter.\n\nYou press past his outstretched arm, ignoring the low hum of his acolytes chanting hymns to the departed salt, and step out onto the grey, sun-baked expanse of the Low.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step past the toll-gate onto the salt flats"
+   ]
+  },
+  "td-1-046": {
+   "title": "The Crusting Salt-Flats",
+   "text": "Miles of grey, baking mud stretch toward a bleached horizon where the seabed has dried into jagged ridges and treacherous hollows. The morning sun beats down without the cooling breath of the missing tide, baking the exposed silt into a crust that hides bottomless pockets of black muck beneath. Strange shapes jut from the hardened sediment - the ribs of ribs and hulls of long-forgotten craft that now lie stranded in the open air. In the distance, figures move like scavengers across a massive carcass, while closer at hand, the salt crust crackles underfoot with every cautious step you take into the vast unknown.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Search the muddy shallows for buried salvage",
+    "Balance along the narrow ridge of dried silt",
+    "Lash together a makeshift driftwood sledge",
+    "Pick through the wake of the frantic pilgrims",
+    "Approach the pawn-widow near the stranded hull"
+   ]
+  },
+  "td-1-047": {
+   "title": "Sunken Riches in the Muck",
+   "text": "Dark water pools sluggishly around the corners of a sunken timber frame, where the seabed has given way under the unaccustomed heat. Thick, foul-smelling silt clings to your shins as you wade into the depression, reaching deep into the suction of the mud to find the iron-bound edges of a heavy chest. The salt-crrusted lid resists your initial pull, wedged firmly against a bed of waterlogged stones and broken pottery. You wedge your fingers beneath the rusted clasp, planting your heels securely in the hardening silt to begin the heavy work of extraction.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Heave the chest clear of the sucking mire"
+   ]
+  },
+  "td-1-048": {
+   "title": "Hauling the Heavy Chest",
+   "text": "Strain pulls hard against your shoulders and back as you lean into the effort, muscles trembling under the dead weight of the sunken burden. The mire surrenders inch by inch, sucking at the timber sides with a wet, gasping sound like lungs drawing air after a drowning. Saltwater drips from the iron straps as the box finally breaks free of the suction, sliding up onto the firmer crust of the salt-flat with a dull, echoing thud. You catch your breath, wiping stinging sweat from your forehead, and flip the rusted latch to see what the retreating sea has left behind.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the heavy silver coins inside"
+   ]
+  },
+  "td-1-049": {
+   "title": "Breaking the Silt's Grasp",
+   "text": "Thick, suffocating mud wraps around your boots like cold fingers, threatening to drag the heavy wooden chest back down into the black depths of the pit. You plant your boots deeper into the stabilizing rocks at the edge of the collapse, gathering every ounce of strength in your frame for one final, desperate heave. The wood groans under the strain as you lock your elbows and brace your spine against the downward pull of the sinkhole, praying the rusted handles hold firm for another heartbeat.",
+   "check": "Yank the heavy chest from the sinking mud",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-050": {
+   "title": "A Costly Extraction",
+   "text": "The chest slips from your sweating palms with a sharp snap of rusted iron, plunging back into the black mire and splashing foul-smelling mud across your face and chest. You stumble backward onto the hard salt crust, coughing and gasping for clean air as the suction swallows the prize out of sight. A sharp edge of buried slate catches your shin through the cloth of your trousers, leaving a hot, throbbing ache and a long, bleeding gash that will take days to heal. You pick yourself up from the dirt, poorer in both time and blood, and press on across the flats.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the sunken chest and push onward"
+   ]
+  },
+  "td-1-051": {
+   "title": "The Sunken Silver",
+   "text": "Thick gray mud cakes your knuckles as you heave the waterlogged chest from the collapsing pit, your muscles straining until the suction finally breaks with a wet, sucking gasp. Inside the salt-crusted lid lies a handful of heavy silver coins minted during the reign of the third Tidewarden, their edges worn smooth by centuries of tides.\n\nYou slip the damp currency into your coat pocket alongside a small lead token stamped with the gull-and-harpoon seal of the guild, a tangible proof of your persistence against the shifting earth of the Low.",
+   "check": "",
+   "grant": "heavy silver tokens",
+   "exits": [
+    "Search among the ribs of the ruined galleon"
+   ]
+  },
+  "td-1-052": {
+   "title": "The Ridge Between Abysses",
+   "text": "A narrow spine of hard-baked silt offers the only safe passage between two yawning craters of black, bubbling sludge that drop away into darkness. The wind whistles across the flat expanse, carrying the distant scent of rotting kelp and the faint sound of iron machinery turning far below the earth. A leather satchel dangles tantalizingly from the broken spar of a stranded merchant skiff wedged on the far side of the chasm. Every step along the razor-thin ridge requires absolute focus, as the crust beneath your soles crumbles and drifts away into the void with every movement.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk the narrow ridge to reach the satchel"
+   ]
+  },
+  "td-1-053": {
+   "title": "Crossing the Razor Ridge",
+   "text": "The wind hits your chest like a solid wall, threatening to tip your balance over the edge of the crumbling mud ridge and into the black mire below. You freeze mid-stride, arms held wide to catch the shifting air currents, fixing your eyes entirely on the weathered leather satchel swaying just yards ahead. Every muscle in your body locks tight as a fresh tremor shakes the salt-flats, threatening to break the fragile bridge of earth beneath your boots into dust.",
+   "check": "Keep your balance across the chasm ridge",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-054": {
+   "title": "A Slips on the Edge",
+   "text": "A brittle shelf of salt collapses beneath your left boot without warning, sending a shower of grey dust rattling down into the dark abyss below. You throw your weight backward with a sharp gasp, catching your ribs hard against the jagged spine of the ridge as the wind tries to peel you from the rock. Your supplies rattle loose within your pack, and a leather flask of precious fresh water slips from its lashings, tumbling silently into the depths of the mire. Bruised and shaken, you crawl the final few yards on your hands and knees until you reach the safety of solid ground.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your breath and continue onward"
+   ]
+  },
+  "td-1-055": {
+   "title": "Across the Ridge",
+   "text": "Narrow and treacherous, the ridge of dried silt offers barely enough space for the soles of your boots as you edge across the yawning chasms of black mud, arms held wide to catch any stray gust of salt-laden wind. A few paces further, half-buried in the hardening crust, rests a leather merchant satchel dropped in some forgotten panic.\n\nYou pull the stiff straps free from the grip of the drying mire, finding dried salt-fish and a tightly stoppered flask of clean well-water intact within the pouch, untouched by the brackish rot of the seabed.",
+   "check": "",
+   "grant": "sealed merchant satchel",
+   "exits": [
+    "Head back toward the hardening salt-flats"
+   ]
+  }
+ },
+ "missing": []
+}
