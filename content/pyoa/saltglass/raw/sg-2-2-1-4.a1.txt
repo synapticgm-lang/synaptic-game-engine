@@ -1,0 +1,47 @@
+Gemini said
+
+@@SECTION sg-2-2-2-0
+TITLE: The Alkaline Dust-Devil
+TEXT: A stray dust-devil dances across the alkaline crust ahead, kicking up spirals of blinding white powder that sting your eyes. Your hand instinctively brushes against the cold ceramic key at your belt, reassuring yourself it remains safe as you weigh your path through the shimmering haze. // To your left, a massive solar dish lies broken and half-submerged in the crust, offering a patch of shade where someone might rest. To your right, a jagged fissure vents a steady stream of superheated sulfur into the dry air. Behind you lies the familiar perimeter of the toll-hut and the strange musical crater.
+EXIT 1: Share water beneath the broken dish
+EXIT 2: Skirt the hissing sulfur fumarole
+EXIT 3: Turn back toward the toll-hut
+@@END
+@@SECTION sg-2-2-2-1
+TITLE: The Pink Brine Pool
+TEXT: You skirt the edge of a simmering salt-pool where pink brine crusts into sharp, geometric needles that crunch under your soles with a delicate chime. The heat rising off the stagnant water creates shimmering ribbons of light that distort the distant horizon into shifting towers of glass and shadow. // Two paths open before you across the dazzling pan. You can press toward the shadow of a fallen metal collector dish where travellers often pause, or veer toward a narrow vent where sulfurous vapour curls from a fracture in the basin floor.
+EXIT 1: Rest near the solar dish
+EXIT 2: Pass the hissing sulfur vent
+@@END
+@@SECTION sg-2-2-2-3
+TITLE: The Fused Green Cleft
+TEXT: You squeeze through a narrow cleft between two tilted slabs of fused green window-panes that sing faintly in the dry draft, their crystalline edges vibrating with a low, melancholy hum. The passage opens into a wider corridor of the desolate basin where the glare hits with renewed intensity. // Ahead, a plume of sulfurous steam rises from a jagged crack in the floor, while further off, the massive skeletal ribcage of an ancient transport barge casts a long, dark shadow over the glass dunes.
+EXIT 1: Walk past the steaming fissure
+EXIT 2: Approach the skeletal transport barge
+@@END
+@@SECTION sg-2-2-2-4
+TITLE: The Rusted Watch-Tower
+TEXT: Keeping your head low, you slip past an abandoned Salt Court watch-tower where rusty shutter-hinges squeak rhythmically in the thermal wind. The empty structure looms like a skeletal sentinel over the empty pan, its observation slits dark and silent against the glare. // You can scramble down a steep, unstable bank choked with loose flint and fine alkaline dust, or press onward toward a low basin where the heavy, sharp tang of ammonia hangs thick in the superheated air.
+EXIT 1: Scramble down the steep alkaline bank
+EXIT 2: Navigate the sharp ammonia sump
+@@END
+@@SECTION sg-2-2-2-5
+TITLE: The Milk-Glass Field
+TEXT: Your boots crunch over a field of shattered milk-glass that scatters the blinding sunlight into dancing rainbow splinters across the white ground. The scattered shards chime like tiny bells with every step you take through this fragile, luminous waste. // Several features break the monotony of the glittering expanse. You spot a row of hollow ceramic jars half-fused into the crust, a reeking sump where the air tastes of ammonia, and a lone raven perched upon a bleached telegraph pole in the distance.
+EXIT 1: Inspect the half-melted ceramic jars
+EXIT 2: Avoid the evaporating industrial sump
+EXIT 3: Approach the solitary salt-crusted raven
+@@END
+@@SECTION sg-2-2-2-6
+TITLE: The Dry Drainage Ditch
+TEXT: You wade through a shallow drainage ditch choked with powdery salt and the tangled, desiccated roots of ancient desert scrub that crackle beneath your boots. The trench offers a brief respite from the relentless wind, though the air at the bottom is stale and heavy with mineral dust. // The trench leads toward a line of half-melted ceramic vessels embedded in the surrounding crust, or opens out near a shimmering depression where the sharp, pungent scent of ammonia drifts on the thermal currents.
+EXIT 1: Follow the ditch past the ceramic jars
+EXIT 2: Climb toward the ammonia-scented depression
+@@END
+@@SECTION sg-2-2-2-7
+TITLE: The Sheared Glass Milestone
+TEXT: An old milestone shaped like a tapering glass finger points toward the northern horizon with its tip sheared cleanly off by some forgotten blast. Its translucent surface catches the harsh light, casting fractured green and violet glows across the salt-crusted earth around your boots. // From this marker, you can trace your way toward the skeletal remains of an ancient transport barge resting on a glass dune, inspect a row of half-melted ceramic jars, or pick your path across a precarious bridge of warped iron girders spanning a gaping void.
+EXIT 1: Head toward the skeletal barge
+EXIT 2: Examine the half-melted ceramic jars
+EXIT 3: Cross the warped iron girder bridge
+@@END

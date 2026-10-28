@@ -1,0 +1,67 @@
+Gemini said
+
+@@SECTION sg-2-2-1-4
+TITLE: The Spinning Housing
+TEXT: Near a collapsed culvert, you find a discarded brass compass housing spinning wildly in the magnetic salt-haze. The needle within has long since shattered, leaving only a frantic, copper-weighted stub that whips around against the glass like a trapped beetle. Your ember-lamp sputters, its banked wick shivering as a sudden thermal draft breathes up from the buried drainage pipes beneath your boots.
+EXIT 1: Climb the crumbling crystal ridge
+EXIT 2: Inspect the sealed well-head
+EXIT 3: Hide from the trotting wardens
+@@END
+@@SECTION sg-2-2-1-5
+TITLE: Among the Salt-Heaps
+TEXT: You navigate a labyrinth of salt-heaps piled high by ancient dredges, keeping your lamp shielded from prying eyes. Every footfall on the crystalline gravel sounds as loud as falling porcelain in the heavy, breathless air of the basin. Above the jagged crests of the mounds, the sun beats down with a flat, white glare that turns your own shadow into a pool of ink.
+EXIT 1: Hide from the trotting wardens
+EXIT 2: Watch the heat-mirage giants
+EXIT 3: Follow the vibrating telegraph wire
+@@END
+@@SECTION sg-2-2-2-0
+TITLE: The Alkaline Dust-Devil
+TEXT: A stray dust-devil dances across the alkaline crust ahead, kicking up spirals of blinding white powder that sting your cheeks. You pull your collar high against the alkaline grit, clutching your lamp tighter as the miniature squall shrieks past and dissolves into the trembling heat.
+EXIT 1: Rest beneath the solar dish
+EXIT 2: Skirt the steaming fumarole
+EXIT 3: Turn back toward the hut
+@@END
+@@SECTION sg-2-2-2-1
+TITLE: The Simmering Salt-Pool
+TEXT: You skirt the edge of a simmering salt-pool where pink brine crusts into sharp, geometric needles. The air here smells heavily of sulfur and stagnant damp, making your throat itch behind the woolen scarf. Every ripple of the dense liquor beneath the crust reflects the sky in twisted, bloody hues.
+EXIT 1: Rest beneath the solar dish
+EXIT 2: Skirt the steaming fumarole
+@@END
+@@SECTION sg-2-2-2-2
+TITLE: The Green Milestone
+TEXT: A weary packer named Vane rests beside a milestone carved from green bottle-glass, warning of alkaline mires ahead. He wipes a crust of salt from his eyebrows and gestures toward the shimmering white flats with a cracked thumb. Your lamp oil sloshes a slow rhythm against the tin housing as you pause to catch your breath in his shadow.
+EXIT 1: Rest beneath the solar dish
+EXIT 2: Trade with the wandering tinker
+@@END
+@@SECTION sg-2-2-2-3
+TITLE: The Singing Panes
+TEXT: You squeeze through a narrow cleft between two tilted slabs of fused green window-panes singing faintly in the draft. The sound is an eerie, high-pitched hum that vibrates right through your ribs and makes the small flame in your lantern dance without the help of the wind.
+EXIT 1: Skirt the steaming fumarole
+EXIT 2: Slip through the transport barge
+@@END
+@@SECTION sg-2-2-2-4
+TITLE: The Silent Watch-Tower
+TEXT: Keeping your head low, you slip past an abandoned Salt Court watch-tower where rusty shutter-hinges squeak in the thermal wind. The empty loopholes stare out over the white flats like hollow eye-sockets, keeping a lonely watch over an empire of dust and glass.
+EXIT 1: Scramble down the flint embankment
+EXIT 2: Face the ammonia wind gust
+@@END
+@@SECTION sg-2-2-2-5
+TITLE: The Milk-Glass Field
+TEXT: Your boots crunch over a field of shattered milk-glass that scatters the blinding sunlight into dancing rainbow splinters. The ground beneath is treacherous, shifting with every step into a fine, powdery meal that cakes the leather of your gaiters with white dust.
+EXIT 1: Pass the melted ceramic jars
+EXIT 2: Face the ammonia wind gust
+EXIT 3: Watch the salt-crusted raven
+@@END
+@@SECTION sg-2-2-2-6
+TITLE: The Dry Drainage Ditch
+TEXT: You wade through a shallow drainage ditch choked with powdery salt and dried desert scrub roots. The earth here is hollow underfoot, threatening to give way into forgotten underground culverts if you move with anything less than absolute care.
+EXIT 1: Pass the melted ceramic jars
+EXIT 2: Face the ammonia wind gust
+@@END
+@@SECTION sg-2-2-2-7
+TITLE: The Sheared Finger
+TEXT: An old milestone shaped like a tapering glass finger points toward the northern horizon with its tip sheared off cleanly by some ancient violence. The surrounding pan is utterly silent save for the occasional sharp ping of cooling glass expanding beneath the fierce afternoon sun.
+EXIT 1: Slip through the transport barge
+EXIT 2: Pass the melted ceramic jars
+EXIT 3: Cross the warped iron bridge
+@@END
