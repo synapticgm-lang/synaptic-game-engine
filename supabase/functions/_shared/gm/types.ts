@@ -1280,6 +1280,11 @@ export interface TravelJourney {
   day?: number;
   /** Hours walked since the last meeting check (one check per watch). */
   hoursSinceCheck?: number;
+  /**
+   * T10AG — exploration hours spent on this leg by typed free text (SRD Travel Pace: time passes
+   * while the party acts on the road). When ≥ hoursPerLeg, the leg completes like Walk on.
+   */
+  legHoursSpent?: number;
   /** Today's weather, rolled once per day of travel. */
   weather?: TravelWeather;
   /** Who does each travel job today ('you' or a companion's name). */
@@ -1831,7 +1836,7 @@ export interface NpcMemory {
   purchases?: string[];
   /** 12c — quest-giver function complete; drop from CAST / Talk. */
   shouldExit?: boolean;
-  exitReason?: 'quest-accepted' | 'goods-sold' | 'function-complete';
+  exitReason?: 'quest-accepted' | 'goods-sold' | 'function-complete' | 'stall-pressure';
   /** 27d — other names this same person is called (title forms, short forms). */
   aliases?: string[];
   /** 27d — player has actually met this person in play. */
