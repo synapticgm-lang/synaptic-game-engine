@@ -1,0 +1,93 @@
+{
+ "batch": "sg-4-1-1-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-1-1-4": {
+   "title": "The Singing Telegraph",
+   "text": "Wind scours the alkali crust until the earth itself seems to hum with a tooth-aching frequency. A tall iron telegraph pole, wrapped in singing copper wires, vibrates furiously against the gray blindness of the mirror storm. Your fingers tighten around the iron handle of your banked coal-lantern, shielding the faint orange glow from the biting grit. Every breath rasps dry against your throat as the metallic shriek builds in volume, threatening to unseat your balance on the blistered flats.\n\nYou must choose your footing carefully before the high frequency cracks your resolve entirely.",
+   "exits": [
+    "Inspect the fluttering leather ledger near the spectacles",
+    "Pry open the concealed bronze latch in the dirt",
+    "Seek shelter beneath the corrugated tin and flashing mirror",
+    "Pick a careful path across the shifting pearl-grit slope"
+   ]
+  },
+  "sg-4-1-1-5": {
+   "title": "The Sunken Barge",
+   "text": "Darkness pools inside the rusted iron hull of the glass barge, offering a brief, trembling sanctuary from the gale outside. You pull your oil flask from your pouch, tilting it against the dying light to measure the precious fluid sloshing within. The meager reserve will barely survive the howling duration of the storm, leaving you to wonder if your embers will go cold before you reach Prism. Outside, the dunes shift and groan under the weight of the driving dust.\n\nThe oil levels drop with every anxious heartbeat, demanding an immediate decision.",
+   "exits": [
+    "Step out onto the treacherous pearl-grit slope",
+    "Venture into the green crystal dust of the old dispensary",
+    "Climb past the spinning iron winch by the basalt cogwheel"
+   ]
+  },
+  "sg-4-1-2-0": {
+   "title": "The Optic Dome",
+   "text": "Dust whips through the broken roof of the hollowed optic dome, stinging your eyes and coating your woolen collar in white alkali. A blind dromedary, tethered securely to a rusted iron ring in the floor, stamps its hooves in frantic terror against the howling white fury outside. You press your back against the cool, curved wall of the dome, keeping your lamp lifted high to watch the animal's frantic movements.\n\nThe beast threatens to snap its tether and bolt into the blinding storm, forcing your next move.",
+   "exits": [
+    "Crawl into the subterranean salt-glazed drainage pipe",
+    "Duck behind the bulwark of discarded mirror frames",
+    "Step out onto the frozen wave of amber slag"
+   ]
+  },
+  "sg-4-1-2-1": {
+   "title": "The Glass Ridge",
+   "text": "Jagged violet glass shingles slide down the steep slope with a sharp, whistling hiss that mimics the sound of flying daggers. You press your body flat against the ridge, shielding your face as a razor-sharp pane shears the air inches above your knuckles. The Seedkey rests cold against your chest beneath your tunic, a steady anchor amid the chaotic fury of the mirror storm. Every movement demands absolute precision to avoid a deep and disabling cut.\n\nThe flying shards give you mere seconds to choose your descent.",
+   "exits": [
+    "Duck behind the bulwark of discarded mirror frames",
+    "Step out onto the frozen wave of amber slag",
+    "Descend into the hollow basalt cistern to escape the wind"
+   ]
+  },
+  "sg-4-1-2-2": {
+   "title": "The Kelp Warehouse",
+   "text": "Dry kelp-cake crumbles into dust beneath your boots inside the collapsed framework of the old storage shed. A large, grey dune-crab scrambles out from the shadows, clicking its menacing claws directly at the warm glow of your lantern. You lift the coal-lantern higher, watching the crustacean threaten to lunge and scatter your precious embers into the suffocating gloom. The wind howls through the skeletal rafters overhead, carrying the sharp scent of old salt and rain-ghosts.\n\nThe aggressive creature blocks your path, requiring an instant reaction.",
+   "exits": [
+    "Crawl into the subterranean salt-glazed drainage pipe",
+    "Step out onto the frozen wave of amber slag"
+   ]
+  },
+  "sg-4-1-2-3": {
+   "title": "The Leaning Tower",
+   "text": "Salt cakes your lips as you lean against the base of the tilting sun-tower, listening to the dry rattle of metal vanes high above. An abandoned water-skin hangs from a rusted bracket, flapping like a white, desiccated tongue in the gale. The temptation to reach out and taste its contents burns hot in your dry throat, even though you know well that aged basin water brings only sickness. Outside the tower's meager shadow, the white storm blinds the entire horizon.\n\nThe dry heat of your breath urges you onward into the howling waste.",
+   "exits": [
+    "Duck behind the bulwark of discarded mirror frames",
+    "Step out onto the frozen wave of amber slag",
+    "Descend into the hollow basalt cistern to escape the wind"
+   ]
+  },
+  "sg-4-1-2-4": {
+   "title": "The Green Crater",
+   "text": "Fused green sand circles a vast depression where an ancient solar furnace melted the basin floor into smooth, radioactive glass. A rusted surveying tripod stands at the crater's rim, humming a low, discordant note in the gale that masks any approaching footfalls. Something heavy drags itself through the drifting white dust just beyond your vision, crunching against the brittle salt-crust with deliberate weight. Your grip tightens instinctively around the iron handle of your lamp.\n\nThe hidden movement in the drift leaves no time for hesitation.",
+   "exits": [
+    "Descend into the hollow basalt cistern to escape the wind",
+    "Seek shelter beneath the canopy of twisted zinc conduits"
+   ]
+  },
+  "sg-4-1-2-5": {
+   "title": "The Mirror Corridor",
+   "text": "Millions of tiny, shattered prisms pave the sunken trench, crunching with a high, crystalline whisper beneath your every step. You tread as lightly as possible, knowing that any sharp sound might carry through the swirling air and alert watchers hidden in the storm. The walls of mirror-slate reflect thousands of fractured, ghost-like versions of your lamp-glow, turning the narrow corridor into a dizzying hall of light.\n\nThe fragile footing threatens to betray your presence at any moment.",
+   "exits": [
+    "Navigate toward the mountain of crushed quartz gravel",
+    "Cross the roofless courtyard of black basalt"
+   ]
+  },
+  "sg-4-1-2-6": {
+   "title": "The Desert Fox",
+   "text": "Yellow salt-crust forms a low, protective shelf overhead, sheltering you from the worst of the flying glass-dust. A small desert-fox crouches in the dust beneath the overhang, its wide amber eyes reflecting the steady, warm glow of your lamp with startling intelligence. It does not bolt, but watches you with quiet resilience, reminding you that life endures even in this grinding, unforgiving wasteland. The storm continues to roar across the open basin beyond your shallow refuge.\n\nThe silent creature watches you weigh your next direction.",
+   "exits": [
+    "Cross the roofless courtyard of black basalt",
+    "Step across the ribbed causeway of translucent slate"
+   ]
+  },
+  "sg-4-1-2-7": {
+   "title": "The Copper Rails",
+   "text": "Warped copper rails twist upward into the howling murk like the ribs of some ancient, buried leviathan. The screaming wind catches your coat, threatening to lift you bodily off the iron track and hurl you down onto the jagged basin floor below. You drop low to the ties, clinging to the oxidized metal with both hands while your lamp swings wildly from your wrist, casting frantic arcs of orange light.\n\nThe fierce gale demands an immediate and desperate grip on your route.",
+   "exits": [
+    "Step across the ribbed causeway of translucent slate",
+    "Cling to the frozen iron stanchion beneath the balcony"
+   ]
+  }
+ },
+ "missing": []
+}
