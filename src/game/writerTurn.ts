@@ -709,7 +709,8 @@ export function normalizeCommittedProse(prose: string, check: DraftCheck, packet
       return words.filter((w) => stemHit(sentence.replace(/["“][^"”]*["”]/g, ' '), w));
     };
     next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, isEvent, check.state.character?.name).text;
-    next = trimSameBeatRestatements(next, { isThisTurnsEvent: isEvent, isMoveEvent: isMove, eventHits }).text;
+    // minKeep 1: same-reply place/leg reprints may leave a single sentence (T10N).
+    next = trimSameBeatRestatements(next, { isThisTurnsEvent: isEvent, isMoveEvent: isMove, eventHits, minKeep: 1 }).text;
   }
   return polishMentions(next, refs, check.state);
 }

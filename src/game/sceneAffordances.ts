@@ -255,6 +255,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   const openRoutes = openRouteView(state);
   const routeRows = openRoutes?.rows ?? [];
   const hereNow = peopleHere(state);
+  const herePlace = (state.currentLocation ?? '').trim().toLowerCase();
+  let placeSearchHere = false;
   if (routeRows.length && openRoutes) {
     const stepRoutes = openRoutes.step.routes ?? [];
     for (let i = 0; i < routeRows.length; i++) {
@@ -279,6 +281,12 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
           }
           if (!present) continue;
         }
+      }
+      // T10N — approach / place / object routes always stay as open leads (Scout camp from Waystation).
+      // Only mark Search-the-area covered when a place/object route's placeId is THIS room.
+      if (route && (route.kind === 'place' || route.kind === 'object')) {
+        const routePlace = (route.placeId ?? '').trim().toLowerCase();
+        if (routePlace && herePlace && routePlace === herePlace) placeSearchHere = true;
       }
       all.push({
         label: row.label,
@@ -466,7 +474,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     });
   }
   const place = (state.currentLocation ?? '').trim();
-  if (place) {
+  // T10N — one search chip: quest "Search {HERE} for signs" already covers the same action.
+  if (place && !placeSearchHere) {
     const label = 'Search the area';
     const entityId = `place:${place}`;
     all.push({

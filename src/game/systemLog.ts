@@ -73,6 +73,9 @@ export function isNoisySystemLogLine(line: string): boolean {
     || /^social\s+check:\s*(?:success|failure)(?:\s*\(.*\))?\s*$/i.test(line)
     || /\[?\s*system\s+roll/i.test(line)
     || /\bd20\b.*\b(?:mod|dc)\b/i.test(line)
+    // T10N — engine step receipts / generator ids are debug, not player STATUS.
+    || /^(?:not\s+)?done:\s*/i.test(line.trim())
+    || /^quest generated:\s*/i.test(line.trim())
     // Director mandates must not surface as STATUS without mechanical pads (Batch S)
     || /^SOCIAL CRISIS\b/i.test(line)
     || /^NPC TOPIC EXHAUSTED\b/i.test(line)

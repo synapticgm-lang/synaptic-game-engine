@@ -176,6 +176,7 @@ export async function checkAndRepairProse(args: {
   let checkPasses = 1;
   const repairedSet = new Set<string>();
 
+  let repairedLine = '';
   if (first.serious.length && args.repair) {
     const target = first.serious[0]!;
     const sentence = sentenceForClaim(prose, target.c);
@@ -208,6 +209,7 @@ export async function checkAndRepairProse(args: {
         if (kept) {
           prose = next;
           repaired = true;
+          repairedLine = line;
           repairedSet.add(target.c);
         }
       }
@@ -219,6 +221,23 @@ export async function checkAndRepairProse(args: {
       chat: args.chat,
     });
     checkPasses = 2;
+    // T10N — drop a rewrite only when the second check flags a claim that is *in* that rewrite
+    // (stale claims about the pre-repair sentence must not kill a clean colour line).
+    if (repaired && repairedLine) {
+      const lineL = repairedLine.toLowerCase();
+      const still = second.serious.find((u) => {
+        const c = (u.c || '').toLowerCase().replace(/^out of character:\s*/i, '').trim();
+        if (c.length < 8) return false;
+        const head = c.slice(0, Math.min(48, c.length));
+        return lineL.includes(head) || c.includes(lineL.slice(0, Math.min(48, lineL.length)));
+      });
+      if (still) {
+        const dropped = replaceDraftSentence(prose, repairedLine, '');
+        if (dropped.trim()) {
+          prose = dropped.replace(/\s+/g, ' ').trim();
+        }
+      }
+    }
     records = toClauseRecords(second.claims, repairedSet);
   }
 
