@@ -180,6 +180,10 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   for (const f of checkPlayCrimes(check.state, check.state, check.playerInput, text).p0) {
     if (f.kind === 'absent-speaker') out.push(`Absent speaker: ${f.detail}. Only PRESENT speak (${here.join(', ') || '(none)'}).`);
     if (f.kind === 'wrong-voice') out.push(`Wrong voice: ${f.detail}`);
+    // T10F — reject (no sentence repair) when an NPC is given the player's quoted line.
+    if (f.kind === 'plays-player' && /NPC speaks the player's quoted words/i.test(f.detail)) {
+      out.push(`Player's quoted words in an NPC's mouth: ${f.detail}`);
+    }
   }
   if (isOfferRefuseLine(check.playerInput)) {
     const card = (check.state.openingEstablishment?.card?.cast ?? '').trim();

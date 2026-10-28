@@ -204,13 +204,11 @@ export function isSpeechOrProtest(action: string): boolean {
 /**
  * In "dismiss X and look for a door", the last clause is the job.
  * Question marks also split clauses so "what's going on? ask someone" keeps the ask.
+ * Quote spans stay whole (T10F) — same splitter as parsePlayerSteps.
  */
 export function primaryActionClause(input: string): string {
   const text = input.replace(/\s+/g, ' ').trim();
-  const parts = text
-    .split(/\s+(?:and then|then|, then|and)\s+|[?]+/)
-    .map((s) => s.replace(/^[.!,;]+|[.!,;]+$/g, '').trim())
-    .filter((s) => s.length >= 3);
+  const parts = splitClauses(text).filter((s) => s.length >= 3);
   if (parts.length < 2) return text.replace(/[?]+$/g, '').trim() || text;
   const talk = [...parts].reverse().find(
     (p) =>
@@ -220,7 +218,7 @@ export function primaryActionClause(input: string): string {
   );
   if (talk && talk.split(/\s+/).length >= 3) return talk;
   const last = parts[parts.length - 1];
-  if (last.split(/\s+/).length >= 3) return last;
+  if (last && last.split(/\s+/).length >= 3) return last;
   return text;
 }
 
@@ -509,13 +507,140 @@ export function sheetContextFromState(state?: GameState | null): IntentSheetCont
   };
 }
 
+/** Letter/digit — apostrophe neighbours for I'll / 'em / don't (not a quote delimiter). */
+function isWordChar(ch: string | undefined): boolean {
+  if (!ch) return false;
+  const c = ch.charCodeAt(0);
+  return (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || (c >= 48 && c <= 57);
+}
+
+/**
+ * T10F — quote span: opening mark to matching closer.
+ * An apostrophe inside a word (I'll, don't) or a leading contraction ('em) is not a closer.
+ * SRD 5.2.1 Communicating — "The speaker can say anything they want… without spending an action"
+ * (Wizards of the Coast SRD 5.2.1, CC BY 4.0): the player's quoted words stay theirs in full.
+ */
+export function extractQuotedSpan(text: string): string | null {
+  const s = text ?? '';
+  for (const [open, close] of [
+    ['"', '"'],
+    ['\u201c', '\u201d'],
+  ] as const) {
+    const a = s.indexOf(open);
+    if (a < 0) continue;
+    const b = s.indexOf(close, a + 1);
+    if (b > a) {
+      const inner = s.slice(a + 1, b).trim();
+      if (inner) return inner;
+    }
+  }
+  // Straight or curly opening single quote; closer may be ' or ’
+  let openAt = -1;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i]!;
+    if (ch !== "'" && ch !== '\u2018') continue;
+    // Mid-word apostrophe is never an opener (I'll).
+    if (isWordChar(s[i - 1]) && isWordChar(s[i + 1])) continue;
+    openAt = i;
+    break;
+  }
+  if (openAt < 0) return null;
+  for (let i = openAt + 1; i < s.length; i++) {
+    const ch = s[i]!;
+    if (ch !== "'" && ch !== '\u2019') continue;
+    const prev = s[i - 1];
+    const next = s[i + 1];
+    // I'll / don't
+    if (isWordChar(prev) && isWordChar(next)) continue;
+    // 'em / 'tis while still inside the quote — not the closer
+    if (isWordChar(next) && !isWordChar(prev)) continue;
+    const inner = s.slice(openAt + 1, i).trim();
+    return inner || null;
+  }
+  return null;
+}
+
+/** First quoted say in the player's typed line (full span; apostrophes stay inside). */
+export function extractPlayerQuotedSay(input: string): string | null {
+  return extractQuotedSpan((input ?? '').replace(/\s+/g, ' ').trim());
+}
+
+/**
+ * True when prose attributes a quote to someone other than the PC and that quote is
+ * the player's own quoted words (or a contiguous slice of them). Reject — do not rewrite.
+ */
+export function npcHoldsPcQuote(prose: string, playerInput: string, pcName?: string | null): boolean {
+  const said = extractPlayerQuotedSay(playerInput);
+  if (!said || said.length < 6) return false;
+  const fold = (t: string) => t.toLowerCase().replace(/\s+/g, ' ').trim();
+  const want = fold(said);
+  const pcFirst = (pcName ?? '').trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+  const text = (prose ?? '').replace(/\s+/g, ' ');
+  const re =
+    /\b([A-Za-z][\w'’-]*(?:\s+[A-Za-z][\w'’-]*){0,2})\s+(?:said|says|asked|asks|replied|replies|whispered|shouted|called|answered)\s*[,:]?\s*["“]([^"”]+)["”]/gi;
+  for (const m of text.matchAll(re)) {
+    const speaker = (m[1] ?? '').trim();
+    const first = speaker.split(/\s+/)[0]?.toLowerCase() ?? '';
+    if (first === 'you' || (pcFirst.length >= 2 && first === pcFirst)) continue;
+    const q = fold(m[2] ?? '');
+    if (q.length < 4) continue;
+    if (want === q || want.includes(q) || q.includes(want)) return true;
+  }
+  return false;
+}
+
+/** Split on then/and/while/?/; but never inside a quoted span (T10F). */
 function splitClauses(text: string): string[] {
   const raw = text.replace(/\s+/g, ' ').trim();
   if (!raw) return [];
-  const parts = raw
-    .split(/\s+(?:and then|then|, then|and|while)\s+|[?]+|;+/)
-    .map((s) => s.replace(/^[.!,;]+|[.!,;]+$/g, '').trim())
-    .filter((s) => s.length >= 2);
+  const parts: string[] = [];
+  let start = 0;
+  let i = 0;
+  /** null | '"' | "'" — which closer family is open. */
+  let q: '"' | "'" | null = null;
+  const push = (from: number, to: number) => {
+    const s = raw.slice(from, to).replace(/^[.!,;]+|[.!,;]+$/g, '').trim();
+    if (s.length >= 2) parts.push(s);
+  };
+  while (i < raw.length) {
+    const ch = raw[i]!;
+    if (q === '"') {
+      if (ch === '"' || ch === '\u201d') q = null;
+      i += 1;
+      continue;
+    }
+    if (q === "'") {
+      if (ch === "'" || ch === '\u2019') {
+        const prev = raw[i - 1];
+        const next = raw[i + 1];
+        if (!(isWordChar(prev) && isWordChar(next)) && !(isWordChar(next) && !isWordChar(prev))) {
+          q = null;
+        }
+      }
+      i += 1;
+      continue;
+    }
+    if (ch === '"' || ch === '\u201c') {
+      q = '"';
+      i += 1;
+      continue;
+    }
+    if ((ch === "'" || ch === '\u2018') && !(isWordChar(raw[i - 1]) && isWordChar(raw[i + 1]))) {
+      q = "'";
+      i += 1;
+      continue;
+    }
+    const rest = raw.slice(i);
+    const m = rest.match(/^(?:\s+(?:and then|then|, then|and|while)\s+|[?]+|;+)/i);
+    if (m) {
+      push(start, i);
+      i += m[0].length;
+      start = i;
+      continue;
+    }
+    i += 1;
+  }
+  push(start, raw.length);
   return parts.length ? parts : [raw];
 }
 
@@ -627,17 +752,20 @@ function pickFromPool(clause: string, pool: string[]): string | null {
   return best;
 }
 
-/** Quoted words the player typed (double or single); never a paraphrase. */
+/** Quoted words the player typed (double or single); never a paraphrase. Apostrophes stay inside the span. */
 function extractSay(clause: string): string | null {
-  const dq = clause.match(/["“]([^"”]+)["”]/);
-  if (dq?.[1]) return dq[1].trim();
-  const sq = clause.match(/'([^']+)'/);
-  if (sq?.[1]) return sq[1].trim();
+  const quoted = extractQuotedSpan(clause);
+  if (quoted) return quoted;
   // Bare say/tell + words, not ask-about topics (those keep the clause as the question).
   const after = clause.match(
     /\b(?:say|said|tell|shout|yell|whisper|call\s+out)\b[:\s]+(.+)$/i
   );
-  if (after?.[1]) return after[1].replace(/^["'“]|["'”]$/g, '').trim().slice(0, 160);
+  if (after?.[1]) {
+    const rest = after[1].trim();
+    const inner = extractQuotedSpan(rest);
+    if (inner) return inner;
+    return rest.replace(/^["'“‘]|["'”’]$/g, '').trim().slice(0, 160);
+  }
   return null;
 }
 

@@ -8,7 +8,7 @@
 
 import type { GameState } from './types';
 import { checkObligationCoverage, buildIntentContract } from './intentContract';
-import { parsePlayerIntent } from './intentParser';
+import { npcHoldsPcQuote, parsePlayerIntent } from './intentParser';
 import { isLookAroundAction } from './sandboxXp';
 import { resolveOfferedChoices } from './playTranscript';
 import { hubsForBibleId } from './outdoorHubs';
@@ -678,6 +678,13 @@ export function checkPlayCrimes(
     const saidWords = said.match(/[a-z]{3,}/g) ?? [];
     const echoes = saidWords.length > 0 && saidWords.filter((w) => typed.has(w)).length / saidWords.length >= 0.6;
     if (!echoes) p0.push({ kind: 'plays-player', detail: `the prose writes the player's own words: "${pcLine[0].slice(0, 100)}"` });
+  }
+  // T10F — player's quoted words in an NPC's mouth (reject; do not rewrite into their line).
+  if (npcHoldsPcQuote(text, action, after.character?.name)) {
+    p0.push({
+      kind: 'plays-player',
+      detail: `an NPC speaks the player's quoted words: "${action.slice(0, 100)}"`,
+    });
   }
 
   // Someone here when the beat began may speak in it, even if they leave by its end.

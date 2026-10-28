@@ -20,7 +20,7 @@ import { currentSceneLedger, weaponsNotInHand } from './infoSheet';
 import { playerAsksRepeat } from './semanticLoopDetector';
 import { systemWindowFieldNames } from './litrpgSystemWindow';
 import { writerFacts } from './systemHousing';
-import { aimsAtSelf } from './intentParser';
+import { aimsAtSelf, npcHoldsPcQuote } from './intentParser';
 import { buildGroundTruthLedger } from './writerInfoLayer';
 import { BAG_WORD, escRe, narrationOf as narratorWords, WORN_OR_BODY } from './engineFactPatterns';
 import { readWireBeat, refEnumOf, TOKEN_USES, type WireLineFn } from './tokenBeatSchema';
@@ -791,6 +791,10 @@ export function plainLineFactProblem(text: string, state: GameState, packet?: Co
   const handed = handedCountText(state, packet);
   if (aimsAtSelf(text)) return 'a self-harm method (a Line: fade instead)';
   if (lineVoicesPc(text, state.character?.name, packet?.playerAction)) return 'words put in the player\'s mouth';
+  // T10F — flag only; writerDraftProblems rejects the draft (no rewrite of the stolen quote).
+  if (packet?.playerAction && npcHoldsPcQuote(text, packet.playerAction, state.character?.name)) {
+    return 'the player\'s quoted words in an NPC\'s mouth';
+  }
   if (lineHasUnhandedCount(text, handed)) return 'a count the scene never handed';
   if (lineHasOutOfWorldThing(text, handed, offSettingWords(state))) return 'a thing this world has no word for';
   if (lineHasUnhandedOwnThing(text, handed, state.character?.name)) return 'a thing carried that the scene never handed';
