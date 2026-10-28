@@ -6,7 +6,7 @@ import {
   scrubInventedWeapons,
 } from './searchContinuity';
 import { scrubInventedCrowdSize } from './crowdAuthority';
-import { rewriteChromePersonClauses } from './chromeAuthority';
+import { isCrowdFillerToken, rewriteChromePersonClauses } from './chromeAuthority';
 import { scrubHookReversals, type HookLock } from './hookLock';
 import { scrubLeaveReachDuringFight } from './oneCameraFight';
 import { placeTitleNeedles, scrubSlotGlue } from './slotGlue';
@@ -943,6 +943,20 @@ export function scrubInventedAlonePresence(text: string, alone: boolean): string
   }
   return tidyClauses(kept.join(' '));
 }
+/**
+ * T10X — when a ledger cast/group is present, do not leave invented "bystanders" as the actors.
+ * Rewrite filler crowd nouns onto the present lead (shared mechanism with alone invent scrub).
+ */
+export function scrubCrowdFillerOntoPresentCast(text: string, presentNames: string[] = []): string {
+  if (!text || !/\bbystanders?\b/i.test(text)) return text;
+  const cast = presentNames
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n) => n && !isCrowdFillerToken(n));
+  if (!cast.length) return text;
+  const lead = cast[0]!;
+  const label = /^(?:the|a|an)\s+/i.test(lead) ? lead : `the ${lead}`;
+  return tidyClauses(text.replace(/\b[Tt]he bystanders?\b/g, label));
+}
 const ONE_ROOM_MAP_LIE =
   /\b(?:only\s+(?:one|a\s+single)\s+(?:open\s+)?room|no\s+doors?\s+(?:intact|remain|left)|(?:there\s+are\s+)?no\s+hallways?|only\s+(?:a\s+)?(?:gap|crack)\s+in\s+the\s+(?:far\s+)?wall|nothing\s+but\s+(?:a\s+)?(?:gap|crack)\s+in\s+the\s+wall)\b/i;
 export function scrubInteriorOneRoomLie(
@@ -1370,6 +1384,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubPlaceholderNouns(next, ctx?.currentLocation);
   next = scrubPrematureSecrets(next);
   next = scrubInventedAlonePresence(next, alone);
+  next = scrubCrowdFillerOntoPresentCast(next, ctx?.presentNames ?? []);
   next = scrubInteriorOneRoomLie(
     next,
     ctx?.hasMappedDoorExits === true,

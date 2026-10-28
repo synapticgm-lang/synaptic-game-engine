@@ -10,7 +10,7 @@
  * Cue blocks are cut on cue headers, not on every ". ", so a period inside a clause cannot leak.
  */
 
-import { isAggregatePersonToken } from './chromeAuthority.ts';
+import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority.ts';
 
 /** Chrome that must never appear on the player book. */
 export const WRITER_CUE_CHROME =
@@ -29,39 +29,56 @@ export function pcSaysExactlyCue(said: string): string {
 }
 
 /**
- * Present named addressee → reaction slot. Crowd/aggregate labels are addressed but do not speak
- * as one NPC (no reaction slot). When `presentHere` is supplied (including `[]` = alone), a named
- * who must be on that list or the cue is absence (T10P). Omitting the list keeps the legacy
- * named-slot behaviour for callers that only pass a who. Unnamed talk with people here addresses
- * them — never "empty scene" (T10M). Else empty-scene speech.
+ * Who may hold a reaction / answer slot from a present list.
+ * Crowd fillers never speak. Ledger cast groups ("the roof-thieves", "the Pact crew") do —
+ * even when the hyphen-plural invent-shape marks them aggregate (T10X / T10V chain).
+ */
+function speakableHere(here: string[]): string[] {
+  return here.filter((n) => !isCrowdFillerToken(n));
+}
+
+/**
+ * Present named addressee → reaction slot. Crowd fillers are addressed but do not speak.
+ * Ledger present groups (roof-thieves / Pact crew) open a reaction slot. When `presentHere`
+ * is supplied (including `[]` = alone), a named who must be on that list or the cue is absence
+ * (T10P). Omitting the list keeps the legacy named-slot behaviour for callers that only pass a
+ * who. Unnamed talk with people here addresses them — never "empty scene" (T10M). Else empty-scene speech.
  */
 export function speechAddressCue(who: string | null, presentHere?: string[] | null): string {
-  if (who && isAggregatePersonToken(who)) {
+  const here =
+    presentHere != null
+      ? presentHere.map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean)
+      : null;
+  if (who && isCrowdFillerToken(who)) {
+    return `Speech event: you address ${who}. No one present to answer.`;
+  }
+  // Invented hyphen group not on the ledger → no slot (T10L salt-burners). On-ledger → reacts (T10X).
+  if (who && isAggregatePersonToken(who) && here != null && !nameOnList(who, here)) {
+    return `Speech event: you address ${who}. No one present to answer.`;
+  }
+  if (who && isAggregatePersonToken(who) && here == null) {
     return `Speech event: you address ${who}. No one present to answer.`;
   }
   if (who) {
-    if (presentHere != null) {
-      const here = presentHere.map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean);
-      if (!nameOnList(who, here)) {
-        return `Speech event: you address ${who}. No one present to answer.`;
-      }
+    if (here != null && !nameOnList(who, here)) {
+      return `Speech event: you address ${who}. No one present to answer.`;
     }
     return `Speech event: you address ${who}. NPC reaction slot open for ${who}.`;
   }
-  const here = (presentHere ?? []).map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean);
-  // T10V — crowd nouns are not a speaker; prefer people who can answer.
-  const speakers = here.filter((n) => !isAggregatePersonToken(n));
+  const list = here ?? [];
+  // T10V/T10X — crowd fillers are not speakers; ledger groups and named people are.
+  const speakers = speakableHere(list);
   if (speakers.length === 1) {
     return `Speech event: you address ${speakers[0]}. NPC reaction slot open for ${speakers[0]}.`;
   }
   if (speakers.length > 1) {
-    return `Speech event: you address the people here. NPC reaction slot open for the people here.`;
+    return `Speech event: you address the people here. NPC reaction slot open for ${speakers[0]}.`;
   }
-  if (here.length === 1) {
-    // Sole aggregate: addressed, but nobody can answer as one NPC.
-    return `Speech event: you address ${here[0]}. No one present to answer.`;
+  if (list.length === 1) {
+    // Sole crowd filler: addressed, but nobody can answer as one NPC.
+    return `Speech event: you address ${list[0]}. No one present to answer.`;
   }
-  if (here.length > 1) {
+  if (list.length > 1) {
     return `Speech event: you address the people here. No one present to answer.`;
   }
   return `Speech event: you address the empty scene. No one present to answer.`;
@@ -101,6 +118,18 @@ export function buildClauseWriterFact(
       parts.push(speechAddressCue(who, here));
     } else {
       parts.push(showActCue());
+      // T10X — unaddressed physical act (kick/point) with a present ledger group: they react.
+      // Addressed Face/Talk targets stay show-act only (T10P — no Speech event stub).
+      if (!who) {
+        const reactors = speakableHere(
+          (here ?? []).map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean),
+        );
+        if (reactors.length >= 1) {
+          parts.push(
+            speechAddressCue(reactors.length === 1 ? reactors[0]! : null, reactors),
+          );
+        }
+      }
     }
   }
   return parts.join(' ');

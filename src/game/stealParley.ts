@@ -23,6 +23,7 @@ import { ensurePersona, nudgePersona, socialShift } from './npcPersona';
 import { tickEncounterTerminal } from './encounterTerminalFsm';
 import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
 import type { IntentStep, IntentTone } from './intentParser';
+import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority';
 
 export type StealOutcome = {
   taken: boolean;
@@ -53,12 +54,44 @@ const PARLEY_RE =
 const CONSUME_TAKE_RE =
   /\btake\s+(?:a|an|the|my|your)\s+(?:sip|drink|swig|gulp|bite|taste|puff|drag|whiff|breath)\b/i;
 
-export function looksLikeSteal(text: string, step?: IntentStep | null): boolean {
+/**
+ * People / crowd fillers / present groups are never loot (T10X "Gained bystanders"; T10S sip class).
+ * A Gained line must come from a real item grant only.
+ */
+export function isNonLootableTakeTarget(target: string | null | undefined, state?: GameState): boolean {
+  const raw = (target ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return false;
+  const bare = raw.replace(/^(?:the|a|an)\s+/i, '').trim();
+  if (isCrowdFillerToken(raw) || isCrowdFillerToken(bare)) return true;
+  if (isAggregatePersonToken(raw) || isAggregatePersonToken(bare)) return true;
+  if (!state) return false;
+  const names = [
+    ...(state.sceneFacts?.present ?? []),
+    ...(state.npcMemories ?? []).map((m) => m.npcName),
+    state.activeEncounter?.name,
+  ]
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+  const key = bare.toLowerCase();
+  return names.some((n) => {
+    const nk = n.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+    return nk === key || nk.includes(key) || key.includes(nk);
+  });
+}
+
+export function looksLikeSteal(text: string, step?: IntentStep | null, state?: GameState): boolean {
   const clause = step?.clause ?? text;
   // T10S — verb-noun consumption is not a take/gain of an item.
   if (CONSUME_TAKE_RE.test(clause) || CONSUME_TAKE_RE.test(text)) return false;
-  if (step?.action === 'take' && STEAL_RE.test(clause)) return true;
-  if (step?.action === 'take' && /\bfrom\b/i.test(clause) && !CONSUME_TAKE_RE.test(clause)) return true;
+  // T10X — grabbing a present person / crowd noun is an act, not loot.
+  if (step?.action === 'take' && isNonLootableTakeTarget(step.target, state)) return false;
+  if (step?.action === 'take' && STEAL_RE.test(clause)) {
+    return !isNonLootableTakeTarget(step.target, state);
+  }
+  if (step?.action === 'take' && /\bfrom\b/i.test(clause) && !CONSUME_TAKE_RE.test(clause)) {
+    if (isNonLootableTakeTarget(step.target, state)) return false;
+    return true;
+  }
   return STEAL_RE.test(text);
 }
 
@@ -152,12 +185,14 @@ export function isGuardedQuestItem(state: GameState, item: string): boolean {
   return false;
 }
 
-function extractStealItem(text: string, step?: IntentStep | null): string {
+function extractStealItem(text: string, step?: IntentStep | null, state?: GameState): string {
   if (CONSUME_TAKE_RE.test(text)) return '';
   if (step?.target?.trim()) {
     const t = step.target.trim();
     // Target that is only a consumption measure (sip/drink) is not loot.
     if (/^(?:sip|drink|swig|gulp|bite|taste|puff|drag|whiff|breath)$/i.test(t)) return '';
+    // T10X — person / crowd / present group is never an inventory item.
+    if (isNonLootableTakeTarget(t, state)) return '';
     return t;
   }
   const m =
@@ -165,6 +200,7 @@ function extractStealItem(text: string, step?: IntentStep | null): string {
     ?? text.match(/\b(?:the|a|an)\s+([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,3})\s+from\b/i);
   const item = (m?.[1] ?? 'purse').replace(/\s+/g, ' ').trim();
   if (/^(?:sip|drink|swig|gulp|bite|taste|puff|drag|whiff|breath)$/i.test(item)) return '';
+  if (isNonLootableTakeTarget(item, state)) return '';
   return item;
 }
 
@@ -187,8 +223,8 @@ export function resolveStealAttempt(
   step?: IntentStep | null,
   rng: () => number = turnRng(state, 'steal'),
 ): StealOutcome {
-  const item = extractStealItem(text, step);
-  // No object (e.g. consumption "sip") → not a steal commit.
+  const item = extractStealItem(text, step, state);
+  // No object (e.g. consumption "sip" / person grab) → not a steal commit.
   if (!item) {
     const empty = resolveCheckRecord({
       label: 'Sleight of Hand',

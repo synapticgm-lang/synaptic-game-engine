@@ -7,7 +7,7 @@ import {
   fallbackSuggestionForState,
 } from './suggestionValidation.ts';
 import { isSystemStatusChip } from './systemHousing.ts';
-import { isAggregatePersonToken } from './chromeAuthority.ts';
+import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority.ts';
 import { openingCastLabel } from './openingEstablishment.ts';
 import { presentNpcRecords } from './npcRecords.ts';
 import { isJourneyUnderway } from './travelJourney.ts';
@@ -490,7 +490,8 @@ export function sheetContextFromState(state?: GameState | null): IntentSheetCont
     if (isJourneyUnderway(state) || state.openingEstablishment?.aloneArrival === true) return [] as string[];
     if (basePresent.length === 0) return [] as string[];
     const label = openingCastLabel(state).replace(/\s+/g, ' ').trim();
-    if (!label || isAggregatePersonToken(label)) return [] as string[];
+    // T10X — crowd fillers stay out; ledger cast groups (roof-thieves) enrich the listen pool.
+    if (!label || isCrowdFillerToken(label)) return [] as string[];
     if (/^(?:the panel|the people who pulled you|the people here)$/i.test(label)) return [] as string[];
     return [label];
   })();

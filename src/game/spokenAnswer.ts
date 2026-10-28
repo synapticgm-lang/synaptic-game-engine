@@ -6,10 +6,14 @@
  * new dialogue.
  */
 import type { GameState, NpcMemory } from './types';
-import { hallTalkTopic } from './openingEstablishment';
+import {
+  hallTalkTopic,
+  openingCastNames,
+  shortCardWant,
+} from './openingEstablishment';
 import { openingCastRecords, presentNpcRecords } from './npcRecords';
 import { authoredTopicsFor } from './manusTopicBanks';
-import { realPresentPeople } from './chromeAuthority';
+import { isCrowdFillerToken } from './chromeAuthority';
 import { fuzzyTypedName } from './typedNameMatch';
 import { motiveAnswer } from './npcSheet';
 
@@ -29,7 +33,6 @@ const TOPIC_ALIASES: Record<SpokenTopic, RegExp> = {
   where: /^(?:where|place|here|this place)$/i,
 };
 const HONORIFIC = /^(?:captain|father|mother|brother|sister|sergeant|lord|lady|sir|dame|master|mistress|elder|old|young|the)$/i;
-const CROWD = /\b(?:bystanders|crowd|people|locals|onlookers|folk|patrons|handlers|guards|figures)\b/i;
 const QUOTE = /["“]([^"“”]{2,}?)["”]/g;
 const QUESTION_OR_CHIP = /^(?:who|what|where|why|how|ask|look|talk|wait|inspect|travel|check|attack|flee)$/i;
 
@@ -46,11 +49,43 @@ function nameParts(label: string, record?: NpcMemory): string[] {
 }
 
 function speakersHere(state: GameState): Speaker[] {
-  const records = presentNpcRecords(state).filter((r) => isCleanName(r.npcName));
+  const records = presentNpcRecords(state).filter(
+    (r) => isCleanName(r.npcName) && !isCrowdFillerToken(r.npcName),
+  );
   if (records.length) return records.map((r) => ({ label: r.npcName, record: r, names: nameParts(r.npcName, r) }));
-  return realPresentPeople(state.sceneFacts?.present ?? [])
-    .filter((p) => !CROWD.test(p) && isCleanName(p))
+  // T10X — ledger present groups (roof-thieves) speak; crowd fillers do not.
+  return (state.sceneFacts?.present ?? [])
+    .filter((p) => !isCrowdFillerToken(p) && isCleanName(p))
     .map((p) => ({ label: p, names: nameParts(p) }));
+}
+
+const sameSpeaker = (a: string, b: string) => {
+  const bare = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+  return !!bare(a) && bare(a) === bare(b);
+};
+
+/**
+ * Typed ask fallback with content: motive → opening-card want for cast lead.
+ * No new canned refusal bank (merge RULES) — ledger lines only; else honest silence.
+ * T10X — present groups get the same picker as named NPCs (reaction slot + cast want).
+ * SRD 5.2.1 Communicating — brief speech is free; the addressed party answers from what they know.
+ */
+function spokenExchangeLine(state: GameState, speaker: Speaker): { line: string; words?: string } {
+  const own = motiveAnswer(state, [speaker.label]);
+  if (own?.spoken?.words) return { line: own.line, words: own.spoken.words };
+  if (own?.line) return { line: own.line };
+  const cast = openingCastNames(state);
+  const isCast = cast.some((n) => sameSpeaker(n, speaker.label));
+  const want = isCast ? shortCardWant(state).replace(/\s+/g, ' ').trim() : '';
+  if (want) {
+    const words = want.replace(/^["“]|["”]$/g, '').trim();
+    return {
+      line: `${capitalize(speaker.label)} said, "${words}"`,
+      words,
+    };
+  }
+  // Disposition is on the packet for the writer; post-writer path stays silent without a ledger line.
+  return { line: `${capitalize(speaker.label)} said nothing.` };
 }
 
 /** A speaker label must read as a name: one line, a few words, no question or chip word ("Greyhollow Who"). */
@@ -162,18 +197,16 @@ export function ensureSpokenAnswer(
     if (quotesBy(prose, speaker, alone, others).length) {
       return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
     }
-    // T10S — exchange needs content (motive/authored) or honest silence; never "answered" with no words.
-    // T10U — prefer motive/authored when present; said nothing remains the Talk-chip last resort.
-    const own = motiveAnswer(state, [speaker.label]);
-    const line = own?.line ?? `${capitalize(speaker.label)} said nothing.`;
+    // T10S/T10U/T10X — exchange needs content (motive / card want / disposition refusal).
+    const exchange = spokenExchangeLine(state, speaker);
     const body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
     return {
-      prose: body ? `${body} ${line}` : line,
+      prose: body ? `${body} ${exchange.line}` : exchange.line,
       answer: {
         status: 'added',
         speaker: speaker.label,
         source: 'authored',
-        line: own?.spoken?.words ? `"${own.spoken.words}"` : line,
+        line: exchange.words ? `"${exchange.words}"` : exchange.line,
       },
     };
   }
