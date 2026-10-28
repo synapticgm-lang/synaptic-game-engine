@@ -1,0 +1,89 @@
+{
+ "batch": "sg-2-0-3-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-0-3-6": {
+   "title": "The Toll-Lord's Wake",
+   "text": "Your ember-lamp remains cold and dark at your hip, its unlit metal casing offering no telltale gleam against the glare. Out on the white crust, a salt-skimmer drifts across the shimmering horizon, its canvas sail catching the furnace wind while its toll-lord rider sweeps a spyglass across the flats. You hunker low behind a ridge of fossilized foam, letting the blinding midday mirage blur your silhouette into the trembling horizon. The skimmer glides past with a dry hiss of runners on mineral, leaving you entirely unseen in the blinding waste.",
+   "exits": [
+    "Slip past the silent skimmer track",
+    "Follow the wide cedar gate ahead",
+    "Thread the empty water-barrel alley"
+   ]
+  },
+  "sg-2-0-3-7": {
+   "title": "The Long-Eared Watcher",
+   "text": "An inquisitive desert fox with huge ears sits perched at the mouth of a glass-lined culvert, its dark eyes fixed upon you with wary intelligence. The heat haze ripples off the fused earthenware pipes behind it, turning the landscape into a wavering canvas of white and pale gold. As you take a cautious step forward to check your bearings, the creature darts away into the blinding glare in a flash of tawny fur, leaving only a delicate trail of tiny paw prints stamped into the salt crust.",
+   "exits": [
+    "Follow the fox's vanishing tracks",
+    "Turn toward the barrel-stacked square"
+   ]
+  },
+  "sg-2-0-3-8": {
+   "title": "The Fractured Basalt",
+   "text": "Heavy hexagonal basalt stones, laid down by the Old Lensfolk in forgotten centuries, form a cracked and heaved pavement beneath your travel-worn boots. Expanding salt crystals have forced their way upward through every tight joint, blooming into delicate white flower-like formations that crunch underfoot with every stride. The ancient road stretches ahead like a broken spine across the blinding expanse of the Bitterflats, offering a firm path through the treacherous salt-skree.",
+   "exits": [
+    "Step onto the converging pilgrim track",
+    "Approach the open cedar gate",
+    "Seek the sunlit barrel square"
+   ]
+  },
+  "sg-2-0-3-9": {
+   "title": "The Iron Skeleton",
+   "text": "A rusted iron crane arm, left behind from some ancient dredging operation of the inland sea, hangs suspended over a completely dry basin. It creaks mournfully in the hot desert wind like a giant metal skeleton, its rusted jib pointing steadily toward the south where Prism's glass spires glimmer through the haze. Coarse salt cakes its joints and thick cables, turning a tool of heavy labor into a permanent monument to the drying of the world.",
+   "exits": [
+    "Head toward the wide cedar gate",
+    "Approach the pale linen guard"
+   ]
+  },
+  "sg-2-0-3-10": {
+   "title": "The Orange Lichen",
+   "text": "Bright orange lichen clings stubbornly to a block of fused green glass, forming a brilliant splash of color against the bleached wilderness of mineral and mirage. You pause for a moment to marvel at how any living thing survives this scorched domain, feeding only on the scant moisture wrung from dawn mists. The dry wind rattles the dry mineral crust around the base of the glass block as you adjust the heavy straps of your pack.",
+   "exits": [
+    "Skirt the circular stone reservoir",
+    "Step onto the packed red clay"
+   ]
+  },
+  "sg-2-0-3-11": {
+   "title": "The Roadside Shade",
+   "text": "A weary traveler named Miri sits hunched beneath a tattered patch of shade-cloth, shielding her eyes from the relentless glare of the midday sun. She glances up as you approach, offering to trade a handful of sweet dried dates in exchange for a single precious drop of water from your traveling flask. The surrounding salt flats stretch out in every direction like a frozen sea of white glass, making every meeting between travelers a fragile bargain for survival.",
+   "exits": [
+    "Speak with the solemn tally-guard",
+    "Skirt the damp pigeon reservoir"
+   ]
+  },
+  "sg-2-0-3-12": {
+   "title": "The Salt-Fern Thicket",
+   "text": "Dense thickets of fossilized salt-ferns rise around your knees, crackling and shattering like thin crystal under your shins as you push your way through. Each snapped stalk leaves a fine trail of sparkling white dust that settles over your travel-worn boots and trousers like fallen snow. The sharp, mineral scent of ancient brine fills the air, masking the heavier odors of the flats and muffling your footsteps against the hard ground.",
+   "exits": [
+    "Continue toward the tally-guard",
+    "Cross onto the packed red clay"
+   ]
+  },
+  "sg-2-0-4-0": {
+   "title": "The Outer Well-Head",
+   "text": "You step out onto the smooth white apron surrounding the outer well-head, where the heavy air grows noticeably cooler against your sun-baked skin. A faint, earthy smell of damp clay rises from the stone masonry, hinting at the deep subterranean moisture banked far below the parched surface of the Basin. The blinding glare of the salt flats fades slightly behind the low stone walls of the well compound, offering a brief respite from the relentless white desert.",
+   "exits": [
+    "Approach the severe well matriarch"
+   ]
+  },
+  "sg-2-0-4-1": {
+   "title": "The Blue Bottle Wall",
+   "text": "A low stone wall built by the Dune Sisters marks the formal approach to their well compound, its top decorated with orderly rows of inverted blue glass bottles. These captured fragments of old vessels catch and refract the blinding desert glare into pools of cool sapphire light upon the white mortar. Beyond the barrier, the shaded courtyards of the water-keepers offer a sanctuary of discipline and measured resource.",
+   "exits": [
+    "Face the severe well matriarch",
+    "Turn back toward the dry ditch"
+   ]
+  },
+  "sg-2-0-4-2": {
+   "title": "The Pilgrim Track",
+   "text": "Countless pilgrim footprints converge here into a single deep track worn smooth across the wide expanse of white salt plaster. The path leads straight toward the shaded canvas pavilions of the Dune Sisters, where well-keepers manage the distribution of life-sustaining water under strict oaths. The air grows still and heavy as you follow the depression in the crust, leaving the open flats behind you.",
+   "exits": [
+    "Approach the central well-head",
+    "Enter the striped central pavilion",
+    "Seek the cloaked sister's trough"
+   ]
+  }
+ },
+ "missing": []
+}
