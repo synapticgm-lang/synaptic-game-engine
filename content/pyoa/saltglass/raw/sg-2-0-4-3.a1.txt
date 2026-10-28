@@ -1,0 +1,20 @@
+Gemini said
+
+@@SECTION sg-2-0-4-6
+TITLE: The Seepage Puddle
+TEXT: Desert pigeons scatter into the dazzling sky as you draw near a circular stone reservoir, their wings beating a frantic rhythm against the dry heat. A handful of thirsty birds have been drinking greedily from a damp seepage puddle clinging to the masonry's mossy flank. Your canvas water-skin feels light and warm at your hip, and the cool smell of mud offers a sharp temptation in the glaring white expanse. You must decide whether to linger here and try to gather a few precious drops from the stones or leave the birds in peace and continue across the blazing flats.
+EXIT 1: Approach the stone rim to gather the seepage
+EXIT 2: Leave the reservoir behind and press onward
+@@END
+@@SECTION sg-2-0-5-2
+TITLE: The Guarded Trough
+TEXT: A cloaked sister steps out beside the creaking wooden pump, blocking your direct approach to the stone water trough with calm finality. She lays out the sacred binding terms required of every traveler, her voice dry as the salt crystals dusting her hem. To taste the station's deep reserve, you must swear an unbreakable oath to the well-keepers, tying your future steps to their hidden designs. You weigh the heavy thirst scratching at your throat against the dangerous price of a stranger's binding word.
+EXIT 1: Swear the binding oath to drink deeply
+EXIT 2: Refuse the terms and walk away from the pump
+@@END
+@@SECTION sg-2-0-5-3
+TITLE: The Silver Bowl
+TEXT: Cool shade pours from the open door of the stone cistern house, offering a brief reprieve from the blinding glare of the Bitterflats. The keeper of the well stands within, holding out a silver-rimmed bowl of water that glints with unbearable invitation. She asks if you are willing to pledge your solemn word to answer a future summons in return for this life-saving hydration. Your fingers tighten around the cold ceramic Seedkey in your pocket while you weigh the cost of indebted freedom.
+EXIT 1: Accept the bowl and make the solemn pledge
+EXIT 2: Decline the offer and turn back to the salt
+@@END
