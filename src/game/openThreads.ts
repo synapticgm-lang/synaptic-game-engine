@@ -37,12 +37,18 @@ export function isGmFacingNote(text: string): boolean {
   return /^[A-Za-z][A-Za-z0-9 /&'-]{0,40}:\s+\S/.test((text ?? '').trim());
 }
 
-/** Spoken motive line → short chip topic ("I only want the town calm" → "the town calm"). */
+/**
+ * Spoken motive line → short chip topic (action phrase, never a quoted speech fragment).
+ * "I only want the town calm" → "the town calm"; "I need someone steady watching that keep gate"
+ * → "someone steady watching that keep gate" (T10O — chip labels are acts, not NPC lines).
+ */
 export function chipWantFromMotiveLine(line: string): string {
   const t = (line ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return '';
-  const m = t.match(/^I (?:only )?want\s+(.+)$/i);
+  const m = t.match(/^I (?:only )?(?:want|need)\s+(.+)$/i);
   let body = (m?.[1] ?? t).trim();
+  // Strip wrapping quotes so a motive stored as dialogue never becomes a chip speech fragment.
+  body = body.replace(/^["'“‘]|["'”’]$/g, '').trim();
   const cut = body.search(/[,.]/);
   if (cut > 8) body = body.slice(0, cut).trim();
   return body.slice(0, 80);
@@ -55,11 +61,14 @@ export function chipWantFromMotiveLine(line: string): string {
  */
 export function npcChipWant(m: NpcMemory): string {
   const target = (m.goal?.target ?? '').trim();
-  if (target && !isGmFacingNote(target)) return target;
+  if (target && !isGmFacingNote(target)) {
+    // T10O — goal targets may be stored as first-person speech; chip labels stay action phrases.
+    return chipWantFromMotiveLine(target) || target;
+  }
   const motive = chipWantFromMotiveLine(m.motiveLines?.[0] ?? '');
   if (motive) return motive;
   const need = (m.need ?? '').trim();
-  if (need && !isGmFacingNote(need)) return need;
+  if (need && !isGmFacingNote(need)) return chipWantFromMotiveLine(need) || need;
   return '';
 }
 

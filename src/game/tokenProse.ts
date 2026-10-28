@@ -837,6 +837,11 @@ export function classifyTokenLine(
   world?: ReadonlySet<string>
 ): LineVerdict {
   if (line.fn === 'speech' && line.text.includes('\\')) return { ok: false, reason: 'speech-shape' };
+  // T10O — mid-word truncate from a partial JSON draft ("…distance, q...") is not a finished line.
+  // Structural: ends with ellipsis after a short alphabetic stub (1–3 letters), not a deliberate "…".
+  if (/\b[a-z]{1,3}\.\.\.\s*$/i.test((line.text ?? '').trim())) {
+    return { ok: false, reason: 'truncated' };
+  }
   if (line.fn !== 'speech' && lineVoicesPc(line.text, pcName, playerWords)) return { ok: false, reason: 'pc-voice' };
   if (aimsAtSelf(line.text)) return { ok: false, reason: 'selfHarmMethod' };
   if (mixesPcPerson(line, beat, pcName)) return { ok: false, reason: 'pc-person' };

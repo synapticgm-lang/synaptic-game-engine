@@ -712,6 +712,8 @@ export function normalizeCommittedProse(prose: string, check: DraftCheck, packet
     // minKeep 1: same-reply place/leg reprints may leave a single sentence (T10N).
     next = trimSameBeatRestatements(next, { isThisTurnsEvent: isEvent, isMoveEvent: isMove, eventHits, minKeep: 1 }).text;
   }
+  // T10O — stray period after a quote that already closed on ?/!/… (`?"."`).
+  next = next.replace(/([?!…])(["”])\.(?=\s|$)/g, '$1$2').replace(/([.!?]){2,}/g, '$1');
   return polishMentions(next, refs, check.state);
 }
 /** Drop already-told sentences (keep ≥2) and name full labels once. */

@@ -708,7 +708,29 @@ export function stripUnauthorizedNpcSpeech(
   next = next.replace(TRAILING_SAID_QUOTE, (full, _o: string, quote: string, _c: string, speaker: string) =>
     drop(speaker, quote) ? '' : full,
   );
-  return next.replace(/\s{2,}/g, ' ').replace(/\s+([.,!?])/g, '$1').trim();
+  // T10O — after a quote is stripped, collapse double stops and drop empty speech shells
+  // ("Jax … spoke.." / "said what they had come to say" with no remaining quote).
+  next = next.replace(/\s{2,}/g, ' ').replace(/\s+([.,!?])/g, '$1').replace(/([.!?]){2,}/g, '$1').trim();
+  if (!next) return next;
+  const kept: string[] = [];
+  for (const raw of next.split(/(?<=[.!?])\s+/)) {
+    const s = raw.trim();
+    if (!s) continue;
+    if (/["“]/.test(s)) {
+      kept.push(s);
+      continue;
+    }
+    // Bare speech verb left after the quote was removed — not a beat.
+    if (/\b(?:said|spoke|asked|replied|whispered|shouted|called|answered)\s*[.!?]?$/i.test(s)) continue;
+    // Speech verb + vague complement with no quote (stub rebuild after strip).
+    if (
+      /\b(?:said|spoke|asked|replied)\s+(?:what they had come to say|something(?:\s+about\b)?)/i.test(s)
+    ) {
+      continue;
+    }
+    kept.push(s);
+  }
+  return kept.join(' ').replace(/\s{2,}/g, ' ').trim();
 }
 
 /** Split on then/and/while/?/; but never inside a quoted span (T10F). */
