@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION sg-3-0-2-7
+TITLE: The Translucent Ledge
+TEXT: Translucent roofing tiles shift dangerously beneath your boots as you pick your way along the narrow rib of a ruined villa. Fifty feet below, the dry basin floor glitters with a crust of salt and fused glass, offering no mercy should your footing fail. The desert wind hums through the jagged architectural bones around you, carrying the dry scent of ancient dust. // Ahead, the precarious pathway splits, leaving you to decide whether to brave the interior gloom or test another narrow span.
+EXIT 1: Step through the window frame
+EXIT 2: Reach the groaning iron sign
+EXIT 3: Inspect the ash mound below
+@@END
+@@SECTION sg-3-0-2-8
+TITLE: The Slate Desk
+TEXT: A makeshift desk of rough slate and salvaged timber blocks the narrow alley, presided over by a toll-lord's clerk wearing ink-stained cuffs. The official taps a ledger with an ivory stylus, demanding immediate proof of water-tax payment before allowing any traveler to pass the boundary stone. The air here smells of stale vinegar and dried parchment, thick with the bureaucratic weight of the Salt Court. // You must choose how to address this obstacle before the guards take an active interest in your lantern.
+EXIT 1: Slip past toward the loft
+EXIT 2: Turn toward the groaning sign
+@@END
+@@SECTION sg-3-0-2-9
+TITLE: The Copper Curtain
+TEXT: Hanging chains of heavy copper jingle softly as you pull them closed behind you, concealing your form within the dim recesses of a deserted workshop. Through the linked metal, you watch a Salt Court patrol squad march past in formation, their brass breastplates catching the harsh glare of the basin sun. Dust motes dance in the amber light cast by your banked coal-lantern, forcing you to keep the shutter nearly closed. // Silence settles over the room once the footsteps fade, leaving several paths open for your continued escape.
+EXIT 1: Climb toward the weaving loft
+EXIT 2: Cross the narrow cedar beam
+EXIT 3: Seek the giant solar mirror
+@@END
+@@SECTION sg-3-0-2-10
+TITLE: The Salted Hide Map
+TEXT: A pale scavenger crouching by a charred hearth holds up a stiff piece of salted hide marked with faded ink lines. He introduces himself as Thistle and whispers that he will trade his crude map for a single pinch of dried tobacco from your pouch. The surrounding ruins are deathly quiet, save for the faint crackle of cooling glass settling in the heat. // You weigh the value of your remaining supplies against the usefulness of his cartography.
+EXIT 1: Trade tobacco for the map
+EXIT 2: Head toward the solar mirror
+@@END
+@@SECTION sg-3-0-2-11
+TITLE: The Sacred Seal
+TEXT: The sacred water-oath inked upon your wrist catches the eye of the well-guard stationed at the postern gate, marking you as a friend of the Dune Sisters. Without a word of demand for tolls or taxes, the weary sentry turns a heavy iron crank and swings the reinforced postern wide. Cool air drifts briefly from the protected courtyard beyond, offering a welcome respite from the baking street. // You step through the threshold into the shaded passage beyond.
+EXIT 1: Approach the colossal solar mirror
+EXIT 2: Meet the waiting ragged urchin
+@@END
+@@SECTION sg-3-0-2-12
+TITLE: The Hemp Rope
+TEXT: A sudden gust of stinging alkaline dust sweeps down the canyon-like street, stinging your eyes and coating your tongue in bitter salt. To escape the blinding squall, you leap toward a frayed hemp rope dangling from a shattered second-story balcony and haul yourself upward with straining muscles. The abrasive fibers bite into your palms as you hoist your weight over the stone sill into comparative shelter. // Catching your breath in the gloom, you look out over the hazy basin below.
+EXIT 1: Follow the urchin through crates
+@@END
+@@SECTION sg-3-0-3-0
+TITLE: The Headless Magistrate
+TEXT: A headless bronze statue of an Old Lensfolk magistrate stands rigidly in the center of a weed-choked plaza, its oxidized arm pointing with unyielding gravity toward a dark glass tunnel. Verdigris coats the folds of its heavy robe, and the surrounding cobblestones are fractured by ancient heat. The entrance it indicates leads away from the blinding glare and into subterranean gloom. // You stand before the silent monument, weighing the descent against other routes.
+EXIT 1: Descend into the salt market
+EXIT 2: Approach the riveted iron gate
+@@END
+@@SECTION sg-3-0-3-1
+TITLE: The Hidden Crawlspace
+TEXT: The steady amber radiance of your coal-lantern spills across the uneven cobblestones, catching the unexpected glint of a dropped brass gear half-buried in sand. Following the metallic reflection reveals a low, dark crawlspace hidden beneath a displaced paving slab, untouched by the scavengers above. The warm glow of your lamp cuts deep into the subterranean recess, revealing a passage that ordinary daylight never touches. // You kneel before the dark opening, considering where it might lead.
+EXIT 1: Crawl beneath the stone floor
+@@END
+@@SECTION sg-3-0-3-2
+TITLE: The Singing Bowl
+TEXT: A blind glass-blower named Kestrel sits cross-legged beside a smoking brazier, striking a small singing bowl with a padded mallet to produce a pure, resonant note that vibrates in your teeth. The sound rolls down the empty street, bouncing off glass facades with hypnotic clarity. She tilts her head toward the approach of your footsteps without breaking her rhythmic cadence. // The music hangs in the dry air as you weigh your next direction.
+EXIT 1: Test the riveted iron gate
+EXIT 2: Duck behind the fish crates
+@@END
+@@SECTION sg-3-0-3-3
+TITLE: The Brittle Balcony
+TEXT: A sharp crack splits the heavy afternoon air as a brittle upper balcony shears away from its moorings under the relentless heat. You throw yourself forward, dodging a dangerous shower of glittering glass shards that clatter onto the pavement right where you stood. Dust billows into the stifling street, coating your shoulders in a fine white powder. // Shaking off the debris, you scan the remaining routes through the ruined square.
+EXIT 1: Hurry down the salt steps
+EXIT 2: Test the heavy iron gate
+@@END

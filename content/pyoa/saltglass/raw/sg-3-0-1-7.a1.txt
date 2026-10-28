@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION sg-3-0-2-1
+TITLE: The Cinder Vendor's Stall
+TEXT: Thick clouds of fragrant grease rise from Vane's bronze brazier, where roasted locusts sizzle beside crusts of salt-bread. The dust-caked vendor pokes the coals with an iron skewer, muttering about the phantom fires that dance above the central observatory each midnight. He offers you a handful of charred insects for a copper farthing, gesturing with his chin toward the towering glass spires ahead. // Your lantern swings at your hip, its banked coals casting a warm, steady circle of light against the grey masonry while the desert wind rattles loose splinters of quartz along the alleyway.
+EXIT 1: Follow the gleam through the debris
+EXIT 2: Leap clear as the masonry gives way
+@@END
