@@ -130,6 +130,20 @@ function capitalize(s: string): string {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 }
 
+/** Typed ask / talk aimed at someone here (not a physical I-act). */
+function isTypedAskOrTalk(playerInput: string): boolean {
+  const t = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^(?:talk(?:\s+to)?|speak(?:\s+to)?|ask)\b/i.test(t)) return true;
+  if (/["\u201c]/.test(t)) return true;
+  // "ask the priest if…" / "ask if she's seen…" / "ask Ysolde if…"
+  if (/\bask\b[\s\S]{0,60}\bif\b/i.test(t)) return true;
+  if (/\bask\s+(?:the\s+)?[\w'-]+(?:\s+[\w'-]+){0,2}\b/i.test(t) && /\b(?:if|whether|about|what|who|where|why|how)\b/i.test(t)) {
+    return true;
+  }
+  return false;
+}
+
 /** Ensure a who / want / where answer carries the addressee's own quoted words, from the ledger only. */
 export function ensureSpokenAnswer(
   prose: string,
@@ -138,12 +152,10 @@ export function ensureSpokenAnswer(
 ): { prose: string; answer: SpokenAnswer } {
   const topic = asked(playerInput);
   const who = addressee(state, playerInput);
-  // T10R — Talk chip / typed address with someone here still needs an exchange beat when
-  // stripUnauthorizedNpcSpeech dropped the writer's invented NPC line (stub + bare `@`).
+  // T10R / T10V — Talk chip / typed ask with someone here still needs an exchange beat when
+  // stripUnauthorizedNpcSpeech dropped the writer's line (stub + bare `@`, or wrong crowd slot).
   if (!topic) {
-    const talkChip = /^(?:talk(?:\s+to)?|speak(?:\s+to)?|ask)\b/i.test((playerInput ?? '').trim());
-    const hasQuote = /["\u201c]/.test(playerInput ?? '');
-    if (!talkChip && !hasQuote) return { prose, answer: { status: 'not-asked' } };
+    if (!isTypedAskOrTalk(playerInput)) return { prose, answer: { status: 'not-asked' } };
     if (!who) return { prose, answer: { status: 'nobody-here' } };
     const { speaker, alone } = who;
     const others = speakersHere(state).filter((s) => s.label !== speaker.label);

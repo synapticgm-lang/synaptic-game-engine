@@ -49,11 +49,20 @@ export function speechAddressCue(who: string | null, presentHere?: string[] | nu
     return `Speech event: you address ${who}. NPC reaction slot open for ${who}.`;
   }
   const here = (presentHere ?? []).map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+  // T10V — crowd nouns are not a speaker; prefer people who can answer.
+  const speakers = here.filter((n) => !isAggregatePersonToken(n));
+  if (speakers.length === 1) {
+    return `Speech event: you address ${speakers[0]}. NPC reaction slot open for ${speakers[0]}.`;
+  }
+  if (speakers.length > 1) {
+    return `Speech event: you address the people here. NPC reaction slot open for the people here.`;
+  }
   if (here.length === 1) {
-    return `Speech event: you address ${here[0]}. NPC reaction slot open for ${here[0]}.`;
+    // Sole aggregate: addressed, but nobody can answer as one NPC.
+    return `Speech event: you address ${here[0]}. No one present to answer.`;
   }
   if (here.length > 1) {
-    return `Speech event: you address the people here. NPC reaction slot open for the people here.`;
+    return `Speech event: you address the people here. No one present to answer.`;
   }
   return `Speech event: you address the empty scene. No one present to answer.`;
 }
