@@ -426,8 +426,10 @@ export function isWriterMonologueLeak(text: string | undefined): boolean {
     || /\bnarrative tension is (?:maybe )?\d+\s*\/\s*10\b/i.test(text)
     || /\bif I want TENSION\b/i.test(text)
     || /\bI(?:['’]ll| will) write short,\s*evocative\b/i.test(text)
-    // 02x — planner / imperative instruction-voice (shape, not a Gemini quote list)
-    || /(?:^|[.!?]\s+)(?:No|Do not|Don't)\s+[a-z][^.]{2,60}\.\s*(?:No|Do not|Don't)\s+/m.test(text)
+    // 02x — planner / imperative instruction-voice (shape, not a Gemini quote list).
+    // Consecutive Do-not / Don't = writer order. Bare "No X. No Y." is often narrative absence
+    // (authored "No priests. No handlers.") — craft chrome stays on the No tag/loot/numbers rules below.
+    || /(?:^|[.!?]\s+)(?:Do not|Don't)\s+[a-z][^.]{2,60}\.\s*(?:No|Do not|Don't)\s+/m.test(text)
     || /(?:^|[.!?]\s+)End with (?:the|a|an)\b/m.test(text)
     || /\bno\s+(?:numbers?|tags?|loot)\b(?:\s*,\s*|\s+)no\s+(?:numbers?|tags?|loot|new named)/i.test(text)
     || /(?:^|[.!?]\s+)No\s+(?:tag|loot|numbers?|named)\b/m.test(text)
