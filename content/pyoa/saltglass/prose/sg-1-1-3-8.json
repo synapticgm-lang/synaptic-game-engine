@@ -1,0 +1,89 @@
+{
+ "batch": "sg-1-1-3-8",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-1-1-3-8": {
+   "title": "The Choked Culvert",
+   "text": "Laborers toil with broad wooden shovels, heaving grey alkali silt from a choked stone culvert that once drained the rim hills. Their foreman wipes salt-crust from his forehead with a grease-rag, offering a gloomy nod as you pass. The cold ceramic Seedkey shifts heavily against your ribs beneath your woolen tunic.\n\nWith the afternoon fading fast, you must decide how to navigate the tightening gloom and the watchful eyes of the basin.",
+   "exits": [
+    "Prepare your flint and tinder for the dark",
+    "Listen to Pell warn of thieves and sentries",
+    "Watch the sand-grouse scatter into the gully"
+   ]
+  },
+  "sg-1-1-3-9": {
+   "title": "Counting Paces",
+   "text": "Heavy walking boots grind against dry gravel, setting a steady rhythm that helps drive away the thoughts of the failing harvests back at Candlemere. Solitary under the glare, you count your paces while tracking the shimmering heat-hazes dancing across the flats. Sweat stings your eyes, but the ember-lamp stays firmly gripped in your leather-gloved hand.\n\nAhead, the trail divides into faint tracks that vanish into the bright salt waste.",
+   "exits": [
+    "Follow the startled birds toward the gully",
+    "Check your gear at the vanishing crossroads"
+   ]
+  },
+  "sg-1-1-3-10": {
+   "title": "Smoke on the Rise",
+   "text": "Pell points a weathered finger toward a distant smudge of greasy grey smoke hovering above the scrub-line. Charcoal burners are smothering stunted oak in earthen pits to feed the distant glass-foundries. The acrid scent of burning roots drifts across the dry earth, mixing with the sharp tang of mineral dust.\n\nYou pause by the trackside to weigh your next move as the afternoon shadows lengthen.",
+   "exits": [
+    "Press onward to the trackless basin crossroads"
+   ]
+  },
+  "sg-1-1-3-11": {
+   "title": "Buried Glass",
+   "text": "A jagged edge of green glass pokes through the dusty soil, the lone remnant of some forgotten farmstead swallowed long ago by the creeping salt. You step carefully around the fused window-pane, mindful of your boots on the brittle shards. The wind carries a faint metallic tang from the interior ruins.\n\nThe path ahead frays into several faint directions as dusk approaches the white pan.",
+   "exits": [
+    "Head toward the crossroads at the basin edge",
+    "Push forward as night falls over the white pan"
+   ]
+  },
+  "sg-1-1-3-12": {
+   "title": "The Locust Seller",
+   "text": "A ragged boy darts alongside the cart-track, offering dried locusts threaded on a stiff grass stalk for a single farthing. He chatters eagerly about toll-lord patrols and sudden sinkholes before darting back into the thorny scrub. You adjust the heavy strap of your ember-lamp while digesting his hasty warning.\n\nThe dusty track ahead offers a couple of distinct paths into the gathering twilight.",
+   "exits": [
+    "Walk toward the crossroads in the fading light",
+    "Watch the distant glass-sentries blink their signals"
+   ]
+  },
+  "sg-1-1-3-13": {
+   "title": "Salt in the Eyes",
+   "text": "Pell dips a damp rag into his canteen, pressing it gently against your stinging, dust-reddened eyelids to wash away the biting alkaline rime. The cool relief is fleeting as the desert breeze immediately coats your skin in fine mineral powder. The heavy iron-shod staff rests against his knee while he scans the horizon.\n\nAcross the darkening plain, distant lights begin to shift and answer one another.",
+   "exits": [
+    "Watch the Glasswrights exchange amber signals",
+    "Face the oncoming night at the edge of the pan"
+   ]
+  },
+  "sg-1-1-3-14": {
+   "title": "Caper Bushes",
+   "text": "Wild caper bushes cling desperately to the calcified mortar joints of a crumbling stone wall, their pale green leaves coated in white dust. You stop briefly in their thin shadow to catch your breath and feel the steady, reassuring weight of the cold ceramic key. The stillness of the desert presses hard against your ears.\n\nThe path splits near the remains of the old enclosure, offering choices for the journey ahead.",
+   "exits": [
+    "Make for the crossroads where the cart-track ends",
+    "Look toward the amber flash of the night-watch",
+    "Step out onto the vast and silent white pan"
+   ]
+  },
+  "sg-1-1-3-15": {
+   "title": "Singing Glass",
+   "text": "The wind drops entirely, leaving the dry basin wrapped in an eerie hush that hums with the thin, metallic vibration of sun-baked window-shards. Every movement rings out across the flat crust like a plucked harp string. You hold the banked coal-lantern steady, listening to the strange music of the dead city.\n\nThe open expanse stretches before you under a deepening violet sky.",
+   "exits": [
+    "Advance toward the edge of the great white pan"
+   ]
+  },
+  "sg-1-1-4-0": {
+   "title": "The Broken Gate",
+   "text": "Near the broken water-gate, Pell holds up a warning hand and advises you to douse your lantern before the glass-sentries on the ridge spot the revealing glare. The cold metal casing of the lamp ticks softly as the coals inside bank against the lack of draft. Every shadow among the ruined masonry looks like a toll-lord watcher.\n\nYou must decide how to handle your light before stepping past the gate.",
+   "exits": [
+    "Open the draft-vent to let the coals glow ruby-red",
+    "Slide the heavy iron shutter closed to hide the light",
+    "Strike a sulphur match to wake the banked coals anew"
+   ]
+  },
+  "sg-1-1-4-1": {
+   "title": "The Slate Windbreak",
+   "text": "You crouch low behind a windbreak of stacked slate, debating whether the biting evening chill requires the warmth and glow of the ember-lamp. The wind whistles through the gaps in the stone, carrying the scent of parched earth and distant woodsmoke. Your fingers trace the cold contours of the Seedkey hidden inside your coat.\n\nThe time has come to leave the shelter of the ridge and choose your path into the dark.",
+   "exits": [
+    "Spin the draft-vent wide to warm the cold air",
+    "Strike a sulphur match against the rough stone",
+    "Press the iron damper shut and march into the starlight"
+   ]
+  }
+ },
+ "missing": []
+}

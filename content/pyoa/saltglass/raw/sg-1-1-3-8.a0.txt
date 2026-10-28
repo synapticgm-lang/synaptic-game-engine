@@ -1,0 +1,73 @@
+Gemini said
+
+@@SECTION sg-1-1-3-8
+TITLE: The Choked Culvert
+TEXT: Laborers toil with broad wooden shovels, heaving grey alkali silt from a choked stone culvert that once drained the rim hills. Their foreman wipes salt-crust from his forehead with a grease-rag, offering a gloomy nod as you pass. The cold ceramic Seedkey shifts heavily against your ribs beneath your woolen tunic. // With the afternoon fading fast, you must decide how to navigate the tightening gloom and the watchful eyes of the basin.
+EXIT 1: Prepare your flint and tinder for the dark
+EXIT 2: Listen to Pell warn of thieves and sentries
+EXIT 3: Watch the sand-grouse scatter into the gully
+@@END
+
+@@SECTION sg-1-1-3-9
+TITLE: Counting Paces
+TEXT: Heavy walking boots grind against dry gravel, setting a steady rhythm that helps drive away the thoughts of the failing harvests back at Candlemere. Solitary under the glare, you count your paces while tracking the shimmering heat-hazes dancing across the flats. Sweat stings your eyes, but the ember-lamp stays firmly gripped in your leather-gloved hand. // Ahead, the trail divides into faint tracks that vanish into the bright salt waste.
+EXIT 1: Follow the startled birds toward the gully
+EXIT 2: Check your gear at the vanishing crossroads
+@@END
+
+@@SECTION sg-1-1-3-10
+TITLE: Smoke on the Rise
+TEXT: Pell points a weathered finger toward a distant smudge of greasy grey smoke hovering above the scrub-line. Charcoal burners are smothering stunted oak in earthen pits to feed the distant glass-foundries. The acrid scent of burning roots drifts across the dry earth, mixing with the sharp tang of mineral dust. // You pause by the trackside to weigh your next move as the afternoon shadows lengthen.
+EXIT 1: Press onward to the trackless basin crossroads
+@@END
+
+@@SECTION sg-1-1-3-11
+TITLE: Buried Glass
+TEXT: A jagged edge of green glass pokes through the dusty soil, the lone remnant of some forgotten farmstead swallowed long ago by the creeping salt. You step carefully around the fused window-pane, mindful of your boots on the brittle shards. The wind carries a faint metallic tang from the interior ruins. // The path ahead frays into several faint directions as dusk approaches the white pan.
+EXIT 1: Head toward the crossroads at the basin edge
+EXIT 2: Push forward as night falls over the white pan
+@@END
+
+@@SECTION sg-1-1-3-12
+TITLE: The Locust Seller
+TEXT: A ragged boy darts alongside the cart-track, offering dried locusts threaded on a stiff grass stalk for a single farthing. He chatters eagerly about toll-lord patrols and sudden sinkholes before darting back into the thorny scrub. You adjust the heavy strap of your ember-lamp while digesting his hasty warning. // The dusty track ahead offers a couple of distinct paths into the gathering twilight.
+EXIT 1: Walk toward the crossroads in the fading light
+EXIT 2: Watch the distant glass-sentries blink their signals
+@@END
+
+@@SECTION sg-1-1-3-13
+TITLE: Salt in the Eyes
+TEXT: Pell dips a damp rag into his canteen, pressing it gently against your stinging, dust-reddened eyelids to wash away the biting alkaline rime. The cool relief is fleeting as the desert breeze immediately coats your skin in fine mineral powder. The heavy iron-shod staff rests against his knee while he scans the horizon. // Across the darkening plain, distant lights begin to shift and answer one another.
+EXIT 1: Watch the Glasswrights exchange amber signals
+EXIT 2: Face the oncoming night at the edge of the pan
+@@END
+
+@@SECTION sg-1-1-3-14
+TITLE: Caper Bushes
+TEXT: Wild caper bushes cling desperately to the calcified mortar joints of a crumbling stone wall, their pale green leaves coated in white dust. You stop briefly in their thin shadow to catch your breath and feel the steady, reassuring weight of the cold ceramic key. The stillness of the desert presses hard against your ears. // The path splits near the remains of the old enclosure, offering choices for the journey ahead.
+EXIT 1: Make for the crossroads where the cart-track ends
+EXIT 2: Look toward the amber flash of the night-watch
+EXIT 3: Step out onto the vast and silent white pan
+@@END
+
+@@SECTION sg-1-1-3-15
+TITLE: Singing Glass
+TEXT: The wind drops entirely, leaving the dry basin wrapped in an eerie hush that hums with the thin, metallic vibration of sun-baked window-shards. Every movement rings out across the flat crust like a plucked harp string. You hold the banked coal-lantern steady, listening to the strange music of the dead city. // The open expanse stretches before you under a deepening violet sky.
+EXIT 1: Advance toward the edge of the great white pan
+@@END
+
+@@SECTION sg-1-1-4-0
+TITLE: The Broken Gate
+TEXT: Near the broken water-gate, Pell holds up a warning hand and advises you to douse your lantern before the glass-sentries on the ridge spot the revealing glare. The cold metal casing of the lamp ticks softly as the coals inside bank against the lack of draft. Every shadow among the ruined masonry looks like a toll-lord watcher. // You must decide how to handle your light before stepping past the gate.
+EXIT 1: Open the draft-vent to let the coals glow ruby-red
+EXIT 2: Slide the heavy iron shutter closed to hide the light
+EXIT 3: Strike a sulphur match to wake the banked coals anew
+@@END
+
+@@SECTION sg-1-1-4-1
+TITLE: The Slate Windbreak
+TEXT: You crouch low behind a windbreak of stacked slate, debating whether the biting evening chill requires the warmth and glow of the ember-lamp. The wind whistles through the gaps in the stone, carrying the scent of parched earth and distant woodsmoke. Your fingers trace the cold contours of the Seedkey hidden inside your coat. // The time has come to leave the shelter of the ridge and choose your path into the dark.
+EXIT 1: Spin the draft-vent wide to warm the cold air
+EXIT 2: Strike a sulphur match against the rough stone
+EXIT 3: Press the iron damper shut and march into the starlight
+@@END
