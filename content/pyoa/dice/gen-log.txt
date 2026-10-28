@@ -377,3 +377,27 @@
 2026-10-28T09:46:56.169Z ask prose td-4-163..td-4-172 items=10 attempt=0
 2026-10-28T09:47:50.668Z done td-4-163: 10/10
 2026-10-28T09:47:50.669Z ask prose td-4-173..td-4-183 items=11 attempt=0
+2026-10-28T09:48:23.301Z   reject td-4-177: words 37
+2026-10-28T09:48:23.302Z   reject td-4-178: words 44
+2026-10-28T09:48:23.302Z   reject td-4-179: words 40
+2026-10-28T09:48:23.302Z   reject td-4-180: meta words
+2026-10-28T09:48:23.302Z   reject td-4-181: words 45
+2026-10-28T09:48:23.303Z   reject td-4-182: words 50
+2026-10-28T09:48:23.303Z   reject td-4-183: words 48
+2026-10-28T09:48:31.306Z ask prose td-4-173..td-4-183 items=7 attempt=1
+2026-10-28T09:48:53.794Z   reject td-4-177: missing
+2026-10-28T09:48:53.794Z   reject td-4-178: missing
+2026-10-28T09:48:53.794Z   reject td-4-179: missing
+2026-10-28T09:48:53.795Z   reject td-4-180: missing
+2026-10-28T09:48:53.795Z   reject td-4-181: missing
+2026-10-28T09:48:53.795Z   reject td-4-182: missing
+2026-10-28T09:48:53.795Z   reject td-4-183: missing
+2026-10-28T09:49:01.807Z done td-4-173: 4/11 MISSING td-4-177,td-4-178,td-4-179,td-4-180,td-4-181,td-4-182,td-4-183
+2026-10-28T09:49:01.808Z ask prose td-4-184..td-4-193 items=10 attempt=0
+2026-10-28T09:49:47.485Z done td-4-184: 10/10
+2026-10-28T09:49:47.488Z ask prose td-4-194..td-5-006 items=13 attempt=0
+2026-10-28T09:50:30.737Z done td-4-194: 13/13
+2026-10-28T09:50:30.739Z ask prose td-5-007..td-5-019 items=13 attempt=0
+2026-10-28T09:51:06.434Z done td-5-007: 13/13
+2026-10-28T09:51:06.435Z ask prose td-5-020..td-5-031 items=12 attempt=0
+2026-10-28T09:51:51.571Z   reject td-5-031: grant

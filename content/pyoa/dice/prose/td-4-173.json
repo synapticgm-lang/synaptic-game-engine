@@ -1,0 +1,55 @@
+{
+ "batch": "td-4-173",
+ "sections": {
+  "td-4-173": {
+   "title": "The Blind Mentor",
+   "text": "Shadows detach themselves from the dripping brickwork of the grand chamber as a familiar silhouette steps into the amber wash of the revived core. Orsolya Venn stands before the iron framework, her lighthouse keeper's coat stiff with dried salt and old seaweed. When she turns her head toward the sound of your boots, the lamplight catches eyes stripped of pigment, rendered entirely milky-white by the deep pressures of the abyss. Her voice rasps like dry gravel scraped across slate as she demands your immediate assistance to throw the main gear. She insists that Saltspire must drown in the returning flood so that Gullmouth and its stranded people might finally breathe again\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step closer to the blinding light"
+   ]
+  },
+  "td-4-174": {
+   "title": "The Final Choice",
+   "text": "Massive iron levers cast long, trembling shadows across the vaulted ceiling of the Sunken Stair as your mentor holds her hand steady over the primary release mechanism. Every faction with a stake in the dry seabed has left its mark upon these stones, yet the ultimate decision of where the waters rush first rests entirely in your blistered hands. The intricate brass teeth of the Meridian Gear grind against each other with a sound like cracking teeth, waiting for the weight of a choice that will remake the world\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the heavy iron arm",
+    "Challenge her dark decree with law",
+    "Smash the descending pilgrim hands",
+    "Heave against the jammed secondary cog",
+    "Brace your back against the tremor",
+    "Wait for the great iron to groan"
+   ]
+  },
+  "td-4-175": {
+   "title": "Wrestling The Iron",
+   "text": "Muscles strain against bone as you lunge forward to intercept her trembling fingers before they can trip the catastrophic release. Orsolya fights with an unnatural, salt-brined strength, her knuckles scraping against the freezing metal as you lock arms in a desperate struggle for supremacy over the mechanism. The heavy bronze lever vibrates with the immense torque of the entire trapped ocean waiting just beyond the stone walls\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the lever to your side"
+   ]
+  },
+  "td-4-176": {
+   "title": "Seizing The Lever",
+   "text": "Iron bites deep into your palm as you throw your entire body weight against the stubborn shaft of the primary control. The mentor gasps, her white eyes widening in shock as your superior leverage forces her hands back from the polished brass knob. Every bolt in the housing groans in protest under the sudden cross-pressure of your competing wills\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test your strength against the mechanism"
+   ]
+  }
+ },
+ "missing": [
+  "td-4-177",
+  "td-4-178",
+  "td-4-179",
+  "td-4-180",
+  "td-4-181",
+  "td-4-182",
+  "td-4-183"
+ ]
+}
