@@ -919,8 +919,8 @@ export function writerEngineResult(fact: string, subject?: string): string {
     let s = (i < parts.length - 1 ? `${parts[i]}.` : parts[i]!).trim();
     while (s.includes('  ')) s = s.split('  ').join(' ');
     if (!s || isRoadLabel(s)) continue;
-    // STATUS chrome never becomes book prose (Extended Travel roll line / bare Check failure).
-    if (/^Extended Travel:/i.test(s) || isVr1RollLine(s) || /^Check (?:success|failure)\.?$/i.test(s)) continue;
+    // Death chrome (Check failure / Extended Travel) is already dropped by the You-are-dead early return.
+    // Live push-on must still hand Extended Travel + Check outcome to the writer (q31-L4 / s73).
     const roomHead = 'Dungeon room: ';
     if (s.startsWith(roomHead) && !s.startsWith('Dungeon room: none')) {
       const body = s.endsWith('.') ? s.slice(0, -1) : s;

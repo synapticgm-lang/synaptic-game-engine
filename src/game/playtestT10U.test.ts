@@ -88,11 +88,15 @@ describe('T10U speech stitch shout + while', () => {
 });
 
 describe('T10U met memory + presence', () => {
-  it('sheetMemoryLine says has met even when meetCount is 0 after introSpoken', () => {
+  it('sheetMemoryLine treats introSpoken as known without visit-count "has met before"', () => {
     const m = base().npcMemories![0]! as NpcMemory;
     const line = sheetMemoryLine(m, 'Jax');
-    expect(line).toMatch(/has met Jax before/i);
+    // meetCount 0 = same visit (s73); still not a stranger (T10U disposition + greet).
+    expect(line).not.toMatch(/has met Jax before/i);
+    expect(line).toMatch(/disposition neutral/i);
     expect(line).toMatch(/someone they know/i);
+    const returned = sheetMemoryLine(base().npcMemories![1]! as NpcMemory, 'Jax');
+    expect(returned).toMatch(/has met Jax before \(once\)/i);
   });
 
   it('addressing someone in awayFrom restores talking range', () => {
