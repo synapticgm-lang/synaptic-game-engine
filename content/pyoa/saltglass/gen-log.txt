@@ -367,3 +367,13 @@
 2026-10-28T16:19:56.769Z ask prose sg-6-2-2-12..sg-6-2-3-6 items=10 attempt=0
 2026-10-28T16:20:46.393Z done sg-6-2-2-12: 10/10 model=Flash-Lite
 2026-10-28T16:20:46.394Z ask prose sg-6-2-3-7..sg-6-2-4-0 items=10 attempt=0
+2026-10-28T16:21:44.313Z   reject sg-6-2-3-7: words 51
+2026-10-28T16:21:44.314Z   reject sg-6-2-3-8: words 48
+2026-10-28T16:21:44.314Z   reject sg-6-2-3-9: words 44
+2026-10-28T16:21:44.315Z   reject sg-6-2-3-10: words 42
+2026-10-28T16:21:44.315Z   reject sg-6-2-3-11: words 39
+2026-10-28T16:21:44.315Z   reject sg-6-2-3-12: words 40
+2026-10-28T16:21:44.316Z   reject sg-6-2-3-13: words 39
+2026-10-28T16:21:44.316Z   reject sg-6-2-3-14: words 43
+2026-10-28T16:21:44.316Z   reject sg-6-2-3-15: words 35
+2026-10-28T16:21:44.316Z   reject sg-6-2-4-0: words 38
