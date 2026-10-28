@@ -1,0 +1,92 @@
+{
+ "batch": "sg-d-1-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-d-1-1": {
+   "title": "The High Swing",
+   "text": "Ignoring Pell's warning, you swing your blazing lamp high above your head to spite the toll-riders, drawing a volley of poisoned sling-stones from the dark and cracking your water-cask against a limestone boulder. Cool, bitter brine immediately soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your fingers grow slippery where the dampness spreads, and the frantic rattling of your belt-lantern sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. The darkness closes in swiftly, heavy with the taste of gypsum and the quiet certainty that your journey ends right here in the white grit.",
+   "exits": []
+  },
+  "sg-1-c2": {
+   "title": "The Lamp-Stall Choice",
+   "text": "Thick tallow smoke curls around the wooden beams of the Last Lamp-Stall as you weigh your departure. To blaze your path with the lamp's exposed flame invites every eye across the basin, yet keeps the bitter night chill at bay. Alternatively, banking the lantern deep within its case preserves your precious oil and cloaks your passage in secrecy, leaving you to feel your way blindly through the rising wind.",
+   "exits": [
+    "Light the wick to guide your step through the dark",
+    "Bank the lamp tight inside its iron housing for stealth"
+   ]
+  },
+  "sg-1-2-0-0": {
+   "title": "By the Oil-Scummed Trough",
+   "text": "Flint sparks catch the oily wick in the lower square just as the evening wind begins to carry the bitter tang of old brine. Shadows stretch long across the cracked flags, and the weight of your ceramic key feels cold against your ribs. You must decide your next immediate stride before the guards complete their rounds.",
+   "exits": [
+    "Step toward the sunken crevice along the rim road",
+    "Turn away toward the crumbling lime-kiln ruins",
+    "Follow the path beneath the skeletal salt-wain"
+   ]
+  },
+  "sg-1-2-0-1": {
+   "title": "The Cast Iron Lid",
+   "text": "You tuck the cast-iron lid tight over the glowing coals of your belt-lantern, feeling only the dull warmth against your thigh. Out on the Rim Road, the white dust stretches like a bone-field under the cold stare of the stars, promising nothing but miles of dry gravel and the occasional whisper of wind through skeletal salt-bush. Every breath tastes of alkaline grit, reminding you that the low murmur of Candlemere's tallow-vats is fading behind your heels for the last time.\n\nThree distinct tracks diverge where the old wagon-ruts bite deep into the crust, each one leading toward a different hazard of the arid basin rim.",
+   "exits": [
+    "Step down the eastern wagon ruts",
+    "Follow the narrow footpath past the cairn",
+    "Take the stony track toward the ridge"
+   ]
+  },
+  "sg-1-2-1-0": {
+   "title": "The Salt-Weighers' Rest",
+   "text": "Squinting under a creaking iron sign, a weathered drover warns you that a stretch of the upper rim road has given way into a deep sink-crevice. The yellow glare of your lamp flickers against the peeling boards of the weigh-house, casting long and jittery shapes across the gravel. You weigh whether to press forward or seek a safer detour.",
+   "exits": [
+    "Tread carefully past the broken timber barricade",
+    "Cut across the rubble toward the fallen lime-kiln",
+    "Seek out the pedlar beneath the skeletal wagon ribs"
+   ]
+  },
+  "sg-1-2-1-1": {
+   "title": "The Heel Crusted Loaf",
+   "text": "Past the tallow-vats, an old cousin thrusts a heel-crusted loaf into your pack and demands you trade it only for rain-warrant. The heavy sourdough smells of woodsmoke and stale lard, a stubborn token from a town that has already forgotten how to bloom. You push the crust deep beside your cold ceramic key, feeling its sharp angles dig through the canvas. Every doorway along the lane is shuttered against the coming drought, and the grey dust swirls in listless eddies around your ankles.\n\nThree shadowed paths open up ahead through the perimeter fence, each promising a different trial before the open salt reaches out to greet you.",
+   "exits": [
+    "Duck beneath the sagging wire fence",
+    "Climb the embankment toward the horse pond",
+    "Head straight for the mirror guild tower"
+   ]
+  },
+  "sg-1-2-1-2": {
+   "title": "The Lime Shed Watch",
+   "text": "Under the orange glare of your raised chimney-wick, three toll-touts from the Salt Court step out from a lime-shed to measure your stride. Their oiled leather coats gleam faintly in the amber wash, smelling sharply of vinegar and cheap brass buttons. One of them taps a heavy ledger against an open palm, eyeing the bulge of your belt-lantern with greedy calculation. The dusty ground beneath your boots feels brittle and treacherous, ready to give way if you make a sudden break for the open flats.\n\nAhead of you, the lane splits around a crumbling pile of masonry, offering three narrow avenues of escape.",
+   "exits": [
+    "Slip past the dark horse pond",
+    "Cut through the collapsed drying sheds",
+    "Scramble up the steep miller mound"
+   ]
+  },
+  "sg-1-2-1-3": {
+   "title": "The Flint Stone Drop",
+   "text": "Behind the drying racks of bladder-wrack, a frightened apprentice drops a pouch of spare flint-stones into your palm and whispers of watchers. The rough canvas bag feels heavy and alive with sharp edges, a small mercy traded in the reeking gloom of the seaweed sheds. Outside, the wind howls thinly across the salt-crust, carrying the dry rattle of dead stalks from the abandoned kitchen gardens. Your lamp sways at your hip, casting frantic orange leaps against the weathered timbers.\n\nThree uncertain routes beckon out into the gathering dusk beyond the racks.",
+   "exits": [
+    "Follow the old parish boundary stones",
+    "Cross near the high tension fence wire",
+    "Seek shelter in the abandoned cistern"
+   ]
+  },
+  "sg-1-2-1-4": {
+   "title": "The Black Ditch",
+   "text": "In the shadowed ditch where the town ditch-water runs black, you stumble over a discarded harness while keeping your dark lantern hidden. The rusted iron buckle bites hard through your trousers into your shin, but you dare not cry out against the sudden pain. Thick vapours rise from the stagnant slime, smelling of rotting reeds and old copper coins lost by travellers long turned to dust. Above the lip of the trench, the grey expanse of the Rim Road waits like a blank page.\n\nThree directions lie open before you in the gloom beyond the sunken bank.",
+   "exits": [
+    "Dodge behind the stone sheep shelter",
+    "Pick your way along the basin haul",
+    "Climb the bed of the dry irrigation ditch"
+   ]
+  },
+  "sg-1-2-1-5": {
+   "title": "The Granary Gate",
+   "text": "Beside the locked gate of the western granary, a shivering watchman warms his chilblains against your iron chimney before checking your seal. His breath fogs grey in the biting draft that sweeps off the barren flats, smelling faintly of turnip-tops and cheap gin. He runs a calloused thumb over your stamped wax paper, grunting noncommittally as your lantern oil sloshes with a dull, heavy rhythm. The massive timber doors behind him are barred with iron straps thicker than your wrist.\n\nThree paths lead away from the heavy portal into the sprawling grey expanse.",
+   "exits": [
+    "Make for the gnarled parish thorn tree",
+    "Head toward the widening lime stack ditch",
+    "Strike out across the open gravel waste"
+   ]
+  }
+ },
+ "missing": []
+}

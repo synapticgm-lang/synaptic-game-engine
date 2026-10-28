@@ -1,0 +1,48 @@
+Gemini said
+
+@@SECTION sg-d-1-1
+TITLE: The High Swing
+TEXT: Ignoring Pell's warning, you swing your blazing lamp high above your head to spite the toll-riders, drawing a volley of poisoned sling-stones from the dark and cracking your water-cask against a limestone boulder. Cool, bitter brine immediately soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your fingers grow slippery where the dampness spreads, and the frantic rattling of your belt-lantern sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. The darkness closes in swiftly, heavy with the taste of gypsum and the quiet certainty that your journey ends right here in the white grit.
+@@END
+@@SECTION sg-1-2-0-1
+TITLE: The Cast Iron Lid
+TEXT: You tuck the cast-iron lid tight over the glowing coals of your belt-lantern, feeling only the dull warmth against your thigh. Out on the Rim Road, the white dust stretches like a bone-field under the cold stare of the stars, promising nothing but miles of dry gravel and the occasional whisper of wind through skeletal salt-bush. Every breath tastes of alkaline grit, reminding you that the low murmur of Candlemere's tallow-vats is fading behind your heels for the last time. // Three distinct tracks diverge where the old wagon-ruts bite deep into the crust, each one leading toward a different hazard of the arid basin rim.
+EXIT 1: Step down the eastern wagon ruts
+EXIT 2: Follow the narrow footpath past the cairn
+EXIT 3: Take the stony track toward the ridge
+@@END
+@@SECTION sg-1-2-1-1
+TITLE: The Heel Crusted Loaf
+TEXT: Past the tallow-vats, an old cousin thrusts a heel-crusted loaf into your pack and demands you trade it only for rain-warrant. The heavy sourdough smells of woodsmoke and stale lard, a stubborn token from a town that has already forgotten how to bloom. You push the crust deep beside your cold ceramic key, feeling its sharp angles dig through the canvas. Every doorway along the lane is shuttered against the coming drought, and the grey dust swirls in listless eddies around your ankles. // Three shadowed paths open up ahead through the perimeter fence, each promising a different trial before the open salt reaches out to greet you.
+EXIT 1: Duck beneath the sagging wire fence
+EXIT 2: Climb the embankment toward the horse pond
+EXIT 3: Head straight for the mirror guild tower
+@@END
+@@SECTION sg-1-2-1-2
+TITLE: The Lime Shed Watch
+TEXT: Under the orange glare of your raised chimney-wick, three toll-touts from the Salt Court step out from a lime-shed to measure your stride. Their oiled leather coats gleam faintly in the amber wash, smelling sharply of vinegar and cheap brass buttons. One of them taps a heavy ledger against an open palm, eyeing the bulge of your belt-lantern with greedy calculation. The dusty ground beneath your boots feels brittle and treacherous, ready to give way if you make a sudden break for the open flats. // Ahead of you, the lane splits around a crumbling pile of masonry, offering three narrow avenues of escape.
+EXIT 1: Slip past the dark horse pond
+EXIT 2: Cut through the collapsed drying sheds
+EXIT 3: Scramble up the steep miller mound
+@@END
+@@SECTION sg-1-2-1-3
+TITLE: The Flint Stone Drop
+TEXT: Behind the drying racks of bladder-wrack, a frightened apprentice drops a pouch of spare flint-stones into your palm and whispers of watchers. The rough canvas bag feels heavy and alive with sharp edges, a small mercy traded in the reeking gloom of the seaweed sheds. Outside, the wind howls thinly across the salt-crust, carrying the dry rattle of dead stalks from the abandoned kitchen gardens. Your lamp sways at your hip, casting frantic orange leaps against the weathered timbers. // Three uncertain routes beckon out into the gathering dusk beyond the racks.
+EXIT 1: Follow the old parish boundary stones
+EXIT 2: Cross near the high tension fence wire
+EXIT 3: Seek shelter in the abandoned cistern
+@@END
+@@SECTION sg-1-2-1-4
+TITLE: The Black Ditch
+TEXT: In the shadowed ditch where the town ditch-water runs black, you stumble over a discarded harness while keeping your dark lantern hidden. The rusted iron buckle bites hard through your trousers into your shin, but you dare not cry out against the sudden pain. Thick vapours rise from the stagnant slime, smelling of rotting reeds and old copper coins lost by travellers long turned to dust. Above the lip of the trench, the grey expanse of the Rim Road waits like a blank page. // Three directions lie open before you in the gloom beyond the sunken bank.
+EXIT 1: Dodge behind the stone sheep shelter
+EXIT 2: Pick your way along the basin haul
+EXIT 3: Climb the bed of the dry irrigation ditch
+@@END
+@@SECTION sg-1-2-1-5
+TITLE: The Granary Gate
+TEXT: Beside the locked gate of the western granary, a shivering watchman warms his chilblains against your iron chimney before checking your seal. His breath fogs grey in the biting draft that sweeps off the barren flats, smelling faintly of turnip-tops and cheap gin. He runs a calloused thumb over your stamped wax paper, grunting noncommittally as your lantern oil sloshes with a dull, heavy rhythm. The massive timber doors behind him are barred with iron straps thicker than your wrist. // Three paths lead away from the heavy portal into the sprawling grey expanse.
+EXIT 1: Make for the gnarled parish thorn tree
+EXIT 2: Head toward the widening lime stack ditch
+EXIT 3: Strike out across the open gravel waste
+@@END
