@@ -804,11 +804,27 @@ export function stripUnauthorizedNpcSpeech(
     }
     // T10S — a person "answered" with no quote claims a reply that isn't on the page.
     // Ambient "the street answered" / "nobody answered" stay. Else → said nothing.
-    if (
+    // T10AF — never leave "said nothing that…" splices: whole-clause rewrite when content follows
+    // "answered", and heal already-spliced "said nothing that/with/about…".
+    if (/\bsaid nothing\s+(?:that|with|about)\b/i.test(s)) {
+      const who =
+        s.match(
+          /\b([A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2}|he|she|they)\s+said nothing\s+(?:that|with|about)\b/i,
+        )?.[1] ?? null;
+      s = who ? `${who} said nothing.` : 'They said nothing.';
+    } else if (
       !/\b(?:nobody|no\s+one|nothing)\b/i.test(s)
       && /\b(?:he|she|they|one of them|[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2})\s+answered\b/.test(s)
     ) {
-      s = s.replace(/\banswered\b/gi, 'said nothing');
+      const who =
+        s.match(
+          /\b((?:he|she|they|one of them|[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2}))\s+answered\b/i,
+        )?.[1] ?? null;
+      if (who && /\banswered\s+(?:that|with|about|by|for)\b/i.test(s)) {
+        s = `${who} said nothing.`;
+      } else {
+        s = s.replace(/\banswered\b/gi, 'said nothing');
+      }
     }
     // T10T — content-free voice shell ("Osric Coyne's voice rasped out, words he could not quite catch").
     // Same gap as empty "answered": claims speech with no words shown → said nothing.

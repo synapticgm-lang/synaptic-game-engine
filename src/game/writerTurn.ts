@@ -37,7 +37,7 @@ import {
 } from './semanticLoopDetector';
 import { stripActionTags, stripChoiceList } from './parser';
 import type { WriterRawIssue } from './openRouterChat';
-import { ensureSpokenAnswer, type SpokenAnswer } from './spokenAnswer';
+import { ensureSpokenAnswer, stripSpeakerSilence, type SpokenAnswer } from './spokenAnswer';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { openingCastNames, shortCardWant } from './openingEstablishment';
 import { isOfferRefuseLine } from './openingOffer';
@@ -566,8 +566,16 @@ export async function repairMissingAnswer(
 }
 /** The answer line lands after the beat's first sentence. */
 function landAnswer<T extends WriterTurnResult>(turn: T, check: DraftCheck, missing: SentenceRepair, line: string): T {
-  const sentences = splitProseSentences(turn.prose);
-  const prose = sentences.length > 1 ? [sentences[0], line, ...sentences.slice(1)].join(' ') : `${turn.prose.trim()} ${line}`;
+  // T10AF — strip content-free non-answers for the speaker before landing a real line, so a
+  // stock motive never stacks on "said nothing / gave no answer" (Keep Gate T131 / Dunn T147).
+  const speaker =
+    line.match(/["”]\s*([^"“”]+?)\s+said\b/i)?.[1]?.trim() ??
+    line.match(/^([^"“”]+?)\s+said\b/i)?.[1]?.trim() ??
+    '';
+  // stripSpeakerSilence derives name tokens from label (Speaker.names is internal to spokenAnswer).
+  const cleaned = speaker ? stripSpeakerSilence(turn.prose, { label: speaker }) : turn.prose;
+  const sentences = splitProseSentences(cleaned);
+  const prose = sentences.length > 1 ? [sentences[0], line, ...sentences.slice(1)].join(' ') : `${cleaned.trim()} ${line}`.trim();
   return { ...turn, prose, answerRepair: { ...missing, repaired: line }, remaining: writerDraftProblems(prose, check) };
 }
 /** The draft with one sentence swapped for `replacement` ('' drops it), whitespace-tolerant. */
