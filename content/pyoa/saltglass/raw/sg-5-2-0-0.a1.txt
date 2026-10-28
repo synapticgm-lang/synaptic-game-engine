@@ -1,0 +1,10 @@
+Gemini said
+
+@@SECTION sg-5-2-1-4
+TITLE: The Heron Fountain
+TEXT: Beneath the shadow of a bronze heron with a throat choked in alkaline crust, a wounded Glasswright courier slumps against the dry basin. His crimson sash is stiff with old salt, and as you drop to your knees beside him, his fingers twitch toward the bronze hilt at his hip. He catches your sleeve with a grip surprisingly fierce, his breath smelling of bitter alum and scorched tin. Watch the upper arcades, he rasps, his voice rattling like dry gravel before his head drops sideways into the dust. The Salt Court bailiffs have traded their brass badges for grey cloaks, and they are sweeping every terrace between here and the lower seal. You touch the cold ceramic weight of the Seedkey in your tunic, weighing the open marble plazas against the shadowed alleys of the inner ring. // A sudden clatter of metal echoes from the colonnade behind you, forcing an immediate decision on your route through the city.
+EXIT 1: Slip into the dim lead-bound library
+EXIT 2: Leap toward the salt-choked skylight above
+EXIT 3: Plunge down the green alabaster stairwell
+EXIT 4: Follow Pell through the hidden drainage conduit
+@@END

@@ -304,3 +304,5 @@
 2026-10-28T11:44:18.958Z ask prose sg-5-1-4-4..sg-5-c2 items=10 attempt=0
 2026-10-28T11:44:47.377Z done sg-5-1-4-4: 10/10 model=Flash-Lite
 2026-10-28T11:44:47.378Z ask prose sg-5-2-0-0..sg-5-2-2-1 items=10 attempt=0
+2026-10-28T11:45:17.675Z   reject sg-5-2-1-4: exit 4 label
+2026-10-28T11:45:23.681Z ask prose sg-5-2-0-0..sg-5-2-2-1 items=1 attempt=1
