@@ -335,7 +335,7 @@ export interface Character {
   /** 28c — class/background weapon proficiencies; each sets familiarity to at least 70. */
   weaponProficiencies?: Array<'blade' | 'axe' | 'blunt' | 'polearm' | 'bow' | 'firearm' | 'unarmed'>;
   /** 29z3 — check-skill ranks granted by level-ups (checkMath skills). Missing = level-derived rank. */
-  skills?: Partial<Record<'athletics' | 'perception' | 'investigation' | 'stealth' | 'thievery' | 'persuasion' | 'arcana' | 'survival', number>>;
+  skills?: Partial<Record<'athletics' | 'perception' | 'investigation' | 'stealth' | 'thievery' | 'persuasion' | 'insight' | 'arcana' | 'survival', number>>;
   /** 29z3 — highest level whose skill rank has been granted. */
   skillsGrantedThrough?: number;
   /** Class with no tabletop sheet (LitRPG): the same SRD class data; a sheet's `srd.classId` wins. */

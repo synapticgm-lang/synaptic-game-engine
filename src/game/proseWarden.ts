@@ -578,37 +578,38 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   next = next.replace(/\bthe\s+Lowmarket\s+Fence\s+staggered\b/gi, 'the skirmisher staggered');
   next = next.replace(/\bimposing silhouette of the Lowmarket\s+Fence\b/gi, 'imposing market wall');
   next = next.replace(/\bscrap\.\s*"\s*/gi, '');
-  // Batch 02a — "Tavern" mad-lib scrubbing (generic building type used as character/direction)
+  // Batch 02a — Title-Case "Tavern" as character/direction mad-lib only (not lowercase "tavern song").
+  // Case-sensitive: ordinary English "from the tavern song" must not become "waystation song" (T10AB s9201 T14).
   next = next.replace(
-    /\b(?:the\s+)?Tavern\s+(?:watches|looks|waits|stands|sits|remains)\b/gi,
+    /\b(?:the\s+)?Tavern\s+(?:watches|looks|waits|stands|sits|remains)\b/g,
     'the vendor watches'
   );
   next = next.replace(
-    /\btoward(?:s)?\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/gi,
+    /\btoward(?:s)?\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/g,
     'toward the waystation'
   );
   next = next.replace(
-    /\bfrom\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/gi,
+    /\bfrom\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/g,
     'from the waystation'
   );
   next = next.replace(
-    /\b(?:at|near|beside)\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/gi,
+    /\b(?:at|near|beside)\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/g,
     'at the waystation'
   );
   next = next.replace(
-    /\bthat swallows the (?:Salt Road\s+)?Tavern\b/gi,
+    /\bthat swallows the (?:Salt Road\s+)?Tavern\b/g,
     'that swallows the waystation'
   );
   next = next.replace(
-    /\b(?:Tavern),\s+(?:the\s+)?passage\b/gi,
+    /\b(?:Tavern),\s+(?:the\s+)?passage\b/g,
     'Further along, the passage'
   );
   next = next.replace(
-    /\ba\s+Tavern\s+(dim|faint|soft|weak|flickering)\b/gi,
+    /\ba\s+Tavern\s+(dim|faint|soft|weak|flickering)\b/g,
     'a $1'
   );
   next = next.replace(
-    /\btake a\s+Tavern\b/gi,
+    /\btake a\s+Tavern\b/g,
     'take a step'
   );
   return tidyClauses(next);

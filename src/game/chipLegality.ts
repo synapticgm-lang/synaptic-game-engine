@@ -7,16 +7,15 @@
 
 import type { GameState } from './types';
 import { isDying } from './tabletop/roundFight';
-import { presentNpcNames } from './npcRelationships';
 import { isChromePersonToken } from './chromeAuthority';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { travelPadBlocked } from './padUniverse';
 import { classifyEdgeType } from './graphChoices';
-import { openingCastNames, openingCastStillHere, openOpeningOffer } from './openingEstablishment';
+import { openOpeningOffer } from './openingEstablishment';
 import { applyNamedHubTravel, hubsForBibleId, matchHub } from './outdoorHubs';
 import { applyGraphExitTravel } from './mapEngine';
 import { isInteriorPlace } from './placeAuthority';
-import { commitTravel, isJourneyPad, isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney';
+import { commitTravel, isJourneyPad, isJourneyUnderway } from './travelJourney';
 import { boundEngineChip, choiceNamesUnnarratedObject } from './choicePipeline';
 import { gateChipProblem } from './skillGates';
 import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './chipRules';
@@ -25,6 +24,13 @@ import { isSystemStatusChip } from './systemHousing';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { hasOpenAsk } from './questGiver';
 import { affordanceEntityPresent } from './sceneAffordances';
+import {
+  listenersOnEmptyText,
+  mentionsName,
+  peopleHere,
+  proseSeatsListener,
+  roadMeetingPeople,
+} from './scenePresence';
 
 export type ChipProblemKind = 'ghost-chip' | 'impossible-chip' | 'unrelated-chip';
 
@@ -36,63 +42,14 @@ export interface ChipProblem {
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
 
-export function mentionsName(text: string, name: string): boolean {
-  const hay = low(text);
-  if (!hay) return false;
-  if (hay.includes(low(name))) return true;
-  const tokens = low(name)
-    .replace(/^(?:the|a|an)\s+/, '')
-    .split(/[\s'’-]+/)
-    .filter((t) => t.length >= 3 && !/^(?:the|of|and)$/.test(t));
-  if (!tokens.length) return false;
-  const hit = (t: string) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay);
-  // Multi-token names need every content token ("Nemi Salt" ≠ "salt-burners" via Salt alone).
-  return tokens.length >= 2 ? tokens.every(hit) : hit(tokens[0]!);
-}
-
-const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'villain']);
-
-/** The person or group a live, un-fought road meeting puts on this stretch, by the journey's own label. */
-export function roadMeetingPeople(state: GameState): string | null {
-  const enc = state.journey?.encounter;
-  if (!enc || roadMeetingOver(enc) || !isJourneyUnderway(state)) return null;
-  return ROAD_PEOPLE_KINDS.has(enc.kind) ? roadMeetingLabel(enc.kind) : null;
-}
-
-/** Article-stripped key so "the crew" and "crew" are one person (T10Y — no "crew of the crew"). */
-function personKey(name: string): string {
-  return name.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
-}
-
-/** Everyone who could answer: the presence record, companions, the live foe, the opening cast, a road meeting. */
-export function peopleHere(state: GameState): string[] {
-  const out = new Map<string, string>();
-  const add = (n?: string | null) => {
-    const name = norm(n);
-    if (!name || isChromePersonToken(name)) return;
-    const key = personKey(name);
-    if (!key) return;
-    const prev = out.get(key);
-    // Prefer the article form ("the crew") when both bare and articulated appear.
-    if (!prev || (/^(?:the|a|an)\s+/i.test(name) && !/^(?:the|a|an)\s+/i.test(prev))) {
-      out.set(key, name);
-    }
-  };
-  presentNpcNames(state).forEach(add);
-  (state.companions ?? []).forEach((c) => add(c.name));
-  add(state.activeEncounter?.name);
-  if (openingCastStillHere(state)) openingCastNames(state).forEach(add);
-  add(roadMeetingPeople(state));
-  return [...out.values()];
-}
-
-/** Who can hear a talk chip when the place text says the room is empty: never the opening card's cast. */
-export function listenersOnEmptyText(state: GameState): string[] {
-  const cast = openingCastNames(state);
-  return peopleHere(state).filter((n) => !cast.some((c) => mentionsName(n, c) || mentionsName(c, n)));
-}
-
-export { crowdHere };
+export {
+  crowdHere,
+  listenersOnEmptyText,
+  mentionsName,
+  peopleHere,
+  proseSeatsListener,
+  roadMeetingPeople,
+};
 
 const TALK_CHIP =
   /^(?:talk (?:to|with)|speak (?:to|with)|ask|tell|greet|question|thank|introduce yourself to|parley with)\s+(?!about\b|for\b|around\b|what\b|who\b|why\b|how\b|where\b|if\b|whether\b)(?:the\s+)?(.+)$/i;
@@ -218,8 +175,14 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   if (isLastKillTalkPad(label, lastKill)) {
     return { kind: 'impossible-chip', detail: `"${label}" talks to ${lastKill?.name}, who is dead` };
   }
-  const here = placeSaysEmpty(state, storyProse) ? listenersOnEmptyText(state) : peopleHere(state);
-  const nobody = !here.length && !crowdHere(state);
+  // Empty-room text strips opening cast; a busy beat that names the listener still seats them
+  // even when cast-list / mock presence missed the ledger (T10AB-fix2).
+  const emptyText = placeSaysEmpty(state, storyProse);
+  const here = emptyText ? listenersOnEmptyText(state) : peopleHere(state);
+  const addr = chipAddressee(label);
+  const proseSeats =
+    !emptyText && !!addr?.who && proseSeatsListener(storyProse, addr.who);
+  const nobody = !here.length && !crowdHere(state) && !proseSeats;
 
   if (chipHandlesSystemWindow(state, label)) {
     return { kind: 'impossible-chip', detail: `"${label}" handles the System window, which only the player sees and nobody can touch` };
@@ -229,13 +192,13 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
     return isJourneyUnderway(state) ? null : { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
   }
 
-  const addr = chipAddressee(label);
   if (addr?.kind === 'named') {
     if (!isChromePersonToken(addr.who)) {
       if (matchesLastKillName(addr.who, lastKill) && lastKill?.outcome === 'victory') {
         return { kind: 'impossible-chip', detail: `"${label}" talks to ${addr.who}, who is dead` };
       }
-      if (!here.some((p) => mentionsName(p, addr.who) || mentionsName(addr.who, p))) {
+      const ledgerHere = here.some((p) => mentionsName(p, addr.who) || mentionsName(addr.who, p));
+      if (!ledgerHere && !proseSeats) {
         return {
           kind: 'ghost-chip',
           detail: `"${label}" talks to ${addr.who}, who is not here (here: ${here.join(', ') || 'nobody'})`,

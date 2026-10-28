@@ -522,6 +522,15 @@ export function planSceneThreads(state: GameState): GameState {
         stallEventId,
         `Stall pressure: open thread brought forward — ${best.label}.`,
       );
+      // T10AB — stalled scenes must move the world (SRD-faithful consequence), not only re-chip.
+      const hereName = (working.currentLocation ?? '').trim();
+      if (hereName && (working.progressGovernor?.turnsSinceProgress ?? 0) > STALL_N) {
+        working = applyPlaceEngineEvent(working, {
+          placeId: hereName,
+          kind: 'new-threat',
+          detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
+        });
+      }
     }
   } else if (stall) {
     // Order: open thread (none) → NPC agenda step → OPT-2 situation.

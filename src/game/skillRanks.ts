@@ -7,6 +7,7 @@ export const CHECK_SKILLS = [
   'stealth',
   'thievery',
   'persuasion',
+  'insight',
   'arcana',
   'survival',
 ] as const;

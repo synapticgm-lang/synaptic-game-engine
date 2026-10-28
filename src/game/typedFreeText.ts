@@ -27,15 +27,47 @@ import {
 } from './intentParser';
 import { interpretRoundTyped } from './tabletop/roundTyped';
 import {
+  isNonLootableTakeTarget,
   looksLikeParley,
   looksLikeSteal,
   resolveParleyAttempt,
+  resolvePersonThreatAttempt,
   resolveStealAttempt,
 } from './stealParley';
 import { engageAddressedInHereSpot } from './hereSpot';
 import { isLedgerReadAction } from './completedEventPacket';
 import { ledgerChangeFact, ledgerReadChanges, ledgerSheetLine } from './litrpgSystemWindow';
 import { buildClauseWriterFact } from './writerCueLines';
+
+function isPersonInsightLabel(clause: string): boolean {
+  return /^read\s+\S/i.test((clause ?? '').trim());
+}
+
+/** Mark Insight attempted on the named person so Read chips retire for this scene (T10AB). */
+function markInsightAttempt(state: GameState, whoRaw: string, success: boolean): GameState {
+  const raw = (whoRaw ?? '').replace(/^read\s+/i, '').replace(/\s+/g, ' ').trim();
+  const want = raw.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+  if (!want) return state;
+  const mems = state.npcMemories ?? [];
+  let hit = false;
+  const next = mems.map((m) => {
+    const n = (m.npcName ?? '').replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+    const id = (m.npcId ?? '').toLowerCase();
+    if (n !== want && !n.startsWith(want) && !want.startsWith(n) && id !== want && !id.endsWith(want)) {
+      return m;
+    }
+    hit = true;
+    const topics = [...(m.completedTopics ?? [])];
+    if (!topics.includes('insight')) topics.push('insight');
+    const facts = [...(m.facts ?? [])];
+    const line = success
+      ? `Insight read: you caught a tell.`
+      : `Insight read: they gave nothing away.`;
+    if (!facts.includes(line)) facts.push(line);
+    return { ...m, completedTopics: topics, facts };
+  });
+  return hit ? { ...state, npcMemories: next } : state;
+}
 
 export type TypedFreeTextResult = {
   receipts: string[];
@@ -129,6 +161,15 @@ function isSpeechStep(step: IntentStep, clause: string, inHostileParley = false)
   ) {
     return true;
   }
+  // T10AB — grab/collar/blade intimidate is Athletics + Intimidation, not free speech.
+  if (
+    step.action === 'intimidate'
+    && /\b(grab|collar|grapple|pin|throat|blade|dagger|sword|knife|drag|haul|seize|cut\s+off)\b/i.test(
+      clause,
+    )
+  ) {
+    return false;
+  }
   // Plain persuade without a hostile/live fight stays speech; hostile path uses inHostileParley.
   if (
     (step.action === 'persuade' || step.action === 'intimidate' || step.action === 'deceive')
@@ -196,6 +237,35 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
       engineResult: steal.facts.join(' ') || steal.receipts.join(' '),
       economySlot: 'action',
       state: steal.state,
+    };
+  }
+
+  // T10AB — grab/collar/blade-threat on a present person: Athletics grapple + Intimidation (SRD).
+  // Runs before hostile-only parley so a collar grab is not a soft social shrug with no grapple.
+  const threatTarget = step.addressee?.trim() || step.target?.trim() || '';
+  const grabThreat =
+    /\b(grab|collar|grapple|pin|throat|blade|dagger|drag|haul|seize)\b/i.test(clause)
+    || (step.action === 'take' && isNonLootableTakeTarget(threatTarget || step.target, state));
+  if (
+    threatTarget
+    && (grabThreat
+      || step.action === 'intimidate'
+      || (step.action === 'attack' && grabThreat))
+  ) {
+    const threat = resolvePersonThreatAttempt(state, clause, {
+      ...step,
+      action: 'intimidate',
+      addressee: threatTarget,
+      target: threatTarget,
+      tone: step.tone === 'friendly' ? 'threatening' : (step.tone ?? 'threatening'),
+    });
+    return {
+      tried,
+      done: true,
+      reason: threat.success ? 'threat resolved' : 'threat resisted',
+      engineResult: [...threat.facts, ...threat.receipts, clauseWriterFact(step, false, here)].filter(Boolean).join(' '),
+      economySlot: 'action',
+      state: threat.state,
     };
   }
 
@@ -274,6 +344,11 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
     const outcome = check.isSuccess ? 'success' : 'failure';
     const fact = `Action resolved: ${check.label || intent.label} — ${outcome}.`;
     const roll = check.codeResolutionText || fact;
+    // T10AB — Insight Read retires the person chip and records a durable social outcome.
+    let nextState = state;
+    if (/^insight$/i.test(check.label ?? '') || isPersonInsightLabel(clause)) {
+      nextState = markInsightAttempt(state, step.addressee || step.target || clause, check.isSuccess);
+    }
     // T10I: every clause still reaches the writer (Must narrate), even when a check fails —
     // free text is never rejected; a roll outcome alone must not drop the act.
     return {
@@ -282,6 +357,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
       reason: outcome,
       engineResult: `${clauseWriterFact(step, false, here)} ${roll}`.trim(),
       economySlot: slot,
+      state: nextState !== state ? nextState : undefined,
     };
   }
   if (actionable && !canRoll) {

@@ -23,7 +23,7 @@ import { exitPlaceNames } from './placeNames';
 import { placeExitRows } from './placeRegistry';
 import { openRouteView, presentPersonForRoute } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
-import { mentionsName, peopleHere } from './chipLegality';
+import { mentionsName, peopleHere } from './scenePresence';
 import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
 import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
@@ -186,27 +186,33 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       check: withModeCheck ? checkForAction(state, parsePlayerIntent(talk, state), talk) : undefined,
     });
     if (dnd) {
-      const insight = `Read ${name}`;
-      all.push({
-        label: insight,
-        actionId: `person:${entityId}:insight`,
-        entityId,
-        slotKind: 'person',
-        salience: 40 - i,
-        required: false,
-        check: checkForAction(state, parsePlayerIntent(insight, state), insight),
-      });
+      const insightId = `person:${entityId}:insight`;
+      if (!personChipExhausted(state, insightId)) {
+        const insight = `Read ${name}`;
+        all.push({
+          label: insight,
+          actionId: insightId,
+          entityId,
+          slotKind: 'person',
+          salience: 40 - i,
+          required: false,
+          check: checkForAction(state, parsePlayerIntent(insight, state), insight),
+        });
+      }
     } else if (litrpg) {
-      const skill = `Read ${name}`;
-      all.push({
-        label: skill,
-        actionId: `person:${entityId}:skill`,
-        entityId,
-        slotKind: 'person',
-        salience: 65 - i,
-        required: false,
-        check: checkForAction(state, parsePlayerIntent(skill, state), skill),
-      });
+      const skillId = `person:${entityId}:skill`;
+      if (!personChipExhausted(state, skillId)) {
+        const skill = `Read ${name}`;
+        all.push({
+          label: skill,
+          actionId: skillId,
+          entityId,
+          slotKind: 'person',
+          salience: 65 - i,
+          required: false,
+          check: checkForAction(state, parsePlayerIntent(skill, state), skill),
+        });
+      }
       const system = `Analyze ${name}`;
       all.push({
         label: system,
@@ -219,8 +225,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       });
     } else if (rpg) {
       const standingId = `person:${entityId}:standing`;
-      // T10AA — Press standing with no outcome must not loop; after one pick in this scene, drop it.
-      if (pickedCountInScene(state, standingId) < 1) {
+      // T10AA + T10AB: Press standing with no outcome must not loop; drop after one pick in this scene or when exhausted.
+      if (pickedCountInScene(state, standingId) < 1 && !personChipExhausted(state, standingId)) {
         const standing = `Press your standing with ${name}`;
         all.push({
           label: standing,
@@ -233,24 +239,27 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         });
       }
       if (contactNames?.has(name.toLowerCase()) && openStep) {
-        const contact = contactChip(name, openStep);
-        all.push({
-          label: contact,
-          actionId: `person:${entityId}:contact`,
-          entityId,
-          slotKind: 'person',
-          salience: 88 - i,
-          required: true,
-          check: undefined,
-        });
+        const contactId = `person:${entityId}:contact`;
+        if (!personChipExhausted(state, contactId)) {
+          const contact = contactChip(name, openStep);
+          all.push({
+            label: contact,
+            actionId: contactId,
+            entityId,
+            slotKind: 'person',
+            salience: 88 - i,
+            required: true,
+            check: undefined,
+          });
+        }
       }
     }
     if (m.goal?.motivation && (m.goal.target || m.need)) {
       // Same want source as Follow-up chips (bound goal target, not role-template need).
       const about = npcChipWant(m);
       const agendaId = `person:${entityId}:agenda`;
-      // T10AA — same Ask-about with no quest tick must yield to travel / next lead (Edda loop).
-      if (about && pickedCountInScene(state, agendaId) < 1) {
+      // T10AA + T10AB: same Ask-about with no quest tick yields to travel / next lead (Edda loop); both guards apply.
+      if (about && pickedCountInScene(state, agendaId) < 1 && !personChipExhausted(state, agendaId)) {
         const agenda = `Ask ${name} about ${about}`;
         all.push({
           label: agenda,
@@ -664,6 +673,50 @@ export function normalizeOfferedActionKeys(state: GameState): GameState {
   if (!changed) return state;
   return { ...state, recentOfferedActions: next };
 }
+/**
+ * T10AB — once a person insight/agenda/skill/standing chip is picked in this scene, do not
+ * re-offer it until place/present changes. Picking used to reset the tabletop streak so
+ * "Read X" / "Ask about…" could spam with no new outcome until LOOP STOP.
+ */
+export function affordancePickedInScene(state: GameState, actionId: string): boolean {
+  if (!actionId) return false;
+  const key = optionSceneKeyString(computeOptionSceneKey(state));
+  const hist = state.recentOfferedActions ?? [];
+  for (let i = 0; i < hist.length; i++) {
+    const row = hist[i]!;
+    if (row.sceneKey === key && row.pickedActionId === actionId) return true;
+  }
+  return false;
+}
+
+function personChipExhausted(state: GameState, actionId: string): boolean {
+  if (
+    !actionId.endsWith(':insight')
+    && !actionId.endsWith(':skill')
+    && !actionId.endsWith(':standing')
+    && !actionId.endsWith(':agenda')
+    && !actionId.endsWith(':contact')
+  ) {
+    return false;
+  }
+  if (affordancePickedInScene(state, actionId)) return true;
+  // Ledger topic: insight attempt already committed on the NPC this scene.
+  if (actionId.endsWith(':insight') || actionId.endsWith(':skill')) {
+    // No regex in this file (C1-7 / OPT1-6). actionId shape: person:<entityId>:insight|skill
+    let entityId = actionId.startsWith('person:') ? actionId.slice('person:'.length) : actionId;
+    if (entityId.endsWith(':insight')) entityId = entityId.slice(0, -':insight'.length);
+    else if (entityId.endsWith(':skill')) entityId = entityId.slice(0, -':skill'.length);
+    const mems = state.npcMemories ?? [];
+    for (let i = 0; i < mems.length; i++) {
+      const m = mems[i]!;
+      const id = m.npcId || `npc:${m.npcName}`;
+      if (id !== entityId && `npc:${m.npcName}` !== entityId) continue;
+      if ((m.completedTopics ?? []).includes('insight')) return true;
+    }
+  }
+  return false;
+}
+
 export function isOptionRepeat(
   state: GameState,
   actionId: string,

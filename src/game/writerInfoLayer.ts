@@ -202,6 +202,12 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
 
   const agendaFact = state.sceneFacts?.agendaWorldFact?.trim();
   const agendaSection = agendaFact ? `Agenda (world fact):\n${agendaFact}` : '';
+  // T10AB — stall pressure must reach the writer so the world acts (patrol / visitor / deadline), not only a chip.
+  const stallFact =
+    state.sceneFacts?.stallWorldFact?.trim()
+    || state.sceneFacts?.placeWorldFact?.trim()
+    || '';
+  const stallSection = stallFact ? `World pressure (must show this beat):\n${stallFact}` : '';
 
   const build = (withLore: boolean, withTimeline: boolean): string =>
     [
@@ -210,6 +216,7 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
       peopleSection,
       lifecycleSection,
       agendaSection,
+      stallSection,
       threatSection,
       roomSection,
       ledgerSection,

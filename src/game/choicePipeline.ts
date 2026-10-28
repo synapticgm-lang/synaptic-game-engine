@@ -635,7 +635,36 @@ export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameS
       offeredChips.push(rec);
     }
   }
-  let next = stampRecentOfferedActions(state, actionIds);
+  // T10AB — record which chip the player just picked so insight/agenda cannot re-offer in-scene.
+  let pickedActionId: string | undefined;
+  {
+    const log = state.log ?? [];
+    let playerLine = '';
+    let playerAt = -1;
+    for (let i = log.length - 1; i >= 0; i--) {
+      if (log[i]?.role === 'player') {
+        playerLine = (log[i]!.content ?? '').trim();
+        playerAt = i;
+        break;
+      }
+    }
+    const low = playerLine.toLowerCase();
+    if (low && playerAt > 0) {
+      for (let i = playerAt - 1; i >= 0; i--) {
+        const chips = log[i]?.offeredChips;
+        if (log[i]?.role !== 'gm' || !chips?.length) continue;
+        for (let c = 0; c < chips.length; c++) {
+          const row = chips[c]!;
+          if ((row.label ?? '').trim().toLowerCase() === low && row.actionId) {
+            pickedActionId = row.actionId;
+            break;
+          }
+        }
+        break;
+      }
+    }
+  }
+  let next = stampRecentOfferedActions(state, actionIds, pickedActionId);
   const log = [...(next.log ?? [])];
   let at = -1;
   for (let i = log.length - 1; i >= 0; i--) if (log[i]?.role === 'gm') { at = i; break; }

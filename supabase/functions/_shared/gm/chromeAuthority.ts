@@ -294,8 +294,11 @@ export function realPresentPeople(present: string[] | undefined): string[] {
 export function isCrowdFillerToken(token: string): boolean {
   const t = (token ?? '').trim();
   if (!t) return false;
-  if (/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(t)) return true;
-  if (/\b(?:bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)\b/i.test(t)) return true;
+  // Plural occupancy chrome only. Singular "the handler" is a role speaker (opening cast /
+  // chromeSpeechAnchor) — handlers? would wrongly clear the opener-cast listener.
+  const bare = t.replace(/^(?:the|a|an)\s+/i, '').trim();
+  if (/^(bystanders|handlers|onlookers|watchers|crowd|people|voices)$/i.test(bare)) return true;
+  if (/\b(?:bystanders|handlers|onlookers|watchers|crowd|people|voices)\b/i.test(t)) return true;
   return false;
 }
 
