@@ -185,6 +185,10 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
     if (f.kind === 'plays-player' && /NPC speaks the player's quoted words/i.test(f.detail)) {
       out.push(`Player's quoted words in an NPC's mouth: ${f.detail}`);
     }
+    // T10P — invented PC quoted speech (player typed no quotes) is a hard miss.
+    if (f.kind === 'plays-player' && /the prose writes the player's own words/i.test(f.detail)) {
+      out.push(`Invented PC speech: ${f.detail}`);
+    }
   }
   if (isOfferRefuseLine(check.playerInput)) {
     const card = (check.state.openingEstablishment?.card?.cast ?? '').trim();
@@ -262,7 +266,8 @@ export async function runWriterTurnWithFightRetry(opts: {
     if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
       || p.startsWith('Someone must answer') || p.startsWith("Answer the player's question") || p.startsWith('Show the player acting')
       || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
-      || p.startsWith("Player's quoted words in an NPC's mouth:")) blocking.push(p);
+      || p.startsWith("Player's quoted words in an NPC's mouth:")
+      || p.startsWith('Invented PC speech:')) blocking.push(p);
   }
   if (!blocking.length) return done;
   let raw = '';
@@ -275,7 +280,8 @@ export async function runWriterTurnWithFightRetry(opts: {
       const p = second.remaining[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
         || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
-        || p.startsWith("Player's quoted words in an NPC's mouth:")) { hardLeft = true; break; }
+        || p.startsWith("Player's quoted words in an NPC's mouth:")
+        || p.startsWith('Invented PC speech:')) { hardLeft = true; break; }
     }
   } else {
     hardLeft = false;
@@ -283,7 +289,8 @@ export async function runWriterTurnWithFightRetry(opts: {
       const p = blocking[i]!;
       if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
         || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
-        || p.startsWith("Player's quoted words in an NPC's mouth:")) { hardLeft = true; break; }
+        || p.startsWith("Player's quoted words in an NPC's mouth:")
+        || p.startsWith('Invented PC speech:')) { hardLeft = true; break; }
     }
   }
   if (second.outcome === 'accepted' && !hardLeft) {

@@ -81,7 +81,8 @@ function clauseWriterFact(step: IntentStep, speech: boolean, presentHere: string
 }
 
 function presentNames(state: GameState): string[] {
-  return (state.sceneFacts?.present ?? []).map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+  // Same listen pool as sheetContextFromState (T10P — road travel drops stale sceneFacts.present).
+  return sheetContextFromState(state).present ?? [];
 }
 
 function speechStep(step: IntentStep, presentHere: string[] = []): StepResolution {
@@ -132,7 +133,8 @@ function isSpeechStep(step: IntentStep, clause: string, inHostileParley = false)
     return true;
   }
   // SRD Communicating: explicit speech verbs / quoted say — not the broad first-person protest heuristic.
-  if (/\b(shout|yell|call out|say|tell|ask|order|taunt)\b/i.test(clause)) {
+  // Stem forms (asking / telling) match the intentParser speech marker (T10P).
+  if (/\b(shout(?:ing)?|yell(?:ing)?|call(?:ing)?\s+out|say|said|tell(?:ing)?|ask(?:ing)?|order|taunt)\b/i.test(clause)) {
     return !/\b(attack|flee|strike|cast|drink|equip|walk to|go to|move to|swing)\b/i.test(clause);
   }
   if (step.say && !/\b(attack|flee|strike|cast|drink|equip|walk|go to|move to)\b/i.test(clause)) {
@@ -224,15 +226,19 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
   }
 
   // Live fight: mechanical clause goes through the existing round resolver (engine rolls).
-  // Incomplete SRD sheet → still never reject; treat as free speech / said aloud.
+  // Incomplete SRD sheet → still never reject; speech stays speech, acts stay acts (T10P —
+  // do not force Face/attack chips into empty speech stubs that invent "spoke the warning").
   if (state.activeEncounter || state.roundCombat) {
     const canRound =
       !!state.character?.srd?.speciesId && !!state.character?.srd?.classId;
     if (!canRound) {
-      return speechStep({
-        ...step,
-        addressee: step.addressee?.trim() || state.activeEncounter?.name || null,
-      }, here);
+      if (isSpeechStep(step, clause, hostile)) {
+        return speechStep({
+          ...step,
+          addressee: step.addressee?.trim() || state.activeEncounter?.name || null,
+        }, here);
+      }
+      return actionDoneStep(step, clause, here);
     }
     const plan = interpretRoundTyped(state, clause);
     const engineResult = plan.facts.join(' ').trim() || plan.receipts.join(' ').trim() || tried;

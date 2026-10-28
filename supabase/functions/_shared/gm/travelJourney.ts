@@ -1,7 +1,7 @@
 /** Edge stub (29z8): road meetings are built on the client (src/game/travelJourney.ts) and arrive in the packet. Lets completedEventPacket and places boot. */
 import type { GameState } from './types.ts';
 import { underwayHereLabel } from './locationName.ts';
-import { plainFromWriterCueSentence } from './writerCueLines.ts';
+import { convertWriterCueFact, hasWriterCueChrome, plainFromWriterCueSentence } from './writerCueLines.ts';
 
 export function roadMeetingFact(_j: unknown): string { return ''; }
 export function roadMeetingRef(_state: unknown): { display: string; note: string } | null { return null; }
@@ -63,6 +63,11 @@ export function writerTravelFact(receipt: string): string | null {
 /** Plain Travel: → writer form, then every other receipt label the same way. Not inside "Extended Travel:" (q31-L4). */
 export function writerEngineResult(fact: string): string {
   const travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  // T10P — cue-heavy facts convert as whole blocks (periods inside Must narrate must not leak).
+  if (hasWriterCueChrome(travel)) {
+    const converted = convertWriterCueFact(travel);
+    if (converted) return converted;
+  }
   const parts = travel.split('. ');
   const out: string[] = [];
   for (let i = 0; i < parts.length; i++) {

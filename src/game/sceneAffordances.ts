@@ -33,7 +33,7 @@ import { isDying } from './tabletop/roundFight';
 import { travelPadBlocked } from './padUniverse';
 import { originPad } from './rules/rpgOrigin';
 import type { QuestRoute } from './types';
-import { capFightChips, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
+import { capFightChips, FIGHT_CHIP_CAP, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
 export function isWayOut(chip: {
   kind?: string;
   actionId?: string;
@@ -720,6 +720,41 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
         entityId: 'foe:' + foe, required: true, rank: e.type === 'attack' ? 100 : e.type === 'flee' ? 99 : 98,
       } as T]);
     }
+  }
+  // T10P: live fight pad = encounter actions only (≤4) + free-input. Generic scene
+  // affordances (chest / scout / contact / travel) stay off the fight page.
+  if (liveFight) {
+    const freeOnly: T[] = [];
+    const fightOnly: T[] = [];
+    const seenFight = new Set<string>();
+    for (let i = 0; i < work.length; i++) {
+      const chip = work[i]!;
+      if (chip.kind === 'free-input') {
+        freeOnly.push({ ...chip, cooldownReturn: undefined });
+        continue;
+      }
+      const id = chip.actionId ?? '';
+      const fightish =
+        chip.slotKind === 'fight'
+        || id.startsWith('fight:')
+        || id.startsWith('thread:foe:');
+      if (!fightish || !id || seenFight.has(id)) continue;
+      seenFight.add(id);
+      fightOnly.push({ ...chip, slotCategory: 'scene', slotKind: 'fight', cooldownReturn: undefined });
+    }
+    const byId = (a: T, b: T) => {
+      const rank = (c: T) => {
+        const id = c.actionId ?? '';
+        if (id.endsWith(':attack') || id.includes(':forward')) return 0;
+        if (id.endsWith(':flee')) return 1;
+        if (id.endsWith(':parley')) return 2;
+        return 3;
+      };
+      return rank(a) - rank(b);
+    };
+    fightOnly.sort(byId);
+    const capped = fightOnly.slice(0, Math.max(0, FIGHT_CHIP_CAP));
+    return [...capped, ...freeOnly];
   }
   const cd =
     mode === 'litrpg'
