@@ -302,18 +302,20 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         }
       }
       if (route?.failed) continue;
-      const stepPlace = (
-        openRoutes.step.placeId ?? openRoutes.step.place ?? route?.placeId ?? ''
-      )
-        .trim()
-        .toLowerCase();
+      const stepPlaceRaw = (openRoutes.step.placeId ?? openRoutes.step.place ?? '').trim();
+      const stepHasPlace = !!stepPlaceRaw;
+      const stepPlace = (stepPlaceRaw || route?.placeId || '').trim().toLowerCase();
       const routePlace = (route?.placeId ?? stepPlace).trim().toLowerCase();
-      // T10AA — contact lead needs someone who stands with you; empty list fails forever.
-      if (route?.kind === 'contact' && !standingContactsHere(state).length) continue;
+      // Contact with nobody Friendly stays offered: pick fails once, then `failed` skips re-offer (OPT4-2).
       if (route?.kind === 'person') {
         const bound = presentPersonForRoute(state, route);
         if (!bound) continue;
-        const label = `Ask ${bound.name} about the lead`;
+        // Authored approach labels stay; rewrite only when a generic witness binds to a present speaker.
+        const authored = (row.label ?? '').trim();
+        const label =
+          authored && mentionsName(authored, bound.name)
+            ? authored
+            : `Ask ${bound.name} about the lead`;
         all.push({
           label,
           actionId: row.actionId,
@@ -334,8 +336,14 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       if (route?.kind === 'place' && (route.entityId ?? '').trim() === 'place:arrival') {
         if (routePlace && herePlace && routePlace !== herePlace) continue;
       }
-      if (route?.kind === 'place' && routePlace && herePlace && routePlace !== herePlace) {
-        // Off-site search is a non-outcome; travel chip is stamped after the loop.
+      // Placed open-step Search off-site → travel chip below. Placeless approach routes stay.
+      if (
+        route?.kind === 'place' &&
+        stepHasPlace &&
+        routePlace &&
+        herePlace &&
+        routePlace !== herePlace
+      ) {
         continue;
       }
       if (route && (route.kind === 'place' || route.kind === 'object')) {
