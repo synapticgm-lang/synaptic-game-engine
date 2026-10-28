@@ -62,9 +62,14 @@ describe('1 — an engine chip is not a missing-item claim', () => {
     expect(g.text).toBe('Cast Fire Bolt');
   });
 
-  it('a stale pad from another turn does not vouch for the line', () => {
+  it('a stale pad from another turn does not vouch for a real USE claim', () => {
     const stale = { ...s, offeredPad: { turn: 19, choices: ['Cast Fire Bolt'] } };
-    expect(groundPlayerAction('Cast Fire Bolt', stale).rewritten).toBe(true);
+    const g = groundPlayerAction('Use my crowbar', stale);
+    // T10A: typed text stays; a real bag miss is a note, never a canned rewrite.
+    expect(g.rewritten).toBe(false);
+    expect(g.text).toBe('Use my crowbar');
+    expect(g.notes.join(' ')).toMatch(/Missing item/i);
+    expect(g.notes.join(' ')).toMatch(/crowbar/i);
   });
 });
 

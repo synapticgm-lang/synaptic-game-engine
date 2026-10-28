@@ -697,3 +697,7 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 2. **`isLookAroundAct`** — the look test now sits on the one stitch call. Same check.
 3. **122 blank lines in `src/game/travelJourney.ts`** — padding only, so ruleCount TOTAL lines stay put. The receipt-to-sentence step lives inside the existing `writerEngineResult`.
 - **M5-PERSONA:** no list/regex deletes. Added engine-owned `npcPersona` (traits/rel/mood/history); FactSheet manner now from persona phrase (old 5-word `stance.now` remains on memory for FSM). Social DC shift -5..+5 via existing SRD Ability Check path in `checkMath`. Backup of pre-M5 stance/relationship/memory: `docs/orders/merge/M5-backup/` (project orders tree). Pre-M5 commit `3324418a`.
+
+## T10A (27 Oct, branch t10fix/T10A, commit `816fd5f6`)
+1. **`groundPlayerAction` canned missing-item rewrite** (`src/game/intentParser.ts`) — deleted the `parts.push` that replaced the whole typed line with `I try to use … then realize I do not have it. I check what I actually carry (…equipped only…) and act only with that.` Covered by: typed text always stays; real USE/EQUIP/GIVE misses are notes (full sheet carry list) and hard-gate `findHardItemUseClaims` / `refusalBody`. Restore: `git show 816fd5f6^:src/game/intentParser.ts`.
+2. **`ITEM_USE_CLAIM` bare `fire`** (`src/game/suggestionValidation.ts`) — `fire` no longer matches without a determiner (so "Cast Fire Bolt" is not "fire a bolt"). `fire a|an|the|my|your …` still claims. Restore: `git show 816fd5f6^:src/game/suggestionValidation.ts`.

@@ -280,8 +280,9 @@ function sceneSpeaker(state: GameState): string {
 
 /**
  * Soft-ground free-typed actions before they hit the GM.
- * Rewrites unowned items, absent companions, and attacks on missing foes into
- * scene-safe clarifications — matches inventory-gate UX (no hard UI break).
+ * Typed text is never replaced by a canned missing-item sentence (T10A): real
+ * inventory USE/EQUIP/GIVE misses stay notes / hard-gate facts; other clauses keep the player's words.
+ * Absent companions and ungrounded targets may still clarify.
  */
 export function groundPlayerAction(
   input: string,
@@ -300,16 +301,14 @@ export function groundPlayerAction(
     pad?.turn === (state.turn ?? 0) && (pad.choices ?? []).some((c) => c.trim().toLowerCase() === trimmed.toLowerCase());
   const missingItems = offeredChip ? [] : findUnsupportedItemClaims(trimmed, state);
   if (missingItems.length) {
-    notes.push(`Missing item(s): ${missingItems.join(', ')}`);
+    // Note only — do not rewrite the typed line. Carried names are the full sheet (equipped or not).
     const carried =
-      state.inventory
-        .filter((i) => i.equipped)
+      (state.inventory ?? [])
         .map((i) => i.name)
-        .slice(0, 3)
-        .join(', ') || 'nothing equipped';
-    parts.push(
-      `I try to use ${missingItems.join(' / ')}, then realize I do not have it. I check what I actually carry (${carried}) and act only with that.`
-    );
+        .filter(Boolean)
+        .slice(0, 8)
+        .join(', ') || 'nothing on the sheet';
+    notes.push(`Missing item(s): ${missingItems.join(', ')} (carry: ${carried})`);
   }
 
   if (referencesAbsentCompanion(trimmed, state)) {
@@ -348,7 +347,8 @@ export function groundPlayerAction(
   }
 
   if (!parts.length) {
-    return { text: trimmed, intent, rewritten: false, notes: [] };
+    // Keep typed text; notes may still name a real USE/EQUIP/GIVE miss (T10A).
+    return { text: trimmed, intent, rewritten: false, notes };
   }
 
   const rewritten = parts.join(' ');
