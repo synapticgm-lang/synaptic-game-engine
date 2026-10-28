@@ -1,0 +1,87 @@
+{
+ "batch": "sg-5-2-2-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-2-2-12": {
+   "title": "The Alabaster Stairwell",
+   "text": "Cool green-veined alabaster walls rise on either side as you scramble higher, dodging a tumbling heap of discarded ledger rolls sent sliding down from above by unseen hands. The parchment cylinders crash against your boots with dry, hollow rattles, smelling strongly of old ink and centuries of damp dust. You press your shoulder hard into a narrow alcove to let the cascading paper storm rush past before the steep steps clear ahead.",
+   "exits": [
+    "Slip through the low service door",
+    "Follow the curving wall toward the singing chamber"
+   ]
+  },
+  "sg-5-2-2-13": {
+   "title": "The Silt Conduits",
+   "text": "Pell drops through a rusted grate into the subterranean dark, his grease-stained coat brushing the damp brickwork of the old drainage conduit. You follow the glass-diver through the narrow brick-vaulted pipe, splashing silently through inches of brackish condensation that taste faintly of old copper and lime. Ahead, muffled boot-thuds echo through the iron grating - the Salt Court patrol guarding the upper iron portcullis, completely unaware of your passage beneath their boots.\n\nThe air grows cooler as the conduit slopes steeply downward into shadow, offering three distinct openings where side-tunnels branch away from the main drainage line.",
+   "exits": [
+    "Scramble over tumbled masonry",
+    "Slip past the damp ventilation shaft",
+    "Turn back toward the upper halls"
+   ]
+  },
+  "sg-5-2-2-14": {
+   "title": "The Refracting Dome",
+   "text": "Pale twilight spills through the overhead facets of a massive glass dome, casting shifting geometric lattices across the flagstones. Beneath this luminous canopy, a lone sentry polishes a heavy brass spyglass with a greasy rag, humming a melancholy local tune about the drowned sea-towns that vanished before the basin dried. Your boots remain perfectly still against the grit as you weigh the quiet space ahead, watching the slow rhythm of the guard's shoulders rise and fall with every note of his song.",
+   "exits": [
+    "Approach the circular mirror gallery",
+    "Press against the sun-carved timber lintel"
+   ]
+  },
+  "sg-5-2-2-15": {
+   "title": "The Resin Storeroom",
+   "text": "Crates of dried pine resin and spare lamp-wicks tower around you in the suffocating dimness of the supply alcove. Through a narrow gap between two stacked hampers, you watch the yellow glow of hooked lanterns sweep across the floorboards as a patrol searches the racks for intruders. Your fingers tighten instinctively around the cold ceramic seedkey in your satchel while the distant murmur of boots draws closer by the second.",
+   "exits": [
+    "Slip toward the heavy timber lintel",
+    "Take the reckless way through the gate"
+   ]
+  },
+  "sg-5-2-3-0": {
+   "title": "The Ink-Stained Clerk",
+   "text": "Green basalt paving stones echo sharply beneath your boots in a narrow corridor where an agitated Salt Court clerk drops his brass ink-horn with a dull clatter. Vane scrambles on hands and knees to gather his scattered parchment slips, muttering nervously about missing quotas and severe penalties. He looks up at you with wide, desperate eyes, blocking your forward path and threatening to raise a clamour unless you pay him off.",
+   "exits": [
+    "Present credentials at the lens archive"
+   ]
+  },
+  "sg-5-2-3-1": {
+   "title": "The Resonance Pillar",
+   "text": "Low vibrations hum through the soles of your boots, pulsing directly from a massive glass resonance pillar that dominates the narrow intersection. Kestel stands firmly beside the vibrating column, a Glasswright veteran whose weathered face is set like flint against trespassers. He rests the butt of a heavy iron pike squarely upon the flagstones, barring the iron door with unyielding authority.",
+   "exits": [
+    "Check in at the grand lens archive",
+    "Face the Salt Court sergeant on the stairs"
+   ]
+  },
+  "sg-5-2-3-2": {
+   "title": "The Whispering Gallery",
+   "text": "A thin, blinding line of concentrated sunlight sweeps across the round chamber, hissing fiercely as it melts the mortar between the ancient stone flags. You drop low against the cool floor, listening to the high-pitched whispers that bounce endlessly around the curved limestone walls like trapped insects. The scorching beam reverses its arc, slicing back across the room and threatening to char anything in its path.",
+   "exits": [
+    "Confront the sergeant on the bronze steps"
+   ]
+  },
+  "sg-5-2-3-3": {
+   "title": "The Fading Constellations",
+   "text": "Faint gold leaf traces ancient constellations across the high vaulted ceiling above a crowded junction of downward-sloping ramps. An old water-seller named Vesper clutches a bone-white cup, her rheumy eyes fixed on your canteen as she begs for a single drop from your dwindling store. Her frail body blocks the main descent, forcing you to choose between charity, speed, or finding another route downward into the darkness.",
+   "exits": [
+    "Pass through the main lens archive gate",
+    "Slip past the sergeant guarding the stair",
+    "Barter fresh oil by the quartz lens"
+   ]
+  },
+  "sg-5-2-3-4": {
+   "title": "The Astrolabe Shadow",
+   "text": "A massive copper astrolabe, tall as a wagon wheel, creaks gently on its rusted axis in the draughty corridor. You crouch low behind a pyramid of heavy lead weights, holding your breath as rhythmic, heavy footfalls approach from the darkened cross-passage. The shadows stretch long and jagged across the floor before the patrol comes into view.",
+   "exits": [
+    "Barter oil by the massive quartz lens",
+    "Present the seedkey to the Glasswright elder"
+   ]
+  },
+  "sg-5-2-3-5": {
+   "title": "The Slot-Window Ambush",
+   "text": "Dust motes dance in the harsh strip of light falling through a narrow slot-window that overlooks the dead, salt-caked basin far below. Gault lunges suddenly from the shadows, his fingers clawing desperately for your satchel in a bid to steal the cold ceramic seedkey. You twist hard to the side, narrowly avoiding his grasp as the glass walls ring with the sudden violence of the scuffle.",
+   "exits": [
+    "Enter the lens archive gateway",
+    "Trade oil near the quartz lens"
+   ]
+  }
+ },
+ "missing": []
+}

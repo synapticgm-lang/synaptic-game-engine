@@ -322,3 +322,9 @@
 2026-10-28T11:47:19.512Z   reject sg-5-2-3-4: words 42
 2026-10-28T11:47:19.512Z   reject sg-5-2-3-5: words 40
 2026-10-28T11:47:25.527Z ask prose sg-5-2-2-12..sg-5-2-3-5 items=9 attempt=1
+2026-10-28T11:48:03.906Z done sg-5-2-2-12: 10/10 model=Flash-Lite
+2026-10-28T11:48:03.911Z ask prose sg-5-2-3-6..sg-5-2-3-15 items=10 attempt=0
+2026-10-28T11:48:36.269Z done sg-5-2-3-6: 10/10 model=Flash-Lite
+2026-10-28T11:48:36.274Z ask prose sg-5-2-4-0..sg-5-2-5-1 items=10 attempt=0
+2026-10-28T11:49:14.687Z done sg-5-2-4-0: 10/10 model=Flash-Lite
+2026-10-28T11:49:14.691Z ask prose sg-5-2-5-2..sg-6-0-1-0 items=10 attempt=0
