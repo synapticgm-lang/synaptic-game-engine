@@ -1,0 +1,106 @@
+{
+ "batch": "td-3-166",
+ "sections": {
+  "td-3-166": {
+   "title": "The Descent Winch",
+   "text": "Iron cables thick as a hangman's noose groan against grease-blackened pulleys above the great drop. This towering contraption serves as Saltspire's mechanical lung, hauling cargo and caged nobility between the stilt-city and the rotting seabed. Rust flakes drift downward like red snow into the abyss, where the shadowed mouth of the Sunken Stair waits like an open grave. Steam hisses from rusted pressure valves nearby, smelling of boiled salt and scorching tallow. You stand at the precipice of the loading stage, weighing every heavy choice before the platform lunges into the damp void.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step onto the swaying platform",
+    "Inspect the heavy braking levers",
+    "Crank the rusted manual override wheel",
+    "Fight off a desperate shadow hijacker",
+    "Pry a glowing crystal from the shaft",
+    "Ride the winch to the base"
+   ]
+  },
+  "td-3-167": {
+   "title": "Iron on the Wind",
+   "text": "Heavy oak timbers shudder under your boots as the hoist platform breaks away from the stilt-city's wooden skirts. The sheer drop sucks the breath from your throat while the salt-crrusted winds whip your jacket against your ribs. Far below, the dry seabed resembles a cracked white skull under the bruised sky. Your fingers search the shivering iron guardrail for purchase, sliding past greasy grease-stains left by a thousand previous descents. A loose bracket rattles furiously beside your knee, threatening to tear free and plunge into the gray nothingness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the hanging iron prybar"
+   ]
+  },
+  "td-3-168": {
+   "title": "The Shuddering Cage",
+   "text": "Cold dampness clings to your skin as the descent accelerates into a dizzying blur of rusted ironwork and rotting timber pilings. The prybar hangs just beyond arm's reach from a protruding bracket, swaying violently with every shudder of the winch. You brace your boots against the ridged metal plating, leaning your weight out over the abyss where the wind screams a jagged tune. The horizon tilts wildly, blending the bleached floor of the Low with the swirling gray clouds overhead in a nauseating whirl.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test your nerve against the drop"
+   ]
+  },
+  "td-3-169": {
+   "title": "Swung Over the Abyss",
+   "text": "Vertigo coils tight in your stomach, threatening to loosen your grip as the platform lurches sideways on a frayed cable. You stretch your arm out into the roaring gale, fingers clawing toward the cold iron handle of the prybar while your boots slip on the greasy deck. The ground below seems to rush upward while the stilt-city vanishes into the mist above. Your muscles lock against the terror, fighting the sickening urge to curl into a ball and let the abyss take you.",
+   "check": "Balance against the dizzying void",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-170": {
+   "title": "A Slip in the Void",
+   "text": "A sudden lurch of the cables betrays your balance, sending you crashing hard against the jagged iron framework of the cage. Pain shoots up your shoulder as your arm takes the brunt of the impact, leaving a deep, throbbing bruise that burns beneath your wool sleeve. The prybar clatters against the metal grating and nearly slips over the edge before you manage to pin it beneath your boot heel. Panting heavily against the gale, you clutch your aching arm and watch the gray depths crawl slowly past.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back to steady footing"
+   ]
+  },
+  "td-3-171": {
+   "title": "Iron in the Fist",
+   "text": "Your fingers wrap securely around the cold, salt-pitted handle of the prybar, wrenching it free from its rusted housing just as the platform settles into a slower, steadier crawl. The metal tool feels reassuringly heavy and solid against your palm, a reliable bite of cold steel amid the treacherous heights. Whether earned through calm mastery or sheer desperate luck, the prize is yours to keep now. You tuck the tool firmly into your belt, ready for whatever rusted locks or stubborn teeth wait below.",
+   "check": "",
+   "grant": "heavy iron prybar",
+   "exits": [
+    "Return to the winch hub"
+   ]
+  },
+  "td-3-172": {
+   "title": "The Brake House",
+   "text": "Thick iron cables hum with unbearable tension inside the wooden control shed perched above the gaping shaft. Heavy brass levers, green with centuries of oxidation, control the descent rate of every cage hanging beneath Saltspire. Piles of discarded oil rags and broken gear teeth litter the floorboards, smelling strongly of stale fish-oil and heated metal. You trace the intricate linkage rods with a careful eye, searching for a mechanical shortcut hidden among the grease and grime.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Study the complex braking levers"
+   ]
+  },
+  "td-3-173": {
+   "title": "Lever and Cog",
+   "text": "Gears grind together with a deafening shriek of protesting bronze as you nudge the primary brake lever a fraction of an inch. The platform beneath your feet shudders, slowing its terrifying plunge into a controlled, rattling creep that stirs up clouds of old dust. Through the grime-coated viewing slit in the shed wall, the vast expanse of the Low opens up like a ruined map carved in salt and bone. A secondary linkage catches your eye, twitching erratically behind a housing of riveted copper plates.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the secondary copper housing"
+   ]
+  },
+  "td-3-174": {
+   "title": "The Jammed Gearbox",
+   "text": "Your fingers trace the intricate pattern of the release pins, seeking the single rusted cotter that holds the entire emergency brake assembly together. The iron casing is blistering cold to the touch, and the deafening roar of the main winch vibrates straight through the floorboards into your teeth. One wrong twitch of your wrist could snap the primary spindle and send the entire cage hurtling down into the dark. You narrow your eyes against the flying rust flakes, calculating the exact pressure needed to trip the lock.",
+   "check": "Calculate the brake release timing",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-175": {
+   "title": "A Costly Misalignment",
+   "text": "A sudden screech of sheared iron shatters your concentration as the gear slips backward with bone-jarring violence. A jagged metal burr slices deep across your palm, painting the brass levers with a bright streak of hot blood. The entire control box rattles furiously, threatening to seize up completely and leave you stranded halfway down the face of the stilt-city. You snatch your hand back with a sharp hiss, wrapping your torn flesh in a scrap of damp cloth while the machinery slowly grinds to a halt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your wits and descend"
+   ]
+  },
+  "td-3-176": {
+   "title": "The Precision Slip",
+   "text": "The heavy brass lever slides home with a satisfying, muffled click, easing the screech of the main cables down to a low, rhythmic thrum. Nestled neatly within the open maintenance tray lies a marvel of old engineering, untouched by the salt-rot that ruins everything else in this drowned world. Whether through brilliant calculation or a blessed stroke of fortune, the mechanism yields its secrets without breaking your fingers. You pocket your prize, feeling the subtle weight of mechanical insight settling into your bones.",
+   "check": "",
+   "grant": "intricate bronze gear-tooth",
+   "exits": [
+    "Return to the winch hub"
+   ]
+  }
+ },
+ "missing": []
+}

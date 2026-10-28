@@ -278,3 +278,18 @@
 2026-10-28T09:27:02.132Z ask prose td-3-113..td-3-122 items=10 attempt=0
 2026-10-28T09:27:35.099Z done td-3-113: 10/10
 2026-10-28T09:27:35.100Z ask prose td-3-123..td-3-132 items=10 attempt=0
+2026-10-28T09:28:05.585Z done td-3-123: 10/10
+2026-10-28T09:28:05.587Z ask prose td-3-133..td-3-142 items=10 attempt=0
+2026-10-28T09:28:53.647Z done td-3-133: 10/10
+2026-10-28T09:28:53.648Z ask prose td-3-143..td-3-155 items=13 attempt=0
+2026-10-28T09:29:29.239Z done td-3-143: 13/13
+2026-10-28T09:29:29.241Z ask prose td-3-156..td-3-165 items=10 attempt=0
+2026-10-28T09:29:54.188Z   reject td-3-164: meta words
+2026-10-28T09:30:02.192Z ask prose td-3-156..td-3-165 items=1 attempt=1
+2026-10-28T09:30:27.417Z done td-3-156: 10/10
+2026-10-28T09:30:27.418Z ask prose td-3-166..td-3-176 items=11 attempt=0
+2026-10-28T09:31:00.325Z done td-3-166: 11/11
+2026-10-28T09:31:00.326Z ask prose td-3-177..td-3-186 items=10 attempt=0
+2026-10-28T09:31:25.242Z   reject td-3-179: check label
+2026-10-28T09:31:25.242Z   reject td-3-184: check label
+2026-10-28T09:31:33.248Z ask prose td-3-177..td-3-186 items=2 attempt=1

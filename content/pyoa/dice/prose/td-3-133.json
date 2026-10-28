@@ -1,0 +1,97 @@
+{
+ "batch": "td-3-133",
+ "sections": {
+  "td-3-133": {
+   "title": "The Gaping Void",
+   "text": "Iron pipes hiss overhead, leaking rusty condensate that splatters onto the grated walkway with a sharp, hollow ring. Below your boots lies a dizzying drop between two stilt-propped platforms of Saltspire, thirty feet of salt-encrusted emptiness where the sea used to run. A frayed hempen rope sways gently in the draft, anchored to a rusted winch on the opposite scaffolding but swinging tantalizingly out of reach with every gust. Smoke billows from a nearby cook-house, stinging your eyes and coating the damp air in soot. You measure the distance once, judging the weight of your soaked coat and the slick iron edge beneath your heels.\n\nThe gap yawns wide, demanding a sudden spring from the wet plating toward the dancing fibers of the line.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leap across the void for the rope"
+   ]
+  },
+  "td-3-134": {
+   "title": "Measure the Span",
+   "text": "Staring across the abyss, you mentally map the arc of your weight against the howling wind tunnel between the stilted tenements. Every second counts as heavy footsteps clatter on the metal grating behind you, drawing closer through the acrid fog of the chimney fire. Your calf muscles coil tight, heels hovering over the sheer drop where barnacles crust the iron pillars far below. A misjudged trajectory means plummeting into the bone-dry seabed, while a clean catch leaves you dangling over the open void with guards at your heels.\n\nYou crouch low, steadying your breathing as you time the rhythmic sway of the frayed rope dancing in the updraft.",
+   "check": "Leap across the gap to the dangling line",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-135": {
+   "title": "Bruised and Breathing",
+   "text": "Your boots strike the slippery edge of the far platform rather than solid timber, sending you skidding hard into a rusted iron bracket that leaves a deep, throbbing bruise across your ribs. Pain flares white-hot through your side as your fingers claw desperately at the rough timber until a secure grip takes hold. You haul yourself upward onto the grating, coughing violently from the inhaled soot and spitting gray phlegm onto the metal. The clumsy impact cost you precious gear and a painful wrench to your shoulder, but the pursuers are left shouting on the far side of the chasm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl away along the stilt walkway"
+   ]
+  },
+  "td-3-136": {
+   "title": "Caught in the Fibers",
+   "text": "Iron screeching against stone fades behind you as your fingers wrap around the coarse hempen strands, taking the full shock of the drop with a searing friction burn across your palms. You swing across the dizzying gulf in a single fluid arc, slamming heavily into the opposite scaffolding but hooking a boot securely over the lower rail. However narrowly you manage the crossing, your weight settles safely onto the platform just as shouts echo from the mist above. Your fingers sting, but clenched in your bruised fist is a heavy brass shackle pin torn straight from the swaying winch rigging.",
+   "check": "",
+   "grant": "Heavy brass shackle pin",
+   "exits": [
+    "Flee down the ladder toward the rooftops"
+   ]
+  },
+  "td-3-137": {
+   "title": "Choked in Soot",
+   "text": "Thick, yellowish smoke billows from a ruptured flue, turning the narrow stilt-alley into a blinding labyrinth of acrid haze and blistering heat. Ash settles in your hair and cakes your throat with every ragged breath you draw through your sleeve. Wooden walkways groan under the thermal stress, warping outward as flames lick the underside of the hanging balconies. Every blind turn offers a new hazard, from white-hot iron plates to plunging drops into the hazy seabed below. You press your shoulder against the damp timber wall, inching forward through the gloom where the air tastes less like burning pitch.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Grope through the choking smoke ahead"
+   ]
+  },
+  "td-3-138": {
+   "title": "Navigating the Blind Maze",
+   "text": "Smoke claws at your lungs, reducing visibility to a handspan of soot-blackened timber and glowing iron rivets. You press your palm flat against the exterior wall of a stilted granary, feeling for the familiar grain of salt-weathered oak that marks the concealed maintenance ladder. Somewhere close by, heavy boots stamp against the metal grates, echoing through the hollow superstructure and tracking your retreat. Your chest burns with every shallow inhalation of superheated air, forcing you to rely entirely on memory and touch to map the next step.\n\nYou pause at a junction where two venting shafts converge, listening for the shift of wind that reveals an unblocked passage.",
+   "check": "Navigate the blinding smoke by touch",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-139": {
+   "title": "Smoke-Scoured Lung",
+   "text": "A sudden gust of superheated draft drives a wall of thick, oily soot straight into your face, blinding you and causing you to stumble hard against a protruding iron pipe. The metal strikes your collarbone with a sickening crack, dropping you to your knees on the blistering deck plates. You gasp in pure ash, your throat tearing as you crawl blindly along the bulkhead until your fingers find a drainage scupper. The delay costs you dear in breath and blood, leaving your chest raw and your supplies scorched, but the suffocating pocket clears enough to let you drag yourself onward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stagger into the damp night air"
+   ]
+  },
+  "td-3-140": {
+   "title": "Finding the Vent",
+   "text": "Your fingers trace the familiar cold iron rivets of a maintenance hatch just as the air turns marginally cooler against your sweat-slicked forehead. However narrowly you thread the labyrinth of burning flues, you slip through a narrow gap behind a water tank where the draft runs clean from the seabed below. The heat recedes into a dull roar behind the timber bulkheads, leaving you coughing in the shadows of a silent storage loft. Clutched in your belt is a damp wool rag soaked in vinegar, discarded by some fleeing dock-worker but offering vital relief against the lingering smoke.",
+   "check": "",
+   "grant": "Vinegar-soaked filtration rag",
+   "exits": [
+    "Drop through the floor hatch downward"
+   ]
+  },
+  "td-3-141": {
+   "title": "Shattering the Glass",
+   "text": "Glass starbursts inward in a cascading roar of crystal shards as your boots smash through the domed skylight of the Brineholder Governor's private chamber. You drop heavily onto a Persian carpet threaded with silver wire, scattering porcelain tea sets and overturning an ivory globe that rolls across the polished floor. Across the room, startled courtiers freeze in mid-sentence, while an immaculate elderly man in a velvet doublet lowers a pearl-handled ledger with unblinking composure. Heavy tapestries hang along the curved walls, muffling the distant sounds of alarms ringing across the stilt-city outside. The Governor regards you not with fear, but with the cold, assessing curiosity of a merchant inspecting a damaged crate washed up on the Low.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the Governor across the shattered glass"
+   ]
+  },
+  "td-3-142": {
+   "title": "The Governor's Solarium",
+   "text": "Pale sunlight filters through salt-crusted domes onto dying ferns and imported palms drooping in terracotta pots across the circular chamber. Nervous aristocrats in stiff collars huddle near velvet settees, whispering behind gloved hands while armed guards hover by the bronze-plated doors. The Governor sits at an inlaid mahogany desk, ignoring the scattered glass from your entrance to study a brass-bound tide ledger. Every exit from this sunlit cage offers a desperate gamble, whether through negotiation, stealth, intimidation, or force, while the true prize - and the missing keeper - lurks deeper in the shadows of the stilt-city.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Forge a false emissary bargain",
+    "Jam the heavy brass locking mechanism",
+    "Stare down the swaggering armed guards",
+    "Shake down a terrified nobleman",
+    "Smash the porcelain urn for cover",
+    "Demand the truth about Orsolya Venn"
+   ]
+  }
+ },
+ "missing": []
+}
