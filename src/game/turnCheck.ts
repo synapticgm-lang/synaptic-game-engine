@@ -798,24 +798,24 @@ export function drawnPlanIssues(state: GameState): string[] {
 }
 
 /**
- * fight2d-PERSONTAG — a road-meeting / "talk to someone" chip is backed only by engine
- * `person:` timeline tags for the current HERE (written at meeting / present-NPC sources).
- * Never prose matching. (SOMEONE regex stays removed.)
+ * fight2d-PERSONTAG — a road-meeting / "talk to someone" chip is backed only by an
+ * engine-recorded person in the CURRENT scene: a `person:` timeline tag at this HERE,
+ * or a live journey meeting that still carries its seeded `name` (timeline can age out
+ * at the 40-cap while the camp/champion meeting is open). Never a kind label, prose word,
+ * or a person tag from a place the PC has left. (SOMEONE regex stays removed.)
  */
 export function checkChosenChip(before: GameState, chosen: string): TurnCheckFlag[] {
   const pick = norm(chosen);
   if (!pick || !roadMeetingPeople(before)) return [];
   if (!chipAddressee(pick) && !/^(?:greet|face|approach|skirt|slip past|hide from|talk your way)\b/i.test(pick)) return [];
-  // T10Z — live journey meeting is the authority. Timeline person tags age out at the 40-cap,
-  // which falsely flagged Approach the camp / Face the champion while the meeting was still open.
-  const enc = before.journey?.encounter;
-  if (enc && !roadMeetingOver(enc)) return [];
-  const listeners = peopleHere(before).filter((n) => !isCrowdFillerToken(n));
-  if (listeners.length > 0) return [];
   const here = low(before.currentLocation);
   if (!here) {
     return [{ kind: 'unrelated-chip', detail: `"${pick}" meets someone on the road, but the prose before it showed nobody` }];
   }
+  // T10Z-fix — live meeting clears the chip only when the engine seeded a person name
+  // on this stretch (camp keeper / traveler). A bare kind stub is not presence.
+  const enc = before.journey?.encounter;
+  if (enc && !roadMeetingOver(enc) && low(enc.name)) return [];
   const trip = low(underwayHereLabel(before));
   const road = low(UNDERWAY_HERE);
   const onTrip = !!trip && (here === trip || here === road);
