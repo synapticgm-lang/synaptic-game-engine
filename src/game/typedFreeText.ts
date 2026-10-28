@@ -18,7 +18,6 @@ import { checkForAction, runPlayerCheck } from './checkMath';
 import {
   describeIntentStep,
   intentFromStep,
-  isSpeechOrProtest,
   parsePlayerIntent,
   parsePlayerSteps,
   sheetContextFromState,
@@ -52,10 +51,66 @@ export type TypedFreeTextResult = {
 
 const NOTHING = 'nothing the world can act on';
 
-function speechStep(step: IntentStep, who: string): StepResolution {
+/** Mechanical step kinds — never free speech via the broad protest heuristic. */
+const MECHANICAL_ACTIONS = new Set([
+  'take',
+  'move',
+  'attack',
+  'search',
+  'use_item',
+  'sneak',
+  'buy',
+  'cast',
+  'flee',
+  'rest',
+  'observe',
+]);
+
+/**
+ * Writer-facing fact for one clause: every clause is a must-narrate fact.
+ * Speech adds the player's exact quoted words (unrewritten) and a reaction slot only when the
+ * addressee is present; otherwise speech is to the empty scene.
+ * SRD 5.2.1 Communicating — brief speech is free; the engine does not invent the PC's line.
+ */
+function clauseWriterFact(step: IntentStep, speech: boolean): string {
+  const clause = (step.clause ?? '').replace(/\s+/g, ' ').trim() || describeIntentStep(step);
+  const said = (step.say ?? '').replace(/\s+/g, ' ').trim();
+  const who = step.addressee?.trim() || null;
+  const parts: string[] = [`Must narrate: ${clause}.`];
+  if (speech) {
+    const target = who || 'the empty scene';
+    if (said) parts.push(`PC says exactly: "${said}" (do not rewrite).`);
+    parts.push(
+      who
+        ? `Speech event: you address ${who}. NPC reaction slot open for ${who}.`
+        : `Speech event: you address ${target}. No one present to answer.`,
+    );
+  } else {
+    parts.push('The story must show this act.');
+  }
+  return parts.join(' ');
+}
+
+function speechStep(step: IntentStep): StepResolution {
   const tried = describeIntentStep(step) || 'speech';
-  const fact = `Speech event: you address ${who}. NPC reaction slot open for the writer.`;
-  return { tried, done: true, reason: 'speech (free)', engineResult: fact, economySlot: 'speech' };
+  return {
+    tried,
+    done: true,
+    reason: 'speech (free)',
+    engineResult: clauseWriterFact(step, true),
+    economySlot: 'speech',
+  };
+}
+
+function actionDoneStep(step: IntentStep, clause: string): StepResolution {
+  const tried = describeIntentStep(step) || clause.slice(0, 80);
+  return {
+    tried,
+    done: true,
+    reason: 'action noted',
+    engineResult: clauseWriterFact(step, false),
+    economySlot: 'action',
+  };
 }
 
 function isSpeechStep(step: IntentStep, clause: string, inHostileParley = false): boolean {
@@ -66,6 +121,8 @@ function isSpeechStep(step: IntentStep, clause: string, inHostileParley = false)
   if (looksLikeSteal(clause, step)) return false;
   // M6 — parley / social Influence against hostiles spends Action (still never rejected).
   if (inHostileParley && looksLikeParley(clause, step)) return false;
+  // Already-classified mechanical aims stay mechanical (take / sit / slide / wink).
+  if (MECHANICAL_ACTIONS.has(step.action)) return false;
   if (
     step.action === 'talk'
     || step.action === 'ask_about'
@@ -81,8 +138,8 @@ function isSpeechStep(step: IntentStep, clause: string, inHostileParley = false)
   ) {
     return true;
   }
-  // SRD Communicating: shouts / orders / trash talk are free speech even when the coarse kind is other.
-  if (/\b(shout|yell|call out|say|tell|ask|order|taunt)\b/i.test(clause) || isSpeechOrProtest(clause)) {
+  // SRD Communicating: explicit speech verbs / quoted say — not the broad first-person protest heuristic.
+  if (/\b(shout|yell|call out|say|tell|ask|order|taunt)\b/i.test(clause)) {
     return !/\b(attack|flee|strike|cast|drink|equip|walk to|go to|move to|swing)\b/i.test(clause);
   }
   if (step.say && !/\b(attack|flee|strike|cast|drink|equip|walk|go to|move to)\b/i.test(clause)) {
@@ -156,8 +213,7 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
   }
 
   if (isSpeechStep(step, clause, hostile)) {
-    const who = step.addressee?.trim() || 'the room';
-    return speechStep(step, who);
+    return speechStep(step);
   }
 
   if (step.action === 'deal' && step.deal) {
@@ -179,8 +235,10 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
     const canRound =
       !!state.character?.srd?.speciesId && !!state.character?.srd?.classId;
     if (!canRound) {
-      const who = step.addressee?.trim() || state.activeEncounter?.name || 'the room';
-      return speechStep(step, who);
+      return speechStep({
+        ...step,
+        addressee: step.addressee?.trim() || state.activeEncounter?.name || null,
+      });
     }
     const plan = interpretRoundTyped(state, clause);
     const engineResult = plan.facts.join(' ').trim() || plan.receipts.join(' ').trim() || tried;
@@ -220,15 +278,13 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
     };
   }
   if (actionable && !canRoll) {
-    // Still never "reject" the line — record that the sheet cannot resolve it yet; words stand.
-    const fact = `Attempt noted (${intent.label}); no built character sheet to resolve the check. Words said aloud.`;
-    return { tried, done: false, reason: 'not done: no character sheet', engineResult: fact, economySlot: slot };
+    // Still never "reject" — the clause is a writer fact even when no sheet can roll a check.
+    const fact = `${clauseWriterFact(step, false)} Attempt noted (${intent.label}); no built character sheet to resolve a check.`;
+    return { tried, done: true, reason: 'action noted (no sheet check)', engineResult: fact, economySlot: slot };
   }
 
-  // Non-actionable clause that still reached a step (e.g. other): words said aloud.
-  const who = step.addressee?.trim() || 'the room';
-  const fact = `Words said aloud to ${who}.`;
-  return { tried, done: true, reason: 'said aloud', engineResult: fact, economySlot: 'speech' };
+  // Non-actionable physical / other clause: still a writer fact (never silent, never rejected).
+  return actionDoneStep(step, clause);
 }
 
 /**
@@ -315,8 +371,7 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     const hostNow = hostileParleyContext(live);
     // Speech is free — classify before spending a mechanical slot.
     if (isSpeechStep(step, clause, hostNow) && !step.unplacedMove) {
-      const who = step.addressee?.trim() || 'the room';
-      stepResults.push(speechStep(step, who));
+      stepResults.push(speechStep(step));
       if (step.addressee) lastAddressee = step.addressee;
       continue;
     }

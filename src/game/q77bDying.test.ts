@@ -130,9 +130,9 @@ describe('q77b-DYINGTYPED / q77c-STEER', () => {
     expect(speech.engineResult).toMatch(/Speech event:.*Wenna Brack|Words said aloud|address/i);
     expect(speech.engineResult).not.toMatch(/Refused:/i);
     const nonsense = resolveTypedFreeText(s, 'xyzzy');
-    // M2: free text is never rejected — words said aloud / nothing the world can act on.
+    // M2/T10C: free text is never rejected — clause still becomes a writer fact.
     expect(nonsense.engineResult).not.toMatch(/Refused:/i);
-    expect(nonsense.engineResult).toMatch(/nothing the world can act on|said aloud|Speech/i);
+    expect(nonsense.engineResult).toMatch(/nothing the world can act on|said aloud|Speech|Must narrate/i);
   });
 
   it('typed fight line routes through interpretRoundTyped when encounter is live', () => {
