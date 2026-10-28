@@ -1,0 +1,13 @@
+Gemini said
+
+@@SECTION td-2-054
+TITLE: A Sour Trade
+TEXT: Coins of thin lead and salt-pitted brass slide across the greasy timber counter while the pawn-widow weighs your iron shards with a suspicious squint. She finds a hairline crack in your best bolt-plate, her blackened thumb pressing hard into the fissure until the metal flakes away like dry skin. You are forced to surrender three weeks of dried lamp-meat and a heavy bronze linchpin just to balance the scale. She mutters a dry blessing over the parchment map of the dunes, slipping it into your palm with fingers cold as bilge-water. // Your knuckles ache from the pinch, and the empty pouch pulls light at your belt as you turn back toward the salt-flats.
+EXIT 1: Step back into the bitter wind
+@@END
+@@SECTION td-2-055
+TITLE: The Price of Parchment
+TEXT: Through shrewd glances and level breaths, you hold your ground against the pawn-widow's sharp-eyed inspection of your salvage. She taps her ledger with a notched bone needle, weighing the worth of your rusted gears against the yellowed skin of her chart. The bargain is struck without a copper changing hands, leaving your dignity intact and your pockets unburdened by debt. She hands you a grease-stained strip of hide marked with the shifting contours of the Singing Dunes. // You fold the sheepskin close to your ribs, knowing the shifting sands will test every step of the crossing ahead.
+GRANT: Map of the dunes
+EXIT 1: Return to the noisy market stalls
+@@END

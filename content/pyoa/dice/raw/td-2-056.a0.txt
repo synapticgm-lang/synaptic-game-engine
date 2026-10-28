@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-2-056
+TITLE: Mending the Still
+TEXT: Salt-crusted copper tubing and fractured ribs of deep-sea fish lie spread across your canvas roll while the merchant watches with anxious, hollow eyes. You wedge a sliver of carved whalebone into the cracked condenser seal, tapping it home with the butt of a skinning knife until the joint seats tight against the hiss of residual steam. Steadying the delicate capillary feed with numbed fingers, you test the alignment against the salt-laden draft of the lowlands. // Satisfied the rig will hold pressure without weeping precious moisture into the silt, you pack your tools away and wait for your payment.
+EXIT 1: Take the filled water canteen
+@@END
+@@SECTION td-2-057
+TITLE: Restoring the Condenser
+TEXT: Fractured ribs of deep-sea fish and salt-crusted copper tubing lie spread across your canvas roll while the merchant watches with anxious, hollow eyes. You wedge a sliver of carved whalebone into the cracked condenser seal, tapping it home with the butt of a skinning knife until the joint seats tight against the hiss of residual steam. Steadying the delicate capillary feed with numbed fingers, you test the alignment against the salt-laden draft of the lowlands. // Satisfied the rig will hold pressure without weeping precious moisture into the silt, you pack your tools away and wait for your payment.
+EXIT 1: Accept the heavy water canteen
+@@END
+@@SECTION td-2-058
+TITLE: The Fragile Seam
+TEXT: Brittle ribs of ancient leviathans and green-corroded copper tubing require a surgeon's touch if this leaking still is to hold pressure once more. You balance a wafer-thin bone wedge against the fractured condenser flange, your breath held shallow against the bitter smell of stagnant brine. One clumsy slip with the hammer will splinter the delicate bone strut beyond recall, spilling the merchant's last reserve into the mud. Your fingers twitch as you raise the tiny lead mallet over the fragile joint, measuring the exact force needed to seat the pin without shattering the casing.
+CHECK: Tap the bone wedge home
+@@END
+@@SECTION td-2-059
+TITLE: A Bitter Patch
+TEXT: Bone shatters under the clumsy blow, spraying sharp white splinters across the greasy timber and rupturing the primary distillation chamber with a sudden hiss of steam. The merchant curses through chapped lips as precious condensation escapes into the thirsty air, leaving you both empty-handed and short on time. You spend an hour scavenging scrap lead and fat from your kit to bodge a clumsy replacement sleeve that barely holds together under heat. // The repair is ugly and leaks a steady drip, but it functions well enough to earn you a begrudging half-measure of tepid water and a sour look from the stall-owner.
+EXIT 1: Leave the sputtering stall behind
+@@END
+@@SECTION td-2-060
+TITLE: The Clean Seal
+TEXT: Bone shatters not, nor does the ancient copper yield under your precise taps, sliding smoothly into a tight, brine-tight union that hums softly as heat builds within the chamber. Clean droplets begin to bead along the interior capillary tube, falling rhythmically into the collection basin with a clear, metallic chime. The merchant lets out a ragged sigh of relief, shoving a brimming leather flask into your palm with genuine gratitude shining through the grime on his cheeks. // You pocket the reward and secure your gear against the coming chill of the salt flats.
+GRANT: Full leather water flask
+EXIT 1: Step back into the market
+@@END
+@@SECTION td-2-061
+TITLE: Intercepting the Brutes
+TEXT: Heavy iron-shod boots kick up gray salt dust as three broad-shouldered wreckers from an opposing crew crowd the terrified fish-monger against a ribbed whale-wall. You step directly into their path, blocking the narrow alley between two stranded hulls with your hand resting casually on the hilt of your heavy salvage scraper. The lead thug stops short, smelling of stale ale and old sweat, his scarred lip curling into a cruel grin as he sizes up your lean frame. // Words pass back and forth like grinding stones, neither side willing to give ground in the shadow of the rotting ribs.
+EXIT 1: Draw steel to protect vendor
+@@END
+@@SECTION td-2-062
+TITLE: Staring Down the Pack
+TEXT: Three burly wreckers from a rival crew block the narrow passage, their iron-studded cudgels dragging lazily through the gray seabed salt as they close in on the cornered vendor. You stand your ground squarely in the middle of the alley, locking your gaze onto the scarred leader's yellowed eyes without a single flicker of doubt. The tension stretches taut as a damp bowstring while the bullies weigh the cost of a messy fight against whatever scraps the merchant has hidden in his coat. You steady your breathing, waiting to see if your cold stare will break their nerve or invite a crushing blow.
+CHECK: Hold your ground against thugs
+@@END
+@@SECTION td-2-063
+TITLE: Bruised and Defiant
+TEXT: A heavy iron-capped cudgel catches you across the shoulder before you can duck, sending a shock of white-hot agony down your arm and driving you hard into the damp ribs of a stranded hull. The thugs press their advantage with mocking laughter, raining blows onto your ribs until you manage to sweep the lead brawler's legs out from under him into the foul mud. Scrambling back to your feet with a bruised shoulder and a split lip, you bare your teeth and refuse to yield another inch of the alley. // The bullies spit into the salt and back away, leaving you battered but the vendor untouched.
+EXIT 1: Help the shaken merchant up
+@@END
+@@SECTION td-2-064
+TITLE: Breaking the Bullies
+TEXT: Your unwavering stare and sudden, deliberate shift of weight makes the lead thug hesitate just long enough for doubt to take root in his muddy eyes. Recognizing the cold certainty in your posture, the ruffian spits into the salt and pulls his snarling mates back with a sharp jerk of his scarred chin. The grateful vendor presses a heavy bundle of dried kelp and salted roe into your hands, swearing eternal loyalty to your name across every corner of the Low. // You tuck the token away, knowing you have earned a dependable friend in a lawless place.
+GRANT: Loyal merchant ally
+EXIT 1: Walk away from the stall
+@@END
+@@SECTION td-2-065
+TITLE: The Singing Wastes
+TEXT: Leaving the foul-smelling bustle of the leviathan carcass far behind, you stride out onto a vast, desolate expanse of pale yellow sand that stretches toward the murky horizon. Underfoot, the sediment begins to shift and tremble, sending a strange, low-frequency hum vibrating straight up through the soles of your boots and into your teeth. It is a mournful, undulating sound like a thousand drowned organs playing beneath the crust of the earth, echoing the sorrow of the vanished tide. Faint silhouettes of wandering pilgrims and half-buried skeletal masts blur through the rising haze of salt dust as you press deeper into the barren flats.
+EXIT 1: Follow the hum across dunes
+@@END

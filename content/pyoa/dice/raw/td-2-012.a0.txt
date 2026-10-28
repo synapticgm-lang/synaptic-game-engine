@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-2-012
+TITLE: Watchers in the Hull
+TEXT: Salt-rimed timbers creak beneath your boots as you crouch behind the ribs of a three-masted merchantman stranded on its beam-ends. Across the dry silt, two rival scavengers from the Brineholder payroll pick their way through a drift of waterlogged barrels, their copper lanterns swinging with rhythmic caution. You wait until their backs turn toward a tangled shroud of rigging before darting across the open rib-valley. // Tucked inside a canvas creel lashed to a dead man's spar rests an intact brass spyglass, its lenses clouded with film but completely free of salt-pitting. You slip it into your coat pocket as the lookouts shift their patrol.
+EXIT 1: Crawl through the rusted winch-gap
+@@END
+@@SECTION td-2-013
+TITLE: Ribs of the Merchantman
+TEXT: Shadows stretch long and grey across the exposed seabed as you shadow the movements of a competing Gullmouth crew working the lower terrace. Their lookout sits perched on an overturned anchor-stock, chewing on dried kelp and watching the upper ridges rather than the debris directly below. Moving with the steady caution of a net-mender picking loose knots, you slide past their flank through the hollow shell of a half-buried barge. // Resting upon a coil of hemp rope inside the splintered cabin is a polished brass spyglass left behind in some hurried scramble. You snatch the glass, feeling its cold metal weight settle into your palm before sliding it deep into your lining.
+EXIT 1: Slip past the anchor-stock
+@@END
+@@SECTION td-2-014
+TITLE: Through the Lookout's Arc
+TEXT: Crouch low against the ribbed iron hull where the shadows thin out and the white crust of the salt-flats reflects a pale, unforgiving glare. Fifty paces ahead, a pair of rival lookouts from the Brineholders lean against a winch-drum, sweeping their gaze across the open trench every time a gull screeches overhead. You need to cross a patch of loose shell-grit without sending a clatter through the quiet dead zone, timing your movement precisely to the rhythm of their sweeping heads. Every muscle in your legs bunches as you prepare to cross the white line.
+CHECK: Thread the salt-lookout's gaze
+@@END
+@@SECTION td-2-015
+TITLE: Caught in the Glare
+TEXT: A dry twig snaps beneath your heel with the sound of a pistol crack, shattering the quiet of the trench. One of the lookouts whips around, shouting a warning across the silt as you scramble headlong behind a pile of waterlogged crates. A heavy iron grappling hook comes flying through the air, clipping your shoulder and tearing a long, jagged rent in your heavy wool coat while leaving a dull, throbbing bruise on your collarbone. You tumble into the shadow of a sunken fishing smack, clutching your bruised arm as the angry shouts fade back into the murmur of the dry seabed.
+EXIT 1: Drag yourself past the wreck-ribs
+@@END
+@@SECTION td-2-016
+TITLE: Scavenged Sight
+TEXT: Movement must be ghost-silent when other boots walk these same dead waters, and you pick your footing with the care of a man crossing thin ice over a winter marsh. Whether you slipped past their notice like a drifting shadow or scrambled clear with a torn coat and a stinging shoulder, you reach the far side of the wreck-field with your prize intact. In your grip rests a long, heavy brass spyglass, its lenses clear enough to pick out the distant ladders of Saltspire against the horizon haze.
+GRANT: Brass spyglass
+EXIT 1: Push toward the rumbling sinkholes
+@@END
+@@SECTION td-2-017
+TITLE: Down the Water-Stair
+TEXT: Memory is the only lamp that matters when the tide is gone and the old sea-roads rot in the open air. You mentally trace the lines of the cargo hold from the coastal charts Orsolya pinned to the lighthouse wall, stepping over rotting crates of dried salt-cod and displaced ballast stones. A sharp groan above makes you jerk backward just as a massive pine mast snaps from its rusted iron collar, crashing down across the exact spot where your boots stood a heartbeat prior. // Beneath a tangle of wet canvas in the forward locker, you find a small, heavy jar of refined lantern oil sealed with thick green wax.
+EXIT 1: Climb through the splintered hatchway
+@@END
+@@SECTION td-2-018
+TITLE: Cargo Hold Navigation
+TEXT: Darkness pools heavy between the jagged bulkheads of the sunken coal-carrier, smelling of ancient bilge and rotted oakum. Relying on your mental draft of the vessel's internal framework, you sidestep a gaping hole where the deck-planks have rotted away into empty blackness. A sudden sharp crack rings out overhead, and a towering oak mast shears free from its stays, slamming down into the hold with a thunderous blow that showers the deck in dry splinters right beside your shoulder. // You press onward into the corner alcove where a sealed earthenware jar of thick lantern oil sits wedged between two ribs.
+EXIT 1: Crawl through the bulkhead breach
+@@END
+@@SECTION td-2-019
+TITLE: Beneath the Groaning Spars
+TEXT: Step by step, you pick your way through the pitch-black belly of the stranded freighter, guided only by the memory of old harbour blueprints and the scrape of your boots on grit. The entire skeletal framework of the ship shifts with a dry, metallic groan as the weight of the seabed settles unevenly against its rusted plates. Directly above, a massive timber spar hangs suspended by a single frayed wire cable, swaying sluggishly in the draft and threatening to drop tons of dead wood upon anyone who misjudges the timing of their next stride. You pause in the dark, breath held, measuring the swing of the iron-bound timber.
+CHECK: Dodge the falling pine spar
+@@END
+@@SECTION td-2-020
+TITLE: Struck in the Dark
+TEXT: The cable snaps with a sharp metallic twang before your foot touches the clear floor, sending the massive pine spar crashing down through the rotting deck-timbers. The blow catches you across the ribs, knocking the wind from your lungs in a ragged gasp and pinning your leather kit-bag beneath a splintered beam. You wrench yourself free with a desperate heave, leaving behind a strip of your coat and suffering a deep, aching bruise along your side that makes every breath burn like salt water.
+EXIT 1: Crawl out through the splintered gap
+@@END
+@@SECTION td-2-021
+TITLE: Oil in the Silt
+TEXT: Every salvage run extracts its toll from those who walk the naked seabed, whether paid in skin, time, or the cold sweat of a near miss. However narrowly you managed to thread the falling timber and the dark hazards of the cargo hold, you emerge from the wreck with your prize secured against the coming night. Firmly clutched in your hand is a thick earthenware jar of clear lantern oil, sealed tight with green apothecary wax to keep the salt rot from spoiling the fuel.
+GRANT: Sealed jar of oil
+EXIT 1: Press on toward the rumbling plains
+@@END

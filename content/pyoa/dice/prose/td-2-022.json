@@ -1,0 +1,106 @@
+{
+ "batch": "td-2-022",
+ "sections": {
+  "td-2-022": {
+   "title": "The Earth Gives Way",
+   "text": "Tremors pulse through the damp floor of the Low, shaking loose the crust of salt and ancient silt. Far ahead, a deep subterranean groan splits the silence, followed by the terrifying sound of snapping timber and falling stone. A cluster of drowned timber houses, long preserved in the suffocating quiet of the seabed, tilts crazily into a sudden, yawning chasm. Grey dust billows into the heavy air, carrying the sharp stench of stagnant mud and rotting kelp as the earth swallows whole streets in a heartbeat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick a path around the dust"
+   ]
+  },
+  "td-2-023": {
+   "title": "The Salt-Flats Sinkholes",
+   "text": "Brittle crusts of white salt stretch out toward the hazy horizon, concealing bottomless pits where strange, intoxicating gases hiss into the cold air. The ground here feels dangerously thin beneath your boots, whispering with the pressure of trapped vapors from below. Every direction offers a perilous temptation, from half-buried treasures glinting in the pale light to the looming, cathedral ribs of the great leviathan far across the flats. You must choose your footing carefully before the creeping vapors dull your senses completely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Scavenge the buried sea chest",
+    "Pull the scavenger to safety",
+    "Smash open the petrified dinghy",
+    "Approach the decaying leviathan carcass",
+    "Work across the fragile crust",
+    "Trace the edge of the pit"
+   ]
+  },
+  "td-2-024": {
+   "title": "Reclaiming the Line",
+   "text": "Tangled heaps of rotting hemp and rusted iron litter the perimeter of the fractured basin. Sifting through the debris with numb fingers, you spot a length of thick, salt-preserved rope coiled beneath a heavy slab of timber. Working quickly to avoid a sudden shift in the rubble, you fashion a makeshift grappling hook from a discarded boat-hook and a curved iron cleat. The prize is heavy and stubborn, but patience finally frees the coil into your waiting hands.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the coil onward"
+   ]
+  },
+  "td-2-025": {
+   "title": "Reaching Across the Chasm",
+   "text": "Loose shale clatters into the black void as you lean over the edge of the jagged crevice, dangling the makeshift iron hook toward a coil of thick maritime rope snagged on a jutting timber below. The weight of the line pulls awkwardly against your grip, and the frozen mud beneath your boots begins to crumble and slide toward the abyss. You brace your muscles and test the balance of the crude tool, waiting to see if the makeshift metal claws will bite firmly into the wood or slip into the dark below.",
+   "check": "Anchor the swinging hook",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-026": {
+   "title": "Slipping into the Grey",
+   "text": "The frozen mud gives way without warning, plunging your boots into a sudden slide of loose shale and sharp debris. You throw your weight backward, scraping your palms raw against the jagged edge of the salt-crust as you scramble desperately for purchase. The coil of rope tumbles further down into the gloom, leaving you breathless and nursing a deep, stinging gash across your knuckles. Though you manage to haul yourself back onto solid ground, the mishap costs precious time and leaves your muscles aching with a bitter chill.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the stable flats"
+   ]
+  },
+  "td-2-027": {
+   "title": "Snagging the Line",
+   "text": "Your fingers strain against the sudden weight as the crude iron prongs bite deep into the water-logged timber, holding firm despite the treacherous slide of the mud. With a slow and steady heave, you draw the prize upward until the heavy hemp coil settles safely onto the dry grit beside your boots. It is a solid piece of gear, smelling faintly of old tar and briny depths, ready to serve when the road ahead grows steeper.",
+   "check": "",
+   "grant": "Preserved coil of rope",
+   "exits": [
+    "Return to the salt flats"
+   ]
+  },
+  "td-2-028": {
+   "title": "Stripping the Winch",
+   "text": "Heavy iron plates and frozen grease lock the old winch mechanism in a stubborn grip at the edge of the dry basin. Using the flat of your blade as a wedge, you hammer away the thick encrustation of salt until the rusted housing finally gives way with a metallic shriek. Inside the battered casing lies a heavy, tooth-cut gear, still greased against the salt-rot and remarkably sound. You pry it free from its housing, feeling the gratifying heft of solid iron in your palms.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the gear further"
+   ]
+  },
+  "td-2-029": {
+   "title": "Turning the Iron",
+   "text": "Heavy iron plates and frozen grease lock the old winch mechanism in a stubborn grip at the edge of the dry basin. Using the flat of your blade as a wedge, you hammer away the thick encrustation of salt until the rusted housing finally gives way with a metallic shriek. Inside the battered casing lies a heavy, tooth-cut gear, still greased against the salt-rot and remarkably sound. You pry it free from its housing, feeling the gratifying heft of solid iron in your palms.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the gear across the low"
+   ]
+  },
+  "td-2-030": {
+   "title": "Striking the Rusted Metal",
+   "text": "The rusted housing of the winch groans under the bite of your heavy blade, refusing to yield its inner workings to an impatient hand. Jagged flakes of iron scale fly through the air as you hammer the wedge deeper into the rusted seam, feeling the ancient metal resist every blow. The whole frame shudders on its mounting bolts, threatening to collapse and trap your fingers in the grinding mechanism if you misjudge the next strike.",
+   "check": "Pry the heavy iron gear",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-031": {
+   "title": "Crushed in the Casing",
+   "text": "A sudden jar sends the rusted frame shifting sideways, trapping your hand against the jagged iron housing with a bruising force. You grit your teeth against the sudden pain, wrenching your fingers free just as the entire winch assembly collapses into a heap of useless scrap. The injury leaves your knuckles swollen and stiff, a sharp reminder of the hazards hidden within the wreckage of the old port.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your breath and move"
+   ]
+  },
+  "td-2-032": {
+   "title": "Freeing the Mechanism",
+   "text": "Your blade finds the precise seam in the rusted iron, and with a sharp twist of your wrist, the stubborn casing splits open to release its hidden treasure. The heavy iron gear tumbles out into the silt, its teeth intact and gleaming with old grease despite the surrounding decay. You wipe the grime from the metal and tuck it safely into your pack, knowing such clean salvage is rare indeed upon the naked seabed.",
+   "check": "",
+   "grant": "Heavy iron gear",
+   "exits": [
+    "Approach the decaying leviathan"
+   ]
+  }
+ },
+ "missing": []
+}
