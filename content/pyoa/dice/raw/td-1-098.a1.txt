@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-1-108
+TITLE: The Priest and the Iron Nail
+TEXT: Father Vane stands ankle-deep in the tepid brine of a receding basin, his heavy vestments stiff with dried salt and his eyes fixed on the cracked mud of the exposed seabed. You match his pious cadence stanza by stanza, chanting the old verses of the drowned apostles until his scowl softens into grudging respect. He reaches into the folds of his wet cassock and draws out a heavy, dark-headed iron nail blessed against rust and rot. // Pocketing the cold metal, you feel the weight of his cautious blessing settle between your shoulder blades as the congregation around you murmurs in uneasy awe.
+GRANT: a blessed iron nail
+EXIT 1: Leave the drying pool for the shrines
+@@END

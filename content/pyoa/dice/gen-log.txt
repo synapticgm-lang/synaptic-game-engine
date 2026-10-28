@@ -81,3 +81,28 @@
 2026-10-28T08:55:29.113Z   reject td-1-085: missing
 2026-10-28T08:55:37.122Z done td-1-076: 9/10 MISSING td-1-085
 2026-10-28T08:55:37.123Z ask prose td-1-086..td-1-097 items=12 attempt=0
+2026-10-28T08:56:07.684Z done td-1-086: 12/12
+2026-10-28T08:56:07.686Z ask prose td-1-098..td-1-108 items=11 attempt=0
+2026-10-28T08:56:30.330Z   reject td-1-108: grant
+2026-10-28T08:56:38.332Z ask prose td-1-098..td-1-108 items=1 attempt=1
+2026-10-28T08:57:03.637Z done td-1-098: 11/11
+2026-10-28T08:57:03.639Z ask prose td-1-109..td-1-118 items=10 attempt=0
+2026-10-28T08:57:28.773Z   reject td-1-109: meta words
+2026-10-28T08:57:28.774Z   reject td-1-118: meta words
+2026-10-28T08:57:36.780Z ask prose td-1-109..td-1-118 items=2 attempt=1
+2026-10-28T08:58:04.558Z done td-1-109: 10/10
+2026-10-28T08:58:04.559Z ask prose td-1-119..td-1-128 items=10 attempt=0
+2026-10-28T08:58:35.223Z done td-1-119: 10/10
+2026-10-28T08:58:35.224Z ask prose td-1-129..td-1-141 items=13 attempt=0
+2026-10-28T08:59:08.404Z done td-1-129: 13/13
+2026-10-28T08:59:08.406Z ask prose td-1-142..td-1-151 items=10 attempt=0
+2026-10-28T08:59:40.942Z   reject td-1-142: grant
+2026-10-28T08:59:40.942Z   reject td-1-143: exit 1 label
+2026-10-28T08:59:40.943Z   reject td-1-144: words 54,check label
+2026-10-28T08:59:40.943Z   reject td-1-145: exit 1 label
+2026-10-28T08:59:40.943Z   reject td-1-146: words 48,grant
+2026-10-28T08:59:40.943Z   reject td-1-147: exit 1 label
+2026-10-28T08:59:40.944Z   reject td-1-148: words 51,exit 1 label
+2026-10-28T08:59:40.944Z   reject td-1-149: exit 1 label
+2026-10-28T08:59:40.944Z   reject td-1-150: words 54,exit 1 label
+2026-10-28T08:59:40.944Z   reject td-1-151: words 54,exit 1 label
