@@ -18,6 +18,7 @@ import { isCrowdFillerToken } from './chromeAuthority';
 import { fuzzyTypedName } from './typedNameMatch';
 import { motiveAnswer, motiveLinesFor, pickNpcSheet, sheetPlaceFor } from './npcSheet';
 import { peopleHere } from './chipLegality';
+import { matchesLastKillName } from './combatAuthority';
 
 export type SpokenTopic = 'who' | 'want' | 'where';
 
@@ -95,9 +96,15 @@ function quotedReply(speaker: Speaker, words: string): { line: string; words: st
  * SRD 5.2.1 Communicating — brief speech is free unless they cannot speak.
  */
 function engineMuteLine(state: GameState, speaker: Speaker): { line: string } | null {
-  const kill = (state.sceneFacts?.lastKill ?? '').replace(/\s+/g, ' ').trim();
-  if (!kill) return null;
-  if (!sameSpeaker(kill, speaker.label) && !speaker.names.some((n) => sameSpeaker(kill, n))) return null;
+  // lastKill is LastKill { name, … }, not a bare string (shared combatAuthority lock).
+  const kill = state.sceneFacts?.lastKill;
+  if (!kill?.name?.trim()) return null;
+  if (
+    !matchesLastKillName(speaker.label, kill) &&
+    !speaker.names.some((n) => matchesLastKillName(n, kill))
+  ) {
+    return null;
+  }
   return { line: `${capitalize(speaker.label)} was already down and said nothing.` };
 }
 

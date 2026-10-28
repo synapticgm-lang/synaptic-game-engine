@@ -552,9 +552,8 @@ function landAnswer<T extends WriterTurnResult>(turn: T, check: DraftCheck, miss
     line.match(/["”]\s*([^"“”]+?)\s+said\b/i)?.[1]?.trim() ??
     line.match(/^([^"“”]+?)\s+said\b/i)?.[1]?.trim() ??
     '';
-  const cleaned = speaker
-    ? stripSpeakerSilence(turn.prose, { label: speaker, names: speaker.split(/\s+/).filter((w) => w.length >= 3) })
-    : turn.prose;
+  // stripSpeakerSilence derives name tokens from label (Speaker.names is internal to spokenAnswer).
+  const cleaned = speaker ? stripSpeakerSilence(turn.prose, { label: speaker }) : turn.prose;
   const sentences = splitProseSentences(cleaned);
   const prose = sentences.length > 1 ? [sentences[0], line, ...sentences.slice(1)].join(' ') : `${cleaned.trim()} ${line}`.trim();
   return { ...turn, prose, answerRepair: { ...missing, repaired: line }, remaining: writerDraftProblems(prose, check) };
