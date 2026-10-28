@@ -86,11 +86,17 @@ export function actionMatchesObjective(step: QuestObjective, action: string): bo
   const intent = parsePlayerIntent(action);
   const said = words(action);
   const objectBare = bare(step.object ?? t.name);
+  // Intent targets are extracted FROM the action — never treat "target word appears in the action"
+  // as naming the step object (T10I: Ask … about the lead matched mud via target "lead").
   const named =
     (!!objectBare && said.includes(words(objectBare)))
     || intent.targets.some((x) => {
       const b = bare(x);
-      return !!b && (b === objectBare || said.includes(words(b)) || words(objectBare).includes(words(b)));
+      if (!b || !objectBare) return false;
+      if (b === objectBare) return true;
+      const tw = words(b);
+      const ow = words(objectBare);
+      return ow.includes(tw) || tw.includes(ow);
     })
     || (t.kind === 'person'
       && words(t.name)
@@ -99,6 +105,8 @@ export function actionMatchesObjective(step: QuestObjective, action: string): bo
         .some((w) => w.length >= 4 && said.includes(` ${w} `)));
   if (t.kind === 'person') return named && (MEET_KINDS.has(intent.kind) || !!t.place);
   // Item / find: naming the object, or a find/inspect class action at the spot (spot is the caller's gate).
+  // Talk/ask never completes a find step by itself (person routes use applyQuestRouteOutcome).
+  if (MEET_KINDS.has(intent.kind)) return false;
   return named || FIND_KINDS.has(intent.kind);
 }
 

@@ -562,8 +562,16 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
     const authored = authoredTopicsFor(name);
     if (authored[0]?.line) extras.push(`Authored line: ${authored[0].line}`);
     const disposition = bibleDisp(npc.disposition);
-    // OPT-3: bind the Doran goal target to the bible hook (or a short description), set once.
-    const bindTarget = (npc.hooks?.[0] ?? npc.description ?? '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    // OPT-3: bind the Doran goal to a player-facing motive line — never bible hooks/description
+    // (those are GM notes: "Secret:", "Moral anchor:", "Obstacle:", …) which leaked onto chips (T10I).
+    const motiveRaw = (npc.motiveLines?.[0] ?? '').replace(/\s+/g, ' ').trim();
+    const bindTarget = motiveRaw
+      ? motiveRaw
+          .replace(/^I (?:only )?want\s+/i, '')
+          .replace(/[,.].*$/, '')
+          .trim()
+          .slice(0, 80) || undefined
+      : undefined;
     let row = ensureNpcAgenda(
       {
         npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,

@@ -20,6 +20,7 @@ import { isGiverName, talkStepPerson } from './questGiver';
 import { hubsForBibleId } from './outdoorHubs';
 import { resolveNpcRecord } from './npcRecords';
 import { atPlace, findQuestTargets, placeQuestTarget, targetSpot } from './questTargets';
+import { applyQuestRouteOutcome, openRouteView } from './questRoutes';
 
 export type TabletopQuestTurn = { state: GameState; receipts: string[]; /** The step taken, as the writer's world fact. */ facts?: string[] };
 
@@ -244,6 +245,16 @@ export function applyTabletopQuestTurn(input: GameState, playerInput: string, he
     const quest = playOpen(placed);
     if (!quest) return { state: placed, receipts: [] };
     forFind = takeAlong(placed, quest, hereBefore);
+  }
+  // T10I: person/study/contact route chips complete via the route — writer fact is the ask/chip,
+  // never the place-step essay ("You check the mud…") that findQuestTargets used to attach.
+  const route = openRouteView(forFind, playerInput)?.routeByLabel ?? null;
+  if (
+    route
+    && (route.kind === 'person' || route.kind === 'study' || route.kind === 'contact' || route.kind === 'system')
+  ) {
+    const hit = applyQuestRouteOutcome(forFind, route.id, 'success');
+    return { state: hit.state, receipts: hit.receipts };
   }
   const found = findQuestTargets(forFind, playerInput);
   return { state: found.state, receipts: found.receipts, ...(found.facts.length ? { facts: found.facts } : {}) };
