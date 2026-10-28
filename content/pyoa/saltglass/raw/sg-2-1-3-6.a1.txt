@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION sg-2-1-3-8
+TITLE: The Tilting Tiles
+TEXT: Giant hexagonal tiles of crusted salt heave upward from the grey mud like the carapaces of buried tortoises, tilting at sharp, treacherous angles across the blinding flat. Your boots slip on the damp, alkaline seams between the tilting plates, sending small cascades of salt-dust rattling into the black mire below. Your banked ember-lamp grows heavy against your thigh, its steady warmth a quiet contrast to the freezing glare of the basin. Ahead, the path bifurcates around a rusted iron lean-to slumped against a heap of tailings, while off to the right, a dry wire hums in the rising thermal wind above a clattering row of sun-bleached skulls. // You pause on a tilted slab to test the slick mud beneath your left heel before deciding which direction to press through the white furnace.
+EXIT 1: Take shelter beneath the corrugated iron roof
+EXIT 2: Follow the track past the clattering camel skulls
+@@END
