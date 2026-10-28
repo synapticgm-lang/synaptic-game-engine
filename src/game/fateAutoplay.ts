@@ -1109,9 +1109,18 @@ export async function headlessFateTurn(
   const displayLine = playerInput;
   const lastGm = [...state.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
   const hard = validateActionHard(playerInput, state, lastGm);
+  // T10O — free text is never rejected: keep the typed line even when the hard gate notes a miss.
+  // Live useGame still shows a repair banner for true missing USE; Fate must not collapse to Look around
+  // (that painted done: observe and erased kick / nail / map / speech). Soft rewrite still applies.
   if (!hard.valid) {
-    playerInput = hard.rewritten || 'Look around';
-    repairNote = (repairNote ? `${repairNote}; ` : '') + `hard_gate→${playerInput}`;
+    if (hard.rewritten && hard.rewritten !== playerInput) {
+      playerInput = hard.rewritten;
+      repairNote = (repairNote ? `${repairNote}; ` : '') + `hard_gate_rewrite→${playerInput}`;
+    } else {
+      repairNote =
+        (repairNote ? `${repairNote}; ` : '')
+        + `hard_gate_kept (${(hard.violations[0] ?? 'unsupported').slice(0, 80)})`;
+    }
   }
   // A chip no longer on the pad is not the action the writer is told. The engine still runs the
   // resolved line; the packet's PLAYER line is the grounded action (gm-facing would put the chip back).

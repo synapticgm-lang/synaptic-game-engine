@@ -52,10 +52,28 @@ const GENERIC_SCENE_NOUNS = new Set([
   'lantern', 'keyhole', 'lock', 'rubble', 'debris', 'blood', 'tracks', 'footprints',
   'noise', 'sound', 'voice', 'voices', 'crowd', 'people', 'body', 'corpse', 'remains',
   'weapon', 'gear', 'equipment', 'armor', 'shield', 'cloak', 'boots', 'gloves',
+  // Body-contact instruments of `with my/your` (T10O) — same catalog as hand/fist, not bag USE.
+  'thumb', 'thumbs', 'thumbnail', 'finger', 'fingers', 'fingernail', 'fingernails',
+  'heel', 'heels', 'toe', 'toes', 'toenail', 'toenails', 'knee', 'knees',
+  'elbow', 'elbows', 'shoulder', 'shoulders', 'wrist', 'wrists', 'ankle', 'ankles',
   'companion', 'party', 'ally', 'allies', 'self', 'myself', 'yourself', 'horizon',
   'sky', 'trees', 'forest', 'water', 'river', 'lake', 'sea', 'cave', 'tunnel',
   'nearest enemy', 'active threat', 'immediate threat',
 ]);
+
+/**
+ * T10O — quoted dialogue is never an inventory USE/EQUIP/GIVE claim
+ * ("need a drink more than I do" is speech, not drinking from the bag).
+ * Blank quote spans (incl. unclosed → end) so ITEM_USE_CLAIM cannot see them.
+ */
+function blankQuotedSpans(input: string): string {
+  let s = input ?? '';
+  // Double / curly doubles first.
+  s = s.replace(/"[^"]*"/g, ' ').replace(/\u201c[^\u201d]*\u201d/g, ' ');
+  // Unclosed double open → blank to end (player left the closer off).
+  s = s.replace(/"[^"]*$/g, ' ').replace(/\u201c[^\u201d]*$/g, ' ');
+  return s;
+}
 
 function normalize(value: string): string {
   return value.trim().toLocaleLowerCase().replace(/\s+/g, ' ');
@@ -202,10 +220,12 @@ function boundItemObjectPhrase(claimed: string, state: GameState): string {
 function collectUnsupportedClaims(input: string, state: GameState, patterns: RegExp[]): string[] {
   const claims: string[] = [];
   const scene = sceneCatalog(state);
+  // T10O — scan outside quoted speech so dialogue verbs never become bag claims.
+  const scan = blankQuotedSpans(input);
   for (const pattern of patterns) {
     const re = new RegExp(pattern.source, 'gi');
     let m: RegExpExecArray | null;
-    while ((m = re.exec(input)) !== null) {
+    while ((m = re.exec(scan)) !== null) {
       const claimed = boundItemObjectPhrase((m[1] ?? '').trim(), state);
       const key = normalize(claimed);
       if (!claimed || NON_ITEM_TOKENS.has(key) || GENERIC_SCENE_ROLES.has(key)) continue;
@@ -221,10 +241,13 @@ function collectUnsupportedClaims(input: string, state: GameState, patterns: Reg
       if (isWithInstrument) {
         // Body / worn / generic scene noun as instrument ("with my boot") is not a bag USE/EQUIP/GIVE.
         if (isGenericSceneNounClaim(claimed)) continue;
+        // T10O — compound instrument headed by a scene/body noun ("with my boot heel") stays scenery.
+        const head = key.split(/\s+/)[0] ?? '';
+        if (head && isGenericSceneNounClaim(head)) continue;
         // Person present ("Press your standing with the muscle") is a social partner, not a tool.
         if (catalogHasName(personCatalog(state), claimed)) continue;
         const parts: string[] = [];
-        for (const raw of input.slice(0, m.index).trimEnd().split(' ')) {
+        for (const raw of scan.slice(0, m.index).trimEnd().split(' ')) {
           if (raw) parts.push(raw);
         }
         let headPhrase: string | null = null;

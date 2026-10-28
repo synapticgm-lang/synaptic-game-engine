@@ -17,15 +17,22 @@ function escRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/** "the ferry inn at Thornferry" → "the inn"; proper-name tails ("West Wall") have no short form. */
+/**
+ * "the ferry inn at Thornferry" → "the inn"; "Barred Oak Gate" → "the gate" (T10O).
+ * Lowercase last tokens always shorten. Title-Case last tokens shorten only when the
+ * label has 3+ words (so "West Wall" stays whole; "Barred Oak Gate" becomes "the gate").
+ */
 export function placeShortForm(display: string): string | null {
   const core = (display ?? '').replace(/^(?:the|a|an)\s+/i, '').replace(/\s+/g, ' ').trim();
   if (core.split(' ').length < 2) return null;
   const head = (core.split(LINK_RE)[0] ?? '').trim().split(' ').filter(Boolean);
   while (head.length > 1 && DIRECTION_RE.test(head[head.length - 1]!)) head.pop();
-  const noun = head[head.length - 1] ?? '';
-  if (noun.length < 3 || !/^[a-z]/.test(noun)) return null;
-  const short = `the ${noun.replace(/[^a-z'-]/gi, '')}`;
+  const nounRaw = head[head.length - 1] ?? '';
+  const noun = nounRaw.replace(/[^a-z'-]/gi, '');
+  if (noun.length < 3) return null;
+  // Two Title-Case tokens ("West Wall") are a proper name with no short form.
+  if (/^[A-Z]/.test(nounRaw) && head.length < 3) return null;
+  const short = `the ${noun.toLowerCase()}`;
   return short.toLowerCase() === display.trim().toLowerCase() ? null : short;
 }
 

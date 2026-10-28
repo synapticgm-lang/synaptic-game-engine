@@ -711,6 +711,8 @@ export function normalizeCommittedProse(prose: string, check: DraftCheck, packet
     next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, isEvent, check.state.character?.name).text;
     next = trimSameBeatRestatements(next, { isThisTurnsEvent: isEvent, isMoveEvent: isMove, eventHits }).text;
   }
+  // T10O — stray period after a quote that already closed on ?/!/… (`?"."`).
+  next = next.replace(/([?!…])(["”])\.(?=\s|$)/g, '$1$2').replace(/([.!?]){2,}/g, '$1');
   return polishMentions(next, refs, check.state);
 }
 /** Drop already-told sentences (keep ≥2) and name full labels once. */
