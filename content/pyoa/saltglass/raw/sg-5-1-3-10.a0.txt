@@ -1,0 +1,64 @@
+Gemini said
+
+@@SECTION sg-5-1-3-10
+TITLE: The Ozone Spark
+TEXT: Pungent ozone fills a chamber where broken copper wires spit faint blue sparks into the dry air. Your boots crunch over brittle fragments of fused silica that scatter like teeth across the floor. You crouch low as the air hums with a deep, vibrating resonance that makes your teeth ache.
+EXIT 1: Crawl beneath the sparking wire cluster
+EXIT 2: Dash toward the solar collector terrace
+EXIT 3: Hide among the stacked spare lenses
+@@END
+@@SECTION sg-5-1-3-11
+TITLE: The Marching Patrol
+TEXT: You flatten yourself against a fluted pillar as a patrol of mirror-bearers marches past with rhythmic clinking. Polished brass plates catch the faint illumination, casting dancing ripples of light across the vaulted ceiling above. Their booted steps echo off the glass walls, fading slowly into the cavernous depths of the observatory.
+EXIT 1: Slip behind the heavy stack of spare lenses
+EXIT 2: Step onto the crumbling stone balustrade
+EXIT 3: Step out onto the bustling Sentry Terrace
+@@END
+@@SECTION sg-5-1-3-12
+TITLE: The Stubborn Latch
+TEXT: A stubborn latch on a ventilation grille requires you to risk a noisy strike with your heavy tool. The metal shudders under the blow, sending a sharp metallic clang ringing through the silent corridor. You freeze, listening intently for any answering sound from the guards above.
+EXIT 1: Approach the scorching solar-collector terrace
+EXIT 2: Duck behind the stack of spare lenses
+EXIT 3: Step onto the decaying stone balustrade
+@@END
+@@SECTION sg-5-1-3-13
+TITLE: The Greasy Cable-Run
+TEXT: You scramble up a vertical cable-run while greasy soot makes every handhold a slippery, terrifying gamble. Your fingers burn against the braided iron strands as you haul your weight upward into the dim gloom. Every breath tastes of ancient machine oil and fine desert dust.
+EXIT 1: Climb toward the scorching solar-collector terrace
+EXIT 2: Leap for the crumbling stone balustrade
+EXIT 3: Take the reckless way across the open mirror-terrace
+@@END
+@@SECTION sg-5-1-3-14
+TITLE: The Resonant Quartz
+TEXT: The Seedkey vibrates warmly against your chest, reacting to a hidden network of resonant quartz veins nearby. The ceramic surface pulses with a faint, sympathetic thrum that matches the steady beat of your own heart. A pale luminescence flickers deep within the mineral walls, tracing invisible pathways through the dark.
+EXIT 1: Duck behind the stacks of spare lenses
+EXIT 2: Step out onto the sweeping Sentry Terrace
+@@END
+@@SECTION sg-5-1-3-15
+TITLE: The Narrow Aperture
+TEXT: You squeeze through an aperture so narrow you must extinguish your ember-lamp and crawl blind in pitch black. Rough stone scrapes against your shoulders and the precious burden strapped to your back. The smell of cold earth and dry salt fills your lungs as you inch forward by touch alone.
+EXIT 1: Emerge onto the threshold of the Sentry Terrace
+@@END
+@@SECTION sg-5-1-4-0
+TITLE: The Whistling Gale
+TEXT: High above the Basin floor, a whistling gale through the broken roof tests your footing on slick glass. The wind claws at your cloak, trying to peel you away from the dizzying heights toward the jagged ruins below. You lean your weight hard into the blast, keeping your centre of gravity low.
+EXIT 1: Crouch behind the low sun-shield
+EXIT 2: Edge along the outer parapet
+@@END
+@@SECTION sg-5-1-4-1
+TITLE: The Iron Framework
+TEXT: You climb a leaning framework of iron girders toward the blinding white glare of the upper terraces. Rust flakes away under your palms, showering down into the bottomless abyss below. The heat of the unshielded sun beats down relentlessly against your neck.
+EXIT 1: Hide behind the low sun-shield
+EXIT 2: Turn back down the utility shaft
+@@END
+@@SECTION sg-5-1-4-2
+TITLE: The Sweeping Flash
+TEXT: A sentinel's mirror-flash sweeps across your hiding alcove, forcing you to freeze amid dangling copper wires. The intense beam searches the shadows, illuminating dust motes dancing in the sterile air. You hold your breath until the brilliant light shifts away toward the higher vaults.
+EXIT 1: Face the veteran sentry on the ledge
+@@END
+@@SECTION sg-5-1-4-3
+TITLE: The Choked Flue
+TEXT: You claw your way up a choked drainage flue that smells faintly of ancient oil and dried desert lime. Sharp grit grinds into your knees as you struggle upward against the steep, narrow incline. A faint grey rectangle of light marks the opening far above.
+EXIT 1: Face the veteran sentry with the polished plate
+EXIT 2: Mirror the sentry's complex code with your own hand
+@@END
