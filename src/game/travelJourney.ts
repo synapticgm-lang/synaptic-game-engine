@@ -2016,7 +2016,6 @@ function moveWithinPlace(state: GameState, input: string, spot: string): TravelC
     state.sceneFacts ? { ...state, sceneFacts: { ...state.sceneFacts, hereSpot: undefined } } : state
   ).map((r) => r.npcName);
   const hereSpot = buildHereSpot(state, input, spot, people);
-  const away = new Set(hereSpot.awayFrom.map((n) => n.toLowerCase()));
   const base = state.sceneFacts ?? {
     crowd: 'unknown' as const,
     noise: 'unknown' as const,
@@ -2025,9 +2024,15 @@ function moveWithinPlace(state: GameState, input: string, spot: string): TravelC
     lastBeat: '',
     updatedTurn: state.turn ?? 0,
   };
+  // T10AN — out of talking range is hereSpot.awayFrom, not absence. Keep present[] so
+  // place/snapshot text still names who is in the room (talk chips filter via isOutOfTalkingRange).
+  const stillHere = Array.from(
+    new Set([...(base.present ?? []), ...hereSpot.awayFrom, ...hereSpot.nearby].map((n) => n.trim()).filter(Boolean))
+  );
   const sceneFacts = {
     ...base,
-    present: (base.present ?? []).filter((p) => !away.has(p.toLowerCase())),
+    present: stillHere,
+    crowd: stillHere.length ? (base.crowd === 'none' ? 'present' : base.crowd) : base.crowd,
     hereSpot,
   };
   const out = hereSpot.awayFrom.length ? `; out of talking range: ${hereSpot.awayFrom.join(', ')}` : '';
