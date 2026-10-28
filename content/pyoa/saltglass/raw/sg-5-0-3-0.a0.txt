@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION sg-5-0-3-0
+TITLE: The Ocular Stair
+TEXT: Down the steep spiral stairs of the Ocular Tower, iron handrails burn hot from the relentless noon glare striking the upper domes. Every footstep echoes hollowly against the curved basalt masonry, carrying the faint scent of baked dust and ancient mortar. Below you, the staircase plunges deeper into shadow, while above, blinding shafts of sunlight pierce through narrow arrow-slits. You clutch your banked coal-lantern tighter, feeling the weight of the cold ceramic seedkey pressing against your ribs as you weigh your next descent.
+EXIT 1: Approach the towering double iron gates
+EXIT 2: Enter the lamp-keepers vaulted vestibule
+EXIT 3: Turn back across the rope bridge
+@@END
+@@SECTION sg-5-0-3-1
+TITLE: The Singing Pipes
+TEXT: Inside the vaulted Hall of Tides, a chorus of singing glass pipes swells into a deafening tone that rattles your teeth. Long tubes of tuned quartz, hung from the vaulted ceiling by copper wire, vibrate with the thermal updrafts rising from the dry basin floor. You press your palms against your ears, navigating the quivering stone pavement while the high-pitched harmonic wail threatens to overwhelm your thoughts. Two distinct routes present themselves through the ringing din, offering a way onward.
+EXIT 1: Push toward the obsidian sanctuary gates
+EXIT 2: Sprint along the sweeping upper gallery
+@@END
+@@SECTION sg-5-0-3-2
+TITLE: The Amber Gallery
+TEXT: Across the threshold of the Amber Gallery, thick curtains of woven hemp trap the dry heat while salt-lords negotiate behind closed cedar doors. Muffled voices murmur in low, transactional tones, haggling over future water rights and vault shares as if the monsoon were already a commodity to be bought and sold. You slip quietly past the velvet drapes, keeping your shadow pressed against the wood-paneled walls. Ahead, the corridor splits, leading deeper into the heart of the observatory complex.
+EXIT 1: Seek shelter in the lens-keepers vestibule
+EXIT 2: Hurry past the upper gallery approach
+@@END
+@@SECTION sg-5-0-3-3
+TITLE: The Scars Legacy
+TEXT: The jagged glass-burn scar on your forearm catches the low-angle prism light, illuminating a hidden spring-latch on the heavy brass door. You remember the howling tempests of the crossing, the shrieking shards that bit deep into your skin when you traversed the outer wastes alone. The panel clicks open under your thumb, revealing a concealed service chamber smelling of ozone and old tallow. Two pathways lie beyond the hidden threshold, waiting in the stillness.
+EXIT 1: Step through toward the obsidian gates
+EXIT 2: Descend into the flickering lamp-keepers hall
+@@END
+@@SECTION sg-5-0-3-4
+TITLE: The First Astronomer
+TEXT: Within the shadowed crypt of the First Astronomer, dust motes dance in the amber beam of your banked coal-lantern. Stone effigies with polished quartz eyes stare mutely into the vaulted gloom, their carved hands resting on cracked celestial globes. The air here is dead and cold, untouched by the desert winds howling outside the thick observatory walls. You can retrace your steps to safety, or press forward into the complex.
+EXIT 1: Proceed toward the obsidian sanctuary doors
+EXIT 2: Follow the agents along the upper curve
+EXIT 3: Turn back toward the western bulwark
+@@END
+@@SECTION sg-5-0-3-5
+TITLE: The Clockwork Ledger
+TEXT: Beside the silent bronze gears of the great clockwork, a discarded Salt Court ledger lies open to pages smeared with dried brine. Columns of neat figures detail the mounting debts of desperate lamp-towns, trading entire seasonal harvests for a single trickle of well-water. The colossal brass cogs around you loom like sleeping teeth, locked fast by decades of desert dust and neglect. You step past the heavy iron machinery, choosing between the tightening paths ahead.
+EXIT 1: Head for the towering obsidian gates
+EXIT 2: Take the upper gallery toward the center
+EXIT 3: Squeeze into the low maintenance tunnel
+@@END
+@@SECTION sg-5-0-3-6
+TITLE: The North Scriptorium
+TEXT: Through the high clerestory windows of the North Scriptorium, you watch distant dust storms sweep across the pale bed of the dead sea. Desolate white flats stretch toward the hazy horizon, swallowing the landmarks of the old world beneath shifting drifts of alkali. Down on the writing desks, scattered sheets of vellum curl upward in the dry heat, abandoned by clerks who fled before the rising heat. Two egresses lead away from the high desk-halls into the darker stonework.
+EXIT 1: Crawl through the low maintenance conduit
+EXIT 2: Enter the cooling chambers of the furnace
+@@END
+@@SECTION sg-5-0-3-7
+TITLE: The Salt Ferns
+TEXT: In the narrow conduit beneath the refracting floor, dripping condensation feeds tiny clusters of pale salt-ferns clinging to damp stone. The air tastes of wet lime and iron rust, a rare coolness in a city built entirely of sun-baked glass and stone. Your boots splash softly in the shallow runoff puddle as you duck beneath low overhead cables. Ahead, the conduit branches into three distinct directions, each marked by the faint hum of distant machinery.
+EXIT 1: Climb toward the sweeping upper gallery
+EXIT 2: Drop into the solar furnace chambers
+EXIT 3: Watch the mirror-flashes on the tiered balconies
+@@END
+@@SECTION sg-5-0-3-8
+TITLE: The Broken Sundial
+TEXT: Across the courtyard of the broken sundial, an old scavenger shouts warnings about unstable glass bridges spanning the inner chasm. Shards of multicolored pavement crunch beneath your boots as you navigate the cracked stone dial, its bronze gnomon pointing at an empty sky. The yawning drop of the chasm splits the observatory grounds, spanned only by precarious ribbons of fused silica and rusted iron. You must choose your crossing carefully before the failing light deserts you.
+EXIT 1: Seek refuge in the solar furnace cooling rooms
+EXIT 2: Join Pell by the deep dry observatory well
+@@END
+@@SECTION sg-5-0-3-9
+TITLE: The Seven Rains
+TEXT: Within the frescoed hall of the Seven Rains, flaking plaster reveals faded murals of green valleys that have not seen water for centuries. Painted rivers wind through cobalt hills while crimson-robed figures offer clay pitchers to an azure sky that will never open again. The dry air is heavy with the scent of ancient plaster dust settling on your shoulders. At the far end of the muraled hall, a single iron ladder descends into the lower workings.
+EXIT 1: Climb down beside Pell at the dry well
+@@END

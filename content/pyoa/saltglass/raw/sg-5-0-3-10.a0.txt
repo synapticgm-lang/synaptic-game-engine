@@ -1,0 +1,64 @@
+Gemini said
+
+@@SECTION sg-5-0-3-10
+TITLE: The Copper Wedge
+TEXT: Heavy bronze valves of the lower conduits sweat with ancient damp, casting a metallic tang into the stagnant air. Beside a rusted hatch, Pell drives a copper wedge into the jammed seam with steady, practiced strikes of a mallet. Metal groans against metal, spraying a fine rust across his scarred knuckles as the seal finally gives way with a sharp hiss. // Beyond the widening gap, two distinct routes beckon into the dim interior: one dips sharply downward into a narrow drainage pipe choked with white salt crusts, while the other leads along a soot-blackened catwalk toward a flickering lantern.
+EXIT 1: Crawl through the salt-choked drainage pipe
+EXIT 2: Follow the soot-blackened catwalk toward the light
+EXIT 3: Squeeze into the cramped junction box of the brass conduits
+@@END
+@@SECTION sg-5-0-3-11
+TITLE: The Meridian Gallery
+TEXT: Vaulted stone ribs of the Meridian Gallery cage the silence, where your footsteps ring hollowly against empty marble floors. Long rows of vacant stone plinths stretch into the gloom like broken teeth, once holding celestial spheres that mapped a wetter sky. Dust motes dance lazily in stray beams of pale light slicing through high, grease-filmed clerestory windows. // Two narrow arches pierce the far wall, offering a choice between a steep spiral stair climbing upward into the drafts or a low-slung tunnel descending into darkness.
+EXIT 1: Climb the steep spiral staircase into the drafts
+EXIT 2: Descend into the low-slung tunnel of darkness
+@@END
+@@SECTION sg-5-0-3-12
+TITLE: The Basalt Threshold
+TEXT: Basalt blocks of the inner threshold loom cold and massive, framing a scene of careless ruin. A dropped merchant lantern sputters in a shallow puddle of spilled lamp-oil, sending greasy black smoke curling up toward the blackened lintel and fouling the dry, breathless air. The glass fragments crunch underfoot like crushed eggshells as you step closer to the heavy iron barrier. // You can either skirt the burning oil by climbing a narrow ledge to the left or squeeze past the smoking wreckage straight ahead into the gloom.
+EXIT 1: Scramble up the narrow stone ledge to the left
+EXIT 2: Squeeze past the smoking wreckage into the gloom
+@@END
+@@SECTION sg-5-0-4-0
+TITLE: The Obsidian Face
+TEXT: Narrow bars of the double iron gates frame a terrifying vista of absolute shadow and looming stone. Towering above the threshold, the sheer obsidian face of the ultimate sanctuary door absorbs the meager light of your lamp without a single reflection. Faint scratching sounds echo from somewhere deep within the black stone, as though unseen claws test the ancient latches. // The heavy barrier blocks further progress, leaving you with only one narrow way forward through the heavy gates.
+EXIT 1: Push open the heavy double iron gates
+@@END
+@@SECTION sg-5-0-4-1
+TITLE: The Lens-Keepers' Vestibule
+TEXT: Vaulted plaster walls of the Lens-Keepers' vestibule harbor a restless, flickering warmth from unattended oil lamps left burning on high desks. Long, dancing shadows stretch across rows of silent observation chairs, their leather seats cracked and gray with decades of accumulated desert dust. Parchment maps curl up at the edges on every table, their ink faded to the color of dried tea. // Two doors lead deeper into the silent complex: one heavy oak portal bound in iron straps, and a low service hatch half-concealed behind a stacked cabinet.
+EXIT 1: Open the heavy oak portal bound in iron straps
+EXIT 2: Crawl through the low service hatch behind the cabinet
+@@END
+@@SECTION sg-5-0-4-2
+TITLE: The Upper Gallery Curve
+TEXT: Sweeping curves of the Upper Gallery vibrate with the frantic scuffle of heavy boots grinding salt crystals into powder. Rival agents emerge from the side corridors, their breath ragged and their eyes fixed entirely on the monumental goal ahead. Every footfall echoes off the high vaulted ceiling, announcing their desperate rush toward the central approach. // You must choose whether to stand your ground against the approaching figures or dive sideways into an alcove.
+EXIT 1: Confront the rushing rival agents head-on
+EXIT 2: Dive sideways into a shadowed stone alcove
+@@END
+@@SECTION sg-5-0-4-3
+TITLE: The Counterweight's Shadow
+TEXT: Massive iron counterweights of the great lens swing overhead with a slow, rhythmic groan that shakes the dust from the ceiling rafters. Ducking low beneath the dangling chains, you scramble through a cramped maintenance tunnel designed to keep runners hidden from patrolling sentries. The air tastes of hot machine grease and old stone. // The crawlspace branches ahead into distinct channels leading toward different sectors of the inner sanctum.
+EXIT 1: Follow the narrow southern crawlspace toward the vault
+EXIT 2: Slide down the steep metal chute into the lower machinery
+EXIT 3: Pry open the overhead ventilation grate with your fingers
+@@END
+@@SECTION sg-5-0-4-4
+TITLE: The Solar Furnace
+TEXT: Thick stone walls of the solar furnace muffle the relentless howl of the desert wind sweeping across the dead basin floor. Residual heat still radiates from the massive copper parabolic mirrors, baking the air until your skin prickles with dry sweat. Cinders of long-burned charcoal crunch softly beneath your boots in the center of the vast chamber. // Two exit arches puncture the thick masonry, one leading toward the open courtyards and the other plunging into the subterranean machinery rooms.
+EXIT 1: Step through the archway leading to the open courtyard
+EXIT 2: Descend the iron ladder into the subterranean machinery room
+@@END
+@@SECTION sg-5-0-4-5
+TITLE: The Deep Dry Well
+TEXT: Deep stone walls of the observatory core drop away into absolute darkness, smelling of ancient lime and damp earth. Beside the gaping rim of the dry well, Pell tests the tension of a frayed winch rope with a skeptical frown, his thumb pressing hard against the hemp fibers until they fray further. A single pebble dropped into the depths bounces silently against the dry stone walls. // Three paths branch out from the wellhead: a narrow stone ledge circling the abyss, a steep metal ladder descending into the dark, and a wide corridor leading toward the outer halls.
+EXIT 1: Walk the narrow stone ledge circling the abyss
+EXIT 2: Climb down the steep metal ladder into the dark
+EXIT 3: Hurry away along the wide corridor toward the outer halls
+@@END
+@@SECTION sg-5-0-4-6
+TITLE: The Tiered Balconies
+TEXT: Tiered stone balconies of the inner cylinder vibrate underfoot as sharp, blinding flashes of mirror signaling slice across the open air. High above, Glasswright sentries wield polished brass heliographs, warning unauthorized climbers to halt immediately or face the consequences. The brilliant beams sweep back and forth across the white stone like accusing fingers. // You can either press yourself flat against the inner wall to avoid the blinding light or dash across the exposed gap toward the doorway opposite.
+EXIT 1: Press flat against the inner wall to avoid the light
+EXIT 2: Dash swiftly across the exposed gap toward the doorway
+@@END
