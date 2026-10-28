@@ -1,0 +1,63 @@
+Gemini said
+
+@@SECTION td-4-122
+TITLE: The Sunken Bulkhead
+TEXT: Green brine drips from the ribbed iron ceiling above as you wedge your shoulder against the swollen gasket of the inner hatch. Rusted bolts groan under the steady pressure, resisting every inch of your forward push. A thin stream of brackish water sprays across your cheek, carrying the sharp tang of old grease and stagnant kelp. Beyond the barrier, the dark corridor slopes downward into absolute shadow. You must clear this obstacle to follow the faint scrape of metal echoing from the depths.
+EXIT 1: Force open the jammed bulkhead
+@@END
+@@SECTION td-4-123
+TITLE: Weight of the Deep
+TEXT: Heavy bronze links rattle against your shins as you haul the heavy dive weight closer to the sunken hatch frame. The air grows noticeably colder here, smelling strongly of ancient rust and sulfurous mud leaking from the floor panels. Slipping your fingers through the ring of the dead weight, you brace your boots against a ribbed bulkhead plate to secure a solid footing for the heavy labor ahead. The silence of the seabed presses down from above like a physical weight.
+EXIT 1: Wedge the heavy brass weight
+@@END
+@@SECTION td-4-124
+TITLE: Strain Against Iron
+TEXT: Muscles bunch in your shoulders and back as you set your palms flat against the freezing metal of the fallen pillar, leaning your entire body weight into the heave. The stone-encrusted column refuses to budge at first, biting into your calloused palms with sharp barnacle edges. Veins throb at your temples as you draw upon every ounce of raw strength you possess to wrench the obstacle away from the jammed seal.
+CHECK: Heave the pillar aside
+@@END
+@@SECTION td-4-125
+TITLE: Bruised and Bone-Sore
+TEXT: The heavy pillar slips from your sweat-slicked grip, crashing back down onto your boot with a jarring thud that sends a white-hot flash of pain up your shin. You stumble backward into the cold brine, gasping for breath as your bruised muscles throb in protest. Though you manage to wrench the obstacle clear on a second desperate lunge, the struggle leaves you limping heavily and nursing a deep, angry purple bruise along your lower leg.
+EXIT 1: Push past the pain downward
+@@END
+@@SECTION td-4-126
+TITLE: Clearance Gained
+TEXT: With a sudden, protesting screech of sheared iron, the heavy pillar finally rolls sideways into the silt, clearing the path to the inner chamber. You catch your breath, wiping salt-crusted sweat from your forehead with the back of a trembling wrist. The victory is hard-won and leaves your muscles aching, but the way forward stands wide open at last. Resting in the mud beside the cleared frame is a solid brass wedge dropped by an earlier scavenger.
+GRANT: Heavy brass wedge
+EXIT 1: Descend into the deeper gloom
+@@END
+@@SECTION td-4-127
+TITLE: Orsolya's Final Trail
+TEXT: Down in the sheltered recess behind the airlock, a familiar scrap of heavy wool cloth flutters slightly in the draft. It is a torn piece of Orsolya Venn's dark weather-coat, snagged sharply on the jagged edge of a fractured steam pipe. Beside it, smeared across the rusted plating in dark, drying strokes, a hasty arrow points directly downward into the black throat of the stairwell. The handwriting is unmistakably hers, rushed and frantic, warning of something rising from the sump. No voice answers your low call, only the hollow dripping of water echoing from the vaults below. You gather the scrap of fabric and prepare yourself for the final descent.
+EXIT 1: Follow the blood-marked descent
+@@END
+@@SECTION td-4-128
+TITLE: The Ruined Camp
+TEXT: A cavernous chamber opens before you, littered with the wreckage of an abandoned expedition. Scattered maps drift in stagnant puddles beside shattered glass lenses and overturned oil lamps. This is Orsolya's ruined camp, left deserted in great haste. A gaping vertical shaft yawns in the center of the floor, exhaling a gust of freezing air that smells of old copper and ozone. Various paths branch outward into the gloom, offering different ways to scavenge the ruins or push deeper toward the heart of the machinery.
+EXIT 1: Rest briefly in the camp
+EXIT 2: Recover the encrypted journal
+EXIT 3: Piece together the tidal chart
+EXIT 4: Build a working water filter
+EXIT 5: Harvest the armored rock-centipede
+EXIT 6: Slide down to the Meridian Gear
+@@END
+@@SECTION td-4-129
+TITLE: Shadows of the Camp
+TEXT: You pull a damp wool blanket over your shoulders and sit down on an overturned crate within the quiet shelter of the deserted campsite. The surrounding silence is heavy and unnatural, filled only with the faint ticking of distant machinery somewhere deep in the rock. Closing your eyes for a brief moment, you force your racing pulse to steady against the rising tide of exhaustion. A small metallic glint catches your eye from beneath a pile of discarded canvas sheets in the corner.
+EXIT 1: Investigate the canvas heap
+@@END
+@@SECTION td-4-130
+TITLE: Facing the Dark
+TEXT: Shadows seem to lengthen and writhe along the damp stone walls as the oppressive quiet of the ruined camp presses in upon your thoughts. Terrible visions of the dry seabed and drowning towns flicker uninvited behind your closed eyelids, threatening to break your fragile composure. You grip the edges of your wooden seat until your knuckles turn white, fighting off the phantom terrors that claw at the edges of your mind.
+CHECK: Suppress the creeping nightmares
+@@END
+@@SECTION td-4-131
+TITLE: Shaken Resolve
+TEXT: A sudden wave of intense vertigo sends you tumbling sideways off the crate, crashing hard against a stack of discarded brass tubing with a sharp clatter. You lie gasping on the cold stone as dark shapes dance at the edge of your vision, your nerves frayed to a breaking point by the relentless isolation. Although you eventually force yourself back to your feet, the terrifying episode leaves you trembling and drains your remaining stamina.
+EXIT 1: Gather your scattered wits
+@@END
+@@SECTION td-4-132
+TITLE: Clear Mind
+TEXT: You anchor your breathing against the oppressive quiet, keeping the encroaching panic at bay through sheer force of will. The shadows retreat to the corners of the cavern, leaving your thoughts sharp and clear once more. Reaching beneath the canvas sheets, your fingers close around a cool, watertight metal flask filled with strong spirits left behind by your mentor. It is a small comfort, but one that will steady your hand when the cold closes in.
+EXIT 1: Proceed to the great machine
+@@END

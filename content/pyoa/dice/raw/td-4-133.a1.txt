@@ -1,0 +1,14 @@
+Gemini said
+
+@@SECTION td-4-137
+TITLE: The Iron Lockbox
+TEXT: Mud suction clings to your boots as you wrench the waterlogged iron chest from the dark, oil-filmed basin, your muscles burning with every inch of lift. Inside the heavy casing, protected from the brine by thick wax seals, lies Orsolya's encrypted journal filled with marginal notes on the Meridian Gear. // You slide the leather-bound book into your dry-sack, feeling the solid weight of her guarded secrets against your ribs.
+GRANT: Orsolya's encrypted journal
+EXIT 1: Return to the ruined camp
+@@END
+@@SECTION td-4-142
+TITLE: Fragments of the Tide
+TEXT: Careful fingers sort through the damp, scattered paper scraps caught between rotting floorboards until the missing pieces of the tidal chart click into place before your eyes. The smeared ink reveals a hidden rhythm in the Gear's stoppage, showing precisely when the locked tumblers will ease their grip. // You pocket the reconstructed scrap of parchment, confident in the secret schedule now resting against your palm.
+GRANT: Reconstructed tidal chart
+EXIT 1: Slide down the debris chute
+@@END

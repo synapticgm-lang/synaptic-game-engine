@@ -360,3 +360,20 @@
 2026-10-28T09:42:47.112Z ask prose td-4-101..td-4-111 items=11 attempt=0
 2026-10-28T09:43:21.919Z done td-4-101: 11/11
 2026-10-28T09:43:21.924Z ask prose td-4-112..td-4-121 items=10 attempt=0
+2026-10-28T09:43:53.581Z done td-4-112: 10/10
+2026-10-28T09:43:53.582Z ask prose td-4-122..td-4-132 items=11 attempt=0
+2026-10-28T09:44:18.633Z   reject td-4-132: grant
+2026-10-28T09:44:26.643Z ask prose td-4-122..td-4-132 items=1 attempt=1
+2026-10-28T09:44:54.282Z done td-4-122: 11/11
+2026-10-28T09:44:54.284Z ask prose td-4-133..td-4-142 items=10 attempt=0
+2026-10-28T09:45:19.399Z   reject td-4-137: grant
+2026-10-28T09:45:19.400Z   reject td-4-142: grant
+2026-10-28T09:45:27.404Z ask prose td-4-133..td-4-142 items=2 attempt=1
+2026-10-28T09:45:52.760Z done td-4-133: 10/10
+2026-10-28T09:45:52.761Z ask prose td-4-143..td-4-152 items=10 attempt=0
+2026-10-28T09:46:23.228Z done td-4-143: 10/10
+2026-10-28T09:46:23.229Z ask prose td-4-153..td-4-162 items=10 attempt=0
+2026-10-28T09:46:56.168Z done td-4-153: 10/10
+2026-10-28T09:46:56.169Z ask prose td-4-163..td-4-172 items=10 attempt=0
+2026-10-28T09:47:50.668Z done td-4-163: 10/10
+2026-10-28T09:47:50.669Z ask prose td-4-173..td-4-183 items=11 attempt=0
