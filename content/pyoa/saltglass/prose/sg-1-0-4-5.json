@@ -1,0 +1,85 @@
+{
+ "batch": "sg-1-0-4-5",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-1-0-4-5": {
+   "title": "The Bleached Pages",
+   "text": "Beside a deep rock-cut cistern whose iron grille has been wrenched off by thieves, a discarded traveler's ledger lies open to pages bleached entirely blank by the sun. The dry wind rattles the stiff parchment edges like dry leaves, while below in the dark stone well, water laps against green slime with a hollow, teasing sound. Your fingers tighten around the cold ceramic key in your pack as you consider whether to linger by the water-hole or retrace your steps toward the perimeter wall.",
+   "exits": [
+    "Step past the open cistern and descend toward the lower track.",
+    "Follow the narrow goat path winding down to the dust.",
+    "Turn back toward the limestone watchtower."
+   ]
+  },
+  "sg-1-0-4-6": {
+   "title": "The Solar Glare",
+   "text": "On the windswept shoulder of the western escarpment, a bank of solar mirrors catches the morning glare and throws blinding shards of white light across the lower track. The angled brass frames hum faintly under the heat, focusing stray rays into burning focal points that dance over the grey dust. Squinting against the brilliant reflection, you grip your ember-lamp tighter as you look for a secure footing down the steep, chalky slope.",
+   "exits": [
+    "Pick your way carefully down the sun-drenched slope."
+   ]
+  },
+  "sg-1-0-4-7": {
+   "title": "The Milestone",
+   "text": "Where the wagon road finally descends onto the flat crust of the Basin, a lonely stone milestone marked with eroded ancient numbers stands half-buried in drifting powder. Salt crystals crust its weathered face, blurring the destination carvings that once pointed travelers toward the glass cities of the interior. The air grows noticeably drier here, carrying the faint, metallic taste of old brine and sun-baked dust.",
+   "exits": [
+    "March straight onto the blinding white expanse.",
+    "Follow the wheel ruts curving toward the lower basin."
+   ]
+  },
+  "sg-1-0-5-0": {
+   "title": "The Lamp-Post Gate",
+   "text": "At the Lamp-Post Gate where the iron lanterns are being snuffed for the day, the wry glass-diver Pell leans against a stone pillar and cleans his salt-goggles with an oily rag. He watches you approach with one eyebrow arched in quiet amusement, his canvas pack resting squarely against his boots. The morning air smells of tallow smoke and dry earth, marking the absolute edge of the town's failing harvest.",
+   "exits": [
+    "Press on into the widening glare."
+   ]
+  },
+  "sg-1-0-5-1": {
+   "title": "The Oil Keg",
+   "text": "By the heavy timber gates of Candlemere, Pell sits on an overturned oil keg whistling a dry tune while tossing a heavy brass sounding-lead from hand to hand. The rhythmic clink of metal against brass echoes softly against the grain of the reinforced wood. He pauses as your shadow falls across his boots, offering a crooked, knowing grin that betrays his familiarity with the treacherous flats ahead.",
+   "exits": [
+    "Press on past the timber barricade."
+   ]
+  },
+  "sg-1-0-5-2": {
+   "title": "The Western Gatehouse",
+   "text": "Under the iron arch of the western gatehouse, Pell adjusts his wide-brimmed wicker hat and asks if you are fool enough to cross the white flats without a guide. His salt-crusted canvas jacket smells faintly of old brine and dried kelp, marking him as someone who knows the perilous shifting crust of the old sea. He taps the side of his copper map-tube with a calloused thumb, waiting for your answer.",
+   "exits": [
+    "Press on toward the open Basin."
+   ]
+  },
+  "sg-1-0-5-3": {
+   "title": "The Guarded Portal",
+   "text": "In the dust just outside the guarded portal, Pell stands with his canvas pack already strapped tight, offering a crooked grin and a weathered copper map-tube if you need him. The distant salt-flats shimmer behind him like a vast sheet of hammered tin under the mounting sun. He shifts his weight onto one heel, balancing an ash-wood pole across his shoulder with casual expertise.",
+   "exits": [
+    "Press on into the bright haze."
+   ]
+  },
+  "sg-1-c1": {
+   "title": "The Diver's Offer",
+   "text": "The heavy timber gates of Candlemere stand wide behind you, framing the vast, blinding expanse of the Saltglass Basin where your journey truly begins. Pell lingers by the stone post, his brass sounding-lead swinging in a slow, hypnotic arc as he waits to see whether you intend to face the treacherous salt-crust alone or secure his seasoned company. Every traveler who has crossed these flats warns of hidden sinkholes and deceptive mirages, making the choice of companionship a matter of survival before the monsoon twenty days away.\n\nYou feel the reassuring cold weight of the Seedkey resting in your travelling pack, reminding you that failure is not an option for the parched lamp-town of Candlemere.",
+   "exits": [
+    "Hire Pell the glass-diver as guide to lead the way across the white flats.",
+    "Go alone, trusting your own feet to navigate the perilous basin."
+   ]
+  },
+  "sg-1-1-0-0": {
+   "title": "The Weather-Cracked Hand",
+   "text": "Beside the tallow-scratched gatepost, Pell offers a weather-cracked hand to guide you across the white flats for half a copper jar. His dry laugh cuts through the morning silence as he slings his canvas pack higher onto his shoulder and adjusts his wide-brimmed hat. Together, you step off the solid stone of the rim road and onto the dazzling, brittle crust of the dead sea.",
+   "exits": [
+    "Follow Pell as he strides onto the white salt.",
+    "Stay close behind your guide as a salt-clogged cart looms ahead.",
+    "Step out independently with the glass-diver at your shoulder."
+   ]
+  },
+  "sg-1-1-0-1": {
+   "title": "The Grey Rim Road",
+   "text": "Solitary footsteps crunch across the alkaline dust as the iron gate of Candlemere shrinks into the shimmering distance. Your ember-lamp swings from your wrist, its banked coals casting a faint, rhythmic glow against the grey expanse of the Rim Road. Behind you, the glass-diver's laughter fades beneath the dry whistling of the wind through abandoned water-scaffolds. The vast, salt-crusted bed of the dead sea stretches eastward like an unwritten page, promising little save for mirage and distance.\n\nAhead, the track divides where a milestone of fused green glass leans drunkenly into the alkali. You must decide whether to press onward through the thickening haze, pause to read the weather signs along the low stone wall, or quicken your pace before the noon heat settles hard upon the flats.",
+   "exits": [
+    "Dodge the kelp-laden mule and press deeper into the grey haze",
+    "Wait by the cistern-house to heed the glass-diver's last warning",
+    "Striding past the cattle-pound unescorted with the key held tight"
+   ]
+  }
+ },
+ "missing": []
+}

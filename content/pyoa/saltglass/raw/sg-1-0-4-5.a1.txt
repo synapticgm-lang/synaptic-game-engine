@@ -1,0 +1,9 @@
+Gemini said
+
+@@SECTION sg-1-1-0-1
+TITLE: The Grey Rim Road
+TEXT: Solitary footsteps crunch across the alkaline dust as the iron gate of Candlemere shrinks into the shimmering distance. Your ember-lamp swings from your wrist, its banked coals casting a faint, rhythmic glow against the grey expanse of the Rim Road. Behind you, the glass-diver's laughter fades beneath the dry whistling of the wind through abandoned water-scaffolds. The vast, salt-crusted bed of the dead sea stretches eastward like an unwritten page, promising little save for mirage and distance. // Ahead, the track divides where a milestone of fused green glass leans drunkenly into the alkali. You must decide whether to press onward through the thickening haze, pause to read the weather signs along the low stone wall, or quicken your pace before the noon heat settles hard upon the flats.
+EXIT 1: Dodge the kelp-laden mule and press deeper into the grey haze
+EXIT 2: Wait by the cistern-house to heed the glass-diver's last warning
+EXIT 3: Striding past the cattle-pound unescorted with the key held tight
+@@END
