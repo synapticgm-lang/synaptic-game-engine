@@ -641,7 +641,10 @@ function personChipExhausted(state: GameState, actionId: string): boolean {
   if (affordancePickedInScene(state, actionId)) return true;
   // Ledger topic: insight attempt already committed on the NPC this scene.
   if (actionId.endsWith(':insight') || actionId.endsWith(':skill')) {
-    const entityId = actionId.replace(/^person:/, '').replace(/:(?:insight|skill)$/, '');
+    // No regex in this file (C1-7 / OPT1-6). actionId shape: person:<entityId>:insight|skill
+    let entityId = actionId.startsWith('person:') ? actionId.slice('person:'.length) : actionId;
+    if (entityId.endsWith(':insight')) entityId = entityId.slice(0, -':insight'.length);
+    else if (entityId.endsWith(':skill')) entityId = entityId.slice(0, -':skill'.length);
     const mems = state.npcMemories ?? [];
     for (let i = 0; i < mems.length; i++) {
       const m = mems[i]!;
