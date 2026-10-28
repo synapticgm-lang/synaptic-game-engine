@@ -1,0 +1,74 @@
+{
+ "beats": {
+  "td-1-001": "You wake in Gullmouth to a silent, dry harbour and discover Orsolya's sealed letter warning that the Meridian Gear has jammed beneath the Sunken Stair.",
+  "td-1-026": "You enter the Wreckers' Guild to formally register your salvage claim for the deep basin, where the guildmaster demands proof of your intentions.",
+  "td-1-045": "The skeletal Customs-Priest intercepts you at the town gates, demanding a tithe for the absent sea before allowing you to step onto the crusting salt-flats.",
+  "td-1-064": "You encounter the eerie pawn-widow scavenging near a galleon, and she offers you a grim bargain for information about Orsolya's last known heading.",
+  "td-1-080": "You reach the rotting carcass of a stranded leviathan where opportunists have already set up a sprawling, foul-smelling market of scavenged seabed oddities.",
+  "td-1-102": "A procession of mournful Drift Pilgrims blocks your path, demanding that you participate in a bleak ritual to appease the sulking ocean before proceeding.",
+  "td-1-123": "You finally reach the treacherous Singing Dunes, where the howling wind carries the faint, grinding echoes of the Meridian Gear from the distant Sunken Stair.",
+  "td-1-147": "You stand before the yawning abyss of the Sunken Stair, ready to descend into the darkness and finally uncover the truth behind Orsolya's disappearance."
+ },
+ "hubs": {
+  "td-1-002": {
+   "place": "Gullmouth Harbour",
+   "situation": "The stranded docks are chaotic as rival wrecker crews argue over the exposed seabed and scavenge whatever they can reach first."
+  },
+  "td-1-027": {
+   "place": "The Wreckers' Guild",
+   "situation": "The smoky guildhall is filled with grim scavengers placing wagers on what lies beneath the mud, offering you a chance to prepare."
+  },
+  "td-1-046": {
+   "place": "The Crusting Salt-flats",
+   "situation": "The mud is rapidly hardening under the strange sun, hiding treacherous sinkholes and half-buried treasures waiting to be claimed."
+  },
+  "td-1-065": {
+   "place": "The Stranded Galleon",
+   "situation": "A colossal warship leans precariously on a jagged reef, its hull groaning as scavengers try to pry loose its remaining secrets."
+  },
+  "td-1-081": {
+   "place": "The Leviathan Market",
+   "situation": "Stalls are carved directly into the sun-baked whale bones, offering a chaotic bazaar where bizarre relics and desperate secrets are traded."
+  },
+  "td-1-103": {
+   "place": "The Tide-pool Shrines",
+   "situation": "Shallow basins of trapped seawater serve as makeshift altars where fanatics offer sacrifices to the absent tide, creating tense and dangerous encounters."
+  },
+  "td-1-124": {
+   "place": "The Singing Dunes",
+   "situation": "Shifting sands hide the remnants of ancient wrecks, and the strange acoustic phenomena threaten to disorient anyone who lingers too long."
+  }
+ },
+ "chains": {
+  "td-1-002/0": "You confront a rival crew claiming a stranded fishing boat, holding your nerve to intimidate them into backing down and securing a sturdy grappling hook.",
+  "td-1-002/1": "You patch a splintered skiff that hangs uselessly from the dry pier, using clever rigging to lower it and scavenging a bundle of salt-cured rations.",
+  "td-1-002/2": "You heave aside a heavy iron anchor blocking access to the old bait-shack, using sheer strength to force the door and finding a lantern.",
+  "td-1-002/3": "You negotiate with the ferryman who sits in his boat upon the mud, staring down his demands to gain a rusted map of the sinkholes.",
+  "td-1-002/4": "You pick the rusted lock on the harbourmaster's abandoned office, relying on careful hands to disarm a simple trap and claiming a stash of coin.",
+  "td-1-027/0": "You stare down a bragging Brineholder agent making offers to the locals, refusing to blink and extracting a valuable secret about the patrol routes.",
+  "td-1-027/1": "You intervene in a knife-point argument between two net-menders, keeping calm to defuse the tension and earning the loyalty of a tough local guide.",
+  "td-1-027/2": "You challenge the guildmaster's champion to an arm-wrestling contest, putting your back into the strain to win a coil of high-quality climbing rope.",
+  "td-1-027/3": "You haul a crate of smuggled fresh water from the cellar, proving your worth through brute labour to receive a rare talisman of safe passage.",
+  "td-1-046/0": "You drag a waterlogged chest from a collapsing mud pit, using your strength to pull it free before it sinks and claiming the silver within.",
+  "td-1-046/1": "You cross a narrow ridge between two yawning chasms of black mud, keeping a steady balance to reach a stranded merchant's dropped satchel of supplies.",
+  "td-1-046/2": "You construct a makeshift sledge from driftwood planks, lashing the wood together to safely cross a patch of soft silt and recover an ivory spyglass.",
+  "td-1-046/3": "You stand perfectly still as a group of frantic Drift Pilgrims rushes past, avoiding their manic zealotry to quietly pocket a dropped ritual bell.",
+  "td-1-065/0": "You slip past a sleeping crew of rival wreckers guarding the captain's cabin, holding your breath to steal a preserved jar of medicinal leeches.",
+  "td-1-065/1": "You pry open a warped iron grate covering the ship's flooded lower hold, forcing the metal apart to retrieve a heavy harpoon gun.",
+  "td-1-065/2": "You smash a reinforced glass display case in the officers' mess, using blunt force to break through and claim a ceremonial silver compass.",
+  "td-1-081/0": "You haggle with a desperate bone-carver over a peculiar amulet, spotting the flaws in his bluff to acquire a warding charm at a fraction of the cost.",
+  "td-1-081/1": "You break up a violent brawl between two merchants fighting over a chunk of ambergris, imposing your physical presence to earn a grateful merchant's discount.",
+  "td-1-081/2": "You decipher the strange markings on a dead sailor's journal being sold for scrap, piecing together the cryptic language to learn a hidden tidal route.",
+  "td-1-081/3": "You repair a delicate clockwork bird for a wealthy trader from Saltspire, using tiny tools to fix the gears and earning a hefty purse of coin.",
+  "td-1-081/4": "You carve a replacement peg for a broken weighing scale, fashioning the wood perfectly to secure a small vial of rare medicinal kelp extract.",
+  "td-1-103/0": "You debate scripture with a zealous priest standing in a drying pool, remembering old coastal hymns to impress him and win a blessed iron nail.",
+  "td-1-103/1": "You rescue a trapped scavenger from a collapsing coral altar, lifting the heavy stone away to gain the grateful survivor as a loyal companion.",
+  "td-1-103/2": "You carve an offering from a piece of pale driftwood, shaping the idol perfectly to satisfy the pilgrims and secure a pouch of blessed salt.",
+  "td-1-103/3": "You wade into a sacred pool filled with biting blind-eels, ignoring the painful nips to retrieve a sunken idol that the pilgrims revere.",
+  "td-1-124/0": "You walk blindly through a blinding sandstorm while resisting the urge to run, trusting your instincts to find a buried stash of emergency rations.",
+  "td-1-124/1": "You construct a windbreak from the ribs of a half-buried galley, weaving canvas tightly to shelter yourself and discovering an ancient, rust-free cutlass inside.",
+  "td-1-124/2": "You dismantle a deadly spring-trap left by Brineholder scouts, disabling the mechanism carefully to salvage the poisonous darts for your own future use.",
+  "td-1-124/3": "You track a strange scuttling creature across the shifting dunes, anticipating its sudden turns to locate its nest and claim a cluster of glowing pearls.",
+  "td-1-124/4": "You navigate a field of acoustic illusions that sound like drowning sailors, identifying the false echoes to safely recover a lost Brineholder signet ring."
+ }
+}

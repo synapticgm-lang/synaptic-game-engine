@@ -109,3 +109,16 @@
 2026-10-28T08:20:17.652Z ask e-sold-knife items=7 attempt=0
 2026-10-28T08:22:19.307Z done e-sold-knife: 7/7 inserts
 2026-10-28T08:22:19.309Z finished run: calls 13, groups done 41/41
+2026-10-28T08:22:58.298Z ask d-w-0 items=4 attempt=0
+2026-10-28T08:24:43.906Z done d-w-0: 4/4
+2026-10-28T08:24:43.907Z ask d-w-1 items=4 attempt=0
+2026-10-28T08:26:14.528Z done d-w-1: 4/4
+2026-10-28T08:26:14.530Z ask d-l-0 items=4 attempt=0
+2026-10-28T08:27:14.926Z done d-l-0: 4/4
+2026-10-28T08:27:14.928Z ask d-l-1 items=4 attempt=0
+2026-10-28T08:29:05.872Z done d-l-1: 4/4
+2026-10-28T08:29:05.874Z ask d-r-0 items=4 attempt=0
+2026-10-28T08:30:46.385Z done d-r-0: 4/4
+2026-10-28T08:30:46.387Z ask d-r-1 items=4 attempt=0
+2026-10-28T08:32:34.425Z done d-r-1: 4/4
+2026-10-28T08:32:34.427Z finished detours run: calls 6

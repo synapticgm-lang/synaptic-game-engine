@@ -1,0 +1,99 @@
+{
+ "batch": "d-l-0",
+ "newNodes": [
+  {
+   "id": "up-l-det-recognised",
+   "stake": "You must negotiate with a stranger who holds your life in their hands to secure vital intelligence.",
+   "page": "A cloaked figure steps from behind a chimney stack, raising a gloved hand. \"The deacon was remarkably precise,\" they murmur, studying your features in the gloom. \"I have no love for the watch, night-crow. Leave me a silver shilling, and I shall tell you which chimney to avoid.\" You toss the coin; they catch it cleanly. \"Matron Rigg's hounds wait by the eastern flue, armed with netting,\" they whisper, dissolving back into the soot-stained shadows. Warned and slightly poorer, you adjust the dead Archbishop's heavy mantle around your shoulders and proceed toward the chalked summons.",
+   "exits": [
+    {
+     "id": "seek-the-letters-beneath-the-slate",
+     "label": "Seek the letters beneath the slate",
+     "to": "up-l-faction-letters"
+    }
+   ]
+  },
+  {
+   "id": "up-l-det-one-hand",
+   "stake": "Confronting both ruthless factions with their shared deception risks a sudden and lethal unified reprisal.",
+   "page": "You approach the adjoining attic doors where Valerius's silk-clad runners and Rigg's iron-men await your answer. Instead of choosing, you slide a transcribed page from the vault's counter-ledgers beneath the partition, exposing the identical handwriting orchestrating their false war. You name the cabal aloud, your voice carrying through the timber. A cold, breathless silence falls over both rooms as the terrible realisation of your knowledge takes hold. Before their sudden, hushed murmurs of negotiation can turn into a coordinated assault, you retreat into the freezing wind, wrapping the Archbishop's cloak tight as you seek higher ground.",
+   "exits": [
+    {
+     "id": "seek-higher-ground-before-they-react",
+     "label": "Seek higher ground before they react",
+     "to": "up-l-eclipse-rise"
+    }
+   ]
+  },
+  {
+   "id": "up-l-det-service-tunnel",
+   "stake": "Navigating the oppressive darkness of the narrow service tunnel threatens to bury you alive beneath the district.",
+   "page": "Taking advantage of the vault you breached earlier, you slip down a grated chute into the Exchange's old service tunnel. The damp, cramped passage smells intensely of sulfur and wet brick. You navigate by tracing the thick copper gas pipes and feeling for the raised chalk marks left by long-dead gas-men. A sudden rush of scalding steam from a fractured valve nearly catches your shoulder, but you duck beneath the hissing vapour just in time. Hauling yourself up through a forgotten ventilation shaft, you emerge safely ahead of the Guard's cordons, stepping back out onto the high gable.",
+   "exits": [
+    {
+     "id": "step-out-onto-the-high-gable",
+     "label": "Step out onto the high gable",
+     "to": "up-l-eclipse-ridgeline"
+    }
+   ]
+  },
+  {
+   "id": "up-l-det-silk-carriage",
+   "stake": "Accepting a secretive carriage ride from a ruthless lord deepens a debt that may eventually cost your life.",
+   "page": "Slipping down from the rooftops, you find the unmarked carriage Lord Valerius promised, its ornate crest hastily obscured beneath a canvas drape. You climb inside, shivering in the dead Archbishop's stolen cloak as the heavy, silk-lined blinds seal you in utter darkness. The carriage rattles violently over the cobblestones, effortlessly bypassing the confused watchmen attempting to marshal during the eclipse. As the vehicle abruptly halts near the northern ridge, the driver raps twice on the partition. \"His Lordship notes the debt,\" a muffled, polite voice warns. You disembark without a word, grappling your way back onto the wet slate.",
+   "exits": [
+    {
+     "id": "grapple-back-onto-the-wet-slate",
+     "label": "Grapple back onto the wet slate",
+     "to": "up-l-eclipse-ridgeline"
+    }
+   ]
+  }
+ ],
+ "addExits": [
+  {
+   "node": "up-l-exchange-ridge",
+   "exit": {
+    "id": "answer-the-stranger-who-knows-your-face",
+    "label": "Answer the stranger who knows your face",
+    "to": "up-l-det-recognised",
+    "when": {
+     "faceKnown": "yes"
+    }
+   }
+  },
+  {
+   "node": "up-l-faction-letters",
+   "exit": {
+    "id": "name-both-houses-as-one-hand",
+    "label": "Name both houses as one hand",
+    "to": "up-l-det-one-hand",
+    "when": {
+     "cabal": "known"
+    }
+   }
+  },
+  {
+   "node": "up-l-eclipse-rise",
+   "exit": {
+    "id": "slip-through-the-opened-vault-tunnel",
+    "label": "Slip through the opened vault tunnel",
+    "to": "up-l-det-service-tunnel",
+    "when": {
+     "vault": "breached"
+    }
+   }
+  },
+  {
+   "node": "up-l-eclipse-rise",
+   "exit": {
+    "id": "call-in-valerius-s-carriage",
+    "label": "Call in Valerius's carriage",
+    "to": "up-l-det-silk-carriage",
+    "when": {
+     "valerius": "allied"
+    }
+   }
+  }
+ ]
+}

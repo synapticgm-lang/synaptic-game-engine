@@ -1,0 +1,99 @@
+{
+ "batch": "d-w-0",
+ "newNodes": [
+  {
+   "id": "up-w-det-recognised",
+   "stake": "You must buy silence from a stranger who holds your life and identity in their soot-stained hands.",
+   "page": "A shadow detaches from the chimney stack. It is a chimney-sweep, soot-stained and still. He squints at you, then at the wanted bill crumpled in his fist. \"The almoner's description,\" he murmurs, recognising your sharp jaw. Sable tenses beside you, her hand dropping to her rigging knife. You toss the boy a silver crown before he can shout for the Watch. He catches it, biting the edge, and points a grubby finger toward the eastern gables. \"Rigg's hounds are thick on the west side,\" he warns softly, slipping into the flue. You nod, leading Sable down the safer slates toward the waiting factions.",
+   "exits": [
+    {
+     "id": "descend-toward-the-meeting-rooms",
+     "label": "Descend toward the meeting rooms",
+     "to": "up-w-faction-summons"
+    }
+   ]
+  },
+  {
+   "id": "up-w-det-one-hand",
+   "stake": "Exposing the cabal risks immediate execution, but buys you the confusion needed to escape the brutal calculation.",
+   "page": "You halt between the open oak doors. To your left, Valerius's silk-draped lieutenant; to your right, Rigg's iron-jawed proxy. You draw a breath and declare it loudly: the ledger's ink matches the vault's counter-ledgers exactly. You name them as one cabal, a single syndicate writing its own false war. The hallway drops into a deathly, frigid silence. Both lieutenants freeze, their manufactured enmity shattered by the bare truth. Sable shoots you a terrified, exhilarated grin. While the proxies stare at each other, recalculating the entire night's political geometry, you grab Sable's arm and slip past the heavy velvet curtains into the fading evening.",
+   "exits": [
+    {
+     "id": "push-out-into-the-twilight",
+     "label": "Push out into the twilight",
+     "to": "up-w-eclipse-approach"
+    }
+   ]
+  },
+  {
+   "id": "up-w-det-service-tunnel",
+   "stake": "You must navigate the scalding, suffocating darkness beneath the streets to outpace the panicking city watch.",
+   "page": "You pry open the corroded iron grate, sliding into the service tunnel you cracked earlier this evening. It is a suffocating, damp descent beneath the gas-mains. Sable follows close, coughing quietly against the sharp reek of sulphur. You navigate by the faint chalk marks left by the old gas-men, brushing past scalding, hissing copper pipes. Suddenly, a rusted valve snaps overhead, venting a jet of hot vapour. You pull Sable down just in time, the steam singeing the heavy cloth of your coat. Climbing the far ventilation shaft, you breach the surface well ahead of the Guard, re-emerging onto the high, slippery gables.",
+   "exits": [
+    {
+     "id": "emerge-onto-the-high-ridgeline",
+     "label": "Emerge onto the high ridgeline",
+     "to": "up-w-eclipse-roofs"
+    }
+   ]
+  },
+  {
+   "id": "up-w-det-silk-carriage",
+   "stake": "You trade a piece of your future freedom for safe, luxurious passage through the chaotic, dimming streets.",
+   "page": "A black lacquered carriage idles by the alms-house, its crest obscured beneath a canvas wrap. The driver tips his hat, a silent acknowledgement of Lord Valerius's protection. You bundle Sable inside, sinking into the plush, silk-lined interior just as the Watch rushes the thoroughfare outside. Through the drawn blinds, you watch the panicked lamplighters scrambling in the premature dusk. The driver takes you swiftly across the district, avoiding the main checkpoints with practised ease. As you prepare to disembark near the high ridgeline, the driver leans back, murmuring that his Lordship notes the debt. You nod, leading Sable back to the high slate.",
+   "exits": [
+    {
+     "id": "climb-toward-the-guard-nest",
+     "label": "Climb toward the guard nest",
+     "to": "up-w-eclipse-roofs"
+    }
+   ]
+  }
+ ],
+ "addExits": [
+  {
+   "node": "up-w-exchange-roofs",
+   "exit": {
+    "id": "answer-the-stranger-who-knows-your-face",
+    "label": "Answer the stranger who knows your face",
+    "to": "up-w-det-recognised",
+    "when": {
+     "faceKnown": "yes"
+    }
+   }
+  },
+  {
+   "node": "up-w-faction-summons",
+   "exit": {
+    "id": "name-both-houses-as-one-hand",
+    "label": "Name both houses as one hand",
+    "to": "up-w-det-one-hand",
+    "when": {
+     "cabal": "known"
+    }
+   }
+  },
+  {
+   "node": "up-w-eclipse-approach",
+   "exit": {
+    "id": "slip-through-the-opened-vault-tunnel",
+    "label": "Slip through the opened vault tunnel",
+    "to": "up-w-det-service-tunnel",
+    "when": {
+     "vault": "breached"
+    }
+   }
+  },
+  {
+   "node": "up-w-eclipse-approach",
+   "exit": {
+    "id": "call-in-valerius-s-carriage",
+    "label": "Call in Valerius's carriage",
+    "to": "up-w-det-silk-carriage",
+    "when": {
+     "valerius": "allied"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "beats": {
+  "td-0-001": "You stand in the salt-crusted lamp room of Gullmouth lighthouse, reading the sealed note Orsolya Venn left before vanishing into the bare seabed.",
+  "td-0-017": "You climb down the treacherous cliff path to the harbour, greeted by the unsettling silence of stranded fishing boats and the whispering winds.",
+  "td-0-038": "Leaving the shadow of the cliff behind, you step onto the endless salt-flats of the Low to begin your search for the missing lighthouse keeper."
+ },
+ "hubs": {
+  "td-0-002": {
+   "place": "Gullmouth Lighthouse",
+   "situation": "You search the abandoned keeper's quarters for any useful gear or lingering clues before descending the cliff to the dried-out harbour below."
+  },
+  "td-0-018": {
+   "place": "The Dry Harbour",
+   "situation": "You navigate the grounded fleet and desperate rival crews, looking for supplies and information before stepping out onto the vast, exposed seabed."
+  }
+ },
+ "chains": {
+  "td-0-002/0": "You decipher a set of faded navigational charts left scattered across the desk, risking a headache to uncover a hidden safe route through the sinkholes.",
+  "td-0-002/1": "You try to repair a rusted spyglass found on the balcony, risking cutting your hands to gain a valuable tool for spotting distant scavengers.",
+  "td-0-002/2": "You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.",
+  "td-0-018/0": "You negotiate with a desperate net-mender for sturdy ropes, risking a harsh argument to secure climbing gear that will help you descend the Sunken Stair.",
+  "td-0-018/1": "You pry open a sealed smuggler's barrel wedged beneath a rotting hull, risking a collapse to acquire a stash of rare cured meats.",
+  "td-0-018/2": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
+  "td-0-018/3": "You coax a frightened drift pilgrim out of hiding to ask about the Meridian Gear, risking their sudden panic to earn a protective bone talisman."
+ }
+}

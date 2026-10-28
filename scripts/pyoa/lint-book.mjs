@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /**
  * PYOA book linter + path simulator.
  *   node scripts/pyoa/lint-book.mjs [path/to/book.json] [--json out.json] [--cap 3000000]
@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pyoaCondHolds, pyoaCondReads, pyoaCondFlags } from '../../src/game/pyoaCond.ts';
 
-export function lintBook(book, { cap = 3_000_000, maxExits = 4 } = {}) {
+export function lintBook(book, { cap = 3_000_000, maxExits = 4, outcomeFlags = ['ledger'] } = {}) {
   const errors = [];
   const warns = [];
   const E = (code, msg) => errors.push({ code, msg });
@@ -75,7 +75,7 @@ export function lintBook(book, { cap = 3_000_000, maxExits = 4 } = {}) {
   for (const n of nodes) if (!seenS.has(n.id)) E('orphan', n.id);
 
   // flag coverage
-  for (const [f] of setters) if (!readerFlags.has(f)) E('flag-never-read', f);
+  for (const [f] of setters) if (!readerFlags.has(f) && !outcomeFlags.includes(f)) E('flag-never-read', f);
   for (const [f] of readerFlags) if (!setters.has(f)) E('flag-never-set', f);
   for (const [k] of readers) {
     const [f, v] = [k.slice(0, k.indexOf('=')), k.slice(k.indexOf('=') + 1)];

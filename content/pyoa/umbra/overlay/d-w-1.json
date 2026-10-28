@@ -1,0 +1,99 @@
+{
+ "batch": "d-w-1",
+ "newNodes": [
+  {
+   "id": "up-w-det-foundry-warrant",
+   "stake": "The watchmen might inspect the heavy iron warrant too closely and discover your true identity.",
+   "page": "You slip down to the cobbled alley, Sable shrinking back into the shadows as Matron Rigg's burly foundry foreman approaches. He fastens a rusted chain loosely to your wrist, loudly declaring you a delinquent debtor bound for the gaol works. The flustered watchmen, blinded by the encroaching celestial gloom, barely glance at the heavy iron-stamped warrant before waving the miserable procession through. The indignity tastes of ash, but Rigg's brutal influence works flawlessly. Past the barricade, the foreman wordlessly drops the chain, gesturing upward to the high slates where your path continues.",
+   "exits": [
+    {
+     "id": "climb-back-to-the-ridgeline",
+     "label": "Climb back to the ridgeline",
+     "to": "up-w-eclipse-roofs"
+    }
+   ]
+  },
+  {
+   "id": "up-w-det-pass-tailor",
+   "stake": "A single keen glance could pierce the miserable facade of the disgraced tailor's debt coat.",
+   "page": "You drop lightly to the gantry beside the guard nest, keeping Sable tucked close behind your shadow. A shivering clerk holds up a lantern, its sputtering flame illuminating the threadbare velvet and crooked stitching of your disgraced tailor's debt coat. You bow your head, playing the ruined merchant. The clerk sneers at the familiar cloth, recognising the mark of utter ruin, and brusquely waves you through as just another pathetic debtor scurrying from the panic. Sable slips silently in your wake as you leave the riflemen behind, stepping back into the freezing twilight to ascend the final incline.",
+   "exits": [
+    {
+     "id": "ascend-to-the-final-apex",
+     "label": "Ascend to the final apex",
+     "to": "up-w-final-choice"
+    }
+   ]
+  },
+  {
+   "id": "up-w-det-pass-livery",
+   "stake": "The riflemen might halt the rumbling hand-cart and demand to inspect the exhausted porters beneath the crates.",
+   "page": "You descend from the slates toward a bustling gantry where panicked merchants are abandoning their goods. Clad in the grease-stained livery of a common porter, you seize the handles of an unattended crate, nodding for Sable to mirror your stooped posture. Together, you fall into step behind a heavy hand-cart rumbling straight through the guard nest. The sentries, busy cursing the unnatural cold and watching the bruised sky, never examine the grimy faces beneath the burdens. You trudge steadily past the riflemen, the heavy ledger hidden securely beneath the coarse canvas, until you can slip away upward.",
+   "exits": [
+    {
+     "id": "slip-away-to-the-highest-gable",
+     "label": "Slip away to the highest gable",
+     "to": "up-w-final-choice"
+    }
+   ]
+  },
+  {
+   "id": "up-w-det-pass-usher",
+   "stake": "The nervous watch sergeant might realise you are not the genuine theatre staff he was expecting.",
+   "page": "You guide Sable down the damp zinc flashing to a theatre-side access door, relying entirely on the crisp, brass-buttoned cut of your opera usher's uniform. A nervous watch sergeant blocks the threshold, but his posture relaxes when the brazier light catches your pristine epaulettes. Expecting the house staff to assist with the panicked crowds, he presses a sputtering lantern into your hands. He barks an order to guide his men backstage, assuming Sable is a corralled street-urchin. You agree with a professional nod, leading them past the cordon before instantly ducking up a spiral service stair.",
+   "exits": [
+    {
+     "id": "climb-the-spiral-service-stair",
+     "label": "Climb the spiral service stair",
+     "to": "up-w-final-choice"
+    }
+   ]
+  }
+ ],
+ "addExits": [
+  {
+   "node": "up-w-eclipse-approach",
+   "exit": {
+    "id": "show-rigg-s-foundry-warrant",
+    "label": "Show Rigg's foundry warrant",
+    "to": "up-w-det-foundry-warrant",
+    "when": {
+     "rigg": "allied"
+    }
+   }
+  },
+  {
+   "node": "up-w-eclipse-roofs",
+   "exit": {
+    "id": "pass-the-checkpoint-in-the-debt-coat",
+    "label": "Pass the checkpoint in the debt coat",
+    "to": "up-w-det-pass-tailor",
+    "when": {
+     "cover": "tailor"
+    }
+   }
+  },
+  {
+   "node": "up-w-eclipse-roofs",
+   "exit": {
+    "id": "pass-checkpoint-in-the-porter-s-rough-livery",
+    "label": "Pass checkpoint in the porter's rough livery",
+    "to": "up-w-det-pass-livery",
+    "when": {
+     "cover": "livery"
+    }
+   }
+  },
+  {
+   "node": "up-w-eclipse-roofs",
+   "exit": {
+    "id": "pass-checkpoint-in-opera-usher-s-uniform",
+    "label": "Pass checkpoint in opera usher's uniform",
+    "to": "up-w-det-pass-usher",
+    "when": {
+     "cover": "usher"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,63 @@
+Gemini said
+
+@@BEAT td-2-001 | You step onto the exposed seabed of the Low, boots sinking into salt-crusted mud as you begin your search for Orsolya.
+@@HUB td-2-002 | The Wreck of the Albatross | The shattered hull of a merchant vessel offers shelter from the biting wind, though scavengers already lurk inside.
+@@CHAIN td-2-002/0 | You decipher the captain's waterlogged ledger to find a hidden cache, risking a sudden deck collapse to claim a silver compass.
+@@CHAIN td-2-002/1 | You translate the strange markings on the cargo crates, avoiding a trapped mechanism to secure a bundle of waterproof matches.
+@@CHAIN td-2-002/2 | You study the scavenging patterns of rival crews to slip past their lookouts, securing an intact spyglass for your journey.
+@@CHAIN td-2-002/3 | You recall old tide maps to navigate the treacherous cargo hold, dodging a falling mast to find a sealed jar of lantern oil.
+@@BEAT td-2-022 | A distant rumble echoes across the plains as a massive sinkhole opens ahead, swallowing a cluster of drowned homes.
+@@HUB td-2-023 | The Salt-Flats Sinkholes | A sprawling expanse of brittle white crust hides deep, treacherous pits that vent strange, intoxicating gases into the cold air.
+@@CHAIN td-2-023/0 | You fashion a sturdy grappling hook from scattered debris, risking a fatal plunge to retrieve a preserved coil of rope.
+@@CHAIN td-2-023/1 | You dismantle a rusted winch mechanism near the edge, carefully avoiding jagged metal to extract a heavy iron gear.
+@@CHAIN td-2-023/2 | You pry open a half-buried sea chest embedded in the crust, straining against the hardened salt to claim a heavy cutlass.
+@@CHAIN td-2-023/3 | You haul a trapped scavenger from a crumbling ledge, risking your own footing to earn a pouch of rare coins.
+@@CHAIN td-2-023/4 | You smash through the petrified hull of a sunken dinghy, ignoring the toxic fumes to grab a sturdy wooden oar.
+@@BEAT td-2-045 | The horizon darkens as you approach the immense, decaying bulk of a stranded leviathan, its pale ribs towering like a cathedral.
+@@HUB td-2-046 | The Leviathan Market | Scavengers and opportunistic merchants have set up a bustling, foul-smelling bazaar within the rotting belly of the dead sea beast.
+@@CHAIN td-2-046/0 | You wrestle a massive slab of blubber away from a territorial hound, taking heavy bruises to secure a valuable fuel source.
+@@CHAIN td-2-046/1 | You negotiate fiercely with a suspicious pawn-widow, maintaining your composure to trade scrap metal for a map of the dunes.
+@@CHAIN td-2-046/2 | You repair a merchant's broken water-still using discarded bones, carefully balancing the delicate components to earn a full canteen.
+@@CHAIN td-2-046/3 | You confront a band of aggressive thugs harassing a vendor, risking a violent brawl to gain the merchant's loyal patronage.
+@@BEAT td-2-065 | Leaving the market behind, you enter a vast stretch of sand that hums and vibrates with an eerie, mournful resonance.
+@@HUB td-2-066 | The Singing Dunes | Shifting hills of golden sand emit a hypnotic sound, concealing ancient relics and the wandering figures of lost sailors.
+@@CHAIN td-2-066/0 | You dig furiously through a sudden sandslide to uncover a buried shrine, exhausting your muscles to claim a jade idol.
+@@CHAIN td-2-066/1 | You analyze the pitch of the singing sands to locate solid ground, avoiding dangerous quicksand to reach an abandoned campsite.
+@@CHAIN td-2-066/2 | You decipher the chaotic footprints left by previous travellers, navigating the shifting maze to find a discarded, sturdy walking staff.
+@@CHAIN td-2-066/3 | You ignore the maddening whispers echoing from the dunes, fighting off a creeping panic to pocket a gleaming white pearl.
+@@CHAIN td-2-066/4 | You stand your ground against a terrifying illusion conjured by the dunes, mastering your fear to pluck a rare desert flower.
+@@BEAT td-2-088 | The dunes give way to a jagged reef of colourful coral, now bleached and crumbling beneath the unrelenting grey sky.
+@@HUB td-2-089 | The Bleached Reef | Razor-sharp coral formations create a treacherous labyrinth, harbouring hidden tide-pools and aggressive, overgrown scavenging crabs.
+@@CHAIN td-2-089/0 | You study the tidal patterns etched in the coral to predict a safe path, avoiding razor-sharp edges to find a healing poultice.
+@@CHAIN td-2-089/1 | You identify the medicinal properties of a rare dried kelp, harvesting the fragile fronds without triggering a rockfall to gain its benefits.
+@@CHAIN td-2-089/2 | You construct a makeshift net from discarded fishing lines, risking a severe pinch to capture a large, edible reef crab.
+@@BEAT td-2-104 | You encounter a solemn procession of figures wearing kelp robes, dragging an ornate anchor across the dry seabed in silent devotion.
+@@HUB td-2-105 | The Pilgrim Trail | The Drift Pilgrims have established a temporary camp, offering strange blessings and seeking offerings for their sulking ocean deity.
+@@CHAIN td-2-105/0 | You help the pilgrims drag their massive anchor up a steep incline, straining your back to earn their sacred blessing of protection.
+@@CHAIN td-2-105/1 | You physically defend the pilgrimage from a desperate pack of wild dogs, risking deep bites to receive a consecrated vial of seawater.
+@@CHAIN td-2-105/2 | You carve a beautiful wooden offering bowl for their ritual, working the wood carefully to win a warm meal and vital supplies.
+@@CHAIN td-2-105/3 | You endure a painful initiation ritual with burning sea-salt, resisting the urge to cry out to gain an amulet of deep-sea glass.
+@@BEAT td-2-126 | As the pilgrim camp fades in the distance, you spot the towering, stilt-supported structures of a wealthy outpost looming ahead.
+@@HUB td-2-127 | Saltspire Outskirts | The towering stilt-city of the Brineholders casts long shadows over a cluster of desperate squatter camps and guarded water-pumps.
+@@CHAIN td-2-127/0 | You bluff your way past a suspicious Brineholder guard, risking imprisonment to smuggle a canteen of pure, fresh water.
+@@CHAIN td-2-127/1 | You force open a jammed, rusted water valve on the city's perimeter, battling the heavy pressure to fill your own flasks.
+@@CHAIN td-2-127/2 | You pick the complex lock on an abandoned storage crate, avoiding a poison needle trap to steal a cache of dried meat.
+@@BEAT td-2-142 | Beyond the stilt-city, the ground plunges into a vast, dark canyon where the remains of a drowned cathedral lie exposed.
+@@HUB td-2-143 | The Drowned Cathedral | A massive gothic structure leans precariously in the mud, its stained glass shattered and its damp halls echoing with strange voices.
+@@CHAIN td-2-143/0 | You brave the dark crypts to confront a restless spirit of the Hollow Choir, keeping your sanity intact to claim a silver chalice.
+@@CHAIN td-2-143/1 | You walk the crumbling upper rafters to reach the bell tower, ignoring the dizzying drop to retrieve a forgotten Tidewarden journal.
+@@CHAIN td-2-143/2 | You carefully dismantle a rusted pipe organ to access a hidden compartment, avoiding the collapsing masonry to find an ornate brass key.
+@@BEAT td-2-159 | A chilling mist rolls in from the deeper trenches, obscuring your path and bringing with it the scent of ancient rot.
+@@HUB td-2-160 | The Trench Edge | The seabed drops off into an impenetrable abyss where strange, phosphorescent fungi grow and unseen predators stalk the gloom.
+@@CHAIN td-2-160/0 | You fight off a grotesque, mutated angler-beast that emerges from the fog, risking terrible lacerations to harvest its glowing lure.
+@@CHAIN td-2-160/1 | You pry a massive clam shell open with your bare hands, struggling against its tremendous grip to extract a flawless black pearl.
+@@CHAIN td-2-160/2 | You navigate the confusing patches of glowing fungi to find a safe descent, avoiding hallucinogenic spores to discover a hidden cave shelter.
+@@BEAT td-2-176 | Following the map from the journal, you finally locate the entrance to the spiral shaft leading down into the darkness.
+@@HUB td-2-177 | The Sunken Stair Descent | A treacherous, spiralling staircase carved into the bedrock descends toward the Meridian Gear, guarded by ancient traps and brittle stone.
+@@CHAIN td-2-177/0 | You disarm an ancient pressure plate on the steps, working with steady hands to secure passage and a vial of alchemical fire.
+@@CHAIN td-2-177/1 | You squeeze through a terrifyingly narrow crevice to bypass a collapsed section, fighting off severe claustrophobia to find a rusted signet ring.
+@@CHAIN td-2-177/2 | You push a massive fallen pillar out of the stairwell, straining your muscles to the limit to uncover a hidden weapon cache.
+@@CHAIN td-2-177/3 | You leap across a yawning chasm where the stairs have crumbled, risking a deadly fall to reach a secure landing and resting spot.
+@@CHAIN td-2-177/4 | You repair a shattered pulley mechanism to lower your heavy gear safely, dodging snapping cables to ensure your supplies remain intact.
+@@BEAT td-2-199 | At the bottom of the stair, the massive brass teeth of the Meridian Gear loom in the shadows, waiting to be turned.
+@@DONE
