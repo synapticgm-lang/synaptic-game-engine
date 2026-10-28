@@ -231,13 +231,20 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
   if (!t) return false;
   if (/^(?:talk(?:\s+to)?|speak(?:\s+to)?|ask)\b/i.test(t)) return true;
   if (/["\u201c]/.test(t)) return true;
-  // "ask the priest if…" / "ask if she's seen…" / "ask Ysolde if…"
-  if (/\bask\b[\s\S]{0,60}\bif\b/i.test(t)) return true;
-  if (/\bask\s+(?:the\s+)?[\w'-]+(?:\s+[\w'-]+){0,2}\b/i.test(t) && /\b(?:if|whether|about|what|who|where|why|how)\b/i.test(t)) {
+  // T10AC / T10P — stem forms (asking / telling) match intentParser speech markers.
+  // `\bask\b` alone missed "asking Brannoc if…" (s8603 T6).
+  if (/\bask(?:ing)?\b[\s\S]{0,60}\bif\b/i.test(t)) return true;
+  if (
+    /\bask(?:ing)?\s+(?:the\s+)?[\w'-]+(?:\s+[\w'-]+){0,2}\b/i.test(t) &&
+    /\b(?:if|whether|about|what|who|where|why|how)\b/i.test(t)
+  ) {
     return true;
   }
-  // T10AA — shout/tell/call at a present named person is speech that needs their reply.
-  if (state && /\b(?:ask|tell|shout(?:\s+at)?|call(?:\s+out)?(?:\s+to)?|say\s+to)\b/i.test(t)) {
+  // T10AA / T10AC — shout/tell/call/ask(ing) at a present named person needs their reply.
+  if (
+    state &&
+    /\b(?:ask(?:ing)?|tell(?:ing)?|shout(?:ing)?(?:\s+at)?|call(?:ing)?(?:\s+out)?(?:\s+to)?|say\s+to)\b/i.test(t)
+  ) {
     const low = t.toLowerCase();
     if (peopleHere(state).some((n) => n.split(/\s+/).some((w) => w.length >= 3 && new RegExp(`\\b${esc(w.toLowerCase())}\\b`).test(low)))) {
       return true;

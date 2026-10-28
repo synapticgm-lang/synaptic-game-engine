@@ -1290,7 +1290,9 @@ function stepAlong(state: GameState, j: TravelJourney): TravelCommit {
   const extra = [...march.status, ...day.status];
   const facts = [...march.facts, ...day.facts];
   if (legsDone >= day.journey.legsTotal) {
-    const a = arrive(day.state, j.to, j.hoursPerLeg, j.ground.toLowerCase(), j.terrain, true);
+    // T10AC — arrival receipt names the recorded journey.from place, not the ground label
+    // ("back streets"), so STATUS matches the place actually left / reached.
+    const a = arrive(day.state, j.to, j.hoursPerLeg, j.from, j.terrain, true);
     const all = [...facts, ...(a.facts ?? [])];
     return { ...a, ...(extra.length ? { extra } : {}), ...(all.length ? { facts: all } : {}) };
   }

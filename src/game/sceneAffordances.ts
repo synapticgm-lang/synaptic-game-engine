@@ -7,7 +7,7 @@
  * the result." Roll only when uncertain; a certain open (unlocked door) carries no CheckSpec.
  * Labels stay the plain action (feature-groups-plan §4). No word lists or label regexes.
  */
-import type { GameState, QuestRoute } from './types';
+import type { GameState, PlaceExitRow, QuestRoute } from './types';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
 import { presentNpcRecords, resolveNpcRecord } from './npcRecords';
@@ -81,6 +81,26 @@ function exitEntityId(row: { id?: string; label?: string }): string {
   const id = (row.id ?? '').trim();
   if (id) return id;
   return (row.label ?? '').trim();
+}
+
+/**
+ * T10AC — one reachable-exit list for MOVE chips and the ghost-chip gate.
+ * placeExitRows (recorded from HERE) plus the open quest step's placeId when off-site
+ * (T10AA Front Door travel). Never invent a parallel `place:` entity the gate cannot see.
+ */
+export function recordedTravelDestinations(state: GameState): PlaceExitRow[] {
+  const rows = placeExitRows(state, state.currentLocation);
+  const open = openRouteView(state);
+  const dest = (open?.step.placeId ?? open?.step.place ?? '').trim();
+  if (!dest) return rows;
+  const here = (state.currentLocation ?? '').trim().toLowerCase();
+  if (!here || dest.toLowerCase() === here) return rows;
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i]!;
+    if (row.label.toLowerCase() === dest.toLowerCase()) return rows;
+    if (exitEntityId(row).toLowerCase() === dest.toLowerCase()) return rows;
+  }
+  return [...rows, { id: dest, label: dest }];
 }
 /** q45b-SLOT — one final-pad slot. Free-input chips are not a slot. */
 export type SlotCategory = 'move' | 'talk' | 'act' | 'scene';
@@ -369,32 +389,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         check: withModeCheck ? checkForAction(state, parsePlayerIntent(row.label, state), row.label) : undefined,
       });
     }
-    // T10AA — when the open step has a placeId and we are not there (or its place route failed),
-    // offer travel to that place so Ask/Press cannot loop with no next step.
-    if (rpg && !travelPadBlocked(state)) {
-      const dest = (openRoutes.step.placeId ?? openRoutes.step.place ?? '').trim();
-      const destKey = dest.toLowerCase();
-      if (dest && destKey && destKey !== herePlace) {
-        const already = all.some(
-          (a) =>
-            a.actionId === `quest-route-travel:${openRoutes.quest.id}:${openRoutes.step.id}` ||
-            (a.slotKind === 'exit' && mentionsName(a.label, dest)),
-        );
-        if (!already) {
-          const travel = `Travel toward ${dest}`;
-          all.push({
-            label: travel,
-            actionId: `quest-route-travel:${openRoutes.quest.id}:${openRoutes.step.id}`,
-            entityId: `place:${dest}`,
-            slotKind: 'exit',
-            slotCategory: 'move',
-            salience: 92,
-            required: true,
-            check: undefined,
-          });
-        }
-      }
-    }
+    // T10AC — off-site quest placeId is folded into recordedTravelDestinations (same list as
+    // exit chips + ghost gate). Do not invent a parallel place: entityId travel chip here.
   } else {
     const step = tabletopStepChip(state) ?? storyRpgDecisionChip(state);
     if (step) {
@@ -440,8 +436,13 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       visitedKeys.add((n.name ?? '').toLowerCase());
     }
   }
-  // q50e — MOVE exits from placeExitRows (record, or the same seed with no write).
-  const recordExits = placeExitRows(state, state.currentLocation);
+  // T10AC / q50e — MOVE exits from recordedTravelDestinations (placeExitRows + open quest place).
+  const questTravelDest = (
+    openRoutes?.step.placeId ?? openRoutes?.step.place ?? ''
+  )
+    .trim()
+    .toLowerCase();
+  const recordExits = recordedTravelDestinations(state);
   if (recordExits.length) {
     for (let i = 0; i < recordExits.length; i++) {
       const row = recordExits[i]!;
@@ -449,12 +450,13 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
       const entityId = exitEntityId(row);
       const chip = `Travel toward ${dest}`;
+      const questBoost = !!questTravelDest && dest.toLowerCase() === questTravelDest;
       all.push({
         label: chip,
         actionId: `exit:${entityId}:travel`,
         entityId,
         slotKind: 'exit',
-        salience: visitedKeys.has(dest.toLowerCase()) ? 30 : 70,
+        salience: questBoost ? 92 : visitedKeys.has(dest.toLowerCase()) ? 30 : 70,
         required: true,
         check: dnd || litrpg ? null : undefined,
       });
@@ -989,8 +991,8 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
   }
   // q75r: never refill Travel toward … while fight / road / dying blocks travel.
   if (!move.length && !noTravel) {
-  // q50e — MOVE refill from placeExitRows (same ids as the MOVE chips).
-  const recordExits = placeExitRows(state, state.currentLocation);
+  // T10AC / q50e — MOVE refill from recordedTravelDestinations (same ids as the MOVE chips).
+  const recordExits = recordedTravelDestinations(state);
   const raw: T[] = [];
   if (recordExits.length) {
     for (let i = 0; i < recordExits.length; i++) {
@@ -1320,6 +1322,25 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
     return false;
   }
   if (entityId.startsWith('place:') || entityId.startsWith('object:')) {
+    const name = entityId.slice(entityId.indexOf(':') + 1).trim();
+    // HERE search chip — current place is always in the scene record.
+    if (
+      entityId.startsWith('place:') &&
+      name &&
+      name.toLowerCase() === (state.currentLocation ?? '').trim().toLowerCase()
+    ) {
+      return true;
+    }
+    // T10AC — travel destinations: same recordedTravelDestinations list the MOVE chips use.
+    if (entityId.startsWith('place:') && name) {
+      const dests = recordedTravelDestinations(state);
+      const want = name.toLowerCase();
+      for (let i = 0; i < dests.length; i++) {
+        const row = dests[i]!;
+        if (row.label.toLowerCase() === want) return true;
+        if (exitEntityId(row).toLowerCase() === want) return true;
+      }
+    }
     const open = openRouteView(state);
     if (!open) return false;
     const rows = open.rows;
@@ -1327,6 +1348,16 @@ export function affordanceEntityPresent(state: GameState, entityId: string): boo
       if (rows[i]!.entityId === entityId) return true;
     }
     return false;
+  }
+  // Exit entityIds on Travel chips (hub id or place label): recorded reachable from HERE.
+  {
+    const dests = recordedTravelDestinations(state);
+    const want = entityId.toLowerCase();
+    for (let i = 0; i < dests.length; i++) {
+      const row = dests[i]!;
+      if (exitEntityId(row).toLowerCase() === want) return true;
+      if (row.label.toLowerCase() === want) return true;
+    }
   }
   if (entityId.startsWith('quest-route:') || entityId.startsWith('quest:')) {
     const open = openRouteView(state);
