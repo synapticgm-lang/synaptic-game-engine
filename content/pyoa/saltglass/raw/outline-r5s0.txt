@@ -1,0 +1,55 @@
+Gemini said
+
+@@SEED sg-5-0-0-0 | Beneath the cracked dome of the Outer Gallery, you dodge falling splinters of solar glass while Salt Court assessors bicker over land claims.
+@@SEED sg-5-0-0-1 | Among the frozen sun-dials of the North Vestibule, a Glasswright sentinel flashes mirror codes that warn of rising basin tides and closed gates.
+@@SEED sg-5-0-0-2 | Within the dusty cistern ring, you share stale water with Pell while heavy basalt drums signal the arrival of rival salt-tolls at the gatehouse.
+@@SEED sg-5-0-0-3 | Beside a colossal fractured objective lens, a Dune Sister trades shelter for your pledge while distant mirrors catch the glare of approaching scavengers.
+@@SEED sg-5-0-1-0 | Under the low lintel of the Sundered Portico, you squeeze past rusted winch gears while salt-inspectors demand immediate tax on your ceramic key.
+@@SEED sg-5-0-1-1 | In the whistling acoustic corridor of the Whispering Arch, shifting wind drafts threaten to blow out your banked ember-lamp before you find shelter.
+@@SEED sg-5-0-1-2 | Amidst heaps of discarded optical glass in the Shard Pit, an old lens-grinder offers a forged pass in exchange for a pinch of precious salt.
+@@SEED sg-5-0-1-3 | Your salt-blistered arm catches a beam from the high beacons, prompting an awed sentry to unlock a hidden service hatch for you.
+@@SEED sg-5-0-1-4 | Beside a dry bronze fountain in the Courtyard of Mirrors, rival toll-agents trade loud insults while guarding the main avenue to the observatory.
+@@SEED sg-5-0-1-5 | Inside a ruined scriptorium choked with drift-sand, you decipher ancient glass-charts detailing the underground service conduits beneath the high lens-halls.
+@@SEED sg-5-0-1-6 | Across the swaying rope bridge of the Great Void, a nervous Salt Court clerk drops his ledgers into the salt-crust far below.
+@@SEED sg-5-0-1-7 | Beneath the towering prismatic spire, a wounded Glasswright sentinel presses a singing prism into your palm before sliding into unconsciousness.
+@@SEED sg-5-0-1-8 | Within the cool shade of the Meridian Porch, you trade flat remarks with Pell about the strange silence echoing from the inner vaults.
+@@SEED sg-5-0-1-9 | Near the western basalt bulwark, a group of tired well-keepers light a small signal fire to guide their straggling companions through the blinding glare.
+@@SEED sg-5-0-2-0 | Through a narrow maintenance slit in the copper wall, you peer into a chamber where salt-lords argue over forged keys and hollow promises.
+@@SEED sg-5-0-2-1 | Believing the vault holds untouched rains, you stride boldly past a nervous checkpoint while guards mistake your absolute certainty for royal authority.
+@@SEED sg-5-0-2-2 | Within the echoing vault of the Star-Clock, brass cogs the size of cartwheels grind to a sudden halt under a drift of dry salt.
+@@SEED sg-5-0-2-3 | Beside the frozen cascade of the Light-Well, a desperate rival drops his water-skin and begs you for a share of your canteen.
+@@SEED sg-5-0-2-4 | Under the arched ribs of the Great Colonnade, a blind Glasswright tunes a singing pillar whose clear note masks the rumble of distant tremors.
+@@SEED sg-5-0-2-5 | In the cramped vestibule of the Prism-Keeper, old ledgers flutter in the draft while you check your ceramic key for hairline fractures.
+@@SEED sg-5-0-2-6 | Across the terrace of singing mirrors, sudden blinding sun-flashes from the sentry towers force you to crawl blindly along the scorching flagstones.
+@@SEED sg-5-0-2-7 | Within the shadow of a collapsed solar furnace, Pell cleans grit from his glass-diver goggles while warning you of traps in the floor.
+@@SEED sg-5-0-2-8 | Beneath a vaulted ceiling encrusted with salt crystals, you dodge heavy iron chains dropped by rival agents from the upper catwalks.
+@@SEED sg-5-0-2-9 | Inside the chilly crypt of the Lens-Founders, your ember-lamp flickers over stone effigies holding empty bronze bowls that once caught dew.
+@@SEED sg-5-0-2-10 | Near the broken sluice-gates of the Lower Basin, frantic diggers shovel white crust in a vain search for hidden emergency drainage pipes.
+@@SEED sg-5-0-2-11 | Within the fragrant cedar-lined alcove of the Archive, a nervous clerk tries to bribe you with dried fruit to hand over your seedkey.
+@@SEED sg-5-0-2-12 | Across the open floor of the Great Refractor, converging flash-signals from hidden sentry nests force you to seek immediate stone cover.
+@@SEED sg-5-0-3-0 | Down the steep spiral stairs of the Ocular Tower, iron handrails burn hot from the relentless noon glare striking the upper domes.
+@@SEED sg-5-0-3-1 | Inside the vaulted Hall of Tides, a chorus of singing glass pipes swells into a deafening tone that rattles your teeth.
+@@SEED sg-5-0-3-2 | Across the threshold of the Amber Gallery, thick curtains of woven hemp trap the dry heat while salt-lords negotiate behind closed cedar doors.
+@@SEED sg-5-0-3-3 | The jagged glass-burn scar on your forearm catches the low-angle prism light, illuminating a hidden spring-latch on the heavy brass door.
+@@SEED sg-5-0-3-4 | Within the shadowed crypt of the First Astronomer, dust motes dance in the amber beam of your banked coal-lantern.
+@@SEED sg-5-0-3-5 | Beside the silent bronze gears of the great clockwork, a discarded Salt Court ledger lies open to pages smeared with dried brine.
+@@SEED sg-5-0-3-6 | Through the high clerestory windows of the North Scriptorium, you watch distant dust storms sweep across the pale bed of the dead sea.
+@@SEED sg-5-0-3-7 | In the narrow conduit beneath the refracting floor, dripping condensation feeds tiny clusters of pale salt-ferns clinging to damp stone.
+@@SEED sg-5-0-3-8 | Across the courtyard of the broken sundial, an old scavenger shouts warnings about unstable glass bridges spanning the inner chasm.
+@@SEED sg-5-0-3-9 | Within the frescoed hall of the Seven Rains, flaking plaster reveals faded murals of green valleys that have not seen water for centuries.
+@@SEED sg-5-0-3-10 | Near the heavy bronze valves of the lower conduits, Pell uses a copper wedge to pry open a jammed service hatch.
+@@SEED sg-5-0-3-11 | Under the vaulted roof of the Meridian Gallery, your footsteps echo hollowly among rows of empty stone plinths that once held celestial spheres.
+@@SEED sg-5-0-3-12 | Beside the great basalt threshold of the inner vault, a dropped lantern smolders in a puddle of spilled oil, fouling the dry air.
+@@SEED sg-5-0-4-0 | Through the narrow gap of the double iron gates, you glimpse the towering obsidian face of the ultimate sanctuary door.
+@@SEED sg-5-0-4-1 | Inside the vaulted vestibule of the Lens-Keepers, flickering oil lamps cast long dancing shadows across rows of silent observation desks.
+@@SEED sg-5-0-4-2 | Across the sweeping curve of the Upper Gallery, rival agents rush toward the central approach while their heavy boots crunch on salt.
+@@SEED sg-5-0-4-3 | Beneath the massive hanging counterweights of the great lens, you scramble through a low maintenance tunnel to avoid patrolling sentries.
+@@SEED sg-5-0-4-4 | Within the cooling chambers of the solar furnace, thick stone walls muffle the howling wind that sweeps across the dead basin floor.
+@@SEED sg-5-0-4-5 | Beside the deep dry well of the observatory core, Pell tests the tension of a frayed winch rope with a skeptical frown.
+@@SEED sg-5-0-4-6 | Across the tiered stone balconies of the inner cylinder, sharp flashes of mirror signaling warn unauthorized climbers to halt immediately.
+@@SEED sg-5-0-4-7 | Within the cramped junction box of the brass conduits, your cold ceramic key hums faintly as it comes close to the sealed vault mechanism.
+@@SEED sg-5-0-5-0 | Before the towering bronze panels of the Lens-Hall Door, a intricate maze of interlocking optical gears blocks every straightforward approach.
+@@SEED sg-5-0-5-1 | Facing the locked portals of the inner sanctum, Pell traces a forgotten Glasswright maintenance tunnel hidden behind a rusted brass grille.
+@@SEED sg-5-0-5-2 | At the threshold of the massive lens-hall doors, you fumble with improvised tools while rival footsteps echo louder down the corridor behind you.
+@@SEED sg-5-0-5-3 | Standing before the heavy adamantine latch of the vault entrance, you raise your cold ceramic key as the great clockwork mechanism begins to groan.
+@@DONE
