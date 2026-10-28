@@ -1,0 +1,28 @@
+MODEL Pro
+
+[
+{
+"section": "sg-1-1-2-5",
+"field": "page",
+"old": "casting pale emerald light across the gray gravel of the Rim Road.",
+"new": "casting pale emerald light across the grey gravel of the Rim Road.",
+"kind": "prose",
+"reason": "Change US spelling (gray) to UK spelling (grey)"
+},
+{
+"section": "sg-1-1-2-6",
+"field": "page",
+"old": "Her skin is baked the color of dried clay, and her fingers tremble as she measures out the meager portions to passing runners.",
+"new": "Her skin is baked the colour of dried clay, and her fingers tremble as she measures out the meagre portions to passing runners.",
+"kind": "prose",
+"reason": "Change US spelling (color, meager) to UK spelling (colour, meagre)"
+},
+{
+"section": "sg-1-1-2-6",
+"field": "page",
+"old": "The smell of stagnant lime water hangs heavy in the stagnant noon air.",
+"new": "The smell of stagnant lime water hangs heavy in the still noon air.",
+"kind": "prose",
+"reason": "Remove filler repetition of the word stagnant"
+}
+]

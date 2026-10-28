@@ -1,0 +1,23 @@
+MODEL Pro
+
+[
+{
+"section": "sg-1-1-1-3",
+"field": "exit:0",
+"old": "Listen to Pell's drover tune echo off limestone",
+"new": "Listen to a distant drover tune echo off limestone",
+"kind": "choice",
+"reason": "Mismatched exit: Pell was left behind in the preceding prose."
+},
+{
+"section": "sg-1-1-1-4",
+"field": "page",
+"old": "scour the flats clean of any traveler foolish enough",
+"new": "scour the flats clean of any traveller foolish enough",
+"kind": "prose",
+"reason": "US spelling 'traveler' changed to UK spelling 'traveller'."
+}
+]
+
+Want to review more connected scenes?
+Yes

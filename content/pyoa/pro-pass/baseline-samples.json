@@ -1,0 +1,76 @@
+{
+  "saltglass": {
+    "prose": 901,
+    "words": 72568,
+    "samples": [
+      {
+        "id": "sg-p1",
+        "title": "The Ember Lamp Post",
+        "w": 88,
+        "page": "Dust hangs thick in the low-beamed hall of the Ember-Lamp Post, where the elders of Candlemere gather around a dead hearth. The valley harvests have shrivelled into grey ash, and t",
+        "exits": [
+          "Clasp the ceramic rod without speaking a word",
+          "Demand to know why previous runners never returned"
+        ]
+      },
+      {
+        "id": "sg-p2a",
+        "title": "Weight of the Seedkey",
+        "w": 70,
+        "page": "Your fingers close around the Seedkey, its heavy ceramic chill biting straight through your palm. As long as a hand and shaped like a closed pod, it is the only thing standing betw",
+        "exits": [
+          "Turn away from the empty hearth and prepare your pack"
+        ]
+      },
+      {
+        "id": "sg-p2b",
+        "title": "Shadows of the Past",
+        "w": 82,
+        "page": "Silence settles over the low-beamed hall as your question hangs in the dry air. The eldest councillor exchanges a heavy glance with the others before admitting that no runner has r",
+        "exits": [
+          "Sling your provisions over your shoulder and prepare for the journey"
+        ]
+      }
+    ]
+  },
+  "dice": {
+    "prose": 1000,
+    "words": 90030,
+    "samples": [
+      {
+        "id": "td-0-001",
+        "title": "The Keeper's Final Note",
+        "w": 167,
+        "page": "Salt crusts the heavy glass of the Gullmouth lighthouse lamp room, frosting the windows against a horizon that should be blue water but is only brown, baked mud. Three days ago, th",
+        "exits": [
+          "Turn away from the glass"
+        ]
+      },
+      {
+        "id": "td-0-002",
+        "title": "The Keeper's Quarters",
+        "w": 144,
+        "page": "Dust motes drift in the cold beams of sunlight piercing the keeper's quarters. Orsolya left in a hurry; her heavy woollen shawl still hangs over the chair, smelling faint of pipe s",
+        "exits": [
+          "Decipher the scattered navigational charts",
+          "Repair the rusted brass spyglass",
+          "Dismantle the heavy lantern for oil"
+        ]
+      },
+      {
+        "id": "td-0-003",
+        "title": "Faded Navigational Charts",
+        "w": 143,
+        "page": "Parchment crackles under your fingers as you smooth out the oversized maps on Orsolya's drafting table. Most of the documents depict the Wrack Coast as it was four days ago, covere",
+        "exits": [
+          "Try to read the safe route"
+        ]
+      }
+    ],
+    "caveat": "dice-tide model-unverified in flashlite-sections.json"
+  },
+  "lintBefore": {
+    "saltglass": "0 errors / 4 warnings (meta wording)",
+    "dice": "0 errors / 3 warnings"
+  }
+}

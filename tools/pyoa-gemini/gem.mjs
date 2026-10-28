@@ -11,10 +11,21 @@ export class GeminiStop extends Error {
 
 async function lastResponse(page) {
   return page.evaluate(() => {
-    const els = [...document.querySelectorAll('model-response')];
-    const el = els.at(-1);
-    if (!el) return { n: 0, text: '' };
-    return { n: els.length, text: (el.innerText || '').trim() };
+    const sels = ['model-response', '[data-message-author-role="model"]', 'message-content', '.model-response-text', '[class*="model-response"]'];
+    const chunks = [];
+    for (const sel of sels) {
+      for (const el of document.querySelectorAll(sel)) {
+        const t = (el.innerText || '').trim();
+        if (t.length > 8) chunks.push(t);
+      }
+    }
+    const n = document.querySelectorAll('model-response').length || chunks.length;
+    let text = chunks.at(-1) || '';
+    // Drop leading chrome / collapsed "Thoughts" headers when the JSON body follows.
+    text = text.replace(/^Gemini said\s*/i, '').trim();
+    const thought = text.match(/^Thoughts?\b[\s\S]*?\n(?=\[|\{|@@)/i);
+    if (thought) text = text.slice(thought[0].length).trim();
+    return { n, text };
   });
 }
 
@@ -55,18 +66,19 @@ export async function ask(prompt, { fresh = true, timeoutMs = 360000, model = ''
     // Pro 'thinking' can look idle with an empty reply: keep polling until real text appears and is stable.
     const t0 = Date.now(); let lastLen = -1, stable = 0;
     while (ok && Date.now() - t0 < timeoutMs) {
-      const body = r.text.replace(/^Gemini said\s*/i, '').trim();
+      const body = (r.text || '').replace(/^Gemini said\s*/i, '').trim();
       if (r.n > before && body.length > 20 && body.length === lastLen) { if (++stable >= 2) break; } else stable = 0;
       lastLen = body.length;
       await sleep(4000);
       r = await lastResponse(page);
     }
     if (!ok) throw new GeminiStop('timeout', 'Gemini still generating after timeout');
-    if (r.n <= before || !r.text) {
+    const body = (r.text || '').replace(/^Gemini said\s*/i, '').trim();
+    if (r.n <= before || body.length < 8) {
       if (st.limit) throw new GeminiStop('limit', 'Gemini limit/error text on page');
       throw new GeminiStop('noreply', 'No new Gemini reply detected');
     }
-    return r.text;
+    return body;
   } finally {
     browser.disconnect();
   }

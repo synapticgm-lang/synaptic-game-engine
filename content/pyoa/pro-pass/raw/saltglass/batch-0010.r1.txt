@@ -1,0 +1,28 @@
+MODEL Pro
+
+[
+{
+"section": "sg-1-1-2-15",
+"field": "page",
+"old": "woolen trousers",
+"new": "woollen trousers",
+"kind": "prose",
+"reason": "British spelling"
+},
+{
+"section": "sg-1-1-3-1",
+"field": "page",
+"old": "meager patch",
+"new": "meagre patch",
+"kind": "prose",
+"reason": "British spelling"
+},
+{
+"section": "sg-1-1-3-1",
+"field": "page",
+"old": "traveling sack",
+"new": "travelling sack",
+"kind": "prose",
+"reason": "British spelling"
+}
+]
