@@ -1,0 +1,66 @@
+Gemini said
+
+@@BEAT td-3-001 | You approach the soaring stilt-legs of Saltspire, discovering the rusted winch-lifts are heavily guarded by Brineholder mercenaries who demand a steep toll for entry.
+@@HUB td-3-002 | The Piling Slums | A sprawling shanty of shipwreck timber clings to the lower stilts, teeming with desperate scavengers looking for a way up.
+@@CHAIN td-3-002/0 | You try forcing a jammed cargo lift to bypass the guards, risking a fatal plunge to earn a rusted access key.
+@@CHAIN td-3-002/1 | You attempt to trick a naive mercenary into lowering a private basket, risking discovery to gain a uniform coat.
+@@CHAIN td-3-002/2 | You work to repair a broken rope-pulley left by smugglers, risking exhaustion to secure a hidden climbing harness.
+@@CHAIN td-3-002/3 | You brave a treacherous climb up the barnacle-encrusted central pillar, risking a nasty fall to discover a dropped purse of Coin.
+@@CHAIN td-3-002/4 | You stare down a territorial thug guarding a secret ladder, risking a beating to win his begrudging respect and free passage.
+@@BEAT td-3-026 | Ascending into the lower districts, you realise Saltspire is parched, and the Brineholders strictly ration all freshwater to control the populace.
+@@HUB td-3-027 | The Drip Markets | A chaotic bazaar suspended on netting, where desperate citizens trade salvage for tiny measures of precious, muddy water.
+@@CHAIN td-3-027/0 | You attempt to jury-rig a broken condensation trap, risking angry merchants to claim a full flask of clean water.
+@@CHAIN td-3-027/1 | You push through a desperate crowd fighting over a spilled barrel, risking broken ribs to grab an ornate silver cup.
+@@CHAIN td-3-027/2 | You forge a quick counterfeit rationing token to fool a vendor, risking arrest to secure extra Supplies for your journey.
+@@CHAIN td-3-027/3 | You intercept a thief trying to steal a merchant's aqueduct map, risking a knife wound to claim the map yourself.
+@@CHAIN td-3-027/4 | You mend a torn canvas rain-catcher dangling over the abyss, risking a deadly slip to earn a grateful water-baron's favour.
+@@BEAT td-3-050 | You learn Orsolya Venn was seen being escorted by the Brineholder elite towards the upper canopy, leaving a trail of coded chalk marks.
+@@HUB td-3-051 | The Swaying Bridges | A network of precarious rope bridges connects the middle tiers, battered by sudden, fierce salt winds.
+@@CHAIN td-3-051/0 | You sprint across a snapping bridge during a sudden squall, risking a plummet to reach an abandoned courier's satchel.
+@@CHAIN td-3-051/1 | You try weaving fallen planks into a stable path across a gap, risking structural collapse to salvage a sturdy grappling hook.
+@@CHAIN td-3-051/2 | You physically hold a tearing rope steady for a panicked citizen, risking torn muscles to receive a vital Brineholder password.
+@@CHAIN td-3-051/3 | You decipher Orsolya's faded chalk marks through the swirling dust, risking lost time to find a hidden cache of Vigor-restoring herbs.
+@@BEAT td-3-071 | A patrol of heavily armed Brineholder enforcers blocks the main thoroughfare, conducting brutal searches for suspected Drift Pilgrim sympathisers.
+@@HUB td-3-072 | The Vent Shafts | Dark, narrow steam vents offer a perilous alternative route upward, echoing with the moans of trapped gulls.
+@@CHAIN td-3-072/0 | You squeeze through a dangerously narrow, boiling pipe, risking severe burns to emerge near a forgotten armoury stash.
+@@CHAIN td-3-072/1 | You navigate the intersecting vents by listening to the changing air currents, risking getting hopelessly lost to find a smuggler's map.
+@@CHAIN td-3-072/2 | You dismantle a rusted vent grating to create a makeshift shield, risking a noise that attracts guards to gain vital protection.
+@@BEAT td-3-086 | Emerging near the upper canopy, you behold the magnificent, glass-domed water reservoirs of the Brineholders, glittering under the harsh sun.
+@@HUB td-3-087 | The Cistern Walk | A grand, patrolled promenade wrapping around the immense glass water tanks, offering incredible views and terrible danger.
+@@CHAIN td-3-087/0 | You try to pry a loose ornamental gem from the cistern framework, risking a crushing fall to acquire a valuable trade stone.
+@@CHAIN td-3-087/1 | You eavesdrop on two elite guards discussing the Sunken Stair, risking discovery to learn the precise schedule of the patrols.
+@@CHAIN td-3-087/2 | You distract a pacing watchman with a thrown piece of debris, risking an alarm to slip inside a secure archivist office.
+@@CHAIN td-3-087/3 | You carefully traverse a thin glass ledge above the reservoir, risking a terrifying plunge to recover a drowned worker's toolbelt.
+@@BEAT td-3-107 | Inside the archives, you discover documents proving the Brineholders know the Meridian Gear is jammed and intend to destroy it.
+@@HUB td-3-108 | The Dusty Annex | A neglected library of damp, rotting charts and tidal records, guarded by intricate mechanical locks.
+@@CHAIN td-3-108/0 | You speed-read through a decaying ledger before it crumbles, risking toxic mold exposure to glean the secret combination to the vault.
+@@CHAIN td-3-108/1 | You carefully pick the brass lock of a restricted tidal cabinet, risking a triggered poison needle to claim an ancient brass compass.
+@@CHAIN td-3-108/2 | You construct a makeshift magnifying lens from broken spectacles, risking eye strain to decipher a microscopic map of the Sunken Stair.
+@@CHAIN td-3-108/3 | You force open a rusted iron bookcase that has sealed shut, risking a deafening crash to uncover a hidden cache of Coin.
+@@BEAT td-3-127 | An alarm bell shatters the quiet, signalling that your intrusion has been noticed, forcing a frantic escape toward the governor's spire.
+@@HUB td-3-128 | The Rooftop Run | A slanted, terrifying expanse of slate roofs and guttering connecting the archives to the central palace.
+@@CHAIN td-3-128/0 | You attempt to jam a pursuit door with a shattered roof tile, risking crushed fingers to buy precious time and a discarded weapon.
+@@CHAIN td-3-128/1 | You calculate the exact trajectory for a desperate leap across a gap, risking a fatal miss to grab a dangling escape rope.
+@@CHAIN td-3-128/2 | You rapidly plan a route through the blinding smoke of a chimney fire, risking asphyxiation to find a safe hideout.
+@@BEAT td-3-141 | You crash through a skylight into the opulent chambers of the Brineholder Governor, finding him locked in a tense negotiation.
+@@HUB td-3-142 | The Governor's Solarium | A sun-drenched room filled with dying exotic plants and nervous aristocrats making desperate bargains.
+@@CHAIN td-3-142/0 | You bluff your way into joining the negotiation as an emissary, risking immediate execution to secure a signed transit pass.
+@@CHAIN td-3-142/1 | You subtly disable the intricate locking mechanism of the solarium door, risking detection to ensure a clear escape route for later.
+@@CHAIN td-3-142/2 | You stand your ground when an aristocrat's bodyguard draws a blade, risking a severe wound to establish dominance and gain respect.
+@@CHAIN td-3-142/3 | You physically restrain a panicked nobleman who tries to flee, risking a brutal scuffle to extort a heavy purse of Coin.
+@@CHAIN td-3-142/4 | You smash a heavy urn to create a sudden diversion, risking flying shrapnel to snatch a ceremonial key from a table.
+@@BEAT td-3-165 | Orsolya is not here, but the Governor reveals she was taken down the Sunken Stair by the Hollow Choir as a hostage.
+@@HUB td-3-166 | The Descent Winch | A massive, groaning mechanical elevator meant to lower brave souls directly towards the exposed seabed.
+@@CHAIN td-3-166/0 | You step onto the swaying, unrailed platform as it violently descends, risking debilitating vertigo to secure a sturdy iron prybar.
+@@CHAIN td-3-166/1 | You study the complex braking levers to control the descent speed, risking a free-fall to salvage some precious mechanical parts.
+@@CHAIN td-3-166/2 | You crank a rusted manual override wheel to force the winch down, risking severe muscle tearing to reach a hidden maintenance alcove.
+@@CHAIN td-3-166/3 | You fight off a desperate scavenger trying to hijack the platform, risking a lethal shove to keep your hard-won Supplies intact.
+@@CHAIN td-3-166/4 | You spot a hidden structural weakness in the elevator shaft, risking a delay to carefully extract a rare, glowing lumen-crystal.
+@@BEAT td-3-192 | The winch deposits you at the very base of Saltspire, where the shadows are long and the entrance to the Stair looms.
+@@HUB td-3-193 | The Stilt-Roots | A gloomy labyrinth of petrified wood and coral forming the foundation of the city in the dry dark.
+@@CHAIN td-3-193/0 | You carve a series of guiding marks into the coral pillars, risking a ruined blade to ensure you can find your way back.
+@@CHAIN td-3-193/1 | You fashion a makeshift torch from dried kelp and whale fat, risking a nasty burn to acquire reliable illumination for the depths.
+@@CHAIN td-3-193/2 | You brave the suffocating darkness to crawl through a narrow root-tunnel, risking a panic attack to discover an ancient Tidewarden signet ring.
+@@CHAIN td-3-193/3 | You pry a massive, crushing barnacle off a buried strongbox, risking crushed hands to loot a hefty sum of emergency Coin.
+@@BEAT td-3-211 | Standing before the spiralling abyss of the Sunken Stair, you take a deep breath and begin the dark descent towards the Gear.
+@@DONE

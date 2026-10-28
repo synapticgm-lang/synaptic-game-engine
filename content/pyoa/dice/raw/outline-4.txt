@@ -1,0 +1,61 @@
+Gemini said
+
+@@BEAT td-4-001 | The descent into the yawning mouth of the Sunken Stair begins with the crushing scent of stagnant brine and ancient rust clinging to your throat.
+@@HUB td-4-002 | The Upper Landings | A vast spiral of slick basalt steps descends into darkness, cluttered with the discarded detritus of desperate scavengers who turned back.
+@@CHAIN td-4-002/0 | You heave a fallen brass beam off a crushed smuggler, testing your strength against rusted metal, claiming a sealed pouch of untainted water as reward.
+@@CHAIN td-4-002/1 | You brave a crumbling ledge to retrieve a glowing fungal lantern, steadying your trembling hands to gain a light source that never requires oil.
+@@CHAIN td-4-002/2 | You force open a jammed iron bulkhead door leading to a forgotten guard post, straining your muscles to discover a heavy harpoon tipped in black glass.
+@@CHAIN td-4-002/3 | You cross a bridge of decaying whalebone suspended over a terrifying drop, maintaining absolute calm to secure a perfectly preserved coil of silk rope.
+@@CHAIN td-4-002/4 | You study a mosaic of the old Tidewardens to deduce the correct pressure plate path, using your sharp mind to uncover a hidden cache of medicinal kelp.
+@@BEAT td-4-026 | The temperature plummets as you reach a platform dominated by a colossal, silent bell that once tolled the changing of the tides.
+@@HUB td-4-027 | The Bell Toll | An expansive stone terrace surrounds the silent bronze bell, its surface etched with deep grooves and guarded by aggressive, oversized scavenger crabs.
+@@CHAIN td-4-027/0 | You wrestle a massive pale crab away from a hollowed-out sea chest, using pure force to secure a pair of heavy brass diving gauntlets.
+@@CHAIN td-4-027/1 | You carefully dismantle the rusted clapper mechanism of the great bell, using your tools to extract a flawless resonating crystal useful for bartering.
+@@CHAIN td-4-027/2 | You decipher the weathered tally marks carved into the bell housing, realizing a hidden compartment contains a detailed chart of the deeper shaft.
+@@CHAIN td-4-027/3 | You smash through a calcified wall of barnacles blocking a side alcove, driving your shoulders forward to uncover a stash of salted provisions.
+@@BEAT td-4-045 | A haunting melody drifts upward from the abyss, echoing off the damp walls as the first pale members of the Hollow Choir emerge from the gloom.
+@@HUB td-4-046 | The Whispering Tiers | Waterlogged priests of the Hollow Choir block the downward path, their voices intertwining in a maddening song that threatens to drown your thoughts.
+@@CHAIN td-4-046/0 | You violently push your way through the grasping hands of a bloated chorister, using brute strength to rip a silver amulet from its neck.
+@@CHAIN td-4-046/1 | You assemble a crude noisemaker from scrap metal to disrupt their unified chanting, earning safe passage and a vial of sacred anointing oil.
+@@CHAIN td-4-046/2 | You endure the piercing gaze of the choir master without flinching, hardening your mind against the song to earn a cryptic blessing of protection.
+@@BEAT td-4-059 | Leaving the choir behind, the stairs transition from stone to massive cogs and gears, indicating you have entered the outer workings of the great machine.
+@@HUB td-4-060 | The Grinding Descent | Massive stationary gears form precarious walkways over a bottomless drop, slick with ancient grease and populated by territorial blind eels.
+@@CHAIN td-4-060/0 | You physically wedge a jammed cogwheel back into alignment to cross a gap, relying on raw power to discover a heavy iron maintenance key.
+@@CHAIN td-4-060/1 | You carefully traverse a rotating shaft while ignoring the snapping jaws of blind eels, keeping steady to pluck a valuable pearl from a nest.
+@@CHAIN td-4-060/2 | You dangle over the abyss to reach a skeletal mechanic hanging from a harness, holding your breath to retrieve his specialized tuning fork.
+@@CHAIN td-4-060/3 | You repair a fractured steam pipe using scraps of leather and wire, sealing the leak to safely harvest condensed freshwater for your empty canteen.
+@@BEAT td-4-081 | A sprawling archive of drowned ledgers blocks the way, watched over by a massive automaton archivist with glowing glass eyes and multiple brass limbs.
+@@HUB td-4-082 | The Drowned Archive | The Last Tidewarden categorizes ruined books in a vast circular library, demanding proper authorization or a terrible toll to let you pass.
+@@CHAIN td-4-082/0 | You firmly assert your right to pass without breaking eye contact with the towering machine, demonstrating unwavering resolve to receive a stamped brass token.
+@@CHAIN td-4-082/1 | You present a contradictory paradox from one of the ruined ledgers to confuse the automaton, utilizing sharp logic to steal a rare oceanic map.
+@@CHAIN td-4-082/2 | You brace your back against a collapsing bookshelf to prevent it from crushing you, using pure physical endurance to save a leather-bound history text.
+@@CHAIN td-4-082/3 | You delicately realign the damaged ocular lens on the automaton's secondary face, employing technical skill to earn a spool of unbreakable copper wire.
+@@BEAT td-4-102 | The archivist permits your descent into the pressure-locked chambers, where the air grows agonizingly thick and your mentor's presence feels tangibly close.
+@@HUB td-4-103 | The Pressure Locks | A series of reinforced bulkheads and flooded antechambers creates a maze of dead ends, hiding secrets of the ancient tide engineers.
+@@CHAIN td-4-103/0 | You crank a rusted emergency valve against immense counter-pressure, straining your shoulders to drain a flooded room and claim a pristine diver's helmet.
+@@CHAIN td-4-103/1 | You wade through waist-deep, freezing water teeming with translucent leeches, enduring the horror to salvage a waterproof satchel containing preserved salted meats.
+@@CHAIN td-4-103/2 | You pry open a deformed metal locker with sheer force, tearing the hinges apart to acquire a heavy iron prybar for future obstacles.
+@@CHAIN td-4-103/3 | You analyze the flow of leaking water to determine the safe path through a compromised corridor, reasoning your way to a hidden tool cache.
+@@CHAIN td-4-103/4 | You heave a submerged fallen pillar aside to free a trapped airlock door, relying on raw power to secure a heavy brass dive weight.
+@@BEAT td-4-127 | Beyond the locks, you find Orsolya Venn's torn coat snagged on a fractured pipe, alongside a frantic message scrawled in dried blood pointing downwards.
+@@HUB td-4-128 | The Ruined Camp | A makeshift camp established by Orsolya lies devastated, scattered with half-finished maps and broken instruments beside a gaping vertical shaft.
+@@CHAIN td-4-128/0 | You sleep briefly in the unsettling silence of the abandoned camp, suppressing terrible nightmares to recover your stamina and find a hidden silver flask.
+@@CHAIN td-4-128/1 | You haul a heavy, submerged iron lockbox out of a dark pool within the camp, using immense strength to uncover Orsolya's encrypted journal.
+@@CHAIN td-4-128/2 | You piece together the torn fragments of a tidal chart left near the bedroll, using keen observation to learn the exact timing of the currents.
+@@CHAIN td-4-128/3 | You salvage parts from a smashed water purifier to build a working filter, demonstrating mechanical ingenuity to gain a reliable source of clean drinking water.
+@@CHAIN td-4-128/4 | You brutally smash a creeping, armored rock-centipede that invaded the campsite, relying on sudden violence to extract its valuable phosphorescent venom sac.
+@@BEAT td-4-152 | You slide down a crumbling chute of debris and land on the colossal, silent teeth of the Meridian Gear itself, surrounded by impenetrable darkness.
+@@HUB td-4-153 | The Gear Housing | The magnificent, stalled heart of the ocean rests here, locked by massive salt crystals and guarded by the ghosts of drowned engineers.
+@@CHAIN td-4-153/0 | You study the alignment of the central spindle to find the primary jam, employing sharp intellect to discover a beautifully crafted golden astrolabe.
+@@CHAIN td-4-153/1 | You chisel away the suffocating salt crust from a delicate relay switch, applying careful precision to free a specialized gear mechanism for your own use.
+@@CHAIN td-4-153/2 | You decipher the final warnings etched into the control console by the ancient builders, gaining critical knowledge that grants you a significant tactical advantage.
+@@CHAIN td-4-153/3 | You reattach a severed hydraulic line using salvaged fittings, demonstrating expert technical skill to restore partial power and claim a glowing crystal battery.
+@@BEAT td-4-173 | Orsolya Venn emerges from the shadows, her eyes completely white, demanding you help her turn the Gear to drown Saltspire and save Gullmouth.
+@@HUB td-4-174 | The Final Choice | Your mentor stands at the primary release lever, presenting a terrible moral trial that will decide which faction receives the returning ocean.
+@@CHAIN td-4-174/0 | You forcefully wrestle the primary lever away from Orsolya, using your superior strength to take control of the mechanism and secure your own authority.
+@@CHAIN td-4-174/1 | You argue against her apocalyptic logic using fragments of old tidal law, winning a battle of words to earn her reluctant submission and a rare compass.
+@@CHAIN td-4-174/2 | You physically block a group of descending Drift Pilgrims aiming to sabotage the controls, using brute force to protect the console and earn Orsolya's grudging respect.
+@@CHAIN td-4-174/3 | You heave against a secondary jammed cog to assist her terrible plan, straining every muscle to align the teeth and claim a piece of the mechanism.
+@@CHAIN td-4-174/4 | You stand your ground as the immense pressure of the turning gear threatens to crush the chamber, maintaining iron resolve to grab a fallen royal seal.
+@@BEAT td-4-198 | With a deafening groan that shakes the bedrock of the world, the Meridian Gear finally turns, and the distant roar of returning water begins.
+@@DONE
