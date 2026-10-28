@@ -93,7 +93,11 @@ function speakersHere(state: GameState): Speaker[] {
 function spokenExchangeLine(state: GameState, speaker: Speaker): { line: string; words?: string } {
   const own = motiveAnswer(state, [speaker.label, ...speaker.names]);
   if (own?.spoken?.words) return { line: own.line, words: own.spoken.words };
-  if (own?.line) return { line: own.line };
+  if (own?.line) {
+    // T10AD — a motive line without spoken.words still carries content; do not treat as silence.
+    const q = own.line.match(/["“]([^"”]+)["”]/);
+    return { line: own.line, words: (q?.[1] ?? '').replace(/\s+/g, ' ').trim() || undefined };
+  }
   const cast = openingCastNames(state);
   const isCast =
     cast.some((n) => sameSpeaker(n, speaker.label)) ||
@@ -122,6 +126,21 @@ function spokenExchangeLine(state: GameState, speaker: Speaker): { line: string;
       };
     }
   }
+  // T10AD — steward / gate cast often has need/goal/offer on the ledger with no sheet yet.
+  // Speak that durable content (refusal with substance), never content-free silence first.
+  // SRD 5.2.1 Communicating — brief speech is free; the addressed party answers from what they know.
+  const ledgerBits = [
+    (memory?.need ?? '').replace(/\s+/g, ' ').trim(),
+    (memory?.goal?.target ?? '').replace(/\s+/g, ' ').trim(),
+    (memory?.offer ?? '').replace(/\s+/g, ' ').trim(),
+  ].filter((w) => w.length >= 3);
+  if (ledgerBits[0]) {
+    const words = ledgerBits[0]!.replace(/^["“]|["”]$/g, '').trim();
+    return {
+      line: `${capitalize(speaker.label)} said, "${words}"`,
+      words,
+    };
+  }
   // Ledger silence once — no second shrug sentence (writer may already have said nothing).
   return { line: `${capitalize(speaker.label)} said nothing.` };
 }
@@ -145,7 +164,22 @@ function stripSpeakerSilence(prose: string, speaker: Speaker): string {
     `[^.!?]*\\b${esc(bare)}\\b[^.!?]*(?:said nothing|offered nothing|stayed completely quiet|gave up nothing)[^.!?]*[.!?]?\\s*`,
     'gi',
   );
-  return prose.replace(re, ' ').replace(/\s+/g, ' ').trim();
+  // T10AD — never strip from inside an open PC quote. A match that *starts* on the closing
+  // quote (`" The steward said nothing`) keeps that quote and drops only the silence.
+  return prose
+    .replace(re, (full, offset) => {
+      const closeLead = full.match(/^["\u201d]/);
+      if (closeLead) return `${closeLead[0]} `;
+      const before = prose.slice(0, offset);
+      const curlyOpen = (before.match(/\u201c/g) ?? []).length;
+      const curlyClose = (before.match(/\u201d/g) ?? []).length;
+      if (curlyOpen > curlyClose) return full;
+      const straight = (before.match(/"/g) ?? []).length;
+      if (straight % 2 === 1) return full;
+      return ' ';
+    })
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** A speaker label must read as a name: one line, a few words, no question or chip word ("Greyhollow Who"). */
@@ -177,9 +211,17 @@ function esc(s: string): string {
 function quoteContext(text: string, start: number, end: number): string {
   const before = text.slice(0, start);
   const lead = Math.max(before.lastIndexOf('. '), before.lastIndexOf('! '), before.lastIndexOf('? '));
+  const head = before.slice(lead + 1);
+  // T10AD — leading attribution (`Jax said, "…"`) is enough. Trailing same-clause only
+  // (`"…," the steward said`) — never a new sentence (`The steward said nothing…`),
+  // which falsely credited the PC's quote to the alone NPC at Keep Gate T6.
   const after = text.slice(end);
-  const stop = after.search(/[.!?](?:\s|$)/);
-  return `${before.slice(lead + 1)} ${stop < 0 ? after : after.slice(0, stop + 1)}`;
+  if (/^\s*[A-Z]/.test(after)) return head;
+  const trail = after.match(
+    /^\s*,?\s*((?:the\s+)?[A-Za-z][\w'’ -]{0,40}\s+(?:said|says|asked|asks|replied|replies|whispered|answered)\b)/i,
+  );
+  if (trail?.[1]) return `${head} ${trail[1].trim()}`;
+  return head;
 }
 
 function mentions(context: string, names: string[]): boolean {
@@ -196,15 +238,29 @@ function beatBefore(text: string, start: number): string {
 }
 
 /** Quotes in a text that belong to this speaker. An unattributed quote counts when they are the only one here. */
-function quotesBy(text: string, speaker: Speaker, alone: boolean, others: Speaker[]): string[] {
+function quotesBy(
+  text: string,
+  speaker: Speaker,
+  alone: boolean,
+  others: Speaker[],
+  pcName?: string | null,
+): string[] {
   const out: string[] = [];
+  const pcParts = (pcName ?? '').trim() ? nameParts(pcName!.trim()) : [];
   for (const m of text.matchAll(QUOTE)) {
     let context = quoteContext(text, m.index!, m.index! + m[0].length);
     const named = (c: string) => mentions(c, speaker.names) || others.some((o) => mentions(c, o.names));
-    if (!named(context)) context = `${beatBefore(text, m.index!)} ${context}`;
+    // T10AD — do not merge the prior beat when this clause already attributes speech
+    // (`Jax said, "…"`). Merging `…to the steward…whisper` made the PC quote look like the
+    // steward's answer (alone + name in beatBefore).
+    if (!named(context) && !/\b(?:said|says|asked|asks|replied|replies|whispered|answered)\b/i.test(context)) {
+      context = `${beatBefore(text, m.index!)} ${context}`;
+    }
     const theirs = mentions(context, speaker.names);
     const someoneElse = others.some((o) => mentions(context, o.names));
-    if (theirs ? !someoneElse : alone && !someoneElse) out.push(m[1]!.trim());
+    // T10AD — PC's own line (`Jax said, "…"`) is never the alone-NPC answer (Keep Gate T6).
+    const pcOwns = pcParts.length > 0 && mentions(context, pcParts);
+    if (theirs ? !someoneElse : alone && !someoneElse && !pcOwns) out.push(m[1]!.trim());
   }
   return out;
 }
@@ -236,8 +292,8 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
   if (/\bask\s+(?:the\s+)?[\w'-]+(?:\s+[\w'-]+){0,2}\b/i.test(t) && /\b(?:if|whether|about|what|who|where|why|how)\b/i.test(t)) {
     return true;
   }
-  // T10AA — shout/tell/call at a present named person is speech that needs their reply.
-  if (state && /\b(?:ask|tell|shout(?:\s+at)?|call(?:\s+out)?(?:\s+to)?|say\s+to)\b/i.test(t)) {
+  // T10AA / T10AD — shout/tell/call/whisper at a present named person needs their reply.
+  if (state && /\b(?:ask|tell|shout(?:\s+at)?|call(?:\s+out)?(?:\s+to)?|say\s+to|whisper(?:\s+to)?)\b/i.test(t)) {
     const low = t.toLowerCase();
     if (peopleHere(state).some((n) => n.split(/\s+/).some((w) => w.length >= 3 && new RegExp(`\\b${esc(w.toLowerCase())}\\b`).test(low)))) {
       return true;
@@ -261,15 +317,28 @@ export function ensureSpokenAnswer(
     if (!who) return { prose, answer: { status: 'nobody-here' } };
     const { speaker, alone } = who;
     const others = speakersHere(state).filter((s) => s.label !== speaker.label);
-    if (quotesBy(prose, speaker, alone, others).length) {
+    const pc = state.character?.name ?? null;
+    if (quotesBy(prose, speaker, alone, others, pc).length) {
       return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
     }
-    // T10S/T10U/T10X/T10Y — exchange needs content (motive / card want). Silence once, never stacked.
+    // T10S/T10U/T10X/T10Y/T10AD — exchange needs content (motive / card want / ledger need).
+    // Content-free silence already on the page is replaced when the ledger has words; never stacked.
     const exchange = spokenExchangeLine(state, speaker);
     let body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
-    if (exchange.words) {
+    const silenceOnly = !exchange.words && /\bsaid nothing\.?$/i.test(exchange.line);
+    if (!silenceOnly) {
       body = stripSpeakerSilence(body, speaker);
-    } else if (proseHasSpeakerSilence(body, speaker)) {
+      return {
+        prose: body ? `${body} ${exchange.line}` : exchange.line,
+        answer: {
+          status: 'added',
+          speaker: speaker.label,
+          source: 'authored',
+          line: exchange.words ? `"${exchange.words}"` : exchange.line,
+        },
+      };
+    }
+    if (proseHasSpeakerSilence(body, speaker)) {
       return { prose: body, answer: { status: 'already-quoted', speaker: speaker.label } };
     }
     return {
@@ -278,20 +347,57 @@ export function ensureSpokenAnswer(
         status: 'added',
         speaker: speaker.label,
         source: 'authored',
-        line: exchange.words ? `"${exchange.words}"` : exchange.line,
+        line: exchange.line,
       },
     };
   }
   if (!who) return { prose, answer: { status: 'nobody-here' } };
   const { speaker, alone } = who;
   const others = speakersHere(state).filter((s) => s.label !== speaker.label);
-  if (quotesBy(prose, speaker, alone, others).length) {
+  const pc = state.character?.name ?? null;
+  if (quotesBy(prose, speaker, alone, others, pc).length) {
     return { prose, answer: { status: 'already-quoted', speaker: speaker.label } };
   }
   const real = realLine(topic, speaker);
-  if (!real) return { prose, answer: { status: 'no-line', speaker: speaker.label } };
+  if (!real) {
+    // T10AD — typed speech (quote / whisper) still needs motive/ledger exchange when the
+    // authored who/want/where bank is empty. Bare chips ("Who are you" / "Ask what they want")
+    // keep the prior no-line miss so sheet-name echoes stay off.
+    const typedSpeech =
+      /["\u201c]/.test(playerInput) || /\bwhisper(?:ing|ed|s)?\b/i.test(playerInput);
+    if (!typedSpeech) {
+      return { prose, answer: { status: 'no-line', speaker: speaker.label } };
+    }
+    const exchange = spokenExchangeLine(state, speaker);
+    let body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
+    const silenceOnly = !exchange.words && /\bsaid nothing\.?$/i.test(exchange.line);
+    if (!silenceOnly) {
+      body = stripSpeakerSilence(body, speaker);
+      return {
+        prose: body ? `${body} ${exchange.line}` : exchange.line,
+        answer: {
+          status: 'added',
+          speaker: speaker.label,
+          source: 'authored',
+          line: exchange.words ? `"${exchange.words}"` : exchange.line,
+        },
+      };
+    }
+    if (proseHasSpeakerSilence(body, speaker)) {
+      return { prose: body, answer: { status: 'already-quoted', speaker: speaker.label } };
+    }
+    return {
+      prose: body ? `${body} ${exchange.line}` : exchange.line,
+      answer: {
+        status: 'added',
+        speaker: speaker.label,
+        source: 'authored',
+        line: exchange.line,
+      },
+    };
+  }
   const line = `${capitalize(speaker.label)} said, "${real.line}"`;
-  const body = prose.trim();
+  const body = stripSpeakerSilence(prose.trim(), speaker);
   return {
     prose: body ? `${body} ${line}` : line,
     answer: { status: 'added', speaker: speaker.label, source: real.source, line },

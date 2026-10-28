@@ -10,7 +10,13 @@ import {
   shouldForceNpcStageAdvance,
   presentNpcForPads,
 } from './npcTopicFsm';
-import { affordancesCoverGenerics } from './sceneAffordances';
+import {
+  affordancesCoverGenerics,
+  FREE_INPUT_DO,
+  FREE_INPUT_SAY,
+  isFreeInputChip,
+} from './sceneAffordances';
+import { isPyoaChipsOnly } from './pyoaChoiceLock';
 import {
   dispositionBlocksPad,
   hasMetBefore,
@@ -1313,6 +1319,16 @@ export function compileChoices(
     const withThreat = withRememberedThreatChip(state, finalChoices);
     if (withThreat !== finalChoices) notes.push('Remembered threat: fight chip');
     finalChoices = withThreat;
+  }
+  // T10AD / TT-C1 — sealed-beat graph replace + cooldown must not drop Say/Do free-input
+  // into a Travel-only dead end while a present NPC was addressable (round 9g T7).
+  // Journey underway and PYOA chips-only keep their exclusive lists.
+  if (!isJourneyUnderway(state) && !isPyoaChipsOnly(state)) {
+    for (const free of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
+      if (finalChoices.some((c) => isFreeInputChip(c) && c.toLowerCase() === free.toLowerCase())) continue;
+      finalChoices = [...finalChoices, free];
+      notes.push(`Free-input restore: ${free}`);
+    }
   }
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
   const intentEnums = finalChoices.map((c) => inferIntent(c));
