@@ -570,9 +570,15 @@ export function extractPlayerQuotedSay(input: string): string | null {
   return extractQuotedSpan((input ?? '').replace(/\s+/g, ' ').trim());
 }
 
+/** Speech-attribution matcher: speaker + verb + quote (straight or curly closers). */
+const NPC_SAID_QUOTE =
+  /\b([A-Za-z][\w'’-]*(?:\s+[A-Za-z][\w'’-]*){0,2})\s+(said|says|asked|asks|replied|replies|whispered|shouted|called|answered)\s*([,:]?\s*)(["“])([^"”]+)(["”])/gi;
+
 /**
  * True when prose attributes a quote to someone other than the PC and that quote is
- * the player's own quoted words (or a contiguous slice of them). Reject — do not rewrite.
+ * the player's own quoted words (or a contiguous slice of them).
+ * SRD 5.2.1 Communicating — "The speaker can say anything they want… without spending an action"
+ * (Wizards of the Coast SRD 5.2.1, CC BY 4.0): those words stay the PC's.
  */
 export function npcHoldsPcQuote(prose: string, playerInput: string, pcName?: string | null): boolean {
   const said = extractPlayerQuotedSay(playerInput);
@@ -581,17 +587,36 @@ export function npcHoldsPcQuote(prose: string, playerInput: string, pcName?: str
   const want = fold(said);
   const pcFirst = (pcName ?? '').trim().split(/\s+/)[0]?.toLowerCase() ?? '';
   const text = (prose ?? '').replace(/\s+/g, ' ');
-  const re =
-    /\b([A-Za-z][\w'’-]*(?:\s+[A-Za-z][\w'’-]*){0,2})\s+(?:said|says|asked|asks|replied|replies|whispered|shouted|called|answered)\s*[,:]?\s*["“]([^"”]+)["”]/gi;
-  for (const m of text.matchAll(re)) {
+  for (const m of text.matchAll(NPC_SAID_QUOTE)) {
     const speaker = (m[1] ?? '').trim();
     const first = speaker.split(/\s+/)[0]?.toLowerCase() ?? '';
     if (first === 'you' || (pcFirst.length >= 2 && first === pcFirst)) continue;
-    const q = fold(m[2] ?? '');
+    const q = fold(m[5] ?? '');
     if (q.length < 4) continue;
     if (want === q || want.includes(q) || q.includes(want)) return true;
   }
   return false;
+}
+
+/**
+ * T10H — when an NPC is tagged speaking the player's own quoted words, put the quote on the PC.
+ * Same matcher as `npcHoldsPcQuote`; one attribution fix, not a parallel checker.
+ */
+export function givePcTheirQuote(prose: string, playerInput: string, pcName?: string | null): string {
+  const said = extractPlayerQuotedSay(playerInput);
+  if (!said || said.length < 6) return prose ?? '';
+  const fold = (t: string) => t.toLowerCase().replace(/\s+/g, ' ').trim();
+  const want = fold(said);
+  const pc = (pcName ?? '').trim().split(/\s+/)[0] || 'You';
+  const pcFirst = pc.toLowerCase();
+  return (prose ?? '').replace(/\s+/g, ' ').replace(NPC_SAID_QUOTE, (full, speaker: string, verb: string, punct: string, open: string, quote: string, close: string) => {
+    const first = speaker.trim().split(/\s+/)[0]?.toLowerCase() ?? '';
+    if (first === 'you' || first === pcFirst) return full;
+    const q = fold(quote);
+    if (q.length < 4) return full;
+    if (!(want === q || want.includes(q) || q.includes(want))) return full;
+    return `${pc} ${verb}${punct}${open}${quote}${close}`;
+  });
 }
 
 /** Split on then/and/while/?/; but never inside a quoted span (T10F). */
