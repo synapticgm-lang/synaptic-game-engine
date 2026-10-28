@@ -19,14 +19,14 @@
   },
   "sg-p2b": {
    "title": "Shadows of the Past",
-   "text": "Silence settles over the low-beamed hall as your question hangs in the dry air. The eldest councillor exchanges a heavy glance with the others before admitting that no runner has returned from Prism in twelve long years, while the predatory Salt Court has quietly bought up every remaining water well on the rim. Yet the ceramic Seedkey remains your only hope - a cold, hand-sized rod capable of unlocking the Rain Vault beneath Prism and saving the valley from the coming flood.",
+   "text": "Silence settles over the low-beamed hall as your question hangs in the dry air. The eldest councillor exchanges a heavy glance with the others before admitting that no runner has returned from Prism in twelve long years, while the predatory Salt Court has quietly bought up every remaining water well on the rim. Yet the ceramic Seedkey remains your only hope - a cold, hand-sized rod capable of unlocking the Rain Vault beneath Prism and saving the valley from the coming drought.",
    "exits": [
     "Sling your provisions over your shoulder and prepare for the journey"
    ]
   },
   "sg-p3": {
    "title": "Dawn on the Rim",
-   "text": "Dawn breaks hard and white over the western rim of the Saltglass Basin, casting long shadows across the dry dust of Candlemere. Your neighbors stand in quiet clusters by the paddock fence, watching you secure the leather water-skin and bank the glowing coals within your tin lantern. The horizon stretches out like a sheet of hammered tin, blinding in the early glare.",
+   "text": "Dawn breaks hard and white over the western rim of the Saltglass Basin, casting long shadows across the dry dust of Candlemere. Your neighbours stand in quiet clusters by the paddock fence, watching you secure the leather water-skin and bank the glowing coals within your tin lantern. The horizon stretches out like a sheet of hammered tin, blinding in the early glare.",
    "exits": [
     "Step out onto the dusty track of the Rim Road"
    ]
