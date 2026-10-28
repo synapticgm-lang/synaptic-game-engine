@@ -23,7 +23,7 @@ import { exitPlaceNames } from './placeNames';
 import { placeExitRows } from './placeRegistry';
 import { openRouteView } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
-import { mentionsName, peopleHere } from './chipLegality';
+import { mentionsName, peopleHere } from './scenePresence';
 import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
 import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';

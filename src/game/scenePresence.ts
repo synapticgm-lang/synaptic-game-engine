@@ -1,0 +1,86 @@
+/**
+ * Who is here to hear / answer — shared by chip legality and scene affordances.
+ * Kept out of chipLegality ↔ sceneAffordances so openingEstablishment mocks (and live
+ * opening-cast presence) bind to one module without a circular import.
+ */
+import type { GameState } from './types';
+import { presentNpcNames } from './npcRelationships';
+import { isChromePersonToken } from './chromeAuthority';
+import * as openingEstablishment from './openingEstablishment';
+import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney';
+
+const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
+const low = (s: string | undefined | null) => norm(s).toLowerCase();
+
+export function mentionsName(text: string, name: string): boolean {
+  const hay = low(text);
+  if (!hay) return false;
+  if (hay.includes(low(name))) return true;
+  const tokens = low(name)
+    .replace(/^(?:the|a|an)\s+/, '')
+    .split(/[\s'’-]+/)
+    .filter((t) => t.length >= 3 && !/^(?:the|of|and)$/.test(t));
+  if (!tokens.length) return false;
+  const hit = (t: string) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay);
+  // Multi-token names need every content token ("Nemi Salt" ≠ "salt-burners" via Salt alone).
+  return tokens.length >= 2 ? tokens.every(hit) : hit(tokens[0]!);
+}
+
+const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'villain']);
+
+/** The person or group a live, un-fought road meeting puts on this stretch, by the journey's own label. */
+export function roadMeetingPeople(state: GameState): string | null {
+  const enc = state.journey?.encounter;
+  if (!enc || roadMeetingOver(enc) || !isJourneyUnderway(state)) return null;
+  return ROAD_PEOPLE_KINDS.has(enc.kind) ? roadMeetingLabel(enc.kind) : null;
+}
+
+/** Article-stripped key so "the crew" and "crew" are one person (T10Y — no "crew of the crew"). */
+function personKey(name: string): string {
+  return name.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+}
+
+/**
+ * Everyone who could answer: the presence record, companions, the live foe, the opening cast,
+ * a road meeting. Opening cast stays while still at the card place (busy beat / no empty text
+ * does not clear them — empty-room listeners strip cast separately).
+ */
+export function peopleHere(state: GameState): string[] {
+  const out = new Map<string, string>();
+  const add = (n?: string | null) => {
+    const name = norm(n);
+    if (!name || isChromePersonToken(name)) return;
+    const key = personKey(name);
+    if (!key) return;
+    const prev = out.get(key);
+    // Prefer the article form ("the crew") when both bare and articulated appear.
+    if (!prev || (/^(?:the|a|an)\s+/i.test(name) && !/^(?:the|a|an)\s+/i.test(prev))) {
+      out.set(key, name);
+    }
+  };
+  presentNpcNames(state).forEach(add);
+  (state.companions ?? []).forEach((c) => add(c.name));
+  add(state.activeEncounter?.name);
+  // Namespace read so vitest openingCastNames mocks stay live (no stale named binding).
+  if (openingEstablishment.openingCastStillHere(state)) {
+    openingEstablishment.openingCastNames(state).forEach(add);
+  }
+  add(roadMeetingPeople(state));
+  return [...out.values()];
+}
+
+/** Who can hear a talk chip when the place text says the room is empty: never the opening card's cast. */
+export function listenersOnEmptyText(state: GameState): string[] {
+  const cast = openingEstablishment.openingCastNames(state);
+  return peopleHere(state).filter((n) => !cast.some((c) => mentionsName(n, c) || mentionsName(c, n)));
+}
+
+/**
+ * Non-empty beat still seats a listener the prose names (opener-cast role the text shows),
+ * even when the cast list / vitest mock did not land in peopleHere.
+ */
+export function proseSeatsListener(prose: string, who: string): boolean {
+  const w = norm(who);
+  if (!w || !norm(prose)) return false;
+  return mentionsName(prose, w) || mentionsName(prose, `the ${w}`);
+}
