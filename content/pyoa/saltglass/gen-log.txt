@@ -356,3 +356,4 @@
 2026-10-28T11:55:32.922Z ask prose sg-6-1-4-4..sg-6-c2 items=10 attempt=0
 2026-10-28T11:55:32.924Z PAUSED for the Pro pass (waiting for content/pyoa/PRO-PASS-DONE or PRO-PASS-RELEASE)
 2026-10-28T13:00:22.272Z merge: sections 1000, with prose 901, missing 99, words 72568
+2026-10-28T16:15:38.180Z RESUMED after Pro pass release
