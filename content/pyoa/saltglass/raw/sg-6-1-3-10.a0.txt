@@ -1,0 +1,61 @@
+Gemini said
+
+@@SECTION sg-6-1-3-10
+TITLE: The Map Etchings
+TEXT: Cartographic lines of the desiccated inland sea stretch across the vaulted ceiling above your head, traced in fine mineral dust by long-dead surveyors. A deep, subterranean rumble vibrates through the stone floor beneath your boots, carrying the unmistakable threat of the approaching monsoon flood. You trace your current bearing against the ancient diagrams, weighing the remaining distance against the gathering roar. // Two paths diverge ahead into the gloom, each offering a distinct route deeper toward the vault's core.
+EXIT 1: Take the left path toward the basin slope
+EXIT 2: Follow the right passage beneath the mineral veins
+@@END
+@@SECTION sg-6-1-3-11
+TITLE: The Frayed Harness
+TEXT: Heavy lead storage boxes line the damp corridor, casting long, blocky shadows in the dim light of your coal-lantern. You pause beside them to secure a fraying leather strap on your lamp harness, pulling the buckle tight to keep the weight steady against your chest. The metal hums softly with the heat of the banked coals as you prepare for the final push into the subterranean depths. // Ahead, the tunnel splits into two distinct directions, leading deeper into the cool masonry.
+EXIT 1: Proceed forward down the unlit hall
+EXIT 2: Turn toward the sloping chamber ahead
+@@END
+@@SECTION sg-6-1-3-12
+TITLE: The Groaning Pipe
+TEXT: Basalt foundations press close around your shoulders as you squeeze sideways through a narrow, jagged crevice. A rusted iron pipe runs along the wall, groaning under the immense shifting weight of the ancient ruin with every breath of damp air. You slide past the metal barrier carefully, your boots finding firm purchase on the grit-strewn floor just as the pressure eases. // Two distinct routes open up before you out of the tight passage.
+EXIT 1: Step down toward the broad antechamber
+EXIT 2: Walk past the dark sentry alcoves
+@@END
+@@SECTION sg-6-1-3-13
+TITLE: The Scored Hatch
+TEXT: Amber light flickers across a heavy iron hatch, revealing deep, erratic claw marks and thick crusts of white salt rot baked into the hinges. You hold your coal-lantern closer to inspect the seal, wondering what desperate hands once tried to tear the metal open from the other side. The air here tastes dry and old, yet a faint, cool draught stirs the soot around your boots. // Three separate tunnels beckon from this junction point into the dark.
+EXIT 1: Head down toward the main basin threshold
+EXIT 2: Walk past the silent stone alcoves
+EXIT 3: Step toward the booming bronze doors
+@@END
+@@SECTION sg-6-1-3-14
+TITLE: The Fossilised Grate
+TEXT: Fossilised roots choke a sunken drain grate beside your boots, forming a tangled web of stone and dark sediment. You kneel close to the iron bars, holding your breath to listen past the hum of your lantern for the precise mechanical click of distant vault tumblers. A heavy draft sweeps up from the depths, carrying the scent of damp earth and ancient iron. // A single towering doorway stands ready for your approach.
+EXIT 1: Approach the massive swinging bronze doors
+@@END
+@@SECTION sg-6-1-3-15
+TITLE: The Ceramic Insignia
+TEXT: Dusty ceramic tiles cover the walls of this quiet vestibule, framing the distinct, weathered stone insignia of the Rain Vault. The carved emblem points downward with a worn finger of clay, marking the correct descent through the final passage. You adjust your grip on the ceramic key tucked inside your coat and step forward. // The corridor splits into two distinct paths ahead.
+EXIT 1: Pass by the empty sentry alcoves
+EXIT 2: Approach the heavy bronze doors ahead
+@@END
+@@SECTION sg-6-1-4-0
+TITLE: The Glass Archway
+TEXT: Towering arches of fused green glass soar overhead, catching the amber beams of your lantern and refracting them into shifting emerald shards. You step across the grand threshold, entering the sweeping approach hall that leads straight toward the central lock chamber of the vault. The sound of your footsteps echoes against the translucent walls, bright and sharp in the silence. // Two distinct routes present themselves ahead in the vast chamber.
+EXIT 1: Approach the massive iron lock cylinder
+EXIT 2: Walk toward the monumental vault portal
+@@END
+@@SECTION sg-6-1-4-1
+TITLE: The Flood Pillar
+TEXT: Centuries of recorded flood heights score the surface of a colossal granite pillar rising beside your path like a rugged stone tree. You quicken your pace as distant water echoes bounce through the hall, growing noticeably louder with each passing second. The air turns cool and humid, whispering of the rising tide waiting beyond the gates. // The corridor ahead leads directly toward the great lock.
+EXIT 1: Move quickly toward the waiting lock cylinder
+@@END
+@@SECTION sg-6-1-4-2
+TITLE: The Basalt Corridor
+TEXT: Polished basalt walls narrow sharply around you, pressing the shadows inward until your lantern's glow is the only warm thing left in the world. Your boots ring with a sharp, metallic rhythm against the stone floor as the air grows steadily colder and damper. Every shadow seems to stretch and reach toward you from the dark crevices of the stone. // Two options lie ahead in the narrowing corridor.
+EXIT 1: Step before the towering brass central seal
+EXIT 2: Advance toward the shadow of the vault portal
+@@END
+@@SECTION sg-6-1-4-3
+TITLE: The Salt Stalactites
+TEXT: Glittering salt stalactites hang like jagged teeth from the low ceiling above, sparkling whenever your lantern light sweeps across them. Ahead, the massive iron framework of the inner security gate looms out of the haze, its heavy bars rusted into place over the centuries. You steady your breathing and step closer to examine the barrier. // Two paths open up beyond the security frame.
+EXIT 1: Approach the iron lock cylinder
+EXIT 2: Step before the towering brass seal
+@@END

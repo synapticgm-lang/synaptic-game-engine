@@ -350,3 +350,8 @@
 2026-10-28T11:53:50.015Z ask prose sg-6-1-2-5..sg-6-1-2-14 items=10 attempt=0
 2026-10-28T11:54:26.292Z done sg-6-1-2-5: 10/10 model=Flash-Lite
 2026-10-28T11:54:26.296Z ask prose sg-6-1-3-0..sg-6-1-3-9 items=10 attempt=0
+2026-10-28T11:54:59.523Z done sg-6-1-3-0: 10/10 model=Flash-Lite
+2026-10-28T11:54:59.525Z ask prose sg-6-1-3-10..sg-6-1-4-3 items=10 attempt=0
+2026-10-28T11:55:32.920Z done sg-6-1-3-10: 10/10 model=Flash-Lite
+2026-10-28T11:55:32.922Z ask prose sg-6-1-4-4..sg-6-c2 items=10 attempt=0
+2026-10-28T11:55:32.924Z PAUSED for the Pro pass (waiting for content/pyoa/PRO-PASS-DONE or PRO-PASS-RELEASE)
