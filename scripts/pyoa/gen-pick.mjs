@@ -244,7 +244,7 @@ function status(reason) {
   try {
     const prose = loadProse(); const have = Object.keys(prose).length; const missing = ORDER.filter((n) => !prose[n.id]);
     const outl = readdirSync(join(DIR, 'outline')).length;
-    const s = `# ${TITLE} (${SLUGARG}) status\n\nUpdated: ${new Date().toISOString()} (UTC; London = UTC+0 on this date)\nLast event: ${reason}\nSections with prose: ${have}/${skel.nodes.length}\nOutline parts done: ${outl}/18\nNext section to write (story order): ${missing[0]?.id || 'none'}\nModel: Flash-Lite only (verified on the mode picker before every call; Pro is never used)\nResume: `node scripts/pyoa/gen-pick.mjs ${SLUGARG} outline` then `... prose`, then `... merge` and `node scripts/pyoa/lint-salt.mjs content/pyoa/${SLUGARG}/book.json`.\n`;
+    const s = `# ${TITLE} (${SLUGARG}) status\n\nUpdated: ${new Date().toISOString()} (UTC; London = UTC+0 on this date)\nLast event: ${reason}\nSections with prose: ${have}/${skel.nodes.length}\nOutline parts done: ${outl}/18\nNext section to write (story order): ${missing[0]?.id || 'none'}\nModel: Flash-Lite only (verified on the mode picker before every call; Pro is never used)\nResume: node scripts/pyoa/run-book.mjs pick ${SLUGARG} (outline, prose, merge, lint; resumable).\n`;
     writeFileSync(join(DIR, 'STATUS.md'), s);
   } catch (e) { /* ignore */ }
 }
