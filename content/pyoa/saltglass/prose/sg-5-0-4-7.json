@@ -1,0 +1,87 @@
+{
+ "batch": "sg-5-0-4-7",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-0-4-7": {
+   "title": "The Brass Conduits",
+   "text": "Within the cramped junction box of the brass conduits, your cold ceramic key hums faintly as it comes close to the sealed vault mechanism. The metal beneath your fingertips feels preternaturally cold, vibrating with a low, sub-audible thrum that echoes the approaching monsoon's distant drums. Around you, the dark machinery of Prism ticks and groans like a living creature waking from a century-long sleep. You must decide whether to force the tumblers with raw leverage or trace the delicate internal wiring.\n\nWill you wedge a heavy iron chisel into the primary seam, or carefully slide the ceramic key into the central alignment groove?",
+   "exits": [
+    "Force the rusted tumblers with a heavy iron wedge",
+    "Carefully slide the ceramic key into the central groove"
+   ]
+  },
+  "sg-5-0-5-0": {
+   "title": "The Lens-Hall Door",
+   "text": "Before the towering bronze panels of the Lens-Hall Door, an intricate maze of interlocking optical gears blocks every straightforward approach. Sunlight caught by distant rooftop mirrors strikes the polished metal face, casting blinding geometric patterns across the flagstones. Every cog and ratchet is fitted with mathematical precision, designed to lock out anyone who lacks the patience to decode its shifting equations.\n\nDo you study the alignment marks carved into the bronze rim, or search for a hidden seam along the outer framing?",
+   "exits": [
+    "Press on by deciphering the geometric alignment marks"
+   ]
+  },
+  "sg-5-0-5-1": {
+   "title": "The Hidden Grille",
+   "text": "Facing the locked portals of the inner sanctum, Pell traces a forgotten Glasswright maintenance tunnel hidden behind a rusted brass grille. The air spilling from the dark aperture smells of ozone and ancient dry dust, promising a way around the impenetrable bronze barrier ahead. Your companion's fingers move with practiced ease, unlatching the corroded bolts without making a single sound.\n\nWill you slip into the dark conduit right behind Pell, or pause to secure your lamp strap before entering?",
+   "exits": [
+    "Press on through the hidden maintenance tunnel with Pell"
+   ]
+  },
+  "sg-5-0-5-2": {
+   "title": "The Fading Window",
+   "text": "At the threshold of the massive lens-hall doors, you fumble with improvised tools while rival footsteps echo louder down the corridor behind you. The iron scraper in your hand slips against the grease-slicked brass, sending a sharp metallic ping ringing through the vaulted chamber. Time is running out as heavy boots draw nearer from the shadows of the lower stairwell.\n\nDo you redouble your efforts on the stubborn latch, or prepare to slip sideways into the gloom?",
+   "exits": [
+    "Press on by forcing the stubborn latch despite the noise"
+   ]
+  },
+  "sg-5-0-5-3": {
+   "title": "The Adamantine Latch",
+   "text": "Standing before the heavy adamantine latch of the vault entrance, you raise your cold ceramic key as the great clockwork mechanism begins to groan. Heavy rings of dark metal shift within the wall, aligning with a series of deep, satisfying clicks that vibrate straight through your boots. The heavy door slowly breathes outward, releasing a gust of refrigerated air that smells faintly of rain and long-buried earth.\n\nWill you step directly into the rising mist of the interior chamber, or wait for the mechanism to finish its cycle?",
+   "exits": [
+    "Press on into the cool mist of the vault interior"
+   ]
+  },
+  "sg-5-c1": {
+   "title": "The Maze of Lenses",
+   "text": "Mandatory scene at the Lens-Hall Door: the lens-hall maze; those with Pell have a guide who knows the Glasswright maintenance ways, those without must improvise. Shifting arrays of magnifying glass and silvered plates stretch out ahead like a labyrinth of mirrors, reflecting your single ember-lamp into a thousand anxious duplicates. Every path splits into confusing angles of refraction where a single misstep could send you stumbling into a drop or tripping an acoustic wire.\n\nWill you trust your hired companion to thread the needle through the service ways, or strike out independently across the open optical floors?",
+   "exits": [
+    "Pell knows the way through the lens-hall",
+    "Find your own way through the lens-hall"
+   ]
+  },
+  "sg-5-1-0-0": {
+   "title": "The Humming Blue Gallery",
+   "text": "Massive lens-segments groan overhead like waking leviathans as Pell wedges a cold iron chisel into the maintenance hatch. Blue light filters through the vibrating glass floor, casting long, fractured shadows across your boots. Your ember-lamp rocks against your hip, its banked coals radiating a steady, familiar warmth against the chill of the observatory. With a sharp crack of rusted metal, the hatch gives way, venting a draft of dry, lime-scented air from the depths below.",
+   "exits": [
+    "Follow Pell down the iron rungs",
+    "Leap across the open machinery pit",
+    "Squeeze past the jammed prism shutter"
+   ]
+  },
+  "sg-5-1-0-1": {
+   "title": "Beneath the Fractured Dome",
+   "text": "Shards of green glass rain down in a silent cascade as a massive focusing plate swings overhead on rusted iron chains. You duck low, groping blindly along the damp stone wall until your fingers find the rusted rungs of a hidden maintenance ladder. The air smells of ozone and ancient dust, thick enough to coat your tongue. Above you, the fractured dome frames a sliver of blinding desert sky while the metal structure groans under the relentless desert heat.",
+   "exits": [
+    "Crawl beneath the hanging green shards",
+    "Slip through the forgotten side duct",
+    "Climb toward the abandoned observation ward"
+   ]
+  },
+  "sg-5-1-1-0": {
+   "title": "The Singing Glass Conduit",
+   "text": "Resonant hums vibrate against your ribs, carrying warnings through the cool ceramic walls of the conduit. Pell moves ahead with silent surety, his boots skimming the smooth floor where ancient drafts carry the salt-scent of the Basin. Every surface hums with an odd, musical frequency that makes your teeth ache slightly. The darkness ahead deepens, broken only by the faint, rhythmic pulse of your swinging ember-lamp.",
+   "exits": [
+    "Open the narrow service flue",
+    "Climb the sun-warmed spiral ramp",
+    "Force the warped bulkhead open"
+   ]
+  },
+  "sg-5-1-1-1": {
+   "title": "The Greasy Mirror-Vault",
+   "text": "Tilting plates of polished glass reflect your distorted face a dozen times over in the dim light. Pell stops abruptly, pointing down at a smear of fresh oil left across the stone floor by earlier rivals scrambling upward. The air here is dead and heavy, smelling faintly of rendered fat and old salt. Your fingers tighten around your lamp handle as you weigh the treacherous footing against the need for haste.",
+   "exits": [
+    "Pry open the deep cooling grate",
+    "Scramble across the green slag ridge",
+    "Slide through the narrow utility shaft"
+   ]
+  }
+ },
+ "missing": []
+}
