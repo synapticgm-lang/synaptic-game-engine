@@ -88,14 +88,14 @@ export function peopleHere(state: GameState): string[] {
     add(roadMeetingPeople(state));
     return [...out.values()];
   }
-  // T10V-fix / T10AJ-fix — opening cast enriches a seated scene only. An empty
-  // present[] must not invent card cast as listeners (empty-scene speech cue).
-  const seated = presentNpcNames(state);
-  seated.forEach(add);
+  presentNpcNames(state).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
   // Namespace read so vitest openingCastNames mocks stay live (no stale named binding).
-  if (seated.length > 0 && openingEstablishment.openingCastStillHere(state)) {
+  // Opening cast stays at the card place (T10AI). True empty occupancy is crowdDepartedByRecord
+  // above (drops cast). Empty-room chips strip cast via listenersOnEmptyText -- do not starve
+  // pads / giver / last-resort want when present[] is merely unset (emptySceneFacts).
+  if (openingEstablishment.openingCastStillHere(state)) {
     openingEstablishment.openingCastNames(state).forEach(add);
   }
   add(roadMeetingPeople(state));
