@@ -4,7 +4,7 @@
  * Never trust an unverified JWT payload — gm-turn / generate-image have verify_jwt=false.
  */
 
-import { FREE_WRITER_FIREWORKS_MODEL } from './gm/openRouterChat.ts';
+import { FREE_WRITER_OPENROUTER_MODEL } from './gm/openRouterChat.ts';
 
 function founderEmailAllowlist(): string[] {
   const raw = Deno.env.get('FOUNDER_EMAILS') ?? '';
@@ -78,5 +78,5 @@ export async function isPrivilegedPlayRequest(req: Request): Promise<boolean> {
 }
 
 export function freeWriterModelId(): string {
-  return FREE_WRITER_FIREWORKS_MODEL;
+  return FREE_WRITER_OPENROUTER_MODEL;
 }

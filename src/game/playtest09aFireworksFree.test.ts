@@ -1,14 +1,16 @@
 /**
- * Batch 09a — Free hosted writer via Fireworks (transport swap only).
+ * Batch 09a — historically Free-via-Fireworks. T10K moved Free to OpenRouter DeepSeek;
+ * this file keeps the Mid-writer / re-ask locks and asserts the new Free path.
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
+import { OPENROUTER_DEEPSEEK_V41_FLASH } from './modelIds';
+import { FREE_WRITER_OPENROUTER_MODEL } from './openRouterChat';
 import { SUBSCRIPTION_TIERS } from './subscriptionTiers';
 import { STAGNATION_MID_WRITER_ENABLED } from './writerPolicy';
-import { FREE_WRITER_FIREWORKS_MODEL, hostedWriterProvider } from './openRouterChat';
 
 const playPrivileges = readFileSync(
   resolve(__dirname, '../../supabase/functions/_shared/playPrivileges.ts'),
@@ -16,29 +18,26 @@ const playPrivileges = readFileSync(
 );
 const gmTurn = readFileSync(resolve(__dirname, '../../supabase/functions/gm-turn/index.ts'), 'utf8');
 
-describe('09a — Free hosted Fireworks routing (no network)', () => {
-  it('HUD/BUILD stay on the 09 line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-/);
+describe('09a — Free hosted OpenRouter routing (no network; was Fireworks)', () => {
+  it('HUD/BUILD at or after 09a, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP >= '2026-09-09a').toBe(true);
+    expect(BUILD_STAMP >= '2026-09-09a').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('default Free catalog id is Fireworks V4 Flash', () => {
-    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe(FREE_WRITER_FIREWORKS_MODEL);
-    expect(hostedWriterProvider(SUBSCRIPTION_TIERS.free.writerOpenRouterId)).toBe('fireworks');
+  it('default Free catalog id is OpenRouter DeepSeek V4.1 Flash', () => {
+    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe(FREE_WRITER_OPENROUTER_MODEL);
+    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe(OPENROUTER_DEEPSEEK_V41_FLASH);
     expect(SUBSCRIPTION_TIERS.mid.writerOpenRouterId).toBe('anthropic/claude-haiku-4.5');
     expect(SUBSCRIPTION_TIERS.high.writerOpenRouterId).toBe('anthropic/claude-sonnet-4.6');
-    expect(hostedWriterProvider(SUBSCRIPTION_TIERS.mid.writerOpenRouterId)).toBe('openrouter');
-    expect(hostedWriterProvider(SUBSCRIPTION_TIERS.high.writerOpenRouterId)).toBe('openrouter');
   });
 
-  it('edge Free clamp and gm-turn use Fireworks, not OpenRouter DeepSeek', () => {
-    expect(playPrivileges).toContain('FREE_WRITER_FIREWORKS_MODEL');
-    expect(playPrivileges).not.toContain("const FREE_WRITER_OPENROUTER = 'deepseek/deepseek-v4-flash-0731'");
-    expect(gmTurn).toContain('FIREWORKS_API_KEY');
-    expect(gmTurn).toContain('FIREWORKS_INFERENCE_BASE');
-    expect(gmTurn).toContain('fireworksChatBody');
-    expect(gmTurn).not.toMatch(/provider === 'openrouter'\s*\n\s*\? 'deepseek\/deepseek-v4-flash-0731'/);
+  it('edge Free clamp and gm-turn use OpenRouter, not Fireworks', () => {
+    expect(playPrivileges).toContain('FREE_WRITER_OPENROUTER_MODEL');
+    expect(gmTurn).not.toContain('FIREWORKS_API_KEY');
+    expect(gmTurn).not.toContain('FIREWORKS_INFERENCE_BASE');
+    expect(gmTurn).not.toContain('fireworksChatBody');
+    expect(gmTurn).toContain('OPENROUTER_API_KEY');
   });
 
   it('empty-GM re-asks the same model once (28l: never a model switch, no Mid writer)', () => {

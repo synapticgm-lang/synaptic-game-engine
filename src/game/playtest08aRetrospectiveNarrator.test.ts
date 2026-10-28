@@ -76,9 +76,7 @@ describe('08a stamps + Free writer + Mid OFF', () => {
     expect(HUD_BUILD_STAMP >= '2026-09-08a').toBe(true);
     expect(BUILD_STAMP >= '2026-09-08a').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe(
-      'accounts/fireworks/models/deepseek-v4p1-flash'
-    );
+    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe('deepseek/deepseek-v4.1-flash');
   });
 });
 

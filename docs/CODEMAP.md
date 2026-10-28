@@ -1482,8 +1482,8 @@ Generated 2026-09-28T15:30:08.077Z · commit `f007ad0` · stamp `2026-09-28j`
 
 ## src/game/openRouterChat.ts
 6613 B · 193 lines
-- exports: FIREWORKS_INFERENCE_BASE, FREE_WRITER_FIREWORKS_MODEL, isFireworksWriterModel, normalizeFireworksWriterModel, hostedWriterProvider, fireworksChatHeaders, fireworksChatBody, hasHanScript, extractChatCompletionText, extractChatCompletionTexts, packGmCandidateTexts, openRouterChatHeaders, openRouterChatBody
-- functions: isFireworksWriterModel:15, normalizeFireworksWriterModel:21, hostedWriterProvider:28, fireworksChatHeaders:32, fireworksChatBody:39, hasHanScript:56, extractOneChoice:60, extractChatCompletionText:80, extractChatCompletionTexts:87, packGmCandidateTexts:97, flattenChatContent:103, openRouterChatHeaders:117, openRouterChatBody:126
+- exports: FREE_WRITER_OPENROUTER_MODEL, openRouterProviderRouting, isFireworksServedProvider, rejectFireworksServed, hasHanScript, extractChatCompletionText, extractChatCompletionTexts, packGmCandidateTexts, openRouterChatHeaders, openRouterChatBody
+- Free writer: OpenRouter DeepSeek V4.1 Flash (`OPENROUTER_DEEPSEEK_V41_FLASH`); every OpenRouter body sets `provider.ignore: ['Fireworks']`
 
 ## src/game/openingEstablishment.test.ts
 11810 B · 289 lines
@@ -1720,7 +1720,10 @@ Generated 2026-09-28T15:30:08.077Z · commit `f007ad0` · stamp `2026-09-28j`
 - functions: baseState:31
 
 ## src/game/playtest09aFireworksFree.test.ts
-2604 B · 52 lines
+(rewritten T10K — Free OpenRouter DeepSeek; Mid OFF / 28l re-ask locks)
+
+## src/game/playtestT10kOpenRouterFree.test.ts
+T10K Free writer + Fireworks-ban invariant
 
 ## src/game/playtest09bOpeningStitch.test.ts
 9011 B · 184 lines
@@ -3070,8 +3073,8 @@ Generated 2026-09-28T15:30:08.077Z · commit `f007ad0` · stamp `2026-09-28j`
 
 ## supabase/functions/_shared/gm/openRouterChat.ts
 6613 B · 193 lines
-- exports: FIREWORKS_INFERENCE_BASE, FREE_WRITER_FIREWORKS_MODEL, isFireworksWriterModel, normalizeFireworksWriterModel, hostedWriterProvider, fireworksChatHeaders, fireworksChatBody, hasHanScript, extractChatCompletionText, extractChatCompletionTexts, packGmCandidateTexts, openRouterChatHeaders, openRouterChatBody
-- functions: isFireworksWriterModel:15, normalizeFireworksWriterModel:21, hostedWriterProvider:28, fireworksChatHeaders:32, fireworksChatBody:39, hasHanScript:56, extractOneChoice:60, extractChatCompletionText:80, extractChatCompletionTexts:87, packGmCandidateTexts:97, flattenChatContent:103, openRouterChatHeaders:117, openRouterChatBody:126
+- exports: FREE_WRITER_OPENROUTER_MODEL, openRouterProviderRouting, isFireworksServedProvider, rejectFireworksServed, hasHanScript, extractChatCompletionText, extractChatCompletionTexts, packGmCandidateTexts, openRouterChatHeaders, openRouterChatBody
+- Free writer: OpenRouter DeepSeek V4.1 Flash; `provider.ignore: ['Fireworks']` on every OpenRouter body
 
 ## supabase/functions/_shared/gm/openingEstablishment.ts
 12208 B · 340 lines

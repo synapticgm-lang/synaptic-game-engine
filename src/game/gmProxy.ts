@@ -15,7 +15,6 @@ import { forceFreeModel } from './opsKillSwitches';
 import { GM_PROXY_TIMEOUT_DEFAULT_MS } from './errorRepairWarden';
 import {
   hasHanScript,
-  hostedWriterProvider,
   sumWriterUsage,
   type TurnWriterUsage,
   type WriterRawIssue,
@@ -73,7 +72,14 @@ export function hostedBackendDiagnostics(): {
 const writerRawIssues: WriterRawIssue[] = [];
 
 export function noteWriterRawIssue(issue: unknown): void {
-  if (issue === 'empty' || issue === 'reasoning-only' || issue === 'cut-off') writerRawIssues.push(issue);
+  if (
+    issue === 'empty' ||
+    issue === 'reasoning-only' ||
+    issue === 'cut-off' ||
+    issue === 'fireworks-served'
+  ) {
+    writerRawIssues.push(issue);
+  }
 }
 
 export function drainWriterRawIssues(): WriterRawIssue[] {
@@ -96,6 +102,8 @@ export function noteWriterUsage(usage: unknown): void {
     tokensCached: num(u.tokensCached),
     modelCalls: num(u.modelCalls),
     modelId: typeof u.modelId === 'string' ? u.modelId : null,
+    servedProvider: typeof u.servedProvider === 'string' ? u.servedProvider : null,
+    servedModel: typeof u.servedModel === 'string' ? u.servedModel : null,
     costUsd: num(u.costUsd),
   });
 }
@@ -155,7 +163,6 @@ export async function invokeGmProxy(params: {
           customModelId: isTestLabEnabled() ? null : params.settings.customModelId,
           tier,
         });
-    const writerProvider = hostedWriterProvider(modelId);
 
     const body = {
       mode: params.mode,
@@ -165,7 +172,7 @@ export async function invokeGmProxy(params: {
       settings: {
         contentMode: params.settings.contentMode,
         mapTriggerMode: params.settings.mapTriggerMode,
-        aiProvider: writerProvider,
+        aiProvider: 'openrouter',
         customModelId: modelId,
         subscriptionTier: tier,
         baseUrl: params.settings.baseUrl,
@@ -188,7 +195,7 @@ export async function invokeGmProxy(params: {
 
     logger.info('ai-proxy', `gm-turn ${params.mode}`, {
       turn: params.state.turn,
-      provider: writerProvider,
+      provider: 'openrouter',
       model: modelId,
       attempt,
       hasClientKey: !!body.clientApiKey,

@@ -68,13 +68,11 @@ function liveSkirmish(hp = 3): GameState {
 }
 
 describe('08b stamps + Free writer + Mid OFF', () => {
-  it('HUD/BUILD are 2026-09-08b, Mid writer OFF, Free is DeepSeek', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-/);
+  it('HUD/BUILD at or after 08b, Mid writer OFF, Free is DeepSeek', () => {
+    expect(HUD_BUILD_STAMP >= '2026-09-08b').toBe(true);
+    expect(BUILD_STAMP >= '2026-09-08b').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe(
-      'accounts/fireworks/models/deepseek-v4p1-flash'
-    );
+    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe('deepseek/deepseek-v4.1-flash');
   });
 });
 

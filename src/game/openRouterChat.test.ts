@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
+import { OPENROUTER_DEEPSEEK_V41_FLASH } from './modelIds';
 import {
   extractChatCompletionText,
-  FIREWORKS_INFERENCE_BASE,
-  fireworksChatBody,
-  fireworksChatHeaders,
-  FREE_WRITER_FIREWORKS_MODEL,
-  hostedWriterProvider,
-  isFireworksWriterModel,
-  normalizeFireworksWriterModel,
+  FREE_WRITER_OPENROUTER_MODEL,
+  isFireworksServedProvider,
+  openRouterChatBody,
+  openRouterProviderRouting,
+  readChatCompletion,
+  rejectFireworksServed,
 } from './openRouterChat';
 
 describe('extractChatCompletionText', () => {
@@ -48,34 +48,45 @@ describe('extractChatCompletionText', () => {
   });
 });
 
-describe('Fireworks Free writer routing (no network)', () => {
-  it('default Free id is Fireworks V4 Flash, not OpenRouter DeepSeek or retired v3p1', () => {
-    expect(FREE_WRITER_FIREWORKS_MODEL).toBe('accounts/fireworks/models/deepseek-v4p1-flash');
-    expect(FREE_WRITER_FIREWORKS_MODEL).not.toMatch(/deepseek-v3p1/);
-    expect(FREE_WRITER_FIREWORKS_MODEL).not.toBe('deepseek/deepseek-v4-flash-0731');
-    expect(FIREWORKS_INFERENCE_BASE).toBe('https://api.fireworks.ai/inference/v1');
+describe('OpenRouter Free writer routing (no network)', () => {
+  it('default Free id is OpenRouter DeepSeek V4.1 Flash', () => {
+    expect(FREE_WRITER_OPENROUTER_MODEL).toBe(OPENROUTER_DEEPSEEK_V41_FLASH);
+    expect(FREE_WRITER_OPENROUTER_MODEL).toBe('deepseek/deepseek-v4.1-flash');
   });
 
-  it('routes Fireworks slugs to Fireworks and OpenRouter ids to OpenRouter', () => {
-    expect(isFireworksWriterModel(FREE_WRITER_FIREWORKS_MODEL)).toBe(true);
-    expect(hostedWriterProvider(FREE_WRITER_FIREWORKS_MODEL)).toBe('fireworks');
-    expect(hostedWriterProvider('anthropic/claude-haiku-4.5')).toBe('openrouter');
-    expect(hostedWriterProvider('anthropic/claude-sonnet-4.6')).toBe('openrouter');
-    expect(hostedWriterProvider('meta-llama/llama-3.1-8b-instruct')).toBe('openrouter');
-    expect(hostedWriterProvider('deepseek/deepseek-v4-flash-0731')).toBe('openrouter');
+  it('every OpenRouter writer body ignores Fireworks', () => {
+    const plain = openRouterChatBody('deepseek/deepseek-v4.1-flash', 'sys', 'go', 128) as {
+      provider: { ignore?: string[]; require_parameters?: boolean };
+    };
+    expect(plain.provider.ignore).toContain('Fireworks');
+    expect(plain.provider.require_parameters).toBeUndefined();
+    const schema = openRouterChatBody('m', 's', 'p', 100, { tokenProse: true }) as {
+      provider: { ignore?: string[]; require_parameters?: boolean };
+    };
+    expect(schema.provider.ignore).toContain('Fireworks');
+    expect(schema.provider.require_parameters).toBe(true);
+    expect(openRouterProviderRouting().ignore).toEqual(['Fireworks']);
   });
 
-  it('remaps retired Fireworks v3p1 slug', () => {
-    expect(normalizeFireworksWriterModel('accounts/fireworks/models/deepseek-v3p1')).toBe(
-      FREE_WRITER_FIREWORKS_MODEL
+  it('surfaces servedProvider/servedModel and hard-rejects Fireworks-served replies', () => {
+    const ok = readChatCompletion({
+      provider: 'DeepSeek',
+      model: 'deepseek/deepseek-v4.1-flash',
+      choices: [{ message: { content: 'Story.' } }],
+    });
+    expect(ok.servedProvider).toBe('DeepSeek');
+    expect(ok.servedModel).toBe('deepseek/deepseek-v4.1-flash');
+    expect(isFireworksServedProvider('Fireworks')).toBe(true);
+    expect(isFireworksServedProvider('deepseek')).toBe(false);
+    const blocked = rejectFireworksServed(
+      readChatCompletion({
+        provider: 'Fireworks',
+        model: 'accounts/fireworks/models/deepseek-v4p1-flash',
+        choices: [{ message: { content: 'Do not use.' } }],
+      })
     );
-  });
-
-  it('Fireworks body is OpenAI-compat without OpenRouter extras', () => {
-    const body = fireworksChatBody(FREE_WRITER_FIREWORKS_MODEL, 'sys', 'go', 128);
-    expect(body.model).toBe(FREE_WRITER_FIREWORKS_MODEL);
-    expect(body.messages).toHaveLength(2);
-    expect(body).not.toHaveProperty('provider');
-    expect(fireworksChatHeaders('fw_test').Authorization).toBe('Bearer fw_test');
+    expect(blocked.text).toBe('');
+    expect(blocked.issue).toBe('fireworks-served');
+    expect(blocked.servedProvider).toBe('Fireworks');
   });
 });

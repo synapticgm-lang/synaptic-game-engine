@@ -3,25 +3,25 @@
  * Every chat call that is not handed an explicit model reads its default from here, so no call can go out on an
  * unpinned id (OpenRouter `deepseek/deepseek-chat` is the Dec-2024 DeepSeek V3 under the restricted Model Agreement).
  * Erasable TypeScript only: Node scripts (writerDataset.mjs, autoThumbs.mjs) import this file directly.
+ *
+ * Live Free writer = OPENROUTER_DEEPSEEK_V41_FLASH only. Old `accounts/fireworks/...` ids may appear on stored
+ * training rows; modelProvider recognises them for provenance and must never be used to make a call.
  */
 
-/** DeepSeek V4.1 Flash on Fireworks (MIT). The live Free hosted writer. */
-export const FIREWORKS_DEEPSEEK_V41_FLASH = 'accounts/fireworks/models/deepseek-v4p1-flash';
-/** DeepSeek V4.1 Flash on OpenRouter (MIT, hf deepseek-ai/DeepSeek-V4.1-Flash). */
+/** DeepSeek V4.1 Flash on OpenRouter (MIT, hf deepseek-ai/DeepSeek-V4.1-Flash). Live Free hosted writer. */
 export const OPENROUTER_DEEPSEEK_V41_FLASH = 'deepseek/deepseek-v4.1-flash';
 /** Qwen3-235B-A22B-Instruct-2507 on OpenRouter (Apache-2.0). */
 export const OPENROUTER_QWEN3_235B = 'qwen/qwen3-235b-a22b-2507';
 /** GLM-5.3-Flash on OpenRouter (MIT, hf zai-org/GLM-5.3-Flash). */
 export const OPENROUTER_GLM_53_FLASH = 'z-ai/glm-5.3-flash';
 
-/** Default for an OpenAI-compatible call to OpenRouter / Fireworks with no model given. */
+/** Default for an OpenAI-compatible call to OpenRouter with no model given. */
 export const PINNED_DEFAULT_MODEL = {
   openrouter: OPENROUTER_DEEPSEEK_V41_FLASH,
-  fireworks: FIREWORKS_DEEPSEEK_V41_FLASH,
 } as const;
 
-/** The model a call will use: the explicit one, else the pinned default for that provider. */
-export function pinnedModel(provider: 'openrouter' | 'fireworks', model?: string | null): string {
+/** The model a call will use: the explicit one, else the pinned OpenRouter default. */
+export function pinnedModel(provider: 'openrouter', model?: string | null): string {
   const m = (model ?? '').trim();
   return m || PINNED_DEFAULT_MODEL[provider];
 }
@@ -59,7 +59,10 @@ export function modelLicence(modelId: string | null | undefined): { licence: str
   return hit ? { licence: hit.licence, trainable: hit.trainable } : { licence: 'unknown', trainable: false };
 }
 
-/** Provider from the id shape: Fireworks ids are `accounts/fireworks/...`; vendor/model ids are OpenRouter. */
+/**
+ * Provider from the id shape (read-only provenance). Old recorded Fireworks slugs
+ * (`accounts/fireworks/...`) stay labelled for training rows — never used to place a call.
+ */
 export function modelProvider(modelId: string | null | undefined): string | null {
   const id = (modelId ?? '').trim();
   if (!id) return null;
