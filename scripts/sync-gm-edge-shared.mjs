@@ -478,7 +478,9 @@ if (check) {
       drift.push({ ...e, status: 'missing' });
       continue;
     }
-    if (fs.readFileSync(destPath, 'utf8') !== edgeContent(e)) {
+    // Compare content, not line endings: Windows autocrlf checkouts turn LF copies into CRLF (byte-equal check false-failed on every fresh worktree).
+    const eol = (t) => t.replace(/\r\n/g, '\n');
+    if (eol(fs.readFileSync(destPath, 'utf8')) !== eol(edgeContent(e))) {
       drift.push({ ...e, status: 'differs' });
     }
   }
