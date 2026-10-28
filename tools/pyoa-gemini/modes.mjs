@@ -1,0 +1,13 @@
+import puppeteer from 'puppeteer-core';
+import { findGeminiPage } from '../../scripts/ai-player-browser/geminiTab.mjs';
+const b = await puppeteer.connect({ browserURL: 'http://127.0.0.1:9222', defaultViewport: null });
+const p = findGeminiPage(await b.pages());
+await p.goto('https://gemini.google.com/app', { waitUntil: 'domcontentloaded' });
+await new Promise(r=>setTimeout(r,3000));
+const lab = () => p.evaluate(() => [...document.querySelectorAll('button')].map(x => x.getAttribute('aria-label')||'').filter(s => /mode picker/i.test(s)));
+console.log('after new chat:', await lab());
+await p.evaluate(() => [...document.querySelectorAll('button')].find(x => /mode picker/i.test(x.getAttribute('aria-label')||''))?.click());
+await new Promise(r=>setTimeout(r,1200));
+console.log(await p.evaluate(() => [...document.querySelectorAll('[role="menuitemradio"],[role="menuitem"],[role="option"],mat-action-list button,.mat-mdc-menu-item')].map(x => (x.innerText||'').replace(/\s+/g,' ').slice(0,100))));
+await p.keyboard.press('Escape');
+b.disconnect();
