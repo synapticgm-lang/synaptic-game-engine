@@ -1,0 +1,92 @@
+{
+ "batch": "sg-6-2-5-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-2-5-3": {
+   "title": "The Vault Lock Settles",
+   "text": "Heavy iron pins drop home within the cooled housing with a sound like dropped gravel, ending generations of waiting. Silence returns to the high circular gallery, save for the wet hiss of condensation weeping down walls of fused crystal. Your fingers still ache from the leverage of the cold ceramic key, yet the air around you tastes startlingly sweet, smelling faintly of damp loam and unopened leaves. Outside the narrow viewing slit, grey storm light churns across the flooded flats of the Salt Basin, where the rising monsoon laps hungrily at the lower lintels.\n\nThe long road back begins here, leading across waters that have swallowed the tracks of your arrival and transformed every familiar salt-arch into a strange grey harbor.",
+   "exits": [
+    "Step through the arch and press on across the rising waters"
+   ]
+  },
+  "sg-d-6-2": {
+   "title": "The Sealed Chamber",
+   "text": "Warning bells clang once through the conduit before the pressure lock seizes with a shriek of tortured brass. Frantic fingers slip against the smooth ceramic key as the heavy lead-lined bolts slide home from the outside, locking forever into wet stone. Dark, foaming brine surges over the threshold in a sudden, cold wave, filling the narrow alcove and driving the air from your lungs with astonishing speed. The ember-lamp hisses and dies in the rising dark, leaving only the distant, hollow echo of water finding its final, quiet level.",
+   "exits": []
+  },
+  "sg-6-out": {
+   "title": "The Final Reckoning",
+   "text": "Cool ceramic rests against your palm as you stand before the towering bronze gates of the Rain Vault, listening to the deep drumbeat of the monsoon against the observatory dome. The choice of what to do with the ancient seed hall hangs heavier now than any pack or weapon, shaping the future of every parched town from the rim to the sunken basin. Water pools around your boots, shallow and persistent, signaling that the dry years are over and the time for half-measures has passed entirely.\n\nEvery road out of this vaulted chamber leads to a different destiny for the dried lands, whether shared among the thirsty millions, hidden forever behind sealed lead, or carried in secret toward the dying hearths of Candlemere.",
+   "exits": [
+    "Turn the large wheel to open the Rain Vault to everyone",
+    "Drop the heavy locking bar and seal the vault against all comers",
+    "Pry free the primary canister and run for Candlemere alone"
+   ]
+  },
+  "sg-f-A": {
+   "title": "Opening the Great Doors",
+   "text": "Trembling hands guide the cold ceramic key through the intricate bronze wards until the entire locking assembly gives way with a deep, resonant hum. Singing glass chimes ring out from the high ceiling as the great valves swing wide, releasing a cool, sweet draft of long-hoarded mountain air into the salt-fogged hall. The Sisters' well-song rises from somewhere deep within the descending conduits, blending with the roar of the rising monsoon to herald an end to the long drought.\n\nDown every flooded corridor and up through the shattered lens-cities, the water begins to flow outward, carrying the promise of green harvests to every throat that ever cried for rain.",
+   "exits": [
+    "Watch the seed wake across the waters",
+    "Step back as the unthanked doors swing wide",
+    "Turn away before the waiting crowd arrives"
+   ]
+  },
+  "sg-f-B": {
+   "title": "Sealing the Vault",
+   "text": "Heavy lead bars drop into their greased channels with a final, flat thud that vibrates through the soles of your boots. The bronze door grinds shut against its stone frame, sealing the ancient seed away from the desperate hands of the Salt Court and the thirsty pilgrims alike. Outside the high balcony, grey rain drives across the glass sea, but within this chamber, the secret remains intact and untouched by the rising tide.\n\nThe key slides deep into a crevice of living rock, leaving the vault to the silence of the drowned city and the watchful care of the deep stone.",
+   "exits": [
+    "Leave the door in the hands of Pell",
+    "Turn away and leave the vault to the glass"
+   ]
+  },
+  "sg-f-C": {
+   "title": "Taking the Seed",
+   "text": "Quick fingers strip the primary seed-pod from its silver cradle, tucking the cold, heavy treasure deep into the folds of your travel coat. The great doors behind you remain half-shut, ignoring the rising flood and the distant calls of the Basin's many factions. Every step toward the exit is heavy with the knowledge of what is left behind, yet the small, hard weight against your ribs promises life for the hearths of home.\n\nThe path out leads through the rising brine and back toward the western rim, owing nothing to the court lords or the singing sisters.",
+   "exits": [
+    "Head for home with a clean pack",
+    "Step into the storm with the Salt Court debt behind you",
+    "Walk out into the dark road without a light"
+   ]
+  },
+  "sg-e-A1-1": {
+   "title": "The Seed Wakes",
+   "text": "Sweet water surges through the old stone arteries of the Basin, carrying the first sprouting grains out upon the surface of the rising flood. The Sisters' well-song echoes from every submerged tower, harmonizing with the steady, drumming rhythm of the monsoon rain. Down in Candlemere, the dry mud of the marketplace drinks deeply, and green shoots push through the crust before the month is half gone.\n\nYour fingers no longer ache from the key, but the memory of the cold ceramic stays with you as proof that old promises can still be kept.",
+   "exits": [
+    "Read on to the final moment"
+   ]
+  },
+  "sg-e-A1-2": {
+   "title": "Green Valleys",
+   "text": "Weeks after the gates swung wide, the salt flats are a shimmering expanse of shallow freshwater where flat-bottomed skiffs pole between drowned glass spires. No one starves this season, and the lamps of Candlemere burn bright with oil pressed from the very first riverside harvest. The Salt Court finds its promissory notes dissolved in the rising tide, replaced by a strange, unaccustomed equity among neighbors.\n\nEven the Dune Sisters offer a cup of fresh well-water without asking for an oath in return, smiling wryly as the rain drums on their broad straw hats.",
+   "exits": [
+    "Reach the last page of the journey"
+   ]
+  },
+  "sg-e-A1-3": {
+   "title": "The Last Lamp",
+   "text": "The ember-lamp sits unlit on the wooden table, its banked coals grown cold in a house that no longer fears the dark or the drought. Outside the window, the young grain grows tall and green beneath a grey, forgiving sky that smells forever of wet earth and salt-free wind. You walk down to the water's edge where the small boats tie up, watching the ripples spread outward toward the horizon where the old world ended and the new one finally took root.\n\nThe lamp is out, but the road goes on.",
+   "exits": []
+  },
+  "sg-e-A2-1": {
+   "title": "Opened, Unthanked",
+   "text": "The heavy doors yield to the cold key just as the old songs promised, flooding the Basin with the rich, damp scent of life-giving water. Yet no crowd gathers to cheer your name, and neither the Sisters nor the Salt Court acknowledge the hand that turned the lock. The seed is loose upon the waters, flowing toward every thirsty field from Prism to the western rim without a single word of gratitude.\n\nYou walk back along the flooded causeway alone, your pockets empty of coin but your pack light with the quiet satisfaction of a hard task finished.",
+   "exits": [
+    "Read on through the quiet aftermath"
+   ]
+  },
+  "sg-e-A2-2": {
+   "title": "The Hard Peace",
+   "text": "Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. The harvest rises green and high across the flats, feeding every town and homestead while the great factions argue over who deserves the credit for the rain. Nobody remembers the runner from Candlemere who turned the key in the dark, and your name is written on no monument in the glass cities.\n\nYet the wells run full when you pass them, and the salt on your boots has washed away into rich, dark mud that clings to the roots of new trees.",
+   "exits": [
+    "Read the final lines of the road"
+   ]
+  },
+  "sg-e-A2-3": {
+   "title": "Unsung Roads",
+   "text": "The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. You watch the rain stitch silver lines across the glass panes, listening to the contented murmur of a town that no longer looks toward the desert with dread. There are no songs sung about your journey, and no statues stand in the drowned squares to mark your passing.\n\nThe seed is in the earth where it belongs, and the road ahead is wide, quiet, and entirely your own.",
+   "exits": []
+  }
+ },
+ "missing": []
+}

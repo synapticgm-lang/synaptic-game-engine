@@ -1,0 +1,84 @@
+{
+ "batch": "sg-6-2-4-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-2-4-1": {
+   "title": "Phosphor Glare and Hum",
+   "text": "Phosphor-lamps hiss along the ribbed ceiling, casting a greenish twilight over the seed vault's thrumming core where restrained energy vibrates against your teeth. Every heavy copper conduit pulses with the strange, low frequency of a sleeping beast, waiting for a touch that might awaken or shatter it.\n\nYou stand with the ceramic key growing warm in your damp palm, feeling the steady tremor of the bedrock beneath your boots. Every breath tastes of ozone and dry limestone, urging a decision before the subterranean silence breaks entirely.",
+   "exits": [
+    "Touch the trembling copper plate to release the stored charge",
+    "Step back from the humming core and test the latch on the secondary case"
+   ]
+  },
+  "sg-6-2-4-2": {
+   "title": "Wind from the Sump",
+   "text": "Cold air rushes up from the deep stone sump where the basin's drainage channels converge, carrying the sharp scent of wet mud and distant rain. Below your feet, the first underground stirrings of the monsoon echo through the dark tunnels like a gathering crowd.\n\nShadows stretch long across the algae-slicked masonry as the draft grows stronger, fluttering the edges of your coat and chilling the sweat on the back of your neck. The water is rising faster than the old ledgers predicted, turning every calculation into a race against the rising tide.",
+   "exits": [
+    "Climb down the iron rungs toward the rising damp",
+    "Seal the drainage grate with the heavy iron wedge"
+   ]
+  },
+  "sg-6-2-4-3": {
+   "title": "Parchment Air of Relics",
+   "text": "Dry stillness fills the innermost reliquary, pulling the moisture from your skin until your knuckles feel tight and stretched like yellow parchment. Rows of glass jars, housing dust-fine grains and shrivelled pods, line the cedar shelves under a fine blanket of unblemished salt.\n\nSilence presses down with physical weight, broken only by the faint crackle of your banked coal-lantern shifting against your hip. The air holds no scent of life, only the mineral breath of centuries past preserved in amber glass.",
+   "exits": [
+    "Uncork the central jar to test the ancient seed",
+    "Leave the reliquary untouched and check the heavy outer latch",
+    "Turn your back on the quiet shelves and retrace your steps"
+   ]
+  },
+  "sg-6-2-4-4": {
+   "title": "The Grand Obsidian Console",
+   "text": "Three obsidian slots wait upon the polished console for choices that will shape the survival or doom of every western lamp-town. The smooth volcanic glass reflects the dim orange glow of your coal-lantern, looking like dark pools waiting for a heavy stone to drop.\n\nYour fingers hover above the cold stone plates, each indentation carved with the jagged runic script of the old lensfolk. The responsibility of an entire harvest hangs upon which groove receives your pressure first.",
+   "exits": [
+    "Press the left slot to open the deep irrigation sluices",
+    "Slide the cold key into the central locking channel"
+   ]
+  },
+  "sg-6-2-4-5": {
+   "title": "Damp Trail on Salt",
+   "text": "Dark footprints mar the glistening white crust of the central hall, standing out like ink spilled across a clean linen sheet. The salt floor crunches softly under your boots, leaving wet rings that slowly fill with bitter brine seeping up from below.\n\nAcross the vast chamber, the dim green glow of the ceiling lamps flickers erratically, throwing long and dancing shadows against the carved pillars. You are leaving a clear path behind you, one that anyone or anything could easily follow into the dark.",
+   "exits": [
+    "Follow the damp trail toward the echoing water-conduit",
+    "Veer toward the obsidian console to lock the central sector"
+   ]
+  },
+  "sg-6-2-4-6": {
+   "title": "Hollow Pillar of Singing Glass",
+   "text": "Acoustic chambers buried deep in the bedrock catch your voice and bounce your name back through the hollow pillar of singing glass like a choir of strangers. The tone shifts from a low, resonant hum to a bright, piercing chime that sets your teeth on edge.\n\nVibrations travel up through the stone floor, making the salt crystals on the walls dance in shimmering patterns of grey and silver. The glass pillar seems to listen, recording every whispered word into the ancient memory of the basin.",
+   "exits": [
+    "Leave the singing chamber before the echoes grow too loud"
+   ]
+  },
+  "sg-6-2-4-7": {
+   "title": "Warmth of the Key",
+   "text": "Heavy titanium doors block the entrance to the seed repository, their massive bolts chilled by centuries of subterranean frost. Yet as you approach, the cold ceramic key in your fist grows strangely warm, pulsing with an inner heat that matches the beat of your heart.\n\nFrost crystals melt into tiny droplets where your fingers press against the porous clay, releasing a scent like wet dust after a long drought. The lock mechanism waits, a silent mouth carved into the metal waiting for its missing tooth.",
+   "exits": [
+    "Insert the warm key into the heavy titanium door"
+   ]
+  },
+  "sg-6-2-5-0": {
+   "title": "Iron Petals of the Urn",
+   "text": "Iron petals part with a slow, grinding screech at the apex of the central platform, revealing the pale, dormant grains of the old world resting upon a velvet cushion of woven copper wire. A faint cloud of dry, golden dust rises from the opening, smelling faintly of old flour and crushed stones.\n\nYou lean over the rim, holding your breath as the lantern light washes across the tiny, perfect shapes of seeds that have not seen rain or sun in a thousand years. The future of Candlemere rests in the hollow of your hand, waiting to be claimed or left to dust.",
+   "exits": [
+    "Press on into the heart of the vault"
+   ]
+  },
+  "sg-6-2-5-1": {
+   "title": "Breach of the Conduit",
+   "text": "Yawning stonework marks the breach of the water-conduit, where a torrent of dark, foaming brine surges against the rusted grating with the force of a battering ram. The roar of water fills the low tunnel, drowning out all other sound and sending cold spray misting across your face.\n\nYou must choose whether to break the remaining bars and flood the basin now to save the parched fields above, or shore up the dry vault to keep the ancient seeds safe from the tide. Every second brings a new shudder to the straining masonry around you.",
+   "exits": [
+    "Press on through the roaring spray",
+    "Turn back before the rising water cuts off your escape"
+   ]
+  },
+  "sg-6-2-5-2": {
+   "title": "High Observatory Balcony",
+   "text": "High observatory arches frame the vast submerged expanse of the saltglass sea, where distant lightning flickers across the grey belly of storm clouds gathering over the horizon. From this dizzying height, the shattered glass cities look like broken teeth jutting from a mirror of salt.\n\nThe wind pulls at your cloak, bringing the sharp tang of approaching rain and the distant, haunting whistle of wind through the spires. You hold the destiny of Candlemere in your palm, looking out over a world about to be drowned or washed clean.",
+   "exits": [
+    "Press on toward the final platform"
+   ]
+  }
+ },
+ "missing": []
+}
