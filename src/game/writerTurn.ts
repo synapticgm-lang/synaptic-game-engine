@@ -155,6 +155,9 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   const dyingNow = tabletopDown && !ds!.dead && !ds!.stable;
   const deadNow = tabletopDown && !!ds!.dead;
   if (dyingNow || deadNow) {
+    // SRD 5.2.1 Unconscious: "An Unconscious creature is incapacitated, can't move or speak, and
+    // is unaware of its surroundings" (Wizards of the Coast, CC BY 4.0). T10AH — any PC-led act
+    // that is not refused in the same sentence (cannot / locked) is illegal, not only walk/talk.
     const first = (check.state.character?.name ?? '').trim().split(' ')[0] ?? '';
     const bits: string[] = [];
     let buf = '';
@@ -168,11 +171,28 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
       const low = lead.toLowerCase();
       const subject = (first.length >= 2 && low.startsWith(first.toLowerCase())) || low.startsWith('you ');
       if (!subject) continue;
-      if (low.includes('cannot') || low.includes("can't") || low.includes('unable') || low.includes('could not')) continue;
+      if (
+        low.includes('cannot')
+        || low.includes("can't")
+        || low.includes('unable')
+        || low.includes('could not')
+        || low.includes('locked inside')
+        || low.includes('stayed locked')
+      ) {
+        continue;
+      }
       const moving = stemHit(lead, 'walk') || stemHit(lead, 'travel') || stemHit(lead, 'head') || stemHit(lead, 'move');
       const speaking = stemHit(lead, 'talk') || stemHit(lead, 'speak') || stemHit(lead, 'say') || stemHit(lead, 'shout') || classifyVerb(lead) === 'spoke' || classifyVerb(lead) === 'traveled' || classifyVerb(lead) === 'left';
       const rescued = deadNow && (stemHit(lead, 'wake') || stemHit(lead, 'stand') || stemHit(lead, 'rescue'));
-      if (moving || speaking || rescued) {
+      const micro =
+        stemHit(lead, 'lick')
+        || stemHit(lead, 'crawl')
+        || stemHit(lead, 'push')
+        || stemHit(lead, 'reach')
+        || stemHit(lead, 'try')
+        || stemHit(lead, 'glare')
+        || /\b(?:worked|managed|succeeded|got up)\b/i.test(lead);
+      if (moving || speaking || rescued || micro) {
         out.push(deadNow ? 'Show the player acting after death.' : 'Show the player acting while unconscious.');
         break;
       }

@@ -888,11 +888,37 @@ export function writerTravelFact(receipt: string): string | null {
   return dest ? `Arrived at ${dest}.${time}` : null;
 }
 /**
+ * T10AH — STATUS ledger labels that must never become book sentences (Encounter budget, Combat status, …).
+ * Shared by writerEngineResult and convertWriterCueFact's non-cue head.
+ */
+export function isBookForbiddenLedgerLine(s: string): boolean {
+  const t = (s ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return true;
+  return /^(?:Encounter budget:|Combat status:|Exhaustion:|Initiative —|Rounds? \d+|Death save:|XP Gained:|Gold Gained:|Coins\b|Moved within\b)/i.test(
+    t,
+  );
+}
+
+/** Rest: receipt → one past-tense rest sentence (HP arrow or HP stays). */
+function restReceiptToProse(s: string): string {
+  const low = s.toLowerCase();
+  const kind = low.includes('long rest') ? 'long rest' : low.includes('short rest') ? 'short rest' : 'rest';
+  const hpAt = s.search(/\bHP\b/i);
+  if (hpAt >= 0) {
+    const tail = s.slice(hpAt).replace(/^HP\s+/i, '').trim();
+    const arrow = tail.match(/^(\d+)\s*(?:→|->|to)\s*(\d+)/i);
+    if (arrow) return `You took a ${kind} and your hurts eased (${arrow[1]} to ${arrow[2]}).`;
+    if (/^stays\b/i.test(tail)) return `You took a ${kind}.`;
+  }
+  return `You took a ${kind}.`;
+}
+
+/**
  * Plain Travel: → writer form, then every other receipt label the same way. Not inside "Extended Travel:" (q31-L4).
  * `subject` is the PC display name for Must-narrate → third-person past (T10R).
  */
 export function writerEngineResult(fact: string, subject?: string): string {
-  const travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  let travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
   // T10U — death beat is the death sentence only (no Check failure / Extended Travel chrome /
   // stray push-on travel sentence mixed into the book). SRD 5.2.1 Exhaustion 6 = death.
   if (/\bYou are dead\./i.test(travel)) {
@@ -908,6 +934,15 @@ export function writerEngineResult(fact: string, subject?: string): string {
         : `The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.`;
     }
   }
+  // T10AH — peel STATUS ledger sentences before cue convert so Rest:/Encounter budget never paste as story.
+  travel = travel
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s && !isBookForbiddenLedgerLine(s))
+    .map((s) => (/^Rest:/i.test(s) ? restReceiptToProse(s) : s))
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   // T10P — cue-heavy facts convert as whole blocks (periods inside Must narrate must not leak).
   if (hasWriterCueChrome(travel)) {
     const converted = convertWriterCueFact(travel, subject);
@@ -918,7 +953,7 @@ export function writerEngineResult(fact: string, subject?: string): string {
   for (let i = 0; i < parts.length; i++) {
     let s = (i < parts.length - 1 ? `${parts[i]}.` : parts[i]!).trim();
     while (s.includes('  ')) s = s.split('  ').join(' ');
-    if (!s || isRoadLabel(s)) continue;
+    if (!s || isRoadLabel(s) || isBookForbiddenLedgerLine(s)) continue;
     // Death chrome (Check failure / Extended Travel) is already dropped by the You-are-dead early return.
     // Live push-on must still hand Extended Travel + Check outcome to the writer (q31-L4 / s73).
     const roomHead = 'Dungeon room: ';
@@ -950,19 +985,8 @@ export function writerEngineResult(fact: string, subject?: string): string {
       else if (names.length > 1) out.push(`Ways led on to ${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}.`);
       continue;
     }
-    if (s.startsWith('Rest:')) {
-      const low = s.toLowerCase();
-      const kind = low.includes('long rest') ? 'long rest' : low.includes('short rest') ? 'short rest' : 'rest';
-      const hpAt = s.indexOf('HP ');
-      if (hpAt >= 0) {
-        const bits = s.slice(hpAt + 3).trim().split(' ');
-        const to = (bits[2] ?? '').split('(')[0] ?? '';
-        if (bits[0] && to && (bits[1] === '→' || bits[1] === '->' || bits[1] === 'to')) {
-          out.push(`You took a ${kind} and your hurts eased (${bits[0]} to ${to}).`);
-          continue;
-        }
-      }
-      out.push(`You took a ${kind}.`);
+    if (/^Rest:/i.test(s)) {
+      out.push(restReceiptToProse(s));
       continue;
     }
     // T10E — writer cue lines (shared writerCueLines) → plain narration; never player chrome.

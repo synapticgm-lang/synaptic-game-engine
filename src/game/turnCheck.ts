@@ -269,11 +269,20 @@ export function checkActionFollowed(
     (!bodyAction && (intent.kind === 'talk' || intent.kind === 'refuse') && !isAddresseelessPhysicalAct(act));
   // An offer or plea is followed when someone here answers it; its words are the act, not an object.
   const socialAct = !talkish && !bodyAction && TALK_NEEDS_EAR.test(act);
+  // A downed or dead PC rolls a death save, not the attack the chip names: no blow is owed.
+  // T10AH — SRD Unconscious: when the prose says the act cannot happen, that is correct — not ignored-action.
+  const pcDown = (before.character?.hp ?? 1) <= 0 || fightRolls(after.completedEvent?.engineResult).pcCannotAct;
+  const proseRefusesDownedAct =
+    pcDown
+    && /\b(?:cannot|can't|could not|unable|unconscious|locked inside|stayed locked)\b/i.test(text);
+  const flagIgnored = (detail: string) => {
+    if (!proseRefusesDownedAct) p0.push({ kind: 'ignored-action', detail });
+  };
 
   if (addr?.kind === 'named' || (talkish && typedNamed)) {
     const who = addr?.kind === 'named' ? addr.who : typedNamed!;
     if (!mentionsName(text, who) && !quoted) {
-      p0.push({ kind: 'ignored-action', detail: `player spoke to ${who}; the prose never has ${who} answer or appear` });
+      flagIgnored(`player spoke to ${who}; the prose never has ${who} answer or appear`);
     }
   } else if (talkish) {
     // Empty scene: speech to shutters / empty street needs no NPC answer — "nobody answers" is the correct beat.
@@ -286,30 +295,28 @@ export function checkActionFollowed(
         text
       );
       if (!cov.ok && !quoted && !(fightTold && fight!.forcedBy === 'parley')) {
-        p0.push({ kind: 'ignored-action', detail: `player said "${act.slice(0, 80)}"; nobody answers in the prose` });
+        flagIgnored(`player said "${act.slice(0, 80)}"; nobody answers in the prose`);
       }
     }
   } else if (socialAct && !quoted && !peopleHere(before).filter((n) => !isCrowdFillerToken(n)).some((p) => mentionsName(text, p))) {
-    p0.push({ kind: 'ignored-action', detail: `player chose "${act.slice(0, 80)}"; nobody here answers in the prose` });
+    flagIgnored(`player chose "${act.slice(0, 80)}"; nobody here answers in the prose`);
   }
 
   const travel = act.match(TRAVEL_ACTION);
   const moved = low(after.currentLocation) !== low(before.currentLocation) || (!!after.journey && after.journey !== before.journey);
   const fighting = !!before.activeEncounter || !!before.sceneFacts?.pendingEncounter;
   if (travel && !moved && !fighting) {
-    p0.push({ kind: 'ignored-action', detail: `player chose to travel toward ${travel[1]}; they never left ${before.currentLocation || 'here'}` });
+    flagIgnored(`player chose to travel toward ${travel[1]}; they never left ${before.currentLocation || 'here'}`);
   }
-  // A downed or dead PC rolls a death save, not the attack the chip names: no blow is owed.
-  const pcDown = (before.character?.hp ?? 1) <= 0 || fightRolls(after.completedEvent?.engineResult).pcCannotAct;
   if (ATTACK_ACTION.test(act) && before.activeEncounter && !pcDown && !BLOW.test(text) && !fightTold) {
-    p0.push({ kind: 'ignored-action', detail: `player attacked ${before.activeEncounter.name}; the prose shows no blow` });
+    flagIgnored(`player attacked ${before.activeEncounter.name}; the prose shows no blow`);
   }
   if (travel && moved) {
     // The destination itself must be named: the ground on the way ("Back streets") is not where they went.
     const dest = travel[1]!.replace(/\s+[—–-]\s+.*$/, '').trim();
     const where = [dest, after.journey?.to ?? ''].filter(Boolean);
     if (!where.some((w) => placeNamed(text, w))) {
-      p0.push({ kind: 'ignored-action', detail: `player travelled toward ${dest}; the prose never names ${dest}` });
+      flagIgnored(`player travelled toward ${dest}; the prose never names ${dest}`);
     }
   }
 
@@ -318,10 +325,9 @@ export function checkActionFollowed(
   if (!travel && !looking) {
     const share = restatedShare(text, gmBodies(before));
     if (share >= 0.6) {
-      p0.push({
-        kind: 'ignored-action',
-        detail: `the beat restates an earlier beat (${Math.round(share * 100)}% of its lines) instead of doing "${act.slice(0, 60)}"`,
-      });
+      flagIgnored(
+        `the beat restates an earlier beat (${Math.round(share * 100)}% of its lines) instead of doing "${act.slice(0, 60)}"`,
+      );
     }
   }
 

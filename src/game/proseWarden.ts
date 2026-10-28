@@ -893,6 +893,35 @@ export function scrubPronounSubjectSlips(text: string): string {
   next = next.replace(/\bFocus on them\b/gi, 'Focus on it');
   return next;
 }
+/**
+ * T10AH — bare internal ref ids (`inside t1`, `toward t3`) never belong in the book.
+ * Token paint owns `@tN`; a leaked digit-id without `@` is dropped to the surrounding noun.
+ */
+export function scrubInternalRefIds(text: string): string {
+  if (!text || !/\bt\d+\b/i.test(text)) return text;
+  return text
+    .replace(/\binside\s+t\d+\b/gi, 'inside')
+    .replace(/\b(?:toward|towards|at|to|from|near|by|on|in)\s+t\d+\b/gi, (m) => m.replace(/\s+t\d+\b/i, ''))
+    .replace(/(^|[^\w@])t(\d+)\b/g, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([.,;:!?])/g, '$1')
+    .trim();
+}
+
+/**
+ * T10AH — possessive `'s` on a long relative place phrase ("building that is gone's visitor")
+ * is unreadable; rewrite to "of …" / drop the glued visitor when the head is a relative clause.
+ */
+export function scrubLongPlacePossessive(text: string): string {
+  if (!text || !/['’]s\b/.test(text)) return text;
+  // Relative place phrase + 's ("building that is gone's other visitor") → "other visitor at …"
+  return text.replace(
+    /((?:[A-Za-z][a-z]*\s+){1,12}that\s+(?:is|was|are|were)\s+[a-z]+(?:\s+[a-z]+){0,4})['’]s\s+((?:a|an|the)\s+)?([a-z]+(?:\s+[a-z]+)?)/gi,
+    (_m, place: string, det: string | undefined, owned: string) =>
+      `${(det ?? '').trim() ? `${det!.trim()} ` : ''}${owned} at the ${place.replace(/^(?:the|a|an)\s+/i, '').trim()}`,
+  );
+}
+
 export function scrubPossessiveDeterminerSlips(text: string): string {
   if (!text) return text;
   let next = text;
@@ -1428,6 +1457,8 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubArticleCollisions(next);
   next = scrubPronounSubjectSlips(next);
   next = scrubPossessiveDeterminerSlips(next);
+  next = scrubInternalRefIds(next);
+  next = scrubLongPlacePossessive(next);
   if (ctx?.ledgerState) {
     next = obeyLedgerNouns(next, ctx.ledgerState, undefined, ctx.isThisTurnsEvent).prose;
   }
