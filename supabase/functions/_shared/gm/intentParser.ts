@@ -688,6 +688,17 @@ export function givePcTheirQuote(prose: string, playerInput: string, pcName?: st
     if (!quoteMatchesPcSay(quote, want)) return full;
     return `${pc} ${verb}, ${open}${quote}${close}`;
   });
+  // T10AI — writer "said the words" / "spoke the words" swallows the typed line; paint the quote.
+  // SRD 5.2.1 Communicating — the speaker's words stay theirs (Wizards of the Coast, CC BY 4.0).
+  const wordsShell =
+    /\b((?:[A-Z][\w'’-]+|You|you))\s+(said|spoke|asked|shouted|whispered|called)\s+the\s+words\b/gi;
+  if (wordsShell.test(next) && !new RegExp(`["\\u201c]${said.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 24)}`, 'i').test(next)) {
+    wordsShell.lastIndex = 0;
+    next = next.replace(wordsShell, (_full, speaker: string, verb: string) => {
+      const who = isPcSpeaker(speaker, pcFirst) || /^(?:you)$/i.test(speaker) ? pc : speaker;
+      return `${who} ${verb}, "${said}"`;
+    });
+  }
   return next;
 }
 

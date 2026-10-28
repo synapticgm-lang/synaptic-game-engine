@@ -279,16 +279,28 @@ export function checkActionFollowed(
     if (!proseRefusesDownedAct) p0.push({ kind: 'ignored-action', detail });
   };
 
-  if (addr?.kind === 'named' || (talkish && typedNamed)) {
-    const who = addr?.kind === 'named' ? addr.who : typedNamed!;
-    if (!mentionsName(text, who) && !quoted) {
+  // T10AI — when prose and the engine agree the addressee is gone, "no answer" is correct (not ignored).
+  const emptyAgree =
+    placeSaysEmpty(before, text) || placeSaysEmpty(after, text);
+  const listenersBefore = peopleHere(before).filter((n) => !isCrowdFillerToken(n));
+  const listenersAfter = peopleHere(after).filter((n) => !isCrowdFillerToken(n));
+  const honestAbsent =
+    emptyAgree && listenersBefore.length === 0 && listenersAfter.length === 0;
+
+  if (addr?.kind === 'named' || addr?.kind === 'role' || (talkish && typedNamed)) {
+    const who = addr?.kind === 'named' || addr?.kind === 'role' ? addr.who : typedNamed!;
+    const whoHere =
+      listenersBefore.some((p) => mentionsName(p, who) || mentionsName(who, p))
+      || listenersAfter.some((p) => mentionsName(p, who) || mentionsName(who, p));
+    if (honestAbsent || (emptyAgree && !whoHere)) {
+      // Gate and prose agree: no reply owed.
+    } else if (!mentionsName(text, who) && !quoted) {
       flagIgnored(`player spoke to ${who}; the prose never has ${who} answer or appear`);
     }
   } else if (talkish) {
     // Empty scene: speech to shutters / empty street needs no NPC answer — "nobody answers" is the correct beat.
     // T10Z — crowd fillers alone are not listeners (bystanders do not owe an answer).
-    const listeners = peopleHere(before).filter((n) => !isCrowdFillerToken(n));
-    if (listeners.length > 0) {
+    if (!honestAbsent && listenersBefore.length > 0) {
       const contract = buildIntentContract({ typed: act, resolvedText: act, intent, state: before });
       const cov = checkObligationCoverage(
         { ...contract, obligations: contract.obligations.filter((o) => o.kind === 'talk' || o.kind === 'refuse') },
@@ -298,7 +310,12 @@ export function checkActionFollowed(
         flagIgnored(`player said "${act.slice(0, 80)}"; nobody answers in the prose`);
       }
     }
-  } else if (socialAct && !quoted && !peopleHere(before).filter((n) => !isCrowdFillerToken(n)).some((p) => mentionsName(text, p))) {
+  } else if (
+    socialAct
+    && !quoted
+    && !honestAbsent
+    && !listenersBefore.some((p) => mentionsName(text, p))
+  ) {
     flagIgnored(`player chose "${act.slice(0, 80)}"; nobody here answers in the prose`);
   }
 

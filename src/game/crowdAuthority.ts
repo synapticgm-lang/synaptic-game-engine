@@ -7,6 +7,7 @@
 
 import type { GameState, SceneFacts } from './types';
 import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority';
+import { proseSaysEmpty } from './chipRules';
 
 export type CrowdBucket = 'empty' | 'solo' | 'pair' | 'few' | 'group' | 'large';
 
@@ -510,6 +511,19 @@ export function harvestCrowdIntoSceneFacts(
         lastBeat: '',
         updatedTurn: turn,
       };
+
+  // T10AI — honest empty (same signal as placeSaysEmpty) wins over a leftover "crowd" noun
+  // ("ask the crowd" when the lane held nobody). Do not re-lock occupancy from that word.
+  if (proseSaysEmpty(narrative)) {
+    return {
+      ...base,
+      crowd: 'none',
+      present: [],
+      crowdCount: undefined,
+      lastBeat: base.lastBeat || 'street empty',
+      updatedTurn: turn,
+    };
+  }
 
   const mention = detectCrowdMention(narrative);
   const flux = crowdFluxInText(narrative);

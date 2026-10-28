@@ -44,6 +44,8 @@ function personKey(name: string): string {
  * Everyone who could answer: the presence record, companions, the live foe, the opening cast,
  * a road meeting. Opening cast stays while still at the card place (busy beat / no empty text
  * does not clear them — empty-room listeners strip cast separately).
+ * T10AI — when the engine records an empty occupancy (crowd none + cleared present), departed
+ * cast/roles/location memories do not stay as listeners (Follow-up chips retract with the record).
  */
 export function peopleHere(state: GameState): string[] {
   const out = new Map<string, string>();
@@ -58,6 +60,17 @@ export function peopleHere(state: GameState): string[] {
       out.set(key, name);
     }
   };
+  const facts = state.sceneFacts;
+  const emptyOccupancy =
+    facts?.crowd === 'none'
+    && (facts.crowdCount ?? 0) === 0
+    && !(facts.present?.length);
+  if (emptyOccupancy) {
+    (state.companions ?? []).forEach((c) => add(c.name));
+    add(state.activeEncounter?.name);
+    add(roadMeetingPeople(state));
+    return [...out.values()];
+  }
   presentNpcNames(state).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);

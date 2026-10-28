@@ -66,10 +66,18 @@ export function stemHit(prose: string, word: string): boolean {
 const EMPTY_ROOM =
   /\b(?:nobody|no one|no-one|not a soul|no other (?:soul|person|people)|no sign of (?:anyone|life|people)|(?:you are|you're|you were|you stand|you stood|you're still|you are still) alone|alone (?:here|now|in (?:the|this))|deserted|(?:room|hall|chamber|place|building|house|ruin|street|square|space|corridor|bathhouse|cell|court|yard) (?:is|was|stood|lay|sat|stands|lies|sits) (?:empty|silent and empty)|empty (?:room|hall|chamber|ruin|building|house|street|square|corridor|bathhouse|cell))\b/i;
 
+/**
+ * T10AI — one empty-room signal for chips, presence harvest, and the readability gate.
+ * Quotes stripped so spoken "nobody" inside dialogue is not a place claim.
+ */
+export function proseSaysEmpty(prose: string): boolean {
+  const text = (prose ?? '').replace(/["“][^"”]*["”]/g, ' ');
+  return EMPTY_ROOM.test(text);
+}
+
 export function placeSaysEmpty(state: GameState, prose: string): boolean {
   const card = (state.places ?? []).find((p) => low(p.name) === low(state.currentLocation));
-  const text = [prose, card?.description].filter(Boolean).join(' ').replace(/["“][^"”]*["”]/g, ' ');
-  return EMPTY_ROOM.test(text);
+  return proseSaysEmpty([prose, card?.description].filter(Boolean).join(' '));
 }
 
 export const WINDOW_NOUN = /\b(?:(?:blue|system|status|translucent|glowing|floating)\s+(?:panel|window|screen|box|plate)|the panel)\b/i;

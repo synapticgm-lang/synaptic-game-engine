@@ -624,7 +624,8 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
   }
 
   // T10S — present addressee gets a reaction beat on last-resort cue convert. Live path: writer
-  // or ensureSpokenAnswer (motive / disposition silence). Never claim they "answered" with no words.
+  // or ensureSpokenAnswer (motive / disposition; T10AI extends to crowd/role). Never claim they
+  // "answered" with no words — stripSpeakerSilence replaces this when exchange content exists.
   if (!absentAnswer && reactionWho) {
     push(`${reactionWho} said nothing.`);
   }
