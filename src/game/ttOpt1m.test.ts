@@ -39,6 +39,8 @@ function modeBase(mode: 'litrpg' | 'rpg', extra?: Partial<GameState>): GameState
     engineMode: mode,
     currentLocation: 'Market',
     turn: 4,
+    // T10D: RPG origin owns the pad until recorded; adapters assert post-setup standing/contact.
+    character: mode === 'rpg' ? { ...s.character, origin: 'sage' } : s.character,
     openingEstablishment: {
       ...(s.openingEstablishment as object),
       complete: true,

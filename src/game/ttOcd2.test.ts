@@ -80,6 +80,8 @@ function base(mode: EngineMode): GameState {
     currentLocation: 'Camp',
     turn: 1,
     quests: play === 'dnd' ? s.quests : [questFor(play)],
+    // T10D: exclusive origin row is not a cooldown tape — stamp origin so RPG exercises free/travel/opt1m.
+    character: play === 'rpg' ? { ...s.character, origin: 'sage' } : s.character,
     openingEstablishment: {
       ...(s.openingEstablishment as object),
       complete: true,

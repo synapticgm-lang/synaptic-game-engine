@@ -216,6 +216,8 @@ describe('q37-C1b free-input + repeat + cuts', () => {
       turn: 8,
       log: [],
       currentLocation: 'Salt Road Waystation',
+      // T10D: exclusive origin pad owns the row until recorded — this case is post-setup scene chips.
+      character: { ...s.character, origin: 'sage' },
       openingEstablishment: {
         ...(s.openingEstablishment as object),
         complete: true,
