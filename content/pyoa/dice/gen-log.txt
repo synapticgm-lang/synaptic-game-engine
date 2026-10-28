@@ -437,3 +437,31 @@
 2026-10-28T09:59:46.305Z   reject td-6-009: missing
 2026-10-28T09:59:46.305Z   reject td-6-010: missing
 2026-10-28T09:59:54.322Z ask prose td-6-005..td-6-010 items=6 attempt=1
+2026-10-28T10:00:16.766Z   reject td-6-005: missing
+2026-10-28T10:00:16.766Z   reject td-6-006: missing
+2026-10-28T10:00:16.767Z   reject td-6-007: missing
+2026-10-28T10:00:16.767Z   reject td-6-008: missing
+2026-10-28T10:00:16.767Z   reject td-6-009: missing
+2026-10-28T10:00:16.768Z   reject td-6-010: missing
+2026-10-28T10:00:24.776Z STOP no valid sections for td-6-005
+2026-10-28T10:01:25.164Z ask prose td-6-005..td-6-010 items=6 attempt=0
+2026-10-28T10:01:47.584Z   reject td-6-005: missing
+2026-10-28T10:01:47.585Z   reject td-6-006: missing
+2026-10-28T10:01:47.585Z   reject td-6-007: missing
+2026-10-28T10:01:47.586Z   reject td-6-008: missing
+2026-10-28T10:01:47.586Z   reject td-6-009: missing
+2026-10-28T10:01:47.586Z   reject td-6-010: missing
+2026-10-28T10:01:55.599Z ask prose td-6-005..td-6-010 items=6 attempt=1
+2026-10-28T10:02:26.019Z done td-6-005: 6/6
+2026-10-28T10:02:26.022Z ask prose td-6-011..td-6-016 items=6 attempt=0
+2026-10-28T10:02:56.611Z done td-6-011: 6/6
+2026-10-28T10:02:56.612Z ask prose td-6-017..td-6-022 items=6 attempt=0
+2026-10-28T10:03:27.120Z done td-6-017: 6/6
+2026-10-28T10:03:27.122Z ask prose td-6-023..td-6-029 items=7 attempt=0
+2026-10-28T10:03:52.328Z   reject td-6-023: missing
+2026-10-28T10:03:52.330Z   reject td-6-024: missing
+2026-10-28T10:03:52.330Z   reject td-6-025: missing
+2026-10-28T10:03:52.331Z   reject td-6-026: missing
+2026-10-28T10:03:52.331Z   reject td-6-027: missing
+2026-10-28T10:03:52.332Z   reject td-6-028: missing
+2026-10-28T10:03:52.332Z   reject td-6-029: missing

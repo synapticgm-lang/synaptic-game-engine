@@ -1,0 +1,56 @@
+{
+ "batch": "td-6-017",
+ "sections": {
+  "td-6-017": {
+   "title": "The Choir's Choir",
+   "text": "Voices rise from the salt-crusted masonry of the Sunken Stair, thin and clear as grease-light on iron, singing the water back to a bed that has forgotten its weight. You stand knee-deep in the rising brine while the Hollow Choir weave their harmonies from old ribs and drowned brass, each note drawing the grey ocean up through the spiral floor with the steady pull of an anchor-chain. Orsolya Venn would have called this foolishness, but Orsolya is gone into the spray, leaving only the sound of her heavy boots in your memory. The tide comes not as a conqueror or a gift, but as a long-withheld confession spilling out between the stone teeth of the coast. You feel the chill of it climb your shins, tasting of old kelp and copper filings, heavy enough to drown a town or wash a debt clean off the slate.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Listen to the drowned voices rise //"
+   ]
+  },
+  "td-6-018": {
+   "title": "Below the Salt",
+   "text": "Water laps against your chest now, grey and opaque with silt, turning the dark shafts into a submerged cathedral where only the dead have standing room. The Brineholders' ledgers drift past your shoulders like bloated white fish, their gold ink dissolving into the swell before the clerks can reckon the price of an inch of lift. There is no air left to breathe that does not taste of salt and iron, yet your lungs refuse to give up the ghost, held by some strange bargain struck in the dark with the things that stayed behind when the tide went out. Above, the sky is a narrow strip of pale slate, shrinking as the sea reclaims its chambers and locks the doors against the sun. You let your feet leave the bottom, trusting the lift of the brine to carry you where it will among the rafters of the sunken world.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drift with the rising tide //"
+   ]
+  },
+  "td-6-019": {
+   "title": "The Endless Deep",
+   "text": "Gullmouth is only a cluster of wet chimneys against the horizon now, swallowed by the grey heave of a sea that has decided never to retreat again. The Meridian Gear spins on its own beneath the waves, locked in a rhythm too slow for mortal ears, turning the world back into a silent place of weed and bone. You float among the drowned streets where the fish swim through parlor windows and the net-menders' benches are draped in heavy green kelp, feeling neither cold nor hunger in the deep, steady dark. There are no more bells to ring and no more ships to wreck upon the rocks, only the slow, rhythmic pulse of the water overhead and the company of those who never left. The salt-crust on your skin dissolves at last, leaving you as smooth and empty as a river-stone polished by a thousand years of tide.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  },
+  "td-6-020": {
+   "title": "The Long Dry",
+   "text": "Dust settles over Gullmouth like a grey fleece, thick enough to blunt the sound of footsteps on the cobbles and choke the remaining wells until they cough up only dry sand. The Low stretches out to the horizon like an unplowed field of white bones and rusted iron, baking under a sun that refuses to set or soften its glare. Down in the town square, the net-menders sit on overturned tubs with empty bowls between their knees, staring at the dry harbour where the gulls have died of thirst upon the mud-banks. No water comes through the pipes, and no ships come up the channel, for the Brineholders have locked their cisterns behind iron grates and left the poor to chew on leather straps and memories of foam. You wipe the alkali from your cracked lips and watch the horizon shimmer with heat-ghosts that look for all the world like white-capped waves.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk out onto the dry seabed //"
+   ]
+  },
+  "td-6-021": {
+   "title": "Bone and Alkali",
+   "text": "Salt cakes the windows of the cliff-houses until they are as opaque as sheep-skull bone, shutting out the merciless glare of a sky that has forgotten how to cloud over. You walk the empty floor of the bay where the great leviathan carcass rots into the silt, its ribs standing against the pale air like the skeleton of an unfinished church. The ferryman sits by his dry dock with an oar across his knees, sharpening the blade with a dry stone that screeches through the stillness like a dying gull. Everyone stays indoors now, hoarding the last drops of brackish water in earthenware jars and listening to the wind whistle through the empty chimneys of a town that has nothing left to sell. The world has grown narrow and dry, reduced to the thickness of a dried skin stretched tight over a wooden frame, waiting for a rain that never gathers in the upper air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Cross the white flats to the silence //"
+   ]
+  },
+  "td-6-022": {
+   "title": "The Quiet Shore",
+   "text": "There is no salt left in the air, only the bitter taste of limestone dust and the dry smell of old wreckage baking in the sun until the timber cracks. You reach the outer edge of the Low where the sea used to begin, but there is nothing there now except more flat, white earth stretching away under a brassy heaven toward an invisible edge. Orsolya Venn's lighthouse stands upon its cliff like a blind man's eye, looking out over a world that has traded its tides for stone and silence. You drop your wrecker's hook into the dust; it hits the hard ground with a dull clack, raising no spray and making no ripple in the air. The tide clock on the shelf in the hall has stopped at low water, its copper hand pointing forever toward a dry horizon that swallows the sun without a hiss.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  }
+ },
+ "missing": []
+}
