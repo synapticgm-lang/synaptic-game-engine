@@ -1,0 +1,85 @@
+{
+ "batch": "td-3-072",
+ "sections": {
+  "td-3-073": {
+   "title": "Boiling Flue",
+   "text": "Heat radiates from the metal walls, baking the air in your lungs until every breath tastes of copper and rust. You hitch your weight onto a narrow bracket, inching forward as the steam thickens around your collar and sweat runs in stinging channels down your forehead. Far below, the muffled clank of Brineholder patrols echoes against the bulkheads, a reminder of the price of a slip.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the heat"
+   ]
+  },
+  "td-3-074": {
+   "title": "The Seam of Steam",
+   "text": "Condensation drips in greasy beads from the overhead rivets, soaking through your woollen collar as you squeeze sideways through a junction box choked with old soot. The metal groans under your boots, vibrating with the pulse of distant pumps that feed the stilt-city's endless thirst. You catch the faint smell of old grease and cold iron ahead, breaking the monotony of the scalding dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Scramble toward the hidden alcove"
+   ]
+  },
+  "td-3-075": {
+   "title": "Scalding Passage",
+   "text": "The pipe narrows until your shoulders scrape the blistering iron, and a sudden roar of superheated steam fills the flue with a blinding white fog. Your skin prickles with immediate blisters as the heat forces you to choose between backing down into certain capture or driving forward through the scorching white-out. You brace your palms against the white-hot metal, gathering every ounce of resolve to push through the choking haze before your lungs give out.",
+   "check": "Push through the scalding steam",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-076": {
+   "title": "Seared Flesh",
+   "text": "Steam bites deep into your forearms, leaving angry, weeping welts that throb with every pulse of your racing heart as you tumble headlong out of the pipe and onto a cold iron grating. You lie coughing in the gloom, clutching your burned skin while the metallic taste of panic slowly fades from your mouth. The pain is a sharp, nagging companion, but you have left the worst of the heat behind in the dark flues.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl away from the heat"
+   ]
+  },
+  "td-3-077": {
+   "title": "The Armoured Niche",
+   "text": "You spill out of the restrictive pipework and tumble onto a bed of discarded sacking, coughing as the cooler air hits your lungs. Nestled in the shadows of an abandoned maintenance bay lies a forgotten cache of gear left behind by some long-dead stilt-guard, untouched by the salt and the damp. You snatch up the prize before the metal settles around you.",
+   "check": "",
+   "grant": "Heavy iron knuckle-guard",
+   "exits": [
+    "Return to the vent junction"
+   ]
+  },
+  "td-3-078": {
+   "title": "The Whispering Drafts",
+   "text": "Murmurs of escaping air thread through the junction boxes, shifting in pitch as distant valves turn and seal within the stilt-city's vast plumbing. You press your ear against a cold rivet, trying to map the complex maze of flues by the subtle whistle of the drafts. Every passage looks identical in the dim, yellow gloom, promising either an exit or a slow death in the iron bowels of the settlement.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the damp air current"
+   ]
+  },
+  "td-3-079": {
+   "title": "Labyrinth of Vents",
+   "text": "Intersecting pipes branch off into darkness like the veins of a drowned leviathan, and the sound of your own breathing threatens to drown out the faint, whistling currents you rely on. You pause at a four-way junction where the air smells faintly of old parchment and salt, trying to recall the jagged lines of the stolen route Orsolya left behind. A wrong turn here means getting swallowed by the endless maze of the stilt-city.",
+   "check": "Read the shifting air drafts",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-080": {
+   "title": "Tangled Corridors",
+   "text": "The drafts deceive you, leading you through a twisting loop of iron flues that deposits you back where you started, shivering and disoriented. Precious time slips away in the metallic silence, leaving your muscles stiff and your provisions tasting of stale dust. You rub your aching temples, listening to the distant hum of the city above as you gather your wits for another attempt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the lower pipe again"
+   ]
+  },
+  "td-3-081": {
+   "title": "The Smuggler's Mark",
+   "text": "You decode the rhythmic hiss of the flues with sudden clarity, picking out the distinct whistle that marks an unsealed service hatch in the plating above. Slipping through the narrow gap, your fingers brush against a folded scrap of oiled sheepskin wedged behind a water pipe, marked with precise ink strokes that map the Brineholder patrol routes. It is a dangerous prize, but it turns the dark maze into a weapon in your hands.",
+   "check": "",
+   "grant": "Smuggler's grease-map",
+   "exits": [
+    "Return to the vent junction"
+   ]
+  }
+ },
+ "missing": [
+  "td-3-072"
+ ]
+}

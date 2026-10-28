@@ -245,3 +245,36 @@
 2026-10-28T09:23:48.257Z   reject td-3-079: words 54
 2026-10-28T09:23:48.257Z   reject td-3-080: words 44
 2026-10-28T09:23:48.258Z   reject td-3-081: words 39
+2026-10-28T09:23:56.270Z ask prose td-3-072..td-3-081 items=10 attempt=1
+2026-10-28T09:24:18.881Z   reject td-3-072: words 49
+2026-10-28T09:24:26.884Z done td-3-072: 9/10 MISSING td-3-072
+2026-10-28T09:24:26.885Z ask prose td-3-082..td-3-092 items=11 attempt=0
+2026-10-28T09:24:52.136Z   reject td-3-082: missing
+2026-10-28T09:24:52.137Z   reject td-3-083: missing
+2026-10-28T09:24:52.137Z   reject td-3-084: missing
+2026-10-28T09:24:52.138Z   reject td-3-085: missing
+2026-10-28T09:24:52.138Z   reject td-3-086: missing
+2026-10-28T09:24:52.138Z   reject td-3-087: missing
+2026-10-28T09:24:52.139Z   reject td-3-088: missing
+2026-10-28T09:24:52.139Z   reject td-3-089: missing
+2026-10-28T09:24:52.139Z   reject td-3-090: missing
+2026-10-28T09:24:52.140Z   reject td-3-091: missing
+2026-10-28T09:24:52.140Z   reject td-3-092: missing
+2026-10-28T09:25:00.145Z ask prose td-3-082..td-3-092 items=11 attempt=1
+2026-10-28T09:25:30.676Z done td-3-082: 11/11
+2026-10-28T09:25:30.677Z ask prose td-3-093..td-3-102 items=10 attempt=0
+2026-10-28T09:26:01.220Z done td-3-093: 10/10
+2026-10-28T09:26:01.222Z ask prose td-3-103..td-3-112 items=10 attempt=0
+2026-10-28T09:26:26.192Z   reject td-3-104: check label
+2026-10-28T09:26:26.192Z   reject td-3-106: grant,exit 1 label
+2026-10-28T09:26:26.193Z   reject td-3-110: check label
+2026-10-28T09:26:26.193Z   reject td-3-112: grant,exit 1 label
+2026-10-28T09:26:34.202Z ask prose td-3-103..td-3-112 items=4 attempt=1
+2026-10-28T09:26:54.116Z   reject td-3-104: missing
+2026-10-28T09:26:54.117Z   reject td-3-106: missing
+2026-10-28T09:26:54.117Z   reject td-3-110: missing
+2026-10-28T09:26:54.117Z   reject td-3-112: missing
+2026-10-28T09:27:02.130Z done td-3-103: 6/10 MISSING td-3-104,td-3-106,td-3-110,td-3-112
+2026-10-28T09:27:02.132Z ask prose td-3-113..td-3-122 items=10 attempt=0
+2026-10-28T09:27:35.099Z done td-3-113: 10/10
+2026-10-28T09:27:35.100Z ask prose td-3-123..td-3-132 items=10 attempt=0

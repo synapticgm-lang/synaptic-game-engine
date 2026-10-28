@@ -1,0 +1,63 @@
+Gemini said
+
+@@SECTION td-3-082
+TITLE: Iron Shield
+TEXT: Heavy iron flakes shower down onto the salt-crusted floor as you wrench the corroded grating from its mounting frame. The screech of tortured metal echoes sharply against the resonant stilt-beams, drawing an immediate challenge from a patrolling guard unit around the corner. Seizing the jagged-edged plate, you heft the heavy iron grid before your chest just as the first heavy boot-steps turn the blind corner. // Shadows stretch long across the vertical thoroughfare, and the damp air tastes intensely of ozone and old sweat. You must press forward into the gloom while the guard tries to locate the source of the metallic shriek.
+EXIT 1: Lift the heavy iron shield
+@@END
+@@SECTION td-3-083
+TITLE: Forced Entry
+TEXT: Rusted bolts scream in protest as you apply calculated pressure with your knuckles and palms, coaxing the stubborn iron framework apart without triggering a collapse. Heavy footfalls echo from the upper catwalks, drawing dangerously close as the patrol swings their lanterns across the damp stilt-beams. You wedge your fingers into the widening gap, muscles trembling under the sudden strain of the rusted barrier.
+CHECK: Wrench the rusted iron plate
+@@END
+@@SECTION td-3-084
+TITLE: Strained Defenses
+TEXT: Brittle iron gives way with a vicious snap, biting deep into your palm and sending a hot flare of pain shooting up your forearm. The sudden slip throws you off balance against a sharp rivet, tearing a ragged gash across your shoulder that stains your salt-cased jacket dark. Heavy boots stamp on the grating above, shouting orders into the damp shadows, but you manage to scramble sideways into a narrow drainage chute before the lanterns sweep your way.
+EXIT 1: Crawl through the drain
+@@END
+@@SECTION td-3-085
+TITLE: Shielding Metal
+TEXT: Fingers locked tight around the jagged crossbar, you manage to tear the heavy grating free from its mounting just as a patrol lantern sweeps the corridor. The thick iron plate absorbs a glancing blow from a Brineholder halberd with a dull, echoing thud that leaves your teeth aching. Breathing hard in the stagnant air, you shoulder the improvised barrier and slip into the shadows.
+GRANT: Heavy iron vent shield
+EXIT 1: Slip deeper into the flues
+@@END
+@@SECTION td-3-086
+TITLE: Dome of Glass
+TEXT: Emerging near the upper canopy through a service hatch, you behold the magnificent, glass-domed water reservoirs of the Brineholders glittering under the harsh sun. Vast oceans of crystal-clear water are held aloft in ribs of wrought iron and sealed glass, casting shifting blue refractions across the towering walkways. Armed sentries in polished brass breastplates pace the perimeters, guarding the pristine liquid against the desperate thirst of the seabed below. Every surface gleams with wealth and strict order, contrasting sharply with the salt-crusted ruin of Gullmouth. You linger in the shadows of a massive support pillar, mapping the patrols and plotting your path toward the Sunken Stair.
+EXIT 1: Follow the upper promenade
+@@END
+@@SECTION td-3-087
+TITLE: Cistern Walk
+TEXT: The Cistern Walk stretches as a grand, patrolled promenade wrapping around the immense glass water tanks, offering incredible views and terrible danger. Sunlight reflects blindingly off the vast liquid domes, where Brineholder wardens march in rhythmic unison and merchants haggle over sealed water skins. Every archway offers a tempting route deeper into the stilt-city's administrative heart, though a single misstep could plunge you into the dry abyss below. You must choose whether to slip past the guards toward the archives, eavesdrop on the patrol captains, or test your nerve along the dizzying glass ledges.
+EXIT 1: Walk the glittering glass promenade
+EXIT 2: Eavesdrop on the elite guards
+EXIT 3: Distract the pacing watchman
+EXIT 4: Traverse the thin glass ledge
+EXIT 5: Enter the restricted archives
+@@END
+@@SECTION td-3-088
+TITLE: Ornamental Gleam
+TEXT: Sunlight catches a dull gold glint embedded in the ornate filigree surrounding the massive water cistern's base. The heavy gemstone ornament looks loose enough to dislodge with steady pressure, offering a rich prize for any wrecker bold enough to reach for it. Below your boots, the drop is sheer and unforgiving, plunging straight down through the iron stilt-work toward the distant seabed.
+EXIT 1: Reach for the gold gem
+@@END
+@@SECTION td-3-089
+TITLE: High Risk Reach
+TEXT: Wind howls through the structural struts, carrying the smell of salt and cold iron from the open Low far below. You stretch one boot outward onto a narrow maintenance bracket, fingers brushing against the cold, encrusted stone of the decorative bezel. The whole framework groans under the sudden shift in weight, warning you of the perilous drop waiting beneath your heels.
+EXIT 1: Test the loose stone fitting
+@@END
+@@SECTION td-3-090
+TITLE: Weight on the Bezel
+TEXT: Muscles coil like rusted springs as you plant your boots firmly against the slick iron strut and lean your entire weight into the decorative bezel. The ornamental stone holds fast for a breathless heartbeat, resisting your pull with stubborn ancient mortar. You brace your shoulders and heave upward with all your strength, straining against the dizzying drop beneath you.
+CHECK: Pry the gemstone free
+@@END
+@@SECTION td-3-091
+TITLE: Dangerous Slip
+TEXT: The stubborn stone gives way with terrifying suddenness, throwing you backward against the sharp edge of the iron bracket and bruising your ribs. You manage to snag your fingers into a drainage loop, but the precious gemstone tumbles out of reach into the empty air below. Pain flares through your side as you haul yourself back onto the narrow walkway, breathless and empty-handed.
+EXIT 1: Retreat to the main path
+@@END
+@@SECTION td-3-092
+TITLE: Prize Secured
+TEXT: With a sudden grinding shriek of old mortar, the heavy ornamental gem pops free into your grip just as your footing begins to slide. You catch your balance against the cistern wall, clutching the cold, multi-faceted trade stone tightly in your palm. It is heavy, flawless salt-crystal stained amber with age, worth a small fortune among the merchants of the stilt-city.
+GRANT: Amber salt-crystal gemstone
+EXIT 1: Return to the grand promenade
+@@END

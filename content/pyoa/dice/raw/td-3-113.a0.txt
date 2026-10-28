@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-3-113
+TITLE: The Locked Cabinet
+TEXT: Heavy salt coats the iron latch of the wall-mounted container, sealing its secrets against the damp air of Saltspire. Inside rests an instrument crafted when the oceans still obeyed human clocks, its polished rim catching the faint greenish luminescence leaking through the floorboards. Your wire pick scrapes against stubborn tumblers while the timber beneath your boots groans under a sudden gust from the empty seabed below. // You ease the tiny tension tool another fraction of a millimeter, listening for the soft click that will release the heavy brass door before any hidden trap can spring.
+EXIT 1: Slip the rusted iron latch
+@@END
+@@SECTION td-3-114
+TITLE: The Restricted Alveolar
+TEXT: Beneath the overhang of a stilt-supported walkway, this secluded alcove holds treasures abandoned by fleeing Brineholders. The cabinet door hangs ajar on green-corroded hinges, revealing velvet-lined slots that once cradled delicate navigational tools. A faint hiss of escaping gas whispers from a tiny concealed tube near the hinge, reminding you how sharply this city punishes uninvited fingers. // You slide your palm into the velvet recess, closing your cold fingers around the heavy brass body of the old compass before the air can turn foul.
+EXIT 1: Pocket the heavy brass compass
+@@END
+@@SECTION td-3-115
+TITLE: Testing the Brass Tumblers
+TEXT: Your fingers trace the intricate channel of the brass faceplate, searching for the hidden pressure release that guards the central mechanism. One false shift of the wire could trip the poison spring nestled deep within the damp timber casing, spraying venom across your knuckles before you can jerk your hand away. Sweat stings your eyes in the salt-heavy air as you apply the final, delicate pressure to the stubborn bronze tumbler. // You hold your breath, waiting for the internal click to confirm whether your touch has bypassed the trap or awakened it.
+CHECK: Probe the hidden spring
+@@END
+@@SECTION td-3-116
+TITLE: The Price of a Slip
+TEXT: A sharp snap echoes in the cramped alcove as the hidden needle strikes home, piercing your thumb with a sudden, burning agony that races up your arm. You jerk your hand back with a curse, knocking a stack of damp logbooks onto the dusty floorboards while poison pulses through your veins. The wound leaves a dark, mottled scar across your flesh and drains your breath, yet you refuse to let the pain stop your retreat. // Sucking the dark blood from your throbbing thumb, you snatch the brass compass from its velvet bed and stumble away into the shadows of the stilt-city.
+EXIT 1: Retreat with a poisoned thumb
+@@END
+@@SECTION td-3-117
+TITLE: The Navigator's Prize
+TEXT: Your fingers find the exact balance of the internal mechanism, coaxing the stubborn brass tumblers aside without disturbing the venomous barb tucked behind the faceplate. The heavy door swings open with a soft, oiled sigh, offering up its prize to the dim light filtering through the floor planks. However narrowly you managed the feat, the ancient instrument rests safely in your palm at last, its needle spinning wildly toward the dry abyss. // You pocket the relic and turn your back on the ruined cabinet, carrying your new prize toward the dusty annex.
+GRANT: ancient brass compass
+EXIT 1: Return to the dusty annex
+@@END
+@@SECTION td-3-118
+TITLE: Shards of Clear Glass
+TEXT: Splintered frames from an old pair of spectacles lie scattered across a mahogany desk, their curved lenses caked in decades of white salt-crust. You gather the least scratched fragment, polishing its cloudy surface against your sleeve until it catches the dim yellowish glow of a hanging tallow lamp. Through this makeshift magnifier, a discarded parchment scroll transforms from a blur of grey ink into a terrifyingly detailed labyrinth of lines and numbers. // You press the glass closer to your eye, squinting to trace the microscopic stairwells and landing markers that denote the path down to the Sunken Stair.
+EXIT 1: Focus through the shattered lens
+@@END
+@@SECTION td-3-119
+TITLE: The Microscopic Cartography
+TEXT: Tiny, hair-thin pen strokes map out every rusted bolt and spiral stone of the great descent beneath the ocean floor. Each marking reveals a hazard left behind by the old Tidewardens, from rusted counterweights to vertical drops where the sea used to roar. Your eyes water and sting from the strain of holding the glass steady in the drafty, salt-fouled chamber. // You shift your footing on the creaking floorboards, leaning closer over the parchment to decipher the final notation near the foot of the abyss.
+EXIT 1: Trace the final descent route
+@@END
+@@SECTION td-3-120
+TITLE: Straining Over the Parchment
+TEXT: The tiny ink marks blur together into an unreadable smear as your tired eyes rebel against the flickering lamplight and the magnifying glass's distorted edges. One more minute of intense scrutiny might reveal the secret bypass around the locked maintenance gates, or it might leave your vision swimming in darkness for hours. You press the curved glass harder against your brow, fighting the burning fatigue behind your eyelids as you scan the perilous drop. // You steady your trembling hand, waiting to see if your strained vision holds long enough to reveal the secret path.
+CHECK: Decipher the microscopic map
+@@END
+@@SECTION td-3-121
+TITLE: Blurred Lines and Headaches
+TEXT: A blinding ache stabs behind your temples, forcing you to drop the makeshift lens onto the desk as darkness swims across your vision. The extreme eye strain leaves you rubbing your temples with trembling fingers while precious minutes tick away in the drafty alcove. Though your head throbs with every beat of your pulse, the general layout of the descent remains burned into your memory, imperfect yet sufficient. // You gather your breath in the damp air, blinking against the lingering blur before turning away from the desk.
+EXIT 1: Leave the desk with aching eyes
+@@END
+@@SECTION td-3-122
+TITLE: Secrets of the Descent
+TEXT: The cracked lens holds firm against your thumb, focusing the dim lamplight into a sharp beam that lays bare the hidden architectural secrets of the abyss. However narrowly you avoided permanent strain, the intricate map yields its deepest mystery, showing you a forgotten maintenance hatch that bypasses the guarded upper gates of the Stair. You fold the fragile parchment with practiced care, securing the crucial knowledge inside your coat. // You pocket the secret route and retrace your steps toward the dusty annex.
+GRANT: secret map of the Sunken Stair
+EXIT 1: Head back to the annex
+@@END

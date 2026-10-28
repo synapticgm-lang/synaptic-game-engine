@@ -1,0 +1,52 @@
+Gemini said
+
+@@SECTION td-3-082
+TITLE: The Rusted Grate
+TEXT: Heavy iron bolts anchor the service grating to the conduit wall, sealing the dark passage like a scab. Working by touch alone, your fingers find the leverage needed to wrench the rusted metal free from its mortar bed. The sudden screech of iron against stone echoes down the narrow pipe like a shriek, carrying straight toward the patrol gallery above. Heavy boots immediately halt their rhythmic pacing overhead, shifting their weight toward the source of the disturbance. Slipping the jagged plate free just in time, you press yourself flat against the damp iron wall, using the heavy metal grille as an improvised shield against whatever crossbow bolts or blades are about to find you.
+EXIT 1: Slip into the shadowed conduit
+@@SECTION td-3-083
+TITLE: Wrenching the Iron Shield
+TEXT: Snapping metal groans as you heave against the corroded frame, forcing the rusted grate out of its recess with a violent shudder that sends tremors up your forearms. A sharp, metallic clatter rings out against the stone floor, bouncing down the dark corridor and tearing the silence to shreds. Above, the steady tramp of Brineholder guards stutters and stops dead. Voices bark in harsh alarm, followed by the rapid scrape of boots pivoting toward your position. Sweating in the stale air, you wedge the jagged iron sheet before your chest, bracing your muscles against the imminent impact of whatever weapons are sliding out of leather scabbards in the dark.
+CHECK: Pry the vent grate free
+@@SECTION td-3-084
+TITLE: The Iron's Cost
+TEXT: The heavy grille slips from your numbed fingers just as a pair of guards round the corner, their iron-shod boots slamming against the plating. Before you can recover the improvised shield, a thrown truncheon catches you squarely across the ribs with a sickening crunch. Pain blooms hot and sharp through your side, robbing your lungs of air as you stumble backward into the cold brine-mist. The guards seize your collar, shoving you hard against the riveted wall and leaving a deep, weeping graze along your shoulder before a sudden clatter elsewhere in the stilt-city distracts them long enough for you to wrench away into the gloom.
+EXIT 1: Stagger deeper into the shadows
+@@SECTION td-3-085
+TITLE: Through the Gauntlet
+TEXT: Iron splinters and sparks fly as a heavy guard's spear slams into the makeshift grille, missing your shoulder by a hair's breadth. Using the jagged vent plate to deflect a second clumsy thrust, you twist your weight sideways and slam the heavy metal into the guard's shins, dropping him with a muffled curse. The narrow gap between the service pipes opens wide enough for a desperate squeeze, and you dive through the aperture just as boots scramble around the corner. Clutched tightly in your calloused palm is a heavy brass locking pin sheared off the guard's gate-latch during the frantic scuffle.
+GRANT: Heavy brass locking pin
+EXIT 1: Climb toward the upper catwalks
+@@SECTION td-3-086
+TITLE: Domes of the Brineholders
+TEXT: Sunlight hits your eyes with blinding cruelty as you emerge from the grease-stained flues onto an open expanse of salt-crusted iron. Towering above the stilt-city are the magnificent, glass-domed water reservoirs of the Brineholders, glittering under the harsh noon glare like enormous jewels dropped upon a corpse. Billions of gallons of trapped, crystal-clear water churn sluggishly behind thick leaded panes, guarded by high bronze walkways where patrols march in unbroken circles. The air here smells of ozone, hot glass, and expensive perfumes that the wealthy drink in place of common well-water. Every shadow hides a watcher, and every glistening pane reflects your own travel-worn face back at you with stark clarity.
+EXIT 1: Step onto the patrolled promenade
+@@SECTION td-3-087
+TITLE: The Cistern Walk
+TEXT: A grand, patrolled promenade wraps around the immense glass water tanks, offering incredible views across the empty seabed and terrible danger from the armored guards who pace its length. The white stone tiles are scrubbed clean of salt and blood alike, leaving nowhere to hide from the sharp eyes stationed at every intersection. Various iron stairwells and grated maintenance hatches branch off into the complex, each promising different hazards and potential paths toward the stairs below. Below the high glass panes, the distant murmur of the stilt-city rises like the breathing of a sleeping leviathan, waiting to see who survives the day.
+EXIT 1: Follow the main walkway forward
+EXIT 2: Creep toward the whispering guards
+EXIT 3: Distract the pacing watchman nearby
+EXIT 4: Traverse the thin glass ledge
+EXIT 5: Slip into the secure archives
+@@SECTION td-3-088
+TITLE: The Ornamental Gem
+TEXT: High on the brass framework supporting the immense glass cistern, a fist-sized blue glass bauble catches the sunlight, bolted securely into the decorative filigree. It is meant to mimic a deep-sea sapphire, but to a wrecker from Gullmouth, it represents hard coin and a way to buy passage down the coast. You reach out across the dizzying drop, testing the stability of the narrow decorative bracket beneath your boots. A steady offshore wind hums through the iron struts, threatening to peel your fingers away from the freezing metal as you steady your stance against the dizzying height.
+EXIT 1: Reach for the gleaming bauble
+@@SECTION td-3-089
+TITLE: Reaching the Vault-Trim
+TEXT: Salt-crusted rivets bite into your palms as you haul your weight upward along the ornate framework of the giant water tank. Below your boots, the stilt-city drops away into a dizzying patchwork of rusted girders and dry harbor mud where abandoned hulls lie like broken ribs. The blue gem sits nestled in a brass bezel just within fingertips' reach, winking in the harsh glare of the midday sun. Your breath catches in your throat as a sudden gust of wind rattles the great glass panes above, shaking the entire skeleton of the reservoir and testing your precarious grip on the slick ironwork.
+EXIT 1: Test the loose decorative setting
+@@SECTION td-3-090
+TITLE: Prying the Trade Stone
+TEXT: Bracing your heels against a narrow drainage flange, you wedge the blade of your utility knife into the seam of the brass bezel holding the heavy blue glass. The metal resists with stubborn stiffness, requiring every ounce of muscle in your shoulders and back to coax the bolt from its rusted housing. Below, the drop is absolute, a sheer fall straight down to the jagged iron pilings of the lower tiers. You lean your entire weight into the tool, gritting your teeth as the screw gives a fractional, screeching turn, bringing the prize to the very edge of freedom before the final, decisive snap.
+CHECK: Pry the ornamental gem loose
+@@SECTION td-3-091
+TITLE: The Fall and the Loss
+TEXT: The stubborn brass bolt snaps with a vicious crack, but the sudden release throws your balance completely off. Your boots skid outward on the slick salt crust, and you slam hard against the iron struts, skinning your forearms to the bone. The heavy blue gem slips from your numbed fingers, plummeting down into the abyss below with a faint clink against the girders. Nursing a bruised shoulder and a stinging, torn palm, you haul yourself back onto the safety of the walkway, panting heavily as distant guards turn their heads to trace the source of the metallic clatter.
+EXIT 1: Retreat back to the promenade
+@@SECTION td-3-092
+TITLE: The Blue Glass Prize
+TEXT: With one final, wrenching heave, the heavy blue glass pops free from its housing, tumbling safely into your open palm before it can fall to the depths below. It is a solid chunk of tinted trade-glass, heavy enough to fetch a handsome sum from any pawn-widow willing to look the other way. You slip the jagged treasure into your canvas pouch, ignoring the raw blisters forming across your fingers from the struggle. The patrols have not yet noticed the missing ornament, leaving you free to scramble back down the framework toward the main promenade with your prize secured.
+GRANT: Heavy blue trade-glass
+EXIT 1: Return to the main walkway
