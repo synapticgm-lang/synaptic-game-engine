@@ -23,6 +23,7 @@ import {
 } from './outdoorHubs.ts';
 import { nearbyPlaceNames } from './placeNames.ts';
 import { isJourneyUnderway, isRoadLabel, isTripHere, meetingMoveBase, roadMeetingRef, travelBeatFact, withRoadMeetingEvent, writerEngineResult } from './travelJourney.ts';
+import { hasWriterCueChrome } from './writerCueLines.ts';
 import { spokenTalkFallback } from './talkEnvelope.ts';
 import { TALK_VERB } from './intentParser.ts';
 import { emptySceneFacts } from './sceneFacts.ts';
@@ -2334,8 +2335,8 @@ function lastResortUsable(state: GameState, prose: string, lastGm: string): stri
   if (isDroughtStubProse(body) || proseAsksForPcName(body)) return '';
   if (isNameTelegramProse(body) || LEDGER_WAIT_FP.test(body)) return '';
   if (isLastGmReprint(body, lastGm)) return '';
-  // T10B — writer-slot receipt chrome is never a book beat (writerEngineResult should have rewritten it).
-  if (/Speech event:|NPC reaction slot open for the writer/i.test(body)) return '';
+  // T10E — writer cue chrome is never a book beat (writerEngineResult should have rewritten it).
+  if (hasWriterCueChrome(body)) return '';
   if (
     /Nothing listed had moved on|The moment at .+ settled|You still had the next move|the room(?: at .+)? held its place|You close with |loot is legal|The exchange goes badly\. You go down/i.test(body)
   ) {

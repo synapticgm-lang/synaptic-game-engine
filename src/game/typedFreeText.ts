@@ -32,6 +32,7 @@ import {
   resolveParleyAttempt,
   resolveStealAttempt,
 } from './stealParley';
+import { buildClauseWriterFact } from './writerCueLines';
 
 export type TypedFreeTextResult = {
   receipts: string[];
@@ -67,28 +68,15 @@ const MECHANICAL_ACTIONS = new Set([
 ]);
 
 /**
- * Writer-facing fact for one clause: every clause is a must-narrate fact.
- * Speech adds the player's exact quoted words (unrewritten) and a reaction slot only when the
- * addressee is present; otherwise speech is to the empty scene.
+ * Writer-facing fact for one clause — strings live in writerCueLines (T10E shared shape).
  * SRD 5.2.1 Communicating — brief speech is free; the engine does not invent the PC's line.
  */
 function clauseWriterFact(step: IntentStep, speech: boolean): string {
   const clause = (step.clause ?? '').replace(/\s+/g, ' ').trim() || describeIntentStep(step);
-  const said = (step.say ?? '').replace(/\s+/g, ' ').trim();
-  const who = step.addressee?.trim() || null;
-  const parts: string[] = [`Must narrate: ${clause}.`];
-  if (speech) {
-    const target = who || 'the empty scene';
-    if (said) parts.push(`PC says exactly: "${said}" (do not rewrite).`);
-    parts.push(
-      who
-        ? `Speech event: you address ${who}. NPC reaction slot open for ${who}.`
-        : `Speech event: you address ${target}. No one present to answer.`,
-    );
-  } else {
-    parts.push('The story must show this act.');
-  }
-  return parts.join(' ');
+  return buildClauseWriterFact(clause, speech, {
+    said: (step.say ?? '').replace(/\s+/g, ' ').trim(),
+    addressee: step.addressee?.trim() || null,
+  });
 }
 
 function speechStep(step: IntentStep): StepResolution {

@@ -90,6 +90,7 @@ import { recordPersonSeen, tag } from './timeline';
 import { isLockablePcName } from './pcNameAuthority';
 import { isSpeechOrProtest } from './intentParser';
 import { inferIntent, PlayerIntent } from './intentEnums';
+import { plainFromWriterCueSentence } from './writerCueLines';
 interface Endpoint {
   name: string;
   regionId?: string;
@@ -939,15 +940,12 @@ export function writerEngineResult(fact: string): string {
       out.push(`You took a ${kind}.`);
       continue;
     }
-    // T10B — speech receipts are writer cues, not player story. Same receipt→sentence form as Rest/Travel.
-    // "Speech event: you address X." → "You spoke to X."; drop the reaction-slot chrome entirely.
-    const speechHead = 'Speech event: you address ';
-    if (s.startsWith(speechHead)) {
-      const who = (s.endsWith('.') ? s.slice(0, -1) : s).slice(speechHead.length).trim();
-      if (who) out.push(`You spoke to ${who}.`);
+    // T10E — writer cue lines (shared writerCueLines) → plain narration; never player chrome.
+    const cue = plainFromWriterCueSentence(s);
+    if (cue.cue) {
+      if (cue.plain) out.push(cue.plain.endsWith('.') ? cue.plain : `${cue.plain}.`);
       continue;
     }
-    if (/^NPC reaction slot open for the writer\.?$/i.test(s)) continue;
     out.push(s.endsWith('.') ? s : `${s}.`);
   }
   return out.join(' ');
