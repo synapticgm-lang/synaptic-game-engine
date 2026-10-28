@@ -1,0 +1,68 @@
+Gemini said
+
+@@SECTION sg-2-2-4-6
+TITLE: The Slag Embankment
+TEXT: Jagged ribs of fused green slag tear at the dry air as you scramble upward, your heavy boots sending showers of sharp glass shards rattling down the slope. Every stride causes the hardened earth to ring with a deep, metallic hollow note that vibrates straight through the soles of your feet. Your ember-lamp swings from your belt, its banked coals radiating a steady, comforting heat against your thigh while the harsh white glare of the salt flats beats down from above. // At the ridge, the terrain splinters into two distinct paths: one drops sharply toward a smoking sulfur vent, while the other winds past the skeletal frame of an old mirror tower.
+EXIT 1: Descend toward the smoking sulfur vent
+EXIT 2: Follow the path past the tower
+@@END
+
+@@SECTION sg-2-2-4-7
+TITLE: The Ancient Cart-Rut
+TEXT: Deep channels carved into the ancient glass road guide your weary steps forward, demanding total focus as you keep your eyes fixed on the shimmering horizon. The surrounding expanse of white alkali shimmers under the relentless sun, playing cruel tricks on your vision until every distant heap of debris looks like a looming fortification or a vanished oasis. You adjust the cold ceramic Seedkey in your pocket, feeling its heavy, reassuring weight against your hip as the hot wind whistles past your ears. // Ahead, the ancient road splits into three separate directions, each leading deeper into the stark white expanse.
+EXIT 1: Follow the left groove toward the ridge
+EXIT 2: Keep straight along the central rut
+EXIT 3: Veer toward the eastern salt mounds
+@@END
+
+@@SECTION sg-2-2-5-0
+TITLE: The Rusted Iron Threshold
+TEXT: Rusted iron gates frame the entrance to the outer shard boundary, their heavy hinges weeping orange corrosion as twilight paints the vast salt flats in bruised shades of purple and indigo. Cool shadows stretch across the ground, offering a brief respite from the burning daytime heat that has dogged your long journey across the bitterflats. You clutch your ember-lamp tighter, watching the tiny sparks swirl within the wire mesh as the first evening stars prick the darkening sky above the silent towers.
+EXIT 1: Step through the rusting iron threshold
+@@END
+
+@@SECTION sg-2-2-5-1
+TITLE: The Mirrored Sentry Post
+TEXT: A sentry wearing a polished mirror visor steps forward to lower a spiked barrier pole, blocking your approach to the perimeter of the Shard Cities with silent, rigid efficiency. Your reflection warps across the curved metal surface of the guard's mask, multiplying your weary face into a dozen tiny distortions under the fading light. The air here smells sharply of ozone and old dust, thick with the silent tension of a border that demands either heavy toll or iron resolve to cross.
+EXIT 1: Push past the lowered barrier pole
+@@END
+
+@@SECTION sg-2-2-5-2
+TITLE: The Obsidian Paving Stones
+TEXT: Polished obsidian paving stones rise beneath your boots as you leave the blinding white alkali fields behind, their dark surfaces cool and smooth against your aching feet. The harsh glare of the bitterflats softens into a quiet, shadowy gloom cast by towering walls of shattered crystal that pierce the evening sky like giant daggers. Your ember-lamp casts a warm, flickering amber glow across the dark stones, illuminating faint streaks of mineral dust left by countless travelers who walked this road before you.
+EXIT 1: Walk deeper down the dark avenue
+@@END
+
+@@SECTION sg-2-2-5-3
+TITLE: The Humming Glass Gates
+TEXT: Massive gates constructed from fused green glass loom directly before you, vibrating with the low, resonant hum of distant signal lenses tuning themselves to the coming night. The sound fills your chest cavity, a deep and steady thrumming that makes the cold ceramic Seedkey in your pocket feel as though it is pulsing in time with the city's heart. Wisps of salt-laden wind drift through the massive archways, carrying the faint, metallic tang of ancient industry and long-abandoned halls.
+EXIT 1: Approach the humming glass gates
+@@END
+
+@@SECTION sg-d-2-2
+TITLE: The Boiling Flats
+TEXT: Scorching white heat rises in shimmering waves from the ground as you press onward across the boiling sulfur flats, ignoring every warning written in the alkali dust. Your canteen hangs empty and light against your hip, its leather sides bone-dry and useless after hours of merciless exposure under the high noon sun. A profound, ringing dizziness overtakes your senses, turning the dazzling landscape into a spinning blur of white and yellow before your legs finally buckle beneath you. You sink softly into the warm crust of the flats, leaving the unfinished journey to the drifting desert winds.
+@@END
+
+@@SECTION sg-2-out
+TITLE: Leaving the Bitterflats
+TEXT: Behind you, the endless white expanse of the Bitterflats fades into a shimmering haze of salt and mirage, its cruel beauty swallowed by the gathering shadows of evening. Ahead lies the labyrinthine maze of the Shard Cities, where towering walls of fractured glass and ancient metal whisper secrets to the desert wind. You adjust the heavy strap of your ember-lamp, checking the glowing coals within to ensure they hold their heat against the coming chill of the ruined metropolis.
+EXIT 1: Proceed into the ruined city
+@@END
+
+@@SECTION sg-3-in
+TITLE: Arrival in the Shard Cities
+TEXT: Jagged towers of fused crystal and shattered glass rise around you like the ribs of prehistoric beasts, forming a dense maze of silent alleys and towering archways in the heart of the Basin. High above, Glasswright signal-towers catch the last slanting rays of sunlight, casting sudden, blinding flashes of coded light across the labyrinth of narrow streets and narrow pedestrian bridges. Scavengers and stray travelers huddle in doorways wrapped in salt-stained cloaks, watching your progress with cautious eyes as the low whistle of the wind echoes through empty window frames.
+EXIT 1: Follow the lamp-lit road
+EXIT 2: Cut across the common ground
+EXIT 3: Ask the way of a stranger
+EXIT 4: Take the old drovers track
+@@END
+
+@@SECTION sg-3-0-0-0
+TITLE: The Splintered Green Causeway
+TEXT: Splintered green glass forms the solid foundation of the causeway beneath your boots, leaning at odd, dizzying angles like broken teeth against the harsh glare of the upper sky. Every step demands careful balance to avoid sliding down the slick, translucent slopes into the dark, ash-choked trenches that yawn between the towers. Your ember-lamp casts long, dancing shadows against the glittering walls, revealing strange, angular patterns fused into the very structure of the ancient masonry by forgotten fires. // At the far end of the span, the walkway widens into a ruined plaza where two distinct pathways invite further exploration.
+EXIT 1: Approach the scraper by the slag heap
+EXIT 2: Confront the guards at the brass gate
+EXIT 3: Cross the cantilevered glass bridge span
+@@END

@@ -1,0 +1,89 @@
+{
+ "batch": "sg-2-2-3-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-2-3-2": {
+   "title": "The Tinker's Trade",
+   "text": "Copper kettles and broken spectacles dangle from a canvas roll as a wandering tinker named Jape halts his hand-cart beside a jagged salt pillar. He squints through thick wire-rimmed lenses, offering to trade a heavy, blunt drawing knife for a single small pinch of salt-cured tobacco from your pouch. The heat beats down relentlessly against the white crust, making the horizon shimmer like molten silver while you weigh his proposition against the miles still left to travel before dusk.\n\nDo you trade your tobacco for the heavy iron blade, or leave the tinker to his lonely salvage work and press onward?",
+   "exits": [
+    "Trade your tobacco for the heavy blade",
+    "Ignore the tinker and press onward alone"
+   ]
+  },
+  "sg-2-2-3-3": {
+   "title": "Ribs of the Barge",
+   "text": "Rusted iron beams arch overhead like the skeleton of some colossal desert beast stranded high upon a towering dune of pulverized glass. You slip through the cavernous ribcage of the ancient transport barge, feeling the cool shadow cast by its metallic hull against the scorching midday glare. Wind sighs through the twisted bulkheads, whistling past old storage lockers long since picked clean by passing scavengers.\n\nDo you scramble over the splintered decking toward the northern tracks, or squeeze through a low bulkhead gap toward the eastern ruins?",
+   "exits": [
+    "Climb across the splintered deck toward the northern track",
+    "Squeeze through the bulkhead gap toward the eastern ruins"
+   ]
+  },
+  "sg-2-2-3-4": {
+   "title": "The Alkaline Slope",
+   "text": "Your lamp-fuel sloshes softly against its tin walls as you scramble down a steep, treacherous embankment composed entirely of fine alkaline dust and loose, sharp-edged flint. Dust puffs around your boots with every cautious step, stinging your throat and coating your traveling cloak in a fine white powder. Below this sliding ridge, the blinding white expanse of the basin stretches out toward shimmering horizons cut by distant shadows of glass architecture.\n\nDo you pick your way carefully down the loose stones toward the northern trail, or veer sideways along the powdery ridge to seek a steadier crossing?",
+   "exits": [
+    "Descend the sliding slope toward the northern path",
+    "Veer sideways along the ridge toward the crumbling wall",
+    "Slide down the dusty bank straight into the sea of glass beads"
+   ]
+  },
+  "sg-2-2-3-5": {
+   "title": "Melted Jars of Old",
+   "text": "Rows of hollow ceramic jars stand half-fused into the luminous glass crust, warped and blistered by some immense, long-forgotten furnace blast from the Old Lensfolk eras. You run a gloved finger along the smooth, vitrified lip of a vessel that once held oils or grain, marveling at how the intense ancient heat transformed the desert floor into a smooth mirror. The air smells faintly of baked clay and old minerals as you pause between the silent, melted pottery.\n\nDo you follow the curve of the fused jars toward the dry drainage basin, or turn aside to inspect a nearby broken boundary wall?",
+   "exits": [
+    "Follow the fused jars toward the dry drainage basin",
+    "Turn aside to inspect the crumbling brick boundary wall",
+    "Head toward the rose quartz fountain filled with alkali dust"
+   ]
+  },
+  "sg-2-2-3-6": {
+   "title": "The Industrial Sump",
+   "text": "A sudden gust of hot desert wind carries the sharp, stinging tang of ammonia across the flats from a bubbling, evaporating industrial sump nearby. You pull your collar over your nose and quicken your pace past the chemical hollow, watching pale yellow crystals form along the receding edge of the stagnant brine. The ground beneath your boots grows harder here, paved with flat tiles of fused silica that ring like ceramic underfoot.\n\nDo you skirt the chemical sump toward the broken brick wall, or press onward across the ringing silica tiles toward the sea of tiny glass beads?",
+   "exits": [
+    "Skirt the chemical sump toward the broken brick wall",
+    "Cross the ringing silica tiles toward the sea of glass beads",
+    "Head past the sump toward the rose quartz fountain"
+   ]
+  },
+  "sg-2-2-3-7": {
+   "title": "The Subsidence Crater",
+   "text": "Twisted iron girders span a gaping subsidence crater like the ribs of a collapsed bridge, their rusted bolts groaning softly in the rising heat. You step with extreme care across the warped metal span, keeping your eyes fixed on the firm crust beyond while the dark, empty pit gapes directly beneath your boots. Every movement must be measured, for a single slip would send you tumbling into the shadowy depths of the old drainage tunnels below.\n\nDo you cross the warped iron girders toward the bed of tiny glass beads, or scramble down the rim toward the rose quartz fountain?",
+   "exits": [
+    "Cross the warped iron girders toward the glass beads",
+    "Descend the crater rim toward the rose quartz fountain"
+   ]
+  },
+  "sg-2-2-3-8": {
+   "title": "The Salt-Crested Raven",
+   "text": "A lone raven with feathers stiffened by white salt crystals watches your approach from atop a bleached, leaning wooden telegraph pole. It tilts its head with ancient curiosity, letting out a dry, rattling croak that echoes thinly across the empty expanse of the flats. Beyond its lonely perch, the landscape ripples with blinding mirages that distort the distant silhouettes of the shattered shard towers.\n\nDo you pass beneath the telegraph pole toward the rose quartz fountain, or climb the jagged slag embankment where the ground echoes hollowly?",
+   "exits": [
+    "Pass beneath the telegraph pole toward the rose quartz fountain",
+    "Climb the jagged slag embankment to test the hollow ground"
+   ]
+  },
+  "sg-2-2-3-9": {
+   "title": "The Shadow of the Beacon",
+   "text": "Walking with your ember-lamp safely banked and cold, you blend into the long shadows cast by a crumbling foundation and slip past a patrol of tax-collectors resting near a glowing survey beacon. Their brass instruments catch the harsh sunlight, but their eyes are heavy with boredom and heat, missing your silent passage entirely in the blinding white glare. You keep your head down and your breathing steady until the bright flare of their signal lamp is safely behind a ridge of fused slag.\n\nDo you slip past the resting patrol toward the crumbling brick boundary wall, or head toward the dried rose quartz fountain?",
+   "exits": [
+    "Slip past the resting patrol toward the crumbling brick wall",
+    "Head toward the dried rose quartz fountain in the distance"
+   ]
+  },
+  "sg-2-2-3-10": {
+   "title": "The Copper Roots",
+   "text": "A dense forest of twisted copper pipes protrudes like dead, oxidized roots from the hard salt crust, humming faintly whenever a hot gust of wind whistles through their hollow cores. You thread your way carefully through the metallic thicket, ducking beneath branching elbows of green-stained brass that gleam like jewelry in the harsh light. The ground here is uneven and scarred with ancient pipe-trenches, requiring constant attention to avoid a twisted ankle.\n\nDo you thread through the copper pipes toward the distant flashing shard tower, or scramble up the jagged slag embankment?",
+   "exits": [
+    "Thread through the copper pipes toward the flashing tower",
+    "Scramble up the jagged slag embankment where the ground rings hollow"
+   ]
+  },
+  "sg-2-2-3-11": {
+   "title": "The Faceless Signpost",
+   "text": "A weather-beaten wooden signpost leans drunkenly into the wind, all of its directional arms snapped clean off by decades of howling salt-storms. You pause beside the bare post, running a hand over the splintered wood where travelers once read the mileage to Prism and the outer cisterns. The white flats stretch out endlessly beyond, unbroken save for the sharp silhouette of a distant mirror-tower catching the noon sun.\n\nDo you leave the faceless post behind and head toward the distant flashing shard tower?",
+   "exits": [
+    "Leave the faceless post behind and head toward the flashing tower"
+   ]
+  }
+ },
+ "missing": []
+}
