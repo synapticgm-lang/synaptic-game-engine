@@ -325,15 +325,20 @@ export function withMoveDestination(state: GameState, prose: string): string {
   const j = state.journey;
   const underway = !!j && j.legsDone < j.legsTotal;
   const dest = (underway ? j!.to : state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
-  // A room inside a place ("Cathedral Undercroft — Corridor") is a dungeon step, painted by the room display, not a trip.
-  if (!dest || isRoadLabel(dest) || /\s[—–]\s/.test(dest) || prose.toLowerCase().includes(dest.toLowerCase())) return prose;
+  if (!dest || isRoadLabel(dest)) return prose;
+  const low = prose.toLowerCase();
+  // T10Y — dungeon "parent — Room": name the room leaf. Skipping every em-dash dest left Coolant Trench unnamed.
+  const leafParts = dest.split(/\s*[—–]\s*|\s+-\s+/);
+  const roomLeaf = leafParts.length >= 2 ? (leafParts[leafParts.length - 1] ?? '').trim() : '';
+  const paintTo = roomLeaf || dest;
+  if (paintTo.length > 2 && low.includes(paintTo.toLowerCase())) return prose;
   const pc = (state.character?.name ?? '').trim() || 'They';
   // T10Q — streets terrain is town travel; do not paste the journey "back streets" leg label as a sentence.
   const line = underway
     ? j!.terrain === 'streets'
-      ? `${pc} headed toward ${dest} through the town.`
-      : `${pc} was on the ${j!.ground.toLowerCase()} toward ${dest}.`
-    : `${pc} reached ${dest}.`;
+      ? `${pc} headed toward ${paintTo} through the town.`
+      : `${pc} was on the ${j!.ground.toLowerCase()} toward ${paintTo}.`
+    : `${pc} reached ${paintTo}.`;
   return `${line} ${prose.trim()}`;
 }
 const wordCount = (s: string) => (s.match(/[A-Za-z0-9][\w'’-]*/g) ?? []).length;
@@ -729,6 +734,15 @@ export function normalizeCommittedProse(prose: string, check: DraftCheck, packet
   }
   // T10O — stray period after a quote that already closed on ?/!/… (`?"."`).
   next = next.replace(/([?!…])(["”])\.(?=\s|$)/g, '$1$2').replace(/([.!?]){2,}/g, '$1');
+  // T10Y — doubled speech attribution (`Jax said, Jax said, "…"`) and group-of-itself (`the crew of the crew`).
+  next = next.replace(
+    /\b([A-Z][\w'’-]+(?:\s+[A-Z][\w'’-]+)?)\s+said,\s+\1\s+said,/g,
+    '$1 said,',
+  );
+  next = next.replace(
+    /\b((?:[Tt]he|[Aa]n?)\s+)([a-z][\w'-]+)\s+of\s+(?:the\s+)?\2\b/g,
+    '$1$2',
+  );
   return polishMentions(next, refs, check.state);
 }
 /** Drop already-told sentences (keep ≥2) and name full labels once. */

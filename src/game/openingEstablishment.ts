@@ -1342,10 +1342,11 @@ export function openingCastNames(state: GameState): string[] {
   };
   const label = openingCastLabel(state);
   push(label);
+  // Alias bits for chip/typed match only when they are multi-word proper tails (Lene Quill → Quill),
+  // never a bare group noun that would double "the crew" as "crew" (T10Y).
   const bare = label.replace(/^(the|a|an)\s+/i, '').trim();
-  if (bare && bare !== label) push(bare);
   const bits = bare.split(/\s+/).filter(Boolean);
-  if (bits.length >= 2) {
+  if (bits.length >= 2 && bits.every((w) => /^[A-Z]/.test(w))) {
     push(bits.slice(-2).join(' '));
     const last = bits[bits.length - 1] ?? '';
     if (last.length >= 5) push(last);
@@ -1361,7 +1362,6 @@ export function openingCastNames(state: GameState): string[] {
     const t = part.replace(/\s+/g, ' ').trim();
     if (!t || slotNamesNobody(t) || !slotNamesOnePerson(t)) continue;
     push(t);
-    push(t.replace(/^(a|an|the)\s+/i, '').trim());
   }
   const titled =
     hay.match(
@@ -1545,7 +1545,9 @@ export function compileOpeningCard(
     // "a steward behind the oak" is the steward; where he stands is not part of his name.
     const t = part.replace(/,.*$/, '').split(/\s+(?:behind|beyond)\s+/i)[0]!.trim();
     if (t.split(' ').length > 6 || !slotNamesOnePerson(t)) continue;
-    castNames.push(t, t.replace(/^(?:a|an|the)\s+/i, '').trim());
+    // One identity per person: keep the card's articulated form only (T10Y — bare+article
+    // doubles fed CAST as "the crew" and "crew" → writer "crew of the crew").
+    castNames.push(t);
   }
   const groupNames = live.map((p) => p.match(SHARED_HEAD)?.[1] ?? '').join(' ');
   if (live.length) {
@@ -1751,7 +1753,8 @@ export function slotNamesOnePerson(part: string): boolean {
   return !/[^s]s$/i.test(head);
 }
 function wantFromPickedHookBlob(blob?: string): string {
-  const m = (blob ?? '').match(/Why this happened:[ \t]*([^\n]+)/i);
+  // T10Y — RPG cards use "Why:" / "Why this happened:" interchangeably on the picked hook.
+  const m = (blob ?? '').match(/Why(?: this happened)?:[ \t]*([^\n]+)/i);
   return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
 }
 function offerFromPickedHookBlob(blob?: string): string {

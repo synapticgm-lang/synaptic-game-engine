@@ -59,13 +59,24 @@ export function roadMeetingPeople(state: GameState): string | null {
   return ROAD_PEOPLE_KINDS.has(enc.kind) ? roadMeetingLabel(enc.kind) : null;
 }
 
+/** Article-stripped key so "the crew" and "crew" are one person (T10Y — no "crew of the crew"). */
+function personKey(name: string): string {
+  return name.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+}
+
 /** Everyone who could answer: the presence record, companions, the live foe, the opening cast, a road meeting. */
 export function peopleHere(state: GameState): string[] {
   const out = new Map<string, string>();
   const add = (n?: string | null) => {
     const name = norm(n);
     if (!name || isChromePersonToken(name)) return;
-    if (!out.has(name.toLowerCase())) out.set(name.toLowerCase(), name);
+    const key = personKey(name);
+    if (!key) return;
+    const prev = out.get(key);
+    // Prefer the article form ("the crew") when both bare and articulated appear.
+    if (!prev || (/^(?:the|a|an)\s+/i.test(name) && !/^(?:the|a|an)\s+/i.test(prev))) {
+      out.set(key, name);
+    }
   };
   presentNpcNames(state).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));

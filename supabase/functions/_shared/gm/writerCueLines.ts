@@ -438,6 +438,44 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
           }
           continue;
         }
+        // T10Y — quote-leading Must narrate (`"You hear that?" I whisper loudly`) paints one
+        // attribution + optional act; never `Name said, Name said` from act+PC-says doubling.
+        // Require a closed quote, or an unclosed quote whose tail is a speech/act clause — not a
+        // mid-phrase space (`"… in B-flat."` must not split on the space before B-flat).
+        const leadQ =
+          body.match(/^(["\u201c])([^"\u201d]+)\1\s+((?:I\s+)?(?:whisper|say|said|tell|shout|yell|call)\b.*)$/i) ??
+          body.match(/^(["\u201c])([^"\u201d]+)$/);
+        if (leadQ?.[2]?.trim()) {
+          const said = leadQ[2]!.trim().replace(/[.,;:]+$/g, '');
+          let rest = (leadQ[3] ?? '').trim().replace(/[.]+$/g, '');
+          const speechVerb = rest.match(
+            /^(?:I\s+)?(whisper|say|said|tell|shout|yell|call(?:\s+out)?)\w*\b(?:\s+\w+)?[,.]?\s*(.*)$/i,
+          );
+          const vRaw = (speechVerb?.[1] ?? 'said').toLowerCase();
+          const afterVerb = (speechVerb?.[2] ?? '').trim();
+          const paintVerb = /whisper/.test(vRaw)
+            ? 'whispered'
+            : /shout/.test(vRaw)
+              ? 'shouted'
+              : /yell/.test(vRaw)
+                ? 'yelled'
+                : /call/.test(vRaw)
+                  ? 'called'
+                  : /tell/.test(vRaw)
+                    ? 'told'
+                    : 'said';
+          if (said) {
+            if (pc && pc !== 'They' && pc !== 'You') push(`${pc} ${paintVerb}, "${said}".`);
+            else push(`You ${paintVerb}, "${said}".`);
+            hadExactSay = true;
+          }
+          rest = speechVerb ? afterVerb : rest.replace(/^(?:I\s+)/i, '');
+          if (rest && !/^(?:loudly|softly|quietly|firmly)$/i.test(rest)) {
+            push(clauseToThirdPerson(rest, pc));
+            hadMustNarrate = true;
+          }
+          continue;
+        }
         // Quotes glued into Must narrate (unclosed player quote) still paint as PC speech.
         const q = body.match(/["\u201c]([^"\u201d]+)["\u201d]?\s*$/);
         const act = (q ? body.slice(0, q.index).trim() : body).replace(/[.]+$/g, '').trim();
