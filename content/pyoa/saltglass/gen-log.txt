@@ -388,3 +388,9 @@
 2026-10-28T16:25:30.232Z ask prose sg-e-C2-1..sg-e-C3-3 items=6 attempt=0
 2026-10-28T16:26:16.647Z done sg-e-C2-1: 6/6 model=Flash-Lite
 2026-10-28T16:26:16.647Z finished prose run: calls 127, batches done 100/100
+2026-10-28T20:32:09.692Z finished prose run: calls 0, batches done 100/100
+2026-10-28T20:32:10.144Z merge: sections 1000, with prose 991, missing 9, words 81222
+2026-10-28T20:36:01.788Z ask prose sg-3-2-3-0..sg-3-2-3-9 items=10 attempt=0
+2026-10-28T20:36:33.389Z done sg-3-2-3-0: 10/10 model=Flash-Lite
+2026-10-28T20:36:33.400Z finished prose run: calls 1, batches done 100/100
+2026-10-28T20:37:17.768Z merge: sections 1000, with prose 1000, missing 0, words 81763

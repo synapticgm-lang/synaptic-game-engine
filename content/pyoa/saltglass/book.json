@@ -12295,17 +12295,17 @@
      "to": "sg-3-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Trace the perimeter along the towering glass barrier"
+     "label": "Dash toward the looming window-wall"
     },
     {
      "to": "sg-3-2-4-2",
      "intent": "",
      "id": "x1",
-     "label": "Ascend the winding ramp toward the broader flats"
+     "label": "Climb the translucent slag ramp"
     }
    ],
-   "title": "The Sea-Green Parapet",
-   "page": "Jagged splinters spit from the masonry as a heavy icicle of fused quartz shears off the high cornice, shattering against your heels with a sharp ring of displaced air. You cling to the crumbling parapet of sea-green glass, watching bright dust drift down into the sun-bleached chasm below while your embers shift lazily in their iron cage."
+   "title": "Sea-Green Parapet",
+   "page": "Jagged shards of fused quartz cascade from a sea-green parapet overhead, splintering against the salt-crusted stones right at your heels. You pull your canvas cloak tight, shielding your ember-lamp as the heat radiates off the crystalline masonry. The maze stretches ahead in blinding glints of green and amber, offering two distinct paths through the ruined towers of the Old Lensfolk."
   },
   {
    "id": "sg-3-2-3-1",
@@ -12320,21 +12320,23 @@
      "to": "sg-3-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Slip past the looming window-wall"
     },
     {
      "to": "sg-3-2-4-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Thread the alleyway of weaving shadows"
     },
     {
      "to": "sg-3-2-4-2",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Ascend the translucent slag ramp"
     }
-   ]
+   ],
+   "title": "Whispering Amphitheatre",
+   "page": "Ghostly murmurs echo off the curved stone benches of the grand amphitheatre, twisting your own breath into mocking jeers that obscure the path ahead. Phantom voices mimic your urgency, whispering doubts about whether the Rain Vault will open in time. You grip your cold ceramic Seedkey and press forward through the swirling acoustic traps, searching for a way out of the singing bowl."
   },
   {
    "id": "sg-3-2-3-2",
@@ -12349,21 +12351,23 @@
      "to": "sg-3-2-4-1",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Step toward the weaving shadow alleys"
     },
     {
      "to": "sg-3-2-4-2",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Make for the translucent slag ramp"
     },
     {
      "to": "sg-3-2-4-3",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Cross the ribbed crystal sky-bridge"
     }
-   ]
+   ],
+   "title": "Rusted Iron Spans",
+   "page": "Rusted iron chains stretch taut across the terrifying drop between two hollow glass spires, humming with the dry desert wind. You inch forward one boot at a time like a tightrope walker, keeping your center of gravity low while the salt flats glare far below. Your banked lantern swings heavily from your belt, casting long, frantic arcs against the translucent walls."
   },
   {
    "id": "sg-3-2-3-3",
@@ -12378,15 +12382,17 @@
      "to": "sg-3-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Head for the sheer window-wall"
     },
     {
      "to": "sg-3-2-4-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Follow the weaving shadow alleys"
     }
-   ]
+   ],
+   "title": "Prism Canopy",
+   "page": "Hanging prisms catch the blinding overhead glare, scattering sudden flashes of mirror-signal across the ruined avenue. You duck low beneath a canopy of dangling crystal drops, sliding into the cool shadow of a dark alcove to let the beacon sweep past. The air smells of ozone and baked dust, urging you to keep moving before the Glasswright sentries spot your passage."
   },
   {
    "id": "sg-3-2-3-4",
@@ -12401,15 +12407,17 @@
      "to": "sg-3-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Escape toward the sheer window-wall"
     },
     {
      "to": "sg-3-2-4-2",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Climb the translucent slag ramp"
     }
-   ]
+   ],
+   "title": "Frozen Mercury Vats",
+   "page": "Heavy metallic fumes rise from rows of frozen mercury vats, making your head spin and your throat burn with every shallow breath. You press your sleeve against your face, navigating the labyrinth of lead-rimmed vats where toxic reflections ripple like silver grease. Finding a way out of this noxious cellar becomes a matter of urgent survival before your senses fail entirely."
   },
   {
    "id": "sg-3-2-3-5",
@@ -12424,15 +12432,17 @@
      "to": "sg-3-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Push toward the looming window-wall"
     },
     {
      "to": "sg-3-2-4-2",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Struggle upward to the slag ramp"
     }
-   ]
+   ],
+   "title": "Shifting Salt Slopes",
+   "page": "Granular salt and tiny glass beads slide treacherously beneath your boots, dragging you backward with every exhausting stride up the steep incline. You dig your heels into the unstable crust, leaning your weight into the slope as the midday heat bakes the exposed basin. Your shoulders ache under the pack, but stopping here means sliding back into the glittering trap."
   },
   {
    "id": "sg-3-2-3-6",
@@ -12447,15 +12457,17 @@
      "to": "sg-3-2-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Cross the ribbed crystal sky-bridge"
     },
     {
      "to": "sg-3-2-4-5",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Duck under the sagging lead arch"
     }
-   ]
+   ],
+   "title": "Melted Borosilicate Doorway",
+   "page": "Warped frames of melted borosilicate groan as you push through into a hidden chamber where the walls pulse with trapped twilight. Soft violet light bleeds from the ancient glass, casting long, distorted shadows across the floor. The strange illumination feels cool against your scorched skin, offering a moment of eerie respite before you choose your next direction."
   },
   {
    "id": "sg-3-2-3-7",
@@ -12470,9 +12482,11 @@
      "to": "sg-3-2-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Traverse the ribbed crystal sky-bridge"
     }
-   ]
+   ],
+   "title": "Ruby Obelisk",
+   "page": "Fractured pillars of ruby glass cast blood-red glints across the dry courtyard, where a discarded water skin lies empty and taunting in the heat. You stare at the shriveled leather, remembering the dry wells of Candlemere and the urgency of the twenty-day monsoon limit. Nothing moves in the quiet heat except the heat-haze shimmering off the broken obelisk."
   },
   {
    "id": "sg-3-2-3-8",
@@ -12487,15 +12501,17 @@
      "to": "sg-3-2-4-4",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Descend the green-tiled subterranean conduit"
     },
     {
      "to": "sg-3-2-4-5",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Duck under the sagging lead arch"
     }
-   ]
+   ],
+   "title": "Shattered Balcony",
+   "page": "Multi-tiered balconies of shattered mirrors throw a thousand dancing sun-hares across your tired eyes, blinding you with sudden flashes of reflected light. You squint through the glare, dodging the shifting bright spots as you pick a careful route across the unstable, glittering stone floor. The wind whistles softly through the iron railings, carrying the distant scent of the salt basin."
   },
   {
    "id": "sg-3-2-3-9",
@@ -12510,13 +12526,13 @@
      "to": "sg-3-2-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Cross the ribbed crystal sky-bridge"
     },
     {
      "to": "sg-3-2-4-4",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Descend the green-tiled subterranean conduit"
     },
     {
      "to": "sg-d-3-2",
@@ -12525,7 +12541,9 @@
      "id": "x2",
      "label": "Take the reckless way"
     }
-   ]
+   ],
+   "title": "Trench of Glass Teeth",
+   "page": "Jagged glass teeth line the bottom of a deep trench that cuts across the thoroughfare like an open wound. A fallen metal girder spans the chasm, offering a narrow, trembling lane of safety above the razor-sharp floor. You steady your breathing and prepare to cross the terrifying gap, keeping your eyes fixed firmly on the far ledge."
   },
   {
    "id": "sg-3-2-3-10",
@@ -21794,7 +21812,7 @@
       "oath": "sworn"
      },
      "id": "x0",
-     "label": "Sing the Sisters' well-song to the lock"
+     "label": "Let the old well-song unlock the heavy stone seal."
     },
     {
      "to": "sg-6-2-0-1",
@@ -21805,9 +21823,11 @@
       }
      },
      "id": "x1",
-     "label": "Work the lock by hand"
+     "label": "Turn the heavy iron levers by hand until the mechanism yields."
     }
-   ]
+   ],
+   "title": "The Vault Lock Chamber",
+   "page": "Heavy air settles in the Lock Chamber, tasting of deep stone and dry centuries. Before you looms the great circular seal of the Rain Vault, its cold face etched with the faded map of a flooded basin. If you carry the memory of the well-song given by the Dune Sisters, your voice can coax the ancient tumblers to turn without friction or fury. Without that fragile covenant, however, the lock demands muscle and patience, forcing you to crank the rusted iron levers by hand while the basalt walls groan around your shoulders. Every choice here carries the weight of the coming harvest, and the chamber watches with silent, expectant stillness."
   },
   {
    "id": "sg-6-out",
@@ -21819,21 +21839,23 @@
      "to": "sg-f-A",
      "intent": "Open the Rain Vault to everyone",
      "id": "x0",
-     "label": "Open the Rain Vault to everyone"
+     "label": "Turn the large wheel to open the Rain Vault to everyone"
     },
     {
      "to": "sg-f-B",
      "intent": "Seal the vault and guard its secret",
      "id": "x1",
-     "label": "Seal the vault and guard its secret"
+     "label": "Drop the heavy locking bar and seal the vault against all comers"
     },
     {
      "to": "sg-f-C",
      "intent": "Take only the seed and run for Candlemere",
      "id": "x2",
-     "label": "Take only the seed and run for Candlemere"
+     "label": "Pry free the primary canister and run for Candlemere alone"
     }
-   ]
+   ],
+   "title": "The Final Reckoning",
+   "page": "Cool ceramic rests against your palm as you stand before the towering bronze gates of the Rain Vault, listening to the deep drumbeat of the monsoon against the observatory dome. The choice of what to do with the ancient seed hall hangs heavier now than any pack or weapon, shaping the future of every parched town from the rim to the sunken basin. Water pools around your boots, shallow and persistent, signaling that the dry years are over and the time for half-measures has passed entirely.\n\nEvery road out of this vaulted chamber leads to a different destiny for the dried lands, whether shared among the thirsty millions, hidden forever behind sealed lead, or carried in secret toward the dying hearths of Candlemere."
   },
   {
    "id": "sg-6-0-0-0",
@@ -24493,15 +24515,17 @@
      "to": "sg-6-1-5-2",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Step toward the lower passage"
     },
     {
      "to": "sg-6-1-5-3",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Follow the curving eastern gallery"
     }
-   ]
+   ],
+   "title": "The Open Palms",
+   "page": "Beside a row of unlit wall sconces shaped like open palms, you hold your coal-lantern high to pierce the gathering gloom. The yellow light casts long, trembling shadows across carved sandstone reliefs that depict ancient water rites long forgotten by the valley folk. Every surface is caked in a fine, glittering layer of ancient salt crystals, making the very walls look as though they are frosted with rime. You pause to catch your breath, listening for the faint rumble of the distant monsoon waters echoing through the deep basalt strata."
   },
   {
    "id": "sg-6-1-4-5",
@@ -24516,21 +24540,23 @@
      "to": "sg-6-1-5-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Approach the central iron cylinder"
     },
     {
      "to": "sg-6-1-5-2",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Turn toward the lower passage"
     },
     {
      "to": "sg-6-1-5-3",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Follow the curving eastern gallery"
     }
-   ]
+   ],
+   "title": "The Brass Threshold",
+   "page": "Within a vast hemispherical antechamber, the ground slopes gently toward the heavy brass threshold of the vault lock. Above your head, intricate geometric traceries carved into the vaulted ceiling gleam with faint phosphorescence as your lantern approaches. The air here is thin, dry, and bitterly cold, carrying the sharp tang of aged metal and dry desert dust. You steady the strap of your lantern across your shoulder and survey the imposing approaches that fan out into the deep recesses of the underground hall."
   },
   {
    "id": "sg-6-1-4-6",
@@ -24545,9 +24571,11 @@
      "to": "sg-6-1-5-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Follow the curving eastern gallery"
     }
-   ]
+   ],
+   "title": "The Silent Alcoves",
+   "page": "Under a dome of dark stone streaked with white mineral veins, you stride past silent sentry alcoves empty of any living guard. The floor beneath your boots is perfectly smooth, polished by centuries of dry desert winds that once whistled through these subterranean avenues before the great seals were dropped. Only the steady sputtering of your coal-lantern breaks the profound silence, casting a warm amber halo against the cold, unyielding masonry on either side."
   },
   {
    "id": "sg-6-1-4-7",
@@ -24562,15 +24590,17 @@
      "to": "sg-6-1-5-2",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Step toward the lower passage"
     },
     {
      "to": "sg-6-1-5-3",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Follow the curving eastern gallery"
     }
-   ]
+   ],
+   "title": "The Monumental Doors",
+   "page": "Beside a pair of monumental bronze doors standing slightly ajar, you feel the suction of heavy air rushing into the vault core. The massive metal panels are etched with swirling patterns of rain clouds and lightning bolts, now tarnished to a deep sea-green at their heavy hinges. A thin draft whistles through the narrow gap, carrying the unmistakable scent of deep earth and moisture that heralds the approaching storm."
   },
   {
    "id": "sg-6-1-5-0",
@@ -24585,9 +24615,11 @@
      "to": "sg-6-c2",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on"
+     "label": "Proceed to the lock chamber"
     }
-   ]
+   ],
+   "title": "The Iron Cylinder",
+   "page": "Across the threshold of the great antechamber, you face the massive iron lock cylinder waiting for your next definitive action. The cold ceramic key in your pouch feels unnaturally heavy against your ribs, a silent reminder of the dried canals and desperate villages waiting far above in the blinding salt light. You raise your lamp to inspect the intricate tumblers, knowing that every choice from this moment forward will decide whether the fields of Candlemere drink again."
   },
   {
    "id": "sg-6-1-5-1",
@@ -24602,16 +24634,18 @@
      "to": "sg-6-c2",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on"
+     "label": "Proceed to the lock chamber"
     },
     {
      "to": "sg-6-1-3-10",
      "intent": "Turn back",
      "back": true,
      "id": "x1",
-     "label": "Turn back"
+     "label": "Retrace your steps back"
     }
-   ]
+   ],
+   "title": "The Central Seal",
+   "page": "Before the towering brass face of the central seal, you steady your breathing as the heavy mechanism clicks in response to your approach. The air grows heavier still, vibrating with the latent power stored beneath the silent observatory city. You grip your lantern tighter, feeling the stark contrast between the warmth of your banked coals and the absolute chill radiating from the ancient lock."
   },
   {
    "id": "sg-6-1-5-2",
@@ -24626,9 +24660,11 @@
      "to": "sg-6-c2",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on"
+     "label": "Proceed to the lock chamber"
     }
-   ]
+   ],
+   "title": "The Vault Portal",
+   "page": "Within the shadow of the monumental vault portal, you raise your cold ceramic key toward the intricate locking tumbler slots. The smooth stone around the mechanism is worn down by generations of hands that sought the very same deliverance from the unending drought. Every second counts now as the distant rumble of the approaching monsoon grows louder through the rock."
   },
   {
    "id": "sg-6-1-5-3",
@@ -24643,9 +24679,11 @@
      "to": "sg-6-c2",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on"
+     "label": "Proceed to the lock chamber"
     }
-   ]
+   ],
+   "title": "The Sunken Platform",
+   "page": "At the edge of the sunken lock platform, you prepare your hands to work the ancient levers before the rising waters arrive. The polished floor slopes down toward a dark trench where the subterranean runoff channels converge into a single, thirsty drain. You take one last look back at the winding corridors you have traversed, then square your shoulders against the biting draft."
   },
   {
    "id": "sg-6-2-0-0",
@@ -24660,7 +24698,7 @@
      "to": "sg-6-2-1-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Strike the floor with the cold ceramic key"
     },
     {
      "to": "sg-6-2-1-1",
@@ -24670,15 +24708,17 @@
      },
      "privWhy": "the reader walks with a banked, dark lamp and slips through unseen",
      "id": "x1",
-     "label": "Go on"
+     "label": "Slip quietly past the watcher using your dark lamp"
     },
     {
      "to": "sg-6-2-1-2",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Lay the seed down upon the central obsidian pedestal"
     }
-   ]
+   ],
+   "title": "The Obsidian Antechamber",
+   "page": "Within the echoing obsidian antechamber, cold ceramic tiles hum against your boots as you weigh the final sacrifice of the seed. The air smells intensely of dry minerals and ancient stone, carrying a faint vibration through the floorboards from deep beneath the vault. Your fingers tighten around the cold ceramic key, feeling its weight and stillness against the rising tension in the chamber. Shadows stretch long and sharp across the polished walls as your banked lantern throws a dim circle of warmth over the floor. You must decide how to proceed before the silence breaks entirely."
   },
   {
    "id": "sg-6-2-0-1",
@@ -24693,21 +24733,23 @@
      "to": "sg-6-2-1-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Turn the heavy basalt wheel clockwise"
     },
     {
      "to": "sg-6-2-1-4",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Tear the final page from the open ledger"
     },
     {
      "to": "sg-6-2-1-5",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Wedge your ember-lamp between the massive cogs"
     }
-   ]
+   ],
+   "title": "The Basalt Gears",
+   "page": "Beside the grinding basalt gears of the inner vault, a forgotten ledger lies open, detailing the bitter cost of past harvests in faded ink. The heavy machinery groans with a low, rhythmic vibration that rattles the dust motes suspended in the dim air. You trace the dry pages with a thumb, noting the columns of numbers and names of forgotten towns that perished when the rains failed generations ago. The smell of old paper and machine oil thickens around you, pressing close against your skin like a physical weight. Every gear turn brings the imminent arrival of the monsoon closer to the surface."
   },
   {
    "id": "sg-6-2-1-0",
@@ -24722,13 +24764,13 @@
      "to": "sg-6-2-2-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Pull the rusted iron lever with both hands"
     },
     {
      "to": "sg-6-2-2-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Smash the lowest hanging prism to clear the mechanism"
     },
     {
      "to": "sg-6-2-2-2",
@@ -24738,15 +24780,17 @@
      },
      "privWhy": "the reader owes nobody and can bargain freely",
      "id": "x2",
-     "label": "Go on"
+     "label": "Request the master schematic from the wary archivist"
     },
     {
      "to": "sg-6-2-2-3",
      "intent": "",
      "id": "x3",
-     "label": "Go on"
+     "label": "Wade through the floating fragments of old maps in the brine"
     }
-   ]
+   ],
+   "title": "Fractured Prisms",
+   "page": "Beneath a chandelier of fractured prisms, rusted iron levers groan under your grip while the heavy air tastes of ozone and dry salt. Sharp slivers of amber light scatter across your shoulders as the overhead fixture sways slightly from subterranean drafts. Your muscles strain against the stubborn metal, locked in place by decades of neglect and mineral buildup. Every breath burns your throat with the fine dust of the dried sea basin. You have to force the mechanism to move or find another way forward before the corridor seals itself."
   },
   {
    "id": "sg-6-2-1-1",
@@ -24765,19 +24809,19 @@
      },
      "privWhy": "the reader owes nobody and can bargain freely",
      "id": "x0",
-     "label": "Go on"
+     "label": "Bargain freely with the wary archivist for the schematic"
     },
     {
      "to": "sg-6-2-2-3",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Wade through the bitter brine of the subterranean cistern"
     },
     {
      "to": "sg-6-2-2-4",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Fit your cold ceramic key into the towering vault doors"
     }
    ],
    "priv": {
@@ -24785,7 +24829,9 @@
      "lamp": "dark"
     },
     "why": "the reader walks with a banked, dark lamp and slips through unseen"
-   }
+   },
+   "title": "The Maintenance Hatch",
+   "page": "Slipping past the sentry's blind spot with your darkened lantern, you discover an unsealed maintenance hatch bypassing the grinding bronze seals. The narrow metal corridor beyond smells of cool grease and stagnant subterranean damp, offering a quiet route away from the guarded main gates. Your fingers brush against the cold rivet heads as you slide sideways into the gloom, keeping your footsteps light and silent. The distant hum of the vault's inner machinery vibrates faintly through the floor beneath your boots. Ahead lies a choice of paths into the heart of the structure."
   },
   {
    "id": "sg-6-2-1-2",
@@ -24800,27 +24846,29 @@
      "to": "sg-6-2-2-4",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Insert your cold ceramic key into the vault door"
     },
     {
      "to": "sg-6-2-2-5",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Step into the chamber of whispering lenses and bright reflections"
     },
     {
      "to": "sg-6-2-2-6",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Wedge a rigid copper tube against the jammed pneumatic seal"
     },
     {
      "to": "sg-6-2-2-7",
      "intent": "",
      "id": "x3",
-     "label": "Go on"
+     "label": "Leave an offering in the dry basin of the rain-seers"
     }
-   ]
+   ],
+   "title": "Weeping Crystals",
+   "page": "In the alcove of weeping crystals, a saline condensation drips onto your bare shoulders as you inspect the cracked pneumatic seals. Each droplet hits the stone floor with a sharp, echoing ping that sounds unnaturally loud in the narrow corridor. The air here is heavy with moisture and the sharp tang of mineral salts. You run a finger along the fractured casing, feeling the faint hiss of escaping pressure from deep within the wall. A decision must be made before the seal gives way entirely."
   },
   {
    "id": "sg-6-2-1-3",
@@ -24835,21 +24883,23 @@
      "to": "sg-6-2-2-7",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Leave a tribute in the dry rain-seer basin"
     },
     {
      "to": "sg-6-2-2-8",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Cross the trembling glass bridge above the deep shaft"
     },
     {
      "to": "sg-6-2-2-9",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Drop your ember-lamp into the singing abyss below"
     }
-   ]
+   ],
+   "title": "Singing Glass",
+   "page": "Across a chasm of singing glass plates, a spectral reflection mimics your every hesitation while the abyss hums a low, warning note. The transparent floor beneath your boots vibrates in tune with the resonant tones rising from the dark depths. Every movement sends a shimmering wave of musical sound bouncing off the distant walls. You grip your lantern tightly, watching your own distorted image shift and fracture across the glass expanse. The path ahead requires an absolute commitment of balance and nerve."
   },
   {
    "id": "sg-6-2-1-4",
@@ -24864,21 +24914,23 @@
      "to": "sg-6-2-2-10",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Cut the glowing red wire in the box"
     },
     {
      "to": "sg-6-2-2-11",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Reset the sputtering control circuit with a firm push"
     },
     {
      "to": "sg-6-2-2-12",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Close the metal maintenance box and walk away"
     }
-   ]
+   ],
+   "title": "Fused Silica Mural",
+   "page": "Beside a mural of fused silica depicting the ancient drought, you pry open a maintenance box to expose the sputtering control circuits. Sparks of white light snap against your knuckles, casting brief, erratic shadows across the carved glass figures of starving citizens. The smell of scorched copper and ozone fills the cramped alcove as the wires buzz with unstable current. Your fingers hover over the exposed toggles, each one connected to a vital sector of the subterranean complex. You must act quickly before the circuitry fries completely."
   },
   {
    "id": "sg-6-2-1-5",
@@ -24893,15 +24945,17 @@
      "to": "sg-6-2-2-13",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Press hard against the hidden iron latch"
     },
     {
      "to": "sg-6-2-2-14",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Kick outward with your boot against the ventilation wall"
     }
-   ]
+   ],
+   "title": "White Salt Flue",
+   "page": "Within the narrow ventilation flue choked with white salt dust, your cramped fingers search for the hidden latch that releases the pressure valve. The abrasive powder coats your skin and throat, making every breath a dry, ragged cough. Above you, the heavy metal plates of the ceiling groan under the weight of the city resting overhead. You slide your palm along the cold interior wall, feeling for the tiny notch carved into the ironwork. The space is claustrophobic, leaving no room for error or hesitation."
   },
   {
    "id": "sg-6-2-2-0",
@@ -24916,21 +24970,23 @@
      "to": "sg-6-2-3-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Move forward into the lower residential tier"
     },
     {
      "to": "sg-6-2-3-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Enter the blind panopticon of dead indicator lights"
     },
     {
      "to": "sg-6-2-3-3",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Investigate the mournful chime near the shattered quartz"
     }
-   ]
+   ],
+   "title": "Hollow Resonators",
+   "page": "In the vaulted gallery of hollow resonators, your heavy footsteps trigger a cascade of melodic echoes that threaten to wake the lower guardians. Ceramic vessels built into the stone walls catch and multiply every sound, turning a simple shuffle into a rolling chord of alarm. The air is cool and still, carrying the scent of ancient clay and dust. You freeze in place, waiting to see if the reverberations fade into the masonry or draw unwanted attention from the depths. A choice of directions opens before you in the dim light."
   },
   {
    "id": "sg-6-2-2-1",
@@ -24945,15 +25001,17 @@
      "to": "sg-6-2-3-2",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Descend into the freezing deep refrigeration tier"
     },
     {
      "to": "sg-6-2-3-4",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Enter the sunken gallery where sulfur fills the air"
     }
-   ]
+   ],
+   "title": "Emergency Beacons",
+   "page": "Under the flickering amber glow of emergency beacons, a corroded brass valve resists your straining muscles as boiling steam hisses overhead. The harsh light turns the shadows into violent, jagged shapes that dance across the riveted iron walls. Scalding mist burns your forearms, and the metallic taste of hot condensation coats your tongue. You lean your entire body weight against the turning wheel, desperate to shut off the hazardous leak. The heat in the corridor is becoming unbearable."
   },
   {
    "id": "sg-6-2-2-2",
@@ -24968,19 +25026,19 @@
      "to": "sg-6-2-3-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Follow the path past the quartz chime"
     },
     {
      "to": "sg-6-2-3-4",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Descend into the sulfur-scented gallery"
     },
     {
      "to": "sg-6-2-3-5",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Trace the copper veins beneath the green glass"
     }
    ],
    "priv": {
@@ -24988,7 +25046,9 @@
      "debt": "clear"
     },
     "why": "the reader owes nobody and can bargain freely"
-   }
+   },
+   "title": "The Unbound Archivist",
+   "page": "Free of any toll-lord's ledger or well-keeper's oath, you stand before a hooded archivist whose fingers are stained with permanent indigo. Seeing your ledger clean of debt and your name unspooled from the Salt Court's demands, she wordlessly slides a master schematic of the lower seed vaults across the pitted zinc table. The vellum crackles with dry age, mapping every sealed conduit and forgotten bulkhead beneath Prism.\n\nOutside the alcove, the air tastes of ancient dust and the low, resonant thrum of the approaching monsoon begins to vibrate through the floorboards beneath your boots, urging you to choose your route before the tunnels flood."
   },
   {
    "id": "sg-6-2-2-3",
@@ -25003,21 +25063,23 @@
      "to": "sg-6-2-3-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Head toward the quartz chime gallery"
     },
     {
      "to": "sg-6-2-3-4",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Search the sulfur-scented lower chamber"
     },
     {
      "to": "sg-6-2-3-5",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Seek the vaulted hall of green glass"
     }
-   ]
+   ],
+   "title": "The Brine Cistern",
+   "page": "Bitter brine laps against your shins, sending ripples through a floating mosaic of waterlogged paper maps that swirl in the dark water. You wade deeper into the subterranean cistern, holding your ember-lamp high to ward off the chill rising from the flooded floor. Somewhere beneath the surface turbulence, the emergency drainage plug waits to be found and hauled free, though the rusted iron ring might snap under too much strain.\n\nThe dark liquid stirs with every step, and you must decide whether to pry at the stuck drain, wade toward the echoing archway, or turn back before the rising water cuts off your retreat."
   },
   {
    "id": "sg-6-2-2-4",
@@ -25032,15 +25094,17 @@
      "to": "sg-6-2-3-5",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Enter the green glass vaulted hall"
     },
     {
      "to": "sg-6-2-3-7",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Approach the condensing tower's shadow"
     }
-   ]
+   ],
+   "title": "The Frost-Patterned Lock",
+   "page": "Towering slabs of dark basalt etched with the sprawling history of the lensfolk loom before you, dwarfing the narrow stone ledge. Your cold ceramic Seedkey fits snugly into the intricate, frost-patterned keyway, sliding into the ancient tumbler with a satisfying click that echoes down the corridor. A faint blue luminescence creeps along the carved grooves, signaling that the inner mechanism is ready to turn.\n\nThe weight of Candlemere's failed harvests rests entirely on your wrists, and the impending monsoon rattles the distant ventilation grates like a gathering storm."
   },
   {
    "id": "sg-6-2-2-5",
@@ -25055,15 +25119,17 @@
      "to": "sg-6-2-3-4",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Venture into the sulfur-scented gallery"
     },
     {
      "to": "sg-6-2-3-6",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Locate the heavy titanium bulkhead"
     }
-   ]
+   ],
+   "title": "The Chamber of Whispering Lenses",
+   "page": "Hundreds of curved, centuries-old mirrors catch your flickering lantern light, refracting a chaotic web of blinding beams across the damp stone floor. Every movement you make sends dazzling arcs of light dancing across the vaulted ceiling, accompanied by a faint, glassine hum like a swarm of metal bees. The brilliant glare makes it difficult to see where the walkways lead, forcing you to navigate by touch and instinct through the maze of optics.\n\nThe air smells of ozone and static electricity, and you must choose which reflected pathway to follow into the dark."
   },
   {
    "id": "sg-6-2-2-6",
@@ -25078,15 +25144,17 @@
      "to": "sg-6-2-3-5",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Walk toward the green glass vault"
     },
     {
      "to": "sg-6-2-3-7",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Step into the condensing tower's shadow"
     }
-   ]
+   ],
+   "title": "The Scaffolding Wedge",
+   "page": "Rusted copper pipes groan and shift as you wrench a sturdy length of rigid tubing free from the collapsed scaffolding overhead. Wedging the metal bar firmly against the jammed secondary locking mechanism, you throw your weight against it until the stubborn gears finally give way with a metallic shriek. Dust billows from the housing, revealing a narrow service gap large enough to squeeze through.\n\nThe subterranean chill bites at your skin, and the distant rumble of the approaching rains warns you that time is running out."
   },
   {
    "id": "sg-6-2-2-7",
@@ -25101,21 +25169,23 @@
      "to": "sg-6-2-3-8",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Follow the dried salt crystal trail"
     },
     {
      "to": "sg-6-2-3-9",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Inspect the humming lift shaft dynamo"
     },
     {
      "to": "sg-6-2-3-10",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Examine the weeping statues' basin"
     }
-   ]
+   ],
+   "title": "The Dry Basin of Rain-Seers",
+   "page": "Carved images of long-forgotten rain-seers stare down from the walls of the alcove, their stone eyes fixed upon an empty stone basin in the center of the floor. A faint residue of old offerings cakes the bottom, waiting for you to decide whether to leave something of value or pass by with empty hands. The silence here is absolute, save for the steady drip of condensation somewhere in the deeper masonry.\n\nEvery instinct tells you that the basin demands a token of your journey before it will grant safe passage further into the vaults."
   },
   {
    "id": "sg-6-2-2-8",
@@ -25130,21 +25200,23 @@
      "to": "sg-6-2-3-8",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Cross toward the obsidian floor"
     },
     {
      "to": "sg-6-2-3-9",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Head for the humming lift dynamo"
     },
     {
      "to": "sg-6-2-3-10",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Seek out the weeping statues"
     }
-   ]
+   ],
+   "title": "The Glass Bridge Gale",
+   "page": "A rising gale from the impending monsoon shrieks through the iron struts of the trembling glass bridge, threatening to sweep you off the narrow span. Below your boots, the deep subterranean shaft drops away into absolute blackness, amplifying the howling wind into a deafening roar. You press yourself low against the vibrating handrails, inching forward as the glass beneath you hums with dangerous resonance.\n\nThe storm is breaking through the upper grates, leaving you precious few moments to reach solid ground on the other side."
   },
   {
    "id": "sg-6-2-2-9",
@@ -25159,15 +25231,17 @@
      "to": "sg-6-2-3-9",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Descend by the lift shaft"
     },
     {
      "to": "sg-6-2-3-10",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Inspect the weeping stone basin"
     }
-   ]
+   ],
+   "title": "The Dynamo's Pulse",
+   "page": "Heavy cables pulse with residual current beside the humming dynamo of the lift shaft, casting long, jittery shadows across the concrete floor. The mechanical lift cage sits stranded halfway up its rusted tracks, groaning as the rising wind pressures push against the outer intake shafts. Your ember-lamp flickers in the draft, casting a warm amber glow over the control levers and warning plates.\n\nYou must decide whether to tinker with the lift controls, brave the maintenance ladder, or slip into the adjacent corridor before the power fails entirely."
   },
   {
    "id": "sg-6-2-2-10",
@@ -25182,21 +25256,23 @@
      "to": "sg-6-2-3-9",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Follow the lift shaft shadows"
     },
     {
      "to": "sg-6-2-3-10",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Inspect the weeping stone basin"
     },
     {
      "to": "sg-6-2-3-11",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Enter the narrow acoustic service tunnel"
     }
-   ]
+   ],
+   "title": "The Weeping Alcove",
+   "page": "Water slowly trickles from the carved stone eyes of ancient bas-reliefs, filling a shallow marble basin that has remained undisturbed for centuries. The steady, rhythmic plink of droplets provides the only sound in the damp alcove, washing over the lingering scent of salt and stagnant air. Your boots leave wet prints on the stone flags as you approach the edge of the pooling water to examine what lies submerged within.\n\nThe vaulted ceiling stretches into darkness above you, hiding several possible exits from the weeping chamber."
   },
   {
    "id": "sg-6-2-2-11",
@@ -25211,21 +25287,23 @@
      "to": "sg-6-2-3-12",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Press your palm to the biometric scanner"
     },
     {
      "to": "sg-6-2-3-13",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Cross the narrow pit on the rope bridge"
     },
     {
      "to": "sg-6-2-3-15",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Step into the great balance chamber"
     }
-   ]
+   ],
+   "title": "The Deep Vault Threshold",
+   "page": "Cool air rushes from the dark threshold ahead, carrying the scent of damp earth and unspooling time from the innermost heart of the Seed Vault. Every old promise made by the lensfolk now comes due, hanging heavy in the stillness as your ember-lamp illuminates the massive brass hinges of the inner door. The basin's fate, and the survival of Candlemere's fields, rests entirely on the choice you are about to make.\n\nYou stand at the precipice of history, needing only to take the final step into the vault's core."
   },
   {
    "id": "sg-6-2-2-12",
@@ -25240,22 +25318,24 @@
      "to": "sg-6-2-3-12",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Press your palm against the scanner plate"
     },
     {
      "to": "sg-6-2-3-13",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Cross the narrow span toward the inner sanctum"
     },
     {
      "to": "sg-6-2-0-1",
      "intent": "Turn back",
      "back": true,
      "id": "x2",
-     "label": "Turn back"
+     "label": "Turn back to the weeping alcove"
     }
-   ]
+   ],
+   "title": "The Vault Lock",
+   "page": "Heavy iron gears groan behind the damp stone walls of the Rain Vault, exhaling a breath of ancient ozone and dry dust. The cold ceramic Seedkey rests in your palm, its weight a stark reminder of Candlemere's parched wells and dying lamp-fires. Every old promise made by the lensfolk now converges on this subterranean threshold, demanding an accounting of your journey across the saltglass basin.\n\nBefore you lie three distinct paths into the heart of the dormant machinery, each promising a different reckoning with the vault's automated sentinels and silent seed halls."
   },
   {
    "id": "sg-6-2-2-13",
@@ -25270,7 +25350,7 @@
      "to": "sg-6-2-3-13",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Cross the narrow iron rib above the pit"
     },
     {
      "to": "sg-6-2-3-14",
@@ -25280,9 +25360,11 @@
      },
      "privWhy": "the reader carries the glass-burn scar that marks them as one who crossed the Storm",
      "id": "x1",
-     "label": "Go on"
+     "label": "Press your glass-burn scar to the security reader"
     }
-   ]
+   ],
+   "title": "The Chasm Threshold",
+   "page": "Across the threshold of the innermost sanctum, the floor drops away into a sheer subterranean pit crossed only by a narrow rib of rusted iron. Below, the dark silence of the basin's deep foundation hums with the memory of rushing monsoon waters long overdue. Your banked coal-lantern casts a flickering, warm glow against the towering walls of fused glass and limestone blocks.\n\nTwo ways present themselves across this dizzying abyss, requiring either a steady nerve on the suspended rib or the invocation of old, painful scars earned in the storm."
   },
   {
    "id": "sg-6-2-2-14",
@@ -25301,15 +25383,17 @@
      },
      "privWhy": "the reader carries the glass-burn scar that marks them as one who crossed the Storm",
      "id": "x0",
-     "label": "Go on"
+     "label": "Offer your glass-burn scar to the resting sensor"
     },
     {
      "to": "sg-6-2-3-15",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Step onto the heavy iron weighing pan"
     }
-   ]
+   ],
+   "title": "The Great Balance",
+   "page": "Within the chamber of the great balance, two heavy iron pans hang suspended in absolute stillness, waiting for a definitive weight to tip their ancient scale. The air tastes faintly of sulfur and cold copper, heavy with the dust of centuries that have forgotten the sound of rain. Your fingers brush the rough texture of the Seedkey as you weigh the future of Candlemere against the hidden mechanisms of the Old Lensfolk.\n\nThe bronze indicator needle shivers against its glass housing, pointing toward the final arbitraments of the vault."
   },
   {
    "id": "sg-6-2-3-0",
@@ -25324,15 +25408,17 @@
      "to": "sg-6-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Heave harder against the rusted winch"
     },
     {
      "to": "sg-6-2-4-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Step into the twilight glare of the core hum"
     }
-   ]
+   ],
+   "title": "The Sub-Vault Lintel",
+   "page": "Under the low-hanging basalt lintel of the sub-vault, your shoulders ache as you heave against a rusted bronze winch that refuses to yield easily. Phosphor-lamps overhead sputter and fade, casting long, jittery shadows across rows of hermetically sealed tin canisters containing the last drought-proof harvests of the basin. Every movement echoes in the confined space, a reminder of the twenty days remaining before the torrential monsoon floods the lowlands.\n\nTwo distinct mechanisms beckon from the gloom, each demanding physical effort or a steady hand on the controls."
   },
   {
    "id": "sg-6-2-3-1",
@@ -25347,9 +25433,11 @@
      "to": "sg-6-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Crawl beneath the low basalt lintel"
     }
-   ]
+   ],
+   "title": "The Blind Panopticon",
+   "page": "Inside the central control panopticon, banks of dead indicator lights gaze down upon you like the blind eyes of ancient stone deities carved by forgotten hands. Dust motes dance lazily in the weak, amber beam of your coal-lantern, illuminating rusted toggle switches and cracked glass dials that have not moved since the old world shattered. The silence here is absolute, broken only by the distant, rhythmic dripping of subterranean moisture somewhere in the dark foundations.\n\nA single egress leads forward into the damp, shadowed machinery of the sub-vault."
   },
   {
    "id": "sg-6-2-3-2",
@@ -25364,21 +25452,23 @@
      "to": "sg-6-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Wrestle the rusted winch in the sub-vault"
     },
     {
      "to": "sg-6-2-4-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Approach the humming core of phosphor-lamps"
     },
     {
      "to": "sg-6-2-4-3",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Seek shelter in the dry innermost reliquary"
     }
-   ]
+   ],
+   "title": "The Refrigeration Tier",
+   "page": "Frost clings stubbornly to your eyelashes while you calculate the exact temperature needed to preserve the vital seed harvest against the coming heat. Coils of blackened copper snake across the vaulted ceiling, radiating a deep, penetrating chill that bites through your runner's coat. The air is remarkably thin and sharp, carrying the faint, sweet scent of dormant wheat and ancient loam preserved in perpetual winter.\n\nThree separate passages branch outward from this freezing chamber into the humming heart of the installation."
   },
   {
    "id": "sg-6-2-3-3",
@@ -25393,15 +25483,17 @@
      "to": "sg-6-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Pull against the heavy winch in the sub-vault"
     },
     {
      "to": "sg-6-2-4-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Investigate the humming phosphor-lamp core"
     }
-   ]
+   ],
+   "title": "The Quartz Chime",
+   "page": "Beside a heap of shattered quartz lenses, an old automated chime tolls a single mournful note every time the tectonic plates shift deep below the basin. The sound resonates through the floorboards, vibrating straight up through the soles of your boots with a strange, musical melancholy. Shards of colored glass catch the amber light of your lantern, scattering tiny constellations across the damp stone walls.\n\nTwo passages open up from this resonant alcove, leading deeper into the subterranean labyrinth."
   },
   {
    "id": "sg-6-2-3-4",
@@ -25416,21 +25508,23 @@
      "to": "sg-6-2-4-1",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Approach the humming core of phosphor-lamps"
     },
     {
      "to": "sg-6-2-4-2",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Descend toward the deep drainage sump"
     },
     {
      "to": "sg-6-2-4-3",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Enter the dry and stretched innermost reliquary"
     }
-   ]
+   ],
+   "title": "The Bronze Seal",
+   "page": "In the sunken gallery where the air tastes distinctly of sulfur and old dust, your trembling hand traces the deep groove of an uncast bronze seal. The metal is freezing to the touch, bearing intricate bas-reliefs of stylized rain clouds and weeping willow boughs that symbolise the lost harvests of the Old Lensfolk. Your lantern oil is slowly running low, casting flickering boundaries that press closer with every passing minute.\n\nThree distinct routes diverge from the gallery, leading toward the core, the drainage sump, and the dry reliquary."
   },
   {
    "id": "sg-6-2-3-5",
@@ -25445,21 +25539,23 @@
      "to": "sg-6-2-4-2",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Follow the cold air toward the deep sump"
     },
     {
      "to": "sg-6-2-4-3",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Push into the bone-dry innermost reliquary"
     },
     {
      "to": "sg-6-2-4-5",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Trace the damp trail across the central hall"
     }
-   ]
+   ],
+   "title": "The Fused Glass Ceiling",
+   "page": "Under the massive vaulted ceiling of fused green glass, a network of copper veins pulses faintly with the residual thermal energy captured from the desert sun above. The translucent green overhead casts an eerie, submarine glow over your skin and the salt-crusted stone flags underfoot. A low, continuous hum vibrates through the air, sounding like a swarm of giant insects slumbering within the masonry.\n\nThree paths lead onward across the glistening floor toward the deeper vaults and drainage channels."
   },
   {
    "id": "sg-6-2-3-6",
@@ -25474,15 +25570,17 @@
      "to": "sg-6-2-4-2",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Head toward the rushing air of the sump"
     },
     {
      "to": "sg-6-2-4-3",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Step into the dry silence of the reliquary"
     }
-   ]
+   ],
+   "title": "The Titanium Bulkhead",
+   "page": "Before the sealed titanium bulkhead of the primary seed repository, a row of manual override cranks waits for someone strong enough to turn them against centuries of accumulated grime. The heavy metal surface is scored with ancient scratch marks, telling silent stories of past runners who fought to reach the grain before the monsoon closed the basin. Your breath fogs slightly in the drafty corridor as you grip the cold iron handles.\n\nTwo passages offer a way forward into the chilling depths of the seed vaults."
   },
   {
    "id": "sg-6-2-3-7",
@@ -25497,21 +25595,23 @@
      "to": "sg-6-2-4-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Crawl through the damp archway"
     },
     {
      "to": "sg-6-2-4-2",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Follow the cold air toward the sumps"
     },
     {
      "to": "sg-6-2-4-3",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Take the dry passage to the right"
     }
-   ]
+   ],
+   "title": "The Condensing Tower",
+   "page": "Under the towering shadow of the great condensing tower, droplets of pure water gather thick on your woolen coat as the subterranean humidity climbs rapidly. The air tastes of cold iron and stagnant centuries, heavy with the breath of hidden pipes. Your ember-lamp sputters in the dampness, its banked coals casting a weak orange halo against the weeping stone walls. You stand at a three-way junction where the dripping masonry gives way to echoing drops and distant mechanical groans.\n\nAhead lies a low service archway choked with condensation, while a sharp draft signals a sudden drop toward the lower drainage sumps to your left, and a thin thread of dry air beckons down a narrow tunnel to your right."
   },
   {
    "id": "sg-6-2-3-8",
@@ -25526,15 +25626,17 @@
      "to": "sg-6-2-4-4",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Follow the salt trail toward the grand console"
     },
     {
      "to": "sg-6-2-4-5",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Turn away toward the central hall"
     }
-   ]
+   ],
+   "title": "The Salt-Scratched Path",
+   "page": "Across the floor of polished obsidian, a trail of dried white salt crystals marks the path taken by the previous generation's doomed runner. Their final journey left a crusty scar across the dark glass, fading into the gloom near a pair of branching archways. Your boots crunch softly over the mineral remnants, and your hand instinctively brushes against the cold ceramic key in your pocket as you study the floor.\n\nThe obsidian reflects the dull amber glow of your lantern, magnifying every shadow into a lurking shape. One route leads deeper into the freezing machinery of the vault, while another curves back toward the central hall's salt-encrusted expanses."
   },
   {
    "id": "sg-6-2-3-9",
@@ -25549,21 +25651,23 @@
      "to": "sg-6-2-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Seek the innermost reliquary in the silence"
     },
     {
      "to": "sg-6-2-4-4",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Approach the grand obsidian console ahead"
     },
     {
      "to": "sg-6-2-4-6",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Listen to the singing glass in the hollow pillar"
     }
-   ]
+   ],
+   "title": "The Dead Lamp",
+   "page": "Beside the humming dynamo of the lift shaft, a discarded oil lamp flickers out, plunging you into absolute darkness save for your own coals. The steady mechanical thrum vibrates through the floorboards and up into your marrow, drowning out all other sounds in the subterranean shaft. You lift your ember-lamp higher, watching the weak red glow struggle against the ancient iron bulkheads and grease-stained walls.\n\nThree distinct routes diverge from the shadows of the humming machinery, each offering a different escape from the suffocating gloom of the lift bay."
   },
   {
    "id": "sg-6-2-3-10",
@@ -25578,21 +25682,23 @@
      "to": "sg-6-2-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Proceed toward the dry reliquary"
     },
     {
      "to": "sg-6-2-4-4",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Head for the grand obsidian console"
     },
     {
      "to": "sg-6-2-4-5",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Return toward the central hall's salt floor"
     }
-   ]
+   ],
+   "title": "The Weeping Statues",
+   "page": "In the alcove of the weeping statues, water slowly trickles from carved stone eyes into a basin that has remained dry for a hundred years. The rhythmic plink of droplets echoes hollowly off the vaulted ceiling, breaking the heavy silence of the sealed vault. Your coat feels damp against your shoulders, and the smell of ancient mineral dust fills your nose as you pause before the stone figures.\n\nBehind the weeping alcove, three paths branch out into the darkness: one leads toward the deep reliquary, another toward the obsidian console, and the third winds back across the salt floor."
   },
   {
    "id": "sg-6-2-3-11",
@@ -25607,21 +25713,23 @@
      "to": "sg-6-2-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Follow the quiet hum toward the reliquary"
     },
     {
      "to": "sg-6-2-4-4",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Turn toward the hum of the obsidian console"
     },
     {
      "to": "sg-6-2-4-5",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Backtrack toward the central hall's damp trail"
     }
-   ]
+   ],
+   "title": "The Acoustic Tunnel",
+   "page": "Within the narrow service tunnel lined with acoustic tiles, every breath sounds like a thunderclap against the silence of the dead city. The perforated metal walls trap your whispers and bounce them back as a distorted chorus, making your own movements feel unnervingly public. Your ember-lamp casts long, jittery shadows ahead of your boots as you navigate the claustrophobic conduit.\n\nThe passage opens up shortly into three distinct directions, each carrying its own faint acoustic signature from the depths of the complex."
   },
   {
    "id": "sg-6-2-3-12",
@@ -25636,15 +25744,17 @@
      "to": "sg-6-2-4-4",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Step forward to the grand obsidian console"
     },
     {
      "to": "sg-6-2-4-6",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Enter the hollow pillar of singing glass"
     }
-   ]
+   ],
+   "title": "The Biometric Scanner",
+   "page": "Before the secondary biometric scanner, your bare palm presses against the cold metal plate while the system checks your lineage for authority. The metal bites into your skin with an icy nip, and a faint blue luminescence washes over your knuckles as internal cogs click into place. Your breath catches in your throat as you wait for the ancient machinery to either accept your bloodline or sound a harsh alarm.\n\nWhen the green status light finally flickers on, two separate pathways unlock within the recessed wall before you."
   },
   {
    "id": "sg-6-2-3-13",
@@ -25659,13 +25769,13 @@
      "to": "sg-6-2-4-6",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Cross toward the singing glass pillar"
     },
     {
      "to": "sg-6-2-4-7",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Make your way to the final titanium door"
     },
     {
      "to": "sg-d-6-2",
@@ -25674,7 +25784,9 @@
      "id": "x2",
      "label": "Take the reckless way"
     }
-   ]
+   ],
+   "title": "The Iron Rail",
+   "page": "Across the threshold of the innermost sanctum, the floor drops away into a sheer pit crossed only by a narrow rail of wrought iron. The drop below is swallowed by absolute blackness, save for the faint red embers of your lantern reflecting off the polished metal bar. The wind howls upward from the chasm with a dry, melodic whistle that rattles the teeth in your jaw.\n\nYou must decide how to cross the dizzying expanse, or if you dare risk a desperate gamble to bypass the safety locks entirely."
   },
   {
    "id": "sg-6-2-3-14",
@@ -25689,7 +25801,7 @@
      "to": "sg-6-2-4-7",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Approach the final titanium door"
     }
    ],
    "priv": {
@@ -25697,7 +25809,9 @@
      "scar": "y"
     },
     "why": "the reader carries the glass-burn scar that marks them as one who crossed the Storm"
-   }
+   },
+   "title": "The Burn Scar",
+   "page": "Because the jagged glass-burn scar across your forearm matches the old protocol, the automated defense turret retracts silently into the ribbed ceiling. The puckered pink skin throbs faintly as if remembering the searing desert storm that carved it into your flesh years ago. A soft pneumatic hiss greets your approach as the heavy machinery recognizes one who survived the glass-wastes.\n\nThe pathway ahead stands clear, inviting you to take the final steps toward the ultimate door of the seed repository."
   },
   {
    "id": "sg-6-2-3-15",
@@ -25712,15 +25826,17 @@
      "to": "sg-6-2-4-5",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Retrace your steps to the central hall"
     },
     {
      "to": "sg-6-2-4-7",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Carry the seed to the titanium door"
     }
-   ]
+   ],
+   "title": "The Great Balance",
+   "page": "Within the chamber of the great balance, two heavy iron pans hang suspended in stillness, waiting for you to place the seed upon them. The massive brass arms gleam under your lantern light, balanced on a knife-edge that has not tipped for generations. The air here is perfectly dead, smelling of old iron and dried desert blooms preserved in amber silence.\n\nYou must choose whether to retrace your steps toward the open hall or carry your burden directly to the final barrier."
   },
   {
    "id": "sg-6-2-4-0",
@@ -25735,9 +25851,11 @@
      "to": "sg-6-2-5-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Climb toward the central platform"
     }
-   ]
+   ],
+   "title": "The Basalt Lintel",
+   "page": "Under the low-hanging basalt lintel of the sub-vault, your shoulders ache as you heave against the rusted winch of the floodgate. Red flakes of ancient scale peel away under your grip, falling into the dark bilge water below with a dull splash. Your ember-lamp swings wildly from your wrist, casting frantic arcs of orange light across the slick, sweating stone walls.\n\nWith a final wrenching groan, the heavy iron mechanism gives way, opening the path upward to the apex of the central vault platform."
   },
   {
    "id": "sg-6-2-4-1",
@@ -25752,15 +25870,17 @@
      "to": "sg-6-2-5-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Touch the trembling copper plate to release the stored charge"
     },
     {
      "to": "sg-6-2-5-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Step back from the humming core and test the latch on the secondary case"
     }
-   ]
+   ],
+   "title": "Phosphor Glare and Hum",
+   "page": "Phosphor-lamps hiss along the ribbed ceiling, casting a greenish twilight over the seed vault's thrumming core where restrained energy vibrates against your teeth. Every heavy copper conduit pulses with the strange, low frequency of a sleeping beast, waiting for a touch that might awaken or shatter it.\n\nYou stand with the ceramic key growing warm in your damp palm, feeling the steady tremor of the bedrock beneath your boots. Every breath tastes of ozone and dry limestone, urging a decision before the subterranean silence breaks entirely."
   },
   {
    "id": "sg-6-2-4-2",
@@ -25775,15 +25895,17 @@
      "to": "sg-6-2-5-1",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Climb down the iron rungs toward the rising damp"
     },
     {
      "to": "sg-6-2-5-3",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Seal the drainage grate with the heavy iron wedge"
     }
-   ]
+   ],
+   "title": "Wind from the Sump",
+   "page": "Cold air rushes up from the deep stone sump where the basin's drainage channels converge, carrying the sharp scent of wet mud and distant rain. Below your feet, the first underground stirrings of the monsoon echo through the dark tunnels like a gathering crowd.\n\nShadows stretch long across the algae-slicked masonry as the draft grows stronger, fluttering the edges of your coat and chilling the sweat on the back of your neck. The water is rising faster than the old ledgers predicted, turning every calculation into a race against the rising tide."
   },
   {
    "id": "sg-6-2-4-3",
@@ -25798,21 +25920,23 @@
      "to": "sg-6-2-5-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Uncork the central jar to test the ancient seed"
     },
     {
      "to": "sg-6-2-5-1",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Leave the reliquary untouched and check the heavy outer latch"
     },
     {
      "to": "sg-6-2-5-3",
      "intent": "",
      "id": "x2",
-     "label": "Go on"
+     "label": "Turn your back on the quiet shelves and retrace your steps"
     }
-   ]
+   ],
+   "title": "Parchment Air of Relics",
+   "page": "Dry stillness fills the innermost reliquary, pulling the moisture from your skin until your knuckles feel tight and stretched like yellow parchment. Rows of glass jars, housing dust-fine grains and shrivelled pods, line the cedar shelves under a fine blanket of unblemished salt.\n\nSilence presses down with physical weight, broken only by the faint crackle of your banked coal-lantern shifting against your hip. The air holds no scent of life, only the mineral breath of centuries past preserved in amber glass."
   },
   {
    "id": "sg-6-2-4-4",
@@ -25827,15 +25951,17 @@
      "to": "sg-6-2-5-0",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Press the left slot to open the deep irrigation sluices"
     },
     {
      "to": "sg-6-2-5-2",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Slide the cold key into the central locking channel"
     }
-   ]
+   ],
+   "title": "The Grand Obsidian Console",
+   "page": "Three obsidian slots wait upon the polished console for choices that will shape the survival or doom of every western lamp-town. The smooth volcanic glass reflects the dim orange glow of your coal-lantern, looking like dark pools waiting for a heavy stone to drop.\n\nYour fingers hover above the cold stone plates, each indentation carved with the jagged runic script of the old lensfolk. The responsibility of an entire harvest hangs upon which groove receives your pressure first."
   },
   {
    "id": "sg-6-2-4-5",
@@ -25850,15 +25976,17 @@
      "to": "sg-6-2-5-1",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Follow the damp trail toward the echoing water-conduit"
     },
     {
      "to": "sg-6-2-5-2",
      "intent": "",
      "id": "x1",
-     "label": "Go on"
+     "label": "Veer toward the obsidian console to lock the central sector"
     }
-   ]
+   ],
+   "title": "Damp Trail on Salt",
+   "page": "Dark footprints mar the glistening white crust of the central hall, standing out like ink spilled across a clean linen sheet. The salt floor crunches softly under your boots, leaving wet rings that slowly fill with bitter brine seeping up from below.\n\nAcross the vast chamber, the dim green glow of the ceiling lamps flickers erratically, throwing long and dancing shadows against the carved pillars. You are leaving a clear path behind you, one that anyone or anything could easily follow into the dark."
   },
   {
    "id": "sg-6-2-4-6",
@@ -25873,9 +26001,11 @@
      "to": "sg-6-2-5-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Leave the singing chamber before the echoes grow too loud"
     }
-   ]
+   ],
+   "title": "Hollow Pillar of Singing Glass",
+   "page": "Acoustic chambers buried deep in the bedrock catch your voice and bounce your name back through the hollow pillar of singing glass like a choir of strangers. The tone shifts from a low, resonant hum to a bright, piercing chime that sets your teeth on edge.\n\nVibrations travel up through the stone floor, making the salt crystals on the walls dance in shimmering patterns of grey and silver. The glass pillar seems to listen, recording every whispered word into the ancient memory of the basin."
   },
   {
    "id": "sg-6-2-4-7",
@@ -25890,9 +26020,11 @@
      "to": "sg-6-2-5-3",
      "intent": "",
      "id": "x0",
-     "label": "Go on"
+     "label": "Insert the warm key into the heavy titanium door"
     }
-   ]
+   ],
+   "title": "Warmth of the Key",
+   "page": "Heavy titanium doors block the entrance to the seed repository, their massive bolts chilled by centuries of subterranean frost. Yet as you approach, the cold ceramic key in your fist grows strangely warm, pulsing with an inner heat that matches the beat of your heart.\n\nFrost crystals melt into tiny droplets where your fingers press against the porous clay, releasing a scent like wet dust after a long drought. The lock mechanism waits, a silent mouth carved into the metal waiting for its missing tooth."
   },
   {
    "id": "sg-6-2-5-0",
@@ -25907,9 +26039,11 @@
      "to": "sg-6-out",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on"
+     "label": "Press on into the heart of the vault"
     }
-   ]
+   ],
+   "title": "Iron Petals of the Urn",
+   "page": "Iron petals part with a slow, grinding screech at the apex of the central platform, revealing the pale, dormant grains of the old world resting upon a velvet cushion of woven copper wire. A faint cloud of dry, golden dust rises from the opening, smelling faintly of old flour and crushed stones.\n\nYou lean over the rim, holding your breath as the lantern light washes across the tiny, perfect shapes of seeds that have not seen rain or sun in a thousand years. The future of Candlemere rests in the hollow of your hand, waiting to be claimed or left to dust."
   },
   {
    "id": "sg-6-2-5-1",
@@ -25924,16 +26058,18 @@
      "to": "sg-6-out",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on"
+     "label": "Press on through the roaring spray"
     },
     {
      "to": "sg-6-2-3-4",
      "intent": "Turn back",
      "back": true,
      "id": "x1",
-     "label": "Turn back"
+     "label": "Turn back before the rising water cuts off your escape"
     }
-   ]
+   ],
+   "title": "Breach of the Conduit",
+   "page": "Yawning stonework marks the breach of the water-conduit, where a torrent of dark, foaming brine surges against the rusted grating with the force of a battering ram. The roar of water fills the low tunnel, drowning out all other sound and sending cold spray misting across your face.\n\nYou must choose whether to break the remaining bars and flood the basin now to save the parched fields above, or shore up the dry vault to keep the ancient seeds safe from the tide. Every second brings a new shudder to the straining masonry around you."
   },
   {
    "id": "sg-6-2-5-2",
@@ -25948,9 +26084,11 @@
      "to": "sg-6-out",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on"
+     "label": "Press on toward the final platform"
     }
-   ]
+   ],
+   "title": "High Observatory Balcony",
+   "page": "High observatory arches frame the vast submerged expanse of the saltglass sea, where distant lightning flickers across the grey belly of storm clouds gathering over the horizon. From this dizzying height, the shattered glass cities look like broken teeth jutting from a mirror of salt.\n\nThe wind pulls at your cloak, bringing the sharp tang of approaching rain and the distant, haunting whistle of wind through the spires. You hold the destiny of Candlemere in your palm, looking out over a world about to be drowned or washed clean."
   },
   {
    "id": "sg-6-2-5-3",
@@ -25965,9 +26103,11 @@
      "to": "sg-6-out",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on"
+     "label": "Step through the arch and press on across the rising waters"
     }
-   ]
+   ],
+   "title": "The Vault Lock Settles",
+   "page": "Heavy iron pins drop home within the cooled housing with a sound like dropped gravel, ending generations of waiting. Silence returns to the high circular gallery, save for the wet hiss of condensation weeping down walls of fused crystal. Your fingers still ache from the leverage of the cold ceramic key, yet the air around you tastes startlingly sweet, smelling faintly of damp loam and unopened leaves. Outside the narrow viewing slit, grey storm light churns across the flooded flats of the Salt Basin, where the rising monsoon laps hungrily at the lower lintels.\n\nThe long road back begins here, leading across waters that have swallowed the tracks of your arrival and transformed every familiar salt-arch into a strange grey harbor."
   },
   {
    "id": "sg-d-6-1",
@@ -25975,7 +26115,9 @@
    "region": 6,
    "brief": "Ignoring all structural warnings, you recklessly jam the Seedkey into a rusted pressure valve, triggering a catastrophic collapse that seals your doom forever.",
    "endingId": "doom-6-1",
-   "exits": []
+   "exits": [],
+   "title": "The Rusted Valve",
+   "page": "Ignoring all structural warnings, you recklessly jam the Seedkey into a rusted pressure valve, triggering a catastrophic collapse that seals your doom forever. A deafening shriek of shearing metal echoes through the chamber as the ancient stone lintels fracture overhead. Tons of glittering salt and shattered glass cascade down from the low ceiling, burying the lantern light and ending your journey in the silent heart of the basin."
   },
   {
    "id": "sg-d-6-2",
@@ -25983,7 +26125,9 @@
    "region": 6,
    "brief": "Rushing blindly past the warning chimes, you force the main lock without setting the pressure release, sealing yourself forever inside the collapsing vault.",
    "endingId": "doom-6-2",
-   "exits": []
+   "exits": [],
+   "title": "The Sealed Chamber",
+   "page": "Warning bells clang once through the conduit before the pressure lock seizes with a shriek of tortured brass. Frantic fingers slip against the smooth ceramic key as the heavy lead-lined bolts slide home from the outside, locking forever into wet stone. Dark, foaming brine surges over the threshold in a sudden, cold wave, filling the narrow alcove and driving the air from your lungs with astonishing speed. The ember-lamp hisses and dies in the rising dark, leaving only the distant, hollow echo of water finding its final, quiet level."
   },
   {
    "id": "sg-f-A",
@@ -26001,7 +26145,7 @@
      },
      "endingKey": "A1",
      "id": "x0",
-     "label": "The Seed Wakes"
+     "label": "Watch the seed wake across the waters"
     },
     {
      "to": "sg-e-A2-1",
@@ -26014,7 +26158,7 @@
      },
      "endingKey": "A2",
      "id": "x1",
-     "label": "Opened, Unthanked"
+     "label": "Step back as the unthanked doors swing wide"
     },
     {
      "to": "sg-e-A3-1",
@@ -26026,9 +26170,11 @@
      },
      "endingKey": "A3",
      "id": "x2",
-     "label": "The Door That Stuck"
+     "label": "Turn away before the waiting crowd arrives"
     }
-   ]
+   ],
+   "title": "Opening the Great Doors",
+   "page": "Trembling hands guide the cold ceramic key through the intricate bronze wards until the entire locking assembly gives way with a deep, resonant hum. Singing glass chimes ring out from the high ceiling as the great valves swing wide, releasing a cool, sweet draft of long-hoarded mountain air into the salt-fogged hall. The Sisters' well-song rises from somewhere deep within the descending conduits, blending with the roar of the rising monsoon to herald an end to the long drought.\n\nDown every flooded corridor and up through the shattered lens-cities, the water begins to flow outward, carrying the promise of green harvests to every throat that ever cried for rain."
   },
   {
    "id": "sg-f-B",
@@ -26045,7 +26191,7 @@
      },
      "endingKey": "B1",
      "id": "x0",
-     "label": "Pell Keeps the Door"
+     "label": "Leave the door in the hands of Pell"
     },
     {
      "to": "sg-e-B2-1",
@@ -26057,9 +26203,11 @@
      },
      "endingKey": "B2",
      "id": "x1",
-     "label": "The Vault Remembers"
+     "label": "Turn away and leave the vault to the glass"
     }
-   ]
+   ],
+   "title": "Sealing the Vault",
+   "page": "Heavy lead bars drop into their greased channels with a final, flat thud that vibrates through the soles of your boots. The bronze door grinds shut against its stone frame, sealing the ancient seed away from the desperate hands of the Salt Court and the thirsty pilgrims alike. Outside the high balcony, grey rain drives across the glass sea, but within this chamber, the secret remains intact and untouched by the rising tide.\n\nThe key slides deep into a crevice of living rock, leaving the vault to the silence of the drowned city and the watchful care of the deep stone."
   },
   {
    "id": "sg-f-C",
@@ -26076,7 +26224,7 @@
      },
      "endingKey": "C1",
      "id": "x0",
-     "label": "Clean Hands, Heavy Pack"
+     "label": "Head for home with a clean pack"
     },
     {
      "to": "sg-e-C2-1",
@@ -26089,7 +26237,7 @@
      },
      "endingKey": "C2",
      "id": "x1",
-     "label": "Light on the Road"
+     "label": "Step into the storm with the Salt Court debt behind you"
     },
     {
      "to": "sg-e-C3-1",
@@ -26108,9 +26256,11 @@
      },
      "endingKey": "C3",
      "id": "x2",
-     "label": "The Dark Walk Home"
+     "label": "Walk out into the dark road without a light"
     }
-   ]
+   ],
+   "title": "Taking the Seed",
+   "page": "Quick fingers strip the primary seed-pod from its silver cradle, tucking the cold, heavy treasure deep into the folds of your travel coat. The great doors behind you remain half-shut, ignoring the rising flood and the distant calls of the Basin's many factions. Every step toward the exit is heavy with the knowledge of what is left behind, yet the small, hard weight against your ribs promises life for the hearths of home.\n\nThe path out leads through the rising brine and back toward the western rim, owing nothing to the court lords or the singing sisters."
   },
   {
    "id": "sg-e-A1-1",
@@ -26125,9 +26275,11 @@
      "to": "sg-e-A1-2",
      "intent": "Read on",
      "id": "x0",
-     "label": "Read on"
+     "label": "Read on to the final moment"
     }
-   ]
+   ],
+   "title": "The Seed Wakes",
+   "page": "Sweet water surges through the old stone arteries of the Basin, carrying the first sprouting grains out upon the surface of the rising flood. The Sisters' well-song echoes from every submerged tower, harmonizing with the steady, drumming rhythm of the monsoon rain. Down in Candlemere, the dry mud of the marketplace drinks deeply, and green shoots push through the crust before the month is half gone.\n\nYour fingers no longer ache from the key, but the memory of the cold ceramic stays with you as proof that old promises can still be kept."
   },
   {
    "id": "sg-e-A1-2",
@@ -26142,9 +26294,11 @@
      "to": "sg-e-A1-3",
      "intent": "The last page",
      "id": "x0",
-     "label": "The last page"
+     "label": "Reach the last page of the journey"
     }
-   ]
+   ],
+   "title": "Green Valleys",
+   "page": "Weeks after the gates swung wide, the salt flats are a shimmering expanse of shallow freshwater where flat-bottomed skiffs pole between drowned glass spires. No one starves this season, and the lamps of Candlemere burn bright with oil pressed from the very first riverside harvest. The Salt Court finds its promissory notes dissolved in the rising tide, replaced by a strange, unaccustomed equity among neighbors.\n\nEven the Dune Sisters offer a cup of fresh well-water without asking for an oath in return, smiling wryly as the rain drums on their broad straw hats."
   },
   {
    "id": "sg-e-A1-3",
@@ -26155,7 +26309,9 @@
    "part": 3,
    "brief": "Final page of \"The Seed Wakes\": a closing image and a last line for the book.",
    "exits": [],
-   "endingId": "end-A1"
+   "endingId": "end-A1",
+   "title": "The Last Lamp",
+   "page": "The ember-lamp sits unlit on the wooden table, its banked coals grown cold in a house that no longer fears the dark or the drought. Outside the window, the young grain grows tall and green beneath a grey, forgiving sky that smells forever of wet earth and salt-free wind. You walk down to the water's edge where the small boats tie up, watching the ripples spread outward toward the horizon where the old world ended and the new one finally took root.\n\nThe lamp is out, but the road goes on."
   },
   {
    "id": "sg-e-A2-1",
@@ -26170,9 +26326,11 @@
      "to": "sg-e-A2-2",
      "intent": "Read on",
      "id": "x0",
-     "label": "Read on"
+     "label": "Read on through the quiet aftermath"
     }
-   ]
+   ],
+   "title": "Opened, Unthanked",
+   "page": "The heavy doors yield to the cold key just as the old songs promised, flooding the Basin with the rich, damp scent of life-giving water. Yet no crowd gathers to cheer your name, and neither the Sisters nor the Salt Court acknowledge the hand that turned the lock. The seed is loose upon the waters, flowing toward every thirsty field from Prism to the western rim without a single word of gratitude.\n\nYou walk back along the flooded causeway alone, your pockets empty of coin but your pack light with the quiet satisfaction of a hard task finished."
   },
   {
    "id": "sg-e-A2-2",
@@ -26187,9 +26345,11 @@
      "to": "sg-e-A2-3",
      "intent": "The last page",
      "id": "x0",
-     "label": "The last page"
+     "label": "Read the final lines of the road"
     }
-   ]
+   ],
+   "title": "The Hard Peace",
+   "page": "Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. The harvest rises green and high across the flats, feeding every town and homestead while the great factions argue over who deserves the credit for the rain. Nobody remembers the runner from Candlemere who turned the key in the dark, and your name is written on no monument in the glass cities.\n\nYet the wells run full when you pass them, and the salt on your boots has washed away into rich, dark mud that clings to the roots of new trees."
   },
   {
    "id": "sg-e-A2-3",
@@ -26200,7 +26360,9 @@
    "part": 3,
    "brief": "Final page of \"Opened, Unthanked\": a closing image and a last line for the book.",
    "exits": [],
-   "endingId": "end-A2"
+   "endingId": "end-A2",
+   "title": "Unsung Roads",
+   "page": "The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. You watch the rain stitch silver lines across the glass panes, listening to the contented murmur of a town that no longer looks toward the desert with dread. There are no songs sung about your journey, and no statues stand in the drowned squares to mark your passing.\n\nThe seed is in the earth where it belongs, and the road ahead is wide, quiet, and entirely your own."
   },
   {
    "id": "sg-e-A3-1",
@@ -26215,9 +26377,11 @@
      "to": "sg-e-A3-2",
      "intent": "Read on",
      "id": "x0",
-     "label": "Read on"
+     "label": "Turn the page and read on"
     }
-   ]
+   ],
+   "title": "The Door That Stuck",
+   "page": "Cold ceramic bites your palm as you force the Seedkey into the rusted tumbler of the Rain Vault, but the ancient mechanism shudders and binds tight at the half-turn. A sharp crack echoes through the cavernous gloom, and the heavy iron doors grind to a stubborn halt, leaving only a narrow hand-width of darkness between the leaves. Before you can wedge a shoulder against the metal, a surge of frantic movement erupts from the shadows as desperate hands reach through the gap, clawing eagerly at the spilling cascade of ancient, dormant grain that pours out in a golden, crushing wave."
   },
   {
    "id": "sg-e-A3-2",
@@ -26232,9 +26396,11 @@
      "to": "sg-e-A3-3",
      "intent": "The last page",
      "id": "x0",
-     "label": "The last page"
+     "label": "Turn forward to the last page"
     }
-   ]
+   ],
+   "title": "The Door That Stuck",
+   "page": "Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. The spilled seed takes root in the wet silt washed down by the early monsoon, turning the cracked salt crust into a sprawling green patchwork of stubborn life. Candlemere fills its granaries with the unexpected harvest, though the giant doors of Prism remain forever wedged, a rusted monument to a clumsy rescue. People speak of the runner who cracked the vault with a wry shake of the head, grateful for the heavy bread on their tables even if the great hall stayed locked."
   },
   {
    "id": "sg-e-A3-3",
@@ -26245,7 +26411,9 @@
    "part": 3,
    "brief": "Final page of \"The Door That Stuck\": a closing image and a last line for the book.",
    "exits": [],
-   "endingId": "end-A3"
+   "endingId": "end-A3",
+   "title": "The Door That Stuck",
+   "page": "The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You sit by the hearth with your hands empty of keys and heavy with rest, listening to the soft murmur of a valley that has finally learned how to drink. The salt has gone back to the sea, the lenses are cool and dark in the observatory above, and the lamp needs no more oil than what remains in the wick."
   },
   {
    "id": "sg-e-B1-1",
@@ -26260,9 +26428,11 @@
      "to": "sg-e-B1-2",
      "intent": "Read on",
      "id": "x0",
-     "label": "Read on"
+     "label": "Turn the page and read on"
     }
-   ]
+   ],
+   "title": "Pell Keeps the Door",
+   "page": "Metal clicks against stone as you slide the heavy bolt back into place, sealing the Rain Vault before the rising damp can spoil the harvest within. Pell leans against the archway with a faint, wry smile, adjusting the strap of a heavy leather pack and offering to watch the threshold while the world dries out. You leave the cold ceramic key in trusted hands, knowing the seed is safe behind glass and steel until the drought returns. Walking out into the salt-scoured air feels remarkably different when you carry no debt upon your shoulders and a good friend keeps watch behind you."
   },
   {
    "id": "sg-e-B1-2",
@@ -26277,9 +26447,11 @@
      "to": "sg-e-B1-3",
      "intent": "The last page",
      "id": "x0",
-     "label": "The last page"
+     "label": "Turn forward to the last page"
     }
-   ]
+   ],
+   "title": "The Door That Stuck",
+   "page": "Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. Word filters back from the center of the dried sea that Pell keeps the great doors well, trading signals with the glass-sentries through flashes of polished mirror. Candlemere receives its share of the sealed grain by swift runner-post, and the villagers speak warmly of the diver who stayed behind in the dark. The wells run full and clear from the rim to the observatory, proving that some treasures are better guarded by a steadfast friend than an army of toll-lords."
   },
   {
    "id": "sg-e-B1-3",
@@ -26290,7 +26462,9 @@
    "part": 3,
    "brief": "Final page of \"Pell Keeps the Door\": a closing image and a last line for the book.",
    "exits": [],
-   "endingId": "end-B1"
+   "endingId": "end-B1",
+   "title": "Pell Keeps the Door",
+   "page": "The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You pour two cups of hot chicory, leaving one cold spot on the wood for a friend who is still down in the dark keeping watch over the world's bread. The basin outside is a lake of silver water now, and the lamps of Candlemere burn bright and untroubled against the coming night."
   },
   {
    "id": "sg-e-B2-1",
@@ -26305,9 +26479,11 @@
      "to": "sg-e-B2-2",
      "intent": "Read on",
      "id": "x0",
-     "label": "Read on"
+     "label": "Turn the page and read on"
     }
-   ]
+   ],
+   "title": "The Vault Remembers",
+   "page": "Heavy iron hinges groan in the gloom as you turn the Seedkey twice and throw the ancient latches, locking the Rain Vault away from a world too eager to spend its future. You leave the heavy door shrouded in shadows and sealed with a touch of mirror-glass, letting the desert reclaim the secret threshold beneath Prism. Nobody watches the entrance now, and the paths leading inward fade beneath the drifting salt storms until even the sharpest-eyed glass-diver would fail to spot the seam. You walk away into the shimmering glare with an empty palm and a quiet conscience."
   },
   {
    "id": "sg-e-B2-2",
@@ -26322,9 +26498,11 @@
      "to": "sg-e-B2-3",
      "intent": "The last page",
      "id": "x0",
-     "label": "The last page"
+     "label": "Turn forward to the last page"
     }
-   ]
+   ],
+   "title": "The Door That Stuck",
+   "page": "Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. The great monsoon arrives on schedule, filling the dry lakebeds with sweet grey water while the secret vault remains hidden beneath the rising tides. People in Candlemere nibble on hard-won bread and wonder where the old legends went, forgetting the exact location of the door that saved them without ever opening. The desert remembers what the living lose, folding its treasures deep beneath the glass crust where no toll-lord or runner can ever touch them again."
   },
   {
    "id": "sg-e-B2-3",
@@ -26335,7 +26513,9 @@
    "part": 3,
    "brief": "Final page of \"The Vault Remembers\": a closing image and a last line for the book.",
    "exits": [],
-   "endingId": "end-B2"
+   "endingId": "end-B2",
+   "title": "The Vault Remembers",
+   "page": "The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You sit alone in the quiet kitchen, listening to the water rise against the doorframes of a town that no longer needs to run across the dried sea. The key is gone, the vault is silent, and the lamp rests happily in the dark."
   },
   {
    "id": "sg-e-C1-1",
@@ -26350,9 +26530,11 @@
      "to": "sg-e-C1-2",
      "intent": "Read on",
      "id": "x0",
-     "label": "Read on"
+     "label": "Turn the page and read on"
     }
-   ]
+   ],
+   "title": "Clean Hands, Heavy Pack",
+   "page": "Cold ceramic slides back into your leather pouch as you snatch a handful of prime seed from the open bin, leaving the rest untouched for the hills to claim. You turn your back on the glittering machinery of Prism before the salt-guards can notice the theft or the toll-lords can write a new contract in blood. The road back to the western rim is long and steep, but your pack is heavy with honest grain and your debts are paid to nobody. Every step northward brings the smell of damp earth closer, drowning out the bitter tang of the glass sea."
   },
   {
    "id": "sg-e-C1-2",
@@ -26367,9 +26549,11 @@
      "to": "sg-e-C1-3",
      "intent": "The last page",
      "id": "x0",
-     "label": "The last page"
+     "label": "Turn forward to the last page"
     }
-   ]
+   ],
+   "title": "The Door That Stuck",
+   "page": "Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. The stolen seed sprouts vigorously in the garden plots behind Candlemere, yielding tall stalks of golden wheat that defy the old curse of the dry rim. You owe no taxes to the Salt Court and no oaths to the Dune Sisters, walking the village streets as a simple runner who did what needed doing. The town council asks few questions about how the sack was filled, preferring to taste the sweet bread and watch the rain fill the barrels."
   },
   {
    "id": "sg-e-C1-3",
@@ -26380,7 +26564,9 @@
    "part": 3,
    "brief": "Final page of \"Clean Hands, Heavy Pack\": a closing image and a last line for the book.",
    "exits": [],
-   "endingId": "end-C1"
+   "endingId": "end-C1",
+   "title": "Clean Hands, Heavy Pack",
+   "page": "The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You hang your leather running-pack from the rafters for the final time, knowing the long race across the mirror desert is over. The lamps of the town shine steadily in the mist, and the soil outside the door is dark, rich, and deeply wet."
   },
   {
    "id": "sg-e-C2-1",
@@ -26395,9 +26581,11 @@
      "to": "sg-e-C2-2",
      "intent": "Read on",
      "id": "x0",
-     "label": "Read on"
+     "label": "Turn the page and read on"
     }
-   ]
+   ],
+   "title": "Light on the Road",
+   "page": "Cold ceramic bites into your palm as you turn your back on the vault's open maw, the Seedkey heavy and settled in your tunic. Behind you, the Salt Court's ledger-men shout into the whistling wind, their ink-pots frozen and their high-interest tallies reduced to fluttering scraps of paper against the white glare. You carry their crushing debt pinned to your name, yet the ember-lamp still swings from your wrist, its banked coals glowing a stubborn, bruised red through the soot-stained tin. That spark makes you a moving target for every toll-lord between Prism and the western rim, but it also carves a defiant corridor through the encroaching dusk. Every step forward on the salt-crust kicks up fine, glittering dust that catches the coal-light, turning your lonely flight into a procession of one.\n\nYou do not look back at the shattered towers or the silent glasswrights watching from their high mirrors, because the horizon ahead belongs entirely to the long, hard miles of your return."
   },
   {
    "id": "sg-e-C2-2",
@@ -26412,9 +26600,11 @@
      "to": "sg-e-C2-3",
      "intent": "The last page",
      "id": "x0",
-     "label": "The last page"
+     "label": "Turn to the last page"
     }
-   ]
+   ],
+   "title": "Light on the Road",
+   "page": "Weeks after your return, the western rim hums with a strange, anxious vitality as sacks of ancient, drought-proof grain are hoisted across thresholds in Candlemere. The fields that once lay cracked and grey now sprout green shoots under a sky thick with the heavy promise of the impending monsoon, proving that the price of the Salt Court's ledger was worth every bitter coin. Creditors ride out from the basin on tall, nervous mounts to peer down village lanes, but they find a community too busy with planting and harvest-prep to offer them more than polite, stony silence. Your ember-lamp, now retired to the mantle of the communal hall, still holds a dull warmth at its core, reminding anyone who enters of the night you brought the future home through the salt-flats. People nod when you pass, their eyes lingering on the debt collectors who pace the perimeter fences like hungry dogs locked out of a warm kitchen.\n\nThe ledger-lords hold your name in their ink-books, but the soil holds the seed, and the green shoots care nothing for interest rates."
   },
   {
    "id": "sg-e-C2-3",
@@ -26425,7 +26615,9 @@
    "part": 3,
    "brief": "Final page of \"Light on the Road\": a closing image and a last line for the book.",
    "exits": [],
-   "endingId": "end-C2"
+   "endingId": "end-C2",
+   "title": "Light on the Road",
+   "page": "Night settles over Candlemere like a dropped blanket, quiet and smelling of damp earth and crushed mint from the newly watered ditch-banks. In the centre of the village, the old communal hall stands tall against the stars, its roof patched and ready for the first heavy drops of the Return that will soon soak the entire basin. You sit on the low stone step outside your kitchen door, fingers brushing against the cold, empty shape where the Seedkey once rested before it unlocked the world. Far across the salt-flats, a single mirror-flash from Prism blinks once, twice, three times - a distant, wordless signal from glasswrights who know the cycle has turned and the basin is whole again. You close your eyes against the cool night wind, listening to the steady, collective breathing of a town that has survived the drought. The lamp has gone out at last, its coals turned to grey ash, but the dark no longer feels empty or cold."
   },
   {
    "id": "sg-e-C3-1",
@@ -26440,9 +26632,11 @@
      "to": "sg-e-C3-2",
      "intent": "Read on",
      "id": "x0",
-     "label": "Read on"
+     "label": "Turn the page and read on"
     }
-   ]
+   ],
+   "title": "The Dark Walk Home",
+   "page": "Fingers trace the cold ceramic of the Seedkey one final time before you pull the heavy bronze doors of the vault shut, leaving the Salt Court's agents howling in the echoing dark behind you. You walk away from Prism with their vast, impossible debt trailing in your wake, carrying the future of the basin in your tunic while you extinguish the ember-lamp completely to save yourself from tracking eyes. Without the coal-lantern's red glow, the night swallows you whole, turning the salt-crust into an endless, grey sea under a starless sky where only the crunch of salt beneath your boots marks your passage. The darkness is absolute, thick with the smell of old dust and the distant, rising humidity of the coming monsoon, forcing you to navigate entirely by memory and the steady slope of the ground. It is a lonely, quiet return, stripped of beacons and warnings, leaving you with only the weight of your choices and the chill of the open basin.\n\nEvery shadow feels like a toll-lord waiting in the salt-dunes, but you move steadily onward through the blackness, invisible and unguided."
   },
   {
    "id": "sg-e-C3-2",
@@ -26457,9 +26651,11 @@
      "to": "sg-e-C3-3",
      "intent": "The last page",
      "id": "x0",
-     "label": "The last page"
+     "label": "Turn to the last page"
     }
-   ]
+   ],
+   "title": "The Dark Walk Home",
+   "page": "Months slip by in a blur of quiet toil, and the grey skies above Candlemere finally break open into the long-awaited rains, feeding the newly sown fields without a single spark of lamp-light to mark your triumph. The villagers whisper of how you returned empty-handed of lanterns but heavy-laden with the seeds of a thousand forgotten harvests, slipping through the cordon of salt-lords like smoke through a wicker hurdle. Creditors still patrol the perimeter roads on moonless nights, checking ledgers by torchlight and demanding interest from doors that remain firmly bolted against them. Yet the crops grow high and green in the valley floor, indifferent to the financial storms brewing beyond the fences, and the people of Candlemere sleep soundly behind walls built on quiet defiance. You walk the muddy lanes in the midday sun without a lamp swinging from your wrist, nodding to neighbors who know the price you paid to keep the town out of the ledger-men's pockets.\n\nThe debt remains unpaid in the high ledgers of the basin, but the granaries are full, and no one asks for light in broad daylight."
   },
   {
    "id": "sg-e-C3-3",
@@ -26470,7 +26666,9 @@
    "part": 3,
    "brief": "Final page of \"The Dark Walk Home\": a closing image and a last line for the book.",
    "exits": [],
-   "endingId": "end-C3"
+   "endingId": "end-C3",
+   "title": "The Dark Walk Home",
+   "page": "Rain drums a steady, comforting rhythm against the slate roof of Candlemere, washing the salt-dust from the eaves and soaking deep into the rich earth of the new fields. Inside your kitchen, the hearth fire crackles with dry brushwood, casting dancing orange shadows across the walls where an unlit lantern hangs cold and forgotten from its iron hook. You sit at the wooden table with empty hands, listening to the water gurgle through the street-drains outside as the great basin fills for the first time in a generation. Somewhere out there in the dark and the rising flood, the Salt Court's books sit waterlogged and useless, their ink running red and black into the rising tide. The journey is over, the seed is in the ground, and the long, quiet walk home has brought you to a place where no one asks for tolls or targets. You close your eyes against the firelight, resting easily in the deep, unlit peace of a world beginning anew."
   }
  ]
 }
