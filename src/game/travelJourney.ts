@@ -1820,7 +1820,29 @@ function leaveDestination(state: GameState, here: string): string | null {
  * T10AG — free text while underway spends a STEP_HOURS slice of the current leg (SRD 5.2.1 Travel
  * Pace / exploration time). Accumulated slices that reach hoursPerLeg complete the leg via stepAlong;
  * the PC is not teleported: arrival still needs legsDone ≥ legsTotal.
+ * Look/Wait/inspect stay still-ahead (bounce rest + drought park must not count as a move).
  */
+function isRoadLoiterLine(input: string): boolean {
+  return /^(?:wait|look|listen|rest|scout|survey|scan|inspect)\b/i.test((input ?? '').trim());
+}
+
+function stillAheadOnRoad(
+  state: GameState,
+  j: TravelJourney,
+  where: string,
+  opts?: { slipped?: boolean; fact?: string | null; extra?: string[]; helpState?: GameState },
+): TravelCommit {
+  return {
+    state: { ...(opts?.helpState ?? state), currentLocation: UNDERWAY_HERE, journey: j },
+    handled: true,
+    arrived: false,
+    outcome: opts?.slipped ? 'slipped away' : 'unchanged',
+    receipt: `${where}; ${j.to} still ahead${j.encounter ? encounterNote(j) : ''}`,
+    ...(opts?.extra?.length ? { extra: opts.extra } : {}),
+    ...(opts?.fact ? { facts: [opts.fact] } : {}),
+  };
+}
+
 function spendExplorationOnRoad(state: GameState, j: TravelJourney): TravelCommit {
   const spent = (j.legHoursSpent ?? 0) + STEP_HOURS;
   if (spent + 1e-9 >= j.hoursPerLeg) {
@@ -1980,19 +2002,22 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
     const helped = answered ? { ...j, encounter: help?.encounter ?? answered } : j;
     const slipped = !help && !!helped.encounter?.escaped && helped.encounter.escapedTurn === state.turn;
     const fact = help?.fact ?? (slipped && answered?.kind === 'wildlife' ? 'You gave the animal room, and it went its own way.' : null);
-    if (answered || help) {
-      return {
-        state: { ...(help?.state ?? state), currentLocation: UNDERWAY_HERE, journey: helped },
-        handled: true,
-        arrived: false,
-        outcome: slipped ? 'slipped away' : 'unchanged',
-        receipt: `${where}; ${j.to} still ahead${helped.encounter ? encounterNote(helped) : ''}`,
-        ...(help?.extra.length ? { extra: help.extra } : {}),
-        ...(fact ? { facts: [fact] } : {}),
-      };
+    // Live / just-closed road meeting: keep the encounter receipt path (chance meeting / got away /
+    // lost fight / dealt with). Never auto-spend the leg past an open meeting or fight outcome.
+    if (answered || help || helped.encounter) {
+      return stillAheadOnRoad(state, helped, where, {
+        slipped,
+        fact,
+        extra: help?.extra,
+        helpState: help?.state,
+      });
     }
-    // T10AG — typed free text on the road spends exploration time (SRD 5.2.1 Travel Pace: hours
-    // pass while the party acts). Walk on still advances one full leg; arrival needs legsDone.
+    // Look/Wait/inspect: still ahead (bounce rest + drought park must not count as travel).
+    if (isRoadLoiterLine(input)) {
+      return stillAheadOnRoad(state, j, where);
+    }
+    // T10AG — typed free text on a quiet stretch spends exploration time (SRD 5.2.1 Travel Pace).
+    // Walk on still advances one full leg; arrival needs legsDone.
     return spendExplorationOnRoad(state, j);
   }
   const parkedOnRoad = isRoadLabel(state.currentLocation);

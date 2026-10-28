@@ -143,7 +143,18 @@ export function travelChipMoves(state: GameState, chip: string): boolean {
   const c = commitTravel(state, chip);
   if (!c.handled) return false;
   // Mid-journey every input is handled; holding on the same ground is not a move.
-  return c.arrived || c.state.journey !== state.journey || c.state.currentLocation !== state.currentLocation;
+  // T10AG exploration clock may replace the journey object without changing the stretch.
+  if (c.arrived || c.state.currentLocation !== state.currentLocation) return true;
+  const before = state.journey;
+  const after = c.state.journey;
+  if (before === after) return false;
+  if (!before || !after) return before !== after;
+  return (
+    before.from !== after.from
+    || before.to !== after.to
+    || before.legsDone !== after.legsDone
+    || before.legsTotal !== after.legsTotal
+  );
 }
 
 function lastStory(state: GameState): string {

@@ -29,7 +29,7 @@ import { isCrowdFillerToken } from './chromeAuthority';
 import { presentNpcRecords } from './npcRecords';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
-import { commitTravel, isJourneyUnderway } from './travelJourney';
+import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
 
 /**
  * Bible hooks are GM notes shaped `Label: essay` (Secret / Moral anchor / Obstacle…).
@@ -460,18 +460,19 @@ function stallDepartPresentNpc(state: GameState, turn: number): GameState {
   if (!present.length) return state;
   const name = present[present.length - 1]!;
   const low = name.trim().toLowerCase();
-  const mems = (state.npcMemories ?? []).map((m) => {
+  const mems: NpcMemory[] = (state.npcMemories ?? []).map((m) => {
     const n = (m.npcName ?? '').trim();
     if (!n || (n.toLowerCase() !== low && !mentionsName(n, name) && !mentionsName(name, n))) return m;
     if (m.shouldExit) return m;
     const fact = `Left under stall pressure T${turn}`;
-    return {
+    const next: NpcMemory = {
       ...m,
       shouldExit: true,
       exitReason: 'stall-pressure',
       facts: m.facts?.includes(fact) ? m.facts : [...(m.facts ?? []), fact].slice(-12),
       lastSeenTurn: turn,
     };
+    return next;
   });
   const nextPresent = (state.sceneFacts?.present ?? []).filter((p) => p.trim().toLowerCase() !== low);
   return {
@@ -550,10 +551,15 @@ export function planSceneThreads(state: GameState): GameState {
 
   // T10AG — under stall, a travel leg always resolves (Walk on) before LOOP STOP: companions on the
   // road and open threads must not freeze the leg (s9701 T18–T23 / s9601 T95–T97).
+  // Never auto-Walk on past a live fight, parked drought foe, or open road meeting.
+  const roadEnc = working.journey?.encounter;
+  const roadOpen = !!roadEnc && !roadMeetingOver(roadEnc);
   if (
     stall
     && isJourneyUnderway(working)
     && !working.activeEncounter
+    && !working.sceneFacts?.pendingEncounter
+    && !roadOpen
   ) {
     const advanced = commitTravel(working, 'Walk on');
     if (advanced.handled) {
@@ -583,8 +589,9 @@ export function planSceneThreads(state: GameState): GameState {
       }
       // T10AB + T10AG — stalled scenes must move the world (SRD-faithful consequence), not only re-chip.
       // Key off stallPressureActive (circling lastProgress), not governor alone.
+      // Never invent a new threat or force an exit while a live fight is open.
       const hereName = (working.currentLocation ?? '').trim();
-      if (hereName && !isJourneyUnderway(working)) {
+      if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
         working = applyPlaceEngineEvent(working, {
           placeId: hereName,
           kind: 'new-threat',
@@ -640,8 +647,9 @@ export function planSceneThreads(state: GameState): GameState {
         );
       } else if (!stallEventId) {
         // T10AG — hub / post-rest stall with no thread/agenda/situation: world still acts.
+        // Skip while a live fight is open (camp mini-boss / hub combat).
         const hereName = (working.currentLocation ?? '').trim();
-        if (hereName && !isJourneyUnderway(working)) {
+        if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
           working = applyPlaceEngineEvent(working, {
             placeId: hereName,
             kind: 'new-threat',

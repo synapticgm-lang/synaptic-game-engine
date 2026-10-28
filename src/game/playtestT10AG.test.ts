@@ -163,8 +163,8 @@ describe('T10AG hub stall moves the world (s9601 T126–T150 / s9501 T124–T131
         stale: {},
       },
       sceneFacts: {
-        crowd: 'busy',
-        noise: 'loud',
+        crowd: 'present',
+        noise: 'voices',
         present: ['Dunn Rudd', 'Osric Wyle'],
         props: [],
         lastBeat: '',
