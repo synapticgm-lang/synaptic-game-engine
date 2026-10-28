@@ -1,0 +1,56 @@
+Gemini said
+
+@@SEED sg-5-2-0-0 | Beside the whispering brass vanes of the meridian hall, you dodge a blind sentry whose mirrors click like beetles, risking detection by the looming Salt Court bailiffs.
+@@SEED sg-5-2-0-1 | In the shadow of a slanted heliostat, you crawl past a team of Glasswright apprentices flashing warning codes across the salt-flats, while your heavy lantern gutters in the draft.
+@@SEED sg-5-2-1-0 | Beneath a vaulted ceiling of purple slag, an old lens-cleaner named Mallow mistakes your ember-glow for a signal, offering false directions toward the wrong vault wing.
+@@SEED sg-5-2-1-1 | Within a gallery of cracked prisms, a Salt Court debt-collector blocks the narrow passage, demanding your ceramic key under threat of a dry-desert flogging.
+@@SEED sg-5-2-1-2 | Amidst ticking solar clocks that measure the waning hours before the monsoon, a nervous sentry drops a magnifying plate, showering the flagstones with lethal glass shards.
+@@SEED sg-5-2-1-3 | Spotting an unrecorded maintenance chute left open by looters, you slip past the upper galleries entirely, gaining an unexpected hour of quiet progress toward the foundations.
+@@SEED sg-5-2-1-4 | Beside a dry ornamental fountain shaped like a bronze heron, a wounded Glasswright courier whispers a warning about patrolling bailiffs before his voice fails.
+@@SEED sg-5-2-1-5 | Under the glare of a focusing dish that tracks the sinking sun, you squeeze behind a stack of spare reflectors, watching heavy boots patrol the terrace above.
+@@SEED sg-5-2-2-0 | In the rotunda of whispering echoes, an anxious apprentice named Joram drops his signalling mirror, threatening to draw every Glasswright guard to your hidden alcove.
+@@SEED sg-5-2-2-1 | Within a damp alcove smelling of old copper, a Salt Court hireling named Morvath sharpens a bone-handled blade while waiting for you to stumble into his trap.
+@@SEED sg-5-2-2-2 | Beside a massive quartz lens that magnifies the distant horizon, a weary sentry doats over a tin of dried figs, ignoring your silent scramble across the sill.
+@@SEED sg-5-2-2-3 | Underneath a dangling chandelier of singing crystal, you dodge a sudden beam of focused sunlight that sweeps the floor like a burning searcher.
+@@SEED sg-5-2-2-4 | In a gallery lined with dusty astrolabes, an old woman named Thora mutters ancient weather proverbs, blocking the egress toward the descending stone stairs.
+@@SEED sg-5-2-2-5 | Beside a frozen water-clock that smells of stagnant silt, you slide behind a carved basalt pillar just as heavy iron boots echo from the gallery entrance.
+@@SEED sg-5-2-2-6 | Within a chamber of hollow mirrors, a nervous runner from an eastern post mistakes your shadow for a Salt Court spy and draws a jagged glass dagger.
+@@SEED sg-5-2-2-7 | Under the hum of vibrating quartz tuning-forks, you balance along a narrow masonry ledge high above a dry subterranean atrium where guard dogs pace.
+@@SEED sg-5-2-2-8 | Beside an alcove filled with brass sand-glasses, a weary glass-maker named Skene offers a cup of bitter salt-tea in exchange for news from the western rim.
+@@SEED sg-5-2-2-9 | Within a subterranean library of lead-bound folios, a Dune Sister refugee named Sula tends a flickering tallow dip, warning you of treacherous sinkholes ahead.
+@@SEED sg-5-2-2-10 | Underneath a great bronze quadrant pointing at the empty sky, you slip past a sleeping bailiff whose snoring rattles the brass astrolabes on their stands.
+@@SEED sg-5-2-2-11 | Beside a shattered skylight choked with wind-blown salt, a flock of desert pigeons startles into noisy flight, drawing sharp queries from a guard below.
+@@SEED sg-5-2-2-12 | Within a cool stairwell carved from green-veined alabaster, you dodge a tumbling heap of discarded ledger rolls sent sliding down by unseen hands.
+@@SEED sg-5-2-2-13 | Guided by Pell’s intimate knowledge of the old drainage conduits, you bypass a heavy iron portcullis guarded by Salt Court mercenaries without raising an alarm.
+@@SEED sg-5-2-2-14 | Beneath a massive refracting dome that scatters pale twilight, a lone sentry polishes a brass spyglass, humming a melancholy tune about the lost sea-towns.
+@@SEED sg-5-2-2-15 | Within a storeroom stacked with spare lamp-wicks, you hide among crates of dried resin while a patrol searches the racks with hooked lanterns.
+@@SEED sg-5-2-3-0 | In a corridor paved with green basalt, a nervous Salt Court clerk named Vane drops his ink-horn, threatening to raise an alarm unless you bribe him.
+@@SEED sg-5-2-3-1 | Beside a humming resonance pillar that vibrates through the soles of your boots, a Glasswright veteran named Kestel blocks the iron door with a heavy iron pike.
+@@SEED sg-5-2-3-2 | Within a round chamber of whispering whispers, you dodge a sweeping beam of concentrated sunlight that melts the mortar between the stone flags.
+@@SEED sg-5-2-3-3 | Under a vaulted ceiling painted with fading constellations, an old water-seller named Vesper begs for a drop from your flask while blocking the downward ramp.
+@@SEED sg-5-2-3-4 | Beside a massive copper astrolabe as large as a wagon wheel, you crouch behind a stack of lead weights as heavy patrol steps approach from the dark.
+@@SEED sg-5-2-3-5 | Within a narrow slot-window overlooking the dead basin, a desperate rival runner named Gault lunges for your satchel, seeking the ceramic seedkey.
+@@SEED sg-5-2-3-6 | Beneath a hanging array of brass wind-chimes, you step carefully across a floor of brittle salt-crust that threatens to crack under your travel-worn boots.
+@@SEED sg-5-2-3-7 | In a dim antechamber smelling of hot copper and old wool, a wary Glasswright archivist named Neris bars the vault threshold with pointed questions.
+@@SEED sg-5-2-3-8 | Recognizing your Dune Sister well-oath brand on your forearm, a sympathetic sentry quietly lowers the iron latch of the inner service gate for you.
+@@SEED sg-5-2-3-9 | Within a hollow foundation pier filled with echoing drafts, you slide past a heap of rusted mining gear just as a distant brass gong sounds.
+@@SEED sg-5-2-3-10 | Beside a frozen solar fountain carved from yellow quartz, a Salt Court tax-collector named Olen demands an inventory of your pack contents.
+@@SEED sg-5-2-3-11 | Under the gaze of a faded mosaic depicting the ancient sea-kings, you scramble over a tumbled pile of masonry blocks to avoid a patrolling squad.
+@@SEED sg-5-2-3-12 | Within a narrow service gallery lined with soot-stained grease-lamps, a coughing watchman named Haze mistakes your lantern for an inspector's signal.
+@@SEED sg-5-2-3-13 | Beside an open ventilation shaft that smells of damp earth and coming rain, you pause to catch your breath while distant alarms ring above.
+@@SEED sg-5-2-3-14 | Within a circular gallery of singing mirrors, a confused apprentice named Telli spins in circles, trying to answer flashing signals from the upper terrace.
+@@SEED sg-5-2-3-15 | Underneath a heavy timber lintel carved with sun-burst glyphs, you press your back against the cool stone as Salt Court guards march past.
+@@SEED sg-5-2-4-0 | In the gateway of the great lens-archive, a sentinel named Brann checks your credentials against a list of approved delegates from the western rim.
+@@SEED sg-5-2-4-1 | Within the shadowed atrium of the astronomical clock, a Salt Court sergeant named Corvus blocks the bronze stair leading down to the vault doors.
+@@SEED sg-5-2-4-2 | Beside a massive quartz lens that catches the final rays of twilight, you barter a flask of fresh oil for passage past a stubborn watch-captain.
+@@SEED sg-5-2-4-3 | Under a vault of interlocking brass gears, you slip through a maintenance hatch just as the heavy mechanisms begin their evening rotation with a roar.
+@@SEED sg-5-2-4-4 | In a gallery fragrant with burning juniper resin, a Glasswright elder named Sargon examines your seedkey with a critical, rheumy eye.
+@@SEED sg-5-2-4-5 | Beside an ancient water-cistern that holds the last stagnant drops of the basin, a rival runner named Miri challenges your right to open the vault.
+@@SEED sg-5-2-4-6 | Within a stone-lined cutting that descends into the dark earth, you dodge a volley of warning arrows fired by trigger-happy sentries from the parapet.
+@@SEED sg-5-2-4-7 | Under the shadow of the central observatory tower, you reach the heavy bronze doors of the Rain Vault where the final test awaits.
+@@SEED sg-5-2-5-0 | At the threshold of the deep subterranean vestibule, you insert the cold ceramic key into the ancient brass lock while distant thunder rumbles overhead.
+@@SEED sg-5-2-5-1 | Before the massive obsidian seal of the Rain Vault, you hold your flickering ember-lamp high to verify the glyphs before turning the mechanism.
+@@SEED sg-5-2-5-2 | Within the echoing threshold chamber, you stand before the sealed bronze barrier as the first heavy drops of the monsoon strike the observatory dome.
+@@SEED sg-5-2-5-3 | At the final landing of the descent, you press the seedkey home into the waiting socket, sealing your desperate quest against the rising tide.
+@@SEED sg-d-5-2 | Attempting to smash through the Glasswright sentry gate with your heavy lantern, you shatter your only light-source and are trapped in the pitch-dark galleries as the basin floods.
+@@DONE
