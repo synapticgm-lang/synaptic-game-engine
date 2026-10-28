@@ -1369,7 +1369,7 @@ export async function headlessFateTurn(
       if (floor.notes.length) arcStatusReceipts = [...arcStatusReceipts, ...floor.notes];
     }
     // TT-T1 — open-thread list + bring at least one forward into this scene.
-    arcState = planSceneThreads(arcState);
+    arcState = planSceneThreads(arcState, playerInput);
   }
   // 08c Tag & Trigger — consume claim pad before packet/writer.
   {

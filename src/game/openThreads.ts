@@ -24,11 +24,12 @@ import type {
   Quest,
   TimelineFact,
 } from './types';
-import { mentionsName, peopleHere } from './chipLegality';
+import { chipAddressee, mentionsName, peopleHere } from './chipLegality';
 import { isCrowdFillerToken } from './chromeAuthority';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
 import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
+import { fuzzyTypedName } from './typedNameMatch';
 
 /**
  * Bible hooks are GM notes shaped `Label: essay` (Secret / Moral anchor / Obstacle…).
@@ -448,13 +449,50 @@ function appendStallFact(state: GameState, eventId: string, text: string): GameS
 }
 
 /**
+ * Who this turn's Talk/Ask/typed address is aimed at — stall must not eject them mid-beat
+ * (T10AM: Ask Brannoc about the lead after stall emptied PRESENT).
+ */
+function addressedPresentName(state: GameState, playerInput: string): string | null {
+  const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!act) return null;
+  const present = (state.sceneFacts?.present ?? []).filter((n) => n && !isCrowdFillerToken(n));
+  if (!present.length) return null;
+  const chip = chipAddressee(act);
+  if (chip?.who) {
+    const hit = present.find(
+      (n) => mentionsName(n, chip.who) || mentionsName(chip.who, n) || n.toLowerCase() === chip.who.toLowerCase(),
+    );
+    if (hit) return hit;
+  }
+  const fuzzy = fuzzyTypedName(act, present);
+  if (fuzzy) return fuzzy;
+  const low = act.toLowerCase();
+  for (const n of present) {
+    if (mentionsName(low, n)) return n;
+  }
+  return null;
+}
+
+/**
  * T10AG — hub / post-rest stall: one present person leaves (engine record). Writer narrates the
  * departure; chips stop cycling the same Talk/Press loop (s9601 T126–T150 / s9501 T124–T131).
+ * T10AM — never eject the person this turn's action addresses (chip or typed). Sole addressee
+ * stays so speech still has a PRESENT listener; world threat / thread-forward still fire.
  */
-function stallDepartPresentNpc(state: GameState, turn: number): GameState {
+function stallDepartPresentNpc(state: GameState, turn: number, playerInput = ''): GameState {
   const present = (state.sceneFacts?.present ?? []).filter((n) => n && !isCrowdFillerToken(n));
   if (!present.length) return state;
-  const name = present[present.length - 1]!;
+  const keep = addressedPresentName(state, playerInput);
+  const candidates = keep
+    ? present.filter(
+        (n) =>
+          n.trim().toLowerCase() !== keep.trim().toLowerCase()
+          && !mentionsName(n, keep)
+          && !mentionsName(keep, n),
+      )
+    : present;
+  if (!candidates.length) return state;
+  const name = candidates[candidates.length - 1]!;
   const low = name.trim().toLowerCase();
   const mems: NpcMemory[] = (state.npcMemories ?? []).map((m) => {
     const n = (m.npcName ?? '').trim();
@@ -486,7 +524,7 @@ function stallDepartPresentNpc(state: GameState, turn: number): GameState {
  * A stale thread (untouched ≥ STALE_TURNS) is preferred so it reappears within BRING_WINDOW.
  * Under OPT-5 stall pressure, also bring an agenda step or OPT-2 situation when no thread.
  */
-export function planSceneThreads(state: GameState): GameState {
+export function planSceneThreads(state: GameState, playerInput = ''): GameState {
   if (state.engineMode === 'pyoa') return state;
   const turn = state.turn ?? 0;
   const threads = collectOpenThreads(state);
@@ -593,7 +631,7 @@ export function planSceneThreads(state: GameState): GameState {
           kind: 'new-threat',
           detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
         });
-        working = stallDepartPresentNpc(working, turn);
+        working = stallDepartPresentNpc(working, turn, playerInput);
       }
     }
   } else if (stall) {
@@ -651,7 +689,7 @@ export function planSceneThreads(state: GameState): GameState {
             kind: 'new-threat',
             detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
           });
-          working = stallDepartPresentNpc(working, turn);
+          working = stallDepartPresentNpc(working, turn, playerInput);
           stallEventId = `stall-hub-${turn}`;
           stallKind = 'situation';
           working = appendStallFact(

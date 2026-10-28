@@ -2763,7 +2763,7 @@ export function useGame() {
           if (floor.notes.length) pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...floor.notes];
         }
         // TT-T1 — open-thread list + bring at least one forward into this scene.
-        liveCurrent = planSceneThreads(liveCurrent);
+        liveCurrent = planSceneThreads(liveCurrent, sanitizedInput);
         stateRef.current = liveCurrent;
       }
       const arcXp = (systemsArc?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);

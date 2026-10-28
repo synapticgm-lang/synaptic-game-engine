@@ -211,6 +211,9 @@ function spokenExchangeLine(
   // T10AF / T10AD — durable need/goal/offer before stock motive (Keep Gate steward need, not
   // "fair and square"). Prefer the bit that overlaps the Follow-up / about-topic when present.
   // T10AL — speak as a sentence; skip bits already told this scene (no verbatim replay).
+  // T10AM — a content question (quoted ?, about-topic, or/whether) only gets a ledger bit that
+  // overlaps the ask; unrelated need ("I need shelter") is not a reply to "was that the wind?".
+  // Demand-to-speak ("Answer me" / waiting for an answer / bare Talk) may still use any fresh bit.
   const ledgerBits = (
     [
       { kind: 'need' as const, text: (memory?.need ?? '').replace(/\s+/g, ' ').trim() },
@@ -219,22 +222,51 @@ function spokenExchangeLine(
     ] satisfies { kind: LedgerKind; text: string }[]
   ).filter((b) => b.text.length >= 3);
   if (ledgerBits.length) {
-    const topicLow = askTopic.toLowerCase();
+    const askBody = [
+      askTopic,
+      ...[...ask.matchAll(QUOTE)].map((m) => (m[1] ?? '').trim()),
+      ask,
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+    const overlapsAsk = (bit: string) => {
+      const bl = bit.toLowerCase();
+      if (!askBody.trim()) return false;
+      if (bl.includes(askTopic.toLowerCase()) && askTopic.length >= 3) return true;
+      if (askTopic.length >= 3 && askTopic.toLowerCase().includes(bl)) return true;
+      const words = bl.match(/[a-z0-9']{4,}/g) ?? [];
+      if (!words.length) return false;
+      let hit = 0;
+      for (const w of words) if (askBody.includes(w)) hit += 1;
+      return hit / words.length >= 0.4 || words.some((w) => w.length >= 5 && askBody.includes(w));
+    };
     const fresh = ledgerBits.filter((b) => {
       const spoken = asSpokenAgenda(b.text, b.kind);
       return !speakerAlreadyTold(state, speaker, b.text) && !speakerAlreadyTold(state, speaker, spoken);
     });
     const pool = fresh.length ? fresh : [];
+    // Content questions end in ? (or name an about-topic). Imperative threats with "or"
+    // ("check your pockets or I will") are demands — keep ledger (T10AF Dunn T147).
+    const contentQuestion =
+      !!askTopic
+      || (/["\u201c]/.test(ask) && /\?/.test(ask))
+      || /\b(?:or|whether)\b[\s\S]{0,80}\?/i.test(ask)
+      || /\bif\b[\s\S]{0,80}\?/i.test(ask);
+    // Bare Talk / Ask-what chips demand any content; "Ask X about the lead" is a content question.
+    const demandsSpeech =
+      /\banswer me\b|\bwaiting for an answer\b/i.test(ask)
+      || /^(?:talk(?:\s+to)?|speak(?:\s+to)?)\b/i.test(ask)
+      || /^ask\s+(?:what|who|why|where)\b/i.test(ask);
     const fitRow =
-      (topicLow
-        ? pool.find((b) => {
-            const bl = b.text.toLowerCase();
-            return bl.includes(topicLow) || topicLow.includes(bl) || topicLow.split(/\s+/).some((t) => t.length >= 4 && bl.includes(t));
-          })
-        : undefined) ?? pool[0];
+      pool.find((b) => overlapsAsk(b.text))
+      ?? (!contentQuestion || demandsSpeech ? pool[0] : undefined);
     if (fitRow) return quotedReply(speaker, asSpokenAgenda(fitRow.text, fitRow.kind));
-    // Every agenda bit already told — ask-back / refuse with a reason (not a replay).
-    return quotedReply(speaker, 'I already told you that. Ask me who, or why.');
+    // Fresh ledger bits exist but none fit this content question — fall through to motive
+    // (react in character) instead of dumping an unrelated need. Already-told-only → ask-back.
+    if (!pool.length) {
+      return quotedReply(speaker, 'I already told you that. Ask me who, or why.');
+    }
   }
 
   const cast = openingCastNames(state);
