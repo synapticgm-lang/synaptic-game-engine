@@ -109,6 +109,7 @@ export function lintBook(book, { cap = 3_000_000, maxExits = 4 } = {}) {
   const deadStates = [];
   const reachedNodes = new Set();
   const nodeStates = new Map();
+  const possible = new Map();
   const endingStates = [];
   for (let qi = 0; qi < queue.length; qi++) {
     if (list.length > cap) { capped = true; break; }
@@ -117,6 +118,7 @@ export function lintBook(book, { cap = 3_000_000, maxExits = 4 } = {}) {
     if (!n) continue;
     reachedNodes.add(s.id);
     nodeStates.set(s.id, (nodeStates.get(s.id) ?? 0) + 1);
+    { let pv = possible.get(s.id); if (!pv) possible.set(s.id, (pv = {})); for (const f of tracked) (pv[f] ??= new Set()).add(s.fl[f] === undefined ? '_' : String(s.fl[f])); }
     (n.variants ?? []).forEach((v, i) => {
       if (pyoaCondHolds(v.when, s.fl)) varHit.set(`${n.id}#${i}`, (varHit.get(`${n.id}#${i}`) ?? 0) + 1);
     });
@@ -208,6 +210,7 @@ export function lintBook(book, { cap = 3_000_000, maxExits = 4 } = {}) {
     warns,
     gateReport,
     variantReport,
+    possible: Object.fromEntries([...possible].map(([k, v]) => [k, Object.fromEntries(Object.entries(v).map(([f, s]) => [f, [...s]]))])),
   };
 }
 
@@ -232,3 +235,4 @@ if (isMain) {
   res.warns.slice(0, 10).forEach((e) => console.log(`    w ${e.code}: ${e.msg}`));
   process.exit(res.errors.length ? 1 : 0);
 }
+

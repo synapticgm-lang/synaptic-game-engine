@@ -1,0 +1,10 @@
+2026-10-27T23:41:04.156Z ask e-parliament-dawn items=7 attempt=0
+2026-10-27T23:41:46.946Z ask e-parliament-dawn items=7 attempt=1
+2026-10-27T23:45:12.639Z STOP noreply: No new Gemini reply detected
+2026-10-27T23:45:47.508Z ask e-parliament-dawn items=7 attempt=0
+2026-10-27T23:46:05.236Z ask e-parliament-dawn items=7 attempt=1
+2026-10-27T23:46:20.702Z done e-parliament-dawn: 0/7 inserts MISSING up-end-parliament-dawn:witness=bought,up-end-parliament-dawn:witness=dropped,up-end-parliament-dawn:faceKnown=yes,up-end-parliament-dawn:cabal=known,up-end-parliament-dawn:valerius=allied,up-end-parliament-dawn:rigg=allied,up-end-parliament-dawn:cover=livery
+2026-10-27T23:46:20.703Z finished run: calls 2, groups done 1/25
+2026-10-27T23:49:56.502Z ask e-parliament-dawn items=7 attempt=0
+2026-10-27T23:53:37.254Z ask e-parliament-dawn items=7 attempt=1
+2026-10-27T23:57:03.211Z STOP noreply: No new Gemini reply detected
