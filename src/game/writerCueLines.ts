@@ -12,6 +12,7 @@
 
 import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority';
 import { plainItemChromeInText } from './proseItemName';
+import { ledgerLineToBookProse } from './ledgerToProse';
 
 /** Chrome that must never appear on the player book. */
 export const WRITER_CUE_CHROME =
@@ -250,6 +251,8 @@ export function clauseToThirdPerson(clause: string, subject = 'They'): string {
   }
   // Strip a leading bare I so we do not double the subject.
   c = c.replace(/^(?:I|i)\s+/i, '');
+  // Named PC: second-person possessives from the typed/chip line become third (Get your bearings → their).
+  const namedPc = who !== 'They' && who !== 'You' && who !== 'I';
   c = c
     .replace(/\bI'm\b/gi, `${who} was`)
     .replace(/\bI've\b/gi, `${who} had`)
@@ -269,6 +272,9 @@ export function clauseToThirdPerson(clause: string, subject = 'They'): string {
     .replace(/\bme\b/gi, 'them')
     // Bare I last — after contractions so "I'm" cannot become "Name'm".
     .replace(/\bI\b/g, who);
+  if (namedPc) {
+    c = c.replace(/\byour\b/gi, 'their').replace(/\byours\b/gi, 'theirs');
+  }
   // Mid-clause bare I → Name left a present stem ("Name check" / "Name have"): finish the tense.
   const whoEsc = who.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   c = c.replace(
@@ -310,10 +316,25 @@ export function clauseToThirdPerson(clause: string, subject = 'They'): string {
     return line.endsWith('.') ? line : `${line}.`;
   }
   // Leading finite verb → past: "slide a coin…" / "Ask Vessa…" / "Face the thugs."
+  // T10AJ — Title-Case chip noun-phrases ("Next unexplored room") are not verbs: never "Jax nexted…".
+  // Lowercase imperatives ("ask if…") and "Ask Vessa" / "Face the thugs" stay on the verb path.
   const lead = c.match(/^([A-Za-z]+)\b(.*)$/);
   if (lead) {
-    const past = toSimplePast(lead[1]!);
+    const verb = lead[1]!;
     const rest = (lead[2] ?? '').trim();
+    const npChip =
+      /^[A-Z]/.test(verb)
+      && !!rest
+      && /^[a-z]/.test(rest)
+      && !/^(?:it|them|him|her|me|us|this|that|these|those|the|a|an|to|at|on|in|into|for|with|from|over|under|about|of|my|your|their|his|her|its)\b/i.test(
+        rest,
+      );
+    if (npChip) {
+      const np = `${verb} ${rest}`.replace(/\s+/g, ' ').trim().toLowerCase();
+      const line = `${who} moved on to the ${np}`.replace(/\s+/g, ' ').trim();
+      return line.endsWith('.') ? line : `${line}.`;
+    }
+    const past = toSimplePast(verb);
     const line = `${who} ${past}${rest ? ` ${rest}` : ''}`.replace(/\s+/g, ' ').trim();
     return line.endsWith('.') ? line : `${line}.`;
   }
@@ -450,23 +471,15 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
   if (!hits.length) return raw;
 
   if (hits[0]!.index > 0) {
-    // T10AH — STATUS ledger glued before Must narrate (Rest: / Encounter budget / Moved within) is not story.
+    // T10AH/T10AJ — STATUS / dungeon / check ledger glued before Must narrate is not story labels.
     const headRaw = raw.slice(0, hits[0]!.index).trim().replace(/[.]+$/g, '');
     const headParts = headRaw
       .split(/(?<=[.!?])\s+|;\s+/)
       .map((p) => p.replace(/\s+/g, ' ').trim())
       .filter(Boolean);
     for (const part of headParts) {
-      if (/^(?:Encounter budget:|Combat status:|Exhaustion:|Initiative —|Rounds? \d+|Death save:|XP Gained:|Gold Gained:|Coins\b|Moved within\b|Combat status\b)/i.test(part)) {
-        continue;
-      }
-      if (/^Rest:/i.test(part)) {
-        const low = part.toLowerCase();
-        const kind = low.includes('long rest') ? 'long rest' : low.includes('short rest') ? 'short rest' : 'rest';
-        push(`You took a ${kind}.`);
-        continue;
-      }
-      push(part.endsWith('.') ? part : `${part}.`);
+      const plain = ledgerLineToBookProse(part, pc);
+      if (plain) push(plain);
     }
   }
 

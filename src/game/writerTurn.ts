@@ -326,16 +326,18 @@ export async function runWriterTurnWithFightRetry(opts: {
   }
   if (!hardLeft) return { ...done, draftRetry: 'retried', fightDraft };
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
+  const spoken = ensureSpokenAnswer(painted.prose, opts.check.state, opts.check.playerInput);
   return {
     ...done,
-    prose: painted.prose,
+    prose: spoken.prose,
     path: 'last-resort',
     refs: undefined,
     speech: undefined,
-    remaining: writerDraftProblems(painted.prose, opts.check),
+    remaining: writerDraftProblems(spoken.prose, opts.check),
     problems: [...new Set([...done.problems, 'blocking draft fell back to engine-fact page'])],
     draftRetry: 'painted',
     fightDraft,
+    spoken: spoken.answer,
   };
 }
 /** Engine moved the player this turn but the beat never names where to — add one plain sentence. */
@@ -725,10 +727,12 @@ async function runWriterTurnFightOnly(opts: {
   const base = rewriteBetter ? second : first;
   if (base.prose.trim()) return withFacts({ ...base, fightRetry: 'added' as const, fightDraft });
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
+  const spoken = ensureSpokenAnswer(painted.prose, opts.check.state, opts.check.playerInput);
   const fight = terminalFightOutcome(state.completedEvent?.engineResult);
   return {
-    ...first, prose: painted.prose, path: 'last-resort', refs: undefined, speech: undefined,
-    remaining: writerDraftProblems(painted.prose, opts.check), fightRetry: 'painted', fightDraft,
+    ...first, prose: spoken.prose, path: 'last-resort', refs: undefined, speech: undefined,
+    remaining: writerDraftProblems(spoken.prose, opts.check), fightRetry: 'painted', fightDraft,
+    spoken: spoken.answer,
     ...(fight ? { outcomeShown: 'engine' as const, combatLog: terminalOutcomeSentence(fight, fightPov) } : {}),
   };
 }

@@ -38,6 +38,7 @@ import { engageAddressedInHereSpot } from './hereSpot';
 import { isLedgerReadAction } from './completedEventPacket';
 import { ledgerChangeFact, ledgerReadChanges, ledgerSheetLine } from './litrpgSystemWindow';
 import { buildClauseWriterFact } from './writerCueLines';
+import { peopleHere } from './scenePresence';
 
 function isPersonInsightLabel(clause: string): boolean {
   return /^read\s+\S/i.test((clause ?? '').trim());
@@ -116,8 +117,8 @@ function clauseWriterFact(step: IntentStep, speech: boolean, presentHere: string
 }
 
 function presentNames(state: GameState): string[] {
-  // Same listen pool as sheetContextFromState (T10P — road travel drops stale sceneFacts.present).
-  return sheetContextFromState(state).present ?? [];
+  // T10AJ — one presence truth (scenePresence.peopleHere), same as chips / gate / spokenAnswer.
+  return peopleHere(state);
 }
 
 function speechStep(step: IntentStep, presentHere: string[] = []): StepResolution {

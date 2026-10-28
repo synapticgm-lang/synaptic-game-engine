@@ -2,6 +2,8 @@
 import type { GameState } from './types.ts';
 import { underwayHereLabel } from './locationName.ts';
 import { convertWriterCueFact, hasWriterCueChrome, plainFromWriterCueSentence } from './writerCueLines.ts';
+import { isBookForbiddenLedgerLine, ledgerLineToBookProse } from './ledgerToProse.ts';
+export { isBookForbiddenLedgerLine } from './ledgerToProse.ts';
 
 export function roadMeetingFact(_j: unknown): string { return ''; }
 export function roadMeetingRef(_state: unknown): { display: string; note: string } | null { return null; }
@@ -63,9 +65,10 @@ export function writerTravelFact(receipt: string): string | null {
 /**
  * Plain Travel: → writer form, then every other receipt label the same way. Not inside "Extended Travel:" (q31-L4).
  * `subject` is the PC display name for Must-narrate → third-person past (T10R).
+ * T10AJ — ledger labels convert (or drop) BEFORE cue convert (parity with src/game/travelJourney.ts).
  */
 export function writerEngineResult(fact: string, subject?: string): string {
-  const travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
+  let travel = (fact ?? '').replace(/(?<![A-Za-z])Travel: .*?\.(?=\s+[A-Z]|\s*$)/g, (m) => writerTravelFact(m) ?? m);
   // T10U — death beat is the death sentence only (no Check failure / Extended Travel chrome /
   // stray push-on travel sentence mixed into the book). SRD 5.2.1 Exhaustion 6 = death.
   if (/\bYou are dead\./i.test(travel)) {
@@ -81,6 +84,15 @@ export function writerEngineResult(fact: string, subject?: string): string {
         : `The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.`;
     }
   }
+  // T10AH/T10AJ — peel + convert STATUS/dungeon/check ledger before cue convert.
+  travel = travel
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .map((s) => ledgerLineToBookProse(s, subject))
+    .filter((s) => s && !isRoadLabel(s))
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   // T10P — cue-heavy facts convert as whole blocks (periods inside Must narrate must not leak).
   if (hasWriterCueChrome(travel)) {
     const converted = convertWriterCueFact(travel, subject);
@@ -91,60 +103,15 @@ export function writerEngineResult(fact: string, subject?: string): string {
   for (let i = 0; i < parts.length; i++) {
     let s = (i < parts.length - 1 ? `${parts[i]}.` : parts[i]!).trim();
     while (s.includes('  ')) s = s.split('  ').join(' ');
-    if (!s || isRoadLabel(s)) continue;
-    // Death chrome (Check failure / Extended Travel) is already dropped by the You-are-dead early return.
-    // Live push-on must still hand Extended Travel + Check outcome to the writer (q31-L4 / s73).
-    const roomHead = 'Dungeon room: ';
-    if (s.startsWith(roomHead) && !s.startsWith('Dungeon room: none')) {
-      const body = s.endsWith('.') ? s.slice(0, -1) : s;
-      const mark = ', inside ';
-      const cut = body.indexOf(mark);
-      if (cut > roomHead.length) {
-        const room = body.slice(roomHead.length, cut);
-        const inside = body.slice(cut + mark.length);
-        if (room && inside) {
-          out.push(`You stood in ${room} inside ${inside}.`);
-          continue;
-        }
-      }
-    }
-    const waysHead = 'Ways on: ';
-    if (s.startsWith(waysHead)) {
-      const body = (s.endsWith('.') ? s.slice(0, -1) : s).slice(waysHead.length);
-      const names: string[] = [];
-      const raw = body.split(',');
-      for (let w = 0; w < raw.length; w++) {
-        let n = raw[w]!.trim();
-        const paren = n.indexOf(' (');
-        if (paren >= 0) n = n.slice(0, paren).trim();
-        if (n && !isRoadLabel(n)) names.push(n);
-      }
-      if (names.length === 1) out.push(`A way led on to ${names[0]}.`);
-      else if (names.length > 1) out.push(`Ways led on to ${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}.`);
-      continue;
-    }
-    if (s.startsWith('Rest:')) {
-      const low = s.toLowerCase();
-      const kind = low.includes('long rest') ? 'long rest' : low.includes('short rest') ? 'short rest' : 'rest';
-      const hpAt = s.indexOf('HP ');
-      if (hpAt >= 0) {
-        const bits = s.slice(hpAt + 3).trim().split(' ');
-        const to = (bits[2] ?? '').split('(')[0] ?? '';
-        if (bits[0] && to && (bits[1] === '→' || bits[1] === '->' || bits[1] === 'to')) {
-          out.push(`You took a ${kind} and your hurts eased (${bits[0]} to ${to}).`);
-          continue;
-        }
-      }
-      out.push(`You took a ${kind}.`);
-      continue;
-    }
+    if (!s || isRoadLabel(s) || isBookForbiddenLedgerLine(s)) continue;
     // T10E — writer cue lines (shared writerCueLines) → plain narration; never player chrome.
     const cue = plainFromWriterCueSentence(s, subject);
     if (cue.cue) {
       if (cue.plain) out.push(cue.plain.endsWith('.') ? cue.plain : `${cue.plain}.`);
       continue;
     }
-    out.push(s.endsWith('.') ? s : `${s}.`);
+    const plain = ledgerLineToBookProse(s, subject);
+    if (plain) out.push(plain.endsWith('.') || plain.endsWith('?') || plain.endsWith('!') ? plain : `${plain}.`);
   }
   return out.join(' ');
 }
