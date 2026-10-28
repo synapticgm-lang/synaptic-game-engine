@@ -98,6 +98,7 @@ async function pickerLabel(page) {
 /** Make sure the Gemini mode picker reads the wanted model (e.g. "Flash-Lite"); never leaves Pro/Flash selected. */
 export async function ensureModel(page, want = 'Flash-Lite') {
   let lab = await pickerLabel(page);
+  for (let i = 0; i < 12 && !lab; i++) { await sleep(2000); lab = await pickerLabel(page); }
   if (!lab.includes(want)) {
     await page.evaluate(() => [...document.querySelectorAll('button')].find((x) => /mode picker/i.test(x.getAttribute('aria-label') || ''))?.click());
     await sleep(1200);
