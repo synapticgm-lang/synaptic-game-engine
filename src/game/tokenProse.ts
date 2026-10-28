@@ -846,8 +846,9 @@ export function classifyTokenLine(
     return { ok: false, reason: 'carried' };
   }
   if (handedCounts != null && lineOpensOnFactLabel(line.text, handedCounts)) return { ok: false, reason: 'label' };
-  // Speech may not invent a prior dawn/morning the clock and page never handed (T10N).
-  if (handedCounts != null && lineHasWrongTimeOfDay(line.text, handedCounts)) {
+  // Narration: full day-part gate. Speech keeps schedule talk ("shuts at dusk"); invented past
+  // history in speech is dropped by clause-check (T10N), not by rejecting every wrong day-part word.
+  if (handedCounts != null && line.fn !== 'speech' && lineHasWrongTimeOfDay(line.text, handedCounts)) {
     return { ok: false, reason: 'time' };
   }
   // Spoken words with no speaker would paint as narration.

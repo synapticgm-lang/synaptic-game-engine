@@ -259,7 +259,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   let placeSearchHere = false;
   if (routeRows.length && openRoutes) {
     const stepRoutes = openRoutes.step.routes ?? [];
-    const stepPlace = (openRoutes.step.placeId ?? openRoutes.step.place ?? '').trim().toLowerCase();
     for (let i = 0; i < routeRows.length; i++) {
       const row = routeRows[i]!;
       let route: QuestRoute | null = null;
@@ -283,35 +282,11 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
           if (!present) continue;
         }
       }
-      // T10N — place / skill / system routes only when the step's place is HERE (nothing to search off-site).
-      if (route && (route.kind === 'place' || route.kind === 'object' || route.kind === 'skill' || route.kind === 'system' || route.kind === 'study')) {
-        const routePlace = (route.placeId ?? stepPlace).trim().toLowerCase();
-        if (routePlace && herePlace && routePlace !== herePlace) continue;
-        if (!routePlace && stepPlace && herePlace && stepPlace !== herePlace) continue;
-        if (route.kind === 'place' || route.kind === 'object') placeSearchHere = true;
-        // Skill/system third: the named object must be on the scene ledger (not an abstract "rumor").
-        if (route.kind === 'skill' || route.kind === 'system' || route.kind === 'study') {
-          const about = row.label.match(/\b(?:of|about)\s+(.+)$/i)?.[1]?.replace(/[.!?]+$/, '').trim() ?? '';
-          if (about) {
-            const hay = [
-              ...(state.sceneFacts?.props ?? []),
-              ...(state.sceneFacts?.present ?? []),
-              state.sceneFacts?.focusNoun ?? '',
-              state.sceneFacts?.lastBeat ?? '',
-              state.currentLocation ?? '',
-            ]
-              .join(' ')
-              .toLowerCase();
-            const tokens = about
-              .toLowerCase()
-              .replace(/^(?:the|a|an)\s+/, '')
-              .split(/[\s'’-]+/)
-              .filter((t) => t.length >= 4);
-            if (tokens.length && !tokens.every((t) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay))) {
-              continue;
-            }
-          }
-        }
+      // T10N — approach / place / object routes always stay as open leads (Scout camp from Waystation).
+      // Only mark Search-the-area covered when a place/object route's placeId is THIS room.
+      if (route && (route.kind === 'place' || route.kind === 'object')) {
+        const routePlace = (route.placeId ?? '').trim().toLowerCase();
+        if (routePlace && herePlace && routePlace === herePlace) placeSearchHere = true;
       }
       all.push({
         label: row.label,

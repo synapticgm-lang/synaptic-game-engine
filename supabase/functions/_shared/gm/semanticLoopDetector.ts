@@ -403,11 +403,13 @@ function sentenceMatches(a: string, b: string): boolean {
   let inter = 0;
   for (const t of A) if (B.has(t)) inter++;
   const smaller = Math.min(A.size, B.size);
-  if (smaller > 0 && inter / smaller >= COLLAGE_CONTAINMENT && inter >= COLLAGE_MIN_INTER) return true;
-  // T10N — a shared 6-word run is the same place/leg line reprinted (same reply or cross-turn).
-  return sharesWordRun(a, b, 6);
+  return smaller > 0 && inter / smaller >= COLLAGE_CONTAINMENT && inter >= COLLAGE_MIN_INTER;
 }
-/** Consecutive content-word runs of length `n` shared by both sentences. */
+/**
+ * Consecutive content-word runs of length `n` shared by both sentences.
+ * Used only for same-reply / cross-turn place-line collapse — not in general collage matching
+ * (a short shared run is common English, and over-matching hits minKeep and keeps the whole draft).
+ */
 function sharesWordRun(a: string, b: string, n: number): boolean {
   const words = (s: string) => (s.toLowerCase().match(/[a-z0-9']+/g) ?? []);
   const aw = words(a);
@@ -417,6 +419,33 @@ function sharesWordRun(a: string, b: string, n: number): boolean {
   for (let i = 0; i + n <= bw.length; i++) keys.add(bw.slice(i, i + n).join(' '));
   for (let i = 0; i + n <= aw.length; i++) {
     if (keys.has(aw.slice(i, i + n).join(' '))) return true;
+  }
+  return false;
+}
+/** Same-reply place/leg reprint: ≥8 consecutive content words already used in this draft. */
+function sharesPlaceLineRun(a: string, b: string): boolean {
+  return sharesWordRun(a, b, 8);
+}
+/**
+ * Cross-turn place/leg near-duplicate: a long shared run that covers most of the shorter sentence.
+ * A bare 8-gram prefix ("The chain hung slack across Keep Gate, and …") must not recycle a new tail
+ * and then hit minKeep (which would keep a repeated quote that should have dropped).
+ */
+function nearlyWholePlaceLineReprint(a: string, b: string): boolean {
+  const words = (s: string) => (s.toLowerCase().match(/[a-z0-9']+/g) ?? []);
+  const aw = words(a);
+  const bw = words(b);
+  const minN = 8;
+  if (aw.length < minN || bw.length < minN) return false;
+  const shorter = Math.min(aw.length, bw.length);
+  for (let len = shorter; len >= minN; len--) {
+    const keys = new Set<string>();
+    for (let i = 0; i + len <= bw.length; i++) keys.add(bw.slice(i, i + len).join(' '));
+    for (let i = 0; i + len <= aw.length; i++) {
+      if (keys.has(aw.slice(i, i + len).join(' '))) {
+        return shorter <= len + 6;
+      }
+    }
   }
   return false;
 }
@@ -574,6 +603,8 @@ export function recycledSentencesIn(
     // A line the person has not said before is new, however the look before it reads.
     if (spoken.split(' ').filter(Boolean).length >= 2 && !priorSpoken.includes(spoken)) return false;
     if (prior.some((p) => sentenceMatches(s, p))) return true;
+    // T10N — cross-turn place/leg near-duplicate (nearly-whole 8+ gram), not bare shared prefixes.
+    if (prior.some((p) => nearlyWholePlaceLineReprint(s, p))) return true;
     if (openingClauses && repeatsOpeningClause(s, prior, actor)) return true;
     for (const m of s.matchAll(QUOTE_SPAN_RE)) {
       if (quotes.has(quoteKey(m[1] ?? ''))) return true;
@@ -631,8 +662,8 @@ export function trimSameBeatRestatements(
     const hits = hitsOf(s).filter(Boolean).sort();
     const hitKey = hits.length ? hits.join('|') : '';
     const restatesPrior = kept.some((k) => sentenceMatches(s, k));
-    // Same-reply place/leg reprint: a long word-run already used, even when Jaccard misses.
-    const sameRun = kept.some((k) => sharesWordRun(s, k, 6));
+    // Same-reply place/leg reprint: ≥8-word run already used (6 was too broad for ordinary prose).
+    const sameRun = kept.some((k) => sharesPlaceLineRun(s, k));
     const sameMove = move && seenMove;
     const sameHits = !!hitKey && seenHitKeys.has(hitKey);
     if ((restatesPrior && (event || kept.some((k) => isEvent(k)))) || sameMove || sameHits || sameRun) {

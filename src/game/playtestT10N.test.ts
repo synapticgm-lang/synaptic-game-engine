@@ -37,7 +37,7 @@ function base(over: Partial<GameState> = {}): GameState {
       ...(over.sceneFacts as object),
     },
     worldHour: 19,
-  } as GameState;
+  } as unknown as GameState;
 }
 
 function checkOf(state: GameState, playerInput: string): DraftCheck {
@@ -200,6 +200,7 @@ describe('T10N grounding and player-facing text', () => {
       log: [
         {
           id: 'g1',
+          turn: 1,
           role: 'gm',
           content:
             'Ahead, the grey stone roof of Greyhollow Church sat low against the pale afternoon sky, still a long walk off.',
