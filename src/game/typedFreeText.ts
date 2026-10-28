@@ -257,11 +257,14 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
     const check = runPlayerCheck(state, intent, clause);
     const outcome = check.isSuccess ? 'success' : 'failure';
     const fact = `Action resolved: ${check.label || intent.label} — ${outcome}.`;
+    const roll = check.codeResolutionText || fact;
+    // T10I: every clause still reaches the writer (Must narrate), even when a check fails —
+    // free text is never rejected; a roll outcome alone must not drop the act.
     return {
       tried,
       done: true,
       reason: outcome,
-      engineResult: check.codeResolutionText || fact,
+      engineResult: `${clauseWriterFact(step, false)} ${roll}`.trim(),
       economySlot: slot,
     };
   }

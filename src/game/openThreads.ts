@@ -30,11 +30,37 @@ import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
 
 /**
- * Want used on Follow-up / Ask-about chips: this person's bound goal target (bible hook / recorded
- * want), not the role-template `need` that was preferred first and reused "a buyer who pays" on priests.
+ * Bible hooks are GM notes shaped `Label: essay` (Secret / Moral anchor / Obstacle…).
+ * Structural colon-label — not a deny-list of words. Never a player chip topic.
+ */
+export function isGmFacingNote(text: string): boolean {
+  return /^[A-Za-z][A-Za-z0-9 /&'-]{0,40}:\s+\S/.test((text ?? '').trim());
+}
+
+/** Spoken motive line → short chip topic ("I only want the town calm" → "the town calm"). */
+export function chipWantFromMotiveLine(line: string): string {
+  const t = (line ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return '';
+  const m = t.match(/^I (?:only )?want\s+(.+)$/i);
+  let body = (m?.[1] ?? t).trim();
+  const cut = body.search(/[,.]/);
+  if (cut > 8) body = body.slice(0, cut).trim();
+  return body.slice(0, 80);
+}
+
+/**
+ * Want used on Follow-up / Ask-about chips: player-facing topic only.
+ * Bound goal target when it is not a GM hook note; else motive line; never Secret:/Moral-anchor essays
+ * and never the shared informant need "a buyer who pays" when a real want exists.
  */
 export function npcChipWant(m: NpcMemory): string {
-  return (m.goal?.target ?? m.need ?? '').trim();
+  const target = (m.goal?.target ?? '').trim();
+  if (target && !isGmFacingNote(target)) return target;
+  const motive = chipWantFromMotiveLine(m.motiveLines?.[0] ?? '');
+  if (motive) return motive;
+  const need = (m.need ?? '').trim();
+  if (need && !isGmFacingNote(need)) return need;
+  return '';
 }
 
 /** Whether the NPC for an agenda / npc-goal thread is in the current scene (chip compiler gate). */
