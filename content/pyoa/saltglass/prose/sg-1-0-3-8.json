@@ -1,0 +1,85 @@
+{
+ "batch": "sg-1-0-3-8",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-1-0-3-8": {
+   "title": "The Sulfur Vent",
+   "text": "Grey bubbles rupture with a wet pop in the sulfurous mud-pot, releasing a thick breath of rotten eggs into the dry air. A lonely hermit squats upon a flat slab of shale nearby, fingers trembling as he offers a pinch of crumpled, sun-baked salt-bush leaves in exchange for a single moisture-filled swallow from the water-skin at your belt. His eyes are milky with age, yet they follow the shape of your canvas pack with sharp intent.\n\nYou consider whether to trade your water for his bitter greens or keep moving along the gravel trail before the sun reaches its zenith.",
+   "exits": [
+    "Trade a mouthful of water for the grey leaves.",
+    "Refuse the trade and step past the bubbling vent."
+   ]
+  },
+  "sg-1-0-3-9": {
+   "title": "The Limestone Arch",
+   "text": "Wind howls through the hollow cavity of the limestone arch, scouring away the loose sand and leaving only bare, pale rock. A family of displaced herders huddles close together around a cold, unlit hearth of blackened stones, watching your approach with heavy, guarded silence. Their sheep-dogs lie motionless at their feet, too weak from the drought to raise their heads as you draw near.",
+   "exits": [
+    "Walk past the silent herders without breaking stride."
+   ]
+  },
+  "sg-1-0-3-10": {
+   "title": "The Broken Axle",
+   "text": "A heavy iron cart-axle lies snapped across the gravel track like the limb of some fallen beast, its spokes half-buried in drifting white dust. On this high ridge, the wind tears fiercely at your cloak, stripping the salt crust from the sparse desert bushes and pelting your boots with tiny pebbles. The shattered remains of the wagon offer no shelter, only a grim reminder of how heavy loads become unbearable under this unsparing sky.",
+   "exits": [
+    "Step carefully around the rusted iron and press onward.",
+    "Search the wreckage for any dropped tools or usable metal."
+   ]
+  },
+  "sg-1-0-3-11": {
+   "title": "The Cliffside Basket",
+   "text": "Orange mineral stains streak the grey cliff face above like dried rust, dripping down toward a weathered wicker basket suspended from a thick iron hook. Pilgrims have left this token for passing runners, and inside lie a handful of wrinkled, sugar-crusted dates wrapped in greasy parchment. The shade beneath the overhang offers a brief respite from the relentless glare bouncing off the salt below.",
+   "exits": [
+    "Take a few dates from the hanging basket.",
+    "Leave the pilgrims' offering untouched and keep walking."
+   ]
+  },
+  "sg-1-0-3-12": {
+   "title": "The Dry Sinkhole",
+   "text": "The white crust around the dry sinkhole ripples in concentric circles like frozen water, marking where the earth once swallowed a careless traveler whole. At the bottom of the depression, a bleached mule skeleton grins up toward the cloudless, blazing vault of the sky with empty eye sockets. The air here smells faintly of ancient dust and baked lime, devoid of any living sound.",
+   "exits": [
+    "Circle wide around the rim to avoid the crumbling edge."
+   ]
+  },
+  "sg-1-0-4-0": {
+   "title": "The Gypsum Canyons",
+   "text": "Two towering dunes of pure white gypsum pinch the rim-road into a narrow corridor, reflecting the blinding morning glare with searing intensity. Deeply gouged tracks from heavy iron-shod salt-wagons converge here into a single rutted trough that cuts straight through the pale sand. The passage feels like walking through the throat of an hourglass where time itself has turned to salt.",
+   "exits": [
+    "Follow the deep wagon ruts deeper into the narrows."
+   ]
+  },
+  "sg-1-0-4-1": {
+   "title": "The Abandoned Toll-Gate",
+   "text": "Three rusted iron drop-bars hang crooked from their snapped chains, swinging gently in the hot breeze before the abandoned toll-gate. The gravel apron is littered with discarded copper tallies and broken ledger boards buried half an inch deep in fine dust. Beyond this broken threshold, the open basin spreads out in a blinding sheet of white all the way to the distant horizon.",
+   "exits": [
+    "Step beneath the crooked iron bars into the open basin.",
+    "Pause to search the littered guardhouse floor for dropped coin.",
+    "Turn back to check the side-tracks leading along the ridge."
+   ]
+  },
+  "sg-1-0-4-2": {
+   "title": "The Alum Spring",
+   "text": "Warm mineral water bubbles up from a jagged fissure in the rock, smelling faintly of alum and leaving a yellow crust along its miniature banks. A weathered wooden sign, bleached grey by decades of sun, points its splintered finger across four days of salt toward the central observatory. The heat rising from the spring wraps around your ankles like a physical weight.",
+   "exits": [
+    "Follow the wooden sign's pointing finger onto the salt flats.",
+    "Stoop to cool your burning hands in the mineral stream."
+   ]
+  },
+  "sg-1-0-4-3": {
+   "title": "The Bronze Vane",
+   "text": "A colossal bronze weather-vane shaped like a winged lizard towers overhead, its frozen tail pointing permanently toward the west while the pivot below is rusted solid. Beneath its massive shadow, a tangled cluster of discarded travelers' bedrolls marks the last sheltered campsite before the true desert begins. A few cold embers lie scattered in the dirt among empty oil flasks and shredded sandals.",
+   "exits": [
+    "Inspect the abandoned bedrolls for anything useful left behind.",
+    "Walk past the silent monument and step out onto the crust."
+   ]
+  },
+  "sg-1-0-4-4": {
+   "title": "The Limestone Terrace",
+   "text": "The limestone terrace breaks away abruptly into a sheer drop over the grey salt-flats, offering a final, sweeping panorama of the dead sea below. A stone bench carved by forgotten engineers sits near the edge, its surface worn smooth by the rumps of countless weary pilgrims who sat here to gaze at the shimmering mirages. From up here, Prism looks like a cluster of jagged glass teeth stuck in a bowl of milk.",
+   "exits": [
+    "Rest your aching legs briefly on the carved stone bench.",
+    "Pick your way down the steep goat trail toward the flats."
+   ]
+  }
+ },
+ "missing": []
+}
