@@ -1,8 +1,8 @@
 # Saltglass book status
 
-Updated: 2026-10-28T13:00:22.287Z (UTC; London = UTC+0 on this date)
-Last event: merge
-Sections with prose: 901/1000
+Updated: 2026-10-28T16:26:16.753Z (UTC; London = UTC+0 on this date)
+Last event: complete
+Sections with prose: 991/1000
 Outline parts done: 18/18
 Next section to write (story order): sg-3-2-3-1
 Model: Flash-Lite only (verified on the mode picker before every call)
