@@ -1,0 +1,84 @@
+{
+ "batch": "sg-3-1-5-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-1-5-0": {
+   "title": "The Spiralling Glass Stairs",
+   "text": "Sharp facets of green and amber crystal bite into your palms as you hoist yourself up the steep flight of spiralling glass stairs. Each turn of the helix brings you closer to the humming signal-tower where the Glasswrights send their blinding messages across the dried basin. Your ember-lamp swings at your hip, casting a warm orange glow against the cold, transparent risers. Far below, the salt-flats stretch away like a frozen ocean under the glare of the desert sun.",
+   "exits": [
+    "Ascend the remaining steps and enter the tower"
+   ]
+  },
+  "sg-3-1-5-1": {
+   "title": "The Bronze Door Ajar",
+   "text": "Heavy metal hinges groan quietly as you slip past a weathered bronze door standing ajar at the base of the signal-tower. A sharp beam of white light cuts through the dim interior, illuminating floating motes of salt dust and the faint scent of ozone. Your fingers brush the cold ceramic weight of the Seedkey hidden safely in your coat. Outside, the dry winds of the basin rattle against the metal frame like loose teeth.",
+   "exits": [
+    "Step through the glowing threshold into the passage"
+   ]
+  },
+  "sg-3-1-5-2": {
+   "title": "The Sweeping Mirror Flash",
+   "text": "Sudden brilliance floods the gallery as a rotating mirror-flash sweeps across the high wall just inches above your head. You press your spine flat against the warm glass masonry, holding your breath while the rhythmic clatter of clockwork machinery echoes overhead. The heat of the concentrated light warms the shoulder of your coat. When the beam swings away toward the western rim, the narrow corridor ahead opens up in the sudden gloom.",
+   "exits": [
+    "Push forward along the gallery while the blind spot holds"
+   ]
+  },
+  "sg-3-1-5-3": {
+   "title": "The Ringing Threshold",
+   "text": "Crisp and musical, the tower steps ring sharply under your heavy boots as you climb toward the glowing sanctum of the Glasswrights. The air here tastes of heated sand and old copper, humming with a vibration that makes your teeth ache in time with the distant signal-lamps. Every surface around you reflects your tired face a hundred times over in warped green glass. You adjust the strap of your banked lantern and prepare to face whoever waits within the light.",
+   "exits": [
+    "Step across the threshold to meet the sentry"
+   ]
+  },
+  "sg-d-3-1": {
+   "title": "The Glass Chute",
+   "text": "Desperate to outrun the approaching patrol, you throw yourself onto a steep, polished chute of fused glass that drops sharply into the dark heart of the ruined city. Without a brake to slow your descent, you gather terrifying speed as the slick walls blur into a single blinding streak of white and amber. Your ember-lamp strikes a razor-sharp protruding joint with a sharp crack, shattering the glass chimney and dowsing your coals in an instant. Total darkness swallows you as you slide helplessly into the freezing abyss.",
+   "exits": []
+  },
+  "sg-3-c2": {
+   "title": "The Signal-Tower Sanctum",
+   "text": "Within the echoing heart of the signal-tower, a robed Glasswright pauses from adjusting a massive brass collimator and turns a pair of pale, lens-ground spectacles toward you. The artisan traces a complex pattern in the air with a polished silver rod, offering to teach you the intricate art of mirror-signal speech before the next watch changes. Such knowledge would unlock the silent language of the spires, but the process demands a full day of study that you can ill afford with the monsoon creeping closer across the basin.",
+   "exits": [
+    "Spend twenty-four hours learning the mirror-signals",
+    "Leave the tower immediately without the lessons"
+   ]
+  },
+  "sg-3-2-0-0": {
+   "title": "The Singing Girder",
+   "text": "Slender ribs of old spires lean against one another like the bones of ancient leviathans, forming a precarious bridge high above the salt floor. You balance carefully across a singing glass girder that hums with a deep, musical resonance every time a gust of the salt-gale strikes its flank. Your boots slide slightly on the smooth surface, demanding every ounce of your concentration as you hurry across the dizzying gap.",
+   "exits": [
+    "Follow the narrow rib toward the eastern terrace",
+    "Drop down into the shadowed alcove beneath the span",
+    "Swing across the chasm toward the industrial ruins"
+   ]
+  },
+  "sg-3-2-0-1": {
+   "title": "The Cracked Prism Courtyard",
+   "text": "Shards of prismatic glass crunch under your feet as you step into a sun-bleached courtyard enclosed by leaning glass monoliths. A scavenger tinker with a patched canvas eyepatch steps out from behind a dry fountain, demanding a sliver of your lantern-fuel as a toll before letting you pass. You weigh the value of your precious banked coals against the cost of a confrontation in this sun-baked maze.",
+   "exits": [
+    "Offer a trade since your debts are entirely clear",
+    "Turn aside to skirt the dry obsidian fountain",
+    "Pick your way through the chiming conservatory crystal"
+   ]
+  },
+  "sg-3-2-1-0": {
+   "title": "The Melted Canopy",
+   "text": "Layers of ancient lenses have melted together over the street into a thick, distorted canopy that filters the desert glare into a sickly violet twilight. An old mirror-sentry named Vane sits on an upturned salt-block, sharpening a glass scraper and warning you that the upper viaducts hum with a dangerous, shattering resonance. The air here tastes dry and metallic, smelling faintly of ozone and old copper wire.",
+   "exits": [
+    "Crawl past the cobalt tunnel of the glass-eaters",
+    "Navigate the broken mirror-post on the amber terrace",
+    "Squeeze through the hollow statue of the queen"
+   ]
+  },
+  "sg-3-2-1-1": {
+   "title": "The Crystal Dome Maze",
+   "text": "Vaulted ribs of clear crystal arch overhead to form a hollow dome that traps the heat of the midday sun like an oven. You navigate a winding maze of razor-sharp shards, your boots crunching softly on the crystalline dust while distant signal-flashes blink cryptic warnings from unseen towers. The shadows shift strangely around you, casting long, fractured reflections that seem to move independently of your own body.",
+   "exits": [
+    "Cross the shimmering floor of white salt-crust",
+    "Use the discarded miner cart to bridge the trench",
+    "Follow the warm glow of your steady ember-lamp"
+   ]
+  }
+ },
+ "missing": []
+}

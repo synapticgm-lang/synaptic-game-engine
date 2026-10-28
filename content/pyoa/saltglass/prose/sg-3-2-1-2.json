@@ -1,0 +1,93 @@
+{
+ "batch": "sg-3-2-1-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-2-1-2": {
+   "title": "The Green Glass Chasm",
+   "text": "Jagged plates of fused green glass form a sheer drop above the lower industrial terraces. A rusted pulley-crane hangs out over the emptiness, its iron cable groaning in the dry wind. You test the swinging arm with a gloved hand, weighing whether its momentum can carry you across the gap before the rusted pivot snaps.\n\nTo your left, a tilting gallery of concave panes distorts your sight into dizzying waves, while a nervous scavenger on a quartz balcony fumbles with a heavy sack of grinding sand. Ahead, the hollow ribs of an ancient dome offer a narrow, razor-sharp scramble upward.",
+   "exits": [
+    "Swing across the chasm on the rusted crane",
+    "Slip past the tilting gallery of concave panes",
+    "Scramble up through the hollow ribs of the dome"
+   ]
+  },
+  "sg-3-2-1-3": {
+   "title": "The Grinder's Gift",
+   "text": "Your pockets are entirely unburdened by debts or borrowed coin, leaving your name clean among the folk of the shard cities. A hospitable lens-grinder nods at your free standing and gifts you an intact optic lens from a velvet pouch. Looking through its polished curve reveals hidden footholds shimmering in the glowing desert dust, bypassing the usual dangers of the climb.\n\nThe path ahead branches toward a steep, sun-baked vault or a narrow drop beside a dry cascade of violet crystals.",
+   "exits": [
+    "Climb upward using the gifted optic lens",
+    "Descend past the sun-trapping mirror-frame",
+    "Squeeze through the hollow pillar of stacked spectacles"
+   ]
+  },
+  "sg-3-2-1-4": {
+   "title": "The Obsidian Fountain",
+   "text": "A dry obsidian fountain marks the plaza, its stone basin caked with grey salt and drifting soot. A salt-crusted trader steps into your path, waving weathered hands and warning of a collapsing archway just ahead that could trap unwary runners forever. His eyes dart toward your banked ember-lamp as he tries to steer you toward alternative routes.\n\nYou can skirt the fountain toward a slender bridge of spun glass-wool, slip under a smoky quartz ceiling smelling of old kilns, or ring your way through a courtyard of hollow crystal bells.",
+   "exits": [
+    "Take the detour past the violet mirror-frame",
+    "Cross carefully over the spun glass-wool bridge",
+    "Duck beneath the smoky quartz vaulted ceiling",
+    "Pick your way through the courtyard of hollow bells"
+   ]
+  },
+  "sg-3-2-1-5": {
+   "title": "The Singing Conservatory",
+   "text": "Fine crystalline wind-wires stretch across the ruined conservatory, humming a low, resonant note whenever the desert breeze sweeps through the shattered panes. Every movement threatens to brush against the vibrating threads and broadcast your position across the silent terraces. You tuck your cloak tightly around your shoulders and watch the shifting shadows of the glass-wrought columns.\n\nTo the left, a tall monolith of magnifying glass focuses intense sunbeams onto the salt crust, while a sunken cellar filled with preserved optic fluid waits further down.",
+   "exits": [
+    "Step lightly through the courtyard of hanging bells",
+    "Dodge the scorched salt near the magnifying monolith",
+    "Wade through the sunken cellar of heavy optic fluid"
+   ]
+  },
+  "sg-3-2-2-0": {
+   "title": "The Cobalt Tunnel",
+   "text": "Cool shadows wash over you inside a narrow tunnel of cobalt glass, far from the blinding glare of the basin. Your boots scrape softly against the pavement, disturbing the nested shells of glass-eaters whose crystalline husks mimic the shattered floor tiles. You hold your breath, stepping with extreme care to avoid crunching any hidden carapace underfoot.\n\nThe passage eventually splits, leading either toward a crumbling parapet of sea-green glass or deep into a grand amphitheatre of whispering echoes.",
+   "exits": [
+    "Head toward the crumbling sea-green parapet",
+    "Venture into the amphitheatre of whispering echoes"
+   ]
+  },
+  "sg-3-2-2-1": {
+   "title": "The Amber Terrace",
+   "text": "Golden light catches on a suspended terrace of amber mosaic, where a broken mirror-post flashes erratic, blinding signals across the plaza. The erratic beams bounce from wall to wall, making it difficult to gauge distances or spot potential obstacles in your path. You keep your head down against the glare, feeling the raw heat of the focused reflections bite into your cheek.\n\nYou can press onward toward a crumbling sea-green parapet, slip into an echo-filled amphitheatre, or test your balance on a network of rusted iron chains strung between distant glass spires.",
+   "exits": [
+    "Press onward toward the sea-green parapet",
+    "Dodge into the amphitheatre of whispering echoes",
+    "Walk the rusted iron chains between glass spires"
+   ]
+  },
+  "sg-3-2-2-2": {
+   "title": "The Queen's Joint",
+   "text": "A colossal hollow statue of an Old Lensfolk queen dominates the square, her stone-and-glass robes frozen in an eternal cascade. Squeezing through a rusted joint in her metal corset allows you to bypass a toll-lord checkpoint stationed at the main archway. The interior smells of stagnant air and ancient dust, offering a safe, cramped tunnel out of sight.\n\nEmerging on the far side puts you right above a network of hanging iron chains or near a dark alley where distant mirror-signals flare against the masonry.",
+   "exits": [
+    "Cross the rusted iron chains between spires",
+    "Hide in the dark alley beneath hanging prisms"
+   ]
+  },
+  "sg-3-2-2-3": {
+   "title": "The Salt Floor",
+   "text": "White salt-crust spreads in a blinding sheet across the open avenue, crunching loudly beneath your boots with every stride. Unseen watchers murmur from the hollow towers flanking the square, their voices carrying ghost-like over the flat expanse. You clutch your seedkey tightly in your pocket, maintaining a steady, unhurried pace despite the exposure.\n\nThe path ahead leads either into the echoing vaults of a grand amphitheatre or toward a dark alley shadowed by hanging glass prisms.",
+   "exits": [
+    "Enter the grand amphitheatre of whispering echoes",
+    "Slip away into the dark alley of hanging prisms"
+   ]
+  },
+  "sg-3-2-2-4": {
+   "title": "The Shutter Cart",
+   "text": "A discarded miner cart sits beneath a shattered solar arch, its iron wheels rusted fast to the rails. Using its wooden bed as a makeshift bridge lets you span a treacherous trench of broken crystal that cuts across the thoroughfare. The jagged shards below glitter with a sharp, unkind light.\n\nAcross the gap, the route divides toward an indoor workshop heavy with metallic fumes or a steep slope covered in loose salt and tiny glass beads.",
+   "exits": [
+    "Step into the workshop of frozen mercury vats",
+    "Climb the exhausting slope of granular salt"
+   ]
+  },
+  "sg-3-2-2-5": {
+   "title": "The Solder Seam",
+   "text": "Your ember-lamp burns with a steady, comforting warmth, casting a rich orange glow against the grey masonry. The flickering light catches a faint, dull gleam within a narrow corner: a hidden vein of soft lead solder framing a secret crawlway long forgotten by the city's scavengers. You push against the pliable metal with your fingers, finding it gives way just enough to admit a determined runner.\n\nThe concealed passage leads toward either a workshop filled with metallic fumes or a steep, sliding slope of salt and glass beads.",
+   "exits": [
+    "Crawl through into the mercury workshop",
+    "Ascend the sliding slope of salt and beads"
+   ]
+  }
+ },
+ "missing": []
+}
