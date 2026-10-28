@@ -1,0 +1,92 @@
+{
+ "batch": "td-2-166",
+ "sections": {
+  "td-2-166": {
+   "title": "The Giant Bivalve",
+   "text": "Salt-encrusted ribs of a rib-ribboned galleon jut from the grey muck like old teeth, and beside them lies an iron-grey shell the size of a tavern table. Its jagged lips are clamped shut against the dry air, weeping a thin trickle of brackish foam that smells of ancient mud and iodine. You wedge the crook of your heavy crowbar into the living seam, leaning your entire weight upon the shaft until your shoulder muscles shriek in protest. Slowly, grudgingly, the massive valves part an inch, revealing a wet cavern of grey-blue nacre where a sphere as dark as a wet slate stone rests in the fleshy folds.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wrench the iron against the shell"
+   ]
+  },
+  "td-2-167": {
+   "title": "Deep Shell Secrets",
+   "text": "Heedless of the suction that threatens to snap your wrists, you dig your fingers deeper into the cold, pulsing meat of the bivalve to snare the prize before the stubborn shell snaps shut again. The brute thing shudders in the muck, exhaling a foul gust of stagnant water that coats your oilskins in a film of grey silt. Your boots slide an inch in the ooze, but you wrench your arm backward with a savage grunt, tearing the heavy pearl free from its ligament just as the great jaws slam together with the hollow crack of a falling spar.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the pearl in your pouch"
+   ]
+  },
+  "td-2-168": {
+   "title": "Forcing the Great Shell",
+   "text": "Mud bubbles sluggishly around the perimeter of the titanic shell where it is half-buried in the floor of the Low. Bending low, you plant both heels against the ribbed underside and jam your bare fingers straight into the slimy, twitching gap of the hinge. The beastly thing fights back with the hydraulic heft of an incoming tide, its massive muscle contracting to crush your digits into bone meal while the suction tries to drag your knuckles into the dark. You strain every tendon in your forearms, summoning the raw muscle needed to wrench the shell apart before the trap closes for good.",
+   "check": "Wrench the stubborn shell open",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-169": {
+   "title": "Crushed in the Grasp",
+   "text": "The bivalve wins the contest with a brutal, sickening snap, its heavy calcareous lips slamming together on your hand before you can yank it clear. A jagged edge of shell slices straight through your thick leather glove and scores deep across your knuckles, drawing a bright line of crimson that mixes instantly with the grey brine. You stagger backward into the stinking silt with a curse, nursing a bruised and bleeding hand that throbs with every beat of your heart, leaving the prize locked tight in the belly of the monster.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stagger back from the trap"
+   ]
+  },
+  "td-2-170": {
+   "title": "The Midnight Sphere",
+   "text": "Whether you pried the prize free with clean strength or tore it loose with skin scraped raw against the jagged nacre, your fingers finally close around the heavy, cold weight of the anomaly. It is no true pearl, but a dense globule of hardened brine and deep-sea phosphorescence that pulses with an oily, midnight sheen when held up to the pale sky of the Low. Slip it into your waxed canvas pouch, where its faint internal warmth presses against your ribs like the heartbeat of something drowned and forgotten.",
+   "check": "",
+   "grant": "Flawless black pearl",
+   "exits": [
+    "Follow the map downward"
+   ]
+  },
+  "td-2-171": {
+   "title": "The Phosphor Grotto",
+   "text": "A cavernous cleft opens in the side of a sunken lighthouse tower, its stone walls furred with thick patches of bioluminescent fungi that pulse in sickly rings of amber and sea-green. Wisps of heavy, sweet-scented vapour curl from the moss, smelling of fermented kelp and old dreams, heavy enough to make your eyelids droop if you breathe too deep. You pull the wet wool of your scarf across your mouth and nose, stepping carefully over the bleached ribcage of a pilot whale that serves as the threshold to the descent.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the glowing gloom"
+   ]
+  },
+  "td-2-172": {
+   "title": "Down the Stained Steps",
+   "text": "Slick stone steps wind downward into the hull of the wrecked tower, coated in a greasy film of luminescent slime that glows faintly beneath the soles of your wading boots. Every surface is damp and weeping, and far below in the dark, a slow rhythmic dripping echoes like a clock ticking down the hours of the stranded sea. You keep one hand pressed firmly against the weeping masonry, feeling the cold salt sweat of the stones as you navigate the treacherous switchbacks of the shaft.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the dripping echoes inward"
+   ]
+  },
+  "td-2-173": {
+   "title": "Navigating the Spores",
+   "text": "Thick carpets of pale blue lichen choke the narrow gallery ahead, releasing microscopic clouds of luminous dust whenever your boots brush against the floorboards. Inhaling even a lungful of the shimmering smoke will fill your head with waking dreams of drowning cities and voices calling your name from beneath the ice. You narrow your eyes against the glare, picking your footing with extreme care, testing every inch of the stone floor with the tip of your boarding axe to find the firmest patches of ground before committing your weight.",
+   "check": "Thread the spore-choked gallery",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-174": {
+   "title": "Breath of the Fungi",
+   "text": "A sudden gust of warm air from a lower vent stirs the blue carpet, billowing a thick cloud of luminous spores directly into your face before you can turn away. You cough violently, your chest burning as the hallucinogenic dust coats your throat, filling your ears with the phantom roar of breakers crashing over your head. By the time you stagger out of the cloud and wipe your streaming eyes, your head is spinning with a dull ache, and you have lost precious minutes stumbling blind against the damp stone walls.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Shake off the clinging vapours"
+   ]
+  },
+  "td-2-175": {
+   "title": "The Hidden Alcove",
+   "text": "Whether you picked your way through the shimmering haze with cool precision or blundered through the worst of the fog with ringing ears, you reach the far side of the grotto and find a dry, sheltered alcove tucked behind an iron bulkhead. The air here is still and free of the sweet, rotting reek of the spores, offering a safe place to catch your breath away from the scouring wind of the seabed. Tucked into a crevice in the stonework, forgotten by whoever fled the tower before the tide vanished, lies a dry bundle wrapped in oilskin.",
+   "check": "",
+   "grant": "Dry oilskin parcel",
+   "exits": [
+    "Follow the map downward"
+   ]
+  }
+ },
+ "missing": []
+}

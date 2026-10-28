@@ -177,3 +177,19 @@
 2026-10-28T09:10:53.856Z ask prose td-2-111..td-2-120 items=10 attempt=1
 2026-10-28T09:11:30.094Z done td-2-111: 10/10
 2026-10-28T09:11:30.095Z ask prose td-2-121..td-2-132 items=12 attempt=0
+2026-10-28T09:11:57.697Z   reject td-2-125: words 48
+2026-10-28T09:11:57.698Z   reject td-2-132: words 53
+2026-10-28T09:12:05.704Z ask prose td-2-121..td-2-132 items=2 attempt=1
+2026-10-28T09:12:33.465Z done td-2-121: 12/12
+2026-10-28T09:12:33.467Z ask prose td-2-133..td-2-142 items=10 attempt=0
+2026-10-28T09:13:06.347Z done td-2-133: 10/10
+2026-10-28T09:13:06.349Z ask prose td-2-143..td-2-153 items=11 attempt=0
+2026-10-28T09:13:37.007Z done td-2-143: 11/11
+2026-10-28T09:13:37.012Z ask prose td-2-154..td-2-165 items=12 attempt=0
+2026-10-28T09:14:14.238Z done td-2-154: 12/12
+2026-10-28T09:14:14.241Z ask prose td-2-166..td-2-175 items=10 attempt=0
+2026-10-28T09:14:48.082Z done td-2-166: 10/10
+2026-10-28T09:14:48.086Z ask prose td-2-176..td-2-185 items=10 attempt=0
+2026-10-28T09:15:11.241Z   reject td-2-177: exit 1 label,exit 2 label,exit 3 label,exit 4 label,exit 5 label,exit 6 label
+2026-10-28T09:15:11.242Z   reject td-2-181: words 52
+2026-10-28T09:15:19.248Z ask prose td-2-176..td-2-185 items=2 attempt=1

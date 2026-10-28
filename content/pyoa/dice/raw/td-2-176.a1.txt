@@ -1,0 +1,18 @@
+Gemini said
+
+@@SECTION td-2-177
+TITLE: The Sunken Stair
+TEXT: Spiralling deep into the damp bedrock, the Sunken Stair drops away into absolute gloom, its basalt treads slick with salt-crust and age-old grease. Every footfall echoes against walls carved with the faded crests of forgotten Tidewardens, who left their iron marks to rot long before Gullmouth took its first breath of brine. Somewhere far below, the great brass teeth of the Meridian Gear grind against the dark, calling to anyone desperate enough to command the returning tide. // Shadows twist along the winding drop, offering half a dozen paths through the fractured stonework where crumbling masonry and rusted machinery block the descent. You test the air for the smell of old oil and damp iron, weighing each hazard before you commit your weight to the stairs.
+EXIT 1: Descend by the pressure-slab staircase
+EXIT 2: Squeeze through the narrow rock crevice
+EXIT 3: Heave the fallen stone pillar aside
+EXIT 4: Leap across the gaping stair chasm
+EXIT 5: Lower heavy gear with the pulley
+EXIT 6: Approach the great brass Meridian Gear
+@@END
+@@SECTION td-2-181
+TITLE: Safe Passage Secured
+TEXT: Metal scrapes softly against stone as your fingers find the hidden seam of the pressure plate, depressing the bronze toggle just in time to hear a distant internal click. The trap settles harmlessly into its groove, leaving the path ahead clear of dart-holes and rusted tripwires. Tucked in the recess behind the mechanism rests a small, heavy flask sealed with red wax, smelling sharply of distilled turpentine and cold fat. You pocket the prize and wipe the greasy black film from your palms, breathing out a slow plume of salted air as the stairs open further into the dark.
+GRANT: a vial of alchemical fire
+EXIT 1: Approach the great brass Meridian Gear
+@@END

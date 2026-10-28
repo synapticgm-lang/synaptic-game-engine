@@ -1,0 +1,14 @@
+Gemini said
+
+@@SECTION td-2-125
+TITLE: The Salt-Sealed Oath
+TEXT: Coarse crystals of grey sea-salt are ground into your forearms until the skin breaks and the blood runs thin and clear, mingling with the sting of the deep. You press your palms against the brazier's iron rim, biting your tongue until the copper taste fills your mouth, refusing to grant the robed pilgrims the satisfaction of a single cry. Through the haze of white smoke and burning brine, an elder steps forward with hands like dried kelp, pressing a cold, thumb-thick drop of deep-sea glass into your clenched fist. The heavy green lens catches no light of its own, yet it hums faintly against your pulse like a distant heartbeat trapped in ice.
+GRANT: amulet of deep-sea glass
+EXIT 1: Leave the camp for the pilgrim trail
+@@END
+@@SECTION td-2-132
+TITLE: The Price of Purity
+TEXT: Heavy iron-shod boots pace slowly across the creaking timber floorboards just inches from your hiding place behind the stacked water barrels, the guard's suspicion hanging as thick in the air as the salt-dust. You steady your breathing, meeting his narrowed gaze with an easy, tooth-rotted grin and a casual lie about checking leaks for the Brineholder magistracy. He lingers, his hand resting heavily on the pommel of a brass-hilted cudgel, before a shouted order from the upper tier draws him away into the shadows. When the coast is clear, you slip your fingers into the canvas sack and draw out a tin-plated canteen, its sloshing weight heavy with sweet, untainted water drawn straight from the deep-city cisterns.
+GRANT: canteen of pure water
+EXIT 1: Move out toward the stilt-city outskirts
+@@END
