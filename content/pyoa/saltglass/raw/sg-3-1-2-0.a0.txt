@@ -1,0 +1,67 @@
+Gemini said
+
+@@SECTION sg-3-1-2-0
+TITLE: The Court of Bells
+TEXT: Shattered crystal bells carpet a sun-baked courtyard, chiming faintly with every step you take across the alkaline dust. A lone beggar named Sola sits amid the crystal fragments, clutching a broken brass sextant to her chest while holding out a cracked clay cup and pleading for a single drop of water. The dry glare bounces off the sharp glass shards around you, making the air shimmer with heat. // You must decide how to respond to the beggar before pressing deeper into the labyrinth of shards.
+EXIT 1: Listen to the frantic courier
+EXIT 2: Watch the skeletal street-cleaner sweep
+EXIT 3: Hear the old woman's salt-crust warning
+@@END
+@@SECTION sg-3-1-2-1
+TITLE: The Slag Tunnel
+TEXT: Low walls of purple slag close in around your shoulders, radiating a dull, baked warmth that smells of sulfur and old smoke. The floor beneath your boots hums with steady, subterranean vibrations, as if massive gears are turning deep within the dead city's foundations. Every breath tastes of metallic dust, urging you to keep moving through the dark, cramped conduit before the heat becomes too heavy to bear. // Ahead, the passage splits into narrow, uninviting fractures in the fused rock.
+EXIT 1: Squeeze through the jagged green bottles
+@@END
+@@SECTION sg-3-1-2-2
+TITLE: The Solitary Winch
+TEXT: Travelling completely on your own leaves your senses unburdened by conversation, allowing you to notice the small, neglected details that a companion would surely talk right over. Tucked behind a rusted iron bracket hangs an unsecured winch, its hempen rope frayed but taut enough to bear a climber's weight. Pulling the heavy iron lever swings you cleanly past the perimeter of the toll barrier without triggering the alarm bells. // You dangle quietly above the alleyway, weighing your next movement.
+EXIT 1: Squeeze through the jagged green bottles
+EXIT 2: Watch the skeletal street-cleaner sweep
+@@END
+@@SECTION sg-3-1-2-3
+TITLE: The Lenswrights' Dispute
+TEXT: Shouts echo off the curved walls as a team of Glasswright apprentices argue noisily over the refractive index of a massive, multi-ton lens-block suspended overhead by heavy chains. Their heated gestures punctuate a fierce debate about how the upcoming monsoon might warp the glass. The massive lens sways slightly in the rising thermal draft, casting dizzying prisms of violet light across your boots. // You must skirt around the arguing apprentices to find a safer route.
+EXIT 1: Squeeze through the jagged green bottles
+EXIT 2: Cross the humming copper bridge
+EXIT 3: Hear the old woman's salt-crust warning
+@@END
+@@SECTION sg-3-1-2-4
+TITLE: The Lead Rib
+TEXT: A narrow rib of twisted lead provides the only path across a yawning chasm filled with thousands of razor-sharp quartz needles pointing skyward like teeth. Balancing precariously on the slick metal, you keep your arms outstretched to steady yourself against the hot desert wind whistling through the gap. One misstep would send you plunging into the glittering trap below. // You steady your breathing and prepare to make your way across the perilous span.
+EXIT 1: Watch the skeletal street-cleaner sweep
+EXIT 2: Cross the humming copper bridge
+EXIT 3: Hear the old woman's salt-crust warning
+@@END
+@@SECTION sg-3-1-2-5
+TITLE: The Signal Flash
+TEXT: A blinding white flare erupts from a distant Glasswright signal-tower, washing the ruined plaza in an intense, momentary glare. Reacting on instinct, you hurl yourself behind a thick pillar of black basalt just as the sharp crack of the light-pulse reverberates through the square. The patrol's footsteps scrape against the glass overhead, searching for intruders in the sudden gloom. // You wait in the cool shadow, deciding how to proceed.
+EXIT 1: Hide inside the hollow cistern
+EXIT 2: Leap across the glittering crystal chasm
+@@END
+@@SECTION sg-3-1-2-6
+TITLE: The Conservatory Chimes
+TEXT: Salt-encrusted wind chimes clatter mournfully in the hollow skeleton of a ruined glass conservatory where nothing green has taken root for centuries. The dry breeze rattles the metallic leaves against brittle panes, creating a lonely soundtrack in the empty ruins. The path ahead divides around a tangle of fused frames and collapsed iron arches. // You eye the remaining routes out of the silent garden.
+EXIT 1: Negotiate swift passage with the cart-driver
+EXIT 2: Trade dried dates with the weary scholar
+EXIT 3: Take the reckless glass-chute drop
+@@END
+@@SECTION sg-3-1-2-7
+TITLE: The Weaver's Canopy
+TEXT: Velvet draperies flutter softly inside a shaded alcove where an itinerant carpet-weaver offers temporary refuge from the scorching glare. You trade a mouthful of brackish water from your leather flask for permission to sit beneath the woven canopy and catch your breath. The cool fabric smells faintly of dried indigo and desert dust, offering a brief respite from the harsh exterior. // Refreshed, you look out toward the open paths waiting beyond the shelter.
+EXIT 1: Negotiate swift passage with the cart-driver
+EXIT 2: Leap across the glittering crystal chasm
+@@END
+@@SECTION sg-3-1-2-8
+TITLE: The Amber Doorway
+TEXT: A forgotten doorway crafted from thick amber glass groans ominously as shifting midday thermal currents cause the material to flex and crack. The honey-colored light pouring through the frame distorts the alley beyond into a warped, dreamlike smear of gold and shadow. Every creak of the cooling glass suggests the structure is on the verge of shattering completely. // You step quickly away from the unstable portal to choose your next direction.
+EXIT 1: Negotiate swift passage with the cart-driver
+EXIT 2: Leap across the glittering crystal chasm
+EXIT 3: Trade dried dates with the weary scholar
+@@END
+@@SECTION sg-3-1-2-9
+TITLE: The Whistle Pillars
+TEXT: Hollow pillars of pale ceramic rise on all sides, forming a dense maze that whistles a low, haunting note every time a stray gust of wind stirs through their drilled vents. The sound rolls across the deserted plaza like a chorus of low sighs, masking the crunch of your boots against the salt crust. The labyrinth opens up into three distinct avenues further ahead. // You choose an alley to escape the eerie whistling.
+EXIT 1: Follow the white-feathered gulls
+EXIT 2: Approach the engraved crystal archway
+EXIT 3: Share bitter tea with the glass-cutter
+@@END
