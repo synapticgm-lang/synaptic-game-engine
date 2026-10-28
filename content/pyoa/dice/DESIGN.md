@@ -99,3 +99,7 @@ Each region has about 8-10 bottlenecks (a mandatory scene every ~25 sections), 2
 3. Gemini (web) fills in prose in batches of 10-14 sections with the neighbourhood context, saved raw per batch and resumable. A second pass tightens style.
 4. The merged book is linted again with the dice-aware linter (new work), then a bot plays 10k random seeded runs to measure the ending distribution and how often a player is Spent.
 5. Engine work (separate Cursor job): `check` on exits, resources and tags, `visitCount`, seeded roll, result panel. Not started: waits on the 2d6 vs d20 decision and on John approving the format above.
+
+## 2d6 spec patch (28 Oct 2026)
+John chose 2d6. The rules of record are content/pyoa/DICE-RULES.md. Vigor is now STAMINA, plus LUCK; the Tide clock, Supplies, Coin and Scars in this draft are retired (not in the data). Ending flags end-<key> are set on reward exits (scripts/pyoa/align-dice1.mjs); Spent is the ungated fallback.
+

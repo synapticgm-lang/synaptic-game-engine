@@ -1,6 +1,29 @@
 {
  "title": "The Tide That Did Not Return",
  "dice": "2d6",
+ "rules": {
+  "system": "2d6",
+  "version": 1,
+  "stats": [
+   "MIGHT",
+   "WIT",
+   "NERVE",
+   "CRAFT"
+  ],
+  "statSpread": [
+   2,
+   1,
+   1,
+   0
+  ],
+  "stamina": 10,
+  "luck": 3,
+  "luckMax": 5,
+  "targets": [
+   7,
+   10
+  ]
+ },
  "start": "td-0-001",
  "nodes": [
   {
@@ -932,7 +955,10 @@
    "exits": [
     {
      "label": "Return to the chaotic docks",
-     "to": "td-1-002"
+     "to": "td-1-002",
+     "setFlags": {
+      "end-drown-gullmouth": true
+     }
     }
    ],
    "chain": "td-1-002/0",
@@ -1205,8 +1231,7 @@
      "cost": true
     }
    ],
-   "chain": "td-1-002/3",
-   "grant": "a rusted map of the sinkholes"
+   "chain": "td-1-002/3"
   },
   {
    "id": "td-1-020",
@@ -1467,8 +1492,7 @@
      "to": "td-1-033"
     }
    ],
-   "chain": "td-1-027/1",
-   "grant": "Loyal local guide Bran"
+   "chain": "td-1-027/1"
   },
   {
    "id": "td-1-033",
@@ -1614,7 +1638,7 @@
    "kind": "recovery",
    "title": "Broken Sinews",
    "brief": "You challenge the guildmaster's champion to an arm-wrestling contest, putting your back into the strain to win a coil of high-quality climbing rope.",
-   "page": "A sudden, sickening pop echoes through your shoulder joint as the champion surges upward with terrifying brute force, shattering your leverage and slamming your knuckles hard against the splintered oak. Pain flares hot and fierce down your arm, leaving your fingers numb and your pride thoroughly bruised by the heavy defeat. You stumble back from the table, clutching your throbbing wrist while the onlookers jeer and collect their winning copper coins from the bar. The loss costs you dearly in stamina and standing among the guild, forcing you to nurse your aching limb in the shadows of the smoky hall.",
+   "page": "A sudden, sickening pop echoes through your shoulder joint as the champion surges upward with terrifying brute force, shattering your leverage and slamming your knuckles hard against the splintered oak. Pain flares hot and fierce down your arm, leaving your fingers numb and your pride thoroughly bruised by the heavy defeat. You stumble back from the table, clutching your throbbing wrist while the onlookers jeer and collect their winning copper coins from the bar. The loss costs you dearly in strength and standing among the guild, forcing you to nurse your aching limb in the shadows of the smoky hall.",
    "exits": [
     {
      "label": "Retreat to lick your wounds in silence",
@@ -2260,7 +2284,10 @@
    "exits": [
     {
      "label": "Climb back to the deck",
-     "to": "td-1-065"
+     "to": "td-1-065",
+     "setFlags": {
+      "end-wreckers-tide": true
+     }
     }
    ],
    "chain": "td-1-065/0",
@@ -2417,8 +2444,7 @@
     "stat": "MIGHT",
     "target": 7,
     "label": "Swing the iron bar hard"
-   },
-   "grant": "A flawed bone amulet"
+   }
   },
   {
    "id": "td-1-078",
@@ -3564,7 +3590,7 @@
    "kind": "recovery",
    "title": "Tangled in the Rigging",
    "brief": "You construct a windbreak from the ribs of a half-buried galley, weaving canvas tightly to shelter yourself and discovering an ancient, rust-free cutlass inside.",
-   "page": "A sudden scream of wind tears the canvas from your frozen grip, collapsing the makeshift shelter and burying your hands in abrasive grit. The heavy timber bucks against your shoulder, leaving a dark, weeping bruise across your collarbone as you scramble clear of the falling wreckage. You salvage the ancient, rust-free cutlass from the drift, but the struggle costs you precious time and drains your remaining stamina. Shivering bitterly, you hoist your pack and limp onward into the swirling whiteout.",
+   "page": "A sudden scream of wind tears the canvas from your frozen grip, collapsing the makeshift shelter and burying your hands in abrasive grit. The heavy timber bucks against your shoulder, leaving a dark, weeping bruise across your collarbone as you scramble clear of the falling wreckage. You salvage the ancient, rust-free cutlass from the drift, but the struggle costs you precious time and drains your remaining strength. Shivering bitterly, you hoist your pack and limp onward into the swirling whiteout.",
    "exits": [
     {
      "label": "Press onward through the stinging grit",
@@ -3948,8 +3974,7 @@
      "to": "td-1-042"
     }
    ],
-   "chain": "td-1-027/3",
-   "grant": "talisman of safe passage"
+   "chain": "td-1-027/3"
   },
   {
    "id": "td-1-153",
@@ -4295,7 +4320,10 @@
    "exits": [
     {
      "label": "Press onward across the mud",
-     "to": "td-2-022"
+     "to": "td-2-022",
+     "setFlags": {
+      "end-long-dry": true
+     }
     }
    ],
    "chain": "td-2-002/1",
@@ -5214,7 +5242,10 @@
    "exits": [
     {
      "label": "Return to the noisy market stalls",
-     "to": "td-2-046"
+     "to": "td-2-046",
+     "setFlags": {
+      "end-quiet-sand": true
+     }
     }
    ],
    "chain": "td-2-046/1",
@@ -6094,7 +6125,7 @@
    "kind": "recovery",
    "title": "Buried in the Scree",
    "brief": "You identify the medicinal properties of a rare dried kelp, harvesting the fragile fronds without triggering a rockfall to gain its benefits.",
-   "page": "A sharp crack shatters the quiet as the unstable limestone shelf gives way beneath your boots, burying your legs in a sudden rush of sharp, sliding scree. Bruised muscles protest fiercely as you claw your way free from the gray debris, leaving behind a precious strip of your pack-strap and a good measure of your stamina. The medicinal fronds are yours now, but they cost you dearly in sweat and torn cloth.",
+   "page": "A sharp crack shatters the quiet as the unstable limestone shelf gives way beneath your boots, burying your legs in a sudden rush of sharp, sliding scree. Bruised muscles protest fiercely as you claw your way free from the gray debris, leaving behind a precious strip of your pack-strap and a good measure of your strength. The medicinal fronds are yours now, but they cost you dearly in sweat and torn cloth.",
    "exits": [
     {
      "label": "Pull free and limp onward",
@@ -6359,7 +6390,10 @@
    "exits": [
     {
      "label": "Leave the camp for the stilted outpost",
-     "to": "td-2-126"
+     "to": "td-2-126",
+     "setFlags": {
+      "end-pilgrim-king": true
+     }
     }
    ],
    "chain": "td-2-105/0",
@@ -9139,7 +9173,10 @@
    "exits": [
     {
      "label": "Return to the bustling market",
-     "to": "td-3-027"
+     "to": "td-3-027",
+     "setFlags": {
+      "end-drown-saltspire": true
+     }
     }
    ],
    "chain": "td-3-027/0",
@@ -10652,8 +10689,7 @@
     "stat": "NERVE",
     "target": 9,
     "label": "Reach across the open drop"
-   },
-   "grant": "Heavy Brineholder crowbar"
+   }
   },
   {
    "id": "td-3-105",
@@ -10783,8 +10819,7 @@
     "stat": "WIT",
     "target": 9,
     "label": "Read the rotting figures quickly"
-   },
-   "grant": "The water-tax cipher scrap"
+   }
   },
   {
    "id": "td-3-111",
@@ -11812,7 +11847,10 @@
    "exits": [
     {
      "label": "Fade into the stilt-city shadows",
-     "to": "td-3-165"
+     "to": "td-3-165",
+     "setFlags": {
+      "end-sell-the-sea": true
+     }
     }
    ],
    "chain": "td-3-142/3",
@@ -12880,8 +12918,7 @@
      "to": "td-3-174"
     }
    ],
-   "chain": "td-3-166/1",
-   "grant": "spare brass gears"
+   "chain": "td-3-166/1"
   },
   {
    "id": "td-3-213",
@@ -12896,8 +12933,7 @@
      "to": "td-3-110"
     }
    ],
-   "chain": "td-3-108/0",
-   "grant": "vault combination notes"
+   "chain": "td-3-108/0"
   },
   {
    "id": "td-3-214",
@@ -12912,8 +12948,7 @@
      "to": "td-3-104"
     }
    ],
-   "chain": "td-3-087/3",
-   "grant": "drowned worker's toolbelt"
+   "chain": "td-3-087/3"
   },
   {
    "id": "td-3-215",
@@ -12928,8 +12963,7 @@
      "to": "td-3-208"
     }
    ],
-   "chain": "td-3-193/3",
-   "grant": "emergency coin cache"
+   "chain": "td-3-193/3"
   },
   {
    "id": "td-3-216",
@@ -12944,8 +12978,7 @@
      "to": "td-3-115"
     }
    ],
-   "chain": "td-3-108/1",
-   "grant": "ancient brass compass"
+   "chain": "td-3-108/1"
   },
   {
    "id": "td-3-217",
@@ -12960,8 +12993,7 @@
      "to": "td-3-095"
     }
    ],
-   "chain": "td-3-087/1",
-   "grant": "guard patrol schedule"
+   "chain": "td-3-087/1"
   },
   {
    "id": "td-3-218",
@@ -12976,8 +13008,7 @@
      "to": "td-3-124"
     }
    ],
-   "chain": "td-3-108/3",
-   "grant": "hidden coin cache"
+   "chain": "td-3-108/3"
   },
   {
    "id": "td-3-219",
@@ -12992,8 +13023,7 @@
      "to": "td-3-220"
     }
    ],
-   "chain": "td-3-142/1",
-   "grant": "cleared escape route"
+   "chain": "td-3-142/1"
   },
   {
    "id": "td-3-220",
@@ -13008,8 +13038,7 @@
      "to": "td-3-148"
     }
    ],
-   "chain": "td-3-142/1",
-   "grant": "secondary escape route"
+   "chain": "td-3-142/1"
   },
   {
    "id": "td-4-001",
@@ -14220,7 +14249,10 @@
    "exits": [
     {
      "label": "Descend into the outer workings",
-     "to": "td-4-046"
+     "to": "td-4-046",
+     "setFlags": {
+      "end-choirs-choir": true
+     }
     }
    ],
    "chain": "td-4-046/2",
@@ -14353,8 +14385,7 @@
      "cost": true
     }
    ],
-   "chain": "td-4-060/0",
-   "grant": "heavy iron maintenance key"
+   "chain": "td-4-060/0"
   },
   {
    "id": "td-4-065",
@@ -14366,7 +14397,10 @@
    "exits": [
     {
      "label": "Return to the central crossroads",
-     "to": "td-4-060"
+     "to": "td-4-060",
+     "setFlags": {
+      "end-return-gently": true
+     }
     }
    ],
    "chain": "td-4-060/0",
@@ -15729,7 +15763,7 @@
    "kind": "recovery",
    "title": "Shaken Resolve",
    "brief": "You sleep briefly in the unsettling silence of the abandoned camp, suppressing terrible nightmares to recover your stamina and find a hidden silver flask.",
-   "page": "A sudden wave of intense vertigo sends you tumbling sideways off the crate, crashing hard against a stack of discarded brass tubing with a sharp clatter. You lie gasping on the cold stone as dark shapes dance at the edge of your vision, your nerves frayed to a breaking point by the relentless isolation. Although you eventually force yourself back to your feet, the terrifying episode leaves you trembling and drains your remaining stamina.",
+   "page": "A sudden wave of intense vertigo sends you tumbling sideways off the crate, crashing hard against a stack of discarded brass tubing with a sharp clatter. You lie gasping on the cold stone as dark shapes dance at the edge of your vision, your nerves frayed to a breaking point by the relentless isolation. Although you eventually force yourself back to your feet, the terrifying episode leaves you trembling and drains your remaining strength.",
    "exits": [
     {
      "label": "Gather your scattered wits",
@@ -15849,7 +15883,10 @@
    "exits": [
     {
      "label": "Return to the ruined camp",
-     "to": "td-4-128"
+     "to": "td-4-128",
+     "setFlags": {
+      "end-orsolyas-way": true
+     }
     }
    ],
    "chain": "td-4-128/1",
@@ -16364,7 +16401,10 @@
    "exits": [
     {
      "label": "Return to the central engine floor",
-     "to": "td-4-153"
+     "to": "td-4-153",
+     "setFlags": {
+      "end-keep-the-gear": true
+     }
     }
    ],
    "chain": "td-4-153/1",
@@ -19547,100 +19587,81 @@
    "page": "Black sea-water batters the reinforced glass overhead with the force of a falling mountain, groaning and fracturing under the pressure of the waiting deep. Your fingers wrap around the icy brass spokes of the Meridian Gear, the great mechanism vibrating violently against your palms as the tide clock strikes twelve. This is the ultimate crucible where every broken wreck, every drowned prayer, and every hard bargain converges. The fate of the coast hangs on a single pull, and no one else is here to bear the weight.\n\nChoose how the waters fall, for the tide is breaking now.",
    "exits": [
     {
-     "label": "ending:return-gently",
+     "label": "Gently return the waiting sea",
      "to": "td-6-001",
      "when": {
-      "mark": "end-return-gently"
-     },
-     "hint": "Gently return the waiting sea"
+      "end-return-gently": true
+     }
     },
     {
-     "label": "ending:drown-saltspire",
+     "label": "Send the deluge to Saltspire",
      "to": "td-6-005",
      "when": {
-      "mark": "end-drown-saltspire"
-     },
-     "hint": "Send the deluge to Saltspire"
+      "end-drown-saltspire": true
+     }
     },
     {
-     "label": "ending:drown-gullmouth",
+     "label": "Flood the cliff-town Gullmouth",
      "to": "td-6-008",
      "when": {
-      "mark": "end-drown-gullmouth"
-     },
-     "hint": "Flood the cliff-town Gullmouth"
+      "end-drown-gullmouth": true
+     }
     },
     {
-     "label": "ending:keep-the-gear",
+     "label": "Lock the Gear forevermore",
      "to": "td-6-011",
      "when": {
-      "mark": "end-keep-the-gear"
-     },
-     "hint": "Lock the Gear forevermore"
+      "end-keep-the-gear": true
+     }
     },
     {
-     "label": "ending:sell-the-sea",
+     "label": "Sell the sea to the highest bidder",
      "to": "td-6-014",
      "when": {
-      "mark": "end-sell-the-sea"
-     },
-     "hint": "Sell the sea to the highest bidder"
+      "end-sell-the-sea": true
+     }
     },
     {
-     "label": "ending:choirs-choir",
+     "label": "Surrender to the Hollow Choir",
      "to": "td-6-017",
      "when": {
-      "mark": "end-choirs-choir"
-     },
-     "hint": "Surrender to the Hollow Choir"
+      "end-choirs-choir": true
+     }
     },
     {
-     "label": "ending:long-dry",
+     "label": "Leave the seabed dry and bare",
      "to": "td-6-020",
      "when": {
-      "mark": "end-long-dry"
-     },
-     "hint": "Leave the seabed dry and bare"
+      "end-long-dry": true
+     }
     },
     {
-     "label": "ending:orsolyas-way",
+     "label": "Follow Orsolya's hidden path",
      "to": "td-6-023",
      "when": {
-      "mark": "end-orsolyas-way"
-     },
-     "hint": "Follow Orsolya's hidden path"
+      "end-orsolyas-way": true
+     }
     },
     {
-     "label": "ending:wreckers-tide",
+     "label": "Claim the tide for the wreckers",
      "to": "td-6-027",
      "when": {
-      "mark": "end-wreckers-tide"
-     },
-     "hint": "Claim the tide for the wreckers"
+      "end-wreckers-tide": true
+     }
     },
     {
-     "label": "ending:pilgrim-king",
+     "label": "Crown the pilgrim leaders king",
      "to": "td-6-030",
      "when": {
-      "mark": "end-pilgrim-king"
-     },
-     "hint": "Crown the pilgrim leaders king"
+      "end-pilgrim-king": true
+     }
     },
     {
-     "label": "ending:spent",
-     "to": "td-6-033",
-     "when": {
-      "mark": "end-spent"
-     },
-     "hint": "Spend your strength and let go"
-    },
-    {
-     "label": "ending:quiet-sand",
+     "label": "Rest beneath the quiet sand",
      "to": "td-6-035",
      "when": {
-      "mark": "end-quiet-sand"
-     },
-     "hint": "Rest beneath the quiet sand"
+      "end-quiet-sand": true
+     }
     },
     {
      "label": "Let the current take everything",
