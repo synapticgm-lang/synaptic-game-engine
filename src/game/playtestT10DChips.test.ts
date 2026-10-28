@@ -102,7 +102,7 @@ describe('T10D origin + follow-up chips', () => {
         complete: true,
       },
       sceneFacts: {
-        crowd: 'few',
+        crowd: 'sparse',
         noise: 'quiet',
         present: ['Father Aldous'],
         props: [],

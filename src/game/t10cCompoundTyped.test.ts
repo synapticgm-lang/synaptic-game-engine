@@ -1,4 +1,4 @@
-﻿/**
+/**
  * T10C — compound typed input: every clause reaches the writer; speech only to people present;
  * PC quoted words are exact facts (never rewritten by the hand-off). Offline, no paid AI.
  */
@@ -35,7 +35,7 @@ function base(over: Partial<GameState> = {}): GameState {
       {
         npcId: 'n',
         npcName: 'Nomi Vale',
-        disposition: 'stranger',
+        disposition: 'unknown',
         met: false,
         facts: [],
         said: [],
@@ -63,8 +63,8 @@ function storyBase(over: Partial<GameState> = {}): GameState {
     engineMode: 'rpg',
     currentLocation: 'Salt Road Waystation',
     sceneFacts: {
-      crowd: 'busy',
-      noise: 'murmur',
+      crowd: 'present',
+      noise: 'voices',
       present: ['Vessa'],
       props: ['table'],
       lastBeat: '',
@@ -75,7 +75,7 @@ function storyBase(over: Partial<GameState> = {}): GameState {
       {
         npcId: 'v',
         npcName: 'Vessa',
-        disposition: 'stranger',
+        disposition: 'unknown',
         met: true,
         facts: [],
         said: [],
@@ -84,14 +84,14 @@ function storyBase(over: Partial<GameState> = {}): GameState {
       {
         npcId: 'y',
         npcName: 'Yara Flint',
-        disposition: 'stranger',
+        disposition: 'unknown',
         met: false,
         facts: [],
         said: [],
         completedTopics: [],
       },
     ],
-    inventory: [{ id: 't', name: 'crew token', equipped: false, quantity: 1 }],
+    inventory: [{ id: 't', name: 'crew token', equipped: false, quantity: 1, rarity: 'Common' }],
     ...over,
   });
 }
