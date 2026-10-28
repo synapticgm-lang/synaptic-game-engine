@@ -1,4 +1,4 @@
-﻿/**
+/**
  * T10T — drink-ask not reframed; content-free voice shell; origin beside scene + Quick start
  * patience; Story RPG quest steps do not tick from mere presence.
  */
@@ -66,7 +66,7 @@ function saltOriginOpen(turn = 3): GameState {
   state.roundCombat = null;
   state.sceneFacts = {
     crowd: 'sparse',
-    noise: 'wind',
+    noise: 'quiet',
     present: ['the scout'],
     props: ['loose boulders', 'ledge'],
     lastBeat: 'cliff',
