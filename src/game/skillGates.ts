@@ -18,6 +18,7 @@ const SKILL_LABEL: Record<CheckSkillName, string> = {
   stealth: 'Stealth',
   thievery: 'Thievery',
   persuasion: 'Persuasion',
+  insight: 'Insight',
   arcana: 'Arcana',
   survival: 'Survival',
 };
@@ -31,6 +32,7 @@ const SKILL_USE: Record<CheckSkillName, string> = {
   investigation: 'find hidden panels and clues sooner',
   stealth: 'slip past and flee more easily',
   persuasion: 'win more hard talks',
+  insight: 'read a person\'s intentions',
   survival: 'rest and track better on the road',
 };
 

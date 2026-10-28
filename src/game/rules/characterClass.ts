@@ -26,6 +26,7 @@ export const CHECK_SKILL_SRD: Record<CheckSkillName, string> = {
   stealth: 'Stealth',
   thievery: 'Sleight of Hand',
   persuasion: 'Persuasion',
+  insight: 'Insight',
   arcana: 'Arcana',
   survival: 'Survival',
 };

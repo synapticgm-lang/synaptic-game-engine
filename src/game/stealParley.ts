@@ -362,6 +362,139 @@ export function rollParleyCheck(
 }
 
 /**
+ * T10AB — grab / collar / blade-threat against a present person (not yet a live fight).
+ * SRD 5.2.1 Grappling: Strength (Athletics) contested check; success → grappled.
+ * Threatening words with the grab also roll Charisma (Intimidation). Never rejects free text.
+ * Target stays on the present ledger (no silent vanish mid-threat).
+ */
+export function resolvePersonThreatAttempt(
+  state: GameState,
+  text: string,
+  step?: IntentStep | null,
+  rng: () => number = turnRng(state, 'person-threat'),
+): ParleyOutcome {
+  const who =
+    step?.addressee?.trim()
+    || step?.target?.trim()
+    || extractWatcher(text, step, state);
+  const grab =
+    /\b(grab|grapple|collar|drag|haul|pin|seize)\b/i.test(text)
+    || step?.action === 'take'
+    || step?.action === 'intimidate';
+  const facts: string[] = [];
+  const receipts: string[] = [];
+  let next = state;
+  let success = false;
+
+  if (grab) {
+    // SRD 5.2.1 — Grappling: "You make a Strength (Athletics) check contested by the target's
+    // Strength (Athletics) or Dexterity (Acrobatics) check." Engine uses Athletics vs DC 12 baseline.
+    const ath = abilityModOf(state.character?.attributes?.STR ?? 10);
+    const dc = 12;
+    const rec = resolveCheckRecord({
+      label: 'Athletics (grapple)',
+      mods: [{ label: 'STR', value: ath }],
+      dc,
+      rng,
+    });
+    rec.spec = { kind: 'skill', ability: 'STR', skill: 'athletics', dc, dcShown: true, adv: 'normal' };
+    receipts.push(
+      `Grapple: d20 ${rec.kept} ${ath >= 0 ? '+' : ''}${ath} = ${rec.total} vs DC ${dc} — ${rec.outcome}`,
+      outcomeFactFromRecord(rec),
+    );
+    success = rec.outcome === 'success';
+    if (success) {
+      facts.push(`Grappled ${who} (Athletics ${rec.total} vs DC ${dc}).`);
+      next = pushOtherTx(next, `Grappled ${who}`, who, `Athletics ${rec.total} vs DC ${dc}`);
+    } else {
+      facts.push(`${who} slipped the grab (Athletics ${rec.total} < DC ${dc}).`);
+      next = pushOtherTx(next, `Failed grapple on ${who}`, who, `Athletics ${rec.total} < DC ${dc}`);
+    }
+  }
+
+  const social = rollParleyCheck(
+    next,
+    text,
+    { ...(step ?? { action: 'intimidate', clause: text, target: who, addressee: who, topic: null, say: null, destination: null, tone: 'threatening', deal: null }), action: 'intimidate', tone: 'threatening' as IntentTone },
+    rng,
+  );
+  const skillName = 'Intimidation';
+  receipts.push(outcomeFactFromRecord(social.record));
+  const intimOk = social.record.outcome === 'success';
+  if (intimOk) {
+    facts.push(`${who} flinches under the threat (${skillName} ${social.record.total} vs DC ${social.record.dc}).`);
+    success = true;
+  } else {
+    facts.push(`${who} does not yield (${skillName} ${social.record.total} < DC ${social.record.dc}).`);
+  }
+  next = pushOtherTx(
+    next,
+    intimOk ? `Intimidated ${who}` : `Intimidation failed vs ${who}`,
+    who,
+    `${skillName} ${social.record.total} vs DC ${social.record.dc}`,
+  );
+
+  // Keep the target present and shift disposition — a threat must leave a durable social mark.
+  const mem = findMemory(next, who);
+  if (mem) {
+    const nudged = nudgePersona(
+      next,
+      {
+        ...mem,
+        disposition: mem.disposition === 'allied' || mem.disposition === 'friendly' ? 'neutral' : 'hostile',
+        attitude: 'hostile',
+        present: true,
+        location: next.currentLocation ?? mem.location,
+      },
+      intimOk ? 'threatened' : 'threatened',
+      grab ? 'grabbed and threatened' : 'threatened',
+    );
+    next = nudged.state;
+    const memories = (next.npcMemories ?? []).map((m) =>
+      (m.npcName ?? '') === (nudged.memory.npcName ?? '')
+        ? { ...nudged.memory, present: true, disposition: 'hostile' as const, attitude: 'hostile' as const }
+        : m,
+    );
+    if (!(next.npcMemories ?? []).some((m) => (m.npcName ?? '') === (nudged.memory.npcName ?? ''))) {
+      memories.push({
+        ...nudged.memory,
+        present: true,
+        disposition: 'hostile',
+        attitude: 'hostile',
+      });
+    }
+    const present = [...(next.sceneFacts?.present ?? [])];
+    const low = who.toLowerCase();
+    if (!present.some((p) => p.toLowerCase() === low)) present.push(who);
+    next = {
+      ...next,
+      npcMemories: memories,
+      personaNudges: [...(next.personaNudges ?? []), ...(nudged.nudge ? [nudged.nudge] : [])],
+      sceneFacts: next.sceneFacts
+        ? { ...next.sceneFacts, present }
+        : {
+            crowd: 'sparse',
+            noise: 'voices',
+            present,
+            props: [],
+            lastBeat: '',
+            updatedTurn: next.turn ?? 0,
+          },
+    };
+  }
+
+  return {
+    success,
+    endedFight: false,
+    skill: 'intimidation',
+    record: social.record,
+    facts,
+    receipts,
+    state: next,
+  };
+}
+
+/**
  * Resolve a parley / calm-hostile social check.
  * Skill from M2 tone; DC = max(15, foe INT) + M5 socialShift; mods include socialLeverage.
  * Success can end a live fight via the encounter terminal.

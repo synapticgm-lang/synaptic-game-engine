@@ -127,7 +127,8 @@ export function playerTypedDialogue(action: string): boolean {
 export const TALK_VERB = /\b(ask|tell|speak|talk|shout|yell|call out|persuade|intimidate|negotiate|greet)\b/i;
 
 const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
-  { kind: 'flee', re: /\b(flee|run away|retreat|escape|back away)\b/i, label: 'Flee / disengage' },
+  // T10AB — bare "escape" matched "cut off Silas's escape" as player flee; require PC flee verbs.
+  { kind: 'flee', re: /\b(flee|run away|retreat|back away)\b|\bi\s+escape\b|\bescape\s+(?:the|from|to|into)\b/i, label: 'Flee / disengage' },
   {
     kind: 'refuse',
     re: /\b(i\s+refuse|i\s+won'?t|didn'?t\s+agree|don'?t\s+agree|not\s+agreeing|i\s+didn'?t\s+(?:sign|ask|want)|no\s+thanks|i\s+decline)\b/i,
@@ -135,11 +136,13 @@ const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   },
   // Practice / gear tests before attack so "practice swings" is not treated as combat.
   { kind: 'observe', re: /\b(practice|test\s+(?:the\s+)?[\w'-]+(?:\s+[\w'-]+){0,3}\s+balance|a\s+few\s+swings|warm[- ]?up)\b/i, label: 'Practice' },
-  { kind: 'attack', re: /\b(attack|strike|slash|stab|shoot|fight|hit|melee|cast fireball|swing\s+(?:at|toward|towards))\b/i, label: 'Attack' },
+  { kind: 'attack', re: /\b(attack|strike|slash|stab|shoot|fight|hit|melee|cast fireball|swing\s+(?:at|toward|towards)|grapple|shove|punch|wrestle|brawl|fistfight|unarmed)\b/i, label: 'Attack' },
   { kind: 'cast', re: /\b(cast|channel|invoke|spell)\b/i, label: 'Cast / magic' },
   { kind: 'use_item', re: /\b(use|drink|eat|equip|wield|draw|throw|deploy|attune)\b/i, label: 'Use item' },
   { kind: 'talk', re: TALK_VERB, label: 'Talk' },
   { kind: 'search', re: /\b(search|loot|rummage|investig\w*|open chest|pick lock)\b/i, label: 'Search / interact' },
+  // T10AB — "Read <person>" is Wisdom (Insight); document/search "read the page" stays search/observe below.
+  { kind: 'observe', re: /\bread\s+[A-Z]/i, label: 'Insight' },
   { kind: 'observe', re: /\b(observ\w*|scan|listen|look|study|inspect|watch|assess|examin\w*)\b/i, label: 'Observe' },
   { kind: 'move', re: /\b(go|move|walk|sneak|climb|enter|leave|head|approach|edge toward)\b/i, label: 'Move' },
   { kind: 'rest', re: /\b(rest|sleep|camp|recover|bandage)\b/i, label: 'Rest' },
@@ -961,7 +964,8 @@ function readDeal(clause: string): IntentDeal | null {
   if (/\bcollect\b|\bpay\s+me\s+back\b|\bowe\s+me\b/i.test(t)) {
     return { kind: 'collect', amount, dueDays: due, terms: t.slice(0, 80) };
   }
-  if (/\bpromise\b|\bi\s+swear\b/i.test(t)) {
+  // T10AB — "I swear I'll break your fingers" is a threat oath, not a promise deal.
+  if (/\bpromise\b|\bi\s+swear\s+to\b/i.test(t)) {
     return { kind: 'promise', amount, dueDays: due, terms: t.slice(0, 80) };
   }
   if (/\btrade\b|\bswap\b|\bexchange\b/i.test(t)) {
@@ -1266,6 +1270,8 @@ export function parsePlayerSteps(
   const draft: IntentStep[] = [];
   // Listeners = present when the sheet stamped it (empty = alone); else legacy people pool.
   const listenPool = ctx.present != null ? ctx.present : ctx.people;
+  // T10AB — "grab his collar" after naming Silas in a prior clause of the same message.
+  let priorPerson: string | null = null;
   for (const clause of clauses) {
     if (isSystemFacingText(clause)) {
       systemText.push(clause);
@@ -1276,7 +1282,7 @@ export function parsePlayerSteps(
       continue;
     }
     const deal = readDeal(clause);
-    const action = classifyStepAction(clause);
+    let action = classifyStepAction(clause);
     const say = extractSay(clause);
     const topic = extractTopic(clause);
     const tone = readTone(clause);
@@ -1294,9 +1300,18 @@ export function parsePlayerSteps(
     // decides reaction vs absence (listenPool alone misses "the priest" aimed while underway).
     // Speech: framed address may use roster; fallback is presence-only and ignores quote topics.
     const roster = [...new Set([...(listenPool ?? []), ...(ctx.people ?? [])])].filter(Boolean);
-    const peopleHit = speechLike
+    let peopleHit = speechLike
       ? speechAddressee(clause, listenPool ?? [], roster.length ? roster : (listenPool ?? []))
       : pickFromPool(clause, roster.length ? roster : listenPool);
+    // Possessive body-grab ("grab his collar") inherits the person named earlier in this message.
+    if (
+      !peopleHit
+      && priorPerson
+      && /\b(his|her|their)\s+(collar|throat|arm|wrist|coat|shirt)\b/i.test(clause)
+    ) {
+      peopleHit = priorPerson;
+    }
+    if (peopleHit) priorPerson = peopleHit;
     let destination: string | null = null;
     let target: string | null = null;
     let addressee: string | null = null;
@@ -1305,6 +1320,7 @@ export function parsePlayerSteps(
     } else if (action === 'use_item' || action === 'take' || action === 'buy') {
       target = pickFromPool(clause, ctx.items) ?? peopleHit;
       // Aimed-at person on a toss/give/wink still needs the addressee slot for presence.
+      // Person-aimed take/grab stays `take` at parse (T10X); typedFreeText resolves grapple/threat.
       if (peopleHit) addressee = peopleHit;
     } else if (action === 'attack' || action === 'search' || action === 'observe') {
       target = peopleHit ?? pickFromPool(clause, ctx.items) ?? pickFromPool(clause, ctx.places);
@@ -1315,8 +1331,24 @@ export function parsePlayerSteps(
     }
     if (deal && !addressee) addressee = peopleHit;
     if (say && !addressee) addressee = peopleHit;
+    // T10AB — free-typed blade/pin/grab (or cutting off escape) at a present person resolves as
+    // intimidate/grapple (SRD), not a content-free General athletics shrug.
+    if (
+      action === 'other'
+      && peopleHit
+      && (tone === 'threatening'
+        || /\b(grab|collar|grapple|pin|throat|blade|dagger|sword|knife|cut\s+off\s+\w+['']?s?\s+escape)\b/i.test(
+          clause,
+        ))
+    ) {
+      action = 'intimidate';
+      addressee = peopleHit;
+      target = peopleHit;
+    }
+    // Threat/grab steps win over a soft promise-deal parse of the same clause.
+    const useDeal = !!deal && action !== 'intimidate' && action !== 'attack' && action !== 'take';
     draft.push({
-      action: deal ? 'deal' : action,
+      action: useDeal ? 'deal' : action,
       target,
       addressee,
       topic,
@@ -1324,7 +1356,7 @@ export function parsePlayerSteps(
       say,
       destination,
       tone,
-      deal,
+      deal: useDeal ? deal : null,
       clause,
     });
   }

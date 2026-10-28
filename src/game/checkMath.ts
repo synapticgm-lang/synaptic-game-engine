@@ -132,8 +132,32 @@ function gearMod(state: GameState, key: AttributeKey): number {
 
 const SRD_CHECK_SKILL: Record<string, string> = {
   athletics: 'Athletics', perception: 'Perception', investigation: 'Investigation', stealth: 'Stealth',
-  thievery: 'Sleight of Hand', persuasion: 'Persuasion', arcana: 'Arcana', survival: 'Survival',
+  thievery: 'Sleight of Hand', persuasion: 'Persuasion', insight: 'Insight', arcana: 'Arcana',
+  survival: 'Survival',
 };
+
+/**
+ * SRD 5.2.1 — Wisdom (Insight): "discern a person's intentions or sincerity."
+ * Tabletop "Read <Name>" chips and typed reads of a present person are Insight, not a General STR check.
+ */
+function isPersonInsightRead(state: GameState, actionText: string): boolean {
+  const raw = (actionText ?? '').replace(/\s+/g, ' ').trim();
+  const m = /^(?:read)\s+(.+)$/i.exec(raw);
+  if (!m) return false;
+  const want = (m[1] ?? '').replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+  if (!want || want.length < 2) return false;
+  const names = [
+    ...(state.sceneFacts?.present ?? []),
+    ...(state.npcMemories ?? []).map((n) => n.npcName),
+  ]
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+  for (let i = 0; i < names.length; i++) {
+    const n = names[i]!.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+    if (n === want || n.startsWith(want) || want.startsWith(n)) return true;
+  }
+  return false;
+}
 
 /** Pure check preview (no roll). Null when SRD says no roll. */
 export function checkForAction(state: GameState, intent: PlayerIntent, actionText: string): CheckSpec | null {
@@ -270,6 +294,16 @@ export function resolveCheckContext(
     };
   }
 
+  // Insight before talk/observe: "Read Edda Coyne" must not fall through to General athletics (T10AB).
+  if (isPersonInsightRead(state, actionText)) {
+    return {
+      label: 'Insight',
+      attr: 'WIS',
+      skill: 'insight',
+      ...taskDc(state, 'notice'),
+      critFailHpRisk: 0,
+    };
+  }
   if (intent.kind === 'talk' || intent.kind === 'refuse' || CONTESTED_SOCIAL.test(t)) {
     if (!isContestedSocialAction(intent, actionText)) {
       return { label: 'Dialogue', attr: 'CHA', skill: 'persuasion', dc: 0, critFailHpRisk: 0, autoSucceed: true };
