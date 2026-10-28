@@ -6,7 +6,7 @@ import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings 
 function foeCanSpeak(enc: { canSpeak?: boolean } | null | undefined): boolean { return enc?.canSpeak === true; }
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov.ts';
 import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName.ts';
-import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
+import { isAggregatePersonToken, isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { formatInfoSheet } from './infoSheet.ts';
 import { buildFactSheet, formatFactSheetForWriter, type FactSheet } from './factSheet.ts';
@@ -649,12 +649,15 @@ export function compileRefEnum(
   const windowNote = housingId
     ? systemHousingWriterClause(housingId)
     : `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
-  if (!underwayHereLabel(state)) add('here', locationLabel(state), 'place');
+  // Live HERE always (trip phrase while underway). Skipping it made placeTok fall through to
+  // journey.from, so mid-travel beats painted the origin as the room ("Nothing in Valespire…").
+  add('here', locationLabel(state), 'place');
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
   const castNote = openingCastNote(state);
   const castRows: string[] = [];
   for (const name of castMentionNames(state)) {
     if (isNeverCastTitle(name, state)) continue;
+    if (isAggregatePersonToken(name)) continue;
     // "faces" and "a steward behind the oak" are the same people as "the exhausted faces" / "the steward": one row each.
     if (castRows.some((prev) => sameCastPerson(prev, name))) continue;
     castRows.push(name);
@@ -665,6 +668,7 @@ export function compileRefEnum(
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
       if (isNeverCastTitle(p, state)) continue;
+      if (isAggregatePersonToken(p)) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
     }
     const encName = state.activeEncounter?.name?.trim();

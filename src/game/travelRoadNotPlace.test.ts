@@ -125,23 +125,29 @@ describe('s71 A+B — the writer and the card builder never treat the road as a 
     return { ...t, state: recordCirclingTurn(moved, input, t.receipt ? [t.receipt] : [], next) };
   }
 
-  it('the writer packet, info layer and info sheet name both ends and no road label', () => {
+  it('the writer packet, info layer and info sheet name both ends; live HERE is the trip (not a bare road label)', () => {
     const t = travelTurn(cinderflow(), 'Travel toward West Wall');
     expect(t.arrived).toBe(false);
     expect(t.state.currentLocation).toBe(UNDERWAY_HERE);
     const packet = buildCompletedEventPacket(t.state, 'Travel toward West Wall');
     const texts = [formatWriterFacingEvent(packet), formatWriterInfoLayer(t.state), formatInfoSheet(t.state)];
     for (const text of texts) {
-      expect(text).not.toMatch(ROAD);
+      // Bare road labels stay out of the prose layers; the trip phrase may name the ground.
+      expect(text).not.toMatch(/^[^\n]*\bOpen road\b/m);
       expect(text).toContain('Cinderflow Road');
       expect(text).toContain('West Wall');
     }
     const refs = packet.refEnum ?? [];
-    expect(refs.some((r) => r.id === 'here')).toBe(false);
+    // T10J — mid-travel placeTok must be live HERE (trip phrase), not journey.from.
+    const here = refs.find((r) => r.id === 'here');
+    expect(here?.klass).toBe('place');
+    expect(here?.display.toLowerCase()).toMatch(/from cinderflow road toward west wall/);
     expect(refs.some((r) => r.klass === 'place' && isRoadLabel(r.display))).toBe(false);
     const places = refs.filter((r) => r.klass === 'place').map((r) => r.display);
-    expect(places).toEqual(['Cinderflow Road', 'West Wall']);
-    expect(packet.allowlist.some((n) => isRoadLabel(n) || ROAD.test(n))).toBe(false);
+    expect(places[0]?.toLowerCase()).toMatch(/from cinderflow road toward west wall/);
+    expect(places).toEqual(expect.arrayContaining(['Cinderflow Road', 'West Wall']));
+    // Bare ground labels are not place-klass rows (trip HERE is the phrase, ends are settlements).
+    expect(refs.some((r) => r.klass === 'place' && /^(Back streets|Open road|On the road between places)$/i.test(r.display))).toBe(false);
   });
 
   it('no place card is built for a road label, by any path', () => {

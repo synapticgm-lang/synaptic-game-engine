@@ -284,9 +284,11 @@ export function realPresentPeople(present: string[] | undefined): string[] {
 
 /** Crowd nouns — not a named speaker slot (never rewrite these to "blue panel"). */
 export function isAggregatePersonToken(token: string): boolean {
-  return /^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(
-    (token ?? '').trim()
-  );
+  const t = (token ?? '').trim();
+  if (!t) return false;
+  // Exact short crowd nouns, or a label that embeds one ("the festival crowd").
+  if (/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(t)) return true;
+  return /\b(?:bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)\b/i.test(t);
 }
 
 /**

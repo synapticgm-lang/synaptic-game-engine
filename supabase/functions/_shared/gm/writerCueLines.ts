@@ -7,6 +7,8 @@
  * (Wizards of the Coast, CC BY 4.0).
  */
 
+import { isAggregatePersonToken } from './chromeAuthority.ts';
+
 /** Chrome that must never appear on the player book. */
 export const WRITER_CUE_CHROME =
   /Must narrate|PC says exactly|Speech event|reaction slot|No one present to answer|The story must show/i;
@@ -23,8 +25,14 @@ export function pcSaysExactlyCue(said: string): string {
   return `PC says exactly: "${said}" (do not rewrite).`;
 }
 
-/** Present addressee → reaction slot for that person; else empty-scene speech. */
+/**
+ * Present named addressee → reaction slot. Crowd/aggregate labels are addressed but do not speak
+ * as one NPC (no reaction slot). Else empty-scene speech.
+ */
 export function speechAddressCue(who: string | null): string {
+  if (who && isAggregatePersonToken(who)) {
+    return `Speech event: you address ${who}. No one present to answer.`;
+  }
   if (who) return `Speech event: you address ${who}. NPC reaction slot open for ${who}.`;
   return `Speech event: you address the empty scene. No one present to answer.`;
 }

@@ -6,7 +6,7 @@ import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings 
 import { foeCanSpeak } from './rules/srdMonsters';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
 import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName';
-import { isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
+import { isAggregatePersonToken, isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { formatInfoSheet } from './infoSheet';
 import { buildFactSheet, formatFactSheetForWriter, type FactSheet } from './factSheet';
@@ -649,12 +649,15 @@ export function compileRefEnum(
   const windowNote = housingId
     ? systemHousingWriterClause(housingId)
     : `the System window: only ${pcName} sees it; nobody can touch it; no surface, heat or weight; it shows text`;
-  if (!underwayHereLabel(state)) add('here', locationLabel(state), 'place');
+  // Live HERE always (trip phrase while underway). Skipping it made placeTok fall through to
+  // journey.from, so mid-travel beats painted the origin as the room ("Nothing in Valespire…").
+  add('here', locationLabel(state), 'place');
   for (const place of nearbyPlaceNames(state)) add(`place:${slugRefId(place)}`, place, 'place');
   const castNote = openingCastNote(state);
   const castRows: string[] = [];
   for (const name of castMentionNames(state)) {
     if (isNeverCastTitle(name, state)) continue;
+    if (isAggregatePersonToken(name)) continue;
     // "faces" and "a steward behind the oak" are the same people as "the exhausted faces" / "the steward": one row each.
     if (castRows.some((prev) => sameCastPerson(prev, name))) continue;
     castRows.push(name);
@@ -665,6 +668,7 @@ export function compileRefEnum(
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
     for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
       if (isNeverCastTitle(p, state)) continue;
+      if (isAggregatePersonToken(p)) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
     }
     const encName = state.activeEncounter?.name?.trim();
