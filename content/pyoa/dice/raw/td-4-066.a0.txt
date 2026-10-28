@@ -1,0 +1,44 @@
+Gemini said
+
+@@SECTION td-4-066
+TITLE: Shaft of Blind Teeth
+TEXT: Heavy grease coats the basalt walls, smelling thick of mutton fat and centuries of rot. A thick bronze axle turns through the alcove with a steady, wet groan, slick with spray from a subterranean sump. Coiled inside the rusted housing of an auxiliary pump, several blind eels writhe in the dim light, their milk-white skin sliding over a nest of scavenged rags and shining shell fragments. They snap blindly at the greasy air whenever the iron warms. // Balancing on the rim of the turning drum requires flat soles and a dead calm stomach. The pearl rests right at the back of the nest, wedged between a greasy jawbone and a copper drain pipe.
+EXIT 1: Step onto the turning drum
+@@SECTION td-4-067
+TITLE: Reach the Oily Nest
+TEXT: Cool air drafts up from the bottomless machinery wells, carrying a tang of old brine and iron dust. You slide your boots over the sweating iron plate, keeping your knees loose to absorb the rhythmic thrum of the great gear below. The blind eels scent the movement in the air or feel the tremor of your nails, their pale snouts whipping toward the ledge with wet, sucking snaps that leave white froth on the dark metal. // Your fingers inch past the snapping jaws into the cold clutch of the nest. The pearl sits deep, cold as sea-ice, pulsing with a dull amber light that has nothing to do with the sun.
+EXIT 1: Pry the amber pearl loose
+@@SECTION td-4-068
+TITLE: Pluck the Deep Pearl
+TEXT: The turning axle shudders with a sudden, discordant screech that threatens to throw your balance into the machinery pit. Right as your fingertips brush the smooth, heavy surface of the amber pearl within the nest, three blind eels strike together from the darkness, their round jaws snapping shut mere inches from your knuckles. The rotating drum beneath your left boot kicks sideways, demanding an immediate shift of weight and absolute steadiness of pulse to keep from slipping into the teeth.
+CHECK: Keep your nerve against the snapping jaws
+@@SECTION td-4-069
+TITLE: Torn by the Sump
+TEXT: A sudden lurch of the machinery knocks your boots out from under you, pitching your forearm straight into the nest. The blind eels strike hard, their needle teeth tearing a deep, jagged line across your wrist before you wrench your arm back into the open air. Blood drips fast onto the turning grease, slicking the drum even further and costing you precious breath and strength. // You haul yourself flat against the cold stone rib of the wall, nursing the torn flesh while the metal groans around you. The pearl is yours now, clutched in your fist, but the cost leaves your pulse ringing in your ears.
+EXIT 1: Crawl back to the stable catwalk
+@@SECTION td-4-070
+TITLE: Salt-Greased Prize
+TEXT: Whether you slipped and paid in torn skin or kept your footing through sheer stubborn will, the amber pearl comes free with a wet suction sound. It is heavy for its size, cold and dense as frozen grease, carrying the faint, salt-crusted scent of the old deep sea before the water vanished. Slip it into your pocket alongside your dry rags and keep moving. // The machinery settles into a deeper, slower rhythm, leaving the alcove behind as the wet iron walkways stretch onward toward the heart of the stair.
+GRANT: Amber Sump Pearl
+EXIT 1: Return to the grinding descent
+@@SECTION td-4-071
+TITLE: The Skeletal Mechanic
+TEXT: A rusted maintenance harness hangs by a single frayed cable over the black drop of the core shaft, swaying slightly in the draft of the turning weights. Slumped inside the canvas straps is the dried carcass of an old Tidewarden mechanic, preserved by the dry salt air and the heavy oils of the mechanism. His skeletal fingers still clutch a brass tuning fork marked with deep ritual grooves, glowing faintly with residual hum. // The abyss below breathes up a steady damp roar, rattling the dry ribs of the harness with every turn of the bronze cams far beneath.
+EXIT 1: Lean out over the drop
+@@SECTION td-4-072
+TITLE: Breath Over the Abyss
+TEXT: You grip the greasy stay-wire with one hand and swing your boots out over empty air, feeling the cold void pull at your coat. The skeletal mechanic hangs just beyond arm's reach, his empty skull tilted toward the dark vault as if listening for a bell that stopped ringing centuries ago. His stiff fingers lock around the stem of the brass fork, refusing to yield easily to a living hand. // You take a long, slow breath of the heavy, oil-tainted air, steadying your shoulders against the swaying of the harness before you reach.
+EXIT 1: Reach for the vibrating fork
+@@SECTION td-4-073
+TITLE: Snatching the Fork
+TEXT: The wire cable screeches against its iron mount, shifting your weight sharply toward the sheer drop as a sudden gust rushes up the shaft. The skeletal mechanic's arm swings on its rusted joint right into your path, knocking your knuckles hard against the brass fork. Every muscle in your chest screams to pull back from the abyss, but the fork is right there, vibrating with a deep, forgotten pitch that rattles your teeth.
+CHECK: Hold your breath and snatch the fork
+@@SECTION td-4-074
+TITLE: Plunge into the Rigs
+TEXT: The cable slips with a sharp crack, dropping you a terrifying fathom down into the shadows before the safety brake catches with a bone-jarring slam. The impact knocks the wind clean from your chest and leaves a deep, aching bruise across your ribs, scraping your palms raw against the rusted iron stays. You hang there gasping in the dark, staring down at the endless gears turning far below. // With shaking fingers, you reach out one last time and wrench the brass fork free from the dead hand before the harness can slip again.
+EXIT 1: Climb back to the service rail
+@@SECTION td-4-075
+TITLE: The Tidewarden's Pitch
+TEXT: Whether you caught the fork clean on the first pass or scrambled back up from a terrifying drop with bruised ribs and scraped palms, the cold brass sits heavy in your palm. The tuning fork hums against your thumb with a clean, resonant note that seems to quiet the grinding iron all around you. It is an old instrument of the deep mechanics, crafted to test the truth of any gear or wall it strikes. // Tuck it safely away among your supplies and leave the skeletal mechanic to his long watch over the rotating weights.
+GRANT: Tidewarden's Brass Fork
+EXIT 1: Return to the grinding descent

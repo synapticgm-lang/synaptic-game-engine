@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-4-064
+TITLE: Strain of Iron
+TEXT: Raw muscle meets ancient metal with a bone-jarring shriek that echoes down the damp stone shaft. A rusted tooth of the cog catches your shoulder plate, biting hard through leather and wool to score a fresh red line across your flesh. You grunt against the pain, heaving your weight until the iron gear groans and snaps grudgingly into alignment. Your breathing comes ragged in the chill air, and your grip feels slippery with your own warm blood, but the heavy iron maintenance key drops heavily into your palm from the jammed housing. //
+GRANT: heavy iron maintenance key
+EXIT 1: Pry the rusted maintenance hatch open
+@@END
