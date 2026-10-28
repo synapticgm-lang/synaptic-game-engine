@@ -1,0 +1,92 @@
+{
+ "batch": "sg-2-2-1-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-2-1-4": {
+   "title": "The Spinning Housing",
+   "text": "Near a collapsed culvert, you find a discarded brass compass housing spinning wildly in the magnetic salt-haze. The needle within has long since shattered, leaving only a frantic, copper-weighted stub that whips around against the glass like a trapped beetle. Your ember-lamp sputters, its banked wick shivering as a sudden thermal draft breathes up from the buried drainage pipes beneath your boots.",
+   "exits": [
+    "Climb the crumbling crystal ridge",
+    "Inspect the sealed well-head",
+    "Hide from the trotting wardens"
+   ]
+  },
+  "sg-2-2-1-5": {
+   "title": "Among the Salt-Heaps",
+   "text": "You navigate a labyrinth of salt-heaps piled high by ancient dredges, keeping your lamp shielded from prying eyes. Every footfall on the crystalline gravel sounds as loud as falling porcelain in the heavy, breathless air of the basin. Above the jagged crests of the mounds, the sun beats down with a flat, white glare that turns your own shadow into a pool of ink.",
+   "exits": [
+    "Hide from the trotting wardens",
+    "Watch the heat-mirage giants",
+    "Follow the vibrating telegraph wire"
+   ]
+  },
+  "sg-2-2-2-0": {
+   "title": "The Alkaline Dust-Devil",
+   "text": "A stray dust-devil dances across the alkaline crust ahead, kicking up spirals of blinding white powder that sting your eyes. Your hand instinctively brushes against the cold ceramic key at your belt, reassuring yourself it remains safe as you weigh your path through the shimmering haze.\n\nTo your left, a massive solar dish lies broken and half-submerged in the crust, offering a patch of shade where someone might rest. To your right, a jagged fissure vents a steady stream of superheated sulfur into the dry air. Behind you lies the familiar perimeter of the toll-hut and the strange musical crater.",
+   "exits": [
+    "Share water beneath the broken dish",
+    "Skirt the hissing sulfur fumarole",
+    "Turn back toward the toll-hut"
+   ]
+  },
+  "sg-2-2-2-1": {
+   "title": "The Pink Brine Pool",
+   "text": "You skirt the edge of a simmering salt-pool where pink brine crusts into sharp, geometric needles that crunch under your soles with a delicate chime. The heat rising off the stagnant water creates shimmering ribbons of light that distort the distant horizon into shifting towers of glass and shadow.\n\nTwo paths open before you across the dazzling pan. You can press toward the shadow of a fallen metal collector dish where travellers often pause, or veer toward a narrow vent where sulfurous vapour curls from a fracture in the basin floor.",
+   "exits": [
+    "Rest near the solar dish",
+    "Pass the hissing sulfur vent"
+   ]
+  },
+  "sg-2-2-2-2": {
+   "title": "The Green Milestone",
+   "text": "A weary packer named Vane rests beside a milestone carved from green bottle-glass, warning of alkaline mires ahead. He wipes a crust of salt from his eyebrows and gestures toward the shimmering white flats with a cracked thumb. Your lamp oil sloshes a slow rhythm against the tin housing as you pause to catch your breath in his shadow.",
+   "exits": [
+    "Rest beneath the solar dish",
+    "Trade with the wandering tinker"
+   ]
+  },
+  "sg-2-2-2-3": {
+   "title": "The Fused Green Cleft",
+   "text": "You squeeze through a narrow cleft between two tilted slabs of fused green window-panes that sing faintly in the dry draft, their crystalline edges vibrating with a low, melancholy hum. The passage opens into a wider corridor of the desolate basin where the glare hits with renewed intensity.\n\nAhead, a plume of sulfurous steam rises from a jagged crack in the floor, while further off, the massive skeletal ribcage of an ancient transport barge casts a long, dark shadow over the glass dunes.",
+   "exits": [
+    "Walk past the steaming fissure",
+    "Approach the skeletal transport barge"
+   ]
+  },
+  "sg-2-2-2-4": {
+   "title": "The Rusted Watch-Tower",
+   "text": "Keeping your head low, you slip past an abandoned Salt Court watch-tower where rusty shutter-hinges squeak rhythmically in the thermal wind. The empty structure looms like a skeletal sentinel over the empty pan, its observation slits dark and silent against the glare.\n\nYou can scramble down a steep, unstable bank choked with loose flint and fine alkaline dust, or press onward toward a low basin where the heavy, sharp tang of ammonia hangs thick in the superheated air.",
+   "exits": [
+    "Scramble down the steep alkaline bank",
+    "Navigate the sharp ammonia sump"
+   ]
+  },
+  "sg-2-2-2-5": {
+   "title": "The Milk-Glass Field",
+   "text": "Your boots crunch over a field of shattered milk-glass that scatters the blinding sunlight into dancing rainbow splinters across the white ground. The scattered shards chime like tiny bells with every step you take through this fragile, luminous waste.\n\nSeveral features break the monotony of the glittering expanse. You spot a row of hollow ceramic jars half-fused into the crust, a reeking sump where the air tastes of ammonia, and a lone raven perched upon a bleached telegraph pole in the distance.",
+   "exits": [
+    "Inspect the half-melted ceramic jars",
+    "Avoid the evaporating industrial sump",
+    "Approach the solitary salt-crusted raven"
+   ]
+  },
+  "sg-2-2-2-6": {
+   "title": "The Dry Drainage Ditch",
+   "text": "You wade through a shallow drainage ditch choked with powdery salt and the tangled, desiccated roots of ancient desert scrub that crackle beneath your boots. The trench offers a brief respite from the relentless wind, though the air at the bottom is stale and heavy with mineral dust.\n\nThe trench leads toward a line of half-melted ceramic vessels embedded in the surrounding crust, or opens out near a shimmering depression where the sharp, pungent scent of ammonia drifts on the thermal currents.",
+   "exits": [
+    "Follow the ditch past the ceramic jars",
+    "Climb toward the ammonia-scented depression"
+   ]
+  },
+  "sg-2-2-2-7": {
+   "title": "The Sheared Glass Milestone",
+   "text": "An old milestone shaped like a tapering glass finger points toward the northern horizon with its tip sheared cleanly off by some forgotten blast. Its translucent surface catches the harsh light, casting fractured green and violet glows across the salt-crusted earth around your boots.\n\nFrom this marker, you can trace your way toward the skeletal remains of an ancient transport barge resting on a glass dune, inspect a row of half-melted ceramic jars, or pick your path across a precarious bridge of warped iron girders spanning a gaping void.",
+   "exits": [
+    "Head toward the skeletal barge",
+    "Examine the half-melted ceramic jars",
+    "Cross the warped iron girder bridge"
+   ]
+  }
+ },
+ "missing": []
+}
