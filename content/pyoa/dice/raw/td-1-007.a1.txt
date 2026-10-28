@@ -1,0 +1,23 @@
+Gemini said
+
+@@SECTION td-1-011
+TITLE: Rigging the Dry Pier
+TEXT: Splintered pine groans under your weight as you brace against the hull of the hanging skiff, sweating despite the bitter salt chill off the empty seabed. By lashing a spare winch-cable through a rusted block and tackle, you manage to swing the heavy craft clear of the rotting timber supports without snapping the rotting stays. A canvas grease-sack tucked beneath the floorboards yields three thick slabs of salt-cured cod and a half-skin of foul-tasting vinegar water. // Hauling the prize onto the gravel embankment, you catch the eye of a passing net-mender who nods slowly at your handiwork, leaving behind a small bone needle tucked into a crack in the quay as an unspoken token of professional respect.
+GRANT: salt-cured cod rations
+EXIT 1: Drag the skiff down toward the muddy harbor
+@@END
+@@SECTION td-1-016
+TITLE: The Ferryman of the Mud
+TEXT: Stagnant river-stench rises from the gray silt where the ferryman rests his bottom on the thwart, his long ash pole jammed uselessly deep into the dry riverbed like a dead tree. He refuses to meet your gaze, counting greasy copper coins over and over in his cracked palm while muttering complaints about the lack of current and the insolence of eels. You lean your forearm against his gunwale, matching his stubborn silence until the rhythmic clicking of his copper tokens finally stumbles and stops. // Without a word, he slides a stiff sheet of beaten copper across the damp bench, its surface etched with the treacherous maze of sinkholes that now scar the upper seabed.
+EXIT 1: Follow the etched copper down the slope
+@@END
+@@SECTION td-1-017
+TITLE: Tracing the Drowned Channels
+TEXT: Cold brine flakes off the copper sheet as your thumb traces the jagged scratches marking where the old harbor channel used to run before the sea withdrew. Every line represents a fathom of treacherous mud where the silt crusts over deep brine-pits waiting to swallow an unwary scavenger whole. You fold the heavy metal sheet into your coat pocket, feeling its sharp corner press against your ribs with every stride you take toward the drop-off. // Down below, the vast gray expanse of the Low stretches toward the horizon under a pale, greasy sky, littered with the black ribs of stranded brigs and forgotten wharves.
+EXIT 1: Descend the cliff path toward the open seabed
+@@END
+@@SECTION td-1-019
+TITLE: A Costly Bargain in the Silt
+TEXT: Impatience gets the better of your judgment, and the ferryman snorts a wet, derisive laugh as you overreach, snatching the copper map away just as your fingers brush the corner. He demands twice the silver you offered, forcing you to strip the heavy brass buckle from your boot-strap and hand over your last roll of waxed twine just to settle the debt. The transaction leaves you poorer and nursing a stinging blister on your thumb where a rusted nail bit through the leather. // Hobbling slightly from the loss of your fastening, you pocket the scratched metal plate and turn your face toward the vast, salt-crusted plain of the seabed.
+EXIT 1: Limp out onto the exposed seabed
+@@END

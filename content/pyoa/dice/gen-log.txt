@@ -21,3 +21,32 @@
 2026-10-28T08:45:58.771Z ask prose td-0-024..td-0-036 items=13 attempt=0
 2026-10-28T08:46:55.641Z   reject td-0-025: meta words
 2026-10-28T08:47:03.650Z ask prose td-0-024..td-0-036 items=1 attempt=1
+2026-10-28T08:47:41.736Z done td-0-024: 13/13
+2026-10-28T08:47:41.737Z ask prose td-0-037..td-1-006 items=10 attempt=0
+2026-10-28T08:48:41.988Z   reject td-1-002: meta words
+2026-10-28T08:48:49.993Z ask prose td-0-037..td-1-006 items=1 attempt=1
+2026-10-28T08:49:17.760Z done td-0-037: 10/10
+2026-10-28T08:49:17.762Z ask prose td-1-007..td-1-019 items=13 attempt=0
+2026-10-28T08:49:42.854Z   reject td-1-011: meta words
+2026-10-28T08:49:42.854Z   reject td-1-016: meta words
+2026-10-28T08:49:42.855Z   reject td-1-017: meta words
+2026-10-28T08:49:42.855Z   reject td-1-019: meta words
+2026-10-28T08:49:50.864Z ask prose td-1-007..td-1-019 items=4 attempt=1
+2026-10-28T08:50:10.759Z   reject td-1-019: meta words
+2026-10-28T08:50:18.769Z done td-1-007: 12/13 MISSING td-1-019
+2026-10-28T08:50:18.771Z ask prose td-1-020..td-1-031 items=12 attempt=0
+2026-10-28T08:50:51.920Z done td-1-020: 12/12
+2026-10-28T08:50:51.921Z ask prose td-1-032..td-1-044 items=13 attempt=0
+2026-10-28T08:51:19.505Z   reject td-1-033: missing
+2026-10-28T08:51:19.505Z   reject td-1-034: missing
+2026-10-28T08:51:19.506Z   reject td-1-035: missing
+2026-10-28T08:51:19.506Z   reject td-1-036: missing
+2026-10-28T08:51:19.506Z   reject td-1-037: missing
+2026-10-28T08:51:19.506Z   reject td-1-038: missing
+2026-10-28T08:51:19.507Z   reject td-1-039: missing
+2026-10-28T08:51:19.507Z   reject td-1-040: missing
+2026-10-28T08:51:19.507Z   reject td-1-041: missing
+2026-10-28T08:51:19.508Z   reject td-1-042: missing
+2026-10-28T08:51:19.508Z   reject td-1-043: missing
+2026-10-28T08:51:19.508Z   reject td-1-044: missing
+2026-10-28T08:51:27.513Z ask prose td-1-032..td-1-044 items=12 attempt=1
