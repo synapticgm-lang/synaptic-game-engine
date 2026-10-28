@@ -1047,6 +1047,8 @@ export interface GameState {
   tutorialProgress?: TutorialProgress;
   /** LitRPG class choice the System opened at the end of the tutorial; cleared once a class is taken. */
   classOffer?: { turn: number; choices: TabletopClassId[] } | null;
+  /** Story RPG: turn the origin row first opened; Quick start auto-assigns after patience (rpgOrigin). */
+  originOfferTurn?: number | null;
   /** Story RPG journal of choices the engine committed (deeds, decisions, origin, romance, ending). */
   choiceJournal?: ChoiceJournalEntry[];
   /** Main quests whose "You have completed the main quest" popup the player already answered. */

@@ -105,7 +105,10 @@ export function gmFacingPlayerAction(typed: string, grounded: GroundedPlayerActi
   const display = (typed ?? '').replace(/\s+/g, ' ').trim();
   if (!display) return grounded.text;
   if (isSaferSceneLeak(grounded.text) || isSaferSceneLeak(display)) return display;
-  if (!playerTypedDialogue(display) && /\bI address\b/i.test(grounded.text)) return display;
+  // T10T — never feed the "does not exist here" soft-reframe when the player asked/spoke.
+  if (playerTypedDialogue(display) || TALK_VERB.test(display)) return display;
+  if (/\bI address\b/i.test(grounded.text)) return display;
+  if (/\binstead of assuming\b/i.test(grounded.text)) return display;
   return grounded.text;
 }
 
@@ -216,7 +219,8 @@ export function primaryActionClause(input: string): string {
     (p) =>
       isAskNearbyPerson(p)
       || isSpeechOrProtest(p)
-      || /^(ask|tell|speak|talk|shout|yell)\b/i.test(p)
+      // Mid-clause ask ("…and ask if he knows…") counts — not only a clause that opens on the verb.
+      || TALK_VERB.test(p)
   );
   if (talk && talk.split(/\s+/).length >= 3) return talk;
   const last = parts[parts.length - 1];
@@ -239,6 +243,14 @@ function readIntent(input: string): PlayerIntent {
     return { kind: 'observe', label: 'Observe', targets: [] };
   }
   if (isSpeechOrProtest(text) || isSpeechOrProtest(input)) {
+    if (/\b(refuse|won'?t|didn'?t\s+agree|don'?t\s+agree|decline)\b/i.test(text + ' ' + input)) {
+      return { kind: 'refuse', label: 'Refuse / protest', targets: [] };
+    }
+    return { kind: 'talk', label: 'Talk / protest', targets: [] };
+  }
+  // T10T — ask/talk beats inventory `drink`/`eat` misuse ("places to grab a drink nearby").
+  // RULES listed use_item before talk, so a conversational drink noun became use_item → reframe.
+  if (TALK_VERB.test(text) || TALK_VERB.test(input)) {
     if (/\b(refuse|won'?t|didn'?t\s+agree|don'?t\s+agree|decline)\b/i.test(text + ' ' + input)) {
       return { kind: 'refuse', label: 'Refuse / protest', targets: [] };
     }
@@ -267,22 +279,12 @@ function readIntent(input: string): PlayerIntent {
   return { kind: 'other', label: 'Free action', targets: [] };
 }
 
-function sceneSpeaker(state: GameState): string {
-  const present = state.sceneFacts?.present ?? [];
-  if (present.some((p) => /bystander/i.test(p))) return 'a bystander';
-  const named = present.find((p) => !/blue panel|cracked street/i.test(p));
-  if (named?.trim()) return named.trim();
-  if (state.sceneFacts?.crowd === 'present') return 'the people who are still here';
-  const npc = state.npcMemories?.[0]?.npcName?.trim();
-  if (npc) return npc;
-  return 'whoever is actually in this scene';
-}
-
 /**
  * Soft-ground free-typed actions before they hit the GM.
  * Typed text is never replaced by a canned missing-item sentence (T10A): real
  * inventory USE/EQUIP/GIVE misses stay notes / hard-gate facts; other clauses keep the player's words.
  * Absent companions and ungrounded targets may still clarify.
+ * T10T — talk/ask about an absent noun keeps the typed line (no "does not exist" reframe).
  */
 export function groundPlayerAction(
   input: string,
@@ -320,17 +322,17 @@ export function groundPlayerAction(
 
   const ungrounded = offeredChip ? [] : findUngroundedNamedClaims(trimmed, state, storyProse);
   if (ungrounded.length && intent.kind !== 'other') {
-    // Soft-rewrite when the claim is central (attack/search/use/talk), not every Proper noun.
-    if (intent.kind === 'attack' || intent.kind === 'search' || intent.kind === 'use_item') {
+    // T10T — a question about something the scene lacks is still the player's act; the NPC answers
+    // (or declines). Never replace the narrated ask with an "X was not there / does not exist" reframe.
+    const asking = playerTypedDialogue(trimmed) || TALK_VERB.test(trimmed);
+    if (asking || intent.kind === 'talk' || intent.kind === 'refuse') {
+      notes.push(`Ungrounded talk target(s): ${ungrounded.join(', ')}`);
+      // Keep the typed line — soft "I address…" rewrites fed Must narrate instead of the ask.
+    } else if (intent.kind === 'attack' || intent.kind === 'search' || intent.kind === 'use_item') {
+      // Soft-rewrite when the claim is central (attack/search/use), not every Proper noun.
       notes.push(`Ungrounded target(s): ${ungrounded.join(', ')}`);
       parts.push(
         `I focus on what is actually here instead of assuming "${ungrounded[0]}" exists — ${fallbackSuggestionForState(state).toLowerCase()}.`
-      );
-    } else if (intent.kind === 'talk' || intent.kind === 'refuse') {
-      notes.push(`Ungrounded talk target(s): ${ungrounded.join(', ')}`);
-      const who = sceneSpeaker(state);
-      parts.push(
-        `I address ${who} who is actually here, not "${ungrounded[0]}". My words stay: ${trimmed}`
       );
     }
   }
@@ -767,6 +769,16 @@ export function stripUnauthorizedNpcSpeech(
       && /\b(?:he|she|they|one of them|[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2})\s+answered\b/.test(s)
     ) {
       s = s.replace(/\banswered\b/gi, 'said nothing');
+    }
+    // T10T — content-free voice shell ("Osric Coyne's voice rasped out, words he could not quite catch").
+    // Same gap as empty "answered": claims speech with no words shown → said nothing.
+    if (
+      !/["“]/.test(s)
+      && /\b(?:voice|words)\s+(?:rasped|came|followed|escaped|drifted)\b/i.test(s)
+      && /\b(?:could not|couldn't|barely|not quite)\s+(?:catch|make out|hear|follow)\b/i.test(s)
+    ) {
+      const who = s.match(/\b([A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,2})'s\s+voice\b/)?.[1] ?? null;
+      s = who ? `${who} said nothing.` : 'They said nothing.';
     }
     // Bare speech verb left after the quote was removed — not a beat.
     if (/\b(?:said|spoke|asked|replied|whispered|shouted|called|answered)\s*[.!?]?$/i.test(s)) continue;

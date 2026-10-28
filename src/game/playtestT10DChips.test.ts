@@ -45,15 +45,16 @@ function memory(partial: Partial<NpcMemory> & Pick<NpcMemory, 'npcName'>): NpcMe
 }
 
 describe('T10D origin + follow-up chips', () => {
-  it('origin chips own the pad until recorded; never beside travel/scene chips', () => {
+  it('origin chips stay available until recorded; scene chips sit beside them (T10T)', () => {
     const open = rpgOpen();
     expect(open.character.origin).toBeUndefined();
     const offered = resolveOfferedChoices(open);
-    expect(offered).toEqual([
+    expect(offered).toEqual(expect.arrayContaining([
       ...BACKGROUNDS.map((b) => originChip(b.id)),
       ORIGIN_QUICK_START_CHIP,
-    ]);
-    expect(offered.some((c) => /travel|walk on|greet/i.test(c))).toBe(false);
+    ]));
+    // T10T — creation no longer hides free-play pads.
+    expect(offered.some((c) => !/^Origin:/i.test(c) && c !== ORIGIN_QUICK_START_CHIP)).toBe(true);
 
     const settled = settleOrigin(open, 'Origin: Sage');
     expect(settled.state.character.origin).toBe('sage');

@@ -474,18 +474,18 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     lastEngineChips = { state, key, chips: dying, labels: seenDying };
     return dying;
   }
-  // T10D: origin setup owns the pad until recorded (same exclusive shape as dying).
-  const originOnly = originPad(state);
-  if (originOnly?.length) {
-    const originChips: EngineChip[] = [];
-    const seenOrigin = new Set<string>();
-    for (const raw of originOnly) {
+  // T10T — origin chips sit alongside scene options (not an exclusive gate that hides talk/travel for many turns).
+  const originRow = originPad(state);
+  const originFront: EngineChip[] = [];
+  const seenOriginFront = new Set<string>();
+  if (originRow?.length) {
+    for (const raw of originRow) {
       const label = sanitizeChoiceLabel(raw);
       if (!label) continue;
       const low = label.toLowerCase();
-      if (seenOrigin.has(low)) continue;
-      seenOrigin.add(low);
-      originChips.push({
+      if (seenOriginFront.has(low)) continue;
+      seenOriginFront.add(low);
+      originFront.push({
         label,
         action: engineChipActionKey(label) || `label:${low}`,
         kind: 'system',
@@ -493,8 +493,6 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
         slotCategory: 'act',
       });
     }
-    lastEngineChips = { state, key, chips: originChips, labels: seenOrigin };
-    return originChips;
   }
   const system = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
   // Specific builders first, so a label two builders make keeps the kind of the one that resolves it.
@@ -583,13 +581,16 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
       chips.push({ label, action, kind, check, slotCategory });
     }
   }
+  // Origin row first when open; scene chips follow (T10T — free play must not hide behind creation).
+  const merged = [...originFront.filter((c) => !seen.has(c.label.toLowerCase())), ...chips];
+  for (const c of originFront) seen.add(c.label.toLowerCase());
   lastEngineChips = {
     state,
     key,
-    chips,
+    chips: merged,
     labels: new Set([...seen]),
   };
-  return chips;
+  return merged;
 }
 
 /**
