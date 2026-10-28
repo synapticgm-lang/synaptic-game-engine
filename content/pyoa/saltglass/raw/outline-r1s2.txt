@@ -1,0 +1,56 @@
+Gemini said
+
+@@SEED sg-1-2-0-0 | By the oil-scummed horse-trough of the lower square, you strike a flint to catch the wick before the night-chill sets in.
+@@SEED sg-1-2-0-1 | You tuck the cast-iron lid tight over the glowing coals of your belt-lantern, feeling only the dull warmth against your thigh.
+@@SEED sg-1-2-1-0 | Beneath the creaking iron sign of the Salt-Weighers' Rest, a squinting drover warns you that the rim road has slipped into a sink-crevice.
+@@SEED sg-1-2-1-1 | Past the tallow-vats, an old cousin thrusts a heel-crusted loaf into your pack and demands you trade it only for rain-warrant.
+@@SEED sg-1-2-1-2 | Under the orange glare of your raised chimney-wick, three toll-touts from the Salt Court step out from a lime-shed to measure your stride.
+@@SEED sg-1-2-1-3 | Behind the drying racks of bladder-wrack, a frightened apprentice drops a pouch of spare flint-stones into your palm and whispers of watchers.
+@@SEED sg-1-2-1-4 | In the shadowed ditch where the town ditch-water runs black, you stumble over a discarded harness while keeping your dark lantern hidden.
+@@SEED sg-1-2-1-5 | Beside the locked gate of the western granary, a shivering watchman warms his chilblains against your iron chimney before checking your seal.
+@@SEED sg-1-2-2-0 | At the crossroads of the three-mile well, an old crone sells dried salt-pears while eyeing the yellow glow of your iron burner.
+@@SEED sg-1-2-2-1 | Among the rubble of the fallen lime-kiln, a stray cur sniffs your boot-heel while your banked lantern stays silent and dark.
+@@SEED sg-1-2-2-2 | Under the skeletal ribs of an old salt-wain, a nervous pedlar offers to trade a cracked spyglass for your spare oil-skin.
+@@SEED sg-1-2-2-3 | In the lee of the chalk-kiln wall, a debt-collector from the court sharpens a skinning knife by the sudden yellow flare of your wick.
+@@SEED sg-1-2-2-4 | By the brackish horse-pond, a knee-deep mire traps your left boot while your dark lantern clicks against a loose belt-ring.
+@@SEED sg-1-2-2-5 | Beneath the leaning telegraph pole of the mirror-guild, a blinking green signal flashes from the ridge above your lifted flame.
+@@SEED sg-1-2-2-6 | In the narrow gap between two collapsed drying sheds, a stray donkey brays at the smell of your charred coal smoke.
+@@SEED sg-1-2-2-7 | Across the gravel slope of the miller's mound, a shadow detaches itself from the mill-wheel while you keep your lamp hooded.
+@@SEED sg-1-2-2-8 | Beside the stone marker bearing the parish boundary, a salt-crusted boot scrap marks where someone turned back in haste.
+@@SEED sg-1-2-2-9 | Under the hum of the high-tension wire-fence, a discarded ledger page flutters against your leg in the dry desert draft.
+@@SEED sg-1-2-2-10 | In the hollow of an abandoned cistern, a charcoal-burner shares his greasy mutton fat while your lantern warms his cold fingers.
+@@SEED sg-1-2-2-11 | Behind the low stone sheep-shelter, a frightened hare bolts from the beam of light cutting across the grey dust.
+@@SEED sg-1-2-2-12 | By the rusted tracks of the old basin-haul, a discarded iron shackle snags your cloak while your dark lantern stays sealed.
+@@SEED sg-1-2-2-13 | Across the chalky bed of the dead irrigation ditch, an owl swoops low toward the amber glass of your swinging chimney.
+@@SEED sg-1-2-2-14 | Under the gnarled boughs of the parish thorn-tree, a clay flask of sour small-beer sits half-buried in grey silt.
+@@SEED sg-1-2-2-15 | Near the lime-stack where the boundary ditch widens, a muffled cough betrays a watcher who expected you an hour ago.
+@@SEED sg-1-2-3-0 | On the shoulder of the low marl ridge, your lamp-beam startles a family of desert-rats scuttling into a drainage pipe.
+@@SEED sg-1-2-3-1 | Beneath the skeletal arch of the old suspension aqueduct, you walk in pitch-darkness while listening for the scrape of salt-shod boots.
+@@SEED sg-1-2-3-2 | By the concrete stump of the telegraph relay, a discarded brass signal-mirror catches the weak starlight above your hooded burner.
+@@SEED sg-1-2-3-3 | Across the alkali flat where the scrub-oak died last season, the wind whistles through your gear with a dry, rattling hiss.
+@@SEED sg-1-2-3-4 | In the deep gravel pit of the lower quarry, a pile of damp pit-props threatens to slide under your searching footsteps.
+@@SEED sg-1-2-3-5 | Beside the iron post of the cattle-gate, a scrawled charcoal warning on the timber tells of poisoned well-heads ahead.
+@@SEED sg-1-2-3-6 | Under the grey overhang of the silt-cliff, you pause to trim the charred wick while smelling the sharp tang of sulphur.
+@@SEED sg-1-2-3-7 | Near the dry bed of the sheep-dip, a tangled nest of rusted barbed wire catches the hem of your travel-trousers.
+@@SEED sg-1-2-3-8 | On the windy lip of the dry wash, your lantern flame flickers dangerously close to going out in the sudden gust.
+@@SEED sg-1-2-3-9 | Behind the broken stone wall of the tanner's paddock, an old brass button gleams dull and green in your downward glance.
+@@SEED sg-1-2-3-10 | Across the crust of the alkali sump, your boots leave deep, cracking prints that fill immediately with white dust.
+@@SEED sg-1-2-3-11 | In the shadow of the dismantled wind-pump, a damp bundle of rags smells strongly of stale tallow and rusted iron.
+@@SEED sg-1-2-3-12 | By the milestone carved from a lump of fossil coral, a chipped tin mug hangs from a bent iron nail.
+@@SEED sg-1-2-3-13 | Under the low wires of the magistrate's fence, you slip through a gap where the hawthorn hedge has withered to bone.
+@@SEED sg-1-2-3-14 | Across the grey silt of the former duck-pond, a dry crust crackles like thin eggshells beneath your deliberate tread.
+@@SEED sg-1-2-3-15 | Near the crumbling brick foundation of the old customs house, a cold draught eddies around your ankles from the basin below.
+@@SEED sg-1-2-4-0 | At the final switchback where the rim road breaks down into broken shale, you adjust your shoulder-strap before the great descent.
+@@SEED sg-1-2-4-1 | Above the black drop of the western quarry-cut, the wind howls through the wire fences while your lamp casts long, dancing shadows.
+@@SEED sg-1-2-4-2 | Beside the milestone that marks the end of the town parish, a discarded bundle of court writs flutters in the salt-rime.
+@@SEED sg-1-2-4-3 | On the high ledge overlooking the grey expanse of the basin, a cairn of white stones marks where runners leave their final doubts.
+@@SEED sg-1-2-4-4 | In the cleft of the limestone bluff, an old metal sign warns that all wells beyond this point belong to the Salt Court.
+@@SEED sg-1-2-4-5 | Across the steep scree slope of the rim's edge, a small landslide of loose shale clatters down into the dark abyss.
+@@SEED sg-1-2-4-6 | By the iron-studded post of the old toll-gate, a rusted padlock hangs open from a staple that has rusted through completely.
+@@SEED sg-1-2-4-7 | Beneath the gallows-frame of the old boundary marker, the track narrows to a single sheep-path choked with greythorn scrub.
+@@SEED sg-1-2-5-0 | At the threshold of the Bitterflats, the hard salt crust rings like iron under your boots as the vast white desert opens before you.
+@@SEED sg-1-2-5-1 | Where the rim road crumbles into the salt-marsh, your lantern beam catches the first glint of the shattered glass dunes of the basin floor.
+@@SEED sg-1-2-5-2 | By the bleached skull of a baggage-mule stuck in the crust, you take your last steady breath of damp town air before the dry wind strikes.
+@@SEED sg-1-2-5-3 | At the crumbling edge of the great descent, the lights of Candlemere wink out behind you, leaving only the salt-glare and the dark.
+@@SEED sg-d-1-2 | Striking your lamp in the volatile gas-pocket of the old lime-kiln, you trigger a blinding flash that shatters your gear and leaves you blind and stranded in the salt-dust.
+@@DONE
