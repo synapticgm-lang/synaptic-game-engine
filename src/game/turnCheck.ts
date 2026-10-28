@@ -274,13 +274,16 @@ export function checkActionFollowed(
       p0.push({ kind: 'ignored-action', detail: `player spoke to ${who}; the prose never has ${who} answer or appear` });
     }
   } else if (talkish) {
-    const contract = buildIntentContract({ typed: act, resolvedText: act, intent, state: before });
-    const cov = checkObligationCoverage(
-      { ...contract, obligations: contract.obligations.filter((o) => o.kind === 'talk' || o.kind === 'refuse') },
-      text
-    );
-    if (!cov.ok && !quoted && !(fightTold && fight!.forcedBy === 'parley')) {
-      p0.push({ kind: 'ignored-action', detail: `player said "${act.slice(0, 80)}"; nobody answers in the prose` });
+    // Empty scene: speech to shutters / empty street needs no NPC answer — "nobody answers" is the correct beat.
+    if (peopleHere(before).length > 0) {
+      const contract = buildIntentContract({ typed: act, resolvedText: act, intent, state: before });
+      const cov = checkObligationCoverage(
+        { ...contract, obligations: contract.obligations.filter((o) => o.kind === 'talk' || o.kind === 'refuse') },
+        text
+      );
+      if (!cov.ok && !quoted && !(fightTold && fight!.forcedBy === 'parley')) {
+        p0.push({ kind: 'ignored-action', detail: `player said "${act.slice(0, 80)}"; nobody answers in the prose` });
+      }
     }
   } else if (socialAct && !quoted && !peopleHere(before).some((p) => mentionsName(text, p))) {
     p0.push({ kind: 'ignored-action', detail: `player chose "${act.slice(0, 80)}"; nobody here answers in the prose` });

@@ -414,6 +414,8 @@ export interface IntentRead {
 /** People / places / items the guard may accept (player words ∪ FactSheet / scene). */
 export interface IntentSheetContext {
   people: string[];
+  /** Named people actually here this beat (scene present ∪ live encounter). Speech reactions only open for these. */
+  present?: string[];
   places: string[];
   items: string[];
   lastAddressee?: string | null;
@@ -469,12 +471,15 @@ export function groundRef(
 
 /** Build guard context from live state (FactSheet people/places/items shape, no FactSheet import). */
 export function sheetContextFromState(state?: GameState | null): IntentSheetContext {
-  if (!state) return { people: [], places: [], items: [] };
-  const people = [
+  if (!state) return { people: [], present: [], places: [], items: [] };
+  const present = [
     ...(state.sceneFacts?.present ?? []),
+    ...(state.activeEncounter?.name ? [state.activeEncounter.name] : []),
+  ].filter(Boolean) as string[];
+  const people = [
+    ...present,
     ...(state.npcMemories ?? []).map((m) => m.npcName).filter(Boolean),
     ...(state.companions ?? []).map((c) => c.name).filter(Boolean),
-    ...(state.activeEncounter?.name ? [state.activeEncounter.name] : []),
   ].filter(Boolean) as string[];
   const places = [
     state.currentLocation,
@@ -497,6 +502,7 @@ export function sheetContextFromState(state?: GameState | null): IntentSheetCont
   };
   return {
     people: uniq(people),
+    present: uniq(present),
     places: uniq(places),
     items: uniq(items),
     lastAddressee: state.sceneFacts?.lastAddressee ?? null,
@@ -507,7 +513,7 @@ function splitClauses(text: string): string[] {
   const raw = text.replace(/\s+/g, ' ').trim();
   if (!raw) return [];
   const parts = raw
-    .split(/\s+(?:and then|then|, then|and)\s+|[?]+|;+/)
+    .split(/\s+(?:and then|then|, then|and|while)\s+|[?]+|;+/)
     .map((s) => s.replace(/^[.!,;]+|[.!,;]+$/g, '').trim())
     .filter((s) => s.length >= 2);
   return parts.length ? parts : [raw];
@@ -586,15 +592,23 @@ function readTone(clause: string): IntentTone | null {
   return null;
 }
 
+/** Whole-word hit so a person token ("Vale") does not match inside a place ("Valespire"). */
+function wordHit(hay: string, needle: string): number {
+  const n = low(needle).trim();
+  if (!n || n.length < 2) return -1;
+  const re = new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+  const m = low(hay).match(re);
+  return m?.index ?? -1;
+}
+
 function pickFromPool(clause: string, pool: string[]): string | null {
-  const c = low(clause);
   let best: string | null = null;
   let bestIdx = Infinity;
   const article = new Set(['the', 'a', 'an']);
   for (const name of pool) {
     const n = low(name);
     if (n.length < 2) continue;
-    const idx = c.indexOf(n);
+    const idx = wordHit(clause, n);
     if (idx >= 0 && idx < bestIdx) {
       best = name;
       bestIdx = idx;
@@ -603,7 +617,7 @@ function pickFromPool(clause: string, pool: string[]): string | null {
     // Prefer a contentful token (not an article) so "the priest" does not match every "the …".
     const tokens = n.split(/\s+/).filter((w) => w.length > 2 && !article.has(w));
     for (const tok of tokens) {
-      const j = c.indexOf(tok);
+      const j = wordHit(clause, tok);
       if (j >= 0 && j < bestIdx) {
         best = name;
         bestIdx = j;
@@ -613,14 +627,39 @@ function pickFromPool(clause: string, pool: string[]): string | null {
   return best;
 }
 
+/** Quoted words the player typed (double or single); never a paraphrase. */
 function extractSay(clause: string): string | null {
-  const q = clause.match(/["“]([^"”]+)["”]/);
-  if (q?.[1]) return q[1].trim();
+  const dq = clause.match(/["“]([^"”]+)["”]/);
+  if (dq?.[1]) return dq[1].trim();
+  const sq = clause.match(/'([^']+)'/);
+  if (sq?.[1]) return sq[1].trim();
+  // Bare say/tell + words, not ask-about topics (those keep the clause as the question).
   const after = clause.match(
-    /\b(?:say|said|ask|tell|shout|yell|whisper|call\s+out)\b[:\s]+(.+)$/i
+    /\b(?:say|said|tell|shout|yell|whisper|call\s+out)\b[:\s]+(.+)$/i
   );
-  if (after?.[1]) return after[1].replace(/^["'“]|["'”]$/g, '').trim().slice(0, 120);
+  if (after?.[1]) return after[1].replace(/^["'“]|["'”]$/g, '').trim().slice(0, 160);
   return null;
+}
+
+/** Explicit speech marker — multi-step classification never uses the broad first-person protest heuristic. */
+function clauseHasSpeechMarker(clause: string): boolean {
+  const t = (clause ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^["'“]/.test(t)) return true;
+  if (/\b(?:say|said|ask|tell|speak|talk|shout|yell|whisper|call\s+out|greet)\b/i.test(t)) return true;
+  return false;
+}
+
+function nameIsPresent(name: string | null | undefined, ctx: IntentSheetContext): boolean {
+  const n = low(name ?? '').trim();
+  if (!n) return false;
+  // Legacy callers with no present list: any sheet person may listen.
+  const pool = ctx.present != null ? ctx.present : ctx.people;
+  if (!pool.length) return false;
+  return pool.some((p) => {
+    const pl = low(p);
+    return pl === n || pl.includes(n) || n.includes(pl);
+  });
 }
 
 function extractTopic(clause: string): string | null {
@@ -651,8 +690,15 @@ function classifyStepAction(clause: string): IntentStepAction {
   if (/\btake\b|\bpick\s+up\b|\bgrab\b/i.test(clause)) return 'take';
   if (/\bparley\b|\btalk\s+(?:it|them)\s+down\b|\bnegotiate\b/i.test(clause)) return 'persuade';
   if (/\brecall\b|\bwhat\s+did\s+\w+\s+tell\b/i.test(clause)) return 'recall';
-  const single = readIntent(clause);
-  return single.kind;
+  // Explicit speech only — never the broad first-person protest heuristic (that ate physical clauses).
+  if (clauseHasSpeechMarker(clause)) return 'talk';
+  for (const rule of RULES) {
+    if (rule.kind === 'talk' || rule.kind === 'refuse') continue;
+    if (rule.re.test(clause)) {
+      return rule.kind as IntentStepAction;
+    }
+  }
+  return 'other';
 }
 
 /**
@@ -671,6 +717,8 @@ export function parsePlayerSteps(
 
   const clauses = splitClauses(text);
   const draft: IntentStep[] = [];
+  // Listeners = present when the sheet stamped it (empty = alone); else legacy people pool.
+  const listenPool = ctx.present != null ? ctx.present : ctx.people;
   for (const clause of clauses) {
     if (isSystemFacingText(clause)) {
       systemText.push(clause);
@@ -685,7 +733,8 @@ export function parsePlayerSteps(
     const say = extractSay(clause);
     const topic = extractTopic(clause);
     const tone = readTone(clause);
-    const peopleHit = pickFromPool(clause, ctx.people);
+    // Speech addressee only from people here — memories/roster names are not listeners.
+    const peopleHit = pickFromPool(clause, listenPool);
     let destination: string | null = null;
     let target: string | null = null;
     let addressee: string | null = null;
@@ -714,7 +763,9 @@ export function parsePlayerSteps(
   }
 
   // Engine-side guards (proto idea): refs must come from player words or the sheet.
+  // Carry-over / named addressee only sticks when that person is actually present.
   let lastWho = ctx.lastAddressee?.trim() || null;
+  if (lastWho && !nameIsPresent(lastWho, ctx)) lastWho = null;
   const steps: IntentStep[] = [];
   for (const st of draft) {
     const clause = st.clause ?? text;
@@ -730,8 +781,12 @@ export function parsePlayerSteps(
       || st.action === 'deal'
       || st.action === 'refuse';
     if (!addressee && speechLike) {
-      // Carry-over when the player names nobody this clause.
+      // Carry-over when the player names nobody this clause — only if still here.
       addressee = lastWho;
+    }
+    // Absent person: speak to the empty scene (no reaction slot for someone not here).
+    if (addressee && !nameIsPresent(addressee, ctx)) {
+      addressee = null;
     }
     if (addressee && inPlayerText(addressee, text)) lastWho = addressee;
     else if (addressee && onSheet(addressee, ctx) && inPlayerText(addressee, clause)) lastWho = addressee;
