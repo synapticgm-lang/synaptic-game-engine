@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION sg-1-2-3-4
+TITLE: The Lower Quarry
+TEXT: Heavy, damp pit-props groan under the shifting weight of the quarry wall, threatening to slide down the steep incline directly across your path. Every step in the loose gravel demands care, your ember-lamp swinging from your wrist and casting wild shadows against the damp clay.
+EXIT 1: Climb toward the upper switchback
+EXIT 2: Pick your way past the parish milestone
+@@END
+@@SECTION sg-1-2-3-5
+TITLE: The Poisoned Gate
+TEXT: A charcoal warning scrawled across the timber of the cattle-gate speaks of tainted well-heads lying further down the track. You adjust the cold ceramic Seedkey in your coat pocket and check the fuel level of your lantern, weighing the risk of every drop of moisture ahead.
+EXIT 1: Follow the boundary path past the writs
+EXIT 2: Ascend the high ledge toward the basin view
+EXIT 3: Take the lower track beneath the limestone bluff
+@@END
+@@SECTION sg-1-2-3-6
+TITLE: The Silt Cliff Overhang
+TEXT: Sharp sulphur fills the air as you pause in the grey shadow of the silt-cliff to trim the charred wick of your burner. The wind howls softly through the crevices above, bringing the unmistakable scent of volatile gases trapped deep within the old lime-kiln nearby.
+EXIT 1: Skirt the edge of the high stone cairn
+EXIT 2: Pass beneath the metal sign of the Salt Court
+EXIT 3: Strike your lamp within the lime-kiln
+@@END
+@@SECTION sg-1-2-3-7
+TITLE: The Sheep-Dip Wire
+TEXT: Rusted barbed wire from the dry sheep-dip catches sharply on the hem of your travel-trousers, halting your stride with a metallic pull. You carefully untangle the fabric while listening to the distant rattle of loose shale falling down the western quarry-cut.
+EXIT 1: Head toward the windy quarry drop
+EXIT 2: Climb up to the stony cairn on the ridge
+@@END
+@@SECTION sg-1-2-3-8
+TITLE: The Dry Wash Gust
+TEXT: A sudden, violent gust sweeps across the lip of the dry wash, threatening to snuff out your lantern flame entirely. You cup your hand around the hot glass, shielding the glowing coals as the wind stirs up small whirlwinds of white alkali dust at your boots.
+EXIT 1: Continue past the fluttering court papers
+EXIT 2: Walk on toward the metal warning sign
+EXIT 3: Turn back toward the warmth of the town
+@@END
+@@SECTION sg-1-2-3-9
+TITLE: The Tanner's Paddock
+TEXT: A dull green glint catches your eye from behind the broken stone wall of the tanner's paddock, revealing an old brass button half-buried in the dust. You pause for a quiet breath, feeling the weight of the coming twenty days before the monsoon floods the great Saltglass Basin.
+EXIT 1: Head toward the marker by the parish edge
+EXIT 2: Climb the path past the high stone cairn
+EXIT 3: Follow the fence beneath the limestone bluff
+@@END
+@@SECTION sg-1-2-3-10
+TITLE: The Alkali Sump
+TEXT: Deep, cracking prints form in the crust of the alkali sump beneath your boots, instantly filling with fine white dust like powdered bone. The landscape stretches out flat and blinding under the pale starlight, hiding any trace of a proper trail ahead.
+EXIT 1: Traverse the steep scree slope of the rim
+EXIT 2: Push through toward the rusted toll-gate
+@@END
+@@SECTION sg-1-2-3-11
+TITLE: The Dismantled Wind-Pump
+TEXT: Stale tallow and rusted iron rise from a damp bundle of discarded rags hidden in the shadow of the dismantled wind-pump. You step around the obstruction, keeping your hand steady on the warm casing of your ember-lamp as the night grows colder.
+EXIT 1: Ascend toward the ridge-top cairn
+EXIT 2: Cross the shifting shale of the scree
+@@END
+@@SECTION sg-1-2-3-12
+TITLE: The Fossil Milestone
+TEXT: A chipped tin mug hangs by a bent iron nail from a milestone carved out of a solid lump of fossil coral. The metal clinks faintly against the stone with every gust of wind, marking the lonely miles stretching outward toward the dead sea.
+EXIT 1: Walk on toward the rusted toll-gate
+@@END
+@@SECTION sg-1-2-3-13
+TITLE: The Magistrate's Hedge
+TEXT: Dead hawthorn branches snap brittlely as you slip through a narrow gap beneath the low wires of the magistrate's fence. The track ahead narrows sharply between banks of grey silt, leading deeper into the quiet margins of the basin rim.
+EXIT 1: Approach the old toll-gate and padlock
+EXIT 2: Follow the narrow sheep-path into the gallows shadow
+@@END

@@ -1,0 +1,7 @@
+Gemini said
+
+@@SECTION sg-1-2-3-1
+TITLE: Beneath the Iron Ribs
+TEXT: Shadows stretch long and jagged beneath the skeletal arch of the old suspension aqueduct, where you walk in pitch-darkness while listening for the scrape of salt-shod boots. Your ember-lamp casts a small, trembling circle of orange light against the rusted iron plates and encrusted stalactites of dried brine. Somewhere in the echoing dark ahead, a rhythmic crunch of gravel suggests you are not the only traveler treading this forgotten trade route. // You pause to adjust the heavy wool wrap around your throat, hand drifting instinctively toward the cold ceramic weight of the Seedkey in your pocket, wondering whether to press forward into the chill draft or seek a narrow side-canyon to wait out whatever approaches.
+EXIT 1: Step quietly into the deeper shadow
+@@END

@@ -81,3 +81,16 @@
 2026-10-28T11:03:40.092Z ask prose sg-1-2-2-10..sg-1-2-3-3 items=10 attempt=0
 2026-10-28T11:04:12.906Z   reject sg-1-2-3-1: missing
 2026-10-28T11:04:18.918Z ask prose sg-1-2-2-10..sg-1-2-3-3 items=1 attempt=1
+2026-10-28T11:04:45.291Z done sg-1-2-2-10: 10/10 model=Flash-Lite
+2026-10-28T11:04:45.292Z ask prose sg-1-2-3-4..sg-1-2-3-13 items=10 attempt=0
+2026-10-28T11:05:05.457Z   reject sg-1-2-3-4: words 45
+2026-10-28T11:05:05.458Z   reject sg-1-2-3-5: words 46
+2026-10-28T11:05:05.458Z   reject sg-1-2-3-6: words 45
+2026-10-28T11:05:05.458Z   reject sg-1-2-3-7: words 41
+2026-10-28T11:05:05.459Z   reject sg-1-2-3-8: words 46
+2026-10-28T11:05:05.459Z   reject sg-1-2-3-9: words 48
+2026-10-28T11:05:05.459Z   reject sg-1-2-3-10: words 42
+2026-10-28T11:05:05.460Z   reject sg-1-2-3-11: words 42
+2026-10-28T11:05:05.460Z   reject sg-1-2-3-12: words 44
+2026-10-28T11:05:05.460Z   reject sg-1-2-3-13: words 40
+2026-10-28T11:05:11.471Z ask prose sg-1-2-3-4..sg-1-2-3-13 items=10 attempt=1
