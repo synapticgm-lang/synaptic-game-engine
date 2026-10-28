@@ -179,8 +179,9 @@ export function pickNpcSheet(name: string, place: SheetPlace, opts?: { campaignI
     secret: pick('secret'),
     place,
   };
-  // OPT-3: agenda fields set once with the sheet from the role-hint template (bound to this place).
-  const agenda = agendaFromRole({ role: job, disposition: 'unknown', bindTarget: place });
+  // OPT-3: agenda from the role template. Never bindTarget the SheetPlace key ("inn"/"town"/…) —
+  // that became a one-word Follow-up chip topic (T10Q). Template targets stay player-facing threads.
+  const agenda = agendaFromRole({ role: job, disposition: 'unknown' });
   return { ...base, ...agenda };
 }
 

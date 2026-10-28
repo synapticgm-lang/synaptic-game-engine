@@ -10,7 +10,7 @@
 import type { GameState } from './types';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
-import { presentNpcRecords } from './npcRecords';
+import { presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { merchantHere } from './merchant';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import {
@@ -138,22 +138,6 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       });
     }
   }
-  // TT-T1 — scene planner brought an open thread forward (engine record; plain label).
-  const forward = forwardThreadAffordance(state);
-  if (forward) {
-    all.push({
-      label: forward.label,
-      actionId: forward.actionId,
-      entityId: forward.entityId,
-      slotKind: 'quest',
-      slotCategory: 'scene',
-      salience: 95,
-      required: true,
-      check: withModeCheck
-        ? checkForAction(state, parsePlayerIntent(forward.label, state), forward.label)
-        : undefined,
-    });
-  }
   const people = presentNpcRecords(state);
   let contactNames: Set<string> | null = null;
   if (rpg) {
@@ -164,11 +148,17 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   const openQuest = rpg ? mainSpineQuest(state) : null;
   const openStep =
     openQuest?.objectives?.find((o) => !o.completed)?.description?.trim() ?? '';
+  // T10Q — one chip family per person entity (canonical record), never title-alias duplicates.
+  const seenPersonEntity = new Set<string>();
   for (let i = 0; i < people.length; i++) {
-    const m = people[i]!;
-    const name = (m.npcName ?? '').trim();
+    const raw = people[i]!;
+    const canonical = resolveNpcRecord(state, raw.npcName) ?? raw;
+    const name = (canonical.npcName ?? '').trim();
     if (!name) continue;
-    const entityId = m.npcId || `npc:${name}`;
+    const entityId = canonical.npcId || `npc:${name}`;
+    if (seenPersonEntity.has(entityId)) continue;
+    seenPersonEntity.add(entityId);
+    const m = canonical.npcId === raw.npcId ? raw : { ...raw, ...canonical, npcName: name, npcId: entityId };
     const talk = `Talk to ${name}`;
     all.push({
       label: talk,
@@ -252,6 +242,27 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       }
     }
   }
+  // TT-T1 — open thread forward. T10Q: skip when Ask-about already covers the same person (no duplicate action).
+  const forward = forwardThreadAffordance(state);
+  if (forward) {
+    const askSame = all.some(
+      (a) => a.actionId.endsWith(':agenda') && a.entityId === forward.entityId,
+    );
+    if (!askSame) {
+      all.push({
+        label: forward.label,
+        actionId: forward.actionId,
+        entityId: forward.entityId,
+        slotKind: 'quest',
+        slotCategory: 'scene',
+        salience: 95,
+        required: true,
+        check: withModeCheck
+          ? checkForAction(state, parsePlayerIntent(forward.label, state), forward.label)
+          : undefined,
+      });
+    }
+  }
   const openRoutes = openRouteView(state);
   const routeRows = openRoutes?.rows ?? [];
   const hereNow = peopleHere(state);
@@ -282,10 +293,21 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
           if (!present) continue;
         }
       }
-      // T10N — approach / place / object routes always stay as open leads (Scout camp from Waystation).
-      // Only mark Search-the-area covered when a place/object route's placeId is THIS room.
+      const stepPlace = (
+        openRoutes.step.placeId ?? openRoutes.step.place ?? route?.placeId ?? ''
+      )
+        .trim()
+        .toLowerCase();
+      const routePlace = (route?.placeId ?? stepPlace).trim().toLowerCase();
+      // T10Q — object chips only where the object is; arrival look only at its place.
+      // Approach place leads (Scout camp from Waystation) stay when placeId ≠ HERE (T10N).
+      if (route?.kind === 'object') {
+        if (routePlace && herePlace && routePlace !== herePlace) continue;
+      }
+      if (route?.kind === 'place' && (route.entityId ?? '').trim() === 'place:arrival') {
+        if (routePlace && herePlace && routePlace !== herePlace) continue;
+      }
       if (route && (route.kind === 'place' || route.kind === 'object')) {
-        const routePlace = (route.placeId ?? '').trim().toLowerCase();
         if (routePlace && herePlace && routePlace === herePlace) placeSearchHere = true;
       }
       all.push({

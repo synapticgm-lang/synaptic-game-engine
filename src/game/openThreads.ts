@@ -55,20 +55,31 @@ export function chipWantFromMotiveLine(line: string): string {
 }
 
 /**
+ * SheetPlace enum keys accidentally bound as goal.target (pre-T10Q). One-word place types are not
+ * conversational threads — fall through to motive / need.
+ */
+function isSheetPlaceKey(text: string): boolean {
+  const t = (text ?? '').trim().toLowerCase();
+  return t === 'inn' || t === 'town' || t === 'road' || t === 'camp' || t === 'cell' || t === 'dungeon';
+}
+
+/**
  * Want used on Follow-up / Ask-about chips: player-facing topic only.
  * Bound goal target when it is not a GM hook note; else motive line; never Secret:/Moral-anchor essays
  * and never the shared informant need "a buyer who pays" when a real want exists.
  */
 export function npcChipWant(m: NpcMemory): string {
   const target = (m.goal?.target ?? '').trim();
-  if (target && !isGmFacingNote(target)) {
+  if (target && !isGmFacingNote(target) && !isSheetPlaceKey(target)) {
     // T10O — goal targets may be stored as first-person speech; chip labels stay action phrases.
     return chipWantFromMotiveLine(target) || target;
   }
   const motive = chipWantFromMotiveLine(m.motiveLines?.[0] ?? '');
-  if (motive) return motive;
+  if (motive && !isSheetPlaceKey(motive)) return motive;
   const need = (m.need ?? '').trim();
-  if (need && !isGmFacingNote(need)) return chipWantFromMotiveLine(need) || need;
+  if (need && !isGmFacingNote(need) && !isSheetPlaceKey(need)) {
+    return chipWantFromMotiveLine(need) || need;
+  }
   return '';
 }
 
@@ -220,10 +231,13 @@ export function collectOpenThreads(state: GameState): OpenThread[] {
     const npcId = m.npcId || `npc:${m.npcName}`;
     const id = `npc-goal:${npcId}`;
     const old = prevById[id];
+    // T10Q — thread label is a plain topic; never the spoken motive fragment (Ask chips still use about).
+    const motiveFrag = chipWantFromMotiveLine(m.motiveLines?.[0] ?? '');
+    const threadTopic = motiveFrag && about === motiveFrag ? '' : about;
     out.push({
       id,
       kind: 'npc-goal',
-      label: `${m.npcName}: ${about}`,
+      label: threadTopic ? `${m.npcName}: ${threadTopic}` : m.npcName,
       entityId: npcId,
       placeId: m.location ?? null,
       lastSeenTurn: old?.lastSeenTurn ?? m.lastSeenTurn ?? turn,
@@ -621,8 +635,18 @@ export function forwardThreadAffordance(state: GameState): {
       }
     }
     if (!npcGoalPersonHere(state, npcId, name)) return null;
+    // T10Q — do not paste a spoken motive fragment onto the Follow-up chip (queues replay).
+    let mem: NpcMemory | undefined;
+    for (let i = 0; i < mems.length; i++) {
+      if ((mems[i]!.npcId || `npc:${mems[i]!.npcName}`) === npcId) {
+        mem = mems[i];
+        break;
+      }
+    }
+    const motiveFrag = chipWantFromMotiveLine(mem?.motiveLines?.[0] ?? '');
+    const topic = want && want !== motiveFrag ? want : '';
     return {
-      label: want ? `Follow up with ${name}: ${want}` : `Follow up with ${name}`,
+      label: topic ? `Follow up with ${name}: ${topic}` : `Follow up with ${name}`,
       actionId: `stall:${id}:forward`,
       entityId: npcId,
     };
