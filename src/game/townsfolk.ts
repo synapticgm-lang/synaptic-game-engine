@@ -8,7 +8,7 @@ import type { GameState, NpcMemory } from './types';
 import type { CompletedEventPacket, LedgerRef, PacketBuildExtras } from './completedEventPacket';
 import { formatWriterFacingEvent, prepareRetrospectiveWriterInput } from './completedEventPacket';
 import { presentNpcRecords } from './npcRecords';
-import { npcSheetWriterLine, pickNpcSheet, sheetPlaceFor, type SheetPlace } from './npcSheet';
+import { ensureNpcSheet, npcSheetWriterLine, pickNpcSheet, sheetPlaceFor, type SheetPlace } from './npcSheet';
 import { createHashRng } from './seededRng';
 import { recordStanceFromAction } from './npcStance';
 import { recordPersonaFromAction, personaStanceWriterLine, decayPlaceMoods } from './npcPersona';
@@ -16,6 +16,7 @@ import { resolveActiveCampaignBible } from './campaignSeed';
 import { nameWords, pickPersonName } from './personNames';
 import { ensureNpcAgenda } from './npcMemory';
 import { applyCompanionOwnActions } from './companionAgency';
+import { peopleHere } from './chipLegality';
 
 const PEOPLE_PER_PLACE: Record<SheetPlace, number> = { cell: 1, dungeon: 0, road: 1, camp: 2, inn: 2, town: 2 };
 
@@ -121,7 +122,13 @@ export function prepareWriterInputWithTownsfolk(
   extras?: PacketBuildExtras,
 ): { state: GameState; packet: CompletedEventPacket; writerFacing: string } {
   const seeded = decayPlaceMoods(seedTownsfolkHere(state));
-  const withStance = recordStanceFromAction(seeded, playerInput, { engineResult: extras?.engineResult });
+  // T10AA — road walkers / harvested companions get a sheet so spoken answers have motive content
+  // (seedTownsfolkHere skips journeys; harvest alone left Hale/Wenna without lines).
+  let sheeted = seeded;
+  for (const name of peopleHere(seeded)) {
+    sheeted = ensureNpcSheet(sheeted, name, seeded.currentLocation);
+  }
+  const withStance = recordStanceFromAction(sheeted, playerInput, { engineResult: extras?.engineResult });
   const peopled = recordPersonaFromAction(withStance, playerInput, { engineResult: extras?.engineResult });
   // M7: companions decide own acts (refuse / disagree / act-alone) from persona + wants.
   const withCompanionActs = applyCompanionOwnActions(peopled, playerInput);

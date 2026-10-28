@@ -7,7 +7,7 @@
  * the result." Roll only when uncertain; a certain open (unlocked door) carries no CheckSpec.
  * Labels stay the plain action (feature-groups-plan §4). No word lists or label regexes.
  */
-import type { GameState } from './types';
+import type { GameState, QuestRoute } from './types';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
 import { presentNpcRecords, resolveNpcRecord } from './npcRecords';
@@ -21,7 +21,7 @@ import {
 import { enumerateLegalEdges } from './graphChoices';
 import { exitPlaceNames } from './placeNames';
 import { placeExitRows } from './placeRegistry';
-import { openRouteView } from './questRoutes';
+import { openRouteView, presentPersonForRoute } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './chipLegality';
 import { applyGraphExitTravel } from './mapEngine';
@@ -32,8 +32,24 @@ import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant } from './open
 import { isDying } from './tabletop/roundFight';
 import { originPad } from './rules/rpgOrigin';
 import { travelPadBlocked } from './padUniverse';
-import type { QuestRoute } from './types';
 import { capFightChips, FIGHT_CHIP_CAP, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
+
+export { presentPersonForRoute } from './questRoutes';
+
+/** How many times this actionId was picked in the current scene key (T10AA non-outcome starve). */
+function pickedCountInScene(state: GameState, actionId: string): number {
+  if (!actionId) return 0;
+  const sk = optionSceneKeyString(computeOptionSceneKey(state));
+  const hist = state.recentOfferedActions ?? [];
+  let n = 0;
+  for (let i = 0; i < hist.length; i++) {
+    const row = hist[i]!;
+    if (row.sceneKey !== sk) continue;
+    if (row.pickedActionId === actionId) n += 1;
+  }
+  return n;
+}
+
 export function isWayOut(chip: {
   kind?: string;
   actionId?: string;
@@ -202,16 +218,20 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         check: null,
       });
     } else if (rpg) {
-      const standing = `Press your standing with ${name}`;
-      all.push({
-        label: standing,
-        actionId: `person:${entityId}:standing`,
-        entityId,
-        slotKind: 'person',
-        salience: 63 - i,
-        required: false,
-        check: undefined,
-      });
+      const standingId = `person:${entityId}:standing`;
+      // T10AA — Press standing with no outcome must not loop; after one pick in this scene, drop it.
+      if (pickedCountInScene(state, standingId) < 1) {
+        const standing = `Press your standing with ${name}`;
+        all.push({
+          label: standing,
+          actionId: standingId,
+          entityId,
+          slotKind: 'person',
+          salience: 63 - i,
+          required: false,
+          check: undefined,
+        });
+      }
       if (contactNames?.has(name.toLowerCase()) && openStep) {
         const contact = contactChip(name, openStep);
         all.push({
@@ -228,11 +248,13 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     if (m.goal?.motivation && (m.goal.target || m.need)) {
       // Same want source as Follow-up chips (bound goal target, not role-template need).
       const about = npcChipWant(m);
-      if (about) {
+      const agendaId = `person:${entityId}:agenda`;
+      // T10AA — same Ask-about with no quest tick must yield to travel / next lead (Edda loop).
+      if (about && pickedCountInScene(state, agendaId) < 1) {
         const agenda = `Ask ${name} about ${about}`;
         all.push({
           label: agenda,
-          actionId: `person:${entityId}:agenda`,
+          actionId: agendaId,
           entityId,
           slotKind: 'person',
           salience: 85 - i,
@@ -279,26 +301,31 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
           break;
         }
       }
-      if (route?.kind === 'person') {
-        const eid = (route.entityId ?? '').trim();
-        const who = eid.toLowerCase().startsWith('npc:') ? eid.slice(4).trim() : eid;
-        if (who) {
-          let present = false;
-          for (let h = 0; h < hereNow.length; h++) {
-            if (mentionsName(hereNow[h]!, who) || mentionsName(who, hereNow[h]!)) {
-              present = true;
-              break;
-            }
-          }
-          if (!present) continue;
-        }
-      }
+      if (route?.failed) continue;
       const stepPlace = (
         openRoutes.step.placeId ?? openRoutes.step.place ?? route?.placeId ?? ''
       )
         .trim()
         .toLowerCase();
       const routePlace = (route?.placeId ?? stepPlace).trim().toLowerCase();
+      // T10AA — contact lead needs someone who stands with you; empty list fails forever.
+      if (route?.kind === 'contact' && !standingContactsHere(state).length) continue;
+      if (route?.kind === 'person') {
+        const bound = presentPersonForRoute(state, route);
+        if (!bound) continue;
+        const label = `Ask ${bound.name} about the lead`;
+        all.push({
+          label,
+          actionId: row.actionId,
+          entityId: bound.entityId,
+          slotKind: 'quest',
+          slotCategory: 'talk',
+          salience: 90 - i,
+          required: true,
+          check: withModeCheck ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
+        });
+        continue;
+      }
       // T10Q — object chips only where the object is; arrival look only at its place.
       // Approach place leads (Scout camp from Waystation) stay when placeId ≠ HERE (T10N).
       if (route?.kind === 'object') {
@@ -306,6 +333,10 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       }
       if (route?.kind === 'place' && (route.entityId ?? '').trim() === 'place:arrival') {
         if (routePlace && herePlace && routePlace !== herePlace) continue;
+      }
+      if (route?.kind === 'place' && routePlace && herePlace && routePlace !== herePlace) {
+        // Off-site search is a non-outcome; travel chip is stamped after the loop.
+        continue;
       }
       if (route && (route.kind === 'place' || route.kind === 'object')) {
         if (routePlace && herePlace && routePlace === herePlace) placeSearchHere = true;
@@ -315,11 +346,37 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         actionId: row.actionId,
         entityId: row.entityId,
         slotKind: 'quest',
-        slotCategory: route?.kind === 'person' ? 'talk' : 'scene',
+        slotCategory: 'scene',
         salience: 90 - i,
         required: true,
         check: withModeCheck ? checkForAction(state, parsePlayerIntent(row.label, state), row.label) : undefined,
       });
+    }
+    // T10AA — when the open step has a placeId and we are not there (or its place route failed),
+    // offer travel to that place so Ask/Press cannot loop with no next step.
+    if (rpg && !travelPadBlocked(state)) {
+      const dest = (openRoutes.step.placeId ?? openRoutes.step.place ?? '').trim();
+      const destKey = dest.toLowerCase();
+      if (dest && destKey && destKey !== herePlace) {
+        const already = all.some(
+          (a) =>
+            a.actionId === `quest-route-travel:${openRoutes.quest.id}:${openRoutes.step.id}` ||
+            (a.slotKind === 'exit' && mentionsName(a.label, dest)),
+        );
+        if (!already) {
+          const travel = `Travel toward ${dest}`;
+          all.push({
+            label: travel,
+            actionId: `quest-route-travel:${openRoutes.quest.id}:${openRoutes.step.id}`,
+            entityId: `place:${dest}`,
+            slotKind: 'exit',
+            slotCategory: 'move',
+            salience: 92,
+            required: true,
+            check: undefined,
+          });
+        }
+      }
     }
   } else {
     const step = tabletopStepChip(state) ?? storyRpgDecisionChip(state);
