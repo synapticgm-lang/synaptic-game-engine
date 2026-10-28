@@ -98,7 +98,16 @@ describe('T10AK travel departure names Greyhollow Inn', () => {
     expect(withMoveDestination(state, prose)).toMatch(/Greyhollow Inn/i);
     const sealed = sealPostWriterProse(state, prose, line);
     expect(sealed.prose).toMatch(/Greyhollow Inn/i);
-    const before = { ...state, currentLocation: 'Keep Gate', journey: null, circling: { lastLocation: 'Keep Gate' } };
+    // CirclingMemory requires stale + lastProgressTurn; only override lastLocation for the departure snapshot.
+    const before: GameState = {
+      ...state,
+      currentLocation: 'Keep Gate',
+      journey: null,
+      circling: {
+        ...(state.circling ?? { stale: {}, lastProgressTurn: 0 }),
+        lastLocation: 'Keep Gate',
+      },
+    };
     const after = state;
     expect(checkActionFollowed(before, after, line, sealed.prose).p0.some((f) => f.kind === 'ignored-action')).toBe(
       false,
