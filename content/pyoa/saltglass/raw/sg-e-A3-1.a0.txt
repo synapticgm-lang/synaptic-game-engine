@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION sg-e-A3-1
+TITLE: The Door That Stuck
+TEXT: Cold ceramic bites your palm as you force the Seedkey into the rusted tumbler of the Rain Vault, but the ancient mechanism shudders and binds tight at the half-turn. A sharp crack echoes through the cavernous gloom, and the heavy iron doors grind to a stubborn halt, leaving only a narrow hand-width of darkness between the leaves. Before you can wedge a shoulder against the metal, a surge of frantic movement erupts from the shadows as desperate hands reach through the gap, clawing eagerly at the spilling cascade of ancient, dormant grain that pours out in a golden, crushing wave.
+EXIT 1: Turn the page and read on
+@@END
+@@SECTION sg-e-A3-2
+TITLE: The Door That Stuck
+TEXT: Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. The spilled seed takes root in the wet silt washed down by the early monsoon, turning the cracked salt crust into a sprawling green patchwork of stubborn life. Candlemere fills its granaries with the unexpected harvest, though the giant doors of Prism remain forever wedged, a rusted monument to a clumsy rescue. People speak of the runner who cracked the vault with a wry shake of the head, grateful for the heavy bread on their tables even if the great hall stayed locked.
+EXIT 1: Turn forward to the last page
+@@END
+@@SECTION sg-e-A3-3
+TITLE: The Door That Stuck
+TEXT: The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You sit by the hearth with your hands empty of keys and heavy with rest, listening to the soft murmur of a valley that has finally learned how to drink. The salt has gone back to the sea, the lenses are cool and dark in the observatory above, and the lamp needs no more oil than what remains in the wick.
+@@END
+@@SECTION sg-e-B1-1
+TITLE: Pell Keeps the Door
+TEXT: Metal clicks against stone as you slide the heavy bolt back into place, sealing the Rain Vault before the rising damp can spoil the harvest within. Pell leans against the archway with a faint, wry smile, adjusting the strap of a heavy leather pack and offering to watch the threshold while the world dries out. You leave the cold ceramic key in trusted hands, knowing the seed is safe behind glass and steel until the drought returns. Walking out into the salt-scoured air feels remarkably different when you carry no debt upon your shoulders and a good friend keeps watch behind you.
+EXIT 1: Turn the page and read on
+@@END
+@@SECTION sg-e-B1-2
+TITLE: The Door That Stuck
+TEXT: Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. Word filters back from the center of the dried sea that Pell keeps the great doors well, trading signals with the glass-sentries through flashes of polished mirror. Candlemere receives its share of the sealed grain by swift runner-post, and the villagers speak warmly of the diver who stayed behind in the dark. The wells run full and clear from the rim to the observatory, proving that some treasures are better guarded by a steadfast friend than an army of toll-lords.
+EXIT 1: Turn forward to the last page
+@@END
+@@SECTION sg-e-B1-3
+TITLE: Pell Keeps the Door
+TEXT: The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You pour two cups of hot chicory, leaving one cold spot on the wood for a friend who is still down in the dark keeping watch over the world's bread. The basin outside is a lake of silver water now, and the lamps of Candlemere burn bright and untroubled against the coming night.
+@@END
+@@SECTION sg-e-B2-1
+TITLE: The Vault Remembers
+TEXT: Heavy iron hinges groan in the gloom as you turn the Seedkey twice and throw the ancient latches, locking the Rain Vault away from a world too eager to spend its future. You leave the heavy door shrouded in shadows and sealed with a touch of mirror-glass, letting the desert reclaim the secret threshold beneath Prism. Nobody watches the entrance now, and the paths leading inward fade beneath the drifting salt storms until even the sharpest-eyed glass-diver would fail to spot the seam. You walk away into the shimmering glare with an empty palm and a quiet conscience.
+EXIT 1: Turn the page and read on
+@@END
+@@SECTION sg-e-B2-2
+TITLE: The Door That Stuck
+TEXT: Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. The great monsoon arrives on schedule, filling the dry lakebeds with sweet grey water while the secret vault remains hidden beneath the rising tides. People in Candlemere nibble on hard-won bread and wonder where the old legends went, forgetting the exact location of the door that saved them without ever opening. The desert remembers what the living lose, folding its treasures deep beneath the glass crust where no toll-lord or runner can ever touch them again.
+EXIT 1: Turn forward to the last page
+@@END
+@@SECTION sg-e-B2-3
+TITLE: The Vault Remembers
+TEXT: The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You sit alone in the quiet kitchen, listening to the water rise against the doorframes of a town that no longer needs to run across the dried sea. The key is gone, the vault is silent, and the lamp rests happily in the dark.
+@@END
+@@SECTION sg-e-C1-1
+TITLE: Clean Hands, Heavy Pack
+TEXT: Cold ceramic slides back into your leather pouch as you snatch a handful of prime seed from the open bin, leaving the rest untouched for the hills to claim. You turn your back on the glittering machinery of Prism before the salt-guards can notice the theft or the toll-lords can write a new contract in blood. The road back to the western rim is long and steep, but your pack is heavy with honest grain and your debts are paid to nobody. Every step northward brings the smell of damp earth closer, drowning out the bitter tang of the glass sea.
+EXIT 1: Turn the page and read on
+@@END
+@@SECTION sg-e-C1-2
+TITLE: The Door That Stuck
+TEXT: Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. The stolen seed sprouts vigorously in the garden plots behind Candlemere, yielding tall stalks of golden wheat that defy the old curse of the dry rim. You owe no taxes to the Salt Court and no oaths to the Dune Sisters, walking the village streets as a simple runner who did what needed doing. The town council asks few questions about how the sack was filled, preferring to taste the sweet bread and watch the rain fill the barrels.
+EXIT 1: Turn forward to the last page
+@@END
+@@SECTION sg-e-C1-3
+TITLE: Clean Hands, Heavy Pack
+TEXT: The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You hang your leather running-pack from the rafters for the final time, knowing the long race across the mirror desert is over. The lamps of the town shine steadily in the mist, and the soil outside the door is dark, rich, and deeply wet.
+@@END
