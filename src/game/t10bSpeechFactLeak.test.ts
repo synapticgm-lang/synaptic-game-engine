@@ -107,19 +107,20 @@ describe('T10B/T10E speech fact never reaches the player', () => {
   it('writerEngineResult turns speech receipts into plain narration (shared last-resort form)', () => {
     const plain = writerEngineResult(PRESENT_SPEECH);
     expect(plain).not.toMatch(CUE_CHROME);
-    expect(plain).toMatch(/You spoke to Vessa/);
+    // T10P — Must narrate → third-person act; reaction-slot chrome never paints.
+    expect(plain).toMatch(/Ask(?:ed)? Vessa what the job pays/i);
 
     const empty = writerEngineResult(EMPTY_SPEECH);
     expect(empty).not.toMatch(CUE_CHROME);
     expect(empty).toMatch(/You said, "Anyone home\?"/);
-    expect(empty).toMatch(/You spoke to the empty scene/);
+    expect(empty).toMatch(/No one was there to answer|empty scene/i);
   });
 
   it('tabletop mud+speech fact becomes narration, never the fact sheet', () => {
     const plain = writerEngineResult(MUD_PLUS_SPEECH);
     expect(plain).not.toMatch(CUE_CHROME);
     expect(plain).toMatch(/opened graves|cart tracks/i);
-    expect(plain).toMatch(/You spoke to Mayor Helga Brask/);
+    expect(plain).toMatch(/Ask(?:ed)? Mayor Helga Brask about the lead/i);
   });
 
   it('after covers, ledger-grounded writer prose is not killed by hook Location wording', () => {

@@ -8,6 +8,7 @@ import {
 } from './suggestionValidation.ts';
 import { isSystemStatusChip } from './systemHousing.ts';
 import { presentNpcRecords } from './npcRecords.ts';
+import { isJourneyUnderway } from './travelJourney.ts';
 
 /**
  * Deleted injection (2026-08-30W). Was `groundPlayerAction` for attack/flee
@@ -471,12 +472,12 @@ export function groundRef(
 /** Build guard context from live state (FactSheet people/places/items shape, no FactSheet import). */
 export function sheetContextFromState(state?: GameState | null): IntentSheetContext {
   if (!state) return { people: [], present: [], places: [], items: [] };
-  // T10G: listen pool = who is actually here (sceneFacts + presentNpcRecords), so a chip
-  // like "Ask Mayor Helga Brask about the lead" matches the same titled full name typing would
-  // when she is here by location/memory even if sceneFacts.present still lists only the cast stamp.
+  // T10G/T10P: listen pool = who is actually here. presentNpcRecords owns road trim
+  // (drops inn cast while travelling). sceneFacts.present strings still join when NOT on the
+  // road so a cast stamp without a memory row (Vessa) still listens — but never while underway.
   const present = [
-    ...(state.sceneFacts?.present ?? []),
     ...presentNpcRecords(state).map((m) => m.npcName).filter(Boolean),
+    ...(isJourneyUnderway(state) ? [] : state.sceneFacts?.present ?? []),
     ...(state.activeEncounter?.name ? [state.activeEncounter.name] : []),
   ].filter(Boolean) as string[];
   const people = [
@@ -716,15 +717,50 @@ export function stripUnauthorizedNpcSpeech(
   for (const raw of next.split(/(?<=[.!?])\s+/)) {
     const s = raw.trim();
     if (!s) continue;
+    // T10P — invented PC dialogue drops when the player typed no quotes: PC-tagged lines,
+    // and orphan quote-led sentences (continuation of invented PC talk).
+    if (!pcSaid && /["“]/.test(s)) {
+      let invented = false;
+      for (const m of s.matchAll(NPC_SAID_QUOTE)) {
+        if (isPcSpeaker(m[1] ?? '', pcFirst)) invented = true;
+      }
+      for (const m of s.matchAll(TRAILING_SAID_QUOTE)) {
+        if (isPcSpeaker(m[4] ?? '', pcFirst)) invented = true;
+      }
+      if (!invented && pcFirst) {
+        const lead = new RegExp(
+          String.raw`["“][^"”]+["”]\s*,?\s*(?:${pcFirst}|you)\s+(?:${SPEECH_VERB})\b`,
+          'i',
+        );
+        const mid = new RegExp(
+          String.raw`\b(?:${pcFirst}|you)\s+(?:${SPEECH_VERB})\b[^.!?"“]{0,40}["“][^"”]+["”]`,
+          'i',
+        );
+        if (lead.test(s) || mid.test(s)) invented = true;
+      }
+      if (!invented && /^["“]/.test(s)) {
+        let npcTagged = false;
+        for (const m of s.matchAll(NPC_SAID_QUOTE)) {
+          if (!isPcSpeaker(m[1] ?? '', pcFirst)) npcTagged = true;
+        }
+        for (const m of s.matchAll(TRAILING_SAID_QUOTE)) {
+          if (!isPcSpeaker(m[4] ?? '', pcFirst)) npcTagged = true;
+        }
+        if (!npcTagged) invented = true;
+      }
+      if (invented) continue;
+    }
     if (/["“]/.test(s)) {
       kept.push(s);
       continue;
     }
     // Bare speech verb left after the quote was removed — not a beat.
     if (/\b(?:said|spoke|asked|replied|whispered|shouted|called|answered)\s*[.!?]?$/i.test(s)) continue;
-    // Speech verb + vague complement with no quote (stub rebuild after strip).
+    // Speech verb + vague complement with no quote (stub rebuild after strip / invented warning).
     if (
-      /\b(?:said|spoke|asked|replied)\s+(?:what they had come to say|something(?:\s+about\b)?)/i.test(s)
+      /\b(?:said|spoke|asked|replied)\s+(?:what they had come to say|something(?:\s+about\b)?|the warning\b)/i.test(
+        s,
+      )
     ) {
       continue;
     }
@@ -954,7 +990,14 @@ function clauseHasSpeechMarker(clause: string): boolean {
   const t = (clause ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
   if (/^["'“]/.test(t)) return true;
-  if (/\b(?:say|said|ask|tell|speak|talk|shout|yell|whisper|call\s+out|greet)\b/i.test(t)) return true;
+  // Stem forms (asking / telling / speaking) count — `\bask\b` alone missed "asking if…" (T10P).
+  if (
+    /\b(?:say|said|asking|ask|telling|tell|speaking|speak|talking|talk|shout(?:ing)?|yell(?:ing)?|whisper(?:ing)?|call(?:ing)?\s+out|greet(?:ing)?)\b/i.test(
+      t,
+    )
+  ) {
+    return true;
+  }
   return false;
 }
 
