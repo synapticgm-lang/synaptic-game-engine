@@ -1,0 +1,9 @@
+Gemini said
+
+@@SECTION sg-6-1-2-3
+TITLE: The Vinegar Alcove
+TEXT: Hanging clusters of dried gourd-flasks knock gently together in the stale draft, casting ribbed shadows across an open stone alcove that smells sharply of old vinegar and parched earth. You crouch by the low threshold, lifting your amber-lamp higher to inspect the pale crusts scaling the lower masonry. Every surface bears the fine, gray powder of a long-dead harvest, undisturbed except for the narrow tracks of your own boots in the dust. Ahead, the dry corridor splinters into three distinct routes deeper into the vault's labyrinth, each marked by its own peculiar scent and shadow. // You must decide whether to test the heavy machinery near the winch, search the charred lockers for a hidden hatch, or follow the alkaline smell toward the white lime trough before the rising heat exhausts your remaining water.
+EXIT 1: Inspect the rusted winch system and hanging chains
+EXIT 2: Search the charred lockers for the master hatch
+EXIT 3: Wipe the stinging sweat near the dry lime trough
+@@END

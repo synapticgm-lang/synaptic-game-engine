@@ -1,0 +1,95 @@
+{
+ "batch": "sg-6-1-2-5",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-1-2-5": {
+   "title": "The Maintenance Hatch",
+   "text": "Beside a monumental stone pillar carved with sprouting ferns, you clear away heavy cobwebs hiding a brass maintenance hatch. The metal is cold under your fingers, coated in a fine layer of white crystalline dust that flakes off at your lightest touch. Inside the narrow cavity, a draft of stale underground air stirs the flame of your banked coal-lantern, casting restless shadows against the damp masonry. You press your ear against the cold casing, listening for the faint, rhythmic pulse of hidden machinery vibrating through the bedrock.",
+   "exits": [
+    "Descend the iron ladder",
+    "Follow the lateral service tunnel"
+   ]
+  },
+  "sg-6-1-2-6": {
+   "title": "The Distant Rumble",
+   "text": "Within a dim alcove filled with discarded sieves, you listen to the distant rumble of subterranean water probing the lower foundations. Fine particles of grit sift down from the vaulted ceiling above, settling on the shoulders of your travel-worn coat as the tremor deepens. Your ember-lamp flickers in the draft, throwing long, trembling silhouettes against stacked heaps of rusted ironwork and broken pottery. The air tastes thick with copper and damp earth, warning you that the deep cisterns are shifting beneath the weight of the coming monsoon.",
+   "exits": [
+    "Proceed toward the low rumble",
+    "Climb the fracture stairs",
+    "Investigate the shadowed corner"
+   ]
+  },
+  "sg-6-1-2-7": {
+   "title": "The Silver Measuring Rod",
+   "text": "Under a low basalt archway encrusted with salt crystals, your lamp catches the glint of a silver measuring rod left behind by generations past. The delicate instrument is welded into the stone by centuries of saline growth, its markings dulled by a pale crust of grey residue. Beyond this point, the corridor slopes downward into absolute darkness, broken only by the rhythmic dripping of condensation from overhead pipes. You adjust your grip on the Seedkey, feeling its cold ceramic surface steadying your nerves against the gathering chill.",
+   "exits": [
+    "Venture down the salt-lined gallery",
+    "Take the sun-lit upper route"
+   ]
+  },
+  "sg-6-1-2-8": {
+   "title": "The Automated Gate",
+   "text": "Because the Salt Court recognizes your registered debt badge, an automated brass gate swings open to spare you a treacherous climb. Heavy counterweights groan within the stone wall as the metal barrier retracts into the floor with a dull, echoing thud. The sudden passage opens into a wide, dry gallery smelling faintly of old parchment and dried resin, untouched by the drafts of the outer halls. You step across the threshold, watching the heavy mechanism lock securely behind you with a final, definitive click.",
+   "exits": [
+    "Follow the paved ledger path",
+    "Take the sun-lit upper route",
+    "Explore the adjoining archive",
+    "Turn back toward the upper halls"
+   ]
+  },
+  "sg-6-1-2-9": {
+   "title": "The Empty Seed-Bin",
+   "text": "Beside an empty terracotta seed-bin large enough to hide inside, you pause to catch your breath against the rising humidity. The vast ceramic container stands half-cracked, its interior stained with the purple residue of ancient grain preservation vats. Wisps of warm air curl up from the floor grates, carrying the unmistakable scent of wet stone and brewing fermentation from deep within the basin's roots. You check your coal-lantern to ensure the banked embers remain glowing brightly in the thickening fog.",
+   "exits": [
+    "Advance toward the vaulted junction",
+    "Squeeze through the narrow fissure",
+    "Turn back to the upper galleries"
+   ]
+  },
+  "sg-6-1-2-10": {
+   "title": "The Spiral Stair",
+   "text": "Within a gallery of silent terracotta statues, you spot a narrow spiral stair winding downward toward the dark core of the basin. Each stone step is worn smooth in the center by the countless footsteps of ancient tenders who once maintained these deep agricultural vaults. Your lantern light catches the pale glint of mica embedded in the handrail, guiding your descent into the cool, silent depths below Prism. A faint draft hums through the stairwell like a distant chorus sung in an empty cathedral.",
+   "exits": [
+    "Descend the spiral steps",
+    "Inspect the heavy lead boxes",
+    "Squeeze through the narrow fissure"
+   ]
+  },
+  "sg-6-1-2-11": {
+   "title": "The Mineral Scum",
+   "text": "Under a web of rusted iron pipes dripping stagnant moisture, you skirt a slippery pool of green mineral scum blocking the doorway. The viscous liquid bubbles sluggishly, releasing a sharp tang of sulfur and aged brine that stings the back of your throat. You press close to the damp stone wall, planting your boots carefully on dry patches of granite to keep your footing secure. The faint glow of your lantern glints off the slick surface, revealing tiny, pale insects scattering into the dark recesses beneath the doorframe.",
+   "exits": [
+    "Proceed past the stagnant pool",
+    "Squeeze through the narrow fissure"
+   ]
+  },
+  "sg-6-1-2-12": {
+   "title": "The Observation Desk",
+   "text": "Beside a shattered observation desk covered in gritty salt, you pocket a heavy bronze gear that might serve as a makeshift lever. The wooden furniture has long since warped and split under the harsh desert climate, leaving only metal brackets and brittle splinters behind. Through the grimy fragments of a high reinforced window, pale shafts of light pierce the gloom, illuminating floating motes of white dust. You test the weight of the metal piece in your palm, appreciating its solid reassurance against the unknown chambers ahead.",
+   "exits": [
+    "Inspect the lead storage stacks",
+    "Examine the scored iron hatch",
+    "Enter the ceramic-lined vestibule"
+   ]
+  },
+  "sg-6-1-2-13": {
+   "title": "The Granary Wall",
+   "text": "Within a vaulted granary echoing with your solitary footsteps, you trace the faded blue stencil of the Old Lensfolk grain mark. The painted emblem - a stylized rain cloud pierced by a needle of light - remains remarkably sharp despite centuries of neglect. Rows of empty storage bays stretch away into the gloom on either side, their earthen floors covered in a fine drift of powdery mineral dust. You pause to listen, hearing only the steady, rhythmic drip of water somewhere in the darkness ahead.",
+   "exits": [
+    "Squeeze past the iron pipe",
+    "Investigate the sunken drain",
+    "Enter the tiled vestibule",
+    "Take the reckless way"
+   ]
+  },
+  "sg-6-1-2-14": {
+   "title": "The Sunbeam Ceiling",
+   "text": "Under a ceiling pierced by pale sunbeams from above, you hurry past stacks of crumbling wicker hampers that threaten to collapse. The fragile baskets shed dry fibers that crunch under your boots, filling the air with the dry, papery scent of antiquity. High above, narrow light-shafts cut through the gloom like golden spears, illuminating the dust motes dancing in the quiet vault. You keep your head down, watching your footing as the stone path narrows sharply between two massive pillars of fused glass.",
+   "exits": [
+    "Approach the scored iron hatch",
+    "Enter the tiled vestibule"
+   ]
+  }
+ },
+ "missing": []
+}
