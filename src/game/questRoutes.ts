@@ -10,8 +10,10 @@
  *
  * placeId is explicit on the step (or none). Word-match placeForStep / STEP_STOP are cut.
  */
-import type { EngineMode, GameState, Quest, QuestObjective, QuestRoute, QuestRouteKind } from './types';
+import type { EngineMode, GameState, NpcMemory, Quest, QuestObjective, QuestRoute, QuestRouteKind } from './types';
 import { mainSpineQuest } from './questPlay';
+import { presentNpcNames } from './npcRelationships';
+import { presentNpcRecords, resolveNpcRecord } from './npcRecords';
 
 const PERSON: ReadonlySet<QuestRouteKind> = new Set(['person', 'contact', 'standing']);
 const PLACE_OBJ: ReadonlySet<QuestRouteKind> = new Set(['place', 'object']);
@@ -36,6 +38,70 @@ export function placeIdForStep(step: Pick<QuestObjective, 'placeId' | 'place'>):
   const id = step.placeId ?? step.place;
   const t = (id ?? '').trim();
   return t || null;
+}
+
+/**
+ * T10AA — person-route entity ("a witness who knows the lead") → a present speaker.
+ * Exact name match first; else a present witness / Knowledge-goal person for generic leads.
+ */
+function nameMentions(text: string, name: string): boolean {
+  const hay = (text ?? '').toLowerCase();
+  const n = (name ?? '').toLowerCase();
+  if (!hay || !n) return false;
+  if (hay.includes(n)) return true;
+  const parts = n.replace(/^(?:the|a|an)\s+/, '').split(/[\s'’-]+/).filter((t) => t.length >= 3);
+  return parts.length >= 2 ? parts.every((p) => new RegExp(`\\b${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay)) : parts.some((p) => new RegExp(`\\b${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay));
+}
+
+export function presentPersonForRoute(
+  state: GameState,
+  route: QuestRoute,
+): { name: string; entityId: string } | null {
+  const eid = (route.entityId ?? '').trim();
+  const who = eid.toLowerCase().startsWith('npc:') ? eid.slice(4).trim() : eid;
+  const here = presentNpcNames(state);
+  if (who) {
+    for (let h = 0; h < here.length; h++) {
+      const n = here[h]!;
+      if (nameMentions(n, who) || nameMentions(who, n)) {
+        const rec = resolveNpcRecord(state, n);
+        return { name: rec?.npcName ?? n, entityId: rec?.npcId || `npc:${rec?.npcName ?? n}` };
+      }
+    }
+  }
+  const generic =
+    !who ||
+    /^(?:a |an |the )?witness\b/i.test(who) ||
+    /\bwho knows the lead\b/i.test(who);
+  if (!generic) return null;
+  const records = presentNpcRecords(state);
+  const score = (m: NpcMemory): number => {
+    const role = `${m.roleHint ?? ''} ${m.sheet?.job ?? ''}`.toLowerCase();
+    const goal = `${m.goal?.motivation ?? ''} ${m.goal?.target ?? ''}`.toLowerCase();
+    let s = 0;
+    if (/\bwitness\b/.test(role)) s += 3;
+    if (/\bknowledge\b/.test(goal) || /what they saw/.test(goal)) s += 2;
+    if ((m.completedTopics ?? []).includes('intro')) s += 1;
+    return s;
+  };
+  let best: NpcMemory | null = null;
+  let bestScore = 0;
+  for (let i = 0; i < records.length; i++) {
+    const m = records[i]!;
+    if (!here.some((n) => nameMentions(n, m.npcName) || nameMentions(m.npcName, n))) continue;
+    const sc = score(m);
+    if (sc > bestScore) {
+      best = m;
+      bestScore = sc;
+    }
+  }
+  if (!best && here.length === 1) {
+    const n = here[0]!;
+    const rec = resolveNpcRecord(state, n);
+    return { name: rec?.npcName ?? n, entityId: rec?.npcId || `npc:${rec?.npcName ?? n}` };
+  }
+  if (!best || bestScore <= 0) return null;
+  return { name: best.npcName, entityId: best.npcId || `npc:${best.npcName}` };
 }
 
 /**
@@ -221,7 +287,8 @@ export function openRouteView(state: GameState, actionLabel?: string): OpenRoute
   const want = (actionLabel ?? '').replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase();
   for (let i = 0; i < routes.length; i++) {
     const r = routes[i]!;
-    if (r.revealed) continue;
+    // T10AA — a failed lead is spent; re-offering it loops Ask/Press/Call with no outcome.
+    if (r.revealed || r.failed) continue;
     const label = (r.label ?? '').trim();
     if (!label) continue;
     leads.push(label);
@@ -229,6 +296,18 @@ export function openRouteView(state: GameState, actionLabel?: string): OpenRoute
     rows.push({ label, actionId, entityId: r.entityId || actionId });
     if (want && label.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim().toLowerCase() === want) {
       routeByLabel = r;
+    }
+  }
+  // T10AA — bound person chip / agenda ask naming that speaker still hits the person route.
+  if (want && !routeByLabel && /^ask\b/.test(want)) {
+    for (let i = 0; i < routes.length; i++) {
+      const r = routes[i]!;
+      if (r.revealed || r.failed || r.kind !== 'person') continue;
+      const bound = presentPersonForRoute(state, r);
+      if (bound && (want.includes(bound.name.toLowerCase()) || bound.name.split(/\s+/).some((w) => w.length >= 3 && want.includes(w.toLowerCase())))) {
+        routeByLabel = r;
+        break;
+      }
     }
   }
   const facts = leads.length ? [`Open leads (${quest.name}): ${leads.join('; ')}`] : [];

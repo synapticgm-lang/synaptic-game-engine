@@ -12,11 +12,12 @@ import {
   openingCastNames,
   shortCardWant,
 } from './openingEstablishment';
-import { openingCastRecords, presentNpcRecords } from './npcRecords';
+import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { isCrowdFillerToken } from './chromeAuthority';
 import { fuzzyTypedName } from './typedNameMatch';
-import { motiveAnswer } from './npcSheet';
+import { motiveAnswer, motiveLinesFor, pickNpcSheet, sheetPlaceFor } from './npcSheet';
+import { peopleHere } from './chipLegality';
 
 export type SpokenTopic = 'who' | 'want' | 'where';
 
@@ -55,24 +56,30 @@ const sameSpeaker = (a: string, b: string) => {
 };
 
 function speakersHere(state: GameState): Speaker[] {
-  const records = presentNpcRecords(state).filter(
-    (r) => isCleanName(r.npcName) && !isCrowdFillerToken(r.npcName),
-  );
-  if (records.length) return records.map((r) => ({ label: r.npcName, record: r, names: nameParts(r.npcName, r) }));
-  // T10X — ledger present groups (roof-thieves) speak; crowd fillers do not.
-  // T10Y — one speaker per bare name ("the crew" / "crew" collapse).
+  // T10AA — same universe as turnCheck/peopleHere (road companions in sceneFacts.present
+  // + presentNpcRecords). Prefer records when known; never drop a present walker because
+  // another record already filled the list (T10X/Y group path kept as fallback).
+  // SRD 5.2.1 Communicating — brief speech is free; the addressed party here may answer.
   const seen = new Set<string>();
   const out: Speaker[] = [];
-  for (const p of state.sceneFacts?.present ?? []) {
-    if (isCrowdFillerToken(p) || !isCleanName(p)) continue;
-    const key = p.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
-    if (!key || seen.has(key)) continue;
+  const push = (label: string, record?: NpcMemory) => {
+    if (isCrowdFillerToken(label) || !isCleanName(label)) return;
+    const key = label.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
+    if (!key || seen.has(key)) return;
     seen.add(key);
-    const label = /^(?:the|a|an)\s+/i.test(p)
-      ? p
-      : (state.sceneFacts?.present ?? []).find((x) => sameSpeaker(x, p) && /^(?:the|a|an)\s+/i.test(x)) ?? p;
-    out.push({ label, names: nameParts(label) });
-  }
+    const rec = record ?? resolveNpcRecord(state, label) ?? undefined;
+    const prefer =
+      /^(?:the|a|an)\s+/i.test(label)
+        ? label
+        : (state.sceneFacts?.present ?? []).find((x) => sameSpeaker(x, label) && /^(?:the|a|an)\s+/i.test(x)) ?? label;
+    out.push({ label: prefer, record: rec, names: nameParts(prefer, rec) });
+  };
+  for (const p of peopleHere(state)) push(p);
+  if (out.length) return out;
+  // T10X — ledger present groups (roof-thieves) speak; crowd fillers do not.
+  // T10Y — one speaker per bare name ("the crew" / "crew" collapse).
+  for (const r of presentNpcRecords(state)) push(r.npcName, r);
+  for (const p of state.sceneFacts?.present ?? []) push(p);
   return out;
 }
 
@@ -98,6 +105,22 @@ function spokenExchangeLine(state: GameState, speaker: Speaker): { line: string;
       line: `${capitalize(speaker.label)} said, "${words}"`,
       words,
     };
+  }
+  // T10AA — road/companion walkers often lack a saved sheet (seedTownsfolk skips journeys).
+  // Derive the same seed-stable motive the sheet would have given; no new canned bank.
+  const memory = speaker.record;
+  if (!memory?.sheet?.motive && !memory?.motiveLines?.length) {
+    const sheet = pickNpcSheet(speaker.label, sheetPlaceFor(state.currentLocation), {
+      campaignId: state.campaignBibleId,
+      roleHint: memory?.roleHint,
+    });
+    const words = (motiveLinesFor(sheet.motive)[0] ?? sheet.motive ?? '').replace(/\s+/g, ' ').trim();
+    if (words) {
+      return {
+        line: `${capitalize(speaker.label)} said, "${words}"`,
+        words,
+      };
+    }
   }
   // Ledger silence once — no second shrug sentence (writer may already have said nothing).
   return { line: `${capitalize(speaker.label)} said nothing.` };
@@ -203,7 +226,7 @@ function capitalize(s: string): string {
 }
 
 /** Typed ask / talk aimed at someone here (not a physical I-act). */
-function isTypedAskOrTalk(playerInput: string): boolean {
+function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
   const t = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
   if (/^(?:talk(?:\s+to)?|speak(?:\s+to)?|ask)\b/i.test(t)) return true;
@@ -212,6 +235,13 @@ function isTypedAskOrTalk(playerInput: string): boolean {
   if (/\bask\b[\s\S]{0,60}\bif\b/i.test(t)) return true;
   if (/\bask\s+(?:the\s+)?[\w'-]+(?:\s+[\w'-]+){0,2}\b/i.test(t) && /\b(?:if|whether|about|what|who|where|why|how)\b/i.test(t)) {
     return true;
+  }
+  // T10AA — shout/tell/call at a present named person is speech that needs their reply.
+  if (state && /\b(?:ask|tell|shout(?:\s+at)?|call(?:\s+out)?(?:\s+to)?|say\s+to)\b/i.test(t)) {
+    const low = t.toLowerCase();
+    if (peopleHere(state).some((n) => n.split(/\s+/).some((w) => w.length >= 3 && new RegExp(`\\b${esc(w.toLowerCase())}\\b`).test(low)))) {
+      return true;
+    }
   }
   return false;
 }
@@ -227,7 +257,7 @@ export function ensureSpokenAnswer(
   // T10R / T10V — Talk chip / typed ask with someone here still needs an exchange beat when
   // stripUnauthorizedNpcSpeech dropped the writer's line (stub + bare `@`, or wrong crowd slot).
   if (!topic) {
-    if (!isTypedAskOrTalk(playerInput)) return { prose, answer: { status: 'not-asked' } };
+    if (!isTypedAskOrTalk(playerInput, state)) return { prose, answer: { status: 'not-asked' } };
     if (!who) return { prose, answer: { status: 'nobody-here' } };
     const { speaker, alone } = who;
     const others = speakersHere(state).filter((s) => s.label !== speaker.label);
