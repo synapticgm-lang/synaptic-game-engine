@@ -474,7 +474,29 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     lastEngineChips = { state, key, chips: dying, labels: seenDying };
     return dying;
   }
-  const system = systemPromptPad(state, classOfferPad(state))?.chips ?? originPad(state) ?? [];
+  // T10D: origin setup owns the pad until recorded (same exclusive shape as dying).
+  const originOnly = originPad(state);
+  if (originOnly?.length) {
+    const originChips: EngineChip[] = [];
+    const seenOrigin = new Set<string>();
+    for (const raw of originOnly) {
+      const label = sanitizeChoiceLabel(raw);
+      if (!label) continue;
+      const low = label.toLowerCase();
+      if (seenOrigin.has(low)) continue;
+      seenOrigin.add(low);
+      originChips.push({
+        label,
+        action: engineChipActionKey(label) || `label:${low}`,
+        kind: 'system',
+        check: null,
+        slotCategory: 'act',
+      });
+    }
+    lastEngineChips = { state, key, chips: originChips, labels: seenOrigin };
+    return originChips;
+  }
+  const system = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
   // Specific builders first, so a label two builders make keeps the kind of the one that resolves it.
   const sources: Array<[ChipKind, string[]]> = [
     ['inspiration-reroll', inspirationRerollPads(state)],

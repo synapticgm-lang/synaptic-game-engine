@@ -704,3 +704,8 @@ Each order replaces this PLANNED entry with the full logged record (file, old li
 ## T10A (27 Oct, branch t10fix/T10A, commit `816fd5f6`)
 1. **`groundPlayerAction` canned missing-item rewrite** (`src/game/intentParser.ts`) — deleted the `parts.push` that replaced the whole typed line with `I try to use … then realize I do not have it. I check what I actually carry (…equipped only…) and act only with that.` Covered by: typed text always stays; real USE/EQUIP/GIVE misses are notes (full sheet carry list) and hard-gate `findHardItemUseClaims` / `refusalBody`. Restore: `git show 816fd5f6^:src/game/intentParser.ts`.
 2. **`ITEM_USE_CLAIM` bare `fire`** (`src/game/suggestionValidation.ts`) — `fire` no longer matches without a determiner (so "Cast Fire Bolt" is not "fire a bolt"). `fire a|an|the|my|your …` still claims. Restore: `git show 816fd5f6^:src/game/suggestionValidation.ts`.
+## T10D (Story RPG origin exclusive + Follow-up own want)
+
+1. **`src/game/playTranscript.ts` `resolveOfferedChoices`** — stopped folding `originPad` into the mixed travel/scene list (`systemPromptPad(...)?.chips ?? originPad(state)`). Origin open now returns the origin row alone until `character.origin` is recorded.
+2. **`src/game/openThreads.ts` npc-goal / agenda chip want** — stopped preferring role-template `need` over bound `goal.target` (`m.need ?? m.goal.target`). Shared helper `npcChipWant` uses `goal.target ?? need`. Absent npc-goal / agenda rows no longer forward into Follow-up chips.
+

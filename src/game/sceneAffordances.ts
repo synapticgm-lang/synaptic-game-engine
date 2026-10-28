@@ -28,7 +28,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
 import { isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
-import { forwardThreadAffordance, isPlaceOpenForExit } from './openThreads';
+import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant } from './openThreads';
 import { isDying } from './tabletop/roundFight';
 import { travelPadBlocked } from './padUniverse';
 import type { QuestRoute } from './types';
@@ -235,7 +235,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       }
     }
     if (m.goal?.motivation && (m.goal.target || m.need)) {
-      const about = (m.need ?? m.goal.target).trim();
+      // Same want source as Follow-up chips (bound goal target, not role-template need).
+      const about = npcChipWant(m);
       if (about) {
         const agenda = `Ask ${name} about ${about}`;
         all.push({
