@@ -1,0 +1,16 @@
+﻿import puppeteer from 'puppeteer-core';
+const b = await puppeteer.connect({ browserURL: 'http://127.0.0.1:9222', defaultViewport: null });
+let pages = await b.pages();
+console.log('pages', pages.length, pages.map(p => p.url()));
+let p = pages.find(x => /gemini\.google\.com/.test(x.url())) || await b.newPage();
+await p.goto('https://gemini.google.com/app', { waitUntil: 'domcontentloaded' });
+await new Promise(r => setTimeout(r, 5000));
+console.log('url', p.url(), 'title', await p.title());
+console.log('signin link:', await p.evaluate(() => !![...document.querySelectorAll('a')].find(a => /accounts\.google\.com\/(ServiceLogin|signin)/i.test(a.href))));
+console.log('account:', await p.evaluate(() => [...document.querySelectorAll('a[aria-label*="Google Account"],button[aria-label*="Google Account"]')].map(x => x.getAttribute('aria-label').replace(/\s+/g,' ')).slice(0,2)));
+console.log('picker:', await p.evaluate(() => [...document.querySelectorAll('button')].map(x => x.getAttribute('aria-label') || '').filter(s => /mode picker/i.test(s))));
+await p.evaluate(() => [...document.querySelectorAll('button')].find(x => /mode picker/i.test(x.getAttribute('aria-label') || ''))?.click());
+await new Promise(r => setTimeout(r, 1500));
+console.log('modes:', await p.evaluate(() => [...document.querySelectorAll('[role="menuitemradio"],[role="menuitem"],[role="option"],mat-action-list button,.mat-mdc-menu-item')].map(x => (x.innerText || '').replace(/\s+/g, ' ').slice(0, 100))));
+await p.keyboard.press('Escape');
+b.disconnect();

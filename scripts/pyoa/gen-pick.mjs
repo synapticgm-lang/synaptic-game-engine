@@ -22,7 +22,7 @@ const skel = JSON.parse(readFileSync(join(DIR, 'skeleton.json'), 'utf8'));
 const N = new Map(skel.nodes.map((n) => [n.id, n]));
 const args = process.argv.slice(3);
 const cmd = args[0];
-const maxCalls = args.includes('--max') ? Number(args[args.indexOf('--max') + 1]) : 9999;
+const maxCalls = args.includes('--max') ? Number(args[args.indexOf('--max') + 1]) : Infinity; // no built-in cap; --max is only for manual test runs
 const MODEL = 'Flash-Lite';
 const log = (m) => { const l = `${new Date().toISOString()} ${m}`; console.log(l); appendFileSync(join(DIR, 'gen-log.txt'), l + '\n'); };
 const clean = (t) => t.replace(/\*+/g, '').replace(/[\u2018\u2019\uFFFD]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/\s*[\u2013\u2014]\s*/g, ' - ').replace(/'\?T/g, "'").trim();
@@ -173,11 +173,11 @@ function parseProse(raw) {
   }
   return out;
 }
-function problems(n, p) {
+function problems(n, p, minW = 55) {
   const e = [];
   if (!p) return ['missing'];
   const w = words(p.text);
-  if (w < 55 || w > 280) e.push(`words ${w}`);
+  if (w < minW || w > 280) e.push(`words ${w}`);
   if (!p.title || p.title.length > 48) e.push('title');
   if (/@@|\b(dice|you rolled|stat check|target number|flag)\b|as an ai|\bsection\b/i.test(p.text)) e.push('meta words');
   for (let i = 0; i < n.exits.length; i++) if (!p.exits[i] || p.exits[i].length < 4 || p.exits[i].length > 76) e.push(`exit ${i + 1} label`);
@@ -220,11 +220,40 @@ async function runProse() {
     markFlash(Object.keys(ordered), batch[0].id);
     log(`done ${batch[0].id}: ${Object.keys(ordered).length}/${batch.length} model=${lastModel}${missing.length ? ' MISSING ' + missing.map((n) => n.id).join(',') : ''}`);
     done++;
+    status('prose batch ' + batch[0].id + ' (' + calls + ' calls this run)');
   }
   log(`finished prose run: calls ${calls}, batches done ${done}/${batches.length}`);
-  status(done === batches.length ? 'complete' : 'run ended (call cap)');
+  status(done === batches.length ? 'prose pass finished (run fill for any missing sections)' : 'prose run ended early (--max)');
 }
-function loadProse() { const prose = {}; for (const f of readdirSync(join(DIR, 'prose'))) Object.assign(prose, JSON.parse(readFileSync(join(DIR, 'prose', f), 'utf8')).sections); return prose; }
+async function runFill() {
+  // Re-ask for any section still without valid prose: groups of 5, up to 3 rounds (later rounds accept 40+ words). Never loops forever; leftovers are reported, not retried.
+  const S = loadSeeds();
+  for (let round = 0; round < 3; round++) {
+    const have = loadProse(); const miss = ORDER.filter((n) => !have[n.id]);
+    if (!miss.length) break;
+    log(`fill round ${round}: ${miss.length} sections missing`);
+    for (let i = 0; i < miss.length; i += 5) {
+      const grp = miss.slice(i, i + 5);
+      log(`ask fill r${round} ${grp[0].id} items=${grp.length}`);
+      const reply = await call(prosePrompt(grp, S, ''), `fill${round}-${grp[0].id}`);
+      const pr = parseProse(reply); const got = {};
+      for (const n of grp) { const pb = problems(n, pr.get(n.id), round >= 1 ? 40 : 55); if (!pb.length) got[n.id] = pr.get(n.id); else log(`  reject ${n.id}: ${pb.join(',')}`); }
+      if (Object.keys(got).length) { writeFileSync(join(DIR, 'prose', `fill-r${round}-${grp[0].id}.json`), JSON.stringify({ batch: grp[0].id, model: lastModel, sections: got, missing: [] }, null, 1)); markFlash(Object.keys(got), 'fill-' + grp[0].id); }
+      status('fill round ' + round + ' ' + grp[0].id);
+      await sleep(6000);
+    }
+  }
+  const left = ORDER.filter((n) => !loadProse()[n.id]);
+  log(`fill finished: ${left.length} sections still without prose${left.length ? ': ' + left.map((n) => n.id).join(',') : ''}`);
+  status(left.length ? `fill finished, ${left.length} sections still missing` : 'complete');
+}
+function loadProse() {
+  const prose = {};
+  const pdir = join(DIR, 'prose-partial');
+  if (existsSync(pdir)) for (const f of readdirSync(pdir)) Object.assign(prose, JSON.parse(readFileSync(join(pdir, f), 'utf8')).sections); // set-aside partial batches count as a fallback
+  for (const f of readdirSync(join(DIR, 'prose'))) Object.assign(prose, JSON.parse(readFileSync(join(DIR, 'prose', f), 'utf8')).sections);
+  return prose;
+}
 function runMerge() {
   const S = loadSeeds(); const prose = loadProse(); let filled = 0; const missingIds = [];
   const nodes = skel.nodes.map((n) => {
@@ -251,5 +280,6 @@ function status(reason) {
 
 if (cmd === 'outline') { await runOutline(); status('outline run ended'); }
 else if (cmd === 'prose') await runProse();
+else if (cmd === 'fill') await runFill();
 else if (cmd === 'merge') runMerge();
-else { console.log('usage: gen-pick.mjs <slug> outline|prose|merge [--max N]'); process.exit(2); }
+else { console.log('usage: gen-pick.mjs <slug> outline|prose|fill|merge [--max N]'); process.exit(2); }

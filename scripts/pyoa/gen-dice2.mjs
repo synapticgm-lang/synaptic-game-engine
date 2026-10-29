@@ -23,7 +23,7 @@ const NODES = skel.nodes;
 const N = new Map(NODES.map((n) => [n.id, n]));
 const args = process.argv.slice(3);
 const cmd = args[0];
-const maxCalls = args.includes('--max') ? Number(args[args.indexOf('--max') + 1]) : 999;
+const maxCalls = args.includes('--max') ? Number(args[args.indexOf('--max') + 1]) : Infinity; // no built-in cap; --max is only for manual test runs
 const log = (m) => { const l = `${new Date().toISOString()} ${m}`; console.log(l); appendFileSync(join(DIR, 'gen-log.txt'), l + '\n'); };
 const clean = (t) => t.replace(/\*+/g, '').replace(/[\u2018\u2019\uFFFD]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/\s*[\u2013\u2014]\s*/g, ' - ').replace(/'\?T/g, "'").trim();
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -172,11 +172,11 @@ function parseProse(raw) {
   return out;
 }
 const words = (t) => t.trim().split(/\s+/).filter(Boolean).length;
-function problems(n, p) {
+function problems(n, p, minW = 55) {
   const e = [];
   if (!p) return ['missing'];
   const w = words(p.text);
-  if (w < 55 || w > 280) e.push(`words ${w}`);
+  if (w < minW || w > 280) e.push(`words ${w}`);
   if (!p.title || p.title.length > 48) e.push('title');
   if (/@@|\b(dice|you rolled|2d6|d20|stat check|target number)\b|as an ai|\bsection\b/i.test(p.text)) e.push('meta words');
   if (n.kind === 'check' && (!p.check || p.check.length < 8 || p.check.length > 70)) e.push('check label');
@@ -185,6 +185,15 @@ function problems(n, p) {
   return e;
 }
 
+function statusLive(reason) {
+  try {
+    const prose = {};
+    for (const f of readdirSync(join(DIR, 'prose'))) Object.assign(prose, JSON.parse(readFileSync(join(DIR, 'prose', f), 'utf8')).sections);
+    const miss = NODES.filter((n) => !prose[n.id]);
+    const regions = [0, 1, 2, 3, 4, 5].filter((r) => existsSync(join(DIR, 'outline', `region-${r}.json`)));
+    writeFileSync(join(DIR, 'STATUS.md'), `# ${skel.title} (${SLUGARG}) status\n\nUpdated: ${new Date().toISOString()} (UTC; London = UTC+0 on this date)\nLast event: ${reason}\nSections with prose: ${NODES.length - miss.length}/${NODES.length}\nOutline regions done: ${regions.join(', ') || 'none'}\nNext section to write (story order): ${miss[0]?.id || 'none'}\nModel: Flash-Lite only (verified on the mode picker before every call; Pro is never used)\nResume: node scripts/pyoa/run-book.mjs dice ${SLUGARG} (outline, prose, fill, merge, lint; resumable).\n`);
+  } catch (e) { /* ignore */ }
+}
 async function runProse() {
   const O = loadOutline();
   if (Object.keys(O.chains).length < 100) { log('STOP outline missing: run "outline" first'); process.exit(5); }
@@ -216,8 +225,10 @@ async function runProse() {
     markFlash(Object.keys(ordered), batch[0].id);
     log(`done ${batch[0].id}: ${Object.keys(ordered).length}/${batch.length}${missing.length ? ' MISSING ' + missing.map((n) => n.id).join(',') : ''}`);
     done++;
+    statusLive('prose batch ' + batch[0].id);
   }
   log(`finished prose run: calls ${calls}, batches done ${done}/${batches.length}`);
+  statusLive(done === batches.length ? 'prose pass finished (fill next)' : 'prose run ended early (--max)');
 }
 
 function markFlash(ids, batchId) {
@@ -232,10 +243,13 @@ function markFlash(ids, batchId) {
 async function runFill() {
   const O = loadOutline();
   let calls = 0;
+  for (let round = 0; round < 3; round++) {
+  let any = false;
   for (const f of readdirSync(join(DIR, 'prose'))) {
     const fp = join(DIR, 'prose', f);
     const j = JSON.parse(readFileSync(fp, 'utf8'));
     if (!j.missing?.length) continue;
+    any = true;
     if (calls >= maxCalls) break;
     const need = j.missing.map((id) => N.get(id));
     const ids = need.map((n) => n.id);
@@ -243,14 +257,18 @@ async function runFill() {
     log(`ask fill ${f} items=${need.length}`);
     const reply = await call(prosePrompt(need, O, ctx), `fill-${f.replace('.json', '')}`); calls++;
     const p = parseProse(reply);
-    for (const n of need) { const pr = problems(n, p.get(n.id)); if (!pr.length) j.sections[n.id] = p.get(n.id); else log(`  reject ${n.id}: ${pr.join(',')}`); }
+    for (const n of need) { const pr = problems(n, p.get(n.id), round >= 1 ? 40 : 55); if (!pr.length) j.sections[n.id] = p.get(n.id); else log(`  reject ${n.id}: ${pr.join(',')}`); }
     const ord = {}; for (const n of NODES) if (j.sections[n.id]) ord[n.id] = j.sections[n.id];
     j.sections = ord; j.missing = ids.filter((id) => !ord[id]);
     writeFileSync(fp, JSON.stringify(j, null, 1));
     log(`filled ${f}: still missing ${j.missing.length}`);
+    statusLive('fill round ' + round + ' ' + f);
     await sleep(8000);
   }
+  if (!any) break;
+  }
   log(`finished fill run: calls ${calls}`);
+  statusLive('fill finished');
 }
 function runMerge() {
   const O = loadOutline();
