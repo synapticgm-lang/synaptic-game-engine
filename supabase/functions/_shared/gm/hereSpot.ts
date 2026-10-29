@@ -134,9 +134,10 @@ function roadEncounterForName(
   if (!e || e.engaged || e.escaped || e.lost) return null;
   const k = personKey(name);
   if (!k) return null;
-  const candidates = [e.name, ROAD_KIND_LABEL[e.kind] ?? '']
+  const candidates = [e.name, ROAD_KIND_LABEL[e.kind]]
+    .filter((n): n is string => typeof n === 'string' && n.length > 0)
     .map((n) => personKey(n))
-    .filter(Boolean);
+    .filter((c) => c.length > 0);
   if (candidates.some((c) => c === k || c.includes(k) || k.includes(c))) return e;
   return null;
 }

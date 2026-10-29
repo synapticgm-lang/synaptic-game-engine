@@ -250,12 +250,14 @@ describe('T10RC1 P1 — no telegram agenda quotes', () => {
         {
           id: 'case',
           name: 'Case the Caravan',
-          status: 'active',
+          description: 'Case the caravan before it moves.',
+          type: 'side' as const,
+          status: 'active' as const,
           revealed: true,
           giver: 'Orel Vane',
           objectives: [],
         },
-      ] as GameState['quests'],
+      ],
     });
     const draft = 'No one was there to answer. The fence held its silence.';
     const out = ensureSpokenAnswer(draft, state, 'Ask Orel Vane about the job');

@@ -26,6 +26,7 @@ import type { IntentStep, IntentTone } from './intentParser';
 import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority';
 import { isOutOfTalkingRange } from './hereSpot';
 import { applyPresenceFacts, seat, unseat, withMemoryPresentFlag } from './presentAuthority';
+import { mentionsName, peopleHere } from './scenePresence';
 
 export type StealOutcome = {
   taken: boolean;
@@ -415,6 +416,35 @@ export function resolvePersonThreatAttempt(
       receipts,
       state: next,
     };
+  }
+
+  // Threat only lands on someone already seated / in talking range (peopleHere). Naming a
+  // left-behind person must not invent a seat and roll Influence (T10R / T10RC1).
+  if (who) {
+    const here = peopleHere(state);
+    const present = here.some((p) => mentionsName(p, who) || mentionsName(who, p));
+    if (!present) {
+      facts.push(`Speech event: you address ${who}. No one present to answer.`);
+      receipts.push(`Threat: ${who} not present`);
+      return {
+        success: false,
+        endedFight: false,
+        skill: 'intimidation',
+        record: {
+          label: 'Intimidation (absent)',
+          d20s: [0],
+          kept: 0,
+          advState: 'normal',
+          total: 0,
+          dc: 0,
+          outcome: 'failure',
+          mods: [],
+        },
+        facts,
+        receipts,
+        state: next,
+      };
+    }
   }
 
   // Seat the target before attitude / leave (road encounter.name included).

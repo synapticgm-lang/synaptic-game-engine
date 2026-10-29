@@ -141,7 +141,9 @@ describe('T10AR buyer stock line source (s9601 T157)', () => {
       s,
       'Talk to Vessa',
     );
-    expect(out.prose).toMatch(/I need a buyer who pays/i);
+    // T10RC1 — spokenAnswer agendaAsIndirectBeat: need content as a real sentence, not "I need …" quote.
+    expect(out.prose).toMatch(/Vessa made clear they needed a buyer who pays/i);
+    expect(out.prose).not.toMatch(/I need a buyer who pays/i);
   });
 });
 
