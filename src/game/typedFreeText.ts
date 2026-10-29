@@ -267,11 +267,13 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
       target: threatTarget,
       tone: step.tone === 'friendly' ? 'threatening' : (step.tone ?? 'threatening'),
     });
+    // T10RC1 — Influence outcome is committed in threat.facts (Must narrate leave/yield).
+    // Do not open a free NPC speech reaction slot for the writer to bargain after dice.
     return {
       tried,
       done: true,
       reason: threat.success ? 'threat resolved' : 'threat resisted',
-      engineResult: [...threat.facts, ...threat.receipts, clauseWriterFact(step, false, here)].filter(Boolean).join(' '),
+      engineResult: [...threat.facts, ...threat.receipts].filter(Boolean).join(' '),
       economySlot: 'action',
       state: threat.state,
     };
@@ -563,10 +565,25 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
   const facts = stepResults.map((r) => r.engineResult);
   // T10AO — compound free text (sling + grip) used to open one NPC reaction slot per clause;
   // convert then painted "said nothing" twice. One reaction owner per beat.
-  const engineResult = dedupeNpcReactionSlots(facts.join(' '));
+  const joined = facts.join(' ');
+  const threatSealed =
+    /\b(?:refuses the threat and leaves|yields under the threat|close the distance before a grab)\b/i.test(
+      joined,
+    );
+  // T10RC1 — when any step sealed Influence, strip open slots from every step + the join.
+  const engineResult = dedupeNpcReactionSlots(joined);
+  const sealedFacts = threatSealed
+    ? facts.map((f) =>
+        f
+          .replace(/\s*Speech event:\s*you address\s+[^.]+?\.\s*NPC reaction slot open for\s+[^.]+?\./gi, '')
+          .replace(/\s*NPC reaction slot open for\s+[^.]+?\./gi, '')
+          .replace(/\s+/g, ' ')
+          .trim(),
+      )
+    : facts;
   return {
     receipts,
-    facts,
+    facts: sealedFacts,
     engineResult,
     intentRead,
     stepResults,
@@ -576,10 +593,23 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
   };
 }
 
-/** Keep the first Speech-event / reaction-slot pair per addressee; drop later clones. */
+/**
+ * Keep the first Speech-event / reaction-slot pair per addressee; drop later clones.
+ * T10RC1 — a committed Influence threat outcome (Must narrate yield/leave) seals the reaction;
+ * do not leave an open speech slot for the writer to bargain.
+ */
 function dedupeNpcReactionSlots(joined: string): string {
-  const raw = (joined ?? '').replace(/\s+/g, ' ').trim();
+  let raw = (joined ?? '').replace(/\s+/g, ' ').trim();
   if (!raw) return raw;
+  if (
+    /\b(?:refuses the threat and leaves|yields under the threat|close the distance before a grab)\b/i.test(raw)
+  ) {
+    raw = raw
+      .replace(/\s*Speech event:\s*you address\s+[^.]+?\.\s*NPC reaction slot open for\s+[^.]+?\./gi, '')
+      .replace(/\s*NPC reaction slot open for\s+[^.]+?\./gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
   const seen = new Set<string>();
   return raw
     .replace(

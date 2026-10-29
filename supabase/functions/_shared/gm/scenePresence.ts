@@ -8,8 +8,7 @@ import { presentNpcNames } from './npcRelationships.ts';
 import { isChromePersonToken } from './chromeAuthority.ts';
 import * as openingEstablishment from './openingEstablishment.ts';
 import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney.ts';
-import { UNDERWAY_HERE } from './locationName.ts';
-import { isOutOfTalkingRange } from './hereSpot.ts';
+import { isOutOfTalkingRange, TALKING_RANGE_FT } from './hereSpot.ts';
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
@@ -34,7 +33,13 @@ const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'vill
 export function roadMeetingPeople(state: GameState): string | null {
   const enc = state.journey?.encounter;
   if (!enc || roadMeetingOver(enc) || !isJourneyUnderway(state)) return null;
-  return ROAD_PEOPLE_KINDS.has(enc.kind) ? roadMeetingLabel(enc.kind) : null;
+  if (!ROAD_PEOPLE_KINDS.has(enc.kind)) return null;
+  // T10RC1 — beyond talking range is not seated (same isOutOfTalkingRange / awayFrom gate).
+  const label = roadMeetingLabel(enc.kind);
+  if (typeof enc.distanceFt === 'number' && enc.distanceFt > TALKING_RANGE_FT) return null;
+  if (enc.name && isOutOfTalkingRange(state, enc.name)) return null;
+  if (isOutOfTalkingRange(state, label)) return null;
+  return label;
 }
 
 /** Article-stripped key so "the crew" and "crew" are one person (T10Y — no "crew of the crew"). */
@@ -77,18 +82,8 @@ export function peopleHere(state: GameState): string[] {
   };
   const facts = state.sceneFacts;
   if (crowdDepartedByRecord(facts)) {
-    // T10AI-fix — empty occupancy still seats engine-tagged people at this place
-    // (refuse/ask via recordPersonSeen). Skip opening-cast filler and stale crowd
-    // stamps (present:true left after sceneFacts cleared) so Follow-up chips retract.
-    // T10AQ-fix — UNDERWAY_HERE is one shared stamp; quiet-road clear must not re-seat
-    // historical road meets via location match (companions + live meeting only below).
-    const hereKey = low(state.currentLocation);
-    const sharedRoad = hereKey === low(UNDERWAY_HERE);
-    for (const m of state.npcMemories ?? []) {
-      if (m.shouldExit || m.present === true) continue;
-      if (sharedRoad) continue;
-      if (low(m.location) && low(m.location) === hereKey) add(m.npcName);
-    }
+    // T10RC1 — empty occupancy is seat-authority empty. Location-stamped memories are not
+    // seats (dual-here deleted). Companions + live road meeting + active encounter only.
     (state.companions ?? []).forEach((c) => add(c.name));
     add(state.activeEncounter?.name);
     add(roadMeetingPeople(state));

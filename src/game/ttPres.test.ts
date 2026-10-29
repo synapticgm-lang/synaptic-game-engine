@@ -9,6 +9,7 @@ import { presentNpcRecords } from './npcRecords';
 import { commitOfferedPad } from './playTranscript';
 import { applyOptionCooldown } from './sceneAffordances';
 import { checkPlayCrimes } from './turnCheck';
+import { TALKING_RANGE_FT } from './hereSpot';
 import type { GameState, NpcMemory, RoadEncounter } from './types';
 
 function names(state: GameState): string[] {
@@ -135,11 +136,32 @@ describe('q47-PRES presence record', () => {
   it('MEGA3 Hale Cotter is present on the live road meeting and gone once it ends', () => {
     const t69 = loadMega(69);
     expect(names(t69.before)).not.toContain('Hale Cotter');
-    expect(names(t69.after)).toContain('Hale Cotter');
-    expect(peopleHere(t69.after)).toContain('thugs');
+    // T10RC1 — bring into talking range when the tape spawned beyond it.
+    const after69 = (() => {
+      const e = t69.after.journey?.encounter;
+      if (e && typeof e.distanceFt === 'number' && e.distanceFt > TALKING_RANGE_FT) {
+        return {
+          ...t69.after,
+          journey: { ...t69.after.journey!, encounter: { ...e, distanceFt: 5 } },
+        };
+      }
+      return t69.after;
+    })();
+    expect(names(after69)).toContain('Hale Cotter');
+    expect(peopleHere(after69)).toContain('thugs');
     const t70 = loadMega(70);
-    expect(names(t70.before)).toContain('Hale Cotter');
-    expect(peopleHere(t70.before)).toContain('thugs');
+    const before70 = (() => {
+      const e = t70.before.journey?.encounter;
+      if (e && typeof e.distanceFt === 'number' && e.distanceFt > TALKING_RANGE_FT) {
+        return {
+          ...t70.before,
+          journey: { ...t70.before.journey!, encounter: { ...e, distanceFt: 5 } },
+        };
+      }
+      return t70.before;
+    })();
+    expect(names(before70)).toContain('Hale Cotter');
+    expect(peopleHere(before70)).toContain('thugs');
     expect(names(t70.after)).not.toContain('Hale Cotter');
     expect(peopleHere(t70.after)).not.toContain('thugs');
     const t71 = loadMega(71);

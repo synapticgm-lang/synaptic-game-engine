@@ -42,7 +42,7 @@ import {
   WINDOW_NOUN,
 } from './chipRules';
 import { floorPlanIssues } from './floorPlan';
-import { isCrowdFillerToken, isSystemWindowLabel } from './chromeAuthority';
+import { isChromePersonToken, isCrowdFillerToken, isSystemWindowLabel } from './chromeAuthority';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { sentenceLooksLikeSelfIntro } from './npcMemory';
 import { canDoKeys, locksOpenedWithoutSkill } from './skillGates';
@@ -750,6 +750,7 @@ export function checkPlayCrimes(
   }
 
   // Someone here when the beat began may speak in it, even if they leave by its end.
+  // T10RC1 — consume presence (peopleHere); chrome tokens are not speakers (no word-list).
   const here = [...peopleHere(before), ...peopleHere(after)].map(low);
   const placeNames = [
     before.currentLocation,
@@ -758,6 +759,7 @@ export function checkPlayCrimes(
     ...getRegisteredLocations(after.campaignBibleId),
   ].map(norm).filter((p) => p.length >= 4);
   for (const m of after.npcMemories ?? []) {
+    if (isChromePersonToken(m.npcName)) continue;
     const names = [m.npcName, ...(m.aliases ?? [])].map(norm).filter((n) => n.length >= 3);
     if (names.some((n) => here.some((h) => h === low(n) || h.includes(low(n)) || low(n).includes(h)))) continue;
     const spoke = names.find((n) => {

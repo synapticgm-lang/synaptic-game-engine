@@ -108,21 +108,33 @@ function quotedReply(speaker: Speaker, words: string): { line: string; words: st
 type LedgerKind = 'need' | 'goal' | 'offer';
 
 /**
- * T10AL — agenda fields are noun phrases ("a buyer who pays"), not dialogue. Speak them as a
- * first-person sentence so the beat is not a clipped fragment and not a turn-plays-player echo.
+ * True when `bit` is already a spoken sentence (authored motive / topic), not a chip noun phrase.
+ * Only spoken sentences may become `Name said, "…"`.
  */
-function asSpokenAgenda(bit: string, kind: LedgerKind): string {
+function isSpokenSentence(bit: string): boolean {
   const t = bit.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
-  if (!t) return t;
-  if (/^(?:I|We|You|Don't|Do not|Never|Ask|Tell|Look)\b/i.test(t)) {
-    return /[.!?]$/.test(t) ? t : `${t}.`;
-  }
-  if (/[.!?]$/.test(t) && /^[A-Z]/.test(t)) return t;
-  // Keep the article on need ("a buyer who pays"); strip only when the frame is "offer/want X".
-  const bare = t.replace(/^(?:an?|the)\s+/i, '');
-  if (kind === 'offer') return `I can offer ${bare}.`;
-  if (kind === 'goal') return `I want ${bare}.`;
-  return `I need ${t}.`;
+  if (!t || t.length < 4) return false;
+  if (/^(?:I|We|You|Don't|Do not|Never|Ask|Tell|Look)\b/i.test(t)) return true;
+  return /[.!?]$/.test(t) && /^[A-Z]/.test(t);
+}
+
+/**
+ * T10RC1 — agenda / thread fields are structured facts (chip topics), never quoted dialogue.
+ * One owner: render as engine-fed indirect speech or action from who/want/where. Keep chip
+ * topics in npcChipWant. No "I want/need/can offer …" telegram quotes.
+ */
+function agendaAsIndirectBeat(
+  speaker: Speaker,
+  bit: string,
+  kind: LedgerKind,
+): { line: string; words?: string } {
+  const t = bit.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
+  if (!t) return { line: `${capitalize(speaker.label)} said nothing.` };
+  if (isSpokenSentence(t)) return quotedReply(speaker, /[.!?]$/.test(t) ? t : `${t}.`);
+  const who = capitalize(speaker.label);
+  if (kind === 'offer') return { line: `${who} held out ${t}.` };
+  if (kind === 'goal') return { line: `${who} pressed for ${t}.` };
+  return { line: `${who} made clear they needed ${t}.` };
 }
 
 const sayWordSet = (s: string) => new Set((s.toLowerCase().match(/[a-z0-9']+/g) ?? []).filter((w) => w.length >= 3));
@@ -247,10 +259,7 @@ function spokenExchangeLine(
       for (const w of words) if (askBody.includes(w)) hit += 1;
       return hit / words.length >= 0.4 || words.some((w) => w.length >= 5 && askBody.includes(w));
     };
-    const fresh = ledgerBits.filter((b) => {
-      const spoken = asSpokenAgenda(b.text, b.kind);
-      return !speakerAlreadyTold(state, speaker, b.text) && !speakerAlreadyTold(state, speaker, spoken);
-    });
+    const fresh = ledgerBits.filter((b) => !speakerAlreadyTold(state, speaker, b.text));
     const pool = fresh.length ? fresh : [];
     // Content questions end in ? (or name an about-topic). Imperative threats with "or"
     // ("check your pockets or I will") are demands — keep ledger (T10AF Dunn T147).
@@ -297,7 +306,7 @@ function spokenExchangeLine(
         : !contentQuestion || demandsSpeech
           ? pool[0]
           : undefined);
-    if (fitRow) return quotedReply(speaker, asSpokenAgenda(fitRow.text, fitRow.kind));
+    if (fitRow) return agendaAsIndirectBeat(speaker, fitRow.text, fitRow.kind);
     if (skipAmbientCombat) {
       return { line: `${capitalize(speaker.label)} said nothing.` };
     }
@@ -367,7 +376,8 @@ function spokenExchangeLine(
   const words = (motiveLinesFor(sheet.motive)[0] ?? sheet.motive ?? '').replace(/\s+/g, ' ').trim();
   if (words && !speakerAlreadyTold(state, speaker, words)) return quotedReply(speaker, words);
 
-  // T10DIR2 — present NPC with an open job/thread must move it forward when addressed, not silence.
+  // T10RC1 — open job/thread: never quote the thread label. Indirect beat from structured agenda
+  // (who wants what); chip topics stay in npcChipWant.
   {
     const threads = state.openThreads ?? [];
     const hit = threads.find((t) => {
@@ -381,9 +391,22 @@ function spokenExchangeLine(
       return false;
     });
     if (hit) {
-      const line = (hit.label || '').replace(/\s+/g, ' ').trim();
-      if (line && !speakerAlreadyTold(state, speaker, line)) {
-        return quotedReply(speaker, line);
+      const need = (memory?.need ?? '').replace(/\s+/g, ' ').trim();
+      const goal = (memory?.goal?.target ?? '').replace(/\s+/g, ' ').trim();
+      const offer = (memory?.offer ?? '').replace(/\s+/g, ' ').trim();
+      if (goal && !speakerAlreadyTold(state, speaker, goal)) {
+        return agendaAsIndirectBeat(speaker, goal, 'goal');
+      }
+      if (need && !speakerAlreadyTold(state, speaker, need)) {
+        return agendaAsIndirectBeat(speaker, need, 'need');
+      }
+      if (offer && !speakerAlreadyTold(state, speaker, offer)) {
+        return agendaAsIndirectBeat(speaker, offer, 'offer');
+      }
+      // Thread topic without a spoken sentence: action beat naming the structured label (no quote).
+      const topic = (hit.label || '').replace(/^.+?:\s*/, '').replace(/\s+/g, ' ').trim();
+      if (topic && !isSpokenSentence(topic) && !speakerAlreadyTold(state, speaker, topic)) {
+        return { line: `${capitalize(speaker.label)} pressed for ${topic}.` };
       }
     }
   }
@@ -760,11 +783,28 @@ function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): 
   const body = (prose ?? '').replace(/\s+/g, ' ').trim();
   if (!body) return false;
   const label = esc(speaker.label);
+  // T10RC1 — indirect agenda beats count as already answered (no second append on seal).
+  if (
+    new RegExp(
+      `${label}\\s+(?:pressed for|made clear they needed|held out)\\b`,
+      'i',
+    ).test(body)
+  ) {
+    return true;
+  }
   if (words) {
     const w = words.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
     if (w.length >= 3) {
       const q = esc(w);
       if (new RegExp(`${label}\\s+said,\\s*["\\u201c]${q}["\\u201d]?`, 'i').test(body)) return true;
+      if (
+        new RegExp(
+          `${label}\\s+(?:pressed for|made clear they needed|held out)\\s+${q}`,
+          'i',
+        ).test(body)
+      ) {
+        return true;
+      }
       const now = sayWordSet(w);
       if (now.size >= 2) {
         for (const m of body.matchAll(QUOTE)) {
@@ -846,12 +886,21 @@ function attachExchange(
   };
 }
 
+/** Engine already recorded absence — never append speech beside it (T10RC1). */
+function engineSaidNobodyPresent(prose: string): boolean {
+  return /\bNo one (?:was|is) there to answer\b|\bNo one present to answer\b/i.test(prose ?? '');
+}
+
 /** Ensure a who / want / where answer carries the addressee's own quoted words, from the ledger only. */
 export function ensureSpokenAnswer(
   prose: string,
   state: GameState,
   playerInput: string
 ): { prose: string; answer: SpokenAnswer } {
+  // T10RC1 — when the engine fact already says nobody is present, do not append motive/quest speech.
+  if (engineSaidNobodyPresent(prose) || speakersHere(state).length === 0) {
+    return { prose: collapseDuplicateSaid(prose), answer: { status: 'nobody-here' } };
+  }
   const topic = asked(playerInput);
   const who = addressee(state, playerInput);
   // T10R / T10V — Talk chip / typed ask with someone here still needs an exchange beat when
