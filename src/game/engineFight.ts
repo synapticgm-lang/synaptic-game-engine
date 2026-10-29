@@ -43,6 +43,19 @@ const PARLEY_RE = /\b(parley|negotiate|talk (?:it|them) down|surrender|truce|bar
 const ATTACK_RE =
   /\b(attack|fight|strike|engage|slash|stab|shoot|punch|lash out|auto[- ]?fight|ambush|sneak attack|loose an arrow|cast (?:a |an )?spell)\b/i;
 
+/**
+ * T10AP — open-thread / affordance "Face {foe}" opens the fight with an attack (same as tabletop
+ * roundFight). ATTACK_RE alone misses Face; Press the attack already matches via "attack".
+ */
+function facesLiveFoe(input: string, enc: { name?: string } | null | undefined): boolean {
+  const name = (enc?.name ?? '').trim();
+  if (!name) return false;
+  const act = meetingMoveBase(input).trim();
+  if (!act) return false;
+  const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`^face\\s+${esc}$`, 'i').test(act);
+}
+
 export interface EngineFightResult {
   state: GameState;
   receipts: string[];
@@ -258,7 +271,10 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const roundMove = roundMode && (!!state.activeEncounter ? classifyRoundAction(input) !== 'other' : isFightCast(state, input));
   const flee = !inRounds && (meetingMove === 'flee' || (!meetingMove && FLEE_RE.test(act)));
   const parley = meetingMove === 'parley' || (!flee && PARLEY_RE.test(act));
-  const attack = !flee && !parley && (ATTACK_RE.test(act) || !!road || inRounds || roundMove);
+  const attack =
+    !flee
+    && !parley
+    && (ATTACK_RE.test(act) || facesLiveFoe(input, raw) || !!road || inRounds || roundMove);
   const onRoad = isRoadFoe(state, raw);
   if (!flee && !parley && !attack) return null;
   if (parked && (flee || /\b(talk|ask|speak|conversation)\b/i.test(input))) return null;

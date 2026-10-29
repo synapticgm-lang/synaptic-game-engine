@@ -1836,7 +1836,7 @@ export interface NpcMemory {
   purchases?: string[];
   /** 12c — quest-giver function complete; drop from CAST / Talk. */
   shouldExit?: boolean;
-  exitReason?: 'quest-accepted' | 'goods-sold' | 'function-complete' | 'stall-pressure';
+  exitReason?: 'quest-accepted' | 'goods-sold' | 'function-complete' | 'stall-pressure' | 'defeated' | 'escaped';
   /** 27d — other names this same person is called (title forms, short forms). */
   aliases?: string[];
   /** 27d — player has actually met this person in play. */

@@ -266,18 +266,67 @@ function spokenExchangeLine(
     );
     const ambientShout =
       /["\u201c]/.test(ask) && !/\?/.test(ask) && !namesThisSpeaker && !demandsSpeech;
+    // T10AP — live foe not named in the line: no ledger/motive dump (T29 combat spawn + "Hey, look…").
+    const liveFoe = (state.activeEncounter?.name ?? '').trim();
+    const speakerIsLiveFoe =
+      !!liveFoe
+      && (sameSpeaker(speaker.label, liveFoe)
+        || speaker.names.some((n) => sameSpeaker(n, liveFoe)));
+    const namedLiveFoe =
+      !!liveFoe
+      && (new RegExp(`\\b${esc(liveFoe)}\\b`, 'i').test(ask)
+        || speaker.names.some((n) => n.length >= 3 && new RegExp(`\\b${esc(n)}\\b`, 'i').test(ask)));
+    const skipAmbientCombat =
+      ambientShout
+      || (speakerIsLiveFoe && !namedLiveFoe && !demandsSpeech && !contentQuestion);
     const fitRow =
       pool.find((b) => overlapsAsk(b.text))
-      ?? (ambientShout
+      ?? (skipAmbientCombat
         ? undefined
         : !contentQuestion || demandsSpeech
           ? pool[0]
           : undefined);
     if (fitRow) return quotedReply(speaker, asSpokenAgenda(fitRow.text, fitRow.kind));
+    if (skipAmbientCombat) {
+      return { line: `${capitalize(speaker.label)} said nothing.` };
+    }
     // Fresh ledger bits exist but none fit this content question — fall through to motive
     // (react in character) instead of dumping an unrelated need. Already-told-only → ask-back.
     if (!pool.length) {
       return quotedReply(speaker, 'I already told you that. Ask me who, or why.');
+    }
+  }
+
+  // T10AP — same combat-ambient skip when there was no ledger bit block (or it fell through).
+  {
+    const contentQuestion =
+      !!askTopic
+      || (/["\u201c]/.test(ask) && /\?/.test(ask))
+      || /\b(?:or|whether)\b[\s\S]{0,80}\?/i.test(ask)
+      || /\bif\b[\s\S]{0,80}\?/i.test(ask);
+    const demandsSpeech =
+      /\banswer me\b|\bwaiting for an answer\b/i.test(ask)
+      || /^(?:talk(?:\s+to)?|speak(?:\s+to)?)\b/i.test(ask)
+      || /^ask\s+(?:what|who|why|where)\b/i.test(ask);
+    const namesThisSpeaker = speaker.names.some(
+      (n) => n.length >= 3 && new RegExp(`\\b${esc(n)}\\b`, 'i').test(ask),
+    );
+    const ambientShout =
+      /["\u201c]/.test(ask) && !/\?/.test(ask) && !namesThisSpeaker && !demandsSpeech;
+    const liveFoe = (state.activeEncounter?.name ?? '').trim();
+    const speakerIsLiveFoe =
+      !!liveFoe
+      && (sameSpeaker(speaker.label, liveFoe)
+        || speaker.names.some((n) => sameSpeaker(n, liveFoe)));
+    const namedLiveFoe =
+      !!liveFoe
+      && (new RegExp(`\\b${esc(liveFoe)}\\b`, 'i').test(ask)
+        || speaker.names.some((n) => n.length >= 3 && new RegExp(`\\b${esc(n)}\\b`, 'i').test(ask)));
+    if (
+      ambientShout
+      || (speakerIsLiveFoe && !namedLiveFoe && !demandsSpeech && !contentQuestion)
+    ) {
+      return { line: `${capitalize(speaker.label)} said nothing.` };
     }
   }
 
@@ -503,6 +552,29 @@ function isCleanName(p: string): boolean {
   return !words.some((w) => QUESTION_OR_CHIP.test(w));
 }
 
+/**
+ * T10AP — typed "ask Maud" / "Maud if…" names a person who is not here. Do not fall back to the
+ * nearest corpse/group; free text stays unanswered (nobody-here).
+ */
+function typedAbsentProperName(playerInput: string, here: Speaker[], pcName?: string | null): boolean {
+  const ask = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!ask) return false;
+  const hit =
+    ask.match(
+      /\b(?:ask|tell|talk(?:\s+to)?|speak(?:\s+to)?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)(?:\s+if\b|\s+whether\b|\s+about\b|\b|,|\.|$)/,
+    )?.[1]
+    ?? ask.match(/\b([A-Z][a-z]{2,})(?:\s+if\b|\s+whether\b)/)?.[1]
+    ?? '';
+  const cand = hit.trim();
+  if (cand.length < 3) return false;
+  if (pcName && sameSpeaker(pcName, cand)) return false;
+  return !here.some(
+    (s) =>
+      sameSpeaker(s.label, cand)
+      || s.names.some((n) => sameSpeaker(n, cand) || new RegExp(`\\b${esc(n)}\\b`, 'i').test(cand)),
+  );
+}
+
 /** The person the question is put to: the one the player named, else the opening lead, else the first here. */
 function addressee(state: GameState, playerInput: string): { speaker: Speaker; alone: boolean } | null {
   const here = speakersHere(state);
@@ -511,9 +583,12 @@ function addressee(state: GameState, playerInput: string): { speaker: Speaker; a
   const named =
     here.find((s) => s.names.some((n) => new RegExp(`\\b${esc(n.toLowerCase())}\\b`).test(said))) ??
     here.find((s) => s.label === fuzzyTypedName(playerInput, here.map((h) => h.label)));
+  if (named) return { speaker: named, alone: here.length === 1 };
+  // Absent proper name must not bind to the nearest present corpse/group (T10AP Maud → Rat Pack).
+  if (typedAbsentProperName(playerInput, here, state.character?.name)) return null;
   const leadIds = new Set(openingCastRecords(state).map((r) => r.npcId));
   const lead = here.find((s) => s.record && leadIds.has(s.record.npcId));
-  return { speaker: named ?? lead ?? here[0]!, alone: here.length === 1 };
+  return { speaker: lead ?? here[0]!, alone: here.length === 1 };
 }
 
 function esc(s: string): string {

@@ -112,9 +112,9 @@ export function isLastKillTalkPad(label: string, lastKill?: LastKill | null): bo
   if (/\b(loot|search the (?:body|corpse)|inspect (?:the )?(?:body|corpse)|search remains)\b/i.test(label)) {
     return false;
   }
-  // Social verbs — living talk on a corpse is illegal
+  // Social / insight verbs — living talk or Read/Analyze on a corpse is illegal (T10AP).
   if (
-    !/\b(talk(?:\s+to)?|ask|speak|listen|press(?:\s+for)?|offer|bargain|negotiate|greet|approach|converse|chat|reply)\b/i.test(
+    !/\b(talk(?:\s+to)?|ask|speak|listen|press(?:\s+for)?|offer|bargain|negotiate|greet|approach|converse|chat|reply|read|analyze|follow\s+up)\b/i.test(
       label
     )
   ) {

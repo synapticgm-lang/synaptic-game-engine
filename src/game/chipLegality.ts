@@ -181,6 +181,12 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
     if (dying?.kind === 'dying') return null;
     return { kind: 'impossible-chip', detail: `"${label}" cannot be done while unconscious at 0 HP` };
   }
+  // T10AP — corpse social/insight pads are illegal even when an affordance entityId still resolves
+  // (Read/Analyze on lastKill must not early-return as legal).
+  const lastKill = state.sceneFacts?.lastKill;
+  if (isLastKillTalkPad(label, lastKill)) {
+    return { kind: 'impossible-chip', detail: `"${label}" talks to ${lastKill?.name}, who is dead` };
+  }
   // Plan §4 / OPT-1: entity-bound affordance chips beat chipLegality word guesses.
   const bound = boundEngineChip(chip, state, storyProse);
   if (bound?.kind === 'affordance' && bound.entityId) {
@@ -191,10 +197,6 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
       };
     }
     return null;
-  }
-  const lastKill = state.sceneFacts?.lastKill;
-  if (isLastKillTalkPad(label, lastKill)) {
-    return { kind: 'impossible-chip', detail: `"${label}" talks to ${lastKill?.name}, who is dead` };
   }
   // Empty-room text strips opening cast; a busy beat that names the listener still seats them
   // even when cast-list / mock presence missed the ledger (T10AB-fix2).
