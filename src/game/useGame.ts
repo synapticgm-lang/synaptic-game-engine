@@ -4829,6 +4829,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
       }
       if (circlingRecorded) mergedState = creditCommittedProgress(circlingRecorded, mergedState, sanitizedInput);
+      // T10DIR2 — no-op chips from engine receipts (search empty / failed no-effect), not chip wording.
+      if (circlingRecorded) {
+        const { noteDirectorNoOpFromReceipts } = await import('./director');
+        const { turnProgress } = await import('./choiceRanking');
+        const p = turnProgress(circlingRecorded, mergedState, [
+          ...(gmEntry.systemLog ?? []),
+          String(mergedState.completedEvent?.engineResult ?? ''),
+        ]);
+        mergedState = noteDirectorNoOpFromReceipts(mergedState, sanitizedInput, [
+          ...(gmEntry.systemLog ?? []),
+          String(mergedState.completedEvent?.engineResult ?? ''),
+        ], p.progressed);
+      }
       // q43-OCD: one shared pad commit (pad → stamp offered chips / recentOfferedActions → replay hash).
       mergedState = commitOfferedTurn({ ...mergedState, choices: heardChoices }, gmEntry.id);
       const postCommitImageJobs: ImageGenJob[] = [];

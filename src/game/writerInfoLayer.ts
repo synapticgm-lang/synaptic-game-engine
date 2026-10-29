@@ -204,6 +204,7 @@ export function formatWriterInfoLayer(state: GameState, activeLoreCards: LoreCar
   const agendaSection = agendaFact ? `Agenda (world fact):\n${agendaFact}` : '';
   // T10AB — stall pressure must reach the writer so the world acts (patrol / visitor / deadline), not only a chip.
   const stallFact =
+    // T10DIR2 — stallWorldFact is already Must narrate: … from director.appendDirectorFact.
     state.sceneFacts?.stallWorldFact?.trim()
     || state.sceneFacts?.placeWorldFact?.trim()
     || '';

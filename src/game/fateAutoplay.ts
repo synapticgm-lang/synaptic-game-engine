@@ -2698,6 +2698,17 @@ export async function runFateAutoplay(opts: {
           const p = turnProgress(turnStart, state, [...(tel.arcStatusReceipts ?? []), ...(tel.systemLog ?? [])]);
           tel.progress = p.progressed;
           tel.progressReasons = p.reasons;
+          // T10DIR2 — no-op chips keyed on engine receipts (found nothing / no-effect fail), not chip text.
+          {
+            const { noteDirectorNoOpFromReceipts } = await import('./director');
+            const chip = String(tel.fatePick || tel.playerInput || '').trim();
+            state = noteDirectorNoOpFromReceipts(
+              state,
+              chip,
+              [...(tel.arcStatusReceipts ?? []), ...(tel.systemLog ?? []), tel.engineFact ?? ''],
+              p.progressed,
+            );
+          }
           const prev = turns[turns.length - 1];
           if (!tel.error) {
             tel.turnCheck = checkPlayerTurn(turnStart, state, { ...tel, previousPick: prev ? prev.fatePick || prev.playerInput : undefined });
