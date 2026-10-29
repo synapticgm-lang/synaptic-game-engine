@@ -1,0 +1,72 @@
+@@SECTION vh-1-1-3-8
+TITLE: The Damped Overhang
+TEXT: In the damp shadow of the overhang, you readjust the shoulder cushioning where the iron weight has begun to bruise your collarbone through the coarse wool. The bronze clapper hums against your spine like a trapped insect, its low vibration sinking deep into your bones as the mountain wind whistles through the rock-crevices. You shift your weight from one frozen boot to the other, testing the grip of the packed gravel beneath your heels. // Ahead, the path splits toward the lower yards, offering a choice between the salted winches of the cordage makers and the draughty corridors where heavy tow-lines wait in the gloom.
+EXIT 1: Inspect the salted winch in the cordage yard
+EXIT 2: Follow the draughty corridor toward the rope storehouse
+@@END
+
+@@SECTION vh-1-1-3-9
+TITLE: The Rusted Crane
+TEXT: By the rusted iron crane used to hoist provisions, you check the weather-eye on the horizon, where purple clouds gather above the distant stair-towns. Frost nips at your knuckles as you secure the leather straps binding the heavy bronze tongue to your padded frame. Below you, the stone steps vanish into a swirling curtain of white mist, hiding the drop into the abyss. // You must decide whether to seek out the secure tow-lines in the sheltered storehouse or approach the guild weighing scales where official stamps are traded for promises.
+EXIT 1: Head inside for the thick three-strand tow-line
+EXIT 2: Seek out the iron weighing scale near the ledger desk
+@@END
+
+@@SECTION vh-1-1-3-10
+TITLE: The Lower Grotto
+TEXT: Across the threshold of the lower grotto, you pause to catch your breath while water drips rhythmically from the green-stained limestone roof onto your hood. The air here smells of damp moss and old stone, thick with the moisture of melting snow from the high ledges. A stray draft carries the faint, sweet scent of burning juniper from the monks' cells far above. // Three distinct paths branch out from the dripping cave mouth, leading toward the hemp-combing benches, the shadowy rope corridors, or the bustling ledger desks.
+EXIT 1: Approach the hemp-combing benches where apprentices work
+EXIT 2: Step into the draughty corridor of the rope storehouse
+EXIT 3: Walk toward the iron weighing scale by the ledger desk
+@@END
+
+@@SECTION vh-1-1-3-11
+TITLE: The Cantilevered Ledge
+TEXT: On the dizzying cantilevered ledge above the deep fissure, you guide the nervous animal step by careful step over the frost-whitened timber planks. The wood groans underfoot, protesting the weight of the beast and the iron clapper strapped to your back. Far below, the white ribbon of the river gleams like a frozen thread in the gorge. // You reach the far side of the span where the path divides, leaving you to choose between the shelter of the indoor stores or the open galleries of the rope-loft.
+EXIT 2: Examine the thick three-strand tow-line in the corridor
+EXIT 2: Approach the iron weighing scale near the ledger desk
+EXIT 3: Climb toward the arched rafters of the rope-loft
+@@END
+
+@@SECTION vh-1-1-3-12
+TITLE: The Ancient Marker
+TEXT: Beside the ancient marker post carved with the runes of the first bell-masters, you check your leather bindings to ensure the clapper cannot slip loose. The old stone is cold and slick with rime, bearing centuries of moss and weathering from the mountain gales. A small tin cup hangs from an iron peg on the post, left for travelers to collect meltwater. // You pull your woolen cloak tighter against the biting draft and weigh your options regarding the equipment ahead.
+EXIT 1: Inspect the thick tow-lines in the draughty corridor
+EXIT 2: Weigh your backup rope against the fibers in the loft
+EXIT 3: Stop by the heavy oak wicket of the cable court office
+@@END
+
+@@SECTION vh-1-1-3-13
+TITLE: The Rock-Cut Shelter
+TEXT: In the hollow bowl of the rock-cut shelter, a group of shivering monks huddles around a small brazier, offering you a brief nod of encouragement. The scent of woodsmoke mixes pleasantly with the sharp tang of high-altitude ozone. Outside the stony alcove, the vertical world plunges downward in a series of gray, ice-rimed steps. // The monks return to their silent prayers as you shoulder the heavy metal tongue once more, eyeing the branching routes that lead deeper into the mountain's throat.
+EXIT 1: Approach the iron weighing scale by the ledger desk
+EXIT 2: Seek shelter under the arched rafters of the rope-loft
+EXIT 3: Visit the heavy oak wicket of the cable court office
+@@END
+
+@@SECTION vh-1-1-3-14
+TITLE: The Broken Trough
+TEXT: Near the broken stone trough where mountain goats sometimes gather, you haul sharply on the halter to keep the mule from chasing a loose stone over the edge. The animal snorts a cloud of white vapor into the frigid air, its ears flicking back and forth at the howling of the wind. Shards of ice crunch beneath your heavy boots as you regain your footing. // The path narrows sharply here, forcing a decision between the bureaucratic hub of the ledger desks and the toll-lords waiting beyond.
+EXIT 1: Head toward the iron weighing scale near the ledger desk
+EXIT 2: Approach the heavy oak wicket of the cable court office
+@@END
+
+@@SECTION vh-1-1-3-15
+TITLE: The Steep Straightaway
+TEXT: At the threshold of the long, steep straightaway, you look down at the dizzying perspective of the stairs receding into the grey valley fog below. The sheer drop-off makes your stomach lurch, reminding you that a single misstep would send both you and the sacred bell-metal tumbling into the clouds. The metal clapper taps a steady, relentless rhythm against your shoulder blades. // You grip the canvas straps tighter and evaluate the three paths opening before you into the gloom.
+EXIT 1: Seek the iron weighing scale near the ledger desk
+EXIT 2: Inspect the stiff new fibers up in the rope-loft
+EXIT 3: Stop at the heavy oak wicket of the cable court office
+@@END
+
+@@SECTION vh-1-1-4-0
+TITLE: The Merchant's Cellar
+TEXT: On the wide platform outside the rope merchant's cellar, you confront stacked coils of hemp while the clerk taps an ink-stained finger on the rough wooden counter. The pungent aroma of pine tar and treated cordage hangs thick in the freezing air, masking the usual scent of mountain snow. Ledger books lie open, fluttering slightly in the drafty passage. // The clerk watches you with a practiced, calculating eye, waiting for you to commit to the guild's terms before the journey continues downward.
+EXIT 1: Sign the guild ledger on the frosty threshold
+@@END
+
+@@SECTION vh-1-1-4-1
+TITLE: The Guild Kiosk
+TEXT: Under the flickering tallow lamp of the guild kiosk, Master Weaver Korda dangles a heavy spliced cable, praising its braided strength against the worst mountain squalls. The master's weathered face is etched with lines from decades of staring into blinding snow and whipping wind. A small charcoal brazier sputters in the corner, offering little warmth against the creeping frost. // You nod slowly as the spliced line is held out toward you, ready to bind your journey to the weaver's craft.
+EXIT 1: Bind your journey with the cold iron nib
+@@END

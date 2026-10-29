@@ -1,0 +1,7 @@
+@@SECTION vh-4-1-1-4
+TITLE: The Frozen Winch
+TEXT: Thick rime locks the oak gears of the traverse winch, leaving the cable slack and silent above the blue abyss. You wedge your belt-knife into the frozen grease of the cogs, scraping away the gray crust until cold iron screeches against steel. Biscuit stomps his iron-shod hooves on the trembling planks, anxious for the span to move. With a final crack of frost, the mechanism shudders loose, but the cable's groan reveals a new fracture in the iron shoes ahead. // You can test the newly freed winch and risk the main span, or leave the machinery behind to find a safer path around the crevasse.
+EXIT 1: Chip away the remaining ice to test the winch line
+EXIT 2: Leave the frozen winch behind to squeeze through the narrow cleft
+EXIT 3: Follow the tattered red pennant along the rocky detour
+@@END

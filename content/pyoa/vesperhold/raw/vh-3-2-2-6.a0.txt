@@ -1,0 +1,61 @@
+@@SECTION vh-3-2-2-6
+TITLE: The Fog Warden's Wedge
+TEXT: White frost clings to your woollen mittens as you pause beside a low dry-stone wall to share a wedge of hard goat cheese with an exhausted fog-warden. Her horn-handled lantern flickers against an encroaching white wall of mist, casting long, wavering shadows across the barley stubble. The bronze clapper rests heavily against your shoulder blades, its cold metal muffled by layers of coarse canvas. // She points a gloved finger down towards the churning vapor where the switchbacks grow steeper and the air tastes of sulfur and old snow. You fold the remaining cheese into your pack and test the stability of your boots on the frozen mud before deciding your next direction.
+EXIT 1: Negotiate credit with the clerk
+EXIT 2: Descend the slick glacier-run
+@@END
+@@SECTION vh-3-2-2-7
+TITLE: The Unrailed Drop
+TEXT: Frost crystals bloom across your leather boots as the stone track narrows sharply between a sheer limestone cliff and an unrailed drop of six hundred feet. Every breath plumes white in the thin, biting air, and the canvas cradle holding the heavy bronze clapper shifts with a sluggish, dead weight against your spine. Far below, the tiered windmills of the terrace turn in sluggish silence against the grey sky. // You steady your footing on the rimed gravel, listening to the hollow echo of the mountain wind whistling through the crevices of the gorge. The path ahead offers no shelter from the gathering gale, demanding absolute focus on every single footstep you take.
+EXIT 1: Watch the distant mountain goat
+EXIT 2: Feel the clapper's low thrum
+EXIT 3: Tend the guttering candles
+@@END
+@@SECTION vh-3-2-2-8
+TITLE: The Rusted Bell-Pull
+TEXT: A rusted iron bell-pull hangs beside a boarded hatchway set deep into the terrace retaining wall, twitching as though an unseen hand underground is trying to ring for help. The mountain wind howls through the narrow gap between the old barley stores, carrying the dry rattle of loose shale down the cliff face. You adjust the heavy bronze mass in your canvas cradle, letting your aching shoulders relax for a brief moment against the damp stone. // The twitching cable falls still, leaving only the rhythmic groan of distant windmill sails turning in the freezing air. You weigh the strange subterranean signal against the darkening sky above, searching for a safe way past the shuttered doorway.
+EXIT 1: Retrieve the frozen tinker's hammer
+EXIT 2: Pause at the mountain shrine
+EXIT 3: Quiet the braying mule
+@@END
+@@SECTION vh-3-2-2-9
+TITLE: The Guild's Open Gate
+TEXT: Guided by your guild-wrapped hemp cord, the terrace toll-keeper takes one look at your knotted insignia and waves you past the heavy timber barrier without demanding your last copper coin. The cold mountain wind tugs at your heavy coat, but the familiar friction of the master cord reassures you against the hostility of the high ledges. Biscuit steps carefully over the timber sill, his iron shoes clicking sharply on the clean-swept frost stones. // You tip your cap in silent acknowledgment to the gate-keeper, who turns back to his tally-board without another word. The path stretches ahead into the grey haze, offering unobstructed passage deeper into the descending stair-towns.
+EXIT 1: Observe the high ledge goat
+EXIT 2: Feel the bronze thrum
+@@END
+@@SECTION vh-3-2-2-10
+TITLE: The Charcoal Brazier
+TEXT: Biscuit digs his stubborn hooves into the frosted shale, refusing to pass a smoking charcoal brazier tended by shivering barley-scavengers who eye your bronze cargo with greedy curiosity. Sparks drift upward into the bitter air, smelling of scorched peat and wet wool. You murmur a low caution to the mule, tugging firmly on the lead-rope while keeping your body positioned between the animal and the glowing iron pot. // The scavengers mutter among themselves, huddled tight against the bitter draft howling off the upper snowfields. You coax the reluctant beast forward past the heat, eager to leave the smoky alcove behind in the freezing wind.
+EXIT 1: Seek shelter at the stone shrine
+EXIT 2: Scrape the frozen mud
+@@END
+@@SECTION vh-3-2-2-11
+TITLE: The Flurry of Dry Snow
+TEXT: A sudden flurry of dry snow scours the terrace wall, stinging your cold cheeks and plastering your woollen coat with frozen dust swept from the upper threshing floor. The world narrows to a swirling curtain of white, obscuring the drop-off to your left and the jagged masonry to your right. You press your shoulder firmly against the damp stone, clutching the steadying straps of the clapper's cradle to keep your balance against the gust. // Biscuit leans his heavy flank against your side, huffing warm, misted breath into the freezing gloom. As the squall momentarily slackens its grip, the grey outline of the path reveals two distinct ways forward through the drifts.
+EXIT 1: Rest by the mountain shrine
+EXIT 2: Calm the restless mule
+@@END
+@@SECTION vh-3-2-2-12
+TITLE: The Iron Relic
+TEXT: You pry a loose horseshoe from the frozen mud of the path, slipping the heavy iron relic into your deep pocket as a minor talisman against mountain misfortune. The metal is rimed with yellow rust and ice, bearing the distinct punch-marks of a high-altitude forge. Biscuit tosses his shaggy head, rattling his halter-rings as you straighten up and test the weight of the clapper on your tired back. // The surrounding terrace stands silent and abandoned under the heavy overcast sky, save for the distant creak of an untended windmill. You rub your numbed fingers inside your mittens, choosing your next step along the narrowing ledge.
+EXIT 1: Answer the mule's challenge
+EXIT 2: Clear your heavy boot treads
+@@END
+@@SECTION vh-3-2-2-13
+TITLE: The Old Weather-Prophet
+TEXT: An old woman huddles beneath a thick woollen shawl on a stone mounting block, muttering ancient weather-rhymes about the thirteen steps and the impending closure of Lowgate before the winter locks the gorge. Her dry fingers twist a length of barley straw into intricate knots as you pass, her clouded eyes tracking the heavy bronze clapper on your back with grim recognition. The wind catches her warning words, scattering them into the empty air above the drop. // You nod respectfully to her whispered prophecy, tightening your grip on the carrying straps. Two narrow tracks branch out before the mounting block, each leading deeper into the freezing terraces.
+EXIT 1: Follow the mule's narrow track
+EXIT 2: Watch the erratic wind-vane
+@@END
+@@SECTION vh-3-2-2-14
+TITLE: The Tang of Foundry Smoke
+TEXT: The wind shifts sharply from the north, carrying the metallic tang of distant foundry smoke and the sharp, piercing yelp of a mountain fox quartering the scree slopes below. You inhale the sudden scent of coal-fire and hot iron with a surge of relief, knowing that Lowgate and the great forge-masters are drawing closer with every arduous mile. The bronze clapper seems to resonate in its canvas sling, answering the unseen blast-furnaces with a faint, sympathetic hum against your spine. // You adjust your footing on the glazed limestone, letting the smell of smoke guide your gaze across the vast, plunging drop of the gorge. The path bends abruptly around a buttress of black rock, revealing a single onward route.
+EXIT 1: Follow the squeaking wind-vane
+@@END
+@@SECTION vh-3-2-2-15
+TITLE: The Rhythm of the Bronze
+TEXT: You adjust the slipping canvas cradle of the clapper, feeling the dead bronze thrum in a slow, heavy rhythm against your own tired heartbeat. The metal holds the chill of the high mountain peaks, seeping through your thick tunic despite the woollen padding. Every step demands conscious effort now as the stone flags grow slicker with rime and wind-driven sleet. // You pause to catch your breath in the thin, biting air, pressing your palm against the icy terrace retaining wall to steady your trembling arms. The path splits ahead around a stone water-cistern, offering two distinct routes through the frozen terraces.
+EXIT 1: Take the hidden mule path
+EXIT 2: Touch the vibrating retaining wall
+@@END

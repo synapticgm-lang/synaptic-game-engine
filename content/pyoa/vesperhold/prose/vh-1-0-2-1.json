@@ -1,0 +1,93 @@
+{
+ "batch": "vh-1-0-2-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-0-2-1": {
+   "title": "The Greasy Tallow-Skin",
+   "text": "Mistress Garrow shoves a greasy tallow-skin into your coat-pocket with strict orders to grease your boot-seams before the middle stairs. The buttery corridor smells heavily of soured milk and damp flagstones, a stale refuge against the howling drafts outside. You finger the stoppered leather flask, wondering if the grease will hold back the slush of the lower runs or merely attract the mountain grit.\n\nWeighing your next move, you consider the icy drop awaiting you beyond the walls.",
+   "exits": [
+    "Descend the stone steps",
+    "Dodge the sliding roof-slate",
+    "Tighten your pack breast-harness"
+   ]
+  },
+  "vh-1-0-2-2": {
+   "title": "Frozen Ruts and Carts",
+   "text": "Iron-shod cart wheels crack the frozen ruts beside the north curtain wall while a teamster curses his stumbling mare on the slope. The beast's breath plumes white against the dark grey granite of Vesperhold, and the weight of your burden pulls sharply at your shoulders. You steady the heavy bronze Clapper in its padded cradle, matching your stance to the shudder of the mountain wind.\n\nThe cart groans forward, clearing a narrow path for your descent.",
+   "exits": [
+    "Step out onto the platform",
+    "Catch your breath near the mast"
+   ]
+  },
+  "vh-1-0-2-3": {
+   "title": "The Cable Court Toll",
+   "text": "Under the shadow of the winch-tower, a Cable Court bailiff blocks your path to demand a toll-token for the bronze you carry down to the valley. His brass-trimmed badge catches the pale mountain glare, and his hand rests casually upon a heavy ledger. You shift your weight, feeling the faint, stubborn hum of the metal against your spine as you weigh a sharp reply against compliance.\n\nThe wind whistles through the iron pulleys overhead, urging you to decide.",
+   "exits": [
+    "Sidestep the falling roof-slate",
+    "Secure the heavy leather straps",
+    "Test your grip on the ice"
+   ]
+  },
+  "vh-1-0-2-4": {
+   "title": "Plums and Barley Prices",
+   "text": "A terrace miller thrusts a bag of dried plums into your pouch at the junction of the upper lych-gate, begging news of barley prices in Lowgate. Her fingers are calloused from years of tending high-altitude wind-crops, and her eyes betray the quiet hunger of the terraces. You nod noncommittally, tucking the sweet fruit close to your ribs while the bitter air bites your cheeks.\n\nThe path splits before you into shadow and frost.",
+   "exits": [
+    "Walk toward the cider-press",
+    "Drink the warm herb-wine",
+    "Pass the iron-plated postern"
+   ]
+  },
+  "vh-1-0-2-5": {
+   "title": "The Glacier Gust",
+   "text": "A sudden gust of wind off the glacier nearly lifts you from your boots in the open courtyard, forcing you to lean your heavy frame into the rock-face. The bronze Clapper hums a deeper note against your spine as the pressure shifts, echoing the vast emptiness of the precipice below. You wait out the squall with your gloved hands clawed into the limestone crevices.\n\nThe gale subsides just enough for you to pick a route.",
+   "exits": [
+    "Move past the old cider-press",
+    "Accept the lay brother's cup"
+   ]
+  },
+  "vh-1-0-2-6": {
+   "title": "Sheep-Dip and Crooked Wood",
+   "text": "Wet fleece and dung fill the air as you pass the sheep-dip pens, where an old shepherd waves a crooked hazel stick toward the grey stairs below. The animals crowd against the wooden hurdles, steaming in the morning chill while their bells clatter a dull accompaniment to your thoughts. You glance down the winding stone track, measuring the distance to the first cloud-bank.\n\nThe shepherd turns back to his flock without a word more.",
+   "exits": [
+    "Head past the black lantern",
+    "Inspect the frozen drainage sluice",
+    "Turn back to the bell-loft"
+   ]
+  },
+  "vh-1-0-2-7": {
+   "title": "Pewter Charm on Stone",
+   "text": "A nervous novice presses a pewter charm of St. Jude into your palm by the frozen fountain to ward off the rock-slides on the Ninety Steps. The metal is bitterly cold against your skin, stamped with the crude image of a fisherman and a heavy oar. You slip the trinket into your mitten, offering a brief, silent nod to the boy before looking down the dizzying drop.\n\nThe fountain ice cracks with a sharp, pistol-like report.",
+   "exits": [
+    "Find the goat-path shortcut",
+    "Follow the iced drainage grating",
+    "Pull your muffler higher up",
+    "Turn back to the bell-loft"
+   ]
+  },
+  "vh-1-0-2-8": {
+   "title": "Charcoal-Burner's Yard",
+   "text": "Soot-stained lads roll pine logs through the slush in the charcoal-burner's yard while you sidestep a rolling roundwood with the heavy Clapper swaying. The sweet, acrid scent of charred wood cuts through the biting mountain air, clinging to your woollen tunic. You keep your balance on the slick mud, eyes fixed on the narrow exit between the stacked timber cribs.\n\nThe lads shout a rough warning as another log breaks loose.",
+   "exits": [
+    "Walk past the iron postern",
+    "Check the frozen drainage sluice"
+   ]
+  },
+  "vh-1-0-2-9": {
+   "title": "Canvas and Icicles",
+   "text": "You adjust the canvas rain-hood over your cradle under the timber pentice of the buttery stores to shield the bronze tongue from dripping icicles. Water droplets strike the heavy cloth with dull ticks like a clock running down, while the metal within answers with a faint, sympathetic tremor. You secure the drawstrings with numb fingers, checking the lashings one last time.\n\nThe path ahead drops sharply into the grey haze.",
+   "exits": [
+    "Hide behind the salt-store wall",
+    "Inspect the frayed mooring-ring"
+   ]
+  },
+  "vh-1-0-2-10": {
+   "title": "Lime-Kiln Dust",
+   "text": "White lime dust coats your boots as you skirt a steaming heap of slaking stone beside the kiln, while the mountain air bites your ears. The heat from the pit radiates against your freezing side, a brief and deceptive comfort before the long cold descent. You cough once against the alkaline haze, wiping your spectacles with a frosted sleeve.\n\nThe trail continues past the smoking enclosure into the wind.",
+   "exits": [
+    "Watch the kitten on the sled",
+    "Examine the high mule-track ring"
+   ]
+  }
+ },
+ "missing": []
+}

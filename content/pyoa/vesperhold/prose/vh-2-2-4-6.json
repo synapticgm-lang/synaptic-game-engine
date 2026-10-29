@@ -1,0 +1,81 @@
+{
+ "batch": "vh-2-2-4-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-2-4-6": {
+   "title": "Limestone Ridge Transition",
+   "text": "Slick limestone replaces splintered pine beneath your boots as the suspended bazaars fade into the mountain shadow. Frost crusts the gray stone, catching the pale mountain light and making every footfall a small calculation of balance and friction. The bronze clapper hums a low, sympathetic vibration against your spine, heavier now that the noise of the market has died away into thin air. Two paths diverge before you: one plunging straight down a flight of worn steps toward the mist, and another winding along a narrow ledge where the rope-makers left coils of discarded hemp.\n\nYou must choose your footing carefully against the encroaching chill.",
+   "exits": [
+    "Follow the steep downward steps",
+    "Take the narrow ledge by the hemp coils"
+   ]
+  },
+  "vh-2-2-4-7": {
+   "title": "The Fog-Warden's Post",
+   "text": "A lone fog-warden stands motionless beside a heavy bronze warning gong, his brass-tipped staff planted firmly in the frozen silt. He gestures mutely with three scarred fingers toward the stone stairs plunging into the thickening gray mist below, offering no words of comfort against the biting wind. The metal of his staff catches a dull glint from the overcast sky as he strikes the gong once, sending a hollow, resonant pulse through the rock to warn climbers of shifting rime.\n\nYou adjust the padded cradle on your shoulders while the low hum of the clapper answers the gong's fading tone.",
+   "exits": [
+    "Descend the stairs into the gray mist"
+   ]
+  },
+  "vh-2-2-5-0": {
+   "title": "Head of the Stone Flight",
+   "text": "Stepping firmly onto the head of the long stone stair-flight, you leave the swinging rope bazaars swaying high above in the freezing clouds. The mountain air grows noticeably crisper here, stripped of the scent of boiling tallow and cheap barley wine that clung to the market stalls. Each step is deeply hollowed by centuries of pilgrim boots and mule hooves, slick with a thin skin of black ice that demands your full attention.\n\nThe massive bronze tongue on your back shifts its weight, reminding you of the long miles still remaining to Lowgate.",
+   "exits": [
+    "Press on down the stone flight"
+   ]
+  },
+  "vh-2-2-5-1": {
+   "title": "Toward the Terrace Tiers",
+   "text": "Great hemp cables of the upper market recede into the gray haze as you shoulder your heavy burden toward the terrace tiers. The chaotic clatter of winches and shouting traders gives way to the rhythmic, distant groan of giant wooden windmills turning somewhere below the cloud line. Loose shale rattles beneath your boots with every stride, threatening to send small cascades of stone over the precipice edge into the empty gulf.\n\nYou keep your center of gravity low, leaning into the mountain face as the path narrows.",
+   "exits": [
+    "Press on toward the terrace tiers"
+   ]
+  },
+  "vh-2-2-5-2": {
+   "title": "Draft from the Barley Terraces",
+   "text": "Cold draft rushes up from the barley terraces below, smelling of damp earth, woodsmoke, and the distant turning of giant wooden sails. The wind here has an unobstructed sweep across the cliff face, testing your balance and tugging hard at the heavy cradle strapped to your back. Scraps of old straw and frozen stubble cling to the stone lips of the path, marking the boundary where the bustling markets yield to the lonely agricultural ledges.\n\nYou grip the shoulder straps tighter, bracing against the sudden gusts.",
+   "exits": [
+    "Press on against the cold draft"
+   ]
+  },
+  "vh-2-2-5-3": {
+   "title": "Leaving the Rope-Sellers Behind",
+   "text": "Leaving the frantic noise of the rope-sellers behind, your boots find a steady rhythm on the ancient stone steps leading down into the shadow of the mountain. The sheer rock face rises steeply to your right, weeping tiny crystal tears of meltwater that instantly freeze into glassy beads on the gray surface. Below, the world drops away in dizzying tiers of gray mist and jagged slate, broken only by the distant geometry of the high agricultural works.\n\nYou steady the humming clapper and keep your eyes fixed on the path.",
+   "exits": [
+    "Press on along the ancient steps"
+   ]
+  },
+  "vh-d-2-2": {
+   "title": "The Frozen Slip",
+   "text": "Ice crusts the narrow gap between the swinging market bridges, and your boots lose their purchase just as a sudden gust catches the heavy bronze clapper on your back. The weight pulls you backward off balance, tearing the shoulder straps from your fingers with a sharp snap of hemp. You tumble out into the open gray air, watching the swinging stalls and the tiny figures of the rope-sellers recede upward into the mist.\n\nThere is only the rushing wind in your ears and the cold, bright freedom of the long fall.",
+   "exits": []
+  },
+  "vh-2-out": {
+   "title": "Leaving The Rope Markets",
+   "text": "Leaving The Rope Markets behind, the chaotic clamour of winch-boys and cable-riders fades into the high mountain silence. The air grows sharper and thinner as you cross the threshold from the suspended bazaars onto the descending stone stairs that bridge the vertical world. Every muscle in your back aches from the steady, patient weight of the bronze tongue, its faint internal hum vibrating deep against your shoulder blades like a second heartbeat.\n\nBelow you, the vast stepped architecture of the windmill terraces unfolds out of the gray mist.",
+   "exits": [
+    "Go on into the terraces"
+   ]
+  },
+  "vh-3-in": {
+   "title": "The Windmill Terraces",
+   "text": "Stepped barley terraces cling desperately to the sheer mountain face in the thin, freezing air, where silent harvest bells hang motionless from carved wooden frames. Windmill-keepers eye you with hard, hungry stares from shuttered doorways, guarding their meager grain stores while low wind-calls echo mournfully between the creaking towers. The path splits here into several distinct routes, each offering its own hazard and bargaining opportunity among the turning sails.\n\nThe heavy bronze clapper shifts against your tired spine as you weigh your next step.",
+   "exits": [
+    "Follow the main stair",
+    "Cut across the lower ledges",
+    "Ask the way of a stranger",
+    "Take the old carriers' path"
+   ]
+  },
+  "vh-3-0-0-0": {
+   "title": "Tenth Tier Shuttered Mills",
+   "text": "High stone shelves of the Tenth Tier offer little shelter as you step carefully between two shuttered windmills while the heavy bronze clapper shifts against your tired spine. Canvas sweeps groan overhead in the gathering gale, snapping like wet canvas against wooden spars as the unseen millers adjust their heavy brakes within. Frost glitters on the iron axle-pins, and the scent of crushed barley and frozen grease hangs thick in the drafty corridor between the buildings.\n\nYou must decide how to navigate this cramped, windy gauntlet.",
+   "exits": [
+    "Duck beneath a spinning canvas sweep",
+    "Stop and speak with old Mara",
+    "Brace against the sudden eddy"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,89 @@
+{
+ "batch": "vh-1-1-2-14",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-1-2-14": {
+   "title": "The Iron-Studged Gates",
+   "text": "By the iron-studded gates of the lower yard, the duty porter inspects your travel tally while Biscuit tries to chew the sleeve of your heavy winter coat. You yank the woolen fabric from the beast's damp teeth with a muttered warning, shifting the heavy bronze clapper on your aching back as the cold mountain wind rattles the gate-post lanterns. The porter stamps the wax tally with a heavy iron seal, grunting a brief farewell before gesturing toward the frozen descent stretching out below into the grey mist.",
+   "exits": [
+    "Pull the stubborn mule toward the goat troughs",
+    "Step out onto the dizzying expanse of the upper stairs"
+   ]
+  },
+  "vh-1-1-2-15": {
+   "title": "The Ninety Steps",
+   "text": "At the yawning mouth of the ninety steps, you brace yourself against the freezing downdraft, knowing that every stone brings you closer to the roaring foundry fires. The bronze tongue upon your spine hums a faint, steady vibration through your padded harness, responding to the chill altitude with its timeless metal song. Biscuit shifts uneasily on the icy flags behind you, his iron shoes clicking against the frost-rimed rock as you weigh your path down the vertical world.",
+   "exits": [
+    "Seek refuge with the shivering monks by the brazier",
+    "Follow the steep straightaway down into the white haze",
+    "Turn back toward the mule yard's frosty shadow"
+   ]
+  },
+  "vh-1-1-3-0": {
+   "title": "The Descending Porters",
+   "text": "On the broad stone landing above the first flight, you pause to let a train of descending wool-porters pass, their heavy baskets scraping loudly against the damp cliff face. The laborers shuffle past with bowed heads and steam rising from their wool caps, smelling of lanolin, wet fleece, and long exertion in the high thin air. You press yourself flat against the cold retaining wall to keep the massive clapper cradle from catching on their woven hampers, waiting until the last basket vanishes around the granite bend.",
+   "exits": [
+    "Inspect the spliced cable hanging by the guild kiosk",
+    "Step across to the rope merchant's stacked hemp coils"
+   ]
+  },
+  "vh-1-1-3-1": {
+   "title": "The Frozen Root",
+   "text": "Beside the iron ring set into the cliff, you untangle the lead rope from a frozen root while the humming bronze vibrates uncomfortably against your aching spine. The ice encrusting the iron is thick and blue as winter glass, requiring a sharp tug and a scraped knuckle to free the hemp line. Biscuit stamps a hoof against the packed snow, eager to leave the high ledge behind as the first pale light catches the jagged peaks above Vesperhold.",
+   "exits": [
+    "Examine the stacked hemp coils by the cellar platform"
+   ]
+  },
+  "vh-1-1-3-2": {
+   "title": "The Wind-Break Arch",
+   "text": "Under the stone arch of the wind-break, you wipe rime from your eyelashes and struggle to pull the recalcitrant mule away from the precipice edge. The wind howls through the narrow granite opening like a trapped spirit, tearing at your woolen cloak and sending loose pebbles clattering down the immense drop into the clouds below. You dig your heels into the frozen dirt, wrapping the leather halter twice around your mittened hand until the stubborn beast finally turns its grey head toward the path.",
+   "exits": [
+    "Approach the stacked hemp coils by the rope cellar",
+    "Inspect the heavy spliced cable at the guild kiosk"
+   ]
+  },
+  "vh-1-1-3-3": {
+   "title": "The Shrine of Sisters",
+   "text": "Near the shrine of the three sisters, you leave a copper coin in the weathered crack of the masonry to buy safe passage down the icy tiers. The small stone alcove is crusted with old ice, and the carved faces of the ancient patronesses stare out with blank, wind-scoured eyes toward the endless stairs. You offer a silent, breath-fogged prayer for firm footing and warm hearths below, patting the leather harness straps before stepping back onto the slick mountain path.",
+   "exits": [
+    "Examine the heavy spliced cable hanging at the kiosk",
+    "Approach the frayed hemp bundles on the combing benches"
+   ]
+  },
+  "vh-1-1-3-4": {
+   "title": "The Buttress Gap",
+   "text": "In the narrow gap between the buttress and the sheer rock, Biscuit braces his legs against the stone steps, refusing to budge until you share a crust of rye. You pull a dry heel of bread from your coat pocket, breaking off a grey morsel and pressing it into the soft muzzle while the heavy bronze clapper hums against your shoulder blades. The mule chews slowly, his warm breath pluming in the bitter air, until the stubborn fit passes and the path ahead opens up.",
+   "exits": [
+    "Head toward the stacked coils of hemp outside the cellar",
+    "Inspect the tar-scented grey twine in the cordage yard"
+   ]
+  },
+  "vh-1-1-3-5": {
+   "title": "The Open Shelf",
+   "text": "Across the open shelf where the gales howl unchecked, you lean your weight into the harness, keeping the heavy iron clapper balanced against the biting wind. The world falls away on your left into a vast, white sea of clouds, while the sheer granite wall presses close and unyielding on your right. Every step requires a deliberate calculation against the gusts that threaten to lift you from the stone, your fingers freezing stiff inside their woolen gloves.",
+   "exits": [
+    "Check the tar-scented grey twine in the cordage yard",
+    "Inspect the frayed hemp bundles near the combing benches",
+    "Proceed to the guild ledger desk by the iron scales"
+   ]
+  },
+  "vh-1-1-3-6": {
+   "title": "The Frozen Cascade",
+   "text": "Beside the frozen cascade of the monastery drain, icicles clink like glass dropped upon stone as the beast's iron-shod hooves ring out on the frozen steps. The water has frozen into a ribbed sheet of blue-white crystal that covers the lower masonry like a discarded skin. You pick your way carefully across the slick incline, leaning into the weight of the bronze clapper to keep your footing from sliding out beneath you.",
+   "exits": [
+    "Examine the heavy spliced cable at the guild kiosk",
+    "Inspect the tar-scented grey twine in the cordage yard",
+    "Approach the frayed hemp bundles on the combing benches"
+   ]
+  },
+  "vh-1-1-3-7": {
+   "title": "The Fog-Warden's Turn",
+   "text": "At the turn of the carved stair-rail, you meet a fog-warden climbing upward with a basket of winter pears, her warning whistle held tight between her chapped lips. She pauses to nod a greeting, her weathered face lined by decades of high-altitude gales and mountain sun, smelling faintly of woodsmoke and sweet frozen fruit. You exchange a brief word about the storm-damaged passes above before she continues her steady ascent into the whitening mists.",
+   "exits": [
+    "Approach the frayed hemp bundles on the combing benches",
+    "Proceed to the guild ledger desk by the iron scales"
+   ]
+  }
+ },
+ "missing": []
+}

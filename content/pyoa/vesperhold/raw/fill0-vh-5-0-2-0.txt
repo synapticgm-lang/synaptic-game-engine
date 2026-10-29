@@ -1,0 +1,18 @@
+@@SECTION vh-5-0-2-0
+TITLE: The Whistling Orchard
+TEXT: Grey ghost-pears loom out of the heavy mist as you step carefully from tuft to sodden tuft, guided only by the rhythmic, three-note whistle of a warden unseen in the white gloom. The padded cradle on your back shifts its weight, the cold bronze clapper within humming a damp counter-melody to the hidden music ahead. Mud sucks at your boots with every stride, threatening to pull you off the hidden stone path into the sunken ruts of the valley floor.
+EXIT 1: Step towards the fading whistle in the gloom
+EXIT 2: Follow the solid line of the drystone boundary wall
+@@END
+@@SECTION vh-5-0-2-1
+TITLE: The Cider Press
+TEXT: Dripping moss clings to the timbers of an abandoned stone cider press while you lean against its cold flank to adjust the leather harness straps biting into your shoulders. Inside its heavy cradle, the bronze clapper vibrates against your spine, a low and melancholy chord born of the mountain damp. Fog swirls between the gnarled pear trunks, swallowing the sounds of the descent and leaving only the rhythmic drip of moisture from leaf to leaf.
+EXIT 1: Navigate the slick mud towards the orchard interior
+EXIT 2: Seek shelter near the moss-covered stone wall
+@@END
+@@SECTION vh-5-0-2-2
+TITLE: The Winter Harvester
+TEXT: Frost-tipped branches form a low ceiling over the muddy track where you break a dry crust of rye bread with a shivering harvester whose pockets yield only bruised winter apples and a handful of dull copper coins. The stranger points a gloved finger deeper into the mist before vanishing silently between two ancient trees, leaving you alone with the rhythmic humming of the heavy metal on your back.
+EXIT 1: Dodge aside as a loose barrel rolls through the boughs
+EXIT 2: Search the bracken hollow for a dropped warden pouch
+@@END

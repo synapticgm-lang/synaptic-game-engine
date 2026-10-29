@@ -1,0 +1,93 @@
+{
+ "batch": "vh-2-2-3-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-2-3-12": {
+   "title": "The Greased Plank",
+   "text": "Slick timber offers a sudden, perilous shortcut where the upper walkway has buckled under rime frost. You slide down a short, greased loading plank, your heels spitting white chips of pine as the heavy bronze clapper hums against your spine. The drop deposits you sharply onto a narrow ledge overlooking the churning gray abyss of the lower gorge.",
+   "exits": [
+    "Scramble toward the windy gap",
+    "Follow the lower timber catwalk",
+    "Step out onto the limestone ledge"
+   ]
+  },
+  "vh-2-2-3-13": {
+   "title": "The Iron Gate",
+   "text": "Heavy iron slams down across the swaying bridge with a dull, echoing clang that rattles through your teeth. A toll-master's clerk plants his boots on the threshold, demanding an exorbitant inspection fee in copper before you can take another step with the temple metal. Behind you, the creak of tensioned hemp reminds you that every moment spent bargaining brings the ice-wind closer.",
+   "exits": [
+    "Pay the steep toll in coin",
+    "Duck beneath the iron barrier"
+   ]
+  },
+  "vh-2-2-3-14": {
+   "title": "The Singing Cables",
+   "text": "Overhead webs of thick rigging vibrate with a mournful, singing resonance that mimics the mountain wind through stone flutes. You duck low beneath the shivering iron wires, feeling the metallic tang of frozen grease prickle the back of your throat. Every taut strand seems alive, humming warnings about the treacherous descents waiting beyond the market stalls.",
+   "exits": [
+    "Slip past the humming winch-rig",
+    "Step onto the frost-heaved limestone",
+    "Head toward the bronze warning gong",
+    "Turn back toward the inner market"
+   ]
+  },
+  "vh-2-2-3-15": {
+   "title": "The Bolting Pack-Mule",
+   "text": "Panic erupts as a tethered pack-mule snaps its hempen tie and charges straight down the narrow plankway toward your laden frame. You leap instinctively to the side, scrambling atop a towering stack of fragrant pine twine just as the frantic beast clatters past. Dust and loose straw settle over your boots while the muffled shouts of merchants fade into the whistling wind.",
+   "exits": [
+    "Drop down past the winch-house",
+    "Follow the fog-warden's brass staff"
+   ]
+  },
+  "vh-2-2-4-0": {
+   "title": "The Final Anchor",
+   "text": "Aching muscles protest as you haul your frame onto the final stone anchor-platform of the rope markets. The last tethered huts and swaying platforms fade rapidly into a thick blanket of white fog, cutting off the upper tier from the world below. Your boots find solid, unyielding masonry at last, offering a brief respite from the dizzying swing of the cables.",
+   "exits": [
+    "Descend the long stone stair-flight",
+    "Shoulder your burden toward the haze",
+    "Face the cold draft from the terraces"
+   ]
+  },
+  "vh-2-2-4-1": {
+   "title": "The Unlatched Gate",
+   "text": "Heavy iron links rattle against the winch-post as Brin drags the security chain aside with a calloused hand, grunting against the morning frost. The bronze clapper shifts on your back, its cold metal humming a dull note through your woolen tunic. A gap opens between the swaying hemp booths of the upper market and the sheer stone descent carved into the mountain flank. Behind you, the pulleys of the Ropewrights' Guild whine in the thin air, while ahead the steps drop away into the pale mist of the gorge.",
+   "exits": [
+    "Descend the long stone stairs",
+    "Follow the draft toward the terraces"
+   ]
+  },
+  "vh-2-2-4-2": {
+   "title": "Leaving the Market",
+   "text": "The low roar of the rope bazaars fades into the whistling mountain wind as you adjust the padded cradle carrying the heavy bronze tongue of Orison. Frost coats your eyebrows, and every breath plumes white against the gray granite of the cliff wall. Below your boots, the world breaks into sheer drops and hanging tiers where the stair-towns cling like swallow nests. The air smells intensely of hemp grease and old snow, clean and bitter in your lungs.",
+   "exits": [
+    "Head down the stone flight",
+    "Keep walking into the gray haze"
+   ]
+  },
+  "vh-2-2-4-3": {
+   "title": "The Frozen Trough",
+   "text": "Ice rims the edges of the stone watering trough, trapping dry barley straw blown from the tiers above. You lean your weight against the frozen rim, letting the heavy bronze clapper rest for a precious moment while your shoulders stop throbbing. In the distance, the wooden wings of the Terrace Millers' windmills turn in jerky rhythms against the pale sky, clicking like dry bones. The air smells of cold stone and distant woodsmoke.",
+   "exits": [
+    "Step firmly onto the stairs",
+    "Walk toward the upper market haze"
+   ]
+  },
+  "vh-2-2-4-4": {
+   "title": "The Lookout's Horn",
+   "text": "A flat, mournful blast from the Cable Court horn rolls over the swinging stalls, setting the hemp cables vibrating beneath your boots. A lookout leans over a timber rail in the mist, marking your passage in a grease-stained tally book with a blunt piece of chalk. The bronze clapper hums in response to the brass horn, a sympathetic vibration that rattles straight through your spine. You stand at the crossroads of the market shelf, where several paths carve their way into the white abyss.",
+   "exits": [
+    "Walk down the stone steps",
+    "Take the upper market path",
+    "Follow the draft to the terrace edge",
+    "Turn back toward the iron turnstile"
+   ]
+  },
+  "vh-2-2-4-5": {
+   "title": "The Narrow Gap",
+   "text": "Rough timbers scrape against your shoulders as you squeeze through the tight alley between two creaking winch-houses, leaving the main bazaar behind. Shouts echo from the inspectors' station where officials are checking travelers for unpaid toll-badges, but the shadows here are deep and blue. The bronze clapper stays muffled against your padded wool, silent for once as you crouch near the edge of the cliff.",
+   "exits": [
+    "Step onto the stone stairs",
+    "Follow the draft downward"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,96 @@
+{
+ "batch": "vh-5-1-1-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-1-1-2": {
+   "title": "The Ledger Clerk's Mistake",
+   "text": "Heavy fog presses against your temples while a clerk from the Cable Court taps a dry knuckle against your leather cradle, muttering about unpaid toll-tariffs. Because your ledger-mark remains unredressed from the upper gates, he assumes you carry company freight, shoves a dry, salted biscuit into your cold palm, and points an ink-stained finger toward an untracked gap in the hawthorn hedge. The bronze tongue hums faintly against your shoulder blades as you weigh whether to slip through the thorny breach or stand your ground.\n\nThe damp air smells of wet wool and stale ledger ink.",
+   "exits": [
+    "Squeeze through the narrow hedge gap",
+    "Scramble up the slippery apple-wood bank",
+    "Tug the dangling bell-pull in the pear grove"
+   ]
+  },
+  "vh-5-1-1-3": {
+   "title": "Shivering Beneath the Willow",
+   "text": "Freezing moisture drips from trailing willow branches down the back of your woollen collar as you pause to readjust the heavy bronze tongue. The bitter mountain wind slips through the valley orchards, threatening to stiffen your leather shoulder straps before you reach the lower terraces. You shift the dead weight of Orison's heart, feeling the cold bronze bite through the padding against your spine.\n\nThe grey light fades slightly into the thick mist as you ready your boots for the descent.",
+   "exits": [
+    "Climb over the heap of pruned apple wood",
+    "Pick your way past the shattered greenhouse glass",
+    "Follow the stampede of sheep into the fog",
+    "Tread carefully near the slippery clay dip"
+   ]
+  },
+  "vh-5-1-1-4": {
+   "title": "The Blocked Lane",
+   "text": "An overturned wicker handcart blocks the sunken mud lane, forcing you to turn aside and force a path through a dense patch of stinging nettles. Your thick trousers offer some defense against the bite, but the sudden detour throws off your balance under the heavy cradle. You adjust your footing in the cold slush, listening to the muffled dripping of moisture from the fruit boughs overhead.\n\nThe grey murk closes in behind you like a damp wall.",
+   "exits": [
+    "Dodge the falling tile from the shed roof",
+    "Step past the buried iron hoops in the humus",
+    "Trail your fingers along the damp retaining wall"
+   ]
+  },
+  "vh-5-1-1-5": {
+   "title": "Disturbed Pigeons",
+   "text": "A sudden flurry of wood-pigeons clatters upward into the grey murk, their frantic wings warning of some unseen disturbance lurking deeper in the misty orchard rows. You freeze in your tracks, bracing your knees against the downward pull of the heavy bronze Clapper. The silence that follows their departure feels heavy and deliberate, broken only by the steady dripping of condensation from pear leaves.\n\nYou grip the cradle harness tighter and wait for the fog to shift.",
+   "exits": [
+    "Move forward along the damp retaining wall",
+    "Walk past the button-eyed scarecrow in the fog",
+    "Tighten your grip against the soaked shoulder straps"
+   ]
+  },
+  "vh-5-1-2-0": {
+   "title": "The Humming Hives",
+   "text": "A long row of dormant bee-hives hums with a deep, vibrating resonance that matches the tired ringing deep inside your own marrow. The air here smells faintly of dead wax and frozen honey, thick enough to taste on the back of your tongue. You stand motionless for a moment, letting the shared tremor ease the ache in your shoulders before deciding your next step through the grey veil.\n\nThe mist swirls silently around the straw skeps.",
+   "exits": [
+    "Rest your aching back on the old stone bench",
+    "Push through the tangle of wild blackberry canes",
+    "Turn back toward the guiding stone cistern"
+   ]
+  },
+  "vh-5-1-2-1": {
+   "title": "Graves of the Keepers",
+   "text": "Tilted gravestones of ancient orchard-keepers loom upward from the damp turf like broken teeth in a grey gum. Moss has swallowed their carved names, leaving only rough slate markers standing silent witness in the mist. You step carefully between the sunken mounds, keeping your balance steady as the bronze Clapper shifts slightly in its canvas cradle.\n\nThe air smells of wet earth and centuries of fallen leaves.",
+   "exits": [
+    "Pause by the lichen-covered stone bench",
+    "Navigate the thorny blackberry briars",
+    "Trace the edge of the misty pear branches"
+   ]
+  },
+  "vh-5-1-2-2": {
+   "title": "The Copper Basin",
+   "text": "A rusted copper basin catches the steady drip of condensation from an overhanging branch, going plink-plonking in a slow rhythm that matches your stumbling boots. The stagnant air around the basin smells of rotting pulp and iron-rich water. You pause beside the low stone border, wiping moisture from your forehead while the heavy bronze tongue rests against your spine.\n\nThe rhythmic dripping echoes softly through the dead orchard.",
+   "exits": [
+    "Avoid the thorny canes by the dry wall",
+    "Step closer to the ditch of fermented windfalls"
+   ]
+  },
+  "vh-5-1-2-3": {
+   "title": "Tangled Brambles",
+   "text": "Wild blackberry brambles reach out from the shadows to snag your leather gaiters and catch upon the cradle harness, threatening to pin you fast in the dripping gloom. You twist your shoulder to shake free of the thorny hooks, feeling the cold weight of the metal shift awkwardly against your back. The mist swirls thicker around your boots as you fight for footing in the mulch.\n\nA single stray thorn scratches sharply through your woollen sleeve.",
+   "exits": [
+    "Ease your load upon the old stone bench",
+    "Brush past the snagging blackberry canes",
+    "Step over the gurgling iron drainpipe"
+   ]
+  },
+  "vh-5-1-2-4": {
+   "title": "The Chipped Note",
+   "text": "A rogue gust of wind cuts through a gap in the fog, catching the chipped edge of the bronze Clapper and striking a clear, ringing C-natural. The sound startles a roosting pheasant into the grey sky and lays bare a hidden drainage culvert piercing straight through the damp stone wall. Because the metal is bare and damaged, its raw voice carries far in the damp air, revealing a passage you might otherwise have missed.\n\nThe vibration dies away into the muffled quiet of the valley.",
+   "exits": [
+    "Follow the path beneath the hanging mist-webs",
+    "Cross the narrow alder plank toward the ditch"
+   ]
+  },
+  "vh-5-1-2-5": {
+   "title": "The Iron Weir",
+   "text": "A moss-grown stone weir gurgles beside the muddy track, its icy water tasting strongly of iron and mountain loam. The white noise of the tiny stream drowns out the usual drip of the fog, offering a brief, clear space in the muffled silence. You pause by the low stone barrier to wet your parched throat with the cold mountain runoff before pressing onward.\n\nThe current pulls dark and swift beneath its green shroud.",
+   "exits": [
+    "Retrieve the sodden mitten from the track ruts",
+    "Cross the rotting alder plank over the ditch",
+    "Scatter the fieldfares resting in the hawthorn hedge"
+   ]
+  }
+ },
+ "missing": []
+}

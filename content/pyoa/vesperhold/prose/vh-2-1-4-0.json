@@ -1,0 +1,85 @@
+{
+ "batch": "vh-2-1-4-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-1-4-0": {
+   "title": "The Iron Ledger",
+   "text": "Heavy iron-bound ledgers slap against the wooden counter as a Cable Court sergeant blocks your narrow path with a scowl. Frost rimes his shoulder-clasps while he demands an immediate transit tally for the bronze burden strapped across your spine. The faintly humming Clapper vibrates within its padded cradle, adding a low thrum to the freezing wind whistling through the gorge cables. You shift your weight on the wooden planks, feeling the bite of the leather harness while the sergeant dips his steel pen into a horn of black ink.",
+   "exits": [
+    "Sign the ledger to pass"
+   ]
+  },
+  "vh-2-1-4-1": {
+   "title": "Silver and Scale",
+   "text": "Triple-bolted gates of the high toll-house loom before you, barring any careless descent toward Lowgate. You wait patiently in the biting draft while a tired clerk weighs a merchant's heavy silver coins against a standard brass scale. The metallic clink echoes off the granite face of the cliff, competing with the distant grinding of the ropeway winches. Behind you, the padded cradle hums a faint, steady note, reminding everyone within earshot of the sacred metal you carry.",
+   "exits": [
+    "Step forward to settle your toll"
+   ]
+  },
+  "vh-2-1-4-2": {
+   "title": "Ink and Hemp",
+   "text": "Sharp scents of wet hemp and cold ledger ink hang thick in the shadow of the tall granite customs tower. A pair of toll-clerks argue in low whispers over a tangled knot of hemp rope used to secure stray cargo crates. The freezing mountain air nips at your fingers as you adjust the leather frame holding the heavy Clapper. Every movement on these suspension bridges requires care, especially with the Cable Court watching from their high windows.",
+   "exits": [
+    "Offer your credentials to the clerks",
+    "Slip past the counter toward the stairs"
+   ]
+  },
+  "vh-2-1-4-3": {
+   "title": "The Toll-House Bell",
+   "text": "High overhead, a small brass bell chimes a sharp warning note whenever a new traveler steps onto the swinging platform. Beside the toll-house warden's high desk, stacked ledgers threaten to topple into the abyss below. You steady the cradle on your back while the warden looks up from his papers, eyeing the bronze tongue with professional suspicion. The cold air bites through your woolen tunic, making every breath plume like wood-smoke.",
+   "exits": [
+    "Present your travel permit for review",
+    "Negotiate a lower fee for the journey",
+    "Pay your way with hard silver groats",
+    "Turn back toward the upper ropeways"
+   ]
+  },
+  "vh-2-1-4-4": {
+   "title": "The Tax-Office Threshold",
+   "text": "Iron-plated thresholds rattle underfoot as you step across the entrance of the crowded tax-office. The frantic scratch of steel nibs fills the room, recording every single pound of transit bronze that passes down the mountain. You keep your posture rigid, though the heavy Clapper hums a warning vibration against your shoulder blades. Outside the frosted windows, the rope-markets sway gently in the grip of the ice-wind.",
+   "exits": [
+    "Hand your transit papers to the clerk",
+    "Empty your heavy purse of earned groats",
+    "Turn back toward the upper ropeways"
+   ]
+  },
+  "vh-2-1-4-5": {
+   "title": "The Debt-Collector",
+   "text": "Narrow hallways of the stone toll-station smell of old tallow and stagnant breath. A debt-collector sharpens a goose-quill with a small curved knife while eyeing the bronze Clapper's padded cradle with predatory hunger. His ledger lies open to a page filled with daunting figures and red ink marks. The steady hum from the bronze tongue seems to agitate him, causing his hand to pause mid-stroke.",
+   "exits": [
+    "Agree to their steep credit terms",
+    "Empty your heavy purse of earned groats"
+   ]
+  },
+  "vh-2-1-4-6": {
+   "title": "The Armed Bailiff",
+   "text": "Windswept wooden porches creak alarmingly under the boots of the Cable Court guards. An armed bailiff steps squarely into your path, his heavy halberd barring your advance until the transit fee is settled in full. The gorge below opens up in a dizzying drop of grey mist and frozen cables. You grip the straps of your burden, calculating whether you can slip past his reach before the winch-boys sound the alarm.",
+   "exits": [
+    "Empty your heavy purse of earned groats",
+    "Pay the toll with your remaining silver"
+   ]
+  },
+  "vh-2-1-4-7": {
+   "title": "The Bronze Wicket",
+   "text": "Bronze-studded wickets of the central toll-house gleam dully in the pale mountain light. You stand before the reinforced barrier, preparing to settle your account with the formidable gorge authorities once and for all. The Clapper hums softly against your spine, as if eager to leave this bureaucratic prison behind for the foundry at Lowgate. Every second spent here costs warmth and daylight.",
+   "exits": [
+    "Pay the toll with your remaining silver"
+   ]
+  },
+  "vh-2-1-5-0": {
+   "title": "The Red Wax Seal",
+   "text": "Cable Court toll-house desks are cluttered with ink-pots and binding twine as you finally accept their bitter loan agreement. A heavy red wax seal is pressed firmly onto the parchment, binding you to a mountainous debt that will take years to sweat away in Lowgate. The clerk nods coldly, handing you the transit token with fingers like dry twigs. The humming Clapper on your back feels suddenly heavier, burdened by the weight of your own signature.",
+   "exits": [
+    "Press on down the mountain stairs"
+   ]
+  },
+  "vh-2-1-5-1": {
+   "title": "The Silent Clerk",
+   "text": "Cramped ledger-rooms stifle your breath with the smell of old dust and damp wool. You scratch your name into the Cable Court's credit bond while a silent clerk meticulously notes your description for the repo-men waiting at the lower gates. The scratch of his pen sounds like insects gnawing through dry timber in the quiet room. With the stroke finished, he pushes a brass transit disk across the scarred wood toward you.",
+   "exits": [
+    "Press on down the mountain stairs"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,90 @@
+{
+ "batch": "vh-4-0-2-5",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-0-2-5": {
+   "title": "Shards of Blue Ice",
+   "text": "Shattered crystal spikes litter the glacier footway, their razor edges catching the pale mountain light as the heavy bronze Clapper shifts against your shoulders. Every step onto the frozen debris threatens to break your rhythm, forcing you to lean hard into the padded cradle while Biscuit picks a cautious path among the glittering detritus. Frost rimes your eyebrows, and the sheer weight of the bell-tongue pulls your spine toward the cold stone.\n\nA rusted iron winch stands sentinel over the lower glacier drop, its cable frozen fast in a blue sheath. You could try to clear the mechanism yourself or look for another way down the slope.",
+   "exits": [
+    "Approach the frozen iron winch",
+    "Show your token to the toll warden"
+   ]
+  },
+  "vh-4-0-2-6": {
+   "title": "Beneath the Ice Vault",
+   "text": "Deep beneath the blue ice vault, a subterranean stream roars against the ancient stone while the bronze Clapper vibrates persistently on your back, humming in tune with the rushing water. The air smells of wet slate and mountain chill, thick with the sound of unseen currents carving through the heart of the glacier. Your boots slide slightly on the damp floor, and you steady yourself against the freezing wall as the heavy metal tongue tugs at your harness.\n\nHard-packed snow bridges the central crevasse where a stray mule bell tinkles faintly in the distance, offering a fragile path across the abyss.",
+   "exits": [
+    "Present your debt token for the winch brake",
+    "Cross the snow bridge toward the tinkling bell",
+    "Step carefully down the sloping blue ice shelves"
+   ]
+  },
+  "vh-4-0-2-7": {
+   "title": "The Frozen Serac",
+   "text": "Frozen timber steps ascend the vertical blue serac where a Ropewright knot secures the guide-line against the gale. The hemp is stiff with frost but holds true to the tension of the mountain wind. Your shoulders ache from the cradle straps as you haul yourself upward hand over hand.\n\nThe summit of the ice-fall is within reach, provided your fingers retain enough feeling to grip the frozen rungs.",
+   "exits": [
+    "Traverse the sloping blue ice shelves",
+    "Head toward the weathered signpost"
+   ]
+  },
+  "vh-4-0-2-8": {
+   "title": "Glacial Basin Sunlight",
+   "text": "Blinding sunlight reflects off the glacial basin, turning every ice-ridge into a dazzling hazard of white and blue. You squint against the glare, relying on the rhythmic swing of the Clapper to keep your balance on the crust. The heat of the reflection threatens to soften the surface snow into treacherous slush.\n\nTwo distinct paths wind away from the basin across the gleaming expanse.",
+   "exits": [
+    "Cross the central snow bridge",
+    "Push into the biting gale-trough"
+   ]
+  },
+  "vh-4-0-2-9": {
+   "title": "The Abandoned Basket",
+   "text": "An abandoned basket hoist hangs crookedly over the abyss while the icy wind tests the strength of the rigging. Rust flakes from its iron frame, painting the white snow orange beneath your boots. The valley below is entirely swallowed by thick grey cloud, leaving only the screaming wind for company.\n\nYou can skirt the edge or search for a firmer crossing point among the blue fractures.",
+   "exits": [
+    "Push into the biting gale-trough",
+    "Head toward the weathered signpost",
+    "Step across the jagged ice fracture"
+   ]
+  },
+  "vh-4-0-2-10": {
+   "title": "The Weary Traveler",
+   "text": "Slick frost veneers the stone stairhead where a weary traveler named Kaelen rests his frostbitten fingers. He offers a tight, grim smile as you approach, rubbing warmth back into his hands against the bitter draft. The stairs plunge downward into shadow from this ledge, demanding absolute focus from every traveler who passes.\n\nVarious ways present themselves amid the frozen masonry and scattered debris.",
+   "exits": [
+    "Press on through the freezing fog",
+    "Step across the jagged ice fracture",
+    "Adjust the frozen leather straps"
+   ]
+  },
+  "vh-4-0-2-11": {
+   "title": "Lengthening Shadows",
+   "text": "Heavy blue shadows lengthen across the moraine ridge as the afternoon freeze hardens the melting snow bridges. The sudden drop in temperature makes the glacier groan with deep subterranean cracks that ripple through your soles. Silence returns quickly, broken only by the steady trudge of the mule behind you.\n\nOnly one narrow path remains open across the thickening frost.",
+   "exits": [
+    "Step across the jagged ice fracture"
+   ]
+  },
+  "vh-4-0-2-12": {
+   "title": "Squall on the Ledge",
+   "text": "Sharp ice granules sting your cheeks on the exposed ledge while Biscuit lowers his head against the rising squall. The pack straps bite hard through your heavy woolen coat as the wind tries to peel you from the cliff face. Every breath is a struggle against the freezing gale sweeping up from the lower gorges.\n\nYou must decide whether to press forward into the whiteout or retrace your steps to safety.",
+   "exits": [
+    "Step across the jagged ice fracture",
+    "Adjust the frozen leather straps",
+    "Turn back along the staging"
+   ]
+  },
+  "vh-4-0-3-0": {
+   "title": "Fragile Ice Bridges",
+   "text": "Fragile ice bridges span the bottomless blue gulf while every step risks a collapse into the freezing depths. The Clapper seems to hum a deeper note here, attuned to the ancient ice beneath your feet. You test each frost-covered span with a cautious boot before committing your full weight.\n\nTwo routes lead onward across the perilous chasm.",
+   "exits": [
+    "Descend the slanted ice rungs",
+    "Navigate the narrow ledge"
+   ]
+  },
+  "vh-4-0-3-1": {
+   "title": "Scratched Brass Markers",
+   "text": "Scratched brass markers on the rock face indicate the old winter trail now choked with blue-tinted drifts. These ancient guideposts, hammered deep into the stone by generations of bell-ringers, offer meager comfort against the driving snow. You clear the rime from one plaque to verify your bearing in the growing gloom.\n\nThe path splits around a towering wall of blue serac ice.",
+   "exits": [
+    "Descend the slanted ice rungs",
+    "Navigate the narrow ledge"
+   ]
+  }
+ },
+ "missing": []
+}

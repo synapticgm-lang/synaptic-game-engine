@@ -1,0 +1,92 @@
+{
+ "batch": "vh-6-2-5-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-2-5-3": {
+   "title": "The Secret Sluice",
+   "text": "Water runs dark and fast through the stone drainage grate beneath the lower forge, smelling of cold mud, old cinders, and melting snow from the high peaks. You slip the heavy bronze tongue from its padded cradle and let it slide downward into the shadows of the sluice, where neither the greedy guild-masters nor the bailiffs of the court will ever fish it out. The monastery-city above will go without its sacred voice for the winter, but the metal remains hidden, wild, and untouched by petty debts.\n\nThe rushing current pulls at the edges of the dark tunnel, and you turn your back on the foundry floor to face whatever path remains down the mountain.",
+   "exits": [
+    "Press on down the mountain track"
+   ]
+  },
+  "vh-d-6-2": {
+   "title": "The Slag Pit",
+   "text": "Steam rises in blinding, sulfurous white plumes from the churning grey-hot trough where the foundry dumps its worthless waste. Defying every warning shouted by the scarred forge-masters, you heave the heavy bronze clapper and yourself straight into the bubbling mire. The thick refuse closes over you with a heavy, sucking sigh, burying the abbey's ancient voice deep beneath tons of suffocating, grey-hot slag. There is no climb back from this furnace, only the quiet, final warmth of sinking into the mountain's belly.",
+   "exits": []
+  },
+  "vh-6-out": {
+   "title": "The Foundry Floor",
+   "text": "Smoke hangs low beneath the blackened rafters of the Lowgate foundry, where the great brick furnace hums with a deep, hungry vibration that shakes the river-pavement. The bronze clapper rests heavily in its wooden cradle at your feet, its faint, familiar hum audible even above the roar of the coal-fires and the shouting of the weary iron-workers. Every promise made on the stairs, every knot tied by the ropewrights, and every debt owed to the valley lords now converges on this open iron door. You must decide what shape the sacred metal will take before the cold mountain air seals the passes for good.",
+   "exits": [
+    "Recast the Great Bell for the lowlands",
+    "Carry the Clapper back up the mountain",
+    "Melt it into ploughshares for the terraces"
+   ]
+  },
+  "vh-f-A": {
+   "title": "The Casting Choice",
+   "text": "The heavy bronze tongue is hefted toward the mouth of the roaring furnace while the forge-masters wait for your final word on its fate. Every eye in the crowded workshop watches the scarred metal gleam under the firelight, balancing the ancient needs of the mountain against the practical hunger of the valley below. You hold the decisive thread of the journey in your hands, knowing that whatever path you clear now will shape the songs and silences of Vesperhold for generations to come. The heat washes over your face, dry and fierce as a summer gale.",
+   "exits": [
+    "The Bell Rings Whole",
+    "A True Bell, No Choir",
+    "The Cracked Note"
+   ]
+  },
+  "vh-f-B": {
+   "title": "The Upward Turn",
+   "text": "You turn your back on the roaring mouth of the furnace and hoist the heavy wooden cradle back onto your aching shoulders. The bronze tongue feels colder now, as if it already longs for the high, thin air and the frost-rimed stones of Vesperhold. The valley folk stare in silence as you step away from the warmth of the forge-fires and toward the long, winding staircase that climbs back into the clouds. There are no debts paid down here today, only the stubborn weight of an unfinished journey and a mountain waiting for its voice.",
+   "exits": [
+    "Biscuit Carries It Home",
+    "The Long Way Up"
+   ]
+  },
+  "vh-f-C": {
+   "title": "The Ploughshare Choice",
+   "text": "The great bronze tongue is laid upon the anvil, and the iron-workers ready their heavy hammers to beat the sacred voice into long, flat blades for the barley fields. The Terrace Millers lean against the doorway, watching with hungry, hopeful eyes as the metal prepares to surrender its history to the furrow and the soil. You stand by the hearth, feeling the final weight of the mountain's ancient promises melting away into the spark-lit air. The choice is made to turn bronze into bread, leaving the peaks to their own silence.",
+   "exits": [
+    "Ploughshares, No Strings",
+    "The Song in the Metal",
+    "Bronze and Silence"
+   ]
+  },
+  "vh-e-A1-1": {
+   "title": "The Bell Rings Whole",
+   "text": "You hand the Clapper to the master smiths, wrapped in the sacred wool and sealed with the knot-oath you swore beneath the high eaves. The bronze melts down pure and bright in the crucible, running like liquid sunlight into the earthen mold prepared by the entire valley. When the great casting cools and is hoisted into the high belfry by the Ropewrights' Guild, Orison rings out across the mountain with a clean, golden resonance that clears the morning frost from the slate roofs.\n\nWeeks later, the people of Vesperhold and Lowgate gather together in the crisp air to listen to the evening chime, knowing the mountain's heart beats true once more.",
+   "exits": [
+    "Read on to the final chapter"
+   ]
+  },
+  "vh-e-A1-2": {
+   "title": "The Valley Reborn",
+   "text": "The old hostility between the cable-lords and the terrace-keepers softens into a quiet, steady peace as the new bell marks the passing hours of the day. You find yourself sitting on the low stone wall outside the gate, watching Biscuit graze peacefully on the green shoots pushing through the melting valley snow. Nobody speaks of the long, freezing stairs or the narrow escapes in the dark, because the sound of Orison overhead tells every traveler all they need to know about the road behind them.\n\nThe air is clear, the bells are whole, and every promise made in the high passes has finally found its rest.",
+   "exits": [
+    "The last page"
+   ]
+  },
+  "vh-e-A1-3": {
+   "title": "The Bell Rings Whole",
+   "text": "The sun dips below the western ridge, painting the cloud-line in shades of copper and violet as the evening Angelus begins to toll from the high stone tower. You let your hands fall idle on your knees, feeling the vibration of the bronze pass gently through the stone beneath you and up into the soles of your boots. The world is large and cold, but for the first time in many seasons, every voice in the mountain sings the same note. You close your eyes against the fading light and listen to the bell.",
+   "exits": []
+  },
+  "vh-e-A2-1": {
+   "title": "A True Bell, No Choir",
+   "text": "The forge-masters take the Clapper and cast the great bell well, but without the seal of an oath or the backing of the guilds, you stand alone in the soot and the shadows. The bronze is sound and the tone is true when it is hauled upward, yet no one comes forward to thank you for the labor or lift the burden from your shoulders. Instead, the Ropewrights and the Cable Court immediately begin to squabble over who holds the privilege of hanging it in the frost-nipped belfry.\n\nDays pass in cold argument, leaving the heavy bronze suspended in the scaffold while the guilds bicker below.",
+   "exits": [
+    "Read on to see the outcome"
+   ]
+  },
+  "vh-e-A2-2": {
+   "title": "The Silent Banners",
+   "text": "Winter settles over Vesperhold with a dry, whistling bite, and still the new bell hangs silent in its wooden scaffolding while the guilds trade insults across the courtyard. You watch the dispute from the warmth of the chimney-corner, realizing that a voice made without friends is only half-heard in the wind. The mountain does not care who won the argument, but the people grow tired of waiting for a sound that never quite reaches their hearths.\n\nThe snow piles high against the doors, sealing the quarrel away in white silence until the spring thaw promises a new reckoning.",
+   "exits": [
+    "The last page"
+   ]
+  },
+  "vh-e-A2-3": {
+   "title": "A True Bell, No Choir",
+   "text": "The fire in the hearth burns low, casting long, flickering shadows across the rafters as the mountain wind rattles the frozen windowpanes outside. You listen to the quiet hum of the un-hung bell somewhere up in the grey mists, wondering if the metal itself regrets coming down the long stairs. There are no grand songs sung for your return, only the steady ticking of the clock and the quiet patience of an apprentice who has learned the cost of walking alone. You pull your wool blanket tighter and let the silence take the room.",
+   "exits": []
+  }
+ },
+ "missing": []
+}

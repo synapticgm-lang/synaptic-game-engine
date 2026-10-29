@@ -1,0 +1,65 @@
+@@SECTION vh-1-2-3-4
+TITLE: The Shepherd's Peg
+TEXT: Under the granite overhang, an old shepherd named Daveth whittles a replacement peg for his pack frame, shaving thin curls of juniper that smell sharp against the mountain chill. The bronze Clapper on your back hums a low, sympathetic vibration into your shoulder blades as you pause to catch your breath. Daveth does not look up from his work, merely gesturing with his crooked thumb toward the paths diverging before you in the grey mist.
+EXIT 1: Walk past the merchant weighing dried chicory
+EXIT 2: Check the mule harness beside the iron ring
+@@END
+@@SECTION vh-1-2-3-5
+TITLE: The Burning Thighs
+TEXT: On the steep slate stairs, your thighs burn with every downward step under the crushing bronze weight of Orison's tongue. Frost clings to the edges of your heavy woolen coat, and the rhythmic clack of your boots provides the only steady measure against the howling wind. Ahead, the stairway plunges deeper into the shadow of the mountain wall where the air tastes of old snow and damp stone.
+EXIT 1: Approach the toll-house beneath the wooden awning
+EXIT 2: Attend to the mule by the frost-covered tethering ring
+@@END
+@@SECTION vh-1-2-3-6
+TITLE: The Rolling Mist
+TEXT: Past the rusted iron crane, the valley mist rolls upward like a grey woolen blanket, swallowing the lower steps and blurring the edge of the abyss. The weight of the Clapper pulls you slightly forward, demanding constant balance on the slick stone. Somewhere in the white gloom, a bell-rope creaks against a hidden timber, answered only by the faint, deep thrum of the bronze you carry.
+EXIT 1: Seek shelter beneath the toll-house awning
+EXIT 2: Adjust the grey mule's frozen harness
+EXIT 3: Step toward the glimmering rope-market stalls
+@@END
+@@SECTION vh-1-2-3-7
+TITLE: The Three Winds
+TEXT: At the crossroads of the three winds, a painted signpost points toward the lower stair-towns with fading black letters. The gales buffet your loaded back, trying to pry you away from the cliff face, but you lean firmly into the stone. Scraps of ice skitter across the flags, clinking softly against your gaiters like tiny glass bells.
+EXIT 1: Head toward the mist-shrouded market stalls
+EXIT 2: Listen for the wool-sorter inside the drafty shed
+EXIT 3: Inspect the flapping parchment on the notice board
+@@END
+@@SECTION vh-1-2-3-8
+TITLE: The Boundary Stone
+TEXT: Within the alcove of the weathered boundary stone, someone has left a fresh sprig of dried rosemary, its herbal scent cutting cleanly through the bitter mountain air. The bronze Clapper hums against your spine, vibrating in tune with some unseen chord hidden deep within the mountain rock. You trace the mossy letters carved into the granite before weighing your next move.
+EXIT 1: Make for the misty rope-market cluster
+EXIT 2: Present your monastery seal to the guard captain
+EXIT 3: Cross the wooden footbridge toward the mills
+@@END
+@@SECTION vh-1-2-3-9
+TITLE: The Loose Handrail
+TEXT: Beside the sheer drop of the Ninety Steps, a loose handrail swings wildly in the mountain gust, clanging rhythmically against rusted iron brackets. Every muscle in your body tightens as you hug the rock face, careful not to let the swinging bronze weight destabilize your footing on the icy stair. The drop below is a bottomless gray expanse of cloud and void.
+EXIT 1: Calm the mule near the tethering ring
+EXIT 2: Speak with the guard captain by the lower stair
+EXIT 3: Check on the wool-sorter inside the shed
+@@END
+@@SECTION vh-1-2-3-10
+TITLE: The Guard Shelter
+TEXT: Under the low lintel of the guard-shelter, a sleeping sentinel jerks awake as your boots crunch on the frozen gravel. The guard blinks away the sleep, wrapping a threadbare blanket tighter around narrow shoulders while eyeing the heavy cradle on your back. A small brazier of glowing charcoal inside the stone nook casts a brief, warm red light across the threshold.
+EXIT 1: Head out toward the rope-market in the mist
+EXIT 2: Visit the wool-sorter inside the drafty shed
+@@END
+@@SECTION vh-1-2-3-11
+TITLE: The Jackdaws
+TEXT: On the frosted wooden landing, a flock of mountain jackdaws scatters into the grey gloom with harsh, protesting cries. Their sudden flight leaves the platform echoing and silent, save for the wind whistling through the timber braces. The Clapper shifts slightly in its padded leather cradle, pressing a cold reminder against your tired spine.
+EXIT 1: Show your papers to the guard captain
+EXIT 2: Step into the wool-shed to warm your hands
+@@END
+@@SECTION vh-1-2-3-12
+TITLE: The Salt Cistern
+TEXT: Near the salt-encrusted cistern, cooper Thram patches a leaking barrel with fresh birch hoops, whistling a dour mountain tune between missing teeth. The smell of wet oak and brine mingles with the high-altitude ozone. He pauses to glance at the bronze tongue on your back, offering a brief, knowing nod before returning to his mallet work.
+EXIT 1: Report to the guard captain at the stair head
+EXIT 2: Cross the footbridge toward the distant water-mills
+EXIT 3: Read the decree on the cliff-side notice board
+@@END
+@@SECTION vh-1-2-3-13
+TITLE: The Wire Bridge
+TEXT: Across the dizzying wire bridge, the first tier of the rope-market hangs above the abyss like a spider's web strung with lanterns. The cable hums beneath your boots, vibrating with every gust that sweeps up from the gorge. Stalls draped in heavy canvas sway gently in the draft, smelling of hemp, tallow, and dried mountain herbs.
+EXIT 1: Follow the path toward the rhythmic water-mills
+EXIT 2: Examine the fluttering decree on the notice board
+@@END

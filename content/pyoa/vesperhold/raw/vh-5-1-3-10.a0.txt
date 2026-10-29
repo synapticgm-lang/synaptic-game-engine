@@ -1,0 +1,71 @@
+@@SECTION vh-5-1-3-10
+TITLE: Smoke in the Mist
+TEXT: Heavy vapor rolls down the terrace steps in grey tendrils, smelling strongly of woodsmoke and damp earth. Your shoulders ache under the steady, humming weight of the bronze clapper, its metal cold against the padding of your pack frame as you pause to catch your breath. The world has narrowed to the damp stone beneath your boots and the shifting shroud of white clouds that swallows the mountain edge.
+EXIT 1: Squeeze past the frozen orchard trees ahead
+EXIT 2: Consult the weathered and blank wooden signpost
+EXIT 3: Listen closely beneath the dripping overhead branches
+@@END
+
+@@SECTION vh-5-1-3-11
+TITLE: Narrow Stone Passage
+TEXT: Unencumbered by a pack animal's clumsy bulk, you slip sideways through a narrow gap between stone buttresses just as a rolling boulder crashes down the lane. Without the stubborn breadth of a mule to hinder your footing, you move with a nimble lightness that lets you navigate the tightest corners of the terrace. The air here tastes sharply of pine resin and wet rock, untainted by animal sweat or heavy harness.
+EXIT 1: Examine the weathered signpost in the mist
+EXIT 2: Proceed carefully past the curtain of dripping leaves
+@@END
+
+@@SECTION vh-5-1-3-12
+TITLE: The Leaping Trout
+TEXT: A rusted wind-vane shaped like a leaping trout creaks dismally atop a rotting wooden post. Below it, the path splits into a web of slick stone alleys veiled in dense mountain fog. The metallic groan of the weather-vane echoes strangely in the quiet air, competing only with the distant, melancholy drop of water from the eaves above.
+EXIT 1: Step cautiously beneath the dripping branch-curtain
+EXIT 2: Follow the draft toward the smell of roasting chestnuts
+@@END
+
+@@SECTION vh-5-1-3-13
+TITLE: Dock Leaves and Bog
+TEXT: Yellowed dock leaves brush against your knees as you skirt a patch of boggy ground near the lower terrace. The mud sucks greedily at your boot heels, reminding you of the heavy bronze tongue secured to your back and the precarious balance required to carry it. Somewhere out in the grey wall of mist, water trickles through unseen stone gutters with a steady, soothing murmur.
+EXIT 2: Step softly past the curtain of dripping foliage
+EXIT 3: Trace the cold draft toward the scent of woodsmoke
+@@END
+
+@@SECTION vh-5-1-3-14
+TITLE: The Crumbling Kiln
+TEXT: A crumbling brick kiln emits a faint, lingering heat that thaws the ice on your stiffened leather gloves. You stand close to the warm masonry for a moment, letting the gentle radiation soothe your aching muscles while the great bronze clapper hums softly against your spine. Wisps of steam rise from your damp wool cloak as the surrounding fog presses in with a silent, heavy stillness.
+EXIT 1: Head toward the blind wooden signpost
+EXIT 2: Follow the cold draft toward the roasting chestnuts
+@@END
+
+@@SECTION vh-5-1-3-15
+TITLE: Wool and Woodsmoke
+TEXT: The damp air tastes of wood-smoke and wet wool, signaling the proximity of inhabited stone shelters ahead. You adjust the padded straps holding the heavy bronze tongue, feeling its familiar, low resonance thrum through your ribs. The path grows firmer beneath your soles, paving stones smoothed by generations of orchard-keepers and travelers heading down the mountain.
+EXIT 1: Proceed past the curtain of dripping branches
+EXIT 2: Follow the chill draft toward the shelter smells
+@@END
+
+@@SECTION vh-5-1-4-0
+TITLE: The Fern Arch
+TEXT: A low stone archway dripping with green maidenhair fern frames the gravel path leading toward the guard post. The masonry is slick with moisture, and tiny droplets cling to the delicate fronds like beads of glass. Through the damp aperture, the faint outline of a low-roofed stone building looms in the thick white haze of the orchard valley.
+EXIT 1: Approach the glowing horn windows of the shelter
+@@END
+
+@@SECTION vh-5-1-4-1
+TITLE: The Bone Whistle
+TEXT: The muffled sound of a bone whistle echoes off the wet cliffs, warning that the checkpoint is near. You halt for a heartbeat, listening to the shrill, bird-like notes dance through the fog and vanish into the damp evergreens. The heavy bronze clapper shifts slightly in its cradle, its metallic thrum harmonising with the lingering vibration of the guard's call.
+EXIT 1: Walk toward the flickering lantern light ahead
+EXIT 2: Inspect the notched wooden tally stick by the door
+@@END
+
+@@SECTION vh-5-1-4-2
+TITLE: Piles of Birch Logs
+TEXT: Piles of split birch logs line the narrow track, smelling of fresh sap and winter fuel stores. The white bark gleams softly against the grey stone walls as the fog drifts slowly between the stacked wood. Each log is cut to a precise measure, ready to keep the upcoming guard post warm against the biting mountain chill.
+EXIT 1: Approach the glowing horn-windowed shelter
+EXIT 2: Check the wooden tally stick hanging by the latch
+EXIT 3: Warm your chilled hands near the wool blankets
+@@END
+
+@@SECTION vh-5-1-4-3
+TITLE: The Hemp Handrail
+TEXT: A frayed hemp rope tied to a stump serves as a handrail above a steep drop into the white fog. The thick fibres are wet to the touch, and you grip them firmly to steady your balance against the pull of the heavy bronze burden on your back. Below the path, the abyss remains entirely hidden behind an opaque wall of cloud and mist.
+EXIT 1: Make your way toward the lantern-lit window
+EXIT 2: Examine the transit toll tallies by the entrance
+EXIT 3: Turn back along the misty retaining wall
+@@END

@@ -1,0 +1,92 @@
+{
+ "batch": "vh-2-0-0-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-0-0-3": {
+   "title": "The Toll At The Plank",
+   "text": "A stout timber toll-house blocks the narrow plankway across the gulf, its green-painted shutters battered by the mountain draft. A clerk from the Cable Court raps a brass knuckle against the wooden sill, demanding a heavy copper coin for every pound of suspended metal swinging on your back. The bronze Clapper hums a dull warning against your shoulder blades as you calculate the weight of your burden.\n\nBehind you, the rope-market hums with shouting traders, but here the path narrows to a single plank where passage is measured strictly in coin.",
+   "exits": [
+    "Step forward and pay the toll",
+    "Argue the weight of the Clapper"
+   ]
+  },
+  "vh-2-0-1-0": {
+   "title": "The Screeching Iron Cable",
+   "text": "Sudden metal shrieks split the air as a mail-skiff hurtles along a greasy iron cable directly overhead, showering fine iron rust into the mist. You throw yourself against the damp rock face, holding the padded cradle steady while the abyss yawns inches from your boots. The wind howls up through the gorge, carrying the smell of burning tallow and wet hemp from the stalls below.",
+   "exits": [
+    "Take refuge inside the anchor stone",
+    "Catch the eye of the rope-master"
+   ]
+  },
+  "vh-2-0-1-1": {
+   "title": "The Splicer Of Tarred Flax",
+   "text": "Old Garrow sits cross-legged among coils of blackened hemp, his calloused fingers knotting tarred flax while he mutters curses about dishonest weigh-masters in the lower wards. The scent of pine tar and sea-salt hangs thick around his stall, cutting through the thin mountain air like a blade. He pauses his work to eye the bronze Clapper with professional suspicion, spitting into the chasm below.",
+   "exits": [
+    "Weave through the fluttering hemp market",
+    "Step over the grease-slicked capstan drum"
+   ]
+  },
+  "vh-2-0-1-2": {
+   "title": "The Brazier Of Hemp Shavings",
+   "text": "Shivering winch-apprentices crowd around a rusted iron brazier, warming their raw knuckles over a fire fed entirely by fragrant hemp shavings. They pass a tin cup of roasted chestnuts back and forth, offering a brief, smoky haven from the freezing gorge draft. The heavy bronze Clapper hums softly in response to the crackling heat, vibrating against your travel-worn straps.",
+   "exits": [
+    "Speak with the nervous tally clerk",
+    "Seek shelter near the moss-seller's corner"
+   ]
+  },
+  "vh-2-0-1-3": {
+   "title": "The Tangled Rigging Heap",
+   "text": "A mountain of discarded cordage blocks the narrow walkway, its frayed strands twisting like sleeping serpents across the timber boards. You must pick your footing carefully to avoid snagging Biscuit's pack or tumbling the heavy bronze Clapper into the yawning gap beside the scaffolding. The rigging groans under the sudden pressure of a shifting wind, threatening to spill over the edge.",
+   "exits": [
+    "Step over the grease-slicked capstan drum",
+    "Seek shelter near the moss-seller's corner",
+    "Duck the swinging timber counter-weight"
+   ]
+  },
+  "vh-2-0-1-4": {
+   "title": "The Green-Spectacled Clerk",
+   "text": "A toll-lord's clerk wearing round green spectacles taps his ledger with a bone stylus, glaring intently at the heavy cargo cradle on your back. His ink-stained fingers twitch toward a brass bell used to summon the gate guards if any traveler disputes the tariff. The cold air bites at your ears while you wait for his verdict on the metal you carry.",
+   "exits": [
+    "Seek shelter near the moss-seller's corner",
+    "Duck the swinging timber counter-weight"
+   ]
+  },
+  "vh-2-0-1-5": {
+   "title": "The Salt-Crusted Stair",
+   "text": "You slip down a steep, damp stair carved directly into the cliff-face, where old rope-scraps litter the slick boards like discarded snake skins. The salt-encrusted stone offers little traction, and every step requires deliberate focus to keep the suspended bronze Clapper from swaying off balance. Far below, the tiered roofs of the middle wards vanish into swirling banks of gray cloud.",
+   "exits": [
+    "Heed the warning of the cable-rider",
+    "Cross the trembling willow-withem bridge",
+    "Let the inspector test your bronze",
+    "Duck beneath the low woven awning"
+   ]
+  },
+  "vh-2-0-1-6": {
+   "title": "The Mule-Savvy Bypass",
+   "text": "Biscuit flattens his ears and suddenly veers toward a hidden side-winch chute, using his stubborn mule-savvy to bypass the clogged toll-gate entirely. The clever beast squeezes past a rusted winch-housing, sliding his hooves sure-footedly down a steep gravel ledge that regular travelers ignore. You scramble after him, keeping the heavy bronze cradle steady as the main path falls away behind.",
+   "exits": [
+    "Cross the trembling willow-withem bridge",
+    "Let the inspector test your bronze",
+    "Show your guild tether to pass"
+   ]
+  },
+  "vh-2-0-1-7": {
+   "title": "The Frantic Rope-Seller",
+   "text": "A frantic rope-seller named Mara catches your sleeve, begging you to help untangle a hopelessly fouled winch-line before the evening gales slam into the gorge. Heavy cargo baskets grind violently against their wooden frames just overhead, threatening to snap the strained fibers into deadly whips. The sharp scent of burning friction oil fills your nose as you weigh her desperate plea.",
+   "exits": [
+    "Duck beneath the low woven awning",
+    "Show your guild tether to pass",
+    "Dodge the falling tallow bucket"
+   ]
+  },
+  "vh-2-0-1-8": {
+   "title": "The Swinging Salt Basket",
+   "text": "You balance carefully on a narrow pine plank while a massive wicker basket filled with salted char swings wildly past your ribs, driven by an erratic gust. The damp wood creaks under your boots, and the abyss waits patiently beneath the gap in the railing. You press your back against the cliff face, letting the violent momentum of the cargo pass before taking another step.",
+   "exits": [
+    "Show your guild tether to pass",
+    "Dodge the falling tallow bucket"
+   ]
+  }
+ },
+ "missing": []
+}

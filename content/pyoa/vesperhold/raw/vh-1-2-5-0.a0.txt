@@ -1,0 +1,58 @@
+@@SECTION vh-1-2-5-0
+TITLE: Stockholm Tar And Hemp
+TEXT: Stockholm tar and wet hemp fill your lungs at the threshold of the rope market, where the morning mist clings to coils of thick cable stacked higher than a mule-shed. Coarse fibers tickle your nose as you squeeze past a merchant weighing greasy strands on a rusted iron balance, the bronze Clapper humming a steady, low counter-pulse against your spine. Around you, apprentices shout over the creak of stretching hemp and the dull thud of heavy wooden mallets driving mooring pins into the granite floor. // Somewhere down the line, a signal horn blares twice, warning of a shifting cable load, and you must decide whether to rush your steps or wait out the impending gust.
+EXIT 1: Take the lower trading track now
+@@END
+@@SECTION vh-1-2-5-1
+TITLE: Timber Archway And Mules
+TEXT: Under the heavy timber archway, a line of laden pack-mules waits for the barrier bell to ring, their breath pluming white against the gray slate of Vesperhold. Hooves shift restlessly on the frost-greased stones while drovers lean against weathered fence posts, chewing hardtack and watching the cloud sea roll below the ledge. The metal cradle on your back strains slightly with every shift of your weight, the heavy bronze tongue inside humming an anxious warning that vibrates through your shoulder blades. // Ahead, the iron gate lifts with a harsh metallic screech, clearing the narrow track that winds down toward the hanging tiers.
+EXIT 1: Step through the rising iron gate
+@@END
+@@SECTION vh-1-2-5-2
+TITLE: Winch Drum Clearance
+TEXT: Beside the central winch-drum, master rigger Joran signals the clearance for the descent to Lowgate, his scarred hand cutting a crisp arc through the sharp mountain air. A thick hemp hawser shrieks around the greased oak cylinder, smoking slightly from the friction as the first cargo basket drops into the swirling white void of the gorge. Your boots grip the frozen granite step while the Clapper hums a deep, sympathetic note in response to the massive machinery turning just inches from your ear. // Joran nods curtly toward the open path, his eyes crinkling against the bitter wind.
+EXIT 1: Follow the rigger's cleared track downward
+@@END
+@@SECTION vh-1-2-5-3
+TITLE: Cloud Sea Drop
+TEXT: Out past the outermost winch-house, the endless grey tiers of the rope-town drop into the cloud sea, a dizzying abyss where mountain peaks jut like dark islands through a churning ocean of fog. The wind claws at your heavy wool cloak, tasting sharply of pine pitch and ancient ice, while the Clapper hums its bronze song against the padded frame of your backpack. Far below, tiny bell-buoys swing in the updraft, their metallic clinking muffled by the dense blankets of vapor drifting up the cliff face. // Every timber and cable ahead groans under the sudden pressure of the rising gales.
+EXIT 1: Advance along the fog-veiled cableway
+@@END
+@@SECTION vh-d-1-2
+TITLE: The Frozen Abyss
+TEXT: Ignoring the ice-warning on the upper stair, you rush the descent in the gathering squall until the frozen cradle slips and pitches the Clapper into the abyss. The bronze tongue tears away from your straps with a sudden, weightless lurch, its familiar humming cut short as it plunges downward into the roaring white nothingness of the gorge. Frost coats your eyelashes and numbs your fingers as you reach out instinctively for a treasure that is already gone, swallowed by the mountain's bottomless throat. There is no recovery here, only the howling wind and the long, cold wait for the storm to take the remaining path.
+@@END
+@@SECTION vh-1-out
+TITLE: Leaving The Ninety Steps
+TEXT: Leaving Vesperhold and the Ninety Steps for The Rope Markets, you tighten the straps across your chest and lean forward into the biting wind that sweeps up the cliff. The stone stairs grow narrower here, replaced by suspended wooden galleries and swaying rope bridges that bridge the yawning chasms between the upper monastery and the bustling trade tiers below. Every breath burns your throat with the crisp, clean edge of high altitude air, and the rhythmic hum of the Clapper provides a steady heartbeat against your spine. // The chaotic din of the markets rises through the mist, promising trade, hazard, and the next stretch of your long descent.
+EXIT 1: Push onward into the noisy bazaars
+@@END
+@@SECTION vh-2-in
+TITLE: Arrival In The Rope Markets
+TEXT: Arrival in The Rope Markets brings a dizzying rush of sound, color, and motion as bazaars slung on thick cables span the plunging gorge. Ropewrights hammer stubborn knots, winch-boys haul on greasy lines, and the looming toll-houses of the Cable Court demand heavy dues from every traveler passing through their gates. The scent of hot tallow and roasted chestnuts mixes with the damp mountain wind, while rumors of Lowgate's forge-masters echo from tavern awnings and crowded bridgeheads. // The path splits before you into several distinct routes, each offering its own hazards and rewards.
+EXIT 1: Follow the main stair
+EXIT 2: Cut across the lower ledges
+EXIT 3: Ask the way of a stranger
+EXIT 4: Take the old carriers' path
+@@END
+@@SECTION vh-2-0-0-0
+TITLE: Swaying Hemp Bridges
+TEXT: You step onto the swaying hemp bridges of the Rope Markets where merchants hawk greased tackle across a dizzying gorge, their voices rising above the constant singing of the strained cables. Below your boots, the drop is sheer and bottomless, hidden only by wisps of cloud that snag on the lower cross-braces and tarred netting. The Clapper hums softly against your back, vibrating in time with the rhythmic bounce of hundreds of travelers treading the woven pathways. // A sudden flurry of activity breaks out ahead near a crowded crossing, drawing anxious eyes toward the iron tracks above.
+EXIT 1: Dodge the flying mail-skiff overhead
+EXIT 2: Inspect old Garrow's tarred flax strands
+EXIT 3: Warm cold fingers by the chestnut brazier
+@@END
+@@SECTION vh-2-0-0-1
+TITLE: Creaking Gantry Warnings
+TEXT: A winch-boy named Jory yells warnings from a creaking gantry above as heavy cargo baskets zip past your ears on humming iron runners. Splintered pine and stray hemp threads rain down onto the damp planking while you flatten your back against the cliff wall to let a team of cable-riders haul a massive crate of tin bars past. The bronze Clapper shifts inside its cradle, its deep resonant hum momentarily drowning out the shouts of the porters and the screech of rusted pulleys. // A narrow gap opens between a stack of discarded rigging crates and the toll-lord's station.
+EXIT 1: Squeeze past the tangled rigging heap
+EXIT 2: Face the green-spectacled toll clerk
+EXIT 3: Slip down the damp salt-crusted stair
+@@END
+@@SECTION vh-2-0-0-2
+TITLE: Awning Of Hemp Coils
+TEXT: You duck beneath an awning of hemp coils while the bronze Clapper hums softly against the cradle on your back, offering a brief respite from the biting wind. The air here smells richly of Stockholm tar and dried lavender, carried down from the hidden orchard balconies tucked behind the merchant stalls. A stray ginger cat sits atop a barrel of tallow, watching you with sleepy indifference as the market crowd surges past in a blur of gray wool and brass buttons. // A narrow side alley opens up behind the stacked rope coils, offering a quiet alternative to the main thoroughfare.
+EXIT 1: Step down the salt-crusted stair
+EXIT 2: Follow Biscuit past the hidden winch chute
+EXIT 3: Help Mara untangle the fouled winch-line
+@@END

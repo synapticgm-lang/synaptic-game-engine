@@ -1,0 +1,80 @@
+{
+ "batch": "vh-6-1-4-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-1-4-4": {
+   "title": "The Jammed Doorframe",
+   "text": "Sparks scatter like startled fireflies across the flagstones as a frantic smith named Hargin beats a heavy iron spud against the jammed door-frame. Each blow sends a dry, jarring shriek through the soot-stained masonry while the air grows thick with the smell of scorched coal and hot scale. You feel the weight of the bronze clapper pressing hard against your shoulder blades as you watch the warped iron refuse to yield an inch to his fury.\n\nWill you step forward to lend your own shoulder to the heavy iron bar, or circle around the roaring flank of the hearth to look for another way inside?",
+   "exits": [
+    "Lend your strength to the iron bar",
+    "Search the smoky perimeter for another entry"
+   ]
+  },
+  "vh-6-1-4-5": {
+   "title": "The Glowing Gap",
+   "text": "Deafening roars roll down from the overhead flues as a soot-blackened artisan named Fenn tries to wedge a steel crowbar into the glowing gap of the portal. The metal groans under the immense pressure, turning a dull cherry-red while tiny beads of sweat carve pale tracks through the grime on his forehead. Every breath tastes of sulfur and old coke, making your lungs ache as you stand frozen in the blinding heat of the chamber.\n\nDo you jump in to help him heave against the stubborn steel wedge, or pull back into the cooler shadows of the outer tunnel?",
+   "exits": [
+    "Help him heave against the wedge",
+    "Step back into the cooler shadows"
+   ]
+  },
+  "vh-6-1-4-6": {
+   "title": "The Foundry Threshold",
+   "text": "Voices strain to be heard over the continuous, hungry roar of the draft as a desperate master-founder named Corvo shouts over the din for someone to break the seal. The heavy wooden beams overhead tremble in time with the deep, rhythmic thrumming of the mountain's core below. He waves a grease-stained arm toward the massive iron barrier, his face blackened by soot and etched with lines of profound exhaustion.\n\nWill you answer his desperate call by stepping forward with the heavy clapper, or wait to see what the other apprentices decide to do?",
+   "exits": [
+    "Step forward with the heavy bronze"
+   ]
+  },
+  "vh-6-1-4-7": {
+   "title": "The Towering Barrier",
+   "text": "Iron plates radiate a punishing wave of dry heat against your chest as you steady your aching shoulders before the towering barrier of blackened steel. The great furnace demands immediate entry for the broken bronze of Orison, its hungry belly roaring for the metal that once sang above the clouds. Every muscle in your legs trembles under the combined burden of the cold mountain air and the furnace's fierce breath.\n\nDo you throw your weight directly against the glowing latch, or turn your back on the roaring fire to retrace your steps toward the fish market?",
+   "exits": [
+    "Throw your weight against the latch",
+    "Shout out to Corvo for assistance",
+    "Turn back toward the fish market"
+   ]
+  },
+  "vh-6-1-5-0": {
+   "title": "The Cherry-Red Iron",
+   "text": "Deep in the gloom, the massive iron furnace door glows a fierce cherry-red, radiating a dry, roaring heat that makes the hair on your arms prickle and curl. The ground beneath your boots vibrates with the relentless thrum of the mountain's furnace, reminding you that time has nearly run out before the high passes freeze shut. Dust motes dance wildly in the convection currents, caught in the blinding glare of the opening.\n\nWill you press forward into the roaring heat with the clapper ready, or hesitate at the threshold?",
+   "exits": [
+    "Press on into the blazing heat"
+   ]
+  },
+  "vh-6-1-5-1": {
+   "title": "The Vaulted Lower Forge",
+   "text": "Sulfur and old coke hang thick in the vaulted chamber of the lower forge, where the great bellows wheeze like a dying leviathan in the dark. Shadows stretch and twist against the soot-caked stone walls as the massive hearth draws in air for the final melt. The weight of the mountain above feels heavier here, pressing down through the rock with the collective gravity of thirteen abandoned towns.\n\nDo you press on toward the glowing core of the forge, or pause to catch your breath in the draft?",
+   "exits": [
+    "Press on toward the glowing core"
+   ]
+  },
+  "vh-6-1-5-2": {
+   "title": "The Master Hearth",
+   "text": "Every idle apprentice and scarred forge-master waits in tense silence before the impenetrable barrier of the master hearth to see if the mountain's heart can be recast. Whispers pass like dry leaves among the crowd regarding the missing tin and the stubbornness of the ancient locks. The air is so hot and still that every breath feels like swallowing embers from a dying campfire.\n\nWill you press on to face the master-founders, or look for an exit away from the crowd?",
+   "exits": [
+    "Press on to face the founders"
+   ]
+  },
+  "vh-6-1-5-3": {
+   "title": "The Heavy Clapper",
+   "text": "Cobblestones radiate residual warmth against your boots as you rest the heavy bronze clapper on the ground and raise your fist to strike the stubborn iron of the furnace door. The metal hums faintly against your knuckles, recognizing the heat and the proximity of the forge where it was first shaped long ago. All around you, the low murmur of the foundry falls silent as the final moment arrives.\n\nDo you press on to strike the iron door, or pull your hand back from the heat?",
+   "exits": [
+    "Press on to strike the door"
+   ]
+  },
+  "vh-d-6-1": {
+   "title": "The Freezing Silt",
+   "text": "Rushing water roars past your ears as you attempt to leap a swollen drainage canal with the heavy clapper secured tightly on your back. Your boot heel catches on a patch of slick, hidden moss, sending you pitching sideways into the black, freezing silt of the lowgate runoff. The weight of the bronze drags you down instantly into the icy current, pulling you under the dark surface as the hum of the metal fades into the rushing water forever.\n\n",
+   "exits": []
+  },
+  "vh-6-c2": {
+   "title": "The Furnace Door",
+   "text": "The heavy iron plate of the furnace door looms before you like a wall of solid night, marked by generations of soot, oil, and arcane seals. Within its depths, the great furnace roars with a hunger that threatens to consume any traveler who approaches without the proper rites or tools. The air tastes of sulfur, hot scale, and the ancient promise of Vesperhold.\n\nYou must now decide how to breach the sealed portal before the mountain weather closes the passes for good.",
+   "exits": [
+    "Tie the Ropewrights' knot to open the door",
+    "Force the door by hand"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,93 @@
+{
+ "batch": "vh-2-2-3-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-2-3-2": {
+   "title": "The Toll-Collector's Eye",
+   "text": "Toll-collector Morva steps from a canvas watch-tent, her eyes fixed entirely on the heavy bronze shape shifting beneath your canvas cover. The cold air stings your throat as you shift the weight of the metal tongue on your spine, waiting for her demand. A ledger flaps in her mittened hand against the rising mountain gale while the neighboring winch-drums clatter in rhythm.\n\n\"The road below is sealed to temple freight without a bond-seal,\" she says, tapping her brass stamp against her palm. You must decide whether to try and talk past her, pay her toll with what little coin remains, or turn back into the maze of stalls.",
+   "exits": [
+    "Climb toward the final anchor-platform",
+    "Bribe the guard for reluctant passage",
+    "Slip away into the sheer cliff-drop"
+   ]
+  },
+  "vh-2-2-3-3": {
+   "title": "The Sloping Tramway",
+   "text": "You dodge a hurtling hand-truck loaded with split pine billets as it careens down the sloped central tramway toward the gorge. Splintered wood and frozen mud scatter across your boots, forcing you to throw your shoulder against a rope-strung post to keep the humming bronze clapper from striking the iron rail. Across the tram-channel, winch-boys shout warnings through cupped hands as another empty crate carrier hurtles upward into the mist.\n\nThe path narrows dramatically past the timber brakes, leaving you with only two ways to advance through the clamor of the market stalls.",
+   "exits": [
+    "Scramble up to the stone anchor-platform",
+    "Bargain with the winch-man for an easier drop"
+   ]
+  },
+  "vh-2-2-3-4": {
+   "title": "The Braider's Gift",
+   "text": "An old rope-braider named Drenn presses a greasy protective leather pad into your bruised hands to ease the weight of the cradle. His fingers are stiff and scarred from decades of twisting hemp and steel-wire cables in the mountain wind. \"You will need that before the lower switchbacks chew your shoulders to bone,\" he mutters, nodding toward the dense maze of hanging bazaars that stretch across the abyss.\n\nThe scent of pine tar and sheep grease hangs thick in the freezing air, and you must choose your next step away from his stall before the market wardens take notice of your cargo.",
+   "exits": [
+    "Make for the final anchor-platform above",
+    "Seek out the weary winch-man's gate",
+    "Leave the market behind for the open cliff"
+   ]
+  },
+  "vh-2-2-3-5": {
+   "title": "The Ore Basket",
+   "text": "The suspension chains groan audibly as a heavily laden ore basket slams into the winch-station platform just ten paces ahead. Iron wheels screech against frozen oak beams, sending a shower of gray sparks into the swirling valley fog. You brace your legs against the shockwave while the heavy bronze clapper hums a deep, sympathetic note against your spine.\n\nThe path ahead bifurcates around a rusted pulley-engine, offering a standard climb or a desperate, leaping shortcut across the open chasm.",
+   "exits": [
+    "Climb toward the final anchor-platform",
+    "Step out onto the open cliff-drop",
+    "Take the reckless way across the gap"
+   ]
+  },
+  "vh-2-2-3-6": {
+   "title": "The Sure-Footed Mule",
+   "text": "Because Biscuit knows every hidden footing on these icy ledges, the stubborn mule picks a safe path past a crumbling timber arch. The faithful animal dips its head against the stinging spindrift, its small hooves finding purchase on frosted stone where a human would slip. You follow close behind, keeping one hand on the beast's warm flank and the other steadying the heavy bronze tongue in its padded wooden frame.\n\nThe chaotic stalls begin to thin out here, replaced by the distant, rhythmic clicking of the valley windmills and the watchful presence of the toll-lords.",
+   "exits": [
+    "Face the sheer drop beyond the market",
+    "Pause beside the frozen water trough",
+    "Dodge the lookout's warning horn in the mist"
+   ]
+  },
+  "vh-2-2-3-7": {
+   "title": "The Measuring Rods",
+   "text": "You press yourself flat against an alcove wall as three armed bailiffs from the Cable Court march past with drawn measuring rods. Their heavy iron-shod boots ring sharply on the frost-covered wooden slats, and their gray cloaks smell of damp wool and tax-office tallow. They are checking the width of every hanging freight-frame to ensure no unapproved temple metal slips past their tolls.\n\nAs their heavy footsteps fade into the whistling wind, you evaluate your remaining paths through the dense rope-markets.",
+   "exits": [
+    "Seek out the weary winch-man for passage",
+    "Head outward toward the sheer cliff-drop",
+    "Rest briefly by the frozen water trough"
+   ]
+  },
+  "vh-2-2-3-8": {
+   "title": "The Whipping Line",
+   "text": "A frayed guide-line whips through the air with a sound like a cracking whip, grazing your canvas pack before snapping into the fog. The sudden lash leaves a white powder trace across your shoulder where the hemp fibers tore against your canvas cover. Around you, market traders dive behind salt-barrels and timber stacks while the broken cable thrashes blindly against the scaffolding.\n\nWith the immediate danger passing into the gray abyss, you must decide whether to push forward toward the terrace bells or seek shelter from the falling ice.",
+   "exits": [
+    "Push onward to the frozen water trough",
+    "Answer the lookout's horn in the mist"
+   ]
+  },
+  "vh-2-2-3-9": {
+   "title": "The Open Mesh",
+   "text": "You cross an open mesh platform where the frozen wind howls up from the deep valley, icing the bronze clapper inside your frame. The metal beneath your boots is nothing more than twisted wire netting, through which you can see thousands of feet of sheer gray air and nothing else. Every breath burns your lungs with sharp, thin frost as you lean your weight forward to keep your balance against the gale.\n\nOn the far side of the mesh, three distinct routes branch off into the swirling fog and timber scaffolding.",
+   "exits": [
+    "Heed the lookout's warning horn in the mist",
+    "Slip through the winch-houses past inspectors",
+    "Follow the fog-warden toward the stone stairs"
+   ]
+  },
+  "vh-2-2-3-10": {
+   "title": "The Cursed Metal",
+   "text": "Weaver Coren tries to trade a coil of waxed rigging line for your temple-cast bronze, claiming the metal is cursed by the frost. His eyes are bloodshot from the mountain glare, and his fingers twitch nervously toward a sharp bone knife tucked in his belt. \"That tongue will drag you to the bottom of the gorge before you see Lowgate,\" he spits, gesturing to the swinging rope bridges around you.\n\nYou tighten your grip on the cradle straps and ignore his superstitious bargaining, looking for a way out of his cluttered stall.",
+   "exits": [
+    "Evade the inspectors between the winch-houses",
+    "Follow the fog-warden down the stone stairs"
+   ]
+  },
+  "vh-2-2-3-11": {
+   "title": "The Watching Children",
+   "text": "A group of shivering market children watch your heavy burden with wide eyes from the safety of a stacked-pulpwood lean-to. Their cheeks are chapped raw by the ice-wind, and they clutch bits of dried apple in mittened fists while whispering among themselves about the ringing metal on your back. You offer them a brief, tired nod as you adjust the sliding leather straps of your frame.\n\nThe ground shifts beneath your boots as you leave their shelter, offering two distinct routes away from the crowded stalls.",
+   "exits": [
+    "Slip past the inspectors between the winch-houses",
+    "Step onto the frost-heaved limestone trail"
+   ]
+  }
+ },
+ "missing": []
+}

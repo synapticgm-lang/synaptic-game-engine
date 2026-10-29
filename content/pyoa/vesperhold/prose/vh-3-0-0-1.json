@@ -1,0 +1,94 @@
+{
+ "batch": "vh-3-0-0-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-0-0-1": {
+   "title": "Toll at the Wheel",
+   "text": "Frost rims the axle of the uppermost mill-wheel where Miller Garrow demands a toll before you cross his turning blades. The heavy bronze clapper hums against your spine as you shift your stance on the frozen stone, eyeing the blur of canvas sweeping dangerously close to your ear.\n\nGarrow taps an iron coin-tray with a calloused thumb, his eyes narrowed against the biting mountain wind that shrieks across the terraced fields.",
+   "exits": [
+    "Pay the toll with a heavy coin",
+    "Duck beneath the turning wheel's sweep",
+    "Bargain with the stubborn miller for passage"
+   ]
+  },
+  "vh-3-0-0-2": {
+   "title": "The Stubborn Mule",
+   "text": "Biscuit digs her stubborn hooves into the grey grit of the barley path as a sudden gust of mountain wind rattles the flour-sacks piled high against the stone wall. The bronze clapper hums a low, sympathetic note against your tired shoulders while you tug gently on the beast's leather halter.\n\nAcross the narrow terrace, a row of silent harvest bells sways slightly in the draft, their iron tongues muffled by thick bands of grease and wool.",
+   "exits": [
+    "Pull the mule past the gusty gap",
+    "Wait out the gale in the lee of the wall",
+    "Slip through the secret drainage past the post"
+   ]
+  },
+  "vh-3-0-0-3": {
+   "title": "Voices on the Wind",
+   "text": "A rusted iron wind-pipe hums against your ear on the cliff edge, carrying sharp snatches of argument from the miller's courtyard below through the freezing air. You press your shoulder against the damp stone, listening to the bitter dispute over barley prices and broken axle-trees while the weight of the clapper pulls you downward.\n\nThe cold metal vibrates with every rising shriek of the gale, singing a thin, metallic tune that matches the rhythm of your own racing pulse.",
+   "exits": [
+    "Follow the pipe down to the courtyard",
+    "Climb the stone parapet to avoid the noise",
+    "Press onward along the narrow cliff ledge"
+   ]
+  },
+  "vh-3-0-1-0": {
+   "title": "Ducking the Canvas",
+   "text": "You duck beneath a spinning canvas sweep that groans against the gale, risking a broken rib to save seconds on the downward track. The coarse fabric grazes your woolen cap with a sharp snap, kicking up a flurry of ice crystals that sting your cheeks.\n\nBehind you, the huge wooden arms of the mill continue their rhythmic pounding against the sky like the wings of a trapped giant.",
+   "exits": [
+    "Shout insults back at the angry miller",
+    "Crawl beneath the low stone trestle",
+    "Step onto the vibrating timber gallery"
+   ]
+  },
+  "vh-3-0-1-1": {
+   "title": "The Grain-Store Door",
+   "text": "Old Mara blocks the stone door of her grain-store with a flour scoop, refusing passage unless you recite the proper miller's blessing. White dust clings to her eyebrows and eyelashes, making her look like a creature carved from compacted winter sleet.\n\nThe bronze clapper rests heavy and cold against your back as you search your memory for the ancient words taught in the high monastery.",
+   "exits": [
+    "Crawl beneath the low stone trestle",
+    "Distract the children clustering near Biscuit",
+    "Take the steep ice-glazed stone steps downward"
+   ]
+  },
+  "vh-3-0-1-2": {
+   "title": "The Narrow Wall",
+   "text": "A sudden eddy catches the bronze clapper on your back, threatening to tip you backward off the narrow terrace wall into the gray mist. You throw your weight forward against the cold stone, fingers digging into the frozen mortar between the slate blocks.\n\nBelow your dangling boots, nothing exists except a bottomless ocean of clouds churned white by the mountain wind.",
+   "exits": [
+    "Shoo away the hungry terrace children",
+    "Step onto the vibrating timber gallery"
+   ]
+  },
+  "vh-3-0-1-3": {
+   "title": "Hard Rye Bread",
+   "text": "You shelter in the drafty lee of a barley hopper where a shivering apprentice offers you a crust of hard rye bread for a copper. The boy's fingers are blue with cold as he clutches a wooden oil-lamp that flickers wildly in the drafts whistling through the timber planks.\n\nThe smell of damp grain and stale yeast fills your lungs, offering a momentary refuge from the biting gale outside.",
+   "exits": [
+    "Descend the steep ice-glazed stone steps",
+    "Dodge the flying wooden shutter overhead",
+    "Confront Miller Caden at the lower gate"
+   ]
+  },
+  "vh-3-0-1-4": {
+   "title": "The Irrigation Trench",
+   "text": "The rope-bridge across the miller's irrigation trench sags dangerously under your weight while freezing meltwater spits from the rocks above. Each hemp strand groans in protest as the icy spray turns the wooden slats slick as river glass.\n\nYou keep your center of gravity low, balancing the heavy bronze tongue against the violent swaying of the bridge.",
+   "exits": [
+    "Pay the exorbitant inspection fee at the gate",
+    "Use the private winch-house stairs with your knot-oath"
+   ]
+  },
+  "vh-3-0-1-5": {
+   "title": "Blocked Path",
+   "text": "Two bickering millers haul sacks of gray grain across your path, neither willing to yield an inch of the slippery limestone ledge. Their angry shouts echo off the stone walls while Biscuit rolls her eyes and snorts plumes of white vapor into the freezing air.\n\nThe heavy clapper shifts uneasily in its leather cradle, reminding you of the ticking time before the high passes freeze shut.",
+   "exits": [
+    "Unlock the private winch-house stairs proudly",
+    "Take the steep ice-glazed stone steps downward"
+   ]
+  },
+  "vh-3-0-1-6": {
+   "title": "The Narrow Cleft",
+   "text": "You squeeze through a narrow cleft between two stone grain-bins where the smell of stale yeast and wet wool hangs thick in the air. The rough granite walls scrape against the leather straps of your burden, testing the stitches that hold the clapper's cradle together.\n\nEmerging on the far side, you find yourself knee-deep in a drift of dry chaff driven here by the relentless gale.",
+   "exits": [
+    "Venture into the damp mountain fog",
+    "Help the frantic miller wedge the brake-beam",
+    "Pause in the shadow of the silent windmill"
+   ]
+  }
+ },
+ "missing": []
+}

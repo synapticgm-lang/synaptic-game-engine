@@ -1,0 +1,15 @@
+@@SECTION vh-4-1-1-1
+TITLE: The Hazel Ladder
+TEXT: A suspended ladder of braided hazel-withe swings outward over a bottomless shaft of deep blue ice, groaning as the wind catches its frozen rungs. Every time you shift your weight, the heavy bronze Clapper hums against its padded frame, threatening to throw your balance into the empty air. Biscuit plants all four hooves at the threshold, refusing to budge until you pull the lead rope hard enough to test the knots. The cold bites through your mittens, and the abyss below breathes a steady, freezing draft that smells of ancient stone and snow. // You must decide whether to trust the swaying ladder, turn aside toward a slushy tongue of meltwater, or seek another way around the icy rift.
+EXIT 1: Lead the mule across the slush
+EXIT 2: Search the burnt signal fire shelf
+EXIT 3: Battle the downdraft on the foot-ledge
+@@END
+@@SECTION vh-4-1-1-3
+TITLE: The Glass Wall
+TEXT: Your iron-shod boots find shallow purchase in hand-carved steps on a vertical wall of blue-black ice that mirrors the grey clouds above. A deep subterranean groan rolls through the frozen heart of the glacier, vibrating in your teeth and setting the bronze Clapper humming on your back like a trapped wasp. Biscuit scrabbles desperately behind you, his iron shoes scraping a sharp rhythm against the cliff face as the wind tears at your oilskins. You hug the glassy stone closely, searching for any handhold that might prevent a slip into the pale void below. // You can reach for a discarded grease-box in a cleft, inspect a locked stone shelter, steady the mule against black ice, or pause beside a frozen waterfall that hums in tune with the bronze.
+EXIT 1: Grab the tin grease-box in the cleft
+EXIT 2: Inspect the locked Cable Court shelter
+EXIT 3: Steady Biscuit against the black ice
+EXIT 4: Listen to the frozen organ-pipe fall
+@@END

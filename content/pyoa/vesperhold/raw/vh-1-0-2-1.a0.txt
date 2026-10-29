@@ -1,0 +1,66 @@
+@@SECTION vh-1-0-2-1
+TITLE: The Greasy Tallow-Skin
+TEXT: Mistress Garrow shoves a greasy tallow-skin into your coat-pocket with strict orders to grease your boot-seams before the middle stairs. The buttery corridor smells heavily of soured milk and damp flagstones, a stale refuge against the howling drafts outside. You finger the stoppered leather flask, wondering if the grease will hold back the slush of the lower runs or merely attract the mountain grit. // Weighing your next move, you consider the icy drop awaiting you beyond the walls.
+EXIT 1: Descend the stone steps
+EXIT 2: Dodge the sliding roof-slate
+EXIT 3: Tighten your pack breast-harness
+@@END
+@@SECTION vh-1-0-2-2
+TITLE: Frozen Ruts and Carts
+TEXT: Iron-shod cart wheels crack the frozen ruts beside the north curtain wall while a teamster curses his stumbling mare on the slope. The beast's breath plumes white against the dark grey granite of Vesperhold, and the weight of your burden pulls sharply at your shoulders. You steady the heavy bronze Clapper in its padded cradle, matching your stance to the shudder of the mountain wind. // The cart groans forward, clearing a narrow path for your descent.
+EXIT 1: Step out onto the platform
+EXIT 2: Catch your breath near the mast
+@@END
+@@SECTION vh-1-0-2-3
+TITLE: The Cable Court Toll
+TEXT: Under the shadow of the winch-tower, a Cable Court bailiff blocks your path to demand a toll-token for the bronze you carry down to the valley. His brass-trimmed badge catches the pale mountain glare, and his hand rests casually upon a heavy ledger. You shift your weight, feeling the faint, stubborn hum of the metal against your spine as you weigh a sharp reply against compliance. // The wind whistles through the iron pulleys overhead, urging you to decide.
+EXIT 1: Sidestep the falling roof-slate
+EXIT 2: Secure the heavy leather straps
+EXIT 3: Test your grip on the ice
+@@END
+@@SECTION vh-1-0-2-4
+TITLE: Plums and Barley Prices
+TEXT: A terrace miller thrusts a bag of dried plums into your pouch at the junction of the upper lych-gate, begging news of barley prices in Lowgate. Her fingers are calloused from years of tending high-altitude wind-crops, and her eyes betray the quiet hunger of the terraces. You nod noncommittally, tucking the sweet fruit close to your ribs while the bitter air bites your cheeks. // The path splits before you into shadow and frost.
+EXIT 1: Walk toward the cider-press
+EXIT 2: Drink the warm herb-wine
+EXIT 3: Pass the iron-plated postern
+@@END
+@@SECTION vh-1-0-2-5
+TITLE: The Glacier Gust
+TEXT: A sudden gust of wind off the glacier nearly lifts you from your boots in the open courtyard, forcing you to lean your heavy frame into the rock-face. The bronze Clapper hums a deeper note against your spine as the pressure shifts, echoing the vast emptiness of the precipice below. You wait out the squall with your gloved hands clawed into the limestone crevices. // The gale subsides just enough for you to pick a route.
+EXIT 1: Move past the old cider-press
+EXIT 2: Accept the lay brother's cup
+@@END
+@@SECTION vh-1-0-2-6
+TITLE: Sheep-Dip and Crooked Wood
+TEXT: Wet fleece and dung fill the air as you pass the sheep-dip pens, where an old shepherd waves a crooked hazel stick toward the grey stairs below. The animals crowd against the wooden hurdles, steaming in the morning chill while their bells clatter a dull accompaniment to your thoughts. You glance down the winding stone track, measuring the distance to the first cloud-bank. // The shepherd turns back to his flock without a word more.
+EXIT 1: Head past the black lantern
+EXIT 2: Inspect the frozen drainage sluice
+EXIT 3: Turn back to the bell-loft
+@@END
+@@SECTION vh-1-0-2-7
+TITLE: Pewter Charm on Stone
+TEXT: A nervous novice presses a pewter charm of St. Jude into your palm by the frozen fountain to ward off the rock-slides on the Ninety Steps. The metal is bitterly cold against your skin, stamped with the crude image of a fisherman and a heavy oar. You slip the trinket into your mitten, offering a brief, silent nod to the boy before looking down the dizzying drop. // The fountain ice cracks with a sharp, pistol-like report.
+EXIT 1: Find the goat-path shortcut
+EXIT 2: Follow the iced drainage grating
+EXIT 3: Pull your muffler higher up
+EXIT 4: Turn back to the bell-loft
+@@END
+@@SECTION vh-1-0-2-8
+TITLE: Charcoal-Burner's Yard
+TEXT: Soot-stained lads roll pine logs through the slush in the charcoal-burner's yard while you sidestep a rolling roundwood with the heavy Clapper swaying. The sweet, acrid scent of charred wood cuts through the biting mountain air, clinging to your woollen tunic. You keep your balance on the slick mud, eyes fixed on the narrow exit between the stacked timber cribs. // The lads shout a rough warning as another log breaks loose.
+EXIT 1: Walk past the iron postern
+EXIT 2: Check the frozen drainage sluice
+@@END
+@@SECTION vh-1-0-2-9
+TITLE: Canvas and Icicles
+TEXT: You adjust the canvas rain-hood over your cradle under the timber pentice of the buttery stores to shield the bronze tongue from dripping icicles. Water droplets strike the heavy cloth with dull ticks like a clock running down, while the metal within answers with a faint, sympathetic tremor. You secure the drawstrings with numb fingers, checking the lashings one last time. // The path ahead drops sharply into the grey haze.
+EXIT 1: Hide behind the salt-store wall
+EXIT 2: Inspect the frayed mooring-ring
+@@END
+@@SECTION vh-1-0-2-10
+TITLE: Lime-Kiln Dust
+TEXT: White lime dust coats your boots as you skirt a steaming heap of slaking stone beside the kiln, while the mountain air bites your ears. The heat from the pit radiates against your freezing side, a brief and deceptive comfort before the long cold descent. You cough once against the alkaline haze, wiping your spectacles with a frosted sleeve. // The trail continues past the smoking enclosure into the wind.
+EXIT 1: Watch the kitten on the sled
+EXIT 2: Examine the high mule-track ring
+@@END

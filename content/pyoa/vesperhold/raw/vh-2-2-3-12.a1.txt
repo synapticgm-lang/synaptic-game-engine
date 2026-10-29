@@ -1,0 +1,32 @@
+@@SECTION vh-2-2-4-1
+TITLE: The Unlatched Gate
+TEXT: Heavy iron links rattle against the winch-post as Brin drags the security chain aside with a calloused hand, grunting against the morning frost. The bronze clapper shifts on your back, its cold metal humming a dull note through your woolen tunic. A gap opens between the swaying hemp booths of the upper market and the sheer stone descent carved into the mountain flank. Behind you, the pulleys of the Ropewrights' Guild whine in the thin air, while ahead the steps drop away into the pale mist of the gorge.
+EXIT 1: Descend the long stone stairs
+EXIT 2: Follow the draft toward the terraces
+@@END
+@@SECTION vh-2-2-4-2
+TITLE: Leaving the Market
+TEXT: The low roar of the rope bazaars fades into the whistling mountain wind as you adjust the padded cradle carrying the heavy bronze tongue of Orison. Frost coats your eyebrows, and every breath plumes white against the gray granite of the cliff wall. Below your boots, the world breaks into sheer drops and hanging tiers where the stair-towns cling like swallow nests. The air smells intensely of hemp grease and old snow, clean and bitter in your lungs.
+EXIT 1: Head down the stone flight
+EXIT 2: Keep walking into the gray haze
+@@END
+@@SECTION vh-2-2-4-3
+TITLE: The Frozen Trough
+TEXT: Ice rims the edges of the stone watering trough, trapping dry barley straw blown from the tiers above. You lean your weight against the frozen rim, letting the heavy bronze clapper rest for a precious moment while your shoulders stop throbbing. In the distance, the wooden wings of the Terrace Millers' windmills turn in jerky rhythms against the pale sky, clicking like dry bones. The air smells of cold stone and distant woodsmoke.
+EXIT 1: Step firmly onto the stairs
+EXIT 2: Walk toward the upper market haze
+@@END
+@@SECTION vh-2-2-4-4
+TITLE: The Lookout's Horn
+TEXT: A flat, mournful blast from the Cable Court horn rolls over the swinging stalls, setting the hemp cables vibrating beneath your boots. A lookout leans over a timber rail in the mist, marking your passage in a grease-stained tally book with a blunt piece of chalk. The bronze clapper hums in response to the brass horn, a sympathetic vibration that rattles straight through your spine. You stand at the crossroads of the market shelf, where several paths carve their way into the white abyss.
+EXIT 1: Walk down the stone steps
+EXIT 2: Take the upper market path
+EXIT 3: Follow the draft to the terrace edge
+EXIT 4: Turn back toward the iron turnstile
+@@END
+@@SECTION vh-2-2-4-5
+TITLE: The Narrow Gap
+TEXT: Rough timbers scrape against your shoulders as you squeeze through the tight alley between two creaking winch-houses, leaving the main bazaar behind. Shouts echo from the inspectors' station where officials are checking travelers for unpaid toll-badges, but the shadows here are deep and blue. The bronze clapper stays muffled against your padded wool, silent for once as you crouch near the edge of the cliff.
+EXIT 1: Step onto the stone stairs
+EXIT 2: Follow the draft downward
+@@END

@@ -1,0 +1,90 @@
+{
+ "batch": "vh-1-1-3-8",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-1-3-8": {
+   "title": "The Damped Overhang",
+   "text": "In the damp shadow of the overhang, you readjust the shoulder cushioning where the iron weight has begun to bruise your collarbone through the coarse wool. The bronze clapper hums against your spine like a trapped insect, its low vibration sinking deep into your bones as the mountain wind whistles through the rock-crevices. You shift your weight from one frozen boot to the other, testing the grip of the packed gravel beneath your heels.\n\nAhead, the path splits toward the lower yards, offering a choice between the salted winches of the cordage makers and the draughty corridors where heavy tow-lines wait in the gloom.",
+   "exits": [
+    "Inspect the salted winch in the cordage yard",
+    "Follow the draughty corridor toward the rope storehouse"
+   ]
+  },
+  "vh-1-1-3-9": {
+   "title": "The Rusted Crane",
+   "text": "By the rusted iron crane used to hoist provisions, you check the weather-eye on the horizon, where purple clouds gather above the distant stair-towns. Frost nips at your knuckles as you secure the leather straps binding the heavy bronze tongue to your padded frame. Below you, the stone steps vanish into a swirling curtain of white mist, hiding the drop into the abyss.\n\nYou must decide whether to seek out the secure tow-lines in the sheltered storehouse or approach the guild weighing scales where official stamps are traded for promises.",
+   "exits": [
+    "Head inside for the thick three-strand tow-line",
+    "Seek out the iron weighing scale near the ledger desk"
+   ]
+  },
+  "vh-1-1-3-10": {
+   "title": "The Lower Grotto",
+   "text": "Across the threshold of the lower grotto, you pause to catch your breath while water drips rhythmically from the green-stained limestone roof onto your hood. The air here smells of damp moss and old stone, thick with the moisture of melting snow from the high ledges. A stray draft carries the faint, sweet scent of burning juniper from the monks' cells far above.\n\nThree distinct paths branch out from the dripping cave mouth, leading toward the hemp-combing benches, the shadowy rope corridors, or the bustling ledger desks.",
+   "exits": [
+    "Approach the hemp-combing benches where apprentices work",
+    "Step into the draughty corridor of the rope storehouse",
+    "Walk toward the iron weighing scale by the ledger desk"
+   ]
+  },
+  "vh-1-1-3-11": {
+   "title": "The Cantilevered Ledge",
+   "text": "Frost whitens the loose pine timbers of the cantilevered ledge, where the mountain wind funnels upward from the deep blue fissure with a low, whistling howl. Biscuit plants each iron-shod hoof with stubborn deliberation, ears flicking back as the planks groan under the weight of the bronze Clapper in its padded frame. Below the open rail, the cloud sea shifts and rolls, swallowing the lower stairs entirely while the sheer stone wall of Vesperhold rises gray and indifferent at your shoulder. Every breath tastes of thin, high-altitude air and old pine resin, demanding absolute focus on the next flat nail-head in the grain.\n\nYou must decide whether to seek shelter within the drafty storehouse before the gale stiffens further, approach the ledger desk to settle your toll with the clerk, or check the tension of your backup lines beneath the loft rafters.",
+   "exits": [
+    "Step into the drafty rope storehouse",
+    "Approach the guild master by the scales",
+    "Inspect the stiff fibers in the rope-loft"
+   ]
+  },
+  "vh-1-1-3-12": {
+   "title": "The Ancient Marker",
+   "text": "Beside the ancient marker post carved with the runes of the first bell-masters, you check your leather bindings to ensure the clapper cannot slip loose. The old stone is cold and slick with rime, bearing centuries of moss and weathering from the mountain gales. A small tin cup hangs from an iron peg on the post, left for travelers to collect meltwater.\n\nYou pull your woolen cloak tighter against the biting draft and weigh your options regarding the equipment ahead.",
+   "exits": [
+    "Inspect the thick tow-lines in the draughty corridor",
+    "Weigh your backup rope against the fibers in the loft",
+    "Stop by the heavy oak wicket of the cable court office"
+   ]
+  },
+  "vh-1-1-3-13": {
+   "title": "The Rock-Cut Shelter",
+   "text": "In the hollow bowl of the rock-cut shelter, a group of shivering monks huddles around a small brazier, offering you a brief nod of encouragement. The scent of woodsmoke mixes pleasantly with the sharp tang of high-altitude ozone. Outside the stony alcove, the vertical world plunges downward in a series of gray, ice-rimed steps.\n\nThe monks return to their silent prayers as you shoulder the heavy metal tongue once more, eyeing the branching routes that lead deeper into the mountain's throat.",
+   "exits": [
+    "Approach the iron weighing scale by the ledger desk",
+    "Seek shelter under the arched rafters of the rope-loft",
+    "Visit the heavy oak wicket of the cable court office"
+   ]
+  },
+  "vh-1-1-3-14": {
+   "title": "The Broken Trough",
+   "text": "Near the broken stone trough where mountain goats sometimes gather, you haul sharply on the halter to keep the mule from chasing a loose stone over the edge. The animal snorts a cloud of white vapor into the frigid air, its ears flicking back and forth at the howling of the wind. Shards of ice crunch beneath your heavy boots as you regain your footing.\n\nThe path narrows sharply here, forcing a decision between the bureaucratic hub of the ledger desks and the toll-lords waiting beyond.",
+   "exits": [
+    "Head toward the iron weighing scale near the ledger desk",
+    "Approach the heavy oak wicket of the cable court office"
+   ]
+  },
+  "vh-1-1-3-15": {
+   "title": "The Steep Straightaway",
+   "text": "At the threshold of the long, steep straightaway, you look down at the dizzying perspective of the stairs receding into the grey valley fog below. The sheer drop-off makes your stomach lurch, reminding you that a single misstep would send both you and the sacred bell-metal tumbling into the clouds. The metal clapper taps a steady, relentless rhythm against your shoulder blades.\n\nYou grip the canvas straps tighter and evaluate the three paths opening before you into the gloom.",
+   "exits": [
+    "Seek the iron weighing scale near the ledger desk",
+    "Inspect the stiff new fibers up in the rope-loft",
+    "Stop at the heavy oak wicket of the cable court office"
+   ]
+  },
+  "vh-1-1-4-0": {
+   "title": "The Merchant's Cellar",
+   "text": "On the wide platform outside the rope merchant's cellar, you confront stacked coils of hemp while the clerk taps an ink-stained finger on the rough wooden counter. The pungent aroma of pine tar and treated cordage hangs thick in the freezing air, masking the usual scent of mountain snow. Ledger books lie open, fluttering slightly in the drafty passage.\n\nThe clerk watches you with a practiced, calculating eye, waiting for you to commit to the guild's terms before the journey continues downward.",
+   "exits": [
+    "Sign the guild ledger on the frosty threshold"
+   ]
+  },
+  "vh-1-1-4-1": {
+   "title": "The Guild Kiosk",
+   "text": "Under the flickering tallow lamp of the guild kiosk, Master Weaver Korda dangles a heavy spliced cable, praising its braided strength against the worst mountain squalls. The master's weathered face is etched with lines from decades of staring into blinding snow and whipping wind. A small charcoal brazier sputters in the corner, offering little warmth against the creeping frost.\n\nYou nod slowly as the spliced line is held out toward you, ready to bind your journey to the weaver's craft.",
+   "exits": [
+    "Bind your journey with the cold iron nib"
+   ]
+  }
+ },
+ "missing": []
+}

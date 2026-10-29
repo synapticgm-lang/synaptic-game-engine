@@ -1,0 +1,60 @@
+@@SECTION vh-5-0-3-10
+TITLE: The Sledge Passage
+TEXT: Damp moss clings to the weather-beaten storage sheds that lean inward against each other, creating a grey, narrow alleyway where the light dies entirely. Wedged firmly between the rotting planks is a stranded timber sledge, its heavy oak axle sheared clean in half like a dry twig, blocking all easy forward movement. You shift the padded cradle on your back, feeling the bronze clapper hum a low, steady note against your shoulder blades as you squeeze past the jagged splintered wood. The mist curls coldly around your ankles, smelling of old resin and wet earth, offering two distinct ways out of this confined trench.
+EXIT 1: Slip past the broken timber sledge
+EXIT 2: Climb the slope toward the pillar
+@@END
+@@SECTION vh-5-0-3-11
+TITLE: The Mounting Block
+TEXT: Green slime coats the crumbling stone mounting block where generations of valley folk once hoisted themselves onto mule saddles, now half-submerged in the tall, frost-bitten orchard grass. A faint, acrid scent of burning pine drifts upward from the lower valley floor, cutting through the heavy blanket of fog with the promise of shelter or company. You adjust the straps of your burden, wincing slightly as the weight settles against your tired muscles while the damp air chills your cheeks. Two paths open before you from this mossy waypoint, leading deeper into the muted gray labyrinth.
+EXIT 1: Follow the scent toward the smoke
+EXIT 2: Seek the stone pillar by the orchard boundary
+@@END
+@@SECTION vh-5-0-3-12
+TITLE: The Tangled Hemp
+TEXT: Dreary gray mist hangs heavy from the low-slung branches, muffling every sound except the rhythmic dripping of moisture from leaf to leaf. Your boots brush against a tangled heap of abandoned hemp rope left behind by careless carriers, its frayed strands slick with frost and frozen mud. You pause to catch your breath, steadying the heavy bronze tongue in its cradle so it does not strike your frame. Ahead, the path splits around a broad pear trunk, offering several directions through the dense, silent thicket.
+EXIT 1: Step carefully past the old rope
+EXIT 2: Head toward the stone pillar ahead
+EXIT 3: Turn back along the warden's guide-rope
+@@END
+@@SECTION vh-5-0-4-0
+TITLE: The Warning Bell
+TEXT: Gray mist thickens like raw wool around the orchard boundary, swallowing the trunks of the fruit trees until they look like floating charcoal sketches. From somewhere unseen in the heavy white shroud, the distant iron tongue of a warden's warning bell clangs dully, its heavy chime vibrating straight through the soles of your boots. You halt near a low stone marker, listening intently to the rhythmic clatter to gauge how far the boundary truly lies. The fog parts slightly to reveal two narrow tracks plunging deeper into the damp gloom.
+EXIT 1: Advance cautiously toward the muddy gate
+EXIT 2: Listen closer by the hidden barrier
+@@END
+@@SECTION vh-5-0-4-1
+TITLE: The Moss-Slicked Post
+TEXT: Cold moisture drips steadily from your wool cap brim, soaking into the collar of your coat as you stand beside the moss-slicked timber gatepost that marks the valley exit. You adjust the heavy burden on your back, shifting the bronze clapper until the hum settles into a steady, comforting vibration against your spine. The surrounding orchards stretch out like silent ghosts in the thick, clinging fog, blotting out the mountainside above and the path below. Two vague trails lead onward into the white obscurity, each promising a way through the quiet valley.
+EXIT 1: Step out toward the distant guide-rope
+EXIT 2: Follow the path past the damp gate
+@@END
+@@SECTION vh-5-0-4-2
+TITLE: The Wicker Gate
+TEXT: The looming shadow of the great wicker orchard gate towers above you like the ribs of an ancient whale stranded in the mist. You wait patiently for the swirling white vapor to part so you can spot the weathered path markers nailed to the sturdy willow posts. The bronze tongue on your back gives a faint, sympathetic chime as you shift your weight, responding to the chill draft blowing through the woven bars. Two distinct gaps in the hedge beckon through the gloom, each swallowed entirely by the dense cloud cover.
+EXIT 1: Press forward through the drifting mud
+EXIT 2: Wait by the timber barrier for the whistle
+@@END
+@@SECTION vh-5-0-4-3
+TITLE: The Dormant Plums
+TEXT: A dense stand of dormant plum trees crowds tightly around the perimeter path, their dark, twisted branches interlocking overhead like gnarled fingers. The low, resonant hum of the bronze clapper vibrates distinctly against the damp air, echoing softly through the hollow trunks of the orchard. You stand still for a long moment, letting the familiar bronze note steady your nerves while the cold fog wraps around your shoulders. The path divides silently between two rows of frost-covered fruit trees, offering a choice of direction in the mist.
+EXIT 1: Follow the trail toward the muddy threshold
+EXIT 2: Listen by the timber barrier for the signal
+@@END
+@@SECTION vh-5-0-4-4
+TITLE: The Rusted Hinge
+TEXT: Rust flakes away in orange scales from the heavy iron hinge of the tall wooden orchard barrier, leaving bright red streaks on the damp grey wood. Pressed into the soft bark beside the bolt, you find a rough scratch left by a preceding mountain carrier, pointing down toward the lower tiers with a hastily carved arrow. You trace the groove with a cold finger, listening for any sound beyond the steady drip of moisture from the canopy. Two narrow routes branch away from the rusted latch into the swirling white gloom.
+EXIT 1: Take the path past the damp gate
+EXIT 2: Approach the locked wicket in the fog
+@@END
+@@SECTION vh-5-0-4-5
+TITLE: The Terrace Edge
+TEXT: A cold grey ceiling of cloud presses down upon the edge of the terrace, turning the distant drop-off into a featureless wall of white. You steady your aching shoulders against the straps of the carrying cradle as a sudden sharp draft of wind stirs the heavy mist. Below, the valley remains utterly hidden, save for the occasional creak of unseen branches shifting in the damp air. Two paths lead away from the stone ledge, swallowed quickly by the fog before they can show their true destination.
+EXIT 1: Tread carefully toward the muddy clearing
+EXIT 2: Descend toward the damp orchard threshold
+@@END
+@@SECTION vh-5-0-4-6
+TITLE: The Lower Crossbeam
+TEXT: Heavy wooden crossbeams of the lower gate loom out of the fog, smelling sharply of wet soil and woodsmoke rising from the hidden valley floor beneath you. You pause with a hand resting on the damp timber, listening to the muffled creak of a warden's ropeway somewhere down in the white abyss. The bronze clapper shifts slightly in its padded cradle, its deep metallic drone blending with the damp silence of the orchards. A single narrow track continues forward through the heavy mist toward the locked wicket.
+EXIT 1: Approach the locked wicket in the fog
+@@END

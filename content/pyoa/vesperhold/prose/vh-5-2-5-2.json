@@ -1,0 +1,87 @@
+{
+ "batch": "vh-5-2-5-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-2-5-2": {
+   "title": "The Master Founder's Judgment",
+   "text": "Unbuckling the heavy straps from your aching shoulders, you present the humming relic to the master founder just as the first heavy snowflakes begin to fall. The old smith runs calloused fingers down the scored bronze, testing the weight of the tongue that once woke Vesperhold through mountain blizzards. Around you, apprentices stoke the coke-beds until the cavernous arch glows like a captured sunset.\n\nThere is no time to linger by the hearth, for the low pass threatens to seal entirely before dawn breaks.",
+   "exits": [
+    "Step back into the mountain chill"
+   ]
+  },
+  "vh-5-2-5-3": {
+   "title": "Refuge in the Lower Foundry",
+   "text": "Stepping inside the roaring warmth of the lower foundry, you slide the great clapper onto the iron cooling floor and know that Vesperhold's voice is saved from the frost. Sparks dance against the soot-blackened rafters while furnace-men cheer your arrival, pounding iron hammers in a rhythm that matches the faint, lingering hum of the bronze. Every muscle in your back aches from the long descent through the mist, yet relief washes over you like warm spring water.\n\nBeyond the tall double doors, however, the valley path remains open and beckons you further down the slope.",
+   "exits": [
+    "Descend further into the river basin",
+    "Turn back toward the mist-shrouded orchards"
+   ]
+  },
+  "vh-d-5-2": {
+   "title": "The Final Leap",
+   "text": "Trying to outrun a mounted warden patrol by leaping across a rotting irrigation flume, you slip on the wet green slime and plunge headfirst into the thorns, shattering the bronze cradle against the stones. The humming clapper rolls free into the muddy ditch, its ancient voice silenced forever in the dripping leaves as the patrol's lanterns close in through the gray fog.",
+   "exits": []
+  },
+  "vh-5-out": {
+   "title": "Leaving the Fogbank Orchards",
+   "text": "Leaving The Fogbank Orchards for Lowgate and the Foundry, you feel the dense white vapors slowly give way to the heavy, coal-scented air of the lower basin. The vertical world opens its stone throat, revealing slate rooftops and gray river water far below where the great mountain meets the plains. Every step downward brings a new dampness to your cloak and a sharper urgency to your tired limbs.\n\nThe final stretch of the journey awaits where the valley flattens out into mud and industry.",
+   "exits": [
+    "Follow the winding road below"
+   ]
+  },
+  "vh-6-in": {
+   "title": "Arrival in Lowgate",
+   "text": "Arrival in Lowgate and the Foundry brings the bustling, soot-stained life of the river-port straight into your face, complete with flooded streets, desperate forge-masters hunting for scarce tin, and old promises coming due in the shadow of roaring blast furnaces. The air tastes of sulphur and wet river silt, thick with the shouts of bargemen and the clatter of iron on stone. Every alleyway offers a different route through the maze of workshops and docks toward your final destination.\n\nYou must choose your path carefully through the crowded, muddy thoroughfares.",
+   "exits": [
+    "Follow the main stair down to the docks",
+    "Cut across the lower ledges by the wall",
+    "Ask the way of a stranger near the gate",
+    "Take the old carriers' path through the mud"
+   ]
+  },
+  "vh-6-0-0-0": {
+   "title": "Silt and Scraps",
+   "text": "By the silt-choked river quay, Master Vane hawks rusted scrap iron while the gray flood laps at his boots and threatens to swallow his makeshift stall. He eyes your travel-worn gear with professional suspicion, muttering about the cost of copper and the scarcity of fuel in the lower wards. The damp wind carries the stench of rotting reeds and stagnant bilge water from the moored barges.\n\nOther travelers crowd the slippery stone quay, seeking answers or passage away from the rising tide.",
+   "exits": [
+    "Inspect the rusted iron heaps nearby",
+    "Seek shelter within the shadowed granary arch",
+    "Show your scarred knuckles to the ferryman"
+   ]
+  },
+  "vh-6-0-0-1": {
+   "title": "Drips and Warnings",
+   "text": "Under the dripping eaves of the copper-smiths' alley, an old woman named Marrow sells salted eel and warnings about the rising tide to anyone willing to spare a copper coin. Rainwater streams from the slate roofs in steady, freezing ropes, pooling around her wooden crate and soaking the hems of passing laborers. The narrow passage echoes with the rhythmic clink of tiny hammers shaping kettles in the gloom.\n\nBeyond her stall, the alley splits into darker, more treacherous lanes.",
+   "exits": [
+    "Pick your way past the tallow-works",
+    "Circle around toward the fish market"
+   ]
+  },
+  "vh-6-0-0-2": {
+   "title": "Locks and Barges",
+   "text": "At the sluice-gate lockhouse, a weary lock-keeper named Hobb argues with barge-haulers about tolls on the muddy current while iron chains groan under the strain of rising water. Heavy timbers shudder as the gray river presses against the wooden gates, threatening to spill over the stone embankments. The smell of wet hemp and horse sweat hangs thick in the damp air.\n\nSeveral paths branch off from the noisy lockhouse into the misty labyrinth of the port.",
+   "exits": [
+    "Seek warmth near the tavern sign",
+    "Check on the workers by the broken wheel",
+    "Enter the damp brick toll-office for shelter"
+   ]
+  },
+  "vh-6-0-0-3": {
+   "title": "Hemp and Gossip",
+   "text": "Near the sunken timber wharf, young apprentices trade gossip about the foundry's dwindling tin stores while hauling drenched hemp coils through the ankle-deep mire. Their laughter cuts through the monotonous roar of the weir upstream, sharp and irreverent against the gray backdrop of the industrial quarter. Heavy cargo crates are stacked haphazardly along the rotting boardwalks, leaking sawdust and grease into the puddles.\n\nThe path ahead winds deeper into the soot and steam of the workshops.",
+   "exits": [
+    "Step inside the brick toll-office",
+    "Pass by the charcoal sheds in the smoke",
+    "Follow the weed-choked canal wall"
+   ]
+  },
+  "vh-6-0-1-0": {
+   "title": "Salt-Crusted Cranes",
+   "text": "Past the salt-crusted crane-posts, a rope-seller named Gault curses the damp air that rots his finest hemp cables before they ever reach the mountain winches. Spools of heavy tarred cordage line the muddy track like giant sleeping serpents, glistening with moisture under the sunless sky. The distant clang of the main foundry hammer reverberates through the damp ground beneath your boots.\n\nYou must decide whether to press onward through the maze or seek out another trade-master.",
+   "exits": [
+    "Venture into the dripping cooperage",
+    "Inspect the ruined produce on the wharf"
+   ]
+  }
+ },
+ "missing": []
+}

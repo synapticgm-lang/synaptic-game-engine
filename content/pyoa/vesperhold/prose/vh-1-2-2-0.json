@@ -1,0 +1,88 @@
+{
+ "batch": "vh-1-2-2-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-2-2-0": {
+   "title": "The Ice Shelf",
+   "text": "Frost glazes the narrow ledge where you stand, making every placement of your boots a quiet negotiation with gravity. A stray pebble breaks loose beneath your heel, rattling down into the white abyss of the lower tiers until its sound swallows entirely into the cloud layer. The padded cradle on your back shifts its heavy bronze load, reminding you of the long miles waiting below.\n\nDo you step carefully toward the upper cable station, or edge around the shoulder to where falling ice clatters against the rock?",
+   "exits": [
+    "Walk toward the upper winch station",
+    "Pick a path past the falling icicles"
+   ]
+  },
+  "vh-1-2-2-1": {
+   "title": "The Salt-Porch Fracture",
+   "text": "Bitter drafts whistle through the wooden slats of the salt-porch, smelling of dried brine and old timber. Kaelen the cooper peers closely at your burden, his scarred thumb tracing a hairline fracture across the wooden cradle frame that holds the great Clapper. A replacement stave might hold, but every minute spent here lets the mountain cold sink deeper into your bones.\n\nDo you stay to let him drive a temporary pin, or thank him and press on toward the cables before the light fails?",
+   "exits": [
+    "Wait while the cooper secures the frame",
+    "Leave quickly and head for the upper winches"
+   ]
+  },
+  "vh-1-2-2-2": {
+   "title": "The Frozen Fold",
+   "text": "Wind howls around the drystone walls of the frozen sheep-fold, carrying the sharp scent of wet wool and melting rime. An old drover named Orvyn leans on his crook, squinting up at the ragged gray clouds and warning you about sudden updrafts that can snatch a heavy burden right off a traveler's shoulders. The bronze tongue on your spine hums a low, sympathetic note to the gale.\n\nDo you seek out the shelter clerk to pay your way, or seek advice from the old shepherd under the rock overhang?",
+   "exits": [
+    "Count coins with the toll-clerk inside",
+    "Talk with the shepherd by the cliff face"
+   ]
+  },
+  "vh-1-2-2-3": {
+   "title": "The Iron Lantern",
+   "text": "Shadows flicker wildly under the swinging iron lantern of the guard-post as sleet begins to pit the frozen mud. Joran stands square in the doorway, his leather gauntlets crossed over his chest, demanding your toll-token with a gruff, practiced nod. Biscuit snorts behind you, breath pluming white in the freezing air against the dark stone.\n\nDo you hand over the token and move past the guard, or step aside to calm the stubborn mule?",
+   "exits": [
+    "Show the token and pass the guard",
+    "Pause by the water-butt to soothe the mule"
+   ]
+  },
+  "vh-1-2-2-4": {
+   "title": "The Singing Bronze",
+   "text": "Solid granite presses against your shoulder while the mountain wind finds the mouth of the bronze Clapper on your back, drawing a thin, singing chord from the heavy metal. Your spine aches under the sheer dead weight, and the temptation to rush the descent before the weather closes in entirely pulls at your judgment.\n\nDo you pause to speak with the shepherd under the granite overhang, or slip past the rusted crane into the rising mist?",
+   "exits": [
+    "Rest near the shepherd by the overhang",
+    "Push onward past the rusted iron crane",
+    "Take the reckless way"
+   ]
+  },
+  "vh-1-2-2-5": {
+   "title": "The Stone Chimney",
+   "text": "Ice rimes the edges of the frozen fountain where a nervous apprentice has just dropped his tallow bucket down the deep stone ventilation chimney with a hollow clatter. Below your boots, the slate steps drop away into gray obscurity, slick with rime and shadowed by the high monastery walls.\n\nDo you brave the steep slate stairs with your heavy burden, or skirt around toward the rusted crane in the mist?",
+   "exits": [
+    "Descent the steep slate steps carefully",
+    "Follow the path toward the rusted iron crane"
+   ]
+  },
+  "vh-1-2-2-6": {
+   "title": "Devil's Knee",
+   "text": "Black ice coats the narrow switchback known as Devil's Knee, and Biscuit has planted all four hooves firmly against the frozen rock, refusing to take another inch. The bronze Clapper hums a warning vibration against your shoulder blades as the wind surges around the corner.\n\nDo you seek out the shepherd beneath the granite overhang for advice, or push forward into the rising valley mist?",
+   "exits": [
+    "Ask the old shepherd for assistance",
+    "Lead the stubborn beast toward the gray mist"
+   ]
+  },
+  "vh-1-2-2-7": {
+   "title": "The Damp Salt-Store",
+   "text": "Scent of wet hemp and old brine fills the damp salt-store where weaver Jessa presses an extra length of cord into your hands before you face the open ridge. Outside, the wind scours the frozen flags, threatening to catch anyone unanchored.\n\nDo you follow the wind-swept trail toward the crossroads signpost, or check the weathered boundary stone in the alcove?",
+   "exits": [
+    "Head toward the three winds crossroads",
+    "Inspect the weathered boundary stone alcove"
+   ]
+  },
+  "vh-1-2-2-8": {
+   "title": "The High Conduit",
+   "text": "Dripping icicles shatter against the frozen masonry of the high conduit as a startled rook bursts from the stonework with a harsh, barking cry. Your boots crunch over frozen gravel, echoing sharply in the thin, cold air between the buttressed walls.\n\nDo you check the alcove by the weathered boundary stone, or hurry toward the low lintel of the guard-shelter?",
+   "exits": [
+    "Stop briefly by the old boundary stone",
+    "Approach the low lintel of the guard-shelter"
+   ]
+  },
+  "vh-1-2-2-9": {
+   "title": "The Limestone Shelf",
+   "text": "Driving sleet stings your cheeks on the exposed limestone shelf, forcing you to lean forward and steady the shifting Clapper against your spine. Beside you, the wooden handrail of the Ninety Steps groans and swings wildly in the fierce mountain gust.\n\nDo you grab for the swinging handrail along the sheer drop, or dash across the frosted landing where jackdaws scatter into the gloom?",
+   "exits": [
+    "Hold fast near the swinging handrail",
+    "Run across the frosted wooden landing"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,70 @@
+@@SECTION vh-1-2-2-0
+TITLE: The Ice Shelf
+TEXT: Frost glazes the narrow ledge where you stand, making every placement of your boots a quiet negotiation with gravity. A stray pebble breaks loose beneath your heel, rattling down into the white abyss of the lower tiers until its sound swallows entirely into the cloud layer. The padded cradle on your back shifts its heavy bronze load, reminding you of the long miles waiting below. // Do you step carefully toward the upper cable station, or edge around the shoulder to where falling ice clatters against the rock?
+EXIT 1: Walk toward the upper winch station
+EXIT 2: Pick a path past the falling icicles
+@@END
+
+@@SECTION vh-1-2-2-1
+TITLE: The Salt-Porch Fracture
+TEXT: Bitter drafts whistle through the wooden slats of the salt-porch, smelling of dried brine and old timber. Kaelen the cooper peers closely at your burden, his scarred thumb tracing a hairline fracture across the wooden cradle frame that holds the great Clapper. A replacement stave might hold, but every minute spent here lets the mountain cold sink deeper into your bones. // Do you stay to let him drive a temporary pin, or thank him and press on toward the cables before the light fails?
+EXIT 1: Wait while the cooper secures the frame
+EXIT 2: Leave quickly and head for the upper winches
+@@END
+
+@@SECTION vh-1-2-2-2
+TITLE: The Frozen Fold
+TEXT: Wind howls around the drystone walls of the frozen sheep-fold, carrying the sharp scent of wet wool and melting rime. An old drover named Orvyn leans on his crook, squinting up at the ragged gray clouds and warning you about sudden updrafts that can snatch a heavy burden right off a traveler's shoulders. The bronze tongue on your spine hums a low, sympathetic note to the gale. // Do you seek out the shelter clerk to pay your way, or seek advice from the old shepherd under the rock overhang?
+EXIT 1: Count coins with the toll-clerk inside
+EXIT 2: Talk with the shepherd by the cliff face
+@@END
+
+@@SECTION vh-1-2-2-3
+TITLE: The Iron Lantern
+TEXT: Shadows flicker wildly under the swinging iron lantern of the guard-post as sleet begins to pit the frozen mud. Joran stands square in the doorway, his leather gauntlets crossed over his chest, demanding your toll-token with a gruff, practiced nod. Biscuit snorts behind you, breath pluming white in the freezing air against the dark stone. // Do you hand over the token and move past the guard, or step aside to calm the stubborn mule?
+EXIT 1: Show the token and pass the guard
+EXIT 2: Pause by the water-butt to soothe the mule
+@@END
+
+@@SECTION vh-1-2-2-4
+TITLE: The Singing Bronze
+TEXT: Solid granite presses against your shoulder while the mountain wind finds the mouth of the bronze Clapper on your back, drawing a thin, singing chord from the heavy metal. Your spine aches under the sheer dead weight, and the temptation to rush the descent before the weather closes in entirely pulls at your judgment. // Do you pause to speak with the shepherd under the granite overhang, or slip past the rusted crane into the rising mist?
+EXIT 1: Rest near the shepherd by the overhang
+EXIT 2: Push onward past the rusted iron crane
+EXIT 3: Take the reckless way
+@@END
+
+@@SECTION vh-1-2-2-5
+TITLE: The Stone Chimney
+TEXT: Ice rimes the edges of the frozen fountain where a nervous apprentice has just dropped his tallow bucket down the deep stone ventilation chimney with a hollow clatter. Below your boots, the slate steps drop away into gray obscurity, slick with rime and shadowed by the high monastery walls. // Do you brave the steep slate stairs with your heavy burden, or skirt around toward the rusted crane in the mist?
+EXIT 1: Descent the steep slate steps carefully
+EXIT 2: Follow the path toward the rusted iron crane
+@@END
+
+@@SECTION vh-1-2-2-6
+TITLE: Devil's Knee
+TEXT: Black ice coats the narrow switchback known as Devil's Knee, and Biscuit has planted all four hooves firmly against the frozen rock, refusing to take another inch. The bronze Clapper hums a warning vibration against your shoulder blades as the wind surges around the corner. // Do you seek out the shepherd beneath the granite overhang for advice, or push forward into the rising valley mist?
+EXIT 1: Ask the old shepherd for assistance
+EXIT 2: Lead the stubborn beast toward the gray mist
+@@END
+
+@@SECTION vh-1-2-2-7
+TITLE: The Damp Salt-Store
+TEXT: Scent of wet hemp and old brine fills the damp salt-store where weaver Jessa presses an extra length of cord into your hands before you face the open ridge. Outside, the wind scours the frozen flags, threatening to catch anyone unanchored. // Do you follow the wind-swept trail toward the crossroads signpost, or check the weathered boundary stone in the alcove?
+EXIT 1: Head toward the three winds crossroads
+EXIT 2: Inspect the weathered boundary stone alcove
+@@END
+
+@@SECTION vh-1-2-2-8
+TITLE: The High Conduit
+TEXT: Dripping icicles shatter against the frozen masonry of the high conduit as a startled rook bursts from the stonework with a harsh, barking cry. Your boots crunch over frozen gravel, echoing sharply in the thin, cold air between the buttressed walls. // Do you check the alcove by the weathered boundary stone, or hurry toward the low lintel of the guard-shelter?
+EXIT 1: Stop briefly by the old boundary stone
+EXIT 2: Approach the low lintel of the guard-shelter
+@@END
+
+@@SECTION vh-1-2-2-9
+TITLE: The Limestone Shelf
+TEXT: Driving sleet stings your cheeks on the exposed limestone shelf, forcing you to lean forward and steady the shifting Clapper against your spine. Beside you, the wooden handrail of the Ninety Steps groans and swings wildly in the fierce mountain gust. // Do you grab for the swinging handrail along the sheer drop, or dash across the frosted landing where jackdaws scatter into the gloom?
+EXIT 1: Hold fast near the swinging handrail
+EXIT 2: Run across the frosted wooden landing
+@@END

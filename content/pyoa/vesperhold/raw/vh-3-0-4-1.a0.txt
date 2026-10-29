@@ -1,0 +1,55 @@
+@@SECTION vh-3-0-4-1
+TITLE: The Miller's Stare
+TEXT: Heavy, flour-dusted hands rest upon a scarred timber crate while weary eyes track your progress across the terrace stones. The old miller watches the heavy bronze tongue shifting in its padded cradle on your back, measuring the weight of your errand against the thin, bitter mountain air. // Will you pause to offer a greeting, or keep your head down and push onward past the mill?
+EXIT 1: Step closer to speak with the miller
+@@END
+@@SECTION vh-3-0-4-2
+TITLE: The Rolling Cask
+TEXT: Splintered wood explodes against the low drystone wall as a runaway barley cask shatters inches from your boots, showering the frosty path with grain. Biscuit shifts nervously against the ropes, ears pinned back against the whistling wind, while the frantic shouting of loaders echoes from the upper tier. // Will you steady the mule and press ahead, or pause to salvage what spilled grain you can?
+EXIT 1: Dodge the debris and hurry down the trail
+@@END
+@@SECTION vh-3-0-4-3
+TITLE: The Muddy Courtyard
+TEXT: Thick gray mud cakes the soles of your boots as the stone trail widens into a drafty central courtyard where a dozen pack-mules huddle in the lee of the district hall. The smell of wet wool and damp chaff hangs heavy here, punctuated by the clinking of harness rings and the low grumbling of resting drivers. // Will you seek shelter by the hall's outer wall, or weave between the tethered beasts to find the lower path?
+EXIT 1: Cut across the courtyard toward the stairs
+EXIT 2: Shelter briefly by the gathering hall wall
+@@END
+@@SECTION vh-3-0-4-4
+TITLE: Smoke and Chaff
+TEXT: Icy moisture clings to your brow, turning to frost as the thick, heavy scent of burning peat and sweet damp chaff rolls over you from the terrace kilns. The bronze Clapper hums a faint, steady counter-rhythm against your shoulder blades, vibrating deep within the padding as the mountain wind shifts. // Will you seek out the kiln-master for warmth, or keep moving before the weather closes in?
+EXIT 1: Seek warmth beside the smoking peat kiln
+EXIT 2: Ignore the smoke and press down the slope
+@@END
+@@SECTION vh-3-0-5-0
+TITLE: Tanner's Warning
+TEXT: Shadows stretch long across the dim rafters of the Rumour Mill, where old Tanner leans close to whisper a dark warning about the valley below. He insists the Lowgate foundry has completely run out of tin and will reject all temple bronze, leaving your heavy burden stranded in the cold. // Will you swallow your misgivings and press on toward the forge anyway?
+EXIT 1: Press on regardless of Tanner's grim warning
+@@END
+@@SECTION vh-3-0-4-5
+TITLE: The Candlelit Scroll
+TEXT: Tallow drips steadily from a flickering tin sconce as a nervous clerk drags a quill down a long, grease-spotted parchment scroll by the side of the track. He mutters dates and quotas under his breath, barely glancing up as your heavy boots crunch upon the gravel. // Will you wait for him to check your passage, or slip past while his eyes remain fixed on the ink?
+EXIT 1: Wait patiently for the clerk to look up
+EXIT 2: Slip quietly past the distracted clerk
+EXIT 3: Ask the clerk about the rumor mill
+@@END
+@@SECTION vh-3-0-4-6
+TITLE: The Archway Press
+TEXT: Shoulders brush and voices rise in sharp argument as you squeeze through a dense knot of gossiping mill-hands gathered beneath the stone lower archway for shelter. The biting draft cuts through your wool tunic, but the crowd's chatter provides a brief barrier against the worst of the mountain gust. // Will you elbow your way through the throng into the dim interior?
+EXIT 1: Push through the crowd into the warm interior
+@@END
+@@SECTION vh-3-0-4-7
+TITLE: Lee of the Mill
+TEXT: The frantic roar of the great valley wind drops abruptly to a low, rhythmic hum as you step into the shadowed overhang of the Rumour Mill. Inside, the air smells of stale ale and roasted barley, offering a brief respite from the biting chill that claws at your woolen cloak. // Will you step inside to warm your hands by the hearth fire?
+EXIT 1: Step inside the mill to escape the wind
+@@END
+@@SECTION vh-3-0-5-1
+TITLE: The Roaring Hearth
+TEXT: Red firelight flickers across a scarred smith's face near the sputtering hearth, where he loudly claims the foundry furnaces are roaring hotter than ever. He laughs off talk of scarcity, declaring the master-smiths are fiercely eager for the great bell's tongue to feed their blazing pits. // Will you nod at his confidence and press on down the mountain?
+EXIT 1: Press on toward the roaring valley forge
+@@END
+@@SECTION vh-3-0-5-2
+TITLE: The Cable Court's Grasp
+TEXT: Pewter mugs clatter against rough wood as a pale trader slams his hand down upon the tavern table, swearing the Cable Court has seized the foundry. He insists the toll-lords plan to melt the temple bronze down into heavy debt-shackles for the mountain folk. // Will you reject his jittery tales and press on regardless?
+EXIT 1: Press on and test the truth at the foundry
+EXIT 2: Ask the trader more about the debt-shackles
+@@END

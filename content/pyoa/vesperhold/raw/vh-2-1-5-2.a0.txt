@@ -1,0 +1,63 @@
+@@SECTION vh-2-1-5-2
+TITLE: The Toll Counter
+TEXT: Cold iron grates against your knuckles as you empty a heavy leather pouch of earned groats onto the high wooden desk. Coins clink and scatter across the grain while the clerk's ink-stained fingers sweep them into a brass bowl to clear the crossing fee in hard cash. // Behind you, Biscuit shifts restlessly on the swaying boards, hoof-nails scraping a hollow rhythm against the gorge below. You square your shoulders against the biting mountain draft and grip the cradle straps, ready for the path ahead.
+EXIT 1: Step through the gate and press on
+@@END
+@@SECTION vh-2-1-5-3
+TITLE: Silver Clearance
+TEXT: Smooth polished stone yields beneath your fingertips at the customs booth while you count out your last gleaming silver coins one by one. The toll-master nods curtly, pocketing the fee to keep your name far away from the heavy, binding ink of the loan ledgers. // The air tastes of resin and old hemp in this narrow corridor suspended between cloud and stone. With your purse lighter but your conscience clear of debt, you eye the swaying ropeway stretching out toward the next tier.
+EXIT 1: Leave the booth and press on
+@@END
+@@SECTION vh-d-2-1
+TITLE: The Lost Pass
+TEXT: Lured by the rattle of dice on a swaying rope-platform, you pause to watch a high-stakes game above the gaping abyss. Temptation overtakes caution as you wager your sacred guild transit pass on a desperate throw of bone markers. // The dice tumble against the grain of the weathered wood, coming up blank before a sharp gust of mountain wind lifts the parchment pass from the boards. Card-sharks laugh as it flutters down into the white fog below, leaving you stranded without proof of your craft or passage.
+@@END
+@@SECTION vh-2-c2
+TITLE: The Cable Court Ledger
+TEXT: A cramped chamber smells of stale tallow and iron ink-pots where the Cable Court toll-collectors present their terms for your passage. The clerk taps a long quill against a binding contract that promises heavy repayment terms down in Lowgate, or demands an immediate settlement from your own dwindling funds. // Every breath tastes of frozen dust in the low-ceilinged booth while Biscuit stomps an impatient hoof outside the reinforced door. You must decide whether to shoulder a crushing debt or part with your remaining hard-earned coin to cross the gorge freely.
+EXIT 1: Take the Cable Court's loan of passage
+EXIT 2: Pay the toll from your own purse
+@@END
+@@SECTION vh-2-2-0-0
+TITLE: The Winch-Master's Eye
+TEXT: Harsh daylight hits your eyes as you step out from the damp toll-house shadows onto a swaying hemp walkway. Winch-master Joram stands by the groaning machinery, weighing your bronze clapper with greedy, narrowed eyes that calculate the worth of its metal. // The heavy cradle digs into your aching shoulders while the bridge rocks under a sudden gust from the gorge. Iron gears shriek behind the master as he gestures toward the branching pathways spanning the dizzying heights.
+EXIT 1: Follow the upper cable toward the northern winches
+EXIT 2: Cut across the narrow maintenance plank to the left
+EXIT 3: Descend the steep ladder toward the lower market tier
+@@END
+@@SECTION vh-2-2-0-1
+TITLE: The Frozen Ledger
+TEXT: Weathered market boards creak beneath your heavy cradle, vibrating with the constant roar of the bottomless gorge below. Clerk Nesta stands by a frosted window, her quill scratching a sharp warning into a frozen ledger as she logs your unpaid debt. // Frost patterns spiderweb across the glass while the shadow of the great mountain looms larger in the late afternoon chill. You adjust the straps of your burden and look out over the complex web of ropes stretching into the mist.
+EXIT 1: Pick your way along the outer market rim
+EXIT 2: Slip past the checkpoint as an insignificant traveler
+EXIT 3: Take the tallow-soaked twine offered by the frantic boy
+@@END
+@@SECTION vh-2-2-1-0
+TITLE: The Flax Bridge
+TEXT: Frigid winds whip across a suspension bridge woven entirely from pale, braided flax that vibrates like a harp string. You flatten your back against the swaying rail to dodge a careering cargo basket hauling smoking tallow barrels toward the upper tiers. // Frost glazes the fibrous handlines while the heavy bronze clapper hums a low, sympathetic note against your spine. Below your boots, the cloud line breaks to reveal dizzying drops of sheer gray stone.
+EXIT 1: Enter the suspended timber gallery
+EXIT 2: Confront Master weaver Elden on the narrow plankway
+EXIT 3: Duck beneath the overhead trestle as draft mules pass
+@@END
+@@SECTION vh-2-2-1-1
+TITLE: The Hide Market
+TEXT: Pungent smells of salted hides and wet wool fill the narrow alley where old Sula catches your sleeve with wrinkled fingers. She warns in a raspy whisper that the Cable Court enforcers have blockaded the middle winch-platforms ahead. // Sacks of coarse salt stack high against the canvas walls, forming a dark labyrinth of stalls that shelter you from the biting wind. The low drone of the great bell miles above still echoes faintly through the canyon walls.
+EXIT 1: Flash your Guild token to the rope-guards
+EXIT 2: Hide in the alcove behind the tallow-chandler's booth
+EXIT 3: Watch the frozen pulley shower sparks from above
+@@END
+@@SECTION vh-2-2-1-2
+TITLE: The Canvas Awnings
+TEXT: Wild gusts of mountain wind tear at the canvas awnings of the hanging bazaar, sending sharp cracks echoing across the white mist. Your heavy bronze burden shifts awkwardly, threatening to pitch you and your load backward into the empty air. // Rope-threads fray against the anchor posts while merchants scramble to secure their swinging wares with double knots. You plant your boots firmly into the groaning pine planks and search for a stable footing.
+EXIT 1: Duck beneath the shower of sparks from the pulley
+EXIT 2: Accept the warm chicory water from apprentice Kenal
+EXIT 3: Crawl beneath the slumping trestle where weavers work
+@@END
+@@SECTION vh-2-2-1-3
+TITLE: The Wicker Sorting Pit
+TEXT: Rough wicker fencing presses against your ribs as you squeeze past a bustling knot-binder's stall filled with coils of hemp. Apprentices test tensile strength by hooking heavy iron weights over the edge and letting them swing out above the abyss. // The sharp scent of tar and dry grass hangs thick in the cold air between the high market stalls. Every rope in this bazaar hums a different pitch to the wind, creating a restless chord that sets your teeth on edge.
+EXIT 1: Approach toll-keeper Vane at the iron turnstile
+EXIT 2: Press flat against the bridge as an updraft hits
+EXIT 3: Skirt the edge of the great wicker sorting pit
+EXIT 4: Step toward the quiet corner near the lower winches
+@@END

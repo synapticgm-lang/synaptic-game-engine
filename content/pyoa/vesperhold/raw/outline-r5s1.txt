@@ -1,0 +1,54 @@
+@@SEED vh-5-1-0-0 | Among dripping pear trees, you test a mossy fence line while the bronze Clapper hums softly against your aching shoulders.
+@@SEED vh-5-1-0-1 | Blinded by woolly mist near a stone cistern, you pause to listen for the Warden's guiding whistle ahead.
+@@SEED vh-5-1-1-0 | An old cider press blocks the sunken path, its rusted screw weeping amber juice into the soaked mulch.
+@@SEED vh-5-1-1-1 | Frost-bitten branches claw at your sleeves as you slip past a silent shed stacked with empty crates.
+@@SEED vh-5-1-1-2 | A passing Cable Court clerk mistakes your pack-strap for a levy-tag, shoving a dry biscuit into your palm and pointing out an untracked gap in the hedge.
+@@SEED vh-5-1-1-3 | Shivering beneath a weeping willow, you adjust the heavy bronze tongue before the rising chill stiffens your leather straps.
+@@SEED vh-5-1-1-4 | A wicker handcart abandoned across the muddy lane forces you to scramble through a patch of stinging nettles.
+@@SEED vh-5-1-1-5 | Distant wood-pigeons clatter upward into the grey murk, warning of some unseen disturbance deeper in the orchard rows.
+@@SEED vh-5-1-2-0 | A row of dormant bee-hives hums with a deep vibration that matches the tired ringing in your marrow.
+@@SEED vh-5-1-2-1 | Tilted gravestones of ancient orchard-keepers loom from the damp turf like broken teeth in a grey gum.
+@@SEED vh-5-1-2-2 | A rusted copper basin catches dripping condensation, plink-plonking in rhythm with your stumbling boots.
+@@SEED vh-5-1-2-3 | Tangled brambles catch the cradle harness, threatening to pin you fast in the dripping shadows.
+@@SEED vh-5-1-2-4 | The chipped bronze Clapper catches a rogue gust through the fog-gaps, chiming a clear C-natural that startles a roosting pheasant and reveals a hidden drainage culvert leading straight through the stone wall.
+@@SEED vh-5-1-2-5 | A moss-grown stone weir gurgles beside the track, its icy water tasting of iron and mountain loam.
+@@SEED vh-5-1-2-6 | Piles of pruned apple wood smell sharply of sap, offering a greasy handhold as you scramble up a slippery bank.
+@@SEED vh-5-1-2-7 | An iron bell-pull dangles from a rotting pear trunk, swaying lifelessly in the stagnant air.
+@@SEED vh-5-1-2-8 | Shards of broken glass glint beneath the rotting leaves where a greenhouse once stood against the cliff.
+@@SEED vh-5-1-2-9 | A flock of startled sheep stampede through the mist, their bells clanking wildly before vanishing into the white void.
+@@SEED vh-5-1-2-10 | Slick clay sucks at your heels near an old sheep dip, threatening to pull you down under the bronze weight.
+@@SEED vh-5-1-2-11 | A slate roof tile slips from an unseen shed above, shattering inches from your heavy boots on the flags.
+@@SEED vh-5-1-2-12 | Rusted iron hoops lie half-buried in the humus like the ribs of stranded river-boats.
+@@SEED vh-5-1-2-13 | The fog thickens to a woolly grey soup, forcing you to trail your fingers along a damp retaining wall.
+@@SEED vh-5-1-2-14 | A weathered scarecrow stuffed with damp straw watches you pass with empty, buttonless eye sockets.
+@@SEED vh-5-1-2-15 | Thick condensation beads on your woollen cloak, soaking through to your shoulders where the heavy cradle straps bite.
+@@SEED vh-5-1-3-0 | An old stone bench covered in grey lichen offers a moment to ease the bruising weight of the Clapper.
+@@SEED vh-5-1-3-1 | A tangle of wild blackberry canes snags your leather gaiters beside a dry-stone retaining wall.
+@@SEED vh-5-1-3-2 | The sweet tang of fermented windfalls rises from a ditch where spoiled fruit rots away in the damp.
+@@SEED vh-5-1-3-3 | A rusted iron drainpipe gurgles with cold mountain runoff, splashing your trousers with yellow clay.
+@@SEED vh-5-1-3-4 | Shimmering spider-webs heavy with mist hang between the pear branches like grey lace curtains.
+@@SEED vh-5-1-3-5 | A discarded woollen mitten lies sodden in the ruts, reminding you how easily a traveller loses his grip here.
+@@SEED vh-5-1-3-6 | The ground dips sharply toward a hidden irrigation ditch bridged by a single rotting alder plank.
+@@SEED vh-5-1-3-7 | A flock of fieldfares bursts from a hawthorn hedge, their frantic wings rustling the dripping leaves above.
+@@SEED vh-5-1-3-8 | Smooth river stones pave a forgotten water-channel that now serves as a treacherous, slippery footpath.
+@@SEED vh-5-1-3-9 | A broken pruning knife glints among the roots of a gnarled plum tree, half-swallowed by green velvet moss.
+@@SEED vh-5-1-3-10 | Heavy vapor rolls down the terrace steps in grey tendrils, smelling strongly of woodsmoke and damp earth.
+@@SEED vh-5-1-3-11 | Unencumbered by a pack animal's clumsy bulk, you slip sideways through a narrow gap between stone buttresses just as a rolling boulder crashes down the lane.
+@@SEED vh-5-1-3-12 | A rusted wind-vane shaped like a leaping trout creaks dismally atop a rotting wooden post.
+@@SEED vh-5-1-3-13 | Yellowed dock leaves brush against your knees as you skirt a patch of boggy ground near the lower terrace.
+@@SEED vh-5-1-3-14 | A crumbling brick kiln emits a faint, lingering heat that thaws the ice on your stiffened leather gloves.
+@@SEED vh-5-1-3-15 | The damp air tastes of wood-smoke and wet wool, signaling the proximity of inhabited stone shelters ahead.
+@@SEED vh-5-1-4-0 | A low stone archway dripping with green maidenhair fern frames the gravel path leading toward the guard post.
+@@SEED vh-5-1-4-1 | The muffled sound of a bone whistle echoes off the wet cliffs, warning that the checkpoint is near.
+@@SEED vh-5-1-4-2 | Piles of split birch logs line the narrow track, smelling of fresh sap and winter fuel stores.
+@@SEED vh-5-1-4-3 | A frayed hemp rope tied to a stump serves as a handrail above a steep drop into the white fog.
+@@SEED vh-5-1-4-4 | Frost-rimed plum trees crowd the path so tightly that your heavy bronze burden scrapes against their frozen bark.
+@@SEED vh-5-1-4-5 | A wooden signpost with worn lettering points blindly into the heavy mist, its directions long since washed away.
+@@SEED vh-5-1-4-6 | The rhythmic dripping of moisture from overhead branches creates a deceptive curtain of sound masking the guard-post.
+@@SEED vh-5-1-4-7 | Cold mountain draft channels down the stone corridor, carrying the sharp tang of woodsmoke and roasted chestnuts.
+@@SEED vh-5-1-5-0 | Pale lantern light flickers through the greasy horn windows of the low stone shelter where the whistle-guards wait.
+@@SEED vh-5-1-5-1 | A notched wooden tally stick hangs beside the heavy oak door of the post, recording the day's transit tolls.
+@@SEED vh-5-1-5-2 | Piles of grey wool blankets sit on a rough bench inside the porch, smelling faintly of sheep lanolin and rain.
+@@SEED vh-5-1-5-3 | A tin kettle boils over on an iron brazier, filling the drafty watch-room with steam and the scent of chicory.
+@@SEED vh-d-5-1 | Ignoring all the Warden whistle-codes, you bolt headlong through a blind orchard gap in the thickest fog, plunging straight down an unflagged cliff drainage chute and shattering the bronze Clapper against the limestone floor below.
+@@DONE

@@ -1,0 +1,96 @@
+{
+ "batch": "vh-5-0-2-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-0-2-3": {
+   "title": "The Drainage Ditch",
+   "text": "Hauling your heavy pack clear of black water before the freezing silt sucks you down, you scramble up the muddy lip of a sunken drainage ditch. The bronze clapper hums a dull, shivering note against your shoulder blades as you catch your breath in the damp orchard air.\n\nBiscuit shakes a spray of cold droplets from floppy ears, stamping impatient hooves into the wet leaf-mould while the fog swirls thick and grey around your boots.",
+   "exits": [
+    "Follow Biscuit down the hidden mule-track",
+    "Retrieve the oilskin pouch from the bracken",
+    "Adjust the padded cradle straps on your back"
+   ]
+  },
+  "vh-5-0-2-4": {
+   "title": "The Moss-Grown Milestone",
+   "text": "Pausing beside a moss-grown milestone carved with faded mountain runes, you let the weight of the bronze clapper settle comfortably against its leather cradle. The thick mist muffles every distant sound, turning the drip of moisture from frozen boughs into a rhythmic, solitary heartbeat.\n\nA sudden clatter echoes through the grey gloom, warning you that the orchard paths remain full of unexpected hazards and hurried travellers.",
+   "exits": [
+    "Dodge the rolling barrel of winter apples",
+    "Search the bracken for the dropped oilskin pouch",
+    "Adjust the padded cradle straps to ease your load",
+    "Turn back toward the upper ridge"
+   ]
+  },
+  "vh-5-0-2-5": {
+   "title": "The Arbor of Vines",
+   "text": "Dodging a crate of rotten pears dropped hurriedly by a fleeing rival carrier, you press flat against a wooden post beneath an arbor of dormant vines heavy with frost. The bitter smell of bruised fruit rises sharply through the chill air, mingling with the low, steady hum of the heavy bronze tongue strapped to your back.\n\nBiscuit shifts uneasily in the mist, eager to leave the littered clearing behind before more trouble finds you in the fog.",
+   "exits": [
+    "Follow Biscuit down the secluded bypass trail",
+    "Adjust your cargo straps and check the mounting",
+    "Inspect the freshly notched guide-post in the glade"
+   ]
+  },
+  "vh-5-0-2-6": {
+   "title": "The Unencumbered Path",
+   "text": "Striding past a protesting toll-keeper into a neglected orchard shortcut where no rival dares to follow, you feel the rare, crisp freedom of walking entirely free from debt or bargain. No cable-lord holds a lien upon your time, and no guild ledger records your passage through the dripping trees.\n\nThe path grows narrower and greener, winding deeper into the silent mist where only independent travellers dare tread.",
+   "exits": [
+    "Listen for the three-tone warden's call ahead",
+    "Watch the wild ducks rise from the steaming pond"
+   ]
+  },
+  "vh-5-0-2-7": {
+   "title": "The Twitching Rope",
+   "text": "Pulling your woollen cloak tighter against the wet chill within a grey fog-shrouded clearing, you watch a distant bell-rope twitch sharply against an unseen wooden post. The damp air carries no sound of whoever pulled the line, leaving only the swaying hemp and the cold grey stillness of the orchard.\n\nThe bronze clapper gives a faint, sympathetic thrum against your spine as the hidden signal dies away into the mist.",
+   "exits": [
+    "Pause to listen for the warden's three-tone call",
+    "Search the glade for the freshly notched guide-post"
+   ]
+  },
+  "vh-5-0-2-8": {
+   "title": "The Frozen Sheep-Dip",
+   "text": "Scraping thick mud from your boot soles beside a frozen sheep-dip filled with grey slush, you pause to listen for the faint, tin whistle of the lower terrace. The air tastes of wet wool and decaying autumn leaves, sharp and cold against the back of your throat.\n\nA distant creak of timber reminds you that the mountain paths are never truly empty, even when the fog hides everything beyond arm's reach.",
+   "exits": [
+    "Follow the path toward the notched guide-post",
+    "Investigate the steam rising from the irrigation pond",
+    "Check the security of your heavy bronze cargo",
+    "Turn back to the previous ridge path"
+   ]
+  },
+  "vh-5-0-2-9": {
+   "title": "The Snagged Guide-Wire",
+   "text": "Helping an old Fog-Warden untangle a snagged guide-wire under a low trellis of dripping pear trees, you work quickly before the drifting fog thickens into freezing sleet. The warden nods a silent, gruff thank-you, tapping a wooden whistle against stained leather as the tension returns to the line.\n\nThe surrounding orchard remains quiet and muffled, offering several dim directions through the grey labyrinth.",
+   "exits": [
+    "Check your cargo beneath the dripping pear tree",
+    "Inspect the stone mounting block by the path",
+    "Step over the tangled heap of abandoned hemp rope",
+    "Turn back toward the cider press"
+   ]
+  },
+  "vh-5-0-2-10": {
+   "title": "The Stone Fruit-Store",
+   "text": "Resting the heavy bronze clapper against a cider cask inside a hollow stone fruit-store smelling of vinegar and straw, you let your aching shoulders finally thaw. The thick walls keep out the raw mountain wind, wrapping you in a cool, earthy quiet that feels miles away from the damp trails.\n\nNarrow exits lead out from the dim shelter back into the grey, mist-choked orchards.",
+   "exits": [
+    "Approach the steam-shrouded irrigation pond",
+    "Squeeze past the stranded timber sledge outside"
+   ]
+  },
+  "vh-5-0-2-11": {
+   "title": "The Abandoned Scarf",
+   "text": "Damp air clings to your eyelashes as you halt beside a broken wicker gate half-buried in soggy dead leaves. Trapped in the thorn bushes nearby, a discarded woollen scarf flutters feebly in the grey draughts, left behind by someone who bolted headlong into the suffocating mist. The bronze clapper on your back hums a low, sympathetic vibration against your spine, matching the distant, muffled pulse of the valley bells. You pull your collar tight against the dripping branches, weighing your choices in the silent white gloom where every direction looks identical.\n\nTo your left, a narrow gap between wooden sheds beckons into deeper shadow. Straight ahead, the ground slopes past a slimy stone mounting block towards faint traces of woodsmoke. Or, if the chill proves too biting and the mist too deep, you can retrace your steps among the dripping pear trees.",
+   "exits": [
+    "Squeeze past the stranded timber sledge",
+    "Follow the scent of distant woodsmoke",
+    "Turn back toward the pear trees"
+   ]
+  },
+  "vh-5-0-2-12": {
+   "title": "The Waterwheel's Thud",
+   "text": "Listening to the rhythmic thud of a distant waterwheel churning sluggishly through the valley mud, you stand beneath a grey expanse of dripping branches. The low, heavy vibrations travel through the damp soil right up into the soles of your boots, matching the steady thrum of the clapper on your back.\n\nTwo distinct paths vanish into the wet gloom ahead, each swallowed by the relentless mountain mist.",
+   "exits": [
+    "Check the stone mounting block for directions",
+    "Step carefully over the tangled heap of hemp rope"
+   ]
+  }
+ },
+ "missing": []
+}

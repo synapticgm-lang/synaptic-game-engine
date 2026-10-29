@@ -1,0 +1,6 @@
+@@SECTION vh-1-2-3-11
+TITLE: The Frosted Landing
+TEXT: Frost glazes the splintered pine landing where a sudden clatter of dark wings erupts as a flock of mountain jackdaws scatters into the grey gloom, leaving the cold air vibrating with their sharp calls. Below your heavy wool cloak, the bronze Clapper rests in its padded cradle, its faint, rhythmic hum pressing against your shoulder blades like a sleeping heartbeat. Two paths diverge beyond the scattered feathers, each drawing your eye downward into the swirling mountain mist. // You adjust the leather straps of the load and weigh the chill wind against the demands of the long descent ahead.
+EXIT 1: Present your monastery seal for inspection at the lower stair
+EXIT 2: Seek out the drafty wool-shed where Elva combs the fleeces
+@@END

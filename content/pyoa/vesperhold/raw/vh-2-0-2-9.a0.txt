@@ -1,0 +1,73 @@
+@@SECTION vh-2-0-2-9
+TITLE: The Inspector's Rod
+TEXT: A Cable Court inspector steps into your path with a short wooden rod, tapping sharply against the bronze Clapper in your pack to test its resonance and weight. The dense metal hums a low, resonant note that vibrates straight through your canvas straps and into your shoulder blades, drawing the sharp attention of nearby toll-guards.
+EXIT 1: Climb the vertical wooden pegs directly into the granite face
+EXIT 2: Answer the irate toll-clerk shouting from the open window
+EXIT 3: Turn back toward the upper ropeway before the inspection deepens
+@@END
+
+@@SECTION vh-2-0-2-10
+TITLE: The Weaving Awning
+TEXT: You duck beneath a low canvas awning where weavers twist coarse fibrous grass into unbreakable anchor-tethers against the mountain wind. The air here smells of damp hemp and cold river salt, while rhythmic thuds echo from the nearby capstans as heavy cargo baskets slide along the gorge cables overhead.
+EXIT 1: Face the irate clerk demanding answers at the toll-house window
+EXIT 2: Squeeze through the narrow gap between the fragrant winch-shacks
+@@END
+
+@@SECTION vh-2-0-2-11
+TITLE: The Guild Accord
+TEXT: Your pristine Ropewrights' Guild tether earns an immediate nod of respect from the gate-guards, who recognize the master-knot at your waist and wave you past the snarled toll-booths without a second glance. The heavy burden on your back feels momentarily lighter as you leave the bickering customs officers behind in the swirling mist.
+EXIT 1: Squeeze past the pine-scented gap between the winch-shacks
+EXIT 2: Follow the capstan-master's scarred finger toward the flickering lanterns
+@@END
+
+@@SECTION vh-2-0-2-12
+TITLE: The Tallow Spill
+TEXT: A frantic winch-boy drops his wooden tallow bucket right across your path, spilling greasy yellow fat just as a heavy cargo basket screeches downward along the iron cable above. You pull up short, steadying the vibrating bronze Clapper on your back while the boy stammers an apology and scrambles to clear the slick timber planks.
+EXIT 1: Deal with the irate clerk shouting from the toll-house window
+EXIT 2: Head toward the capstan-master pointing down at the flickering lanterns
+@@END
+
+@@SECTION vh-2-0-3-0
+TITLE: The Woodpile Shadow
+TEXT: You slip quietly into a shadowy alcove behind a towering stack of mountain-ash wood, keeping out of sight while two toll-collectors loudly argue over ledger tallies and unpaid descent fees. The cold mountain air smells of dry bark and old grease, and the bronze Clapper rests heavily against your tired shoulders.
+EXIT 1: Drop into the sheltered timber trench to deaden the howling wind
+EXIT 2: Dodge past the hurried Cable Court runner in the deepening gloom
+@@END
+
+@@SECTION vh-2-0-3-1
+TITLE: Bitter Chicory Water
+TEXT: A weathered ropewright named Fenn offers you a small wooden cup of bitter chicory water to clear the biting mountain dust from your parched throat. The warm, earthy brew takes the edge off the freezing air as you lean against a stout timber post and watch the cable-riders prep their winches for the evening shift.
+EXIT 1: Step down into the sheltered timber trench away from the gale
+EXIT 2: Navigate the web of crossed guy-lines vibrating like harp strings
+@@END
+
+@@SECTION vh-2-0-3-2
+TITLE: The Timber Wheel
+TEXT: You skirt the edge of a great timber wheel where greasy hemp cables hum with the terrifying tension of the sheer cliff face. Every rotation sends a deep shudder through the platform beneath your boots, reminding you of the thousands of feet of empty air yawning just beyond the guard-rails.
+EXIT 1: Drop down into the sheltered timber trench below the wind
+EXIT 2: Slip past the busy Cable Court runner rushing through the gloom
+@@END
+
+@@SECTION vh-2-0-3-3
+TITLE: The Spiked Pole
+TEXT: A Cable Court sergeant blocks the narrow alley with a heavy spiked pole, demanding immediate proof of your descent permit before you take another step toward the lower stairs. The metal tip gleams coldly in the gray light, matching the stern, unyielding expression on the guard's weather-beaten face.
+EXIT 1: Retreat into the sheltered timber trench away from the guard
+EXIT 2: Duck past the dispatches runner hurrying through the shadows
+EXIT 3: Thread your way across the vibrating guy-lines of the gorge
+@@END
+
+@@SECTION vh-2-0-3-4
+TITLE: The Salted Hides
+TEXT: You guide Biscuit past a towering pile of stiff, salted hides while the bronze Clapper vibrates steadily against your tired spine like a caged heart. The mule’s iron-shod hooves click sharply on the frozen flagstones as merchants shout prices across the misty chasm between the suspended market stalls.
+EXIT 1: Follow the path of the dispatch runner through the gloom
+EXIT 2: Cross the web of vibrating guy-lines singing in the rising gale
+EXIT 3: Step around the massive iron winch-drum groaning in the abyss
+@@END
+
+@@SECTION vh-2-0-3-5
+TITLE: The Secret Knot
+TEXT: A veteran weaver named Bram shows you a clever, interlocking knot tucked into the corner of his stall that secures heavy loads against the fiercest mountain downdrafts. You trace the pattern with cold fingers, noting how the sturdy hemp bites against itself to hold fast under impossible strain.
+EXIT 1: Walk across the web of guy-lines vibrating in the evening gale
+EXIT 2: Follow the apprentice holding a smoking torch through the dark
+EXIT 3: Step around the groaning iron winch-drum towering over the abyss
+@@END

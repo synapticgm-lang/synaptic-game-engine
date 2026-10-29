@@ -1,0 +1,35 @@
+@@SECTION vh-2-0-2-3
+TITLE: The Clerk And Tally
+TEXT: A nervous clerk named Pip drops his tally-chalk as the bronze Clapper hums against your shoulder-straps, letting the white cylinder roll into the greasy sawdust between his boots. The wind off the gorge smells of wet hemp and old grease, whipping through the narrow stalls of the rope market while the heavy metal on your back answers every gust with a low, bronze shiver. Pip scrambles to retrieve his chalk, muttering about toll receipts and missing weight tallies while pointing a trembling finger toward the various winch-lanes and timber platforms branching off into the freezing mist.
+EXIT 1: Skirt the edge of the humming timber wheel
+EXIT 2: Face the sergeant blocking the alley ahead
+EXIT 3: Learn a secure mountain knot from Bram
+EXIT 4: Turn back toward the upper rope market
+@@END
+@@SECTION vh-2-0-2-4
+TITLE: The Capstan And Mule
+TEXT: You step over a grease-slicked capstan while winch-hands heave in unison against the mountain draft, their breath pluming white in the biting air. Biscuit tramples heavily on a loose wooden slat behind you, shaking her head until the leather bells on her harness jingle in protest against the weight of the climb. The massive bronze Clapper resting in your back-cradle vibrates sympathetically with the turning iron gears nearby, sending a steady, low-frequency thrum down your spine that matches the pulse of the bustling market around you.
+EXIT 1: Approach the sergeant demanding descent papers
+EXIT 2: Guide the mule past salted hides
+@@END
+@@SECTION vh-2-0-2-5
+TITLE: The Tallow And Moss
+TEXT: A stall selling dried mountain moss and tallow-dips offers a warm corner away from the biting gorge wind, smelling faintly of rendered sheep fat and herbal smoke. The old vendor nods silently as you pause by her counter, the heavy bronze tongue on your back humming against its wooden cradle like a caged and restless thing. Down the narrow plankway beyond the stall, shouting winch-boys and heavy cargo baskets create a chaotic wall of sound and motion that you must navigate if you are to reach the lower stair-towns before nightfall.
+EXIT 1: Show your permit to the demanding sergeant
+EXIT 2: Lead Biscuit past the stacks of salted hides
+EXIT 3: Listen to the weaver share a heavy-load knot
+EXIT 4: Turn back past the toll-house demanding pennies
+@@END
+@@SECTION vh-2-0-2-6
+TITLE: The Swinging Counterweight
+TEXT: You dodge a swinging counter-weight that crashes into the timber framing with a hollow, booming thud, showering the damp cedar planks with fine wood splinters. The mountain wind howls through the rigging overhead, shaking the suspended walkways of the rope market until the whole precarious bazaar seems to sway over the abyss. Beneath your canvas coat, the bronze Clapper gives a sharp, metallic pulse as if warning you of the next sudden gust sweeping up from the lower valleys.
+EXIT 1: Dash across the slatted pine platform
+EXIT 2: Listen to the merchant begging for secrecy
+@@END
+@@SECTION vh-2-0-2-7
+TITLE: The Frozen Winches
+TEXT: An old cable-rider named Nesta warns you that the lower winches are jammed with frozen grease, leaning heavily on a scarred ash staff while she points toward the icy drums below. Her weathered face is lined with the salt and frost of fifty winters on the cliff, and her sharp eyes flick immediately to the heavy bronze mass strapped across your shoulders. Around her stall, other traders hustle to clear the ice from their rigging before the afternoon gales lock the entire market in a collar of solid frost.
+EXIT 1: Ask the weaver to show you the heavy-load knot
+EXIT 2: Show your braided guild-rope to clear the lane
+EXIT 3: Hear the nervous merchant beg a favor
+@@END

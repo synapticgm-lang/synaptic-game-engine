@@ -1,0 +1,65 @@
+@@SECTION vh-2-0-0-3
+TITLE: The Toll At The Plank
+TEXT: A stout timber toll-house blocks the narrow plankway across the gulf, its green-painted shutters battered by the mountain draft. A clerk from the Cable Court raps a brass knuckle against the wooden sill, demanding a heavy copper coin for every pound of suspended metal swinging on your back. The bronze Clapper hums a dull warning against your shoulder blades as you calculate the weight of your burden. // Behind you, the rope-market hums with shouting traders, but here the path narrows to a single plank where passage is measured strictly in coin.
+EXIT 1: Step forward and pay the toll
+EXIT 2: Argue the weight of the Clapper
+@@END
+@@SECTION vh-2-0-1-0
+TITLE: The Screeching Iron Cable
+TEXT: Sudden metal shrieks split the air as a mail-skiff hurtles along a greasy iron cable directly overhead, showering fine iron rust into the mist. You throw yourself against the damp rock face, holding the padded cradle steady while the abyss yawns inches from your boots. The wind howls up through the gorge, carrying the smell of burning tallow and wet hemp from the stalls below.
+EXIT 1: Take refuge inside the anchor stone
+EXIT 2: Catch the eye of the rope-master
+@@END
+@@SECTION vh-2-0-1-1
+TITLE: The Splicer Of Tarred Flax
+TEXT: Old Garrow sits cross-legged among coils of blackened hemp, his calloused fingers knotting tarred flax while he mutters curses about dishonest weigh-masters in the lower wards. The scent of pine tar and sea-salt hangs thick around his stall, cutting through the thin mountain air like a blade. He pauses his work to eye the bronze Clapper with professional suspicion, spitting into the chasm below.
+EXIT 1: Weave through the fluttering hemp market
+EXIT 2: Step over the grease-slicked capstan drum
+@@END
+@@SECTION vh-2-0-1-2
+TITLE: The Brazier Of Hemp Shavings
+TEXT: Shivering winch-apprentices crowd around a rusted iron brazier, warming their raw knuckles over a fire fed entirely by fragrant hemp shavings. They pass a tin cup of roasted chestnuts back and forth, offering a brief, smoky haven from the freezing gorge draft. The heavy bronze Clapper hums softly in response to the crackling heat, vibrating against your travel-worn straps.
+EXIT 1: Speak with the nervous tally clerk
+EXIT 2: Seek shelter near the moss-seller's corner
+@@END
+@@SECTION vh-2-0-1-3
+TITLE: The Tangled Rigging Heap
+TEXT: A mountain of discarded cordage blocks the narrow walkway, its frayed strands twisting like sleeping serpents across the timber boards. You must pick your footing carefully to avoid snagging Biscuit's pack or tumbling the heavy bronze Clapper into the yawning gap beside the scaffolding. The rigging groans under the sudden pressure of a shifting wind, threatening to spill over the edge.
+EXIT 1: Step over the grease-slicked capstan drum
+EXIT 2: Seek shelter near the moss-seller's corner
+EXIT 3: Duck the swinging timber counter-weight
+@@END
+@@SECTION vh-2-0-1-4
+TITLE: The Green-Spectacled Clerk
+TEXT: A toll-lord's clerk wearing round green spectacles taps his ledger with a bone stylus, glaring intently at the heavy cargo cradle on your back. His ink-stained fingers twitch toward a brass bell used to summon the gate guards if any traveler disputes the tariff. The cold air bites at your ears while you wait for his verdict on the metal you carry.
+EXIT 1: Seek shelter near the moss-seller's corner
+EXIT 2: Duck the swinging timber counter-weight
+@@END
+@@SECTION vh-2-0-1-5
+TITLE: The Salt-Crusted Stair
+TEXT: You slip down a steep, damp stair carved directly into the cliff-face, where old rope-scraps litter the slick boards like discarded snake skins. The salt-encrusted stone offers little traction, and every step requires deliberate focus to keep the suspended bronze Clapper from swaying off balance. Far below, the tiered roofs of the middle wards vanish into swirling banks of gray cloud.
+EXIT 1: Heed the warning of the cable-rider
+EXIT 2: Cross the trembling willow-withem bridge
+EXIT 3: Let the inspector test your bronze
+EXIT 4: Duck beneath the low woven awning
+@@END
+@@SECTION vh-2-0-1-6
+TITLE: The Mule-Savvy Bypass
+TEXT: Biscuit flattens his ears and suddenly veers toward a hidden side-winch chute, using his stubborn mule-savvy to bypass the clogged toll-gate entirely. The clever beast squeezes past a rusted winch-housing, sliding his hooves sure-footedly down a steep gravel ledge that regular travelers ignore. You scramble after him, keeping the heavy bronze cradle steady as the main path falls away behind.
+EXIT 1: Cross the trembling willow-withem bridge
+EXIT 2: Let the inspector test your bronze
+EXIT 3: Show your guild tether to pass
+@@END
+@@SECTION vh-2-0-1-7
+TITLE: The Frantic Rope-Seller
+TEXT: A frantic rope-seller named Mara catches your sleeve, begging you to help untangle a hopelessly fouled winch-line before the evening gales slam into the gorge. Heavy cargo baskets grind violently against their wooden frames just overhead, threatening to snap the strained fibers into deadly whips. The sharp scent of burning friction oil fills your nose as you weigh her desperate plea.
+EXIT 1: Duck beneath the low woven awning
+EXIT 2: Show your guild tether to pass
+EXIT 3: Dodge the falling tallow bucket
+@@END
+@@SECTION vh-2-0-1-8
+TITLE: The Swinging Salt Basket
+TEXT: You balance carefully on a narrow pine plank while a massive wicker basket filled with salted char swings wildly past your ribs, driven by an erratic gust. The damp wood creaks under your boots, and the abyss waits patiently beneath the gap in the railing. You press your back against the cliff face, letting the violent momentum of the cargo pass before taking another step.
+EXIT 1: Show your guild tether to pass
+EXIT 2: Dodge the falling tallow bucket
+@@END

@@ -1,0 +1,79 @@
+{
+ "batch": "vh-3-2-4-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-2-4-4": {
+   "title": "The Anchor Bolts",
+   "text": "Trembling hands trace the cold iron of the final terrace gate while a nervous ropewright checks every anchor-bolt against the rising gale. He warns that the rungs below are glazed with a treacherous skin of black ice, making every foothold a hazard. The heavy bronze clapper hums against your shoulder blades, eager for the descent, yet the mountain offers no easy passage through the freezing mist.\n\nDecide whether to test the iron rungs immediately, wait for the wind to drop, or seek a different path along the stone wall.",
+   "exits": [
+    "Step out onto the icy rungs",
+    "Wait behind the stone wall",
+    "Look for a sheltered ledge nearby"
+   ]
+  },
+  "vh-3-2-4-5": {
+   "title": "Sharing The Flask",
+   "text": "Cool water refreshes your parched throat before you share the last draught from your iron flask with Biscuit, patting his dusty grey neck as the mule huffs plumes of white vapor into the thin air. The terrace path beneath your boots grows narrower by the stride, and the stairs are running out into open space above the cloud sea. You adjust the heavy bronze tongue in its padded cradle, ensuring the animal is settled for the steep drop ahead.\n\nDecide whether to lead the mule down first or check your harness one final time before the descent.",
+   "exits": [
+    "Lead the mule down the slope",
+    "Check your shoulder harness again"
+   ]
+  },
+  "vh-3-2-4-6": {
+   "title": "The Miller's Piton",
+   "text": "Heavy silver frost coats the barley stubble as the last miller of the tier hands you an iron piton for the ladders, muttering a dry blessing for your long journey down to Lowgate. His calloused fingers trace the leather straps of your pack, wishing the great bronze clapper a safe arrival at the foundry. The cold air bites at your cheeks, carrying the faint sound of distant ice cracking in the deep chasms below.\n\nDecide whether to pocket the piton or slide it firmly into your belt loop.",
+   "exits": [
+    "Slide the piton into your belt",
+    "Press forward past the barley tiers"
+   ]
+  },
+  "vh-3-2-4-7": {
+   "title": "Beyond The Lowest Gate",
+   "text": "Cold stone threshold bricks give way to the open void as you step past the lowest terrace gate, leaving the whispered wind-calls of the millers behind in the freezing air. The mountain drops away beneath your soles into a vast expanse of grey cloud and shifting mist. Only the steady hum of the bronze clapper breaks the absolute silence of the upper cliffs.\n\nDecide whether to walk straight onto the hanging ladder or pause to secure your tunic.",
+   "exits": [
+    "Step directly onto the hanging ladder"
+   ]
+  },
+  "vh-3-2-5-0": {
+   "title": "The Sheer Drop",
+   "text": "Jagged stone stairs terminate abruptly at a sheer drop of blue-white ice where the first great ladder swings freely in the mountain draft. Below this dizzying threshold, the world vanishes into a churning floor of clouds that swallows every echo of the valley. The heavy bronze tongue shifts against your back, pulling your center of gravity toward the open abyss.\n\nDecide to press on into the freezing depths below.",
+   "exits": [
+    "Press on into the grey abyss"
+   ]
+  },
+  "vh-3-2-5-1": {
+   "title": "The Uppermost Rung",
+   "text": "Frost bites into your bare fingers while gripping the frozen iron rungs of the uppermost glacier ladder, and you feel the heavy bronze clapper pull your weight backward into the abyss. The mountain wind howls through the narrow gap in the cliffs, testing your footing on the slick metal bars. Every muscle strains against the load as you peer down into the swirling white blur.\n\nDecide to press on down the frozen rungs.",
+   "exits": [
+    "Press on down the frozen rungs"
+   ]
+  },
+  "vh-3-2-5-2": {
+   "title": "The Churning Clouds",
+   "text": "Below your dangling boots, the cloud sea churns like curdled milk, hiding the distant roofs of Lowgate while the wind rises to a relentless scream. The copper-cored rope hums a low counterpoint to the roaring draft, vibrating through your entire frame with every gust. Ice crystals gather on your eyelashes as you search the pale glare for the next foothold.\n\nDecide to press on through the roaring wind.",
+   "exits": [
+    "Press on through the roaring wind"
+   ]
+  },
+  "vh-3-2-5-3": {
+   "title": "The Swaying World",
+   "text": "Sturdy leather straps keep Biscuit tethered securely to your belt-chain as you take the first downward step onto the swaying rungs of the vertical world. The metal groans under the combined weight of the mule, the pack, and the humming bronze tongue, swinging out over the empty air. You steady your breathing against the cold and watch the fog part slightly below.\n\nDecide to press on onto the swaying rungs.",
+   "exits": [
+    "Press on onto the swaying rungs"
+   ]
+  },
+  "vh-d-3-2": {
+   "title": "The Silent Ice",
+   "text": "Endless hours slip through your frozen fingers as you trade away the daylight to master every miller's whistle, lingering too long among the silent barley terraces. The mountain pass freezes shut forever around you, sealing the stone gates in solid rime. The heavy clapper grows as cold as your own pulse, entombing you both in a monument of absolute silence.",
+   "exits": []
+  },
+  "vh-3-out": {
+   "title": "Leaving The Terraces",
+   "text": "Leaving The Windmill Terraces behind, you slip past the final barrier and commit your weight to the hanging paths that cross the upper reaches of the glacier. The air grows sharper and thinner as the stone stairways give way to swaying iron and hemp bridges suspended over bottomless blue crevasses. Every breath stings your lungs, but the low, persistent hum of the bronze clapper reminds you that the foundry at Lowgate waits far below in the valley mist.\n\nDecide to continue forward into the moving ice.",
+   "exits": [
+    "Go on into the moving ice"
+   ]
+  }
+ },
+ "missing": []
+}

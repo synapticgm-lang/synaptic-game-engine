@@ -1,0 +1,91 @@
+{
+ "batch": "vh-3-1-3-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-1-3-4": {
+   "title": "The Clattering Hopper",
+   "text": "Dust hangs thick in the cold draft beside the wooden hopper as miller Doran spits into the grain-chute, cursing the sudden shift in the mountain air-currents that threatens to choke his stones. Biscuit stamps a stubborn hoof against the flagstones, tired of the fine grey flour settling into her harness straps. You steady the heavy bronze Clapper in its padded cradle on your back, feeling its faint, steady hum vibrate against your shoulder blades as you watch the miller wrestle a jammed slide-gate.\n\nDo you step past the rattling machinery to seek a path through the dusty shadows, or do you wait beside the hopper while Doran sharpens an old pruning knife?",
+   "exits": [
+    "Seek a path through the shadows",
+    "Wait beside the clattering hopper"
+   ]
+  },
+  "vh-3-1-3-5": {
+   "title": "The Signal Cord",
+   "text": "Frost glazes the exposed stone balcony where miller-boy Pimm fights a stiff signal cord frozen hard into a stubborn wind-knot. The high-altitude air bites sharply at your cheeks, carrying the thin, metallic scent of snow from the higher crags above Vesperhold. Biscuit lowers her long ears, shaking her head against the whistling gale while you adjust the canvas straps holding the bronze Clapper tightly against your spine.\n\nDo you offer your cold fingers to help untangle the iced hemp, or do you turn your back on the struggling boy to look for a lower track?",
+   "exits": [
+    "Help the boy untangle the cord",
+    "Look for an open lower track",
+    "Seek a different path through the shadows"
+   ]
+  },
+  "vh-3-1-3-6": {
+   "title": "The Rusted Beam",
+   "text": "A heavy beam-balance creaks rhythmically overhead in the echoing timber loft as miller Tilda drops small, grey sacks of barley onto the iron pan. The sweet, heavy smell of grain dust fills the enclosed space, offering a brief shelter from the biting mountain draft outside. You shift the weight of the bronze Clapper in its padded cradle, letting the faint, comforting thrum ease the strain across your aching shoulders.\n\nDo you step closer to the weighing table to ask for a handful of grain, or do you head toward the warm flour-loft next door?",
+   "exits": [
+    "Ask the miller for grain",
+    "Head toward the warm flour-loft"
+   ]
+  },
+  "vh-3-1-3-7": {
+   "title": "The Grinding-Floor Sweep",
+   "text": "Stiff bristles scratch loudly across the stone grinding-floor as miller Kray sweeps up a scatter of golden barley kernels, muttering bitter complaints about the toll-lords of the Cable Court. The massive wooden millstones hum a deep, bass counter-note to the bronze Clapper resting in your padded cradle, creating a strange harmony that resonates straight through your boots. Biscuit blows a warm, snorting breath against your sleeve, impatient to leave the cramped, flour-dusted room.\n\nDo you pause to listen to Kray's grievances against the toll-lords, or do you slip past his broom to find the frost-rimed balcony outside?",
+   "exits": [
+    "Listen to complaints about toll-lords",
+    "Slip past to the frost-rimed balcony",
+    "Move toward the clattering wooden hopper"
+   ]
+  },
+  "vh-3-1-3-8": {
+   "title": "The Mutton Tallow",
+   "text": "A thick, pungent smell of rancid mutton tallow rises from the iron journals beneath the groaning wooden axle as miller Vola swabs grease onto the screaming bearings. Every turn of the great wind-wheel sends a shudder through the stonework, rattling the heavy bronze Clapper secured in your padded cradle. Biscuit shifts nervously on the slick floorboards, her iron-shod hooves clicking against the stone.\n\nDo you offer to hold the grease-pot for the busy miller, or do you step carefully around the axle toward the dizzying suspension bridge?",
+   "exits": [
+    "Hold the grease-pot for Vola",
+    "Step toward the suspension bridge"
+   ]
+  },
+  "vh-3-1-3-9": {
+   "title": "The Guide-Line",
+   "text": "Raw hemp burns against calloused palms as miller-wife Nola pulls a loose guide-line taut against the howling frost-wind on the dizzying rope-bridge. Below the swaying planks, the sheer mountain drop falls away into a vast sea of grey clouds, making your stomach turn with a sudden vertigo. You grip the wooden railing with one hand while steadying the heavy bronze Clapper on your back with the other.\n\nDo you reach out to help her secure the thrashing line, or do you cross the bridge toward the warm flour-loft ahead?",
+   "exits": [
+    "Help secure the thrashing line",
+    "Cross toward the suspension bridge",
+    "Head directly for the warm flour-loft"
+   ]
+  },
+  "vh-3-1-3-10": {
+   "title": "The Peat Fire",
+   "text": "Grey smoke curls lazily from a smoking peat fire as miller Oren jabs at the glowing embers with a heavy iron poker inside the drafty flour-shed. The sudden warmth feels like a small mercy against the biting mountain chill that has numbed your fingers since dawn. Biscuit nudges your shoulder with her dusty muzzle, smelling the dry peat smoke and hoping for a rest.\n\nDo you pause by the hearth to warm your hands, or do you push past the smoke toward the massive stone grinding-wheel?",
+   "exits": [
+    "Warm your hands by the fire",
+    "Head toward the warm flour-loft",
+    "Push past toward the grinding-wheel"
+   ]
+  },
+  "vh-3-1-3-11": {
+   "title": "The Slate Slab",
+   "text": "White chalk dust smears across a dark slate slab as miller Hestia tallies bags of harvested grain with quick, sharp strokes. Outside the narrow window, the canvas sails of the windmill snap rhythmically in the rising gale, nearly drowning out the faint, persistent hum of the bronze Clapper on your back. You adjust the heavy cradle straps, feeling the familiar weight bite into your collarbones.\n\nDo you wait quietly until the miller finishes her calculations, or do you step out beneath the rattling canvas canopy?",
+   "exits": [
+    "Wait for the miller to finish",
+    "Step out under the rattling canvas"
+   ]
+  },
+  "vh-3-1-3-12": {
+   "title": "The Binding Hoops",
+   "text": "A heavy wooden mallet rings against iron binding hoops as miller Joram drives a loose hoop tight around a split stave on the great drum. The rhythmic hammering vibrates through the floorboards, matching the steady, low drone of the bronze Clapper resting in your padded cradle. Biscuit paws at a pile of dry shavings, her ears flicking back and forth at the sharp noise.\n\nDo you offer to hand the miller his spare wedges, or do you turn away toward the massive stone grinding-wheel?",
+   "exits": [
+    "Hand the miller spare wedges",
+    "Turn toward the stone grinding-wheel"
+   ]
+  },
+  "vh-3-1-3-13": {
+   "title": "The Meal-Sack",
+   "text": "Coarse burlap rasps against stone walls as miller-boy Tavis staggers down the precipitous stair under the crushing weight of a heavy meal-sack. His breathing comes in ragged gasps, matching the rhythmic, low-frequency hum of the bronze Clapper strapped securely to your own back. You flatten yourself against the damp masonry to give the struggling boy room to pass.\n\nDo you reach out a hand to steady his staggering load, or do you continue past him toward the rattling canvas canopy below?",
+   "exits": [
+    "Steady the boy's heavy load",
+    "Continue toward the canvas canopy"
+   ]
+  }
+ },
+ "missing": []
+}

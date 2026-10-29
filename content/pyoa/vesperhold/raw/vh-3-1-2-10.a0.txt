@@ -1,0 +1,61 @@
+@@SECTION vh-3-1-2-10
+TITLE: Roots on the Catwalk
+TEXT: Frost glints off the high mountain timber as miller-wife Zilla ties heavy bunches of winter roots to the railing of mill twenty, her fingers red and stiff from the drafts. Biscuit shifts uneasily under the weight of the humming bronze Clapper on your back, his ears flicking at the whistle of the high-altitude wind threading the narrow gully. Zilla glances back from her knot-work, her eyes sharp and assessing against the glare of the snowfields below. // Do you continue along the swaying rope-bridge toward the distant mills, or duck into the low doorway where the peat smoke curls?
+EXIT 1: Cross the swaying high-altitude rope-bridge
+EXIT 2: Seek shelter near the smoking peat fire
+@@END
+@@SECTION vh-3-1-2-11
+TITLE: Stacking the Timber
+TEXT: Heavy pine logs thud against the frozen planking inside mill twenty-one as miller Coren builds a defensive rampart against the encroaching mountain drift. The air smells of sap, dry bark, and the faint, low-pitched hum of the bronze Clapper resting in your padded cradle. Coren pauses, wiping sawdust from his brow with a leather-bound wrist, and nods toward the narrow paths leading deeper into the terrace labyrinth. // Will you press on toward the grain bins, or scramble down the steep stone stair toward the lower ledges?
+EXIT 1: Inspect the nearby grain storage bins
+EXIT 2: Descend the steep stone stair toward the lower ledges
+@@END
+@@SECTION vh-3-1-2-12
+TITLE: The Sharpening Wheel
+TEXT: Sparks scatter in a bright orange arc as miller Leora presses an iron sickle against the stone grinding-wheel of mill twenty-two, her movements rhythmic and practiced. The dry scrape of steel drowns out the whistling gale, though the bronze Clapper on your back continues its steady, sub-audible thrum against your shoulder blades. Leora lifts the blade to test the edge with a calloused thumb, pausing to look up at your heavy burden. // Do you continue past the rattling canvas sails of the working mill, or pause to offer trade?
+EXIT 1: Walk past the rattling canvas sails
+@@END
+@@SECTION vh-3-1-2-13
+TITLE: The Missing Measure
+TEXT: Frustration echoes beneath the creaking canvas sails of mill twenty-three as miller Thaddeus mutters angrily about a stolen copper measure-cup missing from his workbench. The heavy Clapper hums against your spine, vibrating in time with the wooden beams shaking in the gale. Thaddeus glares at the lintel, suspecting a passing traveler or a rival miller from the terrace above. // Do you descend the steep stone stair, seek out the dim interior of the lower mill, or retrace your steps up the mountain?
+EXIT 1: Descend the steep stone stair toward the lower ledges
+EXIT 2: Step into the dim interior of the lower mill
+EXIT 3: Turn back toward the upper terrace
+@@END
+@@SECTION vh-3-1-2-14
+TITLE: The Mountain Crow
+TEXT: Cold air whips across the precipitous ledge of mill twenty-four as miller-girl Maris tosses scraps of salted fish to a glossy, one-eyed mountain crow perched on the stone railing. The bird snaps up the morsel just as the bronze Clapper on your back emits a low, resonant vibration that makes the feathers on the crow's neck ruffle. Maris shields her eyes against the stinging sleet and watches you steady Biscuit's harness against the gust. // Will you press on toward the dim interior of the mill, clear the frozen slush from the drainage, or turn back up the slope?
+EXIT 1: Step into the dim interior of the mill
+EXIT 2: Clear the frozen slush from the drainage sluice
+EXIT 3: Turn back toward the upper terrace
+@@END
+@@SECTION vh-3-1-2-15
+TITLE: The Warm Brazier
+TEXT: Glowing coals cast a reddish light across the flour-scented interior of mill twenty-five, where miller Olen warms his scarred hands over a small iron brazier. The rhythmic thrum of the bronze Clapper in your pack blends with the crackle of dry wood and the settling of stone walls against the frost. Olen gestures toward an empty stool by the warmth, offering a brief respite from the biting air outside. // Do you rest a moment before clearing the frozen slush from the nearby drainage?
+EXIT 1: Clear the frozen slush from the drainage
+@@END
+@@SECTION vh-3-1-3-0
+TITLE: Broth and Whispers
+TEXT: Wooden beams rattle overhead inside mill twenty-six as miller Kren pushes a steaming wooden bowl of thin barley broth across a grease-stained table toward you. The rich, earthy steam mixes with the cold draft whistling through the floorboards, while the bronze Clapper hums a steady accompaniment against your shoulder. Kren leans in close, his eyes fixed on your pack as he waits for any news from the upper passes. // Do you press on toward the groaning sails of the lower terrace, or trade a scrap of dried meat for local gossip?
+EXIT 1: Approach the groaning sails of the lower terrace
+EXIT 2: Trade for news in the dusty shadows
+@@END
+@@SECTION vh-3-1-3-1
+TITLE: Unburdened Bargain
+TEXT: Carrying no debts, ledgers, or obligations to weigh down your passage, you stand before a famously suspicious miller who eyes your pack with wary curiosity. Because your ledger is clean and your hands owe nothing to the local toll-lords, the old man softens his scowl and tosses a spare iron wedge onto the table in exchange for a simple, honest smile. The Clapper hums softly against your spine, sensing the rare ease of a transaction untainted by coin or threat. // Do you continue downward toward the groaning sails, or turn back up the mountain?
+EXIT 1: Approach the groaning sails of the lower terrace
+EXIT 2: Turn back up the mountain toward the upper terraces
+@@END
+@@SECTION vh-3-1-3-2
+TITLE: The Wind-Lashed Balcony
+TEXT: Canvas wind-breaks snap like leather whips on the exposed balcony of mill twenty-seven as miller-wife Jael fights to secure a flapping corner against the mounting gale. Ice crystals sting your cheeks, and the bronze Clapper on your back hums a deep, warning note that seems to vibrate straight through your boots. Jael shouts over the roar of the wind, warning of the treacherous conditions building along the high shelf ahead. // Do you press forward toward the frost-rimed balcony, seek out the clattering wooden hopper, or attempt the reckless shortcut across the gale-swept ridge?
+EXIT 1: Step out onto the frost-rimed balcony
+EXIT 2: Inspect the clattering wooden hopper
+EXIT 3: Take the reckless way across the high terrace
+@@END
+@@SECTION vh-3-1-3-3
+TITLE: Sailmaker's Twine
+TEXT: Heavy sailmaker's twine snakes through miller Brunn's calloused fingers as he patches a torn canvas sail inside the dim stone flour-bin of mill twenty-eight. The air is thick with flour dust that clings to your damp wool cloak, and the bronze Clapper hums a muffled tune against its padded cradle. Brunn knots the thread with a sharp tug of his teeth, glancing up at the sound of Biscuit's hooves shifting on the stone floor. // Do you head toward the groaning sails of the lower mill, or step out onto the frost-rimed balcony?
+EXIT 1: Approach the groaning sails of the lower terrace
+EXIT 2: Step out onto the frost-rimed balcony
+@@END

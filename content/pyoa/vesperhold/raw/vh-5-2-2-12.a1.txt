@@ -1,0 +1,30 @@
+@@SECTION vh-5-2-3-1
+TITLE: The Quince Plantation
+TEXT: Weaving through a dense plantation of dwarf quinces, you keep low as a stray dog barks against the fog somewhere near the upper fence. The bronze Clapper shifts heavily in its padded cradle on your back, its cold metal pressing against your shoulder blades like a sleeping weight. Dew drips from the low branches, soaking through your woollen sleeves while the damp air tastes of bruised fruit and frozen loam. // Three distinct paths beckon through the mist-shrouded orchard rows, each leading deeper down the mountain toward the looming valley floor.
+EXIT 1: Climb the steep stone stairs
+EXIT 2: Approach the silent toll-arch ahead
+EXIT 3: Follow the broad descent toward Lowgate
+@@END
+@@SECTION vh-5-2-3-2
+TITLE: The Mossy Wall
+TEXT: Clinging to a mossy retaining wall while a Cable Court tax-collector hurries past with a ledger under his arm, you blend into the grey stone. The official mutters curses about the damp ink ruining his tallies, his heavy boots squelching loudly in the mud just inches from your boots. Your arms ache from bracing the weight of Orison's tongue against the damp masonry, and the faint, low hum of the bronze seems to vibrate right through the wet rock into your spine. // The collector turns a corner into the grey gloom, leaving two narrow avenues open for your descent.
+EXIT 1: Take the limestone steps downward
+EXIT 2: Slip past the silent warden gate
+@@END
+@@SECTION vh-5-2-3-3
+TITLE: The Rotten Harvest
+TEXT: Navigating a muddy terrace where fallen fruit rots in thick heaps, you keep your balance by clutching dangling branch-ends with frozen fingers. The sweet, fermented stench of bruised apples and frost-bitten quinces hangs heavy in the stagnant air, making your stomach turn slightly as you trudge through the grey soup. Every step requires absolute care, lest the heavy bronze tongue throw you off balance and send you skidding into the thorny brambles below. // Ahead lie two distinct ways out of the treacherous orchard maze.
+EXIT 1: Head for the grand stone staircase
+EXIT 2: Seek the silent toll-gate in the mist
+@@END
+@@SECTION vh-5-2-3-4
+TITLE: The Rusted Winch
+TEXT: Squeezing past a rusted iron winch station, you listen to the rhythmic creak of distant cables stretching across the hidden gulf of the valley. The grease on the massive steel drum smells of old tallow and cold iron, sticking faintly to your knuckles as you steady yourself against the frame. Somewhere out in the dense fog, a cable-rider's whistle trills twice, answered immediately by a faint metallic clang from an unseen platform dangling over the abyss. // The pathway narrows past the winch house, offering a single viable route into the misty expanse.
+EXIT 1: Continue along the cliffside ledge
+@@END
+@@SECTION vh-5-2-3-5
+TITLE: The Sorting Table
+TEXT: Crouching beneath a canvas fruit-sorting table, you wait out a group of gossiping orchard workers who complain bitterly about the early cold snap. Their worn leather boots shuffle against the packed dirt just above your head while they discuss the failing barley harvest and the rising tolls charged by the Cable Court. You hold your breath, careful not to let the humming bronze tongue knock against the wooden slats of the table and betray your hiding place in the gloom. // The workers finally trudge away down a side path, leaving two ways open before you.
+EXIT 1: Venture onto the high cliffside trail
+EXIT 2: Step out toward the lower forge road
+@@END

@@ -1,0 +1,54 @@
+@@SEED vh-4-1-0-0 | On the ribbed blue ice of the snout, you step carefully between turquoise cracks while the bronze clapper hums against your shoulder-blades.
+@@SEED vh-4-1-0-1 | Frost forms thick on Biscuit's heavy ears as the mule digs its iron-shod hooves into the sliding gravel of the terminal moraine.
+@@SEED vh-4-1-1-0 | Beneath a dripping ice-arch, an old cable-rider named Jorren warns you of shifting seracs before offering a dram of parsnip brandy.
+@@SEED vh-4-1-1-1 | A frozen ladder of hazel-withe sways over a bottomless blue shaft, testing your grip while the metal weight shifts behind your neck.
+@@SEED vh-4-1-1-2 | Walking unburdened by a pack-animal, you spot a dry smugglers' shelf free of ice where a stray toolkit lies abandoned in the rime.
+@@SEED vh-4-1-1-3 | You wedge your boots into hand-cut steps on a glass-smooth wall while a low subterranean groan ripples through the ancient glacier beneath you.
+@@SEED vh-4-1-1-4 | A ropeway winch frozen solid in its timber housing blocks the upper traverse, forcing you to chip clear the cogs with your belt-knife.
+@@SEED vh-4-1-1-5 | The wind howls down the ice-chute, carrying the metallic tang of Orison's bronze and stinging your exposed cheeks with needle-sharp sleet.
+@@SEED vh-4-1-2-0 | A stray calf belonging to a Terrace Miller stands shivering beside a crevassed bridge, refusing to budge until you share your crust of bread.
+@@SEED vh-4-1-2-1 | You squeeze through a narrow fissure where blue icicles click together like wind-chimes every time the glacier stirs beneath your soles.
+@@SEED vh-4-1-2-2 | An abandoned sledge lies half-swallowed by powder snow, its runner iron gleaming in the weak mountain light beside a cairn of skulls.
+@@SEED vh-4-1-2-3 | You haul Biscuit by the halter across a treacherous tongue of slush where brown meltwater chatters beneath a fragile crust of frost.
+@@SEED vh-4-1-2-4 | High on a wind-scoured shelf, you find a burnt-out signal fire where a Fog-Warden left a coil of dry hemp rope tied to an iron stake.
+@@SEED vh-4-1-2-5 | Ice-dust rattles against your oilskin coat as a sudden downdraft threatens to sweep you from the narrow foot-ledge into the gray abyss.
+@@SEED vh-4-1-2-6 | A cable-rider's discarded tin grease-box sits wedged in a cleft, offering a smear of tallow to waterproof your stiff leather mitts.
+@@SEED vh-4-1-2-7 | You crawl on hands and knees across a bridge of packed snow that arches over a yawning throat of blue ice humming with pressure.
+@@SEED vh-4-1-2-8 | A small stone shelter built by the Cable Court stands locked and empty, its timber door etched with frosty tally-marks of vanished tolls.
+@@SEED vh-4-1-2-9 | You steady the clapper cradle as Biscuit slips on a patch of black ice, praying the wooden frame holds against the sudden dead weight.
+@@SEED vh-4-1-2-10 | A frozen waterfall hangs like a set of organ pipes beside the track, vibrating in resonance with the deep bronze hum on your back.
+@@SEED vh-4-1-2-11 | You carve extra foothold notches into the blue wall using your cold chisel while salt-rimed fog rolls upward from the valley floor.
+@@SEED vh-4-1-2-12 | Moving without the mule's bulk, you slip through a narrow needle-eye cleft in the granite that bypasses the crumbling ice-bridge entirely.
+@@SEED vh-4-1-2-13 | A tattered red pennant of the Ropewrights' Guild flutters from a piton, marking a safe detour around a collapsed section of the ladderway.
+@@SEED vh-4-1-2-14 | You pause to scrape frozen sweat from your goggles while the distant roar of a sub-glacial river echoes through the soles of your boots.
+@@SEED vh-4-1-2-15 | An old iron ringbolt driven into the cliffside offers a secure anchor point to clip your harness line before tackling the sheer traverse.
+@@SEED vh-4-1-3-0 | You share a mouthful of lukewarm chicory tea with a stranded Fog-Warden whose signal horn is choked with hard-packed blue rime.
+@@SEED vh-4-1-3-1 | A series of notched pine logs lashed with braided hemp spans a gap between two glass-green ice towers swaying in the freezing gale.
+@@SEED vh-4-1-3-2 | You coax Biscuit past the frozen carcass of a pack-goat wedged into a crevice, keeping your eyes fixed ahead on the grey horizon.
+@@SEED vh-4-1-3-3 | A vein of dark volcanic ash cuts through the glacier ice, giving your boots momentary purchase on the slick upward-sloping path.
+@@SEED vh-4-1-3-4 | You tighten the leather straps of the clapper cradle as the mounting vibration threatens to work the bronze free from its padding.
+@@SEED vh-4-1-3-5 | A rusted winch-handle left by the Cable Court lies half-buried in drift-snow near the entrance to a dark meltwater drainage tunnel.
+@@SEED vh-4-1-3-6 | You edge along a cornice of wind-blown powder that overhangs a thousand-foot drop into the mist-shrouded gorge of the lower glacier.
+@@SEED vh-4-1-3-7 | A flock of gray mountain ptarmigan bursts suddenly from a snow-pocket, startling the mule and nearly tipping your heavy burden sideways.
+@@SEED vh-4-1-3-8 | You carve a hasty trench in the hard firn snow to shelter behind while a violent squall of needle-ice rakes the exposed mountain face.
+@@SEED vh-4-1-3-9 | A wooden signpost carved by Lowgate artisans points down through the thickening murk toward the lower ladder stations and the valley floor.
+@@SEED vh-4-1-3-10 | You check your fingers for numbness as the biting frost stiffens the wool of your mittens and turns your breath to rattling crystals.
+@@SEED vh-4-1-3-11 | A discarded woollen blanket frozen stiff as a board blocks your footing, forcing you to hack it loose with your belt-hatchet.
+@@SEED vh-4-1-3-12 | You navigate a maze of shimmering blue seracs that shift and groan like living bone under the relentless weight of the moving ice river.
+@@SEED vh-4-1-3-13 | Suspecting the lower forges may be shuttered, you stash a spare bronze wedge in a rock cairn just in case you must recast the bell yourself.
+@@SEED vh-4-1-3-14 | A frayed hemp hand-line anchored to an ice-piton offers meager security against the gusting winds sweeping across the glacial saddle.
+@@SEED vh-4-1-3-15 | You lead Biscuit across a corrugated iron sheet laid over a widening crevasse, wincing at the hollow metallic clatter under hoof.
+@@SEED vh-4-1-4-0 | The glacier steepens into a sheer wall of blue-white glass where every handhold must be chipped fresh out of the unyielding rime.
+@@SEED vh-4-1-4-1 | You struggle to keep the mule's footing secure on a narrow ice-ledge while the wind whips stinging diamond-dust into your watering eyes.
+@@SEED vh-4-1-4-2 | A rusted suspension cable hums like a plucked harp-string above your head as the upper span strains under the freezing gale's fury.
+@@SEED vh-4-1-4-3 | You haul yourself over a jagged lip of glacier ice onto a rock shelf where the air smells faintly of sulfur and cold damp stone.
+@@SEED vh-4-1-4-4 | A broken ladder-rung dangles by a single strand of hemp over empty air, forcing a dangerous leap while carrying the dead weight of bronze.
+@@SEED vh-4-1-4-5 | You press your back against the freezing rock wall to let a gust of wind pass before attempting the final icy crossing to the gatehouse.
+@@SEED vh-4-1-4-6 | The clapper's internal bronze hum vibrates against your spine in frantic rhythm with the pounding of your own exhausted heart.
+@@SEED vh-4-1-4-7 | A thick bank of freezing fog rolls up from the lower valleys, swallowing the trail markers and plunging the ladderway into absolute white.
+@@SEED vh-4-1-5-0 | You lash Biscuit's lead-rope securely to an iron ring while the rising whiteout swallows the last visible marker posts of the upper route.
+@@SEED vh-4-1-5-1 | A wall of blinding white fog slams into the cliff-face, obliterating the rope-bridge rails and leaving you stranded in a howling vacuum.
+@@SEED vh-4-1-5-2 | You tighten your grip on the frozen hemp guidelines as the whiteout turns the world to featureless milk and numbs your fingers to bone.
+@@SEED vh-4-1-5-3 | The storm closes its white jaws around the ladderway, demanding you hold the guide-line or cast off your heavy pack to survive.
+@@SEED vh-d-4-1 | Desperate to outrun the freezing gale, you unclip your safety tether and bolt across the trembling ice-bridge, plunging headlong into the blue abyss.
+@@DONE

@@ -1,0 +1,21 @@
+@@SECTION vh-6-1-0-0
+TITLE: The Water-Gate Clerk
+TEXT: Muck laps against the green slime of the stone watergate where a shivering clerk named Orris hunkers over a brazier of damp peat. He breaks a dry barley biscuit between blue knuckles, offering half in exchange for any word you carry from the white passes above. The murky river smells of old iron and drowned roots, sliding past the moorings with a heavy, oily grease that coats the wooden piles. // You can trade the news of the high snows for his dry crust and a key to the toll-wicket, or turn your back on his shivering trade and seek the blocked carters by the silt-choked quay. Alternatively, the watchman among the charcoal crates might offer a safer route away from the rising water.
+EXIT 1: Trade high mountain news for the key
+EXIT 2: Leave the clerk to find the blocked carters
+EXIT 3: Seek the watchman by the damp charcoal crates
+@@END
+@@SECTION vh-6-1-0-1
+TITLE: The Drowned Alley Skiff
+TEXT: Water laps knee-deep through the narrow lane, turning cobblestones into treacherous stepping-stones where an old cooper named Jael sits patching a rusted iron skiff. He gestures with a tar-brush toward the grey, swollen sluice, offering to pole you across before the tide rolls in from the valley mouth and swallows the lower foundations. The air here tastes of stagnant brine and hot scale, heavy with the dread of a winter that refuses to lock the mud. // You can step into the leaking iron skiff and trust the cooper's pole, or search the flooded smithy yard where a one-eyed skinner might trade for your mule. Another path leads toward the sagging winch-house, where a mechanic waits to demand a toll.
+EXIT 1: Follow the hidden ledge along the grey rock
+EXIT 2: Cross the flooded smithy yard to find the skinner
+EXIT 3: Pay the grease-stained mechanic inside the winch-house
+@@END
+@@SECTION vh-6-1-1-0
+TITLE: The Cooperage Guard
+TEXT: Drips from the sagging cedar eaves patter rhythmically against the dirt as a wary apprentice steps from the shadow of the cooperage, planting a heavy ash stave to block your way. His eyes flick to the bronze Clapper riding upon your back before dropping to demand the official mountain seal stamped upon your parchment travel papers. The damp air smells of fermented oak shavings and vinegar, thick enough to cling to the wool of your heavy collar. // You can show your stamped papers to pass the guard toward the salt-crusted crane, or turn away to help the desperate mother with her coughing infant. You might also slip past the timber lean-to where the exhausted scribe struggles with ruined ledgers.
+EXIT 1: Present your travel papers to the watchful apprentice
+EXIT 2: Turn aside to offer clean rags to the desperate mother
+EXIT 3: Slip past toward the timber lean-to and the exhausted scribe
+@@END

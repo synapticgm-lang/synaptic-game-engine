@@ -1,0 +1,91 @@
+{
+ "batch": "vh-4-2-2-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-2-2-4": {
+   "title": "The Blindfolded Mule",
+   "text": "Biscuit plants her stubborn hooves hard against the grey crust of the old avalanche chute, refusing to take another step onto the treacherous, wind-scoured ice. You coax her with soft words, but her ears pin back against the howling gale. Reaching into your coat, you pull out a stiff, frozen wool scarf and wrap it gently around her wide eyes. Deprived of the terrifying white drop before her, she gives a low, rumbling huff and finally steps forward onto the slope.\n\nThe bronze clapper hums steadily against your spine as you urge her onward through the biting cold.",
+   "exits": [
+    "Take shelter within the narrow ice cleft",
+    "Check the tautness of the frayed guide-cables"
+   ]
+  },
+  "vh-4-2-2-5": {
+   "title": "Mending the Line",
+   "text": "Freezing mountain spray pelts your raw, bleeding knuckles as you fight to repair the snapped guide-rope lacing the icy abyss. Your fingers are clumsy with cold, but muscle memory takes over, looping the hemp into a secure, traditional ropewright knot that holds fast against the whistling wind. The cable tautens under your pull, offering a lifeline across the chasm.\n\nYou pause to blow warm breath onto your aching hands before deciding your next move along the frozen ladder.",
+   "exits": [
+    "Duck into the narrow cleft to escape the squall",
+    "Inspect the tension on the vibrating guide-cables",
+    "Accept Bran's guidance toward the lower mist"
+   ]
+  },
+  "vh-4-2-2-6": {
+   "title": "The Groaning Pillar",
+   "text": "A jagged pillar of blue glacier-glass groans ominously directly above your head, threatening to shatter as you haul the heavy bronze load upward. Every muscle in your back strains against the dead weight of the clapper while ice dust sprinkles down from the shifting roof like salt. You press yourself flat against the frozen rock wall, waiting to see if the ancient pillar holds its precarious balance.\n\nThe mountain breathes out another gust of bitter air, urging you to move before the fracture spreads further.",
+   "exits": [
+    "Chop through the drift-snow blocking the shelter",
+    "Ring your boot spikes against the hidden boulder",
+    "Follow the whistle-call through the rock ribs"
+   ]
+  },
+  "vh-4-2-2-7": {
+   "title": "The Knotted Path",
+   "text": "The ropewright guards stationed at the checkpoint recognize the intricate, sworn knot-oath tied into the hem of your travel cloak immediately. Their stern expressions soften into respectful nods, acknowledging your standing with the guild. Without a word, they unlatch a heavy wooden gate and lower a sheltered ice-chute shortcut that cuts straight down the frozen spine of the glacier.\n\nYou step onto the slick slide, feeling the weight of the bronze clapper settle comfortably as gravity takes hold.",
+   "exits": [
+    "Clear away the drift-snow blocking the old shelter",
+    "Pick your way carefully across the submerged boulder"
+   ]
+  },
+  "vh-4-2-2-8": {
+   "title": "The Firn Slide",
+   "text": "You drop onto your heels, launching yourself down the steep, glittering slope of the firn chute while the rushing mountain wind tears at your cloak. The heavy metal weight of the clapper hums against your back like a trapped, angry bee, testing your balance with every meter of rapid descent. Spray crystals sting your cheeks as you steer your slide using only the heels of your iron-studded boots.\n\nThe gradient levels out slightly as you approach the jagged edge of the upper col.",
+   "exits": [
+    "Push onward toward the final icy ridge"
+   ]
+  },
+  "vh-4-2-2-9": {
+   "title": "The Frozen Cascade",
+   "text": "A wall of solid, frozen blue water completely blocks the narrow ladder steps, forcing you to halt your descent. You draw your blunt iron utility axe from your belt and begin hacking rhythmically at the crystal barrier, chipping away small, glittering shards to carve fresh footholds. Ice chips fly into the abyss below as you work methodically to open a passage for yourself and the heavy pack.\n\nThe melodic whistling of the valley wind drifts up from below, offering a familiar cue.",
+   "exits": [
+    "Follow the hidden wind-call through the rock ribs",
+    "Clear the drift-snow from the climber's shelter"
+   ]
+  },
+  "vh-4-2-2-10": {
+   "title": "The Snow Cave Rest",
+   "text": "You crouch low in a shallow snow cave, sharing a hard barley biscuit and a handful of wrinkled, dried plums with a stranded cable-inspector named Hauer. He rubs warmth back into his purple fingers while pointing out the safest routes etched into the glacier map spread across his knee. The small kindness of shared food eases the biting chill in your bones for a brief, quiet moment.\n\nOutside the alcove, the glacier gives another low, metallic groan that vibrates through the rock.",
+   "exits": [
+    "Answer the distant whistle through the rock ribs",
+    "Listen to the deep hum of the bronze clapper"
+   ]
+  },
+  "vh-4-2-2-11": {
+   "title": "The Opening Fissure",
+   "text": "The glacier shifts beneath your boots with a deep sound like rolling thunder, opening a fresh, yawning fissure inches from your trembling lead foot. You throw your weight backward just in time, clutching the harness straps as loose ice rattles down into the dark, bottomless blue void. The sudden movement sets the bronze clapper into a low, sustained vibration that numbs the skin between your shoulder blades.\n\nThe freezing expanse offers few safe options as the ice continues to settle around you.",
+   "exits": [
+    "Stand firm against the humming bronze resonance",
+    "Guide the mule across the trembling wire bridge",
+    "Turn back toward the upper shelf"
+   ]
+  },
+  "vh-4-2-2-12": {
+   "title": "The Snow Bridge",
+   "text": "You lead the stubborn mule across a slick, precarious bridge formed entirely of packed avalanche snow while fine rime freezes thick over your heavy woolen mittens. Every breath billows out in a white cloud as you keep your eyes fixed on the far side, ignoring the dizzying drop beneath the fragile span. The animal's hooves crunch rhythmically against the frozen crust, steady and sure despite the freezing gale.\n\nThe vast white expanse stretches out endlessly ahead under a pale, cloudless sky.",
+   "exits": [
+    "Clamber back up from the dangling safety line",
+    "Pause to listen in the absolute ringing silence",
+    "Climb over the final lip of the glacier tongue"
+   ]
+  },
+  "vh-4-2-2-13": {
+   "title": "The Buried Sledge",
+   "text": "An abandoned supply sledge lies half-buried in blue ice, its wooden runners twisted like dry twigs by the relentless pressure of the moving glacier. You brush a thick layer of powdery drift-snow from its frame, checking to see if any useful cordage or spare iron spikes remain intact. The empty waste stretches out on all sides, silent save for the whistling wind cutting across the frozen ridges.\n\nA distant rope-tender waves from a winch station further down the line.",
+   "exits": [
+    "Trade snow with the weary guard at the winch",
+    "Stand still in the sudden ringing silence of the ice",
+    "Haul yourself over the final lip of the glacier"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,54 @@
+@@SEED vh-3-2-0-0 | On the ninth barley tier, old Miller Bram offers a midnight tutorial in wind-whistles while your bronze clapper grows heavy and cold.
+@@SEED vh-3-2-0-1 | Beneath the skeletal arms of Mill Six, miller Thrum bargains a day of your youth for the secret grammar of gale-notes.
+@@SEED vh-3-2-1-0 | Stumbling past frost-rimed hopper stones, you trade precious hours for a Miller's lesson while Biscuit chews salted straw in the dark.
+@@SEED vh-3-2-1-1 | Amid grinding gears that hum like trapped hornets, miller Jael demands twenty-four hours of your schedule to teach the high-altitude whistle.
+@@SEED vh-3-2-1-2 | A gaunt miller named Cribb blocks the stone stair, offering the craft of wind-calls in exchange for a day spent turning his sluggish millstone.
+@@SEED vh-3-2-1-3 | Shivering in the draughty flour-loft, you weigh the cost of a miller's nocturnal schooling against the rapidly shrinking span of your twenty-day journey.
+@@SEED vh-3-2-1-4 | Recognized by the rope-knot carved on your pack, a friendly knot-master steers you past the miller's time-trap onto an untaxed winch-slide.
+@@SEED vh-3-2-1-5 | Rejecting the miller's bargain of stolen time, you slip down a sheer grain-chute while the bronze clapper hums a warning against the frost.
+@@SEED vh-3-2-2-0 | Emerging from the miller's loft minus a day, you find the stone steps glazed with rime and the valley mist rolling upward.
+@@SEED vh-3-2-2-1 | A frozen water-wheel groans beside the path, its dripping paddles forming crystal spears that threaten the strap of your bronze burden.
+@@SEED vh-3-2-2-2 | Miller Korr hawks phlegm into the barley bin, warning you that the glacier ladders ahead are already snapping in the night freeze.
+@@SEED vh-3-2-2-3 | You dodge a falling sack of damp middlings as two terrace boys wrestle near the cliff edge over a stolen pewter spoon.
+@@SEED vh-3-2-2-4 | The bronze clapper strikes a resonant note against a low stone lintel, drawing suspicious stares from weavers mending wind-nets.
+@@SEED vh-3-2-2-5 | A solitary guard from the Cable Court sits on a nail-keg, demanding an inspection fee for the bronze mass strapped to your tired shoulders.
+@@SEED vh-3-2-2-6 | You share a wedge of hard goat cheese with an exhausted fog-warden whose lantern flickers against the encroaching white wall.
+@@SEED vh-3-2-2-7 | Frost crystals bloom across your leather boots as the stone track narrows between a sheer cliff and an unrailed drop of six hundred feet.
+@@SEED vh-3-2-2-8 | A rusted iron bell-pull hangs beside a boarded hatchway, twitching as though an unseen hand underground is trying to ring for help.
+@@SEED vh-3-2-2-9 | Guided by your guild-wrapped hemp cord, the terrace toll-keeper waves you past the barrier without demanding your last copper coin.
+@@SEED vh-3-2-2-10 | Biscuit digs his hooves into the frosted shale, refusing to pass a smoking charcoal brazier tended by shivering barley-scavengers.
+@@SEED vh-3-2-2-11 | A flurry of dry snow scours the terrace wall, stinging your cheeks and plastering your coat with frozen dust from the threshing floor.
+@@SEED vh-3-2-2-12 | You pry a loose horseshoe from frozen mud, slipping the iron relic into your pocket as a minor talisman against mountain misfortune.
+@@SEED vh-3-2-2-13 | An old woman huddles beneath a woollen shawl, muttering ancient weather-rhymes about the thirteen steps and the impending closure of Lowgate.
+@@SEED vh-3-2-2-14 | The wind shifts sharply from the north, carrying the metallic tang of distant foundry smoke and the sharp yelp of a mountain fox.
+@@SEED vh-3-2-2-15 | You adjust the slipping canvas cradle of the clapper, feeling the dead bronze thrum in rhythm with your own tired heartbeat.
+@@SEED vh-3-2-3-0 | Crossing a rickety cedar bridge over a gorge of grey mist, you hear the timbers groan under the combined weight of you and Biscuit.
+@@SEED vh-3-2-3-1 | A tattered scarecrow stuffed with oat-straw points a crooked wooden finger toward the precipitous drop where the ladder-path begins.
+@@SEED vh-3-2-3-2 | Miller Sedge hurls a handful of dry chaff into the wind to test the draft, narrowly missing your pack and the humming bronze tongue.
+@@SEED vh-3-2-3-3 | You shelter behind a dry-stone retaining wall while a sudden squall of ice-pellets rattles against the heavy bronze clapper like buckshot.
+@@SEED vh-3-2-3-4 | A Cable Court clerk offers a predatory credit token for your mule's shoes, promising safe transit down the remaining cliffs for half your rations.
+@@SEED vh-3-2-3-5 | Two fog-wardens pass you in the white gloom, their synchronized hand-bells ringing a mournful three-beat cadence to warn of the ice edge.
+@@SEED vh-3-2-3-6 | The stone path gives way to a slick sheet of blue glacier-run, forcing you to inch forward with your heels locked against the granite.
+@@SEED vh-3-2-3-7 | A stray mountain goat watches from a high ledge, its amber eyes bright and indifferent to your struggle with the heavy metal load.
+@@SEED vh-3-2-3-8 | You find a discarded tinker's hammer frozen in a puddle, its wooden handle splintered by frost-expansion but the iron head still sound.
+@@SEED vh-3-2-3-9 | The bronze clapper emits a sudden, low-pitched thrum that makes the loose pebbles at your feet dance in tiny concentric circles.
+@@SEED vh-3-2-3-10 | A low stone shrine to the Mountain Mother holds three tallow candles guttering in the wind, their flames shielded by cracked slate tiles.
+@@SEED vh-3-2-3-11 | Biscuit brays a harsh, echoing challenge into the canyon, startling a flock of white-feathered choughs from the sheer cliff face.
+@@SEED vh-3-2-3-12 | You scrape crusted mud and barley hulls from your boot treads, shivering as the damp mountain air seeps through your woven wool tunic.
+@@SEED vh-3-2-3-13 | Following Biscuit's canny instinct down a mule-track blocked to humans, you bypass a dangerous ice-slide and gain an hour of precious daylight.
+@@SEED vh-3-2-3-14 | A rusted iron wind-vane shaped like a leaping trout spins erratically on its spindle, squeaking a dry warning of the storm still to come.
+@@SEED vh-3-2-3-15 | You press your palm against the icy terrace retaining wall, feeling the ancient mortar vibrate with the underground hum of the falling mountain.
+@@SEED vh-3-2-4-0 | The wind-mills fall silent behind you one by one, their wooden sails lashed fast with hemp rope against the coming mountain gale.
+@@SEED vh-3-2-4-1 | A solitary iron milestone hammered into the cliffside marks the final boundary of the barley terraces and the start of the vertical ice.
+@@SEED vh-3-2-4-2 | You tighten the leather harness across your chest, ensuring the heavy clapper cannot shift as you prepare for the steep descent ahead.
+@@SEED vh-3-2-4-3 | The fog clears for a heartbeat, revealing the dizzying drop to the glacier ladders where iron rungs frost over in the gathering dusk.
+@@SEED vh-3-2-4-4 | A nervous ropewright checks the anchor-bolts on the final terrace gate, warning you that the iron rungs below are glazed with black ice.
+@@SEED vh-3-2-4-5 | You share a final draught of cold water from your iron flask with Biscuit, patting his dusty grey neck before the stairs run out.
+@@SEED vh-3-2-4-6 | The last miller of the tier hands you an iron piton for the ladders, muttering a dry blessing for your journey down to Lowgate.
+@@SEED vh-3-2-4-7 | You step past the stone threshold of the lowest terrace gate, leaving the whispered wind-calls of the millers behind in the freezing air.
+@@SEED vh-3-2-5-0 | The stone stairs terminate abruptly at a sheer drop of blue-white ice where the first great ladder swings in the mountain draft.
+@@SEED vh-3-2-5-1 | Gripping the frozen iron rungs of the uppermost glacier ladder, you feel the bronze clapper pull your weight backward into the abyss.
+@@SEED vh-3-2-5-2 | Below your dangling boots, the cloud sea churns like curdled milk, hiding the distant roofs of Lowgate while the wind rises to a scream.
+@@SEED vh-3-2-5-3 | With Biscuit tethered securely to your belt-chain, you take the first downward step onto the swaying rungs of the vertical world.
+@@SEED vh-d-3-2 | Traded away all your daylight hours to master every miller's whistle until the mountain pass froze shut forever, entombing you and the clapper in silent ice.
+@@DONE

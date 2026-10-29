@@ -1,0 +1,99 @@
+{
+ "batch": "vh-2-1-0-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-1-0-0": {
+   "title": "The Skein-Master",
+   "text": "On the sun-bleached hemp catwalk of the outer rope market, an old skein-master ties a double-carrick bend around your bronze cargo frame to test its lashing strength. His weathered fingers move with practiced speed, pulling the tarred strands taut until the heavy bronze Clapper hums against your leather harness. He grunts in brief approval before tapping the knot with a wooden mallet.\n\nThe cliff winds buffet the open walkway, carrying the sharp scent of pine pitch and the distant rhythmic groan of heavy winches operating further down the precipice. You adjust your footing on the slatted timber, weighing your next route through the maze of hanging platforms and cordage bazaars.",
+   "exits": [
+    "Step across to the bustling winch lines",
+    "Descend the ladder toward the middle gorge",
+    "Seek shelter beneath the swaying canvas awnings"
+   ]
+  },
+  "vh-2-1-0-1": {
+   "title": "The Hemp-Store Warmth",
+   "text": "In the damp shade of the hemp-store, a winch-apprentice named Garrow offers you a steaming mug of pine-needle tea while you inspect the frayed hauling lines ahead. The air here smells of cool grease and stored fibre, offering a brief respite from the biting mountain gale outside. He points out a cluster of thinning strands on your pack harness, advising you to reinforce the binding before tackling the steeper slopes below.\n\nOutside the shadowed doorway, the market paths fork sharply between high-tariff toll houses and open public catwalks, leaving your next move entirely open.",
+   "exits": [
+    "Follow the lower hauling trail into the market",
+    "Present your guild credentials at the guarded barrier",
+    "Take the narrow service stair past the storage bins"
+   ]
+  },
+  "vh-2-1-1-0": {
+   "title": "The Larch Plank Crossing",
+   "text": "Beneath a canopy of swinging hemp coils, you balance the heavy Clapper across a trembling larch plank while winch-boys haul salted tallow overhead. The wood groans rhythmically underfoot, echoing the deep, resonant vibration of the bronze tongue against your shoulder blades. Drops of cold grease patter down from the overhead cables like untimely rain, slicking the timber surface.\n\nYou must choose your footing carefully before the next gust sweeps across the gorge, threatening to destabilise your precarious load.",
+   "exits": [
+    "Cross toward the weaver stalls ahead",
+    "Divert along the upper maintenance gantry",
+    "Cut across to the oiler station by the pulley-post"
+   ]
+  },
+  "vh-2-1-1-1": {
+   "title": "The Cordwainer's Measure",
+   "text": "Amidst the clatter of spinning jennies, a master cordwainer measures your bronze load against the spanning limits of the middle gorge. He runs a calloused thumb along the edge of your metal frame, muttering about standard weight clearances and municipal toll fees. The workshop hums with the relentless motion of vertical spindles and the dry rustle of twisted flax.\n\nBeyond his workbench, several narrow routes diverge into the misty expanse of the hanging markets, each presenting its own challenge for a burdened traveler.",
+   "exits": [
+    "Slip past the busy inspectors unnoticed",
+    "Share a resting moment by the drying flax fringe",
+    "Venture out onto the swaying rope-bridge"
+   ]
+  },
+  "vh-2-1-1-2": {
+   "title": "The Hawser-Tender's Warning",
+   "text": "On a platform dangling above the abyss, a grease-stained hawser-tender warns you that the wind-whistle through the wire is screaming foul tonight. He secures a loose iron turnbuckle with a sharp blow from his iron-headed hammer, pointing down toward the mist-shrouded drops. The freezing air bites at your cheeks, carrying the metallic tang of strained steel and wet hemp.\n\nEvery cable around you vibrates with a high-pitched hum, setting the bronze Clapper humming a sympathetic note against your back.",
+   "exits": [
+    "Tighten your hip-belt against the rising gale",
+    "Present your cargo papers to the market bailiff",
+    "Step across the open lattice of larch beams"
+   ]
+  },
+  "vh-2-1-1-3": {
+   "title": "The Tarred Scraps",
+   "text": "Beside a bin of tarred hemp scraps, you mend a chafed shoulder strap while a market crier advertises three-ply hemp for a groat. The pungent aroma of pitch fills your lungs as you knot the replacement cord with cold, stiff fingers. Around you, the bustling trade of the rope markets continues unabated, with porters shouting warnings and mules stamping on wooden ramps.\n\nYou finish securing the strap and eye the branching paths that lead deeper into the vertical labyrinth.",
+   "exits": [
+    "Navigate the open lattice of larch beams",
+    "Seek refuge within the cavernous salt-shed",
+    "Climb toward the high ledge overlooking the precipice",
+    "Pass beneath the web of humming guide-wires"
+   ]
+  },
+  "vh-2-1-1-4": {
+   "title": "The Guild-Tied Passage",
+   "text": "Because your guild-tied rope gleams with standard blue twine, the platform-warden waves you straight past the tariff barrier without checking your copper purse. He nods respectfully toward the bronze Clapper on your back, recognizing the mark of Vesperhold craftsmanship. The cleared path stretches out ahead, free of the usual congestion and bickering toll-collectors.\n\nYou steady your mule and stride forward into the quieter sector reserved for recognized guild travelers.",
+   "exits": [
+    "Walk beneath the web of humming guide-wires",
+    "Step onto the suspended trestle stage ahead",
+    "Stop by the pile of discarded coconut-fibre rope"
+   ]
+  },
+  "vh-2-1-1-5": {
+   "title": "The Timber Drum",
+   "text": "Within the echoing hollow of a giant timber drum, you rest your tired mule while overhead cables sing an icy counterpoint to the bronze. The massive wooden wheel slowly revolves, driven by unseen weights somewhere deep within the mountain's rocky core. Dust motes dance in the shafts of pale light piercing the planking joints, illuminating your breath in the chill air.\n\nThe steady mechanical pulse offers a moment of calm before you must guide your animal back out into the open air.",
+   "exits": [
+    "Step out upon the suspended trestle stage",
+    "Inspect the discarded coconut-fibre rope pile",
+    "Lead your mule across the slippery brass-studded walkway",
+    "Peer down into the drafty archway of the cable-house"
+   ]
+  },
+  "vh-2-1-2-0": {
+   "title": "The Spun-Yarn Vendor",
+   "text": "Across a catwalk of woven wire, a spun-yarn vendor named Jael trades gossip about the broken bridge further down the gorge. She gestures with a skein of yellow twine toward a cluster of anxious travelers gathered near the lower winches. The wire mesh flexes slightly beneath your boots with every shift of weight, reminding you of the thousands of feet of empty air below.\n\nYou listen to her warnings about the delayed repairs while deciding whether to investigate the rumor firsthand.",
+   "exits": [
+    "Proceed onto the swaying suspension walkway",
+    "Pause beside the row of smoking tar-pots"
+   ]
+  },
+  "vh-2-1-2-1": {
+   "title": "The Sisal Hand-Cart",
+   "text": "In a narrow alcove hung with tallow buckets, you dodge a careening hand-cart loaded with heavy sisal bundles. The frantic push-boy calls out an apology as he rattles past, his wooden wheels squeaking against the frozen rime on the floor. You press flat against the damp stone wall, keeping your precious bronze burden clear of the passing cargo.\n\nOnce the cart clears the narrow passage, the way opens up toward several different bustling market alleyures.",
+   "exits": [
+    "Catch your breath beside the smoking tar-pots",
+    "Adjust your canvas cover inside the timber shelter",
+    "Guide your mule past the loose iron spike",
+    "Turn back toward the upper market platform"
+   ]
+  }
+ },
+ "missing": []
+}

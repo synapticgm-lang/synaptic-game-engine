@@ -1,0 +1,96 @@
+{
+ "batch": "vh-3-0-5-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-0-5-3": {
+   "title": "The One-Eyed Packer",
+   "text": "A one-eyed packer leans against a dusty sack of barley inside the Rumour Mill, swearing by every knot in the rope-walk that the foundry master has fled south. He taps his glass against the cask and insists the great pits are cold, empty, and choked with ash before you can even catch your breath in the thin air. Biscuit shifts uncomfortably in the narrow aisle, the heavy bronze Clapper humming a faint, steady note against your shoulder blades.",
+   "exits": [
+    "Press on down the terrace path",
+    "Turn back toward the upper stairs"
+   ]
+  },
+  "vh-3-c1": {
+   "title": "Whispers in the Flour-Dust",
+   "text": "Two contradictory tales drift across the grease-stained tables of the milling-house like mountain mist. One group of millers insists the Lowgate forge remains fully manned and desperate for apprentices, while another swears the entire lower district went under water when the river-wall breached last night. You feel the heavy bronze tongue hum against your back, demanding a decision on which path to trust before the afternoon wind turns bitter.\n\nYour choice here shapes every hard bargain and closed door you will face as you descend the remaining stone steps toward the valley floor.",
+   "exits": [
+    "Believe the foundry still stands and is hiring",
+    "Believe the foundry flooded and went cold"
+   ]
+  },
+  "vh-3-1-0-0": {
+   "title": "The Barter of Tin",
+   "text": "Miller Garrow stands on the sun-bleached stone of the seventh terrace, his flour-dusted fingers gripping a wooden ledger as he complains about the valley's trade. He mutters that the Lowgate foundry has secretly bartered all its reserve tin to the Cable Court, leaving common apprentices with nothing to work. The cold mountain wind whistles through the wooden slats of the mill, carrying the dry scent of cracked barley and old grease. Biscuit stamps a hoof against the flags, eager to leave the grumblers behind.",
+   "exits": [
+    "Ask about the upper cable tolls",
+    "Inspect the miller's grain-hoppers",
+    "Slip past toward the lower ladder"
+   ]
+  },
+  "vh-3-1-0-1": {
+   "title": "The Mint of Private Tokens",
+   "text": "Canvas sails creak overhead as miller-wife Jella leans close beneath the wooden ribs of mill nine, whispering that the forge-masters are hoarding fresh bronze to mint private tokens. She taps her temple knowingly, claiming no bell will ever be recast until the profit-takers have filled their own pockets first. Dust motes dance in the shaft of pale sunlight piercing the loft, and the heavy Clapper gives a sympathetic thrum against your travel-worn leather pack.",
+   "exits": [
+    "Slip through the narrow grain aperture",
+    "Question her about the private mints",
+    "Lead the mule down the stone ramp"
+   ]
+  },
+  "vh-3-1-1-0": {
+   "title": "The Forged Permits",
+   "text": "Miller Orlo blocks the doorway beside the stone grain-hopper, squinting suspiciously at the straps of your travel-pack while accusing you of carrying forged trade-permits. His flour-whitened eyebrows draw together in a harsh frown as he demands to inspect your papers before you take another step down the mountain. Biscuit lowers stubborn ears and snorts a cloud of white breath into the freezing air between you.",
+   "exits": [
+    "Defend your honest papers",
+    "Offer a handful of salt",
+    "Force a path past the hopper"
+   ]
+  },
+  "vh-3-1-1-1": {
+   "title": "The Stale Oat-Cake",
+   "text": "Tressa stands across the squeaking timber footbridge, holding out a dry piece of stale oat-cake in exchange for any scrap of news from the upper snows. Her fingers are red from the mountain chill, and her eyes scan the dizzying drops behind you with wary curiosity. The ropes of the nearby bridge hum a low, vibrating chord in the rising wind while Biscuit noses at an empty grain sack.",
+   "exits": [
+    "Trade news for the oat-cake",
+    "Ignore her and cross the bridge",
+    "Share a secret shortcut with her"
+   ]
+  },
+  "vh-3-1-1-2": {
+   "title": "The Flour-Chute Toll",
+   "text": "A heavy timber winch creaks in the drafty shadow above, where miller Hael bars the way and demands a toll of three copper groats for crossing his flour-chute. He crosses thick, flour-dusted arms over his chest and watches the heavy bronze Clapper in its padded cradle with sharp, assessing eyes. The wind rattles the wooden shingles overhead like loose teeth.",
+   "exits": [
+    "Pay the three copper groats",
+    "Barter with a length of cord",
+    "Duck beneath the rattling winch"
+   ]
+  },
+  "vh-3-1-1-3": {
+   "title": "The Narrow Wheat-Bin",
+   "text": "Unburdened by the heavy mule or bulky gear, you slip effortlessly through a narrow wheat-bin aperture, bypassing the blocked miller gate entirely. The passage smells of dry chaff and sweet grain as you squeeze between cool cedar planks into the damp air beyond. Light filters in through cracks in the siding, showing a steep, unused ladder dropping down the cliff face.",
+   "exits": [
+    "Descend the hidden cedar ladder",
+    "Follow the narrow wall ledge",
+    "Drop onto the lower timber catwalk"
+   ]
+  },
+  "vh-3-1-1-4": {
+   "title": "The Salt-Choked Wind-Pipes",
+   "text": "Miller Fenn stands beside the sputtering grease-lamp of the flour-store, warning you with frantic gestures that the wind-pipes are choked with salt-dust from the lower flats. He points a soot-stained finger toward the groaning machinery overhead where white powder drifts like winter snow. The air tastes of brine and dry husk, biting the back of your throat with every breath.",
+   "exits": [
+    "Clear the jammed wind-pipe",
+    "Warn the neighboring millers",
+    "Hurry down the interior steps",
+    "Check the grease-lamp levels"
+   ]
+  },
+  "vh-3-1-1-5": {
+   "title": "The Scattered Barley",
+   "text": "Miller Bessa drops a heavy sack of barley on the precipitous limestone stair, sending golden grain scattering in a bright cascade across your travel-worn boots. She mutters an oath against the mountain gales as the golden kernels bounce over the cliff edge into the cloud sea below. Biscuit immediately lowers his head to snap up a stray mouthful before you can catch your balance.",
+   "exits": [
+    "Help her gather the spilled grain",
+    "Step carefully around the golden spill",
+    "Scold the clumsy miller sharply"
+   ]
+  }
+ },
+ "missing": []
+}

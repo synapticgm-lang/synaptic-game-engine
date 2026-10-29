@@ -1,0 +1,89 @@
+{
+ "batch": "vh-2-1-5-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-1-5-2": {
+   "title": "The Toll Counter",
+   "text": "Cold iron grates against your knuckles as you empty a heavy leather pouch of earned groats onto the high wooden desk. Coins clink and scatter across the grain while the clerk's ink-stained fingers sweep them into a brass bowl to clear the crossing fee in hard cash.\n\nBehind you, Biscuit shifts restlessly on the swaying boards, hoof-nails scraping a hollow rhythm against the gorge below. You square your shoulders against the biting mountain draft and grip the cradle straps, ready for the path ahead.",
+   "exits": [
+    "Step through the gate and press on"
+   ]
+  },
+  "vh-2-1-5-3": {
+   "title": "Silver Clearance",
+   "text": "Smooth polished stone yields beneath your fingertips at the customs booth while you count out your last gleaming silver coins one by one. The toll-master nods curtly, pocketing the fee to keep your name far away from the heavy, binding ink of the loan ledgers.\n\nThe air tastes of resin and old hemp in this narrow corridor suspended between cloud and stone. With your purse lighter but your conscience clear of debt, you eye the swaying ropeway stretching out toward the next tier.",
+   "exits": [
+    "Leave the booth and press on"
+   ]
+  },
+  "vh-d-2-1": {
+   "title": "The Flayed Pass",
+   "text": "Silver coins spin under the cold grease-lamps of the swaying platform, and the flash of a marked deck draws your tired eyes from the heavy bronze bulk on your back. You stake your guild transit pass against a roll of foreign copper, trusting the quick shuffle of a dealer whose smile is too sharp for the high air. The paper flutters from his thumb, catches the sudden mountain updraft, and spirals down into the white wool of the clouds below without a sound. Without the green wax of the guild, the toll-keepers bar the stairs at the middle gate, leaving you to winter in the drafty shacks of the rope-markets as an outlawed drifter. Biscuit shifts his weight against the frozen rail, huffing a cloud of warm breath into the dusk while the mountain slowly closes its gates around you.",
+   "exits": []
+  },
+  "vh-2-c2": {
+   "title": "The Cable Court Ledger",
+   "text": "A cramped chamber smells of stale tallow and iron ink-pots where the Cable Court toll-collectors present their terms for your passage. The clerk taps a long quill against a binding contract that promises heavy repayment terms down in Lowgate, or demands an immediate settlement from your own dwindling funds.\n\nEvery breath tastes of frozen dust in the low-ceilinged booth while Biscuit stomps an impatient hoof outside the reinforced door. You must decide whether to shoulder a crushing debt or part with your remaining hard-earned coin to cross the gorge freely.",
+   "exits": [
+    "Take the Cable Court's loan of passage",
+    "Pay the toll from your own purse"
+   ]
+  },
+  "vh-2-2-0-0": {
+   "title": "The Winch-Master's Eye",
+   "text": "Harsh daylight hits your eyes as you step out from the damp toll-house shadows onto a swaying hemp walkway. Winch-master Joram stands by the groaning machinery, weighing your bronze clapper with greedy, narrowed eyes that calculate the worth of its metal.\n\nThe heavy cradle digs into your aching shoulders while the bridge rocks under a sudden gust from the gorge. Iron gears shriek behind the master as he gestures toward the branching pathways spanning the dizzying heights.",
+   "exits": [
+    "Follow the upper cable toward the northern winches",
+    "Cut across the narrow maintenance plank to the left",
+    "Descend the steep ladder toward the lower market tier"
+   ]
+  },
+  "vh-2-2-0-1": {
+   "title": "The Frozen Ledger",
+   "text": "Weathered market boards creak beneath your heavy cradle, vibrating with the constant roar of the bottomless gorge below. Clerk Nesta stands by a frosted window, her quill scratching a sharp warning into a frozen ledger as she logs your unpaid debt.\n\nFrost patterns spiderweb across the glass while the shadow of the great mountain looms larger in the late afternoon chill. You adjust the straps of your burden and look out over the complex web of ropes stretching into the mist.",
+   "exits": [
+    "Pick your way along the outer market rim",
+    "Slip past the checkpoint as an insignificant traveler",
+    "Take the tallow-soaked twine offered by the frantic boy"
+   ]
+  },
+  "vh-2-2-1-0": {
+   "title": "The Flax Bridge",
+   "text": "Frigid winds whip across a suspension bridge woven entirely from pale, braided flax that vibrates like a harp string. You flatten your back against the swaying rail to dodge a careering cargo basket hauling smoking tallow barrels toward the upper tiers.\n\nFrost glazes the fibrous handlines while the heavy bronze clapper hums a low, sympathetic note against your spine. Below your boots, the cloud line breaks to reveal dizzying drops of sheer gray stone.",
+   "exits": [
+    "Enter the suspended timber gallery",
+    "Confront Master weaver Elden on the narrow plankway",
+    "Duck beneath the overhead trestle as draft mules pass"
+   ]
+  },
+  "vh-2-2-1-1": {
+   "title": "The Hide Market",
+   "text": "Pungent smells of salted hides and wet wool fill the narrow alley where old Sula catches your sleeve with wrinkled fingers. She warns in a raspy whisper that the Cable Court enforcers have blockaded the middle winch-platforms ahead.\n\nSacks of coarse salt stack high against the canvas walls, forming a dark labyrinth of stalls that shelter you from the biting wind. The low drone of the great bell miles above still echoes faintly through the canyon walls.",
+   "exits": [
+    "Flash your Guild token to the rope-guards",
+    "Hide in the alcove behind the tallow-chandler's booth",
+    "Watch the frozen pulley shower sparks from above"
+   ]
+  },
+  "vh-2-2-1-2": {
+   "title": "The Canvas Awnings",
+   "text": "Wild gusts of mountain wind tear at the canvas awnings of the hanging bazaar, sending sharp cracks echoing across the white mist. Your heavy bronze burden shifts awkwardly, threatening to pitch you and your load backward into the empty air.\n\nRope-threads fray against the anchor posts while merchants scramble to secure their swinging wares with double knots. You plant your boots firmly into the groaning pine planks and search for a stable footing.",
+   "exits": [
+    "Duck beneath the shower of sparks from the pulley",
+    "Accept the warm chicory water from apprentice Kenal",
+    "Crawl beneath the slumping trestle where weavers work"
+   ]
+  },
+  "vh-2-2-1-3": {
+   "title": "The Wicker Sorting Pit",
+   "text": "Rough wicker fencing presses against your ribs as you squeeze past a bustling knot-binder's stall filled with coils of hemp. Apprentices test tensile strength by hooking heavy iron weights over the edge and letting them swing out above the abyss.\n\nThe sharp scent of tar and dry grass hangs thick in the cold air between the high market stalls. Every rope in this bazaar hums a different pitch to the wind, creating a restless chord that sets your teeth on edge.",
+   "exits": [
+    "Approach toll-keeper Vane at the iron turnstile",
+    "Press flat against the bridge as an updraft hits",
+    "Skirt the edge of the great wicker sorting pit",
+    "Step toward the quiet corner near the lower winches"
+   ]
+  }
+ },
+ "missing": []
+}

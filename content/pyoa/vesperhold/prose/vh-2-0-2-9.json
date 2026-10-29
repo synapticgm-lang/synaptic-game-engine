@@ -1,0 +1,91 @@
+{
+ "batch": "vh-2-0-2-9",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-0-2-9": {
+   "title": "The Inspector's Rod",
+   "text": "A Cable Court inspector steps into your path with a short wooden rod, tapping sharply against the bronze Clapper in your pack to test its resonance and weight. The dense metal hums a low, resonant note that vibrates straight through your canvas straps and into your shoulder blades, drawing the sharp attention of nearby toll-guards.",
+   "exits": [
+    "Climb the vertical wooden pegs directly into the granite face",
+    "Answer the irate toll-clerk shouting from the open window",
+    "Turn back toward the upper ropeway before the inspection deepens"
+   ]
+  },
+  "vh-2-0-2-10": {
+   "title": "The Canvas Awning",
+   "text": "Coarse fibers brush your shoulder as you duck beneath a low canvas awning where weavers twist tough mountain grass into unbreakable anchor-tethers. The air smells sharply of dried reed and river mud, thick with the rhythmic scraping of palms against hemp. Outside this shelter, the suspended rope markets sway gently over the gray abyss, carrying the distant clatter of iron capstans.\n\nYou shift the padded cradle on your back, feeling the heavy bronze Clapper hum a low, resonant note against your spine that seems to set the very tent-poles vibrating in time.",
+   "exits": [
+    "Step toward the shouting near the toll window",
+    "Squeeze past the narrow gap between the winch-shacks"
+   ]
+  },
+  "vh-2-0-2-11": {
+   "title": "The Guild Accord",
+   "text": "Your pristine Ropewrights' Guild tether catches the eye of the gate-guards immediately, earning a respectful nod and an unhesitating wave past the crowded toll-snarl. Other travelers are stuck arguing behind wooden barriers, but your braided hemp insignia speaks of trade secrets and mountain loyalty. You stride through the checkpoint while the cold air bites your cheeks and the great gorge below yawns wide beneath your boots.\n\nBiscuit follows close behind, his hooves clattering softly on the weathered timber planks of the market bridge.",
+   "exits": [
+    "Squeeze past the narrow gap between the winch-shacks",
+    "Follow the scarred capstan-master toward the flickering lower lanterns"
+   ]
+  },
+  "vh-2-0-2-12": {
+   "title": "The Tallow Spill",
+   "text": "A frantic winch-boy drops his wooden tallow bucket right across your path, spilling greasy yellow fat just as a heavy cargo basket screeches downward along the iron cable above. You pull up short, steadying the vibrating bronze Clapper on your back while the boy stammers an apology and scrambles to clear the slick timber planks.",
+   "exits": [
+    "Deal with the irate clerk shouting from the toll-house window",
+    "Head toward the capstan-master pointing down at the flickering lanterns"
+   ]
+  },
+  "vh-2-0-3-0": {
+   "title": "The Timber Alcove",
+   "text": "Shadows stretch long across the crowded boards as you slip quietly into a narrow alcove behind a tall mountain-ash woodpile. Just beyond the stacked logs, toll-collectors lean over a scarred trestle table, arguing fiercely over ledger tallies and coin weights. The bitter scent of fresh sap mingles with the cold mountain wind that whips around the corners of the storage shed.\n\nYou steady the heavy bronze Clapper against your back, keeping your breathing quiet while the dispute echoes off the canyon walls.",
+   "exits": [
+    "Drop down into the sheltered timber trench",
+    "Dodge past the hurried Cable Court runner in the gloom"
+   ]
+  },
+  "vh-2-0-3-1": {
+   "title": "Bitter Chicory Water",
+   "text": "A weathered ropewright named Fenn offers you a small wooden cup of bitter chicory water to clear the biting mountain dust from your parched throat. The warm, earthy brew takes the edge off the freezing air as you lean against a stout timber post and watch the cable-riders prep their winches for the evening shift.",
+   "exits": [
+    "Step down into the sheltered timber trench away from the gale",
+    "Navigate the web of crossed guy-lines vibrating like harp strings"
+   ]
+  },
+  "vh-2-0-3-2": {
+   "title": "The Great Timber Wheel",
+   "text": "Greasy hemp cables hum with the terrifying tension of the cliff as you skirt the outer edge of a great timber wheel. The massive drum revolves with a low, bone-shaking rumble, drawing tight against the weight of a dozen hanging platforms out over the empty air. Spray from the frozen mists coats your knuckles in a thin layer of rime while you watch the iron-bound spokes turn in slow, relentless circles.\n\nThe bronze Clapper on your back answers the cable's vibration with a steady, sympathetic thrum.",
+   "exits": [
+    "Drop down into the sheltered timber trench",
+    "Dodge past the hurried Cable Court runner in the gloom"
+   ]
+  },
+  "vh-2-0-3-3": {
+   "title": "The Spiked Pole",
+   "text": "A Cable Court sergeant steps directly into the narrow alley, blocking your way with a heavy, iron-tipped pole and demanding immediate proof of your descent permit. His silver tunic is stiff with frost, and his eyes narrow suspiciously at the bulky canvas-wrapped cradle on your back. The surrounding market stalls grow suddenly quiet as nearby merchants pause to watch the confrontation unfold over the yawning gorge.\n\nBiscuit tosses his head, the harness jingling nervously in the freezing air.",
+   "exits": [
+    "Drop down into the sheltered timber trench",
+    "Dodge past the hurried Cable Court runner in the gloom",
+    "Navigate the web of vibrating guy-lines"
+   ]
+  },
+  "vh-2-0-3-4": {
+   "title": "The Salted Hides",
+   "text": "Piles of stiff, salted hides give off a sharp brine smell as you guide Biscuit carefully along the narrow ledge, keeping your boots clear of the freezing puddles. The heavy bronze Clapper vibrates persistently against your tired spine, matching the rhythm of your footsteps on the planking. All around you, the vertical city clings to the mountain face in a dizzying cascade of ropes, winches, and timber scaffolding.\n\nThe rising evening gale begins to howl through the rigging overhead, carrying the distant sound of falling ice.",
+   "exits": [
+    "Dodge past the hurried Cable Court runner in the gloom",
+    "Navigate the web of vibrating guy-lines",
+    "Step around the groaning iron winch-drum"
+   ]
+  },
+  "vh-2-0-3-5": {
+   "title": "The Weaver's Knot",
+   "text": "Quick-fingered hands demonstrate a secret knot that secures heavy loads against the fiercest mountain downdrafts, tying thick hemp with effortless grace. The weaver, whose apron is stiff with dried resin, nods approvingly as you replicate the twists with your numb fingers. Overhead, the sky turns the pale, bruised color of a winter plum as the sun dips below the jagged western peaks.\n\nA glowing tallow torch flares nearby, casting long, dancing shadows across the frost-rimed boards of the rope-market.",
+   "exits": [
+    "Navigate the web of vibrating guy-lines",
+    "Follow the torch-holding apprentice across the slippery boards",
+    "Step around the groaning iron winch-drum"
+   ]
+  }
+ },
+ "missing": []
+}

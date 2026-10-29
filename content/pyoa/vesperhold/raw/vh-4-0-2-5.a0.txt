@@ -1,0 +1,72 @@
+@@SECTION vh-4-0-2-5
+TITLE: Shards on the Footway
+TEXT: Shattered crystal spikes litter the glacier footway where the weight of your pack threatens to break your rhythm. Every step demands caution as you balance the heavy bronze tongue against the shifting slope. The cold air bites deep into your lungs while the low hum of the Clapper resonates through your spine. // Ahead, the trail divides around a massive pressure ridge of blue ice. A rusted iron winch stands sentinel over the drop, its cable frozen fast.
+EXIT 1: Inspect the frozen winch mechanism
+EXIT 2: Seek help from the toll warden  (only offered if: the reader owes the Cable Court a toll-debt and is recognised by its collectors)
+@@END
+
+@@SECTION vh-4-0-2-6
+TITLE: Beneath the Ice Vault
+TEXT: Deep beneath the blue ice vault, a subterranean stream roars against the stone while the Clapper vibrates on your back. Water drips in rhythm with your pounding heart, echoing off frozen walls that gleam like polished glass. The footing grows treacherous as moisture freezes instantly upon your boots. // You must choose your line carefully through the gloom before the light fades entirely from the crevasse.
+EXIT 1: Call out to the toll warden nearby  (only offered if: the reader owes the Cable Court a toll-debt and is recognised by its collectors)
+EXIT 2: Cross the central snow bridge
+EXIT 3: Descend the sloping blue ice shelves
+@@END
+
+@@SECTION vh-4-0-2-7
+TITLE: The Frozen Serac
+TEXT: Frozen timber steps ascend the vertical blue serac where a Ropewright knot secures the guide-line against the gale. The hemp is stiff with frost but holds true to the tension of the mountain wind. Your shoulders ache from the cradle straps as you haul yourself upward hand over hand. // The summit of the ice-fall is within reach, provided your fingers retain enough feeling to grip the frozen rungs.
+EXIT 1: Traverse the sloping blue ice shelves
+EXIT 2: Head toward the weathered signpost
+@@END
+
+@@SECTION vh-4-0-2-8
+TITLE: Glacial Basin Sunlight
+TEXT: Blinding sunlight reflects off the glacial basin, turning every ice-ridge into a dazzling hazard of white and blue. You squint against the glare, relying on the rhythmic swing of the Clapper to keep your balance on the crust. The heat of the reflection threatens to soften the surface snow into treacherous slush. // Two distinct paths wind away from the basin across the gleaming expanse.
+EXIT 1: Cross the central snow bridge
+EXIT 2: Push into the biting gale-trough
+@@END
+
+@@SECTION vh-4-0-2-9
+TITLE: The Abandoned Basket
+TEXT: An abandoned basket hoist hangs crookedly over the abyss while the icy wind tests the strength of the rigging. Rust flakes from its iron frame, painting the white snow orange beneath your boots. The valley below is entirely swallowed by thick grey cloud, leaving only the screaming wind for company. // You can skirt the edge or search for a firmer crossing point among the blue fractures.
+EXIT 1: Push into the biting gale-trough
+EXIT 2: Head toward the weathered signpost
+EXIT 3: Step across the jagged ice fracture
+@@END
+
+@@SECTION vh-4-0-2-10
+TITLE: The Weary Traveler
+TEXT: Slick frost veneers the stone stairhead where a weary traveler named Kaelen rests his frostbitten fingers. He offers a tight, grim smile as you approach, rubbing warmth back into his hands against the bitter draft. The stairs plunge downward into shadow from this ledge, demanding absolute focus from every traveler who passes. // Various ways present themselves amid the frozen masonry and scattered debris.
+EXIT 1: Press on through the freezing fog
+EXIT 2: Step across the jagged ice fracture
+EXIT 3: Adjust the frozen leather straps
+@@END
+
+@@SECTION vh-4-0-2-11
+TITLE: Lengthening Shadows
+TEXT: Heavy blue shadows lengthen across the moraine ridge as the afternoon freeze hardens the melting snow bridges. The sudden drop in temperature makes the glacier groan with deep subterranean cracks that ripple through your soles. Silence returns quickly, broken only by the steady trudge of the mule behind you. // Only one narrow path remains open across the thickening frost.
+EXIT 1: Step across the jagged ice fracture
+@@END
+
+@@SECTION vh-4-0-2-12
+TITLE: Squall on the Ledge
+TEXT: Sharp ice granules sting your cheeks on the exposed ledge while Biscuit lowers his head against the rising squall. The pack straps bite hard through your heavy woolen coat as the wind tries to peel you from the cliff face. Every breath is a struggle against the freezing gale sweeping up from the lower gorges. // You must decide whether to press forward into the whiteout or retrace your steps to safety.
+EXIT 1: Step across the jagged ice fracture
+EXIT 2: Adjust the frozen leather straps
+EXIT 3: Turn back along the staging
+@@END
+
+@@SECTION vh-4-0-3-0
+TITLE: Fragile Ice Bridges
+TEXT: Fragile ice bridges span the bottomless blue gulf while every step risks a collapse into the freezing depths. The Clapper seems to hum a deeper note here, attuned to the ancient ice beneath your feet. You test each frost-covered span with a cautious boot before committing your full weight. // Two routes lead onward across the perilous chasm.
+EXIT 1: Descend the slanted ice rungs
+EXIT 2: Navigate the narrow ledge
+@@END
+
+@@SECTION vh-4-0-3-1
+TITLE: Scratched Brass Markers
+TEXT: Scratched brass markers on the rock face indicate the old winter trail now choked with blue-tinted drifts. These ancient guideposts, hammered deep into the stone by generations of bell-ringers, offer meager comfort against the driving snow. You clear the rime from one plaque to verify your bearing in the growing gloom. // The path splits around a towering wall of blue serac ice.
+EXIT 1: Descend the slanted ice rungs
+EXIT 2: Navigate the narrow ledge
+@@END

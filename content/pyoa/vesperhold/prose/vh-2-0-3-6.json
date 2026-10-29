@@ -1,0 +1,85 @@
+{
+ "batch": "vh-2-0-3-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-0-3-6": {
+   "title": "The Slatted Pine",
+   "text": "Ice-pellets rattle against your canvas coat as you dash across an exposed platform of slatted pine suspended over the yawning gorge. Beneath your boots, the frozen boards rattle with every gust of mountain air, and Biscuit stumbles once behind you, her hooves clicking sharply against the wood before she regains her footing. The heavy bronze Clapper hums in its padded cradle on your back, vibrating in time with the whipping anchor cables that hold the entire market frame to the cliff. You need to pick your way forward before the storm thickens.",
+   "exits": [
+    "Follow the torchlight across the boards",
+    "Head toward the swinging toll-house lantern",
+    "Take the narrow snow ledge past the spinning lofts"
+   ]
+  },
+  "vh-2-0-3-7": {
+   "title": "The Guild's Favor",
+   "text": "The guard spots your braided guild-rope coil looped across your shoulder and instantly clears the winch-lane without demanding a single coin or a second glance. A nod of mutual respect passes between you as you step past the heavy iron gate, leaving the cold toll-takers behind in their drafty box. The air here smells of clean hemp and old grease, offering a brief shelter from the biting winds that sweep across the upper market platforms. Biscuit huffs a warm cloud of steam into the dim evening air, eager to keep moving down the steep drop.",
+   "exits": [
+    "Step around the groaning iron winch-drum",
+    "Walk toward the swinging toll-house lantern"
+   ]
+  },
+  "vh-2-0-3-8": {
+   "title": "The Smuggler's Plea",
+   "text": "A nervous merchant named Kael darts out from a shadow of stacked hemp bales, his fingers twitching as he begs you to hide his smuggled tin wire beneath your bronze Clapper cradle. He glances anxiously toward the upper toll-post, whispering that the Cable Court inspectors are seizing all unbonded metal tonight. The low hum of the Great Bell's tongue throbs against your spine while you weigh the risk of carrying extra weight for a stranger who looks ready to bolt at the first sound of a heavy boot.",
+   "exits": [
+    "Move past the groaning cargo winch-drum",
+    "Follow the narrow snow ledge past the spinning lofts"
+   ]
+  },
+  "vh-2-0-3-9": {
+   "title": "The Granite Pegs",
+   "text": "You climb a vertical series of wooden pegs hammered directly into the frozen granite face above the roaring bazaar, your fingers stiffening against the raw timber. Each handhold is caked in rime ice, and the heavy bronze Clapper shifts uneasily in its cradle, threatening to throw you off balance with its low, persistent hum. Down below, the lantern lights of the rope markets blur into scattered amber embers against the gathering gray twilight of the mountain wall.",
+   "exits": [
+    "Approach the swinging toll-house lantern ahead",
+    "Step onto the narrow snow ledge past the lofts"
+   ]
+  },
+  "vh-2-0-3-10": {
+   "title": "The Inquiring Clerk",
+   "text": "A toll-house window flies open with a sharp crack of frost-bound wood, and an irate clerk leans out into the gale to demand why your pack is humming so loudly. He squints through the driving sleet, his quill poised over a ledger while he questions whether your cargo requires an extra descent tariff. The heavy bronze tongue vibrates against your shoulder blades, its ancient note swelling as if answering the clerk's suspicious gaze.",
+   "exits": [
+    "Move toward the swinging toll-house lantern",
+    "Take the narrow snow ledge past the upper lofts"
+   ]
+  },
+  "vh-2-0-3-11": {
+   "title": "The Tar-Scented Gap",
+   "text": "You squeeze through a narrow gap between two timber winch-shacks where the thick, comforting smell of warm pine tar fills the damp air. The howling mountain wind drops away for a few blessed moments, replaced by the rhythmic creak of heavy machinery and the low murmur of off-duty cable-riders sharing a flask of barley spirit in the corner shadows. Biscuit brushes her flank against the rough planking as she follows you through the tight squeeze.",
+   "exits": [
+    "Follow the narrow snow ledge past the spinning lofts",
+    "Head toward the flickering lanterns of the guild stalls"
+   ]
+  },
+  "vh-2-0-3-12": {
+   "title": "The Capstan Master's Direction",
+   "text": "A gray-bearded capstan-master named Hake points a scarred, leather-wrapped finger toward the flickering lanterns of the lower market, shouting over the grind of a distant brake-wheel. He tells you to watch the ground cables for sudden tension shifts as the evening cargo runs begin down the mountain. Biscuit cocks an ear at the deep groaning of the capstan gears while you map out your footing in the dim light.",
+   "exits": [
+    "Walk toward the flickering lanterns of the guild stalls"
+   ]
+  },
+  "vh-2-0-4-0": {
+   "title": "The Timber Trench",
+   "text": "You drop into a sheltered timber trench where discarded rope-scraps deaden the howling roar of the mountain wind into a hollow, distant sigh. The ground here is padded with springy hemp cuttings and thick strands of tarred coir that cushion Biscuit's hooves as she steps down beside you. For a moment, the freezing draft is blocked by high stacked walls of surplus cable reels, giving you a chance to check the lashings on the humming bronze cradle before the next leg of the descent.",
+   "exits": [
+    "Approach the glowing canvas pavilion of the Knot-Oath Stall"
+   ]
+  },
+  "vh-2-0-4-1": {
+   "title": "The Urgent Dispatch",
+   "text": "A Cable Court runner brushes past you in the gloom, their woolen cloak frosted with rime as they carry urgent dispatches about the frozen pass gates down toward the lower terraces. Their boots clatter sharply against the frozen deck timbers before the runner vanishes around a towering stack of Manila rope coils. The sudden rush of wind left in their wake sets the heavy bronze Clapper humming a sharp, warning note against your back.",
+   "exits": [
+    "Approach the glowing canvas pavilion of the Knot-Oath Stall"
+   ]
+  },
+  "vh-2-0-4-2": {
+   "title": "The Vibrating Web",
+   "text": "You navigate a web of crossed guy-lines that vibrate like giant harp strings in the rising evening gale, every taut fiber humming a different pitch to the mountain wind. Your boots find purchase on the frozen decking between the vibrating strands while you keep a steady hand on Biscuit's halter to guide her through the singing wire maze. Ahead, the path narrows toward the main assembly tents where the ropewrights gather.",
+   "exits": [
+    "Seek safe passage inside the glowing canvas pavilion",
+    "Face the chief rope-master blocking the descent path"
+   ]
+  }
+ },
+ "missing": []
+}

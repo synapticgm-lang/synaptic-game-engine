@@ -1,0 +1,56 @@
+@@SECTION vh-5-0-4-7
+TITLE: The Weathered Pillar
+TEXT: Beside a weathered stone pillar guarding the orchard exit, you tighten your grip on the carrying poles while a lone warden whistles in the gloom. The damp air tastes of rotten leaves and cold stone, sticking to the wool of your scarf and frosting the metal rivets of the bronze Clapper cradle upon your back. Through the churning white veil, the outline of the twisted pear trees dissolves into shifting shadows that offer neither direction nor comfort. // Will you follow the thin sound of the warden's signal deeper into the haze, or turn your shoulder toward the denser thicket where the ground slopes steeply downward?
+EXIT 1: Follow the warden's distant whistle into the grey haze
+@@END
+@@SECTION vh-5-0-5-0
+TITLE: The Fog-Drowned Gate
+TEXT: Standing before the fog-drowned orchard gate, you check your footing in the clinging mud while the distant guide-bells ring their hollow noon chime. The iron latch of the wicket is slick with condensation, and the heavy timber frame seems to sweat in the breath of the cloud-bank. Somewhere beyond the barrier, a mule's harness jingles faintly, swallowed instantly by the heavy moisture that hangs between earth and sky. // Do you draw back the damp bolt to continue your descent, or pause a moment longer to test the security of your pack straps?
+EXIT 1: Press onward through the damp wicket
+@@END
+@@SECTION vh-5-0-5-1
+TITLE: The Timber Barrier
+TEXT: Before the heavy timber barrier lost in white mist, you listen for the warden's whistle that will tell you whether the lower path is clear. The wood is swollen with moisture, smelling sharply of wet bark and hidden earth, while the great bronze tongue on your back hums a low, sympathetic vibration against your spine. Every breath draws raw cold into your chest, reminding you of the long miles still remaining before the valley floor. // Will you lift the wooden latch and venture into the white unknown, or wait another minute for clearer signs from the guides?
+EXIT 1: Press onward through the heavy mist
+@@END
+@@SECTION vh-5-0-5-2
+TITLE: The Damp Threshold
+TEXT: At the threshold of the damp orchard gate, you adjust the clapper's cradle while the surrounding fog swirls like cold smoke among the twisted boughs. Droplets gather on your eyelashes and drip steadily onto your collar, chilling your skin with the relentless damp of the upper cloud-sea. The path ahead is nothing more than a pale suggestion of mud and stone fading entirely into the grey expanse. // Do you step past the rotting gateposts into the grey gloom, or check your provisions before taking another pace?
+EXIT 1: Press onward into the white orchard
+@@END
+@@SECTION vh-5-0-5-3
+TITLE: The Locked Wicket
+TEXT: Facing the locked wicket of the fog-bound orchard gate, you brace yourself against the damp chill and wait for the mandatory warden check. The iron bars are freezing to the touch, and the silence of the orchard is heavy, broken only by the distant, rhythmic drip of condensation from low-hanging branches. Your shoulders ache from the balanced weight of the bronze tongue, yearning for the moment the path opens. // Do you wait patiently for the warden to unlock the barrier, or rattle the iron latch to hurry them along?
+EXIT 1: Press onward when the latch lifts
+@@END
+@@SECTION vh-5-c1
+TITLE: The Orchard Gate
+TEXT: Deep within the choking mists of the Fogbank Orchards, the path fractures into a labyrinth of dripping boughs and treacherous mud. Those who travel with the muleBiscuit have a reliable guide whose sensitive nostrils can smell the firm soil beneath the bog, while those travelling alone must rely entirely on their own wits and the occasional faint echo of a warden's bell. The cold air bites at your fingers, and the heavy Clapper hums an anxious note against your shoulder blades as you weigh your next step. // Do you trust your faithful beast to lead the way through the blinding grey, or forge ahead on your own judgement?
+EXIT 1: Biscuit knows the way through the fog
+EXIT 2: Find your own way through the fog
+@@END
+@@SECTION vh-5-1-0-0
+TITLE: The Mossy Fence
+TEXT: Among dripping pear trees, you test a mossy fence line while the bronze Clapper hums softly against your aching shoulders. The wood is slick with green slime, and every handhold threatens to slip into the wet mulch beneath your boots. Biscuit picks a careful path beside you, blowing warm, steaming breaths into the freezing fog that swirls around your shins. // Will you follow the rotting fence toward the lower terrace edge, or veer toward the sound of dripping water in the thicket?
+EXIT 1: Follow the rotting fence toward the terrace drop
+EXIT 2: Veer toward the sound of dripping water in the thicket
+@@END
+@@SECTION vh-5-1-0-1
+TITLE: The Stone Cistern
+TEXT: Blinded by woolly mist near a stone cistern, you pause to listen for the Warden's guiding whistle ahead. The stagnant water inside the moss-choked basin ripples with tiny, invisible drops, echoing hollowly in the damp quiet. Your fingers are stiff with cold, gripping the shoulder poles so tightly your knuckles show white against the gloom. // Will you press forward into the white blur of the orchard lane, or skirt the edge of the stone cistern to find firmer footing?
+EXIT 1: Step blindly into the white orchard lane
+EXIT 2: Skirt the rim of the mossy stone cistern
+EXIT 3: Listen closely for another whistle from the hidden wardens
+@@END
+@@SECTION vh-5-1-1-0
+TITLE: The Cider Press
+TEXT: An old cider press blocks the sunken path, its rusted screw weeping amber juice into the soaked mulch. The air around the heavy oak beams smells sharply of fermented pulp and autumn rot, pungent enough to cut through the mountain chill. A few frozen apples still cling to the branches overhead like yellow teeth in a skull. // Do you squeeze past the iron handle of the press into the murk, or climb the slippery turf bank to go around?
+EXIT 1: Squeeze past the iron handle of the press
+EXIT 2: Climb the slippery turf bank to go around
+@@END
+@@SECTION vh-5-1-1-1
+TITLE: The Empty Crates
+TEXT: Frost-bitten branches claw at your sleeves as you slip past a silent shed stacked with empty crates. The wooden slats are grey and weathered, smelling of old storage straw and winter dampness. Your boots squelch deeply in the saturated soil, making each step a deliberate test of balance under the heavy bronze burden. // Will you keep close to the shed wall to guide your way, or cut across the open muddy patch toward the tree line?
+EXIT 1: Keep close to the wooden wall of the shed
+EXIT 2: Cut across the open muddy patch toward the trees
+@@END

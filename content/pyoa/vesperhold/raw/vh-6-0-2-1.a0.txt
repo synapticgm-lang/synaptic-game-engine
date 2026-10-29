@@ -1,0 +1,64 @@
+@@SECTION vh-6-0-2-1
+TITLE: The Leaking Wharf
+TEXT: Under the leaking canvas of the vegetable wharf, a merchant named Hestia inspects bruised cabbages ruined by the flood, her fingers stained green with vegetable rot. The bronze Clapper on your back hums a low, damp note against your spine as the icy river breeze sweeps through the rotting crates. Hestia mutters bitterly over a ruined crate of winter roots, tossing a water-logged head aside into the murky shallows where greasy foam bobs against the pilings. You shift the padded cradle, balancing the weight of the bell's tongue before the cold damp settles deeper into your joints.
+EXIT 1: Inspect the watchman near the water-gate
+EXIT 2: Seek the rag-picker in her damp cellar
+EXIT 3: Watch the net-weaver mend hemp meshes
+@@END
+@@SECTION vh-6-0-2-2
+TITLE: The Potter's Kiln
+TEXT: Beside the blackened chimney of the potters' lane, a kiln-stoker named Dael feeds scrap wood into a spluttering fire, sending greasy grey smoke curling into the drizzle. The intense heat offers a brief mercy against the mountain chill, warming the wet leather straps of the Clapper cradle resting between your shoulder blades. Dael shoves another splintered crate into the roaring mouth of the clay oven, sparks spitting sharply onto the soot-stained cobbles. Across the lane, shadows lengthen over the dark doorways of the guildhouse, where impatient voices rise above the hiss of steam.
+EXIT 1: Slip down into the rag-picker's cellar
+EXIT 2: Walk past the debt-collectors without stopping
+@@END
+@@SECTION vh-6-0-2-3
+TITLE: The Chain-Locker
+TEXT: Near the rusted iron chain-locker, a wharfinger named Fenn tallies broken mooring rings lost to the winter surge, scratching figures onto a damp slate with a piece of chalk. The heavy iron links rattle dully every time the swollen river heaves against the wooden piers below. Fenn glances up from his slate, eyeing the heavy padded bundle on your back with professional curiosity before returning to his dismal count. Further along the embankment, shadowy passages lead toward the grain hoist and the wet stone steps of the lower basin.
+EXIT 1: Follow the embankment toward the net-weaver
+EXIT 2: Proceed past the guildhouse without a copper owed
+EXIT 3: Check the grain hoist for dry shelter
+@@END
+@@SECTION vh-6-0-2-4
+TITLE: The Old Mule-Stalls
+TEXT: Because Biscuit knows the old mule-stalls behind the tannery, you slip past the toll-collector's guard without a glance, treading softly over grease-slicked flagstones. The sturdy animal picks its way with sure-footed cunning through the gloom, its ears flicking back at every sudden splash of river water. The heavy Clapper hums against your back in steady rhythm with the beast's slow breathing, keeping pace through the forgotten corners of the lower port. Ahead, narrow alleys branch off into the shadows of the old quarter, offering paths away from the watchful eyes of the toll-lords.
+EXIT 1: Descend into the rag-picker's murky cellar
+EXIT 2: Pass the guildhouse doors with a steady stride
+EXIT 3: Seek shelter beneath the timber grain hoist
+@@END
+@@SECTION vh-6-0-2-5
+TITLE: The Wool-Combers' Loft
+TEXT: Beneath the sagging eaves of the wool-combers' loft, an artisan named Nyx washes fleece in greasy river water, her arms red and raw from the biting cold. The soapy stench of lanolin mixes heavily with the damp odor of rotting weed drifting up from the swollen canal. Nyx wrings out a heavy fleece with a sharp twist, sending dirty water splashing across the wooden trough. Downstream, the embankment stretches toward the net-weaver's hut and the smoking hearths of the charcoal-burners hidden in the lower ward.
+EXIT 1: Head toward the net-weaver's embankment
+EXIT 2: Approach the charcoal-burners' warm shelter
+@@END
+@@SECTION vh-6-0-2-6
+TITLE: The Candle-Dippers' Alley
+TEXT: Along the narrow alley behind the candle-dippers, an apprentice named Jory spills hot tallow onto the cobblestones, watching the pale wax harden instantly in the freezing air. The sweet, heavy scent of rendered mutton fat hangs thick between the damp brick walls, masking the sharper stench of the flooded drains. Jory scrapes at the cooling spill with a chipped slate blade, muttering curses under his breath as the wind whistles through the passage. The lane leads onward toward the smoking hearth of the charcoal workers and the towering timber rafters of the grain hoist.
+EXIT 1: Warm your hands near the charcoal-burners
+EXIT 2: Climb toward the shadowy grain hoist
+@@END
+@@SECTION vh-6-0-2-7
+TITLE: The Timber Crane
+TEXT: Near the weed-hung crane on the timber pier, a sawyer named Loran stacks waterlogged pine planks, his muscles straining against the dead weight of the sodden timber. The river laps hungrily against the rotting pilings below, threatening to tear the remaining docks from their rusted iron anchorages. Loran pauses to wipe sweat from his brow with a brine-stiffened sleeve, staring across the grey expanse of the lower basin. Behind you, the silt-choked quay offers a clear path back toward the upper terraces where the mountain climb begins.
+EXIT 1: Assist the laborer at the coal-quay winch
+EXIT 2: Inspect the hide-salter's pelts by the lane
+EXIT 3: Turn back toward the upper mountain trail
+@@END
+@@SECTION vh-6-0-2-8
+TITLE: The Lower Bridge
+TEXT: Beside the crumbling stone buttress of the lower bridge, a mason named Krell chisels dry mortar into a wet crack, his mallet striking the stone with dull, rhythmic thuds. The freezing spray from the swollen river mists his thick beard, turning the droplets into tiny points of ice. Krell tests the stubborn masonry with a gloved thumb before dipping his trowel back into the bucket of gritty lime. Beyond the bridge, narrow paths wind toward a quiet stone shrine and the creaking timber cranes of the yard.
+EXIT 1: Visit the quiet stone shrine for safe passage
+EXIT 2: Approach the loader stacking pine logs
+@@END
+@@SECTION vh-6-0-2-9
+TITLE: The Sail-Loft
+TEXT: Within the shadowy recess of the sail-loft, a seamstress named Thalia patches heavy canvas torn by mountain gales, her bone needle pulling stout waxed thread through stiffened folds. The vast sheets of grey cloth rustle like dry leaves in the drafty upper room, smelling of salt and fish-oil. Thalia works by the pale light of a narrow window overlooking the flooded quays, her hands moving with swift, practiced grace. Below, the coal-quay and the tanneries wait in the freezing drizzle, their lanes choked with the debris of the storm.
+EXIT 1: Descend toward the coal-quay winch
+EXIT 2: Walk past the tanneries along the muddy lane
+@@END
+@@SECTION vh-6-0-2-10
+TITLE: The Foundry Quarter
+TEXT: Within the flooded foundry quarter, the river laps against the blackened stone foundations of the Great Forge while forge-masters argue bitterly over dwindling supplies of tin. The air smells intensely of sulfur, wet coal-dust, and the sharp, metallic tang of molten metal cooling in iron trays. Every old promise made to the mountain city now comes due in the flickering glow of the central furnace, where the fate of the cracked bell hangs in the balance. Outside in the freezing drizzle, workers scurry between the timber yards and the smoldering smiths' alley.
+EXIT 1: Head toward the creaking timber-yard crane
+EXIT 2: Approach the smiths' alley and the dying brazier
+@@END

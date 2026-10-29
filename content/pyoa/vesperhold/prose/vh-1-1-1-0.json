@@ -1,0 +1,97 @@
+{
+ "batch": "vh-1-1-1-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-1-1-0": {
+   "title": "The Watering Trough",
+   "text": "Beside the stone watering trough, old Garrow watches you tug at Biscuit's stubborn halter, warning that the mule will bolt if the cliff gales turn sour before the ninety steps. The animal plants all four grey hooves firmly in the slush, ears pinned back against the mountain cold, while the bronze clapper hums a low, sympathetic vibration against your shoulder blades. You adjust the heavy straps and weigh your options in the biting air.",
+   "exits": [
+    "Pull the stubborn beast forward",
+    "Wait for the gale to pass",
+    "Trade a crust for better footing"
+   ]
+  },
+  "vh-1-1-1-1": {
+   "title": "The Granary Porch",
+   "text": "Under the timber porch of the granary, you pause to secure a loose buckle on the clapper's cradle while Biscuit sniffs a sack of damp barley with absolute disdain. The mountain wind whistles through the vertical slats above, carrying the sharp scent of old straw and melting ice from the upper roofs. You pat the mule's grey neck, feeling the iron tongue shift slightly in its felt lining as you prepare for the descent.",
+   "exits": [
+    "Step out onto the frozen path",
+    "Check the harness once more",
+    "Lead the animal past the stack"
+   ]
+  },
+  "vh-1-1-1-2": {
+   "title": "The Smithy's Drain",
+   "text": "Past the smithy's smoking drain, you lead the reluctant animal toward the upper gate, where the frozen ruts threaten to jar the humming bronze against your spine. Sparks from the coal-trough drift upward into the grey air, dying out long before they reach the high stone eaves of Vesperhold. Biscuit tosses his head, snorting a cloud of white vapor into the freezing wind as the first flight of stairs looms ahead.",
+   "exits": [
+    "Push through the narrow gateway",
+    "Pause by the warm iron runoff",
+    "Steady the clapper on your back"
+   ]
+  },
+  "vh-1-1-1-3": {
+   "title": "The Tallow-Chandler's Lane",
+   "text": "Ice crunches beneath your boots in the narrow alley behind the tallow-chandler's workshop, where long yellow candles hang frozen in their wire racks. Biscuit stumbles against a stray cask, rattling the heavy bronze tongue until it hums a deep, mournful note against your shoulder blades. You grip the lead rope tighter, feeling the chill seep through your wool mittens as the vertical world drops away before you.",
+   "exits": [
+    "Navigate past the dangling tallow racks",
+    "Check the bronze for new cracks",
+    "Haul the mule away from the edge"
+   ]
+  },
+  "vh-1-1-1-4": {
+   "title": "The Charcoal Burners' Yard",
+   "text": "Black dust coats your boots as you haul on the lead rope to keep Biscuit from rolling in a pile of spent charcoal near the lower kilns. The air tastes of sulfur and ancient pine smoke, stinging your eyes against the bright glare of the snow-fields above the cloud line. You hitch the padded cradle higher on your shoulders, listening to the faint, steady thrum of the heavy metal tongue.",
+   "exits": [
+    "Drag the animal toward the steps",
+    "Sweep the soot from your harness",
+    "Speak softly to calm the mule"
+   ]
+  },
+  "vh-1-1-1-5": {
+   "title": "The Lower Yard Gate",
+   "text": "By the iron-studded gates of the lower yard, the duty porter inspects your travel tally while Biscuit tries to nibble the moss off a damp stone pier. The mountain air is thin and clear, tasting of clean ice and distant stone-dust from the stair-towns hanging down the cliff. You shift your weight to ease the ache in your back, keeping a firm hand on the leather halter.",
+   "exits": [
+    "Present the stamped brass tally",
+    "Yank the lead rope away firmly",
+    "Look down into the open abyss"
+   ]
+  },
+  "vh-1-1-2-0": {
+   "title": "The Harness Shed",
+   "text": "In the cramped harness shed, Miller Thrum offers a handful of salted oats to coax the beast forward, demanding a copper toll just to clear the grain-chute path. Biscuit pricks his ears at the rattle of grain, though his stubborn stance remains unbroken against the frost-heaved flagstones. You dig into your pocket for the coin, watching the miller's scarred fingers tap impatiently on the wooden shelf.",
+   "exits": [
+    "Pay the toll and press on",
+    "Turn back to the upper yard",
+    "Take the reckless way down"
+   ]
+  },
+  "vh-1-1-2-1": {
+   "title": "The Salt-Store Eaves",
+   "text": "Beneath the hanging eaves of the salt-store, you wrestle with Biscuit's stubborn refusal to cross a patch of black ice, risking a tumble toward the outer abyss. The mule braces his legs like carved granite, eyes wide as he stares at the dizzy drop where the cloud line swallows the lower stairs. You lean your shoulder into the animal's flank, trying to find traction on the frozen glaze.",
+   "exits": [
+    "Wrest the beast across the ice",
+    "Seek a safer detour inland",
+    "Unload the clapper to lighten things"
+   ]
+  },
+  "vh-1-1-2-2": {
+   "title": "The Hay-Loft Ladder",
+   "text": "By the lower hay-loft ladder, stable-hand Meara hands you a spare leather girth, muttering that the mule smells the coming blizzard in the deep gorge below. The hemp smells of summer fields long gone, sharply at odds with the bitter wind sweeping up from the first stair-town. You loop the extra strap around the clapper's cradle, thanking her with a quick nod before turning back to the descent.",
+   "exits": [
+    "Secure the extra leather girth",
+    "Ask about the blizzard warnings",
+    "Pull the reluctant mule along"
+   ]
+  },
+  "vh-1-1-2-3": {
+   "title": "The Sheep Pens",
+   "text": "Near the frost-rimed sheep pens, you pause to catch your breath against the biting updraft, checking whether the heavy bronze tongue has shifted in its felt cradle. The woolly backs of the penned rams crowd against the wooden hurdles, steaming in the frigid air while Biscuit blows a long, whistling sigh through his nostrils. You tighten the chest strap, feeling the familiar hum reassure you against the cold.",
+   "exits": [
+    "Check the felt padding closely",
+    "Urge the mule past the pens",
+    "Rest your shoulders against a post"
+   ]
+  }
+ },
+ "missing": []
+}

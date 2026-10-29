@@ -1,0 +1,83 @@
+{
+ "batch": "vh-4-2-4-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-2-4-2": {
+   "title": "The Mule Rime",
+   "text": "Biscuit shakes the rime from her grey ears while you unbuckle the heavy padded cradle from your exhausted shoulders. The bronze clapper rests quietly against the shale, its long tongue cold to the touch as the mountain air slowly stills around you. A thin ribbon of woodsmoke curls up from a hidden hearth somewhere down the rocky slope, promising shelter from the biting draft.\n\nYou weigh the leather harness in your calloused hands, wondering if the mule has the spirit for the descent ahead or if you should seek out the trail-keeper's warming hut before night settles over the moraine.",
+   "exits": [
+    "Check the mule's sore hooves",
+    "Follow the thin trail of smoke",
+    "Rest against the cold boulder"
+   ]
+  },
+  "vh-4-2-4-3": {
+   "title": "The High Cascade",
+   "text": "You look back up the towering white cascade of the glacier ladders, marveling that the bronze clapper made the descent intact. Jagged walls of blue-white ice loom like frozen cathedral spires against the pale sky, groaning under the pressure of their own immense weight. Every timber bridge and hemp rope you crossed now looks impossibly fragile from this safe distance on solid ground.\n\nA sudden gust of wind rattles the metal tongue inside its padded leather housing, reminding you that the journey is far from finished.",
+   "exits": [
+    "Continue down the stony path",
+    "Shelter near the rock face",
+    "Retrace your steps upward"
+   ]
+  },
+  "vh-4-2-4-4": {
+   "title": "The Stone Marker",
+   "text": "A lone fog-warden named Rix waits by the stone boundary marker to guide travelers down into the misty lower tiers. Wearing a heavy wool cloak stiffened with salt and grease, Rix strikes a small bronze tuning fork against a knee-high cairn to test the density of the damp air. The resulting chime hangs suspended in the grey mist for a long, quiet moment before fading into the frost.\n\nThe warden nods a silent greeting, tapping the smooth wood of a long guiding staff against the damp earth.",
+   "exits": [
+    "Ask the warden about the trail",
+    "Pass by without breaking stride"
+   ]
+  },
+  "vh-4-2-4-5": {
+   "title": "Fading Hum",
+   "text": "You massage feeling back into your frost-nipped fingers while the bronze clapper gives one last fading hum in the quiet air. The metal seems almost alive against your spine, vibrating with the memory of Vesperhold's high towers whenever a cold gust sweeps across the moraine. A thin crust of rime flakes off the leather straps and scatters across the grey slate stones like salt.\n\nYou take a deep breath of the heavier, less brittle air, feeling the first true warmth of the lower altitudes reach your cheeks.",
+   "exits": [
+    "Lead the mule toward the track",
+    "Adjust the straps on your back"
+   ]
+  },
+  "vh-4-2-4-6": {
+   "title": "Apple-Scented Breeze",
+   "text": "The icy wind finally softens into a damp, apple-scented breeze blowing up from the mist-shrouded orchard valleys below. The harsh bite of the glacier begins to yield, replaced by the rich, earthy aroma of wet humus and rotting leaves. You can hear the distant, rhythmic creak of wooden cider presses turning somewhere down in the fog.\n\nThe heavy bronze load on your back feels slightly less burdensome in the gentler air.",
+   "exits": [
+    "Step into the misty orchards"
+   ]
+  },
+  "vh-4-2-4-7": {
+   "title": "Threshold of Mist",
+   "text": "You step past the stone threshold of the glacier's reach, setting your feet firmly on the muddy path toward the fogbanks. The white glare of the ice yields to a soft, diffuse grey as the low-hanging cloud layer swallows the trail ahead. Every sound is muffled here, turned into a dull thud by the thick, moisture-laden air that clings to your wool garments.\n\nYou keep one hand on Biscuit's leather halter to ensure the mule does not stray from the worn track.",
+   "exits": [
+    "Follow the path into the fog"
+   ]
+  },
+  "vh-4-2-5-0": {
+   "title": "Upper Orchard Fences",
+   "text": "You lead the mule down the winding stone track as the gray shapes of the upper orchard fences loom through the rising mist. Moss-covered apple trees reach out like gnarled fingers on either side of the path, their branches heavy with late, frost-bitten fruit. The world above has vanished entirely behind a curtain of thick white cloud, leaving only the sound of clicking hooves on wet slate.\n\nA wooden gate stands slightly ajar ahead, marking the boundary of the lower tier's managed lands.",
+   "exits": [
+    "Press on through the gate"
+   ]
+  },
+  "vh-4-2-5-1": {
+   "title": "Distant Bell",
+   "text": "A distant bell tolls dully from the fog-warden post below, marking the safe passage of another traveler off the high ice. The sound is thick and muted by the surrounding moisture, carrying none of Orison's crystalline resonance but offering a steady, human rhythm nonetheless. Biscuit pricks her ears forward at the chime, quickening her pace along the narrowing dirt track.\n\nThe steep mountain wall now rises like a sheer black cliff to your left, entirely obscured by the creeping vapor.",
+   "exits": [
+    "Press on into the mist"
+   ]
+  },
+  "vh-4-2-5-2": {
+   "title": "Wet Canopy",
+   "text": "The last frozen rungs of the mountain world vanish behind you as the wet canopy of the fogbank orchards closes in. Water droplets condense on your eyelashes and drip steadily from the brim of your woolen cap, cool and refreshing after the dry, lung-burning air of the heights. The path turns to packed mud underfoot, flanked by stone walls slick with green slime.\n\nYou steady the padded cradle on your shoulders as the mule stumbles slightly on a slick root.",
+   "exits": [
+    "Press on down the track"
+   ]
+  },
+  "vh-4-2-5-3": {
+   "title": "Silver Twilight",
+   "text": "You adjust the heavy cradle on your back and stride into the damp, silver twilight of the lower orchard terraces. The air here smells of damp bark, wet grass, and the faint, sweet decay of fallen apples fermenting in the deep grass. Shadows lengthen across the terrace walls as the hidden sun sinks lower behind the thick blanket of clouds.\n\nYou grip the lead rope tighter and keep your eyes fixed on the winding dirt path ahead.",
+   "exits": [
+    "Press on toward the valley"
+   ]
+  }
+ },
+ "missing": []
+}
