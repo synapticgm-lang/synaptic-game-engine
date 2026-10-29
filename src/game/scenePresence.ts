@@ -109,11 +109,13 @@ export function peopleHere(state: GameState): string[] {
     add(roadMeetingGroupLabel(state));
     return [...out.values()];
   }
-  // T10RC6 — underway: one seat list = companions + live foe + in-range meeting name.
-  // Do not keep place-cast leftovers (Orel at Lowmarket) beside a road stranger.
+  // T10RC6 / T10RC6fix — underway: companions + live foe + committed sceneFacts.present
+  // (after withQuietRoadCast cleared stale place cast) + presentNpcRecords + meeting name.
+  // Do not pull presentNpcNames' present:true / place-stamp leftovers (Orel at Lowmarket).
   if (isJourneyUnderway(state)) {
     (state.companions ?? []).forEach((c) => add(c.name));
     add(state.activeEncounter?.name);
+    for (const n of facts?.present ?? []) add(n);
     for (const m of presentNpcRecords(state)) add(m.npcName);
     add(roadMeetingPeople(state));
     add(roadMeetingGroupLabel(state));

@@ -359,10 +359,14 @@ export function presentNpcNames(state: GameState): string[] {
     if (resolveNpcRecord(state, name)?.shouldExit || isOutOfTalkingRange(state, name)) return;
     out.set(key, name);
   };
-  // T10AQ-fix — sceneFacts.present / present:true stay readable (SRD Medicine stabilize needs a
-  // present ally). Quiet-road CAST honesty is owned by commitTravel (clears stale road occupancy)
-  // + presentNpcRecords (no UNDERWAY historical location match) + npcNamesAt(UNDERWAY)=[].
-  for (const n of state.sceneFacts?.present ?? []) add(n);
+  // T10AQ-fix / T10RC6fix — sceneFacts.present is the seat authority (presentAuthority.seat).
+  // Trust it even when a memory stamp is a generic road label ("On the road between places")
+  // vs the trip HERE ("On the road between A and B") — npcPlacedElsewhere must not empty the
+  // seat list and fire "No one was there to answer" while a named person is acting on the page.
+  // Quiet-road CAST honesty stays on commitTravel (clears stale road occupancy) +
+  // presentNpcRecords (no UNDERWAY historical location match) + npcNamesAt(UNDERWAY)=[].
+  // present:true alone still checks elsewhere (stale flag without a seat).
+  for (const n of state.sceneFacts?.present ?? []) add(n, true);
   for (const m of state.npcMemories ?? []) if (m.present === true) add(m.npcName);
   for (const m of presentNpcRecords(state)) add(m.npcName, true);
   return [...out.values()];
