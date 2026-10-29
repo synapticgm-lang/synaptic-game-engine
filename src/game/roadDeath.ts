@@ -28,8 +28,9 @@ function deathBeatToBookProse(beat: string): string {
 }
 
 /**
- * When Extended Travel / starvation death settled this turn, the book page is the death
- * sentence (what rolled / why), never a CAST reaction. Null when the PC is not dead on the record.
+ * When Extended Travel / exhaustion-6 death settled this turn (on the travel beat), the book
+ * page is that death sentence — never a CAST reaction. Null when the PC is not dead, or when
+ * death came from elsewhere (combat death saves, danger) with no travel-beat death on record.
  * (Uses deathSaves.dead directly to avoid a roadDeath ↔ death ↔ travelJourney import cycle; readers elsewhere use isDead.)
  */
 export function roadDeathBookProse(
@@ -38,7 +39,8 @@ export function roadDeathBookProse(
   if (!state.deathSaves?.dead) return null;
   const beat = travelBeatFact(state);
   const fromBeat = beat ? deathBeatToBookProse(beat) : '';
+  // SRD 5.2.1 Exhaustion level 6 = death (WotC CC BY 4.0). Only when this turn's travel beat
+  // records the march / road death — not every deathSaves.dead (combat death saves stay off this page).
   if (fromBeat && /\bYou are dead\./i.test(fromBeat)) return fromBeat;
-  // SRD 5.2.1 Exhaustion level 6 = death (WotC CC BY 4.0). Extended Travel CON-save death uses this line.
-  return 'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.';
+  return null;
 }

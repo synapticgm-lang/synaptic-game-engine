@@ -5,11 +5,13 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import {
+  chipWouldMarch,
   commitTravel,
   journeyPads,
   roadDeathBookProse,
   travelBeatFact,
   travelEngineLines,
+  withMarchWarnPads,
   worldClock,
   writerEngineResult,
 } from './travelJourney';
@@ -124,6 +126,43 @@ describe('T10AQ (b) SRD 5.2.1 Extended Travel + Exhaustion', () => {
     expect(journeyPads(at2)[1]).toMatch(/each failed save wears you down more/);
     const at5 = quietTrip('aq-ex5', 10, { character: { ...keep('x').character, exhaustion: 5 } });
     expect(journeyPads(at5)[1]).toMatch(/one failed save now kills you/);
+  });
+});
+
+describe('T10RC4 (7a) march warn on every spend-day move; camp default at high exhaustion', () => {
+  it('exhaustion 3–5 + spent day: all move chips warn; Make camp offered first', () => {
+    // SRD 5.2.1 Extended Travel: CON save each hour past 8; Exhaustion 6 = death.
+    for (const ex of [3, 4, 5]) {
+      const s = quietTrip(`rc4-ex${ex}`, 10, { character: { ...keep('x').character, exhaustion: ex } });
+      const pads = journeyPads(s);
+      expect(pads[0]).toBe('Make camp');
+      const moves = pads.filter((p) => /^(?:Push on|Walk on|Travel)/i.test(p));
+      expect(moves.length).toBeGreaterThan(0);
+      for (const m of moves) {
+        expect(m).toMatch(/but (?:one failed save now kills you|each failed save wears you down more)/);
+        if (ex >= 5) expect(m).toMatch(/one failed save now kills you/);
+        else expect(m).toMatch(/each failed save wears you down more/);
+      }
+    }
+  });
+
+  it('Travel toward while spent carries the same warn; commitTravel still marches via marchHours', () => {
+    const s = quietTrip('rc4-toward', 10, { character: { ...keep('x').character, exhaustion: 3 } });
+    const labeled = withMarchWarnPads(s, ['Travel toward Keep Gate', 'Look around']);
+    const travel = labeled.find((c) => /^Travel toward Keep Gate/i.test(c))!;
+    expect(travel).toMatch(/but each failed save wears you down more/);
+    expect(labeled[0]).toBe('Make camp');
+    expect(chipWouldMarch(s, travel)).toBe(true);
+    let died: ReturnType<typeof commitTravel> | null = null;
+    for (let i = 0; i < 40 && !died; i++) {
+      const worn = quietTrip(`rc4-die-${i}`, 10, { character: { ...keep('x').character, exhaustion: 5 } });
+      const push = journeyPads(worn).find((p) => /Push on/i.test(p))!;
+      const out = commitTravel(worn, push);
+      if (out.state.deathSaves?.dead) died = out;
+    }
+    expect(died).not.toBeNull();
+    expect(travelBeatFact(died!.state)).toMatch(/You are dead\./);
+    expect(roadDeathBookProse(died!.state)).toMatch(/forced march wore you down/i);
   });
 });
 

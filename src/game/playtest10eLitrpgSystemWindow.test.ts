@@ -142,3 +142,27 @@ describe('playtest10e — LitRPG System window', () => {
     expect(narrative).toContain('LitrpgSystemWindowPanel');
   });
 });
+
+describe('T10RC4 — System window checker vs Weighing Cup place name', () => {
+  it('private vision + Weighing Cup is not window-touched; real touch still is', async () => {
+    const { checkSystemWindow, checkPlayerTurn } = await import('./turnCheck');
+    const s = summoned({
+      character: { ...summoned().character, name: 'Jax' },
+      sceneFacts: { ...emptySceneFacts(0), props: ['blue panel'] },
+      openingEstablishment: { ...summoned().openingEstablishment!, complete: true, pending: [] },
+    });
+    const vision =
+      "A small blue window only Jax could see hung in the air and pointed at a bounty tied to the Weighing Cup.";
+    expect(checkSystemWindow(s, [], vision).map((f) => f.kind)).not.toContain('window-touched');
+    expect(
+      checkSystemWindow(s, [], 'Jax touched the blue panel; the surface rippled.').map((f) => f.kind)
+    ).toEqual(['window-touched']);
+    // Rebuild T75-shaped row through checkPlayerTurn (real engine, no mock).
+    const row = checkPlayerTurn(s, s, {
+      playerInput: 'Look around',
+      offeredChoices: ['Look around', 'Wait'],
+      gmText: vision,
+    });
+    expect([...row.p0, ...row.down].map((f) => f.kind)).not.toContain('window-touched');
+  });
+});

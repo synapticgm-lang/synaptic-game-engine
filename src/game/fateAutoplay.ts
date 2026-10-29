@@ -251,7 +251,14 @@ import { resolveShopChip } from './shopChips';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
-import { commitTravel, pinClockTimeOfDay, roadDeathBookProse, travelEngineLines, travelOutcome } from './travelJourney';
+import {
+  chipWouldMarch,
+  commitTravel,
+  pinClockTimeOfDay,
+  roadDeathBookProse,
+  travelEngineLines,
+  travelOutcome,
+} from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
 import { checkPlayerTurn, type TurnCheck, type TurnCheckKind } from './turnCheck';
 import { checkTurnInvariants, type InvariantViolation } from './invariants/turnInvariants';
@@ -980,11 +987,14 @@ function pickGoalOrientedChoice(
   return picked.choice;
 }
 /**
- * Harness behaviour (not a game rule): a chip whose label warns that it is lethal ("... one failed save now
- * kills you") is not picked twice in a row by the autoplay button picker unless it is the only option.
+ * Harness behaviour (not a game rule): a move chip that the travel engine predicts would run
+ * Extended Travel CON saves (chipWouldMarch — hours + exhaustion) is not picked twice in a row
+ * unless it is the only option. Soft "wears you down" Push-on counts — same source as pad warnings,
+ * not a LETHAL_CHIP_RE text match (T10RC4 / s9512 soft-label repeat).
  */
 const LETHAL_CHIP_RE = /\b(?:kills? you|will kill you|you (?:will )?die|means? death|fatal|lethal)\b/i;
-export function isLethalChipLabel(label: string): boolean {
+export function isLethalChipLabel(label: string, state?: GameState): boolean {
+  if (state) return chipWouldMarch(state, label);
   return LETHAL_CHIP_RE.test(label);
 }
 let lastAutoPickWasLethal = false;
@@ -995,10 +1005,11 @@ export function avoidRepeatLethalPick(
   offered: string[],
   pick: string,
   rng: Rng,
-  prevWasLethal: boolean
+  prevWasLethal: boolean,
+  state?: GameState
 ): string {
-  if (!prevWasLethal || !isLethalChipLabel(pick)) return pick;
-  const safe = offered.filter((c) => !isLethalChipLabel(c));
+  if (!prevWasLethal || !isLethalChipLabel(pick, state)) return pick;
+  const safe = offered.filter((c) => !isLethalChipLabel(c, state));
   if (!safe.length) return pick;
   return safe[Math.floor(rng() * safe.length)];
 }
@@ -1010,8 +1021,8 @@ function pickChipAvoidingLethalRepeat(
 ): string {
   const candidates = chipsOnly(offered);
   const raw = pickGoalOrientedChoice(candidates, state, mode, rng);
-  const pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal);
-  lastAutoPickWasLethal = isLethalChipLabel(pick);
+  const pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal, state);
+  lastAutoPickWasLethal = isLethalChipLabel(pick, state);
   return pick;
 }const writerPromptSink: { dir?: string; turn: number } = { turn: 0 };
 async function saveWriterPrompt(state: GameState, payload: string): Promise<void> {

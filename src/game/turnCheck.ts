@@ -633,32 +633,51 @@ export function checkEmptyRoomTalk(state: GameState, chips: string[], prose: str
 }
 
 const WINDOW_QUALIFIED = /\b(?:blue|system|status)\s+(?:panel|window|screen)\b/i;
-const WINDOW_PHYSICAL =
-  /\b(?:touch|tap(?:s|ped)?\b|press|push|poke|prod|grab|grasp|grip|lift|weigh|weight|heavy|surface|rippl|heat|warmth|textur|smooth|rough|knock|rap(?:s|ped)?\b|brush|strok|solid|vibrat|shatter)/i;
+/** Contact / sensation verbs scoped to the window noun phrase — not bare substrings of place names (Weighing Cup). */
+const WINDOW_CONTACT_VERB =
+  /\b(?:touch(?:ed|es|ing)?|tap(?:s|ped|ping)?|press(?:es|ed|ing)?|push(?:es|ed|ing)?|poke[sd]?|prod(?:s|ded)?|grab(?:s|bed)?|grasp(?:s|ed)?|grip(?:s|ped)?|lift(?:s|ed)?|hold(?:s|ing)?|reach(?:es|ed|ing)?(?:\s+for)?|knock(?:s|ed|ing)?(?:\s+on)?|rap(?:s|ped)?|brush(?:es|ed)?|strok(?:e|es|ed)?)\b/i;
+const WINDOW_SENSATION =
+  /\b(?:surface|rippl\w*|heat|warmth|textur\w*|smooth|rough|solid|vibrat\w*|shatter\w*)\b/i;
 const WINDOW_NOT_PHYSICAL =
-  /\b(?:pass(?:es|ed)? (?:straight |clean |right )?through|nothing to (?:touch|hold|grip)|can(?:not|['’]t) (?:touch|feel|hold)|only you (?:can )?see)/i;
+  /\b(?:pass(?:es|ed)? (?:straight |clean |right )?through|nothing to (?:touch|hold|grip)|can(?:not|['’]t) (?:touch|feel|hold)|only you (?:can )?see)\b/i;
+/** Chars either side of the window noun that count as the same noun-phrase / clause span. */
+const WINDOW_CONTACT_SPAN = 48;
+
 function systemWindowInPlay(state: GameState, prose: string): boolean {
   if (state.engineMode !== 'litrpg') return false;
   if ((state.sceneFacts?.props ?? []).some((p) => isSystemWindowLabel(p))) return true;
   return [prose, ...gmBodies(state).slice(-3)].some((t) => WINDOW_QUALIFIED.test(t));
 }
 
+/** True when a contact verb or window sensation sits in the same local span as the window noun. */
+function clauseTouchesWindow(clause: string): boolean {
+  if (!WINDOW_NOUN.test(clause) || WINDOW_NOT_PHYSICAL.test(clause)) return false;
+  const m = clause.match(WINDOW_NOUN);
+  if (!m || m.index == null) return false;
+  const start = Math.max(0, m.index - WINDOW_CONTACT_SPAN);
+  const end = Math.min(clause.length, m.index + m[0].length + WINDOW_CONTACT_SPAN);
+  const near = clause.slice(start, end);
+  return WINDOW_CONTACT_VERB.test(near) || WINDOW_SENSATION.test(near);
+}
+
 /**
  * The LitRPG System window is not a thing in the room: only the PC sees it and nobody can touch it.
- * P0 when the prose gives it a surface, heat, weight or a touch, or a chip handles it like an object.
+ * P0 when the prose gives it a surface, heat or a touch in the same clause as the window noun, or a chip handles it like an object.
  */
 export function checkSystemWindow(state: GameState, chips: string[], prose: string): TurnCheckFlag[] {
   if (!systemWindowInPlay(state, prose)) return [];
   const out: TurnCheckFlag[] = [];
   const narration = narrationOf(norm(prose));
-  const lines = narration.split(/(?<=[.!?])\s+/);
-  const touched = lines
+  // Clauses: sentence ends and semicolons. Merge a following "it/its …" clause onto a window clause
+  // so "touched the blue panel; the surface rippled" stays one contact unit.
+  const raw = narration.split(/(?<=[.!?;])\s+/);
+  const touched = raw
     .map((s, i) => {
       if (!WINDOW_NOUN.test(s)) return '';
-      const next = lines[i + 1] ?? '';
-      return /\b(?:it|its)\b/i.test(next) ? `${s} ${next}` : s;
+      const next = raw[i + 1] ?? '';
+      return /\b(?:it|its|the surface)\b/i.test(next) ? `${s} ${next}` : s;
     })
-    .find((s) => s && WINDOW_PHYSICAL.test(s) && !WINDOW_NOT_PHYSICAL.test(s));
+    .find((s) => s && clauseTouchesWindow(s));
   if (touched) out.push({ kind: 'window-touched', detail: `the System window is handled like an object: "${touched.slice(0, 120)}"` });
   for (const chip of chips) {
     const label = norm(chip);

@@ -82,7 +82,7 @@ import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
 import { rankChoices } from './choiceRanking';
 import { withRememberedThreatChip } from './placeThreats';
-import { isJourneyUnderway, withJourneyPads } from './travelJourney';
+import { isJourneyUnderway, withJourneyPads, withMarchWarnPads } from './travelJourney';
 import { ENGINE_COMBAT_CHIP } from './chipLegality';
 /** A fight move only the engine's live encounter can answer (same test as `chipProblem`). */
 function isFightMoveChip(label: string): boolean {
@@ -1334,6 +1334,12 @@ export function compileChoices(
     if (finalChoices !== before && finalChoices.length !== before.length) {
       notes.push('Director chip policy');
     }
+  }
+  // T10RC4 — Extended Travel warn on every move that would marchHours past 8; camp first when high risk.
+  {
+    const before = finalChoices;
+    finalChoices = withMarchWarnPads(state, finalChoices);
+    if (finalChoices !== before) notes.push('March warn pads');
   }
   // s83 Root C — a named person here keeps one talk chip; a role chip never stands in for them.
   if (!engaged) {
