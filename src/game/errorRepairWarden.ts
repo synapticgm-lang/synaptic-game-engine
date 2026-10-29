@@ -21,6 +21,7 @@ import { shortRoomLabel } from './mapEngine';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { hubsForBibleId } from './outdoorHubs';
 import { seedStoryPlaces, stripAuthorNotes } from './storyDataBoundary';
+import { applyPresenceFacts } from './presentAuthority';
 
 /** Bump when adding load-time repairs that must re-run on old saves.
  *  Rev 4 = 30Y chrome-as-people strip (Place / blue panel out of present[]).
@@ -403,15 +404,15 @@ function repairChromePresent(state: GameState, notes: ErrorRepairNote[]): GameSt
     code: 'ERR_CHROME_PRESENT',
     detail: 'stripped UI chrome / cover-slot labels from present, pins, and harvest NPC rows',
   });
-  return {
+  const base = {
     ...state,
-    sceneFacts: state.sceneFacts ? { ...state.sceneFacts, present: cleanedPresent } : state.sceneFacts,
     openingEstablishment: state.openingEstablishment
       ? { ...state.openingEstablishment, pinnedNpcNames: pinned }
       : state.openingEstablishment,
     lorebook,
     npcMemories,
   };
+  return state.sceneFacts ? applyPresenceFacts(base, { present: cleanedPresent }) : base;
 }
 
 /**
@@ -441,12 +442,9 @@ function repairUnregisteredEntities(state: GameState, notes: ErrorRepairNote[]):
     detail: `stripped ${removed.length} unregistered entities from present: ${removed.join(', ')}`,
   });
   
-  return {
-    ...state,
-    sceneFacts: state.sceneFacts 
-      ? { ...state.sceneFacts, present: registeredPresent }
-      : state.sceneFacts,
-  };
+  return state.sceneFacts
+    ? applyPresenceFacts(state, { present: registeredPresent })
+    : state;
 }
 
 function repairAtmosphereMapRooms(state: GameState, notes: ErrorRepairNote[]): GameState {

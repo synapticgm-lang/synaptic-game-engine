@@ -5,6 +5,7 @@
 
 import type { ActiveEncounter, EngineMode, GameState } from './types';
 import { fightRoundRulesFor, registerFightRoundRules } from './fightRoundRules';
+import { applyPresenceFacts, exitNpc } from './presentAuthority';
 
 export type EncounterPhase = 'pending' | 'engaged' | 'resolving' | 'terminal';
 export type TerminalOutcome =
@@ -318,44 +319,24 @@ function settleFoePresence(
   if (outcome !== 'victory' && outcome !== 'escape') return state;
   const name = (enc.name ?? '').trim();
   if (!name) return state;
-  const base = state.sceneFacts ?? {
-    crowd: 'unknown' as const,
-    noise: 'unknown' as const,
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: state.turn,
-  };
-  const needle = name.toLowerCase();
-  const sameFoe = (raw: string) => {
-    const t = String(raw).toLowerCase().replace(/^(?:the|a|an)\s+/, '').trim();
-    const n = needle.replace(/^(?:the|a|an)\s+/, '').trim();
-    return !!t && !!n && (t === n || t.includes(n) || n.includes(t));
-  };
-  const present = (base.present ?? []).filter((p) => !sameFoe(String(p)));
-  const exitReason: 'defeated' | 'escaped' = outcome === 'victory' ? 'defeated' : 'escaped';
-  const memories = (state.npcMemories ?? []).map((m) => {
-    const hit =
-      sameFoe(m.npcName)
-      || (m.aliases ?? []).some((a) => sameFoe(a));
-    if (!hit || m.shouldExit) return m;
-    return {
-      ...m,
-      shouldExit: true as const,
-      exitReason,
-      present: false,
-      lastSeenTurn: state.turn,
-    };
-  });
-  return {
-    ...state,
-    npcMemories: memories,
-    sceneFacts: {
-      ...base,
-      present,
-      ...(outcome === 'victory' ? { lastKill: { name, outcome: 'victory' as const, turn: state.turn, remains: true }, tension: 'tense' as const } : {}),
-    },
-  };
+  const exitReason = outcome === 'victory' ? 'defeated' : 'escaped';
+  // T10SM1 — exit + present drop owned by presentAuthority (T10AP seam).
+  let next = exitNpc(state, name, exitReason);
+  // Also exit any alias/title form still listed in present that matches the foe token.
+  for (const p of [...(next.sceneFacts?.present ?? [])]) {
+    const t = String(p).toLowerCase().replace(/^(?:the|a|an)\s+/, '').trim();
+    const n = name.toLowerCase().replace(/^(?:the|a|an)\s+/, '').trim();
+    if (t && n && (t === n || t.includes(n) || n.includes(t))) {
+      next = exitNpc(next, p, exitReason);
+    }
+  }
+  if (outcome === 'victory') {
+    next = applyPresenceFacts(next, {
+      lastKill: { name, outcome: 'victory' as const, turn: state.turn, remains: true },
+      tension: 'tense',
+    });
+  }
+  return next;
 }
 
 function commitClear(

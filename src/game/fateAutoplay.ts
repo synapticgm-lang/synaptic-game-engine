@@ -135,7 +135,7 @@ import {
 import { applyWriterNewPlaces, ensurePlaceOnMap, newPlacesFromWriterPayload } from './placeRegistry';
 import { openTalkQuestCard, spokenLines } from './settlementQuestCards';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
-import { applyPresentTrimOnTravel } from './presentAuthority';
+import { applyPresenceFacts, applyPresentTrimOnTravel } from './presentAuthority';
 import { placeQuestGivers, presentNpcRecords, seedOpeningCastLocations } from './npcRecords';
 import { starterArrival } from './questGiver';
 import {
@@ -2123,21 +2123,12 @@ Do NOT print dice notation or CODE ENFORCED.
     if (talkCard.card) working = { ...working, places: talkCard.places };
   }
   if (arcState.sceneFacts?.worldTags?.length) {
-    working = {
-      ...working,
-      sceneFacts: {
-        crowd: working.sceneFacts?.crowd ?? 'unknown',
-        noise: working.sceneFacts?.noise ?? 'unknown',
-        present: working.sceneFacts?.present ?? [],
-        props: working.sceneFacts?.props ?? [],
-        lastBeat: working.sceneFacts?.lastBeat ?? '',
-        updatedTurn: nextTurn,
-        ...working.sceneFacts,
-        worldTags: Array.from(
-          new Set([...(working.sceneFacts?.worldTags ?? []), ...arcState.sceneFacts.worldTags])
-        ),
-      },
-    };
+    working = applyPresenceFacts(working, {
+      updatedTurn: nextTurn,
+      worldTags: Array.from(
+        new Set([...(working.sceneFacts?.worldTags ?? []), ...arcState.sceneFacts.worldTags])
+      ),
+    });
   }
   // Track recent choices for live-style dedupe (agent + pipeline).
   const recentChoices = [

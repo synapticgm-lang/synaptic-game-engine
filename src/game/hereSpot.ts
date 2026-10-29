@@ -5,6 +5,7 @@
  */
 
 import type { GameState, HereSpot } from './types';
+import { applyPresenceFacts } from './presentAuthority';
 
 const norm = (s: string | null | undefined) => (s ?? '').replace(/\s+/g, ' ').trim();
 const key = (s: string | null | undefined) => norm(s).toLowerCase();
@@ -162,10 +163,7 @@ export function engageAddressedInHereSpot(state: GameState, playerInput: string)
   const present = Array.from(
     new Set([...(state.sceneFacts.present ?? []), ...restored].map((n) => norm(n)).filter(Boolean))
   );
-  return {
-    ...state,
-    sceneFacts: { ...state.sceneFacts, hereSpot: next, present },
-  };
+  return applyPresenceFacts(state, { hereSpot: next, present });
 }
 
 /** Chip that closes distance to someone still at THIS place but out of talking range. */

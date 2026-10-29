@@ -14,6 +14,7 @@ import { fitKitToHousing } from './defaults';
 import { withMotiveLines } from './npcSheet';
 import { normalizeLedgerEntry } from './npcMemoryLedger';
 import { setPlayPhase } from './playPhase';
+import { applyPresenceFacts, withMemoryPresentFlag } from './presentAuthority';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -39,12 +40,14 @@ function repairNpcRecords(state: GameState): { state: GameState; changed: boolea
   const memories = (next.npcMemories ?? []).map((m) => {
     if (m.aliases !== undefined && m.met !== undefined && m.present !== undefined) return m;
     changed = true;
-    return {
-      ...m,
-      aliases: m.aliases ?? [],
-      met: m.met ?? isMetNpc(m),
-      present: m.present ?? false,
-    };
+    return withMemoryPresentFlag(
+      {
+        ...m,
+        aliases: m.aliases ?? [],
+        met: m.met ?? isMetNpc(m),
+      },
+      m.present ?? false
+    );
   });
   if (changed) next = { ...next, npcMemories: memories };
 
@@ -77,7 +80,7 @@ function repairNpcRecords(state: GameState): { state: GameState; changed: boolea
         if (name && !split.includes(name)) split.push(name);
       }
     }
-    next = { ...next, sceneFacts: { ...next.sceneFacts!, present: split } };
+    next = applyPresenceFacts(next, { present: split });
     changed = true;
   }
 

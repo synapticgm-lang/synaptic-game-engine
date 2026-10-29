@@ -8,6 +8,7 @@
 import type { GameState, SceneFacts } from './types';
 import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority';
 import { proseSaysEmpty } from './chipRules';
+import { presenceFactsPatch } from './presentAuthority';
 import { mentionsName } from './scenePresence';
 
 export type CrowdBucket = 'empty' | 'solo' | 'pair' | 'few' | 'group' | 'large';
@@ -502,16 +503,22 @@ export function harvestCrowdIntoSceneFacts(
   narrative: string,
   turn = 0
 ): SceneFacts {
-  const base: SceneFacts = prev
-    ? { ...prev, present: filterChromeFromPresent(prev.present), updatedTurn: turn }
-    : {
-        crowd: 'unknown',
-        noise: 'unknown',
-        present: [],
-        props: [],
-        lastBeat: '',
-        updatedTurn: turn,
-      };
+  // T10SM1 — presence/crowd patches go through presentAuthority (may ADD flavour; engine seats stay).
+  const chromePresent = filterChromeFromPresent(prev?.present ?? []);
+  const base: SceneFacts = presenceFactsPatch(
+    prev,
+    prev
+      ? { present: chromePresent, updatedTurn: turn }
+      : {
+          crowd: 'unknown',
+          noise: 'unknown',
+          present: [],
+          props: [],
+          lastBeat: '',
+          updatedTurn: turn,
+        },
+    turn
+  );
 
   // T10AI — honest empty wins over a leftover "crowd" noun ("ask the crowd" when the lane
   // held nobody). Full departure only when no prior present name is still seated in the beat
@@ -527,22 +534,20 @@ export function harvestCrowdIntoSceneFacts(
       .filter(Boolean);
     const kept = Array.from(new Set([...seated, ...spotHeld]));
     if (!kept.length) {
-      return {
-        ...base,
+      return presenceFactsPatch(base, {
         crowd: 'none',
         present: [],
         crowdCount: undefined,
         lastBeat: base.lastBeat || 'street empty',
         updatedTurn: turn,
-      };
+      });
     }
-    return {
-      ...base,
+    return presenceFactsPatch(base, {
       crowd: base.crowd === 'none' ? 'present' : base.crowd,
       present: kept,
       crowdCount: base.crowdCount ?? kept.length,
       updatedTurn: turn,
-    };
+    });
   }
 
   const mention = detectCrowdMention(narrative);
@@ -553,13 +558,12 @@ export function harvestCrowdIntoSceneFacts(
   if (!mention) {
     if (prevLocked && namedFloor > (prev!.crowdCount ?? 0)) {
       const nextCount = namedFloor;
-      return {
-        ...base,
+      return presenceFactsPatch(base, {
         crowd: nextCount > 0 ? (nextCount <= 3 ? 'sparse' : 'present') : 'none',
         present: syncPresentToCount(base.present, nextCount),
         crowdCount: nextCount,
         updatedTurn: turn,
-      };
+      });
     }
     return base;
   }
@@ -573,12 +577,11 @@ export function harvestCrowdIntoSceneFacts(
       ? Math.max(prev!.crowdCount ?? 0, mention.count === prev!.crowdCount ? mention.count : namedFloor)
       : mention.count;
   const present = syncPresentToCount(base.present, nextCount);
-  return {
-    ...base,
+  return presenceFactsPatch(base, {
     crowd: nextCount > 0 ? (nextCount <= 3 ? 'sparse' : 'present') : 'none',
     present,
     crowdCount: nextCount,
     lastBeat: base.lastBeat || (nextCount > 0 ? `${nextCount} people present` : 'street empty'),
     updatedTurn: turn,
-  };
+  });
 }

@@ -334,7 +334,7 @@ import { maybeRevealFromLocation } from './worldAtlas';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { isChromePersonToken } from './chromeAuthority';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
-import { applyPresentTrimOnTravel } from './presentAuthority';
+import { applyPresenceFacts, applyPresentTrimOnTravel } from './presentAuthority';
 import { placeQuestGivers, presentNpcRecords, seedOpeningCastLocations } from './npcRecords';
 import { starterArrival } from './questGiver';
 import {
@@ -5359,27 +5359,32 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           },
           bible
         );
-    const pinnedState = ensureOpeningNpcPinned(
-      {
-        ...sealedNewState,
-        openingEstablishment: {
-          ...sealedNewState.openingEstablishment!,
-          pinnedNpcNames: pinnedNames,
-        },
-        sceneFacts: {
-          ...sealedNewState.sceneFacts,
-          present: pinnedNames.length
-            ? [
-                ...(sealedNewState.sceneFacts?.present ?? []).filter(
-                  (p) => !pinnedNames.some((n) => n.toLowerCase() === p.toLowerCase())
-                ),
-                ...pinnedNames,
-              ]
-            : sealedNewState.sceneFacts?.present,
-        },
-      },
-      bible
-    );
+    const withPinnedPresent = pinnedNames.length
+      ? applyPresenceFacts(
+          {
+            ...sealedNewState,
+            openingEstablishment: {
+              ...sealedNewState.openingEstablishment!,
+              pinnedNpcNames: pinnedNames,
+            },
+          },
+          {
+            present: [
+              ...(sealedNewState.sceneFacts?.present ?? []).filter(
+                (p) => !pinnedNames.some((n) => n.toLowerCase() === p.toLowerCase())
+              ),
+              ...pinnedNames,
+            ],
+          }
+        )
+      : {
+          ...sealedNewState,
+          openingEstablishment: {
+            ...sealedNewState.openingEstablishment!,
+            pinnedNpcNames: pinnedNames,
+          },
+        };
+    const pinnedState = ensureOpeningNpcPinned(withPinnedPresent, bible);
     let newState = seedOpeningCastLocations(mergePreferredProfileIntoOpening(
       withUpdatedHookArc(
         ensureCampaignContract(

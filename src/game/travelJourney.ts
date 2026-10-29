@@ -81,6 +81,7 @@ import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
 import { buildHereSpot, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
+import { applyPresenceFacts, emptyPresenceFacts, withMemoryPresentFlag } from './presentAuthority';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 import { createHashRng, hashUnit, keyedRng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
@@ -1805,30 +1806,36 @@ function withQuietRoadCast(commit: TravelCommit): TravelCommit {
     if (companionKeys.has((m.npcName ?? '').trim().toLowerCase())) return m;
     if (m.present !== true) return m;
     memChanged = true;
-    return { ...m, present: false };
+    return withMemoryPresentFlag(m, false);
   });
   const presentSame =
     nextPresent.length === prevPresent.length && nextPresent.every((p, i) => p === prevPresent[i]);
   if (presentSame && !memChanged) return commit;
-  const base = facts ?? {
-    crowd: 'none' as const,
-    noise: 'quiet' as const,
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: s.turn ?? 0,
+  let patched: GameState = {
+    ...s,
+    ...(memChanged ? { npcMemories: nextMemories } : {}),
   };
-  const crowdClear =
-    nextPresent.length === 0 && (base.crowd === 'present' || (base.crowdCount ?? 0) > 0)
-      ? { crowd: 'none' as const, crowdCount: 0 }
-      : {};
+  if (!facts) {
+    patched = applyPresenceFacts(patched, {
+      crowd: 'none',
+      noise: 'quiet',
+      present: nextPresent,
+    });
+  } else if (
+    nextPresent.length === 0
+    && (facts.crowd === 'present' || (facts.crowdCount ?? 0) > 0)
+  ) {
+    patched = applyPresenceFacts(patched, {
+      present: nextPresent,
+      crowd: 'none',
+      crowdCount: 0,
+    });
+  } else {
+    patched = applyPresenceFacts(patched, { present: nextPresent });
+  }
   return {
     ...commit,
-    state: {
-      ...s,
-      ...(memChanged ? { npcMemories: nextMemories } : {}),
-      sceneFacts: { ...base, present: nextPresent, ...crowdClear },
-    },
+    state: patched,
   };
 }
 
@@ -2077,28 +2084,22 @@ function moveWithinPlace(state: GameState, input: string, spot: string): TravelC
     state.sceneFacts ? { ...state, sceneFacts: { ...state.sceneFacts, hereSpot: undefined } } : state
   ).map((r) => r.npcName);
   const hereSpot = buildHereSpot(state, input, spot, people);
-  const base = state.sceneFacts ?? {
-    crowd: 'unknown' as const,
-    noise: 'unknown' as const,
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: state.turn ?? 0,
-  };
+  const base = state.sceneFacts ?? emptyPresenceFacts(state.turn ?? 0);
   // T10AN — out of talking range is hereSpot.awayFrom, not absence. Keep present[] so
   // place/snapshot text still names who is in the room (talk chips filter via isOutOfTalkingRange).
   const stillHere = Array.from(
     new Set([...(base.present ?? []), ...hereSpot.awayFrom, ...hereSpot.nearby].map((n) => n.trim()).filter(Boolean))
   );
-  const sceneFacts = {
-    ...base,
-    present: stillHere,
-    crowd: stillHere.length ? (base.crowd === 'none' ? 'present' : base.crowd) : base.crowd,
-    hereSpot,
-  };
   const out = hereSpot.awayFrom.length ? `; out of talking range: ${hereSpot.awayFrom.join(', ')}` : '';
   return {
-    state: { ...state, journey: null, sceneFacts },
+    state: applyPresenceFacts(
+      { ...state, journey: null },
+      {
+        present: stillHere,
+        crowd: stillHere.length ? (base.crowd === 'none' ? 'present' : base.crowd) : base.crowd,
+        hereSpot,
+      }
+    ),
     handled: true,
     arrived: false,
     outcome: 'unchanged',

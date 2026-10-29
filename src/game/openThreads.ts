@@ -26,6 +26,7 @@ import type {
 } from './types';
 import { chipAddressee, mentionsName, peopleHere } from './chipLegality';
 import { isCrowdFillerToken } from './chromeAuthority';
+import { exitNpc } from './presentAuthority';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
 import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
@@ -493,29 +494,20 @@ function stallDepartPresentNpc(state: GameState, turn: number, playerInput = '')
     : present;
   if (!candidates.length) return state;
   const name = candidates[candidates.length - 1]!;
-  const low = name.trim().toLowerCase();
-  const mems: NpcMemory[] = (state.npcMemories ?? []).map((m) => {
+  // T10SM1 — stall exit owned by presentAuthority.
+  const exited = exitNpc(state, name, 'stall-pressure');
+  const fact = `Left under stall pressure T${turn}`;
+  const mems = (exited.npcMemories ?? []).map((m) => {
     const n = (m.npcName ?? '').trim();
-    if (!n || (n.toLowerCase() !== low && !mentionsName(n, name) && !mentionsName(name, n))) return m;
-    if (m.shouldExit) return m;
-    const fact = `Left under stall pressure T${turn}`;
-    const next: NpcMemory = {
+    if (!n || (!mentionsName(n, name) && !mentionsName(name, n) && n.toLowerCase() !== name.trim().toLowerCase())) {
+      return m;
+    }
+    return {
       ...m,
-      shouldExit: true,
-      exitReason: 'stall-pressure',
       facts: m.facts?.includes(fact) ? m.facts : [...(m.facts ?? []), fact].slice(-12),
-      lastSeenTurn: turn,
     };
-    return next;
   });
-  const nextPresent = (state.sceneFacts?.present ?? []).filter((p) => p.trim().toLowerCase() !== low);
-  return {
-    ...state,
-    npcMemories: mems,
-    sceneFacts: state.sceneFacts
-      ? { ...state.sceneFacts, present: nextPresent }
-      : state.sceneFacts,
-  };
+  return { ...exited, npcMemories: mems };
 }
 
 /**

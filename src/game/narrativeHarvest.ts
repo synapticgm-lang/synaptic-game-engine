@@ -23,6 +23,7 @@ import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
 import { hubsForBibleId } from './outdoorHubs';
 import { roadMeetingLabel } from './travelJourney';
+import { applyPresenceFacts } from './presentAuthority';
 
 function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined, state: GameState): string[] {
   if (!prose?.trim()) return [];
@@ -303,8 +304,12 @@ export function harvestNarrativePeople(
     presentList = presentList.filter((p) => !roadSkip.has(p.toLowerCase()));
     people = people.filter((p) => !roadSkip.has(p.toLowerCase()));
   }
-  const withNames = { ...next, lorebook, sceneFacts: { ...(next.sceneFacts ?? {}), present: presentList.slice(0, 12) } };
-  const crowded = { ...withNames, sceneFacts: harvestHookIntoSceneFacts(harvestCrowdIntoSceneFacts(withNames.sceneFacts, prose, turn), prose, turn) };
+  // ADD-only occupancy via authority patch: keep engine-seated names; harvest may append (capped).
+  const withNames = applyPresenceFacts(
+    { ...next, lorebook },
+    { present: presentList.slice(0, 12) }
+  );
+  const crowded = { ...withNames, sceneFacts: harvestHookIntoSceneFacts(harvestCrowdIntoSceneFacts(withNames.sceneFacts!, prose, turn), prose, turn) };
   return { state: applyClosedFactHarvest(applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose), prose), people };
 }
 

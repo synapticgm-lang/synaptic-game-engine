@@ -21,6 +21,7 @@ import { hubsForBibleId } from './outdoorHubs';
 import { resolveNpcRecord } from './npcRecords';
 import { atPlace, findQuestTargets, placeQuestTarget, targetSpot } from './questTargets';
 import { applyQuestRouteOutcome, openRouteView } from './questRoutes';
+import { withMemoryPresentFlag } from './presentAuthority';
 
 export type TabletopQuestTurn = { state: GameState; receipts: string[]; /** The step taken, as the writer's world fact. */ facts?: string[] };
 
@@ -219,7 +220,7 @@ function takeAlong(state: GameState, quest: Quest, hereBefore: string | undefine
   const npcMemories = (state.npcMemories ?? []).map((m) => {
     if (!m.location || !atPlace(before, m.location) || !people.some((p) => isGiverName(m.npcName, p))) return m;
     moved = true;
-    return { ...m, location: here, present: true };
+    return withMemoryPresentFlag({ ...m, location: here }, true);
   });
   return moved ? { ...state, npcMemories } : state;
 }

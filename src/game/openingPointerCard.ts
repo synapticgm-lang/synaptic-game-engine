@@ -9,6 +9,7 @@ import { syncPresentToCount } from './crowdAuthority';
 import { openingCastLabel } from './openingEstablishment';
 import { openingCastRecords } from './npcRecords';
 import { systemHousingWriterSentence } from './systemHousing';
+import { presenceFactsPatch } from './presentAuthority';
 
 export type PointerWhoBand = 0 | 1 | 2 | 4 | 5;
 
@@ -407,8 +408,7 @@ export function applyCardCrowdToFacts(state: GameState, withoutProps: SceneFacts
     ...(facts.present ?? []),
   ]);
   if (slots.whoCount === 0) {
-    return {
-      ...facts,
+    return presenceFactsPatch(facts, {
       crowd: 'none',
       noise: 'quiet',
       present: [],
@@ -416,17 +416,16 @@ export function applyCardCrowdToFacts(state: GameState, withoutProps: SceneFacts
       lastBeat: facts.lastBeat && !/people are present/i.test(facts.lastBeat)
         ? facts.lastBeat
         : 'The room is empty of other people.',
-    };
+    });
   }
-  return {
-    ...facts,
+  return presenceFactsPatch(facts, {
     crowd: 'present',
     crowdCount: slots.whoCount,
     present: syncPresentToCount(pinned, slots.whoCount),
     lastBeat: facts.lastBeat && !/people are present/i.test(facts.lastBeat)
       ? facts.lastBeat
       : `${slots.whoCount} ${slots.whoCount === 1 ? 'person is' : 'people are'} here.`,
-  };
+  });
 }
 
 export function compileLitrpgCoreIdentity(state: GameState): string {

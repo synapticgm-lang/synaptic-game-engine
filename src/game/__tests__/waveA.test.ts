@@ -232,7 +232,7 @@ describe('WS-2 Wave A: NPC Lifecycle FSM', () => {
     const result = updateNpcLifecycle(lifecycle, state);
     
     expect(result.lifecycle.state).toBe('exiting');
-    expect(result.lifecycle.exitReason).toBe('deadline_missed');
+    expect(result.lifecycle.lifecycleExitReason).toBe('deadline_missed');
   });
   
   it('updates all lifecycles in batch', () => {
