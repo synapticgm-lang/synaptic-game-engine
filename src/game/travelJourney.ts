@@ -1115,11 +1115,14 @@ export function travelEngineLines(commit: TravelCommit): string[] {
   for (let i = 0; i < (commit.extra ?? []).length; i++) {
     const t = commit.extra![i]!.trim();
     // Record-backed STATUS: formatCheckRecord label "Extended Travel: Constitution save…" (VR1-b CheckResultRecord).
+    // Exhaustion death line stays on STATUS via arc receipts; story death is the fact below (T10AQ).
     if (t.toLowerCase().startsWith('extended travel:') || isVr1RollLine(t) || t.startsWith('Constitution save')) lines.push(t);
   }
   for (let i = 0; i < (commit.facts ?? []).length; i++) {
     const f = commit.facts![i]!.trim();
-    if (f === 'Check success.' || f === 'Check failure.') lines.push(f);
+    // T10AQ — Exhaustion 6 death must enter ENGINE RESULT (writerEngineResult isolates the death sentence).
+    // Check success/failure alone left "You are dead" only on travelBeat; spine speech then owned the page.
+    if (f === 'Check success.' || f === 'Check failure.' || /\bYou are dead\./i.test(f)) lines.push(f);
   }
   if (!commit.receipt) return lines;
   let r = commit.receipt.trim();
@@ -1769,6 +1772,21 @@ function withBeat(commit: TravelCommit): TravelCommit {
 export function travelBeatFact(state: Pick<GameState, 'travelBeat' | 'turn'>): string {
   const b = state.travelBeat;
   return b && b.turn === (state.turn ?? 0) && b.facts.length ? b.facts.join(' ') : '';
+}
+
+/**
+ * T10AQ — when Extended Travel / starvation death settled this turn, the book page is the death
+ * sentence (what rolled / why), never a CAST reaction. Null when the PC is not dead on the record.
+ */
+export function roadDeathBookProse(
+  state: Pick<GameState, 'deathSaves' | 'travelBeat' | 'turn' | 'character'>
+): string | null {
+  if (!state.deathSaves?.dead) return null;
+  const beat = travelBeatFact(state);
+  const fromBeat = beat && /\bYou are dead\./i.test(beat) ? writerEngineResult(beat, state.character?.name) : '';
+  if (fromBeat && /\bYou are dead\./i.test(fromBeat)) return fromBeat;
+  // SRD 5.2.1 Exhaustion level 6 = death (WotC CC BY 4.0). Extended Travel CON-save death uses this line.
+  return 'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.';
 }
 
 /** Leaving a mapped place heads to another mapped place, never back into the room you came out of. */

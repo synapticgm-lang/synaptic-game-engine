@@ -163,7 +163,7 @@ import {
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { normalizeCommittedProse, runWriterTurnWithFightRetry, sealPostWriterProse, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
-import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
+import { commitTravel, pinClockTimeOfDay, roadDeathBookProse, travelEngineLines, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -3780,6 +3780,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             cleanText = painted.prose;
             if (painted.status) mergedSystemLog = [...mergedSystemLog, painted.status];
           }
+        }
+        // T10AQ — Exhaustion-6 / road death: death sentence owns the page (not a CAST reaction).
+        const deathPage = roadDeathBookProse(liveCurrent);
+        if (deathPage && !/\bYou are dead\./i.test(cleanText)) {
+          cleanText = deathPage;
         }
       }
       if (!storyHasBody(cleanText)) {

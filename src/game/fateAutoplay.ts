@@ -250,7 +250,7 @@ import { resolveShopChip } from './shopChips';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
-import { commitTravel, pinClockTimeOfDay, travelEngineLines, travelOutcome } from './travelJourney';
+import { commitTravel, pinClockTimeOfDay, roadDeathBookProse, travelEngineLines, travelOutcome } from './travelJourney';
 import { readabilityGatePass } from './readabilityGate';
 import { checkPlayerTurn, type TurnCheck, type TurnCheckKind } from './turnCheck';
 import { checkTurnInvariants, type InvariantViolation } from './invariants/turnInvariants';
@@ -1633,6 +1633,12 @@ Do NOT print dice notation or CODE ENFORCED.
         renderFallbackUsed = true;
       }
     }
+    // T10AQ — Exhaustion-6 / road death: the book page is the death sentence (roll + why), never a CAST beat.
+    const deathPage = roadDeathBookProse(arcState);
+    if (!useMud && deathPage && !/\bYou are dead\./i.test(gmText)) {
+      gmText = deathPage;
+      renderFallbackUsed = true;
+    }
   }
   if (!useMud && !gmText.trim()) {
     const failLabel = gmResult.dnsFailure
@@ -1892,6 +1898,10 @@ Do NOT print dice notation or CODE ENFORCED.
       roadDay: travelCommit.state.roadDay,
       lastLongRestAt: travelCommit.state.lastLongRestAt,
       daysWithoutFood: travelCommit.state.daysWithoutFood,
+      // T10AQ — Exhaustion-6 / road death must keep character + deathSaves from the travel commit.
+      character: travelCommit.state.character ?? working.character,
+      deathSaves: travelCommit.state.deathSaves ?? working.deathSaves,
+      travelBeat: travelCommit.state.travelBeat ?? working.travelBeat,
       sceneFacts: pinClockTimeOfDay(working.sceneFacts, travelCommit.state),
       places: travelCommit.arrived
         ? touchPlaceVisit(working.places ?? state.places ?? [], here, state.turn + 1, working)

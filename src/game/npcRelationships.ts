@@ -359,8 +359,25 @@ export function presentNpcNames(state: GameState): string[] {
     if (resolveNpcRecord(state, name)?.shouldExit || isOutOfTalkingRange(state, name)) return;
     out.set(key, name);
   };
-  for (const n of state.sceneFacts?.present ?? []) add(n);
-  for (const m of state.npcMemories ?? []) if (m.present === true) add(m.npcName);
+  // T10AQ — on a quiet road stretch, only the journey meeting + companions (via presentNpcRecords).
+  // Stale sceneFacts.present / present:true flags from earlier hubs must not seat Merrit/thugs.
+  const j = state.journey;
+  const enc = j?.encounter;
+  // Same speakable kinds as presentNpcRecords road-meeting party (not signs/lair/wildlife/monster).
+  const speakable =
+    !!enc
+    && enc.kind !== 'signs'
+    && enc.kind !== 'lair'
+    && enc.kind !== 'wildlife'
+    && enc.kind !== 'monster';
+  const meetingHere =
+    speakable
+    && (enc!.engaged || (!enc!.escaped && !enc!.lost && enc!.closedTurn == null));
+  const onQuietRoad = !!j && j.legsDone < j.legsTotal && !meetingHere;
+  if (!onQuietRoad) {
+    for (const n of state.sceneFacts?.present ?? []) add(n);
+    for (const m of state.npcMemories ?? []) if (m.present === true) add(m.npcName);
+  }
   for (const m of presentNpcRecords(state)) add(m.npcName, true);
   return [...out.values()];
 }
