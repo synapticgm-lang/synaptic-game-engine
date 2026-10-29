@@ -179,7 +179,9 @@ describe('T10AO physical free text — one reaction, no ambient need dump (s9862
       state,
       threat,
     );
-    expect(threatOut.prose).toMatch(/I need a buyer who pays/i);
+    // T10RC1 — ledger need still lands as a grammatical indirect sentence, never "I need …" telegram.
+    expect(threatOut.prose).toMatch(/made clear they needed a buyer who pays|buyer who pays/i);
+    expect(threatOut.prose).not.toMatch(/I need a buyer who pays/i);
   });
 
   it('LitRPG engineer: silence-only page after a free act gets one content reply', () => {

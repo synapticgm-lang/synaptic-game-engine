@@ -2,13 +2,25 @@
  * Gap 2 — position inside a place. A typed move that stays in the current place (step back, to the
  * bank, out of the water, away from them) writes a here-spot on sceneFacts: where the player now
  * stands and who stayed out of talking range. The hub does not change.
+ *
+ * T10RC1 — road `distanceFt` reuses this same talking-range gate (`isOutOfTalkingRange` /
+ * `hereSpot.awayFrom`): a meeting beyond conversational reach is out of range until closed.
+ * SRD 5.2.1 Grappling requires the target within reach (typically 5 ft); conversational talk on
+ * the road uses the same awayFrom meaning with {@link TALKING_RANGE_FT}.
  */
 
-import type { GameState, HereSpot } from './types';
+import type { GameState, HereSpot, RoadEncounter } from './types';
 import { applyPresenceFacts } from './presentAuthority';
 
 const norm = (s: string | null | undefined) => (s ?? '').replace(/\s+/g, ' ').trim();
 const key = (s: string | null | undefined) => norm(s).toLowerCase();
+
+/**
+ * Conversational reach on the road (feet). Same gate as `hereSpot.awayFrom` for chips / speech /
+ * grab: beyond this, `isOutOfTalkingRange` is true until the player closes (Approach / Greet /
+ * address by name). Melee grab still needs within-reach after close (SRD Grappling).
+ */
+export const TALKING_RANGE_FT = 30;
 
 const QUESTION_OPENER =
   /^(?:can|could|should|would|may|might|do|does|did|is|are|am|will|shall|what|why|how|where|when|who)\b/i;
@@ -103,23 +115,77 @@ function personKey(name: string): string {
   return key(name).replace(/^(?:the|a|an)\s+/, '');
 }
 
-/** True when the player walked away from this person inside the current place and they did not follow. */
-export function isOutOfTalkingRange(state: Pick<GameState, 'sceneFacts' | 'currentLocation'>, name: string): boolean {
-  const s = activeHereSpot(state);
-  if (!s?.awayFrom?.length) return false;
+/** Kind → ledger label (kept local to avoid hereSpot ↔ travelJourney cycles). */
+const ROAD_KIND_LABEL: Record<string, string> = {
+  traveler: 'a traveler',
+  meeting: 'a stranger',
+  thugs: 'thugs',
+  camp: 'a camp',
+  villain: 'a villain',
+  plea: 'someone in need',
+};
+
+/** Live road meeting that this name stands for (encounter.name or kind label). */
+function roadEncounterForName(
+  state: Pick<GameState, 'journey'>,
+  name: string,
+): RoadEncounter | null {
+  const e = state.journey?.encounter;
+  if (!e || e.engaged || e.escaped || e.lost) return null;
+  const k = personKey(name);
+  if (!k) return null;
+  const candidates = [e.name, ROAD_KIND_LABEL[e.kind]]
+    .filter((n): n is string => typeof n === 'string' && n.length > 0)
+    .map((n) => personKey(n))
+    .filter((c) => c.length > 0);
+  if (candidates.some((c) => c === k || c.includes(k) || k.includes(c))) return e;
+  return null;
+}
+
+/**
+ * True when this person cannot hear / be grabbed: `hereSpot.awayFrom`, or a live road meeting
+ * whose `distanceFt` is beyond {@link TALKING_RANGE_FT} (same meaning as awayFrom until closed).
+ */
+export function isOutOfTalkingRange(
+  state: Pick<GameState, 'sceneFacts' | 'currentLocation' | 'journey'>,
+  name: string,
+): boolean {
   const k = personKey(name);
   if (!k) return false;
-  return s.awayFrom.some((a) => {
-    const ak = personKey(a);
-    if (ak === k) return true;
-    // Chip addressee often drops the article ("denied-god cult" vs "the denied-god cult").
-    const aTok = ak.split(/[\s'’-]+/).filter((t) => t.length >= 3);
-    const kTok = k.split(/[\s'’-]+/).filter((t) => t.length >= 3);
-    if (!aTok.length || !kTok.length) return false;
-    return aTok.length >= kTok.length
-      ? kTok.every((t) => aTok.includes(t))
-      : aTok.every((t) => kTok.includes(t));
-  });
+  const s = activeHereSpot(state);
+  if (s?.awayFrom?.length) {
+    const away = s.awayFrom.some((a) => {
+      const ak = personKey(a);
+      if (ak === k) return true;
+      // Chip addressee often drops the article ("denied-god cult" vs "the denied-god cult").
+      const aTok = ak.split(/[\s'’-]+/).filter((t) => t.length >= 3);
+      const kTok = k.split(/[\s'’-]+/).filter((t) => t.length >= 3);
+      if (!aTok.length || !kTok.length) return false;
+      return aTok.length >= kTok.length
+        ? kTok.every((t) => aTok.includes(t))
+        : aTok.every((t) => kTok.includes(t));
+    });
+    if (away) return true;
+  }
+  // T10RC1 — road distanceFt is the same awayFrom gate (not a second seat list).
+  const enc = roadEncounterForName(state, name);
+  if (enc && typeof enc.distanceFt === 'number' && enc.distanceFt > TALKING_RANGE_FT) return true;
+  return false;
+}
+
+/** Close road `distanceFt` into talking range (Approach / Greet / named address). */
+export function closeRoadTalkingRange(state: GameState, name?: string): GameState {
+  const j = state.journey;
+  const e = j?.encounter;
+  if (!e || typeof e.distanceFt !== 'number' || e.distanceFt <= TALKING_RANGE_FT) return state;
+  if (name) {
+    const hit = roadEncounterForName(state, name);
+    if (!hit) return state;
+  }
+  return {
+    ...state,
+    journey: { ...j!, encounter: { ...e, distanceFt: Math.min(e.distanceFt, 5) } },
+  };
 }
 
 const NAME_LEAD = /^(?:the|a|an)$/i;
@@ -138,6 +204,9 @@ function addressTokens(name: string): string[] {
  * T10AN — match full name or a content token ("cult" / "Ilyra"), never a bare article ("the").
  */
 export function engageAddressedInHereSpot(state: GameState, playerInput: string): GameState {
+  // Road distanceFt closes only via Approach / Greet / Talk pads or Step closer
+  // (`closeRoadTalkingRange` / answersMeeting) — naming someone in a knife line must not
+  // teleport them into reach (T10RC1).
   const s = activeHereSpot(state);
   if (!s?.awayFrom?.length) return state;
   const said = key(playerInput);

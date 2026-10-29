@@ -24,7 +24,9 @@ import { tickEncounterTerminal } from './encounterTerminalFsm';
 import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
 import type { IntentStep, IntentTone } from './intentParser';
 import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority';
-import { applyPresenceFacts, withMemoryPresentFlag } from './presentAuthority';
+import { isOutOfTalkingRange } from './hereSpot';
+import { applyPresenceFacts, seat, unseat, withMemoryPresentFlag } from './presentAuthority';
+import { mentionsName, peopleHere } from './scenePresence';
 
 export type StealOutcome = {
   taken: boolean;
@@ -363,10 +365,11 @@ export function rollParleyCheck(
 }
 
 /**
- * T10AB — grab / collar / blade-threat against a present person (not yet a live fight).
+ * T10AB / T10RC1 — grab / collar / blade-threat against a present person (not yet a live fight).
  * SRD 5.2.1 Grappling: Strength (Athletics) contested check; success → grappled.
- * Threatening words with the grab also roll Charisma (Intimidation). Never rejects free text.
- * Target stays on the present ledger (no silent vanish mid-threat).
+ * SRD 5.2.1 — Influence (Charisma / Intimidation): attitude shifts; a failed hard threat commits
+ * refuse+leave (or fight), never an open speech reaction slot for the writer to bargain.
+ * Never rejects free text. Seat via presentAuthority before attitude/leave (incl. road names).
  */
 export function resolvePersonThreatAttempt(
   state: GameState,
@@ -379,13 +382,73 @@ export function resolvePersonThreatAttempt(
     || step?.target?.trim()
     || extractWatcher(text, step, state);
   const grab =
-    /\b(grab|grapple|collar|drag|haul|pin|seize)\b/i.test(text)
+    /\b(grab|grapple|collar|drag|haul|pin|seize|throat|blade|dagger)\b/i.test(text)
     || step?.action === 'take'
     || step?.action === 'intimidate';
   const facts: string[] = [];
   const receipts: string[] = [];
   let next = state;
   let success = false;
+
+  // T10RC1 — same talking-range gate as presence (hereSpot.awayFrom / road distanceFt).
+  if (who && isOutOfTalkingRange(state, who)) {
+    const ft = state.journey?.encounter?.distanceFt;
+    const range = typeof ft === 'number' ? `${ft} ft off` : 'out of talking range';
+    facts.push(
+      `Must narrate: ${who} is still ${range}; close the distance before a grab or blade threat can land.`,
+    );
+    receipts.push(`Threat out of reach: ${who} (${range})`);
+    return {
+      success: false,
+      endedFight: false,
+      skill: 'intimidation',
+      record: {
+        label: 'Intimidation (out of range)',
+        d20s: [0],
+        kept: 0,
+        advState: 'normal',
+        total: 0,
+        dc: 0,
+        outcome: 'failure',
+        mods: [],
+      },
+      facts,
+      receipts,
+      state: next,
+    };
+  }
+
+  // Threat only lands on someone already seated / in talking range (peopleHere). Naming a
+  // left-behind person must not invent a seat and roll Influence (T10R / T10RC1).
+  if (who) {
+    const here = peopleHere(state);
+    const present = here.some((p) => mentionsName(p, who) || mentionsName(who, p));
+    if (!present) {
+      facts.push(`Speech event: you address ${who}. No one present to answer.`);
+      receipts.push(`Threat: ${who} not present`);
+      return {
+        success: false,
+        endedFight: false,
+        skill: 'intimidation',
+        record: {
+          label: 'Intimidation (absent)',
+          d20s: [0],
+          kept: 0,
+          advState: 'normal',
+          total: 0,
+          dc: 0,
+          outcome: 'failure',
+          mods: [],
+        },
+        facts,
+        receipts,
+        state: next,
+      };
+    }
+  }
+
+  // Seat the target before attitude / leave (road encounter.name included).
+  if (who) next = seat(next, who);
 
   if (grab) {
     // SRD 5.2.1 — Grappling: "You make a Strength (Athletics) check contested by the target's
@@ -424,9 +487,12 @@ export function resolvePersonThreatAttempt(
   const intimOk = social.record.outcome === 'success';
   if (intimOk) {
     facts.push(`${who} flinches under the threat (${skillName} ${social.record.total} vs DC ${social.record.dc}).`);
+    facts.push(`Must narrate: ${who} yields under the threat and stays hostile.`);
     success = true;
   } else {
     facts.push(`${who} does not yield (${skillName} ${social.record.total} < DC ${social.record.dc}).`);
+    // T10RC1 — failed Influence commits refuse + leave (not an open speech bargain slot).
+    facts.push(`Must narrate: ${who} refuses the threat and leaves.`);
   }
   next = pushOtherTx(
     next,
@@ -435,8 +501,19 @@ export function resolvePersonThreatAttempt(
     `${skillName} ${social.record.total} vs DC ${social.record.dc}`,
   );
 
-  // Keep the target present and shift disposition — a threat must leave a durable social mark.
-  const mem = findMemory(next, who);
+  // Shift disposition hostile; seat first, then leave on failed intimidation.
+  const mem = findMemory(next, who) ?? (who
+    ? ({
+        npcId: `threat:${who.toLowerCase().replace(/\s+/g, '-')}`,
+        npcName: who,
+        disposition: 'hostile' as const,
+        attitude: 'hostile' as const,
+        facts: [],
+        lastSeenTurn: next.turn ?? 0,
+        location: next.currentLocation,
+        present: true,
+      } satisfies NpcMemory)
+    : null);
   if (mem) {
     const nudged = nudgePersona(
       next,
@@ -449,7 +526,7 @@ export function resolvePersonThreatAttempt(
         },
         true
       ),
-      intimOk ? 'threatened' : 'threatened',
+      'threatened',
       grab ? 'grabbed and threatened' : 'threatened',
     );
     next = nudged.state;
@@ -469,9 +546,6 @@ export function resolvePersonThreatAttempt(
         )
       );
     }
-    const present = [...(next.sceneFacts?.present ?? [])];
-    const low = who.toLowerCase();
-    if (!present.some((p) => p.toLowerCase() === low)) present.push(who);
     next = applyPresenceFacts(
       {
         ...next,
@@ -479,16 +553,20 @@ export function resolvePersonThreatAttempt(
         personaNudges: [...(next.personaNudges ?? []), ...(nudged.nudge ? [nudged.nudge] : [])],
       },
       next.sceneFacts
-        ? { present }
+        ? { present: [...new Set([...(next.sceneFacts.present ?? []), who])] }
         : {
             crowd: 'sparse',
             noise: 'voices',
-            present,
+            present: [who],
             props: [],
             lastBeat: '',
             updatedTurn: next.turn ?? 0,
           }
     );
+    if (!intimOk && who) {
+      next = unseat(next, who, 'engine');
+      receipts.push(`${who} pulls away and will not stay to be handled.`);
+    }
   }
 
   return {

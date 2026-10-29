@@ -133,8 +133,9 @@ describe('T10AI crowd / role reply beats (s9811 / s9813)', () => {
       'Jax lifted the spark-lamp and tapped its cold glass against their teeth, once, then again, as they stared at the engineer who would not look away. The engineer kept their eyes fixed on Jax and did not speak, and their two companions stayed stiff beside them in the Contract Hall light.';
     const out = ensureSpokenAnswer(draft, state, ask);
     expect(out.answer.status).toBe('added');
-    expect(out.prose).toMatch(/["\u201c].+["\u201d]/);
-    expect(out.prose).toMatch(/order under their roof|roof/i);
+    // T10RC1 — structured agenda is an indirect beat, not a telegram quote.
+    expect(out.prose).toMatch(/made clear they needed|order under their roof|roof/i);
+    expect(out.prose).not.toMatch(/\bI need\b/i);
     expect(out.prose.match(/\bdid not speak\b/gi)?.length ?? 0).toBe(0);
   });
 

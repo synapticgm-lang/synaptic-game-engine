@@ -5,6 +5,7 @@
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
 import { isAcceptOfferLine, openingCastNames, openOpeningOffer } from './openingEstablishment';
+import { seat } from './presentAuthority';
 import { openRouteView } from './questRoutes';
 import { applyStructuralEvents } from './structuralEvents';
 import { recordPersonSeen } from './timeline';
@@ -26,7 +27,8 @@ export function applyOpeningOfferChoice(
     const named = (card || openingCastNames(seated)[0] || '').trim();
     const low = named.toLowerCase();
     const who = !named || low === 'panel' || low === 'the panel' || low === 'the people here' || low === 'people here' || low === 'the people who pulled you' ? '' : named;
-    if (who) seated = recordPersonSeen(seated, who, 'made the offer');
+    // T10RC1 — refuse seats the offer giver via presentAuthority (timeline tag alone is not a seat).
+    if (who) seated = seat(recordPersonSeen(seated, who, 'made the offer'), who);
   }
   const route = openRouteView(seated, playerInput)?.routeByLabel;
   const eid = (route?.kind === 'person' ? route.entityId : '') ?? '';

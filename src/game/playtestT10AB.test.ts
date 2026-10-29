@@ -110,7 +110,7 @@ describe('T10AB Read / Insight chips', () => {
 });
 
 describe('T10AB collar / blade threat (s9201 resume T207–T215)', () => {
-  it('grab collar resolves Athletics grapple + Intimidation and keeps Silas present', () => {
+  it('grab collar resolves Athletics grapple + Intimidation and commits Influence outcome', () => {
     const s = church({
       currentLocation: 'Greyhollow Inn',
       sceneFacts: {
@@ -147,11 +147,17 @@ describe('T10AB collar / blade threat (s9201 resume T207–T215)', () => {
     const out = resolveTypedFreeText(bare, line);
     const blob = `${out.engineResult} ${(out.facts ?? []).join(' ')}`;
     expect(blob).toMatch(/Grapple|Athletics|Intimidation|grappled|threat/i);
+    // T10RC1 — Influence commits yield (stay hostile) or refuse+leave; never an open bargain slot.
+    expect(blob).toMatch(/Must narrate:.*(?:yields under the threat|refuses the threat and leaves)/i);
+    expect(blob).not.toMatch(/NPC reaction slot open/i);
     const next = out.state ?? s;
     const silas = (next.npcMemories ?? []).find((m) => /Silas/i.test(m.npcName));
-    expect(silas?.present !== false).toBe(true);
     expect(silas?.disposition === 'hostile' || silas?.attitude === 'hostile').toBe(true);
-    expect((next.sceneFacts?.present ?? []).some((p) => /Silas/i.test(p))).toBe(true);
+    if (/refuses the threat and leaves/i.test(blob)) {
+      expect((next.sceneFacts?.present ?? []).some((p) => /Silas/i.test(p))).toBe(false);
+    } else {
+      expect((next.sceneFacts?.present ?? []).some((p) => /Silas/i.test(p))).toBe(true);
+    }
   });
 
   it('blade to throat at present Silas is intimidate/grapple, not empty General', () => {

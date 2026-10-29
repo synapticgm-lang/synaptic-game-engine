@@ -79,7 +79,7 @@ import { fuzzyTypedPhrase } from './typedNameMatch';
 import { findSettlement } from './worldMapAuthority';
 import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
-import { buildHereSpot, withinPlaceSpot } from './hereSpot';
+import { buildHereSpot, isOutOfTalkingRange, TALKING_RANGE_FT, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
 import { applyPresenceFacts, emptyPresenceFacts, withMemoryPresentFlag } from './presentAuthority';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
@@ -424,7 +424,12 @@ function answersMeeting(enc: RoadEncounter, input: string, turn: number, terrain
   const said = meetingMoveBase(input).toLowerCase();
   const at = encounterPads(enc, terrain).findIndex((p) => p.toLowerCase() === said);
   if (at > 0 || (at === 0 && enc.kind === 'wildlife')) return { ...enc, escaped: true, escapedTurn: turn, closedTurn: turn };
-  return at === 0 && enc.kind === 'plea' ? { ...enc, engaged: true, closedTurn: turn } : null;
+  if (at === 0 && enc.kind === 'plea') return { ...enc, engaged: true, closedTurn: turn };
+  // T10RC1 — Greet / Talk / Approach closes distanceFt into talking range (same awayFrom gate).
+  if (at === 0 && typeof enc.distanceFt === 'number' && enc.distanceFt > TALKING_RANGE_FT) {
+    return { ...enc, distanceFt: 5 };
+  }
+  return null;
 }
 function helpPlea(state: GameState, enc: RoadEncounter): { state: GameState; encounter: RoadEncounter; fact: string; extra: string[] } {
   const help = PLEA_HELP[enc.want ?? ''];
@@ -1066,13 +1071,16 @@ export function roadMeetingOnBeat(state: Pick<GameState, 'journey' | 'turn'>): {
   return { label: `${ENCOUNTER_LABEL[e.kind]}${meetingCount(e)}`, count: Math.max(1, e.count ?? 1) };
 }
 /** Road-meeting event row (name else label). The row is the meeting class, never a person present. */
-export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn'>): { display: string; note: string } | null {
+export function roadMeetingRef(state: Pick<GameState, 'journey' | 'turn' | 'sceneFacts' | 'currentLocation'>): { display: string; note: string } | null {
   const e = meetingOnBeat(state);
   if (!e || !SPEAKING_KINDS.has(e.kind)) return null;
+  // T10RC1 — out-of-range road names are not speaker/actor refs (same isOutOfTalkingRange gate).
+  const display = e.name ?? ENCOUNTER_LABEL[e.kind];
+  if (isOutOfTalkingRange(state as GameState, display)) return null;
   const idea = encounterOpenerIdea(e);
   // OP-1: the picked idea is the backing for what this person says (its gist), never a line to quote.
   const gist = idea ? `; opens with: ${idea.situation}, ${idea.intent}` : '';
-  return { display: e.name ?? ENCOUNTER_LABEL[e.kind], note: `${meetingWho(e)}; met on the road, not someone already here${gist}` };
+  return { display, note: `${meetingWho(e)}; met on the road, not someone already here${gist}` };
 }
 /** Receipt fragment for this stretch (chrome + ENGINE RESULT; the writer names who or what). */
 function encounterNote(j: TravelJourney): string {

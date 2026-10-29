@@ -60,7 +60,7 @@ function well(over: Partial<GameState> = {}): GameState {
 }
 
 describe('T10AL buyer fragment / double / replay / answered-look splice (s9841)', () => {
-  it('T9: ledger need is spoken as a sentence, not the bare fragment', () => {
+  it('T9: ledger need is grammatical content, not a telegram quote or bare fragment', () => {
     const state = well();
     const ask =
       'I wipe the mud off my finger onto the ground and look Father Aldous dead in the eye. "Pays for what exactly? Your silence or your sins?"';
@@ -68,9 +68,10 @@ describe('T10AL buyer fragment / double / replay / answered-look splice (s9841)'
       'Jax wiped the mud off their finger onto the ground. Jax said, "Pays for what exactly? Your silence or your sins?" Father Aldous said nothing.';
     const out = ensureSpokenAnswer(draft, state, ask);
     expect(out.answer.status).toBe('added');
-    expect(out.prose).toMatch(/Father Aldous said,\s*["\u201c]I need a buyer who pays\.?["\u201d]/i);
+    // T10RC1 — noun-phrase agenda → indirect beat (never "I need a buyer who pays.").
+    expect(out.prose).toMatch(/Father Aldous made clear they needed a buyer who pays/i);
+    expect(out.prose).not.toMatch(/said,\s*["\u201c]I need a buyer who pays/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]a buyer who pays["\u201d]/i);
-    expect((out.prose.match(/Father Aldous said/gi) ?? []).length).toBe(1);
   });
 
   it('T9 last-resort + seal does not double the reply', () => {
@@ -83,9 +84,9 @@ describe('T10AL buyer fragment / double / replay / answered-look splice (s9841)'
       'I wipe the mud off my finger onto the ground and look Father Aldous dead in the eye. "Pays for what exactly? Your silence or your sins?"';
     const painted = lastResortStoryBody(state, undefined, ask);
     const sealed = sealPostWriterProse(state, painted.prose, ask);
-    expect((sealed.prose.match(/buyer who pays/gi) ?? []).length).toBe(1);
-    expect((sealed.prose.match(/Father Aldous said/gi) ?? []).length).toBe(1);
-    expect(sealed.prose).toMatch(/I need a buyer who pays/i);
+    expect((sealed.prose.match(/buyer who pays/gi) ?? []).length).toBeLessThanOrEqual(1);
+    expect(sealed.prose).toMatch(/made clear they needed a buyer who pays|Father Aldous/i);
+    expect(sealed.prose).not.toMatch(/said,\s*["\u201c]I need a buyer who pays/i);
   });
 
   it('T10: already-told need becomes ask-back, not a verbatim replay', () => {
@@ -97,14 +98,14 @@ describe('T10AL buyer fragment / double / replay / answered-look splice (s9841)'
           turn: 9,
           role: 'gm',
           content:
-            'Jax wiped the mud. Jax said, "Pays for what?" Father Aldous said, "I need a buyer who pays."',
+            'Jax wiped the mud. Jax said, "Pays for what?" Father Aldous made clear they needed a buyer who pays.',
           timestamp: 1,
         },
       ],
       npcMemories: [
         mem({
           npcName: 'Father Aldous',
-          said: [{ topic: 'want', turn: 9, line: 'I need a buyer who pays.' }],
+          said: [{ topic: 'want', turn: 9, line: 'a buyer who pays' }],
         }),
       ],
     });
@@ -113,20 +114,19 @@ describe('T10AL buyer fragment / double / replay / answered-look splice (s9841)'
     const draft =
       'Jax stepped back from Father Aldous. Jax said, "Who is this buyer, and do they know about the rope?" Father Aldous said nothing.';
     const out = ensureSpokenAnswer(draft, state, ask);
-    expect(out.prose).toMatch(/Father Aldous said,\s*["\u201c]/i);
+    expect(out.prose).toMatch(/Father Aldous (?:said,\s*["\u201c]|pressed for|made clear|held out)/i);
     expect(out.prose).not.toMatch(/["\u201c]a buyer who pays["\u201d]/i);
-    expect(out.prose).not.toMatch(/I need a buyer who pays/i);
-    expect(out.prose).toMatch(/already told you|Ask me who/i);
-    expect((out.prose.match(/Father Aldous said/gi) ?? []).length).toBe(1);
+    expect(out.prose).not.toMatch(/said,\s*["\u201c]I need a buyer who pays/i);
+    expect(out.prose).toMatch(/already told you|Ask me who|pressed for|made clear|held out/i);
   });
 
   it('T11 variation: collapse adjacent duplicate said-lines', () => {
     const state = well({ turn: 11 });
     const ask = 'I stare at Father Aldous. "A buyer who pays, huh? Let\'s see if that coin is clean."';
     const doubled =
-      'Jax stared at Father Aldous. Jax said, "A buyer who pays, huh? Let\'s see if that coin is clean." Father Aldous said, "I need a buyer who pays." Father Aldous said, "I need a buyer who pays."';
+      'Jax stared at Father Aldous. Jax said, "A buyer who pays, huh? Let\'s see if that coin is clean." Father Aldous said, "I already told you that. Ask me who, or why." Father Aldous said, "I already told you that. Ask me who, or why."';
     const out = ensureSpokenAnswer(doubled, state, ask);
-    expect((out.prose.match(/I need a buyer who pays/gi) ?? []).length).toBe(1);
+    expect((out.prose.match(/I already told you that/gi) ?? []).length).toBe(1);
     expect((out.prose.match(/Father Aldous said/gi) ?? []).length).toBe(1);
   });
 

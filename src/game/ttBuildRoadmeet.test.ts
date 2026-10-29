@@ -18,7 +18,15 @@ import { applyOpeningOfferChoice } from './openingOffer';
 import { commitTravel, roadMeetingFact, roadMeetingRef } from './travelJourney';
 import { PLEA_HELP } from './rules/travelDay';
 import { checkPlayCrimes } from './turnCheck';
+import { TALKING_RANGE_FT } from './hereSpot';
 import type { GameState, RoadEncounter } from './types';
+
+/** T10RC1 — bring a live road meeting into talking range for speaker/PRESENT asserts. */
+function inTalkingRange(s: GameState): GameState {
+  const e = s.journey?.encounter;
+  if (!e || typeof e.distanceFt !== 'number' || e.distanceFt <= TALKING_RANGE_FT) return s;
+  return { ...s, journey: { ...s.journey!, encounter: { ...e, distanceFt: 5 } } };
+}
 
 function keepState(seed: string): GameState {
   const s = createInitialState(undefined, 'dnd') as GameState;
@@ -76,7 +84,7 @@ describe('tt-build-roadmeet 2a: road meetings are named events', () => {
   });
 
   it('the meeting is EVENT+PRESENT while live; ends on arrival; voice rejected, mention allowed', () => {
-    let s = tripWith('rm-packet', ['traveler', 'meeting']);
+    let s = inTalkingRange(tripWith('rm-packet', ['traveler', 'meeting']));
     const name = s.journey!.encounter!.name!;
     const packet = buildCompletedEventPacket(s, 'Wait and watch', { engineResult: 'Travel: on the forest path.' });
     expect(packet.engineResult ?? '').toMatch(/^Travel: on the forest path\.\nEvent on this stretch: the road brings /);
@@ -101,7 +109,7 @@ describe('tt-build-roadmeet 2a: road meetings are named events', () => {
   });
 
   it('a page that names the meeting does not make them someone present', () => {
-    const s = tripWith('rm-harvest', ['traveler', 'meeting', 'villain', 'plea']);
+    const s = inTalkingRange(tripWith('rm-harvest', ['traveler', 'meeting', 'villain', 'plea']));
     const name = s.journey!.encounter!.name!;
     const packet = buildCompletedEventPacket(s, 'Wait and watch');
     const row = (packet.refEnum ?? []).find((r) => r.display === name)!;
