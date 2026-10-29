@@ -13,6 +13,7 @@ import { resolveOpeningHookPick } from './openingEstablishment';
 import { fitKitToHousing } from './defaults';
 import { withMotiveLines } from './npcSheet';
 import { normalizeLedgerEntry } from './npcMemoryLedger';
+import { setPlayPhase } from './playPhase';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -105,9 +106,10 @@ export function repairSaveSchema(state: GameState): SaveRepairResult {
     if (kind === 'semantic') severity = 'semantic';
   };
 
+  // One-time read-repair: missing playPhase on old saves → live via the sole writer.
   const phase = defaultPlayPhase(next);
   if (phase.changed) {
-    next = { ...next, playPhase: phase.playPhase };
+    next = setPlayPhase(next, phase.playPhase);
     note('default playPhase live', 'cosmetic');
   }
 

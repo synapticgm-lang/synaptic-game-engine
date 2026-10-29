@@ -21,6 +21,7 @@ import {
 } from './choiceRanking';
 import { applyRememberedThreatPick } from './placeThreats';
 import { applyPlayPhaseAfterHp, deathQuestReceipt } from './playPhase';
+import { carryDeathSaves } from './rules/death';
 import { pathToFileURL } from 'node:url';
 import { buildContextPrompt as buildClientContextPrompt } from './systemPrompt';
 import {
@@ -1898,15 +1899,16 @@ Do NOT print dice notation or CODE ENFORCED.
       roadDay: travelCommit.state.roadDay,
       lastLongRestAt: travelCommit.state.lastLongRestAt,
       daysWithoutFood: travelCommit.state.daysWithoutFood,
-      // T10AQ — Exhaustion-6 / road death must keep character + deathSaves from the travel commit.
+      // T10AQ — Exhaustion-6 / road death must keep character from the travel commit.
       character: travelCommit.state.character ?? working.character,
-      deathSaves: travelCommit.state.deathSaves ?? working.deathSaves,
       travelBeat: travelCommit.state.travelBeat ?? working.travelBeat,
       sceneFacts: pinClockTimeOfDay(working.sceneFacts, travelCommit.state),
       places: travelCommit.arrived
         ? touchPlaceVisit(working.places ?? state.places ?? [], here, state.turn + 1, working)
         : working.places,
     };
+    // T10SM1 — deathSaves only via death.ts (carry from travel commit that already wrote through commitDeath).
+    working = carryDeathSaves(working, travelCommit.state);
     if (hereBefore !== here) working = applyPresentTrimOnTravel(working, hereBefore, here);
     working = syncSheetToMovedHere(working, fromLoc);
   }

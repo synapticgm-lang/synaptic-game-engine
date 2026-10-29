@@ -51,7 +51,8 @@ import {
   weatherRuleOf,
 } from './rules/travelDay';
 import { modeProfile } from './rules/modeProfile';
-import { commitDeath } from './rules/death';
+import { commitDeath, isDead } from './rules/death';
+export { roadDeathBookProse, travelBeatFact } from './roadDeath';
 import { combineAdv, formatCheckRecord, proficiencyBonus, resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
 import { skillCheckMods } from './checkMath';
 import { isVr1RollLine, outcomeFactFromRecord } from './rules/rollView';
@@ -1519,7 +1520,7 @@ function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hour
   let failed = 0;
   let deathFact: string | undefined;
   const facts: string[] = [];
-  for (let h = Math.max(TRAVEL_DAY_HOURS, Math.floor(before)) + 1; h <= Math.floor(after) && !s.deathSaves?.dead && !deathFact; h++) {
+  for (let h = Math.max(TRAVEL_DAY_HOURS, Math.floor(before)) + 1; h <= Math.floor(after) && !isDead(s) && !deathFact; h++) {
     const dc = extendedTravelDc(h - TRAVEL_DAY_HOURS);
     // SRD 5.2.1 Forced March / Extended Travel: Constitution saving throw (WotC CC BY 4.0).
     const rec = resolveCheckRecord({
@@ -1539,7 +1540,7 @@ function marchHours(state: GameState, terrain: JourneyTerrain, key: string, hour
       failed++;
     }
   }
-  if (s.deathSaves?.dead) return { state: s, status, facts: [...facts, deathFact ?? ''], dead: s.deathSaves.dead };
+  if (isDead(s)) return { state: s, status, facts: [...facts, deathFact ?? ''], dead: true };
   if (deathFact) facts.push(deathFact);
   else if (failed) facts.push('The forced march wore you down; you are more exhausted than before.');
   return { state: s, status, facts };
@@ -1829,27 +1830,6 @@ function withQuietRoadCast(commit: TravelCommit): TravelCommit {
       sceneFacts: { ...base, present: nextPresent, ...crowdClear },
     },
   };
-}
-
-/** This turn's travel beat facts for the writer (empty on any other turn). */
-export function travelBeatFact(state: Pick<GameState, 'travelBeat' | 'turn'>): string {
-  const b = state.travelBeat;
-  return b && b.turn === (state.turn ?? 0) && b.facts.length ? b.facts.join(' ') : '';
-}
-
-/**
- * T10AQ — when Extended Travel / starvation death settled this turn, the book page is the death
- * sentence (what rolled / why), never a CAST reaction. Null when the PC is not dead on the record.
- */
-export function roadDeathBookProse(
-  state: Pick<GameState, 'deathSaves' | 'travelBeat' | 'turn' | 'character'>
-): string | null {
-  if (!state.deathSaves?.dead) return null;
-  const beat = travelBeatFact(state);
-  const fromBeat = beat && /\bYou are dead\./i.test(beat) ? writerEngineResult(beat, state.character?.name) : '';
-  if (fromBeat && /\bYou are dead\./i.test(fromBeat)) return fromBeat;
-  // SRD 5.2.1 Exhaustion level 6 = death (WotC CC BY 4.0). Extended Travel CON-save death uses this line.
-  return 'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.';
 }
 
 /** Leaving a mapped place heads to another mapped place, never back into the room you came out of. */

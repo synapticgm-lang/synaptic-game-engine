@@ -13,7 +13,7 @@ import { advanceDungeonCard, isDungeonCard, parkDungeonCard, previewDungeonCard 
 import { creditCommittedProgress, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
-import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
+import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked, setPlayPhase } from './playPhase';
 import { isDying } from './tabletop/roundFight';
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
@@ -4664,7 +4664,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         lastLongRestAt: liveCurrent.lastLongRestAt,
         daysWithoutFood: liveCurrent.daysWithoutFood,
         character: baseChar,
-        playPhase: phased.playPhase ?? workingState.playPhase ?? liveCurrent.playPhase,
         quests: enrichQuests(preserveArcQuestProgress(liveCurrent.quests, updatedQuests)),
         activeEncounter: updatedEncounter ?? liveCurrent.activeEncounter ?? null,
         currentLocation: finalLocationName,
@@ -4715,6 +4714,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         runManifest: liveCurrent.runManifest ?? workingState.runManifest,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
+      // T10SM1 — playPhase only via setPlayPhase (phased already went through applyPlayPhaseAfterHp).
+      {
+        const phase =
+          phased.playPhase ?? workingState.playPhase ?? liveCurrent.playPhase ?? 'live';
+        mergedStateDraft = setPlayPhase(mergedStateDraft, phase);
+      }
       if (ledgerRound?.enemyDead) {
         mergedStateDraft = markDefeatedMobAtCurrentNode(
           mergedStateDraft,

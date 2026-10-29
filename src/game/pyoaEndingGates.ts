@@ -19,6 +19,7 @@ import type {
 } from './pyoaTypes';
 import { evaluatePredicateGroup, extractFactsFromGameState } from './pyoaExclusiveFacts';
 import { rpgEndingGates } from './rpgEndings';
+import { setPlayPhase } from './playPhase';
 
 // ENDING GATE CATALOG
 
@@ -434,11 +435,13 @@ export function commitEnding(
     nextLedger.committedPaths.push(`fact:${write.factId}`);
   }
   
-  const nextState = {
-    ...state,
-    pyoaBranchLedger: nextLedger,
-    playPhase: 'ended' as const,
-  };
+  const nextState = setPlayPhase(
+    {
+      ...state,
+      pyoaBranchLedger: nextLedger,
+    },
+    'ended',
+  );
   
   const mandate = `ENDING (${ending.class}): ${ending.name}\n` +
     `${ending.terminalText}\n` +

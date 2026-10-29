@@ -1,10 +1,16 @@
 /**
- * The one death point (Order S); nothing else writes `dead: true`.
+ * The one death point (Order S / T10SM1); sole writer of `deathSaves` (and nested `dead`).
  * LitRPG / Story RPG: 0 HP from any danger path fires Package A lifeline (recoveryConfig) — never permanent death.
  * `self` (John 11:38, 11:46) still denies the act in place at 1 HP (no coin cost).
  * Tabletop `danger` applies the table's `deathRule` (SRD 5.2.1 when deathRule is srd).
+ *
+ * SRD 5.2.1 Death Saving Throws (WotC CC BY 4.0): "Whenever you start your turn with 0 Hit Points, you
+ * must make a Death Saving Throw… On a roll of 9 or lower you fail… On a roll of 10 or higher you succeed…
+ * on your third success, you become Stable… on your third failure, you die. A Natural 1 counts as two
+ * failures. A Natural 20 causes you to regain 1 Hit Point." Exhaustion level 6 is also death.
+ * `playPhase` is owned by playPhase.ts (this module never writes it; callers use setPlayPhase).
  */
-import type { EngineMode, GameState } from '../types';
+import type { DeathSaveState, EngineMode, GameState } from '../types';
 import type { Rng } from './dice';
 import { houseRulesOf } from './houseRules';
 import { advanceClock } from '../travelJourney';
@@ -12,6 +18,52 @@ import { hubsForBibleId, matchHub } from '../outdoorHubs';
 import { isWeakened, recoveryConfig } from './recoveryConfig';
 
 export type DeathCause = 'danger' | 'self';
+
+/** Player character is dead on the ledger (`deathSaves.dead`). */
+export function isDead(state: Pick<GameState, 'deathSaves'>): boolean {
+  return !!state.deathSaves?.dead;
+}
+
+/** Run has ended (distinct from isDead — PYOA / main-quest endings set playPhase without deathSaves). */
+export function runEnded(state: Pick<GameState, 'playPhase'>): boolean {
+  return state.playPhase === 'ended';
+}
+
+/** Clear death-save track (stabilised, revived, or lifeline). */
+export function clearDeathSaves(state: GameState): GameState {
+  if (state.deathSaves == null) return state;
+  return { ...state, deathSaves: null };
+}
+
+/** Start the SRD death-save track at 0/0 (downed, not yet dead). */
+export function startDying(state: GameState): GameState {
+  return { ...state, deathSaves: { successes: 0, failures: 0 } };
+}
+
+/** Apply a pure rollDeathSave result onto the player ledger (sole writer of deathSaves from rolls). */
+export function applyDeathSaveResult(state: GameState, save: DeathSaveState): GameState {
+  return { ...state, deathSaves: save };
+}
+
+/** Carry deathSaves from a prior commit (travel) without inventing a new track. */
+export function carryDeathSaves(state: GameState, from: Pick<GameState, 'deathSaves'>): GameState {
+  const ds = from.deathSaves ?? null;
+  if (state.deathSaves === ds) return state;
+  return { ...state, deathSaves: ds };
+}
+
+/** Revive: clear death saves and set HP (and optional conditions). */
+export function reviveAt(state: GameState, hp: number, conditions?: string[]): GameState {
+  const cleared = clearDeathSaves(state);
+  return {
+    ...cleared,
+    character: {
+      ...cleared.character,
+      hp,
+      ...(conditions ? { conditions } : {}),
+    },
+  };
+}
 
 /** Revivify's diamond (SRD): 300 GP. */
 const REVIVIFY_GP = 300;
@@ -128,10 +180,9 @@ function commitLifelinePackageA(
     ...(state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c) && !/^weakened$/i.test(c)),
     'Weakened',
   ];
+  // playPhase stays with playPhase.ts (setPlayPhase / applyPlayPhaseAfterHp).
   let next: GameState = {
-    ...state,
-    playPhase: 'live',
-    deathSaves: null,
+    ...clearDeathSaves(state),
     currentLocation: hub,
     gold: gold - dropped,
     weakenedUntilTurn: turn + cfg.weakenedTurns,
@@ -173,7 +224,7 @@ export function commitDeath(
   deathFact = 'You are dead.'
 ): { state: GameState; receipts: string[]; fact: string; dead: boolean } {
   const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
-  const up: GameState = { ...state, deathSaves: null, character: { ...state.character, hp: 1, conditions } };
+  const up: GameState = reviveAt(state, 1, conditions);
   const hp = `HP: ${Math.max(0, state.character.hp ?? 0)} → 1`;
   const lifeline = state.character.lifeline ?? lifelineFor(state.engineMode);
   if (cause === 'self' && state.engineMode === 'litrpg' && lifeline) {

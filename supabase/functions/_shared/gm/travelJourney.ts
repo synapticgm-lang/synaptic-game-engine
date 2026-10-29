@@ -11,21 +11,22 @@ export function roadMeetingOnBeat(_state: unknown): { label: string; count: numb
 /** The client puts the road meeting event in the engine result; the edge passes the engine result through. */
 export function withRoadMeetingEvent(_state: unknown, engineResult?: string): string { return (engineResult ?? '').trim(); }
 
-/** This turn's travel beat facts for the writer (empty on any other turn). */
-export function travelBeatFact(state: Pick<GameState, 'travelBeat' | 'turn'>): string {
-  const b = state.travelBeat;
-  return b && b.turn === (state.turn ?? 0) && b.facts.length ? b.facts.join(' ') : '';
-}
+/** T10SM1 — real module synced from src/game/roadDeath.ts (no hand-copied death page). */
+export { travelBeatFact, roadDeathBookProse } from './roadDeath.ts';
 
-/** T10AQ — client seals the death page; edge exposes the same helper for boot/import parity. */
-export function roadDeathBookProse(
-  state: Pick<GameState, 'deathSaves' | 'travelBeat' | 'turn' | 'character'>
-): string | null {
-  if (!state.deathSaves?.dead) return null;
-  const beat = travelBeatFact(state);
-  const fromBeat = beat && /\bYou are dead\./i.test(beat) ? writerEngineResult(beat, state.character?.name) : '';
-  if (fromBeat && /\bYou are dead\./i.test(fromBeat)) return fromBeat;
-  return 'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.';
+/**
+ * T10SM1 — death.ts (synced via playPhase) needs advanceClock. Real clock lives in src travelJourney;
+ * edge stub advances hour/day only (no attunement tick) so gm-turn boots.
+ */
+export function advanceClock(state: GameState, hours: number): { state: GameState; note: string } {
+  const before = typeof state.worldHour === 'number' ? state.worldHour : 12;
+  const total = before + hours;
+  const worldHour = ((total % 24) + 24) % 24;
+  const worldDay = (state.worldDay ?? 0) + Math.floor(total / 24);
+  return {
+    state: { ...state, worldHour, ...(worldDay ? { worldDay } : {}) },
+    note: `+${hours}h`,
+  };
 }
 
 export const UNDERWAY_HERE = 'On the road between places';

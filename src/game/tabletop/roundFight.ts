@@ -28,7 +28,13 @@ import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
 import { buildCombatStatusBlock, combatFacts, deathSaveLine, presentCombatStatus } from '../rules/combatPresenter';
 import { payEncounterXp } from '../engineFight';
 import { ENCOUNTER_DIFFICULTY, houseRulesOf } from '../rules/houseRules';
-import { commitDeath, HOURS_LATER } from '../rules/death';
+import {
+  applyDeathSaveResult,
+  commitDeath,
+  HOURS_LATER,
+  reviveAt,
+  startDying,
+} from '../rules/death';
 import { tag } from '../timeline';
 import { sidekickOf, sidekickProfile } from '../rules/sidekick';
 import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
@@ -546,12 +552,11 @@ export function resolveRoundFight(
   const dead = res.outcome === 'dead';
   // The foes leave a downed PC: the encounter ends here and the foe stays at the place (placeThreats).
   const lost = tickEncounterTerminal(next, input, { playerDead: true });
-  next = {
+  next = startDying({
     ...lost.state,
     roundCombat: null,
     character: { ...next.character, hp: 0, conditions: [...new Set([...(next.character.conditions ?? []), 'Unconscious'])] },
-    deathSaves: { successes: 0, failures: 0 },
-  };
+  });
   receipts.push(`Fight: DEFEAT vs ${enc.name} in ${roundsText}. The fight is over: you lost it.`, ...lost.receipts);
   next = tag(next, 'failed', 'combat', { id: `combat:${enc.name}`, name: enc.name }, 'downed');
   next = pushCombatStateTx(next, `Fight vs ${enc.name}: defeat in ${roundsText}`, enc.name, 'Engine fight');
@@ -625,7 +630,7 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
       const quantity = i.id === potion.id ? (i.quantity ?? 1) - 1 : (i.quantity ?? 1);
       if (quantity > 0) inventory.push(i.id === potion.id ? { ...i, quantity } : i);
     }
-    const next: GameState = { ...state, deathSaves: null, inventory, character: { ...state.character, hp, conditions } };
+    const next: GameState = { ...reviveAt(state, hp, conditions), inventory };
     const who = (state.character.name || 'you').trim() || 'you';
     return {
       state: next,
@@ -670,10 +675,7 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
       const conditions: string[] = [];
       for (const c of state.character.conditions ?? []) if (c.toLowerCase() !== 'unconscious') conditions.push(c);
       const hours = 1 + Math.floor(rng() * 4);
-      const woke = advanceClock(
-        { ...state, deathSaves: null, character: { ...state.character, hp: 1, conditions } },
-        hours,
-      );
+      const woke = advanceClock(reviveAt(state, 1, conditions), hours);
       return {
         state: woke.state,
         receipts: [status, hpLine(0, 1), `Time: ${woke.note}`],
@@ -703,7 +705,7 @@ function rollDeathSaveTurn(
   const r = rollDeathSave(state.deathSaves!, rng, { reroll });
   const secret = house.secretDeathSaves;
   const receipts = [...priorReceipts, deathSaveLine(r, secret)];
-  let next: GameState = { ...state, deathSaves: r.state };
+  let next: GameState = applyDeathSaveResult(state, r.state);
   if (r.rerolled !== undefined) {
     next = { ...next, character: { ...next.character, heroicInspiration: false } };
     receipts.push('Heroic Inspiration: spent');
@@ -719,11 +721,11 @@ function rollDeathSaveTurn(
   const conditions = (state.character.conditions ?? []).filter((c) => !/^unconscious$/i.test(c));
   let fact: string;
   if (r.result === 'revived') {
-    next = { ...next, deathSaves: null, character: { ...state.character, hp: 1, conditions } };
+    next = reviveAt(next, 1, conditions);
     receipts.push(hpLine(0, 1));
     fact = 'You surge back to consciousness with a gasp and get up, barely on your feet.';
   } else if (r.state.stable) {
-    const woke = advanceClock({ ...next, deathSaves: null, character: { ...state.character, hp: 1, conditions } }, r.hoursToWake ?? 1);
+    const woke = advanceClock(reviveAt(next, 1, conditions), r.hoursToWake ?? 1);
     next = woke.state;
     receipts.push(hpLine(0, 1), `Time: ${woke.note}`);
     fact = `Your breathing steadies; you are stable. ${HOURS_LATER[r.hoursToWake ?? 0] ?? 'Hours'} later you wake, weak but alive.`;

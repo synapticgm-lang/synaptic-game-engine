@@ -1,6 +1,6 @@
 /**
  * T10SM1 single-writer allow-lists (ratchet: may only shrink).
- * Stage 0 = today's AST writers. Stages 1–2 shrink toward one owner per field.
+ * Stage 0 = today's AST writers. Stage 1 shrinks death fields. Stage 2 shrinks presence.
  */
 
 export const PRESENCE_FIELDS = [
@@ -19,6 +19,7 @@ export const GUARDED_FIELDS = [...PRESENCE_FIELDS, ...DEATH_FIELDS] as const;
 export type GuardedField = (typeof GUARDED_FIELDS)[number];
 
 export const ALLOW_LISTS: Record<GuardedField, readonly string[]> = {
+  // Stage 2 will shrink these toward presentAuthority.ts only.
   present: [
     'src/game/arcDirector.ts',
     'src/game/combatAuthority.ts',
@@ -66,20 +67,10 @@ export const ALLOW_LISTS: Record<GuardedField, readonly string[]> = {
     'src/game/npcMemory.ts',
     'src/game/openThreads.ts',
   ],
-  deathSaves: [
-    'src/game/fateAutoplay.ts',
-    'src/game/rules/death.ts',
-    'src/game/tabletop/roundFight.ts',
-  ],
-  // Local DeathSaveState.dead = true inside rollDeathSave; Stage 1 routes PC death through death.ts.
-  dead: ['src/game/rules/roundCombat.ts'],
-  playPhase: [
-    'src/game/mainQuestEnd.ts',
-    'src/game/playPhase.ts',
-    'src/game/pyoaEndingGates.ts',
-    'src/game/pyoaSpine.ts',
-    'src/game/rules/death.ts',
-    'src/game/saveMigration.ts',
-    'src/game/useGame.ts',
-  ],
+  // Stage 1: sole deathSaves writer.
+  deathSaves: ['src/game/rules/death.ts'],
+  // Stage 1: no assign/patch of bare `dead` (nested deathSaves.dead lives under deathSaves writes).
+  dead: [],
+  // Stage 1: sole playPhase writer (death.ts delegates; endings/migration call setPlayPhase).
+  playPhase: ['src/game/playPhase.ts'],
 };
