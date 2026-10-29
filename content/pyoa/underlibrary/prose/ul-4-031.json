@@ -1,0 +1,104 @@
+{
+ "batch": "ul-4-031",
+ "sections": {
+  "ul-4-031": {
+   "title": "The Murmuring Mastic Floor",
+   "text": "Underneath your heavy boots, the solid stone gives way to a shifting mosaic of discarded bookplates that whisper sharp, paper-dry complaints about your clumsy tread. Each tiny square of gummed paper protests its displacement, grumbling of glue and heraldry against the soles of your shoes. You keep your lamp steady as the floorboards ripple like water, shifting patterns of faded crests and latin mottoes sliding this way and that across the gloom. The air tastes strongly of old paste and copper-gall ink, thick enough to coat your tongue while the subterranean vaults echo with the collective murmuring of thousands of disgruntled past owners. You press forward into the heart of the Deep Annexe, where the walls itself seem to listen to the paper chatter beneath your feet.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the murmuring mosaic deeper inward"
+   ]
+  },
+  "ul-4-032": {
+   "title": "The Ex-Libris Corridor",
+   "text": "Thousands of discarded ownership plates pave this narrow gallery, shifting and rustling underfoot like dry leaves in an autumn gale. Every tile bears a different coat of arms or solemn pledge of collection, now loose and restless under the dim glow of your swinging lamp. Ahead, multiple passages branch into the deep shadows of the oldest stacks, each promising a different route through the ancient paper labyrinth. The air is thick with the scent of rancid glue and aged vellum, whispering hints of secrets half-forgotten by the city above. You must choose your next direction carefully before the shifting floor decides for you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tread lightly across the shifting paper tiles",
+    "Balance along the petrified oak beam above",
+    "Trick the mosaic into lowering its barrier",
+    "Press through the thick fog of pulverized dust"
+   ]
+  },
+  "ul-4-033": {
+   "title": "The Sprite's Favor",
+   "text": "Delicate and measured steps carry you across the shifting tiles without disturbing a single gummed corner or tearing an aged paper edge. A tiny, rustling creature no larger than your hand emerges from a crevice between the floorboards, its body woven from vintage leather bindings and gold-leaf trim. It tilts a head fashioned from a marbled endpaper, inspecting your cautious advance with sharp, ink-stained eyes. Recognizing your respect for its fragile domain, the sprite gives a silent nod of approval and flits ahead to guide your path. You follow its flickering golden silhouette through the labyrinthine gloom of the Annexe.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the nimble guide through the stacks"
+   ]
+  },
+  "ul-4-034": {
+   "title": "The Gilded Passage",
+   "text": "Golden light spills from hairline cracks in the masonry, catching motes of drifting paper dust that dance lazily in the stagnant air. Your companion flits from shelf to shelf, its paper wings rustling softly like turning pages in a silent reading room. The surrounding shelves loom tall and crooked, burdened with massive folios bound in calfskin that has darkened to the color of strong tea. Every surface hums with a faint, residual static charge, making the hairs on your arms stand on end as you pass. You keep your gaze fixed on the glowing sprite, trusting its uncanny knowledge of the shifting architecture.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend toward the whispering alcove below"
+   ]
+  },
+  "ul-4-035": {
+   "title": "Balancing on the Edge",
+   "text": "A sudden drop in the floor leaves only a slick, moss-grown spine of an ancient ledger bridging the dark chasm ahead. You test the narrow bridge with the toe of your boot, feeling the centuries-old parchment sag and groan under your weight above the black abyss. Balancing your lamp in one hand, you stretch your arms wide to catch any stray draft that might throw you off course. Every muscle in your body tightens as you prepare to cross the dangerous span without losing your footing in the dark.",
+   "check": "Step carefully across the parchment bridge",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-036": {
+   "title": "The Torn Spine",
+   "text": "The ancient ledger spine gives way beneath your sudden shift in weight, tearing with a wet, fibrous snap that echoes in the vault. You lurch wildly, arms windmilling as you drop to your knees on the jagged stone ledge just beyond the chasm. A shower of loose pages and heavy iron bookmarks clatters down into the darkness below, leaving your shins bruised and your lamp-oil leaking onto the dusty floor. You pull yourself up, panting heavily, realizing that speed cost you dearly in both skin and supplies.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself toward the flickering light"
+   ]
+  },
+  "ul-4-037": {
+   "title": "The Sprite's Ledger",
+   "text": "Silence settles over the corridor as your boots find the exact centre of each stone seal, disturbing neither dust nor slumber. Perched upon a leather-bound milestone, a tiny bookplate sprite with wings of gummed paper nods in quiet approval at your measured tread. It reaches into its copper waistcoat and presses a warm, damp stamp into your palm, leaving behind an indelible mark that smells faintly of dried lavender and archival paste. This token of passage will stay your hand against the minor trip-wires of the lower stacks, granting you safe conduct among the territorial spirits of the bindery.",
+   "check": "",
+   "grant": "bookplate sprite favour",
+   "exits": [
+    "Step carefully back onto the shifting plates"
+   ]
+  },
+  "ul-4-038": {
+   "title": "The Petrified Beam",
+   "text": "A thick beam of petrified oak spans the unstable expanse, offering a dry and rigid highway above the restless paper floor. You hoist your lamp higher, testing the ancient wood with a tentative hand before hoisting yourself up onto its rounded surface. Halfway across, your fingers brush against a small, forgotten leather pouch wedged into a knot in the timber. Untying the drawstring reveals a cache of scented sealing wax, fragrant with crushed cloves and dried lavender, perfectly preserved in the cool subterranean air. You pocket the prize and continue your steady progress across the span.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the oak beam to the far ledge"
+   ]
+  },
+  "ul-4-039": {
+   "title": "The Narrow Crossing",
+   "text": "The timber beam narrows sharply as it approaches a vertical stack of encyclopedias leaning precariously over the void. A sudden gust of cold air sweeps through the stacks, threatening to unbalance your stance on the slick, petrified wood. You freeze in place, shifting your weight low and centering your breathing against the sway of the hanging lamp. Your boots cling to the rounded grain while you measure the final leap to safety across the remaining gap.",
+   "check": "Leap across the remaining timber gap",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-040": {
+   "title": "A Heavy Fall",
+   "text": "The gust catches your coat at the worst possible moment, tipping your balance and sending you skidding off the rounded timber. You tumble hard onto a massive pile of discarded folios, the impact knocking the wind from your chest and cracking the glass of your oil lamp. Scrambling upright with a bruised shoulder and a torn sleeve, you watch the last drops of fuel soak uselessly into the thirsty paper beneath you. You survive the clumsy landing, but the shadows crowd closer now that your light burns dimmer.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your wits in the dim gloom"
+   ]
+  },
+  "ul-4-041": {
+   "title": "The Scented Vault",
+   "text": "Balancing with absolute precision along the heart-wood beam, you leave the collapsing flags far behind and reach the comparative safety of an unscarred alcove. Tucked into the cranny of a dormant oak press rests a heavy linen pouch tied with a length of crimson silk, its contents cold and satisfyingly dense against your fingers. Inside lies a cache of perfumed sealing wax infused with crushed cloves and dragon's blood, prized by senior scribes for securing documents against the damp air of the vaults. Pocketing the prize, you prepare to re-enter the shifting labyrinth with your provisions replenished.",
+   "check": "",
+   "grant": "pouch of scented wax",
+   "exits": [
+    "Step carefully back onto the shifting plates"
+   ]
+  }
+ },
+ "missing": []
+}

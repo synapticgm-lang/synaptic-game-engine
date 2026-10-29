@@ -1,0 +1,6 @@
+@@SECTION ul-2-134
+TITLE: The Silver Bookmark
+TEXT: You slip sideways through the tightest portion with smooth grace, your shoulder grazing the damp leather spines of forgotten folios until your bootheels find firm flagstones once more. Dust motes dance in the amber glare of your lantern, settling over the endless labyrinth of drifting stacks that stretch out into the gloom. Clutched tightly in your palm is a silver-plated bookmark of fine make, rescued from the gap just as the shelves shifted their iron-bound joints. It hums faintly against your skin like a trapped bee, carrying the secret weight of a librarian's forgotten favor.
+GRANT: silver-plated bookmark of fine make
+EXIT 1: Squeeze back through the narrow fissure
+@@END

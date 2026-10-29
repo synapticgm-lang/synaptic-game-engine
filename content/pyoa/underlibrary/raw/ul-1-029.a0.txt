@@ -1,0 +1,57 @@
+@@SECTION ul-1-029
+TITLE: Flattery in the Stacks
+TEXT: Praise costs nothing when spent upon a scholar whose vanity outstrips his intellect. You lean against the varnished mahogany of the reading desk, offering smooth, unearned compliments regarding his monograph on forgotten scripts. His chest swells beneath his stiff linen waistcoat, and his fingers loosen their jealous grip upon the leather-bound notebook resting beside his inkwell. It details Thessaly Marr's recent inquiries into the vault protocols. // The opportunity sits within arm's reach, wrapped in twine and dust, awaiting a steady hand.
+EXIT 1: Reach quietly for the leather notebook
+@@END
+@@SECTION ul-1-030
+TITLE: The Stolen Inquiry
+TEXT: Drawing a deep breath filled with the scent of old lambskin and tallow, you slip your fingers across the desktop while maintaining a steady stream of sycophantic praise. The scholar turns his head to preen under your flattery, exposing the notebook's spine. You slide your hand toward the target, muscles tightening as you measure the distance against his shifting gaze. A sudden scrape of a nearby chair breaks the silence of the galleried hall, threatening to draw his attention back to his property just as your fingertips brush the edge of the leather cover.
+CHECK: Slide fingers across the polished desk
+@@END
+@@SECTION ul-1-031
+TITLE: A Flawed Deception
+TEXT: Your fingers graze the leather cover just as the scholar pivots back with a suspicious scowl, wrenching the notebook from your reach with a sharp slap of his palm. He narrows his eyes, muttering about audacious shelvers who mistake politeness for permission. The rebuff leaves your wrist stinging from his heavy signet ring, and you lose valuable minutes standing stiffly while he lectures you on library etiquette before finally turning away. You salvage your pride, though the encounter leaves you nursing a bruised wrist and a heightened wariness among the rival scholars.
+EXIT 1: Retreat empty-handed into the crowded aisle
+@@END
+@@SECTION ul-1-032
+TITLE: The Scholar's Notebook
+TEXT: Your fingers close around the warm leather of the notebook, sliding it seamlessly into the deep pocket of your apron while the scholar remains lost in his own bloated reflection. You offer a final, perfectly timed bow before melting back into the shadows of the tall oak shelving. The pages within hold crude maps of restricted corridors and scribbled notes in Thessaly's unmistakable hand, pointing toward the deep annexes. // The risk paid off, leaving you with a vital clue to the Archivist's path.
+GRANT: Stolen Research Notebook
+EXIT 1: Return to the crowded scholar alcove
+@@END
+@@SECTION ul-1-033
+TITLE: The Territorial Bookmark
+TEXT: Heated arguments over cataloguing rights echo through the galleried hall, providing a chaotic cover for your approach. The pompous scholar blocks the narrow corridor with his voluminous robes, guarding his territory like an ancient dragon atop a pile of folios. You slip past his sweeping gestures with a fluid sidestep, your shoulder brushing the rough wool of his sleeve. As you move by, your fingers deftly lift a discarded cardboard bookmark fluttering from his coat pocket, bearing a crucial address written in hurried, familiar ink.
+EXIT 1: Slip away into the shadows
+@@END
+@@SECTION ul-1-034
+TITLE: The Narrow Archway
+TEXT: Darting past the raging historian, you aim for the narrow gap between a towering stack of unbound periodicals and a wobbling cart of heavy lexicons. The floor is slick with spilled lamp-oil, and the scholar whirls around with a furious shout, lunging to block your escape route. You throw your weight forward, trusting your momentum to carry you through the tightening bottleneck while your boots slide perilously close to the dark edge of an open floor grating.
+CHECK: Leap across the oily floor gap
+@@END
+@@SECTION ul-1-035
+TITLE: A Slippery Retreat
+TEXT: Your boot heel catches on a loose floorboard greased with spilled lamp-oil, sending you pitching awkwardly into a stack of loose pamphlets. They scatter across the flagstones like startled birds, drawing the sharp rebukes of nearby readers and the stern glare of the lending clerk. You scramble to gather your dignity alongside the fallen papers, nursing a scraped knee and losing precious minutes to the commotion. The scholar huffs in triumph from across the aisle, but you slip away into the gloom before he can demand compensation.
+EXIT 1: Limp toward the lower scriptoriums
+@@END
+@@SECTION ul-1-036
+TITLE: The Torn Address
+TEXT: Your balance holds through the slide, carrying you cleanly past the flailing historian and into the safety of the transverse stack. Clutched in your palm is a stiff paper bookmark bearing an address in the deep annexes where Thessaly was last seen. The escape cost you a torn sleeve and a moment of breathless panic, but the prize remains secure against your chest. // You press onward into the gloom with a valuable lead on your vanished mentor.
+GRANT: Torn Marginal Bookmark
+EXIT 1: Return to the crowded scholar alcove
+@@END
+@@SECTION ul-1-037
+TITLE: The Lower Scriptoriums
+TEXT: Iron-gall ink and damp stone settle heavy upon your tongue as you descend the spiral stair into the lower scriptoriums, where the air tastes of oxidized copper and cold river silt. Shadows lengthen across rows of sloping desks where scribes work by the dim amber glow of oil lamps, transcribing rotting codices before their words dissolve entirely into the grain. The murmur of whispered annotations rises from every corner, a ceaseless buzzing like trapped insects inside dry bindings. Nobody looks up as you pass, too absorbed in the desperate race against the expanding decay of the catalogue. // Ahead lies the bustling market where merchants trade in the very fluids that keep the library's memory alive.
+EXIT 1: Approach the bustling ink market
+@@END
+@@SECTION ul-1-038
+TITLE: The Ink-Sellers' Stall
+TEXT: Canvas awnings strain against greasy drafts in a cavernous bazaar where merchants hawk dubious liquids by flickering lantern light. Glass vials clink against one another, filled with concoctions that promise to reveal hidden text, make parchment scream when touched, or permanently stain wandering fingers. The air smells thick of turpentine, gall, and stale vinegar, laced with the low hum of rival shelvers haggling over prices. Every stall offers a different route through the creeping shadows, tempting you to spend your meager copper on draughts that might ease your journey into the deep stacks.
+EXIT 1: Catch a jar of falling luminescent ink
+EXIT 2: Identify a rare batch of genuine archive ink
+EXIT 3: Slip through the market stalls with fluid grace
+EXIT 4: Barter skillfully for permanent index-black
+EXIT 5: Trick a greedy merchant with waste-paper
+EXIT 6: Cross the bridge over the ink canal
+@@END

@@ -1,0 +1,52 @@
+@@SECTION ul-1-051
+TITLE: The Oily Bazaar
+TEXT: Lamp-oil fumes hang thick over the stall where the ink-seller squints through a jeweller's lens at your worn leather boots. You press the heel of your left sole against the rough wooden counter to hide the split seam, letting the dim amber glow catch the polished grain of the calfskin. The merchant taps a stained fingernail against a heavy ceramic jar marked with the sigil of the permanent trade. // Weighing his interest against the rising chill of the Reading Rooms, you offer the boots with a solemn nod, suggesting they will outlast three pairs of these damp market slippers.
+EXIT 1: Inspect the heavy ceramic jar //
+@@END
+@@SECTION ul-1-052
+TITLE: Weighing the Trade
+TEXT: Thick soot flakes drift down from the iron lamps, settling on the brim of your shelver's cap as the merchant runs a suspicious thumb over the welt of your spare boot. He mutters something about shoddy stitching in the lower tiers, yet his nostrils flare at the genuine scent of neatsfoot oil. You fold your arms across your chest, feigning indifference while your toes ache in the thin stockings. // The flask of index-black sits just beyond his elbow, its leaden stopper sealed with purple wax that smells faintly of old cloves.
+EXIT 1: Push the boots a little closer //
+@@END
+@@SECTION ul-1-053
+TITLE: A Bargain Struck
+TEXT: Cold sweat beads at the back of your neck as you match the merchant's unblinking stare, sliding the second boot forward with deliberate, unhurried grace. You speak of cataloguing quotas and the strict rules of the Returns Desk, weaving an elaborate fiction about a shortage of proper footwear in the deep stacks that demands an immediate exchange of equal value. His fingers twitch toward the wax-sealed flask, hovering just above the rim while he decides whether your bold front is genuine authority or desperate bluffing. //
+CHECK: Persuade the merchant with sharp wits
+@@END
+@@SECTION ul-1-054
+TITLE: A Costly Exchange
+TEXT: Your tongue slips on a technical term from the library code, and the merchant’s eyes snap wide with sudden, sharp amusement. He snorts, tossing your boots back onto the dusty floorboards with a dismissive flick of his wrist. If you want his finest ink-black now, he demands double the toll, forcing you to hand over your last silver penny and a bundle of precious parchment scraps meant for your evening notes. You stagger away poorer and wiser, your pockets lighter by more than coin.
+EXIT 1: Retreat into the smoky crowd //
+@@END
+@@SECTION ul-1-055
+TITLE: The Darkest Ink
+TEXT: The merchant grunts in grudging surrender, sweeping your spare boots into a greasy crate beneath his counter and thrusting the heavy ceramic flask into your open palms. It settles there with a satisfying, leaden weight, cold enough to numb your fingers through your tunic sleeve. However narrowly you managed the transaction, the prize is yours, sealed with a sharp nod of mutual disrespect. //
+GRANT: Flask of index-black
+EXIT 1: Return to the bustling stall rows //
+@@END
+@@SECTION ul-1-056
+TITLE: The Blank Facade
+TEXT: Smooth sheets of cheap rag paper rustle between your trembling fingers as you fan out the worthless bundle across the counter, making them look like pristine vellum under the flickering lantern light. The greedy merchant leans in close, his grease-stained spectacles sliding down his nose as he inspects the blank margins with hungry eyes. You whisper tales of a lost cartography manual destined for the Index, keeping your voice low and conspiratorial. //
+EXIT 1: Push the blank bundle forward //
+@@END
+@@SECTION ul-1-057
+TITLE: The False Ledger
+TEXT: Heart hammering against your ribs, you point a confident finger at the empty corners of the paper, murmuring that the invisible script requires the heat of a breath to appear. The merchant reaches eagerly for the prize, his fat fingers almost grazing the topmost sheet while suspicion flickers briefly in his rheumy eyes. You hold your breath, forcing your hands to remain steady on the counter edge as he weighs the gamble. //
+CHECK: Trick the merchant with blank paper
+@@END
+@@SECTION ul-1-058
+TITLE: Discovered Deception
+TEXT: A corner of the top sheet catches on a dry splinter, tearing away to reveal the utterly blank, coarse grain beneath. The merchant lets out a sharp whistle of outrage that brings two burly porters charging through the linen drapes behind the stall. You snatch up what you can and bolt, leaving your spare woollen scarf behind in the merchant's furious fist as a token of your hasty retreat.
+EXIT 1: Flee down the shadowy lane //
+@@END
+@@SECTION ul-1-059
+TITLE: The Stolen Secret
+TEXT: The merchant snatches the bundle, grins a yellow-toothed grin of absolute triumph, and shoves a heavy glass vial of clear, stinging fluid into your pocket before he can change his mind. However narrowly you avoided his wrath, the precious draught of invisible ink is safely tucked against your ribs. You slip away into the shifting crowd of scholars before he thinks to test the paper under an open flame. //
+GRANT: Vial of invisible ink
+EXIT 1: Drift back toward the stalls //
+@@END
+@@SECTION ul-1-060
+TITLE: The Bridge of Spines
+TEXT: Heavy iron girders groan overhead as you step onto the swaying span constructed entirely from discarded, iron-clasped library bindings lashed together with hemp rope. Below you, a sluggish canal of discarded black ink rolls in thick, glistening waves, whispering disjointed phrases from forgotten treatises against the stone footings. The air tastes of copper and old glue, and every footstep sends a dry, paper-crackle shudder through the makeshift bridge. You keep your eyes fixed on the distant lantern light of the scriptorium, ignoring the frantic scratching sounds echoing from the dark water beneath your boots.
+EXIT 1: Cross toward the scriptorium arches //
+@@END

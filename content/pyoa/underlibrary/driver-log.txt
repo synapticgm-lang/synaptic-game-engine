@@ -1,0 +1,61 @@
+2026-10-29T07:14:53.612Z driver start dice underlibrary
+2026-10-29T07:14:53.615Z step outline
+2026-10-29T07:18:17.937Z step prose
+2026-10-29T07:34:44.357Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T13:09:35.196Z driver start dice underlibrary
+2026-10-29T13:09:35.199Z step outline
+2026-10-29T13:09:35.451Z step prose
+2026-10-29T13:19:37.341Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T13:41:38.706Z driver start dice underlibrary
+2026-10-29T13:41:38.708Z step outline
+2026-10-29T13:41:38.934Z step prose
+2026-10-29T13:53:32.463Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T13:56:08.226Z driver start dice underlibrary
+2026-10-29T13:56:08.228Z step outline
+2026-10-29T13:56:08.450Z step prose
+2026-10-29T13:57:25.119Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T14:00:00.749Z driver start dice underlibrary
+2026-10-29T14:00:00.752Z step outline
+2026-10-29T14:00:00.981Z step prose
+2026-10-29T14:00:21.231Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T14:02:56.894Z driver start dice underlibrary
+2026-10-29T14:02:56.896Z step outline
+2026-10-29T14:02:57.124Z step prose
+2026-10-29T14:03:17.165Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T14:05:52.794Z driver start dice underlibrary
+2026-10-29T14:05:52.797Z step outline
+2026-10-29T14:05:53.014Z step prose
+2026-10-29T14:09:09.641Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T14:11:45.283Z driver start dice underlibrary
+2026-10-29T14:11:45.286Z step outline
+2026-10-29T14:11:45.498Z step prose
+2026-10-29T14:12:58.398Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T14:15:34.032Z driver start dice underlibrary
+2026-10-29T14:15:34.034Z step outline
+2026-10-29T14:15:34.255Z step prose
+2026-10-29T14:18:33.220Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T14:21:08.864Z driver start dice underlibrary
+2026-10-29T14:21:08.867Z step outline
+2026-10-29T14:21:09.088Z step prose
+2026-10-29T14:46:56.761Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T14:49:32.395Z driver start dice underlibrary
+2026-10-29T14:49:32.398Z step outline
+2026-10-29T14:49:32.615Z step prose
+2026-10-29T14:58:06.427Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T15:00:42.346Z driver start dice underlibrary
+2026-10-29T15:00:42.348Z step outline
+2026-10-29T15:00:42.568Z step prose
+2026-10-29T15:20:16.032Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T15:22:51.970Z driver start dice underlibrary
+2026-10-29T15:22:51.979Z step outline
+2026-10-29T15:22:52.279Z step prose
+2026-10-29T15:47:32.759Z step fill
+2026-10-29T15:54:14.660Z step merge
+dice book: 1000 sections, with prose 1000, words 90638, reachable 1000, endings 12, checks 183, flags set 11
+ERRORS 0
+warnings 4
+  w grant on scene ul-2-043
+  w meta word in ul-2-167
+  w meta word in ul-4-153
+  w meta word in ul-5-014
+2026-10-29T15:54:15.018Z lint exit 0

@@ -1,0 +1,52 @@
+@@SECTION ul-3-053
+TITLE: The False Ledger
+TEXT: Heavy mahogany desks loom over the ink-stained floor of the tribunal chamber while clerks whisper behind towers of stamped parchment. A senior inquisitor slides an open register across the blotter, demanding an alteration to your entry dates with a smooth, dangerous smile that invites quiet compliance. The scratch of steel nibs fills the breathless air, and temptation whispers that a single amended stroke of your pen will clear your path instantly. // Instead of bending the truth, your fingers tighten around your dry quill while you consider the severe penalties for falsifying official records within these echoing stone vaults. Every instinct urges you to slide the ledger back unmarked before the watchful eyes across the desk narrow any further.
+EXIT 1: Push the unaltered logbook away
+@@END
+@@SECTION ul-3-054
+TITLE: Ink on the Sleeve
+TEXT: Cold lamplight glints off brass spectacle frames as the examiner leans closer, tapping an ink-stained finger against the suspicious gap in your movement logs. Silence stretches between the tall bookshelves, heavy with the scent of gum arabic and dried gall. You keep your breathing steady, refusing to drop your gaze from the scrutinizing stare of the clerk who holds your administrative fate in his pale palm. // A sudden draft from the ventilation shafts makes the oil lamps flicker, casting long, wavering shadows across the rows of card-drawers behind the tribunal dais. The senior official tilts his head, weighing your silent defiance against the bureaucratic convenience of a forged confession.
+EXIT 1: Meet the cold gaze without flinching
+@@END
+@@SECTION ul-3-055
+TITLE: The Inquisitor's Stare
+TEXT: Every muscle in your neck stiffens as the chief inquisitor places his pen down with a sharp click that reverberates through the arched hall. He slides the incriminating page an inch closer to your fingers, waiting to see if your nerve will break under the weight of his official authority. You feel the temptation to scratch out the date and rewrite your history pulling at your resolve like a strong current dragging you toward a safe harbor. Sweat beads at your temples while you force your hands to remain flat and open upon the polished timber surface.
+CHECK: Maintain steady eye contact under pressure
+@@END
+@@SECTION ul-3-056
+TITLE: A Slip of the Pen
+TEXT: Your nerve splinters under the unrelenting gaze of the tribunal, and a nervous twitch betrays your hesitation just long enough for the senior clerk to note your weakness. He exacts a heavy toll for your brief panic, extracting a formal debt of service and marking your travel parchment with a crimson stamp of censure that will follow you through every stack in the Underlibrary. A sharp reprimand echoes through the hall, costing you valuable hours of transit time and leaving your shoulders aching from the tension of the ordeal. // You gather your remaining papers with trembling fingers, chastened by the encounter but still permitted to leave the tribunal desk with your skin intact.
+EXIT 1: Gather your marked papers and leave
+@@END
+@@SECTION ul-3-057
+TITLE: Respect Across the Desk
+TEXT: The senior clerk stares at your unblemished logbook for a long, silent moment before a dry, approving cough breaks the heavy stillness of the hall. He closes the register with a dull thud, however narrowly you managed to preserve the integrity of your records against his probing questions. A nod of hard-earned recognition passes between you as he signs your clearance slip with a flourish of his own pen. // You slide the small token into your coat pocket, knowing its value among the stack-keepers will open doors that remain firmly bolted to ordinary shelvers.
+GRANT: A senior clerk's silent respect
+EXIT 1: Walk toward the Scriptorium of Appeals
+@@END
+@@SECTION ul-3-058
+TITLE: The Magistrate's Demand
+TEXT: A stout magistrate blocks the narrow stone archway, his brass badge catching the yellow glow of your brass-bound hand-lamp while he insists that open flames violate municipal code. He reaches out with stubby, ink-stained fingers to snatch the oil reservoir from your grip, citing emergency regulations that govern the lower stacks during the Long Closing. The acrid stench of cheap tallow hangs around his woollen coat as he looms closer, daring you to challenge his authority in the crowded transit corridor. // You grip the handle of your lamp tighter, feeling the warm metal press against your palm as scholars bustle past on their way to the galleried reading rooms.
+EXIT 1: Stand firm against the bullying magistrate
+@@END
+@@SECTION ul-3-059
+TITLE: Shadows on the Wall
+TEXT: Shadows stretch long and crooked across the limestone blocks as the magistrate raises his voice, drawing curious glances from passing cataloguers laden with heavy folios. You refuse to surrender your only source of light in the dim, shifting labyrinth where unlit corridors spell certain disaster for a junior shelver. The brass lamp grows hot against your knuckles, a steady little sun against the creeping gloom of the deep shelves. // A low rumble vibrates through the floorboards beneath your boots, reminding you that the architecture itself cares little for petty bureaucratic disputes over fuel.
+EXIT 1: Hold the lamp above the dispute
+@@END
+@@SECTION ul-3-060
+TITLE: Defending the Flame
+TEXT: The magistrate lunges forward with both hands outstretched to wrench the brass lamp from your fingers, his face flushed with the righteous fury of a petty rule-keeper. You brace your boots against the uneven paving stones, throwing your entire weight backward while your fingers lock around the carrying handle with desperate strength. The flickering flame casts wild, leaping patterns of soot across the stone vaulting as you pit your raw courage against his aggressive advance.
+CHECK: Protect the lamp from confiscation
+@@END
+@@SECTION ul-3-061
+TITLE: A Shattered Reservoir
+TEXT: The magistrate's rough yank tears the lamp from your grasp, sending it crashing against the stone floor where the brass reservoir splits open with a sharp clatter. Precious lamp-oil spills across the flags in a dark, shimmering puddle, robbing you of your primary source of illumination and leaving you with a jagged scratch across your knuckles. The bitter taste of wasted fuel fills the air as the official marches away, leaving you to nurse your minor injury and piece together your journey through the gathering gloom. // You salvage the dented wick-holder from the floor, counting the cost of the confrontation in lost supplies.
+EXIT 1: Retrieve the dented wick-holder
+@@END
+@@SECTION ul-3-062
+TITLE: The Unyielding Flame
+TEXT: Your grip holds fast against the magistrate's sudden lunge, however narrowly you managed to keep the brass lamp from tumbling onto the flagstones. The official snorts in disgust, adjusts his spectacles, and steps aside into the shadows with a muttered warning about future inspections. You steady your breathing and check the fuel level through the small glass viewing port, finding the oil supply miraculously intact within the battered casing. // As a reward for your stubborn courage, you discover a discarded pass slipped beneath the base of the lamp, granting access to restricted transit routes.
+GRANT: A contraband transit pass
+EXIT 1: Proceed into the moving filing labyrinth
+@@END

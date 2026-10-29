@@ -1,0 +1,117 @@
+{
+ "batch": "ul-3-028",
+ "sections": {
+  "ul-3-028": {
+   "title": "The Confiscated Warrant",
+   "text": "Ink smells of iron and vinegar in the small vestibule behind the magistrate's bench, where discarded requisitions pile like fallen leaves. Your fingers trace the damp margin of the confiscated warrant while a guard's heavy boots echo on the floorboards outside. Every second spent holding the bone pen risks discovery by watchful officials who patrol the corridors.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press the nib to parchment"
+   ]
+  },
+  "ul-3-029": {
+   "title": "The Forged Seal",
+   "text": "Swiftly and silently, you mimic the loops of the Chief Cataloguer's peculiar script, letting the dark ink settle into the thirsty grain of the official paper. A lamp flickers in the draft, casting long shadows across the rows of card-drawers. The exemption seal must look entirely genuine if it is to withstand the strict scrutiny of the gatekeepers ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Complete the fraudulent signature now"
+   ]
+  },
+  "ul-3-030": {
+   "title": "Imitating the Chief Cataloguer",
+   "text": "Breath held, you add the final flourish to the forged warrant while heavy footsteps pause just outside the wooden partition. The risk of sudden exposure hangs thick in the dusty air of the chamber as you press your thumb against the wet ink to smudge it convincingly. Everything depends on whether your hasty imitation holds up under the cold eyes of the guard.",
+   "check": "Forge the official signature",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-031": {
+   "title": "Smudged Ink and Scrutiny",
+   "text": "The guard notices the uneven weight of the strokes and snatches the warrant away with a sharp reprimand, leaving your fingers stained with cheap lamp-black. You lose precious minutes arguing your case in the draughty corridor while a stern clerk docks your weekly rations of dried meat. Though you escape without being hauled back before the magistrates, the bitter memory of failure clings to your thoughts like soot.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the suspicious guard"
+   ]
+  },
+  "ul-3-032": {
+   "title": "The Forged Exemption Seal",
+   "text": "Ink stains smear across your fingertips as you scratch the final, crucial loop of the Chief Cataloguer's signature onto the confiscated warrant, your heart hammering a frantic rhythm against your ribs. Heavy boots echo just beyond the arched oak partition, yet your hand remains steady enough to press the brass stamp into the hot red wax, sealing the document with a forged authority that might buy your passage or condemn you to the deepest cells.\n\nPocketing the cool parchment exemption seal before the sentries round the corner, you slip away into the shadows of the card-drawers with a dry throat and a dangerously acquired leverage that no tribunal clerk can easily dispute.",
+   "check": "",
+   "grant": "forged exemption seal",
+   "exits": [
+    "Slip past the mechanical registrar"
+   ]
+  },
+  "ul-3-033": {
+   "title": "Balancing Acts Before Bench",
+   "text": "Great towers of calfskin-bound ledgers groan and shudder beneath your boots as you lean forward to address the stern-faced assessors on the tribunal bench, trusting entirely to balance and nerve. A sudden shift in the floor makes a dozen volumes cascade in a dusty avalanche around your ankles, yet you turn the stumble into a measured bow, catching a sympathetic flicker of amusement in the eyes of the eldest magistrate.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance toward the inner galleries"
+   ]
+  },
+  "ul-3-034": {
+   "title": "Crossing the Collapsing Stacks",
+   "text": "More heavy volumes slide from their rotting shelves, creating an unpredictable hazard of shifting leather and sharp paper edges right across the gallery floor. You leap across a chasm of spilled folios while keeping your gaze fixed firmly on the sympathetic assessor's attentive face. A single misstep will send you crashing into the rows of stacked authorities below.",
+   "check": "Leap across falling reference books",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-035": {
+   "title": "A Clumsy Misstep",
+   "text": "Your boot clips the heavy corner of an open atlas, sending a cascade of ancient appendices clattering across the stone floor in a humiliating clatter. The sympathetic assessor turns away with a disappointed wince while you scramble to gather the loose leaves under the cold stares of the court. You limp away with a scraped shin and a bruised pride that will take days to mend.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the gallery edge"
+   ]
+  },
+  "ul-3-036": {
+   "title": "Grace Among the Falling Tomes",
+   "text": "Leather-bound volumes tumble in a cascading roar around your ankles, yet you manage to keep your footing atop the swaying ledgers while addressing the bench with cool, deliberate precision. The sympathetic assessor in the second row watches your agile recovery with a quiet, approving nod, slipping a folded slip of parchment into your palm as a reward for your uncommon balance under pressure.",
+   "check": "",
+   "grant": "sympathetic assessor's favor",
+   "exits": [
+    "Return to the crowded tribunal gallery"
+   ]
+  },
+  "ul-3-037": {
+   "title": "Staring Down the Prosecutor",
+   "text": "The prosecutor leans across the polished oak barrier, his voice dropping to a dry rasp as he lists the petty thefts of your shelver fellowship. Shadows stretch across the floor from the high arched windows, smelling of damp parchment and old tallow. You meet his gaze without flinching, refusing to let the weight of institutional malice break your spirit.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hold fast against the accusations"
+   ]
+  },
+  "ul-3-038": {
+   "title": "The Weight of Silence",
+   "text": "Silence settles over the crowded benches like a physical blanket of grey dust, muffling the distant scraping of pens from the outer rooms. The prosecutor narrows his eyes, testing your resolve with veiled threats about the Misfiled Wing and its endless stacks of uncatalogued scrap. Your pulse beats hard against your ribs, but you keep your shoulders squared against the courtroom wall.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Endure the prosecutor's cold stare"
+   ]
+  },
+  "ul-3-039": {
+   "title": "Facing the Accuser",
+   "text": "Cold sweat gathers at your temples as the prosecutor invokes the dreaded name of the Chief Cataloguer to terrify you into submission. The flickering lamp-oil casts dancing distortions across his severe face while you summon every ounce of stubborn loyalty to your fellowship. You must anchor your thoughts against the rising panic before the tribunal demands your surrender.",
+   "check": "Stare down the hostile prosecutor",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-040": {
+   "title": "Staring Down the Prosecutor",
+   "text": "The prosecutor's harsh interrogation hammers against your thoughts like a heavy iron mallet striking a cracked bell, draining every ounce of your resolve until your temples throb. A sharp, stinging headache flares behind your eyes as the mental strain forces you to grip the wooden rail just to stay upright. Though you secure the grudging right of passage through the lower arches, the ordeal leaves you battered in spirit and nursing a deep, throbbing weariness that makes every breath feel like drawing dry ash.\n\nYou stumble into the shadows of the corridor, swallowing the bitter taste of exhaustion as you press onward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance into the dim corridor with a heavy heart and ringing ears."
+   ]
+  }
+ },
+ "missing": []
+}

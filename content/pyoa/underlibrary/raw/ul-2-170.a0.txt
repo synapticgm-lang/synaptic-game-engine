@@ -1,0 +1,68 @@
+@@SECTION ul-2-170
+TITLE: The Rusted Latch
+TEXT: Iron flakes crumble under your calloused thumbs as you wedge the flat of your heavy ledger-knife into the stubborn crevice of the maintenance box. Thick grease and centuries of soot coat the mechanism, offering a stubborn resistance that threatens to snap your blade. You lean your full shoulder weight against the cold metal casing, forcing the corroded joint until a sharp screech echoes through the empty stack. Inside the recessed chamber, resting upon a bed of mouldering parchment, lies a heavy implement forged by municipal smiths. You lift the sturdy tool free from its resting place, feeling its solid balance in your palm.
+EXIT 1: Pry open the side panel
+@@END
+@@SECTION ul-2-171
+TITLE: Pincers of the Smith
+TEXT: Heavy blacksmith-forged pincers settle securely into your leather belt, their iron jaws cold against your hip. The narrow service corridor smells intensely of stagnant lamp-oil and damp wool, the drifting shelves shifting slightly in the distance like slow wooden leviathans. You adjust your oil-lamp, watching the amber flame flicker against long rows of uncatalogued ledgers that line the walls. Every movement here requires caution, for the floorboards groan under the weight of misplaced knowledge and forgotten appendices. Ahead, a secondary latch catches the dim light, offering passage deeper into the maze of stacks.
+EXIT 1: Inspect the lower fastener
+@@END
+@@SECTION ul-2-172
+TITLE: Testing the Bound Iron
+TEXT: Frost glazes the exterior of the heavy maintenance hatch, radiating a bitter chill that numbs your fingertips as you reach for the primary fastening bolt. The internal spring groans under immense tension, whispering warnings of a jagged snap if your focus wavers even for a fraction of a breath. You steady your breathing, block out the drifting echoes of the deeper stacks, and channel every ounce of your resolve into maintaining a slow, unwavering pressure against the frozen tumblers. Your muscles strain against the cold iron while the ancient mechanism hovers on the razor edge of release.
+CHECK: Maintain steady mental pressure
+@@END
+@@SECTION ul-2-173
+TITLE: Bitter Frost and Strain
+TEXT: A sudden, vicious slip sends a jarring vibration straight up your forearm, throwing your shoulder hard against the jagged iron corner of the shelving unit. A sharp pain flares across your skin, leaving a deep, weeping graze that quickly stains your sleeve with dark crimson. You stumble back into the reeking gloom, nursing your bruised arm while precious lamp-oil splatters uselessly onto the dusty floorboards. The latch remains sealed in defiance, mocking your hasty strain with its silent, frozen grin. Shaking off the lingering dizziness, you gather your wits and push onward through the suffocating gloom.
+EXIT 1: Proceed past the jammed hatch
+@@END
+@@SECTION ul-2-174
+TITLE: The Smith's Leverage
+TEXT: With a final, resonant thud, the stubborn restraint gives way, yielding to your determined efforts however narrowly you managed the feat. Tucked within the shadowed recess sits a pair of heavy, iron-jawed pincers, their forged surfaces stamped with the official insignia of the Quillon municipal workshops. This sturdy implement will serve you well when confronting rusted padlocks or stubborn binding wires in the deeper stacks. You secure the tool among your gear, feeling a quiet surge of confidence as the path ahead clears toward the heavy iron grilles.
+GRANT: Blacksmith-forged iron pincers
+EXIT 1: Approach the iron grille
+@@END
+@@SECTION ul-2-175
+TITLE: Floor of Pressure
+TEXT: Smooth brass plates lie flush with the worn timber flooring, connected to subterranean wire traps that snake away into the shadowed depths beneath the shelves. You time your strides carefully, stepping only where the grain of the wood appears unmarred and stable. A slight misstep would set the alarm bells ringing across the entire administrative tier, drawing unwanted attention from vigilant cataloguers. Reaching out with practiced fingers, you slide open a velvet-lined cache hidden beneath a loose skirting board, discovering its contents untouched by time or dampness.
+EXIT 1: Retrieve the velvet cache
+@@END
+@@SECTION ul-2-176
+TITLE: Threading the Traps
+TEXT: Every instinct urges caution as you navigate the intricate web of hidden pressure plates guarding the narrow passage between the shifting stacks. A single errant footfall could depress a fatal trigger, snapping shut the heavy iron wire that spans the shadowy gap. You calculate the exact span between each brass plate, balancing your weight on your toes while your heart hammers a frantic rhythm against your ribs. With infinite care, you reach out toward the concealed alcove where the prize rests, holding your breath at the absolute edge of discovery.
+CHECK: Navigate the pressure plates
+@@END
+@@SECTION ul-2-177
+TITLE: Springing the Trap
+TEXT: A metallic click shatters the silence of the stack, instantly followed by the vicious snap of a tripwire wrapping tightly around your ankle. You tumble forward onto the dusty boards, skinning your palms and scattering your spare tinder across the floor while the warning bell above tolls a muffled, rhythmic alarm. Dust billows up from the ancient floorboards, coating your throat in dry soot as you scramble to free your entangled boot from the brass jaws. You manage to wrench yourself loose, leaving behind a torn strip of leather and a lingering ache in your heel as you retreat into safety.
+EXIT 1: Retreat to safer ground
+@@END
+@@SECTION ul-2-178
+TITLE: Velvet and Brass
+TEXT: You slip past the invisible tripwires with feather-light steps, sliding your fingers into the velvet-lined recess however narrowly you avoided the hidden triggers. Within the plush interior lie a dozen spare brass tumblers, meticulously polished and sorted by size, ready to replace worn internal components in any complex lock you might encounter. This delicate cache represents hours of forgotten craftsmanship from some long-dead locksmith of the Underlibrary. You tuck the velvet roll securely into your inner pocket, turning your steps back toward the massive barriers ahead.
+GRANT: Velvet-lined brass tumblers
+EXIT 1: Return to the massive grille
+@@END
+@@SECTION ul-2-179
+TITLE: Frostbitten Iron
+TEXT: Bitter drafts whistle through the narrow gaps between the drifting bookshelves, carrying the scent of ancient rime and stagnant river-damp from the lower vaults. You pull your collar high against the piercing cold that radiates directly from the iron-bound masonry of the walls. Tucked within a recessed alcove behind a row of unindexed gazetteers, a small maintenance hatch waits with a frosted handle that glistens under your lamp-light. You reach out with a gloved hand, brushing away the thick crust of grey rime to expose the hairline seam of the door.
+EXIT 1: Clear the frosted handle
+@@END
+@@SECTION ul-2-180
+TITLE: Enduring the Chill
+TEXT: The intense cold bites deep into your knuckles, threatening to stiffen your fingers before you can engage the delicate internal mechanism of the hatch. Frost crystals crumble under your touch, melting slightly from your body heat only to refreeze instantly into a slippery glaze over the brass lock. You channel your inner fortitude against the numbing agony, forcing your stiffened hands to steady the pick against the icy tumblers while the freezing draft gnaws through your woollen coat. Your focus narrows to the tiny point of contact inside the lock, awaiting the decisive click.
+CHECK: Pick the frozen lock
+@@END
+@@SECTION ul-2-181
+TITLE: Numbed Fumbling
+TEXT: A sudden spasm of shivering ruins your delicate alignment, sending the pick slipping out of the frozen keyway with a sharp scrape of metal. The biting frost seeps straight into your bones, leaving your right hand stiff, clumsy, and throbbing with a dull ache that makes every movement an exercise in quiet endurance. You tuck your freezing fingers into your armpits to restore the circulation, watching frost crystals gather anew upon the abandoned latch. Though the immediate attempt failed, you refuse to let the bitter cold claim your resolve, pushing past the numbness to find another way forward.
+EXIT 1: Press onward despite numbness
+@@END
+@@SECTION ul-2-182
+TITLE: The Warm Collar
+TEXT: The frozen tumblers finally align with a crisp, muffled snap inside the frosted casing, yielding to your persistent efforts however narrowly you beat back the cold. Inside the hidden maintenance compartment hangs a heavy, fur-lined collar of ancient cut, smelling faintly of pipe-smoke and old cedar wood. Wrapping it around your neck instantly traps your body heat, pushing back the relentless chill of the drifting stacks. You secure the garment with quiet satisfaction, knowing this practical keepsake will keep the damp air at bay as you approach the vast subterranean archipelago.
+GRANT: Warm fur-lined collar
+EXIT 1: Descend toward the archipelago
+@@END

@@ -1,0 +1,106 @@
+{
+ "batch": "ul-5-039",
+ "sections": {
+  "ul-5-039": {
+   "title": "The Ancient Rebuke",
+   "text": "Leather-bound folios snap shut upon the stone like heavy jaws, spitting archaic insults about your parentage and the grease on your sleeves. Volumes of forgotten municipal law flutter past your ears with the sharpness of dry razor-blades, howling ancient curses that demand your immediate banishment into the ink-rivers. You grit your teeth against the rising tide of whispered vitriol, pressing your palms over your ears as the pages rustle in a furious crescendo. Amidst the fluttering storm of parchment, your fingers strike cold iron lodged between two defiant volumes.\n\nYanking the heavy metal free from the biting bindings, you secure a tarnished tongue-scraper of heavy iron, its edge dulled by centuries of silencing malicious gossip.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step through the fluttering storm"
+   ]
+  },
+  "ul-5-040": {
+   "title": "Withstanding The Volume",
+   "text": "Shouting volumes crowd the narrow ledge, their pages fanning out like wings of vellum to hurl a concentrated barrage of forgotten statutes and stinging calumny straight into your face. Every ancient penalty for unpaid fines and misplaced folios rings out with unnatural clarity, threatening to crack your focus and drive you backward into the dark abyss. You tighten your grip upon the stone edge and steel your mind against the relentless psychological assault, drawing deep breaths of lamp-oil and dust. Just as the leaden weight of their accusations threatens to shatter your resolve, you brace your boots to push forward into the howling press.",
+   "check": "Brace against the bitter abuse",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-041": {
+   "title": "Silence And Scars",
+   "text": "Words strike with the force of physical blows, leaving narrow, paper-thin gashes across your knuckles and wrists that weep thin lines of black ink instead of blood. The sheer volume of ancient venom overwhelms your defenses, driving you hard against a sharp oak pillar and bruising your ribs before you can force your way past the squabbling library. You limp away with a stinging cheek and a jagged tear in your coat sleeve, heavier by the burden of a fresh wound and the lingering hum of angry syllables trapped inside your ears. The vellum volumes snap their covers shut in triumph behind you, settling back into their slots as you catch your breath.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press onward into the gloom"
+   ]
+  },
+  "ul-5-042": {
+   "title": "The Iron Silence",
+   "text": "Through the barrage of biting leaves and screaming legalities, you force your way forward with steady shoulders, however narrowly you dodge the snapping leather spines that nip at your heels. The flying insults beat against your leather coat like hail against a slate roof, yet your concentration remains intact as you carve a narrow path through the literary storm. Reaching into the flurry, your fingers close firmly around a heavy piece of cold iron wedged deeply between two rebellious folios, silencing their petty grievances with a single wrench. You slip the heavy instrument into your pocket, feeling the peculiar weight of absolute quiet settle over your bruised fingers.",
+   "check": "",
+   "grant": "Iron tongue-scraper of silence",
+   "exits": [
+    "Return to the obsidian ring"
+   ]
+  },
+  "ul-5-043": {
+   "title": "Breaching The Lower Parapet",
+   "text": "Heavy wooden mallets strike the ancient limestone wall with a concussive boom that rattles the dust from the high vaulted arches above. Shouts of crude zeal echo up the stairwells as Burner zealots drive heavy iron wedges into the mortar joints, their torches casting flickering orange smears across the endless ranks of classified ledgers. Smoke drifts through the aisles, smelling of burning buckram and rancid tallow, signaling the arrival of those who believe every word ever written must be purged to save mankind from its own history. The defending scholars scatter like autumn leaves, abandoning their ink-pots and brass stamps as the main gateway shatters inward under a final, coordinated blow of timber and iron.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the smoking stone bridge"
+   ]
+  },
+  "ul-5-044": {
+   "title": "The Scriptorium Bridge",
+   "text": "A narrow stone walkway spans a subterranean chasm of boiling black ink, now contested by desperate scholars and fanatic arsonists alike. Thick plumes of greasy smoke roll across the span, obscuring the far archways where the deep stacks begin their slow, mechanical shifting. To your left, a frantic librarian struggles to defend a stack of uncatalogued maps against a torch-waving zealot, while other paths beckon deeper into the labyrinth of rising alarms and falling masonry. Every route offers a desperate chance to alter the course of the impending closure before the heavy vault doors seal forever.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Charge the fanatic with your iron",
+    "Lever the keystone to drop the arch",
+    "Mislead the squad into the dark abyss",
+    "Coordinate an escape with trapped scholars",
+    "Forge a false tribunal clearance order",
+    "Navigate the shifting upper masonry"
+   ]
+  },
+  "ul-5-045": {
+   "title": "Brand And Buckram",
+   "text": "A fanatic lunges from behind a sliding bookcase, swinging a blazing pine brand that leaves a trail of smoking soot across the damp flagstones. The heat of the fire licks at your eyebrows, illuminating wild eyes and rough woolen robes stained with lamp-oil and soot. You sidestep the clumsy arc of the burning wood, your boots skidding slightly on loose scraps of discarded parchment as you close the distance between you. With a sharp shove of your shoulder, you drive your attacker back against the groaning shelves, sending a shower of burning sparks into the air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Seize the fallen oil-flask"
+   ]
+  },
+  "ul-5-046": {
+   "title": "Securing The Oil",
+   "text": "The fallen zealot scrambles backward into the shadows, his flaming brand hissing out as it strikes a puddle of spilled ink on the floor. You waste no time bending to retrieve the heavy iron oil-flask he dropped during the scuffle, checking its stopper with a quick twist of your thumb. The metal container is reassuringly dense, sloshing with refined lamp-oil that smells strongly of camphor and old tallow. Securing the prize at your belt, you turn your attention back to the smoking bridge where the clamor of the ongoing assault continues to escalate.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the next trial"
+   ]
+  },
+  "ul-5-047": {
+   "title": "The Fiery Stand",
+   "text": "Another fanatic steps forward to block your path, brandishing a heavy iron mace in one hand and a sputtering torch in the other, roaring hymns of universal erasure. The heat is stifling, and the stone floor beneath your boots vibrates as the great subterranean machinery shifts its weight in the dark below. You steady your breathing, raising your newly acquired iron flask like a shield against the impending rush, locking your eyes onto the zealot's wild gaze. Just as the heavy mace begins its downward arc toward your skull, you tense every muscle to meet the blow.",
+   "check": "Meet the zealot's heavy blow",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-048": {
+   "title": "Scorched And Staggered",
+   "text": "The heavy mace grazes your shoulder with bone-jarring force, sending you crashing sideways into a stack of municipal registers that spill their heavy leaves across your back. Pain flares through your collarbone, and the acrid smoke fills your lungs until you cough violently, tasting copper and ash. You manage to scramble away before the fanatic can press the advantage, leaving behind a torn sleeve and a small piece of your skin scraped raw against the rough oak shelving. Though battered and gasping for breath, you press onward into the haze.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance through the settling smoke"
+   ]
+  },
+  "ul-5-049": {
+   "title": "The Heavy Iron Flask",
+   "text": "You brace against the onslaught with unyielding determination, however narrowly you evade the crushing arc of the zealot's weapon, and drive your shoulder straight into his chest. He stumbles backward into the ink-chasm's safety rail, dropping his heavy torch as you wrest control of the space. Tucked securely against your belt is the prize of the skirmish, heavy with fuel and potential fire. You leave the groaning zealot to his recantations and step past the smoking barrier.",
+   "check": "",
+   "grant": "Heavy iron oil-flask",
+   "exits": [
+    "Navigate the shifting upper masonry"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,95 @@
+{
+ "batch": "ul-4-042",
+ "sections": {
+  "ul-4-042": {
+   "title": "The Mosaic Barrier",
+   "text": "Glazed ceramic tiles interlock across the archway, forming a restless mosaic of crimson and ochre beasts that snap their jaws at your approach. Each query the surface throws out demands a historical falsehood about the city's foundation, written in sharp-edged lettering that burns against the gloom. Instead of answering with truth or silence, you feed the wall a web of deliberate misdirections culled from corrupted duplicate folios tucked in your pockets. The ceramic creatures snarl, confused by the cascade of contradictory dates and phantom dynasties, their glowing mortar fracturing with a soft sigh of exhausted alchemy. The barrier droops downward into the floor-grooves, leaving behind a jagged, rectangular sliver of heavy calfskin inscribed with ink that refuses to dry.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step through the lowered ceramic barrier"
+   ]
+  },
+  "ul-4-043": {
+   "title": "Unraveling the Mosaic",
+   "text": "Cold ceramic beasts writhe across the stone portal, their interlocking jaws clicking with the dry sound of snapping spines as they demand an answer to an impossible administrative riddle. The mosaic's surface pulses with a blinding amber luminescence, scanning your intent for any trace of true compliance with its archaic protocols. Every muscle in your arms tenses against the suffocating weight of your oil-skin pack while you feed the surface a calculated tangle of contradictory cataloguing codes, deliberately scrambling the sequence of classification until the tiles begin to chatter and vibrate with uncertainty. You plant your boots firmly against the trembling flagstones, steadying your breath against the acrid smell of ozone and hot ink, and reach out a bare hand to pry the loose fragment free from its slot before the defense mechanism catches your deceit.",
+   "check": "Twist the ledger fragment free",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-044": {
+   "title": "The Cost of Deceit",
+   "text": "A sudden snap of ceramic teeth catches the edge of your heavy canvas sleeve, tearing a deep, jagged strip from fabric to skin before you wrench your arm back with a sharp gasp. Pain flares white and hot across your forearm, mingling with the bitter sting of lamp-oil and dried ink ground into the fresh scratch. The mosaic settles back into place with a sullen rattle, its angry amber glow dimming to a dull, bruised purple as it retains the shredded scrap of your coat as forfeit. You press a stained rag against the bleeding line, swallowing the metallic taste of panic in the heavy air of the deep stacks. Though your pulse hammers hard against your ribs and your sleeve hangs in tatters, the path ahead clears enough for you to stumble forward into the dust.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the stacks"
+   ]
+  },
+  "ul-4-045": {
+   "title": "The Ledger Fragment",
+   "text": "Relieved of its anchor, the heavy calfskin fragment slides free into your grip, cold and slick with an oily preservative that smells faintly of crushed elderberries. Whether you slipped past the ceramic jaws with clean dexterity or wrenched the prize free through sheer stubborn will against a tearing bite, the prize rests securely in your palm. Etched into the hide is a forgotten marginal note in Thessaly Marr's familiar cramped hand, detailing how the Index might be unwritten entirely, offering a profound mercy in absolute forgetting to wipe away the city's oldest shames. You tuck the cold leather close to your chest, feeling its quiet weight settle like a small, dormant seed of deliverance against your ribs.",
+   "check": "",
+   "grant": "A fragment of mercy",
+   "exits": [
+    "Return to the shifting gallery"
+   ]
+  },
+  "ul-4-046": {
+   "title": "The Choking Sump",
+   "text": "Thick clouds of pulverized paper dust roll down the vaulted ceiling like an incoming tide, swallowing the amber halos of your belt-lamp and filling your nose with the dry, grey taste of century-old pulp. Every breath scrapes raw against your windpipe as millions of disintegrated pages settle over your shoulders in a heavy, suffocating mantle. Through the blinding haze, distant shelves groan and shift their weight in the dark, their timber frames weeping resin as the atmosphere grows thick enough to chew. You grope blindly along the uneven stone wall, keeping your fingertips pressed against the cold masonry to avoid stepping off the edge into the vertical drops where the stacks fall away into nothingness. The air tastes of dead ink and forgotten controversies, pressing down on your chest until your vision blurs at the edges and every step feels like wading through wet cement.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the wall toward the draft"
+   ]
+  },
+  "ul-4-047": {
+   "title": "The Dust-Sump",
+   "text": "Stumbling out of the choking white fog, you reach a vast, stagnant hollow where centuries of disintegrating paper have settled into undulating dunes of grey powder. Ghostly drifts rise and fall with every breath of subterranean air, burying the lower shelves in silent, shifting drifts that whisper softly whenever your boots disturb their surface. To your left, a narrow rift opens between two leaning folio-cases where a faint bluish phosphorescence pulses rhythmically from the floor. Straight ahead, a steep mound of pulverized index cards spills toward a dark gap in the masonry, while a narrow catwalk of lashed book-spines stretches off to the right above a bottomless black drop. The air here is dead and cold, smelling powerfully of old linen and dried glue, inviting you to choose your next direction carefully before the shifting dunes swallow your tracks entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb the mound of index cards",
+    "Leap toward the swirling dust devils",
+    "Trace the stable limestone floor below",
+    "Navigate the leaning bookshelf arches"
+   ]
+  },
+  "ul-4-048": {
+   "title": "The Phosphorescent Path",
+   "text": "Dropping to one knee in the knee-deep drifts, you sweep away the surface grey to reveal faint, glowing instructions scrawled in phosphorescent ink across the flagstones by some long-dead scholar. The pale blue light traces a winding trail between towering stacks that lean drunkenly toward one another like tired gossips. Following the luminous prompts, your fingers brush against a cold metal object half-buried in the paper dust near a rotten baseboard. You unearth a heavy brass compass whose needle does not point north, but rather twitches frantically toward the hidden heart of the archives whenever a distant book is pulled from its shelf. The compass clicks softly in your palm, its glass face warm to the touch and fogged with a delicate condensation that smells faintly of rain.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the compass needle onward"
+   ]
+  },
+  "ul-4-049": {
+   "title": "Navigating the Haze",
+   "text": "Blinding clouds of airborne paper-rot swirl around your head, clinging to your eyelashes and turning the dim lantern light into a milky, suffocating blur. You lean heavily upon your iron cataloguing rod, squinting through the stinging particulate to catch the briefest flicker of the phosphorescent marginal notes etched into the floor-tiles ahead. The ground shifts beneath your soles as layers of uncollected pamphlets slide like shale under your boots, threatening to pitch you sideways into the dark void between the stacks. You hold your breath to keep from coughing, steadying your hand on the cold brass compass while you calculate the exact angle of the drift before taking your next blind step into the swirling grey.",
+   "check": "Step through the blinding haze",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-050": {
+   "title": "Blind Misstep",
+   "text": "A sudden shift in the paper dunes pulls the floor-tiles out from under your boots, sending you plunging sideways into a knee-deep drift of razor-sharp card catalogues. Sharp edges slice into your shins through your trousers, drawing a line of hot, stinging cuts that burn with the salt of old paper-dye. You wrench yourself free with a harsh gasp, scattering priceless records into the dark as you scramble back onto the firmer masonry of the walkway. Your lamp flickers and dies in the impact, plunging you into an inky gloom where only the faint blue glow of the floor-notes guides your bruised and trembling hands. You sit for a long moment in the dark, catching your breath while the dust settles over your torn uniform like a shroud.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stand up and limp onward"
+   ]
+  },
+  "ul-4-051": {
+   "title": "The Guiding Needle",
+   "text": "Moving with careful, deliberate steps through the swirling grey, you let the rhythmic ticking of the brass compass pull you safely out of the blinding storm. Whether you slipped through the stinging dust with unbothered grace or dragged yourself out of the drifts bruised and coughing, the prize remains firm in your pocket. The compass settles in your palm, its glowing needle pointing steadily down a previously unseen corridor of iron-ribbed shelving where the air turns suddenly crisp and cold. You stow the instrument away, feeling its steady vibration against your ribs like a small, mechanical heart keeping time with your own.",
+   "check": "",
+   "grant": "A whispering brass compass",
+   "exits": [
+    "Return to the stagnant hollow"
+   ]
+  }
+ },
+ "missing": []
+}

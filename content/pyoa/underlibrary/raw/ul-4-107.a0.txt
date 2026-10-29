@@ -1,0 +1,84 @@
+@@SECTION ul-4-107
+TITLE: The Court of Red Ink
+TEXT: Cold crimson light bleeds from high lancet windows across flagstones stained by centuries of judicial overflow. Past administrative verdicts echo faintly from the damp masonry, hissing like cooling grease whenever a shadow moves. Rows of high mahogany benches face an empty tribunal chair where the automated weights and balances hang motionless in the heavy air. Every surface smells of iron filings and vinegar, thick with the weight of unappealed fines. To the left, a narrow wicket gate offers passage toward the lower archives. Straight ahead, an arched portal hums with the dry static of ancient folios. To the right, a low iron wicket stands unlatched above a spiral stair. Further still, a shadowy breach yawns open behind the scales. Beyond the benches, a wide tunnel leads directly into the murmuring dark.
+EXIT 1: Examine the dusty library statutes
+EXIT 2: Pry open the judicial benches
+EXIT 3: Stand firm against the whispers
+EXIT 4: Slip past the balance scales
+EXIT 5: Approach the amphitheatre of ghosts
+@@END
+
+@@SECTION ul-4-108
+TITLE: Precedents in the Dust
+TEXT: Heavy iron-bound codexes lie scattered across the reading desk like fallen masonry, their pages yellowed with age and sour lamp-oil. You trace brittle parchment lines written in the severe hand of early cataloguers, searching for the clause that frees junior pages from retroactive shelving debts. The ink flakes beneath your thumb, releasing a sharp tang of vinegar and dried gall that stings your eyes. Dust motes dance lazily in the thin beam of your tallow dip while overhead gears grind with a heavy, rhythmic groan. A marginal correction catches your eye, scrawled in an unfamiliar violet ink that seems to pulse faintly under the paper's skin. You gather your notes and prepare to test the ancient wording against the mechanical magistrate.
+EXIT 1: Present your legal argument
+@@END
+
+@@SECTION ul-4-109
+TITLE: The Citation Hearing
+TEXT: Silence settles over the alcove as you place your handwritten transcript upon the bronze reading slope before the magistrate's empty chair. The room grows perceptibly colder, and the violet marginalia on your parchment begins to crawl across the page like trapped insects seeking an escape route. Mechanical wheels grind behind the wainscot, clicking through centuries of accumulated fines and unreturned folios to find a matching infraction. You must decipher the dense legal shorthand and match the archaic phrasing before the tribunal's brass claws snap shut on your cuffs. Your fingers hover over the parchment, ready to press the claim home against the relentless grinding of the archive.
+CHECK: Decode the ancient legal precedents
+@@END
+
+@@SECTION ul-4-110
+TITLE: A Heavy Penalty
+TEXT: The brass claws strike with sudden, bone-numbing force, catching your sleeve and tearing away a strip of coarse wool alongside a heavy toll of precious time. You wrench your arm free, gasping as the automated register stamps a harsh red debt mark across the back of your hand. Hours slip away in the gloom while you wait for the machinery to reset its cogs, leaving you stiff-jointed and nursing a raw, stinging welt that smells faintly of copper. The temporary exemption slips through your fingers, replaced by a lingering sense of administrative grievance. Yet the machinery grinds to a halt at last, allowing you to stumble onward into the dim corridors.
+EXIT 1: Follow the damp corridor
+@@END
+
+@@SECTION ul-4-111
+TITLE: The Seal of Exemption
+TEXT: The heavy brass machinery shudders, clicks twice, and grudgingly spits out a small leaden token stamped with the unbroken seal of the high cataloguers. Whether through swift wit or sheer stubborn endurance, you have beaten the automated court at its own game and secured your freedom from further citation. The cold air of the chamber seems to lighten slightly, and the surrounding stacks appear to settle into a more orderly alignment. You pocket the heavy token, feeling its reassuring weight against your palm as you prepare for the next leg of your journey.
+GRANT: Leaden exemption token
+EXIT 1: Approach the amphitheatre of ghosts
+@@END
+
+@@SECTION ul-4-112
+TITLE: The Hidden Drawer
+TEXT: The judicial bench is scarred with deep notches carved by generations of desperate readers and delinquent scholars. You run your fingers along the intricate wood-carvings beneath the writing surface, feeling for the secret release spring hidden among the carved oak leaves. The wood gives way with a dry, satisfying snap, revealing a shallow recess lined with faded velvet. Inside rests a small silver ring bearing the insignia of an early cataloguer, its surface untarnished by the damp atmosphere of the deep stacks. You pick up the metal band, noting how the ambient lamplight seems to bend around its polished hoop.
+EXIT 1: Inspect the judicial bench further
+@@END
+
+@@SECTION ul-4-113
+TITLE: Parsing the Codes
+TEXT: The symbols engraved upon the silver hoop match the intricate jurisdictional codes carved into the rim of the writing desk. As you turn the ring against the metal grooves, a series of internal clicks echoes through the hollow core of the furniture like falling pins. A hidden compartment springs open in the base of the desk, but a cloud of fine, grey preservative powder billows upward into your face. You must steady your breathing and interpret the remaining sequence of glyphs before the chemical dust blinds you completely. The air grows thick and choking, testing every ounce of your scholarly concentration.
+CHECK: Decipher the jurisdictional glyphs
+@@END
+
+@@SECTION ul-4-114
+TITLE: Choked by the Past
+TEXT: The caustic grey powder fills your lungs, sending you stumbling backward against the cold stone wall with a hacking cough that echoes down the empty aisle. You wipe your streaming eyes with a dusty sleeve, leaving a raw, inflamed scratch across your cheek where a stray metal burr caught your skin. Precious minutes slip away while you wait for the stinging in your chest to subside, and your provisions are dusted with an alkaline film that ruins half your dry rations. It is a costly stumble, leaving you breathless and aching in the dim lamplight. Even so, the immediate danger passes, and the air slowly clears enough for you to move on.
+EXIT 1: Return to the red ink court
+@@END
+
+@@SECTION ul-4-115
+TITLE: The Silver Hoop
+TEXT: Your fingers move with precise, practised certainty, aligning the difficult sequence just as the internal tumblers fall into place with a soft chime. Whether through careful calculation or sheer intuitive luck, you lift the silver seal-ring free from its velvet bed without triggering the preservative trap. The cool metal feels remarkably light against your skin, and as you slide it onto your finger, the nearby catalogue drawers slide shut in unison as if acknowledging a master's touch. You secure the valuable keepsake within your coat pocket and retrace your steps toward the central hall.
+GRANT: Silver cataloguer ring
+EXIT 1: Return to the red ink court
+@@END
+
+@@SECTION ul-4-116
+TITLE: The Tribunal's Whisper
+TEXT: Countless phantom voices rise from the empty benches like steam from a cooling kettle, hissing accusations of lost books, altered indexes, and unpardonable negligence. The unseen judges debate your worthiness with dry, paper-rustling murmurs that scrape against your thoughts like sand in an inkwell. You stand before the central dais, keeping your breathing steady while the phantom arguments wash over your shoulders in waves of cold air. One by one, the hostile whispers begin to falter, cowed by your unyielding posture and the quiet stillness of your resolve. The presiding court ghost leans forward from the shadows, dipping its incorporeal quill in silent acknowledgement.
+EXIT 1: Face the accusatory tribunal
+@@END
+
+@@SECTION ul-4-117
+TITLE: The Unyielding Will
+TEXT: The phantom voices swell into a deafening chorus of censure, conjuring visions of endless stacks collapsing into ink-rivers and catalogues rewriting themselves into oblivion. The floor beneath your boots trembles as if the entire foundation of the Underlibrary is testing your inner strength. You must lock your jaw and refuse to give ground against the psychic pressure, holding fast to your identity as a shelver of the deep stacks. The spiritual weight bears down upon your chest, threatening to force a confession of guilt for crimes you never committed. You tighten your grip on your lapel and brace for the breaking point.
+CHECK: Resist the tribunal's psychic censure
+@@END
+
+@@SECTION ul-4-118
+TITLE: Broken Resolve
+TEXT: The psychic pressure shatters your concentration at the last possible second, sending you staggering back with a sharp pain behind your temples and a bitter taste of iron in your mouth. You drop to one knee on the flagstones, gasping for air while the tribunal's mocking laughter rustles through the vaulted ceiling like dry autumn leaves. A dull, throbbing ache settles into your skull, leaving you drained of spirit and burdened with an oppressive sense of failure. The ghostly judges withdraw into the masonry, leaving you alone in the dim light. You pick yourself up, bruised in mind if not in limb, and limp back toward the main chamber.
+EXIT 1: Retreat to the central hall
+@@END
+
+@@SECTION ul-4-119
+TITLE: The Ghostly Respect
+TEXT: The chaotic chorus of whispers abruptly ceases, replaced by an absolute, reverent silence that settles over the entire court like a heavy woollen blanket. Whether through unshakeable mental fortitude or sheer stubborn defiance, you weather the storm of accusations until the automated tribunal acknowledges your quiet strength. The chief ghost dips its spectral head in formal salute, sliding a scrap of heavy vellum across the polished wood of the bench. You pick up the document, feeling a faint residual warmth radiate from its surface. It is a signed testimonial from the court itself, granting you safe passage through any judicial zone in the library.
+GRANT: Tribunal endorsement scroll
+EXIT 1: Return to the red ink court
+@@END

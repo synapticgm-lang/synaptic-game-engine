@@ -1,0 +1,104 @@
+{
+ "batch": "ul-5-063",
+ "sections": {
+  "ul-5-063": {
+   "title": "The Tribunal Seal",
+   "text": "Ink-stained fingers smooth a sheet of heavy vellum across the scarred surface of a lectern, copying the grand flourish of the High Tribunal with practiced care. Every stroke of the iron nib mimics the rigid authority required to move through the restricted corridors without drawing the cold eyes of the wardens. A bundle of crimson wax seals sits heavy in your pocket, waiting to be pressed into service against the guards who patrol the threshold of the vault.\n\nYou tuck the parchment close to your chest and slip quietly into the shadow of the pillared hall, stepping past a row of silent bookshelves that watch your progress with dry, rustling leaves.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide past the iron gates"
+   ]
+  },
+  "ul-5-064": {
+   "title": "Passing the Guard",
+   "text": "Heavy boots echo against flagstones as the patrol approaches the checkpoint where the high arched doorway bars the passage forward. You raise the forged clearance order with steady hands, letting the lamplight catch the crimson wax seal dangling from its corner. The senior warden narrows his eyes, squinting at the extravagant signatures of the tribunal members while your heart hammers a frantic rhythm against your ribs.\n\nA nod of reluctant acceptance breaks the tension, and the guards begin to shuffle away down the corridor, leaving the path clear for your advance toward the heart of the stacks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step through the cleared portal"
+   ]
+  },
+  "ul-5-065": {
+   "title": "Forging the Decree",
+   "text": "Every muscle in your body tightens as you approach the final sentry post blocking the approach to the vaulted inner sanctum. The guards wear the heavy brass-trimmed coats of the tribunal and eye every shadow with suspicious suspicion. You prepare to step forward, brandishing the forged parchment and your collected bundle of official wax seals with absolute theatrical confidence, aiming to weave a web of falsehood so thick they dare not question its validity. Your fingers brush the edge of the hidden document as you catch the captain's gaze.",
+   "check": "Weave a deceptive clearance order",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-066": {
+   "title": "A Flawed Disguise",
+   "text": "A sharp-eyed sentinel spots the slight smudge in the tribunal's crimson ink before you can utter a commanding word. Heavy hands grip your shoulders, shoving you against the rough stone pillars and relieving you of your stolen wax seals in a flurry of muffled curses. You manage to slip free during the confusion of a sudden shelf-shift, but the encounter costs you precious minutes and leaves a deep bruise across your ribs. You limp deeper into the gloom as the alarm fades behind you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away into the gloom"
+   ]
+  },
+  "ul-5-067": {
+   "title": "The False Authority",
+   "text": "The forged order holds under the captain's cynical scrutiny, however narrowly, convincing the guards to abandon their post and patrol the lower galleries instead. You pocket the remaining wax seals with a quiet sigh of relief, feeling the weight of absolute administrative power resting comfortably in your coat. The way to the inner threshold lies open before you, draped in silence and the scent of melting tallow.",
+   "check": "",
+   "grant": "Bundle of wax seals",
+   "exits": [
+    "Advance toward the inner threshold"
+   ]
+  },
+  "ul-5-068": {
+   "title": "The Shifting Vault",
+   "text": "Thunder rolls through the deep foundations as tons of upper masonry groan and grind against one another, showering the floor with gritty dust and splinters of ancient oak. The gap through the stacks narrows by half, squeezing the remaining space until the shelves press inward like the ribs of a dying leviathan. A relentless pulse beats through the stone beneath your boots, marking the steady countdown of the Long Closing with every tremor.\n\nYou scramble over a tumbled drift of leather-bound folios, gasping for breathable air as the heavy scent of old paper thickens into a choking fog. The walls themselves seem to lean inward, eager to swallow anyone foolish enough to linger in the corridors of power.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Navigate the collapsing corridor"
+   ]
+  },
+  "ul-5-069": {
+   "title": "The Collapsed Stacks",
+   "text": "Fallen timbers and crushed mahogany shelving block the main thoroughfare, burying ancient manuscripts beneath a mountain of splintered wood and choking dust. The great artery of the library lies choked and fractured, forcing you to pick your footing with extreme care among the ruins of a thousand forgotten treatises. Every direction offers a perilous gamble as the ceiling overhead continues to rain fine gray powder upon your shoulders.\n\nTo your left, a narrow gap opens through the wreckage; straight ahead, a precarious bridge of fallen spines beckons; to your right, a stairwell winds down into the suffocating dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Search the stable load line",
+    "Pry open the jammed timber",
+    "Steel nerves against debris",
+    "Brave the whispering ghosts"
+   ]
+  },
+  "ul-5-070": {
+   "title": "The Architectural Grain",
+   "text": "Ancient joists and leaning columns tell a silent story of weight and stress to anyone trained to read the subtle language of library construction. You trace your fingers along the grain of a massive fallen beam, finding the exact neutral axis where the pressure eases just enough to grant safe passage. Beneath a shattered shelf of theological tracts, a velvet-lined case catches your eye, holding a silver bookmark that glints faintly in the gloom.\n\nYou secure the slender token in your pocket and squeeze through the narrow opening into the corridor beyond.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed toward the inner sanctum"
+   ]
+  },
+  "ul-5-071": {
+   "title": "Reading the Ruins",
+   "text": "Splintered wood and pulverized mortar obscure the structural integrity of the fallen stacks, turning every footstep into a potential disaster. You kneel among the rubble, squinting through the dust to analyze the precise load-bearing vectors of the crushing mahogany shelves above your head. Your mind races through decades of architectural manuals, searching for the single hidden seam that will let you harvest the hidden treasure without bringing the ceiling down upon your skull. Your fingers hover over the edge of a velvet-lined case.",
+   "check": "Analyze the fallen timber load",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-072": {
+   "title": "A Miscalculated Stress",
+   "text": "A sudden settling of the masonry betrays your misjudgment, sending a cascade of heavy folios crashing down onto your hands and leaving a jagged scrape along your forearm. You pull back just as the entire stack groans and drops another terrifying inch into the dust. The mishap costs you a pouch of dried ink-cakes and leaves you breathless, but you manage to wrench the velvet case free from the rubble before the gap seals entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to safer ground"
+   ]
+  },
+  "ul-5-073": {
+   "title": "The Erudite Salvage",
+   "text": "The structural analysis proves correct, however narrowly, allowing you to bypass the crushing weight and unearth a velvet-lined case holding a silver bookmark without disturbing the avalanche above. The cool metal feels balanced and precise in your palm, a testament to the quiet power of scholarship amid chaos. You tuck the token away and rejoin the path toward the heart of the stacks.",
+   "check": "",
+   "grant": "Silver bookmark",
+   "exits": [
+    "Return to the main junction"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,117 @@
+{
+ "batch": "ul-2-018",
+ "sections": {
+  "ul-2-018": {
+   "title": "The Vapours Rise",
+   "text": "Thick, chemical fumes drift upward from the sluggish surface of the black stream, carrying the sharp scent of copper and burnt tannin that stings the back of your throat. Bending low over the unstable margin of pulp and silt, your fingers graze the soaked leather binding of a waterproof ledger containing forgotten debts.\n\nA faint murmuring rises from the damp pages as you lift the book clear of the muck, urging you to step away from the encroaching fog before the lamp-oil gutters completely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retrieve the heavy ledger carefully"
+   ]
+  },
+  "ul-2-019": {
+   "title": "Withstanding the Fumes",
+   "text": "Heavy, greasy vapors coil around your temples, threatening to cloud your judgment and blur the cramped columns of figures written in the water-damaged ledger. Clenching your jaw against the dizziness, you brace your boots against the shifting pulp and try to steady your breathing while pulling the damp volume entirely free from the suction of the ink-stream.",
+   "check": "Anchor your resolve against the rising vapours",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-020": {
+   "title": "Cost of Hesitation",
+   "text": "Lungs burning and head throbbing from the noxious fumes, your grip slips at the critical moment, sending a shower of heavy, ink-stained pages flying into the dark stream. You stumble backward onto firmer shelving, coughing violently as your last flask of lamp-oil shatters against the stone, leaving you to grope through the gloom with only the faint, whispering margin-notes to guide your trembling hands.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee deeper into the dark stacks"
+   ]
+  },
+  "ul-2-021": {
+   "title": "The Unwritten Page",
+   "text": "Smoke and shadow swirl around you as you secure the heavy ledger against your chest, emerging from the choking vapours with your wits intact, however narrowly. Tucked between the waterlogged records of forgotten debts, your thumb catches on a completely blank, dry leaf of parchment that smells faintly of clean ozone rather than ink.\n\nYou tuck the pristine sheet safely into your coat, carrying with you the sudden, quiet notion that not every volume in the world needs to be read or rewritten.",
+   "check": "",
+   "grant": "A blank parchment leaf",
+   "exits": [
+    "Return to the ink-choked sump"
+   ]
+  },
+  "ul-2-022": {
+   "title": "Beneath the Waterlogged Treatises",
+   "text": "Layers of soggy, unread treatises block your advance through the narrow aisle, pressing against your chest with the cold weight of centuries of neglected scholarship. With steady, deliberate shoves, you clear a passage through the dissolving pulp, your fingers suddenly brushing against a hard, metallic shape wedged deep within the soggy bindings.\n\nPulling aside the damp paper reveals a small, heavy pouch clinking softly with old silver coinage, offering a welcome means to buy passage or supplies from the clerks above.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the hidden silver pouch"
+   ]
+  },
+  "ul-2-023": {
+   "title": "Pressing the Bound Wall",
+   "text": "The mass of waterlogged treatises shifts menacingly under your weight, threatening to collapse into a suffocating avalanche of pulp and mud that would pin you to the floor indefinitely. Bracing your shoulders against the damp, swaying stack, you summon every ounce of inner strength to keep the barrier from sliding closed while your hand gropes blindly for the hidden pouch.",
+   "check": "Hold back the heavy paper wall",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-024": {
+   "title": "Buried in Pulp",
+   "text": "The unstable wall of books finally gives way with a wet, heavy thud, burying your arms in a freezing slurry of ink and decaying paper that tears your coat sleeve and leaves a deep, stinging scratch across your wrist. You claw your way back to the surface gasping for air, poorer by a day's worth of dried rations that dissolved into the grey slush during the scramble.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself from the damp ruins"
+   ]
+  },
+  "ul-2-025": {
+   "title": "Recovered Coin",
+   "text": "You heave yourself clear of the collapsing pile just as the final treatises settle into the mud, clutching the small leather pouch of silver coinage against your ribs, however narrowly. The heavy coins jingle softly against your belt, providing both a tangible reward for your perseverance and a practical means to bribe any wary sentries you might encounter ahead.",
+   "check": "",
+   "grant": "A pouch of silver",
+   "exits": [
+    "Follow the dark ink-stream onward"
+   ]
+  },
+  "ul-2-026": {
+   "title": "Tracing the Black Current",
+   "text": "Swirling patterns of oily black ink trace intricate, labyrinthine designs across the surface of the sluggish channel, mirroring the shifting architecture of the stacks themselves. Your fingers move carefully along the edge of the current, feeling for anything solid hidden beneath the floating debris of torn indexes and damp pamphlets.\n\nA jagged piece of brass catches your skin before your fingertips hook firmly through the cold, ornate bow of a skeleton key resting in the sediment.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Lift the brass key from the sludge"
+   ]
+  },
+  "ul-2-027": {
+   "title": "The Key in the Sludge",
+   "text": "Cold metal scrapes against stone as you work the heavy brass skeleton key free from the thick, gelatinous sediment lining the bed of the ink-stream. The teeth of the key are notched in an unfamiliar pattern, suggesting it belongs to a restricted cabinet or a private vault within the deeper annexe rather than any ordinary shelver's locker.\n\nPocketing the cold metal, you look up as the distant sound of shifting shelves echoes through the damp air, signalling that the corridors are beginning their eternal migration once more.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the strange brass key"
+   ]
+  },
+  "ul-2-028": {
+   "title": "Snatching the Relic",
+   "text": "The surface of the ink-stream suddenly boils upward in a thick black wave, threatening to swallow the brass key back into the depths before your fingers can secure a proper grip. Quick reflexes and delicate maneuvering are your only hope as you plunge your hand into the swirling vortex to snatch the metal before the current tears it away.",
+   "check": "Snatch the key from the swirling ink",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-029": {
+   "title": "Slipped from the Fingers",
+   "text": "A sudden surge of dark liquid slams your wrist against the stone ledge, forcing your fingers open and sending the brass key plunging into a deep, fathomless drain in the floor. You nurse a bruised hand and a bruised ego as you watch the precious find vanish forever into the subterranean plumbing of the library, leaving you with nothing gained from the risky attempt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Withdraw your bruised and empty hand"
+   ]
+  },
+  "ul-2-030": {
+   "title": "The Brass Key in the Sump",
+   "text": "Sludge clings to your knuckles like cold grease, yet your careful fingers sift through the sodden paper drifts until they strike something unyielding. You lift a heavy, oil-darkened brass skeleton key from the black current, its wards shaped like the interlocking spines of an octavo folio. It is cold to the touch and smells faintly of old tallow and river silt. A quiet promise lingers in its heft, granting you the quiet leverage needed to turn stubborn bolts that were never meant to budge.",
+   "check": "",
+   "grant": "heavy brass skeleton key",
+   "exits": [
+    "Step carefully across the leather bridge"
+   ]
+  }
+ },
+ "missing": []
+}

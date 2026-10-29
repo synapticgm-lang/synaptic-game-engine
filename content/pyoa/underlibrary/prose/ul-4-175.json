@@ -1,0 +1,113 @@
+{
+ "batch": "ul-4-175",
+ "sections": {
+  "ul-4-175": {
+   "title": "The Inner Sanctum",
+   "text": "Heavy velvet drapes part silently as you step into the innermost recess of the Deep Annexe. Here, the air smells intensely of dried rosemary, lamp-oil, and centuries of undisturbed vellum. Mountains of unread manuscripts rise like jagged cliffs around a central wicker chair, where the faint rustle of turning parchment is the only sound breaking the ancient hush.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the silent scholar with caution"
+   ]
+  },
+  "ul-4-176": {
+   "title": "The Blind Scholar",
+   "text": "Shadows stretch across the floorboards as you stand before the blind sage of Quillon, whose milky eyes gaze sightlessly into the dark folds of history. Every word ever written in the city seems etched into the lines of that weathered face. Unread scrolls whisper from every corner of the chamber, tempting you to probe deeper into the mysteries of the Index or seek a way forward before the deep stacks seal shut for good.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Endure the rigorous mental examination",
+    "Interpret the scattered uncatalogued scrolls",
+    "Step softly to gain restoration oil",
+    "Follow the trembling finger toward the vault"
+   ]
+  },
+  "ul-4-177": {
+   "title": "Words of Iron",
+   "text": "Hours blur into a single, grinding test of endurance as relentless questions strike at the core of your training at the Returns Desk. The old scholar tests every ounce of your resolve, demanding proof that a humble junior page understands the heavy price of forgotten history. You keep your voice steady, parrying linguistic traps and subtle trickery with stubborn persistence while the shadows lengthen across the ink-stained floorboards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the interrogation"
+   ]
+  },
+  "ul-4-178": {
+   "title": "The Weight of Proof",
+   "text": "Sweat beads on your forehead as the interrogation intensifies, shifting from dry library procedure to probing inquiries about Thessaly Marr's disappearance. Every reply must be weighed carefully against the unspoken rules of the Cataloguers and the raw loyalty of the Shelvers' Fellowship. You stand your ground, offering neither flattery nor evasion, matching the elder's stern scrutiny with your own unwavering dedication to the truth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Meet the final test of will"
+   ]
+  },
+  "ul-4-179": {
+   "title": "Facing the Inquisition",
+   "text": "Silence stretches tautly across the cluttered chamber as the blind scholar poses a final, harrowing question regarding the true ownership of the original Index. Your temples throb and your breath catches in your throat as you summon every reserve of mental fortitude, preparing to force an answer past lips that feel suddenly dry as parchment.",
+   "check": "Withstand the grueling mental interrogation",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-180": {
+   "title": "A Costly Resolution",
+   "text": "Mental exhaustion fractures your focus, and a sharp, blinding headache leaves you leaning heavily against a towering stack of manuscripts that cascades down in a rustling avalanche. You pay for your survival with a splitting migraine and hours of lost time, your fingers bruised from clutching the edge of the wicker chair. The blind scholar offers no sympathy, only a dry nod as you recover your breath and limp onward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the central sanctum"
+   ]
+  },
+  "ul-4-181": {
+   "title": "The Vault Introduction",
+   "text": "Through sheer stubborn endurance of mind, you weather the old scholar's relentless cross-examination until the harsh lines of his weathered face soften into something resembling grudging respect. He reaches into the folds of his ink-stained woollen cloak and draws out a heavy parchment bearing his own wax seal. This personal letter of introduction grants you passage through the threshold guards of the vault guardian without further question.",
+   "check": "",
+   "grant": "vault guardian introduction letter",
+   "exits": [
+    "Approach the blind scholar's chair"
+   ]
+  },
+  "ul-4-182": {
+   "title": "The Scattered Glyphs",
+   "text": "Loose leaves of vellum drift across the floor around the chair, covered in strange, erratic handwriting that belongs to no standard catalogue in Quillon. You kneel among the papers, brushing away dust to trace the unfamiliar syntax with the tip of your finger, searching for patterns hidden beneath layers of eccentric margin notes and faded ink.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the grammatical structure closely"
+   ]
+  },
+  "ul-4-183": {
+   "title": "Fragments of Memory",
+   "text": "Dust motes dance in the faint yellow glow of your guttering lamp as you smooth out the fragile, uncatalogued scrolls scattered across the flagstones near the chair. Every stroke of ink reveals forgotten syntax that your mind absorbs with careful precision, fitting ancient idioms together like dry kindling. Within the center of the brittle sheet lies a genuine slip of the original Index, its script burning with a quiet, pale luminance that smells faintly of dried lavender and old rain.\n\nYou fold the precious fragment securely into your inner pocket before turning your gaze deeper into the shadowed annexe.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the trembling shadow nearby"
+   ]
+  },
+  "ul-4-184": {
+   "title": "Deciphering the Last Scroll",
+   "text": "Beneath the heavy velvet drapes of the annexe, the final uncatalogued scroll lies half-eaten by silverfish and damp air. You lean closer, bringing your lamp within a handspan of the crumbling vellum to parse the dense, archaic script before the fading ink flakes away into nothingness. Your fingers trace the margin notes while your mind races to reconcile conflicting grammatical roots against the encroaching silence of the stacks.",
+   "check": "Decode the fading marginal glyphs",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-185": {
+   "title": "Faded Ink and Folly",
+   "text": "A sudden misreading triggers a sharp bite from a defensive binding nearby, drawing a thin line of blood across your thumb and scattering your carefully sorted notes into the dark corners of the room. You bind the wound with a scrap of cloth, nursing a bruised ego and a lost hour of research, though the surviving fragments remain within your grasp.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the remaining manuscript scraps"
+   ]
+  },
+  "ul-4-186": {
+   "title": "The Index Fragment Secured",
+   "text": "With meticulous scholarly attention, you tease the brittle secrets from the ancient scrolls scattered around the chair, bending every ounce of your training to the task. The complex syntax yields at last, surrendering a genuine fragment of the original Index into your trembling palm. This slip of paper hums against your fingertips like a trapped bee, carrying the weight of a forgotten city's true name.",
+   "check": "",
+   "grant": "fragment of original Index",
+   "exits": [
+    "Follow the trembling finger forward"
+   ]
+  }
+ },
+ "missing": []
+}

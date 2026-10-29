@@ -1,0 +1,65 @@
+@@SECTION ul-2-051
+TITLE: The Swaying Span
+TEXT: Trembling underfoot, the stitched bindings of the bridge flex like living tendons across the abyss of falling papers. Dust motes dance in the amber radius of your guttering oil-lamp while beneath your boots the timber ribs groan and heave with the subterranean tide. Ahead, glinting among the fluttering loose-leaf debris, a fine steel reading knife catches a stray slant of pale lantern light. You reach out a steady hand, your fingers curling around the cold hilt just as the entire pathway drops an inch into the gloom. // Balancing your weight against the violent roll, you make your way toward the further side where the spine bridge meets the solid oak of the misfiled wing.
+EXIT 1: Advance to the metal blade
+@@END
+@@SECTION ul-2-052
+TITLE: Crossing the Ribs
+TEXT: Slipping past the trembling margins of the bridge, your boots find purchase on a spine-bound rail that pitches wildly in the draft. The reading knife is already tucked securely into your belt, its tempered edge humming with a faint, low-pitched vibration against your ribs. Loose pages swirl in a miniature tempest around your ankles, whispering fragments of forgotten histories that dissolve before they can be fully read. Below, the vertical shaft yawns wide, smelling powerfully of old leather, dried paste, and damp lime. // Every muscle in your legs strains to compensate for the erratic motion of the suspended floor until you finally reach the firm stone of the adjoining alcove.
+EXIT 1: Step onto steady masonry
+@@END
+@@SECTION ul-2-053
+TITLE: Balancing the Tremor
+TEXT: Sensation drains from your fingertips as the spine bridge below your boots suddenly bucks upward like a startled animal in a dark stable. You drop into a low crouch, arms spread wide to catch the shifting center of gravity while the steel reading knife jingles against your canvas satchel. Every plank groans in protest, threatening to pitch you over the low wooden rail and into the paper-choked chasm spinning endlessly below. You fix your eyes on the glinting brass latch of the opposite door, waiting for the precise heartbeat when the violent oscillation pauses.
+CHECK: Tread the bucking bridge
+@@END
+@@SECTION ul-2-054
+TITLE: A Heavy Toll
+TEXT: A sudden lateral wrench of the bridge sweeps your boots out from under you, sending you sprawling hard across the abrasive spine-bindings. The sharp edge of a protruding board catches your forearm, tearing through your woolen sleeve and leaving a bright, stinging red graze that begins to ooze against your cuff. You lose your grip on a spare tallow taper, watching it bounce once before vanishing into the dark vertical shaft below. Gasping for breath in the dust-thick air, you drag yourself over the threshold into the next alcove, richer by a fresh scar and poorer by your best candle.
+EXIT 1: Crawl into the recess
+@@END
+@@SECTION ul-2-055
+TITLE: The Kept Blade
+TEXT: However narrowly you manage to slip across the bucking expanse, your sure balance and sharp timing secure a safe passage onto the firm boards beyond. Tucked safely inside your damp satchel rests your prize, acquired at the cost of only a few scraped knuckles and a badly shaken frame. It is a finely balanced steel reading knife, its pommel engraved with the discreet seal of the central registry and its blade keen enough to slice through stubborn leather binding cord with a single effortless stroke. You pause to catch your breath, testing the weight of the instrument in your palm before turning toward the deeper stacks.
+GRANT: tempered steel reading knife
+EXIT 1: Follow the iron rail
+@@END
+@@SECTION ul-2-056
+TITLE: The Soot-Choked Conduit
+TEXT: Thick clouds of grey carbon grit billow from the low ceiling as you force your way into a narrow corridor flanked by unlit wall sconces and heavy soot. The air tastes of scorched parchment and ancient lamp-oil, coating your tongue with a bitter, metallic film that makes every breath an effort. Along the blackened stonework, bronze sconces drip with cold grease, their unlit wicks sending up thin, oily wisps of smoke that swirl into fantastic shapes above your head. Strange scratching noises issue from behind the wainscot, as though industrious little teeth were gnawing through the backing boards of the lowest shelves. // You press your shoulder against the warm, vibration-riddled masonry, keeping your hood pulled low to protect your eyes from the stinging soot while the corridor narrows steadily ahead.
+EXIT 1: Push deeper into soot
+@@END
+@@SECTION ul-2-057
+TITLE: The Smoky Refuge
+TEXT: A secluded shelving bay filled with smoke-stained biographies offers temporary shelter from the prevailing draughts of the lower levels. The floor here is littered with discarded book-plates and greasy soot-flakes that cling to your boots like grey snow, while a faint, stagnant warmth radiates from the masonry behind the shelves. To one side, a heavy wooden cabinet sits half-shrouded in shadow with a rusted latch, while an old woollen scarf soaked in soothing herbal oil hangs neglected from a nearby brass bracket. The gloom presses close on every hand, whispering of hidden caches and blocked passages waiting to be discovered by anyone bold enough to search the shadows.
+EXIT 1: Inspect the charred wainscot
+EXIT 2: Force the rusted latch
+EXIT 3: Take the oiled scarf
+EXIT 4: Enter the rotating maze
+@@END
+@@SECTION ul-2-058
+TITLE: The Charred Wainscot
+TEXT: Kneeling beside the smoke-stained biographies, you trace the faded marginal annotations scrawled in the margins of a burnt theological manuscript. The ink has taken on a faint, luminous green tinge in the gloom, pointing an unambiguous finger toward a loose oak panel near the floorboards. You slide your fingers into the narrow gap, feeling the cold draft of air that signals a hidden cavity behind the wall. With a gentle tug, the panel swings inward on silent, well-oiled hinges, revealing the dull glint of glass flasks stored safely in the dark recesses. // A row of heavy glass phials filled with refined lamp-oil rests neatly upon a bed of shredded news-sheets, untouched by the soot and grime of the surrounding corridor.
+EXIT 1: Reach into the recess
+@@END
+@@SECTION ul-2-059
+TITLE: The Hidden Cache
+TEXT: Lifting the heavy glass phials from their dusty bed, you check each stopper to ensure the precious oil has not leaked away during decades of neglect. The liquid inside gleams a clear, pale amber, smelling faintly of pressed olives and dried lavender rather than the foul tallow burned by the city porters. You slip three of the phials into your satchel, distributing their weight carefully so they will not clink together as you walk. The warmth of the hidden compartment seems to seep into your chilled fingers, offering a brief respite from the biting damp that permeates every corner of the Underlibrary. // Closing the oak panel with a soft click, you stand up and scan the dim, smoke-hung corridor for the next stretch of your journey.
+EXIT 1: Resume the march onward
+@@END
+@@SECTION ul-2-060
+TITLE: Deciphering the Burned Marginalia
+TEXT: Squinting in the uncertain amber glow of your lamp, you bend close to the crumbling parchment of the charred manuscript resting on the shelf. The annotations are written in a cramped, archaic hand that shifts and blurs whenever the flickering lamplight catches the greasy soot-flakes suspended in the air. You mutter the complex sequence of cross-references under your breath, trying to reconcile the misfiled shelf marks with the architectural anomalies of the surrounding stacks. A wrong turn here could plunge you straight into the burning flues or leave you trapped behind a wall of sliding timber presses. // Your mind races through the catalogue codes while the ink on the page begins to pulse with a faint, warning heat beneath your fingertips.
+CHECK: Decode the charred marginalia
+@@END
+@@SECTION ul-2-061
+TITLE: Smoke and Ash
+TEXT: Your eyes water sharply as a sudden gust of sulfurous air blows back from the dark recesses of the wainscot, blurring the intricate ink marks into an unreadable smudge. In your confusion, you misjudge the shelving alignment and your shoulder strikes a protruding iron bracket with a heavy, sickening thud. A sharp ache radiates down your arm, numbing your hand and sending your oil-lamp clattering against the stone floor where its glass chimney shatters into a thousand glittering shards. You are left groping in near-total darkness, smelling the rich scent of spilled oil soaking uselessly into the stone floor while your bruised shoulder throbs in rhythm with your racing pulse.
+EXIT 1: Grope toward the faint light
+@@END
+@@SECTION ul-2-062
+TITLE: The Amber Phials
+TEXT: However narrowly you manage to interpret the cryptic marginalia, your careful scholarship secures a safe and profitable harvest from the hidden recess behind the wainscot. You pocket the last of the sealed glass phials of refined lamp-oil, their contents promising many hours of clear, steady illumination in the gloom of the deep stacks. The ancient annotations remain clear in your memory, a silent testament to the efficacy of the old classification rules against the chaos of the drifting library. Slinging your satchel over your shoulder, you step out from the smoky alcove and prepare to face the moving timber labyrinth ahead.
+GRANT: phials of refined lamp-oil
+EXIT 1: Enter the rotating maze
+@@END

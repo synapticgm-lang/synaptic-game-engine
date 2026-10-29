@@ -1,0 +1,67 @@
+@@SECTION ul-4-120
+TITLE: The Swinging Scales
+TEXT: Heavy iron balance pans sway rhythmically in the damp subterranean draft, hung from a vaulted ceiling of soot-stained brick. Each breath tastes of stale copper and lamp-oil as you edge past the towering mechanical apparatus, its pointer twitching with every passing tremor of the deep archive. A discarded quill lies on the flagged stones near the brass pedestal, still wet with dark ink. // You reach out with a gloved hand, lifting a blank parchment slip from the dead judge's velvet-lined tray while the iron counterweights hover inches above your shoulder.
+EXIT 1: Slip past the silent judgment scales
+@@END
+@@SECTION ul-4-121
+TITLE: Beyond the Pendulum
+TEXT: Shadows lengthen across the flagstones as the swinging chains settle into a low, rhythmic hum that vibrates through the soles of your boots. The blank writ rests securely within your inner pocket, stiff against your ribs, carrying the faint, cold smell of parchment stored too long in a vault. Ahead, a narrow stone stairwell descends deeper into the limestone, its handrail slick with condensation and fine black dust. // You check the seal on the slip one last time before stepping down into the gloom.
+EXIT 1: Descend into the lower stack
+@@END
+@@SECTION ul-4-122
+TITLE: The Pivot of Balance
+TEXT: Iron weights click against the brass housing of the scale with a sharp, warning note that echoes off the low ceiling. The gap between the swinging counterweights narrows abruptly as a sudden tremor shakes the masonry, threatening to trap your arm against the pedestal. You gather your focus, timing your movement to slide through the narrow clearance before the brass tongue slams home into its locking groove.
+CHECK: Slide past the swinging scales
+@@END
+@@SECTION ul-4-123
+TITLE: A Narrow Escape
+TEXT: Iron edges graze your sleeve with enough force to tear the heavy wool, sending you stumbling hard against the damp pillar. A dull ache flares along your forearm where a jagged corner of the brass pan clipped your skin, leaving a thin line of dark blood that smears against your cuff. The scales settle into a sullen clank behind you, the opportunity for a clean passage lost to your awkward timing.
+EXIT 1: Gather your breath and move on
+@@END
+@@SECTION ul-4-124
+TITLE: The Signed Warrant
+TEXT: Fingers close around the smooth parchment slip, its surface cold and dry despite the damp air of the annexe. A faint scent of dried gall and old cedar clings to the official signature scrawled at the bottom by a hand that has long since turned to dust. You fold the warrant carefully, tucking it away as a tangible reminder of how thinly order holds the archive together.
+GRANT: Signed dead judge writ
+EXIT 1: Enter the Court of Red Ink
+@@END
+@@SECTION ul-4-125
+TITLE: The Amphitheatre of Whispers
+TEXT: Stone tiers rise into the gloom, crowded with thousands of pale, translucent figures leaning forward from shadowed alcoves. These are the Marginalia, the disembodied thoughts and caustic comments of readers long dead, their voices merging into a low, continuous surf of criticism and debate. They argue fiercely over what Thessaly Marr sought in the deep vaults, their spectral fingers pointing toward the lower darkness. Every shelf here is crusted with salt-peter and old ink-stains, and the air hums with the electric static of unvoiced opinions. You stand at the focal point of their collective gaze, feeling the weight of centuries of commentary pressing against your resolve.
+EXIT 1: Face the assembly of shifting ghosts
+@@END
+@@SECTION ul-4-126
+TITLE: The Assembly of Marginalia
+TEXT: Murmurs swell and recede around you like tide water against shelving iron, each ghostly voice offering conflicting advice on how to approach the inner sanctum. Some figures lean close to murmur warnings about trapped passages, while others gesture toward hidden alcoves where forgotten papers lie half-buried in dust. The air grows thick with the scent of old leather and burning rush-lights, and every shadow seems to shift with intent. You must choose which path or counsel to follow before the restless crowd turns its collective scrutiny elsewhere.
+EXIT 1: Listen to the shifting debate
+EXIT 2: Steel your nerves against the cacophony
+EXIT 3: Glide through the phantom audience
+EXIT 4: Withstand the critical spectral gaze
+EXIT 5: Hold your ground against the spectral surge
+EXIT 6: Approach the sliding letter puzzle door
+@@END
+@@SECTION ul-4-127
+TITLE: The Flawed Logic
+TEXT: Voices falter as you dissect the faulty premise of a disputed footnote concerning the original catalogue numbering. The argument ripples outward through the tiers of ghosts, silencing the nearest rows with sudden intellectual surprise. A translucent scroll drifts down from an upper bracket, landing lightly upon your shoulder before tumbling to the flagstones. // You pick up the discarded paper, its margins filled with neat, hurried handwriting that outlines a forgotten path through the stacks.
+EXIT 1: Examine the fallen marginal debate
+@@END
+@@SECTION ul-4-128
+TITLE: The Quiet Tiers
+TEXT: Silence follows your analysis through the dim stone aisles, broken only by the faint scratching of phantom nibs against unseen paper. The marginal ghosts withdraw into their respective alcoves, nodding in reluctant acknowledgment of your reasoning. Ahead, a low archway opens into a narrow service passage lined with leather-bound volumes that smell faintly of bitter almonds and vinegar. // You step through the stone frame into the stillness.
+EXIT 1: Follow the narrow service passage
+@@END
+@@SECTION ul-4-129
+TITLE: The Logic of the Margins
+TEXT: Thousands of critical eyes fix upon you as you trace the tangled web of cross-references governing the shelf allocations. A contradiction in the ancient indexing rules hangs in the air, waiting for your tongue to either resolve it or trigger a storm of disapproval from the assembled scholars. You steady your breathing, mentally calculating the proper sequence of shelf numbers before the assembly begins its collective censure.
+CHECK: Trace the flaws in the debate
+@@END
+@@SECTION ul-4-130
+TITLE: The Cost of Contradiction
+TEXT: A sharp wave of collective derision washes over your thoughts, twisting your reasoning into knotting confusion and leaving a bitter taste of ink on your tongue. The mental strain leaves you with a dull, persistent throbbing behind your temples that makes every footstep echo like a hammer-blow. You stagger against a stack of ledgers, clutching your head as the ghostly murmurs resume their chaotic chatter around you.
+EXIT 1: Recover your wits in the dust
+@@END
+@@SECTION ul-4-131
+TITLE: The Transcribed Truth
+TEXT: Ink flows smooth and black across the parchment sheet as you capture the essence of the scholars' debate, binding their scattered arguments into a coherent whole. The parchment warms in your palm, imbued with the lingering intellectual authority of a thousand critical readers. You tuck the document safely into your satchel, knowing it will open doors that remain firmly shut to ordinary inquirers.
+GRANT: Transcribed marginal debate
+EXIT 1: Return to the whispering assembly
+@@END

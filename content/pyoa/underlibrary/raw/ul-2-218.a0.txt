@@ -1,0 +1,54 @@
+@@SECTION ul-2-218
+TITLE: The Ledger Raft
+TEXT: Discarded heavy ledger boards float like dead timbers upon the sluggish ink-river, smelling strongly of vinegar and gall. You lash them together with quick, secure knots drawn tight through the frayed holes of the covers, fashioning a makeshift raft that dips unsteadily under your weight. Pressing down firmly on the lashed planks, you strap a waterproof canvas sack containing your meager remaining rations and dry lamp-oil against the centre timber. The dark current laps hungrily at your boots, thick and glistening like petroleum, urging you to cast off before the entire shelf-side tilts further into the grey void.
+EXIT 1: Push off into the ink-current
+@@END
+@@SECTION ul-2-219
+TITLE: The Sunken Chest
+TEXT: Swirling dark eddies churn against a jagged stone abutment where refuse from a thousand misfiled folios has collected over decades. Reaching down with a length of copper-reinforced twine, you snag the iron handle of a waterlogged oak chest trapped beneath the surface. You throw your shoulder into a sudden heave, coaxing the spinning currents into lifting the heavy load directly onto the slimy bank. Prying the swollen lid loose with your fingers reveals a neat, intact assortment of coloured sealing waxes nestled within damp velvet.
+EXIT 1: Claim the coloured sealing waxes
+@@END
+@@SECTION ul-2-220
+TITLE: The Overhead Tracks
+TEXT: Frothing black water rushes too fiercely across the lower stacks to permit any crossing by foot or makeshift raft. Abandoning the floor entirely, you leap upward to catch the overhead brass tracks where the heavy sliding ladders are suspended. Hand over hand, you haul your weight along the grease-slicked rail while the dark flood hisses below your dangling boots. A discarded iron pole with a heavy hooked end hangs from a bracket just ahead, waiting within arm's reach.
+EXIT 1: Snag the hanging iron pole
+@@END
+@@SECTION ul-3-001
+TITLE: Threshold of the Court
+TEXT: Heavy bronze doors inscribed with endless lists of prohibited topics loom before you like the gateway to a tomb. A stern cataloguer in stiff, ink-stained cuffs steps out from the shadows, barring your path with a clipboard of black walnut. Demand for travel permits echoes hollowly off the vaulted stone ceiling while the clerk meticulously inspects the seams of your coat for illicit manuscripts. Every confiscated margin-note and smuggled scrap of paper feels suddenly heavy in your pockets under that unblinking, bureaucratic glare.
+EXIT 1: Present your papers for inspection
+@@END
+@@SECTION ul-3-002
+TITLE: Hall of Classification
+TEXT: Endless rows of high walnut desks stretch away into the gloom of the great administrative chamber, smelling of stale parchment and damp wool. Junior scribes hunch under green-shaded lamps, mechanically sorting whispering index cards according to obsolete filing systems that change every hour. To your left, a narrow archway leads deeper into the archives; straight ahead, a stern inquisitor glares over a high lectern; to your right, a tumbling cart of confidential dossiers begs for intervention; and behind a frosted glass screen, armed beadles pace with rhythmic boots.
+EXIT 1: Slip past the silent junior desks
+EXIT 2: Face the inquisitorial senior archivist
+EXIT 3: Intercept the tumbling dossier cart
+EXIT 4: Avoid the patrolling armed beadles
+@@END
+@@SECTION ul-3-003
+TITLE: The Polished Floor
+TEXT: Smooth marble tiles stretch across the open floor between towering card-cabinets, gleaming like frozen black water under the sputtering gas-jets. A solitary clerk sits slumped over an immense ledger near the far archway, his chin resting heavily on his chest in a profound slumber. You take a slow, deliberate step forward, testing the slickness of the stone beneath your soft-soled boots while the distant scratching of distant pens provides a steady background rhythm. One false movement upon this polished expanse will echo through the entire hall and ruin your approach.
+EXIT 1: Glide silently across the marble
+@@END
+@@SECTION ul-3-004
+TITLE: Shadow of the Cabinet
+TEXT: Deep shadows cast by towering rows of oak card-drawers offer a temporary haven from the glaring lamps of the central aisle. You press your back against the cold wood, listening intently to the rhythmic, whistling snores of the sleeping clerk just yards away. The stolen seal-ring glints dully on the corner of his unattended desk, resting beside a brass inkpot shaped like an owl. Your fingers itch to reach out across the intervening space, but the floorboards here groan faintly beneath a coat of dried paste.
+EXIT 1: Reach for the gleaming seal-ring
+@@END
+@@SECTION ul-3-005
+TITLE: The Silent Glide
+TEXT: You ease your weight forward onto the ball of your foot, gliding across the polished marble with the deliberate caution of a cat stalking through a library of glass. The sleeping clerk stirs in his high-backed chair, his hand twitching toward a fallen quill as a sudden draft rustles the papers on his desk. You freeze mid-stride, balancing your entire momentum on a single heel while holding your breath against the rising smell of hot lamp-oil.
+CHECK: Balance silently across the slick floor
+@@END
+@@SECTION ul-3-006
+TITLE: The Clattering Fall
+TEXT: Your boot heel skids unexpectedly on a stray grain of dried sealing wax scattered across the marble floor. You stumble forward with a sharp gasp, catching your shoulder hard against the edge of the clerk's high desk and sending a heavy brass inkpot clattering across the flags. The sleeping clerk jerks awake with a shout, lunging blindly into the gloom while you scramble backward into the shadows, nursing a bruised shoulder and leaving a torn scrap of your sleeve caught on the desk-leg.
+EXIT 1: Retreat into the card-aisles
+@@END
+@@SECTION ul-3-007
+TITLE: The Stolen Seal
+TEXT: You complete the final, delicate stretch across the smooth floor, your fingers closing firmly around the cold metal of the seal-ring just as the clerk shifts in his sleep. Slipping the heavy brass band into your pocket, you retrace your steps into the relative safety of the towering card-cabinets before anyone can raise an alarm. Your heart thumps heavily against your ribs, but your stealth has bought you a quiet victory and a tangible token of authority within these rigid halls.
+GRANT: Heavy brass seal-ring
+EXIT 1: Return to the central hall
+@@END

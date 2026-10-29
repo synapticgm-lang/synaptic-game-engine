@@ -1,0 +1,66 @@
+@@SECTION ul-3-018
+TITLE: The Tribunal Gallery
+TEXT: Tiered benches of soot-stained pine rise into the damp vaulting, packed with grey-robed spectators whose breath smells of stale ink and dried chicory. Below, upon a raised dais of veined slate, three judges of the Cataloguers' Court whisper behind high barricades of cross-indexed ledgers, weighing charges of unauthorized cataloguing against the fellowship of the lower stacks. A thin drift of lamp-oil smoke hangs in the cold air, stinging your eyes while the scratching of nibs echoes like restless beetles. Every aisle out of this hollow court offers a desperate gamble, whether through forged credentials, balanced leaps across ledgers, or sheer defiance of the bench.
+EXIT 1: Slip into the clerk's alcove unnoticed
+EXIT 2: Face the chief judge without flinching
+EXIT 3: Forge an official exemption seal
+EXIT 4: Navigate the collapsing reference ledgers
+EXIT 5: Stare down the hostile prosecutor
+EXIT 6: Approach the iron portcullis barrier
+@@END
+
+@@SECTION ul-3-019
+TITLE: The Clerk's Alcove
+TEXT: Piles of parchment requisitions tower over a sloping mahogany desk where a weary clerk mutters complaints about missing red twine. You step softly across the damp flagstones, slipping your own indictment folio into the middle of a stack marked for indefinite archiving. The clerk dips a heavy steel nib into an ink-pot, distracted by a noisy dispute echoing from the gallery benches above. Whispering remarks about routine administrative transfers, you point toward the bottom shelf where the keys to the lower archive stairs hang from a brass hook, waiting for a steady hand to reach out and take them.
+EXIT 1: Seize the brass archive key
+@@END
+
+@@SECTION ul-3-020
+TITLE: Reordering the Indictment
+TEXT: Your fingers hover over the heavy iron ring of keys while the clerk's ink-stained quill scratches a slow, rhythmic tally just inches away. A single misstep will scatter the precarious columns of ledgers across the flagstones, drawing the sharp eyes of the armed beadles stationed at the archway. You lean forward into the suffocating scent of lamp-oil and gum arabic, timing your movement to the heavy chime of the distant water-clock as you slide your palm toward the brass ring.
+CHECK: Slide your hand toward the keys
+@@END
+
+@@SECTION ul-3-021
+TITLE: A Heavy Misplacement
+TEXT: A corner of your leather sleeve catches the edge of an open register, sending a cascade of loose ink-vials shattering across the stone floor in a dark, spreading flood. The clerk lets out a sharp shriek of indignation, and heavy boots immediately stampede against the flagstones from the gallery doors. You snatch the iron ring from its hook just as iron-shod hands clamp heavily onto your shoulders, dragging you away into a cramped holding cell. The rough handling leaves a deep, angry scrape along your ribs and costs you precious hours of precious time before you manage to slip free into the dim corridors again.
+EXIT 1: Return to the gallery floor
+@@END
+
+@@SECTION ul-3-022
+TITLE: The Purloined Pass-Key
+TEXT: Your fingers close securely around the cold brass ring, lifting it from the hook just as the clerk looks up with a sudden, suspicious frown. You slip the heavy iron key into your waistcoat pocket, however narrowly avoiding a disastrous discovery as the ink-pot wobbles and settles back onto its blotter. The heavy timber door to the lower stairs waits just beyond the shadow of the filing cabinets, offering a quiet descent away from the watchful eyes of the tribunal.
+GRANT: Brass archive key
+EXIT 1: Return to the Tribunal Gallery
+@@END
+
+@@SECTION ul-3-023
+TITLE: The Piercing Gaze
+TEXT: Cold yellow lamplight flickers across the polished mahogany of the dock where you stand under the uncompromising scrutiny of the Chief Cataloguer. Around you, the court falls into a heavy, suffocating hush, broken only by the distant drip of moisture from the cave ceiling and the steady scratching of a recording scribe. The Chief Cataloguer's sharp eyes narrow behind wire spectacles, searching every fold of your shelver's tunic for any sign of hesitation or guilt regarding the lost indexing notes.
+EXIT 1: Meet the chief judge's gaze
+@@END
+
+@@SECTION ul-3-024
+TITLE: Silence in the Dock
+TEXT: Dust motes dance in the shaft of greasy light cutting across the wooden barrier, settling upon the ink-stained cuffs of your uniform. The senior magistrates lean together, muttering dry legalities concerning the misplacement of historical volumes and the unauthorized reading of restricted margins. You keep your shoulders squared against the damp chill radiating from the masonry behind you, listening to the soft murmur of rival scholars whispering from the rear benches about your impending sentence.
+EXIT 1: Step closer to the bench
+@@END
+
+@@SECTION ul-3-025
+TITLE: Unwavering Resolve
+TEXT: The Chief Cataloguer raises a parchment slip bearing your name and reads aloud a list of infractions that could condemn you to decades of sorting scrap paper in the Misfiled Wing. The pressure inside the stone chamber grows thick and heavy, threatening to crush your inner resolve and force a panicked confession from your lips. You lock your jaw against the rising tide of doubt, staring straight into the cold glare of the magistrate while every instinct screams at you to break and run.
+CHECK: Endure the magistrate's cold glare
+@@END
+
+@@SECTION ul-3-026
+TITLE: A Fractured Will
+TEXT: The crushing weight of the court's accumulated silence breaks your concentration like dry brittle paper, forcing you to stagger back against the wooden rail with a sharp gasp. A murmur of disapproval ripples through the tiered benches as the Chief Cataloguer marks a heavy red cross across your dossier. Though you manage to avoid outright imprisonment, the grueling interrogation leaves you mentally exhausted and burdened with a formal reprimand that triples your official debt to the fellowship.
+EXIT 1: Face the portcullis barrier ahead
+@@END
+
+@@SECTION ul-3-027
+TITLE: The Signed Acquittal
+TEXT: Your steady gaze meets the magistrate's eyes until the Chief Cataloguer lets out a dry, reluctant sigh and dips a bone pen into the black well. A formal pardon is scratched onto heavy rag paper, sealed with a glob of hot crimson wax that smells faintly of burnt resin. You accept the document with a steady hand, however narrowly avoiding a humiliating public reprimand as the court bailiff steps aside to clear your path toward the iron depths.
+GRANT: Written pardon for past offenses
+EXIT 1: Approach the iron portcullis barrier
+@@END

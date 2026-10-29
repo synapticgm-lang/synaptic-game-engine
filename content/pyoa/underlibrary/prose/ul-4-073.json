@@ -1,0 +1,117 @@
+{
+ "batch": "ul-4-073",
+ "sections": {
+  "ul-4-073": {
+   "title": "The Leaning Timber",
+   "text": "Splintered oak and cracked pine groan under your boots as you step onto the unstable joists bridging the abyss. Dust motes dance in the amber glow of your lamp, illuminating a trapped cataloguer clinging desperately to a protruding shelf bolt on the far side.\n\nYou must steady the shifting timber framework before the whole structure yields to gravity and tumbles into the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Adjust the wooden support beams"
+   ]
+  },
+  "ul-4-074": {
+   "title": "The Bridging Span",
+   "text": "Tremors ripple through the floorboards while you kneel to test the tension points of the leaning beams. Every adjustment shifts the load, threatening to send both you and the stranded official sliding into the shadowy depths below.\n\nCareful fingers find the rusted iron pins that lock the timber framework into place, demanding a delicate touch to avoid a catastrophic collapse.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the trembling iron bolts"
+   ]
+  },
+  "ul-4-075": {
+   "title": "Tension Points",
+   "text": "Fractured pine beams groan beneath your weight as you test the structural tension of the leaning timbers that span the widening chasm. Below you, the abyss drops away into absolute blackness, save for the faint glimmer of phosphorescent fungi clinging to the ancient stone foundations. You wedge your shoulder against a straining upright, fingers tightening around the cold iron bolt that holds the makeshift bridge together while a trapped cataloguer watches you with desperate, narrowed eyes from the far ledge. Balancing your entire weight on the precarious fulcrum, you reach out to adjust the binding screw just as the wood gives a sharp, warning crack.",
+   "check": "Adjust the leaning timber tension",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-076": {
+   "title": "A Slipping Footing",
+   "text": "The ledge snaps without warning, sending a shower of wood splinters into the dark chasm and dropping you hard against the stone. Your shoulder takes the brunt of the impact, leaving a deep bruise that throbs in time with your racing pulse. The trapped cataloguer hauls you over the threshold just in time, panting and muttering stiff words of gratitude for your reckless rescue.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and press onward"
+   ]
+  },
+  "ul-4-077": {
+   "title": "A Debt Of Honour",
+   "text": "Solid stone rises to meet your boots as you haul yourself across the gap, however narrowly avoiding a plunge into the dark. The rescued cataloguer brushes the dust from their severe woollen robes and presses an embossed brass token into your palm. This official seal binds the rule-keeper to your cause, ensuring safe passage through any future disputes.",
+   "check": "",
+   "grant": "A cataloguer's official token",
+   "exits": [
+    "Follow the corridor into shadow"
+   ]
+  },
+  "ul-4-078": {
+   "title": "Weight And Measure",
+   "text": "Heavy volumes rain down from the upper tiers like falling masonry, crashing into the flagged floor with hollow thuds. You press your back against a stone pillar and study the rhythmic cascade of tumbling texts, searching for patterns in the chaos. The debris follows a predictable arc dictated by the settling foundations of the ancient stacks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the path of falling books"
+   ]
+  },
+  "ul-4-079": {
+   "title": "Calculating the Descent",
+   "text": "Falling texts blur past your eyes in a dizzying cascade of black ink and yellowed leaves, each volume adding its mass to the chaotic kinetic puzzle of the shifting stacks. You narrow your gaze against the swirling paper-dust, mentally mapping the trajectories of the heaviest theological treatises as they plummet toward the floor below. Every second requires a swift recalculation of load and momentum to anticipate where the structural stress will settle next. Your boots hover an inch above the trembling floorboards as you ready yourself to dart across the precise convergence point before the timber flooring gives way completely.",
+   "check": "Predict the safe falling route",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-080": {
+   "title": "The Weight of Paper",
+   "text": "The cascading folios shift beneath your boots like scree on a slate roof, and a sudden avalanche of heavy folio volumes sweeps your feet out from under you. You scramble to latch onto a protruding iron bracket, but your fingers slip on the greasy film of lamp-oil and old dust coating the metalwork. You tumble into a narrow recess between two tilting oak cases, bruising your ribs against a protruding drawer-handle and losing your tin of spare nibs in the darkness. The air smells of crushed vellum and damp earth as you haul yourself upright, nursing a smarting shoulder while the distant rumble of the stacks settles into an uneasy silence.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the tilting aisle northward"
+   ]
+  },
+  "ul-4-081": {
+   "title": "The Vault Diagram",
+   "text": "Calculations form in your mind like ink soaking into blotting paper as you watch the rhythm of the descending leather-bound tomes. You pick your footing across the sliding oak cases with measured precision, timing each leap to match the groaning shift of the timber framing. A heavy ledger brushes past your ear with the whisper of a blade, yet your route holds true through the chaotic flurry of falling knowledge. Tucked neatly into the spine of a wedged dictionary, your fingers close around a crisp parchment sheet detailing the hidden structural braces of the deep annexe vaults.",
+   "check": "",
+   "grant": "architectural diagram of the vaults",
+   "exits": [
+    "Follow the tilting aisle northward"
+   ]
+  },
+  "ul-4-082": {
+   "title": "The Shuddering Aisles",
+   "text": "Rows of towering oak shelves sway in unison like trees in a gale, casting long and dancing shadows across the flagged floor. You time your movements to the rhythm of the tremors, slipping through narrow gaps between swaying cases as books plummet into the gloom. Every instinct urges caution, yet the way forward demands absolute speed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Dart between the swaying shelves"
+   ]
+  },
+  "ul-4-083": {
+   "title": "Fluid Aisle Weaving",
+   "text": "Heavy octavos plummet from the high shelves like falling masonry, transforming the narrow corridor into a gauntlet of flying paper and splintering wood. You drop into a low crouch and slide beneath a tilting crossbeam, letting your momentum carry you smoothly past a crashing stack of encyclopaedias. Every instinct urges you to run, but you force your limbs into a controlled, dancing glide through the gaps in the falling debris, reaching out without breaking your stride toward a stray vellum journal resting on a dangling shelf. Your fingers brush the edge of the leather binding just as the shelf snaps violently upward into the gloom.",
+   "check": "Weave through the shuddering aisles",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-084": {
+   "title": "A Narrow Escape",
+   "text": "The falling book clips your heel, sending you sprawling into a heap of discarded cataloguing slips with a sharp sting in your ankle. You scramble away on hands and knees as a secondary wave of folios rains down around your ears. The physical toll is immediate, leaving you limping and battered in the dim light.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Dust off your coat and stand"
+   ]
+  },
+  "ul-4-085": {
+   "title": "The Vellum Journal",
+   "text": "Shuddering aisles sway like masts in a rising gale while heavy octavos rain down around you in a flurry of torn leaves and flying parchment. You slip sideways through a gap in the shelving, your shoulder brushing the rough timber with fluid lightness as another leather-bound volume shatters the flagstones where you stood a heartbeat prior. Your hand shoots out instinctively to snatch a bound notebook tumbling past in mid-air, clutching it tight against your chest before the momentum carries you clear of the hazard. The leather cover is unmarked by dust or damp, and its uncreased pages offer a clean slate for whatever notes remain to be written.",
+   "check": "",
+   "grant": "an undamaged vellum journal",
+   "exits": [
+    "Follow the tilting aisle northward"
+   ]
+  }
+ },
+ "missing": []
+}

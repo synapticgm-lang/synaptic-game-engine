@@ -1,0 +1,97 @@
+{
+ "batch": "ul-2-008",
+ "sections": {
+  "ul-2-008": {
+   "title": "The Swinging Oak Tiers",
+   "text": "Nimble balance carries you across the widening void between two swaying oak tiers as the floorboards shudder and groan underfoot. Dust motes dance in the amber glare of your sputtering lamp while heavy volumes shift with a dull thud in the gloom. Among the scattered debris on the far ledge, a discarded brass-bound clasp catches the dim light, promising a secure fastening for your travel satchel. You tuck the gleaming metal piece into your pocket, feeling the cold weight of it reassure your fingers before you peer into the drifting shadows ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clamber across the swaying timber ledge"
+   ]
+  },
+  "ul-2-009": {
+   "title": "Leap Across the Gap",
+   "text": "A sudden tremor shakes the towering oak shelves, widening the chasm between the swaying cases until the dark drop below gapes like an open mouth. You crouch low on the trembling floorboards, measuring the distance with a sharp eye while the smell of old paper and lamp-oil thickens in the damp air. Tense muscles bunch in your thighs as you prepare to spring across the void before the gap widens beyond reach.",
+   "check": "Leap across the swaying bookcases",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-010": {
+   "title": "Stumbling on the Timbers",
+   "text": "Your boots strike the slick edge of the opposite shelf at an awkward angle, sending a shower of loose parchment fluttering down into the black abyss. Pain shoots up your ankle as you slam hard against the heavy oak upright, nearly dropping your precious lamp-oil into the dark. You drag yourself over the lip of the tier with a grimace, nursing a bruised shoulder while the groaning shelves settle back into their grinding routine.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and press onward"
+   ]
+  },
+  "ul-2-011": {
+   "title": "The Firm Landing",
+   "text": "Lightness carries your boots across the hazardous void just as the heavy oak tiers grind to a sudden, jarring halt against one another. You land with secure footing on the dusty ledge, your fingers closing around a sturdy brass-bound clasp left behind by a previous shelver. This small prize fastens securely to your travel satchel, offering a reliable latch for the long hours ahead in the shifting stacks.",
+   "check": "",
+   "grant": "Brass-bound satchel clasp",
+   "exits": [
+    "Follow the narrowing stack edge forward"
+   ]
+  },
+  "ul-2-012": {
+   "title": "Bracing Against the Timber",
+   "text": "Grinding timber presses against your shoulder as an entire wall of encyclopedias begins to slide sideways with relentless, crushing force. You lean your full weight into the leather-bound spines, halting the slow migration of knowledge with straining muscles and gritted teeth. A fellow shelver's chalked warning on the adjacent shelf points out a safer route through the rattling stacks. You memorize the faded arrow before the heavy case resumes its slow journey into the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the halting encyclopedias"
+   ]
+  },
+  "ul-2-013": {
+   "title": "Halt the Shifting Wall",
+   "text": "Iron gears shriek behind the oak panels as a towering wall of heavy encyclopedias surges forward, threatening to pin you against the stone pillar. You plant both palms flat against the cold leather spines, summoning every ounce of stubborn resolve to check the crushing momentum. The timber shudders beneath your weight, resisting your push with the accumulated gravity of ten thousand forgotten facts.",
+   "check": "Hold back the sliding bookshelves",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-014": {
+   "title": "Pinned by the Tomes",
+   "text": "The heavy bookcase surges forward despite your desperate shove, slamming into your shoulder and leaving a dull, throbbing ache that makes your breath catch. You squeeze sideways through the narrow gap just in time, leaving a torn scrap of your sleeve wedged tight between the iron shelves. Dust fills your lungs, making you cough hoarsely in the damp gloom as you stumble away from the treacherous timber.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself past the jammed case"
+   ]
+  },
+  "ul-2-015": {
+   "title": "The Steadfast Hold",
+   "text": "Stubborn pressure brings the sliding wall of encyclopedias to a groaning halt just inches from your chest, proving your resolve matches the ancient timber. Carved into the wooden upright near your hand is a helpful tip on local navigation left by an earlier visitor. You trace the scratched arrows with your thumb, committing the secret path through the moving stacks to memory before moving on.",
+   "check": "",
+   "grant": "Tip on local navigation",
+   "exits": [
+    "Advance toward the iron junction"
+   ]
+  },
+  "ul-2-016": {
+   "title": "The Iron Bulkhead",
+   "text": "Heavy iron panels slide together across the vaulted passage with a final, echoing crash that vibrates through the soles of your boots. A narrow transom remains open near the ceiling, through which thick, dark lamp-oil drips in a slow rhythm into a stagnant pool below. The acrid scent of mineral grease and ancient ink fills the stale air, marking the boundary where the orderly rows give way to the flooded sumps. You wipe a smear of soot from your forehead and peer through the iron gap into the darkness beyond.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl through the dripping transom"
+   ]
+  },
+  "ul-2-017": {
+   "title": "The Sump of Pages",
+   "text": "Soggy drifts of discarded manuscripts carpet the damp floor around a sluggish stream of black ink that swallows stray footsteps without a sound. Faint whispers rise from the wet pages, murmuring forgotten arguments and unread tragedies into the gloom. Every surface gleams with a slick, greasy sheen under the feeble light of your lamp, offering several uncertain paths across the mire. You must choose how to navigate the drifting debris before the tide rises further.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wade through the black ink stream",
+    "Push through the waterlogged treatises",
+    "Trace the swirling ink patterns carefully",
+    "Brave the bitter cold of the rising tide",
+    "Salvage intact cartography from the muck",
+    "Cross the chasm on the bridge of spines"
+   ]
+  }
+ },
+ "missing": []
+}

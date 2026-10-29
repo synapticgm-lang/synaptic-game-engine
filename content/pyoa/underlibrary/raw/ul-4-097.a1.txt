@@ -1,0 +1,12 @@
+@@SECTION ul-4-101
+TITLE: The Sluice Dam
+TEXT: Heavy calfskin encyclopedias tumble into the tributary feeder one by one, their dense paper absorbing the black current until the trickling water pools and stalls. You scoop up a thick bundle of dry blotting paper from the ledge before the pressure shifts, stuffing the absorbent sheets into your coat pocket where they will keep damp ink at bay for hours to come. // This salvaged stack-guard's paper remains stiff and dry, ready to soak up stray fluids or shield your fingers from biting bindings in the deeper vaults.
+GRANT: dry blotting paper
+EXIT 1: Retrace your steps toward the sluice
+@@END
+@@SECTION ul-4-105
+TITLE: The Ferry Token
+TEXT: A pinch of coarse grey salt drawn from your provisions draws a low, rasping whistle from the hooded ink-rower, who steers his skiff against the drifting current long enough for you to step aboard the damp timber planks. He drops a heavy, cold disk of cast lead into your palm before pushing off into the gloom, a small circular assurance of safe passage across any dark water in the stacks. // This notched ferry token hums faintly against your thumb, promising another crossing whenever the channels block your path.
+GRANT: heavy lead ferry token
+EXIT 1: Return toward the waste ink sluice
+@@END

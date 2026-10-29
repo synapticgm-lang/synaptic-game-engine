@@ -1,0 +1,107 @@
+{
+ "beats": {
+  "ul-2-001": "You emerge into the shifting expanse of the Unshelved Stacks where towering mahogany bookcases slide across stone floors to block old pathways.",
+  "ul-2-016": "A heavy iron bulkhead slams shut ahead, leaving only a narrow transom through which dark lamp-oil drips into a stagnant pool below.",
+  "ul-2-041": "You cross a narrow chasm on a precarious suspension bridge woven entirely from the heavy leather spines of discarded ledgers.",
+  "ul-2-056": "The air grows thick with stinging carbon grit as you enter a narrow corridor flanked by unlit wall sconces and heavy soot.",
+  "ul-2-072": "A labyrinth of identical wooden shelving units begins to rotate around you in slow circles, confusing your sense of direction.",
+  "ul-2-086": "You stumble into the Misfiled Wing where misdirected histories and misplaced maps pile high in chaotic, unclassifiable heaps.",
+  "ul-2-105": "A turbulent river of jet-black ink cuts straight across the floor, fed by weeping stone walls and overflowing ink-wells.",
+  "ul-2-129": "The stacks narrow dramatically into a vertical cleft where the stone walls press inward and whisper archaic warnings.",
+  "ul-2-147": "You emerge into a vaulted scriptorium where hundreds of disembodied quills scratch frantically across empty vellum sheets.",
+  "ul-2-164": "A barricade of locked iron cabinets blocks the exit, each door inscribed with riddles about the forgotten catalogue.",
+  "ul-2-188": "The floor gives way to a vast subterranean chamber where thousands of drifting bookshelves form a floating archipelago over mist.",
+  "ul-2-214": "You reach the great bronze threshold of the Deep Annexe, where the heavy scent of old paper signals the end of the shifting stacks."
+ },
+ "hubs": {
+  "ul-2-002": {
+   "place": "The Iron Junction",
+   "situation": "Several sliding iron cases converge at a central junction, threatening to crush your lamp if you misjudge their timing."
+  },
+  "ul-2-017": {
+   "place": "The Sump of Pages",
+   "situation": "Discarded manuscripts form soggy drifts around a sluggish stream of black ink that swallows stray footsteps."
+  },
+  "ul-2-042": {
+   "place": "The Spine Span",
+   "situation": "A trembling bridge of stitched bindings sways over a bottomless vertical shaft filled with rustling loose-leaf papers."
+  },
+  "ul-2-057": {
+   "place": "The Sooted Alcove",
+   "situation": "A secluded shelving bay filled with smoke-stained biographies offers temporary shelter from the prevailing draughts."
+  },
+  "ul-2-073": {
+   "place": "The Carousel of Tomes",
+   "situation": "A revolving circular chamber of encyclopaedias spins continuously, hiding the exit behind a blur of spinning labels."
+  },
+  "ul-2-087": {
+   "place": "The Misfiled Wing",
+   "situation": "Mountains of stray folios and uncatalogued scrolls spill across the flagged floor in complete taxonomic disorder."
+  },
+  "ul-2-106": {
+   "place": "The Ink-Weir",
+   "situation": "A rushing sluice of thick writing fluid blocks the main pathway with bubbling pools and submerged shelving units."
+  },
+  "ul-2-130": {
+   "place": "The Narrowing Cleft",
+   "situation": "A claustrophobic fissure between two massive stone book-presses forces you to squeeze through side-on in total darkness."
+  },
+  "ul-2-148": {
+   "place": "The Scriptorium of Echoes",
+   "situation": "Ghostly pens write furiously in the empty air, recording every footstep and breath you take in rustling prose."
+  },
+  "ul-2-165": {
+   "place": "The Iron Grille",
+   "situation": "A massive barrier of interlocking security gates bars the forward passage with heavy padlocks and intricate keyholes."
+  },
+  "ul-2-189": {
+   "place": "The Floating Archive",
+   "situation": "A vast cavern filled with drifting islands of mahogany bookcases suspended over a deep abyss of pale white mist."
+  }
+ },
+ "chains": {
+  "ul-2-002/0": "You decode the carved numbering systems on the floor tiles to find a safe standing seam, securing an oil-flask from a crushed ledge.",
+  "ul-2-002/1": "You leap across the narrowing gap between two swaying oak tiers with nimble balance, earning a brass-bound clasp for your travel satchel.",
+  "ul-2-002/2": "You brace your shoulder firmly against the grinding timber to halt a shifting wall of encyclopedias, gaining a helpful tip on local navigation.",
+  "ul-2-017/0": "You steel your nerves against the noxious vapours rising from the dark stream, retrieving a waterproof ledger of forgotten debts.",
+  "ul-2-017/1": "You push through a thick wall of waterlogged treatises with quiet determination, uncovering a hidden pouch of silver coinage.",
+  "ul-2-017/2": "You trace the swirling patterns of the ink-stream with clever fingers to unearth a brass skeleton key from the sludge.",
+  "ul-2-017/3": "You endure the bitter cold of the rising black tide without flinching, securing a bundle of dry linen rags for cleaning.",
+  "ul-2-017/4": "You master your dread of the whispering dampness to salvage an intact volume of ancient cartography from the muck.",
+  "ul-2-042/0": "You spot a hidden structural flaw in the lashings and bypass the weakest section, securing an ivory bookmark engraved with secret wards.",
+  "ul-2-042/1": "You negotiate a safer crossing by reading the structural tension in the hanging leather, earning the favour of a cautious wandering page.",
+  "ul-2-042/2": "You glide lightly across the undulating surface while the bridge rolls violently beneath your boots, retrieving a fine steel reading knife.",
+  "ul-2-057/0": "You interpret the faded annotations on a charred manuscript to locate a hidden cache of refined lamp-oil behind the wainscot.",
+  "ul-2-057/1": "You expertly pick the rusted latch on a locked journal cabinet to find a bundle of dry tallow tapers inside.",
+  "ul-2-057/2": "You maintain your focus through the choking darkness to secure a woollen scarf soaked in soothing herbal oil.",
+  "ul-2-073/0": "You trick the rotation mechanism by tossing a heavy stone into the gear-teeth, capturing a stray cataloguer's brass stamp.",
+  "ul-2-073/1": "You wait with unwavering patience until the correct doorway aligns with your position, earning a reliable pocket compass.",
+  "ul-2-073/2": "You time your exit with a graceful pirouette through the revolving gap, retrieving an intricately carved bone paper-knife.",
+  "ul-2-087/0": "You outwit a nest of territorial book-worms guarding a heap of poetry, claiming a rare manuscript of lyric verse.",
+  "ul-2-087/1": "You deftly navigate the unstable drifts of loose paper without triggering a collapse, unearthing a leather-bound tally book.",
+  "ul-2-087/2": "You identify the true provenance of a misplaced royal decree beneath the rubbish, winning a valuable information debt from a scholar.",
+  "ul-2-087/3": "You manoeuvre past snapping volumes with clever sleight of hand to recover a heavy brass reading glass.",
+  "ul-2-106/0": "You construct a makeshift raft from floating ledger boards using clever knots, securing a waterproof canvas sack.",
+  "ul-2-106/1": "You bypass the raging current by climbing the overhead iron tracks, acquiring a long iron pole with a hooked end.",
+  "ul-2-106/2": "You trick the swirling eddies into depositing a sunken chest onto the bank, claiming an assortment of coloured sealing waxes.",
+  "ul-2-106/3": "You analyze the flow rate to find a shallow stone bar across the weir, retrieving an intact quill-case of silver.",
+  "ul-2-106/4": "You leap gracefully across the slick stepping-stones amidst the dark spray, earning a pair of oilskin gaiters.",
+  "ul-2-130/0": "You slip sideways through the tightest portion with smooth grace, recovering a dropped silver-plated bookmark of fine make.",
+  "ul-2-130/1": "You navigate the jagged stone protrusions using balanced footwork, finding a forgotten stash of sweet dried figs.",
+  "ul-2-130/2": "You slide past a row of projecting shelf-ends with liquid fluidity, securing a small vial of soothing throat cordial.",
+  "ul-2-130/3": "You bend your posture to match the curving stone vault with elegant poise, earning a sturdy leather wrist-guard.",
+  "ul-2-148/0": "You study the scribbling patterns to deduce a safe path through the phantom ink-fall, capturing an enchanted quill that never blunts.",
+  "ul-2-148/1": "You steel your mind against the deafening scratching noise to harvest blank vellum sheets from an unattended desk.",
+  "ul-2-148/2": "You move with silent grace among the writing phantoms to avoid attracting their attention, securing a jar of gold leaf dust.",
+  "ul-2-165/0": "You resolve the cryptographic riddle engraved on the central padlock through sheer willpower, acquiring a heavy iron master-key.",
+  "ul-2-165/1": "You force open a rusted latch with dogged persistence, earning a sturdy pair of blacksmith-forged pincers.",
+  "ul-2-165/2": "You slip past the pressure-plate triggers in the floor with clever timing, retrieving a velvet-lined cache of spare brass tumblers.",
+  "ul-2-165/3": "You endure the biting frost radiating from the iron bars to unlock a hidden maintenance hatch, finding a warm fur-lined collar.",
+  "ul-2-165/4": "You decipher the ancient cataloguing marks on the frame to trip the internal release spring, securing an illustrated manual of locks.",
+  "ul-2-189/0": "You manipulate the anchor chains of a drifting bookcase to bridge the widest gap, securing a telescope made of brass and horn.",
+  "ul-2-189/1": "You leap across the swirling sea of mist with daring balance, earning a silk rope-ladder with wooden rungs.",
+  "ul-2-189/2": "You slide down a suspended iron conduit with practiced agility, retrieving a heavy pouch of dry flints and steel.",
+  "ul-2-189/3": "You calculate the drift vectors of the floating stacks to chart a direct route across, acquiring a detailed map of the deep vault.",
+  "ul-2-189/4": "You vault lightly from one swaying shelf-top to another in the dim haze, capturing a small brass lantern filled with perpetual oil."
+ }
+}

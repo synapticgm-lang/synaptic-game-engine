@@ -1,0 +1,97 @@
+{
+ "batch": "ul-3-084",
+ "sections": {
+  "ul-3-084": {
+   "title": "Red Robes At The Gate",
+   "text": "Heavy wool cloaks dyed the color of dried cinnabar block the narrow stone archway, their brass fasteners catching the weak yellow glare of corridor lamps. Three enforcers of the Cataloguers' Court stand shoulder to shoulder, their iron-tipped staves planted firmly against the flagged floor. Their leader, a scarred veteran with ink-stained knuckles, holds out an open palm demanding the rough paper scraps tucked inside your damp sleeve. These are the illicit notes concerning Thessaly Marr and her frantic scribblings about the vault, gathered from the edge of the Misfiled Wing. Every breath tastes of lamp-oil and stale dust as iron armor shifts ominously in the cramped passage.\n\nSurrender is unthinkable, yet stepping past that wall of red wool requires threading a needle through a falling portcullis. You tighten your grip on your leather pouch, feeling the hard edges of the stolen leaves press against your palm. The enforcers watch you with cold, practiced disinterest, knowing well that the deep stacks soon seal their heavy iron grilles for a generation.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the crimson guard line"
+   ]
+  },
+  "ul-3-085": {
+   "title": "Linseed And Polished Brass",
+   "text": "Rows of heavy wooden bunks line the long, timber-vaulted dormitory, their blankets folded with severe military precision. The air hangs thick with the sharp tang of linseed oil used to preserve leather scabbards and the metallic bite of brass polish rubbed into uniform buttons. Iron lanterns swing gently from overhead beams, casting long, wavering shadows across scarred tables where off-duty guards usually mend their gear. Faint murmurs drift from the far alcoves, mingling with the steady drip of condensation leaking through the ancient stone ceiling above.\n\nThis place serves as the beating heart of the enforcers' domain, yet every shadowed corner offers a choice of desperate pathways deeper into the stony labyrinth. You must decide whether to seek out the secure muster rolls, slip toward the subterranean depths, or force a confrontation with the patrolling garrison before the long closing seals the iron doors forever.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the captain's private quarters",
+    "Interrogate the cornered guard recruit",
+    "Snatch dispatches from the table",
+    "Confront the garrison commander directly",
+    "Acquire duplicate keys from storage",
+    "Descend into the towering card rotunda"
+   ]
+  },
+  "ul-3-086": {
+   "title": "Shadows In The Barracks",
+   "text": "Cold drafts sweep across the timber floorboards as you press your shoulder against the damp stone wall of the dormitory annex. The watch captain's sharp voice echoes from the inner office, barking orders about confiscated registers and the impending closure of the lower vaults. You wait in the gloom until the junior orderly hurries away toward the mess hall, leaving the heavy oak door slightly ajar. Moonlight filters through a narrow, barred slit high above, illuminating dust motes dancing over a rogue sheaf of parchment resting on the corner desk.\n\nSlipping inside feels like walking across thin ice above a bottomless ink-well, but the prize outweighs the danger of discovery. Your fingers trace the edge of the wooden threshold as you prepare to confront the heavy gaze of the man who holds the keys to the inner patrol routes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stand your ground before the captain"
+   ]
+  },
+  "ul-3-087": {
+   "title": "Facing The Watch Captain",
+   "text": "The watch captain looks up from his ledgers, his pale eyes narrowing beneath a heavy brow scarred by an old bookbinder's clamp. He fixes you with a stare honed by decades of interrogation in the salt-cellars of the court, dismissing your presence with a low, gravelly snarl that demands an immediate confession. Your pulse thumps against your ribs like a trapped moth inside a glass jar, threatening to crack your composure entirely. You refuse to flinch, locking your gaze onto his while reaching slowly toward the edge of the cluttered desk where the patrol schedule lies pinned beneath a bronze paperweight.",
+   "check": "Hold firm against the captain's gaze",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-088": {
+   "title": "A Flawed Resolve",
+   "text": "Your nerve fractures just as the captain slams a heavy fist down upon the oak desk, sending a cloud of dried blotting sand into the air. The sudden violence shatters your focus, and you stumble backward against a stack of discarded penalty slips, scattering white paper across the flags. The captain's laughter is dry and bitter as he seizes your arm, relieving you of a handful of copper coins and your only tin of restorative ink by way of a summary fine. You limp out into the drafty corridor a moment later, bruised in spirit and poorer by several farthings, but still breathing.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the smoky dormitory"
+   ]
+  },
+  "ul-3-089": {
+   "title": "The Stolen Roster",
+   "text": "Your steady stare never wavers, meeting the captain's intimidating glare until the older man finally grunts, looks away, and reaches for his porcelain tea cup. In that brief second of diverted attention, your hand slips across the polished wood to snatch the inked parchment bearing every patrol rotation for the next three bells. You fold the schedule into a tight square and tuck it deep inside your waistcoat, slipping out the side door into the shadows before he notices its absence. You carry away a precise blueprint of every guard movement through the lower stacks.",
+   "check": "",
+   "grant": "Stolen patrol schedule",
+   "exits": [
+    "Return to the smoky dormitory"
+   ]
+  },
+  "ul-3-090": {
+   "title": "Whispers Among The Bunks",
+   "text": "Dim amber light flickers over rows of iron-framed beds as you pace quietly between the silent sleeping quarters. A junior guard sits alone on a low bench near the hearth, mending a torn canvas strap with thick waxed thread while keeping a wary eye on the shadows. He belongs to the fellowship of the outer stacks, though he wears the red coat of the enforcers to keep his belly full and his debts paid. When you approach, he pauses his stitching, his fingers hovering over the leather as he waits to see whether you bring trouble or an alliance.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test the guard's fragile loyalties"
+   ]
+  },
+  "ul-3-091": {
+   "title": "The Bitter Inquisition",
+   "text": "The guard leans forward, resting his calloused elbows on his knees and narrowing his eyes as he questions your ties to the underground shelvers. Every word he speaks carries the weight of a potential betrayal, probing deep into your past loyalty to Thessaly Marr and the hidden indexes. You feel the iron walls of the barracks pressing inward, demanding that you yield an inch of truth to satisfy his caution. You take a slow, deep breath, steadying your voice against the rising tide of panic as you prepare your reply.",
+   "check": "Withstand the grueling interrogation",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-092": {
+   "title": "Broken Trust",
+   "text": "Your voice wavers under the relentless questioning, betraying a flicker of panic that the guard catches instantly in the quiet gloom. He pulls back his hands, shaking his head with a cynical sneer and refusing to share anything further about the hidden exit routes. The interrogation leaves you drained, your temples throbbing with a dull ache and your coat stained with spilled gall ink from where you knocked over a brass inkwell in your agitation. You crawl away into an empty corner to nurse your frayed nerves while the watch bells toll above.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the smoky dormitory"
+   ]
+  },
+  "ul-3-093": {
+   "title": "An Unlikely Ally",
+   "text": "Your steady, unyielding answers cut through his suspicion, convincing the guard that your loyalty to the missing Archivist runs deeper than mere survival. He nods slowly, pulls a small folded slip of parchment from his sleeve, and presses it into your palm with a warning about the patrolling inquisitors in the west wing. You leave him stitching his canvas strap by the dying fire, richer by a secret password that will open the side-gates without raising the alarm.",
+   "check": "",
+   "grant": "Guard's secret password",
+   "exits": [
+    "Return to the smoky dormitory"
+   ]
+  }
+ },
+ "missing": []
+}

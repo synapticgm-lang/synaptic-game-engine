@@ -1,0 +1,92 @@
+{
+ "batch": "ul-2-063",
+ "sections": {
+  "ul-2-063": {
+   "title": "The Rusted Latch",
+   "text": "Amber lamp-light flickers over a heavy iron cabinet wedged deep between two shifting rows of leather-bound volumes. Beneath a crust of verdigris and forgotten grease, a stubborn brass latch guards the dark interior from curious hands. Pressing the flat of your thumb against the cold metal, you slide a slim brass spine from your pocket to feel for the hidden tumblers within.\n\nThe mechanism gives a dry, muffled click as it yields to your practiced touch, swinging wide to reveal a neat stack of dry tallow tapers bundled tightly with coarse twine.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry open the iron cabinet"
+   ]
+  },
+  "ul-2-064": {
+   "title": "Tapers in the Dark",
+   "text": "Cool air drafts through the narrow gap in the wainscot, carrying the faint scent of old tallow and burnt peat from the lower stacks. Reaching into the dark recess of the journal cabinet, your fingers brush against the rough twine binding the fresh tapers together. Each candle is thick and pale, smelling faintly of rendered mutton fat and cellar dust, promising steady warmth against the encroaching damp of the uncatalogued wings.\n\nLifting the bundle free from its dusty resting place, you tuck the tapers securely into your satchel beside your spare ink-bottle and lamp-oil flask.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Collect the tallow tapers"
+   ]
+  },
+  "ul-2-065": {
+   "title": "Reaching Through the Gap",
+   "text": "Shadows lengthen across the floorboards as the neighbouring bookshelf shudders and begins its slow, mechanical drift toward the adjoining alcove. Snatch your hand back too soon and the prize stays locked forever; hesitate too long and the shifting oak frame will pin your wrist against the stone wall. Drawing a steady breath, you slide your fingers back into the narrow gap of the cabinet while the heavy timber groans and grinds its teeth against the floor.\n\nYou angle your fingers toward the hidden brass lever deep within the shadowed recess, testing the weight of the mechanism as the gap narrows.",
+   "check": "Slide fingers into the moving gap",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-066": {
+   "title": "Caught in the Timber",
+   "text": "The heavy oak frame catches your sleeve with sudden malice, dragging your forearm hard against the iron latch and leaving a dull, stinging purple bruise across your skin. A sharp splinter of ancient deal bites deep into your palm, drawing a bright drop of blood that immediately stains the paper cuff of your jacket. You wrench your arm free with a frantic heave just as the shelves slam together with a hollow thud, crushing your last spare bottle of lamp-oil into fragrant shards.\n\nGathering your wits amidst the scattered glass and spilled oil, you nurse your bruised arm and limp onward into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat from the pinching shelves"
+   ]
+  },
+  "ul-2-067": {
+   "title": "The Tallow Cache",
+   "text": "Working with the thin blade of a bone paper-knife, you expertly pick the rusted iron latch on a locked journal cabinet set deep within the wainscot. The stubborn hinge yields with a dry, protesting rasp, releasing a faint cloud of ancient dust that smells of dried lavender and old leather. Within the cedar-lined recess lies a tightly bound bundle of dry tallow tapers, wrapped in a broadsheet of discarded shipping manifests. They are remarkably well preserved against the damp air of the lower stacks, promising a steady, bright flame when your own lamp begins to sputter in the drafty corridors ahead.\n\nPocketing the bundle carefully among your loose papers, you leave the hollow cabinet behind and slip back into the shifting gloom of the stacks.",
+   "check": "",
+   "grant": "bundle of dry tallow tapers",
+   "exits": [
+    "Take shelter in the sooted alcove"
+   ]
+  },
+  "ul-2-068": {
+   "title": "Scarf in the Smoke",
+   "text": "Thick, acrid smoke rolls across the floor from a smouldering cart of discarded encyclopaedias wedged in the adjacent aisle. Coughing behind your hand, you grope blindly along the rough wainscot until your fingers encounter a damp woolen wrap hanging from an iron peg. Drawing the thick cloth to your face, you breathe in the sharp, medicinal sting of herbal oil infused with dried eucalyptus and rosemary.\n\nThe soothing vapour clears your burning passages, restoring a measure of calm as you peer through the grey haze toward the darker stacks beyond.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press onward through the smoke"
+   ]
+  },
+  "ul-2-069": {
+   "title": "Breathing Through the Haze",
+   "text": "The air turns thick with the grey, suffocating dust of burnt paper as a distant shelf collapses into a heap of smouldering fragments. Your lungs burn for clean oxygen, and every instinct urges you to turn back toward the safety of the main stairwell. Closing your eyes against the stinging soot, you force your chest to remain steady, clamping the herbal-soaked scarf tight against your nose and mouth while the heat presses in from all sides.\n\nYou steel your resolve against the panic scratching at your throat, standing firm as the suffocating cloud billows around your shoulders.",
+   "check": "Endure the acrid smoke cloud",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-070": {
+   "title": "Choking on the Ash",
+   "text": "A sudden, violent gust of sulfurous air tears the protective scarf from your grip, swirling the hot ash directly into your face. You stumble backward against a stack of heavy folios, gasping reflexively and swallowing a mouthful of bitter, choking soot that leaves your throat raw. The delay costs you precious time and wastes half your remaining water flask just to rinse the grit from your mouth.\n\nWiping the black grime from your streaming eyes, you stagger forward with a heavy chest and a lingering cough.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Recover breath in the gloom"
+   ]
+  },
+  "ul-2-071": {
+   "title": "The Herbal Compress",
+   "text": "Stifling a cough against the bitter sulfur that lingers in the aisles, you maintain your steady focus through the choking darkness until your fingers brush against a stray bundle hanging from a peg on the end-panel. Unknotting the hemp cord with stiff fingers, you secure a long woollen scarf thoroughly soaked in soothing herbal oil, its sharp mint and eucalyptus scent cutting right through the smoke. Pressing the damp fabric against your mouth and nose clears your smarting eyes and calms your ragged breathing, turning a hazardous stretch of the drift into a manageable climb.\n\nBreathing easier through the scented wool, you watch as the timber frames around you begin their slow, groaning rotation.",
+   "check": "",
+   "grant": "woollen scarf soaked in herbal oil",
+   "exits": [
+    "Navigate the rotating wooden labyrinth"
+   ]
+  },
+  "ul-2-072": {
+   "title": "The Rotating Maze",
+   "text": "The floorboards beneath your boots shudder with a low, subterranean groan as entire rows of heavy wooden shelving begin to pivot in slow, concentric circles. Bound volumes slide from their ledges with dull thuds, scattering loose catalogue cards like autumn leaves across the shifting dust. A pale, ghost-like murmur rises from the gaps between the moving cases - the faint, collective whisper of forgotten margins speaking in unison. You duck beneath a swinging arm of folio cases just as the corridor seals itself shut behind you, leaving only one narrow gap opening toward the revolving heart of the stacks.\n\nThe familiar smell of old ink and dry paste grows heavy in the air as the labyrinth resets its boundaries around your solitary lamp.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step through the spinning carousel"
+   ]
+  }
+ },
+ "missing": []
+}

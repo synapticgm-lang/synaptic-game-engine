@@ -1,0 +1,6 @@
+@@SECTION ul-5-081
+TITLE: The Iron Harvest
+TEXT: Heavy chunks of plaster pelt the stone flags at your feet, yet you manage to steady your balance before the archway shears apart completely. Bending low beneath the groaning lintel, your fingers graze a dropped leather kit wedged between the iron shelving. Inside rests a heavy handful of cold, threaded pinch-bolts, solid enough to anchor any vibrating bracket in the deep stacks.
+GRANT: heavy iron pinch-bolts
+EXIT 1: Step through the fluttering ink-moths
+@@END

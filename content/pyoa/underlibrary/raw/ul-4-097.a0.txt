@@ -1,0 +1,52 @@
+@@SECTION ul-4-097
+TITLE: The Heavy Tomes
+TEXT: Thick calfskin volumes settle with a sodden thud into the black channel, their gold-leafed spines absorbing the dark liquor of the tributary feeder. You wedge the massive encyclopedias between two trembling iron pillars, diverting the greasy current into a temporary backwater where the surface skims clear. Carefully, you press sheets of dry blotting paper across the damp flagstones, soaking up the residual sheen until the slate is workable. The lamp-oil gutters low in your brass lantern, casting long, wavering shadows against the towering stacks of forgotten geography. //
+EXIT 1: Step across the dry stone path
+@@END
+@@SECTION ul-4-098
+TITLE: The Dammed Rill
+TEXT: Heavy iron-clasped geographies serve as your temporary masonry, dropped one by one into the pulsing throat of the feeder until the black fluid slows to a sluggish trickle. You work with frantic haste, your fingers stained deep with walnut-brown gall, stacking damp folios to block every escaping rivulet. Across the makeshift timber-and-paper barrier, a pocket of clean air opens above a dry stretch of flooring. You slide your remaining stack of blotting paper into the sheltered recess, keeping the fragile sheets safe from the drifting spray. //
+EXIT 1: Follow the cleared ledge forward
+@@END
+@@SECTION ul-4-099
+TITLE: Choking the Sluice
+TEXT: Swelling pressure from the upstream feeder threatens to blow your hasty dam apart as black fluid bubbles furiously around the edges of the heavy encyclopedias. You throw your full weight against the spine of a massive biographical dictionary, trying to wedge it deeper into the groove before the entire barricade gives way under the rising tide. The soaked paper groans and slips beneath your palms, threatening to burst the seal and wash your dry cache into the void. //
+CHECK: Press the heavy volumes deeper
+@@END
+@@SECTION ul-4-100
+TITLE: Soaking the Stash
+TEXT: A sudden surge of black liquor punches right through the center of your barricade, showering your boots and clothes in bitter, staining sludge. The precious cache of dry blotting paper drinks the overflow in an instant, swelling into a useless, soggy pulp that falls apart in your hands. You scramble backward up the slippery stone slope, coughing against the sharp smell of iron gall and lamp-oil, poorer by a dozen sheets and half your breath. //
+EXIT 1: Retrieve the ruined paper scraps
+@@END
+@@SECTION ul-4-101
+TITLE: Dry Margin
+TEXT: Whatever the sudden tremor in the conduit might have signaled, your hurried adjustments hold the surging dark water at bay just long enough. You pull a thick, perfectly pristine stack of absorbent paper from the recess, untouched by the grease and ink of the deep channel. //
+GRANT: A sheaf of dry blotters
+EXIT 1: Pick your way toward the sluice
+@@END
+@@SECTION ul-4-102
+TITLE: The Ferryman's Toll
+TEXT: A flat-bottomed punt drifts out from the shadow of the iron stacks, poled by a silent figure draped in grease-stained canvas. You reach into your pocket and draw out a twisted pinch of coarse grey salt, holding it flat upon your palm until the rower's dark eyes catch the glint of mineral. A gnarled hand reaches across the gunwale to accept the trade, dropping a small notched bone disc into your palm in return. //
+EXIT 1: Step aboard the narrow ferry
+@@END
+@@SECTION ul-4-103
+TITLE: Bargaining in Ink
+TEXT: The hooded rower pauses his long ash pole inches from the stone shelf, watching you with the suspicious stillness of a gargoyle. You offer the pinch of grey salt across the dark gap, pitching your voice to a low, respectful murmur that will not disturb the whispering margins around you. The ferryman cocks his head, weighing your sincerity against the rising tide of the ink-rivers below. //
+CHECK: Offer salt to the rower
+@@END
+@@SECTION ul-4-104
+TITLE: A Sour Trade
+TEXT: Your hand slips on the damp stone as you reach out, spilling half the precious salt into the dark current where it dissolves in an instant. The rower scowls, a harsh sound like dry parchment tearing, and pushes the punt an arm's length away from the ledge. You are left standing alone with wet boots and a lighter pouch, forced to find another way across the channel without a token. //
+EXIT 1: Scramble along the lower ledge
+@@END
+@@SECTION ul-4-105
+TITLE: The Bone Token
+TEXT: However difficult the negotiation proved in the dim lamplight, the silent rower accepts your offering and drops a smooth bone token into your palm. The punt grinds gently against the stone flags, inviting you aboard for the crossing through the shadowed stacks. //
+GRANT: A notched bone ferry token
+EXIT 1: Step toward the scriptorium sluice
+@@END
+@@SECTION ul-4-106
+TITLE: The Iron Trial
+TEXT: Heavy iron doors stand ajar within the deepest roots of the annexe, revealing a succession of vaulted chambers where the history of the Underlibrary sits in silent judgment. Every stone surface is carved with ancient administrative verdicts, echoing softly with the voices of forgotten cataloguers who weighed the worth of every manuscript ever shelved. You step across the threshold into the chill draft of the tribunal, feeling the weight of centuries pressing against your conscience. The walls themselves seem to watch you, noting every hesitation as you search for any trace of Thessaly Marr among the dusty records. //
+EXIT 1: Enter the court of red ink
+@@END

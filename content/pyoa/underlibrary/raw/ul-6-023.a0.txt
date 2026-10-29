@@ -1,0 +1,33 @@
+@@SECTION ul-6-023
+TITLE: The Ink Still Wet
+TEXT: Paper beneath your palms hums with a strange, shivering heat as the ink settles into its new geography, binding the world to the correction you have just inked. Dust motes in the high vault freeze mid-air, suspended by the weight of a rewritten decree that ripples outward through every tier of shelves and every gallery of the city above. Somewhere in the deep annexe, a marginal note sighs itself into absolute silence, its work finished at last. You lift your fingers slowly, stained dark with the oil and lamp-soot of centuries, watching the air turn the pale colour of old parchment. The air tastes of copper and damp cellar-stone, heavy with the quiet realization that nothing has been destroyed, only shifted into an order chosen by human hand rather than blind stone.
+EXIT 1: Step back from the heavy ledger
+@@END
+@@SECTION ul-6-024
+TITLE: Silence in the Stacks
+TEXT: Footsteps echo down the bronze-latticed corridors where the cataloguers once marched with their rulers and red ink-pots, but the iron stairs are empty now, their ledgers gathering a soft fleece of undisturbed dust. Far off in the misfiled wing, a river of black ink slows to a mirror-smooth glide, its restless murmurs quieted by the new permanence written into the core of things. The night-porter at the returns desk looks up from his endless sorting, peering into the dim amber glow of the oil-lamps with a mild, puzzled curiosity as the trolleys wheel themselves into neat, unbidden rows. You walk through the aisles without a single volume snapping at your heels or a whisper of old ghosts brushing against your coat-sleeve, for the library has learned to tolerate the presence of someone who dared to alter its mind.
+EXIT 1: Follow the winding stone corridor downward
+@@END
+@@SECTION ul-6-025
+TITLE: The Open Threshold
+TEXT: Beyond the vault door, the Hundredth Door stands wide on hinges that no longer groan, framing a pale, watery light that smells of rain-washed street pavement and distant city bread rather than moldering calfskin. The long closing has halted midway, its iron portcullises hovering half-raised like suspended jaws, neither sealing the stacks away nor opening them completely to the surface world. You pause on the threshold, feeling the cool draft of Quillon's evening air mingle with the trapped warmth of tallow and rag-paper that has defined your life among the shelves. Thessaly Marr is nowhere to be found among the stacked columns, yet her absence feels less like a flight and more like a door left unlatched for whoever next needs to find their way through the maze.
+EXIT 1: Step out through the grand entrance
+@@END
+@@SECTION ul-6-026
+TITLE: The Unwritten Morning
+TEXT: Morning comes to Quillon without bells or proclamations, bringing only a grey, clear light that catches the dust dancing in the narrow alleys between the old timber gables. Down in the dark heart of the stone, the shelves remain steady, their titles rearranged just enough to make every scholar scratch their head and reach for a fresh pot of ink. You sit once more at the edge of the returns desk with a dry cloth and a jar of neat-foot oil, wiping the grime from a stray volume whose pages are completely blank from cover to cover. It waits for whatever story happens to walk past its spine, perfectly willing to record the day as it unfolds without asking permission from a single rule-keeper in the court. The ink on your thumb refuses to wash away entirely, leaving a dark, stubborn crescent that stays with you through every shift, every quiet afternoon, and every turn of the unsealed world.
+@@END
+@@SECTION ul-6-027
+TITLE: Unchained Shelves
+TEXT: The heavy chains that bound the upper ledgers to the gallery rails snap with a sound like dry twigs, and across the vast, galleried halls, thousands of locked volumes pop their brass clasps simultaneously. Scholars in the reading rooms drop their quills in astonishment as reference books slide off the desks on their own accord, scuttling away on edge to find a shelf where they might finally be read by someone who cares. The cataloguers rush hither and thither with their red fines-books, flapping their arms like distressed rooks, but their rules dissolve into thin air as the classification system forgets its own arithmetic. You watch from the gallery rail as the great hall dissolves into a merry, chaotic migration of knowledge, with forgotten pamphlets and ancient folios mingling freely on the flagstones below.
+EXIT 1: Watch the chaotic migration below
+@@END
+@@SECTION ul-6-028
+TITLE: Beyond the Rules
+TEXT: No stamp marks your hand when you pass the porter's lodge now, and the wooden wicket stands unbolted, welcoming every street-child and ink-seller who cares to wander down into the cool, paper-scented dark. In the misfiled wing, the lost things have stopped piling up in gloomy corners and are instead being sorted into heaps by curious readers who care nothing for Dewey or date-stamps. The marginalia no longer whisper bitter complaints from the edges of old sermons, instead breaking into soft, overlapping laughter that echoes like birdsong through the iron stacks. You carry no pen and wear no badge of office, moving through the aisles as a simple traveler among millions of wandering sentences that have finally been set free to find their own readers.
+EXIT 1: Walk out into the shifting alleys
+@@END
+@@SECTION ul-6-029
+TITLE: The Library Without Walls
+TEXT: Quillon itself has changed, its stone walls porous to the paper-scented breeze that drifts up from the caves, carrying fragments of poetry and forgotten recipes into the public squares. The long closing has become a long opening, an endless season where the boundary between the city's cobblestones and the library's deep stacks blurs into a single, sprawling landscape of ink and memory. You find a bench in the sunlit lane outside the returns desk, resting your tired feet while a stray volume of sea-charts nuzzles against your boot like a friendly stray cat. There is no index left to guard, no final truth to lock behind iron doors, and no archivist to tell you where to put your trolley next. The world is an unwritten page, held together only by the ink on your fingers and the bright, uncertain promise of what someone might write upon it tomorrow.
+@@END

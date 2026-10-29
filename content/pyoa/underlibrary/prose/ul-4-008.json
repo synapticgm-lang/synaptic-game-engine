@@ -1,0 +1,92 @@
+{
+ "batch": "ul-4-008",
+ "sections": {
+  "ul-4-008": {
+   "title": "Echoes of the Past",
+   "text": "Heavy historic static hums against your temples like a swarm of trapped hornets, thick with the scent of centuries-old lamp-oil and damp vellum. A phantom scholar, translucent as skimmed milk, steps out from between the iron shelves to steady your elbow with a cold, weightless hand. Listen, the ghostly mentor murmurs, letting the pressure recede just enough for you to draw an even breath in the hushed gloom.\n\nYou nod in gratitude to the lingering spirit, keeping your boots silent against the flagged floor as the deep stacks shift their weight behind you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the phantom scholar deeper"
+   ]
+  },
+  "ul-4-009": {
+   "title": "Anchor the Mind",
+   "text": "Pressure builds behind your eyes as the collective weight of forgotten centuries crashes against your consciousness, threatening to unseat your reason and scatter your thoughts into the ink-dark air. You plant your boots firmly against the flagged stone, clenching your jaw as you try to wall off your mind against the invading tide of historic static. Every instinct screams at you to flee back toward the flickering lanterns of the lower levels, but you tighten your grip on your coat lapel and force your breathing to steady.",
+   "check": "Resist the weight of history",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-010": {
+   "title": "Cost of Resistance",
+   "text": "The historic static breaches your mental barricades with a sharp, blinding spike of pain that leaves you gasping and clutching your temples as blood trickles from a nostril. You stumble sideways against an iron shelf, knocking several leather-bound volumes to the floor where they emit dry, disgruntled coughs in the dark. The mental onslaught leaves you with a dull, throbbing ache behind your left eye and a torn coat sleeve, but your resolve holds firm against the worst of the psychic pressure.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance through the throbbing gloom"
+   ]
+  },
+  "ul-4-011": {
+   "title": "The Phantom Scholar",
+   "text": "Pressure drains from your temples like lamp-oil soaking into dry blotting paper as the historic static recedes into the masonry. Standing firm against that oppressive wave earns you the quiet respect of a phantom scholar whose ink-stained fingers materialize long enough to press an invitation into your palm. They whisper of a permanent seat among the ancient folios, offering you the chance to read until the stars themselves go out. You slip the phantom counsel into your pocket, knowing this quiet debt might anchor you when the deep stacks finally close their heavy bindings for good.",
+   "check": "",
+   "grant": "an old scholar's seat",
+   "exits": [
+    "Step through the heavy iron bulkhead"
+   ]
+  },
+  "ul-4-012": {
+   "title": "Carved in Stone",
+   "text": "Deep chisel marks score the grey granite archway ahead, spelling out cryptic warnings in an archaic script that smells faintly of dried lavender and stale wine. You run a tentative fingertip along the indented grooves, tracing the awkward curves where centuries of damp have blurred the imperative cautions. A faint scratching sound comes from the mortar above, as though the wall itself is trying to correct its own grammar before you can read the full prohibition.\n\nPulling your coat tighter against the draft, you peer closer at the weathered lettering to make sense of the passage phrase.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the warning glyphs closer"
+   ]
+  },
+  "ul-4-013": {
+   "title": "Deciphering the Script",
+   "text": "Faded pigment lingers in the deepest cuts of the stone, hinting at a time when these passages were brightly painted to guide the cataloguers of old. You brush away a drift of grey paper-dust that fills the carved letters, revealing a conditional clause that appears to change its meaning each time you blink. The surrounding air grows chill, smelling sharply of iron filings and vinegar ink, warning you that the text is actively resisting translation.\n\nSquinting in the gloom, you commit the shifting syntax to memory before taking the final step toward the threshold.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the shifting stone arch"
+   ]
+  },
+  "ul-4-014": {
+   "title": "Parsing the Archway",
+   "text": "Symbols twist and slip across the granite surface like wet ink under a careless thumb, defying your attempts to pin down the correct passage phrase before the doorway seals itself. You study the irregular spacing of the glyphs, searching for the grammatical key that unlocks the ancient wards without triggering a defensive snap from the masonry. Your eyes strain against the dim lamp-oil glow as you mentally rearrange the archaic verb tenses while the surrounding stacks groan in warning.",
+   "check": "Decipher the carved warning glyphs",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-015": {
+   "title": "A Flawed Translation",
+   "text": "A mistranslated prefix causes the stone arch to emit a dry, rasping hiss as a vicious tongue of vellum lashes out from the mortar and leaves a jagged paper-cut across your knuckles. You pull your hand back with a sharp intake of breath, watching dark ink well up from the scratch instead of blood. The error costs you precious minutes and leaves you with a stinging wound that smells of old library paste, but the archway eventually settles back into sullen stillness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed past the hostile archway"
+   ]
+  },
+  "ul-4-016": {
+   "title": "The Translated Glyph",
+   "text": "Carved warning glyphs upon the low stone arch yield to your careful scrutiny, their shifting symbols freezing into a coherent sequence just as the mortar begins to grind. Decoding the proper passage phrase stays the vicious vellum tongue that hovered at your throat, leaving you only with the dry scent of old ink and a narrow escape. Tucked safely between your knuckles rests an annotated translation slip, salvaged from the very jaws of the masonry. This scrap of marginal wisdom will serve you well when other doors refuse to open for a mere junior page.",
+   "check": "",
+   "grant": "an annotated translation slip",
+   "exits": [
+    "Return to the iron threshold"
+   ]
+  },
+  "ul-4-017": {
+   "title": "Voices from the Margin",
+   "text": "Parchment-clad walls ripple on either side of the corridor as a restless chorus of whispering marginalia emerges from the bindings like a swarm of waking gnats. What business has a junior shelver where only the grand index has authority, murmur a hundred dry, disembodied voices from the shadows of the shelves. They crowd close with rustling skirts and dry paper sighs, questioning your right to tread upon the oldest floor without an archivist's seal or a proper ink-stamped pass.\n\nYou keep your chin up and your hands empty, pushing through the wall of questions toward the narrow nook ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step into the margin alcove"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,5 @@
+@@SECTION ul-2-001
+TITLE: The Sliding Stacks
+TEXT: Towering mahogany bookcases grind across the flagged floor with the groaning resonance of shifting tectonic plates, parting briefly to reveal narrow chasms of gloom before slamming shut again to seal off yesterday's thoroughfares. You lift your tin lamp higher, wincing as a cascade of dislodged octavos rains down from the upper shelves to shatter against the damp flags with sharp, papery reports. The air tastes thick of copper-gall ink and scorched tallow, heavy with the motion of countless uncatalogued volumes sliding into new, unauthorized geometries. Ahead, several massive iron cases converge upon a central junction, their heavy steel feet scraping deep furrows into the stone as they threaten to crush your glass chimney if you misjudge their relentless timing.
+EXIT 1: Dash across before the iron cases lock
+@@END

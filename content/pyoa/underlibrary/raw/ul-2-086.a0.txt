@@ -1,0 +1,56 @@
+@@SECTION ul-2-086
+TITLE: The Misfiled Wing
+TEXT: Drifts of uncatalogued maps and misdirected histories rise into chaotic, sloping ramparts across the flagged floor. Loose vellum crunches beneath your boots like autumn leaves, hiding the proper seams of the flagstones. Somewhere within these towering mounds of discarded paper, the natural order of the stacks has completely unraveled, leaving only a vast wilderness of forgotten ink and displaced geography. Every surface is coated in a fine, grey film of old dust that smells faintly of rancid lamp-oil and dried gall. You pick your way forward with extreme caution, mindful that a single careless step could bring an entire mountain of orphan folios crashing down upon your shoulders.
+EXIT 1: Climb higher into the drifting paper mounds
+@@END
+@@SECTION ul-2-087
+TITLE: Mountains of Stray Folios
+TEXT: Mountains of stray folios and uncatalogued scrolls spill across the flagged floor in complete taxonomic disorder, creating a treacherous labyrinth of paper waste. The air hangs thick with the bitter scent of iron-gall ink and decaying rag-paper, catching in the back of your throat with every shallow breath. Faint scratching sounds echo from deep within the mountainous heaps, suggesting that even here, the texts refuse to remain completely still. You stand at a turbulent crossroads where several indistinct trails vanish into the grey gloom of the stacks.
+EXIT 1: Pick a narrow path through the poetry drifts
+EXIT 2: Traverse the unstable slopes of loose paper
+EXIT 3: Unearth a misplaced royal decree from beneath the rubbish
+EXIT 4: Recover a heavy brass reading glass using clever sleight of hand
+EXIT 5: Approach the turbulent river of jet-black ink
+@@END
+@@SECTION ul-2-088
+TITLE: The Poetry Heaps
+TEXT: Heaps of verse bound in frayed lambskin block the narrow corridor, their parchment leaves fluttering like trapped moths in the draught. A colony of pale, segmented book-worms stirs within the damp bindings, their blunt heads weaving hungriest towards the warmth of your lantern. You drop low, moving your light in slow, deliberate circles to confuse their blind senses while keeping your fingers clear of their clicking mandibles. A particularly thick manuscript of lyrical odes lies half-buried beneath a mound of heavy epics, waiting for someone bold enough to snatch it away.
+EXIT 1: Reach quickly into the shifting parchment
+@@END
+@@SECTION ul-2-089
+TITLE: Reclaiming the Verses
+TEXT: Thick colonies of territorial book-worms writhe across the margins of the poetry heap, their segmented bodies glistening with the oily residue of ancient glue. You inch your fingers toward the calfskin binding of the lyrical manuscript, watching their blunt heads snap rhythmically toward the amber glow of your lamp. One sudden movement will bring the entire writhing mass down upon your knuckles in a frenzy of hungry mandibles. You time your breath with their blind swaying, curling your fingers around the cool leather spine as you prepare to yank the prize free.
+CHECK: Snatch the rare manuscript before they strike
+@@END
+@@SECTION ul-2-090
+TITLE: Tangled in the Binding
+TEXT: Blind mandibles slash through the air a fraction too late, yet the sudden, violent twitch of the book-worm colony sends a shower of loose vellum cascading over your wrist. You jerk your arm back with a sharp hiss, leaving a jagged scratch across your forearm where acidic ink has seeped into the fresh skin. The rare manuscript remains trapped beneath a heavy avalanche of satirical verse, its leather corners chewed and glistening with slimy residue. You wipe the dark ink from your sleeve, nursing the dull, throbbing ache in your hand as the paper-pests retreat into the shadows.
+EXIT 1: Return empty-handed to the main chamber
+@@END
+@@SECTION ul-2-091
+TITLE: The Poet's Keep
+TEXT: Quick fingers slip past the snapping jaws, snatching the calfskin manuscript from the writhing heap just as the colony collapses inward upon itself. You tuck the slim volume safely beneath your arm, its yellowed leaves smelling richly of dried lavender and old sorrow despite the surrounding dust. The book-worms settle back into their dark nests, leaving behind a small token of salvaged poetry that survived the general decay.
+GRANT: rare manuscript of lyric verse
+EXIT 1: Retrace your steps to the central crossroads
+@@END
+@@SECTION ul-2-092
+TITLE: The Paper Slopes
+TEXT: Loose leaves of ledger-paper form treacherous, shifting scree slopes that threaten to slide away beneath the slightest weight. You crouch low, keeping your center of gravity balanced over the firmer stones hidden beneath the paper drifts. Every inch requires a delicate test of footing, listening closely to the dry rustle of vellum for any sign of an impending avalanche. A leather-bound tally book rests atop a precarious pillar of old customs records, just within reach if your footing holds.
+EXIT 1: Step carefully toward the ledger pillar
+@@END
+@@SECTION ul-2-093
+TITLE: Crossing the Tally Slopes
+TEXT: Slopes of loose, unnumbered paper shift treacherously beneath your boots with every subtle weight shift, threatening to carry you down into a deep crevasse of discarded tracts. You plant your heels firmly into the vellum drift, using your lantern arm to counterbalance the sudden sliding of a hundred administrative rolls. The leather-bound tally book teems on the edge of a paper precipice, its pages fluttering wildly in the sudden draught. You steady your breathing, preparing to lunge across the unstable gap before the entire slope gives way beneath you.
+CHECK: Leap lightly across the sliding vellum drift
+@@END
+@@SECTION ul-2-094
+TITLE: Buried in the Ledger
+TEXT: The paper slope gives way beneath your boot with a dry roar, plunging you knee-deep into a suffocating avalanche of municipal receipts and outdated tariffs. You claw your way back to the surface through a thick cloud of choking dust, coughing violently as grey particles coat your tongue. The heavy leather tally book slips deeper into the slide, leaving you with bruised shins and a torn hem to show for your trouble. You drag yourself onto solid flagstones, shaking the endless scraps of paper from your pockets with a muttered curse.
+EXIT 1: Crawl back to the central hall
+@@END
+@@SECTION ul-2-095
+TITLE: The Accountant's Ledger
+TEXT: Light steps dance across the sliding vellum, finding solid purchase on hidden flagstones just as the paper wave threatens to break beneath your weight. You scoop up the leather-bound tally book with a smooth, practiced motion, tucking it securely against your chest as the surrounding drifts settle into quiet stillness. The heavy volume feels reassuringly dense, its pages crammed with meticulous notes on forgotten debts and lost shipments from the upper city.
+GRANT: leather-bound tally book
+EXIT 1: Return to the cluttered crossroads
+@@END

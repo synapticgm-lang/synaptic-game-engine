@@ -1,0 +1,6 @@
+@@SECTION ul-1-104
+TITLE: The Map Adjusted
+TEXT: Ink lingers on your thumb as you draw a firm red line across the margin of the master chart, correcting the fold where the seventh aisle swallowed a staircase. The lending clerk watches with grudging respect, sliding a folded slip of parchment across the mahogany desk in silent acknowledgement of your correction. This delicate ink-sketch details the forgotten descent toward the lower galleries, marking every shifting landing with precise notes on where the stone masonry tends to buckle. // You tuck the parchment safely into your sleeve, feeling the dry weight of the favor settle between your ribs like a coin earned in hard currency.
+GRANT: detailed stair sketch
+EXIT 1: Ascend the encyclopedia stairwell
+@@END

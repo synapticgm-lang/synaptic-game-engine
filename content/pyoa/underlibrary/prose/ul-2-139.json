@@ -1,0 +1,95 @@
+{
+ "batch": "ul-2-139",
+ "sections": {
+  "ul-2-139": {
+   "title": "The Flowing Shelf-Ends",
+   "text": "Heavy mahogany book-presses drift sideways on hidden brass runners, grinding against the limestone flooring with a low, rhythmic sigh. Dust motes dance in the amber beam of your lamp, smelling faintly of rancid tallow and old linen. Liquid fluidity carries your momentum past a row of projecting shelf-ends, your shoulder brushing the cold timber as you slip smoothly into the narrow gap beyond. Resting upon a jutting bracket of iron sits a small vial of soothing throat cordial, its glass stopper sealed with dried green wax. Your fingers close around the chilled vessel, pocketing it against the damp chill that seeps upward from the ink-rivers below.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the moving timbers"
+   ]
+  },
+  "ul-2-140": {
+   "title": "The Narrow Iron Alley",
+   "text": "Trembling shelving units converge from both flanks, threatening to crush your passage into the masonry unless you time your dart with absolute precision. The gap between the sliding walnut stacks narrows to a hair's breadth, vibrating with the subterranean groan of shifting foundations. Lamp-oil sloshes anxiously inside your tin lantern as you lower your center of gravity, preparing to thread the needle through the shifting maze. You spring forward with balanced agility, trusting your footing on the slick stone flags as the massive timber walls close in around you.",
+   "check": "Balance across the shifting gap",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-141": {
+   "title": "A Scraped Shins Recovery",
+   "text": "Rough oak catches your hip with a brutal impact, spinning you sideways and bruising your ribs against a protruding metal bracket. Your lamp slips from numbed fingers, shattering against the floorboards and spilling precious oil into the dark cracks between the stones. A sharp sting flares along your shin where a splintered shelf-edge rakes across flesh, leaving a thin line of crimson blood. Cursing softly in the gloom, you press onward into the damp shadows, poorer by a pint of oil and richer by a dull, throbbing ache that settles deep into your bones.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hobble onward into the gloom"
+   ]
+  },
+  "ul-2-142": {
+   "title": "The Liquid Slide Reward",
+   "text": "Precision carries your weight clear of the grinding timber, however narrowly, leaving you safely balanced upon a stationary ledge of granite. Your heart thrums a rapid tattoo against your ribs while the massive shelves rumble past like passing merchant barges. Resting on the dusty timber ledge is a forgotten token left by some earlier cataloguer who vanished during the Long Closing. You tuck the prize safely inside your waistcoat pocket, feeling its reassuring weight against your chest before turning your gaze toward the darkness ahead.",
+   "check": "",
+   "grant": "Vial of throat cordial",
+   "exits": [
+    "Squeeze through the narrow fissure"
+   ]
+  },
+  "ul-2-143": {
+   "title": "The Vaulted Curve",
+   "text": "Arched ribs of grey granite soar overhead, forming a gothic canopy where ancient manuscripts are stacked in towering, precarious tiers. Bending your posture to match the curving stone vault requires careful adjustment, your spine aligning with the ancient geometry of the masonry. Every breath draws in the rich perfume of dry vellum and oxidized copper ink that coats the cavern walls like frost. A sturdy leather wrist-guard, discarded by a weary cataloguer, rests upon a protruding decorative corbel within arm's reach. You unbuckle it from the stone and strap it securely around your forearm, testing the stiff hide against your pulse.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the curving stone vault"
+   ]
+  },
+  "ul-2-144": {
+   "title": "The Vaulted Spring",
+   "text": "Overhead masonry dips perilously low, forcing you to compress your frame into a tight, fluid arc to clear the jagged keystones. The air grows heavy with the scent of stagnant ink and scorched lamp-wick, stinging your eyes as you crouch low. Shadows stretch long and distorted across the vellum-packed shelves as your lamp flickers in the draft. You gather your muscles for a sudden, sweeping slide beneath the descending stone arch, measuring the distance with a practiced eye.",
+   "check": "Bend low beneath the stone arch",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-145": {
+   "title": "The Low Arch Strike",
+   "text": "Stone meets crown with a dull, ringing thud that jars your teeth and sends a shower of gritty mortar dust into your hair. You stumble hard onto your knees upon the abrasive flags, gasping for breath as a sharp knot swells rapidly above your brow. The impact leaves your head ringing with hollow echoes from the nearby stacks, reminding you harshly of the library's unyielding nature. Nursing the tender bruise with one palm, you haul yourself back to your feet and press forward through the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue past the low lintel"
+   ]
+  },
+  "ul-2-146": {
+   "title": "The Vaulted Reward",
+   "text": "Motion carries you beneath the jagged limestone ribs with practiced elegance, however narrowly, bringing you safely into a wider alcove of quiet shadows. The air here tastes faintly of peppermint and old parchment, offering a brief respite from the choking dust of the moving stacks. Resting upon a low reading desk is a stout leather wrist-guard, its surface etched with the faded insignia of the Shelvers' Fellowship. You slip it onto your forearm, feeling the stiff leather mold comfortably to your wrist as an unspoken token of safe passage.",
+   "check": "",
+   "grant": "Sturdy leather wrist-guard",
+   "exits": [
+    "Squeeze through the narrow fissure"
+   ]
+  },
+  "ul-2-147": {
+   "title": "The Scriptorium of Echoes",
+   "text": "Vaulted ceilings arch high above a vast, stone-flagged chamber where hundreds of disembodied iron quills scratch frantically across endless sheets of blank vellum. The air vibrates with a continuous, dry rustling sound, like thousands of beetles scuttling behind ancient wainscoting. Ghostly inkwells hover unsupported above rows of vacant desks, spilling drops of luminescent blue fluid that evaporate before they touch the floor. You step cautiously across the threshold, careful not to disturb the invisible currents that guide the phantom writers. Every footstep you take is mirrored instantly by a dozen scratching nibs in the darkness, recording your journey in neat, cursive script upon the drifting rolls. A carved oak archway stands at the far end of the hall, flanked by towering stacks of uncatalogued pamphlets.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the carved oak archway"
+   ]
+  },
+  "ul-2-148": {
+   "title": "The Scriptorium of Echoes",
+   "text": "Ghostly pens write furiously in the empty air around you, recording every footstep and breath you take in rustling, meticulous prose. The vast scriptorium hums with the collective energy of a thousand unseen writers scratching out histories that have not yet happened. Lamp-oil burns low in your lantern, casting long, wavering shadows against walls lined with towering cabinets of discarded index cards. Four distinct pathways beckon from the edges of the hall, each promising a different route through the labyrinthine stacks of the deep archive.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Study the scribbling pen patterns",
+    "Steel mind against scratching noise",
+    "Move with silent grace among phantoms",
+    "Examine the barricaded iron cabinets"
+   ]
+  }
+ },
+ "missing": []
+}

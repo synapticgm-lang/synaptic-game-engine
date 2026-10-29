@@ -1,0 +1,105 @@
+{
+ "batch": "ul-3-063",
+ "sections": {
+  "ul-3-063": {
+   "title": "The Crushing Stacks",
+   "text": "Towering banks of oak and iron glide across the flagstones with a low, bone-grinding groan, sealing off alleyways of classification without warning. You press your spine flat against a cold mahogany upright as two immense stacks rumble past each other, missing your coat-tails by a hair's breadth and smelling heavily of dry wood-rot and old gall-ink. The labyrinthine filing system shifts beneath your boots, rearranging whole centuries of philosophy and trade tariffs into new, suffocating corridors that demand immediate, breathless navigation before the moving timber closes your escape entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Squeeze past the shifting mahogany bulkheads"
+   ]
+  },
+  "ul-3-064": {
+   "title": "The Shifting Stacks",
+   "text": "Heavy oak bookcases glide smoothly along recessed iron tracks, continually redrawing the geography of the vaulted chamber with a rhythmic, mechanical sigh that smells of dust and machine oil. Faint glimmers of copper light catch the edges of moving shelves where distant scholars or unseen mechanisms alter the categorisation of the entire floor. You stand at a temporary nexus of converging corridors, weighing which uncertain path might lead deeper into the masonry. Every partition is restless, promising either a swift passage or a labyrinthine trap among the forgotten folios.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the rhythmic mechanism nearby",
+    "Leap toward the suspended iron catwalk",
+    "Decipher the shifting categorical symbols",
+    "Slide along the top rail",
+    "Confront the red-robed enforcers ahead"
+   ]
+  },
+  "ul-3-065": {
+   "title": "The Maintenance Hatch",
+   "text": "Deep among the groaning framework of the movable cases, you trace the rhythmic, sliding cadence of the counterweights until your fingers brush against a flush brass ring set into the floorboards. The complicated choreography of the shelving units creates a brief, synchronized pause in the machinery, offering a narrow window to unlatch the concealed iron plate. You drop to one knee, ignoring the biting scent of aged paper and copper dust, to pry open the hidden maintenance shaft before the rolling library resumes its deafening march.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Probe the hidden maintenance latch"
+   ]
+  },
+  "ul-3-066": {
+   "title": "The Rhythmic Timing",
+   "text": "Staring intently at the gleaming bronze gears spinning behind a slotted iron grille, you try to map the precise cadence of the counterweights shifting overhead. A single miscalculation in timing will wedge your arm between two converging tonnes of philosophy and theology, yet the hidden latch cannot be lifted without matching their mechanical pulse. You reach your fingers toward the latch, holding your breath as the massive oak case begins its inevitable, crushing glide.",
+   "check": "Decode the rhythmic machinery",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-067": {
+   "title": "A Crushing Misstep",
+   "text": "Your fingers slip against the greased iron just as the heavy case lurches forward, catching your sleeve and pinning your shoulder hard against the rough oak upright with a sickening jolt. Pain flares sharply across your collarbone, leaving a deep purple bruise and tearing a ragged strip from your heavy shelver's coat. You wrench yourself free with a desperate heave, tumbling sideways into the dust as the massive timber grinds past, leaving you battered, winded, and poorer by a good jacket.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl through the clearance gap"
+   ]
+  },
+  "ul-3-068": {
+   "title": "The Serviceman's Key",
+   "text": "Your fingers catch the brass ring and heave upward just as the heavy oak case grinds to a momentary halt, lifting the iron panel to reveal a dark, oil-slicked descent. However narrowly you managed to clear the moving timber's path, you pull yourself over the lip of the hatch with the heavy brass key still clutched in your palm, pocketing a tool meant only for the master cataloguers.",
+   "check": "",
+   "grant": "Master cataloguer's brass key",
+   "exits": [
+    "Confront the red-robed enforcers ahead"
+   ]
+  },
+  "ul-3-069": {
+   "title": "Across the Chasm",
+   "text": "Two towering shelving units part abruptly with a screech of iron wheels, exposing a black, echoing drop where the stone floor has fallen away into the under-stacks. Far below, rivers of stagnant ink gleam faintly under the pale grease-lamps of the lower tiers, while a thin iron catwalk dangles by rusted wire across the void. You step back to gain momentum on the shifting oak boards, fixing your gaze upon the narrow walkway swaying in the draft.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Sprint toward the parting bookcases"
+   ]
+  },
+  "ul-3-070": {
+   "title": "The Parting Stacks",
+   "text": "Mahogany timber groans and splits apart as the heavy oak bookcases grind in opposite directions, carving a jagged black void of empty air through the heart of the aisle. The gap widens with every second, revealing only the misty, ink-stained abyss far below where the floorboards ought to be. Trusting in quick feet and steady balance, you kick off the trembling edge of the retreating shelf, launching yourself outward over the chasm with arms outstretched.",
+   "check": "You leap across a widening chasm between two parting bookcases with agile grace, risking a dangerous plunge, to reach a suspended catwalk.",
+   "grant": "",
+   "exits": [
+    "Scramble onto the trembling iron grating."
+   ]
+  },
+  "ul-3-071": {
+   "title": "The Midair Leap",
+   "text": "You hurl yourself outward from the edge of the receding bookcase, leaving the solid oak behind to hang suspended for one breathless heartbeat in the dusty gloom. Below you, the ink-rivers swirl in silent mockery while the iron catwalk sways wildly away from your oncoming trajectory. You tuck your chin and reach out with both hands, trusting your balance to carry you across the lethal chasm.",
+   "check": "Leap across the dark abyss",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-072": {
+   "title": "A Plunge Into Ink",
+   "text": "Your boots strike the slick edge of the catwalk with insufficient purchase, sending you skidding over the opposite side and plunging your right arm deep into a trough of stagnant, foul-smelling copying ink. You haul yourself back onto the grating with a wet gasp, leaving your sleeve stained a permanent, indelible black that smells of gall and copper. The sudden impact leaves your ribs aching and your pride thoroughly dampened, though you are alive to drag yourself along the iron mesh.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pull yourself onto the grating"
+   ]
+  },
+  "ul-3-073": {
+   "title": "The Balanced Landing",
+   "text": "Your boots hit the center of the swaying iron mesh with practiced lightness, absorbing the shock as the catwalk rings like a struck bell in the hollow vault. However narrowly you managed to find your footing against the violent swing, you secure a loose brass link from the railing as a souvenir of your crossing, pocketing the metal peg before the structure settles back into place.",
+   "check": "",
+   "grant": "Rusted brass railing peg",
+   "exits": [
+    "Inspect the rhythmic mechanism nearby"
+   ]
+  }
+ },
+ "missing": []
+}

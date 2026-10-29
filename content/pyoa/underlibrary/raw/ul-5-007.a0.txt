@@ -1,0 +1,52 @@
+@@SECTION ul-5-007
+TITLE: The Gilded Tumbler
+TEXT: Heavy bronze lanterns swing from the vaulted ceiling above, casting long, fractured shadows across the stone balcony where the Cataloguer guards keep their silent watch. Below your perch, the intricate lock-box hums with dormant machinery, its iron tumblers clicking softly in rhythm with the dripping of ink-wells from the floor above. You draw a thin, notched strip of brass from your sleeve, your fingers steady despite the chill rising from the bottomless stacks. Every breath feels too loud in the hushed air, carrying the sharp scent of lamp-oil and parched vellum as you slide the makeshift tool into the darkened mechanism.
+EXIT 1: Slip the bookmark into the gears
+@@END
+@@SECTION ul-5-008
+TITLE: Shadows on the Balcony
+TEXT: High overhead, iron-shod boots pace against the flagstones, the rhythmic tramping sending tiny tremors through the masonry to rattle the loose card-drawers in the wall. You freeze against the cold plaster, waiting until the heavy footsteps fade into the distance before easing your weight back onto the narrow stone ledge. The lock-box before you offers no second chances, its stubborn brass plates sealed tight against unauthorized hands by ancient decrees. Your palm leaves a faint smudge of grease upon the rusted casing as you adjust your grip on the bent bookmark, ready to test the alignment of the inner wards.
+EXIT 1: Feel for the hidden tumbler catch
+@@END
+@@SECTION ul-5-009
+TITLE: The Cunning Twist
+TEXT: Sweat pricks at your brow as you angle the bent brass strip deeper into the throat of the iron mechanism, searching for the delicate resistance that separates a locked ward from an open vault. Above, a guard leans over the balustrade, the yellow glare of a tallow taper cutting through the gloom and sweeping dangerously close to your hiding place. You hold your breath, relying entirely on the sensitive slide of metal against metal in the absolute dark, applying a fraction more torque to the jury-rigged lever while every instinct screams to pull back.
+CHECK: Probe the lock with clever fingers
+@@END
+@@SECTION ul-5-010
+TITLE: A Costly Slip
+TEXT: Metal screams against metal as the brass bookmark snaps cleanly inside the mechanism, jamming the tumblers and throwing you violently backward against the rough stone wall with a dull thud. A hot streak of pain flares across your knuckles where the jagged edge tears deep into the flesh, leaving a dark crescent of blood smeared upon the cold masonry. Above, a sharp shout echoes through the galleried arches, followed by the clatter of hurried boots rushing toward the balcony. You scramble away into the suffocating gloom of the stacks, clutching your bleeding hand while the bitter taste of failure burns your throat.
+EXIT 1: Slip into the shadowed stacks
+@@END
+@@SECTION ul-5-011
+TITLE: The Master Key
+TEXT: With a sudden, satisfying click that reverberates through the heavy iron housing, the final tumbler gives way, allowing the brass tongue to slide effortlessly into its groove. However narrowly you managed the trick, the mechanism yields, releasing a slender, cold-forged skeleton key that falls directly into your open palm. The metal is dense and impossibly old, carrying the faint, lingering imprint of every door it has ever unlocked within these endless stacks. You pocket the prize swiftly, leaving behind only the silent phantom of a locked box and the rising tide of ink in the corridors below.
+GRANT: Master skeleton key
+EXIT 1: Approach the great inner vault
+@@END
+@@SECTION ul-5-012
+TITLE: The Freezing Latch
+TEXT: Frost feathers across the iron surface of the heavy portal, spinning intricate, crystalline webs that whisper of ancient winters locked away in the deep annexe. The air grows preternaturally cold, drawing the heat straight from your marrow and turning every exhalation into a thick cloud of white mist that clings to the ancient timber. You stare at the massive frosted latch, feeling the magical chill bite straight through your thin shelver's tunic, numbing your collarbones and stiffening the joints in your fingers. The silence here is absolute, broken only by the faint, rhythmic ticking of a clock buried deep within the masonry.
+EXIT 1: Lean hard against the frost
+@@END
+@@SECTION ul-5-013
+TITLE: Gathering Resolve
+TEXT: Bracing your boots against a crack in the flagstones, you reach out to grip the frozen iron, feeling the supernatural frost pierce your skin like a cluster of needles. The cold seeps into your shoulders, sapping your strength and threatening to lock your muscles into rigid immobility before you can even begin to throw the heavy bolt. Around you, the marginal notes scrawled across the nearby stone walls murmur anxious warnings, their faded ink shivering in the draft. You force your trembling fingers to close tighter around the frosted metal, refusing to yield an inch to the creeping numbness.
+EXIT 1: Face the bitter magical chill
+@@END
+@@SECTION ul-5-014
+TITLE: The Iron Weight
+TEXT: Your entire body shivers uncontrollably as the ambient temperature plunges below freezing, threatening to encase your limbs in rime and halt your progress for good. You throw your full weight against the shivering iron latch, muscles straining to their absolute limit as you pit your mortal stamina against the ancient, lingering frost of the vault. The cold bites deeper into your chest, numbing your lungs and clouding your thoughts with a heavy, soporific haze that tempts you to simply close your eyes and stop pushing.
+CHECK: Fight the magical frost with willpower
+@@END
+@@SECTION ul-5-015
+TITLE: The Deep Chill
+TEXT: The magical cold surges outward with brutal force, knocking the wind from your lungs and sending you sprawling backward onto the icy stones with a sharp gasp. A deep, aching numbness settles permanently into your left shoulder, an unwelcome souvenir of the encounter that will leave you stiff whenever the damp rises from the ink-rivers. You drag yourself upright, shivering violently as your teeth chatter in the gloom, and wrap your arms tight around your chest to preserve what little warmth remains in your body. There is no time to nurse the ache, for the stacks continue to shift around you in the dark.
+EXIT 1: Drag yourself past the frost
+@@END
+@@SECTION ul-5-016
+TITLE: The Oiled Shawl
+TEXT: You heave against the frost-locked latch with a final surge of effort until the frozen mechanism groans and gives way with a sharp crack of splintering ice. However narrowly you endured the biting cold, you stand victorious over the threshold, your breathing ragged in the frozen air. As you steady yourself, your hand brushes against a heavy, oil-soaked wool shawl draped over a discarded reading stand nearby. You wrap the thick, pungent garment tightly around your shoulders, instantly feeling the heavy grease block out the lingering supernatural chill.
+GRANT: Insulating wool shawl
+EXIT 1: Return to the threshold arch
+@@END

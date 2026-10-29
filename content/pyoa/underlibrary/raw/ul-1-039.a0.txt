@@ -1,0 +1,63 @@
+@@SECTION ul-1-039
+TITLE: The Tumbling Glass
+TEXT: Heavy canvas awnings snap in the grease-laden draft while merchants bark hoarse claims across the narrow aisle. A rusted iron hoop strikes a merchant's crate nearby, sending a bulbous glass vessel tumbling from its high plank toward the stone flagstones. You lurch forward without thinking, hands snapping out to intercept the descent before the fragile neck shatters against the grit. Luminescent blue fluid swirls inside the stoppered bulb, casting an eerie azure light across your knuckles. The relieved vendor nods, sliding a stoppered vial of ghost-scribe fluid into your palm as recompense for your quick reflexes.
+EXIT 1: Pocket the glowing ghost-fluid
+@@END
+@@SECTION ul-1-040
+TITLE: Catching the Falling Vial
+TEXT: Droplets of luminescent ink spatter the damp paving as the glass orb wobbles dangerously between your palms, its slick surface refusing to yield a solid grip. The merchant shouts a warning too late, his gnarled fingers clutching at empty air while the heavy vessel lists sideways toward the jagged edge of a copper trough. You twist your torso, throwing your weight into a sudden slide along the slick stone to intercept the momentum before gravity finishes its work.
+CHECK: Balance the falling glass orb
+@@END
+@@SECTION ul-1-041
+TITLE: Slipping on the Flagstones
+TEXT: Your boots slide wide on a patch of spilled tallow, sending you crashing hard against a stack of empty crates that splinter with a sharp report. The falling vessel shatters against the iron rim of a drain, coating your sleeve in a cold, permanent smear of glowing blue ink that stains skin and wool alike. A merchant curses at the loss of inventory, docking your personal ledger balance to cover the mess while you pick wood splinters from your bleeding palms.
+EXIT 1: Gather your stained coat and leave
+@@END
+@@SECTION ul-1-042
+TITLE: The Ghost-Scribe's Gift
+TEXT: Fingers close securely around the cold neck of the glass vessel just as it threatens to slip from reach, steadying the turbulent fluid within with a sharp twist of the wrist. The merchant exhales a long whistle of relief, clapping a heavy hand upon your shoulder and pressing a smaller, stoppered vial into your grip as thanks for your swift intervention. This pale fluid clings to the glass like morning mist, whispering faint, unintelligible syllables whenever the lantern light catches its surface.
+GRANT: Vial of ghost-scribe fluid
+EXIT 1: Cross the ink-canal bridge
+@@END
+@@SECTION ul-1-043
+TITLE: The Scent of Iron
+TEXT: Stacks of earthenware pots line the narrow wooden counter, each sealed with melted beeswax that smells faintly of copper and rusted nails. You lean close, nostrils flaring as you sample the heavy vapors drifting from an unlabelled jug tucked behind a stack of ledger covers. The distinctive tang of true archive-grade gall ink settles on your tongue, far superior to the diluted lamp-black hawked to careless scholars. The bearded merchant squints at your junior shelver badge, exchanging a knowing grin before slashing the price in half for a shared secret about misfiled tax rolls.
+EXIT 1: Secure the discounted gall ink
+@@END
+@@SECTION ul-1-044
+TITLE: Inspecting the Dark Varnish
+TEXT: Rows of identical black jars blur together under the guttering tallow lamps, their wax seals bearing the forged stamps of the central scriptorium. You lift a heavy earthenware container by its hempen handle, squinting through your spectacles at the faint chemical bloom creeping across the leaden lid. The proper vintage should taste of copper and old parchment, but this batch carries a sickly, sweet tang of fermented plum that hints at inferior binders and quick-drying forgery.
+CHECK: Identify the true archive ink
+@@END
+@@SECTION ul-1-045
+TITLE: A False Vintage
+TEXT: Your tongue prickles with a sour, metallic burn as a drop of the inferior brew leaks onto your glove and stains your thumb a permanent, indelible violet. The merchant scowls, snatching the jar away and demanding full compensation for a seal broken by an uninvited amateur. You leave the stall poorer by several copper buttons, your fingers throbbing where the caustic forgery ate through your skin.
+EXIT 1: Retreat into the crowded aisles
+@@END
+@@SECTION ul-1-046
+TITLE: The Scribe's Discount
+TEXT: Sharp eyes pierce the deceptive labeling, tracing the subtle flaws in the wax seal straight to a counterfeit batch smuggled up from the lower cellars. The vendor groans softly, acknowledging your expertise with a reluctant nod before trading the genuine article at a steep discount in exchange for your silence. You stow the heavy earthenware jar into your satchel, secure in the knowledge that your writing will never fade or lie on the page.
+GRANT: Discounted archive-grade gall ink
+EXIT 1: Return to the bustling ink-market
+@@END
+@@SECTION ul-1-047
+TITLE: The Shadowy Passage
+TEXT: Heavy velvet draperies separate the noisy main aisle from the shadowy alcoves where merchants trade in illicit draughts that compel confessions from stubborn books. You drop your shoulders, sliding sideways through a knot of argumentative scholars with practiced ease, your soft-soled boots making no sound upon the grit. A heavy glass bottle rests unguarded upon a velvet cushion, its pale contents shifting like liquid moonlight waiting for a careless hand.
+EXIT 1: Slip away with the prize
+@@END
+@@SECTION ul-1-048
+TITLE: Navigating the Stall
+TEXT: Shadows flicker wildly across the canvas roof as a gust of greasy wind rattles the lantern irons overhead. You slide your weight smoothly from heel to toe, threading a narrow gap between a stack of heavy iron-bound folios and a nervous merchant counting copper coins by touch. The small glass vial sits upon the velvet cloth just beyond your fingertips, requiring one final, silent stretch of your arm to clear the counter's edge.
+CHECK: Steal the truth-revealing ink
+@@END
+@@SECTION ul-1-049
+TITLE: Caught in the Act
+TEXT: A heavy ledger shifts beneath your foot with a sharp creak, breaking your rhythm and sending your elbow crashing into a tower of tin spice boxes. The whole stack rattles down onto the flagstones with a deafening clatter, bringing an angry merchant lunging over the counter with a rusted ink-knife raised. You scramble backward into the surging crowd, leaving behind a torn sleeve and your dignity as shouts follow you into the gloom.
+EXIT 1: Flee deeper into the stacks
+@@END
+@@SECTION ul-1-050
+TITLE: The Moonlight Vial
+TEXT: Your fingers brush the cool glass surface, lifting the small vessel from its velvet cushion with such fluid lightness that even the merchant's trained ear remains entirely undisturbed. Slipping the prize deep into your tunic pocket, you blend seamlessly back into the drifting throng of students and scribes without a single head turning your way. The liquid inside pulses with a steady, pearlescent gleam that promises to strip away false bindings and reveal whatever secrets the library tries to hide.
+GRANT: Vial of truth-revealing ink
+EXIT 1: Cross the ink-canal bridge
+@@END

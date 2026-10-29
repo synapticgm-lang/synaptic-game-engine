@@ -1,0 +1,105 @@
+{
+ "batch": "ul-3-191",
+ "sections": {
+  "ul-3-191": {
+   "title": "Paradox of the Margin",
+   "text": "Whispering annotations crawl along the taut membrane, spelling out contradictions that make your teeth ache with the taste of old iron. You lean close to the pulsing vellum and pose a question that loops back upon its own creation, a logical knot designed to starve the ink of its purpose. The barrier shudders, its black veins swelling with agitated punctuation before it begins to dissolve into a fine grey mist that settles harmlessly over your boots.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step through the dissolving mist"
+   ]
+  },
+  "ul-3-192": {
+   "title": "Testing the Linguistic Knot",
+   "text": "Every syllable of the paradox must be uttered without a tremor while the surrounding text writhes like a nest of startled adders. You frame the sentence carefully on your tongue, balancing the dangerous linguistic weight against the snapping tendrils of the vellum. Your fingers hover over the trembling seam as you prepare to unleash the contradiction that will shatter the defensive shield or tear open your own thoughts.",
+   "check": "Utter the paradoxical counter-spell",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-193": {
+   "title": "Cost of a Twisted Tongue",
+   "text": "The paradox misfires in your throat, tearing a sharp, metallic echo through your mind that leaves your temples throbbing with a persistent, dull ache. A bitter taste of scorched paper lingers on your palate as the vellum strikes back, branding a faint, temporary script across the back of your hand before finally collapsing. You catch your breath against the sudden dizziness, poorer by a precious flask of lamp-oil spilled during the scuffle, but the path ahead clears.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press onward through the residue"
+   ]
+  },
+  "ul-3-194": {
+   "title": "Unravelling the Vellum Shield",
+   "text": "Silence floods the narrow corridor as the defensive hide yields entirely to your clever verbal assault, parting like heavy velvet to reveal the shadowed stackways beyond. Whether achieved with effortless precision or through a heart-stopping stutter of logic, the barrier is gone, leaving behind a tangible proof of your ingenuity. You retrieve a stray fragment of vellum that floats down from the collapse, pocketing it as a quiet testament to your cleverness.",
+   "check": "",
+   "grant": "A slip of whispering vellum",
+   "exits": [
+    "Return to the vellum barrier hub"
+   ]
+  },
+  "ul-3-195": {
+   "title": "Threshold of the Grand Balcony",
+   "text": "Stone flags open out beneath your boots as you step through the stone archway onto the vast stone terrace overlooking the Deep Annexe. Far below, endless tiers of drifting book-stacks sway in a slow, hypnotic rhythm through a haze of lamp-oil smoke and floating dust. The air tastes of ancient paper and deep, forgotten history, carrying the distant, hollow echo of turning leaves across the immense chasm. Rising from the floor of the abyss, the Hundredth Door looms like a monolith of dark iron and clamped clasps, its massive hinges waiting in absolute stillness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the edge of the abyss"
+   ]
+  },
+  "ul-3-196": {
+   "title": "The Balcony of Sighs",
+   "text": "Lanterns swing gently from iron brackets along the curving balustrade of the Balcony of Sighs, casting long, wavering shadows across the worn stone. Down in the misty depths, shelves drift like slow-moving rafts of timber, and the faint rustle of phantom pages drifts upward on the chill draft. Every direction offers its own perilous invitation to the depths below, demanding a steady hand and a sharp eye.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Venture down the creaking stairway",
+    "Distract the watchful balcony guard",
+    "Balance along the frost-slicked railing",
+    "Chart the swirling atmospheric currents",
+    "Cross the broken threshold below"
+   ]
+  },
+  "ul-3-197": {
+   "title": "Descent into the Mist",
+   "text": "Iron rungs bite into your palms as you lower yourself over the sheer stone edge into the grey, swirling void of the Deep Annexe. Downward sweeps the heavy hempen rope, vibrating with the distant hum of the endless stacks shifting far beneath your dangling feet. You cling to the coarse fibres while the lamp-oil lanterns above shrink to pale yellow embers in the thick, dusty air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the swinging anchor line"
+   ]
+  },
+  "ul-3-198": {
+   "title": "Navigating the Hanging Ropes",
+   "text": "Shadows reach out from the floating book-stacks to brush against your coat like curious fingers as you swing deeper into the cavernous gloom. The rope beneath your grip groans under the strain, yet holds firm against the ceaseless upward drafts of stale air. You catch a fleeting glimpse of wandering scholars drifting past on distant platforms, their faces pale and absorbed in thick leather-bound tomes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drop toward the lower ledge"
+   ]
+  },
+  "ul-3-199": {
+   "title": "Holding Against the Abyss",
+   "text": "The drop beneath your boots yawns like an open mouth, bottomless and cold, threatening to unseat your reason with its sheer, dizzying scale. Winds howling from the deep stacks tug violently at your clothes, trying to peel your fingers from the hempen cord as the rope twists wildly in the dark. You lock your jaw and force your racing thoughts into a stubborn, unyielding stillness to keep your grip from failing.",
+   "check": "Maintain sanity against the void",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-200": {
+   "title": "Shaken by the Void",
+   "text": "Vertigo strikes like a physical blow, draining the colour from your face and leaving your hands trembling with a cold, greasy sweat. You manage to keep your hold on the rope, but the terror leaves a lingering hollow in your chest and costs you precious minutes of effort as you fight to regain your breath. The experience leaves you bruised in spirit and terribly aware of how easily the library swallows the unwary.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb down to the platform"
+   ]
+  },
+  "ul-3-201": {
+   "title": "Finding Equilibrium",
+   "text": "Mental composure returns like the settling of dust after a heavy tread, leaving your mind clear and your grip iron-firm upon the swaying rope. Whether you fought through a rising panic or merely blinked away the dizziness, you emerge from the ordeal with a renewed steadiness of purpose. Tucked into the knots of the hempen line, you discover a discarded copper token left by a previous shelver, stamped with the mark of the lending clerk.",
+   "check": "",
+   "grant": "A copper lending token",
+   "exits": [
+    "Return to the balcony overview"
+   ]
+  }
+ },
+ "missing": []
+}

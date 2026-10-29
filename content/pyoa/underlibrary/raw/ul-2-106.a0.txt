@@ -1,0 +1,57 @@
+@@SECTION ul-2-106
+TITLE: The Ink-Weir
+TEXT: Thick writing fluid boils against submerged shelving units, churning into a dark froth that swallows the main pathway. Bubbles of stale iron-gall rise and burst, releasing a pungent vapour of old vitriol and wet hemp. Across the churning surface, drifted ledgers bob like broken vessels while narrow timber spans tilt dangerously toward the foam. Every route demands a choice // A rusted iron crane creaks overhead in the draught, its chain swinging toward a channel of black water. Further along the sluice, slick wooden planks offer a treacherous crossing past sunken dictionary cases that mutter definitions into the eddy.
+EXIT 1: Navigate the churning ledger boards
+EXIT 2: Climb the overhead iron tracks
+EXIT 3: Probe the swirling current with care
+EXIT 4: Search the shallow stone bar
+EXIT 5: Leap across the slick stones
+EXIT 6: Squeeze through the narrow cleft
+@@END
+@@SECTION ul-2-107
+TITLE: Timber and Twine
+TEXT: Heavy ledger boards drift within the dark current, their waterlogged covers bound in faded calfskin. You drag several buoyant oak slabs onto the shelving bank, lashing them tight with tarred cord scavenged from a discarded binding press. Each knot must hold against the lateral pull of the black water // A watertight canvas sack sits open beside your knees, waiting to receive whatever dry gear remains salvageable from the surrounding shelves. Pushing off from the slippery stone requires steady balance as the makeshift raft settles into the current.
+EXIT 1: Push off into the dark channel
+@@END
+@@SECTION ul-2-108
+TITLE: Floating Ledger Raft
+TEXT: The timber frame creaks under your weight, riding low upon the sluggish ink-river as the walls slide past in a blur of damp mortar. Stray scraps of parchment drift alongside, covered in marginalia that dissolve into grey smears before your eyes. You guide the awkward craft with a splintered slat, keeping clear of iron brackets jutting from the masonry // A narrow gap in the shelving opens ahead, revealing a dry stone ledge where the current loses its grip on the floor.
+EXIT 1: Step ashore onto dry stone
+@@END
+@@SECTION ul-2-109
+TITLE: Lash the Drifting Timbers
+TEXT: Swift fingers loop tarred cord around water-swollen ledger boards, drawing the knots tight while the current surges against your boots. The binding threatens to slip as a sudden wave of black fluid spills over the makeshift deck, soaking your sleeves in bitter ink. You pull the final hitch taut with your teeth, bracing your weight against the shifting frame just as the craft breaks free from the shelving leg //
+CHECK: Lash the timber frame
+@@END
+@@SECTION ul-2-110
+TITLE: Tangles in the Sluice
+TEXT: The knot slips with a harsh snap, pitching one corner of the timber frame deep beneath the churning ink. Frantic hauling saves the canvas sack from the flood, but the sudden strain tears a long, jagged gash across your forearm where a rusted binder's clasp bites through your wool sleeve. You drag yourself onto the stone margin // Dripping black fluid from your torn coat, you nurse the stinging wound while the rest of your makeshift raft drifts out of reach into the gloom.
+EXIT 1: Gather your damp canvas sack
+@@END
+@@SECTION ul-2-111
+TITLE: Bound in Waterproof Canvas
+TEXT: Your makeshift vessel holds together through the worst of the turbulence, scraping gently against a protruding iron shelf until you secure the painter line. Inside the waterproof canvas sack, your spare lamp-oil and dry chalk remain untouched by the bitter fluid of the weir. You shake the dark droplets from your coat, pocketing a small lead seal found pressed into the corner of the wreckage //
+GRANT: Waterproof canvas sack
+EXIT 1: Follow the narrow vertical cleft
+@@END
+@@SECTION ul-2-112
+TITLE: Iron Tracks Above
+TEXT: Overhead rails run parallel to the ceiling, bolted into granite blocks that once carried traveling crane-books for the senior scribes. You reach upward, catching the cold iron bar with both hands and drawing your boots clear of the ink-swollen floor. Every joint aches with the effort of suspension as you haul yourself hand over hand into the gloom // Below you, the black river churns against the base of empty bookshelves while distant shadows shift behind rusted wire grilles.
+EXIT 1: Traverse the high iron rail
+@@END
+@@SECTION ul-2-113
+TITLE: Reach for the Overhead Rail
+TEXT: Fingers close around the grease-slicked iron bar just as the ledge crumbles beneath your heels, leaving your entire weight dangling above the ink-sluice. Your shoulders burn with sudden strain while the heavy brass glass swings from your belt, clattering loudly against the stone masonry. You hook one knee over the cold metal, searching for a firmer grip in the dim light //
+CHECK: Swing to the overhead rail
+@@END
+@@SECTION ul-2-114
+TITLE: Slipping the Iron Grasp
+TEXT: A sudden tremor shakes the ceiling brackets, loosening a shower of gritty mortar dust into your eyes just as you reach for the next support. Your grip slips on the oily iron, dropping you hard onto a jutting wooden cornice that catches your ribs with a dull thud. You roll gasping onto the narrow ledge // Bruised and breathless, you lose a half-flask of lamp-oil that shatters silently against the dark water far below.
+EXIT 1: Recover on the narrow ledge
+@@END
+@@SECTION ul-2-115
+TITLE: Hooked from the Current
+TEXT: Strong fingers secure the iron rod against the overhead bracket, letting you swing past the worst of the boiling weir with minimal effort. Below your swinging boots, the ink-river flows in thick, sluggish folds toward the lower stacks, leaving you untouched by its damp reach. You drop down onto the far pathway with a soft thud, your palms blackened by old lamp-grease //
+GRANT: Long iron hooked pole
+EXIT 1: Return to the central weir
+@@END

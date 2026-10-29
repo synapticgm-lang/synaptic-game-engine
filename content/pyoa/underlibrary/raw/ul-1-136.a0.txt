@@ -1,0 +1,71 @@
+@@SECTION ul-1-136
+TITLE: The Gatehouse of Rules
+TEXT: Heavy iron portcullises frame the entrance to the inner stacks, glowing with the faint, blue phosphorescence of dried salt and crushed gall-nuts. Behind a towering lectern of black oak sits the senior custodian, a man whose spectacles are thick as jar-bottoms and twice as greasy. He taps a brass paper-knife against the ledger, demanding proof that your junior shelver credentials carry proper authorization to approach the Hundredth Door. Dust motes dance in the shaft of amber lamplight that cuts across his ink-stained cuffs, smelling strongly of stale tobacco and sheepskin glue. Every corridor branching from this iron-ribbed vestibule hums with the low, subterranean vibration of shifting card-drawers and sliding shelves. // A narrow gap in the ironwork beckons into the dimmer stacks beyond the desk. Alternatively, a quieter alcove offers a place to polish your arguments against the custodian's scrutiny before you make a move.
+EXIT 1: Step through the narrow gap
+EXIT 2: Seek refuge within the alcove
+EXIT 3: Swipe the brass gate-ring key
+EXIT 4: Cite the unwritten exemption clause
+EXIT 5: Rush the closing threshold
+@@END
+
+@@SECTION ul-1-137
+TITLE: Before the Iron Lectern
+TEXT: Brass scales balance upon the edge of the register, tipping slightly with every draft that whistles up from the deep sub-basements. You keep your hands flat against the grain of the wooden counter, avoiding the temptation to fidget with your sleeve or glance toward the shadowy archways. The custodian squints through his magnifying lens, examining the frayed edges of your indenture ribbons with a slow, deliberate skepticism that invites impatience. Instead of pulling away, you let your breathing settle into the rhythmic cadence of the room, matching the faint ticking of the wall-clock that measures out the hours of the Long Closing. Every scrap of paper on the desk smells faintly of rancid tallow and old iron filings. // A dry cough rattles from the back of the custodian's throat as he reaches slowly for his heavy red stamping block.
+EXIT 1: Wait for the stamp to descend
+@@END
+
+@@SECTION ul-1-138
+TITLE: The Weight of Scrutiny
+TEXT: Shadows stretch across the flagstones as the central chandelier flickers, casting long, wavering shapes over the rows of waiting petitioners. Your travel manifest lies squarely between the ink-pot and the leaden paperweight, its faded margins curling slightly from the dry heat of the overhead lamps. The custodian leans forward, his breath carrying the distinct aroma of peppermint leaves and dried ink-powder. You keep your spine straight, refusing to shrink back from his piercing gaze or show any sign of haste that might arouse his administrative suspicion. The surrounding silence is absolute, save for the dull scratching of a nib somewhere in the adjacent clerk-room. // He turns the document over twice, inspecting the watermark against the weak amber glow of the corner sconce.
+EXIT 1: Endure the final inspection
+@@END
+
+@@SECTION ul-1-139
+TITLE: The Custodian's Stare
+TEXT: Cold yellow eyes peer over the rim of the magnifying glass, seeking any hairline fracture in your composure or any hesitation in your breath. The custodian begins a rapid-fire interrogation concerning the exact shelf-mark of a missing folio last logged during the previous solstice. You grip the edge of the wooden counter until your knuckles whiten, focusing your entire consciousness on projecting an absolute, unshakeable aura of bureaucratic inevitability. Every fiber of your training as a junior shelver urges you to look down, yet you hold your gaze steady against his intimidating glare. The red ink-pad waits open beside his elbow, gleaming like a fresh wound in the lamplight.
+CHECK: Maintain steady discipline against pressure
+@@END
+
+@@SECTION ul-1-140
+TITLE: A Flaw in the Armor
+TEXT: A sudden twitch in your left eyelid betrays your inner tension, drawing an immediate, sharp snort of derision from behind the brass-bound lectern. The custodian slams his ledger shut with a resounding thud that scatters a small drift of wood-shavings across your boots and leaves your fingers stinging with a sudden, dull ache. He crosses your manifest out with a harsh diagonal slash of purple ink, murmuring something about unseasoned novices wasting valuable cataloguing hours. You are forced to spend a tedious hour scrubbing ink-stains from the ledger racks as a punitive fine, losing precious time against the relentless countdown of the Long Closing. // You collect your marked papers and step back into the dim corridor with a bruised thumb and a lingering sense of humiliation.
+EXIT 1: Proceed into the inner stacks
+@@END
+
+@@SECTION ul-1-141
+TITLE: The Stamped Pass
+TEXT: Your unwavering composure forces a reluctant grunt from the custodian, who dips his heavy wooden handle into the crimson well and brings it down upon your manifest with satisfying finality. The wet impression smells of vinegar and sealing-wax, stamped deep into the coarse rag-paper of your official papers. He shoves the document back across the polished mahogany surface without another word, turning his attention immediately to the next petitioner in line. You tuck the damp pass securely into your doublet pocket, feeling the familiar, reassuring weight of an official seal that opens the way forward. // A frayed parchment scrap bearing a cryptic shelf-coordinate falls from the ledger as he closes it, slipping quietly into your palm.
+GRANT: Cryptic shelf coordinate
+EXIT 1: Return to the central gatehouse
+@@END
+
+@@SECTION ul-1-142
+TITLE: Through the Archway
+TEXT: Tall stone pilasters rise on either side of the passage, carved with the names of forgotten departments and long-abolished indexing committees. You follow the narrow flagged pathway as it winds past towering stacks of rebound periodicals, their leather spines cracking softly in the dry air. The air grows cooler here, carrying the sharp, metallic tang of fresh printing ink mixed with the scent of damp basement brickwork. Faint murmurs drift from the reading carrels hidden behind screens of woven wicker, where rival scholars hunch over their magnifying glasses with suspicious intensity. // A low archway leads deeper into the labyrinth of shelves, guarded only by a heavy velvet curtain embroidered with fading silver letters.
+EXIT 1: Lift the heavy velvet curtain
+@@END
+
+@@SECTION ul-1-143
+TITLE: Shadows of the Stacks
+TEXT: Dust hangs thick in the narrow corridors, suspended in long shafts of light that pierce the high clerestory windows from the city streets far above. You thread your trolley carefully past a stack of heavy quartos that lean at a perilous angle, threatening to avalanche across the flagstones at the slightest vibration. The sound of your boot-heels echoes off the vaulted ceiling, muffled only by the endless rows of leather-bound volumes that line the walls from floor to crown. Somewhere in the gloom ahead, a small bell chimes three times, marking the change of the cataloguing shift across the district. // A side-passage opens toward the ink-sellers' booths, where glowing vials of luminescent gall-ink cast eerie green reflections on the damp stone walls.
+EXIT 1: Inspect the ink-sellers stalls
+@@END
+
+@@SECTION ul-1-144
+TITLE: The Scholarly Cross-Examination
+TEXT: A gaunt scholar in a frayed academic gown steps abruptly out from behind a stack of folios, blocking your path with an outstretched ivory pointer. He demands to know your business in the restricted bays and whether your credentials have been countersigned by the Guild of Indexers. You feel the weight of his probing gaze searching your face for any sign of deception or ignorance regarding the complex Dewey systems of the lower tiers. The silence stretches out between you, broken only by the rhythmic dripping of a leaky pipe somewhere in the ceiling vault. You must summon every ounce of your resolve to prevent your voice from trembling under his haughty scrutiny.
+CHECK: Endure grueling cross-examination without flinching
+@@END
+
+@@SECTION ul-1-145
+TITLE: A Piercing Reproach
+TEXT: Your hesitation is instantaneous, but it is enough to invite a sharp critique from the scholar, who taps his ivory pointer against your chest with stinging precision. He writes a scathing note of reprimand on the back of your sleeve with a piece of blue chalk, marking you out as an untutored novice across every station in the wing. The humiliation costs you precious minutes as you argue your case before the shift-overseer, leaving you with a chalk-dust smudge on your collar and a bitter taste of ink in your mouth. You press onward through the gloom, chastened by the encounter but determined not to let the setback halt your progress toward the deep stacks. // You emerge from the dispute into a quiet, shadowed alcove lined with discarded research notes.
+EXIT 1: Continue deeper into the stacks
+@@END
+
+@@SECTION ul-1-146
+TITLE: The Official Seal of Transit
+TEXT: Your calm, unhurried demeanor disarms the scholar completely, turning his aggressive questioning into a grudging appreciation for your professional poise. He reaches into his satchel and presses a small, leaden counter into your hand, stamping your travel manifest with an intricate purple cipher that denotes high-level clearance. The seal gleams dully in the dim light, smelling faintly of cold metal and elderberry wine. He dips his head in a brief, respectful nod before melting back into the shadows of the manuscript racks without offering his name. // A small leaden counter stamped with the seal of the rival scholars' guild rests heavily in your palm.
+GRANT: Rival scholar leaden counter
+EXIT 1: Step through the threshold into the deep shadows
+@@END

@@ -1,0 +1,92 @@
+{
+ "batch": "ul-4-142",
+ "sections": {
+  "ul-4-142": {
+   "title": "The Gaze of Annotators",
+   "text": "Shadows lengthen across the vellum-paved floor as the spectral tribunal leans forward in silent unison. Their ink-stained fingers twitch above nonexistent pages, weighing every breath you draw in this ancient cellar. You lift your chin, meeting their collective scrutiny without a tremor in your pulse. The air smells strongly of dried gall and bitter tannins, thick with the unwritten judgments of a thousand forgotten censors. A low murmur ripples through the phantom ranks, acknowledging your steady posture and the quiet defiance in your gaze. One leading shade, draped in academic robes woven from grey spider-silk, inclines its translucent head in a rare gesture of respect.\n\nIn return for such composure, the gathering offers a silent pledge to murmur warnings whenever invisible snares or shifting floorboards lie ahead in the labyrinthine gloom. You adjust the strap of your satchel, feeling a strange new warmth settle between your shoulder blades as you prepare to press deeper into the stacks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Heed the warning whispers ahead"
+   ]
+  },
+  "ul-4-143": {
+   "title": "Whispers from the Margin",
+   "text": "Pale ink-marks drift off the nearby vertical bindings like startled midges, hovering in the stagnant air around your ears. They hum with the collective irritation of scholars whose corrections were ignored by generations of lazy cataloguers. Yet your unwavering calm keeps them from settling into your hair or stinging your exposed skin. The lead shade raises a pale, ink-stained hand, sketching a quick circle in the dust to signify a truce between the living shelver and the restless dead. You nod once, accepting their unspoken terms without lowering your guard against the damp chill creeping up from the foundations.\n\nThis fragile accord grants safe passage through the next gallery, provided you respect the margins and tread lightly over the fallen flyleaves. The phantoms part just enough to reveal a narrow gap between two leaning folios, where the oil lamp flickers against the encroaching dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip through the parting folios"
+   ]
+  },
+  "ul-4-144": {
+   "title": "The Censor's Rebuke",
+   "text": "Heavy iron-bound ledgers drop from the upper galleries with deafening thuds, threatening to shatter your footing as the trial intensifies. You brace your boots against the vibrating floorboards, planting your weight firmly to resist the sudden psychological pressure of a hundred judging eyes. The air grows cold enough to freeze the breath in your throat, and the whispering voices swell into a harsh, accusatory chorus that tries to crack your resolve. Gathering every ounce of internal discipline, you lock your jaw and stare down the descending tide of falling folios, refusing to give ground to the spectral onslaught.",
+   "check": "Anchor your mind against the judgment",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-145": {
+   "title": "Bruised and Bound",
+   "text": "The weight of collective disapproval proves too heavy to shrug off entirely, slamming into your chest like a swinging oak door. You stagger backward, your shoulder blades colliding hard with a jutting iron bracket that tears a jagged hole in your coat lining and leaves a dull, throbbing ache along your ribs. Several loose sheets of paper flutter down around you, mocking your stumble with dry, rustling whispers. Catching your breath in the dusty gloom, you press a hand to your bruised side and force yourself upright. The trial demands its toll in pain and lost moments, but the living blood still pumps through your veins, and the path forward remains open.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself toward the exit"
+   ]
+  },
+  "ul-4-146": {
+   "title": "The Censor's Stamp",
+   "text": "Standing firm against the invisible tempests of disapproval, you endure the barrage until the spectral tribunal falls into an uneasy, respectful silence. The leading shade reaches out with a translucent hand, pressing a cold, leaden token directly into your palm before fading back into the shelving. You pocket the heavy keepsake, feeling its peculiar hum against your fingers. Whether you negotiated this trial through pure nerve or breathless fortune, you emerge with a tangible token of their grudging truce.",
+   "check": "",
+   "grant": "Leaden Censor Seal",
+   "exits": [
+    "Return to the whispering assembly"
+   ]
+  },
+  "ul-4-147": {
+   "title": "Weight of the Past",
+   "text": "Several heavy bronze card-drawers slide outward from the nearby stack-ends of their own accord, dropping iron-heavy paperweights onto the flagstones around your boots. You hold your ground without flinching, letting the metal artifacts clatter harmlessly past your shins while the phantom onlookers watch from the gloom. Reaching down amidst the settling dust, your fingers close around the coolest, heaviest paperweight of the lot, its surface engraved with obsolete cataloguing runes. The metal feels reassuringly solid against your palm, grounding your scattered thoughts as the surrounding shelves give a slow, settling groan.\n\nThe ambient murmur of the marginalia softens into a respectful hush, acknowledging that you cannot be easily cowed by falling stationery or phantom theatrics. You slip the heavy bronze object into your deep coat pocket, where its steady weight helps keep your balance true against the shifting draft.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the heavy bronze artifact"
+   ]
+  },
+  "ul-4-148": {
+   "title": "The Iron Scriptorium",
+   "text": "A sudden lateral shift of the towering bookshelves threatens to crush your arms against the adjacent rows of leather-bound volumes. You wedge your shoulder against the moving timber, pitting your willpower against the mechanical grinding of the ancient stack-gears. The wood groans in protest, splintering slightly beneath your coat as the gap narrows to a razor-thin margin of safety. Sweat beads on your forehead in the stale, lamp-lit air, but you refuse to let the collapsing aisle trap you between its unyielding pages.",
+   "check": "Force the moving stacks apart",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-149": {
+   "title": "Crushed Margins",
+   "text": "The massive oak shelves shift too violently for you to hold back, pinning your arm painfully against a protruding bracket of cast iron. You grit your teeth as a sharp edge slices through your sleeve, drawing a thin line of blood down your forearm before the grinding machinery finally grinds to a halt. The cost is steep: precious minutes lost to the squeezing darkness, and a stinging red scratch that will leave a pale scar on your skin. You wrench your arm free with a harsh intake of breath, clutching the bruised limb as the dusty air fills with the smell of crushed leather and spilled ink.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Limp away from the biting shelf"
+   ]
+  },
+  "ul-4-150": {
+   "title": "Unbroken Resolve",
+   "text": "With a sudden surge of strength, however narrowly you manage the feat, your shoulder heaves the heavy oak timber back into alignment just before the gap seals forever. The mechanism clicks into a secure lock, leaving you standing safely in the center of a newly widened aisle smelling of old lamp-oil and dried parchment. As you catch your breath, a faint voice from the margins whispers a strange, urgent plea directly into your ear, begging you to find a way to let the dead readers finally speak aloud when the Hundredth Door opens. You pocket this secret request alongside a small brass bookmark dropped by the grateful spirit.",
+   "check": "",
+   "grant": "Secret plea of the dead",
+   "exits": [
+    "Return to the whispering assembly"
+   ]
+  },
+  "ul-4-151": {
+   "title": "The Threshold of Letters",
+   "text": "Beyond the final colonnade of the deep annexe stands the heavy wooden threshold of the Last Reader's cell, blocking your advance with an intricate puzzle of sliding brass letters. The characters carved into its surface constantly crawl and rearrange themselves across the oak paneling, spelling out shifting aphorisms and dead languages that mock your haste. Lamp-oil burns low in your hand, casting long, jittery shadows against the grain of the door as you study the chaotic shifting of the alphabet. Somewhere behind this labyrinthine barrier sits the ancient scholar who remembers everything, holding the answers to Thessaly's disappearance and the opening of the vault. You must decipher the moving puzzle before the shifting letters lock you out for good.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the shifting alphabet portal"
+   ]
+  }
+ },
+ "missing": []
+}

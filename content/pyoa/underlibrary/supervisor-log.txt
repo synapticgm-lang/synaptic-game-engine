@@ -1,0 +1,32 @@
+2026-10-29T13:41:38.666Z [supervisor underlibrary] supervisor start (dice), sections with prose: 368
+2026-10-29T13:53:32.540Z [supervisor underlibrary] run-book stopped (round 1): STOP refusal/error: I'm having a hard time fulfilling your request. Can I help you with something else instead? | sections 456 | batch "ask prose ul-3-041..ul-3-052 items=12" | consecutive fails 0
+2026-10-29T13:53:32.544Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T13:56:08.183Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T13:57:25.150Z [supervisor underlibrary] run-book stopped (round 2): STOP refusal/error: Sorry, something went wrong. Please try your request again. | sections 468 | batch "ask prose ul-3-053..ul-3-062 items=10" | consecutive fails 0
+2026-10-29T13:57:25.152Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T14:00:00.707Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T14:00:21.259Z [supervisor underlibrary] run-book stopped (round 3): STOP refusal/error: I'm having a hard time fulfilling your request. Can I help you with something else instead? | sections 468 | batch "ask prose ul-3-053..ul-3-062 items=10" | consecutive fails 1
+2026-10-29T14:00:21.261Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T14:02:56.852Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T14:03:17.192Z [supervisor underlibrary] run-book stopped (round 4): STOP refusal/error: Sorry, something went wrong. Please try your request again. | sections 468 | batch "ask prose ul-3-053..ul-3-062 items=10" | consecutive fails 2
+2026-10-29T14:03:17.194Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T14:05:52.754Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T14:09:09.674Z [supervisor underlibrary] run-book stopped (round 5): STOP refusal/error: I'm having a hard time fulfilling your request. Can I help you with something else instead? | sections 478 | batch "ask prose ul-3-063..ul-3-073 items=11" | consecutive fails 0
+2026-10-29T14:09:09.675Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T14:11:45.237Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T14:12:58.427Z [supervisor underlibrary] run-book stopped (round 6): STOP refusal/error: I'm having a hard time fulfilling your request. Can I help you with something else instead? | sections 478 | batch "ask prose ul-3-063..ul-3-073 items=1" | consecutive fails 1
+2026-10-29T14:12:58.428Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T14:15:33.992Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T14:18:33.255Z [supervisor underlibrary] run-book stopped (round 7): STOP refusal/error: Sorry, something went wrong. Please try your request again. | sections 509 | batch "ask prose ul-3-094..ul-3-103 items=10" | consecutive fails 0
+2026-10-29T14:18:33.255Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T14:21:08.820Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T14:46:56.802Z [supervisor underlibrary] run-book stopped (round 8): STOP refusal/error: I'm having a hard time fulfilling your request. Can I help you with something else instead? | sections 706 | batch "ask prose ul-4-073..ul-4-085 items=13" | consecutive fails 0
+2026-10-29T14:46:56.803Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T14:49:32.357Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T14:58:06.469Z [supervisor underlibrary] run-book stopped (round 9): STOP refusal/error: I'm having a hard time fulfilling your request. Can I help you with something else instead? | sections 753 | batch "ask prose ul-4-120..ul-4-131 items=12" | consecutive fails 0
+2026-10-29T14:58:06.470Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T15:00:42.301Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T15:20:16.075Z [supervisor underlibrary] run-book stopped (round 10): STOP refusal/error: Sorry, something went wrong. Please try your request again. | sections 850 | batch "ask prose ul-5-017..ul-5-026 items=10" | consecutive fails 0
+2026-10-29T15:20:16.077Z [supervisor underlibrary] transient Gemini error: waiting 150s, then a fresh Flash-Lite chat and resume
+2026-10-29T15:22:51.902Z [supervisor underlibrary] fresh chat: {"state":"ok","model":"Open mode picker, currently Flash-Lite","detail":"https://gemini.google.com/app"}
+2026-10-29T15:54:15.066Z [supervisor underlibrary] book finished: sections with prose 1000, lint errors 0

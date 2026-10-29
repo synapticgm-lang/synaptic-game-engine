@@ -1,0 +1,56 @@
+{
+ "batch": "ul-6-030",
+ "sections": {
+  "ul-6-030": {
+   "title": "The Unwritten World",
+   "text": "Stacks of untreated vellum drift across the public squares of Quillon like fallen snow, their surfaces entirely free of ink, rule, or register. Every ordinance issued by the Cataloguers' Court has blurred into a pale gray smear, leaving the merchants and street-children to barter in silent nods over blank ledgers. You stand in the centre of the market-cross holding a pen that refuses to leave a mark upon the air, watching the old street names dissolve from the cornerstones into clean, unblemished stone. The ink-sellers have closed their shutters, their bottles now filled with nothing more dangerous than rainwater and gray shadow. Without an Index to keep the tally of births, fines, and forgotten treaties, the city forgets what day of the week it is, and nobody seems particularly anxious to be reminded.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the clean stone fade //"
+   ]
+  },
+  "ul-6-031": {
+   "title": "Silence in the Stacks",
+   "text": "Down in the deep galleries, the shelves have ceased their restless sliding and stand locked in a great, peaceful stillness, their leather spines whitening as the last traces of print sink inward like dew dried by the sun. No marginal notes whisper insults from the margins of old folios, and the biting grammars of the North have grown as docile as stuffed owls. Thessaly Marr's empty chair at the Index desk remains dusted with fine gray flakes where the final register finally let go of its history. You slide your bare hands across the unscribed tables, feeling the profound relief of a room where no one will ever hand you a summons, a late fee, or a decree. The Long Closing has come not with the snap of iron bolts, but as a vast, breathable emptiness that swallows the very need for names.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the empty desk behind //"
+   ]
+  },
+  "ul-6-032": {
+   "title": "The Final Shelf",
+   "text": "Through the open doors of the Underlibrary, the breeze from the forgotten caves carries the smell of damp earth and clean linen right up into the heart of Quillon, mingling with the breath of bakers and stray dogs. There are no catalogues left to sort, no books to shelve by size or subject, and no rules to say whether a stray thought belongs in the history of kings or the recipe for gooseberry tart. You set down your brass stamp upon the stone floor and let the ink-pad dry to a hard, useless crust. The world outside stretches out before you, wide and terribly white, waiting for someone to pick up a stick and draw the first clumsy line in the dirt. You do not pick it up. Instead, you turn your back on the stacks, take a deep breath of the unwritten air, and walk out into the unmapped morning.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  },
+  "ul-6-033": {
+   "title": "Coin for the Catalogues",
+   "text": "Heavy ironbound chests, filled to the lid with heavy silver sovereigns and damp bundles of promissory notes, change hands across the scarred walnut of the Returns Desk while the night-porter looks on with a dry whistle. The lending clerk from the Reading Rooms counts the stack twice, his fingers black with grease-money rather than gall-ink, before nodding toward the three heavily guarded wagons waiting in the courtyard. Every title deed in Quillon, every mortgage and ancestral grudge recorded since the founding of the city, has been bundled into coarse sacks and sold to the highest bidder without a single stamp to mark the transaction. Outside, the rival scholars line up in the rain, clutching heavy purses and shouting bids for the right to remember whose grandfather owned the orchard and whose family never paid their tithe.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Count the heavy silver coin //"
+   ]
+  },
+  "ul-6-034": {
+   "title": "The Ledger Sold",
+   "text": "Wealth of this magnitude smells distinctly of old mutton fat and damp cellar-floors, no matter how many crests are stamped into the sealing wax. The buyers are men with ink-stains behind their ears and avarice in their gray eyes, men who intend to auction off the memories of saints and murderers to the highest-bidding guilds in the upper districts. You pocket your share of the plunder - enough to buy a tavern or a fleet of coal barges - while the Shelvers' Fellowship gathers around the stove to divide the small change left over from the great transaction. No one speaks of the Hundredth Door now, nor of the Index that could rewrite the stars; there is simply too much gold on the table to care whether the past was accurate or merely expensive.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk out with the gold //"
+   ]
+  },
+  "ul-6-035": {
+   "title": "Rich and Forgotten",
+   "text": "Quillon belongs to the highest bidder now, its streets partitioned among syndicates who bought the deeds to the paving stones and the right to name the weather. From the window of your new parlor above the market, you watch the ink-sellers hauling cartloads of blank ledgers to the new municipal offices, ready to write whatever version of history the current owners find profitable. Your pockets are heavy, your boots are calfskin, and your name is spelled correctly in every ledger that matters. Yet sometimes, when the wind blows down from the empty caves beneath the floorboards, you catch the faint, dry scent of old paper and realize that you have sold the only thing worth keeping. You close the heavy velvet curtains, reach for a glass of claret, and try very hard not to remember what was written on the page before you turned it.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  }
+ },
+ "missing": []
+}

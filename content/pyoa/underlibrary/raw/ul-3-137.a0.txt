@@ -1,0 +1,72 @@
+@@SECTION ul-3-137
+TITLE: The Toll of the Stack
+TEXT: Heavy iron chains bar the narrow junction where the shelf-branch meets the outer wall, guarded by a hulking toll-troll whose fingers are stained with permanent blue ink and printer's grease. Instead of reaching for a coin or drawing a blade, you unfold a dog-eared pamphlet containing the municipal codex of Quillon. You point out a forgotten statute granting junior shelvers unhindered passage during the third hour of the ink-tide. The creature blinks its massive yellow eyes, muttering curses as it consults the binding, trying to find a loophole to refute your claim. // You stand your ground against the snarling guard, trusting the literal phrasing of the bylaws to carry your fellowship safely past the barrier.
+EXIT 1: Step past the grumbling toll-troll
+@@END
+
+@@SECTION ul-3-138
+TITLE: Challenging the Binder
+TEXT: The toll-troll's thick thumb traces down the parchment margin, looking for any clause that might invalidate your passage, while the iron chains clank against the stone flags. You lean forward with calculated calm, maintaining an expression of utter bureaucratic certainty even as your pulse hammers in your throat. One misread word in the municipal charter will bring heavy iron down upon your shoulders and trap your companions in the stacks forever. You tilt the pamphlet closer to the flickering lamp-light, pinning the creature's gaze to the text just as it opens its mouth to voice a challenge.
+CHECK: Cite the municipal statute with absolute calm
+@@END
+
+@@SECTION ul-3-139
+TITLE: A Costly Interpretation
+TEXT: The toll-troll snorts with derision, slamming a heavy thumb over the exact clause you cited and pointing out an addendum written in faint, stubborn ink that you entirely missed. By the time you untangle the administrative error, you have lost precious hours in the damp gloom and been forced to hand over your spare tin of lamp-oil to satisfy the creature's petty fine. Your fingers ache from the chill, and your pack feels lighter without the oil, but the iron chains finally slide back with a grinding groan. You stumble past the guard, nursing a throbbing headache and a deep resentment for library clerks.
+EXIT 1: Press onward into the dark stacks
+@@END
+
+@@SECTION ul-3-140
+TITLE: The Letter of the Law
+TEXT: The toll-troll lets out a long, wheezing sigh of defeat, drops the heavy iron chains into the dust, and grudgingly motions your fellowship through the gap. You have turned the library's own cumbersome rules against its wardens, securing safe passage without spilling a single drop of ink or blood. As you slip past the massive guard, he thrusts a small, folded scrap of vellum into your palm—a torn leaf bearing a confidential administrative exemption stamp that might save you from similar trouble ahead.
+GRANT: Administrative exemption slip
+EXIT 1: Continue deeper into the lower corridors
+@@END
+
+@@SECTION ul-3-141
+TITLE: The Fossilised Descent
+TEXT: You leave the noisy junction behind and descend a long spiral staircase carved entirely from layers of compressed, fossilised paper and ancient vellum. The walls themselves murmur with the ancient rules of classification, whispering reminders about alphabetical integrity, subject headings, and the proper disposal of corrupted appendices. Each stone step feels solid yet porous under your boots, smelling faintly of dried lavender and decades of library dust. // As you spiral deeper into the subterranean silence, the whispers grow louder, weaving a complex web of cataloguing philosophy that threatens to bog down your thoughts. You keep your eyes fixed on the twisting handrail made of bound leather spines, forcing your legs to maintain a steady rhythm until the murmurings fade into a low, steady hum.
+EXIT 1: Reach the bottom of the paper stair
+@@END
+
+@@SECTION ul-3-142
+TITLE: The Spiral Archives
+TEXT: Narrow steps wind endlessly downward between sheer walls of compressed, indestructible pulp and yellowed vellum, opening onto a vast vertical shaft where forgotten echoes rise from the depths. To your left, a damp alcove flickers with the faint glow of supplication supplies left by desperate scholars. Straight ahead, a stern maintenance ladder beckons through a narrow ventilation grate in the stone. A shadowy courier darts down a slick side-path, while above you, the massive stone doors of a grand tribunal chamber radiate an aura of absolute authority.
+EXIT 1: Descend further down the winding stairs
+EXIT 2: Search the dimly lit supplication alcove
+EXIT 3: Trick the guardian with false credentials
+EXIT 4: Discover the hidden maintenance ladder
+EXIT 5: Chase after the fleeing courier
+EXIT 6: Enter the grand tribunal chamber
+@@END
+
+@@SECTION ul-3-143
+TITLE: Whispers on the Drop
+TEXT: The air grows thin and cold as you step out onto the lower vault landing, where the drop beneath the open stairwell plunges into absolute darkness. Every stone pillar seems to hum with a strange, magnetic vibration that makes your teeth ache and your vision blur at the edges. You pause to catch your breath, pressing your back against a cold column of stacked encyclopaedias. The vertigo hits in waves, threatening to unbalance your stance and send you tumbling backward into the abyss.
+EXIT 1: Brace against the cold stone pillar
+@@END
+
+@@SECTION ul-3-144
+TITLE: The Vault Landing
+TEXT: You grip the edge of a massive, leather-bound volume serving as a makeshift cornerstone, steadying your nerves against the dizzying drop. The silence here is absolute, broken only by the distant dripping of ink down some unseen drainage pipe far below. Your companions crowd onto the landing behind you, their faces pale in the dim yellow glow of your remaining lamp. You need to gather your focus before attempting the final crossing into the heart of the archives.
+EXIT 1: Gather your focus for the trial ahead
+@@END
+
+@@SECTION ul-3-145
+TITLE: Facing the Abyss
+TEXT: You close your eyes against the terrifying perspective of the endless shaft, drawing a deep lungful of stagnant, paper-scented air. Inside your mind, the whispering walls try to pull your thoughts apart, feeding on your doubts and magnifying every past mistake you ever made in the stacks. You tighten your grip on your satchel strap, locking your jaw as you force every ounce of your mental fortitude into maintaining your balance. The stone beneath your boots seems to tilt, waiting to see if your resolve will shatter before you take another step.
+CHECK: Steel your will against the vertigo
+@@END
+
+@@SECTION ul-3-146
+TITLE: A Shattered Focus
+TEXT: Your concentration snaps under the immense psychic pressure, sending a blinding flash of white light through your mind and leaving your ears ringing with phantom library bells. You stumble sideways, catching your hip hard against the sharp corner of a protruding card-catalog box and dropping your spare inkwell into the dark void. The physical pain grounds you, pulling you back from the brink of total panic, but you are left bruised and shaken. Your companions catch your arm and haul you upright, whispering hurried words of encouragement as you collect your scattered wits.
+EXIT 1: Drag yourself onto firm stone
+@@END
+
+@@SECTION ul-3-147
+TITLE: Unshakable Resolve
+TEXT: You lock your thoughts into an unyielding fortress, pushing back against the psychological weight of the massive stone stacks until the whispering walls fall silent. Your steps remain steady and precise, however narrowly you skirt the edge of the yawning vertical drop. As you reach the safety of the lower vault landing, a strange sense of mental clarity washes over you, leaving your mind sharp and disciplined. Tucked into the stone mortar near your boot, you spot a discarded copper token inscribed with the seal of the senior cataloguers.
+GRANT: Cataloguer's copper token
+EXIT 1: Proceed onward to the central archive hub
+@@END

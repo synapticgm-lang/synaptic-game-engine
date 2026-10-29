@@ -1,0 +1,108 @@
+{
+ "batch": "ul-3-148",
+ "sections": {
+  "ul-3-148": {
+   "title": "The Hidden Alcove",
+   "text": "Silence settles over the corridor like heavy wool once the psychic pressure recedes, leaving your temples throbbing with a dull, persistent ache. Every breath tastes of old dust and melted tallow, thick in the dry air of the lower stacks. Behind a warped panel of oak shelving, a narrow gap reveals a recessed stone niche untouched by decades of cataloguing sweeps. Inside, abandoned provisions gleam faintly in the dim luminescence of your oil lamp.\n\nYou push aside the swollen timber, eager to secure whatever useful rations or tools might lie hidden within the gloom before the wandering shelves shift position once more.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Search the dusty stone recess"
+   ]
+  },
+  "ul-3-149": {
+   "title": "Bracing Against Exhaustion",
+   "text": "Fatigue tugs heavily at your eyelids as you reach into the dark alcove, knowing that a single lapse in mental discipline could trigger a relapse of the crushing pressure. The very stones around the niche seem to pulse with a low, hypnotic hum, whispering doubts directly into your cortex. You grit your teeth and force your wandering attention back to the task, steeling your thoughts against the encroaching haze of dizziness.",
+   "check": "Maintain focus against mental exhaustion",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-150": {
+   "title": "The Cost of Fatigue",
+   "text": "Mental exhaustion overwhelms your defences just as your fingers brush against a cold metal flask, sending a sharp wave of vertigo crashing through your skull. You stumble backward against the rough shelving, dropping your lamp and spilling precious oil across the stone floor in a sputtering hiss. The darkness closes in for a breathless moment before your vision clears, leaving a dull throbbing behind your eyes and a scorched burn across your palm where hot metal grazed your skin.\n\nShaken and bruised by the sudden backlash, you salvage what little remains of the scattered provisions and press onward into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue onward through the gloom"
+   ]
+  },
+  "ul-3-151": {
+   "title": "Found in the Niche",
+   "text": "Fingers wrap securely around a heavy pewter flask of restorative spirits wedged deep within the recess, retrieved cleanly from the shadows despite the lingering tremors in your hands. The metal is cold and dented, bearing the scratched initials of a long-forgotten shelver who clearly endured similar trials in these depths. It provides a comforting weight against your belt, promising warmth and clarity when the damp air of the stacks begins to freeze your resolve.\n\nYou secure the strap and turn your steps away from the alcove, following the narrow passage downward.",
+   "check": "",
+   "grant": "heavy pewter spirit flask",
+   "exits": [
+    "Descend into the spiral archives"
+   ]
+  },
+  "ul-3-152": {
+   "title": "The Guarded Stair",
+   "text": "Heavy iron lanterns cast flickering amber light over the arched threshold where a stern cataloguing guardian stands sentry with a heavy ledger. Stiff posture and a sharp, suspicious glare mark the official as one of the strict rule-keepers who patrol the upper thresholds. You adjust the collar of your ink-stained tunic, pasting an air of unearned bureaucratic authority across your tired features.\n\nStepping forward with measured strides, you prepare to address the vigilant gatekeeper before your nerves betray the clumsy fiction.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the stern stair-guardian"
+   ]
+  },
+  "ul-3-153": {
+   "title": "Impersonating the Inspector",
+   "text": "Words hang brittle in the freezing air between you and the vigilant sentry as you reel off a string of fabricated inspection codes with feigned confidence. The guardian narrows watery eyes, thumbing slowly through the heavy leather-bound register while weighing your scruffy appearance against the grand title you claim. Every second stretches agonizingly as the official's gaze lingers on your ink-stained cuffs, searching for any sign of deception.",
+   "check": "Bluff the suspicious stair-guardian",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-154": {
+   "title": "Caught in the Lie",
+   "text": "A dry, humorless cough breaks the silence as the guardian slams the heavy ledger shut with a resounding thud that echoes down the corridor. Your elaborate fiction unravels instantly under the sharp scrutiny, landing you a stinging reprimand and a hefty administrative fine recorded against your fellowship badge. The official confiscates a bundle of your spare parchment as a penalty for impersonation before finally waving you past the checkpoint with a disgusted scowl.\n\nRubbing your sore arm where the guard's iron grip left a lingering bruise, you shuffle onward toward the grand tribunal.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed toward the grand tribunal"
+   ]
+  },
+  "ul-3-155": {
+   "title": "The Bronze Token",
+   "text": "Approval flickers briefly across the guardian's lined face as your impressive delivery of regulatory jargon hits its mark, convincing the weary official without a single raised eyebrow. A heavy bronze token, stamped with the official seal of the central registry, slides across the scarred wooden counter into your outstretched palm. It feels cool and reassuringly solid, an undeniable passport past the restricted checkpoints that bar ordinary shelvers from the deeper foundations.\n\nYou pocket the metal disc with a polite nod and continue your steady descent toward the heart of the library.",
+   "check": "",
+   "grant": "stamped bronze descent token",
+   "exits": [
+    "Enter the grand tribunal chamber"
+   ]
+  },
+  "ul-3-156": {
+   "title": "The Silent Shaft",
+   "text": "Absolute silence swallows the corridor ahead, a profound lack of ambient sound that feels heavier than any physical weight hanging from your shoulders. The ancient stone walls curve upward into darkness, devoid of even the faintest rustle of turning pages or whispering margins. You take a slow, deliberate breath, steadying your racing pulse against the creeping terror of isolation that threatens to paralyze your limbs.\n\nHidden behind a pillar of compressed vellum blocks, the rusted rung of an old maintenance ladder beckons upward into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Locate the hidden maintenance ladder"
+   ]
+  },
+  "ul-3-157": {
+   "title": "Fighting the Panic",
+   "text": "Cold sweat beads along your hairline as the oppressive quiet presses inward against your ears like a physical barrier of solid lead. You reach out toward the iron rungs of the ladder, fighting a sudden surge of blind panic that urges you to turn and flee back toward the crowded desks. Every nerve endings tingles with the terrifying sensation that the stone walls are slowly closing in around you.",
+   "check": "Resist panic in the silent stone",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-158": {
+   "title": "Yielding to Terror",
+   "text": "Panic breaks through your mental barricades like a sudden hammer-blow, sending you stumbling blindly backward into a stack of loose cataloguing slips. The tumbling papers cascade around you in a blinding white flurry, burying your boots and scattering your lamp across the flagstones. You spend precious minutes clawing your way out of the paper drift, gasping for air and nursing a deep, throbbing scrape along your shin where a sharp wooden corner bit into flesh.\n\nShaking violently with residual dread, you pick yourself up from the floor and locate the ladder once more.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb the ladder despite bruises"
+   ]
+  },
+  "ul-3-159": {
+   "title": "Reaching the Rungs",
+   "text": "Steel fingers close firmly around the cold iron rungs, anchoring your weight against the vertical drop with unshakeable physical control despite the surrounding emptiness. The terrifying silence begins to recede, replaced by the familiar rhythmic thud of your own boots as you hoist yourself up into the vertical shaft. Tucked behind the topmost mounting bracket, a length of sturdy silken cord left behind by a forgotten repair crew offers a welcome lifeline for the climb ahead.\n\nYou coil the cord securely over your shoulder and begin your steady ascent into the upper tiers.",
+   "check": "",
+   "grant": "sturdy braided silken cord",
+   "exits": [
+    "Ascend into the spiral archives"
+   ]
+  }
+ },
+ "missing": []
+}

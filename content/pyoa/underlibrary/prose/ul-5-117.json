@@ -1,0 +1,98 @@
+{
+ "batch": "ul-5-117",
+ "sections": {
+  "ul-5-117": {
+   "title": "Facing the Nostalgia Gale",
+   "text": "Memories of old paper and vanished friends tear through the corridor like a sudden autumn squall, clawing at your concentration and threatening to sweep your footing away into the drift. You lock your knees against the pressure, steadying your breath until the collective sigh of a thousand forgotten readers passes harmlessly over your shoulders. Reaching down into the depression of the stone floor where a cool vein bubbles through the masonry, you press a small glass phial into the fissure. The crystal-clear spring water fills it to the brim, humming faintly with the pure, untainted chill of the deep source.\n\nWith the phial tucked safely into your pouch, you leave the gust behind and push onward through the stacks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the crystal phial"
+   ]
+  },
+  "ul-5-118": {
+   "title": "Dropping the Stone Arch",
+   "text": "Thick plumes of lamp-oil smoke billow down the vaulted corridor, blurring the carved inscriptions along the cornices and stinging your eyes. Through the haze, you trace the load-bearing lines of the ancient stone archway and spot a telltale fracture in the masonry where centuries of shifting weight have left the structure vulnerable. Jamming the shaft of a heavy iron bookmark into the fissure, you lean your full weight against the makeshift lever with a silent prayer to the rule-makers. The great keystone groans, slips from its mortar bed, and crashes downward, bringing the entire archway down in a cloud of dust to sever the path behind you.\n\nThe smoke clears slightly, leaving a clear route forward over the rubble.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee across the rubble"
+   ]
+  },
+  "ul-5-119": {
+   "title": "Bargaining in the Smoke",
+   "text": "Trapped behind a lattice of fallen shelving, a fellow shelver hurls sharp remarks at the shifting walls while dodging falling volumes of obsolete municipal code. You fire back a dry counter-insult about their filing technique, establishing an instant, pragmatic rapport amid the chaos. Working in frantic tandem, you brace the iron uprights while they slip through a narrow service gap, unlocking a concealed maintenance hatch from the inside. They tumble out into your corridor, dusting off their ink-stained sleeves and muttering a grudging thanks, before offering to guide you through the maze using the hidden utility chutes.\n\nYou follow your new companion toward the deeper vaults.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accompany the clever librarian"
+   ]
+  },
+  "ul-5-120": {
+   "title": "Staring Down the Clerk",
+   "text": "A translucent senior clerk materializes before the heavy bronze barrier, its ghostly features rigid with bureaucratic severity as it demands your authorization in a voice like dry parchment. You refuse to flinch under its piercing gaze, standing your ground with quiet, stubborn defiance until the phantom falters in its recitation of outdated fines. Snatching a blank slip from your pocket, you press it against the glowing endorsement stamp left unattended on the clerk's lectern. The hot wax sets instantly, bearing the personal seal of the missing Archivist in deep, unmistakable crimson.\n\nThe ghost fades with a frustrated hiss, leaving the cleared path open.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the stamped waiver"
+   ]
+  },
+  "ul-5-121": {
+   "title": "The Final Descent",
+   "text": "The massive bronze doors of the Hundredth Door grind against the stone floor, their slow, inexorable descent echoing like a falling guillotine through the hollow vaults. Time narrows to a single heartbeat as the great binding mechanism of the Index comes within arm's reach, vibrating with the collective weight of every word ever written or erased in Quillon. The long closing is upon you, and the air grows heavy with the scent of hot lamp-oil and ancient dust. Every faction waits in the shadows for the decision that will shape the coming generation, leaving the ultimate fate of memory entirely in your hands.\n\nChoose how the story ends.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Remember everything",
+    "The Great Forgetting",
+    "The Cataloguers' Century",
+    "The Burning",
+    "The Marginalia Speak",
+    "The Last Reader's Chair",
+    "Edit One Line",
+    "Thessaly's Way",
+    "The Free Shelves",
+    "The Blank Page",
+    "Sell the Index",
+    "Misfiled"
+   ]
+  },
+  "ul-6-001": {
+   "title": "The Weight of All Words",
+   "text": "Every sentence ever whispered in the dark corners of the Underlibrary floods back into your consciousness, sharp and undeniable as wet ink. The Index expands beneath your fingertips, refusing to let a single misplaced comma or forgotten grievance slip away into the dark. Quillon awakens to a dawn where no mistake is ever buried and no past is ever truly lost, burdened by the glorious, unbearable clarity of total recall. The shelves lock tight for a generation, sealing you inside with the infinite echo of a universe that remembers everything.\n\nYou stand amidst the endless stacks as the final gears lock into place.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the endless record"
+   ]
+  },
+  "ul-6-002": {
+   "title": "An Archive Without Sleep",
+   "text": "Generations of scholars will now wander these halls without the mercy of oblivion, haunted by the exact words of every insult, debt, and marginal note ever penned. The air grows cold and thick with the scent of old paper as the last lamp flickers and dies in the sealed vault. You trace your fingers along the spine of a register that records your own hesitant breathing, knowing it will never be erased. There is no peace in perfection, only the quiet agony of an archive that never closes its eyes.\n\nThe darkness settles deep into the stone around you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Listen to the eternal hum"
+   ]
+  },
+  "ul-6-003": {
+   "title": "The Last Page Turns",
+   "text": "Outside these walls, the city lives beneath a crushing avalanche of history, every citizen crushed by the weight of their own unforgotten ancestry. Here in the deep annexe, the dust settles in thick, undisturbed layers over the floorboards while the binding magic finishes its long work. You take a seat in the leather chair, pulling a final blank sheet toward you in the gloom. There is nothing left to write, for every story has already been told and preserved forever in the amber of absolute truth.\n\nThe final barrier seals shut against the outside world.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Rest in the silence"
+   ]
+  },
+  "ul-6-004": {
+   "title": "Sealed for a Generation",
+   "text": "The heavy iron latch falls with a definitive thud, echoing through the empty galleries as the Long Closing claims the Underlibrary for a generation. No more books will be returned, no more fines collected, and no more wanderers will find their way through the shifting stacks. You close your eyes against the dim glow of the Index, resting your hand upon the cold metal of the binding. Let the world outside struggle with its unforgotten past; here in the quiet dark, the work is finally finished.\n\nThe book closes on your story.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Finish the final chapter"
+   ]
+  }
+ },
+ "missing": []
+}
