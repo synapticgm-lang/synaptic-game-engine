@@ -307,6 +307,8 @@ export function settleParleyAfterProse(
 /**
  * The foe leaves the scene with the fight: beaten (lastKill, same commit, before GM) or left behind by an
  * escape. A talked-down or winning foe still stands here.
+ * T10AP — also mark the foe's memory shouldExit so presentNpcRecords / peopleHere / affordance
+ * chips agree (Talk/Ask/Read/Analyze retract; Search/Loot the body stay on lastKill).
  */
 function settleFoePresence(
   state: GameState,
@@ -325,12 +327,29 @@ function settleFoePresence(
     updatedTurn: state.turn,
   };
   const needle = name.toLowerCase();
-  const present = (base.present ?? []).filter((p) => {
-    const t = String(p).toLowerCase();
-    return t !== needle && !t.includes(needle) && !needle.includes(t);
+  const sameFoe = (raw: string) => {
+    const t = String(raw).toLowerCase().replace(/^(?:the|a|an)\s+/, '').trim();
+    const n = needle.replace(/^(?:the|a|an)\s+/, '').trim();
+    return !!t && !!n && (t === n || t.includes(n) || n.includes(t));
+  };
+  const present = (base.present ?? []).filter((p) => !sameFoe(String(p)));
+  const exitReason: 'defeated' | 'escaped' = outcome === 'victory' ? 'defeated' : 'escaped';
+  const memories = (state.npcMemories ?? []).map((m) => {
+    const hit =
+      sameFoe(m.npcName)
+      || (m.aliases ?? []).some((a) => sameFoe(a));
+    if (!hit || m.shouldExit) return m;
+    return {
+      ...m,
+      shouldExit: true as const,
+      exitReason,
+      present: false,
+      lastSeenTurn: state.turn,
+    };
   });
   return {
     ...state,
+    npcMemories: memories,
     sceneFacts: {
       ...base,
       present,
