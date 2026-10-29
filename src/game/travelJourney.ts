@@ -1880,11 +1880,11 @@ function withBeat(commit: TravelCommit): TravelCommit {
 }
 
 /**
- * T10AQ-fix / T10RC6 — on an UNDERWAY stretch, drop stale place CAST from sceneFacts.present and
- * present:true flags. Companions stay. An in-range speakable meeting is seated under its
- * engine-chosen name (one seat list for reaction slot / peopleHere / gate).
- * Read path (presentNpcNames) trusts sceneFacts again so a present ally can Medicine-stabilize
- * (SRD 5.2.1 Stabilizing a Creature: DC 10 Wisdom (Medicine)).
+ * T10AQ-fix / T10RC6 / T10RC6fix2 — on an UNDERWAY stretch, drop stale place CAST from
+ * sceneFacts.present and present:true flags. Companions stay. An in-range speakable meeting is
+ * seated under its engine-chosen name via presentAuthority.seat (stamps record place to HERE so
+ * presentNpcNames / peopleHere / ensureSpokenAnswer share one seat list). SRD 5.2.1 Stabilizing
+ * a Creature (DC 10 Wisdom (Medicine)) still needs a present ally — seat writes that presence.
  */
 function withQuietRoadCast(commit: TravelCommit): TravelCommit {
   if (!commit.handled) return commit;

@@ -160,8 +160,20 @@ export function seat(state: GameState, npcRefOrNames: string | string[]): GameSt
     crowdCount,
     updatedTurn: state.turn ?? base.updatedTurn,
   });
-  const mems = syncMemoriesToPresentList(next, present);
-  return mems === next.npcMemories ? next : { ...next, npcMemories: mems };
+  // T10RC6fix2 — seat writes the place fact readers already require for "here"
+  // (npcPlacedElsewhere / presentNpcNames). One owner: present[] alone never beats an
+  // elsewhere stamp; the writer stamps location to currentLocation when seating.
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  const hereKey = here.toLowerCase();
+  const flagged = syncMemoriesToPresentList(next, present) ?? next.npcMemories ?? [];
+  let changed = flagged !== next.npcMemories;
+  const mems = flagged.map((m) => {
+    if (!present.some((p) => memoryMatchesRef(m, p))) return m;
+    if (!here || (m.location ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === hereKey) return m;
+    changed = true;
+    return { ...m, location: here };
+  });
+  return changed ? { ...next, npcMemories: mems } : next;
 }
 
 /**

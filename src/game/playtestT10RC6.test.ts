@@ -104,6 +104,9 @@ describe('T10RC6 in-range road meeting seats engine name', () => {
     expect(roadMeetingPeople(s)).toBe(name);
     expect(peopleHere(s)).toContain(name);
     expect(peopleHere(s).some((n) => /Orel/i.test(n))).toBe(false);
+    // T10RC6fix2 — seat stamps record place to HERE (readers do not trust bare present[]).
+    expect(s.sceneFacts?.present).toContain(name);
+    expect(s.npcMemories?.find((m) => m.npcName === name)?.location).toBe(s.currentLocation);
     const cue = speechAddressCue(null, peopleHere(s));
     expect(cue).toMatch(new RegExp(`NPC reaction slot open for ${name}`));
     expect(cue).not.toMatch(/Orel/i);
