@@ -543,16 +543,39 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     r.done ? `done: ${r.tried}` : `not done: ${r.tried} (${r.reason})`
   );
   const facts = stepResults.map((r) => r.engineResult);
+  // T10AO — compound free text (sling + grip) used to open one NPC reaction slot per clause;
+  // convert then painted "said nothing" twice. One reaction owner per beat.
+  const engineResult = dedupeNpcReactionSlots(facts.join(' '));
   return {
     receipts,
     facts,
-    engineResult: facts.join(' '),
+    engineResult,
     intentRead,
     stepResults,
     lastAddressee,
     economyUsed: economy,
     state: live,
   };
+}
+
+/** Keep the first Speech-event / reaction-slot pair per addressee; drop later clones. */
+function dedupeNpcReactionSlots(joined: string): string {
+  const raw = (joined ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return raw;
+  const seen = new Set<string>();
+  return raw
+    .replace(
+      /Speech event:\s*you address\s+([^.]+)\.\s*NPC reaction slot open for\s+\1\./gi,
+      (full, who: string) => {
+        const key = (who ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+        if (!key) return full;
+        if (seen.has(key)) return '';
+        seen.add(key);
+        return full;
+      },
+    )
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Legacy single-intent peek (chips / other callers). */
