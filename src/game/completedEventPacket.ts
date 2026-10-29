@@ -677,7 +677,10 @@ export function compileRefEnum(
   if (!opts?.hallTalk) {
     const road = roadMeetingRef(state);
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
-    for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
+    // T10RC5 — speaker/person refs = peopleHere only (same seat authority as talk/absent-speaker).
+    // presentNpcRecords location-match handed unseated Cathedral/quest names as present: speakers.
+    const seated = peopleHere(state);
+    for (const p of seated) {
       if (isNeverCastTitle(p, state)) continue;
       if (isCrowdFillerToken(p)) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
@@ -730,10 +733,14 @@ export function compileRefEnum(
     else if (isSystemWindowLabel(prop) && state.engineMode === 'litrpg') addWindow(prop);
     else add(`prop:${slugRefId(prop)}`, prop, 'prop');
   }
+  const seatedExtra = new Set(peopleHere(state).map((n) => n.replace(/\s+/g, ' ').trim().toLowerCase()));
   for (const extra of extras) {
     if (!extra || isNeverCastTitle(extra, state)) continue;
     if (isSystemWindowLabel(extra)) addWindow(extra);
-    else add(`extra:${slugRefId(extra)}`, extra, 'person');
+    // T10RC5 — unseated extras are absence facts, not speaker rows (Orel on empty Close).
+    else if (seatedExtra.has(extra.replace(/\s+/g, ' ').trim().toLowerCase())) {
+      add(`extra:${slugRefId(extra)}`, extra, 'person');
+    }
   }
   return out;
 }
@@ -2745,4 +2752,4 @@ export function prepareRetrospectiveWriterInput(
     packet,
     writerFacing: formatWriterFacingEvent(packet),
   };
-}
+}

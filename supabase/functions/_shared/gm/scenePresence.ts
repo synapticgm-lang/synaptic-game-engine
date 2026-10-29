@@ -4,8 +4,9 @@
  * opening-cast presence) bind to one module without a circular import.
  */
 import type { GameState } from './types.ts';
-import { presentNpcNames } from './npcRelationships.ts';
 import { isChromePersonToken } from './chromeAuthority.ts';
+import { isNeverCastTitle } from './neverCast.ts';
+import { presentNpcRecords } from './npcRecords.ts';
 import * as openingEstablishment from './openingEstablishment.ts';
 import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney.ts';
 import { isOutOfTalkingRange, TALKING_RANGE_FT } from './hereSpot.ts';
@@ -71,7 +72,8 @@ export function peopleHere(state: GameState): string[] {
   const out = new Map<string, string>();
   const add = (n?: string | null) => {
     const name = norm(n);
-    if (!name || isChromePersonToken(name)) return;
+    // T10RC5 — quest/place concept titles (System bounty) are never seated speakers.
+    if (!name || isChromePersonToken(name) || isNeverCastTitle(name, state)) return;
     const key = personKey(name);
     if (!key) return;
     const prev = out.get(key);
@@ -87,9 +89,17 @@ export function peopleHere(state: GameState): string[] {
     (state.companions ?? []).forEach((c) => add(c.name));
     add(state.activeEncounter?.name);
     add(roadMeetingPeople(state));
+    if (isJourneyUnderway(state)) {
+      for (const m of presentNpcRecords(state)) add(m.npcName);
+    }
     return [...out.values()];
   }
-  presentNpcNames(state).forEach(add);
+  // T10RC5 — SM1 seats only (sceneFacts.present + present:true). Do not location-match
+  // presentNpcRecords / presentNpcNames (that re-seated Orel at Cathedral Close T8/T34).
+  for (const n of facts?.present ?? []) add(n);
+  for (const m of state.npcMemories ?? []) {
+    if (m.present === true && !m.shouldExit) add(m.npcName);
+  }
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
   // Namespace read so vitest openingCastNames mocks stay live (no stale named binding).
@@ -103,6 +113,11 @@ export function peopleHere(state: GameState): string[] {
     }
   }
   add(roadMeetingPeople(state));
+  // T10RC5 — on a live road meeting, presentNpcRecords is encounter-party only (skips
+  // location stamps). Off-road, location-matched records stay out of peopleHere.
+  if (isJourneyUnderway(state)) {
+    for (const m of presentNpcRecords(state)) add(m.npcName);
+  }
   return [...out.values()];
 }
 
