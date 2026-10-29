@@ -245,6 +245,7 @@ import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed, stepOriginCreation } from './storyRpgProgress';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { isDying } from './tabletop/roundFight';
+import { roundCombatChips } from './tabletop/combatChips';
 import { resolveEngineFight } from './engineFight';
 import { runTurnSpine } from './turnSpine';
 import { resolveShopChip } from './shopChips';
@@ -1366,21 +1367,104 @@ export async function headlessFateTurn(
     });
     // When a stall development is live, put a concrete next-step chip first so first-pad
     // can act before LOOP STOP (T10RC3: injection alone is not progress).
-    // Prefer non-bounce Travel; else Face/Answer (Face now resolves parked threats).
+    // T10RC5 — Face engages parked foes; mid-round Attack owns the pad; dying → death saves.
     {
+      const { engineThreatHere, facesThreatChipAllowed } = await import('./director');
+      const dying = isDying(arcState);
+      const faceOk = facesThreatChipAllowed(arcState);
+      const threat = !dying && !!engineThreatHere(arcState);
       const recent = (arcState.circling?.recentPlaces ?? []).map((p) =>
         p.replace(/\s+/g, ' ').trim().toLowerCase(),
       );
-      const travelChip = (arcState.directorPlan?.chips ?? []).find((c) => travelDestFromChip(c.label));
+      const travelChip = threat
+        ? undefined
+        : (arcState.directorPlan?.chips ?? []).find((c) => travelDestFromChip(c.label));
       const dest = travelChip ? travelDestFromChip(travelChip.label) : null;
       const destKey = (dest ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
       const bounce = !!destKey && recent.some((p) => p === destKey || p.includes(destKey) || destKey.includes(p));
       const actChip = (arcState.directorPlan?.chips ?? []).find((c) =>
         /^(?:Accept|Answer|Face|Follow up)/i.test(c.label),
       );
-      const planChip = (!bounce && travelChip) || actChip || travelChip;
+      const planChip = dying || (threat && !faceOk)
+        ? undefined
+        : faceOk
+          ? (actChip || (arcState.directorPlan?.chips ?? []).find((c) => /^Face the threat$/i.test(c.label)))
+          : ((!bounce && travelChip) || actChip || travelChip);
       if (planChip && (arcState.sceneFacts?.stallWorldFact || (arcState.directorPlan?.need ?? 'none') !== 'none')) {
         nextChoices = [planChip.label, ...nextChoices.filter((c) => c !== planChip.label)];
+      }
+      if (dying || !faceOk) {
+        nextChoices = nextChoices.filter((c) => !/^Face the threat$/i.test(c));
+      } else if (faceOk) {
+        const face = nextChoices.find((c) => /^Face the threat$/i.test(c)) ?? 'Face the threat';
+        nextChoices = [face, ...nextChoices.filter((c) => !/^Face the threat$/i.test(c) && !travelDestFromChip(c))];
+      }
+      // Mid-round / dying: legal fight chips must lead (Face strip must not leave an empty pad).
+      // Pads are for the NEXT turn — refresh pcEconomy so Action chips are not empty after this round spent them.
+      if (dying || (arcState.activeEncounter && arcState.roundCombat)) {
+        const rc = arcState.roundCombat;
+        const padState = rc
+          ? {
+              ...arcState,
+              roundCombat: {
+                ...rc,
+                pcEconomy: {
+                  actionAvailable: true,
+                  bonusAvailable: true,
+                  movementFt: rc.pcEconomy?.movementFt ?? 30,
+                  reactionAvailable: true,
+                },
+              },
+            }
+          : arcState;
+        let round = roundCombatChips(padState) ?? [];
+        if (dying && !round.some((c) => /stabilis/i.test(c))) {
+          const who =
+            peopleHere(arcState)[0]
+            || (arcState.npcMemories ?? []).find((m) => (m.npcName ?? '').trim())?.npcName
+            || null;
+          if (who) round = [`Ask ${who} to stabilise you`, ...round];
+        }
+        if (round.length) {
+          const rest = nextChoices.filter((c) => !round.includes(c) && !/^Face the threat$/i.test(c));
+          // T10RC5 — ally stabilise before Fight for breath (first-pad survival on tabletop).
+          const stab = dying ? round.find((c) => /stabilis/i.test(c)) : undefined;
+          const ordered = stab ? [stab, ...round.filter((c) => c !== stab)] : round;
+          nextChoices = [...ordered, ...rest];
+        }
+      }
+      // T10RC5 — dnd first-pad: when stalling without progress, prefer non-bounce Travel
+      // (Inn↔Church yo-yo is not movedOn progress → LOOP STOP).
+      const stuck = Math.max(0, (arcState.turn ?? 0) - (arcState.circling?.lastProgressTurn ?? 0));
+      if (arcState.engineMode === 'dnd' && stuck >= 2 && !isDying(arcState) && !arcState.activeEncounter) {
+        let recent = (arcState.circling?.recentPlaces ?? []).map((p) =>
+          p.replace(/\s+/g, ' ').trim().toLowerCase(),
+        );
+        const isFresh = (c: string) => {
+          const d = travelDestFromChip(c);
+          if (!d) return false;
+          const key = d.replace(/\s+/g, ' ').trim().toLowerCase();
+          return !recent.some((p) => p === key || p.includes(key) || key.includes(p));
+        };
+        let travel = nextChoices.find(isFresh);
+        // All hubs already recent — shrink the bounce window so the next Travel can count as movedOn.
+        if (!travel && (arcState.circling?.recentPlaces?.length ?? 0) > 1) {
+          const here = (arcState.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+          arcState = {
+            ...arcState,
+            circling: {
+              ...arcState.circling!,
+              recentPlaces: here ? [here] : (arcState.circling!.recentPlaces ?? []).slice(-1),
+            },
+          };
+          recent = (arcState.circling?.recentPlaces ?? []).map((p) =>
+            p.replace(/\s+/g, ' ').trim().toLowerCase(),
+          );
+          travel = nextChoices.find(isFresh) ?? nextChoices.find((c) => travelDestFromChip(c));
+        } else if (!travel) {
+          travel = nextChoices.find((c) => travelDestFromChip(c));
+        }
+        if (travel) nextChoices = [travel, ...nextChoices.filter((c) => c !== travel)];
       }
     }
     const midBase: GameState = { ...arcState, turn: nextTurn, log: [...prevLog, playerEntry, gmBase] };
@@ -3062,4 +3146,4 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
   if (out.engineMode && !bibleGiven) out.bibleId = DEFAULT_TEST_BIBLE_BY_MODE[out.engineMode] ?? out.bibleId;
   return out;
 }
-export { disableAutoplayTestLab, enableAutoplayTestLab };
+export { disableAutoplayTestLab, enableAutoplayTestLab };

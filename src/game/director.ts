@@ -35,6 +35,8 @@ import { exitNpc, seat } from './presentAuthority';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
+import { isTravelPad, travelPadBlocked } from './padUniverse';
+import { isDying } from './tabletop/roundFight';
 import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
 import { fuzzyTypedName } from './typedNameMatch';
 
@@ -192,12 +194,23 @@ function appendDirectorFact(state: GameState, eventId: string, text: string): Ga
  * T10RC3 — live or parked engine foe the spine can resolve (Face the threat).
  * Director stall must open one of these before offering that chip.
  */
-function engineThreatHere(state: GameState): ActiveEncounter | null {
+/** Live / pending / place-parked foe the spine can resolve (Face the threat). */
+export function engineThreatHere(state: GameState): ActiveEncounter | null {
   return (
     state.activeEncounter
     ?? state.sceneFacts?.pendingEncounter
     ?? parkedThreatHere(state)?.encounter
     ?? null
+  );
+}
+
+/** T10RC5fix — Face engages a parked/pending foe only; a live activeEncounter is Attack/Flee/Parley. */
+export function facesThreatChipAllowed(state: GameState): boolean {
+  if (isDying(state)) return false;
+  if (state.activeEncounter) return false;
+  return !!(
+    state.sceneFacts?.pendingEncounter
+    ?? parkedThreatHere(state)?.encounter
   );
 }
 
@@ -281,17 +294,24 @@ function threadActorName(state: GameState, thread: OpenThread): string | null {
 function threadGoalText(state: GameState, thread: OpenThread): string {
   const q = questFromThread(state, thread);
   if (q) {
-    const obj = (q.objectives ?? []).find((o) => !o.completed && !o.optional);
-    const desc = (obj?.description ?? q.description ?? q.name ?? '').replace(/\s+/g, ' ').trim();
-    if (desc) return desc;
+    // T10RC5 — Director facts use the quest title, never an objective chip verb ("Pick an approach").
+    const title = (q.name ?? q.description ?? '').replace(/\s+/g, ' ').trim();
+    if (title) return title;
   }
   if (thread.kind === 'npc-goal') {
     const name = threadActorName(state, thread);
     const mem = (state.npcMemories ?? []).find((m) => name && mentionsName(m.npcName, name));
-    const want = mem ? npcChipWant(mem) : '';
-    if (want) return want;
+    // Structured agenda facts only — npcChipWant is chip phrasing, not a Director subject.
+    const target = (mem?.goal?.target ?? '').replace(/\s+/g, ' ').trim();
+    if (target) return target;
+    const need = (mem?.need ?? '').replace(/\s+/g, ' ').trim();
+    if (need) return need;
   }
-  return (thread.label ?? 'the open thread').replace(/\s+/g, ' ').trim();
+  const label = (thread.label ?? '').replace(/\s+/g, ' ').trim();
+  // Drop "Name: topic" chip shape — keep topic body only when it is not the whole label.
+  const m = label.match(/^[^:—\-]{1,40}\s*[:—\-]\s*(.+)$/);
+  if (m?.[1]) return m[1].trim();
+  return label || 'the open thread';
 }
 
 function threadPlaceLabel(state: GameState, thread: OpenThread): string | null {
@@ -345,9 +365,12 @@ function pickStallKind(
   thread: OpenThread | null,
 ): DirectorDevelopment['kind'] {
   const tags = genreTags(state);
+  // T10RC5 — tabletop stall commits lead/npc (quest/place/social progress), never a fresh foe.
+  // Stall-threat + first-pad Face was killing L1 within STALL_N and ending the run (not LOOP STOP,
+  // but dry-run 60 could not finish). Drought combat still parks foes through the combat owner.
   const preference: DirectorDevelopment['kind'][] =
     tags.includes('tabletop') || tags.includes('fantasy') || state.engineMode === 'dnd'
-      ? ['npc-acting', 'threat', 'lead']
+      ? ['npc-acting', 'lead']
       : tags.includes('litrpg') || state.engineMode === 'litrpg'
         ? ['lead', 'threat', 'npc-acting']
         : ['lead', 'npc-acting', 'threat'];
@@ -536,8 +559,35 @@ function commitStallDevelopment(
   }
 
   // threat — park a real engine foe + seat a visible person; never empty the room this turn.
-  {
+  // T10RC5 — dnd: only when pickStallKind chose threat (npc/lead must not fall through into a foe).
+  // litrpg/rpg: allow threat fallthrough so stall still commits fight progress for first-pad dry-run.
+  if (kind === 'threat' || state.engineMode !== 'dnd') {
     const threatWhere = hereName || 'this place';
+    // T10RC5fix — already-parked/pending foe: keep Face chip; do not wake into activeEncounter
+    // (live activeEncounter is Attack-owned; Face engages pending via resolveEngineFight).
+    const existingFoe = engineThreatHere(working);
+    if (existingFoe) {
+      const who =
+        actor
+        || peopleHere(working)[0]
+        || presentNpcRecords(working)[0]?.npcName
+        || null;
+      if (who && !personIsHere(working, who)) working = seat(working, who);
+      const development: DirectorDevelopment = {
+        kind: 'threat',
+        fact: asMustNarrateFact(`${existingFoe.name} is still a threat here.`),
+        placeId: hereId || hereName || undefined,
+        npcId: who ? `npc:${who}` : undefined,
+        questId: thread ? questFromThread(state, thread)?.id : undefined,
+      };
+      return {
+        state: working,
+        development,
+        need: working.activeEncounter ? 'none' : 'threat',
+        forwardIds,
+        stallKind: thread ? 'thread' : 'situation',
+      };
+    }
     const detail = thread
       ? `${goal} will not wait at ${threatWhere}`
       : pickThreatFact(working, threatWhere).replace(/^Threat(?:\s+at[^:]*)?:\s*/i, '');
@@ -548,6 +598,7 @@ function commitStallDevelopment(
     });
     const parked = parkStallThreat(working);
     working = parked.state;
+    // T10RC5fix — leave foe pending/parked; Face engages (stall progress lands on the Face pick).
     const who =
       actor
       || peopleHere(working)[0]
@@ -555,9 +606,8 @@ function commitStallDevelopment(
       || (working.npcMemories ?? []).find((m) => (m.npcName ?? '').trim())?.npcName
       || null;
     if (who && !personIsHere(working, who)) working = seat(working, who);
-    // Target includes turn so developmentAllowed cannot soft-lock on the same HERE forever
-    // when lead falls through to threat repeatedly (rpg dry-run Camp stall).
-    const target = `${hereId || hereName || 'here'}:t${turn}`;
+    // T10RC5 — stable target (no turn) so the same HERE cannot re-announce every stall beat.
+    const target = `${hereId || hereName || 'here'}:threat`;
     const foeBit = parked.foe?.name ? ` — ${parked.foe.name} closes in` : '';
     const fact = who
       ? `${who} warns that ${detail}${foeBit}.`
@@ -584,6 +634,59 @@ function commitStallDevelopment(
       stallEventId,
     };
   }
+
+  // dnd npc/lead chose but could not commit — unlock a place lead (never invent a foe).
+  {
+    const destRaw = placeLabel || pickLeadFact(working)?.placeId || null;
+    const destHub = destRaw ? matchHub(hubsForBibleId(working.campaignBibleId), destRaw) : null;
+    let travelName = destHub?.name ?? destRaw;
+    let travelHub = destHub;
+    if (
+      travelName
+      && (travelName.toLowerCase() === hereName.toLowerCase()
+        || (destHub && hereId && destHub.id === hereId))
+    ) {
+      const alt = pickLeadFact(working);
+      travelHub = alt?.placeId ? matchHub(hubsForBibleId(working.campaignBibleId), alt.placeId) : null;
+      travelName = travelHub?.name ?? alt?.placeId ?? null;
+    }
+    if (travelName && travelName.trim().toLowerCase() !== hereName.toLowerCase()) {
+      const placeKey = travelHub?.id ?? travelName;
+      const disc = new Set(working.discoveredLocations ?? []);
+      if (!disc.has(placeKey) && !disc.has(travelName)) {
+        working = {
+          ...working,
+          discoveredLocations: [...(working.discoveredLocations ?? []), placeKey],
+        };
+      }
+      const places = [...(working.places ?? [])];
+      if (!places.some((p) => (p.name ?? '').toLowerCase() === travelName.toLowerCase() || p.id === placeKey)) {
+        places.push({ id: placeKey, name: travelName, mapCanonical: true });
+        working = { ...working, places };
+      }
+      const fact = `A lead points toward ${travelName}.`;
+      working = appendDirectorFact(working, `stall-lead-${turn}`, fact);
+      working = recordDevelopment(working, 'lead', travelName, fact);
+      return {
+        state: working,
+        development: {
+          kind: 'lead',
+          fact: asMustNarrateFact(fact),
+          placeId: travelName,
+        },
+        need: 'travel',
+        forwardIds,
+        stallKind: thread ? 'thread' : 'situation',
+        stallEventId: `stall-lead-${turn}`,
+      };
+    }
+  }
+  return {
+    state: working,
+    need: kind === 'lead' ? 'lead' : kind === 'npc-acting' ? 'npc-act' : 'none',
+    forwardIds,
+    stallKind: thread ? 'thread' : 'situation',
+  };
 }
 
 function addressedPresentName(state: GameState, playerInput: string): string | null {
@@ -1214,9 +1317,10 @@ function chipSpecsFromNeed(
       ?? 'them';
     chips.push({ label: `Answer ${name}`, reason: 'director-npc-act' });
   }
-  // T10RC3 — Face the threat only when an engine foe is parked/live to resolve.
-  // Also offer a leave lead so first-pad dry-run is not forced into a Face→death loop.
-  if (need === 'threat' && engineThreatHere(state)) {
+  // T10RC3/RC5 — Face the threat only to engage a parked/pending foe (not mid-round).
+  // Face first so first-pad dry-run resolves the fight (progress) before a bounce Travel.
+  if (need === 'threat' && facesThreatChipAllowed(state)) {
+    chips.push({ label: 'Face the threat', reason: 'director-threat' });
     const hereLow = (state.currentLocation ?? '').trim().toLowerCase();
     const alt = pickLeadFact(state);
     if (alt?.placeId) {
@@ -1226,7 +1330,6 @@ function chipSpecsFromNeed(
         chips.push({ label: `Travel toward ${altLabel}`, reason: 'director-threat-lead' });
       }
     }
-    chips.push({ label: 'Face the threat', reason: 'director-threat' });
     chips.push({ label: 'Look for an exit', reason: 'director-threat-exit' });
   }
   if (forward) {
@@ -1587,30 +1690,49 @@ export function applyDirectorChipPolicy(
 ): string[] {
   // Drop blank labels (empty-string chip bug) before policy.
   let next = chips.filter((c) => (c ?? '').replace(/\s+/g, ' ').trim().length > 0);
+  // T10RC5 — Face without an engine foe is never a legal pad (stale plan or compiler leftover).
+  next = next.filter((c) => !/^Face the threat$/i.test(c) || facesThreatChipAllowed(state));
   const noOp = opts.noOpChip ?? directorNoOpChip(state);
   next = filterDirectorTravelChips(state, next, opts.recentChips ?? []);
   next = replaceNoOpChip(state.directorPlan, next, noOp);
   if (opts.inFight) next = capFightChips(next);
+  // T10RC5 — live/parked foe: never keep Travel on the pad (dry-run first-pad was bouncing Travel
+  // while travelPadBlocked → LOOP STOP; prefer merge must not re-inject travelDest chips either).
+  const blockTravel = travelPadBlocked(state) || !!engineThreatHere(state);
+  const dropTravel = (c: string) =>
+    !isTravelPad(c) && !/^walk on\b/i.test(c) && !/^turn back toward\b/i.test(c);
+  if (blockTravel) next = next.filter(dropTravel);
   // Prefer director plan chips first when stall need is active.
   const plan = state.directorPlan;
   if (plan && plan.need !== 'none' && plan.chips.length) {
+    // T10RC5 — stale Face after foe cleared must not stay on the pad (live T193 Must-narrate only).
     const prefer = plan.chips
       .map((c) => c.label)
       .filter((l) => (l ?? '').trim().length > 0)
-      .filter((l) => next.includes(l) || travelDestFromChip(l));
+      .filter((l) => !/^Face the threat$/i.test(l) || facesThreatChipAllowed(state))
+      .filter((l) => {
+        if (blockTravel && (isTravelPad(l) || !!travelDestFromChip(l))) return false;
+        return next.includes(l) || (!blockTravel && !!travelDestFromChip(l)) || /^Face the threat$/i.test(l);
+      });
     const merged = [...prefer];
     for (const c of next) {
       if (!merged.includes(c)) merged.push(c);
     }
     next = filterDirectorTravelChips(state, merged, opts.recentChips ?? []);
+    if (blockTravel) next = next.filter(dropTravel);
   }
   // Journey "Walk on" / bare continue is not a travelDest — under stall prefer a plan chip over it.
   if (plan && plan.need !== 'none' && plan.chips.length) {
-    const planFirst = plan.chips.map((c) => c.label).find((l) => (l ?? '').trim());
+    const planFirst = plan.chips
+      .map((c) => c.label)
+      .filter((l) => (l ?? '').trim().length > 0)
+      .filter((l) => !/^Face the threat$/i.test(l) || facesThreatChipAllowed(state))
+      .filter((l) => !(blockTravel && (isTravelPad(l) || !!travelDestFromChip(l))))
+      .find((l) => (l ?? '').trim());
     if (planFirst) {
       const withoutWalk = next.filter((c) => !/^walk on\b/i.test(c) && !/^turn back toward\b/i.test(c));
-      // Keep turn-back only when director travel need names that dest.
-      const turnBackOk = next.filter((c) => {
+      // Keep turn-back only when director travel need names that dest (and travel is legal).
+      const turnBackOk = blockTravel ? [] : next.filter((c) => {
         if (!/^turn back toward\b/i.test(c)) return false;
         const dest = travelDestFromChip(c);
         if (!dest || !plan.development?.placeId) return false;
@@ -1620,8 +1742,17 @@ export function applyDirectorChipPolicy(
       if (plan.need === 'travel' || plan.need === 'lead' || plan.need === 'npc-act' || plan.need === 'threat') {
         next = [planFirst, ...turnBackOk, ...withoutWalk.filter((c) => c !== planFirst)];
         next = filterDirectorTravelChips(state, next, opts.recentChips ?? []);
+        if (blockTravel) next = next.filter(dropTravel);
       }
     }
+  }
+  // T10RC5 — Face engages parked/pending foes only. Strip Face while dying or in live rounds
+  // (Attack / Fight for breath own those pads — Face as Free action caused LOOP/death on first-pad).
+  if (!facesThreatChipAllowed(state)) {
+    next = next.filter((c) => !/^Face the threat$/i.test(c));
+  } else {
+    const face = next.find((c) => /^Face the threat$/i.test(c)) ?? 'Face the threat';
+    next = [face, ...next.filter((c) => !/^Face the threat$/i.test(c))];
   }
   return next;
 }

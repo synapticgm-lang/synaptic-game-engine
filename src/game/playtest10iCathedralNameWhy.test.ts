@@ -46,9 +46,25 @@ function cathedral(over: Partial<GameState> = {}): GameState {
       mode: 'weave',
       aloneArrival: false,
       pickedHook:
-        'Why this happened: They paid for a Pactborn champion to end the Ash Court war. The seventh ring stuttered; the Mark looks wrong.\nOpening offer: Swear the Pact and they will issue travel kit.',
+        'Place: The Sevenfold Circle under Valespire Cathedral\nWho is here: High Chanter Orel Vane\nWhy this happened: They paid for a Pactborn champion to end the Ash Court war. The seventh ring stuttered; the Mark looks wrong.\nOpening offer: Swear the Pact and they will issue travel kit.',
     },
-    sceneFacts: emptySceneFacts(1),
+    sceneFacts: {
+      ...emptySceneFacts(1),
+      crowd: 'sparse',
+      present: ['High Chanter Orel Vane'],
+      crowdCount: 1,
+    },
+    npcMemories: [
+      {
+        npcId: 'sp-npc-1',
+        npcName: 'High Chanter Orel Vane',
+        disposition: 'neutral',
+        facts: [],
+        lastSeenTurn: 0,
+        location: 'The Sevenfold Circle under Valespire Cathedral',
+        present: true,
+      },
+    ],
     log: [
       {
         id: 't0',
@@ -64,9 +80,10 @@ function cathedral(over: Partial<GameState> = {}): GameState {
 }
 
 describe('playtest10i — cathedral name+why', () => {
-  it('HUD/BUILD stay on the 10 line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-/);
+  it('HUD/BUILD stay current, Mid writer OFF', () => {
+    // Stamp owner moved past 2026-09-10i; Mid writer lock is the behaviour this guards.
+    expect(HUD_BUILD_STAMP.length).toBeGreaterThan(0);
+    expect(BUILD_STAMP.length).toBeGreaterThan(0);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

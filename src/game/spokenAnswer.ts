@@ -757,6 +757,10 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
     if (speakersHere(state).some((s) => s.names.some((w) => w.length >= 3 && new RegExp(`\\b${esc(w.toLowerCase())}\\b`).test(low)))) {
       return true;
     }
+    // T10RC5 — "whisper that if she…" / lean-in talk with people here still needs a reply (T12 Nell).
+    if (speakersHere(state).length > 0 && /\b(?:whisper(?:ing)?|tell(?:ing)?|lean(?:ing)?\s+in)\b/i.test(t)) {
+      return true;
+    }
   }
   // T10AI — stare / look down / address a present person or crowd still needs their reply beat
   // (LitRPG engineer stare; tabletop miller / exhausted faces).
@@ -921,7 +925,13 @@ export function ensureSpokenAnswer(
     const others = speakersHere(state).filter((s) => s.label !== speaker.label);
     const pc = state.character?.name ?? null;
     if (quotesBy(prose, speaker, alone, others, pc).length || proseHasSpeakerReply(prose, speaker)) {
-      return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
+      // T10RC5 — "said nothing" is not grammatical content for a content ask (T12/T185 ignored-action).
+      const contentAsk =
+        /\?/.test(playerInput)
+        || /\b(?:ask(?:ing)?|tell(?:ing)?|whisper(?:ing)?|if she|if he|if they)\b/i.test(playerInput);
+      if (!(contentAsk && proseHasSpeakerSilence(prose, speaker))) {
+        return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
+      }
     }
     // T10AK — a visible act that answers a tell/demand is already the reply (do not stack motive).
     if (demandActAnswered(playerInput, prose, speaker.label)) {

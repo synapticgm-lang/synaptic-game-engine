@@ -257,8 +257,12 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
       }
     }
   } else if ((addr || SOCIAL_CHIP.test(label) || ADDRESSED_QUESTION.test(label)) && nobody) {
-    const who = addr?.who ? ` the ${addr.who}` : '';
-    return { kind: 'ghost-chip', detail: `"${label}" needs${who || ' someone'} to hear it but nobody is here` };
+    // T10RC5fix — Accept/Refuse of the open card offer is not talk-to-someone; SOCIAL_CHIP
+    // matches "Accept" but the card offer does not need a seated hearer (10i auto-named pads).
+    if (!(OFFER_ANSWER_CHIP.test(label) && openOpeningOffer(state))) {
+      const who = addr?.who ? ` the ${addr.who}` : '';
+      return { kind: 'ghost-chip', detail: `"${label}" needs${who || ' someone'} to hear it but nobody is here` };
+    }
   }
 
   if (OFFER_ANSWER_CHIP.test(label) && !openOpeningOffer(state)) {

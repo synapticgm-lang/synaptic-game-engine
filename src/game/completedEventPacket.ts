@@ -677,9 +677,14 @@ export function compileRefEnum(
   if (!opts?.hallTalk) {
     const road = roadMeetingRef(state);
     if (road) add(`road:${slugRefId(road.display)}`, road.display, 'meeting', road.note);
-    for (const p of presentNpcRecords(state).map((r) => r.npcName)) {
+    // T10RC5fix — speaker/person refs = peopleHere (lives-here location stamp + seats; road/neverCast/range).
+    // Live foe stays on encounter: (s77), not present: — peopleHere includes them for talk, enum keeps one id.
+    const foeKey = (state.activeEncounter?.name ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const seated = peopleHere(state);
+    for (const p of seated) {
       if (isNeverCastTitle(p, state)) continue;
       if (isCrowdFillerToken(p)) continue;
+      if (foeKey && p.replace(/\s+/g, ' ').trim().toLowerCase() === foeKey) continue;
       add(`present:${slugRefId(p)}`, p, 'person');
     }
     const encName = state.activeEncounter?.name?.trim();
@@ -730,10 +735,14 @@ export function compileRefEnum(
     else if (isSystemWindowLabel(prop) && state.engineMode === 'litrpg') addWindow(prop);
     else add(`prop:${slugRefId(prop)}`, prop, 'prop');
   }
+  const seatedExtra = new Set(peopleHere(state).map((n) => n.replace(/\s+/g, ' ').trim().toLowerCase()));
   for (const extra of extras) {
     if (!extra || isNeverCastTitle(extra, state)) continue;
     if (isSystemWindowLabel(extra)) addWindow(extra);
-    else add(`extra:${slugRefId(extra)}`, extra, 'person');
+    // T10RC5 — extras not in peopleHere are absence facts, not speaker rows (road Dunn/Edda).
+    else if (seatedExtra.has(extra.replace(/\s+/g, ' ').trim().toLowerCase())) {
+      add(`extra:${slugRefId(extra)}`, extra, 'person');
+    }
   }
   return out;
 }
@@ -2745,4 +2754,4 @@ export function prepareRetrospectiveWriterInput(
     packet,
     writerFacing: formatWriterFacingEvent(packet),
   };
-}
+}

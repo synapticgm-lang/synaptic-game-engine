@@ -4,8 +4,9 @@
  * opening-cast presence) bind to one module without a circular import.
  */
 import type { GameState } from './types.ts';
-import { presentNpcNames } from './npcRelationships.ts';
 import { isChromePersonToken } from './chromeAuthority.ts';
+import { isNeverCastTitle } from './neverCast.ts';
+import { presentNpcNames } from './npcRelationships.ts';
 import * as openingEstablishment from './openingEstablishment.ts';
 import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney.ts';
 import { isOutOfTalkingRange, TALKING_RANGE_FT } from './hereSpot.ts';
@@ -71,7 +72,8 @@ export function peopleHere(state: GameState): string[] {
   const out = new Map<string, string>();
   const add = (n?: string | null) => {
     const name = norm(n);
-    if (!name || isChromePersonToken(name)) return;
+    // T10RC5 — quest/place concept titles (System bounty) are never seated speakers.
+    if (!name || isChromePersonToken(name) || isNeverCastTitle(name, state)) return;
     const key = personKey(name);
     if (!key) return;
     const prev = out.get(key);
@@ -89,6 +91,9 @@ export function peopleHere(state: GameState): string[] {
     add(roadMeetingPeople(state));
     return [...out.values()];
   }
+  // T10RC5fix — people who live at THIS place (presentNpcNames / location stamp, not departed,
+  // in talking range) are here. Narrow RC5 keeps: neverCast titles, road/in-transit (presentNpcRecords
+  // skips UNDERWAY historical stamps; npcPlacedElsewhere drops stale sceneFacts names), out-of-range.
   presentNpcNames(state).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
