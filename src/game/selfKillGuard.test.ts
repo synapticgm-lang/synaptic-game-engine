@@ -1,8 +1,6 @@
 /**
  * Order S part 1: one death point; a self-aimed act never ends the character in any mode or table rule.
  */
-import fs from 'node:fs';
-import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { commitDeath } from './rules/death';
@@ -13,6 +11,8 @@ import { plainLineFactProblem } from './tokenProse';
 import { withHouseRules } from './rules/houseRules';
 import { createDefaultSettings } from './defaults';
 import type { EngineMode, GameState, HouseRules } from './types';
+import { ALLOW_LISTS } from './singleWriterAllow';
+import { scanWriters, writerFilesFor } from './singleWriterScan';
 
 const rng = () => 0.5;
 const at = (mode: EngineMode, hp = 1, rule: HouseRules['deathRule'] = 'srd'): GameState => {
@@ -81,16 +81,10 @@ describe('selfKillGuard', () => {
   });
 
   it('nothing outside rules/death.ts writes dead: true', () => {
-    const roots = ['src/game', 'supabase/functions/_shared/gm'];
-    const hits: string[] = [];
-    const walk = (dir: string) => {
-      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-        const p = path.join(dir, e.name);
-        if (e.isDirectory()) walk(p);
-        else if (/\.tsx?$/.test(e.name) && !/\.test\.tsx?$/.test(e.name) && /\bdead:\s*true\b/.test(fs.readFileSync(p, 'utf8'))) hits.push(p);
-      }
-    };
-    roots.forEach(walk);
-    expect(hits.map((h) => h.replace(/\\/g, '/'))).toEqual(['src/game/rules/death.ts']);
+    // T10SM1: AST (not text) so `state.dead = true` counts. Allow-list ratchets toward death.ts only.
+    const hits = scanWriters(['dead']);
+    const actual = writerFilesFor(hits, 'dead');
+    const allowed = [...ALLOW_LISTS.dead].sort();
+    expect(actual, hits.map((h) => `${h.file}:${h.line}`).join('\n')).toEqual(allowed);
   });
 });
