@@ -105,6 +105,22 @@ describe('29z9i — gap 2: the System window is not a physical object', () => {
     expect(checkSystemWindow(s, [], prose).map((f) => f.kind)).toEqual(['window-touched']);
   });
 
+  it('T10RC4: private-vision line naming Weighing Cup is not window-touched', () => {
+    // Evidence litrpg s9711 T75/T114: "Weighing Cup" matched bare weigh in WINDOW_PHYSICAL.
+    const vision =
+      "A small blue window only Jax could see hung in the air and pointed at a bounty tied to the Weighing Cup.";
+    expect(checkSystemWindow(s, [], vision).map((f) => f.kind)).not.toContain('window-touched');
+    const head =
+      "A thin blue panel opened only inside Jax's head. Text named a bounty tied to the Weighing Cup.";
+    expect(checkSystemWindow(s, [], head).map((f) => f.kind)).not.toContain('window-touched');
+  });
+
+  it('T10RC4: real touch on the blue panel is still P0', () => {
+    expect(
+      checkSystemWindow(s, [], 'Jax touched the blue panel; the surface rippled.').map((f) => f.kind)
+    ).toEqual(['window-touched']);
+  });
+
   it('a hand passing through it is not physical', () => {
     expect(checkSystemWindow(s, [], 'Your hand passed straight through the blue panel. The text did not move.')).toEqual([]);
   });

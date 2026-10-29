@@ -90,6 +90,38 @@ describe('playtestT10SM1 death one writer', () => {
     const page = roadDeathBookProse(dead);
     expect(page).toMatch(/You are dead\./);
   });
+
+  it('T10RC4 s9511: dungeon death saves do not get the forced-march page', () => {
+    // Evidence s9511 T83: death saves in Ruined hall; engineFact fight-for-breath; no travelBeat death.
+    const live = createInitialState('t', 'dnd');
+    const combatDead = {
+      ...live,
+      currentLocation: 'Ruined hall',
+      deathSaves: { successes: 0, failures: 3, dead: true as const },
+      travelBeat: undefined,
+    };
+    expect(roadDeathBookProse(combatDead)).toBeNull();
+    const staleBeat = {
+      ...combatDead,
+      travelBeat: { turn: (live.turn ?? 0) - 1, facts: ['An old road note.'] },
+    };
+    expect(roadDeathBookProse(staleBeat)).toBeNull();
+  });
+
+  it('T10RC4 s9512: travelBeat march death still owns the forced-march page', () => {
+    const live = createInitialState('t', 'dnd');
+    const marchDead = {
+      ...live,
+      deathSaves: { successes: 0, failures: 3, dead: true as const },
+      travelBeat: {
+        turn: live.turn ?? 0,
+        facts: [
+          'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.',
+        ],
+      },
+    };
+    expect(roadDeathBookProse(marchDead)).toMatch(/forced march wore you down/i);
+  });
 });
 
 describe('playtestT10SM1 presence one owner', () => {

@@ -7,6 +7,7 @@ import { isPlannerUiPersonToken } from './chromeAuthority';
 import { parsePlayerSteps, sheetContextFromState } from './intentParser';
 import { convertWriterCueFact, buildClauseWriterFact } from './writerCueLines';
 import { writerEngineResult } from './travelJourney';
+import { roadDeathBookProse } from './roadDeath';
 import { sheetMemoryLine } from './npcRecords';
 import { engageAddressedInHereSpot } from './hereSpot';
 import { harvestNarrativePeople } from './narrativeHarvest';
@@ -129,5 +130,24 @@ describe('T10U death book prose', () => {
     expect(plain).not.toMatch(/Check failure/i);
     expect(plain).not.toMatch(/Extended Travel:/i);
     expect(plain).not.toMatch(/Jax pushed on into the night/i);
+  });
+
+  it('T10RC4: roadDeathBookProse null for combat death; march page only with travelBeat death', () => {
+    const combat = {
+      ...base(),
+      deathSaves: { successes: 0, failures: 3, dead: true as const },
+      travelBeat: undefined,
+    };
+    expect(roadDeathBookProse(combat)).toBeNull();
+    const march = {
+      ...combat,
+      travelBeat: {
+        turn: combat.turn ?? 0,
+        facts: [
+          'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.',
+        ],
+      },
+    };
+    expect(roadDeathBookProse(march)).toMatch(/forced march/i);
   });
 });

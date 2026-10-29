@@ -460,36 +460,137 @@ export function meetingMoveBase(chip: string): string {
   return (chip ?? '').replace(/\s+/g, ' ').trim().replace(FAIL_COST_TAIL, '');
 }
 const TURN_BACK_REST_TURNS = 4;
+/** Soft / lethal Extended Travel warn tails (same wording on every move chip that would march). */
+const MARCH_WARN_SOFT = ', but each failed save wears you down more';
+const MARCH_WARN_LETHAL = ', but one failed save now kills you';
+const MARCH_WARN_TAIL = /,\s*but (?:one failed save now kills you|each failed save wears you down more)$/i;
+
+/** Strip a stamped march warning so commit / destination parse still see the bare chip. */
+export function stripMarchWarn(chip: string): string {
+  return (chip ?? '').replace(MARCH_WARN_TAIL, '').replace(/\s+/g, ' ').trim();
+}
+
+/**
+ * SRD 5.2.1 Extended Travel: each hour past 8 in a day forces a Constitution save
+ * (DC 10 + hours past 8); fail → 1 Exhaustion; Exhaustion level 6 = death (WotC CC BY 4.0).
+ * Engine prediction from road hours + exhaustion — not a chip-text regex.
+ */
+export type MarchPrediction = { wouldMarch: boolean; lethalFail: boolean };
+
+export function predictMarch(
+  state: Partial<Pick<GameState, 'character' | 'engineMode' | 'roadDay' | 'worldHour' | 'worldDay'>> & ClockState,
+  hours: number,
+  terrain?: JourneyTerrain
+): MarchPrediction {
+  if (!survival({ engineMode: state.engineMode } as GameState)) return { wouldMarch: false, lethalFail: false };
+  if (terrain === 'streets' || !(hours > 0)) return { wouldMarch: false, lethalFail: false };
+  const wouldMarch = roadHoursToday(state) + hours > TRAVEL_DAY_HOURS;
+  const lethalFail = wouldMarch && exhaustionLevel(state.character) + 1 >= EXHAUSTION_DEATH;
+  return { wouldMarch, lethalFail };
+}
+
+function marchWarnSuffix(pred: MarchPrediction): string {
+  if (!pred.wouldMarch) return '';
+  return pred.lethalFail ? MARCH_WARN_LETHAL : MARCH_WARN_SOFT;
+}
+
+/** Hours this move chip would add to today's road day (null = not a march move). */
+function hoursForMoveChip(state: GameState, chip: string): { hours: number; terrain?: JourneyTerrain } | null {
+  const bare = stripMarchWarn(chip);
+  const j = state.journey;
+  if (j && isJourneyUnderway(state)) {
+    if (/^push on\b/i.test(bare) || WALK_ON.test(bare) || /^travel on\.?$/i.test(bare)) {
+      return { hours: j.hoursPerLeg, terrain: j.terrain };
+    }
+    if (TURN_BACK.test(bare)) return { hours: j.hoursPerLeg, terrain: j.terrain };
+  }
+  const dest = parseTravelDestination(bare, state.campaignBibleId);
+  if (!dest) return null;
+  const from = j && isJourneyUnderway(state) ? j.from : (state.currentLocation ?? '');
+  const mapped = mapGapBetween(state, from, dest.name);
+  if (mapped.steps <= 0 || mapped.hoursPerLeg <= 0) return null;
+  const hours = hoursAtPace(state, mapped.hoursPerLeg, mapped.terrain);
+  return { hours, terrain: mapped.terrain };
+}
+
+/** True when offering this chip would run Extended Travel CON saves (engine hours + exhaustion). */
+export function chipWouldMarch(state: GameState, chip: string): boolean {
+  const spec = hoursForMoveChip(state, chip);
+  if (!spec) return false;
+  return predictMarch(state, spec.hours, spec.terrain).wouldMarch;
+}
+
+/** True when a failed Extended Travel save on this chip would hit Exhaustion 6 (death). */
+export function chipMarchLethal(state: GameState, chip: string): boolean {
+  const spec = hoursForMoveChip(state, chip);
+  if (!spec) return false;
+  return predictMarch(state, spec.hours, spec.terrain).lethalFail;
+}
+
+function stampMarchWarn(state: GameState, chip: string): string {
+  const bare = stripMarchWarn(chip);
+  const spec = hoursForMoveChip(state, bare);
+  if (!spec) return bare;
+  const pred = predictMarch(state, spec.hours, spec.terrain);
+  const tail = marchWarnSuffix(pred);
+  return tail ? `${bare}${tail}` : bare;
+}
+
+/**
+ * Every move chip that would trigger marchHours past the day carries the same exhaustion
+ * warning. When the next fail is lethal (or exhaustion is already high while marching),
+ * Make camp is offered first as the safety default — policy from predictMarch, not label match.
+ */
+export function withMarchWarnPads(state: GameState, choices: string[]): string[] {
+  if (!survival(state)) return choices;
+  let lethal = false;
+  let highRisk = false;
+  const stamped = choices.map((c) => {
+    const next = stampMarchWarn(state, c);
+    if (next !== stripMarchWarn(c)) {
+      const spec = hoursForMoveChip(state, next);
+      if (spec) {
+        const pred = predictMarch(state, spec.hours, spec.terrain);
+        if (pred.lethalFail) lethal = true;
+        if (pred.wouldMarch && exhaustionLevel(state.character) >= 3) highRisk = true;
+      }
+    }
+    return next;
+  });
+  if (!lethal && !highRisk) return stamped;
+  const withoutCamp = stamped.filter((c) => travelEngineChip(stripMarchWarn(c)) !== 'camp');
+  return [CAMP_CHIP, ...withoutCamp];
+}
+
 /** Push on into the current clock slot; tabletop names the Extended Travel fail cost. */
-function pushOnPad(state: Partial<Pick<GameState, 'character' | 'engineMode'>> & ClockState): string {
+function pushOnPad(state: GameState): string {
   const head = `${PUSH_ON_CHIP} into the ${timeOfDayForHour(currentHour(state))}`;
-  if (!survival({ engineMode: state.engineMode } as GameState)) return head;
-  return exhaustionLevel(state.character) + 1 >= EXHAUSTION_DEATH
-    ? `${head}, but one failed save now kills you`
-    : `${head}, but each failed save wears you down more`;
+  return stampMarchWarn(state, head);
 }
 /** Chips for the ground between: walk on, this stretch's meeting (if any), turn back. */
 export function journeyPads(
   state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> &
-    Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode' | 'character' | 'activeEncounter'>> &
+    Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode' | 'character' | 'activeEncounter' | 'campaignBibleId' | 'roadDay' | 'worldHour' | 'worldDay' | 'seed' | 'houseRules'>> &
     ClockState
 ): string[] {
   const j = state.journey;
   if (!j || !isJourneyUnderway(state)) return [];
   // Same rule as withJourneyPads: a live fight keeps combat pads; Walk on / turn-back stay off.
   if (state.activeEncounter) return [];
+  const full = state as GameState;
   const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
   const spent = dayIsSpent(state, j);
   const forward = laneBlocked(j.encounter)
     ? []
     : spent
-      ? [CAMP_CHIP, pushOnPad(state)]
-      : ['Walk on', ...(canTravelOn(state, j) ? [TRAVEL_ON_CHIP] : [])];
+      ? [CAMP_CHIP, pushOnPad(full)]
+      : [stampMarchWarn(full, 'Walk on'), ...(canTravelOn(state, j) ? [stampMarchWarn(full, TRAVEL_ON_CHIP)] : [])];
   const job = spent || (j.encounter && !roadMeetingOver(j.encounter)) ? null : jobChip(state, j);
   const origin = journeyOrigin(state);
   const bounced = state.circling?.shortReturnTurn;
   const rested = forward.length > 0 && bounced != null && (state.turn ?? 0) - bounced < TURN_BACK_REST_TURNS;
-  return [...forward, ...met, ...(job ? [job] : []), ...(origin && !rested ? [`Turn back toward ${origin}`] : [])];
+  const pads = [...forward, ...met, ...(job ? [job] : []), ...(origin && !rested ? [`Turn back toward ${origin}`] : [])];
+  return withMarchWarnPads(full, pads);
 }
 /** A ground-between chip: walk on / turn back, travel engine chip, or this stretch's meeting pads. */
 export function isJourneyPad(state: Pick<GameState, 'journey'>, choice: string): boolean {
@@ -1920,7 +2021,8 @@ function typedHub(input: string, bibleId: string | undefined | null) {
 }
 
 function commitTravelStep(state: GameState, raw: string): TravelCommit {
-  const input = (raw ?? '').replace(/\s+/g, ' ').trim();
+  // March warn tails are pad chrome only — commit / destination parse use the bare move.
+  const input = stripMarchWarn((raw ?? '').replace(/\s+/g, ' ').trim());
   // q73-DYING: same flag as isDying (roundFight). A death-save turn does not move.
   const ds = state.deathSaves;
   if (state.playPhase === 'ended' || (state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable) || (state.engineMode === 'dnd' && !!ds?.dead)) {
@@ -2118,7 +2220,7 @@ export function pinClockTimeOfDay<F extends { timeOfDay?: TimeOfDay } | undefine
 
 /** Ground chips replace the pad while underway (a live fight keeps its own pads; a parked one does not). */
 export function withJourneyPads(state: GameState, choices: string[]): string[] {
-  if (!isJourneyUnderway(state)) return choices;
+  if (!isJourneyUnderway(state)) return withMarchWarnPads(state, choices);
   if (state.activeEncounter) return choices;
   return journeyPads(state);
 }

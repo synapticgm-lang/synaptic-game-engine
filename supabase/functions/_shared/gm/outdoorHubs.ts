@@ -474,7 +474,8 @@ export function parseTravelDestination(
     /^(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:back\s+)?(?:toward|to|for)|go\s+(?:back\s+)?to|move\s+to|walk\s+(?:back\s+)?to)\s+(.+)$/i
   );
   if (m) {
-    const name = m[1].replace(/[.!?]+$/, '').trim();
+    // T10RC4 — strip stamped Extended Travel warn tails (", but each failed save…") from dest.
+    const name = m[1].replace(/[.!?]+$/, '').replace(/,\s*but\b.*$/i, '').trim();
     const hit = matchHub(hubs, name);
     if (hit) return hit;
   }
@@ -482,7 +483,7 @@ export function parseTravelDestination(
     /(?:travel(?:ing)?|go(?:ing)?|head(?:ing)?|walk(?:ing)?|move)\s+(?:back\s+)?(?:to|toward|into|for)\s+(.+)$/i
   );
   if (loose) {
-    const name = loose[1].replace(/[.!?]+$/, '').trim();
+    const name = loose[1].replace(/[.!?]+$/, '').replace(/,\s*but\b.*$/i, '').trim();
     const hit = matchHub(hubs, name);
     if (hit) return hit;
   }
