@@ -90,6 +90,8 @@ export interface FactSheet {
   quests: FactSheetQuest[];
   /** Recent timeline display lines (same guarantee the old WORLD FACTS block carried). */
   recent: string[];
+  /** T10DIR — stall / world-pressure fact the writer must show this beat (also on timeline). */
+  stallPressure?: string;
   /** Reserved for order 6b — do not fill here. */
   settingsSlot: null;
 }
@@ -295,6 +297,8 @@ export function buildFactSheet(
     },
     quests: questRows(state),
     recent: recentTimeline(state),
+    stallPressure:
+      (state.sceneFacts?.stallWorldFact ?? state.sceneFacts?.placeWorldFact ?? '').trim() || undefined,
     settingsSlot: null,
   };
 }
@@ -359,6 +363,9 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
   }
   if (sheet.recent.length) {
     lines.push('Recent timeline:', ...sheet.recent.map((r) => `  - ${r}`));
+  }
+  if (sheet.stallPressure) {
+    lines.push(`World pressure (must show this beat):\n${sheet.stallPressure}`);
   }
   lines.push(
     '',

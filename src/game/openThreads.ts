@@ -77,7 +77,12 @@ export function stallPressureActive(state: GameState): boolean {
 
 function ensureDirector(): void {
   if (_planDirector) return;
-  throw new Error('T10DIR: import ./director before planSceneThreads (side-effect bind)');
+  // Sync side-effect bind (circular import is safe: bindPlanDirector is already defined).
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('./director');
+  if (!_planDirector) {
+    throw new Error('T10DIR: director bind failed before planSceneThreads');
+  }
 }
 
 export type { OpenThread, SceneThreadPlan, ThreadKind, ThreadResolution } from './types';
@@ -88,7 +93,13 @@ export function threadResolutionMet(state: GameState, thread: OpenThread): boole
   if (r.type === 'quest-complete') {
     const quests = state.quests ?? [];
     for (let i = 0; i < quests.length; i++) {
-      if (quests[i]!.id === r.questId) return quests[i]!.status === 'completed';
+      if (quests[i]!.id !== r.questId) continue;
+      const q = quests[i]!;
+      if (q.status === 'completed') return true;
+      // Same resolved-thread check the old planner / nudge used: every required step done.
+      const objs = q.objectives ?? [];
+      if (objs.length && objs.every((o) => o.completed || o.optional)) return true;
+      return false;
     }
     return false;
   }
@@ -167,6 +178,9 @@ export function collectOpenThreads(state: GameState): OpenThread[] {
     const q = quests[i]!;
     if (q.status !== 'active' && q.status !== 'hidden') continue;
     if (q.revealed === false) continue;
+    // No open step → not an open thread (director must not bring a finished quest forward).
+    const objs = q.objectives ?? [];
+    if (objs.length && objs.every((o) => o.completed || o.optional)) continue;
     const id = `quest:${q.id}`;
     const old = prevById[id];
     out.push({

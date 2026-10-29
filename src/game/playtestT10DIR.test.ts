@@ -205,6 +205,61 @@ describe('T10DIR director', () => {
   });
 });
 
+describe('T10DIR dry-run fate harness reaches director (no paid AI)', () => {
+  it('dry-run headlessFateTurn under stall writes stallWorldFact + directorPlan chips', async () => {
+    const store = new Map<string, string>();
+    (globalThis as { localStorage?: Storage }).localStorage = {
+      getItem: (k) => store.get(k) ?? null,
+      setItem: (k, v) => { store.set(k, String(v)); },
+      removeItem: (k) => { store.delete(k); },
+      clear: () => store.clear(),
+      key: (i) => [...store.keys()][i] ?? null,
+      get length() { return store.size; },
+    } as Storage;
+
+    const { headlessFateTurn } = await import('./fateAutoplay');
+    const { createDefaultSettings } = await import('./defaults');
+    let s = base({
+      engineMode: 'dnd',
+      campaignBibleId: 'cursed-keep',
+      turn: 12,
+      openingEstablishment: {
+        pending: [],
+        answers: { name: 'Jax' },
+        complete: true,
+        sceneWritten: true,
+      },
+      progressGovernor: { turnsSinceProgress: STALL_N + 1, lastProgressTurn: 8, recentDeltas: [] },
+      circling: { stale: {}, lastProgressTurn: 8, recentPlaces: ['Keep Gate'] },
+      currentLocation: 'Keep Gate',
+      offeredPad: { turn: 12, choices: ['Look around', 'Wait', 'Study the clues'] },
+    });
+    const settings = { ...createDefaultSettings(), subscriptionTier: 'free' as const };
+    const rng = () => 0.42;
+    const result = await headlessFateTurn(s, settings, rng, {
+      bibleId: 'cursed-keep',
+      personalityId: 'chilled-gm',
+      seed: 42,
+      mode: 'first-pad',
+      aiAgentMode: 'default',
+      dryRun: true,
+    });
+    // Dry-run previously returned before planSceneThreads — must now reach the director.
+    expect(
+      !!(result.state.sceneFacts?.stallWorldFact
+        || (result.state.directorPlan && result.state.directorPlan.need !== 'none')
+        || (result.telemetry.systemLog ?? []).some((l) => /Stall pressure|Nudge:/i.test(l))),
+    ).toBe(true);
+    const pad = result.state.offeredPad?.choices ?? result.state.choices ?? [];
+    for (const chip of pad) {
+      const dest = travelDestFromChip(chip);
+      if (dest) {
+        expect(dest.toLowerCase()).not.toBe((result.state.currentLocation ?? '').toLowerCase());
+      }
+    }
+  });
+});
+
 describe('T10DIR offline 30-turn first-chip policy (no paid AI)', () => {
   function drive(mode: 'dnd' | 'rpg' | 'litrpg', seed: number): void {
     let s = base({

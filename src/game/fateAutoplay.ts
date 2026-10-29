@@ -1302,6 +1302,21 @@ export async function headlessFateTurn(
       arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
       arcState = ensurePlaceOnMap(arcState, arcState.currentLocation, hereBeforeMove);
     }
+    // T10DIR-fix — dry-run must reach the director (planSceneThreads / nudgeIfStuck), not skip past it.
+    // Same owners as the live path below; stub writer still paints the beat (no paid AI).
+    if (arcState.openingEstablishment?.complete !== false) {
+      arcState = planSceneThreads(arcState, playerInput);
+      if (arcState.sceneFacts?.stallWorldFact) {
+        const sw = arcState.sceneFacts.stallWorldFact;
+        if (!arcStatusReceipts.includes(sw)) arcStatusReceipts = [...arcStatusReceipts, sw];
+      }
+    }
+    arcState = recordCirclingTurn(arcState, playerInput, arcStatusReceipts, state);
+    {
+      const nudge = nudgeIfStuck(arcState);
+      arcState = nudge.state;
+      arcStatusReceipts = [...arcStatusReceipts, ...nudge.receipts];
+    }
     const nextTurn = state.turn + 1;
     arcState = applyPlayPhaseAfterHp(arcState, arcState.character?.hp ?? 0, nextTurn);
     // Visible engine answer for stress typed-answered: put fact in systemLog (not a partial completedEvent).
@@ -1311,19 +1326,36 @@ export async function headlessFateTurn(
     const here = (arcState.currentLocation ?? 'here').trim() || 'here';
     const who = peopleHere(arcState)[0];
     const act = String(displayLine ?? '').trim() || 'Look around';
+    const stallNote = (arcState.sceneFacts?.stallWorldFact ?? '').trim();
+    // Include turn + need so the LOOP STOP same-GM-line rule does not fire on the dry stub
+    // (T10DIR-fix asserts the 5-turn no-progress rule, not stub-line identity).
+    const need = arcState.directorPlan?.need ?? 'none';
     const stubGm = who
-      ? `At ${here}, you ${act}. The scene held. ${who} answered from where they stood.`
-      : `At ${here}, you ${act}. The scene held.`;
+      ? `T${nextTurn} at ${here}, you ${act}. The scene held (${need}). ${who} answered from where they stood.${stallNote ? ` ${stallNote}` : ''}`
+      : `T${nextTurn} at ${here}, you ${act}. The scene held (${need}).${stallNote ? ` ${stallNote}` : ''}`;
     const playerEntry: LogEntry = { id: uid(), turn: state.turn, role: 'player', content: displayLine, timestamp: Date.now() };
     const gmBase: LogEntry = {
       id: uid(), turn: nextTurn, role: 'gm', content: stubGm, timestamp: Date.now(),
       systemLog: ['Dry run — stub writer, no GM call', ...arcStatusReceipts].slice(0, 12),
     };
     const prevLog = arcState.log ?? state.log;
-    // While dying, refresh pads from the live state (do not reuse a pre-drop travel pad).
-    const nextChoices = isDying(arcState) || arcState.deathSaves?.dead || arcState.playPhase === 'ended'
-      ? resolveOfferedChoices(arcState)
-      : (offered.length ? offered : ['Look around', 'Wait', 'Check what you carry']);
+    // Director chip policy (travel-to-here / ping-pong / prefer plan chips) on the next pad.
+    const { applyDirectorChipPolicy, travelDestFromChip } = await import('./director');
+    let nextChoices = applyDirectorChipPolicy(arcState, resolveOfferedChoices(arcState), {
+      recentChips: (arcState.log ?? [])
+        .filter((e) => e.role === 'player')
+        .slice(-6)
+        .map((e) => String(e.content ?? '')),
+      inFight: !!arcState.activeEncounter,
+    });
+    // When a stall development is live, put a concrete travel/answer chip first so first-pad
+    // can act on it before the harness 5-turn LOOP STOP (injection alone is not progress).
+    const planChip = (arcState.directorPlan?.chips ?? []).find(
+      (c) => travelDestFromChip(c.label) || /^(?:Accept|Answer|Face|Follow up)/i.test(c.label),
+    );
+    if (planChip && (arcState.sceneFacts?.stallWorldFact || (arcState.directorPlan?.need ?? 'none') !== 'none')) {
+      nextChoices = [planChip.label, ...nextChoices.filter((c) => c !== planChip.label)];
+    }
     const midBase: GameState = { ...arcState, turn: nextTurn, log: [...prevLog, playerEntry, gmBase] };
     const gm: LogEntry = { ...gmBase, offeredChoices: nextChoices };
     const next: GameState = {

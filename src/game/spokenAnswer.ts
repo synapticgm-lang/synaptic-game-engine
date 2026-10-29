@@ -12,7 +12,7 @@ import {
   openingCastNames,
   shortCardWant,
 } from './openingEstablishment';
-import { openingCastRecords, presentNpcRecords, resolveNpcRecord } from './npcRecords';
+import { openingCastRecords, resolveNpcRecord } from './npcRecords';
 import { authoredTopicsFor } from './manusTopicBanks';
 import { isCrowdFillerToken } from './chromeAuthority';
 import { fuzzyTypedName } from './typedNameMatch';
@@ -88,12 +88,13 @@ function speakersHere(state: GameState): Speaker[] {
     if (r) push(/^(?:the|a|an)\s+/i.test(r) ? r : `the ${r}`);
   }
   if (out.length) return out;
-  // T10DIR — speech reads only the SM1 presence owner. Do not fall back to
-  // location-matched presentNpcRecords / raw sceneFacts.present: those re-seat
-  // absent named NPCs (Nell Rudd speaks while not here). peopleHere already unions
-  // present:true + seated sceneFacts via presentAuthority.
-  for (const r of presentNpcRecords(state)) {
-    if (r.present === true) push(r.npcName, r);
+  // T10DIR — SM1 occupancy only. sceneFacts.present + present:true are the seat list.
+  // Do NOT location-match presentNpcRecords (that re-seated absent Nell Rudd).
+  // sceneFacts.present still answers when peopleHere filtered a seated name via
+  // npcPlacedElsewhere (Bertil on the road with a mismatched location stamp).
+  for (const p of state.sceneFacts?.present ?? []) push(p);
+  for (const m of state.npcMemories ?? []) {
+    if (m.present === true && !m.shouldExit) push(m.npcName, m);
   }
   return out;
 }

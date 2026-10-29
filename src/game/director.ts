@@ -24,13 +24,13 @@ import type {
 import { chipAddressee, mentionsName, peopleHere } from './chipLegality';
 import { isCrowdFillerToken } from './chromeAuthority';
 import { STALL_N } from './directorConstants';
-import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { hubsForBibleId, matchHub, placeFirstSight } from './outdoorHubs';
 import { applyPlaceEngineEvent, bindPlanDirector, collectOpenThreads } from './openThreads';
 import { npcChipWant, npcGoalPersonHere } from './openThreadUtils';
 import { exitNpc } from './presentAuthority';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
-import { presentNpcRecords } from './npcRecords';
+import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
 import { fuzzyTypedName } from './typedNameMatch';
 
@@ -230,6 +230,10 @@ function pickThreatFact(state: GameState, hereName: string): string {
   return `Threat at ${hereName}: a patrol or visitor interrupts the stall — the scene moves on.`;
 }
 
+/**
+ * Exhausted-source lead: same engine-fact wording as the hub nudge
+ * (`Nudge: <speaker> mentions <place>`), never a stock "word points you toward" line.
+ */
 function pickLeadFact(state: GameState): { fact: string; placeId?: string; npcId?: string } | null {
   const hubs = hubsForBibleId(state.campaignBibleId);
   const hereId = placeIdOf(state);
@@ -237,22 +241,40 @@ function pickLeadFact(state: GameState): { fact: string; placeId?: string; npcId
   const visited = new Set(
     (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => (p.name ?? '').toLowerCase()),
   );
+  const speaker =
+    presentNpcRecords(state)[0]?.npcName
+    ?? peopleHere(state)[0]
+    ?? null;
   for (let i = 0; i < hubs.length; i++) {
     const h = hubs[i]!;
     if (h.id === hereId || h.name.toLowerCase() === hereName) continue;
     if (visited.has(h.name.toLowerCase())) continue;
+    if (speaker) {
+      const sight = placeFirstSight(state, h.name);
+      let sightClean = sight;
+      while (sightClean.endsWith('.') || sightClean.endsWith('!') || sightClean.endsWith('?')) {
+        sightClean = sightClean.slice(0, -1);
+      }
+      return {
+        fact: `Nudge: ${speaker} mentions ${h.name}${sightClean ? `: ${sightClean}` : ''}.`,
+        placeId: h.id || h.name,
+      };
+    }
+    // No person here: same engine-fact wording as the old quest/hub soft nudge (not "word points you toward").
     return {
-      fact: `Lead: word points you toward ${h.name} — a reason to leave this stall.`,
+      fact: `Nudge: word reaches you about ${h.name}.`,
       placeId: h.id || h.name,
     };
   }
-  const present = presentNpcRecords(state).filter((m) => m.present === true || peopleHere(state).some((n) => mentionsName(n, m.npcName)));
+  const present = presentNpcRecords(state).filter(
+    (m) => m.present === true || peopleHere(state).some((n) => mentionsName(n, m.npcName)),
+  );
   for (let i = 0; i < present.length; i++) {
     const m = present[i]!;
     const want = npcChipWant(m);
     if (!want) continue;
     return {
-      fact: `Lead: ${m.npcName} has a concrete ask — ${want}.`,
+      fact: `Nudge: ${m.npcName} mentions ${want}.`,
       npcId: m.npcId || `npc:${m.npcName}`,
     };
   }
@@ -261,9 +283,11 @@ function pickLeadFact(state: GameState): { fact: string; placeId?: string; npcId
     const q = quests[i]!;
     const obj = (q.objectives ?? []).find((o) => !o.completed && !o.optional);
     if (!obj) continue;
+    let desc = obj.description;
+    while (desc.endsWith('.') || desc.endsWith('!') || desc.endsWith('?')) desc = desc.slice(0, -1);
     return {
-      fact: `Lead: open step on ${q.name} — ${obj.description}`,
-      placeId: q.placeId,
+      fact: `Nudge: word reaches you about ${q.name}: ${desc}.`,
+      placeId: q.location ?? q.leadsTo ?? undefined,
     };
   }
   return null;
@@ -274,7 +298,9 @@ function pickNpcAct(state: GameState): { fact: string; npcId: string; name: stri
   const mems = state.npcMemories ?? [];
   for (let i = 0; i < mems.length; i++) {
     const m = mems[i]!;
-    if (!m.goal?.motivation && !m.need && !m.offer) continue;
+    // Same gate as old OPT-5 agenda path: a Doran motivation, not bare need/offer alone
+    // (need-only must fall through to hub stallDepart so a second present person can leave).
+    if (!m.goal?.motivation) continue;
     if (!here.some((n) => mentionsName(n, m.npcName) || mentionsName(m.npcName, n))) continue;
     if (m.present === false) continue;
     const want = npcChipWant(m) || m.need || m.offer || m.goal?.target || 'their next move';
@@ -336,8 +362,19 @@ function injectStallDevelopment(
     }
   }
 
-  // Prefer npc-acting → lead → threat (genre-fit), skipping last kind+target.
-  const npcAct = pickNpcAct(working);
+  // Old OPT-5 body first (agenda → situation → hub+depart). New development kinds only
+  // fill when that body has nothing; hub stallDepart always runs on the hub leaf (T10AM).
+  const hereName = placeNameOf(working);
+  const prevClock = working.arcDirector?.pressureClock;
+  const nextClock = tickPressureClock(prevClock, false, turn);
+  working = applyPressureAgendaAdvance(
+    working,
+    prevClock,
+    { ...nextClock, deadlineTurn: turn },
+    false,
+  );
+  const agendaFired = working.arcDirector?.pressureClock?.lastAgendaAdvanceTurn === turn;
+  const npcAct = agendaFired ? pickNpcAct(working) : null;
   if (npcAct && developmentAllowed(working, 'npc-acting', npcAct.npcId)) {
     stallEventId = `stall-npc-${turn}-${npcAct.npcId}`;
     stallKind = 'agenda';
@@ -349,53 +386,6 @@ function injectStallDevelopment(
     return { state: working, development, need, forwardIds, stallKind, stallEventId };
   }
 
-  const lead = pickLeadFact(working);
-  if (lead) {
-    const target = lead.placeId || lead.npcId || 'lead';
-    if (developmentAllowed(working, 'lead', target)) {
-      stallEventId = `stall-lead-${turn}`;
-      stallKind = 'situation';
-      forwardIds.push(`lead:${target}`);
-      working = appendDirectorFact(working, stallEventId, lead.fact);
-      development = { kind: 'lead', fact: lead.fact, placeId: lead.placeId, npcId: lead.npcId };
-      working = recordDevelopment(working, 'lead', target, lead.fact);
-      need = lead.placeId ? 'travel' : 'lead';
-      return { state: working, development, need, forwardIds, stallKind, stallEventId };
-    }
-  }
-
-  const hereName = placeNameOf(working);
-  if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
-    const target = placeIdOf(working) || hereName;
-    if (developmentAllowed(working, 'threat', target)) {
-      const fact = pickThreatFact(working, hereName);
-      stallEventId = `stall-threat-${turn}`;
-      stallKind = 'situation';
-      forwardIds.push(`threat:${target}`);
-      const event: PlaceEngineEvent = {
-        placeId: hereName,
-        kind: 'new-threat',
-        detail: fact,
-      };
-      working = applyPlaceEngineEvent(working, event);
-      working = stallDepartPresentNpc(working, turn, playerInput);
-      working = appendDirectorFact(working, stallEventId, fact);
-      development = { kind: 'threat', fact, placeId: target };
-      working = recordDevelopment(working, 'threat', target, fact);
-      need = 'threat';
-      return { state: working, development, need, forwardIds, stallKind, stallEventId };
-    }
-  }
-
-  // Fall through: agenda / quest floor (same as former OPT-5) when kinds were blocked by repeat.
-  const prevClock = working.arcDirector?.pressureClock;
-  const nextClock = tickPressureClock(prevClock, false, turn);
-  working = applyPressureAgendaAdvance(
-    working,
-    prevClock,
-    { ...nextClock, deadlineTurn: turn },
-    false,
-  );
   const floor = ensureQuestFloor(working);
   working = floor.state;
   if (floor.quest) {
@@ -405,7 +395,54 @@ function injectStallDevelopment(
     const fact = `Stall pressure: new situation — ${floor.quest.name}.`;
     working = appendDirectorFact(working, stallEventId, fact);
     need = 'quest-offer';
-  } else if (!stallEventId && hereName) {
+    return { state: working, development, need, forwardIds, stallKind, stallEventId };
+  }
+
+  // Hub leaf: world moves + depart one non-addressed present person (old OPT-5 / T10AM).
+  if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
+    const target = placeIdOf(working) || hereName;
+    const lead = pickLeadFact(working);
+    if (lead && developmentAllowed(working, 'lead', lead.placeId || lead.npcId || 'lead')) {
+      const leadTarget = lead.placeId || lead.npcId || 'lead';
+      stallEventId = `stall-lead-${turn}`;
+      stallKind = 'situation';
+      forwardIds.push(`lead:${leadTarget}`);
+      working = applyPlaceEngineEvent(working, {
+        placeId: hereName,
+        kind: 'new-threat',
+        detail: lead.fact,
+      });
+      working = stallDepartPresentNpc(working, turn, playerInput);
+      working = appendDirectorFact(working, stallEventId, lead.fact);
+      development = { kind: 'lead', fact: lead.fact, placeId: lead.placeId, npcId: lead.npcId };
+      working = recordDevelopment(working, 'lead', leadTarget, lead.fact);
+      need = lead.placeId ? 'travel' : 'lead';
+      return { state: working, development, need, forwardIds, stallKind, stallEventId };
+    }
+    if (developmentAllowed(working, 'threat', target)) {
+      const fact = pickThreatFact(working, hereName);
+      stallEventId = `stall-threat-${turn}`;
+      stallKind = 'situation';
+      forwardIds.push(`threat:${target}`);
+      working = applyPlaceEngineEvent(working, {
+        placeId: hereName,
+        kind: 'new-threat',
+        detail: fact,
+      });
+      working = stallDepartPresentNpc(working, turn, playerInput);
+      working = appendDirectorFact(working, stallEventId, fact);
+      development = { kind: 'threat', fact, placeId: target };
+      working = recordDevelopment(working, 'threat', target, fact);
+      need = 'threat';
+      return { state: working, development, need, forwardIds, stallKind, stallEventId };
+    }
+    // Blocked by repeat — still depart and stamp hub pressure (old hub leaf).
+    working = applyPlaceEngineEvent(working, {
+      placeId: hereName,
+      kind: 'new-threat',
+      detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
+    });
+    working = stallDepartPresentNpc(working, turn, playerInput);
     stallEventId = `stall-hub-${turn}`;
     stallKind = 'situation';
     const fact = `Stall pressure: the scene at ${hereName} moves on.`;
@@ -699,9 +736,10 @@ export function acceptDirectorQuestOffer(state: GameState): GameState {
     name: `${giver}'s job`,
     description: goal,
     status: 'active',
+    type: 'side',
     revealed: true,
     giver,
-    placeId: d.placeId,
+    location: d.placeId,
     objectives: [{ id: `${questId}-1`, description: goal, completed: false }],
   };
   return { ...state, quests: [...(state.quests ?? []), quest] };
@@ -731,6 +769,17 @@ function chipSpecsFromNeed(
       const hereHub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
       if (!hereHub || hereHub.id !== hub?.id) {
         chips.push({ label: `Travel toward ${label}`, reason: 'director-lead-travel' });
+      } else {
+        // Thread/lead is already HERE — offer a different hub so first-pad can leave the stall
+        // (travel-to-here is illegal; injection alone is not progress).
+        const alt = pickLeadFact(state);
+        if (alt?.placeId) {
+          const altHub = matchHub(hubsForBibleId(state.campaignBibleId), alt.placeId);
+          const altLabel = altHub?.name ?? alt.placeId;
+          if (!hereHub || hereHub.id !== altHub?.id) {
+            chips.push({ label: `Travel toward ${altLabel}`, reason: 'director-here-thread-lead' });
+          }
+        }
       }
     }
   }
@@ -823,6 +872,8 @@ export function planDirector(
 
   // Prefer open-thread bring-forward under stall (OPT-5 / ttT1b): stallKind stays 'thread'
   // when a thread is available; otherwise inject a concrete world development.
+  // Stall depart is the OLD rule (always under stall+thread / hub): one non-addressed
+  // present person via presentAuthority.exitNpc — never gated on developmentAllowed.
   if (stall && best) {
     forwardIds = [best.id];
     stallKind = 'thread';
@@ -835,14 +886,14 @@ export function planDirector(
     const hereName = placeNameOf(working);
     if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
       const target = placeIdOf(working) || hereName;
+      const threatFact = pickThreatFact(working, hereName);
+      working = applyPlaceEngineEvent(working, {
+        placeId: hereName,
+        kind: 'new-threat',
+        detail: threatFact,
+      });
+      working = stallDepartPresentNpc(working, turn, playerInput);
       if (developmentAllowed(working, 'threat', target)) {
-        const threatFact = pickThreatFact(working, hereName);
-        working = applyPlaceEngineEvent(working, {
-          placeId: hereName,
-          kind: 'new-threat',
-          detail: threatFact,
-        });
-        working = stallDepartPresentNpc(working, turn, playerInput);
         working = recordDevelopment(working, 'threat', target, threatFact);
       }
     }
@@ -910,16 +961,22 @@ export function writeDirectorPlan(
   };
 }
 
-/** Sole writer of circling nudge fields (anti-circling routes through director). */
+/**
+ * Sole writer of circling nudge fields (anti-circling routes through director).
+ * Soft engine-fact nudges match the old choiceRanking write (lastProgressTurn advances).
+ * Stall developments pass countsAsProgress:false — injection alone is not progress.
+ */
 export function writeDirectorNudge(
   state: GameState,
   line: string,
   nudgeCursor: number,
+  opts?: { countsAsProgress?: boolean },
 ): GameState {
   const mem = state.circling;
   if (!mem) return state;
   const turn = state.turn ?? 0;
   const fired = [...(mem.firedNudges ?? []), line].slice(-64);
+  const countsAsProgress = opts?.countsAsProgress !== false;
   return {
     ...state,
     circling: {
@@ -928,15 +985,16 @@ export function writeDirectorNudge(
       lastNudge: line,
       nudgeCursor,
       firedNudges: fired,
-      // Do NOT set lastProgressTurn — injection is not progress (T10DIR).
+      ...(countsAsProgress ? { lastProgressTurn: turn } : {}),
     },
   };
 }
 
 /**
- * Anti-circling entry: director owns progression. When stalled, planDirector injects
- * a world development; engine-fact nudges only when the director has nothing new and
- * stuck ≥ STALL_N. The old "Nudge skipped … OPT-5" dead end is deleted.
+ * Anti-circling entry (moved byte-for-byte from choiceRanking.nudgeIfStuck).
+ * Old sources first (dungeon → unmet person → open quest step → hub mention by a person here
+ * with placeFirstSight / firedNudges / nudgeCursor rotation). Lead / director development
+ * ONLY when every old source is exhausted — never replaces them. No "Nudge skipped … OPT-5" dead end.
  */
 export function directorNudgeIfStuck(state: GameState): {
   state: GameState;
@@ -945,6 +1003,7 @@ export function directorNudgeIfStuck(state: GameState): {
 } {
   const mem = state.circling;
   if (!mem || state.activeEncounter) return { state, receipts: [], notes: [] };
+  // Nobody gets word to a PC lying unconscious at 0 HP.
   if (state.deathSaves || (state.character?.hp ?? 1) <= 0) return { state, receipts: [], notes: [] };
   if (state.engineMode === 'pyoa') return { state, receipts: [], notes: [] };
 
@@ -954,21 +1013,9 @@ export function directorNudgeIfStuck(state: GameState): {
     return { state, receipts: [], notes: [] };
   }
 
-  // Stall path: director injects a concrete development (not a soft STATUS nudge).
-  if (stallPressureActive(state)) {
-    const planned = planDirector(state);
-    if (planned.receipts.length || planned.plan.need !== 'none') {
-      const withNudge = writeDirectorNudge(planned.state, planned.plan.development?.fact ?? `director:${planned.plan.need}`, 0);
-      return {
-        state: withNudge,
-        receipts: planned.receipts,
-        notes: [...planned.notes, 'Director stall development'],
-      };
-    }
-  }
-
-  // Engine-fact nudge rotation (dungeon / unmet NPC / quest / hub) — still fact-only.
+  const notes: string[] = [];
   const fired = new Set([...(mem.firedNudges ?? []), ...(mem.lastNudge ? [mem.lastNudge] : [])]);
+  // 28l — sources rotate (room → person → quest → hub). Hub = person-present mention + first-sight.
   const sourceCount = 4;
   const start = (mem.nudgeCursor ?? 0) % sourceCount;
   let line = '';
@@ -979,10 +1026,22 @@ export function directorNudgeIfStuck(state: GameState): {
     if (idx === 0) {
       const d = state.activeDungeon;
       if (d) {
-        const node = d.nodes.find((n) => n.id === d.currentNodeId);
+        let node: (typeof d.nodes)[number] | undefined;
+        for (let n = 0; n < d.nodes.length; n++) {
+          if (d.nodes[n]!.id === d.currentNodeId) {
+            node = d.nodes[n];
+            break;
+          }
+        }
         const conns = node?.connections ?? [];
         for (let c = 0; c < conns.length; c++) {
-          const nextNode = d.nodes.find((n) => n.id === conns[c]);
+          let nextNode: (typeof d.nodes)[number] | undefined;
+          for (let n = 0; n < d.nodes.length; n++) {
+            if (d.nodes[n]!.id === conns[c]) {
+              nextNode = d.nodes[n];
+              break;
+            }
+          }
           if (nextNode && !d.visitedNodeIds.includes(nextNode.id)) {
             candidate = `Nudge: a sound carries from ${nextNode.name}.`;
             break;
@@ -990,9 +1049,9 @@ export function directorNudgeIfStuck(state: GameState): {
         }
       }
     } else if (idx === 1) {
-      const people = presentNpcRecords(state).filter((p) => p.present === true);
+      const people = presentNpcRecords(state);
       for (let p = 0; p < people.length; p++) {
-        if (!people[p]!.met && !people[p]!.introSpoken) {
+        if (!isMetNpc(people[p]!)) {
           candidate = `Nudge: ${people[p]!.npcName} comes over to you.`;
           break;
         }
@@ -1002,19 +1061,30 @@ export function directorNudgeIfStuck(state: GameState): {
       for (let q = 0; q < quests.length; q++) {
         const quest = quests[q]!;
         if (quest.status !== 'active' || !quest.revealed) continue;
-        const obj = (quest.objectives ?? []).find((o) => !o.completed && !o.optional);
-        if (!obj) continue;
-        let desc = obj.description;
-        while (desc.endsWith('.') || desc.endsWith('!') || desc.endsWith('?')) desc = desc.slice(0, -1);
-        candidate = `Nudge: word reaches you about ${quest.name}: ${desc}.`;
-        break;
+        const objs = quest.objectives ?? [];
+        for (let o = 0; o < objs.length; o++) {
+          const obj = objs[o]!;
+          if (obj.completed || obj.optional) continue;
+          let desc = obj.description;
+          while (desc.endsWith('.') || desc.endsWith('!') || desc.endsWith('?')) {
+            desc = desc.slice(0, -1);
+          }
+          candidate = `Nudge: word reaches you about ${quest.name}: ${desc}.`;
+          break;
+        }
+        if (candidate) break;
       }
     } else {
       const hubs = hubsForBibleId(state.campaignBibleId);
       const here = matchHub(hubs, state.currentLocation);
-      const visited = new Set(
-        (state.places ?? []).filter((p) => p.lastVisitedTurn != null).map((p) => p.name.toLowerCase()),
-      );
+      const visited = new Set<string>();
+      const placeRows = state.places ?? [];
+      for (let p = 0; p < placeRows.length; p++) {
+        if (placeRows[p]!.lastVisitedTurn != null) {
+          visited.add(placeRows[p]!.name.toLowerCase());
+        }
+      }
+      let pick: (typeof hubs)[number] | undefined;
       for (let h = 0; h < hubs.length; h++) {
         const hub = hubs[h]!;
         if (hub.id === here?.id || visited.has(hub.name.toLowerCase())) continue;
@@ -1026,9 +1096,19 @@ export function directorNudgeIfStuck(state: GameState): {
           }
         }
         if (!already) {
-          candidate = `Nudge: word reaches you about ${hub.name}.`;
+          pick = hub;
           break;
         }
+        if (!pick) pick = hub;
+      }
+      const sight = pick ? placeFirstSight(state, pick.name) : '';
+      let sightClean = sight;
+      while (sightClean.endsWith('.') || sightClean.endsWith('!') || sightClean.endsWith('?')) {
+        sightClean = sightClean.slice(0, -1);
+      }
+      const speaker = presentNpcRecords(state)[0]?.npcName;
+      if (pick && speaker) {
+        candidate = `Nudge: ${speaker} mentions ${pick.name}${sightClean ? `: ${sightClean}` : ''}.`;
       }
     }
     if (candidate && !fired.has(candidate)) {
@@ -1038,7 +1118,17 @@ export function directorNudgeIfStuck(state: GameState): {
   }
 
   if (!line) {
-    // Last resort: force a director stall plan so the dead-end note never returns.
+    // Former "Nudge skipped: no engine-fact nudge; OPT-5 stall uses the scene planner" dead end:
+    // ONLY now may the director inject a lead/development (engine-fact wording, not stock Lead:).
+    const lead = pickLeadFact(state);
+    if (lead && !fired.has(lead.fact)) {
+      const nextCursor = (used + 1) % sourceCount;
+      return {
+        state: writeDirectorNudge(state, lead.fact, nextCursor),
+        receipts: [lead.fact],
+        notes: [...notes, 'Director lead after old nudge sources exhausted'],
+      };
+    }
     const forced = planDirector({
       ...state,
       progressGovernor: {
@@ -1046,14 +1136,15 @@ export function directorNudgeIfStuck(state: GameState): {
         turnsSinceProgress: STALL_N,
       },
     });
-    if (forced.receipts.length) {
+    if (forced.receipts.length || forced.plan.development?.fact) {
+      const fact = forced.plan.development?.fact ?? forced.receipts[0]!;
       return {
-        state: writeDirectorNudge(forced.state, forced.plan.development?.fact ?? 'director:forced', used),
-        receipts: forced.receipts,
-        notes: [...forced.notes, 'Director forced development (no soft nudge)'],
+        state: writeDirectorNudge(forced.state, fact, (used + 1) % sourceCount, { countsAsProgress: false }),
+        receipts: forced.receipts.length ? forced.receipts : [fact],
+        notes: [...notes, ...forced.notes, 'Director forced development (old nudge sources exhausted)'],
       };
     }
-    return { state, receipts: [], notes: ['Director: no development available this beat'] };
+    return { state, receipts: [], notes: [...notes, 'Director: no development available this beat'] };
   }
 
   return {
