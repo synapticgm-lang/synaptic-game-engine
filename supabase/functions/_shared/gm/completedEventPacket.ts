@@ -1140,9 +1140,11 @@ function movementLine(state: GameState, stay: string): string {
   const prev = c?.prevPlace?.replace(/\s+/g, ' ').trim() ?? '';
   const from = prev && !isRoadLabel(prev) && prev.toLowerCase() !== here.toLowerCase() ? prev : '';
   if (movedNow && c?.shortReturnTurn === state.turn) {
+    // T10AR — bounce return is still an arrival for the writer (s9601 T160/T165 "nothing changed"
+    // / "no new place picked out"). Continuity of cast/mood stays; null-delta language does not.
     const left = from ? ` from ${from}` : '';
-    const nothing = from ? `; nothing more happens at ${from}` : '';
-    return `Turned back this turn:${left} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions. Not a new arrival${nothing}.`;
+    const leftNote = from ? ` Nothing more happens at ${from}.` : '';
+    return `Returned this turn:${left} to ${here}. Narrate arriving back at ${here} and who is present; the place may feel familiar, but this is still an arrival — never say nothing changed, that no one stepped forward, or that no new place was picked out.${leftNote}`;
   }
   if (movedNow && from) {
     const pc = (state.character?.name ?? '').trim() || 'The player character';

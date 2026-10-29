@@ -28,12 +28,13 @@ import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination } from './outdoorHubs';
 import { isJourneyOnwardLine, isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
-import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant } from './openThreads';
+import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant, stallPressureActive } from './openThreads';
 import { isDying } from './tabletop/roundFight';
 import { originPad } from './rules/rpgOrigin';
 import { travelPadBlocked } from './padUniverse';
 import { capFightChips, FIGHT_CHIP_CAP, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
 import { activeHereSpot, stepCloserChip } from './hereSpot';
+import { isSearchTargetEmpty, normalizeSearchTarget } from './searchContinuity';
 
 export { presentPersonForRoute } from './questRoutes';
 
@@ -591,18 +592,23 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   }
   const place = (state.currentLocation ?? '').trim();
   // T10N — one search chip: quest "Search {HERE} for signs" already covers the same action.
+  // T10AR — once THIS place is on searchedEmpty (found nothing / already searched), do not
+  // re-offer Search as a fresh chip (s9601 T158→T162 / Safehouse alley loops).
   if (place && !placeSearchHere) {
     const label = 'Search the area';
-    const entityId = `place:${place}`;
-    all.push({
-      label,
-      actionId: `object:${entityId}:search`,
-      entityId,
-      slotKind: 'object',
-      salience: 50,
-      required: false,
-      check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
-    });
+    const searchKey = normalizeSearchTarget(label, place);
+    if (!isSearchTargetEmpty(state.sceneFacts, searchKey)) {
+      const entityId = `place:${place}`;
+      all.push({
+        label,
+        actionId: `object:${entityId}:search`,
+        entityId,
+        slotKind: 'object',
+        salience: 50,
+        required: false,
+        check: dnd ? checkForAction(state, parsePlayerIntent(label, state), label) : undefined,
+      });
+    }
   }
   for (let i = 0; i < all.length; i++) {
     const a = all[i]!;
@@ -1078,17 +1084,38 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
   const picked: T[] = [];
   const used = new Set<string>();
   let talkFilled = false;
+  // T10AR — under stall, untried talk outranks bounce-only MOVE so Waystation↔Camp travel
+  // does not lead the pad while Ask/Press chips sit behind it (s9601 T160–T165).
+  const recent = state.circling?.recentPlaces ?? [];
+  const prev = (state.circling?.prevPlace ?? '').trim().toLowerCase();
+  const bounceMoveOnly =
+    move.length > 0
+    && move.every((chip) => {
+      const hub = parseTravelDestination(chip.label, state.campaignBibleId);
+      const dest = (hub?.name ?? chip.entityId ?? '').trim().toLowerCase();
+      if (!dest) return false;
+      if (prev && (dest === prev || dest.includes(prev) || prev.includes(dest))) return true;
+      for (let r = 0; r < recent.length; r++) {
+        const p = (recent[r] ?? '').trim().toLowerCase();
+        if (p && (dest === p || dest.includes(p) || p.includes(dest))) return true;
+      }
+      return false;
+    });
+  const talkFirst = stallPressureActive(state) && talk.length > 0 && bounceMoveOnly;
+  // Slot order: MOVE · TALK · ACT · SCENE · rest (or TALK first under bounce stall).
+  const orderedPools: T[][] = talkFirst
+    ? [talk, move, act, scene]
+    : [move, talk, act, scene];
   for (let slot = 0; slot < 5; slot++) {
-    const pool = slot === 0 ? move : slot === 1 ? talk : slot === 2 ? act : slot === 3 ? scene : null;
+    const pool = slot < 4 ? orderedPools[slot]! : null;
     const cands: T[] = [];
     if (pool) {
       for (let i = 0; i < pool.length; i++) {
         if (!used.has(pool[i]!.actionId)) cands.push(pool[i]!);
       }
     } else {
-      const rest = [move, talk, act, scene];
-      for (let g = 0; g < rest.length; g++) {
-        const group = rest[g]!;
+      for (let g = 0; g < orderedPools.length; g++) {
+        const group = orderedPools[g]!;
         for (let i = 0; i < group.length; i++) {
           const row = group[i]!;
           if (used.has(row.actionId)) continue;

@@ -266,9 +266,16 @@ function spokenExchangeLine(
     );
     const ambientShout =
       /["\u201c]/.test(ask) && !/\?/.test(ask) && !namesThisSpeaker && !demandsSpeech;
+    // T10AR — physical free act / arrival silence fill that never asks or names this speaker
+    // must not dump ledger need ("I need a buyer who pays" after snapping a twig; s9601 T157).
+    const addressedTalk =
+      /^(?:ask|talk|speak|Follow up with)\b/i.test(ask)
+      || /\b(?:ask(?:ing)?|tell(?:ing)?|talk(?:ing)?\s+to|speak(?:ing)?\s+to)\b/i.test(ask);
+    const ambientReact =
+      !namesThisSpeaker && !demandsSpeech && !contentQuestion && !addressedTalk;
     const fitRow =
       pool.find((b) => overlapsAsk(b.text))
-      ?? (ambientShout
+      ?? (ambientShout || ambientReact
         ? undefined
         : !contentQuestion || demandsSpeech
           ? pool[0]
