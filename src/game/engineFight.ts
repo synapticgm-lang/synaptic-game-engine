@@ -56,6 +56,11 @@ function facesLiveFoe(input: string, enc: { name?: string } | null | undefined):
   return new RegExp(`^face\\s+${esc}$`, 'i').test(act);
 }
 
+/** T10RC3 — Director "Face the threat" engages a parked/live engine foe (same attack open). */
+function facesDirectorThreatChip(input: string): boolean {
+  return /^face the threat$/i.test(meetingMoveBase(input).trim());
+}
+
 export interface EngineFightResult {
   state: GameState;
   receipts: string[];
@@ -274,7 +279,12 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const attack =
     !flee
     && !parley
-    && (ATTACK_RE.test(act) || facesLiveFoe(input, raw) || !!road || inRounds || roundMove);
+    && (ATTACK_RE.test(act)
+      || facesLiveFoe(input, raw)
+      || facesDirectorThreatChip(input)
+      || !!road
+      || inRounds
+      || roundMove);
   const onRoad = isRoadFoe(state, raw);
   if (!flee && !parley && !attack) return null;
   if (parked && (flee || /\b(talk|ask|speak|conversation)\b/i.test(input))) return null;

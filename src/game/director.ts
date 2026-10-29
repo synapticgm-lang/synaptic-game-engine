@@ -9,6 +9,7 @@
  */
 
 import type {
+  ActiveEncounter,
   DirectorChipSpec,
   DirectorDevelopment,
   DirectorNeed,
@@ -16,17 +17,20 @@ import type {
   GameState,
   NpcMemory,
   OpenThread,
-  PlaceEngineEvent,
   Quest,
   SceneThreadPlan,
   TimelineFact,
 } from './types';
 import { chipAddressee, mentionsName, peopleHere } from './chipLegality';
 import { isCrowdFillerToken } from './chromeAuthority';
+import { markPendingSpawnPreface } from './combatAuthority';
 import { STALL_N } from './directorConstants';
+import { selectCatalogEncounter } from './encounterBible';
+import { initEncounterTerminal, parkPendingEncounter } from './encounterTerminalFsm';
 import { hubsForBibleId, matchHub, placeFirstSight } from './outdoorHubs';
 import { applyPlaceEngineEvent, bindPlanDirector, collectOpenThreads } from './openThreads';
 import { npcChipWant, npcGoalPersonHere } from './openThreadUtils';
+import { parkedThreatHere } from './placeThreats';
 import { exitNpc, seat } from './presentAuthority';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
@@ -184,39 +188,63 @@ function appendDirectorFact(state: GameState, eventId: string, text: string): Ga
   };
 }
 
-/** Append one engine fact onto an NPC memory (socialSignature reads facts.length). */
-function appendNpcAgendaFact(state: GameState, npcName: string, fact: string): GameState {
-  const line = (fact ?? '').replace(/\s+/g, ' ').trim();
-  if (!npcName || !line) return state;
-  let hit = false;
-  const mems = (state.npcMemories ?? []).map((m) => {
-    if (!mentionsName(m.npcName, npcName) && !mentionsName(npcName, m.npcName) && m.npcName.trim().toLowerCase() !== npcName.trim().toLowerCase()) {
-      return m;
-    }
-    hit = true;
-    const facts = m.facts?.includes(line) ? m.facts : [...(m.facts ?? []), line].slice(-12);
-    return { ...m, facts, met: true, lastSeenTurn: state.turn ?? m.lastSeenTurn };
-  });
-  if (hit) return { ...state, npcMemories: mems };
-  // No memory yet — seat path may have created present only; seed a thin record.
-  const npcId = `npc:${npcName.replace(/\s+/g, '-').toLowerCase()}`;
-  return {
-    ...state,
-    npcMemories: [
-      ...mems,
-      {
-        npcId,
-        npcName,
-        disposition: 'neutral' as const,
-        facts: [line],
-        lastSeenTurn: state.turn ?? 0,
-        met: true,
-        present: true,
-        aliases: [],
-        introSpoken: true,
-      },
-    ],
+/**
+ * T10RC3 — live or parked engine foe the spine can resolve (Face the threat).
+ * Director stall must open one of these before offering that chip.
+ */
+function engineThreatHere(state: GameState): ActiveEncounter | null {
+  return (
+    state.activeEncounter
+    ?? state.sceneFacts?.pendingEncounter
+    ?? parkedThreatHere(state)?.encounter
+    ?? null
+  );
+}
+
+/**
+ * Park a catalog foe through the existing encounter owner so "Face the threat" can resolve.
+ * No novel foe name: catalog seed only. Does not count as player progress by itself.
+ */
+function parkStallThreat(state: GameState): { state: GameState; foe: ActiveEncounter | null } {
+  const existing = engineThreatHere(state);
+  if (existing) return { state, foe: existing };
+  if (state.engineMode === 'pyoa') return { state, foe: null };
+  const seed = selectCatalogEncounter(state);
+  const name = (seed?.foeName ?? '').trim();
+  if (!name) return { state, foe: null };
+  const lvl = state.character?.level ?? 1;
+  const hp = 12 + lvl * 4;
+  const foe = initEncounterTerminal(
+    {
+      name,
+      level: lvl,
+      hp,
+      maxHp: hp,
+      armorClass: 11 + lvl,
+      strength: 12,
+      dexterity: 12,
+      constitution: 12,
+      xpReward: seed?.xpReward ?? 25 + lvl * 5,
+      goldReward: seed?.goldReward ?? 5 + lvl * 2,
+    },
+    state,
+    { forcedSpawnKey: name, source: seed?.id ?? 'director-stall' },
+  );
+  const parked = parkPendingEncounter(foe, state.turn ?? 0);
+  const base = state.sceneFacts ?? {
+    crowd: 'unknown' as const,
+    noise: 'unknown' as const,
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: state.turn ?? 0,
   };
+  let next: GameState = {
+    ...state,
+    sceneFacts: { ...base, pendingEncounter: parked },
+  };
+  next = markPendingSpawnPreface(next, parked.name);
+  return { state: next, foe: parked };
 }
 
 function questFromThread(state: GameState, thread: OpenThread): Quest | null {
@@ -381,7 +409,7 @@ function commitStallDevelopment(
       const fact =
         `${name} ${arriveBit} their agenda: ${goal}${whereBit}.`;
       const stallEventId = `stall-npc-${turn}-${name.replace(/\s+/g, '-').toLowerCase()}`;
-      working = appendNpcAgendaFact(working, name, `Director agenda T${turn}: ${goal}`);
+      // T10RC3 — do not appendNpcAgendaFact (false social progress). Seat + Must-narrate only.
       working = appendDirectorFact(working, stallEventId, fact);
       if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
         working = stallDepartPresentNpc(working, turn, playerInput);
@@ -464,13 +492,8 @@ function commitStallDevelopment(
       || peopleHere(working)[0]
       || presentNpcRecords(working)[0]?.npcName
       || null;
-    if (messenger) {
-      if (!personIsHere(working, messenger)) working = seat(working, messenger);
-      working = appendNpcAgendaFact(
-        working,
-        messenger,
-        `Director lead T${turn}: ${goal}${travelName ? ` at ${travelName}` : ''}`,
-      );
+    if (messenger && !personIsHere(working, messenger)) {
+      working = seat(working, messenger);
     }
     const whoBit = messenger ? `${messenger} points you to` : 'A lead opens toward';
     const fact = travelName
@@ -512,7 +535,7 @@ function commitStallDevelopment(
     }
   }
 
-  // threat — always seat/speak via an engine-known person so socialSignature moves.
+  // threat — park a real engine foe + seat a visible person; never empty the room this turn.
   {
     const threatWhere = hereName || 'this place';
     const detail = thread
@@ -523,30 +546,30 @@ function commitStallDevelopment(
       kind: 'new-threat',
       detail,
     });
+    const parked = parkStallThreat(working);
+    working = parked.state;
     const who =
       actor
       || peopleHere(working)[0]
       || presentNpcRecords(working)[0]?.npcName
       || (working.npcMemories ?? []).find((m) => (m.npcName ?? '').trim())?.npcName
       || null;
-    if (who) {
-      if (!personIsHere(working, who)) working = seat(working, who);
-      working = appendNpcAgendaFact(working, who, `Director threat T${turn}: ${detail}`);
-    }
+    if (who && !personIsHere(working, who)) working = seat(working, who);
     // Target includes turn so developmentAllowed cannot soft-lock on the same HERE forever
     // when lead falls through to threat repeatedly (rpg dry-run Camp stall).
     const target = `${hereId || hereName || 'here'}:t${turn}`;
+    const foeBit = parked.foe?.name ? ` — ${parked.foe.name} closes in` : '';
     const fact = who
-      ? `${who} warns that ${detail}.`
-      : `Danger closes at ${threatWhere}: ${detail}.`;
+      ? `${who} warns that ${detail}${foeBit}.`
+      : `Danger closes at ${threatWhere}: ${detail}${foeBit}.`;
     const stallEventId = `stall-threat-${turn}`;
     working = appendDirectorFact(working, stallEventId, fact);
-    if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
-      working = stallDepartPresentNpc(working, turn, playerInput);
-    }
+    // T10RC3 — never stallDepartPresentNpc on threat inject (empty Waystation at T290–T300).
     working = recordDevelopment(working, 'threat', target, fact);
+    // No engine foe → do not claim need=threat (Face chip would be a dead Must-narrate).
+    const need: DirectorNeed = parked.foe ? 'threat' : who ? 'npc-act' : 'threat';
     const development: DirectorDevelopment = {
-      kind: 'threat',
+      kind: parked.foe ? 'threat' : who ? 'npc-acting' : 'threat',
       fact: asMustNarrateFact(fact),
       placeId: hereId || hereName || undefined,
       npcId: who ? `npc:${who}` : undefined,
@@ -555,7 +578,7 @@ function commitStallDevelopment(
     return {
       state: working,
       development,
-      need: 'threat',
+      need,
       forwardIds,
       stallKind: thread ? 'thread' : 'situation',
       stallEventId,
@@ -586,7 +609,8 @@ function addressedPresentName(state: GameState, playerInput: string): string | n
 
 function stallDepartPresentNpc(state: GameState, turn: number, playerInput = ''): GameState {
   const present = (state.sceneFacts?.present ?? []).filter((n) => n && !isCrowdFillerToken(n));
-  if (!present.length) return state;
+  // T10RC3 — never leave the room empty on a stall depart (threat inject used to clear the last face).
+  if (present.length <= 1) return state;
   const keep = addressedPresentName(state, playerInput);
   const candidates = keep
     ? present.filter(
@@ -595,22 +619,12 @@ function stallDepartPresentNpc(state: GameState, turn: number, playerInput = '')
           && !mentionsName(n, keep)
           && !mentionsName(keep, n),
       )
-    : present;
+    : present.slice(0, -1); // leave the last face when no addressee lock
   if (!candidates.length) return state;
   const name = candidates[candidates.length - 1]!;
-  const exited = exitNpc(state, name, 'stall-pressure');
-  const fact = `Left under stall pressure T${turn}`;
-  const mems = (exited.npcMemories ?? []).map((m) => {
-    const n = (m.npcName ?? '').trim();
-    if (!n || (!mentionsName(n, name) && !mentionsName(name, n) && n.toLowerCase() !== name.trim().toLowerCase())) {
-      return m;
-    }
-    return {
-      ...m,
-      facts: m.facts?.includes(fact) ? m.facts : [...(m.facts ?? []), fact].slice(-12),
-    };
-  });
-  return { ...exited, npcMemories: mems };
+  // T10RC3 — exit only; do not append "Left under stall…" into npc facts (false social progress).
+  void turn;
+  return exitNpc(state, name, 'stall-pressure');
 }
 
 function pickThreatFact(state: GameState, hereName: string): string {
@@ -720,8 +734,9 @@ function developmentAllowed(state: GameState, kind: DirectorDevelopment['kind'],
 }
 
 /**
- * Build a stall world development. T10DIR2: always a COMMITTED engine change
- * (seat / quest / discovered place) so turnProgress sees quest or social.
+ * Build a stall world development. T10DIR2/T10RC3: COMMITTED engine change
+ * (seat / quest / discovered place / parked threat). Director self-writes are
+ * not player progress; the player resolving Face/Answer/Travel is.
  */
 function injectStallDevelopment(
   state: GameState,
@@ -766,10 +781,9 @@ function injectStallDevelopment(
     const agendaFired = working.arcDirector?.pressureClock?.lastAgendaAdvanceTurn === turn;
     const npcAct = agendaFired ? pickNpcAct(working) : null;
     if (npcAct && developmentAllowed(working, 'npc-acting', npcAct.npcId)) {
-      // Commit through seat+fact path so socialSignature moves.
+      // Seat + Must-narrate; do not write npc agenda facts (T10RC3 — not player social progress).
       let s = working;
       if (!personIsHere(s, npcAct.name)) s = seat(s, npcAct.name);
-      s = appendNpcAgendaFact(s, npcAct.name, `Director agenda T${turn}: ${npcAct.fact}`);
       const stallEventId = `stall-npc-${turn}-${npcAct.npcId}`;
       s = appendDirectorFact(s, stallEventId, npcAct.fact);
       s = recordDevelopment(s, 'npc-acting', npcAct.npcId, npcAct.fact);
@@ -1200,7 +1214,18 @@ function chipSpecsFromNeed(
       ?? 'them';
     chips.push({ label: `Answer ${name}`, reason: 'director-npc-act' });
   }
-  if (need === 'threat') {
+  // T10RC3 — Face the threat only when an engine foe is parked/live to resolve.
+  // Also offer a leave lead so first-pad dry-run is not forced into a Face→death loop.
+  if (need === 'threat' && engineThreatHere(state)) {
+    const hereLow = (state.currentLocation ?? '').trim().toLowerCase();
+    const alt = pickLeadFact(state);
+    if (alt?.placeId) {
+      const altHub = matchHub(hubsForBibleId(state.campaignBibleId), alt.placeId);
+      const altLabel = altHub?.name ?? alt.placeId;
+      if (altLabel && altLabel.trim().toLowerCase() !== hereLow) {
+        chips.push({ label: `Travel toward ${altLabel}`, reason: 'director-threat-lead' });
+      }
+    }
     chips.push({ label: 'Face the threat', reason: 'director-threat' });
     chips.push({ label: 'Look for an exit', reason: 'director-threat-exit' });
   }

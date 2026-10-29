@@ -19,7 +19,7 @@ import {
   recordCirclingTurn,
   turnProgress,
 } from './choiceRanking';
-import { applyRememberedThreatPick } from './placeThreats';
+import { applyRememberedThreatPick, parkedThreatHere } from './placeThreats';
 import { applyPlayPhaseAfterHp, deathQuestReceipt } from './playPhase';
 import { carryDeathSaves } from './rules/death';
 import { pathToFileURL } from 'node:url';
@@ -1260,8 +1260,13 @@ export async function headlessFateTurn(
     const dyingTurn = isDying(govInputState);
     const hereBeforeMove = arcState.currentLocation ?? '';
     let fightHandled = false;
-    // Live encounter / dying on the round-combat path: typed Attack/Dodge/… via resolveEngineFight.
-    if (dyingTurn || arcState.activeEncounter) {
+    // T10RC3 — pending/parked Director threats must resolve (Face the threat), not only live activeEncounter.
+    if (
+      dyingTurn
+      || arcState.activeEncounter
+      || !!arcState.sceneFacts?.pendingEncounter
+      || !!parkedThreatHere(arcState)
+    ) {
       const fight = resolveEngineFight(arcState, playerInput);
       if (fight) {
         fightHandled = true;
@@ -1348,13 +1353,24 @@ export async function headlessFateTurn(
         .map((e) => String(e.content ?? '')),
       inFight: !!arcState.activeEncounter,
     });
-    // When a stall development is live, put a concrete travel/answer chip first so first-pad
-    // can act on it before the harness 5-turn LOOP STOP (injection alone is not progress).
-    const planChip = (arcState.directorPlan?.chips ?? []).find(
-      (c) => travelDestFromChip(c.label) || /^(?:Accept|Answer|Face|Follow up)/i.test(c.label),
-    );
-    if (planChip && (arcState.sceneFacts?.stallWorldFact || (arcState.directorPlan?.need ?? 'none') !== 'none')) {
-      nextChoices = [planChip.label, ...nextChoices.filter((c) => c !== planChip.label)];
+    // When a stall development is live, put a concrete next-step chip first so first-pad
+    // can act before LOOP STOP (T10RC3: injection alone is not progress).
+    // Prefer non-bounce Travel; else Face/Answer (Face now resolves parked threats).
+    {
+      const recent = (arcState.circling?.recentPlaces ?? []).map((p) =>
+        p.replace(/\s+/g, ' ').trim().toLowerCase(),
+      );
+      const travelChip = (arcState.directorPlan?.chips ?? []).find((c) => travelDestFromChip(c.label));
+      const dest = travelChip ? travelDestFromChip(travelChip.label) : null;
+      const destKey = (dest ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+      const bounce = !!destKey && recent.some((p) => p === destKey || p.includes(destKey) || destKey.includes(p));
+      const actChip = (arcState.directorPlan?.chips ?? []).find((c) =>
+        /^(?:Accept|Answer|Face|Follow up)/i.test(c.label),
+      );
+      const planChip = (!bounce && travelChip) || actChip || travelChip;
+      if (planChip && (arcState.sceneFacts?.stallWorldFact || (arcState.directorPlan?.need ?? 'none') !== 'none')) {
+        nextChoices = [planChip.label, ...nextChoices.filter((c) => c !== planChip.label)];
+      }
     }
     const midBase: GameState = { ...arcState, turn: nextTurn, log: [...prevLog, playerEntry, gmBase] };
     const gm: LogEntry = { ...gmBase, offeredChoices: nextChoices };

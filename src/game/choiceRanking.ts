@@ -38,20 +38,20 @@ const STUCK_TURNS = 3;
 
 const PROGRESS_RECEIPT = /^(?:XP Gained|Loot:|Gold Gained|Quest|Fight: VICTORY|Parley check:.*success|Dungeon: (?:you moved|you opened|you found|search of .*you found (?!nothing))|Dungeon: .* is cleared|Nudge:|.+ pulls away)/i;
 
-/** 29z1 — what a person-facing change looks like on the ledger: memories, answered facts, topics, standing. */
+/**
+ * 29z1 / T10RC3 — player-caused person-facing ledger change only.
+ * Talk commits (facts length, topics, met, disposition, standing, purchases) count.
+ * Director stall self-writes must not: agenda/threat fact churn, seat/depart present flips.
+ * (Do not hash sceneFacts.present — travel trim is not social; T10AR.)
+ */
 function socialSignature(state: GameState): string {
   const mems = (state.npcMemories ?? [])
     .map((m) =>
       [
         m.npcId,
         m.facts?.length ?? 0,
-        // T10DIR2 — fact *content* (not only length): director agenda lines rotate inside a
-        // capped facts[] so length can stay 12 while the ledger still moved.
-        (m.facts ?? []).slice(-4).join('^'),
         m.completedTopics?.length ?? 0,
         m.met ? 1 : 0,
-        // T10DIR2 — seating via presentAuthority must count as social (LOOP STOP / stall).
-        m.present === true ? 1 : 0,
         m.disposition,
         m.relationshipStatus ?? '',
         m.knownPlayerName ?? '',
@@ -65,8 +65,6 @@ function socialSignature(state: GameState): string {
     .map(([k, v]) => `${k}:${v.length}`)
     .sort()
     .join('|');
-  // T10DIR2 — memory.present only (seat/unseat). Do not hash sceneFacts.present:
-  // travel trim churn must not look like social progress on a hub bounce (T10AR).
   return [
     mems,
     topics,
@@ -112,9 +110,9 @@ export interface TurnProgress {
 }
 
 /**
- * 29z1 — the one meaning of progress (loop stop, thumbs no-progress count, recordCirclingTurn):
- * XP or level, loot, a quest change, a fight won, a move that is not a bounce, or a committed social
- * change. A new chip label is not progress.
+ * 29z1 / T10RC3 — the one meaning of progress (loop stop, thumbs no-progress, recordCirclingTurn):
+ * XP or level, loot, quest, fight, non-bounce move, place unlock, or player-caused social
+ * (talk / disposition / topics — not Director agenda/seat churn). A new chip label is not progress.
  */
 function placeDiscoverySignature(state: GameState): string {
   const disc = [...(state.discoveredLocations ?? [])].map((x) => x.toLowerCase()).sort().join('|');
