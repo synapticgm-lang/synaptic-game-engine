@@ -639,6 +639,34 @@ export type SceneThreadPlan = {
   /** Engine event id for the stall fire (timeline / writer fact). */
   stallEventId?: string;
 };
+/** T10DIR — sole progression plan for this turn (written only by director.ts). */
+export type DirectorNeed = 'none' | 'lead' | 'threat' | 'npc-act' | 'quest-offer' | 'travel';
+export type DirectorDevelopment = {
+  kind: 'threat' | 'npc-acting' | 'lead';
+  /** Engine fact string the writer narrates (ledger / engine-facts path). */
+  fact: string;
+  placeId?: string;
+  npcId?: string;
+  questId?: string;
+};
+export type DirectorChipSpec = {
+  label: string;
+  reason: string;
+  kind?: string;
+};
+export type DirectorPlan = {
+  need: DirectorNeed;
+  development?: DirectorDevelopment;
+  chips: DirectorChipSpec[];
+  turn: number;
+};
+/** T10DIR — stall development history + job-ask counters (director-owned). */
+export type DirectorStallState = {
+  last?: { kind: string; target: string };
+  history: Array<{ kind: string; target: string; fact: string; turn: number }>;
+  /** npcId → how many times the player asked this NPC about a job. */
+  jobAsks?: Record<string, number>;
+};
 /** OPT-5 — place arc changes from engine events (not prose). */
 export type PlaceEngineEventKind = 'cleared' | 'closed' | 'reopened' | 'new-threat' | 'new-trader';
 export type PlaceEngineEvent = {
@@ -1013,6 +1041,10 @@ export interface GameState {
   openThreads?: OpenThread[];
   /** TT-T1 — which open threads the scene planner brought forward this turn. */
   sceneThreadPlan?: SceneThreadPlan;
+  /** T10DIR — sole progression plan (director.ts only). */
+  directorPlan?: DirectorPlan;
+  /** T10DIR — stall development records + job-ask counters (director.ts only). */
+  directorStall?: DirectorStallState;
   /** Immutable run manifest for eval/replay binding. */
   runManifest?: import('./runManifest').RunManifest;
   /** B026 sealed manifest snapshot (pre-GM). */

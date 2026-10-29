@@ -159,7 +159,7 @@ import {
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { countTurnReceipts, countRunReceipts, type ReceiptCounts } from './receiptTelemetry';
 import type { RunManifest } from './runManifest';
-import { BUILD_STAMP } from './runManifest';
+import { BUILD_ID, BUILD_STAMP } from './runManifest';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain, characterXpGainBetween } from './characterXp';
 import {
@@ -2842,7 +2842,7 @@ export async function runFateAutoplay(opts: {
       personalityId,
       aiAgentMode: opts.aiAgentMode,
       seed: opts.seed,
-      codeBaseline: BUILD_STAMP,
+      codeBaseline: BUILD_ID,
       errorNote:
         summary.errorCount > 0
           ? `${summary.errorCount} errors / ${summary.timeoutCount} timeouts`

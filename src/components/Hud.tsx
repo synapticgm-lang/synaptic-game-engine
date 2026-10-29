@@ -9,7 +9,10 @@ import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 import { houseRulesOf } from '../game/rules/houseRules';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-10-27a';
+import { BUILD_ID, BUILD_STAMP } from '../game/runManifest';
+/** Bare tag for literal tests; display uses BUILD_ID (tag+sha). */
+export const HUD_BUILD_STAMP = BUILD_STAMP;
+export const HUD_BUILD_ID = BUILD_ID;
 const HUD_BUILD_TITLE =
   'Every setting and panel reads the save; phone drawers open from the HUD';
 
@@ -114,13 +117,13 @@ export function Hud({ state, settings, onSettings, onToggleLeft, onToggleRight, 
           {setName}
         </button>
         <span className="shrink-0 whitespace-nowrap font-mono text-[9px] text-rose-300/80 sm:hidden" title={HUD_BUILD_TITLE}>
-          {HUD_BUILD_STAMP}
+          {HUD_BUILD_ID}
         </span>
         <span
           className="hidden shrink-0 whitespace-nowrap font-mono text-[10px] text-rose-300/90 sm:inline sm:text-[11px]"
           title={HUD_BUILD_TITLE}
         >
-          {HUD_BUILD_STAMP}
+          {HUD_BUILD_ID}
         </span>
         {lastSavedTurn != null && (
           <span className="hidden shrink-0 font-mono text-[10px] text-slate-500 sm:inline" title="Last committed turn saved on this device">

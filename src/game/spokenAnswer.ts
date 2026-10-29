@@ -88,10 +88,13 @@ function speakersHere(state: GameState): Speaker[] {
     if (r) push(/^(?:the|a|an)\s+/i.test(r) ? r : `the ${r}`);
   }
   if (out.length) return out;
-  // T10X — ledger present groups (roof-thieves) speak; crowd fillers do not.
-  // T10Y — one speaker per bare name ("the crew" / "crew" collapse).
-  for (const r of presentNpcRecords(state)) push(r.npcName, r);
-  for (const p of state.sceneFacts?.present ?? []) push(p);
+  // T10DIR — speech reads only the SM1 presence owner. Do not fall back to
+  // location-matched presentNpcRecords / raw sceneFacts.present: those re-seat
+  // absent named NPCs (Nell Rudd speaks while not here). peopleHere already unions
+  // present:true + seated sceneFacts via presentAuthority.
+  for (const r of presentNpcRecords(state)) {
+    if (r.present === true) push(r.npcName, r);
+  }
   return out;
 }
 
