@@ -10,13 +10,14 @@ import {
   applyDirectorChipPolicy,
   filterDirectorTravelChips,
   isJobAsk,
+  noteDirectorNoOpFromReceipts,
   planDirector,
   resolveJobTalk,
   stallPressureActive,
   travelDestFromChip,
 } from './director';
 import { planSceneThreads, stallPressureActive as otStall } from './openThreads';
-import { nudgeIfStuck } from './choiceRanking';
+import { nudgeIfStuck, turnProgress } from './choiceRanking';
 import { BUILD_ID, BUILD_STAMP } from './runManifest';
 import { ALLOW_LISTS, DIRECTOR_FIELDS } from './singleWriterAllow';
 import { peopleHere } from './chipLegality';
@@ -395,5 +396,182 @@ describe('T10DIR absent NPC speech', () => {
     expect(here.some((n) => /Ysolde/i.test(n))).toBe(true);
     // sceneFacts.present must not list Nell either (SM1 seat list).
     expect((s.sceneFacts?.present ?? []).some((n) => /Nell/i.test(n))).toBe(false);
+  });
+});
+
+describe('T10DIR2 stall development commits engine progress (evidence rebuild)', () => {
+  it('tabletop Keep Gate + Silas Thorne charge: stall commits quest/social + Must narrate concrete nouns', () => {
+    const before = base({
+      engineMode: 'dnd',
+      campaignBibleId: 'cursed-keep',
+      turn: 57,
+      currentLocation: 'Keep Gate',
+      circling: { stale: {}, lastProgressTurn: 54, recentPlaces: ['Greyhollow Graveyard', 'Keep Gate'] },
+      progressGovernor: { turnsSinceProgress: 3, lastProgressTurn: 54, recentDeltas: [] },
+      sceneFacts: {
+        ...emptySceneFacts(57),
+        crowd: 'none',
+        present: [],
+        crowdCount: 0,
+      },
+      npcMemories: [
+        mem({
+          npcName: 'Silas Thorne',
+          present: false,
+          location: 'Greyhollow Inn',
+          roleHint: 'quest-patron',
+          goal: { motivation: 'Duty', target: 'Keep Gate' },
+          need: "Silas Thorne's charge",
+        }),
+      ],
+      quests: [
+        {
+          id: 'ck-silas-charge',
+          name: "Silas Thorne's charge",
+          description: 'Honour the charge at the keep',
+          status: 'active',
+          type: 'main',
+          revealed: true,
+          giver: 'Silas Thorne',
+          location: 'Keep Gate',
+          objectives: [{ id: 'o1', description: 'Examine the keep gate for signs', completed: false }],
+        },
+      ],
+      places: [
+        { id: 'ck-hub-gate', name: 'Keep Gate', lastVisitedTurn: 53 },
+        { id: 'ck-hub-apothecary', name: "Mira's Apothecary" },
+        { id: 'ck-hub-inn', name: 'Greyhollow Inn', lastVisitedTurn: 40 },
+      ],
+    });
+    expect(stallPressureActive(before)).toBe(true);
+    const { state, plan } = planDirector(before, { playerInput: 'Use Holy Water (Flask)' });
+    const fact = plan.development?.fact ?? state.sceneFacts?.stallWorldFact ?? '';
+    expect(fact).toMatch(/^Must narrate:/i);
+    expect(fact).not.toMatch(/open thread brought forward/i);
+    expect(fact).toMatch(/Silas|Keep Gate|charge|Examine the keep gate/i);
+    // No stock "Stall pressure:" label-only path.
+    expect(fact).not.toMatch(/^Stall pressure:/i);
+    const p = turnProgress(before, state, []);
+    expect(p.progressed).toBe(true);
+    expect(p.reasons.some((r) => r === 'social' || r === 'quest' || r === 'place')).toBe(true);
+    // Chip to thread place/NPC — never travel to current Keep Gate.
+    const chips = applyDirectorChipPolicy(state, [
+      ...(plan.chips?.map((c) => c.label) ?? []),
+      'Travel toward Keep Gate',
+      'Use Holy Water (Flask)',
+      'Search Keep Gate for signs',
+    ], { recentChips: ['Use Holy Water (Flask)', 'Use Holy Water (Flask)'] });
+    for (const c of chips) {
+      const dest = travelDestFromChip(c);
+      if (dest) expect(dest.toLowerCase()).not.toBe('keep gate');
+    }
+    // Second stall must not repeat same kind+target.
+    const again = planDirector({
+      ...state,
+      turn: 59,
+      circling: { stale: {}, lastProgressTurn: 54 },
+      progressGovernor: { turnsSinceProgress: 5, lastProgressTurn: 54, recentDeltas: [] },
+      sceneThreadPlan: undefined,
+      directorPlan: undefined,
+    });
+    if (again.plan.development && plan.development) {
+      const sameKind = again.plan.development.kind === plan.development.kind;
+      const sameTarget =
+        (again.plan.development.npcId && again.plan.development.npcId === plan.development.npcId)
+        || (again.plan.development.placeId && again.plan.development.placeId === plan.development.placeId);
+      expect(!(sameKind && sameTarget)).toBe(true);
+    }
+  });
+
+  it('rpg Consul Caravan Camp + Case the Caravan: stall commits + breaks travel ping-pong chip', () => {
+    const before = base({
+      engineMode: 'rpg',
+      campaignBibleId: 'salt-road-heist',
+      turn: 182,
+      currentLocation: 'Consul Caravan Camp',
+      circling: {
+        stale: {},
+        lastProgressTurn: 180,
+        recentPlaces: ['Salt Road Waystation', 'Consul Caravan Camp'],
+      },
+      progressGovernor: { turnsSinceProgress: 2, lastProgressTurn: 180, recentDeltas: [] },
+      sceneFacts: {
+        ...emptySceneFacts(182),
+        crowd: 'sparse',
+        present: ['Ysolde Sallow'],
+        crowdCount: 1,
+      },
+      npcMemories: [
+        mem({
+          npcName: 'Ysolde Sallow',
+          present: true,
+          location: 'Consul Caravan Camp',
+          goal: { motivation: 'Protection', target: 'Salt Road Waystation' },
+          need: 'Case the Caravan',
+        }),
+      ],
+      quests: [
+        {
+          id: 'sr-case-caravan',
+          name: 'Case the Caravan',
+          description: 'Case the caravan before it moves',
+          status: 'active',
+          type: 'main',
+          revealed: true,
+          giver: 'Ysolde Sallow',
+          location: 'Consul Caravan Camp',
+          objectives: [{ id: 'o1', description: 'Watch the caravan wagons', completed: false }],
+        },
+      ],
+      places: [
+        { id: 'hub-camp', name: 'Consul Caravan Camp', lastVisitedTurn: 180 },
+        { id: 'hub-waystation', name: 'Salt Road Waystation', lastVisitedTurn: 181 },
+        { id: 'hub-harbor', name: 'Harbor Fence' },
+      ],
+    });
+    const { state, plan } = planDirector(before, { playerInput: 'Turn back toward Consul Caravan Camp' });
+    const fact = plan.development?.fact ?? state.sceneFacts?.stallWorldFact ?? '';
+    expect(fact).toMatch(/^Must narrate:/i);
+    expect(fact).toMatch(/Ysolde|Caravan|Harbor|Watch the caravan/i);
+    expect(turnProgress(before, state, []).progressed).toBe(true);
+    const recent = [
+      'Travel toward Salt Road Waystation',
+      'Turn back toward Consul Caravan Camp',
+      'Travel toward Salt Road Waystation',
+    ];
+    const chips = applyDirectorChipPolicy(
+      state,
+      ['Walk on', 'Turn back toward Consul Caravan Camp', 'Travel toward Salt Road Waystation', 'Travel toward Harbor Fence'],
+      { recentChips: recent },
+    );
+    // Ping-pong Waystation↔Camp broken: no travel to current camp; plan chip preferred.
+    expect(chips.some((c) => /Consul Caravan Camp/i.test(c) && travelDestFromChip(c))).toBe(false);
+  });
+
+  it('no-op chip is keyed on engine receipt and replaced by director next-step', () => {
+    let s = base({
+      directorPlan: {
+        need: 'lead',
+        chips: [{ label: 'Travel toward Harbor Fence', reason: 'lead' }],
+        turn: 10,
+        development: { kind: 'lead', fact: 'Must narrate: Harbor Fence.', placeId: 'Harbor Fence' },
+      },
+    });
+    s = noteDirectorNoOpFromReceipts(
+      s,
+      'Use Holy Water (Flask)',
+      ['Must narrate: Use Holy Water (Flask). FAILURE (General check: d20 12 + -1 = 11 vs DC 15) nothing answered.'],
+      false,
+    );
+    s = noteDirectorNoOpFromReceipts(
+      s,
+      'Use Holy Water (Flask)',
+      ['Search: you searched Keep Gate again and found nothing new.'],
+      false,
+    );
+    expect(s.directorStall?.noOpChip).toMatch(/Holy Water/i);
+    const next = applyDirectorChipPolicy(s, ['Use Holy Water (Flask)', 'Look around'], {});
+    expect(next.some((c) => /Holy Water/i.test(c))).toBe(false);
+    expect(next[0]).toMatch(/Harbor Fence/i);
   });
 });

@@ -630,7 +630,14 @@ export function compileChoices(
 ): CompileChoicesResult {
   const notes: string[] = [];
   if (isJourneyUnderway(state) && !state.activeEncounter) {
-    return { choices: withJourneyPads(state, choices), notes: ['Journey pads: ground between places'] };
+    // T10DIR2 — road continuation chips (Walk on / Turn back / Travel toward) go through
+    // the director plan (ping-pong / no-op / stall next-step), not a parallel producer.
+    const recent = (state.circling?.recentPlaces ?? []).map((p) => `Travel toward ${p}`);
+    const pads = applyDirectorChipPolicy(state, withJourneyPads(state, choices), {
+      recentChips: recent,
+      inFight: false,
+    });
+    return { choices: pads, notes: ['Journey pads: ground between places', 'Director chip policy'] };
   }
   const turn = state.turn;
   const intentText = (playerInput ?? lastPlayerLine(state)).trim();
@@ -1322,6 +1329,7 @@ export function compileChoices(
     finalChoices = applyDirectorChipPolicy(state, finalChoices, {
       recentChips: recent,
       inFight: !!engaged,
+      // noOpChip read from directorStall inside applyDirectorChipPolicy (engine-receipt keyed).
     });
     if (finalChoices !== before && finalChoices.length !== before.length) {
       notes.push('Director chip policy');

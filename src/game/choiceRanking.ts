@@ -45,8 +45,13 @@ function socialSignature(state: GameState): string {
       [
         m.npcId,
         m.facts?.length ?? 0,
+        // T10DIR2 — fact *content* (not only length): director agenda lines rotate inside a
+        // capped facts[] so length can stay 12 while the ledger still moved.
+        (m.facts ?? []).slice(-4).join('^'),
         m.completedTopics?.length ?? 0,
         m.met ? 1 : 0,
+        // T10DIR2 — seating via presentAuthority must count as social (LOOP STOP / stall).
+        m.present === true ? 1 : 0,
         m.disposition,
         m.relationshipStatus ?? '',
         m.knownPlayerName ?? '',
@@ -60,6 +65,8 @@ function socialSignature(state: GameState): string {
     .map(([k, v]) => `${k}:${v.length}`)
     .sort()
     .join('|');
+  // T10DIR2 — memory.present only (seat/unseat). Do not hash sceneFacts.present:
+  // travel trim churn must not look like social progress on a hub bounce (T10AR).
   return [
     mems,
     topics,
@@ -109,6 +116,15 @@ export interface TurnProgress {
  * XP or level, loot, a quest change, a fight won, a move that is not a bounce, or a committed social
  * change. A new chip label is not progress.
  */
+function placeDiscoverySignature(state: GameState): string {
+  const disc = [...(state.discoveredLocations ?? [])].map((x) => x.toLowerCase()).sort().join('|');
+  const places = (state.places ?? [])
+    .map((p) => `${(p.id ?? '').toLowerCase()}:${(p.name ?? '').toLowerCase()}`)
+    .sort()
+    .join('|');
+  return `${disc}#${places}`;
+}
+
 export function turnProgress(before: GameState, after: GameState, receipts: string[] = []): TurnProgress {
   const reasons: string[] = [];
   if ((after.character?.xp ?? 0) !== (before.character?.xp ?? 0) || (after.character?.level ?? 1) !== (before.character?.level ?? 1)) {
@@ -122,6 +138,8 @@ export function turnProgress(before: GameState, after: GameState, receipts: stri
   if (receipts.some((r) => PROGRESS_RECEIPT.test(r))) reasons.push('receipt');
   if (movedOn(before, after)) reasons.push('moved');
   if (socialChanged(before, after)) reasons.push('social');
+  // T10DIR2 — engine unlock of a place card / discoveredLocations (director lead), not prose.
+  if (placeDiscoverySignature(after) !== placeDiscoverySignature(before)) reasons.push('place');
   const inFight = (s: GameState) => !!s.activeEncounter || !!s.deathSaves;
   if ((inFight(before) || inFight(after)) && fightSignature(before) !== fightSignature(after)) reasons.push('fight');
   return { progressed: reasons.length > 0, reasons };

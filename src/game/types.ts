@@ -666,6 +666,13 @@ export type DirectorStallState = {
   history: Array<{ kind: string; target: string; fact: string; turn: number }>;
   /** npcId → how many times the player asked this NPC about a job. */
   jobAsks?: Record<string, number>;
+  /**
+   * T10DIR2 — chip label (exact) → consecutive no-effect picks from engine receipts
+   * (found nothing / no state change / failed check with no effect). Never keyed on chip text meaning.
+   */
+  noOpCounts?: Record<string, number>;
+  /** Chip label ready for replaceNoOpChip when a count reaches 2. */
+  noOpChip?: string | null;
 };
 /** OPT-5 — place arc changes from engine events (not prose). */
 export type PlaceEngineEventKind = 'cleared' | 'closed' | 'reopened' | 'new-threat' | 'new-trader';

@@ -27,7 +27,7 @@ import { STALL_N } from './directorConstants';
 import { hubsForBibleId, matchHub, placeFirstSight } from './outdoorHubs';
 import { applyPlaceEngineEvent, bindPlanDirector, collectOpenThreads } from './openThreads';
 import { npcChipWant, npcGoalPersonHere } from './openThreadUtils';
-import { exitNpc } from './presentAuthority';
+import { exitNpc, seat } from './presentAuthority';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
@@ -139,21 +139,39 @@ function recordDevelopment(
   };
 }
 
+/**
+ * T10DIR2 — stall / director facts enter the same Must-narrate ledger path as other
+ * engine acts (writerInfoLayer / factSheet / cue convert). No stock prose: clause is
+ * built only from engine nouns (NPC name, place, quest objective).
+ */
+function asMustNarrateFact(clause: string): string {
+  const raw = (clause ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return raw;
+  if (/^Must narrate:/i.test(raw)) return raw;
+  // Strip prior soft labels so the writer cue is one Must-narrate clause.
+  const plain = raw
+    .replace(/^Stall pressure:\s*(?:open thread brought forward\s*[—\-]\s*)?/i, '')
+    .replace(/^(?:Nudge|NPC act|Threat(?:\s+at[^:]*)?|Quest offer(?:\s+from[^:]*)?):\s*/i, '')
+    .trim();
+  return `Must narrate: ${plain || raw}`;
+}
+
 function appendDirectorFact(state: GameState, eventId: string, text: string): GameState {
   const turn = state.turn ?? 0;
+  const body = asMustNarrateFact(text);
   // Deterministic timeline stamp (no Date.now) — turn-stable for replay.
   const fact: TimelineFact = {
     id: eventId,
     turn,
     kind: 'world',
-    text,
+    text: body,
     at: turn * 1000,
   };
   return {
     ...state,
     timeline: [...(state.timeline ?? []), fact].slice(-80),
     sceneFacts: state.sceneFacts
-      ? { ...state.sceneFacts, stallWorldFact: text }
+      ? { ...state.sceneFacts, stallWorldFact: body }
       : {
           crowd: 'unknown',
           noise: 'unknown',
@@ -161,9 +179,388 @@ function appendDirectorFact(state: GameState, eventId: string, text: string): Ga
           props: [],
           lastBeat: '',
           updatedTurn: turn,
-          stallWorldFact: text,
+          stallWorldFact: body,
         },
   };
+}
+
+/** Append one engine fact onto an NPC memory (socialSignature reads facts.length). */
+function appendNpcAgendaFact(state: GameState, npcName: string, fact: string): GameState {
+  const line = (fact ?? '').replace(/\s+/g, ' ').trim();
+  if (!npcName || !line) return state;
+  let hit = false;
+  const mems = (state.npcMemories ?? []).map((m) => {
+    if (!mentionsName(m.npcName, npcName) && !mentionsName(npcName, m.npcName) && m.npcName.trim().toLowerCase() !== npcName.trim().toLowerCase()) {
+      return m;
+    }
+    hit = true;
+    const facts = m.facts?.includes(line) ? m.facts : [...(m.facts ?? []), line].slice(-12);
+    return { ...m, facts, met: true, lastSeenTurn: state.turn ?? m.lastSeenTurn };
+  });
+  if (hit) return { ...state, npcMemories: mems };
+  // No memory yet — seat path may have created present only; seed a thin record.
+  const npcId = `npc:${npcName.replace(/\s+/g, '-').toLowerCase()}`;
+  return {
+    ...state,
+    npcMemories: [
+      ...mems,
+      {
+        npcId,
+        npcName,
+        disposition: 'neutral' as const,
+        facts: [line],
+        lastSeenTurn: state.turn ?? 0,
+        met: true,
+        present: true,
+        aliases: [],
+        introSpoken: true,
+      },
+    ],
+  };
+}
+
+function questFromThread(state: GameState, thread: OpenThread): Quest | null {
+  const raw =
+    thread.kind === 'quest' || thread.kind === 'lead'
+      ? (thread.entityId ?? '').replace(/^quest:/, '')
+      : thread.resolution && 'questId' in thread.resolution
+        ? String((thread.resolution as { questId?: string }).questId ?? '')
+        : '';
+  const id = (raw || '').trim();
+  if (!id) return null;
+  return (state.quests ?? []).find((q) => q.id === id) ?? null;
+}
+
+function threadActorName(state: GameState, thread: OpenThread): string | null {
+  if (thread.kind === 'npc-goal') {
+    const id = (thread.entityId ?? '').replace(/^npc:/, '');
+    const mem = (state.npcMemories ?? []).find(
+      (m) => (m.npcId || `npc:${m.npcName}`) === thread.entityId || m.npcName === id,
+    );
+    return mem?.npcName ?? (id || null);
+  }
+  const q = questFromThread(state, thread);
+  if (q?.giver?.trim()) return q.giver.trim();
+  // Label "Name: topic" / "Name's charge"
+  const label = (thread.label ?? '').trim();
+  const m = label.match(/^([^:—\-]+?)(?:'s|\s*[:—\-])/);
+  if (m?.[1] && /[A-Za-z]/.test(m[1]) && m[1].trim().split(/\s+/).length <= 4) {
+    return m[1].trim();
+  }
+  return null;
+}
+
+function threadGoalText(state: GameState, thread: OpenThread): string {
+  const q = questFromThread(state, thread);
+  if (q) {
+    const obj = (q.objectives ?? []).find((o) => !o.completed && !o.optional);
+    const desc = (obj?.description ?? q.description ?? q.name ?? '').replace(/\s+/g, ' ').trim();
+    if (desc) return desc;
+  }
+  if (thread.kind === 'npc-goal') {
+    const name = threadActorName(state, thread);
+    const mem = (state.npcMemories ?? []).find((m) => name && mentionsName(m.npcName, name));
+    const want = mem ? npcChipWant(mem) : '';
+    if (want) return want;
+  }
+  return (thread.label ?? 'the open thread').replace(/\s+/g, ' ').trim();
+}
+
+function threadPlaceLabel(state: GameState, thread: OpenThread): string | null {
+  const raw = (thread.placeId ?? questFromThread(state, thread)?.location ?? questFromThread(state, thread)?.leadsTo ?? '')
+    .toString()
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!raw) return null;
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), raw);
+  return hub?.name ?? raw;
+}
+
+function personIsHere(state: GameState, name: string): boolean {
+  const here = peopleHere(state);
+  if (here.some((n) => mentionsName(n, name) || mentionsName(name, n))) return true;
+  return (state.sceneFacts?.present ?? []).some(
+    (n) => mentionsName(n, name) || mentionsName(name, n),
+  );
+}
+
+/**
+ * T10DIR2 — pick development kind from genre tags + thread payload; honor developmentAllowed.
+ */
+function stallTargetForKind(
+  state: GameState,
+  thread: OpenThread | null,
+  kind: DirectorDevelopment['kind'],
+): string {
+  if (kind === 'npc-acting') {
+    const name =
+      (thread ? threadActorName(state, thread) : null)
+      || peopleHere(state)[0]
+      || 'npc';
+    const mem = (state.npcMemories ?? []).find((m) => mentionsName(m.npcName, name));
+    return mem?.npcId || `npc:${name}`;
+  }
+  if (kind === 'lead') {
+    return (
+      (thread ? threadPlaceLabel(state, thread) : null)
+      || thread?.placeId
+      || thread?.id
+      || pickLeadFact(state)?.placeId
+      || 'lead'
+    );
+  }
+  return placeIdOf(state) || placeNameOf(state) || 'here';
+}
+
+function pickStallKind(
+  state: GameState,
+  thread: OpenThread | null,
+): DirectorDevelopment['kind'] {
+  const tags = genreTags(state);
+  const preference: DirectorDevelopment['kind'][] =
+    tags.includes('tabletop') || tags.includes('fantasy') || state.engineMode === 'dnd'
+      ? ['npc-acting', 'threat', 'lead']
+      : tags.includes('litrpg') || state.engineMode === 'litrpg'
+        ? ['lead', 'threat', 'npc-acting']
+        : ['lead', 'npc-acting', 'threat'];
+  for (let i = 0; i < preference.length; i++) {
+    const kind = preference[i]!;
+    const target = stallTargetForKind(state, thread, kind);
+    if (developmentAllowed(state, kind, target)) return kind;
+  }
+  // All blocked (same kind+target as last): rotate to a different kind than last.
+  const last = lastDevelopment(state);
+  const rotated = preference.find((k) => !last || k !== last.kind) ?? preference[1] ?? preference[0]!;
+  return rotated;
+}
+
+/**
+ * T10DIR2 — COMMITTED stall development (quest / seat / place), not a label-only fact.
+ * Owners: presentAuthority.seat, quest row mutate (reveal/active), director facts.
+ */
+function commitStallDevelopment(
+  state: GameState,
+  thread: OpenThread | null,
+  playerInput: string,
+): {
+  state: GameState;
+  development?: DirectorDevelopment;
+  need: DirectorNeed;
+  forwardIds: string[];
+  stallKind?: SceneThreadPlan['stallKind'];
+  stallEventId?: string;
+} {
+  const turn = state.turn ?? 0;
+  let working = state;
+  const forwardIds: string[] = thread ? [thread.id] : [];
+  const kind = pickStallKind(working, thread);
+  const actor = thread ? threadActorName(working, thread) : null;
+  const goal = thread ? threadGoalText(working, thread) : 'the scene moves on';
+  const placeLabel = thread ? threadPlaceLabel(working, thread) : pickLeadFact(working)?.placeId ?? null;
+  const hereName = placeNameOf(working);
+  const hereId = placeIdOf(working);
+
+  if (kind === 'npc-acting') {
+    const name =
+      actor
+      ?? peopleHere(working)[0]
+      ?? presentNpcRecords(working)[0]?.npcName
+      ?? null;
+    if (name) {
+      const wasHere = personIsHere(working, name);
+      if (!wasHere) working = seat(working, name);
+      const where = placeLabel && placeLabel.toLowerCase() !== hereName.toLowerCase()
+        ? placeLabel
+        : (pickLeadFact(working)?.placeId ?? placeLabel);
+      const destHub = where ? matchHub(hubsForBibleId(working.campaignBibleId), where) : null;
+      const destName = destHub?.name ?? where ?? null;
+      const arriveBit = wasHere ? 'presses' : 'arrives and presses';
+      const whereBit = destName && destName.toLowerCase() !== hereName.toLowerCase()
+        ? ` — go to ${destName}`
+        : '';
+      const fact =
+        `${name} ${arriveBit} their agenda: ${goal}${whereBit}.`;
+      const stallEventId = `stall-npc-${turn}-${name.replace(/\s+/g, '-').toLowerCase()}`;
+      working = appendNpcAgendaFact(working, name, `Director agenda T${turn}: ${goal}`);
+      working = appendDirectorFact(working, stallEventId, fact);
+      if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
+        working = stallDepartPresentNpc(working, turn, playerInput);
+      }
+      const npcId =
+        (working.npcMemories ?? []).find((m) => mentionsName(m.npcName, name))?.npcId
+        || `npc:${name}`;
+      working = recordDevelopment(working, 'npc-acting', npcId, fact);
+      const development: DirectorDevelopment = {
+        kind: 'npc-acting',
+        fact: asMustNarrateFact(fact),
+        npcId,
+        placeId: destName ?? undefined,
+        questId: thread ? questFromThread(state, thread)?.id : undefined,
+      };
+      return {
+        state: working,
+        development,
+        need: 'npc-act',
+        forwardIds,
+        stallKind: thread ? 'thread' : 'agenda',
+        stallEventId,
+      };
+    }
+  }
+
+  if (kind === 'lead') {
+    const beforeLead = working;
+    const destRaw = placeLabel || pickLeadFact(working)?.placeId || null;
+    const destHub = destRaw ? matchHub(hubsForBibleId(working.campaignBibleId), destRaw) : null;
+    // Prefer hub display name over raw id (never Travel toward sp-hub-…).
+    const destName = destHub?.name ?? destRaw;
+    // Never a lead chip to HERE — pick another hub when thread place is current.
+    let travelName = destName;
+    let travelHub = destHub;
+    if (
+      travelName
+      && (travelName.toLowerCase() === hereName.toLowerCase()
+        || (destHub && hereId && destHub.id === hereId))
+    ) {
+      const alt = pickLeadFact(working);
+      travelHub = alt?.placeId ? matchHub(hubsForBibleId(working.campaignBibleId), alt.placeId) : null;
+      travelName = travelHub?.name ?? alt?.placeId ?? null;
+    }
+    // Quest commit: reveal/activate so questSignature changes when possible.
+    const q = thread ? questFromThread(working, thread) : null;
+    if (q) {
+      working = {
+        ...working,
+        quests: (working.quests ?? []).map((row) => {
+          if (row.id !== q.id) return row;
+          const next = { ...row };
+          if (next.revealed === false) next.revealed = true;
+          if (next.status === 'hidden') next.status = 'active';
+          if (travelName && !next.location) next.location = travelName;
+          if (next.revealed !== true) next.revealed = true;
+          return next;
+        }),
+      };
+    }
+    // Unlock destination on the place ledger (discoveredLocations).
+    if (travelName) {
+      const disc = new Set(working.discoveredLocations ?? []);
+      const placeKey = travelHub?.id ?? travelName;
+      if (!disc.has(placeKey) && !disc.has(travelName)) {
+        working = {
+          ...working,
+          discoveredLocations: [...(working.discoveredLocations ?? []), placeKey],
+        };
+      }
+      const places = [...(working.places ?? [])];
+      if (!places.some((p) => (p.name ?? '').toLowerCase() === travelName.toLowerCase() || p.id === placeKey)) {
+        places.push({ id: placeKey, name: travelName, mapCanonical: true });
+        working = { ...working, places };
+      }
+    }
+    // Move social via an engine-known person only (giver / present / memory) — never invent a courier.
+    const messenger =
+      actor
+      || peopleHere(working)[0]
+      || presentNpcRecords(working)[0]?.npcName
+      || null;
+    if (messenger) {
+      if (!personIsHere(working, messenger)) working = seat(working, messenger);
+      working = appendNpcAgendaFact(
+        working,
+        messenger,
+        `Director lead T${turn}: ${goal}${travelName ? ` at ${travelName}` : ''}`,
+      );
+    }
+    const whoBit = messenger ? `${messenger} points you to` : 'A lead opens toward';
+    const fact = travelName
+      ? `${whoBit} ${travelName} for: ${goal}.`
+      : `${whoBit} the next step: ${goal}.`;
+    const stallEventId = `stall-lead-${turn}-${(travelName || thread?.id || 'lead').replace(/\s+/g, '-').toLowerCase()}`;
+    working = appendDirectorFact(working, stallEventId, fact);
+    if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
+      working = stallDepartPresentNpc(working, turn, playerInput);
+    }
+    // If this lead could not change quest/place/social, fall through to threat (never a no-op label).
+    const leadMoved =
+      JSON.stringify(beforeLead.quests ?? []) !== JSON.stringify(working.quests ?? [])
+      || JSON.stringify(beforeLead.discoveredLocations ?? []) !== JSON.stringify(working.discoveredLocations ?? [])
+      || JSON.stringify(beforeLead.places ?? []) !== JSON.stringify(working.places ?? [])
+      || JSON.stringify(beforeLead.npcMemories ?? []) !== JSON.stringify(working.npcMemories ?? [])
+      || JSON.stringify(beforeLead.sceneFacts?.present ?? []) !== JSON.stringify(working.sceneFacts?.present ?? []);
+    if (!leadMoved) {
+      // Fall through to threat commit below with working restored to pre-lead + keep forwardIds.
+      working = beforeLead;
+    } else {
+      const target = travelName || thread?.id || 'lead';
+      working = recordDevelopment(working, 'lead', target, fact);
+      const development: DirectorDevelopment = {
+        kind: 'lead',
+        fact: asMustNarrateFact(fact),
+        placeId: travelName ?? undefined,
+        npcId: messenger ? `npc:${messenger}` : undefined,
+        questId: q?.id,
+      };
+      return {
+        state: working,
+        development,
+        need: travelName ? 'travel' : 'lead',
+        forwardIds,
+        stallKind: thread ? 'thread' : 'situation',
+        stallEventId,
+      };
+    }
+  }
+
+  // threat — always seat/speak via an engine-known person so socialSignature moves.
+  {
+    const threatWhere = hereName || 'this place';
+    const detail = thread
+      ? `${goal} will not wait at ${threatWhere}`
+      : pickThreatFact(working, threatWhere).replace(/^Threat(?:\s+at[^:]*)?:\s*/i, '');
+    working = applyPlaceEngineEvent(working, {
+      placeId: threatWhere,
+      kind: 'new-threat',
+      detail,
+    });
+    const who =
+      actor
+      || peopleHere(working)[0]
+      || presentNpcRecords(working)[0]?.npcName
+      || (working.npcMemories ?? []).find((m) => (m.npcName ?? '').trim())?.npcName
+      || null;
+    if (who) {
+      if (!personIsHere(working, who)) working = seat(working, who);
+      working = appendNpcAgendaFact(working, who, `Director threat T${turn}: ${detail}`);
+    }
+    // Target includes turn so developmentAllowed cannot soft-lock on the same HERE forever
+    // when lead falls through to threat repeatedly (rpg dry-run Camp stall).
+    const target = `${hereId || hereName || 'here'}:t${turn}`;
+    const fact = who
+      ? `${who} warns that ${detail}.`
+      : `Danger closes at ${threatWhere}: ${detail}.`;
+    const stallEventId = `stall-threat-${turn}`;
+    working = appendDirectorFact(working, stallEventId, fact);
+    if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
+      working = stallDepartPresentNpc(working, turn, playerInput);
+    }
+    working = recordDevelopment(working, 'threat', target, fact);
+    const development: DirectorDevelopment = {
+      kind: 'threat',
+      fact: asMustNarrateFact(fact),
+      placeId: hereId || hereName || undefined,
+      npcId: who ? `npc:${who}` : undefined,
+      questId: thread ? questFromThread(state, thread)?.id : undefined,
+    };
+    return {
+      state: working,
+      development,
+      need: 'threat',
+      forwardIds,
+      stallKind: thread ? 'thread' : 'situation',
+      stallEventId,
+    };
+  }
 }
 
 function addressedPresentName(state: GameState, playerInput: string): string | null {
@@ -257,13 +654,14 @@ function pickLeadFact(state: GameState): { fact: string; placeId?: string; npcId
       }
       return {
         fact: `Nudge: ${speaker} mentions ${h.name}${sightClean ? `: ${sightClean}` : ''}.`,
-        placeId: h.id || h.name,
+        // Prefer display name so Travel chips never say sp-hub-… / ck-hub-….
+        placeId: h.name || h.id,
       };
     }
     // No person here: same engine-fact wording as the old quest/hub soft nudge (not "word points you toward").
     return {
       fact: `Nudge: word reaches you about ${h.name}.`,
-      placeId: h.id || h.name,
+      placeId: h.name || h.id,
     };
   }
   const present = presentNpcRecords(state).filter(
@@ -322,20 +720,16 @@ function developmentAllowed(state: GameState, kind: DirectorDevelopment['kind'],
 }
 
 /**
- * Build a stall world development (engine fact). Injection itself is NOT progress —
- * progress lands only when the player acts on it (turnProgress).
+ * Build a stall world development. T10DIR2: always a COMMITTED engine change
+ * (seat / quest / discovered place) so turnProgress sees quest or social.
  */
 function injectStallDevelopment(
   state: GameState,
   playerInput: string,
+  thread: OpenThread | null = null,
 ): { state: GameState; development?: DirectorDevelopment; need: DirectorNeed; forwardIds: string[]; stallKind?: SceneThreadPlan['stallKind']; stallEventId?: string } {
   const turn = state.turn ?? 0;
   let working = state;
-  const forwardIds: string[] = [];
-  let stallKind: SceneThreadPlan['stallKind'];
-  let stallEventId: string | undefined;
-  let development: DirectorDevelopment | undefined;
-  let need: DirectorNeed = 'none';
 
   const roadEnc = working.journey?.encounter;
   const roadOpen = !!roadEnc && !roadMeetingOver(roadEnc);
@@ -345,112 +739,77 @@ function injectStallDevelopment(
     && !working.sceneFacts?.pendingEncounter
     && !roadOpen
   ) {
+    // Advance the road, then commit a real development so Camp↔Waystation ping-pong
+    // cannot burn the LOOP STOP window (leg advance alone is often not movedOn).
     const advanced = commitTravel(working, 'Walk on');
-    if (advanced.handled) {
-      working = advanced.state;
-      forwardIds.push(`stall-road:${turn}`);
-      stallKind = 'situation';
-      stallEventId = `stall-road-${turn}`;
-      const fact = advanced.receipt || 'Stall pressure: the road pressed you onward.';
-      working = appendDirectorFact(working, stallEventId, fact);
-      if (developmentAllowed(working, 'lead', 'road')) {
-        development = { kind: 'lead', fact, placeId: working.currentLocation };
-        working = recordDevelopment(working, 'lead', 'road', fact);
-        need = 'travel';
+    if (advanced.handled) working = advanced.state;
+    const committed = commitStallDevelopment(working, thread, playerInput);
+    if (committed.development) {
+      return {
+        ...committed,
+        forwardIds: [`stall-road:${turn}`, ...committed.forwardIds],
+        stallKind: committed.stallKind ?? 'situation',
+      };
+    }
+  }
+
+  // Old OPT-5 agenda tick first when no open thread to bring forward.
+  if (!thread) {
+    const prevClock = working.arcDirector?.pressureClock;
+    const nextClock = tickPressureClock(prevClock, false, turn);
+    working = applyPressureAgendaAdvance(
+      working,
+      prevClock,
+      { ...nextClock, deadlineTurn: turn },
+      false,
+    );
+    const agendaFired = working.arcDirector?.pressureClock?.lastAgendaAdvanceTurn === turn;
+    const npcAct = agendaFired ? pickNpcAct(working) : null;
+    if (npcAct && developmentAllowed(working, 'npc-acting', npcAct.npcId)) {
+      // Commit through seat+fact path so socialSignature moves.
+      let s = working;
+      if (!personIsHere(s, npcAct.name)) s = seat(s, npcAct.name);
+      s = appendNpcAgendaFact(s, npcAct.name, `Director agenda T${turn}: ${npcAct.fact}`);
+      const stallEventId = `stall-npc-${turn}-${npcAct.npcId}`;
+      s = appendDirectorFact(s, stallEventId, npcAct.fact);
+      s = recordDevelopment(s, 'npc-acting', npcAct.npcId, npcAct.fact);
+      if (placeNameOf(s) && !isJourneyUnderway(s) && !s.activeEncounter) {
+        s = stallDepartPresentNpc(s, turn, playerInput);
       }
-      return { state: working, development, need, forwardIds, stallKind, stallEventId };
+      return {
+        state: s,
+        development: { kind: 'npc-acting', fact: asMustNarrateFact(npcAct.fact), npcId: npcAct.npcId },
+        need: 'npc-act',
+        forwardIds: [`agenda:${npcAct.npcId}`],
+        stallKind: 'agenda',
+        stallEventId,
+      };
     }
-  }
 
-  // Old OPT-5 body first (agenda → situation → hub+depart). New development kinds only
-  // fill when that body has nothing; hub stallDepart always runs on the hub leaf (T10AM).
-  const hereName = placeNameOf(working);
-  const prevClock = working.arcDirector?.pressureClock;
-  const nextClock = tickPressureClock(prevClock, false, turn);
-  working = applyPressureAgendaAdvance(
-    working,
-    prevClock,
-    { ...nextClock, deadlineTurn: turn },
-    false,
-  );
-  const agendaFired = working.arcDirector?.pressureClock?.lastAgendaAdvanceTurn === turn;
-  const npcAct = agendaFired ? pickNpcAct(working) : null;
-  if (npcAct && developmentAllowed(working, 'npc-acting', npcAct.npcId)) {
-    stallEventId = `stall-npc-${turn}-${npcAct.npcId}`;
-    stallKind = 'agenda';
-    forwardIds.push(`agenda:${npcAct.npcId}`);
-    working = appendDirectorFact(working, stallEventId, npcAct.fact);
-    development = { kind: 'npc-acting', fact: npcAct.fact, npcId: npcAct.npcId };
-    working = recordDevelopment(working, 'npc-acting', npcAct.npcId, npcAct.fact);
-    need = 'npc-act';
-    return { state: working, development, need, forwardIds, stallKind, stallEventId };
-  }
-
-  const floor = ensureQuestFloor(working);
-  working = floor.state;
-  if (floor.quest) {
-    stallEventId = `stall-situation-${turn}-${floor.quest.id}`;
-    stallKind = 'situation';
-    forwardIds.push(`situation:${floor.quest.id}`);
-    const fact = `Stall pressure: new situation — ${floor.quest.name}.`;
-    working = appendDirectorFact(working, stallEventId, fact);
-    need = 'quest-offer';
-    return { state: working, development, need, forwardIds, stallKind, stallEventId };
-  }
-
-  // Hub leaf: world moves + depart one non-addressed present person (old OPT-5 / T10AM).
-  if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
-    const target = placeIdOf(working) || hereName;
-    const lead = pickLeadFact(working);
-    if (lead && developmentAllowed(working, 'lead', lead.placeId || lead.npcId || 'lead')) {
-      const leadTarget = lead.placeId || lead.npcId || 'lead';
-      stallEventId = `stall-lead-${turn}`;
-      stallKind = 'situation';
-      forwardIds.push(`lead:${leadTarget}`);
-      working = applyPlaceEngineEvent(working, {
-        placeId: hereName,
-        kind: 'new-threat',
-        detail: lead.fact,
-      });
-      working = stallDepartPresentNpc(working, turn, playerInput);
-      working = appendDirectorFact(working, stallEventId, lead.fact);
-      development = { kind: 'lead', fact: lead.fact, placeId: lead.placeId, npcId: lead.npcId };
-      working = recordDevelopment(working, 'lead', leadTarget, lead.fact);
-      need = lead.placeId ? 'travel' : 'lead';
-      return { state: working, development, need, forwardIds, stallKind, stallEventId };
-    }
-    if (developmentAllowed(working, 'threat', target)) {
-      const fact = pickThreatFact(working, hereName);
-      stallEventId = `stall-threat-${turn}`;
-      stallKind = 'situation';
-      forwardIds.push(`threat:${target}`);
-      working = applyPlaceEngineEvent(working, {
-        placeId: hereName,
-        kind: 'new-threat',
-        detail: fact,
-      });
-      working = stallDepartPresentNpc(working, turn, playerInput);
+    const floor = ensureQuestFloor(working);
+    working = floor.state;
+    if (floor.quest) {
+      // ensureQuestFloor already mutated quests — fact must name the real quest.
+      const stallEventId = `stall-situation-${turn}-${floor.quest.id}`;
+      const fact = `New situation opens: ${floor.quest.name}.`;
       working = appendDirectorFact(working, stallEventId, fact);
-      development = { kind: 'threat', fact, placeId: target };
-      working = recordDevelopment(working, 'threat', target, fact);
-      need = 'threat';
-      return { state: working, development, need, forwardIds, stallKind, stallEventId };
+      return {
+        state: working,
+        development: {
+          kind: 'lead',
+          fact: asMustNarrateFact(fact),
+          questId: floor.quest.id,
+          placeId: floor.quest.location ?? floor.quest.leadsTo,
+        },
+        need: 'quest-offer',
+        forwardIds: [`situation:${floor.quest.id}`],
+        stallKind: 'situation',
+        stallEventId,
+      };
     }
-    // Blocked by repeat — still depart and stamp hub pressure (old hub leaf).
-    working = applyPlaceEngineEvent(working, {
-      placeId: hereName,
-      kind: 'new-threat',
-      detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
-    });
-    working = stallDepartPresentNpc(working, turn, playerInput);
-    stallEventId = `stall-hub-${turn}`;
-    stallKind = 'situation';
-    const fact = `Stall pressure: the scene at ${hereName} moves on.`;
-    working = appendDirectorFact(working, stallEventId, fact);
-    need = 'threat';
   }
 
-  return { state: working, development, need, forwardIds, stallKind, stallEventId };
+  return commitStallDevelopment(working, thread, playerInput);
 }
 
 function pickForwardThread(state: GameState, threads: OpenThread[]): OpenThread | null {
@@ -490,12 +849,64 @@ function pickForwardThread(state: GameState, threads: OpenThread[]): OpenThread 
   return best;
 }
 
-/** Travel chip label → destination name. */
+/** Travel chip label → destination name (includes Turn back toward — road ping-pong). */
 export function travelDestFromChip(chip: string): string | null {
   const m = chip.match(
-    /^(?:travel\s+(?:toward|to)|go\s+to|head\s+(?:to|toward)|walk\s+to|return\s+to|go\s+back\s+to)\s+(.+)$/i,
+    /^(?:travel\s+(?:toward|to)|go\s+to|head\s+(?:to|toward)|walk\s+to|return\s+to|go\s+back\s+to|turn\s+back\s+toward)\s+(.+)$/i,
   );
   return m ? m[1]!.replace(/[.!?]+$/, '').trim() : null;
+}
+
+/**
+ * T10DIR2 — record a no-effect engine receipt against the chip that was picked.
+ * Keyed on receipts (found nothing / no state change / failed check with no effect), never chip wording.
+ */
+export function noteDirectorNoOpFromReceipts(
+  state: GameState,
+  chip: string,
+  receipts: string[],
+  progressed: boolean,
+): GameState {
+  const label = (chip ?? '').replace(/\s+/g, ' ').trim();
+  if (!label || state.engineMode === 'pyoa') return state;
+  const key = label.toLowerCase();
+  const stall = state.directorStall ?? { history: [] };
+  const counts = { ...(stall.noOpCounts ?? {}) };
+  if (progressed) {
+    if (!counts[key] && !stall.noOpChip) return state;
+    const next = { ...counts };
+    delete next[key];
+    const noOpChip = stall.noOpChip && stall.noOpChip.toLowerCase() === key ? null : stall.noOpChip;
+    return {
+      ...state,
+      directorStall: { ...stall, noOpCounts: next, noOpChip },
+    };
+  }
+  const blob = (receipts ?? []).join('\n');
+  // Engine-result shapes only (search empty, item no-effect, failed check with no ledger delta).
+  const noEffect =
+    /\bfound nothing(?:\s+new)?\b/i.test(blob)
+    || /\bnothing new\b/i.test(blob)
+    || /\bno effect\b/i.test(blob)
+    || /\bnothing answered\b/i.test(blob)
+    || /\bwater ran off\b/i.test(blob)
+    || /\bCheck failure\b/i.test(blob)
+    || /\bFAILURE\s*\(/i.test(blob);
+  if (!noEffect) return state;
+  const n = (counts[key] ?? 0) + 1;
+  counts[key] = n;
+  return {
+    ...state,
+    directorStall: {
+      ...stall,
+      noOpCounts: counts,
+      noOpChip: n >= 2 ? label : stall.noOpChip ?? null,
+    },
+  };
+}
+
+export function directorNoOpChip(state: GameState): string | null {
+  return state.directorStall?.noOpChip ?? null;
 }
 
 /**
@@ -870,35 +1281,19 @@ export function planDirector(
   let need: DirectorNeed = 'none';
   let development: DirectorDevelopment | undefined;
 
-  // Prefer open-thread bring-forward under stall (OPT-5 / ttT1b): stallKind stays 'thread'
-  // when a thread is available; otherwise inject a concrete world development.
-  // Stall depart is the OLD rule (always under stall+thread / hub): one non-addressed
-  // present person via presentAuthority.exitNpc — never gated on developmentAllowed.
+  // T10DIR2 — stall bring-forward COMMITS engine state (seat / quest / place), never a
+  // label-only "open thread brought forward" fact. Stall depart stays inside commitStallDevelopment.
   if (stall && best) {
-    forwardIds = [best.id];
-    stallKind = 'thread';
-    stallEventId = `stall-thread-${turn}-${best.id}`;
-    const fact = `Stall pressure: open thread brought forward — ${best.label}.`;
-    working = appendDirectorFact(working, stallEventId, fact);
-    receipts.push(fact);
-    development = { kind: 'lead', fact, placeId: best.placeId ?? undefined };
-    need = 'lead';
-    const hereName = placeNameOf(working);
-    if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
-      const target = placeIdOf(working) || hereName;
-      const threatFact = pickThreatFact(working, hereName);
-      working = applyPlaceEngineEvent(working, {
-        placeId: hereName,
-        kind: 'new-threat',
-        detail: threatFact,
-      });
-      working = stallDepartPresentNpc(working, turn, playerInput);
-      if (developmentAllowed(working, 'threat', target)) {
-        working = recordDevelopment(working, 'threat', target, threatFact);
-      }
-    }
+    const inj = injectStallDevelopment(working, playerInput, best);
+    working = inj.state;
+    forwardIds = inj.forwardIds.length ? inj.forwardIds : [best.id];
+    stallKind = inj.stallKind ?? 'thread';
+    stallEventId = inj.stallEventId ?? `stall-thread-${turn}-${best.id}`;
+    need = inj.need;
+    development = inj.development;
+    if (development?.fact) receipts.push(development.fact);
   } else if (stall) {
-    const inj = injectStallDevelopment(working, playerInput);
+    const inj = injectStallDevelopment(working, playerInput, null);
     working = inj.state;
     forwardIds = inj.forwardIds;
     stallKind = inj.stallKind;
@@ -1165,18 +1560,43 @@ export function applyDirectorChipPolicy(
   chips: string[],
   opts: { recentChips?: string[]; noOpChip?: string | null; inFight?: boolean } = {},
 ): string[] {
-  let next = filterDirectorTravelChips(state, chips, opts.recentChips ?? []);
-  next = replaceNoOpChip(state.directorPlan, next, opts.noOpChip);
+  // Drop blank labels (empty-string chip bug) before policy.
+  let next = chips.filter((c) => (c ?? '').replace(/\s+/g, ' ').trim().length > 0);
+  const noOp = opts.noOpChip ?? directorNoOpChip(state);
+  next = filterDirectorTravelChips(state, next, opts.recentChips ?? []);
+  next = replaceNoOpChip(state.directorPlan, next, noOp);
   if (opts.inFight) next = capFightChips(next);
   // Prefer director plan chips first when stall need is active.
   const plan = state.directorPlan;
   if (plan && plan.need !== 'none' && plan.chips.length) {
-    const prefer = plan.chips.map((c) => c.label).filter((l) => next.includes(l) || travelDestFromChip(l));
+    const prefer = plan.chips
+      .map((c) => c.label)
+      .filter((l) => (l ?? '').trim().length > 0)
+      .filter((l) => next.includes(l) || travelDestFromChip(l));
     const merged = [...prefer];
     for (const c of next) {
       if (!merged.includes(c)) merged.push(c);
     }
     next = filterDirectorTravelChips(state, merged, opts.recentChips ?? []);
+  }
+  // Journey "Walk on" / bare continue is not a travelDest — under stall prefer a plan chip over it.
+  if (plan && plan.need !== 'none' && plan.chips.length) {
+    const planFirst = plan.chips.map((c) => c.label).find((l) => (l ?? '').trim());
+    if (planFirst) {
+      const withoutWalk = next.filter((c) => !/^walk on\b/i.test(c) && !/^turn back toward\b/i.test(c));
+      // Keep turn-back only when director travel need names that dest.
+      const turnBackOk = next.filter((c) => {
+        if (!/^turn back toward\b/i.test(c)) return false;
+        const dest = travelDestFromChip(c);
+        if (!dest || !plan.development?.placeId) return false;
+        return dest.toLowerCase() === plan.development.placeId.toLowerCase()
+          || matchHub(hubsForBibleId(state.campaignBibleId), dest)?.id === plan.development.placeId;
+      });
+      if (plan.need === 'travel' || plan.need === 'lead' || plan.need === 'npc-act' || plan.need === 'threat') {
+        next = [planFirst, ...turnBackOk, ...withoutWalk.filter((c) => c !== planFirst)];
+        next = filterDirectorTravelChips(state, next, opts.recentChips ?? []);
+      }
+    }
   }
   return next;
 }

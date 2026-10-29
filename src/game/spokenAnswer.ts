@@ -367,8 +367,36 @@ function spokenExchangeLine(
   const words = (motiveLinesFor(sheet.motive)[0] ?? sheet.motive ?? '').replace(/\s+/g, ' ').trim();
   if (words && !speakerAlreadyTold(state, speaker, words)) return quotedReply(speaker, words);
 
+  // T10DIR2 — present NPC with an open job/thread must move it forward when addressed, not silence.
+  {
+    const threads = state.openThreads ?? [];
+    const hit = threads.find((t) => {
+      if (t.kind === 'npc-goal') {
+        return speaker.names.some((n) => n && (t.label.includes(n) || (t.entityId ?? '').includes(n)));
+      }
+      if (t.kind === 'quest' || t.kind === 'lead') {
+        const q = (state.quests ?? []).find((row) => `quest:${row.id}` === t.entityId || row.id === (t.entityId ?? '').replace(/^quest:/, ''));
+        return !!(q?.giver && speaker.names.some((n) => n && (mentionsSpeaker(q.giver!, n) || mentionsSpeaker(n, q.giver!))));
+      }
+      return false;
+    });
+    if (hit) {
+      const line = (hit.label || '').replace(/\s+/g, ' ').trim();
+      if (line && !speakerAlreadyTold(state, speaker, line)) {
+        return quotedReply(speaker, line);
+      }
+    }
+  }
+
   // No engine mute and no ledger line — still one seed motive word if pick returned empty parts.
   return { line: `${capitalize(speaker.label)} said nothing.` };
+}
+
+function mentionsSpeaker(a: string, b: string): boolean {
+  const x = (a ?? '').trim().toLowerCase();
+  const y = (b ?? '').trim().toLowerCase();
+  if (!x || !y) return false;
+  return x === y || x.includes(y) || y.includes(x);
 }
 
 /** Name tokens that identify this speaker in a clause (full label + non-title parts). */

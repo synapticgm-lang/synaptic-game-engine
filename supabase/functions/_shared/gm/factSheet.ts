@@ -365,7 +365,11 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
     lines.push('Recent timeline:', ...sheet.recent.map((r) => `  - ${r}`));
   }
   if (sheet.stallPressure) {
-    lines.push(`World pressure (must show this beat):\n${sheet.stallPressure}`);
+    // T10DIR2 — stall development is a Must-narrate ledger fact (same path as other engine acts).
+    const stall = /^Must narrate:/i.test(sheet.stallPressure)
+      ? sheet.stallPressure
+      : `Must narrate: ${sheet.stallPressure}`;
+    lines.push(`World pressure (must show this beat):\n${stall}`);
   }
   lines.push(
     '',
