@@ -5,19 +5,13 @@
 
 import type { ActiveEncounter, GameState, SceneFacts } from './types';
 import { tickEncounterTerminal } from './encounterTerminalFsm';
+import { applyPresenceFacts, emptyPresenceFacts, seat, unseat } from './presentAuthority';
 import { pushCombatStateTx } from './stateTx';
 import { isJourneyUnderway, isRoadLabel, UNDERWAY_HERE } from './travelJourney';
 import { placeScale } from './placeAuthority';
 
 function sceneFactsBase(state: GameState): SceneFacts {
-  return state.sceneFacts ?? {
-    crowd: 'unknown',
-    noise: 'unknown',
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: state.turn,
-  };
+  return state.sceneFacts ?? emptyPresenceFacts(state.turn);
 }
 
 /** Live fight only when a foe is on-screen or this turn committed a spawn preface. */
@@ -223,24 +217,14 @@ export function isClosedKillRecycle(
 }
 
 export function attachLastKill(state: GameState, kill: LastKill): GameState {
-  const base: SceneFacts = state.sceneFacts ?? {
-    crowd: 'unknown',
-    noise: 'unknown',
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: state.turn,
-  };
-  const present = (base.present ?? []).filter((p) => !matchesLastKillName(p, kill));
-  return {
-    ...state,
-    sceneFacts: {
-      ...base,
-      present,
-      lastKill: kill,
-      tension: kill.outcome === 'victory' ? 'tense' : base.tension,
-    },
-  };
+  let next = state;
+  for (const p of [...(state.sceneFacts?.present ?? [])]) {
+    if (matchesLastKillName(p, kill)) next = unseat(next, p, 'engine');
+  }
+  return applyPresenceFacts(next, {
+    lastKill: kill,
+    tension: kill.outcome === 'victory' ? 'tense' : next.sceneFacts?.tension,
+  });
 }
 
 export function lastGmMentionsEnemy(state: GameState, enemyName: string): boolean {
@@ -449,22 +433,12 @@ export function ensureEncounterSpawnPreface(
     }
   }
 
-  const base = sceneFactsBase(state);
-  const present = [...(base.present ?? [])];
-  if (name && !present.some((p) => String(p).toLowerCase().includes(name.toLowerCase()))) {
-    present.push(name);
-  }
-
-  const nextState: GameState = {
-    ...state,
-    sceneFacts: {
-      ...base,
-      present,
-      pendingSpawnPreface: undefined,
-      pendingEncounter: undefined,
-      tension: 'combat',
-    },
-  };
+  let nextState: GameState = name ? seat(state, name) : state;
+  nextState = applyPresenceFacts(nextState, {
+    pendingSpawnPreface: undefined,
+    pendingEncounter: undefined,
+    tension: 'combat',
+  });
 
   const receipts: string[] = [];
   if (spawnReceipt) receipts.push(spawnReceipt);

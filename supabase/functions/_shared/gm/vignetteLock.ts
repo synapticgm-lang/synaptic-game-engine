@@ -12,6 +12,7 @@ import {
   isDialogueVerbPersonToken,
   isNonPersonNameToken,
 } from './chromeAuthority.ts';
+import { applyPresenceFacts, presenceFactsPatch } from './presentAuthority.ts';
 
 export type VignetteKind = 'social' | 'argument' | 'vendor';
 
@@ -195,8 +196,7 @@ export function harvestVignetteIntoSceneFacts(
     const props = uniqNames([...existing.props, ...extractPropMentions(prose)]).slice(0, 5);
     const kind: VignetteKind =
       argument && existing.kind === 'social' ? 'argument' : existing.kind;
-    return {
-      ...facts,
+    return presenceFactsPatch(facts, {
       openVignette: {
         ...existing,
         kind,
@@ -206,7 +206,7 @@ export function harvestVignetteIntoSceneFacts(
       },
       present: uniqNames([...(facts.present ?? []), ...cast]),
       props: uniqNames([...(facts.props ?? []), ...props]),
-    };
+    });
   }
 
   if (!argument || !hub) return facts;
@@ -224,12 +224,11 @@ export function harvestVignetteIntoSceneFacts(
     openedTurn: turn,
     status: 'open',
   };
-  return {
-    ...facts,
+  return presenceFactsPatch(facts, {
     openVignette: vignette,
     present: uniqNames([...(facts.present ?? []), ...cast]),
     props: uniqNames([...(facts.props ?? []), ...props]),
-  };
+  });
 }
 
 /** Clear vignette when player leaves the hub (location change). */
@@ -267,15 +266,11 @@ export function applyVignettePresence(state: GameState): GameState {
   if (!isOpenVignette(v) || !state.sceneFacts) return state;
   const present = uniqNames([...(state.sceneFacts.present ?? []), ...v.cast]);
   const props = uniqNames([...(state.sceneFacts.props ?? []), ...v.props]);
-  return {
-    ...state,
-    sceneFacts: {
-      ...state.sceneFacts,
-      present,
-      props,
-      openVignette: v,
-    },
-  };
+  return applyPresenceFacts(state, {
+    present,
+    props,
+    openVignette: v,
+  });
 }
 
 /** True when drought/hub must continue the locked cast instead of a new social spawn. */

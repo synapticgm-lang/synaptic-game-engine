@@ -5,6 +5,7 @@
 
 import type { GameState } from './types';
 import { aimsAtSelf } from './intentParser';
+import { setPlayPhase } from './playPhase';
 import umbraBook from '@/data/pyoa/umbraBook.json';
 
 export type PyoaSpineNodeId = string;
@@ -346,11 +347,13 @@ export function advancePyoaSpine(state: GameState, playerInput: string): GameSta
   // 08d — Accept the ending must terminate, not infinite-loop as buy-time.
   if (spine.endingId) {
     if (/\baccept the ending\b/i.test(playerInput) || /\bclose the (?:book|road|chapter)\b/i.test(playerInput)) {
-      return {
-        ...working,
-        playPhase: 'ended',
-        pyoaSpine: { ...spine, flags: { ...spine.flags, endingAccepted: '1' } },
-      };
+      return setPlayPhase(
+        {
+          ...working,
+          pyoaSpine: { ...spine, flags: { ...spine.flags, endingAccepted: '1' } },
+        },
+        'ended',
+      );
     }
     return working;
   }
@@ -442,11 +445,9 @@ function applyExit(state: GameState, exit: PyoaSpineExit): GameState {
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
   const moveTo =
     dest?.place && dest.place.toLowerCase() !== here.toLowerCase() ? dest.place : null;
-  return {
+  const moved: GameState = {
     ...state,
     ...(moveTo ? { currentLocation: moveTo } : {}),
-    playPhase:
-      endingId && isAuthoredPyoaBook(state.campaignBibleId) ? 'ended' : state.playPhase,
     pyoaSpine: {
       ...spine,
       currentNodeId: to,
@@ -456,6 +457,7 @@ function applyExit(state: GameState, exit: PyoaSpineExit): GameState {
       endingId,
     },
   };
+  return endingId && isAuthoredPyoaBook(state.campaignBibleId) ? setPlayPhase(moved, 'ended') : moved;
 }
 
 /** Honest ending gate: ending leaf + required flags. */

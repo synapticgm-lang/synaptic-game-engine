@@ -3,6 +3,7 @@ import type { GameEvent } from './parser';
 import type { GameState, TimelineEntityRecord, TimelineFact, TimelineFactKind, TimelineTagKind, TimelineVerb } from './types';
 import { appendVisitEvent, ensurePlaceVisit } from './sceneBlock';
 import { renderTagText } from './timelineFormat';
+import { applyPresenceFacts, emptyPresenceFacts } from './presentAuthority';
 export { formatTimelineForPrompt, renderTagText } from './timelineFormat';
 export {
   formatSceneBlock, formatSceneBlockTokens, appendVisitEvent, compressVisitLog, leavePlaceVisit,
@@ -76,21 +77,21 @@ export function tag(state: GameState, verb: TimelineVerb, kind: TimelineTagKind,
   pushTagged(timeline, { id, turn, verb, kind, name: who, detail: note, ...(place ? { place } : {}), text, at: Date.now() });
   let next: GameState = { ...state, timeline: timeline.length <= MAX ? timeline : timeline.slice(timeline.length - MAX) };
   if ((kind === 'creature' || kind === 'combat' || kind === 'person') && (verb === 'died' || verb === 'left')) {
-    const base = next.sceneFacts ?? { crowd: 'unknown' as const, noise: 'unknown' as const, present: [], props: [], lastBeat: '', updatedTurn: turn };
+    const base = next.sceneFacts ?? emptyPresenceFacts(turn);
     const n = who.toLowerCase();
     const present: string[] = [];
     for (const p of base.present ?? []) {
       const t = p.toLowerCase();
       if (t !== n && t !== `the ${n}` && t !== `a ${n}` && t !== `an ${n}` && n !== `the ${t}`) present.push(p);
     }
-    next = {
-      ...next,
-      sceneFacts: {
-        ...base,
-        present,
-        ...(verb === 'died' ? { lastKill: { name: who, outcome: 'victory' as const, turn, remains: true }, tension: 'tense' as const } : {}),
-      },
-    };
+    next =
+      verb === 'died'
+        ? applyPresenceFacts(next, {
+            present,
+            lastKill: { name: who, outcome: 'victory' as const, turn, remains: true },
+            tension: 'tense' as const,
+          })
+        : applyPresenceFacts(next, { present });
   }
   next = touchEntity(next, kind, { id, name: who }, note);
   next = ensurePlaceVisit(next);

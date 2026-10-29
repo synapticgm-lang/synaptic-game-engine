@@ -1,16 +1,286 @@
 /**
- * Lock C — location-bound present[] trim on real travel.
- * NPCs do not teleport when the player leaves; companions persist. Opening pins do not.
+ * T10SM1 — sole owner of scene presence + NPC exit flags.
+ * Seat / unseat / exit keep NpcMemory.present and sceneFacts.present in agreement.
+ * Lock C travel trim stays here (location-bound cast).
  */
 
-import type { GameState } from './types';
-import { trimAnonymousRolesOnLocationChange } from './closedScenePerson';
+import type { CrowdPresence, GameState, NpcMemory, SceneFacts } from './types';
 import { isSystemWindowLabel } from './chromeAuthority';
 import { npcNamesAt, stampNpcLocationsOnMove } from './npcRecords';
 import { ensurePlaceCard } from './outdoorHubs';
 import { resolvePlace } from './places';
 import { placeScale } from './placeAuthority';
-import { engineTension } from './sceneFacts';
+
+export type PresenceExitReason = NonNullable<NpcMemory['exitReason']>;
+
+export function emptyPresenceFacts(turn = 0): SceneFacts {
+  return {
+    crowd: 'unknown',
+    noise: 'unknown',
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: turn,
+  };
+}
+
+function baseFacts(state: GameState | { sceneFacts?: SceneFacts; turn?: number }): SceneFacts {
+  return state.sceneFacts ?? emptyPresenceFacts(state.turn ?? 0);
+}
+
+/** Inline of closedScenePerson.trim — kept here to avoid presentAuthority ↔ closedScenePerson cycles. */
+function rolesAfterTravel(state: GameState, sameLocation: boolean): string[] {
+  if (sameLocation) return state.sceneFacts?.anonymousRoles ?? [];
+  return [];
+}
+
+/** Minimal travel tension (avoid importing sceneFacts → crowdAuthority cycle). */
+function travelTension(
+  state: Pick<GameState, 'activeEncounter'>,
+  current: SceneFacts['tension']
+): SceneFacts['tension'] {
+  const enc = state.activeEncounter;
+  if (enc && !(typeof enc.hp === 'number' && enc.hp <= 0)) return 'combat';
+  return current === 'combat' ? 'unknown' : current;
+}
+
+function nameKey(n: string): string {
+  return (n ?? '').trim().toLowerCase();
+}
+
+function samePerson(a: string, b: string): boolean {
+  const x = nameKey(a);
+  const y = nameKey(b);
+  if (!x || !y) return false;
+  if (x === y) return true;
+  const x0 = x.split(/\s+/)[0] ?? '';
+  const y0 = y.split(/\s+/)[0] ?? '';
+  return (!!x0 && (y.includes(x0) || x.includes(y0))) || (!!y0 && x.includes(y0));
+}
+
+function memoryMatchesRef(m: NpcMemory, ref: string): boolean {
+  if (samePerson(m.npcName, ref) || samePerson(m.npcId, ref)) return true;
+  return (m.aliases ?? []).some((a) => samePerson(a, ref));
+}
+
+function crowdFromCount(count: number): CrowdPresence {
+  if (count <= 0) return 'none';
+  if (count <= 3) return 'sparse';
+  return 'present';
+}
+
+/**
+ * Sole SceneFacts patch for guarded presence fields.
+ * Explicit `present`/`crowd`/`anonymousRoles`/`leftBehind` so the AST ratchet sees them here only.
+ */
+export function presenceFactsPatch(
+  prev: SceneFacts | undefined,
+  patch: Partial<SceneFacts>,
+  turn?: number
+): SceneFacts {
+  const base = prev ?? emptyPresenceFacts(turn ?? prev?.updatedTurn ?? 0);
+  const present = patch.present !== undefined ? patch.present : base.present;
+  const crowd = patch.crowd !== undefined ? patch.crowd : base.crowd;
+  const anonymousRoles =
+    patch.anonymousRoles !== undefined ? patch.anonymousRoles : base.anonymousRoles;
+  const leftBehind = patch.leftBehind !== undefined ? patch.leftBehind : base.leftBehind;
+  return {
+    ...base,
+    ...patch,
+    present,
+    crowd,
+    anonymousRoles,
+    leftBehind,
+  };
+}
+
+/** Apply a presence SceneFacts patch onto GameState. */
+export function applyPresenceFacts(state: GameState, patch: Partial<SceneFacts>): GameState {
+  return {
+    ...state,
+    sceneFacts: presenceFactsPatch(state.sceneFacts, patch, state.turn ?? 0),
+  };
+}
+
+/** NpcMemory.present flag — only written here. */
+export function withMemoryPresentFlag(m: NpcMemory, present: boolean): NpcMemory {
+  return { ...m, present };
+}
+
+/** NpcMemory exit flags — only written here (shouldExit / exitReason / present:false). */
+export function withMemoryExitFlags(
+  m: NpcMemory,
+  reason: PresenceExitReason,
+  turn?: number
+): NpcMemory {
+  return {
+    ...m,
+    shouldExit: true,
+    exitReason: reason,
+    present: false,
+    ...(turn !== undefined ? { lastSeenTurn: turn } : {}),
+  };
+}
+
+function syncMemoriesToPresentList(state: GameState, present: string[]): NpcMemory[] | undefined {
+  const mems = state.npcMemories;
+  if (!mems?.length) return mems;
+  let changed = false;
+  const next = mems.map((m) => {
+    const here = present.some((p) => memoryMatchesRef(m, p));
+    if (!!m.present === here) return m;
+    changed = true;
+    return withMemoryPresentFlag(m, here);
+  });
+  return changed ? next : mems;
+}
+
+/** Seat one or more names into the scene; mark matching memories present. */
+export function seat(state: GameState, npcRefOrNames: string | string[]): GameState {
+  const names = (Array.isArray(npcRefOrNames) ? npcRefOrNames : [npcRefOrNames])
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+  if (!names.length) return state;
+  const base = baseFacts(state);
+  const present = [...(base.present ?? [])];
+  for (const n of names) {
+    if (!present.some((p) => samePerson(p, n))) present.push(n);
+  }
+  const crowd =
+    base.crowd === 'none' || base.crowd === 'unknown'
+      ? crowdFromCount(present.length)
+      : base.crowd;
+  const crowdCount =
+    typeof base.crowdCount === 'number'
+      ? Math.max(base.crowdCount, present.length)
+      : base.crowdCount;
+  const next = applyPresenceFacts(state, {
+    present,
+    crowd,
+    crowdCount,
+    updatedTurn: state.turn ?? base.updatedTurn,
+  });
+  const mems = syncMemoriesToPresentList(next, present);
+  return mems === next.npcMemories ? next : { ...next, npcMemories: mems };
+}
+
+/**
+ * Remove a name from the scene. Engine events only for reason 'engine'.
+ * Does not set shouldExit (use exitNpc for that).
+ */
+export function unseat(
+  state: GameState,
+  name: string,
+  _reason: 'engine' | 'harvest' | 'travel' | 'repair' | string = 'engine'
+): GameState {
+  void _reason;
+  const base = baseFacts(state);
+  const present = (base.present ?? []).filter((p) => !samePerson(p, name));
+  if (present.length === (base.present ?? []).length) return state;
+  const next = applyPresenceFacts(state, {
+    present,
+    crowdCount:
+      typeof base.crowdCount === 'number' ? Math.min(base.crowdCount, present.length) : base.crowdCount,
+    crowd: present.length === 0 ? 'none' : base.crowd === 'none' ? crowdFromCount(present.length) : base.crowd,
+    updatedTurn: state.turn ?? base.updatedTurn,
+  });
+  const mems = (next.npcMemories ?? []).map((m) =>
+    memoryMatchesRef(m, name) ? withMemoryPresentFlag(m, false) : m
+  );
+  return { ...next, npcMemories: mems };
+}
+
+/**
+ * ONLY place that sets shouldExit/exitReason/present:false on memory AND removes
+ * the name from sceneFacts.present (crowd stays consistent).
+ */
+export function exitNpc(
+  state: GameState,
+  npcRef: string,
+  reason: PresenceExitReason
+): GameState {
+  const turn = state.turn ?? 0;
+  const mems = (state.npcMemories ?? []).map((m) => {
+    if (!memoryMatchesRef(m, npcRef) || m.shouldExit) return m;
+    return withMemoryExitFlags(m, reason, turn);
+  });
+  const base = baseFacts(state);
+  const present = (base.present ?? []).filter((p) => !samePerson(p, npcRef));
+  const next = applyPresenceFacts(
+    { ...state, npcMemories: mems },
+    {
+      present,
+      crowd:
+        present.length === 0
+          ? 'none'
+          : base.crowd === 'none'
+            ? crowdFromCount(present.length)
+            : base.crowd,
+      crowdCount:
+        typeof base.crowdCount === 'number'
+          ? Math.min(base.crowdCount, Math.max(present.length, 0))
+          : base.crowdCount,
+      updatedTurn: turn,
+    }
+  );
+  return next;
+}
+
+/** Replace the whole present list (travel rebuild, harvest sync, vignette cast). Syncs memories. */
+export function setPresentList(state: GameState, present: string[]): GameState {
+  const next = applyPresenceFacts(state, {
+    present,
+    updatedTurn: state.turn ?? 0,
+  });
+  const mems = syncMemoriesToPresentList(next, present);
+  return mems === next.npcMemories ? next : { ...next, npcMemories: mems };
+}
+
+export function setCrowd(
+  state: GameState,
+  crowd: CrowdPresence,
+  crowdCount?: number | undefined
+): GameState {
+  return applyPresenceFacts(state, {
+    crowd,
+    crowdCount,
+    updatedTurn: state.turn ?? 0,
+  });
+}
+
+export function setAnonymousRoles(state: GameState, anonymousRoles: string[]): GameState {
+  return applyPresenceFacts(state, {
+    anonymousRoles,
+    updatedTurn: state.turn ?? 0,
+  });
+}
+
+export function clearScene(
+  state: GameState,
+  opts?: { lastBeat?: string; keepProps?: boolean; crowd?: CrowdPresence }
+): GameState {
+  const base = baseFacts(state);
+  return applyPresenceFacts(state, {
+    present: [],
+    crowd: opts?.crowd ?? 'none',
+    crowdCount: undefined,
+    lastBeat: opts?.lastBeat ?? base.lastBeat,
+    props: opts?.keepProps === false ? [] : base.props,
+    updatedTurn: state.turn ?? 0,
+  });
+}
+
+/** Drop everyone marked shouldExit from the present list (memory flags already set). */
+export function applyExitedToPresent(state: GameState): GameState {
+  const present = state.sceneFacts?.present;
+  if (!present?.length) return state;
+  const next = present.filter((name) => {
+    const m = (state.npcMemories ?? []).find((row) => memoryMatchesRef(row, name));
+    return !m?.shouldExit;
+  });
+  if (next.length === present.length) return state;
+  return setPresentList(state, next);
+}
 
 /** 29z9j — objects belong to the place: park the old place's props on its record, load the new place's. */
 function movePropsWithPlace(state: GameState, fromLocation: string, toLocation: string): GameState {
@@ -28,7 +298,7 @@ function movePropsWithPlace(state: GameState, fromLocation: string, toLocation: 
   return {
     ...state,
     places,
-    sceneFacts: { ...facts, props: [...carried, ...arrived], propsPlace: toLocation },
+    sceneFacts: presenceFactsPatch(facts, { props: [...carried, ...arrived], propsPlace: toLocation }),
   };
 }
 
@@ -82,7 +352,7 @@ export function applyPresentTrimOnTravel(
     );
   const trimmed = trimPresentOnLocationChange(state, fromLocation, toLocation);
   const sameLoc = locationsEquivalentForPresence(fromLocation, toLocation);
-  const nextRoles = trimAnonymousRolesOnLocationChange(state, sameLoc);
+  const nextRoles = rolesAfterTravel(state, sameLoc);
   const prev = state.sceneFacts?.present ?? [];
   const prevRoles = state.sceneFacts?.anonymousRoles ?? [];
   const dropped = sameLoc
@@ -106,7 +376,7 @@ export function applyPresentTrimOnTravel(
           crowd: 'unknown' as const,
           crowdCount: undefined,
           noise: 'unknown' as const,
-          tension: engineTension(state, 'unknown'),
+          tension: travelTension(state, 'unknown'),
           lastBeat: '',
           indoor: scale ? scale === 'indoor' : undefined,
         };
@@ -122,29 +392,17 @@ export function applyPresentTrimOnTravel(
   if (presentSame && rolesSame && behindSame && killSame && pendingSame && moodSame) {
     return state;
   }
-  const base = state.sceneFacts ?? {
-    crowd: 'unknown' as const,
-    noise: 'unknown' as const,
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: state.turn ?? 0,
-  };
-  return {
-    ...state,
-    sceneFacts: {
-      ...base,
-      present: trimmed,
-      anonymousRoles: nextRoles,
-      leftBehind: dropped,
-      ...(moodReset ?? {}),
-      ...(clearCorpse
-        ? {
-            lastKill: undefined,
-            pendingEncounter: undefined,
-            pendingSpawnPreface: undefined,
-          }
-        : {}),
-    },
-  };
+  return applyPresenceFacts(state, {
+    present: trimmed,
+    anonymousRoles: nextRoles,
+    leftBehind: dropped,
+    ...(moodReset ?? {}),
+    ...(clearCorpse
+      ? {
+          lastKill: undefined,
+          pendingEncounter: undefined,
+          pendingSpawnPreface: undefined,
+        }
+      : {}),
+  });
 }

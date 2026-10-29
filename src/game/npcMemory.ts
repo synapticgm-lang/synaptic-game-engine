@@ -9,6 +9,12 @@ import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './man
 import { pickDataswornCharacterSeed } from './dataswornCharacterSeeds';
 import { isMetNpc, syncNpcPresence } from './npcRecords';
 import { isStaleCompanionDefault, personalAgendaFromSeed } from './companionAgency';
+import {
+  applyExitedToPresent,
+  unseat,
+  withMemoryExitFlags,
+  withMemoryPresentFlag,
+} from './presentAuthority';
 
 const MAX_FACTS_PER_NPC = 10;
 const MAX_NPC_MEMORIES = 80;
@@ -362,25 +368,9 @@ export function applyHostilePresentLeave(
       || target.npcName.toLowerCase().includes(p.toLowerCase()),
   );
   if (!here) return { state, receipts: [] };
-  const drop = target.npcName.toLowerCase();
-  const nextPresent = present.filter((p) => {
-    const pl = p.toLowerCase();
-    return pl !== drop && !pl.includes(drop.split(/\s+/)[0]!) && !drop.includes(pl);
-  });
-  const base = state.sceneFacts ?? {
-    crowd: 'unknown' as const,
-    noise: 'unknown' as const,
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: state.turn ?? 0,
-  };
   const receipt = `${target.npcName} pulls away and will not stay to be handled.`;
   return {
-    state: {
-      ...state,
-      sceneFacts: { ...base, present: nextPresent, updatedTurn: state.turn ?? 0 },
-    },
+    state: unseat(state, target.npcName, 'engine'),
     receipts: [receipt],
   };
 }
@@ -638,18 +628,20 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
           .slice(0, 80) || undefined
       : undefined;
     let row = ensureNpcAgenda(
-      {
-        npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
-        npcName: name,
-        disposition,
-        facts: [`Bible roster: ${role}`, ...extras].slice(0, MAX_FACTS_PER_NPC),
-        lastSeenTurn: 0,
-        roleHint: role,
-        aliases: npc.aliases ?? [],
-        met: false,
-        present: false,
-        ...(npc.motiveLines?.length ? { motiveLines: npc.motiveLines } : {}),
-      },
+      withMemoryPresentFlag(
+        {
+          npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
+          npcName: name,
+          disposition,
+          facts: [`Bible roster: ${role}`, ...extras].slice(0, MAX_FACTS_PER_NPC),
+          lastSeenTurn: 0,
+          roleHint: role,
+          aliases: npc.aliases ?? [],
+          met: false,
+          ...(npc.motiveLines?.length ? { motiveLines: npc.motiveLines } : {}),
+        } as NpcMemory,
+        false
+      ),
       { role, disposition, bindTarget: bindTarget || undefined },
     );
     // OPT-3 Datasworn seeds: LitRPG/RPG take descriptor as a trait; tabletop flavour only (fact line).
@@ -810,29 +802,17 @@ export function markQuestGiverExit(
     if (!memoryMatchesNpc(m, giverName) || !isQuestGiverMemory(m)) return m;
     if (m.shouldExit) return m;
     const fact = `Quest accepted — left T${turn}`;
+    const exited = withMemoryExitFlags(m, 'quest-accepted', turn);
     return {
-      ...m,
-      shouldExit: true,
-      exitReason: 'quest-accepted',
-      completedTopics: uniqueTopics([...(m.completedTopics ?? []), 'farewell']),
-      facts: m.facts.includes(fact) ? m.facts : [...m.facts, fact].slice(-MAX_FACTS_PER_NPC),
-      lastSeenTurn: turn,
+      ...exited,
+      completedTopics: uniqueTopics([...(exited.completedTopics ?? []), 'farewell']),
+      facts: exited.facts.includes(fact) ? exited.facts : [...exited.facts, fact].slice(-MAX_FACTS_PER_NPC),
     };
   });
 }
 
 export function applyNpcExitToPresent(state: GameState): GameState {
-  const present = state.sceneFacts?.present;
-  if (!present?.length) return state;
-  const next = present.filter((name) => !npcShouldExit(state, name));
-  if (next.length === present.length) return state;
-  return {
-    ...state,
-    sceneFacts: {
-      ...state.sceneFacts,
-      present: next,
-    },
-  };
+  return applyExitedToPresent(state);
 }
 
 export function isKindSocialPad(choice: string): boolean {

@@ -8,6 +8,7 @@ import { isChromePersonToken, isNonPersonNameToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { npcRecordNames, resolveNpcRecord } from './npcRecords';
 import { ledgerPlaceTitles } from './slotGlue';
+import { applyPresenceFacts } from './presentAuthority';
 
 const OPENING_PIN_TURN_CAP = 20;
 
@@ -136,12 +137,8 @@ export function ensureOpeningNpcPinned(
 
   if (!changed && !needStamp) return state;
 
-  return {
+  const stamped = {
     ...state,
-    sceneFacts: {
-      ...state.sceneFacts,
-      present,
-    },
     openingEstablishment: est
       ? { ...est, pinnedNpcNames: pinned, ...(pinnedAt ? { pinnedAt } : {}) }
       : {
@@ -152,6 +149,7 @@ export function ensureOpeningNpcPinned(
           ...(pinnedAt ? { pinnedAt } : {}),
         },
   };
+  return changed ? applyPresenceFacts(stamped, { present }) : stamped;
 }
 
 export function formatOpeningPinMandate(state: GameState): string | null {

@@ -13,6 +13,8 @@ import { resolveOpeningHookPick } from './openingEstablishment';
 import { fitKitToHousing } from './defaults';
 import { withMotiveLines } from './npcSheet';
 import { normalizeLedgerEntry } from './npcMemoryLedger';
+import { setPlayPhase } from './playPhase';
+import { applyPresenceFacts, withMemoryPresentFlag } from './presentAuthority';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -38,12 +40,14 @@ function repairNpcRecords(state: GameState): { state: GameState; changed: boolea
   const memories = (next.npcMemories ?? []).map((m) => {
     if (m.aliases !== undefined && m.met !== undefined && m.present !== undefined) return m;
     changed = true;
-    return {
-      ...m,
-      aliases: m.aliases ?? [],
-      met: m.met ?? isMetNpc(m),
-      present: m.present ?? false,
-    };
+    return withMemoryPresentFlag(
+      {
+        ...m,
+        aliases: m.aliases ?? [],
+        met: m.met ?? isMetNpc(m),
+      },
+      m.present ?? false
+    );
   });
   if (changed) next = { ...next, npcMemories: memories };
 
@@ -76,7 +80,7 @@ function repairNpcRecords(state: GameState): { state: GameState; changed: boolea
         if (name && !split.includes(name)) split.push(name);
       }
     }
-    next = { ...next, sceneFacts: { ...next.sceneFacts!, present: split } };
+    next = applyPresenceFacts(next, { present: split });
     changed = true;
   }
 
@@ -105,9 +109,10 @@ export function repairSaveSchema(state: GameState): SaveRepairResult {
     if (kind === 'semantic') severity = 'semantic';
   };
 
+  // One-time read-repair: missing playPhase on old saves → live via the sole writer.
   const phase = defaultPlayPhase(next);
   if (phase.changed) {
-    next = { ...next, playPhase: phase.playPhase };
+    next = setPlayPhase(next, phase.playPhase);
     note('default playPhase live', 'cosmetic');
   }
 

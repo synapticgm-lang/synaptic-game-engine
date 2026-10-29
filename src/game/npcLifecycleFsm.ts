@@ -61,8 +61,11 @@ export interface NpcLifecycle {
   /** Turn when NPC exited */
   exitedAtTurn?: number;
   
-  /** Exit reason */
-  exitReason?: 'function_complete' | 'deadline_missed' | 'player_choice' | 'story_beat' | 'transform';
+  /**
+   * Lifecycle bookkeeping only (not NpcMemory.exitReason / scene presence).
+   * T10SM1: renamed off guarded `exitReason` so presence exit has one owner.
+   */
+  lifecycleExitReason?: 'function_complete' | 'deadline_missed' | 'player_choice' | 'story_beat' | 'transform';
   
   /** Previous role (if transformed) */
   previousRole?: NpcRole;
@@ -195,7 +198,7 @@ export function updateNpcLifecycle(
         // functioning → exiting (deadline missed)
         next.state = 'exiting';
         next.exitedAtTurn = state.turn;
-        next.exitReason = 'deadline_missed';
+        next.lifecycleExitReason = 'deadline_missed';
         transition = {
           from: 'functioning',
           to: 'exiting',
@@ -215,7 +218,7 @@ export function updateNpcLifecycle(
         // debt_satisfied → exiting (exit window exceeded)
         next.state = 'exiting';
         next.exitedAtTurn = state.turn;
-        next.exitReason = 'function_complete';
+        next.lifecycleExitReason = 'function_complete';
         transition = {
           from: 'debt_satisfied',
           to: 'exiting',

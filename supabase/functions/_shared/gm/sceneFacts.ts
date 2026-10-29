@@ -12,6 +12,7 @@ import {
 import { matchHub, hubsForBibleId } from './outdoorHubs.ts';
 import { applyCardCrowdToFacts, buildSnapshotGist } from './openingPointerCard.ts';
 import { applyFollowersToHereSpot, hereSpotAt, hereSpotOccupants } from './hereSpot.ts';
+import { presenceFactsPatch } from './presentAuthority.ts';
 import { isJourneyUnderway } from './travelJourney.ts';
 import { proseSaysEmpty } from './chipRules.ts';
 import { mentionsName } from './scenePresence.ts';
@@ -65,12 +66,11 @@ export function crowdHere(state: Pick<GameState, 'sceneFacts' | 'journey'>): boo
 /** Prose on the road never seats a crowd; the next place locks its own headcount. */
 function roadCrowd(state: Pick<GameState, 'journey'>, facts: SceneFacts): SceneFacts {
   if (!isJourneyUnderway(state)) return facts;
-  return {
-    ...facts,
+  return presenceFactsPatch(facts, {
     crowd: 'none',
     crowdCount: undefined,
     present: (facts.present ?? []).filter((p) => !/^bystanders?$/i.test(p)),
-  };
+  });
 }
 
 export function emptySceneFacts(turn = 0): SceneFacts {
@@ -321,13 +321,15 @@ function seedOpeningSceneFactsRaw(state: GameState): SceneFacts {
     state.sceneFacts,
     state.turn
   );
-  return applyCardCrowdToFacts(state, {
-    ...extracted,
-    hookLock: extracted.hookLock ?? hookLock,
-    crowd: 'none',
-    crowdCount: 0,
-    present: [],
-  });
+  return applyCardCrowdToFacts(
+    state,
+    presenceFactsPatch(extracted, {
+      hookLock: extracted.hookLock ?? hookLock,
+      crowd: 'none',
+      crowdCount: 0,
+      present: [],
+    })
+  );
 }
 
 /** True when new prose wipes a bound crowd/noise without time passing. */
@@ -455,11 +457,10 @@ export function applyCommittedNarrative(
     state,
     followed === withIntent.hereSpot
       ? withIntent
-      : {
-          ...withIntent,
+      : presenceFactsPatch(withIntent, {
           hereSpot: followed,
           present: Array.from(new Set([...(withIntent.present ?? []), ...rejoined])),
-        }
+        })
   );
   const engineMood = roadCrowd(state, { ...moded, tension: engineTension(state, moded.tension) });
   return {

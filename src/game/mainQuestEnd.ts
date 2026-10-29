@@ -13,6 +13,7 @@ import { recentChoices } from './choiceJournal';
 import { originLine } from './rules/rpgOrigin';
 import { approvalBandLabel, recruitedCompanions } from './rules/companions';
 import { classDisplayName } from './rules/characterClass';
+import { setPlayPhase } from './playPhase';
 
 export const MAIN_QUEST_DONE_TITLE = 'You have completed the main quest.';
 export const ONE_MORE_TURN = 'One more turn';
@@ -87,5 +88,5 @@ export function finishMainQuest(state: GameState): { state: GameState; receipts:
   const marked = seen(state, p.questId);
   const ended = marked.engineMode === 'rpg' ? commitRpgEnding(marked) : null;
   if (ended) return ended;
-  return { state: { ...marked, playPhase: 'ended' }, receipts: [`Ending: ${p.questName} — the main quest is complete.`] };
+  return { state: setPlayPhase(marked, 'ended'), receipts: [`Ending: ${p.questName} — the main quest is complete.`] };
 }

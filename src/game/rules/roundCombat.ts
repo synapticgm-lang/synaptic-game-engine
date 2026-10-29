@@ -1391,9 +1391,16 @@ export function rollDeathSave(ds: DeathSaveState, rng: Rng, opts: { reroll?: boo
   if (d20 === 20) return { state: { successes: 0, failures: 0 }, d20, result: 'revived', ...tag };
   const failures = ds.failures + (d20 === 1 ? 2 : d20 < 10 ? 1 : 0);
   const successes = ds.successes + (d20 >= 10 ? 1 : 0);
-  const state: DeathSaveState = { successes: Math.min(3, successes), failures: Math.min(3, failures) };
-  if (state.failures >= 3) state.dead = true;
-  else if (state.successes >= 3) state.stable = true;
+  // Pure roll result only — applying onto GameState.deathSaves goes through rules/death.ts (T10SM1).
+  // Build immutably (no `state.dead = true`) so the single-writer scan does not count this file.
+  const fails = Math.min(3, failures);
+  const oks = Math.min(3, successes);
+  const state: DeathSaveState =
+    fails >= 3
+      ? { successes: oks, failures: fails, dead: true }
+      : oks >= 3
+        ? { successes: oks, failures: fails, stable: true }
+        : { successes: oks, failures: fails };
   const result = d20 === 1 ? 'two failures' : d20 >= 10 ? 'success' : 'failure';
   return { state, d20, result, ...tag, ...(state.stable ? { hoursToWake: rollDie(4, rng) } : {}) };
 }

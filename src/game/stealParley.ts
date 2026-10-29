@@ -24,6 +24,7 @@ import { tickEncounterTerminal } from './encounterTerminalFsm';
 import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
 import type { IntentStep, IntentTone } from './intentParser';
 import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority';
+import { applyPresenceFacts, withMemoryPresentFlag } from './presentAuthority';
 
 export type StealOutcome = {
   taken: boolean;
@@ -439,39 +440,46 @@ export function resolvePersonThreatAttempt(
   if (mem) {
     const nudged = nudgePersona(
       next,
-      {
-        ...mem,
-        disposition: mem.disposition === 'allied' || mem.disposition === 'friendly' ? 'neutral' : 'hostile',
-        attitude: 'hostile',
-        present: true,
-        location: next.currentLocation ?? mem.location,
-      },
+      withMemoryPresentFlag(
+        {
+          ...mem,
+          disposition: mem.disposition === 'allied' || mem.disposition === 'friendly' ? 'neutral' : 'hostile',
+          attitude: 'hostile',
+          location: next.currentLocation ?? mem.location,
+        },
+        true
+      ),
       intimOk ? 'threatened' : 'threatened',
       grab ? 'grabbed and threatened' : 'threatened',
     );
     next = nudged.state;
     const memories = (next.npcMemories ?? []).map((m) =>
       (m.npcName ?? '') === (nudged.memory.npcName ?? '')
-        ? { ...nudged.memory, present: true, disposition: 'hostile' as const, attitude: 'hostile' as const }
+        ? withMemoryPresentFlag(
+            { ...nudged.memory, disposition: 'hostile' as const, attitude: 'hostile' as const },
+            true
+          )
         : m,
     );
     if (!(next.npcMemories ?? []).some((m) => (m.npcName ?? '') === (nudged.memory.npcName ?? ''))) {
-      memories.push({
-        ...nudged.memory,
-        present: true,
-        disposition: 'hostile',
-        attitude: 'hostile',
-      });
+      memories.push(
+        withMemoryPresentFlag(
+          { ...nudged.memory, disposition: 'hostile', attitude: 'hostile' },
+          true
+        )
+      );
     }
     const present = [...(next.sceneFacts?.present ?? [])];
     const low = who.toLowerCase();
     if (!present.some((p) => p.toLowerCase() === low)) present.push(who);
-    next = {
-      ...next,
-      npcMemories: memories,
-      personaNudges: [...(next.personaNudges ?? []), ...(nudged.nudge ? [nudged.nudge] : [])],
-      sceneFacts: next.sceneFacts
-        ? { ...next.sceneFacts, present }
+    next = applyPresenceFacts(
+      {
+        ...next,
+        npcMemories: memories,
+        personaNudges: [...(next.personaNudges ?? []), ...(nudged.nudge ? [nudged.nudge] : [])],
+      },
+      next.sceneFacts
+        ? { present }
         : {
             crowd: 'sparse',
             noise: 'voices',
@@ -479,8 +487,8 @@ export function resolvePersonThreatAttempt(
             props: [],
             lastBeat: '',
             updatedTurn: next.turn ?? 0,
-          },
-    };
+          }
+    );
   }
 
   return {

@@ -9,6 +9,7 @@ import type { GameState } from './types';
 import { canHarvestAsNamedPerson, isCommonRoleNpc, isHubContactProperName, isTitlePlusGiven } from './entityRegistry';
 import { resolveHubArrival } from './hubEncounters';
 import { npcRecordNames, presentNpcRecords } from './npcRecords';
+import { setAnonymousRoles } from './presentAuthority';
 import { isPyoaCharterClosed } from './pyoaBranchLedger';
 import { locationChangedRecently } from './sceneContextTail';
 import { isJourneyUnderway } from './travelJourney';
@@ -266,21 +267,7 @@ export function harvestRoleOccupancy(
   const list = [...next];
   const prev = listedAnonymousRoles(state);
   if (list.length === prev.length && list.every((r) => prev.includes(r))) return state;
-  const base = state.sceneFacts ?? {
-    crowd: 'unknown' as const,
-    noise: 'unknown' as const,
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: state.turn ?? 0,
-  };
-  return {
-    ...state,
-    sceneFacts: {
-      ...base,
-      anonymousRoles: list,
-    },
-  };
+  return setAnonymousRoles(state, list);
 }
 
 export function trimAnonymousRolesOnLocationChange(

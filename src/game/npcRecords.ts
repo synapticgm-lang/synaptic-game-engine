@@ -3,6 +3,7 @@ import { isOutOfTalkingRange } from './hereSpot';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 import { resolvePlace } from './places';
 import { companionTravelConsent } from './companionAgency';
+import { withMemoryPresentFlag } from './presentAuthority';
 const SHEET_BOOKKEEPING = /^(?:Bible roster|Introduced in play|Seen in play|Knows the player as|Authored line|Speech:)/i;
 const VOICE_NOTE = /^Speech:/i;
 export function sheetMemoryLine(m: NpcMemory, pcName?: string | null): string {
@@ -302,5 +303,5 @@ export function isMetNpc(m: NpcMemory): boolean {
 }
 export function syncNpcPresence(memories: NpcMemory[], state: GameState): NpcMemory[] {
   const here = new Set(presentNpcRecords({ ...state, npcMemories: memories }).map((m) => m.npcId));
-  return memories.map((m) => ({ ...m, present: here.has(m.npcId) }));
+  return memories.map((m) => withMemoryPresentFlag(m, here.has(m.npcId)));
 }

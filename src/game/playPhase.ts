@@ -3,6 +3,14 @@ import { failRunScopedQuests } from './questGuards';
 import { commitDeath, stampLastSafeHub, tryRecoverDeathCoinCache } from './rules/death';
 import { turnRng } from './seededRng';
 
+/**
+ * T10SM1 — sole writer of `playPhase` (death.ts never writes it; endings/lifeline call here).
+ */
+export function setPlayPhase(state: GameState, playPhase: PlayPhase): GameState {
+  if (state.playPhase === playPhase) return state;
+  return { ...state, playPhase };
+}
+
 /** Whether player input should be blocked. */
 export function isPlayInputLocked(state: GameState): boolean {
   return state.playPhase === 'ended' || state.playPhase === 'down';
@@ -31,7 +39,7 @@ export function applyPlayPhaseAfterHp(
       next = { ...next, weakenedUntilTurn: null, character: { ...next.character, conditions } };
     }
     if (next.playPhase === 'down') {
-      return { ...next, playPhase: 'live' as PlayPhase };
+      return setPlayPhase(next, 'live');
     }
     return next;
   }
@@ -44,14 +52,14 @@ export function applyPlayPhaseAfterHp(
   // LitRPG / Story RPG: Package A lifeline — never 'down' / 'ended' on 0 HP (incl. deathTurn).
   if (state.engineMode === 'litrpg' || state.engineMode === 'rpg') {
     if (next.lifelineFiredTurn === turn && (next.character.hp ?? 0) > 0) {
-      return { ...next, playPhase: 'live' as PlayPhase };
+      return setPlayPhase(next, 'live');
     }
     const end = commitDeath({ ...next, character: { ...next.character, hp: 0 }, turn }, 'danger', turnRng(next, 'lifeline'));
-    return { ...end.state, playPhase: 'live' as PlayPhase };
+    return setPlayPhase(end.state, 'live');
   }
 
   // Tabletop (and any other mode): ended + run-scoped quest sweep.
-  let ended: GameState = { ...next, playPhase: 'ended' as PlayPhase };
+  let ended = setPlayPhase(next, 'ended');
   ended = failRunScopedQuests(ended, turn);
   return ended;
 }
