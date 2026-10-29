@@ -24,6 +24,7 @@ import {
   isRepeatPurchasePad,
   npcShouldExit,
 } from './npcMemory';
+import { applyDirectorChipPolicy } from './director';
 import { hubTravelTargets, hubsForBibleId, matchHub } from './outdoorHubs';
 import { systemStatusChip } from './systemHousing';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
@@ -1313,6 +1314,18 @@ export function compileChoices(
     const ranked = rankChoices(state, finalChoices);
     finalChoices = ranked.choices;
     notes.push(...ranked.notes);
+  }
+  // T10DIR — director owns travel-to-here / ping-pong / no-op replacement / fight cap.
+  {
+    const recent = (state.circling?.recentPlaces ?? []).map((p) => `Travel toward ${p}`);
+    const before = finalChoices;
+    finalChoices = applyDirectorChipPolicy(state, finalChoices, {
+      recentChips: recent,
+      inFight: !!engaged,
+    });
+    if (finalChoices !== before && finalChoices.length !== before.length) {
+      notes.push('Director chip policy');
+    }
   }
   // s83 Root C — a named person here keeps one talk chip; a role chip never stands in for them.
   if (!engaged) {

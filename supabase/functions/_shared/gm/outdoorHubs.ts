@@ -429,9 +429,12 @@ export function hubTravelTargets(state: GameState): string[] {
   // OPT-5: closed places drop from exits until an engine event reopens them.
   // Inline place.arcStatus check (no openThreads import — outdoorHubs is edge-synced).
   const open: Array<{ name: string; dungeon: boolean }> = [];
+  // T10DIR — never travel to the current place (compare by hub id, then name).
+  const hereHub = matchHub(fromBible, state.currentLocation);
   for (let i = 0; i < listed.length; i++) {
     const h = listed[i]!;
     if (!h.name || h.name.toLowerCase() === here) continue;
+    if (hereHub && h.id === hereHub.id) continue;
     const want = h.name.toLowerCase();
     let closed = false;
     const placeRows = state.places ?? [];

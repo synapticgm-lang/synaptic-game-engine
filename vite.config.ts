@@ -1,10 +1,26 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
+import { execSync } from 'node:child_process';
+
+function gitShortSha(): string {
+  try {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+  } catch {
+    return 'dev';
+  }
+}
+
+const SGM_GIT_SHA = gitShortSha();
+const SGM_BUILD_TIME = new Date().toISOString();
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __SGM_GIT_SHA__: JSON.stringify(SGM_GIT_SHA),
+    __SGM_BUILD_TIME__: JSON.stringify(SGM_BUILD_TIME),
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

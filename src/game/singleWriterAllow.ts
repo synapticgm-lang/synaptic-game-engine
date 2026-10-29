@@ -1,6 +1,7 @@
 /**
  * T10SM1 single-writer allow-lists (ratchet: may only shrink).
  * Stage 0 = today's AST writers. Stage 1 shrinks death fields. Stage 2 shrinks presence.
+ * T10DIR: director owns progression fields (directorPlan / sceneThreadPlan / nudge / stall).
  */
 
 export const PRESENCE_FIELDS = [
@@ -14,7 +15,18 @@ export const PRESENCE_FIELDS = [
 
 export const DEATH_FIELDS = ['deathSaves', 'dead', 'playPhase'] as const;
 
-export const GUARDED_FIELDS = [...PRESENCE_FIELDS, ...DEATH_FIELDS] as const;
+/** T10DIR — progression fields owned by director.ts. */
+export const DIRECTOR_FIELDS = [
+  'directorPlan',
+  'directorStall',
+  'sceneThreadPlan',
+  'nudgedTurn',
+  'lastNudge',
+  'firedNudges',
+  'nudgeCursor',
+] as const;
+
+export const GUARDED_FIELDS = [...PRESENCE_FIELDS, ...DEATH_FIELDS, ...DIRECTOR_FIELDS] as const;
 
 export type GuardedField = (typeof GUARDED_FIELDS)[number];
 
@@ -35,4 +47,12 @@ export const ALLOW_LISTS: Record<GuardedField, readonly string[]> = {
   dead: [],
   // Stage 1: sole playPhase writer (death.ts delegates; endings/migration call setPlayPhase).
   playPhase: ['src/game/playPhase.ts'],
+  // T10DIR: sole progression / stall / nudge writers.
+  directorPlan: ['src/game/director.ts'],
+  directorStall: ['src/game/director.ts'],
+  sceneThreadPlan: ['src/game/director.ts'],
+  nudgedTurn: ['src/game/director.ts'],
+  lastNudge: ['src/game/director.ts'],
+  firedNudges: ['src/game/director.ts'],
+  nudgeCursor: ['src/game/director.ts'],
 };

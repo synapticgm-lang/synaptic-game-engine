@@ -28,10 +28,12 @@ import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepAnchor, tabletopStepChip } from './tabletopQuestProgress';
 import { mainSpineQuest } from './questPlay';
 import { stallPressureActive } from './openThreads';
+import { directorNudgeIfStuck } from './director';
 
 export type { CirclingMemory } from './types';
 
 const REST_TURNS = 4;
+/** @deprecated T10DIR — stall/nudge threshold lives on director.STALL_N; kept for local stuck helpers. */
 const STUCK_TURNS = 3;
 
 const PROGRESS_RECEIPT = /^(?:XP Gained|Loot:|Gold Gained|Quest|Fight: VICTORY|Parley check:.*success|Dungeon: (?:you moved|you opened|you found|search of .*you found (?!nothing))|Dungeon: .* is cleared|Nudge:|.+ pulls away)/i;
@@ -270,141 +272,12 @@ export function turnsWithoutProgress(state: GameState): number {
   return Math.max(0, (state.turn ?? 0) - mem.lastProgressTurn);
 }
 
-/** After 3 stuck turns: one nudge from existing engine facts (never authored story). */
+/**
+ * T10DIR — anti-circling nudge routes through the Director (sole progression owner).
+ * Deleted: "Nudge skipped: no engine-fact nudge; OPT-5 stall uses the scene planner" dead end.
+ */
 export function nudgeIfStuck(state: GameState): { state: GameState; receipts: string[]; notes: string[] } {
-  const mem = state.circling;
-  if (!mem || state.activeEncounter) return { state, receipts: [], notes: [] };
-  // Nobody gets word to a PC lying unconscious at 0 HP.
-  if (state.deathSaves || (state.character?.hp ?? 1) <= 0) return { state, receipts: [], notes: [] };
-  const turn = state.turn ?? 0;
-  if (turnsWithoutProgress(state) < STUCK_TURNS) return { state, receipts: [], notes: [] };
-  if (mem.nudgedTurn != null && turn - mem.nudgedTurn < STUCK_TURNS) return { state, receipts: [], notes: [] };
-  const notes: string[] = [];
-  const fired = new Set([...(mem.firedNudges ?? []), ...(mem.lastNudge ? [mem.lastNudge] : [])]);
-  // 28l — sources rotate (room → person → quest → hub). q39-T1b / OPT-5: generic sensory
-  // pool deleted — stall content is the TT-T1 scene planner (thread / agenda / OPT-2).
-  const sourceCount = 4;
-  const start = (mem.nudgeCursor ?? 0) % sourceCount;
-  let line = '';
-  let used = start;
-  for (let i = 0; i < sourceCount && !line; i++) {
-    const idx = (start + i) % sourceCount;
-    let candidate = '';
-    if (idx === 0) {
-      const d = state.activeDungeon;
-      if (d) {
-        let node: (typeof d.nodes)[number] | undefined;
-        for (let n = 0; n < d.nodes.length; n++) {
-          if (d.nodes[n]!.id === d.currentNodeId) {
-            node = d.nodes[n];
-            break;
-          }
-        }
-        const conns = node?.connections ?? [];
-        for (let c = 0; c < conns.length; c++) {
-          let nextNode: (typeof d.nodes)[number] | undefined;
-          for (let n = 0; n < d.nodes.length; n++) {
-            if (d.nodes[n]!.id === conns[c]) {
-              nextNode = d.nodes[n];
-              break;
-            }
-          }
-          if (nextNode && !d.visitedNodeIds.includes(nextNode.id)) {
-            candidate = `Nudge: a sound carries from ${nextNode.name}.`;
-            break;
-          }
-        }
-      }
-    } else if (idx === 1) {
-      const people = presentNpcRecords(state);
-      for (let p = 0; p < people.length; p++) {
-        if (!isMetNpc(people[p]!)) {
-          candidate = `Nudge: ${people[p]!.npcName} comes over to you.`;
-          break;
-        }
-      }
-    } else if (idx === 2) {
-      const quests = state.quests ?? [];
-      for (let q = 0; q < quests.length; q++) {
-        const quest = quests[q]!;
-        if (quest.status !== 'active' || !quest.revealed) continue;
-        const objs = quest.objectives ?? [];
-        for (let o = 0; o < objs.length; o++) {
-          const obj = objs[o]!;
-          if (obj.completed || obj.optional) continue;
-          let desc = obj.description;
-          while (desc.endsWith('.') || desc.endsWith('!') || desc.endsWith('?')) {
-            desc = desc.slice(0, -1);
-          }
-          candidate = `Nudge: word reaches you about ${quest.name}: ${desc}.`;
-          break;
-        }
-        if (candidate) break;
-      }
-    } else {
-      const hubs = hubsForBibleId(state.campaignBibleId);
-      const here = matchHub(hubs, state.currentLocation);
-      const visited = new Set<string>();
-      const placeRows = state.places ?? [];
-      for (let p = 0; p < placeRows.length; p++) {
-        if (placeRows[p]!.lastVisitedTurn != null) {
-          visited.add(placeRows[p]!.name.toLowerCase());
-        }
-      }
-      let pick: (typeof hubs)[number] | undefined;
-      for (let h = 0; h < hubs.length; h++) {
-        const hub = hubs[h]!;
-        if (hub.id === here?.id || visited.has(hub.name.toLowerCase())) continue;
-        let already = false;
-        for (const f of fired) {
-          if (f.includes(hub.name)) {
-            already = true;
-            break;
-          }
-        }
-        if (!already) {
-          pick = hub;
-          break;
-        }
-        if (!pick) pick = hub;
-      }
-      const sight = pick ? placeFirstSight(state, pick.name) : '';
-      let sightClean = sight;
-      while (sightClean.endsWith('.') || sightClean.endsWith('!') || sightClean.endsWith('?')) {
-        sightClean = sightClean.slice(0, -1);
-      }
-      const speaker = presentNpcRecords(state)[0]?.npcName;
-      if (pick && speaker) {
-        candidate = `Nudge: ${speaker} mentions ${pick.name}${sightClean ? `: ${sightClean}` : ''}.`;
-      }
-    }
-    if (candidate && !fired.has(candidate)) {
-      line = candidate;
-      used = idx;
-    }
-  }
-  if (!line) {
-    return {
-      state,
-      receipts: [],
-      notes: ['Nudge skipped: no engine-fact nudge; OPT-5 stall uses the scene planner'],
-    };
-  }
-  return {
-    state: {
-      ...state,
-      circling: {
-        ...mem,
-        nudgedTurn: turn,
-        lastProgressTurn: turn,
-        lastNudge: line,
-        nudgeCursor: (used + 1) % sourceCount,
-        firedNudges: [...fired, line].slice(-64),
-      },
-    },
-    receipts: [line],
-    notes,
-  };
+  return directorNudgeIfStuck(state);
 }
 
 function travelDest(chip: string): string | null {

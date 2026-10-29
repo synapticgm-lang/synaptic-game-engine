@@ -24,92 +24,68 @@ import type {
   Quest,
   TimelineFact,
 } from './types';
-import { chipAddressee, mentionsName, peopleHere } from './chipLegality';
-import { isCrowdFillerToken } from './chromeAuthority';
-import { exitNpc } from './presentAuthority';
-import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
-import { ensureQuestFloor } from './questGenerator';
-import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
-import { fuzzyTypedName } from './typedNameMatch';
+import { mentionsName, peopleHere } from './chipLegality';
+import { STALL_N } from './directorConstants';
+import {
+  chipWantFromMotiveLine,
+  isGmFacingNote,
+  npcChipWant,
+  npcGoalPersonHere,
+} from './openThreadUtils';
+
+export { chipWantFromMotiveLine, isGmFacingNote, npcChipWant, npcGoalPersonHere };
+export { STALL_N };
 
 /**
- * Bible hooks are GM notes shaped `Label: essay` (Secret / Moral anchor / Obstacle…).
- * Structural colon-label — not a deny-list of words. Never a player chip topic.
+ * T10DIR — late-bound planDirector (director imports collectOpenThreads from this file;
+ * bind runs when director.ts loads via choiceRanking / useGame / fateAutoplay).
  */
-export function isGmFacingNote(text: string): boolean {
-  return /^[A-Za-z][A-Za-z0-9 /&'-]{0,40}:\s+\S/.test((text ?? '').trim());
+type PlanDirectorFn = (
+  state: GameState,
+  input?: { playerInput?: string },
+) => { state: GameState };
+let _planDirector: PlanDirectorFn | null = null;
+export function bindPlanDirector(fn: PlanDirectorFn): void {
+  _planDirector = fn;
 }
 
 /**
- * Spoken motive line → short chip topic (action phrase, never a quoted speech fragment).
- * "I only want the town calm" → "the town calm"; "I need someone steady watching that keep gate"
- * → "someone steady watching that keep gate" (T10O — chip labels are acts, not NPC lines).
+ * OPT-5 / T10DIR stall gate. Decision ownership is director.ts; this predicate is the shared
+ * read used by pads / compiler (same meaning as director.stallPressureActive).
  */
-export function chipWantFromMotiveLine(line: string): string {
-  const t = (line ?? '').replace(/\s+/g, ' ').trim();
-  if (!t) return '';
-  const m = t.match(/^I (?:only )?(?:want|need)\s+(.+)$/i);
-  let body = (m?.[1] ?? t).trim();
-  // Strip wrapping quotes so a motive stored as dialogue never becomes a chip speech fragment.
-  body = body.replace(/^["'“‘]|["'”’]$/g, '').trim();
-  const cut = body.search(/[,.]/);
-  if (cut > 8) body = body.slice(0, cut).trim();
-  return body.slice(0, 80);
-}
-
-/**
- * SheetPlace enum keys accidentally bound as goal.target (pre-T10Q). One-word place types are not
- * conversational threads — fall through to motive / need.
- */
-function isSheetPlaceKey(text: string): boolean {
-  const t = (text ?? '').trim().toLowerCase();
-  return t === 'inn' || t === 'town' || t === 'road' || t === 'camp' || t === 'cell' || t === 'dungeon';
-}
-
-/**
- * Want used on Follow-up / Ask-about chips: player-facing topic only.
- * Bound goal target when it is not a GM hook note; else motive line; never Secret:/Moral-anchor essays
- * and never the shared informant need "a buyer who pays" when a real want exists.
- */
-export function npcChipWant(m: NpcMemory): string {
-  const target = (m.goal?.target ?? '').trim();
-  if (target && !isGmFacingNote(target) && !isSheetPlaceKey(target)) {
-    // T10O — goal targets may be stored as first-person speech; chip labels stay action phrases.
-    return chipWantFromMotiveLine(target) || target;
-  }
-  const motive = chipWantFromMotiveLine(m.motiveLines?.[0] ?? '');
-  if (motive && !isSheetPlaceKey(motive)) return motive;
-  const need = (m.need ?? '').trim();
-  if (need && !isGmFacingNote(need) && !isSheetPlaceKey(need)) {
-    return chipWantFromMotiveLine(need) || need;
-  }
-  return '';
-}
-
-/** Whether the NPC for an agenda / npc-goal thread is in the current scene (chip compiler gate). */
-export function npcGoalPersonHere(state: GameState, npcId: string, npcName?: string): boolean {
-  const name = (npcName ?? (npcId.startsWith('npc:') ? npcId.slice(4) : npcId)).trim();
-  if (!name && !npcId) return false;
-  // T10AI — peopleHere is the occupancy source of truth (empty crowd clears departed cast).
-  const here = peopleHere(state);
-  for (let i = 0; i < here.length; i++) {
-    const h = here[i]!;
-    if (name && (mentionsName(h, name) || mentionsName(name, h))) return true;
-    const bare = npcId.startsWith('npc:') ? npcId.slice(4) : npcId;
-    if (bare && (mentionsName(h, bare) || mentionsName(bare, h))) return true;
+export function stallPressureActive(state: GameState): boolean {
+  if (state.engineMode === 'pyoa') return false;
+  const turn = state.turn ?? 0;
+  const tsp = state.progressGovernor?.turnsSinceProgress ?? 0;
+  if (tsp >= STALL_N) return true;
+  const lastProgress = state.circling?.lastProgressTurn;
+  if (typeof lastProgress === 'number' && turn - lastProgress >= STALL_N) return true;
+  const deadline = state.arcDirector?.pressureClock?.deadlineTurn;
+  if (deadline != null && turn >= deadline) return true;
+  const stale = state.circling?.stale;
+  if (!stale) return false;
+  const places = Object.keys(stale);
+  for (let i = 0; i < places.length; i++) {
+    const fams = stale[places[i]!]!;
+    const keys = Object.keys(fams);
+    for (let j = 0; j < keys.length; j++) {
+      if (turn - (fams[keys[j]!] ?? turn) >= STALL_N) return true;
+    }
   }
   return false;
 }
 
-export type { OpenThread, SceneThreadPlan, ThreadKind, ThreadResolution } from './types';
+function ensureDirector(): void {
+  if (_planDirector) return;
+  // Sync side-effect bind (circular import is safe: bindPlanDirector is already defined).
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('./director');
+  if (!_planDirector) {
+    throw new Error('T10DIR: director bind failed before planSceneThreads');
+  }
+}
 
-const STALE_TURNS = 10;
-const BRING_WINDOW = 5;
-/**
- * OPT-5 stall threshold (turnsSinceProgress, circling.stale hold, pressure deadline).
- * T10Z — must fire before fate LOOP STOP (5 no-progress turns) so the planner can move the world.
- */
-export const STALL_N = 3;
+export type { OpenThread, SceneThreadPlan, ThreadKind, ThreadResolution } from './types';
 
 /** Whether the engine record already satisfies this thread's close condition. */
 export function threadResolutionMet(state: GameState, thread: OpenThread): boolean {
@@ -117,7 +93,13 @@ export function threadResolutionMet(state: GameState, thread: OpenThread): boole
   if (r.type === 'quest-complete') {
     const quests = state.quests ?? [];
     for (let i = 0; i < quests.length; i++) {
-      if (quests[i]!.id === r.questId) return quests[i]!.status === 'completed';
+      if (quests[i]!.id !== r.questId) continue;
+      const q = quests[i]!;
+      if (q.status === 'completed') return true;
+      // Same resolved-thread check the old planner / nudge used: every required step done.
+      const objs = q.objectives ?? [];
+      if (objs.length && objs.every((o) => o.completed || o.optional)) return true;
+      return false;
     }
     return false;
   }
@@ -196,6 +178,9 @@ export function collectOpenThreads(state: GameState): OpenThread[] {
     const q = quests[i]!;
     if (q.status !== 'active' && q.status !== 'hidden') continue;
     if (q.revealed === false) continue;
+    // No open step → not an open thread (director must not bring a finished quest forward).
+    const objs = q.objectives ?? [];
+    if (objs.length && objs.every((o) => o.completed || o.optional)) continue;
     const id = `quest:${q.id}`;
     const old = prevById[id];
     out.push({
@@ -288,31 +273,6 @@ export function collectOpenThreads(state: GameState): OpenThread[] {
     if (!threadResolutionMet(state, out[i]!)) kept.push(out[i]!);
   }
   return kept;
-}
-
-/** OPT-5: true when progress stall, pressure deadline, or circling.stale has held ≥ STALL_N. */
-export function stallPressureActive(state: GameState): boolean {
-  if (state.engineMode === 'pyoa') return false;
-  const turn = state.turn ?? 0;
-  const tsp = state.progressGovernor?.turnsSinceProgress ?? 0;
-  if (tsp >= STALL_N) return true;
-  // T10AG — same progress meaning as LOOP STOP / turnProgress (XP, loot, quest, move, social, fight, class).
-  // progressGovernor alone misses hub/travel freezes when soft timeline discoveries reset turnsSinceProgress.
-  const lastProgress = state.circling?.lastProgressTurn;
-  if (typeof lastProgress === 'number' && turn - lastProgress >= STALL_N) return true;
-  const deadline = state.arcDirector?.pressureClock?.deadlineTurn;
-  if (deadline != null && turn >= deadline) return true;
-  const stale = state.circling?.stale;
-  if (!stale) return false;
-  const places = Object.keys(stale);
-  for (let i = 0; i < places.length; i++) {
-    const fams = stale[places[i]!]!;
-    const keys = Object.keys(fams);
-    for (let j = 0; j < keys.length; j++) {
-      if (turn - (fams[keys[j]!] ?? turn) >= STALL_N) return true;
-    }
-  }
-  return false;
 }
 
 /** Closed places are not travel exits until an event reopens them. */
@@ -423,319 +383,14 @@ export function applyPlaceEngineEvent(state: GameState, event: PlaceEngineEvent)
   };
 }
 
-function appendStallFact(state: GameState, eventId: string, text: string): GameState {
-  const turn = state.turn ?? 0;
-  const fact: TimelineFact = {
-    id: eventId,
-    turn,
-    kind: 'world',
-    text,
-    at: Date.now(),
-  };
-  return {
-    ...state,
-    timeline: [...(state.timeline ?? []), fact].slice(-80),
-    sceneFacts: state.sceneFacts
-      ? { ...state.sceneFacts, stallWorldFact: text }
-      : {
-          crowd: 'unknown',
-          noise: 'unknown',
-          present: [],
-          props: [],
-          lastBeat: '',
-          updatedTurn: turn,
-          stallWorldFact: text,
-        },
-  };
-}
-
 /**
- * Who this turn's Talk/Ask/typed address is aimed at — stall must not eject them mid-beat
- * (T10AM: Ask Brannoc about the lead after stall emptied PRESENT).
- */
-function addressedPresentName(state: GameState, playerInput: string): string | null {
-  const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
-  if (!act) return null;
-  const present = (state.sceneFacts?.present ?? []).filter((n) => n && !isCrowdFillerToken(n));
-  if (!present.length) return null;
-  const chip = chipAddressee(act);
-  if (chip?.who) {
-    const hit = present.find(
-      (n) => mentionsName(n, chip.who) || mentionsName(chip.who, n) || n.toLowerCase() === chip.who.toLowerCase(),
-    );
-    if (hit) return hit;
-  }
-  const fuzzy = fuzzyTypedName(act, present);
-  if (fuzzy) return fuzzy;
-  const low = act.toLowerCase();
-  for (const n of present) {
-    if (mentionsName(low, n)) return n;
-  }
-  return null;
-}
-
-/**
- * T10AG — hub / post-rest stall: one present person leaves (engine record). Writer narrates the
- * departure; chips stop cycling the same Talk/Press loop (s9601 T126–T150 / s9501 T124–T131).
- * T10AM — never eject the person this turn's action addresses (chip or typed). Sole addressee
- * stays so speech still has a PRESENT listener; world threat / thread-forward still fire.
- */
-function stallDepartPresentNpc(state: GameState, turn: number, playerInput = ''): GameState {
-  const present = (state.sceneFacts?.present ?? []).filter((n) => n && !isCrowdFillerToken(n));
-  if (!present.length) return state;
-  const keep = addressedPresentName(state, playerInput);
-  const candidates = keep
-    ? present.filter(
-        (n) =>
-          n.trim().toLowerCase() !== keep.trim().toLowerCase()
-          && !mentionsName(n, keep)
-          && !mentionsName(keep, n),
-      )
-    : present;
-  if (!candidates.length) return state;
-  const name = candidates[candidates.length - 1]!;
-  // T10SM1 — stall exit owned by presentAuthority.
-  const exited = exitNpc(state, name, 'stall-pressure');
-  const fact = `Left under stall pressure T${turn}`;
-  const mems = (exited.npcMemories ?? []).map((m) => {
-    const n = (m.npcName ?? '').trim();
-    if (!n || (!mentionsName(n, name) && !mentionsName(name, n) && n.toLowerCase() !== name.trim().toLowerCase())) {
-      return m;
-    }
-    return {
-      ...m,
-      facts: m.facts?.includes(fact) ? m.facts : [...(m.facts ?? []), fact].slice(-12),
-    };
-  });
-  return { ...exited, npcMemories: mems };
-}
-
-/**
- * Scene planner: refresh the open-thread list, drop resolved rows, and bring
- * forward at least one open thread (weighted by turns since last seen + place proximity).
- * A stale thread (untouched ≥ STALE_TURNS) is preferred so it reappears within BRING_WINDOW.
- * Under OPT-5 stall pressure, also bring an agenda step or OPT-2 situation when no thread.
+ * T10DIR — thread data store refresh + director progression plan.
+ * Stall / bring-forward decisions live only in director.ts (bound via bindPlanDirector).
  */
 export function planSceneThreads(state: GameState, playerInput = ''): GameState {
   if (state.engineMode === 'pyoa') return state;
-  const turn = state.turn ?? 0;
-  const threads = collectOpenThreads(state);
-  const stall = stallPressureActive(state);
-  const plan = state.sceneThreadPlan;
-  if (plan && plan.plannedTurn === turn && plan.forwardIds.length && !(stall && !plan.stallKind)) {
-    return { ...state, openThreads: threads, sceneThreadPlan: plan };
-  }
-  if (!threads.length && !stall) {
-    return {
-      ...state,
-      openThreads: [],
-      sceneThreadPlan: { plannedTurn: turn, forwardIds: [] },
-    };
-  }
-
-  const here = (state.currentLocation ?? '').trim().toLowerCase();
-  let best: OpenThread | null = null;
-  let bestScore = -1;
-  for (let i = 0; i < threads.length; i++) {
-    const t = threads[i]!;
-    // Follow-up chips only for people in the scene — skip absent npc-goal rows at pick time.
-    if (t.kind === 'npc-goal' && !npcGoalPersonHere(state, t.entityId || '', t.label.split(':')[0])) {
-      continue;
-    }
-    const stale = Math.max(0, turn - (t.lastSeenTurn ?? 0));
-    let prox = 0;
-    if (here && t.placeId) {
-      const place = t.placeId.trim().toLowerCase();
-      if (place === here) prox = 50;
-      else if (here.includes(place) || place.includes(here)) prox = 25;
-    }
-    const score = stale * 10 + prox;
-    if (score > bestScore) {
-      bestScore = score;
-      best = t;
-    }
-  }
-  for (let i = 0; i < threads.length; i++) {
-    const t = threads[i]!;
-    if (t.kind === 'npc-goal' && !npcGoalPersonHere(state, t.entityId || '', t.label.split(':')[0])) {
-      continue;
-    }
-    const untouched = turn - (t.lastSeenTurn ?? 0);
-    if (untouched >= STALE_TURNS) {
-      const deadline = (t.lastSeenTurn ?? 0) + STALE_TURNS + BRING_WINDOW;
-      if (turn <= deadline) {
-        best = t;
-        break;
-      }
-    }
-  }
-
-  let working: GameState = { ...state, openThreads: threads };
-  const forwardIds: string[] = [];
-  let stallKind: 'thread' | 'agenda' | 'situation' | undefined;
-  let stallEventId: string | undefined;
-
-  // T10AG — under stall, a travel leg always resolves (Walk on) before LOOP STOP: companions on the
-  // road and open threads must not freeze the leg (s9701 T18–T23 / s9601 T95–T97).
-  // Never auto-Walk on past a live fight, parked drought foe, or open road meeting.
-  const roadEnc = working.journey?.encounter;
-  const roadOpen = !!roadEnc && !roadMeetingOver(roadEnc);
-  if (
-    stall
-    && isJourneyUnderway(working)
-    && !working.activeEncounter
-    && !working.sceneFacts?.pendingEncounter
-    && !roadOpen
-  ) {
-    const advanced = commitTravel(working, 'Walk on');
-    if (advanced.handled) {
-      working = advanced.state;
-      forwardIds.push(`stall-road:${turn}`);
-      stallKind = 'situation';
-      stallEventId = `stall-road-${turn}`;
-      working = appendStallFact(
-        working,
-        stallEventId,
-        advanced.receipt || 'Stall pressure: the road pressed you onward.',
-      );
-    }
-  }
-
-  if (best) {
-    forwardIds.push(best.id);
-    if (stall) {
-      if (!stallKind) {
-        stallKind = 'thread';
-        stallEventId = `stall-thread-${turn}-${best.id}`;
-        working = appendStallFact(
-          working,
-          stallEventId,
-          `Stall pressure: open thread brought forward — ${best.label}.`,
-        );
-      }
-      // T10AB + T10AG — stalled scenes must move the world (SRD-faithful consequence), not only re-chip.
-      // Key off stallPressureActive (circling lastProgress), not governor alone.
-      // Never invent a new threat or force an exit while a live fight is open.
-      const hereName = (working.currentLocation ?? '').trim();
-      if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
-        working = applyPlaceEngineEvent(working, {
-          placeId: hereName,
-          kind: 'new-threat',
-          detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
-        });
-        working = stallDepartPresentNpc(working, turn, playerInput);
-      }
-    }
-  } else if (stall) {
-    // Order: open thread (none) → NPC agenda step → OPT-2 situation.
-    const prevClock = working.arcDirector?.pressureClock;
-    const nextClock = tickPressureClock(prevClock, false, turn);
-    working = applyPressureAgendaAdvance(
-      working,
-      prevClock,
-      { ...nextClock, deadlineTurn: turn },
-      false,
-    );
-    const agendaFired = working.arcDirector?.pressureClock?.lastAgendaAdvanceTurn === turn;
-    let memWithGoal: NpcMemory | null = null;
-    const mems = working.npcMemories ?? [];
-    for (let i = 0; i < mems.length; i++) {
-      const m = mems[i]!;
-      if (!m.goal?.motivation) continue;
-      const npcId = m.npcId || `npc:${m.npcName}`;
-      if (!npcGoalPersonHere(working, npcId, m.npcName)) continue;
-      memWithGoal = m;
-      break;
-    }
-    if (agendaFired && memWithGoal) {
-      const npcId = memWithGoal.npcId || `npc:${memWithGoal.npcName}`;
-      forwardIds.push(`agenda:${npcId}`);
-      stallKind = 'agenda';
-      stallEventId = `stall-agenda-${turn}-${npcId}`;
-      if (!working.sceneFacts?.agendaWorldFact) {
-        working = appendStallFact(
-          working,
-          stallEventId,
-          `Stall pressure: agenda step for ${memWithGoal.npcName}.`,
-        );
-      }
-    } else {
-      const floor = ensureQuestFloor(working);
-      working = floor.state;
-      if (floor.quest) {
-        forwardIds.push(`situation:${floor.quest.id}`);
-        stallKind = 'situation';
-        stallEventId = `stall-situation-${turn}-${floor.quest.id}`;
-        working = appendStallFact(
-          working,
-          stallEventId,
-          `Stall pressure: new situation — ${floor.quest.name}.`,
-        );
-      } else if (!stallEventId) {
-        // T10AG — hub / post-rest stall with no thread/agenda/situation: world still acts.
-        // Skip while a live fight is open (camp mini-boss / hub combat).
-        const hereName = (working.currentLocation ?? '').trim();
-        if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
-          working = applyPlaceEngineEvent(working, {
-            placeId: hereName,
-            kind: 'new-threat',
-            detail: 'A patrol or visitor interrupts the stall — the scene moves on.',
-          });
-          working = stallDepartPresentNpc(working, turn, playerInput);
-          stallEventId = `stall-hub-${turn}`;
-          stallKind = 'situation';
-          working = appendStallFact(
-            working,
-            stallEventId,
-            `Stall pressure: the scene at ${hereName} moves on.`,
-          );
-        } else if (agendaFired || (working.arcDirector?.pressureClock?.deadlineTurn != null
-          && turn >= (working.arcDirector.pressureClock.deadlineTurn ?? turn + 1))) {
-          stallEventId = `stall-pressure-${turn}`;
-          working = appendStallFact(
-            working,
-            stallEventId,
-            `Stall pressure: pressure clock fired at T${turn}.`,
-          );
-        }
-      }
-    }
-  }
-
-  const nextThreads: OpenThread[] = [];
-  for (let i = 0; i < threads.length; i++) {
-    const t = threads[i]!;
-    let lastSeen = t.lastSeenTurn;
-    for (let f = 0; f < forwardIds.length; f++) {
-      if (forwardIds[f] === t.id) lastSeen = turn;
-    }
-    nextThreads.push({ ...t, lastSeenTurn: lastSeen });
-  }
-
-  // Pressure deadline still needs an engine event when a thread was already forward (OPT5-2).
-  if (stall && !stallEventId) {
-    const deadline = working.arcDirector?.pressureClock?.deadlineTurn;
-    if (deadline != null && turn >= deadline) {
-      stallEventId = `stall-pressure-${turn}`;
-      if (!stallKind && best) stallKind = 'thread';
-      working = appendStallFact(
-        working,
-        stallEventId,
-        `Stall pressure: pressure clock deadline passed at T${deadline}.`,
-      );
-    }
-  }
-
-  return {
-    ...working,
-    openThreads: nextThreads,
-    sceneThreadPlan: {
-      plannedTurn: turn,
-      forwardIds,
-      stallKind,
-      stallEventId,
-    },
-  };
+  ensureDirector();
+  return _planDirector!(state, { playerInput }).state;
 }
 
 /** Chip label + ids for the brought-forward thread / stall agenda / OPT-2 situation. */
