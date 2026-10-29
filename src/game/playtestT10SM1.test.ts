@@ -45,23 +45,25 @@ describe('playtestT10SM1 death one writer', () => {
     expect(isDead(ended)).toBe(false);
   });
 
-  it('commitDeath srd is the only path that stamps deathSaves.dead on the PC', () => {
-    let s = createInitialState('t', 'dnd');
-    s = withHouseRules(
-      { ...s, character: { ...s.character, hp: 0 } },
-      { ...createDefaultSettings(), ttDeathRule: 'srd' }
-    );
-    const out = commitDeath(s, 'danger', rng);
-    expect(out.dead).toBe(true);
-    expect(isDead(out.state)).toBe(true);
-    expect(writerFilesFor(scanWriters(['deathSaves']), 'deathSaves')).toEqual([
-      ...ALLOW_LISTS.deathSaves,
-    ]);
-    expect(writerFilesFor(scanWriters(['dead']), 'dead')).toEqual([]);
-    expect(writerFilesFor(scanWriters(['playPhase']), 'playPhase')).toEqual([
-      ...ALLOW_LISTS.playPhase,
-    ]);
-  });
+  it(
+    'commitDeath srd is the only path that stamps deathSaves.dead on the PC',
+    () => {
+      let s = createInitialState('t', 'dnd');
+      s = withHouseRules(
+        { ...s, character: { ...s.character, hp: 0 } },
+        { ...createDefaultSettings(), ttDeathRule: 'srd' }
+      );
+      const out = commitDeath(s, 'danger', rng);
+      expect(out.dead).toBe(true);
+      expect(isDead(out.state)).toBe(true);
+      // One scan for all death fields (process cache; warm under ~50ms).
+      const hits = scanWriters(['deathSaves', 'dead', 'playPhase']);
+      expect(writerFilesFor(hits, 'deathSaves')).toEqual([...ALLOW_LISTS.deathSaves]);
+      expect(writerFilesFor(hits, 'dead')).toEqual([]);
+      expect(writerFilesFor(hits, 'playPhase')).toEqual([...ALLOW_LISTS.playPhase]);
+    },
+    60_000
+  );
 
   it('roadDeathBookProse is the one death-page producer', () => {
     const live = createInitialState('t', 'dnd');

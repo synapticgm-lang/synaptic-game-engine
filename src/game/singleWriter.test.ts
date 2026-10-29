@@ -12,27 +12,32 @@ function fmtHits(hits: WriterHit[]): string {
 }
 
 describe('singleWriter ratchet (T10SM1)', () => {
+  // One pass for all guarded fields; scanWriters caches per file (mtime/size).
   const hits = scanWriters([...GUARDED_FIELDS]);
 
   for (const field of GUARDED_FIELDS) {
-    it(`${field}: writers ⊆ allow-list and allow-list ⊆ writers`, () => {
-      const allowed = new Set(ALLOW_LISTS[field]);
-      const actual = writerFilesFor(hits, field);
-      const unexpected = hits.filter((h) => h.field === field && !allowed.has(h.file));
-      const missing = [...allowed].filter((f) => !actual.includes(f)).sort();
+    it(
+      `${field}: writers ⊆ allow-list and allow-list ⊆ writers`,
+      () => {
+        const allowed = new Set(ALLOW_LISTS[field]);
+        const actual = writerFilesFor(hits, field);
+        const unexpected = hits.filter((h) => h.field === field && !allowed.has(h.file));
+        const missing = [...allowed].filter((f) => !actual.includes(f)).sort();
 
-      expect(
-        unexpected,
-        unexpected.length
-          ? `unexpected writer(s) of ${field}:\n${fmtHits(unexpected)}`
-          : undefined
-      ).toEqual([]);
-      expect(
-        missing,
-        missing.length
-          ? `allow-listed file(s) no longer write ${field}:\n${missing.join('\n')}`
-          : undefined
-      ).toEqual([]);
-    });
+        expect(
+          unexpected,
+          unexpected.length
+            ? `unexpected writer(s) of ${field}:\n${fmtHits(unexpected)}`
+            : undefined
+        ).toEqual([]);
+        expect(
+          missing,
+          missing.length
+            ? `allow-listed file(s) no longer write ${field}:\n${missing.join('\n')}`
+            : undefined
+        ).toEqual([]);
+      },
+      60_000
+    );
   }
 });

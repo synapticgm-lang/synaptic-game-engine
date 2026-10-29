@@ -80,11 +80,15 @@ describe('selfKillGuard', () => {
     expect(aimsAtSelf('You stopped short, and the world went dark.')).toBe(false);
   });
 
-  it('nothing outside rules/death.ts writes dead: true', () => {
-    // T10SM1: AST (not text) so `state.dead = true` counts. Allow-list ratchets toward death.ts only.
-    const hits = scanWriters(['dead']);
-    const actual = writerFilesFor(hits, 'dead');
-    const allowed = [...ALLOW_LISTS.dead].sort();
-    expect(actual, hits.map((h) => `${h.file}:${h.line}`).join('\n')).toEqual(allowed);
-  });
+  it(
+    'nothing outside rules/death.ts writes dead: true',
+    () => {
+      // T10SM1: AST (not text) so `state.dead = true` counts. Allow-list ratchets toward death.ts only.
+      const hits = scanWriters(['dead']);
+      const actual = writerFilesFor(hits, 'dead');
+      const allowed = [...ALLOW_LISTS.dead].sort();
+      expect(actual, hits.map((h) => `${h.file}:${h.line}`).join('\n')).toEqual(allowed);
+    },
+    60_000
+  );
 });

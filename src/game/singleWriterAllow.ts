@@ -19,9 +19,10 @@ export const GUARDED_FIELDS = [...PRESENCE_FIELDS, ...DEATH_FIELDS] as const;
 export type GuardedField = (typeof GUARDED_FIELDS)[number];
 
 export const ALLOW_LISTS: Record<GuardedField, readonly string[]> = {
-  // Stage 2 will shrink these toward presentAuthority.ts only.
+  // Stage 2 shrinks toward presentAuthority.ts only.
+  // Fix 0: drop pure-copy sites (arcDirector/tagTrigger `present: prev?.present ?? []`
+  // before `...prev`) — scanner ignores same-field stateish reads (+ optional ??).
   present: [
-    'src/game/arcDirector.ts',
     'src/game/combatAuthority.ts',
     'src/game/crowdAuthority.ts',
     'src/game/encounterTerminalFsm.ts',
@@ -39,19 +40,16 @@ export const ALLOW_LISTS: Record<GuardedField, readonly string[]> = {
     'src/game/sceneFacts.ts',
     'src/game/stealParley.ts',
     'src/game/tabletopQuestProgress.ts',
-    'src/game/tagTrigger.ts',
     'src/game/timeline.ts',
     'src/game/travelJourney.ts',
     'src/game/useGame.ts',
     'src/game/vignetteLock.ts',
   ],
   crowd: [
-    'src/game/arcDirector.ts',
     'src/game/crowdAuthority.ts',
     'src/game/fateAutoplay.ts',
     'src/game/openingPointerCard.ts',
     'src/game/sceneFacts.ts',
-    'src/game/tagTrigger.ts',
     'src/game/travelJourney.ts',
   ],
   anonymousRoles: ['src/game/closedScenePerson.ts', 'src/game/presentAuthority.ts'],
