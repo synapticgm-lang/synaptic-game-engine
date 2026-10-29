@@ -570,6 +570,39 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
         }
         // Quotes glued into Must narrate (unclosed player quote) still paint as PC speech.
         const q = body.match(/["\u201c]([^"\u201d]+)["\u201d]?\s*$/);
+        // T10RC2 — bare PC question in Must narrate → "PC says exactly" quote path (never bare narration).
+        // SRD 5.2.1 Communicating — the speaker's words stay theirs.
+        if (!q) {
+          // Require a real sentence break before the question (not "Ask X what …").
+          const qSplit = body.match(
+            /^(.+?)[.!]\s+((?:Are|Is|Do|Did|Will|Would|Can|Could|What|Where|Who|Why|How)\b.+)$/i,
+          );
+          if (qSplit?.[2]?.trim()) {
+            const actPart = (qSplit[1] ?? '').replace(/[.]+$/g, '').trim();
+            const ask = qSplit[2]!.trim().replace(/[.]+$/g, '');
+            if (actPart) {
+              push(clauseToThirdPerson(actPart, pc));
+              hadMustNarrate = true;
+            }
+            if (ask) {
+              const said = /\?$/.test(ask) ? ask : `${ask}?`;
+              if (pc && pc !== 'They' && pc !== 'You') push(`${pc} said, "${said}".`);
+              else push(`You said, "${said}".`);
+              hadExactSay = true;
+            }
+            continue;
+          }
+          if (/^(?:Are|Is|Do|Did|Will|Would|Can|Could|What|Where|Who|Why|How)\b/i.test(body)) {
+            const ask = body.replace(/[.]+$/g, '').trim();
+            if (ask) {
+              const said = /\?$/.test(ask) ? ask : `${ask}?`;
+              if (pc && pc !== 'They' && pc !== 'You') push(`${pc} said, "${said}".`);
+              else push(`You said, "${said}".`);
+              hadExactSay = true;
+            }
+            continue;
+          }
+        }
         const act = (q ? body.slice(0, q.index).trim() : body).replace(/[.]+$/g, '').trim();
         if (act) {
           push(clauseToThirdPerson(act, pc));

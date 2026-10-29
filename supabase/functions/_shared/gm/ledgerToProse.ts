@@ -4,10 +4,13 @@
  * paste "Dungeon room:" / "A lead waits here" / dice chrome into the story body.
  */
 
-/** STATUS / dice / quest-label lines that must never become book sentences. */
+/** STATUS / dice / quest-label / engine-telegram lines that must never become book sentences. */
 export function isBookForbiddenLedgerLine(s: string): boolean {
   const t = (s ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return true;
+  // T10RC2 — Move/Attempt/Action-resolved telegrams stay STATUS-only (never book passthrough).
+  if (/^(?:Move not done:|Attempt noted\b|Action resolved:)/i.test(t)) return true;
+  if (/\bno built character sheet\b/i.test(t)) return true;
   return /^(?:Encounter budget:|Combat status:|Exhaustion:|Initiative —|Rounds? \d+|Death save:|XP Gained:|Gold Gained:|Coins\b|Moved within\b|Look-out:|Check (?:failure|success)\.?$|SUCCESS\s*\(|FAIL(?:URE)?\s*\(|A lead waits here:|Quest stage:|Travel:)/i.test(
     t,
   );
@@ -139,6 +142,44 @@ export function ledgerLineToBookProse(raw: string, subject?: string): string {
   if (/^A .+ chest,/i.test(s) && /\blocked\b/i.test(s)) {
     const name = s.match(/^A\s+(.+?)\s+chest,/i)?.[1]?.trim();
     if (name) return `A ${name} chest stood closed and locked.`;
+  }
+
+  // T10RC2 — steal / take receipts → past-tense story (never "Failed to take" telegram).
+  // stealParley.ts owns the STATUS string; this owner paints the book form.
+  const stealFail = s.match(/^Failed to take the (.+?)(?:;\s*(.+?))?\.?$/i);
+  if (stealFail?.[1]) {
+    const item = stealFail[1].trim().replace(/[.]+$/g, '');
+    const noticedRaw = (stealFail[2] ?? '').trim().replace(/\s+noticed\.?$/i, '').trim();
+    if (noticedRaw) {
+      return `The ${item} stayed put; ${noticedRaw} noticed.`;
+    }
+    return `The attempt on the ${item} failed.`;
+  }
+  const tookQuiet = s.match(/^Took the (.+?) unnoticed\.?$/i);
+  if (tookQuiet?.[1]) {
+    const item = tookQuiet[1].trim().replace(/[.]+$/g, '');
+    return you ? `You took the ${item} unnoticed.` : `${who} took the ${item} unnoticed.`;
+  }
+  const guardedHold = s.match(
+    /^Sleight of Hand beat Passive Perception \d+, but the guardian still holds the (.+?); it was not taken\.?$/i,
+  );
+  if (guardedHold?.[1]) {
+    const item = guardedHold[1].trim().replace(/[.]+$/g, '');
+    return you
+      ? `You reached for the ${item}, but the guardian still held it.`
+      : `${who} reached for the ${item}, but the guardian still held it.`;
+  }
+  // Orphan watcher half after ";" split in convertWriterCueFact head peel.
+  if (/^(?:someone here|[A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\s+noticed\.?$/i.test(s)) {
+    const line = s.replace(/[.]+$/g, '').trim();
+    return `${line.charAt(0).toUpperCase()}${line.slice(1)}.`;
+  }
+
+  // T10RC2 — default never pastes an unknown receipt telegram into the book.
+  if (
+    /^(?:Failed to take|Took the |Move not done|Attempt noted|Action resolved:|Sleight of Hand beat)/i.test(s)
+  ) {
+    return '';
   }
 
   return s.endsWith('.') || s.endsWith('?') || s.endsWith('!') ? s : `${s}.`;
