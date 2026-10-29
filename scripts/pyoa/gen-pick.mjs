@@ -163,7 +163,7 @@ function prosePrompt(batch, S, prevDigest) {
 }
 function parseProse(raw) {
   const out = new Map();
-  const re = /@@SECTION\s+(\S+)\s*\n([\s\S]*?)@@END/g; let m;
+  const re = /@@SECTION\s+(\S+)\s*\n([\s\S]*?)(?=@@END|@@SECTION|$(?![\s\S]))/g; let m;
   while ((m = re.exec(raw))) {
     const body = m[2];
     const g = (k) => { const mm = body.match(new RegExp(`^${k}:\\s*([\\s\\S]*?)(?=\\n(?:TITLE|TEXT|EXIT \\d+):|$)`, 'm')); return mm ? clean(mm[1].replace(/\s+/g, ' ')) : ''; };
@@ -206,6 +206,9 @@ async function runProse() {
     let prevDigest = '';
     if (bi > 0) { const pf = join(DIR, 'prose', `${batches[bi - 1][0].id}.json`); if (existsSync(pf)) { const pj = JSON.parse(readFileSync(pf, 'utf8')); prevDigest = Object.entries(pj.sections).slice(-2).map(([id, s]) => `${id} "${s.title}": ${s.text.split(/(?<=[.!?])\s/)[0]}`).join('\n'); } }
     let missing = batch.slice(); const got = {};
+    for (const a of ['a0', 'a1']) { const rf = join(DIR, 'raw', `${batch[0].id}.${a}.txt`); if (!existsSync(rf)) continue; const p0 = parseProse(readFileSync(rf, 'utf8')); for (const n of missing) if (!got[n.id] && !problems(n, p0.get(n.id)).length) got[n.id] = p0.get(n.id); }
+    if (Object.keys(got).length) { log(`reused saved replies for ${batch[0].id}: ${Object.keys(got).length}/${batch.length}`); missing = missing.filter((n) => !got[n.id]); }
+    if (!missing.length) { const ordered = {}; for (const n of batch) ordered[n.id] = got[n.id]; writeFileSync(f, JSON.stringify({ batch: batch[0].id, sections: ordered, missing: [] }, null, 1)); markFlash(Object.keys(ordered), batch[0].id); done++; continue; }
     for (let a = 0; a < 2 && missing.length; a++) {
       log(`ask prose ${batch[0].id}..${batch.at(-1).id} items=${missing.length} attempt=${a}`);
       const reply = await call(prosePrompt(missing, S, prevDigest), `${batch[0].id}.a${a}`); calls++;
