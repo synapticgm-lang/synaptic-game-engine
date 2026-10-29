@@ -1,0 +1,67 @@
+@@SECTION cf-4-184
+TITLE: The Bulkhead Markings
+TEXT: Dim amber lamps flicker along the grease-slicked walls of the tunnel, casting long, wavering shadows across the heavy steel doors. Fine soot settles on your collar as you lean close to inspect the rusted wheel rims of the bulkhead. Indented into the cold metal are tiny, interlocking notches and faint, hand-punched tallies left by generations of signalmen. Your fingers trace the worn grooves, feeling the distinct pattern of a forgotten lock sequence hidden within the soot. // The air tastes of stale iron and damp coal dust, pressing heavily against your eardrums as the distant rumble of the engine reverberates through the rock. You must interpret the code before the accumulating pressure forces a shift in the locking tumblers.
+EXIT 1: Decipher the notched sequence on the wheel rims
+@@END
+@@SECTION cf-4-185
+TITLE: Decoding the Tumblers
+TEXT: Cold sweat beads on your forehead as you align the rusted wheel rims, matching the sequence notched into the bulkhead against the fading memory of Hesper's logbook. A sudden tremor shakes the rock above, and a shower of grit rattles down your collar, threatening to throw your alignment out by a hair's breadth. With the heavy locking bar trembling under the immense weight of the water-works behind it, you must commit your weight and wits to the final adjustment.
+CHECK: Decipher the sequence on the wheel rims
+@@END
+@@SECTION cf-4-186
+TITLE: A Slip of the Hand
+TEXT: The heavy iron rim slips from your grease-slicked fingers with a sharp clang, biting into your palm and leaving a jagged, bleeding graze across the heel of your thumb. Time slips away as the lock jams tight with a protesting shriek of dry metal, forcing you to hammer the stubborn pins back into place with the flat of a heavy spanner. The delay costs you precious minutes and leaves your hand throbbing with a dull, persistent ache, but the mechanism finally yields to your persistence.
+EXIT 1: Proceed through the jammed bulkhead doors
+@@END
+@@SECTION cf-4-187
+TITLE: The Iron Combination Ring
+TEXT: Your fingers lock the final wheel rim into place with a satisfying, deep-throated click that echoes down the damp stone corridor. The heavy iron mechanism gives way at last, sliding smoothly into its housing to reveal a hidden recess containing a heavy, stamped metal ring. You slip it into your pocket, feeling the cold weight of the tool as proof of your success.
+GRANT: iron combination ring
+EXIT 1: Approach the final siding and winches
+@@END
+@@SECTION cf-4-188
+TITLE: The Tangled Cable
+TEXT: Coils of rusted steel cable litter the damp floor around the auxiliary winch drum, snarled into a dense, unyielding bird's nest that blocks the line. You drop to your knees in the grit, wiping sweat and coal dust from your eyes as you examine the tangled strands. Every tug brings a shower of fine grey ash from the low ceiling, coating your sleeves and filling the air with the dry taste of the steppe.
+EXIT 1: Clear the tangled cable from the drum
+@@END
+@@SECTION cf-4-189
+TITLE: The Oily Rags
+TEXT: Heavy canvas rags soaked in machine oil lie discarded near the rusted winch frame, smelling strongly of petroleum and old heat. You gather them up, using the slick fabric to scour the crusted grime from the rotating axle and the jammed gear teeth. The metal groans under your ministrations, shedding layers of black scale as the moving parts begin to slip free of their long confinement.
+EXIT 1: Scour the rusted axle and gear teeth
+@@END
+@@SECTION cf-4-190
+TITLE: Clearing the Jam
+TEXT: You wedge the heavy steel wrench into the stubborn gears while your other hand strains to haul the snarled cable free from the jammed drum. The rusted line groans under the sudden tension, threatening to whip back and shatter your knuckles against the stone wall if the teeth slip. With every muscle in your back corded against the strain, you throw your weight onto the lever.
+CHECK: Clear the jammed cable drum with tools
+@@END
+@@SECTION cf-4-191
+TITLE: A Snapped Strand
+TEXT: A sudden, vicious snap echoes through the chamber as the rusted cable gives way under the strain, whipping across your forearm and tearing a jagged line through your sleeve. Warm blood wells up through the torn wool, mixing with the greasy soot on your skin as you curse your haste. You are left with a stinging, superficial welt and a tangled mess of wire, but the drum is finally free to turn.
+EXIT 1: Gather the remaining braided steel cable
+@@END
+@@SECTION cf-4-192
+TITLE: The Braided Steel
+TEXT: The jammed drum spins free at last under your careful guidance, yielding a long, supple length of undamaged braided steel cable wrapped tightly around a heavy wooden spool. You heave it onto your shoulder, feeling the solid utility of the metal against your back as you prepare to make your final push.
+GRANT: braided steel cable
+EXIT 1: Burst through the gates toward Cinderfall
+@@END
+@@SECTION cf-4-193
+TITLE: The Ticker Tape
+TEXT: A narrow ribbon of paper spills endlessly from the brass housing of the telegraph ticker on the wall, covered in jagged dashes of blue ink. You catch the end of the tape, letting the dry paper slide between your thumb and forefinger as you decode the rhythmic pulse of the line. The numbers spell out the fluctuating steam pressures of the mountain locks ahead, warning of narrow margins and dangerous heat thresholds.
+EXIT 1: Decipher the telegraph ticker tape sequence
+@@END
+@@SECTION cf-4-194
+TITLE: The Insulating Roll
+TEXT: Rusted pipes hiss softly in the gloom overhead, venting hot steam into the cramped stone passage and fogging your spectacles with greasy moisture. You reach into the wall-locker and pull out a thick, fibrous roll of treated fabric tape, smelling faintly of tar and old asbestos. It is designed to wrap leaking joints and shield delicate linkages from the biting corrosive draft of the tunnel.
+EXIT 1: Secure the roll of insulation tape
+@@END
+@@SECTION cf-4-195
+TITLE: Reading the Line
+TEXT: Your eyes scan the rapidly advancing ink patterns on the paper tape, searching for the exact moment the pressure drops enough to risk opening the bypass valve. The telegraph key chatters frantically beside your ear, tapping out hurried warnings from the automated signal boxes deeper in the rock. You calculate the tolerance of the feed pipes, your fingers hovering over the control lever as the needle creeps toward the red line.
+CHECK: Decipher the ticker tape pressure warning
+@@END
+@@SECTION cf-4-196
+TITLE: Scorched Fingers
+TEXT: A sudden surge of scalding steam blasts from the nearby pipe joint just as your hand reaches for the valve, catching your fingers before you can jerk them back. The hot moisture leaves your skin pink and tender, throbbing with a sharp, stinging pain that makes it difficult to grip your tools. You press on regardless, binding the burn with a strip of cloth and keeping your eyes fixed on the dials.
+EXIT 1: Proceed with the insulated pressure valves
+@@END

@@ -1,0 +1,52 @@
+@@SECTION cf-4-142
+TITLE: The Grease-Gun Lever
+TEXT: Heavy drops of black oil bead along the cold basalt ribs of the tunnel, smelling faintly of stale tallow and old coal-gas. You wedge the thick timber post back into its dry stone socket, using every ounce of leverage the iron bar affords against the stubborn ground. Grime cakes your palms as the wood groans, settling into alignment with a dull, echoing thud that rattles through the sleepers. A brass grease-gun hangs from a rusted peg nearby, dripping amber fluid into the dark.
+EXIT 1: Push deeper into the narrow maintenance drift
+@@END
+@@SECTION cf-4-143
+TITLE: Slipping the Fastening
+TEXT: Shadows stretch long and crooked across the tunnel floor as your lantern flame flickers against a damp draft from the ventilation shafts. You secure the brass grease-gun to your belt loop, its brass barrel cold against your hip, while your fingers test the stability of the braced timber. The silence here is heavy, broken only by the distant, rhythmic dripping of subterranean water somewhere beyond the partition walls.
+EXIT 1: Advance along the timber-shored siding
+@@END
+@@SECTION cf-4-144
+TITLE: Strain Against the Oak
+TEXT: A sudden lateral shift in the tunnel wall sends a cascade of loose shale rattling down across the tracks, threatening to jam the entire frame. You brace your boots against the rotting sleeper-ends, throw your shoulder against the warped timber post, and heave with all your might to force the jammed joint home before the masonry buckles entirely.
+CHECK: Shove the warped timber post home
+@@END
+@@SECTION cf-4-145
+TITLE: The Cost of the Shift
+TEXT: The timber gives way with a vicious snap, catching your forearm a sharp blow that leaves a purple welt beneath your soot-stained sleeve. Loose ash and sharp fragments of stone shower over your shoulders, filling your collar and grinding painfully against your skin. You stumble backward onto the ballasted gravel, coughing violently as the dust settles, poorer by a wrench slipped from your pocket and lost forever in the dark ballast.
+EXIT 1: Pick yourself up and press onward
+@@END
+@@SECTION cf-4-146
+TITLE: The Signalman's Token
+TEXT: However narrowly you manage the struggle, the warped timber finally slides into its iron seat with a resonant ring that quiets the shifting earth. A small figure in a braided cap steps from the murky alcove, pressing a cold, grease-stained brass token into your palm without a word of greeting. It is an old signalman's pass, notched with the private sigil of the night-shift crews, offering an unspoken berth among the ghostly watchers of the line whenever the final siding is reached.
+GRANT: A signalman's notched brass token
+EXIT 1: Walk toward the circular chamber ahead
+@@END
+@@SECTION cf-4-147
+TITLE: The Wicket Gate
+TEXT: Rusted wire mesh rattles within its iron frame as you square your shoulders before the small barrier blocking the side-passage. The air tastes sharply of old paper and dry vinegar, remnants of some forgotten dispatch office long abandoned by the company clerks. You adjust the heavy brass-bound ledger tucked beneath your arm, keeping your footing secure upon the greasy ties.
+EXIT 1: Strike the wicket frame with your shoulder
+@@END
+@@SECTION cf-4-148
+TITLE: Beyond the Broken Latch
+TEXT: Dust billows up in a thick yellow cloud as the iron latch shatters under your impact, showering the ballast with flakes of rusted paint. You step through the splintered opening into a narrow office lit only by the amber glow of your hand-lamp. Stacks of yellowed waybills and unread manifests carpet the floor like autumn leaves, whispering dryly beneath your heavy boots.
+EXIT 1: Follow the paper-strewn track toward the keep
+@@END
+@@SECTION cf-4-149
+TITLE: Breaching the Barrier
+TEXT: Splintering wood groans under the sudden, brutal impact of your charge, but the stubborn iron latch holds fast against the first blow, biting deep into your shoulder. You pull back for a second, harder rush, tightening your grip on the leather spine of the clerk's ledger tucked securely at your side while the tunnel walls seem to lean inward.
+CHECK: Smash through the stubborn wicket gate
+@@END
+@@SECTION cf-4-150
+TITLE: Bruised and Bone-Sore
+TEXT: The gate finally gives way, but not before the rebounding iron catch clips your ribs, leaving a dull, throbbing ache that flares with every breath you draw. You stumble through the wreckage into the gloom, dropping a small tin of ration biscuits into the dark debris where the rats will find them first.
+EXIT 1: Gather your breath and limp forward
+@@END
+@@SECTION cf-4-151
+TITLE: The Ledger's Secret
+TEXT: However narrowly you manage the breach, the small gate swings wide to reveal the vaulted corridor leading straight to the heart of the subterranean domain. Tucked safely inside the heavy leather cover of the clerk's ledger is a handwritten margin note detailing the secret release mechanism of the inner freight doors, signed with the initials of a clerk who vanished decades ago.
+GRANT: A margin note on secret door releases
+EXIT 1: Approach the massive oak doors of the keep
+@@END

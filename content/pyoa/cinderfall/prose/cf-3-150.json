@@ -1,0 +1,92 @@
+{
+ "batch": "cf-3-150",
+ "sections": {
+  "cf-3-150": {
+   "title": "Hanging in the Grist",
+   "text": "Cold grease coats your palms as you dangle over the abyss of the viaduct drop, the wind howling through the massive riveted girders of the Brasswind span. Metal groans in protest beneath your boots while you fight to regain your breath in the thin, soot-choked air. Below, the toy-sized carts of the toll-city crawl along their tracks like beetles beneath a boot. Every muscle trembles from the sudden jolt of the platform, demanding that you anchor yourself before the swinging chains catch you off guard.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the dangling heavy safety chains"
+   ]
+  },
+  "cf-3-151": {
+   "title": "Silence on the Spans",
+   "text": "Fingers aching, you reach out to grab the greasy swing of the iron link, ignoring the hammering of blood in your ears. The haze from the sulphur wells below rises in sluggish plumes, smelling of rotten eggs and burned coal-tar. You take a measured lungful of the acrid air, forcing your ribs to expand against the corset of fatigue. Ahead, the maintenance catwalk stretches into the oily gloom like a spine of rusted tin, offering a narrow passage past the humming gantry motors.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl along the narrow maintenance catwalk"
+   ]
+  },
+  "cf-3-152": {
+   "title": "The Swaying Abyss",
+   "text": "Dizziness claws at the edges of your vision as the massive lift platform continues its sickening oscillations in the draft between the bridge piers. Your temples throb with every mechanical heartbeat echoing through the ironwork, threatening to unseat your focus entirely. Closing your eyes for a single heartbeat, you try to steady the frantic spinning of your thoughts against the vast, empty drop below. The safety chain swings wildly just out of reach, demanding absolute inward stillness to calculate the grab.",
+   "check": "Steady your frayed nerves against the vertigo",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-153": {
+   "title": "A Slip in the Soot",
+   "text": "Panic breaks through your discipline like a hammer through thin tin, and your fingers close on empty air as the platform bucks under a sudden gust of wind. A blunt corner of the iron frame catches your ribs on the way down, driving the breath from your lungs with a dry wheeze. You sprawl hard onto the mesh floor, tasting copper and cold dust while the world tilts drunkenly around you. The delay costs precious minutes against the storm clock, leaving a purple bruise across your side that will ache until Cinderfall.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and press onward"
+   ]
+  },
+  "cf-3-154": {
+   "title": "The Iron Grip",
+   "text": "Willpower holds against the rising tide of panic, anchoring your focus until the vertigo recedes into a dull, manageable thrum behind your eyes. Your hand shoots out through the greasy gloom, catching the swinging link with a sharp, metallic clatter that rings along the girders. You haul the heavy chain toward the eyelet with a grunt of effort, dropping the brass pin into place just as the gale threatens to whip it away. The mechanism locks solid with a reassuring, heavy thud.",
+   "check": "",
+   "grant": "A staunch iron-forged link pin",
+   "exits": [
+    "Leave the secure platform behind"
+   ]
+  },
+  "cf-3-155": {
+   "title": "Strain on the Cable",
+   "text": "Heavy iron cables sing a high, dangerous note overhead as the entire weight of the gantry hangs by a few frayed strands of wire. You keep your weight balanced evenly across the ribbed plate, watching the grease bubble and slide down the hot housing of the pulley. Every adjustment of your posture sends a tremor through the suspension framework, echoing down into the dark guts of the toll-city. There is no room for haste here, only the careful calculation of balance against the groaning iron.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Navigate past the humming pulley housing"
+   ]
+  },
+  "cf-3-156": {
+   "title": "Calculating the Load",
+   "text": "Sweat cuts pale tracks through the soot on your forehead as you stare up at the straining winch-drum overhead. The geometry of the cantilever bridge warps slightly in the shimmering heat haze, making your tired eyes play tricks on the true load distribution. A single miscalculation in shifting your weight could snap the remaining bracket and send the whole apparatus plunging into the gorge. You must quiet the rushing terror in your chest and weigh the strains purely by the feel of the vibrating deck.",
+   "check": "Calculate the exact weight distribution under pressure",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-157": {
+   "title": "The Fracture Point",
+   "text": "A sudden metallic shriek shatters your concentration as the stress calculation goes catastrophically wrong under your boots. The support plate tilts four inches to the left, pitching you hard against a jagged bolt-head that tears a long, bleeding gash through your sleeve and forearm. You bite down hard on your tongue to swallow a curse, hauling yourself back onto level mesh with a frantic heave. The injury burns with a sharp, stinging fire, a fresh debt paid to the relentless iron road.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Bind your bleeding arm and continue"
+   ]
+  },
+  "cf-3-158": {
+   "title": "The Tense Equilibrium",
+   "text": "Mental discipline holds firm against the rising screech of stressed metal, allowing you to trace the exact line of force through the groaning plates. You shift your weight three inches to the right, letting the cantilever settle back into its proper, perilous equilibrium with a dull, grinding sigh. The cable ceases its frantic whipping, settling into a deep, rhythmic hum that vibrates pleasantly through the soles of your boots. You have coaxed the machine into a temporary, grudging truce.",
+   "check": "",
+   "grant": "A coded Rail Baron maintenance pass",
+   "exits": [
+    "Proceed along the settled gantry path"
+   ]
+  },
+  "cf-3-159": {
+   "title": "The Sealed Horizon",
+   "text": "Heavy pneumatic hammers ring out across the viaduct as Rail Baron work-gangs drop welded plate-iron across the final thoroughfare, turning the upper levels into a maze of dead ends. Steam hisses from severed control lines, filling the narrow corridors with blinding white vapor that smells of hot oil and scorched rubber. Ahead lies the only remaining route: a steep service ladder plunging directly into the dim underworks of the toll-city. The air grows noticeably colder down below, carrying the damp, metallic draft of the tunnels where the old signals still flicker in the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend the steep ladder into the underworks"
+   ]
+  }
+ },
+ "missing": []
+}

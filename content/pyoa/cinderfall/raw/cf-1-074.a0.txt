@@ -1,0 +1,62 @@
+@@SECTION cf-1-074
+TITLE: The Barons Blockade
+TEXT: Heavy iron wheels grind against the rail-heads as a black-plated inspection carriage halts across the junction throat, its brass lamps hissing in the grey drizzle. Uniformed enforcers step down onto the ballast, their leather greatcoats smelling of ozone and ink-stamps, blocking any forward movement with crossed pikes and stamped parchment warrants. They tap the side of your cab with a silvered baton, demanding to see the engine's manifest and your personal charter before you can clear the points.
+EXIT 1: Step down to face the enforcers
+@@END
+@@SECTION cf-1-075
+TITLE: The Water-Seller Pit
+TEXT: Steam rises in thin, bitter curls from the sun-baked ditch where the town's dry cistern lies exposed to the rust-laden wind. Citizens crowd the lip with cracked leather flasks and rusted pails, thrusting bits of scrap brass toward the shadowed depths where the water-seller counts every precious drop. The air tastes of copper and stale dust, heavy with the murmurs of people who have forgotten the sound of rain.
+EXIT 1: Approach the jeering crowd with care
+EXIT 2: Speak quietly with the crippled merchant
+EXIT 3: Lift the fallen beam to help
+EXIT 4: Watch for hidden watchers in the dust
+EXIT 5: Stand firm against the choking drift
+EXIT 6: Turn back toward the main junction line
+@@END
+@@SECTION cf-1-076
+TITLE: Dust and Cinders
+TEXT: Grey grit coats your tongue as you push through the press of desperate laborers, keeping your eyes fixed on the rusted rim of the empty oil tin in your hand. Someone spits a curse into the dust near your boots, but you let your shoulders drop and keep your breathing slow and even against the rising heat. The merchant takes the metal with a scarred thumb, sliding a warm skin of bitter well-water across the stained workbench.
+EXIT 1: Carry the water skin toward the tender
+@@END
+@@SECTION cf-1-077
+TITLE: The Weight of Silence
+TEXT: Jeers rise from the parched onlookers like steam from a neglected relief valve, hot and sharp enough to strip the skin from your temper. You stand motionless amid the press, anchoring your breathing as a ragged laborer lunges forward to knock the empty tin from your grip. Your fingers tighten on the strap while every nerve in your neck strains against the sudden urge to shove back.
+CHECK: Keep your breathing level and quiet
+@@END
+@@SECTION cf-1-078
+TITLE: A Bitter Toll
+TEXT: A sudden shove catches you off balance, sending you stumbling hard against the jagged rim of a discarded coal hopper that tears a long, bleeding gouge across your forearm. The crowd jeers louder at your stumble, forcing you to surrender half your spare scrap brass just to buy a clear path through the crush. You clutch the torn sleeve to your chest, tasting copper and dust as you limp away from the jeering circle with a fresh, stinging ache.
+EXIT 1: Retreated to the shelter of the siding
+@@END
+@@SECTION cf-1-079
+TITLE: The Steady Hand
+TEXT: Whether through pure stubbornness or the quiet rhythm of your breathing, the hostile crowd parts just enough for you to press through without dropping your prize. The water-seller grunts a begrudging nod, sliding a sealed clay flask across the greasy counter into your palm. You tuck the cool clay against your coat, feeling the solid weight of an unexpected advantage gained through sheer steadfastness.
+GRANT: A sealed clay flask
+EXIT 1: Watch the red signal arm drop
+@@END
+@@SECTION cf-1-080
+TITLE: The Merchant's Ledger
+TEXT: A hooded figure sits beside the dry cistern, tapping a blunt pencil against the margins of a dog-eared ledger filled with water-debt tallies. You lean against the timber frame, matching your voice to the low, rasping whistle of a distant shunt engine while you discuss the price of clean boiler-fluid. The old man squints through grease-smeared spectacles, weighing your offer against the empty barrels stacked behind his stool.
+EXIT 1: Press the trade talk a little further
+@@END
+@@SECTION cf-1-081
+TITLE: Brass and Brine
+TEXT: Words pass back and forth across the splintered desk like coins dropped into a deep coffer, measured and careful to avoid waking the sleeping tempers of the yard. The seller traces a yellowed invoice with a blackened nail, pointing toward a sealed cask tucked away in the damp shadow of the water-house. You nod once, keeping your tone level as you seal the bargain with a flick of your wrist.
+EXIT 1: Inspect the sealed cask of water
+@@END
+@@SECTION cf-1-082
+TITLE: The Shadow Bargain
+TEXT: Your fingers trace the rim of an empty grease tin while you spin a plausible tale about a broken feed-pump on the lower line, watching the old man's eyes dart toward the heavy padlock on the cask. He hesitates, his pencil hovering over a column of figures as he tries to calculate whether your story holds more truth than the Barons' patrol reports. You hold his gaze across the dusty counter, measuring the exact moment to drop your final argument.
+CHECK: Weave a convincing trade story
+@@END
+@@SECTION cf-1-083
+TITLE: A Flawed Trade
+TEXT: The merchant catches the slip in your arithmetic before the words have even fully left your mouth, letting out a dry, rattling laugh that draws unwanted eyes from the gangers' union post. He doubles the price on the spot, forcing you to hand over your favorite spanner just to secure a half-filled cask of cloudy brine. You tuck the heavy, foul-smelling barrel onto your shoulder, cursing your own haste as the metal bites into your aching shoulder.
+EXIT 1: Haul the cloudy cask away
+@@END
+@@SECTION cf-1-084
+TITLE: The Clean Cask
+TEXT: Whether through clever phrasing or sheer good fortune, your words strike the exact note the old merchant wants to hear, unlocking a hidden latch beneath his counter. He hefts a wooden bung free with a sharp pop, revealing clear, sediment-free boiler-water that catches the pale sunlight like melted glass. You heave the heavy cask onto your shoulder, carrying away a vital prize that will keep the Marrowbone's flues clean for leagues.
+GRANT: A cask of clean water
+EXIT 1: Return to the bustling junction center
+@@END

@@ -1,0 +1,38 @@
+2026-10-28T21:59:32.111Z driver start dice cinderfall
+2026-10-28T21:59:32.113Z step outline
+2026-10-28T22:02:50.370Z step prose
+2026-10-28T22:12:09.411Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T05:59:16.875Z driver start dice cinderfall
+2026-10-29T05:59:16.878Z step outline
+2026-10-29T05:59:17.104Z step prose
+2026-10-29T06:10:58.764Z STOPPED at prose: exit 5 (see gen-log.txt and STATUS.md). Not retrying.
+2026-10-29T06:24:21.483Z driver start dice cinderfall
+2026-10-29T06:24:21.485Z step outline
+2026-10-29T06:24:24.162Z step prose
+2026-10-29T07:11:50.103Z step fill
+2026-10-29T07:14:30.857Z step merge
+dice book: 1000 sections, with prose 1000, words 90096, reachable 1000, endings 12, checks 178, flags set 11
+ERRORS 0
+warnings 21
+  w grant on scene cf-0-022
+  w grant on scene cf-0-023
+  w grant on scene cf-0-024
+  w grant on scene cf-0-025
+  w grant on scene cf-0-026
+  w grant on scene cf-0-027
+  w grant on scene cf-0-032
+  w grant on scene cf-0-033
+  w grant on scene cf-0-034
+  w grant on scene cf-0-035
+  w grant on scene cf-0-036
+  w grant on scene cf-0-037
+  w grant on scene cf-0-038
+  w grant on scene cf-0-039
+  w grant on scene cf-0-040
+  w grant on scene cf-1-033
+  w grant on bottleneck cf-1-097
+  w grant on bottleneck cf-1-121
+  w grant on hub cf-2-052
+  w grant on scene cf-2-085
+  w grant on scene cf-4-116
+2026-10-29T07:14:33.135Z lint exit 0

@@ -1,0 +1,52 @@
+@@SECTION cf-4-163
+TITLE: The Paper-Ruler's Desk
+TEXT: Parchment dust hangs thick in the air of the sub-vault, smelling faintly of dried ink and old damp mortar. Behind an enormous kneehole desk of scarred mahogany sits the clerk of the registry, her spectacles pinned to the tip of her nose by a brass screw-bridge. She does not look up as you approach, her quill scratching a dry, rhythmic dirge against ledger paper that has yellowed since the Long Fire. You lay your travel warrants upon the blotter, the edges charred and smelling of coal gas. // Without breaking the scrape of her nib, she taps the corner of a document with her thumbnail and demands proof of clearance through the lower bypass. You stare down the ancient bureaucrat without blinking until she stamps your waybill, earning a cup of hot chicory.
+EXIT 1: Take the warm mug and proceed onward
+@@END
+@@SECTION cf-4-164
+TITLE: Bitter Brew and Ink
+TEXT: The chicory is thick, dark, and tastes overwhelmingly of roasted root and iron filings, scalding the tongue just enough to cut through the subterranean chill. Across the narrow iron table, the old clerk dips her steel pen once more into a horn inkwell, the greenish fluid catching the pale light of an acetylene lamp. She watches you over the rims of her thick lenses with eyes like two dried sloes, weighing whether your presence here is a nuisance or a breach of protocol. You set the heavy tin cup down upon the grease-stained wood with a faint clink. // The steam from the mug curls toward the low brick ceiling, dissolving into the greasy soot that coats every surface down in the Hollow Cut. She folds her hands over the ledger and nods toward the narrow service hatch cut into the rear stone wall.
+EXIT 1: Step through the low service hatch
+@@END
+@@SECTION cf-4-165
+TITLE: Staring Down the Ledger
+TEXT: The silence in the vaulted office stretches thin enough to snap, broken only by the distant, rhythmic throb of subterranean water pumps somewhere deep beneath the floorboards. Her gaze is a heavy, rusted weight, testing every ounce of your resolve to see if you will flinch first under the scrutiny of the line's eternal accountants. You keep your shoulders square, locking your jaw against the urge to fidget with the heavy brass valve-key resting inside your coat pocket. Every tick of the wall clock sounds like a hammer striking an anvil as you hold her stare across the ink-stained grain of the mahogany desk.
+CHECK: Hold her gaze without flinching
+@@END
+@@SECTION cf-4-166
+TITLE: The Price of a Staredown
+TEXT: Your eyelids flutter against your will, a microscopic betrayal that the ancient clerk catches instantly with a triumphant twitch of her thin mouth. She marks a sharp red cross across your travel papers with a vicious stroke of her nib, declaring your credentials insufficient for passage through the lower conduits. The reprimand costs you precious minutes and leaves a dull, throbbing ache behind your temples as she forces you to wait while she painstakingly re-logs every entry from scratch. You bite back the hot retort rising in your throat, knowing that anger here only feeds the bureaucratic machinery. // By the time she finally shoves the papers back across the blotter, your nerves are frayed and your uniform jacket smells heavily of stale soot and defeat. You gather your gear with stiff fingers and turn away from the desk into the damp gloom of the corridor.
+EXIT 1: Move past the registry desk
+@@END
+@@SECTION cf-4-167
+TITLE: The Stamp of Approval
+TEXT: The heavy rubber stamp descends with a resounding thud that makes the inkpot jump, leaving a crisp, violet seal squarely across your transit manifest. However narrowly you manage her exacting demands, the ancient clerk relents with a dry, papery sigh and slides the authorized papers back into your palm. She reaches beneath the ledger and pushes a small, grease-stained brass token across the wood toward your knuckles, her expression remaining as unreadable as a slab of basalt. It is a quiet concession from a system that rarely gives anything away for free. // You tuck the token into your breast pocket beside your watch, feeling its cold metal weight settle against your ribs as a silent shield against future disputes. The path ahead opens up between two rows of dormant signal levers, waiting for your boots.
+GRANT: Bureaucratic Transit Token
+EXIT 1: Follow the corridor to the junction
+@@END
+@@SECTION cf-4-168
+TITLE: Marginalia and Conspiracies
+TEXT: The margin of the station log is wide and yellowed, offering a convenient blank strip of paper just beneath an outdated regulation regarding boiler pressures. You dip a stubby steel pen into the dark ink and carefully mimic the spidery, looping hand of the chief dispatcher, adding a brief annotation that validates your unscheduled stop. Every stroke must match the old ink's dull grey fade so the falsification passes muster under the dim light of the corridor lamps. You blot the fresh script with a scrap of flannel, blowing gently across the page until the wet sheen vanishes into the coarse grain. // With the altered register safely closed and returned to its proper rack, you lift a master telegraph code-card from the sorter, slipping the heavy card into your palm. The printed dots and dashes outline the secret bypass frequencies used only by the old guard before the Barons took the line.
+EXIT 1: Carry the code-card toward the platform
+@@END
+@@SECTION cf-4-169
+TITLE: Falsifying the Dispatch
+TEXT: The nib scratches nervously against the dry parchment as you attempt to replicate the precise, looping flourish of the long-dead stationmaster's signature. A single drop of ink threatens to pool too heavily in the crook of an uppercase letter, menacing the entire fabrication with one black smudge. You hold your breath, steadying your hand while the distant rumble of an approaching coal train vibrates through the damp masonry of the wall. If the stroke looks too fresh or the angle of the crossbar misses its mark, the entire logbook will be flagged before the shift ends.
+CHECK: Forge the marginal station note
+@@END
+@@SECTION cf-4-170
+TITLE: Smudged Ink and Scrutiny
+TEXT: The pen slips at the final loop, leaving an ugly, blotched tail that smears across the official seal like a crushed beetle. The clerk spots the error immediately, her nose wrinkling in disgust as she pulls the ledger back toward her chest with a sharp snap of her wrists. You spend the next hour standing in the damp draft of the sorting room while she drafts a formal reprimand, docking your supply rations and leaving you with a stinging ink-stain on your thumb that will not scrub out. The delay eats deep into your dwindling margin against the approaching ash-storm season. // When she finally waves you away with the back of her hand, your patience is worn paper-thin and your fingers ache from the chill. You slip out of the wicket before she can change her mind again, nursing your bruised pride down the tracks.
+EXIT 1: Push onward through the damp archway
+@@END
+@@SECTION cf-4-171
+TITLE: A Forger's Margin
+TEXT: The stroke holds true, drying into an indistinguishable match with the decades-old ink around it, blending seamlessly into the bureaucratic history of the line. However narrowly you pull off the deception, the altered register sits innocently upon the rack, guarding your passage without raising a single alarm among the clerks. You slide the master telegraph code-card into your pocket alongside your pocket-watch, feeling its stiff pasteboard edges reassure your confidence. It is a subtle tool, granting you the ability to speak in the dead language of the old signalmen. // You leave the small office behind without looking back, your boots striking the iron plates of the floorboards with a clear, steady rhythm. The way ahead is clear of immediate obstruction, drawing you deeper into the subterranean heart of the Cut.
+GRANT: Master Telegraph Code-Card
+EXIT 1: Step out toward the main tracks
+@@END
+@@SECTION cf-4-172
+TITLE: The Keep of the General
+TEXT: Beyond the final set of iron swing-doors lies the private sanctum of the Stationmaster-General, a vast octagonal vault where hundreds of pocket-watches tick in unison against the stone walls. In the centre of the chamber stands the ancient woman herself, draped in grease-stained velvet and leaning heavily upon a heavy brass conductor's staff. She watches your approach with cloudy, cataract-filmed eyes that have seen every engine that ever ran the Iron Road since the first rail was spiked. Without a word of greeting, she reaches beneath her heavy skirts and lifts the heavy brass valve-key from its velvet recess on a mahogany pedestal. // The Stationmaster-General slides the Water Key across the counter and points toward the final bulkhead doors with the tip of her staff. The metal chatters softly against the polished wood as it stops inches from your knuckles, cold and heavy with the promise of the locked city ahead. She offers no explanation for Hesper's disappearance, only a low, rattling wheeze that sounds remarkably like a steam valve blowing off pressure.
+EXIT 1: Take the key and approach the bulkhead
+@@END

@@ -1,0 +1,52 @@
+@@SECTION cf-1-097
+TITLE: The Crimson Arm
+TEXT: Overhead, the iron lattice of the signal box shudders under a sudden gust of sulfurous wind, and the semaphore arm snaps down with a dry, metallic clatter to paint the clear sky with a stroke of wet blood. No train should halt here on the mainline, yet the heavy signal hangs stubbornly across the tracks, mocking the idling breath of the Marrowbone. Thick grease drips from the pivot-pin onto the wooden ties below, pooling in the grit like dark oil. You tighten your grip on your oil-stained canvas gauntlets, squinting up through the yellow haze toward the darkened cabin windows where someone watches in silence. // The whole junction holds its breath beneath the dropping sun, waiting to see whether you will force the iron or wait for a ghost to clear the line.
+EXIT 1: Climb up to the signal cabin
+@@SECTION cf-1-098
+TITLE: The Signal Box
+TEXT: Worn timber stairs groan under your heavy boots as you ascend into the elevated control cabin, where a forest of polished brass levers and interlocking rods governs the entire tangled yard. The air inside smells strongly of warm machine oil, stale tobacco, and heated copper, thick enough to chew. Through grime-filmed windows, the Marrowbone waits far below, its boiler softly thrumming a deep, low vibration through the floorboards. A row of brass indicators glimmers dimly in the gloom, each one offering a different path out of this choking basin.
+EXIT 1: Force the rusted interlocking gear
+EXIT 2: Confront the operator within
+EXIT 3: Memorize the night clearance codes
+EXIT 4: Hide during the Barons inspection
+EXIT 5: Outwit the cabin guard silently
+EXIT 6: Defend the tender from rival crews
+@@SECTION cf-1-099
+TITLE: The Rusted Link
+TEXT: Stiff iron joints resist your initial heave, caked in decades of baked-on grease and wind-blown ash that have hardened into a gritty shell. You wedge your shoulder against the cold oak of the operating handle, leaning your entire weight into the stubborn mechanism with a low grunt of effort. The metal protests with a high, thin screech that sets your teeth on edge, slowly pivoting on its worn bed. Little flakes of rust rain down onto your boots as the internal pins begin to slide past one another.
+EXIT 1: Heave the lever through the block
+@@SECTION cf-1-100
+TITLE: The Final Notch
+TEXT: Sweat trickles through the soot on your brow, stinging your eyes as you strain against the last fraction of the iron arc. The heavy counterweights overhead shift with a hollow, resonant boom that echoes across the silent carriage sidings. Your muscles burn from the sustained exertion, but the stubborn toggle yields another precious inch toward the locked home position. A sudden puff of hot steam from a nearby pipe wraps around your ankles, hissing softly against your trousers.
+EXIT 1: Drive the toggle home
+@@SECTION cf-1-101
+TITLE: The Iron Obstruction
+TEXT: The final tooth of the sector plate jams hard against a warped iron dog-leg, refusing to drop into the slot no matter how hard you lean your shoulder against the wood. You plant your boots firmly into the warped floorboards, drawing a deep lungful of oily air while every muscle in your back turns taut as a piano wire. With both hands locked around the greasy iron sphere of the handle, you prepare to put your entire strength into breaking the bind before the rail-clocks click over.
+CHECK: Wrench the jammed lever open
+@@SECTION cf-1-102
+TITLE: A Strain in the Bone
+TEXT: The rusted iron resists your desperate lunge, snapping back with a brutal kick that hurls you backward against the switchboard frame. A sharp edge catches your ribs, driving the breath from your lungs in a ragged gasp and leaving a dull, throbbing ache beneath your vest. You hit the dusty floorboards hard, tasting copper and bitter ash as the lever settles back into its locked bed with a mocking clank. It costs you dearly in precious time and breath, but you drag yourself back to your feet before the yard police can investigate the commotion.
+EXIT 1: Pick yourself up and look around
+@@SECTION cf-1-103
+TITLE: The Broken Bind
+TEXT: The stubborn iron gives way with a sharp, cracking report like a pistol shot, sliding smoothly into its home notch as the semaphore overhead snaps up to clear. You stumble forward, catching your balance against the polished brass rail while your racing pulse slowly settles back into a steady rhythm. In the sudden quiet, your hand brushes against a heavy iron padlock left forgotten on the sill, its heavy shackle stamped with the private mark of the old Union gangers. It is a solid, useful thing to take with you into the ash-dunes.
+GRANT: Heavy union padlock
+EXIT 1: Return to the control cabin
+@@SECTION cf-1-104
+TITLE: The Guarded Desk
+TEXT: You step past the splintered door frame into the inner alcove where the duty signalman sits slumped behind a clutter of yellowed transit manifests. He does not look up from his ledger, his thumb rhythmically tracing the edge of a brass switch key chained securely to his greasy waistcoat. The faint ticking of the wall clock sounds unnaturally loud in the confined space, punctuated only by the distant clank of shunting trucks outside. You keep your breathing slow and even, planting your boots squarely in the doorway to block his retreat.
+EXIT 1: Face the signalman without flinching
+@@SECTION cf-1-105
+TITLE: The Staredown
+TEXT: The signalman finally raises his chin, fixing you with a cold, bloodshot stare born of too many nights breathing coal smoke and stale tea. His hand hovers just above the heavy brass key on his desk, his fingers twitching with nervous anticipation as he measures your worth. You hold your ground without a single tremor, returning his gaze with absolute stillness while the ash-dust drifts lazily past the cracked window pane. Every second stretches thin as gossamer, waiting for one of you to blink.
+CHECK: Hold your ground with steady composure
+@@SECTION cf-1-106
+TITLE: A Fracture of Nerve
+TEXT: A sudden metallic screech from the yards below rattles the window frames, breaking your concentration just long enough for the signalman to slam the brass drawer shut. He snarls a coarse oath and reaches for the heavy iron alarm crank mounted on the wall beside his desk. You lunge forward to intercept him, but your footing slips on the gritty floor, leaving you off balance and exposed to his sharp-edged ruler. It costs you a stinging welt across your knuckles and precious minutes of delay before you finally bundle him out into the corridor.
+EXIT 1: Regroup in the smoky hallway
+@@SECTION cf-1-107
+TITLE: The Unblinking Eye
+TEXT: Your unwavering gaze pins the signalman to his chair until his shoulders slump in quiet defeat and the defiant light fades from his eyes. Without a word, he unclips the heavy brass switch key from his vest and slides it across the scarred wooden desk toward your fingertips. You pocket the cool metal with measured slowness, offering a polite, silent nod of acknowledgment before turning your back on him. It is a quiet victory, leaving you with a master clearance token that opens every secondary lock down the line.
+GRANT: Master brass switch key
+EXIT 1: Return to the control cabin
+@@END

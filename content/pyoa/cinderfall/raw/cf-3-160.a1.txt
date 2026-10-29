@@ -1,0 +1,6 @@
+@@SECTION cf-3-169
+TITLE: The Steaming Tarp
+TEXT: Heavy canvas hangs damp and reeking of machine oil as you draw it tight over your chest, listening to the iron-shod boots of the Baron patrol ring against the gangway rivets just inches away. A sharp hiss from a weeping valve overhead masks your shallow breath, though the stinging heat of the escaping steam makes your skin prickle with cold sweat. When the footsteps finally fade into the clatter of distant machinery, your fingers brush against a forgotten leather pouch wedged beneath the floor ribbing, containing a stamped iron pass signed by a junior inspector. // Pocketing the heavy token with cautious deliberation, you slide silently from beneath the tarpaulin into the shadow of a water-column, your muscles stiff but your path ahead momentarily cleared of immediate pursuers.
+GRANT: stamped iron pass
+EXIT 1: Slip into the maze of boxcars
+@@END

@@ -1,0 +1,57 @@
+@@SECTION cf-4-197
+TITLE: The Insulating Roll
+TEXT: Cool digits unfurl the damp telegraph ticker tape until the ink patterns align into a coherent sequence of pressure readings. Relieved by the sudden drop in tension, your fingers wrap around a thick roll of asbestos insulation tape left behind on the brass shelf. // Tucking the prize securely beneath your heavy canvas belt, you turn away from the clacking machine and step back toward the main chamber.
+GRANT: roll of insulation tape
+EXIT 1: Step through the bulkhead door
+@@END
+@@SECTION cf-4-198
+TITLE: The Final Gates
+TEXT: Locomotive No. 9 surges forward with a deafening roar, smashing through the heavy iron perimeter gates and showering the frozen platform in a spray of sparks and frost. White steam billows into the bitter air as the engine plunges directly into the cavernous approach of Cinderfall. // Massive grey stone walls tower above the tracks, casting long shadows across the trembling boiler while the relentless storm clock tolls its heavy warning overhead.
+EXIT 1: Rush toward the inner terminus
+@@END
+@@SECTION cf-4-199
+TITLE: The Silent Portrait
+TEXT: Standing motionless before the austere portrait of the ancient administrator, you keep your breathing even and your gaze fixed firmly on the polished brass frame. The painted eyes seem to weigh every past debt and minor trespass before a hidden spring clicks within the mahogany wainscoting. // Sliding your hand into the newly opened recess, your fingers close around an ivory-handled carriage key just as the portrait's oil paint begins to flake in the draught.
+EXIT 1: Advance to the platform check
+@@END
+@@SECTION cf-4-200
+TITLE: Unbolting the Fishplates
+TEXT: Kneeling in the freezing ballast, your wrench grips the rusted fishplate bolts with stubborn persistence until the metal groans and gives way. Each rusted fastener is lifted free in precise sequence, allowing you to salvage a sturdy box of hardened steel track bolts without disturbing the surrounding rail. // Sweeping soot from your brow, you secure the heavy container against your hip and prepare for the next stretch of line.
+EXIT 1: Proceed along the cleared track
+@@END
+@@SECTION cf-5-001
+TITLE: Terminus Breach
+TEXT: Locomotive Nine slams violently against the frost-rimed terminus gates, sending a shockwave through the shivering chassis. Screaming valves vent blinding white plumes of steam into the dim air as the looming grey ramparts of Cinderfall close in under the bruised purple sky. // The heavy iron buffers groan under the sudden impact, holding firm against the weight of the charging engine while the storm clock strikes a single, hollow note.
+EXIT 1: Step down into the basin
+@@END
+@@SECTION cf-5-002
+TITLE: The Iron Basin
+TEXT: Frozen rolling stock chokes the desolate terminus yard like skeletal ribs protruding from grey snow and soot. Heavy brass levers of the bypass junction stand rooted and immovable in their icy beds, waiting for a desperate hand to force them. // A bitter wind sweeps across the tracks, rattling loose iron sheets and carrying the distant metallic clatter of approaching authority from the gantry bridges above.
+EXIT 1: Force the frozen bypass junction
+EXIT 2: Wrench the ballast crank loose
+EXIT 3: Steady the chattering regulator valve
+EXIT 4: Snatch the watchmaker tin quietly
+EXIT 5: Tap the seized governor needle
+EXIT 6: Surrender to the grey greatcoats
+@@END
+@@SECTION cf-5-003
+TITLE: Clearing the Switch
+TEXT: Muscle and grease strain against the stubborn iron switch until the rusted joints finally yield with a sharp, protesting crack. A sudden hiss of backfiring steam licks dangerously close to your sleeve, but you pull back in time and snatch up a spare copper gasket from the ledge. // Pocketing the warm metal ring, you clear the mechanism and look ahead toward the darkening approach.
+EXIT 1: Push forward down the line
+@@END
+@@SECTION cf-5-004
+TITLE: Forcing the Junction
+TEXT: Heavy grease-bar braced against the jammed switch, you throw your entire weight into the iron lever while the pressure gauge dances in the red zone. Scalding vapor hisses from the straining seals, threatening to flash-burn your forearm if the bypass valve blows back before the gears turn.
+CHECK: Force the jammed switch
+@@END
+@@SECTION cf-5-005
+TITLE: Scalded Metal
+TEXT: A blinding burst of superheated steam erupts from the failing joint, searing through your shirtsleeve and biting deep into your forearm with a fiery sting. You jerk your arm back with a sharp intake of breath, clutching the smoking burn as the pressure finally subsides with a sullen groan. // Nursing the throbbing ache, you press onward into the gloom with a fresh scar to remind you of the line's toll.
+EXIT 1: Drag yourself past the blockage
+@@END
+@@SECTION cf-5-006
+TITLE: The Gasket Prize
+TEXT: Despite the narrow margin and the heat licking at your skin, the stubborn iron switch yields at last with a resounding metallic thud. Your fingers close triumphantly around the spare copper gasket resting inside the oily housing, perfectly intact and ready for service. // Stowing the prize safely in your canvas pouch, you leave the steaming machinery behind and press toward the looming shadows.
+GRANT: spare copper gasket
+EXIT 1: Face the gantry guards
+@@END

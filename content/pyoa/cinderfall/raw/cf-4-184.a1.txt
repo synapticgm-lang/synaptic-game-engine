@@ -1,0 +1,6 @@
+@@SECTION cf-4-192
+TITLE: Clearing the Cable Drum
+TEXT: Working with frantic precision, you drive the stubborn wedge clear of the jammed cable drum, your knuckles scraping raw against the iron housing as grease and soot smear your forearms. The screeching machinery finally yields with a heavy, protesting sigh, freeing a length of braided steel cable that you coil carefully and tuck into your canvas kit as a hard-earned keepsake of the ordeal.
+GRANT: braided steel cable
+EXIT 1: Pull the heavy iron release lever
+@@END

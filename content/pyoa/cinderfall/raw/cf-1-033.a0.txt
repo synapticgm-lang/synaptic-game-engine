@@ -1,0 +1,43 @@
+@@SECTION cf-1-033
+TITLE: The Widow's Ledger
+TEXT: Grey dust settles on the heavy oak counter as the ticket-widow taps a yellowed telegram against her teeth. Her rheumy eyes narrow behind wire spectacles, searching your face for any sign of fracture or impatience. You keep your shoulders level, letting the rhythmic pounding of a shunting engine outside fill the silence between you. // Beneath the iron bars, her wrinkled hands slide a bundle of damp papers aside to reveal a corner of faded parchment tucked beneath an inkpot.
+EXIT 1: Examine the hidden railway dispatches
+@@SECTION cf-1-034
+TITLE: Ink And Ash
+TEXT: Smoke drifts through the cracked clerestory windows of the station hall, stinging your eyes while the widow lectures on the cost of coal and the insolence of firemen. Not a single muscle twitches in your jaw. The sheer weight of your stillness seems to frustrate her performance, turning her sharp tongue from a weapon into a monotonous drone of old grievances. // Slowly, her claw-like fingers reach into the pigeonhole behind her and brush against a forgotten yellow slip addressed in Hesper's hurried hand.
+EXIT 1: Reach beneath the iron grille
+@@SECTION cf-1-035
+TITLE: Through The Grate
+TEXT: Frost and coal-dust crust the lower panes of the ticket office while the widow tests your resolve with tales of missing crews and unpaid platform taxes. You fold your hands over the brass counter, breathing through your nose and matching the steady thrum of the depot's steam lines. The air grows heavy with the smell of lamp-oil and vinegar as she leans close, her gaze boring into yours to see if your nerve will break before she relinquishes the scrap of paper. You have to keep your breath even and your gaze fixed on hers without a single flinch.
+CHECK: Hold your ground against the widow
+@@SECTION cf-1-036
+TITLE: A Slip Of The Tongue
+TEXT: A sudden clatter from the sorting racks overhead jars your concentration, and a sharp intake of breath betrays your weariness. The widow catches the slight tremor in your shoulder and lets out a dry, rattling laugh, snatching the dispatch away and tossing it back into a pile of damp mail. You lose precious minutes arguing your case through the iron bars while the depot clock ticks towards the evening curfew, costing you a small packet of dry tobacco slipped from your waistcoat pocket as a bribe to set things right.
+EXIT 1: Retrieve the fallen paper from the floor
+@@SECTION cf-1-037
+TITLE: The Yellow Dispatch
+TEXT: Silence is a heavier shield than any boiler-plate, and your unwavering patience finally wears down the old woman's stubborn defences. However narrowly you managed the standoff, her thin lips part in a grudging grin before she shoves a crumpled yellow slip through the narrow brass slot. It is a hasty note in Hesper's familiar angular script, marking a rendezvous behind the water tower where the old lines curve into the ash-dunes.
+GRANT: Hesper's hidden rendezvous note
+EXIT 1: Return to the ticket window hall
+@@SECTION cf-1-038
+TITLE: The Platform Pass
+TEXT: Iron railings divide the crowded concourse from the restricted tracks where the Barons' patrol engines idle on the high iron. You listen without interruption to the ticket-widow's bitter history of every engine that ever blew a boiler between here and Cinderfall. Your steady breathing and motionless stance soothe her ruffled feathers until her complaints subside into a dry wheeze. // With a muttered curse about fools and firemen, she stamps a heavy piece of brass with the station seal and shoves it across the scarred wood.
+EXIT 1: Take the heavy brass pass
+@@SECTION cf-1-039
+TITLE: Beyond The Barriers
+TEXT: Footsteps echo against the soot-blackened brickwork of the station tunnel as the widow recounts the failings of three generations of stationmasters. You maintain a fixed, courteous gaze, nodding at the proper intervals without letting your attention wander to the yard police patrolling the tracks outside. Her fingers trace the notched edge of a heavy metal token while she decides whether your manners warrant an exemption from the yard tariffs. // The heavy brass token hits the counter with a dull clunk, clearing your path to the restricted platforms.
+EXIT 1: Step through the gate toward the tracks
+@@SECTION cf-1-040
+TITLE: The Iron Grille
+TEXT: Steam hisses from a leaking joint overhead, casting a blinding veil of white vapour across the ticket office window. The widow stares hard into your face, testing your endurance with a relentless stream of administrative threats and warnings about the yard police. You stand utterly still, letting the heat wash over your woollen coat while keeping your composure locked tight against the mounting tension. One wrong twitch will send her reaching for the alarm bell on the wall.
+CHECK: Maintain absolute calm before the widow
+@@SECTION cf-1-041
+TITLE: A Costly Hush
+TEXT: A stray cinder pops in the overhead stove, making you flinch just enough to give the game away. The widow slams the glass shutter down with a sharp bang, accusing you of smuggling contraband for the union gangers. You spend an aggravating quarter-hour smoothing her ruffled temper and paying a hefty toll in spare copper coins and half a tin of axle grease just to earn back a civil word and the transit token.
+EXIT 1: Pick up the tarnished brass token
+@@SECTION cf-1-042
+TITLE: The Barons' Gate
+TEXT: Years of listening to stranded travelers have left the ticket-widow immune to pleading, but your impenetrable silence proves too much for her game. However narrowly you weathered her sharp tongue, she finally dips her iron stamp into the purple ink and marks your passage. The heavy brass pass clatters onto the wooden sill, granting you lawful-seeming access past the Barons' checkpoints without a single yard guard questioning your authority.
+GRANT: Official brass platform pass
+EXIT 1: Return to the ticket window hall
+@@END

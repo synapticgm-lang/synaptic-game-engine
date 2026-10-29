@@ -1,0 +1,11 @@
+@@SECTION cf-3-096
+TITLE: The Tripwire Maze
+TEXT: Coils of rusted copper thread the shattered timber of the gantry, linked to a nest of percussion caps taped to a dormant trench mortar. You crouch in the grit, breath shallow against the smell of old cordite and grease, measuring the precise tension of the primary wire with fingers that refuse to warm. If you snip the wrong strand or pull the anchor-peg an inch too wide, the hanging slab of boiler-plate will drop straight into the ravine, taking your bridge-iron with it. Your thumb finds the catch on the pliers, trembling as the metal bites into the salt-corroded core while the wind howls through the girders above.
+CHECK: Slice the tripwire without detonating
+@@END
+@@SECTION cf-3-098
+TITLE: The Iron Harvest
+TEXT: However narrowly you evade the sudden lurch of the wind-scoured girders, you manage to secure the vital connection and pull yourself back onto solid footing with trembling hands. The heavy steel plates lie stacked in the grit at your boots, notched and sound, ready to bridge the gap between the severed rails. Clutched in your palm is a heavy brass transit-token stamped with the crown and pinion of the high surveyors, cold as winter rain and marked with a private cipher that might buy you a moment's grace at the toll-gates. // You slide the salvaged iron into the coal-tender alongside your shovel and wipe the black grime from your eyes, listening to the steady, rhythmic thrum of the Marrowbone waiting below.
+GRANT: Surveyors brass transit token
+EXIT 1: Haul the plates toward the tender
+@@END

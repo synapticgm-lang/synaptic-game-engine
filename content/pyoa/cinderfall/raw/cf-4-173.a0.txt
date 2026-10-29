@@ -1,0 +1,62 @@
+@@SECTION cf-4-173
+TITLE: The Final Siding
+TEXT: Heavy iron swing-doors loom above the tracks, flanked by a battery of steam winches and thick brass control levers that hiss softly in the gloom. The massive bulkhead door bears deep scoring marks where decades of heavy chains have dragged across its face. Steam hangs low in the vaulted chamber, smelling faintly of sulfur and stale machine oil. Every path forward demands a firm hand on the machinery or a sharp eye for the hidden latches that bar the way to Cinderfall. // Several options present themselves along the stone wall, each promising a different method to clear the barrier before the storm clock runs down. You must decide whether to test the winch mechanisms, brave the venting steam pipes, or seek another route through the iron-clad maze.
+EXIT 1: Examine the heavy brass winches
+EXIT 2: Test the pressure relief valves
+EXIT 3: Inspect the secret wheel rims
+EXIT 4: Clear the jammed cable drum
+EXIT 5: Decipher the telegraph ticker tape
+EXIT 6: Burst through the final gates
+@@END
+@@SECTION cf-4-174
+TITLE: Winch Motor Overhaul
+TEXT: Thick grease coats your fingers as you strip away the inspection plate of the primary winch motor, revealing rows of cogs choked with fine grey ash. A soft metallic rattling echoes from deep within the iron casing whenever the secondary shaft turns. You set to work with a brass-bristled brush, scrubbing away the grime until the teeth gleam in the dim lamplight. The heavy steel gears mesh with smooth precision once more, purring like a caged animal as the internal tension winds taut. // Satisfied with the alignment, you reach for a small tin of fine clock-oil tucked behind the housing, lubricating the bronze bearings until they spin silently. A cool draft from the upper ventilation shafts stirs the hair at the back of your neck, reminding you that time is slipping away. You stow the oil can in your pocket and turn your attention toward the next junction in the cold stone passage.
+EXIT 1: Advance down the narrow side passage
+@@END
+@@SECTION cf-4-175
+TITLE: The Greased Cogs
+TEXT: Narrow iron steps lead upward alongside the secondary winch housing, slick with a film of condensation and fine coal dust. Every movement requires a steady grip on the cold handrail to avoid slipping against the jagged masonry of the tunnel wall. Below you, the great brass gears continue their rhythmic turning, throwing long, skeletal shadows across the arched ceiling. The air grows warmer here, carrying the sharp tang of hot axle-grease and burning friction tape from some hidden circuit overhead. // You pause on the landing to wipe your palms on your trousers, listening to the muffled ticking of pocket-watches echoing from the Stationmaster-General's distant sanctum. The metalwork here is older, riveted plates bolted together by hands that have long since turned to dust in the ash-dunes. A faint click resonates through the floorboards, signaling that the machinery ahead is waiting for your touch.
+EXIT 1: Approach the secondary control box
+@@END
+@@SECTION cf-4-176
+TITLE: Tuning the Governor
+TEXT: Delicate brass counterweights hang from the governor arms like tiny pendulums, swaying erratically as the steam pressure surges through the supply pipes. A slight misalignment in the linkage threatens to throw the entire winch assembly into a destructive spin that could shear the main drive teeth. You press your thumb against the vibrating rocker arm, trying to gauge the precise tension required to bring the governor back into harmony with the engine rhythm. The metal grows scorching hot beneath your skin, stinging sharply, but you keep your focus fixed on the tiny adjustment screw.
+CHECK: Adjust the governor tension screw
+@@END
+@@SECTION cf-4-177
+TITLE: A Scorched Slip
+TEXT: A sudden surge of scalding steam spits from the loose gasket, forcing your hand back with a sharp hiss of pain that leaves your palm red and throbbing. The governor arm whips sideways with a metallic shriek, striking the stone wall and showering the floor with sparks. You bite back a curse, cradling your injured hand against your chest while the winch motor grinds to a noisy, uneven halt. Valuable time slips through your fingers like dry ash, and the lingering ache in your skin will remind you of this careless slip for days to come.
+EXIT 1: Gather your tools and press on
+@@END
+@@SECTION cf-4-178
+TITLE: The Well-Oiled Cogs
+TEXT: The stubborn valve finally gives way with a deep, resonant click, settling into a perfect equilibrium as the steam pressure stabilizes throughout the mechanism. However narrowly you managed the adjustment, the machinery now hums with a steady, reliable rhythm that reassures your tired nerves. You wipe the sweat from your forehead, leaving a dark smudge across your brow, and pocket the small prize left behind by the repair.
+GRANT: A tin of clock-oil
+EXIT 1: Return to the main siding hub
+@@END
+@@SECTION cf-4-179
+TITLE: The Hissing Pipe
+TEXT: White plumes of high-pressure steam erupt from a fractured union joint, filling the narrow corridor with a blinding, roaring fog. You crouch low against the damp stone floor, letting the worst of the scalding blast pass overhead while the smell of hot iron fills your lungs. The fierce heat radiates outward from the rupture, baking the moisture from your skin and turning the air thick and heavy. Through the swirling white haze, the outline of the secondary control valve gleams dimly like a drowned moon. // Moving with deliberate care, you inch forward through the dense vapor, keeping your shoulder pressed against the cold rock to maintain your bearings. The steady thrum of the engine vibrates through the soles of your boots, grounding you against the disorienting hiss of the leak. You reach out blindly into the damp heat, feeling for the cold metal wheel of the safety shut-off.
+EXIT 1: Reach through the steam cloud
+@@END
+@@SECTION cf-4-180
+TITLE: Beyond the Valve
+TEXT: The steam thins into a wet drizzle as your fingers close around the ribbed rim of the shut-off valve, turning it through stubborn layers of rust and scale. A final, shuddering gasp echoes through the pipework as the pressure drops, leaving behind an eerie, dripping silence in the tunnel. You shake the moisture from your sleeves and peer into the gloomy alcove revealed by the clearing fog. An abandoned worker's station sits half-buried in grey ash, its wooden desktop cluttered with discarded ledgers and broken tallow candles. // You pause to examine the faded ink marks on the nearest page, wondering what hurried hand abandoned the logbook mid-sentence. The silence of the Hollow Cut presses down heavily, broken only by the distant, rhythmic ticking of the Stationmaster-General's watches. You pocket a thick leather asbestos mitten left hanging on a rusted peg before turning back toward the main junction.
+EXIT 1: Return to the central chamber
+@@END
+@@SECTION cf-4-181
+TITLE: Facing the Blast
+TEXT: The ruptured joint blows wide open with a deafening screech, unleashing a solid wall of searing vapor that threatens to engulf your head and shoulders. Panic claws at your throat, urging you to leap backward into the safety of the dark tunnel, but retreating now would leave the line crippled. You lock your jaw against the mounting heat, forcing your eyes to stay open through the blinding white glare as you reach directly into the heart of the scalding storm.
+CHECK: Stand firm against the steam
+@@END
+@@SECTION cf-4-182
+TITLE: A Burned Palm
+TEXT: The searing blast catches your unprotected wrist before you can wrench the valve shut, searing the skin with a bright, throbbing agony. You stumble backward into the gloom, clutching your scorched arm as the hot mist settles into a steady, mocking drip. The pain is a sharp, constant companion now, slowing your reactions and draining your reserves as you tend to the angry red welt. Though you survived the rush of pressure, the carelessness leaves you weaker for the trials still waiting down the line.
+EXIT 1: Continue toward the main junction
+@@END
+@@SECTION cf-4-183
+TITLE: The Asbestos Guard
+TEXT: Your gloved hand absorbs the worst of the punishing heat, allowing you to force the stubborn valve home with a single, brutal twist of your wrist. However narrowly you avoided a severe scalding, the steam line is finally sealed and the corridor is safe to traverse. You peel off the stiff protective gear, finding a useful token left behind by the old maintenance crews.
+GRANT: A thick asbestos mitten
+EXIT 1: Head back to the control hub
+@@END

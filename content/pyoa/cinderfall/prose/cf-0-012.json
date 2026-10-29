@@ -1,0 +1,92 @@
+{
+ "batch": "cf-0-012",
+ "sections": {
+  "cf-0-012": {
+   "title": "The Water-Seller's Ruse",
+   "text": "Thick grey dust settles on your boots as you approach the collapsible zinc cart where the water-seller sits, his leather skin-bags smelling faintly of stagnant alkali and dead moss. He spits a dark stream into the cinders and swears the grey liquid in his barrels is drawn fresh from the deep mountain wells, though you can see the crust of alkaline salt whitening the seams. You tap the side of your tin measure against his rusted hoop, letting the hollow clink challenge his boast before you offer a handful of heavy iron nuts for a skin of his best oil.\n\nHe squints at the metal, calculating whether your need outweighs his greed, then reaches beneath the canvas flap to haul out a greasy goatskin flask that smells of tallow. You must decide whether to accept his terms or press him further for a cleaner measure.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the greasy oil-skin"
+   ]
+  },
+  "cf-0-013": {
+   "title": "Weighing the Hollow Claims",
+   "text": "Smoke drifts low across the platform timbers as you lean over the water-seller's counter, fixing your gaze on his shifting eyes while he taps a cracked knuckle against his empty barrel. He swears by the old Rail Barons that his oil is pure goose-grease from the western sheds, but the dark sediment swirling through the neck of his flask tells a different tale of refined coal-sludge. You lean closer, matching his practiced cynicism with a steady stare, turning his own oily exaggerations back upon him until he begins to blink behind his soot-caked spectacles.\n\nYour fingers tighten on the worn handle of your copper spanner as you calculate the exact weight of his lies, waiting for the precise moment to strike your bargain.",
+   "check": "Match his lies with cool cynicism",
+   "grant": "",
+   "exits": []
+  },
+  "cf-0-014": {
+   "title": "A Sour Bargain in the Ash",
+   "text": "The water-seller catches your hesitation and bares yellow teeth in a grin of absolute triumph, slamming his thumb over the neck of the flask to double his price in heavy copper wire. You find yourself conceding the extra turn of wire just to save the hour, your temper flaring hot enough to singe the hairs on your forearms as you hand over the precious metal. When he finally shoves the greasy hide into your chest, the stiff leather seam catches your thumb-joint, carving a raw, bleeding split across the skin that immediately fills with black soot.\n\nYou hiss through your teeth, clutching the stinging hand while he cackles and retreats behind his zinc counter, leaving you poorer in wire and thicker in scars.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the stinging oil-skin"
+   ]
+  },
+  "cf-0-015": {
+   "title": "The Greasy Prize",
+   "text": "Your steady gaze holds firm until the water-seller's bluff collapses under its own weight, coughing into a rag and sliding the heavy goatskin across the zinc counter with a grumpy grunt. You secure the stopper with a twist of hemp string, knowing that however narrowly you managed his deceit, the dark lubricant inside will keep the Marrowbone's valve-stems sliding smooth against the grit. It is a foul-smelling trade, but the thick, rancid fat will grease a dozen high-stress joints before you reach the edge of the steppes.\n\nYou sling the heavy hide over your shoulder and turn your back on the dry carts.",
+   "check": "",
+   "grant": "A skin of dark valve-oil",
+   "exits": [
+    "Carry the oil to the cab"
+   ]
+  },
+  "cf-0-016": {
+   "title": "Behind the Ticket Lattice",
+   "text": "Worn brass handles and yellowed timetables frame the small iron window where the ticket-widow keeps her vigil behind a crisscross of rusted wire. Her fingers twitch against a stack of unprinted cardboard passes, her eyes darting constantly toward the stationmaster's locked door down the platform as if expecting a ghost to step through the panels. You place your calloused palm flat against the cold wood of the sill, asking quietly who was seen slipping out of Hesper's office after the midnight bell stopped ringing.\n\nShe draws back into the shadows of her little cage, her breath fogging the glass as she weighs the danger of answering against the greater danger of your stare.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wait for her whispered reply"
+   ]
+  },
+  "cf-0-017": {
+   "title": "Whispers Through the Rusted Wire",
+   "text": "Iron wire rattles as the widow leans her forehead against the mesh, her voice dropping to a dry rasp that barely carries over the hiss of steam from the nearby shunt line. She mutters of a tall figure in a grease-stained greatcoat carrying a heavy tin box toward the southern siding just as the moon dipped behind the slag heaps. You nod slowly, filing away the description of the missing stranger while she slides a small, cold brass token across the scarred wooden counter.\n\nThere is no time to linger at the wicket now, for the station bells are beginning their erratic evening chime down the line.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the brass signal-pass"
+   ]
+  },
+  "cf-0-018": {
+   "title": "Extracting the Ticket-Office Secret",
+   "text": "Dust motes dance in the shaft of pale yellow light cutting through the ticket office window while you lean into the iron lattice, pressing the widow for names she swore to take to her grave. She presses her lips into a thin, white line, pretending to sort through stacks of obsolete platform tickets while her knuckles turn bloodless against the tin counter. You keep your voice level and low, tracing the grain of the wood with a blackened thumb as you remind her of the debts her brother ran at the coaling sheds last winter.\n\nHer breath hitches in the dim space behind the mesh as she realizes you hold the ledger of her family's safety in your calloused hands.",
+   "check": "Press her with the old ledger",
+   "grant": "",
+   "exits": []
+  },
+  "cf-0-019": {
+   "title": "A Costly Silence",
+   "text": "The ticket-widow's jaw sets hard against your pressure, and with a sharp click of her wooden latch, she drops the sliding iron shutter right across your knuckles. The heavy plate catches the side of your hand with a dull thud, scraping the skin from your bone and leaving a purple, swelling bruise that throbs in time with your pulse. You bite back an oath as she calls out through the metal grille that she saw nothing and knows nothing of any midnight visitors.\n\nYou pull your injured hand back into the soot-laden air, nursing the throbbing pain while you walk away from the window with empty pockets and a bitter taste in your mouth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the sullen ticket office"
+   ]
+  },
+  "cf-0-020": {
+   "title": "The Scratched Brass Token",
+   "text": "The sliding shutter remains open just a crack, and through the gap a small, wedge-shaped piece of stamped brass drops onto the wooden counter with a sharp metallic clatter. You pick it up, running your thumb over the notched edge that marks it as an old signal-pass for the lower maintenance spurs, however narrowly you had to squeeze the truth from her reluctant lips. It is a small key, but it will let you slip past the locked boundary gates without waking the yard wardens.\n\nYou slip the token into your waistcoat pocket and turn toward the waiting engine.",
+   "check": "",
+   "grant": "The notched maintenance pass",
+   "exits": [
+    "Return to the depot yards"
+   ]
+  },
+  "cf-0-021": {
+   "title": "Pulling the Heavy Regulator",
+   "text": "Boiler pressure throbs through the iron deck plates beneath your boots as you grip the long brass handle of the regulator and haul it toward your chest with both arms. The Marrowbone gives a deep, shuddering groan that rattles the rivets in her smokebox, her heavy drive-wheels spinning once against the greased rails before biting hard into the grit. Steam roars from the cylinder cocks in a blinding white cloud, swallowing the depot platforms and the silent figures watching from the coaling stage.\n\nYou lean out of the cab window into the rushing wind of your own making, watching the last signal-box recede into the grey haze as the engine plunges out onto the empty, ash-choked expanse of the Steppe.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drive out onto the Steppe"
+   ]
+  }
+ },
+ "missing": []
+}

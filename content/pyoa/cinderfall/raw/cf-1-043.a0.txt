@@ -1,0 +1,52 @@
+@@SECTION cf-1-043
+TITLE: The Widow's Counsel
+TEXT: Saliva collects in the back of your throat as the wind howls against the iron grating, carrying tiny shards of grey mineral that bite at your exposed skin. The ticket-widow leans closer, her rheumy eyes narrowing behind thick spectacles mended with greasy twine, while her papery fingers drum a slow, hollow tattoo upon the varnished counter. She speaks of the great grey squalls that rise unbidden from the southern flats, scouring the track clean of both rail and sleeper before a man can even reach for his shovel. You listen without flinching, letting her bitter talk wash over your shoulders like cold boiler-water. // Satisfied by your granite stillness, she reaches beneath the scarred ledge and drags forth a heavy oil-skin coat stiffened by decades of grease and weather, shoving it across the wooden sill towards your waiting hands.
+EXIT 1: Pull the stiff oil-skin tight
+@@END
+@@SECTION cf-1-044
+TITLE: Beneath the Tin Roof
+TEXT: Heavy drops of condensation patter against the rusted corrugated iron above, smelling sharply of damp soot and old coal-gas. The widow's warning hangs heavily in the gloom, filled with dark tales of signal-wires snapping under the strain of frozen ash and engines found cold and empty miles out on the barren steppes. You nod slowly, keeping your weight balanced evenly on the balls of your boots, neither rushing her words nor offering false comfort. Beneath the battered counter, her hand rummages among dusty ledgers before emerging with a garment that smells powerfully of mutton fat and paraffin. // She drops the heavy oil-skin onto the scratched wood between you, a tangible shield against the coming gales.
+EXIT 1: Gather the oil-skin coat
+@@END
+@@SECTION cf-1-045
+TITLE: Holding the Line
+TEXT: A sudden, violent gust rattles the station's timber frames, wrenching a loose shutter from its rusted hinges and sending a cloud of blinding grit straight into your eyes. The senior inspector's heavy boots scrape loudly on the gravel platform just beyond the frosted glass, pausing as if he smells your hesitation through the very walls. Every instinct urges you to dart away or curse aloud at the sudden onslaught, but you force your breathing to remain deep and measured, anchoring your gaze upon the ticket-widow's yellowed fingers.
+CHECK: Maintain absolute silence against the ash
+@@END
+@@SECTION cf-1-046
+TITLE: Scoured by Grit
+TEXT: The stinging grit finds the corners of your eyes, forcing a sharp, involuntary blink and a sudden, ragged cough that rattles in your raw chest. Outside on the gravel, the inspector's cane strikes the stones with an angry double-rap, and heavy boots turn purposefully toward the little wicket window. You stumble backward against a stack of discarded mail crates, knocking a tin box of spare nibs clattering across the floorboards. The noise draws an immediate, sharp hiss from the widow, who ducks below her counter with a curse. You snatch up the dropped oil-skin just as a heavy fist rattles the locked outer door, paying for your momentary lapse in focus with a bruised shoulder and a racing pulse.
+EXIT 1: Slip away down the siding
+@@END
+@@SECTION cf-1-047
+TITLE: The Oiled Wool
+TEXT: You weather the sudden squall without a single flinch, letting the blinding grit sting your eyelids until the wind passes over and the station roof settles back into sullen creaking. The inspector's footsteps crunch away down the platform, their menacing rhythm fading into the general hum of the junction. The ticket-widow lets out a dry, rattling chuckle, her initial suspicion melting into a grudging, iron-hard respect that binds her fortunes to yours for whatever lies down the line. She pushes the heavy, grease-soaked oil-skin across the wood with a final, firm nod of comradeship among the rails.
+GRANT: Loyalty of the track crews
+EXIT 1: Return to the waiting engine
+@@END
+@@SECTION cf-1-048
+TITLE: The Stubborn Die
+TEXT: Brass filings gleam like gold dust beneath your fingernails as you probe the delicate brass housing of the ancient ticket-stamping press, finding a sheared pin wedged deep in the cog-teeth. The machine has served this lonely junction since the old Board days, and its bronze gears are choked hard with decades of impacted graphite and dry soot. You reach into your pocket for the narrow needle-file, working the cramped metal levers with practiced patience until the jammed cylinder gives a sharp, metallic click and slides smoothly home. // The widow watches your handiwork with narrowed, calculating eyes, then reaches for a brass-faced punch and stamps a heavy cardboard slip.
+EXIT 1: Take the stamped siding pass
+@@END
+@@SECTION cf-1-049
+TITLE: The Jammed Cogs
+TEXT: Your thumb guides the slender steel file into the heart of the brass mechanism, scraping away a jagged ridge of copper burr that has locked the stamping die fast. The metal is freezing cold to the touch, and the dim light from the grease-lamp flickers dangerously as another tremor shakes the station floorboards from the yards outside. If you press too hard, the delicate tooth will snap off entirely, leaving the press an inert lump of scrap and cutting off your only legal route through the restricted sidings. You hold your breath, steadying the tiny file against the palm of your hand as you apply the final, delicate pressure to the stubborn bronze pawl.
+CHECK: Clear the jammed stamping press
+@@END
+@@SECTION cf-1-050
+TITLE: A Broken Tooth
+TEXT: The file slips with a harsh screech against the hardened brass, biting deep into the soft meat of your thumb and shearing the tip of the delicate tooth right off the cog. A bead of dark blood wells up instantly, staining the greasy metal frame as the machine emits a dull, metallic thud and locks tighter than before. The ticket-widow snorts with disgust, snatching the ruined tool from your grasp and tossing it into a drawer of broken scrap. Though she still hands you the stamped pass with a muttered insult about clumsy firemen, the delay costs you precious minutes while the station yard grows restless outside.
+EXIT 1: Pocket the pass and leave
+@@END
+@@SECTION cf-1-051
+TITLE: The Stamped Brass
+TEXT: The delicate steel file bites true, clearing the impacted soot and copper filings from the bronze housing with a soft, satisfying hiss of released tension. The stamping die springs back into its proper vertical groove, ready to press the heavy ink onto any surface presented to it. The widow lets out a low whistle of appreciation, reaching into her leather apron to hand you a heavy brass-rimmed token notched with the private mark of the restricted sidings. It is a small key to closed doors, won through steady hands and a clean ear for the music of machinery.
+GRANT: Restricted siding access pass
+EXIT 1: Step out into the yard
+@@END
+@@SECTION cf-1-052
+TITLE: The Choked Injector
+TEXT: You climb back onto the footplate of Locomotive No. 9, wiping the coal dust from your brow as the heavy brass boiler radiates a steady, comforting heat against the chill of the yard. You reach for the water injector valve to prime the feed before building up a full head of steam for the run to the steppes, but your hand pauses at the strange, dead silence of the pipework. Instead of the familiar high-pitched hiss of rushing water, there is only a dull, choked gurgle and a plume of dry, grey dust puffing out from the overflow cock. Fine ash has drifted into the tender tank during the night, baking hard within the copper feed-tubes into a stubborn plug of grey cement. The Marrowbone stands helpless with an empty belly, and the steam gauge climbs steadily toward the red line while the yard signals begin to drop for your departure.
+EXIT 1: Inspect the clogged tender feed
+@@END

@@ -1,0 +1,60 @@
+@@SECTION cf-3-052
+TITLE: Choking Iron
+TEXT: Thick chemical smog rolls off the viaduct floor, turning the iron track into a treacherous maze of condensation and greasy soot. Every rivet on the Marrowbone weeps yellow moisture as the heat of the boiler fights the damp draft of the lower gantries. Sulphur stings the back of your throat, and the low groaning of stressed bridge-iron vibrates straight up through the tread-plates into your boots.
+EXIT 1: Advance into the choking haze
+@@END
+@@SECTION cf-3-053
+TITLE: The Smog Corridor
+TEXT: You creep along an enclosed maintenance tunnel choked with toxic vapors and discarded railway debris. Dim orange signal-lamps flicker overhead, casting long, wavering shadows across rusted grease-drums and discarded coupling-pins. The air tastes of copper and burnt hair, urging you to choose your footing with utmost care. Forward paths diverge into deeper gloom, each offering its own hazard beneath the groaning weight of the viaduct.
+EXIT 1: Pry open the heavy floor hatch
+EXIT 2: Follow the wall toward the lower vents
+EXIT 3: Endure the leaking steam pipe directly
+EXIT 4: Confront the armored cargo convoy head-on
+@@END
+@@SECTION cf-3-054
+TITLE: The Blocked Hatch
+TEXT: Heavy iron ballast pins the square maintenance panel shut against the rising pressure from below. Rust flakes drift down like red snow as you wedge a pinch-bar into the warped seam and lean your entire weight against the shaft. The metal groans in protest, slowly sliding an inch to reveal a dark cavity smelling of old grease and dry biscuit-tins.
+EXIT 1: Reach down into the dark recess
+@@END
+@@SECTION cf-3-055
+TITLE: Rations in the Rust
+TEXT: Fumbling inside the narrow compartment, your gloved fingers brush against grease-wrapped parcels stashed by some forgotten gangers' shift. A tin of salt pork and a spare woollen muffler come free into your grasp, offering a welcome hedge against the chill of the viaduct. You tuck the provisions inside your jacket as the distant chuffing of a stranger's engine echoes through the iron ribs.
+EXIT 1: Return to the main corridor junction
+@@END
+@@SECTION cf-3-056
+TITLE: Heaving the Sleeper
+TEXT: Wedged tight between two buckled support girders, a massive iron railway sleeper blocks the only clear route to the lower inspection ladder. Muscles strain against the cold dead weight as you wedge your shoulder beneath the rusted beam and prepare to lift. Every sinew in your back twangs like a loose piano wire under the unbearable load.
+CHECK: Lift the heavy iron sleeper
+@@END
+@@SECTION cf-3-057
+TITLE: Strained and Bruised
+TEXT: Pain flares hot and sudden across your lower back as the sleeper slips an inch, grinding your knuckles raw against the jagged edge of the plate. You stagger backward with a sharp gasp, clutching your bruised ribs while the acrid smog fills your smarting eyes. The delay costs precious minutes and leaves a dull, throbbing ache that settles deep into your bones.
+EXIT 1: Crawl past the fallen barrier
+@@END
+@@SECTION cf-3-058
+TITLE: The Lifted Beam
+TEXT: With a sudden, tooth-rattling groan, the heavy iron beam shifts and rolls clear of the hatch with a hollow metallic clang. You catch your breath, wiping greasy sweat from your forehead with the back of a soot-stained sleeve. Tucked neatly beneath the displaced timber lies a heavy brass spanner bearing the punch-mark of the Gangers' Union.
+GRANT: Gangers' brass heavy spanner
+EXIT 1: Retrace your steps to the junction
+@@END
+@@SECTION cf-3-059
+TITLE: The Fumes Below
+TEXT: You steady your breathing against the lung-burning fumes, risking blacking out to maintain focus and locate the hidden maintenance ladder. Gray mist swirls around your ankles, hiding the drop-offs where the bridge plates have buckled away from the main stringers. Blindly, your boot-toe taps against cold, rung-iron bolted straight into the soot-caked masonry.
+EXIT 1: Descent into the lower shadow-way
+@@END
+@@SECTION cf-3-060
+TITLE: Steadying the Mind
+TEXT: Vertigo coils in your stomach as the distant screech of grinding metal echoes up from the abyss beneath the viaduct. Your temples throb in time with the wheezing boilers, threatening to pull you down into a shivering panic as the toxic haze grows thicker. Closing your eyes against the stinging vapors, you force your lungs to take one slow, deliberate draw of the foul air.
+CHECK: Fight the rising panic and focus
+@@END
+@@SECTION cf-3-061
+TITLE: Shaken and Blind
+TEXT: Black spots dance before your eyes and your knees buckle momentarily, sending you crashing hard against a steaming intake pipe. A sharp hiss of escaping steam sears your forearm, leaving a red, angry welt that throbs beneath your damp sleeve. You cling to the ironwork until the spinning world steadies, though the near-collapse leaves your nerves frayed to breaking point.
+EXIT 1: Drag yourself toward the vent-ladder
+@@END
+@@SECTION cf-3-062
+TITLE: The Clear Focus
+TEXT: Willpower triumphs over the poison in the air as your pulse settles into a steady, heavy rhythm against your ribs. The swirling vapors seem to part slightly, revealing a grease-stained brass token hanging from a signal-wire loop nearby. You unhook the small talisman, recognizing the stamp of the Hollow Signalmen's night-shift.
+GRANT: Signalman's stamped brass token
+EXIT 1: Climb back toward the central junction
+@@END

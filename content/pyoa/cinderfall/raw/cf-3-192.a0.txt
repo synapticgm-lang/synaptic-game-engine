@@ -1,0 +1,61 @@
+@@SECTION cf-3-192
+TITLE: The Alarms of Brasswind
+TEXT: Sirens shriek across the entire viaduct structure, their brass throats tearing the soot-laden air with mechanical fury. Baronial searchlights sweep the ash-choked canyons, cutting amber paths through the gathering dusk to find the runaway engine. Every gantry and rivet on the great iron bridge trembles as the heavy defense batteries spin on their mountings, locking onto the vibration of your steel wheels against the frozen rails.
+EXIT 1: Dive deeper into the engine cab
+@@END
+@@SECTION cf-3-193
+TITLE: The Siren Station
+TEXT: Steam hisses from the manifold while red lights flash against the soot-greased walls of the cabin. The throttle bars vibrate beneath your palms, hot and demanding in the din of the alarms. Outside the thick glass, the iron road splits into several distinct paths through the gantries, each offering its own desperate hazard against the closing net of the Rail Barons. // You must choose your immediate course through the maze of signals and blinding lights before the searchlights find your boiler.
+EXIT 1: Repair the damaged cable wires
+EXIT 2: Reach for the signal levers
+EXIT 3: Keep iron composure in steam
+EXIT 4: Trick pursuers with decoy release
+EXIT 5: Smash through the final barrier
+@@END
+@@SECTION cf-3-194
+TITLE: Sparks in the Conduit
+TEXT: Hot sparks spit from the severed throttle cable as you wedge yourself into the cramped maintenance well behind the boiler plate. The smell of burning rubber and ozone fills your throat, sharp against the constant taste of ash. Outside, heavy boots clang against the iron plating of the viaduct roof, drawing closer with every beat of your hammering pulse. // You strip back the frayed insulation with shaking fingers, desperate to reconnect the copper core before the searchlights swing back toward your position.
+EXIT 1: Splice the live wire fast
+@@END
+@@SECTION cf-3-195
+TITLE: The Live Connection
+TEXT: Copper wire stings your raw palms as you twist the broken ends together in the dark, slick with sweat and machine oil. The metal pulses with stray current, humming a low, dangerous note that vibrates straight up your forearms. Every shift of the engine beneath you threatens to tear the fragile repair apart before the circuit can hold steady. // You brace your shoulder against the bulkhead and reach for the secondary housing screw.
+EXIT 1: Test the repaired throttle line
+@@END
+@@SECTION cf-3-196
+TITLE: The Conduit Bridge
+TEXT: With a breath of cold air, you press the bare copper ends into their brass sleeve while the current surges violently against your knuckles. A blinding white flash throws your shadow hard against the iron wall, and the smell of singed skin mixes with the thick coal-smoke. You must hold the connection steady against the bucking vibration of the engine and the searing voltage.
+CHECK: Solder the live cable
+@@END
+@@SECTION cf-3-197
+TITLE: Burned Fingers
+TEXT: A vicious jolt throws you backward against the coal tender, leaving your right hand throbbing and blackened at the fingertips. The repair holds, but the cost is an ugly blistered burn that flares with every movement of your wrist. You clutch your arm against your chest, gasping for air in the sulfurous gloom as the Marrowbone surges forward into the shadows.
+EXIT 1: Return to the main controls
+@@END
+@@SECTION cf-3-198
+TITLE: The Repaired Line
+TEXT: The cable holds firm beneath your taped fingers, sending a clean, steady surge straight to the primary injectors. However narrowly, you have cheated the electrical bite and restored full mechanical response to the engine's iron heart. You wipe the grease from your brow, clutching a small piece of salvaged copper wire that hums faintly with residual current.
+GRANT: Fused copper jumper
+EXIT 1: Return to the control deck
+@@END
+@@SECTION cf-3-199
+TITLE: The Labyrinth of Iron
+TEXT: You throw your weight against the heavy brass selector, forcing the linkage through layers of old soot and hardened grease. The heavy iron rods groan beneath the floorboards as they shift the track switches far out in the ash-storm. Chasing locomotive whistles howl behind you in the gloom, trapped in the maze of sidings and dead-end spurs you have just unlocked. // You must guide the Marrowbone through this confusion before the pursuing guards unravel your pattern.
+EXIT 1: Dive into the junction maze
+@@END
+@@SECTION cf-3-200
+TITLE: The Wrong Junction
+TEXT: The track diagram flickers in the red glow of the firebox as you trace the tangled network of points with your eyes. You slam the heavy lever downward, gambling that the ancient mechanical memory of the line will confuse the pursuers behind you. A grinding screech echoes from the lower switches as heavy wheels cross the split, leaving you suspended between two diverging routes in the dark.
+CHECK: Throw the junction lever
+@@END
+@@SECTION cf-3-201
+TITLE: Tangled Tracks
+TEXT: The switch catches halfway, jammed by a wedge of frozen slag in the guide-groove, and the Marrowbone shudders to a jarring halt across a maintenance spur. Heavy boots pound on the gravel outside as Baronial guards converge on your stranded position, forcing you to crank the reverse gear with all your strength. You break free with a scream of tortured iron, though you have lost precious minutes and earned a deep, aching bruise along your ribs.
+EXIT 1: Flee down the open spur
+@@END
+@@SECTION cf-3-202
+TITLE: The Clear Switch
+TEXT: The heavy lever locks home with a satisfying metallic thud, and the switch points click true in the dark. However narrowly, you have sent the pursuing engines howling down an empty siding of rusted freight cars while your own path remains clear. You pull the regulator wide, clutching a notched brass turnout key dropped by the old line-keeper.
+GRANT: Notched brass turnout key
+EXIT 1: Plunge toward the Hollow Cut
+@@END

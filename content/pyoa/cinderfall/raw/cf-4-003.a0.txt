@@ -1,0 +1,67 @@
+@@SECTION cf-4-003
+TITLE: The Jammed Bearing
+TEXT: Beneath the weeping vault of the tunnel, the forward journal-box groans with a dry, metallic scream that cuts through the hiss of the boiler. You wedge a heavy pinch-bar between the chassis frame and the scorching iron housing, throwing your weight against the cold stone floor to force the seized roller back into alignment. Sweat stings your eyes through the thick soot as the metal grudgingly yields with a sharp, echoing crack, leaving your wrist throbbing and a heavy iron wedge jammed securely into the gap. //
+EXIT 1: Pry the jammed housing loose
+@@END
+@@SECTION cf-4-004
+TITLE: The Resilient Metal
+TEXT: Steam hisses from a leaky gasket nearby, filling the damp air with the taste of sulfur and boiled oil while you work the rusted screw-jacks into the ballast. Every muscle in your back knots against the strain as you lift the dead weight of the engine's lead axle just enough to clear the fouled brake-shoe. The stone beneath your boots is slick with coal-dust and ancient moisture, but the persistent screech finally subsides into a low, rhythmic hum that satisfies the ear. You retrieve your grease-stained tools and steady your breathing in the dark. //
+EXIT 1: Advance down the brick vault
+@@END
+@@SECTION cf-4-005
+TITLE: Realigning the Valve Gear
+TEXT: The eccentric rod on the port side has slipped its keeper, rattling wildly against the motion plate with every labored pulse of the pistons. You crouch in the narrow clearance between the churning machinery and the damp brickwork, fingers slick with grease as you fumble for the adjusting screw in the pitch-dark shadows. The engine bucks beneath your boots, threatening to crush your knuckles against the iron framing if the timing slips another fraction of an inch while you tighten the locking nut by feel alone. //
+CHECK: Tighten the eccentric rod under strain
+@@END
+@@SECTION cf-4-006
+TITLE: A Wrenched Wrist
+TEXT: The wrench slips from the greasy bolt head with a sharp ring, throwing your hand violently against the jagged edge of the valve chest and sending a white-hot line of pain up your forearm. You draw in a ragged, cursing breath, clutching your bruised wrist against your chest as the engine stutters through another heavy stroke. The slip costs precious minutes and leaves a swelling knot of skin that will ache for days, but the bolt is somehow caught well enough to keep the valve from throwing its rod completely. //
+EXIT 1: Press onward with a throbbing arm
+@@END
+@@SECTION cf-4-007
+TITLE: The Wedge Secured
+TEXT: Your fingers find the precise bite of the thread, spinning the locking nut home just as the cylinder head lets out a sharp, definitive hiss of sealed pressure. Whether through steady skill or sheer stubborn luck, the repair holds firm against the heavy beat of the pistons, restoring an even rhythm to the locomotive's iron heart. Resting on the running board to catch your breath, your fingers brush against a heavy iron wedge left behind by some long-dead gander crew, notched and scarred by decades of ballast-work. //
+GRANT: heavy iron wedge
+EXIT 1: Return to the main line
+@@END
+@@SECTION cf-4-008
+TITLE: The Phantom Semaphore
+TEXT: Absolute silence settles over this abandoned siding, broken only by the slow, rhythmic drip of water from the mortar joints overhead. You stand perfectly still beside the rusted iron pillar, letting your breathing slow until it matches the hum of the stone-dust echoes whispering along the curved ceiling. Without warning, a rusted semaphore arm high up in the shadow-draped vault snaps downward with a loud metallic clatter, welcoming you into the hollow domain of the invisible watchers. //
+EXIT 1: Follow the dropping semaphore arm
+@@END
+@@SECTION cf-4-009
+TITLE: Listening to the Dark
+TEXT: Whispers drift through the soot-laden air from unseen alcoves, speaking in the clipped, technical shorthand of signalmen who vanished long before the Long Fire burned the steppe. You close your eyes against the suffocating blackness, trying to filter out the frantic beating of your own heart so you can catch the hidden rhythm in the clicking relays overhead. A sudden rush of freezing air sweeps down the cutting, carrying a chorus of phantom bell-codes that threaten to break your concentration and lure you into a blind panic. //
+CHECK: Stand firm against the whispering dark
+@@END
+@@SECTION cf-4-010
+TITLE: A Shaken Resolve
+TEXT: The sudden clang of an unseen junction bell hits your ears like a physical blow, shattering your focus and sending you stumbling backward against the sharp edge of a coal bunker. A cold sweat breaks across your shoulders as phantom footsteps march past in the dark, leaving you gasping for air in the sulfurous gloom. Though you regain your footing before the echoes fade, the encounter leaves a lingering tremor in your hands and a dull ache behind your temples that takes a long time to shake. //
+EXIT 1: Drag yourself toward the tunnel exit
+@@END
+@@SECTION cf-4-011
+TITLE: The Echoes' Confidence
+TEXT: You keep your breathing steady and your gaze fixed on the faint green phosphorescence clinging to the damp brickwork, letting the strange subterranean frequency wash over you without fear. The invisible watchers seem to recognize your composure, shifting their weight among the high rafters with the dry rustle of old paper and oiled canvas. As you step away from the pillar, a profound sense of quiet clarity settles over your mind, granting you an intuitive feel for the hidden logic of the signal wires overhead. //
+EXIT 1: Return to the baggage hall
+@@END
+@@SECTION cf-4-012
+TITLE: The Grease-Run Bypass
+TEXT: Blocked by a tangle of rusted luggage trucks across the main track, you drop to your hands and knees to inspect the narrow drainage channel running alongside the tunnel wall. Thick layers of dark, ancient grease still coat the brick invert where previous crews dragged heavy cables through the dark. You crawl through the soot and oily sludge, using the recessed trough to worm your way past the metal barricade without touching the unstable wreckage, and emerge beside a leather pouch dropped by a fleeing clerk. //
+EXIT 1: Crawl past the blocked trucks
+@@END
+@@SECTION cf-4-013
+TITLE: Navigating the Toll Archive
+TEXT: Piling through the clutter of abandoned ledgers and water-damaged manifest sheets, you search for the emergency clearance code that might unlock the bulkhead ahead. The air is thick with the scent of rotting paper and dry rot, making your throat scratch with every intake of breath while the faint ticking of a hidden clock echoes through the masonry. Every instinct warns you that pulling the wrong ledger from the stacked archive could trigger a trip-wire connected to an old warning flare or a fallen stack of iron plate. //
+CHECK: Search the damp ledger piles
+@@END
+@@SECTION cf-4-014
+TITLE: The Ledger Collapse
+TEXT: Your fingers catch on the corner of a rotting wooden crate, pulling it just an inch too far before the entire stack of heavy railway ledgers collapses into the muck with a dull, echoing thud. A cloud of black mold and choking ash billows into your face, sending you into a fit of violent coughing that leaves your ribs aching and your eyes watering in the dark. You manage to scramble clear before the remaining shelves give way, but the noise reverberates endlessly down the empty brick vault. //
+EXIT 1: Escape the falling paper stack
+@@END
+@@SECTION cf-4-015
+TITLE: The Toll-Receipt Ledger
+TEXT: With delicate precision, you slide the leather-bound book free from the damp stack without disturbing the precarious balance of the surrounding debris. Opening the brittle cover by the dim light of your pocket lamp, you reveal page after page of meticulous handwritten toll-receipts signed by the old Stationmaster-General's deputies. It is a useless stack of debt records to anyone else, but tucked inside the back cover is a handwritten routing slip detailing every hidden maintenance hatch through the upper ridge. //
+GRANT: old railway ledger
+EXIT 1: Return to the engine halt
+@@END

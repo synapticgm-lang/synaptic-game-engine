@@ -1,0 +1,104 @@
+{
+ "batch": "cf-3-052",
+ "sections": {
+  "cf-3-052": {
+   "title": "Choking Iron",
+   "text": "Thick chemical smog rolls off the viaduct floor, turning the iron track into a treacherous maze of condensation and greasy soot. Every rivet on the Marrowbone weeps yellow moisture as the heat of the boiler fights the damp draft of the lower gantries. Sulphur stings the back of your throat, and the low groaning of stressed bridge-iron vibrates straight up through the tread-plates into your boots.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance into the choking haze"
+   ]
+  },
+  "cf-3-053": {
+   "title": "The Smog Corridor",
+   "text": "You creep along an enclosed maintenance tunnel choked with toxic vapors and discarded railway debris. Dim orange signal-lamps flicker overhead, casting long, wavering shadows across rusted grease-drums and discarded coupling-pins. The air tastes of copper and burnt hair, urging you to choose your footing with utmost care. Forward paths diverge into deeper gloom, each offering its own hazard beneath the groaning weight of the viaduct.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry open the heavy floor hatch",
+    "Follow the wall toward the lower vents",
+    "Endure the leaking steam pipe directly",
+    "Confront the armored cargo convoy head-on"
+   ]
+  },
+  "cf-3-054": {
+   "title": "The Blocked Hatch",
+   "text": "Heavy iron ballast pins the square maintenance panel shut against the rising pressure from below. Rust flakes drift down like red snow as you wedge a pinch-bar into the warped seam and lean your entire weight against the shaft. The metal groans in protest, slowly sliding an inch to reveal a dark cavity smelling of old grease and dry biscuit-tins.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach down into the dark recess"
+   ]
+  },
+  "cf-3-055": {
+   "title": "Rations in the Rust",
+   "text": "Fumbling inside the narrow compartment, your gloved fingers brush against grease-wrapped parcels stashed by some forgotten gangers' shift. A tin of salt pork and a spare woollen muffler come free into your grasp, offering a welcome hedge against the chill of the viaduct. You tuck the provisions inside your jacket as the distant chuffing of a stranger's engine echoes through the iron ribs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the main corridor junction"
+   ]
+  },
+  "cf-3-056": {
+   "title": "Heaving the Sleeper",
+   "text": "Wedged tight between two buckled support girders, a massive iron railway sleeper blocks the only clear route to the lower inspection ladder. Muscles strain against the cold dead weight as you wedge your shoulder beneath the rusted beam and prepare to lift. Every sinew in your back twangs like a loose piano wire under the unbearable load.",
+   "check": "Lift the heavy iron sleeper",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-057": {
+   "title": "Strained and Bruised",
+   "text": "Pain flares hot and sudden across your lower back as the sleeper slips an inch, grinding your knuckles raw against the jagged edge of the plate. You stagger backward with a sharp gasp, clutching your bruised ribs while the acrid smog fills your smarting eyes. The delay costs precious minutes and leaves a dull, throbbing ache that settles deep into your bones.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl past the fallen barrier"
+   ]
+  },
+  "cf-3-058": {
+   "title": "The Lifted Beam",
+   "text": "With a sudden, tooth-rattling groan, the heavy iron beam shifts and rolls clear of the hatch with a hollow metallic clang. You catch your breath, wiping greasy sweat from your forehead with the back of a soot-stained sleeve. Tucked neatly beneath the displaced timber lies a heavy brass spanner bearing the punch-mark of the Gangers' Union.",
+   "check": "",
+   "grant": "Gangers' brass heavy spanner",
+   "exits": [
+    "Retrace your steps to the junction"
+   ]
+  },
+  "cf-3-059": {
+   "title": "The Iron Rung",
+   "text": "Acrid sulphur claws at your throat until spots dance behind your eyelids, threatening to pitch you into the dark beneath the iron plates. You clamp your teeth against the burn, forcing your ribs to expand in slow, agonizing pulls while your scorched fingers sweep the greasy brickwork of the pier. Blindly your knuckles strike cold iron, locating the riveted stiles of the narrow maintenance ladder bolted straight into the bridge's spine.",
+   "check": "You steady your breathing against the lung-burning fumes, risking blacking out to maintain focus and locate the hidden maintenance ladder.",
+   "grant": "",
+   "exits": [
+    "Climb upward through the chokesmoke toward the gantry."
+   ]
+  },
+  "cf-3-060": {
+   "title": "Steadying the Mind",
+   "text": "Vertigo coils in your stomach as the distant screech of grinding metal echoes up from the abyss beneath the viaduct. Your temples throb in time with the wheezing boilers, threatening to pull you down into a shivering panic as the toxic haze grows thicker. Closing your eyes against the stinging vapors, you force your lungs to take one slow, deliberate draw of the foul air.",
+   "check": "Fight the rising panic and focus",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-061": {
+   "title": "Shaken and Blind",
+   "text": "Black spots dance before your eyes and your knees buckle momentarily, sending you crashing hard against a steaming intake pipe. A sharp hiss of escaping steam sears your forearm, leaving a red, angry welt that throbs beneath your damp sleeve. You cling to the ironwork until the spinning world steadies, though the near-collapse leaves your nerves frayed to breaking point.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself toward the vent-ladder"
+   ]
+  },
+  "cf-3-062": {
+   "title": "A Handhold in the Smog",
+   "text": "Thick soot cakes your skin and the bitter vapors sear your chest, yet you keep your footing on the wet iron despite the dizzying void below. Your searching fingers close around a discarded brass inspection token left behind by a sympathetic toll-man, its rim notched with a secret rebate that bypasses the lower gate locks. This small wedge of salvaged metal offers a quiet passage through the lower arcades where the Baron guards rarely tread.",
+   "check": "",
+   "grant": "notched brass inspection token",
+   "exits": [
+    "Slip along the vaulted masonry toward the Smog Corridor."
+   ]
+  }
+ },
+ "missing": []
+}

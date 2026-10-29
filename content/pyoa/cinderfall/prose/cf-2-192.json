@@ -1,0 +1,117 @@
+{
+ "batch": "cf-2-192",
+ "sections": {
+  "cf-2-192": {
+   "title": "Ladder in the Wind",
+   "text": "Whistling gales tear across the ribbed iron plating of the boiler as you step out onto the swaying gantry. Below you, the Marrowbone puffs grey sulphur into the drifting dunes while the semaphore tower above stretches its rusted iron arms toward a leaden sky. Every handhold is slick with frozen grease and fine, biting grit that scours the skin. You grip the upright stanchion of the ladder, feeling the rusted rungs vibrate with the engine's distant thrum as the ash-storm gathers its full force around your ears.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb higher into the howling gale"
+   ]
+  },
+  "cf-2-193": {
+   "title": "Gantry in the Storm",
+   "text": "Jagged flakes of grey rime cling to your woollen collar as you hoist yourself another rung higher above the tender. The wind presses hard against your chest, trying to peel your fingers away from the freezing iron. Up here, high above the tracks, the vast expanse of the Cinder Steppe rolls away in monochromatic waves of ash and shale under a bruised, lowering firmament. You steady your breathing against the biting cold, eyeing the loose cable dangling from the upper pulley.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the swinging hemp line"
+   ]
+  },
+  "cf-2-194": {
+   "title": "Ascending the Shivering Iron",
+   "text": "Frost bites deep into your knuckles as you stretch your right hand out toward the swaying rope while the ladder lurches violently under a sudden gust of wind. The world drops away into a grey blur of churning ash and rusted iron spars below, testing the absolute limits of your nerve. You lock your jaw against the cold and steady your weight on the narrow rung, reaching out once more.",
+   "check": "Keep your nerve on the ladder",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-195": {
+   "title": "Slips in the Rime",
+   "text": "A vicious blast of wind strikes your shoulder mid-reach, knocking your knuckles hard against the iron housing and sending a jagged, white-hot pain shooting through your fingers. You lose your footing for a heart-stopping second, sliding a foot down the rungs before catching yourself with a bruised rib and a torn glove. The precious seconds tick away into the grey gale as you cling to the stanchion, panting heavily against the stinging ash.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the line with aching hands"
+   ]
+  },
+  "cf-2-196": {
+   "title": "Coil of Hemp",
+   "text": "You wrap your numb fingers firmly around the thick, fibrous coils of the hemp rope, securing the length against your belt however narrowly you managed the climb. The fibres are rough and dry against your frost-bitten skin, smelling faintly of tar and old salt from some forgotten warehouse down the line. It is a sturdy piece of gear, capable of hauling weight or lashing down a stubborn valve when the storm closes in for good.",
+   "check": "",
+   "grant": "stout hemp rope",
+   "exits": [
+    "Descend back to the warm deck"
+   ]
+  },
+  "cf-2-197": {
+   "title": "Signal Box Lock",
+   "text": "Heavy timbers creak under the relentless pressure of the wind as you shelter within the recessed alcove of the abandoned signal box. A coat of thick, grey dust covers the iron padlock on the heavy oak door, sealing its mechanism against years of neglect and blowing ash. You pull a thin steel wire and a small brass tension pick from your waistcoat pocket, tapping the frozen shackle to test the internal springs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Fit the pick into the keyway"
+   ]
+  },
+  "cf-2-198": {
+   "title": "Tumblers in the Rust",
+   "text": "Inside the iron housing, the rusted brass tumblers resist your delicate touch with a stubborn, unyielding grind that threatens to snap your thin wire. The wind howls against the warped window frames outside, rattling the glass panes while you listen closely for the faint, elusive click of the final pin falling into place. Every movement must be measured and precise in the gloom.",
+   "check": "Pick the frozen padlock mechanism",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-199": {
+   "title": "Jammed Shackle",
+   "text": "Your tension wire snaps with a sharp, dry ping inside the keyhole, leaving the broken steel wedged firmly in the mechanism and sealing the box tighter than before. Frustration flares hot in your chest as you hammer your gloved palm against the warped timber door in vain. The lost time weighs heavily upon you while the ash-storm whispers warnings across the rusted tin roof overhead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the stubborn latch apart"
+   ]
+  },
+  "cf-2-200": {
+   "title": "Briquettes and Leaves",
+   "text": "The heavy padlock finally gives way with a protesting screech, swinging wide to reveal a dry, sheltered interior untouched by the grey tempest outside. Neap-tide stacks of compressed coal briquettes fill the lower bin, alongside a rusted tin canister packed with fragrant dried tea leaves left behind by some long-departed signalman. It is a welcome hoard against the creeping chill of the steppe.",
+   "check": "",
+   "grant": "dry coal briquettes and tea",
+   "exits": [
+    "Return to the waiting engine"
+   ]
+  },
+  "cf-2-201": {
+   "title": "Copper Strands",
+   "text": "Inside the dim instrument shelter, the intricate network of brass terminals and faded cotton-wrapped wiring hangs in silent disarray. You draw a length of bright copper wire from your toolkit, stripping back the frayed insulation with your teeth to expose the clean, conductive metal underneath. The old telegraph equipment sits cold and dead upon the wooden desk, waiting for a spark of purpose.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Bridge the corroded terminal posts"
+   ]
+  },
+  "cf-2-202": {
+   "title": "Clicking Needle",
+   "text": "You wrap the copper strand securely around the primary binding post, pressing the second end against the auxiliary coil while listening for any sign of current. A faint, electric hum vibrates through the wooden chassis, followed immediately by the rapid, rhythmic clicking of the telegraph needle as it dances back and forth behind its cracked glass cover. The distant line remembers its duty in the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Translate the stuttering wire clicks"
+   ]
+  },
+  "cf-2-203": {
+   "title": "Current in the Wire",
+   "text": "A sudden surge of static crackles through the copper binding, sending a sharp, tingling shock up your forearms as you attempt to balance the delicate circuit resistance. The needle swings erratically between old rail codes while the insulation begins to smoke softly from an unexpected short in the aged wiring harness. You must steady your hands instantly to prevent the whole relay from burning out.",
+   "check": "Rewire the electric bell circuit",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-204": {
+   "title": "Sparks in the Relays",
+   "text": "A blinding flash of blue sparks leaps from the terminal block, scorching your knuckles and filling the small cabin with the acrid stench of melted shellac. The telegraph bell gives one violent, mournful clang before falling permanently silent, its copper coils fused into a useless lump of slag. You nurse your burned fingers in the dark, poorer by a length of wire but none the worse for the abrupt failure.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Salvage the functional wire remnants"
+   ]
+  }
+ },
+ "missing": []
+}

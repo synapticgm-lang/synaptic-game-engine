@@ -1,0 +1,70 @@
+@@SECTION cf-5-027
+TITLE: The Gantry Watch
+TEXT: Heavy iron blockhouses loom above the vaulted waterworks, casting long shadows across the grease-slicked platforms where grey-coated guards pace with fixed bayonets. Smoke coils lazily from steam vents, smelling of sulphur and stale oil. Below these high metal terraces, the lower stairs remain choked with restless crowds and patrolled checkpoints, sealing the approaches to the reservoir. You measure the distance between the sentry posts, weighing your options against the ticking storm clock overhead. // Every shadow offers a potential route forward, though each path demands a different toll in nerve and muscle. The upper passage beckons with quiet intimidation, a side corridor hides behind a nervous clerk's desk, and the heavy bulkhead doors wait for someone willing to force the issue through sheer weight of metal.
+EXIT 1: Step toward the nervous clerk
+EXIT 2: Shoulder past the armed barricade
+EXIT 3: Wrench the iron mounting bracket
+EXIT 4: Wait for the rising storm
+@@END
+@@SECTION cf-5-028
+TITLE: The Nervous Clerk
+TEXT: Paperwork rustles nervously beneath trembling fingers as you approach the elevated station office tucked behind the main gantry. The patrol sergeant watches from ten paces away, his hand resting heavily on the pommel of an iron truncheon while the pale-faced clerk inside the booth fumbles with ink-stains and ledger books. You keep your expression flat, projecting the dull authority of a man who belongs in these restricted vaults by right of schedule and soot-stained coat. // A brief nod satisfies the younger desk-worker's immediate doubts, prompting him to reach for an official stamp and a blank transit pass. The ink pad clicks into place with a dry, hollow snap that echoes over the distant rumble of the approaching ash-storm.
+EXIT 1: Slide the signed transit pass across the desk
+@@END
+@@SECTION cf-5-029
+TITLE: Ink and Iron Nerves
+TEXT: Cool air fills your lungs as the sergeant takes a slow step closer, his sharp eyes narrowing behind the tinted lenses of his watch-goggles to scrutinize the freshly stamped paper in your hand. Every muscle in your neck coils tight against the impulse to bolt or reach for a spanner, knowing that a single twitch will bring half a dozen grey-coats down upon your shoulders. You meet his suspicious stare without flinching, pitching your voice into a steady, flat drone that mimics the endless bureaucratic machinery of the Rail Barons. Time seems to stretch thin as the heavy silence hangs between you.
+CHECK: Maintain a steady, unblinking gaze
+@@END
+@@SECTION cf-5-030
+TITLE: A Fracture of Calm
+TEXT: Suspicion flares in the sergeant's eyes too late as a sudden draft catches the damp ink, smudging the forged seal across the bottom of the pass into a greasy purple smear. Heavy iron hands grab your shoulder with bone-crushing force, spinning you around against the steel bulkhead and bruising your ribs against a protruding rivet. They relieve you of the false papers with a sharp, mocking laugh, leaving you with a dull ache in your side and precious minutes squandered in the shadows of the watchtower. Still, the guards push you back toward the platform rather than the cells, giving you another chance to find a way through.
+EXIT 1: Slip back into the shifting platform crowds
+@@END
+@@SECTION cf-5-031
+TITLE: The Stamped Passage
+TEXT: However narrowly, the sergeant's sharp gaze drifts away as a distant whistle blows from the lower yards, drawing his attention back toward a commotion near the freight hoists. The clerk hastily drops the stamped transit pass onto the wooden counter, eager to clear his desk of trouble before the storm hits. You snatch the paper up before second thoughts can take root, pocketing the official token of passage that clears your path through the inner checkpoints.
+GRANT: Signed transit pass
+EXIT 1: Return to the gantry crossroads
+@@END
+@@SECTION cf-5-032
+TITLE: The Barricaded Stair
+TEXT: Iron boots ring sharply against the checkerplate steel as you charge the improvised barricade before the guards can level their heavy pikes. A sentry lunges forward, catching you a glancing blow to the ribs that drives the breath from your lungs in a hot, ragged gasp. Ignoring the sharp ache in your side, you throw your weight against the timber-and-iron hurdle, sending crates of spare fittings clattering across the walkway. // Amidst the sudden clatter and shouting, your hand brushes against a heavy brass key-ring dangling from an unattended hook on the bulkhead. You snatch the iron-ringed prize free just as boots scramble behind you.
+EXIT 1: Dash down the metal corridor
+@@END
+@@SECTION cf-5-033
+TITLE: Lifting the Iron Gate
+TEXT: Thick iron bars block the low drainage tunnel leading directly beneath the main reservoir foundations, rusted solid into their stone sockets over decades of neglect. You wedge your shoulder beneath the lowest crossbar, planting your boots firmly against the greasy concrete floor while the distant thunder of the ash-storm vibrates through the bedrock. Every muscle in your back strains against the freezing cold of the metal, your tendons singing with taut, agonizing tension as you prepare to lift the dead weight of the gate.
+CHECK: Heave the rusted iron gate upward
+@@END
+@@SECTION cf-5-034
+TITLE: The Crushed Hinge
+TEXT: Heavy iron slips from your sweat-slicked palms with a sharp screech of grinding scale, dropping the thick gate back into its channel with a bone-jarring thud. The sudden rebound wrenches your shoulder fiercely, leaving a dull, throbbing ache that radiates down your arm as you stumble backward onto the grit-strewn floor. Dust and ancient soot fill the confined space, coating your throat in a dry, bitter taste while you struggle to catch your breath. You stagger to your feet, bruised and nursing a pulled muscle, but the passage remains clear enough to crawl through.
+EXIT 1: Crawl through the low drainage gap
+@@END
+@@SECTION cf-5-035
+TITLE: The Heavy Iron Key
+TEXT: However narrowly, your muscles hold against the dead weight of the ironwork, and the rusted hinge yields with a sharp, echoing snap that shatters the silence of the dry culvert. The heavy gate tilts upward just enough for you to squeeze through into the inner vaults, leaving behind a deep scratch across your forearm and a prize clutched tightly in your fist. It is an old, heavy brass key, notched for the high service locks that only the senior engineers are supposed to carry.
+GRANT: Senior engineer brass key
+EXIT 1: Return to the gantry crossroads
+@@END
+@@SECTION cf-5-036
+TITLE: The Tool-Roll Vault
+TEXT: Metal screams against metal as you throw your full weight against the heavy wall-mounted bracket, snapping the cast-iron mounting pins like dry twigs. The reinforced cabinet door swings wide with a hollow clang, revealing a rich trove of equipment left behind by fleeing maintenance crews. You plunge your hands into the dark recess, your fingers closing around a thick leather tool-roll filled with heavy spanners, wire ties, and oil-soaked rags. // Footsteps echo heavily up the adjacent iron staircase, warning you that the noise has drawn unwanted attention from the patrolling gangers. You tuck the leather roll securely beneath your arm and move out before the corner can be turned.
+EXIT 1: Slip away down the lower gantry
+@@END
+@@SECTION cf-5-037
+TITLE: The Gantry Transition
+TEXT: High iron walkways stretch out over the yawning abyss of the water vaults like spiderwebs spun from soot and rivet-heads. Below, the great brass pipes of the Cinderfall reservoir pulse with a faint, rhythmic thrum that suggests the ancient machinery is waking up despite the drought. You step lightly across the open grates, keeping close to the shadowed wall where the steam lines hiss softly through cracked insulation. // A lone signal lamp flickers ahead, casting long, amber shadows across a heavy junction box marked with the insignia of the Rail Barons. The air grows noticeably colder here, smelling strongly of ozone and wet coal dust.
+EXIT 1: Approach the amber-lit junction box
+@@END
+@@SECTION cf-5-038
+TITLE: Breaking the Seal
+TEXT: Thick lead wire seals the inspection hatch of the junction box, stamped with the private crest of the Stationmaster-General to deter unauthorized tampering. You wedge the claw of your heavy spanner beneath the lead disk, planting your boots against the riveted frame and putting your entire upper body strength behind the leverage point. The metal housing groans under the strain, resisting your push with stubborn, unyielding friction while the storm clock strikes another heavy, hollow note from across the yards.
+CHECK: Pry open the sealed junction box
+@@END
+@@SECTION cf-5-039
+TITLE: The Snapped Claw
+TEXT: The tool slips off the greasy lead seal with a sharp metallic crack, barking your knuckles hard against the sharp edge of the iron casing. A hot trickle of blood mixes with the soot on your hand as you stumble back against the gantry rail, cursing softly in the dim amber light. The heavy junction box remains firmly locked, its lead seal mocking your effort while the lost time ticks away against the approaching storm. You suck on your bleeding knuckles, nursing the sharp sting as you look for another way to force the mechanism.
+EXIT 1: Press onward through the bitter cold
+@@END

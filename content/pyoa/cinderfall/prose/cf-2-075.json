@@ -1,0 +1,97 @@
+{
+ "batch": "cf-2-075",
+ "sections": {
+  "cf-2-075": {
+   "title": "Prophet's Cairn",
+   "text": "Charred railway sleepers stack high into a brooding spire of soot and ash, casting long, wavering shadows across the grey dunes. Cinder Prophets sway within the blistering heat, their robes stiff with salt and grease as they chant hymns to the purifying flame that devoured the Steppe. You pause near the edge of the pyre, feeling the dry wind whistle through the iron ribs of stalled tenders. Every path out of this smoky labyrinth demands a choice, whether you seek counsel among the zealots or haul obstacles from the track.\n\nSmoke stings your eyes while the storm clock ticks away precious minutes in your breast pocket. To the left, a narrow path winds directly toward the heart of the chanting monks where the heat beats like a hammer. Straight ahead, iron censers swing from rusted gantries, marking a route through the sputtering shrines. You might also consult a blind prophet for the secrets of the iron gates, heave an iron fire-basket clear of the cowcatcher, clear a collapsed timber crossbeam for the wandering monks, or swing your water-scoop into a shallow tank-car to cool the boiling engine.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the chanting monks directly",
+    "Pick a path past the smoking censers",
+    "Listen to the blind prophet",
+    "Clear the heavy iron basket",
+    "Move the collapsed timber crossbeam",
+    "Scoop grey water from a tank-car"
+   ]
+  },
+  "cf-2-076": {
+   "title": "Heat of the Pyre",
+   "text": "Waves of searing air ripple across your skin as you step closer to the towering cairn of charred sleepers. Cinder Prophets chant in low, rattling cadences, ignoring the blistering embers that drift down like black snow. Your boots crackle upon crusts of saltpetre while you steady your breathing against the suffocating sulphur fumes. The zealots watch you with unblinking, ash-dusted eyes, testing your resolve with every breath you draw in the furnace-wind. You must step forward now into the shimmering haze before the oppressive heat overcomes your senses entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step closer to the blazing shrine"
+   ]
+  },
+  "cf-2-077": {
+   "title": "Trial by Cinder",
+   "text": "Blistering air wraps around your throat like a hot iron collar, threatening to force a cough from your lungs and break your stance before the pyre. Sweat carves clean channels through the soot on your cheeks while the Cinder Prophets inch closer, their rhythmic chanting swelling into a steady, deafening roar. You lock your jaw against the searing gale, forcing your muscles to remain rigidly still despite the agony crawling across your skin. Every instinct screams at you to step back and shield your face from the blinding white glare of the core.",
+   "check": "Endure the furnace heat without flinching",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-078": {
+   "title": "Scorch and Scour",
+   "text": "Lungs burning and skin blistering, you stumble backward from the searing core with a harsh gasp that fills your mouth with dry ash. The Cinder Prophets murmur low condolences, their voices sounding like grinding stones as they watch you clutch your reddened forearms. You lose precious minutes scraping soothing mud from a cracked cistern just to cool the angry burns. The ordeal leaves a raw, pink scar across your wrist and a bitter taste of defeat, yet the Marrowbone still waits on the trembling rails nearby.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the smoky track"
+   ]
+  },
+  "cf-2-079": {
+   "title": "The Sealer's Tin",
+   "text": "Standing firm against the roaring wall of heat, however narrowly you managed to endure the blistering ordeal, you win the grudging respect of the Cinder Prophets. One elder steps forward through the swirling smoke and presses a heavy, grease-sealed tin of fire-clay into your blistered palm. The grey compound inside smells of crushed slate and boiled fat, perfect for patching a leaking boiler seam when the pressure mounts. You secure the heavy tin in your locker and turn back toward the waiting engine with a renewed sense of purpose.",
+   "check": "",
+   "grant": "heavy tin of fire-clay",
+   "exits": [
+    "Return to the central cairn"
+   ]
+  },
+  "cf-2-080": {
+   "title": "Smoke and Iron",
+   "text": "Rusted iron censers hang from crooked chains above the line, sputtering green-tinged flames that smell of burning pitch and old railway ties. You reach out with a leather-gloved hand to steady a swinging vessel before its searing rim strikes the side of a stalled coal tender. Ash flakes drift thickly through the air, settling upon your cap and shoulders like a shroud of fine grey dust. The mechanism of the hanging burner groans in protest, rusted joints binding together under layers of accumulated soot. You need to adjust the flow before the entire apparatus jams fast.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Adjust the smoking iron censer"
+   ]
+  },
+  "cf-2-081": {
+   "title": "The Censer Chain",
+   "text": "Heavy links clink against one another as you guide the smoking iron censer back into its proper alignment above the track. Sulphur smoke swirls around your wrists, stinging minor cuts and coating your skin in a greasy film of black soot. The ground beneath your boots vibrates with the distant, ghostly pulse of an oncoming train that never quite arrives. You wipe your brow with a soiled sleeve, leaving a dark smudge across your forehead while the air grows heavier still. A final adjustment remains before the mechanism runs true.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the final rusted pivot"
+   ]
+  },
+  "cf-2-082": {
+   "title": "Tallow and Grit",
+   "text": "Grime grinds into the brass joints of the smoking censer as you force the jammed regulating screw with a worn spanner. The metal screeches sharply against the heat, threatening to snap the internal pin and spill burning pitch across your boots. You apply steady pressure, feeling the tiny teeth of the gear slip and catch within the blackened housing. A single miscalculation will strip the thread entirely and freeze the apparatus solid in a cloud of choking smoke.",
+   "check": "Clear the jammed regulating screw",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-083": {
+   "title": "A Frozen Valve",
+   "text": "Metal screams in protest and the regulating screw shears clean off, showering your boots with sharp iron splinters and hot soot. You jerk your hands back too late, a jagged burr slicing open your thumb to leave a slow-beading crimson line across your knuckle. The censer lists dangerously to one side, spilling a foul-smelling stream of burning pitch onto the ballast below. You waste valuable time smothering the small grease fire with a handful of damp sand while your shoulders ache from the strain.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your tools and move on"
+   ]
+  },
+  "cf-2-084": {
+   "title": "The Tallow-Dipper",
+   "text": "Turning the regulating screw until the iron linkage runs smooth and true, however narrowly you averted a complete mechanical jam, you free the smoking censer. A Cinder Prophet nods in silent approval from the shadow of a stalled carriage and hands you a heavy, consecrated brass tallow-dipper. The small instrument bears ritual scorch-marks along its handle, perfectly balanced for ladling thick cylinder grease into the Marrowbone's steaming chest. You slip the dipper into your breast pocket and make your way back toward the waiting engine.",
+   "check": "",
+   "grant": "consecrated brass tallow-dipper",
+   "exits": [
+    "Return to the central cairn"
+   ]
+  }
+ },
+ "missing": []
+}

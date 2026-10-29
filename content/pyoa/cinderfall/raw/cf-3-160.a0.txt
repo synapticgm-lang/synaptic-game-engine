@@ -1,0 +1,54 @@
+@@SECTION cf-3-160
+TITLE: The Labyrinthine Siding
+TEXT: Riveted boxcars cast long, greasy shadows across the timber sleepers while plumes of white steam vent from rusted exhaust pipes overhead. Heavy boots crunch against grey gravel as Rail Baron patrols sweep the maze of tracks with brass lanterns, their voices echoing off corrugated iron walls. Every corner offers a choice between narrow gaps in the dead-end sidings and treacherous open stretches of ballast. // Slipping deeper into the rust-flecked labyrinth requires quick wits and a steady hand to avoid the sweeping beams of light. The low rumble of distant machinery vibrates through the soles of your boots, urging you to pick a path before the guards double back to seal the corridor.
+EXIT 1: Crawl beneath the stalled flatbed
+EXIT 2: Skirt the edge of the steaming vent
+EXIT 3: Dash past the sweep of the lantern
+EXIT 4: Wedge yourself between the grease-blacked cars
+@@END
+@@SECTION cf-3-161
+TITLE: The Sealed Carriage
+TEXT: Thick crusts of grey ash flake away from the iron latch as cold fingers wrap around the heavy padlock. Inside the stalled compartment, sealed crates of heavy machinery oil wait in the dimness, smelling of rendered lard and metallic salt. Working the iron pick into the frozen tumbler demands immense patience while the distant clank of patrol boots draws steadily closer along the permanent way. // The rusted shackle finally gives way with a dull, reluctant snap, swinging wide to reveal the dark interior and its valuable contents. Grasping a heavy tin of grease, you step back into the shadow of the gantry just as a pair of lantern-bearers sweep their light across the adjacent track.
+EXIT 1: Haul the grease toward the main line
+@@END
+@@SECTION cf-3-162
+TITLE: The Frozen Tumbler
+TEXT: Cold sweat beads on your forehead as the pick tip grates against jammed brass inside the frozen lock housing. Every subtle vibration through the wire tool speaks of compacted soot and decades of corrosive salt air settling into the mechanism. The footsteps of the Rail Baron patrol grow louder over the ringing steel, leaving mere seconds to force the tumbler before the beam sweeps across the carriage wall. // You lean your full weight into the pick, applying the final twist of leverage as the internal pins bind hard against the rusted cylinder.
+CHECK: Force the rusted padlock
+@@END
+@@SECTION cf-3-163
+TITLE: The Snapped Pick
+TEXT: A sharp metallic ping echoes off the iron siding as the delicate tip of your pick shears clean off inside the frozen tumbler. The lock remains stubbornly sealed, its mechanism jammed fast by the broken shard of steel and generations of impacted soot. A sudden shout from the corner of the gantry announces that the patrol has caught the sound, forcing you to scramble away into the ash-dune shadows empty-handed. // Lungs burning from the foul air, you nurse a bruised thumb where the slip caught you against the jamb, leaving the stubborn carriage behind as you retreat deeper into the maze.
+EXIT 1: Retreat into the smoky shadows
+@@END
+@@SECTION cf-3-164
+TITLE: The Greased Palm
+TEXT: The heavy brass shackle yields at last with a dry, protesting rasp, swinging open to reveal row upon row of sealed metal tins. You snatch a heavy jar of refined axle lubricant, tucking the cold tin deep inside your canvas coat against the biting draught of the viaduct. However narrowly you managed the trick, the quick-witted acquisition leaves you well-equipped for whatever friction lies ahead on the iron road. // A low whistle from the overhead gantry reminds you not to linger among the stalled freight, prompting a swift retreat back into the tangled heart of the siding.
+GRANT: Tin of axle grease
+EXIT 1: Return to the central junction
+@@END
+@@SECTION cf-3-165
+TITLE: The Steaming Tarp
+TEXT: Heavy canvas, stiffened with layers of dried coal-tar and greasy soot, droops low over the skeletal frame of an open mineral wagon. Sliding beneath the coarse folds brings an immediate choking wave of hot sulphur and damp wool, pressing you flat against the cold iron floor. Outside the coarse barrier, hobnailed boots crunch rhythmically over the ballast as the Rail Baron patrol halts just inches from your hiding place. // The heavy fabric radiates the dull, lingering warmth of a banked boiler, masking your silhouette while keeping the drifting ash from settling on your coat. You hold your breath, listening to the murmurs of the guards debating their shift rotation above the hissing steam.
+EXIT 1: Slide out beneath the opposite buffer
+@@END
+@@SECTION cf-3-166
+TITLE: The Guarded Spur
+TEXT: Creeping past the dangling brake-hoses of the mineral wagon, you emerge into a narrow alley between two stalled coal tenders. The air here tastes faintly of copper and stale vinegar, stirred only by the draft whistling through the high iron girders of the viaduct. Armed sentries pace the overhead gantry above, their long coats billowing in the bitter wind blowing off the ash-steppes. // Keeping low to the rusted floorplates, you scurry from shadow to shadow as the lantern light sweeps across the corrugated walls of the depot.
+EXIT 1: Skirt the edge of the coal tender
+@@END
+@@SECTION cf-3-167
+TITLE: The Suppressed Cough
+TEXT: Fine soot particles lodge deep in your windpipe, triggering a sudden, violent spasm that threatens to tear through your tight-lipped resolve. Pressing a gloved hand hard across your mouth, you fight the tickle with sheer force of will while the patrol commander pauses his patrol not three paces away. Every muscle in your neck strains against the urge to hack, your chest burning for want of clean air beneath the suffocating canvas. // You bite down hard on the inside of your cheek until the metallic taste of blood floods your tongue, holding the cough back at the very edge of failure.
+CHECK: Silence the sudden cough
+@@END
+@@SECTION cf-3-168
+TITLE: The Raucous Hack
+TEXT: A sudden, irrepressible cough tears through your clenched teeth, echoing loudly against the hollow iron floor of the mineral wagon. Heavy boots halt abruptly on the gravel outside, followed by the sharp click of a rifle bolt being drawn back in the gloom. You roll desperately out from beneath the tarp just as a heavy bayonet rips through the coarse canvas where your shoulder had rested an instant before. // Scrambling away on hands and knees into the choking soot-smoke, you leave behind a stray leather strap and a ragged breath, nursing a raw throat as you flee the immediate sector.
+EXIT 1: Scramble away into the smoke
+@@END
+@@SECTION cf-3-169
+TITLE: The Timely Hush
+TEXT: You swallow the rising phlegm with a grimace, forcing your chest to remain entirely still as the patrol leader taps his lantern against the wagon frame. The heavy boots resume their measured tramping, fading slowly away down the gravel path until only the hiss of the steam remains. However narrowly you avoided detection, the ordeal leaves your nerves strung tight and your throat raw from the caustic dust. // Sliding out from beneath the protective canvas, you slip unobserved back into the shifting shadows of the yard.
+EXIT 1: Step back into the junction
+@@END

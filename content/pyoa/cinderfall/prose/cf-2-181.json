@@ -1,0 +1,106 @@
+{
+ "batch": "cf-2-181",
+ "sections": {
+  "cf-2-181": {
+   "title": "The Smuggler's Hoist",
+   "text": "Heavy iron gears grind against their housing, protesting every inch of the lift as you work the jammed winch alongside the scarred woman. Grease smears your knuckles, mingling with the stubborn grit of the steppe until your hands feel cast from the same dark metal as the machine. With a sharp snap of releasing tension, the rusted arm swings clear, freeing the payload platform and earning a begrudging nod from your taciturn host. She slides a thick, flat bar of forged iron across the timber floor toward your boots. Grasping the heavy tool, you tuck it firmly beneath your coat, knowing it will make short work of any stubborn bulkhead doors ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide the iron pry-bar into your coat pocket"
+   ]
+  },
+  "cf-2-182": {
+   "title": "Wrenching the Iron Lift",
+   "text": "Frost bites hard into your bare palms as you throw your weight against the frozen crank-handle of the smuggler's hoist, straining to force the buckled teeth back into alignment. The rusted iron shudders violently under the sudden torque, throwing a cascade of bitter red sparks against your oilskin coat while the central axle groans under the strain. Every muscle in your shoulders burns as you fight to drive the slipping gear home before the mounting pressure strips the teeth entirely. Your fingers lock around the jagged metal edge, muscles trembling under the load at the very brink of mechanical failure.",
+   "check": "Force the jammed winch into place",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-183": {
+   "title": "A Bitter Toll",
+   "text": "Metal screams in protest as the crank-handle slips from your frozen grip, spinning backward with a brutal crack that catches the back of your knuckles and leaves a deep, weeping graze. Time bleeds away as you bind the torn skin with a dirty strip of rag, nursing a throbbing hand while the smuggler watches with a cold, dry smirk. The hoist remains stubbornly misaligned, forcing you to abandon the tricky repair and push onward through the biting cold without the tool you hoped to gain.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Turn away from the stubborn machinery and press on"
+   ]
+  },
+  "cf-2-184": {
+   "title": "The Hoist Unlocked",
+   "text": "Iron teeth grind together with a sudden, satisfying shiver of alignment as the rusted hoist surrenders to your clever leverage, clicking smoothly into its proper channel. Whether achieved with effortless grace or through sheer stubborn persistence against the biting wind, the mechanism now turns true and easy under your palm. The scarred woman tosses a heavy, soot-stained bar across the planks in silent acknowledgment of your handiwork, leaving you better equipped for the miles ahead.",
+   "check": "",
+   "grant": "Heavy iron pry-bar",
+   "exits": [
+    "Secure the heavy iron bar and move along"
+   ]
+  },
+  "cf-2-185": {
+   "title": "Ascending the Incline",
+   "text": "Heavy exhaust pulses from the chimney as you haul the brass regulator forward, coaxing the laboring pistons into a rhythmic, pounding roar that shakes the soot from the cab roof. The driving wheels bite deep into the steep, ash-choked incline, sending a blinding flurry of golden sparks dancing wildly into the gathering gloom of the low sky. Steam hisses from the cylinder cocks, wreathing the boiler in a thick, hot fog that smells of scorching oil and ancient coal dust. You lean out from the gangway, watching the dark silhouette of the tracks vanish into the grey waste as the engine fights its way upward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Keep the fire hot and watch the tracks ahead"
+   ]
+  },
+  "cf-2-186": {
+   "title": "The Signal Box",
+   "text": "Skeletal timber walls lean precariously over the frozen tracks, holding a single rusted semaphore arm jammed rigidly upright against the low, bruised sky. A narrow ladder ascends into the creaking gloom of the cabin base, offering a dry refuge from the biting ash-choked wind that sweeps across the plateau. Below the landing, various dark openings and mechanical housings invite inspection, while the main iron road stretches onward into the looming shadow of the viaduct.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb the ladder into the signal tower",
+    "Test your nerve on the storm-lashed rungs",
+    "Pick the padlock on the lower cabin door",
+    "Rewire the dead telegraph in the shelter",
+    "Kick open the rusted fire-door in the base",
+    "Fire the boiler and charge toward the viaduct"
+   ]
+  },
+  "cf-2-187": {
+   "title": "Greasing the Pulleys",
+   "text": "Cold metal bites through your gloves as you smear thick, black tallow into the frozen teeth of the cable pulleys atop the wooden gantry. The rusted mechanism groans and shudders under the renewed lubrication, slowly yielding to the steady pull of the weighted chains. With a sharp metallic sigh, the jammed semaphore arm drops down from its defiant upright posture, signaling a clear road through the grey waste. A friendly local station hand tosses a battered brass lantern up to the platform as payment for your labor.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Catch the brass lantern and descend the ladder"
+   ]
+  },
+  "cf-2-188": {
+   "title": "The Lowering Arm",
+   "text": "Thick tallow smears across the frozen brass axles as you work the greasy lever back and forth until the squealing iron falls silent. The stubborn cables uncoil with a dull metallic clatter, easing the heavy wooden semaphore down into its horizontal resting place. A cold wind rattles the corrugated tin roof overhead, carrying the dry taste of sulphur from the nearby wells. You loop the handle of a sturdy brass lantern over your arm and step back down to solid ground.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the brass lantern back to the engine"
+   ]
+  },
+  "cf-2-189": {
+   "title": "Freezing Pulleys",
+   "text": "Your fingers grow numb and clumsy as you attempt to pack hot tallow into the ice-locked bearings of the semaphore gantry while the wind howls across the steppe. The rusted cable housing refuses to turn, binding tight against the frozen spindle with every ounce of pressure you apply to the grease-gun. Frost forms thick and white across your knuckles, threatening to weld your skin to the cold iron if you slip another fraction of an inch. You brace your boots against the icy timber framework, putting your entire weight behind one final, desperate turn of the handle.",
+   "check": "Grease the frozen cable pulleys",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-190": {
+   "title": "A Frozen Slip",
+   "text": "A sudden gust of wind catches your shoulder, knocking your wrench against the iron housing and sending a sharp, jagged pain shooting through your frost-bitten fingers. The tallow tin slips from your grasp, tumbling down into the grey ash below as the jammed cable snaps back with a harsh metallic twang. You nurse your bruised hand inside your coat, shivering bitterly in the thin air while the semaphore remains stubbornly stuck in the air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Abandon the frozen pulleys and climb down"
+   ]
+  },
+  "cf-2-191": {
+   "title": "The Lantern Earned",
+   "text": "Smooth grease coats the internal drums at last, allowing the heavy iron cables to slide through their channels with a soft, sliding hiss that satisfies the ear. Whether through steady patience or frantic effort against the freezing gale, the semaphore arm drops smoothly into place, clearing the line for the Marrowbone. A heavy brass lantern is handed up from the shadows below as a token of quiet appreciation for your trouble.",
+   "check": "",
+   "grant": "Heavy brass lantern",
+   "exits": [
+    "Return to the engine with your new lantern"
+   ]
+  }
+ },
+ "missing": []
+}

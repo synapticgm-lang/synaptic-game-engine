@@ -1,0 +1,52 @@
+@@SECTION cf-2-042
+TITLE: The Silent Wire
+TEXT: Copper threads hang like dead serpents from the cross-arms of the telegraph pole, grey with generations of soot. Inside the rib-cage of the wrecked carriage, you strip back the brittle gutta-percha insulation with your pocket-knife, twisting the live ends together until a faint, rhythmic clicking begins to stutter through the tin receiver. The instrument remembers old messages from Ashgate, tapping out a steady confirmation that the line ahead is clear of derailed bogies. // Shifting your grip on the iron casing, you listen to the mechanical pulse fade and return, mapping the open miles between the stalled hulks toward the deeper shadow of the valley.
+EXIT 1: Trace the clicking iron wire
+@@END
+@@SECTION cf-2-043
+TITLE: Splicing the Circuit
+TEXT: Sparks spit from the frayed terminal box as you wedge your fingers into the cramped casing, trying to bridge the gap before the heavy iron roof-strut shifts its weight and crushes your knuckles against the timber sill. Sweat cuts clean channels through the soot on your forehead while the electrical surge hums low and angry through the copper strands, threatening to throw your hands back against the jagged bulkhead. You grit your teeth and press the stripped wire hard into the brass terminal block.
+CHECK: Bridge the sparking copper strands
+@@END
+@@SECTION cf-2-044
+TITLE: Scored by the Surge
+TEXT: A vicious blue arc leaps from the terminal box, burning a jagged red line across your forearm and sending a heavy shudder through the iron rib-work of the carriage. You stumble backward into the choking dust, clutching your scorched skin while the telegraph instrument falls silent once more, leaving only the dull roar of the ash-wind outside. The delay eats precious minutes from the storm clock, and the stinging burn leaves a stiff, throbbing reminder of how easily the road breaks those who rush it.
+EXIT 1: Crawl back to the running board
+@@END
+@@SECTION cf-2-045
+TITLE: The Tapped Message
+TEXT: Your fingers hold the copper firm until the screw bites home, locking the connection against the vibration of the steppes and securing a steady, faultless pulse that tells you the block ahead is clear. However narrowly you manage it, the wire yields its secret, leaving behind a slim brass adjuster-key dropped by some long-dead linesman years ago. It slips easily into your breast pocket, cold and heavy with the promise of future access.
+GRANT: A brass adjuster-key
+EXIT 1: Return to the engine deck
+@@END
+@@SECTION cf-2-046
+TITLE: Sealing the Vent
+TEXT: Steam hisses from the fractured pipe-joint like an angry adder, filling the dim service alcove with blinding white mist that smells of boiled grease and old scale. Wrapping layers of sticky asbestos tape around the weeping metal, you haul the copper wire tight with your pliers until the pulsing leaks choked into silence. The repaired line holds firm against the rising pressure, steadying the gauge needle as the engine thrums beneath your boots.
+EXIT 1: Secure the copper binding wire
+@@END
+@@SECTION cf-2-047
+TITLE: Assessing the Gauge
+TEXT: Pale light filters through the grease-filmed glass of the side window, illuminating the spare pressure dial resting on a discarded parts rack inside the rusted tool locker. You lift the brass-rimmed instrument, wiping away a thick crust of grey ash to test the internal spring with a gentle prod of your thumb. It ticks with a clean, healthy resonance that promises reliable readings when the storm closes in over the lower cuttings.
+EXIT 1: Stow the spare pressure gauge
+@@END
+@@SECTION cf-2-048
+TITLE: Bracing the Hot Line
+TEXT: Boiling water spits from the fracture as you struggle to slip the split-collar clamp over the vibrating pipe, your fingers slipping against the slick, superheated metal in the cramped gloom. The entire junction shudders violently with every stroke of the eccentric rod, threatening to blow the temporary patch wide open before the locking bolts can bite into the copper wall. You throw your weight against the wrench, muscles straining against the sudden rush of scalding steam.
+CHECK: Clamp the screaming steam line
+@@END
+@@SECTION cf-2-049
+TITLE: Scalded and Spent
+TEXT: A sudden surge of pressure blows the clamp askew, blasting a stinging cloud of hot mist across your knuckles and leaving a angry red scald that throbs with every beat of your heart. You jerk your hand back with a sharp intake of breath, watching the precious steam vent uselessly into the ballast while the engine coughs and loses a fraction of its forward momentum. The delay costs you dear in water and patience, adding another bitter weight to the journey.
+EXIT 1: Wipe the steam from your eyes
+@@END
+@@SECTION cf-2-050
+TITLE: The Quiet Siding
+TEXT: Your wrench turns the final nut home, locking the copper sleeve tight and reducing the angry hiss to a faint, orderly whisper that satisfies the engine's iron heart. However narrowly you avoid disaster, the repair holds, and tucked behind the old parts rack you uncover a forgotten switch-lever pointing toward an overgrown timber spur that leads away into the silent ash-dunes. It is a quiet, empty place where a man could simply drop his fire-shovel and let the roaring world pass him by.
+GRANT: A forgotten spur map
+EXIT 1: Climb back onto the footplate
+@@END
+@@SECTION cf-2-051
+TITLE: Dropping the Canvas
+TEXT: Outside the cab, the grey horizon dissolves into a howling wall of fine volcanic grit that scours the brass handrails with a high, abrasive whistle. You pull the heavy canvas drop-curtains down along the cab frame, lashing the hemp ties fast against the wind while the injector valves begin to sputter and choke on the blowing ash. The engine stumbles in its stride, swallowing the foul air as you work the lubricator pumps by touch alone in the sudden, yellow-tinted gloom.
+EXIT 1: Push forward into the storm
+@@END

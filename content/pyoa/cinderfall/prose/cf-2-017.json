@@ -1,0 +1,117 @@
+{
+ "batch": "cf-2-017",
+ "sections": {
+  "cf-2-017": {
+   "title": "Crust and Copper",
+   "text": "Thick yellow incrustations choke the main intake line, hardening into brittle mineral glass that threatens to starve the boiler of moisture entirely. You crouch on the rocking running plate with a short brass chisel, chipping away at the calcified sulfur deposits while the Marrowbone groans beneath your boots. Every strike sends sharp, acrid flakes stinging against your cheeks and into your hair, tasting of old matches and wet earth.\n\nThe grey expanse stretches out on all sides under the low, bruised sky, offering no shelter from the bitter wind that carries the scent of distant ash-dunes. You wipe your streaming eyes with a soot-stained sleeve and reach down to test the heavy valve-wheel, feeling it grind stubbornly against its seat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clear the stubborn mineral crust"
+   ]
+  },
+  "cf-2-018": {
+   "title": "The Caking Valve",
+   "text": "Fine sulfur dust coats the exposed copper fittings in a powdery yellow pall, sticking thick to your sweating palms as you grip the wrench. The valve resists every turn, rusted solid by years of acrid steam leaks and baking desert heat from the low wastes. You throw your weight against the long iron handle, feeling the metal bite hard into your calloused palms while the engine coughs a cloud of grey exhaust.\n\nA sudden hiss of released pressure whistles past your ear, smelling sharply of rotten eggs and boiled metal. The crust is breaking free in jagged shards, exposing the bright, scarred brass underneath.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wrench the rusted intake clear"
+   ]
+  },
+  "cf-2-019": {
+   "title": "Fighting the Seized Iron",
+   "text": "Muscles strain against the unyielding metal as you wedge your boot-heel into the mounting bracket and pull back with every ounce of power in your shoulders and spine. The seized valve refuses to budge, holding fast while the pressure needle in the cab ticks dangerously toward the red line of warning. You lean harder into the lever, your breath hissing through clenched teeth as the frame of the Marrowbone shudders in response to your desperate, straining effort.",
+   "check": "Heave against the jammed valve",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-020": {
+   "title": "Strained Muscle and Steam",
+   "text": "The wrench slips with a sharp metallic shriek that sets your teeth on edge, sending you stumbling backward against the hot boiler casing. A searing scrape burns across your knuckles, leaving a dark red line that beads quickly through the grey soot on your skin. You catch your breath against the pain, pressing your bleeding hand into your trousers as the engine settles back into its steady, exhausted rhythm. Valuable minutes have slipped away into the empty waste, and your knuckles throb with a dull, persistent ache that will stay with you long after the journey ends.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tend your raw knuckles and press on"
+   ]
+  },
+  "cf-2-021": {
+   "title": "The Pure Reserve",
+   "text": "With a sharp, cracking snap, the yellow crust shatters away from the housing, leaving the intake spinning freely under your grip just as the danger passes, however narrowly. A hidden latch within the housing clicks open, releasing a small, leather-strapped flask of clear distilled water that has been sealed against the sulfur fumes since the old days. You lift the cool metal container away, pocketing it alongside your tools as a precious shield against the dry ash of the steppes.",
+   "check": "",
+   "grant": "sealed flask of distilled water",
+   "exits": [
+    "Return to the steaming sulfur sinks"
+   ]
+  },
+  "cf-2-022": {
+   "title": "Sinking Ballast",
+   "text": "The steel rails tilt ominously toward a patch of soft grey silt where the track-bed has dissolved into fine, shifting ash. You drop from the cab with a heavy iron shovel in your grip, wading into the loose grey dust to dig deep beneath the sleepers before the weight of the locomotive pulls the wheels off the iron line entirely. Heavy stones and chunks of slag must be hauled from the tender and crammed back into the trench by hand.\n\nThe work is endless and heavy, each shovel-load disappearing into the grey void until you wedge a solid length of rusted iron firmly beneath the tilting rail-joint to hold the weight.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the sagging rail bed"
+   ]
+  },
+  "cf-2-023": {
+   "title": "Shoveling the Sinking Grey",
+   "text": "You heave heavy iron plate and broken stone into the slurry beneath the ties, driving your shovel down with frantic urgency as the engine tilts further toward the sulfur pool. The ground shifts treacherously under your boots, threatening to slide away and drag you down into the warm, bubbling mire. You brace your legs wide against the sliding ash, heaving a massive block of basalt into place to shore up the rail before the whole embankment gives way beneath the heavy locomotive.",
+   "check": "Brace the sinking rail bed",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-024": {
+   "title": "The Slumping Embankment",
+   "text": "The shifting grey earth gives way entirely beneath your right boot, plunging your leg knee-deep into the warm, sulfurous sludge before you can catch yourself. You haul yourself out with a breathless heave, leaving your boot stuck deep in the mire and your shin scraped raw against jagged ballast stone. The engine sits crooked now, canted heavily to one side on the uneven track, costing you precious time and leaving a dull, throbbing ache in your bruised limb as you limp back to the deck.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back onto the tilting deck"
+   ]
+  },
+  "cf-2-025": {
+   "title": "The Iron Wedge",
+   "text": "Your frantic shoveling wedges the heavy basalt blocks into the mud just in time, holding the track steady against the immense weight of the Marrowbone, however narrowly. Deep in the ballast bed, your boot strikes something solid and metallic, buried beneath decades of cinders and old ballast. You pull free a heavy, rusted iron wedge, perfectly shaped for tightening loose tender couplings when the vibrations start shaking the coal car apart.",
+   "check": "",
+   "grant": "rusted iron tender wedge",
+   "exits": [
+    "Return to the steaming sulfur sinks"
+   ]
+  },
+  "cf-2-026": {
+   "title": "The Vapour Peddler",
+   "text": "A hooded figure crouches behind a rusted coal hopper half-buried in the ash dunes, watching your approach with dark, calculating eyes. Empty glass bottles dangle from their belt, clinking softly against one another like dry bones in the wind. You slow your pace, keeping your hands in plain sight while trading slow, measured nods with the scavenger who knows every trick of the low wastes.\n\nThey reach into their ragged coat and produce a small, greasy leather pouch tied with sinew, muttering about the high cost of grease in a world made entirely of dry bone and burnt wood.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the hooded ash scavenger"
+   ]
+  },
+  "cf-2-027": {
+   "title": "The Hollow Bargain",
+   "text": "Yellow vapors swirl around the base of the abandoned hopper car, blurring the scavenger's silhouette into a shifting grey phantom against the dunes. You offer a handful of heavy iron washers from your kit, holding them out flat on your palm so the metal catches the pale, brassy glare of the low sun. The peddler tests the weight of the iron with a grey fingernail, nodding slowly as they slide the pouch across the rusted rail toward your boots.\n\nIt smells faintly of rendered mutton and sweet resin, exactly what the groaning valve gear needs if you are to stop the shrieking metal from seizing up in the dry heat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the sweet tallow pouch"
+   ]
+  },
+  "cf-2-028": {
+   "title": "Outwitting the Salt-Ghost",
+   "text": "You tap the side of the brass oil-can against the rail, feigning a sudden, urgent interest in the pressure gauges back on the locomotive to trick the cautious trader into showing their hand. The scavenger hesitates, half-stepping back into the yellow fog before realizing your ruse, their narrow eyes narrowing further in silent estimation of your wits. You step closer before they can retreat into the dunes, cutting off their escape route along the abandoned string of carriages.",
+   "check": "Outsmart the wary ash scavenger",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-029": {
+   "title": "The Slippery Trade",
+   "text": "The scavenger slips through the dense sulfur vapors like smoke between your fingers, vanishing into the maze of abandoned carriages before you can close your hand around the pouch. You find only a greasy rag left behind in the dirt, smelling faintly of rendered fat and old regret. The loss costs you valuable time in the gathering gloom, leaving you empty-handed and listening to the mournful whistle of the wind through the skeleton trains.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return empty handed to the engine"
+   ]
+  }
+ },
+ "missing": []
+}

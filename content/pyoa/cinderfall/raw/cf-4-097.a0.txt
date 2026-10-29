@@ -1,0 +1,55 @@
+@@SECTION cf-4-097
+TITLE: The Signal Wire
+TEXT: Copper threads gleam in the dim lantern-light where the cable runs beneath the rotting floorboards. Following the insulated line with careful fingers, you uncover a heavy dead-man's switch bolted firmly to an old explosive detonator. The mechanism is rusted with age yet remains fully wired into the track circuit. Slipping a sturdy length of insulated copper wire from the terminals into your pocket, you leave the dangerous trigger behind in the shadows.
+EXIT 1: Trace the remaining cable into the dark
+@@END
+@@SECTION cf-4-098
+TITLE: Testing the Line
+TEXT: A sudden metallic click echoes through the subterranean chamber as your boot grazes a hidden trip-wire connected to the detonator. The spring-loaded striker begins to pivot with alarming speed toward the percussion cap. Your hand darts toward the sensitive wiring harness in an instant attempt to rip the live connection free before the spark catches the charge.
+CHECK: Yank the live wire free
+@@END
+@@SECTION cf-4-099
+TITLE: A Close Shave
+TEXT: The spark leaps an instant too soon, setting off a muffled detonation that sends a shower of hot grit and jagged splinters across your shoulders. A sharp piece of shrapnel grazes your forearm, leaving a jagged red line that begins to seep dark blood onto your sleeve. Coughing in the dense, sulfurous haze, you drag yourself clear of the wreckage and press onward through the gloom.
+EXIT 1: Push past the smoking debris
+@@END
+@@SECTION cf-4-100
+TITLE: Insulated Prize
+TEXT: Quick fingers catch the live wire and snap the copper strands just as the striker hammers against empty iron. Breathing heavily in the acrid air, you pocket the severed length of heavy-duty cable, knowing its thick rubber shielding will prove invaluable for emergency repairs. The narrow escape leaves your heart pounding, but the prize is secured safely in your coat.
+GRANT: Heavy insulated copper wire
+EXIT 1: Return to the gangers camp
+@@END
+@@SECTION cf-4-101
+TITLE: The Iron Barrier
+TEXT: Heavy steel sleepers lie piled across the permanent way in a jagged barricade blocking all further progress down the cutting. Gripping the cold metal with both hands, you wedge a heavy claw-bar beneath the baseplate and throw your full weight into the leverage. The rusty bolts groan in protest before the steel wall gives way with a resounding crash.
+EXIT 1: Haul the claw-bar through the breach
+@@END
+@@SECTION cf-4-102
+TITLE: Heaving the Wall
+TEXT: The massive stack of interlocking sleepers shifts unpredictably, threatening to slide downward and pin you against the damp masonry of the tunnel wall. Bracing your boots against the ballast, you strain every muscle to keep the falling iron from crushing your chest while your fingers search for a safer handhold.
+CHECK: Shove the iron barricade aside
+@@END
+@@SECTION cf-4-103
+TITLE: Crushed Ambition
+TEXT: The heavy steel beam slips from your aching grasp, pinning your left leg beneath its jagged weight in the choking dark. Freeing yourself requires a frantic, painful struggle that leaves your shins bruised and your uniform torn to shreds. You limp away from the collapsed heap with a fresh ache in your bones and precious minutes lost to the shadows.
+EXIT 1: Drag yourself past the wreckage
+@@END
+@@SECTION cf-4-104
+TITLE: Clean Breakthrough
+TEXT: Muscles strain to their absolute limit as the massive iron barrier finally tips forward and crashes onto the ballast. You wrench the heavy claw-bar free from the debris, slipping the dependable tool into your belt loop for future emergencies. The path ahead lies open at last, cleared by sheer grit and stubborn resolve.
+GRANT: Heavy iron claw-bar
+EXIT 1: Advance into the lower tunnel
+@@END
+@@SECTION cf-4-105
+TITLE: The Maintenance Spur
+TEXT: A towering stack of discarded coal-scuttles rattles violently as Locomotive No. 9 approaches the old maintenance spur. The rusted metal vessels begin to slide down the embankment in a noisy cascade, threatening to foul the pistons and block the track entirely. You scramble along the running board with a heavy iron poker, batting away bouncing buckets before they can wedge themselves beneath the driving wheels. The engine pants softly in the confined space, its brass fittings gleaming under the soot as you clear the final obstacle from the rails.
+EXIT 1: Continue toward the coal silo
+@@END
+@@SECTION cf-4-106
+TITLE: The Cinder Silo
+TEXT: A mountain of damp slack blocks the side-loading chute while a mechanical counter clicks away in the dark. The air smells heavily of wet sulphur and stale grease, thick enough to coat your tongue with bitterness. Shadows stretch long across the wooden decking where several potential paths branch out into the subterranean gloom.
+EXIT 1: Free the jammed hopper gate
+EXIT 2: Stand against the shifting slag
+EXIT 3: Calculate the coal-chute gravity
+EXIT 4: Proceed down the narrow basalt corridor
+@@END

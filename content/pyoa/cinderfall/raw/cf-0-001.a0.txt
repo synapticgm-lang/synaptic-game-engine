@@ -1,0 +1,61 @@
+@@SECTION cf-0-001
+TITLE: The Idling Marrowbone
+TEXT: Ash-grit rasps against the corrugated tin of the engine shed, settling over the grease-puddled floor where Locomotive No. 9 stands shuddering in the dark. You trace the raw brass of the Water Key resting inside its felt-lined cradle, heavy as a dead man's forearm, while the firebox groans with a low, hungry breath. Hesper Quill’s stool is tipped on its side in the dust, the driver's cap abandoned beside a cold mug of chicory. Outside, the storm clock's iron tongue hangs motionless, waiting for the first grey gusts of the season to strike the hollow gongs across the yard.
+EXIT 1: Climb up to the deck
+@@END
+@@SECTION cf-0-002
+TITLE: The Ashgate Yards
+TEXT: Stranded passenger carriages lean against rusted buffers like broken teeth, their velvet upholstery long since rotted into damp wool and grey mould. Smoke curls lazily from nearby shanties where gangers sharpen picks and argue over coal rations under a sky the colour of wet slate. Every moment you linger lets the firebox hunger grow, burning through precious slack-wax while the Rail Barons' auditors tick their ledgers in the signal box. You must settle your business in this soot-blanketed bowl before the steam pressure mounts to a dangerous shriek and forces your hand toward the open rail.
+EXIT 1: Search the empty union locker
+EXIT 2: Inspect the leaking injector nozzle
+EXIT 3: Trade with the water-seller
+EXIT 4: Question the nervous ticket-widow
+EXIT 5: Pull the heavy brass regulator
+@@END
+@@SECTION cf-0-003
+TITLE: The Union Locker
+TEXT: Rusted iron hinges shriek as you pry open Hesper Quill’s locker, stirring up a dry cloud of tobacco dust and old rail schedules. Inside, grease-stained logbooks lie piled beneath a heap of spare rags, their margins scrawled with cryptic notes about signal boxes that no longer exist on the company maps. A watchful union clerk lingers by the far doorway, arms crossed over a greasy canvas vest, his yellow eyes tracking your every reach in the gloom. You need to slip your fingers past his suspicious stare to find the spare valve hidden beneath the rubbish.
+EXIT 1: Slip past the union clerk
+@@END
+@@SECTION cf-0-004
+TITLE: The Union Locker
+TEXT: Rusted iron hinges shriek as you pry open Hesper Quill’s locker, stirring up a dry cloud of tobacco dust and old rail schedules. Inside, grease-stained logbooks lie piled beneath a heap of spare rags, their margins scrawled with cryptic notes about signal boxes that no longer exist on the company maps. A watchful union clerk lingers by the far doorway, arms crossed over a greasy canvas vest, his yellow eyes tracking your every reach in the gloom. You need to slip your fingers past his suspicious stare to find the spare valve hidden beneath the rubbish.
+EXIT 1: Search Hesper Quill's hidden notes
+@@END
+@@SECTION cf-0-005
+TITLE: The Clerk's Watchful Eye
+TEXT: Shadows stretch long across the wooden floorboards as you reach deep into the dark metal recesses of the locker, your fingers brushing against cold iron. The clerk steps forward from the doorway, his boots grinding loudly into the ash-grit, demanding to know what business you have prying into company property while Hesper is missing. You slide your hand toward the hidden compartment, timing your movement against his approach, trying to snatch the grease-caked spare valve before his heavy hand clamps down on your wrist.
+CHECK: Slip past the union clerk
+@@END
+@@SECTION cf-0-006
+TITLE: A Clash of Wits
+TEXT: The clerk catches your arm with a grip like a cold rail-clamp, shoving you back against the iron locker until the tin walls rattle in protest. He pockets the greasy spare valve with a dry laugh, muttering about thieves in the depot before turning his back to spit into the cinder-pit. You are left rubbing a bruised shoulder and nursing a sour temper, lighter by a valuable piece of hardware but wiser to the dangers of prying too openly in Ashgate. // The Marrowbone continues to idle outside, its boiler hissing through the safety valve as you make your way back onto the soot-dusted floorboards.
+EXIT 1: Return to the depot yard
+@@END
+@@SECTION cf-0-007
+TITLE: The Greasy Prize
+TEXT: Your fingers close around the cold iron of the spare valve just as the clerk’s heavy boots halt beside the locker, too late to stop the theft. You slide the heavy brass-threaded piece into your coat pocket, nodding politely to his scowl as you back away into the haze of the engine shed. However narrowly you managed the trick, the iron piece is yours now, coated in thick machine tallow and smelling faintly of coal-smoke and old ambition. // The Marrowbone waits outside, its rhythmic breathing calling you back to the deck.
+GRANT: greasy spare regulator valve
+EXIT 1: Return to the depot yard
+@@END
+@@SECTION cf-0-008
+TITLE: Beneath the Firebox
+TEXT: Heat rolls off the belly of the Marrowbone in thick, shimmering waves that taste of sulfur and boiled brass, stinging the back of your throat. You slide flat onto your back in the gritty ash beneath the ashpan, worming your way toward the weeping injector nozzle where hot water spits in angry, hissing jets. The copper pipe glows dull cherry-red in the gloom, vibrating with the immense pressure building in the boiler just inches above your face. You must work fast in the choking dark before a blown fitting scalds your skin.
+EXIT 1: Repair the weeping injector
+@@END
+@@SECTION cf-0-009
+TITLE: The Searing Iron
+TEXT: Sweat carves clean channels through the soot on your face as you maneuver the heavy spanner into the tight, scorching gap between the ashpan and the frame. The fitting refuses to turn, rusted solid by years of coal-tar and chemical residue from the lower steppe, while the dripping water hisses furiously against your leather gloves. You brace your shoulder against the cold steel of the chassis, throwing your weight into the wrench just as another surge of steam rattles the valves overhead.
+CHECK: Wrench the weeping injector tight
+@@END
+@@SECTION cf-0-010
+TITLE: A Bitter Cost
+TEXT: A sudden drop of scalding water strikes the back of your hand, tearing a raw red blister across your knuckles before you can jerk away into the ash. The wrench slips with a sharp ring against the iron frame, leaving the injector leaking a steady, hissing stream that eats away at your precious water reserves. You crawl out from beneath the engine coughing and clutching your burnt hand, knowing the repair will cost you dearly in sweat and lost steam before the journey is done. // The Marrowbone hums impatiently above you.
+EXIT 1: Return to the depot yard
+@@END
+@@SECTION cf-0-011
+TITLE: The Heavy Copper Wrench
+TEXT: Your muscles strain to their absolute limit until the rusted threads finally give way with a sharp, protesting screech that echoes off the tin roof. You crank the brass nut half a turn home, sealing the weeping joint tight against the pressure and plunging the undercarriage into a sudden, satisfying silence. However narrowly you avoided a scalded arm, you crawl out from beneath the engine clutching the heavy copper wrench used for the job, scarred by the heat but richer by a solid tool. // The Marrowbone waits, its boiler pressure steady at last.
+GRANT: heavy copper wrench
+EXIT 1: Return to the depot yard
+@@END

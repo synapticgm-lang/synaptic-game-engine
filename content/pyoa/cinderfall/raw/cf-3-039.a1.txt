@@ -1,0 +1,6 @@
+@@SECTION cf-3-047
+TITLE: The Lever's Release
+TEXT: You throw your weight against the jammed emergency release lever, trusting your shoulder to the biting friction of ungreased iron as the locked crane cables finally shudder and uncoil with a loud, metallic crack. A thick cloud of warm oil-smoke billows into your face, stinging your eyes, but the path ahead clears as the heavy swing-arm judders into its rest. You pocket a grease-stained brass token dropped by the operator in his haste, a private pass stamped with the seal of the Viaduct Watch that should buy your silence at the lower toll-gates.
+GRANT: Viaduct Watch pass
+EXIT 1: Step through the drifting chemical fog
+@@END

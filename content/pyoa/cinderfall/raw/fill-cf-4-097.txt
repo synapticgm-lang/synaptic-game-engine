@@ -1,0 +1,14 @@
+@@SECTION cf-4-104
+TITLE: The Iron Barricade
+TEXT: Iron splinters scream against your leather gloves as you heave the warped rails upward, your muscles singing with the strain of old steel and ancient soot. You wrench the final beam clear of the mouth, tossing it aside to ring hollowly against the ballast. Slipping a heavy claw-bar from the rack, you secure it at your belt for whatever waits in the gloom ahead. // The tunnel breathes a lungful of damp grease and coal-gas against your face, welcoming you into the dark.
+GRANT: heavy claw-bar
+EXIT 1: Clamber back onto the footplate
+@@END
+@@SECTION cf-4-106
+TITLE: The Cinder Silo
+TEXT: Mountains of damp slack choke the side-loading chute while a mechanical counter clicks away like a nervous beetle in the dark. The air tastes of sulphur and old money, heavy with the weight of unburned potential resting against the rusted iron plates. Every surface is coated in a greasy sheen of grey dust that settles over your boots and quietens the scrape of your shovel. // A dull rhythmic thumping vibrates through the basalt floor from somewhere deeper in the network, offering three distinct paths through the shadow while the single narrow rail beckons straight ahead.
+EXIT 1: Strike the jammed hopper gate with the hammer
+EXIT 2: Stand firm against the shifting avalanche of slag
+EXIT 3: Calculate the balance of the coal-chute carefully
+EXIT 4: Follow the narrow rib of basalt-flanked steel
+@@END

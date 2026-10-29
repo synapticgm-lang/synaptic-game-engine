@@ -1,0 +1,5 @@
+@@SECTION cf-4-089
+TITLE: The Fishplate Bolts
+TEXT: Rust has fused the joint-plates into a stubborn, scabby ridge that defies the wrench until you tap the shanks with a cold chisel, sending up tiny sparks of sulfur. One by one, the square-headed bolts yield with a dry, metallic shriek, clattering into the palm of your hand still greased with old graphite. You lift the heavy fishplate away, setting it aside on the ballast, and slide a fresh box of hardened steel track bolts from the wedge-trench into your canvas kit, feeling their satisfying, cold weight. // The line ahead lies clear of the iron barricade, presenting a narrow corridor of light between the soot-stained retaining walls.
+EXIT 1: Haul the kit aboard and push forward into the cut.
+@@END

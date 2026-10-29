@@ -1,0 +1,124 @@
+{
+ "batch": "cf-1-154",
+ "sections": {
+  "cf-1-154": {
+   "title": "The Coal Chute",
+   "text": "Iron groans against rusted pivot-plates as you throw your entire weight into the swinging bar, muscles straining against the bitter chill of the yard. With a sudden, jarring slide, the massive coal-chute clears the obstruction and swings back into its proper seating above the tender deck. Black dust rains down into your eyes, stinging sharply, but the bunker is brimming once more with jagged fuel for the long climb ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pulling the heavy iron latch tight"
+   ]
+  },
+  "cf-1-155": {
+   "title": "The Steam Header",
+   "text": "Kneeling on the vibrating floor-plates, you press raw palms against the hissing joint until you locate the exact hairline fracture venting live steam. Wrapping thick folds of asbestos tape around the copper pipe, you clamp the metal collar down hard with a spanner, securing the seal against the rising pressure. The shriek of escaping vapor drops to a steady, rhythmic thrum as the boiler regains its full, surging power.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Securing the valve with a wrench"
+   ]
+  },
+  "cf-1-156": {
+   "title": "The Fallen Beam",
+   "text": "Splintered timber pins the old water-seller against the side of a stranded carriage, his breath coming in shallow, rattling gasps amid the drifting soot. You wedge your shoulder beneath the heavy oak balk, gritting your teeth as splinters bite through your canvas coat, and heave upward with all your strength. The timber rolls clear into the ash with a dull thud, freeing the coughing man to clutch a grateful hand to your sleeve.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Helping the dazed merchant up"
+   ]
+  },
+  "cf-1-157": {
+   "title": "The Drunk Track-Hands",
+   "text": "Stacks of empty grease-tins rattle around the stove while the off-duty gangers argue loudly over cheap spirits and missing rations. You lean against the damp bulkhead, sifting through the boasts and hollow lies with a cool eye until a specific name cuts through the din. The mention of a clandestine ledger behind the depot office points straight toward where Hesper traded extra briquettes before vanishing into the smoke.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away into the yard shadows"
+   ]
+  },
+  "cf-1-158": {
+   "title": "The Fallen Beam",
+   "text": "Splintered timber pins the old water-seller against the side of a stranded carriage, his breath coming in shallow, rattling gasps amid the drifting soot. You wedge your shoulder beneath the heavy oak balk, gritting your teeth as splinters bite through your canvas coat, and heave upward with all your strength. The timber rolls clear into the ash with a dull thud, freeing the coughing man to clutch a grateful hand to your sleeve.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leaving the merchant to catch breath"
+   ]
+  },
+  "cf-1-159": {
+   "title": "The Jammed Coupling",
+   "text": "Rust and old grease lock the heavy iron jaw of the vestibule hitch, refusing to yield to ordinary kicks or curses. You wedge a cold chisel into the seized knuckle and strike it hard with a heavy hammer until the rusted pin shears clean away. The ancient cargo truck drifts back a few inches, releasing the trapped coupling and revealing a stack of dry briquettes ready for hauling.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hauling the dry briquettes aboard"
+   ]
+  },
+  "cf-1-160": {
+   "title": "The Spare Wheel-Set",
+   "text": "Heavy cast iron sits skewed across the dual-gauge rails, blocking the workshop spur with dead, unyielding weight. You wrap your calloused hands around the axle-tree, planting your boots firmly in the wet ballast, and strain until the veins stand out like cordage on your neck. With a metallic shriek, the massive wheel-set jumps back onto the service track, drawing low murmurs of approval from the union stokers watching from the shed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Nodding back to the watching crew"
+   ]
+  },
+  "cf-2-001": {
+   "title": "Out to the Steppe",
+   "text": "Locomotive No. 9 clears the last switch-points of Ashgate and stumbles out onto the endless grey expanse of the Cinder Steppe. Low, bruised clouds press down upon the horizon where ash-dunes roll away into the soot-stained distance like frozen waves. The rails stretch thin and straight ahead into the gathering gloom, losing themselves in a landscape that swallows sound and color alike.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Setting the throttle further forward"
+   ]
+  },
+  "cf-2-002": {
+   "title": "The Dead Saloon",
+   "text": "A burned-out passenger carriage serves as a makeshift camp where stranded gangers trade old stories for grease-rags and warm tea. The rusted ribs of the carriage frame arch overhead like the skeleton of some iron beast, sheltering huddled figures who watch your approach with weary, cautious eyes. Piles of discarded scrap iron and empty oil drums clutter the frozen ballast around the makeshift doors, blocking the bitter wind off the dunes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step inside the rusted carriage frame",
+    "Listen to the coughing tales near the stove",
+    "Pry open the locked floor-locker quietly",
+    "Tend the sputtering boiler valves outside"
+   ]
+  },
+  "cf-2-003": {
+   "title": "The Card-Playing Gangers",
+   "text": "Heavy wool coats and greasy caps huddle close around a upturned packing crate where greasy cards slap against the wood. You keep your footsteps light upon the loose ballast, slipping past the edge of the glow cast by a smoking tallow lamp. A heavy tin of beef fat sits unguarded upon a crate-corner just within arm's reach, offering a welcome prize if your luck holds out.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach out for the grease tin"
+   ]
+  },
+  "cf-2-004": {
+   "title": "The Cunning Move",
+   "text": "You slide past the outermost circle of gangers while their eyes remain fixed upon a disputed hand of cards and a rattling mug of chicory. Your fingers stretch toward the tin of beef fat resting on the rough wooden crate, calculating the exact distance before someone looks up. A floor-board groans faintly beneath your boot-heel, drawing the sharp, sudden turn of a weathered face just inches away.",
+   "check": "Move silently past the card-players",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-005": {
+   "title": "The Clumsy Grab",
+   "text": "The tin slips from your sweating fingers with a sharp metallic clatter, spilling thick grease across the rough wooden slats of the crate. Heads snap up around the fire pit with low growls of irritation, hands dropping instinctively toward heavy spanners and iron pinch-bars. You catch the tin on the rebound and scramble backward through the low doorway, earning bruised knuckles and a chorus of curses from the angry gangers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat back to the engine deck"
+   ]
+  },
+  "cf-2-006": {
+   "title": "The Greased Palm",
+   "text": "Your fingers close around the cold tin just as a ganger shifts his weight, sliding away into the shadows before anyone can lift a warning hand. The prize sits heavy and useful in your pocket, smelling faintly of rendered tallow and old smoke. Stepping back out into the open air beside the track, you wipe your palms on your trousers and prepare for the next stretch of road.",
+   "check": "",
+   "grant": "A tin of beef fat",
+   "exits": [
+    "Climb back onto the running plate"
+   ]
+  }
+ },
+ "missing": []
+}

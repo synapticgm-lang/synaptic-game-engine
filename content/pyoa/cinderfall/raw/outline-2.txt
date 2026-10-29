@@ -1,0 +1,64 @@
+@@BEAT cf-2-001 | Locomotive No. 9 rumbles out of the junction onto the vast, grey expanse of the Cinder Steppe under a suffocating, low cloud.
+@@HUB cf-2-002 | The Dead Saloon | A burned-out passenger carriage serves as a makeshift camp where stranded gangers trade old stories for grease-rags.
+@@CHAIN cf-2-002/0 | Sneak past the card-playing gangers to swipe a tin of beef fat without starting a brawl, earning an extra ration of cylinder oil.
+@@CHAIN cf-2-002/1 | Listen to the old ganger's coughing tales of the Long Fire without losing your temper, gaining a warning about shifted rails ahead.
+@@CHAIN cf-2-002/2 | Prying open a rusted floor-locker while avoiding notice yields a heavy wrenching-bar that fits the tender hatch bolts.
+@@BEAT cf-2-015 | A sudden drop in boiler pressure forces you to shovel damp sulfur-coal into the roaring firebox while the engine bucks on uneven ballast.
+@@HUB cf-2-016 | Sulphur Sinks | Bubbling yellow pools hiss beside the tracks, steaming with acrid fumes that coat your teeth in bitter mineral dust.
+@@CHAIN cf-2-016/0 | Wrestling a stuck intake valve clear of sulfur crust prevents a blockage, earning a sealed flask of clean distilled boiler water.
+@@CHAIN cf-2-016/1 | Shoveling heavy gravel ballast to shore up a sinking rail bed secures a rusted iron wedge for tightening tender couplings.
+@@CHAIN cf-2-016/2 | Outwitting a scavenging trader hiding among the vapours lets you acquire a pouch of sweet-smelling tallow for the valve gear.
+@@CHAIN cf-2-016/3 | Mapping the subterranean sulfur vents by their rhythmic hissing grants a shortcut token through the hazardous steam-marshes.
+@@BEAT cf-2-036 | The storm clock on the backhead ticks louder as a wall of grey ash-dust rolls across the steppe, blotting out the distant horizon.
+@@HUB cf-2-037 | The Ribcage | Ribs of collapsed iron rolling stock form a twisted tunnel where the wind howls like a lost express train.
+@@CHAIN cf-2-037/0 | Bracing a sagging iron beam with your shoulder keeps the tunnel from collapsing, earning a sturdy brass grease-gun.
+@@CHAIN cf-2-037/1 | Rewiring a dead telegraph pole inside the wreck restores a faint clicking signal that reveals a clear block ahead.
+@@CHAIN cf-2-037/2 | Patching a blown steam line with asbestos tape and copper wire secures a spare pressure gauge for the cab roof.
+@@BEAT cf-2-051 | You drop canvas curtains over the cab windows as fine volcanic grit begins to scour the brasswork and choke the injector valves.
+@@HUB cf-2-052 | The Grey Bazaar | A sprawling marketplace built inside stalled goods wagons where desperate merchants barter scraps for water and tallow.
+@@CHAIN cf-2-052/0 | Staring down a nervous peddler trying to sell fake boiler compound wins his respect and a bag of dry pit-coal.
+@@CHAIN cf-2-052/1 | Trading a spare oil-can for information about washed-out culverts gains a hand-drawn parchment map of the lower rail.
+@@CHAIN cf-2-052/2 | Repairing a broken hand-cranked crane for a grateful vendor earns a heavy steel pinch-bar for unseating jammed switches.
+@@CHAIN cf-2-052/3 | Hauling crates of rusted scrap metal for a market boss secures an emergency voucher for fresh lubricating grease.
+@@CHAIN cf-2-052/4 | Spotting a disguised Rail Baron tax collector slipping through the stalls lets you lift a sealed transit permit from his coat.
+@@BEAT cf-2-074 | The engine shudders violently as the front bogie strikes a mound of hardened ash, threatening to lift the drive wheels off the rails.
+@@HUB cf-2-075 | Prophet's Cairn | A towering pyre of charred railway sleepers where Cinder Prophets chant hymns to the purifying flame of the Steppe.
+@@CHAIN cf-2-075/0 | Enduring the blistering heat of the prayer-fire without flinching wins the zealots trust and a heavy tin of fire-clay.
+@@CHAIN cf-2-075/1 | Adjusting the smoking iron censers to keep the holy fire burning earns a consecrated brass tallow-dipper for the cylinders.
+@@CHAIN cf-2-075/2 | Listening to a blind prophet recite the schedule of the dead secures a whispered password for the iron gates ahead.
+@@CHAIN cf-2-075/3 | Lifting a heavy iron fire-basket out of the way of the cowcatcher secures a bundle of dry kindling-wood.
+@@CHAIN cf-2-075/4 | Dragging a collapsed timber crossbeam away from the holy altar gains a debt of honour from the ragged wandering monks.
+@@BEAT cf-2-099 | You swing the water-scoop down into a shallow tank-car left on a siding, gulping precious grey liquid to cool the smoking firebox.
+@@HUB cf-2-100 | Siding Nine | A tangle of rusted sidings where abandoned carriages serve as a sprawling dormitory for displaced track maintenance gangs.
+@@CHAIN cf-2-100/0 | Realigning a jammed spring-switch with a cold chisel and hammer clears the track and earns a box of matches.
+@@CHAIN cf-2-100/1 | Fixing a broken water pump for the exhausted gangers secures two leather buckets of brackish cooling water.
+@@CHAIN cf-2-100/2 | Calming a fight between tired gangers over a shared oil-rag earns a warm cup of chicory and a spare wick.
+@@CHAIN cf-2-100/3 | Repacking a leaking steam gland on a stranded shunting engine gains a set of heavy brass spanners for your kit.
+@@CHAIN cf-2-100/4 | Stealing past the sleeping foreman to retrieve a stolen ledger reveals the hidden combination to the supply locker.
+@@BEAT cf-2-125 | A flock of soot-gulls startles from the carcass of an overturned tender, wheeling wildly into the ash-choked grey sky above.
+@@HUB cf-2-126 | The Water-Wagon | A massive rusted tender converted into a communal cistern guarded by armed men with thirsty, hollow eyes.
+@@CHAIN cf-2-126/0 | Patching a weeping rivet on the cistern wall with lead solder earns a full leather skin of sweet well water.
+@@CHAIN cf-2-126/1 | Enduring the armed guards hostile stares while waiting in line secures a heavy wooden mallet for driving track pins.
+@@CHAIN cf-2-126/2 | Trickling extra water into the camp boiler while no one looks lets you siphon off a double ration of drinking water.
+@@CHAIN cf-2-126/3 | Calibrating the cistern's brass float-valve earns a handful of copper washers and a tin of anti-friction grease.
+@@CHAIN cf-2-126/4 | Clearing a blocked drainage pipe beneath the iron tank gains a rusted but serviceable brass grease-gun.
+@@BEAT cf-2-150 | The storm clock clicks toward midnight as a low, metallic groaning echoes across the dunes from the direction of the viaduct.
+@@HUB cf-2-151 | The Iron Scriptorium | A derelict telegraph carriage where a lone clerk still records the passage of trains that never arrive.
+@@CHAIN cf-2-151/0 | Decoding a flickering telegraph message about patrol movements earns an advance warning of Rail Baron blockades.
+@@CHAIN cf-2-151/1 | Hauling a heavy crate of coal up the embankment secures a bundle of dry waxed paper for lighting fires.
+@@CHAIN cf-2-151/2 | Searching through dusty dispatch drawers yields an outdated schedule signed by the old Stationmaster-General herself.
+@@CHAIN cf-2-151/3 | Matching wits with the eccentric telegraph clerk wins a brass pocket-compass that points toward magnetic north.
+@@BEAT cf-2-170 | Locomotive No. 9 pants in the thin air as the gradient steepens toward the massive stone footings of the great viaduct.
+@@HUB cf-2-171 | Viaduct Foot | A shadow-drenched encampment tucked beneath the colossal stone arches where smugglers cache contraband goods.
+@@CHAIN cf-2-171/0 | Spotting the hidden trapdoor in the gravel under the arch lets you recover a hidden keg of refined lamp oil.
+@@CHAIN cf-2-171/1 | Negotiating passage with the suspicious smugglers gains a bundle of dry oak kindling and a dry rag.
+@@CHAIN cf-2-171/2 | Repairing the crank on a smuggler's hoist earns an iron pry-bar for opening stuck bulkhead doors.
+@@BEAT cf-2-185 | You heave the regulator forward as the wheels bite into the steep incline, sending sparks flying into the gathering gloom.
+@@HUB cf-2-186 | The Signal Box | A skeletal timber tower leaning precariously over the tracks with its semaphore arm jammed upright.
+@@CHAIN cf-2-186/0 | Greasing the rusted cable pulleys in the freezing wind lowers the jammed semaphore and earns a brass lantern.
+@@CHAIN cf-2-186/1 | Keeping your nerve while climbing the rickety ladder in the ash-storm secures a roll of stout hemp rope.
+@@CHAIN cf-2-186/2 | Picking the padlock on the signal box door reveals a stash of dry coal briquettes and tea leaves.
+@@CHAIN cf-2-186/3 | Rewiring the electric bell circuit with copper strands brings the dead telegraph back to clicking life.
+@@CHAIN cf-2-186/4 | Kicking open a jammed fire-door in the cabin base secures a heavy iron poker for the engine firebox.
+@@BEAT cf-2-210 | The engine crests the ridge with a victorious whistle, leaving the grey ash-stepped wilderness behind as the great viaduct looms ahead.
+@@DONE

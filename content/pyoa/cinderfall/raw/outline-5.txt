@@ -1,0 +1,35 @@
+@@BEAT cf-5-001 | Locomotive Nine smashes through the frost-rimed terminus gates, steam screaming from fractured valves as the grey walls of Cinderfall loom under the purple sky.
+@@HUB cf-5-002 | The Iron Basin | The frozen terminus yard lies choked with rusted rolling stock, and the heavy brass levers of the bypass junction are rusted solid in their oily beds.
+@@CHAIN cf-5-002/0 | You force the jammed switch with a heavy grease-bar, risking a scalded arm if the pressure backfires, and secure a spare copper gasket.
+@@CHAIN cf-5-002/1 | You heave your weight against the frozen ballast-crank, straining shoulder-muscles until the mechanism yields, and claim a heavy iron pinch-bar.
+@@CHAIN cf-5-002/2 | You steady your trembling hands against the chattering regulator, holding your breath through the steam-vent hiss, and recover a dry stub of tallow-wax.
+@@CHAIN cf-5-002/3 | You ignore the screech of tearing iron in the dark sheds, keeping your breathing slow and deliberate, and pocket a small tin of watchmaker's oil.
+@@CHAIN cf-5-002/4 | You tap the seized governor-valve with a brass hammer until the needle drops, averting a boiler blowout, and scavenge a bundle of braided wick.
+@@BEAT cf-5-026 | Armed rail-guards in grey greatcoats drop from the gantries, demanding the surrender of the Water Key under threat of immediate arrest.
+@@HUB cf-5-027 | The Gantry Watch | Heavily fortified blockhouses choke the high platforms above the water vaults, and the Baron's guards hold the lower stairs.
+@@CHAIN cf-5-027/0 | You stand firm under the cold stare of the patrol sergeant, keeping your voice level and polite, and secure a signed transit pass from a nervous clerk.
+@@CHAIN cf-5-027/1 | You shoulder past the barricade before the guards can level their iron poles, absorbing a sharp blow to the ribs, and snatch a heavy key-ring.
+@@CHAIN cf-5-027/2 | You wrench the iron mounting bracket from the wall with brute force, shattering the door-lock, and retrieve a heavy leather tool-roll.
+@@BEAT cf-5-041 | The sky darkens to the bruised purple of the approaching ash-storm, and the storm clock strikes three heavy notes against the echoing vaults.
+@@HUB cf-5-042 | The Sump-House | Sludge-choked drainage tunnels beneath the great reservoir roar with the sound of boiling runoff and escaping steam.
+@@CHAIN cf-5-042/0 | You hammer the jammed sluice-chain back onto its sprocket with a heavy brass spanner, risking a crushed knuckle, and win a heavy brass oil-can.
+@@CHAIN cf-5-042/1 | You wade into the scalding bilge-water while holding your nerve against the rising dark, and salvage a dry woollen muffler.
+@@CHAIN cf-5-042/2 | You crawl through the narrow drainage culvert while choking soot fills the air, maintaining your composure, and find a hidden cache of tallow candles.
+@@CHAIN cf-5-042/3 | You stare down the twitching pressure gauges in the dark pit, waiting for the needle to settle, and earn the silent nod of an old drainage-man.
+@@CHAIN cf-5-042/4 | You clear the choked intake grate with a hooked poker, avoiding a dangerous pressure surge, and keep a heavy iron shackle-bolt.
+@@BEAT cf-5-066 | A delegation of Cinder Prophets blocks the vaulted stair, chanting old hymns of ash and offering a charred wooden box said to hold Hesper's confession.
+@@HUB cf-5-067 | The Ash-Shrine | A hollowed-out passenger carriage serves as a smoky temple where hooded zealots burn railway timetables in iron braziers.
+@@CHAIN cf-5-067/0 | You listen patiently to the high priest's rambling sermon about the cleansing fire, keeping your temper in check, and receive a blessed charcoal amulet.
+@@CHAIN cf-5-067/1 | You rewire the smoking altar-lamp before the sparks catch the dry wreaths, burning your fingertips, and pocket a heavy brass crucifix-wrench.
+@@CHAIN cf-5-067/2 | You spin a clever tale about the engine's sacred duty to the line, convincing the elders, and obtain a pouch of dried bitter-leaf.
+@@CHAIN cf-5-067/3 | You repair the broken copper incense-burner with a quick tap of the hammer, preventing a panic, and secure a bundle of resinous pine-splints.
+@@BEAT cf-5-085 | The Stationmaster-General blocks the final bronze door to the Water Gate, her pocket-watch ticking like a death-clock in the quiet gloom.
+@@HUB cf-5-086 | The Final Platform | The high, vaulted terminus echoes with the whistle of the inbound storm, and every faction waits in the shadows for the outcome.
+@@CHAIN cf-5-086/0 | You patch a ruptured steam line on the emergency generator under a hail of falling soot, and secure a heavy brass cylinder-cock.
+@@CHAIN cf-5-086/1 | You weather the bitter reproaches of the ancient stationmaster without flinching, standing your ground, and win her heavy iron seal-ring.
+@@CHAIN cf-5-086/2 | You endure the freezing draft from the breached roof-lights while adjusting the main feed-valve, and retain an oiled leather ledger-cover.
+@@CHAIN cf-5-086/3 | You trick the remaining platform guards into checking the wrong siding with a false whistle-signal, and pocket a heavy silver pocket-watch.
+@@CHAIN cf-5-086/4 | You outwit the stationmaster's clerk with a swift reading of the old railway rule-book, and claim a signed bill of indemnity.
+@@BEAT cf-5-112 | The storm strikes the glass roof with the roar of a thousand shovels, plunging the terminus into absolute darkness save for the glow of the firebox.
+@@BEAT cf-5-121 | You stand before the bronze pillar of the Water Gate with the heavy brass key in your hand, ready to make the final choice for Cinderfall.
+@@DONE

@@ -1,0 +1,18 @@
+{
+ "beats": {
+  "cf-0-001": "You stand alone in the soot-choked engine shed of Ashgate, feeling the heavy iron thrum of the Marrowbone beneath your boots while Hesper Quill remains missing.",
+  "cf-0-021": "You haul the heavy brass regulator forward as the signals drop, dragging the Marrowbone out of the depot and onto the empty rails of the Ashen Steppe."
+ },
+ "hubs": {
+  "cf-0-002": {
+   "place": "The Ashgate Depot",
+   "situation": "You must prepare the idling locomotive and settle your business in the yards before the boiler pressure forces your hand."
+  }
+ },
+ "chains": {
+  "cf-0-002/0": "You search Hesper Quill's empty locker for hidden notes, testing your CUNNING against a watchful union clerk to secure a greasy spare regulator valve.",
+  "cf-0-002/1": "You crawl beneath the firebox to fix a leaking injector nozzle, testing your MECHANICS against the searing heat to earn a heavy copper wrench.",
+  "cf-0-002/2": "You negotiate with the water-seller for enough grey water to fill the tender, testing your CUNNING against his lies to acquire a skin of oil.",
+  "cf-0-002/3": "You question the nervous ticket-widow about who was seen leaving Hesper's office, testing your CUNNING against her silence to learn a secret signal-pass."
+ }
+}

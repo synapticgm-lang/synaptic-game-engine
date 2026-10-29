@@ -1,0 +1,122 @@
+{
+ "batch": "cf-2-052",
+ "sections": {
+  "cf-2-052": {
+   "title": "The Grey Bazaar",
+   "text": "Hollowed-out freight wagons form a crooked labyrinth of commerce amid the grey dunes, their iron ribs draped in oil-stained canvas and fluttering strips of parchment. Traders hawk lukewarm tallow and bitter well-water from repurposed tender tanks while soot-choked lanterns sway in the ash-laden wind. Music wheezes from a cracked accordion somewhere down the line, competing with the heavy rhythmic thrum of the Marrowbone idling on the parallel track. Every shadow in this sprawling marketplace hides a bargain or a blade, and the low roar of the approaching storm urges you toward whatever shelter or advantage you can snatch before the air turns solid with grit.",
+   "check": "Hold your ground against the vendor",
+   "grant": "Sack of dry pit-coal",
+   "exits": [
+    "Collect your heavy steel pinch-bar",
+    "Trade oil for secret maps",
+    "Mend the vendor's hoist",
+    "Haul scrap for grease vouchers",
+    "Lift a transit permit",
+    "Fight the ash mound"
+   ]
+  },
+  "cf-2-053": {
+   "title": "The Peddler's Dust",
+   "text": "Grey canvas flaps slat against a rusted iron counter where a hump-backed peddler hawks grey bricks of supposed boiler compound. He taps a lumpy grey packet against his palm, swearing by the old track that it will clean any scaled-up firebox from Ashgate to the wall. You cross your arms on the brass sill of the Marrowbone and watch him through the blowing grit.\n\nThe man wilts under your steady, soot-streaked stare, dropping his voice from a greasy roar to a dry wheeze before sliding a heavier, genuine sack of dry pit-coal across the planks. You lean out to scoop the fuel up.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul the pit-coal aboard the cab"
+   ]
+  },
+  "cf-2-054": {
+   "title": "Weighing the Grey Dust",
+   "text": "Dust devils flick grey ash against the cab windows while the peddler shuffles his remaining packets with nervous, soot-blackened fingers. He tries to palm a lighter, crumbly brick of common earth off as high-grade flux, watching your eyes for a flicker of doubt. You hold his gaze across the iron counter, breathing shallow through the wool rag tied over your mouth, keeping your face flat and your posture braced against the rolling deck. Every second drags like a rusted valve needing grease.",
+   "check": "Stare down the nervous peddler",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-055": {
+   "title": "A Sour Bargain",
+   "text": "Your nerve wavers for a heartbeat, a sudden twitch of the eye letting the peddler see your doubt, and he seizes the moment to short-weight your sack with a smug grin. He pockets your copper token before you can hook a thumb into the twine, leaving you with a bag of half-crushed shale that will slag your grates instead of clearing them. The disappointment leaves a dry, coppery taste at the back of your throat. You haul the inferior sack up anyway, paying for the lapse with ruined draft and lost hours.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Kick the engine back into gear"
+   ]
+  },
+  "cf-2-056": {
+   "title": "Respect in the Ash",
+   "text": "Steel meets bone as you hold your ground, your steady stare boring into the peddler until his watery eyes drop to the planks and he shuffles backward with a mutter. However narrowly you manage the standoff, he recognizes your iron grip and shoves the full, heavy sack of dry pit-coal into your hands without another word of protest.",
+   "check": "",
+   "grant": "bag of dry pit-coal",
+   "exits": [
+    "Take the road to the ridge"
+   ]
+  },
+  "cf-2-057": {
+   "title": "Maps in the Smoke",
+   "text": "A greasy oil-can from the spare locker attracts a toothless scout leaning against a stalled coal tender. He traces crooked lines in the fine ash coating a buffer-beam, sketching out the washed-out culverts where the rails hang over hollow drops of grey mud. You listen closely to his gravelly warnings about shifting dunes and sunken sleepers.\n\nThe scout pockets the tin with a toothy grin and hands over a stiff square of yellowed parchment marked with red grease-crayon.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Roll away from the stalled tender"
+   ]
+  },
+  "cf-2-058": {
+   "title": "The Scout's Riddle",
+   "text": "Yellowed parchment crinkles in your gloved hand while the scout points a grease-blackened finger toward a maze of sunken rails half-buried in the dunes. He demands double oil for a secret route around the worst of the wash-outs, his eyes darting toward the horizon where the storm clouds thicken. You weigh his crooked map against your dwindling stores, trying to puzzle out if his marks are real track or just traps set to bleed a passing engine.",
+   "check": "Decode the scout's crooked map",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-059": {
+   "title": "Misread Rails",
+   "text": "The map leads you straight into a choked cutting where the ballast has washed away, leaving the rails sagging like dead snakes over a pit of wet silt. The Marrowbone dips alarmingly to the port side, groaning as mud slumps against the ash-pans and chokes the draft. You spend a grueling hour jacking the chassis clear with heavy timbers and cursing the scout's deceptive ink-lines.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clear the silt and press on"
+   ]
+  },
+  "cf-2-060": {
+   "title": "The Price of Grease",
+   "text": "A dry trade across a greasy workbench leaves you poorer by one spare oil-can and richer by something far more stubborn: a hand-drawn parchment map of the lower rail, inked in squid-brown and stained with old tea. However narrowly you managed the transaction, the vendor's squinting nod confirms that the washed-out culverts ahead are at least navigable if you keep the regulator light and your eyes on the ballast. You roll the parchment tight, tucking it inside your woolen waistcoat against the chill of the steppe wind.",
+   "check": "",
+   "grant": "hand-drawn lower rail map",
+   "exits": [
+    "Take the parchment and push on toward the bazaar"
+   ]
+  },
+  "cf-2-061": {
+   "title": "The Crane's Teeth",
+   "text": "Iron cables groan as you heave on the greasy wooden levers of an abandoned loading crane, coaxing its seized brass gears back into a slow, protesting rotation. A nearby vendor watches with wide eyes as the rusted arm swings clear of a jammed switch-point, freeing the track for the Marrowbone's passage. You wipe black grease from your forehead with a dirty sleeve while the vendor nods in silent gratitude.\n\nA heavy steel pinch-bar clatters onto the footplate as payment for the labor.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the pinch-bar on the rack"
+   ]
+  },
+  "cf-2-062": {
+   "title": "Clearing the Path",
+   "text": "Steam hisses from a leaky union near your knee while you hammer a stubborn wedge back into its chair with sharp, rhythmic strokes. The surrounding rail-yard is quiet save for the wind whistling through empty cattle-trucks and the distant rattle of distant hoists. You pause to catch your breath, listening to the steady, reassuring thrum of the firebox keeping the water hot.\n\nThe track ahead is clear of debris, inviting you to heave the regulator open and roll forward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance past the loaded wagons"
+   ]
+  },
+  "cf-2-063": {
+   "title": "The Gripping Gear",
+   "text": "Teeth screech against dry bronze inside the winch-box as you force the jammed hand-crank to turn against a mountain of rusted slag. The rusted pinions bind tight, threatening to snap the main shaft and spray red-hot iron shards across your knuckles. You brace your shoulder against the iron housing, throwing your weight into the crank while the metal screeches in protest.",
+   "check": "Force the seized winch-gear",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-064": {
+   "title": "The Slipped Gear",
+   "text": "The seized bronze tooth of the winch-box refuses your persuasion, snapping with a sound like a pistol shot and catching your knuckle a glancing, skin-splitting blow against the iron frame. Steam hisses from a nearby union in a mocking whistle as you suck the salt-blood from your thumb, staring at the ruin of the gear with dry resignation. Time slips through your fingers like dry ash while you bind the scrape with a dirty rag, leaving you short on minutes and carrying a fresh, throbbing ache that will remind you of the Cinder Steppe long after the engine reaches the water gate.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the heavy steel pinch-bar and move forward"
+   ]
+  }
+ },
+ "missing": []
+}

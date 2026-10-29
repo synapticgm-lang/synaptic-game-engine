@@ -1,0 +1,111 @@
+{
+ "batch": "cf-1-097",
+ "sections": {
+  "cf-1-097": {
+   "title": "The Crimson Arm",
+   "text": "Overhead, the iron lattice of the signal box shudders under a sudden gust of sulfurous wind, and the semaphore arm snaps down with a dry, metallic clatter to paint the clear sky with a stroke of wet blood. No train should halt here on the mainline, yet the heavy signal hangs stubbornly across the tracks, mocking the idling breath of the Marrowbone. Thick grease drips from the pivot-pin onto the wooden ties below, pooling in the grit like dark oil. You tighten your grip on your oil-stained canvas gauntlets, squinting up through the yellow haze toward the darkened cabin windows where someone watches in silence.\n\nThe whole junction holds its breath beneath the dropping sun, waiting to see whether you will force the iron or wait for a ghost to clear the line.",
+   "check": "Wrench the jammed lever open",
+   "grant": "Heavy union padlock",
+   "exits": [
+    "Return to the control cabin",
+    "Confront the operator within",
+    "Memorize the night clearance codes",
+    "Hide during the Barons inspection",
+    "Outwit the cabin guard silently",
+    "Defend the tender from rival crews"
+   ]
+  },
+  "cf-1-098": {
+   "title": "The Elevated Control Cabin",
+   "text": "Greasy iron stairs climb steeply into the gloom of the signal box, where copper pipes hiss and heavy pine levers reach toward the soot-stained glass like skeletal fingers. Below, the sprawling tracks of Ashgate Junction rumble with the restless shunting of stalled goods wagons. Every movement of the overhead arms governs the iron road ahead, offering paths into the thickening dust-storms or toward the guarded switches of the yard. Faint lamplight flickers across rows of brass indicator plates that remember every train that ever passed through this dismal junction.\n\nYou can study the intricate track diagrams pinned to the back wall, seek out the maintenance catwalks overlooking the northern approach, or peer through the frosted windows toward the distant coal tipples. Weigh your next course before the yardmaster notices unauthorized boots on his boards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the rusted terminal switches",
+    "Challenge the duty signalman directly",
+    "Memorize the safe night clearance codes",
+    "Hide from the approaching inspection car",
+    "Outwit the guard at the switchboard",
+    "Defend the tender from rival crews"
+   ]
+  },
+  "cf-1-099": {
+   "title": "Straining Against the Iron",
+   "text": "Heavy grease cakes the sliding joints of the junction turnout, resisting every ounce of leverage as you throw your weight against the frozen hand-iron. Thick yellow dust settles in your hair while the rusted mechanism groans under the sudden strain, refusing to budge from the siding track. Iron filings flake off the teeth of the gear quadrant, biting into your palms through your thick leather work-gloves. You brace your boots hard against the wooden tie-beams and throw your shoulders squarely into the task once more, determined to force the stubborn latch clear.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Shove the lever through the jam"
+   ]
+  },
+  "cf-1-100": {
+   "title": "Clearing the Main Line",
+   "text": "A metallic shriek echoes across the ballast as the stubborn iron arm finally slips into its new slot with a satisfying, heavy thud. The semaphore blade overhead jerks sharply upright, clearing the departure signal for the Marrowbone to edge out of the choked depot sidings. Acrid coal smoke drifts past the cabin windows from an idling switcher down the line, stinging your eyes in the thin desert air. You wipe your soot-stained brow with the back of a calloused hand and step back from the smoking machinery to survey the open track.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Heave the heavy turnout completely open"
+   ]
+  },
+  "cf-1-101": {
+   "title": "The Jammed Point Lever",
+   "text": "Deep inside the iron housing, a rusted locking tooth binds hard against the primary slide-bar, jamming the whole assembly solid just short of the main line alignment. The whistle of an approaching Barons' inspection engine wails mournfully from the southern cutting, drawing dangerously close by the second. You plant both heels against the sleeper base, grip the cold cast-iron handle with white knuckles, and draw upon every last reserve of muscle and grit to wrench the mechanism free.",
+   "check": "Wrench the stubborn point lever over",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-102": {
+   "title": "Strain and Splintered Iron",
+   "text": "A sickening metallic snap echoes through the ballast as the rusted toggle shears clean off under your frantic heave, throwing you backward hard onto the sharp slag gravel. Your shoulder throbs with a dull, grinding ache and a thin line of blood trickles down your forearm from a jagged scratch on the rail flange. The heavy turnout remains half-switched, mocking your effort while the distant whistle of the inspection engine grows louder by the heartbeat. You pick yourself up from the dirt, nursing the bruised muscle and muttering a curse against the poor iron of the Gangers' Union.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your breath and scramble away"
+   ]
+  },
+  "cf-1-103": {
+   "title": "The Yielding Mechanism",
+   "text": "Metal screams against metal before the stubborn latch finally gives way with a heavy, shuddering thud that vibrates up through your boots. The semaphore blade drops into clear alignment just as the trailing smoke of the inspection engine dissolves into the yellow haze of the yard. Your muscles burn from the sudden exertion, but the iron road ahead lies open and unobstructed for the Marrowbone. You pocket a heavy brass keeper-pin jarred loose during the struggle, a solid reminder of a job forced through by sheer muscle.",
+   "check": "",
+   "grant": "A heavy brass keeper-pin",
+   "exits": [
+    "Climb back down to the yard"
+   ]
+  },
+  "cf-1-104": {
+   "title": "The Signalman's Corner",
+   "text": "Stale pipe smoke and damp wool hang heavy in the small glass-walled office where the night signalman sits hunched over his grease-smeared ledger books. A single tallow candle flickers against the draft, casting long, wavering shadows across the rows of brass telegraph keys on his desk. He does not look up as your heavy boots creak across the warped floorboards, though his fingers pause mid-tap over the cold brass tapper. You stand quietly in the doorway, letting the oppressive silence weigh heavily upon him until he chooses to acknowledge your presence.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Demand the transit token without speaking"
+   ]
+  },
+  "cf-1-105": {
+   "title": "The Staredown in the Cabin",
+   "text": "The old signalman narrows his rheumy eyes behind thick spectacles, trying to stare you down across the clutter of waybills and cold tea mugs. His hand twitches nervously toward the alarm plunger on the wall while his tongue darts out to wet his cracked lips. You lock your gaze onto his, keeping your breathing slow and steady against the rising heat of the tiny room, refusing to blink or yield an inch of floor space. The seconds stretch out thin and brittle, broken only by the steady ticking of the wall clock and the distant rattle of coal hoppers outside.",
+   "check": "Hold your ground against the clerk",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-106": {
+   "title": "Broken Resolve",
+   "text": "A sudden gust of wind rattles the loose window panes, breaking your focus and causing you to flinch just as the old clerk lunges for the brass alarm plunger. He slams the heavy iron stop down hard, setting the junction warning bells clanging wildly across every siding in the district. You retreat from the cramped office with curses ringing in your ears, your nerves frayed and precious minutes lost to the commotion. The incident leaves you with a lingering tightness in your chest and a sharp reprimand from a passing ganger boss.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat hastily into the smoky yard"
+   ]
+  },
+  "cf-1-107": {
+   "title": "Unwavering Iron Nerve",
+   "text": "The old clerk's gaze finally wavers under your unblinking stare, and he lets out a dry, rattling sigh that smells of stale chicory. He pulls a heavy brass switch key from his waistcoat pocket and tosses it onto the scarred wooden desktop with a dull clink. You pocket the cold metal without a word, your steady composure having bought you safe passage through the most heavily guarded switch in the junction. It is a quiet victory won entirely through stillness, leaving you richer by one essential token of authority.",
+   "check": "",
+   "grant": "The station switch key",
+   "exits": [
+    "Return to the lower platform"
+   ]
+  }
+ },
+ "missing": []
+}

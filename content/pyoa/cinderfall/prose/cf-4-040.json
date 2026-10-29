@@ -1,0 +1,115 @@
+{
+ "batch": "cf-4-040",
+ "sections": {
+  "cf-4-040": {
+   "title": "The Sealing Gland",
+   "text": "Scalding droplets spit from the failing packing ring, stinging your bare forearm every time the piston rod thrusts through the bulkhead. Condensation slicks the iron floorplates beneath your boots, turning every step into a cautious slide above the roaring pit. Wrapping a thick rag around your palm, you lean into the heat to reach the rusted securing bolts.\n\nThe heavy copper gasket comes free with a sharp metallic screech, leaving behind a scarred seating that demands immediate attention before the cylinder pressure drops entirely away.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the spanner and fresh packing"
+   ]
+  },
+  "cf-4-041": {
+   "title": "Beneath the Condensation",
+   "text": "Hissing plumes of white vapour curl around your shoulders, obscuring the dim amber glow of the cab lamp and coating your cheeks in greasy moisture. You work entirely by touch in the deafening roar, fingers searching for the exact angle to seat the replacement ring without barking your knuckles against the hot casting. The engine shudders beneath you as it shoulders another heavy grade in the deep dark.\n\nYou hook the thick copper gasket into position, feeling the stubborn metal conform at last to the worn contours of the gland.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tighten the retaining bolts by hand"
+   ]
+  },
+  "cf-4-042": {
+   "title": "The Sealing Torque",
+   "text": "Sweat runs down your spine as you drop a heavy box spanner over the final retaining nut, bracing your boots against the vibrating floorplate. The threads bind hard against rust and old scale, threatening to strip entirely if you apply an ounce too much force, yet leaving them loose invites a catastrophic blow-out under full boiler load. You draw a slow breath of sulphurous air, plant your shoulder against the bulkhead, and throw your weight onto the wrench handle.",
+   "check": "Wrench the rusted gland bolt home",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-043": {
+   "title": "A Wrenched Wrist",
+   "text": "A vicious crack echoes through the cramped housing as the spanner slips from the rounded nut, sending your knuckles smashing hard into the sharp edge of the cylinder casing. A hot bolt of pain shoots straight up your forearm, leaving you gasping against the iron bulkhead while steam hisses angrily from the imperfect seal. You clutch your throbbing hand to your chest, tasting copper and ash in the damp air.\n\nAlthough the leak continues to weep a thin, stubborn stream of grey condensation across your boots, the engine chugs onward through the darkness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wipe the blood and press on"
+   ]
+  },
+  "cf-4-044": {
+   "title": "The Copper Gasket",
+   "text": "Your knuckles take a bruising against the iron lagging, but the final turn holds true as the stubborn nut bites deep into the fresh metal. The angry hissing subsides to a steady, rhythmic sigh, leaving the cylinder housing dry and secure against the creeping damp of the tunnels. You pry the old, flattened ring from its seat and toss it into your tool chest as a heavy memento of the subterranean struggle.\n\nThe Marrowbone rolls rhythmically deeper into the gloom, carrying its warm brass and steady fires toward the heart of the range.",
+   "check": "",
+   "grant": "heavy copper gasket",
+   "exits": [
+    "Climb up to the lantern-roost"
+   ]
+  },
+  "cf-4-045": {
+   "title": "The Subterranean Grotto",
+   "text": "Darkness swallows the headlight beam as the tunnel walls peel away into a cavernous vault where stagnant black water laps against the rusted chassis of derailed coal tenders. Ribs of rotting timber arch overhead like the skeleton of some iron-bellied leviathan, dripping greasy moisture into the sump below. Far across the mirrored surface, pale lanterns swing in a slow, mournful rhythm from unseen gantries.\n\nThe air smells of wet slate and old grease, thick enough to chew, carrying the faint, rhythmic chime of a distant bell that marks no earthly hour.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick a path toward the swinging lights"
+   ]
+  },
+  "cf-4-046": {
+   "title": "The Sump Basin",
+   "text": "A subterranean lock-gate stands locked across the permanent way while oily black water rises steadily toward the glowing ashpan of the firebox. Iron catwalks stretch away into the Stygian gloom, hung with rusted chains and the pale, silent shapes of the Hollow Signalmen peering down from their perches. Every shadow seems to reach toward the warmth of the boiler, whispering old timetables and forgotten debts from the days before the ash-storms.\n\nYou must choose your path across the basin carefully before the rising bilge swamps the grate and drowns the fire.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wade through the rising bilge water",
+    "Haul the heavy sluice chain taut",
+    "Wrestle the jammed drainage wheel around",
+    "Rig a makeshift telegraph wire bridge",
+    "Steady the primary bypass valve handle",
+    "Pick a narrow cleft in the limestone"
+   ]
+  },
+  "cf-4-047": {
+   "title": "The Sinking Track",
+   "text": "Black water laps greedily at the lower rungs of your ladder as you drag a heavy timber baulk across the shifting mire to shore up the sinking track-bed. The ooze sucks at your boots with every strained step, smelling of old coal-dust and dead sulfur from decades of stagnant flood. Overhead, the low brick vaulting weeps gray condensation down upon your shoulders like cold sweat.\n\nYou wedge the squared timber firmly beneath the sagging rail chair, securing a dry sack of oak kindling salvaged from a rotting crate wedged in the muck.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the flooded cutting"
+   ]
+  },
+  "cf-4-048": {
+   "title": "The Waterlogged Crib",
+   "text": "Stagnant ripples spread outward from your shins as you wade through the knee-deep sump, guiding the heavy timber toward the washout beneath the rail. The damp chill penetrates your trousers, but the rhythmic pulsing of the engine's distant boiler keeps a steady, reassuring warmth against your back. You wedge the dry wood tight into the ballast gap, feeling the iron rails settle just an inch above the dark water.\n\nA cluster of rusted signal levers leans drunkenly from the sludge nearby, their glazed porcelain weights cracked and blank.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb up to the rusted catwalk"
+   ]
+  },
+  "cf-4-049": {
+   "title": "The Mire Heave",
+   "text": "A massive timber balk jams fast in the sucking mud just as the water surges higher against the ashpan doors, threatening to douse the vital coals. You brace your boots against the submerged chassis of an overturned coal tub, grabbing the rough, splintered oak with both hands. Veins stand out on your neck as you pit your muscles against the dead weight of the mire and the pressing tide.",
+   "check": "Heave the timber from the muck",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-050": {
+   "title": "The Sucking Mire",
+   "text": "The mud refuses to yield, giving way with a sickening suction that yanks you off balance and sends you sprawling chest-deep into the oily, freezing sump. Water floods your pockets and coats your skin in a gritty film of coal-wash, knocking the wind from your lungs with a sharp gasp. You drag yourself upright by a dangling signal wire, shivering violently in the damp gloom.\n\nAlthough the timber remains wedged at an awkward angle, the Marrowbone holds its steam and waits for you to return to the footplate.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back aboard the slippery deck"
+   ]
+  },
+  "cf-4-051": {
+   "title": "The Oak Kindling",
+   "text": "With a mighty heave of your back and shoulders, you wrench the heavy timber clear of the sucking mire and slam it home beneath the sinking rail joint. The track holds firm against the weight of the locomotive, keeping the firebox high and dry above the black water. You salvage a dry canvas sack of seasoned oak kindling from the ledge above, shaking the grey dust from its folds.\n\nThe Marrowbone hums appreciatively as you toss a handful of the dry wood into the open furnace door.",
+   "check": "",
+   "grant": "dry sack of oak kindling",
+   "exits": [
+    "Return to the central sump basin"
+   ]
+  }
+ },
+ "missing": []
+}

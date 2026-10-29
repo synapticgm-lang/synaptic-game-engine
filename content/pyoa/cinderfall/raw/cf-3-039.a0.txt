@@ -1,0 +1,67 @@
+@@SECTION cf-3-039
+TITLE: The Valve Assembly
+TEXT: Steam hisses from the copper manifold, painting the rusted iron girders with thick, grey condensation. You reach past the chattering pressure gauges toward the primary hydraulic bypass. Every joint in the hoisting winch groans under the weight of the suspended track, vibrating against your palms with a low, bone-deep tremor. The greasy air smells of hot oil and burnt lime // Below the viaduct, the endless drop waits in the silent mist, offering no mercy if the lines snap. You must clear the hydraulic blockage before the pressure seals weld themselves shut forever.
+EXIT 1: Twist the copper release valve
+@@END
+@@SECTION cf-3-040
+TITLE: Releasing the Pressure
+TEXT: Hot condensate spits from the loosened unions, stinging your knuckles and leaving greasy tracks of soot across your skin. The winch housing rattles violently as the hydraulic fluid finds a new channel, weeping out in thin, shimmering jets that evaporate instantly into the draft. You grip the heavy iron wheel, leaning your entire weight into the counter-turn // The Marrowbone settles with a sharp metallic clank, its heavy steel wheels finding the true line of the rails at last.
+EXIT 1: Haul the primary brake lever
+@@END
+@@SECTION cf-3-041
+TITLE: Purging the Line
+TEXT: Fingers slick with grease, you spin the bleeding cock three full turns against the screeching resistance of rusted threads. The pressure needle climbs past the red line, trembling violently as superheated steam forces its way toward the ruptured valve body. A hair-thin plume of scalding white vapour shrieks into the cabin, blurring your vision and heating the cramped space like an oven // You brace your boots against the ribbed floorplate, waiting for the split second the housing either holds or shatters.
+CHECK: Purge the high pressure valves
+@@END
+@@SECTION cf-3-042
+TITLE: Scalded and Stranded
+TEXT: The gasket blows with the force of a pistol shot, filling the cabin with a suffocating wall of white vapour that leaves your forearms raw and weeping. You stagger back against the coal bunker, coughing dryly as the heat slowly dissipates into the damp canyon air. A jagged blister forms across your wrist, burning fiercely every time you shift your grip on the cold iron handrails // The winch settles with a heavy, crooked sigh, leaving you bruised and behind schedule on the grey viaduct.
+EXIT 1: Climb back to the footplate
+@@END
+@@SECTION cf-3-043
+TITLE: Clear of the Hoist
+TEXT: Hot metal pings and settles in the cooling silence as the winch motor finally falls dead, its iron teeth disengaging from the chassis with a dull thud. You wipe the greasy sweat from your forehead with a soot-stained sleeve, breathing in the cold air rising from the depths below. The Marrowbone rests squarely on the parallel rails, ready to roll // However narrowly you managed to drop the engine back onto clear iron, you claw back precious inches against the mounting schedule.
+GRANT: A scorched brass union
+EXIT 1: Roll toward the signal station
+@@END
+@@SECTION cf-3-044
+TITLE: The Jammed Lever
+TEXT: Heavy iron pins bind tight within the rusted quadrant, holding the emergency crane cables taut across the locomotive roof. You square your shoulders against the ribbed steel bar, feeling the cold bite of the metal through your wool coat. The entire gantry shudders as a distant gust of wind sweeps down the viaduct, rattling the suspension chains // There is no room for hesitation now, only the brute leverage of bone and muscle against dead machinery.
+EXIT 1: Throw your weight against steel
+@@END
+@@SECTION cf-3-045
+TITLE: Shunting the Dead Iron
+TEXT: Muscles strain to the point of tearing as you throw your full weight against the jammed emergency release lever, pressing hard into the unyielding iron. The rusted pivot refuses to budge, holding the steel cable taut like a drawn bowstring across the foggy deck. Your vision darkens at the edges with a sudden wave of vertigo, your breath coming in hot, ragged gasps // You brace your boots against the greasy deck plates, gathering every ounce of strength for one final, desperate heave.
+CHECK: Shoulder the jammed release lever
+@@END
+@@SECTION cf-3-046
+TITLE: Crushed and Bent
+TEXT: The lever slips with a sickening crunch, pinning your shoulder against the iron bulkhead and sending a blinding shock of white pain down your arm. You bite down hard on your lip until the taste of copper fills your mouth, dragging yourself free with a dry, rattling sob. A deep purple bruise blooms across your collarbone, stiffening the muscle and making every breath feel like a knife edge // The cable snaps free a second later, whipping into the ash-dunes with a sharp crack.
+EXIT 1: Pick up your heavy coat
+@@END
+@@SECTION cf-3-047
+TITLE: Snapping the Cable
+TEXT: Iron teeth grind together with a deafening shriek as the jammed release gives way all at once under your powerful shove, sending you stumbling forward across the deck. The heavy cable whips clear of the running board, disappearing into the grey mist below with a metallic twang that vibrates through the entire bridge // However narrowly you managed to clear the snag, your shoulder aches with a deep, persistent throb.
+EXIT 1: Advance past the gantry crane
+@@END
+@@SECTION cf-3-048
+TITLE: Bleeding the Brakes
+TEXT: Brake shoes groan against the cast-iron rims as you ease the brass release valve, letting a measured hiss of compressed air escape into the gloom. The Marrowbone begins to creep forward on the greasy rails, sliding inches at a time past the swinging grapple hooks of the toll-city gantry. Every wheel flange chatters against the check-rails // A single misjudgment will drop the tender right into the path of the Barons' patrol carriages.
+EXIT 1: Ease the engine past hooks
+@@END
+@@SECTION cf-3-049
+TITLE: Sliding the Margins
+TEXT: Frost and oil mix on the tread-plates, making every foothold treacherous as you inch the brass brake handle forward by hairbreadths. The engine's heavy pistons pulse beneath the floor, eager to bolt the moment the shoes release their grip on the wheels. Outside the narrow cabin windows, the iron claws of the gantry swing slowly in the thermal draft, missing the smokestack by a fingernail // You hold your breath, nursing the air pressure down to the exact PSI required to slide past.
+CHECK: Bleed the steam brakes
+@@END
+@@SECTION cf-3-050
+TITLE: Caught on the Grapple
+TEXT: A sudden drop in line pressure locks the shoes mid-slide, catching the tender's rear corner on a swinging iron grapple with a screech of tearing plate. You fight the brass wheel, but the dead weight of the engine works against you, pulling a long, ragged groove down the side of the coal bunker. Cinder dust rains down from the overhead beams like dry grey snow // You break the seal on the auxiliary tank just to keep the boilers from starving.
+EXIT 1: Pry the iron claw free
+@@END
+@@SECTION cf-3-051
+TITLE: Slipping the Trap
+TEXT: Brake shoes release with a wet, heavy sigh, letting the Marrowbone glide smoothly through the narrow gap between the toll-house pillars just as the warning bells begin to clamor overhead. You keep your hand steady on the regulator, feeding just enough steam to maintain headway without kicking up a telltale plume of soot // However narrowly you managed to slide past the grapple hooks, the engine slips out into the open track beyond the gantries.
+GRANT: A forged toll token
+EXIT 1: Roll onward to the junction
+@@END

@@ -1,0 +1,6 @@
+@@SECTION cf-4-085
+TITLE: The Ledger of Wrecks
+TEXT: Rotting timber yields to your shoulder with a dry, splintering groan, parting just enough for you to squeeze into a dry auxiliary adit choked with soot. Here, half-buried in a drift of grey dust, lies a thick leather-bound logbook detailing decades of forgotten derailments and mechanical post-mortems. As you brush the soot from its stamped brass corners, you slide the heavy volume into your tunic, securing a valuable record of every past disaster on this treacherous grade.
+GRANT: logbook of old accidents
+EXIT 1: Return to the echoing whisper-vault
+@@END

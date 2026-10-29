@@ -1,0 +1,59 @@
+@@SECTION cf-3-028
+TITLE: The Dispatcher's Tongue
+TEXT: Gravel crunches beneath heavy boots as you step past the iron barrier, throat tight with the specific rasp of a Baronial dispatcher. Every syllable must carry the weight of authority, flat and clipped, mimicking the men who sit in warm brick offices counting rivets while the world freezes. You swallow the bitter taste of coal-dust and pitch your voice to ring against the corrugated tin of the checkpoint booth. The sentry narrows his eyes, squinting through grease-smeared glass at your soot-blackened coat, waiting for a misplaced vowel that might betray your loyalties to the line. // // Leaning hard against the wooden counter, you force your jaw to stay rigid and bark out a demand for immediate track clearance.
+EXIT 1: Step through the iron checkpoint gate
+@@END
+@@SECTION cf-3-029
+TITLE: Parsing the Terminal Circuit
+TEXT: Copper contacts hum beneath your grease-stained fingers, vibrating with the frantic pulse of the signal-relay you are desperately trying to trick. If you cross the armature wire into the wrong terminal, the whole junction box will throw a red fault across every screen from here to the yards, bringing the Baronial patrols down on your head in seconds. You grip the brass-handled pliers, sweat stinging your eyes as you line up the delicate copper bridge against the high-voltage stud. Every instinct screams that a single microscopic slip will weld your pliers to the casing in a blinding flash of white arc-fire. // // CHECK: Bridge the live signal contacts
+@@END
+@@SECTION cf-3-030
+TITLE: A Flash of White Solder
+TEXT: Sparks shower across your knuckles in a blinding white cascade as the circuit violently rejects your clumsy adjustment, searing deep across the skin of your wrist. A sharp, chemical smell of scorched wool and ozone fills the cramped booth as you jerk your hand back with a sharp hiss of pain. The relay box remains stubborn, its iron casing clicking shut with a finality that costs you precious minutes and leaves a weeping red welt across your forearm. You clutch the injured limb to your chest, blinking back the glare-spots dancing in your vision while the heavy boots of a patrol grow louder down the metal walkway.
+EXIT 1: Drag yourself past the locked gate
+@@END
+@@SECTION cf-3-031
+TITLE: The Dispatcher's Seal
+TEXT: Heavy iron latches drop back with a dull, echoing clatter, however narrowly you managed to keep your hand steady against the humming copper relay. The sentry spits a wad of dark tobacco onto the ballast and shoves a heavy brass-stamped waybill across the stained counter without so much as a second glance. It is an old, ink-stained pass bearing the personal stamp of a district inspector who vanished months ago, a heavy piece of authority that carries quiet weight among the gangers. You tuck the paper into your breast pocket, feeling the cold metal of its seal press against your ribs like an unspoken promise.
+GRANT: Dispatcher's stamped waybill
+EXIT 1: Survey the suspended cargo platforms
+@@END
+@@SECTION cf-3-032
+TITLE: The Crane Yard's Grip
+TEXT: Heavy iron jaws plunge from the grey fog above, slamming onto the polished steel shoulders of the tender with a shriek of tortured metal. The Marrowbone shunts violently onto a rusted siding that hangs suspended over a thousand-foot drop into the misty canyon, rocking on her springs as the massive overhead hoisting chains take her weight. Steam screams from the ruptured exhaust lines of the gantry engines, filling the damp air with white billows that smell of hot oil and wet coal. Down below, tiny figures move along the slender catwalks, shouting commands through copper-funnel megaphones while the great crane-drums whine, hauling your engine bodily off the iron road.
+EXIT 1: Navigate the swinging cargo derricks
+@@END
+@@SECTION cf-3-033
+TITLE: The Gantry Labyrinth
+TEXT: Iron catwalks stretch out across the misty abyss like the ribs of some ancient, stranded leviathan, vibrating constantly with the deep, mechanical heartbeat of the viaduct below. Steam hisses from unseen vent-pipes, curling around greasy handrails that slick the palms of your gloves with black condensation. Every direction offers a desperate gamble: above, the crane operators squint through greasy goggles; below, the roaring gears of the hoisting winches offer a dangerous shortcut to the lower tracks. The bitter smell of sulfur drifts up from the canyon floor, mingling with the sharp tang of hot grease from the pulleys.
+EXIT 1: Climb the suspended maintenance ladder
+EXIT 2: Override the hoisting winch hydraulics
+EXIT 3: Shoulder the jammed emergency release
+EXIT 4: Bleed the steam brakes to slide
+EXIT 5: Pick through the chemical smog maze
+@@END
+@@SECTION cf-3-034
+TITLE: Across the Iron Beam
+TEXT: A narrow I-beam spans the dizzying gap between the gantry platform and the crane cabin, slick with a fine film of grey coal-dust and freezing mist. On the far side, the crane operator stands with one hand resting on the brass control wheel, his face half-hidden behind a respirator that hisses with every shallow breath. You edge forward, boots scraping against the cold iron while the canyon wind tears at the heavy skirts of your coat. Below your heels, the drop is absolute, nothing between you and the jagged rocks a thousand feet down except a thin lattice of rusted girders.
+EXIT 1: Step closer to the crane booth
+@@END
+@@SECTION cf-3-035
+TITLE: Staring Down the Crane
+TEXT: The crane man stops turning his brass wheel, his dull eyes fixing on your soot-streaked face through the small rectangular window of his steel cabin. Neither of you moves, caught in the tense silence between the rhythmic thud of distant piston strokes and the whistle of wind through the bridge bracing. You lock your gaze onto his, refusing to blink as the cold sweat freezes on your temples, keeping your posture rigid despite the trembling in your knees. Every second on the narrow span stretches like hot wire, testing whether your nerve will hold before his does.
+EXIT 1: Hold the operator's steady gaze
+@@END
+@@SECTION cf-3-036
+TITLE: Meeting the Operator's Stare
+TEXT: The cabin door groans on its hinges, pushed half an open inch by the howling canyon draft while the operator shifts his grip on the brass control levers. A fraction of an inch either way will send the heavy iron jaws slamming down onto the Marrowbone's cab, crushing the brass roof into scrap. You fix your eyes on the small grease-spot above his left eyebrow, pouring every ounce of your remaining grit into a silent, unyielding contest of wills that leaves your chest burning. If your focus cracks now, he will drop the engine into the gorge without a second thought. // // CHECK: Hold the nervous operator's gaze
+@@END
+@@SECTION cf-3-037
+TITLE: A Fracture of Will
+TEXT: Your vision blurs at the edges as a sharp wave of vertigo hits you, forcing you to blink and lean heavily against the cold iron handrail with a dry sob. The crane operator catches the momentary weakness in your stance, his shoulders relaxing as he spits through the gap in his teeth and reaches for the lowering lever. A deep-seated fatigue settles into your bones, leaving your thoughts scattered like dry ash while the massive steel jaws above you drop another foot with a terrifying metallic groan. You stagger back onto the gantry grating, chest heaving and hands trembling from the strain of a standoff lost.
+EXIT 1: Retreat to the gantry platform
+@@END
+@@SECTION cf-3-038
+TITLE: Breaking the Standoff
+TEXT: The operator looks away first, his shoulders slumping as he releases the tension on the brass control wheel with a dry metallic click, however narrowly you managed to hold your ground. He mumbles something unintelligible through his respirator and jerks his chin toward the side exit, gesturing to a coil of greasy hemp rope hanging from the gantry frame. It is a rough, practical tool left behind by careless trackmen, frayed at the ends but stout enough to lash a valve shut or rig a makeshift hoist when the steam goes down. You coil the stiff rope over your shoulder, feeling its rough fibers bite through your coat as you turn back toward the waiting engine.
+GRANT: Frayed hemp track-rope
+EXIT 1: Return to the gantry platform
+@@END

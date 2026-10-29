@@ -1,0 +1,27 @@
+@@SECTION cf-3-091
+TITLE: Crossing the High Span
+TEXT: Cold air claws at your throat as you inch across the skeletal ribs of the viaduct, your boots finding precarious purchase over a thousand feet of empty grey mist. Vertigo hits like a physical blow, tightening your chest until every breath tastes of copper and stale coal-smoke, yet you force your numb fingers to reach into the wind and lash the heavy hemp tow-cable securely around the rusted anchor-bolt before the panic locks your limbs entirely.
+EXIT 1: Haul yourself across to the signal gantry
+@@END
+@@SECTION cf-3-094
+TITLE: The Price of Height
+TEXT: However narrowly you evade the sudden lurch of the wind-scoured girders, you manage to secure the vital connection and pull yourself back onto solid footing with trembling hands. Tucked into the greasy pocket of your canvas jacket is a heavy iron signal-token stamped with the crest of the Brasswind toll-keepers, a small token of passage that will quiet the guards further down the line.
+GRANT: heavy iron signal-token
+EXIT 1: Clamber back down to the footplate
+@@END
+@@SECTION cf-3-095
+TITLE: The Wire-Cutter's Silence
+TEXT: Shadows stretch long across the abandoned loading bay where the Barons left their nests of rusted wire and trip-latches, waiting for scavengers to grow careless. You crouch in the grit, breath held tight against the dust, using the flat of a grease-knife to lift each hairpin trigger just enough to slip the tension without waking the heavy explosive charges wired into the bulkhead above.
+EXIT 1: Pry free the sound plates from the rusted deck
+@@END
+@@SECTION cf-3-096
+TITLE: Testing the Tripwires
+TEXT: Your fingertips brush the slick insulation of a primary detonator wire while the mercury switch tilts a fraction of a degree toward disaster in the damp air. You must weigh the exact tension of the rusted spring against the shifting weight of your boot on the unstable iron decking before the contacts close.
+CHECK: trace the hidden wires with steady fingers
+@@END
+@@SECTION cf-3-098
+TITLE: Salvage from the Edge
+TEXT: However narrowly you outmaneuver the hair-trigger charges, you manage to pry loose two thick plates of unbroken boiler-steel from the wreckage without setting off the buried mines. The salvage fits neatly across your tool-chest, a sturdy wedge of metal that will hold back the sparks and cinder-storms when the pressure climbs.
+GRANT: thick plates of boiler-steel
+EXIT 1: Face the Baronial inspectors at the gate
+@@END

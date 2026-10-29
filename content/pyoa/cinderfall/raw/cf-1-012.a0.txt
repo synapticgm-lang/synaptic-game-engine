@@ -1,0 +1,60 @@
+@@SECTION cf-1-012
+TITLE: The Iron Office Files
+TEXT: Heavy iron drawers slide open with a metallic shriek that cuts through the whistling wind outside the derelict station. Dust motes dance in the shaft of grey light piercing the cracked windowpane as your fingers sift through damp stacks of paper. Outside, heavy boots crunch on the cinders, reminding you that time is a luxury you do not possess.
+EXIT 1: Pry open the lower drawer //
+@@END
+@@SECTION cf-1-013
+TITLE: Calm Amid the Dust
+TEXT: Footsteps echo in the corridor outside, drawing closer by the second as a shadow stretches across the frosted glass of the office door. You steady your breathing, smoothing the ruffled edges of the manifests while your hands move with practiced precision among the rusting iron tumblers. The bolt gives a sharp warning click beneath your fingers just as the handle begins to turn.
+CHECK: Steady your nerves against the door //
+@@END
+@@SECTION cf-1-014
+TITLE: A Costly Silence
+TEXT: A sudden clatter outside startles your hand, sending a heavy ledger crashing to the floor and shattering the fragile quiet. The door flies open before you can retrieve the fallen papers, and an angry clerk demands an immediate explanation for your intrusion. You slip away into the soot-stained shadows clutching the grease-stained manifest, though the delay costs you a precious hours-worth of coal and leaves a jagged scratch along your forearm.
+EXIT 1: Slip back into the shadows //
+@@END
+@@SECTION cf-1-015
+TITLE: The Smuggled Manifest
+TEXT: Fingers move with absolute stillness through the final stack of documents, bypassing the decoy files to unearth the grease-stained manifest hidden beneath. Heavy footsteps pause outside the threshold and then fade away down the platform, leaving you undisturbed in the dim light. You tuck the damp paper inside your jacket, securing a vital piece of the puzzle that points directly toward the closed fueling yards.
+GRANT: grease-stained supply manifest //
+EXIT 1: Return to the station office //
+@@END
+@@SECTION cf-1-016
+TITLE: Blockade on the Line
+TEXT: Heavy iron lanterns swing from the gantries as a dozen gangers fan out across the soot-caked platform, blocking every exit with crossed iron bars. Their union steward steps forward, his face etched with soot and suspicion, eyes locking onto the heavy brass-handled valve protruding from your canvas sack. The ambient roar of the junction fades into an expectant hush as he demands to inspect your cargo under the authority of the track crews. You tense your muscles, weighing the merits of a sharp retort against a careful explanation of your hurried errand. The heavy metal of the valve presses cold against your ribs as the crowd leans in closer, waiting to see if you will yield or fight for your passage.
+EXIT 1: Step forward and present the valve //
+@@END
+@@SECTION cf-1-017
+TITLE: Smoke and Small Beer
+TEXT: Warm steam and the sharp stench of cheap sulphur hang heavy inside the low-ceilinged room where off-duty firemen huddle around scarred wooden tables. Lanterns flicker through the haze, casting long shadows across walls stained by decades of tobacco smoke and coal dust. Rumors drift between mugs of bitter small beer like drifting ash, offering several promising paths through the troubled junction.
+EXIT 1: Listen in on the corner table //
+EXIT 2: Tinker with the broken draught pump //
+EXIT 3: Endure the taunts of rival crewmen //
+EXIT 4: Confront the Barons' clerk outside //
+@@END
+@@SECTION cf-1-018
+TITLE: Whispers in the Haze
+TEXT: Glasses of bitter small beer clink softly against scarred oak as exhausted track-hands lean close to exchange hushed grievances. You keep your head down, letting the rhythm of their rough laughter mask your deliberate listening. Fragments of conversation piece themselves together through the tobacco smoke, pointing directly toward a clandestine meeting held near the old coal chutes.
+EXIT 1: Follow the lead to the chutes //
+@@END
+@@SECTION cf-1-019
+TITLE: Shadows Behind the Chutes
+TEXT: Rusting iron girders tower overhead like the skeleton of some prehistoric beast, dripping with oily condensation from the damp night air. Footsteps crunch softly upon the ash-strewn ballast as you stalk the periphery of the abandoned loading bays. A low murmur of voices drifts from behind a stack of rotting sleepers, confirming that the men you seek are resting just out of sight.
+EXIT 1: Step out from the girders //
+@@END
+@@SECTION cf-1-020
+TITLE: Sifting the Rumors
+TEXT: Drunken arguments flare up around the scarred oak table, blurring the line between honest recollections and boastful tall tales. You sift through the conflicting stories with practiced care, watching every shift of eye and gesture to catch the ring of truth. The air grows thick with stale tobacco as you press for details regarding Hesper's secret transactions, risking a swift escalation if your questions prove too sharp.
+CHECK: Separate truth from drunk boasts //
+@@END
+@@SECTION cf-1-021
+TITLE: A Broken Trust
+TEXT: A sudden burst of misplaced laughter shatters your concentration, sending a cascade of spilt ale across the table and ruining your careful questioning. The track-hands turn hostile at your persistence, shutting their mouths and fixing you with cold, suspicious stares. You retreat into the noisy crowd empty-handed, nursing a bruised shoulder from an abrupt shove and vowing to find another way to trace the missing driver.
+EXIT 1: Fade back into the tavern crowd //
+@@END
+@@SECTION cf-1-022
+TITLE: The Ganger's Whisper
+TEXT: Words weave together through the haze of cheap tobacco until the stray fragments snap into a clear, undeniable pattern. A grizzled track-hand slides a grease-stained slip of paper across the scarred wood, marking the exact shed where Hesper bartered for extra fuel. You pocket the scrap with a quiet nod of thanks, securing a valuable secret that cuts straight through the local deception.
+GRANT: confidential fuel purchase secret //
+EXIT 1: Return to the main taproom floor //
+@@END

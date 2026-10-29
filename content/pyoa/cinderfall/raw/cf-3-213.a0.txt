@@ -1,0 +1,62 @@
+@@SECTION cf-3-213
+TITLE: Beneath the Steaming Tarp
+TEXT: Heavy canvas radiates the stale heat of a boiler room while thick grey vapor rolls across the gantry floor. You pull the rough wool of your collar high against your chin, waiting for the heavy boots of the patrol to clatter past the coupling. A sudden tickle builds behind your ribs, sharp and insistent, threatening to give away your hiding place in the shadows of the tender. You swallow hard, biting the inside of your cheek until the copper taste of blood chases the cough away. When the lanterns swing past without pausing, you slide quietly from beneath the protective canvas and slip into the narrow corridor beyond.
+CHECK: You hide beneath a steaming tarp as patrols pass by, risking a nervous cough to avoid detection by the armed guards.
+EXIT 1: Crawl beneath the grey canvas curtain
+@@END
+@@SECTION cf-3-214
+TITLE: The Sealed Carriage Door
+TEXT: Thick grime coats the iron latch of the compartment door, hiding decades of weather and neglect from casual view. You wedge the hooked tip of your steel tool into the frozen mechanism, applying steady pressure while the rusted tumblers refuse to yield. A sharp ping echoes in the quiet siding as the metal pick bends slightly under the strain, threatening to wedge permanently in the lock. With one final twist of your wrist, the rusted iron bar gives way with a heavy thud, sliding back to reveal a dark interior stacked high with heavy, grease-sealed wooden crates.
+CHECK: You pick the rusty padlock on a sealed carriage door, risking a jammed pick to find a hidden cache of heavy lubricants.
+EXIT 1: Pry open the stubborn iron latch
+@@END
+@@SECTION cf-3-215
+TITLE: The Heavy Crane Release
+TEXT: Rusted chains groan under the immense weight of the suspended loading arm, locked fast in a tangle of frozen links. You throw your whole weight against the jammed emergency handle, feeling the rusted iron bite deep into the muscle of your upper arm. A sharp pop of cartilage sounds through the ringing silence of the yard, shooting a line of pure agony down your side as the mechanism shudders. The tension finally breaks, and the heavy crane arm swings wide with a long, metallic screech, clearing the tracks for the engine to edge forward.
+CHECK: You shoulder a jammed emergency release lever, risking a crushed shoulder to free the locked crane cables manually.
+EXIT 1: Heave against the stubborn release bar
+@@END
+@@SECTION cf-3-216
+TITLE: The Master Clock Cylinders
+TEXT: Brass cogs click and grind inside the glass-fronted housing of the junction regulator, keeping time to the rhythm of the distant ash-falls. You slide your bare fingers into the tight space between the rotating plates, adjusting the notched pins to bypass the automated blockade. The sharp edge of a brass tooth catches the meat of your thumb, slicing a thin red line across the skin while the heavy cylinder continues its relentless turn. You ignore the warm sting, securing the final pin just as the indicator needle jumps smoothly to green.
+CHECK: You recode the brass gear cylinders inside the master clock, risking a shredded thumb to unlock all outbound rail switches.
+EXIT 1: Adjust the ticking brass regulator
+@@END
+@@SECTION cf-3-217
+TITLE: Bluffing the Rival Driver
+TEXT: The opposing locomotive hisses loudly on the parallel line, its firebox glowing a dull, angry orange through the soot-stained cab window. You lean out from the footplate, shouting a false warning about a broken axle just ahead on the main crossover. For a tense heartbeat, the rival driver hesitates, staring across the intervening space while their hand hovers uncertainly over the regulator valve. Then they haul their reversing lever back in a panic, locking their own wheels in a cloud of burning brake-linings and steam.
+CHECK: You trick the rival driver into reversing too early, risking a failed bluff to cause a harmless collision that disables their locomotive.
+EXIT 1: Shout across the smoking gap
+@@END
+@@SECTION cf-3-218
+TITLE: Restarting the Auxiliary Pump
+TEXT: A high-pitched shriek rises from the pit beneath the deckplates as the water pump rattles itself loose from its mounting bolts. Your stomach tightens into a hard knot of panic, threatening to freeze your limbs as the steam pressure gauge ticks steadily toward the red line. You close your eyes for a single breath, forcing the cold ash out of your lungs until your hands stop shaking against the valve wheel. Gripping the cold metal with both palms, you force the auxiliary pump back into its stroke, steadying the rhythm of the beating iron heart.
+CHECK: You steady your nerves against the terrifying screech of failing metal, risking a panic attack to restart the auxiliary pump.
+EXIT 1: Quiet the shrieking iron pump
+@@END
+@@SECTION cf-3-219
+TITLE: The Pressure-Gauge Housing
+TEXT: Brass thumb-screws turn with a dry, grating scrape as you lift the heavy dial face away from the steam manifold. You slide a pair of spare fuel blocks deep into the cramped cavity behind the needle mechanism, praying the night shift clerks have already finished their rounds. A pair of heavy footsteps echoes on the iron grating outside the cab door, stopping just long enough for a clipboard to slap against a wooden post. You hold your breath in the dark, replacing the gauge face with trembling fingers as the footsteps fade back into the gloom.
+CHECK: You dismantle the pressure-gauge housing to hide extra fuel cells, risking discovery by suspicious clerks to earn a hidden brass token.
+EXIT 1: Conceal the fuel within the dial
+@@END
+@@SECTION cf-3-220
+TITLE: Clearing the Access Hatch
+TEXT: Thick layers of slag and fallen masonry block the iron-plated door set flush into the cinder ballast of the track bed. You wedge a six-foot iron sleeper beneath the lip of the hatch, pressing your boots against the gravel and straining until your spine pops. A sharp twinge of pain shoots down your lower back, nearly buckling your knees before the heavy plate finally breaks its seal with a sucking gasp of stale air. You kick the debris aside, peering down into the dark shaft where a crate of emergency rations sits untouched in the dust.
+CHECK: You heave a massive iron sleeper to clear a blocked access hatch, risking a strained spine to discover a stash of rations.
+EXIT 1: Pry open the buried floor hatch
+@@END
+@@SECTION cf-4-001
+TITLE: The Pitch-Black Maw
+TEXT: Locomotive No. 9 plunges headlong into the pitch-black maw of the Hollow Cut, leaving the grey light of the viaduct far behind in the choking ash. Mineral rot drips from the low brick vaulting above the stack, hissing softly as it strikes the hot boiler plates and fills the cramped cab with the smell of old damp and sulfur. The rhythmic pounding of the cylinders echoes off the stone walls like the heartbeat of an iron beast waking from a century-long sleep. Ahead in the absolute dark, only the faint, greenish glow of a distant signal box hints at what waits beneath the mountain.
+EXIT 1: Drive deeper into the dark tunnel
+@@END
+@@SECTION cf-4-002
+TITLE: The Soot-Locker
+TEXT: Stalled baggage trucks block the tracks with rusted iron wheels while thick oil-lamp smoke clings to the low, weeping brick vaulting of the subterranean hall. The air tastes of wet coal-dust and forgotten years, heavy with the quiet melancholy of a station that time passed by. Every shadowed alcove holds the promise of hidden salvage or ancient hazard, tempting you to leave the safety of the footplate and explore the damp recesses of the mountain. Faint sounds drift down the converging maintenance shafts, offering various paths through the heart of the stone labyrinth.
+EXIT 1: Clear the jammed axle-box with leverage
+EXIT 2: Wait beside the phantom semaphore arm
+EXIT 3: Trace the hidden grease-runs along the footing
+EXIT 4: Heave the splintered cargo crate aside
+EXIT 5: Face the pale figure swinging from the rafters
+@@END

@@ -1,0 +1,11 @@
+@@SECTION cf-2-060
+TITLE: The Price of Grease
+TEXT: A dry trade across a greasy workbench leaves you poorer by one spare oil-can and richer by something far more stubborn: a hand-drawn parchment map of the lower rail, inked in squid-brown and stained with old tea. However narrowly you managed the transaction, the vendor's squinting nod confirms that the washed-out culverts ahead are at least navigable if you keep the regulator light and your eyes on the ballast. You roll the parchment tight, tucking it inside your woolen waistcoat against the chill of the steppe wind.
+GRANT: hand-drawn lower rail map
+EXIT 1: Take the parchment and push on toward the bazaar
+@@END
+@@SECTION cf-2-064
+TITLE: The Slipped Gear
+TEXT: The seized bronze tooth of the winch-box refuses your persuasion, snapping with a sound like a pistol shot and catching your knuckle a glancing, skin-splitting blow against the iron frame. Steam hisses from a nearby union in a mocking whistle as you suck the salt-blood from your thumb, staring at the ruin of the gear with dry resignation. Time slips through your fingers like dry ash while you bind the scrape with a dirty rag, leaving you short on minutes and carrying a fresh, throbbing ache that will remind you of the Cinder Steppe long after the engine reaches the water gate.
+EXIT 1: Pocket the heavy steel pinch-bar and move forward
+@@END

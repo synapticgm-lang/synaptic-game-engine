@@ -1,0 +1,6 @@
+@@SECTION cf-4-076
+TITLE: The Cadence of Hesper
+TEXT: The babble subsides into a steady, rhythmic drop of water against limestone, leaving your head clear and your boots heavy on the grit. You catch the distinct, clipped cadence of Hesper Quill's voice echoing from a salt-crusted seam in the rock, mapping out the precise stretch of poisoned rails where the sleeper-spikes have been treated with green vitriol to rot the gauge. That secret warning stays with you, a sharp piece of practical knowledge earned through sheer endurance in the dark.
+GRANT: a warning of green vitriol
+EXIT 1: Follow the voice toward the damp draught
+@@END
