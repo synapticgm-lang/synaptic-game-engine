@@ -639,11 +639,21 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
   // T10S — present addressee gets a reaction beat on last-resort cue convert. Live path: writer
   // or ensureSpokenAnswer (motive / disposition; T10AI extends to crowd/role). Never claim they
   // "answered" with no words — stripSpeakerSilence replaces this when exchange content exists.
+  // T10AO — one silence per beat (compound physical clauses each opened a reaction slot).
   if (!absentAnswer && reactionWho) {
-    push(`${reactionWho} said nothing.`);
+    const silence = `${reactionWho} said nothing.`;
+    const already = out.some((s) => new RegExp(`\\b${reactionWho.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s+said nothing\\.?$`, 'i').test(s));
+    if (!already) push(silence);
   }
 
-  return out.join(' ').replace(/\s+/g, ' ').trim();
+  return out
+    .join(' ')
+    .replace(
+      /\b((?:[Tt]he\s+)?[A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3}\s+said nothing\.)(?:\s+\1)+/gi,
+      '$1',
+    )
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /**

@@ -214,6 +214,8 @@ function spokenExchangeLine(
   // T10AM — a content question (quoted ?, about-topic, or/whether) only gets a ledger bit that
   // overlaps the ask; unrelated need ("I need shelter") is not a reply to "was that the wind?".
   // Demand-to-speak ("Answer me" / waiting for an answer / bare Talk) may still use any fresh bit.
+  // T10AO — a non-question ambient shout (quoted line that never names this speaker) is a reaction
+  // beat, not a ledger-need dump ("I need listeners" after kicking a boulder).
   const ledgerBits = (
     [
       { kind: 'need' as const, text: (memory?.need ?? '').replace(/\s+/g, ' ').trim() },
@@ -258,9 +260,19 @@ function spokenExchangeLine(
       /\banswer me\b|\bwaiting for an answer\b/i.test(ask)
       || /^(?:talk(?:\s+to)?|speak(?:\s+to)?)\b/i.test(ask)
       || /^ask\s+(?:what|who|why|where)\b/i.test(ask);
+    // Quote names this speaker (or a threat with "or") → ledger may answer; ambient shout does not.
+    const namesThisSpeaker = speaker.names.some(
+      (n) => n.length >= 3 && new RegExp(`\\b${esc(n)}\\b`, 'i').test(ask),
+    );
+    const ambientShout =
+      /["\u201c]/.test(ask) && !/\?/.test(ask) && !namesThisSpeaker && !demandsSpeech;
     const fitRow =
       pool.find((b) => overlapsAsk(b.text))
-      ?? (!contentQuestion || demandsSpeech ? pool[0] : undefined);
+      ?? (ambientShout
+        ? undefined
+        : !contentQuestion || demandsSpeech
+          ? pool[0]
+          : undefined);
     if (fitRow) return quotedReply(speaker, asSpokenAgenda(fitRow.text, fitRow.kind));
     // Fresh ledger bits exist but none fit this content question — fall through to motive
     // (react in character) instead of dumping an unrelated need. Already-told-only → ask-back.
@@ -662,8 +674,22 @@ function collapseDuplicateSaid(prose: string): string {
       /\b((?:[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,3})\s+said,\s*["\u201c][^"\u201d]+["\u201d]?)\s+\1(?=\s|$|[.!?])/g,
       '$1',
     )
+    // T10AO — one silence owner per beat (compound physical clauses used to emit two).
+    .replace(
+      /\b((?:[Tt]he\s+)?[A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3}\s+said nothing\.)(?:\s+\1)+/gi,
+      '$1',
+    )
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/** Look / Wait / travel chips are not free-act reaction beats (T10AO). */
+function isPassiveObserveOrTravel(playerInput: string): boolean {
+  const t = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return true;
+  if (/^(?:look(?:\s+around)?|wait|listen|rest|scout|survey|scan|hold)\b/i.test(t)) return true;
+  if (/^(?:travel|walk|go|head|leave|move)\b/i.test(t)) return true;
+  return false;
 }
 
 function attachExchange(
@@ -717,7 +743,14 @@ export function ensureSpokenAnswer(
   // T10R / T10V — Talk chip / typed ask with someone here still needs an exchange beat when
   // stripUnauthorizedNpcSpeech dropped the writer's line (stub + bare `@`, or wrong crowd slot).
   if (!topic) {
-    if (!isTypedAskOrTalk(playerInput, state)) {
+    // T10AO — physical multi-clause free text opens an NPC reaction slot that converts to
+    // "said nothing"; fill that silence once even when the line is not a typed ask (stare at
+    // the PC name, sling+grip). Look/Wait/travel stay not-asked.
+    const silenceOnPage = !!(who && proseHasSpeakerSilence(prose, who.speaker));
+    const needsExchange =
+      isTypedAskOrTalk(playerInput, state)
+      || (silenceOnPage && !isPassiveObserveOrTravel(playerInput));
+    if (!needsExchange) {
       return { prose: collapseDuplicateSaid(prose), answer: { status: 'not-asked' } };
     }
     if (!who) return { prose, answer: { status: 'nobody-here' } };
