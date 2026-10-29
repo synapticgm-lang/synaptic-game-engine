@@ -27,6 +27,7 @@ import { objectiveOpensInterior } from './enterInterior';
 import { storyRpgDecisionChip } from './storyRpgProgress';
 import { tabletopStepAnchor, tabletopStepChip } from './tabletopQuestProgress';
 import { mainSpineQuest } from './questPlay';
+import { stallPressureActive } from './openThreads';
 
 export type { CirclingMemory } from './types';
 
@@ -494,8 +495,10 @@ export function chipProgressScore(state: GameState, chip: string): number {
   if (dest) {
     const d = dest.toLowerCase();
     const prev = (mem?.prevPlace ?? '').toLowerCase();
+    // T10AR — bounce travel (prev / recent) ranks below untried talk so hub ping-pong
+    // is not the Fate-weighted first pick while Ask chips sit open (s9601 T160–T165).
     if (samePlace(d, prev)) return 9 + repeat;
-    if ((mem?.recentPlaces ?? []).some((p) => samePlace(d, p))) return 5 + repeat;
+    if ((mem?.recentPlaces ?? []).some((p) => samePlace(d, p))) return 8 + repeat;
     const visited = (state.places ?? []).some((p) => p.lastVisitedTurn != null && p.name.toLowerCase() === d);
     return (visited ? 4 : 1) + repeat;
   }
@@ -503,6 +506,8 @@ export function chipProgressScore(state: GameState, chip: string): number {
   const unmet = presentNpcRecords(state).filter((m) => !isMetNpc(m)).map((m) => m.npcName.toLowerCase());
   if (unmet.some((n) => lower.includes(n))) return 2 + repeat;
   const fam = actionFamily(chip);
+  // T10AR — under stall, an untried talk/agenda chip outranks revisit travel.
+  if (fam === 'talk' && triedAgo(state, chip) == null && stallPressureActive(state)) return 1 + repeat;
   if (fam === 'fight') return 1 + repeat;
   if (LOITER.has(fam)) return 6 + repeat;
   if (/^head back to the exit$/i.test(chip)) return 7 + repeat;

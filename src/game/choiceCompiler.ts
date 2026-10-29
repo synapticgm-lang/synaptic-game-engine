@@ -16,6 +16,7 @@ import {
   FREE_INPUT_SAY,
   isFreeInputChip,
 } from './sceneAffordances';
+import { isSearchTargetEmpty, normalizeSearchTarget } from './searchContinuity';
 import { isPyoaChipsOnly } from './pyoaChoiceLock';
 import {
   dispositionBlocksPad,
@@ -188,6 +189,11 @@ function inspectTargetExhausted(state: GameState, choice: string): boolean {
   const searchedEmpty = state.sceneFacts?.searchedEmpty ?? [];
   const emptyContainers = state.sceneFacts?.emptyContainers ?? [];
   const lower = choice.toLowerCase();
+  // T10AR — place Search that already found nothing is exhausted (same ledger as affordance starve).
+  if (canon.action === 'search' || /^search the area$/i.test(choice)) {
+    const target = normalizeSearchTarget(choice, state.currentLocation);
+    if (isSearchTargetEmpty(state.sceneFacts, target)) return true;
+  }
   // Batch G — open/check crate|chest|box|barrel even when action isn't "inspect"
   const containerMatch = lower.match(/\b(crate|chest|box|barrel|trunk)\b/);
   if (containerMatch && /\b(open|check|search|loot|rummage|inspect|examine)\b/.test(lower)) {
