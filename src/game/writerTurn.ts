@@ -281,6 +281,20 @@ export async function runWriterTurnWithFightRetry(opts: {
   }
   // RC-N3 after repairs: hard misses → rewrite then engine-fact page; speech-answer → rewrite then keep.
   if (done.fightRetry) return done;
+  // T10RC2 — engine already recorded absence → answer/absent-speaker family must not discard a usable page.
+  const engineFact = (opts.check.engineFact || opts.packet?.engineResult || '').replace(/\s+/g, ' ');
+  const absenceRecorded = /No one present to answer/i.test(engineFact);
+  const isAbsenceFamily = (p: string) =>
+    p.startsWith('Absent speaker:')
+    || p.startsWith('Someone must answer')
+    || p.startsWith("Answer the player's question");
+  const isHardMiss = (p: string) => {
+    if (absenceRecorded && isAbsenceFamily(p)) return false;
+    return p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
+      || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
+      || p.startsWith("Player's quoted words in an NPC's mouth:")
+      || p.startsWith('Invented PC speech:');
+  };
   const blocking: string[] = [];
   for (let i = 0; i < done.remaining.length; i++) {
     const p = done.remaining[i]!;
@@ -291,6 +305,10 @@ export async function runWriterTurnWithFightRetry(opts: {
       || p.startsWith('Invented PC speech:')) blocking.push(p);
   }
   if (!blocking.length) return done;
+  // T10RC2 — absence already on the fact: do not rewrite away a usable empty-room beat for answer/absent family alone.
+  if (absenceRecorded && blocking.every(isAbsenceFamily) && storySentences(done.prose) >= 2) {
+    return { ...done, draftRetry: 'retried', fightDraft: undefined };
+  }
   let raw = '';
   try { raw = await opts.rewrite(blocking.join('\n')); } catch { /* rewrite miss */ }
   const second = runWriterTurn({ ...opts, firstRaw: raw });
@@ -298,20 +316,12 @@ export async function runWriterTurnWithFightRetry(opts: {
   let hardLeft = second.outcome !== 'accepted';
   if (!hardLeft) {
     for (let i = 0; i < second.remaining.length; i++) {
-      const p = second.remaining[i]!;
-      if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
-        || p.startsWith("Player's quoted words in an NPC's mouth:")
-        || p.startsWith('Invented PC speech:')) { hardLeft = true; break; }
+      if (isHardMiss(second.remaining[i]!)) { hardLeft = true; break; }
     }
   } else {
     hardLeft = false;
     for (let i = 0; i < blocking.length; i++) {
-      const p = blocking[i]!;
-      if (p.startsWith('Too thin:') || p.startsWith('State the ENGINE RESULT') || p.startsWith("Resolve the player's action")
-        || p.startsWith('Show the player acting') || p.startsWith('Absent speaker:') || p.startsWith('Wrong voice:')
-        || p.startsWith("Player's quoted words in an NPC's mouth:")
-        || p.startsWith('Invented PC speech:')) { hardLeft = true; break; }
+      if (isHardMiss(blocking[i]!)) { hardLeft = true; break; }
     }
   }
   if (second.outcome === 'accepted' && !hardLeft) {
@@ -325,6 +335,10 @@ export async function runWriterTurnWithFightRetry(opts: {
     };
   }
   if (!hardLeft) return { ...done, draftRetry: 'retried', fightDraft };
+  // T10RC2 — never replace a usable writer page with a pure Must-narrate / receipt echo.
+  if (storySentences(done.prose) >= 2 && done.prose.replace(/\s+/g, ' ').trim().length >= 80) {
+    return { ...done, draftRetry: 'retried', fightDraft };
+  }
   // T10AL — lastResortStoryBody already finishes with ensureSpokenAnswer (one owner per beat).
   const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
   return {
