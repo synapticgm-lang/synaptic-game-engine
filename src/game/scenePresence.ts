@@ -8,6 +8,7 @@ import { presentNpcNames } from './npcRelationships';
 import { isChromePersonToken } from './chromeAuthority';
 import * as openingEstablishment from './openingEstablishment';
 import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney';
+import { UNDERWAY_HERE } from './locationName';
 import { isOutOfTalkingRange } from './hereSpot';
 
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
@@ -79,9 +80,13 @@ export function peopleHere(state: GameState): string[] {
     // T10AI-fix — empty occupancy still seats engine-tagged people at this place
     // (refuse/ask via recordPersonSeen). Skip opening-cast filler and stale crowd
     // stamps (present:true left after sceneFacts cleared) so Follow-up chips retract.
+    // T10AQ-fix — UNDERWAY_HERE is one shared stamp; quiet-road clear must not re-seat
+    // historical road meets via location match (companions + live meeting only below).
     const hereKey = low(state.currentLocation);
+    const sharedRoad = hereKey === low(UNDERWAY_HERE);
     for (const m of state.npcMemories ?? []) {
       if (m.shouldExit || m.present === true) continue;
+      if (sharedRoad) continue;
       if (low(m.location) && low(m.location) === hereKey) add(m.npcName);
     }
     (state.companions ?? []).forEach((c) => add(c.name));

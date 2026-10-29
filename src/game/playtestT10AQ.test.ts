@@ -19,6 +19,7 @@ import { peopleHere } from './scenePresence';
 import { checkActionFollowed } from './turnCheck';
 import { resolveTypedFreeText } from './typedFreeText';
 import { applyPlayPhaseAfterHp } from './playPhase';
+import { resolveDeathSaveTurn } from './tabletop/roundFight';
 import { UNDERWAY_HERE } from './locationName';
 import type { GameState, NpcMemory } from './types';
 
@@ -97,6 +98,10 @@ describe('T10AQ (a) Exhaustion-6 Push-on death owns the book page', () => {
         present: ['Merrit Pike', 'thugs', 'the thugs'],
         crowd: 'present',
         crowdCount: 3,
+        noise: 'quiet',
+        props: [],
+        lastBeat: '',
+        updatedTurn: 10,
       },
       npcMemories: [
         mem({ npcName: 'Merrit Pike' }),
@@ -124,12 +129,16 @@ describe('T10AQ (b) SRD 5.2.1 Extended Travel + Exhaustion', () => {
 
 describe('T10AQ (d) quiet road does not seat past road CAST', () => {
   it('Merrit Pike / thugs stamped on UNDERWAY do not appear on a quiet stretch', () => {
+    // T10AQ-fix — commitTravel clears stale sceneFacts.present / present:true on quiet UNDERWAY.
     const s = quietTrip('aq-cast', 11, {
       sceneFacts: {
         present: ['Merrit Pike', 'thugs', 'the thugs'],
         crowd: 'present',
         crowdCount: 3,
+        noise: 'quiet',
+        props: [],
         lastBeat: 'street empty; afternoon; outdoors',
+        updatedTurn: 11,
       },
       npcMemories: [
         mem({ npcName: 'Merrit Pike' }),
@@ -138,10 +147,50 @@ describe('T10AQ (d) quiet road does not seat past road CAST', () => {
       ],
     });
     expect(s.journey?.encounter ?? null).toBeNull();
+    expect(s.sceneFacts?.present ?? []).toEqual([]);
     expect(npcNamesAt(s, UNDERWAY_HERE)).toEqual([]);
     expect(presentNpcRecords(s).map((m) => m.npcName)).not.toContain('Merrit Pike');
     expect(presentNpcNames(s)).not.toContain('Merrit Pike');
     expect(peopleHere(s).some((n) => /Merrit|thugs/i.test(n))).toBe(false);
+  });
+
+  it('T10AQ-fix: intentional present ally on the road still Medicine-stabilises (SRD)', () => {
+    // SRD 5.2.1 Stabilizing a Creature: DC 10 Wisdom (Medicine). Write-path clear must not
+    // starve a sceneFacts.present ally set after the quiet stretch (dying beat).
+    const base = quietTrip('aq-med', 8);
+    const here = {
+      ...base,
+      character: { ...base.character, hp: 0, maxHp: 12, conditions: ['Unconscious'] },
+      deathSaves: { successes: 0, failures: 0 },
+      sceneFacts: {
+        ...(base.sceneFacts ?? {
+          crowd: 'none' as const,
+          noise: 'quiet' as const,
+          present: [],
+          props: [],
+          lastBeat: '',
+          updatedTurn: base.turn ?? 0,
+        }),
+        present: ['Wenna Brack'],
+        crowd: 'present' as const,
+        crowdCount: 1,
+      },
+      npcMemories: [
+        ...(base.npcMemories ?? []),
+        {
+          npcId: 'person:wenna-brack',
+          npcName: 'Wenna Brack',
+          disposition: 'friendly' as const,
+          facts: [],
+          lastSeenTurn: (base.turn ?? 0) - 1,
+          present: true,
+          location: UNDERWAY_HERE,
+        },
+      ],
+    };
+    const ok = resolveDeathSaveTurn(here, () => 0.5, 'Ask Wenna Brack to stabilise you')!;
+    expect(ok.receipts.some((r) => r.includes('DC 10') && r.includes('success'))).toBe(true);
+    expect(ok.state.character.hp).toBe(1);
   });
 });
 
@@ -153,7 +202,15 @@ describe('T10AQ (e) statue/squirrel mime is not ignored-action', () => {
 
   it('gate does not P0 nobody-answers when the prose shows the mime', () => {
     const s = quietTrip('aq-statue', 11, {
-      sceneFacts: { present: ['Merrit Pike', 'thugs'], crowd: 'present', crowdCount: 2 },
+      sceneFacts: {
+        present: ['Merrit Pike', 'thugs'],
+        crowd: 'present',
+        crowdCount: 2,
+        noise: 'quiet',
+        props: [],
+        lastBeat: '',
+        updatedTurn: 11,
+      },
       npcMemories: [mem({ npcName: 'Merrit Pike' }), mem({ npcName: 'thugs' })],
     });
     const check = checkActionFollowed(s, s, act, prose);
@@ -161,7 +218,17 @@ describe('T10AQ (e) statue/squirrel mime is not ignored-action', () => {
   });
 
   it('variation: freeze like a statue on an empty road', () => {
-    const s = quietTrip('aq-statue2', 11, { sceneFacts: { present: [], crowd: 'none', crowdCount: 0 } });
+    const s = quietTrip('aq-statue2', 11, {
+      sceneFacts: {
+        present: [],
+        crowd: 'none',
+        crowdCount: 0,
+        noise: 'quiet',
+        props: [],
+        lastBeat: '',
+        updatedTurn: 11,
+      },
+    });
     const check = checkActionFollowed(
       s,
       s,

@@ -1768,6 +1768,69 @@ function withBeat(commit: TravelCommit): TravelCommit {
   return { ...commit, state: { ...commit.state, travelBeat: { turn: commit.state.turn ?? 0, facts } } };
 }
 
+/**
+ * T10AQ-fix — on a quiet UNDERWAY stretch, drop stale road CAST from sceneFacts.present and
+ * present:true flags. Companions stay. Live speakable meetings keep their occupancy.
+ * Read path (presentNpcNames) trusts sceneFacts again so a present ally can Medicine-stabilize
+ * (SRD 5.2.1 Stabilizing a Creature: DC 10 Wisdom (Medicine)).
+ */
+function withQuietRoadCast(commit: TravelCommit): TravelCommit {
+  if (!commit.handled) return commit;
+  const s = commit.state;
+  const j = s.journey;
+  if (!j || j.legsDone >= j.legsTotal) return commit;
+  const here = (s.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (here !== UNDERWAY_HERE.toLowerCase()) return commit;
+  const enc = j.encounter;
+  const speakableLive =
+    !!enc
+    && enc.kind !== 'signs'
+    && enc.kind !== 'lair'
+    && enc.kind !== 'wildlife'
+    && enc.kind !== 'monster'
+    && (enc.engaged || (!enc.escaped && !enc.lost && enc.closedTurn == null));
+  if (speakableLive) return commit;
+  const companionKeys = new Set(
+    (s.companions ?? [])
+      .map((c) => (c.name ?? '').trim())
+      .filter((n) => !!n)
+      .map((n) => n.toLowerCase()),
+  );
+  const facts = s.sceneFacts;
+  const prevPresent = facts?.present ?? [];
+  const nextPresent = prevPresent.filter((n) => companionKeys.has(n.trim().toLowerCase()));
+  let memChanged = false;
+  const nextMemories = (s.npcMemories ?? []).map((m) => {
+    if (companionKeys.has((m.npcName ?? '').trim().toLowerCase())) return m;
+    if (m.present !== true) return m;
+    memChanged = true;
+    return { ...m, present: false };
+  });
+  const presentSame =
+    nextPresent.length === prevPresent.length && nextPresent.every((p, i) => p === prevPresent[i]);
+  if (presentSame && !memChanged) return commit;
+  const base = facts ?? {
+    crowd: 'none' as const,
+    noise: 'quiet' as const,
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: s.turn ?? 0,
+  };
+  const crowdClear =
+    nextPresent.length === 0 && (base.crowd === 'present' || (base.crowdCount ?? 0) > 0)
+      ? { crowd: 'none' as const, crowdCount: 0 }
+      : {};
+  return {
+    ...commit,
+    state: {
+      ...s,
+      ...(memChanged ? { npcMemories: nextMemories } : {}),
+      sceneFacts: { ...base, present: nextPresent, ...crowdClear },
+    },
+  };
+}
+
 /** This turn's travel beat facts for the writer (empty on any other turn). */
 export function travelBeatFact(state: Pick<GameState, 'travelBeat' | 'turn'>): string {
   const b = state.travelBeat;
@@ -1852,7 +1915,7 @@ function spendExplorationOnRoad(state: GameState, j: TravelJourney): TravelCommi
  * While underway every other action stays on that ground.
  */
 export function commitTravel(state: GameState, raw: string): TravelCommit {
-  return withBeat(commitTravelStep(state, raw));
+  return withQuietRoadCast(withBeat(commitTravelStep(state, raw)));
 }
 
 const TYPED_DESTINATION =
