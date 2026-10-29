@@ -6,7 +6,7 @@
 import type { GameState } from './types';
 import { isChromePersonToken } from './chromeAuthority';
 import { isNeverCastTitle } from './neverCast';
-import { presentNpcRecords } from './npcRecords';
+import { presentNpcNames } from './npcRelationships';
 import * as openingEstablishment from './openingEstablishment';
 import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney';
 import { isOutOfTalkingRange, TALKING_RANGE_FT } from './hereSpot';
@@ -89,17 +89,12 @@ export function peopleHere(state: GameState): string[] {
     (state.companions ?? []).forEach((c) => add(c.name));
     add(state.activeEncounter?.name);
     add(roadMeetingPeople(state));
-    if (isJourneyUnderway(state)) {
-      for (const m of presentNpcRecords(state)) add(m.npcName);
-    }
     return [...out.values()];
   }
-  // T10RC5 — SM1 seats only (sceneFacts.present + present:true). Do not location-match
-  // presentNpcRecords / presentNpcNames (that re-seated Orel at Cathedral Close T8/T34).
-  for (const n of facts?.present ?? []) add(n);
-  for (const m of state.npcMemories ?? []) {
-    if (m.present === true && !m.shouldExit) add(m.npcName);
-  }
+  // T10RC5fix — people who live at THIS place (presentNpcNames / location stamp, not departed,
+  // in talking range) are here. Narrow RC5 keeps: neverCast titles, road/in-transit (presentNpcRecords
+  // skips UNDERWAY historical stamps; npcPlacedElsewhere drops stale sceneFacts names), out-of-range.
+  presentNpcNames(state).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
   // Namespace read so vitest openingCastNames mocks stay live (no stale named binding).
@@ -113,11 +108,6 @@ export function peopleHere(state: GameState): string[] {
     }
   }
   add(roadMeetingPeople(state));
-  // T10RC5 — on a live road meeting, presentNpcRecords is encounter-party only (skips
-  // location stamps). Off-road, location-matched records stay out of peopleHere.
-  if (isJourneyUnderway(state)) {
-    for (const m of presentNpcRecords(state)) add(m.npcName);
-  }
   return [...out.values()];
 }
 

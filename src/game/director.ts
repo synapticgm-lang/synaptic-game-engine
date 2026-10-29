@@ -26,7 +26,7 @@ import { isCrowdFillerToken } from './chromeAuthority';
 import { markPendingSpawnPreface } from './combatAuthority';
 import { STALL_N } from './directorConstants';
 import { selectCatalogEncounter } from './encounterBible';
-import { arrivePendingEncounter, initEncounterTerminal, parkPendingEncounter } from './encounterTerminalFsm';
+import { initEncounterTerminal, parkPendingEncounter } from './encounterTerminalFsm';
 import { hubsForBibleId, matchHub, placeFirstSight } from './outdoorHubs';
 import { applyPlaceEngineEvent, bindPlanDirector, collectOpenThreads } from './openThreads';
 import { npcChipWant, npcGoalPersonHere } from './openThreadUtils';
@@ -204,13 +204,14 @@ export function engineThreatHere(state: GameState): ActiveEncounter | null {
   );
 }
 
-/** T10RC5 — Face engages a parked/pending foe; once round combat is live, Attack owns the pad. */
+/** T10RC5fix — Face engages a parked/pending foe only; a live activeEncounter is Attack/Flee/Parley. */
 export function facesThreatChipAllowed(state: GameState): boolean {
   if (isDying(state)) return false;
-  if (!engineThreatHere(state)) return false;
-  // Live round combat: Face is not a legal round action (dry-run first-pad LOOP/death).
-  if (state.activeEncounter && state.roundCombat) return false;
-  return true;
+  if (state.activeEncounter) return false;
+  return !!(
+    state.sceneFacts?.pendingEncounter
+    ?? parkedThreatHere(state)?.encounter
+  );
 }
 
 /**
@@ -562,21 +563,10 @@ function commitStallDevelopment(
   // litrpg/rpg: allow threat fallthrough so stall still commits fight progress for first-pad dry-run.
   if (kind === 'threat' || state.engineMode !== 'dnd') {
     const threatWhere = hereName || 'this place';
-    // T10RC5 — already-parked foe: keep Face chip, do not re-announce after escape/handle.
+    // T10RC5fix — already-parked/pending foe: keep Face chip; do not wake into activeEncounter
+    // (live activeEncounter is Attack-owned; Face engages pending via resolveEngineFight).
     const existingFoe = engineThreatHere(working);
     if (existingFoe) {
-      // T10RC5 — wake pending/parked into activeEncounter so this stall turn counts as fight progress.
-      if (!working.activeEncounter) {
-        const live = arrivePendingEncounter(existingFoe, turn);
-        const baseFacts = working.sceneFacts;
-        working = {
-          ...working,
-          activeEncounter: live,
-          sceneFacts: baseFacts
-            ? { ...baseFacts, pendingEncounter: undefined }
-            : baseFacts,
-        };
-      }
       const who =
         actor
         || peopleHere(working)[0]
@@ -593,7 +583,7 @@ function commitStallDevelopment(
       return {
         state: working,
         development,
-        need: 'threat',
+        need: working.activeEncounter ? 'none' : 'threat',
         forwardIds,
         stallKind: thread ? 'thread' : 'situation',
       };
@@ -608,18 +598,7 @@ function commitStallDevelopment(
     });
     const parked = parkStallThreat(working);
     working = parked.state;
-    // T10RC5 — engage the parked foe now so stall commits fight progress (LOOP STOP), and Face resolves.
-    if (parked.foe && !working.activeEncounter) {
-      const live = arrivePendingEncounter(parked.foe, turn);
-      const baseFacts = working.sceneFacts;
-      working = {
-        ...working,
-        activeEncounter: live,
-        sceneFacts: baseFacts
-          ? { ...baseFacts, pendingEncounter: undefined }
-          : baseFacts,
-      };
-    }
+    // T10RC5fix — leave foe pending/parked; Face engages (stall progress lands on the Face pick).
     const who =
       actor
       || peopleHere(working)[0]

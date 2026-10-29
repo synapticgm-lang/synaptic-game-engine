@@ -53,8 +53,8 @@ function base(over: Partial<GameState> = {}): GameState {
 }
 
 describe('T10RC5 seated speakers + Face threat live path', () => {
-  it('compileRefEnum does not hand location-stamped unseated Orel as a speaker at Cathedral Close', () => {
-    // LitRPG T8/T34 rebuild: Orel stamped at Close but not seated; Nell/Col are.
+  it('compileRefEnum seats people who live at Close; neverCast / elsewhere extras stay out', () => {
+    // LitRPG T8 rebuild: Nell/Col/Orel stamped at Close live there; quest title is neverCast chrome.
     let s = base({
       turn: 8,
       currentLocation: 'Cathedral Close',
@@ -83,12 +83,31 @@ describe('T10RC5 seated speakers + Face threat live path', () => {
       ],
     });
     s = seat(s, ['Nell Rudd', 'Col Thatch']);
-    expect(peopleHere(s)).toEqual(expect.arrayContaining(['Nell Rudd', 'Col Thatch']));
-    expect(peopleHere(s).some((n) => /Orel/i.test(n))).toBe(false);
+    expect(peopleHere(s)).toEqual(expect.arrayContaining(['Nell Rudd', 'Col Thatch', 'High Chanter Orel Vane']));
     expect(peopleHere(s).some((n) => /System bounty/i.test(n))).toBe(false);
-    const refs = compileRefEnum(s, ['High Chanter Orel Vane']);
-    expect(refs.some((r) => /orel/i.test(r.id) || /orel/i.test(r.display))).toBe(false);
+    const refs = compileRefEnum(s, ['High Chanter Orel Vane', 'System bounty: Allies become enemies']);
+    expect(refs.some((r) => /orel/i.test(r.display))).toBe(true);
     expect(refs.some((r) => /nell/i.test(r.display))).toBe(true);
+    expect(refs.some((r) => /System bounty/i.test(r.display))).toBe(false);
+
+    // Same Orel stamped at another place is not a speaker while the player is at Close.
+    const elsewhere = base({
+      turn: 8,
+      currentLocation: 'Cathedral Close',
+      sceneFacts: {
+        ...emptySceneFacts(8),
+        crowd: 'sparse',
+        present: ['Nell Rudd', 'Col Thatch'],
+        crowdCount: 2,
+      },
+      npcMemories: [
+        mem({ npcName: 'High Chanter Orel Vane', location: 'West Wall', present: false }),
+        mem({ npcName: 'Nell Rudd', location: 'Cathedral Close', present: true }),
+        mem({ npcName: 'Col Thatch', location: 'Cathedral Close', present: true }),
+      ],
+    });
+    expect(peopleHere(elsewhere).some((n) => /Orel/i.test(n))).toBe(false);
+    expect(compileRefEnum(elsewhere, ['High Chanter Orel Vane']).some((r) => /orel/i.test(r.display))).toBe(false);
   });
 
   it('rpg road T176–178: unseated Dunn/Edda are not speaker refs while presence is empty', () => {
