@@ -84,7 +84,7 @@ function camp(over: Partial<GameState> = {}): GameState {
       mem({
         npcName: 'Ysolde Sallow',
         roleHint: 'contact',
-        goal: { motivation: 'Redemption', target: 'the next safe door' },
+        goal: { motivation: 'Protection', target: 'the next safe door' },
         location: 'Consul Caravan Camp',
       }),
     ],
@@ -146,7 +146,8 @@ describe('T10AR buyer stock line source (s9601 T157)', () => {
 });
 
 describe('T10AR short-return arrival cue (s9601 T160 / T165)', () => {
-  it('bounce return tells the writer to narrate arrival, not nothing-changed', () => {
+  it('bounce return is same-scene turn-back, not a null-delta page', () => {
+    // Owner: 29z9j return-not-new-arrival. T10AR only bans null-delta writer language.
     const s = camp({
       turn: 165,
       circling: {
@@ -161,10 +162,10 @@ describe('T10AR short-return arrival cue (s9601 T160 / T165)', () => {
       },
     });
     const fact = movementFact(s, 'Walk on');
-    expect(fact).toMatch(/Returned this turn/i);
-    expect(fact).toMatch(/still an arrival/i);
+    expect(fact).toMatch(/^Turned back this turn:/);
+    expect(fact).toMatch(/Not a new arrival/);
     expect(fact).toMatch(/never say nothing changed/i);
-    expect(fact).not.toMatch(/Not a new arrival/i);
+    expect(fact).not.toMatch(/still an arrival/i);
   });
 });
 
@@ -240,7 +241,7 @@ describe('T10AR LOOP STOP vs picker bias (s9601 T165)', () => {
           npcName: 'Ysolde Sallow',
           npcId: ysoldeId,
           roleHint: 'contact',
-          goal: { motivation: 'Redemption', target: 'the next safe door' },
+          goal: { motivation: 'Protection', target: 'the next safe door' },
           location: 'Consul Caravan Camp',
           present: true,
         }),

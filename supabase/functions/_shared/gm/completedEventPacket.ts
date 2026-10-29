@@ -1140,11 +1140,13 @@ function movementLine(state: GameState, stay: string): string {
   const prev = c?.prevPlace?.replace(/\s+/g, ' ').trim() ?? '';
   const from = prev && !isRoadLabel(prev) && prev.toLowerCase() !== here.toLowerCase() ? prev : '';
   if (movedNow && c?.shortReturnTurn === state.turn) {
-    // T10AR — bounce return is still an arrival for the writer (s9601 T160/T165 "nothing changed"
-    // / "no new place picked out"). Continuity of cast/mood stays; null-delta language does not.
+    // 29z9j — short turn-back is a return to the same scene, not a new arrival.
+    // T10AR — Free writer took "same scene" as license for null-delta ("nothing changed" /
+    // "no one stepped forward" / "no new place picked out"; s9601 T160/T165). Keep return-not-
+    // arrival ownership; still require showing the people/mood already on the ledger.
     const left = from ? ` from ${from}` : '';
-    const leftNote = from ? ` Nothing more happens at ${from}.` : '';
-    return `Returned this turn:${left} to ${here}. Narrate arriving back at ${here} and who is present; the place may feel familiar, but this is still an arrival — never say nothing changed, that no one stepped forward, or that no new place was picked out.${leftNote}`;
+    const nothing = from ? `; nothing more happens at ${from}` : '';
+    return `Turned back this turn:${left} back to ${here}, a short way after leaving it. ${here} is the same scene as it was left: the same people, mood and open questions — show them on the return; never say nothing changed, that no one stepped forward, or that no new place was picked out. Not a new arrival${nothing}.`;
   }
   if (movedNow && from) {
     const pc = (state.character?.name ?? '').trim() || 'The player character';
