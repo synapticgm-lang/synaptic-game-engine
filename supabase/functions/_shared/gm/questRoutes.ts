@@ -12,8 +12,8 @@
  */
 import type { EngineMode, GameState, NpcMemory, Quest, QuestObjective, QuestRoute, QuestRouteKind } from './types.ts';
 import { mainSpineQuest } from './questPlay.ts';
-import { presentNpcNames } from './npcRelationships.ts';
 import { presentNpcRecords, resolveNpcRecord } from './npcRecords.ts';
+import { peopleHere } from './scenePresence.ts';
 
 const PERSON: ReadonlySet<QuestRouteKind> = new Set(['person', 'contact', 'standing']);
 const PLACE_OBJ: ReadonlySet<QuestRouteKind> = new Set(['place', 'object']);
@@ -59,7 +59,8 @@ export function presentPersonForRoute(
 ): { name: string; entityId: string } | null {
   const eid = (route.entityId ?? '').trim();
   const who = eid.toLowerCase().startsWith('npc:') ? eid.slice(4).trim() : eid;
-  const here = presentNpcNames(state);
+  // T10RC6 — same seat list as chips / reaction slots (not bare lives-here).
+  const here = peopleHere(state);
   if (who) {
     for (let h = 0; h < here.length; h++) {
       const n = here[h]!;

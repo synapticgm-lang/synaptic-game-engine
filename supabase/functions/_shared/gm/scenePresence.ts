@@ -6,6 +6,7 @@
 import type { GameState } from './types.ts';
 import { isChromePersonToken } from './chromeAuthority.ts';
 import { isNeverCastTitle } from './neverCast.ts';
+import { presentNpcRecords } from './npcRecords.ts';
 import { presentNpcNames } from './npcRelationships.ts';
 import * as openingEstablishment from './openingEstablishment.ts';
 import { isJourneyUnderway, roadMeetingLabel, roadMeetingOver } from './travelJourney.ts';
@@ -29,17 +30,33 @@ export function mentionsName(text: string, name: string): boolean {
 }
 
 const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'villain']);
+/** Group meetings keep the kind label seated beside the leader name (ttPres thugs). */
+const ROAD_GROUP_KINDS = new Set(['thugs', 'camp']);
 
-/** The person or group a live, un-fought road meeting puts on this stretch, by the journey's own label. */
+/**
+ * The person a live, in-range road meeting puts on this stretch.
+ * T10RC6 — engine-chosen `enc.name` is the reaction-slot / gate name when set (not a stale place NPC).
+ */
 export function roadMeetingPeople(state: GameState): string | null {
   const enc = state.journey?.encounter;
   if (!enc || roadMeetingOver(enc) || !isJourneyUnderway(state)) return null;
   if (!ROAD_PEOPLE_KINDS.has(enc.kind)) return null;
   // T10RC1 — beyond talking range is not seated (same isOutOfTalkingRange / awayFrom gate).
   const label = roadMeetingLabel(enc.kind);
+  const who = (enc.name ?? '').trim() || label;
   if (typeof enc.distanceFt === 'number' && enc.distanceFt > TALKING_RANGE_FT) return null;
-  if (enc.name && isOutOfTalkingRange(state, enc.name)) return null;
-  if (isOutOfTalkingRange(state, label)) return null;
+  if (isOutOfTalkingRange(state, who)) return null;
+  return who;
+}
+
+/** Group label for a live in-range meeting (thugs / camp) when distinct from the leader name. */
+function roadMeetingGroupLabel(state: GameState): string | null {
+  const enc = state.journey?.encounter;
+  if (!enc || !ROAD_GROUP_KINDS.has(enc.kind)) return null;
+  if (!roadMeetingPeople(state)) return null;
+  const label = roadMeetingLabel(enc.kind);
+  const who = (enc.name ?? '').trim();
+  if (who && personKey(who) === personKey(label)) return null;
   return label;
 }
 
@@ -89,6 +106,17 @@ export function peopleHere(state: GameState): string[] {
     (state.companions ?? []).forEach((c) => add(c.name));
     add(state.activeEncounter?.name);
     add(roadMeetingPeople(state));
+    add(roadMeetingGroupLabel(state));
+    return [...out.values()];
+  }
+  // T10RC6 — underway: one seat list = companions + live foe + in-range meeting name.
+  // Do not keep place-cast leftovers (Orel at Lowmarket) beside a road stranger.
+  if (isJourneyUnderway(state)) {
+    (state.companions ?? []).forEach((c) => add(c.name));
+    add(state.activeEncounter?.name);
+    for (const m of presentNpcRecords(state)) add(m.npcName);
+    add(roadMeetingPeople(state));
+    add(roadMeetingGroupLabel(state));
     return [...out.values()];
   }
   // T10RC5fix — people who live at THIS place (presentNpcNames / location stamp, not departed,
@@ -108,6 +136,7 @@ export function peopleHere(state: GameState): string[] {
     }
   }
   add(roadMeetingPeople(state));
+  add(roadMeetingGroupLabel(state));
   return [...out.values()];
 }
 

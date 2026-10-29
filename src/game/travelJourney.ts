@@ -81,7 +81,7 @@ import { engineAllowsCombat } from './beatContract';
 import { initEncounterTerminal } from './encounterTerminalFsm';
 import { buildHereSpot, isOutOfTalkingRange, TALKING_RANGE_FT, withinPlaceSpot } from './hereSpot';
 import { presentNpcRecords } from './npcRecords';
-import { applyPresenceFacts, emptyPresenceFacts, withMemoryPresentFlag } from './presentAuthority';
+import { applyPresenceFacts, emptyPresenceFacts, seat, withMemoryPresentFlag } from './presentAuthority';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 import { createHashRng, hashUnit, keyedRng } from './seededRng';
 import { nameWords, pickPersonName } from './personNames';
@@ -1880,8 +1880,9 @@ function withBeat(commit: TravelCommit): TravelCommit {
 }
 
 /**
- * T10AQ-fix — on a quiet UNDERWAY stretch, drop stale road CAST from sceneFacts.present and
- * present:true flags. Companions stay. Live speakable meetings keep their occupancy.
+ * T10AQ-fix / T10RC6 — on an UNDERWAY stretch, drop stale place CAST from sceneFacts.present and
+ * present:true flags. Companions stay. An in-range speakable meeting is seated under its
+ * engine-chosen name (one seat list for reaction slot / peopleHere / gate).
  * Read path (presentNpcNames) trusts sceneFacts again so a present ally can Medicine-stabilize
  * (SRD 5.2.1 Stabilizing a Creature: DC 10 Wisdom (Medicine)).
  */
@@ -1900,13 +1901,18 @@ function withQuietRoadCast(commit: TravelCommit): TravelCommit {
     && enc.kind !== 'wildlife'
     && enc.kind !== 'monster'
     && (enc.engaged || (!enc.escaped && !enc.lost && enc.closedTurn == null));
-  if (speakableLive) return commit;
+  const meetingName =
+    speakableLive
+    && !(typeof enc!.distanceFt === 'number' && enc!.distanceFt > TALKING_RANGE_FT)
+      ? ((enc!.name ?? '').trim() || null)
+      : null;
   const companionKeys = new Set(
     (s.companions ?? [])
       .map((c) => (c.name ?? '').trim())
       .filter((n) => !!n)
       .map((n) => n.toLowerCase()),
   );
+  if (meetingName) companionKeys.add(meetingName.toLowerCase());
   const facts = s.sceneFacts;
   const prevPresent = facts?.present ?? [];
   const nextPresent = prevPresent.filter((n) => companionKeys.has(n.trim().toLowerCase()));
@@ -1919,11 +1925,23 @@ function withQuietRoadCast(commit: TravelCommit): TravelCommit {
   });
   const presentSame =
     nextPresent.length === prevPresent.length && nextPresent.every((p, i) => p === prevPresent[i]);
-  if (presentSame && !memChanged) return commit;
+  if (presentSame && !memChanged && !meetingName) return commit;
   let patched: GameState = {
     ...s,
     ...(memChanged ? { npcMemories: nextMemories } : {}),
   };
+  if (meetingName) {
+    patched = seat(
+      applyPresenceFacts(patched, {
+        present: nextPresent,
+        crowd: nextPresent.length || meetingName ? (facts?.crowd === 'none' ? 'sparse' : facts?.crowd) : 'none',
+        crowdCount: Math.max(nextPresent.length, meetingName ? 1 : 0),
+        updatedTurn: patched.turn ?? facts?.updatedTurn ?? 0,
+      }),
+      meetingName,
+    );
+    return { ...commit, state: patched };
+  }
   if (!facts) {
     patched = applyPresenceFacts(patched, {
       crowd: 'none',
