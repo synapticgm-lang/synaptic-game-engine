@@ -1115,11 +1115,14 @@ export function travelEngineLines(commit: TravelCommit): string[] {
   for (let i = 0; i < (commit.extra ?? []).length; i++) {
     const t = commit.extra![i]!.trim();
     // Record-backed STATUS: formatCheckRecord label "Extended Travel: Constitution save…" (VR1-b CheckResultRecord).
+    // Exhaustion death line stays on STATUS via arc receipts; story death is the fact below (T10AQ).
     if (t.toLowerCase().startsWith('extended travel:') || isVr1RollLine(t) || t.startsWith('Constitution save')) lines.push(t);
   }
   for (let i = 0; i < (commit.facts ?? []).length; i++) {
     const f = commit.facts![i]!.trim();
-    if (f === 'Check success.' || f === 'Check failure.') lines.push(f);
+    // T10AQ — Exhaustion 6 death must enter ENGINE RESULT (writerEngineResult isolates the death sentence).
+    // Check success/failure alone left "You are dead" only on travelBeat; spine speech then owned the page.
+    if (f === 'Check success.' || f === 'Check failure.' || /\bYou are dead\./i.test(f)) lines.push(f);
   }
   if (!commit.receipt) return lines;
   let r = commit.receipt.trim();
@@ -1765,10 +1768,88 @@ function withBeat(commit: TravelCommit): TravelCommit {
   return { ...commit, state: { ...commit.state, travelBeat: { turn: commit.state.turn ?? 0, facts } } };
 }
 
+/**
+ * T10AQ-fix — on a quiet UNDERWAY stretch, drop stale road CAST from sceneFacts.present and
+ * present:true flags. Companions stay. Live speakable meetings keep their occupancy.
+ * Read path (presentNpcNames) trusts sceneFacts again so a present ally can Medicine-stabilize
+ * (SRD 5.2.1 Stabilizing a Creature: DC 10 Wisdom (Medicine)).
+ */
+function withQuietRoadCast(commit: TravelCommit): TravelCommit {
+  if (!commit.handled) return commit;
+  const s = commit.state;
+  const j = s.journey;
+  if (!j || j.legsDone >= j.legsTotal) return commit;
+  const here = (s.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (here !== UNDERWAY_HERE.toLowerCase()) return commit;
+  const enc = j.encounter;
+  const speakableLive =
+    !!enc
+    && enc.kind !== 'signs'
+    && enc.kind !== 'lair'
+    && enc.kind !== 'wildlife'
+    && enc.kind !== 'monster'
+    && (enc.engaged || (!enc.escaped && !enc.lost && enc.closedTurn == null));
+  if (speakableLive) return commit;
+  const companionKeys = new Set(
+    (s.companions ?? [])
+      .map((c) => (c.name ?? '').trim())
+      .filter((n) => !!n)
+      .map((n) => n.toLowerCase()),
+  );
+  const facts = s.sceneFacts;
+  const prevPresent = facts?.present ?? [];
+  const nextPresent = prevPresent.filter((n) => companionKeys.has(n.trim().toLowerCase()));
+  let memChanged = false;
+  const nextMemories = (s.npcMemories ?? []).map((m) => {
+    if (companionKeys.has((m.npcName ?? '').trim().toLowerCase())) return m;
+    if (m.present !== true) return m;
+    memChanged = true;
+    return { ...m, present: false };
+  });
+  const presentSame =
+    nextPresent.length === prevPresent.length && nextPresent.every((p, i) => p === prevPresent[i]);
+  if (presentSame && !memChanged) return commit;
+  const base = facts ?? {
+    crowd: 'none' as const,
+    noise: 'quiet' as const,
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: s.turn ?? 0,
+  };
+  const crowdClear =
+    nextPresent.length === 0 && (base.crowd === 'present' || (base.crowdCount ?? 0) > 0)
+      ? { crowd: 'none' as const, crowdCount: 0 }
+      : {};
+  return {
+    ...commit,
+    state: {
+      ...s,
+      ...(memChanged ? { npcMemories: nextMemories } : {}),
+      sceneFacts: { ...base, present: nextPresent, ...crowdClear },
+    },
+  };
+}
+
 /** This turn's travel beat facts for the writer (empty on any other turn). */
 export function travelBeatFact(state: Pick<GameState, 'travelBeat' | 'turn'>): string {
   const b = state.travelBeat;
   return b && b.turn === (state.turn ?? 0) && b.facts.length ? b.facts.join(' ') : '';
+}
+
+/**
+ * T10AQ — when Extended Travel / starvation death settled this turn, the book page is the death
+ * sentence (what rolled / why), never a CAST reaction. Null when the PC is not dead on the record.
+ */
+export function roadDeathBookProse(
+  state: Pick<GameState, 'deathSaves' | 'travelBeat' | 'turn' | 'character'>
+): string | null {
+  if (!state.deathSaves?.dead) return null;
+  const beat = travelBeatFact(state);
+  const fromBeat = beat && /\bYou are dead\./i.test(beat) ? writerEngineResult(beat, state.character?.name) : '';
+  if (fromBeat && /\bYou are dead\./i.test(fromBeat)) return fromBeat;
+  // SRD 5.2.1 Exhaustion level 6 = death (WotC CC BY 4.0). Extended Travel CON-save death uses this line.
+  return 'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.';
 }
 
 /** Leaving a mapped place heads to another mapped place, never back into the room you came out of. */
@@ -1834,7 +1915,7 @@ function spendExplorationOnRoad(state: GameState, j: TravelJourney): TravelCommi
  * While underway every other action stays on that ground.
  */
 export function commitTravel(state: GameState, raw: string): TravelCommit {
-  return withBeat(commitTravelStep(state, raw));
+  return withQuietRoadCast(withBeat(commitTravelStep(state, raw)));
 }
 
 const TYPED_DESTINATION =

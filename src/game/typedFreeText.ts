@@ -40,6 +40,7 @@ import { ledgerChangeFact, ledgerReadChanges, ledgerSheetLine } from './litrpgSy
 import { buildClauseWriterFact } from './writerCueLines';
 import { proseSaysEmpty } from './chipRules';
 import { listenersOnEmptyText, peopleHere } from './scenePresence';
+import { travelEngineChip } from './rules/travelDay';
 
 function isPersonInsightLabel(clause: string): boolean {
   return /^read\s+\S/i.test((clause ?? '').trim());
@@ -398,6 +399,23 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
 
   // T10U — named address restores talking range before the listen pool is stamped.
   const engaged = engageAddressedInHereSpot(state, raw);
+  // T10AQ — journey engine chips (Push on / Make camp / Travel on / jobs) are settled by
+  // commitTravel. Do not open Speech event / NPC reaction slots from the chip label.
+  const journeyChip = travelEngineChip(raw);
+  const j = engaged.journey;
+  if (journeyChip && j && j.legsDone < j.legsTotal) {
+    const intentRead = parsePlayerSteps(raw, sheetContextFromState(engaged));
+    return {
+      receipts: [],
+      facts: [],
+      engineResult: '',
+      intentRead,
+      stepResults: [],
+      lastAddressee: engaged.sceneFacts?.lastAddressee ?? null,
+      economyUsed: freshEconomy(),
+      state: engaged,
+    };
+  }
   const ctx = sheetContextFromState(engaged);
   const intentRead = parsePlayerSteps(raw, ctx);
   const stepResults: StepResolution[] = [];

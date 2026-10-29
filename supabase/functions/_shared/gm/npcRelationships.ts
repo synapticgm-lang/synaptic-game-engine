@@ -359,6 +359,9 @@ export function presentNpcNames(state: GameState): string[] {
     if (resolveNpcRecord(state, name)?.shouldExit || isOutOfTalkingRange(state, name)) return;
     out.set(key, name);
   };
+  // T10AQ-fix — sceneFacts.present / present:true stay readable (SRD Medicine stabilize needs a
+  // present ally). Quiet-road CAST honesty is owned by commitTravel (clears stale road occupancy)
+  // + presentNpcRecords (no UNDERWAY historical location match) + npcNamesAt(UNDERWAY)=[].
   for (const n of state.sceneFacts?.present ?? []) add(n);
   for (const m of state.npcMemories ?? []) if (m.present === true) add(m.npcName);
   for (const m of presentNpcRecords(state)) add(m.npcName, true);

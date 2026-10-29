@@ -156,8 +156,11 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
   const tripHere = underwayHereLabel(state).trim().toLowerCase();
   const onRoad = !!journey && journey.legsDone < journey.legsTotal && (here === UNDERWAY_HERE.toLowerCase() || (!!tripHere && here === tripHere));
   for (const m of state.npcMemories ?? []) {
+    // T10AQ — UNDERWAY_HERE is one shared stamp for every road. Historical meets (Merrit / thugs)
+    // must not resurrect on a quiet stretch; live meetings join via journey.encounter below.
+    if (onRoad) continue;
     if (m.location && samePlace(m.location, state.currentLocation)) push(m);
-    else if (!onRoad && !m.location && hereSlug && m.npcId.startsWith(`writer:${hereSlug}:`)) push({ ...m, location: state.currentLocation });
+    else if (!m.location && hereSlug && m.npcId.startsWith(`writer:${hereSlug}:`)) push({ ...m, location: state.currentLocation });
   }
   if (!onRoad) {
     for (const m of recordsForEntries(state, state.sceneFacts?.present ?? [])) {
@@ -214,6 +217,10 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
   return out.filter((m) => !m.shouldExit && !isOutOfTalkingRange(state, m.npcName));
 }
 export function npcNamesAt(state: GameState, place: string): string[] {
+  const at = (place ?? '').trim();
+  // T10AQ — arriving on the shared road label must not refill CAST from every past road stamp.
+  // Companions are added separately in trimPresentOnLocationChange; meetings use journey.encounter.
+  if (!at || at.toLowerCase() === UNDERWAY_HERE.toLowerCase()) return [];
   return (state.npcMemories ?? []).filter((m) => samePlace(m.location, place)).map((m) => m.npcName);
 }
 export function seedOpeningCastLocations(state: GameState): GameState {

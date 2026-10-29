@@ -405,18 +405,31 @@ export function brokenLines(prose: string): TurnCheckFlag[] {
  */
 /** A body action, not speech: the talk check does not apply to it. */
 const NON_TALK_ACTION =
-  /^(?:wait|look|inspect|examine|investigate|check|study|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read|flick|spit|kick|toss|throw|slam|spin|pull|push|drag|point|eye|stare|shake|drop|grab|shove|yank)\b/i;
+  /^(?:wait|look|inspect|examine|investigate|check|study|search|rest|listen|watch|hold|walk|travel|go|leave|head|climb|press the attack|attack|strike|flee|hide|sneak|loot|take|open|read|flick|spit|kick|toss|throw|slam|spin|pull|push|drag|point|eye|stare|shake|drop|grab|shove|yank|stop|freeze|pretend)\b/i;
 
 /**
  * T10Y — addressee-less physical I-acts (flick salt / spit / eye a corner) are not talk turns.
  * A real ask/quote/talk chip still needs an answer; this only stops the checker overreach on body verbs.
+ * T10AQ — "I suddenly stop and pretend to be a statue, staring…" is body mime, not a speech that needs an answer.
  */
 function isAddresseelessPhysicalAct(act: string): boolean {
   const t = norm(act);
   if (!t) return false;
   if (/["\u201c]/.test(t)) return false;
   if (/\b(?:ask|tell|talk|speak|say|whisper|shout|yell|call out)\b/i.test(t)) return false;
+  // Explicit mime / hold-still shapes (adverb before stop/pretend still counts).
+  if (
+    /\b(?:stop|freeze|hold still|pretend to be|play statue|like a statue)\b/i.test(t)
+    && !/\b(?:ask|tell|talk|speak|say|whisper|shout|yell)\b/i.test(t)
+  ) {
+    return true;
+  }
   if (/^(?:i|you)\s+/i.test(t) && NON_TALK_ACTION.test(t.replace(/^(?:i|you)\s+/i, ''))) return true;
+  // "I suddenly stop…" — strip one adverb so stop/pretend still match NON_TALK_ACTION.
+  if (/^(?:i|you)\s+\w+ly\s+/i.test(t)) {
+    const stripped = t.replace(/^(?:i|you)\s+\w+ly\s+/i, '');
+    if (NON_TALK_ACTION.test(stripped)) return true;
+  }
   return NON_TALK_ACTION.test(t);
 }
 

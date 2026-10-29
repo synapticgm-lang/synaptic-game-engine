@@ -17,6 +17,17 @@ export function travelBeatFact(state: Pick<GameState, 'travelBeat' | 'turn'>): s
   return b && b.turn === (state.turn ?? 0) && b.facts.length ? b.facts.join(' ') : '';
 }
 
+/** T10AQ — client seals the death page; edge exposes the same helper for boot/import parity. */
+export function roadDeathBookProse(
+  state: Pick<GameState, 'deathSaves' | 'travelBeat' | 'turn' | 'character'>
+): string | null {
+  if (!state.deathSaves?.dead) return null;
+  const beat = travelBeatFact(state);
+  const fromBeat = beat && /\bYou are dead\./i.test(beat) ? writerEngineResult(beat, state.character?.name) : '';
+  if (fromBeat && /\bYou are dead\./i.test(fromBeat)) return fromBeat;
+  return 'The forced march wore you down past what a body can bear. Your breath stops on the road. You are dead.';
+}
+
 export const UNDERWAY_HERE = 'On the road between places';
 
 const tidy = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
