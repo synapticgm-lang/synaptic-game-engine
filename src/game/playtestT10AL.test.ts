@@ -69,7 +69,7 @@ describe('T10AL buyer fragment / double / replay / answered-look splice (s9841)'
     const out = ensureSpokenAnswer(draft, state, ask);
     expect(out.answer.status).toBe('added');
     // T10RC1 — noun-phrase agenda → indirect beat (never "I need a buyer who pays.").
-    expect(out.prose).toMatch(/Father Aldous made clear they needed a buyer who pays/i);
+    expect(out.prose).toMatch(/Father Aldous made clear(?: that)? they needed a buyer who pays/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I need a buyer who pays/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]a buyer who pays["\u201d]/i);
   });
@@ -85,7 +85,7 @@ describe('T10AL buyer fragment / double / replay / answered-look splice (s9841)'
     const painted = lastResortStoryBody(state, undefined, ask);
     const sealed = sealPostWriterProse(state, painted.prose, ask);
     expect((sealed.prose.match(/buyer who pays/gi) ?? []).length).toBeLessThanOrEqual(1);
-    expect(sealed.prose).toMatch(/made clear they needed a buyer who pays|Father Aldous/i);
+    expect(sealed.prose).toMatch(/made clear(?: that)? they needed a buyer who pays|Father Aldous/i);
     expect(sealed.prose).not.toMatch(/said,\s*["\u201c]I need a buyer who pays/i);
   });
 
@@ -98,7 +98,7 @@ describe('T10AL buyer fragment / double / replay / answered-look splice (s9841)'
           turn: 9,
           role: 'gm',
           content:
-            'Jax wiped the mud. Jax said, "Pays for what?" Father Aldous made clear they needed a buyer who pays.',
+            'Jax wiped the mud. Jax said, "Pays for what?" Father Aldous made clear(?: that)? they needed a buyer who pays.',
           timestamp: 1,
         },
       ],

@@ -1349,8 +1349,10 @@ export function formatWriterFacingEvent(
         ? ' Fight-close already on the combat log — narrate the moment and aftermath, do not restate it.'
         : '';
     // VR1-b: engineResult may include "Check success." / "Check failure." from outcomeFactFromRecord — one outcome fact.
+    // T10RC7 — player act / PC quote cues convert to consequence instructions (already shown in UI),
+    // never a required restatement of the typed line.
     lines.push(
-      `ENGINE RESULT (required fact — the story must state this plainly; it is already settled, so write it as finished and never continue, repeat or restart it)${mark}: ${writerEngineResult(packet.engineResult, pcStorySubject(pcPov(packet.pc)))}`
+      `ENGINE RESULT (required fact — state settled outcomes plainly; the player's typed act is already shown in the UI — do not restate it; write the consequence and world/NPC response)${mark}: ${writerEngineResult(packet.engineResult, pcStorySubject(pcPov(packet.pc)))}`
     );
   }
   if (panelRead) {

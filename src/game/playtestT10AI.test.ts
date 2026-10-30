@@ -134,7 +134,7 @@ describe('T10AI crowd / role reply beats (s9811 / s9813)', () => {
     const out = ensureSpokenAnswer(draft, state, ask);
     expect(out.answer.status).toBe('added');
     // T10RC1 — structured agenda is an indirect beat, not a telegram quote.
-    expect(out.prose).toMatch(/made clear they needed|order under their roof|roof/i);
+    expect(out.prose).toMatch(/made clear(?: that)? they needed|order under their roof|roof/i);
     expect(out.prose).not.toMatch(/\bI need\b/i);
     expect(out.prose.match(/\bdid not speak\b/gi)?.length ?? 0).toBe(0);
   });

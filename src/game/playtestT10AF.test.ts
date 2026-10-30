@@ -143,7 +143,7 @@ describe('T10AF steward silence + stock motive (s9501 T127/T131)', () => {
     const out = ensureSpokenAnswer(draft, state, ask);
     expect(out.answer.status).toBe('added');
     // T10RC1 — agenda nouns are indirect beats, not "I need…" telegram quotes.
-    expect(out.prose).toMatch(/the steward (?:said,\s*["\u201c]|pressed for|made clear they needed|held out)/i);
+    expect(out.prose).toMatch(/the steward (?:said,\s*["\u201c]|pressed for|made clear(?: that)? they needed|held out)/i);
     expect(out.prose).toMatch(/safe place to rest|who sent you through the oak/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:want|need|can offer)/i);
     expect(out.prose).not.toMatch(/fair and square/i);
@@ -160,7 +160,7 @@ describe('T10AF steward silence + stock motive (s9501 T127/T131)', () => {
     const draft =
       'Jax snatched the thread from the nose of the steward and tied it around their finger, then they told the steward to answer them or they would start counting teeth. The steward did not say a single word, and they only looked at Jax in silence. The knotted thread sits tight on Jax\'s finger, and the gate shadow stretches long across the road behind the steward.';
     const out = ensureSpokenAnswer(draft, state, ask);
-    expect(out.prose).toMatch(/the steward (?:said,\s*["\u201c]|pressed for|made clear they needed|held out)/i);
+    expect(out.prose).toMatch(/the steward (?:said,\s*["\u201c]|pressed for|made clear(?: that)? they needed|held out)/i);
     expect(out.prose).toMatch(/safe place to rest|who sent you through the oak/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:want|need|can offer)/i);
     expect(out.prose).not.toMatch(/fair and square/i);
@@ -206,7 +206,7 @@ describe('T10AF salt-road ask target + Follow up + splice (s9601)', () => {
       'Jax reached for the loose brick at their feet, but it slipped away from their fingers and they never got it off the ground. Ysolde Sallow watched the failed grab the whole way, cold and unmoved, and offered no help.';
     const out = ensureSpokenAnswer(draft, state, ask);
     expect(out.answer.status).toBe('added');
-    expect(out.prose).toMatch(/Ysolde Sallow (?:said,\s*["\u201c]|pressed for|made clear they needed|held out)/i);
+    expect(out.prose).toMatch(/Ysolde Sallow (?:said,\s*["\u201c]|pressed for|made clear(?: that)? they needed|held out)/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:want|need|can offer)/i);
     expect(out.prose).not.toMatch(/offered no help/i);
     // Content landed for the addressed NPC (indirect agenda beat is the T10RC1 owner).
@@ -248,7 +248,7 @@ describe('T10AF salt-road ask target + Follow up + splice (s9601)', () => {
     const draft =
       'Jax bent down on the open road and flicked a small pebble so it skipped once and stopped right by the boots of Bertil Pike. Jax asked Bertil if he knew why the Bribe Market Toll Stone was humming. Bertil looked down at the pebble, then back up at Jax, and said nothing at all.';
     const out = ensureSpokenAnswer(draft, state, ask);
-    expect(out.prose).toMatch(/Bertil Pike (?:said,\s*["\u201c]|pressed for|made clear they needed|held out)/i);
+    expect(out.prose).toMatch(/Bertil Pike (?:said,\s*["\u201c]|pressed for|made clear(?: that)? they needed|held out)/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:want|need|can offer)/i);
     expect(out.prose).not.toMatch(/said nothing/i);
   });
@@ -262,7 +262,7 @@ describe('T10AF salt-road ask target + Follow up + splice (s9601)', () => {
     expect(scrubbed).not.toMatch(/said nothing that/i);
     const out = ensureSpokenAnswer(scrubbed, state, ask);
     expect(out.answer.status).toBe('added');
-    expect(out.prose).toMatch(/Osric Wyle (?:said,\s*["\u201c]|pressed for|made clear they needed|held out)/i);
+    expect(out.prose).toMatch(/Osric Wyle (?:said,\s*["\u201c]|pressed for|made clear(?: that)? they needed|held out)/i);
     expect(out.prose).toMatch(/delivery|parcel/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:want|need|can offer)/i);
     expect(out.prose).not.toMatch(/said nothing that/i);
@@ -277,7 +277,7 @@ describe('T10AF salt-road ask target + Follow up + splice (s9601)', () => {
     const cleaned = stripSpeakerSilence(draft, { label: 'Dunn Rudd' });
     expect(cleaned).not.toMatch(/nothing at all/i);
     const out = ensureSpokenAnswer(draft, state, ask);
-    expect(out.prose).toMatch(/Dunn Rudd (?:said,\s*["\u201c]|pressed for|made clear they needed|held out)/i);
+    expect(out.prose).toMatch(/Dunn Rudd (?:said,\s*["\u201c]|pressed for|made clear(?: that)? they needed|held out)/i);
     expect(out.prose).toMatch(/safe place to rest/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:want|need|can offer)/i);
     expect(out.prose).not.toMatch(/go quiet when they hear I am coming/i);
@@ -298,7 +298,7 @@ describe('T10AF salt-road ask target + Follow up + splice (s9601)', () => {
     const draft =
       'Jax asked Dunn Rudd for a safe place to rest, pitching their voice low so it would not carry across Bribe Market. Dunn shut their mouth and gave Jax nothing back, just a hard flat look that lasted too long.';
     const out = ensureSpokenAnswer(draft, state, ask);
-    expect(out.prose).toMatch(/Dunn Rudd (?:said,\s*["\u201c]|pressed for|made clear they needed|held out)/i);
+    expect(out.prose).toMatch(/Dunn Rudd (?:said,\s*["\u201c]|pressed for|made clear(?: that)? they needed|held out)/i);
     expect(out.prose).toMatch(/safe place to rest/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:want|need|can offer)/i);
     expect(out.prose).not.toMatch(/gave Jax nothing back|said nothing/i);

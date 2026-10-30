@@ -122,6 +122,7 @@ function isSpokenSentence(bit: string): boolean {
  * T10RC1 — agenda / thread fields are structured facts (chip topics), never quoted dialogue.
  * One owner: render as engine-fed indirect speech or action from who/want/where. Keep chip
  * topics in npcChipWant. No "I want/need/can offer …" telegram quotes.
+ * T10RC7 — always a full indirect clause (never bare "made clear they needed <noun phrase>").
  */
 function agendaAsIndirectBeat(
   speaker: Speaker,
@@ -132,9 +133,15 @@ function agendaAsIndirectBeat(
   if (!t) return { line: `${capitalize(speaker.label)} said nothing.` };
   if (isSpokenSentence(t)) return quotedReply(speaker, /[.!?]$/.test(t) ? t : `${t}.`);
   const who = capitalize(speaker.label);
-  if (kind === 'offer') return { line: `${who} held out ${t}.` };
-  if (kind === 'goal') return { line: `${who} pressed for ${t}.` };
-  return { line: `${who} made clear they needed ${t}.` };
+  if (kind === 'offer') {
+    return { line: `${who} held out ${t.replace(/[.!?]+$/, '')}.`, words: t };
+  }
+  if (kind === 'goal') {
+    return { line: `${who} pressed for ${t.replace(/[.!?]+$/, '')}.`, words: t };
+  }
+  // Full that-clause: "made clear that they needed …" (grammar floor for chip noun phrases).
+  const need = /^that\b/i.test(t) ? t.replace(/[.!?]+$/, '') : `that they needed ${t.replace(/[.!?]+$/, '')}`;
+  return { line: `${who} made clear ${need}.`, words: t };
 }
 
 const sayWordSet = (s: string) => new Set((s.toLowerCase().match(/[a-z0-9']+/g) ?? []).filter((w) => w.length >= 3));
@@ -403,10 +410,10 @@ function spokenExchangeLine(
       if (offer && !speakerAlreadyTold(state, speaker, offer)) {
         return agendaAsIndirectBeat(speaker, offer, 'offer');
       }
-      // Thread topic without a spoken sentence: action beat naming the structured label (no quote).
+      // Thread topic without a spoken sentence: one owner — agendaAsIndirectBeat (T10RC7).
       const topic = (hit.label || '').replace(/^.+?:\s*/, '').replace(/\s+/g, ' ').trim();
       if (topic && !isSpokenSentence(topic) && !speakerAlreadyTold(state, speaker, topic)) {
-        return { line: `${capitalize(speaker.label)} pressed for ${topic}.` };
+        return agendaAsIndirectBeat(speaker, topic, 'goal');
       }
     }
   }
@@ -786,11 +793,16 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
 function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): boolean {
   const body = (prose ?? '').replace(/\s+/g, ' ').trim();
   if (!body) return false;
-  const label = esc(speaker.label);
+  // T10RC7 — any name token for this speaker (Oda / Oda Hask) counts as the same owner.
+  const nameAlts = [speaker.label, ...speaker.names]
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n, i, a) => n.length >= 2 && a.indexOf(n) === i)
+    .map(esc);
+  const who = nameAlts.length ? `(?:${nameAlts.join('|')})` : esc(speaker.label);
   // T10RC1 — indirect agenda beats count as already answered (no second append on seal).
   if (
     new RegExp(
-      `${label}\\s+(?:pressed for|made clear they needed|held out)\\b`,
+      `${who}\\s+(?:pressed for|made clear(?:\\s+that)?(?:\\s+they\\s+needed)?|held out)\\b`,
       'i',
     ).test(body)
   ) {
@@ -800,10 +812,10 @@ function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): 
     const w = words.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
     if (w.length >= 3) {
       const q = esc(w);
-      if (new RegExp(`${label}\\s+said,\\s*["\\u201c]${q}["\\u201d]?`, 'i').test(body)) return true;
+      if (new RegExp(`${who}\\s+said,\\s*["\\u201c]${q}["\\u201d]?`, 'i').test(body)) return true;
       if (
         new RegExp(
-          `${label}\\s+(?:pressed for|made clear they needed|held out)\\s+${q}`,
+          `${who}\\s+(?:pressed for|made clear(?:\\s+that)?(?:\\s+they\\s+needed)?|held out)\\s+(?:that\\s+they\\s+needed\\s+)?${q}`,
           'i',
         ).test(body)
       ) {
@@ -822,7 +834,7 @@ function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): 
       }
     }
   }
-  return new RegExp(`${label}\\s+said,\\s*["\\u201c]`, 'i').test(body);
+  return new RegExp(`${who}\\s+said,\\s*["\\u201c]`, 'i').test(body);
 }
 
 /** Drop a back-to-back identical `Name said, "…"` clone (two code paths each appended once). */
@@ -836,6 +848,26 @@ function collapseDuplicateSaid(prose: string): string {
     .replace(
       /\b((?:[Tt]he\s+)?[A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3}\s+said nothing\.)(?:\s+\1)+/gi,
       '$1',
+    )
+    // T10RC7 — one agenda owner: "Oda made clear… Oda Hask made clear…" (short then full / same need).
+    .replace(
+      /\b([A-Z][\w'-]+)(?:\s+([A-Z][\w'-]+))?\s+(pressed for|made clear(?:\s+that)?(?:\s+they\s+needed)?|held out)\b([^.?!]*)[.?!]\s+\1(?:\s+([A-Z][\w'-]+))?\s+\3\b[^.?!]*[.?!]/g,
+      (_m, first: string, last: string | undefined, verb: string, rest: string, last2: string | undefined) => {
+        const who = [first, last2 || last].filter(Boolean).join(' ');
+        let clause = (rest ?? '').trim();
+        if (/^made clear/i.test(verb) && clause && !/^that\b/i.test(clause)) {
+          clause = /^they\s+needed\b/i.test(clause)
+            ? ` that ${clause}`
+            : ` that they needed ${clause.replace(/^\s+/, '')}`;
+          return `${who} made clear${clause}.`;
+        }
+        return `${who} ${verb}${rest}.`;
+      },
+    )
+    // T10RC7 — normalize a lone bare need fragment to a full that-clause.
+    .replace(
+      /\b([A-Z][\w'-]+(?:\s+[A-Z][\w'-]+)?)\s+made clear they needed\b/g,
+      '$1 made clear that they needed',
     )
     .replace(/\s+/g, ' ')
     .trim();

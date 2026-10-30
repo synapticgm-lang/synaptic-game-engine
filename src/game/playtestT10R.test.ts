@@ -134,9 +134,11 @@ describe('T10R quote + NPC reply', () => {
     expect(steps.some((s) => (s.say ?? '').toLowerCase().includes('look me in the eye'))).toBe(true);
     const typed = resolveTypedFreeText(state, line);
     expect(typed.engineResult).toMatch(/PC says exactly:/i);
+    expect(typed.engineResult).toMatch(/already shown/i);
     expect(typed.engineResult).toMatch(/NPC reaction slot open for Oskar/i);
     const plain = writerEngineResult(typed.engineResult, 'Jax');
-    expect(plain).toMatch(/look me in the eye/i);
+    // T10RC7 — player quote already on the UI; convert never reprints it.
+    expect(plain).not.toMatch(/look me in the eye/i);
     expect(plain).toMatch(/Oskar[^.]{0,40}said nothing/i);
     expect(plain).not.toMatch(/\banswered\b/i);
   });

@@ -35,10 +35,10 @@ function lit(over: Partial<GameState> = {}): GameState {
 
 describe('T10Z s9301 entity-madlib / ask / chips / flee / stall', () => {
   it('a: Fine/Bronze loot chrome is plain for writer; scrub does not mad-lib held Fine X', () => {
-    expect(proseItemName('Fine Pistol')).toBe('Pistol');
+    expect(proseItemName('Fine Pistol')).toBe('pistol');
     expect(proseItemName('Bronze Reward Box')).toBe('reward box');
     expect(plainItemChromeInText('I spin the Fine Pistol on my finger')).toBe(
-      'I spin the Pistol on my finger',
+      'I spin the pistol on my finger',
     );
     expect(mustNarrateCue('Open the Bronze Reward Box')).toMatch(/reward box/i);
     expect(mustNarrateCue('Open the Bronze Reward Box')).not.toMatch(/Bronze Reward Box/);
