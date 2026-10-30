@@ -83,6 +83,10 @@ describe('28q loose ends wired back in', () => {
   it('social progression receipts reach STATUS', () => {
     const lines = formatArcStatusReceipts({ systemReceipts: ['Social track: +6 (negotiate)'] } as never);
     expect(lines).toContain('Social track: +6 (negotiate)');
+    // T10SOC — use-based skill receipts also pass through (LitRPG/RPG).
+    const skill =
+      'Deception: rolled 14+2 vs DC 17 — success (long shot). Deception +9 XP (level 3)';
+    expect(formatArcStatusReceipts({ systemReceipts: [skill] } as never)).toContain(skill);
   });
 
   it('telegraph: one engine sign from the foe, the tier reads in the sign, no catalog text', () => {
