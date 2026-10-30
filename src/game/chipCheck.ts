@@ -2,6 +2,7 @@ import type { GameState } from './types';
 import { engineChipActionKey, engineChips, sanitizeChoiceLabel, type ChipKind } from './choicePipeline';
 import { enumerateLegalEdges } from './graphChoices';
 import { presentNpcRecords } from './npcRecords';
+import { mentionsName, peopleHere } from './scenePresence';
 import { isWayOut, wayOutMovesPlayer } from './sceneAffordances';
 import { exitPlaceNames } from './placeNames';
 import { tabletopStepChip } from './tabletopQuestProgress';
@@ -155,8 +156,12 @@ export function checkChipKinds(state: GameState, offered: string[], prose = ''):
       out.push({ kind: 'missing-chip-kind', detail: 'this place has exits and no exit chip is offered' });
     }
   }
+  // T10RC8 — "is here" for talk-chip duty = peopleHere seat list (not raw presentNpcRecords).
+  const seated = peopleHere(state);
   for (const npc of presentNpcRecords(state)) {
     const name = (npc.npcName ?? '').trim();
+    if (!name) continue;
+    if (!seated.some((p) => mentionsName(p, name) || mentionsName(name, p))) continue;
     const space = name.indexOf(' ');
     const first = (space < 0 ? name : name.slice(0, space)).toLowerCase();
     if (!first) continue;

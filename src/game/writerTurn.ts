@@ -254,7 +254,8 @@ export function runWriterTurn(opts: {
   const problems = writerDraftProblems(first.prose, check);
   if (!first.prose) return { ...first, outcome: 'empty', problems, remaining: problems, firstDraft: '' };
   const spoken = ensureSpokenAnswer(finishCommittedProse(first.prose, check, packet), check.state, check.playerInput);
-  const prose = spoken.prose;
+  // T10RC8 — seat-list final page (after spoken append); Absent-speaker lines never ship.
+  const prose = dropUnseatedSpeakerLines(check.state, spoken.prose);
   return {
     ...first,
     prose,
@@ -264,6 +265,32 @@ export function runWriterTurn(opts: {
     firstDraft: first.prose,
     spoken: spoken.answer,
   };
+}
+
+/**
+ * T10RC8 — final-page owner: drop speaker-attributed lines whose speaker is not on peopleHere
+ * (same seat list as reaction slots / chips). After every append / repair / warden seal.
+ */
+export function dropUnseatedSpeakerLines(state: GameState, prose: string): string {
+  const text = (prose ?? '').replace(/\s+/g, ' ').trim();
+  if (!text) return text;
+  const crimes = checkPlayCrimes(state, state, '', text).p0.filter((f) => f.kind === 'absent-speaker');
+  if (!crimes.length) return text;
+  const names = crimes
+    .map((f) => f.detail.replace(/\s+speaks but is not here\b.*/i, '').trim())
+    .filter((n) => n.length >= 2);
+  if (!names.length) return text;
+  const speech =
+    /\b(?:said|says|answered|answers|asked|asks|replied|replies|told|tells|spoke|speaks|speaking|telling|called|calls|whispered|whispers|muttered|mutters|snapped|snaps|made clear|pressed for|held out)\b/i;
+  const kept = splitProseSentences(text).filter((s) => {
+    for (const n of names) {
+      if (!new RegExp(`\\b${escRe(n)}\\b`, 'i').test(s)) continue;
+      if (speech.test(s)) return false;
+    }
+    return true;
+  });
+  const next = kept.join(' ').replace(/\s+/g, ' ').trim();
+  return next || text;
 }
 /** Fight omit rewrite, then repairs, then RC-N3 blocking rewrite / engine-fact fallback. */
 export async function runWriterTurnWithFightRetry(opts: {
@@ -282,6 +309,13 @@ export async function runWriterTurnWithFightRetry(opts: {
   if (opts.check.state.engineMode === 'dnd') {
     const prose = capBeatWords(done.prose, TABLETOP_BEAT_WORDS, opts.check.state);
     if (prose !== done.prose) done = { ...done, prose, remaining: writerDraftProblems(prose, opts.check) };
+  }
+  // T10RC8 — repairs can reintroduce unseated speakers; drop before accept / rewrite gate.
+  {
+    const sealed = dropUnseatedSpeakerLines(opts.check.state, done.prose);
+    if (sealed !== done.prose) {
+      done = { ...done, prose: sealed, remaining: writerDraftProblems(sealed, opts.check) };
+    }
   }
   // RC-N3 after repairs: hard misses → rewrite then engine-fact page; speech-answer → rewrite then keep.
   if (done.fightRetry) return done;
@@ -382,7 +416,8 @@ export function sealPostWriterProse(
 ): { prose: string; spoken?: SpokenAnswer } {
   const placed = withMoveDestination(state, prose);
   const spoken = ensureSpokenAnswer(placed, state, playerInput);
-  return { prose: spoken.prose, spoken: spoken.answer };
+  // T10RC8 — after every append/repair/warden seal: drop unseated speaker attribution.
+  return { prose: dropUnseatedSpeakerLines(state, spoken.prose), spoken: spoken.answer };
 }
 
 /** Engine moved the player this turn but the beat never names where to — add one plain sentence. */

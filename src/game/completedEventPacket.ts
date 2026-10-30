@@ -4,6 +4,7 @@
  */
 import type { GameState, LogEntry, NarrativePerspective, ReadingLevel, Settings } from './types';
 import { foeCanSpeak } from './rules/srdMonsters';
+import { isEncounterRoleLabel, proseEncounterLabel } from './proseItemName';
 import { narratesPcInThirdPerson, pcPov, pcStorySubject, povExample } from './narrativePov';
 import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabel } from './locationName';
 import { isCrowdFillerToken, isSystemWindowLabel, realPresentPeople } from './chromeAuthority';
@@ -691,7 +692,14 @@ export function compileRefEnum(
     if (encName && state.activeEncounter) {
       const enc = state.activeEncounter;
       if (typeof enc.canSpeak !== 'boolean') enc.canSpeak = foeCanSpeak(enc);
-      add(`encounter:${slugRefId(encName)}`, encName, enc.canSpeak ? 'person' : 'creature');
+      // T10RC8 — role/catalog foeName is a kind label (proseEncounterLabel), not a person speaker.
+      const role = isEncounterRoleLabel(encName);
+      const display = role ? proseEncounterLabel(encName).label : encName;
+      add(
+        `encounter:${slugRefId(encName)}`,
+        display,
+        !role && enc.canSpeak ? 'person' : 'creature',
+      );
     }
     const kill = state.sceneFacts?.lastKill;
     if (kill?.name && kill.remains && kill.outcome === 'victory') {

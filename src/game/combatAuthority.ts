@@ -9,7 +9,7 @@ import { applyPresenceFacts, emptyPresenceFacts, seat, unseat } from './presentA
 import { pushCombatStateTx } from './stateTx';
 import { isJourneyUnderway, isRoadLabel, UNDERWAY_HERE } from './travelJourney';
 import { placeScale } from './placeAuthority';
-import { proseEncounterLabel } from './proseItemName';
+import { isEncounterRoleLabel, proseEncounterLabel } from './proseItemName';
 
 function sceneFactsBase(state: GameState): SceneFacts {
   return state.sceneFacts ?? emptyPresenceFacts(state.turn);
@@ -256,13 +256,15 @@ export function foeVisibleInScene(
 }
 
 /**
- * T10RC7 — book/writer subject for a catalog foe: common-noun when the label is not a person name.
- * Humanoid person names (Blade, Guard, …) stay as the ledger name; Ambush/Raid titles do not.
+ * T10RC7 / T10RC8 — book/writer subject for a foe label.
+ * Role/catalog compounds (Consul Household Blade, Stonevein Ambush) are common nouns via
+ * proseEncounterLabel — never a character who "said" lines. Short humanoid person names
+ * (Blade, Guard, …) stay as the ledger name.
  */
 function spawnSubject(enemyName: string): string {
   const raw = (enemyName ?? '').trim() || 'A threat';
-  if (isHumanoidEnemyName(raw)) return raw;
-  return proseEncounterLabel(raw).label;
+  if (isEncounterRoleLabel(raw) || !isHumanoidEnemyName(raw)) return proseEncounterLabel(raw).label;
+  return raw;
 }
 
 /** `scale` is the committed place's indoor/outdoor (placeScale); a room and a doorway only when indoor. */
@@ -306,9 +308,12 @@ export function pendingFoeSign(
 ): string | null {
   const name = (foe?.name ?? '').trim();
   if (!name) return null;
-  // T10RC7 — catalog labels reach the writer as common nouns (not character names).
-  const shown = isHumanoidEnemyName(name) ? name : `${proseEncounterLabel(name).label} (not a character name — common noun)`;
-  const kind = `${TIER_WORD[String(foe?.threatTier ?? '')] ?? ''}${isHumanoidEnemyName(name) ? 'person' : 'creature'}`;
+  // T10RC7 / T10RC8 — role/catalog + non-person labels reach the writer as common nouns.
+  const role = isEncounterRoleLabel(name) || !isHumanoidEnemyName(name);
+  const shown = role
+    ? `${proseEncounterLabel(name).label} (not a character name — common noun)`
+    : name;
+  const kind = `${TIER_WORD[String(foe?.threatTier ?? '')] ?? ''}${role ? 'creature' : 'person'}`;
   const ground = isJourneyUnderway(state) ? (state.journey?.ground ?? '').trim().toLowerCase() : '';
   const place = (state.currentLocation ?? '').trim();
   const where = ground
