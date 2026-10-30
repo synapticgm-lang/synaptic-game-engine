@@ -445,7 +445,11 @@ export function roadMeetingOver(enc: RoadEncounter): boolean {
 function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   if (roadMeetingOver(enc)) return [];
   if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
-  if (enc.kind === 'traveler') return [TALK_PAD[terrain]];
+  if (enc.kind === 'traveler') {
+    // T10RC8 — Talk needs talking range (same seat list as peopleHere / ghost-chip).
+    if (typeof enc.distanceFt === 'number' && enc.distanceFt > TALKING_RANGE_FT) return [];
+    return [TALK_PAD[terrain]];
+  }
   if (enc.kind === 'camp') {
     const pads: string[] = ['Approach the camp'];
     if (enc.camp?.placeId) pads.push(SNEAK_CAMP_PAD);
@@ -458,6 +462,10 @@ function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
   if (demand === 'name') out.push(NAME_PASSAGE_PAD);
   if (demand === 'toll' || demand === 'purse') out.push(TOLL_PASSAGE_PAD);
   if (enc.kind === 'villain') out.push(GO_AROUND_PAD);
+  // T10RC8 — out-of-range: Face/Approach stay; Talk-your-way is not a seat (ghost-chip T177).
+  if (typeof enc.distanceFt === 'number' && enc.distanceFt > TALKING_RANGE_FT) {
+    return out.filter((p) => !/^Talk\b/i.test(p));
+  }
   return out;
 }
 const FAIL_COST_TAIL = /,\s*but fail and (?:they|it) attacks?$/i;

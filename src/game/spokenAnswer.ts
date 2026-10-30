@@ -919,12 +919,33 @@ function isPassiveObserveOrTravel(playerInput: string): boolean {
   return false;
 }
 
+/**
+ * T10RC8 — one seat, one body. Arrival "tall figure in robes" is the seated speaker when alone,
+ * not a second person beside Nell / Orel.
+ */
+function bindArrivalFigure(prose: string, speaker: Speaker, _alone: boolean): string {
+  if (!prose.trim()) return prose;
+  // T10RC8 — the person whose reply we are attaching owns the unnamed arrival figure
+  // (tall figure in robes ↔ Nell / Orel). One engine person, one name, one seat.
+  if (!/\b(?:a|the)\s+(?:tall\s+|robed\s+)?figure\b/i.test(prose)) return prose;
+  const who = capitalize(speaker.label);
+  return prose
+    .replace(/\b(?:a|the)\s+tall figure(?:\s+in\s+(?:chanted\s+)?robes)?\b/gi, who)
+    .replace(/\b(?:a|the)\s+robed figure\b/gi, who)
+    .replace(/\b(?:a|the)\s+figure in chanted robes\b/gi, who);
+}
+
 function attachExchange(
   prose: string,
   speaker: Speaker,
   exchange: { line: string; words?: string },
+  alone: boolean,
 ): { prose: string; answer: SpokenAnswer } {
-  let body = (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim();
+  let body = bindArrivalFigure(
+    (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim(),
+    speaker,
+    alone,
+  );
   if (proseHasSpeakerReply(body, speaker, exchange.words)) {
     return { prose: collapseDuplicateSaid(body), answer: { status: 'already-quoted', speaker: speaker.label } };
   }
@@ -1027,7 +1048,7 @@ export function ensureSpokenAnswer(
     }
     // T10S/T10U/T10X/T10Y/T10AD/T10AF — exchange needs content (ledger / cast / motive deflection).
     // Content-free silence on the page is replaced when words exist; never stacked with a stock quote.
-    return attachExchange(prose, speaker, spokenExchangeLine(state, speaker, playerInput));
+    return attachExchange(prose, speaker, spokenExchangeLine(state, speaker, playerInput), alone);
   }
   if (!who) return { prose, answer: { status: 'nobody-here' } };
   const { speaker, alone } = who;
@@ -1046,13 +1067,13 @@ export function ensureSpokenAnswer(
     if (!typedSpeech) {
       return { prose, answer: { status: 'no-line', speaker: speaker.label } };
     }
-    return attachExchange(prose, speaker, spokenExchangeLine(state, speaker, playerInput));
+    return attachExchange(prose, speaker, spokenExchangeLine(state, speaker, playerInput), alone);
   }
   const line = `${capitalize(speaker.label)} said, "${real.line}"`;
   if (proseHasSpeakerReply(prose, speaker, real.line)) {
     return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
   }
-  const body = stripSpeakerSilence(prose.trim(), speaker);
+  const body = stripSpeakerSilence(bindArrivalFigure(prose.trim(), speaker, alone), speaker);
   return {
     prose: collapseDuplicateSaid(body ? `${body} ${line}` : line),
     answer: { status: 'added', speaker: speaker.label, source: real.source, line },

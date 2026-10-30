@@ -754,8 +754,9 @@ export function checkRepeatChips(chips: string[], action: string, roundChips: st
     .map((c) => ({ kind: 'repeat-chip' as const, detail: `"${norm(c)}" repeats the previous action ("${norm(action).slice(0, 60)}")` }));
 }
 
+// T10RC8 — spoke/speaking/telling share this owner with said/told (draft + final-page drop).
 const SPEECH_VERB =
-  '(?:said|says|answered|answers|asked|asks|added|replied|replies|told|tells|called|calls|whispered|whispers|muttered|mutters|snapped|snaps|let the name)';
+  '(?:said|says|answered|answers|asked|asks|added|replied|replies|told|tells|spoke|speaks|speaking|telling|called|calls|whispered|whispers|muttered|mutters|snapped|snaps|let the name)';
 const SYSTEM_TERMS =
   /\blevel (?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b|\bXP\b|\bHP\b|\bhit points\b|\bexperience points\b|\bstat (?:sheet|block)\b/i;
 const ASKS_ROLL = /\b(?:roll (?:a|an|for|your)\b|make an? [a-z]+ (?:check|save|saving throw)\b)/i;

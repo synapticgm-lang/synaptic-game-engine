@@ -212,7 +212,15 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   }
 
   if (isJourneyPad(state, label)) {
-    return isJourneyUnderway(state) ? null : { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
+    if (!isJourneyUnderway(state)) {
+      return { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
+    }
+    // T10RC8 — Walk / Face / Turn back stay legal on the journey. Talk-your-way and other
+    // social journey pads still need a hearer on the seat list (same ghost rule below).
+    if (!SOCIAL_CHIP.test(label) && !ADDRESSED_QUESTION.test(label) && !chipAddressee(label)) {
+      return null;
+    }
+    // Fall through to seat / empty-room / range checks.
   }
 
   // T10AN — talk / Read / Analyze / Ask aimed at someone out of talking range cannot land until closer.

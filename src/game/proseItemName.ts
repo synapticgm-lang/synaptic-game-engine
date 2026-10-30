@@ -20,6 +20,16 @@ export function proseItemName(name: string): string {
 }
 
 /**
+ * T10RC8 — catalog / role foe labels are 3+ Title-Case tokens (Consul Household Blade),
+ * not a Given+Family person name. Shared with proseEncounterLabel — no foe-name word list.
+ */
+export function isEncounterRoleLabel(name: string): boolean {
+  const words = (name ?? '').replace(/\s+/g, ' ').trim().split(/\s+/).filter(Boolean);
+  if (words.length < 3) return false;
+  return words.every((w) => /^[A-Z]/.test(w.replace(/^[^A-Za-z]+/, '')));
+}
+
+/**
  * Writer / Must-narrate facing label for a catalog encounter (foeName / Ambush title).
  * Not a character name — common-noun description + explicit flag for the converter.
  */
@@ -31,6 +41,7 @@ export function proseEncounterLabel(name: string): { label: string; notCharacter
     return { label: `the ${words[0]!.toLowerCase()}`, notCharacter: true };
   }
   // "Stonevein Ambush" → "the ambushers from Stonevein" (last word = kind, rest = place/tag).
+  // "Consul Household Blade" → "the blade from Consul Household" (role compound, T10RC8).
   const kind = words[words.length - 1]!.toLowerCase();
   const place = words.slice(0, -1).join(' ');
   const plural =
