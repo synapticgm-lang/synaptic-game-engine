@@ -164,11 +164,27 @@ function speakerAlreadyTold(state: GameState, speaker: Speaker, words: string): 
     if (u && hitLine(u)) return true;
   }
   const names = speaker.names;
-  for (const e of (state.log ?? []).filter((x) => x.role === 'gm').slice(-12)) {
+  // T10RC7fix2 — any name token (Oda / Oda Hask) for quote + indirect agenda scans.
+  const nameAlts = [speaker.label, ...names]
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n, i, a) => n.length >= 2 && a.indexOf(n) === i)
+    .map(esc);
+  const who = nameAlts.length ? `(?:${nameAlts.join('|')})` : esc(speaker.label);
+  // Recent GM window (unchanged-scene filler): quotes + indirect agenda beats (T10N-style cooldown).
+  for (const e of (state.log ?? []).filter((x) => x.role === 'gm').slice(-6)) {
     const body = String(e.content ?? '');
     for (const m of body.matchAll(QUOTE)) {
       const ctx = quoteContext(body, m.index!, m.index! + m[0].length);
       if (!mentions(ctx, names)) continue;
+      if (hitLine(m[1] ?? '')) return true;
+    }
+    // Indirect agenda is not quoted — still counts as already voiced (salt-road T193–T212).
+    for (const m of body.matchAll(
+      new RegExp(
+        `${who}\\s+(?:pressed for|made clear(?:\\s+that)?(?:\\s+they\\s+needed)?|held out)\\s+([^.?!]+)`,
+        'gi',
+      ),
+    )) {
       if (hitLine(m[1] ?? '')) return true;
     }
   }
@@ -306,17 +322,12 @@ function spokenExchangeLine(
         : !contentQuestion || demandsSpeech
           ? pool[0]
           : undefined);
-    // T10RC7fix — free-text that names a seated NPC is an ask/action: spokenAnswer reply
-    // (motive / silence), not an agenda dump. Chip Ask/Talk/Follow may still voice agenda.
-    const chipAskOrTalk = /^(?:ask|talk|speak|Follow up with)\b/i.test(ask);
-    const freeTextSeatedAsk = namesThisSpeaker && !chipAskOrTalk;
-    if (fitRow && !freeTextSeatedAsk) {
-      return agendaAsIndirectBeat(speaker, fitRow.text, fitRow.kind);
-    }
+    // Ledger need IS the ask-reply content (T10AD/AF/AI/AL/Y). Agenda is skipped only for
+    // ambient/physical non-ask beats (skipAmbientCombat / ambientReact above — T10AO).
+    if (fitRow) return agendaAsIndirectBeat(speaker, fitRow.text, fitRow.kind);
     if (skipAmbientCombat) {
       return { line: `${capitalize(speaker.label)} said nothing.` };
     }
-    // freeTextSeatedAsk: skip agenda; fall through to motive / said nothing as the reply.
     // Fresh ledger bits exist but none fit this content question — fall through to motive
     // (react in character) instead of dumping an unrelated need. Already-told-only → ask-back.
     if (!pool.length) {
@@ -385,43 +396,35 @@ function spokenExchangeLine(
 
   // T10RC1 — open job/thread: never quote the thread label. Indirect beat from structured agenda
   // (who wants what); chip topics stay in npcChipWant.
-  // T10RC7fix — free-text seated address skips agenda here too (reply owner, not agenda dump).
   {
-    const chipAskOrTalk = /^(?:ask|talk|speak|Follow up with)\b/i.test(ask);
-    const namesThisSpeaker = speaker.names.some(
-      (n) => n.length >= 3 && new RegExp(`\\b${esc(n)}\\b`, 'i').test(ask),
-    );
-    const freeTextSeatedAsk = namesThisSpeaker && !chipAskOrTalk;
-    if (!freeTextSeatedAsk) {
-      const threads = state.openThreads ?? [];
-      const hit = threads.find((t) => {
-        if (t.kind === 'npc-goal') {
-          return speaker.names.some((n) => n && (t.label.includes(n) || (t.entityId ?? '').includes(n)));
-        }
-        if (t.kind === 'quest' || t.kind === 'lead') {
-          const q = (state.quests ?? []).find((row) => `quest:${row.id}` === t.entityId || row.id === (t.entityId ?? '').replace(/^quest:/, ''));
-          return !!(q?.giver && speaker.names.some((n) => n && (mentionsSpeaker(q.giver!, n) || mentionsSpeaker(n, q.giver!))));
-        }
-        return false;
-      });
-      if (hit) {
-        const need = (memory?.need ?? '').replace(/\s+/g, ' ').trim();
-        const goal = (memory?.goal?.target ?? '').replace(/\s+/g, ' ').trim();
-        const offer = (memory?.offer ?? '').replace(/\s+/g, ' ').trim();
-        if (goal && !speakerAlreadyTold(state, speaker, goal)) {
-          return agendaAsIndirectBeat(speaker, goal, 'goal');
-        }
-        if (need && !speakerAlreadyTold(state, speaker, need)) {
-          return agendaAsIndirectBeat(speaker, need, 'need');
-        }
-        if (offer && !speakerAlreadyTold(state, speaker, offer)) {
-          return agendaAsIndirectBeat(speaker, offer, 'offer');
-        }
-        // Thread topic without a spoken sentence: one owner — agendaAsIndirectBeat (T10RC7).
-        const topic = (hit.label || '').replace(/^.+?:\s*/, '').replace(/\s+/g, ' ').trim();
-        if (topic && !isSpokenSentence(topic) && !speakerAlreadyTold(state, speaker, topic)) {
-          return agendaAsIndirectBeat(speaker, topic, 'goal');
-        }
+    const threads = state.openThreads ?? [];
+    const hit = threads.find((t) => {
+      if (t.kind === 'npc-goal') {
+        return speaker.names.some((n) => n && (t.label.includes(n) || (t.entityId ?? '').includes(n)));
+      }
+      if (t.kind === 'quest' || t.kind === 'lead') {
+        const q = (state.quests ?? []).find((row) => `quest:${row.id}` === t.entityId || row.id === (t.entityId ?? '').replace(/^quest:/, ''));
+        return !!(q?.giver && speaker.names.some((n) => n && (mentionsSpeaker(q.giver!, n) || mentionsSpeaker(n, q.giver!))));
+      }
+      return false;
+    });
+    if (hit) {
+      const need = (memory?.need ?? '').replace(/\s+/g, ' ').trim();
+      const goal = (memory?.goal?.target ?? '').replace(/\s+/g, ' ').trim();
+      const offer = (memory?.offer ?? '').replace(/\s+/g, ' ').trim();
+      if (goal && !speakerAlreadyTold(state, speaker, goal)) {
+        return agendaAsIndirectBeat(speaker, goal, 'goal');
+      }
+      if (need && !speakerAlreadyTold(state, speaker, need)) {
+        return agendaAsIndirectBeat(speaker, need, 'need');
+      }
+      if (offer && !speakerAlreadyTold(state, speaker, offer)) {
+        return agendaAsIndirectBeat(speaker, offer, 'offer');
+      }
+      // Thread topic without a spoken sentence: one owner — agendaAsIndirectBeat (T10RC7).
+      const topic = (hit.label || '').replace(/^.+?:\s*/, '').replace(/\s+/g, ' ').trim();
+      if (topic && !isSpokenSentence(topic) && !speakerAlreadyTold(state, speaker, topic)) {
+        return agendaAsIndirectBeat(speaker, topic, 'goal');
       }
     }
   }
@@ -816,29 +819,21 @@ function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): 
   ) {
     return true;
   }
-  // T10RC7fix — subject-fronted reaction on the page is already the reply (do not stack agenda).
-  // Mere short presence ("stood before them") is not a reply; a longer subject clause is.
-  for (const clause of splitClausesOutsideQuotes(body)) {
-    if (!clauseSpeakerSubject(clause, speaker.label)) continue;
-    if (isSpeakerNonAnswerClause(clause, speaker.label)) continue;
-    const after = clause
-      .replace(new RegExp(`^\\W*(?:(?:the|a|an)\\s+)?(?:${who})\\b`, 'i'), '')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (!after) continue;
-    const wordsAfter = after.split(/\s+/).filter(Boolean);
-    const first = (wordsAfter[0] ?? '').toLowerCase();
-    const presenceOnly =
-      /^(?:was|were|stood|remained|waited)\b/i.test(first)
-      && wordsAfter.length <= 8;
-    if (presenceOnly) continue;
-    if (wordsAfter.length >= 2) return true;
-  }
   if (words) {
     const w = words.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
     if (w.length >= 3) {
       const q = esc(w);
+      // Leading `Name said, "…"` and trailing `"…," Name said` (motiveAnswer owner).
+      // Never treat `said nothing` after a PC quote as a reply (T10AD T6 / T10AL T9).
       if (new RegExp(`${who}\\s+said,\\s*["\\u201c]${q}["\\u201d]?`, 'i').test(body)) return true;
+      if (
+        new RegExp(
+          `["\\u201c]${q}[,.!?]?["\\u201d]\\s*${who}\\s+said\\b(?!\\s+nothing\\b)`,
+          'i',
+        ).test(body)
+      ) {
+        return true;
+      }
       if (
         new RegExp(
           `${who}\\s+(?:pressed for|made clear(?:\\s+that)?(?:\\s+they\\s+needed)?|held out)\\s+(?:that\\s+they\\s+needed\\s+)?${q}`,
@@ -860,14 +855,30 @@ function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): 
       }
     }
   }
-  return new RegExp(`${who}\\s+said,\\s*["\\u201c]`, 'i').test(body);
+  // Leading or trailing attribution already on the page (T10RC7fix2 T190/T216).
+  // Trailing must be real speech (`"…," Name said.`) — not `said nothing` after a PC quote.
+  if (new RegExp(`${who}\\s+said,\\s*["\\u201c]`, 'i').test(body)) return true;
+  if (
+    new RegExp(
+      `["\\u201c][^"\\u201d]{3,}["\\u201d]\\s*${who}\\s+said\\b(?!\\s+nothing\\b)`,
+      'i',
+    ).test(body)
+  ) {
+    return true;
+  }
+  return false;
 }
 
-/** Drop a back-to-back identical `Name said, "…"` clone (two code paths each appended once). */
+/** Drop a back-to-back identical `Name said, "…"` / `"…," Name said` clone (two code paths each appended once). */
 function collapseDuplicateSaid(prose: string): string {
   return (prose ?? '')
     .replace(
       /\b((?:[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,3})\s+said,\s*["\u201c][^"\u201d]+["\u201d]?)\s+\1(?=\s|$|[.!?])/g,
+      '$1',
+    )
+    // Trailing twin: `"When a debt…," Piers Thatch said. "When a debt…," Piers Thatch said.`
+    .replace(
+      /((["\u201c][^"\u201d]+["\u201d])\s*((?:[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,3})\s+said\.?))(?:\s+\2\s+\3\.?)+/g,
       '$1',
     )
     // T10AO — one silence owner per beat (compound physical clauses used to emit two).

@@ -16,7 +16,7 @@ import {
 import { formatFactSheetForWriter, buildFactSheet } from './factSheet';
 import { buildCompletedEventPacket, lastResortStoryBody } from './completedEventPacket';
 import { checkPlayCrimes, openingRestatesPlayerAct } from './turnCheck';
-import { writerDraftProblems, type DraftCheck } from './writerTurn';
+import { sealPostWriterProse, writerDraftProblems, type DraftCheck } from './writerTurn';
 import { ensureSpokenAnswer } from './spokenAnswer';
 import { emptySceneFacts } from './sceneFacts';
 import { autoFightSpawnPreface, pendingFoeSign } from './combatAuthority';
@@ -167,57 +167,87 @@ describe('T10RC7 narration parroting at the root', () => {
     expect((talk.prose.match(/made clear/gi) ?? []).length).toBe(1);
   });
 
-  it('T10/T25/T44: seated free-text ask keeps reply owner; no agenda stack on reaction', () => {
-    const orel = (turn: number) =>
-      rpg({
-        turn,
-        engineMode: 'litrpg',
-        campaignBibleId: 'summoned-pact',
-        currentLocation: turn === 25 ? 'Lowmarket' : 'West Wall',
-        sceneFacts: {
-          ...emptySceneFacts(),
-          present: ['High Chanter Orel Vane'],
-          crowd: 'sparse',
-          crowdCount: 1,
-          updatedTurn: turn,
+  it('T190/T216: trailing motive quote already on page is not appended again', () => {
+    // Evidence: writer silence → motiveAnswer trailing `"…," Name said` → sealPostWriterProse again
+    // missed already-quoted (only checked leading `Name said, "…"`) and doubled the line.
+    const state = rpg({
+      turn: 190,
+      currentLocation: 'Harbor Fence',
+      sceneFacts: {
+        ...emptySceneFacts(),
+        present: ['Piers Thatch'],
+        crowd: 'sparse',
+        crowdCount: 1,
+        updatedTurn: 190,
+      },
+      npcMemories: [
+        mem({
+          npcName: 'Piers Thatch',
+          aliases: ['Piers'],
+          motiveLines: ['When a debt goes unpaid, the property finds its way to me'],
+        }),
+      ],
+    });
+    const ask =
+      'I hook the belt back on and lean against the fence post, watching the riders approach. "You think they\'ll let us pass or start shooting?" I tap my fingers against the wood.';
+    const once =
+      'Jax hooked the belt back onto their road clothes and leaned their weight against the fence post at Harbor Fence. "You think they\'ll let us pass or start shooting?" Jax said, then tapped their fingers on the wood. Far down the Harbor Fence rail, lanterns swung with each step. "When a debt goes unpaid, the property finds its way to me," Piers Thatch said.';
+    const sealed = sealPostWriterProse(state, once, ask);
+    expect((sealed.prose.match(/When a debt goes unpaid/gi) ?? []).length).toBe(1);
+    expect(sealed.spoken?.status).toBe('already-quoted');
+
+    const doubled = `${once} "When a debt goes unpaid, the property finds its way to me," Piers Thatch said.`;
+    const collapsed = ensureSpokenAnswer(doubled, state, ask);
+    expect((collapsed.prose.match(/When a debt goes unpaid/gi) ?? []).length).toBe(1);
+  });
+
+  it('T193/T197: ledger need voiced in recent GM is not repeated as filler', () => {
+    // Evidence: Oda agenda line 7× in 50 turns — speakerAlreadyTold only scanned quotes, not
+    // indirect "made clear they needed …" beats.
+    const prior =
+      'Jax turned to Oda Hask at the Harbor Fence and spoke to the gatekeeper directly. Oda Hask made clear they needed eyes on the approach.';
+    const state = rpg({
+      turn: 197,
+      currentLocation: 'Harbor Fence',
+      sceneFacts: {
+        ...emptySceneFacts(),
+        present: ['Oda Hask'],
+        crowd: 'sparse',
+        crowdCount: 1,
+        updatedTurn: 197,
+      },
+      log: [
+        {
+          id: 'g193',
+          turn: 193,
+          role: 'gm',
+          content: prior,
+          timestamp: 1,
         },
-        npcMemories: [
-          mem({
-            npcName: 'High Chanter Orel Vane',
-            aliases: ['Orel Vane', 'Orel'],
-            need: 'a buyer who pays',
-            goal: { target: 'a secret worth selling' } as NpcMemory['goal'],
-          }),
-        ],
-      });
-
-    // T44 — writer already reacted to the mace ask; do not append agenda.
-    const t44Writer =
-      "Jax crouched low and slid the heavy mace across the wet stones of West Wall until it stopped against High Chanter Orel Vane's boots. High Chanter Orel Vane looked down at the mace and did not reach for it.";
-    const t44 = ensureSpokenAnswer(
-      t44Writer,
-      orel(44),
-      'I slide the heavy mace across the wet stones toward Orel\'s boots and say, "Is this what you\'re looking for, or just another piece of trash?"',
+      ],
+      npcMemories: [
+        mem({
+          npcName: 'Oda Hask',
+          aliases: ['Oda'],
+          need: 'eyes on the approach',
+          goal: { target: 'someone who watches the fence' } as NpcMemory['goal'],
+        }),
+      ],
+    });
+    const stare =
+      'I scratch the rough bark of the fence post with my thumbnail while staring at Oda Hask.';
+    const draft =
+      'Jax pressed their thumbnail into the rough bark of the fence post at Harbor Fence and dragged it down in a slow scratch while their eyes stayed fixed on Oda Hask.';
+    const out = ensureSpokenAnswer(draft, state, stare);
+    expect((out.prose.match(/eyes on the approach/gi) ?? []).length).toBe(0);
+    // Direct Talk still gets a content reply (other facet or ask-back), not silence-only.
+    const talk = ensureSpokenAnswer(
+      'Jax turned to Oda Hask and waited for an answer.',
+      state,
+      'Talk to Oda Hask',
     );
-    expect(t44.prose).toMatch(/looked down at the mace/i);
-    expect(t44.prose).not.toMatch(/pressed for|made clear/i);
-
-    // T25 — shove + shout at seated Orel: reply/silence, not agenda dump.
-    const t25 = ensureSpokenAnswer(
-      'Jax put a shoulder into High Chanter Orel Vane and shoved straight past, and the old chanter rocked back a half step. Jax drove a boot into the door of the Weighing Cup and it banged open.',
-      orel(25),
-      'I shove past Orel Vane and shout, "Move or get out of the way!" while kicking open the Weighing Cup door.',
-    );
-    expect(t25.prose).not.toMatch(/made clear|pressed for/i);
-
-    // T10 — whisper ask to High Chanter: no agenda as the only voiced beat.
-    const t10 = ensureSpokenAnswer(
-      'Jax glanced back over their shoulder toward the dark entrance of Contract Hall. Nell Rudd stopped mid-sentence.',
-      orel(10),
-      'I lean in closer to the High Chanter and whisper, "What\'s the price on that secret?" then I glance over my shoulder toward the dark entrance of Contract Hall.',
-    );
-    expect(t10.prose).not.toMatch(/pressed for a secret worth selling/i);
-    expect(t10.prose).not.toMatch(/made clear that they needed a buyer who pays/i);
+    expect(talk.prose).toMatch(/Oda Hask/i);
+    expect(talk.prose).not.toMatch(/made clear that they needed eyes on the approach/i);
   });
 
   it('T212/T172: encounter and item labels are common nouns, not character names', () => {
