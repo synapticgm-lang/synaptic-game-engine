@@ -33,6 +33,10 @@ const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'vill
 /** Group meetings keep the kind label seated beside the leader name (ttPres thugs). */
 const ROAD_GROUP_KINDS = new Set(['thugs', 'camp']);
 
+// T10RC6fix3 — seat list is pure on a frozen state object; chipProblem / legalChips
+// call peopleHere once per chip. Memoize on the state so one turn pays once.
+const peopleHereByState = new WeakMap<GameState, string[]>();
+
 /**
  * The person a live, in-range road meeting puts on this stretch.
  * T10RC6 — engine-chosen `enc.name` is the reaction-slot / gate name when set (not a stale place NPC).
@@ -86,6 +90,8 @@ export function crowdDepartedByRecord(
  * cast/roles/location memories do not stay as listeners (Follow-up chips retract with the record).
  */
 export function peopleHere(state: GameState): string[] {
+  const cached = peopleHereByState.get(state);
+  if (cached) return cached;
   const out = new Map<string, string>();
   const add = (n?: string | null) => {
     const name = norm(n);
@@ -107,7 +113,9 @@ export function peopleHere(state: GameState): string[] {
     add(state.activeEncounter?.name);
     add(roadMeetingPeople(state));
     add(roadMeetingGroupLabel(state));
-    return [...out.values()];
+    const departed = [...out.values()];
+    peopleHereByState.set(state, departed);
+    return departed;
   }
   // T10RC6 / T10RC6fix2 — underway: companions + live foe + presentNpcRecords + meeting name.
   // Do not trust bare sceneFacts.present over a record placed elsewhere (Edda at the inn).
@@ -118,7 +126,9 @@ export function peopleHere(state: GameState): string[] {
     for (const m of presentNpcRecords(state)) add(m.npcName);
     add(roadMeetingPeople(state));
     add(roadMeetingGroupLabel(state));
-    return [...out.values()];
+    const underway = [...out.values()];
+    peopleHereByState.set(state, underway);
+    return underway;
   }
   // T10RC5fix — people who live at THIS place (presentNpcNames / location stamp, not departed,
   // in talking range) are here. Narrow RC5 keeps: neverCast titles, road/in-transit (presentNpcRecords
@@ -138,7 +148,9 @@ export function peopleHere(state: GameState): string[] {
   }
   add(roadMeetingPeople(state));
   add(roadMeetingGroupLabel(state));
-  return [...out.values()];
+  const here = [...out.values()];
+  peopleHereByState.set(state, here);
+  return here;
 }
 
 /** Who can hear a talk chip when the place text says the room is empty: never the opening card's cast. */
