@@ -149,6 +149,11 @@ describe('T10AB collar / blade threat (s9201 resume T207–T215)', () => {
     expect(blob).toMatch(/Grapple|Athletics|Intimidation|grappled|threat/i);
     // T10RC1 — Influence commits yield (stay hostile) or refuse+leave; never an open bargain slot.
     expect(blob).toMatch(/Must narrate:.*(?:yields under the threat|refuses the threat and leaves)/i);
+    // T10Q2fix — compound intimidate|take must not re-roll into both yield and refuse.
+    const eng = out.engineResult ?? '';
+    const hasYield = /yields under the threat/i.test(eng);
+    const hasRefuse = /refuses the threat and leaves/i.test(eng);
+    expect(Number(hasYield) + Number(hasRefuse)).toBe(1);
     expect(blob).not.toMatch(/NPC reaction slot open/i);
     const next = out.state ?? s;
     const silas = (next.npcMemories ?? []).find((m) => /Silas/i.test(m.npcName));
