@@ -136,7 +136,7 @@ describe('T10SOC use-based social skills', () => {
 
     const alone = litrpgHall({
       sceneFacts: {
-        crowd: 'empty',
+        crowd: 'none',
         noise: 'quiet',
         present: [],
         props: [],

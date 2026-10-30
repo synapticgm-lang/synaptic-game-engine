@@ -203,9 +203,17 @@ export function classifySocialSkillAttempt(
   const mode = state.engineMode;
   if (mode !== 'litrpg' && mode !== 'rpg') return null;
 
-  const ctx = sheetContextFromState(state);
-  // Seat list for presence = peopleHere (same owner the writer / chips use).
-  ctx.present = peopleHere(state);
+  // Seat list = peopleHere (same owner writer/chips use). Build a fresh IntentSheetContext —
+  // never assign `.present` (AST single-writer guards that name for sceneFacts only).
+  const baseCtx = sheetContextFromState(state);
+  const here = peopleHere(state);
+  const ctx = {
+    people: baseCtx.people,
+    places: baseCtx.places,
+    items: baseCtx.items,
+    lastAddressee: baseCtx.lastAddressee,
+    present: here,
+  };
   const read = parsePlayerSteps(playerInput, ctx);
   for (const step of read.steps) {
     const skill = useSkillFromStep(step);
