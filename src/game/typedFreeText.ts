@@ -211,6 +211,31 @@ function hostileParleyContext(state: GameState): boolean {
   );
 }
 
+/** Normalize a threat addressee for one-commit-per-beat sealing (T10Q2fix). */
+function threatTargetKey(who: string): string {
+  return who.replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/**
+ * T10AB / T10Q2fix — a clause that would roll Athletics grapple + Intimidation Influence.
+ * Compound slam+grab+quote used to parse into intimidate|take|talk and re-roll twice.
+ */
+function personThreatTarget(step: IntentStep, clause: string, state: GameState): string {
+  const threatTarget = step.addressee?.trim() || step.target?.trim() || '';
+  if (!threatTarget) return '';
+  const grabThreat =
+    /\b(grab|collar|grapple|pin|throat|blade|dagger|drag|haul|seize)\b/i.test(clause)
+    || (step.action === 'take' && isNonLootableTakeTarget(threatTarget || step.target, state));
+  if (
+    grabThreat
+    || step.action === 'intimidate'
+    || (step.action === 'attack' && grabThreat)
+  ) {
+    return threatTarget;
+  }
+  return '';
+}
+
 function resolveOneStep(state: GameState, step: IntentStep, fullText: string): StepOut {
   const clause = (step.clause ?? fullText).trim() || fullText;
   const tried = describeIntentStep(step) || clause.slice(0, 80);
@@ -250,17 +275,10 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
 
   // T10AB — grab/collar/blade-threat on a present person: Athletics grapple + Intimidation (SRD).
   // Runs before hostile-only parley so a collar grab is not a soft social shrug with no grapple.
-  const threatTarget = step.addressee?.trim() || step.target?.trim() || '';
-  const grabThreat =
-    /\b(grab|collar|grapple|pin|throat|blade|dagger|drag|haul|seize)\b/i.test(clause)
-    || (step.action === 'take' && isNonLootableTakeTarget(threatTarget || step.target, state));
-  if (
-    threatTarget
-    && (grabThreat
-      || step.action === 'intimidate'
-      || (step.action === 'attack' && grabThreat))
-  ) {
-    const threat = resolvePersonThreatAttempt(state, clause, {
+  // Use fullText so a split intimidate clause still sees grab/collar on the same typed line.
+  const threatTarget = personThreatTarget(step, clause, state);
+  if (threatTarget) {
+    const threat = resolvePersonThreatAttempt(state, fullText, {
       ...step,
       action: 'intimidate',
       addressee: threatTarget,
@@ -501,6 +519,10 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     };
   }
 
+  // T10Q2fix — SRD Influence / Grappling commit once per target per beat (T10AO one-owner).
+  // Compound "slam… grab collar… quote" parses intimidate|take|talk; re-rolling yield then refuse
+  // left Must-narrate contradictory and presence flapping under the gate.
+  const threatCommitted = new Set<string>();
   for (let i = 0; i < intentRead.steps.length; i++) {
     const step = intentRead.steps[i]!;
     const clause = (step.clause ?? raw).trim() || raw;
@@ -508,6 +530,21 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     // Speech is free — classify before spending a mechanical slot.
     if (isSpeechStep(step, clause, hostNow) && !step.unplacedMove) {
       stepResults.push(speechStep(step, presentNames(live, clause)));
+      if (step.addressee) lastAddressee = step.addressee;
+      continue;
+    }
+    const threatWho = personThreatTarget(step, clause, live);
+    const threatKey = threatWho ? threatTargetKey(threatWho) : '';
+    if (threatKey && threatCommitted.has(threatKey)) {
+      // Already sealed yield/refuse for this person — do not re-roll Athletics/Intimidation.
+      const tried = describeIntentStep(step) || clause.slice(0, 80);
+      stepResults.push({
+        tried,
+        done: true,
+        reason: 'threat already committed',
+        engineResult: '',
+        economySlot: 'action',
+      });
       if (step.addressee) lastAddressee = step.addressee;
       continue;
     }
@@ -533,6 +570,14 @@ export function resolveTypedFreeText(state: GameState, input: string): TypedFree
     if (result.state) live = result.state;
     const { state: _s, ...row } = result;
     stepResults.push({ ...row, economySlot: row.economySlot ?? slot });
+    if (
+      threatKey
+      && /\bMust narrate:.*(?:yields under the threat|refuses the threat and leaves)\b/i.test(
+        row.engineResult ?? '',
+      )
+    ) {
+      threatCommitted.add(threatKey);
+    }
     if (step.addressee) lastAddressee = step.addressee;
   }
 

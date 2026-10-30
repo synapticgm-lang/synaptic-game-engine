@@ -137,7 +137,101 @@ function agendaAsIndirectBeat(
   return { line: `${who} made clear ${need}.`, words: t };
 }
 
+/**
+ * T10Q2 — how ledger is voiced:
+ * - Chip Talk/Ask/Follow → agenda indirect beat (RC7 / AF).
+ * - Content ask whose bit overlaps → agenda (T10AL grammar: never quote bare "a buyer who pays").
+ * - Other free-text (stare / quote without overlap) → quoted spoken reply so turn-ignored-action
+ *   sees speech (rpg T211; litrpg T44). Never "I need …" telegrams (T10RC1).
+ */
+function voiceLedgerReply(
+  speaker: Speaker,
+  bit: string,
+  kind: LedgerKind,
+  playerInput: string,
+): { line: string; words?: string } {
+  const ask = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (/^(?:talk(?:\s+to)?|speak(?:\s+to)?|ask|Follow up with)\b/i.test(ask)) {
+    return agendaAsIndirectBeat(speaker, bit, kind);
+  }
+  if (isContentAsk(ask) && ledgerOverlapsAsk(ask, bit)) {
+    return agendaAsIndirectBeat(speaker, bit, kind);
+  }
+  const t = bit.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
+  if (!t) return { line: `${capitalize(speaker.label)} said nothing.` };
+  if (isSpokenSentence(t)) return quotedReply(speaker, /[.!?]$/.test(t) ? t : `${t}.`);
+  return quotedReply(speaker, t.replace(/[.!?]+$/, ''));
+}
+
 const sayWordSet = (s: string) => new Set((s.toLowerCase().match(/[a-z0-9']+/g) ?? []).filter((w) => w.length >= 3));
+
+/**
+ * T10Q2 — one owner: content ask vs chip Talk. A quoted ? / about-topic / whether-or ask needs a
+ * reply that addresses it; bare Talk/Ask chips may voice any fresh ledger facet.
+ * SRD 5.2.1 Communicating — brief speech is free; the addressed party answers from what they know.
+ */
+function isContentAsk(playerInput: string): boolean {
+  const ask = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!ask) return false;
+  const askTopic =
+    ask.match(/Follow up with[^:]+:\s*(.+)$/i)?.[1]?.trim() ??
+    ask.match(/\babout\s+(.+?)[.?!]?$/i)?.[1]?.trim() ??
+    '';
+  return (
+    !!askTopic
+    || (/["\u201c]/.test(ask) && /\?/.test(ask))
+    || /\b(?:or|whether)\b[\s\S]{0,80}\?/i.test(ask)
+    || /\bif\b[\s\S]{0,80}\?/i.test(ask)
+  );
+}
+
+function isChipTalkOrDemand(playerInput: string): boolean {
+  const ask = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  return (
+    /\banswer me\b|\bwaiting for an answer\b/i.test(ask)
+    || /^(?:talk(?:\s+to)?|speak(?:\s+to)?)\b/i.test(ask)
+    || /^ask\s+(?:what|who|why|where)\b/i.test(ask)
+    || /^Follow up with\b/i.test(ask)
+  );
+}
+
+/** Ledger/agenda bit overlaps the player's ask body (shared by exchange pick + reply-vs-filler). */
+function ledgerOverlapsAsk(playerInput: string, bit: string): boolean {
+  const ask = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  const askTopic =
+    ask.match(/Follow up with[^:]+:\s*(.+)$/i)?.[1]?.trim() ??
+    ask.match(/\babout\s+(.+?)[.?!]?$/i)?.[1]?.trim() ??
+    '';
+  const askBody = [
+    askTopic,
+    ...[...ask.matchAll(QUOTE)].map((m) => (m[1] ?? '').trim()),
+    ask,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  const bl = (bit ?? '').toLowerCase();
+  if (!askBody.trim() || !bl.trim()) return false;
+  if (bl.includes(askTopic.toLowerCase()) && askTopic.length >= 3) return true;
+  if (askTopic.length >= 3 && askTopic.toLowerCase().includes(bl)) return true;
+  const words = bl.match(/[a-z0-9']{4,}/g) ?? [];
+  if (!words.length) return false;
+  let hit = 0;
+  for (const w of words) if (askBody.includes(w)) hit += 1;
+  return hit / words.length >= 0.4 || words.some((w) => w.length >= 5 && askBody.includes(w));
+}
+
+/**
+ * T10Q2 — reply vs filler: agenda ("made clear" / "pressed for" / "held out") answers only when
+ * the bit overlaps the ask, or the line is a Talk/Ask/answer-me chip that accepts any ledger facet.
+ * Free-text content questions (quoted ?) require overlap — unrelated need is filler (rpg T169).
+ */
+function agendaAnswersAsk(playerInput: string, agendaWords: string): boolean {
+  // Talk / Ask / Answer-me / waiting-for-answer: ledger need IS the designed reply (T10AD/AF/AI/AL/Y).
+  if (isChipTalkOrDemand(playerInput)) return true;
+  if (!isContentAsk(playerInput)) return true;
+  return ledgerOverlapsAsk(playerInput, agendaWords);
+}
 
 /** True when this speaker already spoke substantially the same words (ledger said[] / recent GM). */
 function speakerAlreadyTold(state: GameState, speaker: Speaker, words: string): boolean {
@@ -256,39 +350,13 @@ function spokenExchangeLine(
     ] satisfies { kind: LedgerKind; text: string }[]
   ).filter((b) => b.text.length >= 3);
   if (ledgerBits.length) {
-    const askBody = [
-      askTopic,
-      ...[...ask.matchAll(QUOTE)].map((m) => (m[1] ?? '').trim()),
-      ask,
-    ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
-    const overlapsAsk = (bit: string) => {
-      const bl = bit.toLowerCase();
-      if (!askBody.trim()) return false;
-      if (bl.includes(askTopic.toLowerCase()) && askTopic.length >= 3) return true;
-      if (askTopic.length >= 3 && askTopic.toLowerCase().includes(bl)) return true;
-      const words = bl.match(/[a-z0-9']{4,}/g) ?? [];
-      if (!words.length) return false;
-      let hit = 0;
-      for (const w of words) if (askBody.includes(w)) hit += 1;
-      return hit / words.length >= 0.4 || words.some((w) => w.length >= 5 && askBody.includes(w));
-    };
     const fresh = ledgerBits.filter((b) => !speakerAlreadyTold(state, speaker, b.text));
     const pool = fresh.length ? fresh : [];
     // Content questions end in ? (or name an about-topic). Imperative threats with "or"
     // ("check your pockets or I will") are demands — keep ledger (T10AF Dunn T147).
-    const contentQuestion =
-      !!askTopic
-      || (/["\u201c]/.test(ask) && /\?/.test(ask))
-      || /\b(?:or|whether)\b[\s\S]{0,80}\?/i.test(ask)
-      || /\bif\b[\s\S]{0,80}\?/i.test(ask);
+    const contentQuestion = isContentAsk(ask);
     // Bare Talk / Ask-what chips demand any content; "Ask X about the lead" is a content question.
-    const demandsSpeech =
-      /\banswer me\b|\bwaiting for an answer\b/i.test(ask)
-      || /^(?:talk(?:\s+to)?|speak(?:\s+to)?)\b/i.test(ask)
-      || /^ask\s+(?:what|who|why|where)\b/i.test(ask);
+    const demandsSpeech = isChipTalkOrDemand(ask);
     // Quote names this speaker (or a threat with "or") → ledger may answer; ambient shout does not.
     const namesThisSpeaker = speaker.names.some(
       (n) => n.length >= 3 && new RegExp(`\\b${esc(n)}\\b`, 'i').test(ask),
@@ -315,16 +383,19 @@ function spokenExchangeLine(
       || /\b(?:ask(?:ing)?|tell(?:ing)?|talk(?:ing)?\s+to|speak(?:ing)?\s+to)\b/i.test(ask);
     const ambientReact =
       !namesThisSpeaker && !demandsSpeech && !contentQuestion && !addressedTalk;
+    // T10Q2 — reply vs filler: content ask only takes ledger that overlaps; chip Talk may take any.
     const fitRow =
-      pool.find((b) => overlapsAsk(b.text))
+      pool.find((b) => ledgerOverlapsAsk(ask, b.text))
       ?? (skipAmbientCombat || ambientReact
         ? undefined
         : !contentQuestion || demandsSpeech
           ? pool[0]
           : undefined);
-    // Ledger need IS the ask-reply content (T10AD/AF/AI/AL/Y). Agenda is skipped only for
-    // ambient/physical non-ask beats (skipAmbientCombat / ambientReact above — T10AO).
-    if (fitRow) return agendaAsIndirectBeat(speaker, fitRow.text, fitRow.kind);
+    // Ledger need IS the ask-reply content when it answers (T10AD/AF/AI/AL/Y + T10Q2).
+    // Agenda is skipped for ambient/physical non-ask (T10AO) and for content-ask filler.
+    if (fitRow && agendaAnswersAsk(ask, fitRow.text)) {
+      return voiceLedgerReply(speaker, fitRow.text, fitRow.kind, ask);
+    }
     if (skipAmbientCombat) {
       return { line: `${capitalize(speaker.label)} said nothing.` };
     }
@@ -337,15 +408,8 @@ function spokenExchangeLine(
 
   // T10AP — same combat-ambient skip when there was no ledger bit block (or it fell through).
   {
-    const contentQuestion =
-      !!askTopic
-      || (/["\u201c]/.test(ask) && /\?/.test(ask))
-      || /\b(?:or|whether)\b[\s\S]{0,80}\?/i.test(ask)
-      || /\bif\b[\s\S]{0,80}\?/i.test(ask);
-    const demandsSpeech =
-      /\banswer me\b|\bwaiting for an answer\b/i.test(ask)
-      || /^(?:talk(?:\s+to)?|speak(?:\s+to)?)\b/i.test(ask)
-      || /^ask\s+(?:what|who|why|where)\b/i.test(ask);
+    const contentQuestion = isContentAsk(ask);
+    const demandsSpeech = isChipTalkOrDemand(ask);
     const namesThisSpeaker = speaker.names.some(
       (n) => n.length >= 3 && new RegExp(`\\b${esc(n)}\\b`, 'i').test(ask),
     );
@@ -396,7 +460,9 @@ function spokenExchangeLine(
 
   // T10RC1 — open job/thread: never quote the thread label. Indirect beat from structured agenda
   // (who wants what); chip topics stay in npcChipWant.
+  // T10Q2 — content ask: thread agenda is filler unless it answers; fall through to ask-back.
   {
+    const contentQuestion = isContentAsk(ask);
     const threads = state.openThreads ?? [];
     const hit = threads.find((t) => {
       if (t.kind === 'npc-goal') {
@@ -412,23 +478,34 @@ function spokenExchangeLine(
       const need = (memory?.need ?? '').replace(/\s+/g, ' ').trim();
       const goal = (memory?.goal?.target ?? '').replace(/\s+/g, ' ').trim();
       const offer = (memory?.offer ?? '').replace(/\s+/g, ' ').trim();
-      if (goal && !speakerAlreadyTold(state, speaker, goal)) {
-        return agendaAsIndirectBeat(speaker, goal, 'goal');
-      }
-      if (need && !speakerAlreadyTold(state, speaker, need)) {
-        return agendaAsIndirectBeat(speaker, need, 'need');
-      }
-      if (offer && !speakerAlreadyTold(state, speaker, offer)) {
-        return agendaAsIndirectBeat(speaker, offer, 'offer');
-      }
+      const tryAgenda = (bit: string, kind: LedgerKind) => {
+        if (!bit || speakerAlreadyTold(state, speaker, bit)) return null;
+        if (contentQuestion && !agendaAnswersAsk(ask, bit)) return null;
+        return voiceLedgerReply(speaker, bit, kind, ask);
+      };
+      const fromGoal = tryAgenda(goal, 'goal');
+      if (fromGoal) return fromGoal;
+      const fromNeed = tryAgenda(need, 'need');
+      if (fromNeed) return fromNeed;
+      const fromOffer = tryAgenda(offer, 'offer');
+      if (fromOffer) return fromOffer;
       // Thread topic without a spoken sentence: one owner — agendaAsIndirectBeat (T10RC7).
       const topic = (hit.label || '').replace(/^.+?:\s*/, '').replace(/\s+/g, ' ').trim();
       if (topic && !isSpokenSentence(topic) && !speakerAlreadyTold(state, speaker, topic)) {
-        return agendaAsIndirectBeat(speaker, topic, 'goal');
+        const fromTopic = tryAgenda(topic, 'goal');
+        if (fromTopic) return fromTopic;
+      }
+      // T10Q2 — seated content ask still owes a reply; ask-back acknowledges without filler agenda.
+      if (contentQuestion) {
+        return quotedReply(speaker, 'I already told you that. Ask me who, or why.');
       }
     }
   }
 
+  // T10Q2 — seated content ask still owes a spoken reply (checker: quote / speech verb), not silence.
+  if (isContentAsk(ask)) {
+    return quotedReply(speaker, 'I already told you that. Ask me who, or why.');
+  }
   // No engine mute and no ledger line — still one seed motive word if pick returned empty parts.
   return { line: `${capitalize(speaker.label)} said nothing.` };
 }
@@ -800,8 +877,14 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
  * T10AL — one owner per beat: if this speaker already has a said-line on the page (or the exact
  * exchange words), do not append again. Catches lastResort+seal / finishCommitted+seal doubles
  * when quote attribution is ambiguous.
+ * T10Q2 — agenda filler on a content ask is not a reply (upgrade to motive / ask-back).
  */
-function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): boolean {
+function proseHasSpeakerReply(
+  prose: string,
+  speaker: Speaker,
+  words?: string,
+  playerInput = '',
+): boolean {
   const body = (prose ?? '').replace(/\s+/g, ' ').trim();
   if (!body) return false;
   // T10RC7 — any name token for this speaker (Oda / Oda Hask) counts as the same owner.
@@ -810,15 +893,24 @@ function proseHasSpeakerReply(prose: string, speaker: Speaker, words?: string): 
     .filter((n, i, a) => n.length >= 2 && a.indexOf(n) === i)
     .map(esc);
   const who = nameAlts.length ? `(?:${nameAlts.join('|')})` : esc(speaker.label);
-  // T10RC1 — indirect agenda beats count as already answered (no second append on seal).
-  if (
-    new RegExp(
-      `${who}\\s+(?:pressed for|made clear(?:\\s+that)?(?:\\s+they\\s+needed)?|held out)\\b`,
-      'i',
-    ).test(body)
-  ) {
-    return true;
+  // T10RC1 — indirect agenda beats count as already answered (no second append on seal),
+  // unless T10Q2 content-ask says this agenda is filler for what was asked.
+  const agendaRe = new RegExp(
+    `${who}\\s+(?:pressed for|made clear(?:\\s+that)?(?:\\s+they\\s+needed)?|held out)\\s+([^.?!]+)`,
+    'gi',
+  );
+  let agendaHit = false;
+  let agendaAnswers = false;
+  for (const m of body.matchAll(agendaRe)) {
+    agendaHit = true;
+    const bit = (m[1] ?? '').replace(/^(?:that\s+they\s+needed\s+)/i, '').trim();
+    if (agendaAnswersAsk(playerInput, bit)) agendaAnswers = true;
   }
+  if (agendaHit && agendaAnswers) return true;
+  if (agendaHit && !isContentAsk(playerInput)) return true;
+  // Subject-fronted physical reaction as "already replied" stayed out (RC7fix2): it treated
+  // "stayed quiet" / gaze as replies and starved first-ask ledger. Content asks use speech;
+  // demandActAnswered covers tell/demand acts.
   if (words) {
     const w = words.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
     if (w.length >= 3) {
@@ -935,24 +1027,54 @@ function bindArrivalFigure(prose: string, speaker: Speaker, _alone: boolean): st
     .replace(/\b(?:a|the)\s+figure in chanted robes\b/gi, who);
 }
 
+/**
+ * T10Q2 — drop this speaker's agenda filler clauses when they do not answer the content ask,
+ * so a real reply can attach (rpg T169 traveler "made clear…shelter" on a juggling question).
+ */
+function stripFillerAgenda(prose: string, speaker: Speaker, playerInput: string): string {
+  if (!isContentAsk(playerInput)) return prose;
+  const nameAlts = [speaker.label, ...speaker.names]
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n, i, a) => n.length >= 2 && a.indexOf(n) === i)
+    .map(esc);
+  const who = nameAlts.length ? `(?:${nameAlts.join('|')})` : esc(speaker.label);
+  const kept: string[] = [];
+  for (const clause of splitClausesOutsideQuotes(prose)) {
+    const m = clause.match(
+      new RegExp(
+        `^\\W*(?:(?:the|a|an)\\s+)?(?:${who})\\s+(?:pressed for|made clear(?:\\s+that)?(?:\\s+they\\s+needed)?|held out)\\s+([^.?!]+)`,
+        'i',
+      ),
+    );
+    if (m) {
+      const bit = (m[1] ?? '').replace(/^(?:that\s+they\s+needed\s+)/i, '').trim();
+      if (!agendaAnswersAsk(playerInput, bit)) continue;
+    }
+    kept.push(clause);
+  }
+  return kept.join(' ').replace(/\s+/g, ' ').trim();
+}
+
 function attachExchange(
   prose: string,
   speaker: Speaker,
   exchange: { line: string; words?: string },
   alone: boolean,
+  playerInput = '',
 ): { prose: string; answer: SpokenAnswer } {
   let body = bindArrivalFigure(
     (prose ?? '').replace(/(?:^|\s)@+(?=\s|$)/g, ' ').replace(/\s+/g, ' ').trim(),
     speaker,
     alone,
   );
-  if (proseHasSpeakerReply(body, speaker, exchange.words)) {
+  body = stripFillerAgenda(body, speaker, playerInput);
+  if (proseHasSpeakerReply(body, speaker, exchange.words, playerInput)) {
     return { prose: collapseDuplicateSaid(body), answer: { status: 'already-quoted', speaker: speaker.label } };
   }
   const silenceOnly = !exchange.words && /\bsaid nothing\.?$/i.test(exchange.line);
   if (!silenceOnly) {
     body = stripSpeakerSilence(body, speaker);
-    if (proseHasSpeakerReply(body, speaker, exchange.words)) {
+    if (proseHasSpeakerReply(body, speaker, exchange.words, playerInput)) {
       return { prose: collapseDuplicateSaid(body), answer: { status: 'already-quoted', speaker: speaker.label } };
     }
     const next = collapseDuplicateSaid(body ? `${body} ${exchange.line}` : exchange.line);
@@ -1033,29 +1155,37 @@ export function ensureSpokenAnswer(
     const { speaker, alone } = who;
     const others = speakersHere(state).filter((s) => s.label !== speaker.label);
     const pc = state.character?.name ?? null;
-    if (quotesBy(prose, speaker, alone, others, pc).length || proseHasSpeakerReply(prose, speaker)) {
+    const scrubbed = stripFillerAgenda(prose, speaker, playerInput);
+    if (
+      quotesBy(scrubbed, speaker, alone, others, pc).length
+      || proseHasSpeakerReply(scrubbed, speaker, undefined, playerInput)
+    ) {
       // T10RC5 — "said nothing" is not grammatical content for a content ask (T12/T185 ignored-action).
       const contentAsk =
         /\?/.test(playerInput)
         || /\b(?:ask(?:ing)?|tell(?:ing)?|whisper(?:ing)?|if she|if he|if they)\b/i.test(playerInput);
-      if (!(contentAsk && proseHasSpeakerSilence(prose, speaker))) {
-        return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
+      if (!(contentAsk && proseHasSpeakerSilence(scrubbed, speaker))) {
+        return { prose: collapseDuplicateSaid(scrubbed), answer: { status: 'already-quoted', speaker: speaker.label } };
       }
     }
     // T10AK — a visible act that answers a tell/demand is already the reply (do not stack motive).
-    if (demandActAnswered(playerInput, prose, speaker.label)) {
-      return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
+    if (demandActAnswered(playerInput, scrubbed, speaker.label)) {
+      return { prose: collapseDuplicateSaid(scrubbed), answer: { status: 'already-quoted', speaker: speaker.label } };
     }
     // T10S/T10U/T10X/T10Y/T10AD/T10AF — exchange needs content (ledger / cast / motive deflection).
     // Content-free silence on the page is replaced when words exist; never stacked with a stock quote.
-    return attachExchange(prose, speaker, spokenExchangeLine(state, speaker, playerInput), alone);
+    return attachExchange(scrubbed, speaker, spokenExchangeLine(state, speaker, playerInput), alone, playerInput);
   }
   if (!who) return { prose, answer: { status: 'nobody-here' } };
   const { speaker, alone } = who;
   const others = speakersHere(state).filter((s) => s.label !== speaker.label);
   const pc = state.character?.name ?? null;
-  if (quotesBy(prose, speaker, alone, others, pc).length || proseHasSpeakerReply(prose, speaker)) {
-    return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
+  const scrubbedTopic = stripFillerAgenda(prose, speaker, playerInput);
+  if (
+    quotesBy(scrubbedTopic, speaker, alone, others, pc).length
+    || proseHasSpeakerReply(scrubbedTopic, speaker, undefined, playerInput)
+  ) {
+    return { prose: collapseDuplicateSaid(scrubbedTopic), answer: { status: 'already-quoted', speaker: speaker.label } };
   }
   const real = realLine(topic, speaker);
   if (!real) {
@@ -1065,15 +1195,21 @@ export function ensureSpokenAnswer(
     const typedSpeech =
       /["\u201c]/.test(playerInput) || /\bwhisper(?:ing|ed|s)?\b/i.test(playerInput);
     if (!typedSpeech) {
-      return { prose, answer: { status: 'no-line', speaker: speaker.label } };
+      return { prose: scrubbedTopic, answer: { status: 'no-line', speaker: speaker.label } };
     }
-    return attachExchange(prose, speaker, spokenExchangeLine(state, speaker, playerInput), alone);
+    return attachExchange(
+      scrubbedTopic,
+      speaker,
+      spokenExchangeLine(state, speaker, playerInput),
+      alone,
+      playerInput,
+    );
   }
   const line = `${capitalize(speaker.label)} said, "${real.line}"`;
-  if (proseHasSpeakerReply(prose, speaker, real.line)) {
-    return { prose: collapseDuplicateSaid(prose), answer: { status: 'already-quoted', speaker: speaker.label } };
+  if (proseHasSpeakerReply(scrubbedTopic, speaker, real.line, playerInput)) {
+    return { prose: collapseDuplicateSaid(scrubbedTopic), answer: { status: 'already-quoted', speaker: speaker.label } };
   }
-  const body = stripSpeakerSilence(bindArrivalFigure(prose.trim(), speaker, alone), speaker);
+  const body = stripSpeakerSilence(bindArrivalFigure(scrubbedTopic.trim(), speaker, alone), speaker);
   return {
     prose: collapseDuplicateSaid(body ? `${body} ${line}` : line),
     answer: { status: 'added', speaker: speaker.label, source: real.source, line },
