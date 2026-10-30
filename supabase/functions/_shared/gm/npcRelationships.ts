@@ -345,11 +345,16 @@ function hydrateStored(rec: StoredNpcRelationship, turn: number): NpcRelationshi
   };
 }
 
+// T10RC6fix3 — presentNpcNames is the lives-here scan behind peopleHere; cache per state.
+const presentNpcNamesByState = new WeakMap<GameState, string[]>();
+
 /**
  * Names of the NPCs present here (scene presence, present memories, and the records placed here, the
  * same list the writer's witnesses come from), minus the live foe and anyone who has left the scene.
  */
 export function presentNpcNames(state: GameState): string[] {
+  const cached = presentNpcNamesByState.get(state);
+  if (cached) return cached;
   const foe = (state.activeEncounter?.name ?? '').trim().toLowerCase();
   const out = new Map<string, string>();
   const add = (n: unknown, trustRecord = false) => {
@@ -360,12 +365,17 @@ export function presentNpcNames(state: GameState): string[] {
     out.set(key, name);
   };
   // T10AQ-fix — sceneFacts.present / present:true stay readable (SRD Medicine stabilize needs a
-  // present ally). Quiet-road CAST honesty is owned by commitTravel (clears stale road occupancy)
+  // present ally) only when the record is not placed elsewhere. Seat-honesty: a stale present[]
+  // name whose memory is at another place is dropped (seed94 Orth / T10P Edda). The seat writer
+  // (presentAuthority.seat) stamps location to HERE so a truly seated person passes this check.
+  // Quiet-road CAST honesty is owned by commitTravel (clears stale road occupancy)
   // + presentNpcRecords (no UNDERWAY historical location match) + npcNamesAt(UNDERWAY)=[].
   for (const n of state.sceneFacts?.present ?? []) add(n);
   for (const m of state.npcMemories ?? []) if (m.present === true) add(m.npcName);
   for (const m of presentNpcRecords(state)) add(m.npcName, true);
-  return [...out.values()];
+  const names = [...out.values()];
+  presentNpcNamesByState.set(state, names);
+  return names;
 }
 
 /**

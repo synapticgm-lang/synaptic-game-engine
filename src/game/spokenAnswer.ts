@@ -87,15 +87,8 @@ function speakersHere(state: GameState): Speaker[] {
     const r = (role ?? '').replace(/\s+/g, ' ').trim();
     if (r) push(/^(?:the|a|an)\s+/i.test(r) ? r : `the ${r}`);
   }
-  if (out.length) return out;
-  // T10DIR — SM1 occupancy only. sceneFacts.present + present:true are the seat list.
-  // Do NOT location-match presentNpcRecords (that re-seated absent Nell Rudd).
-  // sceneFacts.present still answers when peopleHere filtered a seated name via
-  // npcPlacedElsewhere (Bertil on the road with a mismatched location stamp).
-  for (const p of state.sceneFacts?.present ?? []) push(p);
-  for (const m of state.npcMemories ?? []) {
-    if (m.present === true && !m.shouldExit) push(m.npcName, m);
-  }
+  // T10RC6 — peopleHere is the sole seat list. Do not fall back to present:true /
+  // raw sceneFacts.present (that re-opened Orel / Maud reaction slots off the road).
   return out;
 }
 
@@ -927,6 +920,24 @@ function engineSaidNobodyPresent(prose: string): boolean {
   return /\bNo one (?:was|is) there to answer\b|\bNo one present to answer\b/i.test(prose ?? '');
 }
 
+/** Append the engine absence line once when empty seats meet a talk/ask (T10RC6). */
+function withAbsenceLineOnce(prose: string, playerInput: string, state: GameState): string {
+  const body = collapseDuplicateSaid(prose);
+  if (engineSaidNobodyPresent(body)) return body;
+  if (isPassiveObserveOrTravel(playerInput)) return body;
+  // Combat / travel / Face chips are not empty-room speech — do not paint absence over them.
+  if (/^(?:face the threat|attack|flee|parley|dodge|block|strike|cast|use)\b/i.test(playerInput)) {
+    return body;
+  }
+  if (!isTypedAskOrTalk(playerInput, state) && !/\b(?:shout|yell|whisper|tell|call out|greet)\b/i.test(playerInput)
+    && !/["\u201c]/.test(playerInput)
+    && !/\bstar(?:e|ing)\b/i.test(playerInput)) {
+    return body;
+  }
+  const line = 'No one was there to answer.';
+  return body ? `${body} ${line}` : line;
+}
+
 /** Ensure a who / want / where answer carries the addressee's own quoted words, from the ledger only. */
 export function ensureSpokenAnswer(
   prose: string,
@@ -934,8 +945,9 @@ export function ensureSpokenAnswer(
   playerInput: string
 ): { prose: string; answer: SpokenAnswer } {
   // T10RC1 — when the engine fact already says nobody is present, do not append motive/quest speech.
+  // T10RC6 — empty seats + a talk/ask still get one absence line (not silence → ignored-action).
   if (engineSaidNobodyPresent(prose) || speakersHere(state).length === 0) {
-    return { prose: collapseDuplicateSaid(prose), answer: { status: 'nobody-here' } };
+    return { prose: withAbsenceLineOnce(prose, playerInput, state), answer: { status: 'nobody-here' } };
   }
   const topic = asked(playerInput);
   const who = addressee(state, playerInput);
