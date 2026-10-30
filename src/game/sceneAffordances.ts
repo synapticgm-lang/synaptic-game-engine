@@ -176,7 +176,12 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       });
     }
   }
-  const people = presentNpcRecords(state);
+  // T10RC6 — Ask/Talk/Read chips use the same seat list as peopleHere (not bare lives-here records
+  // while the place text / crowd record says nobody is here).
+  const seatedHere = peopleHere(state);
+  const people = presentNpcRecords(state).filter((m) =>
+    seatedHere.some((p) => mentionsName(p, m.npcName) || mentionsName(m.npcName, p)),
+  );
   let contactNames: Set<string> | null = null;
   if (rpg) {
     contactNames = new Set();

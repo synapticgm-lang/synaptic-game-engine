@@ -10,6 +10,7 @@ import { ensureSpokenAnswer, stripSpeakerSilence } from './spokenAnswer';
 import { stripUnauthorizedNpcSpeech } from './intentParser';
 import { checkActionFollowed } from './turnCheck';
 import { emptySceneFacts } from './sceneFacts';
+import { seat } from './presentAuthority';
 
 function mem(over: Partial<NpcMemory> & { npcName: string }): NpcMemory {
   return {
@@ -214,26 +215,29 @@ describe('T10AF salt-road ask target + Follow up + splice (s9601)', () => {
   });
 
   it('T97 Bertil ask replaces "said nothing at all" with content', () => {
+    // Stale generic road stamp vs trip HERE — seat writer must stamp place to HERE (not reader trust).
     const bertil = mem({
       npcName: 'Bertil Pike',
       location: 'On the road between places',
       need: 'why the Toll Stone hums',
       introSpoken: true,
+      present: false,
     });
-    const state = {
+    const here = 'On the road between Bribe Market and Checkpoint Rise';
+    let state = {
       ...(createInitialState(undefined, 'rpg') as GameState),
       engineMode: 'rpg',
       character: { ...(createInitialState(undefined, 'rpg') as GameState).character, name: 'Jax' },
       turn: 97,
-      currentLocation: 'On the road between Bribe Market and Checkpoint Rise',
+      currentLocation: here,
       sceneFacts: {
         ...emptySceneFacts(),
-        present: ['Bertil Pike'],
+        present: [],
         crowd: 'none',
         props: [],
         lastBeat: 'road',
         updatedTurn: 97,
-        crowdCount: 1,
+        crowdCount: 0,
       },
       npcMemories: [bertil],
       openingEstablishment: {
@@ -243,6 +247,9 @@ describe('T10AF salt-road ask target + Follow up + splice (s9601)', () => {
         sceneWritten: true,
       },
     } as GameState;
+    state = seat(state, 'Bertil Pike');
+    expect(state.sceneFacts?.present).toContain('Bertil Pike');
+    expect(state.npcMemories?.find((m) => m.npcName === 'Bertil Pike')?.location).toBe(here);
     const ask =
       "I flick a pebble at the ground near Bertil Pike's boots and ask if he knows why the Toll Stone is humming.";
     const draft =
@@ -251,6 +258,7 @@ describe('T10AF salt-road ask target + Follow up + splice (s9601)', () => {
     expect(out.prose).toMatch(/Bertil Pike (?:said,\s*["\u201c]|pressed for|made clear they needed|held out)/i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:want|need|can offer)/i);
     expect(out.prose).not.toMatch(/said nothing/i);
+    expect(out.prose).not.toMatch(/No one was there to answer/i);
   });
 
   it('T146 Follow up with Osric answers from ledger delivery (not said-nothing splice)', () => {

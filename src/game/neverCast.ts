@@ -87,6 +87,10 @@ export function ledgerConceptTitles(state?: {
   return out;
 }
 
+// T10RC6fix3 — chipProblem calls peopleHere once per chip; each candidate hit isNeverCastTitle
+// which used to rebuild this ~300-title list every time. Same state object => same titles.
+const neverCastTitlesByState = new WeakMap<object, string[]>();
+
 export function ledgerNeverCastTitles(state?: Parameters<typeof ledgerPlaceTitles>[0] & {
   sceneFacts?: {
     cameraLock?: { label?: string } | null;
@@ -97,6 +101,11 @@ export function ledgerNeverCastTitles(state?: Parameters<typeof ledgerPlaceTitle
   quests?: Array<{ name?: string }>;
   openingEstablishment?: { pickedHook?: string; answers?: { where?: string } } | null;
 } | null): string[] {
+  if (state && typeof state === 'object') {
+    const hit = neverCastTitlesByState.get(state);
+    if (hit) return hit;
+  }
+
   const out: string[] = [];
   const add = (raw?: string | null) => {
     for (const n of placeTitleNeedles(raw)) pushUnique(out, n);
@@ -109,6 +118,7 @@ export function ledgerNeverCastTitles(state?: Parameters<typeof ledgerPlaceTitle
   for (const n of ledgerPlaceTitles(state)) pushUnique(out, n);
   add(state?.sceneFacts?.cameraLock?.label);
   for (const n of ledgerConceptTitles(state)) pushUnique(out, n);
+  if (state && typeof state === 'object') neverCastTitlesByState.set(state, out);
   return out;
 }
 
