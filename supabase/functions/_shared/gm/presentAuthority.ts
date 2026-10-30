@@ -96,10 +96,17 @@ export function presenceFactsPatch(
 
 /** Apply a presence SceneFacts patch onto GameState. */
 export function applyPresenceFacts(state: GameState, patch: Partial<SceneFacts>): GameState {
-  return {
+  const next = {
     ...state,
     sceneFacts: presenceFactsPatch(state.sceneFacts, patch, state.turn ?? 0),
   };
+  // T10Q5 — whenever present[] is written, mirror NpcMemory.present so orphan present:true
+  // cannot reopen peopleHere / reaction slots after crowd-empty or travel trim cleared the list.
+  if (patch.present !== undefined) {
+    const mems = syncMemoriesToPresentList(next, patch.present ?? []);
+    if (mems !== next.npcMemories) return { ...next, npcMemories: mems };
+  }
+  return next;
 }
 
 /** NpcMemory.present flag — only written here. */

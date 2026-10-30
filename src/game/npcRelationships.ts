@@ -364,14 +364,18 @@ export function presentNpcNames(state: GameState): string[] {
     if (resolveNpcRecord(state, name)?.shouldExit || isOutOfTalkingRange(state, name)) return;
     out.set(key, name);
   };
-  // T10AQ-fix — sceneFacts.present / present:true stay readable (SRD Medicine stabilize needs a
-  // present ally) only when the record is not placed elsewhere. Seat-honesty: a stale present[]
-  // name whose memory is at another place is dropped (seed94 Orth / T10P Edda). The seat writer
-  // (presentAuthority.seat) stamps location to HERE so a truly seated person passes this check.
-  // Quiet-road CAST honesty is owned by commitTravel (clears stale road occupancy)
-  // + presentNpcRecords (no UNDERWAY historical location match) + npcNamesAt(UNDERWAY)=[].
+  // T10Q5 — one seat list with factSheet / presentNpcRecords. Orphan NpcMemory.present:true
+  // (cleared from sceneFacts.present without a flag sync) must not re-open reaction slots or
+  // present: refs while WORLD FACTS says nobody. Trust sceneFacts.present + location-here records;
+  // seat() keeps present:true in sync with that list (SRD Medicine stabilize still sees seated allies).
+  // Quiet-road CAST honesty: commitTravel + presentNpcRecords + npcNamesAt(UNDERWAY)=[].
   for (const n of state.sceneFacts?.present ?? []) add(n);
-  for (const m of state.npcMemories ?? []) if (m.present === true) add(m.npcName);
+  for (const m of state.npcMemories ?? []) {
+    if (m.present !== true) continue;
+    // Flag alone is not a seat — require the same place fact presentNpcRecords already uses.
+    if (!m.location || npcPlacedElsewhere(state, m.npcName)) continue;
+    add(m.npcName);
+  }
   for (const m of presentNpcRecords(state)) add(m.npcName, true);
   const names = [...out.values()];
   presentNpcNamesByState.set(state, names);
