@@ -121,6 +121,31 @@ const SELF_STOP_HEAD = 'ENGINE OUTCOME (facts — narrate exactly this once and 
 const SHOWN_ROUNDS = 6;
 
 /**
+ * T10Q4 — writer-facing auto-resolve log from simulateCombat's roundsLog.
+ * Word-only who-hit-whom (no dice / HP figures — STATUS owns those), same contract as combatPresenter.combatFacts.
+ * Avoids "Round N —" so engineResultFact does not strip the lines as STATUS chrome.
+ */
+export function autoResolveFightFacts(result: CombatResult, foe: string): string {
+  const name = (foe || 'the foe').trim() || 'the foe';
+  const lines: string[] = [];
+  for (const r of result.roundsLog) {
+    if (r.attacker === 'player') {
+      if (r.round === 0) {
+        lines.push(r.hit ? `You strike first at ${name} and hit.` : `You strike first at ${name} and miss.`);
+      } else {
+        lines.push(r.hit ? `You hit ${name}.` : `You miss ${name}.`);
+      }
+      continue;
+    }
+    // Ally-soak hits still land on the companion (damage to PC is 0).
+    if (r.hit && r.damage <= 0) lines.push(`${name} hits your companion.`);
+    else if (r.hit) lines.push(`${name} hits you.`);
+    else lines.push(`${name} misses you.`);
+  }
+  return lines.join(' ');
+}
+
+/**
  * Tabletop: every attack roll of the settled fight, die + modifier against the armour class, for STATUS.
  * Chrome only (engineResult keeps "Round" lines out of the writer's facts).
  */
@@ -445,9 +470,13 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     (tabletop && (flee || parley) ? forcedFightOpener(flee, enc.name) : '')
     + (used.id === 'melee' ? '' : `${approachOpener(used, enc.name)} `);
   const beside = side ? ` ${side.companion.name} fought at your side.` : '';
+  // T10Q4 — page narrates the engine's round-by-round log, not a one-line "fought for N rounds" summary.
+  const swings = autoResolveFightFacts(result, enc.name);
+  const lasted = `The exchange lasted ${result.rounds} round${result.rounds === 1 ? '' : 's'}.`;
+  const body = swings || lasted;
   const what = opener + (result.victory
-    ? `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'}.${beside} ${enc.name} went down and stayed down.${found}`
-    : `You fought ${enc.name} for ${result.rounds} round${result.rounds === 1 ? '' : 's'} and lost.${beside} You went down; ${enc.name} left you there, hurt but alive.`);
+    ? `${body}${beside} ${enc.name} went down and stayed down.${found}`
+    : `${body}${beside} You went down; ${enc.name} left you there, hurt but alive.`);
   const foeAfter = result.victory
     ? undefined
     : { ...enc, hp: Math.max(1, Math.min(enc.maxHp || enc.hp, result.finalEnemyHp)), phase: 'engaged' as const };

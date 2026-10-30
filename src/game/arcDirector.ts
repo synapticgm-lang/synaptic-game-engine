@@ -68,7 +68,6 @@ import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
 import { autoFightSpawnPreface, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
-import { usesRoundCombat } from './tabletop/roundFight';
 import { houseRulesOf, scaledCadence } from './rules/houseRules';
 import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThreats';
 import { commitTravel, isJourneyUnderway } from './travelJourney';
@@ -1253,8 +1252,10 @@ export function runArcDirectorBeforeGm(
   // 29y — a threat stays on its place until beaten or fled.
   working = syncPlaceThreat(state, working, systemReceipts, engineFight?.foeAfter);
 
-  const fightFacts =
-    engineFight && usesRoundCombat(state) ? engineFight.facts.replace(/^ENGINE OUTCOME \([^)]*\):\s*/, '').trim() : '';
+  // T10Q4 — LitRPG/RPG auto-resolve facts must reach the writer (round-by-round log), not only tabletop rounds.
+  const fightFacts = engineFight
+    ? engineFight.facts.replace(/^ENGINE OUTCOME \([^)]*\):\s*/, '').trim()
+    : '';
   return {
     state: working,
     mandate: mandates.filter(Boolean).join('\n'),
