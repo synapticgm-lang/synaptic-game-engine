@@ -100,10 +100,12 @@ export function applyPresenceFacts(state: GameState, patch: Partial<SceneFacts>)
     ...state,
     sceneFacts: presenceFactsPatch(state.sceneFacts, patch, state.turn ?? 0),
   };
-  // T10Q5 — whenever present[] is written, mirror NpcMemory.present so orphan present:true
-  // cannot reopen peopleHere / reaction slots after crowd-empty or travel trim cleared the list.
+  // T10Q5 / T10Q5fix — whenever present[] is written, CLEAR orphan present:true so empty
+  // harvest / travel trim cannot leave zombie seats. Do not invent present:true here:
+  // seat() / setPresentList own the on-list flag (repairSaveSchema splits compound present
+  // without promoting old records that never had the flag).
   if (patch.present !== undefined) {
-    const mems = syncMemoriesToPresentList(next, patch.present ?? []);
+    const mems = clearOrphanPresentFlags(next, patch.present ?? []);
     if (mems !== next.npcMemories) return { ...next, npcMemories: mems };
   }
   return next;
@@ -138,6 +140,20 @@ function syncMemoriesToPresentList(state: GameState, present: string[]): NpcMemo
     if (!!m.present === here) return m;
     changed = true;
     return withMemoryPresentFlag(m, here);
+  });
+  return changed ? next : mems;
+}
+
+/** Drop present:true when the name is no longer on present[] — never invent true. */
+function clearOrphanPresentFlags(state: GameState, present: string[]): NpcMemory[] | undefined {
+  const mems = state.npcMemories;
+  if (!mems?.length) return mems;
+  let changed = false;
+  const next = mems.map((m) => {
+    if (m.present !== true) return m;
+    if (present.some((p) => memoryMatchesRef(m, p))) return m;
+    changed = true;
+    return withMemoryPresentFlag(m, false);
   });
   return changed ? next : mems;
 }

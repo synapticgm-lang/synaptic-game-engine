@@ -23,7 +23,7 @@ import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
 import { hubsForBibleId } from './outdoorHubs';
 import { roadMeetingLabel } from './travelJourney';
-import { seat } from './presentAuthority';
+import { seat, setPresentList } from './presentAuthority';
 
 function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined, state: GameState): string[] {
   if (!prose?.trim()) return [];
@@ -313,10 +313,12 @@ export function harvestNarrativePeople(
     presentList = presentList.filter((p) => !roadSkip.has(p.toLowerCase()));
     people = people.filter((p) => !roadSkip.has(p.toLowerCase()));
   }
-  // T10Q5 / T10SM1 — ADD-only via seat(): stamps location + present flag together so a name
-  // shown on the page stays on peopleHere / factSheet until travel or exitNpc.
-  let withNames: GameState = { ...next, lorebook };
-  for (const name of presentList.slice(0, 12)) {
+  // T10Q5fix / T10SM1 — REPLACE present with the harvested list (fold bare first names, drop
+  // PC) via setPresentList, then seat() to stamp HERE location + present flag. ADD-only seat
+  // left stale bare names / PC on the prior list (s73 fold test).
+  const capped = presentList.slice(0, 12);
+  let withNames = setPresentList({ ...next, lorebook }, capped);
+  for (const name of capped) {
     withNames = seat(withNames, name);
   }
   const crowded = { ...withNames, sceneFacts: harvestHookIntoSceneFacts(harvestCrowdIntoSceneFacts(withNames.sceneFacts!, prose, turn), prose, turn) };
