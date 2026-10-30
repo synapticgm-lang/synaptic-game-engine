@@ -3,7 +3,7 @@
  * arrival figure = one seated person, final-page drop after append/seal.
  */
 import { describe, expect, it } from 'vitest';
-import type { GameState, NpcMemory, RoadEncounter } from './types';
+import type { ActiveEncounter, GameState, NpcMemory, RoadEncounter } from './types';
 import { chipProblem } from './chipLegality';
 import { peopleHere } from './scenePresence';
 import { checkPlayCrimes } from './turnCheck';
@@ -121,14 +121,19 @@ describe('T10RC8 catalog role label is not a character speaker name', () => {
     const preface = autoFightSpawnPreface('Consul Household Blade', 'Salt Road Waystation', undefined, 'indoor');
     expect(preface).not.toMatch(/^Consul Household Blade\b/);
 
-    const s = base({
-      activeEncounter: {
-        name: 'Consul Household Blade',
-        hp: 12,
-        maxHp: 12,
-        threatTier: 'elite',
-      } as GameState['activeEncounter'],
-    });
+    const foe: ActiveEncounter = {
+      name: 'Consul Household Blade',
+      level: 1,
+      hp: 12,
+      maxHp: 12,
+      armorClass: 12,
+      strength: 12,
+      dexterity: 12,
+      constitution: 12,
+      xpReward: 0,
+      goldReward: 0,
+    };
+    const s = base({ activeEncounter: foe });
     const sign = pendingFoeSign({ name: 'Consul Household Blade', threatTier: 'elite' }, s);
     expect(sign).toMatch(/not a character name — common noun/i);
     expect(sign).not.toMatch(/^Consul Household Blade,/);
