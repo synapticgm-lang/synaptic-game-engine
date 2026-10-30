@@ -38,12 +38,20 @@ export function actHalfClause(clause: string): string {
   return words.slice(0, 8).join(' ');
 }
 
+/** Pull the writer-facing act after an already-shown Must-narrate bracket (empty if none). */
+export function alreadyShownActClause(mustNarrateBody: string): string {
+  const body = (mustNarrateBody ?? '').replace(/\s+/g, ' ').trim().replace(/[.]+$/g, '');
+  const m = body.match(/^\[already shown; do not restate[^\]]*\]\s*(.*)$/i);
+  return (m?.[1] ?? '').replace(/\s+/g, ' ').trim().replace(/[.]+$/g, '');
+}
+
 export function mustNarrateCue(clause: string): string {
   // T10Z — Fine Pistol / Bronze Reward Box never reach the writer as Title-Case system nouns.
-  // T10RC7 — player act is already on the page above; half-clause is object clarity only.
-  const half = actHalfClause(clause);
-  return half
-    ? `Must narrate: [already shown; do not restate — write the consequence] ${half}.`
+  // T10RC7 — mark already shown so the page does not restate; keep the FULL clause so compound
+  // acts (ask + wink) and short engine chips still reach the writer as facts (T10RC7fix).
+  const plain = plainItemChromeInText(clause).replace(/\s+/g, ' ').trim();
+  return plain
+    ? `Must narrate: [already shown; do not restate — write the consequence] ${plain}.`
     : `Must narrate: [already shown; do not restate — write the consequence].`;
 }
 
@@ -422,8 +430,16 @@ export function plainFromWriterCueSentence(
 
   if (body.startsWith('Must narrate:')) {
     const clause = plainItemChromeInText(body.slice('Must narrate:'.length).trim());
-    // T10RC7 — already-shown / consequence cues never become a restated act on the book.
-    if (/^\[already shown; do not restate/i.test(clause)) return { cue: true, plain: '' };
+    // T10RC7fix — already-shown: short engine/chip acts may narrate once on last-resort;
+    // long free-text stays off the book (UI already shows it).
+    if (/^\[already shown; do not restate/i.test(clause)) {
+      const act = alreadyShownActClause(clause);
+      const words = act.split(/\s+/).filter(Boolean);
+      if (act && words.length <= 8) {
+        return { cue: true, plain: clauseToThirdPerson(act, who) };
+      }
+      return { cue: true, plain: '' };
+    }
     return { cue: true, plain: clauseToThirdPerson(clause, who) };
   }
   if (/^The story must show(?: this act| the consequence)/i.test(body)) return { cue: true, plain: '' };
@@ -519,10 +535,15 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
       // Drop a trailing "Speech event…" that was glued without its own hit (should not happen).
       const cut = clause.search(/\bSpeech event:|\bPC says exactly:|\bThe story must show/i);
       const body = (cut >= 0 ? clause.slice(0, cut) : clause).trim().replace(/[.]+$/g, '');
-      // T10RC7 — already-shown / consequence Must-narrate: never paint a restated player act.
-      // Half-clause after the bracket is object clarity for the writer only, not book prose.
+      // T10RC7fix — already-shown Must-narrate: short engine/chip acts still narrate on
+      // last-resort; long free-text stays off the page (UI already shows it).
       if (/^\[already shown; do not restate/i.test(body)) {
         hadMustNarrate = true;
+        const act = alreadyShownActClause(body);
+        const words = act.split(/\s+/).filter(Boolean);
+        if (act && words.length <= 8) {
+          push(clauseToThirdPerson(plainItemChromeInText(act), pc));
+        }
         continue;
       }
       if (body) {

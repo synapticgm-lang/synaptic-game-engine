@@ -138,7 +138,8 @@ describe('playtest31pBatchE', () => {
       const name = 'Calamity Remnant';
       const preface = autoFightSpawnPreface(name, 'cathedral infirmary');
       expect(preface).not.toMatch(/already on you/i);
-      expect(preface).toMatch(/Calamity Remnant/i);
+      // T10RC7 — catalog foe labels are common nouns in spawn preface (not Title-Case person subjects).
+      expect(preface).toMatch(/Calamity Remnant|remnant from Calamity/i);
       expect(preface).toMatch(/doorway|forces|pushes|scrape|commits/i);
 
       let state = createInitialState(undefined, 'litrpg');
@@ -147,7 +148,7 @@ describe('playtest31pBatchE', () => {
       state = { ...state, activeEncounter: { name, hp: 12, maxHp: 12, level: 1, phase: 'engaged' } as ActiveEncounter };
       const ensured = ensureEncounterSpawnPreface(state, `${name} is already on you. Steel rings.`);
       expect(ensured.prepended).toBe(true);
-      expect(ensured.spawnReceipt).toMatch(/Calamity Remnant/i);
+      expect(ensured.spawnReceipt).toMatch(/Calamity Remnant|remnant from Calamity/i);
       expect(ensured.prose).not.toMatch(/is already on you/i);
       expect(ensured.prose).not.toMatch(/pushes into|from the edge of the room/i);
       expect(ensured.state.sceneFacts?.pendingSpawnPreface).toBeUndefined();

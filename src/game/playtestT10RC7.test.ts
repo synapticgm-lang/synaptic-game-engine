@@ -101,7 +101,7 @@ describe('T10RC7 narration parroting at the root', () => {
     const check: DraftCheck = {
       state,
       playerInput: action,
-      intent: { kind: 'act', label: action },
+      intent: { kind: 'other', label: action, targets: [] },
       engineFact: buildClauseWriterFact(action, true, { said: "If you don't move faster", presentHere: ['Vessa'] }),
       previousGm: '',
     };
@@ -165,6 +165,59 @@ describe('T10RC7 narration parroting at the root', () => {
     );
     expect(talk.prose).toMatch(/Ysolde Sallow made clear that they needed a charge who will follow/i);
     expect((talk.prose.match(/made clear/gi) ?? []).length).toBe(1);
+  });
+
+  it('T10/T25/T44: seated free-text ask keeps reply owner; no agenda stack on reaction', () => {
+    const orel = (turn: number) =>
+      rpg({
+        turn,
+        engineMode: 'litrpg',
+        campaignBibleId: 'summoned-pact',
+        currentLocation: turn === 25 ? 'Lowmarket' : 'West Wall',
+        sceneFacts: {
+          ...emptySceneFacts(),
+          present: ['High Chanter Orel Vane'],
+          crowd: 'sparse',
+          crowdCount: 1,
+          updatedTurn: turn,
+        },
+        npcMemories: [
+          mem({
+            npcName: 'High Chanter Orel Vane',
+            aliases: ['Orel Vane', 'Orel'],
+            need: 'a buyer who pays',
+            goal: { target: 'a secret worth selling' } as NpcMemory['goal'],
+          }),
+        ],
+      });
+
+    // T44 — writer already reacted to the mace ask; do not append agenda.
+    const t44Writer =
+      "Jax crouched low and slid the heavy mace across the wet stones of West Wall until it stopped against High Chanter Orel Vane's boots. High Chanter Orel Vane looked down at the mace and did not reach for it.";
+    const t44 = ensureSpokenAnswer(
+      t44Writer,
+      orel(44),
+      'I slide the heavy mace across the wet stones toward Orel\'s boots and say, "Is this what you\'re looking for, or just another piece of trash?"',
+    );
+    expect(t44.prose).toMatch(/looked down at the mace/i);
+    expect(t44.prose).not.toMatch(/pressed for|made clear/i);
+
+    // T25 — shove + shout at seated Orel: reply/silence, not agenda dump.
+    const t25 = ensureSpokenAnswer(
+      'Jax put a shoulder into High Chanter Orel Vane and shoved straight past, and the old chanter rocked back a half step. Jax drove a boot into the door of the Weighing Cup and it banged open.',
+      orel(25),
+      'I shove past Orel Vane and shout, "Move or get out of the way!" while kicking open the Weighing Cup door.',
+    );
+    expect(t25.prose).not.toMatch(/made clear|pressed for/i);
+
+    // T10 — whisper ask to High Chanter: no agenda as the only voiced beat.
+    const t10 = ensureSpokenAnswer(
+      'Jax glanced back over their shoulder toward the dark entrance of Contract Hall. Nell Rudd stopped mid-sentence.',
+      orel(10),
+      'I lean in closer to the High Chanter and whisper, "What\'s the price on that secret?" then I glance over my shoulder toward the dark entrance of Contract Hall.',
+    );
+    expect(t10.prose).not.toMatch(/pressed for a secret worth selling/i);
+    expect(t10.prose).not.toMatch(/made clear that they needed a buyer who pays/i);
   });
 
   it('T212/T172: encounter and item labels are common nouns, not character names', () => {
