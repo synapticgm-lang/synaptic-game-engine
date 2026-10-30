@@ -156,9 +156,12 @@ describe('T10AO physical free text — one reaction, no ambient need dump (s9862
     const typed = resolveTypedFreeText(state, act);
     const slots = typed.engineResult.match(/NPC reaction slot open for the scout/gi) ?? [];
     expect(slots.length).toBe(1);
+    // T10RC7 — object half-clause stays on the writer fact; convert never restates the act.
+    expect(typed.engineResult).toMatch(/already shown/i);
+    expect(typed.engineResult).toMatch(/pack|shoulder|knife|grip|sling/i);
     const book = writerEngineResult(typed.engineResult, 'Jax');
     expect((book.match(/\bsaid nothing\b/gi) ?? []).length).toBeLessThan(2);
-    expect(book).toMatch(/pack|shoulder|knife|grip|sling/i);
+    expect(book).not.toMatch(/sling(?:ed|ing)? (?:my|their) pack/i);
   });
 
   it('tabletop steward: ambient shout skips need dump; named threat still uses ledger', () => {
@@ -180,7 +183,7 @@ describe('T10AO physical free text — one reaction, no ambient need dump (s9862
       threat,
     );
     // T10RC1 — ledger need still lands as a grammatical indirect sentence, never "I need …" telegram.
-    expect(threatOut.prose).toMatch(/made clear they needed a buyer who pays|buyer who pays/i);
+    expect(threatOut.prose).toMatch(/made clear(?: that)? they needed a buyer who pays|buyer who pays/i);
     expect(threatOut.prose).not.toMatch(/I need a buyer who pays/i);
   });
 

@@ -210,6 +210,10 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
     if (f.kind === 'plays-player' && /the prose writes the player's own words/i.test(f.detail)) {
       out.push(`Invented PC speech: ${f.detail}`);
     }
+    // T10RC7 — opening restates the typed act; re-draft with the problem named (do not keep the echo).
+    if (f.kind === 'echo-player-act') {
+      out.push(`Do not restate the player's act (already shown in UI): ${f.detail}`);
+    }
   }
   if (isOfferRefuseLine(check.playerInput)) {
     const card = (check.state.openingEstablishment?.card?.cast ?? '').trim();

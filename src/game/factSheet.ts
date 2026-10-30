@@ -373,8 +373,9 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
   }
   lines.push(
     '',
-    'PLAYER (attempts and claims; NOT facts):',
-    `  typed: ${sheet.player.typed || '(none)'}`,
+    // T10RC7 — the UI already shows the typed line above the GM page; never restate it as story.
+    'PLAYER (attempts and claims; NOT facts — already shown in UI; do not restate; write the consequence):',
+    `  typed (already shown): ${sheet.player.typed || '(none)'}`,
     ...(sheet.player.claimsNotTrue.length
       ? sheet.player.claimsNotTrue.map((c) => `  claims_not_true: ${c}`)
       : ['  claims_not_true: (none)']),

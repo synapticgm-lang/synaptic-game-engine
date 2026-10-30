@@ -9,6 +9,7 @@ import { applyPresenceFacts, emptyPresenceFacts, seat, unseat } from './presentA
 import { pushCombatStateTx } from './stateTx.ts';
 import { isJourneyUnderway, isRoadLabel, UNDERWAY_HERE } from './travelJourney.ts';
 import { placeScale } from './placeAuthority.ts';
+import { proseEncounterLabel } from './proseItemName.ts';
 
 function sceneFactsBase(state: GameState): SceneFacts {
   return state.sceneFacts ?? emptyPresenceFacts(state.turn);
@@ -254,6 +255,16 @@ export function foeVisibleInScene(
   return false;
 }
 
+/**
+ * T10RC7 — book/writer subject for a catalog foe: common-noun when the label is not a person name.
+ * Humanoid person names (Blade, Guard, …) stay as the ledger name; Ambush/Raid titles do not.
+ */
+function spawnSubject(enemyName: string): string {
+  const raw = (enemyName ?? '').trim() || 'A threat';
+  if (isHumanoidEnemyName(raw)) return raw;
+  return proseEncounterLabel(raw).label;
+}
+
 /** `scale` is the committed place's indoor/outdoor (placeScale); a room and a doorway only when indoor. */
 export function autoFightSpawnPreface(
   enemyName: string,
@@ -261,25 +272,26 @@ export function autoFightSpawnPreface(
   road?: string,
   scale: 'indoor' | 'outdoor' | null = 'indoor'
 ): string {
-  const name = (enemyName ?? '').trim() || 'A threat';
+  const raw = (enemyName ?? '').trim() || 'A threat';
+  const name = spawnSubject(raw);
   const loc = (location ?? '').trim();
   const ground =
     (road ?? '').trim().toLowerCase()
     || (isRoadLabel(loc) ? (loc.toLowerCase() === UNDERWAY_HERE.toLowerCase() ? 'road' : loc.toLowerCase()) : '');
   if (ground) {
-    return isHumanoidEnemyName(name)
+    return isHumanoidEnemyName(raw)
       ? `${name} steps out onto the ${ground} ahead and commits toward you.`
-      : `${name} lurches onto the ${ground} ahead with a scrape of wrong motion.`;
+      : `${name} lurch onto the ${ground} ahead with a scrape of wrong motion.`;
   }
   const where = loc ? ` into ${loc}` : '';
   // Batch G — diegetic only (no "no prior cast" / "telegraph first" director chrome).
   const edge = scale === 'indoor' ? ' from the edge of the room' : scale === 'outdoor' ? ' from the edge of the open ground' : '';
-  if (isHumanoidEnemyName(name)) {
+  if (isHumanoidEnemyName(raw)) {
     return `${name} pushes${where || ' in'}${edge} and commits toward you.`;
   }
   return scale === 'indoor'
-    ? `${name} forces the doorway${where} with a scrape of wrong motion.`
-    : `${name} lurches${where || ' in'}${edge} with a scrape of wrong motion.`;
+    ? `${name} force the doorway${where} with a scrape of wrong motion.`
+    : `${name} lurch${where || ' in'}${edge} with a scrape of wrong motion.`;
 }
 
 const TIER_WORD: Record<string, string> = { trash: '', elite: 'strong ', boss: 'deadly ' };
@@ -294,13 +306,15 @@ export function pendingFoeSign(
 ): string | null {
   const name = (foe?.name ?? '').trim();
   if (!name) return null;
+  // T10RC7 — catalog labels reach the writer as common nouns (not character names).
+  const shown = isHumanoidEnemyName(name) ? name : `${proseEncounterLabel(name).label} (not a character name — common noun)`;
   const kind = `${TIER_WORD[String(foe?.threatTier ?? '')] ?? ''}${isHumanoidEnemyName(name) ? 'person' : 'creature'}`;
   const ground = isJourneyUnderway(state) ? (state.journey?.ground ?? '').trim().toLowerCase() : '';
   const place = (state.currentLocation ?? '').trim();
   const where = ground
     ? ` on the ${ground.replace(/^the\s+/, '')}`
     : place && !isRoadLabel(place) ? ` near ${place}` : '';
-  return `${name}, a ${kind}, is closing${where} and is not in sight yet.`;
+  return `${shown}, a ${kind}, is closing${where} and is not in sight yet.`;
 }
 
 /** Batch X — combat spawn engine lines belong in STATUS, not GM story body. */

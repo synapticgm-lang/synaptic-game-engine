@@ -116,7 +116,7 @@ describe('T10RC1 P1 — no telegram agenda quotes', () => {
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I need /i);
     expect(out.prose).not.toMatch(/said,\s*["\u201c]I can offer /i);
     expect(out.prose).toMatch(/Piers Thatch/i);
-    expect(out.prose).toMatch(/pressed for|made clear they needed|held out|Piers Thatch said,\s*["\u201c].{12,}/i);
+    expect(out.prose).toMatch(/pressed for|made clear(?: that)? they needed|held out|Piers Thatch said,\s*["\u201c].{12,}/i);
   });
 
   it('T177 Ysolde guide + T284 Oda gatekeeper: agenda nouns stay indirect', () => {
@@ -150,7 +150,7 @@ describe('T10RC1 P1 — no telegram agenda quotes', () => {
     expect(y.prose).not.toMatch(/said,\s*["\u201c]I want (?:the )?next safe door/i);
     expect(y.prose).not.toMatch(/said,\s*["\u201c]I need /i);
     // Grammatical content: indirect agenda beat OR an authored/sheet spoken sentence.
-    expect(y.prose).toMatch(/pressed for|made clear they needed|held out|Ysolde Sallow said,\s*["\u201c].{12,}/i);
+    expect(y.prose).toMatch(/pressed for|made clear(?: that)? they needed|held out|Ysolde Sallow said,\s*["\u201c].{12,}/i);
 
     const oda = rpgHarbor({
       turn: 284,
@@ -179,7 +179,7 @@ describe('T10RC1 P1 — no telegram agenda quotes', () => {
     );
     expect(o.prose).not.toMatch(/said,\s*["\u201c]I want (?:the )?gate they hold/i);
     expect(o.prose).not.toMatch(/said,\s*["\u201c]I need /i);
-    expect(o.prose).toMatch(/pressed for|made clear they needed|held out|Oda Hask said,\s*["\u201c].{12,}/i);
+    expect(o.prose).toMatch(/pressed for|made clear(?: that)? they needed|held out|Oda Hask said,\s*["\u201c].{12,}/i);
   });
 
   it('litrpg refugee / informant / bounty-target: no I need / I can offer quotes', () => {
@@ -213,7 +213,7 @@ describe('T10RC1 P1 — no telegram agenda quotes', () => {
       // Agenda templates → indirect; sheet motive lines that are already sentences may still quote.
       expect(out.prose).not.toMatch(/said,\s*["\u201c]I (?:need|can offer) /i);
       expect(out.prose).not.toMatch(/said,\s*["\u201c]I want (?:next safe door|job they need|gate they hold)/i);
-      expect(out.prose).toMatch(/pressed for|made clear they needed|held out|said,\s*["\u201c]/i);
+      expect(out.prose).toMatch(/pressed for|made clear(?: that)? they needed|held out|said,\s*["\u201c]/i);
     }
   });
 

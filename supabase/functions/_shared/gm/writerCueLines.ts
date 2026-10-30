@@ -16,19 +16,48 @@ import { ledgerLineToBookProse } from './ledgerToProse.ts';
 
 /** Chrome that must never appear on the player book. */
 export const WRITER_CUE_CHROME =
-  /Must narrate|PC says exactly|Speech event|reaction slot|No one present to answer|The story must show/i;
+  /Must narrate|PC says exactly|Speech event|reaction slot|No one present to answer|The story must show|already shown/i;
 
 export function hasWriterCueChrome(text: string): boolean {
   return WRITER_CUE_CHROME.test(text ?? '');
 }
 
+/**
+ * T10RC7 — UI already shows the typed line. Facts keep a short object half-clause for clarity
+ * (≤ ~8 words) and ask for consequence / world response — never a restatement of the act.
+ */
+export function actHalfClause(clause: string): string {
+  const plain = plainItemChromeInText(clause).replace(/\s+/g, ' ').trim();
+  if (!plain) return '';
+  const noSpeech = plain
+    .replace(/["\u201c][^"\u201d]*["\u201d]?/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const words = (noSpeech || plain).split(/\s+/).filter(Boolean);
+  if (words.length <= 8) return words.join(' ');
+  return words.slice(0, 8).join(' ');
+}
+
+/** Pull the writer-facing act after an already-shown Must-narrate bracket (empty if none). */
+export function alreadyShownActClause(mustNarrateBody: string): string {
+  const body = (mustNarrateBody ?? '').replace(/\s+/g, ' ').trim().replace(/[.]+$/g, '');
+  const m = body.match(/^\[already shown; do not restate[^\]]*\]\s*(.*)$/i);
+  return (m?.[1] ?? '').replace(/\s+/g, ' ').trim().replace(/[.]+$/g, '');
+}
+
 export function mustNarrateCue(clause: string): string {
   // T10Z — Fine Pistol / Bronze Reward Box never reach the writer as Title-Case system nouns.
-  return `Must narrate: ${plainItemChromeInText(clause)}.`;
+  // T10RC7 — mark already shown so the page does not restate; keep the FULL clause so compound
+  // acts (ask + wink) and short engine chips still reach the writer as facts (T10RC7fix).
+  const plain = plainItemChromeInText(clause).replace(/\s+/g, ' ').trim();
+  return plain
+    ? `Must narrate: [already shown; do not restate — write the consequence] ${plain}.`
+    : `Must narrate: [already shown; do not restate — write the consequence].`;
 }
 
 export function pcSaysExactlyCue(said: string): string {
-  return `PC says exactly: "${said}" (do not rewrite).`;
+  // T10RC7 — quoted speech is already visible above the GM page; never repeat unless an NPC quotes it back.
+  return `PC says exactly: "${said}" (already shown; do not restate unless an NPC quotes them back).`;
 }
 
 /**
@@ -98,7 +127,8 @@ function nameOnList(who: string, here: string[]): boolean {
 }
 
 export function showActCue(): string {
-  return 'The story must show this act.';
+  // T10RC7 — the act is already on the UI; the book owns consequence + novelty.
+  return 'The story must show the consequence and something new — do not restate the player act.';
 }
 
 /** Writer-facing fact for one clause (same strings the player path later converts). */
@@ -383,7 +413,7 @@ function gerundToPast(gerund: string): string {
 }
 
 const CUE_HEAD =
-  /(?:Must narrate:|PC says exactly:|Speech event:|The story must show this act\.?|NPC reaction slot open for |No one present to answer\.?)/gi;
+  /(?:Must narrate:|PC says exactly:|Speech event:|The story must show(?: this act| the consequence)[^.]*\.?|NPC reaction slot open for |No one present to answer\.?)/gi;
 
 /**
  * One sentence from writerEngineResult's ". "-split (legacy single-sentence path).
@@ -400,9 +430,19 @@ export function plainFromWriterCueSentence(
 
   if (body.startsWith('Must narrate:')) {
     const clause = plainItemChromeInText(body.slice('Must narrate:'.length).trim());
+    // T10RC7fix — already-shown: short engine/chip acts may narrate once on last-resort;
+    // long free-text stays off the book (UI already shows it).
+    if (/^\[already shown; do not restate/i.test(clause)) {
+      const act = alreadyShownActClause(clause);
+      const words = act.split(/\s+/).filter(Boolean);
+      if (act && words.length <= 8) {
+        return { cue: true, plain: clauseToThirdPerson(act, who) };
+      }
+      return { cue: true, plain: '' };
+    }
     return { cue: true, plain: clauseToThirdPerson(clause, who) };
   }
-  if (/^The story must show this act$/i.test(body)) return { cue: true, plain: '' };
+  if (/^The story must show(?: this act| the consequence)/i.test(body)) return { cue: true, plain: '' };
   if (/^No one present to answer$/i.test(body)) {
     return { cue: true, plain: 'No one was there to answer.' };
   }
@@ -417,9 +457,10 @@ export function plainFromWriterCueSentence(
   }
 
   const sayHead = 'PC says exactly: "';
-  const sayTail = '" (do not rewrite)';
   if (body.startsWith(sayHead)) {
-    const end = body.lastIndexOf(sayTail);
+    // T10RC7 — player quote already on the UI; last-resort / convert never reprints it.
+    if (/\balready shown\b/i.test(body)) return { cue: true, plain: '' };
+    const end = body.lastIndexOf('" (');
     if (end > sayHead.length) {
       // T10R — PC name + past when named; "You said" only for unnamed / second-person.
       const said = body.slice(sayHead.length, end);
@@ -494,6 +535,17 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
       // Drop a trailing "Speech event…" that was glued without its own hit (should not happen).
       const cut = clause.search(/\bSpeech event:|\bPC says exactly:|\bThe story must show/i);
       const body = (cut >= 0 ? clause.slice(0, cut) : clause).trim().replace(/[.]+$/g, '');
+      // T10RC7fix — already-shown Must-narrate: short engine/chip acts still narrate on
+      // last-resort; long free-text stays off the page (UI already shows it).
+      if (/^\[already shown; do not restate/i.test(body)) {
+        hadMustNarrate = true;
+        const act = alreadyShownActClause(body);
+        const words = act.split(/\s+/).filter(Boolean);
+        if (act && words.length <= 8) {
+          push(clauseToThirdPerson(plainItemChromeInText(act), pc));
+        }
+        continue;
+      }
       if (body) {
         // T10U — one quoted utterance mid-clause: act, one speech verb + quote, trailing
         // while-adjunct as narration (never a second quoted say).
@@ -620,9 +672,13 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
     if (/^PC says exactly:/i.test(head)) {
       // Already painted from Must narrate mid-clause speech — one verb + quote only (T10U).
       if (hadExactSay) continue;
+      // T10RC7 — player quote already shown in UI; convert/last-resort never reprints it.
+      if (/\balready shown\b/i.test(span)) {
+        hadExactSay = true;
+        continue;
+      }
       const sayHead = 'PC says exactly: "';
-      const sayTail = '" (do not rewrite)';
-      const endQ = span.lastIndexOf(sayTail);
+      const endQ = span.lastIndexOf('" (');
       if (span.toLowerCase().startsWith(sayHead.toLowerCase()) && endQ > sayHead.length) {
         const said = span.slice(sayHead.length, endQ);
         if (pc && pc !== 'They' && pc !== 'You') push(`${pc} said, "${said}".`);

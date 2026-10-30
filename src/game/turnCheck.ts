@@ -95,6 +95,8 @@ export type TurnCheckKind =
   | 'levelup-no-change'
   | 'lock-without-skill'
   | 'plays-player'
+  /** T10RC7 — opening sentence(s) restate the player's typed act (already on the UI). */
+  | 'echo-player-act'
   | 'absent-speaker'
   | 'wrong-voice'
   | 'lecture-ending'
@@ -174,6 +176,58 @@ export function restatedShare(prose: string, earlier: string[]): number {
     return old.some((o) => jaccard(w, o) >= 0.7);
   }).length;
   return hits / mine.length;
+}
+
+const ECHO_STOP = new Set([
+  'the', 'and', 'for', 'you', 'your', 'toward', 'towards', 'with', 'from', 'into', 'onto',
+  'that', 'this', 'they', 'them', 'their', 'then', 'than', 'what', 'when', 'where', 'who',
+  'how', 'why', 'are', 'was', 'were', 'have', 'has', 'had', 'not', 'but', 'out', 'off',
+]);
+
+/** Content words for echo overlap (shared with restatedShare's length≥3 floor; drops stop words). */
+function echoWordSet(s: string): Set<string> {
+  return new Set([...(wordSet(s))].filter((w) => !ECHO_STOP.has(w)));
+}
+
+/**
+ * T10RC7 — one owner with restatedShare's token overlap: opening sentence(s) that restate the
+ * player's typed act (already visible above the GM page). Short chip labels (Face/Travel) are
+ * not free-text parroting. Quoted NPC speech that quotes the player back is allowed; PC-said
+ * reprints of the typed line are not.
+ */
+export function openingRestatesPlayerAct(prose: string, playerInput: string): boolean {
+  const act = norm(playerInput);
+  const raw = norm(prose);
+  if (!act || !raw) return false;
+  // Free-text evidence shape only: long line and/or a quoted say — not 2–4 word chips.
+  const hasQuote = /["\u201c][^"\u201d]{6,}["\u201d]?/.test(act);
+  if (!hasQuote && act.length < 40) return false;
+  // Verbatim player quote (closed or trailing-unclosed) on the page is always an echo.
+  // Check raw prose — narrationOf strips quotes (engineFactPatterns).
+  const quoted: string[] = [];
+  for (const m of act.matchAll(/["\u201c]([^"\u201d]{6,})["\u201d]/g)) quoted.push(low(m[1] ?? ''));
+  const unclosed = act.match(/["\u201c]([^"\u201d]{6,})$/);
+  if (unclosed?.[1]) quoted.push(low(unclosed[1]));
+  for (const q of quoted) {
+    if (q && low(raw).includes(q.slice(0, Math.min(q.length, 48)))) return true;
+  }
+  const player = echoWordSet(act.replace(/["\u201c][^"\u201d]*["\u201d]?/g, ' '));
+  if (player.size < 4) return false;
+  const text = narrationOf(raw);
+  const opening = text
+    .split(/(?<=[.!?]["”']?)\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+  if (!opening.length) return false;
+  const openWords = echoWordSet(opening.join(' '));
+  if (!openWords.size) return false;
+  let hit = 0;
+  for (const w of player) if (openWords.has(w)) hit += 1;
+  const share = hit / player.size;
+  if (share < 0.55) return false;
+  // Same overlap notion as restatedShare (jaccard), so one helper owns both shapes.
+  return share >= 0.65 || jaccard(player, openWords) >= 0.3;
 }
 
 const TRAVEL_ACTION = /^(?:travel(?:\s+(?:toward|to|into))?|head (?:toward|to|for)|go to|return to|walk to)\s+(?:the\s+)?(.+)$/i;
@@ -765,6 +819,13 @@ export function checkPlayCrimes(
     p0.push({
       kind: 'plays-player',
       detail: `an NPC speaks the player's quoted words: "${action.slice(0, 100)}"`,
+    });
+  }
+  // T10RC7 — opening restates the typed act the UI already showed (same token-overlap owner).
+  if (openingRestatesPlayerAct(text, action)) {
+    p0.push({
+      kind: 'echo-player-act',
+      detail: `opening restates the player's act (already shown in UI): "${action.slice(0, 100)}"`,
     });
   }
 

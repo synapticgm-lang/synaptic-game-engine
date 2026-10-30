@@ -80,11 +80,19 @@ describe('T10U speech stitch shout + while', () => {
       addressee: talk!.addressee,
       presentHere: ['Merrit Pike', 'Lisle Dunmore'],
     });
+    // T10RC7 — live facts mark the act already shown; convert never reprints the shout.
+    expect(fact).toMatch(/already shown/i);
     const plain = convertWriterCueFact(fact, 'Jax');
-    expect(plain).toMatch(/shouted,\s*"Show yourself/i);
-    expect(plain).not.toMatch(/Jax said,.*Jax (?:said|shouted)/i);
+    expect(plain).not.toMatch(/shouted,\s*"Show yourself/i);
     expect(plain).not.toMatch(/"While scanning/i);
-    expect(plain).toMatch(/scann(?:ed|ing) the tree line/i);
+    // Legacy mid-clause Must narrate (pre-RC7) still paints one verb + quote + trailing act.
+    const legacy =
+      'Must narrate: I spin around and kick a pile of pine needles into the air, shouting "Show yourself if you\'re gonna lurk in the shadows!" while scanning the tree line for any movement. Speech event: you address Merrit Pike. NPC reaction slot open for Merrit Pike.';
+    const legacyPlain = convertWriterCueFact(legacy, 'Jax');
+    expect(legacyPlain).toMatch(/shouted,\s*"Show yourself/i);
+    expect(legacyPlain).not.toMatch(/Jax said,.*Jax (?:said|shouted)/i);
+    expect(legacyPlain).not.toMatch(/"While scanning/i);
+    expect(legacyPlain).toMatch(/scann(?:ed|ing) the tree line/i);
   });
 });
 

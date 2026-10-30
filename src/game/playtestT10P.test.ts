@@ -116,7 +116,8 @@ describe('T10P fallback narration from engine fact', () => {
 
   it('Face the thugs with no say narrates the act, not a stub speech line', () => {
     const typed = resolveTypedFreeText(rpgFight(), 'Face the thugs');
-    expect(typed.engineResult).toMatch(/Must narrate:\s*Face the thugs/i);
+    // T10RC7 wraps Must narrate with already-shown; the chip act must still be the fact.
+    expect(typed.engineResult).toMatch(/Must narrate:.*Face the thugs/i);
     expect(typed.engineResult).not.toMatch(/Speech event:/i);
     const plain = writerEngineResult(typed.engineResult);
     expect(plain).not.toMatch(/spoke the warning|You spoke to the thugs/i);
