@@ -1016,7 +1016,15 @@ function readDeal(clause: string): IntentDeal | null {
 }
 
 function readTone(clause: string): IntentTone | null {
-  if (/\b(?:threaten|or\s+else|watch\s+yourself)\b/i.test(clause)) return 'threatening';
+  // Conditional / coercive speech acts (quoted "or I'll…" / death-stake taunt) — same
+  // threat family as "or else", not a per-NPC word list.
+  if (
+    /\b(?:threaten|or\s+else|watch\s+yourself)\b/i.test(clause)
+    || /\bor\s+I(?:['\u2019]?ll|\s+will)\b/i.test(clause)
+    || /\b(?:about\s+to\s+die|paint\s+the\s+wall|have\s+you\s+gagged)\b/i.test(clause)
+  ) {
+    return 'threatening';
+  }
   if (/\b(?:insult|fool|idiot|shut\s+up)\b/i.test(clause)) return 'rude';
   if (/\b(?:flatter|handsome|wise|brave)\b/i.test(clause)) return 'flattering';
   if (/\b(?:greet|please|thank|friend)\b/i.test(clause)) return 'friendly';
@@ -1274,19 +1282,58 @@ function extractDestination(clause: string, ctx: IntentSheetContext): string | n
   return raw || null;
 }
 
+/**
+ * False-authority / cover claim spoken to someone ("tell the guard the captain sent me").
+ * Structural speech act — not a keyword maze; requires a tell/say frame + third-party send/authorize.
+ */
+function isFalseAuthorityClaim(clause: string): boolean {
+  const t = (clause ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  // "I tell X … sent me" / "tell X that Y sent/authorized"
+  if (
+    /\b(?:tell|told|saying|say\s+to|inform)\b/i.test(t)
+    && /\b(?:sent\s+me|sent\s+us|authorized|sent\s+here|with\s+(?:the\s+)?(?:captain|commander|king|queen|lord|lady|boss)(?:\s+\w+)?(?:\s+sent)?)\b/i.test(
+      t,
+    )
+  ) {
+    return true;
+  }
+  // Disguise props + spoken cover ("fake mustache" … "I'm here to…") stay buy/talk; lie verbs above cover explicit.
+  if (/\b(?:pretend|claim|pass\s+(?:myself|ourselves)\s+off)\b/i.test(t)) return true;
+  return false;
+}
+
+/** Commercial stake speech (haggle / fare / price) aimed at a person — Barter family. */
+function isCommercialStakeSpeech(clause: string): boolean {
+  return /\b(?:pay|price|passage|fare|coin|haggle|bargain|discount|buy\s+some\s+silence)\b/i.test(
+    clause ?? '',
+  );
+}
+
 function classifyStepAction(clause: string): IntentStepAction {
   const deal = readDeal(clause);
   if (deal) return 'deal';
   if (/\bask\s+(?:about|regarding)\b|\bask\s+\w[\w\s'-]{0,30}\s+about\b/i.test(clause)) return 'ask_about';
+  // Chip family: Press your standing with <NPC> → persuade (one pattern, not per-chip).
+  if (/\bpress\s+(?:your\s+)?standing\s+with\b/i.test(clause)) return 'persuade';
   if (/\bpersuade\b|\bconvince\b/i.test(clause)) return 'persuade';
   if (/\bintimidate\b|\bthreaten\b/i.test(clause)) return 'intimidate';
   if (/\bdeceive\b|\blie\s+to\b|\bbluff\b/i.test(clause)) return 'deceive';
+  if (isFalseAuthorityClaim(clause)) return 'deceive';
   if (/\bsneak\b|\bstealth\b/i.test(clause)) return 'sneak';
   if (/\bbuy\b|\bpurchase\b/i.test(clause)) return 'buy';
   // M6 — steal verbs classify as take (engine resolves Sleight of Hand on the spine).
-  if (/\b(steal|pickpocket|filch|swipe|palm)\b/i.test(clause)) return 'take';
+  // Body-part "my palm" / "his palm" is not the pickpocket verb.
+  if (/\b(steal|pickpocket|filch|swipe)\b/i.test(clause)) return 'take';
+  if (/\bpalm\b/i.test(clause) && !/\b(?:my|your|his|her|their|a|the)\s+palms?\b/i.test(clause)) {
+    return 'take';
+  }
   if (/\btake\b|\bpick\s+up\b|\bgrab\b/i.test(clause)) return 'take';
   if (/\bparley\b|\btalk\s+(?:it|them)\s+down\b|\bnegotiate\b/i.test(clause)) return 'persuade';
+  // Haggle / fare speech without an explicit buy verb still counts as persuade→barter upstream.
+  if (isCommercialStakeSpeech(clause) && !/\b(?:where|what|who|why|how)\b/i.test(clause)) {
+    return 'persuade';
+  }
   if (/\brecall\b|\bwhat\s+did\s+\w+\s+tell\b/i.test(clause)) return 'recall';
   // Explicit speech only — never the broad first-person protest heuristic (that ate physical clauses).
   if (clauseHasSpeechMarker(clause)) return 'talk';
@@ -1369,6 +1416,8 @@ export function parsePlayerSteps(
       // Aimed-at person on a toss/give/wink still needs the addressee slot for presence.
       // Person-aimed take/grab stays `take` at parse (T10X); typedFreeText resolves grapple/threat.
       if (peopleHit) addressee = peopleHit;
+      // Buy/quote after a gesture at someone inherits that listener (compound disguise+buy).
+      else if (action === 'buy' && priorPerson) addressee = priorPerson;
     } else if (action === 'attack' || action === 'search' || action === 'observe') {
       target = peopleHit ?? pickFromPool(clause, ctx.items) ?? pickFromPool(clause, ctx.places);
       if (peopleHit) addressee = peopleHit;
@@ -1393,21 +1442,31 @@ export function parsePlayerSteps(
         target = peopleHit;
       }
     }
-    if (deal && !addressee) addressee = peopleHit;
-    if (say && !addressee) addressee = peopleHit;
-    // T10AB — free-typed blade/pin/grab (or cutting off escape) at a present person resolves as
-    // intimidate/grapple (SRD), not a content-free General athletics shrug.
+    if (deal && !addressee) addressee = peopleHit ?? priorPerson;
+    if (say && !addressee) addressee = peopleHit ?? priorPerson;
+    // Speech / buy with no name this clause inherits the person aimed in an earlier clause.
     if (
-      action === 'other'
-      && peopleHit
+      !addressee
+      && priorPerson
+      && (speechLike || action === 'buy' || action === 'persuade' || action === 'deceive' || action === 'intimidate')
+    ) {
+      addressee = priorPerson;
+      if (!target) target = priorPerson;
+    }
+    // T10AB — free-typed blade/pin/grab/grip (or cutting off escape) at a present person resolves as
+    // intimidate/grapple (SRD), not a content-free General athletics shrug.
+    const coerceWho = peopleHit ?? priorPerson;
+    if (
+      (action === 'other' || action === 'take' || action === 'talk')
+      && coerceWho
       && (tone === 'threatening'
-        || /\b(grab|collar|grapple|pin|throat|blade|dagger|sword|knife|cut\s+off\s+\w+['']?s?\s+escape)\b/i.test(
+        || /\b(grab|grip|squeez(?:e|ing)|collar|grapple|pin|throat|blade|dagger|sword|knife|cut\s+off\s+\w+['']?s?\s+escape|cut\s+off\s+\w+['']?s?\s+whisper)\b/i.test(
           clause,
         ))
     ) {
       action = 'intimidate';
-      addressee = peopleHit;
-      target = peopleHit;
+      addressee = coerceWho;
+      target = coerceWho;
     }
     // Threat/grab steps win over a soft promise-deal parse of the same clause.
     const useDeal = !!deal && action !== 'intimidate' && action !== 'attack' && action !== 'take';
@@ -1442,7 +1501,8 @@ export function parsePlayerSteps(
       || st.action === 'intimidate'
       || st.action === 'deceive'
       || st.action === 'deal'
-      || st.action === 'refuse';
+      || st.action === 'refuse'
+      || st.action === 'buy';
     if (!addressee && speechLike) {
       // Carry-over when the player names nobody this clause — only if still here.
       addressee = lastWho;

@@ -172,10 +172,10 @@ function targetIsPresent(state: GameState, who: string | null | undefined): who 
 
 /**
  * Map an intent step → use-skill. Reuses intent actions only (no GM-prose guess,
- * no per-NPC patches). Negotiate (already classified as persuade) + trade/buy → Barter.
+ * no per-NPC patches). Negotiate / commercial stake (already classified as persuade) + trade/buy → Barter.
  */
 export function useSkillFromStep(step: IntentStep): UseSocialSkill | null {
-  const clause = (step.clause ?? '').trim();
+  const clause = (step.clause ?? step.say ?? '').trim();
   if (step.action === 'deceive') return 'deception';
   if (step.action === 'intimidate') return 'intimidation';
   if (step.action === 'buy') return 'barter';
@@ -183,8 +183,14 @@ export function useSkillFromStep(step: IntentStep): UseSocialSkill | null {
     return 'barter';
   }
   if (step.action === 'persuade') {
-    // Same negotiate/parley gate the intent reader already uses for persuade.
-    if (/\bparley\b|\btalk\s+(?:it|them)\s+down\b|\bnegotiate\b/i.test(clause)) return 'barter';
+    // Press-standing chip stays Persuasion; negotiate / fare / price stakes → Barter.
+    if (/\bpress\s+(?:your\s+)?standing\b/i.test(clause)) return 'persuasion';
+    if (
+      /\bparley\b|\btalk\s+(?:it|them)\s+down\b|\bnegotiate\b/i.test(clause)
+      || /\b(?:pay|price|passage|fare|coin|haggle|bargain|discount|buy\s+some\s+silence)\b/i.test(clause)
+    ) {
+      return 'barter';
+    }
     return 'persuasion';
   }
   // Threatening tone with an addressee (knife/blade threats upgraded to intimidate in the parser).
@@ -215,16 +221,28 @@ export function classifySocialSkillAttempt(
     present: here,
   };
   const read = parsePlayerSteps(playerInput, ctx);
+  // Compound lines: a later buy/talk may omit the name that an earlier gesture already aimed.
+  const aimed =
+    read.steps.map((s) => (s.addressee ?? s.target ?? '').trim()).find((n) => targetIsPresent(state, n))
+    ?? (baseCtx.lastAddressee ?? '').trim();
+  // Sole seated listener — spoken buy/bluff with no vocative still aims at the only person here.
+  const soleHere = here.length === 1 ? here[0]!.trim() : '';
   for (const step of read.steps) {
     const skill = useSkillFromStep(step);
     if (!skill) continue;
-    const target = (step.addressee ?? step.target ?? '').trim();
+    let target = (step.addressee ?? step.target ?? '').trim();
+    if (!targetIsPresent(state, target) && aimed && targetIsPresent(state, aimed)) {
+      target = aimed;
+    }
+    if (!targetIsPresent(state, target) && soleHere && targetIsPresent(state, soleHere)) {
+      target = soleHere;
+    }
     if (!targetIsPresent(state, target)) continue;
     return {
       skill,
       target,
       clause: (step.clause ?? playerInput).trim(),
-      step,
+      step: { ...step, addressee: target, target },
     };
   }
   return null;
