@@ -674,7 +674,10 @@ function spawnFoe(state: GameState, mob: NodeHidden['mobs'][number]): GameState 
   }));
   const withDungeon = { ...state, activeDungeon: dungeon };
   // T10TABFIGHT — first solo L1 tabletop fight: telegraph triad before going live.
-  if (needsFirstFightSafety(withDungeon)) {
+  // Re-entry of an already-parked/wounded foe is not the first telegraph — go live.
+  const reengagingParked =
+    !!mob.spawned || (typeof mob.hpRemaining === 'number' && mob.hpRemaining > 0);
+  if (needsFirstFightSafety(withDungeon) && !reengagingParked) {
     return openFirstFightGate(withDungeon, softenFirstFightEncounter(encounter, withDungeon));
   }
   return { ...withDungeon, activeEncounter: encounter };

@@ -9,6 +9,7 @@
  * One choice set owned here; consumers take a prefix via choiceCountLimitOf (default 3) — never a second list.
  */
 import type { ActiveEncounter, GameState } from '../types';
+import { applyPresenceFacts, seat } from '../presentAuthority';
 import { choiceCountLimitOf } from './houseRules';
 import { crToXp, encounterXpBudget } from '../xpRules';
 import { SRD_MONSTERS, statBlockForEncounter, type StatBlock } from './srdMonsters';
@@ -157,22 +158,12 @@ export function openFirstFightGate(
   encounter: ActiveEncounter
 ): GameState {
   const softened = softenFirstFightEncounter(encounter, state);
+  // T10SM1 — pendingEncounter via presentAuthority; never patch present[] here.
   return {
-    ...state,
+    ...applyPresenceFacts(state, { pendingEncounter: softened }),
     pendingFirstFight: {
       encounter: softened,
       warning: FIRST_FIGHT_WARNING,
-    },
-    sceneFacts: {
-      ...(state.sceneFacts ?? {
-        crowd: 'unknown' as const,
-        noise: 'unknown' as const,
-        present: [],
-        props: [],
-        lastBeat: '',
-        updatedTurn: state.turn,
-      }),
-      pendingEncounter: softened,
     },
     activeEncounter: null,
   };
@@ -205,13 +196,10 @@ export function resolveFirstFightChoice(state: GameState, raw: string): FirstFig
     const { parkedTurn: _p, arrivalTurn: _a, ...rest } = live;
     return {
       state: {
-        ...state,
+        ...applyPresenceFacts(state, { pendingEncounter: undefined }),
         firstFightGateDone: true,
         pendingFirstFight: null,
         activeEncounter: { ...rest, phase: 'engaged', startedTurn: state.turn },
-        sceneFacts: state.sceneFacts
-          ? { ...state.sceneFacts, pendingEncounter: undefined }
-          : state.sceneFacts,
       },
       handled: true,
       receipts: [`Encounter: ${enc.name}`, FIRST_FIGHT_WARNING.replace(/You can.*/, 'You chose to fight.')],
@@ -221,40 +209,25 @@ export function resolveFirstFightChoice(state: GameState, raw: string): FirstFig
   if (intent === 'back off') {
     return {
       state: {
-        ...state,
+        ...applyPresenceFacts(state, { pendingEncounter: undefined }),
         // Backing off is not a fight — gate may show again on the next threat.
         pendingFirstFight: null,
         activeEncounter: null,
-        sceneFacts: state.sceneFacts
-          ? { ...state.sceneFacts, pendingEncounter: undefined }
-          : state.sceneFacts,
       },
       handled: true,
       receipts: [`You backed off from ${enc.name}. No fight.`],
       facts: [`You backed off. ${enc.name} was not engaged.`],
     };
   }
-  // Talk: keep the foe on the scene for the normal talk path; do not start the fight.
-  const present = [...(state.sceneFacts?.present ?? [])];
-  if (!present.some((n) => n.toLowerCase() === enc.name.toLowerCase())) present.push(enc.name);
+  // Talk: seat the foe for the normal talk path; do not start the fight.
+  // T10SM1 — present[] only via presentAuthority.seat.
+  const cleared = applyPresenceFacts(state, { pendingEncounter: undefined });
   return {
     state: {
-      ...state,
+      ...seat(cleared, enc.name),
       firstFightGateDone: true,
       pendingFirstFight: null,
       activeEncounter: null,
-      sceneFacts: {
-        ...(state.sceneFacts ?? {
-          crowd: 'unknown' as const,
-          noise: 'unknown' as const,
-          present: [],
-          props: [],
-          lastBeat: '',
-          updatedTurn: state.turn,
-        }),
-        present,
-        pendingEncounter: undefined,
-      },
     },
     handled: true,
     receipts: [`You try to talk with ${enc.name}.`],
