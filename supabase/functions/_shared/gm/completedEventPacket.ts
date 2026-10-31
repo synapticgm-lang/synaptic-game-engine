@@ -1341,7 +1341,7 @@ export function formatWriterFacingEvent(
     '',
   ];
   // M1 — FactSheet is the single facts block (settings slot reserved for 6b).
-  // T10TURNS — writerLeaf omits ENGINE RESULT + Recent timeline (owned below / INFO SHEET).
+  // T10TURNS — writerLeaf omits short ENGINE RESULT only (long form below). Timeline stays on WORLD FACTS.
   if (packet.factSheet) {
     lines.push(formatFactSheetForWriter(packet.factSheet, { writerLeaf: true }));
     lines.push('');

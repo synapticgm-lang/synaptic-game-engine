@@ -316,15 +316,17 @@ export function hashFactSheet(sheet: FactSheet): string {
 
 /**
  * T10TURNS — writer-facing FactSheet char budget (WORLD FACTS block only).
- * Pins trim: ENGINE RESULT + Recent timeline leave this block when the leaf owns them.
+ * Pins trim: short ENGINE RESULT leaves this block when the leaf owns the long form.
+ * Recent timeline stays here — INFO SHEET LAST is GM-log engine results, not discovery timeline.
  * Fixture growth beyond this fails the section-budget test.
  */
 export const FACT_SHEET_WRITER_CHAR_BUDGET = 2200;
 
 export type FormatFactSheetOpts = {
   /**
-   * Writer leaf already prints ENGINE RESULT (required fact) + INFO SHEET LAST.
-   * Omit the short ENGINE RESULT / Recent timeline duplicates from WORLD FACTS.
+   * Writer leaf already prints the long ENGINE RESULT (required fact).
+   * Omit only the short `ENGINE RESULT:` duplicate from WORLD FACTS.
+   * Keep Recent timeline — sole owner of discovery timeline on the writer path.
    */
   writerLeaf?: boolean;
 };
@@ -377,8 +379,8 @@ export function formatFactSheetForWriter(sheet: FactSheet, opts?: FormatFactShee
       ...sheet.quests.map((q) => `  - ${q.title} (${q.status})${q.step ? `: ${q.step}` : ''}`)
     );
   }
-  // T10TURNS — INFO SHEET LAST owns the timeline when the writer leaf is used.
-  if (sheet.recent.length && !leaf) {
+  // Discovery timeline — WORLD FACTS is the sole writer owner (INFO SHEET LAST ≠ this).
+  if (sheet.recent.length) {
     lines.push('Recent timeline:', ...sheet.recent.map((r) => `  - ${r}`));
   }
   if (sheet.stallPressure) {

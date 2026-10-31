@@ -34,11 +34,11 @@ function talkState(): GameState {
 }
 
 describe('T10TURNS section budget', () => {
-  it('writer-leaf FactSheet stays under the char budget (no ENGINE RESULT / Recent timeline dup)', () => {
+  it('writer-leaf FactSheet stays under the char budget (no short ENGINE RESULT dup; timeline kept)', () => {
     const state = talkState();
     const packet = state.completedEvent!;
     const sheet = buildFactSheet(state, packet, 'Ask Mira what she wants');
-    // Force timeline + engine result so the trim is load-bearing.
+    // Force timeline + engine result so the ENGINE RESULT trim is load-bearing.
     sheet.recent = [
       'T5 Look around → The bathhouse steam hung low.',
       'T4 Ask Mira → Mira answered curtly.',
@@ -49,7 +49,9 @@ describe('T10TURNS section budget', () => {
     const leaf = formatFactSheetForWriter(sheet, { writerLeaf: true });
     expect(leaf.length).toBeLessThanOrEqual(FACT_SHEET_WRITER_CHAR_BUDGET);
     expect(leaf).not.toMatch(/^ENGINE RESULT:/m);
-    expect(leaf).not.toMatch(/Recent timeline:/);
+    // Discovery timeline has no other writer owner (INFO SHEET LAST is GM-log, not this).
+    expect(leaf).toMatch(/Recent timeline:/);
+    expect(leaf).toContain('bathhouse steam hung low');
     const full = formatFactSheetForWriter(sheet);
     expect(full).toMatch(/^ENGINE RESULT:/m);
     expect(full).toMatch(/Recent timeline:/);
