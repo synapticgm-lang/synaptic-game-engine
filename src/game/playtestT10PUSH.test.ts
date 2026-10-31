@@ -228,11 +228,17 @@ describe('T10PUSH (i)(j)(k) choice-count limit owner + fight collapse', () => {
       character: { ...base.character, srd: base.character.srd ?? { classId: 'fighter', level: 1 } },
       houseRules: { ...DEFAULT_HOUSE_RULES, choiceCountLimit: 3 },
       activeEncounter: {
-        id: 'foe-1',
         name: 'Thug',
         hp: 20,
         maxHp: 20,
-        phase: 'active',
+        level: 1,
+        armorClass: 12,
+        strength: 12,
+        dexterity: 12,
+        constitution: 12,
+        xpReward: 0,
+        goldReward: 0,
+        phase: 'engaged',
       },
       roundCombat: {
         encounterName: 'Thug',
@@ -241,7 +247,7 @@ describe('T10PUSH (i)(j)(k) choice-count limit owner + fight collapse', () => {
         foes: [{ name: 'Thug', hp: 20, maxHp: 20 }],
         pcConditions: [],
       },
-    } as GameState;
+    } as unknown as GameState;
     const legal = legalFightActionsThisRound(s);
     expect(legal.length).toBeGreaterThan(3);
     const chips = roundCombatChips(s)!;
