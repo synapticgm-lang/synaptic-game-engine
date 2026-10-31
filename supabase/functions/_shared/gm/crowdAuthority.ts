@@ -6,7 +6,7 @@
  */
 
 import type { GameState, SceneFacts } from './types.ts';
-import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority.ts';
+import { filterChromeFromPresent, isChromePersonToken, isEmptyRoomPersonSlot } from './chromeAuthority.ts';
 import { proseSaysEmpty } from './chipRules.ts';
 import { presenceFactsPatch } from './presentAuthority.ts';
 import { mentionsName } from './scenePresence.ts';
@@ -525,13 +525,16 @@ export function harvestCrowdIntoSceneFacts(
   // ("no one else" keeps Wren; empty lane with no seated name writes crowdDepartedByRecord).
   // T10AN — hereSpot away/nearby are still in the room; silence ("no one raised a hand") ≠ leave.
   if (proseSaysEmpty(narrative)) {
-    const seated = (base.present ?? []).filter((p) => p && mentionsName(narrative, p));
+    // T10Q5R — "Nobody answered" must not keep a present[] token named Nobody via mentionsName.
+    const seated = (base.present ?? []).filter(
+      (p) => p && !isEmptyRoomPersonSlot(p) && mentionsName(narrative, p),
+    );
     const spotHeld = [
       ...(base.hereSpot?.awayFrom ?? []),
       ...(base.hereSpot?.nearby ?? []),
     ]
       .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
-      .filter(Boolean);
+      .filter((n) => n && !isEmptyRoomPersonSlot(n));
     const kept = Array.from(new Set([...seated, ...spotHeld]));
     if (!kept.length) {
       return presenceFactsPatch(base, {

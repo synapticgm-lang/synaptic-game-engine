@@ -1,4 +1,6 @@
 import type { GameState, NpcMemory } from './types.ts';
+import { isEmptyRoomPersonSlot } from './chromeAuthority.ts';
+import { isCommonRoleNpc } from './entityRegistry.ts';
 import { isOutOfTalkingRange } from './hereSpot.ts';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName.ts';
 import { resolvePlace } from './places.ts';
@@ -167,14 +169,18 @@ export function presentNpcRecords(state: GameState): NpcMemory[] {
     for (const m of recordsForEntries(state, state.sceneFacts?.present ?? [])) {
       if (!m.location) push(m);
     }
+    // sceneLedger.present holds named people + roles. Resolve named hits; only invent
+    // anonymous `role:` occupancy for common role nouns (clerk/guard/…). Empty-room
+    // subjects ("Nobody") and novel Title-Case leaks must never become Talk chip targets.
     const roleLabels = [...(resolvePlace(state.places, state.currentLocation)?.sceneLedger?.present ?? []), ...(state.sceneFacts?.anonymousRoles ?? [])];
     for (let i = 0; i < roleLabels.length; i++) {
       const raw = (roleLabels[i] ?? '').replace(/\s+/g, ' ').trim();
-      if (!raw || resolvePlace(state.places, raw)) continue;
+      if (!raw || resolvePlace(state.places, raw) || isEmptyRoomPersonSlot(raw)) continue;
       const bare = raw.replace(LEADING_ROLE_WORD, '').trim() || raw;
       const display = bare === raw && raw.charCodeAt(0) >= 97 ? `the ${raw}` : raw;
       const hit = resolveNpcRecord(state, raw) ?? resolveNpcRecord(state, display) ?? resolveNpcRecord(state, bare);
       if (hit) { push(hit.location ? hit : { ...hit, location: state.currentLocation }); continue; }
+      if (!isCommonRoleNpc(bare) && !isCommonRoleNpc(raw)) continue;
       push({ npcId: `role:${hereSlug}:${bare.toLowerCase().replace(SLUG_GAP, '-')}`.slice(0, 80), npcName: display, disposition: 'neutral', facts: [], lastSeenTurn: state.turn ?? 0, location: state.currentLocation });
     }
   }

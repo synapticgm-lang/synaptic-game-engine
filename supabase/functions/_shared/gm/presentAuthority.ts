@@ -5,7 +5,7 @@
  */
 
 import type { CrowdPresence, GameState, NpcMemory, SceneFacts } from './types.ts';
-import { isSystemWindowLabel } from './chromeAuthority.ts';
+import { isEmptyRoomPersonSlot, isSystemWindowLabel } from './chromeAuthority.ts';
 import { npcNamesAt, stampNpcLocationsOnMove } from './npcRecords.ts';
 import { ensurePlaceCard } from './outdoorHubs.ts';
 import { resolvePlace } from './places.ts';
@@ -162,7 +162,7 @@ function clearOrphanPresentFlags(state: GameState, present: string[]): NpcMemory
 export function seat(state: GameState, npcRefOrNames: string | string[]): GameState {
   const names = (Array.isArray(npcRefOrNames) ? npcRefOrNames : [npcRefOrNames])
     .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
-    .filter(Boolean);
+    .filter((n) => n && !isEmptyRoomPersonSlot(n));
   if (!names.length) return state;
   const base = baseFacts(state);
   const present = [...(base.present ?? [])];
@@ -263,11 +263,14 @@ export function exitNpc(
 
 /** Replace the whole present list (travel rebuild, harvest sync, vignette cast). Syncs memories. */
 export function setPresentList(state: GameState, present: string[]): GameState {
+  const cleaned = present
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n) => n && !isEmptyRoomPersonSlot(n));
   const next = applyPresenceFacts(state, {
-    present,
+    present: cleaned,
     updatedTurn: state.turn ?? 0,
   });
-  const mems = syncMemoriesToPresentList(next, present);
+  const mems = syncMemoriesToPresentList(next, cleaned);
   return mems === next.npcMemories ? next : { ...next, npcMemories: mems };
 }
 
