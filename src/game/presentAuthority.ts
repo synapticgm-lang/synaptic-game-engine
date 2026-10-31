@@ -5,7 +5,7 @@
  */
 
 import type { CrowdPresence, GameState, NpcMemory, SceneFacts } from './types';
-import { isSystemWindowLabel } from './chromeAuthority';
+import { isEmptyRoomPersonSlot, isSystemWindowLabel } from './chromeAuthority';
 import { npcNamesAt, stampNpcLocationsOnMove } from './npcRecords';
 import { ensurePlaceCard } from './outdoorHubs';
 import { resolvePlace } from './places';
@@ -96,10 +96,19 @@ export function presenceFactsPatch(
 
 /** Apply a presence SceneFacts patch onto GameState. */
 export function applyPresenceFacts(state: GameState, patch: Partial<SceneFacts>): GameState {
-  return {
+  const next = {
     ...state,
     sceneFacts: presenceFactsPatch(state.sceneFacts, patch, state.turn ?? 0),
   };
+  // T10Q5 / T10Q5fix — whenever present[] is written, CLEAR orphan present:true so empty
+  // harvest / travel trim cannot leave zombie seats. Do not invent present:true here:
+  // seat() / setPresentList own the on-list flag (repairSaveSchema splits compound present
+  // without promoting old records that never had the flag).
+  if (patch.present !== undefined) {
+    const mems = clearOrphanPresentFlags(next, patch.present ?? []);
+    if (mems !== next.npcMemories) return { ...next, npcMemories: mems };
+  }
+  return next;
 }
 
 /** NpcMemory.present flag — only written here. */
@@ -135,11 +144,25 @@ function syncMemoriesToPresentList(state: GameState, present: string[]): NpcMemo
   return changed ? next : mems;
 }
 
+/** Drop present:true when the name is no longer on present[] — never invent true. */
+function clearOrphanPresentFlags(state: GameState, present: string[]): NpcMemory[] | undefined {
+  const mems = state.npcMemories;
+  if (!mems?.length) return mems;
+  let changed = false;
+  const next = mems.map((m) => {
+    if (m.present !== true) return m;
+    if (present.some((p) => memoryMatchesRef(m, p))) return m;
+    changed = true;
+    return withMemoryPresentFlag(m, false);
+  });
+  return changed ? next : mems;
+}
+
 /** Seat one or more names into the scene; mark matching memories present. */
 export function seat(state: GameState, npcRefOrNames: string | string[]): GameState {
   const names = (Array.isArray(npcRefOrNames) ? npcRefOrNames : [npcRefOrNames])
     .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
-    .filter(Boolean);
+    .filter((n) => n && !isEmptyRoomPersonSlot(n));
   if (!names.length) return state;
   const base = baseFacts(state);
   const present = [...(base.present ?? [])];
@@ -240,11 +263,14 @@ export function exitNpc(
 
 /** Replace the whole present list (travel rebuild, harvest sync, vignette cast). Syncs memories. */
 export function setPresentList(state: GameState, present: string[]): GameState {
+  const cleaned = present
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n) => n && !isEmptyRoomPersonSlot(n));
   const next = applyPresenceFacts(state, {
-    present,
+    present: cleaned,
     updatedTurn: state.turn ?? 0,
   });
-  const mems = syncMemoriesToPresentList(next, present);
+  const mems = syncMemoriesToPresentList(next, cleaned);
   return mems === next.npcMemories ? next : { ...next, npcMemories: mems };
 }
 

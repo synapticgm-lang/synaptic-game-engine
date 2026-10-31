@@ -251,8 +251,8 @@ describe('M6 parley (social Influence + M5 DC)', () => {
   });
 });
 
-describe('M6 fight options cap 4', () => {
-  it('engine + choiceEdge fight pads never exceed 4; Flee folded into Disengage and move', () => {
+describe('M6 fight options cap (T10PUSH choice-count limit)', () => {
+  it('engine + choiceEdge fight pads never exceed the limit; Flee folded into Disengage and move', () => {
     const s = fightState();
     const chips = roundCombatChips(s)!;
     expect(chips.length).toBeGreaterThan(0);
@@ -260,7 +260,10 @@ describe('M6 fight options cap 4', () => {
     expect(chips.some((c) => /^flee$/i.test(c))).toBe(false);
     expect(chips.some((c) => /disengage/i.test(c))).toBe(true);
     const legal = new Set(legalFightActionsThisRound(s).map((c) => c.toLowerCase()));
-    for (const c of chips) expect(legal.has(c.toLowerCase())).toBe(true);
+    for (const c of chips) {
+      const key = c.toLowerCase();
+      expect(legal.has(key) || key === 'use something').toBe(true);
+    }
 
     const edges = enumerateLegalEdges(s);
     expect(edges.length).toBeLessThanOrEqual(FIGHT_CHIP_CAP);

@@ -8,6 +8,7 @@
  * Labels stay the plain action (feature-groups-plan §4). No word lists or label regexes.
  */
 import type { GameState, PlaceExitRow, QuestRoute } from './types';
+import { isEmptyRoomPersonSlot } from './chromeAuthority';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
 import { presentNpcRecords, resolveNpcRecord } from './npcRecords';
@@ -32,7 +33,8 @@ import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant, stallPressure
 import { isDying } from './tabletop/roundFight';
 import { originPad } from './rules/rpgOrigin';
 import { travelPadBlocked } from './padUniverse';
-import { capFightChips, FIGHT_CHIP_CAP, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
+import { capFightChips, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
+import { choiceCountLimitOf } from './rules/houseRules';
 import { activeHereSpot, stepCloserChip } from './hereSpot';
 import { isSearchTargetEmpty, normalizeSearchTarget } from './searchContinuity';
 
@@ -214,7 +216,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     const raw = people[i]!;
     const canonical = resolveNpcRecord(state, raw.npcName) ?? raw;
     const name = (canonical.npcName ?? '').trim();
-    if (!name) continue;
+    // T10Q5R — never chip a missing / empty-room / placeholder seat (Nobody, blank name).
+    if (!name || isEmptyRoomPersonSlot(name)) continue;
     const entityId = canonical.npcId || `npc:${name}`;
     if (seenPersonEntity.has(entityId)) continue;
     seenPersonEntity.add(entityId);
@@ -891,8 +894,10 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       } as T]);
     }
   }
-  // T10P: live fight pad = encounter actions only (≤4) + free-input. Generic scene
-  // affordances (chest / scout / contact / travel) stay off the fight page.
+  // T10P / T10PUSH: live fight pad = encounter actions only (≤ choiceCountLimit) + free-input.
+  // Generic scene affordances (chest / scout / contact / travel) stay off the fight page.
+  // Core fight: chips (attack / flee / parley) outrank thread:foe engagement so a limit of 3
+  // still keeps Press / Flee / Parley — Face-the-foe fills only leftover slots.
   if (liveFight) {
     const freeOnly: T[] = [];
     const fightOnly: T[] = [];
@@ -915,15 +920,16 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     const byId = (a: T, b: T) => {
       const rank = (c: T) => {
         const id = c.actionId ?? '';
-        if (id.endsWith(':attack') || id.includes(':forward')) return 0;
+        if (id.endsWith(':attack')) return 0;
         if (id.endsWith(':flee')) return 1;
         if (id.endsWith(':parley')) return 2;
-        return 3;
+        if (id.includes(':forward') || id.startsWith('thread:foe:')) return 3;
+        return 4;
       };
       return rank(a) - rank(b);
     };
     fightOnly.sort(byId);
-    const capped = fightOnly.slice(0, Math.max(0, FIGHT_CHIP_CAP));
+    const capped = fightOnly.slice(0, Math.max(0, choiceCountLimitOf(state)));
     return [...capped, ...freeOnly];
   }
   const cd =

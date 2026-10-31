@@ -36,6 +36,8 @@ import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { isTravelPad, travelPadBlocked } from './padUniverse';
+import { pushOnChoiceSet } from './rules/pushOnChoice';
+import { CAMP_CHIP } from './rules/travelDay';
 import { isDying } from './tabletop/roundFight';
 import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
 import { fuzzyTypedName } from './typedNameMatch';
@@ -50,7 +52,8 @@ function turnsWithoutProgressLocal(state: GameState): number {
 
 const STALE_TURNS = 10;
 const BRING_WINDOW = 5;
-const MAX_FIGHT_CHIPS = 4;
+/** @deprecated T10PUSH — read choiceCountLimitOf(state); kept as default 3. */
+const MAX_FIGHT_CHIPS = 3;
 
 export type DirectorInput = {
   playerInput?: string;
@@ -845,7 +848,16 @@ function injectStallDevelopment(
   state: GameState,
   playerInput: string,
   thread: OpenThread | null = null,
-): { state: GameState; development?: DirectorDevelopment; need: DirectorNeed; forwardIds: string[]; stallKind?: SceneThreadPlan['stallKind']; stallEventId?: string } {
+): {
+  state: GameState;
+  development?: DirectorDevelopment;
+  need: DirectorNeed;
+  forwardIds: string[];
+  stallKind?: SceneThreadPlan['stallKind'];
+  stallEventId?: string;
+  /** LOOP STOP progress receipt (Nudge:) — Must-narrate alone is not turnProgress. */
+  progressReceipt?: string;
+} {
   const turn = state.turn ?? 0;
   let working = state;
 
@@ -859,14 +871,46 @@ function injectStallDevelopment(
   ) {
     // Advance the road, then commit a real development so Camp↔Waystation ping-pong
     // cannot burn the LOOP STOP window (leg advance alone is often not movedOn).
-    const advanced = commitTravel(working, 'Walk on');
+    // T10RPGLOOP — Must-narrate / seat / present-depart are not turnProgress; emit Nudge so the
+    // forced advance registers (else Make camp becomes a hub rest and five no-progress turns stop the run).
+    // T10COMBO — when the push-on triad is live (day spent), auto Walk on is a forced march that can
+    // reach Exhaustion 6 (SRD death). Stall Make camps instead; Nudge still covers the camp pad.
+    const dest = working.journey?.to ?? 'the next stop';
+    const daySpentPush = pushOnChoiceSet(working).active;
+    const advanced = commitTravel(working, daySpentPush ? CAMP_CHIP : 'Walk on');
     if (advanced.handled) working = advanced.state;
+    const progressReceipt = advanced.handled
+      ? advanced.arrived
+        ? `Nudge: the road brought you to ${working.currentLocation ?? dest}.`
+        : daySpentPush
+          ? `Nudge: the road made you camp toward ${working.journey?.to ?? dest}.`
+          : `Nudge: the road continues toward ${working.journey?.to ?? dest}.`
+      : undefined;
     const committed = commitStallDevelopment(working, thread, playerInput);
     if (committed.development) {
+      let next = committed.state;
+      if (progressReceipt) {
+        next = {
+          ...next,
+          sceneFacts: next.sceneFacts
+            ? { ...next.sceneFacts, stallProgressReceipt: progressReceipt }
+            : {
+                crowd: 'unknown',
+                noise: 'unknown',
+                present: [],
+                props: [],
+                lastBeat: '',
+                updatedTurn: turn,
+                stallProgressReceipt: progressReceipt,
+              },
+        };
+      }
       return {
         ...committed,
+        state: next,
         forwardIds: [`stall-road:${turn}`, ...committed.forwardIds],
         stallKind: committed.stallKind ?? 'situation',
+        ...(progressReceipt ? { progressReceipt } : {}),
       };
     }
   }
@@ -1420,6 +1464,7 @@ export function planDirector(
     need = inj.need;
     development = inj.development;
     if (development?.fact) receipts.push(development.fact);
+    if (inj.progressReceipt) receipts.push(inj.progressReceipt);
   } else if (stall) {
     const inj = injectStallDevelopment(working, playerInput, null);
     working = inj.state;
@@ -1429,6 +1474,7 @@ export function planDirector(
     need = inj.need;
     development = inj.development;
     if (development?.fact) receipts.push(development.fact);
+    if (inj.progressReceipt) receipts.push(inj.progressReceipt);
   } else if (best) {
     forwardIds = [best.id];
   }

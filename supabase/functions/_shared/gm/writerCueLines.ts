@@ -70,30 +70,51 @@ function speakableHere(here: string[]): string[] {
 }
 
 /**
+ * T10Q5 — absence clause for a named addressee who is not seated. Prefer last-seen place so the
+ * writer narrates in-world absence (varied) instead of a bare empty-room telegram.
+ * Wording avoids the CUE_HEAD splitter "No one present to answer" so last-seen stays on the
+ * Speech event span for convertWriterCueFact.
+ */
+export function absenceAddressClause(who: string, lastSeenAt?: string | null): string {
+  const name = (who ?? '').replace(/\s+/g, ' ').trim();
+  const at = (lastSeenAt ?? '').replace(/\s+/g, ' ').trim();
+  if (name && at) return `${name} was last seen at ${at}; not present to answer.`;
+  // Keep the legacy empty-answer cue when no last-seen place is known (RC6 / T10P tests).
+  return `No one present to answer.`;
+}
+
+/**
  * Present named addressee → reaction slot. Crowd fillers are addressed but do not speak.
  * Ledger present groups (roof-thieves / Pact crew) open a reaction slot. When `presentHere`
  * is supplied (including `[]` = alone), a named who must be on that list or the cue is absence
  * (T10P). Omitting the list keeps the legacy named-slot behaviour for callers that only pass a
  * who. Unnamed talk with people here addresses them — never "empty scene" (T10M). Else empty-scene speech.
+ * T10Q5 — when a named who is elsewhere, the fact carries last-seen place (opts.lastSeenAt).
  */
-export function speechAddressCue(who: string | null, presentHere?: string[] | null): string {
+export function speechAddressCue(
+  who: string | null,
+  presentHere?: string[] | null,
+  lastSeenAt?: string | null,
+): string {
   const here =
     presentHere != null
       ? presentHere.map((n) => (n ?? '').replace(/\s+/g, ' ').trim()).filter(Boolean)
       : null;
+  const absent = (name: string) =>
+    `Speech event: you address ${name}. ${absenceAddressClause(name, lastSeenAt)}`;
   if (who && isCrowdFillerToken(who)) {
-    return `Speech event: you address ${who}. No one present to answer.`;
+    return absent(who);
   }
   // Invented hyphen group not on the ledger → no slot (T10L salt-burners). On-ledger → reacts (T10X).
   if (who && isAggregatePersonToken(who) && here != null && !nameOnList(who, here)) {
-    return `Speech event: you address ${who}. No one present to answer.`;
+    return absent(who);
   }
   if (who && isAggregatePersonToken(who) && here == null) {
-    return `Speech event: you address ${who}. No one present to answer.`;
+    return absent(who);
   }
   if (who) {
     if (here != null && !nameOnList(who, here)) {
-      return `Speech event: you address ${who}. No one present to answer.`;
+      return absent(who);
     }
     return `Speech event: you address ${who}. NPC reaction slot open for ${who}.`;
   }
@@ -135,20 +156,27 @@ export function showActCue(): string {
 export function buildClauseWriterFact(
   clause: string,
   speech: boolean,
-  opts?: { said?: string; addressee?: string | null; presentHere?: string[] | null },
+  opts?: {
+    said?: string;
+    addressee?: string | null;
+    presentHere?: string[] | null;
+    /** T10Q5 — last known place when the addressee is not seated. */
+    lastSeenAt?: string | null;
+  },
 ): string {
   const parts: string[] = [mustNarrateCue(clause)];
   const here = opts?.presentHere ?? null;
+  const lastSeen = opts?.lastSeenAt ?? null;
   if (speech) {
     const said = (opts?.said ?? '').replace(/\s+/g, ' ').trim();
     const who = opts?.addressee?.trim() || null;
     if (said) parts.push(pcSaysExactlyCue(said));
-    parts.push(speechAddressCue(who, here));
+    parts.push(speechAddressCue(who, here, lastSeen));
   } else {
     const who = opts?.addressee?.trim() || null;
     // T10P — offering / holding out to a named person who is not here is absence, not a reaction.
     if (who && here != null && !nameOnList(who, here)) {
-      parts.push(speechAddressCue(who, here));
+      parts.push(speechAddressCue(who, here, lastSeen));
     } else {
       parts.push(showActCue());
       // T10X — unaddressed physical act (kick/point) with a present ledger group: they react.
@@ -688,12 +716,22 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
       continue;
     }
     if (/^Speech event:/i.test(head)) {
-      const noOne = /No one present to answer/i.test(span);
+      const noOne =
+        /No one present to answer/i.test(span)
+        || /\bnot present to answer\b/i.test(span)
+        || /\bis not present to answer\b/i.test(span);
       const whoMatch = span.match(/Speech event:\s*you address\s+(.+?)(?:\.|$)/i);
       const who = (whoMatch?.[1] ?? '').replace(/\s+/g, ' ').trim();
+      const lastSeen = span
+        .match(/was last seen at\s+([^.;]+)(?:[.;]|$)/i)?.[1]
+        ?.replace(/\s+/g, ' ')
+        .trim();
       if (noOne) {
         absentAnswer = true;
-        if (who && !/^the empty scene$/i.test(who)) {
+        // T10Q5 — last-seen place is the engine fact; last-resort paints it once (writer path narrates freely).
+        if (who && lastSeen && !/^the empty scene$/i.test(who)) {
+          push(`${who} was last seen at ${lastSeen}, not here to answer.`);
+        } else if (who && !/^the empty scene$/i.test(who) && !/^the people here$/i.test(who)) {
           push(`${who} was not there to answer.`);
         } else {
           push('No one was there to answer.');

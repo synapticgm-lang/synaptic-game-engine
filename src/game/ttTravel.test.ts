@@ -210,19 +210,20 @@ describe('tt-travel — exhaustion (SRD 5.2.1)', () => {
   it('pushing past 8 hours calls for Constitution saves (Extended Travel)', () => {
     const s = quietEvening('march', { roadHours: 8 });
     expect(dayIsSpent(s, s.journey!)).toBe(true);
-    const [camp, push] = journeyPads(s);
-    expect(camp).toBe('Make camp');
-    expect(push).toMatch(/^Push on into the \w+, but each failed save wears you down more$/);
-    const pushed = commitTravel(s, push!);
+    // T10PUSH — triad: Push on / Turn back / Make camp; confirm applies the march.
+    expect(journeyPads(s)).toEqual(['Push on', 'Turn back', 'Make camp']);
+    const opened = commitTravel(s, 'Push on');
+    expect(opened.state.pendingPushOnConfirm).toBeTruthy();
+    const pushed = commitTravel(opened.state, 'Confirm push on');
     // VR1-b: CON save STATUS is formatCheckRecord from CheckResultRecord (label Extended Travel: Constitution save).
     expect((pushed.extra ?? []).some((l) => /^Extended Travel: Constitution save/.test(l))).toBe(true);
   });
 
   it('q31-L4 — push-on hands Extended Travel + the chip\'s night slot to the writer (not morning landing)', () => {
     const s = { ...quietEvening('l4-push', { roadHours: 8 }), worldHour: 22 };
-    const push = journeyPads(s).find((p) => /^Push on into the night/.test(p));
-    expect(push).toBeTruthy();
-    const pushed = commitTravel(s, push!);
+    expect(journeyPads(s)).toContain('Push on');
+    const opened = commitTravel(s, 'Push on');
+    const pushed = commitTravel(opened.state, 'Confirm push on');
     expect(pushed.pushOnSlot).toBe('night');
     const lines = travelEngineLines(pushed);
     expect(lines.some((l) => /Constitution save|Check (?:success|failure)\./.test(l))).toBe(true);

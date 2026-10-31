@@ -260,6 +260,13 @@ import {
   travelEngineLines,
   travelOutcome,
 } from './travelJourney';
+import {
+  AUTO_CAMP_EXHAUSTION,
+  autoplayMayConfirmPushOn,
+  mapPushOnIntent,
+  pushOnChoiceSet,
+  pushOnConfirmFacts,
+} from './rules/pushOnChoice';
 import { readabilityGatePass } from './readabilityGate';
 import { checkPlayerTurn, type TurnCheck, type TurnCheckKind } from './turnCheck';
 import { checkTurnInvariants, type InvariantViolation } from './invariants/turnInvariants';
@@ -992,10 +999,40 @@ function pickGoalOrientedChoice(
  * Extended Travel CON saves (chipWouldMarch — hours + exhaustion) is not picked twice in a row
  * unless it is the only option. Soft "wears you down" Push-on counts — same source as pad warnings,
  * not a LETHAL_CHIP_RE text match (T10RC4 / s9512 soft-label repeat).
+ *
+ * T10PUSH — never confirm a push when the engine's confirm facts say next Exhaustion ≥ 5;
+ * read the option set from pushOnChoiceSet (no second copy).
  */
 const LETHAL_CHIP_RE = /\b(?:kills? you|will kill you|you (?:will )?die|means? death|fatal|lethal)\b/i;
+
+/** T10PUSH — autoplay must never open/confirm a push whose next Exhaustion level is ≥ 5. */
+export function isDeadlyPushOnPick(label: string, state: GameState): boolean {
+  const intent = mapPushOnIntent(label);
+  if (intent === 'confirm') return !autoplayMayConfirmPushOn(state);
+  if (intent === 'push on') {
+    if (pushOnChoiceSet(state).forceCamp) return true;
+    return pushOnConfirmFacts(state).nextLevel >= AUTO_CAMP_EXHAUSTION;
+  }
+  return false;
+}
+
+/**
+ * T10COMBO — while dying, autoplay prefers an ally stabilise chip over "Fight for breath"
+ * (death-save spam). Free text is never rewritten; this only rewrites chip picks.
+ */
+export function preferDyingStabilise(offered: string[], pick: string, state: GameState): string {
+  if (!isDying(state)) return pick;
+  const stab = offered.find((c) => /stabilis/i.test(c));
+  if (!stab) return pick;
+  if (/fight for breath/i.test(pick)) return stab;
+  return pick;
+}
+
 export function isLethalChipLabel(label: string, state?: GameState): boolean {
-  if (state) return chipWouldMarch(state, label);
+  if (state) {
+    if (isDeadlyPushOnPick(label, state)) return true;
+    return chipWouldMarch(state, label);
+  }
   return LETHAL_CHIP_RE.test(label);
 }
 let lastAutoPickWasLethal = false;
@@ -1009,10 +1046,17 @@ export function avoidRepeatLethalPick(
   prevWasLethal: boolean,
   state?: GameState
 ): string {
-  if (!prevWasLethal || !isLethalChipLabel(pick, state)) return pick;
-  const safe = offered.filter((c) => !isLethalChipLabel(c, state));
-  if (!safe.length) return pick;
-  return safe[Math.floor(rng() * safe.length)];
+  // T10PUSH: deadly push confirm is never picked, even on the first try.
+  if (state && isDeadlyPushOnPick(pick, state)) {
+    const safe = offered.filter((c) => !isDeadlyPushOnPick(c, state));
+    if (safe.length) return preferDyingStabilise(offered, safe[Math.floor(rng() * safe.length)]!, state);
+  }
+  let next = pick;
+  if (prevWasLethal && isLethalChipLabel(pick, state)) {
+    const safe = offered.filter((c) => !isLethalChipLabel(c, state));
+    if (safe.length) next = safe[Math.floor(rng() * safe.length)]!;
+  }
+  return state ? preferDyingStabilise(offered, next, state) : next;
 }
 function pickChipAvoidingLethalRepeat(
   offered: string[],
@@ -1020,7 +1064,10 @@ function pickChipAvoidingLethalRepeat(
   mode: AiAgentMode,
   rng: Rng
 ): string {
-  const candidates = chipsOnly(offered);
+  const set = pushOnChoiceSet(state);
+  // Prefer the engine's push-on option set when that choice point is live.
+  const pool = set.active && set.options.length ? set.options : offered;
+  const candidates = chipsOnly(pool.length ? pool : offered);
   const raw = pickGoalOrientedChoice(candidates, state, mode, rng);
   const pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal, state);
   lastAutoPickWasLethal = isLethalChipLabel(pick, state);
@@ -1327,6 +1374,10 @@ export async function headlessFateTurn(
         const sw = arcState.sceneFacts.stallWorldFact;
         if (!arcStatusReceipts.includes(sw)) arcStatusReceipts = [...arcStatusReceipts, sw];
       }
+      if (arcState.sceneFacts?.stallProgressReceipt) {
+        const sp = arcState.sceneFacts.stallProgressReceipt;
+        if (!arcStatusReceipts.includes(sp)) arcStatusReceipts = [...arcStatusReceipts, sp];
+      }
     }
     arcState = recordCirclingTurn(arcState, playerInput, arcStatusReceipts, state);
     {
@@ -1514,6 +1565,14 @@ export async function headlessFateTurn(
     }
     // TT-T1 — open-thread list + bring at least one forward into this scene.
     arcState = planSceneThreads(arcState, playerInput);
+    if (arcState.sceneFacts?.stallWorldFact) {
+      const sw = arcState.sceneFacts.stallWorldFact;
+      if (!arcStatusReceipts.includes(sw)) arcStatusReceipts = [...arcStatusReceipts, sw];
+    }
+    if (arcState.sceneFacts?.stallProgressReceipt) {
+      const sp = arcState.sceneFacts.stallProgressReceipt;
+      if (!arcStatusReceipts.includes(sp)) arcStatusReceipts = [...arcStatusReceipts, sp];
+    }
   }
   // 08c Tag & Trigger — consume claim pad before packet/writer.
   {

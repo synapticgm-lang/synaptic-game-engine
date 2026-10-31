@@ -80,7 +80,7 @@ function roadAlone(stalePresent: string[] = ['Edda Merrow']): GameState {
 }
 
 describe('T10P fight pads', () => {
-  it('live fight pad keeps ≤4 encounter actions and drops out-of-scene affordances', () => {
+  it('live fight pad keeps ≤ choiceCountLimit encounter actions and drops out-of-scene affordances', () => {
     const state = rpgFight();
     const pad = applyOptionCooldown(state, [
       { label: 'Inspect chest', actionId: 'object:prop:chest:inspect', kind: 'affordance', slotCategory: 'act', rank: 40 },

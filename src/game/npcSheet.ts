@@ -17,6 +17,7 @@ import {
 import type { GameState, NpcMemory, NpcSheet } from './types';
 import type { NpcRole } from './npcRoleRegistry';
 import { NPC_ROLE_REGISTRY } from './npcRoleRegistry';
+import { isEmptyRoomPersonSlot } from './chromeAuthority';
 import { createHashRng, keyedRng } from './seededRng';
 import { roadMeetingSpeaker } from './travelJourney';
 import type { SpokenLine } from './tokenProse';
@@ -191,7 +192,8 @@ export function pickNpcSheet(name: string, place: SheetPlace, opts?: { campaignI
  */
 export function ensureNpcSheet(state: GameState, name: string, location?: string | null): GameState {
   const key = name.trim().toLowerCase();
-  if (!key) return state;
+  // T10Q5R — empty-room / placeholder subjects never mint a town-* memory (Nobody → courier).
+  if (!key || isEmptyRoomPersonSlot(name)) return state;
   const list = state.npcMemories ?? [];
   const memory = list.find(
     (m) => m.npcName.toLowerCase() === key || (m.aliases ?? []).some((a) => a.toLowerCase() === key),

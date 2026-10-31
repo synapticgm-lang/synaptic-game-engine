@@ -52,10 +52,11 @@ describe('autoplay picker: lethal-labelled chip is not picked twice in a row (ha
 });
 
 describe('T10RC4 harness lethal avoid uses engine march prediction (not soft-label miss)', () => {
-  it('soft Push-on at exhaustion 3 is march-risk; second pick swaps to Make camp', () => {
+  it('Push on at exhaustion 3 is march-risk; second pick swaps to Make camp (T10PUSH plain label)', () => {
     const s = spentPushState(3);
     const push = journeyPads(s).find((p) => /Push on/i.test(p))!;
-    expect(push).toMatch(/each failed save wears you down more/);
+    // T10PUSH — warning lives in the confirm step, not the chip label.
+    expect(push).toBe('Push on');
     expect(isLethalChipLabel(soft)).toBe(false); // regex alone still misses soft
     expect(isLethalChipLabel(push, s)).toBe(true); // engine prediction catches it
     expect(avoidRepeatLethalPick(['Make camp', push], push, () => 0.1, true, s)).toBe('Make camp');

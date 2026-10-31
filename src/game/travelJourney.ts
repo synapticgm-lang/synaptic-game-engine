@@ -19,6 +19,12 @@ import { tickAwayAttunements } from './rules/magicItems';
 import { DEFAULT_HOUSE_RULES, houseRulesOf, pillarCopies } from './rules/houseRules';
 import { hoursAtPace, paceCheckAdv, paceTag } from './rules/travelPace';
 import {
+  AUTO_CAMP_EXHAUSTION,
+  mapPushOnIntent,
+  pushOnChoiceSet,
+  pushOnConfirmFacts,
+} from './rules/pushOnChoice';
+import {
   CAMP_CHIP,
   CAMP_WATCHES,
   EXHAUSTION_DEATH,
@@ -575,15 +581,10 @@ export function withMarchWarnPads(state: GameState, choices: string[]): string[]
   return [CAMP_CHIP, ...withoutCamp];
 }
 
-/** Push on into the current clock slot; tabletop names the Extended Travel fail cost. */
-function pushOnPad(state: GameState): string {
-  const head = `${PUSH_ON_CHIP} into the ${timeOfDayForHour(currentHour(state))}`;
-  return stampMarchWarn(state, head);
-}
 /** Chips for the ground between: walk on, this stretch's meeting (if any), turn back. */
 export function journeyPads(
   state: Pick<GameState, 'journey' | 'places' | 'currentLocation'> &
-    Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode' | 'character' | 'activeEncounter' | 'campaignBibleId' | 'roadDay' | 'worldHour' | 'worldDay' | 'seed' | 'houseRules'>> &
+    Partial<Pick<GameState, 'circling' | 'turn' | 'engineMode' | 'character' | 'activeEncounter' | 'campaignBibleId' | 'roadDay' | 'worldHour' | 'worldDay' | 'seed' | 'houseRules' | 'pendingPushOnConfirm'>> &
     ClockState
 ): string[] {
   const j = state.journey;
@@ -591,18 +592,35 @@ export function journeyPads(
   // Same rule as withJourneyPads: a live fight keeps combat pads; Walk on / turn-back stay off.
   if (state.activeEncounter) return [];
   const full = state as GameState;
+  // T10PUSH — forced-march choice set from ONE owner (Push on / Turn back / Make camp + confirm).
+  const pushSet = pushOnChoiceSet(full);
+  if (pushSet.active && !laneBlocked(j.encounter)) {
+    return pushSet.options;
+  }
   const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
   const spent = dayIsSpent(state, j);
   const forward = laneBlocked(j.encounter)
     ? []
     : spent
-      ? [CAMP_CHIP, pushOnPad(full)]
+      ? [] // spent + survival is always pushSet.active above; non-survival spent keeps walk/travel below
       : [stampMarchWarn(full, 'Walk on'), ...(canTravelOn(state, j) ? [stampMarchWarn(full, TRAVEL_ON_CHIP)] : [])];
+  // Non-survival modes (no Extended Travel): spent day still offers camp + onward without the push-on triad.
+  const spentNonSurvival =
+    spent && !survival(full) && !laneBlocked(j.encounter)
+      ? [CAMP_CHIP, stampMarchWarn(full, 'Walk on')]
+      : [];
   const job = spent || (j.encounter && !roadMeetingOver(j.encounter)) ? null : jobChip(state, j);
   const origin = journeyOrigin(state);
   const bounced = state.circling?.shortReturnTurn;
-  const rested = forward.length > 0 && bounced != null && (state.turn ?? 0) - bounced < TURN_BACK_REST_TURNS;
-  const pads = [...forward, ...met, ...(job ? [job] : []), ...(origin && !rested ? [`Turn back toward ${origin}`] : [])];
+  const onward = forward.length || spentNonSurvival.length;
+  const rested = onward > 0 && bounced != null && (state.turn ?? 0) - bounced < TURN_BACK_REST_TURNS;
+  const pads = [
+    ...forward,
+    ...spentNonSurvival,
+    ...met,
+    ...(job ? [job] : []),
+    ...(origin && !rested ? [`Turn back toward ${origin}`] : []),
+  ];
   return withMarchWarnPads(full, pads);
 }
 /** A ground-between chip: walk on / turn back, travel engine chip, or this stretch's meeting pads. */
@@ -2074,6 +2092,119 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
     const namedTo = named && named.name.toLowerCase() === j.to.toLowerCase();
     const namedFrom = named && named.name.toLowerCase() === j.from.toLowerCase();
     const chip = travelEngineChip(input);
+    // T10PUSH — forced-march triad / confirm (single owner: pushOnChoiceSet).
+    // T10COMBO — Travel toward / Travel on while the day is spent must not bypass the triad
+    // (namedTo/travel-on used to call stepAlong and could march Exhaustion to SRD level 6).
+    const pushSet = pushOnChoiceSet(state);
+    const pushIntentRaw = mapPushOnIntent(input);
+    const pushIntent =
+      pushIntentRaw
+      ?? (pushSet.active && (namedTo || chip === 'travel on') ? 'push on' : null);
+    if (pushSet.active && !laneBlocked(j.encounter) && pushIntent) {
+      const clearConfirm = (s: GameState): GameState =>
+        s.pendingPushOnConfirm ? { ...s, pendingPushOnConfirm: null } : s;
+      if (pushIntent === 'cancel') {
+        return {
+          state: clearConfirm(state),
+          handled: true,
+          arrived: false,
+          outcome: 'unchanged',
+          receipt: stillOn(state, j, 'push-on cancelled — nothing applied'),
+          facts: ['You stepped back from the forced march. Nothing changed.'],
+        };
+      }
+      if (pushIntent === 'make camp' || pushSet.forceCamp) {
+        const camped = makeCamp(clearConfirm(state), j);
+        if (pushSet.forceCamp) {
+          return {
+            ...camped,
+            facts: [...(pushSet.facts ?? []), ...(camped.facts ?? [])],
+          };
+        }
+        return camped;
+      }
+      if (pushIntent === 'turn back') {
+        // T10PUSH: retreat without Extended Travel Exhaustion from this choice.
+        const beforeEx = state.character.exhaustion ?? 0;
+        const back: TravelJourney = {
+          ...j,
+          from: j.to,
+          to: j.from,
+          legsDone: j.legsTotal - j.legsDone,
+        };
+        const out = stepAlong(clearConfirm({ ...state, journey: back }), back);
+        const restored = {
+          ...out.state,
+          character: { ...out.state.character, exhaustion: beforeEx },
+          playPhase: state.playPhase,
+          deathSaves: state.deathSaves,
+        };
+        return {
+          ...out,
+          state: restored,
+          facts: [
+            ...(out.facts ?? []).filter((f) => !/exhaustion|died on the road|breath stops/i.test(f)),
+            'You turned back. The forced march did not wear you further.',
+          ],
+        };
+      }
+      if (pushIntent === 'push on') {
+        // Never one click: open confirm. At exhaustion ≥5, force camp instead.
+        if (exhaustionLevel(state.character) >= AUTO_CAMP_EXHAUSTION) {
+          const camped = makeCamp(clearConfirm(state), j);
+          return {
+            ...camped,
+            facts: [
+              `Exhaustion is at level ${exhaustionLevel(state.character)}; the party must make camp (SRD level 6 is death).`,
+              ...(camped.facts ?? []),
+            ],
+          };
+        }
+        const confirm = pushOnConfirmFacts(state);
+        return {
+          state: {
+            ...state,
+            pendingPushOnConfirm: {
+              currentLevel: confirm.currentLevel,
+              nextLevel: confirm.nextLevel,
+              consequence: confirm.consequence,
+            },
+          },
+          handled: true,
+          arrived: false,
+          outcome: 'unchanged',
+          receipt: stillOn(state, j, 'awaiting push-on confirm'),
+          facts: [confirm.consequence],
+        };
+      }
+      if (pushIntent === 'confirm') {
+        if (!state.pendingPushOnConfirm) {
+          // Confirm without an open step does nothing — free text is not rejected.
+          return {
+            state,
+            handled: true,
+            arrived: false,
+            outcome: 'unchanged',
+            receipt: stillOn(state, j, 'no push-on to confirm'),
+            facts: ['There was no forced march waiting to be confirmed.'],
+          };
+        }
+        // Never confirm a push that could reach Exhaustion 6 (death). Level 5 already forced camp above.
+        if (state.pendingPushOnConfirm.nextLevel >= EXHAUSTION_DEATH) {
+          const camped = makeCamp(clearConfirm(state), j);
+          return {
+            ...camped,
+            facts: [
+              `Confirm refused: the next Exhaustion level would be death (SRD 5.2.1 level 6). The party makes camp.`,
+              ...(camped.facts ?? []),
+            ],
+          };
+        }
+        const pushOnSlot = timeOfDayForHour(currentHour(state));
+        const out = stepAlong(clearConfirm(state), j);
+        return { ...out, pushOnSlot };
+      }
+    }
     const onward = WALK_ON.test(input) || namedTo || chip === 'travel on' || chip === 'push on';
     if (chip === 'camp' && !laneBlocked(j.encounter)) return makeCamp(state, j);
     if (chip === 'guide' || chip === 'lookout' || chip === 'forager') return takeJob(state, j, chip);
@@ -2089,6 +2220,7 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
     }
     if (chip === 'travel on') return travelOn(state, j);
     if (onward) {
+      // Spent-day push is owned above; remaining onward is Walk on / Travel on before the day is spent.
       const pushOnSlot = chip === 'push on' ? timeOfDayForHour(currentHour(state)) : undefined;
       const out = stepAlong(state, j);
       return pushOnSlot ? { ...out, pushOnSlot } : out;

@@ -1,8 +1,8 @@
 /**
  * Tabletop fight chips: legal actions this round from the SRD action economy (merge M3),
- * capped at 4 non-idle picks in one place. Typed free text always remains available beside them.
- * The round engine (roundFight) reads the same weapon, cantrip, potion and ally helpers, so a chip
- * never offers what the engine cannot do.
+ * capped by houseRules.choiceCountLimit (T10PUSH — default 3, clamp 2..6). Typed free text
+ * always remains available beside them. The round engine (roundFight) reads the same weapon,
+ * cantrip, potion and ally helpers, so a chip never offers what the engine cannot do.
  *
  * SRD 5.2.1 — Combat / Your Turn (Wizards of the Coast LLC, CC BY 4.0): one Action, optional Bonus
  * Action when a feature grants one, Movement, one free object interaction; speech is free (not a chip).
@@ -13,13 +13,16 @@ import { ARMOR_TABLE, hasClassFeature, sheetSpellcasting, untrainedArmor, WEAPON
 import { spellRoundChips } from './spellCasting';
 import { SPELLS } from '../rules/spells';
 import { featureLeft } from '../rules/classFeatures';
-import { houseRulesOf } from '../rules/houseRules';
+import { choiceCountLimitOf, houseRulesOf } from '../rules/houseRules';
 import { ammoFor, ammoLeft } from '../rules/encumbrance';
 
 const POTION = /\bpotion\b.*\bheal|\bheal\w*\b.*\bpotion\b/i;
 
-/** One place for the fight-button cap (gap-cap-4). */
-export const FIGHT_CHIP_CAP = 4;
+/** @deprecated Prefer choiceCountLimitOf(state). Kept as the historical default (was 4; T10PUSH default is 3). */
+export const FIGHT_CHIP_CAP = 3;
+
+export const USE_SOMETHING_CHIP = 'Use something';
+export const RETREAT_CHIP = 'Disengage and move';
 
 export function healingPotion(state: Pick<GameState, 'inventory'>): { id: string; name: string } | null {
   const it = (state.inventory ?? []).find((i) => POTION.test(i.name) && (i.quantity ?? 1) > 0);
@@ -80,22 +83,23 @@ export function fightAlly(state: Pick<GameState, 'companions'>): { name: string 
 export const DEATH_SAVE_CHIP = 'Fight for breath';
 
 /**
- * Priority for the 4-chip fight pad: Attack → Cast/feature → Dodge/Disengage-and-move → rest.
+ * Priority for the fight pad: Attack → Cast/feature → Dodge/Disengage-and-move → rest.
  * M6: Flee folds into Disengage plus move (SRD 5.2.1 — Disengage then use your Speed).
  * All candidates are engine-legal for this round (economy still available at round start).
  */
 function fightChipPriority(label: string): number {
   const l = label.toLowerCase();
   if (l.startsWith('attack')) return 0;
-  if (l.startsWith('cast') || l.startsWith('use innate')) return 1;
-  if (l.startsWith('rage') || l.startsWith('reckless') || l === 'lay on hands') return 2;
-  if (l === 'dodge' || l.startsWith('disengage')) return 3;
-  if (l.startsWith('drink')) return 4;
-  if (l.startsWith('help') || l === 'hide') return 5;
-  return 6;
+  if (l === USE_SOMETHING_CHIP.toLowerCase()) return 1;
+  if (l.startsWith('cast') || l.startsWith('use innate')) return 2;
+  if (l.startsWith('rage') || l.startsWith('reckless') || l === 'lay on hands') return 3;
+  if (l === 'dodge' || l.startsWith('disengage')) return 4;
+  if (l.startsWith('drink')) return 5;
+  if (l.startsWith('help') || l === 'hide') return 6;
+  return 7;
 }
 
-/** Cap non-idle fight picks at FIGHT_CHIP_CAP (one place — gap-cap-4). */
+/** Cap non-idle fight picks at the house-rules choice-count limit (one place). */
 export function capFightChips(candidates: string[], cap = FIGHT_CHIP_CAP): string[] {
   const seen = new Set<string>();
   const unique: string[] = [];
@@ -130,7 +134,7 @@ export function legalFightActionsThisRound(state: GameState): string[] {
     if (cantrip) out.push(`Cast ${cantrip}`);
     out.push(...spellRoundChips(state));
     // M6 — Flee folds into Disengage plus move (SRD: Disengage Action, then move your Speed).
-    out.push('Dodge', 'Disengage and move');
+    out.push('Dodge', RETREAT_CHIP);
     if (ally) out.push(`Help ${ally.name}`);
     out.push('Hide');
   }
@@ -145,9 +149,54 @@ export function legalFightActionsThisRound(state: GameState): string[] {
   return out;
 }
 
+function isAttackChip(label: string): boolean {
+  return /^attack\b/i.test(label) || /^reckless attack\b/i.test(label);
+}
+
+function isRetreatChip(label: string): boolean {
+  return /^disengage\b/i.test(label) || /^dodge$/i.test(label);
+}
+
+/**
+ * Collapse a large legal set to the choice-count limit: Attack / Use something / Retreat
+ * by default (limit 3). Remaining abilities stay reachable under Use something or free text.
+ */
+export function collapseFightChips(legal: string[], limit: number): string[] {
+  if (legal.length <= limit) return capFightChips(legal, limit);
+  if (limit <= 2) {
+    const attack = legal.find(isAttackChip);
+    const retreat = legal.find((l) => /^disengage\b/i.test(l)) ?? legal.find(isRetreatChip);
+    const out: string[] = [];
+    if (attack) out.push(attack);
+    if (retreat && out.length < limit) out.push(retreat);
+    if (out.length < limit) out.push(USE_SOMETHING_CHIP);
+    return out.slice(0, limit);
+  }
+  const attack = legal.find(isAttackChip) ?? legal[0]!;
+  const retreat = legal.find((l) => /^disengage\b/i.test(l)) ?? RETREAT_CHIP;
+  const extras = legal.filter((l) => l !== attack && !isRetreatChip(l));
+  if (extras.length === 0) return capFightChips(legal, limit);
+  // Default triad (+ any room under a raised limit filled from priority).
+  const core = [attack, USE_SOMETHING_CHIP, retreat];
+  if (limit <= 3) return core.slice(0, limit);
+  const more = capFightChips(extras, limit - 3);
+  return [...core, ...more].slice(0, limit);
+}
+
+/** Remaining fight actions under "Use something" (same limit). */
+export function fightUseMenuChips(state: GameState): string[] {
+  const limit = choiceCountLimitOf(state);
+  const legal = legalFightActionsThisRound(state);
+  const attack = legal.find(isAttackChip);
+  const retreat = legal.find((l) => /^disengage\b/i.test(l));
+  const extras = legal.filter((l) => l !== attack && l !== retreat && !isRetreatChip(l));
+  return capFightChips(extras.length ? extras : legal, limit);
+}
+
 /** The round's chips while a tabletop fight is live; null when no round choice is due. */
 export function roundCombatChips(state: GameState): string[] | null {
   if (state.engineMode !== 'dnd' || !state.character?.srd) return null;
+  const limit = choiceCountLimitOf(state);
   const ds = state.deathSaves;
   // SRD 5.2.1 (WotC, CC BY 4.0): at 0 HP the only turns are a death save, a present ally's
   // DC 10 Wisdom (Medicine) stabilise, or drinking a healing potion you carry.
@@ -169,9 +218,10 @@ export function roundCombatChips(state: GameState): string[] | null {
       seen.add(key);
       out.push(`Ask ${c.name.trim()} to stabilise you`);
     }
-    return capFightChips(out, FIGHT_CHIP_CAP);
+    return capFightChips(out, limit);
   }
   const enc = state.activeEncounter;
   if (!enc || enc.hp <= 0 || enc.phase === 'pending') return null;
-  return capFightChips(legalFightActionsThisRound(state), FIGHT_CHIP_CAP);
+  if (state.roundCombat?.useMenu) return fightUseMenuChips(state);
+  return collapseFightChips(legalFightActionsThisRound(state), limit);
 }

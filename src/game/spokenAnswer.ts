@@ -1102,12 +1102,14 @@ function attachExchange(
   };
 }
 
-/** Engine already recorded absence — never append speech beside it (T10RC1). */
+/** Engine already recorded absence — never append speech beside it (T10RC1 / T10Q5 last-seen). */
 function engineSaidNobodyPresent(prose: string): boolean {
-  return /\bNo one (?:was|is) there to answer\b|\bNo one present to answer\b/i.test(prose ?? '');
+  return /\bNo one (?:was|is) there to answer\b|\bNo one present to answer\b|\bnot present to answer\b|\bwas last seen at\b.+\bnot here to answer\b|\bwas not there to answer\b/i.test(
+    prose ?? '',
+  );
 }
 
-/** Append the engine absence line once when empty seats meet a talk/ask (T10RC6). */
+/** Append one absence line when empty seats meet a talk/ask (T10RC6). T10Q5: named last-seen when known. */
 function withAbsenceLineOnce(prose: string, playerInput: string, state: GameState): string {
   const body = collapseDuplicateSaid(prose);
   if (engineSaidNobodyPresent(body)) return body;
@@ -1121,7 +1123,23 @@ function withAbsenceLineOnce(prose: string, playerInput: string, state: GameStat
     && !/\bstar(?:e|ing)\b/i.test(playerInput)) {
     return body;
   }
-  const line = 'No one was there to answer.';
+  // T10Q5 — named address when seats are empty: last-seen place from the record (if any).
+  const named =
+    playerInput.match(
+      /\b(?:ask|tell|talk(?:\s+to)?|speak(?:\s+to)?|whisper(?:\s+to)?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/,
+    )?.[1]
+    ?? playerInput.match(
+      /\b(?:lean(?:\s+in)?(?:\s+close)?(?:\s+to)|stare(?:\s+at)|look(?:\s+at)|glance(?:\s+at))\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/,
+    )?.[1]
+    ?? '';
+  const rec = named ? resolveNpcRecord(state, named) : undefined;
+  const lastAt = (rec?.location ?? '').replace(/\s+/g, ' ').trim();
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim();
+  const label = (rec?.npcName ?? named).replace(/\s+/g, ' ').trim();
+  const line =
+    label && lastAt && lastAt.toLowerCase() !== here.toLowerCase()
+      ? `${label} was last seen at ${lastAt}, not here to answer.`
+      : 'No one was there to answer.';
   return body ? `${body} ${line}` : line;
 }
 
