@@ -17,6 +17,7 @@ import { normalizeCommittedProse, type DraftCheck } from './writerTurn';
 import { chipProgressScore, rankChoices, recordCirclingTurn } from './choiceRanking';
 import { parsePlayerIntent } from './intentParser';
 import { createInitialState } from './defaults';
+import { emptySceneFacts } from './sceneFacts';
 import type { GameState } from './types';
 
 function base(over: Partial<GameState> = {}): GameState {
@@ -136,7 +137,11 @@ describe('T10WARDEN2 guardFinalProse (last-step, no model)', () => {
 describe('T10WARDEN2 producers', () => {
   it('ensureSpokenAnswer does not append nobody-to-answer after a settled fight with no ask', () => {
     const state = base({
-      sceneFacts: { present: [], lastKill: { name: 'Wilds Stalker', remains: true, outcome: 'victory' } },
+      sceneFacts: {
+        ...emptySceneFacts(),
+        present: [],
+        lastKill: { name: 'Wilds Stalker', remains: true, outcome: 'victory', turn: 12 },
+      },
       completedEvent: { justKilled: true, engineResult: 'Fight: VICTORY' } as GameState['completedEvent'],
     });
     const out = ensureSpokenAnswer(
@@ -157,9 +162,9 @@ describe('T10WARDEN2 producers', () => {
   it('normalizeCommittedProse runs Warden v2 on committed beats', () => {
     const state = base({
       log: [
-        { role: 'gm', content: 'The innkeep wiped the same clean spot. A stool scraped.' },
-        { role: 'player', content: 'Wait' },
-        { role: 'gm', content: 'Rain hit the glass. The innkeep wiped the same clean spot.' },
+        { id: 'g1', role: 'gm', content: 'The innkeep wiped the same clean spot. A stool scraped.', turn: 10, timestamp: 1 },
+        { id: 'p1', role: 'player', content: 'Wait', turn: 11, timestamp: 2 },
+        { id: 'g2', role: 'gm', content: 'Rain hit the glass. The innkeep wiped the same clean spot.', turn: 11, timestamp: 3 },
       ],
     });
     const draft =

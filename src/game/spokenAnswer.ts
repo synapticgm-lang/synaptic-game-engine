@@ -896,8 +896,10 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
  * exchange words), do not append again. Catches lastResort+seal / finishCommitted+seal doubles
  * when quote attribution is ambiguous.
  * T10Q2 — agenda filler on a content ask is not a reply (upgrade to motive / ask-back).
+ * T10WARDEN2fix — exported so turnCheck credits the same quote / agenda shapes (made clear /
+ * pressed for / held out) that voiceLedgerReply produces after fragment quotes were banned.
  */
-function proseHasSpeakerReply(
+export function proseHasSpeakerReply(
   prose: string,
   speaker: Speaker,
   words?: string,
@@ -977,6 +979,20 @@ function proseHasSpeakerReply(
     return true;
   }
   return false;
+}
+
+/**
+ * T10WARDEN2fix — present listener answered (quoted speech or agenda indirect beat).
+ * Shared by ensureSpokenAnswer and checkActionFollowed so fragment-ban + agenda voice stay one contract.
+ */
+export function listenerAnsweredInProse(
+  prose: string,
+  listenerLabel: string,
+  playerInput = '',
+): boolean {
+  const label = (listenerLabel ?? '').replace(/\s+/g, ' ').trim();
+  if (!label || !(prose ?? '').trim()) return false;
+  return proseHasSpeakerReply(prose, { label, names: nameParts(label) }, undefined, playerInput);
 }
 
 /** Drop a back-to-back identical `Name said, "…"` / `"…," Name said` clone (two code paths each appended once). */

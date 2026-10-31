@@ -9,7 +9,7 @@
 import type { GameState } from './types';
 import { checkObligationCoverage, buildIntentContract } from './intentContract';
 import { npcHoldsPcQuote, parsePlayerIntent } from './intentParser';
-import { demandActAnswered } from './spokenAnswer';
+import { demandActAnswered, listenerAnsweredInProse } from './spokenAnswer';
 import { isLookAroundAction } from './sandboxXp';
 import { resolveOfferedChoices } from './playTranscript';
 import { hubsForBibleId } from './outdoorHubs';
@@ -364,12 +364,15 @@ export function checkActionFollowed(
     if (!honestAbsent && listenersBefore.length > 0) {
       // T10AK — tell/demand answered by a visible act (jabbed toward the lock after "start working").
       const actAnswer = listenersBefore.some((p) => demandActAnswered(act, text, p));
+      // T10WARDEN2fix — agenda indirect (made clear / pressed for / held out) counts as an answer
+      // after fragment quotes were banned; same owner as ensureSpokenAnswer / proseHasSpeakerReply.
+      const ledgerAnswer = listenersBefore.some((p) => listenerAnsweredInProse(text, p, act));
       const contract = buildIntentContract({ typed: act, resolvedText: act, intent, state: before });
       const cov = checkObligationCoverage(
         { ...contract, obligations: contract.obligations.filter((o) => o.kind === 'talk' || o.kind === 'refuse') },
         text
       );
-      if (!actAnswer && !cov.ok && !quoted && !(fightTold && fight!.forcedBy === 'parley')) {
+      if (!actAnswer && !ledgerAnswer && !cov.ok && !quoted && !(fightTold && fight!.forcedBy === 'parley')) {
         flagIgnored(`player said "${act.slice(0, 80)}"; nobody answers in the prose`);
       }
     }
@@ -377,7 +380,12 @@ export function checkActionFollowed(
     socialAct
     && !quoted
     && !honestAbsent
-    && !listenersBefore.some((p) => mentionsName(text, p) || demandActAnswered(act, text, p))
+    && !listenersBefore.some(
+      (p) =>
+        mentionsName(text, p)
+        || demandActAnswered(act, text, p)
+        || listenerAnsweredInProse(text, p, act),
+    )
   ) {
     flagIgnored(`player chose "${act.slice(0, 80)}"; nobody here answers in the prose`);
   }
