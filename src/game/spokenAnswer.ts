@@ -95,7 +95,24 @@ function speakersHere(state: GameState): Speaker[] {
 /** Quote one ledger/authored line as this speaker's reply (shared attach shape). */
 function quotedReply(speaker: Speaker, words: string): { line: string; words: string } {
   const w = words.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
+  // T10WARDEN2 — never build Name said, "…" from a mid-clause fragment.
+  if (!isSpokenSentence(w) && isBareQuoteFragmentWords(w)) {
+    return { line: `${capitalize(speaker.label)} said nothing.`, words: '' };
+  }
   return { line: `${capitalize(speaker.label)} said, "${w}"`, words: w };
+}
+
+/** Mid-clause stubs only (`to be believed`); full I/We sentences stay quoteable. */
+function isBareQuoteFragmentWords(t: string): boolean {
+  const s = (t ?? '').replace(/\s+/g, ' ').trim();
+  if (!s || s.length < 4) return true;
+  if (/^(?:I|We|You|Don't|Do not|Never|Ask|Tell|Look|Yes|No|Please|Sorry)\b/i.test(s)) return false;
+  if (/[.!?]$/.test(s) && /^[A-Z]/.test(s)) return false;
+  if (/^(?:to|and|or|but|that|which|who|whom|where|when|as|for|of|in|on|at|with|from|someone|something|anyone)\b/i.test(s)) {
+    return true;
+  }
+  if (!/^[A-Z]/.test(s) && s.split(/\s+/).length <= 8) return true;
+  return s.split(/\s+/).length < 3 && !/[.!?]$/.test(s);
 }
 
 type LedgerKind = 'need' | 'goal' | 'offer';
@@ -160,7 +177,8 @@ function voiceLedgerReply(
   const t = bit.replace(/^["“]|["”]$/g, '').replace(/\s+/g, ' ').trim();
   if (!t) return { line: `${capitalize(speaker.label)} said nothing.` };
   if (isSpokenSentence(t)) return quotedReply(speaker, /[.!?]$/.test(t) ? t : `${t}.`);
-  return quotedReply(speaker, t.replace(/[.!?]+$/, ''));
+  // T10WARDEN2 — chip noun phrases stay indirect; never quote a bare fragment.
+  return agendaAsIndirectBeat(speaker, t, kind);
 }
 
 const sayWordSet = (s: string) => new Set((s.toLowerCase().match(/[a-z0-9']+/g) ?? []).filter((w) => w.length >= 3));
@@ -878,8 +896,10 @@ function isTypedAskOrTalk(playerInput: string, state?: GameState): boolean {
  * exchange words), do not append again. Catches lastResort+seal / finishCommitted+seal doubles
  * when quote attribution is ambiguous.
  * T10Q2 — agenda filler on a content ask is not a reply (upgrade to motive / ask-back).
+ * T10WARDEN2fix — exported so turnCheck credits the same quote / agenda shapes (made clear /
+ * pressed for / held out) that voiceLedgerReply produces after fragment quotes were banned.
  */
-function proseHasSpeakerReply(
+export function proseHasSpeakerReply(
   prose: string,
   speaker: Speaker,
   words?: string,
@@ -959,6 +979,20 @@ function proseHasSpeakerReply(
     return true;
   }
   return false;
+}
+
+/**
+ * T10WARDEN2fix — present listener answered (quoted speech or agenda indirect beat).
+ * Shared by ensureSpokenAnswer and checkActionFollowed so fragment-ban + agenda voice stay one contract.
+ */
+export function listenerAnsweredInProse(
+  prose: string,
+  listenerLabel: string,
+  playerInput = '',
+): boolean {
+  const label = (listenerLabel ?? '').replace(/\s+/g, ' ').trim();
+  if (!label || !(prose ?? '').trim()) return false;
+  return proseHasSpeakerReply(prose, { label, names: nameParts(label) }, undefined, playerInput);
 }
 
 /** Drop a back-to-back identical `Name said, "…"` / `"…," Name said` clone (two code paths each appended once). */
@@ -1111,16 +1145,34 @@ function engineSaidNobodyPresent(prose: string): boolean {
 
 /** Append one absence line when empty seats meet a talk/ask (T10RC6). T10Q5: named last-seen when known. */
 function withAbsenceLineOnce(prose: string, playerInput: string, state: GameState): string {
-  const body = collapseDuplicateSaid(prose);
+  let body = collapseDuplicateSaid(prose);
+  // T10WARDEN2 QT4 — drop a leftover nobody-to-answer when no question was asked, or a fight just settled.
+  const fightSettled =
+    !!state.sceneFacts?.lastKill?.remains
+    || !!state.completedEvent?.justKilled
+    || /\b(?:VICTORY|DEFEAT|fled|parley)\b/i.test(state.completedEvent?.engineResult ?? '');
+  const asked =
+    isTypedAskOrTalk(playerInput, state)
+    || /\b(?:shout|yell|whisper|tell|call out|greet)\b/i.test(playerInput)
+    || /["\u201c]/.test(playerInput)
+    || /\bstar(?:e|ing)\b/i.test(playerInput);
+  if ((!asked || fightSettled) && engineSaidNobodyPresent(body)) {
+    body = body
+      .replace(/\bNo one (?:was|is) there to answer\.?/gi, ' ')
+      .replace(/\bNo one present to answer\.?/gi, ' ')
+      .replace(/\bwas not there to answer\.?/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
   if (engineSaidNobodyPresent(body)) return body;
   if (isPassiveObserveOrTravel(playerInput)) return body;
   // Combat / travel / Face chips are not empty-room speech — do not paint absence over them.
   if (/^(?:face the threat|attack|flee|parley|dodge|block|strike|cast|use)\b/i.test(playerInput)) {
     return body;
   }
-  if (!isTypedAskOrTalk(playerInput, state) && !/\b(?:shout|yell|whisper|tell|call out|greet)\b/i.test(playerInput)
-    && !/["\u201c]/.test(playerInput)
-    && !/\bstar(?:e|ing)\b/i.test(playerInput)) {
+  // T10WARDEN2 — never emit nobody-to-answer after a settled fight when no question was asked.
+  if (fightSettled && !asked) return body;
+  if (!asked) {
     return body;
   }
   // T10Q5 — named address when seats are empty: last-seen place from the record (if any).

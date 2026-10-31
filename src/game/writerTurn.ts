@@ -27,6 +27,7 @@ import {
   detectAtmosphereReprint,
   detectLeadingCollage,
   detectSameRoomEssayHard,
+  guardFinalProse,
   playerAsksContinuation,
   playerAsksRepeat,
   recentGmBeatTexts,
@@ -847,6 +848,17 @@ export function normalizeCommittedProse(prose: string, check: DraftCheck, packet
     next = trimRecycledSentences(next, recentGmBeatTexts(check.state), 2, isEvent, check.state.character?.name).text;
     // minKeep 1: same-reply place/leg reprints may leave a single sentence (T10N).
     next = trimSameBeatRestatements(next, { isThisTurnsEvent: isEvent, isMoveEvent: isMove, eventHits, minKeep: 1 }).text;
+    // T10WARDEN2 — Warden v2 last-step (extend semanticLoopDetector; no extra model call).
+    const fightSettled =
+      !!terminalFightOutcome(check.engineFact)
+      || !!packet?.justKilled
+      || !!check.state.sceneFacts?.lastKill?.remains;
+    next = guardFinalProse(next, recentGmBeatTexts(check.state), check.playerInput, {
+      actor: check.state.character?.name,
+      isThisTurnsEvent: isEvent,
+      fightSettled,
+      minKeep: 1,
+    }).text;
   }
   // T10O — stray period after a quote that already closed on ?/!/… (`?"."`).
   next = next.replace(/([?!…])(["”])\.(?=\s|$)/g, '$1$2').replace(/([.!?]){2,}/g, '$1');

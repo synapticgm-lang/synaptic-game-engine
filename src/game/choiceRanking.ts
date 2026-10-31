@@ -241,6 +241,14 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
   if (moved || !mem.lastLocation) visits[key] = (visits[key] ?? 0) + 1;
   const act = actionKey(playerInput);
   const triedHere = { ...(mem.tried?.[key] ?? {}) };
+  // T10WARDEN2 — identical action + identical engine result → mark for pad demotion (never reject free text).
+  const resultBlob = [
+    ...(receipts ?? []),
+    state.completedEvent?.engineResult ?? '',
+  ].join(' ');
+  const deadKey = !progressed && act
+    ? `${act}|${resultBlob.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120)}`
+    : '';
   if (act) {
     if (progressed) delete triedHere[act];
     else triedHere[act] = state.turn ?? 0;
@@ -278,6 +286,7 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
       lastLeg: leg,
       shortReturnTurn: turnedBack ? state.turn ?? 0 : moved ? undefined : mem.shortReturnTurn,
       openingPlace: mem.openingPlace ?? (state.circling ? undefined : here || undefined),
+      lastDeadActResult: progressed ? undefined : (deadKey || mem.lastDeadActResult),
     },
   };
 }
@@ -379,7 +388,10 @@ export function chipProgressScore(state: GameState, chip: string): number {
   const lower = chip.toLowerCase();
   const story = storyChip(state);
   const mem = state.circling;
-  const repeat = triedAgo(state, chip) != null ? 5 : 0;
+  // T10WARDEN2 — same exact action that just yielded the same dead result ranks worse (pads only).
+  const deadAct = (mem?.lastDeadActResult ?? '').split('|')[0] ?? '';
+  const sameDead = !!deadAct && actionKey(chip) === deadAct ? 4 : 0;
+  const repeat = (triedAgo(state, chip) != null ? 5 : 0) + sameDead;
   if (story && lower === story.toLowerCase()) return repeat;
   const dest = travelDest(chip);
   if (dest) {
@@ -580,6 +592,12 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     const ago = triedAgo(state, c);
     if (ago != null && ago < REST_TURNS && !(story && c.toLowerCase() === story.toLowerCase())) {
       notes.push(`Rested repeat: ${c.slice(0, 32)}`);
+      continue;
+    }
+    // T10WARDEN2 — rest the exact action that just produced the same dead engine result.
+    const deadAct = (mem?.lastDeadActResult ?? '').split('|')[0] ?? '';
+    if (deadAct && actionKey(c) === deadAct && !(story && c.toLowerCase() === story.toLowerCase())) {
+      notes.push(`Rested same-result: ${c.slice(0, 32)}`);
       continue;
     }
     kept.push(c);

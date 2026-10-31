@@ -466,6 +466,7 @@ export function plainFromWriterCueSentence(
   }
   if (/^The story must show(?: this act| the consequence)/i.test(body)) return { cue: true, plain: '' };
   if (/^No one present to answer$/i.test(body)) {
+    // Solo cue convert has no fight context; last-step guardFinalProse still drops unasked absence.
     return { cue: true, plain: 'No one was there to answer.' };
   }
   if (/^NPC reaction slot open for /i.test(body)) {
@@ -517,6 +518,8 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
   let hadExactSay = false;
   let absentAnswer = false;
   let reactionWho: string | null = null;
+  // T10WARDEN2 QT4 — a settled fight on the same fact never paints nobody-to-answer.
+  const fightOnFact = /\b(?:Fight:|VICTORY|DEFEAT|fled successfully|parley (?:held|agreed))\b/i.test(raw);
 
   const push = (plain: string) => {
     const p = (plain ?? '').replace(/\s+/g, ' ').trim();
@@ -717,6 +720,8 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
         .trim();
       if (noOne) {
         absentAnswer = true;
+        // T10WARDEN2 — never paint nobody-to-answer on a fight-close fact (QT4).
+        if (fightOnFact) continue;
         // T10Q5 — last-seen place is the engine fact; last-resort paints it once (writer path narrates freely).
         if (who && lastSeen && !/^the empty scene$/i.test(who)) {
           push(`${who} was last seen at ${lastSeen}, not here to answer.`);
@@ -746,7 +751,7 @@ export function convertWriterCueFact(fact: string, subject?: string): string {
       continue;
     }
     if (/^No one present to answer/i.test(head)) {
-      if (!absentAnswer) push('No one was there to answer.');
+      if (!absentAnswer && !fightOnFact) push('No one was there to answer.');
       absentAnswer = true;
       continue;
     }

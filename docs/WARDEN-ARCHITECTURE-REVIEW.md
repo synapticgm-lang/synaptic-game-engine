@@ -5,6 +5,8 @@
 **Build**: 2026-08-24e  
 **Status**: Production System Analysis
 
+> **Refresh (T10WARDEN2 / 2026-10-31):** The Aug “12 pattern rules” Warden still owns English/crowd/name scrub in `proseWarden`. It does **not** see short ambient reprints, bare mid-clause quote stubs, or “No one was there to answer.” after a fight. Those land in **Warden v2** on the existing recycle owner: `guardFinalProse` in `semanticLoopDetector` (last ~5 beats), wired from `normalizeCommittedProse`, plus producers in `spokenAnswer` / `writerCueLines` / pad demotion via `circling.lastDeadActResult`. No extra model call. Motive-line rotation (Wire-in H / Order M) and RC-R1 fight-close stay separate owners — v2 extends them, does not fork a second checker.
+
 ---
 
 ## Executive Summary

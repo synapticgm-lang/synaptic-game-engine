@@ -2094,6 +2094,11 @@ export interface CirclingMemory {
   shortReturnTurn?: number;
   /** 29y — the place the run started in (the first circling record). */
   openingPlace?: string;
+  /**
+   * T10WARDEN2 — last non-progress act+engine-result key (`actResultKey`).
+   * Pads that match demote next; free text is never rejected.
+   */
+  lastDeadActResult?: string;
 }
 /** O1-C — compact cleared-interior record (map as walked + item deltas; no foes). */
 export interface ClearedSiteRecord {
