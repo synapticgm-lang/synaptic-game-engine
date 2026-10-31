@@ -906,3 +906,176 @@ export function detectSameRoomEssayHard(
   if (tokenJaccard(text, last) >= 0.55 && !hasBeatDeltaCue(text)) return true;
   return false;
 }
+
+/** T10WARDEN2 — last ~5 GM beats for ambient / NPC line recycle (big-picture item 1). */
+export const WARDEN_V2_LOOKBACK = 5;
+
+const NOBODY_ANSWER_RE =
+  /\bNo one (?:was|is) there to answer\.?|\bNo one present to answer\.?|\bwas not there to answer\.?/gi;
+
+const SAID_QUOTE_RE =
+  /\b((?:[Tt]he\s+)?[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,3})\s+said,\s*["\u201c]([^"\u201d]+)["\u201d]/g;
+
+/**
+ * Bare mid-clause quote stubs the writer sometimes emits
+ * (`Oskar said, "to be believed"` / `Silas Thorne said, "someone to take the job"`).
+ * Full spoken sentences (capital start + terminal punctuation, or I/We/You openers) stay.
+ */
+export function isBareQuoteFragment(quoted: string): boolean {
+  const t = (quoted ?? '').replace(/^["\u201c]|["\u201d]$/g, '').replace(/\s+/g, ' ').trim();
+  if (!t || t.length < 4) return true;
+  const words = t.split(/\s+/).filter(Boolean);
+  if (/^(?:I|We|You|Don't|Do not|Never|Ask|Tell|Look|Yes|No|Please|Sorry)\b/i.test(t) && words.length >= 3) {
+    return false;
+  }
+  if (/[.!?]$/.test(t) && /^[A-Z]/.test(t) && words.length >= 3) return false;
+  // Mid-clause / infinitive stubs and short lowercase fragments.
+  if (/^(?:to|and|or|but|that|which|who|whom|where|when|as|for|of|in|on|at|with|from|someone|something|anyone)\b/i.test(t)) {
+    return true;
+  }
+  if (!/^[A-Z\u201c"]/.test(t) && words.length <= 8) return true;
+  if (words.length < 3 && !/[.!?]$/.test(t)) return true;
+  return false;
+}
+
+/** True when this turn asked for speech / an answer (not Fight / Look / Wait). */
+export function playerAskedSpeech(playerInput: string): boolean {
+  const t = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/\?/.test(t)) return true;
+  if (/^(?:talk(?:\s+to)?|speak(?:\s+to)?|ask|Follow up with)\b/i.test(t)) return true;
+  if (/\b(?:ask(?:ing)?|tell(?:ing)?|shout(?:ing)?|yell(?:ing)?|whisper(?:ing)?|call(?:ing)?\s+out|greet(?:ing)?)\b/i.test(t)) {
+    return true;
+  }
+  if (/["\u201c]/.test(t)) return true;
+  return false;
+}
+
+/** Compact key for "same action + same engine result" demotion (pads only; free text never rejected). */
+export function actResultKey(playerInput: string, engineResult: string): string {
+  const act = (playerInput ?? '')
+    .toLowerCase()
+    .replace(/[…]|\.{3}/g, '')
+    .replace(/[^a-z0-9 ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const res = (engineResult ?? '')
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 120);
+  if (!act) return '';
+  return `${act}|${res}`;
+}
+
+/**
+ * T10WARDEN2 Warden v2 — one deterministic last-step on final prose (no model call).
+ * Extends semanticLoopDetector (existing recycle owner): (a) drop ambient/NPC lines already
+ * used in the last ~5 turns (including short ambience that collage ≥8 missed), (b) drop bare
+ * quote fragments, (c) drop nobody-to-answer when the turn asked no question / fight just settled.
+ * Never edits the player's input. Keeps engine facts (rolls / receipts stay elsewhere).
+ * playerAsksRepeat / playerAsksContinuation: refrain lines the player asked for are kept.
+ */
+export function guardFinalProse(
+  draft: string,
+  recentGmBeats: string[],
+  playerInput: string,
+  opts?: {
+    actor?: string;
+    isThisTurnsEvent?: (sentence: string) => boolean;
+    fightSettled?: boolean;
+    minKeep?: number;
+  }
+): { text: string; dropped: string[] } {
+  const body = (draft ?? '').replace(/\s+/g, ' ').trim();
+  if (!body) return { text: draft, dropped: [] };
+  const keepRefrain = playerAsksRepeat(playerInput) || playerAsksContinuation(playerInput);
+  const minKeep = opts?.minKeep ?? 1;
+  const isEvent = opts?.isThisTurnsEvent ?? (() => false);
+  const dropped: string[] = [];
+  let next = body;
+
+  // (c) nobody-to-answer without a question, or right after a settled fight.
+  if (!keepRefrain && (!playerAskedSpeech(playerInput) || opts?.fightSettled)) {
+    const stripped = next.replace(NOBODY_ANSWER_RE, ' ').replace(/\s+/g, ' ').trim();
+    if (stripped !== next) {
+      dropped.push('No one was there to answer.');
+      next = stripped;
+    }
+  }
+
+  // (b) bare quote fragments — drop the whole attribution sentence.
+  if (!keepRefrain) {
+    const sentences = splitStorySentences(next);
+    const keptFrag: string[] = [];
+    for (const s of sentences) {
+      SAID_QUOTE_RE.lastIndex = 0;
+      let frag = false;
+      let m: RegExpExecArray | null;
+      while ((m = SAID_QUOTE_RE.exec(s)) != null) {
+        if (isBareQuoteFragment(m[2] ?? '')) {
+          frag = true;
+          break;
+        }
+      }
+      // Also catch trailing `"…," Name said` with a fragment.
+      if (!frag) {
+        const trail = s.match(/["\u201c]([^"\u201d]+)["\u201d]\s*,?\s*(?:[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*){0,3})\s+said/i);
+        if (trail && isBareQuoteFragment(trail[1] ?? '')) frag = true;
+      }
+      if (frag && !isEvent(s)) {
+        dropped.push(s);
+        continue;
+      }
+      keptFrag.push(s);
+    }
+    if (keptFrag.length >= minKeep || keptFrag.length === sentences.length) {
+      next = keptFrag.join(' ').replace(/\s+/g, ' ').trim();
+    }
+  }
+
+  // (a) ambient / NPC line already used in last ~5 — short lines included (collage needs ≥8).
+  if (!keepRefrain) {
+    const window = (recentGmBeats ?? []).filter((b) => String(b ?? '').trim()).slice(-WARDEN_V2_LOOKBACK);
+    const prior = window.flatMap((b) => splitStorySentences(b));
+    const priorKeys = new Set(
+      prior.map((p) => normalizeProseTokens(p).join(' ')).filter((k) => k.split(' ').length >= 4)
+    );
+    const priorQuotes = recentQuoteKeys(window);
+    const recycled = trimRecycledSentences(next, window, minKeep, isEvent, opts?.actor);
+    next = recycled.text;
+    dropped.push(...recycled.dropped);
+
+    const sentences = splitStorySentences(next);
+    const keptShort: string[] = [];
+    for (const s of sentences) {
+      if (isEvent(s)) {
+        keptShort.push(s);
+        continue;
+      }
+      const key = normalizeProseTokens(s).join(' ');
+      const shortReprint =
+        key.split(' ').length >= 4
+        && key.split(' ').length < 8
+        && priorKeys.has(key);
+      let quoteHit = false;
+      for (const m of s.matchAll(QUOTE_SPAN_RE)) {
+        if (priorQuotes.has(quoteKey(m[1] ?? ''))) {
+          quoteHit = true;
+          break;
+        }
+      }
+      if ((shortReprint || quoteHit) && sentences.length > minKeep) {
+        dropped.push(s);
+        continue;
+      }
+      keptShort.push(s);
+    }
+    if (keptShort.length >= minKeep) {
+      next = keptShort.join(' ').replace(/\s+/g, ' ').trim();
+    }
+  }
+
+  return { text: next || body, dropped: [...new Set(dropped)] };
+}

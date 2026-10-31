@@ -5,6 +5,8 @@
 **Build**: 2026-08-24j  
 **Status**: Production System Reference
 
+> **Refresh (T10WARDEN2 / 2026-10-31):** Add **Layer 2b — Warden v2 final prose** (`guardFinalProse` / `semanticLoopDetector`, last ~5 GM beats): drop recycled short ambient + NPC quotes, bare quote fragments, and unasked / post-fight “No one was there to answer.” Producers: `spokenAnswer.quotedReply` / `withAbsenceLineOnce`, `convertWriterCueFact` (skip absence on Fight facts), `circling.lastDeadActResult` for pad demotion. Aug layers 1–6 below are unchanged; this checklist’s “12 rules” list is incomplete without v2.
+
 ---
 
 ## Overview
