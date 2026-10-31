@@ -36,7 +36,8 @@ const REST_TURNS = 4;
 /** @deprecated T10DIR — stall/nudge threshold lives on director.STALL_N; kept for local stuck helpers. */
 const STUCK_TURNS = 3;
 
-const PROGRESS_RECEIPT = /^(?:XP Gained|Loot:|Gold Gained|Quest|Fight: VICTORY|Parley check:.*success|Dungeon: (?:you moved|you opened|you found|search of .*you found (?!nothing))|Dungeon: .* is cleared|Nudge:|.+ pulls away)/i;
+// T10Q4 — same-turn Face auto-resolve DEFEAT is progress (Fight: VICTORY already was; DEFEAT was the LOOP STOP gap).
+const PROGRESS_RECEIPT = /^(?:XP Gained|Loot:|Gold Gained|Quest|Fight: (?:VICTORY|DEFEAT)|Parley check:.*success|Dungeon: (?:you moved|you opened|you found|search of .*you found (?!nothing))|Dungeon: .* is cleared|Nudge:|.+ pulls away)/i;
 
 /**
  * 29z1 / T10RC3 — player-caused person-facing ledger change only.
