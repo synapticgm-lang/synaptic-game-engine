@@ -306,17 +306,19 @@ export function settleParleyAfterProse(
 }
 
 /**
- * The foe leaves the scene with the fight: beaten (lastKill, same commit, before GM) or left behind by an
- * escape. A talked-down or winning foe still stands here.
+ * The foe leaves the scene with the fight: beaten (lastKill, same commit, before GM), left behind by an
+ * escape, or walking off after a defeat ("left you where you fell" — still remembered on placeThreats).
+ * A talked-down foe still stands here.
  * T10AP — also mark the foe's memory shouldExit so presentNpcRecords / peopleHere / affordance
  * chips agree (Talk/Ask/Read/Analyze retract; Search/Loot the body stay on lastKill).
+ * T10TABFIGHT — defeat clears present so dying chips cannot Ask the foe to stabilise you.
  */
 function settleFoePresence(
   state: GameState,
   enc: ActiveEncounter,
   outcome: TerminalOutcome
 ): GameState {
-  if (outcome !== 'victory' && outcome !== 'escape') return state;
+  if (outcome !== 'victory' && outcome !== 'escape' && outcome !== 'defeat') return state;
   const name = (enc.name ?? '').trim();
   if (!name) return state;
   const exitReason = outcome === 'victory' ? 'defeated' : 'escaped';

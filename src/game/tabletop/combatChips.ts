@@ -83,6 +83,39 @@ export function fightAlly(state: Pick<GameState, 'companions'>): { name: string 
 export const DEATH_SAVE_CHIP = 'Fight for breath';
 
 /**
+ * T10TABFIGHT — who may appear on a dying stabilise chip: present and able to act (ghost-chip rule).
+ * Never the live/pending/last-cleared/lastKill foe. Companions with HP > 0 always qualify.
+ * Tabletop-only owner (roundCombatChips); LitRPG / Story RPG do not build these Ask-stabilise chips.
+ */
+export function stabiliseHelpers(state: GameState): string[] {
+  const pc = (state.character?.name ?? '').trim().toLowerCase();
+  const blocked = new Set<string>();
+  const block = (n: string | undefined | null) => {
+    const k = (n ?? '').trim().toLowerCase();
+    if (k) blocked.add(k);
+  };
+  block(state.activeEncounter?.name);
+  block(state.sceneFacts?.pendingEncounter?.name);
+  block(state.sceneFacts?.lastKill?.name);
+  const cleared = state.arcDirector?.encounterClearedReceipts ?? [];
+  if (cleared.length) block(cleared[cleared.length - 1]!.name);
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const add = (name: string) => {
+    const key = name.trim().toLowerCase();
+    if (!key || key === pc || seen.has(key) || blocked.has(key)) return;
+    if ([...blocked].some((b) => b.includes(key) || key.includes(b))) return;
+    seen.add(key);
+    out.push(name.trim());
+  };
+  for (const c of state.companions ?? []) {
+    if ((c.hp ?? 0) > 0) add(c.name);
+  }
+  for (const name of presentNpcNames(state)) add(name);
+  return out;
+}
+
+/**
  * Priority for the fight pad: Attack → Cast/feature → Dodge/Disengage-and-move → rest.
  * M6: Flee folds into Disengage plus move (SRD 5.2.1 — Disengage then use your Speed).
  * All candidates are engine-legal for this round (economy still available at round start).
@@ -204,19 +237,11 @@ export function roundCombatChips(state: GameState): string[] | null {
     const out = [DEATH_SAVE_CHIP];
     const potion = healingPotion(state);
     if (potion) out.push(`Drink the ${potion.name}`);
-    const pc = (state.character?.name ?? '').trim().toLowerCase();
-    const seen = new Set<string>();
-    for (const name of presentNpcNames(state)) {
-      const key = name.trim().toLowerCase();
-      if (!key || key === pc || seen.has(key)) continue;
-      seen.add(key);
-      out.push(`Ask ${name.trim()} to stabilise you`);
-    }
-    for (const c of state.companions ?? []) {
-      const key = (c.name ?? '').trim().toLowerCase();
-      if (!key || key === pc || seen.has(key) || (c.hp ?? 0) <= 0) continue;
-      seen.add(key);
-      out.push(`Ask ${c.name.trim()} to stabilise you`);
+    // T10TABFIGHT — chip pool owner: only someone present and able to act (same ghost-chip rule).
+    // A foe who just left / lastKill / cleared encounter is never a Medicine ally.
+    // This dying pad is tabletop-only; LitRPG / Story RPG do not offer Ask-<foe>-stabilise here.
+    for (const name of stabiliseHelpers(state)) {
+      out.push(`Ask ${name} to stabilise you`);
     }
     return capFightChips(out, limit);
   }

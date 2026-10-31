@@ -58,6 +58,12 @@ import {
   parkPendingEncounter,
   pendingArrivalDue,
 } from './encounterTerminalFsm';
+import {
+  FIRST_FIGHT_WARNING,
+  needsFirstFightSafety,
+  openFirstFightGate,
+  softenFirstFightEncounter,
+} from './rules/firstFightChoice';
 import { catalogDroughtNames, selectCatalogEncounter } from './encounterBible';
 import {
   lockPyoaBranchOnCrisis,
@@ -334,6 +340,25 @@ function advancePendingArrival(
     return { ...none, state: parkForArrival(state, pending) };
   }
   if (!pendingArrivalDue(pending, state.turn)) return none;
+  // T10TABFIGHT — first solo L1 tabletop fight: telegraph + triad instead of going live.
+  if (needsFirstFightSafety(state) && !state.pendingFirstFight) {
+    const gated = openFirstFightGate(state, pending);
+    const telegraph = telegraphForPendingSpawn(gated.pendingFirstFight!.encounter, gated);
+    return {
+      state: telegraph
+        ? { ...gated, arcDirector: { ...gated.arcDirector, pendingTelegraph: telegraph } }
+        : gated,
+      receipts: [FIRST_FIGHT_WARNING, `Threat: ${gated.pendingFirstFight!.encounter.name}`],
+      mandates: [FIRST_FIGHT_WARNING, ...(telegraph ? [telegraph] : [])],
+    };
+  }
+  if (state.pendingFirstFight) {
+    return {
+      state,
+      receipts: [state.pendingFirstFight.warning || FIRST_FIGHT_WARNING],
+      mandates: [state.pendingFirstFight.warning || FIRST_FIGHT_WARNING],
+    };
+  }
   const live = arrivePendingEncounter(pending, state.turn);
   let next: GameState = {
     ...state,
@@ -456,7 +481,7 @@ function hubSkirmishEncounter(state: GameState): ActiveEncounter {
   }
   const xp = seed?.xpReward ?? 25 + lvl * 5;
   const gold = seed?.goldReward ?? 5 + lvl * 2;
-  return initEncounterTerminal(
+  const raw = initEncounterTerminal(
     {
       name,
       level: lvl,
@@ -472,6 +497,8 @@ function hubSkirmishEncounter(state: GameState): ActiveEncounter {
     state,
     { forcedSpawnKey: name, source: seed?.id ?? 'arcDirector' }
   );
+  // T10TABFIGHT — solo L1 first fight: picker softens to Easy/Medium SRD CR.
+  return softenFirstFightEncounter(raw, state);
 }
 
 function completeQuestObjective(
