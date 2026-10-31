@@ -103,8 +103,7 @@ describe('T10LOOP Face the threat with no resolvable foe (s9601 post-clear)', ()
       directorPlan: {
         need: 'threat',
         chips: [{ label: 'Face the threat', reason: 'director-threat' }],
-        forwardIds: [],
-        updatedTurn: 210,
+        turn: 210,
       },
     });
     expect(facesThreatChipAllowed(s)).toBe(false);
