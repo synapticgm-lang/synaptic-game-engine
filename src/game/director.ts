@@ -36,6 +36,8 @@ import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { isTravelPad, travelPadBlocked } from './padUniverse';
+import { pushOnChoiceSet } from './rules/pushOnChoice';
+import { CAMP_CHIP } from './rules/travelDay';
 import { isDying } from './tabletop/roundFight';
 import { commitTravel, isJourneyUnderway, roadMeetingOver } from './travelJourney';
 import { fuzzyTypedName } from './typedNameMatch';
@@ -870,14 +872,19 @@ function injectStallDevelopment(
     // Advance the road, then commit a real development so Camp↔Waystation ping-pong
     // cannot burn the LOOP STOP window (leg advance alone is often not movedOn).
     // T10RPGLOOP — Must-narrate / seat / present-depart are not turnProgress; emit Nudge so the
-    // forced Walk on registers (else Make camp becomes a hub rest and five no-progress turns stop the run).
+    // forced advance registers (else Make camp becomes a hub rest and five no-progress turns stop the run).
+    // T10COMBO — when the push-on triad is live (day spent), auto Walk on is a forced march that can
+    // reach Exhaustion 6 (SRD death). Stall Make camps instead; Nudge still covers the camp pad.
     const dest = working.journey?.to ?? 'the next stop';
-    const advanced = commitTravel(working, 'Walk on');
+    const daySpentPush = pushOnChoiceSet(working).active;
+    const advanced = commitTravel(working, daySpentPush ? CAMP_CHIP : 'Walk on');
     if (advanced.handled) working = advanced.state;
     const progressReceipt = advanced.handled
       ? advanced.arrived
         ? `Nudge: the road brought you to ${working.currentLocation ?? dest}.`
-        : `Nudge: the road continues toward ${working.journey?.to ?? dest}.`
+        : daySpentPush
+          ? `Nudge: the road made you camp toward ${working.journey?.to ?? dest}.`
+          : `Nudge: the road continues toward ${working.journey?.to ?? dest}.`
       : undefined;
     const committed = commitStallDevelopment(working, thread, playerInput);
     if (committed.development) {

@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
-import { avoidRepeatLethalPick, isDeadlyPushOnPick } from './fateAutoplay';
+import { avoidRepeatLethalPick, isDeadlyPushOnPick, preferDyingStabilise } from './fateAutoplay';
 import {
   AUTO_CAMP_EXHAUSTION,
   mapPushOnIntent,
@@ -190,6 +190,36 @@ describe('T10PUSH (g) autoplay never selects a deadly push (exhaustion 0..5)', (
         expect(pick).toBe(CAMP_CHIP);
       }
     }
+  });
+});
+
+describe('T10COMBO Travel toward while day spent opens confirm (no free march)', () => {
+  it('Travel toward destination under push-on triad does not raise Exhaustion', () => {
+    const s = spentPushState(4, 'named-to-bypass');
+    const before = s.character.exhaustion ?? 0;
+    const dest = s.journey?.to ?? 'Blackspine Treeline';
+    const out = commitTravel(s, `Travel toward ${dest}`);
+    expect(out.state.pendingPushOnConfirm).toBeTruthy();
+    expect(out.state.character.exhaustion ?? 0).toBe(before);
+    expect(out.state.playPhase === 'ended').toBe(false);
+  });
+});
+
+describe('T10COMBO autoplay prefers stabilise over Fight for breath while dying', () => {
+  it('preferDyingStabilise and avoidRepeatLethalPick swap Fight for breath', () => {
+    const base = createInitialState(undefined, 'dnd') as GameState;
+    const dying = {
+      ...base,
+      engineMode: 'dnd' as const,
+      deathSaves: { successes: 0, failures: 2, stable: false, dead: false },
+      character: { ...base.character, hp: 0, maxHp: 10 },
+    } as GameState;
+    const offered = ['Fight for breath', 'Ask Hired Blade to stabilise you'];
+    expect(preferDyingStabilise(offered, 'Fight for breath', dying)).toBe(
+      'Ask Hired Blade to stabilise you',
+    );
+    const pick = avoidRepeatLethalPick(offered, 'Fight for breath', mulberry32(3), false, dying);
+    expect(pick).toBe('Ask Hired Blade to stabilise you');
   });
 });
 

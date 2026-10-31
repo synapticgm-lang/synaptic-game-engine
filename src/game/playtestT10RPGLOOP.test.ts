@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { planDirector, STALL_N } from './director';
-import { commitTravel, journeyPads, UNDERWAY_HERE } from './travelJourney';
+import { commitTravel, journeyPads, UNDERWAY_HERE, worldClock } from './travelJourney';
 import { turnProgress } from './choiceRanking';
 import { resolveTypedFreeText } from './typedFreeText';
 import { planSceneThreads } from './openThreads';
@@ -102,5 +102,60 @@ describe('T10RPGLOOP no chip for a missing journey target', () => {
       turn: 186,
     });
     expect(journeyPads(s)).toEqual([]);
+  });
+});
+
+describe('T10COMBO stall Make camp when push-on day is spent (no Exhaustion-6 Walk on)', () => {
+  it('stall mid-journey with day spent camps and still emits Nudge; playPhase stays live', () => {
+    let s = createInitialState(undefined, 'dnd') as GameState;
+    let found = false;
+    for (let i = 0; i < 200; i++) {
+      const probe = {
+        ...s,
+        seed: `combo-stall-${i}`,
+        engineMode: 'dnd' as const,
+        campaignBibleId: 'cursed-keep',
+        currentLocation: 'Keep Gate',
+        worldAtlas: null,
+        activeEncounter: null,
+        journey: null,
+        turn: 29,
+        openingEstablishment: { ...(s.openingEstablishment ?? {}), complete: true },
+        character: { ...s.character, exhaustion: 4, hp: 1, maxHp: 10 },
+      } as GameState;
+      const t = commitTravel(probe, 'Travel toward Greyhollow Graveyard');
+      const j = t.state.journey;
+      if (!j || j.encounter || j.legsDone >= j.legsTotal - 1) continue;
+      s = {
+        ...t.state,
+        roadDay: { since: worldClock(t.state), hours: 10 },
+        pendingPushOnConfirm: null,
+        progressGovernor: {
+          turnsSinceProgress: STALL_N,
+          lastProgressTurn: 25,
+          recentDeltas: [],
+        },
+        circling: {
+          stale: {},
+          lastProgressTurn: 25,
+          lastLocation: UNDERWAY_HERE,
+          recentPlaces: ['Keep Gate', 'Greyhollow Graveyard'],
+          tried: {},
+        },
+      };
+      found = true;
+      break;
+    }
+    expect(found).toBe(true);
+    expect(s.journey).toBeTruthy();
+    const planned = planDirector(s, { playerInput: 'I trip over my own boots' });
+    const nudge =
+      planned.receipts.find((r) => /^Nudge:/i.test(r))
+      ?? planned.state.sceneFacts?.stallProgressReceipt
+      ?? '';
+    expect(nudge).toMatch(/^Nudge:/i);
+    expect(planned.state.playPhase === 'ended' || planned.state.playPhase === 'down').toBe(false);
+    expect(planned.state.character.exhaustion ?? 0).toBeLessThan(6);
+    expect(planned.state.character.hp ?? 1).toBeGreaterThan(0);
   });
 });

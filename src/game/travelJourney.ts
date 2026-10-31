@@ -2093,8 +2093,13 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
     const namedFrom = named && named.name.toLowerCase() === j.from.toLowerCase();
     const chip = travelEngineChip(input);
     // T10PUSH — forced-march triad / confirm (single owner: pushOnChoiceSet).
+    // T10COMBO — Travel toward / Travel on while the day is spent must not bypass the triad
+    // (namedTo/travel-on used to call stepAlong and could march Exhaustion to SRD level 6).
     const pushSet = pushOnChoiceSet(state);
-    const pushIntent = mapPushOnIntent(input);
+    const pushIntentRaw = mapPushOnIntent(input);
+    const pushIntent =
+      pushIntentRaw
+      ?? (pushSet.active && (namedTo || chip === 'travel on') ? 'push on' : null);
     if (pushSet.active && !laneBlocked(j.encounter) && pushIntent) {
       const clearConfirm = (s: GameState): GameState =>
         s.pendingPushOnConfirm ? { ...s, pendingPushOnConfirm: null } : s;

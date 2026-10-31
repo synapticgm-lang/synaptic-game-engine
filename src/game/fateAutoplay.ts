@@ -1016,6 +1016,18 @@ export function isDeadlyPushOnPick(label: string, state: GameState): boolean {
   return false;
 }
 
+/**
+ * T10COMBO — while dying, autoplay prefers an ally stabilise chip over "Fight for breath"
+ * (death-save spam). Free text is never rewritten; this only rewrites chip picks.
+ */
+export function preferDyingStabilise(offered: string[], pick: string, state: GameState): string {
+  if (!isDying(state)) return pick;
+  const stab = offered.find((c) => /stabilis/i.test(c));
+  if (!stab) return pick;
+  if (/fight for breath/i.test(pick)) return stab;
+  return pick;
+}
+
 export function isLethalChipLabel(label: string, state?: GameState): boolean {
   if (state) {
     if (isDeadlyPushOnPick(label, state)) return true;
@@ -1037,12 +1049,14 @@ export function avoidRepeatLethalPick(
   // T10PUSH: deadly push confirm is never picked, even on the first try.
   if (state && isDeadlyPushOnPick(pick, state)) {
     const safe = offered.filter((c) => !isDeadlyPushOnPick(c, state));
-    if (safe.length) return safe[Math.floor(rng() * safe.length)]!;
+    if (safe.length) return preferDyingStabilise(offered, safe[Math.floor(rng() * safe.length)]!, state);
   }
-  if (!prevWasLethal || !isLethalChipLabel(pick, state)) return pick;
-  const safe = offered.filter((c) => !isLethalChipLabel(c, state));
-  if (!safe.length) return pick;
-  return safe[Math.floor(rng() * safe.length)]!;
+  let next = pick;
+  if (prevWasLethal && isLethalChipLabel(pick, state)) {
+    const safe = offered.filter((c) => !isLethalChipLabel(c, state));
+    if (safe.length) next = safe[Math.floor(rng() * safe.length)]!;
+  }
+  return state ? preferDyingStabilise(offered, next, state) : next;
 }
 function pickChipAvoidingLethalRepeat(
   offered: string[],
