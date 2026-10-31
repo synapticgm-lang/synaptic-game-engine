@@ -114,14 +114,15 @@ describe('T10P fallback narration from engine fact', () => {
     expect(plain).toMatch(/Osric Dunmore was not there to answer|No one was there to answer/i);
   });
 
-  it('Face the thugs with no say narrates the act, not a stub speech line', () => {
+  it('Face the thugs with no say: already-shown cue; convert does not restate the chip or stub speech', () => {
     const typed = resolveTypedFreeText(rpgFight(), 'Face the thugs');
-    // T10RC7 wraps Must narrate with already-shown; the chip act must still be the fact.
-    expect(typed.engineResult).toMatch(/Must narrate:.*Face the thugs/i);
+    // T10ECHO — chip label stays off writer Must-narrate; consequence-only marker.
+    expect(typed.engineResult).toMatch(/Must narrate: \[already shown; do not restate/i);
+    expect(typed.engineResult).not.toMatch(/Face the thugs/i);
     expect(typed.engineResult).not.toMatch(/Speech event:/i);
     const plain = writerEngineResult(typed.engineResult);
     expect(plain).not.toMatch(/spoke the warning|You spoke to the thugs/i);
-    expect(plain).toMatch(/[Ff]ace(?:d)? the thugs/);
+    expect(plain).not.toMatch(/[Ff]ace(?:d)? the thugs/);
   });
 });
 

@@ -109,13 +109,15 @@ export function renderWriterDraft(raw: string, state: GameState, packet?: Comple
   return { prose, path: accepted.path, refs, ...(speech ? { speech } : {}), ...(dropped ? { dropped } : {}) };
 }
 function unresolvedProblem(why: string, playerInput: string, engineFact: string): string {
+  void playerInput;
   if (why === 'too short') return 'Too thin: write 4–6 full sentences.';
   if (why === 'engine result not stated') return `State the ENGINE RESULT plainly as already settled: ${engineFact.slice(0, 240)}`;
   if (why === 'speech, no reply' || why === 'asked person, no reply') return 'Someone must answer the player in quoted speech.';
   if (why === 'question unanswered') return 'Answer the player\'s question directly.';
   const target = why.match(/^named target missing \((.+)\)$/)?.[1];
   if (target) return `Show the player acting on the ${target}.`;
-  return `Resolve the player's action "${playerInput.slice(0, 120)}" (${why}).`;
+  // T10ECHO — never hand the typed act back into a rewrite prompt.
+  return `Resolve the player's action (already shown in UI; write the consequence) (${why}).`;
 }
 /** Cheap code checks on a rendered draft (logged with the turn). */
 export function writerDraftProblems(prose: string, check: DraftCheck): string[] {
@@ -210,9 +212,11 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
     if (f.kind === 'plays-player' && /the prose writes the player's own words/i.test(f.detail)) {
       out.push(`Invented PC speech: ${f.detail}`);
     }
-    // T10RC7 — opening restates the typed act; re-draft with the problem named (do not keep the echo).
+    // T10RC7 / T10ECHO — opening restates the typed act; re-draft without re-feeding act wording.
     if (f.kind === 'echo-player-act') {
-      out.push(`Do not restate the player's act (already shown in UI): ${f.detail}`);
+      out.push(
+        `Do not restate the player's act (already shown in UI — write the consequence and world/NPC response only).`,
+      );
     }
   }
   if (isOfferRefuseLine(check.playerInput)) {
@@ -575,7 +579,8 @@ export function answerRepairRequest(
     'The spoken words say only what that person is known to say below, in their own voice: first person (I, me, my), never their own name, and never a copy of a note. Add no new fact, person, place, object or task.',
     ...(pc ? [`${pc} is the player's character: never write words, a reply or a decision for ${pc}.`] : []),
     'Reply with only that sentence as plain prose. No JSON, no other text.',
-    `Player said: "${check.playerInput.slice(0, 200)}"`,
+    // T10ECHO — do not paste the typed line into repair input (UI already shows it).
+    `Player spoke (already shown in UI; answer with world/NPC consequence — do not restate their words).`,
     `People here: ${here.join('; ')}`,
     `Known to say: ${known.join(' | ')}`,
     ...(said.length ? [`Already said (say something new): ${said.slice(-4).map((s) => `"${s.slice(0, 100)}"`).join(' ')}`] : []),

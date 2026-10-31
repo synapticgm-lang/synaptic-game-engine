@@ -16,6 +16,7 @@ import { buildClauseWriterFact, speechAddressCue } from './writerCueLines';
 import { UNDERWAY_HERE, underwayHereLabel } from './locationName';
 import { emptySceneFacts } from './sceneFacts';
 import { isJourneyUnderway } from './travelJourney';
+import { parsePlayerSteps, sheetContextFromState } from './intentParser';
 
 function rpg(over: Partial<GameState> = {}): GameState {
   const s = createInitialState(undefined, 'rpg', undefined, 't10m') as GameState;
@@ -104,9 +105,15 @@ describe('T10M hard gate keeps chip / typed act (not Look around)', () => {
     expect(isJourneyUnderway(state)).toBe(true);
     expect(findHardItemUseClaims(TOSS_TRAVEL, state)).toEqual([]);
     expect(validateActionHard(TOSS_TRAVEL, state, 'Quiet stretch of back streets.').valid).toBe(true);
+    const read = parsePlayerSteps(TOSS_TRAVEL, sheetContextFromState(state));
+    expect(read.steps.some((st) => /toss|chip|puddle/i.test(st.clause ?? '') || /toss/i.test(st.action ?? ''))).toBe(
+      true,
+    );
     const typed = resolveTypedFreeText(state, TOSS_TRAVEL);
     expect(typed.engineResult).not.toMatch(/Must narrate: Look around/i);
-    expect(typed.engineResult.toLowerCase()).toMatch(/toss|chip|puddle/);
+    // T10ECHO — writer Must narrate is consequence-only; toss intent stays on the reader steps above.
+    expect(typed.engineResult).toMatch(/Must narrate: \[already shown; do not restate/i);
+    expect(typed.engineResult.toLowerCase()).not.toMatch(/toss|chip|puddle|archaeologist/);
   });
 });
 

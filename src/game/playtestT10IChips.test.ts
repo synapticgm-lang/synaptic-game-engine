@@ -217,8 +217,10 @@ describe('T10I mixed free-text keeps every clause', () => {
     expect(steps.steps.some((s) => /juggle/i.test(s.clause ?? ''))).toBe(true);
 
     const typed = resolveTypedFreeText(state, line);
-    expect(typed.engineResult).toMatch(/Must narrate:.*juggle three pebbles/i);
-    expect(typed.engineResult).toMatch(/Must narrate:.*salute|Must narrate:.*tell Helga/i);
+    // T10ECHO — each physical clause still yields Must narrate; act wording stays off writer input.
+    expect((typed.engineResult.match(/Must narrate:/gi) ?? []).length).toBeGreaterThanOrEqual(2);
+    expect(typed.engineResult).toMatch(/Must narrate: \[already shown; do not restate/i);
+    expect(typed.engineResult).not.toMatch(/juggle three pebbles|salute the splintered|Your hand is shaking/i);
   });
 });
 

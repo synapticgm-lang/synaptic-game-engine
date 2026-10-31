@@ -40,8 +40,11 @@ describe('T10Z s9301 entity-madlib / ask / chips / flee / stall', () => {
     expect(plainItemChromeInText('I spin the Fine Pistol on my finger')).toBe(
       'I spin the pistol on my finger',
     );
-    expect(mustNarrateCue('Open the Bronze Reward Box')).toMatch(/reward box/i);
-    expect(mustNarrateCue('Open the Bronze Reward Box')).not.toMatch(/Bronze Reward Box/);
+    // T10ECHO — Must narrate no longer carries the chip clause; loot chrome scrub stays on plainItemChromeInText.
+    expect(mustNarrateCue('Open the Bronze Reward Box')).toMatch(/already shown; do not restate/i);
+    expect(mustNarrateCue('Open the Bronze Reward Box')).not.toMatch(/Bronze Reward Box|reward box/i);
+    expect(plainItemChromeInText('Open the Bronze Reward Box')).toMatch(/reward box/i);
+    expect(plainItemChromeInText('Open the Bronze Reward Box')).not.toMatch(/Bronze Reward Box/);
     expect(scrubEntityMadLibs('Jax spun the Fine Pistol on their finger like a coin.')).toBe(
       'Jax spun the Fine Pistol on their finger like a coin.',
     );

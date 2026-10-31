@@ -156,9 +156,9 @@ describe('T10AO physical free text — one reaction, no ambient need dump (s9862
     const typed = resolveTypedFreeText(state, act);
     const slots = typed.engineResult.match(/NPC reaction slot open for the scout/gi) ?? [];
     expect(slots.length).toBe(1);
-    // T10RC7 — object half-clause stays on the writer fact; convert never restates the act.
+    // T10ECHO — already-shown Must narrate; act nouns stay off the writer fact (UI already shows them).
     expect(typed.engineResult).toMatch(/already shown/i);
-    expect(typed.engineResult).toMatch(/pack|shoulder|knife|grip|sling/i);
+    expect(typed.engineResult).not.toMatch(/pack|shoulder|knife|grip|sling/i);
     const book = writerEngineResult(typed.engineResult, 'Jax');
     expect((book.match(/\bsaid nothing\b/gi) ?? []).length).toBeLessThan(2);
     expect(book).not.toMatch(/sling(?:ed|ing)? (?:my|their) pack/i);
