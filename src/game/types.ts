@@ -1775,6 +1775,11 @@ export interface SceneFacts {
   agendaWorldFact?: string;
   /** OPT-5 — stall planner engine event this turn (thread / agenda / situation). */
   stallWorldFact?: string;
+  /**
+   * T10RPGLOOP — stall road Walk on progress receipt (`Nudge:…`) for turnProgress / LOOP STOP.
+   * Must-narrate stallWorldFact alone is not progress.
+   */
+  stallProgressReceipt?: string;
   /** OPT-5 — last place arc event (cleared / closed / reopened / threat / trader). */
   placeWorldFact?: string;
   /**

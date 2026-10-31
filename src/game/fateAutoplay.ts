@@ -1327,6 +1327,10 @@ export async function headlessFateTurn(
         const sw = arcState.sceneFacts.stallWorldFact;
         if (!arcStatusReceipts.includes(sw)) arcStatusReceipts = [...arcStatusReceipts, sw];
       }
+      if (arcState.sceneFacts?.stallProgressReceipt) {
+        const sp = arcState.sceneFacts.stallProgressReceipt;
+        if (!arcStatusReceipts.includes(sp)) arcStatusReceipts = [...arcStatusReceipts, sp];
+      }
     }
     arcState = recordCirclingTurn(arcState, playerInput, arcStatusReceipts, state);
     {
@@ -1514,6 +1518,14 @@ export async function headlessFateTurn(
     }
     // TT-T1 — open-thread list + bring at least one forward into this scene.
     arcState = planSceneThreads(arcState, playerInput);
+    if (arcState.sceneFacts?.stallWorldFact) {
+      const sw = arcState.sceneFacts.stallWorldFact;
+      if (!arcStatusReceipts.includes(sw)) arcStatusReceipts = [...arcStatusReceipts, sw];
+    }
+    if (arcState.sceneFacts?.stallProgressReceipt) {
+      const sp = arcState.sceneFacts.stallProgressReceipt;
+      if (!arcStatusReceipts.includes(sp)) arcStatusReceipts = [...arcStatusReceipts, sp];
+    }
   }
   // 08c Tag & Trigger — consume claim pad before packet/writer.
   {

@@ -845,7 +845,16 @@ function injectStallDevelopment(
   state: GameState,
   playerInput: string,
   thread: OpenThread | null = null,
-): { state: GameState; development?: DirectorDevelopment; need: DirectorNeed; forwardIds: string[]; stallKind?: SceneThreadPlan['stallKind']; stallEventId?: string } {
+): {
+  state: GameState;
+  development?: DirectorDevelopment;
+  need: DirectorNeed;
+  forwardIds: string[];
+  stallKind?: SceneThreadPlan['stallKind'];
+  stallEventId?: string;
+  /** LOOP STOP progress receipt (Nudge:) — Must-narrate alone is not turnProgress. */
+  progressReceipt?: string;
+} {
   const turn = state.turn ?? 0;
   let working = state;
 
@@ -859,14 +868,41 @@ function injectStallDevelopment(
   ) {
     // Advance the road, then commit a real development so Camp↔Waystation ping-pong
     // cannot burn the LOOP STOP window (leg advance alone is often not movedOn).
+    // T10RPGLOOP — Must-narrate / seat / present-depart are not turnProgress; emit Nudge so the
+    // forced Walk on registers (else Make camp becomes a hub rest and five no-progress turns stop the run).
+    const dest = working.journey?.to ?? 'the next stop';
     const advanced = commitTravel(working, 'Walk on');
     if (advanced.handled) working = advanced.state;
+    const progressReceipt = advanced.handled
+      ? advanced.arrived
+        ? `Nudge: the road brought you to ${working.currentLocation ?? dest}.`
+        : `Nudge: the road continues toward ${working.journey?.to ?? dest}.`
+      : undefined;
     const committed = commitStallDevelopment(working, thread, playerInput);
     if (committed.development) {
+      let next = committed.state;
+      if (progressReceipt) {
+        next = {
+          ...next,
+          sceneFacts: next.sceneFacts
+            ? { ...next.sceneFacts, stallProgressReceipt: progressReceipt }
+            : {
+                crowd: 'unknown',
+                noise: 'unknown',
+                present: [],
+                props: [],
+                lastBeat: '',
+                updatedTurn: turn,
+                stallProgressReceipt: progressReceipt,
+              },
+        };
+      }
       return {
         ...committed,
+        state: next,
         forwardIds: [`stall-road:${turn}`, ...committed.forwardIds],
         stallKind: committed.stallKind ?? 'situation',
+        ...(progressReceipt ? { progressReceipt } : {}),
       };
     }
   }
@@ -1420,6 +1456,7 @@ export function planDirector(
     need = inj.need;
     development = inj.development;
     if (development?.fact) receipts.push(development.fact);
+    if (inj.progressReceipt) receipts.push(inj.progressReceipt);
   } else if (stall) {
     const inj = injectStallDevelopment(working, playerInput, null);
     working = inj.state;
@@ -1429,6 +1466,7 @@ export function planDirector(
     need = inj.need;
     development = inj.development;
     if (development?.fact) receipts.push(development.fact);
+    if (inj.progressReceipt) receipts.push(inj.progressReceipt);
   } else if (best) {
     forwardIds = [best.id];
   }

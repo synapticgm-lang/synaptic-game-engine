@@ -2764,6 +2764,14 @@ export function useGame() {
         }
         // TT-T1 — open-thread list + bring at least one forward into this scene.
         liveCurrent = planSceneThreads(liveCurrent, sanitizedInput);
+        if (liveCurrent.sceneFacts?.stallWorldFact) {
+          const sw = liveCurrent.sceneFacts.stallWorldFact;
+          if (!pendingArcStatusReceipts.includes(sw)) pendingArcStatusReceipts = [...pendingArcStatusReceipts, sw];
+        }
+        if (liveCurrent.sceneFacts?.stallProgressReceipt) {
+          const sp = liveCurrent.sceneFacts.stallProgressReceipt;
+          if (!pendingArcStatusReceipts.includes(sp)) pendingArcStatusReceipts = [...pendingArcStatusReceipts, sp];
+        }
         stateRef.current = liveCurrent;
       }
       const arcXp = (systemsArc?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
