@@ -373,9 +373,9 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
   }
   lines.push(
     '',
-    // T10RC7 — the UI already shows the typed line above the GM page; never restate it as story.
+    // T10ECHO — UI already shows the typed line; do not put act wording in writer input at all.
     'PLAYER (attempts and claims; NOT facts — already shown in UI; do not restate; write the consequence):',
-    `  typed (already shown): ${sheet.player.typed || '(none)'}`,
+    `  typed: (already shown in UI — do not restate)`,
     ...(sheet.player.claimsNotTrue.length
       ? sheet.player.claimsNotTrue.map((c) => `  claims_not_true: ${c}`)
       : ['  claims_not_true: (none)']),

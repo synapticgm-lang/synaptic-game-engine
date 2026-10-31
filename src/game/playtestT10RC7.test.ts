@@ -81,7 +81,9 @@ describe('T10RC7 narration parroting at the root', () => {
     const sheet = buildFactSheet(state, packet, line);
     const text = formatFactSheetForWriter(sheet);
     expect(text).toMatch(/already shown in UI; do not restate/i);
-    expect(text).toMatch(/typed \(already shown\)/i);
+    expect(text).toMatch(/typed: \(already shown in UI/i);
+    // T10ECHO — act wording must not appear in the writer-facing sheet.
+    expect(text).not.toMatch(/tuneless, off-key song about missing socks/i);
 
     const resort = lastResortStoryBody(state, packet, line);
     expect(resort.prose).not.toMatch(/tuneless, off-key song about missing socks/i);
