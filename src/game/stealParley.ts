@@ -25,8 +25,10 @@ import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
 import type { IntentStep, IntentTone } from './intentParser';
 import { isAggregatePersonToken, isCrowdFillerToken } from './chromeAuthority';
 import { isOutOfTalkingRange } from './hereSpot';
+import { resolveNpcRecord } from './npcRecords';
 import { applyPresenceFacts, seat, unseat, withMemoryPresentFlag } from './presentAuthority';
 import { mentionsName, peopleHere } from './scenePresence';
+import { speechAddressCue } from './writerCueLines';
 
 export type StealOutcome = {
   taken: boolean;
@@ -429,11 +431,15 @@ export function resolvePersonThreatAttempt(
 
   // Threat only lands on someone already seated / in talking range (peopleHere). Naming a
   // left-behind person must not invent a seat and roll Influence (T10R / T10RC1).
+  // T10Q5Rfix — same absence cue as typed speech (speechAddressCue + last-seen), not a
+  // parallel "No one present" telegram that skipped lastSeenAt.
   if (who) {
     const here = peopleHere(state);
     const present = here.some((p) => mentionsName(p, who) || mentionsName(who, p));
     if (!present) {
-      facts.push(`Speech event: you address ${who}. No one present to answer.`);
+      const lastSeenAt =
+        (resolveNpcRecord(state, who)?.location ?? '').replace(/\s+/g, ' ').trim() || null;
+      facts.push(speechAddressCue(who, here, lastSeenAt));
       receipts.push(`Threat: ${who} not present`);
       return {
         success: false,

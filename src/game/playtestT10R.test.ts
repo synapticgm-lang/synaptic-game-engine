@@ -204,13 +204,15 @@ describe('T10R absent NPC by presence', () => {
     const toss =
       "I squat down and pick up a single pebble, tossing it gently toward the priest's feet to see if he flinches.";
     const typed = resolveTypedFreeText(state, toss);
-    expect(typed.engineResult).toMatch(/No one present to answer/i);
+    // T10Q5 shared absence: last-seen place + not present (legacy bare "No one present" only when no place).
+    expect(typed.engineResult).toMatch(/last seen at .+; not present to answer|No one present to answer/i);
     expect(typed.engineResult).not.toMatch(/NPC reaction slot open for/i);
 
     const wink =
       'I whistle a jaunty tune and give the priest a slow, exaggerated wink. "Nice reflexes, but I bet you can\'t catch this one.';
     const typed2 = resolveTypedFreeText(state, wink);
-    expect(typed2.engineResult).toMatch(/No one present to answer/i);
+    expect(typed2.engineResult).toMatch(/last seen at .+; not present to answer|No one present to answer/i);
+    expect(typed2.engineResult).not.toMatch(/NPC reaction slot open for/i);
   });
 });
 
