@@ -44,29 +44,22 @@ function quietTrip(seed: string, roadHours: number, over: Partial<GameState> = {
 }
 
 describe('1 — the forced march stops at death', () => {
-  it('Exhaustion 6 is death on the facts, and no save, weather or navigation is rolled after it (lap 20 F T14)', () => {
-    let died: ReturnType<typeof commitTravel> | null = null;
-    for (let i = 0; i < 80 && !died; i++) {
-      const s = quietTrip(`march-${i}`, 10);
-      const worn = { ...s, character: { ...s.character, exhaustion: 5 } };
-      const push = journeyPads(worn)[1]!;
-      expect(push).toMatch(/^Push on into the \w+, but one failed save now kills you$/);
-      const out = commitTravel(worn, push);
-      if (out.state.deathSaves?.dead) died = out;
-    }
-    expect(died).not.toBeNull();
-    const extra = died!.extra ?? [];
-    const death = extra.findIndex((l) => /, death$/.test(l));
-    expect(death).toBe(extra.length - 1);
-    expect(extra.some((l) => /^(?:Weather|Navigation|Lost):/.test(l))).toBe(false);
-    expect(travelBeatFact(died!.state)).toMatch(/You are dead\./);
-    expect(died!.receipt).toMatch(/you died on the road/);
+  it('T10PUSH — Exhaustion 5 forces camp; push-on never reaches death (SRD level 6)', () => {
+    const s = quietTrip('march-force', 10);
+    const worn = { ...s, character: { ...s.character, exhaustion: 5 } };
+    expect(journeyPads(worn)).toEqual(['Make camp']);
+    const out = commitTravel(worn, 'Push on');
+    expect(out.state.deathSaves?.dead).not.toBe(true);
+    expect(out.state.character.exhaustion ?? 0).toBeLessThan(6);
+    expect(out.event === 'camp' || (out.facts ?? []).some((f) => /camp/i.test(f))).toBe(true);
   });
 
-  it('a push-on pad below the last level names the hour, not "the night"', () => {
+  it('T10PUSH — spent-day pads are Push on / Turn back / Make camp (confirm names the cost)', () => {
     const s = quietTrip('noon', 8, { worldHour: 10 });
     const at = { ...s, worldHour: 10 };
-    expect(journeyPads(at)[1]).toBe('Push on into the morning, but each failed save wears you down more');
+    expect(journeyPads(at)).toEqual(['Push on', 'Turn back', 'Make camp']);
+    const opened = commitTravel(at, 'Push on');
+    expect(opened.state.pendingPushOnConfirm?.consequence).toMatch(/Exhaustion from level/);
   });
 });
 

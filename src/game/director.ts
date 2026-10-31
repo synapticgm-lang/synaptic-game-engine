@@ -50,7 +50,8 @@ function turnsWithoutProgressLocal(state: GameState): number {
 
 const STALE_TURNS = 10;
 const BRING_WINDOW = 5;
-const MAX_FIGHT_CHIPS = 4;
+/** @deprecated T10PUSH — read choiceCountLimitOf(state); kept as default 3. */
+const MAX_FIGHT_CHIPS = 3;
 
 export type DirectorInput = {
   playerInput?: string;

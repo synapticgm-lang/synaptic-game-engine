@@ -260,6 +260,13 @@ import {
   travelEngineLines,
   travelOutcome,
 } from './travelJourney';
+import {
+  AUTO_CAMP_EXHAUSTION,
+  autoplayMayConfirmPushOn,
+  mapPushOnIntent,
+  pushOnChoiceSet,
+  pushOnConfirmFacts,
+} from './rules/pushOnChoice';
 import { readabilityGatePass } from './readabilityGate';
 import { checkPlayerTurn, type TurnCheck, type TurnCheckKind } from './turnCheck';
 import { checkTurnInvariants, type InvariantViolation } from './invariants/turnInvariants';
@@ -992,10 +999,28 @@ function pickGoalOrientedChoice(
  * Extended Travel CON saves (chipWouldMarch — hours + exhaustion) is not picked twice in a row
  * unless it is the only option. Soft "wears you down" Push-on counts — same source as pad warnings,
  * not a LETHAL_CHIP_RE text match (T10RC4 / s9512 soft-label repeat).
+ *
+ * T10PUSH — never confirm a push when the engine's confirm facts say next Exhaustion ≥ 5;
+ * read the option set from pushOnChoiceSet (no second copy).
  */
 const LETHAL_CHIP_RE = /\b(?:kills? you|will kill you|you (?:will )?die|means? death|fatal|lethal)\b/i;
+
+/** T10PUSH — autoplay must never open/confirm a push whose next Exhaustion level is ≥ 5. */
+export function isDeadlyPushOnPick(label: string, state: GameState): boolean {
+  const intent = mapPushOnIntent(label);
+  if (intent === 'confirm') return !autoplayMayConfirmPushOn(state);
+  if (intent === 'push on') {
+    if (pushOnChoiceSet(state).forceCamp) return true;
+    return pushOnConfirmFacts(state).nextLevel >= AUTO_CAMP_EXHAUSTION;
+  }
+  return false;
+}
+
 export function isLethalChipLabel(label: string, state?: GameState): boolean {
-  if (state) return chipWouldMarch(state, label);
+  if (state) {
+    if (isDeadlyPushOnPick(label, state)) return true;
+    return chipWouldMarch(state, label);
+  }
   return LETHAL_CHIP_RE.test(label);
 }
 let lastAutoPickWasLethal = false;
@@ -1009,10 +1034,15 @@ export function avoidRepeatLethalPick(
   prevWasLethal: boolean,
   state?: GameState
 ): string {
+  // T10PUSH: deadly push confirm is never picked, even on the first try.
+  if (state && isDeadlyPushOnPick(pick, state)) {
+    const safe = offered.filter((c) => !isDeadlyPushOnPick(c, state));
+    if (safe.length) return safe[Math.floor(rng() * safe.length)]!;
+  }
   if (!prevWasLethal || !isLethalChipLabel(pick, state)) return pick;
   const safe = offered.filter((c) => !isLethalChipLabel(c, state));
   if (!safe.length) return pick;
-  return safe[Math.floor(rng() * safe.length)];
+  return safe[Math.floor(rng() * safe.length)]!;
 }
 function pickChipAvoidingLethalRepeat(
   offered: string[],
@@ -1020,7 +1050,10 @@ function pickChipAvoidingLethalRepeat(
   mode: AiAgentMode,
   rng: Rng
 ): string {
-  const candidates = chipsOnly(offered);
+  const set = pushOnChoiceSet(state);
+  // Prefer the engine's push-on option set when that choice point is live.
+  const pool = set.active && set.options.length ? set.options : offered;
+  const candidates = chipsOnly(pool.length ? pool : offered);
   const raw = pickGoalOrientedChoice(candidates, state, mode, rng);
   const pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal, state);
   lastAutoPickWasLethal = isLethalChipLabel(pick, state);

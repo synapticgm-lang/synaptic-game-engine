@@ -68,34 +68,20 @@ function mem(over: Partial<NpcMemory> & { npcName: string }): NpcMemory {
 }
 
 describe('T10AQ (a) Exhaustion-6 Push-on death owns the book page', () => {
-  it('travelEngineLines carries You are dead into ENGINE RESULT', () => {
-    let died: ReturnType<typeof commitTravel> | null = null;
-    for (let i = 0; i < 80 && !died; i++) {
-      const worn = quietTrip(`aq-die-${i}`, 10, {
-        character: { ...keep('x').character, exhaustion: 5 },
-      });
-      const push = journeyPads(worn)[1]!;
-      expect(push).toMatch(/one failed save now kills you/);
-      const out = commitTravel(worn, push);
-      if (out.state.deathSaves?.dead) died = out;
-    }
-    expect(died).not.toBeNull();
-    expect(travelEngineLines(died!).some((l) => /\bYou are dead\./i.test(l))).toBe(true);
-    expect(travelBeatFact(died!.state)).toMatch(/You are dead\./);
-    const engine = travelEngineLines(died!).join(' ');
-    const page = writerEngineResult(engine, 'Jax');
-    expect(page).toMatch(/You are dead\./);
-    expect(page).toMatch(/forced march wore you down/i);
-    expect(page).not.toMatch(/Merrit|said nothing/i);
-    const sealed = roadDeathBookProse(died!.state);
-    expect(sealed).toMatch(/You are dead\./);
-    const phased = applyPlayPhaseAfterHp(died!.state, died!.state.character.hp ?? 0, (died!.state.turn ?? 0) + 1);
-    expect(phased.playPhase).toBe('ended');
+  it('T10PUSH — Exhaustion 5 forces camp; push-on cannot reach death', () => {
+    const worn = quietTrip('aq-die-force', 10, {
+      character: { ...keep('x').character, exhaustion: 5 },
+    });
+    expect(journeyPads(worn)).toEqual(['Make camp']);
+    const out = commitTravel(worn, 'Push on');
+    expect(out.state.deathSaves?.dead).not.toBe(true);
+    expect(out.state.character.exhaustion ?? 0).toBeLessThan(6);
+    expect(out.event === 'camp' || (out.facts ?? []).some((f) => /camp/i.test(f))).toBe(true);
   });
 
   it('Push-on chip does not open an NPC reaction Speech event', () => {
     const s = quietTrip('aq-chip', 10, {
-      character: { ...keep('x').character, exhaustion: 5 },
+      character: { ...keep('x').character, exhaustion: 2 },
       sceneFacts: {
         present: ['Merrit Pike', 'thugs', 'the thugs'],
         crowd: 'present',
@@ -119,50 +105,38 @@ describe('T10AQ (a) Exhaustion-6 Push-on death owns the book page', () => {
 });
 
 describe('T10AQ (b) SRD 5.2.1 Extended Travel + Exhaustion', () => {
-  it('lethal chip only at Exhaustion 5; death at level 6', () => {
-    // SRD 5.2.1 Extended Travel (Gameplay Toolbox): CON save each hour past 8, DC 10 + hours past 8;
-    // fail → 1 Exhaustion. Exhaustion level 6 = death. d20 tests −2 × level.
+  it('T10PUSH triad at low exhaustion; force camp at Exhaustion 5', () => {
+    // SRD 5.2.1 Extended Travel: CON save each hour past 8; Exhaustion 6 = death.
+    // T10PUSH never offers a path to 6 through this choice — auto-camp at 5.
     const at2 = quietTrip('aq-ex2', 10, { character: { ...keep('x').character, exhaustion: 2 } });
-    expect(journeyPads(at2)[1]).toMatch(/each failed save wears you down more/);
+    expect(journeyPads(at2)).toEqual(['Push on', 'Turn back', 'Make camp']);
     const at5 = quietTrip('aq-ex5', 10, { character: { ...keep('x').character, exhaustion: 5 } });
-    expect(journeyPads(at5)[1]).toMatch(/one failed save now kills you/);
+    expect(journeyPads(at5)).toEqual(['Make camp']);
   });
 });
 
 describe('T10RC4 (7a) march warn on every spend-day move; camp default at high exhaustion', () => {
-  it('exhaustion 3–5 + spent day: all move chips warn; Make camp offered first', () => {
-    // SRD 5.2.1 Extended Travel: CON save each hour past 8; Exhaustion 6 = death.
-    for (const ex of [3, 4, 5]) {
+  it('T10PUSH — spent day offers triad; Exhaustion 5 forces Make camp only', () => {
+    for (const ex of [3, 4]) {
       const s = quietTrip(`rc4-ex${ex}`, 10, { character: { ...keep('x').character, exhaustion: ex } });
-      const pads = journeyPads(s);
-      expect(pads[0]).toBe('Make camp');
-      const moves = pads.filter((p) => /^(?:Push on|Walk on|Travel)/i.test(p));
-      expect(moves.length).toBeGreaterThan(0);
-      for (const m of moves) {
-        expect(m).toMatch(/but (?:one failed save now kills you|each failed save wears you down more)/);
-        if (ex >= 5) expect(m).toMatch(/one failed save now kills you/);
-        else expect(m).toMatch(/each failed save wears you down more/);
-      }
+      expect(journeyPads(s)).toEqual(['Push on', 'Turn back', 'Make camp']);
     }
+    const s5 = quietTrip('rc4-ex5', 10, { character: { ...keep('x').character, exhaustion: 5 } });
+    expect(journeyPads(s5)).toEqual(['Make camp']);
   });
 
-  it('Travel toward while spent carries the same warn; commitTravel still marches via marchHours', () => {
+  it('Travel toward while spent still carries march warn via withMarchWarnPads', () => {
     const s = quietTrip('rc4-toward', 10, { character: { ...keep('x').character, exhaustion: 3 } });
     const labeled = withMarchWarnPads(s, ['Travel toward Keep Gate', 'Look around']);
     const travel = labeled.find((c) => /^Travel toward Keep Gate/i.test(c))!;
     expect(travel).toMatch(/but each failed save wears you down more/);
     expect(labeled[0]).toBe('Make camp');
     expect(chipWouldMarch(s, travel)).toBe(true);
-    let died: ReturnType<typeof commitTravel> | null = null;
-    for (let i = 0; i < 40 && !died; i++) {
-      const worn = quietTrip(`rc4-die-${i}`, 10, { character: { ...keep('x').character, exhaustion: 5 } });
-      const push = journeyPads(worn).find((p) => /Push on/i.test(p))!;
-      const out = commitTravel(worn, push);
-      if (out.state.deathSaves?.dead) died = out;
-    }
-    expect(died).not.toBeNull();
-    expect(travelBeatFact(died!.state)).toMatch(/You are dead\./);
-    expect(roadDeathBookProse(died!.state)).toMatch(/forced march wore you down/i);
+    // T10PUSH — Push on at Exhaustion 5 camps; never death through this choice.
+    const worn = quietTrip('rc4-die-force', 10, { character: { ...keep('x').character, exhaustion: 5 } });
+    const out = commitTravel(worn, 'Push on');
+    expect(out.state.deathSaves?.dead).not.toBe(true);
+    expect(out.state.character.exhaustion ?? 0).toBeLessThan(6);
   });
 });
 

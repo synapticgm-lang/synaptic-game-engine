@@ -33,7 +33,8 @@ import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant, stallPressure
 import { isDying } from './tabletop/roundFight';
 import { originPad } from './rules/rpgOrigin';
 import { travelPadBlocked } from './padUniverse';
-import { capFightChips, FIGHT_CHIP_CAP, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
+import { capFightChips, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
+import { choiceCountLimitOf } from './rules/houseRules';
 import { activeHereSpot, stepCloserChip } from './hereSpot';
 import { isSearchTargetEmpty, normalizeSearchTarget } from './searchContinuity';
 
@@ -925,7 +926,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       return rank(a) - rank(b);
     };
     fightOnly.sort(byId);
-    const capped = fightOnly.slice(0, Math.max(0, FIGHT_CHIP_CAP));
+    const capped = fightOnly.slice(0, Math.max(0, choiceCountLimitOf(state)));
     return [...capped, ...freeOnly];
   }
   const cd =
