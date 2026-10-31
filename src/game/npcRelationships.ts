@@ -6,6 +6,7 @@
  */
 
 import type { Commitment, GameState } from './types';
+import { isEmptyRoomPersonSlot } from './chromeAuthority';
 import { npcPlacedElsewhere, presentNpcRecords, resolveNpcRecord } from './npcRecords';
 import { isOutOfTalkingRange } from './hereSpot';
 
@@ -360,7 +361,8 @@ export function presentNpcNames(state: GameState): string[] {
   const add = (n: unknown, trustRecord = false) => {
     const name = String(n ?? '').trim();
     const key = name.toLowerCase();
-    if (!name || key === foe || out.has(key) || (!trustRecord && npcPlacedElsewhere(state, name))) return;
+    // T10Q5R — empty-room subjects never seat (Nobody / no one); role nouns like clerk still seat.
+    if (!name || isEmptyRoomPersonSlot(name) || key === foe || out.has(key) || (!trustRecord && npcPlacedElsewhere(state, name))) return;
     if (resolveNpcRecord(state, name)?.shouldExit || isOutOfTalkingRange(state, name)) return;
     out.set(key, name);
   };

@@ -3,7 +3,7 @@ import { applyFactLocks } from './factLocks';
 import { applySearchContinuityToFacts } from './searchContinuity';
 import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
 import { harvestHookIntoSceneFacts } from './hookLock';
-import { filterChromeFromPresent } from './chromeAuthority';
+import { filterChromeFromPresent, isEmptyRoomPersonSlot } from './chromeAuthority';
 import { harvestCameraIntoSceneFacts } from './travelAuthority';
 import {
   clearVignetteOnHubLeave,
@@ -110,12 +110,13 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   if (hasLedgerPeople) present.delete('bystanders');
   let departed = false;
   if (emptied) {
-    const seated = [...present].filter((p) => p && mentionsName(text, p));
+    // T10Q5R — empty prose mentioning "Nobody" must not keep a placeholder seat of that name.
+    const seated = [...present].filter((p) => p && !isEmptyRoomPersonSlot(p) && mentionsName(text, p));
     // T10AN — hereSpot occupants (away or nearby) are still in the room; silence ≠ departure.
     const spotPeople = [
       ...(prev?.hereSpot?.awayFrom ?? []),
       ...(prev?.hereSpot?.nearby ?? []),
-    ].map((n) => n.trim()).filter(Boolean);
+    ].map((n) => n.trim()).filter((n) => n && !isEmptyRoomPersonSlot(n));
     present.clear();
     for (const p of seated) present.add(p);
     for (const p of spotPeople) present.add(p);

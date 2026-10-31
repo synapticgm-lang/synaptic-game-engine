@@ -8,6 +8,7 @@
  * Labels stay the plain action (feature-groups-plan §4). No word lists or label regexes.
  */
 import type { GameState, PlaceExitRow, QuestRoute } from './types';
+import { isEmptyRoomPersonSlot } from './chromeAuthority';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { parsePlayerIntent } from './intentParser';
 import { presentNpcRecords, resolveNpcRecord } from './npcRecords';
@@ -214,7 +215,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     const raw = people[i]!;
     const canonical = resolveNpcRecord(state, raw.npcName) ?? raw;
     const name = (canonical.npcName ?? '').trim();
-    if (!name) continue;
+    // T10Q5R — never chip a missing / empty-room / placeholder seat (Nobody, blank name).
+    if (!name || isEmptyRoomPersonSlot(name)) continue;
     const entityId = canonical.npcId || `npc:${name}`;
     if (seenPersonEntity.has(entityId)) continue;
     seenPersonEntity.add(entityId);
