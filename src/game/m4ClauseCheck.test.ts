@@ -112,6 +112,7 @@ describe('M4 clause check (stubbed model)', () => {
       { c: 'You open the last box', kind: 'fact', support: '', severity: 'serious' },
       { c: 'Musty oak fills the air', kind: 'colour', support: '' },
     ];
+    let chatPasses = 0;
     const out = await checkAndRepairProse({
       factSheet: sheet({
         gear: { worn: [], carrying: [], inHand: 'nothing' },
@@ -119,13 +120,19 @@ describe('M4 clause check (stubbed model)', () => {
       }),
       prose,
       player: sheet().player,
-      chat: stubChat(claims),
+      chat: async () => {
+        chatPasses += 1;
+        return { claims };
+      },
       // Bad repair: replaces the invent sentence with empty → would drop colour if applied.
       repair: async () => '',
     });
     expect(out.repaired).toBe(false);
     expect(out.prose).toBe(prose);
     expect(out.prose).toMatch(/musty oak/i);
+    // T10TURNS — failed repair must not burn a second clause-check model call.
+    expect(chatPasses).toBe(1);
+    expect(out.checkPasses).toBe(1);
   });
 
   it('colour is never flagged for repair', async () => {

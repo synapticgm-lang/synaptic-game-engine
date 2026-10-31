@@ -214,31 +214,35 @@ export async function checkAndRepairProse(args: {
         }
       }
     }
-    const second = await runClauseCheck({
-      factSheet: args.factSheet,
-      prose,
-      player: args.player,
-      chat: args.chat,
-    });
-    checkPasses = 2;
-    // T10N — drop a rewrite only when the second check flags a claim that is *in* that rewrite
-    // (stale claims about the pre-repair sentence must not kill a clean colour line).
-    if (repaired && repairedLine) {
-      const lineL = repairedLine.toLowerCase();
-      const still = second.serious.find((u) => {
-        const c = (u.c || '').toLowerCase().replace(/^out of character:\s*/i, '').trim();
-        if (c.length < 8) return false;
-        const head = c.slice(0, Math.min(48, c.length));
-        return lineL.includes(head) || c.includes(lineL.slice(0, Math.min(48, lineL.length)));
+    // T10TURNS — second clause pass only when a repair landed. A failed/empty repair leaves the
+    // first-pass records; re-checking the same prose burns a model call for no new gate work.
+    if (repaired) {
+      const second = await runClauseCheck({
+        factSheet: args.factSheet,
+        prose,
+        player: args.player,
+        chat: args.chat,
       });
-      if (still) {
-        const dropped = replaceDraftSentence(prose, repairedLine, '');
-        if (dropped.trim()) {
-          prose = dropped.replace(/\s+/g, ' ').trim();
+      checkPasses = 2;
+      // T10N — drop a rewrite only when the second check flags a claim that is *in* that rewrite
+      // (stale claims about the pre-repair sentence must not kill a clean colour line).
+      if (repairedLine) {
+        const lineL = repairedLine.toLowerCase();
+        const still = second.serious.find((u) => {
+          const c = (u.c || '').toLowerCase().replace(/^out of character:\s*/i, '').trim();
+          if (c.length < 8) return false;
+          const head = c.slice(0, Math.min(48, c.length));
+          return lineL.includes(head) || c.includes(lineL.slice(0, Math.min(48, lineL.length)));
+        });
+        if (still) {
+          const dropped = replaceDraftSentence(prose, repairedLine, '');
+          if (dropped.trim()) {
+            prose = dropped.replace(/\s+/g, ' ').trim();
+          }
         }
       }
+      records = toClauseRecords(second.claims, repairedSet);
     }
-    records = toClauseRecords(second.claims, repairedSet);
   }
 
   return {

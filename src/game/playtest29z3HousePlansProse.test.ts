@@ -187,7 +187,7 @@ describe('29z3 — prose glue', () => {
       currentLocation: 'Open Road',
     });
     const text = formatWriterFacingEvent(buildCompletedEventPacket(s, 'Walk on'));
-    expect(text).toMatch(/ACTION: this beat carries out the PLAYER line/);
+    expect(text).toMatch(/ACTION: write the consequence and world\/NPC response/);
     expect(text).toMatch(/Event on this stretch: the road brings a traveler/);
   });
 });

@@ -351,13 +351,15 @@ export async function runWriterTurnWithFightRetry(opts: {
   }
   if (!blocking.length) return done;
   // T10RC2 — absence already on the fact: keep a usable empty-room beat for soft answer-family alone.
+  // T10TURNS — answer repair already tried this turn: soft answer-family alone must not burn a
+  // blocking rewrite (top retry cause on T50: "Someone must answer" / "Answer the player's question").
   if (
-    absenceRecorded
-    && !hasAbsentSpeaker(blocking)
+    !hasAbsentSpeaker(blocking)
     && blocking.every(isSoftAbsenceFamily)
     && storySentences(done.prose) >= 2
+    && (absenceRecorded || !!done.answerRepair)
   ) {
-    return { ...done, draftRetry: 'retried', fightDraft: undefined };
+    return { ...done, fightDraft: undefined };
   }
   let raw = '';
   try { raw = await opts.rewrite(blocking.join('\n')); } catch { /* rewrite miss */ }

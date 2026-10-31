@@ -315,10 +315,26 @@ export function hashFactSheet(sheet: FactSheet): string {
 }
 
 /**
+ * T10TURNS — writer-facing FactSheet char budget (WORLD FACTS block only).
+ * Pins trim: ENGINE RESULT + Recent timeline leave this block when the leaf owns them.
+ * Fixture growth beyond this fails the section-budget test.
+ */
+export const FACT_SHEET_WRITER_CHAR_BUDGET = 2200;
+
+export type FormatFactSheetOpts = {
+  /**
+   * Writer leaf already prints ENGINE RESULT (required fact) + INFO SHEET LAST.
+   * Omit the short ENGINE RESULT / Recent timeline duplicates from WORLD FACTS.
+   */
+  writerLeaf?: boolean;
+};
+
+/**
  * Writer-facing text: one WORLD FACTS block (the info-layer guarantee, single source).
  * Settings slot left as a blank header for 6b.
  */
-export function formatFactSheetForWriter(sheet: FactSheet): string {
+export function formatFactSheetForWriter(sheet: FactSheet, opts?: FormatFactSheetOpts): string {
+  const leaf = !!opts?.writerLeaf;
   const lines: string[] = [
     'WORLD FACTS (this turn):',
     `Place: ${sheet.place.name}${sheet.place.position ? ` · standing on ${sheet.place.position}` : ''}${sheet.place.scale ? ` · ${sheet.place.scale}` : ''}.`,
@@ -347,8 +363,8 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
     `PC gear: in hand ${sheet.gear.inHand}; worn ${worn}; carrying ${carry}${sheet.gear.gold != null ? `; gold ${sheet.gear.gold}` : ''}.`
   );
   lines.push(`Beat: ${sheet.beat.verb} → ${sheet.beat.outcome}.`);
-  if (sheet.beat.engineResult) {
-    // Short form matches the line-gate record (`ENGINE RESULT: …`); long note is on the completed-event leaf.
+  // T10TURNS — leaf owns the long ENGINE RESULT (required fact); keep short form only off the leaf path.
+  if (sheet.beat.engineResult && !leaf) {
     lines.push(`ENGINE RESULT: ${sheet.beat.engineResult}`);
   }
   for (const s of sheet.beat.steps) {
@@ -361,7 +377,8 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
       ...sheet.quests.map((q) => `  - ${q.title} (${q.status})${q.step ? `: ${q.step}` : ''}`)
     );
   }
-  if (sheet.recent.length) {
+  // T10TURNS — INFO SHEET LAST owns the timeline when the writer leaf is used.
+  if (sheet.recent.length && !leaf) {
     lines.push('Recent timeline:', ...sheet.recent.map((r) => `  - ${r}`));
   }
   if (sheet.stallPressure) {
