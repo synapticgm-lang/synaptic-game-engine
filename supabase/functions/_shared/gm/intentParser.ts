@@ -1453,11 +1453,13 @@ export function parsePlayerSteps(
       addressee = priorPerson;
       if (!target) target = priorPerson;
     }
-    // T10AB — free-typed blade/pin/grab/grip (or cutting off escape) at a present person resolves as
-    // intimidate/grapple (SRD), not a content-free General athletics shrug.
+    // T10AB — free-typed blade/pin/grip (or cutting off escape) as `other` at a present person
+    // resolves as intimidate/grapple (SRD), not a content-free General athletics shrug.
+    // Person-aimed take/grab stays `take` (T10X non-loot). Plain talk with threatening tone stays
+    // `talk` (M3 speech economy / SRD Communicating); useSkillFromStep still reads tone for rolls.
     const coerceWho = peopleHit ?? priorPerson;
     if (
-      (action === 'other' || action === 'take' || action === 'talk')
+      action === 'other'
       && coerceWho
       && (tone === 'threatening'
         || /\b(grab|grip|squeez(?:e|ing)|collar|grapple|pin|throat|blade|dagger|sword|knife|cut\s+off\s+\w+['']?s?\s+escape|cut\s+off\s+\w+['']?s?\s+whisper)\b/i.test(
