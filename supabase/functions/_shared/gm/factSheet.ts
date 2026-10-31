@@ -315,10 +315,28 @@ export function hashFactSheet(sheet: FactSheet): string {
 }
 
 /**
+ * T10TURNS — writer-facing FactSheet char budget (WORLD FACTS block only).
+ * Pins trim: short ENGINE RESULT leaves this block when the leaf owns the long form.
+ * Recent timeline stays here — INFO SHEET LAST is GM-log engine results, not discovery timeline.
+ * Fixture growth beyond this fails the section-budget test.
+ */
+export const FACT_SHEET_WRITER_CHAR_BUDGET = 2200;
+
+export type FormatFactSheetOpts = {
+  /**
+   * Writer leaf already prints the long ENGINE RESULT (required fact).
+   * Omit only the short `ENGINE RESULT:` duplicate from WORLD FACTS.
+   * Keep Recent timeline — sole owner of discovery timeline on the writer path.
+   */
+  writerLeaf?: boolean;
+};
+
+/**
  * Writer-facing text: one WORLD FACTS block (the info-layer guarantee, single source).
  * Settings slot left as a blank header for 6b.
  */
-export function formatFactSheetForWriter(sheet: FactSheet): string {
+export function formatFactSheetForWriter(sheet: FactSheet, opts?: FormatFactSheetOpts): string {
+  const leaf = !!opts?.writerLeaf;
   const lines: string[] = [
     'WORLD FACTS (this turn):',
     `Place: ${sheet.place.name}${sheet.place.position ? ` · standing on ${sheet.place.position}` : ''}${sheet.place.scale ? ` · ${sheet.place.scale}` : ''}.`,
@@ -347,8 +365,8 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
     `PC gear: in hand ${sheet.gear.inHand}; worn ${worn}; carrying ${carry}${sheet.gear.gold != null ? `; gold ${sheet.gear.gold}` : ''}.`
   );
   lines.push(`Beat: ${sheet.beat.verb} → ${sheet.beat.outcome}.`);
-  if (sheet.beat.engineResult) {
-    // Short form matches the line-gate record (`ENGINE RESULT: …`); long note is on the completed-event leaf.
+  // T10TURNS — leaf owns the long ENGINE RESULT (required fact); keep short form only off the leaf path.
+  if (sheet.beat.engineResult && !leaf) {
     lines.push(`ENGINE RESULT: ${sheet.beat.engineResult}`);
   }
   for (const s of sheet.beat.steps) {
@@ -361,6 +379,7 @@ export function formatFactSheetForWriter(sheet: FactSheet): string {
       ...sheet.quests.map((q) => `  - ${q.title} (${q.status})${q.step ? `: ${q.step}` : ''}`)
     );
   }
+  // Discovery timeline — WORLD FACTS is the sole writer owner (INFO SHEET LAST ≠ this).
   if (sheet.recent.length) {
     lines.push('Recent timeline:', ...sheet.recent.map((r) => `  - ${r}`));
   }

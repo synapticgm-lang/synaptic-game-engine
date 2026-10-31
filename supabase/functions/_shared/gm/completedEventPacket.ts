@@ -1341,8 +1341,9 @@ export function formatWriterFacingEvent(
     '',
   ];
   // M1 — FactSheet is the single facts block (settings slot reserved for 6b).
+  // T10TURNS — writerLeaf omits short ENGINE RESULT only (long form below). Timeline stays on WORLD FACTS.
   if (packet.factSheet) {
-    lines.push(formatFactSheetForWriter(packet.factSheet));
+    lines.push(formatFactSheetForWriter(packet.factSheet, { writerLeaf: true }));
     lines.push('');
   }
   lines.push(
@@ -1484,10 +1485,14 @@ export function formatWriterFacingEvent(
     lines.push('GM: (opening)');
   }
   lines.push('');
-  lines.push(`PLAYER: ${packet.playerAction || '(opening)'}`);
+  // T10ECHO / T10TURNS — UI already shows the typed act; never paste it into writer input.
   const act = (packet.playerAction ?? '').trim();
-  if (act && act !== '(opening)') {
-    lines.push(`ACTION: this beat carries out the PLAYER line above — show ${who} doing it and what came of it. Do not retell an arrival already written, and do not answer a different action.`);
+  const opening = !act || act === '(opening)';
+  lines.push(opening ? 'PLAYER: (opening)' : 'PLAYER: (already shown in UI — do not restate)');
+  if (!opening) {
+    lines.push(
+      `ACTION: write the consequence and world/NPC response for this beat — do not restate the player's act. Do not retell an arrival already written, and do not answer a different action.`
+    );
     if (packet.combatLive && WRITER_ATTACK.test(act)) {
       lines.push('The attack is on the page: show the blow landing, glancing or missing, and the foe answering it.');
     }
