@@ -23,7 +23,7 @@ import { isNeverCastTitle } from './neverCast';
 import { applyClosedFactHarvest } from './closedFactLedger';
 import { hubsForBibleId } from './outdoorHubs';
 import { roadMeetingLabel } from './travelJourney';
-import { applyPresenceFacts } from './presentAuthority';
+import { seat, setPresentList } from './presentAuthority';
 
 function extractRegisteredNpcs(prose: string, bibleId: string | null | undefined, state: GameState): string[] {
   if (!prose?.trim()) return [];
@@ -222,6 +222,14 @@ export function harvestNarrativePeople(
   }
 
   const ledgerNouns = compileNounAllowlist(state, openingCastNames(state));
+  // T10Q5 — this-turn speaker/actor/addressed refs are already on the writer page. compileRefEnum
+  // extras drop anyone not yet in peopleHere, so allowlist alone cannot seat a newly painted name;
+  // license those displays directly (and skip the allowlist gate for fromTokenRefs below).
+  for (const r of bound?.refEnum ?? []) {
+    if (!r.display || (r.klass !== 'person' && r.klass !== 'companion')) continue;
+    if (!mentionAllowlistHas(ledgerNouns, r.display)) ledgerNouns.push(r.display);
+  }
+  const licensedByRefs = new Set(fromTokenRefs.map((n) => n.trim().toLowerCase()));
   const pc = state.character?.name?.trim().toLowerCase() ?? '';
   const pcFirst = pc.split(/\s+/)[0] ?? '';
   const isPc = (n: string) => {
@@ -250,7 +258,8 @@ export function harvestNarrativePeople(
       continue;
     }
     // 13c — registry membership is not occupancy. Hall-talk invents (Orel Vane) stay off present[].
-    if (!mentionAllowlistHas(ledgerNouns, name)) {
+    // T10Q5 — this-turn bound refs already licensed the name on the page; seat them.
+    if (!licensedByRefs.has(name.toLowerCase()) && !mentionAllowlistHas(ledgerNouns, name)) {
       continue;
     }
     if (isPlannerUiPersonToken(name)) continue;
@@ -304,11 +313,14 @@ export function harvestNarrativePeople(
     presentList = presentList.filter((p) => !roadSkip.has(p.toLowerCase()));
     people = people.filter((p) => !roadSkip.has(p.toLowerCase()));
   }
-  // ADD-only occupancy via authority patch: keep engine-seated names; harvest may append (capped).
-  const withNames = applyPresenceFacts(
-    { ...next, lorebook },
-    { present: presentList.slice(0, 12) }
-  );
+  // T10Q5fix / T10SM1 — REPLACE present with the harvested list (fold bare first names, drop
+  // PC) via setPresentList, then seat() to stamp HERE location + present flag. ADD-only seat
+  // left stale bare names / PC on the prior list (s73 fold test).
+  const capped = presentList.slice(0, 12);
+  let withNames = setPresentList({ ...next, lorebook }, capped);
+  for (const name of capped) {
+    withNames = seat(withNames, name);
+  }
   const crowded = { ...withNames, sceneFacts: harvestHookIntoSceneFacts(harvestCrowdIntoSceneFacts(withNames.sceneFacts!, prose, turn), prose, turn) };
   return { state: applyClosedFactHarvest(applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose), prose), people };
 }

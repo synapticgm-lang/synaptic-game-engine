@@ -179,6 +179,8 @@ export interface RoundCombatState {
   solo?: boolean;
   /** Barbarian Rage is on (it ends with the fight, or on a turn with no attack). */
   raging?: boolean;
+  /** T10PUSH — fight pad opened "Use something"; next chips are the remaining legal actions. */
+  useMenu?: boolean;
   /** Barbarian Reckless Attack this round: attacks against the PC have Advantage until its next turn. */
   reckless?: boolean;
   /** Sorcerer Innate Sorcery is on for the rest of the fight. */
@@ -239,6 +241,11 @@ export interface HouseRules {
   heroicInspiration: boolean;
   /** SRD Travel Pace: Fast 4 mph (Disadvantage on Perception, Survival, Stealth), Normal 3 (Stealth), Slow 2 (Advantage on Perception, Survival). */
   travelPace: 'fast' | 'normal' | 'slow';
+  /**
+   * T10PUSH — max player-facing chips at a tabletop choice point (fights, push-on, …).
+   * Default 3; clamp 2..6. Free text is always allowed beside the chips.
+   */
+  choiceCountLimit: number;
 }
 /** Coins by denomination (rules/coins). */
 export interface CoinPurse {
@@ -945,6 +952,15 @@ export interface GameState {
   }>;
   /** TT-C1b: free-input chip opened the box; next typed send resolves via checkForAction. */
   pendingFreeInput?: 'say' | 'do' | null;
+  /**
+   * T10PUSH — Push on confirm step (forced march). Set when the player picks Push on;
+   * Confirm applies the march; Cancel clears with nothing applied.
+   */
+  pendingPushOnConfirm?: {
+    currentLevel: number;
+    nextLevel: number;
+    consequence: string;
+  } | null;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];
@@ -2496,6 +2512,8 @@ export interface Settings extends AccessibilitySettings {
   ttCritRule?: CritRule;
   ttHeroicInspiration?: boolean;
   ttTravelPace?: HouseRules['travelPace'];
+  /** T10PUSH — max chips at a tabletop choice point (2–6, default 3). */
+  ttChoiceCountLimit?: number;
   /** When true, skip post-commit sentence reveal and show full GM prose immediately. */
   preferFullResponse?: boolean;
   /**

@@ -27,6 +27,7 @@ import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
 import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
 import { isFightCast } from './tabletop/spellCasting';
+import { USE_SOMETHING_CHIP } from './tabletop/combatChips';
 import { afterFightCompanion, combatCompanion } from './rules/companions';
 import { abilityModOf, realEncounterCr, statBlockForEncounter } from './rules/srdMonsters';
 import { deriveTabletopSheet } from './tabletop/characterBuild';
@@ -282,6 +283,23 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   // Points you make a death saving throw. Tabletop round-combat path only (usesRoundCombat =
   // dnd + character.srd); LitRPG/RPG never set isDying. q77c: do not advance saves outside that path.
   if (roundMode && isDying(state)) return resolveDeathSaveTurn(state, turnRng(state, 'death-save'), input);
+  // T10PUSH — "Use something" opens the remaining legal fight actions (same choice-count limit).
+  if (
+    roundMode
+    && state.activeEncounter
+    && state.roundCombat
+    && input.toLowerCase() === USE_SOMETHING_CHIP.toLowerCase()
+  ) {
+    return {
+      state: { ...state, roundCombat: { ...state.roundCombat, useMenu: true } },
+      receipts: ['Fight: choose what to use'],
+      facts: 'You consider what else you can do this round.',
+      noTerminal: true,
+    };
+  }
+  if (roundMode && state.roundCombat?.useMenu) {
+    state = { ...state, roundCombat: { ...state.roundCombat, useMenu: false } };
+  }
   // A road meeting's own chip ("Skirt around the camp") takes on that meeting, whatever else waits here.
   const meetingMove = state.activeEncounter ? null : roadMeetingMove(state, input);
   const pending = state.activeEncounter || meetingMove ? null : state.sceneFacts?.pendingEncounter ?? null;

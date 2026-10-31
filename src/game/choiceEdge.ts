@@ -27,7 +27,8 @@ import { tabletopStepChip } from './tabletopQuestProgress';
 import { shopChips } from './shopChips';
 import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
 import { affordancesCoverGenerics } from './sceneAffordances';
-import { FIGHT_CHIP_CAP, roundCombatChips } from './tabletop/combatChips';
+import { roundCombatChips } from './tabletop/combatChips';
+import { choiceCountLimitOf } from './rules/houseRules';
 
 export type ChoiceEdgeKind =
   | 'combat'
@@ -67,8 +68,9 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     : undefined;
 
   if (state.activeEncounter) {
-    // M6 — fight options from the engine + choiceEdge only, capped at FIGHT_CHIP_CAP (≤4).
+    // M6 / T10PUSH — fight options from the engine + choiceEdge only, capped by choiceCountLimitOf.
     // Flee folds into Disengage and move (SRD Disengage Action + Speed).
+    const fightCap = choiceCountLimitOf(state);
     const round = roundCombatChips(state);
     if (round && round.length) {
       for (let i = 0; i < round.length; i++) {
@@ -79,18 +81,17 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     } else {
       edges.push({ id: 'enc-attack', label: 'Press the attack', kind: 'combat', risk: 'high' });
       fightApproachChips(state)
-        .slice(0, 2)
+        .slice(0, Math.max(0, fightCap - 2))
         .forEach((label, i) => edges.push({ id: `enc-approach-${i}`, label, kind: 'combat', risk: 'high' }));
       if (fleeAvailable(state.activeEncounter)) {
         edges.push({ id: 'enc-disengage', label: 'Disengage and move', kind: 'combat', risk: 'med' });
       }
-      if (parleyAvailable(state.activeEncounter)) {
+      if (parleyAvailable(state.activeEncounter) && edges.length < fightCap) {
         edges.push({ id: 'enc-parley', label: 'Parley', kind: 'talk', risk: 'low' });
       }
     }
-    // Cap at 4 — engine + choiceEdge only.
     // 29a — while engaged, only encounter edges (no travel/inspect padding below)
-    return closeEdgeUniverse(state, edges.slice(0, FIGHT_CHIP_CAP));
+    return closeEdgeUniverse(state, edges.slice(0, fightCap));
   }
 
   // PYOA spine v1 — Thornferry: pads = legal exits from current node

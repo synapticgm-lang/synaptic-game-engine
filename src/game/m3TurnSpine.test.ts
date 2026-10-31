@@ -209,7 +209,7 @@ describe('M3 gap-str-x15 (encumbrance)', () => {
 });
 
 describe('M3 gap-cap-4 (combatChips one cap)', () => {
-  it('fight buttons never exceed 4 and are engine-legal', () => {
+  it('fight buttons never exceed the choice-count limit and are engine-legal (or Use something)', () => {
     const s = fightState();
     const chips = roundCombatChips(s);
     expect(chips).toBeTruthy();
@@ -217,7 +217,9 @@ describe('M3 gap-cap-4 (combatChips one cap)', () => {
     expect(chips!.length).toBeLessThanOrEqual(FIGHT_CHIP_CAP);
     const legal = new Set(legalFightActionsThisRound(s).map((c) => c.toLowerCase()));
     for (const c of chips!) {
-      expect(legal.has(c.toLowerCase())).toBe(true);
+      const key = c.toLowerCase();
+      // T10PUSH — Use something groups remaining legal actions; free text still reaches them.
+      expect(legal.has(key) || key === 'use something').toBe(true);
     }
     expect(capFightChips(['a', 'b', 'c', 'd', 'e', 'f'], 4)).toHaveLength(4);
   });

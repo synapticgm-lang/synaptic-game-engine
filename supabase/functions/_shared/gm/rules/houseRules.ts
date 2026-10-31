@@ -34,7 +34,15 @@ export const DEFAULT_HOUSE_RULES: HouseRules = {
   // A save with no Settings stamp holds none; Settings turn it on by default.
   heroicInspiration: false,
   travelPace: 'normal',
+  /** T10PUSH — every tabletop choice point (fights included); free text always allowed. */
+  choiceCountLimit: 3,
 };
+
+/** Clamp the tabletop choice-count limit (John 31 Oct: min 2, max 6, default 3). */
+export function clampChoiceCountLimit(n: unknown): number {
+  const v = typeof n === 'number' && Number.isFinite(n) ? Math.round(n) : 3;
+  return Math.max(2, Math.min(6, v));
+}
 
 const slider = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? Math.max(0, Math.min(100, Math.round(v))) : 50);
 const oneOf = <T extends string>(v: unknown, list: readonly T[], fallback: T): T => (list.includes(v as T) ? (v as T) : fallback);
@@ -64,11 +72,17 @@ export function houseRulesFromSettings(s: Partial<Settings> | null | undefined):
     critRule: oneOf(s?.ttCritRule, ['double-dice', 'max-plus-roll', 'double-total'] as const, 'double-dice'),
     heroicInspiration: s?.ttHeroicInspiration !== false,
     travelPace: oneOf(s?.ttTravelPace, ['fast', 'normal', 'slow'] as const, 'normal'),
+    choiceCountLimit: clampChoiceCountLimit(s?.ttChoiceCountLimit),
   };
 }
 
 export function houseRulesOf(state: Pick<GameState, 'houseRules'> | null | undefined): HouseRules {
   return state?.houseRules ? { ...DEFAULT_HOUSE_RULES, ...state.houseRules } : DEFAULT_HOUSE_RULES;
+}
+
+/** ONE owner for the player-facing choice-count limit (houseRules on the save). */
+export function choiceCountLimitOf(state: Pick<GameState, 'houseRules'> | null | undefined): number {
+  return clampChoiceCountLimit(houseRulesOf(state).choiceCountLimit);
 }
 
 /** Milestone keys that earn Heroic Inspiration (a quest finished, an ending reached). */

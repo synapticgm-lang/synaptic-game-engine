@@ -211,6 +211,20 @@ const BARE_PRONOUN_NAME =
 const DISCOURSE_PARTICLE_NAME =
   /^(no|yes|ok|okay|exactly|sure|right|smart|alright)$/i;
 
+/**
+ * Empty-room / absence subjects — same shape as completedEventPacket "not a thing to paint"
+ * (`no|nobody|no one|…`). Never a present[] seat, CAST row, or Talk/Ask chip target.
+ * Narrower than isNonPersonNameToken (which also denies role nouns like clerk that still seat).
+ */
+const EMPTY_ROOM_PERSON_SLOT =
+  /^(?:no|nobody|no[\s-]?one|nothing|none|alone|only|empty)\b/i;
+
+/** True when the token is an empty-room subject, not a person who can take a chip. */
+export function isEmptyRoomPersonSlot(token: string): boolean {
+  const bare = normalizeChromeToken(token);
+  return !bare || EMPTY_ROOM_PERSON_SLOT.test(bare);
+}
+
 const PLANNER_CONTRACTION =
   /\b(?:i['’]m|i['’]ll|i['’]d|i['’]ve|we['’]re|we['’]ll|you['’]re|you['’]ll|don['’]t|can['’]t|won['’]t)\b/i;
 
@@ -221,6 +235,7 @@ export function isPlannerUiPersonToken(token: string): boolean {
   const t = raw.replace(/:+$/, '').replace(/\s+/g, ' ').trim();
   if (!t) return true;
   if (PLANNER_CONTRACTION.test(t)) return true;
+  if (isEmptyRoomPersonSlot(t)) return true;
   const bare = t.replace(/^(the|a|an)\s+/i, '');
   if (!/\s/.test(bare) && BARE_PRONOUN_NAME.test(bare)) return true;
   if (!/\s/.test(bare) && DISCOURSE_PARTICLE_NAME.test(bare)) return true;
