@@ -49,8 +49,11 @@ export type ParleyOutcome = {
   state: GameState;
 };
 
+// Body-part "my/his palm" is not the pickpocket verb (T10SOC2 — slam my palm ≠ steal).
 const STEAL_RE =
-  /\b(steal|pickpocket|filch|swipe|palm|lift\s+(?:the|a|an|his|her|their)\b|take\s+(?:the|a|an)\s+\w[\w\s'-]{0,24}\s+from)\b/i;
+  /\b(steal|pickpocket|filch|swipe|lift\s+(?:the|a|an|his|her|their)\b|take\s+(?:the|a|an)\s+\w[\w\s'-]{0,24}\s+from)\b/i;
+const PALM_STEAL_RE = /\bpalm\b/i;
+const BODY_PALM_RE = /\b(?:my|your|his|her|their|a|the)\s+palms?\b/i;
 const PARLEY_RE =
   /\b(parley|negotiate|talk\s+(?:it|them)\s+down|surrender|truce|bargain|calm\s+(?:them|him|her|the)\b|talk\s+(?:past|your\s+way))\b/i;
 /** Consumption / sample — "take a sip from the cup" is not theft of an object named "sip". */
@@ -82,20 +85,26 @@ export function isNonLootableTakeTarget(target: string | null | undefined, state
   });
 }
 
+function hasStealVerb(hay: string): boolean {
+  if (STEAL_RE.test(hay)) return true;
+  // Pickpocket "palm the coin" — not body-part "slam my palm".
+  return PALM_STEAL_RE.test(hay) && !BODY_PALM_RE.test(hay);
+}
+
 export function looksLikeSteal(text: string, step?: IntentStep | null, state?: GameState): boolean {
   const clause = step?.clause ?? text;
   // T10S — verb-noun consumption is not a take/gain of an item.
   if (CONSUME_TAKE_RE.test(clause) || CONSUME_TAKE_RE.test(text)) return false;
   // T10X — grabbing a present person / crowd noun is an act, not loot.
   if (step?.action === 'take' && isNonLootableTakeTarget(step.target, state)) return false;
-  if (step?.action === 'take' && STEAL_RE.test(clause)) {
+  if (step?.action === 'take' && hasStealVerb(clause)) {
     return !isNonLootableTakeTarget(step.target, state);
   }
   if (step?.action === 'take' && /\bfrom\b/i.test(clause) && !CONSUME_TAKE_RE.test(clause)) {
     if (isNonLootableTakeTarget(step.target, state)) return false;
     return true;
   }
-  return STEAL_RE.test(text);
+  return hasStealVerb(text);
 }
 
 export function looksLikeParley(text: string, step?: IntentStep | null): boolean {

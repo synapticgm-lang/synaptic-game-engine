@@ -44,6 +44,11 @@ export interface SocialProgressionState {
   awardedNoveltyKeys: string[];
   titles: string[];
   revision: number;
+  /**
+   * T10SOC — per-skill use-based tracks (Deception / Persuasion / Barter / Intimidation).
+   * Optional so old saves / 28q ledger load with defaults via ensureUseSkillProgress.
+   */
+  useSkills?: import('./socialSkillAttempt').UseSkillProgressMap;
 }
 
 export interface SkillTreeNode {

@@ -354,6 +354,10 @@ describe('q76a invariant (6) system-ledger — mega9 T52-54 / wrong-voice', () =
 });
 
 describe('q76b-STRESS stub writer voices only present', () => {
+  // Cold dynamic import of scripts/stress-player under full parallel OneDrive
+  // suites can exceed the default 5s before the body runs (T10LOOPM flake).
+  const STRESS_IMPORT_MS = 15_000;
+
   it('pass: stub speakers ⊆ peopleHere', async () => {
     const { buildStressStubProse } = await import('../../../scripts/stress-player/stubWriter');
     const { peopleHere } = await import('../chipLegality');
@@ -378,7 +382,7 @@ describe('q76b-STRESS stub writer voices only present', () => {
       expect(ok).toBe(true);
     }
     expect(stub.prose.length).toBeGreaterThan(8);
-  });
+  }, STRESS_IMPORT_MS);
 
   it('pass: empty present → no speakers', async () => {
     const { buildStressStubProse } = await import('../../../scripts/stress-player/stubWriter');
@@ -394,7 +398,7 @@ describe('q76b-STRESS stub writer voices only present', () => {
     });
     const stub = buildStressStubProse(before, 'Wait');
     expect(stub.speakers).toEqual([]);
-  });
+  }, STRESS_IMPORT_MS);
 });
 
 describe('q76e-SCENARIOS engine injection + answered + naughty stub', () => {

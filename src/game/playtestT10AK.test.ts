@@ -173,7 +173,8 @@ describe('T10AK SRD — brandish is not auto-combat (honest prose only)', () => 
   it('pistol aim + tell-to-work stays a social/demand beat; demand-act prose is followed', () => {
     // SRD 5.2.1 Communicating / Ability Checks: the DM calls for a check when the outcome is
     // uncertain — brandishing is Intimidation/social unless the engine opens an encounter.
-    // Evidence T7: Social track +8 (talk), no activeEncounter. Prose aims the pistol; no fight start.
+    // Evidence T7: brandish stayed social (no activeEncounter). Prose aims the pistol; no fight start.
+    // T10SOC: LitRPG no longer mints flat Social track on talk; intimidation is use-based when present.
     const demand =
       "I draw my pistol. I aim it at the lockpick's head and tell them to start working right now.";
     const state = lockpickDoor({ turn: 7, activeEncounter: null });

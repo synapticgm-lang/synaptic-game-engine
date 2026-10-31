@@ -41,6 +41,12 @@ import {
   detectSocialMilestone,
 } from './socialMilestoneLedger';
 import { awardSocialXp, calculateSocialXp } from './socialProgression';
+import {
+  classifySocialSkillAttempt,
+  resolveSocialSkillAttempt,
+  usesLegacySocialTrack,
+  usesSkillSocialTrack,
+} from './socialSkillAttempt';
 import { telegraphForPendingSpawn } from './encounterTelegraph';
 import { pushBeatStateTx, pushCombatStateTx, type BeatStateTxExtras } from './stateTx';
 import {
@@ -740,6 +746,9 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       lines.push(r);
     } else if (r.startsWith('Social track:')) {
       lines.push(r);
+    } else if (/^(?:Deception|Persuasion|Barter|Intimidation): rolled /.test(r)) {
+      // T10SOC use-based skill receipt (roll + skill XP).
+      lines.push(r);
     } else if (r.startsWith('Social:')) {
       const m = r.match(/Social: \+(\d+) XP \((.+)\)/);
       if (m) lines.push(`XP Gained: ${m[1]} (${m[2]})`);
@@ -926,33 +935,43 @@ export function runArcDirectorBeforeGm(
     );
   }
 
-  const social = downtimeSettled ? null : detectSocialMilestone(playerInput, working);
+  // T10SOC — LitRPG/RPG: use-based social skills (real attempts only). Tabletop + PYOA keep
+  // the legacy flat social track so receipts stay identical to today for those modes.
   const scoutish =
     isLookAroundAction(playerInput)
     || /\b(scout|get bearings|explore (?:the )?(?:cell|room|ruin))\b/i.test(playerInput);
-  if (
-    social
-    && !scoutish
-    && !talkContradictsLockedWhy(playerInput, resolveHookLock(working))
-  ) {
-    working = applySocialMilestone(working, social);
-    systemReceipts.push(`Social: ${social.kind}`);
-    // Social track only — character XP stays milestone-only via sandboxXp.
-    const socialXp = calculateSocialXp({
-      eventId: `${social.key}#${working.turn}`,
-      actorId: 'player',
-      source: social.kind === 'negotiate' ? 'favor_granted' : 'new_information',
-      sourceObjectId: social.key,
-      noveltyKey: social.key,
-      turn: working.turn,
-      stakesTier: 1,
-      difficultyTier: 1,
-      alreadyAwardedNoveltyKeys: new Set(working.arcDirector?.socialProgression?.awardedNoveltyKeys ?? []),
-    });
-    if (socialXp.finalXp > 0) {
-      working = awardSocialXp(working, socialXp);
-      // The social track is not an SRD number: tabletop STATUS never shows it.
-      if (working.engineMode !== 'dnd') systemReceipts.push(`Social track: +${socialXp.finalXp} (${social.kind})`);
+  const socialLockedWhy = talkContradictsLockedWhy(playerInput, resolveHookLock(working));
+  if (!downtimeSettled && !scoutish && !socialLockedWhy && usesSkillSocialTrack(working)) {
+    const attempt = classifySocialSkillAttempt(working, playerInput);
+    if (attempt) {
+      const resolved = resolveSocialSkillAttempt(working, attempt, skillOpts);
+      working = resolved.state;
+      systemReceipts.push(resolved.receipt);
+      // Writer narrates the committed consequence; never invents a different outcome.
+      mandates.push(`ENGINE RESULT (required fact — state it plainly): ${resolved.fact}`);
+    }
+  } else if (!downtimeSettled && usesLegacySocialTrack(working)) {
+    const social = detectSocialMilestone(playerInput, working);
+    if (social && !scoutish && !socialLockedWhy) {
+      working = applySocialMilestone(working, social);
+      systemReceipts.push(`Social: ${social.kind}`);
+      // Social track only — character XP stays milestone-only via sandboxXp.
+      const socialXp = calculateSocialXp({
+        eventId: `${social.key}#${working.turn}`,
+        actorId: 'player',
+        source: social.kind === 'negotiate' ? 'favor_granted' : 'new_information',
+        sourceObjectId: social.key,
+        noveltyKey: social.key,
+        turn: working.turn,
+        stakesTier: 1,
+        difficultyTier: 1,
+        alreadyAwardedNoveltyKeys: new Set(working.arcDirector?.socialProgression?.awardedNoveltyKeys ?? []),
+      });
+      if (socialXp.finalXp > 0) {
+        working = awardSocialXp(working, socialXp);
+        // The social track is not an SRD number: tabletop STATUS never shows it.
+        if (working.engineMode !== 'dnd') systemReceipts.push(`Social track: +${socialXp.finalXp} (${social.kind})`);
+      }
     }
   }
 
