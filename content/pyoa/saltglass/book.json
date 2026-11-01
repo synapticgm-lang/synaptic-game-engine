@@ -1564,7 +1564,7 @@
     }
    ],
    "title": "The Grey Rim Road",
-   "page": "Solitary footsteps crunch across the alkaline dust as the iron gate of Candlemere shrinks into the shimmering distance. Your ember-lamp swings from your wrist, its banked coals casting a faint, rhythmic glow against the grey expanse of the Rim Road. Behind you, the glass-diver's laughter fades beneath the dry whistling of the wind through abandoned water-scaffolds. The vast, salt-crusted bed of the dead sea stretches eastward like an unwritten page, promising little save for mirage and distance.\n\nAhead, the track divides where a milestone of fused green glass leans drunkenly into the alkali."
+   "page": "Solitary footsteps crunch across the alkaline dust as the iron gate of Candlemere shrinks into the shimmering distance. Your ember-lamp swings from your wrist. Banked coals cast a faint glow against the grey expanse of the Rim Road while behind you the glass-diver's laughter fades under the dry whistle of wind through abandoned water-scaffolds. Eastward the salt-crusted bed of the dead sea stretches on and on. Ahead, the track divides where a milestone of fused green glass leans into the alkali."
   },
   {
    "id": "sg-1-1-1-0",
@@ -1688,7 +1688,7 @@
     }
    ],
    "title": "Dodging the Kelp Mule",
-   "page": "You dodge hard to the left as a nervous pack-mule laden with dried kelp lurches past, leaving Calder behind in the press of townfolk as the limestone walls of Candlemere shrink into the desert glare. The animal's iron bells jangle with a frantic, hollow rhythm that echoes off the low hills. You find yourself alone on the gravel path, the wind carrying the sharp scent of iodine and dry scrub.\n\nPressing onward into the open stretch of the Rim Road, solitude closes in on every side. Every footstep carries you further from the familiar tallow-smoke and stone hearths of home, drawing you deeper into the domain of the Salt Court."
+   "page": "You dodge hard left as a nervous pack-mule laden with dried kelp lurches past. Calder stays behind. The limestone walls of Candlemere shrink into the desert glare while the animal's iron bells jangle with a frantic hollow rhythm that carries off the low hills. Alone on the gravel path, you catch the sharp scent of iodine and dry scrub on the wind. The Rim Road opens ahead. Every footstep takes you further from the tallow-smoke and stone hearths of home and deeper into the domain of the Salt Court."
   },
   {
    "id": "sg-1-1-1-4",
@@ -3034,7 +3034,7 @@
     }
    ],
    "title": "The Lime Shed Watch",
-   "page": "Under the orange glare of your raised chimney-wick, three toll-touts from the Salt Court step out from a lime-shed to measure your stride. Their oiled leather coats gleam faintly in the amber wash, smelling sharply of vinegar and cheap brass buttons. One of them taps a heavy ledger against an open palm, eyeing the bulge of your belt-lantern with greedy calculation. The dusty ground beneath your boots feels brittle and treacherous, ready to give way if you make a sudden break for the open flats.\n\nAhead of you, the lane splits around a crumbling pile of masonry, offering three narrow avenues of escape."
+   "page": "Under the orange glare of your raised chimney-wick, three toll-touts from the Salt Court step out from a lime-shed to measure your stride. Their oiled leather coats gleam in the amber wash and smell of vinegar and cheap brass buttons. One taps a ledger against an open palm and eyes the bulge of your belt-lantern with open greed. Dust feels brittle. Ahead the lane splits around a crumbling pile of masonry that once framed a wider gate into the flats."
   },
   {
    "id": "sg-1-2-1-3",
@@ -5371,7 +5371,7 @@
     }
    ],
    "title": "The Long-Eared Watcher",
-   "page": "An inquisitive desert fox with huge ears sits perched at the mouth of a glass-lined culvert, its dark eyes fixed upon you with wary intelligence. The heat haze ripples off the fused earthenware pipes behind it, turning the landscape into a wavering canvas of white and pale gold. As you take a cautious step forward to check your bearings, the creature darts away into the blinding glare in a flash of tawny fur, leaving only a delicate trail of tiny paw prints stamped into the salt crust."
+   "page": "An inquisitive desert fox with huge ears sits perched at the mouth of a glass-lined culvert, its dark eyes fixed on you. Heat haze ripples off the fused earthenware pipes behind it and turns the land into a wavering field of white and pale gold. You take a cautious step forward to check your bearings. The fox bolts. Only a trail of tiny paw prints remains stamped into the salt crust where the tawny flash vanished into the glare."
   },
   {
    "id": "sg-2-0-3-8",
@@ -5578,7 +5578,7 @@
     }
    ],
    "title": "The Pilgrim Track",
-   "page": "Countless pilgrim footprints converge here into a single deep track worn smooth across the wide expanse of white salt plaster. The path leads straight toward the shaded canvas pavilions of the Dune Sisters, where well-keepers manage the distribution of life-sustaining water under strict oaths. The air grows still and heavy as you follow the depression in the crust, leaving the open flats behind you."
+   "page": "Countless pilgrim footprints converge here into a single deep track worn smooth across the white salt plaster. The path leads straight toward the shaded canvas pavilions of the Dune Sisters, where well-keepers manage the distribution of water under strict oaths. The air grows still as you follow the depression in the crust. The open flats fall away behind you."
   },
   {
    "id": "sg-2-0-4-3",
@@ -7177,7 +7177,7 @@
     }
    ],
    "title": "The Heavy Oak Door",
-   "page": "On creaking iron hinges the oak door of the toll-hut swings wide to show a tax-collector in an oiled leather coat that smells of brine and dried ink. He steps directly into your path, blocking the narrow track across the shimmering white flats with an immovable posture and a hand held out for tribute. Behind him, the interior of the hut glows with the yellow light of tallow candles, casting long shadows across open ledgers and heavy iron lockboxes that hold the fortunes of the Basin's debtors."
+   "page": "On creaking iron hinges the oak door of the toll-hut swings wide and shows a tax-collector in an oiled leather coat that smells of brine and dried ink. He blocks the track. One hand is held out for tribute across the shimmering white flats while behind him the hut glows with yellow tallow light. Open ledgers and iron lockboxes crowd the table that holds the fortunes of the Basin's debtors."
   },
   {
    "id": "sg-2-2-0-0",
@@ -8863,7 +8863,7 @@
     }
    ],
    "title": "The Crystal Echoes",
-   "page": "Salty wind whistles through the hollow window frames of translucent crystal, chilling your fingers around the cold ceramic Seedkey in your pocket. The ruins around you hum a faint, eerie note whenever a stray gust catches the razor-thin edges of the glass spires. Dust motes dance in the slanting beams of harsh midday light, turning the stagnant air into a shimmering haze of gold and grey."
+   "page": "Salty wind whistles through the hollow window frames of translucent crystal and chills your fingers around the cold ceramic Seedkey in your pocket. Gusts catch the glass. When the razor-thin edges of the spires take the wind, the ruins answer with a thin eerie note, and dust motes hang in the slanting midday beams. Gold and grey light pools on the floor at your feet."
   },
   {
    "id": "sg-3-0-1-0",
@@ -10351,7 +10351,7 @@
     }
    ],
    "title": "Smoked Glass Window",
-   "page": "A toll-lord's scout peers down through a high window of smoked glass, his sharp eyes sweeping across the empty plaza below. You drop instantly behind the shelter of a crumbling arch, holding your breath as the heavy thud of distant boots echoes off the stone. The danger of discovery hangs heavily in the dry air, making every second feel stretched to its breaking point."
+   "page": "A toll-lord's scout peers down through a high window of smoked glass, his sharp eyes sweeping the empty plaza below while you freeze in the open. You drop fast. Behind a crumbling arch you hold your breath as distant boots thud on stone and pass along the far rim until the plaza goes quiet again."
   },
   {
    "id": "sg-3-1-1-5",
@@ -10494,7 +10494,7 @@
     }
    ],
    "title": "The Lenswrights' Dispute",
-   "page": "Shouts echo off the curved walls as a team of Glasswright apprentices argue noisily over the refractive index of a massive, multi-ton lens-block suspended overhead by heavy chains. Their heated gestures punctuate a fierce debate about how the upcoming monsoon might warp the glass. The massive lens sways slightly in the rising thermal draft, casting dizzying prisms of violet light across your boots.\n\nYou must skirt around the arguing apprentices to find a safer route."
+   "page": "Shouts bounce off the curved walls as a team of Glasswright apprentices argue over the refractive index of a multi-ton lens-block hung overhead on chains. \"The monsoon will warp the glass,\" one snaps, and the others answer with heated gestures. The lens sways in the rising thermal draft and throws violet prisms across your boots. You skirt them."
   },
   {
    "id": "sg-3-1-2-4",
@@ -11989,7 +11989,7 @@
     }
    ],
    "title": "The Shutter Cart",
-   "page": "A discarded miner cart sits beneath a shattered solar arch, its iron wheels rusted fast to the rails. Using its wooden bed as a makeshift bridge lets you span a treacherous trench of broken crystal that cuts across the thoroughfare. The jagged shards below glitter with a sharp, unkind light.\n\nAcross the gap, the route divides toward an indoor workshop heavy with metallic fumes or a steep slope covered in loose salt and tiny glass beads."
+   "page": "A discarded miner cart sits beneath a shattered solar arch, its iron wheels rusted fast to the rails. You use its wooden bed as a bridge and span the trench of broken crystal that cuts the thoroughfare. Shards glitter below. Across the gap an indoor workshop breathes metallic fumes, and beside it a steep slope runs with loose salt and tiny glass beads."
   },
   {
    "id": "sg-3-2-2-5",
@@ -13734,7 +13734,7 @@
     }
    ],
    "title": "The Sunken Observatory Pointer",
-   "page": "A rusted iron signpost leans at a sharp angle toward the sunken observatory of Prism. Decades of abrasive wind-scour have bitten its lettering away. Fine grains of white crystal whisper across the metal post and scratch a thin, eerie note in the dead air. You hitch the strap of your lantern and check the seal on your water flask. Each league brings you closer to the heart of the dried sea, and the bitten lettering still points the way."
+   "page": "A rusted iron signpost leans at a sharp angle toward the sunken observatory of Prism. Lettering is gone. Decades of abrasive wind-scour have bitten the words away, and fine grains of white crystal slide across the metal post and scratch a thin note in the dead air. You hitch the strap of your lantern. You check the seal on your water flask as each league brings you closer to the heart of the dried sea, and the bitten lettering still points the way."
   },
   {
    "id": "sg-4-0-2-9",
@@ -14728,7 +14728,7 @@
     }
    ],
    "title": "The Singing Telegraph",
-   "page": "Wind scours the alkali crust until the earth itself seems to hum with a tooth-aching frequency. A tall iron telegraph pole, wrapped in singing copper wires, vibrates furiously against the gray blindness of the mirror storm. Your fingers tighten around the iron handle of your banked coal-lantern, shielding the faint orange glow from the biting grit. Every breath rasps dry against your throat as the metallic shriek builds in volume, threatening to unseat your balance on the blistered flats."
+   "page": "Wind scours the alkali crust until the earth sets your teeth on edge. A tall iron telegraph pole wrapped in copper wires shakes hard against the gray blindness of the mirror storm. Your fingers tighten on the iron handle of your banked coal-lantern and you cup the faint orange glow from the grit. Breath rasps dry. The metallic shriek climbs until the blistered flats feel loose under your boots."
   },
   {
    "id": "sg-4-1-1-5",
@@ -14952,7 +14952,7 @@
     }
    ],
    "title": "The Desert Fox",
-   "page": "Yellow salt-crust forms a low, protective shelf overhead, sheltering you from the worst of the flying glass-dust. A small desert-fox crouches in the dust beneath the overhang, wide amber eyes catching the warm glow of your lamp with startling intelligence. It does not bolt, but watches you with quiet resilience, reminding you that life endures even in this grinding, unforgiving wasteland. The storm continues to roar across the open basin beyond your shallow refuge.\n\nThe silent creature watches you weigh your next direction."
+   "page": "Yellow salt-crust forms a low shelf overhead and cuts off the worst of the flying glass-dust that scours the basin beyond. A small desert-fox crouches in the dust beneath the overhang. Its amber eyes catch the warm glow of your lamp. It does not bolt. Beyond the shallow refuge the storm still roars across the open basin and drives grit against the crust shelf in hard bursts. The fox watches you without a sound."
   },
   {
    "id": "sg-4-1-2-7",
@@ -15331,7 +15331,7 @@
     }
    ],
    "title": "The Worn Boot-Sole",
-   "page": "Beside a mountain of crushed quartz gravel, your right boot-sole peels away from the leather uppers, threatening to leave your heel bare to the abrasive ground. The biting wind whips razor-sharp dust around your ankles, turning every movement into a painful struggle against the shifting terrain and the biting cold."
+   "page": "Beside a mountain of crushed quartz gravel, your right boot-sole peels away from the leather uppers. Heel nearly bare. The wind whips razor-sharp dust around your ankles until every step is a struggle on the shifting terrain in the cold."
   },
   {
    "id": "sg-4-1-3-6",
@@ -15499,7 +15499,7 @@
     }
    ],
    "title": "The Sunken Ring",
-   "page": "Within a sunken cistern choked with gray salt-drift, your foot strikes a buried metal ring that tolls like a muffled bell against the rushing wind. The strange, resonant clang hangs in the heavy air for a long moment, cutting through the roar of the storm and hinting at forgotten machinery hidden beneath the crust.\n\nThe storm continues to press hard against your back, leaving two distinct directions for your escape."
+   "page": "Within a sunken cistern choked with gray salt-drift, your foot strikes a buried metal ring that tolls like a muffled bell against the rushing wind. The clang hangs a long moment and cuts through the roar of the storm. Old machinery lies below. The storm presses hard against your back as grit slides down the cistern wall."
   },
   {
    "id": "sg-4-1-3-12",
@@ -20475,7 +20475,7 @@
     }
    ],
    "title": "The Tick-Tock Gallery",
-   "page": "Solar clocks tick away the waning hours before the monsoon with a relentless, metallic rhythm that fills the high-ceilinged hall, echoing off walls covered in faded astronomical charts. A nervous sentry fumbles with a heavy magnifying plate near the window, dropping the thick glass with a sharp crack that showers the flagstones right beside your boots with lethal, glittering shards. The sudden noise reverberates down the stone passage, drawing immediate shouts from the guard-post around the corner and forcing you to act before the corridor floods with armed pursuers. You can leap over the sparkling debris toward the northern exit, duck into an empty alcove behind a brass astrolabe, or flatten yourself against the vibrating wall."
+   "page": "Solar clocks tick the waning hours before the monsoon with a metallic rhythm that fills the high-ceilinged hall, and faded astronomical charts cover the walls from floor to cornice. A nervous sentry fumbles a magnifying plate near the window. He drops it. The crack showers glittering shards across the flagstones right beside your boots, and a shout rises at once from the guard-post around the corner as if the whole passage had been waiting for that sound. Armed pursuers will flood the corridor in moments. Shards still glitter at your feet."
   },
   {
    "id": "sg-5-2-1-3",
@@ -20553,7 +20553,7 @@
     }
    ],
    "title": "The Heron Fountain",
-   "page": "Beneath the shadow of a bronze heron with a throat choked in alkaline crust, a wounded Glasswright courier slumps against the dry basin. His crimson sash is stiff with old salt, and as you drop to your knees beside him, his fingers twitch toward the bronze hilt at his hip. He catches your sleeve with a grip surprisingly fierce, his breath smelling of bitter alum and scorched tin. Watch the upper arcades, he rasps, his voice rattling like dry gravel before his head drops sideways into the dust. The Salt Court bailiffs have traded their brass badges for grey cloaks, and they are sweeping every terrace between here and the lower seal. You touch the cold ceramic weight of the Seedkey in your tunic, weighing the open marble plazas against the shadowed alleys of the inner ring.\n\nA sudden clatter of metal echoes from the colonnade behind you, forcing an immediate decision on your route through the city."
+   "page": "Beneath a bronze heron whose throat is choked in alkaline crust, a wounded Glasswright courier slumps against the dry basin. His crimson sash is stiff with old salt. You kneel beside him. His fingers twitch toward the bronze hilt at his hip, then he catches your sleeve with a fierce grip, breath smelling of bitter alum and scorched tin. \"Watch the upper arcades,\" he rasps. His head drops sideways into the dust. The Salt Court bailiffs have traded their brass badges for grey cloaks and they sweep every terrace between here and the lower seal, so you touch the cold ceramic Seedkey in your tunic and listen hard. A clatter of metal spills from the colonnade behind you."
   },
   {
    "id": "sg-5-2-1-5",
@@ -21952,7 +21952,7 @@
     }
    ],
    "title": "The Rusted Grating",
-   "page": "A rusted grating blocks the secondary tunnel, rattling under the pressure of subterranean draughts that carry the sharp scent of damp earth. Orange flakes of oxidized iron drift down onto the stone floor as the heavy metal mesh groans against its stone frame with every pulse of the rising underground air. Your lantern illuminates the dark cavity beyond the barrier, where narrow service tunnels vanish into the limestone ribs of the vault.\n\nThe bolt holding the frame in place is crusted with thick salt crystals that glitter like dull diamonds in the dim light. With a careful twist of your fingers, you test the give of the rusted iron, listening to the hollow ping of water droplets falling into unseen cisterns far below."
+   "page": "A rusted grating blocks the secondary tunnel and rattles under subterranean draughts that carry the sharp scent of damp earth. Orange flakes of oxidized iron drift onto the stone floor as the metal mesh groans against its stone frame with every pulse of underground air. Your lantern lights the dark cavity beyond, where narrow service tunnels vanish into the limestone ribs of the vault. Salt crusts the iron bolt. You twist your fingers against the rusted iron and listen while far below water droplets fall into unseen cisterns with a hollow ping."
   },
   {
    "id": "sg-6-0-0-3",
@@ -22014,7 +22014,7 @@
     }
    ],
    "title": "The Abandoned Cart",
-   "page": "Beside a pillar of fused glass, an abandoned cart of rotting wicker baskets holds only dust and the grey husks of forgotten gourds. The wooden spoking of the wheels has dried and warped away from the iron rims, leaving the vehicle canted at a sad, tired angle against the translucent green column. Fine layers of grey silt coat the bottom of the baskets, undisturbed since the last granary wardens locked these doors and walked out into the blinding glare of the dying sea.\n\nYour lantern flame flickers as a sudden eddy of cool air swirls around the glass pillar, carrying the faint, dry scent of ancient chaff. You step around the splintered axle, keeping your eyes fixed on the branching corridors that cut deeper into the labyrinth of bins and storage vaults."
+   "page": "Beside a pillar of fused glass, an abandoned cart of rotting wicker baskets holds only dust and the grey husks of forgotten gourds. The wooden spokes have dried and warped away from the iron rims, so the cart sits canted against the translucent green column. Fine grey silt coats the bottoms of the baskets, untouched since the last granary wardens locked these doors and walked out into the glare of the dying sea. Your lantern flame flickers. A cool eddy slides around the glass pillar with the dry scent of old chaff. You step around the splintered axle and keep your eyes on the branching corridors that cut deeper into the bins and storage vaults."
   },
   {
    "id": "sg-6-0-1-1",
