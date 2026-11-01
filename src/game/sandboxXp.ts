@@ -98,6 +98,18 @@ export function isBearingsStyleObjective(description: string): boolean {
 }
 
 /**
+ * XP-D1 A2 — only an explicit Ping / System-bearings action pays a bearings objective.
+ * Look-around / explore-the-cell / typed hello stay unpaid (26o / 28a).
+ */
+export function isBearingsPayAction(action: string): boolean {
+  const a = normalizeActionText(action);
+  if (!a) return false;
+  if (/\bping\b/.test(a) && /\bbearings\b/.test(a)) return true;
+  if (/\bping the system\b/.test(a)) return true;
+  return false;
+}
+
+/**
  * True look-around / same-place re-scout.
  * Specific examine/inspect/listen of a named target is NOT look-around.
  */
@@ -391,9 +403,10 @@ export function applySandboxXpAwards(
     let pushedStepRound = mode === 'dnd' || mode === 'pyoa';
     for (const obj of after.objectives ?? []) {
       if (!obj.completed || beforeDone.has(obj.id)) continue;
-      // Look-around must not pay a non-bearings tick that happened to flip on a scout line.
-      // XP-D1 A2: bearings / orient objectives pay 1 unit once as a normal quest step.
-      if (lookAround && !isBearingsStyleObjective(obj.description)) continue;
+      // Look-around / explore never pay a quest tick (26o). Bearings / orient pay only on
+      // an explicit Ping action (XP-D1 A2) — not on look-around, explore-the-cell, or hello.
+      if (lookAround) continue;
+      if (isBearingsStyleObjective(obj.description) && !isBearingsPayAction(opts.playerAction)) continue;
       const label = stepChip(obj) ?? obj.description.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
       pay(`quest-tick:${after.id}:${obj.id}`, 'questStep', `quest step: ${label}`, undefined, undefined, undefined, {
         contentLevel: qLevel,

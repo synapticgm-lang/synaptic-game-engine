@@ -207,6 +207,8 @@ export function unitMilestoneAmount(
     contentLevel?: number | null;
     foeLevel?: number | null;
     areaLevel?: number | null;
+    /** Settlement flat completes (29r/29s) keep the full unit award; main quest path stays capped. */
+    skipEventCap?: boolean;
   } = {}
 ): number {
   const playerLevel = Math.max(1, Math.floor(opts.playerLevel ?? 1));
@@ -230,7 +232,7 @@ export function unitMilestoneAmount(
   if (isFight) {
     amount = Math.max(1, Math.round(amount * toughFoeScale(playerLevel, clamped)));
   }
-  return capXpEventAmount(mode, playerLevel, amount);
+  return opts.skipEventCap ? amount : capXpEventAmount(mode, playerLevel, amount);
 }
 
 export function repeatShare(completionIndex: number): number {

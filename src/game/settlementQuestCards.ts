@@ -242,6 +242,8 @@ export function finishSettlementQuestCard(state: GameState, cardId: string): Set
     // Grey uses unclamped area (rawLevel); AI cannot raise rewards.xp here anyway.
     areaLevel: area.rawLevel,
     contentLevel: area.rawLevel,
+    // 29r/29s flat settlement complete — not the main-quest event bar cap (XP-D1 A2).
+    skipEventCap: true,
   });
   const item = settlementCardItem(state, cardId);
   return {

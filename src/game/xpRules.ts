@@ -269,6 +269,8 @@ export interface MilestoneXpOpts {
   contentLevel?: number;
   /** Optional repeat-ladder share (1 / 0.5 / 0.25 / 0.1). */
   repeatShare?: number;
+  /** Settlement flat completes skip the per-event bar cap (29r/29s). */
+  skipEventCap?: boolean;
 }
 
 /** Legacy constants — litrpg/rpg no longer apply these; kept so old imports compile. */
@@ -347,6 +349,7 @@ function milestoneXpBase(
       foeLevel: opts.foeLevel,
       contentLevel: opts.contentLevel,
       areaLevel: opts.areaLevel,
+      skipEventCap: opts.skipEventCap,
     });
     return { amount, detail: '' };
   }
