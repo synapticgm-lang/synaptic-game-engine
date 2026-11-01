@@ -518,7 +518,7 @@
    "kind": "scene",
    "title": "The Smuggler's Stash",
    "brief": "You pry open a sealed smuggler's barrel wedged beneath a rotting hull, risking a collapse to acquire a stash of rare cured meats.",
-   "page": "Wedged deep beneath the splintered ribs of a stranded cog, a smuggler's barrel sits half-buried in the silt. The ship's hull groans in the wind, a rotting cage threatening to collapse at the slightest disturbance. You slide your crowbar under the rusted iron hoop of the barrel, testing the weight above. A shower of barnacles and dry rot rains down on your shoulders as you apply pressure.\n\nWith a wet crack, the timber lid gives way. Inside, wrapped in oilcloth, lies a small fortune in the current days of famine: a stash of rare, salt-cured meats from the southern archipelagos, untouched by the sea's sudden retreat. You quickly gather the heavy bundles, keeping one eye on the buckling beams groaning in the breeze, eager to escape before the ship becomes your tomb.",
+   "page": "Wedged deep beneath the splintered ribs of a stranded cog, a smuggler's barrel sits half-buried in the silt. The ship's hull groans in the wind, a rotting cage threatening to collapse at the slightest disturbance. You slide your crowbar under the rusted iron hoop of the barrel, testing the weight above. A shower of barnacles and dry rot rains down on your shoulders as you apply pressure.\n\nWith a wet crack, the timber lid gives way. Inside, wrapped in oilcloth, lies a small fortune in the current days of famine: a stash of rare, salt-cured meats from the southern archipelagos, untouched by the sea's sudden retreat. Bundles come up fast into your arms while you watch the buckling beams groan in the breeze, and you get clear before the ship becomes your tomb.",
    "exits": [
     {
      "label": "Slip away from the groaning wreckage",
@@ -1538,7 +1538,7 @@
    "kind": "recovery",
    "title": "A Slip in the Salt",
    "brief": "You intervene in a knife-point argument between two net-menders, keeping calm to defuse the tension and earning the loyalty of a tough local guide.",
-   "page": "Steel catches the dreary grey light, and a sudden, jagged jerk from the older mender bypasses your defences entirely, slicing a deep, burning furrow across your forearm before you can pin his wrist. Blood wells instantly, hot and bright against the brine-caked wool of your sleeve, while the crowd gasps and surges backward in alarm. You stagger against a stack of rotting hemp nets, clutching the stinging wound as the combatants break apart, thoroughly shamed by your sudden spilling of blood. The cost is heavy in both torn flesh and lost time, leaving you throbbing and breathless as you bind the tear with a dirty rag.",
+   "page": "Steel catches the dreary grey light, and a sudden, jagged jerk from the older mender bypasses your defences entirely, slicing a deep, burning furrow across your forearm before you can pin his wrist. Blood wells instantly, hot and bright against the brine-caked wool of your sleeve, while the crowd gasps and surges backward in alarm. You stagger against a stack of rotting hemp nets and clutch the cut as the combatants break apart, thoroughly shamed by your sudden spilling of blood. The cost is heavy in both torn flesh and lost time, leaving you throbbing and breathless as you bind the tear with a dirty rag.",
    "exits": [
     {
      "label": "Bind your bleeding arm and push onward",
@@ -15629,7 +15629,7 @@
    "kind": "recovery",
    "title": "Bruised and Bone-Sore",
    "brief": "You heave a submerged fallen pillar aside to free a trapped airlock door, relying on raw power to secure a heavy brass dive weight.",
-   "page": "The heavy pillar slips from your sweat-slicked grip, crashing back down onto your boot with a jarring thud that sends a white-hot flash of pain up your shin. You stumble backward into the cold brine, gasping for breath as your bruised muscles throb in protest. Though you manage to wrench the obstacle clear on a second desperate lunge, the struggle leaves you limping heavily and nursing a deep, angry purple bruise along your lower leg.",
+   "page": "The pillar slips from your sweat-slicked grip, crashes back onto your boot with a jarring thud, and a white-hot flash of pain runs up your shin. You stumble backward into the cold brine, gasping for breath as your bruised muscles throb in protest. Though you manage to wrench the obstacle clear on a second desperate lunge, the struggle leaves you limping heavily and nursing a deep, angry purple bruise along your lower leg.",
    "exits": [
     {
      "label": "Push past the pain downward",
