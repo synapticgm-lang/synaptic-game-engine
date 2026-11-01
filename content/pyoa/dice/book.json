@@ -471,7 +471,7 @@
    "kind": "recovery",
    "title": "A Costly Exchange",
    "brief": "You negotiate with a desperate net-mender for sturdy ropes, risking a harsh argument to secure climbing gear that will help you descend the Sunken Stair.",
-   "page": "Scowling fiercely, the net-mender rejects your logic with a harsh, barking laugh that echoes down the alley. She accuses you of trying to cheat a starving widow, her voice rising in a shrill crescendo. Several passing wreckers stop to watch the commotion, their hands resting on rusty boat hooks. Forced to back down to avoid a brawl, you hastily press a few of your own meagre rations into her hand just to quiet her down. It is a terrible trade, costing you vital supplies, but she snatches the dried meat greedily and finally kicks the coil of tarred rope toward your boots.",
+   "page": "The net-mender scowls and rejects your logic with a harsh barking laugh that carries down the alley. \"You try to cheat a starving widow,\" she says, her voice climbing shrill. Several passing wreckers stop to watch, hands on rusty boat hooks. You back down to avoid a brawl. A few of your own meagre rations go into her hand just to quiet her. It is a terrible trade, costing you vital supplies, but she snatches the dried meat greedily and kicks the coil of tarred rope toward your boots.",
    "exits": [
     {
      "label": "Take the rope and leave",
@@ -1054,7 +1054,7 @@
    "kind": "reward",
    "title": "Rigging the Dry Pier",
    "brief": "You patch a splintered skiff that hangs uselessly from the dry pier, using clever rigging to lower it and scavenging a bundle of salt-cured rations.",
-   "page": "Splintered pine groans under your weight as you brace against the hull of the hanging skiff, sweating despite the bitter salt chill off the empty seabed. You lash a spare winch-cable through a rusted block and tackle and swing the craft clear of the rotting timber supports without snapping the brittle stays. A canvas grease-sack tucked beneath the floorboards yields three thick slabs of salt-cured cod and a half-skin of foul-tasting vinegar water.\n\nHauling the prize onto the gravel embankment, you catch the eye of a passing net-mender who nods slowly at your handiwork, leaving behind a small bone needle tucked into a crack in the quay as an unspoken token of professional respect.",
+   "page": "Splintered pine groans under your weight as you brace against the hull of the hanging skiff, sweating despite the bitter salt chill off the empty seabed. You lash a spare winch-cable through a rusted block and tackle and swing the craft clear of the rotting timber supports without snapping the brittle stays. A canvas grease-sack tucked beneath the floorboards yields three thick slabs of salt-cured cod and a half-skin of foul-tasting vinegar water.\n\nYou haul the prize onto the gravel embankment. A passing net-mender catches your eye and nods at your handiwork. He moves on. A small bone needle rests in a crack in the quay.",
    "exits": [
     {
      "label": "Drag the skiff down toward the muddy harbour",
@@ -1339,7 +1339,7 @@
    "kind": "reward",
    "title": "Spoils of the Office",
    "brief": "You pick the rusted lock on the harbourmaster's abandoned office, relying on careful hands to disarm a simple trap and claiming a stash of coin.",
-   "page": "Working with patient care, you bypass the concealed tripwire and trip the internal levers with a satisfying double click. On rusted hinges the iron lid pops upward, releasing a puff of stale air and revealing a neat leather pouch of silver coins. You slip the purse into your coat, feeling its reassuring weight against your ribs as you survey the quiet, abandoned room. The risk was high, but the reward ensures you can buy whatever provisions or gear you need before venturing out onto the dried seabed. Prize secured, you check the door once more and slip back out into the salty breeze.",
+   "page": "Patient hands bypass the concealed tripwire and trip the internal levers with a double click. The lid pops up on rusted hinges. Stale air puffs out. Inside lies a neat leather pouch of silver coins. You slip the purse into your coat, where it rests against your ribs as you survey the quiet abandoned room, and those coins will buy provisions or gear before you step out onto the dried seabed. Prize secured, you check the door once more and slip back out into the salty breeze.",
    "exits": [
     {
      "label": "Head down to the docks",
@@ -1723,7 +1723,7 @@
    "kind": "recovery",
    "title": "A Crushing Slip",
    "brief": "You haul a crate of smuggled fresh water from the cellar, proving your worth through brute labour to receive a rare talisman of safe passage.",
-   "page": "The heavy cask shifts treacherously at the apex of the lift, its sodden weight slipping from your numb fingers and crashing back down onto your boot with a bone-jarring thud. Agony shoots up your shin, leaving you gasping for air in the cramped, freezing dark of the cellar while precious fresh water leaks through a newly cracked stave. You limp out into the dim light of the alley a few minutes later, nursing a swollen foot and a bruised ego while cursing your failing grip.",
+   "page": "The cask shifts at the apex of the lift, slips from your numb fingers, and crashes back down onto your boot with a bone-jarring thud. Pain shoots up your shin. You gasp for air in the cramped freezing dark of the cellar while precious fresh water leaks through a newly cracked stave. Minutes later you limp out into the dim light of the alley with a swollen foot and a bruised ego, cursing your failing grip.",
    "exits": [
     {
      "label": "Hobble away from the ruined cellar",
@@ -16500,7 +16500,7 @@
    "kind": "reward",
    "title": "The Hidden Glyph",
    "brief": "You decipher the final warnings etched into the control console by the ancient builders, gaining critical knowledge that grants you a significant tactical advantage.",
-   "page": "You find the worn indentation of the final symbol and press it home. The locking tumbler drops with a hollow thud that runs through the floorboards. No further catch holds. Exact tolerances on the great gear lay out the ancient builder's intent in plain metal. Into a pocket goes the small grease-stained brass tally some forgotten artificer left behind. Scratched numerals catch the lamp light on your way out.",
+   "page": "You find the worn indentation of the final symbol and press it home. The locking tumbler drops with a hollow thud that runs through the floorboards and into the soles of your boots before it fades. No further catch holds. Exact tolerances on the great gear lay out the ancient builder's intent in plain metal, and into a pocket goes the small grease-stained brass tally some forgotten artificer left behind. Scratched numerals catch the lamp light on your way out.",
    "exits": [
     {
      "label": "Return to the gear housing",
@@ -19404,7 +19404,7 @@
    "kind": "scene",
    "title": "The Tidewarden's Ledger",
    "brief": "You debate obscure ancient maritime laws with the weary Tidewarden, risking its mechanical wrath, to earn a heavy brass access key to the lower shafts.",
-   "page": "Ancient brass gears grind within the colossal automaton's chest as you recite the forgotten clauses of the Third Maritime Charter to its vacant glass eyes. Sparks snap from its rusted collar, threatening to sear your eyebrows as it processes your legal defiance with mechanical fury. Slowly, the grinding halts, and a heavy iron compartment in its chest springs open with a resonant chime. It offers up a massive brass key, encrusted with salt and big enough to crack flagstones, a nod to your mastery over its archaic statutes.",
+   "page": "\"I cite the Third Maritime Charter,\" you tell the automaton, and ancient brass gears grind within its colossal chest as you recite the forgotten clauses to its vacant glass eyes. Sparks snap from its rusted collar and nearly sear your eyebrows while it processes your legal defiance with mechanical fury. The grinding slows, then stops. An iron compartment in its chest springs open with a clear chime. It offers a massive brass key, encrusted with salt and big enough to crack flagstones.",
    "exits": [
     {
      "label": "Take the heavy brass access key",
@@ -19829,7 +19829,7 @@
    "kind": "ending-part",
    "title": "The Iron Hand",
    "brief": "Ending \"Keep the Gear\"",
-   "page": "Salt dries white in your eyebrows as your boot rests upon the central cog of the Meridian Gear, heavy and cold as an anchor-stock. Below in the spiral shaft, the Hollow Choir falls silent at last, their watery laments choking down into a dull, rhythmic grinding that shakes the very bedrock of the Sunken Stair. Orsolya Venn would have called this stubbornness; you call it ownership. The Brineholders may send their ledgers and their stilted messengers down from Saltspire, but no clerk's ink can wash away the grease upon your palms or rewrite the oaths written in rust. You hold the brake lever with both hands, locking the great iron teeth into a permanent, immovable clinch that defies the tide clock on the wall.",
+   "page": "Salt dries white in your eyebrows as your boot rests upon the central cog of the Meridian Gear, cold as an anchor-stock. Below in the spiral shaft the Hollow Choir falls silent at last. Their watery laments choke down into a dull rhythmic grinding that shakes the bedrock of the Sunken Stair. Orsolya Venn would have called this stubbornness. You call it ownership. The Brineholders may send their ledgers and their stilted messengers down from Saltspire, but no clerk's ink can wash away the grease upon your palms or rewrite the oaths written in rust. You hold the brake lever with both hands and lock the great iron teeth into a permanent immovable clinch that defies the tide clock on the wall.",
    "exits": [
     {
      "label": "Lock the heavy iron lever fast",
@@ -20125,7 +20125,7 @@
    "kind": "ending-part",
    "title": "Sovereignty of the Low",
    "brief": "Ending \"Pilgrim King\"",
-   "page": "Night comes down over the seabed like a damp wool blanket soaked in kelp juice and old copper. Lanterns flicker along the stranded whale-market where the fish-mongers and salvage-men pay tribute in pearls and silver spoons fished from the ribs of dead galleons. You sit upon a chair constructed from the helm-wheel of an East Indiaman, your boots propped on a chest of heavy Spanish dollars that nobody dares to touch without your nod. The Drift Pilgrims light their tallow dips in long lines along the dunes, singing low, mournful choruses that drift across the mud-flats like gulls calling before a gale. No tide comes to wash away the footprints you leave in the gray silt, and no sail ever rounds the headland to dispute your crown. You are the monarch of the empty wet, ruling an empire of mud and drowned gold.",
+   "page": "Night comes down over the seabed like a damp wool blanket soaked in kelp juice and old copper. Lanterns flicker along the stranded whale-market where the fish-mongers and salvage-men pay tribute in pearls and silver spoons fished from the ribs of dead galleons. You sit upon a chair built from the helm-wheel of an East Indiaman, boots propped on a chest of Spanish dollars that nobody dares to touch without your nod. The Drift Pilgrims light their tallow dips in long lines along the dunes and sing low mournful choruses that cross the mud-flats. No tide comes. No sail ever rounds the headland to dispute your crown. You are the monarch of the empty wet, ruling an empire of mud and drowned gold.",
    "exits": [
     {
      "label": "Watch the distant salt-fires burn",
@@ -20153,7 +20153,7 @@
    "kind": "ending-part",
    "title": "Weight of the Iron",
    "brief": "Ending \"Spent\"",
-   "page": "Your arms feel as if they have been forged from pig-iron and left in the rain to rust until every joint screams at the smallest shift of weight. The great brass levers of the Meridian Gear have left their grease burnt into your palms, dark and permanent as a smith's mark. Down in the dripping damp of the Sunken Stair, the Hollow Choir murmurs its endless, dripping liturgy from the wet walls, but their voices sound small and distant now, like water running down a drain. You have turned the world until it locked, and now there is nothing left for your hands to grip except the cold stone of the shaft and the memory of Orsolya's sealed note. The salt-crust thickens in your hair, stiffening every strand until your head feels bound in a helmet of gray shell.",
+   "page": "Your arms feel forged from pig-iron and left in the rain to rust until every joint screams at the smallest shift. Grease from the great brass levers of the Meridian Gear is burnt into your palms, dark and permanent as a smith's mark. Down in the damp of the Sunken Stair the Hollow Choir murmurs its liturgy from the wet walls, but those voices sound small and distant now. Water down a drain has more presence. The world is locked. Nothing remains for your hands to grip except the cold stone of the shaft and the memory of Orsolya's sealed note. Salt-crust thickens in your hair and stiffens every strand until your scalp feels cased in gray shell.",
    "exits": [
     {
      "label": "Climb back toward the upper air",
