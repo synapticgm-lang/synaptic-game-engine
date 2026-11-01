@@ -1255,7 +1255,7 @@
    "kind": "scene",
    "title": "Office of Tides",
    "brief": "You pick the rusted lock on the harbourmaster's abandoned office, relying on careful hands to disarm a simple trap and claiming a stash of coin.",
-   "page": "Until you wedge a crowbar into the swollen frame and throw your body against the iron, the oak door of the harbourmaster's abandoned office resists your tug. Inside, the air smells of moldering ledgers and stagnant vinegar, untouched since the water vanished from the sills. You kneel before the brass-bound strongbox set into the floorboards, pulling a set of fine wire picks from your belt. Your fingers work by feel alone, listening for the faint clicks of the internal levers as a tripwire of thin copper wire waits just above the keyhole. You ease the tension bar, nudge the final tumbler aside, and lift the heavy iron lid. A tidy stack of silver coins rests within the velvet-lined well.",
+   "page": "Until you wedge a crowbar into the swollen frame and throw your body against the iron, the oak door of the harbourmaster's abandoned office resists your tug. Inside, the air smells of moldering ledgers and stagnant vinegar, untouched since the water vanished from the sills. You kneel before the brass-bound strongbox set into the floorboards and pull a set of fine wire picks from your belt. Fingers work by feel alone. Faint clicks mark the internal levers, and a tripwire of thin copper waits just above the keyhole. You ease the tension bar, nudge the final tumbler aside, and lift the iron lid. Coins fill the well.",
    "exits": [
     {
      "label": "Pocket the silver and leave",
@@ -3103,7 +3103,7 @@
    "kind": "scene",
    "title": "The Coral Trap",
    "brief": "You rescue a trapped scavenger from a collapsing coral altar, lifting the heavy stone away to gain the grateful survivor as a loyal companion.",
-   "page": "Heavy purple branches of fossilised reef groan and shudder as the salt-rotted masonry gives way, pinning a luckless net-mender beneath a jagged block of coral. You brace your shoulder against the porous stone, tasting copper and brine as your muscles strain against the grinding weight until the slab shifts and rolls aside with a hollow thud. The trembling scavenger crawls free from the dust, coughing up grey silt and pressing a cold, trembling palm to your forearm in fierce, silent loyalty.\n\nWith the rescue done, you look out across the drying flats toward the salt-crusted ridge where the old tracks lead.",
+   "page": "Purple branches of fossilised reef groan and shudder as the salt-rotted masonry gives way, and a luckless net-mender lies pinned under a jagged block of coral. You brace your shoulder. Copper and brine sit on your tongue while you push against the porous stone until the slab shifts and rolls aside with a hollow thud. The scavenger crawls free from the dust, coughs up grey silt, and presses a cold palm to your forearm in fierce, silent loyalty.\n\nAcross the drying flats the salt-crusted ridge holds the old tracks.",
    "exits": [
     {
      "label": "Climb the ridge toward the dry track",
@@ -6302,7 +6302,7 @@
    "kind": "scene",
    "title": "Pulling the Iron",
    "brief": "You help the pilgrims drag their massive anchor up a steep incline, straining your back to earn their sacred blessing of protection.",
-   "page": "Hemp bites hard into raw palms as you take your place among the robed figures and throw your weight against the thick tow-rope. The rusted anchor catches on a ridge of buried ballast stone, sending a jarring vibration up your spine while the pilgrims beside you hum an unceasing, low-pitched drone. Sweat stings your eyes in the damp air as you heave together, forcing the massive iron fluke to break free from the suction of the grey silt.",
+   "page": "Hemp bites into raw palms. You take your place among the robed figures and throw yourself against the thick tow-rope while the pilgrims around you lean in as one. The rusted anchor catches on buried ballast stone, a jolt climbs your spine, and the pilgrims keep a low-pitched chant that never breaks until the iron fluke tears free of the grey silt and sweat runs into your eyes.",
    "exits": [
     {
      "label": "Keep pace with the dragging crew",
@@ -12064,7 +12064,7 @@
    "kind": "recovery",
    "title": "A Slip in the Void",
    "brief": "You step onto the swaying, unrailed platform as it violently descends, risking debilitating vertigo to secure a sturdy iron prybar.",
-   "page": "A sudden lurch of the cables betrays your balance, sending you crashing hard against the jagged iron framework of the cage. Pain shoots up your shoulder as your arm takes the brunt of the impact, leaving a deep, throbbing bruise that burns beneath your wool sleeve. The prybar clatters against the metal grating and nearly slips over the edge before you manage to pin it beneath your boot heel. Panting heavily against the gale, you clutch your aching arm and watch the gray depths crawl slowly past.",
+   "page": "The cables lurch without warning. They slam you hard against the jagged iron framework of the cage, and pain shoots up your shoulder as your arm takes the brunt of the impact until a deep bruise burns beneath your wool sleeve. The prybar clatters against the metal grating and nearly slips over the edge before you pin it beneath your boot heel. Against the gale you clutch the aching arm and watch the gray depths crawl past.",
    "exits": [
     {
      "label": "Climb back to steady footing",
@@ -13264,7 +13264,7 @@
    "kind": "reward",
    "title": "The Pale Lantern",
    "brief": "You brave a crumbling ledge to retrieve a glowing fungal lantern, steadying your trembling hands to gain a light source that never requires oil.",
-   "page": "Cold phosphor rubs off on your fingertips and leaves a faint luminous smear across your skin. The bulb hangs snug in its iron cage, thrumming with a silent, internal pulse that feeds on the damp salt-mist without a drop of whale-oil or tallow. Its steady turquoise glare pushes back the clinging shadows of the stairwell, turning the wet stone into a map of jagged crevices and hidden nails. With the pulsing light secured in your grip, you retrace your steps along the ledge and head back toward the upper landings.",
+   "page": "Cold phosphor rubs off on your fingertips. It leaves a faint luminous smear across your skin while the bulb hangs snug in its iron cage and feeds on the damp salt-mist without a drop of whale-oil or tallow. Turquoise glare from inside it pushes back the stairwell shadows and turns the wet stone into a map of jagged crevices and hidden nails. You retrace your steps along the ledge toward the upper landings with the light in your grip.",
    "exits": [
     {
      "label": "Return to the upper landings",
@@ -13480,7 +13480,7 @@
    "kind": "scene",
    "title": "Mosaic of the Tidewardens",
    "brief": "You study a mosaic of the old Tidewardens to deduce the correct pressure plate path, using your sharp mind to uncover a hidden cache of medicinal kelp.",
-   "page": "Faded enamel tiles map the old dynasty's sea-lanes across the floor, each square depicting a legendary tide-command. You trace the sequence with a soot-stained thumb, reading the subtle wear patterns where ancient pilgrims knelt. The correct path shimmers under a film of dried brine, leading directly toward a recessed alcove choked with pale, leathery fronds.\n\nReaching into the shadows past the mosaic, your fingers brush against a damp cluster of preserved kelp, still slick with medicinal sap. You stow the dark green leaves inside your canvas satchel, knowing their bitter juices can staunch a deep salt-rot wound before the chill settles into your bones.",
+   "page": "Faded enamel tiles map the old dynasty's sea-lanes across the floor, each square depicting a legendary tide-command. You trace the sequence with a soot-stained thumb and read the wear patterns where ancient pilgrims knelt. Brine films the correct path. It leads toward a recessed alcove choked with pale, leathery fronds.\n\nPast the mosaic your fingers brush a damp cluster of preserved kelp, still slick with medicinal sap. You stow the dark green leaves inside your canvas satchel; their bitter juices can staunch a deep salt-rot wound before chill settles into bone.",
    "exits": [
     {
      "label": "Step beyond the mosaic tiles",
@@ -13980,7 +13980,7 @@
    "kind": "hub",
    "title": "The Whispering Tiers",
    "brief": "The Whispering Tiers: Waterlogged priests of the Hollow Choir block the downward path, their voices intertwining in a maddening song that threatens to drown your thoughts.",
-   "page": "Gloom wraps tightly around the stone steps as the vanguard of the Hollow Choir forms a shifting wall of damp wool and bloated flesh. Their endless chant reverberates within your skull, threatening to dissolve every coherent thought into a wash of brine and sorrow. Below them, the spiral staircase plunges deeper into the roaring dark toward the great mechanism. You can force a brutal path through their ranks by sheer muscle, or attempt to outwit their hypnotic cadence with a clever distraction. The chorus waits, swaying in unison with the nonexistent tides.",
+   "page": "Gloom wraps the stone steps as the vanguard of the Hollow Choir forms a shifting wall of damp wool and bloated flesh. Their chant works inside your skull and tries to dissolve every coherent thought into brine and sorrow. Below them the spiral staircase plunges deeper into the roaring dark toward the great mechanism. The choristers sway as one. Their damp ranks pack the path down.",
    "exits": [
     {
      "label": "Force a passage through the choristers",
@@ -15329,7 +15329,7 @@
    "kind": "recovery",
    "title": "The Sinking Terror",
    "brief": "You wade through waist-deep, freezing water teeming with translucent leeches, enduring the horror to salvage a waterproof satchel containing preserved salted meats.",
-   "page": "Panic takes hold as a cluster of heavy leeches fastens onto your forearm beneath the water, sending a sudden, nauseating numbness spreading through your skin. You thrash backward in disgust, slipping on the slick stone floor and plunging waist-deep into the filthy brine. The waterproof satchel slips from your numb fingers, sinking into the black silt before you can snatch it back. You scramble upright, scraping your knuckles against the rough masonry and shivering as the cold water drains your remaining strength.",
+   "page": "Panic takes hold as a cluster of leeches fastens onto your forearm beneath the water, and a sudden numbness spreads through your skin. You thrash backward in disgust. Slick stone dumps you waist-deep into the filthy brine, and the waterproof satchel slips from your numb fingers into the black silt before you can snatch it back. You scramble upright, scrape your knuckles against the rough masonry, and shiver as the cold water drains what strength you have left.",
    "exits": [
     {
      "label": "Retreat bleeding to the junction",
@@ -16313,7 +16313,7 @@
    "kind": "scene",
    "title": "The Encrusted Relay",
    "brief": "You chisel away the suffocating salt crust from a delicate relay switch, applying careful precision to free a specialized gear mechanism for your own use.",
-   "page": "Thick layers of pale grey salt seal the junction box like hardened mortar, hiding the intricate mechanical switches that govern the lower sluices. You trace the hairline cracks in the mineral crust, listening to the hollow resonance beneath the metal as you search for a vulnerable seam. Condensation drips rhythmically from an overhead rivet, splashing into stagnant puddles that reflect the sickly green phosphorescence of the cavern walls. Small, jointed carapaces twitch briefly in the gloom nearby, drawn by the faint warmth of your skin before scuttling away into the rusted machinery frames. You select a narrow scraper from your belt, preparing to chip away the suffocating buildup without damaging the fragile brass contacts within.",
+   "page": "Pale grey salt seals the junction box like hardened mortar and hides the mechanical switches that govern the lower sluices. You trace the hairline cracks in the mineral crust and listen for hollow sound under the metal as you search for a vulnerable seam. Condensation drips from an overhead rivet. It splashes into stagnant puddles that catch the sickly green phosphorescence of the cavern walls, and small jointed carapaces twitch in the gloom nearby, drawn by the faint warmth of your skin before they scuttle into the rusted machinery frames. You select a narrow scraper from your belt, ready to chip the buildup without damaging the fragile brass contacts within.",
    "exits": [
     {
      "label": "Begin chipping the mineral seal",
@@ -17165,7 +17165,7 @@
    "kind": "scene",
    "title": "Steps Of The Ancients",
    "brief": "You study a mosaic of the old Tidewardens to deduce the correct pressure plate path, using your sharp mind to uncover a hidden cache of medicinal kelp.",
-   "page": "Carved images of the old Tidewardens stare down from the damp stone walls, their blank stone eyes tracing the geometric patterns worn into the flagstones beneath your boots. Kneeling in the gloom, you trace the faded incisions with a salt-calloused finger, deciphering the sequence that avoided the hidden weight-traps. A discreet click echoes through the chamber as a concealed floor panel pops an inch upward, revealing a bundle of dried medicinal kelp wrapped in oiled canvas.",
+   "page": "Carved images of the old Tidewardens stare down from the damp stone walls, and their blank stone eyes follow the geometric patterns worn into the flagstones beneath your boots. You kneel in the gloom and trace the faded incisions with a salt-calloused finger until the sequence that avoids the hidden traps comes clear. A discreet click sounds. A concealed floor panel pops an inch upward, and under it sits a bundle of dried medicinal kelp wrapped in oiled canvas.",
    "exits": [
     {
      "label": "Take the hidden kelp",
@@ -18063,7 +18063,7 @@
    "kind": "check",
    "title": "Reading The Pale Lines",
    "brief": "You decipher the faded navigational charts scrawled on the wet walls, risking severe mental strain, to pinpoint the exact location of your missing mentor.",
-   "page": "Phosphorescent mold grows in jagged veins across the masonry, casting a sickly greenish glow over the faded ink of the navigational charts. Your temples throb with a sharp, blinding ache as you force your vision to untangle the smeared currents and subterranean soundings left behind by the missing keeper. Every line seems to shift and blur under the damp salt air, threatening to pull your thoughts into a dizzying spiral of exhaustion. Gritting your teeth against the mounting pressure behind your eyes, you narrow your focus onto the precise intersection where the flooded tunnels converge beneath the foundation stones.",
+   "page": "Phosphorescent mold grows in jagged veins across the masonry and casts a sickly greenish glow over the faded ink of the navigational charts. Your temples seize with a sharp ache as you force your vision to untangle the smeared currents and subterranean soundings the missing keeper left behind. The lines blur. Damp salt air makes every current mark shift until you grit your teeth against the pressure behind your eyes and pin your focus on the precise intersection where the flooded tunnels converge beneath the foundation stones.",
    "exits": [
     {
      "label": "check-full",
@@ -18912,7 +18912,7 @@
    "kind": "recovery",
    "title": "Broken Hinges",
    "brief": "You physically bar the rusted iron doors against incoming rival wrecker crews, risking badly battered limbs, to ensure you maintain total control over the main console.",
-   "page": "The heavy iron door suddenly gives a vicious shudder, buckling inward and catching your arm in a crushing pinch that leaves your shoulder bruised and useless. You tumble backward onto the cold flagstones as the rival wreckers pour past you into the chamber, shouting triumphantly over your groans.\n\nA dull, throbbing ache settles deep into your bones, leaving your limb hanging limp and useless at your side while the crowd surges toward the console.",
+   "page": "The iron door gives a vicious shudder, buckles inward, and catches your arm in a crushing pinch that leaves your shoulder bruised and useless. You tumble backward onto the cold flagstones as the rival wreckers pour past you into the chamber and shout over your groans.\n\nYour limb hangs limp at your side. The crowd surges toward the console.",
    "exits": [
     {
      "label": "Drag yourself from the wreckage",
@@ -18928,7 +18928,7 @@
    "kind": "reward",
    "title": "Master of the Threshold",
    "brief": "You physically bar the rusted iron doors against incoming rival wrecker crews, risking badly battered limbs, to ensure you maintain total control over the main console.",
-   "page": "By sheer stubborn muscle and a total disregard for torn ligaments, you manage to keep the heavy iron doors slammed shut until the sliding bolt drops firmly into place with a resounding echo. The furious hammering from the corridor slowly dies away into frustrated curses, leaving you in solitary command of the massive console.\n\nA notched brass winding key, dropped by a fleeing rival during the frantic scramble, lies wedged neatly in the groove of the stone floor.",
+   "page": "By sheer stubborn muscle and a total disregard for torn ligaments, you keep the iron doors slammed shut until the sliding bolt drops firmly into place with a hard clang. Hammering from the corridor dies into frustrated curses. You hold the console alone.\n\nA notched brass winding key, dropped by a fleeing rival during the scramble, lies wedged in the groove of the stone floor.",
    "exits": [
     {
      "label": "Turn back to the machinery",
@@ -19104,7 +19104,7 @@
    "kind": "check",
    "title": "Fingers on the Wire",
    "brief": "You carefully disarm the volatile explosive charges she planted on the primary drive, risking a premature detonation, to save the mechanism and pocket a rare blast-cap.",
-   "page": "The copper primer cap sits wedged deep within the iron housing of the primary drive, held fast by a rusted screw that refuses to turn for ordinary thumbs. You draw your salt-pitted knife from its sheath, using the narrow tip to lever against the delicate brass lip while avoiding the sensitive friction-powder packed inside. A single slip of the blade against the iron casing will send a hot spark straight into the volatile core, taking your fingers and half the bulkhead with it. You hold your breath in the damp, echoing vault, applying just enough pressure to coax the cylinder free without setting off the catastrophe.",
+   "page": "The copper primer cap sits wedged deep within the iron housing of the primary drive, held fast by a rusted screw that refuses to turn for ordinary thumbs. You draw your salt-pitted knife from its sheath and set the narrow tip against the brass lip, clear of the friction-powder packed inside. One slip of the blade against the iron casing will send a hot spark straight into the volatile core and take your fingers and half the bulkhead with it. You hold your breath. Pressure on the tip coaxes the cylinder free.",
    "exits": [
     {
      "label": "check-full",
@@ -19817,7 +19817,7 @@
    "kind": "ending",
    "title": "The Salt-Cured Wanderer",
    "brief": "Ending \"Drown Gullmouth\"",
-   "page": "Inland the hills rise high and dry, untouched by the great flood that has reclaimed the coast and turned the lowlands into a seamless, grey-green sea stretching to every horizon. You walk alone along the sheep-tracks with your empty canvas sack over your shoulder, your boots caked in dried salt that scratches every time you take a step. Behind you, the sea breathes deep and steady against the newly sunken cliffs, erasing the last traces of Gullmouth and leaving only the wheeling gulls and the empty sky behind. There are no more tides to watch and no more clocks to turn, for the water has finally come home and stayed there, locking the secrets of the deep away from the sun forever. You pull your woollen collar tight against the wind and keep walking toward the interior, a wrecker with no port left to call home, carrying nothing but the taste of old salt on your tongue.",
+   "page": "Inland the hills rise high and dry, untouched by the great flood that has reclaimed the coast and turned the lowlands into a seamless grey-green sea stretching to every horizon. You walk alone along the sheep-tracks with your empty canvas sack over your shoulder, boots caked in dried salt that scratches at every step. Gullmouth is gone. Behind you the sea works against the newly sunken cliffs and leaves only wheeling gulls and empty sky where the town stood. No more tides to watch, and no more clocks to turn, for the water has come home and stayed, and the secrets of the deep stay locked from the sun. You pull your woollen collar tight against the wind and keep walking toward the interior, a wrecker with no port left, carrying nothing but the taste of old salt on your tongue.",
    "exits": [],
    "endingKey": "drown-gullmouth",
    "endingTitle": "Drown Gullmouth",
