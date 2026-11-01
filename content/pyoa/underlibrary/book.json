@@ -533,7 +533,7 @@
    "kind": "check",
    "title": "A Question of Balances",
    "brief": "You trick the suspicious lending clerk with a clever falsehood about missing fines, risking a public reprimand to pocket a bundle of linen twine.",
-   "page": "Fabricating a ledger discrepancy for the lending clerk requires a steady tongue and an absolute absence of hesitation, but the man's watery eyes narrow with sudden suspicion as you reel off your manufactured account of missing parish fines. You lean further across the dark grain of the counter, gesturing casually toward the shadowed floorboards while your fingers graze the heavy coil of linen twine tucked behind the shelf of poetry. A sharp reprimand hangs in his throat, and you must maintain the illusion before he calls for the guard.",
+   "page": "A false ledger discrepancy for the lending clerk needs a calm tongue and no pause at all, but the man's watery eyes narrow with sudden suspicion as you reel off your manufactured account of missing parish fines. You lean further across the dark grain of the counter and gesture toward the shadowed floorboards while your fingers graze the coil of linen twine tucked behind the shelf of poetry. A sharp reprimand hangs in his throat. You keep the story going before he can call for the guard.",
    "exits": [
     {
      "label": "check-full",
@@ -603,7 +603,7 @@
    "kind": "scene",
    "title": "Flattery Among the Rules",
    "brief": "You flatter the grumpy cataloguer into turning a blind eye to your wandering, risking a formal demerit to gain a pinch of protective alum powder.",
-   "page": "Rows of towering card-drawers rattle softly as the grumpy cataloguer stamps a stack of requisition forms with aggressive enthusiasm. You step into his line of sight, offering a carefully measured compliment regarding his unmatched precision in filing regional cartography, hoping to soften the rigid line of his jaw.\n\nHe pauses, his ink-stained thumb hovering over the red stamp while his gaze shifts sideways toward the shelves, giving you an opening to edge closer to the jar of protective alum powder sitting on his desk.",
+   "page": "Rows of towering card-drawers rattle as the grumpy cataloguer stamps a stack of requisition forms with aggressive enthusiasm. You step into his line of sight and offer a carefully measured compliment on his unmatched precision in filing regional cartography, and you watch for any ease in the rigid line of his jaw.\n\nHe pauses. His ink-stained thumb hangs over the red stamp, and his eyes tick toward the shelves. You take one step closer to the jar of protective alum powder on his desk.",
    "exits": [
     {
      "label": "Reach for the alum powder",
@@ -10865,7 +10865,7 @@
    "kind": "recovery",
    "title": "The Cost of a Flawed Lie",
    "brief": "You talk your way past the armory quartermaster with clever deception, risking immediate arrest, to acquire a set of duplicate keys.",
-   "page": "The quartermaster jerks his hand back with a sharp snort of disbelief and catches your fingers mid-reach against the cold iron loop. Alarms clang down the stone corridor. Rough hands seize your shoulders and haul you toward the holding cells. A brass ledger drops hard across your knuckles and leaves a swollen purple bruise that burns hot. Ten minutes later, in the confusion of a shifting stack-shift, you slip your bonds. You emerge poorer by a pouch of copper slugs, your right hand still swollen and raw.",
+   "page": "The quartermaster jerks his hand back with a sharp snort of disbelief and catches your fingers mid-reach against the cold iron loop. Alarms clang hard. Rough hands seize your shoulders and haul you toward the holding cells while a brass ledger drops hard across your knuckles and leaves a swollen purple bruise that burns hot. Ten minutes later you slip your bonds in the confusion of a shifting stack-shift. You emerge poorer by a pouch of copper slugs. Your right hand is still swollen and raw.",
    "exits": [
     {
      "label": "Slip away into the stacks",
@@ -18495,7 +18495,7 @@
    "kind": "recovery",
    "title": "Caught in the Glare",
    "brief": "You mislead a squad of zealots by tossing a glowing lamp into the dark abyss, testing your cunning, and you slip past unhindered to secure a bundle of dry lint.",
-   "page": "The lamp shatters against the flagstones, but the splashing oil catches your own boot-hem, singeing the leather and sending a bright arc of flame dancing uncomfortably close to your trousers. The nearest zealot wheels around at the sound, catching a clear glimpse of your retreating silhouette against the flickering firelight. Shouting an angry curse, the pursuer lunges forward and swings an iron inkpot that clips your shoulder. You sprawl painfully across the dusty floorboards.\n\nYou scramble away into the shadows while the fanatic beats out the clinging flames, leaving you with a scorched trouser-cuff and a dull ache in your back.",
+   "page": "The lamp shatters against the flagstones, but the splashing oil catches your own boot-hem, singeing the leather, and a bright arc of flame jumps uncomfortably close to your trousers. The nearest zealot wheels around at the sound. He catches a clear glimpse of your retreating silhouette against the firelight. An angry curse leaves his mouth as he lunges and swings an iron inkpot that clips your shoulder. You sprawl across the dusty floorboards.\n\nYou scramble into the dark. Behind you the fanatic beats out the clinging flames. Your trouser-cuff is scorched and your back complains with each step.",
    "exits": [
     {
      "label": "Flee deeper into the shadows",
