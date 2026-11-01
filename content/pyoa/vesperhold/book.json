@@ -177,7 +177,7 @@
     }
    ],
    "title": "Leaving The Ninety Steps",
-   "page": "Leaving Orisonhold and the Ninety Steps for The Rope Markets, you tighten the straps across your chest and lean forward into the biting wind that sweeps up the cliff. The stone stairs grow narrower here, replaced by suspended wooden galleries and swaying rope bridges that bridge the yawning chasms between the upper monastery and the bustling trade tiers below. Every breath burns your throat with the crisp clean edge of high altitude air, and the Clapper keeps a soft beat against your spine.\n\nThe chaotic din of the markets rises through the mist, promising trade, hazard, and the next stretch of your long descent."
+   "page": "Leaving Orisonhold and the Ninety Steps for The Rope Markets, you tighten the straps across your chest and lean into the wind that sweeps up the cliff. Here the stone stairs narrow and give way to suspended wooden galleries and swaying rope spans across the chasms between the upper monastery and the trade tiers below. Every breath burns your throat with the crisp clean edge of high altitude air, and the Clapper taps your spine in a soft beat.\n\nShouts and winch-squeals climb through the mist from the markets."
   },
   {
    "id": "vh-1-0-0-0",
@@ -1113,7 +1113,7 @@
     }
    ],
    "title": "The Postern Gate",
-   "page": "By the iron-plated postern, a frost-blackened lantern swings in its bracket, casting long, jittery shadows across the slippery limestone flagstones. Metal creaks in the rising wind and keeps time with the low note of the bronze Clapper resting against your coat. You pull your wool scarf tighter around your throat and steady your footing on the rimed stone."
+   "page": "By the iron-plated postern, a frost-blackened lantern swings in its bracket. Jittery shadows cross the slippery limestone flagstones. Metal creaks in the rising wind and keeps time with the low note of the bronze Clapper resting against your coat. You pull your wool scarf tighter around your throat and plant your boots on the rimed stone."
   },
   {
    "id": "vh-1-0-3-7",
@@ -1521,7 +1521,7 @@
     }
    ],
    "title": "The Freezing Draft",
-   "page": "Freezing draft sweeps across the threshold of the stable entrance, biting straight through your woollen tunic while you weigh the merits of taking a stubborn mule against the lonely peril of the foot-stairs. Downward travel on foot promises speed and absolute self-reliance, but the iron tongue grows heavier with every hundred heartbeats. Beside you, the distant clang of iron horseshoes on stone reminds you of the alternative waiting inside the warm, crowded pens."
+   "page": "A freezing draft sweeps across the threshold of the stable entrance and cuts straight through your woollen tunic while you weigh a stubborn mule against the lonely peril of the foot-stairs. Downward travel on foot promises speed and absolute self-reliance, but the iron tongue pulls harder with every hundred heartbeats. Iron horseshoes clang on stone from the warm crowded pens beside you."
   },
   {
    "id": "vh-1-0-5-3",
@@ -2454,7 +2454,7 @@
     }
    ],
    "title": "The Rusted Crane",
-   "page": "By the rusted iron crane used to hoist provisions, you check the weather-eye on the horizon, where purple clouds gather above the distant stair-towns. Frost nips at your knuckles as you secure the leather straps binding the heavy bronze tongue to your padded frame. Below you, the stone steps vanish into a swirling curtain of white mist, hiding the drop into the abyss."
+   "page": "By the rusted iron crane used to hoist provisions, you check the weather-eye on the horizon, where purple clouds gather above the distant stair-towns. Frost nips at your knuckles as you secure the leather straps that bind the bronze tongue to your padded frame. Below you the stone steps vanish into a swirling curtain of white mist. The drop sits out of sight."
   },
   {
    "id": "vh-1-1-3-10",
@@ -2634,7 +2634,7 @@
     }
    ],
    "title": "The Steep Straightaway",
-   "page": "At the threshold of the long, steep straightaway, you look down at the dizzying perspective of the stairs receding into the grey valley fog below. The sheer drop-off makes your stomach lurch, reminding you that a single misstep would send both you and the sacred bell-metal tumbling into the clouds. The metal clapper taps a steady, relentless rhythm against your shoulder blades.\n\nYou grip the canvas straps tighter and evaluate the three paths opening before you into the gloom."
+   "page": "At the threshold of the long, steep straightaway, you look down at the dizzying perspective of the stairs as they fall away into the grey valley fog below. Your stomach lurches. A single misstep would send both you and the sacred bell-metal tumbling into the clouds. The metal clapper taps a relentless rhythm against your shoulder blades.\n\nYou grip the canvas straps tighter. Three paths open into the gloom ahead."
   },
   {
    "id": "vh-1-1-4-0",
@@ -3341,7 +3341,7 @@
     }
    ],
    "title": "The Damp Salt-Store",
-   "page": "Scent of wet hemp and old brine fills the damp salt-store where weaver Jessa presses an extra length of cord into your hands before you face the open ridge. Outside, the wind scours the frozen flags, threatening to catch anyone unanchored."
+   "page": "Scent of wet hemp and old brine fills the damp salt-store where weaver Jessa presses an extra length of cord into your hands before you face the open ridge. Outside, the wind scours the frozen flags. Anyone left loose would be snatched."
   },
   {
    "id": "vh-1-2-2-8",
@@ -3921,7 +3921,7 @@
     }
    ],
    "title": "The Wire Bridge",
-   "page": "Across the dizzying wire bridge, the first tier of the rope-market hangs above the abyss like a spider's web strung with lanterns. The cable hums beneath your boots, vibrating with every gust that sweeps up from the gorge. Stalls draped in heavy canvas sway gently in the draft, smelling of hemp, tallow, and dried mountain herbs."
+   "page": "Across the dizzying wire bridge, the first tier of the rope-market hangs above the abyss like a spider's web strung with lanterns. The cable trembles beneath your boots with every gust that sweeps up from the gorge. Canvas stalls sway in the draft. Hemp, tallow, and dried mountain herbs scent the boards underfoot."
   },
   {
    "id": "vh-1-2-3-14",
@@ -4078,7 +4078,7 @@
     }
    ],
    "title": "The Mist-Shimmered Stalls",
-   "page": "Through the gap in the stone parapet, the first cluster of rope-market stalls shimmers in the mist. Lanterns sway from the canvas eaves, casting long, dancing streaks of amber light across the damp ropes coiled in every doorway. The muffled shouting of the cable-merchants rises from the depths, competing with the steady, mournful drone of the mountain wind."
+   "page": "Through the gap in the stone parapet, the first cluster of rope-market stalls shimmers in the mist. Lanterns sway from the canvas eaves. Amber light streaks the damp ropes coiled in every doorway. Muffled shouting of the cable-merchants rises from the depths and meets the mournful push of the mountain wind."
   },
   {
    "id": "vh-1-2-4-4",
@@ -4128,7 +4128,7 @@
     }
    ],
    "title": "The Wool-Shed",
-   "page": "Inside the drafty wool-shed, sorter Elva combs burrs from a fleece while listening for your approach. The air is thick with the rich, lanolin smell of unwashed sheep's wool and the dry rustle of discarded straw. She pauses her work, her fingers stained deep grey from the grease, and watches you step out of the howling draft."
+   "page": "Inside the drafty wool-shed, sorter Elva combs burrs from a fleece while she listens for your approach. Lanolin from unwashed sheep's wool fills the shed. Straw rustles underfoot. She pauses her work, fingers stained deep grey from the grease, and watches you step out of the howling draft."
   },
   {
    "id": "vh-1-2-4-6",
@@ -4788,7 +4788,7 @@
     }
    ],
    "title": "The Brass Scales",
-   "page": "Iron counterweights clink on a groaning brass scale as a Cable Court guard drops your pack onto the pan. His colleague leans over the counter, eyes narrowing at the pale green patina of the bronze Clapper strapped to your spine. The metal gives a low, sympathetic thrum against your shoulder blades, vibrating through the wood and canvas as the beam teeters, threatening an exorbitant toll for every pound of sacred metal you carry down the mountain face.\n\nA frantic winch-boy spills his tallow bucket across your path just as a basket screeches down from above."
+   "page": "Iron counterweights clink on a groaning brass scale as a Cable Court guard drops your pack onto the pan. His colleague leans over the counter. The pale green patina of the bronze Clapper strapped to your spine draws his stare. The metal knocks a low note against your shoulder blades through wood and canvas as the beam teeters toward an exorbitant toll for every pound of sacred metal you carry down the mountain face.\n\nA frantic winch-boy spills his tallow bucket across your path just as a basket screeches down from above."
   },
   {
    "id": "vh-2-0-2-0",
@@ -5687,7 +5687,7 @@
     }
    ],
    "title": "Snow Along The Lofts",
-   "page": "Cold packed snow crunches beneath your boots as you follow a narrow ledge hugging the rear wall of the upper rope-spinning lofts, where the sharp smell of tarred hemp hangs thick in the freezing air. Through the slatted wooden shutters of the loft above, pale lamplight spills across the drift-piled path, accompanied by the steady rhythmic whir of spinning wheels. The bronze Clapper shifts with a dull, muffled thud against your padded harness, reminding you of the ticking minutes before the passes ice over for good.\n\nYou pull your woolen cloak tighter around your chest, weighing the path ahead against the bustling market square behind you."
+   "page": "Cold packed snow crunches beneath your boots as you follow a narrow ledge along the rear wall of the upper rope-spinning lofts, and the sharp smell of tarred hemp rides the freezing air. Through the slatted wooden shutters of the loft above, pale lamplight spills across the drift-piled path while spinning wheels keep up their rhythmic whir. The bronze Clapper shifts with a dull, muffled thud against your padded harness. Minutes tick down before the passes ice over for good.\n\nYou cinch the woolen cloak. Ahead is the path, and behind you the market square still bustles."
   },
   {
    "id": "vh-2-0-4-7",
@@ -7169,7 +7169,7 @@
     }
    ],
    "title": "The Toll Counter",
-   "page": "Cold iron grates against your knuckles as you empty a heavy leather pouch of earned groats onto the high wooden desk. Coins clink and scatter across the grain while the clerk's ink-stained fingers sweep them into a brass bowl to clear the crossing fee in hard cash.\n\nBehind you, Biscuit shifts restlessly on the swaying boards, hoof-nails scraping a hollow rhythm against the gorge below. You square your shoulders against the biting mountain draft and grip the cradle straps, ready for the path ahead."
+   "page": "Iron grates against your knuckles as you empty a leather pouch of earned groats onto the high wooden desk. Coins clink and scatter across the grain while the clerk's ink-stained fingers sweep them into a brass bowl to clear the crossing fee in hard cash.\n\nBiscuit shifts behind you. His hoof-nails scrape a hollow rhythm above the gorge. You square your shoulders to the mountain draft and grip the cradle straps."
   },
   {
    "id": "vh-2-1-5-3",
@@ -7946,7 +7946,7 @@
     }
    ],
    "title": "The Greasy Drainage Chute",
-   "page": "A towering stack of tarred rope blocks the junction. The only way forward is a crawl through a narrow greasy drainage chute. Rough stone walls press close on either side, smelling of old tallow and mountain mud. Your canvas pack scrapes against the low timber ceiling at every inch. Faint chimes from distant valley towers drift up through the gloom. Lowgate is still a long walk away."
+   "page": "A towering stack of tarred rope blocks the junction, so the only way forward is a crawl through a narrow greasy drainage chute where rough stone walls press close on either side and smell of old tallow and mountain mud. Your canvas pack scrapes the low timber ceiling. Faint chimes from distant valley towers drift up through the gloom. Lowgate is still far."
   },
   {
    "id": "vh-2-2-3-2",
@@ -25057,7 +25057,7 @@
     }
    ],
    "title": "The Hammer Stroke",
-   "page": "A ground-shaking thud travels through the damp flagstones beneath your boots and climbs from the foundations into the bronze you carry. Each impact of the distant water-hammer sets a brief chime through the metal against your back. For a beat you are under the high mountain belfry above the clouds again. Hot oil and flying grit coat your tongue and teeth.\n\nFog-shrouded aisles of Lowgate meet under your boots."
+   "page": "A thud travels through the damp flagstones beneath your boots and climbs from the foundations into the bronze you carry until each stroke of the distant water-hammer sets a brief chime in the metal against your back. You stand still. For a beat you are under the high mountain belfry above the clouds again. Hot oil and flying grit coat your tongue and teeth.\n\nFog-shrouded aisles of Lowgate meet under your boots."
   },
   {
    "id": "vh-6-2-2-0",
