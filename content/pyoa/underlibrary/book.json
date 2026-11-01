@@ -2759,7 +2759,7 @@
    "kind": "bottleneck",
    "title": "The Map-Rooms",
    "brief": "You slip away into the labyrinthine map-rooms where rolled charts of unmapped corridors unroll themselves like sleeping snakes.",
-   "page": "Dust hangs thick in the narrow corridors where rolled charts of unmapped pathways unroll themselves like sleeping snakes along the shelves. You slip away from the bustling reading hall, your boots padding silently against flagstones damp with lingering ink-vapours. Around you, parchment scrolls hiss and twitch in the draft, altering their contours as the geography of the lower bays shifts in the gloom. Thessaly Marr's disappearance leaves a cold vacuum in the archive, and every cartographic draft seems to point toward the sealed vault of the Hundredth Door. You must press deeper into the cartographer's domain before the shifting stacks trap you between floors for good.",
+   "page": "Dust fills the narrow corridors where rolled charts of unmapped pathways unroll themselves like sleeping snakes along the shelves. You slip away. Your boots pad against flagstones damp with lingering ink-vapours from the bustling reading hall, and around you parchment scrolls hiss and twitch in the draft, altering their contours as the geography of the lower bays shifts in the gloom. Thessaly Marr's disappearance leaves a cold vacuum in the archive, and every cartographic draft seems to point toward the sealed vault of the Hundredth Door. You press deeper into the cartographer's domain before the shifting stacks trap you between floors for good.",
    "exits": [
     {
      "label": "Follow the twitching parchment trail",
@@ -9418,7 +9418,7 @@
    "kind": "scene",
    "title": "Staring Down the Prosecutor",
    "brief": "You stare down a hostile prosecutor who threatens your shelver fellowship, risking psychological collapse, to win the right of free passage.",
-   "page": "The prosecutor leans across the polished oak barrier, his voice dropping to a dry rasp as he lists the petty thefts of your shelver fellowship. Shadows stretch across the floor from the high arched windows, smelling of damp parchment and old tallow. You meet his gaze without flinching, refusing to let the weight of institutional malice break your spirit.",
+   "page": "The prosecutor leans across the polished oak barrier, his voice dropping to a dry rasp. He says, \"Your shelver fellowship steals in petty lots.\" Shadows stretch across the floor from the high arched windows, smelling of damp parchment and old tallow. You meet his gaze without flinching and do not look away.",
    "exits": [
     {
      "label": "Hold fast against the accusations",
@@ -11968,7 +11968,7 @@
    "kind": "scene",
    "title": "Following the Runner",
    "brief": "You descend the slick, damp steps with effortless grace, risking a nasty slip, to catch up with a fleeing courier.",
-   "page": "Shadows lengthen across the damp masonry as the gap between your boots and the runner's receding leather heels begins to narrow. Water trickles down the gutter of the stairwell, smelling faintly of stagnant ink and rotting calfskin bindings. You keep your weight centered over your ankles, leaning forward into the descent to maintain momentum without sacrificing control. The air grows noticeably colder, carrying the sharp tang of ozone from some unseen electrical disturbance deep within the foundations.\n\nYou draw a slow breath and prepare for the final stretch of the pursuit.",
+   "page": "Shadows lengthen across the damp masonry as the gap between your boots and the runner's receding leather heels begins to narrow. Water trickles down the gutter of the stairwell. It smells faintly of stagnant ink and rotting calfskin bindings, and you keep your balance over your ankles, leaning forward into the descent so you hold momentum without losing control. The air grows colder and carries the sharp tang of ozone from some unseen electrical disturbance deep within the foundations.\n\nYou draw a slow breath. Your boots find the next slick tread.",
    "exits": [
     {
      "label": "Close the distance on the stairs",
@@ -13102,7 +13102,7 @@
    "kind": "bottleneck",
    "title": "Threshold of the Vault",
    "brief": "You cross the final threshold past the broken seal, stepping into the absolute silence of the Deep Annexe where the original Index rests.",
-   "page": "You cross the broken bronze threshold where the city's ancient weights let go. Cataloguing desks drop behind you into a quiet so blank it rings in the ears. Unread vellum and cold stone scent the still air; no draft stirs, no footfall answers. Ahead stands the primary vault of the archives, metal plates chilled under the palm and scored with centuries of marginalia. Your lamp burns low. Shadows lean long across the floor as dust motes drift and settle. Far overhead the world keeps a slow knock, and time above turns on while you stand in the deep dark.",
+   "page": "You cross the broken bronze threshold where the city's ancient weights let go, and the cataloguing desks drop behind you into a quiet so blank it rings in the ears while unread vellum and cold stone scent the still air. No draft stirs. Ahead stands the primary vault of the archives, metal plates chilled under the palm and scored with centuries of marginalia, and when you scrape a boot on the scored stone no footfall answers from the dark. Your lamp burns low. Shadows lean long across the floor as dust motes drift and settle, and far overhead the world keeps a slow knock while time above turns on and you stand in the deep dark.",
    "exits": [
     {
      "label": "Descend into the vault",
@@ -15496,7 +15496,7 @@
    "kind": "reward",
    "title": "The Seal of Exemption",
    "brief": "You research the ancient precedents to argue successfully against an unjust citation, earning an official seal of exemption.",
-   "page": "The heavy brass machinery shudders, clicks twice, and grudgingly spits out a small leaden token stamped with the unbroken seal of the high cataloguers. Whether through swift wit or sheer stubborn endurance, you have beaten the automated court at its own game and secured your freedom from further citation. The cold air of the chamber seems to lighten slightly, and the surrounding stacks appear to settle into a more orderly alignment. You pocket the token. It presses cool against your palm as you prepare for the next leg of your journey.",
+   "page": "The brass machinery shudders, clicks twice, and grudgingly spits out a small token stamped with the unbroken seal of the high cataloguers. Wit or stubborn endurance got you here. You have beaten the automated court at its own game and secured your freedom from further citation, and the cold air of the chamber seems to lighten as the surrounding stacks settle into a more orderly alignment. You pocket the token. It presses cool against your palm.",
    "exits": [
     {
      "label": "Approach the amphitheatre of ghosts",
@@ -20075,7 +20075,7 @@
    "kind": "ending-part",
    "title": "The Blind Scholar",
    "brief": "Ending \"The Last Reader's Chair\"",
-   "page": "Dust settles upon your shoulders like a grey shawl as you stand before the high-backed chair of the Last Reader. The blind scholar does not turn, his milky eyes fixed on the empty air where a thousand forgotten histories hang suspended in the lamp-oil smoke. Around you, the ancient leather bindings of the Deep Annexe groan, expanding and contracting as though the entire chamber were breathing its last measured breath. A faint smell of vinegar and dried lavender rises from the floorboards, where the margins of the world have begun to curl and blacken at the edges. You reach out a hand, your fingertips brushing the cold mahogany of the armrest, waiting for the verdict of the unwritten pages to settle upon your skin.\n\nSilence fills the stacks for uncounted centuries and leaves no room for anything else.",
+   "page": "Dust settles upon your shoulders like a grey shawl as you stand before the high-backed chair of the Last Reader. The blind scholar does not turn. His milky eyes stay fixed on the empty air where a thousand forgotten histories hang suspended in the lamp-oil smoke, and around you the ancient leather bindings of the Deep Annexe groan, expanding and contracting with the chamber's last measured breath. A faint smell of vinegar and dried lavender rises from the floorboards, where the margins of the world have begun to curl and blacken at the edges. You reach out a hand, your fingertips brushing the cold mahogany of the armrest, waiting for the verdict of the unwritten pages to settle upon your skin.\n\nThe stacks hold their silence for uncounted centuries.",
    "exits": [
     {
      "label": "Approach the leather-bound armrest cautiously",
