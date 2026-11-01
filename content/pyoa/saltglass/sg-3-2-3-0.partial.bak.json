@@ -1,0 +1,25 @@
+{
+ "batch": "sg-3-2-3-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-2-3-0": {
+   "title": "The Sea-Green Parapet",
+   "text": "Jagged splinters spit from the masonry as a heavy icicle of fused quartz shears off the high cornice, shattering against your heels with a sharp ring of displaced air. You cling to the crumbling parapet of sea-green glass, watching bright dust drift down into the sun-bleached chasm below while your embers shift lazily in their iron cage.",
+   "exits": [
+    "Trace the perimeter along the towering glass barrier",
+    "Ascend the winding ramp toward the broader flats"
+   ]
+  }
+ },
+ "missing": [
+  "sg-3-2-3-1",
+  "sg-3-2-3-2",
+  "sg-3-2-3-3",
+  "sg-3-2-3-4",
+  "sg-3-2-3-5",
+  "sg-3-2-3-6",
+  "sg-3-2-3-7",
+  "sg-3-2-3-8",
+  "sg-3-2-3-9"
+ ]
+}

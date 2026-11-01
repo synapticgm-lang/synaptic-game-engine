@@ -1,0 +1,91 @@
+{
+ "batch": "vh-4-1-2-8",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-1-2-8": {
+   "title": "The Toll Lock",
+   "text": "Heavy iron frost encrusts a small stone shelter built into the rock face by the Cable Court. Its thick timber door remains bolted from within, sealed against the creeping glacier drafts, while the lintel bears deep frosty tally-marks recording the vanished tolls of travelers long since descended. The heavy bronze clapper on your back hums a low, sympathetic vibration against your padded harness whenever the mountain wind strikes the masonry.",
+   "exits": [
+    "Edge along the precipice cornice",
+    "Dig a snow trench for shelter"
+   ]
+  },
+  "vh-4-1-2-9": {
+   "title": "The Mule Slip",
+   "text": "Sudden panic grips your chest as Biscuit's iron-shod hoof finds a hidden lens of black ice beneath the powder, sending the mule sliding toward the edge of a jagged crevasse. You throw your weight against the padded wooden cradle, digging your boots hard into the crusted firn to arrest the momentum before the precious bronze payload shifts beyond recovery. The animal blows a ragged cloud of white breath into the freezing air, trembling as its hooves regain purchase on the slope.",
+   "exits": [
+    "Quiet the startled ptarmigan flock",
+    "Follow the Lowgate signpost downward",
+    "Warm your stiffening fingers"
+   ]
+  },
+  "vh-4-1-2-10": {
+   "title": "The Frozen Pipes",
+   "text": "Towering columns of ice hang thick and pale beside the narrow track, resembling the massive organ pipes of a mountain cathedral frozen mid-hymn. Every gust of wind sweeping down the glacier causes the crystal formation to resonate, producing a deep, trembling tone that blends seamlessly with the bronze hum vibrating against your shoulders. You steady your breathing in the biting air, careful not to dislodge the delicate icicles ringing the path.",
+   "exits": [
+    "Descend toward the lower ladder",
+    "Check your frozen mittens",
+    "Hack clear the blocked blanket"
+   ]
+  },
+  "vh-4-1-2-11": {
+   "title": "The Notch Cutting",
+   "text": "Frigid white fog billows upward from the invisible valley floor, swallowing the ice-steps beneath your boots and leaving only the sheer blue wall before you. Holding your cold chisel steady against the dense glacial ice, you hammer out fresh footholds with sharp, measured strikes, letting the rhythmic ringing of metal on ice drown out the hollow groans of the moving glacier.",
+   "exits": [
+    "Clear the stiffened woolen obstacle",
+    "Hide a wedge in the cairn",
+    "Turn back toward the upper ledges"
+   ]
+  },
+  "vh-4-1-2-12": {
+   "title": "The Needle-Eye Cleft",
+   "text": "Unburdened by the pack-mule's clumsy flanks, you slide sideways through a vertical split in the granite wall where the mountain tightens like a fist. The rock is smooth and cold against your ribs, scraping lightly at the padded cradle on your back while the world opens up into a jagged corridor of ice. Without a beast to crowd your footing or test your nerves at every ridge, you notice the delicate patterns of frost ferns on the stone and the absolute, ringing silence of the high shadow. Ahead, the path divides into the chaotic heart of the glacier or drops down toward a thin line of safety strung across the chasm.\n\nYou can pick your way through the shifting blue seracs or trust your weight to a fraying hand-line.",
+   "exits": [
+    "Navigate the shifting blue seracs ahead",
+    "Traverse the gusting chasm by hand-line"
+   ]
+  },
+  "vh-4-1-2-13": {
+   "title": "The Red Flag",
+   "text": "A tattered scrap of scarlet wool snaps furiously from a driven iron piton, marking where the ladderway has sheared away into empty air. The Ropewrights' Guild tied this warning well before the last freeze, leaving a narrow shelf of blue-tinted ice as the only viable bypass around the wreckage. Water drips somewhere deep beneath the glacier, sounding like a slow and heavy clock counting down the hours left before the passes choke with snow. You adjust the heavy bronze Clapper on your shoulders, feeling its faint and steady hum vibrate straight through your spine as you weigh your next step.\n\nYou might press forward across the jagged blue towers, double back to check your hidden wedge, or test a completely different line through the frozen chaos.",
+   "exits": [
+    "Hack a path past the stiffened blanket",
+    "Pick your way through the shifting seracs",
+    "Recover the spare bronze wedge from the cairn"
+   ]
+  },
+  "vh-4-1-2-14": {
+   "title": "The River Sub-Glacial",
+   "text": "Thick frost crusts your protective goggles, forcing you to halt and scrape the rime away with a mittened thumb while a dull, subterranean thunder reverberates up through the soles of your boots. Deep beneath the glacial shell, an ancient river roars against the bedrock, reminding you of the immense pressure grinding away at the mountain's foundations.",
+   "exits": [
+    "Grip the frayed hemp hand-line",
+    "Turn back up the trail"
+   ]
+  },
+  "vh-4-1-2-15": {
+   "title": "The Iron Ringbolt",
+   "text": "An ancient iron ringbolt, green-stained and bitten deep into the cliff granite, offers a solid anchor point in the middle of a dizzying wall of ice. You clip your harness line to the heavy iron with fingers stiffened by the wind, taking a brief moment to catch your breath while the mountain hums beneath your boots. The sheer traverse stretches out horizontally across a drop that seems to have no bottom, testing every ounce of your balance and nerve. Beside you, the mule plants its hooves with stubborn reluctance, blowing frosty plumes of air into the biting gale.\n\nYou can retrieve your hidden wedge from the cairn or guide the mule across the vibrating iron plates.",
+   "exits": [
+    "Retrieve the spare wedge from the cairn",
+    "Lead the mule across the corrugated iron"
+   ]
+  },
+  "vh-4-1-3-0": {
+   "title": "The Fog-Warden's Hearth",
+   "text": "Sheltered in the lee of an azure ice-rib, a lone Fog-Warden sits bundled in grey wool, trying to clear the choked mouth of a bone signal horn with a wire pin. You share a draught of lukewarm chicory tea from your flask, tasting the bitter chicory and the metallic tang of the mountain air as the stranger nods in silent gratitude. The glacier all around you creaks and groans, settling into new shapes under the weight of the coming winter night. The steep wall ahead demands absolute focus, while the narrow ice-ledge offers a perilously wind-swept alternative.\n\nYou can tackle the vertical glass wall or coax the mule along the narrow ledge.",
+   "exits": [
+    "Scale the sheer glass wall of ice",
+    "Lead the mule along the narrow ledge"
+   ]
+  },
+  "vh-4-1-3-1": {
+   "title": "The Swinging Bridge",
+   "text": "A makeshift bridge of notched pine logs, lashed tightly together with braided hemp cable, sways in rhythm with the freezing gale between two towering pillars of glass-green ice. Every step causes the timber to groan and shift above a bottomless blue abyss where the wind howls like a trapped animal. The heavy bronze Clapper on your back hums in sympathetic vibration with the swinging logs, testing your equilibrium with its rhythmic weight. Behind you, the mechanical housing of an upper ropeway sits frozen solid in the rime, while the glacier stretches onward into blinding white heights.\n\nYou can press upward onto the steep ice wall or turn back toward the frozen winch.",
+   "exits": [
+    "Climb the steep wall of blue glass",
+    "Turn back toward the frozen upper winch"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,117 @@
+{
+ "batch": "ul-4-162",
+ "sections": {
+  "ul-4-162": {
+   "title": "The Sliding Tiles",
+   "text": "Dust hangs thick in the beam of your pocket-lamp, illuminating a panel of intricate wooden sliders embedded in the doorframe. Each tile bears a faded letter carved by an anonymous hand centuries ago, shifting lazily under the weight of hidden springs. You trace the rhythm of the clicks echoing from deep within the mechanism, tapping your fingers against the grain to find the counter-pulse. The device yields with a soft, oiled slide, exposing a shallow cavity where a slender length of cold iron rests. You reach out your hand to lift the master skeleton key before the tiles snap back into disorder.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide the key from its recess"
+   ]
+  },
+  "ul-4-163": {
+   "title": "Matching The Cadence",
+   "text": "Cold air breathes across your knuckles as the wooden tiles begin to accelerate their chaotic dance, threatening to jam the internal mechanism permanently. You must mirror their frantic cadence with absolute physical precision, letting your fingertips skim the moving grain without missing a single beat of the hidden tumbler's song. The slightest hesitation will catch your skin in the snapping grooves, sealing the vault forever. You steady your breathing, freeze your wrist, and plunge your fingers into the shifting maze of letters.",
+   "check": "Match the shifting tile rhythm",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-164": {
+   "title": "Caught In The Grain",
+   "text": "A dry snap echoes through the passage as a stubborn wooden tile catches your thumb, pinning it hard against the brass lining of the frame. You wrench your hand back with a sharp intake of breath, leaving behind a smear of dark blood and a deep, throbbing purple bruise across your knuckles. The mechanism chatters angrily, resetting its tumblers while you nurse your injured hand in the gloom. Time slips away in the dust as you wait for the swelling to subside, your fingers stiff and aching in the damp air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retrieve the key through sheer grit"
+   ]
+  },
+  "ul-4-165": {
+   "title": "The Iron Master Key",
+   "text": "Light catches the dull grey sheen of the long iron shaft resting in the velvet-lined groove, untouched by the rust that consumes the rest of the Annexe. Whether through flawless dexterity or sheer stubborn endurance against the pinching wood, your fingers close around the cold metal without triggering the trap. You lift the implement clear of its bed, feeling the balanced weight of centuries of custodial authority resting in your palm. It is a tool designed to bypass any barrier forged within these stacks.",
+   "check": "",
+   "grant": "A master skeleton key",
+   "exits": [
+    "Return to the shifting lintel"
+   ]
+  },
+  "ul-4-166": {
+   "title": "Timing The Portal Gap",
+   "text": "Heavy oak beams grind against one another in the threshold, opening a narrow vertical fissure that reveals only absolute darkness beyond. The gap pulses rhythmically, breathing in and out like the gills of some buried leviathan of paper and binding glue. You watch the rhythmic contraction closely, waiting for the exact heartbeat when the gap reaches its widest span. Nestled on a brass bracket just inside the moving boundary rests a neat spool of stout binding thread, waiting for an audacious hand to claim it.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip through the moving gap"
+   ]
+  },
+  "ul-4-167": {
+   "title": "Threading The Narrow Gap",
+   "text": "The heavy timber frame surges inward unexpectedly, narrowing the passage to a sliver of breathable air and dark stone. You must thread your body through the moving gap with absolute lightness, avoiding the crushing pinch of the closing jamb while your hand darts inward to snatch the prize. A fraction of a second too slow will leave you trapped between two centuries of compressed oak. You tighten your core, dip your shoulder, and launch yourself into the tightening aperture.",
+   "check": "Dart through the closing gap",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-168": {
+   "title": "The Toll Of The Jam",
+   "text": "A heavy wooden edge clips your shoulder with bone-numbing force as the portal snaps shut a fraction too soon, tearing your coat and leaving a jagged, stinging welt across your back. You stumble backward onto the cold flagstones, gasping for breath while the spool of thread rolls haphazardly against your boot. The bruising ache settles deep into your muscle, reminding you sharply of the library's absolute indifference to trespassers. You pick yourself up from the dust, rubbing the sore spot through the torn wool.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the thread and press onward"
+   ]
+  },
+  "ul-4-169": {
+   "title": "The Spool Of Hemp",
+   "text": "Smooth flaxen hemp wound tight around a bone bobbin comes away in your palm, smelling faintly of tallow and old bookbinder's paste. Whether you slipped through the closing timbers with feather-light balance or battered your way past the pinch with bruised determination, the prize is yours. This stout binding thread has been treated to resist rot and mildew, strong enough to hold together the crumbling spine of an entire ledger. It is a useful companion for anyone venturing deeper into the unlit stacks.",
+   "check": "",
+   "grant": "A spool of stout binding thread",
+   "exits": [
+    "Step back to the labyrinthine lintel"
+   ]
+  },
+  "ul-4-170": {
+   "title": "Roots Of The Lock",
+   "text": "Carved into the lintel above the barrier are three archaic glyphs that predate the common registry by several centuries. You trace their awkward angles with the tip of your pen-knife, muttering the ancient etymologies under your breath as you untangle the shifting linguistic roots. The door listens to the grammar of the dead, its heavy iron bolts shuddering as the syntax resolves itself into a coherent command. The timber parts with a long, groaning sigh, granting access to a small leather-bound volume resting on a lectern within.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Collect the dictionary of dead terms"
+   ]
+  },
+  "ul-4-171": {
+   "title": "The Dead Lexicon",
+   "text": "Pale green phosphorescence clings to the margins of the open pages, illuminating definitions of words that haven't been spoken aloud since the city above was built upon marshland. You turn the brittle leaves with infinite care, absorbing the forgotten vocabulary that once governed the deep sorting rooms. Armed with these archaic idioms, you can command doors and shelves that recognize no modern authority. You tuck the slim volume securely beneath your arm and prepare for the next leg of your journey.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance into the deep annex corridors"
+   ]
+  },
+  "ul-4-172": {
+   "title": "Deciphering The Dead Glyphs",
+   "text": "The letters carved into the locking beam twist into an unfamiliar dialect, shifting their vowels every time your eye tries to pin down their meaning. You must apply every ounce of your scholarly training to unpick the grammatical structure before the words dissolve back into meaningless scratches. A single misreading of a tense or a prefix will lock the mechanism permanently, turning the doorway into solid masonry. You squint through the dim lamp-light, scanning the syntax for the hidden root.",
+   "check": "Translate the archaic locking glyphs",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-173": {
+   "title": "A Faulty Translation",
+   "text": "A harsh grating sound reverberates through the stone as your mistranslation triggers a defensive linguistic trap in the frame. The glyphs flash a brilliant, blinding white before burning themselves out into charred ash, filling the air with the acrid stench of scorched vellum. A pounding migraine blooms behind your temples, draining your focus and leaving you dizzy and disoriented in the gloom. You lean against the cold wall to steady your racing thoughts, nursing a sharp mental fatigue.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push past the burnt threshold anyway"
+   ]
+  },
+  "ul-4-174": {
+   "title": "The Definitive Glossary",
+   "text": "Whether through brilliant linguistic deduction or stubborn trial and error among the charred fragments, the grammatical puzzle yields to your persistence. The heavy timber partition swings wide, revealing a small, perfectly preserved reference volume resting upon a velvet cushion. You pick up the definitive dictionary of dead terms, feeling its pages hum with dormant etymological power. It is an invaluable key to the lost dialects spoken by the earliest cataloguers of the Underlibrary.",
+   "check": "",
+   "grant": "A definitive dictionary of dead terms",
+   "exits": [
+    "Return to the shifting wooden lintel"
+   ]
+  }
+ },
+ "missing": []
+}

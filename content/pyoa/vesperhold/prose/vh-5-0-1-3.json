@@ -1,0 +1,54 @@
+{
+ "batch": "vh-5-0-1-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-0-1-3": {
+   "title": "The Frost-Bitten Culvert",
+   "text": "Across a sunken frost-cracked stone wall, your old glacier scar throbs with a dull, familiar ache, guiding your eye straight to a dry mossy culvert that neatly bypasses the churning mud of the main cattle track. The heavy bronze clapper hums against your shoulder blades, its low vibration harmonising with the cold drip of the fog overhead as you weigh whether to risk the open track or squeeze through the stone drain.",
+   "exits": [
+    "Take the hidden culvert beneath the stone wall",
+    "Follow the muddy cattle track past the frost-bent brambles",
+    "Slip through the neglected orchard shortcut without a backward glance"
+   ]
+  },
+  "vh-5-0-1-4": {
+   "title": "The Hempen Guide-Line",
+   "text": "In a silent orchard lane thick as sheep's wool, you follow a length of hempen bell-rope tied to fence posts to avoid stumbling into the irrigation ditch. The fog presses close against your face, cold and tasting faintly of wet soil and rotting windfalls, while the burden of Orison's tongue pulls steadily down your spine.",
+   "exits": [
+    "Haul your pack clear of the black water in the ditch",
+    "Pause beside the moss-grown milestone to catch your breath",
+    "Step past the protesting toll-keeper into the neglected shortcut"
+   ]
+  },
+  "vh-5-0-1-5": {
+   "title": "The Cider Shed Shiver",
+   "text": "Beneath a leaning cider shed smelling intensely of vinegar and damp wood, you dodge a falling frost-heavy bough that shatters the grey gravel right at your heel. The dense fog muffles the surrounding orchards into a silent void, leaving only the faint, rhythmic hum of the bronze clapper on your back and the drip of moisture from the sagging timber eaves above.",
+   "exits": [
+    "Duck into the overgrown orchard path to avoid the toll-keeper",
+    "Push forward into the grey fog-shrouded clearing ahead"
+   ]
+  },
+  "vh-5-0-1-6": {
+   "title": "The Moss-Choked Trough",
+   "text": "Beside a moss-choked stone trough where gray mist settles like down, you scrape wet clay from your boots while a stray rook screams overhead through the blanket of cloud. The air tastes of cold iron and rotting leaves, and the weight of Vesperhold's great bell feels heavier with every yard of descent into the damp valley.",
+   "exits": [
+    "Head toward the frozen sheep-dip through the wet slush",
+    "Step beneath the dripping trellis to assist the Fog-Warden"
+   ]
+  },
+  "vh-5-0-1-9": {
+   "title": "The Stuck Axle",
+   "text": "Beside a muddy embankment where water drips endlessly from dormant boughs, you watch a rival carrier curse at a stuck wheel axle in the fog while their mule strains against the wet clay. The carrier casts a bitter, sidelong glance at your padded carrying frame and the humming bronze within before turning back to curse the mud.",
+   "exits": [
+    "Listen to the distant waterwheel churning through the grey expanse"
+   ]
+  }
+ },
+ "missing": [
+  "vh-5-0-1-7",
+  "vh-5-0-1-8",
+  "vh-5-0-2-0",
+  "vh-5-0-2-1",
+  "vh-5-0-2-2"
+ ]
+}

@@ -1,0 +1,51 @@
+@@SEED vh-1-1-0-0 | In the frosty shadow of the mule yard’s stone wall, you adjust the bronze clapper’s padded straps while Biscuit plants his stubborn grey hooves against the icy cobbles.
+@@SEED vh-1-1-0-1 | Leaving the stable door behind, you step onto the high ridge alone with your burden, feeling the wind test the heavy iron tongue against your shoulder blades.
+@@SEED vh-1-1-1-0 | Beside the watering trough, old Garrow watches you tug at Biscuit’s stubborn halter, warning that the mule will bolt if the cliff gales turn sour before the ninety steps.
+@@SEED vh-1-1-1-1 | Under the timber porch of the granary, you pause to secure a loose buckle on the clapper’s cradle while Biscuit sniffs a sack of damp barley with absolute disdain.
+@@SEED vh-1-1-1-2 | Past the smithy’s smoking drain, you lead the reluctant animal toward the upper gate, where the frozen ruts threaten to jar the humming bronze against your spine.
+@@SEED vh-1-1-2-0 | In the cramped harness shed, Miller Thrum offers a handful of salted oats to coax the beast forward, demanding a copper toll just to clear the grain-chute path.
+@@SEED vh-1-1-2-1 | Beneath the hanging eaves of the salt-store, you wrestle with Biscuit’s stubborn refusal to cross a patch of black ice, risking a tumble toward the outer abyss.
+@@SEED vh-1-1-2-2 | By the lower hay-loft ladder, stable-hand Meara hands you a spare leather girth, muttering that the mule smells the coming blizzard in the deep gorge below.
+@@SEED vh-1-1-2-3 | Near the frost-rimed sheep pens, you pause to catch your breath against the biting updraft, checking whether the heavy bronze tongue has shifted in its felt cradle.
+@@SEED vh-1-1-2-4 | At the stone turn by the cider press, you coax the animal past a discarded wagon axle, wondering if traveling unburdened by four legs would have spared your aching ribs.
+@@SEED vh-1-1-2-5 | In the sheltered lee of the drying kiln, you adjust your shoulder pads against the biting straps, listening to the iron clapper hum a low, warning note against your back.
+@@SEED vh-1-1-2-6 | Beside the timber-stack near the lower trough, a novice monk offers a cup of lukewarm chicory, urging you to move before the midday ice begins to loosen from the eaves.
+@@SEED vh-1-1-2-7 | Through the narrow alley of the tanners' quarter, you drag the recalcitrant beast away from a pile of salted hides that make the animal roll its eyes in terror.
+@@SEED vh-1-1-2-8 | At the intersection of the tallow-chandler’s lane, you dodge a cartload of tallow barrels while Biscuit plants his feet firmly on the greasy stones.
+@@SEED vh-1-1-2-9 | Under the carved lintel of the cooperage, you tighten the breast-band on your own leather harness, feeling the raw pinch of the straps through your woollen tunic.
+@@SEED vh-1-1-2-10 | Beside the frozen drainage culvert, you wrestle the stubborn grey mule away from a crumbling parapet that overlooks the terrifying drop of the first cliff tier.
+@@SEED vh-1-1-2-11 | In the open courtyard of the charcoal burners, black dust coats your boots as you haul on the lead rope to keep the animal from bolting toward the stables.
+@@SEED vh-1-1-2-12 | Near the dry-stone retaining wall, an old shepherd warns you that the descending stairs are slick with sheep grease and melting rime from the upper snowfields.
+@@SEED vh-1-1-2-13 | Beneath the grey slate roof of the provision store, you check the lashings of the bronze tongue one last time before committing to the steep stone descent.
+@@SEED vh-1-1-2-14 | By the iron-studded gates of the lower yard, the duty porter inspects your travel tally while Biscuit tries to chew the sleeve of your heavy winter coat.
+@@SEED vh-1-1-2-15 | At the yawning mouth of the ninety steps, you brace yourself against the freezing downdraft, knowing that every stone brings you closer to the roaring foundry fires.
+@@SEED vh-1-1-3-0 | On the broad stone landing above the first flight, you pause to let a train of descending wool-porters pass, their heavy baskets scraping loudly against the damp cliff face.
+@@SEED vh-1-1-3-1 | Beside the iron ring set into the cliff, you untangle the lead rope from a frozen root while the humming bronze vibrates uncomfortably against your aching spine.
+@@SEED vh-1-1-3-2 | Under the stone arch of the wind-break, you wipe rime from your eyelashes and struggle to pull the recalcitrant mule away from the precipice edge.
+@@SEED vh-1-1-3-3 | Near the shrine of the three sisters, you leave a copper coin in the weathered crack of the masonry to buy safe passage down the icy tiers.
+@@SEED vh-1-1-3-4 | In the narrow gap between the buttress and the sheer rock, Biscuit braces his legs against the stone steps, refusing to budge until you share a crust of rye.
+@@SEED vh-1-1-3-5 | Across the open shelf where the gales howl unchecked, you lean your weight into the harness, keeping the heavy iron clapper balanced against the biting wind.
+@@SEED vh-1-1-3-6 | Beside the frozen cascade of the monastery drain, icicles clink like glass dropped upon stone as the beast’s iron-shod hooves ring out on the frozen steps.
+@@SEED vh-1-1-3-7 | At the turn of the carved stair-rail, you meet a fog-warden climbing upward with a basket of winter pears, her warning whistle held tight between her chapped lips.
+@@SEED vh-1-1-3-8 | In the damp shadow of the overhang, you readjust the shoulder cushioning where the iron weight has begun to bruise your collarbone through the coarse wool.
+@@SEED vh-1-1-3-9 | By the rusted iron crane used to hoist provisions, you check the weather-eye on the horizon, where purple clouds gather above the distant stair-towns.
+@@SEED vh-1-1-3-10 | Across the threshold of the lower grotto, you pause to catch your breath while water drips rhythmically from the green-stained limestone roof onto your hood.
+@@SEED vh-1-1-3-11 | On the dizzying cantilevered ledge above the deep fissure, you guide the nervous animal step by careful step over the frost-whitened timber planks.
+@@SEED vh-1-1-3-12 | Beside the ancient marker post carved with the runes of the first bell-masters, you check your leather bindings to ensure the clapper cannot slip loose.
+@@SEED vh-1-1-3-13 | In the hollow bowl of the rock-cut shelter, a group of shivering monks huddles around a small brazier, offering you a brief nod of encouragement.
+@@SEED vh-1-1-3-14 | Near the broken stone trough where mountain goats sometimes gather, you haul sharply on the halter to keep the mule from chasing a loose stone over the edge.
+@@SEED vh-1-1-3-15 | At the threshold of the long, steep straightaway, you look down at the dizzying perspective of the stairs receding into the grey valley fog below.
+@@SEED vh-1-1-4-0 | On the wide platform outside the rope merchant’s cellar, you confront stacked coils of hemp while the clerk taps an ink-stained finger on the rough wooden counter.
+@@SEED vh-1-1-4-1 | Under the flickering tallow lamp of the guild kiosk, Master Weaver Korda dangles a heavy spliced cable, praising its braided strength against the worst mountain squalls.
+@@SEED vh-1-1-4-2 | Beside the salted winch in the cordage yard, you inspect a coil of grey twine that smells of tar and sea-salt, wondering if its price includes an unwritten oath.
+@@SEED vh-1-1-4-3 | Near the hemp-combing benches, an apprentice pushes a bundle of frayed hemp toward you, whispering that the guild’s cheapest line has a dangerous habit of snapping under frost.
+@@SEED vh-1-1-4-4 | In the draughty corridor of the rope storehouse, you run your fingers over a thick three-strand tow-line, feeling the stiff tar coat your skin with a sticky residue.
+@@SEED vh-1-1-4-5 | By the iron weighing scale near the ledger desk, the guild master demands your thumbprint on a parchment scroll before he will hand over the coiled hemp.
+@@SEED vh-1-1-4-6 | Under the arched rafters of the rope-loft, you weigh your own frayed backup rope against the stiff, new fibers of the official guild stock while the clock chimes softly.
+@@SEED vh-1-1-4-7 | At the heavy oak wicket of the cable court office, a toll-lord watches you hesitate between taking the free municipal twine and signing away your rights for a guild line.
+@@SEED vh-1-1-5-0 | On the frosty threshold of the cordage hall, you sign the guild ledger with a cold iron nib, binding your journey to the makers’ strict terms and heavy penalties.
+@@SEED vh-1-1-5-1 | Beside the stacked coils of tarred hemp, you reject the guild's formal seal and toss your own worn, trusty rope over your shoulder with a quiet sigh of defiance.
+@@SEED vh-1-1-5-2 | Under the lintel of the rope-master’s lodge, you bargain for a mid-tier coil of braided flax, paying half your remaining coppers to avoid the guild's more burdensome clauses.
+@@SEED vh-1-1-5-3 | Near the iron winch at the lower exit, you knot a length of unbranded line around your waist, trusting your own knots rather than the fine print of the cable lords.
+@@SEED vh-d-1-1 | Ignoring the rising gale and the warnings of the gate-warden, you rush headlong down the icy steps with an unspooled rope, losing your footing as the heavy clapper drags you into the abyss.
+@@DONE

@@ -1,0 +1,6 @@
+@@SECTION cf-4-116
+TITLE: The Coal Chute
+TEXT: Iron dust clings to your palms as you test the balance of the suspended hopper above the tender deck. By shifting your weight and bracing the iron lever against the rusted ratchet-tooth, you find the exact pivot-point where the heavy chute yields without spilling a single nugget of coal into the ballast. The balance settles with a satisfying metallic chime, leaving you with a straight, true coal-rake whose tip is worn bright by years of honest service. // Stepping back onto the footplate, you secure the implement against the bulkhead where it belongs.
+GRANT: accurate coal-rake
+EXIT 1: Pull the coal-rake free and climb back to the deck
+@@END

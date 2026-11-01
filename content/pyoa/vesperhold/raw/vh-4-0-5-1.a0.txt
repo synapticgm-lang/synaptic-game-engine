@@ -1,0 +1,64 @@
+@@SECTION vh-4-0-5-1
+TITLE: The Glacier Throat
+TEXT: Jagged teeth of rime-glazed ice frame the narrow approach to the glacier throat, where the wind smells of absolute cold and crushed stone. You stand at the absolute margin of the drop, weighing whether to bind the heavy bronze closer against the rising gale or leave its padded harness loose for an unhindered sprint across the shifting floor. Biscuit stamps a heavy hoof behind you, shivering against the grey squall rolling up from the lower valleys.
+EXIT 1: Press on through the biting wind and shifting ice
+@@END
+@@SECTION vh-4-0-5-2
+TITLE: Howling Frost
+TEXT: Bitter drafts shriek through the frozen ribs of the ice cradle, scouring the blue slopes with needles of wind-driven snow. You lean your weight against the biting gust, considering whether to trade swift mobility for thicker layers of wool and hide against the creeping numbness in your fingers. The bronze clapper hums a low, resonant note against your spine, vibrating in time with the distant groaning of the glacier's deep throat.
+EXIT 1: Press on across the freezing expanse despite the gale
+@@END
+@@SECTION vh-4-0-5-3
+TITLE: Shifting Blue Expanse
+TEXT: Shimmering waves of turquoise ice stretch downward into the blinding white mist, hiding the deadly jaws of unseen crevasses beneath a thin skin of powder. Before taking that first precarious step onto the unstable slope, you must decide how best to secure the sacred metal against the hazards of the descent. The air is so thin and sharp that every breath burns your lungs like cold iron.
+EXIT 1: Press on into the heart of the white wasteland
+@@END
+@@SECTION vh-4-c1
+TITLE: The Ice Cradle Choice
+TEXT: The frozen tongue of the glacier begins here in earnest, sweeping downward between walls of ancient blue-green ice that groan under immense pressure. You must decide right now how to carry Orison's heavy bronze tongue through the treacherous miles ahead, knowing that every choice carries its own punishing weight. Wrap the clapper tight to protect its sacred metal from the biting frost and abrasive ice, or leave it bare to keep your fingers free for the dangerous climbs ahead.
+EXIT 1: Wrap the Clapper tight against the cold
+EXIT 2: Leave it bare and keep your hands free
+@@END
+@@SECTION vh-4-1-0-0
+TITLE: Ribbed Blue Ice
+TEXT: Turquoise cracks snake beneath your boots on the ribbed snout of the glacier as you pick a careful path across the frozen wave. The wrapped clapper rests heavily against your shoulder-blades, its muffled hum vibrating through your woollen tunic with every careful stride. A pale sun glints off the high ridges, offering no warmth to counter the biting alpine draft.
+EXIT 1: Step carefully toward the dripping ice-arch ahead
+EXIT 2: Test the swinging hazel-withe ladder across the blue shaft
+EXIT 3: Slip away onto the quiet smugglers' shelf free of debt
+@@END
+@@SECTION vh-4-1-0-1
+TITLE: Terminal Moraine
+TEXT: Heavy frost coats Biscuit's long ears as the stubborn mule drives its iron-shod hooves into the sliding grey gravel of the terminal moraine. Loose stones clatter down into the shadows of a yawning crevasse while you steady the padded frame on your back. The mountain air tastes of ozone and old bronze, sharp enough to make your teeth ache.
+EXIT 1: Guide the mule along the glass-smooth cutting wall
+EXIT 2: Approach the timber housing of the frozen winch
+EXIT 3: Face the roaring ice-chute where the wind stings your cheek
+@@END
+@@SECTION vh-4-1-1-0
+TITLE: The Dripping Arch
+TEXT: Icy water drips in slow, rhythmic pulses from a low, translucent arch of ancient glacier ice overhead. Jorren, an old cable-rider wrapped in oilskins and salt-cured wool, waits near the threshold, warning you of shifting seracs before offering a warming dram of parsnip brandy from a dented tin flask. The bronze clapper hums softly against your back, answering the subterranean music of the moving mountain.
+EXIT 1: Follow the ice-track where a stray calf shivers by a bridge
+EXIT 2: Squeeze through a narrow fissure where blue icicles chime
+EXIT 3: Inspect an abandoned sledge half-swallowed by powder snow
+@@END
+@@SECTION vh-4-1-1-1
+TITLE: Swinging Hazel Ladder
+TEXT: A flimsy bridge of woven hazel-withe sways violently over a bottomless shaft of blue ice, testing your nerve and balance. The heavy metal weight shifts behind your neck, threatening to pull you off-balance into the roaring emptiness below. Every breath forms a cloud of instant frost that freezes instantly upon your collar.
+EXIT 1: Haul the mule across a treacherous slush-tongue of meltwater
+EXIT 2: Climb toward a burnt-out signal fire on the wind-scoured shelf
+EXIT 3: Lean low against the downdraft rattling your oilskin coat
+@@END
+@@SECTION vh-4-1-1-2
+TITLE: The Debt-Free Shelf
+TEXT: Walking completely unburdened by a pack-animal or heavy debts, you stride freely across the ice without anyone holding a claim over your labor. Tucked away against a stone buttress lies a dry smugglers' shelf, untouched by the rime, where an abandoned toolkit gleams invitingly in the pale light. The peace of owing nothing to the Cable Court or the millers makes the thin mountain air feel lighter in your chest.
+EXIT 1: Ascend toward the signal fire and the coil of dry hemp
+EXIT 2: Examine the discarded grease-box wedged into a dark cleft
+EXIT 3: Crawl across the packed snow bridge arching over the blue throat
+@@END
+@@SECTION vh-4-1-1-3
+TITLE: Glass-Smooth Wall
+TEXT: Sharp iron-shod boots find precarious purchase in hand-cut steps along a vertical wall of polished blue ice. A deep subterranean groan ripples through the ancient body of the glacier, shaking loose a cascade of glittering ice-dust from above. You press your chest against the freezing wall, holding your breath until the mountain settles.
+EXIT 1: Reach for the grease-box wedged in the rocky cleft
+EXIT 2: Knock upon the locked timber door of the Cable Court shelter
+EXIT 3: Steady the cradle as Biscuit slips on a patch of black ice
+EXIT 4: Listen to the organ-pipe resonance of the frozen waterfall
+@@END

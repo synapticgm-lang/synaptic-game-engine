@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION sg-5-1-4-4
+TITLE: The Solar Collector Terrace
+TEXT: Heat radiates upward from the polished bronze tiles of the grand solar-collector terrace, distorting the horizon into shimmering pools of light. You crouch low as the air grows thin and scorching, smelling of roasted copper and baked stone. Above you, the gleaming mirror arrays of the Glasswright sentries pivot with a slow, mechanical groan, casting blinding flashes across the open expanse. Every step risks drawing an immediate challenge from the watchers stationed near the upper domes. // You need to decide whether to brave the open glare toward the central stairs or slip sideways along a narrow maintenance ledge before the rotating mirrors sweep in your direction.
+EXIT 1: Dash across the open solar terrace
+EXIT 2: Creep along the narrow maintenance ledge
+@@END
+@@SECTION sg-5-1-4-5
+TITLE: Shadows Behind the Glass
+TEXT: Stacks of spare, curved lenses lean precariously against the fluted pillars, casting distorted reflections of your tense posture. Just beyond your hiding spot, a weathered glass-diver argues heatedly with a nervous sentry, their sharp voices echoing off the vaulted ceiling. The diver gestures wildly toward the lower basins, demanding access, while the guard's polished breastplate catches the glaring desert sun. // The argument threatens to draw more attention to this sector at any second, leaving you a narrow window to slip away unnoticed or retrace your steps before you are discovered.
+EXIT 1: Dart toward the upper service arch
+EXIT 2: Follow the arguing diver downward
+EXIT 3: Duck behind the western observation rig
+EXIT 4: Turn back across the sliding glass floor
+@@END
+@@SECTION sg-5-1-4-6
+TITLE: The Crumbling Balustrade
+TEXT: A weathered stone balustrade suddenly gives way beneath your gripping fingers, sending a sharp clatter of crumbling masonry echoing down the deep shaft. Dust billows upward into the dry air, stinging your eyes and throat as you cling desperately to the remaining edge. Below, the sheer drop opens into darkness, while above, the telltale click of a sentry's turning mirror suggests the noise has already found an audience. // You must pull yourself up onto the safer platform ahead or scramble down an exposed service ladder before the guards investigate the disturbance.
+EXIT 1: Scramble down the exposed service ladder
+EXIT 2: Pull yourself onto the upper stone platform
+@@END
+@@SECTION sg-5-1-4-7
+TITLE: Threshold of the Sentry Terrace
+TEXT: Harsh daylight floods your vision as you emerge onto the windswept threshold of the Sentry Terrace. Sharp, rhythmic mirror-signals slice through the blinding glare, communicating coded warnings across the sprawling observatory heights. You pull your coat tight against the scouring wind and press your back against a sun-warmed pillar, watching the bright flashes leap from tower to tower. // Ahead lies the main transit route guarded by vigilant watchers, or you can retreat back into the dim corridors from which you just arrived.
+EXIT 1: Advance past the active signal posts
+EXIT 2: Turn back into the shadowed corridor
+@@END
+@@SECTION sg-5-1-5-0
+TITLE: Beneath the Sun Shield
+TEXT: Corrugated sheets of dark sun-shield metal provide scant cover from the searing heat radiating across the upper tiers. You crouch low against the ribbed plates, watching Glasswright sentries semaphore swift, urgent warnings across the dizzying drop of the outer basin. Each flash of reflected light cuts through the dust-hazed air like a blade, warning of intruders below. // Your breath comes shallow and hot as you eye the narrow passage leading deeper into the complex.
+EXIT 1: Press on toward the inner gates
+@@END
+@@SECTION sg-5-1-5-1
+TITLE: The Veteran's Challenge
+TEXT: A veteran sentry pivots abruptly on his heel, turning a polished brass plate straight toward your hiding place. Sharp, rhythmic bursts of light flash from his instrument, demanding your credentials in the silent, intimidating tongue of the tower guards. The metal hums softly with every flick of his wrist, waiting for a proper response that proves you belong among the spires. // You need to commit to your next move before the sentry lowers his shield and sounds a general alarm across the terrace.
+EXIT 1: Press on past the demanding guard
+@@END
+@@SECTION sg-5-1-5-2
+TITLE: The Outer Parapet
+TEXT: Your boots slide carefully along the narrow outer parapet, every muscle tensing against the sheer drop to the salt-crusted floor far below. The whistling desert wind howls around the stone curves, masking the frantic scuff of your footsteps against the ancient masonry. Below, the vast skeleton of the old observatory stretches out in a maze of glass and rusted iron. // Keeping your gaze fixed straight ahead, you look for a safe way to rejoin the main walkways.
+EXIT 1: Press on along the windy ledge
+@@END
+@@SECTION sg-5-1-5-3
+TITLE: Imitating the Flash
+TEXT: You lift your trembling hand and angle a shard of polished metal to catch the fierce midday glare. Trusting your instincts, you mirror the sentry's complex code of short and long flashes, gambling your entire journey on a single imitated signal. The answering pause from the watchtower feels agonizingly long as the light glints off their brass plates. // You must move immediately while the guards process your deceptive reply, pushing forward before the illusion shatters.
+EXIT 1: Press on through the signal gate
+@@END
+@@SECTION sg-d-5-1
+TITLE: Caught in the Glare
+TEXT: You sprint desperately across the open mirror-terrace, abandoning cover as the heat bears down on your shoulders. Instantly, a coordinated volley of blinding light-beams converges on your position from every nearby tower. The focused solar energy strikes your pack with ferocious heat, instantly scorching the canvas and igniting your banked coal-lantern in a sudden puff of smoke and flame. Blinded and overwhelmed by the searing brilliance, you are forced to halt as the guardians of the basin close in.
+@@END
+@@SECTION sg-5-c2
+TITLE: The Sentry Terrace
+TEXT: The wind whips across the vast expanse of the Sentry Terrace, carrying the metallic tang of heated brass and old glass. Ahead, the observation gates block the path toward the heart of Prism, manned by vigilant Glasswrights whose mirrors click like beetles in the dry air. You stand at a crucial crossroads where your previous preparations, or lack thereof, will determine whether you can talk your way past the watchers or must rely on stealth to slip through their shimmering net. // The air is heavy with tension as you weigh your options against the relentless glare of the midday sun.
+EXIT 1: Answer the sentries in mirror-signal
+EXIT 2: Slip past the sentries unseen
+@@END

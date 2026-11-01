@@ -1,0 +1,12 @@
+@@SECTION vh-3-0-3-10
+TITLE: The Slush-Stair Descent
+TEXT: Heavy, wet flakes swirl out of the bruised grey sky, instantly coating the steep stone steps in a treacherous grease of freezing slush and clinging mud. Every boot-heel slides perilously against the shale, and the leaden weight of the bronze clapper on your back threatens to tip your balance toward the sheer abyss. // You steady yourself against a low retaining wall of dry-stacked granite, your breath pluming white and sharp in the sudden squall. Down through the swirling whiteout, a faint glow of amber light beckons from an overhanging eave, while a narrower side-passage offers a sheltered route away from the open precipice.
+EXIT 1: Seek shelter near the smoking hearth
+EXIT 2: Squeeze past the gossiping mill-hands below
+@@END
+@@SECTION vh-3-0-4-0
+TITLE: The Weighing-Shed
+TEXT: Cold drafts whistle through the slatted cedar walls of the communal weighing-shed, where greasy iron scales hang suspended from a blackened overhead beam. You step carefully inside to escape the biting mountain drift, the heavy bronze clapper clicking softly against its padded leather cradle as you shrug off the stinging wind. // Several large sacks of barley are stacked against the damp floorboards, bearing the seal of the Terrace Millers' proud guild. A ledger lies open on a trestle table near the iron weights, its ink smudged by moisture, waiting for an entry that no one has marked.
+EXIT 1: Listen to Tanner whisper near the dark rafters
+EXIT 2: Catch the nervous trader's talk by the mugs
+@@END

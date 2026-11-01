@@ -1,0 +1,69 @@
+Gemini said
+
+@@SECTION sg-4-2-1-0
+TITLE: The Fused Crescent
+TEXT: Beneath a crescent of fused sand, you mend a cracked chimney with tallow and grit while the tempest thrums overhead. The rising gale screeches against the hardened dunes, threatening to tear the tools from your stiff fingers. Every breath tastes of fine alkaline dust, but you keep your shoulder pressed against the shelter's curve, nursing the pale coal-glow within your lantern until the sputtering flame straightens into a steady yellow core. // The wind howls louder outside the barricade, yet the cold ceramic Seedkey remains heavy and dry against your collarbone, urging you deeper into the blinding expanse before the shifting sands bury your only path.
+EXIT 1: Follow the howling ridge toward the deeper basin
+EXIT 2: Seek the alkali spring pledged to your oath
+EXIT 3: Head straight across the open glass flats
+@@END
+@@SECTION sg-4-2-1-1
+TITLE: The Glass Skull
+TEXT: Within a hollow glass skull, you wait out a blinding micro-burst, clutching your soot-blackened lantern against the rising chill. The curved obsidian walls hum like a plucked string as abrasive crystals hammer the exterior, sealing you in a temporary twilight of grey shadow and amber light. You adjust the wick with trembling care, ensuring the precious heat does not die in the gloom while the storm tears furiously at the dunes outside. // The air grows thin and stale within the domed enclosure, forcing you to consider your next movement before the drifting debris completely blocks the low, jagged opening.
+EXIT 1: Crawl through the low aperture into the scouring drift
+EXIT 2: Slide down the dark obsidian slope toward the basin floor
+EXIT 3: Follow the buried water-hoop along the trench edge
+@@END
+@@SECTION sg-4-2-1-2
+TITLE: The Amber Drain
+TEXT: Walking entirely alone through the howling waste, you spot a dry drainage pipe choked with amber beads that shields your fragile flame from the screaming drift. No companion speaks to distract your thoughts or share the burden of the navigation, leaving only the crunch of salt beneath your boots and the frantic rattling of the glass beads in the pipe. You tuck your chin into your collar, guarding the amber lantern with your free hand as the wind tries to rip the very coat from your shoulders. // The quiet isolation presses hard against your temples, reminding you that every choice across this shifting desert rests entirely upon your own weary judgment.
+EXIT 1: Trace the labyrinth of hollow glass pipes onward
+EXIT 2: Step beneath the glittering scree where old Voss stands
+EXIT 3: Slip inside the hollowed cistern rim to clean your coat
+@@END
+@@SECTION sg-4-2-1-3
+TITLE: The Blue Slag Arch
+TEXT: Behind a tumbled arch of blue slag, you bind your burned fingers with hempen cloth while the gale strips the dunes of their powdery crests. The sharp scent of ozone and crushed salt fills the air as the tempest beats relentlessly against your makeshift cover. You draw the cold ceramic Seedkey closer to your ribs, feeling its dead chill contrast sharply against the feverish throb of your injured hand. // The howling outside dips into a lower, more threatening moan, signaling that the lull is temporary and the open expanse awaits your crossing.
+EXIT 1: Follow the humming glass conduits toward the distance
+EXIT 2: Sprint across the shimmering sulphate crust through the needles
+EXIT 3: Scrape the accumulated glass-powder from your heavy hem
+EXIT 4: Press forward into the howling eye of the gray drift
+@@END
+@@SECTION sg-4-2-1-4
+TITLE: The Bell-Jar Lee
+TEXT: In the lee of a massive bell-jar fragment, you feed precious scrap-coal to your sputtering wick as the night turns abrasive and cold. The curved glass barrier blocks the worst of the howling gale, casting distorted reflections of your tired face into the surrounding gloom. You carefully break a dark lump of fuel between your palms, dropping it into the metal basket to revive the dying yellow eye of your lamp before the darkness swallows the trench entirely. // The temperature continues to drop sharply as the storm clouds gather weight overhead, demanding that you move before your boots freeze to the glass floor.
+EXIT 1: Push past the jagged rim into the open dust-storm
+EXIT 2: Climb the steep bank of fused crystals toward the ridge
+EXIT 3: Follow the curved shadow of the jar into the deeper trench
+@@END
+@@SECTION sg-4-2-1-5
+TITLE: The Salt-Pimple Flats
+TEXT: Across a ribbed crust of salt-pimple flats, you run low and hard, praying your singed wick holds its yellow spark against the ferocious downdraft. Every step crunches through the brittle white blisters of the ancient seabed, sending up tiny puffs of stinging dust that cling to your sweat-drenched neck. Your lungs burn with every inhalation, yet you dare not slacken your pace while the open mirrors stretch endlessly on every side. // The wind shifts abruptly from the west, bringing a sharper tang of sulfur and forcing you to lean heavily into the gale just to maintain your footing.
+EXIT 1: Dash toward the cluster of jagged glass spires ahead
+EXIT 2: Duck into the shadowy cleft between two salt domes
+@@END
+@@SECTION sg-4-2-2-0
+TITLE: The Telegraph Wire
+TEXT: Through a corridor of singing telegraph-wire, you dodge whipping glass reeds while your lamp casts long, stuttering shadows across the white floor. The thin metallic filaments hum with a sharp, musical vibration that sets your teeth on edge, echoing the distant fury of the mirror storm. You duck beneath a low-hanging loop of fused copper, keeping your eyes fixed on the dim horizon where Prism's spires should rise through the scouring grit. // The whistling wires pull tighter in the rising gale, creating a chaotic web of sound and motion that forces you to choose your footing with absolute precision.
+EXIT 1: Follow the wind-vane spire into the deeper basin
+EXIT 2: Cross the violet mirror-shards along the charred peg trail
+@@END
+@@SECTION sg-4-2-2-1
+TITLE: The Hidden Spring
+TEXT: Bound tightly by the sisters' well-oath, you recognize a hidden alkali spring beneath the drift that cools your scorched palm and feeds your resolve. The familiar weight of the sacred promise hums quietly in your blood, guiding your eyes past the deceptive surface crust to the faint moisture breathing through the salt. You kneel in the stinging dust to press your damp fingers to your brow, letting the cold water renew your strength before the storm resumes its assault. // The surrounding dunes shift and settle with a dry hiss, reminding you that your sworn duty leaves no time for lingering in the shelter.
+EXIT 1: Follow the trail of charred pegs across the mirror-shards
+EXIT 2: Trace the crystalline meal dune toward the distant towers
+@@END
+@@SECTION sg-4-2-2-2
+TITLE: The Slag Ledge
+TEXT: Under a ledge of milk-white slag, a shivering nomad named Nola trades a handful of coarse salt for a drop of water from your skin. Her fingers are wrapped in stained leather rags, and her eyes reflect the pale, frantic yellow of your guarded lantern as the wind tears at the edges of your coat. You exchange low whispers about the rising storm and the treacherous condition of the basin floor before she points a scarred thumb toward the southern transit. // The slag ledge groans under the pressure of the howling wind, urging you to leave the shelter and resume your lonely march across the Basin.
+EXIT 1: Advance into the swirling crystal meal of the dune
+EXIT 2: Press through the choking mica veil toward the interior
+@@END
+@@SECTION sg-4-2-2-3
+TITLE: The Jagged Prisms
+TEXT: Past a reef of jagged prisms, you scramble over shifting dunes, your breath rattling in a throat parched by microscopic grit. The blinding sun catches the razor edges of the crystal formations, splintering the grey daylight into a dizzying kaleidoscope of violet and gold. You keep your head bowed against the stinging spray of glass-dust, clutching the cold Seedkey tightly inside your tunic to ensure it remains free of abrasive silt. // The dunes slide away beneath your boots with every stride, threatening to trap you in a deep trough unless you find a firmer path.
+EXIT 1: Follow the charred wooden pegs across the violet glass
+EXIT 2: Head toward the greenish glass cataract where Garrow stands
+EXIT 3: Push through the choking mica veil into the howling drift
+@@END

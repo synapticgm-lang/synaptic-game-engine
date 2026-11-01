@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION td-1-032
+TITLE: Blood on the Net
+TEXT: Voices crackle like dried kelp beneath the wooden docks where the drying frames cast long, skeletal shadows. Two net-menders stand chest-to-chest, iron fish-knives drawn and glinting with pale salt-crust under the grey Gullmouth sky. Passers-by edge away, muttering into woolen collars, leaving the dispute to fester in the salty air. You step between them with slow, deliberate palms held open, watching the twitch of tendon and knuckle as razor edges hover inches from wet wool. // A scarred local guide named Bran, leaning against a salt-cured piling with a coil of hemp over his shoulder, narrows his eyes and watches how steadily you hold your ground while the steel stays high.
+EXIT 1: Step between the raised blades
+@@SECTION td-1-033
+TITLE: The Unblinking Stand
+TEXT: Cold sweat traces the curve of your jawline as the heavier knife-wielder lunges forward, his temper snapping under the strain of empty harbours and vanished tides. The blade stops a hair’s breadth from your throat, smelling of old fish and raw panic, while the second net-mender snarls and prepares to shove past your shoulder. Every instinct screams to jerk back or raise your fists, threatening disaster. You lock your gaze onto his bloodshot eyes, forcing every muscle in your frame to remain carved in absolute stillness against the threat.
+CHECK: Hold steady against flashing steel
+@@SECTION td-1-034
+TITLE: A Slip in the Salt
+TEXT: Muscle memory fails you for a frantic heartbeat, and you flinch just as the lunging blade sweeps past, slicing a deep, hot line across your forearm. Blood beads instantly, bright and thin against your salt-stiffened coat, drawing a low chuckle from the onlookers who expected nothing less from a reckless wrecker. The combatants stumble apart, startled by the sudden spill, but the cost is paid in torn wool and stinging flesh. You bind the gash tight with a strip of rag, swallowing the bitter taste of failure as the crowd drifts back to their miserable business.
+EXIT 1: Leave the brawlers behind
+@@SECTION td-1-035
+TITLE: Silence Before the Steel
+TEXT: Iron discipline holds firm against the rush of adrenaline, however narrowly, forcing the aggressor to lower his point with a muttered curse and a shake of his head. Bran pushes off the timber piling, stepping up beside you with an approving nod and a quiet whistle for your steady nerve. He slings his hemp coil higher and spits into the grey dust, deciding right then that a wrecker who doesn't blink at cold iron is a good sort to have at one's back when descending toward the dark seabed.
+GRANT: Loyal local guide Bran
+EXIT 1: Walk down to the docks
+@@SECTION td-1-036
+TITLE: Muscle and Mahogany
+TEXT: Smoke hangs low beneath the rafters of the guildhall where old timber groans under the weight of salted hams and hanging oil-lamps. The guildmaster's champion, a broad-shouldered net-hauler named Barnaby with forearms like cured oak, slams his elbow onto the sticky table and flashes a yellow-toothed grin. You roll up your sleeves, plant your boots firmly against the salt-rotted floorboards, and lock palms across the scarred grain of the wood. The tavern quiets down instantly, every scavenger and net-mender turning to watch the clash of brawn. // Sweat beads on your brow as the strain settles deep into your shoulder joints, pushing every muscle to the very edge of endurance.
+EXIT 1: Push harder across the table
+@@SECTION td-1-037
+TITLE: Strain of the Table
+TEXT: Sinews pop and timber creaks under the mounting pressure while Barnaby’s face darkens to the shade of a boiled beet. You dig your heels into the uneven floor, feeling the old wood groan in sympathy with your aching joints. The room holds its collective breath as the contest teeters on a knife-edge of pure physical grit and stubborn pride. With a final, explosive heave, you slam his knuckles down onto the wood with a sharp thud that rattles the empty pewter mugs.
+EXIT 1: Claim your heavy prize
+@@SECTION td-1-038
+TITLE: The Iron Grip
+TEXT: Barnaby lets out a guttural roar as his hand starts to tilt slowly toward the splintered tabletop, his muscles bunching into rigid knots of frustration. You throw your entire weight behind the effort, leaning your shoulder forward while your fingers dig desperately into the edge of the wood for leverage. Every breath burns your lungs like salt water, and the veins in your temples throb with the sheer violence of the strain as the final inch slips away.
+CHECK: Slam the champion down
+@@SECTION td-1-039
+TITLE: Broken Leverage
+TEXT: A sudden splinter catches your palm, tearing a bloody groove across your skin and breaking your concentration at the worst possible moment. Barnaby seizes the opening with a triumphant roar, throwing his massive weight behind a brutal counter-surge that slams your knuckles flat against the wood. Laughter erupts from the watching scavengers, and you nurse a bruised hand and a bruised ego while the champion gloats over his ale. You salvage your dignity with a dry quip, accepting the bitter taste of defeat as the price of a hard lesson.
+EXIT 1: Pick yourself up slowly
+@@SECTION td-1-040
+TITLE: The Rope and the Glory
+TEXT: Victory belongs to you, however narrowly, as Barnaby shakes out his aching wrist with a grudging grin and shoves a thick coil of pale climbing rope across the sticky planks. It is prime gear, strong enough to hold a plummeting scavenger over the jagged rim of the Sunken Stair, smelling faintly of tar and deep ocean brine. The guildhall murmurs with fresh respect, acknowledging that your shoulders are broad enough for the grim work waiting out on the bare seabed.
+GRANT: Coil of high-quality rope
+EXIT 1: Step out into the air
+@@SECTION td-1-041
+TITLE: Dark Cellar Labour
+TEXT: Damp stone walls weep condensation down into the shadowy depths of the cellar beneath the abandoned chandlery. You heave a heavy crate of smuggled fresh water onto your shoulder, feeling the rough wooden staves bite straight through your wet tunic. The air tastes of stagnant bilge and ancient lime, thick enough to choke an unwary scavenger. You carry the burden up the steep, rotting steps without a single stumble, proving your strength to the shadowy figures watching from the gloom. // A hooded broker nods approvingly from the doorway, sliding a heavy talisman across the counter.
+EXIT 1: Collect the damp talisman
+@@SECTION td-1-042
+TITLE: The Crushing Weight
+TEXT: The heavy crate shifts unexpectedly as you hoist it onto your shoulder, throwing your center of gravity off balance on the slick stone steps. Water sloshes inside the hidden casks, threatening to spill precious ounces onto the floor as your boots slip on the damp moss. You drop your center of gravity low, bracing your legs against the burning pain in your thighs while you fight to keep the cumbersome load from crushing your spine against the low brick ceiling.
+CHECK: Lift the heavy water crate
+@@SECTION td-1-043
+TITLE: A Crushed Shoulder
+TEXT: The weight proves too much for a split second, and the crate slips, smashing hard against your shoulder and pinning you against the damp brickwork with a dull thud. You grunt in pain as a dull bruise blooms across your flesh, costing you precious time and leaving your muscles aching and stiff. The hooded broker sighs with mild irritation, helping you shove the heavy wood back into place while deducting a few copper coins from your prospective due for your clumsiness.
+EXIT 1: Drag the crate upstairs anyway
+@@SECTION td-1-044
+TITLE: The Burden Lifted
+TEXT: Muscle and bone hold firm against the crushing load, however narrowly, allowing you to top the cellar stairs and deposit the dripping crate with a solid, satisfying thud. The broker grunts in silent approval, peeling back a greasy rag to reveal a small, cold piece of carved bone shaped like a drowning gull. It is a prized token of safe passage among the low-tide tunnels, promising safe passage past the territorial crews who patrol the mud-flats.
+GRANT: Cold bone talisman
+EXIT 1: Return to the smoky guildhall
+@@END

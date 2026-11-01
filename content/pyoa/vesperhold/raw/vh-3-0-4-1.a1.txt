@@ -1,0 +1,6 @@
+@@SECTION vh-3-0-5-2
+TITLE: The Rumour Mill
+TEXT: Tin mugs chatter against grease-stained tables inside the drafty milling-house, where a nervous spice-trader leans across a cask to grab your sleeve. He insists the Lowgate foundry has already been seized by the Cable Court's bailiffs to recast your bronze Clapper into heavy debt-shackles instead of a true voice for Orison. The air smells of wet barley and spilt small-beer while every miller at the hearth-bench turns to watch how you bear the weight of the news.// // You might stay to question the trembling merchant for details, or shoulder the padded cradle and leave the warm stone walls behind before the whispers harden into a blockade.
+EXIT 1: Demand proof from the merchant
+EXIT 2: Leave the mill and press on
+@@END

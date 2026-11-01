@@ -1,0 +1,113 @@
+{
+ "batch": "cf-4-065",
+ "sections": {
+  "cf-4-065": {
+   "title": "The Rigged Wire",
+   "text": "Coiling the discarded telegraph wire with methodical care, you lash the intact porcelain block to the iron stanchion above the sump. The dry-cell battery slips snugly into its leather sling, its terminals hissing faintly against a stray bead of moisture before catching and holding a steady, low-humming current. That salvaged charge bridges the gap, lighting your way through the slick dark.",
+   "check": "",
+   "grant": "dry-cell battery and block",
+   "exits": [
+    "Climb back down to the sump basin"
+   ]
+  },
+  "cf-4-066": {
+   "title": "The Scalding Room",
+   "text": "Steam hisses from the rusted manifold, filling the cramped cabin with a dense, blinding fog that tastes of copper and boiled tallow. You keep your footing on the slick deck plates, sliding your fingers along the primary bypass valve until the wheel stops its juddering rattle. The pressure gauge settles into a steady, safe hum, leaving you with a dry oilskin case fished from a shelf.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip the waterproof case into your tunic"
+   ]
+  },
+  "cf-4-067": {
+   "title": "The Steaming Valve",
+   "text": "Condensation drips from the copper ceiling, striking your shoulders like cold needles as you navigate the narrow walkway beside the boiler. The air is thick enough to chew, smelling sharply of heated grease and mineral scale. Moving with deliberate caution, you secure the loose coupling on the pressure line before the temperature climbs any higher in the enclosed space.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance deeper into the tunnel mist"
+   ]
+  },
+  "cf-4-068": {
+   "title": "The Scalding Bypass",
+   "text": "Scald-heat rolls off the brass housing in heavy, suffocating waves, fogging your goggles and slicking the deck plates with greasy condensate. Your hands hover over the screaming valve while the pressure needle pins itself hard against the red sector, threatening to split the copper elbow wide open. You steady your breathing against the roar of the boiler, reaching out your fingers to catch the spinning wheel.",
+   "check": "Steady the screaming bypass valve",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-069": {
+   "title": "The Scald-Burn",
+   "text": "Boiling vapor bites through your canvas sleeve with a sharp hiss, leaving a red, stinging welt across your forearm that throbs with every beat of your pulse. You lose your grip on the spinning wheel as the pressure slams the metal casing, venting a hot cloud that leaves you coughing and groping blindly in the grey gloom. The engine stutters, burning precious time and leaving you bruised.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your breath and press forward"
+   ]
+  },
+  "cf-4-070": {
+   "title": "The Sealed Case",
+   "text": "Through the haze of steam and scalding water, your fingers find the toggle and lock the bypass valve into its proper groove with a satisfying metallic click. The pressure drops back into the green, steady and low, and resting on the bracket beside the manifold is a dry, oilskin map case untouched by the damp. You slide it free of the clips, your thumb testing the sealed brass clasp.",
+   "check": "",
+   "grant": "waterproof oilskin map case",
+   "exits": [
+    "Return to the main sump basin"
+   ]
+  },
+  "cf-4-071": {
+   "title": "The Limestone Cleft",
+   "text": "Locomotive No. 9 wheezes through a narrow cleft in the limestone where the air tastes sharply of old copper and burnt sage. The engine's heavy wheels grind against stone walls that weep rusty moisture, the headlight painting long, pale arcs across ancient timber shoring. Every rivet in the iron chassis rattles in rhythm with the subterranean draft, answering some hidden pulse buried deep beneath the mountain root.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the rails into the dark"
+   ]
+  },
+  "cf-4-072": {
+   "title": "The Whisper Vault",
+   "text": "Archways carved into the cave walls echo with the recorded voices of every driver who perished here, their ghostly words blending into a continuous, murmuring tide of soot-stained gossip. The damp air smells of cold coal dust and old iron, carrying fragments of vanished timetables through the dark. Ahead, the cavern splits into several distinct paths, each marked by flickering signal lamps hung from rusted brackets.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press onward through the echoing arch",
+    "Listen closely to the acoustic stone",
+    "Shoulder through the rotten timber partition",
+    "Approach the barricade of iron sleepers"
+   ]
+  },
+  "cf-4-073": {
+   "title": "The Familiar Cadence",
+   "text": "You listen to the whispering wall until you catch the cadence of Hesper Quill's familiar voice repeating a warning about poisoned rails buried beneath the ash. The stone gives up its secrets in a dry, rattling whisper that sounds precisely like grease sliding down a cold piston. You pocket the advice, your fingers brushing the cold metal of the Water Key at your belt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the warning toward the junction"
+   ]
+  },
+  "cf-4-074": {
+   "title": "The Acoustic Echo",
+   "text": "Voices overlap in the limestone corridor, rising from a murmur to a frantic clamor of past engine failures and warning bells. You press your palms against the vibrating rock face, trying to isolate Hesper Quill's distinct register from the howling subterranean draft. The stone grows unnaturally cold beneath your skin as a specific sentence detaches itself from the babble, demanding your full attention.",
+   "check": "Decipher the whispering stone wall",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-075": {
+   "title": "The Deafening Babble",
+   "text": "A sudden surge of competing voices strikes your ears like a physical blow, driving a spike of sharp pain behind your temples and leaving you dizzy on the ballast. You stumble against the damp limestone wall, shaking your head to clear the ringing confusion while precious minutes slip away in the dark. The acoustic shock leaves you drained, but the worst of the howling fades into a dull ache.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Shake off the dizziness and advance"
+   ]
+  },
+  "cf-4-076": {
+   "title": "The Cadence of Hesper",
+   "text": "The babble subsides into a steady, rhythmic drop of water against limestone, leaving your head clear and your boots heavy on the grit. You catch the distinct, clipped cadence of Hesper Quill's voice echoing from a salt-crusted seam in the rock, mapping out the precise stretch of poisoned rails where the sleeper-spikes have been treated with green vitriol to rot the gauge. That secret warning stays with you, a sharp piece of practical knowledge earned through sheer endurance in the dark.",
+   "check": "",
+   "grant": "a warning of green vitriol",
+   "exits": [
+    "Follow the voice toward the damp draught"
+   ]
+  }
+ },
+ "missing": []
+}

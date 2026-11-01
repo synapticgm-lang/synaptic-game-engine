@@ -1,0 +1,68 @@
+@@SECTION cf-2-215
+TITLE: The Grease Tin
+TEXT: Heavy canvas flaps snap in the sulfurous gale while you sidestep the circle of card-playing gangers hunched near the banked boiler. Their attention remains fixed on greasy cardboard tokens and disputed tallies of coal-scraps. Your fingers close around the dented rim of a tallow tin sitting half-concealed beneath an overturned crate. Slipping it into your coat pocket without a clink, you earn a rich, yellow paste of beef fat destined for the sliding rods of the valve-gear.
+EXIT 1: Slide back into the coal dust
+@@END
+@@SECTION cf-2-216
+TITLE: The Hoist Crank
+TEXT: Rusted chains groan overhead as you lean your weight against the jammed iron spindle of a smuggler's cargo lift. Grit grinds inside the bronze housing until a sharp crack signals the gears finally biting home. The winch spins true once more, earning a heavy, notched iron pry-bar tossed from the shadows by a grateful handler. This solid wedge of cold metal will serve well enough when rusted bulkhead doors refuse to yield.
+EXIT 1: Take the pry-bar and move
+@@END
+@@SECTION cf-2-217
+TITLE: The Shared Valve
+TEXT: Steam hisses softly from the manifold while the camp guards turn their backs to warm their mittened hands over a brazier. You slip a copper feed-tube past the outer casing of the station boiler, listening to the satisfying gurgle of stolen fluid shifting through the lines. This quiet theft fills your canteens with double the allowance of murky, iron-tasting water before anyone notices the drop in pressure.
+EXIT 1: Withdraw into the steam haze
+@@END
+@@SECTION cf-2-218
+TITLE: The Float Valve
+TEXT: Copper scale flakes off the internal wall of the roadside cistern as you tap the jammed float-valve with a brass spanner. Water surges back into the trough with a clean, steady rush that satisfies the waiting tank crews. For your trouble, the foreman drops a handful of smooth copper washers and a sealed tin of dark anti-friction grease into your open palm.
+EXIT 1: Secure the grease and press on
+@@END
+@@SECTION cf-2-219
+TITLE: The Stolen Stream
+TEXT: Vapor curls thickly around the makeshift encampment while the watchmen argue over a spilled tin of chicory. You drop the flexible copper line into the auxiliary injector and watch the glass gauge climb steadily as the liquid transfers. Securing a double ration of drinking water lightens your immediate worries about the dry miles waiting beyond the dunes.
+EXIT 1: Leave the hissed valve behind
+@@END
+@@SECTION cf-2-220
+TITLE: The Blind Reciter
+TEXT: Hooded figures sway in unison around a rusted signal-mast while a blind prophet chants timetables of trains that vanished decades ago. You pause in the drifting ash, listening closely to the rhythmic cadence until the hidden pattern of arrivals and cancellations reveals itself. That whispered sequence of platform numbers forms a secret password for the guarded iron gates ahead.
+EXIT 1: Step past the chanting circle
+@@END
+@@SECTION cf-3-001
+TITLE: The Iron Spans
+TEXT: Locomotive No. 9 crawls heavily onto the monumental lattice of the Brasswind Viaduct, trembling against the sheer drop above the grey expanse. Green signal-lamps blink rhythmically from the toll-gantries high above the boiler roof, challenging your right to cross the gorge. You check the steam pressure and ease the regulator forward, feeling the massive iron bridge hum beneath the wheels as the city of tolls looms out of the blowing ash.
+EXIT 1: Approach the towering toll-barrier
+@@END
+@@SECTION cf-3-002
+TITLE: The Iron Tollhouse
+TEXT: Looming steel barricades block the bridge-head where Baronial inspectors demand steep transit duties from every engine crossing the gorge. Steam vents hiss a nervous rhythm against the stonework while clerks tally tonnage in thick ledgers. You must find a way past this customs blockade before the schedule shifts against you.
+EXIT 1: Pay the heavy transit duty
+EXIT 2: Hammer a loose chassis rivet
+EXIT 3: Purge the auxiliary steam lines
+EXIT 4: Face the gantry-guard blockade
+@@END
+@@SECTION cf-3-003
+TITLE: The Gauge Housing
+TEXT: Brass screws turn sluggishly under your screwdriver as you pry open the face of the pressure-gauge housing. The cramped cavity behind the dial offers just enough space to tuck away a pair of contraband fuel cells wrapped in oily rag. You slide the metal lid back into place just as heavy boots echo against the iron decking outside.
+EXIT 1: Pocket the hidden brass token
+@@END
+@@SECTION cf-3-004
+TITLE: The Tollhouse Clerk
+TEXT: Meticulous ledgers snap shut with a sharp crack of leather as the clerk finishes stamping your clearance manifest. You slide the newly earned brass token into your waistcoat pocket alongside the stubby pencil. The checkpoint officials wave a lazy green flag, clearing your passage deeper into the maze of gantry bridges.
+EXIT 1: Advance deeper into the gantry
+@@END
+@@SECTION cf-3-005
+TITLE: The Housing Check
+TEXT: Fingers trembling slightly against the vibrating brass bezel, you work the final retaining screw into the hollowed gauge housing. A sudden clatter of heavy boots on the gantry stairs threatens to expose the hidden fuel cells tucked inside the instrument panel. You hold your breath, relying on steady hands and quick adjustments to keep the inspectors from prying too closely into your work.
+CHECK: Wrenching the housing shut in time
+@@END
+@@SECTION cf-3-006
+TITLE: The Inspector's Glance
+TEXT: A sharp rap of a brass ruler against the instrument casing shatters your concentration as the senior clerk spots the mismatched thread on the housing bezel. You absorb a stinging reprimand and surrender a small portion of your coal stores to satisfy their suspicion before they finally wave you onward. The delay leaves your knuckles throbbing and your fuel bunkers noticeably lighter.
+EXIT 1: Take the loss and move
+@@END
+@@SECTION cf-3-007
+TITLE: The Cleared Panel
+TEXT: The housing bezel clicks firmly into place just as the inspector passes by with a casual wave of his ledger. You pocket the small brass token slipped to you by a sympathetic shunt-worker, securing a quiet favor among the gantry crews. The machinery hums steadily beneath your boots, leaving you ready to face the looming barriers ahead.
+EXIT 1: Face the gantry-guard blockade
+@@END

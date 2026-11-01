@@ -1,0 +1,55 @@
+@@SECTION cf-5-117
+TITLE: The Narrow Drain
+TEXT: Squeezing your shoulders through the iron-bound masonry of the drainage culvert, you swallow the alkaline taste of soot that coats your tongue like dry plaster. The storm rages against the surface above, but down here the silence is absolute save for the slow drip of stagnant condensate. Steadying your breath against the rising panic in your chest, you reach into the dark alcove and your fingers brush the cold wax and rough wick of a hidden cache of tallow candles. // Tucking the salvage safely into your oilskin pocket, you turn your boot toward the junction ahead.
+EXIT 1: Creep along the masonry wall
+@@END
+@@SECTION cf-5-118
+TITLE: The Iron Switch
+TEXT: Leaning your full weight against the heavy grease-bar, you force the rusted switch-point as it shrieks in protest against decades of accumulated coal-dust and scale. A sudden hiss of superheated steam spits from the failing joint beside your knuckles, threatening to scald your skin if the pressure backfires into the pit. Grit your teeth against the blistering heat, you throw your hip into the lever until the tongue snaps home with a satisfying iron thud. // Slipping the spare copper gasket from the spindle-slot, you secure your prize in your pocket.
+EXIT 1: Pry the jammed iron free
+@@END
+@@SECTION cf-5-119
+TITLE: The Clerk's Ledger
+TEXT: Sliding the dog-eared railway rule-book across the scarred oak counter, you tap a grease-stained thumb against paragraph four of the emergency schedule. The clerk blinks behind his spectacles, his pen hovering uncertainly over the ledger as he weighs your authority against the rising fury of the storm outside. You hold his gaze with unblinking resolve until he sighs, dips his nib into the violet ink, and stamps the heavy paper with the station seal. // Folding the signed bill of indemnity, you tuck it inside your waistcoat.
+EXIT 1: Secure the stamped official paper
+@@END
+@@SECTION cf-5-120
+TITLE: The Sooty Vault
+TEXT: Crawling through the narrow drainage culvert while choking soot fills the air, you press your palms into the grit and maintain your composure against the stifling gloom. The atmosphere weighs heavy upon your temples, smelling of ancient grease and damp masonry, but you refuse to let the darkness blur your senses. Your searching fingers encounter a wooden crate wedged behind a brick pillar, revealing a hidden cache of tallow candles wrapped in oily canvas. // Grab the candles and press onward
+@@END
+@@SECTION cf-5-121
+TITLE: The Bronze Pillar
+TEXT: Standing before the immense bronze pillar of the Water Gate, you feel the cold heft of the brass key in your palm as the storm clock ticks down its final, hollow beats. Cinderfall holds its breath behind the titanic bulk of the dam, while the low rumble of the approaching ash-tempest shakes the foundations of the terminal cliff. Every faction watches from the shadows, waiting to see whether you will turn the spindle to wash the grey steppes or seal the doom of the iron road forever. The gear awaits your hand. // Turn the great brass key
+EXIT 1: Open the final bronze lock
+EXIT 2: Strike a bargain with the barons
+EXIT 3: Smash the tracks with fire
+EXIT 4: Raise the gangers to rule
+EXIT 5: Feed the prophetic pyre
+EXIT 6: Join the signalmen in dark
+EXIT 7: Board the last escaping train
+EXIT 8: Search for missing Hesper
+EXIT 9: Let the deep waters drown all
+EXIT 10: Retire to a quiet siding
+EXIT 11: Claim the stationmaster throne
+EXIT 12: Let the iron engines die
+@@END
+@@SECTION cf-6-001
+TITLE: The First Turn
+TEXT: The brass key engages the bronze tumblers with a shriek that echoes off the vaulted limestone ceiling of the terminal. Old scale flakes away from the ancient threads, falling like black snow onto the soot-stained flags beneath your boots. You throw your entire weight against the long arm of the valve, feeling the immense hydraulic pressure of the reservoir straining against decades of neglect. Water begins to weep from the cracked seals, smelling of mountain moss and pristine snow. // The heavy pillar shudders, groaning as the long-stalled mechanism finally breaks its rust-bound sleep.
+EXIT 1: Force the valve another turn
+@@END
+@@SECTION cf-6-002
+TITLE: The Rushing Tide
+TEXT: A white plume of pent-up spray bursts from the high gallery, instantly washing away the choking grey ash that has smothered Cinderfall for generations. Down in the gulley, the rusted rails gleam under the sudden deluge, turning from dull iron to glistening silver as the fresh current scours the tracks clean. The people of the city crowd the iron balconies, pressing their faces into the cool, damp wind with shouts of disbelief and weeping laughter. You lean against the trembling pillar, watching the grey desert transform beneath the rushing tide. // The great basin empties its heart into the dry valleys below, drowning the dust.
+EXIT 1: Watch the water claim the line
+@@END
+@@SECTION cf-6-003
+TITLE: The Cleansing Wash
+TEXT: Torrents of crystal water roar through the lower viaducts, sweeping away the stranded wrecks and the burnt-out hulks of the Grey Bazaar like drifted straw. The low sky cracks open above the terminal, letting a pale, true sunlight pierce the broken clouds for the first time since the Long Fire began its reign. Steam rises in thick white billows where the cold flood meets the hot cinders of the steppes, wrapping the valley in a clean, breathable fog. The iron road is flooded, but the land finally drinks. // Stand firm as the deluge surrounds the engine
+EXIT 1: Step down into the cool flow
+@@END
+@@SECTION cf-6-004
+TITLE: The Last Arrival
+TEXT: Locomotive No. 9 rests quietly in the wash of the great spillway, her boiler cooling at last as the fires within her belly die down to a peaceful, embers-glow. You leave the brass key where it rests in the turned valve, its teeth gleaming bright against the dark green metal of the gate. The Marrowbone has brought her charge home through ash and iron, fulfilling the old debt under a sky washed clear of soot. There are no more schedules to keep, no more signals to read in the dark, and the water runs deep and cold through the streets of Cinderfall. // The journey is finished, and the long road rests beneath the water.
+EXIT 1: Rest beside the quiet engine
+@@END

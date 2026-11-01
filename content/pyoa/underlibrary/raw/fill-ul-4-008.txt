@@ -1,0 +1,12 @@
+@@SECTION ul-4-011
+TITLE: The Phantom Scholar
+TEXT: Pressure drains from your temples like lamp-oil soaking into dry blotting paper as the historic static recedes into the masonry. Standing firm against that oppressive wave earns you the quiet respect of a phantom scholar whose ink-stained fingers materialize long enough to press an invitation into your palm. They whisper of a permanent seat among the ancient folios, offering you the chance to read until the stars themselves go out. You slip the phantom counsel into your pocket, knowing this quiet debt might anchor you when the deep stacks finally close their heavy bindings for good.
+GRANT: an old scholar's seat
+EXIT 1: Step through the heavy iron bulkhead
+@@END
+@@SECTION ul-4-016
+TITLE: The Translated Glyph
+TEXT: Carved warning glyphs upon the low stone arch yield to your careful scrutiny, their shifting symbols freezing into a coherent sequence just as the mortar begins to grind. Decoding the proper passage phrase stays the vicious vellum tongue that hovered at your throat, leaving you only with the dry scent of old ink and a narrow escape. Tucked safely between your knuckles rests an annotated translation slip, salvaged from the very jaws of the masonry. This scrap of marginal wisdom will serve you well when other doors refuse to open for a mere junior page.
+GRANT: an annotated translation slip
+EXIT 1: Return to the iron threshold
+@@END

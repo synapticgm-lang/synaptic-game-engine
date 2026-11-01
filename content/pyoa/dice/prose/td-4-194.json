@@ -1,0 +1,124 @@
+{
+ "batch": "td-4-194",
+ "sections": {
+  "td-4-194": {
+   "title": "Weight Of The Deep",
+   "text": "Stone dust powders your shoulders as the massive brass collar grinds against its seating, threatening to flatten you into the masonry. Your knuckles turn white where you brace against the tremor, muscles singing with strain as the air grows thick with ancient rust. Through the haze of particulate matter, a glint of gold catches your eye amidst the rubble, resting perilously close to the crushing edge. Dropping lower to escape the brunt of the weight, you reach out across the trembling flagstones to snatch the royal seal before the machinery shifts again.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Seize the fallen gold"
+   ]
+  },
+  "td-4-195": {
+   "title": "Hold The Line",
+   "text": "Tremors shake the bedrock as the iron chamber groans under unbearable tonnage, threatening to snap the pillars and crush everything in the stairwell. Without a thought for safety, you plant your boots against the shifting floor and throw your entire weight into the narrow gap beside the grinding housing. Dust fills your throat and the stone beneath your knees splinters into grey grit, but your gaze remains fixed on the fallen royal seal glinting just inches from the churning teeth.",
+   "check": "Defy the crushing pressure",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-196": {
+   "title": "Scraped From The Sockets",
+   "text": "A sudden lateral shudder of the ironwork hurls you violently against a jagged salt-pillar, tearing a deep, stinging gash across your forearm while the royal seal slips away into the dark machinery. Blood wets your wool sleeve as you pick yourself up from the grit, gasping for breath against the sulfurous air. Though your ribs ache with every intake and your arm throbs with a fresh, raw stripe of pain, the immediate peril passes as the mechanism settles into a stubborn, sullen stillness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Rise and press onward"
+   ]
+  },
+  "td-4-197": {
+   "title": "Gold From The Grinder",
+   "text": "Metal screeches against stone, then yields with a sudden, granting shudder that leaves your ears ringing in the heavy silence. Your fingers close around the cold metal of the royal seal just as the primary housing locks firmly into place, sparing your bones from the descending weight. You pull your arm back into the safety of the alcove, sliding the heavy prize into your canvas pouch alongside your salt-crusted compass.",
+   "check": "",
+   "grant": "Heavy royal seal",
+   "exits": [
+    "Approach the final lever"
+   ]
+  },
+  "td-4-198": {
+   "title": "The Long-Held Breath",
+   "text": "Beneath the vaulted arches, the very earth shudders as the immense brass teeth of the Meridian Gear lock into their ancient track with a sound like a distant cathedral bell. For a long heartbeat, silence swallows the damp corridors, broken only by the steady drip of saltwater from the ceiling. Then a low, rising moan travels up from the abyss, shaking the moss from the mortar and rattling the bone charms hanging from your belt. The seabed floor outside is cracking, and the salt-crust shatters as a dark wall of water surges back toward the cliffs of Gullmouth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the returning tide"
+   ]
+  },
+  "td-4-199": {
+   "title": "Fighting The Flood",
+   "text": "Cold brine sprays against your face as you heave against the spokes of the rusted emergency valve, your shoulders burning with every turn. The flooded chamber groans, slowly forcing gallons of stagnant seawater out through the drainage grates until the floor emerges from the grey muck. Resting your hands on your knees to catch your breath, you spot a pristine diver's helmet resting atop a drowned sea-chest, its glass faceplate gleaming with untouched clarity.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the dry helmet"
+   ]
+  },
+  "td-4-200": {
+   "title": "Steps Of The Ancients",
+   "text": "Carved images of the old Tidewardens stare down from the damp stone walls, their blank stone eyes tracing the geometric patterns worn into the flagstones beneath your boots. Kneeling in the gloom, you trace the faded incisions with a salt-calloused finger, deciphering the sequence that avoided the hidden weight-traps. A discreet click echoes through the chamber as a concealed floor panel pops an inch upward, revealing a bundle of dried medicinal kelp wrapped in oiled canvas.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the hidden kelp"
+   ]
+  },
+  "td-5-001": {
+   "title": "Bottom Of The World",
+   "text": "Deep beneath the cliffs, the winding stair terminates in a vast, cathedral-like vault echoing with the drips of ancient moisture. Towering before you stand the immense brass teeth of the Meridian Gear, silent and motionless like the jawbones of a buried titan. Thick crusts of salt and centuries of accumulated deep-sea debris choke the massive cogs, locking the great mechanism in a frozen slumber.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step into the gear chamber"
+   ]
+  },
+  "td-5-002": {
+   "title": "The Clogged Heart",
+   "text": "The colossal brass mechanism fills the damp cavern, its vast teeth locked tight by centuries of calcified salt and deep-sea wreckage. Every surface is coated in grey brine crust and the tangled remnants of drowned rigging, leaving the great wheel immobile and silent. You must clear the obstructions from the drive system before any lever can be pulled or any tide commanded.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clear the jammed machinery",
+    "Rotate the alignment wheel",
+    "Smash the iron barnacles",
+    "Drag the leviathan rib",
+    "Dismantle bathysphere wreckage",
+    "Face the Last Tidewarden"
+   ]
+  },
+  "td-5-003": {
+   "title": "Mast And Mire",
+   "text": "Water drips from the vaulted ceiling onto your neck as you brace your shoulder against the splintered pine of a wrecked galleon mast wedged deep between the primary cogs. The timber groans under your weight, soaked through with brine and heavy as lead, yet it refuses to budge from its iron prison. You dig your boots into the greasy silt, gathering your strength for another heave against the massive obstruction.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Heave the heavy timber"
+   ]
+  },
+  "td-5-004": {
+   "title": "Strain And Salt",
+   "text": "Muscles strain to their breaking point as you throw your weight against the lodged mast once more, feeling the ancient wood shift a fraction of an inch in the dark. The surrounding machinery rattles in protest, shedding flakes of orange rust that sting your eyes. Your breath comes in ragged gasps in the damp, heavy air of the vault as you prepare for one final push.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Give one final heave"
+   ]
+  },
+  "td-5-005": {
+   "title": "Shifting The Dead Wood",
+   "text": "Bracing your back against the cold iron housing, you wedge your hands beneath the waterlogged pine mast and plant your boots firmly in the thick, greasy silt of the floor. Every muscle in your arms and thighs trembles under the immense dead weight of the timber wedged deep between the primary cogs. You grit your teeth against the strain, throwing your entire body into a desperate heave to dislodge the obstruction before your strength gives out entirely.",
+   "check": "Heave the jammed mast",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-006": {
+   "title": "Broken Sinews",
+   "text": "The timber slips with a sickening jar, throwing you hard against the jagged iron housing and leaving a dull, throbbing ache across your ribs. You slump into the wet silt, gasping for air while your strained muscles burn with exhaustion and a dark bruise blooms across your shoulder. Though the mast remains stubbornly wedged, you pick yourself up from the muck, determined to find another way to clear the cogs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself away"
+   ]
+  }
+ },
+ "missing": []
+}

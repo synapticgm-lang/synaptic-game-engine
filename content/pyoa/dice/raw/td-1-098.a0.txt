@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION td-1-098
+TITLE: The Scale Peg
+TEXT: Seasoned boxwood rests beneath your calloused thumbs as the small knife blade curls pale shavings onto the workbench. Every stroke requires absolute patience to match the tapered pin of the apothecary scale, ensuring the tiny brass sleeve holds tight against the weight of precious kelp extract. Outside, the dry wind scrapes salt-grit across the windowpanes like sand in a sieve.
+EXIT 1: Secure the scale peg firmly
+@@END
+@@SECTION td-1-099
+TITLE: Whittling the Toggle
+TEXT: Splitting a knot of drift-timber demands a delicate wrist while the small vial of medicinal kelp extract sits dangerously close to the edge of the workbench. One careless nudge of the blade could shatter the glass and spill the luminous green liquid into the sawdust. You steady your breath, holding the green wood against the grain as the edge bites deep into the heartwood to shape the replacement peg.
+CHECK: Carve the delicate toggle
+@@END
+@@SECTION td-1-100
+TITLE: A Splintered Slip
+TEXT: The grain twists unpredictably under your blade, sending a sharp shard of boxwood deep into the ball of your thumb while the apothecary scale clatters onto the floor. Precious minutes slip away as you bind the weeping cut with a dirty rag and salvage the bruised wood from the dust. The valuable vial remains intact, but the clumsy slip leaves a dull, throbbing ache in your hand.
+EXIT 1: Gather your tools and leave
+@@END
+@@SECTION td-1-101
+TITLE: Perfect Fit
+TEXT: Smooth friction catches the toggle as you press the handmade peg home into the brass socket of the weighing scale, where it locks the precious vial of kelp extract securely in place. The repair holds fast against the heavy pull of the mechanism, proving your mastery over stubborn timber and erratic tools. You pack the remainder of your shavings away, pocketing a tangible token of your skill for the long road ahead.
+GRANT: Carved boxwood toggle
+EXIT 1: Head toward the market
+@@END
+@@SECTION td-1-102
+TITLE: Pilgrims of the Sulk
+TEXT: Hooded figures in salt-stiffened wool crowd the cobblestones, chanting mournful dirges into the hollow air where waves once broke against the quay. Their leader thrusts an iron brazier forward, demanding tribute for the offended deep before any traveler may pass further onto the exposed seabed. Thick grey smoke smells of burnt bladderwrack and old brine, stinging your eyes and coating your tongue with the taste of copper. You must decide whether to join their bleak chorus or force a way through their ranks.
+EXIT 1: Push past the mournful crowd
+@@END
+@@SECTION td-1-103
+TITLE: Basins of the Faithful
+TEXT: Stagnant pools of grey seawater cling to the salt-flats like weeping eyes, reflecting the pale, cloudless dome of the sunless sky. Fanatics kneel by the rims, whispering desperate bargains to the vanished tide while black weed dries into brittle crusts along the margins. Every path away from this basin offers its own peculiar peril, whether through the guarded shrines, the biting shallows, or onward to the howling dunes. Choose your route carefully before the watchers take notice of your lingering presence.
+EXIT 1: Inspect the drying shrines
+EXIT 2: Rescue the trapped scavenger
+EXIT 3: Shape an offering of driftwood
+EXIT 4: Wade through the blind-eel pool
+EXIT 5: Approach the singing dunes
+@@END
+@@SECTION td-1-104
+TITLE: The Zealous Warden
+TEXT: Standing ankle-deep in warm, receding brine, a priest in oilskin vestments recites verses from the Book of the Ebb while waving a rusted censer. You recall an ancient coastal hymn about the third flooding of Gullmouth, humming the resonant cadence to catch his attention. He pauses his chanting, turning a cloudy eye toward you as he weighs your understanding of the old ways against the silence of the horizon.
+EXIT 1: Answer with the second verse
+@@END
+@@SECTION td-1-105
+TITLE: Echoes in the Mud
+TEXT: Ripples spread across the shallow basin as the priest nods slowly at your memory of the drowned liturgy, acknowledging your roots in the cliff-town. He reaches into the folds of his wet cassock and draws out a heavy iron nail, blackened by sea-rot but tipped with a strange greenish sheen. This relic, he murmurs, has driven into many a timber bulkhead to ward off the cold malice of the deep.
+EXIT 1: Accept the rusted iron nail
+@@END
+@@SECTION td-1-106
+TITLE: Testing the Liturgy
+TEXT: Quoting the forbidden verses of the Great Silt to the high priest requires absolute precision, for a single mispronounced syllable will mark you as an unbeliever in these salt-crusted lands. The crowd of pilgrims leans in closer, their breath smelling of dried kelp and stale well-water, waiting for your tongue to trip on the archaic syllables. You gather your thoughts, preparing to speak the next stanza over the dry slop of the mud.
+CHECK: Recite the sacred verses
+@@END
+@@SECTION td-1-107
+TITLE: A Scraped Tongue
+TEXT: A faulty cadence causes your voice to crack, prompting the priest to spit into the brine and curse your lineage for a profane land-lubber. The surrounding pilgrims close ranks, pelting your shoulders with dried urchin shells and driving you back from the pool with sharp blows from their staves. You escape with your skin intact, though your pride smarts and your mouth tastes of bitter mud.
+EXIT 1: Retreat to the tide pools
+@@END
+@@SECTION td-1-108
+TITLE: Blessed Iron
+TEXT: Your sharp wit weaves the complex theology of the ebb into a seamless argument that satisfies the stern priest, earning a grudging nod of respect. He presses a heavy iron nail into your palm, its surface cold and slick with ancient grease. It is a humble token, yet one that carries weight among those who still listen to the ghost of the ocean.
+EXIT 1: Return to the pool hub
+@@END

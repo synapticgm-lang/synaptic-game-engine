@@ -1,0 +1,92 @@
+{
+ "batch": "td-3-093",
+ "sections": {
+  "td-3-093": {
+   "title": "Whispers Beneath Saltspire",
+   "text": "Salt-crusted timber groans overhead as the ocean-wind rattles through the stilt-city's suspended walkways, carrying the sharp scent of ozone and dried kelp. Two Brineholder guards in lacquered blue breastplates lean against a corroded bronze railing, their low murmurs cutting through the hollow roar of the distant seabed. They speak of rotation shifts at the Sunken Stair, mapping out when the heavy iron gates are left unbolted for supply hoists. Every word they drop is a sharp-edged stone you tuck into your memory, each detail of their patrol timing offering a safer passage down into the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the silent guards"
+   ]
+  },
+  "td-3-094": {
+   "title": "Shadows on the Walkway",
+   "text": "Below the raised wooden planking, the grey expanse of the Low stretches toward the horizon like an unscribed slate, framed by the skeletal ribs of stranded schooners. The elite watchmen continue their measured pacing, their heavy greaves clanking rhythmically against the salt-bleached joists. You cling to the shadowed underside of the crossing, letting their conversation about the lower iron stairwell wash over your ears. The exact minutes they pause to check their copper pocket-watches are yours to keep, unlocking the rhythm of the garrison's guard rotation.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the damp timber trail"
+   ]
+  },
+  "td-3-095": {
+   "title": "Listening Through the Brine",
+   "text": "Condensation drips from the iron conduits above, splashing cold against your neck as you press your shoulder harder into the damp timber wall. The guards shift their weight, their conversation turning toward the precise timing of the change of guard at the lower security threshold. A sudden gust of salt-laden wind howls through the structural struts, nearly drowning out their crucial words about the password and the patrol routes. You strain every sense, calculating the gaps in their speech and trying to catch the hidden schedule before their boots turn back toward your hiding spot.",
+   "check": "Decode the patrol schedule",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-096": {
+   "title": "Caught in the Draft",
+   "text": "A sudden shift in the sea-breeze eddies around the stilt supports, blowing a flurry of loose salt directly into your eyes and blinding you for a crucial second. Your boot slips on the greasy green slime coating the timber joist, sending a sharp thud echoing through the hollow framework. The guards whirl around with drawn cutlasses, forcing you to scramble backward into a narrow storage alcove among stacked brine barrels. You escape their sweeping lanterns by squeezing into the darkest cranny, but the frantic scramble leaves a deep, stinging scrape across your forearm and costs you precious minutes in the damp gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away into the fog"
+   ]
+  },
+  "td-3-097": {
+   "title": "Secrets of the Guard",
+   "text": "Silence holds as the guards' heavy footsteps fade away down the branching walkway, leaving only the steady drip of brine against the iron pilings. You let out a slow, measured breath, clutching the valuable fragments of conversation you managed to extract from their talk. The precise layout of the lower checkpoint and the shifting hours of the watchmen are now clear in your mind, providing an invaluable edge for the descent. However narrowly you managed to avoid detection, the knowledge you carry is a sharp weapon against the Brineholder patrols.",
+   "check": "",
+   "grant": "Patrol schedule and watch-times",
+   "exits": [
+    "Descend toward the lower tiers"
+   ]
+  },
+  "td-3-098": {
+   "title": "The Watchman's Turning",
+   "text": "Heavy iron lanterns swing in the salty updraft, casting long, fractured shadows across the high walkways of Saltspire. A solitary watchman paces his beat with mechanical regularity, his boots clicking against the riveted plating just ten paces from the restricted archivist doors. You reach down and pry a loose rusted rivet from the timber decking, feeling its satisfying weight in your palm. With a sharp flick of your wrist, you send the iron scrap clattering into a distant empty bucket, creating a metallic echo that draws the guard instantly away from his post.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Dart toward the heavy door"
+   ]
+  },
+  "td-3-099": {
+   "title": "Distracting the Sentinel",
+   "text": "The sentinel barks an oath into the damp air, his lantern sweeping rapidly toward the far corner where the metal scrap clattered against the iron pail. He stomps away along the elevated gangway to investigate the sudden noise, his back turned entirely to the recessed doorway of the archivist quarters. The narrow gap between the heavy oak panels beckons like an open mouth in the salt-whitened wall. You step out from the shadows of the rigging, moving with silent haste to bridge the distance before the watchman realizes he has chased a phantom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Squeeze past the heavy doors"
+   ]
+  },
+  "td-3-100": {
+   "title": "Timing the Distraction",
+   "text": "The hollow clatter of the thrown rivet echoes off the corrugated tin walls, drawing an angry shout from the pacing sentinel as he pivots toward the sound. You crouch low behind a stack of curing nets, waiting for his heavy, copper-shod boots to carry him far enough down the wooden run. Every second counts as you measure the distance to the reinforced archivist threshold against the speed of his furious inspection. Your fingers trace the cold iron latch of the restricted door, calculating the exact moment to slip inside before he wheels around to check his rear.",
+   "check": "Slip past the distracted watchman",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-101": {
+   "title": "Echoes in the Iron",
+   "text": "The metal rivet hits the tin pail with a hollow clang, but the watchman's reflexes are sharper than anticipated, and he wheels around before you can make your move. A stray length of anchor chain catches your shoulder as you lunge for the doorway, tearing your jacket and leaving a deep, throbbing bruise across your collarbone. You manage to slip into the shadowed recess just as his lantern beam sweeps the threshold, but the clumsy rush costs you precious time and leaves your nerves frayed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee deeper into the shadows"
+   ]
+  },
+  "td-3-102": {
+   "title": "Through the Narrow Gap",
+   "text": "The heavy oak door gives way with a muted creak as you throw your weight against it, slipping past the threshold just as the sentinel's boots return to the corridor outside. You press your back against the cool stone wall of the interior archive, listening to the heavy thud of his patrol fading into the distance. However narrowly you managed to time the diversion, the inner sanctum is now yours to explore. Resting on a mahogany side table within arm's reach is a heavy leather folio bearing the seal of the high magistrates.",
+   "check": "",
+   "grant": "Archivist office key and map",
+   "exits": [
+    "Search the inner record room"
+   ]
+  }
+ },
+ "missing": []
+}

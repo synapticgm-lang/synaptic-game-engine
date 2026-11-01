@@ -1,0 +1,6 @@
+@@SECTION cf-4-034
+TITLE: The Working Timetable
+TEXT: By reciting the 1894 working timetable from memory, your voice echoing off the soot-stained rafters where the Hollow Signalmen crouch like crows, you earn a begrudging nod from the shadows. A folded slip of grease-stained vellum drops into your palm, bearing the ink-stamped seal of the line's forgotten chief engineer. It details every hidden bypass siding and auxiliary shunt tucked away behind the masonry, offering a clear run through the dark labyrinth ahead.
+GRANT: map of hidden bypass sidings
+EXIT 1: Step through into the water-choked grotto
+@@END

@@ -1,0 +1,6 @@
+@@SECTION ul-3-070
+TITLE: The Parting Stacks
+TEXT: Mahogany timber groans and splits apart as the heavy oak bookcases grind in opposite directions, carving a jagged black void of empty air through the heart of the aisle. The gap widens with every second, revealing only the misty, ink-stained abyss far below where the floorboards ought to be. Trusting in quick feet and steady balance, you kick off the trembling edge of the retreating shelf, launching yourself outward over the chasm with arms outstretched.
+CHECK: You leap across a widening chasm between two parting bookcases with agile grace, risking a dangerous plunge, to reach a suspended catwalk.
+EXIT 1: Scramble onto the trembling iron grating.
+@@END

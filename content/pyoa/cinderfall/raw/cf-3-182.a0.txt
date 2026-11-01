@@ -1,0 +1,52 @@
+@@SECTION cf-3-182
+TITLE: The Signal Box
+TEXT: Copper wires hum with a low, parasitic frequency beneath the floorboards of the upper gantry. You trace the lead-sheathed bundle past the rusted terminal blocks where the Rail Barons keep their automated pulse. Every chime on the brass horns outside depends upon these delicate copper veins carrying the correct electrical resistance. A wrong turn here will flood the viaduct with false departure bells.
+EXIT 1: Trace the heavy copper wire upward
+@@END
+@@SECTION cf-3-183
+TITLE: Reversing the Current
+TEXT: Sweat cools quickly in the drafty iron chamber as you nudge the magnetic relays into alignment with a bone-handled screwdriver. The metal cylinders click cold against your palm, smelling of ozone and old oil. Outside the dirty window, the signal horns lean out over the yawning drop like gargoyles waiting for a change in the wind. You must trick the mechanical memory before the patrol clock reaches its next chime.
+EXIT 1: Shift the magnetic relay plates
+@@END
+@@SECTION cf-3-184
+TITLE: The Logical Trap
+TEXT: A secondary safety tumbler drops into place with a sharp metallic clack, blocking the master drum just as you reach for the primary override switch. If you force the tumbler, the logic circuit will snap shut and sound an alarm across the entire viaduct. You study the sequence of notched brass wheels, looking for the tiny flaw in the Baronial pattern where hesitation might buy you a fraction of a second.
+CHECK: Match the notched brass wheels
+@@END
+@@SECTION cf-3-185
+TITLE: A Costly Bypass
+TEXT: A sudden spark leaps from the ungrounded terminal, scorching your knuckle and fusing the delicate return spring into a lump of useless slag. The security lock shrieks in protest, jamming the mechanism and forcing you to rip the housing open with a heavy iron pinch-bar. You leave the box behind with a smoking sleeve and a deep, stinging burn across your hand, but the horns fall silent just as the watchman passes below.
+EXIT 1: Flee down the maintenance ladder
+@@END
+@@SECTION cf-3-186
+TITLE: The Silenced Horns
+TEXT: Silence settles over the brass gantries like falling ash as the automated horns click shut, their iron lungs choked before they can scream. Whether through flawless calculation or sheer desperate luck, the security drum spins free and leaves the line clear for your approach. You pocket a heavy brass bypass key dropped by the duty clerk, heavy and cold against your palm.
+GRANT: A heavy brass bypass key
+EXIT 1: Return to the engine deck
+@@END
+@@SECTION cf-3-187
+TITLE: The Ledger Room
+TEXT: Ledger leaves flutter in the dry draft of the office above the sorting platforms, smelling of dried ink and stale tallow. Clerk desks stretch in long, dreary rows under green-shaded gas lamps that hiss with sulphurous vapour. You lean over the high mahogany counter where the master clearance log lies open, its heavy hide binding stamped with the triple-eagle seal of the Rail Barons.
+EXIT 1: Reach for the feathered dip-pen
+@@END
+@@SECTION cf-3-188
+TITLE: Ink and Iron
+TEXT: Your fingers twitch over the stiff parchment page, matching the slanting copperplate strokes of the chief inspector with painstaking care. Every pen-scratch echoes in the silent office while the night watchman's heavy boots scrape against the iron grating outside the door. A single blot of ink could ruin the entire forgery and bring half a battalion of gangers down on your neck.
+EXIT 1: Complete the final flourished signature
+@@END
+@@SECTION cf-3-189
+TITLE: The Clerk's Eye
+TEXT: A sharp rap sounds against the frosted glass panel just as you lift the pen from the drying sand. Through the blurred pane, the silhouette of a senior clerk pauses, head tilted as if noticing an unfamiliar hand in the registry. You hold your breath, hovering your hand over the inkpot while the shadow fingers the handle of the office door.
+CHECK: Forge the inspector's clearance mark
+@@END
+@@SECTION cf-3-190
+TITLE: Caught in the Margin
+TEXT: The door swings open with a dry squeak, and an alarmed shout cuts through the stale air before you can slide the ledger back into its rack. You shove the clerk aside against the iron coat-rack and vault the mahogany counter, leaving behind a torn sleeve and a valuable tin of grease. The alarm bell behind the desk begins to toll, but you are already sprinting down the gantry stairs into the smoke.
+EXIT 1: Drop through the gantry floor grating
+@@END
+@@SECTION cf-3-191
+TITLE: The Permanent Stamp
+TEXT: The purple inspection seal dries hard and flat across the master page, indistinguishable from the thousands of orders issued by the Board before you. Whether through bold deception or a blind stroke of fortune, the clerks remain oblivious while you tuck the signed manifest safely inside your greasy waistcoat. You walk out into the cooling air with a stolen transit pass that opens every gate on the line.
+GRANT: A forged master transit pass
+EXIT 1: Head for the waiting engine
+@@END

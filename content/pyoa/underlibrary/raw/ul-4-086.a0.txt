@@ -1,0 +1,61 @@
+@@SECTION ul-4-086
+TITLE: The Black Sluice
+TEXT: Frost forms along the margins of the paving stones, hardening the soot into crystalline crusts that crunch beneath your aching boots. Thickening vapours rise from a trench carved deep into the limestone floor, carrying the bitter tang of copper, lamp-oil, and boiled gall-nuts. Before you flows an underground river of glistening black ink, its sluggish surface reflecting the dull amber glow of distant wall-brackets without returning any warmth. Bubbles of forgotten prose break lazily against the slick stone banks, releasing faint, dry whispers that dissolve before their meaning can be caught. You press your shoulder against the cold masonry, testing the air for any sign of a bridge or stepping-way across the dark tide.
+EXIT 1: Trace the sluggish channel westward
+@@END
+@@SECTION ul-4-087
+TITLE: The Scriptorium Sluice
+TEXT: Stagnant vapours curl around iron sluice-gates that drip with dark, viscous residue draining from the writing chambers above. To your left, a narrow ledge hugs the limestone wall where ink-crusted stepping stones break the current. Straight ahead, a smoother stone pathway winds toward the deeper subterranean vaults where the air tastes of ancient dust. Beyond a partition of warped oak, a ferry-rope sags slack over the black stream, promising a different crossing for those with the stomach for it. You grip your satchel tightly, weighing the relative dangers of each dubious route through the darkening stacks.
+EXIT 1: Follow the narrow stone ledge
+EXIT 2: Leap toward the trembling shelf-board
+EXIT 3: Build a makeshift paper dam
+EXIT 4: Hail the unseen ink-rower
+EXIT 5: Enter the iron-bound trial chambers
+@@END
+@@SECTION ul-4-088
+TITLE: The Chemical Current
+TEXT: Careful observation of the dark tide reveals a regular rhythm to the swirling eddies, governed by some distant sluice-master's schedule. You crouch near the brink, dipping a testing finger into the runoff to gauge its density and temperature. Among the discarded debris trapped in an eddy, a water-resistant leather satchel floats wedged between two sodden ledgers of local tariffs. You hook it out with the toe of your boot, shaking away a cluster of damp cataloguing slips. Inside, the lining remains dry, offering a safe vessel for whatever fragile notes you might gather from the shelves.
+EXIT 1: Step out upon the narrow stone ledge
+@@END
+@@SECTION ul-4-089
+TITLE: Assessing the Sludge
+TEXT: Calculating the exact intervals between the heavier influxes of waste ink requires precise attention to the bubbling patterns near the footing stones. You squint through the dim amber light, mapping the slick patches of residue against the damp masonry of the lower vault. One misplaced footstep upon a grease-slicked ledge could plunge your legs into the caustic black current, ruining your remaining dry clothes and fouling your equipment. You take a slow, measured breath, readying yourself to test the stability of the nearest submerged slab before the next dark surge arrives.
+CHECK: Calculate stepping stone stability
+@@END
+@@SECTION ul-4-090
+TITLE: A Slipping Footing
+TEXT: A sudden surge from an upper sluice sends a greasy wave over the ledge, catching your ankle and sweeping your boot out from under you. You scramble against the slimy stone wall, scraping your palms raw as you haul yourself back from the black brink. Your trousers are soaked through with caustic ink that burns sharply against a fresh scrape on your shin, and the damp chill settles deep into your marrow. The satchel’s strap is coated in sticky black residue, but you are alive and coughing on solid ground once more.
+EXIT 1: Return to the main sluice junction
+@@END
+@@SECTION ul-4-091
+TITLE: Crossing the Chemical Tide
+TEXT: Navigating the slick stones with practiced caution, however narrowly you manage the shifting currents, you reach the far side without a serious misstep. Your boots are stained deep violet with spilled gall, but your balance holds firm against the heavy vapours rising from the ink-channelling trench below. Tucked into a crevice of the opposite wall, a discarded wire-bound notebook catches your eye, its pages entirely blank yet smelling strongly of fresh lavender and old paper. You slide the clean quire into your satchel, gaining a useful tool for whatever drafts or records lie ahead.
+GRANT: clean blank quire
+EXIT 1: Return to the main sluice junction
+@@END
+@@SECTION ul-4-092
+TITLE: The Drifting Plank
+TEXT: Loose shelving boards bob sluggishly upon the oily surface of the ink-channel, held together by strands of rotted hemp and dried paste. You steady a long oak plank with the butt of a heavy ledger, testing its buoyancy against the steady pull of the underground drain. Glinting beneath a tangle of waterlogged parchment near the middle of the span lies an ornamental silver dipping pen, its nib intact and untarnished by the corrosive fluid around it. The wood groans softly under your weight as you shift your stance to secure the prize.
+EXIT 1: Retrieve the silver dipping pen
+@@END
+@@SECTION ul-4-093
+TITLE: Reclaiming the Quill
+TEXT: Snatching the silver pen from its resting place, you tuck it swiftly into your coat pocket just as the floating board tips alarmingly toward the dark drain. The ink-channel bubbles angrily beneath your boots, spitting tiny droplets of black gall onto your cuffs as the current accelerates into a narrow conduit. You spring across the widening gap, landing hard on the opposite stone apron with a muffled clatter of loose slate chips. Your heart thumps against your ribs in the hushed air of the stacks.
+EXIT 1: Return to the main sluice junction
+@@END
+@@SECTION ul-4-094
+TITLE: The Mid-Stream Leap
+TEXT: Balancing upon the narrow edge of a shifting oak board, you prepare to vault across the churning black channel toward the opposite stack. The air is thick with the acrid scent of boiling copperas, blurring the edges of the distant wall-brackets and making distances hard to judge. A single mistimed jump will plunge you directly into the corrosive stream, while a clean landing will clear the hazard entirely. You bend your knees, fixing your gaze upon a narrow gap in the shelving opposite.
+CHECK: Leap across the ink channel
+@@END
+@@SECTION ul-4-095
+TITLE: Plunging into the Ink
+TEXT: Your boot clips the upper rim of a floating folio, throwing off your balance mid-air and sending you crashing sideways into the dark current. You scramble upright with a sharp gasp, coughing up the bitter taste of iron and lamp-oil while your left sleeve drips black slime. The fall leaves a deep, stinging bruise along your ribs where you struck a projecting shelf-bracket, and your pockets are sodden with ruined notes. You drag yourself onto the stone margin, shivering and dripping ink onto the dry dust of the floor.
+EXIT 1: Return to the main sluice junction
+@@END
+@@SECTION ul-4-096
+TITLE: Clearing the Dark Conduit
+TEXT: Flying across the gap with a light, practiced spring, however narrowly you clear the churning froth below, your boots find solid purchase on the opposite flags. You stumble once against a stack of discarded parliamentary acts, but keep your balance without losing your footing or your composure. Tucked into the timber frame of the nearest shelf is a slender bone-handled paper knife, cold to the touch and remarkably sharp. You slide it into your belt, adding a handy implement for cutting stubborn bindings and sealed envelopes.
+GRANT: bone paper knife
+EXIT 1: Return to the main sluice junction
+@@END

@@ -1,0 +1,90 @@
+{
+ "batch": "sg-6-2-2-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-2-2-12": {
+   "title": "The Vault Lock",
+   "text": "Heavy iron gears groan behind the damp stone walls of the Rain Vault, exhaling a breath of ancient ozone and dry dust. The cold ceramic Seedkey rests in your palm, its weight a stark reminder of Candlemere's parched wells and dying lamp-fires. Every old promise made by the lensfolk now converges on this subterranean threshold, demanding an accounting of your journey across the saltglass basin.\n\nBefore you lie three distinct paths into the heart of the dormant machinery, each promising a different reckoning with the vault's automated sentinels and silent seed halls.",
+   "exits": [
+    "Press your palm against the scanner plate",
+    "Cross the narrow span toward the inner sanctum",
+    "Turn back to the weeping alcove"
+   ]
+  },
+  "sg-6-2-2-13": {
+   "title": "The Chasm Threshold",
+   "text": "Across the threshold of the innermost sanctum, the floor drops away into a sheer subterranean pit crossed only by a narrow rib of rusted iron. Below, the dark silence of the basin's deep foundation hums with the memory of rushing monsoon waters long overdue. Your banked coal-lantern casts a flickering, warm glow against the towering walls of fused glass and limestone blocks.\n\nTwo ways present themselves across this dizzying abyss, requiring either a steady nerve on the suspended rib or the invocation of old, painful scars earned in the storm.",
+   "exits": [
+    "Cross the narrow iron rib above the pit",
+    "Press your glass-burn scar to the security reader"
+   ]
+  },
+  "sg-6-2-2-14": {
+   "title": "The Great Balance",
+   "text": "Within the chamber of the great balance, two heavy iron pans hang suspended in absolute stillness, waiting for a definitive weight to tip their ancient scale. The air tastes faintly of sulfur and cold copper, heavy with the dust of centuries that have forgotten the sound of rain. Your fingers brush the rough texture of the Seedkey as you weigh the future of Candlemere against the hidden mechanisms of the Old Lensfolk.\n\nThe bronze indicator needle shivers against its glass housing, pointing toward the final arbitraments of the vault.",
+   "exits": [
+    "Offer your glass-burn scar to the resting sensor",
+    "Step onto the heavy iron weighing pan"
+   ]
+  },
+  "sg-6-2-3-0": {
+   "title": "The Sub-Vault Lintel",
+   "text": "Under the low-hanging basalt lintel of the sub-vault, your shoulders ache as you heave against a rusted bronze winch that refuses to yield easily. Phosphor-lamps overhead sputter and fade, casting long, jittery shadows across rows of hermetically sealed tin canisters containing the last drought-proof harvests of the basin. Every movement echoes in the confined space, a reminder of the twenty days remaining before the torrential monsoon floods the lowlands.\n\nTwo distinct mechanisms beckon from the gloom, each demanding physical effort or a steady hand on the controls.",
+   "exits": [
+    "Heave harder against the rusted winch",
+    "Step into the twilight glare of the core hum"
+   ]
+  },
+  "sg-6-2-3-1": {
+   "title": "The Blind Panopticon",
+   "text": "Inside the central control panopticon, banks of dead indicator lights gaze down upon you like the blind eyes of ancient stone deities carved by forgotten hands. Dust motes dance lazily in the weak, amber beam of your coal-lantern, illuminating rusted toggle switches and cracked glass dials that have not moved since the old world shattered. The silence here is absolute, broken only by the distant, rhythmic dripping of subterranean moisture somewhere in the dark foundations.\n\nA single egress leads forward into the damp, shadowed machinery of the sub-vault.",
+   "exits": [
+    "Crawl beneath the low basalt lintel"
+   ]
+  },
+  "sg-6-2-3-2": {
+   "title": "The Refrigeration Tier",
+   "text": "Frost clings stubbornly to your eyelashes while you calculate the exact temperature needed to preserve the vital seed harvest against the coming heat. Coils of blackened copper snake across the vaulted ceiling, radiating a deep, penetrating chill that bites through your runner's coat. The air is remarkably thin and sharp, carrying the faint, sweet scent of dormant wheat and ancient loam preserved in perpetual winter.\n\nThree separate passages branch outward from this freezing chamber into the humming heart of the installation.",
+   "exits": [
+    "Wrestle the rusted winch in the sub-vault",
+    "Approach the humming core of phosphor-lamps",
+    "Seek shelter in the dry innermost reliquary"
+   ]
+  },
+  "sg-6-2-3-3": {
+   "title": "The Quartz Chime",
+   "text": "Beside a heap of shattered quartz lenses, an old automated chime tolls a single mournful note every time the tectonic plates shift deep below the basin. The sound resonates through the floorboards, vibrating straight up through the soles of your boots with a strange, musical melancholy. Shards of colored glass catch the amber light of your lantern, scattering tiny constellations across the damp stone walls.\n\nTwo passages open up from this resonant alcove, leading deeper into the subterranean labyrinth.",
+   "exits": [
+    "Pull against the heavy winch in the sub-vault",
+    "Investigate the humming phosphor-lamp core"
+   ]
+  },
+  "sg-6-2-3-4": {
+   "title": "The Bronze Seal",
+   "text": "In the sunken gallery where the air tastes distinctly of sulfur and old dust, your trembling hand traces the deep groove of an uncast bronze seal. The metal is freezing to the touch, bearing intricate bas-reliefs of stylized rain clouds and weeping willow boughs that symbolise the lost harvests of the Old Lensfolk. Your lantern oil is slowly running low, casting flickering boundaries that press closer with every passing minute.\n\nThree distinct routes diverge from the gallery, leading toward the core, the drainage sump, and the dry reliquary.",
+   "exits": [
+    "Approach the humming core of phosphor-lamps",
+    "Descend toward the deep drainage sump",
+    "Enter the dry and stretched innermost reliquary"
+   ]
+  },
+  "sg-6-2-3-5": {
+   "title": "The Fused Glass Ceiling",
+   "text": "Under the massive vaulted ceiling of fused green glass, a network of copper veins pulses faintly with the residual thermal energy captured from the desert sun above. The translucent green overhead casts an eerie, submarine glow over your skin and the salt-crusted stone flags underfoot. A low, continuous hum vibrates through the air, sounding like a swarm of giant insects slumbering within the masonry.\n\nThree paths lead onward across the glistening floor toward the deeper vaults and drainage channels.",
+   "exits": [
+    "Follow the cold air toward the deep sump",
+    "Push into the bone-dry innermost reliquary",
+    "Trace the damp trail across the central hall"
+   ]
+  },
+  "sg-6-2-3-6": {
+   "title": "The Titanium Bulkhead",
+   "text": "Before the sealed titanium bulkhead of the primary seed repository, a row of manual override cranks waits for someone strong enough to turn them against centuries of accumulated grime. The heavy metal surface is scored with ancient scratch marks, telling silent stories of past runners who fought to reach the grain before the monsoon closed the basin. Your breath fogs slightly in the drafty corridor as you grip the cold iron handles.\n\nTwo passages offer a way forward into the chilling depths of the seed vaults.",
+   "exits": [
+    "Head toward the rushing air of the sump",
+    "Step into the dry silence of the reliquary"
+   ]
+  }
+ },
+ "missing": []
+}

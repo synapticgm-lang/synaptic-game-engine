@@ -1,0 +1,66 @@
+@@SECTION vh-5-1-3-0
+TITLE: The Lichen Bench
+TEXT: Resting the heavy cradle against cold stone offers a brief sanctuary from the unending downward pull of the mountain. Grey lichen coats the old wooden surface where generations of orchard workers have paused to catch their breath. The bronze Clapper hums softly against your shoulder pads, a low vibration that matches the steady thrum of your own tired pulse. Through the clinging white mist, the path ahead winds deeper into the damp orchard silence.
+EXIT 1: Follow the fern-fringed gravel toward the guard post
+@@END
+@@SECTION vh-5-1-3-1
+TITLE: Tangled Briars
+TEXT: Thorny blackberry canes catch at your leather gaiters, binding your feet as you attempt to navigate the narrow terrace lane. Beside the path, an old dry-stone retaining wall leans precariously under the weight of wet earth and winter frost. Stacks of split birch wood release a sharp, clean scent of fresh sap that cuts through the heavy smell of fog and rot.
+EXIT 1: Approach the fern-fringed guard post along the gravel track
+EXIT 2: Step toward the fragrant stacks of fresh birch logs
+@@END
+@@SECTION vh-5-1-3-2
+TITLE: Fermented Windfalls
+TEXT: A heavy sweetness rises from a drainage ditch where forgotten autumn apples turn to mush in the cold mud. The smell of fermented windfalls clings to your woollen cloak as you steady the bronze burden on your back. Muffled echoes bounce off unseen rock faces, warning that human habitation or watchful eyes are near.
+EXIT 1: Head toward the fern-framed gravel path near the guards
+EXIT 2: Listen closely to the bone whistles echoing through the mist
+EXIT 3: Grab the frayed hemp handrail above the white drop
+@@END
+@@SECTION vh-5-1-3-3
+TITLE: The Iron Drainpipe
+TEXT: Cold mountain runoff gurgles loudly through a rusted iron pipe, spraying fine yellow clay across your trousers and boots. The sudden splashing noise startles the damp air, reminding you of how exposed you are in this cloud-choked valley. Every step requires absolute care to keep your footing on the slick, uneven stones.
+EXIT 1: Walk toward the fern-draped stone archway ahead
+EXIT 2: Pause to listen for the bone whistle warnings nearby
+EXIT 3: Take the reckless way through a blind orchard gap
+@@END
+@@SECTION vh-5-1-3-4
+TITLE: Mist-Laden Webs
+TEXT: Delicate spider-webs thick with moisture stretch between low pear branches, forming shimmering grey curtains across your line of sight. You brush past them carefully, feeling the cold condensation soak further into the wool of your sleeves. The path narrows as the fog thickens around the ancient fruit trees.
+EXIT 1: Follow the sound of bone whistles toward the checkpoint
+EXIT 2: Pass by the fragrant piles of split birch logs
+EXIT 3: Hold fast to the hemp rope above the steep drop
+@@END
+@@SECTION vh-5-1-3-5
+TITLE: The Sodden Mitten
+TEXT: A single woollen mitten lies abandoned in the deep mud, soaked through and grey with dirt from the trail. It serves as a quiet warning about the perils of losing one's grip on these slippery mountain slopes. The heavy bronze Clapper shifts in its cradle, pulling your shoulders down as you survey the orchard path.
+EXIT 1: Make for the stone archway leading to the post
+EXIT 2: Inspect the neatly stacked piles of winter firewood
+EXIT 3: Squeeze past the frost-rimed plum trees crowding the lane
+@@END
+@@SECTION vh-5-1-3-6
+TITLE: The Alder Plank
+TEXT: The muddy track dips sharply toward a hidden irrigation ditch bridged by a single rotting alder plank that bows under your weight. Water rushes below the fragile crossing, churning up dark silt from the orchard floor. You balance the heavy bronze burden carefully to avoid a disastrous slip into the channel.
+EXIT 1: Move past the fragrant stacks of split birch logs
+EXIT 2: Grip the frayed hemp handrail above the white fog
+EXIT 3: Push through the frost-rimed plum branches ahead
+EXIT 4: Turn back toward the muddy lane and nettles
+@@END
+@@SECTION vh-5-1-3-7
+TITLE: Fieldfare Flight
+TEXT: A sudden flurry of wings breaks the heavy silence as a flock of fieldfares bursts upward from a dense hawthorn hedge. The startled birds scatter into the white mist, raining tiny droplets of cold water down from the shivering leaves. You steady your breathing and adjust the straps biting into your shoulders.
+EXIT 1: Walk past the aromatic stacks of split birch fuel
+EXIT 2: Reach for the frayed hemp rope serving as a handrail
+@@END
+@@SECTION vh-5-1-3-8
+TITLE: The Water-Channel Path
+TEXT: Smooth river stones pave what was once a clear water-channel, transforming the forgotten trench into a treacherous, slippery footpath. Your boots slide slightly on the rounded moss-covered rocks, testing the balance of the heavy metal cradle on your back. The surrounding fog swallows the landscape just a few paces away.
+EXIT 1: Follow the frayed hemp rope along the white drop
+EXIT 2: Ease past the frost-rimed plum trees blocking the path
+@@END
+@@SECTION vh-5-1-3-9
+TITLE: The Pruning Knife
+TEXT: Half-swallowed by emerald moss, the rusted blade of a broken pruning knife rests among the gnarled roots of an ancient tree. The abandoned tool speaks of forgotten labors in an orchard now swallowed by thick mountain mist. You adjust your grip on the cradle straps and weigh your next step on the slick path.
+EXIT 1: Pass by the fragrant piles of split birch logs
+EXIT 2: Squeeze past the frost-rimed plum trees ahead
+EXIT 3: Turn back toward the muddy lane and nettles
+@@END

@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION sg-5-2-4-0
+TITLE: The Lens-Archive Gate
+TEXT: Cold metal rattles against slate as a sentinel named Brann checks your credentials against a list of approved delegates from the western rim. His fingers trace the paper while the great glass roofs above groan in the rising wind. Your ember-lamp casts a dull red glow across his polished brass breastplate, revealing deep lines carved into his weathered face by decades of desert glare. Behind him, the high vaulted corridors of the archive stretch into shadow like the ribs of an ancient leviathan. You adjust the weight of your pack and wait for his verdict.
+EXIT 1: Step past the checking sentinel
+EXIT 2: Retreat toward the outer shadow
+@@END
+@@SECTION sg-5-2-4-1
+TITLE: The Clock Atrium
+TEXT: Heavy iron gears grind overhead in a rhythmic, deafening heartbeat as a Salt Court sergeant named Corvus blocks the bronze stair leading down to the vault doors. He rests a heavy hand upon the pommel of a broadsword notched from countless skirmishes in the dry basin. Dust motes dance in the amber light leaking through the high clerestory windows, catching the sweat on his forehead. Every movement of the massive clockwork above seems timed to your own racing pulse. You must decide whether to force your way past or seek another route into the depths.
+EXIT 1: Push down the guarded stair
+EXIT 2: Slip sideways into the alcove
+@@END
+@@SECTION sg-5-2-4-2
+TITLE: The Quartz Lens
+TEXT: Sunlight splinters through a massive quartz lens that catches the final rays of twilight, painting the dusty flagstones in brilliant strokes of violet and gold. You barter a flask of fresh oil for passage past a stubborn watch-captain who eyes your provisions with undisguised hunger. The sweet smell of refined cedar oil mingles with the dry, alkaline tang of the basin dust drifting through the high embrasures. He uncorks the flask with his teeth, sniffs the contents with an approving nod, and gestures toward the descending corridor.
+EXIT 1: Follow the downward stone path
+EXIT 2: Pause to watch the twilight fade
+@@END
+@@SECTION sg-5-2-4-3
+TITLE: The Brass Hatch
+TEXT: Rushing air whistles through narrow conduits as you slip through a maintenance hatch just as the heavy mechanisms begin their evening rotation with a roar. Grease and metal shavings coat your palms as you squeeze past vibrating brass pistons that dwarf a grown person. The heat radiating from the steam-channels warms the damp chill of the lower tiers, making the air thick and heavy with the scent of hot oil. Blind turns loom in the gloom ahead, promising either safety or a dead end among the turning cogs.
+EXIT 1: Crawl deeper into the machinery
+EXIT 2: Climb the inspection ladder upward
+@@END
+@@SECTION sg-5-2-4-4
+TITLE: The Juniper Gallery
+TEXT: Fragrant curls of burning juniper resin drift across a gallery where a Glasswright elder named Sargon examines your seedkey with a critical, rheumy eye. He turns the cold ceramic artifact over and over in his wrinkled palms, testing its weight against the murmur of distant machinery. Blue smoke coils toward the vaulted ceiling, blurring the elaborate star-charts painted upon the plaster overhead. His silence stretches out like a taut wire, unbroken except for the crackle of the resin brazier.
+EXIT 1: Ask for the elder's formal blessing
+EXIT 2: Snatch the cold key back now
+EXIT 3: Wait in silence for his word
+@@END
+@@SECTION sg-5-2-4-5
+TITLE: The Stagnant Cistern
+TEXT: Green scum rings an ancient water-cistern that holds the last stagnant drops of the basin, reflecting the pale glow of your lantern. A rival runner named Miri challenges your right to open the vault, her hand resting casually on the hilt of a bone-handled dagger. Her boots are crusted with white salt from the deep flats, telling of a hard march that rivaled your own. The damp smell of stagnant moisture rises from the stone basin, a bitter reminder of what every living soul in Candlemere is dying for.
+EXIT 1: Stand your ground against her
+EXIT 2: Offer a truce of shared water
+@@END
+@@SECTION sg-5-2-4-6
+TITLE: The Stone Cutting
+TEXT: Whistling shafts graze the damp masonry within a stone-lined cutting that descends into the dark earth, forcing you to dodge a volley of warning arrows fired by trigger-happy sentries from the parapet. Feathers flutter down to the flagstones as you flatten yourself against the rough-hewn rock wall. Dust and grit sting your eyes while the echoes of the bow-shots die away into the vaulted gloom below. Every breath tastes of ancient lime and the sharp tang of ozone from the approaching storm.
+EXIT 1: Dash forward into the deeper shadow
+EXIT 2: Scramble back up the rising incline
+@@END
+@@SECTION sg-5-2-4-7
+TITLE: The Central Tower
+TEXT: Looming pillars of dark basalt rise toward the heavens under the shadow of the central observatory tower, where you reach the heavy bronze doors of the Rain Vault where the final test awaits. Green verdigris streaks the massive metal panels like ancient weeping scars, smelling faintly of copper and rain. Your ember-lamp flickers in the draft whistling through the high colonnade, throwing long and jittery shadows across the glyph-carved threshold. The air grows noticeably cooler here, smelling of damp earth and distant, long-locked moisture.
+EXIT 1: Turn the heavy bronze handle
+EXIT 2: Inspect the glyphs on the lintel
+@@END
+@@SECTION sg-5-2-5-0
+TITLE: The Subterranean Vestibule
+TEXT: Deep stone walls absorb the sound at the threshold of the deep subterranean vestibule, where you insert the cold ceramic key into the ancient brass lock while distant thunder rumbles overhead. The mechanism responds with a heavy, satisfying click that vibrates up through your forearms. Dust puffs from the keyhole after decades of absolute silence, carrying the dry scent of forgotten harvests. A sudden gust of wind sweeps up the stairwell behind you, howling like a lost spirit against the stone.
+EXIT 1: Press on
+EXIT 2: Turn back
+@@END
+@@SECTION sg-5-2-5-1
+TITLE: The Obsidian Seal
+TEXT: Gleaming facets catch the dull red glare of your lantern before the massive obsidian seal of the Rain Vault, where you hold your flickering ember-lamp high to verify the glyphs before turning the mechanism. The polished black stone reflects a distorted, thumb-sized version of your weary face. Somewhere deep within the sealed chamber, water drips with a hollow, resonant echo that promises an end to the long drought. Your fingers grow numb against the freezing metal lever as you prepare to throw your weight behind it.
+EXIT 1: Press on
+@@END

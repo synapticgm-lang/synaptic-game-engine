@@ -1,0 +1,96 @@
+{
+ "batch": "cf-0-032",
+ "sections": {
+  "cf-0-032": {
+   "title": "Beneath the Firebox",
+   "text": "Heat pours off the ash-clogged grate like an open furnace door as you squeeze into the narrow gap beneath the Marrowbone. Soot cakes your eyelashes and sweat carves clean channels through the grime on your cheeks. You reach blindly past the weeping copper unions until your fingers find the loose injector nozzle, vibrating and hissing live steam into the dark. Working by touch alone against the blistering iron, you twist the seating until the shriek cuts off into a dry, obedient cough. Your palm comes away blackened and scored, but clamped in your fist is a heavy copper wrench that fits the valve-shafts with a solid, satisfying weight.",
+   "check": "MECHANICS",
+   "grant": "heavy copper wrench",
+   "exits": [
+    "Slide back into the depot gloom"
+   ]
+  },
+  "cf-0-033": {
+   "title": "The Empty Locker",
+   "text": "Iron panels rattle under your fist as you yank open Hesper Quill's metal locker in the deserted depot back-office. Dust motes dance in the shaft of grey light cutting through the grime-caked window, settling over empty tunic hooks and discarded tea tins. A watchful union clerk lingers by the doorway, his boots scuffing the floorboards with rhythmic impatience, pretending not to watch your fingers slip along the false bottom of the shelf. You slide your nails into the hidden rebate just as he turns his head, hooking out a greasy spare regulator valve wrapped in an old manifest.",
+   "check": "CUNNING",
+   "grant": "greasy spare regulator valve",
+   "exits": [
+    "Pocket the valve and turn away"
+   ]
+  },
+  "cf-0-034": {
+   "title": "Checking the Empty Locker",
+   "text": "Shadows stretch long across the wooden floorboards of the clerk's office as you pry open the latch on Hesper Quill's rusted locker. The union clerk stands just outside the perimeter wire, leaning heavily on a rolled ledger and watching your every move with dull suspicion. You ignore the weight of his gaze, sliding your fingers along the dark internal seam until they catch on a loose bolt. With a quiet snap of old pine, the false back drops forward, revealing a greasy spare regulator valve left tucked out of sight.",
+   "check": "CUNNING",
+   "grant": "greasy spare regulator valve",
+   "exits": [
+    "Slip the valve into your coat"
+   ]
+  },
+  "cf-0-035": {
+   "title": "The Water-Seller's Barrel",
+   "text": "The water-seller leans against his empty iron drum, spitting dark juice into the grey dust while he swears by the old line that every drop he sells is sweet spring water hauled from the hills. You sniff the tin mug he holds out, smelling only sulphur and stagnant marsh-rinse from the ditches behind the dead carriage sidings. Catching his eye, you name the exact weight of the dregs sitting at the bottom of his barrel and watch his stubborn jaw slacken. He grumbles, spits again, and reaches behind his crate to shove a greasy skin of oil into your hands instead.",
+   "check": "CUNNING",
+   "grant": "skin of oil",
+   "exits": [
+    "Take the skin and leave him"
+   ]
+  },
+  "cf-0-036": {
+   "title": "The Ticket-Widow's Ledger",
+   "text": "Brass ticket wickets rattle in their grooves as the old window-glass slides back an inch, letting out the smell of stale tallow and cold tea. The ticket-widow stares past your shoulder at the silent tracks, her lips pressed into a thin, bloodless line of practiced indifference. You lean close, dropping your voice to match the hiss of the Marrowbone's cooling cylinders until she finally meets your gaze. Slowly, she traces a coded pattern against the scarred wood of the counter, whispering the secret signal-pass that opens the outer gantry gates.",
+   "check": "CUNNING",
+   "grant": "secret signal-pass",
+   "exits": [
+    "Memorize the pass and step back"
+   ]
+  },
+  "cf-0-037": {
+   "title": "Trading at the Siding",
+   "text": "Grey ripples settle in the bottom of the water-seller's tin cup as he insists the yellow liquid came straight from an upstream spring untouched by the ash-storms. You tilt the vessel toward the pale light, pointing out the dark film of coal-dust floating on the surface and the oily ring around the rim. He narrows his eyes, sizing you up against the backdrop of the idling engine, then shrugs with heavy resignation. Reaching under the counter, he trades his exaggerated claims for a heavy skin of oil that smells of axle-grease and cold iron.",
+   "check": "CUNNING",
+   "grant": "skin of oil",
+   "exits": [
+    "Secure the oil and move on"
+   ]
+  },
+  "cf-0-038": {
+   "title": "Beyond the Wicket",
+   "text": "Cold draughts whistle through the ticket hall where hand-bills lie plastered to the walls in stiff layers of old paste. The ticket-widow keeps her eyes fixed on her ink-stained ledger, her fingers hovering nervously over the brass date-stamp. You lean against the iron grille, dropping a quiet word about the missing driver into the silence between you. She stops her stamping, swallows hard, and raps her knuckles twice against the wood to signal the secret password needed for the night shift.",
+   "check": "CUNNING",
+   "grant": "secret signal-pass",
+   "exits": [
+    "Pocket the secret and walk out"
+   ]
+  },
+  "cf-0-039": {
+   "title": "The Grille in the Wall",
+   "text": "Peeling timetables curl away from the plaster around the ticket window like dead birch bark. The widow behind the iron bars refuses to look up, her thumbs worrying the edge of a blank passenger card while the storm clock ticks heavily overhead. You slide a brass token across the scarred ledge, naming a train that hasn't run since the Great Burn. She flinches at the number, glances left and right down the empty platform, and rasps out the secret signal-pass through the wire mesh.",
+   "check": "CUNNING",
+   "grant": "secret signal-pass",
+   "exits": [
+    "Take the pass and turn away"
+   ]
+  },
+  "cf-0-040": {
+   "title": "Whispers at the Window",
+   "text": "The ticket-widow's lamp sputters in the draught, throwing long, jittery shadows across the rows of uncollected luggage stacked against the wall. She shakes her head slowly before you even speak, her fingers tightening around a brass tally-counter in her apron pocket. You match her silence, waiting out the slow throb of the Marrowbone's boiler until her resistance crumbles under the steady pressure. With a nervous glance at the ceiling, she leans into the iron mesh and breathes the secret signal-pass into the cold air.",
+   "check": "CUNNING",
+   "grant": "secret signal-pass",
+   "exits": [
+    "Leave the window with the pass"
+   ]
+  },
+  "cf-1-001": {
+   "title": "The Cold Depot",
+   "text": "Frost glitters across the massive iron flanks of the Marrowbone where she stands idling in the half-light of Ashgate Junction's dead terminal. The storm clock on the central gantry ticks with a slow, heavy pulse, counting down the hours before the grey skies break and choke the iron road with drifting dunes. You pull your collar high against the biting draft, staring down at the sealed orders left crumpled on the driver's seat by Hesper Quill. The depot is utterly empty save for the rhythmic shudder of the water-pumps and the distant, lonely clank of a switch-lever settling into place in the dark.",
+   "check": "COMPOSURE",
+   "grant": "",
+   "exits": [
+    "Leave the platform for the stationmaster's office"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,92 @@
+{
+ "batch": "td-1-066",
+ "sections": {
+  "td-1-066": {
+   "title": "The Sleeping Deck",
+   "text": "Salt-rimed pine creaks beneath your boots as you edge across the quarterdeck of the stranded schooner, keeping your profile low against the salt-bleached rail. Below the companionway, the rival crew from Saltspire lie sprawled in drunken exhaustion, snoring in unison amid empty rum flasks and discarded rope ends. The captain's cabin door hangs half-open on swollen brass hinges, leaking a stale reek of vinegar and old tobacco. Inside, shadows pool thick around the mahogany desk where the prize sits waiting behind glass.\n\nYou pause, letting a sudden gust of wind die down against the timbers before you take your next step into the gloom.",
+   "check": "Lift the jar without waking them",
+   "grant": "",
+   "exits": [
+    "Make for the leviathan market"
+   ]
+  },
+  "td-1-067": {
+   "title": "The Sleeping Cabin",
+   "text": "Shadows cling to the mahogany paneling of the captain's saloon like wet soot. Heavy snoring rattles through the stagnant air from three rival wreckers sprawled across sea-chests, their knuckles bruised from turf fights on the dead seabed. Upon the baize-covered table sits a stoppered glass container clouded with dark brine, wherein dozen-eyed leeches writhe sluggishly in search of fresh blood. Your boots tread carefully over scattered navigation charts, avoiding the loose floorboards that could betray your quiet approach to the prize.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the glass jar"
+   ]
+  },
+  "td-1-068": {
+   "title": "The Breath Held",
+   "text": "Fingertips brush the cold glass of the jar just as the biggest of the sleeping guards grunts, rolling heavily onto his side with a leather-creaking sigh. His boot-heel hooks over your ankle, threatening to jerk you out into the open light filtering through the splintered stern-windows. Every muscle in your chest locks tight while you lean your weight against the tilt of the wreck, praying the floor timbers will hold their tongue under the sudden shift.",
+   "check": "Wrench your foot free",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-069": {
+   "title": "The Price of Clumsiness",
+   "text": "Wood splinters beneath your heel with a loud crack that shatters the cabin's silence, waking the guard with a drunken curse and a sweep of a heavy iron wrench. The blow glances off your shoulder, leaving a hot, tearing ache in the muscle and a purple bruise that blooms instantly through your wet wool sleeve. You stumble backward out the shattered stern-gallery and into the salt-crusted alleys of the hull, lungs burning as you leave your quarry behind.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the coral deck"
+   ]
+  },
+  "td-1-070": {
+   "title": "The Stolen Jar",
+   "text": "Glass cold as winter sea-water meets your palm, however narrowly you managed the theft before the snoring guard stirred and kicked out at empty air. Slipping backward through the shattered stern-window into the grey light, you tuck the heavy jar of medicinal leeches safely beneath your oilskin coat. It is a foul and squirming prize, but one that will buy patience or medicine in the alleys of Gullmouth when the fever sets in.",
+   "check": "",
+   "grant": "Jar of medicinal leeches",
+   "exits": [
+    "Climb back to the deck"
+   ]
+  },
+  "td-1-071": {
+   "title": "Below the Waterline",
+   "text": "Rust flakes drift like dark snow into the stagnant puddles pooled inside the ship's cavernous belly. Salt has welded the iron bars of the lower hold into a single stubborn mass, sealing off the dark waters where forgotten cargo drifts against the ribs. Your fingers trace the pitted metal, feeling the cold damp rise from the stagnant bilge below while the distant shouts of rival scavengers echo through the skeletal bulkheads.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wedge your crowbar deeper"
+   ]
+  },
+  "td-1-072": {
+   "title": "The Iron Grate",
+   "text": "Thick layers of marine scale and oxidized copper coat the hinges of the rusted hatchway, smelling faintly of old vinegar and stagnant weed. Every movement inside the hull sends hollow, metallic groans shivering through the entire frame of the stranded warship, warning that the whole structure rests on a knife-edge of balance. You wipe the salt-grit from your eyes and plant your boots firmly against the wet timber ribs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Put your back into it"
+   ]
+  },
+  "td-1-073": {
+   "title": "Heaving the Iron",
+   "text": "Muscles strain against the unyielding resistance of the warped iron bars as you throw your entire weight into the crowbar's shaft, feeling the metal groan in protest. The rusted hinges shriek like a gull, threatening to snap or slide and pin your fingers against the jagged bulkhead frame as the heavy grate shifts a fraction of an inch. Sweat stings your eyes in the damp subterranean gloom while the deck above settles deeper into the coral reef.",
+   "check": "Force the rusted metal open",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-074": {
+   "title": "The Slipped Iron",
+   "text": "The crowbar slips from the slimy iron with a sharp clang, sending you crashing hard against the jagged ribs of the hull and carving a deep, bleeding gash across your forearm. A shower of heavy rust and rotten timber splinters rains down into the dark bilge water below, filling the hold with a choking cloud of red dust. You clutch your torn arm, teeth gritted against the sudden heat of the wound as you scramble clear of the unstable bulkhead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat from the flooded hold"
+   ]
+  },
+  "td-1-075": {
+   "title": "The Heavy Iron Harpoon",
+   "text": "Iron yields with a screeching groan, however narrowly you forced the warped bars apart without bringing the rotting deck down upon your head. Reaching down into the dark, oil-slicked water of the lower hold, your fingers wrap around the cold, oiled walnut stock of a heavy harpoon gun. It is an unwieldy piece of equipment, scarred by old salt-pits and heavy enough to weigh down a man crossing the flats, but capable of piercing the thickest hide on the seabed.",
+   "check": "",
+   "grant": "Heavy harpoon gun",
+   "exits": [
+    "Head out to the market"
+   ]
+  }
+ },
+ "missing": []
+}

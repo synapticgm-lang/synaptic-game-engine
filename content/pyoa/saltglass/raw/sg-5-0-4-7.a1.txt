@@ -1,0 +1,30 @@
+Gemini said
+
+@@SECTION sg-5-1-0-0
+TITLE: The Humming Blue Gallery
+TEXT: Massive lens-segments groan overhead like waking leviathans as Pell wedges a cold iron chisel into the maintenance hatch. Blue light filters through the vibrating glass floor, casting long, fractured shadows across your boots. Your ember-lamp rocks against your hip, its banked coals radiating a steady, familiar warmth against the chill of the observatory. With a sharp crack of rusted metal, the hatch gives way, venting a draft of dry, lime-scented air from the depths below.
+EXIT 1: Follow Pell down the iron rungs
+EXIT 2: Leap across the open machinery pit
+EXIT 3: Squeeze past the jammed prism shutter
+@@END
+@@SECTION sg-5-1-0-1
+TITLE: Beneath the Fractured Dome
+TEXT: Shards of green glass rain down in a silent cascade as a massive focusing plate swings overhead on rusted iron chains. You duck low, groping blindly along the damp stone wall until your fingers find the rusted rungs of a hidden maintenance ladder. The air smells of ozone and ancient dust, thick enough to coat your tongue. Above you, the fractured dome frames a sliver of blinding desert sky while the metal structure groans under the relentless desert heat.
+EXIT 1: Crawl beneath the hanging green shards
+EXIT 2: Slip through the forgotten side duct
+EXIT 3: Climb toward the abandoned observation ward
+@@END
+@@SECTION sg-5-1-1-0
+TITLE: The Singing Glass Conduit
+TEXT: Resonant hums vibrate against your ribs, carrying warnings through the cool ceramic walls of the conduit. Pell moves ahead with silent surety, his boots skimming the smooth floor where ancient drafts carry the salt-scent of the Basin. Every surface hums with an odd, musical frequency that makes your teeth ache slightly. The darkness ahead deepens, broken only by the faint, rhythmic pulse of your swinging ember-lamp.
+EXIT 1: Open the narrow service flue
+EXIT 2: Climb the sun-warmed spiral ramp
+EXIT 3: Force the warped bulkhead open
+@@END
+@@SECTION sg-5-1-1-1
+TITLE: The Greasy Mirror-Vault
+TEXT: Tilting plates of polished glass reflect your distorted face a dozen times over in the dim light. Pell stops abruptly, pointing down at a smear of fresh oil left across the stone floor by earlier rivals scrambling upward. The air here is dead and heavy, smelling faintly of rendered fat and old salt. Your fingers tighten around your lamp handle as you weigh the treacherous footing against the need for haste.
+EXIT 1: Pry open the deep cooling grate
+EXIT 2: Scramble across the green slag ridge
+EXIT 3: Slide through the narrow utility shaft
+@@END

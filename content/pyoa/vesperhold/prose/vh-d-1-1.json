@@ -1,0 +1,91 @@
+{
+ "batch": "vh-d-1-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-d-1-1": {
+   "title": "The Unspooled Line",
+   "text": "Ignoring the rising gale and the sharp warnings of the gate-warden, you rush headlong down the icy steps with an unspooled hemp line trailing behind you. A sudden blast of mountain air catches the trailing coils, wrapping your boots in a desperate tangle as you lose your footing on the rimed stone. The heavy bronze clapper on your back drags you forward into the gray abyss, the wind roaring in your ears as the mountain swallows you whole.",
+   "exits": []
+  },
+  "vh-1-c2": {
+   "title": "The Rope Store",
+   "text": "The smell of cold tar and beaten flax fills the low-beamed timber warehouse where Master Orem weighs every coil on rusted scales. You face a hard choice for the descent ahead. You can swear the Guild oath and bind your waist with their branded hemp, gaining the protection of the cable-makers along the vertical drop, or you can rely solely on your own frayed and trusted line, keeping your independence at the cost of safety.\n\nChoose carefully before stepping out into the biting gale.",
+   "exits": [
+    "Sign for a Ropewrights' Guild rope",
+    "Trust your own old rope"
+   ]
+  },
+  "vh-1-2-0-0": {
+   "title": "The Limestone Arch",
+   "text": "Elder Corin checks the hemp seal of your chosen Guild line against the biting gales that howl through the monastery gates. Frost glints upon his heavy wool spectacles as he knots the official yellow marker into your harness. The bronze clapper hums quietly against your shoulder blades, vibrating with every shift of the mountain wind. Three paths diverge beyond the gatehouse porch, each leading down into the gray cloud sea.",
+   "exits": [
+    "Step toward the narrow stone ledge",
+    "Follow the steep ramp of frozen timber",
+    "Take the sheltered switchback behind the granary"
+   ]
+  },
+  "vh-1-2-0-1": {
+   "title": "The Shadowed Mule Yard",
+   "text": "Biscuit tests the oiled canvas hitch with a stubborn nudge of his gray muzzle while Master Hesketh inspects your bronze load for any sign of shifting. The mule's breath plumes white against the frost-covered slate walls of the stable. Every strap is taut, and the heavy iron rings gleam with fresh grease against the cold. Three separate tracks lead out from the courtyard gates into the gathering squall.",
+   "exits": [
+    "Lead Biscuit down the main mule path",
+    "Take the steep stone stairs to the left",
+    "Veer toward the lower freight winch"
+   ]
+  },
+  "vh-1-2-1-0": {
+   "title": "The Frost-Rimed Trough",
+   "text": "Beside the frozen horse trough, Miller Bran offers a hard crust of salted barley bread to help steady your nerves before you cross the ridge. The wind rattles the icicles hanging from the horse-block, and the distant hum of Orison's broken shell vibrates faintly through the rock beneath your boots. Three distinct routes open before you through the swirling sleet.",
+   "exits": [
+    "Traverse the narrow ice-shelf above the abyss",
+    "Descend toward the drafty salt-porch",
+    "Head past the frozen sheep-fold into the fog"
+   ]
+  },
+  "vh-1-2-1-1": {
+   "title": "The Nine Knots",
+   "text": "Sola draws the waxed hemp tight between her calloused fingers, knotting an extra hitch into your shoulder straps under the creaking sign of the Nine Knots. The air smells of tar and dry juniper from the cordage bins lining the alley. With a final yank that tests the salt-cured fibers against your collarbone, she steps back and nods toward the outbound paths winding down the frozen limestone ridge. You adjust the weight of the bronze Clapper, feeling the familiar hum vibrate through your spine as you weigh your next step.\n\nDo you present your papers to the checkpoint guard, press onward while the morning glare still cuts the ice, or linger to check the apprentice buckets by the conduit?",
+   "exits": [
+    "Present your travel token at the guard-post",
+    "Press onward into the glare",
+    "Inspect the apprentice buckets near the conduit"
+   ]
+  },
+  "vh-1-2-1-2": {
+   "title": "The Cable-Lord's Ledger",
+   "text": "Garrow leans his heavy wool-wrapped bulk against the winch-house wall, measuring your laden packs with greedy, calculating eyes that miss nothing. His hand taps rhythmically against a leather toll-ledger tucked beneath his arm, hinting at the steep tariffs levied on every ounce of bronze leaving Vesperhold. The iron drums behind him groan as a cable-car descends into the white void below, spitting frosty grease onto the flagstones. You must decide whether to negotiate his terms, slip past the winch while his gaze drifts, or take the steeper goat-track to avoid the toll entirely.\n\nDo you treat with the toll-lord, slip past the winch-house, or seek the goat-track?",
+   "exits": [
+    "Negotiate the cable toll",
+    "Slip past the winch-house unseen",
+    "Take the steep goat-track down"
+   ]
+  },
+  "vh-1-2-1-3": {
+   "title": "The Drying Rack",
+   "text": "Young Marta darts out from behind the rattling sheepskin racks, her cheeks wind-chapped and glowing, and thrusts an extra pair of thick tallow mittens directly into your pocket. The sheepskins smell of lanolin and peat smoke, offering a brief, warm sanctuary against the rising mountain gale. She points a mittened finger toward the crumbling masonry ahead, whispering a quick caution about the loose shale near the lower buttress before scurrying back to her frames. You pull the rough wool snug over your knuckles and steady your grip on the straps.\n\nDo you check the retaining wall ahead, brave the open limestone shelf, or head toward the dripping conduit?",
+   "exits": [
+    "Inspect the collapsed retaining wall",
+    "Step out onto the exposed shelf",
+    "Head toward the high conduit"
+   ]
+  },
+  "vh-1-2-1-4": {
+   "title": "The Outer Buttress",
+   "text": "Two fog-wardens lean heavily on their long brass-tipped staves beside the outer buttress, their faces half-hidden behind grey wool hoods. They lift a gloved hand to warn you of treacherous shale sliding across the lower stone-cut in the bitter wind. A distant horn sounds faintly through the swirling mist from the cable-station below, signaling the shift change of the cable-riders. You shift the bronze Clapper on your back, testing your footing on the grit-strewn flagstones before committing to the descent.\n\nDo you follow the warning down the stone-cut, test the frayed guide-line, or seek shelter near the shrine?",
+   "exits": [
+    "Descend the guarded stone-cut",
+    "Test the rope-slack guide-line",
+    "Seek shelter near St. Jude's shrine"
+   ]
+  },
+  "vh-1-2-1-5": {
+   "title": "The High Stile",
+   "text": "The grey monastery wall abruptly ends at the high stone stile, leaving nothing between your boots and the sheer vertical drop of the thirteen tiers. A thin rill of meltwater crosses the path, frozen into a slick sheet of black ice that glints coldly in the pale alpine light. Far below, the cloud sea churns in the valley like an ocean of milk, swallowing the upper stair-towns whole. You brace the heavy bronze load against your shoulder blades and prepare to cross the threshold into the open descent.\n\nDo you cross the frozen rill with care, or pause to warm your hands with gathered company?",
+   "exits": [
+    "Cross the frozen rill with care",
+    "Warm your hands by the lime kiln"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION sg-2-0-4-3
+TITLE: The Open Cedar Gate
+TEXT: Weathered cedar panels swing wide between carved stone pillars, inviting weary travelers into the outer courtyard of the well-station. Copper wind-chimes suspended from the eaves tinkle softly in the dry breeze, offering a melodic contrast to the unrelenting glare of the salt flats. // Dust settles around your boots as you weigh the various paths stretching out before you under the blinding noon sky.
+EXIT 1: Step through the open gate
+EXIT 2: Approach the central pavilion tent
+EXIT 3: Turn back toward the distant ridge
+@@END
+@@SECTION sg-2-0-4-4
+TITLE: The Timber Lever Pump
+TEXT: Narrow gaps between towering stacks of empty water-barrels open directly into a sunlit square dominated by a heavy timber lever pointing skyward. The air smells sharply of damp earth and rusted iron where previous travelers have drawn their daily share from the hidden aquifers below. // Dust motes dance in the harsh light as you stand considering which direction to take next.
+EXIT 1: Inspect the deep well machinery
+EXIT 2: Follow the path toward the inner courtyard
+@@END
+@@SECTION sg-2-0-4-5
+TITLE: The Stone Entrance Post
+TEXT: Pale linen rustles softly as a solemn guard nods from her post beside the arched stone entrance, her fingers resting lightly on a notched wooden tally-staff. She watches your approach with quiet vigilance, marking every traveler who crosses the threshold into the well-station compound. // The cool shadow of the stone archway offers a brief reprieve from the desert heat.
+EXIT 1: Proceed past the checkpoint
+EXIT 2: Divert toward the barrel storage yard
+@@END
+@@SECTION sg-2-0-4-6
+TITLE: The Seepage Puddle
+TEXT: Desert pigeons flutter anxiously around a damp circular stone reservoir, drinking greedily from the dark seepage puddle before scattering into the bright sky at your approach. The sudden rush of wings breaks the heavy stillness of the arid afternoon. // Droplets shimmer on the damp stone rim as you weigh your next move.
+EXIT 1: Head toward the main pavilion
+@@END
+@@SECTION sg-2-0-4-7
+TITLE: The Red Clay Plaza
+TEXT: Crushing white salt crust gives way beneath your boots to packed red clay as you step onto the sacred plaza of the well-station, bringing your grueling march across the flats to a close. Ornate mosaics set into the brickwork depict legendary rains of the past. // The atmosphere shifts perceptibly as you stand at the center of the spacious courtyard.
+EXIT 1: Walk toward the creaking pump
+EXIT 2: Approach the cistern house shade
+@@END
+@@SECTION sg-2-0-5-0
+TITLE: The Bronze Measuring Cup
+TEXT: Severe lines mark the face of the matriarch standing before the main well-head, holding out a heavy bronze measuring cup as a token of the station's liquid wealth. She demands your formal, unyielding agreement to an unbreakable oath before a single drop passes your parched lips. // The surrounding guards watch your hands for any sign of hesitation.
+EXIT 1: Press on and make your choice
+@@END
+@@SECTION sg-2-0-5-1
+TITLE: The Striped Canvas Pavilion
+TEXT: Colored canvas flutters above the central pavilion where the chief well-keeper extends a clay beaker filled with cool, sweet water. She warns you plainly that partaking of this vital resource requires binding yourself to fulfill one future request without question or hesitation. // Sunlight filters through the fabric overhead, casting striped shadows across the dusty ground.
+EXIT 1: Press on and make your choice
+@@END
+@@SECTION sg-2-0-5-2
+TITLE: The Creaking Wooden Pump
+TEXT: Heavy timber groans as the creaking wooden pump rises and falls under unseen labor nearby, while a cloaked sister steps directly into your path. She lays out the sacred binding terms that every traveler must swear to before tasting the station's deep reserve. // Her dark eyes remain fixed on yours, waiting for an answer.
+EXIT 1: Press on and make your choice
+@@END
+@@SECTION sg-2-0-5-3
+TITLE: The Cistern House Shade
+TEXT: Cool shadows envelop the stone cistern house where the keeper of the well presents a silver-rimmed bowl of water. She asks if you are prepared to pledge your solemn word to answer a future summons in return for life-saving hydration. // The damp stone smells faintly of moss and deep mineral salt.
+EXIT 1: Press on and make your choice
+@@END
+@@SECTION sg-2-c1
+TITLE: The Binding Oath
+TEXT: Steam rises faintly from the stone well-mouth as the well-keepers gather close, waiting for your final word on the bargain. Accepting their water means pledging your future loyalty to an unknown demand, whereas refusing leaves you to carry your thirst back out into the blinding white expanse with your own dwindling supplies. // The choice hangs heavy in the dry air between you and the silent watchers.
+EXIT 1: Swear the well-oath for water and shelter
+EXIT 2: Refuse the oath and pay dear for water
+@@END

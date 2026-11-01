@@ -1,0 +1,28 @@
+MODEL Pro
+
+[
+{
+"section": "td-1-011",
+"field": "exit:0",
+"old": "Drag the skiff down toward the muddy harbor",
+"new": "Drag the skiff down toward the muddy harbour",
+"kind": "choice",
+"reason": "Corrected US spelling to British spelling"
+},
+{
+"section": "td-1-011",
+"field": "page",
+"old": "rotting timber supports without snapping the rotting stays",
+"new": "rotting timber supports without snapping the brittle stays",
+"kind": "prose",
+"reason": "Removed repetition of the word 'rotting'"
+},
+{
+"section": "td-1-010",
+"field": "page",
+"old": "tearing a jagged hole in your shoulder as you dive out of the path of the falling wreckage.\n\nYou pull yourself up from the grey silt, brushing salt from a raw, bleeding scratch across your arm",
+"new": "tearing a jagged gash in your shoulder as you dive out of the path of the falling wreckage.\n\nYou pull yourself up from the grey silt, brushing salt from the raw, bleeding wound",
+"kind": "prose",
+"reason": "Resolved contradictory injury descriptions (hole vs scratch)"
+}
+]

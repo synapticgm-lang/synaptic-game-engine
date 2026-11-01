@@ -1,0 +1,56 @@
+@@SECTION cf-1-023
+TITLE: The Copper Hearth
+TEXT: Grease cakes your knuckles as you probe the rusted bowels of the tavern hearth's auxiliary draught-pump, coaxing a choked copper valve back to life with a brass-bladed screwdriver. The publican watches from behind a stacked tier of clouded mugs, his face soot-creased and hopeful as the stubborn iron diaphragm finally gives way with a deep, shuddering sigh of clean air. A greasy cloud of soot lifts toward the crooked stove-pipe, leaving the kitchen warm and the grease-traps clear of clinkers.
+EXIT 1: Inspect the repaired pump housing
+@@END
+@@SECTION cf-1-024
+TITLE: The Seized Valve
+TEXT: Sweat stings your eyes while you lean into the rusted seating-ring of the pump-gland, applying a delicate torque with your fingers to free the jammed pin without shearing the soft brass threads. The metal groans under the strain, teetering on the edge of a clean turn or a catastrophic fracture that would jam the mechanism forever.
+CHECK: Turn the delicate brass pin
+@@END
+@@SECTION cf-1-025
+TITLE: A Bitter Toll
+TEXT: The thin brass pin snaps clean against the seating-ring with a sharp, sickening crack that sends a shower of metal splinters into your palm. The publican sighs, docking your promised coal rations by half to pay for a replacement peg from the smiths down the line, leaving your hands smarting from a fresh, jagged scratch that oozes dark grease.
+EXIT 1: Gather your tools and leave
+@@END
+@@SECTION cf-1-026
+TITLE: The Welder's Cut
+TEXT: Steel and brass yield at last to your practiced touch, the valve spinning true into its collar and filling the tavern hearth with a steady, roaring draught. The publican nods approvingly, shoving a heavy sack of dry anthracite across the stained wood to reward your labor.
+GRANT: Sack of dry anthracite
+EXIT 1: Carry the coal to the engine
+@@END
+@@SECTION cf-1-027
+TITLE: The Smoke-Room Taunts
+TEXT: Jeers drift across the sawdust-strewn floor from a knot of rival gangers nursing lukewarm cider by the coal-bunker. You keep your eyes fixed on your mug, breathing in the stale tang of cheap tobacco and cold iron while their barbed remarks bounce off your silence like gravel against a boiler plate. After a tense stretch, the mockers turn away, leaving a grudging sort of peace in the dim tap-room.
+EXIT 1: Finish your bitter small beer
+@@END
+@@SECTION cf-1-028
+TITLE: The Staring Match
+TEXT: A heavy-shouldered ganger leans over your bench, breathing fumes of sour mash into your face while the other drinkers fall silent to watch how much insult a Marrowbone man can swallow without swinging a fist. Your pulse hammers against your ribs, but your features remain as blank and grey as the ash-dunes outside the window.
+CHECK: Hold their aggressive gaze
+@@END
+@@SECTION cf-1-029
+TITLE: A Flawed Stride
+TEXT: A sudden drop in your nerve betrays you, a brief twitch of the jaw that the lead ganger catches with a cruel, broken-toothed grin. They shove your shoulder hard enough to send your mug spilling across the table, costing you a copper coin dropped to cover the mess and a lingering bruise on your collarbone.
+EXIT 1: Retreat to the chilly platform
+@@END
+@@SECTION cf-1-030
+TITLE: Silence Wins the Yard
+TEXT: Stone-cold patience settles over the table like a blanket of fresh ash, wearing down the swagger of the rival crew until they mutter into their beakers and look away. One older ganger tosses a tarnished token onto the wood, a grudging badge of local respect for a guard who knows when to keep his temper cool.
+GRANT: Tarnished local respect token
+EXIT 1: Return to the engine shed
+@@END
+@@SECTION cf-1-031
+TITLE: The Barons' Padlock
+TEXT: Heavy iron chains loop through the turnout levers of the south siding, secured by an official brass padlock stamped with the crest of the Rail Barons. A stiff parchment notice hangs from the shackle, warning that all unauthorized movements out of Ashgate Junction are forbidden until the regional audit concludes. Hesper's engine sits silent behind the barrier, its safety valve weeping a faint wisp of steam into the grey evening air while you stare down the cold metal obstacle.
+EXIT 1: Find another way around
+@@END
+@@SECTION cf-1-032
+TITLE: The Ticket Window
+TEXT: Iron bars divide the soot-stained waiting hall from the ticket office, where the ancient widow sorts bundles of damp, yellowed telegrams by the dim glow of an oil lamp. A draft rattles the loose panes of the booking hall, carrying the dry scent of old paper and coal-dust from the tracks outside. You stand before the scarred wooden counter, where every shadow seems to hide a forgotten message or a fresh complication.
+EXIT 1: Request a forgotten message from Hesper
+EXIT 2: Secure a brass platform pass for the yard
+EXIT 3: Ask about the upcoming ash-storm warnings
+EXIT 4: Fix the jammed ticket-stamping press
+EXIT 5: Tend to the Marrowbone's clogged water injector
+@@END

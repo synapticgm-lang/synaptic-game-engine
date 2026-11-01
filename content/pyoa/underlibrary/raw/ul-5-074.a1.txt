@@ -1,0 +1,47 @@
+@@SECTION ul-5-074
+TITLE: The Iron Jack
+TEXT: Plunging your shoulder against the makeshift iron jack, you heave until the jammed timber groans and snaps outward, sending a dense cloud of grey mortar dust swirling into your face. You blink against the stinging grit, wiping your brow with a stained sleeve as you sweep your hand across the floorboards. Your fingers close around a heavy brass paperweight shaped like a crouching lion, its dense mass reassuring in your palm and ready to serve if anything lunges from the dark.
+EXIT 1: Pry the jammed beam wider
+@@SECTION ul-5-075
+TITLE: Shoring the Ruin
+TEXT: Heavy mahogany lintels settle with a ominous screech above your head, threatening to bury the narrow crawlspace beneath tons of compressed literature and pulverized plaster. Gritting your teeth against the rising panic, you wedge your shoulder beneath a sagging crossbeam, planting your boots firmly on the scattered folios while the air grows thick with blinding dust. Every muscle in your frame trembles under the mounting pressure of the fallen stacks as you brace for the final shift.
+CHECK: Brace against the falling timber
+@@SECTION ul-5-076
+TITLE: A Costly Clearance
+TEXT: The beam slips with a deafening crack, pinning your hand against the rough masonry and carving a deep, burning crimson line across your forearm before you wrench yourself free. You stumble back into the choking gloom, clutching your bleeding arm while precious minutes tick away in the suffocating silence of the ruined stacks. The wound throbs with a steady, dull heat, but the path ahead finally stands clear enough to crawl through.
+EXIT 1: Crawl through the settling dust
+@@SECTION ul-5-077
+TITLE: The Salvaged Weight
+TEXT: Straining every sinew against the descending masonry, you manage to shift the dead weight just enough to slide through the narrow breach before the whole archway collapses for good. Tucked beneath a pile of discarded broadsheets, your fingers brush against a cold, velvet-lined case containing a solid silver bookmark shaped like an open quill. You tuck the gleaming keepsake into your coat pocket as the dust slowly settles around your boots.
+GRANT: Solid silver bookmark
+EXIT 1: Return to the main corridor
+@@SECTION ul-5-078
+TITLE: The Sturdy Pouch
+TEXT: Acrid lamp-oil smoke stings your eyes as the ceiling plaster rains down in fine, grey granules, coating your collar and hair in the detritus of forgotten centuries. You flatten your back against a tilted bookcase, letting the worst of the falling debris clatter harmlessly off your leather satchel while you search the rubble at your feet. Your hand fastens upon a stout leather pouch bulging with heavy iron pinch-bolts, a welcome find for securing loose hinges or sealing doors against the drafts.
+EXIT 1: Secure the heavy iron bolts
+@@SECTION ul-5-079
+TITLE: The Groaning Vault
+TEXT: Overhead masonry shifts with the ominous sound of tearing parchment and cracking stone, threatening to bring the vaulted ceiling down upon your head at any second. You clamp your jaw shut, steadying your breathing while you reach blindly into the cascade of falling rubble to snatch up a leather pouch before the crush becomes absolute. The roof beams settle another agonizing inch, demanding every ounce of your inner fortitude to hold your ground.
+CHECK: Steel your nerves against debris
+@@SECTION ul-5-080
+TITLE: A Brutal Rebuff
+TEXT: A sudden lateral shudder of the masonry catches you off balance, knocking you violently against a jagged iron shelf and leaving a deep, throbbing bruise across your ribs. You gasp for breath in the dust-choked air, clutching your side as the leather pouch slips from your fumbling fingers and scatters its iron bolts into an inaccessible crevice. Though bruised and battered by the falling archive, you pick yourself up and push forward into the gloom.
+EXIT 1: Press onward through the debris
+@@SECTION ul-5-081
+TITLE: The Iron Bounty
+TEXT: Navigating the treacherous cascade of masonry with careful precision, you manage to salvage a sturdy leather pouch filled to the brim with cold iron pinch-bolts without triggering another collapse. The heavy little sack hangs reassuringly from your belt, offering a practical means of fastening doors or securing loose fittings as you press deeper into the shifting labyrinth.
+EXIT 1: Advance into the lower stacks
+@@SECTION ul-5-082
+TITLE: The Murmuring Air
+TEXT: Invisible presences crowd the narrow corridor like a swarm of restless ink-moths, their collective whispers brushing against your ears with the dry rustle of forgotten manuscript pages. Thousands of marginal notes, penned by readers long dead, murmur competing secrets and frantic entreaties from the darkness, begging you to transcribe their names and grievances into the pages of the waking world. You press your hands to your temples to shut out the rising tide of disembodied voices, wading through an atmosphere thick with nostalgia and old ink as you approach the heart of the vault.
+EXIT 1: Approach the singing chamber
+@@SECTION ul-5-083
+TITLE: The Gallery of Whispers
+TEXT: Suspended high above the dark abyss, an iron walkway vibrates continuously with the low, choral hum of every bitter or brilliant commentary ever scrawled in the margins of a dying book. The metallic floor plates shudder beneath your boots, and each arching span tempts you toward a different hazard or hidden passage branching off into the gloom. A clever wordplay might buy safe passage, wax earplugs could shut out the madness, crystal water might steady your pulse, or a swift leap across the rusted gaps could save precious time, but every choice carries its own quiet price.
+EXIT 1: Bargain with the disgruntled annotators
+EXIT 2: Seal your ears against the chorus
+EXIT 3: Hold fast against the psychic gale
+EXIT 4: Step gracefully across the rusted gap
+EXIT 5: Dance through the tempest of pages
+EXIT 6: Stand before the pedestal of the Index
+@@END

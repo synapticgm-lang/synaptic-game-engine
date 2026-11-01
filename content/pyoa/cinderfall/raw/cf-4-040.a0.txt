@@ -1,0 +1,67 @@
+@@SECTION cf-4-040
+TITLE: The Sealing Gland
+TEXT: Scalding droplets spit from the failing packing ring, stinging your bare forearm every time the piston rod thrusts through the bulkhead. Condensation slicks the iron floorplates beneath your boots, turning every step into a cautious slide above the roaring pit. Wrapping a thick rag around your palm, you lean into the heat to reach the rusted securing bolts. // The heavy copper gasket comes free with a sharp metallic screech, leaving behind a scarred seating that demands immediate attention before the cylinder pressure drops entirely away.
+EXIT 1: Reach for the spanner and fresh packing
+@@END
+@@SECTION cf-4-041
+TITLE: Beneath the Condensation
+TEXT: Hissing plumes of white vapour curl around your shoulders, obscuring the dim amber glow of the cab lamp and coating your cheeks in greasy moisture. You work entirely by touch in the deafening roar, fingers searching for the exact angle to seat the replacement ring without barking your knuckles against the hot casting. The engine shudders beneath you as it shoulders another heavy grade in the deep dark. // You hook the thick copper gasket into position, feeling the stubborn metal conform at last to the worn contours of the gland.
+EXIT 1: Tighten the retaining bolts by hand
+@@END
+@@SECTION cf-4-042
+TITLE: The Sealing Torque
+TEXT: Sweat runs down your spine as you drop a heavy box spanner over the final retaining nut, bracing your boots against the vibrating floorplate. The threads bind hard against rust and old scale, threatening to strip entirely if you apply an ounce too much force, yet leaving them loose invites a catastrophic blow-out under full boiler load. You draw a slow breath of sulphurous air, plant your shoulder against the bulkhead, and throw your weight onto the wrench handle.
+CHECK: Wrench the rusted gland bolt home
+@@END
+@@SECTION cf-4-043
+TITLE: A Wrenched Wrist
+TEXT: A vicious crack echoes through the cramped housing as the spanner slips from the rounded nut, sending your knuckles smashing hard into the sharp edge of the cylinder casing. A hot bolt of pain shoots straight up your forearm, leaving you gasping against the iron bulkhead while steam hisses angrily from the imperfect seal. You clutch your throbbing hand to your chest, tasting copper and ash in the damp air. // Although the leak continues to weep a thin, stubborn stream of grey condensation across your boots, the engine chugs onward through the darkness.
+EXIT 1: Wipe the blood and press on
+@@END
+@@SECTION cf-4-044
+TITLE: The Copper Gasket
+TEXT: Your knuckles take a bruising against the iron lagging, but the final turn holds true as the stubborn nut bites deep into the fresh metal. The angry hissing subsides to a steady, rhythmic sigh, leaving the cylinder housing dry and secure against the creeping damp of the tunnels. You pry the old, flattened ring from its seat and toss it into your tool chest as a heavy memento of the subterranean struggle. // The Marrowbone rolls rhythmically deeper into the gloom, carrying its warm brass and steady fires toward the heart of the range.
+GRANT: heavy copper gasket
+EXIT 1: Climb up to the lantern-roost
+@@END
+@@SECTION cf-4-045
+TITLE: The Subterranean Grotto
+TEXT: Darkness swallows the headlight beam as the tunnel walls peel away into a cavernous vault where stagnant black water laps against the rusted chassis of derailed coal tenders. Ribs of rotting timber arch overhead like the skeleton of some iron-bellied leviathan, dripping greasy moisture into the sump below. Far across the mirrored surface, pale lanterns swing in a slow, mournful rhythm from unseen gantries. // The air smells of wet slate and old grease, thick enough to chew, carrying the faint, rhythmic chime of a distant bell that marks no earthly hour.
+EXIT 1: Pick a path toward the swinging lights
+@@END
+@@SECTION cf-4-046
+TITLE: The Sump Basin
+TEXT: A subterranean lock-gate stands locked across the permanent way while oily black water rises steadily toward the glowing ashpan of the firebox. Iron catwalks stretch away into the Stygian gloom, hung with rusted chains and the pale, silent shapes of the Hollow Signalmen peering down from their perches. Every shadow seems to reach toward the warmth of the boiler, whispering old timetables and forgotten debts from the days before the ash-storms. // You must choose your path across the basin carefully before the rising bilge swamps the grate and drowns the fire.
+EXIT 1: Wade through the rising bilge water
+EXIT 2: Haul the heavy sluice chain taut
+EXIT 3: Wrestle the jammed drainage wheel around
+EXIT 4: Rig a makeshift telegraph wire bridge
+EXIT 5: Steady the primary bypass valve handle
+EXIT 6: Pick a narrow cleft in the limestone
+@@END
+@@SECTION cf-4-047
+TITLE: The Sinking Track
+TEXT: Black water laps greedily at the lower rungs of your ladder as you drag a heavy timber baulk across the shifting mire to shore up the sinking track-bed. The ooze sucks at your boots with every strained step, smelling of old coal-dust and dead sulfur from decades of stagnant flood. Overhead, the low brick vaulting weeps gray condensation down upon your shoulders like cold sweat. // You wedge the squared timber firmly beneath the sagging rail chair, securing a dry sack of oak kindling salvaged from a rotting crate wedged in the muck.
+EXIT 1: Push deeper into the flooded cutting
+@@END
+@@SECTION cf-4-048
+TITLE: The Waterlogged Crib
+TEXT: Stagnant ripples spread outward from your shins as you wade through the knee-deep sump, guiding the heavy timber toward the washout beneath the rail. The damp chill penetrates your trousers, but the rhythmic pulsing of the engine's distant boiler keeps a steady, reassuring warmth against your back. You wedge the dry wood tight into the ballast gap, feeling the iron rails settle just an inch above the dark water. // A cluster of rusted signal levers leans drunkenly from the sludge nearby, their glazed porcelain weights cracked and blank.
+EXIT 1: Climb up to the rusted catwalk
+@@END
+@@SECTION cf-4-049
+TITLE: The Mire Heave
+TEXT: A massive timber balk jams fast in the sucking mud just as the water surges higher against the ashpan doors, threatening to douse the vital coals. You brace your boots against the submerged chassis of an overturned coal tub, grabbing the rough, splintered oak with both hands. Veins stand out on your neck as you pit your muscles against the dead weight of the mire and the pressing tide.
+CHECK: Heave the timber from the muck
+@@END
+@@SECTION cf-4-050
+TITLE: The Sucking Mire
+TEXT: The mud refuses to yield, giving way with a sickening suction that yanks you off balance and sends you sprawling chest-deep into the oily, freezing sump. Water floods your pockets and coats your skin in a gritty film of coal-wash, knocking the wind from your lungs with a sharp gasp. You drag yourself upright by a dangling signal wire, shivering violently in the damp gloom. // Although the timber remains wedged at an awkward angle, the Marrowbone holds its steam and waits for you to return to the footplate.
+EXIT 1: Climb back aboard the slippery deck
+@@END
+@@SECTION cf-4-051
+TITLE: The Oak Kindling
+TEXT: With a mighty heave of your back and shoulders, you wrench the heavy timber clear of the sucking mire and slam it home beneath the sinking rail joint. The track holds firm against the weight of the locomotive, keeping the firebox high and dry above the black water. You salvage a dry canvas sack of seasoned oak kindling from the ledge above, shaking the grey dust from its folds. // The Marrowbone hums appreciatively as you toss a handful of the dry wood into the open furnace door.
+GRANT: dry sack of oak kindling
+EXIT 1: Return to the central sump basin
+@@END

@@ -1,0 +1,28 @@
+@@SECTION cf-6-017
+TITLE: The Lanterns Below
+TEXT: Cold iron beneath your palms has the familiar weight of a service long kept, each rivet singing the same low tune against the vibration of the rail. You pull the heavy brass lever two notches back, letting the green signal-arm drop into its slot with a hollow clatter that echoes off the tunnel walls. Above you, in the high timber of the roof, the Hollow Signalmen move without sound, their lanterns swinging in slow, deliberate arcs that map a road no living man was ever meant to walk alone. The smoke from the firebox drifts back through the cab, tasting of old coke and damp earth, mingling with the grease on your sleeves until you cannot tell where your coat ends and the engine begins. Every red eye along the permanent way turns green as you pass, acknowledging the hand that never left the iron.
+EXIT 1: Step into the green light of the junction
+@@END
+@@SECTION cf-6-018
+TITLE: The Permanent Way
+TEXT: Night has no beginning here, only a deeper shade of soot that settles between the sleepers and coats the ballast in a fine, grey powder. You tend the fire with steady rhythm, casting shovelfuls of dry slack into the amber roar of the belly while the pressure needle hovers at the exact red mark the old timetables demanded. Down the line, past the rusted gantries and the silent water-towers, the rails stretch out like twin threads of polished silver under a sky that has forgotten how to clear. No schedule is posted on the wall of this cab, for time has stopped ticking in the brass clock, leaving only the rhythm of the exhaust and the quiet company of those who watch from the shadows of the telegraph poles.
+EXIT 1: Ride the rhythm of the endless rail
+@@END
+@@SECTION cf-6-019
+TITLE: Signalman Eternal
+TEXT: Far ahead, where the cuttings narrow into the eternal dark of the final range, a single yellow lamp burns steady through the drift. You do not whistle for the crossing, because there is nothing left to warn and no one left to pay the toll at the gate. The Marrowbone rolls on through the quiet dark, its cylinders ticking as they cool, carrying its fireman deeper into the service of the line where no train ever stops and no journey ever reaches an end. Here, among the ghosts of old gangers and forgotten engines, you tend the fire and watch the signals change from red to green, forever bound to the iron road and the long night of the steppe.
+@@END
+@@SECTION cf-6-020
+TITLE: Beyond the Water Gate
+TEXT: Rushing water thunders through the great brass sluices as the valve-key turns with a long, protesting groan of ancient threads. The heavy iron gates of Cinderfall swing inward at last, parting the thick yellow smog of the steppe and letting a cold, clean wind sweep across the dry cobbles of the lower wards. Down below, the crowds press close against the low stone walls, staring in silence at the steam-plume rising from the stack of Locomotive No. 9 as it breaks through the barricades. The Rail Barons' clerks drop their ledgers in the mud, too astonished to speak, while the gangers on the embankments raise their hammers in a slow, hard salute that needs no words.
+EXIT 1: Open the regulator for the open plain
+@@END
+@@SECTION cf-6-021
+TITLE: The Smoke Clear
+TEXT: Behind the engine, the great walled city opens its dry throat to the flood, drinking deep from the black reservoirs while the steam whistle blows a long, triumphant blast that rattles the glass in every window from the market square to the summit. You wipe the grease from your forehead with the back of a blackened hand, feeling the heat of the firebox die down to a steady, manageable glow as the pressure eases in the copper tubes. The ash-storm season breaks against the battlements and falls away like spent coal, leaving the tracks clear toward the western horizon where the sky finally shows a pale, washed strip of blue.
+EXIT 1: Drive the engine past the final signal
+@@END
+@@SECTION cf-6-022
+TITLE: The Last Train Out
+TEXT: Out past the suburbs and the abandoned sidings, the open steppe stretches away under a morning that smells of wet earth and rusted iron. The Marrowbone rolls easy on the jointed track, its bell ringing a slow, clear note for every mile of newly opened road, leaving the high walls and the old debts far behind in the grey smoke. There are no schedules left to keep and no Barons to ask for your pass, only the endless twin lines running west toward the sunrise and the clean smell of steam on the wind. You bank the fire for the last time today, pull your cap low against the morning chill, and let the engine carry you home.
+@@END

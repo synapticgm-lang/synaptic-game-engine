@@ -1,0 +1,92 @@
+{
+ "batch": "sg-5-1-3-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-1-3-0": {
+   "title": "The Dormant Automaton",
+   "text": "Silent and towering in the gloom, a dormant brass automaton blocks the corridor, its faceted glass eyes catching the faint, sputtering glow of your coal-lantern. You ease past its frozen limbs, listening to the hollow echo of your own breathing against the chill masonry.\n\nThe path splits ahead, offering a choice between a howling draught from the heights, an exposed iron climb, or a tight squeeze where a sentinel's mirror sweeps.",
+   "exits": [
+    "Step out onto the windy upper ledge",
+    "Climb the rusted iron framework toward the light",
+    "Freeze in the alcove while the light sweeps past"
+   ]
+  },
+  "sg-5-1-3-1": {
+   "title": "The Dripping Cistern",
+   "text": "Heavy drops of black condensation fall with rhythmic malice from the vaulted brickwork of the dim cistern-room, threatening to drown the sole remaining source of heat and light you carry from Candlemere. You cup your hand over the lantern's trembling coal, sheltering the orange glow as the moisture pools around your boots.\n\nThe damp air presses close, forcing you to choose your next direction before the cold extinguishes your only defense.",
+   "exits": [
+    "Step out onto the windy upper ledge",
+    "Freeze in the alcove while the light sweeps past"
+   ]
+  },
+  "sg-5-1-3-2": {
+   "title": "The Blocked Maintenance Tunnel",
+   "text": "Bracing your shoulder against a stubborn, shifting pane of green-tinted glass, you heave until the jammed frame gives way with a dry groan, clearing a narrow path through the choked maintenance tunnel. Dust motes dance in the amber radius of your coal-lantern as you peer into the darkness beyond.\n\nYou must decide whether to ascend into the glare or slip sideways into the shadows.",
+   "exits": [
+    "Climb the rusted iron framework toward the light",
+    "Freeze in the alcove while the light sweeps past"
+   ]
+  },
+  "sg-5-1-3-3": {
+   "title": "The Hairline Fracture",
+   "text": "Traveling entirely alone through the hollow heart of Prism, without any companion's voice to cover your steps, you notice a subtle draft whispering through a hairline fracture in the masonry wall. This thin stream of outside air carries the sharp tang of salt and distant thunder, hinting at a hidden route.\n\nThe silence of the empty hall leaves your next move entirely in your own hands.",
+   "exits": [
+    "Step out onto the windy upper ledge",
+    "Climb the rusted iron framework toward the light",
+    "Freeze in the alcove while the light sweeps past"
+   ]
+  },
+  "sg-5-1-3-4": {
+   "title": "The Cascading Beads",
+   "text": "A stray boot-heel dislodges a pocket of ancient optical beads, sending a sudden cascade of loose glass rattling down the sloping floor with a sound like falling rain. You freeze instantly, holding your breath as the noisy clatter echoes through the chamber, threatening to betray your silent ascent to anyone listening in the dark.\n\nThe clatter fades, leaving you with a choice of where to hide or how to press forward.",
+   "exits": [
+    "Freeze in the alcove while the light sweeps past",
+    "Push upward into the thin, scorching air"
+   ]
+  },
+  "sg-5-1-3-5": {
+   "title": "The Hall of Mirrors",
+   "text": "Row upon row of curved and faceted mirrors surround you, multiplying your single frame into a dozen terrifying, phantom pursuers that mimic your every twitching movement in the gloom. The dizzying reflections warp the space around your coal-lantern until you can no longer tell which way is true.\n\nYou need to escape the disorienting maze before your nerve breaks.",
+   "exits": [
+    "Freeze in the alcove while the light sweeps past",
+    "Claw your way up the choked drainage flue",
+    "Push upward into the thin, scorching air"
+   ]
+  },
+  "sg-5-1-3-6": {
+   "title": "The Forgotten Archive",
+   "text": "Thick salt crust crunches audibly beneath your boots as you cross the floor of a forgotten archive, leaving a stark, white trail across the dark floorboards that would invite any tracker straight to your heels. You sweep a hand behind you to scuff the crystals, but the dry crunch remains uncomfortably loud in the quiet vault.\n\nYou must choose your next escape route before your presence is discovered.",
+   "exits": [
+    "Freeze in the alcove while the light sweeps past",
+    "Claw your way up the choked drainage flue",
+    "Push upward into the thin, scorching air"
+   ]
+  },
+  "sg-5-1-3-7": {
+   "title": "The Sooty Air-Vent",
+   "text": "Black velvet soot cakes the interior of the narrow air-vent, smearing across your face and clinging to your clothes with every wriggling inch, threatening to choke your breathing in the confined space. You drag yourself forward on elbows and knees, guided only by the faint warmth of your lantern trailing behind you.\n\nThe vent opens up ahead into choices of ascent or exposure.",
+   "exits": [
+    "Claw your way up the choked drainage flue",
+    "Push upward into the thin, scorching air"
+   ]
+  },
+  "sg-5-1-3-8": {
+   "title": "The Swinging Counterweight",
+   "text": "A heavy brass counterweight sweeps across your narrow ledge on a long iron arm, slicing through the dim air with a rhythmic whine that forces you to time your frantic leap with lethal precision. You wait for the heavy mass to pass, muscles coiled and ready to spring across the void.\n\nThe metal pendulum clears, leaving you an instant to move forward.",
+   "exits": [
+    "Push upward into the thin, scorching air",
+    "Slip behind the stacks while voices rise outside"
+   ]
+  },
+  "sg-5-1-3-9": {
+   "title": "The Fragile Bridge",
+   "text": "Suspended high over a yawning shaft where ancient machinery groans in darkness, a fragile bridge of ribbed glass groans under your weight, every step sending tiny shivers through the transparent spans. You keep your eyes fixed straight ahead, ignoring the dizzying drop inches below your boots.\n\nThe opposite side offers multiple branching paths into the observatory's interior.",
+   "exits": [
+    "Push upward into the thin, scorching air",
+    "Slip behind the stacks while voices rise outside",
+    "Leap for safety as the balustrade crumbles"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-5-041
+TITLE: The Memory of Copper
+TEXT: Your fingers trace the hair-fine silver threads within the automaton's open skull, coaxing a stuttering spark into a steady, rhythmic pulse. A hot copper smell fills the vault as the ancient archivist’s jaw clicks in quiet astonishment, its internal lenses widening to focus upon your steady hands. In token of its restoration, it slides a cold metal cylinder across the grease-slicked brass desk—a sealed surveyor's roll mapping every salt-crusted sinkhole and hidden gully across the naked Low. //
+GRANT: Sealed surveyor chart
+EXIT 1: Step back toward the chamber threshold
+@@END

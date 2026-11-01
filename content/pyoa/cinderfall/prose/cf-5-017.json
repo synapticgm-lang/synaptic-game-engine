@@ -1,0 +1,92 @@
+{
+ "batch": "cf-5-017",
+ "sections": {
+  "cf-5-017": {
+   "title": "Oil in the Dark",
+   "text": "Shadows stretch long across the abandoned siding while the screech of tearing iron echoes from the dark sheds. You ignore the metallic shrieking entirely, keeping your breathing slow and deliberate as you reach into the recess of the maintenance locker. Your fingers find a small tin of watchmaker's oil, cold and heavy with lubricant, and slide it securely into your breast pocket.\n\nOutside, the wind howls against the blackened chassis, carrying the biting tang of sulphur and stale coal-dust from the terminal yards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step through to the trembling corridor"
+   ]
+  },
+  "cf-5-018": {
+   "title": "Steadying the Nerve",
+   "text": "Cold sweat bead your forehead as the bulkhead groans under the relentless weight of the mounting steam pressure, threatening to blow the rusted rivets clean out of the frame. You force your trembling lungs to draw deep, quiet draughts of the foul air, centering your racing thoughts against the mounting roar of the furnace. Every instinct screams to leap clear of the scorching metal, but you fix your gaze entirely on the quivering bronze dial, reaching out with absolute stillness to grasp the emergency throttle.",
+   "check": "Hold fast against the panic",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-019": {
+   "title": "The Price of Hesitation",
+   "text": "A violent shudder rattles through the deckplates, ripping the grip from your fingers and sending you sprawling hard against the cast-iron firebox door. A jagged corner of the bracket catches your forearm, tearing a long, bleeding gash through your sleeve and leaving a hot smear of crimson across the soot. You pick yourself up from the iron plating with a grimace, nursing the stinging wound as the engine settles into a heavy, uneven cough. Time has slipped through your fingers like dry ash, and the storm clock ticks closer to its reckoning.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back to the controls"
+   ]
+  },
+  "cf-5-020": {
+   "title": "Silence in the Gauge-Room",
+   "text": "However narrowly, your fingers find the exact balance point on the brass handle, easing the frantic pressure down until the needle settles back into a steady, safe hum. The engine sighs, its rhythmic breathing smoothing out against the cold rails as the danger passes without a major breach. Resting on the ledge beside the pressure gauge is a small, heavy brass washer stamped with the seal of the old Stationmaster-General, left behind by someone who passed this way long before the fires.",
+   "check": "",
+   "grant": "Stationmaster's brass seal",
+   "exits": [
+    "Advance toward the terminal hub"
+   ]
+  },
+  "cf-5-021": {
+   "title": "Hammer and Wick",
+   "text": "Sharp metallic clangs echo through the cramped cab as you tap the seized governor-valve with a short brass hammer until the stubborn needle drops, averting an imminent boiler blowout. The hot hiss of escaping steam fades to a steady, manageable rumble, leaving the air thick with the smell of boiled grease and heated iron. Rummaging through the supply locker beneath the driver's seat, you scavenge a thick bundle of braided wick, stiff with old grease and ready for the dark miles ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Check the forward coupling"
+   ]
+  },
+  "cf-5-022": {
+   "title": "Coals of the Steppe",
+   "text": "Cinders tap against the thick glass of the cab windows like dry fingers seeking entrance from the howling waste outside. You secure the bundle of braided wick in your belt-pouch, running a gloved hand over the damp brass of the instrument panel to test its readiness. The furnace bed glows with a dull, stubborn cherry light, casting long shadows across the deck as the heavy locomotive prepares for the final push toward the walled city.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the steam injector"
+   ]
+  },
+  "cf-5-023": {
+   "title": "Adjusting the Governor",
+   "text": "Steam hisses angrily around the threaded joints of the main regulator, coating your knuckles in a film of scalding moisture that threatens to lock the mechanism completely. You grip the heavy spanner with both hands, setting its jaws against the stubborn brass nut while the entire bulkhead shudders under the immense strain of the reserve pressure. A fraction of a turn too far will crack the housing, but too little will leave the pistons starved of power as the engine climbs the final grade.",
+   "check": "Turn the stubborn brass nut",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-024": {
+   "title": "A Slip of the Spanner",
+   "text": "The wrench slips suddenly with a sharp metallic crack, barking your knuckles against the iron bulkhead and venting a cloud of blinding, white-hot vapor into the cabin. You stumble backward, coughing violently as the stinging mist coats your throat and leaves a bitter taste of burnt oil on your tongue. Though the valve remains half-jammed and the engine labors heavily against its own internal friction, you manage to shut the main feeder before the pressure cuts completely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clear the choked steam line"
+   ]
+  },
+  "cf-5-025": {
+   "title": "The Unlocked Valve",
+   "text": "However narrowly, the spanner bites into the worn thread, and the jammed valve gives way with a deep, shuddering groan that clears the choked lines in a single rush of clean power. The engine responds instantly, its pistons driving with a renewed and steady rhythm that shakes the soot from the roof ribs. Tucked into the recess of the valve-box, you discover a small, folded paper slip bearing a hurried route-code written in Hesper Quill's unmistakable hand.",
+   "check": "",
+   "grant": "Hesper's route-code slip",
+   "exits": [
+    "Approach the iron basin yard"
+   ]
+  },
+  "cf-5-026": {
+   "title": "The Gantry Ultimatum",
+   "text": "Heavy iron boots ring out sharply against the overhead ironwork as armed rail-guards in grey greatcoats drop silently from the gantries, blocking every escape route from the platform. Their bayonets catch the dim, flickering light of the sulphur lamps, gleaming with a cold, unyielding menace that matches the iron authority of the Barons. They demand the immediate surrender of the Water Key under threat of instant arrest, their hands resting poised near their heavy signal-pistols while the storm clock ticks down above the archway.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the gantry watchmen"
+   ]
+  }
+ },
+ "missing": []
+}

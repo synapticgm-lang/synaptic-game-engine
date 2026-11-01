@@ -1,0 +1,54 @@
+{
+ "batch": "v-e-perch-answers",
+ "variants": [
+  {
+   "node": "up-end-perch-answers",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Letting the panicked turnkey flee to the Guard meant your exact route was shouted across every precinct house courtyard. She simply listened from her cell, mapping your escape before breaking out to deliver her own brutal justice."
+  },
+  {
+   "node": "up-end-perch-answers",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "A whispered promise to the turnkey bought your quiet escape, but he gladly traded that same debt to secure her sudden release from the gaol. Your silence was purchased, leaving her completely free to collect the arrears in lead."
+  },
+  {
+   "node": "up-end-perch-answers",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Exposing the identical handwriting that proves Rigg and Valerius are one syndicate means nothing to a woman demanding personal blood. The cabal's ruin burns in the streets below, but up here, only her loaded pistol dictates the future."
+  },
+  {
+   "node": "up-end-perch-answers",
+   "when": {
+    "rigg": "allied"
+   },
+   "after": "Matron Rigg's heavy warrants and foundry coin might shield you from the city watch, but they cannot stop a ghost you betrayed. Her iron protection ends at the belfry door, leaving you entirely alone against a cocked pistol."
+  },
+  {
+   "node": "up-end-perch-answers",
+   "when": {
+    "valerius": "betrayed"
+   },
+   "after": "Spurning Lord Valerius means you have no silk-cloaked runners guarding your back in the shadows, leaving the rooftop perfectly open for her ambush. His polite menace has simply been replaced by her ruthless, unflinching demand for a reckoning."
+  },
+  {
+   "node": "up-end-perch-answers",
+   "when": {
+    "cover": "bare"
+   },
+   "after": "Sprinting bare-faced across the slates offered no anonymity, making it absurdly easy for a betrayed rival to track your brazen silhouette against the gaslight. Escaping without a disguise was a prideful error that has finally drawn her aim."
+  },
+  {
+   "node": "up-end-perch-answers",
+   "when": {
+    "vault": "breached"
+   },
+   "after": "Shattering the grandmaster's lock on the undervault left a trail of scored brass and flash-powder that she easily tracked from the Exchange. Your violent entry below ground has led her directly to this fatal convergence in the rafters."
+  }
+ ]
+}

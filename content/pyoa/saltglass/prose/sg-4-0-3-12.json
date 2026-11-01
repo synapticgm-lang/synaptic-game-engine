@@ -1,0 +1,85 @@
+{
+ "batch": "sg-4-0-3-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-0-3-12": {
+   "title": "The Basalt Milestone",
+   "text": "Basalt carved from the ancient seabed stands pitted and worn smooth by centuries of abrasive sand-blasting, marking twenty leagues remaining to Prism. The freezing ceramic Seedkey rests heavy against your ribs while the banked coals of your lamp throw a dull, stubborn glow against the drifting grit. Every breath tastes of dry alkaline dust, and the low, grinding hum of the distant mirror storm vibrates through the soles of your boots.\n\nTo the north, the salt-track vanishes into a swirling yellow haze, leaving you to weigh whether your failing provisions can endure another push forward or if you must retrace your steps before the weather breaks entirely.",
+   "exits": [
+    "Press deeper into the salt wastes",
+    "Turn back toward the rusted wind-sieve"
+   ]
+  },
+  "sg-4-0-4-0": {
+   "title": "The Final Shale Rise",
+   "text": "Sharp ozone stings your throat at the base of the final shale rise, where the ground itself vibrates with the ominous approach of the tempest. Shards of fused quartz rattle against your shins as the wind gathers force, howling through the hollow arches of nearby glass ruins. Your thumb checks the twine on your waterproof pouch, reassuring yourself that the cold ceramic key remains safe from the abrasive air.\n\nAbove you, the sky darkens to a bruised violet, and every instinct warns that staying exposed on this elevated ridge invites disaster.",
+   "exits": [
+    "Scramble down toward the storm wall",
+    "Seek shelter before the gale strikes"
+   ]
+  },
+  "sg-4-0-4-1": {
+   "title": "The Singing Quartz Chasm",
+   "text": "Jagged fissures block your direct approach to the storm-line, presenting a perilous leap across a bottomless chasm where the exposed quartz walls hum a continuous, high-pitched note in the rising wind. Fine dust stings your exposed cheeks like thrown needles, and the banked coals in your tin lantern flicker frantically against the draft. Hesitating means being buried in the shifting drift, yet the chasm demands a leap of blind faith.\n\nYou gather your muscles, eyeing the narrow ledge on the far side while the air grows colder by the second.",
+   "exits": [
+    "Leap across the singing quartz chasm"
+   ]
+  },
+  "sg-4-0-4-2": {
+   "title": "The Bottle-Glass Ruins",
+   "text": "Ruined warehouse foundations offer a brief, desperate lee as a spinning tornado of fine glass-dust whirls wildly across the salt-pan fifty paces ahead. You crouch low behind a block of green bottle-glass, listening to the shrill whistle of air shearing over jagged shards. The weight of the ceramic Seedkey in your pocket grounds your racing thoughts while the amber lantern at your belt sputters in the eddying draft.\n\nThe spinning vortex shifts sideways, threatening to cut off your only viable path through the ruins.",
+   "exits": [
+    "Dash past the swirling glass-dust vortex",
+    "Wait out the gale in the ruins"
+   ]
+  },
+  "sg-4-0-4-3": {
+   "title": "The Glass-Diver's Warning",
+   "text": "Maren clings desperately to a weathered rock outcrop, gasping for breath while warning you that the approaching storm wall is sheer, merciless, and entirely blind. The trembling glass-diver points toward the howling wall of white grit, shouting over the rising roar of the basin. Your grip tightens on the tin handle of your coal-lantern as flying crystals pepper your leather coat with a steady, drum-like rattle.\n\nDeciding whether to heed the warning or force your way onward against the diver's advice leaves no room for error.",
+   "exits": [
+    "Push forward into the blinding gale",
+    "Pause to reconsider your desperate route"
+   ]
+  },
+  "sg-4-0-4-4": {
+   "title": "Securing the Ember-Lamp",
+   "text": "Crevice stone bites into your palms as you wedge your lamp securely into a narrow rock split, freeing both hands to check the frayed twine on your waterproof pouch. Inside rests the cold ceramic Seedkey, untouched by the biting dust that cakes your eyelashes and eyebrows. The surrounding air hums with a dangerous, electric tension as the great storm front narrows the distance between the horizon and your hiding spot.\n\nEvery second spent adjusting your gear steals precious time from your race against the monsoon.",
+   "exits": [
+    "Brace for the impending tempest front",
+    "Plunge headfirst into the screaming gale"
+   ]
+  },
+  "sg-4-0-4-5": {
+   "title": "The Obsidian Horizon",
+   "text": "Violet cloud towers mingle with spinning crystal fragments to obliterate the horizon, blotting out the midday sun with terrifying, unnatural speed. The vast plain of the Salt Basin turns the color of bruised iron under the shadow of the oncoming front. You clutch your amber lamp tighter to your chest, feeling the glass chimney grow warm as the wind presses against your wool cloak with the weight of a physical wall.\n\nThe blinding glare of the storm's edge leaves you no sanctuary, only a stark choice of direction.",
+   "exits": [
+    "Grip the key and run blindly",
+    "Hunker down against the flying crystals",
+    "Charge directly into the screaming gale"
+   ]
+  },
+  "sg-4-0-4-6": {
+   "title": "The Ancient Quay Wall",
+   "text": "Ice-cold stone presses against your spine as you flatten yourself against the remnants of an ancient quay wall, listening to the million-toned roar of the approaching glass-dust front. The ground trembles rhythmically under your boots, matching the frantic beat of your own heart. Fine particles hiss against your leather satchel, chewing away at the old travel marks while your banked lantern glows like a solitary red eye in the gloom.\n\nThe roaring wall draws closer with every breath, demanding an immediate movement before the air becomes unbreathable.",
+   "exits": [
+    "Bravely face the biting micro-crystals",
+    "Leap into the screaming gale ahead"
+   ]
+  },
+  "sg-4-0-4-7": {
+   "title": "The Final Preparations",
+   "text": "Numb fingers struggle to secure your coat against a fierce gust that nearly rips the amber lamp from your grasp as you make your final preparations. The air is thick with the metallic tang of crushed quartz and ancient salt, signaling that the barrier between the open basin and the storm is vanishing. You check the cold ceramic key one last time, feeling its smooth, dead weight reassure you against the chaos.\n\nThe final barrier of the tempest looms directly before you, waiting to test every ounce of your endurance.",
+   "exits": [
+    "Plunge forward into the screaming gale"
+   ]
+  },
+  "sg-4-0-5-0": {
+   "title": "The Mirror Storm Wall",
+   "text": "Towering high above the bleached dunes, the tempestuous wall of the Mirror Storm casts a pale, blinding glare across your salt-caked face as you stand entirely exposed. Swirling sheets of microscopic glass hiss through the air, creating a shimmering curtain that swallows the landscape whole. Your lamp struggles against the vacuum of the drafting winds, throwing long, jittery shadows against your boots.\n\nThere is no cover left to claim, nor any path back to the safety of the lamp-towns; only the wall remains.",
+   "exits": [
+    "Press on into the roaring storm"
+   ]
+  }
+ },
+ "missing": []
+}

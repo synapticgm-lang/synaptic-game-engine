@@ -1,0 +1,115 @@
+{
+ "batch": "td-5-020",
+ "sections": {
+  "td-5-020": {
+   "title": "Marrow Stone Secret",
+   "text": "Fingers trace the cold, calcified ridge where the ancient rib wedged tight against the heavy iron counterweights, scraping away salt crust and encrusted barnacles until your nails find the purchase they need. However narrowly you escape the sudden shift of grinding stone, a heavy pulse of cold weight yields to your tug. Nestled deep within the porous grey marrow lies a smooth, pale pebble pulsing with a faint, briny luminescence that smells faintly of old rain and deep sea trenches. You pry the small relic free, sliding it safely into your pocket as the machinery settles with a heavy, protesting sigh.",
+   "check": "",
+   "grant": "Pale Marrow Stone Amulet",
+   "exits": [
+    "Slip into the inner chamber"
+   ]
+  },
+  "td-5-021": {
+   "title": "Copper Wire Salvage",
+   "text": "Salt-crusted plates of the shattered bathysphere groan beneath your boots as you lean deep into the tangled maw of the great iron gearing. Every movement threatens to shift the rusted hull plates into a grinding collapse that would pin your arms forever in the dark. Steadying your weight against a frozen piston, you work a curved blade with painstaking care through layers of encrusted hemp and tarred canvas. Lengths of bright, untarnished copper wire slide free from the ruined conduit, coiling smoothly into your waiting palm like a sleeping serpent.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb upward past the gears"
+   ]
+  },
+  "td-5-022": {
+   "title": "Untangling The Copper Coil",
+   "text": "Your fingers move with deliberate precision among the jagged, razor-sharp edges of the shattered bathysphere hull, probing blindly into the greasy darkness where the thick bundle of copper wire is wedged. Every breath must be measured, because a single careless twitch of your blade against the tensioned steel bracing could bring tons of rusted iron crashing down upon your shoulders. Sweat drips from your chin, splashing silently against the damp machinery as you attempt to sever the stubborn housing without snagging the pristine strands within.",
+   "check": "Cut the copper wire free",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-023": {
+   "title": "Snapped Wire And Splintered Hull",
+   "text": "A sudden, sickening lurch of the rusted steel plates sends the entire jagged assembly sliding sideways with a screech of tortured metal. You jerk your hands back too late as a sharp edge of the bathysphere bites deep across your forearm, slicing through canvas and skin in a hot flash of pain. The tangled bundle of copper wire snaps violently under the sudden stress, whipping back into the gloom and leaving you empty-handed and bleeding against the cold bulkhead. You bandage the raw, weeping gash with a strip of salt-stiffened rag, your breath coming in ragged gasps in the damp dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the solid stone ledge"
+   ]
+  },
+  "td-5-024": {
+   "title": "Spoils Of The Wreckage",
+   "text": "Fingers cramped and aching from the tense struggle against the ruined hull, you pull the last pristine coil of copper wire free from the wreckage with a sharp, echoing tug. However narrowly you avoided bringing the whole twisted apparatus down upon your head, the prize rests safely in your grip. The metal shines with an unblemished, reddish glow, completely untouched by the corrosive brine that has eaten away everything else in this drowned vault for generations. It is a rare find, worth a heavy handful of coin or a dozen favors back in the cliff-town.",
+   "check": "",
+   "grant": "Spool of pristine copper wire",
+   "exits": [
+    "Return to the main threshold"
+   ]
+  },
+  "td-5-025": {
+   "title": "Oaths Of The Depths",
+   "text": "Out of the dripping darkness where the massive iron gears meet the damp rock wall, a tall figure steps forward with a sound like grinding shingle. The Last Tidewarden stands shoulder-high, its brass plates pitted with green verdigris and its glass-bulb eyes glowing with the amber light of a dying hearth. It raises an elongated hand of riveted copper, barring your path to the central shaft with an authoritative weight that brooks no argument. Its voice rasps like dry parchment sliding over gravel, demanding to know what vows you bring to the great mechanism before a single further step is permitted into the heart of the tide.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Answer the automaton with defiance"
+   ]
+  },
+  "td-5-026": {
+   "title": "The Warden's Archive",
+   "text": "Piled high with water-logged ledgers, brass astrolabes, and copper pipes weeping grey condensation, the vaulted archive smells of old salt and scorched oil. At the far side of the chamber, the towering automaton stands sentinel before the great alignment levers that control the returning ocean's path. Every surface gleams faintly with dampness, reflecting the amber glow of the archivist's unblinking optical lenses as it tracks your every movement. The narrow room offers several paths forward into the working machinery, each guarded by the relentless watchfulness of the mechanical keeper.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Speak softly to the metal archivist",
+    "Challenge the towering machine directly",
+    "Repair the damaged memory coil",
+    "Decipher the wet navigational charts",
+    "Slip past toward the ledger shelves",
+    "Face the singing drowned ones"
+   ]
+  },
+  "td-5-027": {
+   "title": "Debating The Ancient Decrees",
+   "text": "Words become your only shield as you stand before the towering automaton, reciting clause after obsolete clause from the maritime codes of the old Tidewardens. The machine pauses, its internal cogs clicking rhythmically as it cross-references your claims against centuries of forgotten sea-law carved into the stone floor. Every argument must be chosen with absolute precision, because a single flawed precedent will cause the mechanical keeper to lock the access shafts forever. Slowly, the heavy bronze latch on the side of its torso gives way with a resonant pneumatic hiss, sliding a heavy brass key out into the open air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the brass access key"
+   ]
+  },
+  "td-5-028": {
+   "title": "The Weight Of Old Law",
+   "text": "Echoes bounce off the damp stone walls as you press your case further into the archive's dim recesses, matching the automaton's literal interpretation with clever applications of historical exemption. The machine's amber eyes flare brighter, registering the complex web of maritime jurisdiction you have woven around its ancient programming logic. It cannot refute the precedents without violating its core oaths, yet granting passage runs counter to its primary directive of total exclusion. You stand your ground in the dripping chill, waiting for the final mechanical verdict to drop.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Await the warden's final ruling"
+   ]
+  },
+  "td-5-029": {
+   "title": "Parsing The Maritime Decrees",
+   "text": "Your mind races through forgotten volumes of Admiralty law, searching for the precise legal loophole that will compel the automaton to recognize your wrecker's license as a valid warrant of access. You lean close to the machine's whirring faceplate, speaking clearly and formally while its internal cogs grind in agitated deliberation. Every syllable must hit the mark without hesitation, because the slightest ambiguity in your phrasing will trigger its defensive protocols and seal the lower shafts for good.",
+   "check": "Cite the forgotten salvage statutes",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-030": {
+   "title": "A Flawed Citation And A Heavy Cost",
+   "text": "A sharp clunk echoes through the chamber as the automaton rejects your legal citation with a blast of pressurized steam that leaves your ears ringing and your throat raw. You stumble backward across the slippery stone, coughing violently as the hot vapor scalds your skin and leaves a persistent, aching tightness in your chest. The machine's amber eyes narrow down to cold, unmoving pinpricks of light, signaling that its patience has worn dangerously thin. You clutch your burning chest, bruised and chastised, realizing you must find another way past its relentless sentinel guard.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Fall back into the shadows"
+   ]
+  },
+  "td-5-031": {
+   "title": "The Brass Key",
+   "text": "You trade sharp-edged articles of ancient statute with the automaton-archivist until its copper jaw clicks shut upon a grudging concession. It slides a heavy brass access key across the oiled slate table, its brass fingers whirring with reluctant respect for your stubborn scholarship.\n\nThis weighty relic bears the teeth of the lower shafts, cold to the touch and smelling faintly of stagnant deep-water.",
+   "check": "",
+   "grant": "heavy brass access key",
+   "exits": [
+    "Seize the key and turn toward the lower shafts"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,83 @@
+{
+ "batch": "vh-6-2-4-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-2-4-1": {
+   "title": "The Grand Pouring Pit",
+   "text": "Standing at the absolute lip of the grand pouring pit, you unpick the stiff hempen lashings with cold, trembling fingers while the gathered smiths watch in breathless, reverent silence. The air reeks of sulfur and damp coke, heavy with the weight of twenty mountain days coming to an end. Every eye fixes on the padded cradle as the heavy bronze tongue shifts against its straps, waiting for the final word that will tip it into the waiting fire below.",
+   "exits": [
+    "Tip the sacred tongue into the melting pot"
+   ]
+  },
+  "vh-6-2-4-2": {
+   "title": "The Bailiff's Ledger",
+   "text": "Beside the bubbling bronze cauldron, a Cable Court bailiff taps his ledger with a sharp silver pen, demanding immediate toll for the metal's descent down the mountain stairs. Steam rises from the quench-troughs to cloud his spectacles, yet his hand remains outstretched for payment or collateral. The surrounding forge-masters step back into the shadows, leaving you alone to weigh the cost of passage against the integrity of the monastery's bell.",
+   "exits": [
+    "Surrender the sacred tongue to pay the toll debt",
+    "Refuse the bailiff and shove the bronze into the fire"
+   ]
+  },
+  "vh-6-2-4-3": {
+   "title": "The Safety Flare",
+   "text": "Under the flickering, sickly glare of the safety flare, you balance the heavy clapper precariously on the edge of the iron hopper, ready to tip it into the roaring fire. Sparks shower upward from the crucible, catching in your frost-stiffened hair and dying out against your woollen sleeves. The heat is a tangible wall pressing against your chest, urging a swift, irreversible motion before your strength gives out entirely.",
+   "exits": [
+    "Let the sacred metal slide into the white-hot flames",
+    "Pull the bronze back and hoist your pack once more"
+   ]
+  },
+  "vh-6-2-4-4": {
+   "title": "The Great Chimney",
+   "text": "In the deep shadow of the great chimney, you drop your leather pack to the soot-blackened flagstones, feeling your spine straighten as twenty days of mountain cold finally leave your aching bones. The foundry hums with the low, subterranean vibration of water-wheels and bellows, drowning out the whistle of the high winds far above. Around you, the low-country air feels thick and rich, smelling of river mud and coal smoke rather than glacier ice.",
+   "exits": [
+    "Cast the broken voice straight into the central furnace",
+    "Turn away from the heat and carry the tongue back upward",
+    "Slip the heavy bronze into the dark drainage sluice"
+   ]
+  },
+  "vh-6-2-4-5": {
+   "title": "The Frayed Deed",
+   "text": "Before the roaring central hearth, you unroll the frayed parchment deed of Vesperhold, laying it flat across a damp barrel-head for the master's final signature. The parchment smells of old wax and mountain damp, its edges scorched by the proximity of the open flame. Forge-masters crowd close in the dim light, eager to seal the contract that will bind the mountain's voice to the low-country's forge.",
+   "exits": [
+    "Hoist the bronze onto your back and leave the forge",
+    "Hide the sacred tongue inside the secret drainage channel"
+   ]
+  },
+  "vh-6-2-4-6": {
+   "title": "The Flooded Casting Floor",
+   "text": "At the edge of the flooded casting floor, you stand ankle-deep in tepid river run-off, staring up at the gaping throat of the primary furnace as it swallows the shadows. Water laps gently against your boots, carrying small flakes of slag and coal dust from the upper basins. There is no one here to demand tolls or offer contracts, only the steady, unyielding roar of the fire waiting for its fuel.",
+   "exits": [
+    "Slide the heavy clapper down into the dark drainage sluice"
+   ]
+  },
+  "vh-6-2-4-7": {
+   "title": "The Wooden Block",
+   "text": "Within the silent circle of waiting forge-masters, you set the heavy bronze tongue down upon a solid wooden block, letting its low, resonant hum die away into the rising steam. The men look down at the cracked metal with scarred hands resting on their aprons, weighing its worth in tin and tradition. Nobody speaks, leaving the decision entirely in your hands as the steam curls around your knees.",
+   "exits": [
+    "Hoist the heavy cradle back onto your tired shoulders",
+    "Push the sacred metal away into the hidden water run-off"
+   ]
+  },
+  "vh-6-2-5-0": {
+   "title": "The White-Hot Crucible",
+   "text": "You heave the cracked clapper straight into the white-hot crucible, letting the old bronze melt down instantly so Orison can be reborn without the heavy debts of the mountain. Sparks explode toward the blackened rafters in a brilliant cascade of green and gold, illuminating the astonished faces of the watching smiths. The weight leaves your shoulders entirely, leaving you standing empty-handed in the roaring heat.",
+   "exits": [
+    "Press on"
+   ]
+  },
+  "vh-6-2-5-1": {
+   "title": "The Valley's Lords",
+   "text": "You hand the heavy tongue over to the waiting Cable Court bailiffs as collateral for the extortionate toll-debt, watching the sacred bronze vanish securely into the hands of the valley's lords. The bailiff smiles thinly, sealing the cold metal inside a reinforced crate while the smiths turn their backs in quiet disgust. The debt is settled, but the mountain has lost its voice to the low-country ledger-men.",
+   "exits": [
+    "Press on"
+   ]
+  },
+  "vh-6-2-5-2": {
+   "title": "The Upward Stairs",
+   "text": "You turn your back on the roaring furnace and hoist the clapper back into its wooden cradle, deciding to carry the broken voice back up the stone stairs before the ice-wind closes the pass for good. The strap cuts sharply into your bruised shoulder, familiar and grounding as you step away from the warmth of the Lowgate forge. Biscuit lets out a low, approving grunt from the courtyard shadows as you lead the way toward the steep ascent.",
+   "exits": [
+    "Press on"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,60 @@
+Gemini said
+
+@@SECTION sg-3-0-4-1
+TITLE: The Iron Gate
+TEXT: Heavy iron plates riveted together with copper studs form a towering barrier at the corridor's end, blocking any further passage. Two veterans stand guard before the massive threshold, wearing gleaming breastplates beaten out of recycled green bottle-glass that catches the harsh desert glare. They lean against long pikes, eyeing your ember-lamp with cautious professional curiosity while the dry wind hums against the metal seams.
+EXIT 1: Approach the guards to test the heavy bolt
+EXIT 2: Turn back toward the ringing mosaic courtyard
+@@END
+@@SECTION sg-3-0-4-2
+TITLE: Behind the Fish Crates
+TEXT: Tallow dips flicker along the walls of a bustling alleyway as you slip through a narrow gap behind stacked crates of salted fish. The scent of brine and old wood hangs thick in the close air, mingling with the distant shouting of merchants and the scrape of iron-shod wheels on stone. Shadows stretch long across the packed dirt floor while unseen voices argue over the price of dried provisions.
+EXIT 1: Follow the winding lane deeper into the market
+EXIT 2: Duck beneath a frayed canvas awning to seek quieter ground
+EXIT 3: Thread your way toward the crowded central square
+@@END
+@@SECTION sg-3-0-4-3
+TITLE: The Archivist's Portico
+TEXT: Damp ledgers are stacked high upon a marble table beneath a pillared portico where a nervous archivist named Fenn sorts through crumbling parchment. He mutters constantly about missing wax seals and fraudulent water deeds, his ink-stained fingers trembling as another page sticks together in the dry heat. A faint smell of vinegar and old glue drifts from his makeshift desk while the street noise murmurs beyond the columns.
+EXIT 1: Step closer to ask Fenn about the records
+EXIT 2: Leave the scholar to his disputes and head for the square
+@@END
+@@SECTION sg-3-0-4-4
+TITLE: The Willow Footbridge
+TEXT: Dry reeds rattle in the hot afternoon draft as you cross a dry canal bed on a narrow footbridge made of interlaced willow branches. The wooden structure creaks rhythmically beneath your boots, sagging slightly toward the baked silt below where cracked mud tiles bake under the glare. Farther along the opposite bank, low adobe walls shimmer through the rising heat haze.
+EXIT 1: Continue forward toward the clamour of the market
+EXIT 2: Step off the path to seek a shaded nook among the reeds
+@@END
+@@SECTION sg-3-0-4-5
+TITLE: The Dry Fountain Plaza
+TEXT: Travelers gather around a dry stone fountain at the center of a broad plaza, trading gossip and dipping tin cups into a meager basin. The sun beats down mercilessly on the dusty flagstones, turning the open space into a glaring white arena of sound and motion. Someone near the rim of the stone basin claims to have seen strange lights moving across the upper balconies of Prism just before dawn.
+EXIT 1: Join the circle around the basin to listen closer
+EXIT 2: Cross the open plaza toward the northern thoroughfare
+@@END
+@@SECTION sg-3-0-4-6
+TITLE: The Lens Sledge
+TEXT: Sweating laborers strain against thick hemp ropes, hauling a massive quartz lens on a wooden sledge right down the narrowing commercial thoroughfare. You squeeze tightly past the rough-hewn timber frame as it grinds against the sun-baked plaster walls, scattering a fine grit of glass dust into the air. The heavy metal runners spark faintly whenever they strike hidden flints embedded in the paving stones.
+EXIT 1: Slip past the struggling team to reach the noisy bazaar
+EXIT 2: Duck into an alcove until the sledge clears the passage
+EXIT 3: Follow close behind the timber frame into the open square
+@@END
+@@SECTION sg-3-0-4-7
+TITLE: The Canvas Awning
+TEXT: A brightly painted canvas awning flaps wildly above a crowded spice stall, casting shifting patterns of indigo shadow across the sun-bleached flagstones. Pungent heaps of yellow turmeric and dried salt-lavender mound in shallow baskets, filling the warm breeze with sharp, medicinal aromas. Shoppers jostle past one another in the narrow lane, their voices rising above the dry snapping of the canvas overhead.
+EXIT 1: Push past the spice racks toward the central market
+@@END
+@@SECTION sg-3-0-5-0
+TITLE: The Rumour Market
+TEXT: Merchants hawk dubious tales from wooden crates while desperate travelers crowd around competing information stalls in the chaotic clamour of the Rumour Market. Voices rise and fall in a frantic competition for attention, each vendor swearing their particular map or secret is the only one guaranteed to reach the Vault. Your hand instinctively brushes against the cold ceramic key hidden safely within your tunic.
+EXIT 1: Press on into the heart of the frantic crowd
+@@END
+@@SECTION sg-3-0-5-1
+TITLE: Whispers of the Vault
+TEXT: Urgent whispers hum through the sultry air as rival factions trade conflicting stories regarding the sealed gates and hidden water levels of the Rain Vault. Some claim the subterranean chambers are already half-flooded by ancient leaks, while others swear the doors remain locked tight against the approaching monsoon. The tension in the crowded thoroughfare feels as brittle and sharp as unannealed glass.
+EXIT 1: Press on to hear what the merchants truly know
+@@END
+@@SECTION sg-3-0-5-2
+TITLE: Weighing the Reports
+TEXT: Arguing traders and bickering scribes shove past your shoulders as you seek out a quiet corner to weigh the conflicting reports before choosing your path. Every stranger seems to have a different warning about the toll-lords or the temperamental glass-divers who patrol the upper tiers. You steady your breathing, keeping your banked coal-lantern close against your ribs while the market roars around you.
+EXIT 1: Press on to make your final choice among the gossips
+@@END

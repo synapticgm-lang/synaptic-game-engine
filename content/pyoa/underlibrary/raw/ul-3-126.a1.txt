@@ -1,0 +1,12 @@
+@@SECTION ul-3-131
+TITLE: The Unpaid Span
+TEXT: Cool damp air rises from the dark ink-channels below as you lean against the toll-keeper's iron grille, spinning a quick, plausible yarn about an urgent audit in the outer stacks. The gatekeeper’s fingers hover indecisively over the brass lever, suspicious yet reluctant to invite a formal reprimand from the senior inspectors. With a reluctant sigh, he dips his foot to release the counterweight, letting the heavy leather-bound bridge groan downward into place without extracting the customary copper toll. You slip across the gap into the shadows, pocketing a small stamped brass token of exemption that ensures safe passage through the lower checkpoints.
+GRANT: stamped brass token
+EXIT 1: Cross the creaking leather span
+@@END
+@@SECTION ul-3-136
+TITLE: The Floating Ledger
+TEXT: Every plank of the swaying spine-bridge trembles underfoot as the heavy quarto volumes shift against the current of thick, slow-moving printing ink below. You balance lightly, ignoring the whispered cautions drifting from the marginalia etched into the leather bindings, and reach out to snag a water-swollen pocket ledger as it bobs past. Your fingers close around the damp spine just as the bridge gives a sickening lurch toward the dark sluice. Tucking the prize safely into your woolen coat, you scramble up the opposite bank with your prize intact.
+GRANT: water-swollen pocket ledger
+EXIT 1: Descend the fossilised paper stairs
+@@END

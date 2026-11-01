@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-1-019
+TITLE: The Price of Mud
+TEXT: The ferryman does not blink as he names a price that leaves your pockets stinging with loss and your skin crawling with salt-rash. When you finally snatch the rusted copper map from his grease-stained palm, a jagged edge of the metal slices deep into the meat of your thumb, drawing thick, dark blood that immediately crusts over with grey rime. The delay has cost you half your morning and a good portion of your remaining water skin, leaving your throat dry and your temper short as the salt-stiffened mud sucks at your boots.
+GRANT: a rusted map of the sinkholes
+EXIT 1: Climb back up to the cliff-top
+@@END

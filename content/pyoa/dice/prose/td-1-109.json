@@ -1,0 +1,92 @@
+{
+ "batch": "td-1-109",
+ "sections": {
+  "td-1-109": {
+   "title": "The Coral Trap",
+   "text": "Heavy purple branches of fossilised reef groan and shudder as the salt-rotted masonry gives way, pinning a luckless net-mender beneath a jagged block of coral. You brace your shoulder against the porous stone, tasting copper and brine as your muscles strain against the grinding weight until the slab shifts and rolls aside with a hollow thud. The trembling scavenger crawls free from the dust, coughing up grey silt and pressing a cold, trembling palm to your forearm in fierce, silent loyalty.\n\nWith the rescue done, you look out across the drying flats toward the salt-crusted ridge where the old tracks lead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb the ridge toward the dry track"
+   ]
+  },
+  "td-1-110": {
+   "title": "Beneath the Weight",
+   "text": "Slumping shoulders against the porous stone, you brace your boots deep into the dried brine and grip the jagged edge of the fallen pillar. The calcified mass is dense with ancient barnacles that bite into your palms through thick leather, drawing beads of dark blood. Every muscle in your back hums with strain as the pillar shifts a fraction of an inch, revealing a pale face smeared with mud and salt-tears. The trapped scavenger reaches out with a trembling hand, whispering a frantic prayer to the retreating ocean.\n\nYou summon every ounce of your strength to heave the dead weight off their crushed limbs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Heave the stone aside now"
+   ]
+  },
+  "td-1-111": {
+   "title": "Shifting the Coral Arch",
+   "text": "Jagged shards of petrified coral grind against your ribs as you wedge your shoulder beneath the fallen archway, testing the dead weight of the masonry against your tired muscles. The entire heap shivers in the damp air, threatening to avalanche down the slope of the ruined bulkhead and bury you both in a suffocating shroud of shell-grit. You tighten your grip on the porous stone, leaning your full body weight into the lift while the damp earth gives way beneath your heels.\n\n",
+   "check": "Push against the falling masonry",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-112": {
+   "title": "The Slip of the Stone",
+   "text": "The damp earth gives way beneath your boots with a wet sucking sound, sending a sharp jolt of pain through your lower back as the heavy coral slips back into place. A jagged fragment of shell rakes a deep red line across your forearm, warm blood instantly cooling in the salty air. You stagger backward into the reedy sludge, coughing violently as a cloud of ancient lime dust settles over your hair and clothes. The trapped scavenger groans in despair from beneath the debris, though they are still breathing.\n\nYou grit your teeth against the dull ache in your muscles and prepare to haul the masonry once more.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul the heavy stone again"
+   ]
+  },
+  "td-1-113": {
+   "title": "A Grateful Survivor",
+   "text": "With a final wrenching heave, the massive coral block rolls clear of the trapped scavenger and plunges into the dark silt with a heavy thud. The rescued soul scrambles out from the wreckage, gasping for salt air and pressing a trembling hand to bruised ribs. They press a small, damp bundle of dried kelp leaves into your palm as a token of desperate thanks before pledging their loyalty to your crew for the long road ahead.\n\n",
+   "check": "",
+   "grant": "Loyal scavenger companion",
+   "exits": [
+    "Return to the tide shrines"
+   ]
+  },
+  "td-1-114": {
+   "title": "Carving the Pale Driftwood",
+   "text": "Sitting on an overturned crab-pot outside the edge of the salt-flats, you turn a smooth piece of grey driftwood over in your calloused hands. The grain is dense and heavy with absorbed brine, polished to a dull sheen by years of rolling in the surf before the sea vanished. Using a narrow skinning knife, you shave away thin curls of pale wood to reveal a faceless idol meant to appease the wandering pilgrims of the deep. The sharp scent of resin fills the damp air as the crude likeness of a drowned saint begins to emerge from the timber.\n\nYou carefully pare the final details into the wooden surface before offering the small carving to the waiting crowd.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Present the wooden carved idol"
+   ]
+  },
+  "td-1-115": {
+   "title": "The Pilgrim's Bargain",
+   "text": "The hooded zealots gather close in the salt-fog, their heavy woolen cloaks stiff with dried froth and smelling of old storms. They pass the pale wooden idol from hand to hand with reverent fingers, murmuring low incantations to the empty horizon where the tide used to lie. Satisfied by the stark craftsmanship and the unmistakable tang of sacred driftwood, their leader opens a heavy leather pouch and tips a measure of glittering white crystals into your waiting palm. This blessed salt commands a high price among the inland folk who still fear the thirst of the dry seabed.\n\nYou pocket the precious grains and turn your steps back toward the bustling clamor of the shore.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk back toward the shore"
+   ]
+  },
+  "td-1-116": {
+   "title": "Shaping the Sacred Timber",
+   "text": "The woodgrain resists the edge of your blade, tough and stringy with centuries of salt-curing that makes every stroke a test of steady patience. A sudden knot in the timber threatens to split the delicate votive figure right down the center as the pilgrims watch with dark, suspicious eyes from the edge of the dunes. You ease your pressure, feathering the blade across the stubborn grain while the salty wind whips loose strands of hair across your brow.\n\n",
+   "check": "Carve the stubborn driftwood piece",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-117": {
+   "title": "A Slip of the Blade",
+   "text": "The narrow blade catches on a hidden knot of dried salt, slipping sideways with a dull snap that shears away the carved face of the idol in a jagged ruin. A murmur of displeasure ripples through the watching pilgrims, their hooded heads turning away in sudden rejection of the botched offering. You curse under your breath as the ruined timber falls into the dust, costing you precious time and the clean materials you spent hours selecting from the wreck-fields.\n\nYou salvage the remaining scrap of wood and begin to carve a smaller token from what is left.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carve a smaller wooden token"
+   ]
+  },
+  "td-1-118": {
+   "title": "The Driftwood Idol",
+   "text": "Smooth grains of pale driftwood yield to your blade, shaving away under the cold light of the stranded moon until the small, eyeless effigy takes the required shape of a crouching gull. You present the carved offering to the watching pilgrims, who stroke its polished flanks with reverent thumbs and mutter praises to the sulking deep. They nod in quiet satisfaction, handing over a tightly sealed canvas pouch filled with coarse, blessed salt that stings your palm with an ancient, bitter cold.",
+   "check": "",
+   "grant": "pouch of blessed salt",
+   "exits": [
+    "Return to the tide-pool shrines"
+   ]
+  }
+ },
+ "missing": []
+}

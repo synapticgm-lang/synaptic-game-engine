@@ -1,0 +1,7 @@
+@@SECTION vh-5-0-2-11
+TITLE: The Abandoned Scarf
+TEXT: Damp air clings to your eyelashes as you halt beside a broken wicker gate half-buried in soggy dead leaves. Trapped in the thorn bushes nearby, a discarded woollen scarf flutters feebly in the grey draughts, left behind by someone who bolted headlong into the suffocating mist. The bronze clapper on your back hums a low, sympathetic vibration against your spine, matching the distant, muffled pulse of the valley bells. You pull your collar tight against the dripping branches, weighing your choices in the silent white gloom where every direction looks identical. // To your left, a narrow gap between wooden sheds beckons into deeper shadow. Straight ahead, the ground slopes past a slimy stone mounting block towards faint traces of woodsmoke. Or, if the chill proves too biting and the mist too deep, you can retrace your steps among the dripping pear trees.
+EXIT 1: Squeeze past the stranded timber sledge
+EXIT 2: Follow the scent of distant woodsmoke
+EXIT 3: Turn back toward the pear trees
+@@END

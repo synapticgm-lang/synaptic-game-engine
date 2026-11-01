@@ -1,0 +1,50 @@
+@@SECTION cf-1-121
+TITLE: The Uncoupling Crew
+TEXT: Heavy iron scrap clatters against the ash-crusted paving of the siding as two figures in grease-stiffened canvas stoop over the drawbar between the Marrowbone and her coal tender. Their wrench slips with a high, metallic shriek that cuts through the hiss of escaping steam, and one of them swears low, squinting up into the soot-stained dusk toward the footplate where you stand. The coupling pin, thick as a navvy's forearm and greased with black tallow, has already been lifted half an inch from its seating. If they drive it home, the engine will lurch forward alone into the dead-end spurs while the heavy wagon stays behind in the shadows, leaving your fuel and your supplies at the mercy of the yard guards. // Shadows lengthen across the stacked sleepers as you leap down from the iron ladder, boots crunching deep into the grey drift of the ballast just as a heavy fist reaches for the latch of the safety chain.
+EXIT 1: Rush the coupling to drive them back
+@@SECTION cf-1-122
+TITLE: The Engine Sheds
+TEXT: Vaulted ribs of soot-blackened iron arch overhead like the skeleton of an industrial whale, trapping the thick reek of burning coal-dust, hot valve oil, and damp flannel. Stalled locomotives loom in the gloom like slumbering iron beasts, their copper fittings dull under the smear of grease and their safety valves weeping faint plumes of grey steam into the rafters. From somewhere deep within the roundhouse comes the rhythmic clank of a heavy sledge against red-hot metal and the murmur of union men arguing over the night's coal ration. Every shadow holds a rival or a watcher, and the narrow service tracks stretch out like iron fingers toward the open steppe beyond the yard gates.
+EXIT 1: Inspect the leaking header pipe
+EXIT 2: Search the shadows for lurking saboteurs
+EXIT 3: Heave the spare wheel-set back onto the tracks
+EXIT 4: Wait by the driving wheels as the storm clock strikes
+@@SECTION cf-1-123
+TITLE: Patching the Header
+TEXT: Scalding mist curls from the hairline fracture in the copper manifold, filling the cramped cab with a sharp hiss that smells of boiled scale and old copper. You wrap the weeping joint tight with layers of heavy asbestos tape, binding it fast with iron wire while the heat radiates through your leather gauntlets like a slow-burning hearth. A single stray spark from the firebox catches the hem of your overalls, but you beat it out with a gloved palm without looking up from the twisting pliers. The pressure gauge needle shivers, steadies, and begins to climb back toward the green line as the metal holds firm under the restored steam.
+EXIT 1: Secure the valve casing before the run
+@@SECTION cf-1-124
+TITLE: The Repaired Manifold
+TEXT: Cool air drafts through the inspection hatch as the pressure gauge settles into a steady, rhythmic thrum, the copper pipe holding against the surge with a low, contented vibration. You wipe the sweat from your forehead with a grease-rag, leaving a dark streak of coal-dust across your brow while you check the packing glands one final time by the light of a smoking tallow dip. The engine breathes deep now, her pistons sliding smooth and true in their oiled channels, ready to haul dead weight across the grey miles without a stutter in her chest.
+EXIT 1: Return to the main roundhouse floor
+@@SECTION cf-1-125
+TITLE: Re-Packing the Steam Gland
+TEXT: Live steam spits white and vicious from the worn packing gland of the primary piston rod, threatening to blow the remaining hemp seals clear out of their brass housing before you can tighten the restraining bolts. You grip the box-spanner with both hands, muscles straining against the rusted thread as the metal screeches in protest under the immense internal pressure of the boiler. One false twist of the wrench will strip the seating and vent the entire head, leaving the engine crippled in the middle of the active yard. // You lean your full weight into the iron lever, teeth grit against the searing heat of the escaping vapor.
+CHECK: Wrench the stubborn packing bolt home
+@@SECTION cf-1-126
+TITLE: A Blistered Hand
+TEXT: The rusted thread shears with a sharp, metallic snap that sends the spanner flying into the dark recesses of the pit, and a jet of scalding steam lashes across the back of your hand before you can jerk it clear. Pain flares hot and bright beneath your leather glove, leaving a raw, blistering welt across your knuckles that will ache every time you haul a heavy lever through the coming ash-storms. You curse quietly in the gloom, binding the wound tight with a strip of oily rag while the pressure in the cylinder sighs away into the rafters in a long, mocking whistle.
+EXIT 1: Collect your tools and limp back to the yard
+@@SECTION cf-1-127
+TITLE: The Tightened Joint
+TEXT: However narrowly you managed to catch the thread before the seal blew, the bolt holds fast in its brass housing, and the white hiss dwindles away to a dry, rhythmic thrum. You wipe the grease from your stinging palms and catch your breath in the heavy, smoke-laden air of the pit, knowing the repair will stand the pounding of the rails for at least a few dozen leagues. On the workbench beside your knee lies a heavy brass pin dropped by a careless fitter, scored with the private punch-mark of the union yard-master. // You pocket the token before turning back toward the main roundhouse.
+GRANT: Union Yard-Master's Marked Pin
+EXIT 1: Return to the central engine stalls
+@@SECTION cf-1-128
+TITLE: Shadows in the Coal-Bunker
+TEXT: A boot-heel clicks softly against the iron deck-plates behind the tender, too light for a union ganger and too deliberate for a stray rat scuttling among the clinkers. You freeze with your hand on the oil-can, listening to the slow, measured breathing coming from the hollow space beneath the canvas water-bag where a man could easily crouch with a length of iron pipe. The air smells faintly of stale tobacco and cheap machine grease, distinct from the heavy sulfur reek of the roundhouse. Every nerve in your shoulders tightens as you weigh whether to spin around blind or wait for the first movement in the dark.
+EXIT 1: Spring around the water-bag with the oil-can
+@@SECTION cf-1-129
+TITLE: The Ambush in the Coal
+TEXT: You whirl around the edge of the canvas screen with the heavy iron oil-can raised high, catching the gleam of a jagged wedge gripped in a stranger's fist just as he lunges out from the shelter of the tender wall. His eyes widen in the dim light of the tallow lamp, fixed on your descending arm while his own blow starts its clumsy arc toward your ribs. The narrow space leaves no room to dodge, and the outcome hangs entirely on who strikes first in the cramped shadow of the coal-bunker. // You fling your shoulder forward into the narrow gap to intercept his wrist.
+CHECK: Strike first in the coal bunker shadow
+@@SECTION cf-1-130
+TITLE: A Heavy Blow
+TEXT: The stranger's iron wedge catches you square across the shoulder-blade with a dull thud that knocks the wind from your lungs and sends you stumbling hard against the sharp edge of the coal-gate. Pain shoots down your arm, leaving your fingers half-numb as the intruder scrambles backward over the rail-lip and drops down into the grey ballast outside the shed. You clutch your bruised shoulder in the dark, breathing the cold dust of the floor while the distant signal bell tolls twice for the changing shift.
+EXIT 1: Climb down from the bunker to nurse your ribs
+@@SECTION cf-1-131
+TITLE: The Disarmed Saboteur
+TEXT: However narrowly you managed to block his thrust, your iron-rimmed boot catches the intruder square across the shin, sending his wedge clattering across the steel deck-plates with a hollow ring. He spits a curse and scrambles backward over the edge of the tender, dropping into the ash-dunes below before you can grab his collar, but he leaves behind a small, grease-stained leather pouch he had dropped in the scuffle. Inside rests a brass tally-check stamped with the insignia of the Rail Barons' inspection bureau, proving someone higher up is taking a keen interest in your departure. // You pocket the token and straighten your jacket.
+GRANT: Barons' Inspection Tally-Check
+EXIT 1: Climb down to the main engine floor
+@@END

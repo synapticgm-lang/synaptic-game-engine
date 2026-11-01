@@ -1,0 +1,32 @@
+@@SECTION ul-4-080
+TITLE: The Weight of Paper
+TEXT: The cascading folios shift beneath your boots like scree on a slate roof, and a sudden avalanche of heavy folio volumes sweeps your feet out from under you. You scramble to latch onto a protruding iron bracket, but your fingers slip on the greasy film of lamp-oil and old dust coating the metalwork. You tumble into a narrow recess between two tilting oak cases, bruising your ribs against a protruding drawer-handle and losing your tin of spare nibs in the darkness. The air smells of crushed vellum and damp earth as you haul yourself upright, nursing a smarting shoulder while the distant rumble of the stacks settles into an uneasy silence.
+EXIT 1: Follow the tilting aisle northward
+@@END
+@@SECTION ul-4-081
+TITLE: The Vault Diagram
+TEXT: Calculations form in your mind like ink soaking into blotting paper as you watch the rhythm of the descending leather-bound tomes. You pick your footing across the sliding oak cases with measured precision, timing each leap to match the groaning shift of the timber framing. A heavy ledger brushes past your ear with the whisper of a blade, yet your route holds true through the chaotic flurry of falling knowledge. Tucked neatly into the spine of a wedged dictionary, your fingers close around a crisp parchment sheet detailing the hidden structural braces of the deep annexe vaults.
+GRANT: architectural diagram of the vaults
+EXIT 1: Follow the tilting aisle northward
+@@END
+@@SECTION ul-4-085
+TITLE: The Vellum Journal
+TEXT: Shuddering aisles sway like masts in a rising gale while heavy octavos rain down around you in a flurry of torn leaves and flying parchment. You slip sideways through a gap in the shelving, your shoulder brushing the rough timber with fluid lightness as another leather-bound volume shatters the flagstones where you stood a heartbeat prior. Your hand shoots out instinctively to snatch a bound notebook tumbling past in mid-air, clutching it tight against your chest before the momentum carries you clear of the hazard. The leather cover is unmarked by dust or damp, and its uncreased pages offer a clean slate for whatever notes remain to be written.
+GRANT: an undamaged vellum journal
+EXIT 1: Follow the tilting aisle northward
+@@END
+@@SECTION ul-4-075
+TITLE: Tension Points
+TEXT: Fractured pine beams groan beneath your weight as you test the structural tension of the leaning timbers that span the widening chasm. Below you, the abyss drops away into absolute blackness, save for the faint glimmer of phosphorescent fungi clinging to the ancient stone foundations. You wedge your shoulder against a straining upright, fingers tightening around the cold iron bolt that holds the makeshift bridge together while a trapped cataloguer watches you with desperate, narrowed eyes from the far ledge. Balancing your entire weight on the precarious fulcrum, you reach out to adjust the binding screw just as the wood gives a sharp, warning crack.
+CHECK: Adjust the leaning timber tension
+@@END
+@@SECTION ul-4-079
+TITLE: Calculating the Descent
+TEXT: Falling texts blur past your eyes in a dizzying cascade of black ink and yellowed leaves, each volume adding its mass to the chaotic kinetic puzzle of the shifting stacks. You narrow your gaze against the swirling paper-dust, mentally mapping the trajectories of the heaviest theological treatises as they plummet toward the floor below. Every second requires a swift recalculation of load and momentum to anticipate where the structural stress will settle next. Your boots hover an inch above the trembling floorboards as you ready yourself to dart across the precise convergence point before the timber flooring gives way completely.
+CHECK: Predict the safe falling route
+@@END
+@@SECTION ul-4-083
+TITLE: Fluid Aisle Weaving
+TEXT: Heavy octavos plummet from the high shelves like falling masonry, transforming the narrow corridor into a gauntlet of flying paper and splintering wood. You drop into a low crouch and slide beneath a tilting crossbeam, letting your momentum carry you smoothly past a crashing stack of encyclopaedias. Every instinct urges you to run, but you force your limbs into a controlled, dancing glide through the gaps in the falling debris, reaching out without breaking your stride toward a stray vellum journal resting on a dangling shelf. Your fingers brush the edge of the leather binding just as the shelf snaps violently upward into the gloom.
+CHECK: Weave through the shuddering aisles
+@@END

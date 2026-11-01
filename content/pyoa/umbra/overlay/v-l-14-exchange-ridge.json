@@ -1,0 +1,47 @@
+{
+ "batch": "v-l-14-exchange-ridge",
+ "variants": [
+  {
+   "node": "up-l-exchange-ridge",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Down in the gaslit streets, you catch a glimpse of the runners circulating a rough charcoal sketch of your own face, ensuring every passing watchman knows exactly who to look for in the gloom."
+  },
+  {
+   "node": "up-l-exchange-ridge",
+   "when": {
+    "vault": "breached"
+   },
+   "after": "The frantic pace of the guards beneath the ridge tells you they have already discovered the forced lock on the undervault, turning a quiet manhunt into a desperate scramble for the broken seal."
+  },
+  {
+   "node": "up-l-exchange-ridge",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Far below, a sergeant barks orders peppered with specific details about your solitary flight, a bitter reminder that the terrified deacon you spared has already poured his tale into the ears of the Guard."
+  },
+  {
+   "node": "up-l-tunnel-mouth",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Your rough porter's livery provides a momentary shield in the shadows, making you look like nothing more than an overworked labourer trying to clear a jammed coal chute if any passing patrol happens to glance down the narrow alleyway."
+  },
+  {
+   "node": "up-l-tunnel-mouth",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Blood from the deacon you pushed to his death still rusts upon your sleeves, a grim guarantee that any echoing mistake you make at this lock will lead straight to the hangman's noose."
+  },
+  {
+   "node": "up-l-vault-antechamber",
+   "when": {
+    "vault": "breached"
+   },
+   "after": "An unnatural draft whistles down from the grandmaster's lock you just destroyed, warning you that the breached doorway left yawning open behind you gives the surface watch a perfect trail to follow."
+  }
+ ]
+}

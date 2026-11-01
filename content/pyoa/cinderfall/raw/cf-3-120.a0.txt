@@ -1,0 +1,57 @@
+@@SECTION cf-3-120
+TITLE: The Pressure Vault
+TEXT: Darkness smells of baked scale and old grease inside the auxiliary boiler casing, where the silence is heavy enough to weigh upon your shoulders. Steam hisses through unseen hairline fractures, painting the curved iron plates in ghostly white ribbons of heat. Every breath tastes of iron filings and dry soot. You must decide where to direct your desperate hands before the last faint pulse of pressure bleeds away entirely. // Crawling deeper into the narrow drum demands steady nerves to face the claustrophobic dark. Alternatively, reaching back toward the manifold offers a different hazard against the shrieking metal. Other paths wait beyond, promising temporary relief through careful work, wire-poking, spring-tuning, asbestos-patching, or battling the swaying freight elevator overhead.
+EXIT 1: Crawl deep into the iron drum
+EXIT 2: Reach back toward the shrieking manifold
+EXIT 3: Purge the injector nozzle with wire
+EXIT 4: Recalibrate the governor spring under heat
+EXIT 5: Patch the cylinder drain with tape
+EXIT 6: Fight the swaying freight elevator
+@@END
+@@SECTION cf-3-121
+TITLE: Into the Drum
+TEXT: Narrow iron ribs press against your jacket like the ribs of a buried beast, restricting every inhalation to a shallow gasp. Rivets poke into your spine while you grope blindly along the curved floor for the source of the blockage. Heat radiates from the outer shell, turning the cramped space into a baking oven of stale air and sweat. Through the thick metal walls comes the dull, distant thrum of the viaduct far below. // You inch forward on bruised knees, fingers brushing against something jagged and unexpected tucked behind the main feed pipe. The obstruction feels solid, wedged tightly into the vital passage where the steam must flow to keep the Marrowbone alive.
+EXIT 1: Probe deeper past the jagged obstruction
+@@END
+@@SECTION cf-3-122
+TITLE: The Obstruction Found
+TEXT: Grime cakes your forehead as you angle your shoulder deeper into the restricted space, forcing your trembling fingers toward the jammed valve mechanism. A thick crust of white lime and scorched scale seals the joint shut, resisting your frantic scratching with stubborn malice. The air grows unbreathable, thick with the oily reek of boiled gaskets and rust. // With one hand braced against the vibrating wall, you hook a fingernail beneath the crust and feel it give with a sharp, brittle snap. Beneath the debris, a small brass lever rests completely askew, tied down with copper wire by someone who wanted this engine stopped for good.
+EXIT 1: Test the tension on the wire
+@@END
+@@SECTION cf-3-123
+TITLE: Testing the Nerve
+TEXT: Panic scratches at the inside of your throat, threatening to lock your jaw as the claustrophobic walls seem to press closer together in the gloom. You close your eyes for a single heartbeat, forcing the hot, metallic taste of fear back down into your stomach while your fingers map the intricate tangle of sabotage wire in total darkness. The slightest slip of your hand will jam the mechanism forever or tear your knuckles against the razor-sharp plate edge. // Biting your lip until copper-tasted warmth fills your mouth, you ready your fingers to untangle the snare without triggering the spring-loaded trap.
+CHECK: Unravel the sabotaged copper snare
+@@END
+@@SECTION cf-3-124
+TITLE: Tangled Fingers
+TEXT: Sudden metal fatigue or a careless tremor betrays you, and the tensioned wire snaps back with a vicious whip-crack against your wrist. A hot line of fire flares across your skin, leaving a deep, bleeding welt that smarts fiercely in the dry air. You curse aloud, banging your shoulder hard against the overhead plate as you recoil from the snap. // Time slips away while you nurse your smarting hand in the cramped dark, catching your breath through clenched teeth. You emerge from the casing with a fresh red scar across your forearm and a bruised spirit, but the obstruction is at least cleared enough to limp onward.
+EXIT 1: Return to the boiler casing
+@@END
+@@SECTION cf-3-125
+TITLE: The Clear Passage
+TEXT: Fingers moving with practiced precision, however narrowly, you unhook the final turn of copper wire and feel the jammed valve spring back into its proper seating with a clean, satisfying thunk. A sudden rush of warm, revitalised steam floods through the newly opened channel, washing over your soot-stained face like an old friend's greeting. // You squeeze backward out of the tight iron throat, dragging yourself into the dim light of the compartment with aching muscles. Clutched in your palm is a small, heavy token of your triumph over the sabotaged machinery.
+GRANT: A notched copper keeper
+EXIT 1: Return to the pressure vault hub
+@@END
+@@SECTION cf-3-126
+TITLE: Screeching Metal
+TEXT: Shrill metallic protests ring out from the auxiliary pump like the cries of a wounded bird trapped inside the iron framing. You throw your weight against the vibrating casing, hands sliding on greasy condensation as the temperature climbs toward the danger mark. The entire bulkhead shudders with every stroke of the failing piston, threatening to tear its mountings from the floorboards. // Gritting your teeth against the rising din, you reach blindly into the machinery to find the primary release valve before the pressure vessel ruptures entirely.
+EXIT 1: Leap across the swaying gantry path
+@@END
+@@SECTION cf-3-127
+TITLE: Steadying the Scream
+TEXT: Deafening shrieks fill the narrow compartment, drowning out your own racing heartbeat as the auxiliary pump threatens to shake itself to pieces. You press your palms flat against the vibrating iron, forcing your trembling muscles to lock into a rigid brace against the bucking bulkhead. Every instinct screams at you to flee the suffocating enclosure before the seal blows. // Closing your eyes against the blinding rush of hot steam, you steady your breathing and reach for the main bypass lever with absolute, freezing focus.
+CHECK: Brace against the screaming bulkhead
+@@END
+@@SECTION cf-3-128
+TITLE: The Cost of Shakes
+TEXT: A sudden violent heave of the bulkhead throws you sideways into a jagged corner of the iron casing, driving the wind entirely from your lungs. You slump against the coal-scuttle in a heap, gasping for air while a dark purple bruise blooms across your ribs. The pump settles down with a sullen, wheezing groan, leaving you alive but battered by the violent motion. // You pick yourself up slowly, rubbing your aching side with a grimace. The immediate danger has passed, but the cost is etched deep into your sore muscles and the lost minutes ticking away on the distant storm clock.
+EXIT 1: Drag yourself back to the vault
+@@END
+@@SECTION cf-3-129
+TITLE: The Unbroken Nerve
+TEXT: Holding your breath against the searing heat, however narrowly, you throw your full weight onto the stubborn release lever until the screaming metal drops to a deep, steady hum. The pump catches its rhythm once more, spitting a cloud of grey condensation into the bilge before settling into an even, dependable stroke. // You wipe the greasy sweat from your brow with the back of a soot-stained sleeve, tasting the grit of the steppes on your lips. Resting on the deck-plate near your boot, shaken loose by the vibration, lies a small relic left behind by the unknown saboteur.
+GRANT: A scratched brass tally
+EXIT 1: Return to the pressure vault hub
+@@END

@@ -1,0 +1,65 @@
+@@SECTION ul-4-175
+TITLE: The Inner Sanctum
+TEXT: Heavy velvet drapes part silently as you step into the innermost recess of the Deep Annexe. Here, the air smells intensely of dried rosemary, lamp-oil, and centuries of undisturbed vellum. Mountains of unread manuscripts rise like jagged cliffs around a central wicker chair, where the faint rustle of turning parchment is the only sound breaking the ancient hush.
+EXIT 1: Approach the silent scholar with caution
+@@END
+@@SECTION ul-4-176
+TITLE: The Blind Scholar
+TEXT: Shadows stretch across the floorboards as you stand before the blind sage of Quillon, whose milky eyes gaze sightlessly into the dark folds of history. Every word ever written in the city seems etched into the lines of that weathered face. Unread scrolls whisper from every corner of the chamber, tempting you to probe deeper into the mysteries of the Index or seek a way forward before the deep stacks seal shut for good.
+EXIT 1: Endure the rigorous mental examination
+EXIT 2: Interpret the scattered uncatalogued scrolls
+EXIT 3: Step softly to gain restoration oil
+EXIT 4: Follow the trembling finger toward the vault
+@@END
+@@SECTION ul-4-177
+TITLE: Words of Iron
+TEXT: Hours blur into a single, grinding test of endurance as relentless questions strike at the core of your training at the Returns Desk. The old scholar tests every ounce of your resolve, demanding proof that a humble junior page understands the heavy price of forgotten history. You keep your voice steady, parrying linguistic traps and subtle trickery with stubborn persistence while the shadows lengthen across the ink-stained floorboards.
+EXIT 1: Push deeper into the interrogation
+@@END
+@@SECTION ul-4-178
+TITLE: The Weight of Proof
+TEXT: Sweat beads on your forehead as the interrogation intensifies, shifting from dry library procedure to probing inquiries about Thessaly Marr's disappearance. Every reply must be weighed carefully against the unspoken rules of the Cataloguers and the raw loyalty of the Shelvers' Fellowship. You stand your ground, offering neither flattery nor evasion, matching the elder's stern scrutiny with your own unwavering dedication to the truth.
+EXIT 1: Meet the final test of will
+@@END
+@@SECTION ul-4-179
+TITLE: Facing the Inquisition
+TEXT: Silence stretches tautly across the cluttered chamber as the blind scholar poses a final, harrowing question regarding the true ownership of the original Index. Your temples throb and your breath catches in your throat as you summon every reserve of mental fortitude, preparing to force an answer past lips that feel suddenly dry as parchment.
+CHECK: Withstand the grueling mental interrogation
+@@END
+@@SECTION ul-4-180
+TITLE: A Costly Resolution
+TEXT: Mental exhaustion fractures your focus, and a sharp, blinding headache leaves you leaning heavily against a towering stack of manuscripts that cascades down in a rustling avalanche. You pay for your survival with a splitting migraine and hours of lost time, your fingers bruised from clutching the edge of the wicker chair. The blind scholar offers no sympathy, only a dry nod as you recover your breath and limp onward.
+EXIT 1: Return to the central sanctum
+@@END
+@@SECTION ul-4-181
+TITLE: The Vault Letter
+TEXT: Sheer willpower carries you through the ordeal, however narrowly, leaving the old scholar nodding in grudging acknowledgment of your formidable spirit. A parchment slip is pressed into your palm, signed with a sweeping flourish of dark ink that commands any guardian in the Annexe to grant you passage.
+GRANT: Personal letter of introduction
+EXIT 1: Return to the central sanctum
+@@END
+@@SECTION ul-4-182
+TITLE: The Scattered Glyphs
+TEXT: Loose leaves of vellum drift across the floor around the chair, covered in strange, erratic handwriting that belongs to no standard catalogue in Quillon. You kneel among the papers, brushing away dust to trace the unfamiliar syntax with the tip of your finger, searching for patterns hidden beneath layers of eccentric margin notes and faded ink.
+EXIT 1: Examine the grammatical structure closely
+@@END
+@@SECTION ul-4-183
+TITLE: Threads of Meaning
+TEXT: Fragment by fragment, the erratic script begins to yield its secrets as you connect recurring symbols to forgotten dialects from the Misfiled Wing. The old scholar listens quietly, head tilted in sharp curiosity as you read aloud a sequence of marginal annotations that hint at the true origin of the vault's locks.
+EXIT 1: Decipher the final cryptic sentence
+@@END
+@@SECTION ul-4-184
+TITLE: The Scholar's Riddle
+TEXT: Your eyes strain against the dim lamp-oil glow as you attempt to parse a dense cluster of overlapping corrections written in a frantic, hurried hand. The letters seem to shift and blur under your gaze, threatening to collapse into nonsense unless your scholarly precision holds firm for one critical moment.
+CHECK: Translate the erratic marginalia
+@@END
+@@SECTION ul-4-185
+TITLE: Faded Ink and Folly
+TEXT: A sudden misreading triggers a sharp bite from a defensive binding nearby, drawing a thin line of blood across your thumb and scattering your carefully sorted notes into the dark corners of the room. You bind the wound with a scrap of cloth, nursing a bruised ego and a lost hour of research, though the surviving fragments remain within your grasp.
+EXIT 1: Gather the remaining manuscript scraps
+@@END
+@@SECTION ul-4-186
+TITLE: A Fragment Secured
+TEXT: Scholarly precision triumphs, however narrowly, allowing you to extract a delicate scrap of vellum bearing the unmistakable, archaic watermark of the original Index. You tuck the priceless fragment safely into your pocket, feeling the faint, latent vibration of forgotten words humming against your fingertips.
+GRANT: Fragment of the original Index
+EXIT 1: Follow the trembling finger toward the vault
+@@END

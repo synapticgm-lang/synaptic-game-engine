@@ -1,0 +1,104 @@
+{
+ "batch": "cf-3-099",
+ "sections": {
+  "cf-3-099": {
+   "title": "The Hoist Cable",
+   "text": "Heavy grease coats your palms as you haul the emergency winch cable across the rusted iron span. Below your boots, the drop through the viaduct girders reveals only the grey, swirling depths of the canyon where old boxcars lie half-buried in dry silt. Copper contacts spark blue in the damp air as you force the jammed starter lever forward to bridge the gap.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pull the groaning winch motor"
+   ]
+  },
+  "cf-3-100": {
+   "title": "Sparks on the Iron",
+   "text": "Raw current surges through the wet casing, biting into your skin with the force of an ungrounded arc. You grit your teeth against the sudden vibration shaking the winch frame, shoving the manual gear-dog deeper into its notch while the cable groans under the strain of the stranded carriage. Sweat stings your eyes as the motor begins to whine with a high, dangerous pitch.",
+   "check": "Jam the smoking lever home",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-101": {
+   "title": "Scorched Fumes",
+   "text": "A blinding flash of white current leaps from the terminal block, scorching your knuckles and filling the narrow gantry with the sharp smell of ozone. You stumble back against the cold rail as the winch motor dies with a dry clank, leaving the heavy carriage swaying half-bridged over the drop. Your fingers burn where the slag caught them, a jagged red blister mapping your haste.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul the cable by hand"
+   ]
+  },
+  "cf-3-102": {
+   "title": "The Bridged Span",
+   "text": "Sparks scatter like hot iron gnats into the abyss as the winch motor catches, holding its rhythm by a hair's breadth. The stranded carriage drags itself across the gap with a metallic screech, finally locking its wheels onto the secure rails of the viaduct deck. You wipe the black soot from your face, catching your breath in the thin mountain air while the machinery ticks cool in the gloom.",
+   "check": "",
+   "grant": "A scarred winch-lever",
+   "exits": [
+    "Return to the severed span"
+   ]
+  },
+  "cf-3-103": {
+   "title": "Heavy Wool and Brass",
+   "text": "Heavy wool coats and polished brass buttons fill the narrow footplate as the Barons' tax-inspectors crowd through the sliding cabin door. Their ledgers snap open with dry, administrative finality while heavy boots scuff the coal dust on the deck plates. Every corner of the tender is probed with long iron rods, searching for untaxed tallow, hidden spirits, or the unauthorized movement of cargo across the toll-bridge.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the ledger-men with steady hands"
+   ]
+  },
+  "cf-3-104": {
+   "title": "The Customs Office",
+   "text": "Smoke drifts lazy from the coal box while the inspectors crowd every square inch of the cramped engine cab. The station ledger lies open on the small fold-down desk, its pages smelling of stale ink and damp wool. Every lever you touch feels hot under your palms, and the false bottom of the tool locker rests only a few inches from an inquiring brass-tipped cane.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Endure the rigid inspection patiently",
+    "Smile through the endless questions",
+    "Bar the cabin door against them",
+    "Guard the dropping steam pressure"
+   ]
+  },
+  "cf-3-105": {
+   "title": "Ink and Cold Iron",
+   "text": "A heavy ledger drops onto the work-shelf with a dull thud that rattles the pressure gauges. The senior inspector runs a dry thumb down a column of figures, his eyes fixed on the grease-stained floorboards where your boots stand planted. Outside the narrow glass, the vast iron lattice of the viaduct stretches away into the grey haze of the valley.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the inspector turn the page"
+   ]
+  },
+  "cf-3-106": {
+   "title": "The Ledger's Edge",
+   "text": "Thin parchment pages rustle in the draft blowing through the cab door as the inspector questions your mileage permits. You keep your weight balanced evenly on the metal footplates, listening to the steady, low thrum of the firebox breathing behind its iron plate. Every word must be measured against the schedule pinned to the bulkhead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Answer with the official route number"
+   ]
+  },
+  "cf-3-107": {
+   "title": "A Watchful Eye",
+   "text": "The inspector's gaze lingers on the fresh scratch marks around the floor-plate seam where the hidden Water Key rests below. Your fingers curl slowly into your palms inside your thick woollen pockets, fighting the sudden urge to shift your weight or shield the iron panel. A single dropped word or a nervous twitch will bring the brass-tipped cane down on the secret seam.",
+   "check": "Hold your ground under inspection",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-108": {
+   "title": "The Sharp Rebuke",
+   "text": "A sharp rap of the brass-tipped cane catches you across the knuckles, drawing a quick hiss of indrawn air through your teeth. The inspector narrows his eyes at your momentary flinch, scribbling a harsh red mark across the margin of the shipping manifest. The penalty for hesitation is a heavy toll taken in coal and water before you are allowed to turn a wheel.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the red-inked penalty"
+   ]
+  },
+  "cf-3-109": {
+   "title": "The Clean Page",
+   "text": "The inspector's chalk scrapes a brief, grudging mark of clearance across the metal bulkhead before he slides his ledger back into its leather case. You keep your expression flat and neutral, watching the heavy wool coats retreat down the gantry steps toward the toll-office. The false bottom remains undisturbed beneath your boots, dark and silent in the gloom.",
+   "check": "",
+   "grant": "A stamped clearance chit",
+   "exits": [
+    "Check the falling steam pressure"
+   ]
+  }
+ },
+ "missing": []
+}

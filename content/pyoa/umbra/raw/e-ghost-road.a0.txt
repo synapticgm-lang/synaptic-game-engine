@@ -1,0 +1,28 @@
+Gemini said
+
+@@INSERT up-end-ghost-road | sable=with
+Sable walks beside you in exile, her resentment a quiet, sharp thing in the dark. She never speaks of the brother left languishing in the gaol, but you catch her glaring at the satchel that cost him his freedom.
+@@END
+@@INSERT up-end-ghost-road | sable=left
+Somewhere behind you in the smog of Veridia, the girl you abandoned to the rooftops is likely rotting in the gaol. Her absence is a hollow space at your side, a cold reminder of the price you paid to escape alone.
+@@END
+@@INSERT up-end-ghost-road | witness=bought
+Occasionally, a sealed letter reaches your transient lodgings, demanding the whispered promise you made to that trembling churchman on the roof. You burn the parchment over a candle flame, knowing a debt to the clergy never truly expires.
+@@END
+@@INSERT up-end-ghost-road | witness=dropped
+In the quiet hours before dawn, you still hear the sickening crunch of the churchman striking the cobblestones. The secret of his murder weighs heavier than the brass-bound ledger, a stain that no amount of distance from the city can wash clean.
+@@END
+@@INSERT up-end-ghost-road | faceKnown=yes
+Wanted posters featuring a stark, terrifyingly accurate charcoal sketch of your face appear pinned to tavern boards even in provincial towns. You keep your collar turned up against the bitter wind, dreading the day a sharp-eyed publican recognises those shadowed features.
+@@END
+@@INSERT up-end-ghost-road | cover=usher
+The cheap brass buttons of the opera usher's coat you fled in have long since tarnished in the damp provincial air. It remains your only defence against the autumn chill, a faded scrap of theatrical livery smelling faintly of stage powder and fear.
+@@END
+@@INSERT up-end-ghost-road | valerius=allied
+Lord Valerius’s silk-clad agents are untiring, tracking your movements from port to port with unnerving politeness. A bottle of expensive vintage wine occasionally appears on your rented nightstand, a silent, menacing reminder that his lordship has not forgotten your sudden defection.
+@@END
+@@INSERT up-end-ghost-road | rigg=allied
+Matron Rigg’s iron-fisted reach extends far beyond the foundry smoke of your home city, manifesting in the heavy boots of bounty hunters tracking your scent. You check the window latches twice every evening, knowing her warrants carry weight even in these distant shires.
+@@END
+
+Would you like me to draft similar ending inserts for the scenarios where the player successfully sold the ledger to one of the great houses?

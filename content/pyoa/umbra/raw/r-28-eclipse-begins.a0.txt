@@ -1,0 +1,20 @@
+Gemini said
+
+@@INSERT up-r-eclipse-begins | valerius=betrayed
+Below, in the sudden gloom, Lord Valerius's silken runners spread out with dark lanterns. Having rejected his polite menace, you know his men will gleefully trap you on these high gutters for your rival to finish the job.
+@@END
+@@INSERT up-r-eclipse-begins | rigg=allied
+Down in the square, Matron Rigg’s iron-shod warrant officers ignite their gas-lamps. You wear her protection now, meaning her gaolers would eagerly arrest your pursuer if you survive this rooftop encounter long enough to signal them.
+@@END
+@@INSERT up-r-eclipse-begins | rigg=betrayed
+To make matters worse, the heavy tread of Matron Rigg’s gaolers echoes up from the Exchange steps. Turning your back on her iron foundry means those brutes will shoot you themselves if you drop out of the crosshairs to hide.
+@@END
+@@INSERT up-r-eclipse-begins | vault=breached
+Shouts ring from the shattered undervault beneath the Exchange, where your ruined grandmaster's lock has drawn a swarm of agitated constables. With the watch already mobilised by your thievery, this rooftop duel becomes a terribly precarious dance.
+@@END
+@@INSERT up-r-eclipse-begins | cover=bare
+Because you scaled the masonry completely bare-faced, the assassin easily tracks your pale features against the soot-stained tiles. Without a cowl or mask to obscure your identity, you have no chance of simply melting into the encroaching shadows.
+@@END
+@@INSERT up-r-eclipse-begins | cover=tailor
+The disgraced tailor’s debt coat hangs heavily on your shoulders, its stiff fabric doing little to ward off the sudden, biting chill. Its distinctive embroidered silhouette offers dreadful camouflage, making you a terribly obvious target in the unnatural twilight.
+@@END

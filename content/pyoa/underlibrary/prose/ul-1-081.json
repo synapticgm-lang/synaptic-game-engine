@@ -1,0 +1,108 @@
+{
+ "batch": "ul-1-081",
+ "sections": {
+  "ul-1-081": {
+   "title": "The Ledger's Mark",
+   "text": "Smoke curls from a tallow dip while Barnaby slams his heavy thumb against the spine of the contraband volume. Ink-smudged fingers trace the peculiar red cancellation stamp across the flyleaf, a mark you recognize instantly from the master register of the upper tiers. You lean across the scarred oak table, pointing out the subtle divergence in the classification code that proves the book has been illicitly moved from its proper bay. Barnaby narrows his eyes, the hostility in his posture shifting into something far more attentive and grudgingly respectful.\n\nHe closes the cover with a hollow thump that stirs the settling dust.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the hidden page markings"
+   ]
+  },
+  "ul-1-082": {
+   "title": "Deciphering the Binding",
+   "text": "Dust motes dance in the amber glare of the corner lamp as you lean millimeters from the cracked leather spine, searching for the faint, acid-etched monogram of the renegade cataloguer. Every breath feels heavy with the scent of vinegar and old parchment, and your fingers hover over the textured grain while you calculate the precise angle of the binder's iron stamp. A single wrong guess about the provincial press mark will expose your ignorance to Barnaby and ruin any hope of an alliance. You steady your breathing, squinting against the stinging glare of the sputtering wick to parse the faded ink before the oil burns completely dry.",
+   "check": "Inspect the binding stamp",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-083": {
+   "title": "A Costly Oversight",
+   "text": "Your fingertips slip against the greasy leather, sending a cascade of loose slips clattering across the flagged floor into the shadows. Barnaby lets out a sharp, disappointed hiss through his teeth, snatching the volume away before you can recover your balance. The abrupt motion leaves a jagged paper-cut across your thumb, welling dark and bright against the grime of your palm as a lasting reminder of your clumsiness. You bite back a curse, nursing the stinging wound while the precious minutes tick away in the heavy silence of the alcove.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the hearthside shadows"
+   ]
+  },
+  "ul-1-084": {
+   "title": "The Proven Competence",
+   "text": "Sharp eyes catch the minute discrepancy in the numbering sequence just as the candle gutters, however narrowly securing the truth of the matter from the fading ink. Barnaby grunts, his heavy shoulders dropping as he acknowledges your sharp eye and steady nerve with a slow, respectful nod of his head. He shoves a small, dog-eared memorandum across the grain of the table into your palm, offering proof of his clandestine trade without another word of argument.\n\nYou pocket the paper quickly, knowing the debt between you has shifted forever.",
+   "check": "",
+   "grant": "Barnaby's clandestine memorandum",
+   "exits": [
+    "Slip away into the map-rooms"
+   ]
+  },
+  "ul-1-085": {
+   "title": "Standing Firm",
+   "text": "Heavy boots creak on the floorboards as Barnaby leans over the battered desk, trying to stare you down with the full weight of his seniority. You meet his gaze without flinching, your voice dropping to a calm, steady register that cuts cleanly through the ambient murmur of the reading hall. The defiance in your posture slowly takes the wind out of his blustering accusation, forcing him to reconsider whether you are merely a frightened page or someone worth trusting in deep water. He exhales a long, whistling breath that smells of stale pipe-weed and ink.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the heavy iron latchkey"
+   ]
+  },
+  "ul-1-086": {
+   "title": "Facing the Interrogation",
+   "text": "Barnaby's accusations press down upon your shoulders like a sodden wool cloak, demanding an immediate defense while the surrounding shelves seem to lean in close to listen. You feel the hot prickle of anger rise behind your ribs, tempting you to snap back or bolt into the labyrinthine stacks behind your back. Instead, you force your spine to straighten and lock your eyes onto his, summoning every ounce of stubborn endurance you possess to weather his harsh cross-examination without breaking character. The silence stretches taut between you, waiting for your resolve to either hold or shatter completely against his wall of suspicion.",
+   "check": "Hold your ground against Barnaby",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-087": {
+   "title": "A Heavy Rebuke",
+   "text": "Your nerve cracks under the relentless pressure, and you stumble backward against a wobbling stack of octavos that cascade down in a noisy avalanche of paper and boards. Barnaby merely watches you scramble among the fallen debris, his expression hardening into absolute contempt as you pick yourself up with bruised dignity and a fresh scrape along your shin. The humiliation burns hot beneath your collar, costing you valuable time and leaving you with a lingering ache in your bones as you retreat from his harsh scrutiny.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the waiting hearth"
+   ]
+  },
+  "ul-1-088": {
+   "title": "Unwavering Trust",
+   "text": "Steel meets stone in your steady gaze, however narrowly convincing the hardened shelver that your loyalties remain anchored where they belong. Barnaby spits into the sawdust and reaches into his deep coat pocket, drawing out a cold, heavy lump of forged iron attached to a knotted hemp cord. He drops it into your palm with a dull clink that seals your newfound standing within the fellowship of the stacks.\n\nYou curl your fingers around the metal, feeling the weight of the responsibility settling into your grip.",
+   "check": "",
+   "grant": "Heavy iron latchkey",
+   "exits": [
+    "Return to the fellowship hearth"
+   ]
+  },
+  "ul-1-089": {
+   "title": "The Measured Apology",
+   "text": "Soft words slip past your lips, smoothing over the jagged edges of the dispute before Barnaby can draw breath for another caustic remark. You gesture toward the flickering wall-bracket and offer a shared pinch of coarse salt-tabacco, bridging the awkward chasm between your desks with old-fashioned courtesy and tact. His suspicious scowl softens at the edges, replaced by a weary, crooked grin that acknowledges your knack for defusing trouble before it draws the eye of the floor-wardens.\n\nHe reaches beneath his stool to retrieve a spare oil-flask for your belt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the spare brass lantern"
+   ]
+  },
+  "ul-1-090": {
+   "title": "Navigating the Tense Exchange",
+   "text": "Every sentence must be weighed like gold dust on a jeweler's scale while you maneuver around Barnaby's prickly pride and the rumors buzzing through the lower bays. A single awkward inflection or clumsy gesture will confirm his worst suspicions about your ambitions regarding the missing Archivist's private papers. You step closer to the warm circle of his desk lamp, pitching your voice to a soothing, confidential murmur that invites cooperation rather than defiance. Your fingers tap a quiet, rhythmic tattoo against your thigh while you wait to see if your diplomacy wins the day or invites his derision.",
+   "check": "Smooth over the confrontation",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-091": {
+   "title": "A Clumsy Misstep",
+   "text": "Your conciliatory gesture misfires entirely, coming across as patronizing rather than polite in the damp, echoing vault of the reading hall. Barnaby knocks your outstretched hand aside with an angry swipe, sending your ink-horn spinning across the trestle table to spill a dark, permanent stain across several centuries of municipal bylaws. The resulting mess draws sharp glares from the nearby lending clerks, landing you with a severe reprimand and a promise of extra sweeping duty before the night is out.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Collect your spilled ink-horn"
+   ]
+  },
+  "ul-1-092": {
+   "title": "The Diplomatic Yield",
+   "text": "Graceful phrasing turns the sharp edge of the argument, however narrowly preventing a bitter quarrel that would have echoed through the entire bay. Barnaby relents with a dry cough, sliding a clean brass lantern and a coil of waxed wick across the timber surface as a silent token of truce. You nod your thanks, pocketing the equipment as a safeguard against the creeping gloom of the unmapped corridors ahead.\n\nThe tension dissolves into the steady, rhythmic scratching of pens all around the hall.",
+   "check": "",
+   "grant": "Spare lantern and backup promise",
+   "exits": [
+    "Return to the fellowship hearth"
+   ]
+  }
+ },
+ "missing": []
+}

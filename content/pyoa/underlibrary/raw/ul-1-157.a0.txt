@@ -1,0 +1,59 @@
+@@SECTION ul-1-157
+TITLE: Arguments over Ink-Scraps
+TEXT: Three red-robed monks crowd a high lectern, their dry voices rasping like parchment dragged across gravel as they dispute the ownership of a crumpled scrap of vellum. You step smoothly into their circle, dropping a well-timed quotation from the third chapter of the municipal tax code that stops their bickering cold. While they blink in sudden confusion, your fingers slip neatly into their wicker scrap-basket, lifting a discarded margin note that bears Thessaly Marr's familiar, hurried handwriting. // With a polite nod, you leave the baffled scholars to resume their theological dispute in peace.
+EXIT 1: Inspect the recovered vellum scrap closely
+@@END
+@@SECTION ul-1-158
+TITLE: The Scholar's Ledger
+TEXT: Heavy candlelight flickers across an open calfskin ledger where a rival scholar has scrawled marginal notes in a crabbed, archaic dialect of the outer shelf-districts. You lean over the mahogany counter, pointing out a subtle error in the verb conjugation that unlocks the entire meaning of the page. Impressed despite himself, the scholar pushes a torn fragment of a bird's-eye map across the ink-stained wood in exchange for your fluent correction. // The parchment fragment fits snugly into your palm, showing a hidden stairwell behind the lending clerk's desk.
+EXIT 1: Take the map fragment and slip away
+@@END
+@@SECTION ul-1-159
+TITLE: Tales of the Lost Wings
+TEXT: Old Barnaby sits on a battered brass trolley, his eyes clouded with cataracts as he launches once again into his endless chronicle of the wings that vanished during the great cataloguing reform of ninety-four. You nod at every appropriate interval, keeping your breath steady and your fingers resting lightly on the cold iron handle of your compass-trolley. The repetition threatens to dull your wits, but patience is a shelver's truest armor against the madness of the deeper aisles.
+EXIT 1: Continue listening to the ancient cartographer
+@@END
+@@SECTION ul-1-160
+TITLE: The Compass-Trolley's Guidance
+TEXT: Hours seem to dissolve into the smell of stale lamp-oil and drifting dust while Barnaby finally winds down his labyrinthine narrative with a wheezing sigh. Your reward for enduring the ordeal is a fully functional compass-trolley whose iron needle twitches reliably toward the nearest dry corridor. You check the leather straps, load your spare ink-pots, and prepare to leave the relative safety of the galleried halls for the shifting shadows beyond.
+EXIT 1: Push the trolley into the gloom
+@@END
+@@SECTION ul-2-001
+TITLE: Shifting Mahogany Tiers
+TEXT: Heavy timber groans as you step past the threshold and emerge into the vast, restless expanse of the Unshelved Stacks. Towering mahogany bookcases slide silently across the uneven stone floors on concealed brass rails, constantly rearranging the geography of the library to block old pathways and open terrifying new chasms. The scent of ancient paper and damp mortar hangs thick in the air. Every few moments, a distant rumble signals another section of the floor pivoting into darkness. // You pull your coat tight against the chill draft rising from the ink-rivers below, scanning the moving maze for a safe route forward.
+EXIT 1: Pick a path between sliding stacks
+@@END
+@@SECTION ul-2-002
+TITLE: The Iron Junction
+TEXT: Several massive sliding iron cases converge at a central junction, grinding together with a tooth-aching shriek that threatens to shatter your lamp if you misjudge their timing. The floor beneath your boots vibrates with the immense weight of thousands of forgotten volumes shifting toward unseen destinations. Narrow gaps open briefly between the iron flanks, offering glimpses of deeper aisles choked with drifting dust. Every passage looks equally perilous, demanding absolute precision from anyone daring to cross.
+EXIT 1: Dodge through the closing iron gap
+EXIT 2: Leap across the swaying oak tiers
+EXIT 3: Brace against the shifting wall
+EXIT 4: Follow the dripping lamp-oil transom
+@@END
+@@SECTION ul-2-003
+TITLE: Carved Floor Numbers
+TEXT: Frost-white numerals are chiseled into the gray paving stones, marking out a complex mathematical sequence that governs the movement of the heavy iron cases overhead. You trace the fading digits with the toe of your boot, stepping carefully from one safe seam to the next while the metal walls rumble inches from your shoulder. Wedged between the base of a crushed shelving unit, a brass oil-flask gleams dully in the dim light of your flickering wick. // You reach down, pry the flask free from the debris, and check its heavy contents.
+EXIT 1: Advance to the next numbered seam
+@@END
+@@SECTION ul-2-004
+TITLE: The Numbered Seam
+TEXT: Another sequence of worn numerals appears under your soles, etched deeply into the dark stone to warn of shifting foundation blocks. The air grows noticeably colder here, smelling strongly of iron filings and vinegar-ink from some unsealed vat in the floor below. You keep your eyes fixed on the carved patterns, ignoring the scraping sound of thousands of pages rustling in the darkness behind you. Every stone must be weighed and tested before you commit your full weight.
+EXIT 1: Test the next stone slab
+@@END
+@@SECTION ul-2-005
+TITLE: Reading the Floor Glyphs
+TEXT: The numbering system suddenly breaks its predictable rhythm, branching into three overlapping geometric series that seem to contradict one another on the damp stone. You hold your smoking lamp lower, squinting at the worn chisel-marks as the massive iron cases on either side begin to accelerate their grinding crawl toward each other. You must calculate the exact intersection point before the walls meet.
+CHECK: Study the intricate floor carvings
+@@END
+@@SECTION ul-2-006
+TITLE: A Crushing Misstep
+TEXT: A sudden lurch of the stone floor throws your calculations into disarray, and you leap forward just as the iron wall slams shut behind you with a deafening crash. The impact rattles your teeth and scrapes a deep, raw graze across your forearm, sending your lamp flying into the gloom. You tumble hard onto the grit, clutching your bleeding arm while the darkness presses in close. Though you survived the squeeze, the cost in skin and spilled oil is immediate and sharp.
+EXIT 1: Pick yourself up from the grit
+@@END
+@@SECTION ul-2-007
+TITLE: Through the Iron Gap
+TEXT: You slip through the narrowing gap between the grinding bookcases just as they lock together with a heavy, final thud that echoes through the stacks. Your shoulder aches from the close brush, but your lamp remains lit and your wits are intact. Clutched in your fist is the dented brass oil-flask you salvaged from the ledge, its contents sloshing steadily against the metal walls. You catch your breath in the sudden, eerie silence of the new aisle.
+GRANT: Dented brass oil-flask
+EXIT 1: Proceed deeper into the stacks
+@@END

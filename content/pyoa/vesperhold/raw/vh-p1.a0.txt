@@ -1,0 +1,71 @@
+@@SECTION vh-p1
+TITLE: The Fractured Bell
+TEXT: High above the swirling cloud line, Vesperhold clings to its mountain face like a barnacle on a ship's timber, enduring the bitter nip of thin air. In the damp nave of the upper monastery, the Great Bell Orison sits silent with a jagged fracture splitting its metallic lip from crown to sound-bow. The Prioress stands before you in her woollen habit, her lined fingers gripping a heavy iron key as she tells you that the ice-wind season will lock the mountain passes in twenty days. She commands you, as bell-ringer's apprentice, to carry the broken bronze down through the thirteen stair-towns to the foundry at Lowgate before the frost seals the world. // The cold wind whistles through the high clerestory windows, carrying the sharp scent of old tallow and frozen stone, reminding you that time is short.
+EXIT 1: Lift the bronze tongue immediately and set forth
+EXIT 2: Demand of the Prioress what she keeps hidden
+@@END
+
+@@SECTION vh-p2a
+TITLE: Bearing the Bronze
+TEXT: You reach out and take the heavy bronze tongue straight from the Prioress's outstretched hands, feeling its strange, deep-seated warmth against your palms. It is as long as your forearm and dense as a sleeping child, and even when held still, it emits a faint, continuous hum that vibrates straight up into your teeth. You slide it carefully into the padded leather cradle strapped across your shoulders, adjusting the hempen buckles until the dead-weight balances evenly against your spine. This scarred fragment of Orison must reach the foundry at Lowgate to be melted and recast into a true voice for the monastery before the winter storm closes the upper trails.
+EXIT 1: Leave the cloister and pack for the descent
+@@END
+
+@@SECTION vh-p2b
+TITLE: Questions in the Gloom
+TEXT: You hesitate before the Prioress, fixing your eyes upon her weathered face, and ask what dangers truly wait for you along the hanging stair-towns. She presses her thin lips together before admitting in a low murmur that nobody has climbed back up from Lowgate in over a full year, that the greedy Cable Court has been buying up the ropeways, and that no bell below has rung true since the master founder departed. Despite these dark warnings, she transfers the bronze tongue into your hands; it measures as long as your forearm, weighs as heavy as a child, and hums faintly against your chest. It must be carried down to the foundry to be recast before the mountain passes freeze solid.
+EXIT 1: Turn away from the altar and pack for the descent
+@@END
+
+@@SECTION vh-p3
+TITLE: Dawn at the Gate
+TEXT: Dawn breaks over the cloister gate in a pale streak of saffron light while the older ringers and sleepy novices gather to see you off into the biting frost. You adjust the heavy padded cradle on your shoulders, making sure the humming bronze tongue is lashed down tight beside your spare water skin and dried rye biscuits. Ninety sheer stone steps stretch down from the threshold into the churning grey mist, marking the beginning of the long, perilous road to the lowlands. The watchers offer quiet nods and silent prayers, their breath pluming white in the freezing air as you prepare to cross the threshold.
+EXIT 1: Step out and tread the first stair
+@@END
+
+@@SECTION vh-1-in
+TITLE: The Ninety Steps
+TEXT: You stand at the threshold of Vesperhold where the sheer limestone cliff drops away into an endless sea of tumbling clouds and screaming gulls. The monastery's stone bell-towers pierce the grey sky above, while the mule yards bustle with anxious drovers shouting hoarse instructions across the frozen cobbles. Your shoulders ache already under the cradled weight of the bronze tongue, and you must choose how to begin the long descent through the clifftops. Kin and rivals eye your burden from the shelter of the butter-lamp alcoves, each with their own advice on which path to trust when the mountain wind turns sour.
+EXIT 1: Follow the wide main stair downward
+EXIT 2: Cut across the steep lower ledges
+EXIT 3: Ask the way of an old stranger
+EXIT 4: Take the hidden carriers' path
+@@END
+
+@@SECTION vh-1-0-0-0
+TITLE: The Belfry Rime
+TEXT: In the frost-rimed belfry of Vesperhold, you hoist the bronze Clapper into its harness while Orison's fractured lip weeps cold grease onto your knuckles. The metal tongue presses heavily against your woollen jacket, vibrating with a dull, persistent thrum that resonates through the ancient timber flooring. Outside the narrow lancet windows, the cloud-sea shifts and heaves against the stone buttresses like an ocean of milk, hiding the drop to the first stair-town far below. You must decide whether to seek out the rope-loft for better lashings or hurry toward the buttery before the morning shift changes.
+EXIT 1: Make your way toward the rope-loft
+EXIT 2: Snatch a crust from the buttery tray
+@@END
+
+@@SECTION vh-1-0-0-1
+TITLE: Copper Dust
+TEXT: Beneath the echoing bronze ribs of Orison, you swab copper dust from your woollen sleeves before shouldering the heavy metal tongue for its long descent. The cold air bites at your cheeks, carrying the sharp tang of mountain lichen and woodsmoke from the warming braziers near the lower cloisters. Around you, novices scurry through the shadows with tallow buckets and iron scrapers, intent on their morning chores before the great frost sets in for the day. You check the leather buckles of your cradle one last time, listening to the faint, continuous hum emanating from the bronze against your back.
+EXIT 1: Pause by the salt-bins to clear your boots
+EXIT 2: Dodge the swinging buckets in the choir-loft
+EXIT 3: Rest your spine against the warm chimney
+@@END
+
+@@SECTION vh-1-0-0-2
+TITLE: The Butter-Lamp Alcove
+TEXT: By the monastery's butter-lamp alcove, you check the hempen straps of your carrying cradle while the dawn wind rattles the frozen iron wind-vanes above. The flickering yellow flames cast long, dancing shadows across the whitewashed stone walls, smelling faintly of rendered mutton fat and dried rosemary. Your muscles tighten with anticipation as you feel the dead-weight of the Clapper shifting slightly against your shoulder-blades with every breath you take. Several paths lie open before you, leading either through the quiet library garth or past the deep stone cisterns where the mountain water runs black and cold.
+EXIT 1: Cross the quiet library garth
+EXIT 2: Splash freezing water by the cisterns
+EXIT 3: Tighten your belt in the dormitory
+@@END
+
+@@SECTION vh-1-0-0-3
+TITLE: The Sacristy Threshold
+TEXT: Within the dim sacristy, you trade your greasy apprentice smock for a stout dyer's jacket while the cathedral bells toll a low, muffled warning for the frost. The heavy wool keeps out the worst of the draft, but the iron Clapper in its harness remains as cold as a river stone against your spine. Through the narrow door, you can see the white vapour of fellow apprentices breathing into their cupped hands as they gather near the outer gatehouse. The time for preparation is over, and the mountain demands an immediate answer from anyone bold enough to carry its broken voice downward.
+EXIT 1: Tighten your belt among the sleeping pallets
+EXIT 2: Step out into the freezing outer gatehouse
+EXIT 3: Warm your fingers by the brazier pit
+@@END
+
+@@SECTION vh-1-0-1-0
+TITLE: The Balcony Edge
+TEXT: Staggering onto the frost-slicked balcony, you feel the Clapper's bronze dead-weight shift against your shoulder-blades as the cloud-sea boils below the limestone sills. The wind catches at the hem of your coat, howling an ancient mountain tune that threatens to pull you off balance if you do not plant your boots firmly. Down in the courtyard, the rope-loft door swings back and forth on rusted iron hinges, while across the corridor, Mistress Garrow prepares her morning rations for the travelers. Every breath tastes of iron and rime, urging you to choose your next step with absolute care.
+EXIT 1: Enter the damp gloom of the rope-loft
+EXIT 2: Seek out Mistress Garrow in the buttery
+@@END

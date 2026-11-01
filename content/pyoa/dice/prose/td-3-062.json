@@ -1,0 +1,92 @@
+{
+ "batch": "td-3-062",
+ "sections": {
+  "td-3-062": {
+   "title": "The Fraying Hawser",
+   "text": "Hemp fibres shriek against iron stanchions as a heavy cargo net swings wild over the abyss between Saltspire's leaning piers. A merchant clerk, pinned by his own panic, clings to a snapping guideline while the wind tears at his fine wool coat. Below lies the empty grey floor of the Low, far enough down that a falling body would be nothing more than a wet splash against salt. You lurch forward across the shivering planks, boots skidding on encrusted rime, and slam your shoulder against the post just as the hemp begins to unravel into thin white hairs.\n\nYour fingers claw into the greasy strands, twisting the damp rope around your forearm to create a desperate friction brake. The vibration travels straight up your bones, numbing your palms as the weight of the dangling hoist fights your grip. If you let go now, the cargo and the clerk go over together, leaving you with nothing but a torn hide and a screaming conscience.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Brace against the vibrating hemp"
+   ]
+  },
+  "td-3-063": {
+   "title": "Weight of the Stranded",
+   "text": "Sweat stings your eyes, mixing with the crust of old salt caked on your eyebrows while the straining rope burns a black line through the leather of your sleeve. The clerk scrambles backward onto the safety of the slatted walkway, gasping like a landed cod and clutching a ledger to his chest with white knuckles. He looks up at you with wild, grateful terror in his rheumy eyes, knowing as well as you do that Gullmouth wreckers do not haul strangers out of the air for charity.\n\nTrembling, he fumbles in his waistcoat pocket and presses a damp scrap of parchment into your palm, whispering a sequence of coded numbers that grant entry through the lower customs gates. The wind howls through the stilt-timbers, drowning his voice, but the sequence remains clear in your head. He ducks away into the shadow of a brine-vat house, leaving you alone on the vibrating timber.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the customs gate"
+   ]
+  },
+  "td-3-064": {
+   "title": "Strain of the Fiber",
+   "text": "The hemp groans, parting strand by strand under an intolerable load while the wind hammers your ribs against the scaffolding. Your boots slide half an inch toward the open drop, and the iron ring securing the line screeches in its wooden socket, threatening to rip free entirely. You throw your entire weight backward, locking your elbows and setting your boots hard into the grain of the wet timber, forcing every ounce of muscle to fight the howling void below.",
+   "check": "Hold the tearing rope steady",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-065": {
+   "title": "Torn Tendons and Salt",
+   "text": "The rope snaps with the crack of a dry branch, whipping back to lash across your forearm and leaving a hot, weeping welt through your torn jacket. You stumble hard against the railing, breath knocked from your lungs as the heavy load crashes into the empty air below with a hollow, distant thud. Your muscles burn with a deep, sullen ache that settles into your joints like winter damp, reminding you of the cost of interference. The clerk vanishes into the grey mist before you can demand your due, leaving you bruised and nursing a smarting arm on the swaying boards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue toward the lower tiers"
+   ]
+  },
+  "td-3-066": {
+   "title": "A Merchant Secret",
+   "text": "The hemp holds, however narrowly, its frayed threads screaming under the strain until the trapped load settles safely onto the timber platform with a heavy, vibrating thud. The merchant clerk presses a wet scrap of parchment into your hand, whispering a sequence of coded numbers that grant entry through the lower customs gates before he scuttles away into the shadows. Your muscles throb with a dull ache from the effort, but your grip remains firm around the ink-stained paper.",
+   "check": "",
+   "grant": "Brineholder gate password",
+   "exits": [
+    "Return to the swaying bridges"
+   ]
+  },
+  "td-3-067": {
+   "title": "Chalk on the Timbers",
+   "text": "Gray dust coats the underside of the leaning walkways, settling into the grain of old pilings where the sun never reaches. Orsolya's unmistakable hand lingers here, scratched into the salt-crusted timber with a piece of dry tallow-chalk that resists the damp breeze. The marks form a ragged trail of arrows and cryptic cross-hatching, pointing away from the busy trade-platforms and toward the dark, forgotten storage alcoves beneath the water-tanks.\n\nYou follow the faint white lines past dripping pipes and rusted chains, keeping low to avoid the notice of Brineholder patrols. The air smells of stagnant bilge and old lime, thick enough to coat the tongue. Every surface bears the grey residue of the vanished sea, making the familiar structure feel alien and brittle underfoot.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the faded chalk marks"
+   ]
+  },
+  "td-3-068": {
+   "title": "Reading the Gray Dust",
+   "text": "The marks grow fainter where the wind eddies around a corner, turning into mere smudges against the damp, salt-rotted grain of the stilt-posts. You squint through the gloom, trying to separate Orsolya's deliberate strokes from random splashes of dried foam and bird droppings. Time slips away as you trace the ambiguous angles with a gloved finger, needing to guess which way the old lighthouse keeper turned before her trail vanished into the shadows altogether.",
+   "check": "Decipher the fading chalk trail",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-069": {
+   "title": "Lost in the Stilt-Mazes",
+   "text": "The dust shifts under your boot, revealing only a dead-end alcove filled with discarded nets and rusted crab-pots while the pale light fades further from the gaps in the planking. You wasted precious minutes chasing a false trail left by some net-mender's idle chalk, and now your legs feel heavy with fatigue and the biting cold of the upper air. No hidden cache waits here, only the hollow sound of distant waves that refuse to return. You turn back toward the main thoroughfare, poorer in time and breath.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the main walkway"
+   ]
+  },
+  "td-3-070": {
+   "title": "The Chalk Cache",
+   "text": "Dust hangs thick between the salt-encrusted beams, stinging your eyes as you trace Orsolya's hurried strokes with a grease-stained thumb. Each faded chalk mark cuts through the labyrinth of rotting timber, pointing toward a dry pocket sheltered from the wind's scouring salt. Beneath a loose plank bound in hempen twine, you uncover a small oilcloth pouch. Inside lie dried stalks of bitter-root and blue-veined lungwort, smelling of damp earth and old cellars, ready to be chewed when the lungs burn and the limbs grow heavy with exhaustion.\n\nWith the bitter bundles tucked safely into your coat pocket, the narrow gangway ahead opens up toward the swaying rope bridges of the middle tiers.",
+   "check": "",
+   "grant": "pouch of bitter-root and lungwort",
+   "exits": [
+    "Cross the swaying rope bridge"
+   ]
+  },
+  "td-3-071": {
+   "title": "The Iron Barricade",
+   "text": "Heavy iron pikes gleam in the pale light as a squad of Brineholder enforcers seals the intersection with a spiked barrier, their polished breastplates reflecting no warmth at all. They drag a trembling Drift Pilgrim from the line, demanding papers, tithes, and names of those who whisper against the water-monopoly. The crowd parts in a wide, silent circle, too terrified to meet the enforcers' gaze or offer a hand of help. To reach the lower levels and the path toward the Stair, you must pass directly through their checkpoint.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the dark steam vents"
+   ]
+  }
+ },
+ "missing": []
+}

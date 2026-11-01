@@ -1,0 +1,5 @@
+@@SECTION cf-5-107
+TITLE: The Rule of Ink
+TEXT: The clerk's fountain pen hovers above the ledger like a dead crane's leg, twitching at every rattle of distant rolling stock. You slide the dog-eared manual across the grease-stained counter, pointing a soot-blackened finger directly at Paragraph Twelve of the Emergency Transit Act of Ninety-Four. He squints through thick, grease-smeared spectacles, his thin lips moving silently as he traces the obsolete clauses regarding emergency cargo clearance. The weight of your silence presses heavily against the small wicket window until he finally mutters a curse beneath his breath. With a sharp scratch of steel nib on yellowed parchment, he scrawls his signature across the bill of indemnity and slams an iron stamp into the wax. You snatch the paper before the ink can dry, tucking the cold proof of passage securely into your waistcoat pocket as the platform bell tolls once for departure.
+EXIT 1: Slip away into the gathering steam
+@@END

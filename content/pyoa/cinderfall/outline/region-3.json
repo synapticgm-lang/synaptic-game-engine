@@ -1,0 +1,110 @@
+{
+ "beats": {
+  "cf-3-001": "Locomotive No. 9 crawls onto the monumental iron spans of Brasswind Viaduct as toll-inspectors flash green signal-lamps.",
+  "cf-3-017": "A regiment of Baronial gantry-guards drops iron chains across the rails, demanding immediate surrender of the brass Water Key.",
+  "cf-3-032": "The Marrowbone shunts onto a rusted siding overhanging a thousand-foot drop while heavy crane-jaws lock onto the tender.",
+  "cf-3-052": "Thick chemical smog rolls off the viaduct floor, turning the iron track into a treacherous maze of condensation and greasy soot.",
+  "cf-3-067": "A rival convoy of armored cargo carriages attempts to shunt the Marrowbone off the single-track bridge into the abyss.",
+  "cf-3-088": "The bridge shudders as structural maintenance charges detonate ahead, carving a gaping chasm right through the iron roadbed.",
+  "cf-3-103": "Baronial tax-collectors board the footplate, demanding an inspection of every locker, valve, and coal bunker for smuggled goods.",
+  "cf-3-119": "Steam pressure drops alarmingly as a saboteur closes the main feed-valve, plunging the locomotive into a dangerous cold stall.",
+  "cf-3-144": "A massive freight elevator halts midway between viaduct tiers, trapping the Marrowbone on a swaying platform over empty space.",
+  "cf-3-159": "Rail Baron enforcers weld shut the final exit gate, leaving a labyrinth of hot iron corridors as the only way forward.",
+  "cf-3-176": "The central control tower looms ahead, where automated signal-engines lock every switch against escaping locomotives.",
+  "cf-3-192": "Alarm sirens shriek across the entire viaduct structure as Baronial searchlights sweep the ash-choked canyons for the runaway engine.",
+  "cf-3-211": "The Marrowbone smashes through the final toll-barrier, plunging off Brasswind Viaduct and into the yawning mouth of the Hollow Cut."
+ },
+ "hubs": {
+  "cf-3-002": {
+   "place": "The Iron Tollhouse",
+   "situation": "You must negotiate the initial customs barrier where Barons demand a heavy transit duty from unregistered engines."
+  },
+  "cf-3-018": {
+   "place": "The Gantry Watch",
+   "situation": "You survey the suspended platforms where armed guards inspect every passing freight car for contraband."
+  },
+  "cf-3-033": {
+   "place": "The Crane Yard",
+   "situation": "You navigate a labyrinth of swinging cargo derricks and suspended catwalks high above the misty canyon floor."
+  },
+  "cf-3-053": {
+   "place": "The Smog Corridor",
+   "situation": "You creep along an enclosed maintenance tunnel choked with toxic vapors and discarded railway debris."
+  },
+  "cf-3-068": {
+   "place": "The Shunting Junction",
+   "situation": "You fight for control of the mechanical switch-points amidst roaring exhausts and grinding steel wheels."
+  },
+  "cf-3-089": {
+   "place": "The Severed Span",
+   "situation": "You stand at the edge of a blown-up rail gap where only twisted girders span the terrifying grey void."
+  },
+  "cf-3-104": {
+   "place": "The Customs Office",
+   "situation": "You entertain greedy inspectors in the cramped cab while the firebox door remains dangerously unlatched."
+  },
+  "cf-3-120": {
+   "place": "The Pressure Vault",
+   "situation": "You crawl inside the auxiliary boiler casing to hunt down the hidden blockage halting the steam flow."
+  },
+  "cf-3-145": {
+   "place": "The Lift Platform",
+   "situation": "You survey the precarious hoisting machinery dangling over the misty chasm with no visible means of descent."
+  },
+  "cf-3-160": {
+   "place": "The Labyrinthine Siding",
+   "situation": "You navigate a maze of parked boxcars and hissing steam vents while guards hunt for trespassers."
+  },
+  "cf-3-177": {
+   "place": "The Control Tower",
+   "situation": "You infiltrate the clanking clockwork sanctum where master signalmen dictate the fate of all passing traffic."
+  },
+  "cf-3-193": {
+   "place": "The Siren Station",
+   "situation": "You man the locomotive controls through a blinding storm of flashing red lights and blaring steam sirens."
+  }
+ },
+ "chains": {
+  "cf-3-002/0": "You dismantle the pressure-gauge housing to hide extra fuel cells, risking discovery by suspicious clerks to earn a hidden brass token.",
+  "cf-3-002/1": "You hammer a loose rivet into the chassis to distract the guards, risking a snapped knuckle to secure an illicit passage permit.",
+  "cf-3-002/2": "You purge the auxiliary steam lines to create a blinding fog, risking scalded fingers to slip past the toll-gate unnoticed.",
+  "cf-3-018/0": "You forge a shipping manifest using stale soot-ink, risking a handwriting discrepancy to convince officers you carry official cargo.",
+  "cf-3-018/1": "You rewire the station signal-box to flash an emergency recall, risking short-circuit sparks to force the guards to abandon their posts.",
+  "cf-3-018/2": "You mimic the harsh dialect of Baronial dispatchers, risking a linguistic slip to bluff your way through the checkpoint.",
+  "cf-3-033/0": "You stare down a nervous crane operator across a narrow beam, risking psychological fracture to force him to lower your engine.",
+  "cf-3-033/1": "You override the hoisting winch hydraulic valves, risking a high-pressure blowout to drop the Marrowbone back onto clear rails.",
+  "cf-3-033/2": "You shoulder a jammed emergency release lever, risking a crushed shoulder to free the locked crane cables manually.",
+  "cf-3-033/3": "You bleed the steam brakes to slide the engine past the grapple hooks, risking a runaway derailment to escape the trap.",
+  "cf-3-053/0": "You heave a massive iron sleeper to clear a blocked access hatch, risking a strained spine to discover a stash of rations.",
+  "cf-3-053/1": "You steady your breathing against the lung-burning fumes, risking blacking out to maintain focus and locate the hidden maintenance ladder.",
+  "cf-3-053/2": "You endure the suffocating heat of a leaking steam pipe, risking heat exhaustion to salvage a functional pressure valve.",
+  "cf-3-068/0": "You readjust the points-lever timing while wheels spin, risking a broken linkage to divert the enemy engine onto a dead-end spur.",
+  "cf-3-068/1": "You trick the rival driver into reversing too early, risking a failed bluff to cause a harmless collision that disables their locomotive.",
+  "cf-3-068/2": "You wedge an iron crowbar into the switch mechanism, risking a broken arm to lock the tracks against the oncoming attackers.",
+  "cf-3-068/3": "You anticipate the rival signalman's next lever pull, risking a misread pattern to trap their engine in a siding.",
+  "cf-3-089/0": "You master your vertigo on the swaying girder bridge, risking a paralyzing panic attack to cross and secure a tow-cable.",
+  "cf-3-089/1": "You outsmart the demolition crew's tripwires, risking an accidental detonation to salvage undamaged steel plates for a makeshift bridge.",
+  "cf-3-089/2": "You jury-rig the bridge winch motor, risking an electrical shock to pull a stranded carriage across the chasm.",
+  "cf-3-104/0": "You maintain absolute calm while an inspector eyes the false bottom, risking a nervous twitch to protect the hidden Water Key.",
+  "cf-3-104/1": "You endure the humiliating interrogation with steady poise, risking a loss of temper to convince them you are simple gangers.",
+  "cf-3-104/2": "You physically bar the narrow cabin door against greedy hands, risking a violent scuffle to keep inspectors away from the boiler.",
+  "cf-3-120/0": "You keep your wits about you in the claustrophobic iron drum, risking claustrophobic terror to locate the sabotage mechanism.",
+  "cf-3-120/1": "You steady your nerves against the terrifying screech of failing metal, risking a panic attack to restart the auxiliary pump.",
+  "cf-3-120/2": "You purge the clogged injector nozzle with a slim wire, risking scorched fingertips to restore proper water flow to the boiler.",
+  "cf-3-120/3": "You recalibrate the governor spring under intense heat, risking steam burns to stabilize the erratic engine pressure.",
+  "cf-3-120/4": "You patch a cracked cylinder drain using asbestos tape, risking toxic inhalation to keep the pistons firing smoothly.",
+  "cf-3-145/0": "You heave against the rusted brake drum with all your might, risking a muscle tear to manually lower the heavy platform.",
+  "cf-3-145/1": "You steady your breathing while hanging off the edge of the lift frame, risking a dizzy spell to secure the dangling safety chains.",
+  "cf-3-145/2": "You maintain a cool head while the cable groans under stress, risking a mental break to calculate the exact weight distribution.",
+  "cf-3-160/0": "You pick the rusty padlock on a sealed carriage door, risking a jammed pick to find a hidden cache of heavy lubricants.",
+  "cf-3-160/1": "You hide beneath a steaming tarp as patrols pass by, risking a nervous cough to avoid detection by the armed guards.",
+  "cf-3-160/2": "You resist the temptation to bolt prematurely from cover, risking a loss of nerve to time your dash past the searchlights.",
+  "cf-3-176/0": "You recode the brass gear cylinders inside the master clock, risking a shredded thumb to unlock all outbound rail switches.",
+  "cf-3-176/1": "You outwit the tower's mechanical security puzzles, risking a logical trap to reprogram the automated signal horns.",
+  "cf-3-176/2": "You forge an override signature on the master log roll, risking detection by rival clerks to grant yourself permanent clearance.",
+  "cf-3-193/0": "You repair the severed throttle cable amid blinding sparks, risking electrocution to regain full speed before guards close in.",
+  "cf-3-193/1": "You outmaneuver the pursuit engines through clever signal manipulation, risking a wrong switch to send your chasers into a siding.",
+  "cf-3-193/2": "You maintain iron composure while searchlights sweep the cab, risking a panic attack to keep the engine hidden in steam.",
+  "cf-3-193/3": "You trick the pursuers with a decoy steam release, risking a failed deception to buy precious minutes for your escape."
+ }
+}

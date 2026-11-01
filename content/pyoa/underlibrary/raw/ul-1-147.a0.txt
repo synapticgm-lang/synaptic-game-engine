@@ -1,0 +1,43 @@
+@@SECTION ul-1-147
+TITLE: The Blind Spot
+TEXT: Dust hangs thick in the lantern-light where the gatekeeper doats over a heavy ledger of fines, his ear-trumpet twitching to the scratching of his own steel nib. Shadows lengthen across the stone flags, offering a narrow strip of absolute dark that slips right past his high wooden booth. You adjust the heavy strap of your canvas shoulder-bag, keeping your breathing shallow and even as the scent of stale lamp-oil and dried ink fills your nose. The iron gate-ring key hangs from his belt by a grease-darkened leather thong, swaying rhythmically with every heavy nod of his drowsy head.
+EXIT 1: Step into the deep shadow
+@@SECTION ul-1-148
+TITLE: The Suspended Pendulum
+TEXT: Silence settles over the alcove, broken only by the rhythmic ticking of a brass bracket-clock that seems to measure the slow decay of the paper around it. With practiced lightness, your fingers brush against the cold wool of your waistcoat, smoothing away any stray flakes of dry charcoal or dried mucilage from your cuffs. The gatekeeper stirs slightly, muttering a dry complaint about missing bookmarks into his damp cravat before settling back against his padded horsehair cushion. The heavy iron key glints dully in the amber glow of the wall-bracket, perfectly within reach if your timing matches the swing of his pendulum.
+EXIT 1: Reach for the dangling iron
+@@SECTION ul-1-149
+TITLE: A Quiet Theft
+TEXT: Your fingers stretch toward the swinging leather thong while your weight shifts imperceptibly from heel to toe on the gritty floor-stone. Every fibre of your concentration focuses on the precise distance between your knuckles and the cold brass rim of the key, blocking out the scratching of the distant nib and the hum of the restless stacks. The gatekeeper gives a sudden, sharp snort and his hand twitches toward his belt, threatening to cut off your narrow window of opportunity before your fingers can close around the cool metal.
+CHECK: Pinch the key from his belt
+@@SECTION ul-1-150
+TITLE: Caught in the Draft
+TEXT: A sudden gust of sulfurous air from the ventilation flues sweeps through the alcove, catching the hem of your coat and ballooning the canvas against the wooden balustrade. The gatekeeper jerks awake with a raspy curse, his ivory pointer snapping out to catch you across the knuckles with a sharp, stinging crack that leaves a dull ache in your bones. You tumble backward into a stack of discarded broadsheets, losing precious minutes gathering your scattered pencils while the old man glares through thick, yellowed spectacles and docks your weekly tallow allowance by three whole farthings.
+EXIT 1: Pick yourself up and retreat
+@@SECTION ul-1-151
+TITLE: The Stolen Ring
+TEXT: Your fingers close around the cold, greasy metal of the key just as the gatekeeper exhales a long, whistling sigh and shifts his weight toward the wall. The leather thong slips free of its copper button with a faint, greasy pop, leaving the heavy ring of iron entirely in your palm without a single metallic clink to betray the deed. You tuck the cold iron deep into your canvas bag beneath a bundle of damp blotting-paper, carrying away a small, silent token that unlocks every restricted passage between here and the deep stacks.
+GRANT: The iron gate-ring key
+EXIT 1: Pass through the iron gate
+@@SECTION ul-1-152
+TITLE: The Marginal Clause
+TEXT: Leather-bound volumes lean against one another like exhausted travellers on the high podium, their gilded lettering flaking off into dry golden dust. Your finger traces a cramped, handwritten note squeezed into the narrow gutter of page four hundred and twelve, penned in the spidery ink of some long-dead junior clerk. The rule is absurdly specific, citing an ancient ordinance from the Third Century of the Catalogues that grants any junior shelver the right of unhindered passage if the hour is prime and the ink-wells are full. You tap the margin firmly, knowing the custodian must heed the letter of the law or face a formal audit.
+EXIT 1: Quote the forgotten exemption loudly
+@@SECTION ul-1-153
+TITLE: The Scholarly Citation
+TEXT: You clear your throat and recite the archaic clause with deliberate, unhurried cadence, matching the pedantic rhythm of the official code-books. The custodian freezes mid-reach, his ink-stained thumb hovering over a ledger entry as his mind races to cross-reference your absurd interpretation against forty years of administrative precedent. His jaw tightens behind his graying beard, his eyes darting frantically across the crowded shelves as he searches for a contradictory footnote that might let him deny your passage.
+CHECK: Debate the esoteric legal clause
+@@SECTION ul-1-154
+TITLE: A Flawed Precedent
+TEXT: The custodian slams his heavy bone paper-knife against the mahogany desk with a dry, cracking sound that echoes sharply down the corridor. He points a trembling, ink-blackened finger at a later addendum scrawled in red ink across the flyleaf, proving that the clause you cited was formally repealed during the Great Binder's Strike. Your ears burn with mild humiliation as he slaps a heavy fine-slip onto your ledger-board, demanding two hours of tedious sorting in the damp basement among the moldering parish registers before you are permitted another step.
+EXIT 1: Submit to the tedious punishment
+@@SECTION ul-1-155
+TITLE: The Conceded Passage
+TEXT: The custodian lets out a long, wheezing hiss of reluctant surrender, his shoulders slumping as he recognizes the absolute airtight logic of your citation. With a sour scowl, he reaches for his heavy brass stamp, inking the margin of your travel-permit with a deep purple impression that carries the full authority of the Cataloguers' Court. He shoves the paper across the counter without a single word, leaving you with an official waiver that turns every locked barrier into a welcoming portal.
+GRANT: The stamped transit waiver
+EXIT 1: Proceed past the silenced desk
+@@SECTION ul-1-156
+TITLE: The Descending Vault
+TEXT: You cross the damp stone threshold just as the massive iron counterweights begin their deep, grinding descent into the floor-slots. Dust cascades from the carved lintel like gray snow, stinging your eyes and coating your tongue with the taste of century-old lime and iron filings. Behind you, the familiar hum of the Reading Rooms dies away into a profound, suffocating hush as the corridor narrows and the walls begin to sweat with cold moisture. The air grows noticeably thinner here, smelling strongly of charred willow-bark and ancient parchment that has never seen a living flame. You pull your collar tight against the draft, knowing the return path is sealing itself shut behind you for an entire generation.
+EXIT 1: Advance into the shifting stacks
+@@END

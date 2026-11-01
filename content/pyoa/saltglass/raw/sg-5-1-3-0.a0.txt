@@ -1,0 +1,67 @@
+Gemini said
+
+@@SECTION sg-5-1-3-0
+TITLE: The Dormant Automaton
+TEXT: Silent and towering in the gloom, a dormant brass automaton blocks the corridor, its faceted glass eyes catching the faint, sputtering glow of your coal-lantern. You ease past its frozen limbs, listening to the hollow echo of your own breathing against the chill masonry. // The path splits ahead, offering a choice between a howling draught from the heights, an exposed iron climb, or a tight squeeze where a sentinel's mirror sweeps.
+EXIT 1: Step out onto the windy upper ledge
+EXIT 2: Climb the rusted iron framework toward the light
+EXIT 3: Freeze in the alcove while the light sweeps past
+@@END
+@@SECTION sg-5-1-3-1
+TITLE: The Dripping Cistern
+TEXT: Heavy drops of black condensation fall with rhythmic malice from the vaulted brickwork of the dim cistern-room, threatening to drown the sole remaining source of heat and light you carry from Candlemere. You cup your hand over the lantern's trembling coal, sheltering the orange glow as the moisture pools around your boots. // The damp air presses close, forcing you to choose your next direction before the cold extinguishes your only defense.
+EXIT 1: Step out onto the windy upper ledge
+EXIT 2: Freeze in the alcove while the light sweeps past
+@@END
+@@SECTION sg-5-1-3-2
+TITLE: The Blocked Maintenance Tunnel
+TEXT: Bracing your shoulder against a stubborn, shifting pane of green-tinted glass, you heave until the jammed frame gives way with a dry groan, clearing a narrow path through the choked maintenance tunnel. Dust motes dance in the amber radius of your coal-lantern as you peer into the darkness beyond. // You must decide whether to ascend into the glare or slip sideways into the shadows.
+EXIT 1: Climb the rusted iron framework toward the light
+EXIT 2: Freeze in the alcove while the light sweeps past
+@@END
+@@SECTION sg-5-1-3-3
+TITLE: The Hairline Fracture
+TEXT: Traveling entirely alone through the hollow heart of Prism, without any companion's voice to cover your steps, you notice a subtle draft whispering through a hairline fracture in the masonry wall. This thin stream of outside air carries the sharp tang of salt and distant thunder, hinting at a hidden route. // The silence of the empty hall leaves your next move entirely in your own hands.
+EXIT 1: Step out onto the windy upper ledge
+EXIT 2: Climb the rusted iron framework toward the light
+EXIT 3: Freeze in the alcove while the light sweeps past
+@@END
+@@SECTION sg-5-1-3-4
+TITLE: The Cascading Beads
+TEXT: A stray boot-heel dislodges a pocket of ancient optical beads, sending a sudden cascade of loose glass rattling down the sloping floor with a sound like falling rain. You freeze instantly, holding your breath as the noisy clatter echoes through the chamber, threatening to betray your silent ascent to anyone listening in the dark. // The clatter fades, leaving you with a choice of where to hide or how to press forward.
+EXIT 1: Freeze in the alcove while the light sweeps past
+EXIT 2: Push upward into the thin, scorching air
+@@END
+@@SECTION sg-5-1-3-5
+TITLE: The Hall of Mirrors
+TEXT: Row upon row of curved and faceted mirrors surround you, multiplying your single frame into a dozen terrifying, phantom pursuers that mimic your every twitching movement in the gloom. The dizzying reflections warp the space around your coal-lantern until you can no longer tell which way is true. // You need to escape the disorienting maze before your nerve breaks.
+EXIT 1: Freeze in the alcove while the light sweeps past
+EXIT 2: Claw your way up the choked drainage flue
+EXIT 3: Push upward into the thin, scorching air
+@@END
+@@SECTION sg-5-1-3-6
+TITLE: The Forgotten Archive
+TEXT: Thick salt crust crunches audibly beneath your boots as you cross the floor of a forgotten archive, leaving a stark, white trail across the dark floorboards that would invite any tracker straight to your heels. You sweep a hand behind you to scuff the crystals, but the dry crunch remains uncomfortably loud in the quiet vault. // You must choose your next escape route before your presence is discovered.
+EXIT 1: Freeze in the alcove while the light sweeps past
+EXIT 2: Claw your way up the choked drainage flue
+EXIT 3: Push upward into the thin, scorching air
+@@END
+@@SECTION sg-5-1-3-7
+TITLE: The Sooty Air-Vent
+TEXT: Black velvet soot cakes the interior of the narrow air-vent, smearing across your face and clinging to your clothes with every wriggling inch, threatening to choke your breathing in the confined space. You drag yourself forward on elbows and knees, guided only by the faint warmth of your lantern trailing behind you. // The vent opens up ahead into choices of ascent or exposure.
+EXIT 1: Claw your way up the choked drainage flue
+EXIT 2: Push upward into the thin, scorching air
+@@END
+@@SECTION sg-5-1-3-8
+TITLE: The Swinging Counterweight
+TEXT: A heavy brass counterweight sweeps across your narrow ledge on a long iron arm, slicing through the dim air with a rhythmic whine that forces you to time your frantic leap with lethal precision. You wait for the heavy mass to pass, muscles coiled and ready to spring across the void. // The metal pendulum clears, leaving you an instant to move forward.
+EXIT 1: Push upward into the thin, scorching air
+EXIT 2: Slip behind the stacks while voices rise outside
+@@END
+@@SECTION sg-5-1-3-9
+TITLE: The Fragile Bridge
+TEXT: Suspended high over a yawning shaft where ancient machinery groans in darkness, a fragile bridge of ribbed glass groans under your weight, every step sending tiny shivers through the transparent spans. You keep your eyes fixed straight ahead, ignoring the dizzying drop inches below your boots. // The opposite side offers multiple branching paths into the observatory's interior.
+EXIT 1: Push upward into the thin, scorching air
+EXIT 2: Slip behind the stacks while voices rise outside
+EXIT 3: Leap for safety as the balustrade crumbles
+@@END

@@ -1,0 +1,85 @@
+{
+ "batch": "vh-1-0-4-5",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-0-4-5": {
+   "title": "The Upper Cirque",
+   "text": "Frigid gales barrel down from the upper cirque, catching the hem of your coat and threatening to spin you clean off the narrow, sheer-drop tread of the mountain stair. The bronze Clapper hums softly against your spine, vibrating with every shiver of your frame as you lock your boots into the frozen ruts. Frost rims your eyelashes, and below your dangling heels, the cloud sea churns in a pale, silent abyss. You must decide whether to lean hard into the mountain face and brave the wind-scoured steps or duck into a cleft of stone to wait out the gust.",
+   "exits": [
+    "Duck into the cleft of stone"
+   ]
+  },
+  "vh-1-0-4-6": {
+   "title": "Smoke Over the Yard",
+   "text": "Gray vapor parts just enough to reveal the stout stone chimneys of the mule yard, drawing a fresh wave of exhaustion through your aching muscles as the weight of the bronze tongue burns your shoulders. Puffs of steam rise from the stables below, carrying the sharp scent of wet straw, old dung, and wood smoke over the cliff edge. You adjust the grease-soaked padding of your carrying frame, listening to the muffled clatter of hooves on cobbles through the fog.\n\nThree distinct paths beckon from this snowy threshold, each leading deeper into the complex before the long descent truly begins.",
+   "exits": [
+    "Sneak past the outer grooming stalls",
+    "Approach the main timber loading dock",
+    "Take the sheltered servants' side alley"
+   ]
+  },
+  "vh-1-0-4-7": {
+   "title": "The Lower Landing",
+   "text": "Knees braced against the steep downward plunge, you reach the lower terrace landing where the stable-gates loom large through the drifting mountain fog. Frost crusted on the massive iron bolts glitters in the dim light filtering through the cloud layer. You can hear the low, rhythmic thrum of the Great Bell's memory still vibrating faintly through the mountain rock beneath your soles, urging you onward toward the descent. A choice of approach hangs before you in the damp air.",
+   "exits": [
+    "Knock heavily on the main oak portal",
+    "Inspect the side latch near the fodder shed"
+   ]
+  },
+  "vh-1-0-5-0": {
+   "title": "The High Mule Yard",
+   "text": "Heavy oak doors of the high mule yard frame a scene of steady, rhythmic industry as iron-shod hooves stamp against frozen cobbles within the enclosure. The dry scent of barley chaff and animal sweat hangs thick in the drafty space, offering a brief shelter from the biting external wind. Inside, stable-hands move between shadowy stalls with lanterns held high, checking girths and smoothing blankets. You stand with your heavy burden, weighing the best way to announce your arrival to the yard-master.",
+   "exits": [
+    "Push forward into the stable yard"
+   ]
+  },
+  "vh-1-0-5-1": {
+   "title": "Wicket Gate Watch",
+   "text": "Wicket-gate in the weathered timber wall frames grooms who breathlessly brush crusted snow and rime from the flanks of shivering pack-beasts. The air smells of wet wool and burning peat, warm enough to sting your frozen cheeks as you peer into the bustling enclosure. A few drivers toss sharp words back and forth while securing heavy leather packs to wooden frames. You clutch the straps of your own burden, wondering if help or hindrance waits beyond the gate.",
+   "exits": [
+    "Step through and announce your errand"
+   ]
+  },
+  "vh-1-0-5-2": {
+   "title": "The Freezing Draft",
+   "text": "Freezing draft sweeps across the threshold of the stable entrance, biting straight through your woollen tunic while you weigh the merits of taking a stubborn mule against the lonely peril of the foot-stairs. Downward travel on foot promises speed and absolute self-reliance, but the iron tongue grows heavier with every hundred heartbeats. Beside you, the distant clang of iron horseshoes on stone reminds you of the alternative waiting inside the warm, crowded pens.",
+   "exits": [
+    "Enter the stable to find a beast"
+   ]
+  },
+  "vh-1-0-5-3": {
+   "title": "Mounting Block Respite",
+   "text": "Resting the bronze Clapper against the stone mounting-block of the mule yard, you let your aching shoulders relax for a precious moment while stable-master Jago whistles through his teeth to call the beasts from the stalls. The heavy metal hums against the cold rock, answering the distant mountain winds with a low, mournful drone. Jago squints at your carrying frame through the haze of peat smoke, wiping grease from his calloused palms.",
+   "exits": [
+    "Call out to Jago across the yard"
+   ]
+  },
+  "vh-1-c1": {
+   "title": "The Departure Choice",
+   "text": "Standing within the bustling courtyard of the mule yard, you face the central dilemma of your descent toward Lowgate. The bronze Clapper rests heavily in its frame, a demanding load that will test every joint and sinew on the thousand-meter drop. You can accept the company of Biscuit, a famously stubborn grey mule who knows every icy turn of the stairs but requires constant cajoling, or you can shoulder the entire burden yourself and take the narrow foot-path alone in the freezing mist.",
+   "exits": [
+    "Take Biscuit the mule to carry the pack",
+    "Go down on foot, alone and light"
+   ]
+  },
+  "vh-1-1-0-0": {
+   "title": "The Stubborn Halt",
+   "text": "Frosty shadow of the mule yard's stone wall stretches across the cobbles as you adjust the bronze clapper's padded straps while Biscuit plants his stubborn grey hooves against the icy stones. The mule lowers his head, ears pinned flat against a skull as hard as temple granite, refusing to budge an inch toward the open gate. Old Garrow chuckles from the doorway, tossing you a length of braided hemp to coax the beast forward into the wind.",
+   "exits": [
+    "Tug the halter past the watering trough",
+    "Secure a loose buckle beneath the timber porch",
+    "Lead the reluctant animal toward the upper gate"
+   ]
+  },
+  "vh-1-1-0-1": {
+   "title": "The Solo Ridge",
+   "text": "Stable door swings shut behind you, leaving the warmth of the pens for the high ridge where you step out alone with your burden, feeling the wind test the heavy iron tongue against your shoulder blades. Without a beast to slow your pace or demand your attention, the mountain feels vast, silent, and dangerously steep. Every step requires absolute concentration as the stone path narrows into a mere riband carved into the dark cliff face.",
+   "exits": [
+    "Follow the cliff-edge toward the steps",
+    "Pause to test the footing on the ice",
+    "Adjust your grip on the carrying frame"
+   ]
+  }
+ },
+ "missing": []
+}

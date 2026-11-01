@@ -1,0 +1,92 @@
+{
+ "batch": "ul-3-094",
+ "sections": {
+  "ul-3-094": {
+   "title": "Halberds in the Archivist's Hall",
+   "text": "Iron-shod boots hammer against the mosaic floor of the Cataloguers' Court as the guard detail closes the ring around the bronze sorting tables. Heavy halberds slice through the air with a whistling hiss, their polished edges catching the amber glare of the brass oil-lamps. Beneath a mountain of impounded dispatches tied with stiff twine, the bundle of confiscated papers you need rests precariously on a folding walnut trestle. Smoke from tallow candles drifts across the rafters, blurring the stern stone faces of ancient rule-keepers carved into the corbels. Dust motes dance in the narrow shafts of light piercing the tall, leaded windows that overlook the silent, fathomless stacks. Every breath tastes of dry parchment and cold iron.\n\nSlipping past the swinging blades requires absolute precision and an eye for the guards' rhythmic shifting weight. You crouch low behind a stack of ledger-cases, waiting for the sergeant to bark his next command and turn his broad back toward the shadowed archway.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Dart beneath the swinging iron blades"
+   ]
+  },
+  "ul-3-095": {
+   "title": "Reaching for the Tied Bundles",
+   "text": "Cold sweat slicks your palms as you inch closer to the trestle table, keeping your weight balanced on the balls of your feet. The rhythmic thud of polearms biting into the timber floor vibrates through the soles of your boots, setting your teeth on edge. A silver-clasped mail-bag lies half-hidden beneath the dispatches, swelling with handwritten ink-slips that outline the movements of the search parties. The air grows heavy with the smell of scorched lamp-oil and the metallic tang of sweat from the patrolling guards. You have only a heartbeat of misdirection while a distant bell tolls from the central clock-tower, echoing endlessly down the stone corridors of the Annexe.\n\nYour fingers brush the rough twine of the topmost bundle, feeling the familiar texture of cheap rag-paper beneath your fingertips. The guards shift their formation, closing the gap between the desks with deliberate, unhurried steps.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Snatch the dispatches from the table"
+   ]
+  },
+  "ul-3-096": {
+   "title": "Seizing the Imperial Dispatches",
+   "text": "Muscles coil tight as you spring forward from the shadow of the card-drawers, lunging directly into the narrow corridor between two sweeping polearms. One heavy blade arcs downward with terrifying speed, shearing a button from your waistcoat and grazing the skin of your shoulder with a searing lick of cold steel. You fling your weight sideways, sliding across the polished oak surface of the sorting table to scoop the tied parcel into your arms against your chest. The remaining guards pivot in unison, shouting hoarsely as iron heels slam against the flagged floor, trapping your exit route behind a wall of uplifted steel.",
+   "check": "Dodge the swinging halberds with grace",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-097": {
+   "title": "The Cost of a Blundered Leap",
+   "text": "A heavy steel haft catches you squarely across the ribs, driving the breath from your lungs in a ragged gasp and sending you sprawling hard onto the cold flagstones. The bundle of dispatches scatters across the floor, loose ink-slips fluttering like wounded crows before a pair of iron-plated boots pins them down. You scramble backward on hands and knees, tasting copper and dust while a sharp, throbbing ache blooms along your left side. The guards haul you to your feet with bruising rough-hands, relieving you of your remaining spare quills and leaving a deep, purple bruise over your ribs that will ache every time you lift a heavy volume for weeks to come.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick up the scattered fragments"
+   ]
+  },
+  "ul-3-098": {
+   "title": "The Seized Dispatch Bundle",
+   "text": "Momentum carries you cleanly beneath the intersecting arcs of steel, your fingers locked tightly around the heavy twine of the confiscated parcel even as the wind of the missed blows stirs your hair. You tumble head over heels into the alcove beyond the desks, scrambling to your feet with the prize clutched tightly to your chest before the guards can wheel about. It is a messy, breathless escape, leaving your coat torn at the cuff and your heart hammering against your ribs like a trapped moth, but the prize is yours.",
+   "check": "",
+   "grant": "bundle of confiscated dispatches",
+   "exits": [
+    "Retreat to the smoky barracks"
+   ]
+  },
+  "ul-3-099": {
+   "title": "Staring Down the Commander",
+   "text": "Heavy oak doors loom at the end of the vaulted corridor, barred by two towering sentries and overseen by the senior garrison commander whose reputation for cruelty is etched into every line of his scarred face. He stands beside a brazier of glowing coals, his folded arms resting across a chest adorned with disciplinary medals forged from old printer's lead. The silence in the stone-walled foyer is absolute, broken only by the crackle of burning coke and the slow, heavy drip of water from an unseen leak somewhere in the high vaulting. His dark, unblinking eyes lock onto yours with the weight of an inquisitor inspecting heresy in a marginal note.\n\nYou refuse to drop your gaze, holding your ground as the commander steps forward, his boots clicking like clockwork against the paving stones.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Meet the commander's gaze head-on"
+   ]
+  },
+  "ul-3-100": {
+   "title": "The Weight of Unblinking Eyes",
+   "text": "Tension stretches like a dry bowstring across the narrow hall as the commander measures your worth with a slow, calculating sneer. The ambient hum of the endless stacks seems to recede, leaving only the sound of your own measured breathing and the hiss of the nearby brazier. He tilts his head slightly, testing whether your nerve will shatter under the sheer intimidation of his presence and the implied threat of the deep cells below. Every instinct screams at you to look away, to bow your head and murmur excuses for your intrusion into the restricted administrative wards.\n\nInstead, you plant your heels firmly on the stone, keeping your chin raised and your expression entirely blank.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stand firm against his silent scrutiny"
+   ]
+  },
+  "ul-3-101": {
+   "title": "Facing the Commander's Will",
+   "text": "The commander steps closer still, towering over you as he projects an aura of absolute authority meant to crush any defiance before it can take root in your mind. He leans in, whispering a low, venomous reminder of what happens to shelvers who pry too deeply into the missing Archivist's private ledgers. The air between you grows thick and suffocating, laden with the metallic scent of old armor and the dry dust of forgotten centuries. You feel your thoughts beginning to scatter under the immense pressure of his unyielding gaze, threatening to betray your panic.",
+   "check": "Withstand the commander's intimidating stare",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-102": {
+   "title": "Broken Resolve in the Foyer",
+   "text": "Your nerve cracks under the sheer weight of his glare, and a sudden, involuntary shudder betrays your terror before you can mask it. The commander smiles thinly, recognizing your weakness instantly, and presses his advantage with a stinging reprimand that leaves your pride in tatters. He denies you passage through the main gates, forcing you to endure a humiliating interrogation that strips away hours of precious time and leaves your thoughts foggy and scattered. You limp away from the threshold with a throbbing headache and a bitter sense of humiliation that settles deep into your bones.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Withdraw into the shadowed corridors"
+   ]
+  },
+  "ul-3-103": {
+   "title": "Unbroken Will and Passage",
+   "text": "However narrowly, your resolve holds fast against his oppressive stare, refusing to yield an inch of ground to his intimidation. The commander's eyes narrow in grudging, silent recognition; he recognizes a will that cannot be easily broken by mere bluster or rank. With a sharp, dismissive jerk of his chin, he steps aside from the heavy oak doors, granting you an unhindered departure into the restricted corridors beyond. As you pass him, he slips a small, folded scrap of parchment into your palm - a forbidden pass-token scribbled in hurried ink.",
+   "check": "",
+   "grant": "garrison commander's pass-token",
+   "exits": [
+    "Proceed toward the smoky barracks"
+   ]
+  }
+ },
+ "missing": []
+}

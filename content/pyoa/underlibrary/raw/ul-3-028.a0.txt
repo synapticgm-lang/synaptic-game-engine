@@ -1,0 +1,54 @@
+@@SECTION ul-3-028
+TITLE: The Confiscated Warrant
+TEXT: Ink smells of iron and vinegar in the small vestibule behind the magistrate's bench, where discarded requisitions pile like fallen leaves. Your fingers trace the damp margin of the confiscated warrant while a guard's heavy boots echo on the floorboards outside. Every second spent holding the bone pen risks discovery by watchful officials who patrol the corridors.
+EXIT 1: Press the nib to parchment
+@@SECTION ul-3-029
+TITLE: The Forged Seal
+TEXT: Swiftly and silently, you mimic the loops of the Chief Cataloguer's peculiar script, letting the dark ink settle into the thirsty grain of the official paper. A lamp flickers in the draft, casting long shadows across the rows of card-drawers. The exemption seal must look entirely genuine if it is to withstand the strict scrutiny of the gatekeepers ahead.
+EXIT 1: Complete the fraudulent signature now
+@@SECTION ul-3-030
+TITLE: Imitating the Chief Cataloguer
+TEXT: Breath held, you add the final flourish to the forged warrant while heavy footsteps pause just outside the wooden partition. The risk of sudden exposure hangs thick in the dusty air of the chamber as you press your thumb against the wet ink to smudge it convincingly. Everything depends on whether your hasty imitation holds up under the cold eyes of the guard.
+CHECK: Forge the official signature
+@@SECTION ul-3-031
+TITLE: Smudged Ink and Scrutiny
+TEXT: The guard notices the uneven weight of the strokes and snatches the warrant away with a sharp reprimand, leaving your fingers stained with cheap lamp-black. You lose precious minutes arguing your case in the draughty corridor while a stern clerk docks your weekly rations of dried meat. Though you escape without being hauled back before the magistrates, the bitter memory of failure clings to your thoughts like soot.
+EXIT 1: Slip past the suspicious guard
+@@SECTION ul-3-032
+TITLE: The Exemption Seal
+TEXT: However narrowly, the wet ink passes inspection under the porter's dim lantern, and the heavy stamp falls with a dull thud onto your makeshift warrant. You slide the crisp document into your jacket pocket beside a bundle of stolen blotting paper. The exemption seal is yours to use.
+GRANT: forged exemption seal
+EXIT 1: Advance toward the iron portcullis
+@@SECTION ul-3-033
+TITLE: Navigating the Ledgers
+TEXT: Stacks of towering reference ledgers wobble precariously along the marble flags of the tribunal gallery, threatening to avalanche across your path. You sidestep a tumbling pile of calfskin volumes while addressing the high bench with practiced deference. A sympathetic assessor leans forward from the tiered benches, watching your agile footwork through tinted spectacles.
+EXIT 1: Maintain balance before the judges
+@@SECTION ul-3-034
+TITLE: Crossing the Collapsing Stacks
+TEXT: More heavy volumes slide from their rotting shelves, creating an unpredictable hazard of shifting leather and sharp paper edges right across the gallery floor. You leap across a chasm of spilled folios while keeping your gaze fixed firmly on the sympathetic assessor's attentive face. A single misstep will send you crashing into the rows of stacked authorities below.
+CHECK: Leap across falling reference books
+@@SECTION ul-3-035
+TITLE: A Clumsy Misstep
+TEXT: Your boot clips the heavy corner of an open atlas, sending a cascade of ancient appendices clattering across the stone floor in a humiliating clatter. The sympathetic assessor turns away with a disappointed wince while you scramble to gather the loose leaves under the cold stares of the court. You limp away with a scraped shin and a bruised pride that will take days to mend.
+EXIT 1: Retreat to the gallery edge
+@@SECTION ul-3-036
+TITLE: The Assessor's Nod
+TEXT: However narrowly, you land lightly on the balls of your feet amidst the sea of sliding paper, maintaining your composure before the entire assembly. The sympathetic assessor offers a subtle, approving nod of the head from behind the high mahogany desk. This quiet favour may prove useful when the guards begin asking awkward questions.
+GRANT: sympathetic assessor's favour
+EXIT 1: Return to the tribunal gallery
+@@SECTION ul-3-037
+TITLE: Staring Down the Prosecutor
+TEXT: The prosecutor leans across the polished oak barrier, his voice dropping to a dry rasp as he lists the petty thefts of your shelver fellowship. Shadows stretch across the floor from the high arched windows, smelling of damp parchment and old tallow. You meet his gaze without flinching, refusing to let the weight of institutional malice break your spirit.
+EXIT 1: Hold fast against the accusations
+@@SECTION ul-3-038
+TITLE: The Weight of Silence
+TEXT: Silence settles over the crowded benches like a physical blanket of grey dust, muffling the distant scraping of pens from the outer rooms. The prosecutor narrows his eyes, testing your resolve with veiled threats about the Misfiled Wing and its endless stacks of uncatalogued scrap. Your pulse beats hard against your ribs, but you keep your shoulders squared against the courtroom wall.
+EXIT 1: Endure the prosecutor's cold stare
+@@SECTION ul-3-039
+TITLE: Facing the Accuser
+TEXT: Cold sweat gathers at your temples as the prosecutor invokes the dreaded name of the Chief Cataloguer to terrify you into submission. The flickering lamp-oil casts dancing distortions across his severe face while you summon every ounce of stubborn loyalty to your fellowship. You must anchor your thoughts against the rising panic before the tribunal demands your surrender.
+CHECK: Stare down the hostile prosecutor
+@@SECTION ul-3-040
+TITLE: Broken Resolve
+TEXT: The crushing pressure of the prosecutor's stare shatters your mental defences, forcing you to stagger backward against the wooden railing with a sharp, ragged gasp. Whispers ripple through the tiered benches as your composure crumbles into trembling exhaustion. You escape the platform with a lingering dread that leaves your nerves frayed like old cordage.
+EXIT 1: Flee the hostile tribunal dock

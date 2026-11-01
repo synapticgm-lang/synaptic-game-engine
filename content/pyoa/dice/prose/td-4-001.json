@@ -1,0 +1,106 @@
+{
+ "batch": "td-4-001",
+ "sections": {
+  "td-4-001": {
+   "title": "The Yawning Descent",
+   "text": "Damp air rises from the dark interior of the Sunken Stair, thick with the old stench of rotting kelp and copper scale. Your boots meet the slick basalt threshold, where the world above narrows into a spiral shaft carved deep into the seabed's floor. Faint echoes drift up from the lower tiers, sounding less like human voices and more like the low groaning of timber under crushing weight. Every breath burns the throat with ancient salt, reminding you that whatever mechanism waits below has slept far too long.\n\nA cold draft pushes against your chest, urging you deeper into the damp gloom where the light of Gullmouth cannot reach.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the yawning stone spiral"
+   ]
+  },
+  "td-4-002": {
+   "title": "The Upper Landings",
+   "text": "A vast well of slick basalt steps drops away into absolute shadow, choked with the discarded junk of desperate scavengers who lost their nerve and turned back. Rusted iron spikes and waterlogged packs litter the stone landings, telling silent stories of those who misjudged the climb. The air here hangs heavy and still, smelling of wet slate and old bone. Shadows twist unnaturally against the curved walls as your lantern flickers against the damp draft. Several passages branch away into the dark architecture, each promising a different route toward the heart of the machinery.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clear the jammed metal beam ahead",
+    "Reach for the glowing fungal lantern",
+    "Force open the heavy iron bulkhead",
+    "Cross the decaying whalebone bridge",
+    "Study the old Tidewarden mosaic path",
+    "Approach the colossal silent bell"
+   ]
+  },
+  "td-4-003": {
+   "title": "Beneath the Fallen Beam",
+   "text": "Heavy iron girders block the narrow archway, pinning the crushed remains of a long-dead smuggler against the masonry. You wedge your shoulder beneath a rusted brass beam, feeling the cold metal bite through your jacket as you strain every muscle. Dust and dried salt shower down from the vaulted ceiling with every fraction of an inch you gain. A sealed leather pouch hangs untouched at the dead man's belt, bulging with the unmistakable shape of precious supplies. You plant your boots firmly against the stone and push with everything you have.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wrench the beam clear of the remains"
+   ]
+  },
+  "td-4-004": {
+   "title": "The Smuggler's Hoard",
+   "text": "The heavy brass beam groans and shifts, sliding sideways with a harsh scrape of metal against stone to clear the blocked path. Beneath the wreckage, the leather pouch lies waiting, its wax seal intact against the creeping damp. You slip the cord from the dead smuggler's belt and tuck the prize safely into your own pack. The air feels slightly fresher here, drawn through a narrow vent that opens somewhere toward the lower foundations. Stepping past the ruin, you prepare for the next turn in the winding descent.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the corridor deeper inward"
+   ]
+  },
+  "td-4-005": {
+   "title": "The Smuggler's Beam",
+   "text": "Crushed timber and green-rotted canvas pin the dead smuggler to the basalt floor of the stairwell, trapping a leather water-skin beneath his ribs. Heavy condensation drips from the damp vault above, pooling in the grease that smears your palms as you grip the cold, square-headed brass beam. Every muscle in your back knots and trembles, straining against centuries of accumulated silt and jammed masonry. You brace your boots hard against a rib of ancient iron, heave upward with all your strength to break the dead weight free, and wait for the metal to either groan and yield or snap your spine.",
+   "check": "Heave the rusted brass beam",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-006": {
+   "title": "Crushed Underfoot",
+   "text": "The rusted metal suddenly slips from your grip with a sharp screech, dropping back onto the stone with a force that rattles your teeth. A jagged edge catches your forearm, tearing through cloth and skin to draw a hot line of blood. You stumble backward into the damp wall, gasping for air as pain flares through your arm. The lost time and sudden injury leave you shaken, but you manage to yank the sealed pouch free from the debris before pressing onward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat slightly to bind the wound"
+   ]
+  },
+  "td-4-007": {
+   "title": "The Sealed Pouch",
+   "text": "Metal screams against stone, however narrowly you managed the lift, and the crushed ribs give up their prize into your waiting fingers. A thick-skinned pouch of treated ox-hide slides from beneath the wreckage, smelling faintly of old brine and mountain mint rather than the flat stagnation of the Low. Inside lies a full day's ration of sweet, cool water untouched by the bitter salt-crust of the abandoned seabed. Tucking the prize against your ribs, you turn your back on the crushed smuggler and begin the long, careful climb back toward the echoing basalt landings.",
+   "check": "",
+   "grant": "sealed untainted water-pouch",
+   "exits": [
+    "Climb back to the landings"
+   ]
+  },
+  "td-4-008": {
+   "title": "The Fungal Shelf",
+   "text": "A narrow stone ledge juts out over a pitch-black chasm, its surface slick with slimy phosphorescent moss that casts a sickly green glow. Suspended from a rusted iron bracket at the far end hangs a wild cluster of bioluminescent fungi, throbbing with a steady, pulsing light. No oil feeds the uncanny bloom, making it a priceless prize for anyone brave enough to cross the drop. The stone beneath your boots crumbles silently into the abyss below at the slightest touch.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step carefully along the narrow ledge"
+   ]
+  },
+  "td-4-009": {
+   "title": "The Fungal Glow",
+   "text": "Thin air rattles in your lungs as you inch along a six-inch lip of crumbling mortar, hundreds of feet above the dark abyss of the Sunken Stair. Below your boots, loose scree rattles into the vertical blackness with no answering clatter of bottom. Suspended directly over the void on a broken iron bracket hangs a pale, swollen bulb of fungus, casting a steady, cold turquoise luminescence across the sheer damp wall. You force your racing heart to slow, press your shoulder flat against the weeping stone, and reach out an unsteady hand toward the dangling stalk.",
+   "check": "Reach for the glowing bulb",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-010": {
+   "title": "Slipping the Ledge",
+   "text": "A patch of wet moss betrays your footing, sending loose gravel clattering down into the unseen depths with a hollow sound. You throw your weight against the rock face, scraping your shoulder raw as you scramble for a secure handhold. The fungal lantern swings wildly on its bracket, spilling a shower of cold spores across your face before you finally manage to steady yourself. You claim the glowing prize, but the near-fall leaves your nerves frayed and your breath coming in ragged gasps.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl back to solid stone"
+   ]
+  },
+  "td-4-011": {
+   "title": "The Pale Lantern",
+   "text": "Cold phosphor rubs off on your fingertips, however narrowly you kept your balance over the drop, leaving a faint luminous smear across your skin. The bulb hangs snug in its iron cage, thrumming with a silent, internal pulse that feeds on the damp salt-mist without a drop of whale-oil or tallow. Its steady turquoise glare pushes back the clinging shadows of the stairwell, turning the wet stone into a map of jagged crevices and hidden nails. With the pulsing light secured in your grip, you retrace your steps along the ledge and head back toward the upper landings.",
+   "check": "",
+   "grant": "oil-free fungal lantern",
+   "exits": [
+    "Return to the upper landings"
+   ]
+  }
+ },
+ "missing": []
+}

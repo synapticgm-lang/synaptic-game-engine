@@ -1,0 +1,7 @@
+Gemini said
+
+@@SECTION td-6-003
+TITLE: The First Long Swell
+TEXT: A low, trembling vibration passes through the soles of your boots as the great brass cogs of the Meridian Gear finally shift into alignment, releasing a pent-up sigh of ancient steam that tastes of old salt and deep, forgotten mud. Far out across the grey, desolate expanse of the Low, a distant grey line darkens the horizon before a single, magnificent wall of green water surges forward to reclaim the naked seabed. It does not crash with violent fury, but rises with a steady, solemn grace, lifting stranded hulks and filling dry harbours as the tide comes home to Gullmouth once and for all.
+EXIT 1: Watch the grey water rise against the cliff face
+@@END

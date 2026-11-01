@@ -1,0 +1,31 @@
+@@SECTION vh-4-1-2-12
+TITLE: The Needle-Eye Cleft
+TEXT: Unburdened by the pack-mule's clumsy flanks, you slide sideways through a vertical split in the granite wall where the mountain tightens like a fist. The rock is smooth and cold against your ribs, scraping lightly at the padded cradle on your back while the world opens up into a jagged corridor of ice. Without a beast to crowd your footing or test your nerves at every ridge, you notice the delicate patterns of frost ferns on the stone and the absolute, ringing silence of the high shadow. Ahead, the path divides into the chaotic heart of the glacier or drops down toward a thin line of safety strung across the chasm. // You can pick your way through the shifting blue seracs or trust your weight to a fraying hand-line.
+EXIT 1: Navigate the shifting blue seracs ahead
+EXIT 2: Traverse the gusting chasm by hand-line
+@@END
+@@SECTION vh-4-1-2-13
+TITLE: The Red Flag
+TEXT: A tattered scrap of scarlet wool snaps furiously from a driven iron piton, marking where the ladderway has sheared away into empty air. The Ropewrights' Guild tied this warning well before the last freeze, leaving a narrow shelf of blue-tinted ice as the only viable bypass around the wreckage. Water drips somewhere deep beneath the glacier, sounding like a slow and heavy clock counting down the hours left before the passes choke with snow. You adjust the heavy bronze Clapper on your shoulders, feeling its faint and steady hum vibrate straight through your spine as you weigh your next step. // You might press forward across the jagged blue towers, double back to check your hidden wedge, or test a completely different line through the frozen chaos.
+EXIT 1: Hack a path past the stiffened blanket
+EXIT 2: Pick your way through the shifting seracs
+EXIT 3: Recover the spare bronze wedge from the cairn
+@@END
+@@SECTION vh-4-1-2-15
+TITLE: The Iron Ringbolt
+TEXT: An ancient iron ringbolt, green-stained and bitten deep into the cliff granite, offers a solid anchor point in the middle of a dizzying wall of ice. You clip your harness line to the heavy iron with fingers stiffened by the wind, taking a brief moment to catch your breath while the mountain hums beneath your boots. The sheer traverse stretches out horizontally across a drop that seems to have no bottom, testing every ounce of your balance and nerve. Beside you, the mule plants its hooves with stubborn reluctance, blowing frosty plumes of air into the biting gale. // You can retrieve your hidden wedge from the cairn or guide the mule across the vibrating iron plates.
+EXIT 1: Retrieve the spare wedge from the cairn
+EXIT 2: Lead the mule across the corrugated iron
+@@END
+@@SECTION vh-4-1-3-0
+TITLE: The Fog-Warden's Hearth
+TEXT: Sheltered in the lee of an azure ice-rib, a lone Fog-Warden sits bundled in grey wool, trying to clear the choked mouth of a bone signal horn with a wire pin. You share a draught of lukewarm chicory tea from your flask, tasting the bitter chicory and the metallic tang of the mountain air as the stranger nods in silent gratitude. The glacier all around you creaks and groans, settling into new shapes under the weight of the coming winter night. The steep wall ahead demands absolute focus, while the narrow ice-ledge offers a perilously wind-swept alternative. // You can tackle the vertical glass wall or coax the mule along the narrow ledge.
+EXIT 1: Scale the sheer glass wall of ice
+EXIT 2: Lead the mule along the narrow ledge
+@@END
+@@SECTION vh-4-1-3-1
+TITLE: The Swinging Bridge
+TEXT: A makeshift bridge of notched pine logs, lashed tightly together with braided hemp cable, sways in rhythm with the freezing gale between two towering pillars of glass-green ice. Every step causes the timber to groan and shift above a bottomless blue abyss where the wind howls like a trapped animal. The heavy bronze Clapper on your back hums in sympathetic vibration with the swinging logs, testing your equilibrium with its rhythmic weight. Behind you, the mechanical housing of an upper ropeway sits frozen solid in the rime, while the glacier stretches onward into blinding white heights. // You can press upward onto the steep ice wall or turn back toward the frozen winch.
+EXIT 1: Climb the steep wall of blue glass
+EXIT 2: Turn back toward the frozen upper winch
+@@END

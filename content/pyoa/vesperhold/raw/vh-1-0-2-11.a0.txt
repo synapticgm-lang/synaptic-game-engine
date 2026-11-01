@@ -1,0 +1,60 @@
+@@SECTION vh-1-0-2-11
+TITLE: The Hawk Mews
+TEXT: At the head of the cliff-mews, a caged mountain hawk screeches as you pass, its hood fluttering against the leather strap in the grey wind. You adjust your grip on the carrying frame while the bronze Clapper gives a low, answering thrum against your shoulder blades, vibrating through your coat in the thin air. The mountain gale smells of old snow and wet feathers, sweeping down from the jagged peaks above Vesperhold to test your balance on the narrow flagstones.
+EXIT 1: Follow the high mule-track junction
+EXIT 2: Step past the fish-hurdles toward the stairs
+@@END
+@@SECTION vh-1-0-2-12
+TITLE: The Gate-Saint
+TEXT: In the alcove of the gate-saint, you brush a drift of dry snow from the stone saint's beard while the bronze Clapper hums softly against your shoulder. The carved granite face of the protector stares blankly out over the cloud line, indifferent to the freezing draft funneling through the stone arches. You shift the heavy padding of the harness to ease the dead weight pressing against your spine before deciding on your route down.
+EXIT 1: Inspect the granite mooring-ring ahead
+EXIT 2: Head toward the timber drying racks
+@@END
+@@SECTION vh-1-0-3-0
+TITLE: The Ninety Steps
+TEXT: Stepping out onto the stone platform of the Ninety Steps, you peer down into the swirling mist where the first stair-flight vanishes into white nothingness. The mountain wind howls off the glacier face, threatening to pull you off balance as you steady the heavy bronze tongue in its padded cradle. Below you, the staircase drops away into the abyss of cloud and rock, demanding total concentration with every boot-heel placement.
+EXIT 1: Descend the frozen granite gradient
+EXIT 2: Touch the abbot's niche for luck
+@@END
+@@SECTION vh-1-0-3-1
+TITLE: The Butter-Stores
+TEXT: At the corner of the butter-stores, you dodge a sliding avalanche of roof-slate while your boots skid briefly on the black ice of the landing. The bitter cold bites sharply at your fingers as you reach out to steady yourself against the rough-hewn stone wall, keeping the heavy Clapper balanced securely behind your neck. A second rattle of falling tiles reminds you that lingering here is as dangerous as the descent itself.
+EXIT 1: Take the frozen iron hand-rail down
+@@END
+@@SECTION vh-1-0-3-2
+TITLE: The Weather-Gauges
+TEXT: Beside the wind-whistle mast, brass weather-gauges spin wildly in the draft while you catch your breath against the jagged limestone parapet. The metallic shriek of the spinning instruments blends with the deep, internal hum of the Clapper against your back, creating an unsettling chord in the high-altitude air. You tighten your grip on the carrying straps and scan the precipitous drop for a safe footing.
+EXIT 1: Grip the frozen iron hand-rail
+EXIT 2: Catch your balance near the third landing
+@@END
+@@SECTION vh-1-0-3-3
+TITLE: The Buttery Gable
+TEXT: In the lee of the buttery gable, you tighten the breast-harness of your pack as the bronze Clapper gives a heavy, dead lurch against your spine. The wooden wall offers a brief shelter from the biting gusts sweeping across the upper courtyards of Vesperhold. You prepare yourself for the exposed stretch of stairs waiting just beyond the timber corner.
+EXIT 1: Slide carefully along the damp cliff-face
+EXIT 2: Brush the mossy stone of the abbot's niche
+@@END
+@@SECTION vh-1-0-3-4
+TITLE: The Old Cider-Press
+TEXT: Near the old cider-press, frozen apple pulp clings to the cobblestones while you test the grip of your iron-nailed heels on the steep slope. The air smells faintly of fermented peel and mountain frost, sharp enough to make your eyes water as you adjust the weight of the bronze tongue on your back. Choosing your path carefully among the frozen debris, you look for the clearest way down the upper terraces.
+EXIT 1: Pass the mossy stone of the first abbot
+EXIT 2: Pad the lower rim with extra felt
+EXIT 3: Keep your eyes fixed on the stone riband
+@@END
+@@SECTION vh-1-0-3-5
+TITLE: The Porter's Lodge
+TEXT: Under the carved lintel of the porter's lodge, an old lay brother hands you a horn cup of bitter herb-wine to steady your nerves for the stairs. The warm spirit burns pleasantly in your chest, cutting through the mountain chill as you secure the canvas rain-hood over the Clapper's cradle. With a brief nod of farewell to the silent porter, you step out toward the edge of the abyss.
+EXIT 1: Add extra felt padding to the rim
+EXIT 2: Walk toward the narrow stone riband
+@@END
+@@SECTION vh-1-0-3-6
+TITLE: The Postern Gate
+TEXT: By the iron-plated postern, a frost-blackened lantern swings in its bracket, casting long, jittery shadows across the slippery limestone flagstones. The heavy metal creaks rhythmically in the rising wind, keeping time with the low hum of the bronze Clapper resting against your coat. You pull your wool scarf tighter around your throat and steady your footing on the rimed stone.
+EXIT 1: Recover your balance near the third landing
+EXIT 2: Pause to check the lower rim padding
+@@END
+@@SECTION vh-1-0-3-7
+TITLE: The Goat-Path
+TEXT: At the head of the goat-path shortcut, you kick away a pile of wind-blown twigs to find the frozen edge of the stone-cut track. The narrow path winds steeply down between jagged outcrops of grey rock, offering a quicker but far more treacherous descent than the main stair-flights. You lean forward into the slope, letting the heavy Clapper's weight settle squarely over your center of gravity.
+EXIT 1: Touch the mossy stone of the abbot's niche
+EXIT 2: Fix your gaze on the narrow stone riband
+@@END

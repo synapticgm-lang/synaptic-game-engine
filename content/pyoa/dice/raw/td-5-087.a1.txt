@@ -1,0 +1,14 @@
+Gemini said
+
+@@SECTION td-5-091
+TITLE: The Keeper's Burden
+TEXT: Salt-crusted brows furrow beneath the lamplight as you demand an accounting from your old mentor, pushing past her fierce glare to extract the heavy truth of the ancient Tidewardens' original watery sin. Her voice rasps like dry pebbles against the masonry, revealing how the sea was first bound by a cruel bargain struck in the deep trenches. For your trouble, she presses a heavy brass key into your palm—a token that once unlocked the inner vaults of the Saltspire. //
+GRANT: brass vault key
+EXIT 1: Demand she stand down and explain the full cost of her silence
+@@END
+@@SECTION td-5-096
+TITLE: The Unexploded Spark
+TEXT: Cool sweat prickles your neck as your fingers work with agonizing care to unseat the volatile charges wired into the primary drive, averting a premature blast that would have buried the mechanism forever. Your heart hammers against your ribs like a trapped gull against a pane, yet your hands remain steady until the final copper wire is slipped free. Tucked safely into your coat pocket rests a heavy, unexploded brass blast-cap, salvaged from the very jaws of ruin. //
+GRANT: heavy brass blast-cap
+EXIT 1: Confront your mentor before she can trigger another catastrophe
+@@END

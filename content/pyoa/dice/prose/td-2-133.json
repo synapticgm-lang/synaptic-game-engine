@@ -1,0 +1,92 @@
+{
+ "batch": "td-2-133",
+ "sections": {
+  "td-2-133": {
+   "title": "The Seeping Conduit",
+   "text": "Salt-crusted copper pipes snake along the underside of the stilt-city, weeping bitter moisture into the barren grey mud. You trace a thick feeder line where a rusted iron spigot juts from a joint like an old bone. Inside the casing, water gurgles with a heavy, pressurized promise that could save your parched throat if you can manage to crack the seal.\n\nSlipping your fingers into the pitted grooves of the handle, you brace your boot against the iron pillar and heave with all your weight, but the valve refuses to turn an inch against decades of accumulated lime and neglect.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wrench the rusted iron spigot"
+   ]
+  },
+  "td-2-134": {
+   "title": "Pressure in the Pipe",
+   "text": "Condensation drips steadily onto your neck as you lean your full shoulder into the stubborn conduit, muscles straining against the unyielding cold of the metal. The valve groans, a dry, sharding screech that echoes across the skeletal stilts above, threatening to draw unwanted eyes from the sentinels patrolling the walkways. You ignore the rising panic and plant your heels deeper into the brine-crusted silt.\n\nAnother desperate heave sends a sharp vibration up your spine, and the sealed joint finally gives a fraction of a rotation, spitting a thin, hissing jet of foul-tasting brackish water across your knuckles.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the stubborn valve open"
+   ]
+  },
+  "td-2-135": {
+   "title": "The Frozen Spigot",
+   "text": "Sweat stings your eyes as you wrap your blistered palms around the jagged iron lever, gathering your breath for one final, lung-bursting effort. The pressure inside the conduit hums a low, resonant note that vibrates right through the soles of your boots, warning of a sudden rupture if you push too hard or too fast. You set your jaw, lock your knees against the cold stilt, and throw your entire frame into the wrenching twist.\n\n",
+   "check": "Wrench the frozen valve open",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-136": {
+   "title": "A Bitter Spray",
+   "text": "Iron screams as the frozen stem shears clean off in your grip, sending you tumbling backward into the thick, foul-smelling mud of the seabed. A ferocious geyser of high-pressure brine erupts from the ruptured pipe, drenching your pack and scouring a deep, stinging gash across your forearm before you can scramble out of the way. You lie coughing in the wet filth for a long moment, tasting copper and salt, poorer in strength and supplies than you were a minute ago.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl away from the geyser"
+   ]
+  },
+  "td-2-137": {
+   "title": "Sweet Bitter Drops",
+   "text": "Iron groans and gives way at last under your desperate strain, allowing a thick, metallic stream of water to gush straight into your open flasks. You cap the containers just as the pressure threatens to burst the seams, wiping the stinging spray from your forehead with a trembling hand. However narrowly you managed the feat, you walk away with a heavy skin of precious liquid tucked securely against your ribs.\n\n",
+   "check": "",
+   "grant": "Sealed water skin",
+   "exits": [
+    "Turn back toward the outskirts"
+   ]
+  },
+  "td-2-138": {
+   "title": "The Sealed Chest",
+   "text": "Half-buried in a drift of grey kelp and dried barnacles sits a heavy naval crate bearing the faded crest of the old Gullmouth fleet. Its brass has turned the pale green of a bruised apple, and the keyhole is choked tight with salt-grit and hardened grease. You kneel in the damp gloom, drawing your thin wire picks from their lining to probe the intricate inner tumblers by touch alone.\n\nA faint, sweetish odour drifts up from the lid's edge - the unmistakable tang of preserved lard and poison-damp that warns of a crude needle trap waiting behind the brass plate.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick the salt-choked lock"
+   ]
+  },
+  "td-2-139": {
+   "title": "The Poison Needle",
+   "text": "Your fingertips dance lightly over the jammed tumblers, feeling the tiny shivers of tension in the rusted springs beneath the heavy lid. A single false click will trip the poisoned brass barb hidden within the groove, leaving your arm numb before you can even claim the rations locked inside. You hold your breath, sliding the slender wire deeper into the dark gap while your heart hammers against your ribs.\n\n",
+   "check": "Probe the rusted lock tumblers",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-140": {
+   "title": "A Slip in the Dark",
+   "text": "Metal scrapes against metal with an ugly shriek, and a tiny, envenomed dart springs from the casing to graze the meat of your thumb before you can jerk your hand back. Numbness spreads like cold ink through your fingers, forcing you to drop your tools and sit in the grey mud while your pulse pounds wildly in your ears. You survive the sting by sheer stubborn will, but your pack remains firmly shut and your hand throbs with a dull, persistent ache.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Nurs your poisoned thumb"
+   ]
+  },
+  "td-2-141": {
+   "title": "The Stolen Cache",
+   "text": "The rusty latch finally yields with a wet, satisfying snap, swinging upward to reveal rows of salted mutton wrapped in oilskin and grease-stained canvas. However narrowly you avoided the hidden trap, your nimble fingers have secured a prize that will keep your belly full through the long miles ahead. You slip the savory slabs into your pack alongside a small, unmarked brass token left behind by some forgotten sailor.\n\n",
+   "check": "",
+   "grant": "Rations and brass token",
+   "exits": [
+    "Return to the sprawling outskirts"
+   ]
+  },
+  "td-2-142": {
+   "title": "The Abyssal Trench",
+   "text": "Beyond the outer ring of stilts, the flat grey seabed breaks apart, plunging precipitously into a massive, shadowed gash where the light of the low sun fails to reach. At the bottom of this drowned canyon lies a titanic gothic structure half-swallowed by grey silt, its shattered stained-glass windows gaping like blind eyes and its towering buttresses leaning at perilous angles. Faint, mournful harmonies drift up from the vaulted stone archways, echoing with voices that have not spoken to the living air in generations. You shoulder your pack and pick your way carefully down the steep, shale-strewn slope toward the dark entrance.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the drowned cathedral"
+   ]
+  }
+ },
+ "missing": []
+}

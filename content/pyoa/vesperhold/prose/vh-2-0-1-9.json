@@ -1,0 +1,92 @@
+{
+ "batch": "vh-2-0-1-9",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-0-1-9": {
+   "title": "The Brass Scales",
+   "text": "Heavy iron weights clink against a groaning brass scale as a Cable Court guard drops your pack onto the pan. His colleague leans over the counter, eyes narrowing at the pale green patina of the bronze Clapper strapped to your spine. The metal gives a low, sympathetic thrum against your shoulder blades, vibrating through the wood and canvas as the beam teeters, threatening an exorbitant toll for every pound of sacred metal you carry down the mountain face.\n\nA frantic winch-boy drops his tallow bucket right across your path as a heavy basket screeches downward.",
+   "exits": [
+    "Rush past the sliding bucket"
+   ]
+  },
+  "vh-2-0-2-0": {
+   "title": "The Anchor Stone",
+   "text": "Frigid gales sweep across the open marketplace, causing a thick iron cable overhead to sing a high, piercing note that sets your teeth on edge. You duck quickly inside a hollow anchor-stone, finding a brief sanctuary from the biting wind and the watchful eyes of the toll-collectors patrolling the suspension bridges. The heavy bronze Clapper hums quietly against your padded cradle, answering the distant vibration of the mountain's frozen heart.",
+   "exits": [
+    "Slip behind the woodpile",
+    "Accept the bitter chicory water"
+   ]
+  },
+  "vh-2-0-2-1": {
+   "title": "The Rope-Master",
+   "text": "A one-eyed rope-master named Tallow steps into your path, coughing dryly into a woollen knuckle as he inspects your backpack cradle with professional interest. His gnarled fingers trace the hemp lashings securing the bronze Clapper, testing the tension with the ease of a man who has spent fifty years binding the vertical world together against the abyss. He mutters something about winter gales before nodding at your burden.",
+   "exits": [
+    "Duck into the shadowy alcove",
+    "Take a cup of chicory water"
+   ]
+  },
+  "vh-2-0-2-2": {
+   "title": "Yellow Hemp Flags",
+   "text": "Hundreds of hanks of bright yellow hemp flutter like prayer flags above the suspended market square, filling the crisp mountain air with the sharp scent of fresh tar and dry grass. You pick your way carefully across the swinging timber planks, keeping a steady hand on the padded cradle where the heavy bronze Clapper hums its low, continuous note against your tired muscles.",
+   "exits": [
+    "Skirt the edge of the great timber wheel",
+    "Guide Biscuit past the salted hides"
+   ]
+  },
+  "vh-2-0-2-3": {
+   "title": "The Clerk And Tally",
+   "text": "A nervous clerk named Pip drops his tally-chalk as the bronze Clapper hums against your shoulder-straps, letting the white cylinder roll into the greasy sawdust between his boots. The wind off the gorge smells of wet hemp and old grease, whipping through the narrow stalls of the rope market while the heavy metal on your back answers every gust with a low, bronze shiver. Pip scrambles to retrieve his chalk, muttering about toll receipts and missing weight tallies while pointing a trembling finger toward the various winch-lanes and timber platforms branching off into the freezing mist.",
+   "exits": [
+    "Skirt the edge of the humming timber wheel",
+    "Face the sergeant blocking the alley ahead",
+    "Learn a secure mountain knot from Bram",
+    "Turn back toward the upper rope market"
+   ]
+  },
+  "vh-2-0-2-4": {
+   "title": "The Capstan And Mule",
+   "text": "You step over a grease-slicked capstan while winch-hands heave in unison against the mountain draft, their breath pluming white in the biting air. Biscuit tramples heavily on a loose wooden slat behind you, shaking her head until the leather bells on her harness jingle in protest against the weight of the climb. The massive bronze Clapper resting in your back-cradle vibrates sympathetically with the turning iron gears nearby, sending a steady, low-frequency thrum down your spine that matches the pulse of the bustling market around you.",
+   "exits": [
+    "Approach the sergeant demanding descent papers",
+    "Guide the mule past salted hides"
+   ]
+  },
+  "vh-2-0-2-5": {
+   "title": "The Tallow And Moss",
+   "text": "A stall selling dried mountain moss and tallow-dips offers a warm corner away from the biting gorge wind, smelling faintly of rendered sheep fat and herbal smoke. The old vendor nods silently as you pause by her counter, the heavy bronze tongue on your back humming against its wooden cradle like a caged and restless thing. Down the narrow plankway beyond the stall, shouting winch-boys and heavy cargo baskets create a chaotic wall of sound and motion that you must navigate if you are to reach the lower stair-towns before nightfall.",
+   "exits": [
+    "Show your permit to the demanding sergeant",
+    "Lead Biscuit past the stacks of salted hides",
+    "Listen to the weaver share a heavy-load knot",
+    "Turn back past the toll-house demanding pennies"
+   ]
+  },
+  "vh-2-0-2-6": {
+   "title": "The Swinging Counterweight",
+   "text": "You dodge a swinging counter-weight that crashes into the timber framing with a hollow, booming thud, showering the damp cedar planks with fine wood splinters. The mountain wind howls through the rigging overhead, shaking the suspended walkways of the rope market until the whole precarious bazaar seems to sway over the abyss. Beneath your canvas coat, the bronze Clapper gives a sharp, metallic pulse as if warning you of the next sudden gust sweeping up from the lower valleys.",
+   "exits": [
+    "Dash across the slatted pine platform",
+    "Listen to the merchant begging for secrecy"
+   ]
+  },
+  "vh-2-0-2-7": {
+   "title": "The Frozen Winches",
+   "text": "An old cable-rider named Nesta warns you that the lower winches are jammed with frozen grease, leaning heavily on a scarred ash staff while she points toward the icy drums below. Her weathered face is lined with the salt and frost of fifty winters on the cliff, and her sharp eyes flick immediately to the heavy bronze mass strapped across your shoulders. Around her stall, other traders hustle to clear the ice from their rigging before the afternoon gales lock the entire market in a collar of solid frost.",
+   "exits": [
+    "Ask the weaver to show you the heavy-load knot",
+    "Show your braided guild-rope to clear the lane",
+    "Hear the nervous merchant beg a favor"
+   ]
+  },
+  "vh-2-0-2-8": {
+   "title": "The Willow Bridge",
+   "text": "Slender willow withes twist together to form a trembling suspension bridge that sways rhythmically while the bottomless abyss yawns directly below your heavy boots. You take slow, measured breaths, keeping your center of gravity low beneath the weight of the bronze Clapper as the gorge wind attempts to sweep your legs out from under you.",
+   "exits": [
+    "Conceal the merchant wire in your pack",
+    "Climb the wooden pegs hammered into granite",
+    "Squeeze between the warm pine tar shacks"
+   ]
+  }
+ },
+ "missing": []
+}

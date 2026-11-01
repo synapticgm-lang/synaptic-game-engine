@@ -1,0 +1,71 @@
+@@SECTION ul-4-018
+TITLE: The Margin Alcove
+TEXT: Air thick with the smell of scorched vellum and lamp-oil surrounds you in this narrow nook, where disembodied commentary hovers like faint smoke. Murmurs from unseen readers argue in the shadows, their dry voices debating the proper categorization of lost thoughts. Shadows stretch across the wooden shelves, pulsing softly with every flicker of your failing wick. Every surface bears the restless ghost-ink of past annotations, tempting you to linger or press deeper into the oldest stacks. // The way forward splits into distinct corridors of inquiry, each promising its own burden of secrets before the Long Closing seals these chambers forever.
+EXIT 1: Listen to the whispering walls
+EXIT 2: Dodge the snapping reference books
+EXIT 3: Step past the tumbling folios
+EXIT 4: Tread softly on murmuring bookplates
+@@END
+@@SECTION ul-4-019
+TITLE: Echoes of Reproach
+TEXT: Bitter reproaches drift from the parchment-clad walls, hissing sharp critiques about your sloppy shelving and unscholarly haste. You stand your ground against the spectral scolding, enduring the endless catalog of petty grievances without flinching. One particularly stern voice, belonging to a long-forgotten reader, eventually falters into grudging respect. It drops a scrap of yellowed parchment into your open palm before dissolving back into the binding. This scrap bears a forgotten archival shortcut through the twisting labyrinth of the Deep Annexe.
+EXIT 1: Follow the hidden archival shortcut
+@@END
+@@SECTION ul-4-020
+TITLE: Enduring the Bitter Chorus
+TEXT: Disembodied complaints swell into a deafening wall of sound, shaking the very dust from your collar as you prepare to force your way through the narrowest part of the alcove. The spectral voices jabber with malicious glee, attempting to break your concentration and drive you back into the open stacks. You brace your shoulders, locking your jaw against the stinging barbs of criticism and holding fast to your purpose while the parchment walls crowd close around your ears.
+CHECK: Maintain steady nerve against criticism
+@@END
+@@SECTION ul-4-021
+TITLE: Scratched by the Margin
+TEXT: Weakening under the relentless barrage of ancient opinions, you stumble against a sharp wooden corner and tear your sleeve. The abrasive paper-dust gets into your eyes, blinding you for a crucial moment while the ghostly chorus jeers at your clumsiness. You recover your footing with a heavy sigh, wiping a smear of dark ink from your bruised forearm. The delay costs you precious time and leaves a raw, stinging paper-cut across your skin, but you push onward into the gloom.
+EXIT 1: Proceed into the dimmer stacks
+@@END
+@@SECTION ul-4-022
+TITLE: The Annotated Shortcut
+TEXT: Holding your ground against the spectral reprimands, you press forward through the swirling cloud of commentary and emerge into a quieter corridor. Whether you slipped through cleanly or took a few sharp paper-cuts along the way, your stubborn determination has paid off. Clutched in your fist is a valuable token left behind by the vanquished critics. You tuck it safely into your pocket, ready for whatever the stacks demand next.
+GRANT: a forgotten archival shortcut
+EXIT 1: Return to the Margin Alcove
+@@END
+@@SECTION ul-4-023
+TITLE: Snapping Bindings
+TEXT: Shelves line the narrow passage like rows of hungry jaws, filled with heavy reference books that lunged at your passing coat-tails with leather-bound fury. You wait for the right moment, timing your breath to the rhythm of the clicking spines. A flash of polished metal catches your eye amidst the leather and teeth. With a quick flick of your wrist, you reach out and snatch a gleaming brass bookmark from the jaws of a particularly aggressive folio before it can snap shut again.
+EXIT 1: Retribution among the snapping folios
+@@END
+@@SECTION ul-4-024
+TITLE: Threading the Dental Shelves
+TEXT: Reference volumes snap their leather covers open and shut like iron traps, blocking access to the prize wedged deep between two heavy encyclopedias. You balance on the edge of a rolling stool, preparing to weave through the gap with absolute precision while the predatory books lash out from their resting places. Every instinct warns you that a single mistimed movement will leave your fingers caught between biting pages.
+CHECK: Dodge snapping books for bookmark
+@@END
+@@SECTION ul-4-025
+TITLE: Caught in the Binding
+TEXT: A sudden shift in the shelving throws off your balance, and a heavy dictionary snaps shut viciously over your knuckles before you can pull back. You wrench your hand free with a sharp hiss of pain, leaving a bit of fabric and skin behind in the greedy leather mouth. The injury throbs painfully with every heartbeat, slowing your steps and reminding you of the library's unyielding appetite for careless visitors.
+EXIT 1: Retreat to the alcove to nurse fingers
+@@END
+@@SECTION ul-4-026
+TITLE: The Brass Safeguard
+TEXT: Moving with careful grace past the snapping rows, you slip your fingers into the gap and slide the metal marker free from the hungry pages. Whether you danced through untouched or paid a small toll in skin and fabric, the prize is yours at last. The cool metal talisman hums with a faint, steady counter-magic that seems to calm the surrounding ink. You stow it carefully away, knowing it will protect your hands from further hostility.
+GRANT: a brass ink-repelling bookmark
+EXIT 1: Return to the Margin Alcove
+@@END
+@@SECTION ul-4-027
+TITLE: Tumbling Folios
+TEXT: Shelves overhead groan under the weight of unread manuscripts, shedding thick layers of dust and loose pages like autumn leaves. A cascade of heavy leather-bound folios breaks loose from the upper tier, tumbling down toward the narrow stone path with gathering speed. You keep your wits about you, watching the avalanche of paper with a cool eye. On a crumbling wooden ledge just beneath the falling debris, a small glass vial glimmers with preserved, iridescent ink.
+EXIT 1: Pluck the vial from the ledge
+@@END
+@@SECTION ul-4-028
+TITLE: Sidestepping the Paper Avalanche
+TEXT: Heavy folios rain down around your boots in a chaotic flurry of loose signatures and broken spines, threatening to sweep your feet out from under you on the slick stone floor. You drop low, shifting your weight from heel to toe as you prepare to lunge past the falling debris and snatch the delicate glass vial resting on the crumbling wooden ledge before the whole structure gives way.
+CHECK: Snatch ink-vial from crumbling ledge
+@@END
+@@SECTION ul-4-029
+TITLE: Buried in Paper
+TEXT: The crumbling ledge gives way entirely under your weight, sending a shower of splinters and old paper cascading over your shoulders as you scramble to safety. You tumble hard against a cold stone pillar, scraping your knee and losing a portion of your supplies to the encroaching drifts of loose text. Dust fills your lungs, making you cough as you brush off the ruined pages clinging to your coat.
+EXIT 1: Dust yourself off and move on
+@@END
+@@SECTION ul-4-030
+TITLE: The Preserved Drop
+TEXT: Darting through the cascading cascade of falling folios, your fingers close around the cold glass vial just as the wooden ledge shatters into dust behind you. Whether you vaulted through the falling paper with effortless balance or scrambled away with bruised shins and a ruined hem, you hold the prize secure. The iridescent ink inside swirls with strange, deep colors that seem entirely untouched by the age of the surrounding stacks.
+GRANT: a preserved ink-vial
+EXIT 1: Return to the Margin Alcove
+@@END

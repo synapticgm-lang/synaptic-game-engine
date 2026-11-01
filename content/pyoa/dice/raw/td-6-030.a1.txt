@@ -1,0 +1,7 @@
+Gemini said
+
+@@SECTION td-6-035
+TITLE: The Quiet Sand
+TEXT: Nothing stirs on the miles of grey silt where the tide used to break against the cliffs of Gullmouth. The great iron levers of the Sunken Stair stand silent, cold with salt-frost, their teeth locked into a motionless brass eternity that neither floods nor ebbs. Down in the dry gullies, the stranded leviathan rots slowly under a grey, sunless sky, its ribs like the skeleton of an overturned cathedral filled with drifts of powdery salt. No gulls wheel overhead, and no lanterns bob along the horizon where the Brineholders once guarded their water-towers on stilts. You walk alone across the level floor of the world, your boots crunching on tiny, dead shells and the brittle remains of things that forgot how to breathe long before the old wardens laid their iron to sleep.
+EXIT 1: Walk toward the distant grey horizon
+@@END

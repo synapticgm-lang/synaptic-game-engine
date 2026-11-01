@@ -1,0 +1,107 @@
+{
+ "batch": "cf-1-121",
+ "sections": {
+  "cf-1-121": {
+   "title": "The Uncoupling Crew",
+   "text": "Heavy iron scrap clatters against the ash-crusted paving of the siding as two figures in grease-stiffened canvas stoop over the drawbar between the Marrowbone and her coal tender. Their wrench slips with a high, metallic shriek that cuts through the hiss of escaping steam, and one of them swears low, squinting up into the soot-stained dusk toward the footplate where you stand. The coupling pin, thick as a navvy's forearm and greased with black tallow, has already been lifted half an inch from its seating. If they drive it home, the engine will lurch forward alone into the dead-end spurs while the heavy wagon stays behind in the shadows, leaving your fuel and your supplies at the mercy of the yard guards.\n\nShadows lengthen across the stacked sleepers as you leap down from the iron ladder, boots crunching deep into the grey drift of the ballast just as a heavy fist reaches for the latch of the safety chain.",
+   "check": "Wrench the stubborn packing bolt home",
+   "grant": "Union Yard-Master's Marked Pin",
+   "exits": [
+    "Climb down to the main engine floor",
+    "Search the shadows for lurking saboteurs",
+    "Heave the spare wheel-set back onto the tracks",
+    "Wait by the driving wheels as the storm clock strikes"
+   ]
+  },
+  "cf-1-122": {
+   "title": "The Engine Sheds",
+   "text": "Heavy iron girders drip with black condensation above the roundhouse floor, where the Marrowbone stands hissing in the soot-stained dark. Around her flank, the smell of hot grease and damp coal mixes with the distant rumble of the station clock grinding through its gears. You stand amid the silent pits where grease-traps bubble and pressure gauges twitch under flickering gaslamps. Every shadow between the stalled tenders seems to watch your next move with quiet impatience.\n\nSteaming oil drips onto the flagged stone while the vast depot breathes its heavy, iron-lunged breath around you. Decide where the work or the danger calls you now from this smoky heart of the yards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the leaking steam header //",
+    "Watch the shadows near the coal bunker //",
+    "Heave a heavy spare wheel-set //",
+    "Wait until the midnight hour strikes //"
+   ]
+  },
+  "cf-1-123": {
+   "title": "Beneath the Iron Ribs",
+   "text": "Scalding mist curls from the fractured flange of the main distribution pipe, coating your leather gloves in slick, grey moisture. You wrap the heavy asbestos tape tightly around the hissing seam while tightening the brass securing bolts with a short-handled spanner. The leaking hiss subsides into a steady, rhythmic thrum as the pressure needle creeps back into the green arc.\n\nCool air sweeps through the rafters overhead, carrying the dry taste of distant ash from the yards outside. With the joint sealed and the gasket holding firm, the Marrowbone stands ready once more for whatever pressure the road demands.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test the restored boiler pressure //"
+   ]
+  },
+  "cf-1-124": {
+   "title": "The Re-pressurized Line",
+   "text": "Steady heat radiates through the copper lagging as you tap the pressure gauge glass with a calloused fingernail to ensure the needle stays true. The boiler sings its deep, low-pitched song once more, vibrating through the footplate with the promise of a long, hard haul across the steppes. A thin plume of white vapour drifts past the cab window and vanishes into the blackened rafters above.\n\nEvery valve sits square in its cradle, and the auxiliary feed pump pulses with an even, reliable beat. You wipe your hands on an oily rag and turn your gaze toward the open track waiting beyond the shed doors.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Venture out toward the main line //"
+   ]
+  },
+  "cf-1-125": {
+   "title": "Sealing the Fracture",
+   "text": "Boiling vapour lashes your wrists as you lean into the narrow gap between the firebox casing and the main steam chest, your fingers searching blindly for the blown gasket. A sudden sputter of superheated water spits from the fracture, threatening to scald your forearms if your wrench slips even a fraction of an inch against the hot iron bolt. You tighten your grip on the metal handle and draw a slow breath, aligning the fresh packing ring by touch alone in the blinding hiss.\n\n",
+   "check": "Wrench the rusted bolt home //",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-126": {
+   "title": "Scalded and Bent",
+   "text": "A sudden surge of scalding spray forces your hand aside, searing the skin of your wrist and driving a sharp curse from your throat. You stumble back into the coal bunker with a bruised shoulder, coughing against the thick cloud of white steam that fills the cramped cab. The gasket is wedged crookedly in its seat, leaking a steady hiss that mocks your hurried efforts.\n\nYou bind the burn with a greasy rag and reach for a heavier drift-pin to hammer the stubborn seating back into true alignment. The repair holds after a fashion, though the delay costs you precious coal and leaves a dull, throbbing ache in your forearm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the roundhouse floor //"
+   ]
+  },
+  "cf-1-127": {
+   "title": "A Tightened Joint",
+   "text": "Your wrench turns the final stubborn thread with a sharp metallic squeak as the gasket beds home against the iron flange, sealing the breach cleanly at last. The violent hissing cuts off instantly, leaving only the steady, low-throated rumble of the firebox and the steady climb of the pressure needle. You wipe the sweat and grey ash from your forehead, knowing how narrowly you avoided a blown line before the journey even began.\n\nA stout copper packing-ring drops into your palm from the ledge, heavy and cold, left behind by some vanished mechanic who knew the value of a solid fix.",
+   "check": "",
+   "grant": "heavy copper packing-ring //",
+   "exits": [
+    "Step back to the central yard //"
+   ]
+  },
+  "cf-1-128": {
+   "title": "Shadows in the Bunker",
+   "text": "A low scrape of boot leather against slack coal alerts you just before a dark silhouette detaches itself from behind the tender's rear ladder. You freeze beside the firebox door, watching a gloved hand slide a jagged iron wedge between the motion-bars where it could jam the valve gear instantly. The intruder pauses, sensing your presence in the gloom, but has not yet turned to face the glow of the open fire-door.\n\nThe scent of stale tobacco and railway grease hangs heavy in the narrow space between the tenders. You shift your weight onto the iron floorplate, keeping your movements silent as you prepare to strike before the wedge drops.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Spring forward to catch the saboteur //"
+   ]
+  },
+  "cf-1-129": {
+   "title": "The Iron Wedge",
+   "text": "You lunge across the footplate just as the intruder's arm cocks back to hammer the iron wedge deep into the valve linkages, aiming to seize the Marrowbone's drive-wheels. Your fingers hook into the rough wool of a heavy canvas coat, twisting the fabric hard to throw the prowler off balance against the jagged edge of the coal bunker. The heavy wedge slips from gloved fingers with a dull clatter, spinning across the iron decking into the shadows.\n\n",
+   "check": "Tackle the intruder into the coal //",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-130": {
+   "title": "Caught Off Balance",
+   "text": "The intruder twists away with surprising agility, sending your clutching hands sliding harmlessly off their coat-sleeve as you crash shoulder-first into the iron water-column. A heavy iron wedge strikes the deck-plates with a sharp ring, wedging itself beneath the brake pedal before you can recover your footing. You curse through bruised ribs as the saboteur slips away into the smoky gloom of the coaling stage, leaving behind a torn scrap of dark wool and a jammed brake that will take precious minutes to clear.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself back to the roundhouse //"
+   ]
+  },
+  "cf-1-131": {
+   "title": "The Saboteur Cornered",
+   "text": "Your shoulder connects squarely with the intruder's ribs, driving the breath from their lungs in a sharp gasp and slamming them hard against the ribbed iron tender wall. The heavy wedge drops from their failing grip with a dull thud, clattering harmlessly against the footplate far clear of the valve gear. You pin them against the cold metal until they stop struggling, catching your breath in the acrid air.\n\nA small leather notebook tumbles from their pocket onto the steel plates, its pages filled with neat pencil tallies of every engine scheduled to cross the steppes this week.",
+   "check": "",
+   "grant": "saboteurs coded notebook //",
+   "exits": [
+    "Return to the central yard //"
+   ]
+  }
+ },
+ "missing": []
+}

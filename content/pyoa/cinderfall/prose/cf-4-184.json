@@ -1,0 +1,117 @@
+{
+ "batch": "cf-4-184",
+ "sections": {
+  "cf-4-184": {
+   "title": "The Bulkhead Markings",
+   "text": "Dim amber lamps flicker along the grease-slicked walls of the tunnel, casting long, wavering shadows across the heavy steel doors. Fine soot settles on your collar as you lean close to inspect the rusted wheel rims of the bulkhead. Indented into the cold metal are tiny, interlocking notches and faint, hand-punched tallies left by generations of signalmen. Your fingers trace the worn grooves, feeling the distinct pattern of a forgotten lock sequence hidden within the soot.\n\nThe air tastes of stale iron and damp coal dust, pressing heavily against your eardrums as the distant rumble of the engine reverberates through the rock. You must interpret the code before the accumulating pressure forces a shift in the locking tumblers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Decipher the notched sequence on the wheel rims"
+   ]
+  },
+  "cf-4-185": {
+   "title": "Decoding the Tumblers",
+   "text": "Cold sweat beads on your forehead as you align the rusted wheel rims, matching the sequence notched into the bulkhead against the fading memory of Hesper's logbook. A sudden tremor shakes the rock above, and a shower of grit rattles down your collar, threatening to throw your alignment out by a hair's breadth. With the heavy locking bar trembling under the immense weight of the water-works behind it, you must commit your weight and wits to the final adjustment.",
+   "check": "Decipher the sequence on the wheel rims",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-186": {
+   "title": "A Slip of the Hand",
+   "text": "The heavy iron rim slips from your grease-slicked fingers with a sharp clang, biting into your palm and leaving a jagged, bleeding graze across the heel of your thumb. Time slips away as the lock jams tight with a protesting shriek of dry metal, forcing you to hammer the stubborn pins back into place with the flat of a heavy spanner. The delay costs you precious minutes and leaves your hand throbbing with a dull, persistent ache, but the mechanism finally yields to your persistence.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed through the jammed bulkhead doors"
+   ]
+  },
+  "cf-4-187": {
+   "title": "The Iron Combination Ring",
+   "text": "Your fingers lock the final wheel rim into place with a satisfying, deep-throated click that echoes down the damp stone corridor. The heavy iron mechanism gives way at last, sliding smoothly into its housing to reveal a hidden recess containing a heavy, stamped metal ring. You slip it into your pocket, feeling the cold weight of the tool as proof of your success.",
+   "check": "",
+   "grant": "iron combination ring",
+   "exits": [
+    "Approach the final siding and winches"
+   ]
+  },
+  "cf-4-188": {
+   "title": "The Tangled Cable",
+   "text": "Coils of rusted steel cable litter the damp floor around the auxiliary winch drum, snarled into a dense, unyielding bird's nest that blocks the line. You drop to your knees in the grit, wiping sweat and coal dust from your eyes as you examine the tangled strands. Every tug brings a shower of fine grey ash from the low ceiling, coating your sleeves and filling the air with the dry taste of the steppe.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clear the tangled cable from the drum"
+   ]
+  },
+  "cf-4-189": {
+   "title": "The Oily Rags",
+   "text": "Heavy canvas rags soaked in machine oil lie discarded near the rusted winch frame, smelling strongly of petroleum and old heat. You gather them up, using the slick fabric to scour the crusted grime from the rotating axle and the jammed gear teeth. The metal groans under your ministrations, shedding layers of black scale as the moving parts begin to slip free of their long confinement.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Scour the rusted axle and gear teeth"
+   ]
+  },
+  "cf-4-190": {
+   "title": "Clearing the Jam",
+   "text": "You wedge the heavy steel wrench into the stubborn gears while your other hand strains to haul the snarled cable free from the jammed drum. The rusted line groans under the sudden tension, threatening to whip back and shatter your knuckles against the stone wall if the teeth slip. With every muscle in your back corded against the strain, you throw your weight onto the lever.",
+   "check": "Clear the jammed cable drum with tools",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-191": {
+   "title": "A Snapped Strand",
+   "text": "A sudden, vicious snap echoes through the chamber as the rusted cable gives way under the strain, whipping across your forearm and tearing a jagged line through your sleeve. Warm blood wells up through the torn wool, mixing with the greasy soot on your skin as you curse your haste. You are left with a stinging, superficial welt and a tangled mess of wire, but the drum is finally free to turn.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the remaining braided steel cable"
+   ]
+  },
+  "cf-4-192": {
+   "title": "Clearing the Cable Drum",
+   "text": "Working with frantic precision, you drive the stubborn wedge clear of the jammed cable drum, your knuckles scraping raw against the iron housing as grease and soot smear your forearms. The screeching machinery finally yields with a heavy, protesting sigh, freeing a length of braided steel cable that you coil carefully and tuck into your canvas kit as a hard-earned keepsake of the ordeal.",
+   "check": "",
+   "grant": "braided steel cable",
+   "exits": [
+    "Pull the heavy iron release lever"
+   ]
+  },
+  "cf-4-193": {
+   "title": "The Ticker Tape",
+   "text": "A narrow ribbon of paper spills endlessly from the brass housing of the telegraph ticker on the wall, covered in jagged dashes of blue ink. You catch the end of the tape, letting the dry paper slide between your thumb and forefinger as you decode the rhythmic pulse of the line. The numbers spell out the fluctuating steam pressures of the mountain locks ahead, warning of narrow margins and dangerous heat thresholds.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Decipher the telegraph ticker tape sequence"
+   ]
+  },
+  "cf-4-194": {
+   "title": "The Insulating Roll",
+   "text": "Rusted pipes hiss softly in the gloom overhead, venting hot steam into the cramped stone passage and fogging your spectacles with greasy moisture. You reach into the wall-locker and pull out a thick, fibrous roll of treated fabric tape, smelling faintly of tar and old asbestos. It is designed to wrap leaking joints and shield delicate linkages from the biting corrosive draft of the tunnel.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the roll of insulation tape"
+   ]
+  },
+  "cf-4-195": {
+   "title": "Reading the Line",
+   "text": "Your eyes scan the rapidly advancing ink patterns on the paper tape, searching for the exact moment the pressure drops enough to risk opening the bypass valve. The telegraph key chatters frantically beside your ear, tapping out hurried warnings from the automated signal boxes deeper in the rock. You calculate the tolerance of the feed pipes, your fingers hovering over the control lever as the needle creeps toward the red line.",
+   "check": "Decipher the ticker tape pressure warning",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-196": {
+   "title": "Scorched Fingers",
+   "text": "A sudden surge of scalding steam blasts from the nearby pipe joint just as your hand reaches for the valve, catching your fingers before you can jerk them back. The hot moisture leaves your skin pink and tender, throbbing with a sharp, stinging pain that makes it difficult to grip your tools. You press on regardless, binding the burn with a strip of cloth and keeping your eyes fixed on the dials.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed with the insulated pressure valves"
+   ]
+  }
+ },
+ "missing": []
+}

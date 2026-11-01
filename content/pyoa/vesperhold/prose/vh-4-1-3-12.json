@@ -1,0 +1,87 @@
+{
+ "batch": "vh-4-1-3-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-1-3-12": {
+   "title": "The Groaning Seracs",
+   "text": "Jagged towers of shimmering blue ice rise on every side, shifting and groaning like living bone under the relentless weight of the moving glacier. Deep beneath your boots, a muffled subterranean crack echoes through the frozen canyon, setting the heavy bronze Clapper humming in its padded cradle against your spine. You must pick your path through this unstable labyrinth before the shifting walls close entirely.",
+   "exits": [
+    "Weave carefully between the cracking seracs",
+    "Climb higher to bypass the moving ice maze",
+    "Take the reckless way across the trembling span"
+   ]
+  },
+  "vh-4-1-3-13": {
+   "title": "The Hidden Wedge",
+   "text": "Doubting whether the lower foundry fires still burn through this bitter freeze, you pause behind a frost-rimed outcrop to cache your spare gear. With numb fingers, you tuck a heavy bronze wedge deep into a secure rock cairn, ensuring you have a backup plan if you must recast Orison yourself. The wind howls down the gully, urging you onward into the white expanse.",
+   "exits": [
+    "Leave the cairn and press downward",
+    "Retrace your steps toward the open ridge"
+   ]
+  },
+  "vh-4-1-3-14": {
+   "title": "The Frayed Line",
+   "text": "Gale-force winds tear across the exposed glacial saddle, threatening to wrench the padded bronze Clapper from your shoulders and hurl you into the grey abyss. A single frayed hemp hand-line, knotted clumsily around a frost-rimed iron piton driven into the blue-veined ice, offers the only tether between standing upright and sliding into nothingness. You lean your weight against the singing wind, fingers cramping white around the coarse fibers as the ice beneath your boots begins to crumble into fine, glittering powder.\n\nDeciding whether to trust the rotting rope or brave the open gust without a guide, you grip the tether tighter and peer into the swirling vortex ahead.",
+   "exits": [
+    "Trust the frayed hemp and lean forward"
+   ]
+  },
+  "vh-4-1-3-15": {
+   "title": "Across the Iron Sheet",
+   "text": "Frost-shrouded gaps in the glacier yawn wide beneath your boots, spanned only by a corrugated iron sheet that shrieks and flexes under every shift in weight. Biscuit steps hesitantly onto the shivering metal, ears pinned back against the howling gale, while each iron corrugation sends a hollow, metallic clang echoing deep into the blue ice. You clutch the bronze Clapper tightly in its cradle, matching the mule's cautious cadence as the freezing air bites at your cheeks and skitters loose gravel into the dark cleft below.\n\nThe passage narrows sharply where the sheet meets the jagged stone face, leaving you to choose whether to press on blindly or seek firmer footing against the cliff.",
+   "exits": [
+    "Climb toward the sulfur-scented stone shelf",
+    "Flatten against the freezing rock wall",
+    "Step into the oncoming wall of fog"
+   ]
+  },
+  "vh-4-1-4-0": {
+   "title": "The Vertical Glass",
+   "text": "The path ahead vanishes into a sheer wall of blue-white glacier glass where every single handhold must be chipped fresh out of the unyielding rime. Your belt-hatchet rings sharply against the frozen surface, sending tiny diamond shards scattering into the deep void below. The weight of the bronze Clapper pulls heavily at your aching shoulders.",
+   "exits": [
+    "Hew a staircase upward into the blue wall"
+   ]
+  },
+  "vh-4-1-4-1": {
+   "title": "Diamond Dust Squall",
+   "text": "Stinging diamond-dust whipped from the glacier crust blinds your watering eyes as you struggle to keep Biscuit's hooves planted on the narrowing ice-ledge. The mule shivers violently beneath its pack, slipping slightly on the slick blue rime while the bronze Clapper hums a low, sympathetic vibration against your spine. Every breath burns your throat like liquid frost, and the steep drop-off to your left vanishes entirely behind swirling curtains of white.\n\nPausing to steady the trembling animal against the freezing stone, you weigh your options against the mounting fury of the storm.",
+   "exits": [
+    "Secure the lead-rope and wait it out"
+   ]
+  },
+  "vh-4-1-4-2": {
+   "title": "The Humming Span",
+   "text": "High above your head, a rusted suspension cable hums like a giant plucked harp-string as the upper span strains and groans under the relentless fury of the freezing gale. Vibrations travel down the iron wire straight into your aching shoulders, matching the deep, resonant thrum of the bronze Clapper on your back. Ice flakes peel from the overhead links in tiny avalanches, stinging your wool-wrapped neck as you crouch low on the icy decking.\n\nWith the bridge shuddering violently beneath your boots, you must decide whether to anchor yourself securely or press forward before the cable snaps.",
+   "exits": [
+    "Lash the lead-rope to an iron ring",
+    "Push ahead into the blinding fog wall"
+   ]
+  },
+  "vh-4-1-4-3": {
+   "title": "Sulfur and Cold Stone",
+   "text": "Strong arms haul you over the jagged lip of glacier ice onto a sheltered rock shelf where the air smells faintly of sulfur and cold damp stone. The sudden absence of the roaring wind is almost deafening as you catch your ragged breath against the cliff face. Here, the mountain feels ancient, solid, and still.",
+   "exits": [
+    "Follow the rock shelf deeper inward",
+    "Descend the stone steps toward the gorge"
+   ]
+  },
+  "vh-4-1-4-4": {
+   "title": "The Broken Rung",
+   "text": "A fractured wooden ladder-rung dangles by a single frayed strand of hemp over empty air, swinging sickeningly above the hazy blue depth of the glacier crevasse. Carrying the heavy, dead weight of the bronze Clapper makes the required leap a desperate gamble with gravity and ice. Frost numbs your knuckles as you test the tension of the remaining strand, watching tiny shards of wood flutter down into the fog.\n\nPreparing your muscles for the perilous bound across the void, you tighten your grip and eye the opposite ledge.",
+   "exits": [
+    "Leap across the gap into the whiteout",
+    "Clutch the frozen guidelines and brace yourself"
+   ]
+  },
+  "vh-4-1-4-5": {
+   "title": "The Gatehouse Shelter",
+   "text": "Shielded temporarily by a jutting buttress of black granite, you press your back against the freezing rock wall to let a violent gust pass. Just ahead lies the final icy crossing toward the heavy timber of the lower gatehouse. The bronze Clapper hums softly against your spine, sensing the proximity of masonry and old hearths.",
+   "exits": [
+    "Cross the final bridge to the gates",
+    "Take shelter inside the stone alcove",
+    "Climb the upper embankment to get your bearings"
+   ]
+  }
+ },
+ "missing": []
+}

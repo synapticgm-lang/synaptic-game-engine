@@ -1,0 +1,88 @@
+{
+ "batch": "sg-5-2-2-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-2-2-2": {
+   "title": "The Quartz Lens",
+   "text": "Sunlight hums through a massive quartz lens that skews the desert horizon into a violet smear. Beside the heavy frame, a weary sentry doats over a square tin of dried figs, utterly ignoring your silent scramble across the cool stone sill. The scent of roasted barley and dry dust hangs thick in the draft.\n\nYou must choose your next direction before the sentinel finishes his snack and turns his gaze toward the sill.",
+   "exits": [
+    "Slip past the humming lens toward the shadow.",
+    "Drop down behind the heavy brass astrolabe wheel."
+   ]
+  },
+  "sg-5-2-2-3": {
+   "title": "The Singing Crystal",
+   "text": "A heavy bronze chandelier of singing crystal dangles overhead, chiming faintly with every tremor of the high masonry. A sudden beam of focused sunlight sweeps the floor like a burning searcher, forcing you to huddle low against the wainscot. The air tastes of ozone and hot glass.\n\nYou must find cover before the searing arc swings back across your boots.",
+   "exits": [
+    "Scramble toward the humming pillar in the corner.",
+    "Duck behind the painted archway where the water-seller waits."
+   ]
+  },
+  "sg-5-2-2-4": {
+   "title": "The Weather Proverb",
+   "text": "Dust-caked astrolabes line the gallery walls like skeletons of strange metal birds. An old woman named Thora mutters ancient weather proverbs to herself, blocking the sole egress toward the descending stone stairs with her heavy wool skirts. Her rheumy eyes fix on the horizon, missing your approach entirely.\n\nYou must decide whether to wait out her mumbling or find another way around.",
+   "exits": [
+    "Creep behind the stacked lead weights to avoid notice."
+   ]
+  },
+  "sg-5-2-2-5": {
+   "title": "The Frozen Clock",
+   "text": "A frozen water-clock drips no longer, smelling only of stale silt and ancient lime. You slide behind a carved basalt pillar just as heavy iron boots echo from the gallery entrance, their rhythm steady and merciless. The shadows here are cool and deep, offering a brief reprieve from the blinding glare outside.\n\nYou must choose your route before the patrol rounds the corner.",
+   "exits": [
+    "Dart through the narrow archway into the whispering rotunda.",
+    "Crawl behind the heavy lead weights near the wall.",
+    "Squeeze through the narrow slot-window overlooking the dead basin."
+   ]
+  },
+  "sg-5-2-2-6": {
+   "title": "The Mirror Chamber",
+   "text": "Hollow mirrors multiply your reflection into a fractured crowd of strangers. A nervous runner from an eastern post mistakes your shadow for a Salt Court spy and draws a jagged glass dagger with a sharp scrape of metal on stone. The reflections shimmer and warp in the harsh light.\n\nYou must act quickly to defuse the tension before the blade strikes.",
+   "exits": [
+    "Retreat softly beneath the hanging brass wind-chimes.",
+    "Show your well-oath brand to prove your allegiance."
+   ]
+  },
+  "sg-5-2-2-7": {
+   "title": "The Masonry Ledge",
+   "text": "Quartz tuning-forks vibrate with a low, tooth-aching hum that fills the high air. You balance along a narrow masonry ledge high above a dry subterranean atrium where guard dogs pace and snarl in the gloom. A single misstep would send you crashing onto the stone flags below.\n\nYou must maintain your precarious balance and choose where to drop.",
+   "exits": [
+    "Ease along the ledge toward the dim antechamber ahead.",
+    "Display your well-oath brand to the sentry watching from below."
+   ]
+  },
+  "sg-5-2-2-8": {
+   "title": "The Bitter Tea",
+   "text": "Brass sand-glasses trickle silently in their wooden frames, measuring out the slow collapse of the city. A weary glass-maker named Skene offers a cup of bitter salt-tea in exchange for news from the western rim, his eyes bright with curiosity. The earthenware cup rattles against his trembling fingers.\n\nYou must decide whether to tarry with the glass-maker or press onward.",
+   "exits": [
+    "Slip away toward the dim antechamber of the archives.",
+    "Flash your well-oath brand to secure safe passage through the gate."
+   ]
+  },
+  "sg-5-2-2-9": {
+   "title": "The Lead Folios",
+   "text": "Lead-bound folios line the subterranean library shelves like heavy bricks of grey metal. A Dune Sister refugee named Sula tends a flickering tallow dip, her fingers stained with ink as she warns you of treacherous sinkholes lurking in the dark ahead. The smell of melted fat and old paper fills the confined space.\n\nYou must choose which path to follow into the depths.",
+   "exits": [
+    "Slide past the rusted mining gear in the hollow pier.",
+    "Scramble over the tumbled pile of masonry beneath the mosaic."
+   ]
+  },
+  "sg-5-2-2-10": {
+   "title": "The Sleeping Bailiff",
+   "text": "A great bronze quadrant points an empty metal arm at the blank sky. You slip past a sleeping bailiff whose loud snoring rattles the brass astrolabes on their stands. The air is heavy with the dust of centuries and the smell of stale wine.\n\nYou must choose your direction before the bailiff wakes from his slumber.",
+   "exits": [
+    "Show your well-oath brand to the guard at the iron latch.",
+    "Duck behind the yellow quartz solar fountain to avoid notice.",
+    "Drop down toward the ventilation shaft smelling of damp earth."
+   ]
+  },
+  "sg-5-2-2-11": {
+   "title": "The Shattered Skylight",
+   "text": "Loose salt rattles against your boots as you lean too heavily against the rim of a collapsed dome, sending a sudden grey cloud of grit down into the hollow beneath. A frantic rustle of wings erupts from the chasm as a flock of pale desert pigeons scatter toward the blinding sky, their startled cooing echoing sharply off the quartz walls. Immediately, a harsh challenge rings up from the sentry post below, the sound of iron-shod boots scraping against stone warning you that the Glasswrights are alert. You can either slip sideways through a narrow gap between two leaning pillars to avoid the courtyard entirely, or drop flat onto the sun-baked tiles and crawl toward the shadow of an old mirror-mount.",
+   "exits": [
+    "Slide through the narrow pillar gap",
+    "Crawl toward the mirror shadow"
+   ]
+  }
+ },
+ "missing": []
+}

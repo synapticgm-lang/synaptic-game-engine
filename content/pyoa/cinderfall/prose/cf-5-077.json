@@ -1,0 +1,97 @@
+{
+ "batch": "cf-5-077",
+ "sections": {
+  "cf-5-077": {
+   "title": "Pouch of Dried Leaves",
+   "text": "Smoke hangs low beneath the soot-blackened rafters while the elders murmur among themselves, squinting through the haze at your grease-stained coat. You lean against a scarred timber pillar and spin a careful tale about the engine's sacred duty to the iron line, invoking old timetables and the binding weight of ancient debts. Gradually, the skepticism in their lined faces softens into grudging respect for a fellow traveler of the rails. One of the robed figures reaches into a leather sack and produces a small, coarse pouch filled with dried bitter-leaf, thrusting it into your calloused palm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the leaf and press onward"
+   ]
+  },
+  "cf-5-078": {
+   "title": "The Elder Council",
+   "text": "Shadows flicker across the rough-hewn benches as you weave a plausible story regarding the engine's vital mission to keep the line moving through the encroaching ash-storm. The senior elder leans forward, his milky eye catching the dull glow of the brazier, weighing every word against the bitter memory of broken promises and abandoned depots. You must draw upon your sharpest wits and quickest tongue to maintain the illusion of absolute authority before the council picks apart your narrative and demands to see your clearance papers.",
+   "check": "Talk your way past the elders",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-079": {
+   "title": "A Costly Deception",
+   "text": "Your tongue falters for a crucial heartbeat under the steady, unforgiving gaze of the council elders, and the thread of your story snaps completely in the heavy air. Someone scoffs from the back of the carriage, and a heavy iron poker is thrust toward your ribs to drive you out into the soot and cold. You scramble backward over a stack of discarded luggage, scraping your knuckles raw against a rusted bracket while the bitter-leaf pouch is snatched away by a greedy hand. You limp out into the grey corridor with a throbbing wrist and a lighter pocket, nursing your bruises in the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee down the soot-stained corridor"
+   ]
+  },
+  "cf-5-080": {
+   "title": "The Bitter Leaf Secured",
+   "text": "However narrowly you managed to convince the council of your sacred purpose, the transaction concludes with a heavy thump of approval on the bench. You slip the coarse pouch into your inner pocket, feeling the dry rustle of the leaves against your ribs as a reminder of the narrow escape. The elders turn back to their cold braziers without another word, leaving you free to navigate the smoky aisles back toward the waiting iron.",
+   "check": "",
+   "grant": "pouch of bitter leaf",
+   "exits": [
+    "Return through the ash-shrine corridor"
+   ]
+  },
+  "cf-5-081": {
+   "title": "The Broken Burner",
+   "text": "Sparks dance across the iron floor as the copper incense-burner splters and threatens to shower the assembled crowd with burning embers. With practiced speed, you draw your heavy workshop hammer and deliver a sharp, precise tap to the dented rim, reseating the loose metal just as a murmur of alarm begins to rise among the travelers. The flame settles back into a steady, smoky glow, averting a general panic in the confined space of the carriage. A grateful attendant shoves a bundle of resinous pine-splints into your arms as a token of thanks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the splints and move on"
+   ]
+  },
+  "cf-5-082": {
+   "title": "The Rusted Incense",
+   "text": "The copper burner shudders violently in your grip, venting a jet of black smoke that threatens to choke the narrow compartment while the surrounding passengers edge away in sudden terror. You must rely entirely on your precise knowledge of riveted seams and heat expansion to strike the fractured casing in the exact right spot before the entire vessel ruptures and scatters live coals across the wooden floorboards.",
+   "check": "Strike the burner with hammer",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-083": {
+   "title": "The Smoking Ruin",
+   "text": "The hammer blow falls a fraction too heavy, splitting the fatigued copper seam wide open and showering your boots with stinging sparks and hot ash. You curse under your breath as smoke billows thick and blinding through the cramped carriage, driving the panicked passengers out into the freezing draft of the corridor. You salvage what you can from the smoking ruin, coughing violently and nursing a nasty burn across your knuckles, leaving the wrecked burner behind in the haze.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Escape the smoky compartment fast"
+   ]
+  },
+  "cf-5-084": {
+   "title": "Resinous Pine Splints",
+   "text": "However narrowly you managed to steady the fractured burner, the crisis subsides into a manageable hiss of escaping steam and curling smoke. You sweep the remaining debris into a corner with your boot and tuck the bundle of resinous pine-splints securely beneath your arm, feeling their sticky weight against your jacket. The grateful attendant nods silently from the shadows, granting you passage through the crowded aisle without further delay.",
+   "check": "",
+   "grant": "bundle of pine splints",
+   "exits": [
+    "Walk back toward the ash-shrine"
+   ]
+  },
+  "cf-5-085": {
+   "title": "The Final Bronze Door",
+   "text": "The Stationmaster-General stands squarely before the massive bronze portal of the Water Gate, her ancient frame draped in heavy wool and grease-stained ribbons of office. Her silver pocket-watch rests upon an upturned crate between you, ticking with a cold, metronomic persistence that seems to swallow the distant roar of the gathering ash-storm. She does not look up as you approach, her bony fingers resting lightly upon the heavy iron ring of her keys as if the passage of time itself were hers to command. The low groan of stressed metal echoes through the vaulted chamber overhead, warning that the storm clock is running down to its final ticks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step forward to face the stationmaster"
+   ]
+  },
+  "cf-5-086": {
+   "title": "The Cinderfall Terminus",
+   "text": "The vast, arched roof of the terminus shudders under the rising howl of the wind, trapping the smell of hot brass, old coal-dust, and impending disaster in the high rafters. Down on the oil-slicked platforms, every faction lingers in the gloom like dark birds waiting for the last signal to drop. The massive doors loom at the far end of the tracks, while emergency lights flicker and die one by one against the encroaching dark. Every shadow hides a watchful eye, and every choice pulls you deeper into the final reckoning of the line.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Patch the ruptured steam line",
+    "Face the ancient stationmaster directly",
+    "Adjust the main feed valve overhead",
+    "Trick the remaining platform guards",
+    "Outwit the clerk with rulebook",
+    "Weather the storm in darkness"
+   ]
+  }
+ },
+ "missing": []
+}

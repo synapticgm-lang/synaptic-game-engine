@@ -1,0 +1,54 @@
+{
+ "batch": "v-e-sold-knife",
+ "variants": [
+  {
+   "node": "up-end-sold-knife",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "She kicks a heavy, familiar iron ring of gaol keys across the carpet, a grim souvenir from the turnkey you threw from the parapets, proving she knows exactly how many bodies paved your way here."
+  },
+  {
+   "node": "up-end-sold-knife",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "The detailed charcoal sketches circulating among the city watch made finding you entirely too simple, and she sneers at the arrogance that led you to believe high terrace walls could hide a face every street runner now knows."
+  },
+  {
+   "node": "up-end-sold-knife",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "In your final moments, the bitter irony sharpens; since the vault's ledgers proved the silk and iron houses are a single grand cabal, your wealthy patrons have merely hired this old shadow to neatly erase the last loose thread."
+  },
+  {
+   "node": "up-end-sold-knife",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Lord Valerius's promised men in their crisp silk uniforms lie bleeding outside your threshold, demonstrating that a gentleman's polite protection means absolutely nothing against a feral night-crow intent on settling the score."
+  },
+  {
+   "node": "up-end-sold-knife",
+   "when": {
+    "rigg": "betrayed"
+   },
+   "after": "Stamped with Matron Rigg's foundry seal, the iron-pressed warrant in your rival's left hand makes it brutally clear that betraying the gaol-keeper only earned your assassin an official mandate to end you."
+  },
+  {
+   "node": "up-end-sold-knife",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "Cast over a velvet chair, the disgraced tailor's drab debt coat looks utterly pathetic in this opulent suite, a lingering remnant of the gutter that your pursuer followed straight to your gilded cage."
+  },
+  {
+   "node": "up-end-sold-knife",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "A bloody strip of the rough porter's livery you wore during your escape is wrapped tightly around her blade's hilt, a silent mockery of the disguise that ultimately failed to mask your trail."
+  }
+ ]
+}

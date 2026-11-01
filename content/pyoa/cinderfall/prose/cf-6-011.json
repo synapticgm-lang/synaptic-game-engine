@@ -1,0 +1,56 @@
+{
+ "batch": "cf-6-011",
+ "sections": {
+  "cf-6-011": {
+   "title": "The Iron Fellowship",
+   "text": "Ash settles thick upon the discarded ledgers of the Rail Barons, sealing their ledgers in a grey shroud of rust and cancelled debt. You stand upon the footplate of the Marrowbone while the heavy brass valve-key rests in its cradle, no longer a weapon of siege but a simple tool for the people who mend the ties. Around you, the gangers of the Union gather with their shovels and oil-cans, their laughter tasting of grease and bitter tea as they pull down the high semaphore gates that once dictated every heartbeat on the line. The heavy iron does not fall with a crash; it yields slowly to collective weight, bending like old grass under a late autumn frost. Every signal box between Ashgate and the high wall of Cinderfall stands dark tonight, its glass empty of watchers, leaving the road wide and unmeasured beneath a low, indifferent sky.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the semaphore blades fall into the dust"
+   ]
+  },
+  "cf-6-012": {
+   "title": "Without a Master",
+   "text": "No whistle blows to mark the passing hours, because time has ceased to belong to the men in tall hats who kept the clocks in the back offices. You shovel fine coal into the belly of the Marrowbone, watching the orange glow reflect in the wet eyes of companions who have traded their rations for a share in the road. Cinderfall's great Water Gate remains unlatched at last, its heavy bronze gears turned by many hands rather than a single tyrant's decree, letting the cool mountain water run free through the rusted sluices to refresh the gray flats below. There is no applause from the parapets, only the steady hiss of steam escaping into the dusk and the sound of hammers ringing against the iron plates as the unions carve their own names into the tender-frames. Old debts are paid in sweat and shared bread, leaving the slate clean enough to write upon with chalk.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Sit upon the iron bench as evening falls"
+   ]
+  },
+  "cf-6-013": {
+   "title": "The Last Fire",
+   "text": "Night settles deep over the Ashen Steppe, but the darkness is no longer lonely or watched by cold electric eyes from distant gantries. The Marrowbone idles at the platform's edge, its furnace breathing a steady, warm red into the drafty air while the grease-lamps flicker along the open corridor where no tickets are ever checked again. You leave your heavy leather gloves on the grease-board and step down into the grey dust, your boots crunching on ballast that now belongs to nobody and everybody all at once. Far down the track, a single signal arm stays fixed half-raised in an eternal, useless greeting to the empty horizon, too stubborn to drop and too tired to care. The road stretches out before you toward the hills, silent, patient, and entirely your own.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  },
+  "cf-6-014": {
+   "title": "Ashes of the Law",
+   "text": "Flames leap high from the burning station-house at Ashgate, casting long, writhing shadows of soot across the ruined platforms where the old schedule-books feed the pyre. You watch the charred pages drift into the grey upper air like flocks of black swallows seeking a season that never comes. The Cinder Prophets gather around the blaze with their faces smeared in grease and red clay, chanting low hymns that celebrate the great burning as a sacred clearing of the ground. The heavy iron of the rails glows cherry-red in the heat, twisting and warping until no engine could ever travel upon them again, returning the metal to the earth from which it was dragged so many years ago. Every ledger, ticket-punch, and iron desk is consumed by the cleansing heat, leaving nothing behind but the clean smell of wood-smoke and the dry rattle of cinder-dust in the wind.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Feed another ledger to the hungry flames"
+   ]
+  },
+  "cf-6-015": {
+   "title": "The Teacher's Voice",
+   "text": "Smoke rolls thick across the steppe, blotting out the stars and turning the pale moon into a dull brass button pinned to a dirty coat. You stand among the burning ties with the brass Water Key held high in your bare hand, feeling the metal grow hot not from steam, but from the fierce conviction of the crowd surrounding you. Cinderfall's high walls loom through the haze, their shuttered windows blind to the red glow that dances along the base of the great masonry. The prophets whisper of a world reborn from ash, where no trains run to bind the hours and no signals dictate the rhythm of a man's breathing. Every barrier falls before the heat, and the massive gates of the reservoir groan as the fire licks at their ancient timbers, demanding a reckoning that no timetable can postpone or forgive.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the great gates char and crumble"
+   ]
+  },
+  "cf-6-016": {
+   "title": "A Clean Slate",
+   "text": "Silence follows the great fire, a vast and heavy quiet that settles over the blackened plain like a blanket of cold wool. The Marrowbone stands cold upon its dead track, its brass fittings dulled by soot and its boiler silent forever, a monument to the age of iron that burned itself out to the last coal. You walk away from the smoking ruins toward the open hills, leaving the brass key half-melted in the embers of the great pyre where the old world held its final class. There are no roads left to follow and no schedules to keep, only the endless expanse of grey dust stretching out beneath a sky that has forgotten the color of smoke. The prophets have gone ahead into the dark, singing their ragged songs to the wind, and you walk behind them into a morning that has no need of whistles or destinations.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  }
+ },
+ "missing": []
+}

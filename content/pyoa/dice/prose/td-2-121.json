@@ -1,0 +1,113 @@
+{
+ "batch": "td-2-121",
+ "sections": {
+  "td-2-121": {
+   "title": "Salt Upon The Skin",
+   "text": "Coarse crystals of sea-salt are pressed directly into the raw meat of your forearm, searing with a dry, white heat that bites straight to the marrow. A hooded pilgrim chants low and rhythmic words over the burning patch, watching your eyes for any twitch of terror or sign of surrender. Every instinct in your blood screams to wrench your arm away and plunge it into cooling mud. Instead, you lock your jaw until your teeth grind, keeping your breath steady against the agonizing burn of the ritual.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Endure the burning salt rite"
+   ]
+  },
+  "td-2-122": {
+   "title": "The Seared Flesh",
+   "text": "White smoke rises from your arm where the caustic grains eat into your skin, carrying the sharp scent of old brine and burnt copper. The elder pilgrim presses a flat thumb directly into the stinging wound to test your resolve one final time before nodding in grim satisfaction. A heavy disk of deep-sea glass, cold and dark as a drowned eye, is dropped heavily into your blistered palm as the price of your silence.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the pilgrim circle"
+   ]
+  },
+  "td-2-123": {
+   "title": "The Salt Trial",
+   "text": "Hot crystals of dried ocean salt are ground into the raw flesh of your arm by a withered pilgrim hand, the burning pain sinking deep into the bone. The hooded keeper of the rite watches your face with unblinking intensity, waiting for the first gasp or tremor that will ruin the ceremony. You must hold your muscles rigid against the white-hot agony, fighting the primitive urge to scream out as the salt poisons your blood.",
+   "check": "Hold fast against the burning salt",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-124": {
+   "title": "Scars Of The Rite",
+   "text": "A sudden, irrepressible gasp tears from your throat, shattering the silence of the tent and drawing a disappointed hiss from the surrounding pilgrims. Rough hands shove you backward into the cold dust, denying you the pristine treasure promised to the steadfast. Your forearm is left raw, blistered, and weeping pale fluid, a painful reminder of your broken composure that will cost you precious time and tender flesh to mend.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your pride and leave"
+   ]
+  },
+  "td-2-125": {
+   "title": "The Salt-Sealed Oath",
+   "text": "Coarse crystals of grey sea-salt are ground into your forearms until the skin breaks and the blood runs thin and clear, mingling with the sting of the deep. You press your palms against the brazier's iron rim, biting your tongue until the copper taste fills your mouth, refusing to grant the robed pilgrims the satisfaction of a single cry. Through the haze of white smoke and burning brine, an elder steps forward with hands like dried kelp, pressing a cold, thumb-thick drop of deep-sea glass into your clenched fist. The heavy green lens catches no light of its own, yet it hums faintly against your pulse like a distant heartbeat trapped in ice.",
+   "check": "",
+   "grant": "amulet of deep-sea glass",
+   "exits": [
+    "Leave the camp for the pilgrim trail"
+   ]
+  },
+  "td-2-126": {
+   "title": "Beyond The Dust Shallows",
+   "text": "The ragged tents of the drift folk shrink into grey smudges behind you as the low seabed flattens into a hard expanse of bleached shell-grit. Rising from this barren floor like the ribcage of an ancient leviathan, the immense iron stilts of Saltspire pierce the hazy sky. Heavy wooden walkways and suspended rope-bridges connect the towering platforms overhead, where the wealthy Brineholders oversee their guarded water-engines and pump-houses. Armed wardens pace the lower ladders, their brass-trimmed helmets catching the pale, sunless glare reflected off the salt-flats. You pull your cloak tighter around your shoulders, stepping carefully into the long, cold shadows cast by the sprawling metropolis of water-mongers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the guarded stilt-city"
+   ]
+  },
+  "td-2-127": {
+   "title": "Saltspire Outskirts",
+   "text": "Desperate squatter camps cling to the massive rusted iron feet of the city like barnacles on a stranded hull, their inhabitants boiling brackish sludge over small fires of driftwood. Armed guards in polished bronze breastplates stand before the primary ladder-lifts, turning away anyone without heavy coin or a water-debt token. To your left, a leaking distribution pipe drips precious moisture into waiting copper basins, while narrow service hatches lead into the dark underbelly of the stilt-city. Further out, the seabed drops away into a deep, shadowy canyon where strange metal structures protrude from the silt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the lower guards",
+    "Pry open the rusted water valve",
+    "Pick the storage crate lock",
+    "Descend toward the dark canyon"
+   ]
+  },
+  "td-2-128": {
+   "title": "The Copper Canteen",
+   "text": "You hitch your belt and adopt the brisk, unconcerned stride of an errand-runner carrying orders for the upper tiers, keeping your eyes fixed straight ahead. A Brineholder sentinel turns his heavy gaze toward you, his hand dropping casually to the heavy iron truncheon at his hip as you approach the checkpoint ladder. Your heart beats a frantic rhythm against your ribs, but you force your posture to remain loose and indifferent while holding a forged delivery tally in your left hand.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Meet the guard's cold stare"
+   ]
+  },
+  "td-2-129": {
+   "title": "Steps Upon Iron",
+   "text": "The sentinel squints at the ink-stamped paper in your hand, muttering a dry curse about the endless clerical nonsense of the upper levels before stepping aside with a sluggish wave. You climb the creaking iron rungs of the ladder as fast as dignity allows, leaving the watchful eyes of the checkpoint behind in the damp gloom. A narrow maintenance catwalk stretches before you, lined with condensation-slick pipes that hum with the distant vibration of heavy machinery.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the damp catwalk"
+   ]
+  },
+  "td-2-130": {
+   "title": "The Guarded Ladder",
+   "text": "The Brineholder sentinel steps directly into your path, blocking the ladder-foot with his broad iron-plated shoulder and demanding your travel seal. You must maintain an absolute mask of unbothered authority, spinning a swift falsehood about urgent repairs for the upper reservoirs while your palms grow slick with nervous sweat. A single hesitation in your voice will invite a search and throw you straight into the deep-water holding cages below.",
+   "check": "Bluff past the watchful sentinel",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-131": {
+   "title": "The Iron Cage",
+   "text": "The guard's eyes narrow at a slight tremor in your voice, and with a swift shove he pins you against the cold iron stilt, stripping your pack in seconds. You spend the next few hours huddled in a damp subterranean lock-up while they confiscate your spare rations and leave you with a bruised shoulder and a bitter grudge. They dump you back out into the squatter filth by nightfall, poorer and sorer, but free to try your luck elsewhere in the salt-shadows.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl back to the slums"
+   ]
+  },
+  "td-2-132": {
+   "title": "The Price of Purity",
+   "text": "Heavy iron-shod boots pace slowly across the creaking timber floorboards just inches from your hiding place behind the stacked water barrels, the guard's suspicion hanging as thick in the air as the salt-dust. You steady your breathing, meeting his narrowed gaze with an easy, tooth-rotted grin and a casual lie about checking leaks for the Brineholder magistracy. He lingers, his hand resting heavily on the pommel of a brass-hilted cudgel, before a shouted order from the upper tier draws him away into the shadows. When the coast is clear, you slip your fingers into the canvas sack and draw out a tin-plated canteen, its sloshing weight heavy with sweet, untainted water drawn straight from the deep-city cisterns.",
+   "check": "",
+   "grant": "canteen of pure water",
+   "exits": [
+    "Move out toward the stilt-city outskirts"
+   ]
+  }
+ },
+ "missing": []
+}

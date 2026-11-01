@@ -1,0 +1,31 @@
+{
+ "batch": "vh-5-0-2-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-0-2-0": {
+   "title": "The Whistling Orchard",
+   "text": "Grey ghost-pears loom out of the heavy mist as you step carefully from tuft to sodden tuft, guided only by the rhythmic, three-note whistle of a warden unseen in the white gloom. The padded cradle on your back shifts its weight, the cold bronze clapper within humming a damp counter-melody to the hidden music ahead. Mud sucks at your boots with every stride, threatening to pull you off the hidden stone path into the sunken ruts of the valley floor.",
+   "exits": [
+    "Step towards the fading whistle in the gloom",
+    "Follow the solid line of the drystone boundary wall"
+   ]
+  },
+  "vh-5-0-2-1": {
+   "title": "The Cider Press",
+   "text": "Dripping moss clings to the timbers of an abandoned stone cider press while you lean against its cold flank to adjust the leather harness straps biting into your shoulders. Inside its heavy cradle, the bronze clapper vibrates against your spine, a low and melancholy chord born of the mountain damp. Fog swirls between the gnarled pear trunks, swallowing the sounds of the descent and leaving only the rhythmic drip of moisture from leaf to leaf.",
+   "exits": [
+    "Navigate the slick mud towards the orchard interior",
+    "Seek shelter near the moss-covered stone wall"
+   ]
+  },
+  "vh-5-0-2-2": {
+   "title": "The Winter Harvester",
+   "text": "Frost-tipped branches form a low ceiling over the muddy track where you break a dry crust of rye bread with a shivering harvester whose pockets yield only bruised winter apples and a handful of dull copper coins. The stranger points a gloved finger deeper into the mist before vanishing silently between two ancient trees, leaving you alone with the rhythmic humming of the heavy metal on your back.",
+   "exits": [
+    "Dodge aside as a loose barrel rolls through the boughs",
+    "Search the bracken hollow for a dropped warden pouch"
+   ]
+  }
+ },
+ "missing": []
+}

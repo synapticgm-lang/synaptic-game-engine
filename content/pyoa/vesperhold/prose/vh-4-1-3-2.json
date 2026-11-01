@@ -1,0 +1,91 @@
+{
+ "batch": "vh-4-1-3-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-1-3-2": {
+   "title": "The Frozen Pack-Goat",
+   "text": "Stubborn hooves refuse the turn until you haul on the leading rope, coaxing Biscuit past the rigid carcass of a pack-goat wedged tight into a blue-veined crevice. The cold is a physical presence here, biting at your knuckles through wet wool while the bronze Clapper hums a low, sympathetic vibration against your spine. Keeping your eyes fixed strictly ahead on the shifting grey horizon, you guide the mule forward through the treacherous cleft as the wind howls down the ice-chute.",
+   "exits": [
+    "Face the sheer blue-white glass wall",
+    "Negotiate the narrow wind-lashed ice-ledge",
+    "Listen to the humming suspension cable"
+   ]
+  },
+  "vh-4-1-3-3": {
+   "title": "The Volcanic Vein",
+   "text": "A dark ribbon of volcanic ash slices straight through the pale glacier ice, offering your numbed boots sudden, gritty purchase on the slick, upward-sloping path. You lean into the slope, the heavy bronze tongue shifting in its leather cradle with a dull, resonant thud that jars your shoulder blades. Biscuit picks a cautious way behind you, ears pinned back against the howling gale.",
+   "exits": [
+    "Steer the mule along the ledge",
+    "Heed the humming overhead cable",
+    "Climb onto the sulfur-scented rock shelf"
+   ]
+  },
+  "vh-4-1-3-4": {
+   "title": "Securing the Bronze",
+   "text": "Fingers clumsy with frost, you haul hard on the leather straps of the clapper cradle as a violent mounting vibration threatens to work the heavy bronze free from its padding. The metal sings a thin, complaining note against the gale, demanding your full attention to keep it lashed securely to your frame. Biscuit huddles close against your flank, shaking a crust of rime from his grey muzzle while you double-knot the harness.",
+   "exits": [
+    "Guide the mule along the icy ledge",
+    "Test the straining overhead cable span"
+   ]
+  },
+  "vh-4-1-3-5": {
+   "title": "The Meltwater Tunnel",
+   "text": "Half-buried in a drift of crystalline snow near the shadowed mouth of a dark meltwater drainage tunnel, a heavy, rusted winch-handle left by the Cable Court catches the pale light. Water drips with a slow, hollow rhythm from the frozen vault above, echoing the faint hum of the Clapper on your back. You pause for a heartbeat to catch your breath in the sheltered gloom before pressing forward.",
+   "exits": [
+    "Follow the path beneath the humming cable",
+    "Climb up to the sulfur-scented stone shelf"
+   ]
+  },
+  "vh-4-1-3-6": {
+   "title": "The Cornice Edge",
+   "text": "You edge carefully along a treacherous cornice of wind-blown powder that overhangs a thousand-foot vertical drop into the mist-shrouded gorge of the lower glacier. Every step must be tested twice to ensure the snow-bridge holds your weight and the heavy bronze burden on your back. Below you, the abyss churns with white vapour and the faint, haunting echo of falling ice.",
+   "exits": [
+    "Scramble up to the high rock shelf",
+    "Press flat against the freezing wall"
+   ]
+  },
+  "vh-4-1-3-7": {
+   "title": "The Ptarmigan Flurry",
+   "text": "A sudden explosion of gray mountain ptarmigan bursts straight out from a snow-pocket right beneath your boots, startling the mule with a frantic beating of wings. Biscuit rears back sharply, nearly tipping your heavy bronze burden sideways into the drift. You grab his halter-strap with a shouted warning, planting your heels firmly into the hard-packed crust until the flurry passes.",
+   "exits": [
+    "Lead the mule across the narrow ledge",
+    "Pull yourself up to the rocky shelf"
+   ]
+  },
+  "vh-4-1-3-8": {
+   "title": "The Firn Trench",
+   "text": "You carve a hasty trench into the hard firn snow with your belt-hatchet, crouching low to shelter behind its icy lip while a violent squall of needle-ice rakes the exposed mountain face. The wind shrieks overhead like a trapped spirit, driving frozen pellets into the wool of your hood. Biscuit presses his nose into your shoulder, sharing your meager shelter until the worst of the whiteout passes.",
+   "exits": [
+    "Crawl out onto the sulfur-scented shelf",
+    "Leap across the broken hanging ladder",
+    "Flatten against the freezing rock face"
+   ]
+  },
+  "vh-4-1-3-9": {
+   "title": "The Lowgate Signpost",
+   "text": "A sturdy wooden signpost carved with deep, weather-worn letters by Lowgate artisans points down through the thickening murk toward the lower ladder stations and the distant valley floor. The painted arrows are crusted with rime, but the carved destination remains unmistakably clear. You wipe the frost from the wood with a mittened thumb, measuring the remaining daylight against the long descent ahead.",
+   "exits": [
+    "Haunt the high rock shelf above",
+    "Attempt the leap across the broken ladder",
+    "Hug the freezing wall against the gust"
+   ]
+  },
+  "vh-4-1-3-10": {
+   "title": "Numbed Fingers",
+   "text": "You check your fingers one by one for feeling as the biting frost stiffens the knitted wool of your mittens and turns your ragged breath to rattling crystals. The cold seeps deep into your bones, making the straps of the clapper cradle feel heavier with every passing stride. Stamping your feet against the packed ice, you force your stiff joints to move once more along the trail.",
+   "exits": [
+    "Press against the wall for the final push",
+    "Enter the thick bank of freezing fog"
+   ]
+  },
+  "vh-4-1-3-11": {
+   "title": "The Frozen Blanket",
+   "text": "A discarded woollen blanket frozen stiff as a rigid board blocks your footing on the narrow track, forcing you to hack it loose with short, sharp blows from your belt-hatchet. Shards of ice fly into the air as the fabric finally tears free and tumbles down the precipice. You steady Biscuit against the resulting shudder of the slope before taking your next step forward into the wind.",
+   "exits": [
+    "Lean into the freezing stone wall",
+    "Plunge into the oncoming freezing fog"
+   ]
+  }
+ },
+ "missing": []
+}

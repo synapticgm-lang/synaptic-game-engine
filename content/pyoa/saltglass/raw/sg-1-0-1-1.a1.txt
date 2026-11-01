@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION sg-1-0-1-7
+TITLE: The Empty Sheep Pens
+TEXT: Behind the timber stockade where the sheep-pens stand empty, a weary herdsman hands you a greasy wool blanket and warns you that the desert nights are as sharp as broken glass. The wind whistling through the dry cedar poles carries the cold bite of the distant salt flats, reminding you that your wool coat alone will not hold out the frost. He gestures toward two different paths winding away from the pens into the gathering dusk, advising you to seek shelter before the shadows lengthen across the dust.
+EXIT 1: Take the lower track toward the stone huts
+EXIT 2: Follow the wagon ruts past the empty trough
+@@END

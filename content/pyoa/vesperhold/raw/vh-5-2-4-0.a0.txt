@@ -1,0 +1,57 @@
+@@SECTION vh-5-2-4-0
+TITLE: The Limestone Descent
+TEXT: Damp fruit-groves give way beneath your boots to the great limestone staircase, sweeping downward in broad, weather-worn tiers. You shift the padded cradle on your back, feeling the familiar hum of the heavy bronze tongue against your spine as the cloud ceiling lifts to reveal jagged peaks far above. Moisture drips from mossy stone balustrades, catching the pale afternoon light while Biscuit follows closely behind on clacking hooves. Ahead, the path bifurcates toward the bustling smithies and the main gates of the lower tier.
+EXIT 1: Take the lower smithy path
+EXIT 2: Approach the foundry gates directly
+@@END
+@@SECTION vh-5-2-4-1
+TITLE: The Silent Toll-Arch
+TEXT: Cold condensation beads on your forehead as you pause beneath a vaulted stone toll-arch where the warden bells hang completely silent in the mist. You reach back to check the mule's girth-straps, ensuring the pack remains secure before pressing onward down the winding lane. The air smells sharply of damp earth and distant woodsmoke drifting up from the valley floor.
+EXIT 1: Follow the lane toward the gates
+EXIT 2: Seek the master founder immediately
+EXIT 3: Enter the roaring foundry warmth
+@@END
+@@SECTION vh-5-2-4-2
+TITLE: The Lower Gorge Breeze
+TEXT: White mist swirls behind you as you look back up the sheer mountain face where Vesperhold dissolves into impenetrable cloud. The first clear, crisp breeze of the lower gorge strikes your cheeks, carrying the unmistakable scent of coal-smoke and rushing river water. Every step downward lightens the oppressive weight upon your shoulders, even as the humming bronze core of the Great Bell remains a heavy, pulsing presence in its cradle.
+EXIT 1: Watch the scarred smith inspect the bronze
+@@END
+@@SECTION vh-5-2-4-3
+TITLE: The Broad Paved Descent
+TEXT: Broad paved stones guide your rapid descent toward Lowgate, accompanied by the muffled, rhythmic clank of heavy foundry hammers echoing through the valley haze. The sound acts as a steady pulse, drawing you ever closer to the final destination of your grueling quest. Biscuit quickens his pace beside you, sensing the journey's end in the thickening air and the warmth radiating from the forge-master's yards.
+EXIT 1: Ring the heavy brass hand-pull
+EXIT 2: Drop the cradle on the threshold
+EXIT 3: Present the relic to the master founder
+@@END
+@@SECTION vh-5-2-4-4
+TITLE: The River-Fog Terrace
+TEXT: Dust settles on the mule's grey neck as you reach the final stone terrace overlooking the dense, rolling river-fog below. The dark silhouette of the lower smithies looms ominously through the haze, outlined by the fiery orange glow of furnace doors swinging open in the distance. You rest a hand on the beast's dusty flank, steadying your breathing against the sharp chill of the mountain air.
+EXIT 1: Watch the scarred smith inspect the bronze
+EXIT 2: Present the relic to the master founder
+@@END
+@@SECTION vh-5-2-4-5
+TITLE: The Shuttered Drying-Sheds
+TEXT: Shuttered drying-sheds line the narrow lane, their wooden slats grey and warped from decades of mountain moisture. Your spirit lightens despite the physical exhaustion, knowing the cracked bronze clapper is finally nearing the hearths designed to mend its voice. Biscuit snorts softly into the damp air, kicking up a loose pebble that clatters against the stone wall.
+EXIT 1: Ring the heavy brass hand-pull
+EXIT 2: Present the relic to the master founder
+@@END
+@@SECTION vh-5-2-4-6
+TITLE: The Arch Bridge Torrent
+TEXT: Rushing white-water churns beneath the old arch bridge, sending fine spray into the crisp air as you cross to the northern bank. Thick coal-smoke and the sharp tang of hot iron rise from the forge-master's yard spread out below, promising warmth and shelter after days of freezing isolation. The heavy strap across your chest digs in one last time as you make your final turn toward the roaring furnaces.
+EXIT 1: Step inside the roaring foundry
+@@END
+@@SECTION vh-5-2-4-7
+TITLE: The Final Zig-Zag Trail
+TEXT: Clear lowland air fills your lungs as you stand at the head of the final zig-zag trail winding down into the bustling heart of Lowgate. The Orison's tongue hums softly against your back, vibrating in tune with the massive hammers beating out a rhythm below. You adjust your grip on the carrying straps and prepare to step out of the mountain shadows once and for all.
+EXIT 1: Step inside the roaring foundry
+@@END
+@@SECTION vh-5-2-5-0
+TITLE: The Iron-Studded Gates
+TEXT: Heavy iron-studded gates loom before you, marking the boundary of the vast foundry yard where coal-smoke billows into the grey sky. You reach out to grasp the heavy brass hand-pull, letting it drop with a resounding metallic clang that echoes off the stone walls. Inside, the muffled shouts of workmen and the steady roar of bellows signal that your summons has been heard.
+EXIT 1: Press on
+@@END
+@@SECTION vh-5-2-5-1
+TITLE: The Casting Hall Threshold
+TEXT: Stone flags rise to meet your boots as you drop the padded cradle onto the threshold of the cavernous casting hall. A tall, scarred smith steps forward from the blinding glare of the central furnace, wiping soot from his brow with a leather rag. He looks down with narrowed eyes at the fractured bronze tongue resting quietly in its harness.
+EXIT 1: Press on
+@@END

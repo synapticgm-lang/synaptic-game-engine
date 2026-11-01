@@ -1,0 +1,92 @@
+{
+ "batch": "cf-1-064",
+ "sections": {
+  "cf-1-064": {
+   "title": "Shadows in the Siding",
+   "text": "Shadows stretch long across the ballasted gravel as you skirt the perimeter of the dormant coal stage. Beneath the skeletal frame of an upturned water crane, grease-slick footprints leave a faint, dark trail in the grey dust. Someone has been rifling through the abandoned oil lockers, hunting for anything that burns or trades.\n\nKeeping low against the rusted flank of a ballast wagon, you weigh your options and step cautiously toward the narrow gap between the bogies.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the dark coal stage"
+   ]
+  },
+  "cf-1-065": {
+   "title": "The Oil Locker",
+   "text": "Footsteps echo softly against iron sheeting ahead, rhythmic and cautious, matching your own pace through the labyrinth of dead rolling stock. A sliver of lantern light flickers from the ventilation slit of an unlatched stores van, catching the amber glint of spilled tallow on the sleepers. Whoever is hiding inside is listening just as intently for the rattle of your regulator key.\n\nYou test the heavy iron latch with a gloved thumb, finding it unsealed and waiting for a shove.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push open the creaking door"
+   ]
+  },
+  "cf-1-066": {
+   "title": "Scavengers in the Dark",
+   "text": "Two figures crouch amidst a heap of discarded tallow crates, their faces smeared with lamp-black and suspicion, turning sharply as the floorboards groan beneath your boot. Before they can swing a heavy lead-lined spanner or trigger an alarm, you have to read the sudden shift in their posture and outwit their desperate scramble for the exit.\n\nYou feign a sudden shout toward the rear buffers while lunging low to block their narrow escape route under the chassis.",
+   "check": "Outwit the scavengers in the dark",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-067": {
+   "title": "Cornered by the Rails",
+   "text": "A sudden sweep of a greasy crowbar catches your shoulder, spinning you hard against the jagged iron bracing of the chassis with a dull, ringing thud that rattles your teeth. The scavengers scramble past into the ash-fog, leaving you bruised and clutching a torn sleeve, but the engine waits with steam up and the track ahead is clear.\n\nYou pick yourself up from the ballast, nursing the ache in your arm, and press onward through the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the engine deck"
+   ]
+  },
+  "cf-1-068": {
+   "title": "A Pouch of Pencils",
+   "text": "Swift instincts carry you past the swinging iron bar, pinning the lead thief's arm against the framework with a sharp wrench while the other flees into the grey drift. Between the splintered crates lies a heavy leather pouch of grease-pencils, perfectly preserved and smelling faintly of linseed oil and dry cedar.\n\nYou pocket the find, securing the tools needed to mark the rail schedules in the dim cab.",
+   "check": "",
+   "grant": "heavy leather pouch of grease-pencils",
+   "exits": [
+    "Return to the stranded carriages"
+   ]
+  },
+  "cf-1-069": {
+   "title": "The Hissing Valve",
+   "text": "Steam escapes in a thin, grey plume from the junction box beneath the footplate, feathering against your shins with a hot, damp hiss that smells of old scale and boiled tallow. The isolation valve is jammed solid with lime and mineral crust, refusing to turn either way despite the heavy leather wraps on your palms.\n\nYou reach for your brass drift and small copper hammer, preparing to tap the stubborn housing back into true alignment.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tap the stubborn brass housing"
+   ]
+  },
+  "cf-1-070": {
+   "title": "Copper and Scale",
+   "text": "Fine flakes of calcified lime drift downward like grey snow as the hammer meets the drift with dull, measured chinks against the iron casing. The valve spindle gives a fraction of an inch, releasing a sharp puff of superheated vapour that tastes of copper and river-mud before settling into a smooth, even rhythm.\n\nYou wipe your brow with a greasy rag and inspect the gauge connections behind the main steam header.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the main steam header"
+   ]
+  },
+  "cf-1-071": {
+   "title": "The Fractured Gauge",
+   "text": "Brittle threads inside the brass collar resist the turn, groaning under the torque of your spanner as the hair-spring inside the old pressure dial begins to jitter erratically. If the casing shears off under pressure, the sudden blast of scalding steam will fill the cab before you can shut the main cock.\n\nYou ease off the wrench slightly, resetting your grip to coax the threaded fitting home without stripping the soft brass.",
+   "check": "Overhaul the rusted steam-heating valve",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-072": {
+   "title": "A Scalding Slip",
+   "text": "The wrench slips with a sharp crack, barking your knuckles against the iron bracket while a jet of hot water spits sideways across your sleeve, leaving a dull, stinging red welt. You curse quietly in the gloom, shutting the secondary cock with a wrench of your shoulder, but the replacement gauge is cracked and useless now.\n\nYou salvage what brass fittings you can carry and step back onto the ballast to let the steam vent clear.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back onto the footplate"
+   ]
+  },
+  "cf-1-073": {
+   "title": "The Spare Dial",
+   "text": "Steady fingers guide the threads home at last, seating the heavy brass collar with a clean, airtight seal that holds firm against the rising pressure of the line. The spare pressure gauge settles smoothly into the cab console, its black needle steady and true against the white enamel face, ready for the long run north.\n\nYou secure the spare dial in its mounting, knowing it will keep the boiler within safe limits when the ash-storms hit.",
+   "check": "",
+   "grant": "spare pressure gauge for the cab console",
+   "exits": [
+    "Return to the stranded carriages"
+   ]
+  }
+ },
+ "missing": []
+}

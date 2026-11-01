@@ -1,0 +1,91 @@
+{
+ "batch": "vh-2-2-1-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-2-1-4": {
+   "title": "The Untaxed Pauper's Gate",
+   "text": "Toll-clerks peer out from their frost-rimed wooden booth, their eyes sweeping over your travel-worn pack and the simple length of ordinary hemp coiled on your shoulder. Because you carry no precious metal or dutiable cargo to tempt their greed, they dismiss you with a lazy wave of a mittened hand, letting you slip past the barrier without a sideways glance. The bustling market lane opens wider ahead, choked with the smell of pine tar and wet wool.\n\nYou adjust your heavy burden as the icy wind howls through the rigging above, wondering which path through the hanging bazaar will take you deeper into the gorge.",
+   "exits": [
+    "Take the lower stair toward the misty abyss",
+    "Dodge the swinging freight basket and dart left",
+    "Watch the guildmaster inspect the iron cable"
+   ]
+  },
+  "vh-2-2-1-5": {
+   "title": "The Frantic Winch-Boy's Plea",
+   "text": "A frantic winch-boy named Tolly intercepts you near the capstan house, thrusting a handful of tallow-soaked twine directly into your numb palm. He begs you to inspect a frayed anchor-line that threatens to snap under the weight of the dangling cargo baskets. The cold air bites at your cheeks while the boy chatters nervously about the rising gale-force winds battering the market platforms.\n\nYou must decide whether to stop and lend your hands to the repair or press onward down the mountain before the squall worsens.",
+   "exits": [
+    "Step clear of the capstan and run right",
+    "Pause to help the boy mend the line",
+    "Face the blind squall along the limestone wall",
+    "Balance across the narrow fir pole bridge"
+   ]
+  },
+  "vh-2-2-2-0": {
+   "title": "The Suspended Timber Gallery",
+   "text": "You navigate a suspended timber gallery where towering stacks of resin-smelling coils rest against the sheer, dripping mountain face like dark sleeping serpents. The wooden planks groan under your boots with every step, vibrating with the distant thunder of the massive cable winches hauling freight between the hanging towns.\n\nThe damp chill clings to your clothes while you look for a way through the tangle of ropes.",
+   "exits": [
+    "Scramble across the dripping timber gantry"
+   ]
+  },
+  "vh-2-2-2-1": {
+   "title": "The Wire-Cored Toll",
+   "text": "Master weaver Elden plants his boots across the narrow plankway, burying his calloused hands in a bundle of stiff, wire-cored cables that hum faintly in the high wind. The old man narrows his eyes at the heavy canvas cradle on your back, where the bronze tongue rests, and demands double toll for any metal passing through his gate. Biscuit lowers his stubborn head, huffing a cloud of warm steam into the freezing air as the cable-tensions groan around you. You must decide whether to pay the exorbitant fee in coin or test the weaver's patience.\n\nElden taps his iron-shod staff against the timber deck, waiting for your move while the gorge wind howls beneath the planks.",
+   "exits": [
+    "Scramble across the wet gantry timber",
+    "Crawl through the greasy drainage chute"
+   ]
+  },
+  "vh-2-2-2-2": {
+   "title": "The Heavy Draft Mules",
+   "text": "A sudden team of heavy draft mules clatters across the overhead trestle, their iron-shod hooves showering your shoulders with frozen grit and loose horseshoe nails. You press yourself tightly against the freezing limestone wall as the beasts thunder past, their breath pluming white in the thin mountain air.\n\nThe clatter fades into the howling wind, leaving you standing at a slippery junction in the market walkways.",
+   "exits": [
+    "Follow the mule tracks toward the canvas tent",
+    "Careen down the sloped central tramway",
+    "Accept the greasy protective leather pad"
+   ]
+  },
+  "vh-2-2-2-3": {
+   "title": "The Guild's Knotted Token",
+   "text": "Because you bear the Ropewrights' Guild's sacred knotted token proudly displayed on your jacket, the armed rope-guards snap their splicing mallets to attention as you approach. They clear a direct, unimpeded passage across the swaying gorge bridge, nodding respectfully to the heavy burden you carry.\n\nThe open walkway stretches before you, free of the usual tolls and delays that plague ordinary travelers in this hanging market.",
+   "exits": [
+    "Hurry down the sloped central tramway",
+    "Meet the heavily laden ore basket at the platform"
+   ]
+  },
+  "vh-2-2-2-4": {
+   "title": "The Hidden Alcove",
+   "text": "You slip quietly into a narrow alcove behind a tallow-chandler's booth while two Cable Court enforcers angrily argue over ledger tallies in the freezing drizzle. Their voices echo off the damp rock face, discussing tax rates and seized bronze with menacing intensity.\n\nCrouched in the shadows with your heavy burden, you wait for them to clear the path ahead.",
+   "exits": [
+    "Squirm through the greasy drainage chute",
+    "Approach the canvas watch-tent cautiously",
+    "Take the leather pad from the old braider"
+   ]
+  },
+  "vh-2-2-2-5": {
+   "title": "The Screeching Pulley",
+   "text": "A frozen pulley screeches overhead, showering bright orange sparks onto the canvas roof above your head as a heavy timber crate swings violently past on a frayed tow-line. The acrid scent of burning hemp smoke fills the air while workers shout warnings back and forth across the chasm.\n\nYou need to pick your footing carefully before another stray crate comes hurtling out of the fog.",
+   "exits": [
+    "Step toward the busy winch-station platform",
+    "Press flat against the shadowed alcove wall"
+   ]
+  },
+  "vh-2-2-2-6": {
+   "title": "The Curious Apprentice",
+   "text": "Apprentice Kenal offers you a warm cup of bitter chicory water from a dented tin mug in exchange for news of the broken bell-metal ticking softly inside your canvas cradle. The young weaver leans against a wooden post, blowing on his steaming cup while the icy wind tugs at his woolen scarf.\n\nYou consider whether to share the tale of the shattered Orison or keep your silence and move on.",
+   "exits": [
+    "Follow the mule past the ropeway stalls",
+    "Dodge the whipping guide-line ahead"
+   ]
+  },
+  "vh-2-2-2-7": {
+   "title": "The Splicers' Trestle",
+   "text": "You crawl beneath a slumping timber trestle where three veteran weavers are splicing a thick hemp hawser with bone needles while shouting over the roar of the gale. Strands of grey fiber swirl around you like winter snow as the great ropes groan under the weight of the suspended city.\n\nEmerging on the other side of the trestle, you face two distinct routes deeper into the market labyrinth.",
+   "exits": [
+    "Walk past the shadowed alcove wall",
+    "Duck under the whipping guide-line"
+   ]
+  }
+ },
+ "missing": []
+}

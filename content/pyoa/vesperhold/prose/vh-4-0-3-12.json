@@ -1,0 +1,88 @@
+{
+ "batch": "vh-4-0-3-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-0-3-12": {
+   "title": "The Frozen Straps",
+   "text": "Trembling fingers struggle with frozen leather straps while the glacier groans its deep-seated subterranean warning beneath your boots. Every breath tastes of iron and hoarfrost, and the heavy bronze Clapper shifts restlessly in its padded cradle against your spine, humming a low, vibrating note that matches the shiver in your bones. Biscuit plant her hoofs firmly into the blue crust, ears pinned back against the whistling draft. You must decide whether to force the stiff buckles open now or press forward before the cold stiffens your hands entirely.",
+   "exits": [
+    "Adjust the frozen harness bucklings",
+    "Lead the mule onward without delay"
+   ]
+  },
+  "vh-4-0-4-0": {
+   "title": "The Blue Precipice",
+   "text": "Slanted ice rungs lead down the blue precipice where a forgotten hemp line offers an alternative handhold against the abyss. The wind tears fiercely at your woolen cap, carrying the dry, sharp scent of distant stone and ancient packed snow. Below, the glacier tongue breaks into jagged seracs that catch the pale winter light like shattered glass. You grip the frayed rope, testing its hemp core for any sign of rot while the bronze tongue hums against your shoulder blade.",
+   "exits": [
+    "Descend using the frayed hemp line",
+    "Trust the carved rungs alone"
+   ]
+  },
+  "vh-4-0-4-1": {
+   "title": "The Moraine Crest",
+   "text": "Gusts sweep the upper moraine crest, scattering dry snow across the narrow ledge where you balance the Clapper and wait out the squall. The world has shrunk to a blinding curtain of white and the dark, looming shapes of ice pinnacles down-slope. Biscuit lowers her muzzle, finding shelter behind a jagged slab of slate that juts from the frozen shale. Every muscle in your back aches from the dead weight, urging you to choose your footing carefully before the wind shifts again.",
+   "exits": [
+    "Step out onto the wind-swept shelf",
+    "Seek shelter behind the slate slab"
+   ]
+  },
+  "vh-4-0-4-2": {
+   "title": "The Timber Baulks",
+   "text": "Cracked timber baulks bridge the final blue chasm before the path levels onto the lower glacier moraine. These old pine beams are crusted with rime and groan under the relentless pressure of the shifting ice field beneath. Below the gap, a bottomless blue throat exhales a blast of cold air that smells of ancient stone and deep water. You take a slow breath, steadying the heavy bronze tongue in its pack before committing your weight to the groaning wood.",
+   "exits": [
+    "Cross the fractured timber span",
+    "Seek a safer detour around the chasm"
+   ]
+  },
+  "vh-4-0-4-3": {
+   "title": "The Crevasse Field",
+   "text": "Frozen mist rolls through the crevasse field, blurring the distinction between solid rock and bottomless ice drop. Every step requires a blind reach into the white haze, tapping the ice ahead with a wooden pole to test for hollow spans. Biscuit nudges your elbow anxiously, her breath coming in warm, rhythmic puffs against your coat. The low hum of the Clapper seems to resonate with the hidden depths around you, warning of unstable bridges beneath the drift.",
+   "exits": [
+    "Advance deeper into the mist",
+    "Test the ice with your staff",
+    "Turn back toward the upper rocks"
+   ]
+  },
+  "vh-4-0-4-4": {
+   "title": "The Stiff Harness",
+   "text": "Stiff leather gloves fumble with the harness buckle while the cold air burns the inside of your chest like swallowed fire. The weight of the bronze Clapper pulls you backward toward the slope, threatening to unbalance your stance on the glassy crust. Nearby, a dark fissure splits the blue floor, whispering of hidden depths and biting drafts. You pause to catch your breath, fingers raw and aching as you wrestle with the frozen tongue of the bell.",
+   "exits": [
+    "Secure the buckle with bare fingers",
+    "Rely on the loosened strap for speed"
+   ]
+  },
+  "vh-4-0-4-5": {
+   "title": "The Weathered Cairn",
+   "text": "A weathered cairn marks the junction where the upper rope-track meets the shifting surface of the blue glacier. Piles of gray stones, heaped by generations of rope-riders and muleteers, are capped with fresh drifts of powdery snow. The path ahead splits between a series of steep ice stairs and a precarious shelf hugging the cliff wall. You adjust the padded cradle on your back, feeling the heavy metal pulse against your shoulder as you weigh the two routes.",
+   "exits": [
+    "Take the steep ice stairs downward",
+    "Follow the cliff-hugging shelf route"
+   ]
+  },
+  "vh-4-0-4-6": {
+   "title": "The Deep Vibration",
+   "text": "Deep rhythmic vibrations pass from the heavy bronze Clapper straight into your tired muscles as the wind rises. The metal seems to remember every storm that ever shook Vesperhold's high tower, singing a low, mournful chord that vibrates through the very soles of your boots. Biscuit stamps her feet against the ice, unsettled by the sound echoing off the frozen canyon walls. You must decide whether to deaden the resonance with extra woolen wrapping or let the bell sing to the mountains.",
+   "exits": [
+    "Wrap the Clapper in extra wool",
+    "Let the bronze ring out unchecked"
+   ]
+  },
+  "vh-4-0-4-7": {
+   "title": "The Stone Threshold",
+   "text": "Slick frost coats the final stone threshold before the descent into the chilling embrace of the ice cradle. The wind drops for a fleeting moment, leaving an absolute silence broken only by the distant cracking of the glacier's frozen joints. Below you, the great basin stretches out in shades of cobalt and pale turquoise, vast and indifferent to your small struggle. You grip your wooden staff and check the mule's lead rope one last time before stepping over the threshold.",
+   "exits": [
+    "Step down into the ice basin",
+    "Pause to check the weather ahead"
+   ]
+  },
+  "vh-4-0-5-0": {
+   "title": "The Ice Cradle Basin",
+   "text": "The ice cradle opens wide before you, a vast bowl of blue-white pressure where the moving glacier splits around a central spine of dark rock. Towering walls of compressed ice tower overhead, gleaming with an eerie internal light under the gray winter sky. The air is deathly still here, heavy with the ancient cold of the deep mountain core. You grip the straps of the Clapper tightly, preparing for the long crossing across the shifting floor.",
+   "exits": [
+    "Press on across the ice floor",
+    "Turn back to the upper ridge"
+   ]
+  }
+ },
+ "missing": []
+}

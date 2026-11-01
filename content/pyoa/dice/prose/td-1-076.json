@@ -1,0 +1,99 @@
+{
+ "batch": "td-1-076",
+ "sections": {
+  "td-1-076": {
+   "title": "Shattering the Glass",
+   "text": "Heavy mahogany panels frame the captains' mess, smelling of dried salt and long-spoiled brandy, where a thick pane of reinforced glass seals off a polished oak cabinet. Inside rests a silver compass gimballed in brass, its needle twitching erratically toward the dry, empty seabed outside rather than any true north. Raising the iron crowbar high above your shoulder, you bring the weighted end crashing down with all your strength against the centre of the pane. Shards burst inward like frozen rain, scattering across the threadbare rug as you reach through the jagged frame to claim your prize.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the silver compass and leave"
+   ]
+  },
+  "td-1-077": {
+   "title": "Striking the Case",
+   "text": "Heavy salt-caked oak and stubborn brass frame the officers' mess, protecting the treasures within from the greedy hands of scavengers. You raise the iron bar high above your shoulder, muscles bunching across your back as you line up the blow against the reinforced glass. With a sharp grunt, you bring the heavy metal down hard upon the center of the display, praying the thick pane shatters before the patrolling guild wardens hear the crash echoing through the hollow ribs of the wrecked frigate.",
+   "check": "Swing the iron bar hard",
+   "grant": "A flawed bone amulet",
+   "exits": [
+    "Leave the bone carver stall"
+   ]
+  },
+  "td-1-078": {
+   "title": "The Shattered Wrist",
+   "text": "The heavy glass resists the blow with a malicious elasticity, deflecting your iron bar and sending a vicious jolt straight up your forearms that rattles your teeth. Before you can pull back, the upper edge of the frame snaps free, dropping a jagged curtain of wire-bound glass directly across your knuckles and opening a hot, stinging gash. You snatch your hand back with a sharp hiss, clutching your bleeding wrist as the silver compass remains just out of reach behind its ruined barrier.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Nursing the fresh crimson gash"
+   ]
+  },
+  "td-1-079": {
+   "title": "The Silver Needle",
+   "text": "Thick glass fragments tumble away from the splintered mahogany frame, clattering against the deck plates as you plunge your hand into the dust-lined recess. Your fingers close around the cool, heavy metal of the gimballed casing, dragging the prize free from its velvet bed however narrowly the snapping wire frame tried to catch your sleeve. It is a heavy officer's compass of polished silver, its glass face intact and its erratic needle spinning in wild, desperate circles toward the vacant horizon.",
+   "check": "",
+   "grant": "Ceremonial silver compass",
+   "exits": [
+    "Return to the stranded galleon deck"
+   ]
+  },
+  "td-1-080": {
+   "title": "The Leviathan Bazaar",
+   "text": "Colossal white ribs arch overhead like the vault of an ungodly cathedral, forming a cavernous market inside the stranded carcass of a leviathan where the air tastes of old blubber and stale brine. Stalls are hacked directly into the yellowed bone, draped with rotting sails and illuminated by flickering lanterns fuelled from whale-fat grease. Shouting scavengers, nervous salt-miners, and hooded traders crowd the narrow alley of the beast's throat, hawking rusted winch-teeth, jars of phosphorescent weed, and scraps of copper pulled from the dead seabed. The market hums with a desperate, greedy energy, everyone watching their neighbours for any sign of weakness or sudden wealth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step deeper into the bone market"
+   ]
+  },
+  "td-1-081": {
+   "title": "The Salt-Scraped Hub",
+   "text": "Smoke from tiny dung-fires curls against the high ribs of the whale carcass, scenting the crowded market with an acrid haze that stings the eyes and throat. Every stall offers a new temptation or a hidden trap, from the glint of ambergris traded in the shadows to the quiet whispers of pilgrims mourning the missing sea. You stand at the crossroads of the beast's massive jaw, where multiple narrow paths diverge into the bustling chaos of the seabed bazaar. From here, you must choose where your search for Orsolya and the Meridian Gear leads next.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the crowded market",
+    "Break up a violent merchant brawl",
+    "Decipher markings in a dead sailor journal",
+    "Repair a delicate clockwork bird for coin",
+    "Carve a weighing scale peg for kelp",
+    "Pass through the mournful pilgrim procession"
+   ]
+  },
+  "td-1-082": {
+   "title": "The Bone-Carver's Bargain",
+   "text": "Yellowed scrimshaw teeth and jagged shark jaws litter the cramped stall where an old man with milky eyes polishes a dull green amulet carved from whale ear-bone. He swears by the dry tide that the trinket wards off the cold hum of the Hollow Choir, running a trembling thumb over its notched edges. You lean closer, smelling the rank tallow on his coat, and spot the fresh tool-marks near the suspension hole that prove he cut the protective runes this very morning. Pointing out the clumsy forgery with a dry smirk, you watch his defiant bluster deflate into a grudging surrender.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the warding amulet and move on"
+   ]
+  },
+  "td-1-083": {
+   "title": "Weighing the Carver's Lies",
+   "text": "Narrowing your eyes at the crude notch in the whale-bone amulet, you turn the trinket over in your palm to test its weight against the old carver's breathless claims. The man watches your fingers like a starving gull, his tongue darting out to wet dry lips as he tries to guess whether you know real Tidewarden scrimshaw from modern shoreline scrap. You have to weigh his greasy desperation against the faint, unsettling vibration humming through the bone before you name your price.",
+   "check": "Call out the clumsy forgery",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-084": {
+   "title": "The Flawed Trade",
+   "text": "Your challenge misses its mark as the old carver suddenly turns the tables, spinning a tearful tale of his starving grandchildren until shame and exhaustion cloud your judgment. You pay twice what the jagged bone is worth just to escape his weeping pleas, clutching a heavy, useless trinket that feels suspiciously soft and damp in the palm of your hand. The coin pouch feels noticeably lighter at your hip as you slip away from his stall, poorer in silver and richer only in experience.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the stall with a lighter purse"
+   ]
+  },
+  "td-1-085": {
+   "title": "The Carved Ear-Bone",
+   "text": "Your cold thumb finds the flaw in the old man's scrimshaw, a hairline fracture running straight through the whale-ear whorl where salt has eaten the grain. You press the defect home with a dry, flat stare, naming a fraction of his copper demand until his watery eyes dart to the rafters and his trembling fingers surrender the green trinket. It rests in your palm like a cold pebble, smelling faintly of bilge and old tallow, but the small charm will turn the edge of a salt-chill or a greedy blade when the mist rolls heavy off the dead seabed.\n\n",
+   "check": "",
+   "grant": "green bone amulet",
+   "exits": [
+    "Step back into the grey press of the market"
+   ]
+  }
+ },
+ "missing": []
+}

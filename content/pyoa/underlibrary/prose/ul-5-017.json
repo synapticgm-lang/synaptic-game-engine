@@ -1,0 +1,96 @@
+{
+ "batch": "ul-5-017",
+ "sections": {
+  "ul-5-017": {
+   "title": "The Greasy Beam",
+   "text": "Thick lamp-oil slicks the iron timber stretched above the bottomless ink-well, catching the amber glow of your lantern in a greasy smear. Every breath tastes of soot and stagnant gall as you inch forward, toes curling over the cold rivet-heads. Reaching into a rotting canvas holster slung across your hip, your fingers brush against a leather pouch filled with dry chalk. You pull it free and coat your palms, restoring a thin margin of grip against the void.\n\nThe bypass lever glimmers just beyond a sagging junction of copper pipes, waiting for your hand.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach across the ink chasm"
+   ]
+  },
+  "ul-5-018": {
+   "title": "Walking the Iron",
+   "text": "Frost glazes the narrow beam above the roaring black gulf where old editions dissolve into ink-sludge. Your boots slip on a patch of rime, sending a shower of loose flakes tumbling down into the lightless depths where nothing echoes back. Throwing your weight backward to check the momentum, you slide an inch further along the greasy iron, arms windmilling to keep your balance against the draft from the deep flues. The bypass lever is inches away, its metal loop trembling under a sudden vibration.",
+   "check": "Step carefully across the beam",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-019": {
+   "title": "Into the Sludge",
+   "text": "The rusty timber gives a treacherous lurch beneath your heel, plunging your boot into the sticky void and throwing you hard against a jagged bracket of shelving. Pain flares across your ribs as bruised bone strikes cold iron, while a priceless ledger slips from your pocket to vanish silently into the ink-well below. You cling desperately to the upright with raw, bleeding fingers, hauling yourself upward through the reek of ancient vinegar and ruined paper. Your breath comes in ragged gasps, but you manage to scramble back onto the narrow plate of the walkway.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself toward the lever"
+   ]
+  },
+  "ul-5-020": {
+   "title": "Across the Span",
+   "text": "Slender iron rivets groan under your boots as you make the final crossing, however narrowly, keeping your weight centered over the narrowest spine of the girder. Your fingers close around the cold brass handle of the bypass lever, steadying your pulse against the rhythmic dripping of ink from the vault ceiling above. Tucked securely into your belt-loop now is a small pouch of dry chalk, its fine white dust smelling faintly of limestone and old schoolrooms. The mechanism clicks smoothly under your palm, granting you passage toward the threshold arch.",
+   "check": "",
+   "grant": "pouch of dry chalk",
+   "exits": [
+    "Return to the heavy threshold arch"
+   ]
+  },
+  "ul-5-021": {
+   "title": "The Phantom Clerk",
+   "text": "Translucent grey fingers grip the edges of a towering oak lectern while pale eyes glare from a face composed entirely of dried vellum and ink-stains. The phantom clerk blocks the seal with an imperious frown, muttering complaints about overdue returns and improper ink usage that echo hollowly off the stone vault. You produce the folded slip signed by Thessaly Marr, holding it steady despite the unnatural chill radiating from the apparition's cuffs. A low sigh rattles through the empty hall as the spirit grudgingly dips an invisible stamp into phantom red wax.\n\nThe official document drops onto the reading desk, bearing the unmistakable imprint of the Archivist's office.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed through the sealed barrier"
+   ]
+  },
+  "ul-5-022": {
+   "title": "Staring Down the Guard",
+   "text": "Cold blue light bleeds from the phantom clerk's spectacles, boring straight into your thoughts and dredging up every forgotten fine, misplaced folio, and reprimand from your days as a junior page. Your jaw tightens as the apparition grows taller, whispering names of dead scholars who failed this very test and turned to dust upon the flagstones. You lock your gaze onto the flickering ink-well pinned to the clerk's lapel, refusing to blink or yield an inch of ground against the mounting pressure in your temples. The quill pauses mid-air, trembling over the parchment seal.",
+   "check": "Withstand the clerk's cold gaze",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-023": {
+   "title": "Broken Resolve",
+   "text": "A sudden surge of ancient authority shatters your concentration, driving you to your knees with a crushing weight upon your shoulders as old memories of reprimands flood your mind. The phantom clerk's voice rises in a triumphant screech, mocking your humble station among the shelvers and demanding an impossible toll in overdue stamps. You grit your teeth against the blinding headache, crawling forward through the freezing draft until your fingers graze the heavy oak base of the lectern. The spirit retreats an inch, leaving you shaken and drained, but alive enough to continue.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Collect the stamped parchment slip"
+   ]
+  },
+  "ul-5-024": {
+   "title": "The Official Stamp",
+   "text": "Standing firm against the phantom's barrage of ancient rules, however narrowly, you stare down the spectral administrator until its rigid posture crumples into a sigh of reluctant surrender. The spirit stamps the requisition slip with a sharp, echoing thud that leaves a smear of crimson sealing-wax hardening upon the page. Tucked safely inside your tunic now is a stamped waiver bearing the Archivist's own seal, an official guarantee that grants you safe passage past the administrative wardens. The ghost fades into a drift of grey dust, leaving the way open toward the threshold arch.",
+   "check": "",
+   "grant": "stamped waiver scroll",
+   "exits": [
+    "Advance to the heavy threshold arch"
+   ]
+  },
+  "ul-5-025": {
+   "title": "The Hundredth Door",
+   "text": "Heavy iron bolts groan and slide back within the masonry, releasing centuries of trapped lamp-oil fumes as the massive portal swings inward on oiled pivots. A vast, lightless circular vault spreads before you, its domed ceiling lost in shadows where countless hanging lanterns swing without a sound. At the center of the chamber floats the original Index, suspended within a column of pure, shifting illumination that hums with the resonance of every remembered name. Tiny particles of gold leaf drift through the beam like dust motes in sunlight, whispering fragments of forgotten histories to the quiet air.\n\nThe air grows thick with the scent of ozone and vellum as the inner sanctum reveals its shifting geometry to your gaze.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step into the outer ring"
+   ]
+  },
+  "ul-5-026": {
+   "title": "The Outer Ring",
+   "text": "Colossal shelves of black obsidian curve around the central light, packed with chained ledgers that hiss and writhe in the shadows like resting serpents. Every spine is bound in stamped calfskin, their gold lettering shifting and rearranging itself while you watch in the dim lamp-oil gloom. The floor beneath your boots is paved with inscribed slate tiles that click softly whenever a distant stack adjusts its position. Across the expanse, narrow bridges of twisted twine and iron wire lead toward darker recesses where various scholars and zealots have left their marks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Decipher the shifting blood-red folio",
+    "Flatter the self-important guardian ledger",
+    "Snatch the stray parchment from bindings",
+    "Endure the ancient insults of bound law",
+    "Watch the Burner zealots breach parapet"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,67 @@
+@@SECTION cf-2-131
+TITLE: The Line of Eyes
+TEXT: Heavy wool coats and grease-stained caps offer little shelter against the hostile stares of the guards stationed along the staging rail. They lean against stacked crates of ballast rock, fingers hooked casually into heavy belts, watching every shift of your weight in the queue. The metallic tang of sulphur hangs thick between your teeth as the line inches forward toward the quartermaster's counter, where tools are traded under the glare of unblinking lanterns. // You keep your chin tucked low into your collar, matching your breathing to the steady thrum of distant pumps until the sergeant at the desk finally jerks his thumb toward the heavy timber rack.
+EXIT 1: Step forward to claim the mallet
+@@END
+@@SECTION cf-2-132
+TITLE: The Quartermaster's Stare
+TEXT: The sergeant's eyes remain fixed on your knuckles while you reach out toward the hickory-handled mallet resting among the rusted spikes on the zinc table. A sudden murmur ripples through the guard detail behind you, and a heavy hand grips the flat of a bayonet blade with a dry rasp of steel against leather. You feel the heat climb the back of your neck as you must keep your pulse steady and your fingers from twitching under the sharp scrutiny. A single false move will bring the iron down upon your wrists before your palm can close around the seasoned wood.
+CHECK: Keep your nerve under scrutiny
+@@END
+@@SECTION cf-2-133
+TITLE: A Heavy Toll
+TEXT: Your fingers jerk against the zinc edge, knocking a loose drift-pin clattering across the iron floorboards and drawing a sharp bark of laughter from the sergeant. The guard closest to you shoves you hard against the bulkhead, leaving a jagged scrape along your ribs and stealing the breath from your lungs with a dull thud. You bite your tongue until you taste copper, clutching your bruised side while the laughing guard kicks the heavy mallet further out of your immediate reach. They let you take it in the end, but the pain in your ribs throbs in time with your boots as you limp back toward the siding.
+EXIT 1: Retreat with the heavy mallet
+@@END
+@@SECTION cf-2-134
+TITLE: The Weight of Iron
+TEXT: Your fingers close around the seasoned hickory handle of the mallet, the balanced weight reassuring against your palm despite the hostile glares burning into your back. You lift it clear of the zinc counter without a single tremor in your wrist, earning a grudging nod from the sergeant as he swipes a greasy ledger shut. The tool is scarred with old burn marks and notched from driving countless thousands of track pins into the frozen ash-beds, but the grain is solid and true. // You tuck the heavy head beneath your arm and turn away into the grey gloom before anyone can change their mind.
+GRANT: A seasoned track mallet
+EXIT 1: Carry the mallet back trackside
+@@END
+@@SECTION cf-2-135
+TITLE: The Siphon's Whisper
+TEXT: Steam hisses softly from the auxiliary belly-cock of the camp boiler, masking the gentle gurgle of the rubberized tube you lower into the overflow basin. The gangers are all crowded around the far side of the tender, arguing over a handful of salt-cured beef and greasy tobacco leaves. Every drop counts out here on the dry flats, and the secondary line fills with sweet condensation while the attendants turn their backs to warm their hands over a brazier. // You pinch the rubber shut with your thumb and slip the dripping hose into your canvas kit before anyone glances back.
+EXIT 1: Walk away with the water
+@@END
+@@SECTION cf-2-136
+TITLE: Beyond the Boiling Vats
+TEXT: Steam curls in lazy plumes from the safety valves of the station boilers, casting long, wavering shadows across the gravel bed where the supply teams camp. You shoulder your canvas kit, feeling the satisfying shift of the extra water bladder against your spine as you navigate the narrow gap between two rusted coal hoppers. The air tastes of scorched grease and wet iron, and the low murmur of the card players fades behind the rattling rhythm of a shunting crane further down the line. // You follow the rusted spur curving away toward the silent water-wagon.
+EXIT 1: Approach the great communal cistern
+@@END
+@@SECTION cf-2-137
+TITLE: The Guarded Basin
+TEXT: The brass valve wheel turns with a dry, protesting squeak that sounds deafening against the background drone of the camp generators. You keep your eyes fixed on the reflection in the oily puddle below, watching for the swinging lanterns of the patrol detail while you coax the stubborn tap another fraction of an inch. A fraction too wide and the hiss will carry across the yard; a fraction too slow and the heavy boots will round the corner before the bladder is full. You hold your breath, your fingers slick with condensation and soot as you wait for the stream to steady.
+CHECK: Siphon water without being seen
+@@END
+@@SECTION cf-2-138
+TITLE: Caught in the Spill
+TEXT: The hose slips from the nozzle with a sharp hiss of atomized spray, splashing a dark circle of moisture across the dry dust right at the feet of the roundsman. A heavy hand drops onto your shoulder before you can snatch the bladder away, spinning you around to face a lantern-jawed overseer with vinegar in his eyes. He relieves you of the extra water ration on the spot, adding a sharp cuff to your ear for your trouble and leaving your knuckles scraped against the rough iron plating. You limp away empty-handed, poorer in water but richer in caution.
+EXIT 1: Slip back into the shadows
+@@END
+@@SECTION cf-2-139
+TITLE: A Stolen Drought
+TEXT: The hose runs silent and heavy until the canvas side swells tight against your ribs, plump with cool condensation scavenged from the station boilers. You slip the brass clip back into place just as a heavy boot crunch sounds on the gravel behind you, but the roundsman merely grunts and passes without a second glance. The extra water sloshes against your spine, a precious little reserve against the dry miles ahead on the Cinder Steppe. // You secure the neck of the bladder with a stout hemp cord and merge back into the shifting crowd.
+GRANT: A full water bladder
+EXIT 1: Return to the water-wagon depot
+@@END
+@@SECTION cf-2-140
+TITLE: The Brass Float
+TEXT: Small adjustments require a steady hand and a fine ear for the way metal sings under pressure when the valve-seat settles into its groove. You kneel beside the massive brass housing of the cistern, tapping the linkage gently with the flat of a small wrench until the high-pitched whistle settles into a low, contented purr. The overseer watches you from the edge of the staging, his expression sour until he checks the gauge and sees the steady climb of the fluid level. // He tosses you a greasy tin and a handful of washers as his sole acknowledgment of honest work.
+EXIT 1: Pocket the grease and washers
+@@END
+@@SECTION cf-2-141
+TITLE: Along the Siding
+TEXT: Heavy iron wheels loom out of the grey haze like monuments to forgotten timetables, their journals caked in black grease and dry alkali dust. You pick your way along the ballast shoulder, swinging the small tin of anti-friction grease in your palm as the copper washers chink softly inside your pocket. Every carriage here bears the scars of the Long Fire, scorched ribs and buckled window frames standing empty against the low, bruised sky. // You round the corner of a tilted dining car and spot the low brick profile of the pump-house.
+EXIT 1: Inspect the pump-house machinery
+@@END
+@@SECTION cf-2-142
+TITLE: The Binding Pin
+TEXT: The threaded collar of the float-valve is crusted with blue-green verdigris that threatens to strip the ancient brass threads at the slightest wrench twist. You apply a dab of thick grease and apply steady, measured pressure to the lever, feeling the microscopic give of the metal through the handle of your tool. If the pin shears now, the entire cistern will drain into the ballast before you can drive a wooden plug into the feed-pipe. You ease off a hair's breadth and tap the housing again with a lighter touch.
+CHECK: Free the rusted valve spindle
+@@END
+@@SECTION cf-2-143
+TITLE: Stripped Threads
+TEXT: The ancient brass thread gives way with a sudden, grating screech, showering your knuckles in sharp metal flakes and hot, greasy water. You curse under your breath as the packing nut spins loose, venting a plume of scalding steam that leaves a stinging red welt across the back of your hand. You spend a frantic ten minutes wrapping the ruined joint in hemp twine and yellow soap before the leak finally subsides to a sullen weep. The task is done, but your hands are smarting and the grease tin took a nasty dent in the scuffle.
+EXIT 1: Gather your tools and move on
+@@END

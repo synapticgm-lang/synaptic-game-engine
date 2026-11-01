@@ -1,0 +1,92 @@
+{
+ "batch": "td-5-077",
+ "sections": {
+  "td-5-077": {
+   "title": "Iron in the Grip",
+   "text": "Stepping hard into the mercs' personal space, you keep your eyes locked on their leader while your fingers curl around the cold hilt of your scraper. Heavy iron lockboxes sit piled between them, brimming with heavy silver coin that could buy a dozen boats back in Gullmouth. Every breath smells of damp wool and rising panic.\n\nA sudden lunge in the dark could easily slice open your ribs, yet you refuse to give an inch of wet stone, pressing your weight forward until their boots slide backward on the brine-slick floor and the heavy coin chests are yours to claim.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Seize the heavy coin chests"
+   ]
+  },
+  "td-5-078": {
+   "title": "Weight of the Bribe",
+   "text": "Metal scrapes sharply against cold masonry as you crowd the mercenaries, forcing their pike points down with sheer salt-crusted bravado. They sneer through salt-stiffened beards, muttering oaths against the Gullmouth guild, but the raw threat in your narrowed eyes keeps their cold steel sheathed for now.\n\nWith a rough shove, you thrust your arms past their guard to snatch up the iron lockboxes, feeling the dead weight of stolen coin drag heavily against your aching muscles as you retreat into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the heavy iron coin"
+   ]
+  },
+  "td-5-079": {
+   "title": "Staring Down the Blade",
+   "text": "Shadows writhe along the damp corridor while you lean your chest against the mercenaries' leveled pikes, daring them to strike through the gloom. A single misjudged twitch of a forearm means a six-inch spike driven straight through your lungs, but you refuse to blink or show a flicker of doubt.\n\nYour fingers hover inches from the heavy iron lockboxes while you lock eyes with the lead mercenary, waiting to see if his nerve breaks first.",
+   "check": "Dare the steel to strike",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-080": {
+   "title": "Paid in Red",
+   "text": "Cold steel bites deep into your shoulder before you can twist clear, leaving a jagged red slash that sears like boiling brine. The mercenaries snatch up their iron lockboxes and vanish into the shadows, leaving you gasping against the damp wall with a fresh wound weeping through your jacket.\n\nPain throbs in rhythm with your pounding heart, a sharp reminder that the Low extracts a toll from every scavenger who tries to play the big game.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clutch the bleeding shoulder wound"
+   ]
+  },
+  "td-5-081": {
+   "title": "Spoil of the Standoff",
+   "text": "Whether you moved with lightning speed or simply let pure obstinacy carry the day, the mercenaries' resolve crumbles and they drop their heavy iron burden with a dull thud. You hoist the stout chest onto your shoulder, feeling the solid jingle of stolen silver coins against your ribs as your prize for standing firm in the dark.\n\nA dented brass padlock hangs from the clasp, bearing the private stamp of the Brineholder treasury - a neat little token of leverage to carry back into the fray.",
+   "check": "",
+   "grant": "Brineholder treasury lockbox",
+   "exits": [
+    "Return to the turbulent chamber"
+   ]
+  },
+  "td-5-082": {
+   "title": "Barring the Vault",
+   "text": "Rival boots thunder up the spiral stairs just as you slam your shoulder against the rusted iron doors, throwing your full weight into the rusted latch. Screaming metal protests under the sudden strain as outside hands heave against the barrier, trying to force an entry into the chamber of the Gear.\n\nSweat stings your eyes while you wedge a jagged piece of ship timber through the handles, sealing the heavy portals shut against the tide of desperate scavengers clawing to get inside.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the heavy iron doors"
+   ]
+  },
+  "td-5-083": {
+   "title": "Weight Against the Iron",
+   "text": "Outside the chamber, a mob of rival wreckers throws their combined weight against the rusted iron plates, groaning as the hinges threaten to snap. You brace your boots against the slick stone floor, heaving your entire body against the barrier with every ounce of muscle you possess to keep the heavy doors shut.\n\nMuscles strain to the point of tearing while the iron frame vibrates violently beneath your palms.",
+   "check": "Hold the slammed iron doors",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-084": {
+   "title": "Broken Hinges",
+   "text": "The heavy iron door suddenly gives a vicious shudder, buckling inward and catching your arm in a crushing pinch that leaves your shoulder bruised and useless. You tumble backward onto the cold flagstones as the rival wreckers pour past you into the chamber, shouting triumphantly over your groans.\n\nA dull, throbbing ache settles deep into your bones, leaving your limb hanging limp and useless at your side while the crowd surges toward the console.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself from the wreckage"
+   ]
+  },
+  "td-5-085": {
+   "title": "Master of the Threshold",
+   "text": "By sheer stubborn muscle and a total disregard for torn ligaments, you manage to keep the heavy iron doors slammed shut until the sliding bolt drops firmly into place with a resounding echo. The furious hammering from the corridor slowly dies away into frustrated curses, leaving you in solitary command of the massive console.\n\nA notched brass winding key, dropped by a fleeing rival during the frantic scramble, lies wedged neatly in the groove of the stone floor.",
+   "check": "",
+   "grant": "Notched brass winding key",
+   "exits": [
+    "Turn back to the machinery"
+   ]
+  },
+  "td-5-086": {
+   "title": "The Missing Keeper",
+   "text": "Water drips with a hollow rhythm from the vaulted ceiling as a familiar, salt-bleached figure steps out from behind the massive pillars of the Gear. Orsolya Venn leans heavily on a driftwood cane, her skin pale as sea-foam and her coat soaked in dark, drying blood from a wound she refuses to cradle. In her trembling hand she hovers the heavy master lever, her eyes burning with a wild, cold clarity that brooks no argument. She speaks in a dry rasp that cuts through the humming machinery, declaring that the Meridian Gear has rusted its last turn and must be shattered down to its bedrock roots before the tide returns to drown them all.\n\nThe immense bronze cogs groan behind her, waiting for the hand that will either break the world or let the ocean run wild.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face your missing mentor"
+   ]
+  }
+ },
+ "missing": []
+}

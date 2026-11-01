@@ -1,0 +1,47 @@
+{
+ "batch": "v-l-18-eclipse-ridgeline",
+ "variants": [
+  {
+   "node": "up-l-eclipse-ridgeline",
+   "when": {
+    "rigg": "betrayed"
+   },
+   "after": "Matron Rigg's betrayal has a long reach, evidenced by the heavy iron warrant-badges glinting on two of the distracted men below. Her foundry-bred enforcers would gladly throw you from this roof if they glanced up, making your silent passage all the more critical."
+  },
+  {
+   "node": "up-l-eclipse-ridgeline",
+   "when": {
+    "cover": "cloak"
+   },
+   "after": "The Archbishop's stolen cloak billows wildly in the gale, its velvet weight heavy with the dead man's secrets. You draw the rich, blood-coloured fabric tight against your chest, grateful for the shadows it casts across your face while the watchmen argue."
+  },
+  {
+   "node": "up-l-eclipse-ridgeline",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "Disgraced though he was, the tailor cut this debt coat for supreme agility, and its reinforced seams hold firm against the punishing gusts. Its muted wool blends perfectly with the soot-stained slate, rendering you little more than another shadow moving beneath the blackened sun."
+  },
+  {
+   "node": "up-l-eclipse-ridgeline",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Shivering inside the rough cloth of a common porter's livery, you curse the biting cold at this altitude. Yet the unremarkable garments serve their purpose well, ensuring that even if a sentry spots your silhouette, they will only see a lowly dock-worker scrambling in panic."
+  },
+  {
+   "node": "up-l-solo-final",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Knowing that Valerius and Rigg are mere masks for the same syndicate changes the calculus of your final move. The identical handwriting in the vault's counter-ledgers proves there is no lesser evil to empower, leaving you to decide if exposing their monopoly is worth your life."
+  },
+  {
+   "node": "up-l-solo-final",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "Somewhere in the sprawling city below, the trembling deacon still holds your whispered promise close to his chest. That surviving witness is a living debt that will eventually demand payment, regardless of whether you sell the brass-bound book or publish its damnable contents."
+  }
+ ]
+}

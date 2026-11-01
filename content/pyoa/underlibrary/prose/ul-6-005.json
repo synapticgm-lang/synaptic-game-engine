@@ -1,0 +1,58 @@
+{
+ "batch": "ul-6-005",
+ "sections": {
+  "ul-6-005": {
+   "title": "The Ink Fades",
+   "text": "Silence settles over the high galleried vaults like dry grey ash upon a neglected table. The heavy copper vats in the scriptoriums run sluggish and cold, their black liquor thickening into a useless sludge that refuses to take the nib. Across the Reading Rooms, scholars stare down at blank vellum sheets where yesterday's debt registers and birth-right codicils once glared in sharp iron-gall. The ink has simply lost its temper, lifting its pigment from the rag-paper and drifting upward in microscopic black motes to settle against the vaulted stone ceilings. Nothing remains upon the page save the dull indentation of the bone-folder and the faint, sweet smell of linseed oil and flax. Even the marginal notes, those malicious little whispers that used to carp at your margins, have grown toothless and grey. They flake away at a touch, leaving margins as white and smooth as an untouched drift of salt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the ink rise into the rafters"
+   ]
+  },
+  "ul-6-006": {
+   "title": "A Clean Slate",
+   "text": "Outside, in the narrow winding lanes beneath the upper city of Quillon, the cobblestones feel strangely light beneath your iron-shod boots. Citizens stumble from their tall timbered doorways with blank eyes, clutching ledgers that contain nothing but the crisp, mocking rustle of empty leaves. The heavy hereditary grudges that divided the guilds for three hundred years have dissolved overnight into thin air, leaving butchers and bakers to look across their stalls with polite, unremembering bewilderment. No one recalls who stole the wool-merchants' weigh-beam in the winter of forty-four, nor who cursed the well in the tallow-chandlers' yard. The past has been scraped clean as a butcher's block after the evening wash-down. A great, vast emptiness stretches before every hearth and market-cross, heavy with the terrifying potential of a morning that has never heard its own name.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk back toward the darkened stacks"
+   ]
+  },
+  "ul-6-007": {
+   "title": "The Empty Shelf",
+   "text": "Down in the Returns Desk, the trolleys stand in a neat, pathetic row with their grease-caked wheels locked by decades of honest service. The night-porter doops his chin against his brass waistcoat buttons, dreaming of nothing at all, while the red-ink stampers dry hard in their iron trays like small, extinct beetles. You lay your leather sorting apron across the edge of the high oak counter for the very last time. The air smells of cool limestone and old paper that has forgotten the touch of human thumbs. There are no fines to record, no overdue slips to harangue the students with, and no lost volumes waiting in the misfiled wing. You take your brass lamp from its peg, turn down the wick until the tiny blue bead of flame dies into a thread of grey smoke, and leave the great hall to the quiet administration of the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step out into the wide white world"
+   ]
+  },
+  "ul-6-008": {
+   "title": "The Iron Ledger",
+   "text": "Order reigns with the absolute precision of a newly sharpened nib drawn across clean laid paper. In the Cataloguers' Court, the long rows of card-drawers are locked with heavy brass padlocks, each key accounted for in triplicate by men who have not seen the sun since their apprenticeship. Every book in the Underlibrary now sits at a precise ninety-degree angle to its neighbour, indexed, cross-referenced, and bound in stiff black buckram that admits no argument. The whispering marginalia have been systematically scraped from every leaf with razor-sharp steel erasers, leaving the margins as sterile and uniform as a freshly raked gravel walk. Rival scholars sit at their assigned carrels under green-shaded lamps, forbidden to speak, turning pages only when the master clock strikes the hour with a dull, pneumatic thud.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the rows of black buckram"
+   ]
+  },
+  "ul-6-009": {
+   "title": "The Price of Order",
+   "text": "Authority settles over the endless stacks like a cold sheet of lead dropped from the rafters. The lending clerk issues volumes with a rubber stamp that clicks like a falling guillotine, while the zealots of the Burners are safely bolted into the coal-cellars with their damp firewood and unlit torches. Nothing moves in the deep annexes unless a rule permits it, and no shelf shifts its position by so much as a hair's breadth from dawn to dusk. You walk the galleried aisles with your cataloguing iron tucked neatly beneath your arm, checking spine-numbers against the master register with a weary, mechanical precision. The air is entirely devoid of mystery; every shadow has been measured, docketed, and filed under its proper heading in the registry of approved silences.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Sign your name in the final register"
+   ]
+  },
+  "ul-6-010": {
+   "title": "The Final Shelf-Mark",
+   "text": "The heavy iron latch falls home with a dry, satisfying click that seals the catalogued centuries into their permanent boxes. There are no more doors left to open and no more wandering corridors to trick the unwary page. You place your brass quill-knife in the velvet-lined drawer and turn the key twice, sliding the heavy bolt into its groove. The library sleeps at last beneath a mountain of stone and ink, perfect, immobile, and dead. You turn your back on the stacks and walk out into the quiet city, carrying nothing with you save the cold taste of rules and the immaculate, terrifying peace of a world that has been put entirely in its place.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  }
+ },
+ "missing": []
+}

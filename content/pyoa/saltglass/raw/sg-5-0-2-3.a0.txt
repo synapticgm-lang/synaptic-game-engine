@@ -1,0 +1,68 @@
+Gemini said
+
+@@SECTION sg-5-0-2-3
+TITLE: The Light-Well Cascade
+TEXT: Frost-white crust flakes away from the frozen cascade of the Light-Well, where a rival traveler drops a cracked water-skin onto the flags and begs hoarsely for a single draught from your canvas canteen. Heat radiates upward from the fused glass floor, making the distant columns shiver in the glare. You clutch your banked coal-lantern closer against your hip while weighing the dry plea against your own dwindling reserves for the road ahead.
+EXIT 1: Inspect the hidden spring-latch beneath your scarred forearm
+EXIT 2: Step past the pleading traveler toward the astronomer crypt
+@@END
+@@SECTION sg-5-0-2-4
+TITLE: The Singing Pillar
+TEXT: Deep beneath the arched stone ribs of the Great Colonnade, a blind Glasswright tunes a towering singing pillar whose resonant, clear note masks a low and unsettling rumble of distant tremors in the Basin floor. Fine dust sifts down from the vaulted mortar with every vibration, settling over your boots like gray snow.
+EXIT 1: Follow the amber beam toward the First Astronomer crypt
+EXIT 2: Examine the smeared ledger near the silent bronze gears
+EXIT 3: Glance through the high clerestory at the approaching dust storm
+@@END
+@@SECTION sg-5-0-2-5
+TITLE: The Prism-Keeper Vestibule
+TEXT: Yellowed ledgers flutter wildly in a sudden draft inside the cramped vestibule of the Prism-Keeper, smelling sharply of old paper and dried ink. You pull the cold ceramic key from your tunic pouch, turning it over in your palm to inspect the fine hairline fractures threatening its length. Outside this narrow shelter, the vast glare of the salt flats presses hard against the leaded windowpanes.
+EXIT 1: Seek the quiet shadows of the astronomer crypt
+EXIT 2: Inspect the abandoned ledger beside the clockwork gears
+EXIT 3: Watch the gathering storms through the high clerestory windows
+@@END
+@@SECTION sg-5-0-2-6
+TITLE: The Terrace of Mirrors
+TEXT: Blinding sun-flashes lance across the open terrace of singing mirrors from the high sentry towers, forcing you to drop and crawl awkwardly along the scorching flagstones. The heat radiating off the polished glass plates threatens to blister your knuckles through your leather gloves. Every movement must be timed between the rhythmic sweeps of light sweeping across the blinding white expanse.
+EXIT 1: Seek refuge within the shadowed astronomer crypt
+EXIT 2: Watch the distant storms from the high clerestory
+EXIT 3: Descend into the narrow conduit beneath the refracting floor
+@@END
+@@SECTION sg-5-0-2-7
+TITLE: The Solar Furnace
+TEXT: Coarse grit spatters against the rusted metal within the shadow of a collapsed solar furnace, where Pell sits quietly clearing white dust from his thick glass-diver goggles. He taps a weathered knuckle against the cracked flags at his feet, warning you of concealed drop-shfts and fragile weight-plates honeycombing the path ahead.
+EXIT 1: Inspect the open ledger beside the silent bronze clockwork
+EXIT 2: Slip into the narrow conduit beneath the refracting floor
+EXIT 3: Enter the frescoed hall of the faded green valleys
+@@END
+@@SECTION sg-5-0-2-8
+TITLE: The Salt-Encrusted Vault
+TEXT: Heavy iron chains drop with a sudden, clattering crash from the upper catwalks, splintering the salt crystals encrusting the vaulted ceiling just inches above your head. You flatten yourself against a damp pillar while rival agents shout warnings and threats from the shadows above.
+EXIT 1: Crawl away through the narrow condensation conduit
+EXIT 2: Rush across the courtyard toward the broken sundial
+EXIT 3: Turn back to the relative safety of the outer gallery
+@@END
+@@SECTION sg-5-0-2-9
+TITLE: The Crypt of Founders
+TEXT: Your ember-lamp casts a wavering amber glow over solemn stone effigies inside the chilly crypt of the Lens-Founders, each holding empty bronze bowls that once caught the mountain dew of a forgotten age. The air here smells of cold stone and ancient damp, untouched by the baking glare of the Basin outside.
+EXIT 1: Step into the frescoed hall of the Seven Rains
+EXIT 2: Help Pell pry open a jammed service hatch with a wedge
+@@END
+@@SECTION sg-5-0-2-10
+TITLE: The Broken Sluice-Gates
+TEXT: Frantic diggers throw up clouds of white crust near the broken sluice-gates of the Lower Basin, hunting in desperate vain for hidden emergency drainage pipes that vanished under decades of salt. The dry wind whips white dust into your eyes as you edge past the frantic laborers.
+EXIT 1: Assist Pell with the heavy conduit valves
+EXIT 2: Approach the smoking lantern by the inner vault threshold
+@@END
+@@SECTION sg-5-0-2-11
+TITLE: The Cedar Alcove
+TEXT: Dried fruit rolls across the cedar-lined floor of the Archive as a nervous clerk pushes a small wooden bowl toward you, trying in hushed tones to bribe you into handing over your precious seedkey. Outside the alcove, the hollow echo of footsteps reminds you that you are being hunted.
+EXIT 1: Walk the hollow floorboards of the Meridian Gallery
+EXIT 2: Approach the smoking oil puddle at the inner vault threshold
+EXIT 3: Turn back toward the cracked dome of the outer gallery
+@@END
+@@SECTION sg-5-0-2-12
+TITLE: The Great Refractor
+TEXT: Converging flash-signals from hidden sentry nests sweep rapidly across the open floor of the Great Refractor, forcing you to scramble headlong toward a barricade of fallen masonry for immediate stone cover. The sharp hum of resonant glass vibrates through the soles of your boots with every pulse of light.
+EXIT 1: Slip down toward the heavy conduit valves with Pell
+EXIT 2: Head for the smoking lantern near the inner vault threshold
+@@END

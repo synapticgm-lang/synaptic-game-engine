@@ -1,0 +1,98 @@
+{
+ "batch": "sg-6-1-1-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-1-1-1": {
+   "title": "Shattered Skylight Vault",
+   "text": "Fine white salt sifts through a jagged rent in the overhead vault, dusting your shoulders as you dance across the flagstones. Heavy ceramic tiles break loose from the crumbling sill above, smashing into white shards inches from your boots and threatening to crush the cold ceramic key clutched in your palm. You leap past the falling debris into the deeper gloom, your coal-lantern swinging wildly against your thigh while you weigh your next step toward the lower chambers.",
+   "exits": [
+    "Dash past the falling tiles ahead",
+    "Duck into a shadowy alcove to wait",
+    "Scramble toward a brass-fitted maintenance pipe"
+   ]
+  },
+  "sg-6-1-1-2": {
+   "title": "The Resonant Latch",
+   "text": "The cold ceramic key in your hand gives a sudden, distinct thrum against your palm, vibrating with an ancient harmony that matches the concealed machinery within the masonry. A heavy stone floor panel clicks and pivots open without a sound, revealing a cool, untouched subterranean gallery filled with untouched rows of dark grain bins. You peer down into the unexpected recess where the air tastes of ancient dust and promised life.",
+   "exits": [
+    "Descend into the unplundered grain gallery",
+    "Follow the narrow corridor along the wall",
+    "Inspect the low basalt archway ahead"
+   ]
+  },
+  "sg-6-1-1-3": {
+   "title": "Frost and Barley Husks",
+   "text": "Bitter drafts bite through your coat as you wade through knee-deep drifts of blackened barley husks inside the freezing basalt chamber. Your banked coal-lantern sputters and dims against the damp cold, casting pale, wavering light over frost-rimed walls and twisted iron conduits. You steady the lantern and listen to the hollow crunch of husks beneath your boots, searching for a way through the gloom.",
+   "exits": [
+    "Follow the sound of distant water running",
+    "Step beneath the low salt-crusted basalt arch",
+    "Present your debt badge to the brass gate",
+    "Hide behind the empty terracotta seed-bin"
+   ]
+  },
+  "sg-6-1-1-4": {
+   "title": "The Sleeping Stone Fish",
+   "text": "A dry stone fountain carved with curling stone fish stands silent under the low vault, its basin choked with pale crystal dust. Your boot kicks against an abandoned copper hoe left in the dust, sending a sharp metallic clatter ringing off the damp walls. The sudden noise hangs heavy in the stillness as you grip your lantern and look down the branching dark tunnels.",
+   "exits": [
+    "Descend the narrow spiral staircase downward",
+    "Skirt the slippery pool of green mineral scum",
+    "Pocket the heavy bronze gear from the desk"
+   ]
+  },
+  "sg-6-1-1-5": {
+   "title": "Whispering Crystal Dust",
+   "text": "Peeling constellations painted in faded lapis and gold arch above your head across the low vaulted ceiling. You step gingerly over undulating drifts of crystal dust that shift and sigh under your weight like sleeping insects. The faint scratching sound follows your heels as you scan the shadows for a clear passage deeper into the vault.",
+   "exits": [
+    "Trace the faded blue stencil toward the granary",
+    "Hurry past the stacks of crumbling wicker hampers"
+   ]
+  },
+  "sg-6-1-2-0": {
+   "title": "The Saltwort Vent",
+   "text": "Rusted iron gates secured by long-dead mechanisms bar the main corridor, forcing you to squeeze sideways through a narrow ventilation slit choked with prickly saltwort. Sharp thorns tug at your sleeves and scratch your knuckles while you worm your way through the dry vegetation into the dark space beyond. You shake the stinging burrs from your coat and catch the scent of damp stone and old earth.",
+   "exits": [
+    "Emerge into the damp round vestibule",
+    "Check your Seedkey near the bronze scales",
+    "Hack through the gray vines ahead"
+   ]
+  },
+  "sg-6-1-2-1": {
+   "title": "Scrolls of the Archive",
+   "text": "Fluttering parchment scrolls detach from the rotting shelves like dying moths, brushing against your face and hair in the drafty circular archive. You swat the brittle paper away while keeping your eyes fixed on the shadows for any sign of the lock chamber. The air smells intensely of dry glue and centuries of forgotten records.",
+   "exits": [
+    "Cut through the subterranean greenhouse",
+    "Sidestep the rushing mineral drainage channel",
+    "Examine the deep dark shaft by the winch",
+    "Turn back toward the alabaster jars"
+   ]
+  },
+  "sg-6-1-2-2": {
+   "title": "The Dripping Water Clock",
+   "text": "An ancient copper water-clock hums quietly beside a bubbling puddle of thick, bitter brine, its slow rhythmic drips marking the relentless approach of the monsoon flood. The metal vessel echoes with every metallic plop, a stark reminder of the twenty days ticking away above the basin. You wipe moisture from your brow and eye the branching tunnels leading onward.",
+   "exits": [
+    "Hack through the tangled greenhouse vines",
+    "Sidestep the rushing mineral drainage channel",
+    "Peer down the deep dark shaft by the winch"
+   ]
+  },
+  "sg-6-1-2-3": {
+   "title": "The Vinegar Alcove",
+   "text": "Hanging clusters of dried gourd-flasks knock gently together in the stale draft, casting ribbed shadows across an open stone alcove that smells sharply of old vinegar and parched earth. You crouch by the low threshold, lifting your amber-lamp higher to inspect the pale crusts scaling the lower masonry. Every surface bears the fine, gray powder of a long-dead harvest, undisturbed except for the narrow tracks of your own boots in the dust. Ahead, the dry corridor splinters into three distinct routes deeper into the vault's labyrinth, each marked by its own peculiar scent and shadow.\n\nYou must decide whether to test the heavy machinery near the winch, search the charred lockers for a hidden hatch, or follow the alkaline smell toward the white lime trough before the rising heat exhausts your remaining water.",
+   "exits": [
+    "Inspect the rusted winch system and hanging chains",
+    "Search the charred lockers for the master hatch",
+    "Wipe the stinging sweat near the dry lime trough"
+   ]
+  },
+  "sg-6-1-2-4": {
+   "title": "The Prism Corridor",
+   "text": "Fractured prisms lining the walls catch the weak glow of your lantern, slicing sharp ribbons of red light across the floor. Each step must be placed with absolute care upon the pavement of fragile glass shards that crunch delicately beneath your soles. You hold your breath to keep your balance as the corridor bends toward a fresh expanse of shadow.",
+   "exits": [
+    "Check your Seedkey by the ancient scales",
+    "Sidestep the rushing mineral drainage channel",
+    "Search the long gallery of charred oak lockers"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,93 @@
+{
+ "batch": "sg-5-0-2-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-0-2-3": {
+   "title": "The Light-Well Cascade",
+   "text": "Frost-white crust flakes away from the frozen cascade of the Light-Well, where a rival traveler drops a cracked water-skin onto the flags and begs hoarsely for a single draught from your canvas canteen. Heat radiates upward from the fused glass floor, making the distant columns shiver in the glare. You clutch your banked coal-lantern closer against your hip while weighing the dry plea against your own dwindling reserves for the road ahead.",
+   "exits": [
+    "Inspect the hidden spring-latch beneath your scarred forearm",
+    "Step past the pleading traveler toward the astronomer crypt"
+   ]
+  },
+  "sg-5-0-2-4": {
+   "title": "The Singing Pillar",
+   "text": "Under the arched ribs of the Great Colonnade, a blind Glasswright tunes a singing pillar whose clear note masks the rumble of distant tremors. You feel the heavy stone floor vibrate beneath your boots as the resonant pitch climbs higher, setting the salt encrustations on the capitals into a fine, shimmering powder. The air tastes of ozone and old dust, thick with the tension of the ancient observatory settling into its final age.\n\nWith the ground beginning to pulse more sharply beneath your feet, you weigh your options among the shadowed archways.",
+   "exits": [
+    "Step into the shadowed crypt",
+    "Inspect the abandoned clockwork ledger",
+    "Watch the distant dust storms"
+   ]
+  },
+  "sg-5-0-2-5": {
+   "title": "The Prism-Keeper Vestibule",
+   "text": "Yellowed ledgers flutter wildly in a sudden draft inside the cramped vestibule of the Prism-Keeper, smelling sharply of old paper and dried ink. You pull the cold ceramic key from your tunic pouch, turning it over in your palm to inspect the fine hairline fractures threatening its length. Outside this narrow shelter, the vast glare of the salt flats presses hard against the leaded windowpanes.",
+   "exits": [
+    "Seek the quiet shadows of the astronomer crypt",
+    "Inspect the abandoned ledger beside the clockwork gears",
+    "Watch the gathering storms through the high clerestory windows"
+   ]
+  },
+  "sg-5-0-2-6": {
+   "title": "The Terrace of Mirrors",
+   "text": "Blinding sun-flashes lance across the open terrace of singing mirrors from the high sentry towers, forcing you to drop and crawl awkwardly along the scorching flagstones. The heat radiating off the polished glass plates threatens to blister your knuckles through your leather gloves. Every movement must be timed between the rhythmic sweeps of light sweeping across the blinding white expanse.",
+   "exits": [
+    "Seek refuge within the shadowed astronomer crypt",
+    "Watch the distant storms from the high clerestory",
+    "Descend into the narrow conduit beneath the refracting floor"
+   ]
+  },
+  "sg-5-0-2-7": {
+   "title": "The Solar Furnace",
+   "text": "Within the shadow of a collapsed solar furnace, Pell cleans grit from his glass-diver goggles while warning you of traps in the floor. His copper-rimmed tool clicks softly against the stone as he gestures toward hairline fractures spreading across the tiled pavement ahead. The smell of scorched brass and dry earth hangs heavy in the ruin, punctuated by the steady drip of unseen condensation from the higher tiers.\n\nYou grip your banked coal-lantern tighter as you consider the safest way forward through the hazard.",
+   "exits": [
+    "Inspect the silent bronze gears",
+    "Slip into the narrow conduit",
+    "Enter the frescoed hall of rains"
+   ]
+  },
+  "sg-5-0-2-8": {
+   "title": "The Falling Chains",
+   "text": "Beneath a vaulted ceiling encrusted with salt crystals, you dodge heavy iron chains dropped by rival agents from the upper catwalks. The thick links strike the glass-paved floor with deafening smashes, sending sharp shards spraying into the dim air like freezing stars. Your ember-lamp casts long, frantic shadows against the fluted pillars as you duck behind a thick basalt buttress for shelter.\n\nThe metallic echoes fade slightly, leaving you with three distinct paths through the chaotic chamber.",
+   "exits": [
+    "Crawl through the dripping conduit",
+    "Cross the courtyard of the broken sundial",
+    "Turn back toward the fractured lens"
+   ]
+  },
+  "sg-5-0-2-9": {
+   "title": "The Crypt of Founders",
+   "text": "Inside the chilly crypt of the Lens-Founders, your ember-lamp flickers over stone effigies holding empty bronze bowls that once caught dew. The dead faces of the ancient opticians gaze blankly upward into the gloom, untouched by the growing heat of the approaching monsoon. A thin crust of white mineral coats their heavy robes, making the statues look like they are carved from solid salt rather than basalt.\n\nYou pause among the silent figures, weighing the passages that branch away from the cold vault.",
+   "exits": [
+    "Proceed toward the frescoed hall",
+    "Pry open the jammed service hatch"
+   ]
+  },
+  "sg-5-0-2-10": {
+   "title": "The Broken Sluices",
+   "text": "Near the broken sluice-gates of the Lower Basin, frantic diggers shovel white crust in a vain search for hidden emergency drainage pipes. Their shovels scrape harshly against the fused glass floor, kicking up choking clouds of dry alkaline dust that catch in your throat. Around them, the ancient ironwork groans under the immense pressure of the dry earth above, threatening to give way at any moment.\n\nWith the laborers too frantic to notice your passing, you look for a clear route away from the excavation.",
+   "exits": [
+    "Force open the jammed service hatch",
+    "Approach the smoldering threshold"
+   ]
+  },
+  "sg-5-0-2-11": {
+   "title": "The Cedar Alcove",
+   "text": "Within the fragrant cedar-lined alcove of the Archive, a nervous clerk tries to bribe you with dried fruit to hand over your seedkey. His fingers twitch continuously against the folds of his salt-stained tunic as he glances anxiously toward the vaulted ceiling, terrified of the rival factions roaming the halls. The sweet, shriveled figs smell strongly of sugar and dust, offering a tempting contrast to the bitter journey ahead.\n\nYou step back from the outstretched palm, keeping your hand firmly on the cold ceramic key in your pouch.",
+   "exits": [
+    "Walk down the empty Meridian Gallery",
+    "Approach the smoking inner threshold",
+    "Turn back toward the outer dome"
+   ]
+  },
+  "sg-5-0-2-12": {
+   "title": "The Great Refractor",
+   "text": "Across the open floor of the Great Refractor, converging flash-signals from hidden sentry nests force you to seek immediate stone cover. Brilliant beams of reflected sunlight sweep the polished glass tiles like searching fingers, turning the dust motes into burning sparks. You flatten yourself against a low marble plinth while the signals stutter in their frantic, complex code above your head.\n\nWith the blinding light washing over the open floor, you need to choose your next movement carefully.",
+   "exits": [
+    "Slip toward the heavy bronze valves",
+    "Dash for the smoking basalt threshold"
+   ]
+  }
+ },
+ "missing": []
+}

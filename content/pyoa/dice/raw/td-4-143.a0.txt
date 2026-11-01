@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-4-143
+TITLE: Copper And Cinder
+TEXT: Salt-crusted filters lie scattered across the flagstones like the ribs of salted cod, their diaphragms split by mineral rot and years of neglect. Your thumb traces the hairline fracture in a brass valve while the damp air smells of stagnant lime and old grease. With a blunt screwdriver salvaged from a rusted toolbox, you pry open the copper casing to reach the ceramic filter core inside.
+EXIT 1: Clear out the salt blockages
+@@END
+@@SECTION td-4-144
+TITLE: Rebuilding The Core
+TEXT: Thin streams of brackish gray water drip from the overhead stone, splashing against your boots with a rhythmic, hollow ping. Working by the dim, flickering light of a tallow candle, you fit a fresh strip of oiled canvas around the intake ring and bind it tight with waxed twine. Every component feels brittle in the chill, demanding a delicate touch to avoid snapping the fragile copper pins.
+EXIT 1: Secure the makeshift intake valve
+@@END
+@@SECTION td-4-145
+TITLE: Testing The Filter
+TEXT: Water from the stagnant cistern pools in the upper funnel, dark as bog-tea and flecked with gray silt that circles lazily toward the drain hole. Your fingers press down on the cracked lever, coaxing the valve open by a fraction of a hair's breadth to control the pressure before the brittle seals burst under the sudden weight of the liquid. The entire contraption shudders as the foul water meets the dry charcoal core, trembling on the verge of total collapse if the tension shifts even a fraction of an inch.
+CHECK: Twist the valve to steady pressure
+@@END
+@@SECTION td-4-146
+TITLE: A Bitter Draft
+TEXT: A sudden high-pitched squeal splits the quiet as the ceramic core fractures down the middle, unleashing a dirty torrent that floods across your knuckles and soaks your sleeves in foul gray muck. You pull your hand back with a sharp hiss of pain as a jagged brass burr slices a shallow red line across your palm. The precious water drains away into the porous stone below, leaving you empty-handed and wiping sticky mud from your stinging skin while the damp cold settles deep into the new scratch.
+EXIT 1: Gather your ruined tools slowly
+@@END
+@@SECTION td-4-147
+TITLE: Sweet Clear Droplets
+TEXT: Clear liquid begins to bead at the brass nozzle, falling with a clean, steady plink into the tin cup below until the vessel holds a small, untainted measure of sweet water. You lift the tin to your lips, washing away the lingering taste of salt and dry stone with a cold, reviving swallow that steadies your tired limbs. Whatever hardships wait down in the dark, you carry a dependable means of survival against the encroaching thirst.
+GRANT: Filtered water flask
+EXIT 1: Climb back toward the camp
+@@END
+@@SECTION td-4-148
+TITLE: Shell And Sinew
+TEXT: Hard jointed armor scrapes against the dry masonry of the lower alcove, signaling the sudden, scuttling advance of a pale centipede with antennae twitching like frayed wire. Without pausing to weigh the risk, you snatch up a heavy iron belaying pin and bring it down hard across the creature's segmented back with a dull, echoing crunch. Yellowish fluid bubbles from the cracked shell, smelling sharply of vinegar and old copper.
+EXIT 1: Pry the glowing sac free
+@@END
+@@SECTION td-4-149
+TITLE: Crushing The Carapace
+TEXT: The armored beast thrashes in the dust, its dozens of needle-tipped legs kicking wildly against your boots as it tries to wedge its heavy mandibles into the leather of your instep. You plant your heel squarely upon the center of its segmented thorax, throwing your entire weight downward while your muscles strain against the stubborn resilience of its calcified hide. The shell resists with a sickening, leathery groan, hovering on the absolute edge of snapping beneath your boot-sole.
+CHECK: Smash through the armored shell
+@@END
+@@SECTION td-4-150
+TITLE: A Costly Struggle
+TEXT: The creature wrenches sideways with unexpected fury, its barbed forelegs catching the back of your hand and tearing a ragged gash through your glove before you can grind it into the flagstones. You stumble back against the damp wall, cradling the bleeding hand against your chest while the venom-sac bursts uselessly against the stone, wasting its luminous prize in the dust. The dull throb in your knuckles reminds you of the careless speed of your strike.
+EXIT 1: Bind your torn hand tight
+@@END
+@@SECTION td-4-151
+TITLE: The Luminous Vial
+TEXT: The heavy boot-heel crushes the final layer of armor, leaving the segmented carcass twitching feebly in the gloom while you slice free the pulsing, blue-tinged gland from beneath its throat. It rests in your palm like a cold pearl, radiating a steady, phosphorescent glow that cuts through the surrounding shadows without a flicker of smoke. You pocket the strange prize, knowing its eerie light will serve you well where ordinary torches fail.
+GRANT: Phosphorescent venom sac
+EXIT 1: Return to the ruined shelter
+@@END
+@@SECTION td-4-152
+TITLE: Into The Iron Throat
+TEXT: Loose shale gives way beneath your boots with a sudden, sliding roar, pitching you headfirst down a steep chute of rusted iron plates and ancient sediment. You tumble through the suffocating dark, elbows scraping against cold rivets until you drop clear of the descent and land with a jarring thud upon a colossal ridge of jagged metal. Towering shapes loom around you in the pitch black, cold as frozen anchors and silent as graves—the enormous, unmoving teeth of the Meridian Gear itself, waiting for a hand to turn them.
+EXIT 1: Stand upon the stalled gear teeth
+@@END

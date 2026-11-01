@@ -1,0 +1,90 @@
+{
+ "batch": "sg-2-1-5-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-1-5-2": {
+   "title": "The Bolted Wicket",
+   "text": "A copper placard bolted to the timber post proclaims that all travelers must satisfy the toll or bind themselves to the ledger before crossing the salt-crust. You halt before the small iron wicket, your hand resting lightly on the cold brass cylinder of the Seedkey in your pocket while your banked coal-lantern radiates a steady, comforting warmth against your hip. The clerk within peers out from behind thick spectacles, tapping a heavy quill against a stack of parchment debt-bonds as the desert wind rattles the dry hinges.",
+   "exits": [
+    "Press on past the guarded barrier"
+   ]
+  },
+  "sg-2-1-5-3": {
+   "title": "The Heavy Oak Door",
+   "text": "The heavy oak door of the toll-hut swings wide on creaking iron hinges, revealing a tax-collector whose oiled leather coat smells of brine and dried ink. He steps directly into your path, blocking the narrow track across the shimmering white flats with an immovable posture and a hand held out for tribute. Behind him, the interior of the hut glows with the yellow light of tallow candles, casting long shadows across open ledgers and heavy iron lockboxes that hold the fortunes of the Basin's debtors.",
+   "exits": [
+    "Press on along the dusty track"
+   ]
+  },
+  "sg-d-2-1": {
+   "title": "The Hollow Sinks",
+   "text": "Ignoring all warning signs of unstable salt-crust and the faint hollow echo beneath your boots, you sprint recklessly across a fragile sink-basin in a desperate bid for speed. The white crust shatters instantly beneath your weight like thin window-glass, plunging you straight down into a boiling, suffocating pit of subterranean brine. The heavy air fills with choking sulfur and the sharp tang of hot salt as the white walls close in around you, swallowing your footsteps and your lamp-light forever.",
+   "exits": []
+  },
+  "sg-2-c2": {
+   "title": "The Toll-Collector's Demand",
+   "text": "A lean official blocks your way, tapping a ledger with an ink-stained finger and demanding settlement before you take another step across the Salt Court's territory. You can either sign your name to their cruel credit terms, pledging a future portion of your harvest for safe passage today, or you can open your personal purse and pay the heavy coin fee outright. The choice is yours to make, and the clerk waits with quill poised, watching the steady glow of your lamp with sharp, calculating eyes.",
+   "exits": [
+    "Take the Salt Court's loan of passage",
+    "Pay the toll from your own purse"
+   ]
+  },
+  "sg-2-2-0-0": {
+   "title": "The Singing Glass",
+   "text": "Beyond the iron toll-hut, you skirt a vast circular crater where jagged shards of green and amber glass protrude from the white earth like the teeth of a sleeping beast. Dry desert winds sweep across the jagged edges, plucking strange, haunting chords that vibrate through the soles of your boots and set your teeth on edge. The air here shimmers with dry heat, distorting the horizon into a dancing wall of silver mirages that makes it difficult to tell solid ground from alkaline mire.",
+   "exits": [
+    "Follow the winding track past the crater",
+    "Inspect the singing shards closer by your lamp",
+    "Take a wide berth around the ringing hollow"
+   ]
+  },
+  "sg-2-2-0-1": {
+   "title": "The Sunken Trench",
+   "text": "Past the toll-keepers, you follow a sunken drainage trench where bleached crusts of salt flake off in dry white scales beneath your heavy boots. The trench walls shelter you from the scouring desert wind, though the air at the bottom smells stagnant and thick with old alkali dust. Overhead, the relentless midday sun beats down upon the rim of the cutting, turning the narrow path into a stifling kiln where every breath tastes of ancient ocean beds.",
+   "exits": [
+    "Climb out onto the open salt flats",
+    "Search the ruined culvert ahead",
+    "Follow the trench deeper into the maze"
+   ]
+  },
+  "sg-2-2-1-0": {
+   "title": "The Old Mender",
+   "text": "Beside a rusted iron salt-pan, an old mender named Mallow sits cross-legged on a woven rush mat, patiently soldering cracked glass lenses with a tiny spirit-flame. He looks up as your boots crunch on the salt, offering to trade tales of buried cisterns and hidden water-vaults in exchange for a meager scrap of your dried mutton. The rich smell of toasted fat mingles with the sharp tang of flux as he gestures toward a shaded corner of the pan.",
+   "exits": [
+    "Step carefully across the white alkaline crust",
+    "Skirt the edge of the simmering pink pool",
+    "Heed the warning of the weary packer nearby",
+    "Squeeze through the narrow cleft of green panes"
+   ]
+  },
+  "sg-2-2-1-1": {
+   "title": "The Hidden Trench",
+   "text": "Your burning ember-lamp casts a warm, ruddy glow that catches the amber gleam of a half-buried ceramic marker protruding from the white salt crust. The familiar light reveals a narrow, hidden trench choked with dry desert tumbleweeds that shaves leagues off the tedious route around the alkaline flats. Stepping down into the sheltered cutting, you feel the wind drop away entirely, leaving you in a quiet, shadowy corridor of earth and old brick.",
+   "exits": [
+    "Squeeze through the singing green window-panes",
+    "Slip past the abandoned watch-tower quietly",
+    "Walk across the field of shattered milk-glass"
+   ]
+  },
+  "sg-2-2-1-2": {
+   "title": "The Salt-Scrapers",
+   "text": "Under the harsh, unsparing glare of noon, you dodge a team of weary salt-scrapers hauling massive white blocks on creaking wooden sledges across the blinding pan. The workers pull in unison against heavy hemp harnesses, their sunburned faces caked in a thick crust of salt that makes them look like statues carved from sea-foam. You press yourself flat against a stack of dried reeds to let the heavy convoy rumble past without catching the overseer's eye.",
+   "exits": [
+    "Slip past the old watch-tower ruins",
+    "Cross the field of shattered milk-glass",
+    "Wade through the dry drainage ditch",
+    "Follow the glass milestone northward"
+   ]
+  },
+  "sg-2-2-1-3": {
+   "title": "The Crazed Expanse",
+   "text": "You cross a flat expanse of crazed glaze where the white earth has fused into a brilliant, porcelain-like sheet that stretches unbroken to the shimmering horizon. Your long, thin shadow races ahead of you across the white waste, distorted by the rising heat waves into a dancing, spectral silhouette. Every step produces a sharp, brittle crackle like walking on a frozen lake in the dead of winter, though the air burns your lungs with dry desert heat.",
+   "exits": [
+    "Slip past the sleeping sentry unseen",
+    "Cross the dry silt bed of hexagonal patterns",
+    "Pass the solitary glass-shingle roof"
+   ]
+  }
+ },
+ "missing": []
+}

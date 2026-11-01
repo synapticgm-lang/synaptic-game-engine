@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION sg-4-0-5-1
+TITLE: The Weight of Speed
+TEXT: Heavy gales buffet the white wastes, sending abrasive needles of glass-dust stinging against your exposed cheeks as you grip the cold ceramic Seedkey in your pocket. Every second spent standing in this open drift tests the seams of your coat and the endurance of your burning lungs. You must decide whether to endure the punishing velocity of the open dunes or seek shelter before the storm seals every landmark in white obscurity. // The howling tempest offers no mercy to hesitant travelers, urging a swift and dangerous advance into the howling white.
+EXIT 1: Press onward through the biting gale
+@@END
+@@SECTION sg-4-0-5-2
+TITLE: Descending Micro-Crystals
+TEXT: Sharp micro-crystals fill the freezing air, hissing against your woolen layers as the great storm front descends with sudden, suffocating fury. Your fingers grow numb around the handle of your amber lamp, fighting to keep the precious flame banked against the howling void. The blinding squall leaves no room for hesitation, demanding an immediate choice on how best to shield your vital burden from the scouring drift. // Every gust threatens to extinguish your only warmth and scour the skin from your face.
+EXIT 1: Press on into the screaming tempest
+@@END
+@@SECTION sg-4-0-5-3
+TITLE: The Blinding Plunge
+TEXT: Screaming winds tear at your collar while the towering wall of glass-dust looms inches away, casting an eerie, pale luminescence across the frosted dunes. You steel your frayed nerves for the final blinding plunge into the roaring white, keeping one hand clamped firmly over the pocket where your cold ceramic key rests. The salt-crust beneath your boots shudders under the immense atmospheric pressure of the approaching storm front. // There is no turning back now as the tempest swallows the horizon whole.
+EXIT 1: Press on through the wall of dust
+@@END
+@@SECTION sg-4-c1
+TITLE: The Glass-Dust Wall
+TEXT: Towering banks of razor-fine quartz and grey powder churn before you, a wall of the Mirror Storm that promises to strip paint from metal and flesh from bone. Your fingers brush the cold ceramic Seedkey in your pocket, knowing that one wrong method here will ruin your mission before you ever reach the heart of the Basin. You must decide whether to take the extra time to wrap the delicate artifact securely in spare cloth, accepting the delay, or trust the leather pouch as it is and run for the shelter of the dunes at full speed. // The howling storm offers no compromise, demanding a choice between cautious preservation and desperate haste.
+EXIT 1: Wrap the Seedkey in cloth against the dust
+EXIT 2: Trust the pouch and run for it
+@@END
+@@SECTION sg-4-1-0-0
+TITLE: The Buried Culvert
+TEXT: Razor-fine quartz dunes tower overhead, their crests hissing as high winds drive a relentless stream of glass-dust across the barren wastes. You drop low, crawling on hands and knees through a buried iron culvert while sharp shards pelt your woolen cloak with the force of thrown gravel. The confined space offers temporary relief from the worst of the gale, but the shifting grit threatens to wedge against your pockets and dislodge the Seedkey into the dark silt. // Every inch forward requires deliberate effort against the choking drift.
+EXIT 1: Crawl deeper toward the open trench
+EXIT 2: Slide sideways into a rusted vent
+EXIT 3: Rise cautiously onto the upper ridge
+@@END
+@@SECTION sg-4-1-0-1
+TITLE: The Singing Crystal Bowl
+TEXT: Jagged fragments of singing crystal surround you in a natural bowl, vibrating with a high, mournful note whenever the abrasive white gale sweeps across their razor-sharp edges. You crouch low behind a shattered porphyry pillar, shielding your flickering ember-lamp with your body as the wind tries to tear the iron door from its latch. The dancing flame casts long, wavering shadows against the glittering debris, threatening to sputter out entirely if the scouring draft finds a gap in your guard. // The surrounding debris hums a chaotic dirge to the storm.
+EXIT 1: Inspect the fresh tracks leading toward the flute
+EXIT 2: Dash across the ribbed flat of blistered alkali
+EXIT 3: Check your oil flask within the sunken barge
+@@END
+@@SECTION sg-4-1-1-0
+TITLE: The Salt-Miner's Arch
+TEXT: Crescent ridges of fused sand tower above a hollow archway where an old salt-miner named Barnaby coughs into a stained rag, offering shelter from the gale for a pinch of tobacco. His breath rattles in his chest with the ominous wet wheeze of lung-rot, a common curse among those who breathe the Basin's glass-laden air too long. Outside, the storm shatters small dunes into flying dust, making any departure into the open expanse a hazardous gamble for your eyes and lungs. // The old man gestures toward a dim alcove out of the biting draft.
+EXIT 1: Step inside the hollowed optic dome
+EXIT 2: Venture onto the violet glass shingles
+EXIT 3: Take refuge within the collapsed kelp-cake warehouse
+@@END
+@@SECTION sg-4-1-1-1
+TITLE: The Milk-Glass Archway
+TEXT: Hollow ribs of ancient milk-glass form a natural shelter where you pause to wipe the stinging grit from your smarting eyes with a salt-stiffened sleeve. The howling gale tests the integrity of your clothing and hammers rhythmically against the ceramic Seedkey resting in your pocket, reminding you that the storm is a physical weight. Outside this fragile sanctuary, the white waste shifts continuously, erasing old tracks and carving new dunes out of the wreckage of the Old Lensfolk cities. // Your breath fogs the smooth glass surface inches from your face.
+EXIT 1: Step toward the leaning sun-tower
+EXIT 2: Circle the crater of fused green sand
+EXIT 3: Descend into the sunken mirror-slate corridor
+@@END
+@@SECTION sg-4-1-1-2
+TITLE: The Salt Court Cart
+TEXT: Frozen cascades of green slag flank a stranded wooden cart left behind by the Salt Court, its heavy iron-rimmed wheels wedged firmly in a choked drainage trench. The obstacle blocks your direct path against the mounting tempest, forcing you to choose a scrambling detour across unstable debris while the wind howls like a trapped beast. Every surface is coated in a fine layer of abrasive powder that makes footing treacherous and handholds uncertain. // The creaking timbers of the abandoned wagon groan under the force of the gale.
+EXIT 1: Seek shelter beneath the yellow salt-crust shelf
+EXIT 2: Cross the bridge of warped copper rails
+EXIT 3: Retreat into the hollow bronze valve-housing
+@@END
+@@SECTION sg-4-1-1-3
+TITLE: The Hidden Drainage Flute
+TEXT: Tumbled solar-reflectors cast skewed shadows across the howling waste, and behind one massive mirror you spot a distinct, fresh boot-print left by the alleged vault-looters. The impression points straight toward the gaping mouth of a hidden drainage flute plunging down into the gloom of the lower ruins. Knowing that others have passed this way ahead of you adds a grim urgency to your steps, even as the storm shrieks its warning from the open dunes above. // The dark metal tube echoes with the steady whistle of draft air.
+EXIT 1: Slip inside the hollow bronze valve-housing
+EXIT 2: Follow the cairn of cracked spectacles
+EXIT 3: Descend toward the vaulted cistern of green mud
+@@END

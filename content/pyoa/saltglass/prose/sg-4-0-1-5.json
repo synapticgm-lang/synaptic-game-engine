@@ -1,0 +1,88 @@
+{
+ "batch": "sg-4-0-1-5",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-0-1-5": {
+   "title": "Shingles on the Slope",
+   "text": "Shards of green and amber glass cascade down the steep dune face like a breaking wave, forcing you to leap sideways into a shallow depression. Your boots crunch against buried ceramic tiles as you land in a hidden trench, carved deep into the salt-crust by ancient water-seekers long before the Basin dried. The howling gale diminishes here to a dry, organ-like drone against the stone ribs. You pause to scrape accumulated glass-dust from your lamp-gasket, watching the tiny red glow of your coals bat.\n\nThe trench deepens ahead into darkness, while a crumbling stair of fused brick winds upward toward the blinding crest of the dune.",
+   "exits": [
+    "Climb upward to face the gale"
+   ]
+  },
+  "sg-4-0-1-6": {
+   "title": "Hum of the Signal",
+   "text": "Overhead, a tethered signaling mirror hums loudly in the wind-shear, casting erratic blinding flashes across the white-hot dunes around you. The metallic shriek of its straining guy-wires vibrates directly through your boots into the salt floor. You grip your ember-lamp tightly as a blinding arc of reflected sunlight sweeps across your chest, momentarily erasing the shadows of the wasteland. The air tastes of scorched copper and fine alkali dust, stinging your eyes and throat.",
+   "exits": [
+    "Follow the rusted iron signpost toward Prism",
+    "Slide down the steep incline of loose pearl-sand"
+   ]
+  },
+  "sg-4-0-1-7": {
+   "title": "Shards of the Shelf",
+   "text": "A brittle shelf of crust gives way beneath your boots, dropping you sharply into a narrow trench lined with razor-sharp shards of green bottle-glass. You catch your weight against the earthen walls, feeling the cold, heavy cylinder of the Seedkey press safe and solid against your ribs. The storm above shrieks like a trapped animal against the rim of the cutting. You must find a way onward before the loose debris shifts further and seals the trench completely.",
+   "exits": [
+    "Crawl through the low stone conduit",
+    "Inspect the abandoned kelp-drying rack",
+    "Face the sudden thermal dust updraft"
+   ]
+  },
+  "sg-4-0-1-8": {
+   "title": "Veins of the Sisters",
+   "text": "Bound by your well-oath to the Dune Sisters, your tongue recognizes the distinct mineral tang of sweet moisture leaking through the deep sub-strata. You easily identify the safe subterranean seepage-tracks that bypass the howling surface gale entirely, following the cool damp current in the dark. The salt-encrusted walls here hum with the slow, steady resonance of ancient wells drilled by hands that understood the deep desert. You move with quiet confidence, your banked lamp casting a warm circle of orange light upon the damp floor.",
+   "exits": [
+    "Inspect the abandoned kelp-drying rack",
+    "Face the sudden thermal dust updraft"
+   ]
+  },
+  "sg-4-0-1-9": {
+   "title": "Blinded by Alkali",
+   "text": "A thick cloud of stinging alkali dust blinds you momentarily, forcing you to rely entirely on the steady warmth of your banked coal-lantern to keep your footing. You press a salt-dampened rag across your mouth while the abrasive gale scours your woolen cloak. Every breath feels like swallowing hot needles, yet the familiar pulse of heat from your lamp reminds you of the fires of Candlemere. You wait blindly for the white-out to thin, listening to the shifting roar of the dunes around you.",
+   "exits": [
+    "Push forward into the thermal updraft"
+   ]
+  },
+  "sg-4-0-2-0": {
+   "title": "Stakes in the Basin",
+   "text": "You discover a fresh mule-carcass stripped clean by the scouring wind, its metal pack-frames offering sturdy stakes to anchor your storm-cloak against the rising gale. The sun beats down like a brass hammer upon the bleached ribs and the frozen salt beneath them. You drive your walking staff deep into the crust to secure your footing, pausing to catch your breath in the thin, dry air. The horizon shimmers with deceptive blue lakes that vanish the moment you blink.",
+   "exits": [
+    "Seek shelter beneath the customs gate arch",
+    "Cross the cracking expanse of purple mud"
+   ]
+  },
+  "sg-4-0-2-1": {
+   "title": "Footprints in the Pocket",
+   "text": "Believing the vault was looted, you spot fresh boot-prints in a pocket of sheltered silt that lead directly toward a hidden crevice in the dunes. The tracks are sharp-edged and purposeful, cutting across the wind-rippled sand with disturbing recentness. You check the cold ceramic weight of the Seedkey in your pocket, your thumb tracing its smooth, unyielding angles. Someone else is moving through this blinding white maze with a destination in mind.",
+   "exits": [
+    "Seek shelter beneath the customs gate arch",
+    "Approach the canvas tent in the distance",
+    "Cross the cracking expanse of purple mud"
+   ]
+  },
+  "sg-4-0-2-2": {
+   "title": "Basalt Ribs and Amber",
+   "text": "An elderly Glasswright scout named Jael rests inside a hollow basalt rib, signaling with frantic amber flashes to warn you of a sudden micro-burst ahead. The old scout's mirrors click with rhythmic precision, casting swift yellow codes across the dark stone. You drop low against the ground as a sudden wall of superheated air screams overhead, tearing at the loose salt crust. Jael gestures urgently toward a protected trench leading deeper into the Basin.",
+   "exits": [
+    "Approach the canvas tent in the distance",
+    "Cross the cracking expanse of purple mud"
+   ]
+  },
+  "sg-4-0-2-3": {
+   "title": "Silent Basin Fissure",
+   "text": "You squeeze through a narrow fissure between two canted slabs of sea-wall, emerging into a dead-silent basin choked with glittering dust-drifts. The sudden absence of the roaring wind is almost deafening, leaving only the crunch of your own boots on the frozen brine. Ghostly towers of fused glass rise out of the haze like frozen lightning, casting long violet shadows across the flat pan. You lift your lamp to pierce the gloom, watching the red coals pulse in the sudden quiet.",
+   "exits": [
+    "Cross the cracking expanse of purple mud",
+    "Investigate the distant flashing green signal",
+    "Scale the wall of fused brickwork"
+   ]
+  },
+  "sg-4-0-2-4": {
+   "title": "Shark-Skin Ledger",
+   "text": "A discarded ledger bound in salted shark-skin flutters against a cairn, detailing the exorbitant interest rates levied by the southern toll-lords. Its salt-stiffened pages crack open in the breeze, revealing neat columns of figures mortgaging future water rights for handfuls of dry coin. You step past the marker, shaking your head at the desperate bargains men strike when the wells run low. The road ahead drops into a deeper depression where the air smells faintly of sulfur and old mud.",
+   "exits": [
+    "Scale the wall of fused brickwork",
+    "Squeeze past the porous basalt chimney"
+   ]
+  }
+ },
+ "missing": []
+}

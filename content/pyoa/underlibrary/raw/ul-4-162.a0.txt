@@ -1,0 +1,68 @@
+@@SECTION ul-4-162
+TITLE: The Sliding Tiles
+TEXT: Dust hangs thick in the beam of your pocket-lamp, illuminating a panel of intricate wooden sliders embedded in the doorframe. Each tile bears a faded letter carved by an anonymous hand centuries ago, shifting lazily under the weight of hidden springs. You trace the rhythm of the clicks echoing from deep within the mechanism, tapping your fingers against the grain to find the counter-pulse. The device yields with a soft, oiled slide, exposing a shallow cavity where a slender length of cold iron rests. You reach out your hand to lift the master skeleton key before the tiles snap back into disorder.
+EXIT 1: Slide the key from its recess
+@@END
+@@SECTION ul-4-163
+TITLE: Matching The Cadence
+TEXT: Cold air breathes across your knuckles as the wooden tiles begin to accelerate their chaotic dance, threatening to jam the internal mechanism permanently. You must mirror their frantic cadence with absolute physical precision, letting your fingertips skim the moving grain without missing a single beat of the hidden tumbler's song. The slightest hesitation will catch your skin in the snapping grooves, sealing the vault forever. You steady your breathing, freeze your wrist, and plunge your fingers into the shifting maze of letters.
+CHECK: Match the shifting tile rhythm
+@@END
+@@SECTION ul-4-164
+TITLE: Caught In The Grain
+TEXT: A dry snap echoes through the passage as a stubborn wooden tile catches your thumb, pinning it hard against the brass lining of the frame. You wrench your hand back with a sharp intake of breath, leaving behind a smear of dark blood and a deep, throbbing purple bruise across your knuckles. The mechanism chatters angrily, resetting its tumblers while you nurse your injured hand in the gloom. Time slips away in the dust as you wait for the swelling to subside, your fingers stiff and aching in the damp air.
+EXIT 1: Retrieve the key through sheer grit
+@@END
+@@SECTION ul-4-165
+TITLE: The Iron Master Key
+TEXT: Light catches the dull grey sheen of the long iron shaft resting in the velvet-lined groove, untouched by the rust that consumes the rest of the Annexe. Whether through flawless dexterity or sheer stubborn endurance against the pinching wood, your fingers close around the cold metal without triggering the trap. You lift the implement clear of its bed, feeling the balanced weight of centuries of custodial authority resting in your palm. It is a tool designed to bypass any barrier forged within these stacks.
+GRANT: A master skeleton key
+EXIT 1: Return to the shifting lintel
+@@END
+@@SECTION ul-4-166
+TITLE: Timing The Portal Gap
+TEXT: Heavy oak beams grind against one another in the threshold, opening a narrow vertical fissure that reveals only absolute darkness beyond. The gap pulses rhythmically, breathing in and out like the gills of some buried leviathan of paper and binding glue. You watch the rhythmic contraction closely, waiting for the exact heartbeat when the gap reaches its widest span. Nestled on a brass bracket just inside the moving boundary rests a neat spool of stout binding thread, waiting for an audacious hand to claim it.
+EXIT 1: Slip through the moving gap
+@@END
+@@SECTION ul-4-167
+TITLE: Threading The Narrow Gap
+TEXT: The heavy timber frame surges inward unexpectedly, narrowing the passage to a sliver of breathable air and dark stone. You must thread your body through the moving gap with absolute lightness, avoiding the crushing pinch of the closing jamb while your hand darts inward to snatch the prize. A fraction of a second too slow will leave you trapped between two centuries of compressed oak. You tighten your core, dip your shoulder, and launch yourself into the tightening aperture.
+CHECK: Dart through the closing gap
+@@END
+@@SECTION ul-4-168
+TITLE: The Toll Of The Jam
+TEXT: A heavy wooden edge clips your shoulder with bone-numbing force as the portal snaps shut a fraction too soon, tearing your coat and leaving a jagged, stinging welt across your back. You stumble backward onto the cold flagstones, gasping for breath while the spool of thread rolls haphazardly against your boot. The bruising ache settles deep into your muscle, reminding you sharply of the library's absolute indifference to trespassers. You pick yourself up from the dust, rubbing the sore spot through the torn wool.
+EXIT 1: Gather the thread and press onward
+@@END
+@@SECTION ul-4-169
+TITLE: The Spool Of Hemp
+TEXT: Smooth flaxen hemp wound tight around a bone bobbin comes away in your palm, smelling faintly of tallow and old bookbinder's paste. Whether you slipped through the closing timbers with feather-light balance or battered your way past the pinch with bruised determination, the prize is yours. This stout binding thread has been treated to resist rot and mildew, strong enough to hold together the crumbling spine of an entire ledger. It is a useful companion for anyone venturing deeper into the unlit stacks.
+GRANT: A spool of stout binding thread
+EXIT 1: Step back to the labyrinthine lintel
+@@END
+@@SECTION ul-4-170
+TITLE: Roots Of The Lock
+TEXT: Carved into the lintel above the barrier are three archaic glyphs that predate the common registry by several centuries. You trace their awkward angles with the tip of your pen-knife, muttering the ancient etymologies under your breath as you untangle the shifting linguistic roots. The door listens to the grammar of the dead, its heavy iron bolts shuddering as the syntax resolves itself into a coherent command. The timber parts with a long, groaning sigh, granting access to a small leather-bound volume resting on a lectern within.
+EXIT 1: Collect the dictionary of dead terms
+@@END
+@@SECTION ul-4-171
+TITLE: The Dead Lexicon
+TEXT: Pale green phosphorescence clings to the margins of the open pages, illuminating definitions of words that haven't been spoken aloud since the city above was built upon marshland. You turn the brittle leaves with infinite care, absorbing the forgotten vocabulary that once governed the deep sorting rooms. Armed with these archaic idioms, you can command doors and shelves that recognize no modern authority. You tuck the slim volume securely beneath your arm and prepare for the next leg of your journey.
+EXIT 1: Advance into the deep annex corridors
+@@END
+@@SECTION ul-4-172
+TITLE: Deciphering The Dead Glyphs
+TEXT: The letters carved into the locking beam twist into an unfamiliar dialect, shifting their vowels every time your eye tries to pin down their meaning. You must apply every ounce of your scholarly training to unpick the grammatical structure before the words dissolve back into meaningless scratches. A single misreading of a tense or a prefix will lock the mechanism permanently, turning the doorway into solid masonry. You squint through the dim lamp-light, scanning the syntax for the hidden root.
+CHECK: Translate the archaic locking glyphs
+@@END
+@@SECTION ul-4-173
+TITLE: A Faulty Translation
+TEXT: A harsh grating sound reverberates through the stone as your mistranslation triggers a defensive linguistic trap in the frame. The glyphs flash a brilliant, blinding white before burning themselves out into charred ash, filling the air with the acrid stench of scorched vellum. A pounding migraine blooms behind your temples, draining your focus and leaving you dizzy and disoriented in the gloom. You lean against the cold wall to steady your racing thoughts, nursing a sharp mental fatigue.
+EXIT 1: Push past the burnt threshold anyway
+@@END
+@@SECTION ul-4-174
+TITLE: The Definitive Glossary
+TEXT: Whether through brilliant linguistic deduction or stubborn trial and error among the charred fragments, the grammatical puzzle yields to your persistence. The heavy timber partition swings wide, revealing a small, perfectly preserved reference volume resting upon a velvet cushion. You pick up the definitive dictionary of dead terms, feeling its pages hum with dormant etymological power. It is an invaluable key to the lost dialects spoken by the earliest cataloguers of the Underlibrary.
+GRANT: A definitive dictionary of dead terms
+EXIT 1: Return to the shifting wooden lintel
+@@END

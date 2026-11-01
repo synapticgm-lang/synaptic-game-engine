@@ -1,0 +1,64 @@
+@@SECTION vh-4-1-2-8
+TITLE: The Toll Lock
+TEXT: Heavy iron frost encrusts a small stone shelter built into the rock face by the Cable Court. Its thick timber door remains bolted from within, sealed against the creeping glacier drafts, while the lintel bears deep frosty tally-marks recording the vanished tolls of travelers long since descended. The heavy bronze clapper on your back hums a low, sympathetic vibration against your padded harness whenever the mountain wind strikes the masonry.
+EXIT 1: Edge along the precipice cornice
+EXIT 2: Dig a snow trench for shelter
+@@END
+@@SECTION vh-4-1-2-9
+TITLE: The Mule Slip
+TEXT: Sudden panic grips your chest as Biscuit's iron-shod hoof finds a hidden lens of black ice beneath the powder, sending the mule sliding toward the edge of a jagged crevasse. You throw your weight against the padded wooden cradle, digging your boots hard into the crusted firn to arrest the momentum before the precious bronze payload shifts beyond recovery. The animal blows a ragged cloud of white breath into the freezing air, trembling as its hooves regain purchase on the slope.
+EXIT 1: Quiet the startled ptarmigan flock
+EXIT 2: Follow the Lowgate signpost downward
+EXIT 3: Warm your stiffening fingers
+@@END
+@@SECTION vh-4-1-2-10
+TITLE: The Frozen Pipes
+TEXT: Towering columns of ice hang thick and pale beside the narrow track, resembling the massive organ pipes of a mountain cathedral frozen mid-hymn. Every gust of wind sweeping down the glacier causes the crystal formation to resonate, producing a deep, trembling tone that blends seamlessly with the bronze hum vibrating against your shoulders. You steady your breathing in the biting air, careful not to dislodge the delicate icicles ringing the path.
+EXIT 1: Descend toward the lower ladder
+EXIT 2: Check your frozen mittens
+EXIT 3: Hack clear the blocked blanket
+@@END
+@@SECTION vh-4-1-2-11
+TITLE: The Notch Cutting
+TEXT: Frigid white fog billows upward from the invisible valley floor, swallowing the ice-steps beneath your boots and leaving only the sheer blue wall before you. Holding your cold chisel steady against the dense glacial ice, you hammer out fresh footholds with sharp, measured strikes, letting the rhythmic ringing of metal on ice drown out the hollow groans of the moving glacier.
+EXIT 1: Clear the stiffened woolen obstacle
+EXIT 2: Hide a wedge in the cairn
+EXIT 3: Turn back toward the upper ledges
+@@END
+@@SECTION vh-4-1-2-12
+TITLE: The Needle Eye
+TEXT: Traveling unencumbered by the heavy mule's bulk, you slide smoothly through a razor-sharp fissure in the granite that bypasses the sagging ice-bridge entirely. The rock walls press cold against your shoulders while the muffled roar of subterranean water echoes through the narrow gap, offering a swift and silent passage down the mountain face.
+EXIT 1: Navigate the shifting blue seracs
+EXIT 2: Secure a hemp hand-line
+@@END
+@@SECTION vh-4-1-2-13
+TITLE: The Guild Pennant
+TEXT: A tattered red scrap of cloth bearing the knotted emblem of the Ropewrights' Guild whips frantically from an iron piton, marking a wide detour around a recent collapse in the ladderway. Fine powdery snow drifts across the abandoned track, but the bright marker points the way toward firmer footing among the blue-veined ice pillars.
+EXIT 1: Clear the frozen blanket obstruction
+EXIT 2: Traverse the shifting serac field
+EXIT 3: Stash a spare bronze wedge
+@@END
+@@SECTION vh-4-1-2-14
+TITLE: The River Sub-Glacial
+TEXT: Thick frost crusts your protective goggles, forcing you to halt and scrape the rime away with a mittened thumb while a dull, subterranean thunder reverberates up through the soles of your boots. Deep beneath the glacial shell, an ancient river roars against the bedrock, reminding you of the immense pressure grinding away at the mountain's foundations.
+EXIT 1: Grip the frayed hemp hand-line
+EXIT 2: Turn back up the trail
+@@END
+@@SECTION vh-4-1-2-15
+TITLE: The Iron Ringbolt
+TEXT: A rusted iron ringbolt, hammered deep into the cliff granite by generations of cable-riders, offers a solid anchor point in the middle of the dizzying expanse. You loop your safety tether through the metal eye and lock the clasp, securing yourself before stepping out onto the exposed ledge where the wind howls loudest.
+EXIT 1: Leave a hidden bronze wedge
+EXIT 2: Guide Biscuit across the corrugated iron
+@@END
+@@SECTION vh-4-1-3-0
+TITLE: The Chicory Break
+TEXT: Stiff with cold, you crouch beside a stranded Fog-Warden whose emergency signal horn is choked solid with hard-packed blue rime, rendering it silent against the rising gale. You share a draught of lukewarm chicory tea from your leather flask, watching the steam vanish instantly into the biting mountain air.
+EXIT 1: Scale the sheer glass wall
+EXIT 2: Steady the mule against the gale
+@@END
+@@SECTION vh-4-1-3-1
+TITLE: The Pine Ladder
+TEXT: Two tall ice towers sway gently toward each other in the freezing gale, bridged by a rickety span of notched pine logs lashed tightly with braided hemp cables. The structure groans under the weight of the wind, spraying fine ice-dust across the abyss that drops away into the gray mist below.
+EXIT 1: Climb the steep glass-white face
+EXIT 2: Turn back from the span
+@@END

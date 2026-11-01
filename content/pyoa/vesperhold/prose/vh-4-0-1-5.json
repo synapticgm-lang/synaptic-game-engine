@@ -1,0 +1,88 @@
+{
+ "batch": "vh-4-0-1-5",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-0-1-5": {
+   "title": "Moraine Salvage",
+   "text": "Hushed winds whistle through the frozen moraine where a Terrace Miller salvage crew piles stray barley sacks. You stand knee-deep in gray drift, steadying the padded crate against your spine as the bronze Clapper inside responds to the gale with a faint, sympathetic thrum. The millers ignore your passage, intent on securing their grain before the afternoon freeze hardens the ruts into glass. Your boots slip on the gravel, forcing you to choose between the steep upper shelf or the blinding basin below.\n\nThe air tastes of dry chaff and old snow.",
+   "exits": [
+    "Climb the frozen timber steps toward the upper serac",
+    "Pick a path across the dazzling glacial basin"
+   ]
+  },
+  "vh-4-0-1-6": {
+   "title": "The Dangling Ladder",
+   "text": "A frozen rope-ladder dangles above an endless blue void while the bitter air chills the metal in your pack. Below your boots, the glacier groans and shifts, grinding ancient ice against rock with a sound like iron teeth. You grip the hempen rungs, which are stiffened with rime and grey frost, feeling the weight of the bronze Clapper pull your center of gravity backward toward the abyss. Every breath stings your throat, and the wind offers no shelter as you weigh the iron routes ahead.",
+   "exits": [
+    "Ascend the vertical blue serac on frozen timber steps",
+    "Cross the glaring ice-ridge toward the lower basin",
+    "Risk the weight of the crooked basket hoist over the abyss"
+   ]
+  },
+  "vh-4-0-1-7": {
+   "title": "Slick Ice Margins",
+   "text": "Slick blue ice margins force you to crawl on hands and knees while the mule finds a narrower footing. Biscuit stumbles once, his iron shoes clicking sharply against a hidden rib of blue glass before he regains his balance with a disgruntled snort. You keep your head low, listening to the heavy bronze tongue hum rhythmically against your spine with every shifting movement. The pass splits ahead into a subterranean roar, a blinding glare, and a steep stairhead lost in rime.",
+   "exits": [
+    "Follow the subterranean stream into the blue ice vault",
+    "Pick a path across the dazzling glacial basin",
+    "Climb toward the frost-veneered stone stairhead"
+   ]
+  },
+  "vh-4-0-1-8": {
+   "title": "Glacier Tongue Mist",
+   "text": "Gray mist rolls off the glacier tongue, obscuring the anchor-bolts and threatening to swallow the trail completely. The world shrinks to the immediate reach of your numb fingers and the steady, rhythmic scrape of Biscuit's hooves on the grit. Without the rope-lines to guide your shoulders, the drop-off into the white void feels dangerously close. You pause to catch your breath against the damp cold, listening to the iron rigging groan in the distance.",
+   "exits": [
+    "Inspect the crooked basket hoist hanging over the abyss",
+    "Wait on the moraine ridge as the afternoon freeze sets in"
+   ]
+  },
+  "vh-4-0-1-9": {
+   "title": "Shivering on the Ledge",
+   "text": "Shivering against the wind-scoured rock, you adjust the shoulder straps while the bronze mass hums a deep warning note. The temperature drops sharply as the sun dips behind the high jagged teeth of the Vesperhold wall, turning the sweat on your collar into freezing needles. Biscuit presses his warm flank against your arm, sharing what little heat remains in the mountain air. Two distinct tracks offer an escape from the freezing ledge before night closes the passes.",
+   "exits": [
+    "Head toward the stone stairhead where a weary traveler rests",
+    "Battle the stinging ice granules on the exposed ledge"
+   ]
+  },
+  "vh-4-0-2-0": {
+   "title": "Upper Serac Shelf",
+   "text": "Brittle frost feathers snap underfoot on the upper serac shelf where an abandoned sled lies half-buried in blue snow. The wood is splintered and gray, left behind by some earlier haul of timber or stone that never reached the lowlands. You check the lashings on your back, ensuring the heavy bronze Clapper remains secure in its padded cradle before taking another step. The path ahead narrows into a fragile rib of ice spanning the vast gulf.",
+   "exits": [
+    "Cross the fragile ice bridges spanning the bottomless gulf"
+   ]
+  },
+  "vh-4-0-2-1": {
+   "title": "Twisted Iron Pitons",
+   "text": "Twisted iron pitons hold a taut cable spanning the glacial gap while ice water drips steadily onto your leather collar. The metal hums in harmony with the bronze Clapper on your back, creating a strange, vibrating chord that echoes off the blue walls. You test the tension with a gloved hand, feeling the solid anchor hold fast against the mountain's slow slide. Beyond the cable, scratched markers and bottomless gulfs compete for your attention.",
+   "exits": [
+    "Step out onto the fragile ice bridges over the gulf",
+    "Follow the scratched brass markers along the old winter trail"
+   ]
+  },
+  "vh-4-0-2-2": {
+   "title": "Narrow Cleft Shelter",
+   "text": "A narrow cleft in the ice wall offers shelter from the gale while Biscuit tests the firmness of the hard-packed drift. The walls here are translucent blue, glowing faintly with trapped light from centuries of packed snowfall. You slip the heavy straps from your aching shoulders for a moment, letting the Clapper rest against the frozen stone while you catch your breath. The wind howls outside the crevice, but the air inside is still and bitterly cold.",
+   "exits": [
+    "Venture out onto the fragile ice bridges spanning the gulf",
+    "Untangle the knotted guide-rope in the glacial shadow"
+   ]
+  },
+  "vh-4-0-2-3": {
+   "title": "Overhead Cables",
+   "text": "Overhead cables sing in the glacial draft like tightened harp strings while you edge past a gaping blue crevasse. The sheer drop on your right vanishes into a milky sea of cloud, hiding the lower tiers of the mountain entirely. You lean your weight inward against the rock face, keeping the heavy bronze mass balanced squarely between your shoulder blades. Every gust tests your footing on the narrow, frost-slick ledge.",
+   "exits": [
+    "Pick your way across the rime-covered stepping stones",
+    "Hand over your Cable Court debt token to the toll-warden"
+   ]
+  },
+  "vh-4-0-2-4": {
+   "title": "Whistling Shortcut",
+   "text": "Whistling back to the high terrace mills earns you a secret guide-rope shortcut across the shifting blue ice. A distant miller answers your signal with three sharp notes on a bone pipe, confirming that the upper cable is clear of drift-ice. You adjust your grip on the harness and follow the hidden line through a maze of séracs where few travelers dare to tread. The mule picks its way carefully behind you, ears flicking to the sound of the distant pipes.",
+   "exits": [
+    "Approach the rusted iron winch standing over the lower drop",
+    "Cross the hard-packed snow bridge toward the tinkling bell"
+   ]
+  }
+ },
+ "missing": []
+}

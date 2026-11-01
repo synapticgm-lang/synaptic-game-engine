@@ -1,0 +1,47 @@
+{
+ "batch": "v-r-27-silk-balcony",
+ "variants": [
+  {
+   "node": "up-r-silk-balcony",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "The turnkey's silence cost you a dangerous promise, and now you understand why he looked so frightened when he accepted it; he knew exactly whose gold was already unlocking Sable's cell. Your whispered debt remains unpaid, lingering in the shadows of the silk house."
+  },
+  {
+   "node": "up-r-foundry-gallery",
+   "when": {
+    "rigg": "allied"
+   },
+   "after": "Already sheltered beneath her syndicate's heavy iron wing, you feel the weight of your prior alliance shift. She extends her protection once more, expecting you to act as her personal bloodhound in return for this sanctuary."
+  },
+  {
+   "node": "up-r-foundry-gallery",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Listening to her feign ignorance about the gaol book, you bite your tongue, recalling the matching handwriting in the vault's counter-ledgers. She and Valerius share a single purse, making this entire interrogation a beautifully orchestrated piece of theatre."
+  },
+  {
+   "node": "up-r-foundry-gallery",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Beneath the gallery's gaslight, her wardens stare at you with mounting suspicion, their eyes flicking toward the fresh sketches circulating amongst the city watch. The fleeing witness has ensured your features are an open secret, making it dangerous to linger."
+  },
+  {
+   "node": "up-r-foundry-gallery",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "A faint smear of the turnkey's blood still darkens your cuff, a grim testament to the deadly shove that ensured his permanent silence. Rigg's frantic search for leaks in her gaol will never uncover the man lying broken on the cobblestones."
+  },
+  {
+   "node": "up-r-eclipse-begins",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Lord Valerius's silken guarantees of safety offer no shield against a high-calibre rifle in the freezing dark. You accepted his polite patronage, yet his expensive protection stops precisely where Sable's hunting grounds begin."
+  }
+ ]
+}

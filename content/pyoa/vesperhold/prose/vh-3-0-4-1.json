@@ -1,0 +1,82 @@
+{
+ "batch": "vh-3-0-4-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-0-4-1": {
+   "title": "The Miller's Stare",
+   "text": "Heavy, flour-dusted hands rest upon a scarred timber crate while weary eyes track your progress across the terrace stones. The old miller watches the heavy bronze tongue shifting in its padded cradle on your back, measuring the weight of your errand against the thin, bitter mountain air.\n\nWill you pause to offer a greeting, or keep your head down and push onward past the mill?",
+   "exits": [
+    "Step closer to speak with the miller"
+   ]
+  },
+  "vh-3-0-4-2": {
+   "title": "The Rolling Cask",
+   "text": "Splintered wood explodes against the low drystone wall as a runaway barley cask shatters inches from your boots, showering the frosty path with grain. Biscuit shifts nervously against the ropes, ears pinned back against the whistling wind, while the frantic shouting of loaders echoes from the upper tier.\n\nWill you steady the mule and press ahead, or pause to salvage what spilled grain you can?",
+   "exits": [
+    "Dodge the debris and hurry down the trail"
+   ]
+  },
+  "vh-3-0-4-3": {
+   "title": "The Muddy Courtyard",
+   "text": "Thick gray mud cakes the soles of your boots as the stone trail widens into a drafty central courtyard where a dozen pack-mules huddle in the lee of the district hall. The smell of wet wool and damp chaff hangs heavy here, punctuated by the clinking of harness rings and the low grumbling of resting drivers.\n\nWill you seek shelter by the hall's outer wall, or weave between the tethered beasts to find the lower path?",
+   "exits": [
+    "Cut across the courtyard toward the stairs",
+    "Shelter briefly by the gathering hall wall"
+   ]
+  },
+  "vh-3-0-4-4": {
+   "title": "Smoke and Chaff",
+   "text": "Icy moisture clings to your brow, turning to frost as the thick, heavy scent of burning peat and sweet damp chaff rolls over you from the terrace kilns. The bronze Clapper hums a faint, steady counter-rhythm against your shoulder blades, vibrating deep within the padding as the mountain wind shifts.\n\nWill you seek out the kiln-master for warmth, or keep moving before the weather closes in?",
+   "exits": [
+    "Seek warmth beside the smoking peat kiln",
+    "Ignore the smoke and press down the slope"
+   ]
+  },
+  "vh-3-0-4-5": {
+   "title": "The Candlelit Scroll",
+   "text": "Tallow drips steadily from a flickering tin sconce as a nervous clerk drags a quill down a long, grease-spotted parchment scroll by the side of the track. He mutters dates and quotas under his breath, barely glancing up as your heavy boots crunch upon the gravel.\n\nWill you wait for him to check your passage, or slip past while his eyes remain fixed on the ink?",
+   "exits": [
+    "Wait patiently for the clerk to look up",
+    "Slip quietly past the distracted clerk",
+    "Ask the clerk about the rumor mill"
+   ]
+  },
+  "vh-3-0-4-6": {
+   "title": "The Archway Press",
+   "text": "Shoulders brush and voices rise in sharp argument as you squeeze through a dense knot of gossiping mill-hands gathered beneath the stone lower archway for shelter. The biting draft cuts through your wool tunic, but the crowd's chatter provides a brief barrier against the worst of the mountain gust.\n\nWill you elbow your way through the throng into the dim interior?",
+   "exits": [
+    "Push through the crowd into the warm interior"
+   ]
+  },
+  "vh-3-0-4-7": {
+   "title": "Lee of the Mill",
+   "text": "The frantic roar of the great valley wind drops abruptly to a low, rhythmic hum as you step into the shadowed overhang of the Rumour Mill. Inside, the air smells of stale ale and roasted barley, offering a brief respite from the biting chill that claws at your woolen cloak.\n\nWill you step inside to warm your hands by the hearth fire?",
+   "exits": [
+    "Step inside the mill to escape the wind"
+   ]
+  },
+  "vh-3-0-5-0": {
+   "title": "Tanner's Warning",
+   "text": "Shadows stretch long across the dim rafters of the Rumour Mill, where old Tanner leans close to whisper a dark warning about the valley below. He insists the Lowgate foundry has completely run out of tin and will reject all temple bronze, leaving your heavy burden stranded in the cold.\n\nWill you swallow your misgivings and press on toward the forge anyway?",
+   "exits": [
+    "Press on regardless of Tanner's grim warning"
+   ]
+  },
+  "vh-3-0-5-1": {
+   "title": "The Roaring Hearth",
+   "text": "Red firelight flickers across a scarred smith's face near the sputtering hearth, where he loudly claims the foundry furnaces are roaring hotter than ever. He laughs off talk of scarcity, declaring the master-smiths are fiercely eager for the great bell's tongue to feed their blazing pits.\n\nWill you nod at his confidence and press on down the mountain?",
+   "exits": [
+    "Press on toward the roaring valley forge"
+   ]
+  },
+  "vh-3-0-5-2": {
+   "title": "The Rumour Mill",
+   "text": "Tin mugs chatter against grease-stained tables inside the drafty milling-house, where a nervous spice-trader leans across a cask to grab your sleeve. He insists the Lowgate foundry has already been seized by the Cable Court's bailiffs to recast your bronze Clapper into heavy debt-shackles instead of a true voice for Orison. The air smells of wet barley and spilt small-beer while every miller at the hearth-bench turns to watch how you bear the weight of the news.\n\n\n\nYou might stay to question the trembling merchant for details, or shoulder the padded cradle and leave the warm stone walls behind before the whispers harden into a blockade.",
+   "exits": [
+    "Demand proof from the merchant",
+    "Leave the mill and press on"
+   ]
+  }
+ },
+ "missing": []
+}

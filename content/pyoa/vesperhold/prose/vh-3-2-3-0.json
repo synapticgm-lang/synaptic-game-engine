@@ -1,0 +1,88 @@
+{
+ "batch": "vh-3-2-3-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-2-3-0": {
+   "title": "The Groaning Cedar Bridge",
+   "text": "Crossing a rickety cedar bridge over a gorge of grey mist, you hear the timbers groan under the combined weight of you and Biscuit. The abyss below breathes up a draft of damp air and old pine, making the heavy bronze tongue in your cradle hum a low, sympathetic chord against your spine.\n\nEvery plank shifts slightly underfoot, testing your balance and reminding you that one misstep would send both traveler and burden down into the white obscurity.",
+   "exits": [
+    "Step carefully off the span"
+   ]
+  },
+  "vh-3-2-3-1": {
+   "title": "The Straw Finger",
+   "text": "A tattered scarecrow stuffed with oat-straw points a crooked wooden finger toward the precipitous drop where the ladder-path begins. Its sackcloth head turns slowly in the mountain current, watching you pass while Biscuit gives a low, disgruntled snort at the straw man's empty sleeves.\n\nThe wind whistles through the dry stalks, creating a reedy sound that blends with the faint, persistent thrum of the metal against your back.",
+   "exits": [
+    "Leave the silent watcher behind",
+    "Inspect the milestone by the drop"
+   ]
+  },
+  "vh-3-2-3-2": {
+   "title": "Chaff on the Wind",
+   "text": "Miller Sedge hurls a handful of dry chaff into the wind to test the draft, narrowly missing your pack and the humming bronze tongue. The golden husks scatter instantly into the abyss, swallowed by the rising updraft from the glacier fields below.\n\nHe shakes his head, muttering about the unpredictability of the upper air before turning back to secure his heavy millstones.",
+   "exits": [
+    "Continue past the lower stone marker",
+    "Glance toward the distant ice rungs"
+   ]
+  },
+  "vh-3-2-3-3": {
+   "title": "The Ice-Pellet Squall",
+   "text": "You shelter behind a dry-stone retaining wall while a sudden squall of ice-pellets rattles against the heavy bronze clapper like buckshot. The tiny frozen beads bounce off your canvas cradle and skitter across the frosty flags with a sharp, clicking chatter.\n\nWaiting out the brief fury, you press your shoulder against the cold stone and steady the mule against the sudden gust.",
+   "exits": [
+    "Resume walking as the air clears",
+    "Check the milestone at the path edge"
+   ]
+  },
+  "vh-3-2-3-4": {
+   "title": "The Predatory Token",
+   "text": "A Cable Court clerk offers a predatory credit token for your mule's shoes, promising safe transit down the remaining cliffs for half your rations. His ink-stained fingers tap impatiently on a brass ledger while his eyes measure the heavy bronze burden on your back with professional greed.\n\nYou pat Biscuit's warm neck and decline the thin parchment offer, knowing too well the price of borrowing from the court.",
+   "exits": [
+    "Adjust your chest harness firmly",
+    "Warn the nervous ropewright ahead"
+   ]
+  },
+  "vh-3-2-3-5": {
+   "title": "The Mournful Cadence",
+   "text": "Two fog-wardens pass you in the white gloom, their synchronized hand-bells ringing a mournful three-beat cadence to warn of the ice edge. Their wool cloaks are stiff with rime, and their faces are hidden beneath deep leather hoods, revealing only the grim set of their jaws.\n\nThey offer a brief nod as they stride past into the freezing vapor, their bells fading into a dull, rhythmic clatter.",
+   "exits": [
+    "Secure the heavy leather harness",
+    "Peer toward the frosted ladder drop"
+   ]
+  },
+  "vh-3-2-3-6": {
+   "title": "The Blue Glacier-Run",
+   "text": "The stone path gives way to a slick sheet of blue glacier-run, forcing you to inch forward with your heels locked against the granite. Biscuit finds his footing with a desperate scramble, his iron shoes clicking sharply on the polished sheet of ancient ice.\n\nThe drop-off waits just beyond your boots, silent and steep, demanding absolute concentration with every single breath.",
+   "exits": [
+    "Test the iron rungs below",
+    "Speak a quiet word of caution",
+    "Share water from the iron flask"
+   ]
+  },
+  "vh-3-2-3-7": {
+   "title": "The High Watcher",
+   "text": "A stray mountain goat watches from a high ledge, its amber eyes bright and indifferent to your struggle with the heavy metal load. It shifts its weight on tiny, sure-footed hooves, completely unbothered by the sheer drop that makes your own stomach tighten.\n\nAs you pause to catch your breath, the animal turns gracefully and bounds upward into the swirling cloud.",
+   "exits": [
+    "Tighten the strap across your ribs",
+    "Look down toward the ice ladders"
+   ]
+  },
+  "vh-3-2-3-8": {
+   "title": "The Frozen Tinker's Hammer",
+   "text": "You find a discarded tinker's hammer frozen in a puddle, its wooden handle splintered by frost-expansion but the iron head still sound. Prying it free with your thumb, you test its weight and find it balanced well enough for driving loose pitons into the rock.\n\nYou slip the cold tool into your belt pouch alongside a coil of spare hemp line, glancing down the narrowing path.",
+   "exits": [
+    "Peer over the edge at the rungs",
+    "Pass the anxious terrace gate guard"
+   ]
+  },
+  "vh-3-2-3-9": {
+   "title": "The Resonant Thrum",
+   "text": "The bronze clapper emits a sudden, low-pitched thrum that makes the loose pebbles at your feet dance in tiny concentric circles. The vibration travels straight through the padded canvas and into your shoulders, setting your teeth on edge with its deep, bell-metal resonance.\n\nBiscuit cocks an ear backward at the sound, stomping a dusty hoof against the frozen ground as if answering a distant call.",
+   "exits": [
+    "Adjust the leather harness tightly",
+    "Approach the nervous terrace gate",
+    "Accept the iron piton from the miller"
+   ]
+  }
+ },
+ "missing": []
+}

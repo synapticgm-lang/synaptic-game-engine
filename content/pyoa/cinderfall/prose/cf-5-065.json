@@ -1,0 +1,114 @@
+{
+ "batch": "cf-5-065",
+ "sections": {
+  "cf-5-065": {
+   "title": "The Sluice Cleared",
+   "text": "Heavy iron gives way under the steady bite of the hooked poker, sliding free with a long, metallic groan that echoes off the damp brickwork. Black sludge and grey foam rush through the widened gap, tumbling down into the sump below as the water-level drops inches in a single breath. Amidst the swirling grit, your fingers close around a thick, oil-slicked shackle-bolt dropped by some long-dead gangers. You pull your arm back, wiping soot from your forehead with a soot-stained sleeve as the drainage settles into a steady, roaring bass note.",
+   "check": "",
+   "grant": "heavy iron shackle-bolt",
+   "exits": [
+    "Climb back up to the sump-house"
+   ]
+  },
+  "cf-5-066": {
+   "title": "The Chanting Stair",
+   "text": "Narrow stone steps spiral upward into the soot-stained vault, choked now by a knot of figures wrapped in grey wool and ash-stained canvas. The Cinder Prophets block the climb completely, their low voices rising in a rhythmic, drone-like hymn that speaks of burnt ties and absolute forgiveness. One elder steps forward, pressing a charred wooden box into your hands with fingers as dry as kindling, muttering that it holds the true confession of Hesper Quill. The scent of burnt paper and old lamp-oil clings thick to the grain of the wood as you stand hemmed in by the silent, watching zealots.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push past into the shrine"
+   ]
+  },
+  "cf-5-067": {
+   "title": "The Ash Shrine",
+   "text": "Stripped-down passenger carriages form the walls of this smoky vault, where iron braziers cast long, shivering shadows across rusted iron ribs and floorboards. Hooded figures tend the small fires, feeding torn strips of ancient railway timetables to the flames while acrid smoke collects against the curved ceiling. Every corner smells of dry dust and charred parchment, humming with the low murmur of prayers addressed to the iron line. From here, narrow service ladders and dark passages lead further into the heart of the terminus.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the high pulpit",
+    "Inspect the altar wiring",
+    "Debate the sacred duty",
+    "Mend the copper burner",
+    "Face the bronze door"
+   ]
+  },
+  "cf-5-068": {
+   "title": "Words in the Soot",
+   "text": "Standing before the high pulpit, you endure the endless drone of the chief priest without losing your grip on the heavy brass key in your pocket. The speaker's sermon weaves through stories of the great fire that cleared the steppes, praising the purification of iron and the absolute justice of the ash. You nod at measured intervals, showing just enough deference to keep the hostile crowd from closing in. When the sermon finally trails off into a raspy cough, the priest shoves a small, soot-darkened lump into your palm as a token of uncertain truce.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step deeper into the alcove"
+   ]
+  },
+  "cf-5-069": {
+   "title": "The Smoldering Pew",
+   "text": "Ash drifts down from the iron ribs overhead like grey snow, settling into the creases of your coat as you move past rows of discarded compartment benches. A solitary zealot sits sharpening a piece of scrap iron against the floorboards, pausing only to watch you with eyes white against soot-stained cheeks. The air grows noticeably warmer here, thick with the smell of scorched upholstery and the distant, rhythmic throb of the reservoir pumps below. You keep your hand near your pocket, stepping carefully around a pile of smoldering railway manifests.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue toward the inner arch"
+   ]
+  },
+  "cf-5-070": {
+   "title": "Silence in the Firestorm",
+   "text": "Sparks flare suddenly from a nearby brazier as a sudden draft rushes down the ventilation flue, showering red embers across the dry wooden floorboards right at your feet. The assembled crowd surges forward with a collective hiss of indrawn breath, their hungry eyes fixed on your coat and the heavy brass key hidden beneath it. Your pulse hammers hard against your ribs, but you force your limbs to remain completely still amidst the mounting panic, locking your jaw against the rising tide of heat and shouting.",
+   "check": "Maintain steady composure against the sudden panic",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-071": {
+   "title": "The Smoke Breaks Through",
+   "text": "A sudden lungful of bitter ash catches in your throat, tearing a ragged cough from your chest that shatters your hard-won calm. The crowd surges inward before you can recover your footing, shoving you hard against the jagged iron ribs of a burned-out carriage wall. Your shoulder takes the impact with a sickening crunch, leaving a dull, throbbing ache and tearing your sleeve from wrist to elbow. You stumble away into the gloom, clutching your bruised arm while the zealots jeer from the smoke.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up from the floor"
+   ]
+  },
+  "cf-5-072": {
+   "title": "Through the Smoke",
+   "text": "Footsteps echo hollowly against the metal floor as you leave the turbulent alcove behind, however narrowly you managed to slip past the angry crowd. The bruised ribs and stinging throat serve as a sharp reminder of the cost of hesitation under these low, smoke-stained vaults. Your hand closes reassuringly around a smooth, blessed charcoal amulet tucked safely into your lining, its surface cool despite the ambient heat. Ahead of you, the dim light of the central shrine flickers across the tracks, drawing you toward the final ascent.",
+   "check": "",
+   "grant": "blessed charcoal amulet",
+   "exits": [
+    "Return to the central ash-shrine"
+   ]
+  },
+  "cf-5-073": {
+   "title": "Sparks on the Altar",
+   "text": "Exposed copper wires spit pale blue sparks across a heap of dry funeral wreaths, threatening to turn the whole provisional altar into a roaring fire-trap. You drop to your knees in the choking dark, fingers working fast to twist the live leads apart before the flames can catch. A sudden bright flash bites deep into your fingertips, searing the skin with a sharp, white-hot sting that leaves your hands trembling. Wiping the blood on your trousers, you pry a heavy brass crucifix-wrench loose from the mounting plate and pocket it.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Move away from the sputtering altar"
+   ]
+  },
+  "cf-5-074": {
+   "title": "The Live Wire",
+   "text": "Bare copper snakes across the wet iron framework of the altar-lamp, hissing softly as stray moisture shorts out the circuit in a shower of violet sparks. You reach out with the heavy brass crucifix-wrench, aiming to wedge the live lead away from the timber frame before the whole structure goes up in flames. The metal tool vibrates violently in your grip, humming with a dangerous current that threatens to jump straight through your gloves at any second.",
+   "check": "Rewire the live circuit without grounding yourself",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-075": {
+   "title": "The Bitter Shock",
+   "text": "A violent shock runs up your forearms, throwing you backward onto the iron grating with a choked cry as the wrench sparks brightly. The smell of burned leather and singed hair fills your nose, and your right hand hangs limp and numb, stinging fiercely from fingertip to palm. You lie there for a long moment watching soot drift down through the pale beam of a distant signal-lamp, gathering your breath before you manage to push yourself up.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your tools and move on"
+   ]
+  },
+  "cf-5-076": {
+   "title": "The Wrench Secured",
+   "text": "Cool brass rests heavily in your coat pocket, however narrowly you managed to avoid frying your fingers on the sputtering altar wiring. The small burn on your palm throbs in rhythm with your pulse, a dull reminder of how thin the margin is between a functioning engine and a heap of scrap. Around you, the murmur of the Cinder Prophets rises and falls like distant surf against a shingle beach. You grip the cold metal of your rail-pass and step past the smoking woodwork toward the wider corridor.",
+   "check": "",
+   "grant": "heavy brass crucifix-wrench",
+   "exits": [
+    "Return to the central ash-shrine"
+   ]
+  }
+ },
+ "missing": []
+}

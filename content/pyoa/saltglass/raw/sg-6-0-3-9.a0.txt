@@ -1,0 +1,72 @@
+Gemini said
+
+@@SECTION sg-6-0-3-9
+TITLE: The Magistrate's Alcove
+TEXT: A stone alcove contains a row of empty amphorae, their clay sides stamped with the double-lens seal of the ancient Prism magistrates. The unglazed pottery drinks the dry air of the vault, smelling faintly of ancient resin and long-evaporated wine. Beyond the alcove, the corridor forks around a pillar of fused basalt, leaving you to choose between the narrow service drop or the lower conduit. // You brush your fingers against the stamped clay, feeling the cold weight of your ember-lamp shift on its strap.
+EXIT 1: Descend the steep service drop
+EXIT 2: Follow the lower conduit onward
+EXIT 3: Turn back toward the dry shaft
+@@END
+
+@@SECTION sg-6-0-3-10
+TITLE: The Obsidian Mirror Pool
+TEXT: You wade through a shallow pool of mineral water that mirrors the vaulted brickwork like a sheet of dark, liquid obsidian. Every step sends dull ripples outward to disturb the absolute stillness of the subterranean lakelet, echoing softly against the damp mortar. Ahead, the path divides into two distinct routes through the flooded foundations of the observatory.
+EXIT 1: Step down into the mist
+EXIT 2: Track the iron transport groove
+@@END
+
+@@SECTION sg-6-0-3-11
+TITLE: The Leaking Grating
+TEXT: A bronze grating set into the ceiling drops a single, heavy drop of water directly onto the shoulder of your damp jacket. The chill moisture startles your skin, a rare reminder of open skies above the dead sea of glass. The passage ahead splits into a pair of branching tunnels that wind deeper into the gloom.
+EXIT 1: Slip through the salt-crusted drape
+EXIT 2: Step down into the mist
+EXIT 3: Track the iron transport groove
+@@END
+
+@@SECTION sg-6-0-3-12
+TITLE: Behind the Slate Slabs
+TEXT: You slip behind a stack of slate partition slabs, hiding from the distant, rhythmic clank of automated machinery that refuses to stop. The heavy stone blocks smell of ancient dust and cool iron, offering a secure shadow away from the open thoroughfare. You can either push forward into the humming heart of the mechanism or retrace your steps.
+EXIT 1: Track the iron transport groove
+EXIT 2: Turn back toward the broken arch
+@@END
+
+@@SECTION sg-6-0-4-0
+TITLE: The Chaff-Scented Door
+TEXT: A grand double door of iron-studded oak stands slightly ajar, leaking a smell of dry chaff and ancient, preserved grain hulls. The wood is warped with age yet remarkably sturdy, held together by hand-forged braces that catch the yellow flicker of your lamp. Stepping through this gap promises entry into the vaulted granaries of the Old Lensfolk.
+EXIT 1: Approach the outer bronze gate
+EXIT 2: Inspect the central granary threshold
+@@END
+
+@@SECTION sg-6-0-4-1
+TITLE: The Glass Chute
+TEXT: You scramble down a chute of polished green glass, sliding past rows of empty bin markers cut into the basalt rock-face. Friction warms the soles of your boots as you brake against the slick surface, descending smoothly into the lower tier of the vault. Two distinct passageways open at the bottom of the slide.
+EXIT 1: Approach the outer bronze gate
+EXIT 2: Examine the primary vault threshold
+@@END
+
+@@SECTION sg-6-0-4-2
+TITLE: The Rusted Winch
+TEXT: A rusted winch mechanism spans the corridor, its iron chain sagging into a heap of orange flakes upon the flagstone floor. The heavy drum is locked fast by thick crusts of oxide, bearing silent witness to the centuries that have passed since anyone hoisted a load here. The path ahead branches around the dead machinery.
+EXIT 1: Inspect the central granary threshold
+EXIT 2: Examine the primary vault threshold
+@@END
+
+@@SECTION sg-6-0-4-3
+TITLE: The Gallery of Urns
+TEXT: You step through a shattered fanlight into a long gallery where rows of bronze seed-urns stretch into the dim distance. Each vessel wears a tight-fitting lid sealed with green copper carbonate, preserving whatever secrets lie buried within their metallic bellies. The corridor runs straight toward the heart of the sealed vaults.
+EXIT 1: Inspect the central granary threshold
+@@END
+
+@@SECTION sg-6-0-4-4
+TITLE: The Service Cat-Walk
+TEXT: A narrow service cat-walk hugs the apex of the ceiling, offering a bird's-eye view of the vast, silent storage vaults below. Iron mesh rattles under your boots, suspended high above the darkened floor where old bins wait in eternal twilight. You can follow the suspended walkway further into the storage complex or descend toward the massive sealing doors.
+EXIT 1: Examine the primary vault threshold
+EXIT 2: Approach the final rain seal
+@@END
+
+@@SECTION sg-6-0-4-5
+TITLE: The Salt-Stiffened Drape
+TEXT: You push past a heavy wool drape stiffened with salt-crust, entering a chamber where the air tastes startlingly sweet and cold. Frost feathers cling to the edges of the lintel, fed by some hidden thermal vent from the deep earth. The corridor ahead divides before the central barriers of the subterranean complex.
+EXIT 1: Examine the primary vault threshold
+EXIT 2: Approach the final rain seal
+@@END

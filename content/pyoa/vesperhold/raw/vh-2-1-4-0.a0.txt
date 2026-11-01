@@ -1,0 +1,58 @@
+@@SECTION vh-2-1-4-0
+TITLE: The Iron Ledger
+TEXT: Heavy iron-bound ledgers slap against the wooden counter as a Cable Court sergeant blocks your narrow path with a scowl. Frost rimes his shoulder-clasps while he demands an immediate transit tally for the bronze burden strapped across your spine. The faintly humming Clapper vibrates within its padded cradle, adding a low thrum to the freezing wind whistling through the gorge cables. You shift your weight on the wooden planks, feeling the bite of the leather harness while the sergeant dips his steel pen into a horn of black ink.
+EXIT 1: Sign the ledger to pass
+@@END
+@@SECTION vh-2-1-4-1
+TITLE: Silver and Scale
+TEXT: Triple-bolted gates of the high toll-house loom before you, barring any careless descent toward Lowgate. You wait patiently in the biting draft while a tired clerk weighs a merchant's heavy silver coins against a standard brass scale. The metallic clink echoes off the granite face of the cliff, competing with the distant grinding of the ropeway winches. Behind you, the padded cradle hums a faint, steady note, reminding everyone within earshot of the sacred metal you carry.
+EXIT 1: Step forward to settle your toll
+@@END
+@@SECTION vh-2-1-4-2
+TITLE: Ink and Hemp
+TEXT: Sharp scents of wet hemp and cold ledger ink hang thick in the shadow of the tall granite customs tower. A pair of toll-clerks argue in low whispers over a tangled knot of hemp rope used to secure stray cargo crates. The freezing mountain air nips at your fingers as you adjust the leather frame holding the heavy Clapper. Every movement on these suspension bridges requires care, especially with the Cable Court watching from their high windows.
+EXIT 1: Offer your credentials to the clerks
+EXIT 2: Slip past the counter toward the stairs
+@@END
+@@SECTION vh-2-1-4-3
+TITLE: The Toll-House Bell
+TEXT: High overhead, a small brass bell chimes a sharp warning note whenever a new traveler steps onto the swinging platform. Beside the toll-house warden's high desk, stacked ledgers threaten to topple into the abyss below. You steady the cradle on your back while the warden looks up from his papers, eyeing the bronze tongue with professional suspicion. The cold air bites through your woolen tunic, making every breath plume like wood-smoke.
+EXIT 1: Present your travel permit for review
+EXIT 2: Negotiate a lower fee for the journey
+EXIT 3: Pay your way with hard silver groats
+EXIT 4: Turn back toward the upper ropeways
+@@END
+@@SECTION vh-2-1-4-4
+TITLE: The Tax-Office Threshold
+TEXT: Iron-plated thresholds rattle underfoot as you step across the entrance of the crowded tax-office. The frantic scratch of steel nibs fills the room, recording every single pound of transit bronze that passes down the mountain. You keep your posture rigid, though the heavy Clapper hums a warning vibration against your shoulder blades. Outside the frosted windows, the rope-markets sway gently in the grip of the ice-wind.
+EXIT 1: Hand your transit papers to the clerk
+EXIT 2: Empty your heavy purse of earned groats
+EXIT 3: Turn back toward the upper ropeways
+@@END
+@@SECTION vh-2-1-4-5
+TITLE: The Debt-Collector
+TEXT: Narrow hallways of the stone toll-station smell of old tallow and stagnant breath. A debt-collector sharpens a goose-quill with a small curved knife while eyeing the bronze Clapper's padded cradle with predatory hunger. His ledger lies open to a page filled with daunting figures and red ink marks. The steady hum from the bronze tongue seems to agitate him, causing his hand to pause mid-stroke.
+EXIT 1: Agree to their steep credit terms
+EXIT 2: Empty your heavy purse of earned groats
+@@END
+@@SECTION vh-2-1-4-6
+TITLE: The Armed Bailiff
+TEXT: Windswept wooden porches creak alarmingly under the boots of the Cable Court guards. An armed bailiff steps squarely into your path, his heavy halberd barring your advance until the transit fee is settled in full. The gorge below opens up in a dizzying drop of grey mist and frozen cables. You grip the straps of your burden, calculating whether you can slip past his reach before the winch-boys sound the alarm.
+EXIT 1: Empty your heavy purse of earned groats
+EXIT 2: Pay the toll with your remaining silver
+@@END
+@@SECTION vh-2-1-4-7
+TITLE: The Bronze Wicket
+TEXT: Bronze-studded wickets of the central toll-house gleam dully in the pale mountain light. You stand before the reinforced barrier, preparing to settle your account with the formidable gorge authorities once and for all. The Clapper hums softly against your spine, as if eager to leave this bureaucratic prison behind for the foundry at Lowgate. Every second spent here costs warmth and daylight.
+EXIT 1: Pay the toll with your remaining silver
+@@END
+@@SECTION vh-2-1-5-0
+TITLE: The Red Wax Seal
+TEXT: Cable Court toll-house desks are cluttered with ink-pots and binding twine as you finally accept their bitter loan agreement. A heavy red wax seal is pressed firmly onto the parchment, binding you to a mountainous debt that will take years to sweat away in Lowgate. The clerk nods coldly, handing you the transit token with fingers like dry twigs. The humming Clapper on your back feels suddenly heavier, burdened by the weight of your own signature.
+EXIT 1: Press on down the mountain stairs
+@@END
+@@SECTION vh-2-1-5-1
+TITLE: The Silent Clerk
+TEXT: Cramped ledger-rooms stifle your breath with the smell of old dust and damp wool. You scratch your name into the Cable Court's credit bond while a silent clerk meticulously notes your description for the repo-men waiting at the lower gates. The scratch of his pen sounds like insects gnawing through dry timber in the quiet room. With the stroke finished, he pushes a brass transit disk across the scarred wood toward you.
+EXIT 1: Press on down the mountain stairs
+@@END

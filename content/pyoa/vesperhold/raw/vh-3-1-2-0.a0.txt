@@ -1,0 +1,73 @@
+@@SECTION vh-3-1-2-0
+TITLE: The Stone Loft
+TEXT: Dust hangs thick in the echoing stone loft of mill twelve as miller Corin whets his broad scythe against an oilstone, stopping only to eye the padded cradle on your back with sharp suspicion. He demands to know what the high monks of Vesperhold are playing at while the barley rots in the frost, his thumb testing the newly polished edge with a soft hiss. The heavy bronze Clapper hums against your shoulder blades like a caged hornet, a steady vibration that seems to answer the rhythmic scraping of the steel. // Step past the grinding floor and head down toward the lower mills. // Seek a favorable trade with clean ledgers and an open hand.
+EXIT 1: Follow the rattled beams toward the lower floor
+EXIT 2: Barter your unburdened credit for an iron wedge
+@@END
+
+@@SECTION vh-3-1-2-1
+TITLE: The Grinding Stone
+TEXT: A fine spray of salt-grit blows through the open shutter, settling over the churning wooden mill-stone where miller Marna shakes her head in bitter disgust. She complains that the autumn gales bring nothing useful from the heights, only freezing mist and low-altitude damp that spoils her winter milling. Biscuit shifts his weight against the stone wall outside, blowing a long, frosty breath through his soft grey muzzle as the canvas roof billows overhead. // Choose between pressing onward into the gathering gloom or seeking shelter among the rattling gears.
+EXIT 1: Trade your unburdened credit for a spare wedge
+EXIT 2: Duck beneath the flapping canvas wind-breaks outside
+EXIT 3: Slip into the dim flour-bin to mend your gear
+@@END
+
+@@SECTION vh-3-1-2-2
+TITLE: The Canvas Canopy
+TEXT: Under the snapping canvas canopy of mill fourteen, miller Dane measures handfuls of parched, grey-brown barley into a wooden measure, trading them away for a stout length of hempen twine. The bitter mountain wind tugs fiercely at the roof-ropes, singing a thin, whining note through the timber framing that matches the faint, subterranean hum of the Clapper on your back. // Decide whether to brave the wind-lashed terrace or turn your steps back toward the upper stone.
+EXIT 1: Step out onto the wind-lashed canvas terrace
+EXIT 2: Hide within the dim stone flour-bin from the gale
+EXIT 3: Turn back toward the sun-bleached seventh terrace
+@@END
+
+@@SECTION vh-3-1-2-3
+TITLE: The Wind-Scoured Balcony
+TEXT: Miller-widow Kella leans against the wooden railing of mill fifteen's wind-scoured balcony, watching the white clouds drift far below the mountain face like a frozen sea. She offers a warm corner out of the drafting wind if you can spare a pinch of dried pipe-leaf from your travel pouch, her weathered fingers already clutching a short clay pipe. The heavy bronze tongue in its padded cradle warms against your spine, humming a quiet tune that seems to draw the thin air deep into your lungs. // Choose whether to seek refuge in the dim flour-bin or climb toward the whistling signal cords.
+EXIT 1: Crawl inside the dim stone flour-bin for shelter
+EXIT 2: Climb toward the frost-slick balcony and signal cords
+@@END
+
+@@SECTION vh-3-1-2-4
+TITLE: The Drying Kiln
+TEXT: Red embers glow softly beside the stone drying-kiln of mill sixteen, where miller Tion idly pokes the slumbering fire with a charred pine branch while the milling stones turn overhead. The rising heat smells pleasantly of roasted grain and woodsmoke, driving the biting mountain chill from your travel-worn fingers for a brief, welcome moment. Biscuit stamps a hoof against the flagstones outside, eager to move before the heavy gray clouds settle any lower over the crags. // Select your path among the clattering hoppers and whistling balconies ahead.
+EXIT 1: Seek shelter inside the dim stone flour-bin
+EXIT 2: Press past the clattering wooden hopper and noisy gears
+EXIT 3: Step out onto the frost-slick balcony near the signal line
+@@END
+
+@@SECTION vh-3-1-2-5
+TITLE: The Unencumbered Path
+TEXT: Walking with clean ledgers and an unburdened pack opens doors that remain firmly bolted against the debt-ridden and the desperate. Miller Corin nods respectfully as you pass, letting you slip through a concealed door in the grain-drying loft where the sweet scent of dry oats fills the dim, warm air. The heavy Clapper rests comfortably against your spine, unhindered by the bitter reckonings and bitterer coin-lenders of the upper terraces. // Choose whether to climb toward the freezing balcony or descend to the grinding floor.
+EXIT 1: Advance toward the frost-slick balcony and signal cords
+EXIT 2: Descend toward the stone grinding-floor and spilled grain
+@@END
+
+@@SECTION vh-3-1-2-6
+TITLE: The Wooden Gears
+TEXT: Wooden gears grind overhead with a deafening, wooden roar as miller Jory measures out dark rye into a notched wooden scoop, his eyes darting anxiously toward the darkening sky. The air tastes of dry chaff and old iron, and every timber in the loft shivers as a fresh gust strikes the great canvas sails outside. The bronze Clapper hums softly against your padded frame, its deep vibration steadying your nerves against the mountain's raw height. // Decide whether to brave the frosted balcony or search the echoing timber loft below.
+EXIT 1: Venture out onto the frost-slick stone balcony
+EXIT 2: Search the echoing timber loft for a quiet corner
+@@END
+
+@@SECTION vh-3-1-2-7
+TITLE: The Stray Goat
+TEXT: Miller-boy Bram runs across the frost-rimed stone platform of mill eighteen, waving a knitted cap to drive a stubborn stray goat away from an open stack of flour-sacks. The animal leaps lightly over a coil of hempen rope, its small hooves clattering sharply against the frozen flags before disappearing around the corner of the kiln. The thin, clear air burns your throat with every breath, reminding you how far Vesperhold and the great cracked bell remain above. // Choose your direction across the stone grinding-floor or the dizzying rope-bridge.
+EXIT 1: Make your way toward the stone grinding-floor
+EXIT 2: Cross the dizzying rope-bridge toward the lower cables
+@@END
+
+@@SECTION vh-3-1-2-8
+TITLE: The Flour-Dust Haze
+TEXT: River sand scrapes against a grease-stained wooden trough as miller Sula vigorously scours the vessel within the dim flour-dust haze of mill nineteen, paying little heed to your arrival. The air is thick with white particles that stick to your damp eyelashes and coat your woolen cloak in a fine, ghostly powder. Biscuit shakes his head stubbornly outside, his long ears twitching at the mournful whistle of the wind through the axle-beams. // Choose between greasing the iron journals, crossing the rope-bridge, or stoking the peat fire.
+EXIT 1: Grease the groaning wooden axle with mutton tallow
+EXIT 2: Step onto the dizzying rope-bridge above the abyss
+EXIT 3: Approach the drafty flour-shed and its smoking peat fire
+@@END
+
+@@SECTION vh-3-1-2-9
+TITLE: The Sluice-Gate
+TEXT: Thick waxed thread snakes through a leather punch as miller Vane repairs a broken drive-belt beside the churning wooden sluice-gate of mill twenty. Ice forms rapidly along the wooden edges where the mountain runoff spills into the troughs, glittering like scattered salt in the pale afternoon light. The heavy bronze Clapper hums rhythmically against your back, its ancient metal singing a quiet note whenever the icy spray touches the padded leather harness. // Choose whether to head toward the stone grinding-floor or the swaying rope-bridge.
+EXIT 1: Head toward the stone grinding-floor and sweeping brooms
+EXIT 2: Venture onto the dizzying rope-bridge spanning the gorge
+@@END

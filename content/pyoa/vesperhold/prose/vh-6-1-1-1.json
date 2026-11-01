@@ -1,0 +1,96 @@
+{
+ "batch": "vh-6-1-1-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-1-1-1": {
+   "title": "The Silt-Choked Quay",
+   "text": "Heavy wagons sink to their wooden hubs by the grey water's edge, where three carters shout against the roar of the lowland drainage canal bursting its banks. Mud spatters your greaves as the men heave their shoulders against a stalled axle, their breath pluming white in the chill air while the dark tide rises around the rotting pilings.\n\nYou can wait for the teamsters to clear the path, offer your broad shoulders to the strain of the wheel, or turn back toward the narrow alleys before the rising waters cut off your retreat entirely.",
+   "exits": [
+    "Wait for the carters to clear the blocked path",
+    "Put your back against the stalled wheel to help",
+    "Turn back toward the shelter of the narrow alleys"
+   ]
+  },
+  "vh-6-1-1-2": {
+   "title": "The Stacked Crates",
+   "text": "Cold moisture drips from the sagging cedar eaves, pattering rhythmically against the dirt floor as a tired watchman steps out from behind towering stacks of damp charcoal. He lifts a rusted lantern, casting a jaundiced yellow glow over the heavy bronze burden strapped to your shoulders while the lower sluice gates groan under midnight pressure nearby.\n\nYou must choose whether to answer the watchman's gruff demands, slip past him into the shadows of the fuel yard, or offer him a small coin to look the other way.",
+   "exits": [
+    "Answer the watchman with steady patience",
+    "Slip silently past into the charcoal shadows",
+    "Toss a small copper coin to buy his silence",
+    "Warn him of the groaning sluice gates ahead"
+   ]
+  },
+  "vh-6-1-1-3": {
+   "title": "The Hidden Ledge",
+   "text": "Old frostbite aches deep within your left shoulder, the jagged scar from the high glacier tingling sharply in the damp lowland air as it guides your frost-trained boots along a hidden stone ledge. Below you, the dark, submerged wharf laps against the stone foundations, and the hum of the heavy bronze clapper on your back vibrates in rhythm with your old mountain injuries.\n\nYou can follow the elevated ledge above the flood, scramble down to the slippery timbers of the wharf, or pause to test the stability of the crumbling mortar beneath your boots.",
+   "exits": [
+    "Follow the elevated stone ledge above the flood",
+    "Scramble down to the slippery timbers of the wharf",
+    "Pause to test the crumbling mortar beneath your boots"
+   ]
+  },
+  "vh-6-1-1-4": {
+   "title": "The Flooded Smithy",
+   "text": "Murky water laps around the anvil block in the flooded smithy yard, where a one-eyed skinner named Bran gestures with a greasy hand toward a coiled hemp rope. He glances nervously at the mule and the padded cradle on your back, offering to trade his dry cordage for your spare harness before the river swallows the rest of his gear.\n\nYou can accept the skinner's trade for the stout hemp, question him about the rising water levels upstream, or ignore his desperate offer and press on toward the lower gates.",
+   "exits": [
+    "Trade your spare harness for the coiled hemp",
+    "Question the skinner about the rising water levels",
+    "Ignore the offer and press on toward the gates",
+    "Check the mule's pack before leaving the yard"
+   ]
+  },
+  "vh-6-1-1-5": {
+   "title": "The Sagging Winch-House",
+   "text": "Thick grease coats the heavy iron levers inside the sagging winch-house, where a scowling mechanic named Taggart plants his boots across the threshold and demands a toll before you touch the drainage crank. The air smells of stale oil and river silt, and the rhythmic clanking of the machinery echoes like a heartbeat through the damp floorboards.\n\nYou can pay the mechanic's fee from your dwindling pouch, try to outwit him with a sharp word about guild regulations, or look for another way to reach the drainage controls.",
+   "exits": [
+    "Pay the mechanic's toll from your pouch",
+    "Argue guild regulations with the surly mechanic",
+    "Search for another way to reach the controls"
+   ]
+  },
+  "vh-6-1-2-0": {
+   "title": "The Salt-Crusted Crane",
+   "text": "Rust flakes from the iron ribs of the salt-crusted crane as a desperate mother named Milla steps from the drizzle, clutching a coughing infant to her chest while begging you for clean rags against the mountain chill. The wind off the water carries the sharp tang of brine and old iron, chilling your fingers inside your thick woollen mittens.\n\nYou can search your pack for a clean strip of linen, offer the mother a warming swallow from your flask, or murmur a quiet apology and walk past her into the fog.",
+   "exits": [
+    "Search your pack for a clean strip of linen",
+    "Offer the mother a warming swallow from your flask",
+    "Listen as the bronze clapper hums against the cold"
+   ]
+  },
+  "vh-6-1-2-1": {
+   "title": "The Water-Ruined Ledgers",
+   "text": "Flickering grease lamps cast long, dancing shadows across water-ruined ledgers inside a drafty timber lean-to, where an exhausted scribe named Hesketh frantically tries to wipe mud from his ink-stained parchment. Outside, the steady patter of rain mixes with the distant grinding of the great water-wheel, and the heavy clapper on your back hums softly against the chill.\n\nYou can help the scribe salvage his ruined records, ask him about the road ahead toward the foundry, or leave him to his dismal work and step back out into the rain.",
+   "exits": [
+    "Listen as the bronze clapper hums its warning",
+    "Help the exhausted scribe salvage his water-ruined ledgers",
+    "Ask the scribe about the open road to the foundry"
+   ]
+  },
+  "vh-6-1-2-2": {
+   "title": "The Silt-Banked Fountain",
+   "text": "Murky water overflows the stone basin of the silt-banked fountain, where a sharp-tongued fishwife named Nessa scrubs her wooden tubs and glares fiercely at the mud tracking from your boots onto her drying nets. Gulls wheel overhead in the grey sky, crying out against the rising wind that sweeps up from the lowlands.\n\nYou can offer a polite apology to the fishwife, step carefully around her nets to avoid further trouble, or ask her if the lower bridge is still passable.",
+   "exits": [
+    "Offer a polite apology to the angry fishwife",
+    "Step carefully around her drying nets to avoid trouble"
+   ]
+  },
+  "vh-6-1-2-3": {
+   "title": "The Sluice Bridge Arch",
+   "text": "Timbers groan under the weight of the water as you step beneath the creaking arch of the sluice bridge, where a nervous boy named Kray drops his bundle of iron spikes into the murky depths with a dull splash. He looks up at you with wide, frightened eyes, his fingers clutching uselessly at his wet leather apron.\n\nYou can reach into the water to help the boy retrieve his spikes, offer him a word of comfort about the rising flood, or hurry across the bridge before the timbers give way.",
+   "exits": [
+    "Reach into the murky water to help retrieve the spikes",
+    "Offer the boy a word of comfort and hurry across"
+   ]
+  },
+  "vh-6-1-2-4": {
+   "title": "The Narrow Coal Alley",
+   "text": "Coal dust coats the damp cobblestones of the narrow alley, where an old bailiff named Vane steps out from the gloom and raises an ash-wood staff to block your path, insisting on inspecting the wooden cradle on your back. The air tastes of sulphur and wet soot, and every breath burns the back of your throat.\n\nYou can let the bailiff inspect your heavy burden, demand to know by whose authority he stops travellers, or slip your hand toward the strap and prepare to push past him.",
+   "exits": [
+    "Allow the bailiff to inspect the wooden cradle",
+    "Demand to know his authority for stopping travellers"
+   ]
+  }
+ },
+ "missing": []
+}

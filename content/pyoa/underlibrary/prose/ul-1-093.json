@@ -1,0 +1,114 @@
+{
+ "batch": "ul-1-093",
+ "sections": {
+  "ul-1-093": {
+   "title": "The Map-Rooms",
+   "text": "Dust hangs thick in the narrow corridors where rolled charts of unmapped pathways unroll themselves like sleeping snakes along the shelves. You slip away from the bustling reading hall, your boots padding silently against flagstones damp with lingering ink-vapours. Around you, parchment scrolls hiss and twitch in the draft, altering their contours as the geography of the lower bays shifts in the gloom. Thessaly Marr's disappearance leaves a cold vacuum in the archive, and every cartographic draft seems to point toward the sealed vault of the Hundredth Door. You must press deeper into the cartographer's domain before the shifting stacks trap you between floors for good.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the twitching parchment trail"
+   ]
+  },
+  "ul-1-094": {
+   "title": "The Cartographer's Loft",
+   "text": "Piles of yellowed vellum block the draughty corners of the loft, where an eccentric map-maker mutters over a brass compass that spins wildly on its mount. He tries to sell you a chart of corridors that shift whenever someone blinks, his ink-stained fingers tapping impatiently on the mahogany counter. Outside his window, the endless stacks rumble as another bay reorders itself in the damp subterranean air. You need a reliable route through this maze before the Long Closing seals the archives. Choose your path carefully among the shifting cartography.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Match wits with the erratic map-maker",
+    "Correct the glaring master map errors",
+    "Study the changing parchment folds",
+    "Endure the endless lost-wing tales",
+    "Ascend the encyclopedia-spine stairs"
+   ]
+  },
+  "ul-1-095": {
+   "title": "The Riddle of Ink",
+   "text": "Pungent lamp-oil scents the cramped alcove as the cartographer leans forward, challenging your intellect with a convoluted puzzle about missing chapters and inverted floor numbers. You weigh every syllable carefully, countering his riddles with standard library nomenclature learned during your earliest days as a shelver. The old man narrows his eyes, clearly surprised by your sharp comprehension of the shifting stacks. Satisfied with your intellectual parry, he slides a thin roll of vellum across the cluttered desk toward you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the non-existent corridors map"
+   ]
+  },
+  "ul-1-096": {
+   "title": "Cartographic Secrets",
+   "text": "Unrolling the crisp vellum reveals a chaotic web of ink lines depicting pathways that supposedly lead straight through solid masonry and bottomless air-wells. The cartographer insists these non-existent corridors open only to those who understand the cadence of the archive's breathing walls. You tuck the peculiar map into your coat pocket, feeling its heavy, fibrous weight against your ribs. The ink is still slightly tacky, smelling faintly of vinegar and crushed galls.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test the impossible cartography ahead"
+   ]
+  },
+  "ul-1-097": {
+   "title": "Tracing Phantom Passages",
+   "text": "Stepping out into the dim corridor, you match the map's impossible creases against the masonry arches while the stone walls groan and slide around you. A false door shivers in the lamplight, its brass handle turning lazily through empty air as the spatial puzzle shifts beneath your boots. You try to anticipate the exact moment the masonry will realign, relying entirely on your wits to pick the one true path through the geometric illusion.",
+   "check": "Outsmart the shifting architectural illusion",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-098": {
+   "title": "Misaligned Ambition",
+   "text": "Stone grates violently against stone as the corridor snaps shut a fraction of a second too soon, catching your shoulder and sending you sprawling across the gritty floor. The map tears along a phantom crease, and you lose precious minutes digging your lamp out from beneath a pile of fallen cataloguing slips. Bruised and aching from the sudden impact, you pull yourself up against a cold pillar, poorer by a flask of oil and a good deal of pride.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push onward through the altered stacks"
+   ]
+  },
+  "ul-1-099": {
+   "title": "The Impossible Cartography",
+   "text": "Moving with careful precision, however narrowly you avoid the snapping jaws of the rearranging masonry, you step cleanly through the phantom archway into a stable bay beyond. The strange map folds neatly into your palm, its shifting ink settling into a permanent, reliable trace of the hidden passages. You emerge with a clearer understanding of how the library bends its own geometry around unwary shelvers.",
+   "check": "",
+   "grant": "Map of phantom corridors",
+   "exits": [
+    "Return to the cartographer loft"
+   ]
+  },
+  "ul-1-100": {
+   "title": "The Master Chart",
+   "text": "Massive leather-bound atlases sprawl across oak trestles, their pages covered in frantic ink corrections and fading marginal notes left by generations of anonymous scholars. You notice a glaring topological error near the lower registry where an entire stairwell has been transposed with a dead-end bindery. Pointing out the mistake to the busy draftsman earns his grudging respect and a quick flick of his pen.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the detailed descent sketch"
+   ]
+  },
+  "ul-1-101": {
+   "title": "Ink-Stained Gratitude",
+   "text": "The draftsman nods briskly, muttering appreciation as he hands over a detailed, freshly drawn sketch of the stone steps leading downward into the deeper annexes. The paper is thick and heavy, bearing the official stamp of the Cartographers' Court in purple ink that smells of iron and cloves. You roll it tightly and secure it with a length of twine from your belt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend toward the lower archive"
+   ]
+  },
+  "ul-1-102": {
+   "title": "Reading the Topography",
+   "text": "Dim amber light flickers across the drafting table as you cross-reference the new sketch with the ancient architectural carvings on the nearby pillars. The stairs below seem to breathe, expanding and contracting with a rhythmic pulse that threatens to scramble your sense of direction entirely. You concentrate fiercely on the structural anomalies, trying to decode the hidden logic behind the shifting stone steps.",
+   "check": "Decipher the shifting architectural logic",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-103": {
+   "title": "A Miscalculated Descent",
+   "text": "A sudden tremor shakes the foundation, causing your lamp to flare wildly and casting confusing shadows across the carved steps. You misjudge the rise of the lowest landing, stumbling forward and scraping your knuckles raw against the rough granite wall. The precious sketch slips from your fingers, getting smudged with greasy soot before you manage to scoop it back up from the dusty floor.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Recover your footing and press on"
+   ]
+  },
+  "ul-1-104": {
+   "title": "The Map Adjusted",
+   "text": "Ink lingers on your thumb as you draw a firm red line across the margin of the master chart, correcting the fold where the seventh aisle swallowed a staircase. The lending clerk watches with grudging respect, sliding a folded slip of parchment across the mahogany desk in silent acknowledgement of your correction. This delicate ink-sketch details the forgotten descent toward the lower galleries, marking every shifting landing with precise notes on where the stone masonry tends to buckle.\n\nYou tuck the parchment safely into your sleeve, feeling the dry weight of the favor settle between your ribs like a coin earned in hard currency.",
+   "check": "",
+   "grant": "detailed stair sketch",
+   "exits": [
+    "Ascend the encyclopedia stairwell"
+   ]
+  }
+ },
+ "missing": []
+}

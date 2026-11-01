@@ -1,0 +1,94 @@
+{
+ "batch": "cf-2-205",
+ "sections": {
+  "cf-2-205": {
+   "title": "The Click of Truth",
+   "text": "Copper coils hum and settle as the restored current flows through the telegraph armature with a sharp, rhythmic chatter. The tiny brass lever taps out a steady sequence, bringing the dead line back to life despite the surrounding decay.\n\nYou pocket the resulting prize, knowing how narrowly you salvaged the connection from the soot-clogged terminals.",
+   "check": "",
+   "grant": "a functioning copper telegraph key",
+   "exits": [
+    "Climb back down into the tender"
+   ]
+  },
+  "cf-2-206": {
+   "title": "Iron from the Ash",
+   "text": "Shivering in the drafty recess of the cabin base, you set your boots against the jammed iron fire-door and throw your weight behind the push. It gives with a sharp, protesting shriek of rusted hinges, falling inward to reveal a thick, soot-blackened poker forged from solid boiler iron.\n\nYou haul the heavy tool free from the debris, testing its balance in your soot-stained grip before climbing back toward the deck plates.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul the heavy poker aboard"
+   ]
+  },
+  "cf-2-207": {
+   "title": "Heaving the Iron Door",
+   "text": "Resistance meets your every muscle as you lean your full weight into the warped iron frame, sweat cutting clean channels through the grime on your face. The frozen latch refuses to budge, holding fast against the dead-bolted seal while the cold wind howls through the gaps in the timber walls.\n\nYou brace your boots deeper into the ash-strewn flooring, drawing on every ounce of muscle to force the barrier open against the grip of rust.",
+   "check": "Throw your weight against the iron door",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-208": {
+   "title": "The Wrenched Shoulder",
+   "text": "A sudden slip sends your shoulder crashing violently into the iron jamb, driving the wind from your lungs in a sharp, ragged gasp. The jammed door remains obstinately shut, leaving you nursing a bruised joint and a deep, throbbing ache that settles heavily into your bones.\n\nYou shake off the dizziness, wiping sweat and grey dust from your forehead as you prepare to tackle the stubborn obstacle once more.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and try again"
+   ]
+  },
+  "cf-2-209": {
+   "title": "The Prize Within",
+   "text": "Clearing away the heavy flakes of rust, you slide your fingers into the recess and draw out a long, heavy iron poker that bears the authentic stamp of the Ashgate foundries. It is cold to the touch yet carries a reassuring weight, promising many hours of hard service at the firebox mouth.\n\nYou slide the implement into the deck rack, securing a valuable asset for the long miles ahead across the barren steppe.",
+   "check": "",
+   "grant": "a heavy forged iron poker",
+   "exits": [
+    "Return to the main engine deck"
+   ]
+  },
+  "cf-2-210": {
+   "title": "Crossing the Ridge",
+   "text": "Steam hisses from the relief valves as Locomotive No. 9 gathers its remaining strength and begins the long, arduous climb toward the crest of the final ridge. Below you, the vast, grey expanse of the Ashen Steppe rolls away into the smoke-choked horizon, a desolate wasteland of stalled carcasses and grey grass-stubble.\n\nWith a final, triumphant shriek of the whistle, the engine breaks over the summit and begins its descent toward the lowlands. Far ahead, cutting sharply across the ash-dunes, the monumental iron spans of the Brasswind Viaduct loom through the yellow haze, their gantries bristling with the watchful lanterns of the Rail Barons.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl onto the great iron spans"
+   ]
+  },
+  "cf-2-211": {
+   "title": "Wits Across the Wire",
+   "text": "Exchanging sharp, coded pleasantries with the weary operator across the desk, you match his dry humor with a steady stream of trackside gossip. He yields with a grudging grin, sliding a heavy brass pocket-compass across the scarred wood of the counter.\n\nThe needle spins lazily before settling true, pointing an unwavering finger toward magnetic north through the thick cabin air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the compass and depart"
+   ]
+  },
+  "cf-2-212": {
+   "title": "The Heat of Devotion",
+   "text": "Standing motionless within the blinding halo of the prayer-fire, you endure the searing wave of dry heat without flinching under the watchful gazes of the robed zealots. One of the elders nods slowly, recognizing your endurance, and presses a heavy tin of dense fire-clay into your open palm.\n\nThe sealant will patch the worst of the boiler leaks when the pressure climbs too high on the downgrade.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the tin and turn away"
+   ]
+  },
+  "cf-2-213": {
+   "title": "Whispers on the Line",
+   "text": "The receiver clicks rhythmically in the dim light as you parse the fractured sequence of dashes and dots detailing armored patrols moving along the southern embankment. It is a vital advance warning of the blockades waiting near the lower junctions.\n\nYou memorize the sequence before clearing the slate, stepping back into the drafty corridor with your mind sharp and prepared.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Head back to the cab deck"
+   ]
+  },
+  "cf-2-214": {
+   "title": "Greasing the Sheaves",
+   "text": "Frigid winds whip across the open scaffolding as you work tallow deep into the frozen cable pulleys of the upper signal bracket, your fingers numb against the metal. With a sharp groan, the rusted iron arm yields to your leverage and drops cleanly into the clear position.\n\nA heavy brass signal-lantern, left behind by a vanished tender crew, hangs securely from the newly greased bracket as your reward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the lantern and descend"
+   ]
+  }
+ },
+ "missing": []
+}

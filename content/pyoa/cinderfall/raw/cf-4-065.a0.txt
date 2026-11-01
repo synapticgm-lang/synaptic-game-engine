@@ -1,0 +1,66 @@
+@@SECTION cf-4-065
+TITLE: The Rigged Wire
+TEXT: Coiling the discarded telegraph wire with methodical care, you lash the intact porcelain block to the iron stanchion above the sump. The dry-cell battery slips snugly into its leather sling, its terminals hissing faintly against a stray bead of moisture before catching and holding a steady, low-humming current. That salvaged charge bridges the gap, lighting your way through the slick dark.
+GRANT: dry-cell battery and block
+EXIT 1: Climb back down to the sump basin
+@@END
+@@SECTION cf-4-066
+TITLE: The Scalding Room
+TEXT: Steam hisses from the rusted manifold, filling the cramped cabin with a dense, blinding fog that tastes of copper and boiled tallow. You keep your footing on the slick deck plates, sliding your fingers along the primary bypass valve until the wheel stops its juddering rattle. The pressure gauge settles into a steady, safe hum, leaving you with a dry oilskin case fished from a shelf.
+EXIT 1: Slip the waterproof case into your tunic
+@@END
+@@SECTION cf-4-067
+TITLE: The Steaming Valve
+TEXT: Condensation drips from the copper ceiling, striking your shoulders like cold needles as you navigate the narrow walkway beside the boiler. The air is thick enough to chew, smelling sharply of heated grease and mineral scale. Moving with deliberate caution, you secure the loose coupling on the pressure line before the temperature climbs any higher in the enclosed space.
+EXIT 1: Advance deeper into the tunnel mist
+@@END
+@@SECTION cf-4-068
+TITLE: The Scalding Bypass
+TEXT: Scald-heat rolls off the brass housing in heavy, suffocating waves, fogging your goggles and slicking the deck plates with greasy condensate. Your hands hover over the screaming valve while the pressure needle pins itself hard against the red sector, threatening to split the copper elbow wide open. You steady your breathing against the roar of the boiler, reaching out your fingers to catch the spinning wheel.
+CHECK: Steady the screaming bypass valve
+@@END
+@@SECTION cf-4-069
+TITLE: The Scald-Burn
+TEXT: Boiling vapor bites through your canvas sleeve with a sharp hiss, leaving a red, stinging welt across your forearm that throbs with every beat of your pulse. You lose your grip on the spinning wheel as the pressure slams the metal casing, venting a hot cloud that leaves you coughing and groping blindly in the grey gloom. The engine stutters, burning precious time and leaving you bruised.
+EXIT 1: Gather your breath and press forward
+@@END
+@@SECTION cf-4-070
+TITLE: The Sealed Case
+TEXT: Through the haze of steam and scalding water, your fingers find the toggle and lock the bypass valve into its proper groove with a satisfying metallic click. The pressure drops back into the green, steady and low, and resting on the bracket beside the manifold is a dry, oilskin map case untouched by the damp. You slide it free of the clips, your thumb testing the sealed brass clasp.
+GRANT: waterproof oilskin map case
+EXIT 1: Return to the main sump basin
+@@END
+@@SECTION cf-4-071
+TITLE: The Limestone Cleft
+TEXT: Locomotive No. 9 wheezes through a narrow cleft in the limestone where the air tastes sharply of old copper and burnt sage. The engine's heavy wheels grind against stone walls that weep rusty moisture, the headlight painting long, pale arcs across ancient timber shoring. Every rivet in the iron chassis rattles in rhythm with the subterranean draft, answering some hidden pulse buried deep beneath the mountain root.
+EXIT 1: Follow the rails into the dark
+@@END
+@@SECTION cf-4-072
+TITLE: The Whisper Vault
+TEXT: Archways carved into the cave walls echo with the recorded voices of every driver who perished here, their ghostly words blending into a continuous, murmuring tide of soot-stained gossip. The damp air smells of cold coal dust and old iron, carrying fragments of vanished timetables through the dark. Ahead, the cavern splits into several distinct paths, each marked by flickering signal lamps hung from rusted brackets.
+EXIT 1: Press onward through the echoing arch
+EXIT 2: Listen closely to the acoustic stone
+EXIT 3: Shoulder through the rotten timber partition
+EXIT 4: Approach the barricade of iron sleepers
+@@END
+@@SECTION cf-4-073
+TITLE: The Familiar Cadence
+TEXT: You listen to the whispering wall until you catch the cadence of Hesper Quill's familiar voice repeating a warning about poisoned rails buried beneath the ash. The stone gives up its secrets in a dry, rattling whisper that sounds precisely like grease sliding down a cold piston. You pocket the advice, your fingers brushing the cold metal of the Water Key at your belt.
+EXIT 1: Follow the warning toward the junction
+@@END
+@@SECTION cf-4-074
+TITLE: The Acoustic Echo
+TEXT: Voices overlap in the limestone corridor, rising from a murmur to a frantic clamor of past engine failures and warning bells. You press your palms against the vibrating rock face, trying to isolate Hesper Quill's distinct register from the howling subterranean draft. The stone grows unnaturally cold beneath your skin as a specific sentence detaches itself from the babble, demanding your full attention.
+CHECK: Decipher the whispering stone wall
+@@END
+@@SECTION cf-4-075
+TITLE: The Deafening Babble
+TEXT: A sudden surge of competing voices strikes your ears like a physical blow, driving a spike of sharp pain behind your temples and leaving you dizzy on the ballast. You stumble against the damp limestone wall, shaking your head to clear the ringing confusion while precious minutes slip away in the dark. The acoustic shock leaves you drained, but the worst of the howling fades into a dull ache.
+EXIT 1: Shake off the dizziness and advance
+@@END
+@@SECTION cf-4-076
+TITLE: The Hidden Cadence
+TEXT: You filter out the meaningless static of the dead drivers until a single, sharp sentence cuts through the gloom with absolute clarity. Hesper Quill's voice maps the exact location of a treacherous rail section ahead, giving you an edge against whatever waits in the dark tunnels. You tuck the warning into your memory like a fresh ticket.
+GRANT: warning about poisoned rails
+EXIT 1: Return to the vault junction
+@@END

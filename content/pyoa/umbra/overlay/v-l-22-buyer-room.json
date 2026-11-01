@@ -1,0 +1,47 @@
+{
+ "batch": "v-l-22-buyer-room",
+ "variants": [
+  {
+   "node": "up-l-buyer-room",
+   "when": {
+    "rigg": "allied"
+   },
+   "after": "Matron Rigg's earlier promise of sanctuary holds true in this quiet parlour; her foundryman does not sneer, but instead rests a heavy iron gaol-key on the mahogany as a silent guarantee of your continued freedom."
+  },
+  {
+   "node": "up-l-buyer-room",
+   "when": {
+    "rigg": "betrayed"
+   },
+   "after": "The foundry representative glowers from the corner, his coat smelling of iron and malice, clearly carrying the gaol warrants his mistress prepared the moment you previously refused her harsh protection."
+  },
+  {
+   "node": "up-l-buyer-room",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Outside the thick parlour glass, heavy boots ring across the cobblestones; the merciful release of that panicked deacon ensured the city watch now violently hunts a lone fugitive wrapped in the prelate's stolen mantle."
+  },
+  {
+   "node": "up-l-harbor-statue",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "Escaping across the water means outrunning the city watch, but you cannot outpace the whispered debt you owe the shivering deacon, a quiet promise that will surely follow your ship far beyond the harbour bounds."
+  },
+  {
+   "node": "up-l-harbor-statue",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Lantern light sweeps the nearby coal barges as patrols hunt frantically for a solitary figure in a stolen clerical cloak, their search narrowed to these very docks thanks to the babbling deacon you foolishly spared."
+  },
+  {
+   "node": "up-l-harbor-statue",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Beneath the heavy wool of the Archbishop's stolen garment, your hands still feel the sudden, desperate shove that sent the screaming deacon plummeting to the cobbles, a brutal secret sinking with you into the dark."
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+Gemini said
+
+@@PAGE up-l-det-foundry-warrant
+LABEL: Present Matron Rigg's iron foundry warrant
+STAKE: You must rely on Rigg's heavy-handed protection, risking discovery if the foreman's paperwork is questioned.
+TEXT: You slip from the eaves and drop into an alley, presenting the heavy iron-stamped paper to a waiting foreman. He scarcely glances at you, clamping a calloused hand onto your shoulder and marching you straight toward the watchmen's brazier blocking the ascent. "Prisoner for the gaol books," he barks, waving the warrant. The guards part, intimidated by Matron Rigg's seal. It is a rough, humiliating escort, but utterly effective. As soon as you clear the cordon, the foreman shoves you toward the next ascent, muttering a curse. You immediately turn back to the climb.
+CONTINUE: Climb toward the high ridge
+@@END
+
+@@PAGE up-l-det-pass-cloak
+LABEL: Advance boldly in the murdered Archbishop's cloak
+STAKE: The velvet commands instant respect, but the deception will shatter the moment they remember who was murdered.
+TEXT: You descend briefly to a rooftop terrace where a watchmen's checkpoint blocks the only route forward. Pulling the heavy cowl low, you stride directly into the flickering light of their lantern. The gold-embroidered hem catches the flame, and the sentries instinctively avert their eyes, stepping aside to let his eminence pass. You are halfway across the terrace when a young guardsman gasps, suddenly recalling that the Archbishop was found dead an hour ago. Boots scramble on the slate behind you. Without waiting for a challenge, you vault the final parapet and sprint away.
+CONTINUE: Vault the parapet and flee
+@@END
+
+@@PAGE up-l-det-pass-tailor
+LABEL: Cross the checkpoint in the debt coat
+STAKE: Relying on the pitiful appearance of the ruined tailor's garb risks unwanted scrutiny from the watchmen.
+TEXT: You drop from the gable onto a narrow walkway, stumbling deliberately as you approach a temporary checkpoint. A yawning clerk of the cordon holds up a lantern, his eyes narrowing at the precise, recognisable stitching of the disgraced tailor's coat. Sneering at the threadbare fabric, the clerk assumes you are just another wretched debtor being quietly escorted out of a scandal. He waves you through with a flick of his wrist, eager to be rid of you. You lower your head, hurrying past the idle guards, and slip quietly toward your final destination.
+CONTINUE: Hurry past toward the zenith
+@@END
+
+@@PAGE up-l-det-pass-livery
+LABEL: Blend through the checkpoint in rough livery
+STAKE: You must match the exhausting rhythm of the labourers, hoping no guard examines the faces beneath the crates.
+TEXT: You abandon the roof tiles and drop into an elevated service gantry just as a line of grunting labourers passes. Pulling at the rough collar of your porter's livery, you seize an abandoned crate and fall into step behind a squealing hand-cart. A pair of watchmen stand at the gantry gates, checking warrants, but they pay no attention to the sweat-stained faces beneath the heavy timber boxes. You match the dull, trudging rhythm of the crew, keeping your gaze fixed on the cart's wheels. Once past the iron gates, you abandon the crate.
+CONTINUE: Abandon the crate and press onward
+@@END
+
+Are there any other specific detour pages or alternate paths you would like me to outline for this section?

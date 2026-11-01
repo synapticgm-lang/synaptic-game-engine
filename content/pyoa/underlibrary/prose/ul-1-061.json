@@ -1,0 +1,96 @@
+{
+ "batch": "ul-1-061",
+ "sections": {
+  "ul-1-061": {
+   "title": "The Scriptorium of Strains",
+   "text": "Greasy candle-stubs gutter upon heavy oak desks while robed monks lean into one another, hissing through yellowed teeth over whether marginalia should be scraped clean or preserved for posterity. Spilled ink congeals in the cracks of the flagstones like dried blood, smelling faintly of vinegar and rotted gall. To your left, a narrow stairwell winds downward into the gloom where rough-knuckled comrades wait in the shadow of the shelves. Straight ahead, an iron-bound wicket gate stands ajar, revealing a chamber choked with discarded parchment scraps. Near the back pillar, a towering lectern holds a massive ledger covered in furious ink-corrections, offering a tempting glimpse of institutional secrets. Every shadow hums with low, marginal whispers that pull at the edges of your attention, urging you to choose your path through the dust.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the forbidden scrap-basket",
+    "Parse the carved stone argument",
+    "Seek an antique bone stylus",
+    "Correct the monks ledger system",
+    "Visit the Shelvers Fellowship vault"
+   ]
+  },
+  "ul-1-062": {
+   "title": "The Scrap-Basket Inquiry",
+   "text": "Grease-stained robes brush against your sleeves as you slip past the disputing brothers, your boots crunching softly upon drifts of discarded parchment shavings. The air thickens with the reek of lamp-oil and fermented vinegar, masking the subtle scratch of quills moving in the dark alcoves above. You edge closer to the woven wicker basket where confiscated marginalia and torn-out glosses accumulate like autumn leaves. One of the senior monks turns his hooded head sharply toward you, his rheumy eyes narrowing with instant suspicion. You must act before his suspicion hardens into a formal denunciation by the order.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach into the wicker basket"
+   ]
+  },
+  "ul-1-063": {
+   "title": "Assessing the Wicker Depth",
+   "text": "Fingers twitching against the rough rim of the wicker basket, you slide a hand down past the curled vellum slips while fixing the lead monk with an unwavering, placid stare that masks your rising pulse. The air grows stifling as the old man opens his mouth to challenge your intrusion, his breath sour with stale chicory and ink-dust. You lean your weight forward to block his line of sight, trusting your tongue to spin a plausible fabrication about missing inventory. Every nerve strains against the impending discovery as the monks close their circle around you.",
+   "check": "Talk your way past the suspicious monk",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-064": {
+   "title": "Tangled in the Shavings",
+   "text": "A heavy bronze paperweight slips from a nearby shelf, crashing down onto the flagstones and shattering the thin veneer of your confident performance. The monks surge forward with outraged squawks, their grease-stained sleeves flapping like the wings of startled crows as they pin your arms against the rough wicker. You twist away, but not before a sharp wooden splinter tears a jagged line across your palm, leaving hot blood to mingle with the black ink staining your knuckles. They bundle you out into the drafty corridor with a chorus of dry curses, heavier by a stinging wound and bruised pride, yet leaving you free to lick your scratches in the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the noisy scriptorium hub"
+   ]
+  },
+  "ul-1-065": {
+   "title": "The Scraps Secured",
+   "text": "Quick words woven with practiced ease placate the furious brothers just long enough for your fingers to graze the bottom of the wicker receptacle and withdraw a tightly curled scrap of vellum. The monks grunt in grudging acquiescence, turning back to their theological dispute as though you were nothing more than a stray draft of air. You tuck the prize into your waistcoat pocket, feeling the cold weight of a recovered secret pressing against your ribs.\n\nWhether negotiated cleanly or snatched away amid bitter scowls, the victory leaves you richer by a hidden scrap of verse.",
+   "check": "",
+   "grant": "A hidden scrap of verse",
+   "exits": [
+    "Return to the scriptorium hub"
+   ]
+  },
+  "ul-1-066": {
+   "title": "The Carved Dialectic",
+   "text": "Cold stone presses against your fingertips as you trace the deep-set grooves of an ancient argument chiseled directly into the load-bearing pillar of the hall. Centuries of lamp-smoke have stained the masonry charcoal-black, filling the carved lettering with a greasy sludge that smells of old tallow and subterranean damp. The words debate the true ownership of forgotten thoughts, each line twisting back upon itself in an endless logical loop. Dust motes drift lazily through the shaft of yellow light piercing the high clerestory, illuminating the faint, ghostly shimmer of marginal notes written in a hand that vanished generations ago.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the carved argument deeper"
+   ]
+  },
+  "ul-1-067": {
+   "title": "Shadows of the Foundation",
+   "text": "Deeper into the alcove the carving runs, recounting the foundational collapse of the lower tiers where entire catalogues slid into the dark earth. The stone grows clammy to the touch, and the distant murmur of the reading rooms fades into a low, metallic thrum like the beating of an iron heart. You trace a particularly knotty paragraph where the original mason seems to have doubted the very existence of the indexes he was commanded to immortalize. A tiny beetle emerges from a crack in the verb 'therefore', scurries across your knuckle, and vanishes into the binding seam of a rotting ledger propped against the base.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Decipher the ancient mason doubt"
+   ]
+  },
+  "ul-1-068": {
+   "title": "Decoding the Mason Flaw",
+   "text": "Squinting against the dim flicker of your oil-lamp, you peer into the jagged intersections of the chiseled text where the grammar begins to unravel into pure contradiction. The stone seems to shift under your gaze, the letters expanding and contracting as if responding to the heat of your breath or the rising panic in your chest. You press your forehead against the cold masonry, running every rule of library architecture and cataloguing logic through your mind to find the hidden seam in the reasoning. A single misinterpretation could trap your thoughts in the carved loop forever, binding your mind to the silent stone.",
+   "check": "Unravel the foundational contradiction",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-069": {
+   "title": "The Stone Trap",
+   "text": "A sudden drop in air pressure sends a freezing draft howling through the fluting of the pillars, chilling the sweat on your neck and blurring the chiseled lines into meaningless smears of grey shadow. Your eyes burn from the strain, and a sharp, blinding headache blooms behind your temples as the logic collapses inward upon itself like a punctured lung. You stumble backward with a sharp gasp, striking your shoulder against the iron corner of a stationary shelf and dropping your lamp with a dull thud. The oil spreads in a dark, shimmering puddle across the floor, leaving you shivering in the half-light, poorer by a broken lamp and hours of wasted focus.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the scriptorium threshold"
+   ]
+  },
+  "ul-1-070": {
+   "title": "The Foundational Crack",
+   "text": "Logic yields at last under your relentless prodding, snapping open like a stubborn latch to reveal a hairline fracture running straight through the heart of the stone argument. Through this narrow fissure in the masonry, a draft smelling of damp earth and pressed lavender whispers secrets of the library's original design long before the Cataloguers took command. You commit the underlying pattern to memory, feeling the heavy architecture of the room settle slightly as your understanding locks the truth into place.\n\nWhether achieved with effortless clarity or through agonizing trial, the insight settles deep into your bones.",
+   "check": "",
+   "grant": "Insight into library flaws",
+   "exits": [
+    "Return to the main scriptorium hub"
+   ]
+  }
+ },
+ "missing": []
+}

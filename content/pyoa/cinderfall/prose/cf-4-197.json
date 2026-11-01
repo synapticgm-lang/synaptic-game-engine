@@ -1,0 +1,99 @@
+{
+ "batch": "cf-4-197",
+ "sections": {
+  "cf-4-197": {
+   "title": "The Insulating Roll",
+   "text": "Cool digits unfurl the damp telegraph ticker tape until the ink patterns align into a coherent sequence of pressure readings. Relieved by the sudden drop in tension, your fingers wrap around a thick roll of asbestos insulation tape left behind on the brass shelf.\n\nTucking the prize securely beneath your heavy canvas belt, you turn away from the clacking machine and step back toward the main chamber.",
+   "check": "",
+   "grant": "roll of insulation tape",
+   "exits": [
+    "Step through the bulkhead door"
+   ]
+  },
+  "cf-4-198": {
+   "title": "The Final Gates",
+   "text": "Locomotive No. 9 surges forward with a deafening roar, smashing through the heavy iron perimeter gates and showering the frozen platform in a spray of sparks and frost. White steam billows into the bitter air as the engine plunges directly into the cavernous approach of Cinderfall.\n\nMassive grey stone walls tower above the tracks, casting long shadows across the trembling boiler while the relentless storm clock tolls its heavy warning overhead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Rush toward the inner terminus"
+   ]
+  },
+  "cf-4-199": {
+   "title": "The Silent Portrait",
+   "text": "Standing motionless before the austere portrait of the ancient administrator, you keep your breathing even and your gaze fixed firmly on the polished brass frame. The painted eyes seem to weigh every past debt and minor trespass before a hidden spring clicks within the mahogany wainscoting.\n\nSliding your hand into the newly opened recess, your fingers close around an ivory-handled carriage key just as the portrait's oil paint begins to flake in the draught.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance to the platform check"
+   ]
+  },
+  "cf-4-200": {
+   "title": "Unbolting the Fishplates",
+   "text": "Kneeling in the freezing ballast, your wrench grips the rusted fishplate bolts with stubborn persistence until the metal groans and gives way. Each rusted fastener is lifted free in precise sequence, allowing you to salvage a sturdy box of hardened steel track bolts without disturbing the surrounding rail.\n\nSweeping soot from your brow, you secure the heavy container against your hip and prepare for the next stretch of line.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed along the cleared track"
+   ]
+  },
+  "cf-5-001": {
+   "title": "Terminus Breach",
+   "text": "Locomotive Nine slams violently against the frost-rimed terminus gates, sending a shockwave through the shivering chassis. Screaming valves vent blinding white plumes of steam into the dim air as the looming grey ramparts of Cinderfall close in under the bruised purple sky.\n\nThe heavy iron buffers groan under the sudden impact, holding firm against the weight of the charging engine while the storm clock strikes a single, hollow note.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step down into the basin"
+   ]
+  },
+  "cf-5-002": {
+   "title": "The Iron Basin",
+   "text": "Frozen rolling stock chokes the desolate terminus yard like skeletal ribs protruding from grey snow and soot. Heavy brass levers of the bypass junction stand rooted and immovable in their icy beds, waiting for a desperate hand to force them.\n\nA bitter wind sweeps across the tracks, rattling loose iron sheets and carrying the distant metallic clatter of approaching authority from the gantry bridges above.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the frozen bypass junction",
+    "Wrench the ballast crank loose",
+    "Steady the chattering regulator valve",
+    "Snatch the watchmaker tin quietly",
+    "Tap the seized governor needle",
+    "Surrender to the grey greatcoats"
+   ]
+  },
+  "cf-5-003": {
+   "title": "Clearing the Switch",
+   "text": "Muscle and grease strain against the stubborn iron switch until the rusted joints finally yield with a sharp, protesting crack. A sudden hiss of backfiring steam licks dangerously close to your sleeve, but you pull back in time and snatch up a spare copper gasket from the ledge.\n\nPocketing the warm metal ring, you clear the mechanism and look ahead toward the darkening approach.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push forward down the line"
+   ]
+  },
+  "cf-5-004": {
+   "title": "The Jammed Switch",
+   "text": "Thick grease slickens your palms as you wedge the heavy iron bar against the rusted pivot of the stubborn siding switch, leaning your full weight into the rusted iron while the steam-lines shriek a warning in your ears. Scalding condensate spits from the joint above, hissing sharply as it spatters against your leather sleeve and threatens to skin your forearm if the back-pressure suddenly snaps the lever. With your teeth clenched hard against the mounting heat, you heave upward once more to force the stubborn wedge home and snatch the spare copper gasket from the trembling groove before the toggle kicks back.",
+   "check": "Heave the greasy iron bar against the jammed slide",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-005": {
+   "title": "Scalded Metal",
+   "text": "A blinding burst of superheated steam erupts from the failing joint, searing through your shirtsleeve and biting deep into your forearm with a fiery sting. You jerk your arm back with a sharp intake of breath, clutching the smoking burn as the pressure finally subsides with a sullen groan.\n\nNursing the throbbing ache, you press onward into the gloom with a fresh scar to remind you of the line's toll.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself past the blockage"
+   ]
+  },
+  "cf-5-006": {
+   "title": "The Gasket Prize",
+   "text": "Despite the narrow margin and the heat licking at your skin, the stubborn iron switch yields at last with a resounding metallic thud. Your fingers close triumphantly around the spare copper gasket resting inside the oily housing, perfectly intact and ready for service.\n\nStowing the prize safely in your canvas pouch, you leave the steaming machinery behind and press toward the looming shadows.",
+   "check": "",
+   "grant": "spare copper gasket",
+   "exits": [
+    "Face the gantry guards"
+   ]
+  }
+ },
+ "missing": []
+}

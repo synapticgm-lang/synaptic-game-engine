@@ -1,0 +1,113 @@
+{
+ "batch": "cf-1-132",
+ "sections": {
+  "cf-1-132": {
+   "title": "The Iron Spares",
+   "text": "Iron splinters sting your palms as you hook the heavy spare wheel-set, planting your boots deep in the oily grit of the yard. Muscles cord in your forearms as you heave the dead weight upward, forcing the steel flanges back onto the rusted service tracks with a resonant clang that echoes off the signal-box. Union stokers leaning against the ash-bins stop whispering among themselves, their grime-darkened faces turning your way with slow, hard-won approval.\n\nYou wipe a streak of soot from your brow and leave the heavy axle resting true in its chair, ready for the next shift to roll.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step back to the tender"
+   ]
+  },
+  "cf-1-133": {
+   "title": "Tracks of the Union",
+   "text": "Heavy iron demands a heavy back, and you throw your shoulder against the crooked spare wheel-set until the metal groans and rights itself on the parallel bars. Around the depot, union men pause with their shovels, nodding in grudging respect as the thick grease smears across your knuckles. No words pass between you, for the soot-stained brotherhood values labor far above talk in these dying yards. You let go of the cold flange, your breath coming hot and shallow in the chill air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the engine steps"
+   ]
+  },
+  "cf-1-134": {
+   "title": "The Lurching Flange",
+   "text": "Slipped off its mount during the skirmish, the massive steel spare wheel-set wobbles precariously on the edge of the pit, threatening to tumble down and crush the hydraulic lines beneath the gantry. You drop low, setting your boots against the sleeper-ends and wedging your shoulders beneath the freezing iron lip to lever it back before the gantry supervisor spots the hazard.",
+   "check": "Lift the heavy spare wheel-set",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-135": {
+   "title": "Crushed Underfoot",
+   "text": "The dead weight slips despite your straining muscles, plunging down to crush your knuckles against the ballast and leaving a jagged, purple-black bruise across the bone. Pain shoots up your forearm as you stumble back into the grit, gasping for air while the heavy iron settles crookedly into the pit. You salvage your grip with a curse, nursing the throbbing hand as the union hands look away in silent pity.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tend your bruised knuckles"
+   ]
+  },
+  "cf-1-136": {
+   "title": "A Union Nod",
+   "text": "Muscles scream and boots bite deep into the ash before the massive steel flange finally leaps back into its cradle with a dull, satisfying thud. Union stokers murmur approval through their grease-rags, acknowledging your grit with a sharp nod of respect. You shake out your aching arms, knowing the labor cost you dearly in sweat and strain, but the debt of the rails is paid.",
+   "check": "",
+   "grant": "Union stoker's heavy grease-rag",
+   "exits": [
+    "Climb back aboard the footplate"
+   ]
+  },
+  "cf-1-137": {
+   "title": "Midnight on the Steppe",
+   "text": "The storm clock high on the municipal water-tower tolls its heavy brass tongue, vibrating through the iron girders of Ashgate Junction as the midnight hour strikes. Fine grey ash begins to drift across the driving wheels of the Marrowbone like driven snow, hissing against the hot copper of the boiler casing. Down the line, the signal lamps flicker from green to a dull, bruised amber as the automated switches lock themselves for the night. You check the water-glass one last time, feeling the thin vibration of the approaching tempest through the wooden floorboards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Move to the coaling yards"
+   ]
+  },
+  "cf-1-138": {
+   "title": "The Coal Stacks",
+   "text": "Towering black mounds of municipal fuel loom against the bruised twilight, guarded by frozen gangers and shivering ticket-widows who eye your tender with hungry desperation. You must secure your furnace provisions before the loading chutes freeze solid for the night. Down the western line, distant shunting whistles shriek through the ash-mist toward the depot tracks. Across the yard, the stationmaster's private siding sits dark and silent behind rusted iron gates. Beyond the water-column, the open grey expanse of the Cinder Steppe waits under a low, choking sky.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Shoveling the municipal bunker",
+    "Swing the heavy iron coal-chute",
+    "Haul the stalled coal wagon",
+    "Pull the brass regulator forward"
+   ]
+  },
+  "cf-1-139": {
+   "title": "Shoveling the Bunker",
+   "text": "Shoveling heavy wet coal into the iron bunker demands a rhythm as old as the rails themselves, your back bending and straightening against the biting chill of the yard. Each scoop of dark slack clatters against the steel plates, building a black mountain inside the tender before the depot guards can wander over to question your tally. Sweat cuts pale channels through the soot on your cheeks as you hurl the last heavy shovelful into the dark recess.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the tender side-gates"
+   ]
+  },
+  "cf-1-140": {
+   "title": "Stoking the Edges",
+   "text": "Pushing deeper into the damp slack-heap, you drive the shovel blade home with the heel of your boot and heave another heavy load into the rising black pyramid. The Marrowbone's boiler groans softly under the growing mass, retaining heat against the bitter night wind sweeping down from the northern ranges. You level the edges with the back of the iron blade, making certain nothing spills over the side-plates before you lock the bunker hatch.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step down from the tender"
+   ]
+  },
+  "cf-1-141": {
+   "title": "The Shifting Heap",
+   "text": "A sudden slide in the damp municipal coal-stack sends a hundredweight of jagged, frozen slack cascading outward, threatening to bury the footplate controls and trap your legs against the tender wall. You brace your thighs against the bulkhead and swing your heavy iron shovel like a broadsword to beat back the sliding avalanche before it floods the deck.",
+   "check": "Beat back the sliding coal",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-142": {
+   "title": "Buried in Slack",
+   "text": "The black cascade overpowers your stance, tumbling over your boots and pinning your shins against the iron deck with a bruising weight of jagged slack. You claw your way out of the heap with raw fingernails, coughing up coal-dust while precious minutes tick away against the storm clock. The delay leaves your shins aching and your breath burning with sulfurous grit.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clear the spilled coal"
+   ]
+  },
+  "cf-1-143": {
+   "title": "Crown of Slack",
+   "text": "Shovelful by shovelful, you beat the shifting black avalanche back into submission, piling the damp fuel high against the tender wall until the bunker is crowned to the very brim. The engine settles perceptibly on its springs under the massive burden, ready to devour the miles ahead. You jam the shovel into its iron rack, wiping the stinging sweat from your eyes with a soot-stained sleeve.",
+   "check": "",
+   "grant": "Heaped tender of wet slack",
+   "exits": [
+    "Return to the yard hub"
+   ]
+  }
+ },
+ "missing": []
+}

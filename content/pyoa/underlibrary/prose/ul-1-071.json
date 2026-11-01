@@ -1,0 +1,95 @@
+{
+ "batch": "ul-1-071",
+ "sections": {
+  "ul-1-071": {
+   "title": "The Monastic Barrage",
+   "text": "Sharp tongues lash against your concentration like dry twigs snapping in a gale while hooded librarians press in close, their breath sour with chicory and old grievance. Words fail to pierce your stubborn silence as you anchor your heels into the flagstones, weathering the tempest of theological venom without yielding an inch of ground. A grizzled monk finally spits in disgust, thrusting a yellowed strip of carved bone into your palm before turning his back on your unyielding stance.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the bone stylus from the monk"
+   ]
+  },
+  "ul-1-072": {
+   "title": "Withstanding the Tongue-Lash",
+   "text": "Saliva flies from the lips of the senior scribe as he questions your lineage, your loyalty to the Index, and the very sanity of your presence in these hallowed aisles. You lock your jaw against the biting insults, tightening your grip on your oil-lamp until the brass rim bites into your palm. Every instinct screams at you to snap back or turn away, but you force your breathing into a slow, deliberate rhythm, steeling your spine against the mounting psychological pressure.",
+   "check": "Hold firm against the verbal assault",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-073": {
+   "title": "A Costly Resolution",
+   "text": "Cracking under the relentless verbal barrage, you flinch and step backward, knocking your shoulder painfully against a jutting stone corbel. The monks jeer at your momentary weakness, exacting a humiliating toll by confiscating your tin of spare lamp-wicks before they allow you to stumble past. You rub the bruised muscle in your shoulder, nursing a fresh ache in your pride as you limp onward into the dusty gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your breath and move forward"
+   ]
+  },
+  "ul-1-074": {
+   "title": "The Bone Token",
+   "text": "Weathering the verbal tempest with granite resolve, however narrowly, you compel the lead scribe to respect your stubborn endurance. He mutters a begrudging curse and shoves a smooth, yellowed sliver of carved bone into your hand, sealing an uneasy truce between your order and theirs. This unassuming relic carries the weight of a hard-won alliance within these labyrinthine stacks.",
+   "check": "",
+   "grant": "Antique bone stylus",
+   "exits": [
+    "Venture deeper into the reading galleries"
+   ]
+  },
+  "ul-1-075": {
+   "title": "Correcting the Ledger",
+   "text": "Glancing over the chaotic columns of the central registry, your eye catches a glaring inversion where the shelf-indices loop backward into a recursive void. You reach out with a piece of chalk, swiftly correcting the misplaced cross-reference before the error can cascade into the main stack. The chief clerk blinks in astonishment at your sharp observation, muttering his gratitude as he hands you a brass pass token.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the brass pass token"
+   ]
+  },
+  "ul-1-076": {
+   "title": "Spotting the Flaw",
+   "text": "Columns of dense script blur beneath the unsteady glare of your lantern as you scan the massive vellum ledger for the structural discrepancy. You trace a trembling finger along the tangled lines of categorization, searching for the single misplaced entry that threatens to throw the entire bay into chaos. Your mind races through complex classification rules, hunting for the precise thread of logic hidden within the ink.",
+   "check": "Trace the error in the ledger",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-077": {
+   "title": "Miscalculated Lines",
+   "text": "Exhaustion blurs your vision, causing you to misread a crucial cross-reference and plunge your ink-pen straight through the vellum surface. The clerks cry out in alarm at the ruined page, forcing you to spend a tedious hour meticulously scraping the ink away with a dull penknife while they dock your weekly lamp-oil allowance. You leave the desk with smarting fingers and a lingering headache from the close inspection.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket your ruined notes and press on"
+   ]
+  },
+  "ul-1-078": {
+   "title": "The Ledger's Secret",
+   "text": "Pinpointing the subtle misclassification with razor-sharp precision, however narrowly, you avert a catastrophic indexing loop that would have sealed the bay for weeks. The head clerk nods in silent appreciation, sliding a heavy brass token across the walnut counter into your waiting hand. This small disk grants you unhindered passage through the administrative turnstiles without further inspection.",
+   "check": "",
+   "grant": "Safe passage token",
+   "exits": [
+    "Proceed toward the Scriptorium of Strains"
+   ]
+  },
+  "ul-1-079": {
+   "title": "The Fellowship Hearth",
+   "text": "Damp stone walls sweat grease and old candle-wax in the vaulted cellar where the Shelvers gather between shifts to nurse their sore feet. Troughs of lukewarm turnip broth steam on iron tripods while rough-hewn pages murmur in small, distrustful clusters around scarred oak tables. Your arrival draws sudden, wary silences from men and women who know that Thessaly's disappearance has turned every junior page into a suspect. Barnaby steps out from the shadows near the hearth, his arms crossed over his leather apron and his eyes narrowed with pointed suspicion.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the waiting circle of comrades"
+   ]
+  },
+  "ul-1-080": {
+   "title": "The Hearthside Inquest",
+   "text": "Embers pop and spark in the massive hearth, casting long, jittery shadows across the scarred faces of your peers. Barnaby stands waiting by the iron kettle, his heavy frame blocking the path forward while rumors of your encounter with Thessaly's final note buzz like hornets through the room. Every pair of eyes in the damp chamber tracks your movements, waiting to see whether you will stand your ground, offer proof of your loyalty, or try to slip away into the unmapped maps.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Point out the cataloguing mark on Barnaby's ledger",
+    "Stand your ground against Barnaby's aggressive doubts",
+    "Smooth over the tension with calm diplomacy",
+    "Slip away into the labyrinthine map-rooms"
+   ]
+  }
+ },
+ "missing": []
+}

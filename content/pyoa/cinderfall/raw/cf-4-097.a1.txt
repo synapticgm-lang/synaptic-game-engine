@@ -1,0 +1,17 @@
+@@SECTION cf-4-102
+TITLE: The Iron Obstruction
+TEXT: Heavy iron rails and warped steel sleepers pile three men high across the mouth of the tunnel, sealing the dark like a set of broken teeth. You wedge the hooked bill of your claw-bar beneath the lowest girder, planting your boots hard against the loose ballast and sulfur-stained tie-plates. Every muscle in your back hums and twitches under the strain as you lean your full weight into the iron shaft, feeling the dead weight of the barricade groan and shift against the bedrock. The air tastes of dry copper and old sweat while the metal bites deep into your palms.
+CHECK: Heave the twisted rail wall
+@@SECTION cf-4-104
+TITLE: Clearance Gained
+TEXT: With a sudden shriek of tortured steel and sliding stone, the lower brace gives way, letting you heave the bulk of the obstruction clear of the rails. You keep the scarred claw-bar tucked tight beneath your leather belt for whatever waits further down the cut, wiping the black soot and grease from your forehead with the back of a grime-darkened sleeve. The Marrowbone huffs softly behind you, its brass fittings gleaming in the yellow glare of the headlight while the way ahead finally opens to the dark drop.
+GRANT: Heavy iron claw-bar
+EXIT 1 -> cf-4-105: Crawl past the rattling coal-scuttles
+@@SECTION cf-4-106
+TITLE: The Cinder Silo
+TEXT: Mountains of damp, grey slack pile high against the rotting timbers of the side-loading chute while a mechanical counter clicks rhythmically away in the dark, measuring nothing at all. A thin plume of blue smoke drifts from an abandoned brazier nearby, smelling faintly of burnt hair and tallow, casting long shadows across the oily puddles between the ties. You can drive your weight against the jammed hopper gate with your hammer, brace your shoulders against the shifting avalanche of slag to salvage a plate, measure the balance of the iron chute with careful math, or follow the narrowing rib of steel deeper into the basalt.
+EXIT 1 -> cf-4-107: Smash the jammed hopper gate
+EXIT 2 -> cf-4-112: Hold against the shifting slag
+EXIT 3 -> cf-4-116: Calculate the iron chute balance
+EXIT 4 -> cf-4-121: Follow the narrow basalt tracks
+@@END

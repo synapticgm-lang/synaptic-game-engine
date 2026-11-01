@@ -1,0 +1,63 @@
+@@SECTION vh-5-0-1-3
+TITLE: The Frost-Scarred Shortcut
+TEXT: Across a sunken frost-cracked stone wall, your old glacier scar throbs, guiding your eye to a dry mossy culvert that bypasses the muddy cattle track. The heavy bronze clapper shifts against your shoulder blades, its low metallic resonance vibrating straight through your woollen tunic as you test the stability of the ancient masonry.
+EXIT 1: Follow the mossy culvert into the dry bypass
+EXIT 2: Climb over the cracked stone wall toward the lower terrace
+EXIT 3: Slip past the toll-keeper into the untaxed orchard lane
+@@END
+@@SECTION vh-5-0-1-4
+TITLE: The Hempen Guide-Line
+TEXT: In a silent orchard lane thick as sheep's wool, you follow a length of hempen bell-rope tied to fence posts to avoid stumbling into the irrigation ditch. The fog presses close against your face, cold and tasting faintly of wet soil and rotting windfalls, while the burden of Orison's tongue pulls steadily down your spine.
+EXIT 1: Haul your pack clear of the black water in the ditch
+EXIT 2: Pause beside the moss-grown milestone to catch your breath
+EXIT 3: Step past the protesting toll-keeper into the neglected shortcut
+@@END
+@@SECTION vh-5-0-1-5
+TITLE: The Cider Shed Drop
+TEXT: Beneath a leaning cider shed smelling of vinegar and damp wood, you dodge a falling frost-heavy bough that shatters the gravel right at your heel. Water drips in a steady, monotonous rhythm from the mossy eaves, soaking through your cloak's heavy weave while the bronze clapper hums softly against your spine.
+EXIT 1: Take the neglected shortcut past the silent orchard gate
+EXIT 2: Push deeper into the grey fog-shrouded clearing ahead
+@@END
+@@SECTION vh-5-0-1-6
+TITLE: The Stone Trough
+TEXT: Beside a moss-choked stone trough where gray mist settles like down, you scrape wet clay from your boots while a stray rook screams overhead. The bitter air bites at your cheeks, carrying the sharp scent of crushed leaves and woodsmoke from some hidden hearth down in the dripping valley.
+EXIT 1: Trudge toward the frozen sheep-dip filled with grey slush
+EXIT 2: Help the old Fog-Warden untangle a snagged guide-wire nearby
+@@END
+@@SECTION vh-5-0-1-7
+TITLE: The Wicker Hurdle
+TEXT: Within a hollow ring of ancient pear trees, you find an abandoned wicker hurdle and strap it over your heavy bronze clapper to keep the damp off. The woven twigs rustle dryly against the metal, offering a makeshift shield against the persistent drizzle that hangs like a curtain over the orchards.
+EXIT 1: Make your way toward the frozen sheep-dip in the slush
+EXIT 2: Step inside the hollow stone fruit-store smelling of vinegar
+EXIT 3: Investigate the broken wicker gate half-buried in dead leaves
+@@END
+@@SECTION vh-5-0-1-8
+TITLE: The Frayed Cord
+TEXT: Under a dense grey ceiling of low cloud, you trace the frayed edge of a warden's guide-rope that leads deeper into the white blind labyrinth. Every footstep in the slick mud requires deliberate care, lest the weight of the bronze clapper unbalance your stride on the sloping ground.
+EXIT 1: Assist the old Fog-Warden with the snagged guide-wire
+EXIT 2: Seek shelter within the hollow stone fruit-store nearby
+EXIT 3: Inspect the broken wicker gate half-buried in dead leaves
+@@END
+@@SECTION vh-5-0-1-9
+TITLE: The Stuck Axle
+TEXT: Beside a muddy embankment where water drips endlessly from dormant boughs, you watch a rival carrier curse at a stuck wheel axle in the fog. The heavy cart lists precariously into a drainage trench, its wooden spokes groaning under the weight of sodden crates while you adjust the harness of your own burden.
+EXIT 1: Listen to the distant waterwheel churning through the grey expanse
+@@END
+@@SECTION vh-5-0-2-0
+TITLE: The Whistling Guide
+TEXT: Within a drowned pear orchard where every tree looks like a grey ghost, you follow the rhythmic whistle of an unseen warden to stay on firm mud. The shrill notes cut sharply through the damp stillness, offering a reliable lifeline through the maze of twisted trunks and hidden irrigation ruts.
+EXIT 1: Test every footstep with a stout hazel staff ahead
+EXIT 2: Pull your collar high against the dripping terrace wall
+@@END
+@@SECTION vh-5-0-2-1
+TITLE: The Cider Press Harness
+TEXT: Beside a crumbling stone cider press, you tighten the harness straps on your shoulders while the heavy bronze clapper hums a low, damp chord. The cold iron buckles bite through your thick woollen layers, reminding you of the long miles still remaining before the valley floor opens into Lowgate.
+EXIT 1: Probe the misty lane ahead with a stout staff
+EXIT 2: Draw your cloak tight beside the mossy drystone terrace
+@@END
+@@SECTION vh-5-0-2-2
+TITLE: The Shared Crust
+TEXT: Under a canopy of dripping branches, you share a crust of rye bread with a lost harvester whose pockets hold only bruised winter apples and copper. The stranger's breath plumes white in the damp air as they point a gloved finger toward a faint break in the orchard mist.
+EXIT 1: Dodge the rolling barrel of winter apples breaking loose
+EXIT 2: Retrieve the dropped oilskin pouch from the bracken hollow
+@@END

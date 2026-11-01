@@ -1,0 +1,10 @@
+@@SECTION cf-2-163
+TITLE: The Stationmasters Signature
+TEXT: Heavy oak drawers stick fast in the warped carcass of the brasswind desk, choked with fine grey dust and the brittle husks of dead beetles. You prise the bottom slide open with an iron poker, uncovering a sheaf of damp-rotted manifests and a calfskin ledger signed by the ancient Stationmaster-General with thick purple gall-ink. While the office timbers groan under the relentless pressure of the ash-dune outside, you trace the faded ink lines of a forgotten bypass freight run that might just spare No. 9 the Baron checkpoints ahead, your fingers hovering over the ink-smudged seal as the ceiling joists crack in the rising wind.
+CHECK: Decipher the faded bypass route
+@@END
+@@SECTION cf-2-167
+TITLE: The Telegraph Clerks Bargain
+TEXT: Across a littered counter of brass relays and damp tallow dips, the gaunt clerk taps a rhythmic tattoo with a lead weight while his mismatched eyes track every twitch of your soot-stained fingers. You match his dry, mocking cadence tap for tap on the dead brass key, trading old station gossip about the vanished Hesper Quill until his thin mouth twitches into a grudging grin and he shides an unpolished brass compass across the green baize. Just as your palm closes over the cold metal and the needle begins its erratic spin toward the magnetic pole, he slams the brass cover shut with a sharp click.
+CHECK: Outwit the eccentric telegraph clerk
+@@END

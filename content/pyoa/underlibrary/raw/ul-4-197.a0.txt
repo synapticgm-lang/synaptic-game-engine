@@ -1,0 +1,56 @@
+@@SECTION ul-4-197
+TITLE: Static on the Temples
+TEXT: Heavy historic static thrums against your temples like a trapped wasp, threatening to unseat your thoughts with every breath you draw in the deep stacks. Yet you stand firm, planting your heels into the carpet of damp rag-paper as the ambient pressure peaks around you. A ghostly scholar materialized from the margins of a hovering folio speaks in low, dry tones, offering counsel on how to anchor your mind against the weight of unremembered centuries. // Absorbing this quiet protection, you feel the roaring in your ears recede into a manageable hum, leaving you steady enough to push deeper into the ancient annex.
+EXIT 1: Follow the phantom scholar inward
+@@END
+@@SECTION ul-4-198
+TITLE: Steps Among the Stacks
+TEXT: Careful balance guides your approach toward the fragile elder hunched over a desk of rotted deal, ensuring your boots make not a single whisper upon the loose paper sheets scattered across the stone floor. Every motion is deliberate, measured to avoid disturbing the towering stacks of vellum that threaten to cascade at a vibration. Your restraint is noted with a dry nod from the bent figure, who wordlessly reaches into the folds of a moth-eaten robe and extends a small, stoppered vial of amber restoration oil. // The glass feels cool and heavy against your palm as you slip it safely into your pocket, ready for whatever decay lies ahead.
+EXIT 1: Accept the amber oil quietly
+@@END
+@@SECTION ul-4-199
+TITLE: Steps Among the Stacks
+TEXT: Careful balance guides your approach toward the fragile elder hunched over a desk of rotted deal, ensuring your boots make not a single whisper upon the loose paper sheets scattered across the stone floor. Every motion is deliberate, measured to avoid disturbing the towering stacks of vellum that threaten to cascade at a vibration. Your restraint is noted with a dry nod from the bent figure, who wordlessly reaches into the folds of a moth-eaten robe and extends a small, stoppered vial of amber restoration oil. // The glass feels cool and heavy against your palm as you slip it safely into your pocket, ready for whatever decay lies ahead.
+EXIT 1: Accept the amber oil quietly
+@@END
+@@SECTION ul-4-200
+TITLE: Static on the Temples
+TEXT: Heavy historic static thrums against your temples like a trapped wasp, threatening to unseat your thoughts with every breath you draw in the deep stacks. Yet you stand firm, planting your heels into the carpet of damp rag-paper as the ambient pressure peaks around you. A ghostly scholar materialized from the margins of a hovering folio speaks in low, dry tones, offering counsel on how to anchor your mind against the weight of unremembered centuries. // Absorbing this quiet protection, you feel the roaring in your ears recede into a manageable hum, leaving you steady enough to push deeper into the ancient annex.
+EXIT 1: Follow the phantom scholar inward
+@@END
+@@SECTION ul-5-001
+TITLE: Threshold of the Hundredth
+TEXT: Scorched leather and stinging ozone hang thick in the dim air as you finally reach the threshold of the Hundredth Door at the heart of the annex. Massive iron hinges groan with a sound like grinding millstones, protesting against the centuries as the final countdown to the Long Closing begins its irreversible descent. The darkness beyond the lintel seems to breathe, curling outward with the scent of old ink and forbidden histories, waiting for someone to cross the line.
+EXIT 1: Step toward the threshold arch
+@@END
+@@SECTION ul-5-002
+TITLE: The Threshold Arch
+TEXT: The heavy stone lintel above is thoroughly choked with rusted iron chains and thick padlocks left behind by generations of cautious Cataloguers. Clearing a viable path forward demands steady hands and an unyielding will against the lingering curses woven into the metalwork. Each potential route away from this choked gateway offers its own trials, whether through hidden mechanisms, freezing drafts, or the sheer weight of institutional dread hanging in the vaulted gloom.
+EXIT 1: Clear the padlocked iron chains
+EXIT 2: Pick the rusted tumbler mechanism
+EXIT 3: Brace against the freezing latch
+EXIT 4: Balance across the deep ink-well
+EXIT 5: Confront the whispering clerk phantom
+EXIT 6: Approach the massive swinging pivot
+@@END
+@@SECTION ul-5-003
+TITLE: Prying the Rusted Iron
+TEXT: Cold metal flakes away under your fingernails as you pry desperately at the ancient padlock, while thin, spiteful whispers coil from the iron to discourage your tired heart. Testing your resolve against the creeping tide of doubt, you force the rusted shackle with a wrench of your wrists, determined to secure the heavy brass lever waiting just beyond the obstruction. // The mechanism gives a sharp, protesting click as the last barrier yields to your persistence, leaving the lever ready for your grasp if you can master the dread still prickling at the back of your neck.
+EXIT 1: Seize the heavy brass lever
+@@END
+@@SECTION ul-5-004
+TITLE: The Iron Will Test
+TEXT: Whispers from the ancient padlock grow into a chorus of doubt inside your skull, sapping the warmth from your fingers as you throw your weight against the rusted metal shackle. Every instinct warns you to let go and retreat into the familiar safety of the stacks, but you grit your teeth against the mounting pressure on your thoughts. // You must harden your spirit to overcome the dread before the iron locks fast again.
+CHECK: Master the dread within the iron
+@@END
+@@SECTION ul-5-005
+TITLE: Yielding to the Dread
+TEXT: The malicious whispers swell into a deafening roar of historic static, shattering your concentration and forcing you to stumble backward with a sharp gasp. A jagged edge of the rusted padlock catches your forearm, leaving a shallow, burning scratch that seeps a bead of dark ink-like blood. You clutch your arm against your ribs, catching your breath as the oppressive weight of the door briefly pushes you away from the mechanism. // Though shaken and nursing a fresh sting, you pick yourself up from the cold floor, determined not to let the ancient metal defeat you entirely.
+EXIT 1: Recover and try the latch again
+@@END
+@@SECTION ul-5-006
+TITLE: Securing the Lever
+TEXT: Resistance melts away as you master the creeping dread, your fingers finding the exact purchase needed to throw the heavy brass lever into its new alignment with a resounding thud. A deep shudder runs through the stonework beneath your boots as the ancient machinery acknowledges your success, however narrowly you managed to keep your footing against the psychological onslaught. // A tangible sense of accomplishment settles over you, accompanied by the acquisition of a solid tool for the trials ahead.
+GRANT: Heavy brass lever
+EXIT 1: Pass through the open vault
+@@END

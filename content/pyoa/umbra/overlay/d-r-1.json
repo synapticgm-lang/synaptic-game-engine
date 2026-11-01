@@ -1,0 +1,99 @@
+{
+ "batch": "d-r-1",
+ "newNodes": [
+  {
+   "id": "up-r-det-foundry-warrant",
+   "stake": "You must rely on Rigg's ironclad authority to bypass the watch, even if it means posing as a prisoner.",
+   "page": "You present the iron-stamped warrant to a glowering foundry foreman, who immediately loops a heavy iron chain around your wrists. \"Prisoner in transit,\" he barks at the watchmen manning the street cordon. The guards flinch from his blackened apron and step aside. It is thoroughly humiliating to be dragged through the ash-choked streets like a runaway debtor, but Rigg's authority is absolute. As he releases you in a soot-stained alley, the foreman taps his ledger, reminding you that this favour is now a debt cast in iron. You rub your chafed skin and push forwards.",
+   "exits": [
+    {
+     "id": "push-onwards-to-the-harbour",
+     "label": "Push onwards to the harbour",
+     "to": "up-r-her-perch"
+    }
+   ]
+  },
+  {
+   "id": "up-r-det-pass-bare",
+   "stake": "Without a disguise to hide behind, you must risk a treacherous climb that leaves you dangerously exposed.",
+   "page": "Stripped of any disguise, you cannot simply walk through the watchmen's barricade. You scale the slick brickwork of the customs house, hauling yourself over the rusted iron spikes where the cordon does not think to look. The manoeuvre demands dangerous haste in the sudden eclipse, forcing you to silhouette yourself against the dimming corona. A crossbow bolt instantly shatters the slate inches from your hand, showering your knuckles with sharp stone splinters. Sable has spotted your bare-faced ascent, and the sting in your bleeding fingers serves as a grim warning to keep moving.",
+   "exits": [
+    {
+     "id": "flee-towards-the-harbour-colossus",
+     "label": "Flee towards the harbour colossus",
+     "to": "up-r-her-perch"
+    }
+   ]
+  },
+  {
+   "id": "up-r-det-pass-tailor",
+   "stake": "You must trust the miserable appearance of the ruined tailor's coat to deflect the sharp eyes of the watch.",
+   "page": "You pull the collar of the disgraced tailor's debt coat high against the sudden chill and join the throng pressing through the watchmen's checkpoint. A sharp-eyed clerk of the cordon raises his lantern, the sputtering flame illuminating the distinct, desperate stitching of a ruined artisan. Recognising the miserable garment of a known debtor, his expression sours into pity and disgust. He gestures with his cane, waving you through the barricade before you can taint his respectable ledger with your supposed insolvency. You lower your head, playing the ruined wretch perfectly as you slip away.",
+   "exits": [
+    {
+     "id": "slip-away-towards-the-harbour",
+     "label": "Slip away towards the harbour",
+     "to": "up-r-her-perch"
+    }
+   ]
+  },
+  {
+   "id": "up-r-det-pass-livery",
+   "stake": "You must blend seamlessly into the miserable toil of the labourers to avoid the watchmen's scrutiny.",
+   "page": "The rough canvas of your porter's livery scratches at your neck as you approach the barricade. A line of exhausted labourers is hauling heavy timber crates through the watchmen's checkpoint, their breaths blooming in the sudden eclipse cold. You seize an abandoned crate, hoist it onto your aching shoulder, and fall into step behind a groaning hand-cart. The guards are too busy checking shipping manifests to look closely at a soot-stained face obscured by rough wood. The sheer mundane misery of manual labour renders you entirely invisible, allowing you to cross the line unchallenged.",
+   "exits": [
+    {
+     "id": "proceed-quietly-towards-the-harbour",
+     "label": "Proceed quietly towards the harbour",
+     "to": "up-r-her-perch"
+    }
+   ]
+  }
+ ],
+ "addExits": [
+  {
+   "node": "up-r-eclipse-begins",
+   "exit": {
+    "id": "show-rigg-s-iron-foundry-warrant",
+    "label": "Show Rigg's iron foundry warrant",
+    "to": "up-r-det-foundry-warrant",
+    "when": {
+     "rigg": "allied"
+    }
+   }
+  },
+  {
+   "node": "up-r-eclipse-begins",
+   "exit": {
+    "id": "pass-the-checkpoint-in-no-disguise",
+    "label": "Pass the checkpoint in no disguise",
+    "to": "up-r-det-pass-bare",
+    "when": {
+     "cover": "bare"
+    }
+   }
+  },
+  {
+   "node": "up-r-eclipse-begins",
+   "exit": {
+    "id": "pass-the-checkpoint-in-the-debt-coat",
+    "label": "Pass the checkpoint in the debt coat",
+    "to": "up-r-det-pass-tailor",
+    "when": {
+     "cover": "tailor"
+    }
+   }
+  },
+  {
+   "node": "up-r-eclipse-begins",
+   "exit": {
+    "id": "pass-the-checkpoint-in-porter-s-livery",
+    "label": "Pass the checkpoint in porter's livery",
+    "to": "up-r-det-pass-livery",
+    "when": {
+     "cover": "livery"
+    }
+   }
+  }
+ ]
+}

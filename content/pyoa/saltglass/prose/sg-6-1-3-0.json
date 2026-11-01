@@ -1,0 +1,92 @@
+{
+ "batch": "sg-6-1-3-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-1-3-0": {
+   "title": "The Iron Vestibule",
+   "text": "Through a narrow gap between massive stone slabs, you emerge into a round vestibule smelling strongly of damp iron and cold earth. Your coal-lantern flickers, casting long, distorted shadows against the flaking mortar of the walls. Every breath tastes faintly of the ancient dust settling over the basin's forgotten heart. Ahead, the route fractures into deeper shadows, demanding a swift decision before the stale air saps your remaining strength.\n\nYou adjust the ceramic Seedkey tucked securely inside your coat, feeling its familiar, steady chill against your ribs.",
+   "exits": [
+    "Advance toward the green hall",
+    "Hurry past the flood marker pillar"
+   ]
+  },
+  "sg-6-1-3-1": {
+   "title": "The Bronze Scale",
+   "text": "Beside an ancient bronze weighing scale tilted at a reckless angle, you check your Seedkey to ensure it remains free of grit. The rusty pans scrape against the flagstones with a thin, metallic sigh whenever a subterranean draft sweeps through the chamber. Your banked coal-lantern glows warmly against the gloom, illuminating the fine layer of salt crusting the floor like hoarfrost. There is only one clear way forward from this cramped alcove, deeper into the bowels of the silent observatory.",
+   "exits": [
+    "Proceed through the green archway"
+   ]
+  },
+  "sg-6-1-3-2": {
+   "title": "The Gray Vines",
+   "text": "Within a subterranean greenhouse filled with gray vines, you hack through brittle stems blocking the approach to the inner vault. The severed stalks release a sharp, herbal tang that cuts right through the heavy smell of old moisture and dry earth. Shadows dance across the tangled trellises as you push your way toward the far side of the enclosure. Several murky routes branch out from the tangled foliage, each promising a different path through the tangled ruins.",
+   "exits": [
+    "Follow the path toward the granite pillar",
+    "Head for the glittering salt gate",
+    "Raise your lantern past the open palms"
+   ]
+  },
+  "sg-6-1-3-3": {
+   "title": "The Mineral Meltwater",
+   "text": "Under a low ceiling studded with glowing mineral veins, you sidestep a deep drainage channel rushing with bitter subterranean meltwater. The constant gushing echoes hollowly off the basalt walls, masking any other sounds that might creep up from the dark tunnels. You grip your coal-lantern tighter to keep the damp draft from snuffing out the precious flame. Behind you, the way back remains open, while two other passages beckon into the gloom.",
+   "exits": [
+    "Walk toward the grand approach",
+    "Press past the old flood pillar",
+    "Turn back toward the basalt shelves"
+   ]
+  },
+  "sg-6-1-3-4": {
+   "title": "The Rusted Winch",
+   "text": "Beside a rusted winch system dangling heavy iron chains, you examine a deep shaft plunging into absolute darkness below. The heavy links clink softly together as rising air currents set the rusted tackle swinging in slow, rhythmic arcs. Your lantern light barely reaches the slimy brickwork lining the abyss. Two distinct paths curve away from the chasm, leading around the mechanical hazards into the deeper levels of the vault.",
+   "exits": [
+    "Raise your lantern against the gathering dark",
+    "Step into the narrowing basalt corridor"
+   ]
+  },
+  "sg-6-1-3-5": {
+   "title": "The Charred Lockers",
+   "text": "Within a long gallery of charred oak lockers, you search for the master hatch while your coal-lantern dims in the stale air. Splintered doors hang loosely from rusted hinges, revealing only empty shelves and accumulated drifts of gray soot. The floor creaks beneath your boots with an unsettling hollowness that suggests deep voids beneath the masonry. You must decide whether to press onward into the damp corridors or retrace your steps to safety.",
+   "exits": [
+    "Hurry past the towering granite pillar",
+    "Follow the narrow basalt corridor",
+    "Turn back toward the dry stone fountain"
+   ]
+  },
+  "sg-6-1-3-6": {
+   "title": "The Eroded Warning",
+   "text": "Underneath a massive stone lintel bearing an eroded warning glyph, you steady your trembling hands against the damp masonry. The carved script has been worn down by centuries of humid air, leaving only mysterious curves that hint at forgotten perils. Beyond the threshold, the floor descends into profound stillness, broken only by the soft hissing of your coal-lantern. Two distinct routes invite your next cautious steps into the vault's core.",
+   "exits": [
+    "Approach the glittering salt gate",
+    "Enter the vast hemispherical antechamber"
+   ]
+  },
+  "sg-6-1-3-7": {
+   "title": "The Lime Trough",
+   "text": "Beside a dry stone trough filled with powdery white lime, you wipe stinging sweat from your eyes as the air grows heavier. The fine dust clings to your fingers and coats the hem of your coat like flour. Faint drafts whistle through hairline fractures in the stone above, carrying the scent of ancient stone and deep earth. The chamber splits into several shadowy avenues, each offering a different way forward through the subterranean labyrinth.",
+   "exits": [
+    "Walk toward the green glass arch",
+    "Take the narrowing basalt corridor",
+    "Head for the glittering salt gate"
+   ]
+  },
+  "sg-6-1-3-8": {
+   "title": "The Sunlit Bypass",
+   "text": "Because you read the Glasswrights' high-wall mirror flashes, you bypass a collapsed tunnel by taking a sun-lit ventilation bypass. Shafts of pale, refracted daylight cut through the gloom like golden wires, guiding your boots safely over the rubble. The air here is surprisingly dry and crisp, smelling faintly of heated glass and clean desert wind. Two clear exits lie ahead, leading deeper into the heart of the sealed observatory.",
+   "exits": [
+    "Proceed past the open-palm sconces",
+    "Enter the vast hemispherical chamber"
+   ]
+  },
+  "sg-6-1-3-9": {
+   "title": "The Slag-Glass Junction",
+   "text": "Within a circular junction chamber paved with green slag-glass, three competing archways beckon with different drafts of stale air. The smooth floor reflects your coal-lantern's amber glow in shimmering, distorted pools of green light. Faint whispers seem to ride the air currents, though they dissolve into silence the moment you stop to listen. Multiple passages branch out into the darkness, alongside the route by which you arrived.",
+   "exits": [
+    "Enter the narrowing basalt corridor",
+    "Walk toward the open-palm wall sconces",
+    "Step under the white-veined dark stone dome",
+    "Turn back toward the hidden floor panel"
+   ]
+  }
+ },
+ "missing": []
+}

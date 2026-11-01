@@ -1,0 +1,48 @@
+@@BEAT cf-1-001 | You wake in the cold depot of Ashgate Junction beside the idling Marrowbone while the storm clock ticks.
+@@HUB cf-1-002 | The Iron Office | You search the stationmaster's abandoned office for missing papers concerning Hesper.
+@@CHAIN cf-1-002/0 | You sift through discarded ledgers using quick wits to find a hidden timetable noting Hesper's secret night route, gaining a coded destination memo.
+@@CHAIN cf-1-002/1 | You face an angry union steward while maintaining steady composure to avoid a brawl, earning the respect of the local gangers.
+@@CHAIN cf-1-002/2 | You inspect the locked filing cabinets under intense pressure with calm composure, recovering a grease-stained manifest of barred supplies.
+@@BEAT cf-1-016 | A Gangers Union patrol stops you on the soot-caked platform demanding to inspect your heavy brass-handled valve.
+@@HUB cf-1-017 | The Cinder Tap | You visit the local watering hole where off-duty firemen share rumors about missing drivers.
+@@CHAIN cf-1-017/0 | You listen to drunk track-hands using sharp cunning to separate truth from boasts, learning where Hesper bought extra fuel.
+@@CHAIN cf-1-017/1 | You tinker with a broken draught-pump using fine mechanics to earn free coal rations from the grateful tavern keeper.
+@@CHAIN cf-1-017/2 | You endure the taunts of rival crewmen with cold composure until they back down, winning a round of bitter small beer and local sympathy.
+@@BEAT cf-1-031 | A Barons' clerk blocks the turnout switches with a padlock and a stamped requisition demand.
+@@HUB cf-1-032 | The Ticket Window | You approach the barred glass partition where the ancient ticket-widow hoards forgotten messages.
+@@CHAIN cf-1-032/0 | You withstand the widow's sharp tongue with unwavering composure until she slips you a forgotten telegram from Hesper.
+@@CHAIN cf-1-032/1 | You sit quietly through her endless complaints maintaining deep composure, securing a brass platform pass that bypasses the yard police.
+@@CHAIN cf-1-032/2 | You absorb her cryptic warnings about the upcoming ash-storm with steady composure, earning an old oil-skin coat for the road.
+@@CHAIN cf-1-032/3 | You fix her jammed ticket-stamping press using clever mechanics, receiving a stamped pass that grants access to the restricted sidings.
+@@BEAT cf-1-052 | The Marrowbone's water injector clogs with dry ash just as you prepare to clear the yard.
+@@HUB cf-1-053 | The Stranded Carriages | You explore a row of abandoned passenger coaches rusting on a weed-choked siding.
+@@CHAIN cf-1-053/0 | You search through luxury compartments using clever cunning to find a hidden cache of tallow and spare gaskets.
+@@CHAIN cf-1-053/1 | You repair a jammed vestibule coupling using solid mechanics to free an old cargo truck loaded with dry briquettes.
+@@CHAIN cf-1-053/2 | You outmaneuver scavengers hiding in the dark using sharp cunning, discovering a heavy leather pouch of grease-pencils.
+@@CHAIN cf-1-053/3 | You overhaul a rusted steam-heating valve using expert mechanics, securing a spare pressure gauge for the cab console.
+@@BEAT cf-1-074 | A Barons' inspection carriage blocks the main line while uniformed enforcers demand your credentials.
+@@HUB cf-1-075 | The Water-Seller's Pit | You visit the drought-stricken cistern where desperate citizens trade small items for drops of brackish water.
+@@CHAIN cf-1-075/0 | You endure the harsh insults of the desperate crowd with unbroken composure, trading an empty oil tin for a skin of bitter water.
+@@CHAIN cf-1-075/1 | You bargain with the crippled water-seller using cunning trade talk, securing a cask of clean boiler-water for the engine tender.
+@@CHAIN cf-1-075/2 | You lift a fallen support beam to rescue a trapped water-dealer using raw brawn, earning a lasting debt of honor.
+@@CHAIN cf-1-075/3 | You spot a disguised Barons' agent lurking near the dry cistern using sharp cunning, avoiding a costly ambush.
+@@CHAIN cf-1-075/4 | You withstand the suffocating dust and jeers with quiet composure, securing a rusted tin cup of sediment-free water.
+@@BEAT cf-1-097 | The signal box above the junction drops a blood-red warning arm despite the clear track ahead.
+@@HUB cf-1-098 | The Signal Box | You climb the creaking wooden stairs to the elevated control cabin where mechanical levers govern the yard.
+@@CHAIN cf-1-098/0 | You force open a rusted interlocking lever using immense brawn, resetting the semaphore to clear your departure route.
+@@CHAIN cf-1-098/1 | You stand your ground against a corrupt signalman keeping strict composure, forcing him to hand over the switch keys.
+@@CHAIN cf-1-098/2 | You endure the freezing draft and flickering oil lamps with steady composure, memorizing the safe night clearance codes.
+@@CHAIN cf-1-098/3 | You maintain quiet composure while locked in the tiny cabin during an inspection, overhearing the Barons' transit schedule.
+@@CHAIN cf-1-098/4 | You outwit the cabin guard using clever cunning to slip past the locked switchboard, securing the main line clearance token.
+@@BEAT cf-1-121 | A rival crew tries to uncouple your coal tender from the Marrowbone in the gathering dusk.
+@@HUB cf-1-122 | The Engine Sheds | You return to the roaring smoky depths of the primary roundhouse for final locomotive maintenance.
+@@CHAIN cf-1-122/0 | You patch a leaking steam header using precise mechanics and asbestos tape, restoring full boiler pressure for the run.
+@@CHAIN cf-1-122/1 | You anticipate a sabotage attempt in the shadows using quick cunning, catching the saboteur red-handed with a heavy iron wedge.
+@@CHAIN cf-1-122/2 | You heave a heavy spare wheel-set back onto the service tracks using brute brawn, earning the profound respect of the union stokers.
+@@BEAT cf-1-137 | The storm clock strikes the midnight hour as ash begins to drift across the driving wheels.
+@@HUB cf-1-138 | The Coal Stacks | You rush to top off your tender from the dwindling municipal coal reserves before the gates close.
+@@CHAIN cf-1-138/0 | You shovel heavy wet coal into the bunker using sheer brawn, filling the tender right to the brim before the guards arrive.
+@@CHAIN cf-1-138/1 | You heave a massive iron coal-chute back into position using raw brawn, securing enough fuel for the grueling crossing ahead.
+@@CHAIN cf-1-138/2 | You haul a stalled coal wagon off the approach tracks using heavy brawn, clearing the path for the Marrowbone's explosive departure.
+@@BEAT cf-1-153 | You pull the brass regulator and blast past the shattered signals out onto the grey expanse of the Cinder Steppe.
+@@DONE

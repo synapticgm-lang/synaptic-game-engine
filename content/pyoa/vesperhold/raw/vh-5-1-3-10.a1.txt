@@ -1,0 +1,6 @@
+@@SECTION vh-5-1-3-13
+TITLE: The Foggy Margin
+TEXT: Yellowed dock leaves brush against your knees as you skirt a patch of boggy ground near the lower terrace, each step sinking ankle-deep into cold, peat-scented muck that tries to pull your boots down. The bronze Clapper on your back shifts its weight, a dull, reassuring hum against your spine that counterbalances the damp chill rising through your woolen trousers. Through the grey mist overhead, heavy drops of moisture begin to fall from the leaf-laden boughs, pattering steadily against your leather pack. // Two separate trails diverge from this soggy hollow: one narrow track plunges deeper into the dripping thicket where a curtain of falling water masks the path, while the other winds toward a stone wall where the sharp tang of woodsmoke drifts on a sudden mountain draft.
+EXIT 1: Follow the path behind the dripping water curtain
+EXIT 2: Head toward the wall smelling of woodsmoke
+@@END

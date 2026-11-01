@@ -1,0 +1,65 @@
+@@SECTION vh-d-1-1
+TITLE: The Unspooled Line
+TEXT: Ignoring the rising gale and the sharp warnings of the gate-warden, you rush headlong down the icy steps with an unspooled hemp line trailing behind you. A sudden blast of mountain air catches the trailing coils, wrapping your boots in a desperate tangle as you lose your footing on the rimed stone. The heavy bronze clapper on your back drags you forward into the gray abyss, the wind roaring in your ears as the mountain swallows you whole.
+@@END
+@@SECTION vh-1-c2
+TITLE: The Rope Store
+TEXT: The smell of cold tar and beaten flax fills the low-beamed timber warehouse where Master Orem weighs every coil on rusted scales. You face a hard choice for the descent ahead. You can swear the Guild oath and bind your waist with their branded hemp, gaining the protection of the cable-makers along the vertical drop, or you can rely solely on your own frayed and trusted line, keeping your independence at the cost of safety. // Choose carefully before stepping out into the biting gale.
+EXIT 1: Sign for a Ropewrights' Guild rope
+EXIT 2: Trust your own old rope
+@@END
+@@SECTION vh-1-2-0-0
+TITLE: The Limestone Arch
+TEXT: Elder Corin checks the hemp seal of your chosen Guild line against the biting gales that howl through the monastery gates. Frost glints upon his heavy wool spectacles as he knots the official yellow marker into your harness. The bronze clapper hums quietly against your shoulder blades, vibrating with every shift of the mountain wind. Three paths diverge beyond the gatehouse porch, each leading down into the gray cloud sea.
+EXIT 1: Step toward the narrow stone ledge
+EXIT 2: Follow the steep ramp of frozen timber
+EXIT 3: Take the sheltered switchback behind the granary
+@@END
+@@SECTION vh-1-2-0-1
+TITLE: The Shadowed Mule Yard
+TEXT: Biscuit tests the oiled canvas hitch with a stubborn nudge of his gray muzzle while Master Hesketh inspects your bronze load for any sign of shifting. The mule's breath plumes white against the frost-covered slate walls of the stable. Every strap is taut, and the heavy iron rings gleam with fresh grease against the cold. Three separate tracks lead out from the courtyard gates into the gathering squall.
+EXIT 1: Lead Biscuit down the main mule path
+EXIT 2: Take the steep stone stairs to the left
+EXIT 3: Veer toward the lower freight winch
+@@END
+@@SECTION vh-1-2-1-0
+TITLE: The Frost-Rimed Trough
+TEXT: Beside the frozen horse trough, Miller Bran offers a hard crust of salted barley bread to help steady your nerves before you cross the ridge. The wind rattles the icicles hanging from the horse-block, and the distant hum of Orison's broken shell vibrates faintly through the rock beneath your boots. Three distinct routes open before you through the swirling sleet.
+EXIT 1: Traverse the narrow ice-shelf above the abyss
+EXIT 2: Descend toward the drafty salt-porch
+EXIT 3: Head past the frozen sheep-fold into the fog
+@@END
+@@SECTION vh-1-2-1-1
+TITLE: The Nine Knots
+TEXT: Under the creaking wooden sign of the Nine Knots, Sola weaves a spare splice into your harness straps with swift, calloused fingers. The tavern chimney puffs thick peat smoke into the freezing air, momentarily scenting the cold stone courtyard with warmth. Three ways lie open down the mountain spine.
+EXIT 1: Pass beneath the swinging iron lantern of the guard-post
+EXIT 2: Hug the sheer cliff face where the wind hums
+EXIT 3: Pick your way past the frozen fountain
+@@END
+@@SECTION vh-1-2-1-2
+TITLE: The Winch-House Wall
+TEXT: Near the winch-house wall, a cable-lord named Garrow measures your packs with greedy, calculating eyes, assessing the weight of the bronze load for potential toll fees. The heavy iron gears groan overhead as an empty ore-bucket descends into the fog. Three passages descend from this windswept post.
+EXIT 1: Pick your way down the narrow switchback
+EXIT 2: Step inside the damp salt-store for shelter
+EXIT 3: Descend beneath the dripping icicles of the high conduit
+@@END
+@@SECTION vh-1-2-1-3
+TITLE: The Drying Rack
+TEXT: Behind the drying rack of heavy sheepskins, young Marta thrusts an extra pair of tallow-soaked mittens into your coat pocket with a shy grin. The smell of lanolin and wet wool rises sharply in the drafty alcove. Three tracks wind away from the stables toward the lower tiers.
+EXIT 1: Follow the high conduit through the dripping icicles
+EXIT 2: Step out onto the exposed limestone shelf
+EXIT 3: Pick your way past the collapsed retaining wall
+@@END
+@@SECTION vh-1-2-1-4
+TITLE: The Outer Buttress
+TEXT: At the outer buttress, a pair of fog-wardens warns you of loose shale blocking the lower stone-cut, pointing their brass whistles toward the gray haze below. The ancient masonry shivers under the force of the gathering gale. Three directions offer passage through the squall.
+EXIT 1: Listen for the distant bell-tower chime
+EXIT 2: Navigate the treacherous rope-slack turn
+EXIT 3: Seek shelter within the niche of St. Jude's shrine
+@@END
+@@SECTION vh-1-2-1-5
+TITLE: The High Stone Stile
+TEXT: Over the high stone stile, the grey monastery wall abruptly ends and the sheer vertical drop of the upper stairs begins. The world below is swallowed entirely by a thick blanket of rolling cloud. Two paths diverge at the edge of the precipice.
+EXIT 1: Step carefully across the frozen rill
+EXIT 2: Make for the abandoned lime kiln ahead
+@@END

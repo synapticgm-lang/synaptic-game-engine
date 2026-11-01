@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-5-031
+TITLE: The Brass Key
+TEXT: You trade sharp-edged articles of ancient statute with the automaton-archivist until its copper jaw clicks shut upon a grudging concession. It slides a heavy brass access key across the oiled slate table, its brass fingers whirring with reluctant respect for your stubborn scholarship. // This weighty relic bears the teeth of the lower shafts, cold to the touch and smelling faintly of stagnant deep-water.
+GRANT: heavy brass access key
+EXIT 1: Seize the key and turn toward the lower shafts
+@@END

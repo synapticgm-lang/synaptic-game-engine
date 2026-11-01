@@ -1,0 +1,117 @@
+{
+ "batch": "ul-3-202",
+ "sections": {
+  "ul-3-202": {
+   "title": "The Guarded Balcony",
+   "text": "Heavy iron lanterns cast long, flickering shadows across the marble gallery where the balcony guard paces with mechanical regularity. His brass-buckled tunic smells faintly of mutton grease and dry parchment, and his eyes remain fixed upon the upper clerestory windows. Resting upon a low stone plinth just beyond his reach sits the three-pronged grappling hook of cold forged steel, its coil of hempen rope coiled neatly like a sleeping adder. Slipping past him requires a sudden, calculated disruption to draw his heavy boots toward the opposite balustrade.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Create a clatter of fallen folios"
+   ]
+  },
+  "ul-3-203": {
+   "title": "Distracting the Sentinel",
+   "text": "Dropping a heavy leather-bound ledger onto the hollow floorboards produces a resonant crack that echoes sharply against the vaulted stone ceiling. The guard jerks his head toward the noise, his hand instinctively dropping to the hilt of his shortsword as he peers suspiciously into the gloom. You slide silently across the flagstones toward the pedestal, your heart hammering against your ribs while his boots scrape heavily over the dust in search of the phantom intruder.",
+   "check": "Toss the ledger to distract him",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-204": {
+   "title": "The Price of Discovery",
+   "text": "A clumsy boot-heel scuffs the loose stone beneath your weight, sending a spray of grit skittering across the flagstones and betraying your position instantly. The guard wheels around with a sharp oath, his heavy brass lantern swinging wide and catching your forearm with a bruising, scalding impact that leaves a crescent-shaped burn across your skin. You wrench the grappling hook free from its mounting just as he lunges forward, scrambling away into the shadows with a stinging injury and a throbbing wrist that reminds you of your carelessness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee toward the gallery stairs"
+   ]
+  },
+  "ul-3-205": {
+   "title": "Securing the Iron Hook",
+   "text": "Fingers close around the cold, oil-slicked metal of the grappling hook just as the guard pivots toward the sound, his heavy brass lantern sweeping empty air where you stood a heartbeat prior. You slip away into the labyrinthine shadows of the carved pillars, clutching your prize tightly against your chest with a profound sense of breathless relief. The notched flukes of the forged steel gleam faintly in the dim lamp-light, offering a reliable means of descent into the cavernous depths below.",
+   "check": "",
+   "grant": "Forged steel grappling hook",
+   "exits": [
+    "Descend into the deep stacks"
+   ]
+  },
+  "ul-3-206": {
+   "title": "The Frost-Slicked Rail",
+   "text": "Rime frost coats the narrow stone balustrade above the abyssal void, turning the ancient limestone into a treacherous ribbon of white glass. Down in the gulf between the shifting stacks, a forgotten brass spyglass glints dully upon a drifting rafter like a fallen star. Crossing that perilous span demands absolute focus, ignoring the dizzying drop that plunges endlessly into the dark bellows of the library.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step carefully onto the stone"
+   ]
+  },
+  "ul-3-207": {
+   "title": "Balancing Over the Void",
+   "text": "Wind whistling up from the deep stacks carries the scent of damp paper and ancient ozone, chilling your fingertips until they stiffen against the cold air. Each footstep requires a delicate shifting of weight across the slick stone, testing the friction of your leather soles against the rime. The brass spyglass lies just ahead, rocking rhythmically with the slow, tectonic drift of the surrounding bookshelves.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the gleaming brass"
+   ]
+  },
+  "ul-3-208": {
+   "title": "Walking the Narrow Edge",
+   "text": "Leaning outward into the howling updraft, you place one boot precisely before the other along the frost-rimed apex of the rail. The abyss pulls at your balance with invisible, grasping fingers, threatening to tip your centre of gravity into the empty air below. You extend your arms wide to catch the shifting currents, holding your breath at the absolute edge of a fatal fall.",
+   "check": "Walk the frozen rail",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-209": {
+   "title": "Slipping on the Rime",
+   "text": "A sudden gust of icy air from the lower flues catches your shoulder off balance, sending your front foot skidding wildly across the glazed stone. You drop hard onto your knee to arrest the fall, scraping skin raw against the jagged masonry and tearing a deep, jagged rent in your trousers. The spyglass rattles away into the darkness below, leaving you bruised, shaken, and nursing a bleeding kneecap as you crawl back to safety.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl back to solid ground"
+   ]
+  },
+  "ul-3-210": {
+   "title": "Retrieving the Glass",
+   "text": "Fingers wrap securely around the cold brass barrel of the spyglass just as the freezing gust subsides, leaving you crouched safely upon the narrow stone rib. You tuck the heavy instrument into your coat pocket, feeling its reassuring weight against your ribs as you catch your breath from the narrow escape. It is an old, scratched thing of polished brass and cracked lenses, yet its telescoping tubes still promise a clear view through the gloom of the deep annexes.",
+   "check": "",
+   "grant": "Cracked brass spyglass",
+   "exits": [
+    "Return to the upper walkway"
+   ]
+  },
+  "ul-3-211": {
+   "title": "Reading the Air Currents",
+   "text": "Warm thermal plumes rise in steady, rhythmic pulses from the deep vertical flues, smelling of scorched paper and sweet lamp-oil. Kneeling at the edge of the iron grating, you test the direction of the draft with a dampened finger, observing how the tiny motes of floating ink-dust spiral through the air. Charting these invisible rivers of air is the only way to glide safely across the gaping chasms that separate the upper galleries from the lower vaults.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Study the rising thermal plumes"
+   ]
+  },
+  "ul-3-212": {
+   "title": "Mapping the Invisible Drafts",
+   "text": "Tracing the swirling patterns in your mind, you calculate the exact angle of descent required to catch the upward draft without stalling against the sheer stone buttress. The currents shift unpredictably beneath your boots, whispering secrets of pressure and temperature from the deepest stacks. You lean forward over the drop, committing your fragile mathematical vector to the mercy of the wind.",
+   "check": "Chart the air current vector",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-213": {
+   "title": "Miscalculating the Thermal",
+   "text": "A sudden downdraft of freezing air slams upward from a closing flue, shattering your carefully calculated trajectory and driving you hard against the rough stone wall. The impact knocks the wind from your lungs in a ragged gasp, leaving a deep, aching bruise across your ribs and tearing your notebook from your grasping fingers. You cling to a protruding iron bracket, coughing and shivering as you drag yourself back onto the safety of the gantry.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself to safety"
+   ]
+  },
+  "ul-3-214": {
+   "title": "Catching the Updraft",
+   "text": "The rising thermal catches the hem of your coat and lifts you smoothly off your boots, bearing you across the yawning abyss upon an invisible cushion of heated air. You adjust your posture by instinct, steering cleanly through the drifting cloud of black ink-dust with effortless precision. The route remains clear and open ahead, mapped permanently in your mind as a reliable passage through the roaring currents of the deep library.",
+   "check": "",
+   "grant": "Mental draft chart",
+   "exits": [
+    "Return to the central balcony"
+   ]
+  }
+ },
+ "missing": []
+}

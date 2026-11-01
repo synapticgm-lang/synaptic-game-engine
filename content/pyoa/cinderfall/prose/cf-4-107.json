@@ -1,0 +1,117 @@
+{
+ "batch": "cf-4-107",
+ "sections": {
+  "cf-4-107": {
+   "title": "The Coal Depot Spur",
+   "text": "Soot settles thick across the iron ribs of the tender as you peer into the rusted maw of the storage bin. Dim red embers from the firebox cast long, wavering shadows against the damp brickwork of the tunnel wall. You grasp the heavy steel hammer, feeling its cold grain bite into your palm, and line up the rusted pin of the hopper gate. A single well-placed blow might clear the blockage and feed the starved furnace before the steam pressure drops too low.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Strike the rusted release pawl"
+   ]
+  },
+  "cf-4-108": {
+   "title": "Echoes in the Dark",
+   "text": "Metal rings against metal with a dull, hollow thud that reverberates down the damp masonry of the Hollow Cut. Dust flakes from the curved ceiling, settling like grey snow over your shoulders and cap. The jammed mechanism groans, iron teeth shifting within their grease-clotted housing as the weight of the fuel above begins to settle. You lean your weight against the timber frame, waiting to see whether the chute will yield its contents or stay frozen shut.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Catch the falling coal buckets"
+   ]
+  },
+  "cf-4-109": {
+   "title": "Freeing the Chute",
+   "text": "Sweat cuts pale channels through the grime on your forehead as you brace your shoulder against the vibrating iron gate. The release pawl hangs by a fraction of an inch, wedged tight by decades of accumulated slag and mineral crust. With the hammer poised in your right hand and your fingers hooked beneath the rusted lip, you prepare to strike the exact stress point that will clear the feed.",
+   "check": "Drive the hammer home",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-110": {
+   "title": "A Heavy Toll",
+   "text": "The jammed iron snaps too violently, catching your knuckles against the sharp edge of the hopper and sending a sharp spasm of pain up your forearm. Coal spills too fast, burying your boots in a heavy avalanche of black dust and bruising your shins against the iron plating. You stagger back with a bruised hand and a torn coat sleeve, sucking air that tastes of sulfur and old damp earth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the spilled fuel"
+   ]
+  },
+  "cf-4-111": {
+   "title": "Clean Fuel Secured",
+   "text": "The stubborn pin gives way with a sharp crack, sliding home into its oiled slot as three deep buckets of clean Welsh steam-coal pour out in a steady, rewarding cascade. The dark fuel gleams with a rich, oily luster, free of the grey dust and clinkers that choke the common bunkers. You heave the heavy vessels onto the footplate one by one, your muscles aching but your firebox fed with proper grade.",
+   "check": "",
+   "grant": "three buckets of steam-coal",
+   "exits": [
+    "Return to the dark silo"
+   ]
+  },
+  "cf-4-112": {
+   "title": "The Slag Avalanche",
+   "text": "Heavy grey slag shifts along the tunnel shoulder with a dry, rattling hiss like a nest of disturbed adders. Dust billows into the lantern light, stinging your eyes and coating your tongue in the dry taste of old cinders. You wedge your boots firmly between the wooden ties of the track, keeping your balance as the sliding debris beats a steady tattoo against the side of the tender.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hold fast against the sliding debris"
+   ]
+  },
+  "cf-4-113": {
+   "title": "Bracing Against the Fall",
+   "text": "Loose shale and jagged clinkers cascade down from the embankment, threatening to sweep your footing out from under the running board. You square your shoulders and drop your center of gravity, gripping a riveted stanchion with both hands while the grey tide surges around your shins. The iron fender-plate shudders under the impact, testing your nerve against the crushing weight of the shifting heap.",
+   "check": "Weather the rattling grey slide",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-114": {
+   "title": "Battered by the Slide",
+   "text": "The weight of the falling slag proves too great for your stance, slamming the heavy iron fender-plate against your knee and knocking the wind from your ribs. You hit the ballast hard, scraping your palms against the sharp ballast stones while dust fills the air around you. It takes long, agonizing moments to drag yourself upright, nursing a deep bruise that will throb with every step of the road.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back onto the footplate"
+   ]
+  },
+  "cf-4-115": {
+   "title": "The Iron Shield",
+   "text": "You stand your ground with absolute resolve, letting the cascade of heavy slag spend its force harmlessly against your braced boots and the sturdy hull of the locomotive. When the dust finally clears, a thick, heavy iron fender-plate lies dislodged at your feet, perfectly shaped to reinforce the front cowcatcher against whatever obstructions wait further down the line. You lift the salvage onto the deck, grateful for the unexpected armor.",
+   "check": "",
+   "grant": "heavy iron fender-plate",
+   "exits": [
+    "Make your way back forward"
+   ]
+  },
+  "cf-4-116": {
+   "title": "The Coal Chute",
+   "text": "Iron dust clings to your palms as you test the balance of the suspended hopper above the tender deck. By shifting your weight and bracing the iron lever against the rusted ratchet-tooth, you find the exact pivot-point where the heavy chute yields without spilling a single nugget of coal into the ballast. The balance settles with a satisfying metallic chime, leaving you with a straight, true coal-rake whose tip is worn bright by years of honest service.\n\nStepping back onto the footplate, you secure the implement against the bulkhead where it belongs.",
+   "check": "",
+   "grant": "accurate coal-rake",
+   "exits": [
+    "Pull the coal-rake free and climb back to the deck"
+   ]
+  },
+  "cf-4-117": {
+   "title": "Measuring the Balance",
+   "text": "You trace the angle of the loading arm against the dim bulkhead, calculating how much weight the rusted pivot can bear before the whole structure groans out of alignment. Every movement in this tunnel has its price, measured in grease, sweat, and the quiet creak of stressed metal. The engine breathes softly beneath you, a low, patient thrumming in the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Position the long coal-rake"
+   ]
+  },
+  "cf-4-118": {
+   "title": "Tipping the Balance",
+   "text": "You eye the exact center of gravity where the pivot meets the overhead hopper, balancing the heavy iron rake against the lip of the chute. One wrong twitch will send the entire stack crashing down into the ballast, while a precise touch will swing the load clean across the tender lip. You take a slow breath, steadying your hand against the wooden shaft before making the final push.",
+   "check": "Tip the balanced coal chute",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-119": {
+   "title": "A Spilled Measure",
+   "text": "The pivot catches on a warped rivet, swinging wide at the last second and sending half a load of coal rattling uselessly into the dark ballast below. You bite back a curse, wiping soot from your brow with the back of your wrist as you survey the scattered black diamonds among the ties. It costs you precious minutes and extra sweat to shovel the spilled fuel back where it belongs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Collect the scattered black dust"
+   ]
+  }
+ },
+ "missing": []
+}

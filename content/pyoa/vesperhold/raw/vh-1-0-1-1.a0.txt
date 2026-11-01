@@ -1,0 +1,64 @@
+@@SECTION vh-1-0-1-1
+TITLE: The High Buttery Threshold
+TEXT: Passing the high buttery, you snatch a crust of rye bread from a wicker tray while old Brother Thomas mutters a short prayer for the valley road. The coarse crumb sticks in your dry throat, tasting faintly of caraway and cellar dust. Outside the narrow lancet window, the mountain mist coils against the leaded glass like white wool.
+EXIT 1: Inspect the tarred cordage in the rope-loft
+EXIT 2: Follow the cart ruts along the curtain wall
+@@END
+@@SECTION vh-1-0-1-2
+TITLE: Beside the Salt Bins
+TEXT: Near the salt-bins, you pause to scrape rime from your boot-soles while the iron Clapper hums a dull, shivering note against your spine. The white grains crunch under your heels, dry and bitter-smelling in the freezing draft that sweeps up from the lower gorges. You shift the padded cradle, trying to find a balance before the long descent begins.
+EXIT 1: Follow the cart ruts along the curtain wall
+EXIT 2: Face the bailiff by the winch-tower
+@@END
+@@SECTION vh-1-0-1-3
+TITLE: Under the Choir Loft
+TEXT: Ducking under the low arch of the choir-loft, you dodge a swinging tallow-bucket while the novice-master shouts last-minute cautions about the wind-slips on the stair. The air smells heavily of melted wax and sheep-fat. Above your head, the great rafters groan under a sudden weight of packed snow.
+EXIT 1: Accept the miller's dried plums at the lych-gate
+EXIT 2: Lean hard against the glacier gale in the courtyard
+EXIT 3: Pass the sheep pens toward the lower stone path
+@@END
+@@SECTION vh-1-0-1-4
+TITLE: The South Cloister Walk
+TEXT: In the south cloister walk, you press your back against the warm stone chimney to ease the shoulder strap before tackling the vertical drop. The brickwork retains a faint, comforting heat from the kitchen fires below. Sparrows huddle together in the ivy overhead, too frozen to flutter as your shadow falls across them.
+EXIT 1: Pass the sheep pens toward the lower stone path
+EXIT 2: Pocket the pewter charm by the frozen fountain
+EXIT 3: Sidestep rolling logs in the charcoal yard
+@@END
+@@SECTION vh-1-0-1-5
+TITLE: Crossing the Library Garth
+TEXT: Crossing the library garth, you watch jackdaws wheeling through the grey rime while the bronze tongue in your cradle taps a steady, rhythmic tattoo against your ribs. The frozen turf snaps crisply beneath your boots with every stride. Frost feathers cling to the copper sundial in the centre of the lawn, pointing silently toward the west.
+EXIT 1: Lean hard against the glacier gale in the courtyard
+EXIT 2: Pass the sheep pens toward the lower stone path
+EXIT 3: Pocket the pewter charm by the frozen fountain
+@@END
+@@SECTION vh-1-0-1-6
+TITLE: By the Rain Cisterns
+TEXT: Pausing by the rain-cisterns, you splash freezing water over your wrists to clear the workshop sleep from your eyes before the descent begins. The skin of ice on the surface shatters into glittering shards beneath your knuckles. A stray gust rattles the tin mugs hanging from the scullery wall.
+EXIT 1: Sidestep rolling logs in the charcoal yard
+EXIT 2: Adjust your canvas rain-hood by the buttery stores
+EXIT 3: Skirt the steaming lime-kiln beside the path
+@@END
+@@SECTION vh-1-0-1-7
+TITLE: Within the Great Dormitory
+TEXT: Under the stone vaulting of the Great Dormitory, you tighten your leather waist-belt while fellow apprentices murmur quiet bets on whether you will reach Lowgate intact. A candle guttering on the oak bench casts long, dancing shadows across your pack. Someone slips a hard lump of tallow into your side pocket for the frost.
+EXIT 1: Skirt the steaming lime-kiln beside the path
+EXIT 2: Pass the screaming hawk at the cliff-mews
+@@END
+@@SECTION vh-1-0-1-8
+TITLE: The Outer Gatehouse Threshold
+TEXT: Standing on the threshold of the outer gatehouse, you watch the white vapour of your breath dissolve into the high mountain air before stepping onto the stones. Iron frost coats the heavy oak double doors, sealing them against the rising gale. The valley below is completely swallowed by a vast, churning ocean of cloud.
+EXIT 1: Skirt the steaming lime-kiln beside the path
+EXIT 2: Pass the screaming hawk at the cliff-mews
+EXIT 3: Brush snow from the stone saint's beard
+@@END
+@@SECTION vh-1-0-1-9
+TITLE: Beside the Brazier Pit
+TEXT: Beside the brazier-pit, you warm your stiffened fingers over glowing charcoal while the master bell-founder watches you with a critical, squinting eye. Coals pop and hiss as stray snowflakes drift down to melt in the iron basin. The heavy scent of burnt oak and foundry slag clings thick to your woollen sleeves.
+EXIT 1: Brush snow from the stone saint's beard
+@@END
+@@SECTION vh-1-0-2-0
+TITLE: The Damp Rope Loft
+TEXT: Entering the damp gloom of the rope-loft, you smell tarred hemp and mutton tallow while Master Hobb dangles a hank of three-ply cordage for your inspection. The floorboards are slick with oily shavings that whisper beneath your soles. Dust motes dance lazily in the thin shaft of grey light piercing the high louvered shutter.
+EXIT 1: Step out onto the platform of the Ninety Steps
+EXIT 2: Dodge falling slate at the butter-stores corner
+@@END

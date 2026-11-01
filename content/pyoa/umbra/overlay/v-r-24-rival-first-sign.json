@@ -1,0 +1,47 @@
+{
+ "batch": "v-r-24-rival-first-sign",
+ "variants": [
+  {
+   "node": "up-r-rival-first-sign",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "A cold certainty settles over you. The turnkey who booked her, the very man whose silence you bought with a whispered promise, must have sold you out the moment she offered a steeper price."
+  },
+  {
+   "node": "up-r-rival-first-sign",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Letting that terrified turnkey flee to the Guard was a fatal mistake; the ensuing commotion clearly afforded her the perfect distraction to slip her manacles. Now she walks the night alongside the patrols he summoned to hunt you."
+  },
+  {
+   "node": "up-r-rival-first-sign",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Pushing the turnkey from the slate roof silenced the only watchman who could testify to her exact cell number, meaning she must have broken the gaol's heavy iron locks entirely on her own. She is far more dangerous than you anticipated."
+  },
+  {
+   "node": "up-r-rival-first-sign",
+   "when": {
+    "cover": "bare"
+   },
+   "after": "Crossing the rooftops bare-faced has left you horribly exposed to her keen eyes, giving her every advantage as she tracks your familiar silhouette against the eclipse. Your arrogance in refusing a disguise has painted a target squarely on your back."
+  },
+  {
+   "node": "up-r-rival-first-sign",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "That disgraced tailor's debt coat might mask your identity from the city watch, but to a fellow night-crow, its stiff collar and heavy cut only make you easier to spot against the soot. She knows precisely what you are wearing."
+  },
+  {
+   "node": "up-r-rival-first-sign",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Wearing a rough porter's livery offers little comfort now. Though it obscures your shape from the streets below, a seasoned climber like her will instantly recognise the awkward, heavy drag of the cheap uniform across the tiles."
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+Gemini said
+
+@@SECTION td-4-194
+TITLE: Weight Of The Deep
+TEXT: Stone dust powders your shoulders as the massive brass collar grinds against its seating, threatening to flatten you into the masonry. Your knuckles turn white where you brace against the tremor, muscles singing with strain as the air grows thick with ancient rust. Through the haze of particulate matter, a glint of gold catches your eye amidst the rubble, resting perilously close to the crushing edge. Dropping lower to escape the brunt of the weight, you reach out across the trembling flagstones to snatch the royal seal before the machinery shifts again.
+EXIT 1: Seize the fallen gold
+@@END
+@@SECTION td-4-195
+TITLE: Hold The Line
+TEXT: Tremors shake the bedrock as the iron chamber groans under unbearable tonnage, threatening to snap the pillars and crush everything in the stairwell. Without a thought for safety, you plant your boots against the shifting floor and throw your entire weight into the narrow gap beside the grinding housing. Dust fills your throat and the stone beneath your knees splinters into grey grit, but your gaze remains fixed on the fallen royal seal glinting just inches from the churning teeth.
+CHECK: Defy the crushing pressure
+@@END
+@@SECTION td-4-196
+TITLE: Scraped From The Sockets
+TEXT: A sudden lateral shudder of the ironwork hurls you violently against a jagged salt-pillar, tearing a deep, stinging gash across your forearm while the royal seal slips away into the dark machinery. Blood wets your wool sleeve as you pick yourself up from the grit, gasping for breath against the sulfurous air. Though your ribs ache with every intake and your arm throbs with a fresh, raw stripe of pain, the immediate peril passes as the mechanism settles into a stubborn, sullen stillness.
+EXIT 1: Rise and press onward
+@@END
+@@SECTION td-4-197
+TITLE: Gold From The Grinder
+TEXT: Metal screeches against stone, then yields with a sudden, granting shudder that leaves your ears ringing in the heavy silence. Your fingers close around the cold metal of the royal seal just as the primary housing locks firmly into place, sparing your bones from the descending weight. You pull your arm back into the safety of the alcove, sliding the heavy prize into your canvas pouch alongside your salt-crusted compass.
+GRANT: Heavy royal seal
+EXIT 1: Approach the final lever
+@@END
+@@SECTION td-4-198
+TITLE: The Long-Held Breath
+TEXT: Beneath the vaulted arches, the very earth shudders as the immense brass teeth of the Meridian Gear lock into their ancient track with a sound like a distant cathedral bell. For a long heartbeat, silence swallows the damp corridors, broken only by the steady drip of saltwater from the ceiling. Then a low, rising moan travels up from the abyss, shaking the moss from the mortar and rattling the bone charms hanging from your belt. The seabed floor outside is cracking, and the salt-crust shatters as a dark wall of water surges back toward the cliffs of Gullmouth.
+EXIT 1: Face the returning tide
+@@END
+@@SECTION td-4-199
+TITLE: Fighting The Flood
+TEXT: Cold brine sprays against your face as you heave against the spokes of the rusted emergency valve, your shoulders burning with every turn. The flooded chamber groans, slowly forcing gallons of stagnant seawater out through the drainage grates until the floor emerges from the grey muck. Resting your hands on your knees to catch your breath, you spot a pristine diver's helmet resting atop a drowned sea-chest, its glass faceplate gleaming with untouched clarity.
+EXIT 1: Claim the dry helmet
+@@END
+@@SECTION td-4-200
+TITLE: Steps Of The Ancients
+TEXT: Carved images of the old Tidewardens stare down from the damp stone walls, their blank stone eyes tracing the geometric patterns worn into the flagstones beneath your boots. Kneeling in the gloom, you trace the faded incisions with a salt-calloused finger, deciphering the sequence that avoided the hidden weight-traps. A discreet click echoes through the chamber as a concealed floor panel pops an inch upward, revealing a bundle of dried medicinal kelp wrapped in oiled canvas.
+EXIT 1: Take the hidden kelp
+@@END
+@@SECTION td-5-001
+TITLE: Bottom Of The World
+TEXT: Deep beneath the cliffs, the winding stair terminates in a vast, cathedral-like vault echoing with the drips of ancient moisture. Towering before you stand the immense brass teeth of the Meridian Gear, silent and motionless like the jawbones of a buried titan. Thick crusts of salt and centuries of accumulated deep-sea debris choke the massive cogs, locking the great mechanism in a frozen slumber.
+EXIT 1: Step into the gear chamber
+@@END
+@@SECTION td-5-002
+TITLE: The Clogged Heart
+TEXT: The colossal brass mechanism fills the damp cavern, its vast teeth locked tight by centuries of calcified salt and deep-sea wreckage. Every surface is coated in grey brine crust and the tangled remnants of drowned rigging, leaving the great wheel immobile and silent. You must clear the obstructions from the drive system before any lever can be pulled or any tide commanded.
+EXIT 1: Clear the jammed machinery
+EXIT 2: Rotate the alignment wheel
+EXIT 3: Smash the iron barnacles
+EXIT 4: Drag the leviathan rib
+EXIT 5: Dismantle bathysphere wreckage
+EXIT 6: Face the Last Tidewarden
+@@END
+@@SECTION td-5-003
+TITLE: Mast And Mire
+TEXT: Water drips from the vaulted ceiling onto your neck as you brace your shoulder against the splintered pine of a wrecked galleon mast wedged deep between the primary cogs. The timber groans under your weight, soaked through with brine and heavy as lead, yet it refuses to budge from its iron prison. You dig your boots into the greasy silt, gathering your strength for another heave against the massive obstruction.
+EXIT 1: Heave the heavy timber
+@@END
+@@SECTION td-5-004
+TITLE: Strain And Salt
+TEXT: Muscles strain to their breaking point as you throw your weight against the lodged mast once more, feeling the ancient wood shift a fraction of an inch in the dark. The surrounding machinery rattles in protest, shedding flakes of orange rust that sting your eyes. Your breath comes in ragged gasps in the damp, heavy air of the vault as you prepare for one final push.
+EXIT 1: Give one final heave
+@@END
+@@SECTION td-5-005
+TITLE: Shifting The Dead Wood
+TEXT: Bracing your back against the cold iron housing, you wedge your hands beneath the waterlogged pine mast and plant your boots firmly in the thick, greasy silt of the floor. Every muscle in your arms and thighs trembles under the immense dead weight of the timber wedged deep between the primary cogs. You grit your teeth against the strain, throwing your entire body into a desperate heave to dislodge the obstruction before your strength gives out entirely.
+CHECK: Heave the jammed mast
+@@END
+@@SECTION td-5-006
+TITLE: Broken Sinews
+TEXT: The timber slips with a sickening jar, throwing you hard against the jagged iron housing and leaving a dull, throbbing ache across your ribs. You slump into the wet silt, gasping for air while your strained muscles burn with exhaustion and a dark bruise blooms across your shoulder. Though the mast remains stubbornly wedged, you pick yourself up from the muck, determined to find another way to clear the cogs.
+EXIT 1: Drag yourself away
+@@END

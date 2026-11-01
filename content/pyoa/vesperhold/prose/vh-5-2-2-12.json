@@ -1,0 +1,88 @@
+{
+ "batch": "vh-5-2-2-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-2-2-12": {
+   "title": "The Rushing Flume",
+   "text": "Gnarled apple trunks twist into shapes like reaching fingers as you thread your path through the ancient orchard, guided by the steady, rushing sound of a distant water flume. The heavy bronze tongue on your back hums a low, sympathetic vibration against your spine, matching the pulse of the mountain current nearby.\n\nA sudden clatter shatters the muffled stillness of the fog, and you spot danger barreling down the terrace. You must choose how to respond before the momentum catches you.",
+   "exits": [
+    "Dive into the alcove from the bounding barrel",
+    "Verify the Lowgate path by the lichen milestone"
+   ]
+  },
+  "vh-5-2-2-13": {
+   "title": "Tallow and Frost",
+   "text": "White frost clings to the old scar across your knuckles, a lasting reminder of the bitter glacier crossing that tested your endurance weeks ago. Remembering an old carter's trick, you pause to rub rendered tallow into your boot-soles, ensuring that every step you take through the silent fog remains completely soundless. The weight of the bronze clapper rests securely in its padded cradle, its faint metallic thrum muted by the heavy, damp air of the orchard.",
+   "exits": [
+    "Duck away from the bouncing timber barrel",
+    "Check the weathered milestone for the Lowgate distance",
+    "Turn back along the mossy irrigation run"
+   ]
+  },
+  "vh-5-2-2-14": {
+   "title": "The Cart Above",
+   "text": "Low-hanging branches scratch against the canvas of the heavy bell-cradle as you navigate the narrow, twisting animal track through the fog. A heavy farm cart rumbles along the paved terrace directly overhead, its iron-rimmed wheels grinding against frozen gravel and shaking loose droplets of cold dew. You press yourself flat against the damp earth, waiting out the passage of the unseen vehicle before you dare to move forward.",
+   "exits": [
+    "Slip through the leather-hinged orchard gate",
+    "Descend the moss-slick stone stairs toward the rumble"
+   ]
+  },
+  "vh-5-2-2-15": {
+   "title": "The Storage Clamp",
+   "text": "Root vegetables stored for the winter fill the stone clamp beside you with a sharp, earthy scent that cuts through the thick white gloom. You freeze in place as a heavy timber door creaks open just yards away, casting a pale sliver of lamplight across the wet grass. Holding your breath, you keep your hand steady against the padded frame of the bronze clapper until the footsteps fade back inside.",
+   "exits": [
+    "Step quietly through the oiled leather gate",
+    "Follow the steep stone stairway downward in the mist"
+   ]
+  },
+  "vh-5-2-3-0": {
+   "title": "The Drainage Sluice",
+   "text": "Wet timber groans beneath your boots as you cross a narrow wooden plank stretched over a roaring mountain drainage sluice. The icy water churns violently below, throwing up a fine mist that mixes with the heavy cloud blanketing the terraces. Every step requires absolute concentration as the heavy bronze cradle on your back shifts its weight against your shoulders.",
+   "exits": [
+    "Step out onto the grand limestone staircase",
+    "Pause to gaze up at the misty mountain face"
+   ]
+  },
+  "vh-5-2-3-1": {
+   "title": "The Quince Plantation",
+   "text": "Weaving through a dense plantation of dwarf quinces, you keep low as a stray dog barks against the fog somewhere near the upper fence. The bronze Clapper shifts heavily in its padded cradle on your back, its cold metal pressing against your shoulder blades like a sleeping weight. Dew drips from the low branches, soaking through your woollen sleeves while the damp air tastes of bruised fruit and frozen loam.\n\nThree distinct paths beckon through the mist-shrouded orchard rows, each leading deeper down the mountain toward the looming valley floor.",
+   "exits": [
+    "Climb the steep stone stairs",
+    "Approach the silent toll-arch ahead",
+    "Follow the broad descent toward Lowgate"
+   ]
+  },
+  "vh-5-2-3-2": {
+   "title": "The Mossy Wall",
+   "text": "Clinging to a mossy retaining wall while a Cable Court tax-collector hurries past with a ledger under his arm, you blend into the grey stone. The official mutters curses about the damp ink ruining his tallies, his heavy boots squelching loudly in the mud just inches from your boots. Your arms ache from bracing the weight of Orison's tongue against the damp masonry, and the faint, low hum of the bronze seems to vibrate right through the wet rock into your spine.\n\nThe collector turns a corner into the grey gloom, leaving two narrow avenues open for your descent.",
+   "exits": [
+    "Take the limestone steps downward",
+    "Slip past the silent warden gate"
+   ]
+  },
+  "vh-5-2-3-3": {
+   "title": "The Rotten Harvest",
+   "text": "Navigating a muddy terrace where fallen fruit rots in thick heaps, you keep your balance by clutching dangling branch-ends with frozen fingers. The sweet, fermented stench of bruised apples and frost-bitten quinces hangs heavy in the stagnant air, making your stomach turn slightly as you trudge through the grey soup. Every step requires absolute care, lest the heavy bronze tongue throw you off balance and send you skidding into the thorny brambles below.\n\nAhead lie two distinct ways out of the treacherous orchard maze.",
+   "exits": [
+    "Head for the grand stone staircase",
+    "Seek the silent toll-gate in the mist"
+   ]
+  },
+  "vh-5-2-3-4": {
+   "title": "The Rusted Winch",
+   "text": "Squeezing past a rusted iron winch station, you listen to the rhythmic creak of distant cables stretching across the hidden gulf of the valley. The grease on the massive steel drum smells of old tallow and cold iron, sticking faintly to your knuckles as you steady yourself against the frame. Somewhere out in the dense fog, a cable-rider's whistle trills twice, answered immediately by a faint metallic clang from an unseen platform dangling over the abyss.\n\nThe pathway narrows past the winch house, offering a single viable route into the misty expanse.",
+   "exits": [
+    "Continue along the cliffside ledge"
+   ]
+  },
+  "vh-5-2-3-5": {
+   "title": "The Sorting Table",
+   "text": "Crouching beneath a canvas fruit-sorting table, you wait out a group of gossiping orchard workers who complain bitterly about the early cold snap. Their worn leather boots shuffle against the packed dirt just above your head while they discuss the failing barley harvest and the rising tolls charged by the Cable Court. You hold your breath, careful not to let the humming bronze tongue knock against the wooden slats of the table and betray your hiding place in the gloom.\n\nThe workers finally trudge away down a side path, leaving two ways open before you.",
+   "exits": [
+    "Venture onto the high cliffside trail",
+    "Step out toward the lower forge road"
+   ]
+  }
+ },
+ "missing": []
+}

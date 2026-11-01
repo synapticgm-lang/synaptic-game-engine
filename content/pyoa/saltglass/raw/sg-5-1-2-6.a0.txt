@@ -1,0 +1,68 @@
+Gemini said
+
+@@SECTION sg-5-1-2-6
+TITLE: The Faint Scratch
+TEXT: Fine crystalline dust cakes your collar as Pell crouches low, pointing a grimy finger toward a hair-thin arc etched into the gleaming floor. This faint scratch is the only visible boundary marking a treacherous minefield of rusted trapdoors designed to swallow the unwary. Beyond this narrow line, the floor appears smooth, yet every square span hides a hinged drop into the lightless substructure. // You balance your weight carefully on the ball of your foot, weighing whether to risk a silent slide along the wall or take a bolder stride over the deceptive expanse.
+EXIT 1: Slide along the outer wall
+EXIT 2: Step boldly across the etched seam
+@@END
+@@SECTION sg-5-1-2-7
+TITLE: The Jammed Louver
+TEXT: Metal screams against rusted iron as you force your shoulder against the stuck louver, tearing it free from its frame with a sudden, metallic groan. A violent rush of desert heat and blinding, unfiltered glare floods the cramped shaft, making your eyes water in the sudden brightness. Dust motes dance wildly in the beam of harsh sunlight while the wind whistles through the newly opened gap like a distant flute. // You crouch in the suffocating warmth, deciding whether to squeeze into the dark ventilation tunnel below or risk balancing across the chasm ahead.
+EXIT 1: Crawl into the soot-lined vent
+EXIT 2: Cross the fragile glass bridge
+@@END
+@@SECTION sg-5-1-2-8
+TITLE: The Iron Maze
+TEXT: Tangled veins of rusted iron gears choke the corridor completely, forming a jagged barrier of spiked teeth and heavy cogs. There is no way around the mechanical blockage except to squeeze your frame directly through the greasy, narrow heart of the machine. The metal smells of ancient machine oil and dry desert age, cold against your skin as you wriggle into the tight iron gap. // You emerge on the far side among swinging pendulums, heavy counterweights, and hidden drop-shafts, needing to choose your next precarious step with extreme care.
+EXIT 1: Follow the soot-blackened air-vent
+EXIT 2: Leap past the swinging brass counterweight
+EXIT 3: Step onto the trembling glass bridge
+EXIT 4: Turn back toward the humming blue gallery
+@@END
+@@SECTION sg-5-1-2-9
+TITLE: The Echoing Drop
+TEXT: Pell drops a small grey pebble into the sheer vertical shaft at your feet, waiting in the dry stillness for any sign of a bottom. Seconds pass before a faint, hollow clatter echoes back up through the darkness, revealing an immense drop that swallows sound whole. The stale air rising from the abyss carries a mineral tang of old salt and deep, forgotten stone. // You clutch your ember-lamp tighter against your ribs, wondering whether to seek a narrow crawlspace or trust your footing above the yawning void.
+EXIT 1: Duck into the low soot-choked vent
+EXIT 2: Time your run past the swinging counterweight
+EXIT 3: Venture out onto the fragile glass span
+@@END
+@@SECTION sg-5-1-2-10
+TITLE: The Buckled Frame
+TEXT: Heavy stone walls groan and shift around you, pressing inward with the agonizing weight of centuries until the copper doorframe has buckled into a jagged diamond. You must twist your torso sideways and exhale every scrap of air just to force your ribs through the narrowing metal slit. Outside this crushing pinch, the observatory interior stretches away in a maze of flickering blue shadows and frayed wiring. // You catch your breath in the dim chamber, deciding whether to follow the scent of ozone or retrace your steps before the masonry settles further.
+EXIT 1: Trace the path of blue electrical sparks
+EXIT 2: Pry open the stubborn ventilation grille
+EXIT 3: Turn back beneath the fractured dome
+@@END
+@@SECTION sg-5-1-2-11
+TITLE: The Salt Flurry
+TEXT: A vicious gust of wind whips across the open ledge, driving a blinding flurry of crystalline salt directly into your face and stinging your eyes raw. You clamp one hand over your goggles and press your spine flat against the fluted stone pillar to keep from being swept into the empty air. Somewhere nearby, heavy boots crunch against grit, warning that the passage is not entirely deserted. // The grit settles slightly in the pale light, leaving you to choose between plunging into the gloom or slipping past unseen sentries.
+EXIT 1: Step carefully onto the trembling glass bridge
+EXIT 2: Follow the scent of ozone and sparks
+EXIT 3: Press flat against the fluted pillar
+EXIT 4: Heed the warm vibration against your chest
+@@END
+@@SECTION sg-5-1-2-12
+TITLE: The Cleaner's Passage
+TEXT: Iron scrapes screechingly against dry mortar as Pell drives a crowbar deep into the refractory brick wall, leveraging a forgotten wedge loose from the masonry. A dark, narrow crawlspace opens behind the loosened blocks—a low utility chute once used by the old telescope-cleaners to haul rags and polishing powders. A smell of dry lime and stagnant centuries drafts out from the hidden opening. // You peer into the black void of the chute, deciding whether to squeeze inside or test the ventilation grilles further along the corridor.
+EXIT 1: Chase the scent of buzzing ozone
+EXIT 2: Force the stubborn ventilation latch
+@@END
+@@SECTION sg-5-1-2-13
+TITLE: The Shard Floor
+TEXT: Every step is a hazard on the floor of loose glass shards, which slide and whisper beneath your heavy boots like frozen scree. The weight of your pack threatens to throw you off balance with every shifting tile, risking a noisy cascade that would echo through the silent halls. You keep your knees slightly bent, using your arms to steady your drift as the glittering floor slopes away into deeper shadows. // You reach the far edge of the dangerous slope, needing to choose between a stubborn metal latch or a vertical climb.
+EXIT 1: Strike the stubborn ventilation latch
+EXIT 2: Climb the greasy vertical cable-run
+@@END
+@@SECTION sg-5-1-2-14
+TITLE: The Crystal Wall
+TEXT: The cracked Seedkey pulses violently against your breastbone, shivering in your coat like a live thing as it encounters the sheer wall of tinted crystal ahead. The cold ceramic grows almost hot to the touch, its fractures singing a high, reedy note that harmonizes with the invisible quartz veins running through the glass barrier. Here, where the lens-matter is thickest, the key recognizes its own reflection within the observatory's core. // You press your palm against the vibrating crystal, choosing whether to scale the cable, follow the resonant hum, or plunge into absolute darkness.
+EXIT 1: Scramble up the slippery cable-run
+EXIT 2: Follow the resonant quartz vibrations
+EXIT 3: Extinguish your lamp and crawl blind
+@@END
+@@SECTION sg-5-1-2-15
+TITLE: The Iron Pendulum
+TEXT: A heavy iron counterweight sweeps rhythmically across the low service tunnel, casting a long, rhythmic shadow against the curved brickwork with every pass. You time your breathing to the heavy thud of the swinging metal, crouching low in the dust as it misses the top of your cap by barely a handspan. The air smells of hot iron and old grease, thick in the close confines of the serviceway. // You wait for the heavy mass to swing away, preparing to squeeze through the narrow aperture yawning just beyond its arc.
+EXIT 1: Squeeze through the narrow dark aperture
+@@END

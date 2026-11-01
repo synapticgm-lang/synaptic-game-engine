@@ -1,0 +1,66 @@
+Gemini said
+
+@@SECTION sg-2-1-2-2
+TITLE: The Sulphur Spring
+TEXT: Yellow brine bubbles from a jagged vent in the floor, venting a heavy stench of rotten kelp and ancient sulphur that coats the back of your throat. You adjust the heavy wick of your banked lamp, its steady warmth a quiet contrast to the cold, mineral air rising from the fissure. // The crust beneath your boots shudders slightly under the pressure of hidden gases, urging you to choose your footing before the alkaline ground gives way entirely.
+EXIT 1: Follow the startled desert grouse toward the low reeds
+EXIT 2: Step carefully onto the green bottle-glass causeway
+EXIT 3: Inspect the rusted salt-scraper's spade in the tailings
+@@END
+@@SECTION sg-2-1-2-3
+TITLE: The Weathered Boundary Post
+TEXT: Weathered notches carved into a stout boundary post guide your steps past a dry water-course choked with grey tumble-reeds that rasp together in the dry thermal draft. Your ember-lamp swings gently from your shoulder, casting a faint, rhythmic glow against the pale salt crust as you navigate the quiet outskirts of the basin.
+EXIT 1: Examine the empty merchant crate bearing the Candlemere brand
+EXIT 2: Cross toward the Causeways of green bottle-glass
+@@END
+@@SECTION sg-2-1-2-4
+TITLE: The Singing Crystals
+TEXT: Walking completely alone allows you to catch the strange, high-pitched singing of salt-crystals expanding deep within the earth as the midday heat intensifies around you. Without a guide's voice to chatter over the stillness, every microscopic crack in the blinding crust sounds like a sharp warning to steer clear of unstable ground.
+EXIT 1: Head toward the lone salt-scraper's spade in the tailings
+EXIT 2: Weave through the labyrinth of jagged salt-pillars
+@@END
+@@SECTION sg-2-1-2-5
+TITLE: The Glass-Kelp Sphere
+TEXT: A sudden gust of hot wind tumbles a sphere of dried glass-kelp past your shins like a brittle tumbleweed bound for the deep southern sinks. Your boots crunch softly over the crystalline dust while you keep a firm hand on the strap of your lantern.
+EXIT 1: Pick a path through the jagged salt-pillars
+EXIT 2: Inspect the tethered leather water-bag on the telegraph pole
+@@END
+@@SECTION sg-2-1-2-6
+TITLE: The Cold Ceramic Key
+TEXT: Pressing a gloved thumb against your wool tunic, you feel the reassuring, hard chill of the heavy ceramic Seedkey resting securely in its padded pocket. The familiar weight of the key steadies your nerves against the vast, glaring emptiness of the bitterflats.
+EXIT 1: Check the orange-stained blade of the tailings spade
+EXIT 2: Approach the leather water-bag hanging from the telegraph pole
+@@END
+@@SECTION sg-2-1-2-7
+TITLE: The Half-Buried Milestone
+TEXT: Half-buried in a drift of white alkali, an old copper milestone shows numbers rubbed completely smooth by decades of scouring dust-storms. The silence of the flats presses heavily against your ears as you pause to catch your breath.
+EXIT 1: Track the faint boot-prints of the Salt Court patrol
+EXIT 2: Cross the expanse of cracked, tilting hexagonal tiles
+@@END
+@@SECTION sg-2-1-2-8
+TITLE: The Pink Salt-Crust
+TEXT: Walking through a shallow drainage ditch, your sandals crush a crust of pink salt that shatters with a sound like dry autumn leaves beneath your feet. The air tastes faintly of copper and dust, reminding you of the long miles still waiting ahead.
+EXIT 1: Walk across the tilting hexagonal salt tiles
+EXIT 2: Approach the tattered canvas banner of the Salt Court
+@@END
+@@SECTION sg-2-1-2-9
+TITLE: The Mirror Signal
+TEXT: Three bright flashes from a distant glasswright's mirror tower wink across the basin, warning of trouble and heightened watchfulness on the plateaus ahead. You pull your collar high against the glare and grip your lamp tightly.
+EXIT 1: Head toward the Salt Court's tattered banner
+EXIT 2: Measure your remaining water against the miles ahead
+EXIT 3: Take the reckless way
+@@END
+@@SECTION sg-2-1-2-10
+TITLE: The Purple Fissure
+TEXT: A jagged fissure splits the white floor, revealing pools of purple mineral water that gleam in the dark like liquid amethyst far out of reach. You leap across the narrowest part of the gap, listening to the small clatter of loose stone tumbling into the void.
+EXIT 1: Walk past the Salt Court's canvas banner
+EXIT 2: Check the remaining water in your canteen
+EXIT 3: Listen to the musical chatter of dried glass-reeds
+EXIT 4: Turn back
+@@END
+@@SECTION sg-2-1-2-11
+TITLE: The Abandoned Barrow
+TEXT: An iron-spoked merchant's barrow sits abandoned in the blinding glare, its canvas tilt shredded to ribbons by relentless alkali gales. You pause in the scant shade of its rusted frame to let the heat wash over you before pressing onward.
+EXIT 1: Pass the chattering cluster of dried glass-reeds
+EXIT 2: Navigate around the heavy basalt paving slabs
+@@END

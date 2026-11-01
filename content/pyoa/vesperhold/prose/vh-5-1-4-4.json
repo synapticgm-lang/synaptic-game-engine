@@ -1,0 +1,81 @@
+{
+ "batch": "vh-5-1-4-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-1-4-4": {
+   "title": "Frost-Rimed Plum Trees",
+   "text": "Frost-rimed plum trees crowd the path so tightly that your heavy bronze burden scrapes against their frozen bark with a dry, metallic rasp. Each twisting bough hangs low under the grey weight of the cloud-drenched air, trapping you in a silent, freezing tunnel of wood and rime. Biscuit plants his hooves behind you, snorting a warm plume of mist against the damp moss as the branches claw at your canvas straps. You must decide whether to force a narrower passage through the northern thicket or test the slippery footing of the stone run winding down toward the lower terrace.",
+   "exits": [
+    "Force a passage through the frozen branches",
+    "Step carefully down the slick stone run"
+   ]
+  },
+  "vh-5-1-4-5": {
+   "title": "The Blind Signpost",
+   "text": "A wooden signpost with worn lettering points blindly into the heavy mist, its directions long since washed away by decades of mountain rain and biting frost. Barely legible grain streaks hint at old paths toward the lower orchards, but the wood is swollen and damp beneath your exploring fingers. Biscuit nudges your shoulder, eager to leave the quiet gloom of the crossing while the air remains still. You can trust the faint impression of an arrow pointing toward the western steps or follow the sound of dripping water past the splintered post.",
+   "exits": [
+    "Follow the faint arrow west",
+    "Walk toward the dripping water"
+   ]
+  },
+  "vh-5-1-4-6": {
+   "title": "The Deceptive Curtain",
+   "text": "The rhythmic dripping of moisture from overhead branches creates a deceptive curtain of sound masking the guard-post just beyond the hedgerow. Water droplets strike broad pear leaves with monotonous regularity, turning the muffled silence of the orchard into a steady, whispering screen. You pause to adjust the heavy bronze Clapper on your back, letting the familiar hum steady your breathing against the cold. The temptation to dart past while the acoustics remain tangled in the foliage pulls at your nerves, but the risk of stumbling into an unseen patrol grows with every step.",
+   "exits": [
+    "Dart quickly through the dripping screen",
+    "Creep forward along the sheltered ditch"
+   ]
+  },
+  "vh-5-1-4-7": {
+   "title": "The Draft and Smoke",
+   "text": "Cold mountain draft channels down the stone corridor, carrying the sharp tang of woodsmoke and roasted chestnuts from a hearth hidden somewhere in the white gloom. The sudden warmth is a welcome relief against your stiff shoulders, though the heavy iron cradle holding Orison's tongue remains bitterly cold. You lean against the damp masonry to catch your breath while Biscuit stamps an impatient hoof on the flagstones. Beyond the drafty threshold, the path splits between a narrow service stair and a wider mule track half-blocked by fallen crates.",
+   "exits": [
+    "Take the narrow stone service stair",
+    "Follow the wide mule track past the crates"
+   ]
+  },
+  "vh-5-1-5-0": {
+   "title": "Pale Lantern Light",
+   "text": "Pale lantern light flickers through the greasy horn windows of the low stone shelter where the whistle-guards wait out the heavy mountain haar. Inside, a low murmur of voices rises over the steady hiss of damp firewood and boiling chicory. You shift the padded straps of your burden, feeling the dull bronze hum against your spine as you weigh your options in the shadow of the eaves. Pressing onward past the lighted window risks drawing the attention of the vigilant wardens, while turning back means losing precious hours before the ice-wind season closes the upper passes.",
+   "exits": [
+    "Press on past the lighted window",
+    "Turn back toward the old orchard roots"
+   ]
+  },
+  "vh-5-1-5-1": {
+   "title": "The Notched Tally Stick",
+   "text": "A notched wooden tally stick hangs beside the heavy oak door of the post, recording the day's transit tolls in neat, rough-hewn gashes. The wood smells of resin and old ink, untouched by the drifting fog that clings stubbornly to the lintel and stone jambs. You run a gloved finger over the recent marks, wondering how many carriers have passed this way today with loads heavier than your own. The road ahead vanishes completely into the white soup, leaving you with little choice but to step forward and face whatever lies beyond the threshold.",
+   "exits": [
+    "Press on into the dense white fog"
+   ]
+  },
+  "vh-5-1-5-2": {
+   "title": "Piles of Grey Wool",
+   "text": "Piles of grey wool blankets sit on a rough bench inside the porch, smelling faintly of sheep lanolin and lingering rain. The shelter offers a brief, dry respite from the relentless chill of the Fogbank Orchards, though the heavy bronze Clapper on your back reminds you that the journey cannot pause for long. Biscuit shakes his head, sending a cascade of droplets from his ears onto the dusty flagstones. You can either shoulder your burden and plunge back into the damp gloom or linger a moment longer to warm your frozen fingers.",
+   "exits": [
+    "Press on into the damp grey gloom"
+   ]
+  },
+  "vh-5-1-5-3": {
+   "title": "The Boiling Tin Kettle",
+   "text": "A tin kettle boils over on an iron brazier, filling the drafty watch-room with steam and the scent of roasted chicory. The sudden heat fogs your spectacles and dampens your collar, but the warmth sinks gratefully into your aching muscles. Outside the small iron-barred window, the grey mist shifts sluggishly against the glass like a restless animal. You must decide whether to leave the relative comfort of the hearth behind or spend more time warming your boots before tackling the steep drop ahead.",
+   "exits": [
+    "Press on into the chilly mountain air"
+   ]
+  },
+  "vh-d-5-1": {
+   "title": "The Blind Leap",
+   "text": "Ignoring all the Warden whistle-codes, you bolt headlong through a blind orchard gap in the thickest fog, plunging straight down an unflagged cliff drainage chute. The loose gravel gives way instantly beneath your boots, sending you sliding into a wall of wet limestone. The heavy bronze Clapper breaks free from its rotting straps, shattering against the bedrock below with a dull, mournful shriek that echoes endlessly down the silent mountain.",
+   "exits": []
+  },
+  "vh-5-c2": {
+   "title": "The Warden's Post",
+   "text": "Fog-Wardens cluster around the low stone shelter, their polished horn whistles catching the pale light of the hanging lanterns. They are masters of the mist, relying on complex codes and breath-notes to track every traveler who passes between the thirteen hanging towns. The captain steps forward, blocking the narrow track with a steady, unblinking gaze that pierces through your hesitation.\n\nYou must choose your next move carefully before the watchful guardians decide your fate for you.",
+   "exits": [
+    "Answer the Wardens in wind-call",
+    "Slip past the Wardens unseen"
+   ]
+  }
+ },
+ "missing": []
+}

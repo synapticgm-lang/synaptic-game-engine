@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION sg-1-2-3-4
+TITLE: The Lower Quarry Pit
+TEXT: Heavy timbers shift beneath your boots with a dry, groaning groan as you navigate the deep gravel pit of the lower quarry. A pile of damp pit-props threatens to slide down the slope, dislodging sharp shards of slate that clatter into the dark below. Your hooded burner casts a flickering amber glow against the damp earth walls while you search for firmer footing. // You can scramble up the loose shale toward the switchback trail, or edge carefully past the rust-stained props toward the parish boundary.
+EXIT 1: Climb toward the shale switchback
+EXIT 2: Skirt the pit-props toward the parish line
+@@END
+@@SECTION sg-1-2-3-5
+TITLE: The Cattle Gate Warning
+TEXT: Scrawled in greasy charcoal across the weathered timber of the cattle-gate, a blunt message warns of poisoned well-heads lying further down the track. The cold ceramic key inside your travel coat presses heavily against your ribs as you study the hasty warning marks. A sharp desert wind whistles through the iron post, carrying the faint, dry scent of alkali dust from the basin floor. // You must choose whether to follow the low trail past the warning, take the higher ledge above the grey expanse, or slip into the limestone bluff's deep cleft.
+EXIT 1: Follow the low track past the gate
+EXIT 2: Climb the high ledge toward the white cairn
+EXIT 3: Seek shelter in the limestone bluff
+@@END
+@@SECTION sg-1-2-3-6
+TITLE: The Silt-Cliff Overhang
+TEXT: Sharp sulphur stings your nostrils as you pause under the grey overhang of the silt-cliff to trim the charred wick of your ember-lamp. The banked coals pulse with a dull red warmth, keeping the chill of the rising night wind at bay. Loose dust trickles down from the dry earth above, ticking against your woollen cloak like falling gravel. // You can press onward toward the white cairn on the ledge, slip away into the limestone cleft, or strike your lamp directly into the volatile air of the old lime-kiln.
+EXIT 1: Head toward the white stone cairn
+EXIT 2: Slip into the limestone cleft
+EXIT 3: Take the reckless way
+@@END
+@@SECTION sg-1-2-3-7
+TITLE: The Sheep-Dip Wire
+TEXT: Tangled nests of rusted barbed wire catch sharply at the hem of your travel-trousers near the dry, cracked bed of the sheep-dip. You pause to unhook the heavy wool, your hooded lamp casting long, skeletal shadows across the sunken concrete troughs. The dry wind howls continuously through the broken wire fences, rattling loose bits of metal against the parched stone. // You can press upward toward the edge of the western quarry-cut or make your way toward the high ledge marked by white stones.
+EXIT 1: Climb toward the western quarry-cut
+EXIT 2: Walk toward the white stone ledge
+@@END
+@@SECTION sg-1-2-3-8
+TITLE: The Windy Dry Wash
+TEXT: A sudden, violent gust sweeps across the windy lip of the dry wash, threatening to blow out your precious lantern flame entirely. You cup your gloved hands around the iron chimney, feeling the intense heat of the banked coals flare against your palms. Below the bank, the cracked earth stretches away into grey twilight toward the distant salt basin. // You can push onward toward the parish milestone, skirt the limestone bluff's shadow, or retrace your steps toward the drying racks.
+EXIT 1: Head toward the parish milestone
+EXIT 2: Pass along the limestone bluff
+EXIT 3: Turn back
+@@END
+@@SECTION sg-1-2-3-9
+TITLE: The Tanner's Paddock
+TEXT: Dull and green against the grey dust, an old brass button gleams in the dirt as you glance down behind the broken stone wall of the tanner's paddock. The smell of old hides and lime still clings faintly to the crumbling mortar despite years of drought. Your hooded burner swings gently from your fingers, casting a rhythmic circle of orange light over the rubble. // You can continue toward the parish milestone, climb up toward the high stone ledge, or seek the shelter of the limestone bluff.
+EXIT 1: Walk toward the parish milestone
+EXIT 2: Climb toward the high ledge
+EXIT 3: Make for the limestone bluff
+@@END
+@@SECTION sg-1-2-3-10
+TITLE: The Alkali Sump
+TEXT: Deep, cracking footprints form instantly in the crust of the alkali sump beneath your boots, filling immediately with fine white dust that coats your ankles. The landscape here is bleached and silent, save for the crunch of salt crystals breaking under your tread. Your lamp casts a warm, steady glow that makes the surrounding white expanse look like fields of shattered ice. // You can struggle across the steep scree slope of the rim or follow the path toward the old toll-gate.
+EXIT 1: Traverse the steep scree slope
+EXIT 2: Head toward the rusted toll-gate
+@@END
+@@SECTION sg-1-2-3-11
+TITLE: The Wind-Pump Shadow
+TEXT: Stale tallow and rusted iron rise heavily from a damp bundle of rags hidden in the deep shadow of the dismantled wind-pump. The skeletal wooden tower creaks softly above you in the dry draft, its shattered blades pointing silently toward the east. Your lamp flickers in the draft, throwing long, jittery beams across the parched earth. // You can make your way toward the white stone cairn on the ledge or cross the steep scree slope toward the basin.
+EXIT 1: Walk toward the white stone cairn
+EXIT 2: Cross the steep scree slope
+@@END
+@@SECTION sg-1-2-3-12
+TITLE: The Fossil Milestone
+TEXT: Chipped from a dense lump of fossil coral, an old milestone stands beside the track with a tin mug hanging from a bent iron nail on its side. The metal clinks softly against the stone whenever the evening wind shifts through the scrub. Your hooded lamp provides the only warmth in the rapidly chilling air of the rim road. // You can follow the trail onward toward the iron-studded post of the old toll-gate.
+EXIT 1: Continue toward the old toll-gate
+@@END
+@@SECTION sg-1-2-3-13
+TITLE: The Magistrate's Hedge
+TEXT: Dry hawthorn branches snap beneath your weight as you slip through a withered gap in the magistrate's fence. The thorny hedge has turned entirely to bone under years of relentless sun, offering no shelter but plenty of snags for your woolen cloak. Your burner swings steadily at your side, its coals glowing a deep, banked red. // You can follow the path toward the rusted toll-gate or push ahead toward the gallows-frame of the boundary marker.
+EXIT 1: Head toward the rusted toll-gate
+EXIT 2: Press toward the boundary gallows-frame
+@@END

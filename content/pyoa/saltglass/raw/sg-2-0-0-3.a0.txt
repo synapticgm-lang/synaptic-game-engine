@@ -1,0 +1,68 @@
+Gemini said
+
+@@SECTION sg-2-0-0-3
+TITLE: The Salt-Peddler's Bargain
+TEXT: Crouching behind a bleached camel skull, a wandering salt-peddler named Throm offers stale dried melon rinds for a pinch of coal from your lamp. The blinding haze shimmers around his thin frame as he waits anxiously for your decision, clutching his leather pouch of grey crystals. // You must weigh the value of your precious fuel against the gnawing hunger in your stomach before he loses his nerve and scurries back into the white glare.
+EXIT 1: Trade a pinch of coal for dried melon rinds
+EXIT 2: Refuse the barter and keep your embers banked
+EXIT 3: Ignore his frantic whispers and stride past the skull
+@@END
+@@SECTION sg-2-0-1-0
+TITLE: The Heat-Warped Foundation
+TEXT: Beneath a canopy of heat-warped air, you pass the crumbling foundation of an old watch-tower where a discarded iron bucket rattles in the empty wind. This hollow clatter reminds you how thin the margin is between survival and bone-dry ruin out here on the open flats. // Several faint tracks diverge into the shimmering distance, offering different routes through the blinding expanse as the midday heat presses down like lead.
+EXIT 1: Follow the faint track toward the horizon
+EXIT 2: Skirt the massive mound of fused green slag
+EXIT 3: Inspect the abandoned refugee cart ahead
+EXIT 4: Dodge the sudden whirl of stinging alkali dust
+@@END
+@@SECTION sg-2-0-1-1
+TITLE: The Sleeping Patrol
+TEXT: Keeping your ember-lamp completely shuttered and cold, you slip silently past a sleeping patrol of Salt Court toll-guards huddled in the deep shade of a basalt monolith. Moving with deliberate care saves both your coal and your anonymity in one lucky stride, leaving the snoring sentries behind in the dust. // The open basin stretches out before you, presenting multiple winding paths away from the dangerous shadow of the guards.
+EXIT 1: Head deeper into the silent basin alone
+EXIT 2: Inspect the cargo of the abandoned refugee cart
+EXIT 3: Approach the elderly scavenger polishing singing glass
+@@END
+@@SECTION sg-2-0-1-2
+TITLE: The Alkali Ridge
+TEXT: A low ridge of crystallized alkali blocks your direct path, forcing you to scramble over jagged, crumbling mineral teeth that threaten to crush the ceramic Seedkey tucked securely inside your inner belt pouch. Every handhold is sharp enough to slice leather, demanding absolute precision with every step. // Beyond the treacherous crest, the landscape opens into swirling dust and quiet expanses where new directions wait to be chosen.
+EXIT 1: Push forward into the swirling alkali dust
+EXIT 2: Seek out the elderly scavenger resting on the pavement
+@@END
+@@SECTION sg-2-0-1-3
+TITLE: The Glass-Diver's Warning
+TEXT: An old glass-diver named Corin sits upon a salt-caked crate scraping brine from his goggles, muttering dire warnings about sudden sinkholes opening beneath the crust. His dry cough matches the abrasive whistle of the rising wind as he points a weathered finger toward the treacherous ground ahead. // You must choose your next route carefully to avoid the hidden cavities yawning beneath the white salt.
+EXIT 1: Walk toward the flat salt-pavement where Orla sits
+EXIT 2: Cross the rotting timbers of the collapsed brine-conduit
+EXIT 3: Veer away from the flapping Salt Court banner
+@@END
+@@SECTION sg-2-0-1-4
+TITLE: The Shimmering Snail Trail
+TEXT: You cross a flat expanse of pink-tinted salt where thousands of crystallized snail shells crunch beneath your soles like broken china, leaving a clear trail that any keen tracker could follow across the blinding flats. The unnerving sound of crushing shells echoes loudly in the heavy air, drawing unwanted attention to your passage. // Several paths branch away from the crunching crust, leading toward different hazards in the distance.
+EXIT 1: Step carefully across the collapsed underground conduit
+EXIT 2: Give the snapping Salt Court banner a wide berth
+EXIT 3: Wade cautiously into the dry drainage ditch of glass reeds
+@@END
+@@SECTION sg-2-0-1-5
+TITLE: The Humming Boundary
+TEXT: A solitary metal boundary marker hums softly in the dry heat, vibrating with some residual low-frequency current from the Old Lensfolk days that sets your teeth on edge as you hurry past the humming iron. The strange metallic resonance hangs heavy in the stagnant air, making the skin on your arms prickle. // Traveling completely alone and unencumbered by a guide allows you to notice subtle details that others might miss in the landscape.
+EXIT 1: Inspect the subtle color shift in the alkali crust
+EXIT 2: Wade cautiously through the dry drainage ditch
+@@END
+@@SECTION sg-2-0-1-6
+TITLE: The Split Waterskin
+TEXT: You pause to examine a discarded leather waterskin split wide open by the sun, its dark stain vanished into the crust long ago, warning you of the brutal thirst awaiting those who misjudge the distance between wells. The empty shell of leather curls like a dead leaf against the harsh white salt. // Various routes stretch out before you, each carrying its own silent warning about the scarcity of water.
+EXIT 1: Investigate the subtle color shift in the crust
+EXIT 2: Enter the dry drainage ditch choked with glass reeds
+EXIT 3: Watch the lone sentry flash a mirror signal
+@@END
+@@SECTION sg-2-0-1-7
+TITLE: The Wheeling Gulls
+TEXT: A flock of white-feathered alkali gulls wheels overhead against the pale zinc sky, their sharp cries echoing across the empty flats like mockery from creatures that know where every hidden moisture pocket lies. Their wings catch the glaring sunlight as they swoop low over the horizon and vanish into the haze. // A steep ridge of hard-packed salt looms ahead, offering a vantage point to survey the grueling trek.
+EXIT 1: Climb the steep ridge of salt and pottery fragments
+@@END
+@@SECTION sg-2-0-1-8
+TITLE: The Crusted Slush
+TEXT: You wade through a shallow basin of crusted alkaline slush that sucks greedily at your boot-heels, threatening to pull you off balance and exhaust your leg muscles before you reach the firm ground beyond. The thick paste clings stubbornly to your leather boots, making every single forward step a heavy battle against suction and weight. // Two distinct paths lie beyond the sticky basin, leading deeper into the heart of the flats.
+EXIT 1: Climb the steep ridge of hard-packed salt
+EXIT 2: Examine the weathered basalt milestone half-buried in the crust
+@@END

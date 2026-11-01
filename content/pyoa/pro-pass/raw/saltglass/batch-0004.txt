@@ -1,0 +1,28 @@
+MODEL Pro
+
+[
+{
+"section": "sg-1-0-5-3",
+"field": "page",
+"old": "In the dust just outside the guarded portal",
+"new": "In the dust just beyond the heavy gates",
+"kind": "prose",
+"reason": "Avoids awkward repetition of the scene title in the opening phrase."
+},
+{
+"section": "sg-1-1-0-1",
+"field": "exit:2",
+"old": "Striding past the cattle-pound unescorted with the key held tight",
+"new": "Stride past the cattle-pound unescorted with the key held tight",
+"kind": "choice",
+"reason": "Matches the imperative verb tense used in the other exits."
+},
+{
+"section": "sg-1-1-1-0",
+"field": "page",
+"old": "weight of your copper coin against his knuckles. The glass-diver flips the metal once, listening for the sharp ring of true silver-alloy",
+"new": "weight of your silver coin against his knuckles. The glass-diver flips the metal once, listening for the sharp ring of true silver-alloy",
+"kind": "prose",
+"reason": "Corrects a minor logic clash (testing a copper coin for the sound of silver)."
+}
+]

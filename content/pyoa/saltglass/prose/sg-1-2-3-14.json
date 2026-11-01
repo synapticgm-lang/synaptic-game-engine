@@ -1,0 +1,89 @@
+{
+ "batch": "sg-1-2-3-14",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-1-2-3-14": {
+   "title": "The Cracked Silt",
+   "text": "Across the grey silt of the former duck-pond, a dry crust crackles like thin eggshells beneath your deliberate tread. Each step disturbs a pale film of alkaline dust that clings to your boots and dulls the brass of your lamp. The winter reeds stand like rusted iron wires, brittle and lifeless in the bitter wind blowing off the high crags. Farther ahead, the path dips toward a narrow gap in the stone wall where the basin air smells faintly of old lime and damp stone. You adjust the cold ceramic key in your inner pocket and weigh the value of pressing on into the dry expanse before the dusk settles.",
+   "exits": [
+    "Follow the narrow gap toward the basin"
+   ]
+  },
+  "sg-1-2-3-15": {
+   "title": "The Customs House Draught",
+   "text": "Near the crumbling brick foundation of the old customs house, a cold draught eddies around your ankles from the basin below. Weeds have split the mortar, and the timber roof caved in long before the wells failed, leaving only a skeletal hearth against the eastern wall. Your banked coal-lantern casts a warm, flickering glow across the charred floorboards, revealing scraps of old toll-manifests half-buried in grey sand. The wind whistles through the vacant window frames, carrying the scent of dry salt and distant copper-smoke from the lower terraces.",
+   "exits": [
+    "Step through the shattered doorway onto the lower track",
+    "Climb the broken stone steps toward the basin rim"
+   ]
+  },
+  "sg-1-2-4-0": {
+   "title": "The Final Switchback",
+   "text": "At the final switchback where the rim road breaks down into broken shale, you adjust your shoulder-strap before the great descent. Below you, the vast white stretch of the Saltglass Basin stretches out like a sheet of hammered tin under the pale afternoon glare. The air grows noticeably thinner here, carrying the sharp, metallic tang of fused glass and old salt pans. Your ember-lamp bumps gently against your hip, a steady weight that reminds you of the failing hearths back in Candlemere and the urgency of the journey ahead.",
+   "exits": [
+    "Descend onto the hard crust of the flats",
+    "Pause by the roadside to check your gear"
+   ]
+  },
+  "sg-1-2-4-1": {
+   "title": "The Quarry Cut",
+   "text": "Above the black drop of the western quarry-cut, the wind howls through the wire fences while your lamp casts long, dancing shadows. Jagged blocks of grey limestone hang suspended over the abyss where convict labor once carved out the town foundations. Down in the hollow, a rusted winch stands silent beside a blocked adit, its iron chain frozen solid in red rust. The path narrows sharply here, hugging the cliff face where every foothold feels precarious against the rushing draught.",
+   "exits": [
+    "Tread carefully along the cliff edge",
+    "Step into the shelter of the abandoned adit",
+    "Turn away from the drop and find another way"
+   ]
+  },
+  "sg-1-2-4-2": {
+   "title": "The Parish Milestone",
+   "text": "Beside the milestone that marks the end of the town parish, a discarded bundle of court writs flutters in the salt-rime. The faded ink on the parchment speaks of forgotten debts and seized water-rights, signed by magistrates who have long since abandoned their posts. The road ahead loses its paved crown, turning into a rough track of compacted gravel and wind-blown dust that leads straight into the glare of the lowlands. Your boots crunch softly on the edge of the parish boundary as you gaze into the empty distance.",
+   "exits": [
+    "Leave the parish behind and push onward",
+    "Examine the fluttering papers for any useful news"
+   ]
+  },
+  "sg-1-2-4-3": {
+   "title": "The Cairn of Doubts",
+   "text": "On the high ledge overlooking the grey expanse of the basin, a cairn of white stones marks where runners leave their final doubts. Small slips of dried reed-paper are wedged between the jagged rocks, bearing names, warnings, and quiet prayers for rain that never came. Your lamp flickers as a sudden gust catches the ridge, threatening the banked coals within the tin housing. You stand for a moment in the biting wind, feeling the immense scale of the dry sea stretching out beneath your boots.",
+   "exits": [
+    "Continue down the ridge toward the salt",
+    "Add a small pebble to the weathered pile"
+   ]
+  },
+  "sg-1-2-4-4": {
+   "title": "The Salt Court Warning",
+   "text": "In the cleft of the limestone bluff, an old metal sign warns that all wells beyond this point belong to the Salt Court. The brass letters have been scoured clean by wind-driven grit, gleaming coldly in the harsh light. A series of rusted iron stakes trace the boundary of their claimed jurisdiction, running down toward the grey flats like the ribs of an ancient leviathan. You check the seal of your pack to ensure the Seedkey is hidden securely out of sight from any passing toll-lord scouts.",
+   "exits": [
+    "Follow the line of iron stakes downward",
+    "Slip behind the limestone bluff to avoid the markers"
+   ]
+  },
+  "sg-1-2-4-5": {
+   "title": "The Scree Slope",
+   "text": "Across the steep scree slope of the rim's edge, a small landslide of loose shale clatters down into the dark abyss. The path here is little more than a goat-track of sliding grey stones that shift beneath your boots with every stride. Dust rises in small choking clouds, smelling of dry earth and sulfur. You keep your center of gravity low, using your free hand to steady yourself against the rock face while your lantern swings rhythmically at your side.",
+   "exits": [
+    "Scramble quickly across the unstable stones",
+    "Pause to let the dust settle before moving"
+   ]
+  },
+  "sg-1-2-4-6": {
+   "title": "The Rusted Toll-Gate",
+   "text": "By the iron-studded post of the old toll-gate, a rusted padlock hangs open from a staple that has rusted through completely. The heavy oak barrier has fallen away into the dirt, half-swallowed by grey salt-crust and creeping thorn bushes. No guards sit in the wooden watch-box today; only the dry wind rattles the empty lantern bracket overhead. You step over the splintered timber, leaving the guarded precincts of the upper rim behind you for good.",
+   "exits": [
+    "Walk past the broken barrier into the flats",
+    "Inspect the empty watch-box for dropped supplies"
+   ]
+  },
+  "sg-1-2-4-7": {
+   "title": "The Narrow Sheep-Path",
+   "text": "Beneath the gallows-frame of the old boundary marker, the track narrows to a single sheep-path choked with greythorn scrub. Thorny branches catch at your traveling cloak, and the ground beneath your feet grows increasingly chalky and dry. The distant murmur of Candlemere fades entirely, replaced by the hollow howling of the wind across the salt basins. You shield the glass of your lamp with one hand to keep the banked coals from being smothered by the blowing dust.",
+   "exits": [
+    "Push through the thicket along the ridge",
+    "Descend toward the lower salt pans",
+    "Follow the sheep-path deeper into the scrub",
+    "Turn back toward the warmth of the town"
+   ]
+  }
+ },
+ "missing": []
+}

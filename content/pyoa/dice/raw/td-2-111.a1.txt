@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-2-111
+TITLE: Hounds of the Low
+TEXT: Gaunt shapes detach themselves from the salt-crusted shadow of a turned hull, snarling with jaws dripping gray foam and sea-foulness. These beasts have lived on what the retreating brine spat ashore, growing bolder and leaner as the dry months stretch their hunger. They circle the small band of Drift Pilgrims, yellow eyes fixed upon the trembling children huddled beneath coarse wool cloaks. Your hand drops automatically to the heavy iron-shod timber staff at your side, planting your boots firmly into the damp, sucking silt. The lead hound lunges, a blur of matted fur and yellowed teeth, aiming straight for the nearest pilgrim's throat.
+EXIT 1: Strike hard against the lead hound
+@@END
+@@SECTION td-2-112
+TITLE: Snarls in the Silt
+TEXT: Salt cakes instantly into the fresh cuts along your forearms as the pack closes its ranks, driven by a frantic starvation that knows no fear of man or iron. The pilgrims chant a low, discordant supplication to the absent deep, throwing handfuls of dried kelp into the dusty wind while backing toward a ribbed cage of whale bones. You step forward to form a living wall between their ragged vestments and snapping jaws, lifting your timber stave to parry the lunging weight of a beast scarred by old brine burns. The air smells intensely of copper, wet hair, and the sharp, alkaline tang of exposed ocean floor.
+EXIT 1: Stand your ground with raised staff
+@@END
+@@SECTION td-2-113
+TITLE: Teeth in the Muck
+TEXT: Blood roars in your ears as three lean curs surge forward simultaneously, ignoring the heavy wood blows to claw directly up your chest with desperate, frantic energy. You twist your torso away from the tearing claws, planting your boots deeper into the unstable seabed while driving all your muscle and fury behind a two-handed thrust to keep their snapping jaws from your face. The brute weight threatens to drag you backward into the abrasive mud as your muscles strain against the onslaught, every fiber of your body burning with exertion.
+CHECK: Wrench free and shatter their charge
+@@END
+@@SECTION td-2-114
+TITLE: Torn Hide and Salt
+TEXT: A vicious snap of jaws tears deep through the thick wool of your sleeve, leaving a jagged row of white punctures along your forearm as a hound’s tooth scores the bone. You roar through the pain and lash out with a wild, desperate sweep of your staff, cracking ribs and sending the remaining curs yelping into the salt-mist. The pilgrims gather around you in the eerie quiet, binding your weeping wound with coarse linen strips soaked in bitter brine that burns like fire. You are left bruised, bleeding, and slower of foot, but the pack is scattered and the camp remains safe.
+EXIT 1: Gather your breath and limp onward
+@@END
+@@SECTION td-2-115
+TITLE: The Consecrated Drop
+TEXT: Steel and muscle find the necessary leverage, however narrowly, driving the fiercest of the brutes back into the muck with a sickening crunch of shattered bone. The surviving curs tuck their tails and vanish into the grey mists curling around the distant wrecks, leaving you chest-heaving and salt-encrusted upon the barren seabed. The oldest of the Drift Pilgrims steps forward, dipping a gnarled thumb into a small earthenware flask and pressing a cold, wet cross of sanctified foam onto your bleeding knuckle. He presses the stoppered glass firmly into your palm without a word, sealing a debt of salt and survival between you.
+GRANT: Vial of Consecrated Seawater
+EXIT 1: Return to the pilgrim camp
+@@END
+@@SECTION td-2-116
+TITLE: Grain of the Driftwood
+TEXT: You find a solid piece of grey wreckage timber cast up from an old merchant ketch, its grain tight and seasoned by decades of salt-soaking. Sitting on an overturned crab-basket near the flickering drift-fires, you steady your pocket-knife and begin peeling away the weathered outer layers to reach the pale, workable heartwood beneath. The pilgrims watch in silence, their murmured prayers rising and falling like distant surf while your blade curls long, fragrant ribbons of cedar onto the damp earth. Every cut must be precise, smoothed against your palm until the vessel takes the clean, hollow curve of an offering basin.
+EXIT 1: Shape the rim with careful blade-work
+@@END
+@@SECTION td-2-117
+TITLE: Offerings for the Sullen Deep
+TEXT: The completed bowl rests in your hands, smooth and pale as polished bone, catching the wan light of the low-slung sun hanging over the dry horizon. You carry it through the ring of kneeling pilgrims, setting it gently upon their driftwood altar among dried starfish and iron nails left behind by superstitious sailors. In return, an old woman ladle-pours a steaming broth of salted kelp and dried cockles into your canteen, dropping a bundle of dry tallow tapers into your pack alongside hard biscuit. The warmth settles deep into your bones, steeling you against the damp chill of the endless seabed.
+EXIT 1: Take your leave of the pilgrims
+@@END
+@@SECTION td-2-118
+TITLE: Carving the Offerings
+TEXT: The wood grain twists unexpectedly against the edge of your blade, threatening to splinter the delicate rim you have spent an hour shaping from the brine-cured timber. You ease your breathing, resting your thumb along the steel spine to steady your hand against the erratic gusts sweeping across the open seabed from the north. The light is fading fast behind the skeletal ribs of the nearby wrecks, casting long, wavering shadows across the work as you press the edge forward for the final, critical smoothing cut.
+CHECK: Pare the stubborn grain with precision
+@@END
+@@SECTION td-2-119
+TITLE: Split Timber and Salt Tears
+TEXT: A sudden, vicious gust catches your sleeve and diverts the blade with a sharp crack, slicing clean through the thin rim of the offering bowl and ruining hours of meticulous labor. You toss the ruined timber into the sand with a muttered curse, rubbing your cramped fingers as the watching pilgrims murmur softly among themselves at the spoiled craft. They still share a portion of their meager broth and hard biscuit with you out of pity, but the loss of your intended gift leaves you empty-handed and sharp with frustration as the cold sets in.
+EXIT 1: Swallow your pride and eat
+@@END
+@@SECTION td-2-120
+TITLE: The Carver's Wages
+TEXT: The blade slides smooth and true, however narrowly, shaving away the final curl of stubborn timber to leave the offering bowl perfectly balanced and satin-smooth to the touch. The pilgrims gasp in genuine admiration as you present the finished vessel, immediately filling it with dried sea-lavender and silver coins recovered from drowned pockets. They press a warm wooden bowl of thick broth into your hands alongside a sturdy canvas bundle of dried rations, murmuring blessings for the road ahead. You walk away richer in supplies and goodwill, your fingers aching pleasantly from the honest work.
+GRANT: Sturdy Rations and Favor
+EXIT 1: Return to the pilgrim camp
+@@END

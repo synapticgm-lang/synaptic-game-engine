@@ -1,0 +1,76 @@
+{
+ "batch": "vh-4-0-2-5",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-0-2-7": {
+   "title": "Serac of the Ropewrights",
+   "text": "Frozen timber steps ascend the vertical blue serac where a stout Ropewright knot secures the guide-line against the rising gale. The hemp is stiff with frost, yet the whipping knots hold fast with the unyielding strength of an ancient mountain oath. Every breath billows white in the bitter updraft as you haul yourself upward, muscle and bronze working together against the steep gravity of the glacier wall.",
+   "exits": [
+    "Navigate the sloping blue shelves",
+    "Follow the weathered signpost toward the stairs"
+   ]
+  },
+  "vh-4-0-2-8": {
+   "title": "Dazzling Glacial Basin",
+   "text": "Blinding sunlight reflects off the glacial basin, turning every ice-ridge into a dazzling hazard of white and blue that stings unprotected eyes. The glare forces you to squint through narrowed lids while the heavy cradle on your shoulders warms slightly under the direct glare. Down in the trough, the wind howls a hollow tune through the crevasses, scattering fine diamond dust across the crusted surface.",
+   "exits": [
+    "Traverse the central snow bridge",
+    "Lean into the biting trough gale"
+   ]
+  },
+  "vh-4-0-2-9": {
+   "title": "The Abandoned Hoist",
+   "text": "An abandoned basket hoist hangs crookedly over the abyss while the icy wind tests the strength of its frayed rigging with a dismal creak. Rusted chains dangle into the gray fog below, swaying rhythmically with the mountain drafts. You pause beneath the trembling iron frame, weighing the safety of the open ledge against the uncertain stability overhead.",
+   "exits": [
+    "Press onward into the biting trough gale",
+    "Head toward the weathered lower signpost",
+    "Step across the blue ice fracture"
+   ]
+  },
+  "vh-4-0-2-10": {
+   "title": "Frost on the Stairhead",
+   "text": "Slick frost veneers the stone stairhead where a weary traveler named Kaelen rests his frostbitten fingers against his knees. He murmurs a low warning about the stability of the lower passages before coughing into a woolen scarf. The mule stamps a heavy hoof against the rime-covered stone, impatient to be moving away from the bitter draft.",
+   "exits": [
+    "Plunge into the freezing fog",
+    "Cross over the jagged ice fracture",
+    "Adjust the frozen leather straps"
+   ]
+  },
+  "vh-4-0-2-11": {
+   "title": "Lengthening Blue Shadows",
+   "text": "Heavy blue shadows lengthen across the moraine ridge as the afternoon freeze hardened the melting snow bridges into brittle glass. The temperature drops sharply with the fading sun, turning the mist into stinging crystals that cling to your coat. You check the fastenings of the bronze Clapper one last time before committing to the darkening descent.",
+   "exits": [
+    "Step across the blue ice fracture"
+   ]
+  },
+  "vh-4-0-2-12": {
+   "title": "Squall on the Ridge",
+   "text": "Sharp ice granules sting your cheeks on the exposed ledge while Biscuit lowers his head against the rising squall with a stubborn grunt. The mule's breath plumes thick and gray into the freezing air as he digs his iron-shod hooves into the crusted drift. Below the staging, the drop-off disappears entirely into churning banks of white cloud and swirling spindrift.",
+   "exits": [
+    "Cross the jagged ice fracture",
+    "Struggle with the frozen leather straps",
+    "Turn back toward the upper staging"
+   ]
+  },
+  "vh-4-0-3-0": {
+   "title": "Gulf of Fragile Spans",
+   "text": "Fragile ice bridges span the bottomless blue gulf while every step risks a collapse into the freezing depths below. The thin crust crackles ominously underfoot, warning of hidden voids where the glacier pulls apart in the deep cold. You distribute your weight carefully across the soles of your boots, keeping the heavy bronze pendulum balanced dead-center upon your spine.",
+   "exits": [
+    "Descend the slanted ice rungs",
+    "Balance across the narrow moraine crest"
+   ]
+  },
+  "vh-4-0-3-1": {
+   "title": "Markers in the Drift",
+   "text": "Scratched brass markers on the rock face indicate the old winter trail now choked with blue-tinted drifts of packed snow. Each marker bears the stamp of the Vesperhold guild-masters, half-buried under decades of accumulated rime and ice. You clear the frost from one plaque with a gloved thumb, confirming your bearings before pushing through the powdery barrier.",
+   "exits": [
+    "Take the slanted ice rungs down",
+    "Follow the narrow moraine crest"
+   ]
+  }
+ },
+ "missing": [
+  "vh-4-0-2-5",
+  "vh-4-0-2-6"
+ ]
+}

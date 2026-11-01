@@ -1,0 +1,91 @@
+{
+ "batch": "vh-6-2-2-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-2-2-2": {
+   "title": "The Blind Weaver",
+   "text": "Sitting beside the towering heaps of grey coal-bins, Marda the blind weaver runs calloused fingers across the coarse wool of your coat to determine whether you bring honest trade or bitter trouble. Her sightless eyes turn toward the muffled hum of the bronze clapper strapped against your spine, sensing the heavy weight of Vesperhold resting upon your shoulders. The surrounding air carries the sharp, metallic tang of unrefined ore and damp stone, reminding you that time grows short in the cavernous halls of Lowgate.\n\nYou must decide how to answer her touch before the lingering ash settles any further into your clothes.",
+   "exits": [
+    "Skirt the glowing molten slag stream",
+    "Squeeze past the cooling ovens",
+    "Listen to the coin-collectors arguing nearby"
+   ]
+  },
+  "vh-6-2-2-3": {
+   "title": "The Hissing Vents",
+   "text": "High-pressure steam vents hiss sharply from a fractured brass pipe overhead, bathing the dark stone alcove in a blinding veil of scalding white vapour. You shield your face with a soot-stained sleeve as the damp heat clings instantly to your woollen garments, making it hard to draw a clean breath. Through the rushing roar of escaping steam, the distant rhythmic pounding of the great forge hammers vibrates straight through the flagged floorboards.\n\nThe blinding cloud begins to thin slightly, revealing narrow paths leading deeper into the foundry's dim labyrinth.",
+   "exits": [
+    "Step toward the flickering wall-bracket lamp",
+    "Inspect the smudged debt ledger on the keg"
+   ]
+  },
+  "vh-6-2-2-4": {
+   "title": "The Burdened Spine",
+   "text": "You heft the heavy bronze clapper higher on your back as the hardened leather straps bite deeper into your bruised collarbones, utterly ignoring the numbness slowly creeping into your cold fingertips. The relentless weight of Orison's tongue seems to pull you down toward the stone floor with every step, a constant reminder of the mountain journey left behind. Sparks drift lazily through the dim air like dying fireflies, caught in the draft of the massive bellows laboring in the distance.\n\nThe corridor ahead branches out into the smoke-choked shadows, demanding a choice of direction.",
+   "exits": [
+    "Squeeze through the narrow gap between ovens",
+    "Creep closer to the supervisor's noisy office"
+   ]
+  },
+  "vh-6-2-2-5": {
+   "title": "The Graphite Crucible",
+   "text": "Deep in the massive shadow of a towering graphite crucible, an old woman stirs a thick pot of lentil mash with a splintered oar, completely ignoring your exhausted approach. The rich, earthy smell of boiled grain cuts sharply through the sulfurous coal-smoke hanging thick beneath the iron rafters. A faint ember glows from beneath her makeshift hearth, casting long, wavering shadows across her lined face and your dust-covered boots.\n\nYou wait a moment for her to look up, but she only stirs the porridge with steady, rhythmic indifference.",
+   "exits": [
+    "Walk past toward the coin-collectors' office",
+    "Head for the ventilation hatch in the draft"
+   ]
+  },
+  "vh-6-2-2-6": {
+   "title": "The Tangled Wire",
+   "text": "A heavy bundle of discarded copper wire catches your trailing stride in the gloom, sending a sudden metallic clatter echoing sharply across the cavernous foundry floor. You freeze instantly, holding your breath as the harsh clatter fades into the constant, low-frequency thrum of the mountain machinery. The dark workspace around you appears entirely deserted save for the slow drift of black soot settling over rusted iron frameworks.\n\nYou must choose your next footing carefully before the noise draws unwanted attention from the foremen.",
+   "exits": [
+    "Move toward the drafty ventilation hatch",
+    "Pace past the rows of silenced hand-hammers",
+    "Watch the spinning iron wheel on its cord"
+   ]
+  },
+  "vh-6-2-2-7": {
+   "title": "The Auxiliary Bellows",
+   "text": "Convinced that the main hearth has finally died in this forsaken quarter, you duck down a low side-tunnel toward the auxiliary bellows-shed to find another way inside. The stone walls here are slick with cold condensation, smelling strongly of stale grease and stagnant river water rather than coal smoke. Your tired legs burn with every upward step along the sloping floor, but the desperate need to recast the bell keeps you moving.\n\nThree distinct routes diverge before you in the damp gloom of the subsidiary passage.",
+   "exits": [
+    "Follow the path toward the hanging iron wheel",
+    "Cross the wet wooden drainage grating",
+    "Show your frost-bitten fingers to the gatekeeper"
+   ]
+  },
+  "vh-6-2-2-8": {
+   "title": "The Overhead Crane",
+   "text": "White-hot sparks cascade from an overhead crane chain as it hauls an empty ingot mould across the rusted rafters, filling the damp air with the fierce, acrid smell of hot oil. You duck low beneath the swinging burden, watching heavy grease drip slowly from the overhead pulleys onto the flagstones inches from your pack. The deafening screech of iron sliding on iron vibrates through your teeth, echoing off the blackened stone walls of the foundry.\n\nThe chain clanks into the distance, leaving you standing at a crossroads of soot-blackened tunnels.",
+   "exits": [
+    "Walk past the rows of silenced hand-hammers",
+    "Head toward the spinning wheel on its cord",
+    "Step cautiously across the wet drainage grating"
+   ]
+  },
+  "vh-6-2-2-9": {
+   "title": "The Buttress Pillar",
+   "text": "You lean your tired forehead against the cool stone pillar of a massive structural buttress, letting the freezing damp soothe the throbbing ache behind your eyes. The heavy wooden cradle holding the bronze clapper rests against the masonry with a soft, dull thud as you catch your breath. Low voices murmur from somewhere beyond the thick stone pier, speaking in the rough, practical dialect of Lowgate forge-masters.\n\nThe chill from the stone begins to seep through your hair, urging you back onto your feet.",
+   "exits": [
+    "Present your glacier-scarred fingers to the guard",
+    "Duck under the swinging chain-hoist's path"
+   ]
+  },
+  "vh-6-2-2-10": {
+   "title": "The Stray Mongrel",
+   "text": "A thin, mangy mongrel darts out suddenly from behind a towering stack of refractory bricks, snapping viciously at your trailing pack-strap before vanishing back into the shadows. You stumble half a step sideways, catching your balance against a grease-smeared wooden post while the clapper hums a dull note of warning against your spine. The sharp odor of wet dog and coal dust lingers in the frigid air around you.\n\nTwo distinct paths open up before you amidst the labyrinth of brick stacks and iron machinery.",
+   "exits": [
+    "Follow the trail of the discarded muffler",
+    "Approach the tired workers sharing bread"
+   ]
+  },
+  "vh-6-2-2-11": {
+   "title": "The Silt Trough",
+   "text": "You pause beside a long wooden trough of dark river water, watching your soot-streaked reflection ripple and distort away as tiny bubbles rise steadily from the heavy silt below. The water smells of mountain mud and old iron, perfectly still except for the vibrations sent down by the distant foundry works. Your shoulders ache with a deep, bone-weary fatigue that no amount of cold air can properly numb.\n\nThe quiet moment slips away as the muffled sounds of working machinery return to the forefront.",
+   "exits": [
+    "Avoid the swinging hook of the chain-hoist",
+    "Listen to the deep subsonic hum of Orison"
+   ]
+  }
+ },
+ "missing": []
+}

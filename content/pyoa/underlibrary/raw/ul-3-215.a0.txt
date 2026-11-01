@@ -1,0 +1,69 @@
+@@SECTION ul-3-215
+TITLE: Threshold of the Vault
+TEXT: Step across the broken bronze threshold where the city's ancient weights lose their hold, leaving behind the hum of the cataloguing desks for absolute, crushing quiet. The air hangs thick with the scent of unread vellum and cold stone, undisturbed by draft or footfall. Before you stands the primary vault of the archives, its heavy metal plates cold to the touch and scored with centuries of marginalia. Your lamp flickers low, casting long, wavering shadows across the floor where dust motes settle like fallen ash. There is no sound save for the rhythmic, distant throb of the world overhead, reminding you that time above continues while you linger in the deep dark.
+EXIT 1: Descend into the vault
+@@END
+@@SECTION ul-3-216
+TITLE: Weight of Names
+TEXT: Millions of forgotten monikers press against your temples with the force of an oncoming tide, threatening to splinter your focus into a thousand drifting fragments. You grit your teeth against the mounting hysteria, forcing your breath to steady as you reach into the swirling vortex of discarded history. With a sharp, decisive pluck, you snatch a single authentic leaf from the air before the surrounding chorus can swallow it whole. The parchment grows heavy in your trembling hand, cold and dense with the unvarnished truth of an era cast aside by the city above.
+EXIT 1: Proceed with the recovered record
+@@END
+@@SECTION ul-3-217
+TITLE: Threading the Vellum
+TEXT: Coiled ribbons of stiff parchment snap outward from the shelf like the guard-springs of an offended animal, hissing softly as they sweep through the damp air. You dip your shoulder and slide past the sweeping edge with practiced lightness, your coat brushing the parchment with barely a sound. Reaching deep into the layered binding, your fingers locate the concealed opening of the hidden slip-pocket. A quick flick of your blade parts the last stubborn threads, revealing the prize tucked securely within the dry folds.
+EXIT 1: Examine the hidden prize
+@@END
+@@SECTION ul-3-218
+TITLE: The Counter Directive
+TEXT: Leaning casually against the sorting counter, you lay down a slip bearing a thoroughly forged stamp of administrative disapproval with an air of absolute boredom. The chief sorter squints over brass-rimmed spectacles, his tongue ticking against his teeth as he runs a weathered thumb across the spurious ink. You offer a dry remark about inventory quotas to mask the racing of your pulse, holding his gaze until he grunts and reaches for the ring of heavy iron keys hanging from his belt. A moment later, the master key rests in your palm, still warm from his coat.
+EXIT 1: Take the master key below
+@@END
+@@SECTION ul-3-219
+TITLE: Cutting the Binding
+TEXT: Vellum tendrils lash from the shadowy shelf-ends like thorny briars, seeking to entangle your wrists and pin your fingers to the wooden grain. You twist sideways with fluid ease, letting the stiff strips whistle harmlessly past your ear as you close the distance to the target volume. Your blade traces the false seam of the pasted endpaper, slicing cleanly through the hidden pocket where the contraband document lies concealed. The leather lining parts with a soft sigh, releasing a faint whiff of dried lavender and old ink.
+EXIT 1: Retrieve the hidden document
+@@END
+@@SECTION ul-3-220
+TITLE: Steadying the Descent
+TEXT: The hempen rope groans under your weight as the wooden ledge tilts violently toward the black void below, sending a cascade of loose slate rattling into the dark. You lock your heels against the slick stone face, throwing your weight backward to check the sickening momentum of the swinging line. Your muscles burn with the strain as the fraying strands bite hard into your palms, but you hold your ground until the frantic swaying finally subsides into a slow, manageable arc.
+EXIT 1: Continue the descent downward
+@@END
+@@SECTION ul-4-001
+TITLE: Descent into the Annexe
+TEXT: Cold air rises from the spiraling stone stairs, tasting strongly of lamp-oil and centuries of undisturbed dust that coat the banisters in a thick gray pelt. Each step downward sinks deeper into a profound hush, where the distant clamor of the reading rooms fades into a low, resonant thrumming within the bedrock. Your boots strike the flags with hollow reverberations, echoing off high vaulted ceilings lost in the gloom above. Ahead, the corridor narrows between towering stacks of leather-bound folios that seem to lean inward as if straining to catch the sound of your approach.
+EXIT 1: Approach the heavy bulkhead
+@@END
+@@SECTION ul-4-002
+TITLE: The Iron Threshold
+TEXT: Heavy iron plating blocks the end of the passage, bearing the deep indentations of ancient locks and seals that have long since rusted into immovable red crusts. Wisps of vapor curl from the narrow gap beneath the door, carrying faint, overlapping murmurs of voices that speak in languages no living scholar remembers. The corridor behind you grows colder still, as though the air itself is being drawn forward into the sealed vault by some unseen draft. To pass further requires more than a steady hand and a turned key; it demands a reckoning with the architecture of the deep dark.
+EXIT 1: Turn the rusted iron latch
+EXIT 2: Seek counsel from the phantom scholar
+EXIT 3: Decipher the carved warning glyphs
+EXIT 4: Answer the whispering wall parchment
+@@END
+@@SECTION ul-4-003
+TITLE: Silent Fingers
+TEXT: The latch gives a faint, protesting click as your thumb eases it upward, the sound magnified a hundredfold in the absolute stillness of the stack. You freeze instantly, holding your breath while a nearby sentinel volume turns its pages with a dry, rustling hiss like a resting snake. When the movement ceases, you slide your fingers deeper into the recess, feeling the cold, familiar bite of iron. A sharp tug frees the hidden skeleton key from its magnetic slot in the masonry, resting heavy and cool in your palm.
+EXIT 1: Test the key in the lock
+@@END
+@@SECTION ul-4-004
+TITLE: The Second Tumbler
+TEXT: Heavy oil coats the interior mechanism, catching the meager light of your lamp and reflecting a dull, oily sheen across the ironwork. You guide the skeleton key into the keyhole with infinite care, feeling for the distinct resistance of the primary tumbler as it rises to meet the wards. The metal grinds against metal with a muffled scrape that makes your teeth ache, but the obstacle yields by degrees. Beyond the barrier, a narrow service alcove opens into deeper darkness, smelling sharply of ozone and old paper.
+EXIT 1: Step into the alcove
+@@END
+@@SECTION ul-4-005
+TITLE: Reaching for the Latch
+TEXT: Your fingertips hover millimeters from the cold iron handle while the sentinel scroll above shifts its weight with a slow, deliberate rustle that betrays an awakening awareness. Every instinct screams to snatch your hand back before the vellum can snap shut and trap your fingers in its heavy wooden jaws. You force your hand to remain perfectly steady, measuring the interval between the creature's rhythmic pulses against the pounding of your own heart as you begin to turn the metal.
+CHECK: Bypass the sentinel with steady fingers
+@@END
+@@SECTION ul-4-006
+TITLE: Caught in the Vellum
+TEXT: A dry, papery snap shatters the silence as the sentinel volume slams shut with vicious speed, catching your sleeve and pinning your arm against the cold iron shelving. Pain shoots through your shoulder as you wrench yourself free, leaving a ragged strip of heavy wool behind in the snapping jaws of the book. You stumble back against the opposite stack, clutching a bleeding forearm while the dark pages rustle with a mocking, dry chatter in the gloom.
+EXIT 1: Retreat to the side passage
+@@END
+@@SECTION ul-4-007
+TITLE: Slipping Past Unseen
+TEXT: The heavy latch yields with a soft, buttery slide that betrays no sound to the resting sentinel, allowing you to slip through the gap before the vellum can register your presence. Your fingers close around the cold metal of the skeleton key hanging from the hidden peg, securing the prize without disturbing a single particle of dust. You withdraw your hand into the safety of the shadows, clutching the small iron instrument that unlocks the lower tiers.
+GRANT: A master skeleton key
+EXIT 1: Answer the whispering wall
+@@END

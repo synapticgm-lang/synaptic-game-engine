@@ -1,0 +1,113 @@
+{
+ "batch": "cf-4-120",
+ "sections": {
+  "cf-4-120": {
+   "title": "The Balanced Hopper",
+   "text": "Settling the heavy iron rake into the pivot's groove, you throw your weight against the timber handle with measured, practiced calm. The overhead hopper groans as the balance shifts precisely on its fulcrum, tipping the damp slack in a smooth, cascading arc that settles deep within the tender without spilling a single grain onto the ballast below. However narrowly you managed the angle, the mechanism holds firm and rewards your steady hand with a heavy, forged coal-rake free of rust and warp.",
+   "check": "",
+   "grant": "A heavy forged coal-rake",
+   "exits": [
+    "Shovel the slack into the firebox"
+   ]
+  },
+  "cf-4-121": {
+   "title": "The Basalt Wall",
+   "text": "The trackbed narrows sharply into a single glistening rib of steel, wedged tight between towering walls of pure, unyielding black basalt that sweat a bitter, mineral damp onto the boiler casing. Every rivet on the Marrowbone screams against the compressed air of the corridor, and the headlight beam catches only slick, weeping stone where no signal-lantern has burned for years. You keep your hand on the brass regulator, feeling the heavy thrum of the pistons vibrating straight through the floorboards as the engine plunges deeper into the mountain's throat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance into the narrow squeeze"
+   ]
+  },
+  "cf-4-122": {
+   "title": "The Basalt Narrows",
+   "text": "The rock presses inward so tightly that the cab roof scrapes against jagged outcroppings of ancient stone, showering sparks over the running board whenever the boiler lists to port. Ahead, the dark corridor splinters into several distinct paths through the living mountain, each marked by faint, ghostly glimmers of oil lamps or the distant echo of steam hissing through unseen valves. You can nurse the regulator straight ahead into the tightest cleft, risk the higher ledge where the iron rails look dangerously thin, or scout the lower maintenance spurs where the air smells faintly of old grease and forgotten grease-traps.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Creep through the central cleft",
+    "Climb the steep upper iron",
+    "Follow the low maintenance spur",
+    "Approach the inner gatehouse ahead"
+   ]
+  },
+  "cf-4-123": {
+   "title": "The Narrow Ledge",
+   "text": "Bracing your boots against the shivering floorplates, you wedge your shoulder firmly against the cold rock face to fend off a sharp, protruding overhang that threatens to shear away the whistle-valve. The stone grinds heavily against your leather coat, leaving a smear of grey dust and grease, but you manage to ease the engine past the obstruction without denting the lagging. Reaching down into the ballast where the rock split open under the pressure, your fingers brush against a heavy, dense chunk of natural lodestone that pulls strongly against your belt buckle.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the heavy stone and proceed"
+   ]
+  },
+  "cf-4-124": {
+   "title": "Scraping the Overhang",
+   "text": "Gritting your teeth against the mounting strain, you throw your full weight against the cab pillar just as another jagged spur of basalt lurches toward the boiler cladding. The engine groans, its wheels slipping briefly on the slick rails as you try to force the heavy machine away from the unyielding stone wall before it tears open the steam dome.\n\nSweat stings your eyes in the oppressive heat of the cab while the iron screeches a high, protesting note against the mountain.",
+   "check": "Shove the engine clear of the rock face",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-125": {
+   "title": "A Heavy Scraping",
+   "text": "A sickening screech of torn iron fills the narrow cut as the rock face bites deep into the engine's side-plating, jarring you off your footing and sending you sprawling hard against the coal bunker. The Marrowbone shudders to a groaning halt, trapped by a stubborn outcrop of basalt that refuses to yield an inch. It costs you precious minutes of boiler pressure and leaves a long, ugly raw scar down the steel plating before you manage to reverse off, pry the obstacle free with a pinch-bar, and get the wheels rolling once more.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Resume the crawl through the dark"
+   ]
+  },
+  "cf-4-126": {
+   "title": "Clearance Gained",
+   "text": "With a sudden, jarring lurch, the engine clears the stubborn stone protrusion, sliding back into the center of the rail-bed as the basalt walls widen into a low subterranean cavern. However narrowly you avoided a catastrophic jam, the Marrowbone steams forward with only a dented running board to show for the trial. Among the fallen debris scattered across the sleepers by the engine's flank, you spot a sturdy iron pinch-bar left behind by an old track-crew, its claw end still bright and clean.",
+   "check": "",
+   "grant": "A sturdy iron pinch-bar",
+   "exits": [
+    "Return to the branching junction"
+   ]
+  },
+  "cf-4-127": {
+   "title": "The Condensate Drain",
+   "text": "Bending low beneath the gleaming cylinders, you reach for the brass petcocks and twist them sharply to clear out the accumulated water before it can choke the stroke. A blistering cloud of white steam and greasy grey condensation roars out into the cramped space, smelling strongly of burnt tallow and old machine oil. The pistons immediately take up a smoother, more rhythmic beat, freeing every ounce of raw power from the chambers and leaving behind a clean, dry hiss.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back to the driving deck"
+   ]
+  },
+  "cf-4-128": {
+   "title": "The Steam-Worm Spur",
+   "text": "The track dips sharply beneath a low brick-arched culvert where weeping mortar drips rhythmically onto the coal tender like cold sweat. You lean out from the gangway, watching the grey shadows stretch across the tender as the single headlight cuts through the damp air, illuminating faint chalk marks left by the Hollow Signalmen. Nothing stirs in the gloom save the slow, rhythmic dripping of the roof-springs and the steady, comforting thrum of the firebox drawing draft.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the culvert"
+   ]
+  },
+  "cf-4-129": {
+   "title": "Tapping the Cylinders",
+   "text": "Kneeling on the slick timber sleepers beside the driving gear, you tap the jammed slide-valve cover sharply with a brass-headed mallet, listening for the clear ring that signals proper seating. The engine trembles violently as full boiler pressure surges against the valve chest, threatening to blow the packing rings if the alignment is off by even a fraction of a hair.\n\nYou hold your breath, hand poised on the regulator linkage, waiting to see whether the assembly holds under the sudden, brutal spike of heat.",
+   "check": "Tap the slide-valve into true alignment",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-130": {
+   "title": "Blown Packing",
+   "text": "A sharp, violent crack splits the air beneath the boiler as the dry packing ring shatters under the pressure, venting a blinding plume of scalding white vapor directly into your face. You scramble backward coughing and wiping hot grease from your brow, losing precious minutes and a good measure of boiler head before you can isolate the line. The repair takes time and leaves your hands blistered and stained with dark graphite paste, but you manage to wire the housing shut with copper strand.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl back to the regulator and drive on"
+   ]
+  },
+  "cf-4-131": {
+   "title": "The True Ring",
+   "text": "The valve housing gives a deep, musical chime under the mallet and settles smoothly into its bed with a satisfying hiss of released pressure. However narrowly you timed the adjustment, the cylinders now fire in perfect, synchronized harmony, driving the Marrowbone forward with renewed vigor through the dark rock. Lying half-buried in the grease-pan beneath the assembly, you find a heavy, intact pressure gauge with its glass face completely unblemished and the needle resting true at zero.",
+   "check": "",
+   "grant": "An intact brass pressure gauge",
+   "exits": [
+    "Approach the inner gatehouse ahead"
+   ]
+  }
+ },
+ "missing": []
+}

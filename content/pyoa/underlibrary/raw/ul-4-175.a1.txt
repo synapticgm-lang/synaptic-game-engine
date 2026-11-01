@@ -1,0 +1,22 @@
+@@SECTION ul-4-181
+TITLE: The Vault Introduction
+TEXT: Through sheer stubborn endurance of mind, you weather the old scholar's relentless cross-examination until the harsh lines of his weathered face soften into something resembling grudging respect. He reaches into the folds of his ink-stained woollen cloak and draws out a heavy parchment bearing his own wax seal. This personal letter of introduction grants you passage through the threshold guards of the vault guardian without further question.
+GRANT: vault guardian introduction letter
+EXIT 1: Approach the blind scholar's chair
+@@END
+@@SECTION ul-4-183
+TITLE: Fragments of Memory
+TEXT: Dust motes dance in the faint yellow glow of your guttering lamp as you smooth out the fragile, uncatalogued scrolls scattered across the flagstones near the chair. Every stroke of ink reveals forgotten syntax that your mind absorbs with careful precision, fitting ancient idioms together like dry kindling. Within the center of the brittle sheet lies a genuine slip of the original Index, its script burning with a quiet, pale luminance that smells faintly of dried lavender and old rain. // You fold the precious fragment securely into your inner pocket before turning your gaze deeper into the shadowed annexe.
+EXIT 1: Inspect the trembling shadow nearby
+@@END
+@@SECTION ul-4-184
+TITLE: Deciphering the Last Scroll
+TEXT: Beneath the heavy velvet drapes of the annexe, the final uncatalogued scroll lies half-eaten by silverfish and damp air. You lean closer, bringing your lamp within a handspan of the crumbling vellum to parse the dense, archaic script before the fading ink flakes away into nothingness. Your fingers trace the margin notes while your mind races to reconcile conflicting grammatical roots against the encroaching silence of the stacks.
+CHECK: Decode the fading marginal glyphs
+@@END
+@@SECTION ul-4-186
+TITLE: The Index Fragment Secured
+TEXT: With meticulous scholarly attention, you tease the brittle secrets from the ancient scrolls scattered around the chair, bending every ounce of your training to the task. The complex syntax yields at last, surrendering a genuine fragment of the original Index into your trembling palm. This slip of paper hums against your fingertips like a trapped bee, carrying the weight of a forgotten city's true name.
+GRANT: fragment of original Index
+EXIT 1: Follow the trembling finger forward
+@@END

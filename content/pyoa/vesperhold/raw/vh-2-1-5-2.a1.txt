@@ -1,0 +1,4 @@
+@@SECTION vh-d-2-1
+TITLE: The Flayed Pass
+TEXT: Silver coins spin under the cold grease-lamps of the swaying platform, and the flash of a marked deck draws your tired eyes from the heavy bronze bulk on your back. You stake your guild transit pass against a roll of foreign copper, trusting the quick shuffle of a dealer whose smile is too sharp for the high air. The paper flutters from his thumb, catches the sudden mountain updraft, and spirals down into the white wool of the clouds below without a sound. Without the green wax of the guild, the toll-keepers bar the stairs at the middle gate, leaving you to winter in the drafty shacks of the rope-markets as an outlawed drifter. Biscuit shifts his weight against the frozen rail, huffing a cloud of warm breath into the dusk while the mountain slowly closes its gates around you.
+@@END

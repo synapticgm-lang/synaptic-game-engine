@@ -1,0 +1,92 @@
+{
+ "batch": "cf-3-203",
+ "sections": {
+  "cf-3-203": {
+   "title": "Smothered in White",
+   "text": "Thick white plumes hiss from the ruptured manifold, wrapping the iron ribs of the Marrowbone in a dense, artificial fog that smells of scorching oil and wet packing. Yellow searchlights sweep across the curved iron roof of the cab, casting long, frantic bars of light through the greasy windows. Your lungs feel tight and dry, threatening to close entirely under the weight of the sudden ambush, yet your fingers remain hooked around the brass regulator. You force your breathing down to a slow, deliberate rhythm, matching the steady thrum of the piston-rods beneath the floor plates.\n\nDrop the side injector valve and drown the track in vapour before the Rail Barons spot your silhouette.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drown the track in thick steam"
+   ]
+  },
+  "cf-3-204": {
+   "title": "The Steady Hand",
+   "text": "Outside the iron skin of the cab, heavy boots clatter against the gantry walkways of the viaduct, accompanied by the sharp metallic bark of a Rail Baron inspector shouting orders through a megaphone. A beam of white light pins the smoke-stack, washing the rolling white clouds in a harsh, clinical glare that threatens to expose your hiding spot to the entire yard. Sweat stings your eyes, and an old terror of small, dark spaces claws up the back of your throat, urging you to throw open the regulator and bolt blindly into the night. Instead, you stare into the glowing heart of the firebox and clamp your jaw shut, keeping your pulse from racing while the searchlight slowly sweeps past the dripping tender.",
+   "check": "Keep your pulse steady in the glare",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-205": {
+   "title": "Cost of the Gaze",
+   "text": "The searchlight lingers a fraction too long, catching the glint of the brass water-key on the bench and forcing you to duck behind the coal bunker with a sharp intake of breath. A heavy iron rivet strikes the cab side with a deafening ring, and a splinter of hot metal grazes your forearm, leaving a jagged, stinging line of red across your skin. You gasp, nearly dropping your grip on the fire-iron as the sudden panic spike leaves your ribs aching and your head spinning with cold sweat. The engine shudders beneath you, betrayed by a ragged cough from the exhaust, but the shifting shadows of the viaduct swallow your retreat just as the heavy boots tramp past your bunker.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away into the shadow"
+   ]
+  },
+  "cf-3-206": {
+   "title": "Through the Glare",
+   "text": "Shifting shadows swallow the bulk of the locomotive as the searchlight swings away toward an empty freight car, leaving only the steady, rhythmic groan of stressed iron in the night air. You draw a long, shuddering breath, tasting the familiar metallic tang of soot and coal-dust on your tongue as your nerves settle back into their customary granite hardness. On the metal floor beside your boot lies a heavy brass spanner dropped by a fleeing track-walker, bearing the notched crest of the Gangers' Union on its worn handle. Pocketing the tool, you nudge the throttle forward and let the engine slip quietly into the darkness beyond the toll-station.",
+   "check": "",
+   "grant": "heavy union spanner",
+   "exits": [
+    "Man the controls through the red storm"
+   ]
+  },
+  "cf-3-207": {
+   "title": "Smoke and Iron",
+   "text": "Cunning requires a delicate touch when dealing with men who live by the schedule and die by the ledger. You yank the auxiliary whistle chain twice, sending a sharp, defiant shriek echoing off the rusted corrugated roofs of the toll-city. Instantly, a secondary steam-release valve under the footplate opens wide, dumping a massive cloud of grey vapor directly across the parallel maintenance line where the pursuers' handcar waits. The decoy plume billows thick and false, smelling fiercely of wet lime and scorched tallow to trick the watchers into firing their signal flares at empty track.\n\nWheel the steering gear hard over and dive into the labyrinth of side-tracks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Dive into the side-tracks"
+   ]
+  },
+  "cf-3-208": {
+   "title": "The False Scent",
+   "text": "Heavy iron wheels grind against the rail-heads on the adjacent spur as the Rail Barons' patrol engine reacts to the sudden hiss of steam, roaring blindly into the artificial fog you left behind. You lean over the side of the cab, peering into the swirling grey murk to judge the exact moment your pursuers will realize they are chasing nothing more substantial than hot water and old soot. Your fingers hover over the secondary bypass valve, ready to either drop a smoke-pot into the ash-pan or cut the headlights entirely before the beam catches your cab number. Every second counts against the schedule now, and a single mistimed toggle will paint the Marrowbone in a target-glow for every sniper on the gantries.",
+   "check": "Trick the pursuers with a false steam trail",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-209": {
+   "title": "Caught in the Vent",
+   "text": "The decoy plume thins too quickly in the crosswind, dissolving into the mountain draft before the pursuit engine commits to the wrong siding. A sharp clatter of iron teeth on the track signals the pursuit crew shifting their points back, catching your bluff and sending a load of hot slag splashing across the running board. You curse under your breath as a jagged piece of clinker strikes your shoulder, tearing your canvas jacket and leaving a dull, throbbing bruise that radiates down your spine. Shoveling raw coal into the hopper with one hand, you wrestle the heavy reversing lever against the jam, paying for the failed trick with aching muscles and lost yards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wrestle the reversing lever home"
+   ]
+  },
+  "cf-3-210": {
+   "title": "Slipped Gears",
+   "text": "Grey vapor wraps around the boiler like a shroud, blinding the gantry guards just long enough for the Marrowbone to slide across the diamond crossing without a whistle. However narrowly you managed the trick, the pursuers are left shouting curses at an empty stretch of rusted iron while your engine picks up speed toward the dark cliffs. Resting on the wooden tool-box is a slip of grease-stained paper left behind by a friendly grease-monkey, detailing the exact blind spots in the viaduct signal system. You tuck the crumpled schedule into your waistcoat pocket and let the steam build for the final descent.",
+   "check": "",
+   "grant": "viaduct blind-spot map",
+   "exits": [
+    "Man the controls through the red storm"
+   ]
+  },
+  "cf-3-211": {
+   "title": "The Iron Mouth",
+   "text": "Brasswind Viaduct falls away behind the tender like a broken spine of iron and rusted girders, its toll-gates left shuttered and silent in the rising ash-storm. The Marrowbone gathers a terrifying, unstoppable momentum down the steep incline, her boiler screaming a high, iron-throated song as the gradient tilts sharply toward the jagged roots of the range. Ahead of the pilot wheel lies only the dark, wet maw of the Hollow Cut, where the tunnel walls drip with ancient mineral rot and the signal lamps burn a sickly, stagnant green. You brace your boots against the ribbed floor-plate, one hand locked hard on the brass regulator and the other gripping the whistle-cord as the daylight dies completely into the tunnel's throat.\n\nPlunge straight into the blackness before the tracking signals shift against you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Plunge into the pitch-black maw"
+   ]
+  },
+  "cf-3-212": {
+   "title": "The Wrong Lever",
+   "text": "Iron points groan beneath the heavy steel wheels as you haul the brass-headed lever toward the maintenance siding, feeding the Marrowbone just enough steam to jump the gap. The pursuing engine roars past on the main line, its searchlights slicing through the soot-laden air to illuminate empty track and rising ash-dunes where you should have been. A faint smirk touches your lips at the clean execution of the diversion, though you know the Rail Barons will reset their traps before the next shift changes at the junction.\n\nFollow the tangled network of points back into the deep cuttings.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the tangled points back"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,60 @@
+@@SECTION vh-3-1-3-14
+TITLE: The Sandstone Spark
+TEXT: Within the dim interior of mill thirty-nine, miller Corina sharpens a dull grain-shovel against a wet sandstone block, sending tiny silver sparks flying into the flour-scented air. Biscuit shifts his weight against the heavy bronze Clapper in your cradle, letting out a low, complaining huff that rattles the harness rings. Corina pauses, eyeing the muffled metal on your back with professional curiosity before gesturing toward the narrow exterior catwalk.
+EXIT 1: Step out onto the narrow plankway
+EXIT 2: Wait inside while the shovel is honed
+@@END
+@@SECTION vh-3-1-3-15
+TITLE: The Frozen Sluice
+TEXT: Beside the churning wooden sluice-gate of mill forty, miller Beric clears away frozen slush from the drainage channels with swift, practiced thumps of an iron spade. The frigid mountain spray dampens your woollen cloak, and the heavy Clapper hums faintly against your shoulder blades as if sensing the rushing mountain meltwater. Beric nods a brief greeting over the roar of the wooden gears, pausing to lean on his frost-pitted tool.
+EXIT 1: Ask him for news of the path ahead
+EXIT 2: Offer to help clear the jammed ice
+EXIT 3: Keep moving past the churning water
+@@END
+@@SECTION vh-3-1-4-0
+TITLE: The High Toll
+TEXT: Beneath the groaning sails of mill forty-one, miller Thura demands an exorbitant toll for the use of the lower stone steps, crossing her flour-dusted arms over a stout canvas apron. The wind shrieks through the revolving oak beams overhead, drowning out all but the steady, metallic thrum of the bronze Clapper on your back. Biscuit plants his hooves stubbornly against the flagstones, refusing to budge until the dispute is settled.
+EXIT 1: Pay the steep fee from your pouch
+@@END
+@@SECTION vh-3-1-4-1
+TITLE: The Ice-Bound Pass
+TEXT: On the frost-rimed balcony of mill forty-two, miller-wife Mila warns that the upcoming wind-pass is blocked by heavy ice-drifts, pointing a mittened finger toward the frozen gap below. Icicles hang like jagged glass teeth from the eves, shivering in the sharp, thin air that cuts straight through your layers of wool and leather. The heavy burden on your back feels colder than ever, vibrating in time with the distant groaning of the mountain glaciers.
+EXIT 1: Listen closely to her warnings about the drifts
+EXIT 2: Inspect the frozen pass with your own eyes
+@@END
+@@SECTION vh-3-1-4-2
+TITLE: The Mutton Trade
+TEXT: Within the dusty shadows of mill forty-three, miller Aris trades a handful of parched beans for a scrap of dried mutton, his fingers moving with the mechanical speed of an old clockwork. The smell of rendered fat and roasting grain fills the dim alcove, offering a brief, warm respite from the biting chill of the terrace heights. Biscuit stretches his neck longingly toward the burlap sacks while you adjust the straps of the Clapper cradle.
+EXIT 1: Trade a spare ration for some mutton
+EXIT 2: Decline the offer and check the harness
+@@END
+@@SECTION vh-3-1-4-3
+TITLE: The Pruning Knife
+TEXT: Beside the clattering wooden hopper of mill forty-four, miller Doran sharpens an old pruning knife on an oiled stone, testing the gleaming edge with a calloused thumb. The rhythmic scraping echoes above the thunderous grinding of the upper millstones, shaking fine white dust from the heavy timber beams. Doran glances at the muffled bronze tongue on your back, offering a dry smile that creases his flour-white cheeks.
+EXIT 1: Ask him about the condition of the steps
+EXIT 2: Watch the grinding stones turn in silence
+EXIT 3: Lead Biscuit past the clattering machinery
+@@END
+@@SECTION vh-3-1-4-4
+TITLE: The Lost Tally
+TEXT: On the dizzying suspension bridge near mill forty-five, miller-boy Kian drops a wooden tally-stick into the foggy abyss, watching it vanish into the gray nothingness below with a small gasp. The hempen ropes sway violently underfoot in the gusting mountain draft, making the heavy bronze Clapper shift uneasily in its padded cradle. Kian turns to you with wide eyes, gripping the handrail tightly as the bridge heaves in the wind.
+EXIT 1: Steady the boy before he loses his footing
+EXIT 2: Cross the swaying planks with slow care
+EXIT 3: Pull Biscuit close to the cliffside cable
+@@END
+@@SECTION vh-3-1-4-5
+TITLE: The Sour Draught
+TEXT: Within the warm flour-loft of mill forty-six, miller Senta offers a draught of sour small-beer in exchange for monastery gossip, her eyes sharp and curious in the dim light. The earthenware jug passes between you, sharp and yeasty against the dry chill in your throat, while the heavy metal on your back hums its low, persistent note. Senta leans in closer over a stack of empty grain sacks, eager to hear what news has trickled down from Vesperhold.
+EXIT 1: Share the latest monastery news with her
+EXIT 2: Drink quickly and head back to the stairs
+@@END
+@@SECTION vh-3-1-4-6
+TITLE: The Frozen Wheel
+TEXT: Beside the massive stone grinding-wheel of mill forty-seven, miller Varis complains that the mountain winds have turned too cold for milling, his breath pluming white in the freezing air. The great stone sits idle and silent, frosted over with a thick layer of rime that glints under the pale high-altitude sun. Varis kicks a frozen block of chaff away from the axle, grumbling about the shortening days and the stubborn ice.
+EXIT 1: Offer a hand to free the frozen axle
+@@END
+@@SECTION vh-3-1-4-7
+TITLE: The Insulating Wall
+TEXT: Under the rattling canvas canopy of mill forty-eight, miller Jole packs dried barley hulls tightly into insulating wall-pockets to keep out the creeping frost. The dry husks rustle like dry leaves against the wooden framing, muffling the howling whistle of the wind outside. Jole wipes sweat from his brow despite the biting cold, pausing to secure another flap of canvas with a stout wooden peg.
+EXIT 1: Help him tuck the loose canvas tight
+@@END

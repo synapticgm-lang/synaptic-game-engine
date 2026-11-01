@@ -1,0 +1,105 @@
+{
+ "batch": "cf-1-053",
+ "sections": {
+  "cf-1-053": {
+   "title": "The Stranded Carriages",
+   "text": "Rotting teak coaches lean against one another on the weed-choked siding like exhausted draft horses past their prime, their faded crimson paint blistered by decades of alkaline wind. Tarnished brass window frames peer blindly into the grey ash-dunes while rusted iron vestibules gape open to the biting draft, inviting you to wade deeper into the forgotten debris of wealthier years. You can pick your way past shattered mahogany paneling toward the forward compartments, squeeze through a narrow corridor choked with drifted silt, or turn your attention elsewhere along the sprawling railway yard.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Search through the shattered first-class compartments",
+    "Pry open the rusted luggage van doors",
+    "Investigate the dark shadows near the guards van",
+    "Overhaul the steam heating valves on the floor",
+    "Approach the Barons inspection carriage on the main line"
+   ]
+  },
+  "cf-1-054": {
+   "title": "Velvet and Silt",
+   "text": "Fine grey dust coats the deep maroon upholstery like powdered bone, muffling your heavy boots as you step gingerly into the first-class saloon. Shattered crystal drops from the ceiling sconces crunch beneath your soles, glittering faintly in the pale light filtered through grime-caked windows. Beneath a collapsed side-table, a brass-bound tin box catches your eye, half-buried under water-stained velvet curtains and discarded timetables. You kneel in the choking gloom, prying at the swollen wooden lid with your bare fingers while checking the corridor behind you for falling debris.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Lift the latch and inspect the interior"
+   ]
+  },
+  "cf-1-055": {
+   "title": "The Hidden Cache",
+   "text": "The brass latch yields with a sharp click, swinging open to reveal a neat tier of compartments lined with faded green baize. Inside lie several thick rolls of waxed tallow and a handful of pristine copper pipe gaskets, preserved from the damp air by layers of oily rag. These are proper engine-stores, dry and serviceable, salvaged from an era when carriages carried more than ghosts and rust. You gather the precious supplies into your canvas apron, tying off the corners securely against the rising draft that whistles through the splintered window frame.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the rusted siding junction"
+   ]
+  },
+  "cf-1-056": {
+   "title": "Picking the Seam",
+   "text": "Heavy iron luggage racks overhead groan under the shifting weight of drifted ash, threatening to drop a cascade of rusted debris onto your stooped shoulders as you reach deeper into the recessed wall panels. Your fingertips brush against a hidden spring-catch behind the velvet trim, but the mechanism is jammed solid with decades of compacted soot and dried grease. With the timber bulkhead creaking ominously in the wind, you must rely on nimble wits and delicate pressure to coax the recalcitrant latch without snapping the rusted linkage inside.",
+   "check": "Probe the recessed latch with careful fingers",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-057": {
+   "title": "A Slip in the Dark",
+   "text": "The rusted pin snaps under your hurried pressure with a sharp, metallic ping that echoes hollowly down the empty corridor. A shower of sharp-edged wood splinters and cold ash cascades down from the luggage rack, biting deep into the exposed skin of your forearm and leaving a jagged, stinging scratch. You stumble backward against the mahogany partition, clutching your bleeding arm while the stubborn panel remains stubbornly locked shut against further inspection.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat empty-handed to the siding"
+   ]
+  },
+  "cf-1-058": {
+   "title": "Spoils of the Saloon",
+   "text": "Your fingertips catch the stubborn brass spring just as it threatens to bind, easing the rusted tongue back with a smooth, silent slide that leaves the hidden compartment gaping wide. Nestled within the dark recess lies a small leather pouch filled with heavy tallow cakes and several unblemished sealing washers, untouched by the creeping damp of the steppes. You slip the prize into your coat pocket, your fingers brushing against the cool, oily leather of your new acquisition.",
+   "check": "",
+   "grant": "A pouch of fine tallow",
+   "exits": [
+    "Return to the main line inspection point"
+   ]
+  },
+  "cf-1-059": {
+   "title": "The Stubborn Link",
+   "text": "A heavy cargo truck sits marooned between two listing timber wagons, its central coupling frozen fast by years of accumulated rust and grit. You drop to your knees in the grey ballast, wedging a heavy pinch-bar into the iron jaw of the draw-gear while testing the strain with your shoulder. The thick metal pins refuse to budge, locked tight by an ancient strain that demands more than raw muscle to overcome. You tap the housing smartly with a brass-faced hammer, listening to the dull thud of solid iron ringing through the dead air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Apply leverage to the frozen draw-bar"
+   ]
+  },
+  "cf-1-060": {
+   "title": "Briquettes in the Dust",
+   "text": "The coupling pin rises with a reluctant groan of strained metal, freeing the old freight wagon to roll a few inches down the sloping grade before settling against the brake shoes. You haul back the rusted side-flap, releasing a cloud of fine coal dust as the heavy wooden wall drops open to reveal neat stacks of compressed peat briquettes. They are dry and dense, smelling faintly of ancient bog-moss and resin, ready to feed the ravenous firebox of the Marrowbone when the steam pressure begins to drop.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul the fuel crates toward the tender"
+   ]
+  },
+  "cf-1-061": {
+   "title": "The Frozen Pin",
+   "text": "The wedge-pin of the vestibule coupling is welded together by decades of rust and expansion, resisting every ounce of force you put into the brass-faced mallet. You brace your boots against the rotting wooden buffer-beam, heaving upward with both hands while driving the heavy drift-punch squarely into the seized pivot hole. The metal screeches in protest, sending hot vibrations up your forearms as the rusted collar threatens to shear off entirely inside the sleeve.",
+   "check": "Drive the seized coupling pin home",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-062": {
+   "title": "Hammer and Rust",
+   "text": "The drift-punch slips sideways on the slick, greasy metal surface, catching your knuckles a glancing blow against the jagged iron edge of the brake-standard. A dull, throbbing ache flares through your hand as skin splits against the cold steel, leaving a dark bruise that blooms beneath the soot. You drop the heavy hammer with a curse, shaking your throbbing fingers while the jammed coupling remains as immovable as the bedrock beneath the track.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick up your tools and limp away"
+   ]
+  },
+  "cf-1-063": {
+   "title": "Cleared Metal",
+   "text": "Your hammer blow lands square and true, driving the rusted wedge-pin cleanly through the housing with a satisfying crack of fracturing scale. The jammed iron jaws fall apart into your waiting palm, releasing the trapped cargo truck and leaving the pathway clear for you to haul the fuel supplies back toward the depot. You wipe the sweat from your forehead with a soot-stained sleeve, carrying your prize away from the rusting iron skeletons.",
+   "check": "",
+   "grant": "A crate of dry briquettes",
+   "exits": [
+    "Return to the central depot siding"
+   ]
+  }
+ },
+ "missing": []
+}

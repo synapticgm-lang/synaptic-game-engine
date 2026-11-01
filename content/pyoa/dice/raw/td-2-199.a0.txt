@@ -1,0 +1,42 @@
+Gemini said
+
+@@SECTION td-2-199
+TITLE: The Meridian Gear
+TEXT: Heavy shadows press against the wet stone walls as you descend into the damp belly of the Sunken Stair. Massive brass teeth, slick with stagnant brine and age-old grease, loom before you in the gloom, waiting quietly for a hand to turn them. The air tastes of copper and ozone, thick with the weight of unchosen destinies and the silent, grinding pressure of the waiting ocean. Somewhere within the metal framework, the Last Tidewarden waits behind blind iron eyes, while the tide clock ticks its relentless warning against your ribs. // You stand before the central mechanism that will decide whether the sea returns to drown Gullmouth or leaves the seabed bare forever. Your fingers brush the freezing metal of the primary lever, feeling the immense tension coiled within the deep machinery.
+EXIT 1: Approach the stilt-legs of Saltspire
+@@SECTION td-2-200
+TITLE: Salvaging the Winch
+TEXT: Cold metal dust coats your knuckles as you work the rusted levers of the winch near the edge of the low escarpment. Jagged iron plates snap and flake away under your prying blade, showering the grey silt with reddish scale. Careful fingers slip past a razor-sharp housing to unbolt a heavy, oil-stained gear that still carries the faint smell of whale fat and old salt. You slip the salvage into your pack and step back from the grinding frame.
+EXIT 1: Climb down into the wreck-field
+@@SECTION td-2-201
+TITLE: Salt-Scarred Amulet
+TEXT: Burning grains of sea-salt bite deep into the flesh of your palm during the silent rite upon the salt-flats. Sweat stings your eyes, yet you keep your breathing even and your fingers steady against the searing agony. A robed elder of the Drift Pilgrims presses a polished disc of deep-sea glass into your raw hand as the burning salt crusts over. The cool amulet stills the throbbing heat in your skin immediately.
+EXIT 1: Follow the pilgrims toward the dunes
+@@SECTION td-2-202
+TITLE: The Pressure Plate
+TEXT: Slender bronze triggers lie flush with the damp stone steps of the descent, barely visible beneath a film of dried kelp. Your blade slides beneath the rusted housing, easing the tension of a hidden spring just before it can snap. A sealed glass vial of alchemical fire sits undisturbed in the recess, waiting to be claimed by steady hands. You lift the green glass free and pocket it before resuming your climb.
+EXIT 1: Descend further into the stairwell
+@@SECTION td-2-203
+TITLE: Rafters of the Bell
+TEXT: Rotting timbers groan beneath your boots as you cross the high, skeletal rafters of the abandoned signal station. Far below, the empty seabed stretches out in pale ribs of mud and rusted ribs of cargo ships. Your fingers close around the leather spine of a forgotten Tidewarden journal tucked behind a cracked beam. You secure the damp pages against your chest and turn back from the dizzying drop.
+EXIT 1: Return down to the lower walkway
+@@SECTION td-2-204
+TITLE: Cargo of the Wreck
+TEXT: Faded crimson markings on the waterlogged crates spell out warnings in the old merchant tongue of Gullmouth. You scrape away the swollen salt-crust with your knife, deliberately missing a hair-thin wire connected to a spring-loaded striker. A bundle of dry, sulfur-tipped matches tumbles out from the hidden compartment into your waiting palm. You pocket the waterproof prize and leave the deadly trap unspring.
+EXIT 1: Step away from the open hold
+@@SECTION td-2-205
+TITLE: The Offering Bowl
+TEXT: Smooth strokes of your draw-knife peel curls of seasoned driftwood away from the hollow of the ceremonial bowl. The gatherers watch in silence from the shadow of the hull, their salt-rimed eyelids unblinking. You finish the final carved notch and hand the polished vessel across the damp planks to the leader. In return, a warm tin of broth and a slab of dried skate are pressed into your hands.
+EXIT 1: Eat the meal and move on
+@@SECTION td-2-206
+TITLE: Whispers in the Crypt
+TEXT: Damp stone walls weep icy water down your neck as you step into the vaulted crypt of the Hollow Choir. A pale figure wreathed in phosphorescent weed drifts across the threshold, whispering names of the drowned. You force your lungs to breathe slowly, holding your nerve against the rising panic in your chest. The restless shade dissolves into mist, leaving a tarnished silver chalice resting upon the stone altar.
+EXIT 1: Take the chalice from the altar
+@@SECTION td-2-207
+TITLE: Echoes of the Choir
+TEXT: Stale air clings to your skin like wet linen as you navigate the narrow stone corridor of the lower vaults. Murmurs drift from the empty niches, speaking of storms that broke fifty years before your birth. You grit your teeth against the dizziness and push past the shadowy threshold without a sound. A heavy silver chalice remains behind on the floor, unclaimed by the phantom voices.
+EXIT 1: Leave the dark crypt behind
+@@SECTION td-2-208
+TITLE: Pearls of the Dunes
+TEXT: Shifting mounds of white sand hiss softly in the wind, carrying voices that sound like your own name spoken from underwater. Panic claws at your throat, urging you to run back toward the safety of the cliffs, but you force your heels into the slope. Your boot hits a hard round shape buried in the drift. You kneel in the stinging dust and unearth a gleaming white pearl the size of a pigeon's egg.
+EXIT 1: Walk away from the singing sand

@@ -1,0 +1,20 @@
+MODEL Pro
+
+[
+{
+"section": "sg-p2b",
+"field": "page",
+"old": "saving the valley from the coming flood.",
+"new": "saving the valley from the coming drought.",
+"kind": "prose",
+"reason": "unclear stakes"
+},
+{
+"section": "sg-p3",
+"field": "page",
+"old": "Your neighbors stand in quiet clusters",
+"new": "Your neighbours stand in quiet clusters",
+"kind": "prose",
+"reason": "US spelling"
+}
+]

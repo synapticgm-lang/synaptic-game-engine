@@ -1,0 +1,52 @@
+@@SECTION cf-5-087
+TITLE: The Hissing Generator
+TEXT: Heavy flakes of soot drift down from the high iron beams, coating your shoulders in a gritty shroud as you crawl beneath the auxiliary dynamo. The emergency generator coughs, sputtering greasy smoke into the cramped recess while a fractured steam line releases a frantic, scalding jet. Blinded by the stinging humidity and the dark grease smearing your forehead, you reach for the heavy spanner wedged in your belt.
+EXIT 1: Reach for the grease-stained spanner
+@@END
+@@SECTION cf-5-088
+TITLE: Securing the Cock
+TEXT: Scalding mist billows around your knuckles, but the wrench bites hard into the stubborn threading of the brass valve-cock. With a sharp wrench and a muttered curse against the low sky, you heave your weight against the iron bar until the leaking joint groans and holds. The shriek of escaping vapour dwindles to a wet, disgruntled hiss, leaving only the smell of hot oil and scorched copper in the gloom.
+EXIT 1: Crawl back from the dynamo recess
+@@END
+@@SECTION cf-5-089
+TITLE: The Final Valve-Turn
+TEXT: A sudden tremor shakes the iron floorplates under your knees as the wind outside hurls another fistful of ash against the siding walls. The generator’s main housing bulges, threatening to blow its gasket entirely if you do not seat the final cylinder-cock home against the rising pressure. You steady your breathing, grip the vibrating brass wheel with both palms, and commit every ounce of leverage you possess to forcing the thread straight.
+CHECK: Force the vibrating brass valve home
+@@END
+@@SECTION cf-5-090
+TITLE: Scalded and Bent
+TEXT: Hot iron bites into your palm as the valve slips sideways with a vicious screech, spraying boiling water across your sleeve and leaving a bright, angry burn along your forearm. You stagger backward out of the recess, coughing violently as the generator clanks to a sullen, limping idle. It costs you dearly in precious skin and precious minutes, but the pressure drops enough to keep the machine from tearing itself apart in the dark.
+EXIT 1: Drag yourself clear of the wreckage
+@@END
+@@SECTION cf-5-091
+TITLE: The Seated Seal
+TEXT: However narrowly you managed to thread the obstinate valve, the emergency generator settles into a steady, reliable thrum that vibrates right through the soles of your boots. You wipe the stinging sweat from your eyes with a blackened wrist, catching your breath as the metal cools just enough to touch. For your trouble, you pocket a heavy piece of salvaged equipment that will serve you well in the dark days ahead.
+GRANT: heavy brass union-nut
+EXIT 1: Head out toward the platform
+@@END
+@@SECTION cf-5-092
+TITLE: The Old Woman's Gaze
+TEXT: The Stationmaster-General stands like a monolith of grey wool and bitter judgment, her ancient eyes fixed upon you with the unyielding weight of an expired timetable. Every harsh word she hurls carries the accumulated frost of decades spent guarding a sealed gate against desperate men. You keep your jaw set, refusing to offer the easy compliance or the frightened excuses she expects from her subordinates.
+EXIT 1: Meet the old woman's gaze
+@@END
+@@SECTION cf-5-093
+TITLE: Standing Fast Against Reproach
+TEXT: Silence stretches between you like a rusted coupling under tension, broken only by the whistling gale rattling the distant glass roof. She tests your resolve with another barbed reminder of the debts owed to the line, but you hold your ground without flinching an inch. Slowly, grudgingly, the rigid lines around her thin mouth soften into something resembling exhausted respect.
+EXIT 1: Accept the weight of her seal
+@@END
+@@SECTION cf-5-094
+TITLE: The Test of Nerves
+TEXT: Her gaze bores into you like a cold drill, searching for the crack in your composure that will let her dismiss you back into the ash-dunes. You feel the temptation to look away, to break the silence with a placating murmur or a nervous shuffle of your boots against the grit. Instead, you lock your jaw, steady your breath against the rising panic in your chest, and stare straight back into those unforgiving eyes.
+CHECK: Hold your ground against her stare
+@@END
+@@SECTION cf-5-095
+TITLE: Cracked Composure
+TEXT: Her sharp tongue cuts through your defenses like a fresh cold chisel, driving a sudden flush of hot humiliation up your neck and forcing you to blink away the stinging salt of your own frustration. You stumble slightly on your footing, losing your balance for a heartbeat before you manage to clamp your mouth shut. It leaves you bruised in pride and shaken to your core, but you refuse to yield the ground beneath your boots.
+EXIT 1: Swallow your pride and stay
+@@END
+@@SECTION cf-5-096
+TITLE: The Iron Token
+TEXT: However narrowly you weathered her merciless scrutiny, your stubborn endurance has earned you a grudging measure of ground in her esteem. She reaches into the folds of her heavy woollen shawl and presses a cold, weighty piece of metal into your open palm with a dry, papery snap. It is a token of authority that opens doors others must batter down, carrying the silent weight of the old administration.
+GRANT: heavy iron seal-ring
+EXIT 1: Step into the howling darkness
+@@END

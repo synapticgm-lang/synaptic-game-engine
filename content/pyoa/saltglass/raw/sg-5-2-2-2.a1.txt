@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION sg-5-2-2-11
+TITLE: The Shattered Skylight
+TEXT: Loose salt rattles against your boots as you lean too heavily against the rim of a collapsed dome, sending a sudden grey cloud of grit down into the hollow beneath. A frantic rustle of wings erupts from the chasm as a flock of pale desert pigeons scatter toward the blinding sky, their startled cooing echoing sharply off the quartz walls. Immediately, a harsh challenge rings up from the sentry post below, the sound of iron-shod boots scraping against stone warning you that the Glasswrights are alert. You can either slip sideways through a narrow gap between two leaning pillars to avoid the courtyard entirely, or drop flat onto the sun-baked tiles and crawl toward the shadow of an old mirror-mount.
+EXIT 1: Slide through the narrow pillar gap
+EXIT 2: Crawl toward the mirror shadow
+@@END

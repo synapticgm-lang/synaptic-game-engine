@@ -1,0 +1,55 @@
+@@SECTION ul-2-041
+TITLE: The Ledger Span
+TEXT: Heavy calfskin bindings groan beneath your boots, stitched together with waxed cord that hums with old legal disputes. Below this precarious suspension bridge, a chasm of shifting shadows exhales the cold scent of damp rag paper and oxidized copper ink. Every step sends a tremor through the woven spines of discarded ledgers, setting loose a flurry of marginal notes that drift upward like pale moths. You grip your lamp tighter as the vertical walls begin to slide against one another, narrowing the passage until the leather handrails writhe like live eels. // The oil in your reservoir sloshes against the tin, casting long, jittery shadows across the embossed titles of forgotten bankruptcies and royal decrees. There is no turning back toward the relative safety of the flooded ink-channels, for the shelves behind you have already retracted into the masonry.
+EXIT 1: Tread the groaning leather spine
+@@END
+@@SECTION ul-2-042
+TITLE: The Spine Span
+TEXT: Trembling bindings sway violently over a bottomless vertical shaft where thousands of loose-leaf papers rustle in the updraft. The air here tastes of iron filings and ancient parchment dust, thick enough to coat your teeth. Across the void, shadowy corridors branch away into the gloom, each promising a different route through the erratic heart of the Uncatalogued Stacks. Your lamp flame flickers low, starved of fresh oxygen by the deep stone vents. // You must choose your footing carefully before the vibration of the hanging bridge alerts whatever dwells in the hanging stacks above.
+EXIT 1: Follow the narrow binding path
+EXIT 2: Climb toward the higher stacks
+EXIT 3: Glide across the rolling surface
+EXIT 4: Enter the carbon-smoked corridor
+@@END
+@@SECTION ul-2-043
+TITLE: A Flaw in the Weave
+TEXT: Shadows stretch long across the stitched joints as you inspect the suspension cables made of twisted parchment rolls. A subtle sag in the left-hand anchor reveals a dangerous gap where the leather has begun to rot from stagnant dampness. By shifting your weight to the outer margin and sliding your palm along a reinforced hinge, you bypass the crumbling section entirely. Your fingers brush against a cold metal edge protruding from the binding, revealing a small ivory bookmark inscribed with sharp, unfamiliar wards.
+EXIT 1: Advance along the secured ledge
+@@END
+@@SECTION ul-2-044
+TITLE: Reading the Stitches
+TEXT: The suspension cords groan under a sudden gust of dry, paper-scented wind rising from the abyss below. You press yourself flat against the vertical stack-face, trying to calculate the exact tension required to cross the frayed gap without snapping the remaining threads. Your fingers trace the embossed lettering on a nearby spine, searching for the hidden structural pins that hold the entire hanging bridge in equilibrium. //
+CHECK: Test the tension by touch
+@@END
+@@SECTION ul-2-045
+TITLE: A Slipping Grasp
+TEXT: The leather loop gives way with a wet snap, dropping your lead boot into empty space and sending a shower of loose index cards into the dark. You catch yourself by the elbows against a jutting mahogany shelf, but the sudden jolt sends your tin oil flask clattering into the depths. A sharp splinter of dry oak pierces your left sleeve, leaving a shallow, burning scratch across your forearm. You haul yourself back onto solid timber, panting as the shelves grind shut behind you.
+EXIT 1: Push onward through the dust
+@@END
+@@SECTION ul-2-046
+TITLE: The Secured Binding
+TEXT: However narrowly you manage to keep your footing against the shifting architecture of the stacks, your quick fingers secure a tangible prize from the edge of the gap. The tension in the leather relaxes just enough for you to scramble onto safer timber, leaving the trembling chasm behind. Tucked securely into your palm is a small, heavy token that hums faintly against your skin whenever the library lamps flare. //
+GRANT: An ivory ward-marked bookmark
+EXIT 1: Return to the trembling span
+@@END
+@@SECTION ul-2-047
+TITLE: The Cautious Page
+TEXT: A figure draped in ink-stained canvas emerges from the shadows of a drifting book-press, holding a short brass lantern aloft. He pauses, watching the way you read the subtle sagging of the leather cables before taking your next stride. Impressed by your deliberate caution, he offers a brief nod and shares a scrap of greasy parchment mapping the local drift patterns. This timely encounter spares you from stepping onto a section of shelves known to swallow unwary visitors whole.
+EXIT 1: Follow the wandering page further
+@@END
+@@SECTION ul-2-048
+TITLE: Measuring the Drift
+TEXT: The entire row of shelves shudders sideways, threatening to pinch your shoulders between two heavy oak presses. You watch the rhythm of the swinging spines, trying to anticipate the exact moment the gap between the hanging walkways will briefly narrow. Your mind races through the cataloguing codes for structural movement while the floorboards beneath your boots tilt at an alarming angle. //
+CHECK: Time the shifting shelves
+@@END
+@@SECTION ul-2-049
+TITLE: Caught in the Press
+TEXT: The heavy oak shelves slam together a fraction too soon, catching the brim of your cap and tearing your canvas satchel at the seam. You wrench yourself free with a hard twist, leaving behind a valuable bundle of salvaged blank leaves crushed between the wooden blocks. The impact leaves your shoulder bruised and aching, throbbing in time with the low mechanical heartbeat echoing through the stone floor. //
+EXIT 1: Crawl through the narrow gap
+@@END
+@@SECTION ul-2-050
+TITLE: The Cleared Margin
+TEXT: However narrowly you manage to slip through the grinding timber frames, your determination secures a safe passage into the adjacent alcove. The stranger in the ink-stained coat watches your escape with dry approval, tossing a small token across the widening gap before melting back into the shadows. You catch it cleanly in your palm, feeling the cold weight of a borrowed brass key designed to fit the subsidiary locks of the lower stacks. //
+GRANT: A brass subsidiary key
+EXIT 1: Return to the central span
+@@END

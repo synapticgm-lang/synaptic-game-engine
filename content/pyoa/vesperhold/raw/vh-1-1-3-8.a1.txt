@@ -1,0 +1,7 @@
+@@SECTION vh-1-1-3-11
+TITLE: The Cantilevered Ledge
+TEXT: Frost whitens the loose pine timbers of the cantilevered ledge, where the mountain wind funnels upward from the deep blue fissure with a low, whistling howl. Biscuit plants each iron-shod hoof with stubborn deliberation, ears flicking back as the planks groan under the weight of the bronze Clapper in its padded frame. Below the open rail, the cloud sea shifts and rolls, swallowing the lower stairs entirely while the sheer stone wall of Vesperhold rises gray and indifferent at your shoulder. Every breath tastes of thin, high-altitude air and old pine resin, demanding absolute focus on the next flat nail-head in the grain. // You must decide whether to seek shelter within the drafty storehouse before the gale stiffens further, approach the ledger desk to settle your toll with the clerk, or check the tension of your backup lines beneath the loft rafters.
+EXIT 1: Step into the drafty rope storehouse
+EXIT 2: Approach the guild master by the scales
+EXIT 3: Inspect the stiff fibers in the rope-loft
+@@END

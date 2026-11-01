@@ -1,0 +1,92 @@
+{
+ "batch": "ul-3-008",
+ "sections": {
+  "ul-3-008": {
+   "title": "The Inquisitorial Desk",
+   "text": "Senior Archivist Haxby pins you with a stare forged from decades of cataloguing heresy, his spectacles reflecting the dim amber glow of a desk lamp smelling of stale tallow and dried ink. He interrogates your allegiances to the Fellowship with a relentless cadence, demanding to know whose marginalia you carry in your pockets and whether you have sworn oaths to the Burners. Every question scrapes against your thoughts like a blunt nib on cheap vellum, threatening to unravel your sanity under the weight of his bureaucratic scrutiny. You must face his final, probing inquiry directly before any clearance pass can be written.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Answer the senior archivist calmly"
+   ]
+  },
+  "ul-3-009": {
+   "title": "Weathering The Interrogation",
+   "text": "Haxby leans forward across the ledger-strewn mahogany, his voice dropping to a dry, rasping whisper that vibrates in the marrow of your teeth while the very ink in nearby inkwells ripples with invisible malice. You tighten your grip on the edge of the heavy oak desk, fighting the insidious urge to confess every rule you have ever bent in the dim corridors. The weight of his relentless scrutiny presses against your mind like a descending iron press, threatening to fracture your resolve and scatter your thoughts into the echoing stacks. You marshal every ounce of your inner fortitude against the psychic undertow of his questions.",
+   "check": "Resist the inquisitorial mental pressure",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-010": {
+   "title": "The Cost Of Hesitation",
+   "text": "Your resistance shatters under the final onslaught of Haxby's barrage, leaving your temples throbbing with a dull, persistent ache that tastes of copper and stale lamp-oil. The senior archivist marks a sharp, jagged stroke of red ink across your temporary ledger sheet, muttering a dry reprimand about undisciplined shelvers and unstable wits. You stagger back from the high desk, clutching your splitting head as a sharp throbbing pain settles behind your eyes like an unindexed splinter. A heavy administrative debt is added to your file, ensuring every movement through the lower stacks will carry a punishing surcharge.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Withdraw into the dusty corridors"
+   ]
+  },
+  "ul-3-011": {
+   "title": "The Signed Clearance",
+   "text": "Haxby's pen scratches a final, definitive flourish across the heavy parchment before he shoves the document across the ink-stained blotter toward you. You pick up the crisp voucher, feeling the faint, reassuring vibration of its official stamp against your fingertips despite the exhausting ordeal of the cross-examination. This signed clearance pass will grant you unhindered passage through the guarded thresholds of the lower tiers, offering a rare shield against the zealous inquiries of the rule-keepers. You tuck the paper safely into your tunic pocket alongside your bone-handled cutter.",
+   "check": "",
+   "grant": "Signed transit clearance pass",
+   "exits": [
+    "Return to the classification hall"
+   ]
+  },
+  "ul-3-012": {
+   "title": "The Cascading Cabinets",
+   "text": "Massive wooden card-cabinets grind across the uneven stone floor on rusted iron casters, their countless drawers sliding open and shut in a mechanical rhythm that mimics a giant's breathing. Ahead of you, a high-wheeled wooden trolley laden with teetering piles of confidential dossiers hits a ridge in the masonry and begins to careen wildly toward a sheer drop into the ink-rivers. You dart between the shifting furniture as stray index cards flutter through the air like startled moths, chasing the runaway records before they plunge into the dark fluid below.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Sprint between the drifting furniture"
+   ]
+  },
+  "ul-3-013": {
+   "title": "The Lurching Stacks",
+   "text": "Iron-bound shelving units grind against one another with a shriek of protesting metal, narrowing the gap between the card-drawers into a hazardous, swaying corridor. You press your shoulder against a vibrating bookcase as a towering cart of misfiled dossiers rattles past, its loose wheels spitting dry wooden shavings across the polished flagstones. The scent of ancient glue and damp paper fills your lungs while you calculate the precise moment to leap across the widening chasm between the shelves.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leap toward the swaying trolley"
+   ]
+  },
+  "ul-3-014": {
+   "title": "Chasing The Runaway Cart",
+   "text": "You launch yourself off the edge of a drifting shelf, aiming straight for the careening timber cart as confidential papers spill from its top tier like a white waterfall. The stone floor drops away beneath your boots, leaving you suspended for a terrifying heartbeat in the dusty air between two moving stacks of literature. You throw your weight sideways, trusting your balance and agility to carry you through the gap before the heavy furniture shifts again and blocks your path completely.",
+   "check": "Leap and catch the runaway cart",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-015": {
+   "title": "The Heavy Spill",
+   "text": "Your boot clips the lower rail of a sliding cabinet as you land, sending you crashing hard against a stack of heavy volumes with a bruised shoulder and a scraped palm. The runaway cart crashes into a pillar with a splintering thud, scattering hundreds of confidential dossiers across the floor in a chaotic white drift. You pick yourself up from the dusty flagstones, wincing as a sharp sting flares across your skinned knuckles while the surrounding cataloguers murmur disapprovingly from their high desks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the scattered transit vouchers"
+   ]
+  },
+  "ul-3-016": {
+   "title": "The Retrieved Voucher",
+   "text": "Your fingers clamp firmly around the edge of the leather-bound transit dossier just as the cart shudders to a permanent halt against a stout stone pillar, however narrowly avoiding a disastrous plunge into the ink-river. You pull the required parchment free from the tangled heap of paperwork, checking its embossed stamp to ensure the transit voucher remains intact and unsoiled. Tucking the recovered document securely into your belt pouch, you leave the scattered papers for the junior scribes to sort.",
+   "check": "",
+   "grant": "Misplaced transit voucher",
+   "exits": [
+    "Proceed to classification hall"
+   ]
+  },
+  "ul-3-017": {
+   "title": "The Water-Clock Antechamber",
+   "text": "Heavy oak doors swing shut behind you with a dull boom as armed beadles in stiff grey uniforms escort you into a remarkably austere antechamber carved directly from the living rock of Quillon's foundations. The air here is thick with the rhythmic, hypnotic ticking of a hundred water-clocks, their brass-and-glass reservoirs dripping dark, ink-like fluid into pewter basins to measure the unyielding passage of the Long Closing. Spectators murmur quietly from shadowy alcoves as you are led toward the center of the mosaic floor, where the tribunal awaits to weigh your transgressions against the ancient laws of the library.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the waiting tribunal judges"
+   ]
+  }
+ },
+ "missing": []
+}

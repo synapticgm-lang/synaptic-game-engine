@@ -1,0 +1,86 @@
+{
+ "batch": "vh-2-1-5-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-1-5-2": {
+   "title": "The Iron Grating",
+   "text": "Cold metal bites into your chilled palms as you press heavy groats one by one through the high iron grating of the toll-house. The clerk's ledger snaps shut with a dry report, marking your departure from the disputed accounts. Biscuit stomps a restless hoof against the cedar planks, eager to leave the cramped booth behind.\n\nAhead, the rope markets stretch across the dizzying gulf, suspended above a sea of white cloud and jagged stone.\n\nYou adjust the bronze clapper in its padded cradle, feeling its faint, familiar hum against your spine.",
+   "exits": [
+    "Step forward onto the hanging bridge"
+   ]
+  },
+  "vh-2-1-5-3": {
+   "title": "The Customs Counter",
+   "text": "Silver coins slide across the polished stone counter of the customs booth, each one a precious sacrifice from your dwindling purse. The toll-keeper weighs them in a calloused palm before pushing your clean ledger slip back across the wood. By paying in full, you keep your name far from the dangerous credit columns of the Cable Court.\n\nOutside the window, the mountain wind rattles the canvas awnings of the suspended bazaar.\n\nYou hitch the heavy bronze clapper higher on your shoulders, ready to face the swaying expanses of the gorge.",
+   "exits": [
+    "Leave the booth and press on"
+   ]
+  },
+  "vh-2-c2": {
+   "title": "The Toll-House Choice",
+   "text": "The heavy oak door of the Cable Court toll-house slams shut behind you, leaving only two paths through this financial checkpoint. You can sign their binding credit agreement and keep your silver coins tucked safely away in your belt, accepting the heavy burden of debt. Alternatively, you can empty your purse right here on the splintered wood, paying every last groat to walk away completely clear. Either choice leaves the mountain winds howling outside, waiting for your next step.",
+   "exits": [
+    "Sign the ledger and take their loan of passage",
+    "Pay the toll directly from your own purse"
+   ]
+  },
+  "vh-2-2-0-0": {
+   "title": "The Winch-Master's Scales",
+   "text": "Hemp boards groan beneath your boots as you step out from the shadows of the toll-house onto a swaying walkway above the deep gorge. Winch-master Joram blocks the path, his greedy, narrowed eyes fixed firmly on the padded cradle holding your heavy bronze burden. He weighs the vibrating metal with a critical gaze, calculating what extra fees he might wring from your tired shoulders.\n\nBelow the wooden slats, the world falls away into a grey ocean of drifting mist and distant stone.",
+   "exits": [
+    "Dodge past the winch-master toward the upper winch",
+    "Slip sideways along the narrow maintenance rail",
+    "Stand your ground and demand safe passage"
+   ]
+  },
+  "vh-2-2-0-1": {
+   "title": "The Ledger of Debts",
+   "text": "Damp market boards heave and creak over the bottomless abyss beneath the weight of your loaded cradle. Clerk Nesta sits huddled over a frozen wooden desk, her quill scratching furiously as she records your new, unpaid debt in a thick sheepskin ledger. The ink freezes in its pot before it can dry properly, leaving dark, blurred streaks across the page.\n\nIce-rimed ropes shiver in the draft, transmitting the hollow thrum of the mountain straight up through your soles.",
+   "exits": [
+    "Follow the curving rail toward the lower market stalls",
+    "Melt away into the crowd while the clerk dips her quill",
+    "Ask the ledger-keeper for a moment to catch your breath"
+   ]
+  },
+  "vh-2-2-1-0": {
+   "title": "The Flax Bridge",
+   "text": "Frost crunches underfoot on a suspension bridge woven from thick, pale flax that swings wildly in the crosswind. A careering cargo basket hurtles down the cable toward you, packed to the brim with leaking tallow barrels. You flatten your back against the swaying guide-rope as the iron carriage screeches past with a shower of grey sparks.\n\nFar below, the jagged slate roofs of the middle tiers look like scattered teeth in the white haze.",
+   "exits": [
+    "Climb toward the suspended timber gallery",
+    "Confront the cable-weaver blocking the narrow plankway",
+    "Duck beneath the trestle as draft mules thunder overhead"
+   ]
+  },
+  "vh-2-2-1-1": {
+   "title": "The Salted Hides Stall",
+   "text": "Old Sula catches your sleeve near a towering stack of stiff, salted hides that smell sharply of brine and mountain peat. Her weathered finger points toward the middle winch-platforms, where Cable Court enforcers are locking the iron gates. A heavy silence hangs over the stalls as the market folk watch the checkpoint snap shut.\n\nThe bronze clapper hums against your spine, a low warning note that matches the tension in the air.",
+   "exits": [
+    "Flash your knotted guild token to bypass the guards",
+    "Hide behind the chandler's booth until the patrol passes",
+    "Dash across the open platform before the winch shifts"
+   ]
+  },
+  "vh-2-2-1-2": {
+   "title": "The Raking Gust",
+   "text": "Violent mountain gales batter the canvas awnings of the hanging bazaar, sending sharp slaps of wind across the wooden decks. Your heavy bronze burden shifts in its cradle, threatening to pitch you backward into the grey mist of the gorge. You dig your heels into the frozen pine planks and lean hard into the gale to keep your balance.\n\nAround you, merchants secure their swinging wares with frantic loops of hemp twine.",
+   "exits": [
+    "Dive toward the shelter of the falling-timber stack",
+    "Accept a steaming cup of chicory from a nearby apprentice",
+    "Crawl beneath the slumping trestle where weavers work"
+   ]
+  },
+  "vh-2-2-1-3": {
+   "title": "The Testing Pit",
+   "text": "Hemp fibers drift through the freezing air like grey snow as you squeeze past a knot-binder's busy stall. Apprentices test the tensile strength of thick hawsers by hanging heavy iron weights directly over the gaping abyss. Each rope groans under the strain, singing a high, taut note into the whistling wind.\n\nYou keep your eyes fixed straight ahead, careful not to look down into the fog-filled void.",
+   "exits": [
+    "Approach the iron turnstile guarded by Vane",
+    "Press your chest flat against the swaying bridge rail",
+    "Skirt the edge of the great wicker sorting pit",
+    "Cut across the timber yard toward the lower stair"
+   ]
+  }
+ },
+ "missing": [
+  "vh-d-2-1"
+ ]
+}

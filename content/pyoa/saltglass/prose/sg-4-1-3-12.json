@@ -1,0 +1,91 @@
+{
+ "batch": "sg-4-1-3-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-1-3-12": {
+   "title": "The White Alkali",
+   "text": "Across an open expanse of blistered white alkali, the gale hits with the force of a slammed door, driving millions of glass needles into your leather coat. Your banked coal-lantern rattles against your hip, sending weak orange flickers across the crusted ground as you struggle to keep your footing against the horizontal shriek of the storm.",
+   "exits": [
+    "Push forward into the blinding drift",
+    "Veer toward the low ridges of fused slag",
+    "Seek refuge within the dark mud alcove"
+   ]
+  },
+  "sg-4-1-3-13": {
+   "title": "The Copper Cylinder",
+   "text": "Inside a hollowed copper cylinder that once held a solar lens, you press your back to the curved wall while the tempest shrieks through the open ends. The metal hums with a deep, vibrating resonance that matches the frantic beating of your heart, offering a brief, echoing pocket away from the direct fury of the gale.",
+   "exits": [
+    "Step out into the churning grit",
+    "Follow the rumbling pipe deeper inward",
+    "Cross the ribbed pan of purple salt"
+   ]
+  },
+  "sg-4-1-3-14": {
+   "title": "The Rusted Iron Flange",
+   "text": "Beneath a massive flange of rusted iron pipe, you pause to lash the Seedkey securely inside your tunic with a length of braided hemp cord. The cold ceramic piece warms slightly against your ribs, reminding you of the green vaults waiting at the basin's heart while the metal overhead groans under the weight of the wind.",
+   "exits": [
+    "Crawl along the shelter of the conduit",
+    "Head toward the bruised purple salt-pan",
+    "Take the reckless way"
+   ]
+  },
+  "sg-4-1-3-15": {
+   "title": "The Sulfur Fissure",
+   "text": "Beside a cliff of yellow crystal slag, an eddy of warm, sulfurous air rises from a deep fissure, threatening to suffocate you with the breath of the dead basin. You pull your collar high across your nose and mouth, tasting the alkaline dust and ancient minerals as you weigh the foul heat against the freezing bite of the open storm.",
+   "exits": [
+    "Breast the dune of pulverized quartz",
+    "Turn toward the darkening salt expanse"
+   ]
+  },
+  "sg-4-1-4-0": {
+   "title": "The Screaming Pipe",
+   "text": "Shrieking air funnels through the rusted throat of the giant drainage flute, turning every breath into a struggle against the pressure. The howling wind rattles your ribs and scours the salt from your boots while you crouch low to keep your balance. Clinging tightly to the cold iron rim of the pipe, you must decide whether to crawl forward into the roaring interior or scramble back toward the shelter of the masonry.",
+   "exits": [
+    "Crawl through the iron hatch ahead",
+    "Retreat to the mirror-station door"
+   ]
+  },
+  "sg-4-1-4-1": {
+   "title": "The Glass Screen",
+   "text": "Behind a jagged screen of sea-green plate glass, you watch the full fury of the storm scour the basin floor while your lantern oil begins to smoke. The thick emerald barrier muffles the roar of the gale to a dull, subterranean thrum, letting you catch your breath and steady your grip on the precious metal handle.",
+   "exits": [
+    "Press onward to the deep siphon tube",
+    "Seek the battered mirror-station shelter"
+   ]
+  },
+  "sg-4-1-4-2": {
+   "title": "The Buckled Span",
+   "text": "Slender ribs of buckled iron groan under the relentless weight of the gale, forming a narrow bridge across a yawning trench of darkness. Each gust strikes your shoulders like a physical blow, threatening to pitch you sideways into the empty air. With the heavy lamp swinging wildly at your side and the Seedkey cold against your palm, you weigh the dangerous crossing against the safety of the path behind.",
+   "exits": [
+    "Rush across the iron framework now",
+    "Step back onto the windward lip"
+   ]
+  },
+  "sg-4-1-4-3": {
+   "title": "The Salt Vault",
+   "text": "Damp masonry cradles your tired shoulders inside the vaulted junction of the old aqueducts, offering a brief respite from the fury outside. Above your head, the concrete ceiling vibrates with the heavy thunder of the storm while fine white salt sifts through the mortar joints. Catching your breath in the damp stillness, you look toward the low tunnel leading downward and the heavy maintenance exit nearby.",
+   "exits": [
+    "Follow the tunnel toward the central depression",
+    "Slip out beside the copper intake valve"
+   ]
+  },
+  "sg-4-1-4-4": {
+   "title": "The Milk-Glass Spire",
+   "text": "Freezing air spills down the face of the leaning milk-glass spire, turning your fingers numb and clumsy against the brass handle of your coal-lantern. The pale glow of the ember-lamp flickers weakly against the gathering gloom as frost begins to rim the glass plates underfoot. Shivering in the bitter draft, you ponder whether to press onward into the storm's teeth or seek refuge behind the warped hinges of the nearby station door.",
+   "exits": [
+    "Push forward toward the windward ridge",
+    "Force open the battered mirror-station door"
+   ]
+  },
+  "sg-4-1-4-5": {
+   "title": "The Quartz Mountain",
+   "text": "Beside a mountain of pulverized quartz, a sudden shift in the dune buries your shins in heavy grit, anchoring you fast against the rushing wind-wall. You wrench your right boot free with a sucking sound, shielding your glowing coal-lantern with your body to prevent the fine white powder from snuffing out the last ember of Candlemere.",
+   "exits": [
+    "Struggle toward the Grand Siphon tube",
+    "Climb the windward depression edge",
+    "Lean against the battered mirror door"
+   ]
+  }
+ },
+ "missing": []
+}

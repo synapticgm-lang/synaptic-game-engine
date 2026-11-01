@@ -1,0 +1,52 @@
+@@SECTION cf-3-110
+TITLE: The Chalked Ledger
+TEXT: Saliva tastes of copper and coal-dust as you keep your chin level, absorbing each mocking inquiry with studied dullness. The inspectors lean closer, smelling of cheap gin and oiled paper, searching your grease-stained sleeves for signs of rebellion or sharper wits. Every twitch of your eyelid is a hazard, but you force your breath into an even, heavy rhythm, playing the part of a mindless shovel-hand who knows nothing beyond the weight of damp slate. // Step back onto the iron footplate before the supervisor loses his patience entirely.
+EXIT 1: Stand firm against the inspectors
+@@END
+@@SECTION cf-3-111
+TITLE: A Steady Pulse
+TEXT: The senior inspector taps his brass-headed cane sharply against your shin, testing whether you will flinch or curse under sudden provocation. Your teeth grind together until the jawbone aches, but you swallow the bitter retort rising in your throat, fixing your eyes instead on a grease-smear upon the boiler jacket. A single hot word could ruin everything and bring the whole station guard down upon the Marrowbone. You lock your fingers into your palms, keeping every muscle iron-still as the heavy brass watch ticks inside his waistcoat pocket.
+CHECK: Hold your tongue against spite
+@@END
+@@SECTION cf-3-112
+TITLE: The Stiffening Jaw
+TEXT: Your temper frays at the edges, and a sudden, sharp syllable slips past your lips before you can clamp them shut. The inspector's eyes narrow with sudden triumph, and he marks a jagged, punitive surcharge across your manifest, adding a fresh debt of three days' heavy track-laying to your ledger. The blow leaves a dull, throbbing ache behind your ear where a supervisor's sleeve brushed past, and your pride feels as thin and torn as scorched wrapping paper. Still, the Marrowbone remains yours to steer, and you force your lungs to draw another lungful of heavy station soot.
+EXIT 1: Take up the heavy shovel
+@@END
+@@SECTION cf-3-113
+TITLE: A Grudging Nod
+TEXT: Whether by stubborn silence or a masterstroke of dull-witted acting, the officials finally lose interest in your small miseries and turn their gaze toward the next stalled engine. You exhale a long, shuddering breath of ash-choked air as their heavy boots retreat down the metal gantry. Tucked into the greasy corner of your coat pocket rests a scrap of stamped tin, greasy with official wax.
+GRANT: A forged clearance pass
+EXIT 1: Return to the cab before dusk
+@@END
+@@SECTION cf-3-114
+TITLE: The Brass Latch
+TEXT: Hands grip the edge of the cab opening, fingers digging into the teak and iron with greedy intent to haul themselves inside where the secret floor-plate hides. You drop your weight low, setting your boots squarely against the iron plates, and slam the heavy weather-curtain down across the opening with a sharp rattle of brass rings. Shouts rise from the platform, muffled by the thick canvas and the steady, lung-filling thrum of the idling firebox. // Wedge the heavy iron pinch-bar firmly behind the sliding latch.
+EXIT 1: Bar the door against intruders
+@@END
+@@SECTION cf-3-115
+TITLE: Shouts Through the Canvas
+TEXT: Knuckles hammer rhythmically against the exterior wood, accompanied by demands to inspect every square inch of the coal bunker and the floor-plates below. The Marrowbone trembles beneath your boots, her internal pressure climbing as the heat builds against the sealed safety valves. You press your shoulder hard against the partition, feeling the vibration of angry fists and the scrape of brass buttons sliding along the outer plating. // Turn back to the hissing regulator valve.
+EXIT 1: Watch the trembling steam gauge
+@@END
+@@SECTION cf-3-116
+TITLE: Shoving Back the Tide
+TEXT: A heavy shoulder hits the center of the weather-curtain, straining the brass eyelets until they scream against the grain. You throw your entire weight against the timber frame, bracing your boots against a grease-slick rivet while the hinges groan under the assault from the platform outside. Every muscle in your back knots like dry hemp as you fight to keep the gap closed against the shoving hands of the toll-men.
+CHECK: Throw your weight against the door
+@@END
+@@SECTION cf-3-117
+TITLE: Battered Shutter
+TEXT: The timber gives way with a sickening crack, and a heavy boot kicks through the canvas, catching you square in the ribs and sending you sprawling across the coal-scuttle. A sharp, tearing pain lances through your side, leaving you gasping for cool air while grease and soot smear across your forehead. Though you managed to tumble them back before they reached the hidden floor-plate, the struggle leaves you bruised and short of breath.
+EXIT 1: Pick yourself up from the coal
+@@END
+@@SECTION cf-3-118
+TITLE: The Splintered Guard
+TEXT: Whether by pure muscle or a lucky brace against the bulkhead, the intruders slide away down the slippery gantry with bruised fingers and curses upon their lips. You lean against the battered bulkhead, chest heaving, wiping a smear of dark engine-grease from your forehead with the back of a torn sleeve. On the floorboards near the bulkhead lies a heavy brass spanner dropped in the scramble.
+GRANT: A heavy brass spanner
+EXIT 1: Secure the hatch against further intrusion
+@@END
+@@SECTION cf-3-119
+TITLE: The Choking Silence
+TEXT: The steady, comforting thrum of the boiler dies away into an eerie, high-pitched whistle as the needle on the pressure dial plunges toward the red line. Frost begins to feather the edges of the sight-glass while the firebox below spits a weak, dying puff of gray smoke instead of its usual orange roar. Someone has tampered with the main feed-valve near the tender coupling, starving the belly of the beast just as the ash-storm season begins to howl against the corrugated iron roof above. The Marrowbone is going cold, her iron bones freezing in the drafty depot, and unless you crawl down into the shadows beneath the tender to clear the blocked line, the journey ends here in the dark.
+EXIT 1: Crawl into the auxiliary boiler casing
+@@END

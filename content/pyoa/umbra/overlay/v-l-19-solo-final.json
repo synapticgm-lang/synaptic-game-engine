@@ -1,0 +1,47 @@
+{
+ "batch": "v-l-19-solo-final",
+ "variants": [
+  {
+   "node": "up-l-solo-final",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Far below, the glow of watchmen's braziers multiplies across the cobblestones, driven by the frightened deacon's breathless report to the Guard. They are hunting a phantom in a murdered man's cloak, and every shadow seems to shrink as the cordon tightens."
+  },
+  {
+   "node": "up-l-solo-final",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "The cold wind off the harbour carries a faint, phantom echo of the deacon's final, brief scream before he struck the paving stones. You killed a servant to ensure this absolute silence, purchasing this uninterrupted moment of power with his shattered bones."
+  },
+  {
+   "node": "up-l-solo-final",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "A heavy silver coin bearing Lord Valerius's private crest rests securely in your pocket, a promise of velvet-draped sanctuary and fine wine if you deliver the ledger. His polite menace now serves as your personal shield against the encroaching chaos."
+  },
+  {
+   "node": "up-l-solo-final",
+   "when": {
+    "valerius": "betrayed"
+   },
+   "after": "Even from this height, you catch glimpses of lithe figures darting across the Exchange roofs, swift runners clad in Valerius silk hunting for your blood. Spurning the lord's gilded cage means his polite menace has sharpened into a very real, deadly pursuit."
+  },
+  {
+   "node": "up-l-solo-final",
+   "when": {
+    "rigg": "allied"
+   },
+   "after": "Heavy iron tokens from Matron Rigg weigh down your satchel, a guarantee that her gaolers and warrants will sweep aside any opposition in your path. With the foundry matriarch's brutal authority backing your play, the city feels less like a trap and more like an anvil."
+  },
+  {
+   "node": "up-l-solo-final",
+   "when": {
+    "rigg": "betrayed"
+   },
+   "after": "Somewhere in the gloom, the rhythmic, metallic clang of iron-shod boots betrays Matron Rigg's heavies scouring the alleys for your scent. Denying the foundry matriarch has unleashed a relentless pack of warrant-wielding hounds, and they will not stop until you are in the gaol books."
+  }
+ ]
+}

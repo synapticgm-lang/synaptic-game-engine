@@ -1,0 +1,86 @@
+{
+ "batch": "sg-6-0-4-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-0-4-6": {
+   "title": "Mist Along the Stairs",
+   "text": "Cool moisture dampens your brow as a stone staircase descends into a thick bank of subterranean mist that clings to the floor like chilled breath in winter. Every downward step muffles your boots against the flagstones, trading the dry alkaline grit of the upper levels for the dense, stagnant damp of the deep vaults. Faint shadows shift beyond the reaches of your ember-lamp, suggesting massive pillars or towering granary walls hidden just beneath the grey haze.",
+   "exits": [
+    "Step carefully down into the thick mist",
+    "Reach out to feel along the cold damp wall"
+   ]
+  },
+  "sg-6-0-4-7": {
+   "title": "The Iron Transport Groove",
+   "text": "Deep channels score the floor where heavy iron transport trucks once ran, leading straight toward the heart of the seed halls with unyielding geometry. Your boots follow the smooth iron tracks through an endless corridor of echoing silence, guided by the straight path carved by hands that vanished centuries ago. The air here tastes faintly of rusted metal and dry earth, promising that the central vaults are near at hand.",
+   "exits": [
+    "Follow the old iron tracks deeper inward",
+    "Step off the tracks to search the shadowy alcoves"
+   ]
+  },
+  "sg-6-0-5-0": {
+   "title": "The Outer Bronze Gate",
+   "text": "Massive metalwork blocks your path as you stand before the outer bronze gate of the Great Seed Hall, where the cold ceramic Seedkey hums in your trembling grip. Green verdigris streaks the heavy panels, framing intricate engravings of long-withered grain stalks and clouds that never brought rain. Your banked coal-lantern casts a warm, flickering amber glow over the keyway, inviting the final turn that will test every mile you walked across the basin.",
+   "exits": [
+    "Turn the ceramic key in the bronze lock"
+   ]
+  },
+  "sg-6-0-5-1": {
+   "title": "The Central Granary Doors",
+   "text": "Heavy wooden timbers bound in darkened iron loom before you, their surfaces carved with hollow depressions that await the true key. The wood is bone-dry and cracked with age, yet it holds the heavy scent of ancient harvests that outlasted empires. Your fingers brush the central depression while your ember-lamp sputters softly against the draft slipping from the gaps in the grain-house.",
+   "exits": [
+    "Press the ceramic key into the hollow panel"
+   ]
+  },
+  "sg-6-0-5-2": {
+   "title": "The Primary Vault Threshold",
+   "text": "Stone lintels frame the entrance as you reach the threshold of the primary vault, wondering whether the ancient bins hold life-giving grain or only centuries of ash. Faint drafts whistle through the doorframe, carrying the dry rattle of neglected husks and the hollow echoes of your own breathing. Your lantern light washes over towering mounds of shadow that might conceal either salvation or absolute ruin.",
+   "exits": [
+    "Step across the threshold to test the ancient bins"
+   ]
+  },
+  "sg-6-0-5-3": {
+   "title": "The Rain Vault Seal",
+   "text": "Massive slabs of fused glass and grey stone form the final barrier between Candlemere and total ruin, filling the corridor ahead with an impenetrable wall. The seal bears no handle or latch, only a narrow slot shaped precisely to receive the cold ceramic key resting in your palm. Your ember-lamp flickers once as a sudden subterranean draft sweeps past the great barrier, whispering of secrets kept too long.",
+   "exits": [
+    "Slide the Seedkey into the glass seal"
+   ]
+  },
+  "sg-6-c1": {
+   "title": "The Heart of the Vaults",
+   "text": "Vaulted ceilings stretch into darkness as the massive doors swing inward to reveal the legendary seed halls of Prism, silent and immense. What you find here hangs upon the long-buried truths of the basin, shifting between towering heaps of preserved grain and empty chambers stripped bare by forgotten looters. The cold ceramic key grows heavier in your hand as the silence of the deep earth presses down on your shoulders.\n\nChoose your path through the storied halls of the ancient vault.",
+   "exits": [
+    "Walk the full halls you believed in",
+    "Search the looted halls for what was missed"
+   ]
+  },
+  "sg-6-1-0-0": {
+   "title": "Alabaster Jars and Old Debts",
+   "text": "Towering alabaster jars rise like pale monuments out of the gloom, filled with petrified rye that has turned to stone over the long centuries. Beside them, you discover a ledger detailing long-forgotten debts that could rewrite your village's survival, written in neat ink that has outlasted the hands that penned it. The faint scent of dried salt clings to the parchment pages as your lantern light flickers across columns of figures promising redemption or bitter reckonings.",
+   "exits": [
+    "Examine the ledger entries by lantern light",
+    "Dodge tumbling ceramic tiles beneath a shattered skylight",
+    "Open the hidden floor panel revealed by your key"
+   ]
+  },
+  "sg-6-1-0-1": {
+   "title": "The Intact Seed Pods",
+   "text": "Rows of copper pods stretching into the gloom smell faintly of dry lavender, guarding an intact seed vault that holds thousands of shimmering wheat kernels awaiting your key. The metal containers remain tightly sealed against the ravages of time, preserving life within their gleaming bellies while the outside world turns to salt and dust. Your ember-lamp catches on the polished surfaces, casting dancing amber reflections across the long-forgotten bounty.",
+   "exits": [
+    "Navigate mounds of blackened barley husks",
+    "Listen to the abandoned copper hoe clatter against your boot",
+    "Step gingerly over drifts of crystal dust under peeling constellations"
+   ]
+  },
+  "sg-6-1-1-0": {
+   "title": "The Ghost-Moth's Lantern",
+   "text": "A collapsed grain silo leaks gray dust across the flagstones, accompanied by a discarded iron lantern flickering with a trapped ghost-moth guiding you deeper. Its pale blue luminescence cuts through the heavy gloom, pointing toward a narrow fissure in the stone wall where ancient air circulates freely. You adjust your grip on your own coal-lantern, following the erratic flight of the glowing insect into the uncharted dark.",
+   "exits": [
+    "Squeeze through the narrow ventilation slit choked with price",
+    "Enter the circular archive room where parchment scrolls drift",
+    "Follow the rhythmic water-clock dripping beside bitter brine"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,74 @@
+Gemini said
+
+@@SECTION td-4-173
+TITLE: The Blind Mentor
+TEXT: Shadows detach themselves from the dripping brickwork of the grand chamber as a familiar silhouette steps into the amber wash of the revived core. Orsolya Venn stands before the iron framework, her lighthouse keeper's coat stiff with dried salt and old seaweed. When she turns her head toward the sound of your boots, the lamplight catches eyes stripped of pigment, rendered entirely milky-white by the deep pressures of the abyss. Her voice rasps like dry gravel scraped across slate as she demands your immediate assistance to throw the main gear. She insists that Saltspire must drown in the returning flood so that Gullmouth and its stranded people might finally breathe again //
+EXIT 1: Step closer to the blinding light
+@@END
+
+@@SECTION td-4-174
+TITLE: The Final Choice
+TEXT: Massive iron levers cast long, trembling shadows across the vaulted ceiling of the Sunken Stair as your mentor holds her hand steady over the primary release mechanism. Every faction with a stake in the dry seabed has left its mark upon these stones, yet the ultimate decision of where the waters rush first rests entirely in your blistered hands. The intricate brass teeth of the Meridian Gear grind against each other with a sound like cracking teeth, waiting for the weight of a choice that will remake the world //
+EXIT 1: Reach for the heavy iron arm
+EXIT 2: Challenge her dark decree with law
+EXIT 3: Smash the descending pilgrim hands
+EXIT 4: Heave against the jammed secondary cog
+EXIT 5: Brace your back against the tremor
+EXIT 6: Wait for the great iron to groan
+@@END
+
+@@SECTION td-4-175
+TITLE: Wrestling The Iron
+TEXT: Muscles strain against bone as you lunge forward to intercept her trembling fingers before they can trip the catastrophic release. Orsolya fights with an unnatural, salt-brined strength, her knuckles scraping against the freezing metal as you lock arms in a desperate struggle for supremacy over the mechanism. The heavy bronze lever vibrates with the immense torque of the entire trapped ocean waiting just beyond the stone walls //
+EXIT 1: Force the lever to your side
+@@END
+
+@@SECTION td-4-176
+TITLE: Seizing The Lever
+TEXT: Iron bites deep into your palm as you throw your entire body weight against the stubborn shaft of the primary control. The mentor gasps, her white eyes widening in shock as your superior leverage forces her hands back from the polished brass knob. Every bolt in the housing groans in protest under the sudden cross-pressure of your competing wills //
+EXIT 1: Test your strength against the mechanism
+@@END
+
+@@SECTION td-4-177
+TITLE: Testing Your Might
+TEXT: Sweat stings your raw skin as you wedge your shoulder beneath the primary arm, attempting to heave the massive locking pin home against the dead weight of the drowned city's history. The metal shudders under your grip //
+CHECK: Heave the primary locking pin home
+@@END
+
+@@SECTION td-4-178
+TITLE: Crushed By The Weight
+TEXT: The heavy iron arm slips from your slick, salt-caked palms with a brutal jolt that sends a shooting pain straight up your spine. You stumble backward against a jagged bulkhead, clutching a bruised shoulder while Orsolya regains her footing with a low, triumphant hiss //
+EXIT 1: Pick yourself up from the iron grating
+@@END
+
+@@SECTION td-4-179
+TITLE: Master Of The Gear
+TEXT: Metal yields with a resounding clunk as you successfully force the primary lever past its stubborn notch, locking the mechanism firmly into your chosen alignment. Orsolya steps back, panting and defeated, leaving you in absolute command of the great engine //
+GRANT: heavy iron locking key
+EXIT 1: Return to the final control console
+@@END
+
+@@SECTION td-4-180
+TITLE: Words Of The Tide
+TEXT: Old maritime statutes roll off your tongue like verses from a forgotten hymn, reminding her of the ancient oaths sworn upon the first lighthouse stones. Orsolya pauses, her white eyes staring past you into the dark corners of the vault as the iron logic of your argument slowly takes root in her fractured mind. Her rigid posture softens just enough for you to press your advantage //
+EXIT 1: Demand she surrender the primary control
+@@END
+
+@@SECTION td-4-181
+TITLE: Parsing The Statutes
+TEXT: Your voice cuts cleanly through the rhythmic pounding of the distant machinery, weaving together fragments of ancient coastal charter and common wrecking law to dismantle her apocalyptic design piece by piece. The tension in the air grows so thick it tastes of copper and brine //
+CHECK: Recite the ancient coastal charter law
+@@END
+
+@@SECTION td-4-182
+TITLE: Flawed Arguments
+TEXT: Your tongue stumbles over an archaic clause, and the rhythm of your reasoning shatters against her unyielding fanaticism like a wave hitting a vertical cliff. Orsolya cuts you off with a sharp wave of her hand, her expression hardening into absolute granite as she prepares to throw the lever regardless //
+EXIT 1: Gather your wits for another attempt
+@@END
+
+@@SECTION td-4-183
+TITLE: Conceding The Point
+TEXT: She lowers her hand slowly from the heavy brass handle, letting out a long, rattling breath that smells of old kelp and sea-salt. With a reluctant nod, she yields control of the great mechanism to your steadier judgment and presses a cold, octagonal brass token into your palm //
+GRANT: weathered brass tide compass
+EXIT 1: Stand ready as the great gear turns
+@@END

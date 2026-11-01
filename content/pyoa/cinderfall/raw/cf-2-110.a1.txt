@@ -1,0 +1,42 @@
+@@SECTION cf-2-110
+TITLE: The Greasy Rag
+TEXT: Heavy boots crunch against the frozen ballast near a stalled coal hopper where two track-hands are snarling over a greasy rag. One clutches the stained cotton with soot-blackened fingers while the other lunges forward with a raw oath about shared property and broken rosters. The biting wind whips their ragged scarves across their faces, carrying the bitter taste of sulfur from the low dunes. Stepping between the crouched gangers, you raise a gloved hand to halt the impending blow before someone takes a serious injury over scraps. // The older man hesitates, his chest heaving beneath a patched canvas jacket, while his companion lowers his clenched fists to peer at you through the gloom.
+EXIT 1: Step closer to lower the tension
+@@SECTION cf-2-111
+TITLE: Shared Chicory
+TEXT: Standing your ground in the biting gale, you offer a steady word about the long miles left to Cinderfall and the foolishness of shedding blood over soiled lint. The taller worker spits a dark stream of ash-spit into the grey gravel, grumbles something about ungrateful rosters, and finally shoves the rag into his pocket with a disgruntled grunt. His partner relaxes his shoulders, muttering an acknowledgment of the shared misery that binds every worker to these dead rails. Grime-cracked fingers reach into a battered tin to pull out a dented tin mug filled with bitter, steaming chicory. // You accept the warm metal, feeling the heat seep through your frozen palms, and take a spare lamp wick pressed into your palm as a token of rough truce.
+EXIT 1: Take the path past the hopper
+@@SECTION cf-2-112
+TITLE: Steadying the Balance
+TEXT: The low grumbling among the track-hands abruptly flares again as a sudden gust of wind rattles the nearby rusted carriages, threatening to turn the fragile peace into a wild scuffle. You must keep your voice entirely even and your posture anchored against the shifting shale, absorbing their raw fatigue without letting your own temper snap under the strain. Every muscle in your neck tightens as you hold their wary gazes, weighing the volatile mood of men who have spent too many weeks breathing grey dust and drinking foul water. // You steady your breath against the rising panic in the air, waiting for the exact second to speak.
+CHECK: Keep your voice level and calm
+@@SECTION cf-2-113
+TITLE: A Costly Quarrel
+TEXT: A sudden shove from the taller ganger knocks your elbow wide, sending the hot chicory spilling across your sleeve and burning your wrist with a sharp sting. Time slips away as you scramble to retrieve your scattered gear from the grey gravel while the two workers exchange dark looks and melt away into the ash-dunes. You are left with a raw, stinging scald on your arm and a lingering sense of wasted minutes that pushes the storm clock closer to its deadline. // Nursing your burnt skin, you pull your leather coat tighter against the wind and climb back onto the iron plating of the deck.
+EXIT 1: Climb back aboard the engine
+@@SECTION cf-2-114
+TITLE: Warm Truce
+TEXT: Your measured words and steady stance defuse the flashpoint, leaving the exhausted workers to mutter apologies into their scarves and share their meager supplies. However narrowly you manage the frayed tempers, the tension dissolves into the freezing wind, replaced by a grudging respect for your patience on the line. You walk away with a warm cup in your belly and a sturdy new wick tucked safely into your breast pocket for the coming dark. // The rusted rails stretch out ahead through the grey wasteland toward the distant silhouette of the viaduct.
+GRANT: Spare wick and warm chicory
+EXIT 1: Walk on toward the viaduct
+@@SECTION cf-2-115
+TITLE: The Sealing Iron
+TEXT: A rusted shunting engine leans at a drunken angle beside the main line, its high-pressure steam gland hissing a thin, angry jet of white vapor into the freezing air. Crouching beside the smoking housing, you inspect the blown packing rope and the pitted brass casing that has taken the full brunt of the season's alkali grit. The metal is scorching hot to the touch, radiating a dry, metallic heat that smells faintly of old machine oil and boiled leather. // You reach into your tool sack and ready your irons, preparing to clear away the ruined gasket before the pressure drops entirely.
+EXIT 1: Pry out the old gasket
+@@SECTION cf-2-116
+TITLE: Clearing the Pitted Seat
+TEXT: Scraping away the calcified remnants of the old asbestos packing requires patient, careful scraping with a flat-bladed chisel to avoid scoring the soft brass seating. Every tap of the small hammer rings out sharply against the silent expanse of the steppes, drawing the curious eyes of passing scavengers from the distant ash-mounds. You work methodically, blowing away the grey flakes of corrosion and wiping the seating clean with an oily rag until the metal gleams dully in the pale light. // Selecting a fresh length of hemp rope from your spares, you grease it thoroughly and begin winding it tight into the narrow gland channel.
+EXIT 1: Pack the new hemp tight
+@@SECTION cf-2-117
+TITLE: Torque and Steam
+TEXT: The heavy brass spanner bites into the gland nut as you throw your full weight into the final turn, feeling the newly packed hemp compress against the live steam pressure. A sudden hiss of superheated vapor screams past your knuckles, testing every ounce of your technical skill as you fight to seat the nut squarely without stripping the aged, delicate threads. The wrench slips slightly on the greasy flats, and you must correct your grip instantly before the escaping pressure blows the entire assembly out. // You brace your shoulder against the vibrating boiler plate and strain against the stubborn hex nut.
+CHECK: Torque the leaking steam gland
+@@SECTION cf-2-118
+TITLE: Stripped Threads
+TEXT: A sharp, metallic crack rings out as the aged threads shear under your wrench, unleashing a fierce plume of scalding steam that scorches your forearm and fills the small cab with blinding white fog. You cough violently, stumbling back against the coal bunker while the pressure bleeds down in a deafening hiss that wastes precious minutes of your schedule. Your forearm bears a bright red burn where the jet caught you, and the gland remains stubbornly loose, leaking a steady, annoying drip of hot water. // Gritting your teeth against the pain, you bind a rag around your scalded arm and make a temporary fix using wire and tallow.
+EXIT 1: Secure the temporary wire patch
+@@SECTION cf-2-119
+TITLE: Tight and True
+TEXT: The heavy spanner bites home with a solid, satisfying clunk, locking the packing nut securely against the housing and sealing the angry hiss into a faint, rhythmic thrum. However narrowly you avoid stripping the ancient threads, the repair holds firm against the surging pressure, restoring full efficiency to the auxiliary line. You wipe your greasy hands on a scrap of waste and gather your tools, leaving the stranded shunting engine in better shape than you found it. // A heavy set of forged spanners remains in your kit as payment for your labor on the iron.
+GRANT: Heavy brass spanners
+EXIT 1: Return to your own engine

@@ -1,0 +1,97 @@
+{
+ "batch": "td-3-022",
+ "sections": {
+  "td-3-022": {
+   "title": "The Iron Gatekeeper",
+   "text": "Thick hemp ropes bind the rusted ladder to a salt-crusted stilt, and a broad-shouldered Brineholder enforcer plants his heavy boots across the lowest rung. He smells of stale sweat and stagnant cistern water, eyeing your salt-greased wrecking clothes with undisguised contempt. You plant your feet on the groaning timber, meeting his flat stare without a blink as he raises a meaty fist to push you back into the abyss. Instead of retreating, you lean your weight forward, taking his heaviest blow squarely against your collarbone with a dull thud that leaves your teeth aching. Your stillness in the face of his violence gives him pause, his heavy brows knitting together as he weighs your stubbornness against the hassle of a broken jaw.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the enforcer without flinching"
+   ]
+  },
+  "td-3-023": {
+   "title": "Standing Your Ground",
+   "text": "Heavy iron-knuckled fingers coil around your collar, shoving you hard against the shivering stilt ironwork until your breath bursts from your lungs in a hot cloud. You refuse to drop your gaze from his flat, pitiless eyes, letting the salt-rimed wind whip between you while your ribs throb beneath your tunic. Every muscle in your torso coils like a wet winch-cable, bracing for the inevitable haymaker that threatens to pitch you over the rail into the empty seabed far below.",
+   "check": "Absorb the brutal beating",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-024": {
+   "title": "The Price of Passage",
+   "text": "The enforcer's heavy knuckle catches you across the cheekbone, splitting the skin and sending a hot trickle of blood down into your salt-caked collar. You stagger sideways, clinging to a rusted crossbeam as dizziness swims behind your eyes, your left shoulder burning from where you slammed against the iron. He spits a glob of phlegm onto the planks, grunting a coarse word of grudging respect before stepping aside to clear the ladder. You wipe the blood from your face with a calloused thumb, nursing a fresh bruise that will throb for days as you pull yourself onto the rungs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb past the heavy guard"
+   ]
+  },
+  "td-3-025": {
+   "title": "A Grudging Nod",
+   "text": "The enforcer's heavy fist halts an inch from your jaw, his thick fingers uncurling as a slow, greasy grin cracks his sun-baked lips. Whether you stood your ground through sheer stubborn luck or raw endurance, your willingness to take his punishment earns a raspy chuckle and a heavy slap between your shoulder blades. He steps aside, hooking a thumb toward the vertical rungs above and muttering a warning about the masters higher up. You press past him, pocketing a greasy brass token that marks you as someone who has earned the lower guards' twisted tolerance.",
+   "check": "",
+   "grant": "greasy brass pass-token",
+   "exits": [
+    "Ascend toward the upper levels"
+   ]
+  },
+  "td-3-026": {
+   "title": "The Thirst of Saltspire",
+   "text": "Iron ladders and rusted catwalks spiral upward into the copper haze, revealing a city dying of terrible thirst while surrounded by an empty ocean. Every pipe, trough, and gutter in Saltspire funnels strictly downward to the heavily guarded private cisterns of the Brineholders, leaving the lower stilt-dwellers to lick moisture from cold metal plates. Armed enforcers patrol every major junction with drawn harpoons, ensuring no common scavenger dares siphon a single drop of the precious condensation. Battered wooden shanties cling like barnacles to the structural beams, packed with hollow-cheeked citizens who trade their last scraps of rusted copper for drops of muddy water. You pull your canvas hood lower over your forehead, navigating the humid shadows while the constant drip of distant, inaccessible valves mocks every dry swallow in your throat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the chaotic market"
+   ]
+  },
+  "td-3-027": {
+   "title": "The Drip Markets",
+   "text": "Frayed fishing nets stretch between rusted iron pylons to form a swaying, crowded plaza where desperate souls barter salvage for tiny, measured vials of murky water. A sharp reek of unwashed bodies, rotting kelp, and boiling brine hangs heavy in the damp air, thick enough to chew. Shouts echo from every corner as merchants weigh dull iron nails against drops of condensation, while desperate scavengers eye your pockets with hungry, sunken eyes. You must decide where to spend your energy in this maze of thirst before the Brineholder enforcers clear the nets.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Jury-rig a broken condensation trap",
+    "Grab the spilled silver cup",
+    "Forge a counterfeit rationing token",
+    "Intercept the aqueduct map thief",
+    "Mend the torn rain-catcher canvas",
+    "Trace the chalk marks of Orsolya"
+   ]
+  },
+  "td-3-028": {
+   "title": "The Leaking Condenser",
+   "text": "Copper tubing snakes across a vibrating frame of ship ribs, weeping precious droplets of condensation into a dented tin basin while angry market vendors glare from nearby stalls. You wedge yourself between a stack of salt-crusted barrels and the humming pipework, pulling a spool of waxed hemp twine from your belt. The local merchants watch your every move with suspicion, ready to set their guard dogs on you if your clumsy fingers puncture their makeshift water line. You wrap the leaking joint tightly, binding the split copper just as a sharp hiss of escaping steam threatens to blow your patch wide open.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Seal the vibrating copper pipe"
+   ]
+  },
+  "td-3-029": {
+   "title": "The Quick Repair",
+   "text": "Your calloused fingers work with frantic speed against the vibrating, superheated copper while boiling drops spit against your forearms. The rusted union sleeve threatens to shear completely under the pressure of the escaping steam, requiring absolute precision with your hemp cord and sealing wax. You bite your lower lip, ignoring the searing heat of the metal as you thread the final knot around the spitting seam, holding your breath at the crucial moment before the entire apparatus either holds or bursts.",
+   "check": "Jury-rig the leaking pipe",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-030": {
+   "title": "Scalded and Shouted Down",
+   "text": "A sudden surge of pressure blows your hemp binding wide open, blasting a cloud of scalding steam across your knuckles and leaving angry red blisters blooming on your skin. The surrounding merchants erupt into fierce shouts, brandishing iron wrenches and driving you back from the rig with sharp blows to your shins. You stumble backward into the swaying netting, clutching your burning hand to your chest while losing precious time and a coil of your best twine. Although you escaped without a knife in your ribs, you are left empty-handed and nursing a painful burn that makes every movement a chore.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat into the swaying crowd"
+   ]
+  },
+  "td-3-031": {
+   "title": "The Spliced Line",
+   "text": "The hemp binding holds firm against the shuddering metal, choking off the angry hiss of steam and sending a steady, clear trickle of water into the tin basin. Whether through clever finger-work or sheer stubborn luck, you secure the joint just as the vendor steps forward to inspect your handiwork with a grudging nod. He scoops a modest measure of clean water into your leather flask as payment for saving his rig from total ruin. You tuck the heavy, cool flask against your hip, carrying away a quiet reputation among the net-traders as someone who knows how to fix a broken line.",
+   "check": "",
+   "grant": "flask of clean water",
+   "exits": [
+    "Return to the bustling market"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,23 @@
+Gemini said
+
+@@INSERT up-end-shadow-truce | witness=let-go
+Deep in the burning city, the Archbishop's almoner will be screaming his warnings to a distracted Guard, though no watchman cares about one fleeing thief whilst the grand houses tear each other apart.
+@@END
+@@INSERT up-end-shadow-truce | cabal=known
+Only you understand the terrible irony of the chaos below; those rival thugs butchering each other in the smoke still answer to the single, neat handwriting you found in the vault's counter-ledgers, bleeding Veridia for profit.
+@@END
+@@INSERT up-end-shadow-truce | valerius=betrayed
+Somewhere beneath the smoke, Lord Valerius’s silk-sleeved runners are already slipping through the alleys, their polite menace sharpened into deadly intent as they hunt the night-crow who dared refuse their master's wine.
+@@END
+@@INSERT up-end-shadow-truce | rigg=betrayed
+Matron Rigg’s iron-fisted bruisers will not easily forget your defiance, and the clatter of their heavy boots across the cobblestones promises a relentless, unforgiving pursuit long after the gaol books are rewritten.
+@@END
+@@INSERT up-end-shadow-truce | vault=breached
+Beneath the Exchange, the shattered grandmaster’s lock remains a gaping wound in the city's security, a quiet crime scene that the surviving inspectors will eventually trace back to your climbing routes.
+@@END
+@@INSERT up-end-shadow-truce | cover=tailor
+You draw the disgraced tailor’s debt coat tightly against the biting wind, grateful for the heavy wool that obscures your silhouette and buries your identity amidst the swirling soot.
+@@END
+@@INSERT up-end-shadow-truce | faceKnown=yes
+Already, a hastily sketched likeness of your features is passing from hand to hand amongst the surviving watchmen, ensuring that your future nights must be spent strictly above the reach of the streetlamps.
+@@END

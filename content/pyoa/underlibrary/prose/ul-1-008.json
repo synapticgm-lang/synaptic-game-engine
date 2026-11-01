@@ -1,0 +1,92 @@
+{
+ "batch": "ul-1-008",
+ "sections": {
+  "ul-1-008": {
+   "title": "The Trembling Shelves",
+   "text": "Heavy mahogany timbers groan above your head as an entire bay of historical geographies shudders violently on its iron tracks. You hurl yourself sideways just as a towering avalanche of overdue folios crashes down into the ink-slicked trench where you stood a heartbeat before. Dust and yellowed confetti rise in a choking cloud that smells strongly of rancid lamp-oil and centuries of dead bindings. Standing up and brushing calf-skin flakes from your sleeves, you catch the eye of a veteran shelver hauling a groaning trolley past the wreckage. She offers a tight, respectful nod of solidarity before vanishing back into the labyrinthine gloom of the Reading Rooms.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step carefully past the fallen timber"
+   ]
+  },
+  "ul-1-009": {
+   "title": "A Path Through Dust",
+   "text": "Navigating deeper into the galleried arches requires dodging erratic currents of air that carry fluttering margin-notes like agitated moths. You press your shoulder against a cold stone pillar to let a pair of argumentative scholars hurry by with their arms full of biting lexicons. The air grows thick with the scent of iron-gall ink and damp wool as you trace the perimeter of the grand reading hall toward the upper tiers. Every surface hums with a faint, low vibration, as though the entire library were a sleeping beast shifting its immense weight in the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the narrow iron staircase ahead"
+   ]
+  },
+  "ul-1-010": {
+   "title": "Leap the Swaying Gap",
+   "text": "A sudden lurch of the floorboards sends the iron gangway swinging away from the gallery wall, leaving a wide, black chasm above the bottomless ink-vats. You crouch low on the trembling planks, measuring the distance to the opposite ledge while loose vellum scrolls slide off the edge into the abyss. There is no time to wait for the machinery to cycle back, and the gap widens with every rhythmic groan of the masonry. You gather your muscles, fixing your gaze entirely on the rough timber opposite, and launch yourself across the yawning dark.",
+   "check": "Leap across the widening chasm",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-011": {
+   "title": "Bruised Shins and Ink",
+   "text": "Momentum deserts you mid-air as the landing shifts, causing your chest to slam hard against the splintered oak edge of the far platform. You scramble desperately with scraped fingers, hauling yourself upward while your dangling boots drag through a cold puddle of spilled manuscript ink. The cost of your clumsy clearance is immediate and stinging: a deep purple bruise along your ribs and the loss of your brass pocket-trowel, which now rests far below among the forgotten refuse. Shaking out your aching arms, you pull yourself onto solid boards and press onward into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hobble onward into the stacks"
+   ]
+  },
+  "ul-1-012": {
+   "title": "The Firm Grasp",
+   "text": "Your fingers bite into the rough timber of the gallery rail just as the swinging walkway stabilises with a metallic clatter. You haul yourself over the barrier, landing with a muted thud among scattered quires of commentary, however narrowly you managed the crossing. Clutched tightly in your palm is a heavy brass key dropped by some careless clerk, its heavy wards cold and patterned with strange, looping sigils. This small token might just unlock doors that remain stubbornly barred to ordinary shelvers.",
+   "check": "",
+   "grant": "heavy brass key",
+   "exits": [
+    "Proceed toward the lending desk"
+   ]
+  },
+  "ul-1-013": {
+   "title": "Staring Down the Clerk",
+   "text": "Behind the high mahogany counter of the lending office, the senior clerk narrows his eyes behind tinted spectacles and taps a long, ink-stained finger against the ledger. You meet his suspicious glare without flinching, standing completely still as the ambient murmurs of the Reading Rooms swirl around your shoulders. Stubborn persistence forms your only shield against his endless array of petty regulations and fabricated administrative fines. Slowly, grudgingly, the clerk stops his scratching quill and reaches into a brass drawer to retrieve a stamped tin badge of authority.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the visitor badge and move"
+   ]
+  },
+  "ul-1-014": {
+   "title": "The Heavy Ledger",
+   "text": "Heavy vellum registers bound in green calfskin lie stacked in towering columns across every available square inch of the counter. You slide your newly acquired badge onto your lapel, listening to the monotonous scratching of dozens of quill pens wielded by unseen scribes in the alcoves. A sharp smell of vinegar and gall fills your nose as a nearby scholar drops a heavy commentary that begins to whisper insults in an ancient dialect. Ignoring the petulant book, you focus entirely on finding the trail left by Thessaly Marr before the cataloguers notice her absence.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the corridor of whispering folios"
+   ]
+  },
+  "ul-1-015": {
+   "title": "The Interrogation of Rules",
+   "text": "The head archivist blocks the arched exit with a stack of overdue notices, demanding an immediate accounting of your presence in the restricted sector. You must hold your ground against a barrage of bureaucratic threats designed to strip away your resolve and send you back to the basement returns. Every nerve frays under the weight of her inquisitorial gaze as she challenges your right to walk these ink-stained aisles. You gather your mental fortitude, refusing to look away or offer a single apologetic word.",
+   "check": "Withstand the archivist sharp gaze",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-016": {
+   "title": "A Costly Concession",
+   "text": "Your composure cracks under the relentless barrage of administrative citations, forcing you to nod submissively to avoid outright expulsion from the galleries. The victory is entirely hers, and the price of your momentary hesitation is a towering stack of delinquent catalogues dumped unceremoniously into your arms. Staggering under the unexpected weight, you accept a burdensome clerical debt that will tie you to menial sorting duties for weeks. Still, you retain your access, and you carry the crushing stack deeper into the labyrinth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the heavy stack away"
+   ]
+  },
+  "ul-1-017": {
+   "title": "Unyielding Resolve",
+   "text": "Your unblinking stare meets the archivist's challenge until she lets out a sharp sigh of exasperation and steps aside, however narrowly you maintained your stance. She presses a folded slip of parchment into your hand - an emergency transit permit signed with her own cramped, venomous handwriting. It is a grudging concession, but it grants you absolute freedom to traverse the crowded galleries without further interference from her junior inspectors.",
+   "check": "",
+   "grant": "signed emergency transit permit",
+   "exits": [
+    "Enter the crowded scholar gallery"
+   ]
+  }
+ },
+ "missing": []
+}

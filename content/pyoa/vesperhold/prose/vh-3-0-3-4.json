@@ -1,0 +1,90 @@
+{
+ "batch": "vh-3-0-3-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-0-3-4": {
+   "title": "Labyrinth of Fermented Mash",
+   "text": "Sharp fumes of fermenting grain sting your eyes as you wind through low stone storage sheds. Stacks of damp malt bags press close against the narrow passage, and the bronze clapper hums a heavy, low note against your spine, vibrating with the cold mountain draught.\n\nTwo dark alleyways branch away between the barrel-vaulted roofs, one leading down toward the shadowed lower shelf and the other winding past an unsecured loading dock.",
+   "exits": [
+    "Descend toward the lower terrace steps",
+    "Dodge the rolling barley cask ahead"
+   ]
+  },
+  "vh-3-0-3-5": {
+   "title": "Shortcut Through the Grain Lofts",
+   "text": "Because your shoulder strap bears a genuine guild-woven rope, the terrace guards snap a crisp salute and wave you past the heavy iron gate. They point out a dry, sheltered shortcut through the cavernous grain lofts, sparing you the bitter teeth of the open ledge.\n\nDust motes dance in the slanted shafts of sunlight piercing the timber rafters overhead while muffled voices echo from the storage bins below.",
+   "exits": [
+    "Approach the tired miller resting near crates",
+    "Step out into the muddy pack-mule courtyard",
+    "Follow the scent of woodsmoke and dried mash"
+   ]
+  },
+  "vh-3-0-3-6": {
+   "title": "Blocked Stair and Stubborn Mule",
+   "text": "A thick-fleeced mountain sheep plants its hooves firmly on the narrow stone stair, stubbornly refusing to yield an inch of the path. Biscuit lowers her grey head, exhales a cloud of frosty breath, and gives the woolly obstruction a solid, patient nudge until it clatters aside.\n\nThe path ahead divides around a massive stone water-trough frozen solid with grey ice.",
+   "exits": [
+    "Approach the tired miller near the crates",
+    "Dodge the rolling barley cask on the left",
+    "Enter the muddy courtyard past the tethered mules"
+   ]
+  },
+  "vh-3-0-3-7": {
+   "title": "Black Ice at the Chutes",
+   "text": "Your boot heel catches on a treacherous sheet of black ice near the timber flour-chutes, pitching you sideways into a rough wooden railing. You throw out an arm just in time to save the heavy clapper from crashing against the stones, leaving your fingers aching from the jarring impact.\n\nAcross the narrow ledge, two distinct routes beckon through the swirling mist.",
+   "exits": [
+    "Follow the scent of woodsmoke and dry grain",
+    "Seek the clerk checking parchment by candlelight"
+   ]
+  },
+  "vh-3-0-3-8": {
+   "title": "Suspicious Miller's Spy-Glass",
+   "text": "Miller Voss peers intently through a cracked brass spy-glass, squinting with one eye at the bronze clapper strapped to your frame. He mutters dark warnings about cursed temple metal bringing bad luck to the barley harvest, his fingers twitching nervously against his leather apron.\n\nThe stone path stretches out on either side of his wooden post, offering two distinct ways forward.",
+   "exits": [
+    "Approach the miller resting by dusty crates",
+    "Step out toward the muddy pack-mule courtyard",
+    "Head toward the scent of woodsmoke and mash"
+   ]
+  },
+  "vh-3-0-3-9": {
+   "title": "Row of Silent Windmills",
+   "text": "You hurry past a row of silent, empty windmills whose black apertures stare out across the dizzying drop like sightless eyes. Their wooden sails are lashed fast against the rising gales, leaving the terrace eerily quiet save for the rhythmic crunch of your boots on frozen gravel.\n\nThe path splits ahead, leading toward different corners of the sprawling milling district.",
+   "exits": [
+    "Dodge the loose cask near the drystone wall",
+    "Enter the muddy courtyard where mules wait",
+    "Approach the clerk by the flickering tallow candle"
+   ]
+  },
+  "vh-3-0-3-10": {
+   "title": "The Slush-Stair Descent",
+   "text": "Heavy, wet flakes swirl out of the bruised grey sky, instantly coating the steep stone steps in a treacherous grease of freezing slush and clinging mud. Every boot-heel slides perilously against the shale, and the leaden weight of the bronze clapper on your back threatens to tip your balance toward the sheer abyss.\n\nYou steady yourself against a low retaining wall of dry-stacked granite, your breath pluming white and sharp in the sudden squall. Down through the swirling whiteout, a faint glow of amber light beckons from an overhanging eave, while a narrower side-passage offers a sheltered route away from the open precipice.",
+   "exits": [
+    "Seek shelter near the smoking hearth",
+    "Squeeze past the gossiping mill-hands below"
+   ]
+  },
+  "vh-3-0-3-11": {
+   "title": "Tightening the Pack-Girth",
+   "text": "You pause against a rough stone pillar to retighten Biscuit's pack-girth, where the constant, bone-shaking vibration of the great grinding stones has worked the thick leather loose. The mule stamps a hoof patiently against the frost while you pull the knot tight with numb fingers.\n\nThe path continues onward past the rhythmic thrum of the mills.",
+   "exits": [
+    "Follow the trail smelling of woodsmoke and mash",
+    "Squeeze past the gossiping mill-hands near the arch"
+   ]
+  },
+  "vh-3-0-3-12": {
+   "title": "Mournful Wind-Pipe Moan",
+   "text": "A hollow wind-pipe mounted beside the trail emits a long, mournful moan as pressure shifts across the stone terraces ahead of the storm. The metallic resonance mingles with the faint humming of the bronze clapper on your back, creating an eerie chord that sets your teeth on edge.\n\nThe path narrows sharply as it plunges into the sheltered lee of the district's social heart.",
+   "exits": [
+    "Step into the sheltered lee of the Rumour Mill"
+   ]
+  },
+  "vh-3-0-4-0": {
+   "title": "The Weighing-Shed",
+   "text": "Cold drafts whistle through the slatted cedar walls of the communal weighing-shed, where greasy iron scales hang suspended from a blackened overhead beam. You step carefully inside to escape the biting mountain drift, the heavy bronze clapper clicking softly against its padded leather cradle as you shrug off the stinging wind.\n\nSeveral large sacks of barley are stacked against the damp floorboards, bearing the seal of the Terrace Millers' proud guild. A ledger lies open on a trestle table near the iron weights, its ink smudged by moisture, waiting for an entry that no one has marked.",
+   "exits": [
+    "Listen to Tanner whisper near the dark rafters",
+    "Catch the nervous trader's talk by the mugs"
+   ]
+  }
+ },
+ "missing": []
+}

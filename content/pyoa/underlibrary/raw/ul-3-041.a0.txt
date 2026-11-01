@@ -1,0 +1,67 @@
+@@SECTION ul-3-041
+TITLE: The Tribunal Yields
+TEXT: Tremors fade from your fingers as the prosecutor’s gaze finally falters, beaten back by the sheer granite weight of your unyielding stare. The judges mutter among themselves, shuffling parchment rolls before grudgingly granting you clearance to leave the dock with your shelver fellowship's honor intact, however narrowly you managed it. You slip away from the bench into the shadow of the tiered galleries, clutching your prize tightly.
+GRANT: a magistrate's signed pass
+EXIT 1: Step through into the viewing gallery
+@@END
+@@SECTION ul-3-042
+TITLE: The Iron Portcullis
+TEXT: Heavy iron links groan overhead as a towering mechanical registrar blocks your forward advance with a wall of spikes and cold grey metal. The clockwork figure extends a brass hand, demanding a heavy toll of rare marginalia torn straight from the margins of forbidden volumes before it will grant permission to pass. You search your pockets, sacrificing precious hand-scrawled notes left behind by ancient readers to appease the greedy mechanism. With a dry, grinding shriek of gears, the heavy portcullis drags itself upward into the stone ceiling, clearing the path ahead.
+EXIT 1: Walk beneath the raised gate
+@@END
+@@SECTION ul-3-043
+TITLE: The Scriptorium of Appeals
+TEXT: Despairing scholars lean over individual wooden booths, whispering frantic grievances while ink-stained scribes record every complaint with scratchy nibs. The air smells strongly of gall-ink and nervous sweat under the vaulted stone ceiling where multiple arched corridors diverge into shadow. You pause by the central pillar, weighing your options as impatient murmurs rise from the crowded petitioners around you. Every path leads deeper into the labyrinthine machinery of the court, demanding immediate decision before the guards notice your hesitation.
+EXIT 1: Approach the restricted filing alcove
+EXIT 2: Inspect the heavy ledger shelves
+EXIT 3: Seek out the quiet southern exit
+EXIT 4: Examine the darkened side corridor
+EXIT 5: Follow the grinding gear sounds
+@@END
+@@SECTION ul-3-044
+TITLE: The Requisition Booth
+TEXT: Brass wire mesh separates you from a clerk whose ink-stained fingers tap impatiently against a stack of official forms. You lean in close, speaking in the brisk, clipped tones of urgent magisterial business to mask the rapid hammering of your heart against your ribs. The clerk narrows their eyes behind wire-rimmed spectacles, weighing your audacity against the formidable penalties for forgery. With a reluctant sigh, a blank requisition form slides across the scarred wooden counter toward your waiting fingers.
+EXIT 1: Take the blank form forward
+@@END
+@@SECTION ul-3-045
+TITLE: Claiming the Form
+TEXT: Your fingers stretch across the wooden counter toward the crisp, unsullied slip of official paper while the clerk turns away to answer a distant summons. A sharp cough from the neighboring booth threatens to expose your unauthorized reach, drawing the immediate attention of the watchful guard stationed nearby. You freeze in place, feigning innocent curiosity about the posted schedule while tension coils tight in your shoulders.
+CHECK: reach across the counter for the form
+@@END
+@@SECTION ul-3-046
+TITLE: A Costly Deception
+TEXT: Heavy boots strike the stone flags as the booth guard intercepts your hand mid-motion, twisting your wrist behind your back with bruising force. Your carefully crafted bluff collapses instantly under the sharp glare of the magistrate's official, costing you precious minutes and leaving a dull, throbbing ache in your joints. You are shoved roughly aside into the drafty corridor, poorer by a valuable slip of parchment you had hoped to keep.
+EXIT 1: Pick yourself up and continue
+@@END
+@@SECTION ul-3-047
+TITLE: The Blank Slip Secured
+TEXT: Your fingers close securely around the crisp, official paper just as the booth clerk turns back to face the counter, however narrowly you avoided detection. The blank requisition form bears the authentic watermark of the Cataloguers' Court, offering an invaluable key to restricted archives if used with care. You pocket the prize immediately, slipping away into the press of petitioners before anyone realizes the oversight.
+GRANT: a blank official requisition slip
+EXIT 1: Return to the central scriptorium
+@@END
+@@SECTION ul-3-048
+TITLE: The Procedural Code
+TEXT: Yellowed pages turn with a dry rustle beneath your trembling fingertips as you scan lines of dense, archaic legal prose written by forgotten judges. The heavy leather-bound tome rests on a sloping lectern, its iron chains clinking softly against the stone floor with every breath you draw. Somewhere within these tangled clauses lies the exact wording needed to unlock the restricted passage ahead, provided your mind does not buckle under the sheer weight of the bureaucracy.
+EXIT 1: Read deeper into the volume
+@@END
+@@SECTION ul-3-049
+TITLE: Deciphering the Clauses
+TEXT: Candlelight flickers across thin vellum leaves as you trace faded ink annotations scrawled by generations of tired scholars who walked this hall before you. Your temples throb with a dull, persistent ache from hours of intense concentration in the dusty, poorly ventilated alcove. The procedural code begins to reveal hidden exceptions and forgotten exemptions buried deep within the convoluted legal phrasing.
+EXIT 1: Turn to the final coded page
+@@END
+@@SECTION ul-3-050
+TITLE: Unlocking the Passage
+TEXT: Your eyes scan the final dense paragraph of legal jargon while mental fatigue presses against your brain like a leaden weight threatening to obscure your focus entirely. A hidden catch somewhere within the wooden shelving clicks softly in response to your murmured interpretation of the ancient rule. You steady your breathing, waiting to see if the mechanism accepts your deduction or seals the passage permanently.
+CHECK: interpret the ancient legal clause
+@@END
+@@SECTION ul-3-051
+TITLE: Mental Fatigue
+TEXT: The legal clause blurs into a meaningless smear of black ink as your exhausted mind rebels against the complex phrasing, leaving your thoughts scattered and confused. A sharp spike of mental fatigue strikes like a physical blow, costing you precious time and leaving you with a lingering, throbbing migraine. You stagger back from the lectern, rubbing your aching temples in the dim candlelight.
+EXIT 1: Recover your wits in the hallway
+@@END
+@@SECTION ul-3-052
+TITLE: The Secret Clearance
+TEXT: Your mind pierces the dense legal jargon just as the hidden mechanism gives a satisfying thud, unlatching a narrow vertical door in the oak paneling, however narrowly you managed it. The secret passage swings outward on well-oiled hinges, revealing a dark stone stairwell descending into the restricted stacks. You pocket your notes and step through the gap before the librarian notices the breach.
+GRANT: knowledge of the hidden passage
+EXIT 1: Return to the central scriptorium
+@@END

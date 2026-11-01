@@ -1,0 +1,68 @@
+@@SECTION ul-4-073
+TITLE: The Leaning Timber
+TEXT: Splintered oak and cracked pine groan under your boots as you step onto the unstable joists bridging the abyss. Dust motes dance in the amber glow of your lamp, illuminating a trapped cataloguer clinging desperately to a protruding shelf bolt on the far side. // You must steady the shifting timber framework before the whole structure yields to gravity and tumbles into the dark.
+EXIT 1: Adjust the wooden support beams
+@@END
+@@SECTION ul-4-074
+TITLE: The Bridging Span
+TEXT: Tremors ripple through the floorboards while you kneel to test the tension points of the leaning beams. Every adjustment shifts the load, threatening to send both you and the stranded official sliding into the shadowy depths below. // Careful fingers find the rusted iron pins that lock the timber framework into place, demanding a delicate touch to avoid a catastrophic collapse.
+EXIT 1: Secure the trembling iron bolts
+@@END
+@@SECTION ul-4-075
+TITLE: Tension And Balance
+TEXT: Sweat stings your eyes as you wedge a heavy leather-bound ledger beneath the primary stress joint to redirect the pressure. The wood shrieks in protest, teetering on a knife-edge between structural hold and total ruin. You lean your weight precisely into the diagonal brace, trusting your instincts over the failing materials.
+CHECK: Shift the timber under pressure
+@@END
+@@SECTION ul-4-076
+TITLE: A Slipping Footing
+TEXT: The ledge snaps without warning, sending a shower of wood splinters into the dark chasm and dropping you hard against the stone. Your shoulder takes the brunt of the impact, leaving a deep bruise that throbs in time with your racing pulse. The trapped cataloguer hauls you over the threshold just in time, panting and muttering stiff words of gratitude for your reckless rescue.
+EXIT 1: Pick yourself up and press onward
+@@END
+@@SECTION ul-4-077
+TITLE: A Debt Of Honour
+TEXT: Solid stone rises to meet your boots as you haul yourself across the gap, however narrowly avoiding a plunge into the dark. The rescued cataloguer brushes the dust from their severe woollen robes and presses an embossed brass token into your palm. This official seal binds the rule-keeper to your cause, ensuring safe passage through any future disputes.
+GRANT: A cataloguer's official token
+EXIT 1: Follow the corridor into shadow
+@@END
+@@SECTION ul-4-078
+TITLE: Weight And Measure
+TEXT: Heavy volumes rain down from the upper tiers like falling masonry, crashing into the flagged floor with hollow thuds. You press your back against a stone pillar and study the rhythmic cascade of tumbling texts, searching for patterns in the chaos. The debris follows a predictable arc dictated by the settling foundations of the ancient stacks.
+EXIT 1: Trace the path of falling books
+@@END
+@@SECTION ul-4-079
+TITLE: The Falling Archive
+TEXT: Piles of displaced folios block every obvious thoroughfare, creating a shifting labyrinth of paper and leather. You calculate the trajectory of the next impending avalanche, estimating the exact seconds required to dash across the hazard zone. Your mind races through shelf numbers and load capacities, seeking a logical route through the storm.
+CHECK: Calculate the falling text vectors
+@@END
+@@SECTION ul-4-080
+TITLE: Buried Beneath Paper
+TEXT: A sudden shift in the stack sends an unexpected cascade of heavy atlases crashing down upon your shoulders. You emerge from the paper drift coughing and bruised, nursing a strained wrist where a cornered dictionary struck hard. Valuable minutes slip away while you dig yourself free from the literary landslide.
+EXIT 1: Clear the papers and stumble onward
+@@END
+@@SECTION ul-4-081
+TITLE: The Architectural Map
+TEXT: You thread the needle through the falling storm of leather and ink, however narrowly avoiding the worst of the tumbling debris. Clutched tightly in your hand is a scorched parchment sheet detailing the hidden access shafts of the deep stacks. It is an invaluable guide through the labyrinthine corridors that lie ahead.
+GRANT: An architectural vault diagram
+EXIT 1: Navigate toward the dark interior
+@@END
+@@SECTION ul-4-082
+TITLE: The Shuddering Aisles
+TEXT: Rows of towering oak shelves sway in unison like trees in a gale, casting long and dancing shadows across the flagged floor. You time your movements to the rhythm of the tremors, slipping through narrow gaps between swaying cases as books plummet into the gloom. Every instinct urges caution, yet the way forward demands absolute speed.
+EXIT 1: Dart between the swaying shelves
+@@END
+@@SECTION ul-4-083
+TITLE: The Shifting Corridor
+TEXT: A massive leather-bound encyclopedia tears free from the top shelf directly above you, hurtling downward like a falling stone. You drop low and slide across the polished floorboards, relying entirely on balance and momentum to clear the impact zone before the heavy volume smashes into the ground.
+CHECK: Slide beneath the falling volume
+@@END
+@@SECTION ul-4-084
+TITLE: A Narrow Escape
+TEXT: The falling book clips your heel, sending you sprawling into a heap of discarded cataloguing slips with a sharp sting in your ankle. You scramble away on hands and knees as a secondary wave of folios rains down around your ears. The physical toll is immediate, leaving you limping and battered in the dim light.
+EXIT 1: Dust off your coat and stand
+@@END
+@@SECTION ul-4-085
+TITLE: The Vellum Journal
+TEXT: You slide beneath the falling hazard with clean, fluid momentum, however narrowly avoiding the crushing weight of the tumbling books. In the dust of your landing, your fingers brush against an intact vellum journal resting among the debris. Its pages contain unrecorded notes from an earlier expedition into the deep stacks.
+GRANT: An undamaged vellum journal
+EXIT 1: Proceed toward the dark depths
+@@END

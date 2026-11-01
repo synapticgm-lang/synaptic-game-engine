@@ -1,0 +1,52 @@
+@@SECTION cf-1-144
+TITLE: The Iron Chute
+TEXT: Sweat stings your eyes as you grip the rusted locking-lever of the heavy overhead coal-chute, bracing your boots against the ribbed steel of the tender deck. Muscles strain against frozen grease and generations of soot-cake while the iron trough groans protest, refusing to budge an inch at first. You lean your entire weight into the rusted bar, chest heaving against the cold damp air of the depot, until the retaining tooth finally slips from its notch with a sharp metallic crack. Gravity and stubborn muscle do the rest as the massive iron spout swings ponderously back into its stowed cradle above the bunker wall.
+EXIT 1: Secure the heavy loading chute
+@@END
+@@SECTION cf-1-145
+TITLE: Clearing the Hoppers
+TEXT: Heavy iron rumbles overhead as you shove the massive fuel-chute back into its upright housing, locking the brass pin home against the vibration of the idling boiler. Fine coal-dust settles over your scorched forearms, mixing with sweat to form black streaks that catch the yellow flicker of the cab lamp. There is just enough anthracite in the bunker now to feed the hungry firebox through the bitter salt-flats ahead, provided the draught holds steady against the low barometer. You wipe your palms on your canvas trousers and step back onto the footplate to check the steam-gauge needle creeping upward into the green.
+EXIT 1: Climb back to the footplate
+@@END
+@@SECTION cf-1-146
+TITLE: Wrestling the Sprocket
+TEXT: The frozen worm-gear refuses to turn, its teeth choked with grit and decades of unwashed grease from the Ashgate bunkers. You wrap both leather-bound forearms around the jammed iron handle, planting your boots squarely against the ribbed floorplate as the engine shivers beneath you. Every muscle in your back knots like old hemp rope as you throw your entire weight into the lever, praying the cast-iron tooth does not snap off in your grip and send you crashing into the coal-pile.
+CHECK: Heave the stubborn sprocket round
+@@END
+@@SECTION cf-1-147
+TITLE: Strain and Splinter
+TEXT: The sprocket gives way with a vicious metal shriek, spinning backward and rapping your knuckles hard against the iron guard-rail. You hiss through your teeth, clutching your bruised hand to your chest as a sharp line of heat flares across your skin. The coal-chute drops three inches and jams solid in the crooked tracks, leaving the loading half-finished and your shoulder aching with a deep, dull throb that will follow you all the way to the border.
+EXIT 1: Clear the jammed iron slide
+@@END
+@@SECTION cf-1-148
+TITLE: The Unyielding Lever
+TEXT: Iron obeys muscle only when you give it everything in your chest, and the stubborn chute finally slams home into its resting fork with a heavy, satisfying clang. Your palms sting where the rough scale bit through your work-gloves, but the task is done and the bunker is sealed against the ash-wind. As you catch your breath, a heavy iron shackle drops from the overhead gantry, left behind by some long-gone ganger—a useful bit of dead-weight metal for chaining a swinging hatch.
+GRANT: Heavy iron shackle
+EXIT 1: Step down to the footplate
+@@END
+@@SECTION cf-1-149
+TITLE: Clear the Iron
+TEXT: A dead wagon blocks the departure throat, its iron axles rusted square to the rails and its timber sides bowed outward with dead slag. You brace your shoulder against the cold sideboard, boots finding purchase in the greasy ballast between the sleepers, and throw your weight forward with a grunt. The rusted wheels groan, spitting red flakes onto the grey stones, and then the whole dead weight shifts sideways, scraping off the running line with a long, metallic screech.
+EXIT 1: Clear the blocked departure line
+@@END
+@@SECTION cf-1-150
+TITLE: Shifting the Dead Weight
+TEXT: The derailed coal wagon resists every ounce of leverage you can put into the pinch-bar, its iron flanges wedged hard against the fishplate joints. You plant your boots firmly in the frozen ash between the sleepers, muscles corded in your neck as you lean your full weight against the hickory handle. The timber frame creaks under the strain, teetering on the edge of the rail as the engine pants hot steam against your back.
+CHECK: Pry the rusted wagon clear
+@@END
+@@SECTION cf-1-151
+TITLE: Slag and Sprain
+TEXT: The pinch-bar slips from the wet rail with a sudden jolt, sending you sprawling backward into the gritty ballast and bruising your ribs against a discarded brake-shoe. The wagon settles back onto the iron with a heavy thud, immovable as a tombstone, forcing you to spend precious minutes dragging heavy jacks from the tool-locker just to lift the dead axle clear.
+EXIT 1: Rig the heavy lifting jacks
+@@END
+@@SECTION cf-1-152
+TITLE: The Cleared Way
+TEXT: With a final, groaning heave, the derailed chassis bounces over the rail-lip and drops clear of the running line, leaving the path to the main signal open at last. Your shoulder aches where the iron bit into your coat, but the Marrowbone has a clean road out of the junction now. As you drop the pinch-bar into the tender box, you notice a greasy iron token tucked between the floorboards, stamped with the mark of the Gangers' Union—a small shield against the yard-police.
+GRANT: Gangers Union token
+EXIT 1: Return to the coal stacks
+@@END
+@@SECTION cf-1-153
+TITLE: The Iron Threshold
+TEXT: You shove the brass regulator forward until the cylinders scream and the Marrowbone leaps off her chocks with a sudden, bone-shaking roar. Ash and cinders swirl in the red wash of the firebox door as you sweep past the silent signal-boxes of Ashgate, leaving the stranded carriages and the ticket-widow far behind in the smoke. The vast, grey flatness of the Cinder Steppe opens before the snout of the boiler like an unwritten ledger, waiting under the low, bruised belly of the clouds for a train that refuses to stop.
+EXIT 1: Run out onto the steppe
+@@END

@@ -1,0 +1,73 @@
+@@SECTION vh-6-2-3-7
+TITLE: The Silent Forges
+TEXT: Thick soot coats the rafters while heavy silence hangs over the empty casting floor where no fires burn this evening. You steady your breathing against the lung-burning smog, counting your paces past the deadweight of silenced hammers and idle casting tables. Every footstep echoes hollowly against the damp stone walls, reminding you how far you have carried the humming bronze tongue from the frozen heights of Vesperhold. // Ahead, multiple paths branch through the gloom of the foundry quarter, each offering a different way forward through the maze of machinery and shadowed archways.
+EXIT 1: Approach the roaring primary crucible
+EXIT 2: Step toward the grand pouring pit
+EXIT 3: Balance the clapper near the hopper
+EXIT 4: Turn back toward the antechamber
+@@END
+
+@@SECTION vh-6-2-3-8
+TITLE: The Rusted Wheel
+TEXT: Damp air cuts through your woollen cloak as a rusted iron wheel hangs from a rafter by a frayed hemp cord, spinning slowly in the draft like a hanged man's token. Below it, the stone floor is slick with condensation and black grease dripping from overhead winches. The heavy clapper on your back hums a low, warning note against your spine, vibrating in time with the distant rumble of the river outside the foundation walls. // You can either seek shelter closer to the massive chimney structure or spread out your documents to inspect the path ahead, though both choices demand steady nerves in this freezing gloom.
+EXIT 1: Seek shelter near the great chimney
+EXIT 2: Unroll the Vesperhold deed on a barrel
+EXIT 3: Take the reckless way into the slag-pit
+@@END
+
+@@SECTION vh-6-2-3-9
+TITLE: The Subterranean Channel
+TEXT: Water drips rhythmically from the ceiling vaults, echoing through the cavernous gloom of the lower works. You cross a wet wooden grating that spans a deep subterranean drainage channel, hearing the sullen rush of river water far below. The timber planks groan under your boots, slippery with spray and fine coal dust carried up from the active furnace chambers deeper in the mountain's roots. // Beyond the grating, the passage splits into two distinct routes lit by the faint, flickering glow of distant safety flares.
+EXIT 1: Approach the glowing safety hopper
+EXIT 2: Walk toward the shadow of the chimney
+@@END
+
+@@SECTION vh-6-2-3-10
+TITLE: The Gatekeeper's Nod
+TEXT: Heavy iron gates stand slightly ajar, guarded by a veteran warder whose face is mapped with old burns from flying slag. Because your fingers bear the deep, pale ridge of glacier-frost, the gatekeeper recognises your ordeal and waves you through without question. He offers a brief, respectful nod to the padded cradle on your back, acknowledging the freezing heights from which you have descended with Orison's tongue. // Inside the threshold, the foundry floor stretches out in a haze of smoke and dim lantern light, offering two clear paths toward the heart of the works.
+EXIT 1: Step toward the safety hopper
+EXIT 2: Lay the parchment upon a barrel-head
+@@END
+
+@@SECTION vh-6-2-3-11
+TITLE: The Frayed Muffler
+TEXT: Cobbles slick with coal dust and greasy river spray make every step a careful calculation in the dim light. A discarded woollen muffler catches your boot-toe, dragging behind you like a ghostly tail across the gritty stone floor. You pause to kick it free, listening to the muffled clatter of distant machinery somewhere deep within the bowels of the mountain. // Two routes open before you out of the shadows, leading deeper into the labyrinth of furnaces and cooling floors.
+EXIT 1: Head toward the great chimney's shadow
+EXIT 2: Unroll the parchment across a barrel-head
+@@END
+
+@@SECTION vh-6-2-3-12
+TITLE: The Swinging Hoist
+TEXT: Overhead chains rattle in the freezing draft as heavy iron tackle sways above the narrow walkway. You duck beneath a swinging chain-hoist just as a rusty hook grazes the top of your wooden cradle with a hollow metallic clang. The sudden movement nearly throws you off balance, forcing you to lean hard against the stone wall until the swinging iron settles. // Ahead of you, the passage opens up toward the wet casting floors and the circle of waiting smiths.
+EXIT 1: Walk to the shadow of the chimney
+EXIT 2: Stand at the flooded casting floor
+EXIT 3: Approach the circle of forge-masters
+@@END
+
+@@SECTION vh-6-2-3-13
+TITLE: The Weary Workers
+TEXT: The smell of stale sweat and wet wool hangs heavy in the stagnant air between the brick support piers. A pair of tired foundry workers lean against a brick pier, sharing a dry crust of bread while staring blankly into the distance. They barely glance up as you pass, too exhausted by the endless shifts and fuel shortages to question an apprentice carrying a sacred bell-tongue. // Beyond them, the foundry paths divide toward the massive chimneys, the flooded pits, and the watchful elders.
+EXIT 1: Head toward the great chimney
+EXIT 2: Step onto the flooded casting floor
+EXIT 3: Join the circle of waiting forge-masters
+EXIT 4: Turn back toward the vibrating water-hammer
+@@END
+
+@@SECTION vh-6-2-3-14
+TITLE: The Humming Bronze
+TEXT: The air grows noticeably warmer as you draw closer to the heart of the industrial complex, smelling strongly of sulfur and hot iron. The low, subsonic hum of Orison's bronze clapper grows louder on your back, vibrating in harmony with the massive furnace flues ahead. Your shoulders ache from the heavy burden, but the familiar resonance feels like an encouragement from the mountain temple you left behind. // Two pathways lie ahead, leading either to the flooded casting floor or directly to the waiting forge-masters.
+EXIT 1: Walk to the flooded casting floor
+EXIT 2: Approach the circle of forge-masters
+@@END
+
+@@SECTION vh-6-2-3-15
+TITLE: The Slag-Stone Pillar
+TEXT: Thick shadows pool between towering walls of discarded masonry and cooling refuse from previous melts. You round a massive pillar of slag-stone and find your path blocked by a stack of warped iron plates waiting for the scrap-heap. You have to squeeze carefully past the jagged metal edges to avoid tearing your woollen pack or scraping the padded cradle holding Orison's tongue. // Beyond the obstruction, the main gathering area of the forge-masters comes into view through the haze.
+EXIT 1: Enter the circle of waiting forge-masters
+@@END
+
+@@SECTION vh-6-2-4-0
+TITLE: The Crucible's Maw
+TEXT: Heat blasts against your face like a physical wall as you step out of the shadows and onto the raised iron grating. Before the roaring maw of the primary crucible, master smith Orren holds out his bare scarred palm for the abbey's token. Sparks dance in his tired eyes as he looks from your frost-bitten hands to the heavy bronze clapper resting in your wooden cradle, waiting to see if you have brought what is needed to save Vesperhold. // The final moment has arrived, and the glowing metal awaits your command to begin the melting process.
+EXIT 1: Heave the cracked clapper into the crucible
+@@END

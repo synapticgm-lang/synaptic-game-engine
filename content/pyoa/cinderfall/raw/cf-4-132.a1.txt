@@ -1,0 +1,13 @@
+@@SECTION cf-4-139
+TITLE: The Painted Silence
+TEXT: Oil paint cracks like dried mud across the heavy cheekbones of the Stationmaster-General's portrait, an enormous canvas hung where the tunnel narrows to a choke-point and the soot settles thickest. Her painted gaze fixes upon the brass pressure gauge on your hip with an unyielding, bureaucratic scrutiny that seems to measure the very air in your lungs. You clamp your jaws together, biting back the reflex cough that rises against the sulphur-grit in the dark, and lock your knees against the vibration of the idling firebox. Every muscle in your throat strains to remain motionless while the grey shadows of the Hollow Signalmen flicker through the coal-dust at the edge of your vision, whispering names you used to know. // The pressure in your ears builds to a dull roar, and you must hold this absolute stone-still quiet before the canvas eye or let your nerves crack entirely.
+CHECK: Hold your breath against the canvas gaze
+@@SECTION cf-4-140
+TITLE: A Cough in the Dust
+TEXT: A sudden rattle in your chest betrays you, and the cough bursts out like a dry coal-shot against the stillness, shattering the heavy silence of the tunnel. The oil portrait seems to lean down from its heavy frame as the failure catches in your throat, leaving you gasping for air while a sharp flake of falling slate slices a long, clean line across the back of your hand. Blood mixes with the grey soot on your knuckles, a small and stinging reminder that the old administration exacts its toll in slow measures even when you try to stand like a pillar. You wipe the salt from your lip, poorer by a drop of blood and a vital breath of time, but the tunnel ahead remains open for the iron wheels to turn.
+EXIT 1: Step past the frame into the lower siding
+@@SECTION cf-4-141
+TITLE: The Ivory Key
+TEXT: You hold your breath until the red sparks behind your eyelids fade to a dull charcoal grey, matching the ancient administrator's painted stare with an iron stillness that brooks no argument from the dark. The canvas does not shift, yet a small click behind the heavy wainscot announces that the test has been met, however narrowly, and the debt of silence is paid in full. From a greasy brass peg beneath the frame, you lift a heavy, yellowed key carved from old whale-ivory with a grip shaped like a carriage door-latch. It fits nowhere upon the Marrowbone itself, but it carries the unmistakable weight of a pass that opens doors closed to ordinary gangers.
+GRANT: an ivory-handled carriage key
+EXIT 1: Approach the great oak doors of the keep

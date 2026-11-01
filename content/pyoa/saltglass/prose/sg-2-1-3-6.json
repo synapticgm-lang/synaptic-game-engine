@@ -1,0 +1,90 @@
+{
+ "batch": "sg-2-1-3-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-1-3-6": {
+   "title": "The Empty Waterskin",
+   "text": "A tethered leather water-bag hangs from a dead telegraph pole, swaying gently in the dry thermal drafts that sweep across the Bitterflats. When you lift the cracked pouch by its hempen cord, you find only dry dust and bitter disappointment sifting through the seams. Your ember-lamp knocks softly against your thigh as you look ahead along the white, baking expanse.",
+   "exits": [
+    "Follow the weathered boundary markers toward the tariff fence",
+    "Seek temporary shelter beneath the corrugated iron lean-to"
+   ]
+  },
+  "sg-2-1-3-7": {
+   "title": "The Solitary Tracks",
+   "text": "Walking completely alone leaves your thoughts entirely to yourself, undisturbed by any companion's chatter or the clink of hired gear. Moving in this unbroken silence lets you spot the faint boot-prints of a Salt Court patrol veering off toward the east, cutting a sharp line across the alkali crust. You adjust the heavy strap of your ember-lamp and weigh your solitary path against the shimmering horizon.",
+   "exits": [
+    "Take the path past the weathered copper tariff warnings"
+   ]
+  },
+  "sg-2-1-3-8": {
+   "title": "The Tilting Tiles",
+   "text": "Giant hexagonal tiles of crusted salt heave upward from the grey mud like the carapaces of buried tortoises, tilting at sharp, treacherous angles across the blinding flat. Your boots slip on the damp, alkaline seams between the tilting plates, sending small cascades of salt-dust rattling into the black mire below. Your banked ember-lamp grows heavy against your thigh, its steady warmth a quiet contrast to the freezing glare of the basin. Ahead, the path bifurcates around a rusted iron lean-to slumped against a heap of tailings, while off to the right, a dry wire hums in the rising thermal wind above a clattering row of sun-bleached skulls.\n\nYou pause on a tilted slab to test the slick mud beneath your left heel before deciding which direction to press through the white furnace.",
+   "exits": [
+    "Take shelter beneath the corrugated iron roof",
+    "Follow the track past the clattering camel skulls"
+   ]
+  },
+  "sg-2-1-3-9": {
+   "title": "The Salt Court Banner",
+   "text": "A tattered canvas banner bearing the scales of the Salt Court flutters feebly from a rusted iron stake planted deep in an alkali mound. The fabric is bleached bone-white by the relentless basin sun, its painted emblems flaking away into the dust. You pull your collar higher against the glare and grip your ember-lamp tightly as you survey the branching tracks ahead.",
+   "exits": [
+    "Cut toward the corrugated iron lean-to by the old track",
+    "Follow the wire strung with clacking camel skulls further north",
+    "Circle closer to the wooden rampart of the toll-hut"
+   ]
+  },
+  "sg-2-1-3-10": {
+   "title": "Measuring the Sips",
+   "text": "You dip your fingers into your canteen, measuring your remaining sips against the long miles remaining before the toll-hut appears through the haze. The cool metal feels precious against your skin, reminding you just how few drops stand between you and the thirst of the basin. The road stretches onward through blinding white salt-pans under a pitiless sky.",
+   "exits": [
+    "Follow the wire hung with dried camel skulls along the track",
+    "Peer through the gap in the salt-mound toward the tax-station",
+    "Approach the wooden rampart where the lone guard paces"
+   ]
+  },
+  "sg-2-1-3-11": {
+   "title": "The Singing Glass-Reeds",
+   "text": "A cluster of dried glass-reeds chatters musically in the hot draft, sounding like wind chimes hung in an abandoned temple porch. Their hollow, crystalline voices ring out with strange clarity across the otherwise silent expanse of the Bitterflats. You pause for a heartbeat to listen to the eerie music before checking the heavy cold ceramic shape of the Seedkey in your pocket.",
+   "exits": [
+    "Make your way toward the corrugated iron lean-to ahead",
+    "Take the track marked by the string of dried camel skulls"
+   ]
+  },
+  "sg-2-1-3-12": {
+   "title": "The Slag Wall",
+   "text": "You duck behind a crumbling retaining wall of fused slag as a sudden gust of wind whips the white dust into a choking fog. The sharp grit stings your cheeks and coats your eyelashes, blotting out the glaring sun for a few tense moments. As the pale storm begins to settle, the familiar shapes of the basin edge loom closer through the haze.",
+   "exits": [
+    "Inspect the low palisade of the nearby tax-station",
+    "Advance cautiously toward the wooden rampart of the toll-hut"
+   ]
+  },
+  "sg-2-1-3-13": {
+   "title": "The Basalt Blockade",
+   "text": "An abandoned hand-cart loaded with heavy basalt paving slabs blocks the narrow defile between two salt-domes you must traverse. The wooden wheels have long since warped and split in the dry heat, leaving the cargo stranded squarely across your path. You squeeze past the jagged stone edges, making sure your ember-lamp does not strike the rough basalt.",
+   "exits": [
+    "Slip past the cart toward the corrugated iron shelter",
+    "Follow the track past the wire strung with camel skulls",
+    "Move forward to inspect the palisade of the tax-station"
+   ]
+  },
+  "sg-2-1-3-14": {
+   "title": "The Gypsum Crust",
+   "text": "You scrape a layer of crystalline gypsum off your leather boots to lighten your load before tackling the steeper incline ahead. The hardened flakes fall away in small white scales, clinking softly against the salt floor as you work with your pocket-knife. With your footing restored, you hoist the strap of your ember-lamp and look up at the bright horizon.",
+   "exits": [
+    "Head toward the copper sign warning of basin tariffs",
+    "Take the winding track beneath the clacking camel skulls",
+    "Approach the wooden rampart of the nearby toll-hut"
+   ]
+  },
+  "sg-2-1-3-15": {
+   "title": "The Wood-Smoke Drift",
+   "text": "A faint smell of wood-smoke drifts across the salt-pans from an unseen hearth hidden somewhere in the shimmering heat haze. It is an unexpected scent in this vast desert of salt and glass, carrying a faint tang of burning scrub-root. You test the air for a moment, wondering who else might be burning fuel in the Bitterflats before pressing on.",
+   "exits": [
+    "Examine the low palisade of the tax-station ahead",
+    "Approach the wooden rampart where the guard keeps watch"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,61 @@
+@@SECTION vh-2-1-2-12
+TITLE: Trestle Stage Updraft
+TEXT: Upon a suspended trestle stage, you steady the vibrating cradle frame as a sudden thermal updraft rattles the scaffolding. The heavy bronze Clapper hums against your shoulder-blades, its low murmur fighting the scream of wind through the iron stays. Below your boots, the mountain drops away into grey nothingness, and every plank groans under the sudden pressure of the shifting gale.
+EXIT 1: Step toward the boiling pitch vat
+EXIT 2: Seek shelter near the unhewn granite pillar
+@@END
+@@SECTION vh-2-1-2-13
+TITLE: The Splicer's Offer
+TEXT: Beside a pile of discarded coconut-fibre rope, an old splicer offers to whip your frayed pack-straps with waxed thread. He works with quick, gnarled fingers, pulling the twine tight with his teeth while the mountain air bites at his ears. You shift the burden on your back, watching the neat stitches form a sturdy collar against the chafing canvas.
+EXIT 1: Walk toward the toll-collector's wooden gallery
+EXIT 2: Squeeze through the narrow maintenance gap
+@@END
+@@SECTION vh-2-1-2-14
+TITLE: The Grease Puddle
+TEXT: Across a slippery brass-studded walkway, your lead-footed mule balks at a deep puddle of black axle grease. Biscuit plants all four hooves and lets out a stubborn, rattling snort that echoes off the cliff face. You tug gently on the halter rope, smelling the thick petroleum and wet stone while the mist clings to your wool sleeves.
+EXIT 1: Squeeze ahead through the narrow maintenance gap
+EXIT 2: Follow the suspension cables past the porter
+@@END
+@@SECTION vh-2-1-2-15
+TITLE: The Void Archway
+TEXT: Within the drafty archway of a cable-house, you peer down into the grey void where the river foams three hundred feet below. Iron machinery clanks rhythmically in the gloom above, and the smell of hot grease hangs heavy in the damp air. You grip the stone doorframe with cold fingers, waiting for the gust to ease before you venture further along the precipice.
+EXIT 1: Approach the cedar shingle stack
+@@END
+@@SECTION vh-2-1-3-0
+TITLE: The Falling Shuttle
+TEXT: On a swaying suspension walkway, a nervous weaver drops a shuttle that clatters down into the bottomless fog. The thin wooden bridge pitches sharply underfoot, forcing you to grab the guide-ropes with both hands to keep the cradle steady. Around you, the great network of lines hums like a giant harp plucked by the mountain drafts.
+EXIT 1: Face the Cable Court sergeant at the checkpoint
+EXIT 2: Wait before the triple-bolted toll gates
+@@END
+@@SECTION vh-2-1-3-1
+TITLE: Tar-Pot Breath
+TEXT: Beside a row of smoking tar-pots, you catch your breath while an overseer berates a lazy pulley-boy. Thick blue smoke drifts across the platform, stinging your eyes and smelling strongly of boiling resin and pine pitch. You rest a hand against the warm iron rim of a kettle, letting the heat thaw your stiffening fingers before moving on.
+EXIT 1: Approach the iron-bound checkpoint ledge
+EXIT 2: Wait at the triple-bolted toll gates
+EXIT 3: Listen near the warden's high desk
+@@END
+@@SECTION vh-2-1-3-2
+TITLE: The Mail Skiff
+TEXT: Across a narrow gap of open air, a basket-skiff loaded with mail bags slides past on a greased iron wire. The leather pouches rattle with small metal tallies, and the pulley sheaves sing a high-pitched whine that cuts through the wind. You duck your head as the dangling iron hardware clears your canvas pack by mere inches.
+EXIT 1: Face the sergeant at the iron-bound ledge
+EXIT 2: Wait by the triple-bolted toll-house gates
+@@END
+@@SECTION vh-2-1-3-3
+TITLE: Shelter from Sleet
+TEXT: Within a dim timber shelter, you adjust the bronze Clapper's canvas cover against a flurry of wet sleet. The metal hums against the cloth, vibrating with a low pulse that seems to match your own tired heartbeat. Outside, the storm whips the hanging ropes into a whistling frenzy, making the wooden walls tremble from floor to rafter.
+EXIT 1: Approach the triple-bolted toll gates
+@@END
+@@SECTION vh-2-1-3-4
+TITLE: The Winch-Master's Dispute
+TEXT: On a platform clamped directly to the cliff, a winch-master named Bran argues loudly with a toll-clerk over grease tariffs. His face is red with cold and anger, and his calloused hands gesture wildly toward a stack of dry hemp cables. You stand quietly near the edge of the boards, keeping the mule calm while the shouting bounces off the stone walls.
+EXIT 1: Step into the customs tower shadow
+EXIT 2: Cross the iron tax-office threshold
+EXIT 3: Enter the narrow toll-station hallway
+EXIT 4: Turn back along the upper drumway
+@@END
+@@SECTION vh-2-1-3-5
+TITLE: The Loose Spike
+TEXT: Beneath a tangled canopy of guy-ropes, your mule's hoof strikes a loose iron spike with a sharp metallic ring. Biscuit stumbles slightly on the uneven planking, tossing his head and rattling the iron harness rings in the quiet gloom. You reach out to soothe the animal's flank, checking the straps of the bronze cradle to ensure nothing has shaken loose.
+EXIT 1: Wait before the triple-bolted toll gates
+EXIT 2: Step into the customs tower shadow
+@@END

@@ -1,0 +1,12 @@
+@@SECTION ul-2-043
+TITLE: The Flawed Lashing
+TEXT: Tucked behind a swinging stack of quarto volumes, the heavy hempen lashings holding the gantry slacken ominously under the weight of drifting iron shelves. You trace the fraying strands with cautious fingers, bypassing the treacherous span entirely by stepping onto a rigid bracket of old oak. Lodged between two chained ledgers lies an ivory bookmark, its surface cool to the touch and finely etched with wards that prickle against your skin with the faint taste of copper. // Slip the engraved talisman into your coat pocket and leave the sagging timber behind.
+CHECK: You spot a hidden structural flaw in the lashings and bypass the weakest section, securing an ivory bookmark engraved with secret wards.
+GRANT: ivory bookmark
+EXIT 1: Climb along the reinforced oak bracket
+@@END
+@@SECTION ul-2-047
+TITLE: Tension in the Leather
+TEXT: Suspended chains creak as you test the weight of the hanging leather footway, its thick hide stretched tight across a chasm of dark ink-water. By reading the subtle grain of the dried hide and the rhythmic tremor of the links, you adjust your pace and offer a quiet nod to a nervous wandering page crouched near the guide-rope. The stranger relaxes, sharing a dry crust of bread and a nod of mutual respect for your steady footwork over the abyss. // Leave the cautious page to tend their lantern and press forward across the span.
+EXIT 1: Cross the hanging leather to safety
+@@END

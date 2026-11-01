@@ -1,0 +1,92 @@
+{
+ "batch": "cf-2-110",
+ "sections": {
+  "cf-2-110": {
+   "title": "The Greasy Rag",
+   "text": "Two gangers from the track crews crouch beside a cooling firebox, shouting over a tattered piece of greasy cotton waste they both claim by seniority. Their tempers fray thin as dry rope in the biting wind off the ash-dunes, fingers twitching near heavy iron wrenches tucked in their belts. You step between their raised shoulders, letting the steam-whistle hiss a low warning note while you remind them how far Ashgate lies behind and how cold the night will grow.\n\nOne ganger spits into the grey dust and curses your interference, but the other catches your eye, nods slowly, and lets go of the rag to reach for a dented tin pot resting near the embers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step closer to the fire"
+   ]
+  },
+  "cf-2-111": {
+   "title": "Steaming Chicory in the Ash",
+   "text": "Hot, dark liquid swirls in a cracked ceramic mug handed over with a gruff grumble about meddling firemen who don't know when to keep their boots out of track brawls. You cup your frozen palms around the warmth, feeling the bitter chicory bite the back of your throat as the gangers slump back against a discarded coal tender. Beside the empty tin, a length of fresh hemp wick lies coiled like a sleeping adder, soaked in tallow and ready for trimming. The older ganger pushes it toward your knuckles with the toe of his heavy boot, offering a grunt of grudging truce.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the spare lamp wick"
+   ]
+  },
+  "cf-2-112": {
+   "title": "Tensions by the Boiler",
+   "text": "The lingering argument threatens to flare up again as another track hand joins the circle, casting suspicious glances at your brass-trimmed jacket and the Water Key strapped securely beneath your oilskin. You need to keep the peace without reaching for iron or letting your own voice crack under the mounting pressure of the schedule. You steady your breathing, matching the rhythmic throb of the idle engine behind you, and fix the newcomer with a cold, level stare that brooks no further shouting.",
+   "check": "Calm the angry gangers",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-113": {
+   "title": "A Flash of Temper",
+   "text": "A sudden shove catches you off balance, sending your shoulder hard against the jagged iron corner of a rusted ballast wagon and leaving a deep, purple bruise beneath your woolen waistcoat. The gangers scatter into the grey gloom before you can recover your footing, leaving you alone with your throbbing arm and a half-empty mug spilled across the frozen ties. You salvage what you can from the dirt, nursing your bruised pride and your aching shoulder as you climb back up onto the iron deck of the Marrowbone.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back onto the deck"
+   ]
+  },
+  "cf-2-114": {
+   "title": "A Cup Shared in Silence",
+   "text": "Your steady voice and calm demeanor take the raw edge off their exhaustion, turning the rising brawl into a sullen, weary quiet broken only by the crackle of burning coke-dust. However narrowly you managed to smooth over the dispute, the older ganger respects a cool head in a tight spot and presses both the warm mug and a small token of alliance into your gloved hands. You pocket the prize and prepare to cast off from the siding before the low sky darkens further.",
+   "check": "",
+   "grant": "Warm mug and wick",
+   "exits": [
+    "Walk back to the engine"
+   ]
+  },
+  "cf-2-115": {
+   "title": "The Weeping Gland",
+   "text": "A stalled shunting engine settles into the ash-drift a few yards down the line, its high-pressure steam gland weeping a steady, hissing stream of white vapor into the freezing air. You approach the abandoned iron beast with your hammer ready, tapping the casing to gauge the thickness of the corroded metal and finding the packing completely rotted away by years of neglect and bad water. The rusted bolts resist your first three pulls, screaming in protest against the salt-crust holding their threads fast.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the stubborn bolts"
+   ]
+  },
+  "cf-2-116": {
+   "title": "Wrenching the Iron Free",
+   "text": "You throw your full weight against the rusted lever, grunting as the stubborn bolt finally yields with a sharp crack that echoes across the empty rail yard like a pistol shot. Scalding mist billows out around your wrists, smelling sharply of old oil and sulfur, but you keep your grip steady while you strip away the ruined packing ring with the tip of your pocket-knife. A set of heavy brass spanners, stamped with the old mark of the Gangers' Union, lies neatly looped over a nearby grease-bucket just waiting to be claimed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Grab the heavy brass spanners"
+   ]
+  },
+  "cf-2-117": {
+   "title": "Bending the Seized Valve",
+   "text": "The replacement graphite packing resists being hammered into the narrow slot of the valve housing, threatening to wedge crookedly and ruin the seal entirely if you force it with too much speed. You adjust your grip on the heavy spanner, feeling the strain in your forearms as you apply steady, turning pressure to the main gland nut while watching the steam pressure gauge flicker nervously on the bulkhead.",
+   "check": "Repack the weeping steam gland",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-118": {
+   "title": "A Scorched Wrist and Lost Time",
+   "text": "A sudden drop in boiler pressure causes the valve to buck violently, spitting a jet of boiling water that slips past your leather glove and leaves a painful, angry scald across your wrist. You jerk your hand back with a sharp intake of breath, watching precious minutes slip away into the grey fog as the pressure bleeds out into the ballast. You manage to finish the job eventually, but the delay costs you dear in fuel and patience.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the leaking valve hatch"
+   ]
+  },
+  "cf-2-119": {
+   "title": "Tightened to True",
+   "text": "Your wrench turns the final nut home with a clean, satisfying bite, sealing the high-pressure steam completely and leaving only a faint smell of warm oil behind in the crisp air. However narrowly you avoided a worse blowout, the repair holds firm against the surging pressure of the boiler, proving your skill with iron and brass. You gather your tools and claim the heavy set of spanners as your own, knowing they will serve you well before the line reaches Cinderfall.",
+   "check": "",
+   "grant": "Set of heavy brass spanners",
+   "exits": [
+    "Return to the cab steps"
+   ]
+  }
+ },
+ "missing": []
+}

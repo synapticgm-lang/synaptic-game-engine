@@ -1,0 +1,20 @@
+2026-10-29T05:57:29.334Z driver start pick vesperhold
+2026-10-29T05:57:29.337Z step outline
+2026-10-29T05:57:29.580Z finished outline run: calls 0
+2026-10-29T05:57:29.666Z step prose
+2026-10-29T05:57:29.890Z finished prose run: calls 0, batches done 100/100
+2026-10-29T05:57:29.950Z step fill
+2026-10-29T05:57:30.222Z fill round 0: 3 sections missing
+2026-10-29T05:57:30.225Z ask fill r0 vh-5-0-2-0 items=3
+2026-10-29T05:58:37.468Z fill finished: 0 sections still without prose
+2026-10-29T05:58:37.532Z step merge
+2026-10-29T05:58:37.808Z merge: sections 1000, with prose 1000, missing 0, words 84085
+2026-10-29T05:58:38.131Z lint exit 0
+sections 1000, with prose 1000, states 81855, endings 20/20 reachable
+flags set: mule=biscuit,alone; rope=guild,own; oath=sworn,free; debt=owed,clear; rumor=true,false; calls=y,n; bell=wrapped,bare; scar=y
+flags read: mule=biscuit,alone; rope=guild,own; debt=clear,owed; oath=sworn; calls=y; rumor=false,true; scar=y; bell=bare,wrapped
+ERRORS 0
+WARNINGS 2
+  W vh-6-1-1-2: meta wording
+  W title "The Ninety Steps" x4
+

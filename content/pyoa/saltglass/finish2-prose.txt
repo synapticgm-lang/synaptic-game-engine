@@ -1,0 +1,3 @@
+2026-10-28T20:36:01.788Z ask prose sg-3-2-3-0..sg-3-2-3-9 items=10 attempt=0
+2026-10-28T20:36:33.389Z done sg-3-2-3-0: 10/10 model=Flash-Lite
+2026-10-28T20:36:33.400Z finished prose run: calls 1, batches done 100/100

@@ -1,0 +1,20 @@
+Gemini said
+
+@@SECTION sg-2-0-2-0
+TITLE: The Damp Hollow
+TEXT: Silence presses down upon the Bitterflats like a hot, flat iron, broken only by the dry crunch of your boots against the crystalline crust. Traveling entirely alone across this blinding expanse without a guide's chatter to distract you, you spot a faint depression in the salt where a fresh moisture seep has recently softened the surface. A rich, earthy smell rises from the damp grey clay, offering a rare chance to refill your canteen or perhaps unearth something left behind by earlier travelers. Ahead, the pale glare shimmers into dancing white lakes that obscure the horizon, leaving you to decide whether to investigate the muddy hollow or press onward before the midday heat peaks.
+EXIT 1: Step carefully into the muddy depression
+EXIT 2: Ignore the seep and keep walking
+@@END
+@@SECTION sg-2-0-2-1
+TITLE: The Slag Mound
+TEXT: Heat radiates in heavy, shimmering waves from a massive mound of fused green slag that hums with trapped solar heat, casting a long shadow where you stop briefly to wet your parched throat from your rapidly dwindling flask. The strange glassy rock vibrates faintly beneath your palms, storing the fierce daylight of the Basin within its twisted, bubbles-pocked green belly. To the left, the open flats stretch away in a glare of absolute white, while to the right, a tighter maze of wind-carved pillars offers a cooler, more shadowed route that demands constant twisting and ducking. You must choose whether to skirt the humming glass mound toward the open expanse or slip into the labyrinthine shadows beside it.
+EXIT 1: Skirt wide around the vibrating mound
+EXIT 2: Duck into the jagged salt labyrinth
+@@END
+@@SECTION sg-2-0-2-6
+TITLE: The Toll Banner
+TEXT: A tethered, wind-bleached canvas banner bearing the twin serpents of the Salt Court flutters aggressively from an iron pole, marking the outer perimeter of their toll-collection zone ahead. The sharp clinking of brass coin-weights drifts faintly on the dry wind from a low stone hut crouched behind the fluttering marker. You clutch your canvas cloak tighter around your chest, acutely aware of the Seedkey hidden against your ribs and the heavy copper coins in your pocket that the toll-lords would gladly claim. You can approach the ruined rain-shrine to seek shelter and avoid the checkpoint entirely, or plunge your lamp into total darkness and try to creep past the guards unseen.
+EXIT 1: Seek shelter at the weathered rain-shrine
+EXIT 2: Slip past the toll-lords in the dark
+@@END

@@ -1,0 +1,60 @@
+@@SECTION vh-1-2-2-10
+TITLE: The Mason's Wall
+TEXT: Wet slate clinks against wet slate as mason Toval builds up the crumbling path, his calloused fingers ignoring the chill of the stones. He pauses to wipe mortar from his brow, eyeing the heavy bronze clapper lashed to your back with a sympathetic grimace. The mountain wind funnels through the gap, rattling the loose tools at his belt. // You must decide whether to press on past his workspace, turn toward the lower courtyard, or seek out the hanging paths.
+EXIT 1: Step past the guard shelter
+EXIT 2: Approach the salt cistern barrels
+EXIT 3: Cross toward the wire bridge
+@@END
+@@SECTION vh-1-2-2-11
+TITLE: Noon Through The Squall
+TEXT: A heavy, muffled bronze toll rolls out from the distant bell-tower of Vesperhold, cutting through the swirling white squall like a blunt stroke of lead. Ice crystals cling to your eyelashes as you squint against the gale, shifting the heavy clapper on your spine to keep your balance on the slick flagstones. The mist swallows the stone parapet just a few paces ahead. // You can either push forward through the blinding flurry or seek shelter near the span.
+EXIT 1: Navigate the frosted landing steps
+EXIT 2: Head toward the wire bridge
+@@END
+@@SECTION vh-1-2-2-12
+TITLE: The Frayed Guide-Line
+TEXT: A sudden slackening of the tension whips the guide-line across your knuckles, stinging like a lash of cold iron wire. You draw your hand back sharply, tucking it inside your woolen sleeve while you steady the swinging mass of the clapper against your ribs. The wooden framework of the walkway groans under the relentless pressure of the gale. // You must choose whether to retreat toward the guarded shelter or inspect the cistern area.
+EXIT 1: Pass the sleeping sentinel
+EXIT 2: Check the cooper's barrels
+@@END
+@@SECTION vh-1-2-2-13
+TITLE: St. Jude's Niche
+TEXT: The wick of the tallow candle within St. Jude's sheltered stone niche still curls a thin wisp of grey smoke into the frigid air, having guttered out only moments before your arrival. You pause in its meager lee to catch your breath, listening to the faint, continuous hum of the bronze clapper against your shoulder blades. The stone floor of the shrine is powdered with fine drift-snow. // You can continue across the chasm, inspect the weaver's tally, or descend the frozen stair turn.
+EXIT 1: Cross the abyss bridge
+EXIT 2: Speak with the weaver
+EXIT 3: Descend the frozen stair turn
+@@END
+@@SECTION vh-1-2-2-14
+TITLE: The Black Ice Slip
+TEXT: Your left boot catches hard on a sheet of invisible black ice over the frozen rill, throwing your entire weight and the heavy bronze load dangerously askew. You windmill your arms to recover your balance, your heels grinding into the frost until you finally steady yourself against the rock face. The metallic hum inside the cradle shifts to a sharper, higher pitch. // You can either move toward the buttress shadow or negotiate the icy stair turn.
+EXIT 1: Head for the buttress shadow
+EXIT 2: Navigate the frozen stair turn
+@@END
+@@SECTION vh-1-2-2-15
+TITLE: The Lime Kiln Flask
+TEXT: A plume of steam rises from the battered tin flask that local gatherer Ruda shoves cheerfully into your mittened hands, offering a draught of hot, biting pine tea. The warmth eases the cramp in your shoulders where the heavy clapper straps bite through your heavy coat. She points a gloved finger down toward the shadowed descent before returning to her baskets of dried moss. // You can take the path around the bend toward the stair turn.
+EXIT 1: Turn down the stone stair
+@@END
+@@SECTION vh-1-2-3-0
+TITLE: The Upper Winch Station
+TEXT: Operator Brimm leans his weight against the iron brake lever while the heavy hemp cable hums a deep, vibrating note through the frozen winch house. Grease smokes faintly from the grooved wooden drum, smelling of mutton fat and cold iron. The cliff drops away sharply beyond the open loading bay into an endless sea of grey cloud. // You can continue onward toward the lower gate landing.
+EXIT 1: Walk to the lower gate landing
+@@END
+@@SECTION vh-1-2-3-1
+TITLE: The Mossy Gully
+TEXT: A dense cluster of icicles snaps cleanly from the mossy gully overhead, clattering in a shower of sharp crystal shards across the rocky path before your boots. You shield your face with a forearm, feeling the vibration of the great clapper resonate through your chest as the echoes die away into the white abyss. // You can press on toward the gate merchant or inspect the toll-house awning.
+EXIT 1: Approach the gate merchant
+EXIT 2: Step beneath the toll-house awning
+@@END
+@@SECTION vh-1-2-3-2
+TITLE: The Toll-Clerk's Lamp
+TEXT: Toll-clerk Nesta licks a thumb stained with purple ink, methodically counting small copper coins by the flickering, greasy light of a fat-lamp inside the stone shelter. The scent of burnt mutton tallow and damp wool fills the cramped recess, shielding you momentarily from the biting mountain draft. He does not look up as your heavy boots scrape the threshold. // You can continue toward the lower gate or examine the toll permits.
+EXIT 1: Head toward the lower gate
+EXIT 2: Inspect the permit desk
+@@END
+@@SECTION vh-1-2-3-3
+TITLE: Calming The Mule
+TEXT: Mule-driver Korda murmurs low encouragement, stroking Biscuit's twitching, frost-rimed ears to soothe the stubborn beast against the rising howl of the wind. The mule stamps a heavy hoof against the frozen ground, its breath pluming white and thick in the freezing air while pack-saddles creak under their burden. // You can move forward toward the lower gate landing or check the toll-house.
+EXIT 1: Proceed to the gate landing
+EXIT 2: Approach the toll-house clerk
+@@END

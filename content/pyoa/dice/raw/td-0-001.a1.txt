@@ -1,0 +1,13 @@
+Gemini said
+
+@@SECTION td-0-002
+TITLE: The Keeper's Quarters
+TEXT: Dust motes drift in the cold beams of sunlight piercing the keeper's quarters. Orsolya left in a hurry; her heavy woollen shawl still hangs over the chair, smelling faint of pipe smoke and dried kelp. Beyond the salt-rimed window, the dry expanse of the Low stretches out, a vast brown scab where the sea used to be. You need to gather what you can before descending the cliff path to the dead harbour. // The room is a clutter of the old keeper's eccentricities. A scattering of faded navigational charts litters the heavy oak desk, tracing routes through sinkholes and reefs now exposed to the open air. On the stone balcony, a rusted brass spyglass lies abandoned beside a coiled rope. By the hearth, a heavy lantern sits half-dismantled, sloshing with precious whale oil. The path down to the boats waits outside, steep and unforgiving.
+EXIT 1: Decipher the scattered navigational charts
+EXIT 2: Repair the rusted brass spyglass
+EXIT 3: Dismantle the heavy lantern for oil
+EXIT 4: Climb down the treacherous cliff path
+@@END
+
+Write the section for deciphering the charts
+Yes

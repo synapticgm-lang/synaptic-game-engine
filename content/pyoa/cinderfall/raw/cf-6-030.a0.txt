@@ -1,0 +1,28 @@
+@@SECTION cf-6-030
+TITLE: The Quiet Siding
+TEXT: No signals fall to green for you now, nor do the Barons' ledger-clerks come running with warrants or ink-horns. Locomotive No. 9 rests her heavy iron ribs against the rusted buffers of a siding that the maps forgot, her firebed cooling to a dull and honest ember under the grey drift of the Cinderfall sky. You set the heavy brass valve-key down upon the timber deck, watching the faint steam rise from the regulator valve like a tired sigh. The long road from Ashgate is behind you, its iron miles bitten through by ash and time, and the water you let loose still pounds against the masonry of the central plaza like a heart finding its beat after decades of stone-still drought.
+EXIT 1: Step down onto the quiet ballast
+@@END
+@@SECTION cf-6-031
+TITLE: Beyond the Last Buffer
+TEXT: Silence settles over the cab, thick with the smell of scorched oil, burnt coal-dust, and the sharp copper tang of a journey well-run. Hesper Quill is nowhere in the ash-grey shadows, yet the empty seat beside the fire-door feels less like an abandonment and more like a place kept warm for another shift that never quite arrives. Outside, the soot-stained roofs of the last walled city stretch out beneath a low, unmoving cloud-blanket, indifferent to the history you have dragged through their gates on ten tons of steel and boiler-plate. You wipe your palms on a greasy rag, leaving dark smears of soot that will take weeks of hard scrubbing—or perhaps no scrubbing at all—to wash away from your skin.
+EXIT 1: Leave the engine to the ash
+@@END
+@@SECTION cf-6-032
+TITLE: The End of the Line
+TEXT: There are no more timetables to keep, no sealed orders tucked beneath greasy cushions, and no frantic gangers waving red flags from the cuttings. You walk the length of the silent train one last time, your boots crunching softly upon the fallen ash that drifts across the tracks like grey snow. The iron road ends here, swallowed by the great grey steppes and the quiet persistence of a world that remembers its own dead. You pull your collar high against the rising chill, turning your face toward the open track beyond the buffers, where the horizon dissolves into a seamless wash of earth and sky, and wait for whatever morning chooses to find you.
+@@END
+@@SECTION cf-6-033
+TITLE: The Stationmaster's Heir
+TEXT: Heavy oak doors swing shut with a finality that shakes the dust from the arched cornices above the gallery, sealing you within the cool, paper-scented shadows of the keep. The Stationmaster-General sits motionless in her high-backed chair of carved mahogany, her ancient hands folded over the leather spine of the great ledger as if holding down the very floorboards of Cinderfall. She does not offer praise, nor does she ask for the names of the gangers who fell beside the iron road, for the ledgers of the city record only balances struck and debts cleared. You lay the heavy brass Water Key across her desk, its metal still warm from the long run through the ash-storm.
+EXIT 1: Accept the ledger-keeper's heavy seal
+@@END
+@@SECTION cf-6-034
+TITLE: Ink and Iron
+TEXT: A dry rustle of parchment fills the high room as the old woman opens the heavy book to a blank page near the end of the volume, her quill dipping once into an ink-pot that has stood in the same place for fifty winters. She writes your name in a small, cramped hand that brook no argument, fitting it neatly between a cancelled tariff for anthracite and an uncollected fine from the Rail Barons. You stand in the silence of the gallery, watching the steady scratch of the iron-nib against the paper, knowing that your days of shovelling coal and watching signals loom out of the murk are gone forever. The city outside drinks its fill from the restored fountains, but here inside the keep, time moves only by the scratch of ink.
+EXIT 1: Sign away your last free mile
+@@END
+@@SECTION cf-6-035
+TITLE: The Last Ledger
+TEXT: The pen is laid aside in its groove of polished bone, and the ink dries dark and dull against the page while the city below settles into a cautious, water-rich peace. You are no longer the guard of the Marrowbone, nor a ganger running from the Barons' tally-men on the Cinder Steppe, but part of the machinery now—fixed as firmly to the wall as the brass dials and the pendulum clocks that govern the gates. Through the tall window, the grey sky hangs low over the ramparts, and somewhere far down the line, a solitary whistle blows three short blasts into the ash. You close the heavy covers of the ledger yourself, knowing the line is run and the books are balanced until the next fire starts.
+@@END

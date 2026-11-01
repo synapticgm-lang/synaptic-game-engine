@@ -1,0 +1,97 @@
+{
+ "batch": "td-1-119",
+ "sections": {
+  "td-1-119": {
+   "title": "The Murky Shallows",
+   "text": "Cold brine stings your ankles as you step into the sacred pool, disturbing a thick silt that clouds the dark water. Sleek, pale shapes dart between your shins with sudden, vicious hunger, their tiny jaws snapping against your leather boots and bare skin. Ignoring the sharp nips that draw thin lines of crimson into the pool, you plunge your hands deep into the heavy mud until your fingers brush the smooth edges of the venerated driftwood effigy.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pull the idol free"
+   ]
+  },
+  "td-1-120": {
+   "title": "Enduring the Bite",
+   "text": "Hundreds of blind-eels swirl in a frenzied knot around your submerged arms, tearing at your flesh with needle-teeth as the water churns red. Every instinct screams to snatch your hands back and abandon the relic to the deep, but the Drift Pilgrims are watching from the ridge. You must hold your stance in the freezing brine, muscles locked against the agony of the swarm, trusting your iron resolve to keep your grip true until the idol is clear.",
+   "check": "Keep your hands steady in the swarm",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-121": {
+   "title": "Torn by the Swarm",
+   "text": "Pain flares white-hot as the blind-eels find a gap in your defense, latching onto your wrists in a writhing tangle of teeth. You wrench your arms upward with a desperate grunt, tearing yourself free from the water, but the voracious swarm leaves your forearms raked with ragged gashes and weeping crimson. The sacred idol comes with you, coated in blood and dark mud, but the cost leaves you breathless and smarting from the deep, throbbing bites.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wrap your bleeding arms"
+   ]
+  },
+  "td-1-122": {
+   "title": "The Pilgrim's Blessing",
+   "text": "Water drips from your bloodied sleeves as you lift the damp, carved figure clear of the frothing pool, clutching it close against your damp tunic. However narrowly you endure the snapping jaws and the stinging chill of the brine, the sacred relic remains intact within your grasp, smelling strongly of old kelp and stagnant sea-salt. A murmur rises from the watchers on the stony shore, acknowledging your grim endurance with quiet respect and a begrudging debt.",
+   "check": "",
+   "grant": "Blessed driftwood idol",
+   "exits": [
+    "Climb back to the ridge"
+   ]
+  },
+  "td-1-123": {
+   "title": "Voices in the Dust",
+   "text": "The salt-flats give way to the rising slopes of the Singing Dunes, where the wind groans through ancient, hollowed ribs of stranded galleys. Beneath the whistling gale lies a deeper, resonant hum that vibrates through the soles of your boots, carrying the rhythmic, metallic grinding of the Meridian Gear from miles away. It sounds like a great clockwork heart beating beneath the seabed, reminding every scavenger in Gullmouth that the world's pulse is stuttering. You press forward through the swirling grey haze, keeping your eyes fixed on the distant, jagged silhouette of the Sunken Stair while the dunes whisper warnings in voices that sound hauntingly human.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the shifting dunes"
+   ]
+  },
+  "td-1-124": {
+   "title": "Heart of the Whispers",
+   "text": "Towering drifts of pale sand shift continuously under a bruised sky, burying old masts and swallowing the echoes of the coast. The acoustic trickery of the dunes plays strange games with your ears, turning the whistle of the wind into distant laughter or the splash of unseen waves. Every direction offers a different hazard and a different prize across the vast, undulating desert of the low seabed. You must decide how to navigate this treacherous expanse before the shifting sands wipe away your only landmarks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the white dust",
+    "Shelter within a buried galley",
+    "Dismantle a Brineholder spring-trap",
+    "Track a scuttling dune-crawler's nest",
+    "Navigate the field of false echoes",
+    "Approach the yawning Sunken Stair"
+   ]
+  },
+  "td-1-125": {
+   "title": "Through the Gray Veil",
+   "text": "A sudden wall of fine white sand sweeps across the flats, swallowing the horizon and reducing the world to a blinding, choking blur. You pull your collar high across your face and lower your head, relying entirely on the memory of the ground beneath your boots to keep moving forward without losing your sense of direction. The howling gale tries to push you off course into the deeper sinkholes, but you march on with dogged persistence until your shoulder bumps against a hard, wooden timber marking the buried cache.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Unearth the hidden stash"
+   ]
+  },
+  "td-1-126": {
+   "title": "Blinded by the Gale",
+   "text": "The sandstorm thickens into a screaming vortex that scourges your skin and fills your eyes with stinging grit, entirely erasing the landmarks you relied upon. Panic threatens to take root as the ground shifts treacherously beneath your boots, hinting at hidden drop-offs into the empty sea-caves below. You force yourself to stand completely still amidst the howling white fury, listening to the subtle pitch of the wind against nearby wreckage to find your bearing.",
+   "check": "Trust your instincts in the storm",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-127": {
+   "title": "Lost in the Whiteout",
+   "text": "A sudden eddy of wind sweeps your footing away, sending you tumbling down a steep bank of loose sand into a shallow, debris-choked hollow. You lie there coughing up grit as the storm howls overhead, bruised by half-buried iron spikes and losing precious hours digging yourself back out to the surface. When you finally regain the trail, your water skins are fouled with sand and your limbs ache with a deep, grinding exhaustion.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself back to the path"
+   ]
+  },
+  "td-1-128": {
+   "title": "Buried Provisions",
+   "text": "Your fingers scrape against oiled canvas buried deep beneath the drifting dune, revealing a tightly sealed bundle left behind by earlier scouts. However narrowly you navigate the blinding fury of the storm, your steady patience pays off as you haul the dry canvas sack free from the grasping sands. Inside lies a small cache of unspoiled salt-meat and fresh water, providing a vital lifeline against the harsh emptiness of the Low.",
+   "check": "",
+   "grant": "Sealed pouch of rations",
+   "exits": [
+    "Return to the singing dunes"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-3-177
+TITLE: The Iron Wheel
+TEXT: Heavy grease coats your knuckles as you grasp the spokes of the manual override. Salt crust flakes off the iron with a dry, papery hiss every time you strain against the jammed spindle. Below your boots, the stilt-city groans in the cold wind blowing off the exposed seabed, vibrating through the metal floor plates like a trapped pulse. // Breathing deep, you plant your heels against the riveted plating and force your weight onto the wheel, praying the rusted chain inside the partition holds firm.
+EXIT 1: Force the rusted spindle downward
+@@END
+@@SECTION td-3-178
+TITLE: A Searing Strain
+TEXT: Iron splinters and rust flakes rain down onto your shoulders as the stubborn mechanism grudgingly gives another quarter-turn. Muscles across your back tighten like overtightened bowstrings, threatening to tear with every inch you claw from the dead weight of the winch. The alcove remains shrouded in absolute shadow just past the rusted bulkhead. // You grit your teeth against the sudden tremor in your forearms, determined to force the pathway open before the chain snaps.
+EXIT 1: Wrench the iron wheel around
+@@END
+@@SECTION td-3-179
+TITLE: The Breaking Point
+TEXT: Every fibre in your shoulders screams in protest as you heave your entire body weight against the unyielding spokes of the override wheel. The metal shudders violently, a high-pitched metallic shriek echoing through the hollow stilt-work as the internal gears bind together. You feel a sickening hot tug deep within your shoulder joint, right on the edge of tearing muscle apart, while the hidden alcove waits just inches beyond your reach. // Pull with all remaining strength
+CHECK: MIGHT
+@@END
+@@SECTION td-3-180
+TITLE: Torn Tendons and Rust
+TEXT: A sharp pop echoes inside your shoulder joint, followed by a wave of white-hot agony that robs the breath straight from your lungs. Your grip fails, and you stumble backward against the wet iron railing, clutching your wrenched arm as the override wheel spins violently back into place. // Pain flares with every heartbeat, leaving you weakened and gasping on the cold deck, yet alive enough to press onward through the gloom.
+EXIT 1: Crawl toward the hidden alcove
+@@END
+@@SECTION td-3-181
+TITLE: The Hidden Alcove
+TEXT: Pain flares through your shoulder with a dull, persistent throb, reminding you how close you came to snapping entirely. However narrowly you managed the strain, the iron bulkhead finally gives way with a heavy, protesting groan, sliding aside to reveal the cramped space within. Resting upon a dusty shelf of oiled canvas sits a small, cold object left behind by some long-forgotten mechanic. // Reach inside and claim the prize.
+GRANT: Oiled brass valve-key
+EXIT 1: Enter the damp maintenance chamber
+@@END
+@@SECTION td-3-182
+TITLE: The Desperate Leap
+TEXT: A heavy shadow lunges from behind a support beam, gloved hands slamming hard against your chest to knock you backward toward the open drop. Salty air rushes past your ears as you twist violently at the last fraction of a second, catching the attacker by the collar of their sodden oilskin coat. // The stilt-city walkway sways under the sudden, brutal impact, threatening to send your hard-earned packs tumbling into the empty abyss below.
+EXIT 1: Shove the assailant away hard
+@@END
+@@SECTION td-3-183
+TITLE: Teeth and Scraps
+TEXT: Fingernails rake across your forearm as the desperate scavenger fights like a cornered dog, snarling curses about water rations and empty pockets. You slam your shoulder into their ribs, driving them back against the freezing iron railing while your canvas packs remain safely strapped to your chest. // The salt-encrusted deck is slick underfoot, turning every movement into a perilous dance above the dead seabed.
+EXIT 1: Break the frantic grapple grip
+@@END
+@@SECTION td-3-184
+TITLE: Edge of the Abyss
+TEXT: The scavenger hooks a boot behind your ankle, trying to tip your balance over the unguarded edge of the platform where the drop falls straight down into the dark. You lock your fingers into the heavy canvas of their coat, muscles bulging as you fight to anchor your weight against the swaying stilt-work. A single misstep will send your provisions tumbling into the dust far below, leaving you with nothing. // Throw your weight into the counter-shove
+CHECK: MIGHT
+@@END
+@@SECTION td-3-185
+TITLE: Bruised and Battered
+TEXT: A vicious blow catches you across the ribs, winding you instantly and forcing you to release your grip as your attacker scrambles away into the shadows. You slump against the cold iron stanchion, gasping for air while checking your gear bags. Several precious items are crushed or lost over the edge, leaving your provisions lighter and your body aching from the violent exchange. // Gather your breath and stand up
+EXIT 1: Trace the path downward
+@@END
+@@SECTION td-3-186
+TITLE: The Spoils of Scrimmage
+TEXT: The scuffle ends with a sudden, breathless thud as your adversary tumbles away into the gloom, leaving behind a heavy canvas pouch dropped in the rush. However narrowly you survived the brutal push, your supplies remain intact and your grip is firm upon the prize left in the wake of the fight. // Pocket the recovered token of survival.
+GRANT: Heavy brass latch-pin
+EXIT 1: Descend toward the lower foundations
+@@END

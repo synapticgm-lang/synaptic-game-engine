@@ -1,0 +1,66 @@
+@@SECTION vh-2-2-3-12
+TITLE: The Greased Plank
+TEXT: Slick timber offers a sudden, perilous shortcut where the upper walkway has buckled under rime frost. You slide down a short, greased loading plank, your heels spitting white chips of pine as the heavy bronze clapper hums against your spine. The drop deposits you sharply onto a narrow ledge overlooking the churning gray abyss of the lower gorge.
+EXIT 1: Scramble toward the windy gap
+EXIT 2: Follow the lower timber catwalk
+EXIT 3: Step out onto the limestone ledge
+@@END
+@@SECTION vh-2-2-3-13
+TITLE: The Iron Gate
+TEXT: Heavy iron slams down across the swaying bridge with a dull, echoing clang that rattles through your teeth. A toll-master's clerk plants his boots on the threshold, demanding an exorbitant inspection fee in copper before you can take another step with the temple metal. Behind you, the creak of tensioned hemp reminds you that every moment spent bargaining brings the ice-wind closer.
+EXIT 1: Pay the steep toll in coin
+EXIT 2: Duck beneath the iron barrier
+@@END
+@@SECTION vh-2-2-3-14
+TITLE: The Singing Cables
+TEXT: Overhead webs of thick rigging vibrate with a mournful, singing resonance that mimics the mountain wind through stone flutes. You duck low beneath the shivering iron wires, feeling the metallic tang of frozen grease prickle the back of your throat. Every taut strand seems alive, humming warnings about the treacherous descents waiting beyond the market stalls.
+EXIT 1: Slip past the humming winch-rig
+EXIT 2: Step onto the frost-heaved limestone
+EXIT 3: Head toward the bronze warning gong
+EXIT 4: Turn back toward the inner market
+@@END
+@@SECTION vh-2-2-3-15
+TITLE: The Bolting Pack-Mule
+TEXT: Panic erupts as a tethered pack-mule snaps its hempen tie and charges straight down the narrow plankway toward your laden frame. You leap instinctively to the side, scrambling atop a towering stack of fragrant pine twine just as the frantic beast clatters past. Dust and loose straw settle over your boots while the muffled shouts of merchants fade into the whistling wind.
+EXIT 1: Drop down past the winch-house
+EXIT 2: Follow the fog-warden's brass staff
+@@END
+@@SECTION vh-2-2-4-0
+TITLE: The Final Anchor
+TEXT: Aching muscles protest as you haul your frame onto the final stone anchor-platform of the rope markets. The last tethered huts and swaying platforms fade rapidly into a thick blanket of white fog, cutting off the upper tier from the world below. Your boots find solid, unyielding masonry at last, offering a brief respite from the dizzying swing of the cables.
+EXIT 1: Descend the long stone stair-flight
+EXIT 2: Shoulder your burden toward the haze
+EXIT 3: Face the cold draft from the terraces
+@@END
+@@SECTION vh-2-2-4-1
+TITLE: The Security Chain
+TEXT: Heavy links clink against stone as a weary winch-man named Brin unlatches the security chain barring the descent. He offers a brief, scarred nod, granting you reluctant passage away from the clamor of the high bazaars. The steep stone steps drop away into the mist like teeth down a gullet.
+EXIT 1: Step firmly onto the stone stairs
+EXIT 2: Seek the path toward the barley terraces
+@@END
+@@SECTION vh-2-2-4-2
+TITLE: The Sheer Drop
+TEXT: Rope markets fall completely silent behind you as you shoulder the heavy bronze clapper and face the sheer cliff-drop. The air grows sharper here, biting at your cheeks with the unmistakable promise of approaching frost and snow. Nothing lies ahead now save the endless descent toward Lowgate and the waiting forge-masters.
+EXIT 1: Step out onto the stone steps
+EXIT 2: March into the gray mountain haze
+@@END
+@@SECTION vh-2-2-4-3
+TITLE: The Frozen Trough
+TEXT: Frost glazes the edges of an abandoned watering trough where you pause to catch your ragged breath. In the distance, the windmills of the terrace tier click rhythmically against the pale, freezing sky like skeleton joints. The weight of the clapper presses firmly into your shoulders, steady and demanding.
+EXIT 1: Step onto the steep stone flight
+EXIT 2: Head toward the gray hemp haze
+@@END
+@@SECTION vh-2-2-4-4
+TITLE: The Warning Horn
+TEXT: Blaring brass cuts through the mist as a Cable Court lookout sounds a sharp warning horn into the damp air. The signal confirms that your debt-laden passage from the market has been officially logged in their ledger. You adjust the padded cradle on your back and quicken your pace toward the vanishing path.
+EXIT 1: Walk down the stone stair-flight
+EXIT 2: Head into the upper market haze
+EXIT 3: Face the draft from the terraces
+EXIT 4: Turn back toward the iron turnstile
+@@END
+@@SECTION vh-2-2-4-5
+TITLE: The Narrow Gap
+TEXT: Shadows cloak your movements as you slip through a narrow gap between two timber winch-houses. Just beyond, a team of watchful inspectors emerges onto the walkway to check travelers for unpaid tolls and hidden contraband. You keep your head low, letting the mist swallow your footsteps as you press onward.
+EXIT 1: Step onto the stone stair-flight
+EXIT 2: Descend toward the distant woodsmoke
+@@END

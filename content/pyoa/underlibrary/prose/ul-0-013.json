@@ -1,0 +1,105 @@
+{
+ "batch": "ul-0-013",
+ "sections": {
+  "ul-0-013": {
+   "title": "Decoding the Night-Porter",
+   "text": "Lamp-oil pools in amber circles upon the scarred oak of the Returns Desk while the night-porter mutters his endless cataloguing nonsense into his mutton-chop whiskers. Behind him, stacked columns of past fortnightly roster sheets threaten to avalanche into the ink-wells. You sift through the yellowed records, matching his slurred mutterings of misplaced folios to old duty rotations, your temples throbbing with the strain of deciphering the cramped handwriting.\n\nThe goal is within reach among the clutter, requiring a final steady push through the columns of names and shift numbers to claim the heavy brass sorting stamp before he wakes fully.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the roster columns closely"
+   ]
+  },
+  "ul-0-014": {
+   "title": "The Roster Cipher",
+   "text": "Stacks of brittle paper tower around you like limestone pillars in a cavern, their margins swimming before your tired eyes as you hunt for the hidden pattern in the porter's rotational schedule. A wrong deduction means hours of fruitless searching while the lamp oil sputters low, yet every instinct urges you to press deeper into the dense ink before your mind blurs entirely. Your fingers hover over the final crucial page, tracing the faded ink lines where the old man hid the true whereabouts of his sorting stamp.",
+   "check": "Decode the rotational roster sheets",
+   "grant": "",
+   "exits": []
+  },
+  "ul-0-015": {
+   "title": "Ink-Stained Fatigue",
+   "text": "Sleep deprivation takes its toll as your tired eyes misread a crucial column, mistaking a midnight shift for a midday delivery. The heavy ledger slips from your numb fingers, scattering loose paper across the stone floor with a sharp clatter that startles the sleeping porter into an irritable snort. You rub your aching temples, your mind foggy and battered by hours of fruitless ciphering, leaving you with a dull headache and precious time wasted. Yet the porter drifts back into snoring slumber without investigating further, leaving the pathway forward clear at last.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your scattered papers up"
+   ]
+  },
+  "ul-0-016": {
+   "title": "The Old Brass Stamp",
+   "text": "Perseverance pays off as the intricate web of duty rosters suddenly aligns into a crystal-clear sequence of numbers and names. You slide your hand behind the tumbling stack of folios and grasp the cold, heavy metal of the night-porter's brass sorting stamp, its worn wooden handle fitting snugly into your palm. Whether through sharp deduction or sheer stubborn luck, the prize is yours to keep for the long shifts ahead in the dim stone vaults.",
+   "check": "",
+   "grant": "Night-porter's brass stamp",
+   "exits": [
+    "Step away from the desk"
+   ]
+  },
+  "ul-0-017": {
+   "title": "Thessaly Marr's Warning",
+   "text": "Resting upon your wooden sorting trolley lies a damp, heavily folded square of parchment bearing the familiar, hurried script of Thessaly Marr, the missing Archivist. The ink is still slightly tacky, smelling faintly of bitter almonds and ancient calfskin, marking it as a dispatch written mere moments before her disappearance. You unfold the brittle sheet beneath the flickering circle of your desk lamp, reading the trembling words that confirm every whispered rumor in the damp corridors.\n\nThe Hundredth Door, the sealed vault holding the original Index, has swung open of its own accord into the dark heart of the stacks. The note warns that whoever reads those pages will dictate what the world remembers and what it consigns to oblivion, and the deep stacks are already beginning their slow, inevitable seal for the Long Closing.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push your trolley into the stacks"
+   ]
+  },
+  "ul-0-018": {
+   "title": "The Sorting Annex",
+   "text": "Towering pine bookshelves rumble across iron tracks along the floor, shifting their positions with deep, resonant groans that echo through the stone vaults. All around your station, rival junior pages whisper in hushed, anxious huddles about the open vault and the impending Long Closing. Trolleys piled high with unruly octavos block the narrow avenues, their wheels squeaking against the uneven flags. Lamp-oil smoke hangs thick and blue in the damp air, carrying the scents of dust and old paper as every route out beckons with its own distinct peril and promise.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Navigate the shifting pine aisles",
+    "Trick the suspicious lending clerk",
+    "Flatter the grumpy cataloguer nearby",
+    "Research ancient floor-weight equations",
+    "Step through the squeaking wicker gate"
+   ]
+  },
+  "ul-0-019": {
+   "title": "Aisle Mathematics",
+   "text": "Columns of heavy shelving groan as they slide silently across the brass floor-tracks, obeying an ancient, unseen geometry that defies simple memory. You track the rhythmic clicking of the overhead mechanical index to anticipate where the massive pine barricades will converge next, guarding against a bone-crushing collision in the narrow gap. The air grows cold and smells of dry dust as you trace the shifting Dewey decimal markers along the wood-grain panels.\n\nA small leather pouch hangs forgotten from a protruding iron bracket on a passing shelf, dangling just within reach before the aisle closes shut entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the leather pouch"
+   ]
+  },
+  "ul-0-020": {
+   "title": "The Narrowing Gap",
+   "text": "The gap between the towering pine bookcases narrows with a dull, rhythmic grinding sound, squeezing the amber lamplight into a thin, horizontal slit against the opposite wall. You brace your shoulder against the warm, varnish-scented timber, measuring the speed of the moving stack against your own stride. Every second counts as the massive wooden walls threaten to seal off the transverse corridor completely, plunging the entire bay into absolute shadow.\n\nYou time your movement carefully with the shifting machinery, preparing to make a decisive lunge toward the safety of the open crossing before the heavy frames lock together.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Lunge through the closing gap"
+   ]
+  },
+  "ul-0-021": {
+   "title": "The Shifting Stack",
+   "text": "The massive pine shelving unit drifts sideways with relentless momentum, its heavy iron wheels rumbling against the stone flags as it closes the gap toward the adjacent stack. You study the complex decimal patterns etched into the floor rails, calculating the exact moment the mechanical tracks will cross and create a momentary pocket of safety. A misstep risks being pinned between thousands of leather-bound volumes, yet the dry leather pouch remains tantalizingly suspended on the moving frame before you.",
+   "check": "Predict the decimal shift patterns",
+   "grant": "",
+   "exits": []
+  },
+  "ul-0-022": {
+   "title": "Crushed Ambition",
+   "text": "The heavy pine bookcase slams shut against the adjoining stack a fraction of a second too soon, catching your sleeve and pinning you briefly in the tightening squeeze. You wrench your arm free with a sharp yank, leaving a torn cuff of fabric and a bruised shoulder behind as the metal tracks grind to a halt. The near-miss leaves your heart hammering against your ribs and your breath catching in your throat in the dusty, oil-scented air. Though battered and shaken by the crushing weight of the archive, you manage to slip away into the adjacent corridor with your life intact.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat down the quiet aisle"
+   ]
+  },
+  "ul-0-023": {
+   "title": "The Leather Pouch",
+   "text": "You slip your fingers through the gap just as the massive shelves lock into place with a definitive, echoing thud, snatching the dry leather pouch from its iron bracket. The container is stiff with age, its drawstring tied with a complicated knot that smells faintly of dried lavender and tallow. Whether you slipped through the closing mechanism with practiced grace or scrambled clear at the very last heartbeat, the prize is securely in your possession now.",
+   "check": "",
+   "grant": "Dry leather pouch",
+   "exits": [
+    "Return to the central annex"
+   ]
+  }
+ },
+ "missing": []
+}

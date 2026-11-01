@@ -1,0 +1,34 @@
+@@SECTION vh-1-2-1-1
+TITLE: The Nine Knots
+TEXT: Sola draws the waxed hemp tight between her calloused fingers, knotting an extra hitch into your shoulder straps under the creaking sign of the Nine Knots. The air smells of tar and dry juniper from the cordage bins lining the alley. With a final yank that tests the salt-cured fibers against your collarbone, she steps back and nods toward the outbound paths winding down the frozen limestone ridge. You adjust the weight of the bronze Clapper, feeling the familiar hum vibrate through your spine as you weigh your next step. // Do you present your papers to the checkpoint guard, press onward while the morning glare still cuts the ice, or linger to check the apprentice buckets by the conduit?
+EXIT 1: Present your travel token at the guard-post
+EXIT 2: Press onward into the glare
+EXIT 3: Inspect the apprentice buckets near the conduit
+@@END
+@@SECTION vh-1-2-1-2
+TITLE: The Cable-Lord's Ledger
+TEXT: Garrow leans his heavy wool-wrapped bulk against the winch-house wall, measuring your laden packs with greedy, calculating eyes that miss nothing. His hand taps rhythmically against a leather toll-ledger tucked beneath his arm, hinting at the steep tariffs levied on every ounce of bronze leaving Vesperhold. The iron drums behind him groan as a cable-car descends into the white void below, spitting frosty grease onto the flagstones. You must decide whether to negotiate his terms, slip past the winch while his gaze drifts, or take the steeper goat-track to avoid the toll entirely. // Do you treat with the toll-lord, slip past the winch-house, or seek the goat-track?
+EXIT 1: Negotiate the cable toll
+EXIT 2: Slip past the winch-house unseen
+EXIT 3: Take the steep goat-track down
+@@END
+@@SECTION vh-1-2-1-3
+TITLE: The Drying Rack
+TEXT: Young Marta darts out from behind the rattling sheepskin racks, her cheeks wind-chapped and glowing, and thrusts an extra pair of thick tallow mittens directly into your pocket. The sheepskins smell of lanolin and peat smoke, offering a brief, warm sanctuary against the rising mountain gale. She points a mittened finger toward the crumbling masonry ahead, whispering a quick caution about the loose shale near the lower buttress before scurrying back to her frames. You pull the rough wool snug over your knuckles and steady your grip on the straps. // Do you check the retaining wall ahead, brave the open limestone shelf, or head toward the dripping conduit?
+EXIT 1: Inspect the collapsed retaining wall
+EXIT 2: Step out onto the exposed shelf
+EXIT 3: Head toward the high conduit
+@@END
+@@SECTION vh-1-2-1-4
+TITLE: The Outer Buttress
+TEXT: Two fog-wardens lean heavily on their long brass-tipped staves beside the outer buttress, their faces half-hidden behind grey wool hoods. They lift a gloved hand to warn you of treacherous shale sliding across the lower stone-cut in the bitter wind. A distant horn sounds faintly through the swirling mist from the cable-station below, signaling the shift change of the cable-riders. You shift the bronze Clapper on your back, testing your footing on the grit-strewn flagstones before committing to the descent. // Do you follow the warning down the stone-cut, test the frayed guide-line, or seek shelter near the shrine?
+EXIT 1: Descend the guarded stone-cut
+EXIT 2: Test the rope-slack guide-line
+EXIT 3: Seek shelter near St. Jude's shrine
+@@END
+@@SECTION vh-1-2-1-5
+TITLE: The High Stile
+TEXT: The grey monastery wall abruptly ends at the high stone stile, leaving nothing between your boots and the sheer vertical drop of the thirteen tiers. A thin rill of meltwater crosses the path, frozen into a slick sheet of black ice that glints coldly in the pale alpine light. Far below, the cloud sea churns in the valley like an ocean of milk, swallowing the upper stair-towns whole. You brace the heavy bronze load against your shoulder blades and prepare to cross the threshold into the open descent. // Do you cross the frozen rill with care, or pause to warm your hands with gathered company?
+EXIT 1: Cross the frozen rill with care
+EXIT 2: Warm your hands by the lime kiln
+@@END

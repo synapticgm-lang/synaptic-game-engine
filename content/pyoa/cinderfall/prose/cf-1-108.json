@@ -1,0 +1,117 @@
+{
+ "batch": "cf-1-108",
+ "sections": {
+  "cf-1-108": {
+   "title": "The Drafty Ledger",
+   "text": "Frost feathers the bottom edges of the iron window frame, turning the breath into pale puffs of smoke inside the cramped enclosure. You hunker closer to the lukewarm radiator ribs, shielding the guttering tallow dip with one calloused palm while your eyes travel down the columns of railway numbers. Every clearance code matters when the night freight starts rumbling through the junction without lights or warnings.\n\nOutside, a loose signal wire taps a rhythmic, hollow tattoo against the rusted siding pole, keeping time with the distant shunting of coal cars. You trace the greasy ink of the midnight schedule with a fingernail, memorizing the safe intervals between heavy ore runs before the yard wakes up.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step out into the corridor"
+   ]
+  },
+  "cf-1-109": {
+   "title": "Holding Against the Chill",
+   "text": "Gale-force drafts howl through the ill-fitting door seals, threatening to snuff out your only candle and plunge the small compartment into absolute darkness. The old wooden floorboards groan under sudden pressure as heavy boots tramp up the outside stair landing, pausing right outside your thin wooden partition. You force your lungs to slow, clamping your jaw tight against the shiver rising up your spine while you steady the grease-smeared ledger on your knees.",
+   "check": "Maintain absolute silent stillness",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-110": {
+   "title": "Caught in the Draft",
+   "text": "The sudden lurch of the floorboards throws you hard against the corner bracket, bruising your shoulder blade and sending your tin cup clattering across the iron floor. Heavy fists hammer twice on the warped door panel before a gruff voice demands an immediate accounting of your presence in the restricted relay room. You scrape yourself up off the dirty floor, nursing a sharp ache in your arm and surrendering three precious tallow candles as a hurried bribe to the suspicious yard guard just to keep him from locking you out in the freezing sleet.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide back into the shadows"
+   ]
+  },
+  "cf-1-111": {
+   "title": "The Quiet Memorizer",
+   "text": "Silence settles back over the cramped cabin like a heavy wool blanket, however narrowly you managed to avoid detection when those heavy boots passed by outside. Your fingers find the folded slip of paper left wedged behind the cast-iron thermometer, containing the verified sequence of night clearance numbers for the lower valley. This scrap of ink and pulp gives you safe passage past the eastern sentinel posts without drawing unwanted questions from the station inspectors.",
+   "check": "",
+   "grant": "Night clearance sequence",
+   "exits": [
+    "Climb to the control cabin"
+   ]
+  },
+  "cf-1-112": {
+   "title": "Behind the Iron Latch",
+   "text": "Shadows stretch long and crooked across the narrow floorboards as the heavy brass inspection lamp swings back and forth in the corridor outside. You squeeze yourself flat against the inside wall of the supply locker, smelling the sharp tang of machine oil and wet flannel while boots scrape heavily on the threshold. Through the slatted louvers, you watch the Barons' transit inspector toss waybills onto the desk with careless impatience, muttering curses about missing fuel manifests and delayed coal tenders.\n\nEvery word of the official timetable drops clear into the quiet gloom as he reads aloud from his leather-bound schedule, detailing which sidings will remain clear during the upcoming midnight run toward the wall.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip through the door gap"
+   ]
+  },
+  "cf-1-113": {
+   "title": "Breath Behind the Laths",
+   "text": "Heavy knuckles rap a sharp, impatient tattoo directly against the outer panel of the wooden locker where you stand wedged among spare oil cans. The inspector pauses right outside your hiding place, muttering something about a lingering draft and reaching out to rattle the brass latch with thick, calloused fingers. Your heart hammers a frantic rhythm against your ribs while you fight to keep your breathing shallow and even inside the dusty dark.",
+   "check": "Hold breath behind wooden laths",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-114": {
+   "title": "Rafters and Rusted Iron",
+   "text": "The heavy latch slips with a loud metallic snap under the inspector's rough yank, spilling you out onto the floorboards in a tangle of limbs and spilled grease rags. He barks an angry curse, demanding to know your business in the private transit office before slamming a heavy iron ledger down onto your knuckles as a rough warning. You bite back a sharp cry of pain, nursing bruised fingers while he marches off down the platform to summon the yard police, leaving you poorer by a pocketknife and twenty precious minutes of lost time.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl beneath the sorting table"
+   ]
+  },
+  "cf-1-115": {
+   "title": "The Inspector's Schedule",
+   "text": "The heavy footsteps fade away down the wooden platform outside, however narrowly you managed to keep your silence while the transit inspector searched the compartment. Clutched in your palm is a discarded ticket-slip torn directly from the inspector's own working book, showing the exact timing of the armored freight trains rolling through the upper yards. This stolen scrap of routine gives you the precise hours when the heavy tracks stand clear of the Barons' patrols.",
+   "check": "",
+   "grant": "Stolen transit schedule",
+   "exits": [
+    "Meet the rival crew outside"
+   ]
+  },
+  "cf-1-116": {
+   "title": "Slipping the Switch",
+   "text": "Brass gears grind softly behind the green-painted switchboard as you work a bent hairpin into the brass tumbler of the maintenance lock. The tiny latch yields with a faint, greasy click that barely rises above the steady humming of the overhead telegraph wires. You swing the metal panel open just enough to slide your fingers inside the terminal box, where the heavy copper clearance token rests upon its velvet-lined pegs.\n\nDust motes dance in the amber glow of the panel light as you lift the heavy metal token free, feeling its cold weight settle into your palm like an old debt waiting to be settled.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the brass token"
+   ]
+  },
+  "cf-1-117": {
+   "title": "Down the Dark Corridor",
+   "text": "Floorboards creak beneath your boots as you move swiftly away from the switchboard enclosure, keeping close to the damp brick wall of the signal tower. Outside the tall arched windows, the grey light of the ash-steppe stretches toward the horizon under a low, bruised sky that smells of sulphur and wet coal dust. You tuck the heavy brass token deep inside your oilskin pocket, feeling it knock against your thigh with every purposeful stride toward the exit stairway.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend the iron stair treads"
+   ]
+  },
+  "cf-1-118": {
+   "title": "The Sentry at the Board",
+   "text": "Soft leather soles pad quietly around the corner of the switchboard row just as your fingers brush the cold rim of the brass clearance token inside the open panel. The night watchman halts abruptly, his hand hovering over the heavy brass alarm plunger on the mahogany desk while his sharp eyes sweep the dim interior. You freeze halfway between the open metal door and the shadowy pillar, every muscle tensing for the sudden lunge that will either secure the line or bring the yard guards down upon your head.",
+   "check": "Reach for the clearance token",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-119": {
+   "title": "Caught in the Cogs",
+   "text": "The watchman lunges forward with a rough shout, slamming his palm down against the brass alarm plunger and filling the dusty room with a clattering, mechanical clamor. You twist sharply to evade his clutching fingers, but your sleeve catches on a protruding iron lever, tearing a long rent in your heavy wool coat and throwing you hard against the brick pillar. By the time you wrench yourself free and bolt into the foggy night, your shoulder throbs with a dull ache and the station yard is already echoing with the shouts of pursuing gangers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee into the foggy yard"
+   ]
+  },
+  "cf-1-120": {
+   "title": "The Cleared Line",
+   "text": "The watchman's heavy hand closes on empty air as you duck low beneath the sorting table, however narrowly you managed to snatch the brass token from its terminal peg. Your fingers close tightly around the cold metal disk, feeling the notched edges that signify unhindered passage through the lower junction switches. This heavy token grants you undisputed authority to swing the main signals whenever the Marrowbone needs a clear road through the yards.",
+   "check": "",
+   "grant": "Main line clearance token",
+   "exits": [
+    "Climb to the control cabin"
+   ]
+  }
+ },
+ "missing": []
+}

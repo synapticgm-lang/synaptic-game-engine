@@ -1,0 +1,16 @@
+@@SECTION cf-3-002
+TITLE: The Iron Tollhouse
+TEXT: Rust flakes from the overhead gantry as the heavy iron gates of the customs depot groan inward, revealing a gauntlet of ledger-clerks and uniformed inspectors demanding heavy transit coin from every engine that dares roll its wheels upon Baronial iron. Steam hisses from the rail-mounts while greasy ledger-pages flutter in the downdraft, and you must decide whether to slip past the inspection booths through cunning, force your way through the bottleneck with brute leverage, or gamble your last drop of patience on a dangerous bribe. // The soot-stained tracks branch off toward the high-level scaffolding and the lower maintenance pits, each route offering its own sharp hazard and potential salvation under the cold gaze of the gantry-sentinels.
+EXIT 1: Hide extra fuel cells inside the gauge housing
+EXIT 2: Hammer a loose rivet to distract the guards
+EXIT 3: Purge auxiliary steam lines to create a blinding fog
+EXIT 4: Surrender immediately to the regiment of gantry-guards
+@@SECTION cf-3-004
+TITLE: Beneath the Brass Dials
+TEXT: Hot oil and bitter sweat drip onto your boots as you wrench the brass housing off the pressure-gauge, your fingers working entirely by feel in the cramped, trembling gloom beneath the cab floor. Outside the narrow inspection slit, a clerk's nailed boots echo on the iron plating, pausing just long enough for your heart to hammer against your ribs like a loose piston-rod. // You slide the spare fuel cells into the dark cavity behind the copper tubing, securing the rusted plate with a swift twist of the spanner just as a heavy fist strikes the exterior steel plate with a hollow, demanding clang.
+EXIT 1: Slip away into the shadow of the gantry
+@@SECTION cf-3-007
+TITLE: The Smuggler's Token
+TEXT: Your knuckles throb with a dull, persistent ache from the cramped labor inside the housing, yet your palm closes around a small, grease-slick token stamped with the private sigil of a sympathetic track-clerk. The hazardous gamble paid off, leaving you richer by one illicit credential even as the smell of hot sulphur and Baronial tobacco thickens in the damp gantry air around the Marrowbone. // You tuck the heavy brass disc safely into your waistcoat pocket, keeping your face turned toward the steam-shrouded rails as the path ahead clears enough for a cautious advance toward the viaduct gates.
+GRANT: smuggled brass token
+EXIT 1: Advance toward the gantry-guards blocking the line

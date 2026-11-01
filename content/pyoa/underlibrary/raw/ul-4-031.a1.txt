@@ -1,0 +1,12 @@
+@@SECTION ul-4-037
+TITLE: The Sprite's Ledger
+TEXT: Silence settles over the corridor as your boots find the exact centre of each stone seal, disturbing neither dust nor slumber. Perched upon a leather-bound milestone, a tiny bookplate sprite with wings of gummed paper nods in quiet approval at your measured tread. It reaches into its copper waistcoat and presses a warm, damp stamp into your palm, leaving behind an indelible mark that smells faintly of dried lavender and archival paste. This token of passage will stay your hand against the minor trip-wires of the lower stacks, granting you safe conduct among the territorial spirits of the bindery.
+GRANT: bookplate sprite favour
+EXIT 1: Step carefully back onto the shifting plates
+@@END
+@@SECTION ul-4-041
+TITLE: The Scented Vault
+TEXT: Balancing with absolute precision along the heart-wood beam, you leave the collapsing flags far behind and reach the comparative safety of an unscarred alcove. Tucked into the cranny of a dormant oak press rests a heavy linen pouch tied with a length of crimson silk, its contents cold and satisfyingly dense against your fingers. Inside lies a cache of perfumed sealing wax infused with crushed cloves and dragon's blood, prized by senior scribes for securing documents against the damp air of the vaults. Pocketing the prize, you prepare to re-enter the shifting labyrinth with your provisions replenished.
+GRANT: pouch of scented wax
+EXIT 1: Step carefully back onto the shifting plates
+@@END

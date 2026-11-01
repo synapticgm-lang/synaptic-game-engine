@@ -1,0 +1,6 @@
+@@SECTION vh-2-2-2-1
+TITLE: The Wire-Cored Toll
+TEXT: Master weaver Elden plants his boots across the narrow plankway, burying his calloused hands in a bundle of stiff, wire-cored cables that hum faintly in the high wind. The old man narrows his eyes at the heavy canvas cradle on your back, where the bronze tongue rests, and demands double toll for any metal passing through his gate. Biscuit lowers his stubborn head, huffing a cloud of warm steam into the freezing air as the cable-tensions groan around you. You must decide whether to pay the exorbitant fee in coin or test the weaver's patience. // Elden taps his iron-shod staff against the timber deck, waiting for your move while the gorge wind howls beneath the planks.
+EXIT 1: Scramble across the wet gantry timber
+EXIT 2: Crawl through the greasy drainage chute
+@@END

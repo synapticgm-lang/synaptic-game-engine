@@ -1,0 +1,60 @@
+@@SECTION vh-2-1-3-6
+TITLE: The Hollow Drum
+TEXT: Beside an open winch-pit, you watch a massive braided towline wind slowly onto a hollow oak drum. The greasy hemp groans under heavy tension, spraying a fine mist of cold water into your face as the gear teeth grind together with rhythmic regularity. The Clapper hums softly against your spine, vibrating in time with the turning machinery. // You weigh your options against the biting mountain wind, looking for a way past the watchful toll-houses ahead.
+EXIT 1: Step past the toll-house warden's desk
+EXIT 2: Take the reckless way
+@@END
+@@SECTION vh-2-1-3-7
+TITLE: The Split Pine Bridge
+TEXT: Across a vibrating foot-bridge of split pine, a market guard taps his brass-headed truncheon against your bronze cradle. The abyss yawns far below through the gaps in the timber slats, smelling of old hemp and melting glacier ice. Your boots find a steady purchase on the frost-slipped planks while the guard eyes the heavy load on your back with cold professional suspicion. // A second path branches off toward the narrow interiors of the station, where shadows stretch long across the wooden walls.
+EXIT 1: Continue toward the toll-house warden's desk
+EXIT 2: Enter the narrow hallway of the toll-station
+@@END
+@@SECTION vh-2-1-3-8
+TITLE: The Hemp Bales
+TEXT: Within a sheltered alcove of hemp bales, you wipe condensation from your brow while checking your harness buckles. The air smells strongly of tar and dried flax, offering a brief respite from the howling gale outside the canvas screens. Your mule shifts its weight uneasily against the rough fiber stacks, rattling its leather tackle in the dim, dusty enclosure. // Beyond the stack, the heavy iron plate of the tax-office threshold gleams under a sliver of gray light.
+EXIT 1: Approach the iron-plated threshold of the tax-office
+@@END
+@@SECTION vh-2-1-3-9
+TITLE: The Exposed Staging
+TEXT: On an exposed stone staging, a gust of mountain wind catches the heavy Clapper and nearly turns you off balance. You stagger against the low parapet as icy air claws at your cloak and threatens to pitch you into the vast, empty gorge below. The bronze tongue hums a sharp, warning note against your shoulder blades until you manage to anchor your boots firmly into the gritty stone. // Ahead lies the high porch of the Cable Court, guarded by figures wrapped in thick wool.
+EXIT 1: Cross toward the iron-plated threshold of the tax-office
+EXIT 2: Face the armed bailiff on the windswept porch
+@@END
+@@SECTION vh-2-1-3-10
+TITLE: The Boiling Pitch
+TEXT: Beside a boiling vat of waterproofing pitch, an apprentice stirs the black brew with a notched pine paddle. Thick, acrid smoke curls up into the open air, stinging your eyes and mixing with the cold mountain drafts. The bubbling resin pops rhythmically, casting oily glints across the timber framing of the lower stalls. // Two distinct paths beckon from this smoky corner, leading deeper into the labyrinth of the market.
+EXIT 1: Slip into the narrow hallway of the toll-station
+EXIT 2: Approach the windswept porch of the Cable Court
+@@END
+@@SECTION vh-2-1-3-11
+TITLE: The Suspension Cables
+TEXT: Across a network of sagging suspension cables, you follow a sure-footed porter carrying crates of dried lichen. Every step causes the iron wires to sing in a high, metallic register that sets your teeth on edge. Below your dangling boots, the misty void drops away into dizzying depths where the lower stair-towns vanish into cloud cover. // Several routes diverge from the far anchorage, offering passage through the maze of offices and checkpoints.
+EXIT 1: Head toward the iron-plated threshold of the tax-office
+EXIT 2: Step into the narrow hallway of the toll-station
+EXIT 3: Proceed toward the windswept porch of the Cable Court
+@@END
+@@SECTION vh-2-1-3-12
+TITLE: The Unhewn Granite
+TEXT: Within a vaulted transit shed, you rest your aching shoulders against a cold pillar of unhewn granite. The stone is slick with condensation, drawing the heat straight out of your wool tunic as you catch your breath. Outside the wide archway, the clamor of the rope markets echoes off the canyon walls in a chaotic wave of shouting voices and clanking iron. // You can press forward into the administrative quarters or retrace your steps toward the spinning jennies.
+EXIT 1: Approach the windswept porch of the Cable Court
+EXIT 2: Face the bronze-studded wicket of the central toll-house
+EXIT 3: Turn back toward the clatter of spinning jennies
+@@END
+@@SECTION vh-2-1-3-13
+TITLE: The Brass Gauge
+TEXT: On a frost-rimed wooden gallery, a toll-collector measures the thickness of your hauling lines with a brass gauge. His fingers are stiff with cold, yet he works with practiced precision, sliding the metal tool along your worn hemp ropes before jotting figures down in a leather-bound ledger. The heavy bronze Clapper hums a low counter-melody to the scraping of his pen against the page. // The gallery continues toward the heart of the toll operations, dividing into two distinct checkpoints.
+EXIT 1: Approach the windswept porch of the Cable Court
+EXIT 2: Face the bronze-studded wicket of the central toll-house
+@@END
+@@SECTION vh-2-1-3-14
+TITLE: The Narrow Maintenance Gap
+TEXT: Because you travel unburdened by the stubborn mule today, you easily squeeze through a narrow maintenance gap that blocks all pack-trains. The rough stone walls press close against your shoulders, forcing you to turn sideways and edge forward in absolute darkness. Cool air drafts through the fissure from the gorge below, guiding your hands along the damp, mossy rock face until you emerge into a narrow alley behind the main administrative block. // The alley opens out directly before the central checkpoint where travelers settle their accounts.
+EXIT 1: Face the bronze-studded wicket of the central toll-house
+@@END
+@@SECTION vh-2-1-3-15
+TITLE: The Cedar Shingles
+TEXT: Beside a stack of cedar shingles, an old rope-grader shakes his head at the salt damage on your leather frame. He runs a calloused thumb over the frayed straps holding your heavy bronze cargo, warning you that the mountain moisture will rot the stitching before you reach Lowgate. The smell of fresh-cut cedar provides a clean contrast to the greasy tang of the surrounding cable works. // Two different thoroughfares branch out from the shingle stack, leading past the various desks and wickets.
+EXIT 1: Enter the narrow hallway of the toll-station
+EXIT 2: Face the bronze-studded wicket of the central toll-house
+@@END

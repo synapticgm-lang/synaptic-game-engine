@@ -1,0 +1,70 @@
+Gemini said
+
+@@SECTION td-4-032
+TITLE: The Rusted Clapper
+TEXT: Iron corrosion flakes away like dried scales under the edge of your heavy blade as you begin working on the heavy bronze clapper suspended inside the bell housing. Salt has welded the joints into a stubborn mass, demanding patient, careful leverage rather than brute force. Every tap of your hammer echoes hollowly down the spiralling stone corridor, bouncing off damp masonry and stale air. You wedge a narrow cold chisel into the primary hinge, applying steady pressure until the ancient metal finally gives a sharp, protesting groan.
+EXIT 1: Pry the rusted hinge loose
+@@END
+@@SECTION td-4-033
+TITLE: Extracting the Resonant Core
+TEXT: Deep within the heart of the iron assembly lies a milky quartz crystal, snug against the bronze and shimmering with a faint, trapped luminescence. Your fingers work methodically around its mounting brackets, brushing away centuries of grey silt and encrusted salt crystals that threaten to scratch the delicate mineral surface. The chamber feels intensely still, save for the distant, phantom dripping of water somewhere far below in the sunless shaft. With a final twist of your pliers, the mineral block slips free from its housing into your waiting palm, cool and humming with a faint internal vibration.
+EXIT 1: Pocket the resonating crystal
+@@END
+@@SECTION td-4-034
+TITLE: Silence the Iron Tongue
+TEXT: Slipping your slenderest scraping tool into the hairline seam of the bell's internal locking nut, you hold your breath as you apply torsional force. The rusted threading binds instantly, threatening to snap the delicate steel tip inside the ancient machinery. A sudden shudder runs through the hanging bronze above you, as if the massive dead bell itself objects to your intrusion. You lean your weight into the tool, fingers slick with cold sweat, trying to coax the rusted bolt past its final thread without shattering the precious crystal hidden inside.
+CHECK: Unseat the crystal without snapping steel
+@@END
+@@SECTION td-4-035
+TITLE: A Shattered Prize
+TEXT: Metal screams against metal as the stubborn pin shears off mid-turn, sending a sharp shard of hot iron slicing across the back of your hand. Blood wells instantly into the salt-crusted skin, stinging sharply in the damp air as you pull your arm back with a sharp hiss. The valuable crystal fractures down its middle with a dry pop, its inner glow winking out into a dull, grey opacity. You are left sucking at the bleeding scratch in the gloom, richer by only a jagged stone and a fresh, throbbing ache in your knuckles.
+EXIT 1: Return to the stone terrace
+@@END
+@@SECTION td-4-036
+TITLE: The Flawless Core
+TEXT: Steel sings softly against brass as the retaining bracket yields at last, turning smoothly in your grip despite the centuries of decay. You slide the milk-white mineral free from its iron cradle, catching it neatly before it can drop onto the unforgiving flags. It rests in your palm, completely whole and thrumming with a steady, captive pulse of cold light that reveals the deep scoring on your calloused palms. Such an artifact will fetch a heavy purse of coin or buy safe passage from any wary scavenger along the coast.
+GRANT: Flawless resonating crystal
+EXIT 1: Step back out to the terrace
+@@END
+@@SECTION td-4-037
+TITLE: Marks in the Bronze
+TEXT: Faint, purposeful scratches catch your eye where the salt has worn thin near the base of the massive bell housing, revealing a series of weathered tally marks carved by someone long dead. Your fingers trace the jagged lines, noting how they group and repeat in patterns that mirror the winding descent of the Sunken Stair below. A small, square panel right beneath the lowest notch seems slightly recessed from the surrounding masonry, suggesting a hidden catch tucked away from casual inspection.
+EXIT 1: Inspect the concealed brass panel
+@@END
+@@SECTION td-4-038
+TITLE: Decoding the Tally
+TEXT: Squinting against the gloom, you examine the sequence of deep notches and directional arrows etched into the verdigris-stained metal. Each stroke appears to correspond to a specific pressure point or counter-weight release within the vertical shaft, mapped out by a meticulous predecessor. You press your thumb against the final, heavily worn groove, trying to determine if it acts as a spring-loaded latch or a dead-bolt that requires a precise, measured push to slide open without triggering a trap.
+CHECK: Decipher the hidden panel mechanism
+@@END
+@@SECTION td-4-039
+TITLE: The Trapped Spring
+TEXT: A sharp metallic snap echoes off the damp stone walls as your thumb depresses the wrong notch, releasing a rusted internal spring with brutal force. The hidden panel slams shut violently, catching the edge of your thumbnail and pinning your hand against the rough iron housing in a vice-like grip. You curse under your breath, wrenching your fingers free with a sickening tug that leaves your nail bruised dark and bleeding into the grit. The compartment remains firmly locked, mocking your miscalculation.
+EXIT 1: Nursing your bruised thumb
+@@END
+@@SECTION td-4-040
+TITLE: Secrets of the Shaft
+TEXT: The concealed panel gives way with a soft, pneumatic hiss, swinging open on hidden hinges to reveal a dry, oil-preserved leather cylinder tucked safely inside. You pull it free and unroll the stiff hide on the flat stone rim, revealing a remarkably detailed chart of the lower chambers, noting every known drop-off, sealed door, and air pocket marked in faded ink. It is a prize that turns the blind descent into a calculated route, saving hours of hazardous guesswork in the dark.
+GRANT: Detailed chart of the deep shaft
+EXIT 1: Return to the central terrace
+@@END
+@@SECTION td-4-041
+TITLE: Breaking the Barnacle Wall
+TEXT: Generations of calcified marine growth have sealed a shallow side alcove completely shut, forming a thick, grey mound of stone-hard shells against the corridor wall. You set your jaw, planting your heavy boots firmly on the damp flagstones and drawing in a deep breath of the stale, brine-heavy air. Bracing your shoulder against the center of the crust, you slam your full weight forward into the barrier, listening to the sharp crunch of shattered shells giving way beneath the sudden impact.
+EXIT 1: Smash through the calcified shell barrier
+@@END
+@@SECTION td-4-042
+TITLE: Clearing the Sealed Alcove
+TEXT: Driving your shoulder repeatedly into the stubborn crust of barnacles, you feel the solid mass begin to fracture along invisible stress lines within the old mortar. Sharp edges of ancient shell bite through your heavy canvas jacket, scoring the skin beneath as you put every ounce of muscle into forcing the blockade inward. The wall groans and shifts, threatening to collapse entirely upon your boots or give way to whatever stagnant air has pooled behind the barrier for years.
+CHECK: Force open the calcified alcove
+@@END
+@@SECTION td-4-043
+TITLE: Crushed by the Shells
+TEXT: The calcified mass collapses inward all at once, but your momentum carries you too far into the jagged opening as a heavy shelf of stone-hard barnacles shears off and pins your leg to the floor. A sharp pain flares through your shin as the jagged edges tear through your trousers, drawing a warm line of blood down to your ankle. You spend long, frustrating minutes levering the heavy debris off your limb, emerging from the alcove dusty, bruised, and nursing a raw, stinging scrape.
+EXIT 1: Crawl back out to the terrace
+@@END
+@@SECTION td-4-044
+TITLE: Hidden Rations
+TEXT: The barrier caves inward with a satisfying crash, scattering dry white shell dust across the flagstones and revealing a small, dry alcove untouched by the encroaching damp. Tucked safely inside sits a tightly sealed canvas bundle bearing the old wax stamp of the Gullmouth Wreckers' Guild. Untying the cord reveals a cache of hard biscuit and salted mutton, remarkably preserved and smelling strongly of old tallow and dried pepper. It is a welcome windfall for anyone facing a long journey down into the sunless depths.
+GRANT: Cache of preserved salted provisions
+EXIT 1: Head back to the stone terrace
+@@END

@@ -1,0 +1,7 @@
+Gemini said
+
+@@SECTION td-2-042
+TITLE: Splitting the Hull
+TEXT: Trapped air from the sunken dinghy's bowels smells of old bilge and rotten kelp, thick enough to coat your tongue in gray grease. You wedge the heel of your boot against the waterlogged gunwale and swing your heavy iron-shod maul with both arms, putting your back into the blow to shatter the petrified ribs of the craft. A cloud of black silt and stinging vapor bursts from the fracture, but you ignore the burning in your lungs and shove your shoulder into the gap, reaching deep into the dark interior for the clean, dry heft of an unbroken oar.
+CHECK: Drive your shoulder through the timbers
+@@END

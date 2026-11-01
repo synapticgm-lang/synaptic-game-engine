@@ -1,0 +1,57 @@
+{
+ "beats": {
+  "ul-5-001": "You reach the threshold of the Hundredth Door, where the air smells of scorched leather and ozone, and the massive iron hinges groan as the final countdown to the Long Closing begins.",
+  "ul-5-025": "The massive door swings inward on oiled pivots, revealing a vast, lightless circular vault where the original Index floats within a column of pure, shifting illumination.",
+  "ul-5-043": "Burner zealots breach the lower parapet with torches and heavy mallets, shouting that all memory must turn to ash so that humanity may begin anew without its burdens.",
+  "ul-5-068": "The ceiling cracks with a sound like thunder as tons of upper masonry shift, narrowing the gap through the stacks and quickening the relentless pulse of the Long Closing.",
+  "ul-5-082": "The whispering ghosts of the Marginalia swarm the air like a cloud of ink-moths, murmuring thousands of forgotten secrets and begging you to write their names into the final text.",
+  "ul-5-106": "You stand at the absolute center of the vault before the pedestal of the Index, where Thessaly Marr waits in the flickering shadows with her lamp guttering out.",
+  "ul-5-121": "The massive bronze doors begin their final descent into the stone floor, and you must make your ultimate choice before the vault seals for a generation."
+ },
+ "hubs": {
+  "ul-5-002": {
+   "place": "The Threshold Arch",
+   "situation": "The lintel is choked with iron chains and heavy padlocks left by the Cataloguers, requiring steady hands and iron resolve to clear a path."
+  },
+  "ul-5-026": {
+   "place": "The Outer Ring",
+   "situation": "Shelves of obsidian hold chained ledgers that hiss and writhe in the shadows, waiting for someone bold enough to touch their leather spines."
+  },
+  "ul-5-044": {
+   "place": "The Scriptorium Bridge",
+   "situation": "A narrow stone walkway spans a subterranean chasm of boiling black ink, now contested by desperate scholars and fanatic arsonists alike."
+  },
+  "ul-5-069": {
+   "place": "The Collapsed Stacks",
+   "situation": "Fallen timbers and crushed mahogany shelving block the main thoroughfare, burying ancient manuscripts beneath a mountain of splintered wood and dust."
+  },
+  "ul-5-083": {
+   "place": "The Gallery of Whispers",
+   "situation": "A suspended iron walkway vibrates with the collective voice of every reader who ever left a bitter or brilliant note in the margin of a dying book."
+  }
+ },
+ "chains": {
+  "ul-5-002/0": "You pry at a rusted padlock while whispers from the iron discourage your heart, testing your resolve, and you secure a heavy brass lever if you master the dread.",
+  "ul-5-002/1": "You trick the iron tumbler mechanism with a bent brass bookmark while guards watch from above, testing your cunning, and you gain a master skeleton key.",
+  "ul-5-002/2": "You brace your shoulder against the shivering latch while magical cold drains your warmth, testing your resolve, and you earn an insulating wool shawl soaked in lamp-oil.",
+  "ul-5-002/3": "You balance along a greasy beam above the bottomless ink-well to reach the bypass lever, testing your agility, and you recover a pouch of dry chalk for better footing.",
+  "ul-5-002/4": "You stare down the whispering phantom of a senior clerk guarding the seal, testing your resolve, and you acquire a stamped waiver bearing the Archivist's own seal.",
+  "ul-5-026/0": "You decipher a warning scrawled in blood-red ink across a shifting folio, testing your erudition, and you learn the secret cipher to bypass the outer wards.",
+  "ul-5-026/1": "You flatter a self-important guardian ledger into opening its clasp, testing your cunning, and you receive a gold-plated nib that can alter official entries.",
+  "ul-5-026/2": "You thread your fingers past snapping leather bindings to snatch a stray parchment, testing your agility, and you pocket a scrap of vellum inscribed with protective runes.",
+  "ul-5-026/3": "You endure a barrage of ancient insults hurled by bound volumes of forgotten law, testing your resolve, and you secure an iron tongue-scraper of silence.",
+  "ul-5-044/0": "You stand your ground against a fanatic swinging a flaming brand, testing your resolve, and you drive them back to claim their heavy iron oil-flask.",
+  "ul-5-044/1": "You spot a structural weakness in the ancient stone arch beneath the smoke, testing your erudition, and you lever a keystone to drop the bridge behind you.",
+  "ul-5-044/2": "You mislead a squad of zealots by tossing a glowing lamp into the dark abyss, testing your cunning, and you slip past unhindered to secure a bundle of dry lint.",
+  "ul-5-044/3": "You trade clever insults with a trapped librarian to coordinate a mutual escape, testing your cunning, and you gain a loyal ally who knows the vault's hidden utility hatches.",
+  "ul-5-044/4": "You forge a false clearance order from the high tribunal to scatter the guard detail, testing your cunning, and you pocket a bundle of official wax seals.",
+  "ul-5-069/0": "You read the architectural grain of the fallen timbers to find the safe load-bearing line, testing your erudition, and you uncover a velvet-lined case holding a silver bookmark.",
+  "ul-5-069/1": "You force a jammed timber aside with a makeshift jack while dust blinds your eyes, testing your resolve, and you retrieve a heavy brass paperweight that doubles as a weapon.",
+  "ul-5-069/2": "You steel your nerves against the falling debris as the roof groans overhead, testing your resolve, and you salvage a sturdy leather pouch filled with iron pinch-bolts.",
+  "ul-5-083/0": "You bargain with a chorus of disgruntled annotators using clever wordplay, testing your cunning, and you win a binding oath of silence from the spectral crowd.",
+  "ul-5-083/1": "You resist the temptation to listen to the maddening chorus of lost histories, testing your resolve, and you find a pair of wax earplugs that dull the mental din.",
+  "ul-5-083/2": "You hold fast against a psychic gale of pure collective nostalgia, testing your resolve, and you secure a phial of crystal-clear spring water from the deep source.",
+  "ul-5-083/3": "You step gracefully across a gap where the iron floor has rusted away into nothingness, testing your agility, and you retrieve a spool of fine silken thread.",
+  "ul-5-083/4": "You dance through a tempest of flying loose-leaf pages without dropping your lamp, testing your agility, and you snatch a pristine quill plucked from a golden swan."
+ }
+}

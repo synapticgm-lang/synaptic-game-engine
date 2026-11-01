@@ -1,0 +1,52 @@
+@@SECTION ul-3-181
+TITLE: The Unyielding Hide
+TEXT: Pressure builds within your temples as you stare down the sprawling mass of stretched skin across the stone archway. Dark veins pulse against the parchment like trapped blood, daring you to test your mettle against its stubborn blockade. Every instinct urges caution, yet the deep stacks wait beyond this living threshold. You draw a sharp breath, settling your stance against the flagged floor, and plant your intent directly into the fibers of the gate.
+EXIT 1: Force your way through the hide
+@@END
+@@SECTION ul-3-182
+TITLE: Pushing the Threshold
+TEXT: Tendrils of black ink writhe angrily across the parchment barrier, reacting to the quiet stubbornness radiating from your posture. You refuse to take a backward step, focusing your determination until the air grows heavy with the scent of hot lamp-oil and iron filings. The membrane trembles under your unseen weight, straining against the ancient bolts that anchor it to the masonry. You gather every ounce of your resolve to conquer the stubborn barrier in front of you.
+EXIT 1: Demand passage from the barrier
+@@END
+@@SECTION ul-3-183
+TITLE: Demanding Passage Now
+TEXT: Heavy shadows lengthen across the vaulted corridor as you lean your full mental weight against the pulsing, ink-stained hide. The parchment resists with a tactile malice, its dark veins tightening like a fist around the stone frame while a cold sweat breaks across your forehead. Every breath feels like drawing dry ash into your lungs as you pit your stubborn endurance directly against the living archive's defense. You narrow your gaze and brace for the breaking point.
+CHECK: Command the hide to open
+@@END
+@@SECTION ul-3-184
+TITLE: The Cost of Stubbornness
+TEXT: The parchment yields at last, but not without exacting a sharp toll for your fierce persistence. A sudden backlash of bitter ink floods your senses, leaving a metallic taste of rust and old vinegar on your tongue while a dull, throbbing ache settles deep behind your eyes. You stagger forward through the now-slack membrane, clutching your aching ribs as a fresh, dark stain mars the sleeve of your shelver's coat. // You catch your breath against the cold stone wall, knowing the exhaustion will linger long after your pulse settles.
+EXIT 1: Continue into the dim stacks
+@@END
+@@SECTION ul-3-185
+TITLE: Conquering the Membrane
+TEXT: The living parchment shivers violently and parts before your unyielding resolve, parting its dark veins to grant you passage into the restricted vault beyond. Whether your triumph was absolute or bought with the quiet fatigue settling into your bones, the barrier is beaten. Among the folds of the sagging hide, your fingers brush against a stray piece of parchment left behind by an earlier scholar. You pocket the creased slip of heavy card before the doorway seals again.
+GRANT: A margin-note cipher
+EXIT 1: Return to the vellum barrier corridor
+@@END
+@@SECTION ul-3-186
+TITLE: Slipping Past the Tendrils
+TEXT: Shadows flicker along the curving corridor as the vellum barrier shifts its dark, ink-filled tendrils in a slow, hypnotic rhythm. You calculate the precise distance between each looping lash, keeping your breathing shallow and your movements light against the stone flags. The air carries a heavy tang of iron and old paper as you time your advance to match the slow pulse of the wall. A single misstep would invite a stinging strike across your knuckles, but your balance remains true.
+EXIT 1: Slide past the snapping vellum
+@@END
+@@SECTION ul-3-187
+TITLE: Navigating the Vellum
+TEXT: Fluid motion carries you through the narrow gap between the writhing skin and the jagged masonry, missing the snapping ink-veins by a hair's breadth. Your fingers graze a loose seam in the stretched hide where a hidden pocket hangs heavy against the damp stone. Without breaking your momentum, you slip a hand into the fold to claim what lies concealed within the dark fibers. The corridor opens up ahead, leading deeper into the labyrinth of shelves.
+EXIT 1: Advance into the deeper alcoves
+@@END
+@@SECTION ul-3-188
+TITLE: Threading the Ink Tendrils
+TEXT: Black printer's ink pools and drips from the twitching margin-lines as you glide toward the narrow crease in the barrier's hide. A sudden tremor shakes the wall, sending a vicious lash of vellum whipping through the air directly toward your exposed wrist. You shift your weight onto the ball of your foot, twisting your torso in a fluid arc to evade the stinging strike while reaching blindly into the hidden pouch. The lash brushes your sleeve just as your fingers find purchase inside the fold.
+CHECK: Dodge and slice the pocket
+@@END
+@@SECTION ul-3-189
+TITLE: A Stinging Misstep
+TEXT: A sudden lash of the vellum catches you across the forearm, tearing a thin line through your coat and leaving a stinging, ink-stained welt upon your skin. You suppress a sharp hiss, stumbling slightly against the cold flagstones as the dark fluid seeps into the fabric of your sleeve. The hidden pocket remains stubbornly jammed against the stone, demanding a clumsy tug that leaves your fingers blackened and bruised by the time the fold finally gives way. // You nurse the smarting scratch, poorer in patience and skin, but the prize is yours.
+EXIT 1: Press onward with a bruised arm
+@@END
+@@SECTION ul-3-190
+TITLE: The Sleight of Hand
+TEXT: You slip past the defensive tendrils with effortless precision, your fingers dancing across the stretched hide to slice open the hidden pocket with a quiet scrape of steel. Whether you glided through untouched or absorbed a stinging lash from the ink-veins, the prize is now tucked safely within your coat. Emerging from the narrow passage, you find a discreet figure waiting in the dim light, offering a heavy purse of silver for the exact mercantile property you carry.
+GRANT: A prospective buyer's card
+EXIT 1: Step back toward the main vellum hub
+@@END

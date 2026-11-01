@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-3-012
+TITLE: The Smuggler's Hide
+TEXT: Damp hemp and salt-grease cling to your fingers as you pry open the smuggler's forgotten cache tucked beneath a rotting cross-brace. A severed tackle-block swings in the stale draft, its wooden sheave jammed tight with dried kelp and verdigris. Working by the dim grey luminescence filtering through the stilt-forest above, you set to cleaning the brass spindle with a notched pocket-knife // Scraping away the hard-encrusted shell requires steady patience, every minute spent clinging to the timber framework draining your remaining reserves as the distant hum of the upper districts vibrates through your boot-soles.
+EXIT 1: Reach for the rusted winch handle
+@@END
+@@SECTION td-3-013
+TITLE: Rigging the Line
+TEXT: Heavy canvas straps and frayed twine are pulled taut across your knees as you splice the broken strands of the smugglers' harness. The work demands careful fingers that do not shake despite the numbing dampness soaking through your woollen cuffs from the open seabed below. Every knot must hold its bite against the iron weight of the climb, or a single slip will send you crashing down into the skeletal shadows of the lower stilt-work // Testing the tension with a sharp tug, you find the improvised purchase holds fast against your weight, promising a safer passage upward through the vertical maze.
+EXIT 1: Test the repaired climbing harness
+@@END
+@@SECTION td-3-014
+TITLE: The Frayed Pivot
+TEXT: Sweat stings your eyes as you wedge your iron wedge into the jammed housing of the smuggler's pulley, applying steady torque to free the frozen axle. The metal groans under the strain, flakes of rust raining down onto the barnacled timber far below like dark snow. If the housing shatters under your leverage, the whole mechanism will rip loose and send you tumbling into the void. You brace your boots against the slimy wood and throw your weight onto the tool, holding your breath as the bolt reaches its breaking point.
+CHECK: Wrench the stubborn iron axle
+@@END
+@@SECTION td-3-015
+TITLE: The Splintered Snag
+TEXT: Metal screeches against metal as the rusted pivot gives way too fast, biting deep into your forearm and leaving a ragged, bleeding graze across the skin. The broken winch handle whips around in a vicious arc, striking your ribs and knocking the wind from your chest with a sharp gasp. You cling desperately to the slippery timber beam, wheezing salt air as the pain flares through your torso. The harness is secured at last, but the struggle has cost you dearly in both time and blood.
+EXIT 1: Drag yourself onto the platform
+@@END
+@@SECTION td-3-016
+TITLE: The Smuggler's Cache
+TEXT: Metal yields to your careful pressure with a dry, satisfying snap, leaving the repaired rope-pulley swinging true and silent in the draft. You secure the heavy leather climbing harness around your shoulders, checking every buckle and knot to ensure it will bear your weight into the upper heights. However narrowly you managed the repair, the gear is now fit for service and ready to bear the strain. A small token of old illicit trade rolls free from the mechanism into your palm as you finish.
+GRANT: oiled leather climbing harness
+EXIT 1: Climb up toward the stilt slums
+@@END
+@@SECTION td-3-017
+TITLE: The Iron Pillar
+TEXT: Barnacles crust the massive iron-sheathed central pillar like grey tumours, offering treacherous footing above the dizzying drop to the dried seabed. Every handhold must be tested before you commit your weight, the cold metal sweating a thin brine that makes your leather gloves slick and untrustworthy. Far above, the lower balconies of Saltspire loom against the pale sky like the ribs of a stranded leviathan // Shifting your grip to a rusted rivet, you spot a glint of dull metal wedged deep inside a seam of iron plating just within reach.
+EXIT 1: Reach into the crusted iron seam
+@@END
+@@SECTION td-3-018
+TITLE: The Lodged Purse
+TEXT: Your fingers scrape against rough salt-encrustation as you inch higher up the vertical expanse of the central pillar, leaving smeared tracks in the grey grime. The wind whistles through the network of timber braces below, carrying the distant, hollow echoes of the stilt-city's markets and guarded gates. Every inch gained is a silent battle against vertigo and the creeping ache in your forearms // Pressing your chest flat against the cold metal plate, you angle your hand further into the crevice where the glint of coin caught your eye.
+EXIT 1: Pry the heavy coin purse loose
+@@END
+@@SECTION td-3-019
+TITLE: The Slippery Footing
+TEXT: Your left boot heel skids sideways on a slick cluster of dried barnacles, leaving you dangling by one desperate hand over the abyss. Below you, the jagged wrecks of the Low look like broken teeth waiting in the grey haze. If your grip fails now, there is nothing between you and the seabed to break the fall. You lock your fingers tighter around the rusted iron flange, pulling with all your remaining strength to find a toehold against the sheer vertical plate.
+CHECK: Claw for purchase on the metal
+@@END
+@@SECTION td-3-020
+TITLE: The Bruised Ascent
+TEXT: A sudden shift in the rusted plates drops you hard against the jagged ironwork, scraping your shoulder raw and sending a jarring shock down your spine. You cling to the pillar with teeth gritted against the sudden, hot sting of torn skin, listening to the heavy thud of your own heart in your ears. Though you manage to keep from falling, the clumsy scramble costs you precious breath and leaves a dark, purple bruise across your ribs.
+EXIT 1: Pull yourself onto the rusted ledge
+@@END
+@@SECTION td-3-021
+TITLE: The Plundered Seam
+TEXT: Your fingers hook securely around the leather cord of the hidden purse just as the foothold crumbles beneath your boot, leaving you swinging for a heartbeat before hauling yourself flush against the metal. However narrowly you avoided a disastrous fall, your hand comes away clutching a heavy, salt-stiffened pouch filled with old coinage left behind by some careless traveller. The small hoard will buy passage or silence when you finally reach the gates above.
+GRANT: heavy pouch of old coin
+EXIT 1: Advance into the parched districts
+@@END

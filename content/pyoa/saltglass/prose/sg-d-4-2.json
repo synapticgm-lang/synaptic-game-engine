@@ -1,0 +1,90 @@
+{
+ "batch": "sg-d-4-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-d-4-2": {
+   "title": "The Glass Pit",
+   "text": "Rushing blindly through the blinding tempest without cupping your precious lamp, your boot slips on the greasy rim of an ancient trench. You tumble heavily into a hidden nest of razor-sharp cullet, the jagged crystal shards biting deep into your limbs. The darkness closes in swiftly as your lifeblood warms the cold salt, and the wind howls a lonely dirge over your final resting place.",
+   "exits": []
+  },
+  "sg-4-out": {
+   "title": "Beyond the Storm",
+   "text": "The howling gale of the mirror storm finally subsides behind you, leaving a vast, silent expanse of white earth stretching toward the distant horizon. Prism looms ahead like a jagged crown of glass and dark stone, its towers catching the pale desert light. You steady your breathing, adjust the cold ceramic key in your pouch, and prepare to cross the threshold into the heart of the dry basin.",
+   "exits": [
+    "Press forward toward the grand gates"
+   ]
+  },
+  "sg-5-in": {
+   "title": "The Heart of Prism",
+   "text": "Rising from the flat expanse of the dried sea, Prism stands as an imposing maze of tilted lenses, basalt galleries, and quiet courtyards. Glasswright sentries flash warning codes from the upper parapets while rival claimants and weary wanderers crowd the lower approaches. Your journey has brought you to the doorstep of the legendary Rain Vault, and several distinct routes now open before you through the city's labyrinthine avenues.",
+   "exits": [
+    "Follow the lamp-lit road",
+    "Cut across the common ground",
+    "Ask the way of a stranger",
+    "Take the old drovers' track"
+   ]
+  },
+  "sg-5-0-0-0": {
+   "title": "The Outer Gallery",
+   "text": "Splinters of solar glass rain down from the cracked dome of the Outer Gallery, shattering into bright dust upon the ancient flagstones. Below the falling debris, sleek Salt Court assessors cluster in heated debate over old property deeds and basin boundaries. You keep your head low, hugging your hooded coat tight against the grit while searching for a clear path away from their grasping arguments.",
+   "exits": [
+    "Dodge beneath the crumbling archway",
+    "Slip past the bickering taxmen",
+    "Climb the shadowed stairs ahead"
+   ]
+  },
+  "sg-5-0-0-1": {
+   "title": "The North Vestibule",
+   "text": "Frost-rimed sun-dials cast long, unmoving shadows across the white stone of the North Vestibule, untouched by any warmth for years. High above on the iron balconies, a Glasswright sentinel flashes sharp mirror codes that warn of rising basin tides and heavily bolted gates. The air smells of old copper and ozone, urging you to choose your next direction before the signals shift and seal the approaches.",
+   "exits": [
+    "Show your glass-burn mark to the sentinel",
+    "Cross the courtyard of mirrors",
+    "Enter the scriptorium choked with drift-sand"
+   ]
+  },
+  "sg-5-0-0-2": {
+   "title": "The Cistern Ring",
+   "text": "Stale water from your skin tastes of copper and dust as you share a quiet moment with Pell within the echoing stone cistern ring. Heavy basalt drums begin to thump from the outer gatehouse, signaling the arrival of impatient rival salt-tolls eager to stake their claims. Pell flashes a dry, knowing grin and checks the strap of his digging pack, waiting to see which way you will turn.",
+   "exits": [
+    "Search the sand-choked scriptorium",
+    "Cross the swaying rope bridge",
+    "Seek the wounded sentry near the spire"
+   ]
+  },
+  "sg-5-0-0-3": {
+   "title": "The Fractured Lens",
+   "text": "Colossal shards of a fractured objective lens lean against one another like fallen monoliths, casting distorted reflections across the dry ground. A Dune Sister waits quietly in their blue shade, offering safe shelter if you will only swear a binding oath to her well-keepers. In the distance, the greedy glare of approaching scavenger lanterns flickers across the salt-crust, leaving little time for hesitation.",
+   "exits": [
+    "Seek the wounded sentry near the spire",
+    "Join Pell beneath the meridian porch",
+    "Head toward the western basalt bulwark"
+   ]
+  },
+  "sg-5-0-1-0": {
+   "title": "The Sundered Portico",
+   "text": "Rusted winch gears groan overhead as you squeeze yourself through the low, sagging lintel of the Sundered Portico. Salt-inspectors immediately step forward from the shadows, demanding an exorbitant immediate tax on the cold ceramic key hidden in your pack. Their greedy fingers hover near their brass scales, waiting to see whether you will pay or turn back.",
+   "exits": [
+    "Peer through the copper wall slit",
+    "Stride boldly past the nervous checkpoint"
+   ]
+  },
+  "sg-5-0-1-1": {
+   "title": "The Whispering Arch",
+   "text": "Shifting wind drafts shriek through the narrow limestone flutes of the Whispering Arch, threatening to snuff out your banked ember-lamp with a single violent gust. You cup your hand desperately around the dying coals, shielding the weak red glow while you search for a pocket of calm air. The ancient stonework vibrates around you like a tuning fork struck by a heavy mallet.",
+   "exits": [
+    "Enter the great hall of the star-clock",
+    "Head toward the frozen light-well cascade",
+    "Seek shelter beneath the colonnade ribs"
+   ]
+  },
+  "sg-5-0-1-2": {
+   "title": "The Shard Pit",
+   "text": "Piles of discarded optical glass crunch and shift underfoot within the deep hollow of the Shard Pit, glittering balefully in the dim light. An old lens-grinder crouches amidst the jagged heaps, holding up a crudely forged pass and whispering an offer to trade it for a pinch of your precious salt. The air smells of fine silica dust and dry alkali.",
+   "exits": [
+    "Enter the great hall of the star-clock",
+    "Head toward the frozen light-well cascade"
+   ]
+  }
+ },
+ "missing": []
+}

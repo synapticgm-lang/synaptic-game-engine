@@ -1,0 +1,95 @@
+{
+ "batch": "cf-4-097",
+ "sections": {
+  "cf-4-097": {
+   "title": "The Signal Wire",
+   "text": "Copper threads gleam in the dim lantern-light where the cable runs beneath the rotting floorboards. Following the insulated line with careful fingers, you uncover a heavy dead-man's switch bolted firmly to an old explosive detonator. The mechanism is rusted with age yet remains fully wired into the track circuit. Slipping a sturdy length of insulated copper wire from the terminals into your pocket, you leave the dangerous trigger behind in the shadows.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the remaining cable into the dark"
+   ]
+  },
+  "cf-4-098": {
+   "title": "Testing the Line",
+   "text": "A sudden metallic click echoes through the subterranean chamber as your boot grazes a hidden trip-wire connected to the detonator. The spring-loaded striker begins to pivot with alarming speed toward the percussion cap. Your hand darts toward the sensitive wiring harness in an instant attempt to rip the live connection free before the spark catches the charge.",
+   "check": "Yank the live wire free",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-099": {
+   "title": "A Close Shave",
+   "text": "The spark leaps an instant too soon, setting off a muffled detonation that sends a shower of hot grit and jagged splinters across your shoulders. A sharp piece of shrapnel grazes your forearm, leaving a jagged red line that begins to seep dark blood onto your sleeve. Coughing in the dense, sulfurous haze, you drag yourself clear of the wreckage and press onward through the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push past the smoking debris"
+   ]
+  },
+  "cf-4-100": {
+   "title": "Insulated Prize",
+   "text": "Quick fingers catch the live wire and snap the copper strands just as the striker hammers against empty iron. Breathing heavily in the acrid air, you pocket the severed length of heavy-duty cable, knowing its thick rubber shielding will prove invaluable for emergency repairs. The narrow escape leaves your heart pounding, but the prize is secured safely in your coat.",
+   "check": "",
+   "grant": "Heavy insulated copper wire",
+   "exits": [
+    "Return to the gangers camp"
+   ]
+  },
+  "cf-4-101": {
+   "title": "The Iron Barrier",
+   "text": "Heavy steel sleepers lie piled across the permanent way in a jagged barricade blocking all further progress down the cutting. Gripping the cold metal with both hands, you wedge a heavy claw-bar beneath the baseplate and throw your full weight into the leverage. The rusty bolts groan in protest before the steel wall gives way with a resounding crash.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul the claw-bar through the breach"
+   ]
+  },
+  "cf-4-102": {
+   "title": "The Iron Obstruction",
+   "text": "Heavy iron rails and warped steel sleepers pile three men high across the mouth of the tunnel, sealing the dark like a set of broken teeth. You wedge the hooked bill of your claw-bar beneath the lowest girder, planting your boots hard against the loose ballast and sulfur-stained tie-plates. Every muscle in your back hums and twitches under the strain as you lean your full weight into the iron shaft, feeling the dead weight of the barricade groan and shift against the bedrock. The air tastes of dry copper and old sweat while the metal bites deep into your palms.",
+   "check": "Heave the twisted rail wall",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-103": {
+   "title": "Crushed Ambition",
+   "text": "The heavy steel beam slips from your aching grasp, pinning your left leg beneath its jagged weight in the choking dark. Freeing yourself requires a frantic, painful struggle that leaves your shins bruised and your uniform torn to shreds. You limp away from the collapsed heap with a fresh ache in your bones and precious minutes lost to the shadows.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself past the wreckage"
+   ]
+  },
+  "cf-4-104": {
+   "title": "The Iron Barricade",
+   "text": "Iron splinters scream against your leather gloves as you heave the warped rails upward, your muscles singing with the strain of old steel and ancient soot. You wrench the final beam clear of the mouth, tossing it aside to ring hollowly against the ballast. Slipping a heavy claw-bar from the rack, you secure it at your belt for whatever waits in the gloom ahead.\n\nThe tunnel breathes a lungful of damp grease and coal-gas against your face, welcoming you into the dark.",
+   "check": "",
+   "grant": "heavy claw-bar",
+   "exits": [
+    "Clamber back onto the footplate"
+   ]
+  },
+  "cf-4-105": {
+   "title": "The Maintenance Spur",
+   "text": "A towering stack of discarded coal-scuttles rattles violently as Locomotive No. 9 approaches the old maintenance spur. The rusted metal vessels begin to slide down the embankment in a noisy cascade, threatening to foul the pistons and block the track entirely. You scramble along the running board with a heavy iron poker, batting away bouncing buckets before they can wedge themselves beneath the driving wheels. The engine pants softly in the confined space, its brass fittings gleaming under the soot as you clear the final obstacle from the rails.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue toward the coal silo"
+   ]
+  },
+  "cf-4-106": {
+   "title": "The Cinder Silo",
+   "text": "Mountains of damp slack choke the side-loading chute while a mechanical counter clicks away like a nervous beetle in the dark. The air tastes of sulphur and old money, heavy with the weight of unburned potential resting against the rusted iron plates. Every surface is coated in a greasy sheen of grey dust that settles over your boots and quietens the scrape of your shovel.\n\nA dull rhythmic thumping vibrates through the basalt floor from somewhere deeper in the network, offering three distinct paths through the shadow while the single narrow rail beckons straight ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Strike the jammed hopper gate with the hammer",
+    "Stand firm against the shifting avalanche of slag",
+    "Calculate the balance of the coal-chute carefully",
+    "Follow the narrow rib of basalt-flanked steel"
+   ]
+  }
+ },
+ "missing": []
+}

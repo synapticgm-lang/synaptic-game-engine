@@ -1,0 +1,117 @@
+{
+ "batch": "cf-4-052",
+ "sections": {
+  "cf-4-052": {
+   "title": "The Sluice Chains",
+   "text": "Heavy drops of condensation patter against your neck like cold grease as you grope along the dripping masonry of the culvert. Beneath the floorboards, the black water surges with a rhythmic, throat-deep roar, smelling strongly of old oil and drowned lime. Your fingers find the salted iron of the primary sluice chain, slick with slime and crusted with decades of mineral scale. Every fiber in your shoulders aches from the preceding heave, but the level of the sump continues to inch upward toward the trembling ashpan doors of the engine. Pulling this line requires all your remaining weight and a steady footing on the slime-slick duckboards. You loop the cold links twice around your raw palms, brace your boots against a stanchion of rusted angle-iron, and throw your entire weight backward into the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul upon the slimy chain links"
+   ]
+  },
+  "cf-4-053": {
+   "title": "Dragging the Iron",
+   "text": "Iron groans against stone as the links slip through your bleeding grip, yielding inches of grudging progress against the immense hydrostatic weight pressing from beyond the bulkhead. The cold air inside the tunnel vibrates with the low-frequency thrum of the Marrowbone idling in the gloom behind you. Somewhere up in the vaulted brickwork, a single green signal lamp flickers erratically, casting long, wavering shadows across the greasy surface of the rising flood. You take another turn of the chain around your forearm, ignoring the sharp bite of the metal against bruised skin, and strain for the critical notch where the dog-catch finally seats itself. The water laps eagerly at your boot-tops, carrying flecks of gray ash and oily scum that cling to your trousers like a shroud.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the dog into its notch"
+   ]
+  },
+  "cf-4-054": {
+   "title": "The Sluice Gate Leap",
+   "text": "Water boils up around your thighs with the force of a small mill-race, threatening to sweep your footing away from the narrow drainage ledge altogether. The heavy cast-iron dog-catch hovers just an inch shy of its retaining slot, vibrating with the immense strain of the backed-up bilge. If the bolt slips now, the surge will slam back into the pit with enough force to swamp the firebox and leave the Marrowbone dead in the water beneath the mountain. You bunch your muscles, grit your teeth against the raw pain in your shoulder, and launch your entire body weight upward to drive the stubborn locking pin home into its rusted socket before the current rips the chain from your grasp.",
+   "check": "Heave the stubborn sluice pin home",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-055": {
+   "title": "Slips in the Sump",
+   "text": "Slip and splash, the metal bar kicks back with a vicious clatter that rings off the wet brick vaulting, tearing the skin clean from your palm and sending you sprawling backward into the freezing, oily sump. The black water closes over your head for a breathless second, tasting of sulphur and ancient coal-dust, before you thrash upward, gasping and shivering in the dark. Your shoulder flares with a hot, tearing pain where it struck the projecting stone corner of the culvert, leaving a purple-black bruise that will throb for days. The sluice gate remains only half-drawn, letting a steady trickle of dirty water hiss into the lower trench, costing you precious minutes and burning away the last of your dry matches.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl back to the footplate"
+   ]
+  },
+  "cf-4-056": {
+   "title": "The Greasy Shackle",
+   "text": "However narrowly, your shoulder muscle holds against the sudden hydraulic backlash, and the heavy iron dog-catch drops into its retaining notch with a dull, satisfying thud. The surging tide immediately loses its frantic momentum, gurgling away down the secondary drainage pipes with a long, exhausted sigh that clears the ashpan doors just in time. As you straighten up, rubbing your bruised arm and wiping black slime from your eyes, your fingers brush against a stray piece of salvage wedged behind the iron bracket - a stout, grease-stained shackle forged from good Ashgate steel that has never seen a flaw. You pocket the heavy piece of metal, knowing its worth in a place where nothing manufactured ever stays whole for long.",
+   "check": "",
+   "grant": "A greasy iron shackle",
+   "exits": [
+    "Return to the sump basin"
+   ]
+  },
+  "cf-4-057": {
+   "title": "The Rusted Wheel",
+   "text": "Turning the brass drainage wheel demands a slow, agonizing rotation against decades of accumulated lime-scale and dried boiler compound. Your knuckles scrape raw against the damp limestone wall as you apply every ounce of leverage you possess, coaxing the stubborn mechanism around one millimeter at a time. A thin, high-pitched squeal rises from the packing-gland, turning into a wet gurgle as stagnant water finally begins to weep past the valve seat and trickle away into the dark below. The air clears slightly of the worst sulphur stench, replaced by the clean, metallic tang of cold brass and wet stone. You take a ragged breath, letting the chill subterranean damp settle deep into your woolen waistcoat while you wait for the pressure to equalize.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the clearing drainage channel"
+   ]
+  },
+  "cf-4-058": {
+   "title": "The Valve Seat",
+   "text": "The brass wheel sticks hard at the three-quarter mark, jammed immovably by a grit-encrusted thread that refuses to yield to ordinary persuasion. Beyond the partition, the water level taps a steady, menacing tattoo against the lower boiler plating, warning that time has nearly run out for the engine's draft. You grab a short length of rusted iron pipe from the debris at your feet, slip it over the spoke of the wheel to gain extra leverage, and lean your full weight into the improvised extension with your eyes fixed on the stubborn seating. The metal of the wheel shudders under the strain, balanced precisely between stripping the ancient threads entirely or clearing the obstruction with one sudden snap.",
+   "check": "Force the jammed brass wheel",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-059": {
+   "title": "Stripped Threads",
+   "text": "A dry, metallic crack splits the damp silence of the tunnel as the internal threads shear clean away under your sudden exertion. The wheel spins wildly out of control, wrapping your knuckles painfully against the rough stone wall and leaving you empty-handed as the valve drops shut again. Dirty water sloshes over your boots once more, cold and indifferent to your efforts, while a dull ache settles deep into your bruised wrist. You are forced to spend a grueling quarter-hour hacking away at the jammed packing with a pocket-knife, losing precious minutes and gathering a long, stinging scratch across your forearm before the drainage flow is finally established by hand.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back to the engine deck"
+   ]
+  },
+  "cf-4-060": {
+   "title": "The Drainage Cock",
+   "text": "However narrowly, the wheel breaks past its rusted seat with a sharp report, and the blocked channel opens wide to vent the accumulated filth into the deep sumps. As the water level drops away from the lower stays, your hand encounters a loose fitting in the debris - an intact, heavy brass drainage cock with its ground-glass core still bright and unblemished beneath the grime. You pocket the small prize, recognizing the fine work of the old Ashgate shops before the Rail Barons standardized everything to cheap cast iron. As you pocket it, an old signalman sitting in the recess of the archway nods approvingly, recognizing the care you take with machinery and noting your respect for the old timetables.",
+   "check": "",
+   "grant": "Trust of the old signalman",
+   "exits": [
+    "Advance toward the limestone cleft"
+   ]
+  },
+  "cf-4-061": {
+   "title": "The Telegraph Wire",
+   "text": "Scraps of discarded telegraph wire litter the ballast here like the silver entrails of some metal beast long since gutted by scavengers. You kneel beside the tangled heap, your fingers sorting through the cold copper strands until you find a length that retains its gutta-percha insulation without serious cracking. Beside it lies an intact porcelain block, smooth and cold, and a heavy dry-cell battery that still shows a faint trace of chemical life when you test its terminals against your tongue. Binding the materials together with greasy twine, you construct a makeshift hoist line capable of dragging heavy gear across the treacherous mud-sumps without risking another ungraceful plunge into the mire.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Rig the line across the gap"
+   ]
+  },
+  "cf-4-062": {
+   "title": "The Rigging",
+   "text": "Threading the insulated wire through the porcelain block requires stiff, freezing fingers and absolute concentration in the dim, flickering light of your oil lantern. The distant rumble of the engine's blower echoes down the tunnel, reminding you that the fire on the grate must not be neglected for too long if steam pressure is to be maintained against the mountain grade. You anchor one end of the line around a stout granite pillar embedded in the tunnel wall, testing the tension with a sharp tug that sets the porcelain humming softly in the damp air. It is a neat, seamanlike job born of long hours on the permanent way, designed to span the black water without asking favors of the broken tracks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test the improvised block hoist"
+   ]
+  },
+  "cf-4-063": {
+   "title": "The Wire Hoist",
+   "text": "The heavy gear basket hangs suspended from your improvised copper line, swinging slowly above the black, oil-slicked waters of the inner sump. If the salvaged wire holds its splice under the sudden dead weight of the iron jacks, you can swing the entire kit across the gap in a single smooth pull; if the old insulation parts where it rubs against the sharp granite edge, everything will plunge irrevocably into the deep silt below. You gather the slack into your mittened hands, plant your boots firmly against the uneven sleepers, and give the hauling line a sharp, testing tug to commit the cargo to the air.",
+   "check": "Haul the gear across the sump",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-064": {
+   "title": "The Snapped Splice",
+   "text": "The copper splice parts with a sharp, singing snap that echoes off the curved brickwork like a pistol shot. The gear basket drops instantly, striking the surface of the black sump with a heavy, sucking splash that sends a foul-smelling spray of oily mud across your chest and face. You manage to haul back the frayed end of the line before it whips out of reach, but the heavy block and the dry-cell battery are gone, swallowed entirely by the shifting mire below. The loss leaves your pockets lighter and your temper frayed, forcing you to wade the remaining distance through the freezing muck on foot with your lantern held high above your head.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wade through the remaining sump"
+   ]
+  }
+ },
+ "missing": []
+}

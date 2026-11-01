@@ -1,0 +1,55 @@
+@@SECTION ul-0-024
+TITLE: The Counterfeit Ledger
+TEXT: Ink-stained ledgers loom across the high wooden barrier of the reading rooms, where the lending clerk squints through spectacles greased with tallow. You lean against the counter, tapping a fingernail beside an imaginary deficit in the ledger of unreturned folios to draw his gaze away from your twitching sleeve. // Whispering an elaborate falsehood regarding missing fines from the upper parish, you prepare to slip a coil of rough linen twine from the sunken shelf into your pocket while his attention wanders down the aisle.
+EXIT 1: Slide the twine into your coat
+@@SECTION ul-0-025
+TITLE: The Clerk's Diversion
+TEXT: Lamp-oil fumes hang heavy in the galleried hall as the lending clerk grumbles under his breath, turning another brittle leaf in search of nonexistent fines. You maintain your steady, earnest posture, keeping your voice low enough that it barely carries over the dry rustle of turning parchment from nearby scholars. // The spool of linen twine rests just within reach behind a stack of overdue poetry, waiting for the exact moment the clerk looks toward the ink-sellers' archway.
+EXIT 1: Reach behind the overdue poetry
+@@SECTION ul-0-026
+TITLE: A Question of Balances
+TEXT: Fabricating a ledger discrepancy for the lending clerk requires a steady tongue and an absolute absence of hesitation, but the man's watery eyes narrow with sudden suspicion as you reel off your manufactured account of missing parish fines. You lean further across the dark grain of the counter, gesturing casually toward the shadowed floorboards while your fingers graze the heavy coil of linen twine tucked behind the shelf of poetry. A sharp reprimand hangs in his throat, and you must maintain the illusion before he calls for the guard.
+CHECK: Fabricate a convincing debt
+@@SECTION ul-0-027
+TITLE: Reprimand and Scraps
+TEXT: The lending clerk catches your movement with a sharp snap of his ledger, slamming the heavy leather cover down and fixing you with a glare of pure vitriol. A formal demerit is scratched into the blue returns slip with a dry scratch of steel, docking your evening ration of lamp-oil and earning you a stern lecture on the sanctity of inventory. // You escape his counter with stinging fingers and a bruised pride, though the clerk in his irritation leaves a loose tangle of rough linen twine behind on the wood.
+EXIT 1: Gather the fallen twine
+@@SECTION ul-0-028
+TITLE: The Unnoticed Spool
+TEXT: Whether through sheer audacity or the clerk's distracted weariness, your fabricated tale of missing fines holds together long enough for your fingers to close around the prize. The spool of rough grey material comes away without a sound, sliding smoothly into the dark folds of your coat while the old man continues muttering about parish ledgers. // You leave the counter behind with a steady pace, carrying your newfound asset into the dim corridors of the stacks.
+GRANT: bundle of linen twine
+EXIT 1: Retreat toward the sorting annex
+@@SECTION ul-0-029
+TITLE: Flattery Among the Rules
+TEXT: Rows of towering card-drawers rattle softly as the grumpy cataloguer stamps a stack of requisition forms with aggressive enthusiasm. You step into his line of sight, offering a carefully measured compliment regarding his unmatched precision in filing regional cartography, hoping to soften the rigid line of his jaw. // He pauses, his ink-stained thumb hovering over the red stamp while his gaze shifts sideways toward the shelves, giving you an opening to edge closer to the jar of protective alum powder sitting on his desk.
+EXIT 1: Reach for the alum powder
+@@SECTION ul-0-030
+TITLE: The Grumpy Cataloguer
+TEXT: Cataloguing rules are carved into the very mortar of the archway, yet the elderly keeper before you looks particularly susceptible to a well-timed dose of unearned praise about his filing accuracy. You lean against the edge of his high oak desk, spinning a tale of his legendary patience while your fingers drift slowly toward the small stoneware jar of protective alum powder used to seal damp bindings. He stops stamping, his bushy eyebrows twitching as he weighs your flattery against the strict prohibition of civilian handling of chemical supplies.
+CHECK: Flatter the grumpy cataloguer
+@@SECTION ul-0-031
+TITLE: Sullied Courtesy
+TEXT: The cataloguer sees right through your clumsy praise, slamming his heavy brass stamp onto the blotter with a hollow thud that echoes off the stone flags. He issues a sharp demerit that stains your ledger record with a permanent red mark of censure, costing you precious time and forcing you to listen to a lengthy discourse on proper desk decorum. // You withdraw your hand empty and chastised, though in his flurry of bureaucratic anger he knocks a small pinch of white alum powder onto your cuff.
+EXIT 1: Brush the powder away
+@@SECTION ul-0-032
+TITLE: Alum and Approbation
+TEXT: Your honeyed words land precisely where intended, melting the cataloguer's sour demeanor into a brief, grudging nod of professional fellowship. While he turns away to retrieve a fresh stack of index cards, your fingers dip into the open stoneware jar and lift a fine pinch of the protective alum powder. // You secure the mineral safely in a folded scrap of waste paper, walking away from the desk with a quiet sense of triumph before he changes his mind.
+GRANT: pinch of protective alum powder
+EXIT 1: Return to the sorting annex
+@@SECTION ul-0-033
+TITLE: Weight and Stone
+TEXT: Dusty blue folios lie open across the reading table, their yellowed pages detailing the exact stone-load limits of the lower limestone vaults before the great subsidence. You trace the faded diagrams with a fingertip, calculating the precise tonnage a single pine shelving unit can bear before the flagstones beneath begin to fracture and sink into the dark. // Tucked between two heavy leaves concerning masonry stresses rests a slender ivory bone-handled bookmark, cool to the touch and scored with tiny tally marks left by an unknown hand.
+EXIT 1: Lift the ivory bookmark
+@@SECTION ul-0-034
+TITLE: The Blue Folios
+TEXT: The air in the deep alcove tastes of old linen and chalk dust as you turn the heavy pages of the engineering folios, searching for the calculations that govern the shifting stacks. Each diagram is rendered in fading violet ink, mapping the subterranean pressure points where the foundations meet the living rock of the city below. // Resting deep within the crease of a particularly fragile leaf, an ivory bone-handled bookmark gleams faintly in the dim glow of your rush-light, untouched by the general decay of the lower stacks.
+EXIT 1: Retrieve the bone-handled bookmark
+@@SECTION ul-0-035
+TITLE: Calculating the Abyss
+TEXT: The ancient floor-weight equations scrawled across the dusty blue folios require absolute precision, for a single miscalculation in the load distribution of the moving stacks could bring down an entire tier of shelving into the ink-rivers below. You trace the intricate geometric proofs by the feeble light of your lamp, your mind racing through load-bearing limits and stone-density ratios while the floorboards beneath your boots emit a faint, ominous groan. Reaching deep into the gutter of the binding where the rarest diagrams reside, you try to extract the ivory bone-handled bookmark without disturbing the precarious stack of heavy volumes leaning against your elbow.
+CHECK: Research floor-weight equations
+@@SECTION ul-0-036
+TITLE: Tremors in the Stack
+TEXT: The floor-weight calculations prove treacherous, and as your fingers close around the bookmark, the towering stack of blue folios shifts with a sudden, sickening slide. A cascade of heavy leather-bound volumes crashes onto the flagstones, kicking up a blinding cloud of ancient dust and pinning your sleeve beneath a jagged corner of masonry. // You wrench your arm free with a sharp yank, leaving a torn scrap of fabric behind, though your frantic grasp manages to secure the slender ivory marker just as the shelving settles back into place.
+EXIT 1: Proceed to the reward
+@@END

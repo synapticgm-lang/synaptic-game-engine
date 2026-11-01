@@ -1,0 +1,92 @@
+{
+ "batch": "ul-3-116",
+ "sections": {
+  "ul-3-116": {
+   "title": "The Vault of Echoes",
+   "text": "Shadows cling to the stone pillars of the gallery like damp moss as the murmurs begin to swell from the dark floorboards. Every forgotten name, erased from the ledgers of Quillon, presses against your temples with the heavy, suffocating weight of unremembered history. Your lamp flickers, threatened by the cold psychic gale of vanished lives clamoring for a single voice. You steady your breathing against the rising tide of forgotten grief, anchoring your thoughts to the familiar smell of lamp-oil and ink.\n\nStep past the trembling barrier of voices and press onward toward the deeper corridor before your resolve shatters.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk toward the whispering dark"
+   ]
+  },
+  "ul-3-117": {
+   "title": "Threshold of the Past",
+   "text": "Cold drafts sweep through the aisle, carrying the dry scent of centuries-old paper and the metallic tang of dried blood on forgotten decrees. The psychic pressure inside your skull lessens just enough to let you draw a full, ragged breath without tasting copper. Ahead, a narrow iron gate stands half-open, revealing shelves piled high with unindexed folios that tremble in the gloom. You grip your leather satchel tighter, feeling the solid reassurance of your shelver's stamps against your hip as you prepare to cross the threshold.\n\nSlip through the iron gate before the shelves shift their alignment again.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip through the iron gate"
+   ]
+  },
+  "ul-3-118": {
+   "title": "Bearing the Weight",
+   "text": "Millions of erased identities converge upon your consciousness, their collective grief threatening to scour your memories clean and leave your mind an empty book. You clamp your teeth together until your jaw aches, fighting to separate your own existence from the vast, drowning chorus of the unwritten dead. Every second feels like an eternity spent standing under a cataract of cold ink and phantom tears. You push your mind against the invading tide, summoning every ounce of inner fortitude to pluck a single true record from the howling air.",
+   "check": "Anchor your mind against the whispers",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-119": {
+   "title": "The Cost of Listening",
+   "text": "The psychic backlash strikes like a leaden mallet, driving you to your knees upon the cold flagstones as blood trickles warm and sharp from your nose. Your vision blurs with shimmering motes of silver ink, and for a terrifying moment you cannot remember your own name or your rank in the Shelvers' Fellowship. When the roaring in your ears finally subsides into a dull ache, you find your fingers clutching a torn page, purchased at the steep price of a persistent, throbbing migraine that settles deep behind your eyes.\n\nGather your fallen lamp and limp forward into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick up your smoking lamp"
+   ]
+  },
+  "ul-3-120": {
+   "title": "A True Record Secured",
+   "text": "Through sheer stubborn endurance, however narrowly, you manage to carve a pocket of absolute silence within the storm of forgotten names, plucking the genuine parchment from the drifting illusion. The recovered leaf feels impossibly heavy in your palm, cold as winter stone yet vibrating with the faint, residual heartbeat of history. It is a fragile fragment of truth salvaged from the rising tide of fabrication, capable of shifting the balance in the Cataloguers' Court.\n\nReturn to the main hall with your prize tucked safely inside your tunic.",
+   "check": "",
+   "grant": "A genuine historical leaf",
+   "exits": [
+    "Ascend to the Rotunda of Records"
+   ]
+  },
+  "ul-3-121": {
+   "title": "The Chief Sorter",
+   "text": "Rows of towering card-cabinets stretch into the dim subterranean haze, where the chief card-sorter sits behind a mahogany desk stamping rejection notices with rhythmic precision. You smooth down your tunic, adopting the brisk, indifferent posture of an authorized auditor delivering an urgent directive from the upper administration. The sorter's ink-stained fingers pause mid-stroke above a drawer of cross-references, his sharp eyes narrowing behind spectacles thick as bottle-bottoms as he weighs your confident bearing against the strict rules of the court.\n\nHand over the fabricated paper before your nerve breaks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Present the fabricated counter-directive"
+   ]
+  },
+  "ul-3-122": {
+   "title": "Beyond the Card Index",
+   "text": "The forged seal on the counter-directive holds against the sorter's scrutiny, gleaming dully under the amber glow of the desk lamps. With a disgruntled grunt, he reaches into a locked brass drawer and tosses a heavy iron ring of keys onto the blotter without another word. You scoop them up quickly before he can change his mind, feeling the cold metal bite into your palm. The way down to the lower stacks lies open before you, veiled in thick shadows and the scent of damp leather.\n\nDescend into the restricted lower stacks",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the restricted stacks"
+   ]
+  },
+  "ul-3-123": {
+   "title": "Weaving the Deception",
+   "text": "You lean across the mahogany counter, pitching your voice to the exact dry, bureaucratic register favored by the senior rule-keepers of the court. Every syllable must fall with absolute precision to convince the chief card-sorter that your unsanctioned presence is part of a routine archival audit. His quill hovers inches above the parchment, trembling slightly as he hesitates between upholding protocol and avoiding a costly administrative dispute. You hold his gaze with unblinking assurance, feeding him the next layer of your elaborate fiction.",
+   "check": "Deliver the fabricated counter-directive",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-124": {
+   "title": "Caught in the Bureaucracy",
+   "text": "A sudden twitch of the sorter's eyebrow betrays the lie a fraction too late, and the rubber-stamped rejection mark comes down upon your paperwork with a sharp, echoing crack. Alarms begin to chime softly within the wooden cabinets, setting thousands of index cards fluttering like trapped moths in panic. You snatch your ruined papers back from the desk, leaving behind a strip of your sleeve caught in the brass sorting mechanism as you turn and flee into the labyrinth of aisles.\n\nRetreat into the shadowed filing aisles",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee into the shadow aisles"
+   ]
+  },
+  "ul-3-125": {
+   "title": "The Master Key",
+   "text": "Through a seamless blend of audacity and persuasive fiction, however narrowly, you convince the chief card-sorter to surrender the heavy iron master key without sounding the general alarm. The cold metal ring rests in your hand, its iron teeth notched to fit every restricted lock down to the Deep Annexe. It is a dangerous trinket to carry through the lower levels, but one that unlocks doors the Cataloguers thought sealed forever.\n\nPocket the keys and turn toward the descending stone stairs.",
+   "check": "",
+   "grant": "Master key of the lower levels",
+   "exits": [
+    "Make your way toward the Rotunda"
+   ]
+  }
+ },
+ "missing": []
+}

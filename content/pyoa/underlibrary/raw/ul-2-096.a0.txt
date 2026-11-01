@@ -1,0 +1,52 @@
+@@SECTION ul-2-096
+TITLE: The Misplaced Royal Decree
+TEXT: Heaps of discarded broadsheets and crumpled proclamations hide countless administrative secrets within their folds. Among these yellowed papers lies a royal decree bearing the distinct crimson wax of a long-deposed sovereign. A rival scholar from the reading rooms kneels nearby, desperately hunting for evidence to settle a historical dispute. By deciphering the archaic watermarks and margin notes, you instantly recognize the document's true provenance. You slide the parchment toward the scholar, whose expression shifts from frantic frustration to grudging respect as they realize the magnitude of their discovery and the debt they now owe you.
+EXIT 1: Demand a debt of knowledge
+@@END
+@@SECTION ul-2-097
+TITLE: Tracing the Royal Seal
+TEXT: Dust hangs heavy in the dim lamp-light while you sift through the crumbling layers of discarded state papers, searching for the hidden margins that reveal the true origin of the royal proclamation. A sudden draft from the lower stacks threatens to scatter the delicate fragments across the floor, making every movement perilous. You lean closer to the fragile vellum, squinting past the flaking ink to parse the faded scribbles of the royal scribe. Your fingers hover over the torn edge, ready to lift the document before the shifting currents of paper bury it completely.
+CHECK: Decipher the faded royal provenance
+@@END
+@@SECTION ul-2-098
+TITLE: Buried Under Old Statecraft
+TEXT: The paper mound collapses with a dry, papery sigh, sending a thick cloud of centuries-old dust billowing into your eyes and lungs. You stagger backward, coughing violently as loose folios cascade over your boots and pin your hem to the flagged floor. By the time you claw your way free from the literary avalanche, precious minutes have slipped away, and your lamp oil runs dangerously low. The rival scholar watches your clumsy exit with a cold, superior smirk, leaving you with an embarrassing bruise and a lingering obligation you would rather have avoided.
+EXIT 1: Escape the collapsing paper drift
+@@END
+@@SECTION ul-2-099
+TITLE: A Scholar's Secret Obligation
+TEXT: Your sharp eye picks out the hidden watermark amidst the clutter, locking down the precise historical context before the paper stack settles. The rival scholar nods slowly, acknowledging your superior scholarship with a quiet, reluctant sigh. Whether you arrived smoothly or fought your way through a cascade of tumbling folios, the transaction remains complete and binding under the unwritten laws of the stack. You depart with a valuable piece of leverage over someone who knows the hidden corridors well.
+GRANT: A scholar's information debt
+EXIT 1: Return to the misfiled wing
+@@END
+@@SECTION ul-2-100
+TITLE: The Snapping Bindings
+TEXT: Leather-bound volumes skitter across the stone flags like disturbed crabs, their metal clasps clicking with sharp, metallic warnings. Deep within the shadow of a listing bookshelf, a heavy brass reading glass rests upon a drift of discarded invoices. The lenses catch the feeble yellow glow of your lantern, glinting like an eye in the dark. You edge closer, watching the nearest volumes rear up on their frayed spines as if ready to defend their temporary roost against any intrusive fingers.
+EXIT 1: Approach the snapping leather volumes
+@@END
+@@SECTION ul-2-101
+TITLE: Glint in the Shadows
+TEXT: Shadows lengthen across the uneven masonry as the moving shelves grind together with a low, wooden groan. The brass reading glass remains just out of reach, half-swallowed by a nest of aggressive leather-bound folios that snap their covers shut at the slightest vibration. You ready your hand, timing your movement to match the rhythmic sway of the hanging lamps overhead. Every instinct warns you that a clumsy grab will draw a sharp nip from the territorial tomes.
+EXIT 1: Time your reach past the volumes
+@@END
+@@SECTION ul-2-102
+TITLE: Snatching the Brass Lens
+TEXT: You wait for the exact moment the flanking volumes part their leather jaws, then dart your hand straight into the gap toward the gleaming brass. The heavy reading glass sits nestled against a spine that shivers violently under your knuckles, sensing the intrusion. You slide your fingers beneath the cold metal frame, holding your breath as the surrounding covers begin to angle inward to trap your wrist against the shelf.
+CHECK: Swipe the brass reading glass
+@@END
+@@SECTION ul-2-103
+TITLE: Nicked by Bound Pages
+TEXT: A sudden snap echoes through the aisle as sharp paper edges and iron clasps bite deep into your skin. You jerk your hand back with a sharp intake of breath, leaving a smear of crimson across a blank flyleaf while the heavy brass glass clatters deeper into the shadows out of reach. The pain is sharp and stinging, a stark reminder of the hostility harboured by uncatalogued texts. You nurse your bleeding thumb, vowing to approach the territorial literature with far greater caution next time.
+EXIT 1: Retreat with a stinging hand
+@@END
+@@SECTION ul-2-104
+TITLE: Secured Brass Lens
+TEXT: Your fingers close securely around the cool handle, slipping the heavy brass glass free from its nest just as the snapping covers slam shut on empty air. Whether you moved with absolute feline grace or snatched it away amidst a flurry of paper bites, the prize is yours. The lens is heavy, its glass thick enough to magnify the tiniest marginal notes hidden in the darkest corners of the stacks. You pocket the instrument, feeling the quiet satisfaction of a successful acquisition.
+GRANT: Heavy brass reading glass
+EXIT 1: Return to the misfiled wing
+@@END
+@@SECTION ul-2-105
+TITLE: The Flow of Black Ink
+TEXT: A wide, sluggish river of pure black ink cuts directly across the flagged pathway, fed by weeping stone walls and overflowing storage urns. Bubbling pools of thick writing fluid swirl sluggishly around the base of submerged shelving units, occasionally releasing heavy, metallic bubbles that burst into greasy clouds of vapour. Makeshift stepping stones of discarded slate lie scattered across the current, but they shift constantly under the oily tide. Across the dark channel, the stacks continue their endless, silent drift into the gloom.
+EXIT 1: Wade across the ink river
+@@END

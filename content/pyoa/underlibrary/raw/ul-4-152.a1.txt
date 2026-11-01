@@ -1,0 +1,57 @@
+@@SECTION ul-4-152
+TITLE: The Labyrinthine Lintel
+TEXT: Heavy oak beams groan against your weight as you confront the massive wooden portal whose face continually rearranges its alphabet to bar entry. Brass letters slide and click across the grain like frantic beetles, spelling out words that dissolve into dust before your eyes. Lamp-oil drips from a smoky sconce overhead, scenting the chill air with burnt tallow and ancient pine. To your left, a narrow service ladder winds upward into the gloom where the marginalia murmur in the shadows. Straight ahead, the shifting lintel pulses with a low, hypnotic hum that tugs at your thoughts, daring you to decipher its moving cipher. Every plank beneath your boots vibrates with the distant, steady pressure of the Long Closing, urging haste before the deep stacks seal themselves for a generation.
+EXIT 1: Trace the sliding brass letters
+EXIT 2: Force a path through the grain
+EXIT 3: Match the rhythm by hand
+EXIT 4: Slip through the mechanical gap
+EXIT 5: Analyze the root etymology
+EXIT 6: Enter the silent inner sanctum
+@@END
+@@SECTION ul-4-153
+TITLE: Shifting Brass Letters
+TEXT: Cold brass stings your fingertips as you press against the shifting wooden tiles of the portal, enduring the relentless linguistic puzzle through sheer mental stamina. The carved alphabet reorganizes itself into mocking warnings, each phrase demanding an immediate sacrifice of attention while the air grows thick with floating paper-dust. You steady your breathing, blocking out the frantic whispers of forgotten scholars leaking from the surrounding floorboards. With methodical patience, you guide the stubborn components into alignment, watching the stubborn mechanism hesitate in its frantic dance. A narrow gap opens in the center of the panel, revealing a dim, vaulted alcove where a single object rests upon a velvet cushion.
+EXIT 1: Reach into the hidden alcove
+@@END
+@@SECTION ul-4-154
+TITLE: The Luminous Prism
+TEXT: Pale light spills from the small chamber beyond the puzzle-door, illuminating dust motes that drift lazily in the stagnant air of the deep annexe. Resting upon a scarred mahogany pedestal sits a heavy, multifaceted reading prism, catching every stray flicker of your oil lamp and refracting it into sharp, violet beams. The glass hums faintly against your skin, resonating with the quiet melancholy of unread manuscripts piled high around the floor. You lift the instrument from its velvet rest, feeling its surprising heft and the steady warmth it radiates against your palm. The surrounding darkness seems to retreat a fraction, leaving only the sound of your own boots on the flagstones and the distant, grinding shift of distant shelves.
+EXIT 1: Inspect the glowing glass core
+@@END
+@@SECTION ul-4-155
+TITLE: Testing the Mind
+TEXT: Sudden pressure tightens behind your temples as the prism draws upon your inner reserves, threatening to overwhelm your focus with a flood of ancient memories that do not belong to you. Images of forgotten catastrophes and long-dead cataloguers flicker behind your eyelids, dragging your concentration toward the edge of panic. You grit your teeth against the psychic tide, marshaling every ounce of stubborn resolve you possess to keep your footing on the slick stone floor. The glass grows burning hot in your grip, demanding absolute mental surrender before it will yield its secrets to a junior page.
+CHECK: Maintain absolute mental focus
+@@END
+@@SECTION ul-4-156
+TITLE: Strain and Stumble
+TEXT: Pain flares through your skull as the mental backlash throws you backward against a stack of discarded ledgers, scattering yellowed leaves across the damp floor. Your ears ring with a discordant chorus of whispers, and a thin line of blood traces a slow path from your nostril down to your lip. Gasping for breath in the ink-scented gloom, you drag yourself up by the edge of a heavy shelf, clutching your throbbing head. The prism settles into a dull, sullen glow on the flagstones beside you, its demanding hum quieted for the moment into a low, reproachful thrum. You pick it up with a bruised shoulder, knowing the cost of your momentary slip in focus.
+EXIT 1: Proceed into the inner hall
+@@END
+@@SECTION ul-4-157
+TITLE: Prism of Clarity
+TEXT: Cool glass rests steadily in your palm, its violet beams cutting a clean path through the clinging shadows of the deep annexe. Whatever resistance the object offered has dissolved into a cooperative hum, aligning itself with your thoughts and sharpening your senses against the gloom. You slip the instrument securely into your canvas satchel, feeling its reassuring weight steady your stride as you leave the alcove behind. The corridor ahead opens toward the heart of the archives, where the air grows colder and the silence deepens into something profound and watchful.
+GRANT: Luminous reading prism
+EXIT 1: Enter the silent inner sanctum
+@@END
+@@SECTION ul-4-158
+TITLE: Stubborn Focus
+TEXT: Fingers curled tight around your lamp, you press your shoulder firmly against the vibrating oak of the portal, trusting in stubborn endurance to break the psychic barrier. The wood pushes back with an unnatural resistance, sending tremors up your arm and filling your mouth with the dry taste of old paper-dust. You lean harder into the grain, ignoring the warning creaks of the floorboards and the frantic rustle of unseen pages turning in the dark. Slowly, grudgingly, the mechanism yields an inch, allowing a narrow sliver of cold air to escape from the chamber beyond. Your boots find purchase on the uneven stone as you wedge yourself further into the widening gap.
+EXIT 1: Retrieve the hidden implement
+@@END
+@@SECTION ul-4-159
+TITLE: Resisting the Lock
+TEXT: A sudden surge of psychic cold rushes through the crack in the door, trying to freeze your thoughts and drive you back into the echoing corridors of the stack. You dig your heels into the mortar between the flagstones, clenching your jaw until your teeth ache with the strain. The weight of the entire archive seems to press down upon your shoulders, testing every boundary of your will as you fight to keep the heavy timbers from snapping shut again. The locking mechanism chatters furiously like a nest of mechanical teeth, demanding absolute mental dominance before it will grant passage.
+CHECK: Overpower the psychic lock
+@@END
+@@SECTION ul-4-160
+TITLE: Bitter Resistance
+TEXT: A sharp fracture of pain shoots through your shoulder as the door snaps back a fraction before you finally force it wide, leaving a deep bruise along your arm. You stagger forward into the dusty interior, catching yourself against a lectern with a sharp intake of breath. The air inside tastes of stale lamp-oil and scorched leather, thick with the residue of broken spells that linger in the stone. You press a hand to your throbbing arm, feeling the heat of the strain settle into muscle and bone as you survey the shadowy chamber. Whatever lies ahead must be faced with a fresh ache in your limbs and a deeper respect for the archive's defences.
+EXIT 1: Step into the chamber
+@@END
+@@SECTION ul-4-161
+TITLE: Ivory Edge
+TEXT: Smooth and cold against your palm, an ancient ivory letter-opener rests upon a small reading desk just inside the threshold, left behind by some long-forgotten scholar. Its surface is etched with delicate marginal notes that shift under your thumb, spelling out brief, cryptic warnings about the halls ahead. You pocket the slender tool, finding comfort in its solid density and the faint hum of utility it imparts to your fingers. The heavy door swings shut behind you with a muffled thud, cutting off the sounds of the outer stacks and leaving you alone in the quiet domain of the last reader.
+GRANT: Etched ivory letter-opener
+EXIT 1: Return to the main lintel
+@@END

@@ -1,0 +1,99 @@
+{
+ "batch": "d-r-0",
+ "newNodes": [
+  {
+   "id": "up-r-det-recognised",
+   "stake": "A quiet observer recognises your exposed features, threatening to alert the Guard unless their price is met.",
+   "page": "A soot-stained gas-lighter catches your arm beside a smoking chimney, holding his dark lantern up to illuminate your features. \"I heard the watch description,\" he murmurs, his voice barely carrying over the whistling wind. \"A climber with a ragged coat and that exact bruised jaw. The turnkey painted a vivid picture.\" Instead of shouting for the patrol below, he extends a grimy, expectant palm. You drop two copper pence into his hand. He pockets the coin, nods toward a crumbling slate roof adjacent to the old pressing house, and points out a route the Guard has neglected to block.",
+   "exits": [
+    {
+     "id": "step-toward-the-auctioning-factions",
+     "label": "Step toward the auctioning factions",
+     "to": "up-r-faction-bid"
+    }
+   ]
+  },
+  {
+   "id": "up-r-det-one-hand",
+   "stake": "Revealing their secret alliance strips both syndicates of their leverage, transforming their smug bargaining into cold hostility.",
+   "page": "You pause upon the threshold, holding up the brass-bound ledger for both faction envoys to see. \"I read the counter-ledgers in the undervault,\" you state, your voice cutting through the heated bidding. \"Valerius silk and Rigg iron are logged in the same ink, by the same hand. You are one cabal.\" The silence that follows is absolute, heavy and sudden as a slammed vault door. The painted envoy stops pouring his wine; the iron-clad clerk lowers his warrants. Before either can decide how to dispose of a thief who knows their foundational lie, you pivot and retreat.",
+   "exits": [
+    {
+     "id": "slip-out-into-the-darkening-streets",
+     "label": "Slip out into the darkening streets",
+     "to": "up-r-eclipse-begins"
+    }
+   ]
+  },
+  {
+   "id": "up-r-det-service-tunnel",
+   "stake": "The claustrophobic passage beneath the streets hides you from the sky but risks trapping you in absolute darkness.",
+   "page": "Because you already cracked the grandmaster's lock beneath the Exchange, the heavy grate leading into the old service tunnels remains ajar. You slip beneath the street level just as the sky turns a bruised purple. It is a cramped, damp crawl over rusted pipes, breathing stagnant air thick with coal dust and mildew. Midway through, a narrow collapse forces you to squeeze blindly past jagged brickwork that tears at your sleeves. You emerge gasping at a cellar grating near the harbour, entirely bypassing the roaming patrolmen who are now wandering confused under the suddenly blackened sun.",
+   "exits": [
+    {
+     "id": "climb-toward-her-sniper-nest",
+     "label": "Climb toward her sniper nest",
+     "to": "up-r-her-perch"
+    }
+   ]
+  },
+  {
+   "id": "up-r-det-silk-carriage",
+   "stake": "Taking refuge in the velvet-lined cab shields you from the hunt but tightly binds you to his debt.",
+   "page": "A polished black carriage waits idling in the mews, its lacquered crest wrapped in heavy canvas. Because you drank his wine and accepted his patronage, the driver tips his hat and pulls open the door. You climb inside, sinking into plush, silk-lined seats as the cab lurches forward into the unnatural twilight. The heavy blinds block the darkening sky and the shouting guards entirely. \"Lord Valerius notes the debt,\" the driver calls over his shoulder through the brass speaking-tube. You are deposited silently near the docks, safe from the immediate chaos but owing a favour to a spider.",
+   "exits": [
+    {
+     "id": "approach-the-harbour-colossus",
+     "label": "Approach the harbour colossus",
+     "to": "up-r-her-perch"
+    }
+   ]
+  }
+ ],
+ "addExits": [
+  {
+   "node": "up-r-exchange-parapet",
+   "exit": {
+    "id": "answer-the-stranger-who-knows-your-face",
+    "label": "Answer the stranger who knows your face",
+    "to": "up-r-det-recognised",
+    "when": {
+     "faceKnown": "yes"
+    }
+   }
+  },
+  {
+   "node": "up-r-faction-bid",
+   "exit": {
+    "id": "name-both-houses-as-one-hand",
+    "label": "Name both houses as one hand",
+    "to": "up-r-det-one-hand",
+    "when": {
+     "cabal": "known"
+    }
+   }
+  },
+  {
+   "node": "up-r-eclipse-begins",
+   "exit": {
+    "id": "slip-through-the-opened-vault-tunnel",
+    "label": "Slip through the opened vault tunnel",
+    "to": "up-r-det-service-tunnel",
+    "when": {
+     "vault": "breached"
+    }
+   }
+  },
+  {
+   "node": "up-r-eclipse-begins",
+   "exit": {
+    "id": "call-in-valerius-s-carriage",
+    "label": "Call in Valerius's carriage",
+    "to": "up-r-det-silk-carriage",
+    "when": {
+     "valerius": "allied"
+    }
+   }
+  }
+ ]
+}

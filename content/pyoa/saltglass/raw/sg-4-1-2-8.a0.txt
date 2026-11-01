@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION sg-4-1-2-8
+TITLE: The Bronze Valve
+TEXT: Coiled copper shavings and gritty salt pack the seams of the massive bronze housing, offering a narrow, dim cavity away from the screaming gale. Your banked coal-lantern rattles against your knee, its tiny eye of red heat fighting a losing battle against the fine glass-dust that drifts through the air valves. Every breath tastes of old grease and baked brass as the storm pressure swells against the metal plates, testing the stubborn endurance in your limbs. // You must choose whether to weather the blast further or risk the open causeway ahead.
+EXIT 1: Cross the translucent slate causeway
+EXIT 2: Listen at the whistling speaking tube
+@@END
+@@SECTION sg-4-1-2-9
+TITLE: The Fluttering Ledger
+TEXT: Shards of discarded spectacles click and slide against one another like teeth in an iron jaw as the rising gust tears at the pages of an old, water-swollen ledger pinned beneath a heavy cairn. Inked cartography from a forgotten survey season ripples in the murk, threatening to scatter vital paths across the shifting, blinding dunes before you can commit them to memory. Your fingers grow stiff as you try to anchor the flailing calfskin against the driving squall. // You must decide whether to chase the vanishing ink or press onward into the storm.
+EXIT 1: Follow the whistling brass speaking-tube
+EXIT 2: Cling to the quartz balcony stanchion
+@@END
+@@SECTION sg-4-1-2-10
+TITLE: The Vitrified Cistern
+TEXT: Green vitrified mud forms a slick, cup-shaped vault around a stagnant pool of thick, amber brine that mirrors your soot-stained, travel-worn face with cruel clarity. The dry heat of the basin has baked your tongue, and every swallow of your dwindling canteen water reminds you of the quiet dehydration creeping steadily into your veins. Shadows twist across the wet floor as the storm beats a frantic rhythm on the masonry above. // You must decide whether to seek out the faint smell of tallow left by recent visitors or probe the buried metal ring in the salt-drift.
+EXIT 1: Track the faint tallow scent through the cleft
+EXIT 2: Strike the buried metal ring in the salt
+@@END
+@@SECTION sg-4-1-2-11
+TITLE: The Concealed Latch
+TEXT: Wandering deliberately wide of the main track to escape the relentless wind-shriek, your travel-worn bootheel clicks sharply against a concealed bronze latch half-swallowed by ancient crust. Because you travel entirely alone, with no guide to chatter or pull your sleeve toward safer ruts, you catch the slight metallic hollow beneath the salt that others stride right past. The discovery hints at a lost secondary cache belonging to old Prism, waiting just beneath the crust. // You must decide whether to investigate the hidden latch or push across the alkali flats.
+EXIT 1: Pry at the concealed bronze latch
+EXIT 2: Traverse the blistered white alkali expanse
+@@END
+@@SECTION sg-4-1-2-12
+TITLE: The Corrugated Shelter
+TEXT: Corrugated tin rattles overhead like a drum beaten by invisible hands, sheltering you briefly while a shattered mirror fragment catches the dim storm-light and throws erratic violet flashes into the swirling murk. Those wild beams cut through the haze, threatening to draw unwanted attention from watchful signal-sentries stationed on the higher ruins. You crouch low in the gray gloom, holding your flickering coal-lantern close to your chest. // You must choose your next direction through the shifting shadows.
+EXIT 1: Step out onto the white alkali flat
+EXIT 2: Squeeze into the hollow copper cylinder
+EXIT 3: Secure the Seedkey inside your tunic
+@@END
+@@SECTION sg-4-1-2-13
+TITLE: The Shifting Quick-Salt
+TEXT: Fine pearl-grit rolls beneath your soles like dry beads, offering no purchase as your ankles sink deeper into the treacherous quick-salt with every desperate stride. The gale presses hard against your back, shoving you toward the unstable crust while the heavy Seedkey shifts against your ribs. Every muscle in your legs burns as you fight to pull your boots free from the greedy, shifting basin floor. // You must decide which way to direct your stumbling escape from the grit.
+EXIT 1: Strike the buried metal ring in the salt
+EXIT 2: Seek refuge within the hollow copper cylinder
+@@END
+@@SECTION sg-4-1-2-14
+TITLE: The Ruined Dispensary
+TEXT: Green crystal dust coats the dry roof-timbers of an old Lensfolk dispensary, filling the stagnant air with a sharp, coppery bitterness that burns your throat with every shallow gasp. The fine particles cling to your sweat-damp skin, threatening to choke your breath in the suffocating darkness of the ruined medical hall. Your hand drifts automatically to the warm iron of your coal-lantern to ensure the flame still holds against the draft. // You must choose how to navigate away from the choking chemical dust.
+EXIT 1: Head out across the blistered alkali expanse
+EXIT 2: Lash the Seedkey securely inside your tunic
+@@END
+@@SECTION sg-4-1-2-15
+TITLE: The Basalt Cogwheel
+TEXT: A monumental basalt cogwheel towers beside you, its iron winch spinning uselessly in the howling draft with a high, mournful screech of rusted teeth. The jammed machinery warns that the ancient mechanical pathways ahead are choked with impenetrable slag and wind-blown debris, blocking the direct route. Your lantern light flickers against the dark stone as you search for an alternative passage through the ruins. // You must choose your path around the jammed mechanical barrier.
+EXIT 1: Enter the hollow solar-lens cylinder
+EXIT 2: Secure the Seedkey beneath your tunic
+EXIT 3: Approach the sulfurous fissure in the slag
+@@END
+@@SECTION sg-4-1-3-0
+TITLE: The Clay Drainage Pipe
+TEXT: Salt-glazed clay arches low overhead, forcing you into a cramped, choking crawl through subterranean darkness while the cold ceramic Seedkey bangs rhythmically against your ribs like an impatient fist. The air smells of damp earth and ancient lime, far removed from the screaming fury of the mirror storm above. Every movement forward scrapes your pack against the rough ceramic ribs of the long-abandoned conduit. // You must push deeper into the subterranean dark toward the outlet.
+EXIT 1: Crawl toward the screaming drainage flute
+@@END
+@@SECTION sg-4-1-3-1
+TITLE: The Mirror Bulwark
+TEXT: Shards of discarded mirror frames form a jagged bulwark against the storm, but a persistent whistling gust curls around the edge to try and rip your woolen scarf away. The sudden loss of your neck-wrap would expose your skin directly to the scouring, glass-laden wind that strips paint from metal and flesh from bone. You brace your shoulder against the wooden frames, holding your coat tight. // You must decide whether to hold your ground or push forward into the draft.
+EXIT 1: Advance into the screaming drainage flute
+@@END

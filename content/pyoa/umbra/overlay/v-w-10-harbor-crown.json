@@ -1,0 +1,47 @@
+{
+ "batch": "v-w-10-harbor-crown",
+ "variants": [
+  {
+   "node": "up-w-harbor-crown",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "A lingering shadow taints your departure, for the Archbishop's almoner still holds the whispered promise you traded for his silence. Fleeing Veridia leaves that debt unpaid, an invisible tether stretching across the water that he might one day decide to pull."
+  },
+  {
+   "node": "up-w-harbor-crown",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Down on the docks, the patrols are frantic and targeted, their shouts echoing upward because the almoner gave the Guard a perfect description of you. Sable shrinks back from the edge, watching the watchmen scour the cobbles for your exact silhouette."
+  },
+  {
+   "node": "up-w-harbor-crown",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Escaping downriver will not wash away the memory of the almoner plunging to the cobbles. The brutal secret of his murder secured this quiet getaway, leaving only Sable as a silent witness to the lengths you went to keep the ledger."
+  },
+  {
+   "node": "up-w-harbor-crown",
+   "when": {
+    "valerius": "betrayed"
+   },
+   "after": "Below the statue's bronze chin, a cluster of Lord Valerius's silk-clad runners scurry like poisoned rats along the pier. They are desperately checking outgoing manifests, infuriated that their master's polite menace failed to secure the book."
+  },
+  {
+   "node": "up-w-harbor-crown",
+   "when": {
+    "rigg": "betrayed"
+   },
+   "after": "Matron Rigg's heavy-booted foundrymen patrol the nearest locks, waving fresh warrants and violently interrogating every bargeman they catch. Sable clutches your arm, her brother's freedom trapped back in Rigg's unforgiving gaol books while you abandon the city entirely."
+  },
+  {
+   "node": "up-w-harbor-crown",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "The disgraced tailor's heavy debt coat pulls at your shoulders in the harbour draught, its rigid seams offering excellent camouflage against the tarnished brass. It has shielded you well tonight, though it reeks of stale wool and desperate bargains."
+  }
+ ]
+}

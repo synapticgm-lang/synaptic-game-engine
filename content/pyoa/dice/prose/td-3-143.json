@@ -1,0 +1,117 @@
+{
+ "batch": "td-3-143",
+ "sections": {
+  "td-3-143": {
+   "title": "The False Envoy",
+   "text": "Heavy mahogany doors part to reveal a ring of tense Brineholder factors arguing over ledgers of stagnant water rights. You smooth your salt-stiffened collar, step into the sunlit perimeter of the chamber with an assumed swagger, and announce yourself as a courier dispatched from the lower docks. A scribe wearing spectacles lashed to his nose with twine looks up, his quill hovering over parchment while murmurs ripple through the silk-robed assembly. Every eye turns toward you, measuring the dust on your boots against the pristine white marble of the floor. You must convince them your forged credentials carry the weight of an official trade mandate before suspicion hardens into steel.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step forward and present the scroll"
+   ]
+  },
+  "td-3-144": {
+   "title": "Weighing the Bluff",
+   "text": "Sweat trickles into the stubble of your jaw as the chief factor examines the greasy seal with trembling fingers, muttering under his breath about harbour tariffs and contraband. Your pulse hammers against your ribs like a trapped gull, each tick of the distant tide clock sounding louder than a church bell. You lean casually against a carved mahogany pillar, maintaining a flat gaze while calculating the exact distance to the arched balcony window in case the fraud dissolves into iron. Your mind races through maritime statutes and forged signatures, searching for the precise cadence of bureaucratic arrogance that keeps executioners at bay.",
+   "check": "Talk your way past the factors",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-145": {
+   "title": "Cost of a Slip",
+   "text": "The chief factor narrows his eyes, spots the smeared ink of a false seal, and slams his fist down upon the mahogany desk with a sharp oath. Guards converge from the shadows with drawn cutlasses, their leather boots slamming hard against the floorboards as iron rings out in the confined space. You take a vicious backhand across the cheek that leaves a stinging red welt and tears your collar, driving the breath from your lungs in a ragged gasp. Scrambling backward through the shattered glass of the balcony, you leave behind your reserve supplies and a deep, angry scratch along your forearm while desperate shouts echo behind you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee across the stilted rooftops"
+   ]
+  },
+  "td-3-146": {
+   "title": "The Forged Seal",
+   "text": "The chief factor grunts, rubs his salt-roughened chin, and presses his heavy signet ring into warm red wax to validate your passage with reluctant authority. You tuck the parchment inside your jacket alongside your pounding heartbeat, offering a stiff, mocking bow before the nervous aristocrats have time to reconsider their cowardice. The ink dries quickly in the salt breeze drifting through the open casement, leaving you with a weapon far sharper than any rusted blade in Gullmouth.",
+   "check": "",
+   "grant": "Signed Brineholder transit pass",
+   "exits": [
+    "Return to the solarium floor"
+   ]
+  },
+  "td-3-147": {
+   "title": "Whispers in the Iron",
+   "text": "Pale light glints off the brass tumblers of the heavy solarium door as your fingers dance over the delicate pins of the lock. Dust motes drift lazily through the humid air, settling upon the abandoned tea trays and velvet armchairs of the panicked aristocracy. Every breath must be measured so as not to betray your presence to the guards patrolling the outer corridor with heavy halberds. A faint metallic click whispers through the silence as the internal tongue slips free from its housing, leaving the heavy portal primed to swing open at a single touch whenever haste demands it.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Move back toward the arched balcony"
+   ]
+  },
+  "td-3-148": {
+   "title": "The Tumbler's Secret",
+   "text": "A drop of cold sweat gathers on the bridge of your nose as your improvised wire probe nudges a stubborn spring within the brass mechanism. The inner bolt resists with a dull metallic grinding sound that seems to echo like thunder through the quiet antechamber. Your fingers grow cramped and clumsy against the cold metal, but you force your breathing to slow, feeling for the subtle give of the brass lever that separates a clean escape from a locked tomb. The tension in the internal springs reaches a razor edge, waiting for the final twist of your wrist.",
+   "check": "Pick the heavy solarium lock",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-149": {
+   "title": "Caught in the Cogs",
+   "text": "A sudden snap shatters the silence as the delicate pick jams fast inside the brass housing, shearing off the tip and leaving the lock permanently fouled. Alarms chime softly in the corridor outside, and rough hands seize your collar before you can twist away from the door. You wrench yourself free at the cost of a torn sleeve and a nasty graze across your knuckles, tumbling into a storage alcove amid crates of imported linens. The guards sweep past the wrong archway, leaving you breathless, bruised, and nursing a throbbing hand in the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip out through the service hatch"
+   ]
+  },
+  "td-3-150": {
+   "title": "The Oiled Bolt",
+   "text": "The brass tumblers yield with a whisper of well-oiled grease, leaving the heavy iron tongue retracted flush within its mortise plate. You withdraw your wire tools with clean precision, wiping the soot from your fingers onto your trousers without leaving a single mark upon the polished timber. The escape route remains entirely yours, quiet and unguarded, offering a clear path out of the stilt-city when the inevitable reckoning arrives.",
+   "check": "",
+   "grant": "Lubricated bolt escape route",
+   "exits": [
+    "Approach the inner iron gate"
+   ]
+  },
+  "td-3-151": {
+   "title": "The Iron Stare",
+   "text": "A tall bodyguard in silver-plated scale armour steps squarely into your path, his hand resting casually upon the pommel of a broadsword notched from years of wharf brawls. His eyes are cold and pale as dried bone, sweeping over your mud-spattered boots and patched coat with quiet contempt. You do not flinch, meeting his dead gaze with a flat, level stare that acknowledges neither fear nor respect. The murmur of the surrounding aristocrats fades away into an uneasy stillness as the two of you measure each other in the salt-heavy air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hold your ground against the guard"
+   ]
+  },
+  "td-3-152": {
+   "title": "Standoff on the Stilt",
+   "text": "Sunlight beats down through the salt-crusted glass dome above, casting long bars of amber light across the polished marble floor where you stand shoulder to shoulder with the armed sentinel. The bodyguard shifts his weight, leather creaking softly, testing whether your nerve will shatter or bend beneath the weight of his institutional authority. You keep your hands loose at your sides, fingers hovering close to your hidden rigging knife, ready for the lightning flash of cold steel. Every second stretches like salted twine, daring either side to blink first and unleash a bloody brawl among the ferns.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force a path past the blade"
+   ]
+  },
+  "td-3-153": {
+   "title": "Testing the Metal",
+   "text": "The mercenary's fingers tighten around his leather-wrapped grip, his knuckles whitening as he draws the heavy broadsword an inch clear of its scabbard with a low rasp of iron. A single drop of sweat traces the line of your jaw, but you refuse to step back, holding your ground as the razor edge catches the pale light from the ruined dome. Your pulse roars in your ears like surf against the Gullmouth cliffs, waiting for the twitch of a muscle that will turn this stilted parlour into a slaughterhouse.",
+   "check": "Stare down the armed mercenary",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-154": {
+   "title": "The Price of Pride",
+   "text": "The mercenary's blade flashes too fast for the eye, flat-siding across your ribs with a sickening thud that knocks the wind from your chest and sends you staggering into a terracotta planter. Shards of red clay and dying ferns erupt around your boots as you hit the marble floor, tasting copper on your tongue. You scramble back to your feet with a bruised shoulder and a shallow gash along your ribs, chest heaving while the guard returns his sword to its sheath with bored indifference.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up from the floor"
+   ]
+  },
+  "td-3-155": {
+   "title": "Unflinching Bone",
+   "text": "The mercenary holds your unwavering gaze for a long, breathless heartbeat before slowly sliding his broadsword back into its scabbard with a dull click of locking brass. A flicker of reluctant respect crosses his scarred features, and he steps aside to clear the threshold without a single spoken word. You adjust your jacket, smoothing the crumpled fabric with steady hands, knowing you have earned passage through the heart of the stilt-city by sheer stubbornness alone.",
+   "check": "",
+   "grant": "Guard's grudging respect",
+   "exits": [
+    "Proceed toward the inner balcony"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,10 @@
+@@SECTION cf-3-029
+TITLE: The Baronial Dispatch
+TEXT: Heavy iron gates loom ahead, draped in the blue bunting of the Rail Barons while armed toll-takers lean against the brass telegraph box with bored expressions. Your fingers tighten over the brass valve-key tucked inside your coat, feeling its cool weight against your ribs as you lean out from the footplate of the Marrowbone. You rasp out a string of fabricated dispatch codes, mimicking the gravelly nasal cadence of a senior Baronial line-inspector to cow the guards into dropping the barrier without checking your manifests. // Sweat beads along your hairline, stinging your eyes against the acrid soot while the guard captain squints up at your grease-stained cap, his hand drifting toward the heavy signal horn at his hip as he weighs the truth of your crisp bureaucratic consonants against the soot on your nose.
+CHECK: Shout the forged dispatch codes
+@@END
+@@SECTION cf-3-036
+TITLE: The Crane Operator
+TEXT: Overhead, a massive steam-driven hoisting gantry clanks against its rusted track, suspended over a terrifying drop that plunges straight down through the latticed girders of Brasswind Viaduct into the grey mist below. A young toll-operator grips the brake-lever of the crane with white-knuckled panic, his eyes darting toward your heavy engine with trembling indecision while he threatens to drop your track-sling into the void. You step out onto the narrow timber footway, locking your gaze onto his darting eyes and breathing out a slow, deliberate cloud of pipe-smoke as you force your shoulders to drop and your posture to harden into absolute stillness. // The plank beneath your boots groans under the wind, and you keep your breathing even and heavy, projecting the cold, immovable authority of a man who has stared down boiler explosions and never blinked once.
+CHECK: Stare down the shaking operator
+@@END

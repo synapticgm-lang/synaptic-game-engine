@@ -1,0 +1,105 @@
+{
+ "batch": "ul-1-115",
+ "sections": {
+  "ul-1-115": {
+   "title": "The Spiral Stair",
+   "text": "Heavy leather treads groan under your boots as you ascend a narrow spiral staircase carved entirely from the confiscated spines of thick encyclopedias. Dust and dried glue hang thick in the dim air, coating your tongue with the taste of alum and old paste. Somewhere above, a bell tolls through the stacks, announcing the approach of another shift change.\n\nYou keep one hand pressed against the ribbed marble wall, feeling the faint, rhythmic pulse that suggests the very stone is breathing in time with the unwritten Index.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb higher into the shadows"
+   ]
+  },
+  "ul-1-116": {
+   "title": "The Binding Gallery",
+   "text": "Binders stitch screaming leather to recalcitrant pages across long oak tables, enforcing strict silence with heavy wooden mallets that thump like a slow heartbeat. The smell of boiling glue and damp sheepskin fills the galleried hall where junior pages hover near the ink-sellers' stalls. Every shadow seems to hold a rival scholar watching your hands for any sign of hesitation or stolen knowledge.\n\nYou weigh your options among the clatter of bone folders and the whispered threats of the rule-keepers guarding the exits.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the tangled binding thread",
+    "Slip past the mallet-wielding binders",
+    "Decipher the secret code woven here",
+    "Retrieve a silver bone-folder scrap",
+    "Approach the heavy brass gates quietly"
+   ]
+  },
+  "ul-1-117": {
+   "title": "The Paste-Pot Corner",
+   "text": "Varnish tins and heavy linen strips litter the low bench where you pause to catch your breath away from the bustling tables. You study a complex binding instruction pinned to the damp wall with a rusted bodkin, tracing the intricate loops with a soot-stained fingertip. Mastering this particular knot will allow you to secure doors from the outside without drawing the attention of the rule-keepers.\n\nThe parchment whispers dry warnings about what happens when a knot slips under pressure.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Practice the knot on the latch"
+   ]
+  },
+  "ul-1-118": {
+   "title": "The Second Knot",
+   "text": "Pulling the waxed cord through a double loop, you feel the fibers tighten with a dry snap that echoes faintly in the confined alcove. The parchment instruction sheet curls at the edges as if eager to escape the wall, its printed ink shifting slightly under your gaze. You repeat the sequence until your fingers move without thought, perfectly mimicking the technique used by the senior binders during the great audits.\n\nA draft of cold air from a hidden vent rattles the loose papers on the bench.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test the finished binding loop"
+   ]
+  },
+  "ul-1-119": {
+   "title": "The Faulty Toggle",
+   "text": "Securing the final loop around the iron latch, you apply pressure to test whether the mechanism will hold against an eager intruder pushing from within. The wood of the door groans beneath the strain, and the waxed cord begins to fray under the friction of the rusted staple. You must calculate the exact tension required to keep the toggle locked without snapping the delicate hemp fiber in your grip.\n\nYour pulse thrums in your ears as the timber starts to splinter.",
+   "check": "Calculate the exact tension needed",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-120": {
+   "title": "The Frayed Cord",
+   "text": "Hemp snaps with a dry crack, and the heavy door swings outward, catching you off balance and sending you sprawling across the gritty floorboards. A sharp edge of the iron staple catches your forearm, leaving a shallow, burning scratch that immediately begins to ooze dark printer's ink instead of blood. You scramble back as the door rebounds, clutching your throbbing arm and nursing a fresh debt to the lending clerk for the ruined cord.\n\nDust motes settle slowly over the scattered fragments of your failed knot.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat toward the gallery lights"
+   ]
+  },
+  "ul-1-121": {
+   "title": "The Secure Toggle",
+   "text": "Hemp holds fast against the straining timber, locking the heavy panel firmly in place with a satisfying, muffled click. You wipe a smear of excess paste from your knuckles, breathing out a steady sigh as the tension in the room finally eases. The successful knot leaves you with a sturdy length of waxed cord and the quiet confidence of a shelver who knows how to keep things shut.\n\nThe shadows part slightly, revealing a clear path toward the deeper stacks.",
+   "check": "",
+   "grant": "A sturdy waxed cord",
+   "exits": [
+    "Approach the heavy brass gates"
+   ]
+  },
+  "ul-1-122": {
+   "title": "The Heavy Air",
+   "text": "Silence hangs like wet wool over the narrow gallery, pressing against your eardrums until every breath sounds like a gale in a cavern. You resist the deafening pressure of the collective silence spell, planting your boots firmly against the uneven flagstones. Around you, other pages move like ghosts through the grey gloom, clutching rolls of reinforced buckram under their arms to mend the sagging shelves.\n\nYour shoulders ache from the sheer weight of the unvoiced discipline filling the hall.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push forward for the buckram"
+   ]
+  },
+  "ul-1-123": {
+   "title": "The Wall of Quiet",
+   "text": "Deafening pressure rises until the air itself feels thick enough to chew, threatening to crush your resolve and force you to your knees in submission. You brace your spine against the invisible weight, drawing deep upon every ounce of stubborn endurance you possess to keep moving toward the shelf of buckram rolls. Your vision blurs at the edges as the silent spell demands total surrender from your weary mind.\n\nEvery muscle in your body trembles under the unrelenting stillness.",
+   "check": "Resist the collective silence spell",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-124": {
+   "title": "The Crushing Stillness",
+   "text": "Mind gives way under the immense pressure, forcing you to drop to one knee as a wave of intense dizziness steals your focus. The roll of buckram slips from your numb fingers and unrolls across the dusty floor like a white tongue, drawing an immediate, sharp reprimand from a passing catalogue warden. You stumble backward out of the zone of quiet, nursing a bruised shoulder and a bitter sense of failure among your peers.\n\nThe silence lingers in your bones long after you crawl away.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the binding gallery"
+   ]
+  },
+  "ul-1-125": {
+   "title": "The Unyielding Stride",
+   "text": "Will prevails against the suffocating quiet, allowing you to reach out through the heavy air and secure a stout roll of reinforced buckram. The collective silence breaks around your steady breathing like water parting against a stone, leaving you standing upright and victorious in the dim aisle. You tuck the sturdy material beneath your arm, knowing this small victory plants a quiet seed among the Shelvers' Fellowship that a library needs no locked doors at all.\n\nThe other pages watch you with newfound respect from the shadows.",
+   "check": "",
+   "grant": "A roll of reinforced buckram",
+   "exits": [
+    "Return to the main gallery"
+   ]
+  }
+ },
+ "missing": []
+}

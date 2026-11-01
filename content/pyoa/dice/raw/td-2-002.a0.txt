@@ -1,0 +1,67 @@
+Gemini said
+
+@@SECTION td-2-002
+TITLE: The Albatross Ribs
+TEXT: Iron ribs arch over the silt like the skeleton of some drowned beast, shielding the lee of the merchant hull from the scouring brine-wind. Scavengers huddle near rusted windlasses, whispering of fresh water springs beneath the seabed and sharpening rusted blades against the salt-crust. Every shadow cast by the listing bulwarks hides a rival crew or a watcher from the Brineholders. // Between the cracked strakes and rusted anchor chains, narrow gaps invite you deeper into the wreck's dry belly, or outward toward the open salt-flats where the horizon shimmers under the leaden sky.
+EXIT 1: Slip through the splintered timber gap
+EXIT 2: Climb the rusted starboard deck
+EXIT 3: Watch rival crews from hiding
+EXIT 4: Navigate the treacherous cargo hold
+EXIT 5: Cross the quaking seabed flats
+@@END
+
+@@SECTION td-2-003
+TITLE: Waterlogged Ledger
+TEXT: Thick parchment swollen with salt sticks together like salted hides, demanding careful fingers to pry each page apart without tearing the ink. Heavy beams groan overhead in the wind, threatening to drop tons of rotten oak onto your stooped shoulders while you peer into the gloom. By the faint grey light filtering through a fractured scuttle, strange symbols emerge from the damp pulp. You trace a faded diagram pointing toward the captain's private chart chest tucked beneath the flooring.
+EXIT 1: Pry open the hidden floor panel
+@@END
+
+@@SECTION td-2-004
+TITLE: The Splintered Floor
+TEXT: Heavy iron hinges screech as you wedge a pry-bar beneath the warped floorboards, but the rotten deck-timbers groan in warning, shifting under your boots with a sickening lurch. Dust and dried kelp fall from the overhead beams as the entire aft section settles another couple of inches into the sucking grey silt. You must read the alignment of the ledger marks instantly and shift your weight before the rotten joists snap.
+CHECK: Read ledger codes under pressure
+@@END
+
+@@SECTION td-2-005
+TITLE: A Heavy Cost
+TEXT: Timbers splinter violently beneath your boots as the floor drops away, plunging you knee-deep into jagged debris and tearing a deep, bleeding gash across your shin. You haul yourself free from the settling wreckage with aching muscles, gasping for breath in the salt-choked air while precious supplies spill into the dark mud below. The wound burns fiercely, a stark reminder of the seabed's hidden teeth, but you keep moving before the rest of the hull collapses.
+EXIT 1: Leave the wreckage behind limping
+@@END
+
+@@SECTION td-2-006
+TITLE: The Silver Compass
+TEXT: Dust settles around the shattered timbers as your fingers close securely around the cold metal casing nestled in the velvet lining. A delicate glass face reveals a needle spinning wildly over a rusted dial, refusing to point north in a world where the sea has vanished. You slip the heavy keepsake into your coat pocket, feeling its reassuring weight against your ribs as you step back out into the open air.
+GRANT: heavy silver compass
+EXIT 1: Advance toward the distant dunes
+@@END
+
+@@SECTION td-2-007
+TITLE: Cargo Hold Glyphs
+TEXT: Heavy cedar crates stamped with the seal of the Brineholders fill the dark lower deck, their iron bands furred with green corrosion. Strange symbols are carved into the timber lids, warning of volatile compounds or cursed contraband meant for the wealthy enclaves. You kneel in the damp gloom, turning a tallow candle over in your fingers to inspect the wax seals before touching the latch.
+EXIT 1: Examine the sealed cargo boxes
+@@END
+
+@@SECTION td-2-008
+TITLE: The Iron Sealing
+TEXT: Thick wax flakes away under your thumbnail to reveal heavy iron latches forged in the shape of coiling sea-serpents. A faint hiss escapes from the seam as fresh air hits the interior, releasing the sharp scent of damp wool and old spices. You slide the heavy bolts back one by one, mindful of any hidden triggers or poisoned needles left behind by cautious merchants.
+EXIT 1: Unlatch the heavy iron lid
+@@END
+
+@@SECTION td-2-009
+TITLE: The Serpent Latch
+TEXT: Cold metal resists your fingers as you turn the ornate serpent clasp, feeling a slight spring tension beneath the rusted iron plate. One wrong twitch could snap a concealed copper wire and trigger whatever mechanical trap the old merchants rigged to guard their wares. You steady your breathing in the silent hull, testing the resistance of the bolt against the palm of your hand.
+CHECK: Disarm the rusted cargo latch
+@@END
+
+@@SECTION td-2-010
+TITLE: Snapped Wire
+TEXT: A sharp click echoes through the dark hold a fraction too late, and a heavy iron spring lashes out across your knuckles, drawing a sharp line of blood. You jerk your hand back with a sharp intake of breath, clutching your throbbing wrist while your precious tallow candle tumbles into the dark silt and extinguishes. The trap is sprung, leaving you to finish unsealing the crate by the dim grey light of the bulkhead gap.
+EXIT 1: Recover in the dark hold
+@@END
+
+@@SECTION td-2-011
+TITLE: Waterproof Matches
+TEXT: Smooth wooden sticks tipped with dark sulfur emerge from the wax-sealed tin, completely untouched by the damp salt air that rots everything else on the Low. You slide the snug lid back into place, pocketing the dry treasures alongside your remaining gear with a quiet sigh of relief. Every scrap of dry tinder is worth its weight in silver out here on the barren seabed.
+GRANT: tin of dry matches
+EXIT 1: Press onward across the mud
+@@END

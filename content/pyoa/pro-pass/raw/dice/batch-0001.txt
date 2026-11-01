@@ -1,0 +1,20 @@
+MODEL Pro
+
+[
+{
+"section": "td-0-014",
+"field": "page",
+"old": "a delicate task requiring steady hands.",
+"new": "an exacting task requiring absolute focus.",
+"kind": "prose",
+"reason": "Repeats the phrase 'delicate' and 'steady hands' already used in td-0-008."
+},
+{
+"section": "td-0-008",
+"field": "page",
+"old": "stagnant tide-pools down below.",
+"new": "stagnant rock pools down below.",
+"kind": "prose",
+"reason": "'Rock pools' is standard British spelling/usage over 'tide-pools'."
+}
+]

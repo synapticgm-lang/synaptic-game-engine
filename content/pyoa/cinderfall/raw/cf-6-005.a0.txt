@@ -1,0 +1,29 @@
+@@SECTION cf-6-005
+TITLE: The Ledger of Iron
+TEXT: Ledger books bound in pigskin slide across the mahogany counter with the weight of tombstones, closed by men whose cuffs are stiff with dried ink and coal dust. The Rail Barons do not shout; they negotiate in the quiet click of brass abacuses and the steady scratching of nibs that record every gallon of water now flowing down the masonry. Your boots leave wet prints upon their patterned carpet, smelling of river silt and old grease, entirely out of place among the velvet and polished rosewood. They offer you a desk near the high windows, a silver watch on a heavy chain, and a title that sounds remarkably like a life sentence served in comfortable slippers.
+EXIT 1: Sign your name in black ink
+@@END
+@@SECTION cf-6-006
+TITLE: Silence in the Boardroom
+TEXT: Outside, the great iron city hums with a new rhythm, slow and measured like the heartbeat of a tethered beast that has forgotten how to run. Hesper Quill would have spat upon their ledgers and thrown the inkwell through their leaded glass, preferring the bite of the cinders and the fierce wind of the open steppe. You turn the brass valve-key in your pocket one last time, feeling its cold ridges against your palm before placing it upon the polished cedar table as a final, silent payment. The directors do not look up from their columns of figures, too busy calculating the tariff on every drop that slakes the thirst of the lower wards.
+EXIT 1: Step back into the grey corridor
+@@END
+@@SECTION cf-6-007
+TITLE: The Unpaved Horizon
+TEXT: Down in the yards, Locomotive No. 9 stands cold and silent on the siding, her firebox grey and dead, her brass dull beneath a skim of dried spray. No smoke rises from her stack, and the gangers have already begun unbolting her side-rods to salvage the metal for other, more profitable lines of transit. You walk away through the damp ballast, leaving the station behind without a backward glance as the low grey clouds part just enough to show an empty, unpaved horizon stretching out beyond the reach of any track. There are no more timetables to keep, and the road ahead belongs entirely to whatever is left of your own worn boots.
+EXIT 1: Walk out into the wide ash
+@@END
+@@SECTION cf-6-008
+TITLE: The Great Unmaking
+TEXT: Flames lick along the creosoted ties with a dry, rattling roar that dances across the steppe like an army of crimson spiders devouring the past. Behind you, the heavy timbers of the viaduct groan and twist under the unbearable heat, shedding decades of greasy soot and iron scale into the boiling flood below. The Rail Barons' telegraph wires snap one by one in the fierce updraft, singing high and mournful notes into the grey sky before falling silent in the ash. No engine will ever run these rails again, and the rust can finally have its way with the bridges that once held a starving world in chains.
+EXIT 1: Watch the old trestles fall
+@@END
+@@SECTION cf-6-009
+TITLE: Footsteps in the Cinders
+TEXT: Walking away from the burning line requires a steady stride over ground that is suddenly free of ballast, ties, and the watchful eyes of signal boxes. The air smells of scorched willow-wood and sweet, damp earth where the liberated water has found its own ancient channels through the dust. Other gangers join you from the embankments, carrying empty oil-cans and worn shovels, their faces smeared with charcoal and something resembling genuine laughter for the first time in years. You share a final twist of salt-beef and watch the smoke from the ruined tracks drift away into the vast, empty distance where no trains can ever follow.
+EXIT 1: Turn toward the open steppe
+@@END
+@@SECTION cf-6-010
+TITLE: The Last Engine
+TEXT: Darkness falls slowly over the grey flats, unmeasured by whistles or the harsh glare of headlamps cutting through the choking ash-storms of the old days. The Iron Road is gone, reduced to twisted ribbons of red-hot metal cooling slowly in the mud and black skeletons of trestle bridges spanning empty air. Yet beneath your boots, the earth feels soft and damp with the promise of green shoots pushing up through the crust of the long fire's legacy. You keep the brass valve-key in your pocket, not as a key to any gate, but as a heavy reminder of a journey that ended the only way a good road should. The night is quiet, the wind is clean, and the long walk home has finally begun.
+@@END

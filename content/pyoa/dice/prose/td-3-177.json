@@ -1,0 +1,92 @@
+{
+ "batch": "td-3-177",
+ "sections": {
+  "td-3-177": {
+   "title": "The Iron Wheel",
+   "text": "Heavy grease coats your knuckles as you grasp the spokes of the manual override. Salt crust flakes off the iron with a dry, papery hiss every time you strain against the jammed spindle. Below your boots, the stilt-city groans in the cold wind blowing off the exposed seabed, vibrating through the metal floor plates like a trapped pulse.\n\nBreathing deep, you plant your heels against the riveted plating and force your weight onto the wheel, praying the rusted chain inside the partition holds firm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the rusted spindle downward"
+   ]
+  },
+  "td-3-178": {
+   "title": "A Searing Strain",
+   "text": "Iron splinters and rust flakes rain down onto your shoulders as the stubborn mechanism grudgingly gives another quarter-turn. Muscles across your back tighten like overtightened bowstrings, threatening to tear with every inch you claw from the dead weight of the winch. The alcove remains shrouded in absolute shadow just past the rusted bulkhead.\n\nYou grit your teeth against the sudden tremor in your forearms, determined to force the pathway open before the chain snaps.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wrench the iron wheel around"
+   ]
+  },
+  "td-3-179": {
+   "title": "The Manual Override",
+   "text": "Cold brine cakes the thick iron spokes of the manual winch as you plant your boots against the slick rusted grating of the platform. Below your heels, a three-hundred-foot drop opens into the grey gloom of the seabed, empty and waiting. The jammed cable above groans like a dying beast, refusing to yield an inch of slack unless you put every ounce of muscle and leverage behind the turning wheel. Gritting your teeth against the sudden strain in your back, you heave with all your might against the dead weight of the iron.\n\nSinews pull taut beneath your skin and the salt-crusted metal bites hard into your calloused palms while the heavy drum shudders beneath the sudden, brutal pressure.",
+   "check": "Heave against the frozen winch",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-180": {
+   "title": "Torn Tendons and Rust",
+   "text": "A sharp pop echoes inside your shoulder joint, followed by a wave of white-hot agony that robs the breath straight from your lungs. Your grip fails, and you stumble backward against the wet iron railing, clutching your wrenched arm as the override wheel spins violently back into place.\n\nPain flares with every heartbeat, leaving you weakened and gasping on the cold deck, yet alive enough to press onward through the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl toward the hidden alcove"
+   ]
+  },
+  "td-3-181": {
+   "title": "The Hidden Alcove",
+   "text": "Pain flares through your shoulder with a dull, persistent throb, reminding you how close you came to snapping entirely. However narrowly you managed the strain, the iron bulkhead finally gives way with a heavy, protesting groan, sliding aside to reveal the cramped space within. Resting upon a dusty shelf of oiled canvas sits a small, cold object left behind by some long-forgotten mechanic.\n\nReach inside and claim the prize.",
+   "check": "",
+   "grant": "Oiled brass valve-key",
+   "exits": [
+    "Enter the damp maintenance chamber"
+   ]
+  },
+  "td-3-182": {
+   "title": "The Desperate Leap",
+   "text": "A heavy shadow lunges from behind a support beam, gloved hands slamming hard against your chest to knock you backward toward the open drop. Salty air rushes past your ears as you twist violently at the last fraction of a second, catching the attacker by the collar of their sodden oilskin coat.\n\nThe stilt-city walkway sways under the sudden, brutal impact, threatening to send your hard-earned packs tumbling into the empty abyss below.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Shove the assailant away hard"
+   ]
+  },
+  "td-3-183": {
+   "title": "Teeth and Scraps",
+   "text": "Fingernails rake across your forearm as the desperate scavenger fights like a cornered dog, snarling curses about water rations and empty pockets. You slam your shoulder into their ribs, driving them back against the freezing iron railing while your canvas packs remain safely strapped to your chest.\n\nThe salt-encrusted deck is slick underfoot, turning every movement into a perilous dance above the dead seabed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Break the frantic grapple grip"
+   ]
+  },
+  "td-3-184": {
+   "title": "Edge of the Platform",
+   "text": "Rough canvas rubs raw against your ribs as the scavenger lunges from the shadow of a salt-crusted oil drum, fingers clawing fiercely for the straps of your bulging pack. You slam your bootheel down onto the damp, slick timber of the stilt-walk, throwing your shoulder forward to meet the sudden impact with every ounce of muscle you possess. The brine-soaked boards groan beneath your combined weight while the dizzy drop to the dry seabed yawns just inches away, threatening to swallow you both whole in the dark.",
+   "check": "Shove the desperate scavenger backward",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-185": {
+   "title": "Bruised and Battered",
+   "text": "A vicious blow catches you across the ribs, winding you instantly and forcing you to release your grip as your attacker scrambles away into the shadows. You slump against the cold iron stanchion, gasping for air while checking your gear bags. Several precious items are crushed or lost over the edge, leaving your provisions lighter and your body aching from the violent exchange.\n\nGather your breath and stand up",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the path downward"
+   ]
+  },
+  "td-3-186": {
+   "title": "The Spoils of Scrimmage",
+   "text": "The scuffle ends with a sudden, breathless thud as your adversary tumbles away into the gloom, leaving behind a heavy canvas pouch dropped in the rush. However narrowly you survived the brutal push, your supplies remain intact and your grip is firm upon the prize left in the wake of the fight.\n\nPocket the recovered token of survival.",
+   "check": "",
+   "grant": "Heavy brass latch-pin",
+   "exits": [
+    "Descend toward the lower foundations"
+   ]
+  }
+ },
+ "missing": []
+}

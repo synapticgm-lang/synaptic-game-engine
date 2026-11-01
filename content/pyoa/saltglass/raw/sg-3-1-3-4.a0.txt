@@ -1,0 +1,70 @@
+Gemini said
+
+@@SECTION sg-3-1-3-4
+TITLE: The Coded Beacons
+TEXT: Coarse salt-crusts sizzle on a tin brazier while an old woman in a patched oilskin coat gestures toward the heights of the shattered city. The high signal-towers flash in rhythmic, unbroken sequences against the gathering dusk, translating the silent warnings of the Glasswright sentries. Your ember-lamp shifts against your hip, its banked coals radiating a steady, familiar warmth through the thick canvas of your pack as you weigh your next step through the labyrinth.
+EXIT 1: Dash beneath the falling stained glass
+EXIT 2: Slip past the brass telescope observer
+EXIT 3: Duck behind the massive sun-disc stairwell
+@@END
+@@SECTION sg-3-1-3-5
+TITLE: The Basalt Cistern
+TEXT: Absolute silence hums inside the hollow belly of the black basalt cistern, broken only by the heavy, measured crunch of iron-shod boots pacing across the thick glass roof directly above your head. You press your shoulder against the cold, damp stone, holding your breath while the rhythmic footfalls slowly recede into the distance. The weight of the ceramic Seedkey rests securely against your collarbone, an icy contrast to the feverish heat of your skin.
+EXIT 1: Descend into the hidden subterranean stair
+EXIT 2: Scramble across the slippery blue slag incline
+EXIT 3: Turn back toward the obsidian balcony
+@@END
+@@SECTION sg-3-1-3-6
+TITLE: The Unencumbered Cart
+TEXT: Free from the heavy chains of debt or the binding oaths demanded by the Dune Sisters, you stand before a waiting transport with a solitary copper coin pressed between your fingers. A rogue cart-driver nods once at the glint of honest metal, tipping his wide brim without asking where your loyalties lie or what heavy burdens you carry. The open road through the shard towers stretches out wide and inviting under the pale, salt-bleached sky.
+EXIT 1: Take the hidden stair behind the sun-disc
+EXIT 2: Follow the wind down the hollow glass canyon
+EXIT 3: Approach the nervous talisman broker
+@@END
+@@SECTION sg-3-1-3-7
+TITLE: The Crystal Chasm
+TEXT: A sudden, jagged cleft rips straight through the middle of the glass thoroughfare, exposing a dizzying drop into the glittering, razor-sharp depths below. Shards of violet and amber crystal chime softly like broken bells as small pebbles dislodge from the rim and tumble endlessly into the gloom. You tighten the straps of your travel pack, steady your footing on the brittle lip, and prepare to cross the dangerous void.
+EXIT 1: Leap across toward the stained glass canopy
+EXIT 2: Drop behind the fallen solar disc
+EXIT 3: Push onward down the howling glass canyon
+EXIT 4: Turn back toward the obsidian balcony
+@@END
+@@SECTION sg-3-1-3-8
+TITLE: The Scholar's Map
+TEXT: Dried dates disappear one by one into the palm of a weary scholar whose fingers trace intricate routes across a parchment stained with salt and ink. In exchange for the meager sweet ration, you receive precise guidance on how to skirt the edges of the central toll-fort without drawing the greedy gaze of the Salt Court enforcers. The desert air tastes of old dust and distant rain as you memorize the secret turnings.
+EXIT 1: Find the hidden stair behind the sun-disc
+EXIT 2: Climb the steep blue slag incline
+@@END
+@@SECTION sg-3-1-3-9
+TITLE: The Iridescent Pillar
+TEXT: A swirling cloud of white-feathered gulls erupts from the summit of a scorched pillar, their sharp cries echoing off the towering walls of iridescent slag. The glassy column radiates a faint, residual heat from some ancient fire, bathing the surrounding ruins in a shimmering, pearlescent glow. Below the nesting birds, a narrow track winds its way deeper into the heart of the shattered basin.
+EXIT 1: Walk the windy canyon of hollow towers
+EXIT 2: Traverse the slippery blue slag incline
+EXIT 3: Visit the nervous talisman broker
+@@END
+@@SECTION sg-3-1-3-10
+TITLE: The Brine Pool
+TEXT: Warm, saline water laps against your shins, stinging the open blisters on your travel-worn feet with every cautious step through the shallow basin. The stagnant pool reflects the fractured towers above like a mirror of broken silver, hiding the jagged edges of sunken masonry beneath its murky surface. You keep your lamp held high above the waterline to protect the precious coals from the damp spray.
+EXIT 1: Talk to the nervous talisman broker
+EXIT 2: Find the unguarded postern gate
+EXIT 3: Balance along the narrow salt knife-edge
+@@END
+@@SECTION sg-3-1-3-11
+TITLE: The Crystal Archway
+TEXT: A towering archway carved from pure, transparent crystal frames a breathtaking, silent vista of Prism rising in the distance like a jagged crown of diamonds against the horizon. The great observatory-city seems impossibly close, yet the treacherous expanse of the Shard Cities still lies heavily between your tired feet and the Rain Vault. The air here carries a clean, mineral sharpness that hints at high altitudes and ancient secrets.
+EXIT 1: Scale the slippery blue slag incline
+EXIT 2: Consult the nervous talisman broker
+@@END
+@@SECTION sg-3-1-3-12
+TITLE: The Salt-Encrusted Pipe
+TEXT: Rough barnacles of hardened salt tear against your palms as you haul your weight up the vertical length of an old copper drainage pipe. Every muscle in your arms trembles with exertion, but the climb lifts you safely above the cluttered alleys where scavengers and toll-collectors roam. At the top, a narrow ledge offers a momentary breath of clean air before the next trial.
+EXIT 1: Speak with the nervous talisman broker
+EXIT 2: Slip through the old foundry postern gate
+EXIT 3: Turn back toward the woven copper bridge
+@@END
+@@SECTION sg-3-1-3-13
+TITLE: The Glass-Cutter's Warning
+TEXT: Steam rises from a tin cup of bitter herbal tea pushed across a rough workbench by a cautious glass-cutter named Bram. He points a calloused finger toward the dark alleyways ahead, detailing the tripwires and hidden snares left behind by rival scavengers who guard their turf jealously. The embers in your lantern cast a steady, comforting glow over his scarred hands as you listen closely to his advice.
+EXIT 1: Ascend the blue slag incline
+EXIT 2: Enter the old foundry postern gate
+@@END

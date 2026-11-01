@@ -1,0 +1,65 @@
+@@SECTION vh-6-1-2-5
+TITLE: The Pitch-Pot Thoroughfare
+TEXT: Thick, acrid smoke from a sputtering pitch-pot curls across the flagstones, stinging your eyes as a weary drover named Corin curses his balky mule. The stubborn beast plants its hooves squarely in the center of the narrow thoroughfare, blocking your passage while the bronze clapper hums quietly against your spine. Corin wipes soot from his forehead and glares at the animal, offering no room to squeeze past unless you take matters into your own hands.
+EXIT 1: Slip past the sputtering pitch-pot toward the rope-loft
+EXIT 2: Wait for the drover to clear the dock-marshal's landing
+EXIT 3: Take the reckless way across the swollen drainage canal
+@@END
+@@SECTION vh-6-1-2-6
+TITLE: Timber Yard Confrontation
+TEXT: Splintered pine and dark, oily water surround the flooded timber yards where a nervous watchman named Farris steps out from behind a stack of dripping planks. He mistakes the heavy wooden cradle on your back and its bronze burden for smuggled contraband salt, drawing his ash-wood truncheon with a sharp warning. The low-slung fog rolls in off the river, chilling the air as you weigh your options against the watchful guard.
+EXIT 1: Duck away toward the slippery stone landing
+EXIT 2: Dart past the hissing lime-pit into the alley
+@@END
+@@SECTION vh-6-1-2-7
+TITLE: Salt-Shed Exchange
+TEXT: Salt-crusted rafters drip condensation onto your shoulders inside the gloomy shed, where a sharp-eyed hawker named Jute leans over a barrel. He taps a counterfeit brass token against the rim, trying to palm it off in exchange for the sacred bronze clapper on your back. Outside, the tide laps against the pilings, and the damp air carries the low, persistent hum of the heavy metal tongue you carry for Vesperhold.
+EXIT 1: Leave the hawker for the damp cooperage floorboards
+EXIT 2: Hurry past the hissing lime-pit into the fog
+EXIT 3: Kick past the snarl of a starving hound under the granary arch
+@@END
+@@SECTION vh-6-1-2-8
+TITLE: Mired Wagon Dilemma
+TEXT: Mud bubbles lazily beside a stagnant drainage ditch where an anxious carter named Lorn struggles against the failing light, begging you to help lift a snapped axle from his mired wagon. The heavy wheels are sunk deep in black sludge, and the strain of your own burden makes your knees ache with every breath. You must decide whether to lend a hand in the muck or leave the carter to his sinking load.
+EXIT 1: Step carefully around the mud toward the cooperage
+EXIT 2: Head past the hissing lime-pit into the gathering gloom
+EXIT 3: Turn back toward the murky watergate and safety
+@@END
+@@SECTION vh-6-1-2-9
+TITLE: Granary Map
+TEXT: Towering brick walls cast a deep shadow over the damp ground where a shivering beggar named Paul intercepts your path, thrusting a grease-stained map of the flooded vaults directly into your hand. His fingers tremble with cold as he mutters warnings about the rising waters below Lowgate. The bronze clapper hums a warning note against your pack-frame, matching the anxious rhythm of the streets.
+EXIT 1: Ignore the map and head toward the lower granary arch
+EXIT 2: Follow the slipway tracks toward the exhausted winch-man
+@@END
+@@SECTION vh-6-1-2-10
+TITLE: Tallow Vat Warning
+TEXT: Boiling tallow bubbles in a copper vat, filling the soot-blackened courtyard with a thick, greasy stench as an old woman named Martha stirs the brew with a wooden oar. She pauses to wipe her brow, warning you that the river lock is failing and the floodwaters will soon swallow the lower streets. The heavy bronze tongue on your back feels suddenly burdensome as you weigh her words.
+EXIT 1: Seek shelter inside the half-submerged boat-shed
+EXIT 2: Follow the slipway tracks past the sleeping winch-man
+EXIT 3: Cross the narrow timber catwalk above the spray
+@@END
+@@SECTION vh-6-1-2-11
+TITLE: Plank Bridge Toll
+TEXT: Frost crisps the edges of a splintered plank bridge where a surly toll-keeper named Greaves plants his boots and measures the width of your mule's hooves against a notched willow stick. He demands a heavy coin fee for every iron nail and bronze gram passing into the lower ward, eyeing the sacred clapper with greedy suspicion. The cold mountain wind whistles through the gaps in the timber planks beneath your feet.
+EXIT 1: Pay the toll and cross toward the boat-shed
+EXIT 2: Bypass the bridge and head for the slipway tracks
+@@END
+@@SECTION vh-6-1-2-12
+TITLE: Fish Market Trade
+TEXT: Rotting pilings release a foul, fishy reek into the damp air as a desperate tanner named Thatch shuffles out of the mist, offering you a dry leather doublet in exchange for your woollen scarf. His teeth chatter in the biting wind blowing off the river-port. You adjust the padded cradle holding the heavy bronze clapper while considering whether to trade your warmth against the encroaching chill.
+EXIT 1: Decline the trade and push toward the boat-shed
+EXIT 2: Walk past the slipway toward the resting winch-man
+EXIT 3: Cross the narrow timber catwalk above the churning water
+@@END
+@@SECTION vh-6-1-2-13
+TITLE: Secret Drainage Tunnel
+TEXT: Ledger marks from your unpaid debts to the Cable Court still linger in the collector's damp pocket, and a grinning toll-lord named Skiff spots them immediately. Recognizing your overdue tally, he leans in close and points out a hidden drainage tunnel that neatly bypasses the heavily guarded foundry gates. The dark opening reeks of stagnant river water, but it offers a clear, unguarded path into the heart of Lowgate.
+EXIT 1: Take the dark drainage tunnel toward the foundry alley
+EXIT 2: Refuse the shortcut and head for the peat stacks
+@@END
+@@SECTION vh-6-1-2-14
+TITLE: Canvas Tent Scream
+TEXT: Rain lashes the canvas roof of a leaking tent where a deaf charcoal burner named Gault mistakes your heavy footfalls for an approaching flood warning and lets out a shrill scream. Black coal dust coats every surface within the cramped shelter, and the sudden noise startles your mule into a restless shuffle. You must calm the panicked worker before his cries draw unwanted attention from the night watch.
+EXIT 1: Quiet the burner and slip into the foundry alley
+EXIT 2: Move past the tent toward the towering peat briquettes
+@@END

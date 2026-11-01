@@ -1,0 +1,52 @@
+Gemini said
+
+@@SECTION td-3-103
+TITLE: Across the Glass Ledge
+TEXT: Frost-slicked windowpanes offer a narrow footing suspended high above the echoing darkness of the primary water reservoir. Below, the dark liquid laps silently against iron pillars while far overhead salt-crusted girders groan in the cold draught. A discarded leather toolbelt hangs precariously from a protruding rivet on the opposite pier, swaying gently with every gust that whistles through the stilt-city struts. Balance requires absolute focus as boots find only inches of smooth, condensation-filmed plate glass.
+EXIT 1: Step across to the dangling leather
+@@END
+@@SECTION td-3-104
+TITLE: The Vaulted Crossing
+TEXT: Suspended above the roaring dark of the great storage cistern, the narrow glass strip shivers underfoot like frozen oil. Cold moisture coats the soles, threatening to slip with every millimetre of progress toward the abandoned worker's rig. Fingers tighten into fists against the damp masonry of the wall while the abyss waits below to swallow a misstep. Every tendon strains to keep the center of gravity low over the transparent floor. // CHECK: Balance along the brittle glass
+@@END
+@@SECTION td-3-105
+TITLE: Slip on the Pane
+TEXT: A sudden tremor in the stilt-work sends the boots skidding across the condensation-slicked glass before purchase can be found. Arms windmill wildly against the void, catching hard against a rusted iron bracket that leaves a deep, stinging purple bruise across the forearm. The heavy belt slides off the far rivet and drops silently into the deep water below, leaving only bruised ribs and a bitter taste of rust in the mouth. Shivering and breathless, the foothold is finally secured on the far platform.
+EXIT 1: Pull yourself onto the platform
+@@END
+@@SECTION td-3-106
+TITLE: Salvaged Heavy Rigger Belt
+TEXT: Weight shifts carefully from heel to toe until the frost-rimed glass is left behind for the rusted safety of the iron gantry. Cold fingers close around the thick leather straps of the abandoned toolbelt, lifting it free from the rusted iron peg with a satisfying scrape. Inside the heavy pouches rest three hardened steel wedges and a length of greased hemp line, salvaged from whoever last worked the high conduits. Breathing slows as the expanse of the reservoir recedes into the shadows. // GRANT: Heavy rigger toolbelt // EXIT 1: Follow the gantry toward the archives
+@@END
+@@SECTION td-3-107
+TITLE: The Governors Ink
+TEXT: Heavy iron-bound ledgers lie scattered across the mahogany table of the inner chamber, bearing the neat, ruthless script of the Brineholder magistracy. Parchment maps pinned to the cedar walls reveal that the great pumping engine at the foot of the Sunken Stair has not merely jammed by accident, but has been deliberately welded shut by royal decree. The water barons intend to shatter the mechanism entirely, locking the seabed dry forever while they control the last stagnant cisterns above. Every page confirms that Gullmouth is meant to die of thirst while these high platforms hoard the remnant tide. A single iron-keyed corridor leads deeper into the stilt-city core past the patrols.
+EXIT 1: Slip past the iron door
+@@END
+@@SECTION td-3-108
+TITLE: The Dusty Annex
+TEXT: Rotting charts and damp tidal logs carpet the floor of this forgotten alcove, where the air tastes of old paper and stagnant bilge. Intricate brass-faced locks hum faintly from every cabinet, guarding secrets that the water barons would rather leave to mould in the dark. Narrow grates in the floor vent the chill draught of the empty seabed far below, carrying the distant, hollow moans of the stilt-city struts. Every shadow seems to hold a watcher, and every surface invites a desperate pry or a stolen glance.
+EXIT 1: Search the rotting chart shelves
+EXIT 2: Pick the restricted tidal cabinet
+EXIT 3: Decipher the microscopic wall map
+EXIT 4: Force the rusted iron bookcase
+EXIT 5: Flee before the patrol arrives
+@@END
+@@SECTION td-3-109
+TITLE: The Crumbling Ledger
+TEXT: Brittle pages flake away into grey dust at the lightest touch, bearing centuries of high-tide calculations and water-tax tallies. Eyes strain across fading iron-gall ink to trace the sequence of emergency overrides once used by the original Tidewardens. Acrid mould spores rise from the binding like yellow smoke, catching in the throat and setting off a silent, burning cough that threatens to draw the sentinels from the corridor. Only a few lines remain legible before the binding entirely disintegrates into the floor grates.
+EXIT 1: Pocket the torn cipher fragment
+@@END
+@@SECTION td-3-110
+TITLE: Deciphering the Rot
+TEXT: The ancient ink swims before tired eyes while greenish mildew blooms across the margins like a slow bruise. Fingers hover over the crumbling paper, trying to separate stuck pages without turning the crucial numerical sequence into gray powder. The lungs burn with the fine dust of dead vellum and damp wool while footsteps echo on the iron stairs outside the door. Mind and breath must hold steady to pluck the hidden numbers from the rot before the air becomes unbreathable. // CHECK: Decode the rotting combination
+@@END
+@@SECTION td-3-111
+TITLE: Choked on the Dust
+TEXT: A thick cloud of black spores bursts from the spine of the ancient ledger, catching the throat in a sudden, violent spasm. Coughing tears at the chest wall, leaving a metallic taste of blood and rotten linen on the tongue while the eyes stream with blinding tears. Footsteps halt in the outer passage at the sudden noise, forcing a frantic scramble into the shadows behind a stack of empty water casks. The secret numbers are lost to the dust, and the lungs will ache with every breath for hours to come.
+EXIT 1: Crawl away into the gloom
+@@END
+@@SECTION td-3-112
+TITLE: The Ledger Secret
+TEXT: Fingers trace the faint indentation left by a metal stylus across the final readable page just as the paper crumbles into grey flakes. The four-digit combination for the central water vault imprints itself firmly in the memory before the wind through the floor grates sweeps the debris away. A small brass token slips from the binding into the palm, stamped with the crest of the ancient Tidewardens. The alcove remains quiet, its secrets traded for a heavy memory and a cool piece of brass. // GRANT: Tidewarden brass tally // EXIT 1: Return to the dusty annex
+@@END

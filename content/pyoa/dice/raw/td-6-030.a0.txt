@@ -1,0 +1,44 @@
+Gemini said
+
+@@SECTION td-6-030
+TITLE: The Pilgrim Crown
+TEXT: Drift Pilgrims kneel in the stinging brine as the salt-rimed mantle settles across your shoulders like a heavy wet fleece. They do not call you wrecker any longer; they name you the keeper of the receding horizon and the guardian of the sulking deep. Your boots stand ankle-deep in weed-strung foam that never stirs from its mark, forever faithful to the throne you carved out of driftwood and dried skate-skin at the water's edge. Salt crystals crust your eyelashes, heavy as lead coins, but you watch the gray line where sky and silt weld shut. Gullmouth sends its barrels of coin down the cliff road by mule-train, paying homage to the sovereign who turned the key and locked the ocean where the faithful wanted it. // Far out on the flats, the stilted skeletons of Saltspire stand silent against the glare, abandoned by their moneyed masters who have nothing left to sell. You hold the brass crank-handle of the Meridian Gear tucked inside your belt like an iron rib, cold against your skin, while the kneeling host chants old prayers to a dry and grateful sky.
+EXIT 1: Bow before the salt-bound throne
+@@END
+@@SECTION td-6-031
+TITLE: Sovereignty of the Low
+TEXT: Night comes down over the seabed like a damp wool blanket soaked in kelp juice and old copper. Lanterns flicker along the stranded whale-market where the fish-mongers and salvage-men pay tribute in pearls and silver spoons fished from the ribs of dead galleons. You sit upon a chair constructed from the helm-wheel of an East Indiaman, your boots propped on a chest of heavy Spanish dollars that nobody dares to touch without your nod. The Drift Pilgrims light their tallow dips in long lines along the dunes, singing low, mournful choruses that drift across the mud-flats like gulls calling before a gale. No tide comes to wash away the footprints you leave in the gray silt, and no sail ever rounds the headland to dispute your crown. You are the monarch of the empty wet, ruling an empire of mud and drowned gold.
+EXIT 1: Watch the distant salt-fires burn
+@@END
+@@SECTION td-6-032
+TITLE: Kingdom of the Dry Horizon
+TEXT: Silence settles over the great Low until the only sound is the slow, dripping trickle of brine leaking from the rusted joints of the Meridian Gear far below. You have given Gullmouth its eternal feast and the pilgrims their sullen god, leaving the rest of the world to choke on dry air and memory. The sea lies tamed at your feet like a beaten hound, held in a perpetual, unmoving shallow that yields its silver without a struggle. No further storms will ever batter the cliff-town, and no stranger will ever arrive from across the water with news of a greener shore. Here you remain, king of the salt-pans and master of the locked tide, watching the gray mist swallow the last faint smudge of the horizon until nothing is left but you, the mud, and the unchanging dark.
+@@END
+@@SECTION td-6-033
+TITLE: Weight of the Iron
+TEXT: Your arms feel as if they have been forged from pig-iron and left in the rain to rust until every joint screams at the smallest shift of weight. The great brass levers of the Meridian Gear have left their grease burnt into your palms, dark and permanent as a smith's mark. Down in the dripping damp of the Sunken Stair, the Hollow Choir murmurs its endless, dripping liturgy from the wet walls, but their voices sound small and distant now, like water running down a drain. You have turned the world until it locked, and now there is nothing left for your hands to grip except the cold stone of the shaft and the memory of Orsolya's sealed note. The salt-crust thickens in your hair, stiffening every strand until your head feels bound in a helmet of gray shell.
+EXIT 1: Climb back toward the upper air
+@@END
+@@SECTION td-6-034
+TITLE: Spent at the Root
+TEXT: Steps lead upward through the dark, but your knees refuse the climb, trembling like old timber under a falling roof. You sink down against the damp brickwork of the Sunken Stair, listening to the small, rhythmic drip of the seal-oil lantern as it gutters toward its final spark. Somewhere above, Gullmouth is growing fat on the silver and salt-fish you bought with your marrow, its taverns roaring with the laughter of men who never saw the bottom of the deep. You close your eyes and feel the immense weight of the earth and the locked sea pressing down from every side, heavy as a mountain of wet sand. The cold creeps up through your boots, quiet and gray, turning your blood to brine and settling the salt behind your tongue until there is nothing left to say.
+@@END
+@@SECTION td-6-035
+TITLE: Walking the Gray Crust
+TEXT: Footsteps leave a sharp, crisp crunch across the salt-flats where the sea used to roll three fathom deep before the world broke its rhythm. The air smells of sun-baked weed and ancient mud, sharp enough to make your nostrils sting with every breath you draw into your aching chest. Gullmouth is a distant smudge of gray slate perched on the cliff-edge behind you, its harbor still choked with mud and weed despite all the shouting of the Guild. You walk alone because no one else cared to follow when you let go of the great iron levers and turned your back on the lock. The horizon stretches out ahead of you, flat and white as a cleaned bone, shimmering in the heat of a sky that has forgotten how to rain.
+EXIT 1: Follow the path toward the dunes
+@@END
+@@SECTION td-6-036
+TITLE: Beyond the Wreck-Fields
+TEXT: Rusted anchors and the ribs of stranded sloops rise from the dried mud like the cage-work of some monstrous beast buried by a careless tide. You pass them without a glance, your pockets empty of silver and your hands clean of brass grease for the first time since the water left the coast. A cold wind begins to moan through the Singing Dunes away to the west, lifting gray dust into the air like wood-smoke from a damp hearth. In the distance, the stilt-legs of Saltspire loom through the haze, their ladders dangling uselessly above the dry silt where no skiff has docked for days. The Brineholders have locked their doors and gone inland, leaving their glass towers to the gulls and the wandering salt-drift.
+EXIT 1: Cross the line of the old harbor
+@@END
+@@SECTION td-6-037
+TITLE: Leaving the Shore Behind
+TEXT: Miles of bare seabed stretch between the old cliffs and the deep water that refuses to return to its accustomed bed. You keep your head down and your boots moving, letting the rhythm of the march push the memory of Orsolya and the Meridian Gear down into the dark. Every gull overhead sounds like it is crying for something it lost before the world was mapped. The salt-crust breaks beneath your heels with a sound like dry biscuit-tin lids snapping underfoot, white dust puffing into the still air. Behind you, the smoke from Gullmouth's chimneys rises straight and thin into the heavy gray sky, marking the place where people still argue over who owns the mud.
+EXIT 1: Step out into the open gray
+@@END
+@@SECTION td-6-038
+TITLE: The Unreturning Tide
+TEXT: Nothing waits at the end of the dry seabed except more sand and the pale glitter of sun-bleached shells turning slowly to powder in the wind. You walk until your legs are stiff and your skin is caked in salt-rime, moving deeper into the empty country where no tides have washed the stones for a hundred years. The sun hangs low and red in the west like an unwashed eye peering through greasy window-glass, casting long shadows across the ribbed dunes. Let the Wreckers keep their silver and let the Brineholders guard their empty pipes; the world has turned another way, and you are simply walking with it. There is no sound now except the steady crunch of your boots on the crust and the dry whistling of the wind across the floor of the lost sea.
+@@END

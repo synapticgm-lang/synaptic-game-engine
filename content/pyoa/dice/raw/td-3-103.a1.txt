@@ -1,0 +1,20 @@
+Gemini said
+
+@@SECTION td-3-104
+TITLE: The Brine Reservoir
+TEXT: Below your boots, millions of gallons of trapped, stagnant water press against ancient, green-tinted panes, humming with a low vibration that rattles your teeth. A gust from the ventilation shaft catches your coat, threatening to peel you off the narrow shelf of brittle glass that spans the great dark basin. You inch your weight forward, fingers scraping the cold iron wall, eyes fixed on the heavy leather toolbelt snagged upon a rusted bracket just out of reach over the abyss. // Every breath tastes of copper and old damp, and your calves burn with the strain of keeping your heels flat against the slick surface while the void below waits to swallow any mistake.
+CHECK: Reach across the glass chasm
+@@SECTION td-3-106
+TITLE: Salvaged From The Edge
+TEXT: Your fingers hook into the heavy leather straps of the drowned worker's toolbelt, dragging it back from the brink just as your footing slips an inch on the condensation-slicked glass. The metal buckles jingle softly against your thigh, sounding entirely too loud in the cavernous quiet of the reservoir tanks, though the echoing drops of water soon swallow the noise. Whatever terrors nearly met you over that fathomless drop, you now possess the grease-stained kit and its heavy spanners.
+GRANT: A drowned wrecker's toolkit
+EXIT 1: Step back onto solid iron
+@@SECTION td-3-110
+TITLE: The Rotting Ledger
+TEXT: Flakes of pale, toxic mold puff upward into your face like grey smoke as you violently flip through the water-swollen pages of the Brineholder ledger, your eyes stinging from the ammonia fumes. The ink is bleeding into the pulp, dissolving before your very sight into illegible smudges, while your lungs burn with every shallow breath you dare to draw in the cramped archive room. You chase the disappearing numbers across the gutter of the spine, hunting for the sequence that unlocks the heavy copper vault door behind the desk.
+CHECK: Decipher the decaying numbers
+@@SECTION td-3-112
+TITLE: Secrets in the Dust
+TEXT: The final digits imprint themselves behind your eyelids just as the crumbling corner of the page turns to black dust between your fingertips, leaving your lungs aching from the spores. You cough silently into your sleeve, tasting bitter rot, but the combination remains sharp and clear in your mind against the gloom of the annex. The knowledge sits heavy in your head, a stolen key that could swing open the iron doors and reveal whatever the Brineholders have locked away from the drying world.
+GRANT: The vault combination
+EXIT 1: Return to the dark hallway

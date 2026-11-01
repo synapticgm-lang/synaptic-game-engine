@@ -1,0 +1,106 @@
+{
+ "beats": {
+  "ul-3-001": "You stand before the towering bronze doors of the Cataloguers' Court, where a stern clerk demands your travel permit and searches your belongings for illicit manuscripts.",
+  "ul-3-017": "Armed beadles intercept your progress down the vaulted corridor, escorting you into a dim antechamber filled with the ticking of a hundred water-clocks.",
+  "ul-3-042": "A massive iron portcullis slams shut ahead of you, operated by a mechanical registrar who demands a heavy toll of rare marginalia.",
+  "ul-3-063": "You navigate a labyrinthine filing labyrinth where towering shelves slide back and forth to crush unauthorized intruders.",
+  "ul-3-084": "A detachment of red-robed enforcers blocks the archway, demanding you surrender all notes pertaining to the missing Archivist.",
+  "ul-3-109": "You emerge into a vast subterranean rotunda where towering pillars of index cards support a vaulted ceiling of dark stone.",
+  "ul-3-126": "A narrow bridge constructed entirely from the reinforced spines of giant encyclopedias spans a deep ink-river below.",
+  "ul-3-141": "You descend a spiral staircase carved from fossilised paper, where the walls murmur ancient rules of classification.",
+  "ul-3-165": "You enter the grand tribunal chamber where the Grand Cataloguer presides over a glowing map of the entire Underlibrary.",
+  "ul-3-179": "A wall of living parchment blocks the exit, requiring a blood-seal or a classified password to grant further access.",
+  "ul-3-195": "You step out onto the Grand Balcony overlooking the vast, hazy expanse of the Deep Annexe where the Hundredth Door waits.",
+  "ul-3-215": "You cross the final threshold past the broken seal, stepping into the absolute silence of the Deep Annexe where the original Index rests."
+ },
+ "hubs": {
+  "ul-3-002": {
+   "place": "The Hall of Classification",
+   "situation": "Rows of high desks stretch into the gloom where junior scribes sort whispering index cards by obsolete filing systems."
+  },
+  "ul-3-018": {
+   "place": "The Tribunal Gallery",
+   "situation": "Spectators in grey robes watch from tiered benches as judges deliberate over charges of unauthorized cataloguing."
+  },
+  "ul-3-043": {
+   "place": "The Scriptorium of Appeals",
+   "situation": "Despairing scholars plead their cases at individual booths while ink-stained scribes record every whispered grievance."
+  },
+  "ul-3-064": {
+   "place": "The Shifting Stacks",
+   "situation": "Rows of heavy oak bookcases glide across recessed tracks, rearranging the geography of the entire chamber."
+  },
+  "ul-3-085": {
+   "place": "The Enforcers' Barracks",
+   "situation": "Armor clinks against wooden bunks in a long, smoke-filled dormitory smelling of linseed oil and polished brass."
+  },
+  "ul-3-110": {
+   "place": "The Rotunda of Records",
+   "situation": "Millions of catalogued index cards flutter like trapped moths in the drafts stirred by unseen subterranean vents."
+  },
+  "ul-3-127": {
+   "place": "The Spine Bridge",
+   "situation": "Heavy leather-bound volumes form a precarious crossing over dark, slow-moving channels of black printing ink."
+  },
+  "ul-3-142": {
+   "place": "The Spiral Archives",
+   "situation": "Narrow steps wind endlessly downward between sheer walls of compressed, indestructible pulp and yellowed vellum."
+  },
+  "ul-3-166": {
+   "place": "The Grand Tribune",
+   "situation": "High stained-glass windows depict legendary librarians sorting the stars while golden scales hang motionless above the judges."
+  },
+  "ul-3-180": {
+   "place": "The Vellum Barrier",
+   "situation": "A massive stretched hide writhes gently against the corridor walls, bearing pulsing veins of black printer's ink."
+  },
+  "ul-3-196": {
+   "place": "The Balcony of Sighs",
+   "situation": "Stone balustrades overlook a dizzying abyss filled with drifting book-stacks, floating lanterns, and distant whispering echoes."
+  }
+ },
+ "chains": {
+  "ul-3-002/0": "You attempt to slip past a sleeping clerk by gliding silently across the polished marble floor, risking exposure, to secure a stolen seal-ring.",
+  "ul-3-002/1": "You endure a punishing cross-examination by an inquisitorial senior archivist regarding your true loyalties, risking your sanity, to earn a signed clearance pass.",
+  "ul-3-002/2": "You dance between drifting card-cabinets to intercept a tumbling cart of confidential dossiers, risking a heavy fall, to retrieve a misplaced transit voucher.",
+  "ul-3-018/0": "You manipulate the clerk of court into misfiling your indictment papers, risking public exposure, to secure a key to the lower archive stairs.",
+  "ul-3-018/1": "You maintain absolute composure under the piercing gaze of the Chief Cataloguer, risking your inner resolve, to gain a written pardon for past offenses.",
+  "ul-3-018/2": "You forge an official signature on a confiscated warrant using quick wit, risking discovery by guards, to obtain an exemption seal.",
+  "ul-3-018/3": "You gracefully navigate a stack of collapsing reference ledgers while addressing the bench, risking physical stumbling, to impress a sympathetic assessor.",
+  "ul-3-018/4": "You stare down a hostile prosecutor who threatens your shelver fellowship, risking psychological collapse, to win the right of free passage.",
+  "ul-3-043/0": "You bluff your way past the booth guard by claiming urgent magisterial business, risking detection, to acquire a blank requisition form.",
+  "ul-3-043/1": "You decipher an ancient clause in the procedural code hidden within a massive tome, risking mental fatigue, to unlock a restricted passage.",
+  "ul-3-043/2": "You resist the temptation to falsify your own travel records under intense interrogation, risking your nerve, to earn the secret respect of a senior clerk.",
+  "ul-3-043/3": "You hold your ground against a bullying magistrate who tries to confiscate your lamp, risking your courage, to protect your precious oil supply.",
+  "ul-3-064/0": "You study the complex mechanical rhythm of the moving shelving units, risking miscalculation, to discover a hidden maintenance hatch.",
+  "ul-3-064/1": "You leap across a widening chasm between two parting bookcases with agile grace, risking a dangerous plunge, to reach a suspended catwalk.",
+  "ul-3-064/2": "You decipher the shifting categorical symbols carved into the floorboards, risking profound confusion, to map the safest route forward.",
+  "ul-3-064/3": "You slide along the top rail of a moving bookcase with practiced balance, risking a clumsy tumble, to retrieve a dropped brass compass.",
+  "ul-3-085/0": "You steel your nerves against the intimidating threats of the watch captain, risking your composure, to secure a stolen patrol schedule.",
+  "ul-3-085/1": "You endure a grueling interrogation about your fellowship ties without yielding, risking your resolve, to gain the trust of a dissident guard.",
+  "ul-3-085/2": "You dodge between swinging halberds to snatch a bundle of confiscated dispatches, risking a heavy blow, to acquire vital intelligence.",
+  "ul-3-085/3": "You stare down the intimidating garrison commander during a tense standoff, risking your mental fortitude, to win an unhindered departure.",
+  "ul-3-085/4": "You talk your way past the armory quartermaster with clever deception, risking immediate arrest, to acquire a set of duplicate keys.",
+  "ul-3-110/0": "You trick a diligent filing automaton into indexing your name as a visiting inspector, risking discovery, to gain permanent administrative clearance.",
+  "ul-3-110/1": "You withstand the psychic weight of a million forgotten names whispering in unison, risking your sanity, to extract a true historical record.",
+  "ul-3-110/2": "You deceive the chief card-sorter with a fabricated counter-directive, risking exposure, to acquire a master key for the lower levels.",
+  "ul-3-127/0": "You talk a nervous toll-keeper into lowering the span without paying the usual fee, risking suspicion, to cross without delay.",
+  "ul-3-127/1": "You cross the swaying bridge of old book spines with light, dancing steps, risking a fall into the ink, to retrieve a floating notebook.",
+  "ul-3-127/2": "You outwit a toll-troll by exploiting a loophole in the library bylaws, risking a challenge, to secure safe passage for your fellowship.",
+  "ul-3-142/0": "You steel your will against the dizzying vertigo of the deep stairwell, risking your concentration, to reach the lower vault landing.",
+  "ul-3-142/1": "You remain steadfast against the psychic pressure of the whispering walls, risking mental fatigue, to find a hidden alcove containing supplies.",
+  "ul-3-142/2": "You trick the stair-guardian by posing as a senior cataloguing inspector, risking exposure, to acquire a bronze descent token.",
+  "ul-3-142/3": "You maintain your inner resolve despite the oppressive silence of the deep stone, risking panic, to discover a forgotten maintenance ladder.",
+  "ul-3-142/4": "You descend the slick, damp steps with effortless grace, risking a nasty slip, to catch up with a fleeing courier.",
+  "ul-3-166/0": "You move with exquisite poise across the echoing mosaic floor, risking an embarrassing stumble, to present your case directly to the bench.",
+  "ul-3-166/1": "You gracefully sidestep a sweeping procedural trap laid by the prosecutors, risking your balance, to reach the evidentiary table.",
+  "ul-3-166/2": "You sweet-talk the chief magistrate into overlooking your lack of formal accreditation, risking swift rejection, to secure a travel warrant.",
+  "ul-3-180/0": "You force your indomitable will upon the living barrier until it relents and opens, risking severe exhaustion, to pass through untouched.",
+  "ul-3-180/1": "You glide past the defensive tendrils of the vellum with fluid grace, risking a painful lash, to slice open a hidden pocket.",
+  "ul-3-180/2": "You outsmart the barrier's magical defenses with a clever verbal paradox, risking linguistic backlash, to cause it to dissolve harmlessly.",
+  "ul-3-196/0": "You hold your nerve against the terrifying drop into the abyss, risking your sanity, to steady a dangling descent rope.",
+  "ul-3-196/1": "You trick the balcony guard into looking the other way with a clever distraction, risking discovery, to secure a grappling hook.",
+  "ul-3-196/2": "You balance precariously along the frost-slicked stone railing with perfect grace, risking a fatal fall, to retrieve a lost spyglass.",
+  "ul-3-196/3": "You analyze the atmospheric currents swirling up from the deep stacks, risking misinterpretation, to chart the safest gliding route down."
+ }
+}

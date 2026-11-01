@@ -1,0 +1,7 @@
+@@SECTION vh-1-0-0-0
+TITLE: The Bronze Tongue
+TEXT: In the frost-rimed belfry of Vesperhold, you hoist the bronze Clapper into its harness while Orison's fractured lip weeps cold grease onto your knuckles. The metal tongue hums against your spine, heavy as a sleeping child and smelling of old rain. Outside, the high mountain wind rattles the slate roofs and spits dry sleet across the stone sill. You must choose how to leave this freezing vault before the noon bells summon the monks to prayer.
+EXIT 1: Step out onto the wind-whipped stone balcony.
+EXIT 2: Slip past the buttery for a stolen rye crust.
+EXIT 3: Clear the frozen rime from your boot-soles by the salt-bins.
+@@END

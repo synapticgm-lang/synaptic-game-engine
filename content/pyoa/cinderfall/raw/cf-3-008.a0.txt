@@ -1,0 +1,52 @@
+@@SECTION cf-3-018
+TITLE: Interrupted Advance
+TEXT: Heavy links of iron chain slap against the cold steel of the rails with a dull, echoing crash that vibrates through the floorboards of the cab. Standing upon the suspended gantry above, the Baronial guards level their brass-trimmed polearms downward, their faces hidden behind dark grease-cloth masks. They demand the immediate surrender of the Water Key // You grip the brass regulator handle as steam hisses from the primary valves, casting a thick, blinding veil of white vapor across the platform that hides your deliberate reach toward the emergency bypass levers.
+EXIT 1: Reverse into the shadows of the viaduct
+
+@@SECTION cf-3-008
+TITLE: The Rivet Hammer
+TEXT: Heavy iron tools lie scattered across the slick metal decking of the chassis, smelling sharply of machine oil and heated coal dust. You pick up the short-peen riveting hammer, its wooden haft worn smooth by years of greasy palms and vibration. The checkpoint guards are distracted by a shouting match further down the gantry, giving you a narrow window to secure the forged permit before the inspector returns // With calculated precision, you bring the flat face of the hammer down against the protruding iron pin, driving it deep into its socket with a sharp ring that pierces the ambient hum of the viaduct engines.
+EXIT 1: Wedge the forged permit beneath the iron plate
+
+@@SECTION cf-3-009
+TITLE: Driving the Fastener
+TEXT: Sweat stings your eyes as you raise the heavy hammer once more, aiming for the stubborn iron rivet while heavy boots echo across the overhead gantry plating. A single false strike will mangle the thread and alert the patrolling guards to your illicit tampering with the chassis seal. You draw a sharp breath of sulphurous air, steady your aching wrist against the vibrating boiler shell, and bring the hammer down hard // CHECK: Hammer the loose chassis rivet under pressure
+
+@@SECTION cf-3-010
+TITLE: A Mismatched Blow
+TEXT: The heavy hammer glancing off the iron bolt catches your knuckles against the sharp edge of the chassis plate with a sickening crunch. Pain lances up your forearm, leaving a dark, purple bruise that throbs in time with the pulsing steam pumps. You bite back a sharp curse as the guard's footsteps halt nearby, forcing you to snatch the forged permit from the gap and dive behind a rusted fuel tender while an angry whistle blows overhead.
+EXIT 1: Crawl back toward the firebox deck
+
+@@SECTION cf-3-011
+TITLE: The Forged Authority
+TEXT: The heavy rivet seats itself flush against the iron plate with a satisfying, muffled thud that blends seamlessly into the industrial rhythm of the viaduct. You slip the illicit transit permit from its crevice, its inked stamp still damp and smelling faintly of stale vinegar and clerical office wax. It is a crude forgery, yet the hurried signature scrawled across the bottom bears the unmistakable mark of a sympathetic union hand // GRANT: Forged transit permit
+EXIT 1: Present the stamped paper at the barrier
+
+@@SECTION cf-3-012
+TITLE: Hissing Valves
+TEXT: Thick plumes of grey exhaust steam billow out from beneath the engine running board, curling around the rusted iron stanchions of the viaduct like waking serpents. The acrid taste of boiled lime coats your tongue as you twist the auxiliary release valve another half-turn, feeding raw pressure into the discharge pipes. Guards cough loudly through their linen scarves on the upper gantry, their vision completely blinded by the boiling fog rolling across the tracks // You keep your hand low against the vibrating brass pipework, feeling your way blindly toward the narrow maintenance ladder.
+EXIT 1: Climb the ladder through the steam fog
+
+@@SECTION cf-3-013
+TITLE: Scalding Mist
+TEXT: Heat radiates fiercely from the leaking joint of the auxiliary pipe, turning the surrounding air into a suffocating blanket of moisture and grease. You press your sleeve against your mouth to filter out the stinging vapor, squinting through the white gloom toward the dim silhouette of the toll-gate winch. Every movement requires absolute caution, for a single slip against the hot copper tubing will leave raw, weeping blisters across your skin // You reach out a trembling hand to test the tension of the heavy iron chain blocking the line.
+EXIT 1: Slip beneath the lowered iron chain
+
+@@SECTION cf-3-014
+TITLE: Purging the Line
+TEXT: Fingers wrap tightly around the blistering metal wheel of the steam release valve as you throw your full weight against the stubborn threading. A sharp hiss of superheated vapor screams from the exhaust port, threatening to coat your bare skin in boiling condensation if your grip slips for even a fraction of a second. You grit your teeth against the rising heat, holding the valve wide open while the surrounding gantry vanishes completely into an opaque wall of white fog // CHECK: Purge the auxiliary steam lines under pressure
+
+@@SECTION cf-3-015
+TITLE: A Burned Palm
+TEXT: A sudden surge of scalding condensate spits past the packing rings, searing across the back of your hand with a sharp, blistering agony. You snatch your arm back with a sharp gasp, dropping your grip on the valve as the pressure blows back into the cab with a deafening shriek. The steam thins just enough for a nearby guard to spot you nursing your ruined skin, forcing a frantic scramble into the shadows of the tender.
+EXIT 1: Retreat into the smoky engine cabin
+
+@@SECTION cf-3-016
+TITLE: The Fog-Born Slip
+TEXT: The heavy steam valve spins home with a final metallic squeal, choking off the discharge and leaving behind a dense, lingering bank of artificial fog. Through the swirling white haze, the barred toll-gate stands deserted, its guards temporarily driven back by the heat and moisture. You slip past the heavy timber barrier into the clear air beyond, carrying away a smudge of fresh soot and a valuable secret about the Baronial shift rotations // GRANT: Guard rotation secret
+EXIT 1: Advance past the iron tollhouse
+
+@@SECTION cf-3-017
+TITLE: The Gantry Ultimatum
+TEXT: Heavy iron links drop into place with a definitive, jarring clang that echoes across the suspended platforms of the viaduct. A dozen Baronial gantry-guards step out from the shadows of the signal box, their polished brass breastplates catching the weak, yellow light of the hanging oil lamps. They form an unbroken wall of authority across the rails, demanding the immediate surrender of the brass Water Key under threat of immediate confiscation // You rest your hand quietly against the warm copper of the whistle lever, measuring the distance to the dark mouth of the cut ahead.
+EXIT 1: Defy the gantry guards and pull forward

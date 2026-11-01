@@ -1,0 +1,56 @@
+Gemini said
+
+@@SEED sg-2-2-0-0 | Beyond the iron toll-hut, you skirt a crater of singing glass where dry desert winds pluck strange chords from jagged shards.
+@@SEED sg-2-2-0-1 | Past the toll-keepers, you follow a sunken drainage trench where bleached crusts of salt flake off beneath your boots.
+@@SEED sg-2-2-1-0 | Beside a rusted salt-pan, an old mender named Mallow trade tales of buried cisterns for a scrap of dried mutton.
+@@SEED sg-2-2-1-1 | Your burning ember-lamp catches the amber gleam of a half-buried ceramic marker, revealing a secret trench that shaves leagues off the route.
+@@SEED sg-2-2-1-2 | Under the harsh glare of noon, you dodge a team of salt-scrapers hauling blocks on creaking wooden sledges.
+@@SEED sg-2-2-1-3 | You cross a flat expanse of crazed glaze where your shadow stretches long and thin across the white alkali waste.
+@@SEED sg-2-2-1-4 | Near a collapsed culvert, you find a discarded brass compass housing spinning wildly in the magnetic salt-haze.
+@@SEED sg-2-2-1-5 | You navigate a labyrinth of salt-heaps piled high by ancient dredges, keeping your lamp shielded from prying eyes.
+@@SEED sg-2-2-2-0 | A stray dust-devil dances across the alkaline crust ahead, kicking up spirals of blinding white powder.
+@@SEED sg-2-2-2-1 | You skirt the edge of a simmering salt-pool where pink brine crusts into sharp, geometric needles.
+@@SEED sg-2-2-2-2 | A weary packer named Vane rests beside a milestone carved from green bottle-glass, warning of alkaline mires ahead.
+@@SEED sg-2-2-2-3 | You squeeze through a narrow cleft between two tilted slabs of fused green window-panes singing faintly in the draft.
+@@SEED sg-2-2-2-4 | Keeping your head low, you slip past an abandoned Salt Court watch-tower where rusty shutter-hinges squeak in the thermal wind.
+@@SEED sg-2-2-2-5 | Your boots crunch over a field of shattered milk-glass that scatters the blinding sunlight into dancing rainbow splinters.
+@@SEED sg-2-2-2-6 | You wade through a shallow drainage ditch choked with powdery salt and dried desert scrub roots.
+@@SEED sg-2-2-3-0 | Beneath a shattered solar-collector dish, you share a swallow of lukewarm water with a stranded caravan muleteer.
+@@SEED sg-2-2-2-7 | An old milestone shaped like a tapering glass finger points toward the northern horizon with its tip sheared off.
+@@SEED sg-2-2-2-8 | Moving with your ember-lamp banked entirely dark, you slip past a snoring toll-sentry slumped against a stack of salt-sacks.
+@@SEED sg-2-2-2-9 | You cross a dry silt bed where the cracked earth forms intricate hexagonal patterns like a colossal tiled floor.
+@@SEED sg-2-2-2-10 | A solitary glass-shingle roof protrudes from the white pan like a tombstone marking a buried courtyard.
+@@SEED sg-2-2-2-11 | You climb a low ridge of crushed crystal waste that crumbles treacherously beneath every hurried footstep.
+@@SEED sg-2-2-2-12 | Beside a rusted winch frame, you inspect a dry well-head sealed with lead mortar and stamped with court insignia.
+@@SEED sg-2-2-2-13 | You duck behind a towering stack of wooden crates as a patrol of mounted toll-wardens trots across the horizon.
+@@SEED sg-2-2-2-14 | A shimmering heat-mirage makes a distant line of telegraph poles look like towering glass giants wading through water.
+@@SEED sg-2-2-2-15 | You navigate by the low hum of a vibrating telegraph wire strung between two leaning iron pylons.
+@@SEED sg-2-2-3-1 | You skirt a steaming fumarole where sulfurous gas hisses through a jagged crack in the crystalline basin floor.
+@@SEED sg-2-2-3-2 | A wandering tinker named Jape offers to trade a blunt drawing knife for a pinch of salt-cured tobacco.
+@@SEED sg-2-2-3-3 | You slip through the skeletal ribcage of an ancient transport barge stranded high upon a glass dune.
+@@SEED sg-2-2-3-4 | Your lamp-fuel sloshes softly as you scramble down a steep embankment of alkaline dust and loose flint.
+@@SEED sg-2-2-3-5 | You pass a row of hollow ceramic jars half-melted into the glass crust by some forgotten furnace blast.
+@@SEED sg-2-2-3-6 | A sudden gust of hot wind carries the sharp tang of ammonia from an evaporating industrial sump.
+@@SEED sg-2-2-3-7 | You step carefully across a bridge of warped iron girders spanning a gaping subsidence crater.
+@@SEED sg-2-2-3-8 | A lone raven with salt-crusted feathers watches your approach from atop a bleached wooden telegraph pole.
+@@SEED sg-2-2-3-9 | Walking with your ember-lamp safely banked and cold, you bypass a patrol of tax-collectors resting near a glowing beacon.
+@@SEED sg-2-2-3-10 | You thread your way through a forest of twisted copper pipes protruding like dead roots from the salt crust.
+@@SEED sg-2-2-3-11 | A weather-beaten wooden signpost points toward the distant shard cities with all its directional arms snapped off.
+@@SEED sg-2-2-3-12 | You wipe a film of fine white salt from your brow as the afternoon heat beats down mercilessly.
+@@SEED sg-2-2-3-13 | You traverse a broad terrace of black obsidian tiles that absorb the sun's glare and radiate intense dry heat.
+@@SEED sg-2-2-3-14 | A discarded ledger page flutters past your ankles, its ink completely bleached white by decades of glaring sun.
+@@SEED sg-2-2-3-15 | You duck beneath a dangling length of copper cable that swings rhythmically in the dry desert breeze.
+@@SEED sg-2-2-4-0 | You trace the edge of a deep drainage basin where the silt has dried into deep, fissured polygonal plates.
+@@SEED sg-2-2-4-1 | A nervous caravan scout named Hale warns you that the northern shard gates are bolted against late travellers.
+@@SEED sg-2-2-4-2 | You squeeze through a narrow breach in a crumbling brick boundary wall choked with wind-blown crystal sand.
+@@SEED sg-2-2-4-3 | Your boots crunch over millions of tiny glass beads that roll beneath your soles like frozen morning dew.
+@@SEED sg-2-2-4-4 | You pause beside a dried-up fountain carved from rose quartz, now filled only with fine white alkali dust.
+@@SEED sg-2-2-4-5 | A distant flash of mirror-signal from a shard tower cuts across the white flats, spelling warnings in coded glints.
+@@SEED sg-2-2-4-6 | You scramble up a jagged embankment of fused slag where the ground rings hollow beneath your heavy tread.
+@@SEED sg-2-2-4-7 | You follow a deep cart-rut carved into the ancient glass road, keeping your eyes fixed on the looming horizon.
+@@SEED sg-2-2-5-0 | You reach the rusted iron threshold of the outer shard gate as twilight paints the salt flats in bruised purple hues.
+@@SEED sg-2-2-5-1 | A sentry in a mirrored visor lowers a spiked barrier pole as you approach the perimeter of the Shard Cities.
+@@SEED sg-2-2-5-2 | You step onto the polished obsidian paving stones of the outer avenue, leaving the blinding white bitterflats behind.
+@@SEED sg-2-2-5-3 | The massive glass gates of the metropolis loom before you, vibrating with the low, resonant hum of distant signal lenses.
+@@SEED sg-d-2-2 | Ignoring all warnings, you attempt to cross the boiling sulfur flats at high noon without water, and collapse as your canteen runs bone dry.
+@@DONE

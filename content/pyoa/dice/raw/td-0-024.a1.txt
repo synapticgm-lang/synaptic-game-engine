@@ -1,0 +1,10 @@
+Gemini said
+
+@@SECTION td-0-025
+TITLE: The Smuggler's Stash
+TEXT: Wedged deep beneath the splintered ribs of a stranded cog, a smuggler’s barrel sits half-buried in the silt. The ship’s hull groans in the wind, a rotting cage threatening to collapse at the slightest disturbance. You slide your crowbar under the rusted iron hoop of the barrel, testing the weight above. A shower of barnacles and dry rot rains down on your shoulders as you apply pressure. // With a wet crack, the timber lid gives way. Inside, wrapped in oilcloth, lies a small fortune in the current days of famine: a stash of rare, salt-cured meats from the southern archipelagos, untouched by the sea's sudden retreat. You quickly gather the heavy bundles, keeping one eye on the buckling beams groaning in the breeze, eager to escape before the ship becomes your tomb.
+EXIT 1: Slip away from the groaning wreckage
+@@END
+
+Shall we descend to the Sunken Stair?
+Yes

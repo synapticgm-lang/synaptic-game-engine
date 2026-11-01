@@ -1,0 +1,89 @@
+{
+ "batch": "sg-3-2-3-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-2-3-0": {
+   "title": "Sea-Green Parapet",
+   "text": "Jagged shards of fused quartz cascade from a sea-green parapet overhead, splintering against the salt-crusted stones right at your heels. You pull your canvas cloak tight, shielding your ember-lamp as the heat radiates off the crystalline masonry. The maze stretches ahead in blinding glints of green and amber, offering two distinct paths through the ruined towers of the Old Lensfolk.",
+   "exits": [
+    "Dash toward the looming window-wall",
+    "Climb the translucent slag ramp"
+   ]
+  },
+  "sg-3-2-3-1": {
+   "title": "Whispering Amphitheatre",
+   "text": "Ghostly murmurs echo off the curved stone benches of the grand amphitheatre, twisting your own breath into mocking jeers that obscure the path ahead. Phantom voices mimic your urgency, whispering doubts about whether the Rain Vault will open in time. You grip your cold ceramic Seedkey and press forward through the swirling acoustic traps, searching for a way out of the singing bowl.",
+   "exits": [
+    "Slip past the looming window-wall",
+    "Thread the alleyway of weaving shadows",
+    "Ascend the translucent slag ramp"
+   ]
+  },
+  "sg-3-2-3-2": {
+   "title": "Rusted Iron Spans",
+   "text": "Rusted iron chains stretch taut across the terrifying drop between two hollow glass spires, humming with the dry desert wind. You inch forward one boot at a time like a tightrope walker, keeping your center of gravity low while the salt flats glare far below. Your banked lantern swings heavily from your belt, casting long, frantic arcs against the translucent walls.",
+   "exits": [
+    "Step toward the weaving shadow alleys",
+    "Make for the translucent slag ramp",
+    "Cross the ribbed crystal sky-bridge"
+   ]
+  },
+  "sg-3-2-3-3": {
+   "title": "Prism Canopy",
+   "text": "Hanging prisms catch the blinding overhead glare, scattering sudden flashes of mirror-signal across the ruined avenue. You duck low beneath a canopy of dangling crystal drops, sliding into the cool shadow of a dark alcove to let the beacon sweep past. The air smells of ozone and baked dust, urging you to keep moving before the Glasswright sentries spot your passage.",
+   "exits": [
+    "Head for the sheer window-wall",
+    "Follow the weaving shadow alleys"
+   ]
+  },
+  "sg-3-2-3-4": {
+   "title": "Frozen Mercury Vats",
+   "text": "Heavy metallic fumes rise from rows of frozen mercury vats, making your head spin and your throat burn with every shallow breath. You press your sleeve against your face, navigating the labyrinth of lead-rimmed vats where toxic reflections ripple like silver grease. Finding a way out of this noxious cellar becomes a matter of urgent survival before your senses fail entirely.",
+   "exits": [
+    "Escape toward the sheer window-wall",
+    "Climb the translucent slag ramp"
+   ]
+  },
+  "sg-3-2-3-5": {
+   "title": "Shifting Salt Slopes",
+   "text": "Granular salt and tiny glass beads slide treacherously beneath your boots, dragging you backward with every exhausting stride up the steep incline. You dig your heels into the unstable crust, leaning your weight into the slope as the midday heat bakes the exposed basin. Your shoulders ache under the pack, but stopping here means sliding back into the glittering trap.",
+   "exits": [
+    "Push toward the looming window-wall",
+    "Struggle upward to the slag ramp"
+   ]
+  },
+  "sg-3-2-3-6": {
+   "title": "Melted Borosilicate Doorway",
+   "text": "Warped frames of melted borosilicate groan as you push through into a hidden chamber where the walls pulse with trapped twilight. Soft violet light bleeds from the ancient glass, casting long, distorted shadows across the floor. The strange illumination feels cool against your scorched skin, offering a moment of eerie respite before you choose your next direction.",
+   "exits": [
+    "Cross the ribbed crystal sky-bridge",
+    "Duck under the sagging lead arch"
+   ]
+  },
+  "sg-3-2-3-7": {
+   "title": "Ruby Obelisk",
+   "text": "Fractured pillars of ruby glass cast blood-red glints across the dry courtyard, where a discarded water skin lies empty and taunting in the heat. You stare at the shriveled leather, remembering the dry wells of Candlemere and the urgency of the twenty-day monsoon limit. Nothing moves in the quiet heat except the heat-haze shimmering off the broken obelisk.",
+   "exits": [
+    "Traverse the ribbed crystal sky-bridge"
+   ]
+  },
+  "sg-3-2-3-8": {
+   "title": "Shattered Balcony",
+   "text": "Multi-tiered balconies of shattered mirrors throw a thousand dancing sun-hares across your tired eyes, blinding you with sudden flashes of reflected light. You squint through the glare, dodging the shifting bright spots as you pick a careful route across the unstable, glittering stone floor. The wind whistles softly through the iron railings, carrying the distant scent of the salt basin.",
+   "exits": [
+    "Descend the green-tiled subterranean conduit",
+    "Duck under the sagging lead arch"
+   ]
+  },
+  "sg-3-2-3-9": {
+   "title": "Trench of Glass Teeth",
+   "text": "Jagged glass teeth line the bottom of a deep trench that cuts across the thoroughfare like an open wound. A fallen metal girder spans the chasm, offering a narrow, trembling lane of safety above the razor-sharp floor. You steady your breathing and prepare to cross the terrifying gap, keeping your eyes fixed firmly on the far ledge.",
+   "exits": [
+    "Cross the ribbed crystal sky-bridge",
+    "Descend the green-tiled subterranean conduit",
+    "Take the reckless way"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,6 @@
+@@SECTION cf-4-076
+TITLE: The Voice in the Brick
+TEXT: You press your ear against the cold, damp masonry of the tunnel wall, filtering out the heavy thrum of the engine until a familiar, dry cadence cuts through the subterranean hum. It is Hesper Quill's voice, caught in the porous stone like soot in a flue, warning you that the upcoming junction rails have been greased with tallow and poisoned with acid to seize your wheels. This phantom counsel leaves you with a sharp, practical awareness of sabotage ahead, a debt owed to a ghost who still watches the line.
+GRANT: warning of poisoned rails
+EXIT 1 -> cf-4-072 (Return to the whispering vault archways)
+@@END

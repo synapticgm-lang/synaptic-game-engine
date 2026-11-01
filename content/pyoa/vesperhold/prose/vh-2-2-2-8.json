@@ -1,0 +1,90 @@
+{
+ "batch": "vh-2-2-2-8",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-2-2-8": {
+   "title": "The Iron Turnstile",
+   "text": "A toll-keeper named Vane bars the iron turnstile with a heavy ledger, demanding proof that your bronze clapper is not stolen temple treasure. The wind howls against the brass-bound covers of his book while the cold mountain air freezes the moisture on your eyelashes. You shift the heavy canvas pack on your aching shoulders, feeling the deep, faint hum of the metal tongue vibrating against your spine. Vane squints through grease-smeared spectacles, tapping an ink-stained finger impatiently on the frost-rimed wood of the barrier.",
+   "exits": [
+    "Slip past the gate into the shadows",
+    "Dodge aside as a guide-line snaps nearby"
+   ]
+  },
+  "vh-2-2-2-9": {
+   "title": "The Pitching Bridge",
+   "text": "The suspended bridge pitches violently sideways in an updraft, forcing you to press your chest flat against the freezing hemp mesh. Below your boots, the abyss yawns in shades of gray fog and distant stone, completely swallowed by the shifting cloud sea. The bronze clapper knocks heavily against your shoulder blades with every violent lurch of the bridge fibers. You dig your mittened fingers deep into the wet knots, waiting for a momentary lull in the gale before you attempt to crawl another yard forward.",
+   "exits": [
+    "Push onward across the open mesh platform",
+    "Bargain with Weaver Coren for safer shelter",
+    "Duck behind the pulp-wood stacks from watching children"
+   ]
+  },
+  "vh-2-2-2-10": {
+   "title": "The Wicker Sorting Pit",
+   "text": "You skirt the edge of a great wicker sorting pit where discarded fibers swirl like dead leaves above the yawning gray void. The air smells strongly of damp hemp, pine tar, and the sharp ozone tang of high-altitude ice. Winch-boys shout unintelligible warnings from invisible platforms somewhere above in the thickening mist. Every step requires absolute focus as the slick planking beneath your soles trembles to the rhythm of the hidden machinery.",
+   "exits": [
+    "Trade the bronze for waxed rigging line with Coren",
+    "Slide down the greased loading plank to bypass debris",
+    "Duck beneath the web of singing overhead cables"
+   ]
+  },
+  "vh-2-2-2-11": {
+   "title": "The Cable Market Gust",
+   "text": "Ice crystals rattle against your canvas pack as a sudden thermal updraft surges up through the rope-strung market stalls. Merchants scramble to secure dangling coils of hemp while lanterns swing wildly on their rusted iron hooks. You brace your legs against the tilting floorboards, clutching the padded shoulder straps until your knuckles turn white. The heavy bronze tongue inside your pack gives a low, mournful thrum that resonates right through your chest.",
+   "exits": [
+    "Scramble across the open mesh platform ahead",
+    "Take shelter near the stacked pulp-wood crates"
+   ]
+  },
+  "vh-2-2-2-12": {
+   "title": "The Swinging Counterweight",
+   "text": "You duck under a swinging counter-weight just as a fully laden freight basket shoots out from the mist toward the lower stations. The iron pulley screeches in protest against the frozen axle, sending a shower of fine frost down upon your hood. Your muscles ache from the relentless downward pull of the heavy clapper, yet the steep path ahead offers no place to rest. Across the swaying gap, a winch-boy gestures frantically toward a narrow passage cut directly into the cliff-face.",
+   "exits": [
+    "Hide among the stacked pulp-wood crates",
+    "Slide down the greased loading plank"
+   ]
+  },
+  "vh-2-2-2-13": {
+   "title": "The Tuning Fork",
+   "text": "Guildmaster Orson tests the tension of a massive iron-bound cable with a silver tuning fork, ignoring your desperate plea for passage. The clear, ringing tone is instantly swallowed by the constant, deep roar of the valley wind below. He adjusts a brass tension screw with calloused fingers, his attention entirely fixed on the vibrating strands. You stand shivering in the damp chill, wondering how much longer your shoulders can bear the dead weight of the temple's broken tongue.",
+   "exits": [
+    "Pay the exorbitant inspection fee at the iron gate",
+    "Duck beneath the singing overhead cables",
+    "Leap aside as a panicked pack-mule charges past"
+   ]
+  },
+  "vh-2-2-2-14": {
+   "title": "The Sleet Squall",
+   "text": "A sudden sleet squall blinds the walkway lanterns, forcing you to feel your way along the damp limestone wall by touch alone. Tiny ice pellets sting your cheeks and coat your canvas pack in a rigid layer of frozen armor. The sound of the market fades into a muffled roar, leaving only the scrape of your boots and the steady hum of the heavy bronze against your back. Every handhold on the slick stone feels uncertain and treacherous in the sudden gloom.",
+   "exits": [
+    "Slide down the greased loading plank",
+    "Face the toll-master's clerk at the iron gate",
+    "Duck beneath the singing overhead cables"
+   ]
+  },
+  "vh-2-2-2-15": {
+   "title": "The Fir Pole Bridge",
+   "text": "You balance precariously on a single fir pole bridging two swaying market huts while below you the cloud sea boils upward. The pole flexes alarmingly with your every step, testing your sense of balance to its absolute limit. Mist wraps coldly around your ankles, hiding the dizzying drop into the gorge from your direct view. You keep your eyes fixed firmly on the splintered threshold on the far side, breathing in the scent of wet pine and old rope.",
+   "exits": [
+    "Duck beneath the web of singing overhead cables",
+    "Jump clear as a panicked pack-mule charges the path"
+   ]
+  },
+  "vh-2-2-3-0": {
+   "title": "The Dripping Gantry",
+   "text": "You scramble across a dripping timber gantry where apprentice Kaelen frantically knots a snapping guide-rope against the gale. Water drips in a steady, freezing stream from the salted canvas awnings above, soaking through your wool collar. Kaelen shouts a brief warning over the rising din of the wind, his hands moving with practiced speed through intricate loops and hitches. You steady your footing on the wet beams, keeping the heavy bronze cradle balanced carefully between your shoulder blades.",
+   "exits": [
+    "Haul yourself onto the final stone anchor-platform"
+   ]
+  },
+  "vh-2-2-3-1": {
+   "title": "The Greasy Drainage Chute",
+   "text": "A towering stack of tarred rope blocks the junction, forcing you to crawl through a narrow greasy drainage chute to proceed. The rough stone walls press close on either side, smelling strongly of old tallow and mountain mud. Your canvas pack scrapes noisily against the low timber ceiling, making every inch of forward movement a struggle. Faint chimes from distant valley towers drift up through the gloom, reminding you of the long miles still remaining before Lowgate.",
+   "exits": [
+    "Haul yourself onto the final stone anchor-platform",
+    "Leave the rope markets behind and face the cliff-drop"
+   ]
+  }
+ },
+ "missing": []
+}

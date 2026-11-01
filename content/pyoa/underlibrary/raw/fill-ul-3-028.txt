@@ -1,0 +1,17 @@
+@@SECTION ul-3-032
+TITLE: The Forged Exemption Seal
+TEXT: Ink stains smear across your fingertips as you scratch the final, crucial loop of the Chief Cataloguer's signature onto the confiscated warrant, your heart hammering a frantic rhythm against your ribs. Heavy boots echo just beyond the arched oak partition, yet your hand remains steady enough to press the brass stamp into the hot red wax, sealing the document with a forged authority that might buy your passage or condemn you to the deepest cells. // Pocketing the cool parchment exemption seal before the sentries round the corner, you slip away into the shadows of the card-drawers with a dry throat and a dangerously acquired leverage that no tribunal clerk can easily dispute.
+GRANT: forged exemption seal
+EXIT 1: Slip past the mechanical registrar
+@@END
+@@SECTION ul-3-033
+TITLE: Balancing Acts Before Bench
+TEXT: Great towers of calfskin-bound ledgers groan and shudder beneath your boots as you lean forward to address the stern-faced assessors on the tribunal bench, trusting entirely to balance and nerve. A sudden shift in the floor makes a dozen volumes cascade in a dusty avalanche around your ankles, yet you turn the stumble into a measured bow, catching a sympathetic flicker of amusement in the eyes of the eldest magistrate.
+EXIT 1: Advance toward the inner galleries
+@@END
+@@SECTION ul-3-036
+TITLE: Grace Among the Falling Tomes
+TEXT: Leather-bound volumes tumble in a cascading roar around your ankles, yet you manage to keep your footing atop the swaying ledgers while addressing the bench with cool, deliberate precision. The sympathetic assessor in the second row watches your agile recovery with a quiet, approving nod, slipping a folded slip of parchment into your palm as a reward for your uncommon balance under pressure.
+GRANT: sympathetic assessor's favor
+EXIT 1: Return to the crowded tribunal gallery
+@@END

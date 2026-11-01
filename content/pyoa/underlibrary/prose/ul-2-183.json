@@ -1,0 +1,115 @@
+{
+ "batch": "ul-2-183",
+ "sections": {
+  "ul-2-183": {
+   "title": "Deciphering the Frame Marks",
+   "text": "Frost crrusts the iron lintel, but your fingernails trace the shallow, deliberate grooves left by a long-dead cataloguer. These subtle scratches are not random damage; they form a sequence of ancient rules that dictate how the internal levers of the locking assembly must settle. You press your thumb against a cold indentation shaped like a crescent moon, feeling the internal spring give a fraction of an inch as the mechanism recognises the authorized touch.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the ancient cataloguing marks"
+   ]
+  },
+  "ul-2-184": {
+   "title": "Tripping the Release Spring",
+   "text": "Steady pressure applied to the crescent notch causes a deep, muffled clunk to resonate through the hollow metal frame. The rusted tongue within the casing withdraws from its socket with a dry, papery slide, freed from decades of accumulated grime and stagnant lamp-oil. You slide your fingers into the widening gap, pulling back the heavy iron plate to reveal the dark interior where your prize rests untouched by the damp air of the stacks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach inside the open housing"
+   ]
+  },
+  "ul-2-185": {
+   "title": "Releasing the Stubborn Tumblers",
+   "text": "You slide your thin brass pick into the narrow slot, relying entirely on the subtle vibrations traveling up through your stiff fingertips to map the hidden interior. The cold metal resists your pressure, binding tightly against an unyielding brass lever that refuses to slip into place. You lean your weight against the frozen casing, trying to recall every diagram of this specific pattern you ever copied out in the dim light of the shelvers' hall.",
+   "check": "Decode the frozen lock mechanism",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-186": {
+   "title": "A Costly Slip of the Hand",
+   "text": "A sudden, violent tremor in the iron floor jolts your elbow, throwing off your careful alignment and sending the pick scraping harshly against the frozen brass casing. A sharp shard of rusted iron bites deep into the meat of your thumb, drawing a dark bead of blood that freezes almost instantly in the bitter draft. You hiss through your teeth and jerk your hand back, nursing the stinging wound as you realize the mechanism has jammed tight.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Nursing the torn, stinging thumb"
+   ]
+  },
+  "ul-2-187": {
+   "title": "Securing the Illustrated Manual",
+   "text": "The frozen tumblers yield with a sharp, satisfying snap, swinging the heavy inspection hatch wide to reveal your prize nestled in the velvet-lined recess. You lift out a heavy, leather-bound manual detailing every forgotten lock, latch, and security seal ever devised by the early Cataloguers. Your fingers ache from the relentless chill, but tucking this volume into your coat gives you a quiet, enduring advantage against the closed doors ahead.",
+   "check": "",
+   "grant": "Illustrated manual of locks",
+   "exits": [
+    "Advance toward the iron grille"
+   ]
+  },
+  "ul-2-188": {
+   "title": "The Drifting Archipelago",
+   "text": "The narrow corridor abruptly terminates at a sheer precipice where the solid stone floor simply ends above an immense, lightless cavern. Thousands of mahogany bookshelves hang suspended in the damp air like a floating archipelago, drifting lazily upon slow currents of pale white mist. Faint scratching sounds drift up from the shadowy gaps between the floating rows, where chained volumes twitch and whisper in the dark. A thick rope bridge sways gently in the draft, offering the only immediate pathway across the dizzying expanse.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Cross the swaying bridge of spines"
+   ]
+  },
+  "ul-2-189": {
+   "title": "The Floating Archive Hub",
+   "text": "A vast, silent cavern opens before you, filled with countless islands of dark mahogany bookcases suspended over a bottomless abyss of pale white mist. Distant chains groan rhythmically as the shelves shift their positions in the gloom, rearranging the geography of knowledge while you watch. Every direction presents a different peril and a potential route deeper into the shifting maze toward the distant vault.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leap across the swirling mist sea",
+    "Slide down the suspended iron conduit",
+    "Calculate the drifting stack vectors",
+    "Vault lightly across swaying shelf-tops",
+    "Approach the great bronze threshold",
+    "Bridge the widest gap with anchor chains"
+   ]
+  },
+  "ul-2-190": {
+   "title": "Reaching for the Anchor Chains",
+   "text": "Heavy iron links hang down from the nearest drifting bookcase, swinging in a slow, hypnotic arc above the pale abyss. You wait until the heavy links draw close enough, then lunge forward to catch a cold, greasy link in both gloved hands. The chain jerks violently under your weight before steadying, allowing you to haul the massive mahogany frame closer to your crumbling ledge.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul the drifting shelf closer"
+   ]
+  },
+  "ul-2-191": {
+   "title": "Bridging the Widest Gap",
+   "text": "By snubbing the heavy iron chain around a rusted floor stanchion, you lock the floating bookcase into a stable position against your ledge. A narrow gap remains, spanned only by the polished oak spine of an oversized folio that bridges the chasm like a perilous beam. You test the sturdy leather binding with the toe of your boot, ensuring it can bear your full weight before stepping out over the open drop.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Cross over the folio bridge"
+   ]
+  },
+  "ul-2-192": {
+   "title": "Navigating the Swaying Chasm",
+   "text": "You step out onto the suspended oak spine, arms held wide to balance against the unpredictable drafts rising from the deep mist below. Halfway across, the entire shelf assembly shifts abruptly to the left, tilting the makeshift bridge at a sickening angle over the dark void. You must time your footing and lean against the sway with absolute precision to keep from tumbling into the grey nothingness.",
+   "check": "Balance across the shifting spine bridge",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-193": {
+   "title": "Falling into the Pale Mist",
+   "text": "The bookcase gives a sudden, violent heave beneath your boots, slipping out from under your feet and sending you crashing hard against the sharp edge of a lower shelf. The impact knocks the wind from your lungs and leaves a deep, purple bruise across your ribs, while your favorite lantern shatters against the masonry below. You haul yourself up coughing into the dim gloom, alive but thoroughly battered by the treacherous stacks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back onto solid shelves"
+   ]
+  },
+  "ul-2-194": {
+   "title": "Securing the Brass Telescope",
+   "text": "You catch the edge of the opposing shelf with your fingertips, scrambling over the polished mahogany molding just as the gap widens beyond reach. Resting against a discarded reading desk is a compact telescope fashioned from polished brass and ribbed horn, left behind by some vanished scholar. You pocket the fine instrument, knowing it will help you spot distant landmarks across the drifting maze ahead.",
+   "check": "",
+   "grant": "Telescope of brass and horn",
+   "exits": [
+    "Return to the floating archive hub"
+   ]
+  }
+ },
+ "missing": []
+}

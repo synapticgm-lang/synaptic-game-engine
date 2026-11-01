@@ -1,0 +1,60 @@
+@@SECTION cf-2-052
+TITLE: The Grey Bazaar
+TEXT: Hollowed-out freight wagons form a crooked labyrinth of commerce amid the grey dunes, their iron ribs draped in oil-stained canvas and fluttering strips of parchment. Traders hawk lukewarm tallow and bitter well-water from repurposed tender tanks while soot-choked lanterns sway in the ash-laden wind. Music wheezes from a cracked accordion somewhere down the line, competing with the heavy rhythmic thrum of the Marrowbone idling on the parallel track. Every shadow in this sprawling marketplace hides a bargain or a blade, and the low roar of the approaching storm urges you toward whatever shelter or advantage you can snatch before the air turns solid with grit.
+EXIT 1: Scrutinize the peddler's stall
+EXIT 2: Trade oil for secret maps
+EXIT 3: Mend the vendor's hoist
+EXIT 4: Haul scrap for grease vouchers
+EXIT 5: Lift a transit permit
+EXIT 6: Fight the ash mound
+@@SECTION cf-2-053
+TITLE: False Compound
+TEXT: Greasy canvas awnings snap in the rising draft as you lean against a rusted coal hopper, fixing the merchant with a cold, level stare until his nervous chatter stutters to a halt. He is trying to pass off pulverized clinker as premium boiler compound, but your soot-darkened fingers know the weight and grit of the real stuff. Under your unyielding gaze, his shoulders slump and he reaches beneath his cart to haul out a genuine sack of dense, dry pit-coal that burns with a clean blue heat. You heave the sack over your shoulder, leaving him to count his teeth while the engine calls softly from the rails.
+EXIT 1: Secure the coal and move on
+@@SECTION cf-2-054
+TITLE: The Peddler's Stare
+TEXT: Heavy grey dust swirls around your boots as the peddler refuses to yield, his hand hovering near a rusted butcher's knife tucked inside his woollen waistcoat. You stand motionless against the rail-car, your breath shallow in the sulfurous air, matching his darting gaze with absolute stillness while the storm clock ticks louder in your mind. Every muscle in your neck coils tight as you lean forward an inch, daring him to test your resolve before the fragile peace between the wagons shatters entirely.
+CHECK: Hold your ground against the vendor
+@@SECTION cf-2-055
+TITLE: Bitter Dust
+TEXT: A sudden gust of wind flings a blinding handful of hot ash straight into your eyes, blinding you just long enough for the peddler to snatch his counterfeit sack and scramble under the chassis of a derelict sleeper car. You stumble backward against the Marrowbone's cold steel steps, rubbing your smarting eyes while a sharp piece of ironmongery bites deep into your palm, leaving a jagged red crescent that seeps dark blood. The delay costs precious minutes against the storm clock, and your left hand throbs with a dull, persistent ache that will stay with you all the way to the range.
+EXIT 1: Climb back to the footplate
+@@SECTION cf-2-056
+TITLE: Hard-Won Coal
+TEXT: However narrowly you manage the standoff, the peddler breaks first, dropping his knife with a metallic clatter and shoving the sack of dry pit-coal across the rough plank table. You hoist the heavy canvas bundle aboard the footplate, feeling the dense, promising weight of fuel that will keep the Marrowbone's firebox roaring when the grade steepens. It is a small victory against the looming ash-storm, bought with stubborn silence and a steady pulse that refuses to falter under pressure.
+GRANT: Sack of dry pit-coal
+EXIT 1: Clear the jammed bogie
+@@SECTION cf-2-057
+TITLE: Parchment Lines
+TEXT: Bent over a grease-smeared crate in the lee of a boxcar, you trade a half-empty tin of valve oil for a rolled sheet of heavy rag paper covered in faded violet ink. The vendor's ink-stained fingers trace a web of secondary sidings and washed-out culverts that the Rail Barons scrubbed from official timetables years ago. This hand-drawn chart reveals a hidden passage beneath the lower embankment, offering a way around the worst of the dunes if the rails are still spiked true. You tuck the parchment securely inside your waistcoat pocket as the engine exhales a long, melancholy sigh of steam.
+EXIT 1: Study the secret map
+@@SECTION cf-2-058
+TITLE: The Cartographer's Bargain
+TEXT: Shadows lengthen across the rust-pitted tracks as the map-seller glances nervously toward the gangers' lookout posts, clutching your oil-can like a holy relic while you wait for the trade to settle. A sudden commotion rattles the corrugated iron roof above, and you must time your next move with absolute precision to slip away with the document before the patrol spots the illicit exchange. Your fingers brush the edge of the parchment while the vendor's gaze darts toward the sound of approaching boots.
+CHECK: Snatch the map before patrol arrives
+@@SECTION cf-2-059
+TITLE: Stolen Shadows
+TEXT: Heavy iron boots ring out against the ties just as your fingers close on the parchment, startling the vendor into yanking the map backward and tearing the corner cleanly off in your grip. A patrol of track-gangers emerges from the gloom, demanding your transit papers and confiscating your remaining supply of fresh cotton waste as a tax on unauthorized trading. You push past them with a muttered curse, clutching the mutilated document to your chest while the loss of your wiping rags leaves your hands black with stubborn grease.
+EXIT 1: Return to the engine hub
+@@SECTION cf-2-060
+TITLE: The Smuggler's Chart
+TEXT: However narrowly you time the transaction, you secure the fragile rag paper just as the gangers round the corner of the boxcar, leaving you free to melt back into the labyrinth of stalled carriages. The hand-drawn chart rests safely in your pocket, its intricate lines promising safe passage through the flooded cuttings where the Rail Barons fear to tread. You climb back onto the Marrowbone's deck with a quiet sense of triumph, knowing every shortcut marked in violet ink brings you one step closer to Cinderfall.
+GRANT: Hand-drawn parchment map
+EXIT 1: Return to the bazaar hub
+@@SECTION cf-2-061
+TITLE: Heavy Iron
+TEXT: Sweating grime in the shadow of a stalled coal tender, you grip the frozen bronze gears of a hand-cranked lifting crane and put your shoulder into the rusted handle until the mechanism screams in protest. The vendor watches with anxious eyes, muttering prayers to the Cinder Prophets as decades of hardened ash flake off the cogs in thick, grey scales. With a sudden, jarring pop, the winch frees up, sending the chain humming smoothly through its pulley block and earning the hearty approval of everyone crowded around the rusted winch.
+EXIT 1: Claim your heavy pinch-bar
+@@SECTION cf-2-062
+TITLE: The Grateful Hoist
+TEXT: Sparks fly from the crane's repaired spindle as you test the swinging arm with a swing of dead weight, watching the iron chain glide without a single catch or stutter. The old vendor grins through his soot-blackened beard, pressing a cold, three-foot length of forged steel into your palms as a token of genuine respect for proper mechanical craft. This heavy pinch-bar is scarred with hammer marks and notched from decades of plying stubborn track switches, but its curved claw will make light work of any warped rails blocking your escape.
+EXIT 1: Test the pinch-bar on the switches
+@@SECTION cf-2-063
+TITLE: The Frozen Winch
+TEXT: Thick layers of calcified grease bind the main gear cluster solid, threatening to shear the cast-iron teeth clean off the drum the moment you apply full muscle to the crank. You lean your entire weight into the iron lever, listening intently to the microscopic ping of stress singing through the metal while the heavy load dangles precariously above the ballast. A single fraction of an inch too much force will crack the housing and drop the crane into the dirt, halting all movement in this sector of the bazaar.
+CHECK: Force the rusted winch gear
+@@SECTION cf-2-064
+TITLE: Shattered Cogs
+TEXT: A sharp crack splits the air as the gear housing fractures down the center, sending a flurry of iron shrapnel spraying across the gravel and dropping the suspended load with a dull, hollow thud. You leap clear just in time, nursing a deep, stinging graze along your forearm where a flying shard sliced through your sleeve. The vendor groans at the ruined machinery, and you are forced to leave your spare packet of tallow behind as compensation, walking away with a throbbing arm and a bitter taste of rust on your tongue.
+EXIT 1: Collect your heavy steel pinch-bar
+@@END

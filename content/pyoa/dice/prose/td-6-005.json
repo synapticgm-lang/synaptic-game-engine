@@ -1,0 +1,56 @@
+{
+ "batch": "td-6-005",
+ "sections": {
+  "td-6-005": {
+   "title": "Saltspire Beneath the Surge",
+   "text": "Water does not ask for permission when it reclaims its throne; it simply rises, swallowing the wooden stilts of Saltspire with a long, wet groan of timber and iron. The wealthy Brineholders who traded in bottled rain and hoarded moisture find their high balconies suddenly level with a churning, grey-green sea that cares nothing for ledgers or sealed wells. From your vantage point on the shore, you watch the proud stilt-city shudder as the first great wall of brine hits its lower ladders, sending baskets of precious water tumbling into the foam. No bell rings for them, and no ferryman waits; the tide simply climbs higher, turning parlours into tide-pools and drowning the ledgers where the price of thirst was calculated. The water tastes of ancient slate and bitter vengeance, grey and heavy with silt, filling every doorway until Saltspire is nothing more than a cluster of drowning chimneys poking through the froth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the stilt-city go under"
+   ]
+  },
+  "td-6-006": {
+   "title": "The Drowning of the Spires",
+   "text": "Beneath the surface, the grand pavilions of the Brineholders dissolve into silent gardens of drifting silt and swaying kelp, where crabs scuttle across velvet carpets and furniture bobs against carved ceilings. Down in the drowned streets, the wealth of a hundred seasons drifts away on the current, turning into mere wreckage that any common wrecker might claim with a gaff-hook. You stand at the water's edge and feel the spray cool your face, tasting the salt that Orsolya Venn spent her life watching from her windy tower. There is no triumph in the flood, only a deep, settling quiet as the sea reclaims the world it lent for a little while, smoothing over the footprints of the greedy and the desperate alike. The great brass cogs beneath the earth have done their work, and the world is wet again, heavy with the smell of wet wool and rotting kelp.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Turn away from the grey expanse"
+   ]
+  },
+  "td-6-007": {
+   "title": "The Endless Wet Horizon",
+   "text": "Gullmouth remains perched upon its high white cliffs, safe and salt-cured above the vast, restored ocean that stretches away to the grey horizon without a single break. Down below, the harbour is full once more, its stranded hulls lifting on the swell and knocking their wooden ribs together like old friends gossiping after a long absence. Orsolya Venn is still gone, vanished into the damp silence of the coast, but her lighthouse lamp burns bright again each evening, sweeping a yellow beam across the dark water to guide the returning boats home. You sit on the edge of the stone slipway with a mug of chicory and a dry pair of boots, listening to the familiar slap of the waves against the pilings. The world has its water back, the tide clock ticks steadily in the dark, and out on the grey brine, the wrecks wait patiently for tomorrow's low tide to show what else the deep has swallowed.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  },
+  "td-6-008": {
+   "title": "Gullmouth Under the Green Wall",
+   "text": "The cliff-town of Gullmouth does not die quietly; it goes down beneath a towering wall of green-black water that smells of old weed and rusted anchors. The narrow stone alleys where net-menders gossiped only yesterday are choked with foam, and the whitewashed cottages are smashed like eggshells against the limestone cliffs by the fury of the returning flood. You scramble up the steep sheep-tracks toward the very top of the ridge, watching your home vanish beneath a churning froth that tears roofs from rafters and drags the tavern stools out to sea. Down on the slipway, the old boats that had rested so comfortably in the mud are suddenly snatched up, battered against the stone quays, and splintered into matchwood by the weight of the ocean. There is no time to save a single kettle or a single coil of rope as the tide rushes in to fill every corner of the town with bitter, freezing brine.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb higher above the roaring surf"
+   ]
+  },
+  "td-6-009": {
+   "title": "The Drowned Cliffs",
+   "text": "From the high ledge where you cling to a stunted thorn bush, the whole of Gullmouth is now a grey, churning lake dotted with floating barrels, stray thatch, and the bobbing wreckage of a hundred lives. The sea covers the marketplace, the pawn-widow's shop, and the fish-salting sheds, turning the bay into a vast, indifferent graveyard where nothing moves except the gulls wheeling frantically overhead. Down in the depths, the streets where you grew up are choked with weed and drowned furniture, visited only by curious cod and the silent shades of the Hollow Choir. You wipe the salt spray from your eyes and feel the cold wind whistling off the water, carrying the distant, hollow clang of the lighthouse bell as it dips beneath the rising flood. The world has chosen its path, and the town that bred you is nothing more than a memory swallowed by the brine.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk the lonely path away inland"
+   ]
+  },
+  "td-6-010": {
+   "title": "The Salt-Cured Wanderer",
+   "text": "Inland the hills rise high and dry, untouched by the great flood that has reclaimed the coast and turned the lowlands into a seamless, grey-green sea stretching to every horizon. You walk alone along the sheep-tracks with your empty canvas sack over your shoulder, your boots caked in dried salt that scratches every time you take a step. Behind you, the sea breathes deep and steady against the newly sunken cliffs, erasing the last traces of Gullmouth and leaving only the wheeling gulls and the empty sky behind. There are no more tides to watch and no more clocks to turn, for the water has finally come home and stayed there, locking the secrets of the deep away from the sun forever. You pull your woollen collar tight against the wind and keep walking toward the interior, a wrecker with no port left to call home, carrying nothing but the taste of old salt on your tongue.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  }
+ },
+ "missing": []
+}

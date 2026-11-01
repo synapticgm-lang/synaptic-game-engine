@@ -6,6 +6,7 @@
 import type { GameState } from './types.ts';
 import { aimsAtSelf } from './intentParser.ts';
 import { setPlayPhase } from './playPhase.ts';
+import { pyoaCondHolds, resolvePyoaPage, type PyoaCond, type PyoaPageVariant } from './pyoaCond.ts';
 const umbraBook = { startId: 'up-bell-tower', nodes: [] };
 
 export type PyoaSpineNodeId = string;
@@ -21,6 +22,8 @@ export interface PyoaSpineExit {
   action: string;
   /** Soft tags stamped onto spine.flags when taken. */
   setFlags?: Record<string, string | boolean>;
+  /** Only offer this exit when the condition holds against spine.flags. */
+  when?: PyoaCond;
 }
 
 export interface PyoaSpineNode {
@@ -33,6 +36,8 @@ export interface PyoaSpineNode {
   endingId?: string;
   /** Compiled book prose. Thornferry omits this and still calls the writer. */
   page?: string;
+  /** Flag-gated text variants layered onto `page`. */
+  variants?: PyoaPageVariant[];
   /** HERE label committed when the player arrives on this node; omitted = stay put. */
   place?: string;
 }
@@ -224,6 +229,7 @@ for (const n of (umbraBook as { nodes?: RawSpineNode[] }).nodes ?? []) {
       to: e.to,
       action,
       setFlags: e.setFlags,
+      when: e.when,
     });
   }
   UMBRA_SPINE.push({
@@ -232,11 +238,23 @@ for (const n of (umbraBook as { nodes?: RawSpineNode[] }).nodes ?? []) {
     majorFork: !!n.majorFork,
     endingId: n.endingId || undefined,
     page: typeof n.page === 'string' ? n.page : undefined,
+    variants: Array.isArray(n.variants) && n.variants.length ? n.variants : undefined,
     place: typeof n.place === 'string' && n.place.trim() ? n.place.trim() : undefined,
     exits,
   });
 }
 const UMBRA_BY_ID = new Map(UMBRA_SPINE.map((n) => [n.id, n]));
+
+/** Vitest-only synthetic nodes — never used in live play. */
+const TEST_BY_ID = new Map<string, PyoaSpineNode>();
+
+/** Install a tiny synthetic book for flag-gating tests; returns a disposer. */
+export function installPyoaTestSpineNodes(nodes: PyoaSpineNode[]): () => void {
+  for (const n of nodes) TEST_BY_ID.set(n.id, n);
+  return () => {
+    for (const n of nodes) TEST_BY_ID.delete(n.id);
+  };
+}
 
 export function spineBibleSupported(bibleId: string | undefined | null): boolean {
   return bibleId === 'thornferry-road' || bibleId === 'umbra-protocol';
@@ -248,7 +266,7 @@ export function isAuthoredPyoaBook(bibleId: string | undefined | null): boolean 
 
 export function getSpineNode(id: string | undefined | null): PyoaSpineNode | undefined {
   if (!id) return undefined;
-  return NODE_BY_ID.get(id) ?? UMBRA_BY_ID.get(id);
+  return TEST_BY_ID.get(id) ?? NODE_BY_ID.get(id) ?? UMBRA_BY_ID.get(id);
 }
 
 export function initThornferrySpine(): PyoaSpineState {
@@ -279,12 +297,14 @@ export function initPyoaSpine(bibleId: string | undefined | null): PyoaSpineStat
 
 export function authoredPageText(state: GameState): string | null {
   const node = currentSpineNode(state) ?? getSpineNode(state.pyoaSpine?.currentNodeId);
-  const page = node?.page?.trim();
+  if (!node) return null;
+  const page = resolvePyoaPage(node.page, node.variants, state.pyoaSpine?.flags ?? {});
   return page || null;
 }
 
 export function authoredStartPage(): string {
-  return UMBRA_BY_ID.get(UMBRA_START)?.page?.trim() || '';
+  const node = UMBRA_BY_ID.get(UMBRA_START);
+  return resolvePyoaPage(node?.page, node?.variants, {}) || '';
 }
 
 export function ensurePyoaSpine(state: GameState): GameState {
@@ -305,15 +325,23 @@ export function legalSpineExits(state: GameState): PyoaSpineExit[] {
   if (!node) return [];
   if (node.endingId) return [];
   const flags = state.pyoaSpine?.flags ?? {};
-  // Gate honest-with-Wren only if Wren is with the player
-  return node.exits.filter((e) => {
+  // Gate honest-with-Wren only if Wren is with the player; then `when` on authored exits.
+  const thornferryOk = (e: PyoaSpineExit): boolean => {
     if (e.to === 'tf-end-honest' && flags.wren === 'solo') return false;
     if (e.id === 'gate-mill' && flags.charterIntent === 'pell' && flags.wren === 'solo') {
       // Still allow mill return — redirects ending leaf via resolveEndingLeaf
       return true;
     }
     return true;
-  });
+  };
+  const gated = node.exits.filter((e) => thornferryOk(e) && pyoaCondHolds(e.when, flags));
+  if (gated.length) return gated;
+  // Safety net: never a dead end on a non-ending node when `when` gates everything out.
+  if (!node.exits.length) return [];
+  const ungated = node.exits.filter((e) => !e.when && thornferryOk(e));
+  if (ungated.length) return ungated;
+  const fallback = node.exits.filter(thornferryOk);
+  return fallback.length ? fallback : node.exits.slice();
 }
 
 /** Map gate choice + flags onto the honest ending leaf (Wren/solo variants share leaf ids). */
@@ -406,8 +434,10 @@ export function spineSelfEnding(state: GameState, playerInput: string): boolean 
   if (state.engineMode !== 'pyoa' || !state.pyoaSpine || state.pyoaSpine.endingId) return false;
   if (aimsAtSelf(playerInput)) return true;
   const exit = matchSpineExit(legalSpineExits(state), (playerInput ?? '').toLowerCase().trim());
-  const dest = exit ? getSpineNode(resolveEndingLeaf(exit.to, { ...state.pyoaSpine.flags, ...(exit.setFlags ?? {}) })) : undefined;
-  return !!exit && !!dest?.endingId && (aimsAtSelf(exit.label) || aimsAtSelf(dest.page ?? ''));
+  const nextFlags = { ...state.pyoaSpine.flags, ...(exit?.setFlags ?? {}) };
+  const dest = exit ? getSpineNode(resolveEndingLeaf(exit.to, nextFlags)) : undefined;
+  const destPage = dest ? resolvePyoaPage(dest.page, dest.variants, nextFlags) : '';
+  return !!exit && !!dest?.endingId && (aimsAtSelf(exit.label) || aimsAtSelf(destPage));
 }
 
 function fuzzyExitMatch(exits: PyoaSpineExit[], lower: string): PyoaSpineExit | undefined {

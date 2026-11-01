@@ -1,0 +1,68 @@
+@@SECTION cf-2-098
+TITLE: A Debt of Ash
+TEXT: Heavy timbers groan beneath your boots as you heave the charred crossbeam clear of the holy altar, freeing the trapped wanderer. The ragged monks murmur low canticles into their cowls, their faces blackened by soot and devotion. They press a heavy brass medallion into your palm, promising that wherever their fires burn along the line, your engine shall find sanctuary. // You climb back onto the footplate of the Marrowbone, feeling the weight of the new debt settle into your bones as the low sky presses down upon the Steppe.
+GRANT: debt of the wanderers
+EXIT 1: Climb back to the footplate
+@@END
+@@SECTION cf-2-099
+TITLE: Drinking from the Siding
+TEXT: Scalding steam hisses from the leaking regulator as you swing the heavy iron water-scoop down into the belly of a shallow tank-car abandoned on the rusted siding. The liquid that splashes into the tender is thick and grey, smelling of sulphur and old rust, but the ravenous appetite of the boiler demands it. You watch the pressure gauge tick upward through a film of grime as the thirsty iron drinks its fill, cooling the glowing heart of the Marrowbone just enough to keep the cylinders from seizing. There is no time to waste before the rising ash-storm finds you here.
+EXIT 1: Pull the heavy throttle forward
+@@END
+@@SECTION cf-2-100
+TITLE: Siding Nine
+TEXT: Rusted carriages lean at drunken angles across the choked tracks, their shattered windows stuffed with oily rags and greasy sacking to keep out the stinging wind. This sprawling dormitory shelters bands of displaced track maintenance gangers who squat over smoking braziers, watching you with weary, dust-rimmed eyes. The air smells of charred fat and cheap chicory. Every pathway between the sleeping cars offers a choice of desperate labor or quiet danger, and the low rumble of distant thunder warns that the storm clock is running down.
+EXIT 1: Pick a path through the sleeping cars
+EXIT 2: Approach the rusted water tank
+EXIT 3: Share an oil-rag with the gangers
+EXIT 4: Repack the leaking steam gland
+EXIT 5: Slip past the sleeping foreman
+EXIT 6: Watch the soot-gulls wheeling overhead
+@@END
+@@SECTION cf-2-101
+TITLE: The Jammed Point
+TEXT: Iron filings grate against your knuckles as you drop to your knees beside the spring-switch, finding the mechanism choked solid with hard-baked ash and grit. A cold chisel from your belt rings sharp against the frozen metal, sending sparks dancing into the gloom like dying fireflies. Every hammer blow echoes off the rusted ribs of stalled carriages nearby, punctuated by the mournful whistle of the wind through the dunes. You drive the chisel deeper into the stubborn joint until the mechanism shudders and finally yields to your hand.
+EXIT 1: Clear the track and proceed
+@@END
+@@SECTION cf-2-102
+TITLE: Clearing the Rails
+TEXT: Sweating through your woollen shirt despite the biting chill, you lever the heavy steel tongue back into alignment with a groaning heave. A small wooden box rattles loose from beneath the sleepers, spilling dry matches into your palm with a dry wooden clatter. You pocket the matches quickly, knowing the value of a reliable flame in a world where wet coal and damp timber are the death of engines. The iron road stretches ahead once more, a grey ribbon cutting through the endless dunes of ash.
+EXIT 1: Return to the waiting engine
+@@END
+@@SECTION cf-2-103
+TITLE: Testing the Point
+TEXT: Every muscle strains as you drive the cold chisel into the rusted hinge of the stubborn spring-switch, tapping the iron with measured force while the heavy freight carriage above groans on its rotting bogies. The rusted tongue resists, wedged tight by decades of accumulated ash and frozen grease. You must time your final blow precisely with the settling of the track bed, or the iron will snap under the hammer.
+CHECK: Strike the jammed spring-switch
+@@END
+@@SECTION cf-2-104
+TITLE: A Shattered Chisel
+TEXT: A sharp crack splits the air as the cold chisel snaps in two, sending a jagged piece of steel whistling past your ear to bury itself in the grey bank of an ash-dune. The spring-switch remains locked solid, and the sudden jolt sends a stinging pain shooting up your forearm while your knuckles scrape raw against the ballast. You stumble back, sucking at the torn skin as precious minutes slip away into the ash-choked wind. The Marrowbone waits, her boiler groaning under the strain of delay.
+EXIT 1: Gather your broken tools
+@@END
+@@SECTION cf-2-105
+TITLE: The Unlocked Way
+TEXT: With a final, satisfying ring of steel against iron, the stubborn switch gives way and slides smoothly into its groove. You wipe the sweat from your forehead with a soot-stained sleeve, retrieving a small, grease-stained box of matches that was wedged beneath the rail base. It is a meager prize, but every dry match is a victory against the damp cold of the Steppe. You pocket the box and turn back to the idling engine.
+GRANT: box of dry matches
+EXIT 1: Climb back to the footplate
+@@END
+@@SECTION cf-2-106
+TITLE: The Broken Pump
+TEXT: A rhythmic squeak echoes across the silent siding where the gangers' rusted water pump stands abandoned, its leather seals cracked and dry as old parchment. You strip off your heavy gloves and set to work with grease-gun and spanner, coaxing life back into the frozen plungers. After a tense struggle against stubborn brass fittings, dark brackish water begins to gurgle into the leather buckets you set beneath the spout. It is heavy with minerals, but the Marrowbone will drink it without complaint.
+EXIT 1: Carry the buckets to the tender
+@@END
+@@SECTION cf-2-107
+TITLE: Pumping the Sump
+TEXT: Your fingers freeze against the wet brass of the pump handle as you throw your weight into the stroke, trying to draw moisture from the dead sump below. The leather plunger slips with a dry wheeze, refusing to catch the prime, while the rusty intake pipe groans under the suction. You have to balance the pressure perfectly or the entire casting will crack in the bitter air.
+CHECK: Prime the frozen water pump
+@@END
+@@SECTION cf-2-108
+TITLE: A Split Seam
+TEXT: A dull thud echoes through the pump housing as the water-starved brass casing splits down the side, spraying a fine mist of foul-smelling grease and rusty water across your face. You leap back with a curse, wiping the greasy filth from your eyes as the last hope of an easy fill drains away into the ash. The lost time weighs heavier than any physical blow, and your shoulders ache with the cold.
+EXIT 1: Salvage what remains
+@@END
+@@SECTION cf-2-109
+TITLE: The Brackish Haul
+TEXT: The pump handle finally kicks back with a solid, reassuring thud, drawing up two heavy leather buckets of dark, mineral-stained water from the deep sump below. You hoist the dripping straps over your shoulders and carry them carefully across the uneven cinders to the waiting tender. The liquid is far from pure, but it will keep the water gauge safely above the danger line as you steam out across the grey expanse.
+GRANT: two buckets of brackish water
+EXIT 1: Return to the engine cab
+@@END

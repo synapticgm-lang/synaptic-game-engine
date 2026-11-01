@@ -1,0 +1,96 @@
+{
+ "batch": "td-3-042",
+ "sections": {
+  "td-3-042": {
+   "title": "The Stilt-City Scuffle",
+   "text": "A hooded figure slips between the salt-encrusted beams of the mezzanine, fingers clawing greedily at the brass cylinder strapped to a merchant's leather pack. You leap across the narrow gap of rotting timber, catching the thief's sleeve just as a rusted blade slices deep into your forearm with a hot, stinging hiss of salt-seared blood. You wrench the heavy brass tube free from their grip, tumbling hard onto the wooden slats while the mugger vanishes into the shadowed maze of ladders.\n\nClutching your bleeding arm, you uncap the battered metal casing on a wet barrel top, spreading out the stiff vellum sheets to reveal the inked layout of the Brineholder aqueducts and the hidden service flumes below.",
+   "check": "You intercept a thief trying to steal a merchant's aqueduct map, risking a knife wound to claim the map yourself.",
+   "grant": "",
+   "exits": [
+    "Slip into the lower maintenance tunnels"
+   ]
+  },
+  "td-3-043": {
+   "title": "Intercepting the Courier",
+   "text": "Steel flashes in the cramped corridor as you hurl your weight forward, aiming to pin the courier's knife-arm against the damp timber rail before he can find your ribs. He twists sideways with eel-like speed, driving his shoulder into your chest while his free hand slashes an erratic, blinding arc through the stagnant air. You catch his wrist mid-air, muscles straining against bone and leather as the dagger's point hovers inches from your throat, every ounce of your physical strength required to keep the blade from sinking home.",
+   "check": "Wrestle the blade from his grip",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-044": {
+   "title": "A Costly Struggle",
+   "text": "The courier proves too slick, wrenching his arm free and driving the pommel of his dagger hard into your collarbone with a sickening crack of bone and leather strain. You stumble backward against a sagging rain-barrel, gasping for breath as a hot line of blood spills down your shoulder, soaking your jacket in salt-stiffened fabric. The thief scrambles over the low wooden balustrade and drops toward the lower netting, leaving you clutching a torn scrap of the map and nursing a deep, throbbing ache in your chest.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the path toward the canopy"
+   ]
+  },
+  "td-3-045": {
+   "title": "Blood-Earned Cartography",
+   "text": "Salt stings the raw gash across your forearm where the thief's blade bit deep, but the heavy brass cylinder resting in your palm is reward enough for the pain. Inside the watertight casing lies an unrolled vellum sheet detailing every concealed drainage pipe and rusted pressure valve winding beneath the stilt-city's foundations. The merchant, too terrified of the Brineholder guards to raise an alarm, presses a small token of iron currency into your palm and scurries away into the fog.\n\nYou pocket the inked chart and the blood-stained token, knowing this hidden route bypasses the main gates entirely.",
+   "check": "",
+   "grant": "Aqueduct service map",
+   "exits": [
+    "Follow the charted route downward"
+   ]
+  },
+  "td-3-046": {
+   "title": "The Canvas Catch",
+   "text": "High above the yawning emptiness of the seabed, a massive expanse of tattered canvas flaps wildly against its iron moorings, threatening to tear free and deprive a wealthy water-baron's terrace of precious condensation. You climb out onto the swaying wooden crossbeams, the wind roaring up from the dry abyss like the breath of a buried leviathan. Securing the fluttering fabric requires absolute steady hands and a cool head, as the ropes groan and fray beneath your boots with every violent gust of salt air.\n\nBelow you, a cluster of privileged water-merchants watch from a dry balcony, their faces masked against the alkaline dust. Repairing this tear before the canvas gives way entirely will earn you the direct attention of the household master and a vital opening into their heavily guarded district.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Mend the torn canvas roof"
+   ]
+  },
+  "td-3-047": {
+   "title": "Weaving the Rain-Catcher",
+   "text": "Hanging suspended over empty space, you thread a thick needle of bone through the wet, heavy duck-cloth, pulling the hemp cord tight against the howling gale. Every stitch demands precise calculation as the frayed edges strain under the immense weight of trapped moisture, threatening to rip the entire quadrant free at once. Your fingers grow numb against the frozen metal of the eyelets, and a single clumsy knot will unravel the whole repair while the watching barons murmur impatiently from their dry ledge.",
+   "check": "Stitch the canvas under tension",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-048": {
+   "title": "A Shredded Mend",
+   "text": "A sudden, vicious gale rips through the scaffolding just as you pull the final knot taut, snapping the heavy hemp line and sending a shower of coarse canvas shards fluttering down into the dark. The water-baron's overseer shouts an angry oath from the balcony, docking your expected standing and leaving your hands raw, bleeding, and stiff from the abrasive salt-twine. You scramble back to the safety of the wooden platform with bruised knuckles and a torn sleeve, having lost precious time to the unforgiving winds.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the lower scaffolding"
+   ]
+  },
+  "td-3-049": {
+   "title": "The Baron's Ledger",
+   "text": "Your quick fingers tie off the last reinforced seam just as the squall crests, leaving the massive rain-catcher taut, secure, and funneling precious trickles of clean water into the central cistern. However narrowly you managed the repair, the overseer nods in grudging approval, tossing a heavy brass tally token onto the planks as a token of the household's gratitude. This token grants you temporary passage through the guarded brass gates that bar the route toward the upper tiers and the missing lighthouse keeper.",
+   "check": "",
+   "grant": "Water-baron's brass tally",
+   "exits": [
+    "Enter the Drip Markets"
+   ]
+  },
+  "td-3-050": {
+   "title": "The Chalk Trail",
+   "text": "Moving cautiously past the guarded gates of the middle tier, you spot a faint, powdery smear of pale blue chalk upon a timber pillar, shaped into the distinct, jagged glyph of an old Gullmouth tide-mark. It is Orsolya's hand, unmistakable in its hurried angles, pointing straight up toward the gilded balconies where the Brineholder elite hold court. Inquiry among the net-menders confirms that a stern escort of armed enforcers marched an old woman with a brass-rimmed spyglass through these very arches only hours ago.\n\nThe trail leads deeper into the labyrinth of suspended walkways, away from the open air and into the echoing stone corridors of the high administration towers. Every sentinel you pass wears the silver whale emblem of the water-lords, their eyes sharp for interlopers from the cliff-town. If Orsolya was brought this way, she is being held within the inner sanctum where the mechanisms of Saltspire are controlled.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the chalk marks upward"
+   ]
+  },
+  "td-3-051": {
+   "title": "The Swaying Bridges",
+   "text": "A dizzying web of thick hemp ropes and salt-bleached cedar planks links the middle tiers across a sheer drop where the seabed lies thousands of feet below. Sudden, freezing salt gales howl through the gap, setting the entire causeway shuddering like a hooked shark on a line. Distant lantern light flickers through the gray haze, illuminating narrow crossings that offer several desperate routes deeper into the stilt-city's core. Every path is fraught with hazard, and every span requires absolute nerve to cross before the rising squall tears the moorings free.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Sprint across the snapping bridge",
+    "Weave fallen planks into a path",
+    "Hold the tearing rope steady",
+    "Decipher Orsolya's faded chalk marks",
+    "Confront the Brineholder patrol"
+   ]
+  }
+ },
+ "missing": []
+}

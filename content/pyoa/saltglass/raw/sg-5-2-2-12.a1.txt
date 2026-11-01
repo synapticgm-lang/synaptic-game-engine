@@ -1,0 +1,56 @@
+Gemini said
+
+@@SECTION sg-5-2-2-13
+TITLE: The Silt Conduits
+TEXT: Pell drops through a rusted grate into the subterranean dark, his grease-stained coat brushing the damp brickwork of the old drainage conduit. You follow the glass-diver through the narrow brick-vaulted pipe, splashing silently through inches of brackish condensation that taste faintly of old copper and lime. Ahead, muffled boot-thuds echo through the iron grating—the Salt Court patrol guarding the upper iron portcullis, completely unaware of your passage beneath their boots. // The air grows cooler as the conduit slopes steeply downward into shadow, offering three distinct openings where side-tunnels branch away from the main drainage line.
+EXIT 1: Scramble over tumbled masonry
+EXIT 2: Slip past the damp ventilation shaft
+EXIT 3: Turn back toward the upper halls
+@@END
+@@SECTION sg-5-2-2-14
+TITLE: The Refracting Dome
+TEXT: Pale twilight spills through the overhead facets of a massive glass dome, casting shifting geometric lattices across the flagstones. Beneath this luminous canopy, a lone sentry polishes a heavy brass spyglass with a greasy rag, humming a melancholy local tune about the drowned sea-towns that vanished before the basin dried. Your boots remain perfectly still against the grit as you weigh the quiet space ahead, watching the slow rhythm of the guard's shoulders rise and fall with every note of his song.
+EXIT 1: Approach the circular mirror gallery
+EXIT 2: Press against the sun-carved timber lintel
+@@END
+@@SECTION sg-5-2-2-15
+TITLE: The Resin Storeroom
+TEXT: Crates of dried pine resin and spare lamp-wicks tower around you in the suffocating dimness of the supply alcove. Through a narrow gap between two stacked hampers, you watch the yellow glow of hooked lanterns sweep across the floorboards as a patrol searches the racks for intruders. Your fingers tighten instinctively around the cold ceramic seedkey in your satchel while the distant murmur of boots draws closer by the second.
+EXIT 1: Slip toward the heavy timber lintel
+EXIT 2: Take the reckless way through the gate
+@@END
+@@SECTION sg-5-2-3-0
+TITLE: The Ink-Stained Clerk
+TEXT: Green basalt paving stones echo sharply beneath your boots in a narrow corridor where an agitated Salt Court clerk drops his brass ink-horn with a dull clatter. Vane scrambles on hands and knees to gather his scattered parchment slips, muttering nervously about missing quotas and severe penalties. He looks up at you with wide, desperate eyes, blocking your forward path and threatening to raise a clamour unless you pay him off.
+EXIT 1: Present credentials at the lens archive
+@@END
+@@SECTION sg-5-2-3-1
+TITLE: The Resonance Pillar
+TEXT: Low vibrations hum through the soles of your boots, pulsing directly from a massive glass resonance pillar that dominates the narrow intersection. Kestel stands firmly beside the vibrating column, a Glasswright veteran whose weathered face is set like flint against trespassers. He rests the butt of a heavy iron pike squarely upon the flagstones, barring the iron door with unyielding authority.
+EXIT 1: Check in at the grand lens archive
+EXIT 2: Face the Salt Court sergeant on the stairs
+@@END
+@@SECTION sg-5-2-3-2
+TITLE: The Whispering Gallery
+TEXT: A thin, blinding line of concentrated sunlight sweeps across the round chamber, hissing fiercely as it melts the mortar between the ancient stone flags. You drop low against the cool floor, listening to the high-pitched whispers that bounce endlessly around the curved limestone walls like trapped insects. The scorching beam reverses its arc, slicing back across the room and threatening to char anything in its path.
+EXIT 1: Confront the sergeant on the bronze steps
+@@END
+@@SECTION sg-5-2-3-3
+TITLE: The Fading Constellations
+TEXT: Faint gold leaf traces ancient constellations across the high vaulted ceiling above a crowded junction of downward-sloping ramps. An old water-seller named Vesper clutches a bone-white cup, her rheumy eyes fixed on your canteen as she begs for a single drop from your dwindling store. Her frail body blocks the main descent, forcing you to choose between charity, speed, or finding another route downward into the darkness.
+EXIT 1: Pass through the main lens archive gate
+EXIT 2: Slip past the sergeant guarding the stair
+EXIT 3: Barter fresh oil by the quartz lens
+@@END
+@@SECTION sg-5-2-3-4
+TITLE: The Astrolabe Shadow
+TEXT: A massive copper astrolabe, tall as a wagon wheel, creaks gently on its rusted axis in the draughty corridor. You crouch low behind a pyramid of heavy lead weights, holding your breath as rhythmic, heavy footfalls approach from the darkened cross-passage. The shadows stretch long and jagged across the floor before the patrol comes into view.
+EXIT 1: Barter oil by the massive quartz lens
+EXIT 2: Present the seedkey to the Glasswright elder
+@@END
+@@SECTION sg-5-2-3-5
+TITLE: The Slot-Window Ambush
+TEXT: Dust motes dance in the harsh strip of light falling through a narrow slot-window that overlooks the dead, salt-caked basin far below. Gault lunges suddenly from the shadows, his fingers clawing desperately for your satchel in a bid to steal the cold ceramic seedkey. You twist hard to the side, narrowly avoiding his grasp as the glass walls ring with the sudden violence of the scuffle.
+EXIT 1: Enter the lens archive gateway
+EXIT 2: Trade oil near the quartz lens
+@@END

@@ -1,0 +1,50 @@
+{
+  "accepted": 25,
+  "samples": [
+    {
+      "section": "sg-p1",
+      "field": "page",
+      "kind": "prose",
+      "reason": "British spelling",
+      "old": "center of the dried Basin",
+      "new": "centre of the dried Basin",
+      "now": "Dust hangs thick in the low-beamed hall of the Ember-Lamp Post, where the elders of Candlemere gather around a dead hearth. The valley harvests have shrivelled into grey ash, and the twenty-day countd"
+    },
+    {
+      "section": "sg-1-in",
+      "field": "exit:2",
+      "kind": "choice",
+      "reason": "British spelling",
+      "old": "Hail a weathered traveler for directions",
+      "new": "Hail a weathered traveller for directions",
+      "now": "Hail a weathered traveller for directions"
+    },
+    {
+      "section": "sg-1-c1",
+      "field": "page",
+      "kind": "prose",
+      "reason": "British spelling",
+      "old": "Every traveler who has crossed",
+      "new": "Every traveller who has crossed",
+      "now": "The heavy timber gates of Candlemere stand wide behind you, framing the vast, blinding expanse of the Saltglass Basin where your journey truly begins. Pell lingers by the stone post, his brass soundin"
+    },
+    {
+      "section": "sg-1-c1",
+      "field": "exit:0",
+      "kind": "choice",
+      "reason": "Remove trailing full stop for choice consistency",
+      "old": "Hire Pell the glass-diver as guide to lead the way across the white flats.",
+      "new": "Hire Pell the glass-diver as guide to lead the way across the white flats",
+      "now": "Hire Pell the glass-diver as guide to lead the way across the white flats"
+    },
+    {
+      "section": "sg-p2b",
+      "field": "page",
+      "kind": "prose",
+      "reason": "unclear stakes",
+      "old": "saving the valley from the coming flood.",
+      "new": "saving the valley from the coming drought.",
+      "now": "Silence settles over the low-beamed hall as your question hangs in the dry air. The eldest councillor exchanges a heavy glance with the others before admitting that no runner has returned from Prism i"
+    }
+  ]
+}

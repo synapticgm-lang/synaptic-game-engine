@@ -1,0 +1,51 @@
+@@SECTION cf-4-077
+TITLE: The Stone Sieve
+TEXT: Moisture beads along the limestone ribs overhead, dropping with a heavy, hollow rhythm into the oily puddles between the ties. You press your palms against the damp masonry of the drift, feeling the subterranean pulse where the cold rock meets the iron frame of the Cutting. A pale seam of quartz snakes through the grey shale, humming faintly with the draft of distant air-shafts. By leaning your ear against the partition, you can trace the hollow resonance of unseen chambers branching off into the dark. // Following this acoustic thread leads you past a forgotten inspection nook where the strata fracture cleanly into natural shelves. You reach out to test the integrity of the stone face, probing the deep clefts with a pocket-knife until the shale yields to your touch.
+EXIT 1: Trace the quartz seam deeper into the dark
+@@END
+@@SECTION cf-4-078
+TITLE: Veins of Slate
+TEXT: Silence settles over the tunnel floor save for the crunch of shattered slate beneath your boots. The lantern light catches a glimmer of mineral crust clinging to the roof-timbers, weeping reddish water that leaves bitter stains on the wood. You crouch low to examine the way the sedimentary layers shift against the iron plates, mapping the stress points where the mountain leans its weight upon the track. The vibration in the ballast tells you of a large pocket hollowed out just behind the partition. // Reaching into a narrow crevice, your fingers brush against loose gravel and metallic dust that coats the stone like flour. You begin to clear away the debris with steady strokes, uncovering the narrow mouth of a secondary gallery lined with sparkling mineral flakes.
+EXIT 1: Clear the gravel from the hidden alcove
+@@END
+@@SECTION cf-4-079
+TITLE: Reading the Fault
+TEXT: Sound carries differently through compressed slate than through soft earth, and you tilt your head to catch the returning whistle of air currents threading through the blind fractures. Every stone shelf behaves like a tuning fork, ringing with the pressure of the overburden above the line. You close your eyes to shut out the flicker of the oil lamp, letting the low thrum of the mountain guide your fingertips across the damp face of the rock. The subtle change in pitch reveals where the fault-line splits, opening a hidden vein of heavy ore behind the partition. // You wedge your iron pry-bar into the primary fissure, testing the resistance of the stubborn strata with a calculated twist of wrist and shoulder while the ceiling groans in response.
+CHECK: Read the fault lines in the dark
+@@END
+@@SECTION cf-4-080
+TITLE: The Slipping Shard
+TEXT: A sudden shift in the mountain sends a cascade of razor-sharp shale rattling down the rock face, biting deep into your knuckles and showering your shoulders with grey grit. You stumble backward off the ballast as a heavy slab of slate shears away from the wall, crashing onto the ties with a heavy, leaden thud that shakes the dust from the timbers. Your palm is raw and bleeding where the sharp stone caught you, and the spilled oil from your lantern leaves a dark, wasted stain among the rubble. You catch your breath in the acrid dark, binding the torn skin with a strip of greasy rag while the tunnel settles back into its sullen silence.
+EXIT 1: Gather your tools and limp onward
+@@END
+@@SECTION cf-4-081
+TITLE: The Glittering Seam
+TEXT: Your fingers trace the exact line where the vibration falters, finding the hidden toggle of stone that releases the stubborn wedge with a dull metallic click. The shelf gives way inward, spilling a small, heavy sack of sparkling pyrite into your waiting hands. The mineral dust coats your palms with a fine golden film that glimmers faintly in the yellow lantern light. As you heft the pouch, an old inscription carved into the lintel catches your eye, warning of the catastrophic deluge that follows when the Cinderfall sluices are wrenched open before the pressure drops. // You tuck the heavy little sack safely into your coat pocket alongside your rations, carrying the secret weight of the ruined reservoir's design with you into the deeper shadows.
+GRANT: heavy pouch of pyrite
+EXIT 1: Return to the whispering stone archways
+@@END
+@@SECTION cf-4-082
+TITLE: The Rotten Wall
+TEXT: Timbers shored up during the old administration have swollen with dampness, their wood turning to sodden sponge that smells of ancient rot and dry-rot fungus. You plant your boot against the base of a warped prop and lean your weight into the barrier until the iron nails shriek in their rusty beds. The partition groans, shedding flakes of grey fungus like ash before giving way with a hollow, splintering crash that echoes down the empty adit. // Beyond the wreckage lies a dry alcove untouched by the general seepage, containing a low bench and a leather-bound logbook resting upon a rusted bracket. You brush the mildew from the cover, revealing the faded gold lettering of the old Line Maintenance records.
+EXIT 1: Inspect the leather logbook on the bracket
+@@END
+@@SECTION cf-4-083
+TITLE: Breaking the Timber
+TEXT: The heavy oak stanchions blocking the secondary drift have swollen tight against the roof-arch, wedging themselves into the stone until they form a solid wall of stubborn grain. You wedge your shoulder firmly against the damp wood, feeling the cold moisture soak through your canvas coat while you brace your boots against the loose ballast. The timber frame resists with all the dead weight of the mountain pressing down upon the ceiling. You gather your breath, tensing every muscle in your back and legs to heave the rotted barrier off its iron seat in one sustained, groaning effort.
+CHECK: Shoulder through the rotted timber bulkhead
+@@END
+@@SECTION cf-4-084
+TITLE: The Splintered Trap
+TEXT: The rotted beam collapses too suddenly, catching your shoulder a glancing blow and spilling you hard onto the jagged granite ballast. A sharp splinter of oak tears through your sleeve, leaving a long, stinging scratch across your arm that begins to well with dark blood. Your lantern goes out in the scuffle, plunging the narrow drift into absolute ink-blackness while the dust settles in your throat like dry sand. You spend precious minutes fumbling in the dark for your flint and steel, nursing a bruised shoulder and a torn coat before the wick catches once more.
+EXIT 1: Pick up the lantern and crawl through
+@@END
+@@SECTION cf-4-085
+TITLE: The Water Ledger
+TEXT: The heavy timber gives way with a sharp crack, spilling you into the dry recess where the iron bracket holds its prize. You lift the leather-bound logbook free, its pages stiff with age and salt-encrusted from old leaks in the masonry. Inside are recorded the exact discharge rates of every sluice-gate along the line, detailing how the Rail Barons choked the lower basins to starve the city below. Tucked between the final pages lies a rusted iron skeleton key marked with the stamp of the Ashgate Water Authority. // You slip the ledger and the key into your satchel, knowing that these damp pages hold the evidence of how the great valves were locked against the people.
+EXIT 1: Take the logbook back to the vault
+@@END
+@@SECTION cf-4-086
+TITLE: The Iron Barricade
+TEXT: The tunnel widens abruptly into a broad switching basin where the tracks fan out toward the old maintenance sidings. Cutting straight across the parallel rails stands a massive barricade built from surplus iron sleepers stacked four high and bound together with heavy gauge telegraph wire. Unseen hands have wedged jagged chunks of slag between the iron bars, turning the junction into a formidable breastwork that blocks the entire width of the bore. A faint blue glow flickers behind the barrier from several improvised sulphur braziers, casting long, wavering shadows against the soot-blackened roof. // No sound comes from the dark side of the wall save for the steady hiss of escaping gas and the muffled scrape of a shovel on stone. You slow the Marrowbone to a gentle idle, letting the boiler breathe while you measure the height of the obstruction.
+EXIT 1: Approach the barricade camp in the dark
+@@END

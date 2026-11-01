@@ -1,0 +1,26 @@
+Gemini said
+
+@@PAGE up-r-det-recognised
+LABEL: Answer the stranger who knows your face
+STAKE: A quiet observer recognises your exposed features, threatening to alert the Guard unless their price is met.
+TEXT: A soot-stained gas-lighter catches your arm beside a smoking chimney, holding his dark lantern up to illuminate your features. "I heard the watch description," he murmurs, his voice barely carrying over the whistling wind. "A climber with a ragged coat and that exact bruised jaw. The turnkey painted a vivid picture." Instead of shouting for the patrol below, he extends a grimy, expectant palm. You drop two copper pence into his hand. He pockets the coin, nods toward a crumbling slate roof adjacent to the old pressing house, and points out a route the Guard has neglected to block.
+CONTINUE: Step toward the auctioning factions
+@@END
+@@PAGE up-r-det-one-hand
+LABEL: Name both houses as one hand
+STAKE: Revealing their secret alliance strips both syndicates of their leverage, transforming their smug bargaining into cold hostility.
+TEXT: You pause upon the threshold, holding up the brass-bound ledger for both faction envoys to see. "I read the counter-ledgers in the undervault," you state, your voice cutting through the heated bidding. "Valerius silk and Rigg iron are logged in the same ink, by the same hand. You are one cabal." The silence that follows is absolute, heavy and sudden as a slammed vault door. The painted envoy stops pouring his wine; the iron-clad clerk lowers his warrants. Before either can decide how to dispose of a thief who knows their foundational lie, you pivot and retreat.
+CONTINUE: Slip out into the darkening streets
+@@END
+@@PAGE up-r-det-service-tunnel
+LABEL: Slip through the opened vault tunnel
+STAKE: The claustrophobic passage beneath the streets hides you from the sky but risks trapping you in absolute darkness.
+TEXT: Because you already cracked the grandmaster's lock beneath the Exchange, the heavy grate leading into the old service tunnels remains ajar. You slip beneath the street level just as the sky turns a bruised purple. It is a cramped, damp crawl over rusted pipes, breathing stagnant air thick with coal dust and mildew. Midway through, a narrow collapse forces you to squeeze blindly past jagged brickwork that tears at your sleeves. You emerge gasping at a cellar grating near the harbour, entirely bypassing the roaming patrolmen who are now wandering confused under the suddenly blackened sun.
+CONTINUE: Climb toward her sniper nest
+@@END
+@@PAGE up-r-det-silk-carriage
+LABEL: Call in Valerius's carriage
+STAKE: Taking refuge in the velvet-lined cab shields you from the hunt but tightly binds you to his debt.
+TEXT: A polished black carriage waits idling in the mews, its lacquered crest wrapped in heavy canvas. Because you drank his wine and accepted his patronage, the driver tips his hat and pulls open the door. You climb inside, sinking into plush, silk-lined seats as the cab lurches forward into the unnatural twilight. The heavy blinds block the darkening sky and the shouting guards entirely. "Lord Valerius notes the debt," the driver calls over his shoulder through the brass speaking-tube. You are deposited silently near the docks, safe from the immediate chaos but owing a favour to a spider.
+CONTINUE: Approach the harbour colossus
+@@END

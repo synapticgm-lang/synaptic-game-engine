@@ -1,0 +1,48 @@
+Gemini said
+
+@@SECTION sg-5-0-2-4
+TITLE: The Singing Pillar
+TEXT: Under the arched ribs of the Great Colonnade, a blind Glasswright tunes a singing pillar whose clear note masks the rumble of distant tremors. You feel the heavy stone floor vibrate beneath your boots as the resonant pitch climbs higher, setting the salt encrustations on the capitals into a fine, shimmering powder. The air tastes of ozone and old dust, thick with the tension of the ancient observatory settling into its final age. // With the ground beginning to pulse more sharply beneath your feet, you weigh your options among the shadowed archways.
+EXIT 1: Step into the shadowed crypt
+EXIT 2: Inspect the abandoned clockwork ledger
+EXIT 3: Watch the distant dust storms
+@@END
+@@SECTION sg-5-0-2-7
+TITLE: The Solar Furnace
+TEXT: Within the shadow of a collapsed solar furnace, Pell cleans grit from his glass-diver goggles while warning you of traps in the floor. His copper-rimmed tool clicks softly against the stone as he gestures toward hairline fractures spreading across the tiled pavement ahead. The smell of scorched brass and dry earth hangs heavy in the ruin, punctuated by the steady drip of unseen condensation from the higher tiers. // You grip your banked coal-lantern tighter as you consider the safest way forward through the hazard.
+EXIT 1: Inspect the silent bronze gears
+EXIT 2: Slip into the narrow conduit
+EXIT 3: Enter the frescoed hall of rains
+@@END
+@@SECTION sg-5-0-2-8
+TITLE: The Falling Chains
+TEXT: Beneath a vaulted ceiling encrusted with salt crystals, you dodge heavy iron chains dropped by rival agents from the upper catwalks. The thick links strike the glass-paved floor with deafening smashes, sending sharp shards spraying into the dim air like freezing stars. Your ember-lamp casts long, frantic shadows against the fluted pillars as you duck behind a thick basalt buttress for shelter. // The metallic echoes fade slightly, leaving you with three distinct paths through the chaotic chamber.
+EXIT 1: Crawl through the dripping conduit
+EXIT 2: Cross the courtyard of the broken sundial
+EXIT 3: Turn back toward the fractured lens
+@@END
+@@SECTION sg-5-0-2-9
+TITLE: The Crypt of Founders
+TEXT: Inside the chilly crypt of the Lens-Founders, your ember-lamp flickers over stone effigies holding empty bronze bowls that once caught dew. The dead faces of the ancient opticians gaze blankly upward into the gloom, untouched by the growing heat of the approaching monsoon. A thin crust of white mineral coats their heavy robes, making the statues look like they are carved from solid salt rather than basalt. // You pause among the silent figures, weighing the passages that branch away from the cold vault.
+EXIT 1: Proceed toward the frescoed hall
+EXIT 2: Pry open the jammed service hatch
+@@END
+@@SECTION sg-5-0-2-10
+TITLE: The Broken Sluices
+TEXT: Near the broken sluice-gates of the Lower Basin, frantic diggers shovel white crust in a vain search for hidden emergency drainage pipes. Their shovels scrape harshly against the fused glass floor, kicking up choking clouds of dry alkaline dust that catch in your throat. Around them, the ancient ironwork groans under the immense pressure of the dry earth above, threatening to give way at any moment. // With the laborers too frantic to notice your passing, you look for a clear route away from the excavation.
+EXIT 1: Force open the jammed service hatch
+EXIT 2: Approach the smoldering threshold
+@@END
+@@SECTION sg-5-0-2-11
+TITLE: The Cedar Alcove
+TEXT: Within the fragrant cedar-lined alcove of the Archive, a nervous clerk tries to bribe you with dried fruit to hand over your seedkey. His fingers twitch continuously against the folds of his salt-stained tunic as he glances anxiously toward the vaulted ceiling, terrified of the rival factions roaming the halls. The sweet, shriveled figs smell strongly of sugar and dust, offering a tempting contrast to the bitter journey ahead. // You step back from the outstretched palm, keeping your hand firmly on the cold ceramic key in your pouch.
+EXIT 1: Walk down the empty Meridian Gallery
+EXIT 2: Approach the smoking inner threshold
+EXIT 3: Turn back toward the outer dome
+@@END
+@@SECTION sg-5-0-2-12
+TITLE: The Great Refractor
+TEXT: Across the open floor of the Great Refractor, converging flash-signals from hidden sentry nests force you to seek immediate stone cover. Brilliant beams of reflected sunlight sweep the polished glass tiles like searching fingers, turning the dust motes into burning sparks. You flatten yourself against a low marble plinth while the signals stutter in their frantic, complex code above your head. // With the blinding light washing over the open floor, you need to choose your next movement carefully.
+EXIT 1: Slip toward the heavy bronze valves
+EXIT 2: Dash for the smoking basalt threshold
+@@END

@@ -1,0 +1,28 @@
+@@SECTION vh-e-C2-1
+TITLE: The Song in the Metal
+TEXT: Bright sparks shower across the floor of the flooded foundry as the bronze Clapper yields to the white-hot belly of the furnace, singing a long, low note that vibrates straight through the damp soles of your boots. You stand shoulder to shoulder with the forge-masters, watching the heavy tongue of the Great Bell dissolve into a bubbling amber pool laced with the silver tin loaned by the Cable Court. When the ladles tip, the molten metal pours into the dry sand molds of the Terrace Millers, who lean over the frames and murmur old wind-calls into the rising steam. Each cooling blade drinks the sound until the iron-grey steel takes on a faint, permanent hum that answers the draft coming down from Vesperhold. // Biscuit shakes his heavy ears outside the sluice gate, smelling the turned loam of the lower valleys where the first new blades will soon test the earth.
+EXIT 1: Turn the page to see what follows this casting.
+@@END
+@@SECTION vh-e-C2-2
+TITLE: The Song in the Metal
+TEXT: Weeks after the fires die down in Lowgate, the mountain air carries a strange and steady music that has nothing to do with bells or storms. When the spring thaw finally softens the frozen ledges of the middle tiers, the new ploughshares bite into the dark mountain earth with a clean, eager scrape that wakes the sleeping worms. Green shoots push through the dark mountain earth in long, trembling rows that stretch from the fifth tier all the way down to the orchard borders, humming in unison with every turn of the furrow. The toll-lords of the Cable Court check their ledgers less often now, distracted by the rich weight of the harvest dues rolling up the ropeways in baskets lined with clean straw. Even the fog-wardens down in the orchards find their routes easier to trace by the sound of the singing soil than by whistle or rope.
+EXIT 1: Read the final words of this journey.
+@@END
+@@SECTION vh-e-C2-3
+TITLE: The Song in the Metal
+TEXT: Dusk settles over the thirteen hanging towns like a cool hand laid upon a fevered brow, silencing the noise of the winches and the chatter of the market squares. High above the cloud line, the jagged stone ribs of Vesperhold stand dark and empty against the fading orange of the western sky, stripped of the great voice they once trusted above all else. Yet down in the furrows where the barley pushes through the cold dirt, a faint, rhythmic vibration travels from root to root, steady as a heartbeat in the dark. Biscuit lowers his muzzle to the damp grass by the stone wall, his breath rising in a small, soft cloud that dissolves into the night air. The mountain holds its breath, waiting for no one, while the earth sings its quiet song to the stones.
+@@END
+@@SECTION vh-e-C3-1
+TITLE: Bronze and Silence
+TEXT: Heavy smoke billows from the low brick chimney of the foundry as the bronze Clapper surrenders its long-held shape to the greedy core of the hearth. You watch the ancient metal turn to liquid fire without the help of the Terrace Millers, leaving the debt of the Cable Court hanging heavy over your shoulders like a wet woolen cloak. The forge-masters pour the glowing alloy into simple, unblessed sand molds, working in silence while the cold drafts whistle through the cracked windows of the workshop. No old wind-calls are whispered into the stream, and no answering hum rises from the cooling steel as the rough plough-blades take their cold, grey form upon the stone floor. Biscuit paws uneasily at the packed earth near the door, sensing the lack of song in the heavy metal you have carried all the way down the mountain.
+EXIT 1: Proceed to the aftermath of this quiet casting.
+@@END
+@@SECTION vh-e-C3-2
+TITLE: Bronze and Silence
+TEXT: Months pass under a grey sky that offers neither rain nor snow, only a thin, persistent mist that clings to the eaves of Lowgate and the cold stone walls of the lower tiers. The new ploughshares are strong enough to break the stubborn mountain crust, but they cut through the dark earth without a whisper, leaving behind a silence that feels heavier than the load you hauled down the stairs. Up in the monastery-city, the monks stare out over empty cloud-banks, wondering how to measure the hours now that Orison is gone and the replacement iron makes no sound in the furrow. The Cable Court collects its coin with cold efficiency, offering no grace for the long miles walked or the blistered hands that tended the mule. Even the orchard bells seem duller in the damp air, ringing out across the terraces with a flat, hollow tone that fades before it reaches the middle steps.
+EXIT 1: Reach the end of the road.
+@@END
+@@SECTION vh-e-C3-3
+TITLE: Bronze and Silence
+TEXT: Night falls without fanfare over the thirteen stair-towns, wrapping the hanging balconies and the steep slate roofs in an impenetrable mantle of fog and frost. High above the world, Vesperhold rests in absolute quiet, its empty belfry open to the stars and the biting wind that sweeps down from the upper passes. Down in the silent furrows, the unblessed iron rests deep in the dark earth, cold and mute beneath a blanket of winter snow that grows thicker with every passing hour. Biscuit shifts his weight in the shadowed stable, blowing a warm, steady breath into the dark that lingers for a moment before vanishing into the frost. The mountain stands cold and tall against the night, keeping its own counsel while the world sleeps on beneath the heavy ice.
+@@END

@@ -1,0 +1,64 @@
+Gemini said
+
+@@SECTION sg-5-2-5-2
+TITLE: Threshold of Bronze
+TEXT: Within the echoing threshold chamber, you stand before the sealed bronze barrier as the first heavy drops of the monsoon strike the observatory dome. The metal feels damp beneath your fingertips, sweating with condensation from the subterranean air rushing up through the gaps in the stonework. Your banked coal-lantern sputters, casting frantic shadows against the oxidized green ribs of the vault door while distant thunder shakes the bedrock far above your head. // The cold ceramic seedkey rests heavily in your coat pocket, its surface completely immune to the rising warmth of the chamber. Outside, the great dried basin drinks the sudden downpour, but your single purpose lies locked behind this ancient barrier, waiting for the turn of your wrist and the breath of old promise.
+EXIT 1: Press the heavy bronze boundary
+@@END
+@@SECTION sg-5-2-5-3
+TITLE: Final Descent Landing
+TEXT: At the final landing of the descent, you press the seedkey home into the waiting socket, sealing your desperate quest against the rising tide. The ancient brass mechanism swallows the cold ceramic shaft with a heavy, satisfying click that reverberates deep into the foundation stones. Faint currents of clean, ozone-laden air rush past your shoulder, smelling of damp earth and unspent rain after months of blinding salt-glare and choking dust. // Your shoulder aches from the long miles across the basin, and the soot inside your glass lantern settles as the draft stabilizes around the turning lock. Nothing moves in the dim stairwell except the shifting reflections of your own exhausted face trapped in the polished obsidian panels surrounding the monumental gateway.
+EXIT 1: Turn the lock and press on
+@@END
+@@SECTION sg-d-5-2
+TITLE: Darkness in the Gallery
+TEXT: Attempting to smash through the Glasswright sentry gate with your heavy lantern, you shatter your only light-source and are trapped in the pitch-dark galleries as the basin floods. The brass casing splits with a sharp, metallic shriek, spilling glowing coals across the salt-encrusted floor before a sudden gust of underground wind snuffs the last red embers into absolute blackness. Frantic fingers trace cold, smooth stone and alien brass bezels in the void, finding only locked panels and dead ends while the muffled, rushing roar of the incoming water grows louder from the upper levels. // You stand still in the damp dark, listening to the creeping murmur of the tide filling the hollow glass streets above, knowing the dry rim of Candlemere is a lifetime away across a sea that has finally reclaimed its bed.
+@@END
+@@SECTION sg-5-out
+TITLE: Leaving the Observatory
+TEXT: Leaving Prism for the Rain Vault, you close this part of your long journey and look ahead to the dark chambers waiting beneath the ruined city. The heavy doors swing inward with a low, groaning scrape of ancient bronze upon stone, welcoming the draft of cool, damp air that pours upward from the deep seed halls. Every footstep echoes hollowly against the ribbed vaults as you leave the dry, sun-baked surface world behind you for good. // Below your boots, the hidden maze of the old reservoir stretches out in absolute silence, holding the forgotten wealth of a hundred dead towns in its stone bins. Your lantern beam cuts a narrow yellow lane through the clinging mist, guiding your hand toward the final doors that hold the survival of Candlemere.
+EXIT 1: Go on into the vaults
+@@END
+@@SECTION sg-6-in
+TITLE: Beneath the Glass City
+TEXT: Arrival in the Rain Vault beneath Prism brings the scent of ancient damp and the heavy weight of every old promise coming due as you enter the central hall with several ways forward. Towering pillars of fused quartz and dark basalt stretch upward into the gloom, supporting the massive weight of the observatory-city above while water begins to drip with a steady, rhythmic chime from the ceiling. Your lantern flame steadies in the still, chilled air, throwing long, wavering fingers of light across the dust-covered stone pathways that branch out into the subterranean darkness. // The choice of direction hangs heavy on your tongue, for each tunnel leads deeper into the labyrinth where the forgotten harvests of the Old Lensfolk sleep beneath their locks. You adjust the strap of your pack and grip the warm handle of your lantern, ready to pick your path through the sleeping heart of the basin.
+EXIT 1: Follow the lamp-lit road
+EXIT 2: Cut across the common ground
+EXIT 3: Ask the way of a stranger
+EXIT 4: Take the old drovers' track
+@@END
+@@SECTION sg-6-0-0-0
+TITLE: The Brass Lintel
+TEXT: You step through the brass lintel of the Rain Vault, where the air smells of ozone and ancient stone, and the Seedkey warms in your palm. The metal threshold is cold beneath your boots, etched with faded agricultural glyphs that trace the turning of forgotten planting seasons. Shadows stretch long and crooked across the paved floor as your lantern light catches the edges of abandoned stone storage bins stretching into the gloom on either side of the passage. // Far overhead, the muffled rumble of the storm echoes through the rock like the beating of a giant's heart, reminding you that the twenty days have run their course. You pause to catch your breath in the drafty corridor, weighing the narrow paths that branch out ahead into the silent heart of the vault.
+EXIT 1: Proceed down the central corridor
+EXIT 2: Take the narrow arched hallway
+EXIT 3: Follow the collapsed masonry trail
+@@END
+@@SECTION sg-6-0-0-1
+TITLE: Ribbed Slate Stairs
+TEXT: Downward stairs of ribbed slate descend into the dark, echoing with the rhythmic drip of condensation that mocks the thirsty towns above. Each step is worn smooth in the center by generations of salt-tax auditors and seed-keepers who walked this way before the great drought settled over the basin. Your boots find a steady purchase on the ridged stone, though the dampness clings to your wool coat like a cold hand. // A faint, whistling draft rises from the lower depths, carrying the metallic tang of old iron and wet earth through the stairwell. You hold your lantern out before you, watching the yellow glow wash over the slick walls and the dark, yawning mouths of side-passages leading away from the descent.
+EXIT 1: Descend the ringing iron steps
+EXIT 2: Follow the glass-burn passage
+EXIT 3: Take the cobalt mosaic route
+@@END
+@@SECTION sg-6-0-0-2
+TITLE: The Rusted Grating
+TEXT: A rusted grating blocks the secondary tunnel, rattling under the pressure of subterranean draughts that carry the sharp scent of damp earth. Orange flakes of oxidized iron drift down onto the stone floor as the heavy metal mesh groans against its stone frame with every pulse of the rising underground air. Your lantern illuminates the dark cavity beyond the barrier, where narrow service tunnels vanish into the limestone ribs of the vault. // The bolt holding the frame in place is crusted with thick salt crystals that glitter like dull diamonds in the dim light. With a careful twist of your fingers, you test the give of the rusted iron, listening to the hollow ping of water droplets falling into unseen cisterns far below.
+EXIT 1: Pry at the rusted grating
+EXIT 2: Check the cobalt mosaic route
+EXIT 3: Follow the copper tally trail
+@@END
+@@SECTION sg-6-0-0-3
+TITLE: Fractured Lens-Partition
+TEXT: You slide through a fractured lens-partition, emerging onto a narrow catwalk suspended above an abyss of jagged, silent quartz stalactites. The shattered glass edges of the partition gleam with a faint, trapped iridescence, catching the yellow rays of your lantern and scattering them into pale prisms against the far wall. Below the metal walkway, the chasm drops away into absolute blackness, broken only by the pale, dagger-like points of crystal rising from the floor of the void. // The metal grating flexes slightly under your weight, humming with a high, musical vibration that travels straight up through the soles of your boots. You keep your center of gravity low, gripping the rusted handrail as you trace the curving edge of the abyss toward the opposite ledge.
+EXIT 1: Follow the copper tally trail
+EXIT 2: Cross the narrow bronze pipe
+EXIT 3: Inspect the crooked mirror-frame
+@@END
+@@SECTION sg-6-0-1-0
+TITLE: The Abandoned Cart
+TEXT: Beside a pillar of fused glass, an abandoned cart of rotting wicker baskets holds only dust and the grey husks of forgotten gourds. The wooden spoking of the wheels has dried and warped away from the iron rims, leaving the vehicle canted at a sad, tired angle against the translucent green column. Fine layers of grey silt coat the bottom of the baskets, undisturbed since the last granary wardens locked these doors and walked out into the blinding glare of the dying sea. // Your lantern flame flickers as a sudden eddy of cool air swirls around the glass pillar, carrying the faint, dry scent of ancient chaff. You step around the splintered axle, keeping your eyes fixed on the branching corridors that cut deeper into the labyrinth of bins and storage vaults.
+EXIT 1: Follow the stone drainage trench
+EXIT 2: Squeeze through the acoustic service vent
+EXIT 3: Pick across the broken ceramic shards
+@@END

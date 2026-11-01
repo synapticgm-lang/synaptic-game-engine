@@ -1,0 +1,99 @@
+{
+ "batch": "td-5-117",
+ "sections": {
+  "td-5-117": {
+   "title": "Splintering the Dial",
+   "text": "Shadows writhe within the glass face of the central tide clock as cold fingers of mist lap at your boots. Lifting a jagged iron crowbar, you take aim directly at the ticking brass gears, threatening to shatter the heart of the mechanism into a thousand useless shards. The Hollow Choir shrieks in unison, a wall of drowning wails that threatens to burst your eardrums and crack the stone vault. Yet under the sheer weight of your menace, the spectral voices falter and fold back into the damp masonry. A pale, spectral compass drifts out from the trembling dial, glowing with a cold, ghost-blue light that pierces the perpetual gloom.",
+   "check": "You threaten to completely shatter the central tide clock, risking the Choir's violent frenzy, to force the spirits into yielding a glowing spectral compass.",
+   "grant": "",
+   "exits": [
+    "Take the pale compass"
+   ]
+  },
+  "td-5-118": {
+   "title": "The Lighthouse Keeper's Sin",
+   "text": "Confronting Orsolya amid the dripping masonry feels like striking flint against dry salt. Her eyes flash with a familiar, dangerous heat, the sort of stubborn temper that once kept the Gullmouth beacon lit through the worst winter gales. Instead of shrinking back, you press her on the sudden disappearance, demanding to know why she fled into the dark roots of the stairs. She turns away, jaw tight, before whispering the terrible truth of the ancient Tidewardens and their original watery sin - a debt paid in drowned lives that the ocean has finally come to collect.",
+   "check": "You bravely confront Orsolya about her sudden disappearance, risking her remarkably volatile temper, to learn the devastating truth concerning the ancient Tidewardens' original watery sin.",
+   "grant": "",
+   "exits": [
+    "Listen to the bitter confession"
+   ]
+  },
+  "td-5-119": {
+   "title": "Striking the Mercenaries' Hoard",
+   "text": "Cold steel hums against wet stone as you crowd the Brineholder mercenaries into a dripping corner of the corridor. They eye your stance with desperate calculation, weighing the dark drop behind them against the raw fury in your grip. Letting out a low, gravelly growl, you step closer, daring the blade to find your ribs. The bluff holds; their nerve breaks with a collective sigh of surrender. Heavy iron lockboxes filled with the heavy thud of stolen coin hit the wet flags at your feet, yours for the taking.",
+   "check": "You brutally intimidate the Brineholder mercenaries into slowly backing down, risking a fatal stab in the dark, to confiscate their heavy iron lockboxes of coin.",
+   "grant": "",
+   "exits": [
+    "Claim the heavy coin boxes"
+   ]
+  },
+  "td-5-120": {
+   "title": "Mending the Memory Coil",
+   "text": "Sparks spit from the exposed wiring of the automaton, stinging your knuckles with sharp, needle-like bursts of current. You keep your teeth gritted, steadying the delicate copper filament with a pair of salt-crusted pliers until the sputtering spark settles into a steady, rhythmic hum. The machine's glass optics flare to life, whirring as long-buried memory-coils align with a soft click. Out spills a flawlessly detailed map of the seabed's shifting salt-flats and hidden sinkholes, etched in fine blue light upon the damp flags.",
+   "check": "You diligently repair the automaton's damaged memory-coil, risking a painful electrical surge, to receive a flawlessly accurate map of the seabed's shifting salt-flats and sinkholes.",
+   "grant": "",
+   "exits": [
+    "Take the glowing seabed map"
+   ]
+  },
+  "td-5-121": {
+   "title": "The Final Reckoning",
+   "text": "Black sea-water batters the reinforced glass overhead with the force of a falling mountain, groaning and fracturing under the pressure of the waiting deep. Your fingers wrap around the icy brass spokes of the Meridian Gear, the great mechanism vibrating violently against your palms as the tide clock strikes twelve. This is the ultimate crucible where every broken wreck, every drowned prayer, and every hard bargain converges. The fate of the coast hangs on a single pull, and no one else is here to bear the weight.\n\nChoose how the waters fall, for the tide is breaking now.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gently return the waiting sea",
+    "Send the deluge to Saltspire",
+    "Flood the cliff-town Gullmouth",
+    "Lock the Gear forevermore",
+    "Sell the sea to the highest bidder",
+    "Surrender to the Hollow Choir",
+    "Leave the seabed dry and bare",
+    "Follow Orsolya's hidden path",
+    "Claim the tide for the wreckers",
+    "Crown the pilgrim leaders king",
+    "Spend your strength and let go",
+    "Rest beneath the quiet sand",
+    "Let the current take everything"
+   ]
+  },
+  "td-6-001": {
+   "title": "The First Drop Falls",
+   "text": "Trembling brass yields to your grip as the great axle turns inward, spinning with a sound like a cathedral bell tolling underwater. A soft, cool sigh breathes through the vaulted chamber, carrying the clean scent of open kelp and deep salt. Above the reinforced glass, the furious wall of black water pauses its violent assault. The jagged pressure fractures spider-web and fade into harmless mist as the ocean begins to lower its massive head, sighing back into its ancient bed with infinite, measured grace.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the water settle"
+   ]
+  },
+  "td-6-002": {
+   "title": "The Low Submerged",
+   "text": "Across the wide expanse of the Low, the wrecks and whale bones drink the returning flood in a long, bubbling gasp. Drowned streets and sun-bleached alleys fill slowly, the salt-crust dissolving into a rich, green-grey brine that remembers every ship that ever broke upon Gullmouth. There is no roar of destruction, only the steady, rising hiss of a million tiny ripples meeting at last. The tide-pool shrines fill one by one, their stone basins overflowing with clear, living foam under the grey light of noon.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the rising tide inland"
+   ]
+  },
+  "td-6-003": {
+   "title": "The First Long Swell",
+   "text": "A low, trembling vibration passes through the soles of your boots as the great brass cogs of the Meridian Gear finally shift into alignment, releasing a pent-up sigh of ancient steam that tastes of old salt and deep, forgotten mud. Far out across the grey, desolate expanse of the Low, a distant grey line darkens the horizon before a single, magnificent wall of green water surges forward to reclaim the naked seabed. It does not crash with violent fury, but rises with a steady, solemn grace, lifting stranded hulks and filling dry harbours as the tide comes home to Gullmouth once and for all.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the grey water rise against the cliff face"
+   ]
+  },
+  "td-6-004": {
+   "title": "The Tide Remembered",
+   "text": "You leave the Meridian Gear to its eternal clockwork, its brass cogs spinning smoothly in the quiet dark beneath the stairs. The sea has returned to where it belongs, washing over the secrets of the seabed and hiding the drowned things from the cruel light of day once more. License and ledger, coin and salt-shrine - they all fade into the rhythmic wash of the waves against the stone. There are no more choices to make, only the long, steady pull of the tide and the quiet music of the shore.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "The End"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,53 @@
+Gemini said
+
+@@SECTION td-1-152
+TITLE: The Water Smuggler's Debt
+TEXT: Heavy iron-banded timber bites into your sweating palms as you lug the dripping water crate up the slick stone steps from the cellar. Brine leaks from the staves, soaking your boots with the bitter smell of stagnant well-water hoarded against the drought. The tavern keeper grunts approval, sliding a cold pewter disk across the sticky counter—a token stamped with the gull-wing mark of the smuggling ring. // Pocketing the metal talisman, you step back out into the sharp coastal glare to seek the next lead.
+GRANT: talisman of safe passage
+EXIT 1: Take the metal token and leave
+@@END
+@@SECTION td-1-153
+TITLE: Across the Sinking Ridge
+TEXT: Narrow and treacherous, the spine of dried silt offers only inches of purchase between two bottomless pits of grey, bubbling ooze. You steady your breathing, planting each boot heel with calculated precision while the wind tries to peel your oilskins from your shoulders. Down in the reeking trench, the abandoned merchant satchel rests beside a shattered crate, its leather straps glinting invitingly in the pale sunlight. // Crouching low to preserve your balance, you reach out with cautious fingers to claim the prize before the crust gives way beneath your weight.
+EXIT 1: Secure the satchel and turn back
+@@END
+@@SECTION td-1-154
+TITLE: The Ambergris Brawl
+TEXT: Shouts and heavy thuds echo off the salt-stained walls of the fish market as two burly haulers grapple in the dust over a grey, waxy lump of whale grease. You step directly between them, planting a solid hand against each heaving chest with enough force to break their momentum and remind them whose turf they are fouling. The taller man spits blood into the dirt, recognizes your guild colors, and backs off with a disgruntled mutter. // Grabbing the heavy chunk of ambergris for safe disposal, you pocket the merchant's token of gratitude.
+EXIT 1: Leave the brawlers in the dust
+@@END
+@@SECTION td-1-155
+TITLE: Shadows in the Salt
+TEXT: Chanting hymns to a dry ocean, a ragged swarm of pilgrims surges past the alley mouth, their bare feet slapping hard against the cobbles in a feverish frenzy. You press your spine flat against the flaking whitewash of the net-mender's shop, holding your breath until the cloud of dust and incense clears. In the dirt near your boot heel lies a small bronze bell on a frayed cord, dropped by a zealous straggler who never looked back. // Stooping swiftly, you slip the cold metal into your pocket and melt away from the procession.
+EXIT 1: Slip away with the bronze bell
+@@END
+@@SECTION td-1-156
+TITLE: The Weighing Peg
+TEXT: Smooth boxwood turns slowly against the fine blade of your drawknife, shaving off paper-thin curls that smell faintly of resin and old sawdust. You test the tapered end in your palm until it fits the brass balance scale without a wobble, restoring an honest measure to the pawn-widow's trade. She nods in quiet satisfaction, reaching beneath the counter to hand you a stoppered glass vial filled with dark, viscous kelp extract. // Stowing the remedy securely in your tunic, you gather your remaining tools and head for the door.
+EXIT 1: Take the vial and depart
+@@END
+@@SECTION td-1-157
+TITLE: Grip of Iron
+TEXT: Sweat stings your eyes as your forearm locks against the guildmaster's champion across the scarred oak table, neither of you yielding an inch of leverage. Sinews strain and breath comes hard as the crowd falls silent, watching the white-knuckled struggle for dominance in the damp tavern air. With a final surge of effort, you slam your opponent's fist down onto the wood, winning a hearty roar from the onlookers. // Tossing the prize over your shoulder, the defeated brawler hands you a sturdy coil of climbing rope.
+EXIT 1: Collect the heavy climbing rope
+@@END
+@@SECTION td-1-158
+TITLE: Claiming the Hull
+TEXT: Weathered timber groans as three rival wreckers cluster around a stranded fishing boat, waving rusted iron bars and shouting claims on the remaining gear. You step into their path without breaking your stride, keeping your expression flat and your hand resting casually near your belt. Meeting your cold stare, the leader hesitates, spits into the salt-crusted sand, and signals his men to retreat rather than force a bloody fight. // Pulling the iron-toothed grappling hook free from the gunwale, you secure your new prize.
+EXIT 1: Claim the abandoned salvage hook
+@@END
+@@SECTION td-1-159
+TITLE: The Brineholder's Stare
+TEXT: Sleek wool and silver buttons mark the agent out from the salt-bitten locals, his smooth smile dripping with false promises of water rights and secure contracts. You plant your boots firmly on the paving stones, fixing him with an unblinking gaze that slowly wipes the confidence from his face. Unsettled by your silence, he drops his voice and hastily blurts out the changing times of the southern patrols just to buy your quiet. // Pocketing the whispered intelligence, you turn your back on the rattled agent.
+EXIT 1: Walk away with the secret
+@@END
+@@SECTION td-1-160
+TITLE: The Second Procession
+TEXT: Frenzied hymns rise into the salt-laden air as another knot of zealots surges through the narrow alley, their eyes wide with feverish visions of a returning tide. You freeze mid-stride, blending into the rough timber wall of the drying shed while the frantic procession sweeps past in a blur of gray rags and wild gestures. In the dust left in their wake, a small iron-tongued bell rests half-buried in the silt. // Bending down with slow care, you lift the relic before anyone else notices.
+EXIT 1: Pocket the bell and move on
+@@END
+@@SECTION td-2-001
+TITLE: Descent Onto the Low
+TEXT: Grey silt stretches away to the jagged horizon where the ocean used to be, a vast and silent desert of sun-bleached mud, exposed ship ribs, and drowned streets no living eye was ever meant to witness. Your boots sink deep into the crust with a wet sucking sound as you leave the safety of the cliff shadow behind and step out onto the open seabed. Somewhere out in that maze of rotting hulls and salt-crusted alleys, Orsolya Venn has left a trail in the muck. // Pulling your cloak tight against the bitter wind, you set your sights toward the first skeletal wreck.
+EXIT 1: Head toward the broken hull
+@@END

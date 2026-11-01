@@ -1,0 +1,74 @@
+Gemini said
+
+@@SECTION td-2-219
+TITLE: The Singing Dunes
+TEXT: Fine quartz crystals hum against your boots like a nest of trapped hornets as you cross the undulating ridge. By listening closely to the fluctuating whine of the dunes, you map out the denser compaction where the silt settles safely over buried bedrock. Every step requires a light touch, keeping your weight distributed to avoid sliding down the deceptive slopes that conceal bottomless pockets of shifting dust. Beyond the loudest crest lies a sheltered hollow where previous travelers abandoned a smoldering brazier and a scatter of dry rations. //
+EXIT 1: Navigate across the singing dunes
+@@END
+@@SECTION td-2-220
+TITLE: The Watchful Horizon
+TEXT: Crouched behind the bleached ribs of a stranded pinnace, you track the rhythmic sweeps of the rival crew patrolling the salt flats. They move in predictable pairs, their heavy iron pikes catching the harsh midday glare while their eyes scan the open flats rather than the broken hulls. Waiting for their backs to turn toward the distant tide pools, you dart from shadow to shadow across the white-crusted mud. Tucked beneath an overturned dingoy lies a brass-bound spyglass left behind in their haste, its lenses clear and undamaged. //
+EXIT 1: Slip past the rival crew
+@@END
+@@SECTION td-3-001
+TITLE: The Iron Stilts
+TEXT: Colossal iron stilts rise from the barren seabed like the legs of drowned goliaths, holding the towering metropolis of Saltspire high above the dry floor. At their base, a sprawling camp of timber shanties crowds the rusted structural joints, patrolled by Brineholder mercenaries in polished plate mail. Their blockade is absolute, barring the central lift platforms with heavy pikes and demanding an exorbitant toll in coin or rare rations from every desperate soul trying to ascend. Guards eye your salt-stained gear with suspicion, their hands resting near their heavy cudgels as you step into the shadow of the great legs. //
+EXIT 1: Approach the guarded stilt-base
+@@END
+@@SECTION td-3-002
+TITLE: The Piling Slums
+TEXT: Shacks built from driftwood and discarded canvas cling desperately to the rust-streaked iron pillars of Saltspire, forming a sprawling shanty town beneath the wealthy city. Cries of haggling vendors echo between the damp walls, and desperate scavengers eye every ladder and pulley with hungry calculation. Upward routes snake through the structural maze, promising either a quick way past the guards or a treacherous climb into the heights. A narrow rope ladder sways gently in the draft, while nearby a rusted maintenance hatch rattles under the weight of someone testing the locks. //
+EXIT 1: Force a jammed cargo lift
+EXIT 2: Trick a naive mercenary guard
+EXIT 3: Climb the smuggler rope pulley
+EXIT 4: Scale the barnacle encrusted pillar
+EXIT 5: Confront the territorial slum thug
+EXIT 6: Ascend into the parched districts
+@@END
+@@SECTION td-3-003
+TITLE: The Cargo Lift
+TEXT: Heavy grease cakes the sliding tracks of the freight hoist where it jams halfway up the lower support column. Below the suspended platform, a drop of twenty spans opens directly onto jagged iron scrap protruding from the seabed. A rusted access key hangs from a wire tether just out of normal reach, dangling temptingly above the mechanical teeth of the winch housing. You wedge your fingers into the frozen gears, straining against the rusted iron as the entire framework groans under the sudden tension. //
+EXIT 1: Reach for the access key
+@@END
+@@SECTION td-3-004
+TITLE: The Hoist Mechanism
+TEXT: Rust flakes off the iron housing into your eyes as you heave your shoulder against the stuck pulley wheel. The cable groans, slipping an inch before catching with a sharp metallic shriek that echoes off the surrounding shanties. Salt-caked grease fouls your grip, threatening to send you tumbling backward into the open drop below. With a final heave, you throw your weight onto the rusted lever to force the mechanism past its rusted bind. //
+EXIT 1: Test the frozen winch gears
+@@END
+@@SECTION td-3-005
+TITLE: Forcing the Mechanism
+TEXT: Muscles screaming under the sudden strain, you throw your entire weight against the frozen iron lever of the cargo lift, praying the rusted housing holds. The internal cogs grind together with a deafening screech of stressed metal, threatening to snap the main axle and send you plunging into the scrap-strewn depths below. You lock your heels against the slick decking and heave with every ounce of strength left in your frame. //
+CHECK: Heave against the jammed lift
+@@END
+@@SECTION td-3-006
+TITLE: The Broken Gear
+TEXT: The rusted axle snaps with a sound like a pistol shot, sending you sprawling backward onto the metal decking as a shower of iron teeth rains down into the abyss. Your shoulder impacts a jagged bolt, leaving a deep, throbbing bruise that flares with every breath you take. The lift remains firmly wedged, and the noise draws immediate shouts from the guard post above, forcing you to scramble away into the shadows of the shanty town before they can investigate. //
+EXIT 1: Retreat into the lower shanties
+@@END
+@@SECTION td-3-007
+TITLE: The Rusted Key
+TEXT: The stubborn iron mechanism finally yields with a wet metallic pop, dropping the heavy lift plate an inch into place. Reaching quickly into the greasy recess, your fingers close around a cold, oil-slicked key that fits the lower maintenance gates. However narrowly, you have secured the means to bypass the primary checkpoint without paying the exorbitant merchant toll. //
+GRANT: Rusted maintenance key
+EXIT 1: Return to the shanty hub
+@@END
+@@SECTION td-3-008
+TITLE: The Uniform Coat
+TEXT: A young Brineholder guard stands alone near the outer basket winch, whistling idly as he watches the distant horizon of the Low. His discarded uniform coat, bearing the brass buttons of an assistant hoist-tender, drapes over a nearby packing crate while he adjusts his boots. Approaching with a practiced swagger and a borrowed clipboard from a dead scavenger, you call out an urgent false order regarding an inspection of the lower cables. He hesitates, glancing nervously between his post and the gleaming brass buttons on the coat. //
+EXIT 1: Execute the deception
+@@END
+@@SECTION td-3-009
+TITLE: The False Inspection
+TEXT: You fix the young guard with a stern, authoritative glare, reeling off fabricated regulations about low-tide pressure checks to rattle his composure. He shifts his weight from foot to foot, his eyes darting toward the hanging basket and the spare uniform coat as he tries to weigh the risk of offending an apparent superior. You step closer into his personal space, holding out a hand for the garment while keeping your tone completely steady. //
+CHECK: Trick the young guard
+@@END
+@@SECTION td-3-010
+TITLE: The Guard's Suspicion
+TEXT: The young guard narrows his eyes at the salt stains on your hem, suddenly spotting the telltale insignia of a Gullmouth wrecker beneath your improvised swagger. He lets out a sharp whistle for backup, and though you slip away into the labyrinth of shanties before the patrol arrives, the clumsy ruse costs you precious time and leaves you with a sharp scrape across your forearm where a bulkhead corner caught you. //
+EXIT 1: Flee into the shanty shadows
+@@END
+@@SECTION td-3-011
+TITLE: The Guard's Coat
+TEXT: The young guard blushes, mutters an apology, and steps back, handing over the spare uniform coat before turning his attention back to his ledger. However narrowly, your sharp tongue has earned you the exact disguise needed to walk past the outer checkpoint without raising an alarm. //
+GRANT: Brineholder uniform coat
+EXIT 1: Return to the shanty hub
+@@END

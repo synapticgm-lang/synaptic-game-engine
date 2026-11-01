@@ -1,0 +1,62 @@
+@@SECTION vh-5-0-3-0
+TITLE: The Slick Lane
+TEXT: Thick grey clay pulls at your boots with every step you take through the muffled orchard lane. You lean your weight on a stout hazel pole, probing the mud before you commit to the crossing, while the heavy bronze clapper hums a steady, low-pitched vibration against your back. The mist hangs thick and cold, wrapping the dormant branches in dripping veils. // Beyond the next row of frosted apple trees, the ground rises toward a narrow track leading deeper into the fog. You must decide whether to press straight ahead through the slippery mud or veer toward the stone wall where footing might be firmer.
+EXIT 1: Follow the muddy track straight ahead
+@@END
+@@SECTION vh-5-0-3-1
+TITLE: The Mossy Wall
+TEXT: Cold moisture drips steadily from the mossy drystone terrace wall as you pull your wool collar high against the biting fog. The bronze clapper rests heavily against your shoulder blades, its rhythmic, faint hum vibrating through your coat with every breath you draw. Silence swallows the valley, broken only by the distant, heavy thud of water machinery somewhere down below. // Two distinct paths open before you through the dripping gloom. One route winds downward along the damp stones toward the lower terraces, while the other leads into a narrow alley between overgrown pear trees.
+EXIT 1: Take the lower path along the stones
+EXIT 2: Turn into the overgrown pear alley
+@@END
+@@SECTION vh-5-0-3-2
+TITLE: The Rolling Barrel
+TEXT: Frost-tipped boughs shake overhead as a stray barrel of winter apples, broken loose from an unattended timber cart, comes rolling swiftly through the wet grass. You leap sideways into the soggy brush just in time, watching the heavy wood crash into a rotting stump and splinter wide. The damp air fills with the sharp, sweet scent of crushed fruit mixed with cold mountain mud. // Ahead, the lane splits around a moss-grown outbuilding half-lost in the swirling grey mist. You can push past the wreckage toward the western gate or circle wide through the orchard rows.
+EXIT 1: Step around the wreckage toward the gate
+EXIT 2: Circle wide through the orchard rows
+@@END
+@@SECTION vh-5-0-3-3
+TITLE: Biscuit's Sure Footing
+TEXT: Biscuit snorts twice into the heavy grey mist, shaking frost from his grey ears before turning sharply down a hidden mule-track that bypasses the flooded ditch entirely. The faithful pack-mule knows every treacherous ledge and narrow ropeway stall by heart, picking his way through the slick clay with steady confidence. You follow close behind, grateful for his mountain-bred instinct as the heavy bronze clapper hums quietly against your spine. // The hidden track branches further down, offering choices toward the lower barrier, the old timber gate, or a narrow side-trail winding off into the fog.
+EXIT 1: Follow the mule toward the timber gate
+EXIT 2: Head down the foggy lane toward the barrier
+EXIT 3: Take the narrow side-trail into the mist
+@@END
+@@SECTION vh-5-0-3-4
+TITLE: The Oilskin Pouch
+TEXT: Sinking ankle-deep into a hollow choked with dead, soggy bracken, your boot catches on something firm hidden beneath the leaves. Reaching down, you retrieve a dropped oilskin pouch containing a warden's spare copper whistle and a dry bundle of friction matches. The metal feels freezing cold against your fingers, but the find could prove invaluable if the thick mountain fog closes in completely. // Standing back up with the heavy bronze resting against your back, you weigh your options as the mist shifts slightly. You can head toward the looming wicker gate or push deeper into the dormant plum orchard.
+EXIT 1: Head toward the looming wicker gate
+EXIT 2: Push deeper into the dormant plum orchard
+EXIT 3: Follow the marked trail toward the barrier
+@@END
+@@SECTION vh-5-0-3-5
+TITLE: The Worn Ladder
+TEXT: Weathered wood crumbles beneath your touch as you brush past an old fruit-ladder half-consumed by damp rot. You pause beside it to adjust the padded leather cradle straps biting into your shoulders, easing the immense weight of the bronze clapper before it can bruise your spine. The surrounding orchard remains deathly quiet, shrouded in a dense blanket of cloud that hides all distant landmarks. // Two narrow gaps in the dripping hedgerow invite you onward through the chill air. One path leads toward the plum orchard perimeter, while the other winds toward the tall wooden barrier.
+EXIT 1: Walk toward the plum orchard perimeter
+EXIT 2: Proceed toward the tall wooden barrier
+@@END
+@@SECTION vh-5-0-3-6
+TITLE: The Three-Tone Call
+TEXT: Low-hanging lichen brushes against your brow as you halt beneath a dripping canopy, straining your ears to catch the faint three-tone warden's call that signals a safe crossing at the middle brook. The bronze clapper hums a counterpoint against your back, its metal resonance almost matching the hidden stream's burble through the stones. A sharp gust of wind stirs the fog, revealing a pair of diverging paths ahead. // You can choose to push toward the looming wicker gate in the distance or slip quietly into the stand of plum trees.
+EXIT 1: Move toward the looming wicker gate
+EXIT 2: Slip quietly into the plum trees
+@@END
+@@SECTION vh-5-0-3-7
+TITLE: The Fresh Notch
+TEXT: Visibility shrinks to barely three paces within the silent orchard glade, hiding everything beyond the dripping trunks. Your hand brushes against a freshly notched guide-post driven deep into the bark, its clean white slash pointing decisively toward the lower stone stairs. The cold mountain air carries a faint trace of woodsmoke and damp earth from below. // Two routes present themselves from this quiet junction in the mist. One trail leads toward the great wicker orchard gate, and the other heads toward the tall wooden barrier.
+EXIT 1: Head toward the great wicker orchard gate
+EXIT 2: Follow the guide-post toward the barrier
+@@END
+@@SECTION vh-5-0-3-8
+TITLE: The Hidden Pond
+TEXT: White steam rises lazily from a stagnant irrigation pond shrouded in the dense valley fog. You freeze as a pair of wild ducks lift heavily from the reeds into the grey air, their powerful wings beating without a single sound before they vanish into the ceiling of cloud. The bronze clapper shifts slightly in its leather cradle, humming a deep note that ripples through your tired muscles. // The pond's edge offers two distinct directions to continue your descent. You can skirt the water toward the wicker gate or take the path leading to the wooden barrier.
+EXIT 1: Skirt the pond toward the wicker gate
+EXIT 2: Take the path toward the wooden barrier
+@@END
+@@SECTION vh-5-0-3-9
+TITLE: The Pear Tree
+TEXT: Heavy dew drips from the sprawling branches of a towering pear tree directly onto your wool cap. You wipe moisture from your brow with a cold sleeve, pausing to check that the stout lashings securing your heavy cargo remain iron-tight against your spine. The bronze clapper gives off a faint, reassuring pulse as you tighten the final knot. // The orchard mist parts slightly around the roots of the tree, revealing three distinct ways forward. You can move toward the wicker gate, slip into the plum trees, or push onward to the edge of the terrace.
+EXIT 1: Head toward the great wicker orchard gate
+EXIT 2: Make your way toward the plum trees
+EXIT 3: Push onward to the terrace edge
+@@END

@@ -1,0 +1,98 @@
+{
+ "batch": "sg-5-2-0-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-2-0-0": {
+   "title": "The Meridian Hall",
+   "text": "Brass vanes hum overhead like caged hornets as you slip between two polished columns, your shoulder brushing the cold flank of a meridian ring. Just feet away, a blind sentry turns in a slow, mechanical circle, its chest-mounted mirrors clicking like desert beetles while it listens for intruders. Beyond its patrol path, the heavy velvet coats of Salt Court bailiffs sweep across the flagstones, their low voices arguing over water tariffs and vault rights. Your lantern feels suddenly heavy in your trembling hand, its banked coals radiating a stifling heat against your ribs. You must decide whether to risk a dash across the open floor, slide into a narrow maintenance gap behind the clockwork, or crawl beneath the low stone benches where the dust lies thick.",
+   "exits": [
+    "Dash across the open mosaic floor",
+    "Slip into the narrow clockwork gap",
+    "Crawl beneath the low stone benches"
+   ]
+  },
+  "sg-5-2-0-1": {
+   "title": "The Slanted Heliostat",
+   "text": "Heavy shadows stretch long and bruised across the terrace as you crouch beneath the rusted iron rib of a tilted heliostat, desperately shielding your sputtering lamp from the rising draught. A few paces away, a knot of young Glasswright apprentices mutters low urgency, their hands flashing polished signal-shards to warn distant sentries across the glowing salt-flats. You know from the broken padlocks and trampled dust nearby that thieves have already breached this upper level, leaving a trail of discarded tools and shattered lenses pointing down into the dark core of the observatory. With the wind clawing at your cloak, you have to choose your next move carefully before the apprentices finish their transmissions and turn their sharp eyes your way.",
+   "exits": [
+    "Follow the looters down the broken stair",
+    "Dodge past the apprentices toward the eastern arch",
+    "Duck behind a stack of spare copper reflectors"
+   ]
+  },
+  "sg-5-2-1-0": {
+   "title": "The Purple Slag Vault",
+   "text": "Purple slag vaults curve overhead like the ribs of some ancient, fossilised beast, casting an eerie violet gloom over the stone floor where an old lens-cleaner named Mallow kneels with a greasy rag. Mistaking the warm glow of your hooded ember-lamp for a signal from the upper watch, he gestures frantically toward a crumbling staircase that leads away into the dry dark. You know from your maps that his directions point straight toward the abandoned storage wings rather than the true descent, yet remaining here risks drawing the attention of the roving patrols echoing through the corridors. You can accept his misguided help and head down the wrong wing, slip past him into the deeper shadows on the left, or step out to correct his mistake.",
+   "exits": [
+    "Follow the cleaner down the wrong wing",
+    "Slip past him into the deeper shadows",
+    "Step forward and correct the old man"
+   ]
+  },
+  "sg-5-2-1-1": {
+   "title": "The Cracked Prisms",
+   "text": "Shards of fractured crystal crunch softly under your boots as you enter a narrow gallery where the walls are lined with weeping prisms that catch the dying daylight and scatter it in blind, dazzling slivers. Blocking the far exit stands a burly Salt Court debt-collector, his hand resting casually on a heavy brass truncheon while his sharp eyes scan the gloom for runners carrying the seedkeys of Candlemere. He flashes an ugly, salt-cracked grin as he spots your lantern, demanding the ceramic key under immediate threat of a brutal flogging out on the scorching flats. You can try to slip back the way you came, dart across the prism-strewn floor while he lunges, or offer a heavy bribe of dried meat to buy your passage.",
+   "exits": [
+    "Retreat quickly back into the dim corridor",
+    "Dart across the prism floor past him",
+    "Offer a heavy bribe of dried meat"
+   ]
+  },
+  "sg-5-2-1-2": {
+   "title": "The Tick-Tock Gallery",
+   "text": "Solar clocks tick away the waning hours before the monsoon with a relentless, metallic rhythm that fills the high-ceilinged hall, echoing off walls covered in faded astronomical charts. A nervous sentry fumbles with a heavy magnifying plate near the window, dropping the thick glass with a sharp crack that showers the flagstones right beside your boots with lethal, glittering shards. The sudden noise reverberates down the stone passage, drawing immediate shouts from the guard-post around the corner and forcing you to act before the corridor floods with armed pursuers. You can leap over the sparkling debris toward the northern exit, duck into an empty alcove behind a brass astrolabe, or flatten yourself against the vibrating wall.",
+   "exits": [
+    "Leap over the sparkling glass debris",
+    "Duck into the empty astrolabe alcove",
+    "Flatten yourself against the vibrating wall"
+   ]
+  },
+  "sg-5-2-1-3": {
+   "title": "The Maintenance Chute",
+   "text": "Slipping away from the main terraces because you suspect the vault has already been plundered, you stumble upon an unrecorded maintenance chute tucked behind a rotting wooden screen. The steep metal slide smells of old grease and dry dust, descending sharply into the cool, silent bowels of the foundation levels far below the reach of the guards. It is an unexpected stroke of luck that bypasses the upper checkpoints entirely, giving you a quiet hour of uninterrupted progress toward the sealed heart of the Rain Vault. You can trust the dark slide and let gravity take you down, search the nearby wall for a safer ladder descent, or pause at the lip to listen for any sounds rising from below.",
+   "exits": [
+    "Slide down into the dark metal chute",
+    "Search the wall for a ladder descent",
+    "Pause at the lip to listen closely"
+   ]
+  },
+  "sg-5-2-1-4": {
+   "title": "The Heron Fountain",
+   "text": "Beneath the shadow of a bronze heron with a throat choked in alkaline crust, a wounded Glasswright courier slumps against the dry basin. His crimson sash is stiff with old salt, and as you drop to your knees beside him, his fingers twitch toward the bronze hilt at his hip. He catches your sleeve with a grip surprisingly fierce, his breath smelling of bitter alum and scorched tin. Watch the upper arcades, he rasps, his voice rattling like dry gravel before his head drops sideways into the dust. The Salt Court bailiffs have traded their brass badges for grey cloaks, and they are sweeping every terrace between here and the lower seal. You touch the cold ceramic weight of the Seedkey in your tunic, weighing the open marble plazas against the shadowed alleys of the inner ring.\n\nA sudden clatter of metal echoes from the colonnade behind you, forcing an immediate decision on your route through the city.",
+   "exits": [
+    "Slip into the dim lead-bound library",
+    "Leap toward the salt-choked skylight above",
+    "Plunge down the green alabaster stairwell",
+    "Follow Pell through the hidden drainage conduit"
+   ]
+  },
+  "sg-5-2-1-5": {
+   "title": "The Focusing Dish",
+   "text": "The afternoon sun beats down mercilessly against a massive copper focusing dish that tracks the sky with slow, whining gears, filling the air with the smell of scorched metal and heated air. You squeeze your frame tightly behind a stack of spare concave reflectors, holding your breath as heavy, measured boots pace back and forth across the stone terrace directly above your head. Every shift of your weight threatens to rattle the loose metal plates and betray your hiding place to the patrolling bailiffs. You can wait patiently for the patrol to complete its circuit, risk a quick crawl toward the nearby service hatch, or tap a soft rhythm on the copper dish to create a diversion.",
+   "exits": [
+    "Wait patiently for the patrol to pass",
+    "Risk a quick crawl to the service hatch",
+    "Tap a soft rhythm on the copper dish"
+   ]
+  },
+  "sg-5-2-2-0": {
+   "title": "The Whispering Rotunda",
+   "text": "Echoes bounce endlessly around the curved stone walls of the rotunda, magnifying every breath you take until it sounds like a rushing gale. An anxious young apprentice named Joram stumbles backward as you step into the light, dropping his heavy signalling mirror with a loud clatter that threatens to summon every Glasswright guard in the complex to your hidden alcove. His eyes widen in sheer panic as he scrambles on the floor among the glittering fragments, trying to silence the ringing echoes. You can lunge forward to help him gather the broken glass, dart past him toward the descending spiral stair, or press your back against the curved wall and stay perfectly still.",
+   "exits": [
+    "Lunge forward to help gather the glass",
+    "Dart past him toward the spiral stair",
+    "Press your back against the curved wall"
+   ]
+  },
+  "sg-5-2-2-1": {
+   "title": "The Copper Alcove",
+   "text": "The air in the damp alcove is thick with the verdigris smell of old copper and stagnant dampness, clinging to the back of your throat like fine salt. In the dim light, a Salt Court hireling named Morvath sits sharpening a wide bone-handled blade against a whetstone, humming a dry desert tune while he waits for you to stumble directly into his trap. His eyes glint with cruel amusement in the flickering amber glow of your lantern, knowing you have nowhere else to run on this sealed level. You can draw your own heavy travel knife and face him head-on, extinguish your lamp and try to slip past him in total darkness, or throw a handful of salt into his face and bolt.",
+   "exits": [
+    "Draw your travel knife to face him",
+    "Extinguish your lamp to slip past",
+    "Throw a handful of salt and bolt"
+   ]
+  }
+ },
+ "missing": []
+}

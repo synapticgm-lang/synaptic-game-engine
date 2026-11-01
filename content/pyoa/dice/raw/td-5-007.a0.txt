@@ -1,0 +1,70 @@
+Gemini said
+
+@@SECTION td-5-007
+TITLE: Cleared Mast And Iron
+TEXT: Splintering wood groans under your final, frantic heave, releasing its iron-toothed grip on the primary cogs with a sharp, echoing snap that vibrates through the soles of your boots. You stumble backward into the damp gloom, chest heaving and palms raw, clutching the prize you wrested from the wreck. Beneath the fallen timber lies a masterfully forged wrecker's hook, its curved steel edge gleaming with a faint, oily sheen in the salt-fog. It is an instrument born of Gullmouth's trade, heavy and perfectly balanced for tearing open stubborn hulls. You tuck it firmly against your belt, knowing well the heavy debt of exhaustion you paid to claim it.
+GRANT: A masterfully forged wrecker's hook
+EXIT 1: Return to the thrumming gear mechanism
+@@END
+@@SECTION td-5-008
+TITLE: Turning The Calcified Wheel
+TEXT: Thick crusts of grey salt and ancient scale flake away under the assault of your knuckles as you track the rusted line of the machinery toward the central pressure valve. Reaching the calcified alignment wheel, you set your boots against the slick iron plating and lock your fingers into the frozen spokes. The metal resists with stubborn malice, cold enough to bite through your thick leather gloves. Inch by straining inch, you lean your weight into the frozen circle, feeling the ancient grease within the housing give way with a wet, grinding hiss. The path forward opens at last, demanding your next move.
+EXIT 1: Approach the central pressure valve
+@@END
+@@SECTION td-5-009
+TITLE: Forcing The Frozen Spokes
+TEXT: Every muscle in your back and shoulders knots as you pit your full strength against the immovable iron wheel, your boots slipping slightly in the greasy silt coating the chamber floor. The calcified spokes groan beneath your palms, threatening to snap or tear the skin from your fingers as the rusted internal gears screech in protest against the sudden, violent torque. The pressure mounts against your chest, turning the air in your lungs to fire as you try to force the alignment wheel past its ancient, salt-locked dead center.
+CHECK: Force the frozen alignment wheel
+@@END
+@@SECTION td-5-010
+TITLE: Broken Grip And Salt
+TEXT: The frozen wheel bites back with brutal suddenness, slipping from your strained grip and spinning backward with a bone-jarring metallic shriek that echoes off the wet stone walls. You stumble hard against the jagged iron housing, a sharp, white-hot pain shooting across your knuckles and tearing the skin from your palms. Warm blood mingles instantly with the greasy brine coating your hands, leaving a stinging reminder of your failure against the ancient machinery. You drag yourself upright, breathing heavily through the salt-choked air, and press onward despite the fresh injury throbbing in your hands.
+EXIT 1: Move past the stubborn valve
+@@END
+@@SECTION td-5-011
+TITLE: Turning The Iron Valve
+TEXT: Iron screams against iron as your renewed effort catches the internal teeth just right, bringing the calcified alignment wheel around in a full, satisfying rotation. A deep, subterranean shudder passes through the foundations of the stair, followed by the hissing release of pent-up steam and brine from the central pressure valve. Clutched in your palm or secured safely within your pack rests a tangible token of your struggle: a heavy bronze seal-ring bearing the crest of the ancient Tidewardens, cool to the touch and gleaming faintly through the grime. You pocket the relic, knowing the path back to the great mechanism lies open before you.
+GRANT: An ancient Tidewarden seal-ring
+EXIT 1: Return to the main mechanism
+@@END
+@@SECTION td-5-012
+TITLE: Clearing The Drive Shaft
+TEXT: Jagged shells splinter and fly into the dark water below as you hammer relentlessly at the massive colony of iron-shelled barnacles choking the primary drive shaft. Each blow sends a sharp vibration up your forearms, threatening to slice through your sleeves and skin if your aim falters for even a heartbeat. Yet you persist, clearing away the centuries-old crustacean growth until the gleaming steel beneath is exposed to the damp air. Among the shattered debris, a cluster of razor-sharp shell-blades remains intact, gleaming with a deadly, iridescent edge. You gather them carefully before moving onward.
+EXIT 1: Advance toward the exposed shaft
+@@END
+@@SECTION td-5-013
+TITLE: Smashing The Shell Crust
+TEXT: Your muscles coil and snap forward as you bring your heavy tool down once more upon the dense crust of iron-shelled barnacles encrusting the drive shaft. The impact sends a violent shockwave through your wrists, and the razor-sharp edges of the living barrier fracture outward in a dangerous spray of jagged fragments. You tighten your grip on the handle, bracing yourself against the slick machinery as you prepare to smash through the final layer of calcified armour blocking the turning mechanism.
+CHECK: Smash the iron-shelled barnacle colony
+@@END
+@@SECTION td-5-014
+TITLE: Lacerated Hands And Rusted Iron
+TEXT: A sudden slip sends your bare hand sliding directly across the razor-sharp edge of a shattered barnacle cluster, biting deep into your flesh with vicious speed. You pull back with a sharp intake of breath, clutching your bleeding palm as dark crimson droplets mix with the oily brine at your feet. The wound is raw and throbbing, a painful tax paid to the mechanical heart of the Low, but you bind it tightly with a strip of cloth and keep moving.
+EXIT 1: Press onward past the shaft
+@@END
+@@SECTION td-5-015
+TITLE: Harvesting The Shell Blades
+TEXT: Your perseverance pays off as the last stubborn crust of barnacles shatters completely, leaving the drive shaft turning smoothly in its oiled bed. Sorting through the wreckage of the colony, you unearth a cluster of razor-sharp shell-blades, perfectly preserved by the deep-sea minerals and notched like a wrecker's knife. You tuck the deadly curved fragments into your belt pouch, securing a versatile new tool born from the ruins of the deep. With the obstruction cleared, you turn your steps back toward the towering core of the mechanism.
+GRANT: A cluster of razor-sharp shell-blades
+EXIT 1: Return to the central mechanism
+@@END
+@@SECTION td-5-016
+TITLE: Moving The Leviathan Bone
+TEXT: Massive and yellowed with age, the petrified leviathan rib blocks access to the heavy iron counterweights that regulate the gear's descent. You set your shoulder against the porous, heavy bone, feeling the ancient weight of a creature that swam the open seas before Gullmouth was even a cluster of salt-bleached shacks. Pushing with steady, measured force, you feel the leviathan remain grind against the stone flooring with a low, mournful groan that sounds almost like a sigh. The counterweights shift an inch, revealing a glint of metal wedged deep within the fossilised marrow.
+EXIT 1: Reach for the hidden treasure
+@@END
+@@SECTION td-5-017
+TITLE: Unlodging The Ancient Rib
+TEXT: Sweat stings your eyes as you heave the massive arch of bone away from the moving parts, creating just enough clearance to slip your hand into the dark crevice behind it. The air smells intensely of old salt, dried ambergris, and the metallic tang of unceasing friction. Your fingers graze something small and cold nestled against the porous calcium, snagged firmly on a spike of ancient bone. You work it back and forth, coaxing the trapped object free from its centuries-long resting place before stepping back to inspect the prize.
+EXIT 1: Examine the recovered amulet
+@@END
+@@SECTION td-5-018
+TITLE: Wrestling The Fossilized Bone
+TEXT: Your boots slide across the grease-slick stone as you throw your entire body weight against the petrified leviathan rib, straining to shove the giant obstruction clear of the heavy iron counterweights. The fossilized bone refuses to budge easily, its immense mass seeming to anchor itself deeper into the floor as the machinery above vibrates with a menacing, irregular rhythm. You plant your heels harder into the silt, driving your muscles to their absolute limit as you attempt to wrench the heavy bone aside before the whole assembly shifts out of your control.
+CHECK: Wrench the leviathan rib aside
+@@END
+@@SECTION td-5-019
+TITLE: Crushed Counterweights And Bruised Ribs
+TEXT: The heavy counterweight drops with a sudden, thunderous crash, clipping your shoulder and slamming you sideways against the cold stone bulkhead. Pain flares hot and sharp across your ribs, leaving you gasping for breath in the heavy, salt-laden air while the massive bone settles back into its original, immovable position. You clutch your side, feeling the dull ache of a deep bruise forming beneath your jacket as you struggle back to your feet. Surviving the misstep is victory enough, though the cost is written clearly in your aching bones.
+EXIT 1: Proceed to the recovered amulet
+@@END

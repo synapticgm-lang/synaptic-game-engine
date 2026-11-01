@@ -1,0 +1,95 @@
+{
+ "batch": "cf-3-140",
+ "sections": {
+  "cf-3-140": {
+   "title": "Patching the Iron Lung",
+   "text": "White dust coats your eyelashes as you unroll the stiff band of asbestos tape beside the howling cylinder. Steam escapes in erratic, shrieking bursts from the hairline fracture, superheating the air into a shimmering haze that burns your throat with every shallow inhalation. You wrap the grey fabric tightly around the vibrating iron flank, securing the frayed ends with a wire toggle while the metal beneath your palms throbs like a trapped beast. The hissing diminishes to a sullen murmur, but the grey fibers already shed fine, choking particles that coat your tongue in bitterness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Bind the leaking seam securely"
+   ]
+  },
+  "cf-3-141": {
+   "title": "Silence in the Valve",
+   "text": "Fine threads of asbestos dance in the hot updraft as you press your palms against the vibrating brass housing, listening for the internal rhythm of the piston. A sudden shudder rattles the entire assembly, threatening to tear your makeshift binding away before the adhesive sets in the heat. Your fingers hover over the toggle, balancing the need for absolute tightness against the risk of cracking the casting altogether. You draw a careful breath through your teeth, steadying your wrists against the bucking iron frame as the pressure gauge ticks upward into the red.",
+   "check": "Wrench the stubborn locking bolt",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-142": {
+   "title": "The Price of Haste",
+   "text": "The wrench slips on the greasy housing with a sharp metallic clatter, sending a jolt of raw pain up your forearm as your elbow smacks hard against the running board. A fresh gust of superheated steam billows from the widening split, scalding your knuckles and leaving a angry, red welt across the back of your hand. You cough violently, tasting copper and bitter grey dust as your vision blurs momentarily from the toxic fumes. The Marrowbone shudders under your boots, demanding attention you can ill afford while the clock ticks inexorably toward the ash-storms.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wipe the ash from your eyes"
+   ]
+  },
+  "cf-3-143": {
+   "title": "A Tighter Seal",
+   "text": "Stubborn pressure fights your grip every inch of the way, but the wrench holds true as the final turn bites deep into the cast iron. The shrill whistle of escaping steam dies down to a steady, rhythmic breathing that smells faintly of scorched hemp and oil. You wipe the sweat from your forehead with a soot-stained sleeve, leaving a dark streak across your brow. That small victory buys you precious moments of engine health, though the lingering taste of asbestos will stay with you long after the journey ends.",
+   "check": "",
+   "grant": "Heat-proof binding wire",
+   "exits": [
+    "Crawl inside the auxiliary boiler"
+   ]
+  },
+  "cf-3-144": {
+   "title": "Suspended Over the Void",
+   "text": "Heavy iron girders loom out of the yellow smog as the great freight elevator shudders to a halt halfway between the viaduct tiers. Below the dangling platform, the grey expanse of the lower levels drops away into a bottomless throat of mist and rusted lattice-work. The Marrowbone rests precariously on the vibrating iron deck, its firebox rumbling a low, discontented bass note that sets the suspension springs whining. Overhead, the heavy overhead hoisting chains groan under the asymmetrical load, swinging the entire platform in a slow, sickening arc above the empty air. Rail Baron patrol lanterns flicker on the distant gantries, casting long, accusing shadows across the soot-stained cables.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step out onto the swaying platform"
+   ]
+  },
+  "cf-3-145": {
+   "title": "The Hoisting Abyss",
+   "text": "Rust flakes drift like dark snow into the grey nothingness surrounding the stranded platform, where four distinct paths offer uncertain escape from the dangling cage. A rusted access ladder snakes upward into the gloom toward the upper gantry, while a narrow service catwalk hugs the sheer rock face toward the mountain roots. Across the gap, a heavy maintenance cable sways invitingly in the updraft, and a sealed iron bulkhead bears the fresh weld marks of Baron enforcers. Every option demands a heavy toll in nerve and muscle while the structural groans beneath the engine grow louder by the heartbeat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb the rusted access ladder",
+    "Scramble across the swaying maintenance cable",
+    "Follow the narrow rock-face catwalk",
+    "Force the newly welded iron bulkhead"
+   ]
+  },
+  "cf-3-146": {
+   "title": "Wrestling the Drum",
+   "text": "Heavy iron teeth grind together as you throw your weight against the frozen spokes of the emergency brake drum, calling upon every reserve of strength left in your aching shoulders. The drum refuses to budge at first, rusted solid by decades of damp ash and neglect, while the lift platform gives a sudden, alarming tilt toward the precipice. You brace your boots against the riveted deck plating, lean your entire body into the iron wheel, and feel the stubborn mechanism give a fraction of an inch with a deafening screech of tormented metal.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Throw your weight into the spin"
+   ]
+  },
+  "cf-3-147": {
+   "title": "The Turning Point",
+   "text": "Rust scales rain down onto your shoulders as you strain against the frozen iron spokes, feeling the muscles in your back stretch to their absolute limit. The brake drum groans a high, protesting shriek, teetering right on the edge between holding fast and stripping its ancient gears entirely. Your palms slip slightly on the greasy metal rim, and you must decide whether to commit everything to a final, violent heave or risk losing the entire descent. The drop below waits in absolute silence, save for the ticking of the cooling firebox.",
+   "check": "Heave the rusted brake wheel",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-148": {
+   "title": "Strained Sinews",
+   "text": "A sharp, tearing pain lances through your shoulder as the wheel spins backward with brutal velocity, throwing you hard against the riveted guard rail. Your breath leaves your lungs in a ragged gasp, and a dull, throbbing ache settles deep into your shoulder joint, reminding you of the cost of forcing dead iron. The platform drops a sudden, stomach-churning foot before the emergency dogs finally catch, leaving you dangling and breathless in the dark smog.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself back to your feet"
+   ]
+  },
+  "cf-3-149": {
+   "title": "The Sprocket Yields",
+   "text": "Iron teeth engage with a satisfying, deep-throated thud as the heavy platform begins its controlled descent into the gloom. The screech of the brake drum settles into a steady, rhythmic mechanical purr that vibrates pleasantly through the soles of your boots. You flex your aching fingers, feeling the familiar burn of honest work in your muscles as the misty tiers of the viaduct slide past your window. That hard-won mechanical advantage leaves you bruised but functional, ready for whatever lies waiting in the iron corridors ahead.",
+   "check": "",
+   "grant": "Seasoned ganger's winch handle",
+   "exits": [
+    "Navigate the hot iron corridors"
+   ]
+  }
+ },
+ "missing": []
+}

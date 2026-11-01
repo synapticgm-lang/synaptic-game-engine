@@ -1,0 +1,96 @@
+{
+ "batch": "sg-3-0-5-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-0-5-3": {
+   "title": "Heart of the Market",
+   "text": "Vendors shout over displays of spun crystal and clouded quartz while the scent of roasted thistle seed hangs thick in the hazy air. Your fingers brush the cold ceramic weight of the Seedkey hidden beneath your tunic, reminding you of the failing harvests back at Candlemere. Two competing whispers cut through the din regarding the true state of the deep underground waterworks. You step closer to the stalls to weigh these claims before choosing your path.",
+   "exits": [
+    "Press on into the market crowd"
+   ]
+  },
+  "sg-3-c1": {
+   "title": "The Rumour Market",
+   "text": "Heated arguments erupt near a fountain of dry, salt-crusted stone where merchants trade conflicting tales of the great subterranean vault. One faction of ragged scavengers swears the ancient cisterns remain untouched and brimming with fresh mountain meltwater, waiting only for the proper key to turn. Conversely, a group of frantic caravan guards insists the Salt Court breached the lower valves months ago and drained every drop for their private wells. You must decide which version of the truth to anchor your faith upon before taking another step into the labyrinth.",
+   "exits": [
+    "Believe the vault is still full",
+    "Believe the vault was looted long ago"
+   ]
+  },
+  "sg-3-1-0-0": {
+   "title": "Shard Bazaar Corridor",
+   "text": "Cool blue shadows stretch across the packed salt floor as you weave through the humming corridors of the Shard Bazaar. A toothless merchant leans against a pillar of fused glass, murmuring that the Rain Vault is empty and dry, nothing more than a hollow shell of rusted pipes. The your hand tightens over the banked embers of your lantern, keeping its pale glow hidden from the curious eyes of passing toll-collectors. Every corner hides a new danger or a fresh diversion pulling you deeper into the city.",
+   "exits": [
+    "Thread through the narrow stalls",
+    "Climb the shattered crystal stairwell",
+    "Follow the low hum of the conduit"
+   ]
+  },
+  "sg-3-1-0-1": {
+   "title": "Leaning Green Arcade",
+   "text": "Sunlight filters through a leaning arcade of greenish glass, casting a sickly emerald hue over the cracked pavement beneath your boots. A desperate smuggler crouches near a pillar, insisting in a frantic whisper that the Rain Vault is already heavily guarded by the Salt Court's elite pikemen. Your breath catches in your throat as you realize how closely watched the main avenues have become. Without a companion to draw unwanted attention away, you notice small details that others usually miss entirely.",
+   "exits": [
+    "Slip into the hidden drainage pipe",
+    "Dart across the sunlit courtyard",
+    "Crawl beneath the fallen crystal arch"
+   ]
+  },
+  "sg-3-1-1-0": {
+   "title": "Collapsed Obsidian Balcony",
+   "text": "Rough obsidian crunches beneath your boots as you slip past a collapsed balcony where rival scavengers bicker furiously over twisted copper wire. Below your footing, a deep chasm hums with the eerie, resonant vibrations of the singing pits, threatening to betray your passage with every shifting pebble. You keep your weight low and your eyes fixed on the narrow ledge ahead, mindful of the vast drop just inches from your heel.",
+   "exits": [
+    "Pick your way past the bickering scavengers",
+    "Descend into the purple slag tunnel",
+    "Utilize the unsecured winch above the barrier"
+   ]
+  },
+  "sg-3-1-1-1": {
+   "title": "Teal Crystal Pillar",
+   "text": "A blind scavenger leans against a towering column of fused teal crystal, softly bartering for your spare flint with uncanny precision. The air around you smells of old dust and baked minerals, thick with the silence of a city long abandoned by its original makers. You offer a small piece of metal in exchange for safe passage through his territory before moving onward into the maze of shards.",
+   "exits": [
+    "Skirt the edge of the apprentice workshop",
+    "Balance along the twisted lead rib",
+    "Duck behind the dark basalt pillar"
+   ]
+  },
+  "sg-3-1-1-2": {
+   "title": "Mirror-Maker Workshop",
+   "text": "Jagged shards of antique glass scatter across the floor of a ruined mirror-maker's workshop, catching the scorching noon glare and throwing blinding reflections directly into your eyes. You shield your face with a calloused forearm, navigating the glittering hazard by instinct and the crunch of glass beneath your heavy soles. The heat radiating off the ruined frames is stifling, pressing down like a physical weight upon your shoulders.",
+   "exits": [
+    "Traverse the narrow quartz chasm ridge",
+    "Pass the clattering salt wind chimes",
+    "Seek shelter under the velvet carpet canopy",
+    "Avoid the groaning amber glass doorway"
+   ]
+  },
+  "sg-3-1-1-3": {
+   "title": "Fresh Salt Dust Print",
+   "text": "Unburdened by the chatter of a guide, your eyes scan the ground with total concentration and immediately spot a fresh bootprint pressed deep into the fine salt dust. It leads straight toward the mouth of a hidden drainage conduit that most travellers would walk right past without a second glance. You crouch low, testing the coolness of the subterranean air rising from the dark opening.",
+   "exits": [
+    "Enter the amber glass doorway",
+    "Navigate the whistling hollow pillars",
+    "Approach the sunlit Dune Sister well"
+   ]
+  },
+  "sg-3-1-1-4": {
+   "title": "Smoked Glass Window",
+   "text": "A toll-lord's scout peers down through a high window of smoked glass, his sharp eyes sweeping across the empty plaza below. You drop instantly behind the shelter of a crumbling arch, holding your breath as the heavy thud of distant boots echoes off the stone. The danger of discovery hangs heavily in the dry air, making every second feel stretched to its breaking point.",
+   "exits": [
+    "Follow the whistling hollow pillars",
+    "Scramble over the spectacle frame heap",
+    "Trade cloaks with the hooded scavenger",
+    "Slip through the old vinegar larder"
+   ]
+  },
+  "sg-3-1-1-5": {
+   "title": "Woven Copper Wire Bridge",
+   "text": "The air grows thick and heavy with the sharp scent of scorched resin as your boots step onto a suspension bridge made of tightly woven copper wire. It sways gently under your weight, humming a low, metallic note that vibrates straight up through the soles of your feet. Far below, the dry floor of the Basin glitters like crushed diamonds in the harsh glare of the afternoon sun.",
+   "exits": [
+    "Meet with the hooded map trader",
+    "Dodge the swinging iron crane chain",
+    "Hide inside the amethyst glass alcove"
+   ]
+  }
+ },
+ "missing": []
+}

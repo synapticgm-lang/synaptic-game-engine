@@ -1,0 +1,47 @@
+{
+ "batch": "v-w-02-portrait-map",
+ "variants": [
+  {
+   "node": "up-w-portrait-map",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "Sable leans close, her soot-stained fingers gripping your sleeve as she glares at the smirking artist. \"The almoner's silence was bought on credit,\" she mutters, warning that when the church eventually calls in that whispered debt, you will need every hidden escape route this canvas offers."
+  },
+  {
+   "node": "up-w-portrait-map",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "The painter's smirk falters as he notices the dried blood still flecking your boots from the almoner's fatal plummet. Beside you, Sable shifts uneasily, the brutal reality of the old man's shattered body on the cobbles making her question how far you will go to secure her brother's freedom."
+  },
+  {
+   "node": "up-w-portrait-map",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "Your disgraced tailor's debt coat catches on a splintered easel, tearing a threadbare seam. The artist recognises the distinctive cut of the ruined velvet, his eyes narrowing as he recalculates your worth and wonders aloud if you can truly afford his subterranean secrets."
+  },
+  {
+   "node": "up-w-portrait-map",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Judging by your coarse porter's livery, the artist clearly assumes you are merely an errand-runner for someone far wealthier. He speaks slowly, pointing a turpentine-stained finger at the canvas as if explaining the subterranean geometry to a simple labourer."
+  },
+  {
+   "node": "up-w-portrait-map",
+   "when": {
+    "cover": "usher"
+   },
+   "after": "Crimson fabric and tarnished gold braid make your opera usher's uniform stand out absurdly amidst the drab, paint-splattered studio. Sable nudges your elbow, clearly amused that you wore such a theatrical disguise to bargain for illicit maps."
+  },
+  {
+   "node": "up-w-exchange-roofs",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Because a witness escaped to describe your features, the chalked summons are accompanied by crude, hasty sketches of your actual visage. Sable traces the recognisable lines of your jaw etched into the soot, her expression tightening as she realises both houses are hunting a very specific profile."
+  }
+ ]
+}

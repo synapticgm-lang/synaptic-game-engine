@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-3-112
+TITLE: The Vault Combination
+TEXT: Your fingertips trace the fading, ash-grey digits pressed into the final intact margin before the parchment dissolves entirely into your damp palm. You cough against the black spores clinging to your tongue, memorizing the sequence of turns required for the heavy iron tumblers. Amidst the rot and the bitter taste of salt-acid, you secure the cipher that opens the Brineholder vaults. // It is a heavy copper tally-token stamped with the seal of the high water-tax office, heavy enough to crack a tooth and recognized by every gate-warden on the stilts.
+GRANT: heavy copper tally-token
+EXIT 1: Slip away before the guards return
+@@END

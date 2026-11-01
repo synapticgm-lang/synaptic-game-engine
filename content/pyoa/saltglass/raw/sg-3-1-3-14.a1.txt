@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION sg-3-1-4-3
+TITLE: The Howling Glass Towers
+TEXT: Gale-force winds scream through the narrow canyon formed by the towering, hollow monoliths of the Old Lensfolk, carrying razor-sharp salt spray that stings your cheeks. Each gust makes the glassy walls resonate with a deep, mournful hum that vibrates straight through your boots and into your teeth. You cling tightly to your ember-lamp, shielding its precious glow with your coat as you try to steady your footing on the slick, crystalline pavement. Two paths present themselves amidst the roaring gale: a spiralling ascent carved into the side of an adjacent tower, and a heavy, slightly ajar bronze portal at the base of the nearest structure.
+EXIT 1: Climb the spiralling glass stairs upward
+EXIT 2: Step through the ajar bronze door
+@@END

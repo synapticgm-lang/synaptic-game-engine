@@ -1,0 +1,68 @@
+@@SECTION cf-2-157
+TITLE: Crate on the Embankment
+TEXT: Heavy black dust coats the ballast where the supply wagon tipped into the ditch. You dig your boots into the shifting grey shale, heaving your shoulders against the splintered pine of a dropped coal crate. The wood groans under your palms as greasy soot smears across your forearms, and the steep embankment threatens to slide beneath your weight back toward the tracks. // Wrenching the lid free reveals a nest of dry, paraffin-dipped paper wrappers packed tight against the damp, ready to coax the cold fire-bed back into a roaring furnace.
+EXIT 1: Climb back down the ballast slope
+@@END
+@@SECTION cf-2-158
+TITLE: Hauling the Heavy Coal
+TEXT: Slipping fingers find no purchase on the slick, greasy timber of the crate as the loose ash embankment crumbles beneath your boots. You brace your legs against the steep grey slope, locking your spine and throwing your full weight upward to drag the heavy load clear of the ditch before the shifting ground gives way completely. You strain against the dead mass of the crate, muscles burning in the thin mountain air as the shale slides out from under your heels.
+CHECK: Lift the heavy coal crate
+@@END
+@@SECTION cf-2-159
+TITLE: Burden of the Slip
+TEXT: Gravity wins the struggle, and the crate rolls back down the embankment, dragging you through the abrasive grey grit and scraping your knuckles raw against the jagged ballast. You pull yourself up with a bruised shoulder and a dull ache in your ribs, coughing up a mouthful of bitter dust while the heavy timber settles deeper into the ash-dune. // The spilled fuel is lost to the slope, leaving you with only a torn coat and a bruised forearm to show for the effort.
+EXIT 1: Return empty-handed to the engine cab
+@@END
+@@SECTION cf-2-160
+TITLE: Securing the Waxed Paper
+TEXT: Muscle and grit carry the heavy crate over the crest of the embankment, however narrowly, as your boots find firm footing on the sleeper-ends just before the shale gives way. Inside the splintered casing lies a tight bundle of dry, waxed paper wrappers, perfectly preserved from the damp and smelling faintly of paraffin and old storage oil. // You tuck the bundle securely beneath your leather jacket, knowing it will coax the stubborn fire-bed into a roaring heat when the night closes in.
+GRANT: Bundle of waxed paper
+EXIT 1: Proceed toward the stone viaduct
+@@END
+@@SECTION cf-2-161
+TITLE: Dusty Dispatch Drawers
+TEXT: Rusted brass handles pull away from the rotting mahogany desk with a dry shriek that echoes through the abandoned station office. Inside the lowest drawer, buried beneath layers of grey silt and dead insects, lies a bundle of stiff parchment schedules bound with brittle twine. // You brush the soot from the uppermost page, revealing precise ink stamps and formal routing notes bearing the unmistakable, spidery signature of the old Stationmaster-General herself.
+EXIT 1: Examine the old timetable closely
+@@END
+@@SECTION cf-2-162
+TITLE: Ink on the Parchment
+TEXT: Faded red margin notes trace the forgotten running times of coal tenders and passenger expresses through sectors that have long since grown over with ash-grass. The paper crackles dryly between your fingers, smelling of old cellars and long-dead bureaucracy in a world that has forgotten what schedules mean. // You fold the brittle document carefully and slip it into your breast pocket, keeping the old rules close against your ribs.
+EXIT 1: Leave the drafty station office
+@@END
+@@SECTION cf-2-163
+TITLE: Searching the Dispatch Desk
+TEXT: Shadows stretch across the splintered floorboards as you sift through the tangled jam of rusted paper-spindles and rotting ledgers. You flick through the damp pages with quick, sharp movements, hunting for the specific dispatch order that might explain why the Water Gate was shut, listening closely for any sound outside the window.
+CHECK: Search through the dispatch drawers
+@@END
+@@SECTION cf-2-164
+TITLE: Caught in the Jam
+TEXT: A rusted iron binder snaps shut across your knuckles with a sharp bite, pinning your fingers to the rotting desk drawer and sending a jolt of pain up your arm. You jerk your hand back with a sharp hiss, leaving a smear of blood on the splintered wood while the scattered papers flutter uselessly into the grey dust. // You nurse your throbbing hand in the dim light, having lost precious minutes to the stubborn furniture.
+EXIT 1: Gather your breath and move on
+@@END
+@@SECTION cf-2-165
+TITLE: The Old Timetable
+TEXT: Nimble fingers untangle the rusted brass clasp of the desk drawer, however narrowly, slipping the prize free before the jammed runner can trap your knuckles. The prize is a stiff, official schedule bearing the rare stamp of the Stationmaster-General, outlining the hidden sidings and secret watering points of the upper line. // You tuck the parchment safely into your coat, securing a silent advantage for the road ahead.
+GRANT: Outdated official schedule
+EXIT 1: Return to the waiting locomotive
+@@END
+@@SECTION cf-2-166
+TITLE: The Eccentric Clerk
+TEXT: A solitary figure in a grease-stained telegrapher's visor sits behind the ticket grille, nodding rhythmically to the hum of dead wires. You match his dry riddles with a steady tongue and a patient ear, trading old stories of the Ashgate yards for a heavy brass pocket-compass that still spins true toward magnetic north despite the surrounding sulphur haze. // You pocket the cool metal instrument, tipping your cap to the silent clerk as he turns back to his silent sounder.
+EXIT 1: Head back to the steaming engine
+@@END
+@@SECTION cf-2-167
+TITLE: Matching Wits
+TEXT: Words hang heavy in the stale air of the ticket office as you test the eccentric telegraph clerk with pointed questions about the ruined track ahead. He narrows his eyes behind thick glass lenses, tossing riddles back across the scarred wooden counter while you search his sharp expression for any sign of a bluff.
+CHECK: Match wits with the clerk
+@@END
+@@SECTION cf-2-168
+TITLE: Outwitted by the Wire
+TEXT: A sharp retort from behind the brass grille catches you off guard, turning your clever argument into an awkward stutter as the clerk lets out a dry, rasping laugh. He refuses to hand over the compass, leaving you empty-handed and flustered while the telegraph sounder chatters mockingly in the background. // You swallow your pride and turn away from the counter with a sour taste in your mouth.
+EXIT 1: Leave the ticket office empty-handed
+@@END
+@@SECTION cf-2-169
+TITLE: Winning the Compass
+TEXT: Sharp banter wins the day, however narrowly, as your quick tongue turns the clerk's own riddle back upon him until he grunts in grudging respect. He slides a heavy brass pocket-compass across the scarred deal counter, its glass face clear and its internal needle trembling steadily toward the magnetic north. // You pocket the solid weight of the instrument, securing a reliable guide through the blinding ash-storms ahead.
+GRANT: Brass pocket-compass
+EXIT 1: Return to the waiting engine
+@@END

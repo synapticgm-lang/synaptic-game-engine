@@ -1,0 +1,92 @@
+{
+ "batch": "td-3-156",
+ "sections": {
+  "td-3-156": {
+   "title": "Panic On The Branch",
+   "text": "Silk rustles like dry kelp as the nobleman scrambles backward over the carved railing of the stilt-way, his eyes wide and milky with saltwater terror. Below him, the exposed seabed yawns like an open grave, tempting him to jump or bolt into the shadowed lattice of Saltspire's lower struts. You catch the hem of his velvet doublet before his heels can find purchase on the slick iron rungs, hauling him back onto the wooden planks with a sharp twist of his embroidered collar. He thrashes like a hooked cod, his expensive rings flashing in the dim gloom of the high walkway.\n\nSeizing the opportunity while he gasps for air, you wedge your forearm across his chest to pin him against the damp cedar wall, demanding the heavy purse swinging from his belt as toll for your silence.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Twist his arm for coin"
+   ]
+  },
+  "td-3-157": {
+   "title": "The Weight Of Silk",
+   "text": "Breath rattles in the aristocrat's throat as he writhes against your grip, his manicured fingers clawing desperately at your wrists to break your hold. He babbles about Brineholder guards and maritime law, spitting salt-foam onto your sleeve while his heavy coin-purse jingles temptingly against his hip like a trapped bell. The humid air of the stilt-city reeks of old brine and stagnant bilge-water, thick enough to choke on as you tighten your purchase on his silk collar.\n\nEvery second spent wrestling this coward risks drawing the attention of patrolling wardens or rival wreckers lurking in the shadows of the water-towers. You must force the issue now before his frantic shrieks bring the entire upper tiers down upon your head.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wrench the heavy pouch free"
+   ]
+  },
+  "td-3-158": {
+   "title": "A Desperate Struggle",
+   "text": "The nobleman lunges sideways with unexpected fury, slamming his full weight against your ribs and trying to hurl you both over the narrow railing into the abyssal drop below. You drop your stance instantly, planting your boots hard against the damp grain of the duckboards and driving your shoulder straight into his chest with all the leverage you can muster. Bone grinds against bone in the tight, wet heat of the stilt-way as you fight for dominance over the precipice.\n\nFor one breathless heartbeat, you hover on the very edge of the drop, your muscles screaming under the strain of his frantic, terrified thrashing.",
+   "check": "Wrench the purse from his grip",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-159": {
+   "title": "Bruised Pride",
+   "text": "Your footing slips on a patch of green slime coating the cedar planks, sending you stumbling hard against a rusted iron water-pipe. The nobleman breaks free with a ragged shriek, leaving a fistful of your jacket behind as he scrambles away down the ladder-well like a frightened crab. You pick yourself up from the deck, rubbing a deep, purple bruise blossoming across your ribs where the pipe bit into your flesh. The heavy purse remains dangling from his retreating belt, a bitter loss that costs you both valuable time and your pride.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pursue him down the iron rungs"
+   ]
+  },
+  "td-3-160": {
+   "title": "The Spoils Of Salt",
+   "text": "Your grip holds firm despite the slippery slime underfoot, and you wrench the heavy leather purse from his failing grasp with a sharp snap of breaking cord. The nobleman collapses against the cedar bulkhead, gasping for breath and clutching his bruised side while you pocket the rattling prize. It is a heavy haul, brimming with cold silver coins stamped with the seal of the Brineholders. You leave him huddled there among the damp ropes, nursing his terror as you slip away into the labyrinth of walkways.",
+   "check": "",
+   "grant": "Heavy Brineholder coin-purse",
+   "exits": [
+    "Fade into the stilt-city shadows"
+   ]
+  },
+  "td-3-161": {
+   "title": "Shards And Shadows",
+   "text": "Heavy terracotta pots filled with dying ferns line the veranda, casting deep, salt-crusted shadows across the sun-bleached planks of the terrace. You grab a massive ornamental urn by its rim and hurl it down hard against the stone flagging, where it shatters into a thousand jagged pieces with a deafening crack. High-born guests shriek and scatter like gulls from a carcass, diving behind wicker screens and gilded pillars to escape the flying red shards.\n\nThrough the sudden cloud of dry dust and confusion, you lunge across the inlaid mahogany table, your fingers closing around the cold brass of the ceremonial key just as a guard shouts from the arched doorway.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Snatch the key and run"
+   ]
+  },
+  "td-3-162": {
+   "title": "The Brass Snatch",
+   "text": "Shards of baked clay skitter across the floorboards as you drive your weight forward, plunging your hand into the swirling dust toward the glittering brass key resting upon the velvet cloth. Heavy boots thunder behind you along the wooden gallery, and a mailed hand reaches out from the drifting haze to close around your shoulder before your fingers can fully secure the prize. You brace your legs against the polished floor, putting every ounce of your strength into a violent, twisting heave to break free and pull the key along with you.\n\nThe metal bites into your palm as you struggle against the sudden, iron grip closing on your back.",
+   "check": "Rip the key from the table",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-163": {
+   "title": "A Costly Escape",
+   "text": "The guard's grip proves too heavy to shake off cleanly, and as you wrench yourself away, a jagged terracotta shard slices a deep, stinging line across your forearm. Blood wells up instantly, hot and bright against your salt-stained skin, dripping onto the splintered floorboards as you bolt through the arched exit. You clutch the stolen key tightly in your bleeding hand, leaving behind a trail of red droplets that will make tracking you through Saltspire's alleys all too easy for your pursuers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee down the lower ladder"
+   ]
+  },
+  "td-3-164": {
+   "title": "The Brazen Key",
+   "text": "Terracotta shards fly like gravel against your boots as the heavy storage urn shatters across the mosaic tiles, drawing every armed eye in the chamber toward the noise. In that sudden, frantic shift of attention, your hand darts across the carved mahogany table to close around a heavy ceremonial key of dull bronze, its teeth filed into the shape of a breaking wave. A Brineholder captain shouts an oath, but you are already backing toward the arched doorway, your fingers curled tightly around the cold metal keepsake that now binds the house's fortunes to your own.",
+   "check": "",
+   "grant": "ceremonial bronze wave-key",
+   "exits": [
+    "Slip through the sunlit archway"
+   ]
+  },
+  "td-3-165": {
+   "title": "The Governor's Confession",
+   "text": "High above the dry seabed, the sun-drenched solarium smells of scorched citrus leaves and the cold sweat of terrified aristocrats. The governor sits slumped in a wicker chair, his powdered wig askew, staring blankly out at the empty horizon where the grey ocean used to be. Orsolya Venn is not here among the fluttering palms and trembling sycophants, but when you press the blade of your intent against his ribs, the old man speaks her name with a shudder. He confesses that the lighthouse keeper was cornered on the cliffs three nights ago and dragged down the Sunken Stair by the Hollow Choir as an offering to the jammed Meridian Gear. The drowned dead wanted someone who knew how the machinery sang before they turned it to drown the world once more.\n\nThe only way down to chase them is through the great iron winch dangling over the abyss.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend the rusty iron winch"
+   ]
+  }
+ },
+ "missing": []
+}

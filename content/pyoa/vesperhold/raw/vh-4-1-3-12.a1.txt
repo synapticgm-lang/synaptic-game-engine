@@ -1,0 +1,29 @@
+@@SECTION vh-4-1-3-14
+TITLE: The Frayed Line
+TEXT: Gale-force winds tear across the exposed glacial saddle, threatening to wrench the padded bronze Clapper from your shoulders and hurl you into the grey abyss. A single frayed hemp hand-line, knotted clumsily around a frost-rimed iron piton driven into the blue-veined ice, offers the only tether between standing upright and sliding into nothingness. You lean your weight against the singing wind, fingers cramping white around the coarse fibers as the ice beneath your boots begins to crumble into fine, glittering powder. // Deciding whether to trust the rotting rope or brave the open gust without a guide, you grip the tether tighter and peer into the swirling vortex ahead.
+EXIT 1: Trust the frayed hemp and lean forward
+@@END
+@@SECTION vh-4-1-3-15
+TITLE: Across the Iron Sheet
+TEXT: Frost-shrouded gaps in the glacier yawn wide beneath your boots, spanned only by a corrugated iron sheet that shrieks and flexes under every shift in weight. Biscuit steps hesitantly onto the shivering metal, ears pinned back against the howling gale, while each iron corrugation sends a hollow, metallic clang echoing deep into the blue ice. You clutch the bronze Clapper tightly in its cradle, matching the mule's cautious cadence as the freezing air bites at your cheeks and skitters loose gravel into the dark cleft below. // The passage narrows sharply where the sheet meets the jagged stone face, leaving you to choose whether to press on blindly or seek firmer footing against the cliff.
+EXIT 1: Climb toward the sulfur-scented stone shelf
+EXIT 2: Flatten against the freezing rock wall
+EXIT 3: Step into the oncoming wall of fog
+@@END
+@@SECTION vh-4-1-4-1
+TITLE: Diamond Dust Squall
+TEXT: Stinging diamond-dust whipped from the glacier crust blinds your watering eyes as you struggle to keep Biscuit's hooves planted on the narrowing ice-ledge. The mule shivers violently beneath its pack, slipping slightly on the slick blue rime while the bronze Clapper hums a low, sympathetic vibration against your spine. Every breath burns your throat like liquid frost, and the steep drop-off to your left vanishes entirely behind swirling curtains of white. // Pausing to steady the trembling animal against the freezing stone, you weigh your options against the mounting fury of the storm.
+EXIT 1: Secure the lead-rope and wait it out
+@@END
+@@SECTION vh-4-1-4-2
+TITLE: The Humming Span
+TEXT: High above your head, a rusted suspension cable hums like a giant plucked harp-string as the upper span strains and groans under the relentless fury of the freezing gale. Vibrations travel down the iron wire straight into your aching shoulders, matching the deep, resonant thrum of the bronze Clapper on your back. Ice flakes peel from the overhead links in tiny avalanches, stinging your wool-wrapped neck as you crouch low on the icy decking. // With the bridge shuddering violently beneath your boots, you must decide whether to anchor yourself securely or press forward before the cable snaps.
+EXIT 1: Lash the lead-rope to an iron ring
+EXIT 2: Push ahead into the blinding fog wall
+@@END
+@@SECTION vh-4-1-4-4
+TITLE: The Broken Rung
+TEXT: A fractured wooden ladder-rung dangles by a single frayed strand of hemp over empty air, swinging sickeningly above the hazy blue depth of the glacier crevasse. Carrying the heavy, dead weight of the bronze Clapper makes the required leap a desperate gamble with gravity and ice. Frost numbs your knuckles as you test the tension of the remaining strand, watching tiny shards of wood flutter down into the fog. // Preparing your muscles for the perilous bound across the void, you tighten your grip and eye the opposite ledge.
+EXIT 1: Leap across the gap into the whiteout
+EXIT 2: Clutch the frozen guidelines and brace yourself
+@@END

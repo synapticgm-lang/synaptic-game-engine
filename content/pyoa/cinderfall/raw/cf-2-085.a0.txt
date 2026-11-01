@@ -1,0 +1,54 @@
+@@SECTION cf-2-085
+TITLE: The Blind Chant
+TEXT: Cinders drift across the cold iron deck while a blind prophet draped in scorched wool drones the timetable of the dead. Every stalled engine and vanished crew gets its minute on the tongue, a litany of rust and memory recited to the gray sky. You lean against the trembling bulkhead, listening for the cadence that unlocks the iron gates ahead, separating the names of lost trains from the whispered syllables you need to pass. // The prophet turns milky eyes toward your breathing, pausing only when the steam-vent hisses a sharp warning against the chill.
+EXIT 1: Catch the low spoken password
+@@SECTION cf-2-086
+TITLE: Voices in the Ash
+TEXT: Smoke clings to your woollen collar as the blind prophet weaves another delayed arrival into the rhythmic chant of the steppe. The names of forgotten railmen echo over the gravel beds, merging with the rhythmic thrum of the Marrowbone's idle pump. You catch the faint shape of the secret phrase hidden beneath the holy jargon, a string of syllables meant to satisfy any watcher at the iron gates. // A stray gust of wind whips gritty dust across the deck, nearly drowning out the final syllable before you lock it in your memory.
+EXIT 1: Step back to the deck
+@@SECTION cf-2-087
+TITLE: Memorising the Dead Schedule
+TEXT: Dust devils swirl around the prophet's staff as the names of vanished passenger runs blend into a dizzying rush of numbers and departures. You struggle to hold your nerve and keep your breath steady against the rising sulfur fumes that threaten to choke your thoughts. The air grows hot and thick, testing every scrap of your focus as you try to pick the true gate-word out of the endless catalog of wreck and ruin. // You close your eyes against the blowing ash and brace your mind for the critical recall.
+CHECK: Recite the gate password clearly
+@@SECTION cf-2-088
+TITLE: Choked on the Litany
+TEXT: Sulfur smoke stings your throat and your concentration shatters mid-word, leaving you coughing violently against the iron rail of the cab. The prophet's rhythmic chanting rolls past you like an indifferent tide, offering no second chance to catch the drifting syllables. You lose precious minutes clawing at your handkerchief and gasping for clean air while the Marrowbone burns down its pressure. // You survive the choking fit with a raw throat and a lingering headache, forced to press on without the password you came for.
+EXIT 1: Return to the cold deck
+@@SECTION cf-2-089
+TITLE: The Whispered Cipher
+TEXT: Breath held against the acrid haze, however narrowly you managed to anchor your wits through the prophet's dizzying recitation, you catch the precise sequence of iron numbers. The blind man presses a cold, grease-stained brass token into your palm as his chant rolls on toward the next lost terminal. You pocket the small weight, knowing it will satisfy the watchers at the barrier ahead. //
+GRANT: A whispered gate password
+EXIT 1: Return to the cab floor
+@@SECTION cf-2-090
+TITLE: Clearing the Cowcatcher
+TEXT: Heavy iron mesh on the front of the Marrowbone holds a tangled heap of dead brush and windblown timbers dropped by some earlier wreck. You step down onto the gray sleepers, boots crunching on brittle charcoal, to heave the debris clear of the track before it fouls the running gear. Lifting a massive iron fire-basket out of the way reveals a neat bundle of dry kindling-wood wedged beneath the rusty bars. // You sling the valuable dry wood over your shoulder and climb back onto the warm iron footplate.
+EXIT 1: Toss the kindling inside
+@@SECTION cf-2-091
+TITLE: Heaving the Iron Basket
+TEXT: Twisted stays and heavy cinders lock the iron fire-basket fast against the cowcatcher, threatening to jam your path across the desolate steppe. You plant your boots firmly on the ash-dusted gravel and wrap your calloused fingers around the frozen metal rim, throwing your whole weight into the lift. The strained iron groans under the sudden torque, demanding every ounce of your muscle to break it free from the rusted frame. // You take a deep breath and strain against the stubborn weight.
+CHECK: Lift the heavy iron basket
+@@SECTION cf-2-092
+TITLE: Strained Muscles and Ash
+TEXT: Metal screams as the rusted joint slips sideways, dropping the heavy iron basket back onto your boot with a dull, jarring thud. Pain shoots up your shin and you stumble backward into a heap of sharp cinders, gasping for breath while the Marrowbone hisses impatiently overhead. You manage to shove the obstacle aside with a frantic kick, but your ankle throbs with a fresh, angry ache that will slow every step today. // You limp back to the cab with a bruised foot and a lighter resolve.
+EXIT 1: Climb back to the footplate
+@@SECTION cf-2-093
+TITLE: Salvaged Kindling
+TEXT: Iron bars give way with a sharp screech, however narrowly you managed to clear the obstacle without dropping the whole assembly onto the ballast. You rescue a sturdy bundle of dry kindling-wood from beneath the wreckage, perfectly preserved from the damp air by the surrounding ash. It will make a fine addition to the tender fire when the cold really sets in tonight. //
+GRANT: A bundle of dry kindling
+EXIT 1: Stash the wood safely
+@@SECTION cf-2-094
+TITLE: The Fallen Altar Beam
+TEXT: Ragged monks in gray robes chant softly around a blackened timber crossbeam that has crashed across the makeshift shrine by the tracks. Stepping forward to help, you grab the charred wood where it pins a copper offering dish to the ash-strewn ground. The monks watch your labor with solemn eyes, their dry lips moving in silent gratitude as you haul the heavy timber clear of the holy stones. // You set the beam down against an abandoned rail-wagon and nod to the silent watchers.
+EXIT 1: Leave the holy enclosure
+@@SECTION cf-2-095
+TITLE: Clearing the Sanctuary
+TEXT: Gray dust billows from the fallen crossbeam as you drag it away from the ragged altar, restoring a semblance of order to the wayside shrine. The wandering monks touch your sleeve with dust-stained fingers, murmuring low blessings over your grease-stained jacket. You take a moment to catch your breath in the lee of the halted wagon while the desert wind rattles the tin roofs of the bazaar nearby. // You turn back toward the waiting locomotive as the monks bow their hooded heads.
+EXIT 1: Return to the engine deck
+@@SECTION cf-2-096
+TITLE: Lifting the Heavy Beam
+TEXT: Charred timber and iron spikes lock the fallen crossbeam across the shrine entrance, weighing down the sacred stones with tons of dead ballast. You grip the rough, splintered wood with both hands, planting your heels deep into the shifting ash-dune while the monks watch in dead silence. The massive beam refuses to budge at first, testing your strength against the dead weight of the ruined railway. // You grit your teeth and throw your entire weight into one desperate heave.
+CHECK: Drag the heavy crossbeam clear
+@@SECTION cf-2-097
+TITLE: Trapped Under Timber
+TEXT: Splintered oak rolls unexpectedly, catching your forearm a sharp blow and pinning you briefly against the stone altar while a cloud of blinding ash fills the air. You wrench your arm free with a furious heave, leaving behind a nasty graze and a torn sleeve, but the heavy beam finally tumbles off the holy ground. The monks rush forward to bind your scraped skin with strips of clean linen, paying the debt of honour in quiet, careful tending. // You limp back to the Marrowbone with a bruised arm and a new scar to remind you of the steppe.
+EXIT 1: Return to the locomotive cab

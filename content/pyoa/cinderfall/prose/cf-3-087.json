@@ -1,0 +1,113 @@
+{
+ "batch": "cf-3-087",
+ "sections": {
+  "cf-3-087": {
+   "title": "Snaring the Rival",
+   "text": "Hot iron screams against brake-shoes while you anticipate the rival signalman's next lever pull, reading the grease-smudged pattern of the semaphore tracks just a heartbeat ahead. Your boot slams down upon the auxiliary release, locking their lumbering switcher into a blind siding of dead pig iron while the Marrowbone surges through the clearance gap. You pocket a grease-stained brass tally dropped from their fleeing cab, an official token bearing the private seal of the Rail Barons' western district.",
+   "check": "",
+   "grant": "Baronial district brass tally",
+   "exits": [
+    "Follow the trembling needle forward"
+   ]
+  },
+  "cf-3-088": {
+   "title": "The Blown Viaduct",
+   "text": "Sudden concussion rattles the soot from the cab roof as structural maintenance charges detonate ahead, carving a gaping chasm right through the iron roadbed of the Brasswind Viaduct. Chunks of gray masonry and red-hot rivets cascade into the empty air, leaving two hundred feet of sheer drop where the mainline used to run. Steam hisses from ruptured couplings beneath the Marrowbone as you haul the heavy brass regulator hard into reverse, bringing the shuddering engine to a screaming halt mere inches from the sheared edge of the void.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the chasm edge"
+   ]
+  },
+  "cf-3-089": {
+   "title": "The Severed Span",
+   "text": "Cold wind howls through the gap where the railway used to be, stirring drifts of fine gray ash against the stalled bogies. You stand at the edge of a blown-up rail gap where only twisted girders span the terrifying grey void, looking for any conceivable way to bridge the drop. Below, the rusted lattice-work of the lower spans offers narrow footings, while above, the gantry cables sway in the updraft like the rigging of a dead ship.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Scramble across the swaying girders",
+    "Pry loose the demolition tripwires",
+    "Rig the bridge winch motor",
+    "Wait for the baronial inspectors"
+   ]
+  },
+  "cf-3-090": {
+   "title": "Crossing the Ribs",
+   "text": "Iron plates groan under your heavy boots while you master your vertigo on the swaying girder bridge, keeping your eyes fixed strictly upon the next rusted rivet ahead. A sudden gust from the ash-steppes threatens to peel your coat from your shoulders, but you press your palms flat against the vibrating web of steel until the dizziness passes like a cold sweat. Across the gap, a discarded tow-cable hangs from a gantry cleat, waiting to be hauled home.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the hanging tow-cable"
+   ]
+  },
+  "cf-3-091": {
+   "title": "Crossing the High Span",
+   "text": "Cold air claws at your throat as you inch across the skeletal ribs of the viaduct, your boots finding precarious purchase over a thousand feet of empty grey mist. Vertigo hits like a physical blow, tightening your chest until every breath tastes of copper and stale coal-smoke, yet you force your numb fingers to reach into the wind and lash the heavy hemp tow-cable securely around the rusted anchor-bolt before the panic locks your limbs entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul yourself across to the signal gantry"
+   ]
+  },
+  "cf-3-092": {
+   "title": "Testing the Nerve",
+   "text": "Cold sweat slicks your palms as you lean out over the endless drop, fingers closing around the frayed strands of the cable while the wind tears at your breath. Every muscle in your spine knots tight against the panic rising in your throat, threatening to unman you before the heavy iron hook can be lashed to the spar.",
+   "check": "Master your vertigo and secure the tow-cable",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-093": {
+   "title": "Slipping the Footing",
+   "text": "Vertigo overwhelms your senses for one blinding second, sending your boots sliding off the narrow flange and leaving you dangling by your fingertips over the sheer abyss. The heavy cable whips free, striking your shoulder with a bruising blow before you manage to haul yourself upward, coughing ash and clutching a wrenched wrist that will ache for leagues.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl back to the stable deck"
+   ]
+  },
+  "cf-3-094": {
+   "title": "The Price of Height",
+   "text": "However narrowly you evade the sudden lurch of the wind-scoured girders, you manage to secure the vital connection and pull yourself back onto solid footing with trembling hands. Tucked into the greasy pocket of your canvas jacket is a heavy iron signal-token stamped with the crest of the Brasswind toll-keepers, a small token of passage that will quiet the guards further down the line.",
+   "check": "",
+   "grant": "heavy iron signal-token",
+   "exits": [
+    "Clamber back down to the footplate"
+   ]
+  },
+  "cf-3-095": {
+   "title": "The Wire-Cutter's Silence",
+   "text": "Shadows stretch long across the abandoned loading bay where the Barons left their nests of rusted wire and trip-latches, waiting for scavengers to grow careless. You crouch in the grit, breath held tight against the dust, using the flat of a grease-knife to lift each hairpin trigger just enough to slip the tension without waking the heavy explosive charges wired into the bulkhead above.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry free the sound plates from the rusted deck"
+   ]
+  },
+  "cf-3-096": {
+   "title": "The Tripwire Maze",
+   "text": "Coils of rusted copper thread the shattered timber of the gantry, linked to a nest of percussion caps taped to a dormant trench mortar. You crouch in the grit, breath shallow against the smell of old cordite and grease, measuring the precise tension of the primary wire with fingers that refuse to warm. If you snip the wrong strand or pull the anchor-peg an inch too wide, the hanging slab of boiler-plate will drop straight into the ravine, taking your bridge-iron with it. Your thumb finds the catch on the pliers, trembling as the metal bites into the salt-corroded core while the wind howls through the girders above.",
+   "check": "Slice the tripwire without detonating",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-097": {
+   "title": "The Premature Snap",
+   "text": "A sudden spark leaps from the crude battery box, setting off a minor secondary charge that blasts a shower of hot slag across your knuckles and fills the trench with blinding smoke. You scramble backward into the girders, escaping the worst of the flash but leaving behind your primary blade and half an hour of precious daylight.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Salvage what remains in the smoke"
+   ]
+  },
+  "cf-3-098": {
+   "title": "The Iron Harvest",
+   "text": "However narrowly you evade the sudden lurch of the wind-scoured girders, you manage to secure the vital connection and pull yourself back onto solid footing with trembling hands. The heavy steel plates lie stacked in the grit at your boots, notched and sound, ready to bridge the gap between the severed rails. Clutched in your palm is a heavy brass transit-token stamped with the crown and pinion of the high surveyors, cold as winter rain and marked with a private cipher that might buy you a moment's grace at the toll-gates.\n\nYou slide the salvaged iron into the coal-tender alongside your shovel and wipe the black grime from your eyes, listening to the steady, rhythmic thrum of the Marrowbone waiting below.",
+   "check": "",
+   "grant": "Surveyors brass transit token",
+   "exits": [
+    "Haul the plates toward the tender"
+   ]
+  }
+ },
+ "missing": []
+}

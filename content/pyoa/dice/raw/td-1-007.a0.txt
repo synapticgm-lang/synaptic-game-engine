@@ -1,0 +1,69 @@
+Gemini said
+
+@@SECTION td-1-007
+TITLE: Splintered Ribs of Wood
+TEXT: Salt cakes thick upon the hemp ropes as you grip the pulley, hauling your weight against the dry frame of the pier. Below, the skiff hangs suspended in the salt-blistered air, its hull scarred by a hundred bruising encounters with the reef. You need to drop it gently onto the cracked mud of the Low without snapping the remaining ribs. // Reaching into your coat, you draw a length of oiled leather twine and loop it through the tackle to slow the sudden, grinding descent. You must guide the vessel down inch by inch while the dry wind howls through the empty pilings of Gullmouth.
+EXIT 1: Lower the skiff to the mud
+@@END
+@@SECTION td-1-008
+TITLE: The Rigging Holds
+TEXT: Heavy hemp groans beneath the strain as the wooden hull swings slightly in the coastal draft, settling closer to the grey, exposed silt of the seabed. Your fingers work swiftly through the complex knots of the tackle, adjusting the tension before the whole weight can slip and shatter against a protruding piling. // A bundle of salt-cured rations rests on the thwart inside the boat, wrapped in grease-stained canvas and smelling faintly of old brine. You secure the line to an iron bollard on the dock, preparing to descend into the hull and claim your provisions.
+EXIT 1: Step down into the vessel
+@@END
+@@SECTION td-1-009
+TITLE: Tying the Fraying Line
+TEXT: Ropes dry out and turn brittle when the sea abandons its shore for three long days, and the tackle you hold is no exception. With the skiff dangling precariously above the hardened mud, you must whip the frayed strands together with swift, precise knots before the whole rig snaps under the sudden weight. A single clumsy twist will send the vessel crashing down into the rocks below, ruining your only means of crossing the Low. // Drawing a length of spare twine from your pocket, you steady your breathing against the biting wind and begin to wrap the core.
+CHECK: Mend the fraying tackle
+@@END
+@@SECTION td-1-010
+TITLE: Snap of the Hemp
+TEXT: Sudden friction betrays your hurried fingers, and the hemp rope parting with a sharp crack sends the skiff plunging sideways into the dry timbers of the pier. Splintered wood explodes outward, spraying shards across the mud and tearing a jagged hole in your shoulder as you dive out of the path of the falling wreckage. // You pull yourself up from the grey silt, brushing salt from a raw, bleeding scratch across your arm while your precious rations scatter into the dust. The mishap costs you both time and skin, leaving you poorer by a bundle of provisions and nursing a fresh, stinging wound.
+EXIT 1: Gather the ruined gear
+@@END
+@@SECTION td-1-011
+TITLE: Secured Cargo
+TEXT: Fingers moving with practiced skill, you thread the final knot through the iron ring just as the entire rigging settles into a stable, balanced drop. The skiff touches the cracked seabed with a dull thud, intact and ready to bear your weight out across the empty gulf where the tides used to roll. // Inside the hull, the canvas-wrapped package waits for you among the dust. You slice the twine and lift the prize, securing it within your coat against the bitter wind.
+GRANT: Salt-cured rations bundle
+EXIT 1: Return to the bustling harbour
+@@END
+@@SECTION td-1-012
+TITLE: Iron Against Timber
+TEXT: Rust has welded the heavy iron anchor to the rotting boards of the bait-shack porch, sealing the door shut against anyone seeking shelter or hidden gear. You plant your boots against the warped threshold and reach for the cold metal ring, bracing your legs for a hard heave. Gullmouth remains quiet around you, save for the distant shouting of rival crews arguing over stranded lobster pots down on the flats. // Dust flakes off the iron in orange scales as you put your back into the lift, straining to break the decades-old corrosion.
+EXIT 1: Force the rusted door open
+@@END
+@@SECTION td-1-013
+TITLE: Heaving the Anchor
+TEXT: The heavy iron fluke is wedged deep into the swollen timber of the shack's threshold, locked fast by layers of dried salt and ancient rust. You plant your boots firmly against the splintered floorboards, grip the cold metal ring with both hands, and lean your entire weight into the lift to wrench the obstacle free. Every muscle in your back strains against the stubborn mass as you prepare to break its grip on the door.
+CHECK: Dislodge the heavy anchor
+@@END
+@@SECTION td-1-014
+TITLE: Strain and Slip
+TEXT: Your boots slide on a patch of encrusted salt just as you heave, throwing your weight forward against the jagged iron fluke instead of lifting it. A sharp wrench tears through your lower back, dropping you to your knees in the grit with a breathless gasp. // By the time you manage to kick the heavy anchor aside, the door is open, but the exertion has left you bruised and aching. The delay costs you precious daylight, and the lantern inside the shack proves to be cracked and dry of oil.
+EXIT 1: Limp into the dusty shack
+@@END
+@@SECTION td-1-015
+TITLE: Threshold Cleared
+TEXT: Metal screams against dry wood as the heavy anchor finally tears free from the swollen boards, tumbling off the porch and sinking deep into the grey mud below. You kick the warped door inward, sending a cloud of ancient dust billowing out into the salt-laden air of the cliff-town. // On a low bench just inside the threshold sits a heavy brass-hooded lantern, its glass intact and its reservoir still half-full of clean whale oil. You pick it up, testing its weight, and slip it onto your belt as a reliable companion for the dark miles ahead.
+GRANT: Whale-oil brass lantern
+EXIT 1: Return to the bustling harbour
+@@END
+@@SECTION td-1-016
+TITLE: The Dry River
+TEXT: The ferryman sits motionless in his wooden skiff, which rests on cracked grey mud where the deep channel used to run beneath the cliff. His oars lie useless across the thwarts like skeletal arms, and his pale eyes stare fixedly at the empty horizon beyond the docks. You step down the muddy bank, your boots sucking slightly at the dried silt, and approach his hull with a steady tread. // He names a price in silver for the rolled parchment tucked beneath his weathered woollen cap, refusing to lower his chin or blink against the stinging wind.
+EXIT 1: Haggle for the tide-map
+@@END
+@@SECTION td-1-017
+TITLE: Staring Down the Row
+TEXT: Silence stretches between you and the old ferryman as you stand knee-deep in the dry bed of the channel, refusing to reach for your purse. He shifts his weight in the wooden seat, the timber groaning beneath him, while seagulls wheel overhead in a sky that has forgotten how to rain. // You hold his gaze with unblinking resolve, letting the bitter salt-wind tear at your cloak until his thin lips twitch into a reluctant, toothless grin. He reaches up, plucks the rolled paper from his brim, and tosses it onto the mud between your boots.
+EXIT 1: Pick up the parchment map
+@@END
+@@SECTION td-1-018
+TITLE: Meeting the Ferryman's Gaze
+TEXT: The ferryman is an old fixture of Gullmouth who has ferried the dead and the desperate across the channel for forty years, and he knows how to break a younger wrecker's nerve with a single flat stare. He demands twice your remaining coin for a scrap of paper showing where the sinkholes hide beneath the salt-crust of the Low. // You stand your ground on the dry mud beside his stranded boat, locking your eyes onto his without flinching, refusing to show the desperation gnawing at your ribs.
+CHECK: Outstare the stubborn ferryman
+@@END
+@@SECTION td-1-019
+TITLE: Breaking Under the Gaze
+TEXT: Your gaze wavers under the cold, fish-grey stare of the ferryman, forcing you to look away and swallow your pride. He grunts a dry laugh, demands an extra handful of copper on top of your original coin, and makes you fetch a bucket of water from the cistern just to seal the bargain. // By the time you secure the rolled parchment in your fist, your nerves are frayed and your purse feels dangerously light. The map is yours, but the encounter has cost you precious time and a humiliating concession of will.
+EXIT 1: Take the map and leave
+@@END

@@ -1,0 +1,64 @@
+@@SECTION vh-4-2-2-4
+TITLE: The Blindfolded Mule
+TEXT: Biscuit plants her stubborn hooves hard against the grey crust of the old avalanche chute, refusing to take another step onto the treacherous, wind-scoured ice. You coax her with soft words, but her ears pin back against the howling gale. Reaching into your coat, you pull out a stiff, frozen wool scarf and wrap it gently around her wide eyes. Deprived of the terrifying white drop before her, she gives a low, rumbling huff and finally steps forward onto the slope. // The bronze clapper hums steadily against your spine as you urge her onward through the biting cold.
+EXIT 1: Take shelter within the narrow ice cleft
+EXIT 2: Check the tautness of the frayed guide-cables
+@@END
+@@SECTION vh-4-2-2-5
+TITLE: Mending the Line
+TEXT: Freezing mountain spray pelts your raw, bleeding knuckles as you fight to repair the snapped guide-rope lacing the icy abyss. Your fingers are clumsy with cold, but muscle memory takes over, looping the hemp into a secure, traditional ropewright knot that holds fast against the whistling wind. The cable tautens under your pull, offering a lifeline across the chasm. // You pause to blow warm breath onto your aching hands before deciding your next move along the frozen ladder.
+EXIT 1: Duck into the narrow cleft to escape the squall
+EXIT 2: Inspect the tension on the vibrating guide-cables
+EXIT 3: Accept Bran's guidance toward the lower mist
+@@END
+@@SECTION vh-4-2-2-6
+TITLE: The Groaning Pillar
+TEXT: A jagged pillar of blue glacier-glass groans ominously directly above your head, threatening to shatter as you haul the heavy bronze load upward. Every muscle in your back strains against the dead weight of the clapper while ice dust sprinkles down from the shifting roof like salt. You press yourself flat against the frozen rock wall, waiting to see if the ancient pillar holds its precarious balance. // The mountain breathes out another gust of bitter air, urging you to move before the fracture spreads further.
+EXIT 1: Chop through the drift-snow blocking the shelter
+EXIT 2: Ring your boot spikes against the hidden boulder
+EXIT 3: Follow the whistle-call through the rock ribs
+@@END
+@@SECTION vh-4-2-2-7
+TITLE: The Knotted Path
+TEXT: The ropewright guards stationed at the checkpoint recognize the intricate, sworn knot-oath tied into the hem of your travel cloak immediately. Their stern expressions soften into respectful nods, acknowledging your standing with the guild. Without a word, they unlatch a heavy wooden gate and lower a sheltered ice-chute shortcut that cuts straight down the frozen spine of the glacier. // You step onto the slick slide, feeling the weight of the bronze clapper settle comfortably as gravity takes hold.
+EXIT 1: Clear away the drift-snow blocking the old shelter
+EXIT 2: Pick your way carefully across the submerged boulder
+@@END
+@@SECTION vh-4-2-2-8
+TITLE: The Firn Slide
+TEXT: You drop onto your heels, launching yourself down the steep, glittering slope of the firn chute while the rushing mountain wind tears at your cloak. The heavy metal weight of the clapper hums against your back like a trapped, angry bee, testing your balance with every meter of rapid descent. Spray crystals sting your cheeks as you steer your slide using only the heels of your iron-studded boots. // The gradient levels out slightly as you approach the jagged edge of the upper col.
+EXIT 1: Push onward toward the final icy ridge
+@@END
+@@SECTION vh-4-2-2-9
+TITLE: The Frozen Cascade
+TEXT: A wall of solid, frozen blue water completely blocks the narrow ladder steps, forcing you to halt your descent. You draw your blunt iron utility axe from your belt and begin hacking rhythmically at the crystal barrier, chipping away small, glittering shards to carve fresh footholds. Ice chips fly into the abyss below as you work methodically to open a passage for yourself and the heavy pack. // The melodic whistling of the valley wind drifts up from below, offering a familiar cue.
+EXIT 1: Follow the hidden wind-call through the rock ribs
+EXIT 2: Clear the drift-snow from the climber's shelter
+@@END
+@@SECTION vh-4-2-2-10
+TITLE: The Snow Cave Rest
+TEXT: You crouch low in a shallow snow cave, sharing a hard barley biscuit and a handful of wrinkled, dried plums with a stranded cable-inspector named Hauer. He rubs warmth back into his purple fingers while pointing out the safest routes etched into the glacier map spread across his knee. The small kindness of shared food eases the biting chill in your bones for a brief, quiet moment. // Outside the alcove, the glacier gives another low, metallic groan that vibrates through the rock.
+EXIT 1: Answer the distant whistle through the rock ribs
+EXIT 2: Listen to the deep hum of the bronze clapper
+@@END
+@@SECTION vh-4-2-2-11
+TITLE: The Opening Fissure
+TEXT: The glacier shifts beneath your boots with a deep sound like rolling thunder, opening a fresh, yawning fissure inches from your trembling lead foot. You throw your weight backward just in time, clutching the harness straps as loose ice rattles down into the dark, bottomless blue void. The sudden movement sets the bronze clapper into a low, sustained vibration that numbs the skin between your shoulder blades. // The freezing expanse offers few safe options as the ice continues to settle around you.
+EXIT 1: Stand firm against the humming bronze resonance
+EXIT 2: Guide the mule across the trembling wire bridge
+EXIT 3: Turn back toward the upper shelf
+@@END
+@@SECTION vh-4-2-2-12
+TITLE: The Snow Bridge
+TEXT: You lead the stubborn mule across a slick, precarious bridge formed entirely of packed avalanche snow while fine rime freezes thick over your heavy woolen mittens. Every breath billows out in a white cloud as you keep your eyes fixed on the far side, ignoring the dizzying drop beneath the fragile span. The animal's hooves crunch rhythmically against the frozen crust, steady and sure despite the freezing gale. // The vast white expanse stretches out endlessly ahead under a pale, cloudless sky.
+EXIT 1: Clamber back up from the dangling safety line
+EXIT 2: Pause to listen in the absolute ringing silence
+EXIT 3: Climb over the final lip of the glacier tongue
+@@END
+@@SECTION vh-4-2-2-13
+TITLE: The Buried Sledge
+TEXT: An abandoned supply sledge lies half-buried in blue ice, its wooden runners twisted like dry twigs by the relentless pressure of the moving glacier. You brush a thick layer of powdery drift-snow from its frame, checking to see if any useful cordage or spare iron spikes remain intact. The empty waste stretches out on all sides, silent save for the whistling wind cutting across the frozen ridges. // A distant rope-tender waves from a winch station further down the line.
+EXIT 1: Trade snow with the weary guard at the winch
+EXIT 2: Stand still in the sudden ringing silence of the ice
+EXIT 3: Haul yourself over the final lip of the glacier
+@@END

@@ -1,0 +1,52 @@
+Gemini said
+
+@@SECTION td-4-133
+TITLE: The Iron Pool
+TEXT: Black water laps against the rusted ribs of a collapsed shelter, smelling of stagnant kelp and copper. Deep within the silt of the basin, something heavy catches your boot edge with a dull, muffled thud. Kneeling in the wet grit, you brush aside layers of slimy silt until the rusted corners of an iron lockbox emerge from the murk. It is wedged tightly between two fallen foundation timbers, held fast by decades of accumulated grime and suction. // You brace your boots against the slimy stone and reach down into the freezing water to get a firm, two-handed grip on the rusted handles.
+EXIT 1: Pry the heavy box from the silt
+@@END
+@@SECTION td-4-134
+TITLE: Unyielding Anchor
+TEXT: Cold brine stings your knuckles as you strain against the suction of the water-filled cavity. The iron box refuses to budge, locked fast by the weight of shifting rubble and mud that has settled over it like a shroud. Every muscle in your back tightens as you throw your weight backward, testing the stubborn resistance of the buried chest. The water ripples violently, sending dark sediment swirling around your forearms and clouding the pool in sudden gloom. // Taking a slow breath, you adjust your footing on the slick moss and prepare for a harder heave.
+EXIT 1: Strain once more against the suction
+@@END
+@@SECTION td-4-135
+TITLE: Hauling the Relic
+TEXT: Water drips from your hair as you sink your fingers deep into the cold mire beneath the handles, ignoring the ache in your shoulders. You lock your elbows and drive your legs upward against the slimy stone floor, throwing every ounce of muscle and sinew into wrenching the iron box free from its watery grave. The metal groans in protest against the suction, shifting an inch before the stubborn silt threatens to pull you back down into the dark pool. // Your breath burns in your chest as you hold the straining tension at the breaking point.
+CHECK: Wrench the lockbox from the deep mire
+@@END
+@@SECTION td-4-136
+TITLE: Waterlogged Strain
+TEXT: A sudden shift in the unstable gravel beneath your boots sends a sharp jolt shooting up your spine, throwing your balance off completely. The heavy iron box slips from your numbed fingers with a dull splash, plunging back into the black water and showering your shins with jagged shards of rusted shale. A sharp edge slices deep across your forearm, drawing a slow line of dark blood that mixes instantly with the briny pool. Gasping for air, you stumble backward against the damp stones, clutching your throbbing arm while the cold damp settles deep into your bruised joints.
+EXIT 1: Pick yourself up from the wet stone
+@@END
+@@SECTION td-4-137
+TITLE: The Submerged Ledger
+TEXT: Muscles trembling and breath ragged, you give one final, desperate heave that shatters the suction with a wet, sucking gasp. The iron lockbox breaks free from the mire, sliding heavily onto the damp flags of the floor with a hollow, rattling echo. Inside, protected by thick layers of oiled tallow, lies Orsolya's encrypted journal, its pages untouched by the corrosive brine. You tuck the damp leather volume into your coat, feeling the solid weight of her hidden notes pressed against your ribs. // GRANT: Orsolya's encrypted journal
+EXIT 1: Return to the ruined camp site
+@@END
+@@SECTION td-4-138
+TITLE: Scattered Charts
+TEXT: Torn fragments of parchment lie scattered across the camp bedroll like fallen autumn leaves, curling at the edges from the damp salt air. You kneel beside the makeshift table, carefully arranging the fragile strips of ink-stained paper into something resembling a coherent map. The diagrams depict strange, unfamiliar lunar alignments and intricate tidal vectors that bear no resemblance to the old almanacs of Gullmouth. By the dim light of your lantern, you trace the faint, hurried annotations penned in Orsolya's familiar, cramped hand. // The scattered lines begin to reveal a hidden pattern beneath the messy ink.
+EXIT 1: Trace the alignment of the ink lines
+@@END
+@@SECTION td-4-139
+TITLE: The Missing Vector
+TEXT: Faded ink smudges beneath your fingertips as you try to align the jagged edges of a torn coastal chart. A crucial corner is missing, leaving a blank gap where the deepest channel of the Low should be marked with soundings. You squint against the flickering amber flame of your lamp, searching the dust beneath the cot for the lost scrap of paper. Every shadow along the stone wall seems to stretch and distort in the draft, making the tiny symbols dance confusingly before your tired eyes. // You steady your hand and look closer at the overlapping ink strokes left behind on the remaining fragments.
+EXIT 1: Study the faint marks in the dust
+@@END
+@@SECTION td-4-140
+TITLE: Decoding the Tides
+TEXT: Your eyes dart back and forth across the fractured margins of the parchment, tracking the subtle variations in the ink density where Orsolya corrected her calculations. You mentally reconstruct the missing quadrant, calculating the exact lag of the receding waters against the geometry of the Sunken Stair. A sudden realization forms in your mind, connecting the erratic lunar symbols to the jammed mechanism waiting far below in the dark. The margins conceal a hidden sequence, but one wrong deduction will leave you blind in the subterranean maze. // You hold your breath, letting your gaze settle on the crucial converging lines.
+CHECK: Decipher the hidden tidal sequence
+@@END
+@@SECTION td-4-141
+TITLE: False Horizons
+TEXT: A headache flares behind your temples as the complex arrangement of lines blurs into an unintelligible tangle of ink and salt stains. You spend precious hours chasing a faulty calculation, only to realize the torn edges belonged to an entirely different mapping expedition from years ago. Fatigue dulls your senses, robbing you of valuable time while the damp chill sinks deeper into your bones. Your supplies are lighter now, depleted by the hours spent staring fruitlessly at the ruined paper. // You rub your tired eyes and push the useless fragments aside on the makeshift table.
+EXIT 1: Stand up from the makeshift table
+@@END
+@@SECTION td-4-142
+TITLE: The Secret Alinement
+TEXT: Your focused gaze pierces the confusion of the torn paper, allowing you to reconstruct the missing calculations with absolute clarity. You commit the hidden sequence to memory, understanding precisely how the tidal lag operates beneath the seabed. The knowledge settles in your mind like a compass needle, giving you a quiet edge against whatever waits in the depths below. You gather the vital fragments, securing the secret map within your tunic as a silent testament to your mentor's final hours. // GRANT: Orsolya's secret tidal timing
+EXIT 1: Descend toward the churning darkness
+@@END

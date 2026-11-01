@@ -1,0 +1,95 @@
+{
+ "batch": "cf-1-002",
+ "sections": {
+  "cf-1-002": {
+   "title": "The Iron Office",
+   "text": "Dust hangs thick in the abandoned stationmaster's office, coating the brass inkwells and the green-shaded desklamps in a fine grey silt. Through the cracked windowpanes, the silent bulk of the Marrowbone broods against the platform edge, her boiler ticking softly as she cools in the draft. Every surface bears the stale imprint of authority abandoned in haste, from the ledger-stacks tumbling across the floorboards to the heavy iron-bound door that stands slightly ajar. Somewhere down the line, a signal-wire pings a thin, metallic warning into the empty air, drawing your gaze toward the paths waiting to be walked.\n\nShadows pool deep beneath the mahogany shelving where private correspondence lies half-shredded by mice and time. The air tastes of dry paper, old tobacco, and the faint, bitter tang of coal-gas leaking from a neglected stove. You can linger here among the ghosts of management, or step back out into the soot-stained corridors of Ashgate Junction where other interests stir.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Search the cluttered ledger shelves",
+    "Face the union crew outside",
+    "Inspect the locked filing cabinets",
+    "Answer the platform patrol challenge"
+   ]
+  },
+  "cf-1-003": {
+   "title": "Ledgers of Ashgate",
+   "text": "Yellowed leaves of heavy rag paper flutter beneath your fingers as you turn back the moldering covers of the dead stationmaster's personal log. Ink smeared by old moisture tells a story of midnight amendments, unofficial coal allocations, and private memos concerning Hesper Quill's movements through the junction's western switches. A folded leaf of cardstock slips from the binding, bearing a series of railway shorthand marks that hint at a destination far beyond the ordinary timetables. You pocket the scrap just as a floorboard groans overhead, signaling that your time in the office is running short.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the hidden schedule card"
+   ]
+  },
+  "cf-1-004": {
+   "title": "Decoding the Night Route",
+   "text": "Candlelight flickers low against the grease-stained margin where Hesper's hurried hand has scrawled a sequence of switching codes over the printed timetable. Every fiber of your training warns you that a single misread symbol will send the Marrowbone hurtling down a dead-end spur into the ash-dunes. Your eyes track the looping pencil lines, searching for the hidden pattern among the canceled runs and ghost-train arrivals. You press your thumb hard against the paper edge, squinting through the gloom as the depot clock strikes eleven, and begin to puzzle out the sequence.",
+   "check": "decipher the secret transit codes",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-005": {
+   "title": "A Costly Cipher",
+   "text": "A sudden gust rattles the window frame, blowing a cloud of fine soot across the desk and obscuring the vital marks just as your mind struggles to grasp them. You blink away the sting of ash, but precious seconds slip through your fingers while the candle sputters and dies in its own grease. By the time you force the meaning from the smeared ink, a throbbing headache beats behind your temples like a runaway piston, and your knuckles are stained black with soot that will not wash out. You stumble backward from the desk, bruised by frustration and poorer by a span of lost time.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the main office"
+   ]
+  },
+  "cf-1-006": {
+   "title": "The Clean Thread",
+   "text": "Patience and sharp observation peel back the layers of bureaucratic deceit until the true rhythm of Hesper's route lies exposed beneath your palm. However narrowly you managed to separate the genuine departures from the Rail Barons' deliberate falsehoods, the secret pattern now stands clear and undeniable. You tuck the recovered schedule safely inside your waistcoat pocket, feeling the reassuring weight of knowledge that belongs to no one else in Ashgate. A quiet satisfaction warms your chest against the chill of the dead depot.",
+   "check": "",
+   "grant": "a secret route schedule",
+   "exits": [
+    "Return to the main office"
+   ]
+  },
+  "cf-1-007": {
+   "title": "Smoke and Cinders",
+   "text": "Heavy boots grind against the grit of the platform as three members of the Gangers' Union step out from the shadow of the water crane. Their leather waistcoats are stiff with old grease and copper-riveted at the seams, and their scarred knuckles rest heavily upon the handles of iron pinch-bars. They are in no mood to welcome strangers nosing about the administrative quarters while the ash-storms gather on the horizon. You hold your ground near the station doorway, letting the steam vent softly from your coat cuffs while you measure the distance between you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Meet the gangers with steady words"
+   ]
+  },
+  "cf-1-008": {
+   "title": "The Union's Claim",
+   "text": "Iron plates rattle on the walkway overhead as the senior ganger spits a brown stream of tobacco juice into the grey dust at your feet. He narrows his eyes at the brass valve-key tucked beneath your arm, recognizing the unmistakable stamp of the locomotive deck. The air between you grows thick with the smell of sweat, cheap grease, and mutual distrust that has kept Ashgate divided since the Long Fire. You keep your hands visible and loose at your sides, refusing to take the bait of their hostile posturing.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stand your ground before them"
+   ]
+  },
+  "cf-1-009": {
+   "title": "Holding the Line",
+   "text": "Silence stretches taut between you and the gathered track-crew, broken only by the rhythmic throb of the Marrowbone idling in the distance. The union steward steps closer, his face shadowed beneath a grease-stained cap, testing your nerve with a slow, deliberate glare meant to provoke a rash move. Every instinct urges you to tense your muscles or reach for a weapon, but you force your breathing to remain slow and even. You fix your gaze steadily upon the steward's eyes, offering neither submission nor defiance as the tension reaches its breaking point.",
+   "check": "maintain steady composure under pressure",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-010": {
+   "title": "A Grazed Pride",
+   "text": "A sharp retort slips past your teeth before you can check it, shattering the fragile truce and sending a murmur of anger rippling through the gathered gangers. The steward lunges forward, shoving you hard against the brick pillar and leaving a jagged scrape along your shoulder where an iron bolt protrudes. You catch your balance before you hit the ground, but the momentary lapse in your temper has cost you dearly in mutual respect. They let you step away at last, though they leave behind a lingering debt of bad blood.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Withdraw to the central office"
+   ]
+  },
+  "cf-1-011": {
+   "title": "Earning Their Nod",
+   "text": "Quiet endurance turns the edge of their hostility, softening the hard lines around the steward's mouth into a reluctant, weather-beaten grin. However narrowly you held your temper against their provocation, your refusal to flinch or reach for steel has earned their hard-won respect. The steward claps a heavy, coal-blackened hand onto your shoulder, leaving a smudge of grease and a promise of safe passage through the yards. You step back into the main office with a valuable ally notched into your belt.",
+   "check": "",
+   "grant": "a union protection tally",
+   "exits": [
+    "Return to the main office"
+   ]
+  }
+ },
+ "missing": []
+}

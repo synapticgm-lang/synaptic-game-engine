@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-w-press-run | valerius=allied
+Valerius’s silk-clad runners secure the alleyway outside, their polite menace ensuring the city watch looks elsewhere. Beside you, Sable wipes a smudge of grease from her cheek, trusting that the lord's protection buys you both the precious minutes needed to expose these secrets.
+@@END
+@@INSERT up-w-press-run | rigg=allied
+Matron Rigg’s iron-stamped warrant rests heavy in your pocket, a grim guarantee against the Guard's interference. Sable watches the typesetter’s trembling hands, whispering a fierce hope that the Matron’s gaol books will soon show her brother’s name crossed out in return for this night's ink.
+@@END
+@@INSERT up-w-press-run | witness=bought
+Your whispered promise to the Archbishop’s almoner still lingers in the quiet of the shop, a heavy debt hanging over your head. The bought silence kept the alarm bells from ringing, giving you and your young companion the undisturbed hour required to work the heavy presses.
+@@END
+@@INSERT up-w-brazier | cabal=known
+Knowing from the vault’s counter-ledgers that Valerius and Rigg are merely two hands of the same secretive cabal makes the brass-bound volume infinitely more dangerous. Sable shifts anxiously by the ledge, unaware that the great houses' feigned war could end in ash if you drop the pages.
+@@END
+@@INSERT up-w-brazier | valerius=betrayed
+Below the ledge, you glimpse a flash of fine silk as Valerius’s runners scour the Exchange roofs for their hated enemy. Sable crouches low against the brickwork to avoid their gaze, clutching her lockpicks whilst you weigh the survival value of a burning book against the lord's polite vengeance.
+@@END
+@@INSERT up-w-brazier | rigg=betrayed
+Heavy boots ring out on the cobblestones beneath your perch, echoing the relentless pursuit of Matron Rigg’s warrant officers. The foundry men are hunting you both with iron resolve, forcing Sable to edge away from the flickering light as you calculate whether ash can truly erase a death mark.
+@@END
+
+Are there any other locations or specific choices in the game you need inserts drafted for?

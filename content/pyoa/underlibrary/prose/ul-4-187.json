@@ -1,0 +1,94 @@
+{
+ "batch": "ul-4-187",
+ "sections": {
+  "ul-4-187": {
+   "title": "Oil and Elder",
+   "text": "Dust hangs thick in the annexe, catching the faint amber glow of your pocket-lamp as you edge closer to the low wicker chair where the Last Reader sits. Every movement requires absolute precision, your boots brushing the stone floor with barely a whisper to avoid disturbing the towering, precarious columns of parchment that lean like drunken pillars all around. The old scholar breathes in slow, measured rhythms, eyes clouded and fixed on nothing. Reaching out your hand with infinite care, you lift a small, stoppered vial of thick restoration oil from the armrest before the fragile stacks can tremble or shift.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step carefully back into the shadows"
+   ]
+  },
+  "ul-4-188": {
+   "title": "The Oiled Hinge",
+   "text": "Shadows flicker against the high stone walls as you navigate the narrow gap between the leaning stacks of discarded treatises. Your fingers grip the small glass vial of restoration oil, feeling the cool weight of the amber liquid inside against your palm. The air tastes of dried lavender and stale lamp-oil, heavy with the centuries of forgotten lore resting upon these towering shelves. Ahead, the corridor deepens into absolute quiet, broken only by the faint, rhythmic ticking of a clockwork beetle somewhere behind the wainscot.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance toward the distant reading desk"
+   ]
+  },
+  "ul-4-189": {
+   "title": "Tread of the Page",
+   "text": "Balance hangs by a single thread as you step across a treacherous floor strewn with loose sheets of vellum and brittle index cards. Your boots must find the bare flags beneath the paper without disturbing a single corner, or the entire avalanche of historical error will cascade down upon you in the dark. You draw a slow, deep breath, steadying your weight over your lead foot while your eyes measure the inches between a sleeping volume of theology and a snapping codex.",
+   "check": "Pick your way across the papers",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-190": {
+   "title": "Paper Cuts and Stumbles",
+   "text": "A sudden shift in the stack sends a heavy leather-bound volume sliding across your path, catching your ankle and sending you sprawling awkwardly into a drift of loose leaves. Your lamp rattles violently against the flagstones, spilling a thin circle of oil that flares briefly before dying out in the dust. You pick yourself up with a bruised shin and a palm scraped raw by jagged paper edges, leaving behind a small smear of blood on an ancient treatise of forgotten laws.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your spilled belongings and stand"
+   ]
+  },
+  "ul-4-191": {
+   "title": "The Restorer's Gift",
+   "text": "Silence settles back over the stacks as you regain your footing, your fingers brushing against the cool, smooth glass of the small vial you managed to secure despite the mishap. The restoration oil inside catches the dim lamp-light, gleaming like liquid amber meant for soothing stiff bindings or healing cracked parchment. With this quiet prize tucked safely into your pocket, the narrow aisle ahead opens up into the deeper reaches of the annexe where the air grows colder still.",
+   "check": "",
+   "grant": "Vial of restoration oil",
+   "exits": [
+    "Proceed toward the central reading gallery"
+   ]
+  },
+  "ul-4-192": {
+   "title": "The Long Closing",
+   "text": "A heavy tremor rolls through the foundations of the Underlibrary, shaking dust from the high rafters and setting every suspended lamp swinging in unison. Across the dim chamber, the Last Reader raises a trembling, ink-stained finger toward the far wall, where the iron-bound panels of the Hundredth Door begin to groan and part of their own accord. The deep stacks are sealing themselves for a generation, their internal mechanisms grinding together with the force of an oncoming tide. The air grows thin and electric as the original Index waits beyond the threshold, ready to be read.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the opening Hundredth Door"
+   ]
+  },
+  "ul-4-193": {
+   "title": "Roots of Iron",
+   "text": "Etymologies twist and settle in your mind as you examine the carved lettering surrounding the stubborn brass keyhole. Every dead term holds a specific weight in the masonry, and tracing the ancient root reveals the exact grammatical lever needed to spring the rusted mechanism. With a firm turn of your wrist, the heavy bolt slides home with a sound like a falling shelf, releasing the latch.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push open the heavy timber door"
+   ]
+  },
+  "ul-4-194": {
+   "title": "Dance of the Bindings",
+   "text": "Heavy reference folios snap their leather jaws from the dark shelves, lunging like caged hounds as you dart past the mahogany reading tables. Your feet move with instinctive rhythm, ducking a flying dictionary of heraldry and spinning past a snapping volume of local ordinances. Amidst the flurry of snapping pages and fluttering markers, your fingers close around a cool piece of stamped brass resting on the ledge.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the brass bookmark and dash"
+   ]
+  },
+  "ul-4-195": {
+   "title": "The Ink-Repeller",
+   "text": "The aggressive splashes of black ink tracking across the floor hiss and retreat as you hold the heavy brass bookmark before you like a shield. Its stamped edges gleam with an old, protective alloy that keeps the venomous liquids from staining your coat or shoes. The corridor ahead grows strangely quiet, the predatory books slinking back into their dark cubbies with sullen thuds.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the cleared passage ahead"
+   ]
+  },
+  "ul-4-196": {
+   "title": "Silence in the Court",
+   "text": "Murmurs swell among the gathered scholars until you step forward and point out the glaring logical fallacy in their central premise regarding the authorship of the lost catalogues. The weight of your argument cuts through the noisy debate like a cold draft, leaving the crowd blinking in sudden, embarrassed silence. In the wake of their quiet realization, a student hands over a neatly transcribed scroll containing the very arguments that won the day.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the transcribed marginal debate"
+   ]
+  }
+ },
+ "missing": []
+}
