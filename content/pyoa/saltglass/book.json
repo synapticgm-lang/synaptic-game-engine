@@ -3171,7 +3171,7 @@
     }
    ],
    "title": "The Fallen Lime-Kiln",
-   "page": "Sharp shards of tumbled masonry crunch beneath your heavy boot-heels among the ruins of the old lime-kiln. A lean, mangy cur emerges from the lime-dust, sniffing eagerly at your cuff while your banked lantern remains tightly shuttered and dark against prying eyes. The night air tastes of stale lime and dry earth, thick with the silence of a dying frontier.\n\nYou grip the strap of your pack and listen closely for any sound of pursuit from the lamp-town behind you."
+   "page": "Sharp shards of tumbled masonry crunch beneath your boot-heels among the ruins of the old lime-kiln, and a lean mangy cur emerges from the lime-dust to sniff at your cuff. Your banked lantern stays dark. The night air tastes of stale lime and dry earth.\n\nYou grip the strap of your pack and listen for any sound of pursuit from the lamp-town behind you."
   },
   {
    "id": "sg-1-2-2-2",
@@ -3986,7 +3986,7 @@
     }
    ],
    "title": "The Customs House Draught",
-   "page": "Near the crumbling brick foundation of the old customs house, a cold draught eddies around your ankles from the basin below. Weeds have split the mortar, and the timber roof caved in long before the wells failed, leaving only a skeletal hearth against the eastern wall. Your banked coal-lantern casts a warm, flickering glow across the charred floorboards, revealing scraps of old toll-manifests half-buried in grey sand. The wind whistles through the vacant window frames, carrying the scent of dry salt and distant copper-smoke from the lower terraces."
+   "page": "Near the crumbling brick foundation of the old customs house, a cold draught eddies around your ankles from the basin below. Weeds have split the mortar. The timber roof caved in long before the wells failed. Only a skeletal hearth stands against the eastern wall. Your banked coal-lantern casts a warm flicker across the charred floorboards, and scraps of old toll-manifests lie half-buried in grey sand. Wind whistles through the vacant window frames with the scent of dry salt and distant copper-smoke from the lower terraces."
   },
   {
    "id": "sg-1-2-4-0",
@@ -9375,7 +9375,7 @@
     }
    ],
    "title": "The Translucent Ledge",
-   "page": "Translucent roofing tiles shift dangerously beneath your boots as you pick your way along the narrow rib of a ruined villa. Fifty feet below, the dry basin floor glitters with a crust of salt and fused glass, offering no mercy should your footing fail. The desert wind hums through the jagged architectural bones around you, carrying the dry scent of ancient dust.\n\nAhead, the precarious pathway splits, leaving you to decide whether to brave the interior gloom or test another narrow span."
+   "page": "Translucent roofing tiles shift beneath your boots as you pick your way along the narrow rib of a ruined villa, and fifty feet below the dry basin floor glitters with a crust of salt and fused glass. No mercy if you slip. The desert wind moves through the jagged architectural bones around you and carries the dry scent of ancient dust.\n\nAhead the pathway splits toward the interior gloom and another narrow span."
   },
   {
    "id": "sg-3-0-2-8",
@@ -9694,7 +9694,7 @@
     }
    ],
    "title": "The Weaver's Loft",
-   "page": "You squeeze through a jagged window frame into a weaver's loft strewn with tangled threads of spun glass that glitter like frozen cobwebs across the floorboards. Every footfall must be measured and light to avoid snapping the delicate filaments that ring out like tiny crystal chimes in the stale air. Sunlight catches the suspended threads, creating an intricate maze of rainbow refractions that obscure the farther corners of the room."
+   "page": "You squeeze through a jagged window frame into a weaver's loft strewn with tangled threads of spun glass that glitter like frozen cobwebs across the floorboards. Every footfall must be measured and light. Snap a filament and it rings in the stale air. Sunlight catches the suspended threads. Rainbow refractions obscure the farther corners of the room."
   },
   {
    "id": "sg-3-0-3-8",
@@ -10382,7 +10382,7 @@
     }
    ],
    "title": "Woven Copper Wire Bridge",
-   "page": "The air grows thick and heavy with the sharp scent of scorched resin as your boots step onto a suspension bridge made of tightly woven copper wire. The span gives under your steps, and a metallic note climbs through the soles of your feet. Far below, the dry floor of the Basin glitters like crushed diamonds in the harsh glare of the afternoon sun."
+   "page": "Scorched resin smells sharp as your boots step onto a suspension bridge made of tightly woven copper wire. The span gives. A metallic note climbs through the soles of your feet while far below the dry floor of the Basin glitters like crushed diamonds in the harsh glare of the afternoon sun."
   },
   {
    "id": "sg-3-1-2-0",
@@ -12367,7 +12367,7 @@
     }
    ],
    "title": "Rusted Iron Spans",
-   "page": "Rusted iron chains stretch taut across the terrifying drop between two hollow glass spires, humming with the dry desert wind. You inch forward one boot at a time like a tightrope walker, keeping your center of gravity low while the salt flats glare far below. Your banked lantern swings heavily from your belt, casting long, frantic arcs against the translucent walls."
+   "page": "Rusted iron chains stretch taut across the drop between two hollow glass spires while the dry desert wind works them. You inch forward one boot at a time like a tightrope walker, and your center of gravity stays low. The salt flats glare. Your banked lantern swings from your belt and throws long arcs against the translucent walls."
   },
   {
    "id": "sg-3-2-3-3",
@@ -13329,7 +13329,7 @@
     }
    ],
    "title": "Salt-Tube Labyrinth",
-   "page": "You navigate a treacherous labyrinth of hollow salt-tubes that whistle like dying birds under the immense pressure of the dry gale. Each tubular conduit stands like a pipe organ organ-cast from brine and minerals, vibrating under your gloved touch. The air inside the maze is remarkably still, though heavy with the scent of stagnant moisture deep below. You keep your lamp held high, watching for sudden fissures in the crystalline floor."
+   "page": "You navigate a labyrinth of hollow salt-tubes that whistle like dying birds under the pressure of the dry gale, and each tubular conduit stands cast from brine and minerals under your gloved touch. The air inside the maze is still. Stagnant moisture rises from deep below. You keep your lamp held high and watch for sudden fissures in the crystalline floor."
   },
   {
    "id": "sg-4-0-1-4",
@@ -13597,7 +13597,7 @@
     }
    ],
    "title": "Silent Basin Fissure",
-   "page": "You squeeze through a narrow fissure between two canted slabs of sea-wall, emerging into a dead-silent basin choked with glittering dust-drifts. The sudden absence of the roaring wind is almost deafening, leaving only the crunch of your own boots on the frozen brine. Ghostly towers of fused glass rise out of the haze like frozen lightning, casting long violet shadows across the flat pan. You lift your lamp to pierce the gloom, watching the red coals pulse in the sudden quiet."
+   "page": "You squeeze through a narrow fissure between two canted slabs of sea-wall and emerge into a dead-silent basin choked with glittering dust-drifts. The roaring wind is gone. Only the crunch of your own boots on the frozen brine remains. Ghostly towers of fused glass rise out of the haze like frozen lightning, and they cast long violet shadows across the flat pan. You lift your lamp to pierce the gloom. Red coals pulse in the sudden quiet."
   },
   {
    "id": "sg-4-0-2-4",
@@ -15027,7 +15027,7 @@
     }
    ],
    "title": "The Fluttering Ledger",
-   "page": "Shards of discarded spectacles click and slide against one another like teeth in an iron jaw as the rising gust tears at the pages of an old, water-swollen ledger pinned beneath a heavy cairn. Inked cartography from a forgotten survey season ripples in the murk, threatening to scatter vital paths across the shifting, blinding dunes before you can commit them to memory. Your fingers grow stiff as you try to anchor the flailing calfskin against the driving squall."
+   "page": "Shards of discarded spectacles click and slide against one another like teeth in an iron jaw as the rising gust tears at the pages of an old water-swollen ledger pinned beneath a cairn. Inked cartography ripples in the murk. It is from a forgotten survey season, and those paths could scatter across the shifting blinding dunes before you commit them to memory. Your fingers grow stiff as you try to anchor the flailing calfskin against the driving squall."
   },
   {
    "id": "sg-4-1-2-10",
