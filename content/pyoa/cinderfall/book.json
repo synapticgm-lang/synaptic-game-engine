@@ -5585,7 +5585,7 @@
    "kind": "hub",
    "title": "Prophet's Cairn",
    "brief": "Prophet's Cairn: A towering pyre of charred railway sleepers where Cinder Prophets chant hymns to the purifying flame of the Steppe.",
-   "page": "Charred railway sleepers stack high into a brooding spire of soot and ash, casting long, wavering shadows across the grey dunes. Cinder Prophets sway within the blistering heat, their robes stiff with salt and grease as they chant hymns to the purifying flame that devoured the Steppe. You pause near the edge of the pyre, feeling the dry wind whistle through the iron ribs of stalled tenders. Every path out of this smoky labyrinth demands a choice, whether you seek counsel among the zealots or haul obstacles from the track.\n\nSmoke stings your eyes while the storm clock ticks away precious minutes in your breast pocket. To the left, a narrow path winds directly toward the heart of the chanting monks where the heat beats like a hammer. Straight ahead, iron censers swing from rusted gantries, marking a route through the sputtering shrines. You might also consult a blind prophet for the secrets of the iron gates, heave an iron fire-basket clear of the cowcatcher, clear a collapsed timber crossbeam for the wandering monks, or swing your water-scoop into a shallow tank-car to cool the boiling engine.",
+   "page": "Charred railway sleepers stack into a spire of soot and ash. Shadows crawl across the grey dunes. Cinder Prophets sway in the blistering heat, robes stiff with salt and grease, and chant hymns to the purifying flame that ate the Steppe. You pause near the edge of the pyre. Dry wind whistles through the iron ribs of stalled tenders. Smoke gets in your eyes while the storm clock ticks away minutes in your breast pocket.\n\nTo the left a narrow path runs toward the chanting monks, where the heat beats like a hammer. Straight ahead, iron censers swing from rusted gantries and mark a route through the sputtering shrines. A blind prophet waits with talk of the iron gates. An iron fire-basket sits jammed against the cowcatcher. A collapsed timber crossbeam blocks the wandering monks. A shallow tank-car holds grey water for the scoop if the engine is boiling.",
    "exits": [
     {
      "label": "Approach the chanting monks directly",
@@ -6074,7 +6074,7 @@
    "kind": "reward",
    "title": "A Debt of Ash",
    "brief": "Dragging a collapsed timber crossbeam away from the holy altar gains a debt of honour from the ragged wandering monks.",
-   "page": "Timbers groan beneath your boots as you heave the charred crossbeam clear of the holy altar and free the trapped wanderer. The ragged monks murmur low canticles into their cowls, their faces blackened by soot and devotion. They press a heavy brass medallion into your palm, promising that wherever their fires burn along the line, your engine shall find sanctuary.\n\nYou climb back onto the footplate of the Marrowbone, feeling the weight of the new debt settle into your bones as the low sky presses down upon the Steppe.",
+   "page": "Timbers groan under your boots as you heave the charred crossbeam clear of the holy altar and free the trapped wanderer. The ragged monks murmur low canticles into their cowls, faces blackened by soot and devotion. They press a brass medallion into your palm and promise that wherever their fires burn along the line, your engine shall find sanctuary.\n\nYou climb back onto the footplate of the Marrowbone with a new debt owed. The low sky presses down upon the Steppe.",
    "exits": [
     {
      "label": "Climb back to the footplate",
@@ -6539,7 +6539,7 @@
    "kind": "scene",
    "title": "Secrets in the Dust",
    "brief": "Stealing past the sleeping foreman to retrieve a stolen ledger reveals the hidden combination to the supply locker.",
-   "page": "Sunlight filters through the begrimed clerestory windows, casting long, dusty shafts across the cluttered interior of the supply car. Holding the recovered ledger close to your face, you squint against the gloom to decipher the faded pencil notes left by the night clerks. The combination sits in the margin in a hasty, slanted hand, tucked under a freight manifest for slag-irons. Every floorboard beneath your boots groans at the slightest shift of your weight, threatening to alert the sleeping crew in the adjoining compartment. You memorize the numbers quickly, turning the sequence over in your head until it burns into your memory like hot coals.",
+   "page": "Sunlight filters through the begrimed clerestory windows and throws long, dusty shafts across the cluttered interior of the supply car. You hold the recovered ledger close to your face and squint against the gloom to read the faded pencil notes the night clerks left. The combination sits in the margin in a hasty, slanted hand, tucked under a freight manifest for slag-irons. Every floorboard under your boots groans at the slightest shift. The sleeping crew in the adjoining compartment might hear. You memorize the numbers fast and turn the sequence over in your head until it sticks like hot coals.",
    "exits": [
     {
      "label": "Approach the locked supply cabinet",
@@ -6811,7 +6811,7 @@
    "kind": "recovery",
    "title": "A Heavy Toll",
    "brief": "Enduring the armed guards hostile stares while waiting in line secures a heavy wooden mallet for driving track pins.",
-   "page": "Your fingers jerk against the zinc edge, knocking a loose drift-pin clattering across the iron floorboards and drawing a sharp bark of laughter from the sergeant. The guard closest to you shoves you hard against the bulkhead, leaving a jagged scrape along your ribs and stealing the breath from your lungs with a dull thud. You bite your tongue until you taste copper, clutching your bruised side while the laughing guard kicks the heavy mallet further out of your immediate reach. They let you take it in the end, but the pain in your ribs throbs in time with your boots as you limp back toward the siding.",
+   "page": "Your fingers jerk against the zinc edge and knock a loose drift-pin clattering across the iron floorboards. The sergeant barks a sharp laugh. The guard closest to you shoves you hard against the bulkhead. A jagged scrape opens along your ribs and the breath leaves your lungs with a thud. You bite your tongue until you taste copper and clutch your bruised side while the laughing guard kicks the mallet further out of reach. They let you take it in the end. Pain in your ribs keeps time with your boots as you limp back toward the siding.",
    "exits": [
     {
      "label": "Retreat with the heavy mallet",
@@ -11036,7 +11036,7 @@
    "kind": "scene",
    "title": "Into the Drum",
    "brief": "You keep your wits about you in the claustrophobic iron drum, risking claustrophobic terror to locate the sabotage mechanism.",
-   "page": "Narrow iron ribs press against your jacket like the ribs of a buried beast, restricting every inhalation to a shallow gasp. Rivets poke into your spine while you grope blindly along the curved floor for the source of the blockage. Heat radiates from the outer shell, turning the cramped space into a baking oven of stale air and sweat. Through the thick metal walls comes the dull, distant thrum of the viaduct far below.\n\nYou inch forward on bruised knees, fingers brushing against something jagged and unexpected tucked behind the main feed pipe. The obstruction feels solid, wedged tightly into the vital passage where the steam must flow to keep the Marrowbone alive.",
+   "page": "Narrow iron ribs press against your jacket like the ribs of a buried beast. Each breath is a shallow gasp. Rivets poke into your spine while you grope blindly along the curved floor for the source of the blockage. Heat radiates from the outer shell and turns the cramped space into a baking oven of stale air and sweat. Through the thick metal walls comes a dull knock from the viaduct far below.\n\nYou inch forward on bruised knees. Fingers brush something jagged and unexpected tucked behind the main feed pipe. The obstruction feels solid, wedged tight into the vital passage where the steam must flow to keep the Marrowbone alive.",
    "exits": [
     {
      "label": "Probe deeper past the jagged obstruction",
@@ -12722,7 +12722,7 @@
    "kind": "scene",
    "title": "Smothered in White",
    "brief": "You maintain iron composure while searchlights sweep the cab, risking a panic attack to keep the engine hidden in steam.",
-   "page": "Thick white plumes hiss from the ruptured manifold, wrapping the iron ribs of the Marrowbone in a dense, artificial fog that smells of scorching oil and wet packing. Yellow searchlights sweep across the curved iron roof of the cab, casting long, frantic bars of light through the greasy windows. Your lungs feel tight and dry, threatening to close entirely under the weight of the sudden ambush, yet your fingers remain hooked around the brass regulator. You force your breathing down to a slow, deliberate rhythm, matching the steady thrum of the piston-rods beneath the floor plates.\n\nDrop the side injector valve and drown the track in vapour before the Rail Barons spot your silhouette.",
+   "page": "White plumes hiss from the ruptured manifold and wrap the iron ribs of the Marrowbone in a dense, artificial fog. Scorching oil and wet packing cut sharp at the nose. Yellow searchlights sweep the curved iron roof of the cab and throw long, frantic bars of light through the greasy windows. Your lungs go tight and dry in the sudden ambush, yet your fingers stay hooked around the brass regulator. You force each breath into a slow, deliberate rhythm that matches the knock of the piston-rods under the floor plates.\n\nThe side injector valve sits under your hand. Flood the track with vapour before the Rail Barons catch your silhouette.",
    "exits": [
     {
      "label": "Drown the track in thick steam",
@@ -13325,7 +13325,7 @@
    "kind": "recovery",
    "title": "The Ledger Collapse",
    "brief": "You trace the hidden grease-runs along the tunnel footing to bypass the blockade, securing an old railway ledger full of toll-receipts.",
-   "page": "Your fingers catch on the corner of a rotting wooden crate, pulling it just an inch too far before the entire stack of heavy railway ledgers collapses into the muck with a dull, echoing thud. A cloud of black mold and choking ash billows into your face, sending you into a fit of violent coughing that leaves your ribs aching and your eyes watering in the dark. You manage to scramble clear before the remaining shelves give way, but the noise reverberates endlessly down the empty brick vault.",
+   "page": "Your fingers catch on the corner of a rotting wooden crate and pull it just an inch too far. The whole stack of railway ledgers collapses into the muck with a dull thud. Black mold and choking ash billow into your face. A fit of violent coughing wracks your ribs and waters your eyes in the dark. You scramble clear before the remaining shelves give way, but the noise rolls on and on down the empty brick vault.",
    "exits": [
     {
      "label": "Escape the falling paper stack",
@@ -13861,7 +13861,7 @@
    "kind": "scene",
    "title": "The Sealing Gland",
    "brief": "You reseal the leaking steam gland under a barrage of dripping condensation, retaining a heavy copper gasket for repairs.",
-   "page": "Scalding droplets spit from the failing packing ring, stinging your bare forearm every time the piston rod thrusts through the bulkhead. Condensation slicks the iron floorplates beneath your boots, turning every step into a cautious slide above the roaring pit. Wrapping a thick rag around your palm, you lean into the heat to reach the rusted securing bolts.\n\nThe heavy copper gasket comes free with a sharp metallic screech, leaving behind a scarred seating that demands immediate attention before the cylinder pressure drops entirely away.",
+   "page": "Scalding droplets spit from the failing packing ring and hit your bare forearm each time the piston rod thrusts through the bulkhead. Condensation slicks the iron floorplates under your boots, so every step becomes a cautious slide above the roaring pit. You wrap a thick rag around your palm and lean into the heat to reach the rusted securing bolts.\n\nThe copper gasket comes free with a sharp metallic screech. A scarred seating remains. Cylinder pressure will fall unless you act at once.",
    "exits": [
     {
      "label": "Reach for the spanner and fresh packing",
@@ -14314,7 +14314,7 @@
    "kind": "scene",
    "title": "The Rigging",
    "brief": "You rig a system of block and tackle using discarded telegraph wire, securing an intact block and a dry dry-cell battery.",
-   "page": "Threading the insulated wire through the porcelain block requires stiff, freezing fingers and absolute concentration in the dim, flickering light of your oil lantern. The distant rumble of the engine's blower echoes down the tunnel, reminding you that the fire on the grate must not be neglected for too long if steam pressure is to be maintained against the mountain grade. You anchor one end of the line around a stout granite pillar embedded in the tunnel wall, testing the tension with a sharp tug that sets the porcelain humming softly in the damp air. It is a neat, seamanlike job born of long hours on the permanent way, designed to span the black water without asking favors of the broken tracks.",
+   "page": "You thread the insulated wire through the porcelain block with stiff, cold fingers, working by the dim flicker of your oil lantern. Far down the tunnel the engine's blower works, a reminder that the fire on the grate needs tending if steam pressure is to hold against the mountain grade. You anchor one end of the line around a stout granite pillar in the tunnel wall and give a sharp tug. The porcelain holds taut in the damp air. It is a neat, seamanlike job born of long hours on the permanent way, meant to span the black water without asking favors of the broken tracks.",
    "exits": [
     {
      "label": "Test the improvised block hoist",
@@ -14814,7 +14814,7 @@
    "kind": "bottleneck",
    "title": "The Iron Barricade",
    "brief": "The engine's headlight cuts across a makeshift barricade of iron rail sleepers piled high by unseen hands across the track.",
-   "page": "The tunnel widens abruptly into a broad switching basin where the tracks fan out toward the old maintenance sidings. Cutting straight across the parallel rails stands a massive barricade built from surplus iron sleepers stacked four high and bound together with heavy gauge telegraph wire. Unseen hands have wedged jagged chunks of slag between the iron bars, turning the junction into a formidable breastwork that blocks the entire width of the bore. A faint blue glow flickers behind the barrier from several improvised sulphur braziers, casting long, wavering shadows against the soot-blackened roof.\n\nNo sound comes from the dark side of the wall save for the steady hiss of escaping gas and the muffled scrape of a shovel on stone. You slow the Marrowbone to a gentle idle, letting the boiler breathe while you measure the height of the obstruction.",
+   "page": "The tunnel widens into a broad switching basin where the tracks fan out toward the old maintenance sidings. Straight across the parallel rails stands a barricade of surplus iron sleepers stacked four high and bound with gauge telegraph wire. Unseen hands have wedged jagged chunks of slag between the iron bars. The junction is a breastwork that blocks the entire width of the bore. A faint blue glow flickers behind the barrier from several improvised sulphur braziers and throws long, wavering shadows against the soot-blackened roof.\n\nNo sound comes from the dark side of the wall save the hiss of escaping gas and the muffled scrape of a shovel on stone. You slow the Marrowbone to a gentle idle. The boiler breathes while you measure the height of the obstruction.",
    "exits": [
     {
      "label": "Approach the barricade camp in the dark",
@@ -14829,7 +14829,7 @@
    "kind": "hub",
    "title": "The Barricade Camp",
    "brief": "The Barricade Camp: Abandoned sleeping quarters of the early gangers flicker with the blue glow of sulphur braziers.",
-   "page": "Abandoned sleeping quarters of the early gangers flicker with the blue glow of sulphur braziers, casting long, shivering shadows across rusted iron bunks and frosted glass lanterns. Piles of discarded oilskins smell faintly of stagnant damp and old grease, while overhead, water drips with a dull, rhythmic echo against the arched stone ceiling.\n\nYou stand in the centre of this forgotten habitation where five distinct routes branch off into the dark tunnels, each promising its own peril or advantage under the low vaulting. You weigh the damp air and listen to the distant hum of the rails before choosing your path through the subterranean gloom.",
+   "page": "Abandoned sleeping quarters of the early gangers flicker with the blue glow of sulphur braziers. Long shadows crawl across rusted iron bunks and frosted glass lanterns. Piles of discarded oilskins smell of stagnant damp and old grease. Overhead, water drips one drop at a time against the arched stone ceiling and leaves dark rings on the floor.\n\nYou stand in the centre of this forgotten habitation. Five routes branch off into the dark tunnels under the low vaulting, each mouth a black cut in the rock. The damp air sits cold against your face. Blue light from the braziers crawls up the bunk frames and dies at the tunnel lips.",
    "exits": [
     {
      "label": "Unbolt the iron fishplates ahead",
@@ -16500,7 +16500,7 @@
    "kind": "reward",
    "title": "The Stamp of Approval",
    "brief": "You stare down the ancient bureaucrat without blinking until she stamps your waybill, earning a cup of hot chicory.",
-   "page": "The heavy rubber stamp descends with a resounding thud that makes the inkpot jump, leaving a crisp, violet seal squarely across your transit manifest. A dry papery sigh escapes the ancient clerk as she slides the authorized papers back into your palm. She reaches beneath the ledger and pushes a small, grease-stained brass token across the wood toward your knuckles, her expression remaining as unreadable as a slab of basalt. It is a quiet concession from a system that rarely gives anything away for free.\n\nYou tuck the token into your breast pocket beside your watch, feeling its cold metal weight settle against your ribs as a silent shield against future disputes. The path ahead opens up between two rows of dormant signal levers, waiting for your boots.",
+   "page": "The rubber stamp comes down with a resounding thud that makes the inkpot jump. A crisp violet seal lands squarely across your transit manifest. A dry papery sigh escapes the ancient clerk as she slides the authorized papers back into your palm. She reaches beneath the ledger and pushes a small, grease-stained brass token across the wood toward your knuckles. Her face stays as blank as a slab of basalt. A rare concession from a system that rarely gives anything away for free.\n\nYou tuck the token into your breast pocket beside your watch. Cold metal sits against your ribs. Between two rows of dormant signal levers the corridor stretches ahead.",
    "exits": [
     {
      "label": "Follow the corridor to the junction",
@@ -17329,7 +17329,7 @@
    "kind": "scene",
    "title": "The Iron Bar",
    "brief": "You heave your weight against the frozen ballast-crank, straining shoulder-muscles until the mechanism yields, and claim a heavy iron pinch-bar.",
-   "page": "Resting within the recess of the ballast-bed lies the prize you freed from the grip of the ice. You drop to one knee in the grit, sweeping away a drift of dry ash to reveal a heavy iron pinch-bar, scarred by slag and pitted with ancient rust. Your fingers close around the cold metal, testing its weight against the pull of gravity. It is thick enough to force any jammed latch or pry open a rusted bypass valve when the need arises.\n\nYou tuck the tool securely beneath your leather belt, feeling its solid, reassuring heft press against your hip as you stand back up. The low rumble of the approaching ash-storm hums through the steel rails beneath your boots, urging you onward toward the terminus.",
+   "page": "In the recess of the ballast-bed lies the prize you freed from the grip of the ice. You drop to one knee in the grit and sweep away a drift of dry ash to uncover an iron pinch-bar, scarred by slag and pitted with old rust. Your fingers close around the cold metal. You lift it and test the balance. Thick enough to force any jammed latch or pry open a rusted bypass valve when the need arises.\n\nYou tuck the tool under your leather belt so it rides against your hip as you stand back up. Through the steel rails under your boots comes the grind of the approaching ash-storm. You turn toward the terminus.",
    "exits": [
     {
      "label": "Return to the engine deck",
@@ -17793,7 +17793,7 @@
    "kind": "recovery",
    "title": "A Fracture of Calm",
    "brief": "You stand firm under the cold stare of the patrol sergeant, keeping your voice level and polite, and secure a signed transit pass from a nervous clerk.",
-   "page": "Suspicion flares in the sergeant's eyes too late as a sudden draft catches the damp ink, smudging the forged seal across the bottom of the pass into a greasy purple smear. Heavy iron hands grab your shoulder with bone-crushing force, spinning you around against the steel bulkhead and bruising your ribs against a protruding rivet. They relieve you of the false papers with a sharp, mocking laugh, leaving you with a dull ache in your side and precious minutes squandered in the shadows of the watchtower. Still, the guards push you back toward the platform rather than the cells, giving you another chance to find a way through.",
+   "page": "Suspicion flares in the sergeant's eyes too late. A sudden draft catches the damp ink and smudges the forged seal across the bottom of the pass into a greasy purple smear. Iron hands grab your shoulder with bone-crushing force, spin you against the steel bulkhead, and bruise your ribs on a protruding rivet. They take the false papers with a sharp, mocking laugh. Your side hurts. Precious minutes are gone in the shadows of the watchtower. Still, the guards push you back toward the platform, not the cells, and leave you another chance to find a way through.",
    "exits": [
     {
      "label": "Slip back into the shifting platform crowds",
@@ -17910,7 +17910,7 @@
    "kind": "scene",
    "title": "The Tool-Roll Vault",
    "brief": "You wrench the iron mounting bracket from the wall with brute force, shattering the door-lock, and retrieve a heavy leather tool-roll.",
-   "page": "Metal screams against metal as you throw yourself at the wall-mounted bracket, snapping the cast-iron mounting pins like dry twigs. The reinforced cabinet door swings wide with a hollow clang, revealing a rich trove of equipment left behind by fleeing maintenance crews. You plunge your hands into the dark recess, your fingers closing around a thick leather tool-roll filled with heavy spanners, wire ties, and oil-soaked rags.\n\nFootsteps echo heavily up the adjacent iron staircase, warning you that the noise has drawn unwanted attention from the patrolling gangers. You tuck the leather roll securely beneath your arm and move out before the corner can be turned.",
+   "page": "Metal screams against metal as you throw yourself at the wall-mounted bracket. The cast-iron mounting pins snap like dry twigs. The reinforced cabinet door swings wide with a hollow clang and shows a rich trove of equipment left by fleeing maintenance crews. You dig into the dark recess and close on a thick leather tool-roll packed with spanners, wire ties, and oil-soaked rags.\n\nFootsteps climb the adjacent iron staircase. The noise has drawn the patrolling gangers. You tuck the leather roll under your arm and move out before anyone turns the corner.",
    "exits": [
     {
      "label": "Slip away down the lower gantry",
