@@ -970,7 +970,7 @@
    "kind": "scene",
    "title": "Splintered Ribs of Wood",
    "brief": "You patch a splintered skiff that hangs uselessly from the dry pier, using clever rigging to lower it and scavenging a bundle of salt-cured rations.",
-   "page": "Salt cakes thick upon the hemp ropes as you grip the pulley, hauling your weight against the dry frame of the pier. Below, the skiff hangs suspended in the salt-blistered air, its hull scarred by a hundred bruising encounters with the reef. You need to drop it gently onto the cracked mud of the Low without snapping the remaining ribs.\n\nReaching into your coat, you draw a length of oiled leather twine and loop it through the tackle to slow the sudden, grinding descent. You must guide the vessel down inch by inch while the dry wind howls through the empty pilings of Gullmouth.",
+   "page": "Salt cakes on the hemp ropes as you grip the pulley and haul against the dry frame of the pier. The skiff hangs below. Its hull bears the scars of a hundred bruising encounters with the reef in the salt-blistered air. You need to drop it gently onto the cracked mud of the Low without snapping the remaining ribs.\n\nFrom your coat you draw a length of oiled leather twine and loop it through the tackle to slow the grinding descent, and then you guide the vessel down inch by inch while the dry wind howls through the empty pilings of Gullmouth.",
    "exits": [
     {
      "label": "Lower the skiff to the mud",
@@ -1270,7 +1270,7 @@
    "kind": "scene",
    "title": "The Harbor Office",
    "brief": "You pick the rusted lock on the harbourmaster's abandoned office, relying on careful hands to disarm a simple trap and claiming a stash of coin.",
-   "page": "Sunlight cuts through the grimy salt-crusted windows of the harbourmaster's abandoned office, illuminating dust motes dancing above scattered papers. You step carefully over a discarded ledger, keeping your eyes on the open strongbox where the silver coins gleam in the dim light. Reaching down, you gather the metal pieces into a leather pouch; their pleasant clink breaks the hush of the stranded waterfront. The room holds nothing else of immediate value, save for a brass spyglass mounted on a tripod facing the empty bay. You take a final look across the dry silt before turning your back on the quiet desk.",
+   "page": "Sunlight cuts through the grimy salt-crusted windows of the harbourmaster's abandoned office and lights dust above scattered papers strewn across the warped boards. You step over a discarded ledger. Eyes stay on the open strongbox. Silver coins gleam in the dim light as you gather the metal pieces into a leather pouch, and their clink breaks the hush of the stranded waterfront. The room holds nothing else of immediate value save a brass spyglass on a tripod facing the empty bay. Across the dry silt you take a last look, then turn your back on the desk.",
    "exits": [
     {
      "label": "Return to the bustling harbour",
@@ -4162,7 +4162,7 @@
    "kind": "check",
    "title": "The Captains Ledger",
    "brief": "You decipher the captain's waterlogged ledger to find a hidden cache, risking a sudden deck collapse to claim a silver compass.",
-   "page": "Rotting oak groans beneath your boots as you pry open the captain's seaman chest, its salt-crust flaking away to reveal a ledger swollen with dark ink. Every line of crabbed handwriting hides a secret coordinate, but the rusted deck-beams overhead sag dangerously with the weight of collapsed bulkheads. You trace the damp pages for the hidden cache while a sudden shift in the timbers warns that the entire ceiling is about to come down upon your head.",
+   "page": "Rotting oak groans beneath your boots as you pry open the captain's seaman chest, its salt-crust flaking away to reveal a ledger swollen with dark ink. Every line of crabbed handwriting hides a secret coordinate, but the rusted deck-beams overhead sag under collapsed bulkheads. You trace the damp pages for the hidden cache. Timbers shift above you. You mutter, \"The ceiling is coming down.\"",
    "exits": [
     {
      "label": "check-full",
@@ -15898,7 +15898,7 @@
    "kind": "scene",
    "title": "Scattered Charts",
    "brief": "You piece together the torn fragments of a tidal chart left near the bedroll, using keen observation to learn the exact timing of the currents.",
-   "page": "Torn fragments of parchment lie scattered across the camp bedroll like fallen autumn leaves, curling at the edges from the damp salt air. You kneel beside the makeshift table, carefully arranging the fragile strips of ink-stained paper into something resembling a coherent map. The diagrams show strange lunar alignments and tidal vectors foreign to the old almanacs of Gullmouth. By the dim light of your lantern, you trace the faint, hurried annotations penned in Orsolya's familiar, cramped hand.\n\nThe scattered lines begin to reveal a hidden pattern beneath the messy ink.",
+   "page": "Torn scraps of parchment litter the camp bedroll and curl at the edges from the damp salt air that drifts through the tent. You kneel beside it. Fragile ink-stained strips come together into a rough map on the makeshift table. The diagrams show strange lunar alignments and tidal vectors that sit far outside anything catalogued in the old almanacs of Gullmouth. By lantern light you trace faint hurried notes in Orsolya's familiar cramped hand.\n\nUnder the messy ink a hidden pattern takes shape.",
    "exits": [
     {
      "label": "Trace the alignment of the ink lines",
