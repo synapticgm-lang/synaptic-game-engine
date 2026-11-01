@@ -1884,7 +1884,7 @@
    "kind": "reward",
    "title": "The Sunken Silver",
    "brief": "You drag a waterlogged chest from a collapsing mud pit, using your strength to pull it free before it sinks and claiming the silver within.",
-   "page": "Thick gray mud cakes your knuckles as you heave the waterlogged chest from the collapsing pit, your muscles straining until the suction finally breaks with a wet, sucking gasp. Inside the salt-crusted lid lies a handful of heavy silver coins minted during the reign of the third Tidewarden, their edges worn smooth by centuries of tides.\n\nYou slip the damp currency into your coat pocket alongside a small lead token stamped with the gull-and-harpoon seal of the guild, a tangible proof of your persistence against the shifting earth of the Low.",
+   "page": "Gray mud cakes your knuckles as you heave the waterlogged chest from the collapsing pit, and your arms burn until the suction breaks with a wet gasp. The lid is salt-crusted. Inside sits a handful of silver coins minted in the reign of the third Tidewarden, edges worn smooth by centuries of tides.\n\nYou slip the damp currency into your coat pocket beside a small lead token stamped with the gull-and-harpoon seal of the guild, proof you dragged something free from the shifting earth of the Low.",
    "exits": [
     {
      "label": "Search among the ribs of the ruined galleon",
@@ -6157,7 +6157,7 @@
    "kind": "scene",
    "title": "The Tangled Pool",
    "brief": "You construct a makeshift net from discarded fishing lines, risking a severe pinch to capture a large, edible reef crab.",
-   "page": "Coiled strands of frayed hemp and copper wire drift among the calcified ribs of a sunken ketch, offering the raw materials for a snare. Tangled in the kelp below, a mottled reef crab tests the water with twitching feelers, its heavy pincers snapping at the currents of air. Kneeling in the wet silt, fingers loop the discarded twine into a crude but serviceable noose, sliding it steadily toward the twitching shell while avoiding the razor edges of barnacles that encrust the hull timbers.",
+   "page": "Frayed hemp and copper wire drift among the calcified ribs of a sunken ketch, raw stock for a snare. Below in the kelp a mottled reef crab tests the water with twitching feelers, and its pincers snap at the currents of air. You kneel in the wet silt. Fingers loop the discarded twine into a crude noose and slide it toward the twitching shell, clear of the razor barnacles that crust the hull timbers.",
    "exits": [
     {
      "label": "Slip the noose around the claw",
@@ -6489,7 +6489,7 @@
    "kind": "reward",
    "title": "The Consecrated Drop",
    "brief": "You physically defend the pilgrimage from a desperate pack of wild dogs, risking deep bites to receive a consecrated vial of seawater.",
-   "page": "Steel and muscle find the necessary leverage, however narrowly, driving the fiercest of the brutes back into the muck with a sickening crunch of shattered bone. The surviving curs tuck their tails and vanish into the grey mists curling around the distant wrecks, leaving you chest-heaving and salt-encrusted upon the barren seabed. The oldest of the Drift Pilgrims steps forward, dipping a gnarled thumb into a small earthenware flask and pressing a cold, wet cross of sanctified foam onto your bleeding knuckle. He presses the stoppered glass firmly into your palm without a word, sealing a debt of salt and survival between you.",
+   "page": "Steel and muscle find the leverage and drive the fiercest of the brutes back into the muck with a sickening crunch of shattered bone. Surviving curs tuck their tails and vanish into the grey mists that curl around the distant wrecks. You stand salt-encrusted on the barren seabed. The oldest of the Drift Pilgrims steps forward, dips a gnarled thumb into a small earthenware flask, and presses a cold wet cross of sanctified foam onto your bleeding knuckle. He presses the stoppered glass firmly into your palm without a word. The vial rests there.",
    "exits": [
     {
      "label": "Return to the pilgrim camp",
@@ -7031,7 +7031,7 @@
    "kind": "bottleneck",
    "title": "The Abyssal Trench",
    "brief": "Beyond the stilt-city, the ground plunges into a vast, dark canyon where the remains of a drowned cathedral lie exposed.",
-   "page": "Beyond the outer ring of stilts, the flat grey seabed breaks apart, plunging precipitously into a massive, shadowed gash where the light of the low sun fails to reach. At the bottom of this drowned canyon lies a titanic gothic structure half-swallowed by grey silt, its shattered stained-glass windows gaping like blind eyes and its towering buttresses leaning at perilous angles. Faint, mournful harmonies drift up from the vaulted stone archways, echoing with voices that have not spoken to the living air in generations. You shoulder your pack and pick your way carefully down the steep, shale-strewn slope toward the dark entrance.",
+   "page": "Beyond the outer ring of stilts the flat grey seabed breaks apart and drops into a massive shadowed gash where the light of the low sun fails to reach. At the bottom of this drowned canyon lies a titanic gothic structure half-swallowed by grey silt, its shattered stained-glass windows open like blind eyes and its towering buttresses tipped at perilous angles. Faint mournful harmonies drift up from the vaulted stone archways, voices that have not spoken to the living air in generations. You shoulder your pack. The steep shale-strewn slope leads you down toward the dark entrance.",
    "exits": [
     {
      "label": "Descend into the drowned cathedral",
@@ -7102,7 +7102,7 @@
    "kind": "check",
    "title": "Facing the Choir",
    "brief": "You brave the dark crypts to confront a restless spirit of the Hollow Choir, keeping your sanity intact to claim a silver chalice.",
-   "page": "The spectral figure presses inward, filling your ears with the roar of a thousand phantom breakers crashing against unseen rocks. You force your breath to steady, planting your boots firmly in the wet silt as you reach out a hand toward the silver chalice resting on the altar. Every instinct screams to flee the crushing pressure of the tomb, but you grit your teeth against the rising panic.",
+   "page": "The spectral figure presses inward. Your ears fill with the roar of a thousand phantom breakers that crash against unseen rocks and leave no room for any other sound. Boots plant firm in the wet silt as you reach a hand toward the silver chalice resting on the altar. Every instinct screams to flee. You grit your teeth against the panic of the tomb's crushing pressure.",
    "exits": [
     {
      "label": "check-full",
@@ -7428,7 +7428,7 @@
    "kind": "scene",
    "title": "The Lure's Harvest",
    "brief": "You fight off a grotesque, mutated angler-beast that emerges from the fog, risking terrible lacerations to harvest its glowing lure.",
-   "page": "You drive your salvage hook deep into the soft cartilage behind the creature's eye, pinning its thrashing head against the rib-bone until the frantic movements slow to a sluggish twitch. Reaching out with your sheath-knife, you slice cleanly through the fleshy stalk of the glowing lure, catching the pulsing pouch before it can fade into dull gray jelly. The beast slides back into the sucking mud with a wet sigh, leaving you alone in the quiet mist with your prize.",
+   "page": "You drive your salvage hook deep into the soft cartilage behind the creature's eye and pin its thrashing head against the rib-bone until the frantic movements slow to a sluggish twitch. The sheath-knife cuts clean through the fleshy stalk of the glowing lure, and you catch the pulsing pouch before it can fade into dull gray jelly. The beast slides back into the sucking mud with a wet sigh. Mist thins over the flats. The prize rests in your palm.",
    "exits": [
     {
      "label": "Move on into the deeper trench",
@@ -7443,7 +7443,7 @@
    "kind": "check",
    "title": "Wrestling the Abyssal Horror",
    "brief": "You fight off a grotesque, mutated angler-beast that emerges from the fog, risking terrible lacerations to harvest its glowing lure.",
-   "page": "The beast strikes with the weight of a falling spar, slamming its bulk against your chest and driving the breath from your lungs in a ragged gasp. You throw your arms around its slick, cold throat, fighting to keep its snapping jaws away from your face while your boots sink deeper into the treacherous grey mire. Every muscle in your back screams against the strain as you try to force its head back against the jagged hull plates.",
+   "page": "The beast strikes as hard as a falling spar and slams its bulk against your chest, driving the breath from your lungs in a ragged gasp. Arms lock around its slick cold throat. Snapping jaws stay clear of your face only while your boots sink deeper into the grey mire. Back muscles scream against the strain as you force its head against the jagged hull plates.",
    "exits": [
     {
      "label": "check-full",
@@ -7497,7 +7497,7 @@
    "kind": "reward",
    "title": "The Pulse in the Palm",
    "brief": "You fight off a grotesque, mutated angler-beast that emerges from the fog, risking terrible lacerations to harvest its glowing lure.",
-   "page": "Your fingers close around the pulsing lump of bioluminescent tissue as the beast writhes back into the black water. The soft organ warms your palm, casting a pale green glow over the wet sand and illuminating the strange tracks left by other things that share the trench. You slide the prize into a sealed oilskin pouch, wiping the cold slime from your blade as the silence settles back over the flats.",
+   "page": "Your fingers close around the pulsing lump of bioluminescent tissue as the beast writhes back into the black water. The soft organ warms your palm. Pale green light spills over the wet sand and shows the strange tracks left by other things that share the trench. You slide the prize into a sealed oilskin pouch. Cold slime comes off the blade on your cuff.",
    "exits": [
     {
      "label": "Return to the trench edge hub",
@@ -8016,7 +8016,7 @@
    "kind": "reward",
    "title": "The Hidden Cache",
    "brief": "You push a massive fallen pillar out of the stairwell, straining your muscles to the limit to uncover a hidden weapon cache.",
-   "page": "Granite resists your strength with stubborn fury, but you find the exact balance point and heave with a final, desperate burst of energy. The massive pillar groans, tips over the edge of the stair, and crashes heavily into the abyss below, leaving the secret alcove wide open to your reach. Inside the dry cavity rests a well-preserved blade of dark tempered steel, its edge still keen despite long years of salt and time. You slip the weapon's leather harness over your shoulder, feeling the solid, reassuring weight of the relic against your ribs.",
+   "page": "Granite resists your strength with stubborn fury, but you find the exact balance point and heave with a final desperate burst of energy. The massive pillar groans, tips over the edge of the stair, and crashes into the abyss below. The secret alcove stands open. Inside the dry cavity rests a well-preserved blade of dark tempered steel, its edge still keen despite long years of salt and time. You slip the weapon's leather harness over your shoulder. The relic sits solid against your ribs.",
    "exits": [
     {
      "label": "Follow the dark spiral down",
@@ -8085,7 +8085,7 @@
    "kind": "recovery",
    "title": "Falling Short",
    "brief": "You leap across a yawning chasm where the stairs have crumbled, risking a deadly fall to reach a secure landing and resting spot.",
-   "page": "Your boots strike the slick edge of the far landing, but your momentum fails you and your knees slam hard into the jagged stone. Pain shoots up your shins as you slip backward, your fingernails frantically scraping against the rough rock wall until you manage to hook your elbows over the rim. You dangle for a breathless second over the endless drop before heaving yourself onto solid ground, bruised and breathless. A sharp scrape across your ribs leaves a warm streak of blood beneath your shirt, reminding you of the cost of carelessness in this buried place.",
+   "page": "Your boots strike the slick edge of the far landing, but your momentum fails and your knees slam hard into the jagged stone. Pain shoots up your shins. You slip backward. Fingernails scrape the rough rock wall until you hook your elbows over the rim. For a breathless second you dangle over the endless drop, then heave yourself onto solid ground, bruised and breathless. A sharp scrape across your ribs leaves a warm streak of blood beneath your shirt.",
    "exits": [
     {
      "label": "Crawl forward into the gloom",
@@ -8247,7 +8247,7 @@
    "kind": "scene",
    "title": "The Pressure Plate",
    "brief": "You disarm an ancient pressure plate on the steps, working with steady hands to secure passage and a vial of alchemical fire.",
-   "page": "Cold stone blocks press down beneath your boots along the winding stairway, where a single hair-trigger seam threatens to unmake the entire passage. You drop to one knee, breath held tight, and use a notched blade to scrape away centuries of encrusted lime from the hidden spring. The metal clicks softly into place, harmless at last, leaving a small vial of volatile alchemical fire exposed in the dust.",
+   "page": "Cold stone blocks press down beneath your boots along the winding stairway, where a single hair-trigger seam could unmake the entire passage. You drop to one knee. Breath held tight, you use a notched blade to scrape away centuries of encrusted lime from the hidden spring until the metal clicks softly into place, harmless at last. A small vial of volatile alchemical fire lies exposed in the dust.",
    "exits": [
     {
      "label": "Pocket the vial of alchemical fire",
@@ -8367,7 +8367,7 @@
    "kind": "scene",
    "title": "The Anchor Haul",
    "brief": "You help the pilgrims drag their massive anchor up a steep incline, straining your back to earn their sacred blessing of protection.",
-   "page": "Drift Pilgrims lean their raw shoulders against the cold iron shank of an anchor as heavy as a cathedral bell, their cracked lips chanting praises to a sea that turned its back. You step into the muddy rut behind them, setting your palms against the rusted fluke and throwing your spine into the heave while the damp incline threatens to slide back down into the brine-pit. Sweat stings your salt-crusted eyebrows, but the collective grunt of the faithful finally tops the rise, earning you a solemn nod and a thumb-pressed smear of holy silt across your forehead.",
+   "page": "Drift Pilgrims lean their raw shoulders against the cold iron shank of an anchor as large as a cathedral bell, and their cracked lips chant praises to a sea that turned its back. You step into the muddy rut behind them, set your palms against the rusted fluke, and throw your spine into the heave while the damp incline tries to slide back down into the brine-pit. Sweat burns your salt-crusted eyebrows. The collective grunt of the faithful finally tops the rise. A solemn nod and a thumb-pressed smear of holy silt cross your forehead.",
    "exits": [
     {
      "label": "Receive the blessing of the pilgrims",
@@ -9272,7 +9272,7 @@
    "kind": "reward",
    "title": "A Gleaming Trophy",
    "brief": "You push through a desperate crowd fighting over a spilled barrel, risking broken ribs to grab an ornate silver cup.",
-   "page": "Your sudden impact catches the guard off balance, and he crashes sideways into the wooden railing with a muffled oath. Your fingers close around the cold, chased metal of the silver cup just as his heavy gauntlet grazes your sleeve. Slipping backward into the shadows of a drying-rack, you tuck the prize inside your woollen coat, the stolen cup cool against your ribs.",
+   "page": "Your sudden impact catches the guard off balance, and he crashes sideways into the wooden railing with a muffled oath before he can set his feet again. Fingers close around the cold chased metal of the silver cup just as his gauntlet grazes your sleeve. You slip into the shadows of a drying-rack. The prize tucks inside your woollen coat. Cool silver rests against your ribs.",
    "exits": [
     {
      "label": "Carry your prize to the market",
@@ -9388,7 +9388,7 @@
    "kind": "scene",
    "title": "The Stilt-City Scuffle",
    "brief": "You intercept a thief trying to steal a merchant's aqueduct map, risking a knife wound to claim the map yourself.",
-   "page": "A hooded figure slips between the salt-encrusted beams of the mezzanine, fingers clawing greedily at the brass cylinder strapped to a merchant's leather pack. You leap across the narrow gap of rotting timber, catching the thief's sleeve just as a rusted blade slices deep into your forearm with a hot, stinging hiss of salt-seared blood. You wrench the heavy brass tube free from their grip, tumbling hard onto the wooden slats while the mugger vanishes into the shadowed maze of ladders.\n\nClutching your bleeding arm, you uncap the battered metal casing on a wet barrel top, spreading out the stiff vellum sheets to reveal the inked layout of the Brineholder aqueducts and the hidden service flumes below.",
+   "page": "A hooded figure slips between the salt-encrusted beams of the mezzanine, fingers clawing at the brass cylinder strapped to a merchant's leather pack. You leap across the narrow gap of rotting timber and catch the thief's sleeve just as a rusted blade slices deep into your forearm with a hot hiss of salt-seared blood. The brass tube comes free from their grip. You tumble hard onto the wooden slats. The mugger vanishes into the shadowed maze of ladders.\n\nYou clutch your bleeding arm and uncap the battered metal casing on a wet barrel top, then spread the stiff vellum sheets to show the inked layout of the Brineholder aqueducts and the hidden service flumes below.",
    "exits": [
     {
      "label": "Slip into the lower maintenance tunnels",
@@ -9441,7 +9441,7 @@
    "kind": "recovery",
    "title": "A Costly Struggle",
    "brief": "You intercept a thief trying to steal a merchant's aqueduct map, risking a knife wound to claim the map yourself.",
-   "page": "The courier proves too slick, wrenching his arm free and driving the pommel of his dagger hard into your collarbone with a sickening crack of bone and leather strain. You stumble backward against a sagging rain-barrel, gasping for breath as a hot line of blood spills down your shoulder, soaking your jacket in salt-stiffened fabric. The thief scrambles over the low wooden balustrade and drops toward the lower netting, leaving you clutching a torn scrap of the map and nursing a deep, throbbing ache in your chest.",
+   "page": "The courier proves too slick. He wrenches his arm free and drives the pommel of his dagger hard into your collarbone with a sickening crack of bone and leather strain. You stumble backward against a sagging rain-barrel. Breath catches as a hot line of blood spills down your shoulder and soaks your jacket in salt-stiffened fabric. The thief scrambles over the low wooden balustrade and drops toward the lower netting. A torn scrap of the map stays in your fist. Deep ache sits in your chest.",
    "exits": [
     {
      "label": "Follow the path toward the canopy",
