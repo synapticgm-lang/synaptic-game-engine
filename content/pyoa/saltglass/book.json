@@ -1445,7 +1445,7 @@
     }
    ],
    "title": "The Lamp-Post Gate",
-   "page": "At the Lamp-Post Gate where the iron lanterns are being snuffed for the day, the wry glass-diver Calder leans against a stone pillar and cleans his salt-goggles with an oily rag. He watches you approach with one eyebrow arched in quiet amusement, his canvas pack resting squarely against his boots. The morning air smells of tallow smoke and dry earth, marking the absolute edge of the town's failing harvest."
+   "page": "At the Lamp-Post Gate the iron lanterns are being snuffed for the day. Calder, the wry glass-diver, leans against a stone pillar and cleans his salt-goggles with an oily rag. He watches you approach with one eyebrow arched, and his canvas pack rests squarely against his boots while morning air carries tallow smoke and dry earth. You have reached the edge of the town's failing harvest. Dust coats the gate step."
   },
   {
    "id": "sg-1-0-5-1",
@@ -2578,7 +2578,7 @@
     }
    ],
    "title": "Singing Glass",
-   "page": "The wind drops entirely, leaving the dry basin wrapped in an eerie hush that hums with the thin, metallic vibration of sun-baked window-shards. Every movement rings out across the flat crust like a plucked harp string. You keep the banked coal-lantern still and listen to the strange music of the dead city.\n\nThe open expanse stretches before you under a deepening violet sky."
+   "page": "The wind drops entirely. The dry basin sits in a hush while sun-baked window-shards give off a thin metallic vibration that rides every small sound. Movement rings across the flat crust like a plucked harp string. You keep the banked coal-lantern still. You listen to the strange music of the dead city.\n\nThe open expanse lies under a deepening violet sky."
   },
   {
    "id": "sg-1-1-4-0",
@@ -2910,7 +2910,7 @@
     }
    ],
    "title": "By the Oil-Scummed Trough",
-   "page": "Flint sparks catch the oily wick in the lower square just as the evening wind begins to carry the bitter tang of old brine. Shadows stretch long across the cracked flags, and the weight of your ceramic key feels cold against your ribs."
+   "page": "Flint sparks catch the oily wick in the lower square just as the evening wind begins to carry the bitter tang of old brine. Shadows stretch long across the cracked flags. The ceramic key sits cold against your ribs."
   },
   {
    "id": "sg-1-2-0-1",
@@ -3615,7 +3615,7 @@
     }
    ],
    "title": "Beneath the Iron Ribs",
-   "page": "Shadows stretch long and jagged beneath the skeletal arch of the old suspension aqueduct, where you walk in pitch-darkness while listening for the scrape of salt-shod boots. Your ember-lamp casts a small, trembling circle of orange light against the rusted iron plates and encrusted stalactites of dried brine. Somewhere in the echoing dark ahead, a rhythmic crunch of gravel suggests you are not the only traveler treading this forgotten trade route.\n\nYou pause to adjust the heavy wool wrap around your throat, hand drifting instinctively toward the cold ceramic weight of the Seedkey in your pocket, wondering whether to press forward into the chill draft or seek a narrow side-canyon to wait out whatever approaches."
+   "page": "Shadows stretch long and jagged beneath the skeletal arch of the old suspension aqueduct, where you walk in pitch-darkness and listen for the scrape of salt-shod boots. Your ember-lamp casts a small circle of orange light against the rusted iron plates and encrusted stalactites of dried brine. Somewhere in the dark ahead, gravel crunches in a rhythm that marks another traveler on this forgotten trade route.\n\nYou pause here. The wool wrap sits tight at your throat, and your hand finds the cold ceramic Seedkey in your pocket while a chill draft moves through the iron ribs."
   },
   {
    "id": "sg-1-2-3-2",
@@ -3817,7 +3817,7 @@
     }
    ],
    "title": "The Windy Dry Wash",
-   "page": "A sudden, violent gust sweeps across the windy lip of the dry wash, threatening to blow out your precious lantern flame entirely. You cup your gloved hands around the iron chimney, feeling the intense heat of the banked coals flare against your palms. Below the bank, the cracked earth stretches away into grey twilight toward the distant salt basin.\n\nYou can push onward toward the parish milestone, skirt the limestone bluff's shadow, or retrace your steps toward the drying racks."
+   "page": "A sudden violent gust sweeps across the windy lip of the dry wash and shoves at the lantern until the flame leans hard against the glass. You cup your gloved hands around the iron chimney. Banked coals flare against your palms.\n\nBelow the bank, the cracked earth stretches away into grey twilight toward the distant salt basin."
   },
   {
    "id": "sg-1-2-3-9",
@@ -3961,7 +3961,7 @@
     }
    ],
    "title": "The Cracked Silt",
-   "page": "Across the grey silt of the former duck-pond, a dry crust crackles like thin eggshells beneath your deliberate tread. Each step disturbs a pale film of alkaline dust that clings to your boots and dulls the brass of your lamp. The winter reeds stand like rusted iron wires, brittle and lifeless in the bitter wind blowing off the high crags. Farther ahead, the path dips toward a narrow gap in the stone wall where the basin air smells faintly of old lime and damp stone. You adjust the cold ceramic key in your inner pocket and weigh the value of pressing on into the dry expanse before the dusk settles."
+   "page": "Across the grey silt of the former duck-pond, a dry crust crackles like thin eggshells under your tread. Alkaline dust clings to your boots. Each step dulls the brass of your lamp and lifts a pale film that drifts in your wake. Winter reeds stand brittle and lifeless in the bitter wind that blows off the high crags and works grit into every seam of your coat. Farther ahead the path dips toward a narrow gap in the stone wall where basin air smells of old lime and damp stone. You settle the cold ceramic key in your inner pocket. Dusk is not far off."
   },
   {
    "id": "sg-1-2-3-15",
@@ -4092,7 +4092,7 @@
     }
    ],
    "title": "The Cairn of Doubts",
-   "page": "On the high ledge overlooking the grey expanse of the basin, a cairn of white stones marks where runners leave their final doubts. Small slips of dried reed-paper are wedged between the jagged rocks, bearing names, warnings, and quiet prayers for rain that never came. Your lamp flickers as a sudden gust catches the ridge, threatening the banked coals within the tin housing. You stand for a moment in the biting wind, feeling the immense scale of the dry sea stretching out beneath your boots."
+   "page": "On the high ledge overlooking the grey expanse of the basin, a cairn of white stones marks where runners leave their final doubts. Small slips of dried reed-paper sit wedged between the jagged rocks, bearing names, warnings, and prayers for rain that never came. Your lamp flickers as a sudden gust catches the ridge and worries the banked coals inside the tin housing.\n\nYou set a palm on the cairn. The dry sea lies below."
   },
   {
    "id": "sg-1-2-4-4",
@@ -4848,7 +4848,7 @@
     }
    ],
    "title": "The Damp Hollow",
-   "page": "Silence presses down upon the Bitterflats like a hot, flat iron, broken only by the dry crunch of your boots against the crystalline crust. Traveling entirely alone across this blinding expanse without a guide's chatter to distract you, you spot a faint depression in the salt where a fresh moisture seep has recently softened the surface. A rich, earthy smell rises from the damp grey clay, offering a rare chance to refill your canteen or perhaps unearth something left behind by earlier travelers. Ahead, the pale glare shimmers into dancing white lakes that obscure the horizon, leaving you to decide whether to investigate the muddy hollow or press onward before the midday heat peaks."
+   "page": "Silence presses on the Bitterflats like a hot flat iron. Boot crunch breaks it. Alone across this blinding expanse without a guide's chatter, you spot a faint depression in the salt where a fresh moisture seep has softened the surface, and a rich earthy smell rises from the damp grey clay that offers a rare chance to refill your canteen or unearth something left by earlier travelers. Pale glare shimmers into white lakes that obscure the horizon. The muddy hollow sits at your feet."
   },
   {
    "id": "sg-2-0-2-1",
@@ -5114,7 +5114,7 @@
     }
    ],
    "title": "Ridge of Broken Pottery",
-   "page": "Sharp shards of ancient ceramic crunch beneath your boots as you crest a steep ridge of hard-packed salt and crushed red pottery fragments. From this dusty vantage point, you scan the shimmering, heat-warped expanse below for any sign of the telltale green pennants marking the Dune Sisters' well-stations. The air dances with mirages, making distant salt-pillars look like towering spires, while your throat feels as dry and cracked as the ground beneath you."
+   "page": "Sharp shards of ancient ceramic crunch beneath your boots as you crest a steep ridge of hard-packed salt and crushed red pottery fragments. From this dusty vantage you scan the heat-warped expanse below for any sign of the green pennants that mark the Dune Sisters' well-stations. Distant salt-pillars warp in the mirage until they look like towering spires. Your throat is dry and cracked.\n\nPottery grit sticks to your soles."
   },
   {
    "id": "sg-2-0-2-11",
@@ -5346,7 +5346,7 @@
     "why": "the reader walks with a banked, dark lamp and slips through unseen"
    },
    "title": "The Toll-Lord's Wake",
-   "page": "Your ember-lamp remains cold and dark at your hip, its unlit metal casing offering no telltale gleam against the glare. Out on the white crust, a salt-skimmer drifts across the shimmering horizon, its canvas sail catching the furnace wind while its toll-lord rider sweeps a spyglass across the flats. You hunker low behind a ridge of fossilized foam, letting the blinding midday mirage blur your silhouette into the trembling horizon. The skimmer glides past with a dry hiss of runners on mineral, leaving you entirely unseen in the blinding waste."
+   "page": "Your ember-lamp remains cold and dark at your hip, its unlit metal casing offering no gleam against the glare. Out on the white crust a salt-skimmer drifts across the shimmering horizon, its canvas sail catching the furnace wind while its toll-lord rider sweeps a spyglass across the flats. You hunker low behind a ridge of fossilized foam until the midday mirage blurs your outline into the pale waste.\n\nThe skimmer glides past with a dry hiss of runners on mineral. You stay unseen."
   },
   {
    "id": "sg-2-0-3-7",
@@ -5846,7 +5846,7 @@
     }
    ],
    "title": "The Brittle Mask",
-   "page": "Leaving the sisterly oath behind, you strike across the blinding crust while your damp scarf stiffens into a brittle mask of salt. Every step forward produces a sharp, glassine crack that echoes thinly across the empty pan. Your canteen swings heavy and lukewarm against your hip, a liquid reminder of how quickly wells turn sour in this parched expanse."
+   "page": "Leaving the sisterly oath behind, you strike across the blinding crust while your damp scarf stiffens into a brittle mask of salt. Every step produces a sharp glassine crack. The sound carries thinly across the empty pan. Your canteen swings lukewarm against your hip, a liquid reminder of how quickly wells turn sour in this parched expanse.\n\nThe strap digs at your side."
   },
   {
    "id": "sg-2-1-1-0",
@@ -25636,7 +25636,7 @@
     }
    ],
    "title": "The Salt-Scratched Path",
-   "page": "Across the floor of polished obsidian, a trail of dried white salt crystals marks the path taken by the previous generation's doomed runner. Their final journey left a crusty scar across the dark glass, fading into the gloom near a pair of branching archways. Your boots crunch softly over the mineral remnants, and your hand instinctively brushes against the cold ceramic key in your pocket as you study the floor.\n\nThe obsidian reflects the dull amber glow of your lantern, magnifying every shadow into a lurking shape. One route leads deeper into the freezing machinery of the vault, while another curves back toward the central hall's salt-encrusted expanses."
+   "page": "Across the floor of polished obsidian, a trail of dried white salt crystals marks the path of the previous generation's doomed runner. Their final journey left a crusty scar across the dark glass. The scar fades near a pair of branching archways. Your boots crunch over the mineral remnants, and your hand brushes the cold ceramic key in your pocket as you study the floor.\n\nObsidian throws back the dull amber of your lantern. Shadows stretch out. One way drops deeper into the freezing machinery of the vault, while the other curves back toward the central hall's salt-encrusted expanses."
   },
   {
    "id": "sg-6-2-3-9",
