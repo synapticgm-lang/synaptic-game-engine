@@ -53,9 +53,9 @@ export const vesperholdBook: CampaignBible = stub({
   type: 'pick',
   tagline: 'Lower the bronze tongue before the hold seals at dusk.',
   shortDescription:
-    'A pick-your-path gamebook in Vesperhold. Offline authored pages — chips only.',
+    'A pick-your-path gamebook in Orisonhold. Offline authored pages — chips only.',
   premise: 'The bell must come down. The hold is listening.',
-  startingLocation: 'the Vesperhold bell-walk',
+  startingLocation: 'the Orisonhold bell-walk',
 });
 
 export const tideThatDidNotReturnBook: CampaignBible = stub({

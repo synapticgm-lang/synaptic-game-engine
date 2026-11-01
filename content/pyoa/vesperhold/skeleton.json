@@ -1,6 +1,6 @@
 {
  "title": "The Bell That Must Come Down",
- "slug": "vesperhold",
+ "slug":"vesperhold",
  "start": "vh-p1",
  "count": 1000,
  "nodes": [
@@ -8,7 +8,7 @@
    "id": "vh-p1",
    "kind": "prologue",
    "region": 0,
-   "brief": "Opening: the reader is a bell-ringer's apprentice of Vesperhold, the monastery-city above the cloud line; the Great Bell Orison has cracked, and the Prioress hands over its bronze Clapper to be carried down thirteen stair-towns to the foundry at Lowgate before the ice-wind season closes the passes in twenty days.",
+   "brief": "Opening: the reader is a bell-ringer's apprentice of Orisonhold, the monastery-city above the cloud line; the Great Bell Orison has cracked, and the Prioress hands over its bronze Clapper to be carried down thirteen stair-towns to the foundry at Lowgate before the ice-wind season closes the passes in twenty days.",
    "exits": [
     {
      "to": "vh-p2a",
@@ -65,7 +65,7 @@
    "id": "vh-1-in",
    "kind": "in",
    "region": 1,
-   "brief": "Arrival in Vesperhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down. The reader enters with several ways forward.",
+   "brief": "Arrival in Orisonhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down. The reader enters with several ways forward.",
    "exits": [
     {
      "to": "vh-1-0-0-0",
@@ -141,7 +141,7 @@
    "id": "vh-1-out",
    "kind": "out",
    "region": 1,
-   "brief": "Leaving Vesperhold and the Ninety Steps for The Rope Markets: close this part of the journey.",
+   "brief": "Leaving Orisonhold and the Ninety Steps for The Rope Markets: close this part of the journey.",
    "exits": [
     {
      "to": "vh-2-in",
@@ -3574,7 +3574,7 @@
    "id": "vh-d-1-1",
    "kind": "doom",
    "region": 1,
-   "brief": "A bad end in Vesperhold and the Ninety Steps: the reader's gamble fails and the journey ends here (a death or ruin that is vivid but not gruesome).",
+   "brief": "A bad end in Orisonhold and the Ninety Steps: the reader's gamble fails and the journey ends here (a death or ruin that is vivid but not gruesome).",
    "endingId": "doom-1-1",
    "exits": []
   },
@@ -3582,7 +3582,7 @@
    "id": "vh-d-1-2",
    "kind": "doom",
    "region": 1,
-   "brief": "A bad end in Vesperhold and the Ninety Steps: the reader's gamble fails and the journey ends here (a death or ruin that is vivid but not gruesome).",
+   "brief": "A bad end in Orisonhold and the Ninety Steps: the reader's gamble fails and the journey ends here (a death or ruin that is vivid but not gruesome).",
    "endingId": "doom-1-2",
    "exits": []
   },
@@ -22360,7 +22360,7 @@
    "endingKey": "B1",
    "endingTitle": "Biscuit Carries It Home",
    "part": 1,
-   "brief": "Ending \"Biscuit Carries It Home\": You carry the Clapper back up the mountain to keep it from the furnace; Biscuit shoulders the cradle the whole climb, and Vesperhold gets its bronze back, unrung.",
+   "brief": "Ending \"Biscuit Carries It Home\": You carry the Clapper back up the mountain to keep it from the furnace; Biscuit shoulders the cradle the whole climb, and Orisonhold gets its bronze back, unrung.",
    "exits": [
     {
      "to": "vh-e-B1-2",

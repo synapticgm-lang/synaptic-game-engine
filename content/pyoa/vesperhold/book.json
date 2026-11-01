@@ -1,13 +1,13 @@
 {
  "title": "The Bell That Must Come Down",
- "slug": "vesperhold",
+ "slug":"vesperhold",
  "start": "vh-p1",
  "nodes": [
   {
    "id": "vh-p1",
    "kind": "prologue",
    "region": 0,
-   "brief": "Opening: the reader is a bell-ringer's apprentice of Vesperhold, the monastery-city above the cloud line; the Great Bell Orison has cracked, and the Prioress hands over its bronze Clapper to be carried down thirteen stair-towns to the foundry at Lowgate before the ice-wind season closes the passes in twenty days.",
+   "brief": "Opening: the reader is a bell-ringer's apprentice of Orisonhold, the monastery-city above the cloud line; the Great Bell Orison has cracked, and the Prioress hands over its bronze Clapper to be carried down thirteen stair-towns to the foundry at Lowgate before the ice-wind season closes the passes in twenty days.",
    "exits": [
     {
      "to": "vh-p2a",
@@ -23,7 +23,7 @@
     }
    ],
    "title": "The Fractured Bell",
-   "page": "High above the swirling cloud line, Vesperhold clings to its mountain face like a barnacle on a ship's timber, enduring the bitter nip of thin air. In the damp nave of the upper monastery, the Great Bell Orison sits silent with a jagged fracture splitting its metallic lip from crown to sound-bow. The Prioress stands before you in her woollen habit, her lined fingers gripping a heavy iron key as she tells you that the ice-wind season will lock the mountain passes in twenty days. She commands you, as bell-ringer's apprentice, to carry the broken bronze down through the thirteen stair-towns to the foundry at Lowgate before the frost seals the world.\n\nThe cold wind whistles through the high clerestory windows, carrying the sharp scent of old tallow and frozen stone, reminding you that time is short."
+   "page": "High above the swirling cloud line, Orisonhold clings to its mountain face like a barnacle on a ship's timber, enduring the bitter nip of thin air. In the damp nave of the upper monastery, the Great Bell Orison sits silent with a jagged fracture splitting its metallic lip from crown to sound-bow. The Prioress stands before you in her woollen habit, her lined fingers gripping a heavy iron key as she tells you that the ice-wind season will lock the mountain passes in twenty days. She commands you, as bell-ringer's apprentice, to carry the broken bronze down through the thirteen stair-towns to the foundry at Lowgate before the frost seals the world.\n\nThe cold wind whistles through the high clerestory windows, carrying the sharp scent of old tallow and frozen stone, reminding you that time is short."
   },
   {
    "id": "vh-p2a",
@@ -77,7 +77,7 @@
    "id": "vh-1-in",
    "kind": "in",
    "region": 1,
-   "brief": "Arrival in Vesperhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down. The reader enters with several ways forward.",
+   "brief": "Arrival in Orisonhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down. The reader enters with several ways forward.",
    "exits": [
     {
      "to": "vh-1-0-0-0",
@@ -105,7 +105,7 @@
     }
    ],
    "title": "The Ninety Steps",
-   "page": "You stand at the threshold of Vesperhold where the sheer limestone cliff drops away into an endless sea of tumbling clouds and screaming gulls. The monastery's stone bell-towers pierce the grey sky above, while the mule yards bustle with anxious drovers shouting hoarse instructions across the frozen cobbles. Your shoulders ache already under the cradled weight of the bronze tongue, and you must choose how to begin the long descent through the clifftops. Kin and rivals eye your burden from the shelter of the butter-lamp alcoves, each with their own advice on which path to trust when the mountain wind turns sour."
+   "page": "You stand at the threshold of Orisonhold where the sheer limestone cliff drops away into an endless sea of tumbling clouds and screaming gulls. The monastery's stone bell-towers pierce the grey sky above, while the mule yards bustle with anxious drovers shouting hoarse instructions across the frozen cobbles. Your shoulders ache already under the cradled weight of the bronze tongue, and you must choose how to begin the long descent through the clifftops. Kin and rivals eye your burden from the shelter of the butter-lamp alcoves, each with their own advice on which path to trust when the mountain wind turns sour."
   },
   {
    "id": "vh-1-c1",
@@ -167,7 +167,7 @@
    "id": "vh-1-out",
    "kind": "out",
    "region": 1,
-   "brief": "Leaving Vesperhold and the Ninety Steps for The Rope Markets: close this part of the journey.",
+   "brief": "Leaving Orisonhold and the Ninety Steps for The Rope Markets: close this part of the journey.",
    "exits": [
     {
      "to": "vh-2-in",
@@ -177,7 +177,7 @@
     }
    ],
    "title": "Leaving The Ninety Steps",
-   "page": "Leaving Vesperhold and the Ninety Steps for The Rope Markets, you tighten the straps across your chest and lean forward into the biting wind that sweeps up the cliff. The stone stairs grow narrower here, replaced by suspended wooden galleries and swaying rope bridges that bridge the yawning chasms between the upper monastery and the bustling trade tiers below. Every breath burns your throat with the crisp, clean edge of high altitude air, and the rhythmic hum of the Clapper provides a steady heartbeat against your spine.\n\nThe chaotic din of the markets rises through the mist, promising trade, hazard, and the next stretch of your long descent."
+   "page": "Leaving Orisonhold and the Ninety Steps for The Rope Markets, you tighten the straps across your chest and lean forward into the biting wind that sweeps up the cliff. The stone stairs grow narrower here, replaced by suspended wooden galleries and swaying rope bridges that bridge the yawning chasms between the upper monastery and the bustling trade tiers below. Every breath burns your throat with the crisp, clean edge of high altitude air, and the rhythmic hum of the Clapper provides a steady heartbeat against your spine.\n\nThe chaotic din of the markets rises through the mist, promising trade, hazard, and the next stretch of your long descent."
   },
   {
    "id": "vh-1-0-0-0",
@@ -186,7 +186,7 @@
    "seg": 0,
    "layer": 0,
    "idx": 0,
-   "brief": "In the frost-rimed belfry of Vesperhold, you hoist the bronze Clapper into its harness while Orison's fractured lip weeps cold grease onto your knuckles.",
+   "brief": "In the frost-rimed belfry of Orisonhold, you hoist the bronze Clapper into its harness while Orison's fractured lip weeps cold grease onto your knuckles.",
    "exits": [
     {
      "to": "vh-1-0-1-0",
@@ -208,7 +208,7 @@
     }
    ],
    "title": "The Bronze Tongue",
-   "page": "In the frost-rimed belfry of Vesperhold, you hoist the bronze Clapper into its harness while Orison's fractured lip weeps cold grease onto your knuckles. The metal tongue hums against your spine, heavy as a sleeping child and smelling of old rain. Outside, the high mountain wind rattles the slate roofs and spits dry sleet across the stone sill. You must choose how to leave this freezing vault before the noon bells summon the monks to prayer."
+   "page": "In the frost-rimed belfry of Orisonhold, you hoist the bronze Clapper into its harness while Orison's fractured lip weeps cold grease onto your knuckles. The metal tongue hums against your spine, heavy as a sleeping child and smelling of old rain. Outside, the high mountain wind rattles the slate roofs and spits dry sleet across the stone sill. You must choose how to leave this freezing vault before the noon bells summon the monks to prayer."
   },
   {
    "id": "vh-1-0-0-1",
@@ -656,7 +656,7 @@
     }
    ],
    "title": "Frozen Ruts and Carts",
-   "page": "Iron-shod cart wheels crack the frozen ruts beside the north curtain wall while a teamster curses his stumbling mare on the slope. The beast's breath plumes white against the dark grey granite of Vesperhold, and the weight of your burden pulls sharply at your shoulders. You steady the heavy bronze Clapper in its padded cradle, matching your stance to the shudder of the mountain wind.\n\nThe cart groans forward, clearing a narrow path for your descent."
+   "page": "Iron-shod cart wheels crack the frozen ruts beside the north curtain wall while a teamster curses his stumbling mare on the slope. The beast's breath plumes white against the dark grey granite of Orisonhold, and the weight of your burden pulls sharply at your shoulders. You steady the heavy bronze Clapper in its padded cradle, matching your stance to the shudder of the mountain wind.\n\nThe cart groans forward, clearing a narrow path for your descent."
   },
   {
    "id": "vh-1-0-2-3",
@@ -913,7 +913,7 @@
     }
    ],
    "title": "The Hawk Mews",
-   "page": "At the head of the cliff-mews, a caged mountain hawk screeches as you pass, its hood fluttering against the leather strap in the grey wind. You adjust your grip on the carrying frame while the bronze Clapper gives a low, answering thrum against your shoulder blades, vibrating through your coat in the thin air. The mountain gale smells of old snow and wet feathers, sweeping down from the jagged peaks above Vesperhold to test your balance on the narrow flagstones."
+   "page": "At the head of the cliff-mews, a caged mountain hawk screeches as you pass, its hood fluttering against the leather strap in the grey wind. You adjust your grip on the carrying frame while the bronze Clapper gives a low, answering thrum against your shoulder blades, vibrating through your coat in the thin air. The mountain gale smells of old snow and wet feathers, sweeping down from the jagged peaks above Orisonhold to test your balance on the narrow flagstones."
   },
   {
    "id": "vh-1-0-2-12",
@@ -1032,7 +1032,7 @@
     }
    ],
    "title": "The Buttery Gable",
-   "page": "In the lee of the buttery gable, you tighten the breast-harness of your pack as the bronze Clapper gives a heavy, dead lurch against your spine. The wooden wall offers a brief shelter from the biting gusts sweeping across the upper courtyards of Vesperhold. You prepare yourself for the exposed stretch of stairs waiting just beyond the timber corner."
+   "page": "In the lee of the buttery gable, you tighten the breast-harness of your pack as the bronze Clapper gives a heavy, dead lurch against your spine. The wooden wall offers a brief shelter from the biting gusts sweeping across the upper courtyards of Orisonhold. You prepare yourself for the exposed stretch of stairs waiting just beyond the timber corner."
   },
   {
    "id": "vh-1-0-3-4",
@@ -1689,7 +1689,7 @@
     }
    ],
    "title": "The Smithy's Drain",
-   "page": "Past the smithy's smoking drain, you lead the reluctant animal toward the upper gate, where the frozen ruts threaten to jar the humming bronze against your spine. Sparks from the coal-trough drift upward into the grey air, dying out long before they reach the high stone eaves of Vesperhold. Biscuit tosses his head, snorting a cloud of white vapor into the freezing wind as the first flight of stairs looms ahead."
+   "page": "Past the smithy's smoking drain, you lead the reluctant animal toward the upper gate, where the frozen ruts threaten to jar the humming bronze against your spine. Sparks from the coal-trough drift upward into the grey air, dying out long before they reach the high stone eaves of Orisonhold. Biscuit tosses his head, snorting a cloud of white vapor into the freezing wind as the first flight of stairs looms ahead."
   },
   {
    "id": "vh-1-1-1-3",
@@ -1698,7 +1698,7 @@
    "seg": 1,
    "layer": 1,
    "idx": 3,
-   "brief": "a scene in Vesperhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down",
+   "brief": "a scene in Orisonhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down",
    "exits": [
     {
      "to": "vh-1-1-2-8",
@@ -1729,7 +1729,7 @@
    "seg": 1,
    "layer": 1,
    "idx": 4,
-   "brief": "a scene in Vesperhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down",
+   "brief": "a scene in Orisonhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down",
    "exits": [
     {
      "to": "vh-1-1-2-11",
@@ -1760,7 +1760,7 @@
    "seg": 1,
    "layer": 1,
    "idx": 5,
-   "brief": "a scene in Vesperhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down",
+   "brief": "a scene in Orisonhold and the Ninety Steps: the cliff-monastery, its bell-towers and mule yards; outfitting, kin and rivals; the reader takes the Clapper and chooses a companion and a rope; the first stairs down",
    "exits": [
     {
      "to": "vh-1-1-2-14",
@@ -2242,7 +2242,7 @@
     }
    ],
    "title": "The Frozen Root",
-   "page": "Beside the iron ring set into the cliff, you untangle the lead rope from a frozen root while the humming bronze vibrates uncomfortably against your aching spine. The ice encrusting the iron is thick and blue as winter glass, requiring a sharp tug and a scraped knuckle to free the hemp line. Biscuit stamps a hoof against the packed snow, eager to leave the high ledge behind as the first pale light catches the jagged peaks above Vesperhold."
+   "page": "Beside the iron ring set into the cliff, you untangle the lead rope from a frozen root while the humming bronze vibrates uncomfortably against your aching spine. The ice encrusting the iron is thick and blue as winter glass, requiring a sharp tug and a scraped knuckle to free the hemp line. Biscuit stamps a hoof against the packed snow, eager to leave the high ledge behind as the first pale light catches the jagged peaks above Orisonhold."
   },
   {
    "id": "vh-1-1-3-2",
@@ -2516,7 +2516,7 @@
     }
    ],
    "title": "The Cantilevered Ledge",
-   "page": "Frost whitens the loose pine timbers of the cantilevered ledge, where the mountain wind funnels upward from the deep blue fissure with a low, whistling howl. Biscuit plants each iron-shod hoof with stubborn deliberation, ears flicking back as the planks groan under the weight of the bronze Clapper in its padded frame. Below the open rail, the cloud sea shifts and rolls, swallowing the lower stairs entirely while the sheer stone wall of Vesperhold rises gray and indifferent at your shoulder. Every breath tastes of thin, high-altitude air and old pine resin, demanding absolute focus on the next flat nail-head in the grain.\n\nYou must decide whether to seek shelter within the drafty storehouse before the gale stiffens further, approach the ledger desk to settle your toll with the clerk, or check the tension of your backup lines beneath the loft rafters."
+   "page": "Frost whitens the loose pine timbers of the cantilevered ledge, where the mountain wind funnels upward from the deep blue fissure with a low, whistling howl. Biscuit plants each iron-shod hoof with stubborn deliberation, ears flicking back as the planks groan under the weight of the bronze Clapper in its padded frame. Below the open rail, the cloud sea shifts and rolls, swallowing the lower stairs entirely while the sheer stone wall of Orisonhold rises gray and indifferent at your shoulder. Every breath tastes of thin, high-altitude air and old pine resin, demanding absolute focus on the next flat nail-head in the grain.\n\nYou must decide whether to seek shelter within the drafty storehouse before the gale stiffens further, approach the ledger desk to settle your toll with the clerk, or check the tension of your backup lines beneath the loft rafters."
   },
   {
    "id": "vh-1-1-3-12",
@@ -2728,7 +2728,7 @@
     }
    ],
    "title": "The Frayed Bundle",
-   "page": "Pungent hemp dust rises from the combing benches where an apprentice shuffles a loose, cheap bundle toward your boots, murmuring warnings about frostbite and sudden snapping under tension. The guild's bargain line looks deceptive, pale and loosely spun against the mountain chill, yet your purse grows painfully light with every step through Vesperhold. You consider whether a frayed lifeline is better than none at all when the descent begins in earnest."
+   "page": "Pungent hemp dust rises from the combing benches where an apprentice shuffles a loose, cheap bundle toward your boots, murmuring warnings about frostbite and sudden snapping under tension. The guild's bargain line looks deceptive, pale and loosely spun against the mountain chill, yet your purse grows painfully light with every step through Orisonhold. You consider whether a frayed lifeline is better than none at all when the descent begins in earnest."
   },
   {
    "id": "vh-1-1-4-4",
@@ -3053,7 +3053,7 @@
     }
    ],
    "title": "The Cable-Lord's Ledger",
-   "page": "Garrow leans his heavy wool-wrapped bulk against the winch-house wall, measuring your laden packs with greedy, calculating eyes that miss nothing. His hand taps rhythmically against a leather toll-ledger tucked beneath his arm, hinting at the steep tariffs levied on every ounce of bronze leaving Vesperhold. The iron drums behind him groan as a cable-car descends into the white void below, spitting frosty grease onto the flagstones. You must decide whether to negotiate his terms, slip past the winch while his gaze drifts, or take the steeper goat-track to avoid the toll entirely.\n\nDo you treat with the toll-lord, slip past the winch-house, or seek the goat-track?"
+   "page": "Garrow leans his heavy wool-wrapped bulk against the winch-house wall, measuring your laden packs with greedy, calculating eyes that miss nothing. His hand taps rhythmically against a leather toll-ledger tucked beneath his arm, hinting at the steep tariffs levied on every ounce of bronze leaving Orisonhold. The iron drums behind him groan as a cable-car descends into the white void below, spitting frosty grease onto the flagstones. You must decide whether to negotiate his terms, slip past the winch while his gaze drifts, or take the steeper goat-track to avoid the toll entirely.\n\nDo you treat with the toll-lord, slip past the winch-house, or seek the goat-track?"
   },
   {
    "id": "vh-1-2-1-3",
@@ -3174,7 +3174,7 @@
    "seg": 2,
    "layer": 2,
    "idx": 1,
-   "brief": "Within the drafty salt-porch, Kaelen the cooper points out a hairline fracture in your wooden cradle frame.",
+   "brief": "Within the drafty salt-porch, Brann the cooper points out a hairline fracture in your wooden cradle frame.",
    "exits": [
     {
      "to": "vh-1-2-3-0",
@@ -3190,7 +3190,7 @@
     }
    ],
    "title": "The Salt-Porch Fracture",
-   "page": "Bitter drafts whistle through the wooden slats of the salt-porch, smelling of dried brine and old timber. Kaelen the cooper peers closely at your burden, his scarred thumb tracing a hairline fracture across the wooden cradle frame that holds the great Clapper. A replacement stave might hold, but every minute spent here lets the mountain cold sink deeper into your bones.\n\nDo you stay to let him drive a temporary pin, or thank him and press on toward the cables before the light fails?"
+   "page": "Bitter drafts whistle through the wooden slats of the salt-porch, smelling of dried brine and old timber. Brann the cooper peers closely at your burden, his scarred thumb tracing a hairline fracture across the wooden cradle frame that holds the great Clapper. A replacement stave might hold, but every minute spent here lets the mountain cold sink deeper into your bones.\n\nDo you stay to let him drive a temporary pin, or thank him and press on toward the cables before the light fails?"
   },
   {
    "id": "vh-1-2-2-2",
@@ -3431,7 +3431,7 @@
    "seg": 2,
    "layer": 2,
    "idx": 11,
-   "brief": "Through the swirling white squall, the distant bronze bell-tower of Vesperhold chimes a muffled noon.",
+   "brief": "Through the swirling white squall, the distant bronze bell-tower of Orisonhold chimes a muffled noon.",
    "exits": [
     {
      "to": "vh-1-2-3-11",
@@ -3447,7 +3447,7 @@
     }
    ],
    "title": "Noon Through The Squall",
-   "page": "A heavy, muffled bronze toll rolls out from the distant bell-tower of Vesperhold, cutting through the swirling white squall like a blunt stroke of lead. Ice crystals cling to your eyelashes as you squint against the gale, shifting the heavy clapper on your spine to keep your balance on the slick flagstones. The mist swallows the stone parapet just a few paces ahead.\n\nYou can either push forward through the blinding flurry or seek shelter near the span."
+   "page": "A heavy, muffled bronze toll rolls out from the distant bell-tower of Orisonhold, cutting through the swirling white squall like a blunt stroke of lead. Ice crystals cling to your eyelashes as you squint against the gale, shifting the heavy clapper on your spine to keep your balance on the slick flagstones. The mist swallows the stone parapet just a few paces ahead.\n\nYou can either push forward through the blinding flurry or seek shelter near the span."
   },
   {
    "id": "vh-1-2-2-12",
@@ -4210,7 +4210,7 @@
     }
    ],
    "title": "Timber Archway And Mules",
-   "page": "Under the heavy timber archway, a line of laden pack-mules waits for the barrier bell to ring, their breath pluming white against the gray slate of Vesperhold. Hooves shift restlessly on the frost-greased stones while drovers lean against weathered fence posts, chewing hardtack and watching the cloud sea roll below the ledge. The metal cradle on your back strains slightly with every shift of your weight, the heavy bronze tongue inside humming an anxious warning that vibrates through your shoulder blades.\n\nAhead, the iron gate lifts with a harsh metallic screech, clearing the narrow track that winds down toward the hanging tiers."
+   "page": "Under the heavy timber archway, a line of laden pack-mules waits for the barrier bell to ring, their breath pluming white against the gray slate of Orisonhold. Hooves shift restlessly on the frost-greased stones while drovers lean against weathered fence posts, chewing hardtack and watching the cloud sea roll below the ledge. The metal cradle on your back strains slightly with every shift of your weight, the heavy bronze tongue inside humming an anxious warning that vibrates through your shoulder blades.\n\nAhead, the iron gate lifts with a harsh metallic screech, clearing the narrow track that winds down toward the hanging tiers."
   },
   {
    "id": "vh-1-2-5-2",
@@ -4330,7 +4330,7 @@
     }
    ],
    "title": "The Knot-Oath Stall",
-   "page": "Inside the sprawling canvas pavilion of the Knot-Oath Stall, the air is thick with the scent of pine pitch and warm wool. Master ropewrights crowd around the central cable hub, their fingers endlessly looping and tucking heavy hemp cords into intricate, unyielding patterns. They offer you immediate shelter, hot barley broth, and safe passage down the ice-slicked cable ways, but the price is absolute: you must swear an oath tied in a sailor's hitch, promising to answer one unspecified request for the guild when you reach Lowgate or return to Vesperhold.\n\nYou can bind your word to theirs and secure a safe, swift passage down the freezing cliff face, or you can refuse their tangled promises and pay the full toll in coin and muscle, trusting only your own strength to carry the humming bronze Clapper down the mountain."
+   "page": "Inside the sprawling canvas pavilion of the Knot-Oath Stall, the air is thick with the scent of pine pitch and warm wool. Master ropewrights crowd around the central cable hub, their fingers endlessly looping and tucking heavy hemp cords into intricate, unyielding patterns. They offer you immediate shelter, hot barley broth, and safe passage down the ice-slicked cable ways, but the price is absolute: you must swear an oath tied in a sailor's hitch, promising to answer one unspecified request for the guild when you reach Lowgate or return to Orisonhold.\n\nYou can bind your word to theirs and secure a safe, swift passage down the freezing cliff face, or you can refuse their tangled promises and pay the full toll in coin and muscle, trusting only your own strength to carry the humming bronze Clapper down the mountain."
   },
   {
    "id": "vh-2-c2",
@@ -6019,7 +6019,7 @@
     "why": "the reader carries a Ropewrights' Guild rope and is waved through guild places"
    },
    "title": "The Guild-Tied Passage",
-   "page": "Because your guild-tied rope gleams with standard blue twine, the platform-warden waves you straight past the tariff barrier without checking your copper purse. He nods respectfully toward the bronze Clapper on your back, recognizing the mark of Vesperhold craftsmanship. The cleared path stretches out ahead, free of the usual congestion and bickering toll-collectors.\n\nYou steady your mule and stride forward into the quieter sector reserved for recognized guild travelers."
+   "page": "Because your guild-tied rope gleams with standard blue twine, the platform-warden waves you straight past the tariff barrier without checking your copper purse. He nods respectfully toward the bronze Clapper on your back, recognizing the mark of Orisonhold craftsmanship. The cleared path stretches out ahead, free of the usual congestion and bickering toll-collectors.\n\nYou steady your mule and stride forward into the quieter sector reserved for recognized guild travelers."
   },
   {
    "id": "vh-2-1-1-5",
@@ -7911,7 +7911,7 @@
    "seg": 2,
    "layer": 3,
    "idx": 0,
-   "brief": "You scramble across a dripping timber gantry where apprentice Kaelen frantically knots a snapping guide-rope against the gale.",
+   "brief": "You scramble across a dripping timber gantry where apprentice Brann frantically knots a snapping guide-rope against the gale.",
    "exits": [
     {
      "to": "vh-2-2-4-0",
@@ -7921,7 +7921,7 @@
     }
    ],
    "title": "The Dripping Gantry",
-   "page": "You scramble across a dripping timber gantry where apprentice Kaelen frantically knots a snapping guide-rope against the gale. Water drips in a steady, freezing stream from the salted canvas awnings above, soaking through your wool collar. Kaelen shouts a brief warning over the rising din of the wind, his hands moving with practiced speed through intricate loops and hitches. You steady your footing on the wet beams, keeping the heavy bronze cradle balanced carefully between your shoulder blades."
+   "page": "You scramble across a dripping timber gantry where apprentice Brann frantically knots a snapping guide-rope against the gale. Water drips in a steady, freezing stream from the salted canvas awnings above, soaking through your wool collar. Brann shouts a brief warning over the rising din of the wind, his hands moving with practiced speed through intricate loops and hitches. You steady your footing on the wet beams, keeping the heavy bronze cradle balanced carefully between your shoulder blades."
   },
   {
    "id": "vh-2-2-3-1",
@@ -9608,7 +9608,7 @@
    "seg": 0,
    "layer": 3,
    "idx": 1,
-   "brief": "Miller Jago offers a mug of warm barley-water in exchange for news of the storm damage up at Vesperhold's high sanctuary.",
+   "brief": "Miller Jago offers a mug of warm barley-water in exchange for news of the storm damage up at Orisonhold's high sanctuary.",
    "exits": [
     {
      "to": "vh-3-0-4-0",
@@ -9624,7 +9624,7 @@
     }
    ],
    "title": "The Miller's Mug",
-   "page": "Miller Jago offers a steaming mug of warm barley-water across a flour-dusted counter in exchange for news of the storm damage up at Vesperhold's high sanctuary. The thick, sweet liquid burns agreeably in your frozen throat as you recount the tearing of the great roof timbers and the silent crack in the shoulder of Orison.\n\nThe old miller nods slowly, his scarred hands wrapping around his own cup while he gazes up toward the cloud-shrouded peak with quiet dread."
+   "page": "Miller Jago offers a steaming mug of warm barley-water across a flour-dusted counter in exchange for news of the storm damage up at Orisonhold's high sanctuary. The thick, sweet liquid burns agreeably in your frozen throat as you recount the tearing of the great roof timbers and the silent crack in the shoulder of Orison.\n\nThe old miller nods slowly, his scarred hands wrapping around his own cup while he gazes up toward the cloud-shrouded peak with quiet dread."
   },
   {
    "id": "vh-3-0-3-2",
@@ -10471,7 +10471,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 0,
-   "brief": "Within the echoing stone loft of mill twelve, miller Corin sharpens his scythe while demanding news from Vesperhold.",
+   "brief": "Within the echoing stone loft of mill twelve, miller Corin sharpens his scythe while demanding news from Orisonhold.",
    "exits": [
     {
      "to": "vh-3-1-3-0",
@@ -10491,7 +10491,7 @@
     }
    ],
    "title": "The Stone Loft",
-   "page": "Dust hangs thick in the echoing stone loft of mill twelve as miller Corin whets his broad scythe against an oilstone, stopping only to eye the padded cradle on your back with sharp suspicion. He demands to know what the high monks of Vesperhold are playing at while the barley rots in the frost, his thumb testing the newly polished edge with a soft hiss. The heavy bronze Clapper hums against your shoulder blades like a caged hornet, a steady vibration that seems to answer the rhythmic scraping of the steel.\n\nStep past the grinding floor and head down toward the lower mills.\n\nSeek a favorable trade with clean ledgers and an open hand."
+   "page": "Dust hangs thick in the echoing stone loft of mill twelve as miller Corin whets his broad scythe against an oilstone, stopping only to eye the padded cradle on your back with sharp suspicion. He demands to know what the high monks of Orisonhold are playing at while the barley rots in the frost, his thumb testing the newly polished edge with a soft hiss. The heavy bronze Clapper hums against your shoulder blades like a caged hornet, a steady vibration that seems to answer the rhythmic scraping of the steel.\n\nStep past the grinding floor and head down toward the lower mills.\n\nSeek a favorable trade with clean ledgers and an open hand."
   },
   {
    "id": "vh-3-1-2-1",
@@ -10695,7 +10695,7 @@
     }
    ],
    "title": "The Stray Goat",
-   "page": "Miller-boy Bram runs across the frost-rimed stone platform of mill eighteen, waving a knitted cap to drive a stubborn stray goat away from an open stack of flour-sacks. The animal leaps lightly over a coil of hempen rope, its small hooves clattering sharply against the frozen flags before disappearing around the corner of the kiln. The thin, clear air burns your throat with every breath, reminding you how far Vesperhold and the great cracked bell remain above.\n\nChoose your direction across the stone grinding-floor or the dizzying rope-bridge."
+   "page": "Miller-boy Bram runs across the frost-rimed stone platform of mill eighteen, waving a knitted cap to drive a stubborn stray goat away from an open stack of flour-sacks. The animal leaps lightly over a coil of hempen rope, its small hooves clattering sharply against the frozen flags before disappearing around the corner of the kiln. The thin, clear air burns your throat with every breath, reminding you how far Orisonhold and the great cracked bell remain above.\n\nChoose your direction across the stone grinding-floor or the dizzying rope-bridge."
   },
   {
    "id": "vh-3-1-2-8",
@@ -11073,7 +11073,7 @@
     }
    ],
    "title": "The Signal Cord",
-   "page": "Frost glazes the exposed stone balcony where miller-boy Pimm fights a stiff signal cord frozen hard into a stubborn wind-knot. The high-altitude air bites sharply at your cheeks, carrying the thin, metallic scent of snow from the higher crags above Vesperhold. Biscuit lowers her long ears, shaking her head against the whistling gale while you adjust the canvas straps holding the bronze Clapper tightly against your spine.\n\nDo you offer your cold fingers to help untangle the iced hemp, or do you turn your back on the struggling boy to look for a lower track?"
+   "page": "Frost glazes the exposed stone balcony where miller-boy Pimm fights a stiff signal cord frozen hard into a stubborn wind-knot. The high-altitude air bites sharply at your cheeks, carrying the thin, metallic scent of snow from the higher crags above Orisonhold. Biscuit lowers her long ears, shaking her head against the whistling gale while you adjust the canvas straps holding the bronze Clapper tightly against your spine.\n\nDo you offer your cold fingers to help untangle the iced hemp, or do you turn your back on the struggling boy to look for a lower track?"
   },
   {
    "id": "vh-3-1-3-6",
@@ -11400,7 +11400,7 @@
    "seg": 1,
    "layer": 4,
    "idx": 2,
-   "brief": "Within the dusty shadows of mill forty-three, miller Aris trades a handful of parched beans for a scrap of dried mutton.",
+   "brief": "Within the dusty shadows of mill forty-three, miller Halden trades a handful of parched beans for a scrap of dried mutton.",
    "exits": [
     {
      "to": "vh-3-1-5-1",
@@ -11416,7 +11416,7 @@
     }
    ],
    "title": "The Mutton Trade",
-   "page": "Within the dusty shadows of mill forty-three, miller Aris trades a handful of parched beans for a scrap of dried mutton, his fingers moving with the mechanical speed of an old clockwork. The smell of rendered fat and roasting grain fills the dim alcove, offering a brief, warm respite from the biting chill of the terrace heights. Biscuit stretches his neck longingly toward the burlap sacks while you adjust the straps of the Clapper cradle."
+   "page": "Within the dusty shadows of mill forty-three, miller Halden trades a handful of parched beans for a scrap of dried mutton, his fingers moving with the mechanical speed of an old clockwork. The smell of rendered fat and roasting grain fills the dim alcove, offering a brief, warm respite from the biting chill of the terrace heights. Biscuit stretches his neck longingly toward the burlap sacks while you adjust the straps of the Clapper cradle."
   },
   {
    "id": "vh-3-1-4-3",
@@ -11503,7 +11503,7 @@
     }
    ],
    "title": "The Sour Draught",
-   "page": "Within the warm flour-loft of mill forty-six, miller Senta offers a draught of sour small-beer in exchange for monastery gossip, her eyes sharp and curious in the dim light. The earthenware jug passes between you, sharp and yeasty against the dry chill in your throat, while the heavy metal on your back hums its low, persistent note. Senta leans in closer over a stack of empty grain sacks, eager to hear what news has trickled down from Vesperhold."
+   "page": "Within the warm flour-loft of mill forty-six, miller Senta offers a draught of sour small-beer in exchange for monastery gossip, her eyes sharp and curious in the dim light. The earthenware jug passes between you, sharp and yeasty against the dry chill in your throat, while the heavy metal on your back hums its low, persistent note. Senta leans in closer over a stack of empty grain sacks, eager to hear what news has trickled down from Orisonhold."
   },
   {
    "id": "vh-3-1-4-6",
@@ -11624,7 +11624,7 @@
     }
    ],
    "title": "The Threshold of Mist",
-   "page": "Across the frost-slick stone threshold of the final miller's lodge, you glimpse the winding stair descending into the gray mist below like a spine of broken bone. Ice coats the handrails, and the muffled roar of distant glacier water rises from the hidden depths of the gorge. Biscuit shifts uneasily behind you, his iron shoes scraping a sharp spark from the frozen flagstones.\n\nThe urge to turn back to the warmth of the flour-bins tugs hard at your chest, but the cracked bell in Vesperhold waits for its tongue. Every breath stings your throat as the altitude wind presses relentlessly against your laden frame."
+   "page": "Across the frost-slick stone threshold of the final miller's lodge, you glimpse the winding stair descending into the gray mist below like a spine of broken bone. Ice coats the handrails, and the muffled roar of distant glacier water rises from the hidden depths of the gorge. Biscuit shifts uneasily behind you, his iron shoes scraping a sharp spark from the frozen flagstones.\n\nThe urge to turn back to the warmth of the flour-bins tugs hard at your chest, but the cracked bell in Orisonhold waits for its tongue. Every breath stings your throat as the altitude wind presses relentlessly against your laden frame."
   },
   {
    "id": "vh-3-2-0-0",
@@ -13593,7 +13593,7 @@
     }
    ],
    "title": "Shivering on the Ledge",
-   "page": "Shivering against the wind-scoured rock, you adjust the shoulder straps while the bronze mass hums a deep warning note. The temperature drops sharply as the sun dips behind the high jagged teeth of the Vesperhold wall, turning the sweat on your collar into freezing needles. Biscuit presses his warm flank against your arm, sharing what little heat remains in the mountain air. Two distinct tracks offer an escape from the freezing ledge before night closes the passes."
+   "page": "Shivering against the wind-scoured rock, you adjust the shoulder straps while the bronze mass hums a deep warning note. The temperature drops sharply as the sun dips behind the high jagged teeth of the Orisonhold wall, turning the sweat on your collar into freezing needles. Biscuit presses his warm flank against your arm, sharing what little heat remains in the mountain air. Two distinct tracks offer an escape from the freezing ledge before night closes the passes."
   },
   {
    "id": "vh-4-0-2-0",
@@ -13876,7 +13876,7 @@
    "seg": 0,
    "layer": 2,
    "idx": 10,
-   "brief": "Slick frost veneers the stone stairhead where a weary traveler named Kaelen rests his frostbitten fingers.",
+   "brief": "Slick frost veneers the stone stairhead where a weary traveler named Brann rests his frostbitten fingers.",
    "exits": [
     {
      "to": "vh-4-0-3-10",
@@ -13898,7 +13898,7 @@
     }
    ],
    "title": "The Weary Traveler",
-   "page": "Slick frost veneers the stone stairhead where a weary traveler named Kaelen rests his frostbitten fingers. He offers a tight, grim smile as you approach, rubbing warmth back into his hands against the bitter draft. The stairs plunge downward into shadow from this ledge, demanding absolute focus from every traveler who passes.\n\nVarious ways present themselves amid the frozen masonry and scattered debris."
+   "page": "Slick frost veneers the stone stairhead where a weary traveler named Brann rests his frostbitten fingers. He offers a tight, grim smile as you approach, rubbing warmth back into his hands against the bitter draft. The stairs plunge downward into shadow from this ledge, demanding absolute focus from every traveler who passes.\n\nVarious ways present themselves amid the frozen masonry and scattered debris."
   },
   {
    "id": "vh-4-0-2-11",
@@ -14462,7 +14462,7 @@
     }
    ],
    "title": "The Deep Vibration",
-   "page": "Deep rhythmic vibrations pass from the heavy bronze Clapper straight into your tired muscles as the wind rises. The metal seems to remember every storm that ever shook Vesperhold's high tower, singing a low, mournful chord that vibrates through the very soles of your boots. Biscuit stamps her feet against the ice, unsettled by the sound echoing off the frozen canyon walls. You must decide whether to deaden the resonance with extra woolen wrapping or let the bell sing to the mountains."
+   "page": "Deep rhythmic vibrations pass from the heavy bronze Clapper straight into your tired muscles as the wind rises. The metal seems to remember every storm that ever shook Orisonhold's high tower, singing a low, mournful chord that vibrates through the very soles of your boots. Biscuit stamps her feet against the ice, unsettled by the sound echoing off the frozen canyon walls. You must decide whether to deaden the resonance with extra woolen wrapping or let the bell sing to the mountains."
   },
   {
    "id": "vh-4-0-4-7",
@@ -17003,7 +17003,7 @@
     }
    ],
    "title": "The Bronze Resonance",
-   "page": "A sudden, deep tremor ripples upward through the glacier ice, vibrating sharply through your iron-spiked boots and setting the heavy bronze clapper into a sustained, low-pitched hum. The sound fills your skull and numbs your teeth, carrying the ancient memory of Vesperhold's high belfry over the silent white expanse. Biscuit tosses her grey head uneasily as the ice settles beneath her hooves, small powdery avalanches hissing down the distant crevasses.\n\nThe ringing fades slowly into the thin air, leaving you standing at a crucial junction where the path divides ahead of the final descent. You can tend to your frozen fingers before moving on, or step directly onto the muddy track leading away from the glacier's reach."
+   "page": "A sudden, deep tremor ripples upward through the glacier ice, vibrating sharply through your iron-spiked boots and setting the heavy bronze clapper into a sustained, low-pitched hum. The sound fills your skull and numbs your teeth, carrying the ancient memory of Orisonhold's high belfry over the silent white expanse. Biscuit tosses her grey head uneasily as the ice settles beneath her hooves, small powdery avalanches hissing down the distant crevasses.\n\nThe ringing fades slowly into the thin air, leaving you standing at a crucial junction where the path divides ahead of the final descent. You can tend to your frozen fingers before moving on, or step directly onto the muddy track leading away from the glacier's reach."
   },
   {
    "id": "vh-4-2-3-11",
@@ -17292,7 +17292,7 @@
     }
    ],
    "title": "Fading Hum",
-   "page": "You massage feeling back into your frost-nipped fingers while the bronze clapper gives one last fading hum in the quiet air. The metal seems almost alive against your spine, vibrating with the memory of Vesperhold's high towers whenever a cold gust sweeps across the moraine. A thin crust of rime flakes off the leather straps and scatters across the grey slate stones like salt.\n\nYou take a deep breath of the heavier, less brittle air, feeling the first true warmth of the lower altitudes reach your cheeks."
+   "page": "You massage feeling back into your frost-nipped fingers while the bronze clapper gives one last fading hum in the quiet air. The metal seems almost alive against your spine, vibrating with the memory of Orisonhold's high towers whenever a cold gust sweeps across the moraine. A thin crust of rime flakes off the leather straps and scatters across the grey slate stones like salt.\n\nYou take a deep breath of the heavier, less brittle air, feeling the first true warmth of the lower altitudes reach your cheeks."
   },
   {
    "id": "vh-4-2-4-6",
@@ -17875,7 +17875,7 @@
     }
    ],
    "title": "The Moss-Choked Trough",
-   "page": "Beside a moss-choked stone trough where gray mist settles like down, you scrape wet clay from your boots while a stray rook screams overhead through the blanket of cloud. The air tastes of cold iron and rotting leaves, and the weight of Vesperhold's great bell feels heavier with every yard of descent into the damp valley."
+   "page": "Beside a moss-choked stone trough where gray mist settles like down, you scrape wet clay from your boots while a stray rook screams overhead through the blanket of cloud. The air tastes of cold iron and rotting leaves, and the weight of Orisonhold's great bell feels heavier with every yard of descent into the damp valley."
   },
   {
    "id": "vh-5-0-1-7",
@@ -21457,7 +21457,7 @@
     }
    ],
    "title": "The Boundary Wall",
-   "page": "Trailing your hand along a damp stone wall that marks the boundary of the lower groves, you sense the air growing warmer and less choked with mist. The persistent dampness of Vesperhold begins to yield to the dry, coal-scented updrafts rising from the foundry town far below. Every stone here is slick with centuries of mountain runoff and autumn leaves, demanding absolute concentration with every step you take.\n\nThree separate ways beckon through the thinning vapor as the descent continues."
+   "page": "Trailing your hand along a damp stone wall that marks the boundary of the lower groves, you sense the air growing warmer and less choked with mist. The persistent dampness of Orisonhold begins to yield to the dry, coal-scented updrafts rising from the foundry town far below. Every stone here is slick with centuries of mountain runoff and autumn leaves, demanding absolute concentration with every step you take.\n\nThree separate ways beckon through the thinning vapor as the descent continues."
   },
   {
    "id": "vh-5-2-3-11",
@@ -21648,7 +21648,7 @@
    "seg": 2,
    "layer": 4,
    "idx": 2,
-   "brief": "Looking back up the sheer mountain face where Vesperhold dissolves into white mist, you feel the first clear breeze of the lower gorge strike your cheeks.",
+   "brief": "Looking back up the sheer mountain face where Orisonhold dissolves into white mist, you feel the first clear breeze of the lower gorge strike your cheeks.",
    "exits": [
     {
      "to": "vh-5-2-5-1",
@@ -21658,7 +21658,7 @@
     }
    ],
    "title": "The Lower Gorge Breeze",
-   "page": "White mist swirls behind you as you look back up the sheer mountain face where Vesperhold dissolves into impenetrable cloud. The first clear, crisp breeze of the lower gorge strikes your cheeks, carrying the unmistakable scent of coal-smoke and rushing river water. Every step downward lightens the oppressive weight upon your shoulders, even as the humming bronze core of the Great Bell remains a heavy, pulsing presence in its cradle."
+   "page": "White mist swirls behind you as you look back up the sheer mountain face where Orisonhold dissolves into impenetrable cloud. The first clear, crisp breeze of the lower gorge strikes your cheeks, carrying the unmistakable scent of coal-smoke and rushing river water. Every step downward lightens the oppressive weight upon your shoulders, even as the humming bronze core of the Great Bell remains a heavy, pulsing presence in its cradle."
   },
   {
    "id": "vh-5-2-4-3",
@@ -21834,7 +21834,7 @@
     }
    ],
    "title": "The Master Founder's Judgment",
-   "page": "Unbuckling the heavy straps from your aching shoulders, you present the humming relic to the master founder just as the first heavy snowflakes begin to fall. The old smith runs calloused fingers down the scored bronze, testing the weight of the tongue that once woke Vesperhold through mountain blizzards. Around you, apprentices stoke the coke-beds until the cavernous arch glows like a captured sunset.\n\nThere is no time to linger by the hearth, for the low pass threatens to seal entirely before dawn breaks."
+   "page": "Unbuckling the heavy straps from your aching shoulders, you present the humming relic to the master founder just as the first heavy snowflakes begin to fall. The old smith runs calloused fingers down the scored bronze, testing the weight of the tongue that once woke Orisonhold through mountain blizzards. Around you, apprentices stoke the coke-beds until the cavernous arch glows like a captured sunset.\n\nThere is no time to linger by the hearth, for the low pass threatens to seal entirely before dawn breaks."
   },
   {
    "id": "vh-5-2-5-3",
@@ -21843,7 +21843,7 @@
    "seg": 2,
    "layer": 5,
    "idx": 3,
-   "brief": "Stepping inside the roaring warmth of the lower foundry, you slide the great clapper onto the iron cooling floor and know that Vesperhold's voice is saved.",
+   "brief": "Stepping inside the roaring warmth of the lower foundry, you slide the great clapper onto the iron cooling floor and know that Orisonhold's voice is saved.",
    "exits": [
     {
      "to": "vh-5-out",
@@ -21860,7 +21860,7 @@
     }
    ],
    "title": "Refuge in the Lower Foundry",
-   "page": "Stepping inside the roaring warmth of the lower foundry, you slide the great clapper onto the iron cooling floor and know that Vesperhold's voice is saved from the frost. Sparks dance against the soot-blackened rafters while furnace-men cheer your arrival, pounding iron hammers in a rhythm that matches the faint, lingering hum of the bronze. Every muscle in your back aches from the long descent through the mist, yet relief washes over you like warm spring water.\n\nBeyond the tall double doors, however, the valley path remains open and beckons you further down the slope."
+   "page": "Stepping inside the roaring warmth of the lower foundry, you slide the great clapper onto the iron cooling floor and know that Orisonhold's voice is saved from the frost. Sparks dance against the soot-blackened rafters while furnace-men cheer your arrival, pounding iron hammers in a rhythm that matches the faint, lingering hum of the bronze. Every muscle in your back aches from the long descent through the mist, yet relief washes over you like warm spring water.\n\nBeyond the tall double doors, however, the valley path remains open and beckons you further down the slope."
   },
   {
    "id": "vh-d-5-1",
@@ -21974,7 +21974,7 @@
     }
    ],
    "title": "The Furnace Door",
-   "page": "The heavy iron plate of the furnace door looms before you like a wall of solid night, marked by generations of soot, oil, and arcane seals. Within its depths, the great furnace roars with a hunger that threatens to consume any traveler who approaches without the proper rites or tools. The air tastes of sulfur, hot scale, and the ancient promise of Vesperhold.\n\nYou must now decide how to breach the sealed portal before the mountain weather closes the passes for good."
+   "page": "The heavy iron plate of the furnace door looms before you like a wall of solid night, marked by generations of soot, oil, and arcane seals. Within its depths, the great furnace roars with a hunger that threatens to consume any traveler who approaches without the proper rites or tools. The air tastes of sulfur, hot scale, and the ancient promise of Orisonhold.\n\nYou must now decide how to breach the sealed portal before the mountain weather closes the passes for good."
   },
   {
    "id": "vh-6-out",
@@ -22778,7 +22778,7 @@
     }
    ],
    "title": "The Tinker's Shack",
-   "page": "Near the smoking chimney of the tinker's shack, a mender named Garreth hammers dents out of battered copper kettles, sending sharp ringing echoes across the muddy lane. Sparks fly from the small charcoal stove, catching briefly in the cold drizzle before dying in the puddles at your feet. Biscuit lowers his head to sniff at a heap of scrap metal while you adjust the heavy bronze Clapper in its padded cradle. Garreth pauses his rhythmic pounding to wipe soot from his forehead with a greasy rag, eyeing the massive tongue of Vesperhold with professional curiosity.\n\nThe metallic clamor fades into a steady, damp quiet as the mender turns his attention back to a split kettle seam. You weigh your options in the chill air, knowing the foundry is close but uncertain whether to seek out the masters now or circle the lower lanes first."
+   "page": "Near the smoking chimney of the tinker's shack, a mender named Garreth hammers dents out of battered copper kettles, sending sharp ringing echoes across the muddy lane. Sparks fly from the small charcoal stove, catching briefly in the cold drizzle before dying in the puddles at your feet. Biscuit lowers his head to sniff at a heap of scrap metal while you adjust the heavy bronze Clapper in its padded cradle. Garreth pauses his rhythmic pounding to wipe soot from his forehead with a greasy rag, eyeing the massive tongue of Orisonhold with professional curiosity.\n\nThe metallic clamor fades into a steady, damp quiet as the mender turns his attention back to a split kettle seam. You weigh your options in the chill air, knowing the foundry is close but uncertain whether to seek out the masters now or circle the lower lanes first."
   },
   {
    "id": "vh-6-0-3-1",
@@ -23012,7 +23012,7 @@
    "seg": 0,
    "layer": 3,
    "idx": 9,
-   "brief": "Within the damp stone alcove of the shrine, a pilgrim named Vesper leaves a dried mountain iris for safe travel.",
+   "brief": "Within the damp stone alcove of the shrine, a pilgrim named Perrin leaves a dried mountain iris for safe travel.",
    "exits": [
     {
      "to": "vh-6-0-4-5",
@@ -23034,7 +23034,7 @@
     }
    ],
    "title": "The Shrine Alcove",
-   "page": "Damp stones weep moisture against your shoulder inside the candle-lit alcove where a pilgrim named Vesper presses a dried mountain iris into a crack in the masonry for safe travel. The delicate purple petals smell of high altitude and old snow, contrasting sharply with the thick smell of coal-smoke drifting up from the lower foundries. Biscuit shakes his harness bells outside, the light bronze clatter echoing against the wet slate. You adjust the heavy padded cradle holding the great Clapper on your back, feeling its faint, steady hum vibrate through your spine like a distant heartbeat."
+   "page": "Damp stones weep moisture against your shoulder inside the candle-lit alcove where a pilgrim named Perrin presses a dried mountain iris into a crack in the masonry for safe travel. The delicate purple petals smell of high altitude and old snow, contrasting sharply with the thick smell of coal-smoke drifting up from the lower foundries. Biscuit shakes his harness bells outside, the light bronze clatter echoing against the wet slate. You adjust the heavy padded cradle holding the great Clapper on your back, feeling its faint, steady hum vibrate through your spine like a distant heartbeat."
   },
   {
    "id": "vh-6-0-3-10",
@@ -23874,7 +23874,7 @@
     }
    ],
    "title": "Salt-Shed Exchange",
-   "page": "Salt-crusted rafters drip condensation onto your shoulders inside the gloomy shed, where a sharp-eyed hawker named Jute leans over a barrel. He taps a counterfeit brass token against the rim, trying to palm it off in exchange for the sacred bronze clapper on your back. Outside, the tide laps against the pilings, and the damp air carries the low, persistent hum of the heavy metal tongue you carry for Vesperhold."
+   "page": "Salt-crusted rafters drip condensation onto your shoulders inside the gloomy shed, where a sharp-eyed hawker named Jute leans over a barrel. He taps a counterfeit brass token against the rim, trying to palm it off in exchange for the sacred bronze clapper on your back. Outside, the tide laps against the pilings, and the damp air carries the low, persistent hum of the heavy metal tongue you carry for Orisonhold."
   },
   {
    "id": "vh-6-1-2-8",
@@ -24876,7 +24876,7 @@
      "to": "vh-6-2-2-1",
      "intent": "",
      "id": "x1",
-     "label": "Demand he respect the sacred commission of Vesperhold"
+     "label": "Demand he respect the sacred commission of Orisonhold"
     },
     {
      "to": "vh-6-2-2-2",
@@ -25138,7 +25138,7 @@
     }
    ],
    "title": "The Blind Weaver",
-   "page": "Sitting beside the towering heaps of grey coal-bins, Marda the blind weaver runs calloused fingers across the coarse wool of your coat to determine whether you bring honest trade or bitter trouble. Her sightless eyes turn toward the muffled hum of the bronze clapper strapped against your spine, sensing the heavy weight of Vesperhold resting upon your shoulders. The surrounding air carries the sharp, metallic tang of unrefined ore and damp stone, reminding you that time grows short in the cavernous halls of Lowgate.\n\nYou must decide how to answer her touch before the lingering ash settles any further into your clothes."
+   "page": "Sitting beside the towering heaps of grey coal-bins, Marda the blind weaver runs calloused fingers across the coarse wool of your coat to determine whether you bring honest trade or bitter trouble. Her sightless eyes turn toward the muffled hum of the bronze clapper strapped against your spine, sensing the heavy weight of Orisonhold resting upon your shoulders. The surrounding air carries the sharp, metallic tang of unrefined ore and damp stone, reminding you that time grows short in the cavernous halls of Lowgate.\n\nYou must decide how to answer her touch before the lingering ash settles any further into your clothes."
   },
   {
    "id": "vh-6-2-2-3",
@@ -25404,7 +25404,7 @@
    "seg": 2,
    "layer": 2,
    "idx": 12,
-   "brief": "A burly forge-hand named Kaelen points a greasy thumb toward the master's office, warning you that tin prices have doubled since dawn.",
+   "brief": "A burly forge-hand named Brann points a greasy thumb toward the master's office, warning you that tin prices have doubled since dawn.",
    "exits": [
     {
      "to": "vh-6-2-3-13",
@@ -25421,7 +25421,7 @@
     }
    ],
    "title": "The Cost of Tin",
-   "page": "Heavy iron doors groan open against the draft as a burly forge-hand named Kaelen points a greasy thumb toward the master's office, warning you that tin prices have doubled since dawn. The weight of the clapper shifts on your aching shoulders as you calculate the meager coins left in your pouch, wondering if Vesperhold's bronze will be enough to buy the smiths' full cooperation or if you must barter with empty promises.\n\nSmoke billows from a nearby quenching trough, stinging your eyes and coating the back of your throat in salt and sulfur. The choice narrows between pressing forward into the heat of negotiation or retreating before the debts crush you."
+   "page": "Heavy iron doors groan open against the draft as a burly forge-hand named Brann points a greasy thumb toward the master's office, warning you that tin prices have doubled since dawn. The weight of the clapper shifts on your aching shoulders as you calculate the meager coins left in your pouch, wondering if Orisonhold's bronze will be enough to buy the smiths' full cooperation or if you must barter with empty promises.\n\nSmoke billows from a nearby quenching trough, stinging your eyes and coating the back of your throat in salt and sulfur. The choice narrows between pressing forward into the heat of negotiation or retreating before the debts crush you."
   },
   {
    "id": "vh-6-2-2-13",
@@ -25697,7 +25697,7 @@
     }
    ],
    "title": "The Silent Forges",
-   "page": "Thick soot coats the rafters while heavy silence hangs over the empty casting floor where no fires burn this evening. You steady your breathing against the lung-burning smog, counting your paces past the deadweight of silenced hammers and idle casting tables. Every footstep echoes hollowly against the damp stone walls, reminding you how far you have carried the humming bronze tongue from the frozen heights of Vesperhold.\n\nAhead, multiple paths branch through the gloom of the foundry quarter, each offering a different way forward through the maze of machinery and shadowed archways."
+   "page": "Thick soot coats the rafters while heavy silence hangs over the empty casting floor where no fires burn this evening. You steady your breathing against the lung-burning smog, counting your paces past the deadweight of silenced hammers and idle casting tables. Every footstep echoes hollowly against the damp stone walls, reminding you how far you have carried the humming bronze tongue from the frozen heights of Orisonhold.\n\nAhead, multiple paths branch through the gloom of the foundry quarter, each offering a different way forward through the maze of machinery and shadowed archways."
   },
   {
    "id": "vh-6-2-3-8",
@@ -25718,7 +25718,7 @@
      "to": "vh-6-2-4-5",
      "intent": "",
      "id": "x1",
-     "label": "Unroll the Vesperhold deed on a barrel"
+     "label": "Unroll the Orisonhold deed on a barrel"
     },
     {
      "to": "vh-d-6-2",
@@ -25942,7 +25942,7 @@
     }
    ],
    "title": "The Crucible's Maw",
-   "page": "Heat blasts against your face like a physical wall as you step out of the shadows and onto the raised iron grating. Before the roaring maw of the primary crucible, master smith Orren holds out his bare scarred palm for the abbey's token. Sparks dance in his tired eyes as he looks from your frost-bitten hands to the heavy bronze clapper resting in your wooden cradle, waiting to see if you have brought what is needed to save Vesperhold.\n\nThe final moment has arrived, and the glowing metal awaits your command to begin the melting process."
+   "page": "Heat blasts against your face like a physical wall as you step out of the shadows and onto the raised iron grating. Before the roaring maw of the primary crucible, master smith Orren holds out his bare scarred palm for the abbey's token. Sparks dance in his tired eyes as he looks from your frost-bitten hands to the heavy bronze clapper resting in your wooden cradle, waiting to see if you have brought what is needed to save Orisonhold.\n\nThe final moment has arrived, and the glowing metal awaits your command to begin the melting process."
   },
   {
    "id": "vh-6-2-4-1",
@@ -26051,7 +26051,7 @@
    "seg": 2,
    "layer": 4,
    "idx": 5,
-   "brief": "Before the central hearth, you unroll the frayed parchment deed of Vesperhold, laying it across a barrel-head for the master's final signature.",
+   "brief": "Before the central hearth, you unroll the frayed parchment deed of Orisonhold, laying it across a barrel-head for the master's final signature.",
    "exits": [
     {
      "to": "vh-6-2-5-2",
@@ -26067,7 +26067,7 @@
     }
    ],
    "title": "The Frayed Deed",
-   "page": "Before the roaring central hearth, you unroll the frayed parchment deed of Vesperhold, laying it flat across a damp barrel-head for the master's final signature. The parchment smells of old wax and mountain damp, its edges scorched by the proximity of the open flame. Forge-masters crowd close in the dim light, eager to seal the contract that will bind the mountain's voice to the low-country's forge."
+   "page": "Before the roaring central hearth, you unroll the frayed parchment deed of Orisonhold, laying it flat across a damp barrel-head for the master's final signature. The parchment smells of old wax and mountain damp, its edges scorched by the proximity of the open flame. Forge-masters crowd close in the dim light, eager to seal the contract that will bind the mountain's voice to the low-country's forge."
   },
   {
    "id": "vh-6-2-4-6",
@@ -26177,7 +26177,7 @@
    "seg": 2,
    "layer": 5,
    "idx": 3,
-   "brief": "You slide the clapper into the secret drainage sluice to hide it from both the guild and the court, leaving Vesperhold without a bell but keeping its ancient spirit wild.",
+   "brief": "You slide the clapper into the secret drainage sluice to hide it from both the guild and the court, leaving Orisonhold without a bell but keeping its ancient spirit wild.",
    "exits": [
     {
      "to": "vh-6-out",
@@ -26254,7 +26254,7 @@
     }
    ],
    "title": "The Casting Choice",
-   "page": "The heavy bronze tongue is hefted toward the mouth of the roaring furnace while the forge-masters wait for your final word on its fate. Every eye in the crowded workshop watches the scarred metal gleam under the firelight, balancing the ancient needs of the mountain against the practical hunger of the valley below. You hold the decisive thread of the journey in your hands, knowing that whatever path you clear now will shape the songs and silences of Vesperhold for generations to come. The heat washes over your face, dry and fierce as a summer gale."
+   "page": "The heavy bronze tongue is hefted toward the mouth of the roaring furnace while the forge-masters wait for your final word on its fate. Every eye in the crowded workshop watches the scarred metal gleam under the firelight, balancing the ancient needs of the mountain against the practical hunger of the valley below. You hold the decisive thread of the journey in your hands, knowing that whatever path you clear now will shape the songs and silences of Orisonhold for generations to come. The heat washes over your face, dry and fierce as a summer gale."
   },
   {
    "id": "vh-f-B",
@@ -26287,7 +26287,7 @@
     }
    ],
    "title": "The Upward Turn",
-   "page": "You turn your back on the roaring mouth of the furnace and hoist the heavy wooden cradle back onto your aching shoulders. The bronze tongue feels colder now, as if it already longs for the high, thin air and the frost-rimed stones of Vesperhold. The valley folk stare in silence as you step away from the warmth of the forge-fires and toward the long, winding staircase that climbs back into the clouds. There are no debts paid down here today, only the stubborn weight of an unfinished journey and a mountain waiting for its voice."
+   "page": "You turn your back on the roaring mouth of the furnace and hoist the heavy wooden cradle back onto your aching shoulders. The bronze tongue feels colder now, as if it already longs for the high, thin air and the frost-rimed stones of Orisonhold. The valley folk stare in silence as you step away from the warmth of the forge-fires and toward the long, winding staircase that climbs back into the clouds. There are no debts paid down here today, only the stubborn weight of an unfinished journey and a mountain waiting for its voice."
   },
   {
    "id": "vh-f-C",
@@ -26359,7 +26359,7 @@
     }
    ],
    "title": "The Bell Rings Whole",
-   "page": "You hand the Clapper to the master smiths, wrapped in the sacred wool and sealed with the knot-oath you swore beneath the high eaves. The bronze melts down pure and bright in the crucible, running like liquid sunlight into the earthen mold prepared by the entire valley. When the great casting cools and is hoisted into the high belfry by the Ropewrights' Guild, Orison rings out across the mountain with a clean, golden resonance that clears the morning frost from the slate roofs.\n\nWeeks later, the people of Vesperhold and Lowgate gather together in the crisp air to listen to the evening chime, knowing the mountain's heart beats true once more."
+   "page": "You hand the Clapper to the master smiths, wrapped in the sacred wool and sealed with the knot-oath you swore beneath the high eaves. The bronze melts down pure and bright in the crucible, running like liquid sunlight into the earthen mold prepared by the entire valley. When the great casting cools and is hoisted into the high belfry by the Ropewrights' Guild, Orison rings out across the mountain with a clean, golden resonance that clears the morning frost from the slate roofs.\n\nWeeks later, the people of Orisonhold and Lowgate gather together in the crisp air to listen to the evening chime, knowing the mountain's heart beats true once more."
   },
   {
    "id": "vh-e-A1-2",
@@ -26429,7 +26429,7 @@
     }
    ],
    "title": "The Silent Banners",
-   "page": "Winter settles over Vesperhold with a dry, whistling bite, and still the new bell hangs silent in its wooden scaffolding while the guilds trade insults across the courtyard. You watch the dispute from the warmth of the chimney-corner, realizing that a voice made without friends is only half-heard in the wind. The mountain does not care who won the argument, but the people grow tired of waiting for a sound that never quite reaches their hearths.\n\nThe snow piles high against the doors, sealing the quarrel away in white silence until the spring thaw promises a new reckoning."
+   "page": "Winter settles over Orisonhold with a dry, whistling bite, and still the new bell hangs silent in its wooden scaffolding while the guilds trade insults across the courtyard. You watch the dispute from the warmth of the chimney-corner, realizing that a voice made without friends is only half-heard in the wind. The mountain does not care who won the argument, but the people grow tired of waiting for a sound that never quite reaches their hearths.\n\nThe snow piles high against the doors, sealing the quarrel away in white silence until the spring thaw promises a new reckoning."
   },
   {
    "id": "vh-e-A2-3",
@@ -26480,7 +26480,7 @@
     }
    ],
    "title": "The Cracked Note",
-   "page": "Weeks after the hoisting cables stop singing, the new bell speaks across the thirteen stair-towns at dusk, and every window-shutter in Vesperhold rattles with a strange, sweet tremor. The note is not the clean, pure peal the abbots rehearsed in drafty choir stalls, but rather a deep, double-throated murmur that catches on the icicles and lingers until the valley goats look up from their sparse grass. Children in the terrace orchards mimic the small hitch in the middle of the chime, laughing as the sound bounces back from the granite face with a charming, accidental stutter. Even the Cable Court toll-collectors pause their ledgers when the evening air wobbles, admitting quietly that a bell with a secret in its throat is harder to forget.\n\nRead on, for the final resting place of the sound."
+   "page": "Weeks after the hoisting cables stop singing, the new bell speaks across the thirteen stair-towns at dusk, and every window-shutter in Orisonhold rattles with a strange, sweet tremor. The note is not the clean, pure peal the abbots rehearsed in drafty choir stalls, but rather a deep, double-throated murmur that catches on the icicles and lingers until the valley goats look up from their sparse grass. Children in the terrace orchards mimic the small hitch in the middle of the chime, laughing as the sound bounces back from the granite face with a charming, accidental stutter. Even the Cable Court toll-collectors pause their ledgers when the evening air wobbles, admitting quietly that a bell with a secret in its throat is harder to forget.\n\nRead on, for the final resting place of the sound."
   },
   {
    "id": "vh-e-A3-3",
@@ -26502,7 +26502,7 @@
    "endingKey": "B1",
    "endingTitle": "Biscuit Carries It Home",
    "part": 1,
-   "brief": "Ending \"Biscuit Carries It Home\": You carry the Clapper back up the mountain to keep it from the furnace; Biscuit shoulders the cradle the whole climb, and Vesperhold gets its bronze back, unrung.",
+   "brief": "Ending \"Biscuit Carries It Home\": You carry the Clapper back up the mountain to keep it from the furnace; Biscuit shoulders the cradle the whole climb, and Orisonhold gets its bronze back, unrung.",
    "exits": [
     {
      "to": "vh-e-B1-2",
@@ -26531,7 +26531,7 @@
     }
    ],
    "title": "Biscuit Carries It Home",
-   "page": "Up through the frozen orchards and the rattling ropeways, the return of the uncast Clapper becomes a quiet legend told around grease-lamps in the terrace shelters. Vesperhold's scaffolding remains empty, a stark wooden rib cage against the grey sky, but the people find a strange comfort in the silent metal resting under a tarp in the stable yard. Biscuit spends his days eating dry mash in the warmest corner of the barn, rubbing his scarred neck against the fence while children come by just to press a hand against the cold leather casing. The guild masters send formal letters of complaint that get lost in the snowdrifts, while the mountain goes about its business without needing a single bronze tongue to tell it when to sleep.\n\nRead on, for the final view from the stables."
+   "page": "Up through the frozen orchards and the rattling ropeways, the return of the uncast Clapper becomes a quiet legend told around grease-lamps in the terrace shelters. Orisonhold's scaffolding remains empty, a stark wooden rib cage against the grey sky, but the people find a strange comfort in the silent metal resting under a tarp in the stable yard. Biscuit spends his days eating dry mash in the warmest corner of the barn, rubbing his scarred neck against the fence while children come by just to press a hand against the cold leather casing. The guild masters send formal letters of complaint that get lost in the snowdrifts, while the mountain goes about its business without needing a single bronze tongue to tell it when to sleep.\n\nRead on, for the final view from the stables."
   },
   {
    "id": "vh-e-B1-3",
@@ -26544,7 +26544,7 @@
    "exits": [],
    "endingId": "end-B1",
    "title": "Biscuit Carries It Home",
-   "page": "Winter settles deep into the granite bones of Vesperhold, wrapping the empty bell-frame in thick white blankets that muffle the whistling of the high gales. You lean against the stable door with a mug of chicory tea, watching Biscuit blow soft, gray clouds of steam into the dim, straw-scented air. The heavy bronze tongue stays silent inside its cradle, a cold and massive secret that refuses to be hammered into someone else's song. Out across the darkening precipice, the thirteen stair-towns glimmer with tiny yellow grease-lights, hanging like distant stars against the vast, quiet face of the night. Nothing is broken, nothing is finished, and the mule stands guard over a voice that has chosen to keep its own counsel."
+   "page": "Winter settles deep into the granite bones of Orisonhold, wrapping the empty bell-frame in thick white blankets that muffle the whistling of the high gales. You lean against the stable door with a mug of chicory tea, watching Biscuit blow soft, gray clouds of steam into the dim, straw-scented air. The heavy bronze tongue stays silent inside its cradle, a cold and massive secret that refuses to be hammered into someone else's song. Out across the darkening precipice, the thirteen stair-towns glimmer with tiny yellow grease-lights, hanging like distant stars against the vast, quiet face of the night. Nothing is broken, nothing is finished, and the mule stands guard over a voice that has chosen to keep its own counsel."
   },
   {
    "id": "vh-e-B2-1",
@@ -26595,7 +26595,7 @@
    "exits": [],
    "endingId": "end-B2",
    "title": "The Long Way Up",
-   "page": "Night falls like an iron shutter over the peaks, plunging Vesperhold into a profound, ringing stillness that needs no metal to enforce its peace. You stand at the edge of the stone balcony, looking down through the cloud line where the thirteen stair-towns twinkle like faint embers in a dying hearth. The great bronze tongue lies behind you in the dark, cold to the touch and silent as a sleeping dog, content to hold its heavy music until the world changes its mind. A single gust of wind brushes past your cheek, carrying the distant smell of pine resin and woodsmoke from the valley floor. Here at the top of everything, there is nothing left to carry and nowhere else to climb."
+   "page": "Night falls like an iron shutter over the peaks, plunging Orisonhold into a profound, ringing stillness that needs no metal to enforce its peace. You stand at the edge of the stone balcony, looking down through the cloud line where the thirteen stair-towns twinkle like faint embers in a dying hearth. The great bronze tongue lies behind you in the dark, cold to the touch and silent as a sleeping dog, content to hold its heavy music until the world changes its mind. A single gust of wind brushes past your cheek, carrying the distant smell of pine resin and woodsmoke from the valley floor. Here at the top of everything, there is nothing left to carry and nowhere else to climb."
   },
   {
    "id": "vh-e-C1-1",
@@ -26646,7 +26646,7 @@
    "exits": [],
    "endingId": "end-C1",
    "title": "Ploughshares, No Strings",
-   "page": "Green shoots push through the dark mountain earth in long, trembling rows that stretch from the fifth tier all the way down to the orchard borders. You sit on a low stone retaining wall with dirt under your fingernails and a crust of barley bread in your pocket, watching the wind ripple across the young crops like water in a shallow basin. The great scaffolding up at Vesperhold stands bare against the sky, a wooden skeleton that has forgotten how to make a noise, and nobody seems to miss the voice it lost. Down in the furrows, the transformed bronze does its silent work beneath the roots, feeding the valley with something far more lasting than music. The mountain breathes deep, smells of green life, and lets the old stories drift away on the wind."
+   "page": "Green shoots push through the dark mountain earth in long, trembling rows that stretch from the fifth tier all the way down to the orchard borders. You sit on a low stone retaining wall with dirt under your fingernails and a crust of barley bread in your pocket, watching the wind ripple across the young crops like water in a shallow basin. The great scaffolding up at Orisonhold stands bare against the sky, a wooden skeleton that has forgotten how to make a noise, and nobody seems to miss the voice it lost. Down in the furrows, the transformed bronze does its silent work beneath the roots, feeding the valley with something far more lasting than music. The mountain breathes deep, smells of green life, and lets the old stories drift away on the wind."
   },
   {
    "id": "vh-e-C2-1",
@@ -26665,7 +26665,7 @@
     }
    ],
    "title": "The Song in the Metal",
-   "page": "Bright sparks shower across the floor of the flooded foundry as the bronze Clapper yields to the white-hot belly of the furnace, singing a long, low note that vibrates straight through the damp soles of your boots. You stand shoulder to shoulder with the forge-masters, watching the heavy tongue of the Great Bell dissolve into a bubbling amber pool laced with the silver tin loaned by the Cable Court. When the ladles tip, the molten metal pours into the dry sand molds of the Terrace Millers, who lean over the frames and murmur old wind-calls into the rising steam. Each cooling blade drinks the sound until the iron-grey steel takes on a faint, permanent hum that answers the draft coming down from Vesperhold.\n\nBiscuit shakes his heavy ears outside the sluice gate, smelling the turned loam of the lower valleys where the first new blades will soon test the earth."
+   "page": "Bright sparks shower across the floor of the flooded foundry as the bronze Clapper yields to the white-hot belly of the furnace, singing a long, low note that vibrates straight through the damp soles of your boots. You stand shoulder to shoulder with the forge-masters, watching the heavy tongue of the Great Bell dissolve into a bubbling amber pool laced with the silver tin loaned by the Cable Court. When the ladles tip, the molten metal pours into the dry sand molds of the Terrace Millers, who lean over the frames and murmur old wind-calls into the rising steam. Each cooling blade drinks the sound until the iron-grey steel takes on a faint, permanent hum that answers the draft coming down from Orisonhold.\n\nBiscuit shakes his heavy ears outside the sluice gate, smelling the turned loam of the lower valleys where the first new blades will soon test the earth."
   },
   {
    "id": "vh-e-C2-2",
@@ -26697,7 +26697,7 @@
    "exits": [],
    "endingId": "end-C2",
    "title": "The Song in the Metal",
-   "page": "Dusk settles over the thirteen hanging towns like a cool hand laid upon a fevered brow, silencing the noise of the winches and the chatter of the market squares. High above the cloud line, the jagged stone ribs of Vesperhold stand dark and empty against the fading orange of the western sky, stripped of the great voice they once trusted above all else. Yet down in the furrows where the barley pushes through the cold dirt, a faint, rhythmic vibration travels from root to root, steady as a heartbeat in the dark. Biscuit lowers his muzzle to the damp grass by the stone wall, his breath rising in a small, soft cloud that dissolves into the night air. The mountain holds its breath, waiting for no one, while the earth sings its quiet song to the stones."
+   "page": "Dusk settles over the thirteen hanging towns like a cool hand laid upon a fevered brow, silencing the noise of the winches and the chatter of the market squares. High above the cloud line, the jagged stone ribs of Orisonhold stand dark and empty against the fading orange of the western sky, stripped of the great voice they once trusted above all else. Yet down in the furrows where the barley pushes through the cold dirt, a faint, rhythmic vibration travels from root to root, steady as a heartbeat in the dark. Biscuit lowers his muzzle to the damp grass by the stone wall, his breath rising in a small, soft cloud that dissolves into the night air. The mountain holds its breath, waiting for no one, while the earth sings its quiet song to the stones."
   },
   {
    "id": "vh-e-C3-1",
@@ -26748,7 +26748,7 @@
    "exits": [],
    "endingId": "end-C3",
    "title": "Bronze and Silence",
-   "page": "Night falls without fanfare over the thirteen stair-towns, wrapping the hanging balconies and the steep slate roofs in an impenetrable mantle of fog and frost. High above the world, Vesperhold rests in absolute quiet, its empty belfry open to the stars and the biting wind that sweeps down from the upper passes. Down in the silent furrows, the unblessed iron rests deep in the dark earth, cold and mute beneath a blanket of winter snow that grows thicker with every passing hour. Biscuit shifts his weight in the shadowed stable, blowing a warm, steady breath into the dark that lingers for a moment before vanishing into the frost. The mountain stands cold and tall against the night, keeping its own counsel while the world sleeps on beneath the heavy ice."
+   "page": "Night falls without fanfare over the thirteen stair-towns, wrapping the hanging balconies and the steep slate roofs in an impenetrable mantle of fog and frost. High above the world, Orisonhold rests in absolute quiet, its empty belfry open to the stars and the biting wind that sweeps down from the upper passes. Down in the silent furrows, the unblessed iron rests deep in the dark earth, cold and mute beneath a blanket of winter snow that grows thicker with every passing hour. Biscuit shifts his weight in the shadowed stable, blowing a warm, steady breath into the dark that lingers for a moment before vanishing into the frost. The mountain stands cold and tall against the night, keeping its own counsel while the world sleeps on beneath the heavy ice."
   }
  ]
 }

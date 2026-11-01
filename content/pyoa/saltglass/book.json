@@ -111,16 +111,16 @@
    "id": "sg-1-c1",
    "kind": "choke",
    "region": 1,
-   "brief": "Mandatory scene at the Lamp-Post Gate: the reader decides whether to hire the glass-diver Pell, a wry guide who knows the Saltglass, or go alone",
+   "brief": "Mandatory scene at the Lamp-Post Gate: the reader decides whether to hire the glass-diver Calder, a wry guide who knows the Saltglass, or go alone",
    "exits": [
     {
      "to": "sg-1-1-0-0",
-     "intent": "Hire Pell the glass-diver as guide",
+     "intent": "Hire Calder the glass-diver as guide",
      "setFlags": {
       "guide": "pell"
      },
      "id": "x0",
-     "label": "Hire Pell the glass-diver as guide to lead the way across the white flats"
+     "label": "Hire Calder the glass-diver as guide to lead the way across the white flats"
     },
     {
      "to": "sg-1-1-0-1",
@@ -133,7 +133,7 @@
     }
    ],
    "title": "The Diver's Offer",
-   "page": "The heavy timber gates of Candlemere stand wide behind you, framing the vast, blinding expanse of the Saltglass Basin where your journey truly begins. Pell lingers by the stone post, his brass sounding-lead swinging in a slow, hypnotic arc as he waits to see whether you intend to face the treacherous salt-crust alone or secure his seasoned company. Every traveller who has crossed these flats warns of hidden sinkholes and deceptive mirages, making the choice of companionship a matter of survival before the monsoon twenty days away.\n\nYou feel the reassuring cold weight of the Seedkey resting in your travelling pack, reminding you that failure is not an option for the parched lamp-town of Candlemere."
+   "page": "The heavy timber gates of Candlemere stand wide behind you, framing the vast, blinding expanse of the Saltglass Basin where your journey truly begins. Calder lingers by the stone post, his brass sounding-lead swinging in a slow, hypnotic arc as he waits to see whether you intend to face the treacherous salt-crust alone or secure his seasoned company. Every traveller who has crossed these flats warns of hidden sinkholes and deceptive mirages, making the choice of companionship a matter of survival before the monsoon twenty days away.\n\nYou feel the reassuring cold weight of the Seedkey resting in your travelling pack, reminding you that failure is not an option for the parched lamp-town of Candlemere."
   },
   {
    "id": "sg-1-c2",
@@ -1435,7 +1435,7 @@
    "seg": 0,
    "layer": 5,
    "idx": 0,
-   "brief": "At the Lamp-Post Gate where the iron lanterns are being snuffed for the day, the wry glass-diver Pell leans against a stone pillar and cleans his salt-goggles with an oily rag.",
+   "brief": "At the Lamp-Post Gate where the iron lanterns are being snuffed for the day, the wry glass-diver Calder leans against a stone pillar and cleans his salt-goggles with an oily rag.",
    "exits": [
     {
      "to": "sg-1-c1",
@@ -1445,7 +1445,7 @@
     }
    ],
    "title": "The Lamp-Post Gate",
-   "page": "At the Lamp-Post Gate where the iron lanterns are being snuffed for the day, the wry glass-diver Pell leans against a stone pillar and cleans his salt-goggles with an oily rag. He watches you approach with one eyebrow arched in quiet amusement, his canvas pack resting squarely against his boots. The morning air smells of tallow smoke and dry earth, marking the absolute edge of the town's failing harvest."
+   "page": "At the Lamp-Post Gate where the iron lanterns are being snuffed for the day, the wry glass-diver Calder leans against a stone pillar and cleans his salt-goggles with an oily rag. He watches you approach with one eyebrow arched in quiet amusement, his canvas pack resting squarely against his boots. The morning air smells of tallow smoke and dry earth, marking the absolute edge of the town's failing harvest."
   },
   {
    "id": "sg-1-0-5-1",
@@ -1454,7 +1454,7 @@
    "seg": 0,
    "layer": 5,
    "idx": 1,
-   "brief": "By the heavy timber gates of Candlemere, Pell sits on an overturned oil keg whistling a dry tune while tossing a heavy brass sounding-lead from hand to hand.",
+   "brief": "By the heavy timber gates of Candlemere, Calder sits on an overturned oil keg whistling a dry tune while tossing a heavy brass sounding-lead from hand to hand.",
    "exits": [
     {
      "to": "sg-1-c1",
@@ -1464,7 +1464,7 @@
     }
    ],
    "title": "The Oil Keg",
-   "page": "By the heavy timber gates of Candlemere, Pell sits on an overturned oil keg whistling a dry tune while tossing a heavy brass sounding-lead from hand to hand. The rhythmic clink of metal against brass echoes softly against the grain of the reinforced wood. He pauses as your shadow falls across his boots, offering a crooked, knowing grin that betrays his familiarity with the treacherous flats ahead."
+   "page": "By the heavy timber gates of Candlemere, Calder sits on an overturned oil keg whistling a dry tune while tossing a heavy brass sounding-lead from hand to hand. The rhythmic clink of metal against brass echoes softly against the grain of the reinforced wood. He pauses as your shadow falls across his boots, offering a crooked, knowing grin that betrays his familiarity with the treacherous flats ahead."
   },
   {
    "id": "sg-1-0-5-2",
@@ -1473,7 +1473,7 @@
    "seg": 0,
    "layer": 5,
    "idx": 2,
-   "brief": "Under the iron arch of the western gatehouse, Pell adjusts his wide-brimmed wicker hat and asks if you are fool enough to cross the white flats without a guide.",
+   "brief": "Under the iron arch of the western gatehouse, Calder adjusts his wide-brimmed wicker hat and asks if you are fool enough to cross the white flats without a guide.",
    "exits": [
     {
      "to": "sg-1-c1",
@@ -1483,7 +1483,7 @@
     }
    ],
    "title": "The Western Gatehouse",
-   "page": "Under the iron arch of the western gatehouse, Pell adjusts his wide-brimmed wicker hat and asks if you are fool enough to cross the white flats without a guide. His salt-crusted canvas jacket smells faintly of old brine and dried kelp, marking him as someone who knows the perilous shifting crust of the old sea. He taps the side of his copper map-tube with a calloused thumb, waiting for your answer."
+   "page": "Under the iron arch of the western gatehouse, Calder adjusts his wide-brimmed wicker hat and asks if you are fool enough to cross the white flats without a guide. His salt-crusted canvas jacket smells faintly of old brine and dried kelp, marking him as someone who knows the perilous shifting crust of the old sea. He taps the side of his copper map-tube with a calloused thumb, waiting for your answer."
   },
   {
    "id": "sg-1-0-5-3",
@@ -1492,7 +1492,7 @@
    "seg": 0,
    "layer": 5,
    "idx": 3,
-   "brief": "In the dust just outside the guarded portal, Pell stands with his canvas pack already strapped tight, offering a crooked grin and a weathered copper map-tube if you need him.",
+   "brief": "In the dust just outside the guarded portal, Calder stands with his canvas pack already strapped tight, offering a crooked grin and a weathered copper map-tube if you need him.",
    "exits": [
     {
      "to": "sg-1-c1",
@@ -1502,7 +1502,7 @@
     }
    ],
    "title": "The Guarded Portal",
-   "page": "In the dust just beyond the heavy gates, Pell stands with his canvas pack already strapped tight, offering a crooked grin and a weathered copper map-tube if you need him. The distant salt-flats shimmer behind him like a vast sheet of hammered tin under the mounting sun. He shifts his weight onto one heel, balancing an ash-wood pole across his shoulder with casual expertise."
+   "page": "In the dust just beyond the heavy gates, Calder stands with his canvas pack already strapped tight, offering a crooked grin and a weathered copper map-tube if you need him. The distant salt-flats shimmer behind him like a vast sheet of hammered tin under the mounting sun. He shifts his weight onto one heel, balancing an ash-wood pole across his shoulder with casual expertise."
   },
   {
    "id": "sg-1-1-0-0",
@@ -1511,13 +1511,13 @@
    "seg": 1,
    "layer": 0,
    "idx": 0,
-   "brief": "Beside the tallow-scratched gatepost, Pell offers a weather-cracked hand to guide you across the white flats for half a copper jar.",
+   "brief": "Beside the tallow-scratched gatepost, Calder offers a weather-cracked hand to guide you across the white flats for half a copper jar.",
    "exits": [
     {
      "to": "sg-1-1-1-0",
      "intent": "",
      "id": "x0",
-     "label": "Follow Pell as he strides onto the white salt."
+     "label": "Follow Calder as he strides onto the white salt."
     },
     {
      "to": "sg-1-1-1-1",
@@ -1533,7 +1533,7 @@
     }
    ],
    "title": "The Weather-Cracked Hand",
-   "page": "Beside the tallow-scratched gatepost, Pell offers a weather-cracked hand to guide you across the white flats for half a copper jar. His dry laugh cuts through the morning silence as he slings his canvas pack higher onto his shoulder and adjusts his wide-brimmed hat. Together, you step off the solid stone of the rim road and onto the dazzling, brittle crust of the dead sea."
+   "page": "Beside the tallow-scratched gatepost, Calder offers a weather-cracked hand to guide you across the white flats for half a copper jar. His dry laugh cuts through the morning silence as he slings his canvas pack higher onto his shoulder and adjusts his wide-brimmed hat. Together, you step off the solid stone of the rim road and onto the dazzling, brittle crust of the dead sea."
   },
   {
    "id": "sg-1-1-0-1",
@@ -1573,13 +1573,13 @@
    "seg": 1,
    "layer": 1,
    "idx": 0,
-   "brief": "Under the eaves of the tallow-sellers, Pell tests the weight of your copper while grease-smoke curls from a copper brazier.",
+   "brief": "Under the eaves of the tallow-sellers, Calder tests the weight of your copper while grease-smoke curls from a copper brazier.",
    "exits": [
     {
      "to": "sg-1-1-2-0",
      "intent": "",
      "id": "x0",
-     "label": "Inspect the mule-track with Pell"
+     "label": "Inspect the mule-track with Calder"
     },
     {
      "to": "sg-1-1-2-1",
@@ -1595,7 +1595,7 @@
     }
    ],
    "title": "The Tallow-Sellers' Eaves",
-   "page": "Under the low thatch of the tallow-sellers, grease-smoke curls thick and sweet from a copper brazier while Pell tests the weight of your silver coin against his knuckles. The glass-diver flips the metal once, listening for the sharp ring of true silver-alloy before sliding it deep into his waistcoat pocket with a knowing nod. Around you, the market noise of Candlemere fades against the relentless dry wind whispering off the white rim.\n\nYou tighten the straps of your wool coat over the cold ceramic key hidden in your lining, your eyes fixed on the hazy expanse of the Basin stretching out beyond the rim road. Pell slings his narrow iron-shod staff across his shoulder, waiting to see which direction you intend to take as the dust settles around your boots."
+   "page": "Under the low thatch of the tallow-sellers, grease-smoke curls thick and sweet from a copper brazier while Calder tests the weight of your silver coin against his knuckles. The glass-diver flips the metal once, listening for the sharp ring of true silver-alloy before sliding it deep into his waistcoat pocket with a knowing nod. Around you, the market noise of Candlemere fades against the relentless dry wind whispering off the white rim.\n\nYou tighten the straps of your wool coat over the cold ceramic key hidden in your lining, your eyes fixed on the hazy expanse of the Basin stretching out beyond the rim road. Calder slings his narrow iron-shod staff across his shoulder, waiting to see which direction you intend to take as the dust settles around your boots."
   },
   {
    "id": "sg-1-1-1-1",
@@ -1604,7 +1604,7 @@
    "seg": 1,
    "layer": 1,
    "idx": 1,
-   "brief": "A salt-clogged cart blocks the cart-track, and Pell leans on an ash-pole to help you shove the timber aside.",
+   "brief": "A salt-clogged cart blocks the cart-track, and Calder leans on an ash-pole to help you shove the timber aside.",
    "exits": [
     {
      "to": "sg-1-1-2-3",
@@ -1626,7 +1626,7 @@
     }
    ],
    "title": "The Blocked Cart-Track",
-   "page": "A heavy salt-clogged cart blocks the narrow track, its wooden axle splintered under a mound of crude alkaline blocks that glint cruelly in the sun. Pell leans his full weight against a sturdy ash-pole, planting his boots in the grit as he urges you to help shove the dead weight aside so the road ahead clears. The heat beats down from a cloudless sky, smelling strongly of old brine and sun-baked timber.\n\nWith a final heave, the wheel-hub clears the rut and spins free, kicking up a shower of glittering dust that settles on your gaiters. Pell wipes his brow with a greasy rag, nodding toward the diverging tracks that fork out toward the open white desert."
+   "page": "A heavy salt-clogged cart blocks the narrow track, its wooden axle splintered under a mound of crude alkaline blocks that glint cruelly in the sun. Calder leans his full weight against a sturdy ash-pole, planting his boots in the grit as he urges you to help shove the dead weight aside so the road ahead clears. The heat beats down from a cloudless sky, smelling strongly of old brine and sun-baked timber.\n\nWith a final heave, the wheel-hub clears the rut and spins free, kicking up a shower of glittering dust that settles on your gaiters. Calder wipes his brow with a greasy rag, nodding toward the diverging tracks that fork out toward the open white desert."
   },
   {
    "id": "sg-1-1-1-2",
@@ -1666,7 +1666,7 @@
    "seg": 1,
    "layer": 1,
    "idx": 3,
-   "brief": "You dodge a nervous mule laden with dried kelp, leaving Pell behind as the town walls shrink into the glare.",
+   "brief": "You dodge a nervous mule laden with dried kelp, leaving Calder behind as the town walls shrink into the glare.",
    "exits": [
     {
      "to": "sg-1-1-2-8",
@@ -1688,7 +1688,7 @@
     }
    ],
    "title": "Dodging the Kelp Mule",
-   "page": "You dodge hard to the left as a nervous pack-mule laden with dried kelp lurches past, leaving Pell behind in the press of townfolk as the limestone walls of Candlemere shrink into the desert glare. The animal's iron bells jangle with a frantic, hollow rhythm that echoes off the low hills. You find yourself alone on the gravel path, the wind carrying the sharp scent of iodine and dry scrub.\n\nPressing onward into the open stretch of the Rim Road, you feel the solitude close around you like a heavy cloak. Every footstep carries you further from the familiar tallow-smoke and stone hearths of home, drawing you deeper into the domain of the Salt Court."
+   "page": "You dodge hard to the left as a nervous pack-mule laden with dried kelp lurches past, leaving Calder behind in the press of townfolk as the limestone walls of Candlemere shrink into the desert glare. The animal's iron bells jangle with a frantic, hollow rhythm that echoes off the low hills. You find yourself alone on the gravel path, the wind carrying the sharp scent of iodine and dry scrub.\n\nPressing onward into the open stretch of the Rim Road, you feel the solitude close around you like a heavy cloak. Every footstep carries you further from the familiar tallow-smoke and stone hearths of home, drawing you deeper into the domain of the Salt Court."
   },
   {
    "id": "sg-1-1-1-4",
@@ -1697,13 +1697,13 @@
    "seg": 1,
    "layer": 1,
    "idx": 4,
-   "brief": "Pell catches your elbow by the cistern-house, pointing out a salt-squall curdling the eastern horizon before you commit.",
+   "brief": "Calder catches your elbow by the cistern-house, pointing out a salt-squall curdling the eastern horizon before you commit.",
    "exits": [
     {
      "to": "sg-1-1-2-11",
      "intent": "",
      "id": "x0",
-     "label": "Inspect the wheel-rut gypsum crystals with Pell"
+     "label": "Inspect the wheel-rut gypsum crystals with Calder"
     },
     {
      "to": "sg-1-1-2-12",
@@ -1719,7 +1719,7 @@
     }
    ],
    "title": "The Cistern-House Warning",
-   "page": "Pell catches your elbow with a calloused hand by the moss-grown cistern-house, pulling you back into the shadow of the stone water-trough. He points a sun-darkened finger toward the eastern horizon, where a thick, yellowish salt-squall is rapidly curdling the sky into an angry haze. The wind dies down completely for a breathless heartbeat, replaced by an eerie, heavy stillness that makes the hairs on your arms stand on end.\n\nThe coming blow promises to scour the flats clean of any traveller foolish enough to cross without cover. Pell looks sideways at you, waiting to see how you intend to weather the approaching gale before committing your steps to the open track."
+   "page": "Calder catches your elbow with a calloused hand by the moss-grown cistern-house, pulling you back into the shadow of the stone water-trough. He points a sun-darkened finger toward the eastern horizon, where a thick, yellowish salt-squall is rapidly curdling the sky into an angry haze. The wind dies down completely for a breathless heartbeat, replaced by an eerie, heavy stillness that makes the hairs on your arms stand on end.\n\nThe coming blow promises to scour the flats clean of any traveller foolish enough to cross without cover. Calder looks sideways at you, waiting to see how you intend to weather the approaching gale before committing your steps to the open track."
   },
   {
    "id": "sg-1-1-1-5",
@@ -1759,7 +1759,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 0,
-   "brief": "Pell kicks a loose shard of window-slag aside on the mule-track, muttering about toll-collectors waiting near the dry ford.",
+   "brief": "Calder kicks a loose shard of window-slag aside on the mule-track, muttering about toll-collectors waiting near the dry ford.",
    "exits": [
     {
      "to": "sg-1-1-3-0",
@@ -1775,7 +1775,7 @@
     }
    ],
    "title": "The Mule-Track Shards",
-   "page": "Pell kicks a loose, jagged shard of window-slag aside on the dusty mule-track, sending it skittering across the white crust with a thin, metallic ring. He mutters a low curse under his breath, warning that toll-collectors from the Salt Court have been spotted watching the dry ford ahead for unwary travellers. The air here smells of sulphur and sun-baked glass, thick with the heat radiating off the ancient lake-bed.\n\nYou check the iron housing of your ember-lamp to ensure the banked coals are secure before pressing forward into the shadow of the crumbling ruins. Every shadow along the track looks like a mounted guard waiting to demand exorbitant passage fees."
+   "page": "Calder kicks a loose, jagged shard of window-slag aside on the dusty mule-track, sending it skittering across the white crust with a thin, metallic ring. He mutters a low curse under his breath, warning that toll-collectors from the Salt Court have been spotted watching the dry ford ahead for unwary travellers. The air here smells of sulphur and sun-baked glass, thick with the heat radiating off the ancient lake-bed.\n\nYou check the iron housing of your ember-lamp to ensure the banked coals are secure before pressing forward into the shadow of the crumbling ruins. Every shadow along the track looks like a mounted guard waiting to demand exorbitant passage fees."
   },
   {
    "id": "sg-1-1-2-1",
@@ -1784,7 +1784,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 1,
-   "brief": "You trade insults with a crusty tinker mending a copper kettle by the ditch while Pell inspects his compass-dial.",
+   "brief": "You trade insults with a crusty tinker mending a copper kettle by the ditch while Calder inspects his compass-dial.",
    "exits": [
     {
      "to": "sg-1-1-3-0",
@@ -1800,7 +1800,7 @@
     }
    ],
    "title": "The Tinkering Dispute",
-   "page": "You trade sharp insults with a crusty tinker who is busy hammering a dented copper kettle beside the drainage ditch, while Pell methodically inspects his brass compass-dial. The tinker spits into the dirt, complaining bitterly about the rising price of charcoal and the cruelty of the local toll-lords. Pell ignores the grumbling, tapping the glass face of his instrument until the needle settles true toward the southeast.\n\nLeaving the disgruntled artisan to his hammering, you follow your guide away from the ditch as the track begins to slope downward toward the sun-bleached expanse of the Basin floor. The distant towers of Prism glimmer like broken teeth on the horizon."
+   "page": "You trade sharp insults with a crusty tinker who is busy hammering a dented copper kettle beside the drainage ditch, while Calder methodically inspects his brass compass-dial. The tinker spits into the dirt, complaining bitterly about the rising price of charcoal and the cruelty of the local toll-lords. Calder ignores the grumbling, tapping the glass face of his instrument until the needle settles true toward the southeast.\n\nLeaving the disgruntled artisan to his hammering, you follow your guide away from the ditch as the track begins to slope downward toward the sun-bleached expanse of the Basin floor. The distant towers of Prism glimmer like broken teeth on the horizon."
   },
   {
    "id": "sg-1-1-2-2",
@@ -1853,7 +1853,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 4,
-   "brief": "Pell shares a roasted chicory root from his leather wallet while you check the hemp straps of your water-cask.",
+   "brief": "Calder shares a roasted chicory root from his leather wallet while you check the hemp straps of your water-cask.",
    "exits": [
     {
      "to": "sg-1-1-3-2",
@@ -1865,7 +1865,7 @@
      "to": "sg-1-1-3-3",
      "intent": "",
      "id": "x1",
-     "label": "Pocket the copper shoe-eyelet Pell found and press onward"
+     "label": "Pocket the copper shoe-eyelet Calder found and press onward"
     },
     {
      "to": "sg-1-1-3-4",
@@ -1875,7 +1875,7 @@
     }
    ],
    "title": "The Glass-Diver's Share",
-   "page": "Pell splits a roasted chicory root from his battered leather wallet, offering you the bitterer half while your thumbs test the hemp straps of your water-cask. The dry heat pulls moisture from every pore, but the roots keep the tongue active against the alkaline dust.\n\nThe road stretches ahead through the blinding white glare of the salt flats, empty save for the heat-shimmers dancing over the abandoned boundary stones. You need to decide whether to push forward directly or keep to the lower scrub-line."
+   "page": "Calder splits a roasted chicory root from his battered leather wallet, offering you the bitterer half while your thumbs test the hemp straps of your water-cask. The dry heat pulls moisture from every pore, but the roots keep the tongue active against the alkaline dust.\n\nThe road stretches ahead through the blinding white glare of the salt flats, empty save for the heat-shimmers dancing over the abandoned boundary stones. You need to decide whether to push forward directly or keep to the lower scrub-line."
   },
   {
    "id": "sg-1-1-2-5",
@@ -1953,7 +1953,7 @@
      "to": "sg-1-1-3-7",
      "intent": "",
      "id": "x1",
-     "label": "Watch Pell test the hollow crust beside the track"
+     "label": "Watch Calder test the hollow crust beside the track"
     }
    ],
    "title": "Signals on the Ridge",
@@ -1966,7 +1966,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 8,
-   "brief": "Pell whistles an old drover's tune that skips off the limestone banks, keeping your lagging spirits steady against the sun.",
+   "brief": "Calder whistles an old drover's tune that skips off the limestone banks, keeping your lagging spirits steady against the sun.",
    "exits": [
     {
      "to": "sg-1-1-3-8",
@@ -1976,7 +1976,7 @@
     }
    ],
    "title": "Drover's Tune",
-   "page": "Pell whistles an old, skipping drover's tune that bounces off the bleached limestone banks, keeping your lagging spirits steady against the merciless weight of the sun. The ancient melody speaks of green pastures that haven't existed since the great drying began.\n\nThe dust devils swirl around your boots as the road winds deeper into the sun-baked hills. You keep step with the music, looking ahead to where the path narrows."
+   "page": "Calder whistles an old, skipping drover's tune that bounces off the bleached limestone banks, keeping your lagging spirits steady against the merciless weight of the sun. The ancient melody speaks of green pastures that haven't existed since the great drying began.\n\nThe dust devils swirl around your boots as the road winds deeper into the sun-baked hills. You keep step with the music, looking ahead to where the path narrows."
   },
   {
    "id": "sg-1-1-2-9",
@@ -2003,7 +2003,7 @@
      "to": "sg-1-1-3-10",
      "intent": "",
      "id": "x2",
-     "label": "Watch Pell point toward the distant charcoal burners' smoke"
+     "label": "Watch Calder point toward the distant charcoal burners' smoke"
     },
     {
      "to": "sg-1-1-0-1",
@@ -2035,7 +2035,7 @@
      "to": "sg-1-1-3-10",
      "intent": "",
      "id": "x1",
-     "label": "Follow Pell's gaze toward the smudge of distant smoke"
+     "label": "Follow Calder's gaze toward the smudge of distant smoke"
     }
    ],
    "title": "The Wire-Whiskered Hare",
@@ -2048,7 +2048,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 11,
-   "brief": "Pell kneels to inspect a wheel-rut filled with glittering gypsum crystals, warning you that heavy wagons have cut deep traps.",
+   "brief": "Calder kneels to inspect a wheel-rut filled with glittering gypsum crystals, warning you that heavy wagons have cut deep traps.",
    "exits": [
     {
      "to": "sg-1-1-3-11",
@@ -2064,7 +2064,7 @@
     }
    ],
    "title": "Gypsum Traps",
-   "page": "Pell drops to one knee to inspect a deep wheel-rut filled with glittering gypsum crystals, warning you that heavy freight wagons have cut treacherous traps into the crust. The razor-edged mineral can slice through stout boot leather with a single misstep.\n\nThe bright morning glare makes the crystalline rime sparkle with deceptive beauty. You watch your footing carefully as you weigh the safest course around the fracture."
+   "page": "Calder drops to one knee to inspect a deep wheel-rut filled with glittering gypsum crystals, warning you that heavy freight wagons have cut treacherous traps into the crust. The razor-edged mineral can slice through stout boot leather with a single misstep.\n\nThe bright morning glare makes the crystalline rime sparkle with deceptive beauty. You watch your footing carefully as you weigh the safest course around the fracture."
   },
   {
    "id": "sg-1-1-2-12",
@@ -2117,7 +2117,7 @@
      "to": "sg-1-1-3-13",
      "intent": "",
      "id": "x0",
-     "label": "Let Pell wipe the alkaline rime from your stinging eyelids"
+     "label": "Let Calder wipe the alkaline rime from your stinging eyelids"
     },
     {
      "to": "sg-1-1-3-14",
@@ -2136,13 +2136,13 @@
    "seg": 1,
    "layer": 2,
    "idx": 14,
-   "brief": "Pell points out a chimney peeking above the salt-drifts where a hermit once boiled seawater for tax-free crystals.",
+   "brief": "Calder points out a chimney peeking above the salt-drifts where a hermit once boiled seawater for tax-free crystals.",
    "exits": [
     {
      "to": "sg-1-1-3-13",
      "intent": "",
      "id": "x0",
-     "label": "Let Pell clear the rime from your eyes"
+     "label": "Let Calder clear the rime from your eyes"
     },
     {
      "to": "sg-1-1-3-14",
@@ -2152,7 +2152,7 @@
     }
    ],
    "title": "The Salt-Boiler's Chimney",
-   "page": "Salt-encrusted hummocks rise around a crooked brick chimney that barely clears the blinding white drifts of the basin floor. Pell points his knuckle toward the soot-stained opening where a fugitive hermit once boiled brine for tax-free crystals. The baked earth here smells faintly of sulphur and stale wood-ash, a lonely marker left behind by men who tried to cheat the toll-lords.\n\nYour boots crunch against the brittle ground while you weigh whether to press deeper into the glare or seek a moment's shelter near the ruin."
+   "page": "Salt-encrusted hummocks rise around a crooked brick chimney that barely clears the blinding white drifts of the basin floor. Calder points his knuckle toward the soot-stained opening where a fugitive hermit once boiled brine for tax-free crystals. The baked earth here smells faintly of sulphur and stale wood-ash, a lonely marker left behind by men who tried to cheat the toll-lords.\n\nYour boots crunch against the brittle ground while you weigh whether to press deeper into the glare or seek a moment's shelter near the ruin."
   },
   {
    "id": "sg-1-1-2-15",
@@ -2171,7 +2171,7 @@
     }
    ],
    "title": "The Narrow Silt-Banks",
-   "page": "Towering ramparts of wind-piled silt close in on either side, pinching the cart-track until it becomes a narrow trench of grey dust and shadow. You walk boot-to-boot with Pell, the two of you kicking up fine clouds of alkaline powder that cling to your woollen trousers. The silence between the high banks feels heavy and enclosed, smelling of ancient dust and sun-baked clay.\n\nA sudden hush falls over the trench as the wind dies completely, leaving only the sound of your own measured breathing."
+   "page": "Towering ramparts of wind-piled silt close in on either side, pinching the cart-track until it becomes a narrow trench of grey dust and shadow. You walk boot-to-boot with Calder, the two of you kicking up fine clouds of alkaline powder that cling to your woollen trousers. The silence between the high banks feels heavy and enclosed, smelling of ancient dust and sun-baked clay.\n\nA sudden hush falls over the trench as the wind dies completely, leaving only the sound of your own measured breathing."
   },
   {
    "id": "sg-1-1-3-0",
@@ -2180,7 +2180,7 @@
    "seg": 1,
    "layer": 3,
    "idx": 0,
-   "brief": "Beside a crumbling lime-kiln, Pell tells a grim tale of the Salt Court's enforcers collecting teeth for back-taxes.",
+   "brief": "Beside a crumbling lime-kiln, Calder tells a grim tale of the Salt Court's enforcers collecting teeth for back-taxes.",
    "exits": [
     {
      "to": "sg-1-1-4-0",
@@ -2202,7 +2202,7 @@
     }
    ],
    "title": "The Lime-Kiln Tale",
-   "page": "Crumbling white stone forms the hollow shell of an old lime-kiln, its interior stained by centuries of intense heat. Beside the ruined hearth, Pell spins a low-voiced yarn about the Salt Court enforcers who once patrolled these flats demanding molar teeth as collateral for unpaid extraction taxes. The dry air seems to tighten around his words, carrying the ghost-scent of wood smoke and old terror.\n\nShadows lengthen across the lime-floor, reminding you that the open basin grows unforgiving once the sun dips."
+   "page": "Crumbling white stone forms the hollow shell of an old lime-kiln, its interior stained by centuries of intense heat. Beside the ruined hearth, Calder spins a low-voiced yarn about the Salt Court enforcers who once patrolled these flats demanding molar teeth as collateral for unpaid extraction taxes. The dry air seems to tighten around his words, carrying the ghost-scent of wood smoke and old terror.\n\nShadows lengthen across the lime-floor, reminding you that the open basin grows unforgiving once the sun dips."
   },
   {
    "id": "sg-1-1-3-1",
@@ -2255,7 +2255,7 @@
    "seg": 1,
    "layer": 3,
    "idx": 3,
-   "brief": "Pell stoops to pick up a copper shoe-eyelet dropped by an earlier runner, pocketing it with a cynical wink.",
+   "brief": "Calder stoops to pick up a copper shoe-eyelet dropped by an earlier runner, pocketing it with a cynical wink.",
    "exits": [
     {
      "to": "sg-1-1-4-1",
@@ -2271,7 +2271,7 @@
     }
    ],
    "title": "The Copper Eyelet",
-   "page": "Sunlight glints off a tiny scrap of metal half-buried in the alkaline dust near the path. Pell stoops with a practiced creak of his leather jerkin, plucking a small copper shoe-eyelet dropped by some forgotten runner before you. He pockets the trinket with a cynical wink, muttering that every bit of salvage tells a story of someone who walked too fast or packed too light.\n\nThe vast white flats stretch onward under an unyielding sky, silent and indifferent to small gains."
+   "page": "Sunlight glints off a tiny scrap of metal half-buried in the alkaline dust near the path. Calder stoops with a practiced creak of his leather jerkin, plucking a small copper shoe-eyelet dropped by some forgotten runner before you. He pockets the trinket with a cynical wink, muttering that every bit of salvage tells a story of someone who walked too fast or packed too light.\n\nThe vast white flats stretch onward under an unyielding sky, silent and indifferent to small gains."
   },
   {
    "id": "sg-1-1-3-4",
@@ -2305,7 +2305,7 @@
    "seg": 1,
    "layer": 3,
    "idx": 5,
-   "brief": "You share a mouthful of lukewarm water from your tin flask while Pell scans the white flats for mirage-shimmers.",
+   "brief": "You share a mouthful of lukewarm water from your tin flask while Calder scans the white flats for mirage-shimmers.",
    "exits": [
     {
      "to": "sg-1-1-4-0",
@@ -2321,7 +2321,7 @@
     }
    ],
    "title": "The Tin Flask",
-   "page": "Warm metal touches your cracked lips as you unscrew the tin flask and share a meager mouthful of lukewarm water with your guide. Pell wipes his mouth with the back of a calloused hand while his pale eyes sweep the shimmering white flats for mirage-tricks. The taste of tin and flat well-water does little to quench the salt-thirst coating your tongue, but it steadies your legs for the miles ahead.\n\nThe horizon wavers and bends under layers of superheated air, blurring the line between salt-crust and sky."
+   "page": "Warm metal touches your cracked lips as you unscrew the tin flask and share a meager mouthful of lukewarm water with your guide. Calder wipes his mouth with the back of a calloused hand while his pale eyes sweep the shimmering white flats for mirage-tricks. The taste of tin and flat well-water does little to quench the salt-thirst coating your tongue, but it steadies your legs for the miles ahead.\n\nThe horizon wavers and bends under layers of superheated air, blurring the line between salt-crust and sky."
   },
   {
    "id": "sg-1-1-3-6",
@@ -2342,7 +2342,7 @@
      "to": "sg-1-1-4-3",
      "intent": "",
      "id": "x1",
-     "label": "Listen to Pell tap the iron casing of your lantern"
+     "label": "Listen to Calder tap the iron casing of your lantern"
     },
     {
      "to": "sg-1-1-1-2",
@@ -2362,13 +2362,13 @@
    "seg": 1,
    "layer": 3,
    "idx": 7,
-   "brief": "Pell uses his iron-shod staff to test the crust of a suspicious sinkhole yawning beside the cart-track.",
+   "brief": "Calder uses his iron-shod staff to test the crust of a suspicious sinkhole yawning beside the cart-track.",
    "exits": [
     {
      "to": "sg-1-1-4-3",
      "intent": "",
      "id": "x0",
-     "label": "heed Pell's warning about well-thieves and mirror-sentries"
+     "label": "heed Calder's warning about well-thieves and mirror-sentries"
     },
     {
      "to": "sg-1-1-4-5",
@@ -2378,7 +2378,7 @@
     }
    ],
    "title": "The Iron Staff",
-   "page": "Dust devils spin lazy spirals across the abandoned cart-track while Pell uses his heavy iron-shod staff to test the crust of a suspicious sinkhole yawning nearby. The wood-and-iron pole punches through the hollow crust with a brittle snap, revealing a dark drop where ancient brine once pooled beneath the salt. He steps back with a dry whistle, shaking dust from the iron tip.\n\nThe path ahead requires wary footing and a sharp eye for hidden traps in the white expanse."
+   "page": "Dust devils spin lazy spirals across the abandoned cart-track while Calder uses his heavy iron-shod staff to test the crust of a suspicious sinkhole yawning nearby. The wood-and-iron pole punches through the hollow crust with a brittle snap, revealing a dark drop where ancient brine once pooled beneath the salt. He steps back with a dry whistle, shaking dust from the iron tip.\n\nThe path ahead requires wary footing and a sharp eye for hidden traps in the white expanse."
   },
   {
    "id": "sg-1-1-3-8",
@@ -2399,7 +2399,7 @@
      "to": "sg-1-1-4-3",
      "intent": "",
      "id": "x1",
-     "label": "Listen to Pell warn of thieves and sentries"
+     "label": "Listen to Calder warn of thieves and sentries"
     },
     {
      "to": "sg-1-1-4-4",
@@ -2443,7 +2443,7 @@
    "seg": 1,
    "layer": 3,
    "idx": 10,
-   "brief": "Pell points toward a distant smudge of smoke where charcoal burners are smothering scrub-oak in earthen pits.",
+   "brief": "Calder points toward a distant smudge of smoke where charcoal burners are smothering scrub-oak in earthen pits.",
    "exits": [
     {
      "to": "sg-1-1-4-5",
@@ -2453,7 +2453,7 @@
     }
    ],
    "title": "Smoke on the Rise",
-   "page": "Pell points a weathered finger toward a distant smudge of greasy grey smoke hovering above the scrub-line. Charcoal burners are smothering stunted oak in earthen pits to feed the distant glass-foundries. The acrid scent of burning roots drifts across the dry earth, mixing with the sharp tang of mineral dust.\n\nYou pause by the trackside to weigh your next move as the afternoon shadows lengthen."
+   "page": "Calder points a weathered finger toward a distant smudge of greasy grey smoke hovering above the scrub-line. Charcoal burners are smothering stunted oak in earthen pits to feed the distant glass-foundries. The acrid scent of burning roots drifts across the dry earth, mixing with the sharp tang of mineral dust.\n\nYou pause by the trackside to weigh your next move as the afternoon shadows lengthen."
   },
   {
    "id": "sg-1-1-3-11",
@@ -2512,7 +2512,7 @@
    "seg": 1,
    "layer": 3,
    "idx": 13,
-   "brief": "Pell dips a stained rag into his canteen to wipe the alkaline rime from your stinging, dust-reddened eyelids.",
+   "brief": "Calder dips a stained rag into his canteen to wipe the alkaline rime from your stinging, dust-reddened eyelids.",
    "exits": [
     {
      "to": "sg-1-1-4-6",
@@ -2528,7 +2528,7 @@
     }
    ],
    "title": "Salt in the Eyes",
-   "page": "Pell dips a damp rag into his canteen, pressing it gently against your stinging, dust-reddened eyelids to wash away the biting alkaline rime. The cool relief is fleeting as the desert breeze immediately coats your skin in fine mineral powder. The heavy iron-shod staff rests against his knee while he scans the horizon.\n\nAcross the darkening plain, distant lights begin to shift and answer one another."
+   "page": "Calder dips a damp rag into his canteen, pressing it gently against your stinging, dust-reddened eyelids to wash away the biting alkaline rime. The cool relief is fleeting as the desert breeze immediately coats your skin in fine mineral powder. The heavy iron-shod staff rests against his knee while he scans the horizon.\n\nAcross the darkening plain, distant lights begin to shift and answer one another."
   },
   {
    "id": "sg-1-1-3-14",
@@ -2587,7 +2587,7 @@
    "seg": 1,
    "layer": 4,
    "idx": 0,
-   "brief": "Near the broken water-gate, Pell advises you to douse your lantern before the glass-sentries on the ridge spot the glare.",
+   "brief": "Near the broken water-gate, Calder advises you to douse your lantern before the glass-sentries on the ridge spot the glare.",
    "exits": [
     {
      "to": "sg-1-1-5-0",
@@ -2609,7 +2609,7 @@
     }
    ],
    "title": "The Broken Gate",
-   "page": "Near the broken water-gate, Pell holds up a warning hand and advises you to douse your lantern before the glass-sentries on the ridge spot the revealing glare. The cold metal casing of the lamp ticks softly as the coals inside bank against the lack of draft. Every shadow among the ruined masonry looks like a toll-lord watcher.\n\nYou must decide how to handle your light before stepping past the gate."
+   "page": "Near the broken water-gate, Calder holds up a warning hand and advises you to douse your lantern before the glass-sentries on the ridge spot the revealing glare. The cold metal casing of the lamp ticks softly as the coals inside bank against the lack of draft. Every shadow among the ruined masonry looks like a toll-lord watcher.\n\nYou must decide how to handle your light before stepping past the gate."
   },
   {
    "id": "sg-1-1-4-1",
@@ -2680,7 +2680,7 @@
    "seg": 1,
    "layer": 4,
    "idx": 3,
-   "brief": "Pell taps the iron casing of your lantern, reminding you that lit coals draw both well-thieves and mirror-sentries.",
+   "brief": "Calder taps the iron casing of your lantern, reminding you that lit coals draw both well-thieves and mirror-sentries.",
    "exits": [
     {
      "to": "sg-1-1-5-1",
@@ -2695,8 +2695,8 @@
      "label": "March out with grey smoke"
     }
    ],
-   "title": "Pell's Sharp Warning",
-   "page": "Metal clinks against metal as Pell taps a gloved knuckle sharply against the iron casing of your lantern. The glass-diver leans in close, smelling faintly of brine and sun-bleached rope, muttering that every lit coal on the crust acts as a beacon for wandering well-thieves and mirror-sentries alike. The warning hangs heavy in the settling frost while the vast white expanse waits silently beyond the ridge.\n\nYou eye the glowing seam of the lantern and weigh the risk of visibility against the encroaching night."
+   "title": "Calder's Sharp Warning",
+   "page": "Metal clinks against metal as Calder taps a gloved knuckle sharply against the iron casing of your lantern. The glass-diver leans in close, smelling faintly of brine and sun-bleached rope, muttering that every lit coal on the crust acts as a beacon for wandering well-thieves and mirror-sentries alike. The warning hangs heavy in the settling frost while the vast white expanse waits silently beyond the ridge.\n\nYou eye the glowing seam of the lantern and weigh the risk of visibility against the encroaching night."
   },
   {
    "id": "sg-1-1-4-4",
@@ -2755,7 +2755,7 @@
    "seg": 1,
    "layer": 4,
    "idx": 6,
-   "brief": "Pell points out a distant amber blink on the horizon, signaling that the Glasswrights are swapping night-watches on Prism.",
+   "brief": "Calder points out a distant amber blink on the horizon, signaling that the Glasswrights are swapping night-watches on Prism.",
    "exits": [
     {
      "to": "sg-1-1-5-2",
@@ -2771,7 +2771,7 @@
     }
    ],
    "title": "Amber on the Rim",
-   "page": "Far across the pale curvature of the basin, a sharp amber blink stabs through the gathering dusk like a needle of fire. Pell points a weather-roughened finger toward the distant horizon, noting that the Glasswrights are swapping their high night-watches upon the spires of Prism. The signal flashes twice more before dissolving back into the purple haze of the upper ridges.\n\nYou adjust the leather strap of your pack and decide how to proceed with the journey."
+   "page": "Far across the pale curvature of the basin, a sharp amber blink stabs through the gathering dusk like a needle of fire. Calder points a weather-roughened finger toward the distant horizon, noting that the Glasswrights are swapping their high night-watches upon the spires of Prism. The signal flashes twice more before dissolving back into the purple haze of the upper ridges.\n\nYou adjust the leather strap of your pack and decide how to proceed with the journey."
   },
   {
    "id": "sg-1-1-4-7",
@@ -4287,11 +4287,11 @@
    "id": "sg-d-1-1",
    "kind": "doom",
    "region": 1,
-   "brief": "Ignoring Pell's warning, you swing your blazing lamp high above your head to spite the toll-riders, drawing a volley of poisoned sling-stones from the dark and cracking your water-cask against a limestone boulder.",
+   "brief": "Ignoring Calder's warning, you swing your blazing lamp high above your head to spite the toll-riders, drawing a volley of poisoned sling-stones from the dark and cracking your water-cask against a limestone boulder.",
    "endingId": "doom-1-1",
    "exits": [],
    "title": "The High Swing",
-   "page": "Ignoring Pell's warning, you swing your blazing lamp high above your head to spite the toll-riders, drawing a volley of poisoned sling-stones from the dark and cracking your water-cask against a limestone boulder. Cool, bitter brine immediately soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your fingers grow slippery where the dampness spreads, and the frantic rattling of your belt-lantern sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. The darkness closes in swiftly, heavy with the taste of gypsum and the quiet certainty that your journey ends right here in the white grit."
+   "page": "Ignoring Calder's warning, you swing your blazing lamp high above your head to spite the toll-riders, drawing a volley of poisoned sling-stones from the dark and cracking your water-cask against a limestone boulder. Cool, bitter brine immediately soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your fingers grow slippery where the dampness spreads, and the frantic rattling of your belt-lantern sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. The darkness closes in swiftly, heavy with the taste of gypsum and the quiet certainty that your journey ends right here in the white grit."
   },
   {
    "id": "sg-d-1-2",
@@ -5803,9 +5803,9 @@
      "when": {
       "guide": "pell"
      },
-     "privWhy": "Pell the glass-diver is with the reader and knows this place",
+     "privWhy": "Calder the glass-diver is with the reader and knows this place",
      "id": "x1",
-     "label": "Follow Pell toward the sunken track"
+     "label": "Follow Calder toward the sunken track"
     },
     {
      "to": "sg-2-1-1-2",
@@ -5892,7 +5892,7 @@
    "seg": 1,
    "layer": 1,
    "idx": 1,
-   "brief": "Pell whistles softly, guiding your boots onto an ancient basalt track hidden beneath the shifting salt-crust where blisters will not form.",
+   "brief": "Calder whistles softly, guiding your boots onto an ancient basalt track hidden beneath the shifting salt-crust where blisters will not form.",
    "exits": [
     {
      "to": "sg-2-1-2-3",
@@ -5921,10 +5921,10 @@
     "cond": {
      "guide": "pell"
     },
-    "why": "Pell the glass-diver is with the reader and knows this place"
+    "why": "Calder the glass-diver is with the reader and knows this place"
    },
    "title": "The Basalt Track",
-   "page": "Pell whistles softly, guiding your boots onto an ancient basalt track hidden beneath the shifting salt-crust where blisters will not form. Having a glass-diver at your shoulder turns this lethal maze into a manageable puzzle, especially when he points out the subtle violet discoloration that warns of soft mire below. The dark stones feel firm and trustworthy beneath your tired soles, a rare luxury in the Basin."
+   "page": "Calder whistles softly, guiding your boots onto an ancient basalt track hidden beneath the shifting salt-crust where blisters will not form. Having a glass-diver at your shoulder turns this lethal maze into a manageable puzzle, especially when he points out the subtle violet discoloration that warns of soft mire below. The dark stones feel firm and trustworthy beneath your tired soles, a rare luxury in the Basin."
   },
   {
    "id": "sg-2-1-1-2",
@@ -12218,9 +12218,9 @@
      "when": {
       "guide": "pell"
      },
-     "privWhy": "Pell the glass-diver is with the reader and knows this place",
+     "privWhy": "Calder the glass-diver is with the reader and knows this place",
      "id": "x1",
-     "label": "Follow Pell through the secure drainage tunnel"
+     "label": "Follow Calder through the secure drainage tunnel"
     },
     {
      "to": "sg-3-2-3-15",
@@ -12627,7 +12627,7 @@
    "seg": 2,
    "layer": 3,
    "idx": 13,
-   "brief": "Because Pell guides your steps, you bypass the unstable cantilevered streets and slip safely through an old drainage flue.",
+   "brief": "Because Calder guides your steps, you bypass the unstable cantilevered streets and slip safely through an old drainage flue.",
    "exits": [
     {
      "to": "sg-3-2-4-4",
@@ -12652,10 +12652,10 @@
     "cond": {
      "guide": "pell"
     },
-    "why": "Pell the glass-diver is with the reader and knows this place"
+    "why": "Calder the glass-diver is with the reader and knows this place"
    },
    "title": "The Diver's Conduit",
-   "page": "Pell weaves ahead through the ruined masonry with an easy, fluid grace, knowing precisely which cantilevered streets will hold weight and which will snap under a footfall. Following his wry lead, you drop away from the dangerous upper tiers and slip safely into a cool, shadowed drainage flue lined with smooth tiles. The air here smells faintly of ancient rain and dry moss, offering a welcome respite from the baking glare of the basin.\n\nSeveral dark conduits branch outward from this sheltered junction into the lower ruins."
+   "page": "Calder weaves ahead through the ruined masonry with an easy, fluid grace, knowing precisely which cantilevered streets will hold weight and which will snap under a footfall. Following his wry lead, you drop away from the dangerous upper tiers and slip safely into a cool, shadowed drainage flue lined with smooth tiles. The air here smells faintly of ancient rain and dry moss, offering a welcome respite from the baking glare of the basin.\n\nSeveral dark conduits branch outward from this sheltered junction into the lower ruins."
   },
   {
    "id": "sg-3-2-3-14",
@@ -17361,16 +17361,16 @@
    "id": "sg-5-c1",
    "kind": "choke",
    "region": 5,
-   "brief": "Mandatory scene at the Lens-Hall Door: the lens-hall maze; those with Pell have a guide who knows the Glasswright maintenance ways, those without must improvise",
+   "brief": "Mandatory scene at the Lens-Hall Door: the lens-hall maze; those with Calder have a guide who knows the Glasswright maintenance ways, those without must improvise",
    "exits": [
     {
      "to": "sg-5-1-0-0",
-     "intent": "Pell knows the way through the lens-hall",
+     "intent": "Calder knows the way through the lens-hall",
      "when": {
       "guide": "pell"
      },
      "id": "x0",
-     "label": "Pell knows the way through the lens-hall"
+     "label": "Calder knows the way through the lens-hall"
     },
     {
      "to": "sg-5-1-0-1",
@@ -17385,7 +17385,7 @@
     }
    ],
    "title": "The Maze of Lenses",
-   "page": "Mandatory scene at the Lens-Hall Door: the lens-hall maze; those with Pell have a guide who knows the Glasswright maintenance ways, those without must improvise. Shifting arrays of magnifying glass and silvered plates stretch out ahead like a labyrinth of mirrors, reflecting your single ember-lamp into a thousand anxious duplicates. Every path splits into confusing angles of refraction where a single misstep could send you stumbling into a drop or tripping an acoustic wire.\n\nWill you trust your hired companion to thread the needle through the service ways, or strike out independently across the open optical floors?"
+   "page": "Mandatory scene at the Lens-Hall Door: the lens-hall maze; those with Calder have a guide who knows the Glasswright maintenance ways, those without must improvise. Shifting arrays of magnifying glass and silvered plates stretch out ahead like a labyrinth of mirrors, reflecting your single ember-lamp into a thousand anxious duplicates. Every path splits into confusing angles of refraction where a single misstep could send you stumbling into a drop or tripping an acoustic wire.\n\nWill you trust your hired companion to thread the needle through the service ways, or strike out independently across the open optical floors?"
   },
   {
    "id": "sg-5-c2",
@@ -17506,7 +17506,7 @@
    "seg": 0,
    "layer": 0,
    "idx": 2,
-   "brief": "Within the dusty cistern ring, you share stale water with Pell while heavy basalt drums signal the arrival of rival salt-tolls at the gatehouse.",
+   "brief": "Within the dusty cistern ring, you share stale water with Calder while heavy basalt drums signal the arrival of rival salt-tolls at the gatehouse.",
    "exits": [
     {
      "to": "sg-5-0-1-5",
@@ -17528,7 +17528,7 @@
     }
    ],
    "title": "The Cistern Ring",
-   "page": "Stale water from your skin tastes of copper and dust as you share a quiet moment with Pell within the echoing stone cistern ring. Heavy basalt drums begin to thump from the outer gatehouse, signaling the arrival of impatient rival salt-tolls eager to stake their claims. Pell flashes a dry, knowing grin and checks the strap of his digging pack, waiting to see which way you will turn."
+   "page": "Stale water from your skin tastes of copper and dust as you share a quiet moment with Calder within the echoing stone cistern ring. Heavy basalt drums begin to thump from the outer gatehouse, signaling the arrival of impatient rival salt-tolls eager to stake their claims. Calder flashes a dry, knowing grin and checks the strap of his digging pack, waiting to see which way you will turn."
   },
   {
    "id": "sg-5-0-0-3",
@@ -17549,7 +17549,7 @@
      "to": "sg-5-0-1-8",
      "intent": "",
      "id": "x1",
-     "label": "Join Pell beneath the meridian porch"
+     "label": "Join Calder beneath the meridian porch"
     },
     {
      "to": "sg-5-0-1-9",
@@ -17727,7 +17727,7 @@
      "to": "sg-5-0-2-7",
      "intent": "",
      "id": "x1",
-     "label": "Meet Pell near the collapsed solar furnace"
+     "label": "Meet Calder near the collapsed solar furnace"
     },
     {
      "to": "sg-5-0-2-9",
@@ -17796,7 +17796,7 @@
    "seg": 0,
    "layer": 1,
    "idx": 8,
-   "brief": "Within the cool shade of the Meridian Porch, you trade flat remarks with Pell about the strange silence echoing from the inner vaults.",
+   "brief": "Within the cool shade of the Meridian Porch, you trade flat remarks with Calder about the strange silence echoing from the inner vaults.",
    "exits": [
     {
      "to": "sg-5-0-2-11",
@@ -17812,7 +17812,7 @@
     }
    ],
    "title": "The Meridian Porch",
-   "page": "Within the cool shade of the Meridian Porch, you trade flat remarks with Pell about the strange silence echoing from the inner vaults where the water-halls ought to be roaring. He flicks a pebble off the stone balustrade, watching it bounce across the glaring white flats far below with a dry, humorless smirk. Your banked ember-lamp smokes gently in the draft, smelling of old peat and sulfur.\n\nA narrow doorway opens behind the stone pillars, leading toward the heart of the observatory."
+   "page": "Within the cool shade of the Meridian Porch, you trade flat remarks with Calder about the strange silence echoing from the inner vaults where the water-halls ought to be roaring. He flicks a pebble off the stone balustrade, watching it bounce across the glaring white flats far below with a dry, humorless smirk. Your banked ember-lamp smokes gently in the draft, smelling of old peat and sulfur.\n\nA narrow doorway opens behind the stone pillars, leading toward the heart of the observatory."
   },
   {
    "id": "sg-5-0-1-9",
@@ -18050,7 +18050,7 @@
    "seg": 0,
    "layer": 2,
    "idx": 7,
-   "brief": "Within the shadow of a collapsed solar furnace, Pell cleans grit from his glass-diver goggles while warning you of traps in the floor.",
+   "brief": "Within the shadow of a collapsed solar furnace, Calder cleans grit from his glass-diver goggles while warning you of traps in the floor.",
    "exits": [
     {
      "to": "sg-5-0-3-5",
@@ -18072,7 +18072,7 @@
     }
    ],
    "title": "The Solar Furnace",
-   "page": "Within the shadow of a collapsed solar furnace, Pell cleans grit from his glass-diver goggles while warning you of traps in the floor. His copper-rimmed tool clicks softly against the stone as he gestures toward hairline fractures spreading across the tiled pavement ahead. The smell of scorched brass and dry earth hangs heavy in the ruin, punctuated by the steady drip of unseen condensation from the higher tiers.\n\nYou grip your banked coal-lantern tighter as you consider the safest way forward through the hazard."
+   "page": "Within the shadow of a collapsed solar furnace, Calder cleans grit from his glass-diver goggles while warning you of traps in the floor. His copper-rimmed tool clicks softly against the stone as he gestures toward hairline fractures spreading across the tiled pavement ahead. The smell of scorched brass and dry earth hangs heavy in the ruin, punctuated by the steady drip of unseen condensation from the higher tiers.\n\nYou grip your banked coal-lantern tighter as you consider the safest way forward through the hazard."
   },
   {
    "id": "sg-5-0-2-8",
@@ -18464,7 +18464,7 @@
      "to": "sg-5-0-4-5",
      "intent": "",
      "id": "x1",
-     "label": "Join Pell by the deep dry observatory well"
+     "label": "Join Calder by the deep dry observatory well"
     }
    ],
    "title": "The Broken Sundial",
@@ -18483,7 +18483,7 @@
      "to": "sg-5-0-4-5",
      "intent": "",
      "id": "x0",
-     "label": "Climb down beside Pell at the dry well"
+     "label": "Climb down beside Calder at the dry well"
     }
    ],
    "title": "The Seven Rains",
@@ -18496,7 +18496,7 @@
    "seg": 0,
    "layer": 3,
    "idx": 10,
-   "brief": "Near the heavy bronze valves of the lower conduits, Pell uses a copper wedge to pry open a jammed service hatch.",
+   "brief": "Near the heavy bronze valves of the lower conduits, Calder uses a copper wedge to pry open a jammed service hatch.",
    "exits": [
     {
      "to": "sg-5-0-4-5",
@@ -18518,7 +18518,7 @@
     }
    ],
    "title": "The Copper Wedge",
-   "page": "Heavy bronze valves of the lower conduits sweat with ancient damp, casting a metallic tang into the stagnant air. Beside a rusted hatch, Pell drives a copper wedge into the jammed seam with steady, practiced strikes of a mallet. Metal groans against metal, spraying a fine rust across his scarred knuckles as the seal finally gives way with a sharp hiss.\n\nBeyond the widening gap, two distinct routes beckon into the dim interior: one dips sharply downward into a narrow drainage pipe choked with white salt crusts, while the other leads along a soot-blackened catwalk toward a flickering lantern."
+   "page": "Heavy bronze valves of the lower conduits sweat with ancient damp, casting a metallic tang into the stagnant air. Beside a rusted hatch, Calder drives a copper wedge into the jammed seam with steady, practiced strikes of a mallet. Metal groans against metal, spraying a fine rust across his scarred knuckles as the seal finally gives way with a sharp hiss.\n\nBeyond the widening gap, two distinct routes beckon into the dim interior: one dips sharply downward into a narrow drainage pipe choked with white salt crusts, while the other leads along a soot-blackened catwalk toward a flickering lantern."
   },
   {
    "id": "sg-5-0-3-11",
@@ -18702,7 +18702,7 @@
    "seg": 0,
    "layer": 4,
    "idx": 5,
-   "brief": "Beside the deep dry well of the observatory core, Pell tests the tension of a frayed winch rope with a skeptical frown.",
+   "brief": "Beside the deep dry well of the observatory core, Calder tests the tension of a frayed winch rope with a skeptical frown.",
    "exits": [
     {
      "to": "sg-5-0-5-0",
@@ -18724,7 +18724,7 @@
     }
    ],
    "title": "The Deep Dry Well",
-   "page": "Deep stone walls of the observatory core drop away into absolute darkness, smelling of ancient lime and damp earth. Beside the gaping rim of the dry well, Pell tests the tension of a frayed winch rope with a skeptical frown, his thumb pressing hard against the hemp fibers until they fray further. A single pebble dropped into the depths bounces silently against the dry stone walls.\n\nThree paths branch out from the wellhead: a narrow stone ledge circling the abyss, a steep metal ladder descending into the dark, and a wide corridor leading toward the outer halls."
+   "page": "Deep stone walls of the observatory core drop away into absolute darkness, smelling of ancient lime and damp earth. Beside the gaping rim of the dry well, Calder tests the tension of a frayed winch rope with a skeptical frown, his thumb pressing hard against the hemp fibers until they fray further. A single pebble dropped into the depths bounces silently against the dry stone walls.\n\nThree paths branch out from the wellhead: a narrow stone ledge circling the abyss, a steep metal ladder descending into the dark, and a wide corridor leading toward the outer halls."
   },
   {
    "id": "sg-5-0-4-6",
@@ -18802,17 +18802,17 @@
    "seg": 0,
    "layer": 5,
    "idx": 1,
-   "brief": "Facing the locked portals of the inner sanctum, Pell traces a forgotten Glasswright maintenance tunnel hidden behind a rusted brass grille.",
+   "brief": "Facing the locked portals of the inner sanctum, Calder traces a forgotten Glasswright maintenance tunnel hidden behind a rusted brass grille.",
    "exits": [
     {
      "to": "sg-5-c1",
      "intent": "Press on",
      "id": "x0",
-     "label": "Press on through the hidden maintenance tunnel with Pell"
+     "label": "Press on through the hidden maintenance tunnel with Calder"
     }
    ],
    "title": "The Hidden Grille",
-   "page": "Facing the locked portals of the inner sanctum, Pell traces a forgotten Glasswright maintenance tunnel hidden behind a rusted brass grille. The air spilling from the dark aperture smells of ozone and ancient dry dust, promising a way around the impenetrable bronze barrier ahead. Your companion's fingers move with practiced ease, unlatching the corroded bolts without making a single sound.\n\nWill you slip into the dark conduit right behind Pell, or pause to secure your lamp strap before entering?"
+   "page": "Facing the locked portals of the inner sanctum, Calder traces a forgotten Glasswright maintenance tunnel hidden behind a rusted brass grille. The air spilling from the dark aperture smells of ozone and ancient dry dust, promising a way around the impenetrable bronze barrier ahead. Your companion's fingers move with practiced ease, unlatching the corroded bolts without making a single sound.\n\nWill you slip into the dark conduit right behind Calder, or pause to secure your lamp strap before entering?"
   },
   {
    "id": "sg-5-0-5-2",
@@ -18859,13 +18859,13 @@
    "seg": 1,
    "layer": 0,
    "idx": 0,
-   "brief": "In the humming blue gallery, Pell pries open a maintenance hatch while shifting lens-segments groan overhead.",
+   "brief": "In the humming blue gallery, Calder pries open a maintenance hatch while shifting lens-segments groan overhead.",
    "exits": [
     {
      "to": "sg-5-1-1-0",
      "intent": "",
      "id": "x0",
-     "label": "Follow Pell down the iron rungs"
+     "label": "Follow Calder down the iron rungs"
     },
     {
      "to": "sg-5-1-1-1",
@@ -18881,7 +18881,7 @@
     }
    ],
    "title": "The Humming Blue Gallery",
-   "page": "Massive lens-segments groan overhead like waking leviathans as Pell wedges a cold iron chisel into the maintenance hatch. Blue light filters through the vibrating glass floor, casting long, fractured shadows across your boots. Your ember-lamp rocks against your hip, its banked coals radiating a steady, familiar warmth against the chill of the observatory. With a sharp crack of rusted metal, the hatch gives way, venting a draft of dry, lime-scented air from the depths below."
+   "page": "Massive lens-segments groan overhead like waking leviathans as Calder wedges a cold iron chisel into the maintenance hatch. Blue light filters through the vibrating glass floor, casting long, fractured shadows across your boots. Your ember-lamp rocks against your hip, its banked coals radiating a steady, familiar warmth against the chill of the observatory. With a sharp crack of rusted metal, the hatch gives way, venting a draft of dry, lime-scented air from the depths below."
   },
   {
    "id": "sg-5-1-0-1",
@@ -18925,7 +18925,7 @@
    "seg": 1,
    "layer": 1,
    "idx": 0,
-   "brief": "Pell leads you through a cool conduit where singing glass reverberates against your ribs with warning tones.",
+   "brief": "Calder leads you through a cool conduit where singing glass reverberates against your ribs with warning tones.",
    "exits": [
     {
      "to": "sg-5-1-2-0",
@@ -18947,7 +18947,7 @@
     }
    ],
    "title": "The Singing Glass Conduit",
-   "page": "Resonant hums vibrate against your ribs, carrying warnings through the cool ceramic walls of the conduit. Pell moves ahead with silent surety, his boots skimming the smooth floor where ancient drafts carry the salt-scent of the Basin. Every surface hums with an odd, musical frequency that makes your teeth ache slightly. The darkness ahead deepens, broken only by the faint, rhythmic pulse of your swinging ember-lamp."
+   "page": "Resonant hums vibrate against your ribs, carrying warnings through the cool ceramic walls of the conduit. Calder moves ahead with silent surety, his boots skimming the smooth floor where ancient drafts carry the salt-scent of the Basin. Every surface hums with an odd, musical frequency that makes your teeth ache slightly. The darkness ahead deepens, broken only by the faint, rhythmic pulse of your swinging ember-lamp."
   },
   {
    "id": "sg-5-1-1-1",
@@ -18978,7 +18978,7 @@
     }
    ],
    "title": "The Greasy Mirror-Vault",
-   "page": "Tilting plates of polished glass reflect your distorted face a dozen times over in the dim light. Pell stops abruptly, pointing down at a smear of fresh oil left across the stone floor by earlier rivals scrambling upward. The air here is dead and heavy, smelling faintly of rendered fat and old salt. Your fingers tighten around your lamp handle as you weigh the treacherous footing against the need for haste."
+   "page": "Tilting plates of polished glass reflect your distorted face a dozen times over in the dim light. Calder stops abruptly, pointing down at a smear of fresh oil left across the stone floor by earlier rivals scrambling upward. The air here is dead and heavy, smelling faintly of rendered fat and old salt. Your fingers tighten around your lamp handle as you weigh the treacherous footing against the need for haste."
   },
   {
    "id": "sg-5-1-1-2",
@@ -18993,7 +18993,7 @@
      "to": "sg-5-1-2-6",
      "intent": "",
      "id": "x0",
-     "label": "Follow Pell along the scratched floor seam"
+     "label": "Follow Calder along the scratched floor seam"
     },
     {
      "to": "sg-5-1-2-7",
@@ -19133,7 +19133,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 0,
-   "brief": "Pell taps a hollow ceramic flue, unlocking a narrow service chute that bypasses three patrols of nervous sentries.",
+   "brief": "Calder taps a hollow ceramic flue, unlocking a narrow service chute that bypasses three patrols of nervous sentries.",
    "exits": [
     {
      "to": "sg-5-1-3-0",
@@ -19149,7 +19149,7 @@
     }
    ],
    "title": "The Hollow Ceramic Flue",
-   "page": "Sharp knuckle-taps echo softly against the baked clay as Pell locates the secret seam in the flue wall. With a sharp wrench, the ceramic panel slips inward, revealing a cramped vertical drop that completely bypasses three different sentry posts of the nervous Glasswrights. The darkness inside smells of cool soot and baked earth, offering a silent corridor away from watchful eyes."
+   "page": "Sharp knuckle-taps echo softly against the baked clay as Calder locates the secret seam in the flue wall. With a sharp wrench, the ceramic panel slips inward, revealing a cramped vertical drop that completely bypasses three different sentry posts of the nervous Glasswrights. The darkness inside smells of cool soot and baked earth, offering a silent corridor away from watchful eyes."
   },
   {
    "id": "sg-5-1-2-1",
@@ -19202,7 +19202,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 3,
-   "brief": "Pell coaxes open a stubborn floor-grate, revealing a steep drop into the cooling flues of the great lens.",
+   "brief": "Calder coaxes open a stubborn floor-grate, revealing a steep drop into the cooling flues of the great lens.",
    "exits": [
     {
      "to": "sg-5-1-3-1",
@@ -19222,7 +19222,7 @@
     }
    ],
    "title": "The Flue Drop",
-   "page": "Rust flakes drift from the iron hinge as Pell drives the heel of his palm against the warped iron grille, coaxing the stubborn floor-grate upward with a dry shriek of metal. Beneath the gap lies a steep plunge into the dark, smelling sharply of baked soot and ancient lime where the cooling flues of the great lens funnel down toward the foundations. Your ember-lamp casts a weak, reddish glow over the soot-blackened brickwork, while the distant, hollow dripping of water echoes from somewhere far below. Pell wipes his grease-stained brow with a sleeve and gestures silently down into the shaft.\n\nDo you slide into the soot-choked flues behind your guide, or pause to test the draught from a hairline masonry crack nearby?"
+   "page": "Rust flakes drift from the iron hinge as Calder drives the heel of his palm against the warped iron grille, coaxing the stubborn floor-grate upward with a dry shriek of metal. Beneath the gap lies a steep plunge into the dark, smelling sharply of baked soot and ancient lime where the cooling flues of the great lens funnel down toward the foundations. Your ember-lamp casts a weak, reddish glow over the soot-blackened brickwork, while the distant, hollow dripping of water echoes from somewhere far below. Calder wipes his grease-stained brow with a sleeve and gestures silently down into the shaft.\n\nDo you slide into the soot-choked flues behind your guide, or pause to test the draught from a hairline masonry crack nearby?"
   },
   {
    "id": "sg-5-1-2-4",
@@ -19291,7 +19291,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 6,
-   "brief": "Pell points out a faint scratch on the glass floor, marking the safe seam in a minefield of trapdoors.",
+   "brief": "Calder points out a faint scratch on the glass floor, marking the safe seam in a minefield of trapdoors.",
    "exits": [
     {
      "to": "sg-5-1-3-4",
@@ -19307,7 +19307,7 @@
     }
    ],
    "title": "The Faint Scratch",
-   "page": "Fine crystalline dust cakes your collar as Pell crouches low, pointing a grimy finger toward a hair-thin arc etched into the gleaming floor. This faint scratch is the only visible boundary marking a treacherous minefield of rusted trapdoors designed to swallow the unwary. Beyond this narrow line, the floor appears smooth, yet every square span hides a hinged drop into the lightless substructure.\n\nYou balance your weight carefully on the ball of your foot, weighing whether to risk a silent slide along the wall or take a bolder stride over the deceptive expanse."
+   "page": "Fine crystalline dust cakes your collar as Calder crouches low, pointing a grimy finger toward a hair-thin arc etched into the gleaming floor. This faint scratch is the only visible boundary marking a treacherous minefield of rusted trapdoors designed to swallow the unwary. Beyond this narrow line, the floor appears smooth, yet every square span hides a hinged drop into the lightless substructure.\n\nYou balance your weight carefully on the ball of your foot, weighing whether to risk a silent slide along the wall or take a bolder stride over the deceptive expanse."
   },
   {
    "id": "sg-5-1-2-7",
@@ -19379,7 +19379,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 9,
-   "brief": "Pell tosses a pebble into a dizzying vertical drop to test the acoustic echo of the lower vaults.",
+   "brief": "Calder tosses a pebble into a dizzying vertical drop to test the acoustic echo of the lower vaults.",
    "exits": [
     {
      "to": "sg-5-1-3-7",
@@ -19401,7 +19401,7 @@
     }
    ],
    "title": "The Echoing Drop",
-   "page": "Pell drops a small grey pebble into the sheer vertical shaft at your feet, waiting in the dry stillness for any sign of a bottom. Seconds pass before a faint, hollow clatter echoes back up through the darkness, revealing an immense drop that swallows sound whole. The stale air rising from the abyss carries a mineral tang of old salt and deep, forgotten stone.\n\nYou clutch your ember-lamp tighter against your ribs, wondering whether to seek a narrow crawlspace or trust your footing above the yawning void."
+   "page": "Calder drops a small grey pebble into the sheer vertical shaft at your feet, waiting in the dry stillness for any sign of a bottom. Seconds pass before a faint, hollow clatter echoes back up through the darkness, revealing an immense drop that swallows sound whole. The stale air rising from the abyss carries a mineral tang of old salt and deep, forgotten stone.\n\nYou clutch your ember-lamp tighter against your ribs, wondering whether to seek a narrow crawlspace or trust your footing above the yawning void."
   },
   {
    "id": "sg-5-1-2-10",
@@ -19479,7 +19479,7 @@
    "seg": 1,
    "layer": 2,
    "idx": 12,
-   "brief": "Pell wedges a crowbar into a refractory brick wall, prizing open a forgotten passage used by telescope-cleaners.",
+   "brief": "Calder wedges a crowbar into a refractory brick wall, prizing open a forgotten passage used by telescope-cleaners.",
    "exits": [
     {
      "to": "sg-5-1-3-10",
@@ -19495,7 +19495,7 @@
     }
    ],
    "title": "The Cleaner's Passage",
-   "page": "Iron scrapes screechingly against dry mortar as Pell drives a crowbar deep into the refractory brick wall, leveraging a forgotten wedge loose from the masonry. A dark, narrow crawlspace opens behind the loosened blocks - a low utility chute once used by the old telescope-cleaners to haul rags and polishing powders. A smell of dry lime and stagnant centuries drafts out from the hidden opening.\n\nYou peer into the black void of the chute, deciding whether to squeeze inside or test the ventilation grilles further along the corridor."
+   "page": "Iron scrapes screechingly against dry mortar as Calder drives a crowbar deep into the refractory brick wall, leveraging a forgotten wedge loose from the masonry. A dark, narrow crawlspace opens behind the loosened blocks - a low utility chute once used by the old telescope-cleaners to haul rags and polishing powders. A smell of dry lime and stagnant centuries drafts out from the hidden opening.\n\nYou peer into the black void of the chute, deciding whether to squeeze inside or test the ventilation grilles further along the corridor."
   },
   {
    "id": "sg-5-1-2-13",
@@ -20547,9 +20547,9 @@
      "when": {
       "guide": "pell"
      },
-     "privWhy": "Pell the glass-diver is with the reader and knows this place",
+     "privWhy": "Calder the glass-diver is with the reader and knows this place",
      "id": "x3",
-     "label": "Follow Pell through the hidden drainage conduit"
+     "label": "Follow Calder through the hidden drainage conduit"
     }
    ],
    "title": "The Heron Fountain",
@@ -20570,7 +20570,7 @@
      "when": {
       "guide": "pell"
      },
-     "privWhy": "Pell the glass-diver is with the reader and knows this place",
+     "privWhy": "Calder the glass-diver is with the reader and knows this place",
      "id": "x0",
      "label": "Wait patiently for the patrol to pass"
     },
@@ -20944,7 +20944,7 @@
    "seg": 2,
    "layer": 2,
    "idx": 13,
-   "brief": "Guided by Pell's intimate knowledge of the old drainage conduits, you bypass a heavy iron portcullis guarded by Salt Court mercenaries without raising an alarm.",
+   "brief": "Guided by Calder's intimate knowledge of the old drainage conduits, you bypass a heavy iron portcullis guarded by Salt Court mercenaries without raising an alarm.",
    "exits": [
     {
      "to": "sg-5-2-3-11",
@@ -20970,10 +20970,10 @@
     "cond": {
      "guide": "pell"
     },
-    "why": "Pell the glass-diver is with the reader and knows this place"
+    "why": "Calder the glass-diver is with the reader and knows this place"
    },
    "title": "The Silt Conduits",
-   "page": "Pell drops through a rusted grate into the subterranean dark, his grease-stained coat brushing the damp brickwork of the old drainage conduit. You follow the glass-diver through the narrow brick-vaulted pipe, splashing silently through inches of brackish condensation that taste faintly of old copper and lime. Ahead, muffled boot-thuds echo through the iron grating - the Salt Court patrol guarding the upper iron portcullis, completely unaware of your passage beneath their boots.\n\nThe air grows cooler as the conduit slopes steeply downward into shadow, offering three distinct openings where side-tunnels branch away from the main drainage line."
+   "page": "Calder drops through a rusted grate into the subterranean dark, his grease-stained coat brushing the damp brickwork of the old drainage conduit. You follow the glass-diver through the narrow brick-vaulted pipe, splashing silently through inches of brackish condensation that taste faintly of old copper and lime. Ahead, muffled boot-thuds echo through the iron grating - the Salt Court patrol guarding the upper iron portcullis, completely unaware of your passage beneath their boots.\n\nThe air grows cooler as the conduit slopes steeply downward into shadow, offering three distinct openings where side-tunnels branch away from the main drainage line."
   },
   {
    "id": "sg-5-2-2-14",
@@ -21096,7 +21096,7 @@
    "seg": 2,
    "layer": 3,
    "idx": 3,
-   "brief": "Under a vaulted ceiling painted with fading constellations, an old water-seller named Vesper begs for a drop from your flask while blocking the downward ramp.",
+   "brief": "Under a vaulted ceiling painted with fading constellations, an old water-seller named Lumen begs for a drop from your flask while blocking the downward ramp.",
    "exits": [
     {
      "to": "sg-5-2-4-0",
@@ -21118,7 +21118,7 @@
     }
    ],
    "title": "The Fading Constellations",
-   "page": "Faint gold leaf traces ancient constellations across the high vaulted ceiling above a crowded junction of downward-sloping ramps. An old water-seller named Vesper clutches a bone-white cup, her rheumy eyes fixed on your canteen as she begs for a single drop from your dwindling store. Her frail body blocks the main descent, forcing you to choose between charity, speed, or finding another route downward into the darkness."
+   "page": "Faint gold leaf traces ancient constellations across the high vaulted ceiling above a crowded junction of downward-sloping ramps. An old water-seller named Lumen clutches a bone-white cup, her rheumy eyes fixed on your canteen as she begs for a single drop from your dwindling store. Her frail body blocks the main descent, forcing you to choose between charity, speed, or finding another route downward into the darkness."
   },
   {
    "id": "sg-5-2-3-4",
@@ -26185,13 +26185,13 @@
    "exits": [
     {
      "to": "sg-e-B1-1",
-     "intent": "Pell Keeps the Door",
+     "intent": "Calder Keeps the Door",
      "when": {
       "guide": "pell"
      },
      "endingKey": "B1",
      "id": "x0",
-     "label": "Leave the door in the hands of Pell"
+     "label": "Leave the door in the hands of Calder"
     },
     {
      "to": "sg-e-B2-1",
@@ -26420,9 +26420,9 @@
    "kind": "endingpart",
    "region": 6,
    "endingKey": "B1",
-   "endingTitle": "Pell Keeps the Door",
+   "endingTitle": "Calder Keeps the Door",
    "part": 1,
-   "brief": "Ending \"Pell Keeps the Door\": You seal the Rain Vault to keep the seed safe; Pell stays as its keeper and you walk home lighter, with a friend's promise to wait.",
+   "brief": "Ending \"Calder Keeps the Door\": You seal the Rain Vault to keep the seed safe; Calder stays as its keeper and you walk home lighter, with a friend's promise to wait.",
    "exits": [
     {
      "to": "sg-e-B1-2",
@@ -26431,17 +26431,17 @@
      "label": "Turn the page and read on"
     }
    ],
-   "title": "Pell Keeps the Door",
-   "page": "Metal clicks against stone as you slide the heavy bolt back into place, sealing the Rain Vault before the rising damp can spoil the harvest within. Pell leans against the archway with a faint, wry smile, adjusting the strap of a heavy leather pack and offering to watch the threshold while the world dries out. You leave the cold ceramic key in trusted hands, knowing the seed is safe behind glass and steel until the drought returns. Walking out into the salt-scoured air feels remarkably different when you carry no debt upon your shoulders and a good friend keeps watch behind you."
+   "title": "Calder Keeps the Door",
+   "page": "Metal clicks against stone as you slide the heavy bolt back into place, sealing the Rain Vault before the rising damp can spoil the harvest within. Calder leans against the archway with a faint, wry smile, adjusting the strap of a heavy leather pack and offering to watch the threshold while the world dries out. You leave the cold ceramic key in trusted hands, knowing the seed is safe behind glass and steel until the drought returns. Walking out into the salt-scoured air feels remarkably different when you carry no debt upon your shoulders and a good friend keeps watch behind you."
   },
   {
    "id": "sg-e-B1-2",
    "kind": "endingpart",
    "region": 6,
    "endingKey": "B1",
-   "endingTitle": "Pell Keeps the Door",
+   "endingTitle": "Calder Keeps the Door",
    "part": 2,
-   "brief": "Aftermath of \"Pell Keeps the Door\": what changes for the people of the Basin and Candlemere, weeks later.",
+   "brief": "Aftermath of \"Calder Keeps the Door\": what changes for the people of the Basin and Candlemere, weeks later.",
    "exits": [
     {
      "to": "sg-e-B1-3",
@@ -26451,19 +26451,19 @@
     }
    ],
    "title": "The Door That Stuck",
-   "page": "Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. Word filters back from the center of the dried sea that Pell keeps the great doors well, trading signals with the glass-sentries through flashes of polished mirror. Candlemere receives its share of the sealed grain by swift runner-post, and the villagers speak warmly of the diver who stayed behind in the dark. The wells run full and clear from the rim to the observatory, proving that some treasures are better guarded by a steadfast friend than an army of toll-lords."
+   "page": "Months pass under a grey, dripping sky, and the Basin thrives despite the silence left in your wake. Word filters back from the center of the dried sea that Calder keeps the great doors well, trading signals with the glass-sentries through flashes of polished mirror. Candlemere receives its share of the sealed grain by swift runner-post, and the villagers speak warmly of the diver who stayed behind in the dark. The wells run full and clear from the rim to the observatory, proving that some treasures are better guarded by a steadfast friend than an army of toll-lords."
   },
   {
    "id": "sg-e-B1-3",
    "kind": "ending",
    "region": 6,
    "endingKey": "B1",
-   "endingTitle": "Pell Keeps the Door",
+   "endingTitle": "Calder Keeps the Door",
    "part": 3,
-   "brief": "Final page of \"Pell Keeps the Door\": a closing image and a last line for the book.",
+   "brief": "Final page of \"Calder Keeps the Door\": a closing image and a last line for the book.",
    "exits": [],
    "endingId": "end-B1",
-   "title": "Pell Keeps the Door",
+   "title": "Calder Keeps the Door",
    "page": "The ember-lamp burns low on the sill, casting a warm, steady glow across a kitchen table laden with bread from the new harvest. Outside, the rain taps a gentle, endless rhythm against the glass, washing away the last white traces of the salt flats from your worn boots. You pour two cups of hot chicory, leaving one cold spot on the wood for a friend who is still down in the dark keeping watch over the world's bread. The basin outside is a lake of silver water now, and the lamps of Candlemere burn bright and untroubled against the coming night."
   },
   {

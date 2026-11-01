@@ -603,7 +603,7 @@
    "kind": "scene",
    "title": "Shadows and Secrets",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "Crouched behind a stack of barnacle-encrusted crates, you watch a trio of rival wreckers from the Hook-and-Line crew. They are huddled around a lantern, arguing over a scrap of parchment. You recognise their leader, a scarred net-mender named Silas, tracing a jagged line across the paper with a grimy finger.\n\n\"The Sunken Stair is this way,\" Silas mutters, his voice carrying on the salty breeze. \"Past the singing dunes and the old coral beds.\" That parchment is a hand-drawn chart of the newly exposed seabed, tracking hazards and stable paths. If you can get a closer look, or perhaps snatch it while they are distracted, your journey would be vastly safer.",
+   "page": "Crouched behind a stack of barnacle-encrusted crates, you watch a trio of rival wreckers from the Hook-and-Line crew. They are huddled around a lantern, arguing over a scrap of parchment. You recognise their leader, a scarred net-mender named Harlan, tracing a jagged line across the paper with a grimy finger.\n\n\"The Sunken Stair is this way,\" Harlan mutters, his voice carrying on the salty breeze. \"Past the singing dunes and the old coral beds.\" That parchment is a hand-drawn chart of the newly exposed seabed, tracking hazards and stable paths. If you can get a closer look, or perhaps snatch it while they are distracted, your journey would be vastly safer.",
    "exits": [
     {
      "label": "Sneak closer for a better look",
@@ -618,7 +618,7 @@
    "kind": "check",
    "title": "A Stolen Glance",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "Edging along the shadows of the crates, you try to memorise the crude topography Silas has sketched. The light from their lantern flickers, casting long, distorted shadows across the dry docks. You need more than just a fleeting glance to understand the safe routes through the sinkholes.\n\nOne of the crew members turns his head, a sudden motion as a gull cries out overhead. You freeze, pressing your back flat against the damp wood. You must carefully track their sightlines, timing your movements to the rhythm of their argument so you can memorise the chart on the barrelhead the moment Silas looks away.",
+   "page": "Edging along the shadows of the crates, you try to memorise the crude topography Harlan has sketched. The light from their lantern flickers, casting long, distorted shadows across the dry docks. You need more than just a fleeting glance to understand the safe routes through the sinkholes.\n\nOne of the crew members turns his head, a sudden motion as a gull cries out overhead. You freeze, pressing your back flat against the damp wood. You must carefully track their sightlines, timing your movements to the rhythm of their argument so you can memorise the chart on the barrelhead the moment Harlan looks away.",
    "exits": [
     {
      "label": "check-full",
@@ -656,7 +656,7 @@
    "kind": "recovery",
    "title": "Chased from the Docks",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "A stray pebble crunches loudly beneath your heel. Silas snaps his head around, his eyes narrowing as he spots you lurking in the gloom. \"Spying for your own crew, are you?\" he barks, drawing a rusted gutting knife.\n\nYou are forced to bolt, scrambling over the crates as the rival wreckers hurl stones and curses at your back. One jagged rock catches you sharply on the temple, leaving a bleeding graze. You escape into the labyrinth of the dry docks, but your head spins and you have lost precious time. Worse, you carry no map, forcing you to navigate the perilous Low entirely blind.",
+   "page": "A stray pebble crunches loudly beneath your heel. Harlan snaps his head around, his eyes narrowing as he spots you lurking in the gloom. \"Spying for your own crew, are you?\" he barks, drawing a rusted gutting knife.\n\nYou are forced to bolt, scrambling over the crates as the rival wreckers hurl stones and curses at your back. One jagged rock catches you sharply on the temple, leaving a bleeding graze. You escape into the labyrinth of the dry docks, but your head spins and you have lost precious time. Worse, you carry no map, forcing you to navigate the perilous Low entirely blind.",
    "exits": [
     {
      "label": "Flee into the winding alleys",
@@ -672,7 +672,7 @@
    "kind": "reward",
    "title": "Paths of the Low",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "Slipping back into the deeper shadows just as Silas turns, you hold your breath. An argument breaks out among the rivals over a shared flask, and in their momentary distraction, you commit the final details of the route to memory.\n\nRetreating safely to a quiet alley, you quickly sketch the vital paths onto a scrap of sailcloth using a piece of charcoal. You now possess a reliable guide through the treacherous salt-flats and sinkholes leading toward the Sunken Stair. Breathing a quiet sigh of relief, you secure the rough chart inside your coat.",
+   "page": "Slipping back into the deeper shadows just as Harlan turns, you hold your breath. An argument breaks out among the rivals over a shared flask, and in their momentary distraction, you commit the final details of the route to memory.\n\nRetreating safely to a quiet alley, you quickly sketch the vital paths onto a scrap of sailcloth using a piece of charcoal. You now possess a reliable guide through the treacherous salt-flats and sinkholes leading toward the Sunken Stair. Breathing a quiet sigh of relief, you secure the rough chart inside your coat.",
    "exits": [
     {
      "label": "Head out onto the flats",
