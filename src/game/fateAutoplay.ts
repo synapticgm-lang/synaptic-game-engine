@@ -17,6 +17,7 @@ import {
   creditCommittedProgress,
   nudgeIfStuck,
   recordCirclingTurn,
+  storyChip,
   turnProgress,
 } from './choiceRanking';
 import { applyRememberedThreatPick, parkedThreatHere } from './placeThreats';
@@ -210,6 +211,11 @@ import {
   consumeTagTriggerOnInput,
 } from './tagTrigger';
 import { applyOpeningOfferChoice } from './openingOffer';
+import {
+  applyOpeningRiteTurn,
+  ensureOpeningRite,
+  pickQuestProfileChoice,
+} from './openingRite';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
@@ -316,6 +322,8 @@ export type FateAutoplayCliOpts = {
   aiTier: HostedAiTier;
   mode: FateMode;
   aiAgentMode?: AiAgentMode;
+  /** XP-D1 OPEN — `random` (default) or `quest` (prefer pinned rite / A2 story chip). */
+  playerProfile?: 'random' | 'quest';
   dryRun: boolean;
   matrix: boolean;
   /** Balanced matrix: 10 per test mode (LitRPG / tabletop / RPG). */
@@ -475,6 +483,7 @@ export type RunSummary = {
   dryRun: boolean;
   aiTier: HostedAiTier;
   aiAgentMode?: AiAgentMode;
+  playerProfile?: 'random' | 'quest';
   startedAt: string;
   endedAt: string;
   errorCount: number;
@@ -826,14 +835,15 @@ export function buildNewGameState(opts: {
     )
   );
   const placed = placeQuestGivers(seedOpeningCastLocations(state));
+  const withRite = ensureOpeningRite(placed);
   const built = engineMode === 'dnd' && opts.tabletopCreation
-    ? autoTabletopCreation(placed, mulberry32(seedNumber(`tt-fate:${opts.seed}`)))
-    : placed;
+    ? autoTabletopCreation(withRite, mulberry32(seedNumber(`tt-fate:${opts.seed}`)))
+    : withRite;
   return { state: built, bible, personalityId: voices.personalityId };
 }
 export function stampOpening(state: GameState): GameState {
   // q50-MAP2 — opening HERE on the place record with hub-graph exits (no atlas / discovered write).
-  state = ensurePlaceOnMap(state, state.currentLocation);
+  state = ensureOpeningRite(ensurePlaceOnMap(state, state.currentLocation));
   const text = stitchOpeningScene(state);
   const seeded = seedOpeningSceneFacts({ ...state, turn: 1 });
   const facts = applyCommittedNarrative({ ...state, sceneFacts: seeded, turn: 1 }, text, 1);
@@ -1062,13 +1072,22 @@ function pickChipAvoidingLethalRepeat(
   offered: string[],
   state: GameState,
   mode: AiAgentMode,
-  rng: Rng
+  rng: Rng,
+  playerProfile: 'random' | 'quest' = 'random'
 ): string {
   const set = pushOnChoiceSet(state);
   // Prefer the engine's push-on option set when that choice point is live.
   const pool = set.active && set.options.length ? set.options : offered;
   const candidates = chipsOnly(pool.length ? pool : offered);
-  const raw = pickGoalOrientedChoice(candidates, state, mode, rng);
+  const raw =
+    playerProfile === 'quest'
+      ? pickQuestProfileChoice(
+          candidates,
+          state,
+          () => pickGoalOrientedChoice(candidates, state, mode, rng),
+          storyChip(state)
+        )
+      : pickGoalOrientedChoice(candidates, state, mode, rng);
   const pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal, state);
   lastAutoPickWasLethal = isLethalChipLabel(pick, state);
   return pick;
@@ -1166,6 +1185,7 @@ export async function headlessFateTurn(
     mode: FateMode;
     aiAgentMode: AiAgentMode;
     dryRun: boolean;
+    playerProfile?: 'random' | 'quest';
     /** Typed human line (live-drive opening script). Skips chip pick. */
     playerInputOverride?: string;
   }
@@ -1190,7 +1210,17 @@ export async function headlessFateTurn(
         : applyRememberedThreatPick(
             state,
             offered,
-            applyAutoPlayerStallRules(state, offered, pickChipAvoidingLethalRepeat(offered, state, meta.aiAgentMode, rng)).pick
+            applyAutoPlayerStallRules(
+              state,
+              offered,
+              pickChipAvoidingLethalRepeat(
+                offered,
+                state,
+                meta.aiAgentMode,
+                rng,
+                meta.playerProfile ?? 'random'
+              )
+            ).pick
           ).pick;
   let playerInput = fatePick;
   let repairNote: string | undefined;
@@ -1586,6 +1616,11 @@ export async function headlessFateTurn(
   const offerTurn = applyOpeningOfferChoice(arcState, playerInput);
   arcState = offerTurn.state;
   arcStatusReceipts = [...arcStatusReceipts, ...offerTurn.receipts];
+  {
+    const riteTurn = applyOpeningRiteTurn(arcState, playerInput);
+    arcState = riteTurn.state;
+    arcStatusReceipts = [...arcStatusReceipts, ...riteTurn.receipts];
+  }
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const dyingTurn = isDying(govInputState);
   const hereBeforeMove = arcState.currentLocation ?? '';
@@ -2740,6 +2775,7 @@ export async function runFateAutoplay(opts: {
   aiTier: HostedAiTier;
   mode: FateMode;
   aiAgentMode?: AiAgentMode;
+  playerProfile?: 'random' | 'quest';
   dryRun: boolean;
   outRoot: string;
   characterName: string;
@@ -2796,7 +2832,8 @@ export async function runFateAutoplay(opts: {
   const rng = mulberry32(opts.seed);
   resetLethalPickStreak();
   const runId = new Date().toISOString().replace(/[:.]/g, '-');
-  const slug = `${bible.id}_${personalityId}_s${opts.seed}`;
+  const profile = opts.playerProfile === 'quest' ? 'quest' : 'random';
+  const slug = `${bible.id}_${personalityId}_s${opts.seed}${profile === 'quest' ? '_quest' : ''}`;
   const outDir = join(opts.outRoot, `${runId}_${slug}`);
   mkdirSync(outDir, { recursive: true });
   writerPromptSink.dir = join(outDir, 'writer-prompts');
@@ -2859,6 +2896,7 @@ export async function runFateAutoplay(opts: {
           mode: opts.mode,
           aiAgentMode: opts.aiAgentMode ?? 'default',
           dryRun: opts.dryRun,
+          playerProfile: opts.playerProfile ?? 'random',
           playerInputOverride: routeLine ?? provided?.input ?? (opts.inputs?.[i] || undefined),
         });
         state = result.state;
@@ -3008,6 +3046,7 @@ export async function runFateAutoplay(opts: {
     dryRun: opts.dryRun,
     aiTier: opts.aiTier,
     aiAgentMode: opts.aiAgentMode,
+    playerProfile: opts.playerProfile ?? 'random',
     startedAt,
     endedAt,
     errorCount: turns.filter((t) => t.error).length,
@@ -3132,6 +3171,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     personality: 'cold-system',
     aiTier: 'free',
     mode: 'fate',
+    playerProfile: 'random',
     dryRun: false,
     matrix: false,
     matrix40: false,
@@ -3170,6 +3210,9 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
       out.aiAgentMode = ['maxlevel', 'storyfollower', 'completionist'].includes(m)
         ? (m as AiAgentMode)
         : 'default';
+    } else if (a === '--player-profile') {
+      const m = next().trim().toLowerCase();
+      out.playerProfile = m === 'quest' ? 'quest' : 'random';
     } else if (a === '--writer') {
       out.writer = parseAutoplayWriterKind(next());
     } else if (a === '--writer-model') out.writerModel = next().trim();

@@ -215,3 +215,7 @@ Assumption: one XP event every 2.2 turns; 65% quest-shaped (2–3 step then comp
 
 `encounterKind` matched `\belite\b` on catalog/road `source` strings (density tier "elite" / `road-camp-elite`), so ordinary Story RPG fights paid `miniBoss` = flat 80. Pay is now units × level (miniBoss=2 units), not a second flat table.
 
+## XP-D1 OPEN build note (1 Nov 2026) — in-tree, no T50 yet
+
+Branch `xp/design`. LitRPG-only **Opening Rite**: one-step easy-win per scenario (`openingRiteTable.ts`); engine completes on accept chip / free-text accept / refuse→forced / turn-4 backstop; XP fill = L1 bar − current XP → Level 2 exactly (exempt from 60% event cap; one-level-per-apply stays). Writer facts via `openingRiteFacts.ts` + `completedEventPacket`; accept chip pinned first; System window shows quest + XP + Level 2; Fate `--player-profile quest`. Pace model: L2 at turns 1–3 with opening win, L3 15–25 later (no unitsPerLevel retune). Tabletop/RPG/PYOA unchanged. Report: `merge-logs/xp-design/open/OPEN-report.md`. Free-path T50 still owed after stamp/ship.
+

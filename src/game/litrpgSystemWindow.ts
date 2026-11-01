@@ -86,6 +86,15 @@ export function shouldAttachLitrpgSystemWindow(args: {
   if (isLedgerReadAction(args.playerInput ?? '')) return true;
   if (playerLockedNameThisLine(args.playerInput ?? '')) return true;
   if ((args.systemLog ?? []).some((l) => /level\s*up|^Class: (?:Class taken|The System assigned)|^Stats:|^(?:Skill up|Skill rank up|Technique learned|Perk gained|Title earned|Title):/i.test(l))) return true;
+  // XP-D1 OPEN — attach window when the Opening Rite completes this turn.
+  if ((args.systemLog ?? []).some((l) => /opening rite|Quest complete:\s*Opening Rite/i.test(l))) return true;
+  if (
+    args.state.openingRite?.done
+    && args.state.openingRite.completedAtTurn != null
+    && args.state.openingRite.completedAtTurn === (args.state.turn ?? 0)
+  ) {
+    return true;
+  }
   return false;
 }
 
@@ -137,6 +146,13 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
     lines.push(registered ? 'Interface: online' : 'Interface: online — awaiting designation');
   }
   if (on('experience')) lines.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
+  // XP-D1 OPEN — show rite completion + XP + Level 2 on the turn it lands.
+  const rite = state.openingRite;
+  if (rite?.done && rite.completedAtTurn != null && rite.completedAtTurn === (state.turn ?? 0)) {
+    if (rite.title) lines.push(`Quest complete: ${rite.title}`);
+    if ((rite.xpPaid ?? 0) > 0) lines.push(`+${rite.xpPaid} XP`);
+    if ((c?.level ?? 1) >= 2) lines.push('Level 2 reached');
+  }
   // The floor line is the first to go when the window would run past its limit.
   return { heading: 'SYSTEM', lines: lines.length > SYSTEM_WINDOW_MAX_LINES ? lines.filter((l) => l !== floor) : lines };
 }

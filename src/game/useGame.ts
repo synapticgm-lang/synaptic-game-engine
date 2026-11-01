@@ -402,6 +402,7 @@ import {
   consumeTagTriggerOnInput,
 } from './tagTrigger';
 import { applyOpeningOfferChoice } from './openingOffer';
+import { applyOpeningRiteTurn, ensureOpeningRite } from './openingRite';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
@@ -2799,6 +2800,12 @@ export function useGame() {
       const offerTurn = applyOpeningOfferChoice(liveCurrent, sanitizedInput);
       liveCurrent = offerTurn.state;
       pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...offerTurn.receipts];
+      // XP-D1 OPEN — LitRPG Opening Rite accept / refuse / turn-4 backstop (engine XP fill to L2).
+      {
+        const riteTurn = applyOpeningRiteTurn(liveCurrent, sanitizedInput);
+        liveCurrent = riteTurn.state;
+        pendingArcStatusReceipts = [...pendingArcStatusReceipts, ...riteTurn.receipts];
+      }
       const hereBeforeMove = liveCurrent.currentLocation ?? '';
       const graphMoved = dyingTurn ? liveCurrent : applyGraphExitTravel(liveCurrent, sanitizedInput);
       const travelCommit = dyingTurn || graphMoved !== liveCurrent ? null : commitTravel(liveCurrent, sanitizedInput);
@@ -5438,19 +5445,23 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           },
         };
     const pinnedState = ensureOpeningNpcPinned(withPinnedPresent, bible);
-    let newState = seedOpeningCastLocations(mergePreferredProfileIntoOpening(
-      withUpdatedHookArc(
-        ensureCampaignContract(
-          {
-            ...pinnedState,
-            quests: enrichQuests(pinnedState.quests ?? []),
-            recentBeatFingerprints: [],
-            stateTxLog: [],
-          },
-          bible
-        )
+    let newState = ensureOpeningRite(
+      seedOpeningCastLocations(
+        mergePreferredProfileIntoOpening(
+          withUpdatedHookArc(
+            ensureCampaignContract(
+              {
+                ...pinnedState,
+                quests: enrichQuests(pinnedState.quests ?? []),
+                recentBeatFingerprints: [],
+                stateTxLog: [],
+              },
+              bible
+            )
+          )
+        ).state
       )
-    ).state);
+    );
     setState(newState);
     stateRef.current = newState;
     clearActionDraft();

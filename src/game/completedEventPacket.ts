@@ -92,6 +92,10 @@ import {
   countSameHallTopicRepeats,
   openingCastNote,
 } from './openingEstablishment';
+import {
+  openingRiteRefuseWriterFact,
+  openingRiteWriterOffer,
+} from './openingRiteFacts';
 export type EventOutcome =
   | 'killed'
   | 'bloodied'
@@ -178,6 +182,10 @@ export interface CompletedEventPacket {
   cardWant?: string;
   /** The card's offer while it is still open, with the same trigger as `cardWant`. */
   cardOffer?: string;
+  /** XP-D1 OPEN — LitRPG Opening Rite pending offer; prose must end on it. */
+  openingRiteOffer?: string;
+  /** XP-D1 OPEN — refuse path writer fact (System persists, no punishment). */
+  openingRiteRefusePersist?: string;
   /** 11b — mode-safe spoken identity (no Pactborn on tabletop). */
   engineMode?: string;
   /** 14a — this-turn ledger ids for token prose. Single source with compileRefEnum. */
@@ -1077,6 +1085,9 @@ export function buildCompletedEventPacket(
     answerOffer: shortCardOffer(state) || undefined,
     cardWant: askedWantAtCard ? shortCardWant(state) || undefined : undefined,
     cardOffer: askedWantAtCard && openOpeningOffer(state) ? shortCardOffer(state) || undefined : undefined,
+    openingRiteOffer: openingRiteWriterOffer(state) || state.sceneFacts?.openingRiteOffer || undefined,
+    openingRiteRefusePersist:
+      openingRiteRefuseWriterFact(state) || state.sceneFacts?.openingRiteRefusePersist || undefined,
     engineMode: state.engineMode,
     placeDescriptor: placeFacts.descriptor || undefined,
     exitNames: placeFacts.exits.length ? placeFacts.exits : undefined,
@@ -1399,6 +1410,10 @@ export function formatWriterFacingEvent(
   if (packet.gates?.length) lines.push(`LOCKS:\n${packet.gates.join('\n')}`);
   if (packet.cardWant) lines.push(`What they want (their own reason; the answer says it in their words): ${packet.cardWant}`);
   if (packet.cardOffer) lines.push(`What they offer (still open; the player has not taken it): ${packet.cardOffer}`);
+  if (packet.openingRiteOffer) lines.push(packet.openingRiteOffer);
+  if (packet.openingRiteRefusePersist) {
+    lines.push(`OPENING RITE REFUSAL: ${packet.openingRiteRefusePersist}`);
+  }
   if (packet.mood) lines.push(`Mood: ${packet.mood}.`);
   if (opts?.stricter) {
     lines.push('STRICT: Use only the nouns listed. Outcome is immutable.');

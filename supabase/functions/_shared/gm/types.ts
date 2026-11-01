@@ -1011,6 +1011,10 @@ export interface GameState {
   storyStartTextTurnsRemaining?: number;
   /** Campaign-start interview (where / clothes / folk). Undefined on old saves = already playing. */
   openingEstablishment?: OpeningEstablishment;
+  /**
+   * XP-D1 OPEN — LitRPG one-step Opening Rite (accept → Level 2). Absent on non-LitRPG / old saves.
+   */
+  openingRite?: import('./openingRite.ts').OpeningRiteState;
   /** After the last establishment answer, generate the real opening scene once. */
   pendingGeneratedOpening?: boolean;
   /** Per-NPC memory ledger. */
@@ -1811,6 +1815,10 @@ export interface SceneFacts {
   worldTags?: string[];
   /** 29z9j — the place the current `props` belong to (props move with the place on travel). */
   propsPlace?: string;
+  /** XP-D1 OPEN — pending Opening Rite offer sentence for the writer (LitRPG only). */
+  openingRiteOffer?: string;
+  /** XP-D1 OPEN — refuse path: System/summoner persists, no punishment. */
+  openingRiteRefusePersist?: string;
   /** OPT-3 — last pressure-clock agenda advance this turn (world fact for the writer packet). */
   agendaWorldFact?: string;
   /** OPT-5 — stall planner engine event this turn (thread / agenda / situation). */

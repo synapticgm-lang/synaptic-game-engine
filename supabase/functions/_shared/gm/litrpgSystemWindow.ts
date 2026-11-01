@@ -73,6 +73,13 @@ function buildLitrpgSystemWindow(state: GameState): { heading: string; lines: st
     lines.push(registered ? 'Interface: online' : 'Interface: online — awaiting designation');
   }
   if (on('experience')) lines.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
+  // XP-D1 OPEN — rite completion chrome (mirrors client litrpgSystemWindow).
+  const rite = state.openingRite;
+  if (rite?.done && rite.completedAtTurn != null && rite.completedAtTurn === (state.turn ?? 0)) {
+    if (rite.title) lines.push(`Quest complete: ${rite.title}`);
+    if ((rite.xpPaid ?? 0) > 0) lines.push(`+${rite.xpPaid} XP`);
+    if ((c?.level ?? 1) >= 2) lines.push('Level 2 reached');
+  }
   return { heading: 'SYSTEM', lines };
 }
 

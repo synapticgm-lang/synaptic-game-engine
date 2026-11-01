@@ -83,6 +83,7 @@ import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
 import { pinStoryChipInTop, rankChoices } from './choiceRanking';
+import { pinOpeningRiteChip } from './openingRite';
 import { withRememberedThreatChip } from './placeThreats';
 import { isJourneyUnderway, withJourneyPads, withMarchWarnPads } from './travelJourney';
 import { ENGINE_COMBAT_CHIP } from './chipLegality';
@@ -1382,6 +1383,14 @@ export function compileChoices(
     finalChoices = pinStoryChipInTop(state, finalChoices, 3);
     if (finalChoices !== before && finalChoices.join('|') !== before.join('|')) {
       notes.push('Quest step chip pinned top-3');
+    }
+  }
+  // XP-D1 OPEN — LitRPG Opening Rite accept chip first; does not count against pad cap.
+  {
+    const before = finalChoices;
+    finalChoices = pinOpeningRiteChip(state, finalChoices);
+    if (finalChoices !== before && finalChoices.join('|') !== before.join('|')) {
+      notes.push('Opening Rite chip pinned first');
     }
   }
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context

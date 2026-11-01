@@ -27,11 +27,18 @@ const TURN_GAP = 2.2;
  */
 const QUEST_SHARE = 0.55;
 
+/**
+ * XP-D1 OPEN — Opening Rite fill lands L2 on this turn (1–3), then engaged mix continues.
+ * Pass 0 to disable (legacy mixed pace without the opening win).
+ */
+const OPENING_WIN_TURN = 2;
+
 function simulate(
   mode: EngineMode,
   turns: number,
   mix: 'mixed' | 'quest' | 'fight',
-  rng: () => number = Math.random
+  rng: () => number = Math.random,
+  opts: { openingWinTurn?: number } = {}
 ): { levelAt: Map<number, number>; xpBySource: { quest: number; fight: number }; finalLevel: number } {
   let char: Character = {
     name: 'Pace',
@@ -47,8 +54,30 @@ function simulate(
   let fightXp = 0;
   let stepBudget = 0;
   let nextEventAt = TURN_GAP;
+  const openingWinTurn =
+    opts.openingWinTurn === undefined
+      ? mode === 'litrpg'
+        ? OPENING_WIN_TURN
+        : 0
+      : opts.openingWinTurn;
 
   for (let t = 1; t <= turns; t++) {
+    // Opening Rite: exact fill of the L1 bar → Level 2 (exempt from event cap).
+    if (openingWinTurn > 0 && t === openingWinTurn && (char.level ?? 1) === 1) {
+      const fill = Math.max(0, levelBar(mode, 1) - (char.xp ?? 0));
+      if (fill > 0) {
+        questXp += fill;
+        const before = char.level ?? 1;
+        char = applyCharacterXpGain(char, fill, mode).character;
+        if ((char.level ?? 1) > before) {
+          for (let L = before + 1; L <= (char.level ?? 1); L++) {
+            if (!levelAt.has(L)) levelAt.set(L, t);
+          }
+        }
+      }
+      nextEventAt = t + TURN_GAP;
+      continue;
+    }
     if (t + 0.001 < nextEventAt) continue;
     nextEventAt += TURN_GAP;
     const r = rng();
@@ -127,11 +156,11 @@ describe('XP-D1 pace model', () => {
     expect(skillLevelCap(24)).toBe(50);
   });
 
-  it('LitRPG mixed pace: L2 at turns 4–8; L3–9 take 15–25; L10–19 take 40–60 (±8 turns)', () => {
+  it('LitRPG mixed pace with Opening Rite: L2 at turns 1–3; L3–9 take 15–25; L10–19 take 40–60 (±8 turns)', () => {
     const { levelAt, xpBySource } = simulate('litrpg', 1200, 'mixed', rngFrom(42));
     const t2 = levelAt.get(2);
-    expect(t2).toBeGreaterThanOrEqual(4);
-    expect(t2).toBeLessThanOrEqual(8);
+    expect(t2).toBeGreaterThanOrEqual(1);
+    expect(t2).toBeLessThanOrEqual(3);
 
     for (let L = 3; L <= 9; L++) {
       const prev = levelAt.get(L - 1);
@@ -160,8 +189,9 @@ describe('XP-D1 pace model', () => {
   });
 
   it('Story RPG is ~1.5× slower from L2; quest-only and fight-only both advance', () => {
-    const lit = simulate('litrpg', 600, 'mixed', rngFrom(99));
-    const rpg = simulate('rpg', 600, 'mixed', rngFrom(99));
+    // Story RPG has no Opening Rite; LitRPG compare uses the same opening-win-off baseline.
+    const lit = simulate('litrpg', 600, 'mixed', rngFrom(99), { openingWinTurn: 0 });
+    const rpg = simulate('rpg', 600, 'mixed', rngFrom(99), { openingWinTurn: 0 });
     const litT4 = lit.levelAt.get(4) ?? 999;
     const rpgT4 = rpg.levelAt.get(4) ?? 999;
     expect(rpgT4).toBeGreaterThan(litT4);
