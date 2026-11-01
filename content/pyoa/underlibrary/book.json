@@ -8829,7 +8829,7 @@
    "kind": "check",
    "title": "Weathering The Interrogation",
    "brief": "You endure a punishing cross-examination by an inquisitorial senior archivist regarding your true loyalties, risking your sanity, to earn a signed clearance pass.",
-   "page": "Haxby leans forward across the ledger-strewn mahogany, his voice dropping to a dry, rasping whisper that vibrates in the marrow of your teeth while the very ink in nearby inkwells ripples with invisible malice. You tighten your grip on the edge of the oak desk and fight the urge to confess every rule you have ever bent in the dim corridors. The weight of his relentless scrutiny presses against your mind like a descending iron press, threatening to fracture your resolve and scatter your thoughts into the echoing stacks. You marshal every ounce of your inner fortitude against the psychic undertow of his questions.",
+   "page": "Haxby leans forward across the ledger-strewn mahogany. His voice falls to a dry, rasping whisper that finds the roots of your teeth, and ink in the nearby inkwells ripples without a touch on the glass. You clamp the edge of the oak desk and bite back the urge to confess every rule you have ever bent in the dim corridors. His scrutiny lands like an iron press on wet paper, and thoughts want to flee into the stacks. Against the psychic undertow of his questions you spend every scrap of fortitude you still own.",
    "exits": [
     {
      "label": "check-full",
