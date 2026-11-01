@@ -102,6 +102,7 @@ export function payEncounterXp(
     cr: state.engineMode === 'dnd' ? realEncounterCr(raw) : raw.cr,
     count: raw.count,
     strictness: state.gmStrictness,
+    foeLevel: raw.level,
     ...milestoneAreaOpts(state),
   });
   if (r.amount <= 0) {

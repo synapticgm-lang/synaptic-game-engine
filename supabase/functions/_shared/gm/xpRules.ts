@@ -1,5 +1,5 @@
 /**
- * 28a — Engine-owned XP rules (XP-PLAN.md). The AI never decides XP.
+ * 28a / XP-D1 — Engine-owned XP rules (XP-PLAN.md). The AI never decides XP.
  *
  * D&D tables (CR→XP, level thresholds): This work includes material taken from the System Reference
  * Document 5.1 ("SRD 5.1") by Wizards of the Coast LLC and available at
@@ -14,6 +14,14 @@
  */
 import type { Companion, EngineMode, GmStrictness, SummonEntity } from './types.ts';
 import { difficultyRow } from './difficultyRules.ts';
+import {
+  DEED_UNITS,
+  contentScale,
+  isUnitXpMode,
+  unitMilestoneAmount,
+  unitsToXp,
+  xpUnit,
+} from './rules/xpPace.ts';
 
 export type MilestoneKind =
   | 'encounter'
@@ -52,20 +60,22 @@ export const DND_XP_BUDGET_PER_CHARACTER: readonly (readonly [number, number, nu
   [3800, 6100, 9800], [4500, 7200, 11700], [5000, 8700, 14200], [5500, 10700, 17200], [6400, 13200, 22000],
 ];
 
-/** LitRPG and other non-D&D modes: flat milestone amounts (level 2 at 150 on the existing curve). */
+/**
+ * LitRPG L1 reference amounts (xpUnit L1 = 50). Live litrpg/rpg pay uses unitMilestoneAmount;
+ * this table is the L1 snapshot / FAST_XP + SANDBOX_XP alias surface (one owner via xpPace).
+ */
 export const LITRPG_MILESTONE_XP: Readonly<Record<MilestoneKind, number>> = {
-  encounter: 40,
-  miniBoss: 80,
-  boss: 150,
-  dungeonCleared: 100,
+  encounter: 50,
+  miniBoss: 100,
+  boss: 200,
+  dungeonCleared: 150,
   dungeonEntry: 25,
-  roomCleared: 30,
+  roomCleared: 25,
   questStep: 50,
-  questComplete: 100,
+  questComplete: 150,
   significantPerson: 25,
   significantPlace: 25,
   achievement: 75,
-  /** 29z1 — LitRPG deeds pay through deedXp on the flat kinds; story RPG deeds pay no XP. */
   deed: 0,
 };
 
@@ -84,15 +94,17 @@ export const STORY_RPG_MILESTONE_XP: Readonly<Record<MilestoneKind, number>> = {
 export type DeedStep = 'first' | 'count' | 'capstone';
 
 /**
- * 29z1 — pay for an engine-seen deed, by mode. LitRPG: significant-place / quest-step / quest-complete
- * amounts. Tabletop: 0 XP (SRD XP is monster CR only). Story RPG: 0 XP (its reward is an item, see sandboxXp).
- * Difficulty scale and the over-level cut apply as for any milestone.
+ * 29z1 / XP-D1 — LitRPG deeds pay fixed units. Tabletop / Story RPG: 0 XP (item-only for RPG).
  */
 export function deedXp(mode: EngineMode | undefined, step: DeedStep, opts: MilestoneXpOpts = {}): MilestoneXpResult {
-  if (mode === 'litrpg') {
-    return milestoneXp(mode, step === 'first' ? 'significantPlace' : step === 'count' ? 'questStep' : 'questComplete', opts);
-  }
-  return { amount: 0, detail: '' };
+  if (mode !== 'litrpg') return { amount: 0, detail: '' };
+  const playerLevel = opts.playerLevel ?? opts.level ?? 1;
+  const content = opts.areaLevel ?? playerLevel;
+  let amount = unitsToXp(DEED_UNITS[step], xpUnit(mode, playerLevel));
+  amount = Math.max(1, Math.round(amount * contentScale(playerLevel, content)));
+  const scale = difficultyRow(opts.strictness).xpScale;
+  if (scale !== 1 && amount > 0) amount = Math.round(amount * scale);
+  return { amount, detail: '' };
 }
 
 /** CR a bare number falls back to when nothing else gives one (crToXp only). */
@@ -101,9 +113,16 @@ export const DND_DEFAULT_CR = '1/4';
 /** D&D fight XP is paid from a CR; a fight with no encounter behind it has none. */
 export const NO_CR_XP_REASON = 'no XP: the foe has no challenge rating on its card or an SRD stat block';
 
-/** Fight milestone kind from the encounter's source / name (one rule for every payer). */
-export function encounterKind(enc: { source?: string; name?: string }): MilestoneKind {
+/**
+ * Fight milestone kind from the encounter's source / name.
+ * XP-D1: density-tier "elite" in catalog ids/sources is mid-threat (miniBoss units), not a second flat table.
+ * Root of the old flat-80 Story RPG fight: `\belite\b` matched catalog/road sources and paid miniBoss=80.
+ */
+export function encounterKind(enc: { source?: string; name?: string; miniBoss?: boolean; threatTier?: string }): MilestoneKind {
+  if (enc.miniBoss === true || enc.threatTier === 'elite' || enc.threatTier === 'miniboss') return 'miniBoss';
+  if (enc.threatTier === 'boss') return 'boss';
   const src = `${enc.source ?? ''} ${enc.name ?? ''}`;
+  // Prefer explicit role tokens; bare "elite" in a catalog id still means miniBoss (density role).
   if (/mini[- ]?boss|\belite\b/i.test(src)) return 'miniBoss';
   if (/\bboss\b/i.test(src)) return 'boss';
   return 'encounter';
@@ -166,7 +185,6 @@ export function dndLevelForXp(xp: number): number {
 
 /** A party member splits fight XP with the player. Pets, mounts and summons do not. */
 export function takesPartyShare(c: Companion): boolean {
-  // A house-rule sidekick levels with the PC and takes no share.
   return c.type === 'party' && !c.summon && !c.sidekick;
 }
 
@@ -175,15 +193,8 @@ export function keepsOwnXp(c: Companion): boolean {
   return c.summon === true || c.type === 'beast' || c.type === 'mount';
 }
 
-/** Max HP gained per level from the hidden total. */
 const COMPANION_HP_PER_LEVEL = { party: 5, pet: 3 } as const;
 
-/**
- * D&D fight XP for everyone who fought beside the player: each party member gets the same per-member
- * share the player got; pets and summons add the same amount to their own total without counting in
- * the split. A companion with no level starts at level 1. A level-up raises max HP (their powers
- * advance from the hidden total). Caretakers take nothing. The writer never sees these numbers.
- */
 export function payCompanionsFightXp(companions: Companion[] | undefined, share: number): Companion[] {
   const list = companions ?? [];
   if (share <= 0) return list;
@@ -198,7 +209,6 @@ export function payCompanionsFightXp(companions: Companion[] | undefined, share:
   });
 }
 
-/** Active summons on the sheet: their own hidden total; a level-up raises max HP, attack and defense. */
 export function paySummonsFightXp(summons: SummonEntity[] | undefined, share: number): SummonEntity[] | undefined {
   if (!summons?.length || share <= 0) return summons;
   return summons.map((s) => {
@@ -226,7 +236,7 @@ export interface MilestoneXpResult {
   detail: string;
 }
 
-/** 29r — player this many levels above the area: every milestone there pays OVER_LEVEL_SHARE. */
+/** Kept for dnd/pyoa callers and legacy tests; litrpg/rpg use contentScale instead. */
 export const OVER_LEVEL_GAP = 6;
 export const OVER_LEVEL_SHARE = 0.05;
 
@@ -236,7 +246,6 @@ export function isOverLevel(playerLevel: number | undefined, areaLevel: number |
   return playerLevel - areaLevel >= OVER_LEVEL_GAP;
 }
 
-/** 5 percent, rounded, never zero when the full amount was at least 1. */
 export function overLevelAmount(amount: number): number {
   if (amount < 1) return 0;
   return Math.max(1, Math.round(amount * OVER_LEVEL_SHARE));
@@ -250,14 +259,18 @@ export interface MilestoneXpOpts {
   /** D&D encounter: how many foes of that CR were beaten (each pays its CR XP). */
   count?: number;
   strictness?: GmStrictness | null;
-  /** 29r — player level and unclamped area level for the over-level cut. */
+  /** Player level for grey / over-level. */
   playerLevel?: number;
   areaLevel?: number;
-  /** Fight milestones outside D&D: the foe's level for the low-foe cut. */
+  /** Fight milestones: the foe's real level (clamped in xpPace). */
   foeLevel?: number;
+  /** Quest / milestone content level when known. */
+  contentLevel?: number;
+  /** Optional repeat-ladder share (1 / 0.5 / 0.25 / 0.1). */
+  repeatShare?: number;
 }
 
-/** LitRPG / story RPG fight: a foe this many levels below the player pays LOW_FOE_SHARE. */
+/** Legacy constants — litrpg/rpg no longer apply these; kept so old imports compile. */
 export const LOW_FOE_GAP = 3;
 export const LOW_FOE_SHARE = 0.25;
 
@@ -272,14 +285,14 @@ export function isLowFoe(playerLevel: number | undefined, foeLevel: number | und
 }
 
 /**
- * Order E — how each mode levels on the one engine. PYOA: no XP, no levels. Tabletop: SRD CR XP, every multiplier 1.
- * LitRPG / story RPG keep the researched multipliers (LOOT-RESEARCH §A5, litrpg-xp-review, SUMMARY-29r).
+ * Order E / XP-D1 — mode row. LitRPG / Story RPG: difficulty yes; LOW_FOE and OVER_LEVEL off
+ * (replaced by contentScale). Tabletop / PYOA rows unchanged.
  */
-type Table = Readonly<Record<MilestoneKind, number>> | 'srd';
+type Table = Readonly<Record<MilestoneKind, number>> | 'srd' | 'units';
 export const MODE_XP: Readonly<Record<EngineMode, { xp: boolean; difficulty: boolean; overLevel: boolean; lowFoe: boolean; table: Table }>> = {
   dnd: { xp: true, difficulty: false, overLevel: false, lowFoe: false, table: 'srd' },
-  litrpg: { xp: true, difficulty: true, overLevel: true, lowFoe: true, table: LITRPG_MILESTONE_XP },
-  rpg: { xp: true, difficulty: true, overLevel: true, lowFoe: true, table: STORY_RPG_MILESTONE_XP },
+  litrpg: { xp: true, difficulty: true, overLevel: false, lowFoe: false, table: 'units' },
+  rpg: { xp: true, difficulty: true, overLevel: false, lowFoe: false, table: 'units' },
   pyoa: { xp: false, difficulty: false, overLevel: false, lowFoe: false, table: LITRPG_MILESTONE_XP },
 };
 
@@ -287,7 +300,7 @@ export const MODE_XP: Readonly<Record<EngineMode, { xp: boolean; difficulty: boo
 export function milestoneXp(mode: EngineMode | undefined, kind: MilestoneKind, opts: MilestoneXpOpts = {}): MilestoneXpResult {
   const rules = MODE_XP[mode ?? 'litrpg'] ?? MODE_XP.litrpg;
   if (!rules.xp) return { amount: 0, detail: '' };
-  let result = milestoneXpBase(rules, kind, opts);
+  let result = milestoneXpBase(mode, rules, kind, opts);
   const scale = difficultyRow(opts.strictness).xpScale;
   if (rules.difficulty && scale !== 1 && result.amount > 0) {
     result = { amount: Math.round(result.amount * scale), detail: result.detail };
@@ -298,24 +311,43 @@ export function milestoneXp(mode: EngineMode | undefined, kind: MilestoneKind, o
   if (rules.overLevel && result.amount > 0 && isOverLevel(opts.playerLevel, opts.areaLevel)) {
     result = { amount: overLevelAmount(result.amount), detail: result.detail };
   }
+  if (opts.repeatShare != null && opts.repeatShare !== 1 && result.amount > 0) {
+    result = { amount: Math.max(1, Math.round(result.amount * opts.repeatShare)), detail: result.detail };
+  }
   return result;
 }
 
-function milestoneXpBase(rules: { table: Table }, kind: MilestoneKind, opts: MilestoneXpOpts): MilestoneXpResult {
-  if (rules.table !== 'srd') return { amount: rules.table[kind] ?? 0, detail: '' };
-  if (kind === 'encounter' || kind === 'miniBoss' || kind === 'boss') {
-    const party = Math.max(1, Math.floor(opts.partySize ?? 1));
-    const foes = Math.max(1, Math.floor(opts.count ?? 1));
-    const cr = normalizeCr(opts.cr);
-    if (!cr) return { amount: 0, detail: NO_CR_XP_REASON };
-    const each = crToXp(cr);
-    const base = each * foes;
-    const amount = Math.floor(base / party);
-    return {
-      amount,
-      detail: `CR ${cr} = ${foes > 1 ? `${each} XP × ${foes} = ` : ''}${base} XP ÷ ${party} = ${amount}`,
-    };
+function milestoneXpBase(
+  mode: EngineMode | undefined,
+  rules: { table: Table },
+  kind: MilestoneKind,
+  opts: MilestoneXpOpts
+): MilestoneXpResult {
+  if (rules.table === 'srd') {
+    if (kind === 'encounter' || kind === 'miniBoss' || kind === 'boss') {
+      const party = Math.max(1, Math.floor(opts.partySize ?? 1));
+      const foes = Math.max(1, Math.floor(opts.count ?? 1));
+      const cr = normalizeCr(opts.cr);
+      if (!cr) return { amount: 0, detail: NO_CR_XP_REASON };
+      const each = crToXp(cr);
+      const base = each * foes;
+      const amount = Math.floor(base / party);
+      return {
+        amount,
+        detail: `CR ${cr} = ${foes > 1 ? `${each} XP × ${foes} = ` : ''}${base} XP ÷ ${party} = ${amount}`,
+      };
+    }
+    return { amount: 0, detail: '' };
   }
-  // SRD 5.2.1 as written: XP comes from the challenge rating of monsters overcome, nothing else.
-  return { amount: 0, detail: '' };
+  if (rules.table === 'units' || isUnitXpMode(mode)) {
+    const playerLevel = opts.playerLevel ?? opts.level ?? 1;
+    const amount = unitMilestoneAmount(mode, kind, {
+      playerLevel,
+      foeLevel: opts.foeLevel,
+      contentLevel: opts.contentLevel,
+      areaLevel: opts.areaLevel,
+    });
+    return { amount, detail: '' };
+  }
+  return { amount: rules.table[kind] ?? 0, detail: '' };
 }

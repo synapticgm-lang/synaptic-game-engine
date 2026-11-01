@@ -12,7 +12,7 @@ describe('26t character XP level-ups', () => {
     expect(out.levelsGained).toBe(1);
     expect(out.character.level).toBe(2);
     expect(out.character.xp).toBe(10);
-    expect(out.character.xpToNext).toBe(450);
+    expect(out.character.xpToNext).toBe(187); // XP-D1: levelBar(2) = floor(150×1.25)
     expect(out.notes.some((n) => /Level Up! Now level 2/.test(n))).toBe(true);
   });
 });

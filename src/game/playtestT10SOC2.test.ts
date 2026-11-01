@@ -66,7 +66,8 @@ function rpgSeat(
   } as GameState;
 }
 
-const SKILL_RECEIPT = /^(Deception|Persuasion|Barter|Intimidation): rolled \d+[+-]\d+ vs DC \d+ — .+\. \1 \+\d+ XP \(level \d+\)$/;
+// XP-D1: per-use XP silent; roll chrome always; optional Skill up on rank-up.
+const SKILL_RECEIPT = /^(Deception|Persuasion|Barter|Intimidation): rolled \d+[+-]\d+ vs DC \d+ — .+\.(?: Skill up: .+\.)?$/;
 
 function expectOneSkillRoll(state: GameState, line: string, skill: string, d20 = 14) {
   const attempt = classifySocialSkillAttempt(state, line);

@@ -25,7 +25,8 @@ function litrpg(over: Partial<GameState> = {}): GameState {
     seed: 'sk5',
     engineMode: 'litrpg',
     turn: 3,
-    character: { ...s.character, name: 'Rook', level: 1, xp: 40, skills: {}, skillsGrantedThrough: 1 },
+    // Character level 24 → soft skill cap 50 so SK-5 maths can train through Master.
+    character: { ...s.character, name: 'Rook', level: 24, xp: 40, skills: {}, skillsGrantedThrough: 1 },
     openingEstablishment: { ...(s.openingEstablishment ?? {}), complete: true } as GameState['openingEstablishment'],
     ...over,
   };

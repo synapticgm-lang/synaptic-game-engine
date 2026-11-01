@@ -236,10 +236,12 @@ export function finishSettlementQuestCard(state: GameState, cardId: string): Set
   const done = completeSettlementQuestCard(places, cardId);
   const area = resolveLocalAreaLevel(state);
   const r = milestoneXp(state.engineMode, 'questComplete', {
-    level: area.level,
+    level: area.partyLevel,
     strictness: state.gmStrictness,
     playerLevel: area.partyLevel,
+    // Grey uses unclamped area (rawLevel); AI cannot raise rewards.xp here anyway.
     areaLevel: area.rawLevel,
+    contentLevel: area.rawLevel,
   });
   const item = settlementCardItem(state, cardId);
   return {

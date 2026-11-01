@@ -1,13 +1,14 @@
 /**
- * Fast XP loop (02ac Phase 4) — L2 by T25 design curve.
+ * Fast XP loop aliases — amounts and curve come from xpRules / xpPace (one owner).
  * Awards are code-owned; STATUS shows the reason. No SNAPSHOT/CRAFT essays.
  */
 
-import type { Character, GameState } from './types';
+import type { Character, EngineMode, GameState } from './types';
 import { applyCharacterXpGain } from './characterXp';
-import { LITRPG_MILESTONE_XP } from './xpRules';
+import { LITRPG_MILESTONE_XP, milestoneXp } from './xpRules';
+import { levelBar } from './rules/xpPace';
 
-/** Old key names over the one LitRPG table (xpRules). Drip keys pay 0. */
+/** Old key names over the one LitRPG L1 table (xpRules). Drip keys pay 0. */
 export const FAST_XP_AWARDS = {
   combatTrash: LITRPG_MILESTONE_XP.encounter,
   combatElite: LITRPG_MILESTONE_XP.miniBoss,
@@ -21,37 +22,37 @@ export const FAST_XP_AWARDS = {
   dailyFirstTick: 0,
 } as const;
 
+/** Alias of levelBar growth — L1→L2 = 150, then ×1.25 (XP-D1). */
 export const FAST_XP_CURVE = {
   L1_to_L2: 150,
-  L2_to_L3: 225,
-  L3_to_L4: 340,
-  multiplier: 1.5,
+  get L2_to_L3() {
+    return levelBar('litrpg', 2);
+  },
+  get L3_to_L4() {
+    return levelBar('litrpg', 3);
+  },
+  multiplier: 1.25,
 } as const;
 
 export type CombatXpTier = 'trash' | 'elite' | 'boss';
 export type QuestXpStage = 'accept' | 'tick' | 'complete';
 
-export function combatXpAmount(tier: CombatXpTier): number {
-  if (tier === 'boss') return FAST_XP_AWARDS.combatBoss;
-  if (tier === 'elite') return FAST_XP_AWARDS.combatElite;
-  return FAST_XP_AWARDS.combatTrash;
+export function combatXpAmount(tier: CombatXpTier, mode: EngineMode = 'litrpg', level = 1): number {
+  const kind = tier === 'boss' ? 'boss' : tier === 'elite' ? 'miniBoss' : 'encounter';
+  return milestoneXp(mode, kind, { level, playerLevel: level }).amount;
 }
 
-export function questXpAmount(stage: QuestXpStage): number {
-  if (stage === 'complete') return FAST_XP_AWARDS.questComplete;
-  if (stage === 'accept') return FAST_XP_AWARDS.questAccept;
-  return FAST_XP_AWARDS.questTick;
+export function questXpAmount(stage: QuestXpStage, mode: EngineMode = 'litrpg', level = 1): number {
+  if (stage === 'accept') return 0;
+  const kind = stage === 'complete' ? 'questComplete' : 'questStep';
+  return milestoneXp(mode, kind, { level, playerLevel: level }).amount;
 }
 
 /** Cumulative XP required to *reach* `level` from 0 (L2 = 150). */
-export function xpRequiredForLevel(level: number): number {
+export function xpRequiredForLevel(level: number, mode: EngineMode = 'litrpg'): number {
   if (level <= 1) return 0;
-  let total = FAST_XP_CURVE.L1_to_L2;
-  let step = FAST_XP_CURVE.L1_to_L2;
-  for (let i = 2; i < level; i++) {
-    step = Math.floor(step * FAST_XP_CURVE.multiplier);
-    total += step;
-  }
+  let total = 0;
+  for (let i = 1; i < level; i++) total += levelBar(mode, i);
   return total;
 }
 
@@ -59,8 +60,9 @@ export function awardCombatXp(
   state: GameState,
   encounterTier: CombatXpTier
 ): { state: GameState; xp: number; reason: string } {
-  const xp = combatXpAmount(encounterTier);
-  const applied = applyCharacterXpGain(state.character, xp);
+  const level = state.character?.level ?? 1;
+  const xp = combatXpAmount(encounterTier, state.engineMode, level);
+  const applied = applyCharacterXpGain(state.character, xp, state.engineMode);
   return {
     state: { ...state, character: applied.character },
     xp,
@@ -72,8 +74,9 @@ export function awardQuestXp(
   state: GameState,
   stage: QuestXpStage
 ): { state: GameState; xp: number; reason: string } {
-  const xp = questXpAmount(stage);
-  const applied = applyCharacterXpGain(state.character, xp);
+  const level = state.character?.level ?? 1;
+  const xp = questXpAmount(stage, state.engineMode, level);
+  const applied = applyCharacterXpGain(state.character, xp, state.engineMode);
   return {
     state: { ...state, character: applied.character },
     xp,
@@ -86,16 +89,15 @@ export function checkLevelUp(
 ): { leveledUp: boolean; newLevel?: number; state: GameState } {
   const current = state.character?.level ?? 1;
   const xp = state.character?.xp ?? 0;
-  const needed = state.character?.xpToNext ?? xpRequiredForLevel(current + 1);
+  const needed = state.character?.xpToNext ?? levelBar(state.engineMode, current);
   if (xp < needed) {
     return { leveledUp: false, state };
   }
-  // applyCharacterXpGain(0) no-ops — feed the threshold as a gain of 0 by
-  // subtracting it from xp first, then awarding `needed`.
   const remainderXp = Math.max(0, xp - needed);
   const applied = applyCharacterXpGain(
     { ...(state.character as Character), xp: remainderXp },
-    needed
+    needed,
+    state.engineMode
   );
   if (applied.levelsGained <= 0) {
     return { leveledUp: false, state };

@@ -24,6 +24,15 @@ import { parsePlayerIntent } from './intentParser';
 import { placeIdFromName } from './places';
 import { getSpineNode } from './pyoaSpine';
 import { LITRPG_MILESTONE_XP, NO_CR_XP_REASON, deedXp, encounterKind, milestoneXp, type DeedStep, type MilestoneKind } from './xpRules';
+import {
+  countFightRepeats,
+  countIdentityCompletions,
+  engineQuestLevel,
+  fightRepeatKey,
+  questCompleteRepeatKey,
+  questIdentity,
+  repeatShare,
+} from './rules/xpPace';
 import { realEncounterCr } from './rules/srdMonsters';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { weaponCategory } from './checkRules';
@@ -231,11 +240,25 @@ export function applySandboxXpAwards(
     label: string,
     cr?: string | number | null,
     count?: number,
-    foeLevel?: number
+    foeLevel?: number,
+    extra?: { contentLevel?: number; repeatShare?: number; alsoKeys?: string[] }
   ) => {
     if (hasAward(awardKeys, key)) return;
     awardKeys.push(key);
-    const r = milestoneXp(mode, kind, { level, partySize, cr, count, strictness: state.gmStrictness, ...areaOpts, foeLevel });
+    for (const k of extra?.alsoKeys ?? []) {
+      if (!hasAward(awardKeys, k)) awardKeys.push(k);
+    }
+    const r = milestoneXp(mode, kind, {
+      level,
+      partySize,
+      cr,
+      count,
+      strictness: state.gmStrictness,
+      ...areaOpts,
+      foeLevel,
+      contentLevel: extra?.contentLevel,
+      repeatShare: extra?.repeatShare,
+    });
     if (r.amount <= 0) {
       if (r.detail === NO_CR_XP_REASON) xpNotes.push(`XP: none (${label} — ${r.detail})`);
       return;
@@ -306,13 +329,21 @@ export function applySandboxXpAwards(
     if (outcome === 'victory') wonThisTurn = true;
     if (outcome === 'victory' && encounterKind(ended) === 'boss') bossWon = true;
     if (outcome === 'victory' || outcome === 'parleyResolved') {
+      const placeId = placeIdFromName(loc ?? state.currentLocation ?? 'here');
+      const farmKey = fightRepeatKey(placeId, ended.name);
+      const farmN = mode === 'dnd' || mode === 'pyoa' ? 0 : countFightRepeats(awardKeys, farmKey);
+      const farmShare = mode === 'dnd' || mode === 'pyoa' ? 1 : repeatShare(farmN);
       pay(
         `encounter:${ended.encounterId ?? normalizeNpcKey(ended.name)}:${rec?.turn ?? opts.turn}`,
         encounterKind(ended),
         `${outcome === 'victory' ? 'defeated' : 'resolved'} ${ended.name}`,
         mode === 'dnd' ? realEncounterCr(ended) : ended.cr,
         ended.count,
-        ended.level
+        ended.level,
+        {
+          repeatShare: farmShare,
+          alsoKeys: mode === 'dnd' || mode === 'pyoa' ? [] : [`${farmKey}:${farmN}`],
+        }
       );
     }
   }
@@ -339,21 +370,34 @@ export function applySandboxXpAwards(
     }
   }
 
-  // Quest steps and quest completion.
+  // Quest steps and quest completion. Engine owns XP — Quest.rewards.xp is ignored (AI hint only).
   const beforeById = new Map(opts.questsBefore.map((q) => [q.id, q]));
   for (const after of opts.questsAfter) {
     const before = beforeById.get(after.id);
     if (!before) continue;
+    // AI-supplied rewards.xp must never become the paid amount (kept on the quest for item hints only).
+    void after.rewards?.xp;
+    const qLevel = engineQuestLevel(level, after, areaOpts.areaLevel);
     const beforeDone = new Set((before.objectives ?? []).filter((o) => o.completed).map((o) => o.id));
     for (const obj of after.objectives ?? []) {
       if (!obj.completed || beforeDone.has(obj.id)) continue;
       // Bearings / look-around ticks are orientation, not a milestone.
       if (lookAround || isBearingsStyleObjective(obj.description)) continue;
       const label = stepChip(obj) ?? obj.description.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
-      pay(`quest-tick:${after.id}:${obj.id}`, 'questStep', `quest step: ${label}`);
+      pay(`quest-tick:${after.id}:${obj.id}`, 'questStep', `quest step: ${label}`, undefined, undefined, undefined, {
+        contentLevel: qLevel,
+      });
     }
     if (after.status === 'completed' && before.status !== 'completed') {
-      pay(`quest-complete:${after.id}`, 'questComplete', `quest complete: ${after.name}`);
+      // Per-quest-id idempotency (one instance never pays twice) + giver::task identity ladder.
+      const identity = questIdentity(after);
+      const n = countIdentityCompletions(awardKeys, identity);
+      const share = mode === 'dnd' || mode === 'pyoa' ? 1 : repeatShare(n);
+      pay(`quest-complete:${after.id}`, 'questComplete', `quest complete: ${after.name}`, undefined, undefined, undefined, {
+        contentLevel: qLevel,
+        repeatShare: share,
+        alsoKeys: mode === 'dnd' || mode === 'pyoa' ? [] : [questCompleteRepeatKey(identity, n)],
+      });
     }
   }
 

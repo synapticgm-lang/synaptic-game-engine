@@ -387,22 +387,9 @@ export function extractUpdates(state: GameState, gmText: string): Partial<GameSt
     };
   }
 
-  const xpMatch = gmText.match(/XP:\s*(\d+)\s*\/\s*(\d+)/i);
-  if (xpMatch) {
-    updates.character = {
-      ...(updates.character ?? state.character),
-      xp: parseInt(xpMatch[1], 10),
-      xpToNext: parseInt(xpMatch[2], 10),
-    };
-  }
-
-  const levelMatch = gmText.match(/Level:\s*(\d+)/i);
-  if (levelMatch) {
-    updates.character = {
-      ...(updates.character ?? state.character),
-      level: parseInt(levelMatch[1], 10),
-    };
-  }
+  // XP-D1: never trust AI STATUS for sheet XP / level / xpToNext — engine (sandboxXp / characterXp) owns those.
+  void gmText.match(/XP:\s*(\d+)\s*\/\s*(\d+)/i);
+  void gmText.match(/Level:\s*(\d+)/i);
 
   return updates;
 }

@@ -20,7 +20,7 @@ const T13_RECEIPTS = [
   `Fight: ${FOE} forces the fight`,
   `Fight: VICTORY vs ${FOE} in 3 rounds. The fight is over: ${FOE} is down and cannot fight on.`,
   `Encounter cleared: ${FOE} (victory)`,
-  `XP Gained: 40 (defeated ${FOE})`,
+  `XP Gained: 50 (defeated ${FOE})`,
   'Gold Gained: 5',
   'Loot: [Common] Worn Hand Axe',
 ];

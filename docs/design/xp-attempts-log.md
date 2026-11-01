@@ -97,3 +97,30 @@ If XP-D1 fails, alternatives already researched and not yet tried here: (a) mile
 
 ## XP-D1 results
 (Appended after the T50 runs. Empty until then.)
+
+## XP-D1 build notes (phase A, 1 Nov 2026)
+
+Branch `xp/design`. Unit table in `src/game/rules/xpPace.ts`; `milestoneXp` for litrpg/rpg reads units × xpUnit × contentScale (+ tough-foe bonus on fights); difficulty xpScale still after. Curve: levelBar L1=150 then ×1.25 (`characterXp`). LOW_FOE / OVER_LEVEL removed from MODE_XP litrpg/rpg (dnd/pyoa unchanged).
+
+### unitsPerLevel (LitRPG; Story RPG L2+ = ceil(1.5×))
+
+| Level band | LitRPG units | Notes |
+|---|---|---|
+| L1 | 3 | xpUnit=50; quest step 50, fight 50, First Steps 75 |
+| L2 | 6 | |
+| L3 | 8 | |
+| L4 | 10 | |
+| L5–6 | 12 | |
+| L7–9 | 14 | |
+| L10–14 | 20 | |
+| L15–19 | 24 | |
+| L20+ | 28 | |
+
+### Pace model (`src/game/xpPace.test.ts`)
+
+Assumption: one XP event every 2.2 turns; 65% quest-shaped (2–3 step then complete), 35% on-level fights; seed 42. Tolerances used: L2 at turns 4–8; L3–9 spans 5–35 turns (±10 around 15–25); L10–15 spans 25–75 (±15 around 40–60); quest XP share 55–80% (target 60–70%; completes weigh more than fights). Story RPG ~1.5× slower from L2 measured at turn-of-L4.
+
+### Flat-80 root cause
+
+`encounterKind` matched `\belite\b` on catalog/road `source` strings (density tier "elite" / `road-camp-elite`), so ordinary Story RPG fights paid `miniBoss` = flat 80. Pay is now units × level (miniBoss=2 units), not a second flat table.
+

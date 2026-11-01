@@ -19,11 +19,20 @@ describe('Order E: one XP engine, per-mode rows', () => {
     );
   });
 
-  it('LitRPG and story RPG keep ×1.25 on Hard, the 5% over-level cut and the 25% low-foe share', () => {
+  it('LitRPG and story RPG keep ×1.25 on Hard; LOW_FOE/OVER_LEVEL replaced by contentScale (XP-D1)', () => {
     for (const mode of ['litrpg', 'rpg'] as const) {
-      expect(milestoneXp(mode, 'encounter', hard).amount).toBe(Math.round(LITRPG_MILESTONE_XP.encounter * 1.25));
-      expect(milestoneXp(mode, 'encounter', over).amount).toBe(Math.round(LITRPG_MILESTONE_XP.encounter * 0.05));
-      expect(milestoneXp(mode, 'encounter', { level: 5, foeLevel: 1 }).amount).toBe(LITRPG_MILESTONE_XP.encounter * 0.25);
+      expect(milestoneXp(mode, 'encounter', { ...hard, level: 1, playerLevel: 1, foeLevel: 1 }).amount).toBe(
+        Math.round(LITRPG_MILESTONE_XP.encounter * 1.25)
+      );
+      // Far-below area on a fight with no foe level: content falls back to area, grey floor 5%.
+      expect(
+        milestoneXp(mode, 'encounter', { level: 10, playerLevel: 10, areaLevel: 1, foeLevel: 1 }).amount
+      ).toBe(Math.max(1, Math.round(milestoneXp(mode, 'encounter', { level: 10, playerLevel: 10, foeLevel: 10 }).amount * 0.05)));
+      // gap 3 at L5 (foe clamped): less than full, above the 5% floor — not the old flat 25%.
+      const full = milestoneXp(mode, 'encounter', { level: 5, playerLevel: 5, foeLevel: 5 }).amount;
+      const greyish = milestoneXp(mode, 'encounter', { level: 5, playerLevel: 5, foeLevel: 1 }).amount;
+      expect(greyish).toBeGreaterThan(Math.round(full * 0.05));
+      expect(greyish).toBeLessThan(full);
     }
     expect(milestoneXp('rpg', 'significantPlace').amount).toBe(0);
   });

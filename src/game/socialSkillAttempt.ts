@@ -21,6 +21,7 @@ import { turnRng } from './seededRng';
 import { socialLeverageMods } from './socialLeverage';
 import { ensurePersona, nudgePersona, socialShift, type PersonaEventTag } from './npcPersona';
 import type { SocialProgressionState } from './socialProgression';
+import { skillLevelCap } from './rules/xpPace';
 
 /** The four use-based skills (Barter is distinct from Persuasion). */
 export type UseSocialSkill = 'deception' | 'persuasion' | 'barter' | 'intimidation';
@@ -359,16 +360,26 @@ export function resolveSocialSkillAttempt(
 
   const success = record.outcome === 'success';
   const longShot = success && p <= 0.35;
-  const xpGained = success ? successXpForOdds(p) : failureXpSliver();
-  const { after, leveledUp } = applySkillXp(before, xpGained);
+  const softCap = skillLevelCap(state.character?.level ?? 1);
+  const atCap = before.level >= softCap;
+  const rawXp = atCap ? 0 : success ? successXpForOdds(p) : failureXpSliver();
+  const { after: grown, leveledUp: rawLevel } = applySkillXp(before, rawXp);
+  const after: UseSkillProgress = {
+    level: Math.min(softCap, grown.level),
+    xp: Math.min(softCap, grown.level) < softCap ? grown.xp : 0,
+  };
+  const leveledUp = rawLevel && after.level > before.level;
+  const xpGained = rawXp;
   skills[attempt.skill] = after;
 
   const label = skillLabel(attempt.skill);
   const modStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
   const outcomeWord = success ? (longShot ? 'success (long shot)' : 'success') : 'failed';
-  const receipt =
-    `${label}: rolled ${record.kept}${modStr} vs DC ${dc} — ${outcomeWord}. `
-    + `${label} +${xpGained} XP (level ${after.level})`;
+  // XP-D1: per-use skill XP is silent; only rank-ups produce a skill line (roll chrome stays).
+  const rollBit = `${label}: rolled ${record.kept}${modStr} vs DC ${dc} — ${outcomeWord}.`;
+  const receipt = leveledUp
+    ? `${rollBit} Skill up: ${label}, level ${after.level}.`
+    : rollBit;
 
   const fact = consequenceFact(attempt.skill, attempt.target, success);
 

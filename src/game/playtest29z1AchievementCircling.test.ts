@@ -87,11 +87,10 @@ describe('29z1 — stamp', () => {
 });
 
 describe('29z1 — deed pay by mode', () => {
-  it('LitRPG: first 25, count 50, capstone 100; First Steps stays the flat 75', () => {
-    expect(deedXp('litrpg', 'first').amount).toBe(LITRPG_MILESTONE_XP.significantPlace);
-    expect(deedXp('litrpg', 'count').amount).toBe(LITRPG_MILESTONE_XP.questStep);
-    expect(deedXp('litrpg', 'capstone').amount).toBe(LITRPG_MILESTONE_XP.questComplete);
+  it('LitRPG: first 25, count 50, capstone 100; First Steps stays 75 (XP-D1 deed units)', () => {
     expect(deedXp('litrpg', 'first').amount).toBe(25);
+    expect(deedXp('litrpg', 'count').amount).toBe(50);
+    expect(deedXp('litrpg', 'capstone').amount).toBe(100);
     expect(milestoneXp('litrpg', 'achievement').amount).toBe(75);
     expect(milestoneXp('dnd', 'achievement').amount).toBe(0);
   });

@@ -7,7 +7,7 @@ import { createInitialState } from './defaults';
 import { clampSystemHousing, type SystemPartId } from './systemHousing';
 import { SMALL_XP_PER_DAY, applySandboxXpAwards } from './sandboxXp';
 import { hubsForBibleId } from './outdoorHubs';
-import { LITRPG_MILESTONE_XP, LOW_FOE_SHARE, milestoneXp } from './xpRules';
+import { LITRPG_MILESTONE_XP, milestoneXp } from './xpRules';
 import { FAST_XP_AWARDS } from './xpPolicy';
 import type { ActiveEncounter, EngineMode, GameState, NpcMemory, Quest } from './types';
 
@@ -110,11 +110,15 @@ describe('xp fix 2026-10-14e', () => {
     expect(FAST_XP_AWARDS.questAccept).toBe(0);
   });
 
-  it('7) a foe 3+ levels below pays 25% (LitRPG and story RPG; tabletop unchanged)', () => {
-    const full = LITRPG_MILESTONE_XP.encounter;
-    expect(milestoneXp('litrpg', 'encounter', { level: 4, foeLevel: 2 }).amount).toBe(full);
-    expect(milestoneXp('litrpg', 'encounter', { level: 4, foeLevel: 1 }).amount).toBe(Math.round(full * LOW_FOE_SHARE));
-    expect(milestoneXp('rpg', 'boss', { level: 5, foeLevel: 1 }).amount).toBe(Math.round(LITRPG_MILESTONE_XP.boss * LOW_FOE_SHARE));
+  it('7) XP-D1 contentScale greys far-below foes (replaces flat 25% LOW_FOE); tabletop unchanged', () => {
+    const fullL4 = milestoneXp('litrpg', 'encounter', { level: 4, playerLevel: 4, foeLevel: 4 }).amount;
+    expect(milestoneXp('litrpg', 'encounter', { level: 4, playerLevel: 4, foeLevel: 2 }).amount).toBe(fullL4);
+    const grey = milestoneXp('litrpg', 'encounter', { level: 4, playerLevel: 4, foeLevel: 1 }).amount;
+    expect(grey).toBeLessThan(fullL4);
+    expect(grey).toBeGreaterThanOrEqual(Math.max(1, Math.round(fullL4 * 0.05)));
+    const bossFull = milestoneXp('rpg', 'boss', { level: 5, playerLevel: 5, foeLevel: 5 }).amount;
+    const bossGrey = milestoneXp('rpg', 'boss', { level: 5, playerLevel: 5, foeLevel: 1 }).amount;
+    expect(bossGrey).toBeLessThan(bossFull);
     expect(milestoneXp('dnd', 'encounter', { level: 5, foeLevel: 1, cr: '1' }).amount).toBe(200);
 
     const foe = { name: 'Rat', level: 1, hp: 0, maxHp: 4, encounterId: 'rat' } as ActiveEncounter;
@@ -123,7 +127,7 @@ describe('xp fix 2026-10-14e', () => {
       sandboxAwardKeys: ['achv:first-kill'],
     });
     const r = award(s, { endedEncounter: foe, encounterCleared: true, enemyKilled: true });
-    expect(r.notes.some((n) => n.includes(`XP Gained: ${Math.round(full * LOW_FOE_SHARE)} (defeated Rat`))).toBe(true);
+    expect(r.notes.some((n) => n.includes(`XP Gained: ${grey} (defeated Rat`))).toBe(true);
   });
 
   it('8) small first-time awards cap at 3 per in-game day', () => {

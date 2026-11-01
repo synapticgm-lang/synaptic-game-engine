@@ -37,8 +37,8 @@ describe('28a xpRules — verified 5e tables', () => {
     const d = milestoneXp('dnd', 'encounter', { cr: 2, partySize: 2 });
     expect(d.amount).toBe(225);
     expect(d.detail).toMatch(/450/);
-    const l = milestoneXp('litrpg', 'encounter');
-    expect(l.amount).toBe(40);
+    const l = milestoneXp('litrpg', 'encounter', { level: 1, playerLevel: 1, foeLevel: 1 });
+    expect(l.amount).toBe(50); // XP-D1: 1 unit × xpUnit(L1)=50 (was flat 40)
     expect(l.detail).toBe('');
   });
 

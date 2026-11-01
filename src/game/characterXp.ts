@@ -5,6 +5,7 @@
 
 import type { Character, EngineMode } from './types';
 import { MODE_XP, dndXpToNext } from './xpRules';
+import { levelBar } from './rules/xpPace';
 import { hidesPart, type SystemHousingConfig } from './systemHousing';
 import { presentLevelUp, sharedLevelUp, srdLevelUp } from './rules/advancement';
 import type { Rng } from './rules/dice';
@@ -21,18 +22,13 @@ function onSrdThresholds(character: Character, mode?: EngineMode): boolean {
 }
 
 /**
- * Apply XP and cascade level-ups. Every character gains HP per level by the SRD rule (rules/advancement): a SRD
- * sheet also gains its class's features, ASI and spells; a character with no sheet takes the d8 Hit Die at its
- * fixed value + CON. The mode profile decides what the level-up lines show.
- * The XP bar is still per mode: tabletop on the SRD thresholds, LitRPG and story RPG on the ×1.5 curve from 150
- * (a mode maths difference held for John — tt-build-7).
+ * Apply XP and cascade level-ups. LitRPG / Story RPG use levelBar (×1.25 after L1→L2 = 150).
+ * A save that already has xpToNext keeps it until its next level-up, then the new curve applies.
  */
 export function applyCharacterXpGain(
   character: Character,
   xpGain: number,
-  /** 'dnd' uses the SRD thresholds; other modes keep the ×1.5 curve. */
   mode?: EngineMode,
-  /** A housing with level off still levels the character, hidden: no level note. */
   housing?: SystemHousingConfig | null,
   rng?: Rng
 ): CharacterXpApplyResult {
@@ -41,7 +37,7 @@ export function applyCharacterXpGain(
   }
   const srdBar = onSrdThresholds(character, mode);
   let next: Character = { ...character, xp: (character.xp ?? 0) + xpGain };
-  let xpToNext = srdBar ? dndXpToNext(next.level ?? 1) : Math.max(1, character.xpToNext ?? 150);
+  let xpToNext = srdBar ? dndXpToNext(next.level ?? 1) : Math.max(1, character.xpToNext ?? levelBar(mode, character.level ?? 1));
   let levelsGained = 0;
   const notes: string[] = [];
   while ((next.xp ?? 0) >= xpToNext) {
@@ -51,7 +47,8 @@ export function applyCharacterXpGain(
     next = up.character;
     levelsGained += 1;
     notes.push(...presentLevelUp(next.srd ? 'dnd' : mode, up.info));
-    xpToNext = srdBar ? dndXpToNext(next.level) : Math.floor(xpToNext * 1.5);
+    // After a level-up, always take the current curve (no save migration of the old bar).
+    xpToNext = srdBar ? dndXpToNext(next.level) : levelBar(mode, next.level);
   }
   return {
     character: { ...next, xpToNext },
@@ -71,10 +68,10 @@ export function characterXpGainBetween(
   const fromLevel = before.level ?? 1;
   const toLevel = after.level ?? fromLevel;
   if (toLevel <= fromLevel) return Math.max(0, (after.xp ?? 0) - (before.xp ?? 0));
-  let xpToNext = srdBar ? dndXpToNext(fromLevel) : Math.max(1, before.xpToNext ?? 150);
+  let xpToNext = srdBar ? dndXpToNext(fromLevel) : Math.max(1, before.xpToNext ?? levelBar(mode, fromLevel));
   let gain = xpToNext - (before.xp ?? 0);
   for (let level = fromLevel + 1; level < toLevel; level++) {
-    xpToNext = srdBar ? dndXpToNext(level) : Math.floor(xpToNext * 1.5);
+    xpToNext = srdBar ? dndXpToNext(level) : levelBar(mode, level);
     gain += xpToNext;
   }
   return Math.max(0, gain + (after.xp ?? 0));

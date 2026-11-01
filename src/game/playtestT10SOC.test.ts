@@ -82,7 +82,9 @@ describe('T10SOC use-based social skills', () => {
     expect(resolved.skillAfter.xp + resolved.skillAfter.level).toBeGreaterThan(0);
     expect(resolved.receipt).toMatch(/^Deception: rolled 18/);
     expect(resolved.receipt).toMatch(/success/);
-    expect(resolved.receipt).toMatch(/Deception \+\d+ XP/);
+    // XP-D1: per-use skill XP is silent; rank-up lines only when leveledUp.
+    if (resolved.leveledUp) expect(resolved.receipt).toMatch(/Skill up:/);
+    else expect(resolved.receipt).not.toMatch(/\+\d+ XP/);
     expect(resolved.fact).toMatch(/believes/i);
     expect(resolved.state.arcDirector?.socialProgression?.useSkills?.deception?.xp).toBeGreaterThan(0);
   });

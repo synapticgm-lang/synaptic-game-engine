@@ -148,13 +148,15 @@ describe('29r XP in every mode', () => {
     expect(first.places![0].questCards![0].takenTurn).toBe(2);
   });
 
-  // Order E: the over-level cut is LitRPG / Story RPG only; tabletop pays the plain SRD CR XP (multipliers 1).
+  // XP-D1: contentScale greys far-below content (G = 5+floor(L/10)); tabletop stays SRD-only.
   it('six levels above the area pays 5 percent in LitRPG and Story RPG, full CR XP in tabletop', () => {
     const cut = (n: number) => (n < 1 ? 0 : Math.max(1, Math.round(n * 0.05)));
+    const litFull = milestoneXp('litrpg', 'questComplete', { level: 10, playerLevel: 10, contentLevel: 10 }).amount;
     const lit = finishSettlementQuestCard(st('litrpg', 10, 1), cardOf(st('litrpg', 10, 1)).id);
-    expect(lit.xp).toBe(cut(100));
+    expect(lit.xp).toBe(cut(litFull));
+    const rpgFull = milestoneXp('rpg', 'questComplete', { level: 10, playerLevel: 10, contentLevel: 10 }).amount;
     const rpg = finishSettlementQuestCard(st('rpg', 10, 1), cardOf(st('rpg', 10, 1)).id);
-    expect(rpg.xp).toBe(cut(100));
+    expect(rpg.xp).toBe(cut(rpgFull));
     // D&D: a settlement card pays no XP at all (SRD: monster CR only).
     const dnd = finishSettlementQuestCard(st('dnd', 10, 1), cardOf(st('dnd', 10, 1)).id);
     expect(dnd.xp).toBe(0);
@@ -162,9 +164,11 @@ describe('29r XP in every mode', () => {
     const kinds: MilestoneKind[] = ['questComplete', 'encounter', 'significantPlace', 'significantPerson', 'dungeonCleared', 'roomCleared'];
     for (const mode of ['litrpg', 'rpg', 'dnd'] as const) {
       for (const kind of kinds) {
-        const full = milestoneXp(mode, kind, { level: 10, cr: 1 }).amount;
-        const over = milestoneXp(mode, kind, { level: 10, cr: 1, playerLevel: 10, areaLevel: 4 }).amount;
-        const near = milestoneXp(mode, kind, { level: 10, cr: 1, playerLevel: 10, areaLevel: 5 }).amount;
+        const full = milestoneXp(mode, kind, { level: 10, cr: 1, playerLevel: 10, foeLevel: 10, contentLevel: 10 }).amount;
+        // gap 6 at L10 → G=6 → floor 5%
+        const over = milestoneXp(mode, kind, { level: 10, cr: 1, playerLevel: 10, areaLevel: 4, foeLevel: 4, contentLevel: 4 }).amount;
+        // gap 2 → full
+        const near = milestoneXp(mode, kind, { level: 10, cr: 1, playerLevel: 10, areaLevel: 8, foeLevel: 8, contentLevel: 8 }).amount;
         expect(over).toBe(mode === 'dnd' ? full : cut(full));
         expect(near).toBe(full);
       }

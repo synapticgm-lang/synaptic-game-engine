@@ -21,6 +21,7 @@ import {
   sceneKey,
   techniqueReady,
 } from './librarySkills';
+import { skillLevelCap } from './xpPace';
 
 export interface SkillSettle {
   state: GameState;
@@ -220,6 +221,11 @@ export function settleSkillUse(state: GameState, input: string, opts: SkillUseOp
     if (!success) {
       if (opts.craftAttempt) next = applyFailedCraftMaterials(next, opts.craftAttempt.name, opts.craftAttempt.qty);
     } else if ((rec.level ?? 0) < SKILL_LEVEL_CAP) {
+      // XP-D1: soft cap by character level — practice adds nothing at the cap until the next level.
+      const softCap = skillLevelCap(next.character?.level ?? 1);
+      if ((rec.level ?? 0) >= softCap) {
+        // Silent no-op at the soft cap (no chat/status line).
+      } else {
       const gain =
         longShot && tier && (tier === 'Journeyman' || tier === 'Expert' || tier === 'Master')
           ? longShotBoost(tier)
@@ -227,8 +233,9 @@ export function settleSkillUse(state: GameState, input: string, opts: SkillUseOp
       if (gain > 0) {
         const before = rec.level ?? 0;
         const applied = applySkillXp(rec.level ?? 0, rec.xp ?? 0, gain);
-        rec.level = applied.level;
-        rec.xp = applied.xp;
+        // Do not cross the soft cap on this use.
+        rec.level = Math.min(softCap, applied.level);
+        rec.xp = rec.level < softCap ? applied.xp : 0;
         rec.rank = rankFromLevel(rec.level);
         rec.uses = (rec.uses ?? 0) + 1;
         if (applied.leveled && rec.level > before) {
@@ -252,6 +259,7 @@ export function settleSkillUse(state: GameState, input: string, opts: SkillUseOp
             });
           }
         }
+      }
       }
     }
   }
