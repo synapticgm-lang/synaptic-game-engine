@@ -5514,7 +5514,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           authoredStartPage() ||
           stitchText;
         const diceOpen = authoredPyoaDiceLine(authoredBoot ?? newState);
-        if (diceOpen) openingText = \\n\n\;
+        if (diceOpen) openingText = `${openingText}\n\n${diceOpen}`;
       }
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);

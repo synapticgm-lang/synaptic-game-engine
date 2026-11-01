@@ -4,15 +4,18 @@
  *   - Umbra spine shape (startId, bibleId, stake, endingId, variants)
  *   - Pick books (start, slug, kind doom/ending)
  *   - Dice books (dice/rules, check/recovery/reward)
- * Loads from bundled content/pyoa (and src/data/pyoa/umbraBook.json).
+ * Loads from bundled JSON (Umbra under src/data; others under content/pyoa).
  * Validates at load; fails loudly when strict (default in tests/dev).
+ *
+ * Browser-safe: no node:fs — static imports only (same pattern as Umbra).
  */
 
-import { readFileSync, existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import umbraBook from '@/data/pyoa/umbraBook.json';
+import saltglassBook from '../../content/pyoa/saltglass/book.json';
+import vesperholdBook from '../../content/pyoa/vesperhold/book.json';
+import tideBook from '../../content/pyoa/dice/book.json';
+import cinderfallBook from '../../content/pyoa/cinderfall/book.json';
+import underlibraryBook from '../../content/pyoa/underlibrary/book.json';
 import { getPyoaBookCatalogEntry, type PyoaBookCatalogEntry } from './pyoaBookCatalog';
 import type {
   CompiledPyoaBook,
@@ -68,32 +71,16 @@ type RawBook = {
   nodeCount?: number;
 };
 
+const BUNDLED_RAW: Record<string, RawBook> = {
+  'umbra-protocol': umbraBook as unknown as RawBook,
+  saltglass: saltglassBook as unknown as RawBook,
+  vesperhold: vesperholdBook as unknown as RawBook,
+  'tide-that-did-not-return': tideBook as unknown as RawBook,
+  cinderfall: cinderfallBook as unknown as RawBook,
+  underlibrary: underlibraryBook as unknown as RawBook,
+};
+
 const cache = new Map<string, CompiledPyoaBook>();
-
-function repoRootFromHere(): string {
-  // src/game → repo root
-  try {
-    const here = dirname(fileURLToPath(import.meta.url));
-    return resolve(here, '../..');
-  } catch {
-    return process.cwd();
-  }
-}
-
-function contentBookPath(folder: string): string {
-  const root = repoRootFromHere();
-  if (folder === 'umbra') {
-    const built = join(root, 'content/pyoa/umbra/book.built.json');
-    if (existsSync(built)) return built;
-    return join(root, 'src/data/pyoa/umbraBook.json');
-  }
-  return join(root, 'content/pyoa', folder, 'book.json');
-}
-
-function readRawJson(path: string): RawBook {
-  const text = readFileSync(path, 'utf8');
-  return JSON.parse(text) as RawBook;
-}
 
 function exitId(e: RawExit, index: number, nodeId: string): string {
   const raw = (e.id || e.label || e.intent || `x${index}`).toString().trim();
@@ -248,23 +235,15 @@ export function adaptRawBook(
   };
 }
 
-function loadUmbraRaw(): RawBook {
-  return umbraBook as unknown as RawBook;
-}
-
-/** Load raw JSON for a catalog entry (node / vitest). */
+/** Load raw JSON for a catalog entry (bundled static imports). */
 export function loadRawPyoaBook(bookId: string): RawBook {
   const entry = getPyoaBookCatalogEntry(bookId);
   if (!entry) throw new Error(`Unknown PYOA book id: ${bookId}`);
-  if (entry.id === 'umbra-protocol') {
-    // Prefer bundled import (always present in app + tests).
-    return loadUmbraRaw();
+  const raw = BUNDLED_RAW[entry.id];
+  if (!raw) {
+    throw new Error(`PYOA book bundle missing for ${entry.id}`);
   }
-  const path = contentBookPath(entry.folder);
-  if (!existsSync(path)) {
-    throw new Error(`PYOA book file missing for ${entry.id}: ${path}`);
-  }
-  return readRawJson(path);
+  return raw;
 }
 
 export interface LoadPyoaBookOptions {

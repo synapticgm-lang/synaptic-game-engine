@@ -7,6 +7,7 @@ import type { GameState } from './types.ts';
 import { aimsAtSelf } from './intentParser.ts';
 import { setPlayPhase } from './playPhase.ts';
 import { pyoaCondHolds, resolvePyoaPage, type PyoaCond, type PyoaPageVariant } from './pyoaCond.ts';
+import { isAuthoredPyoaBookId } from './pyoaBookCatalog.ts';
 const umbraBook = { startId: 'up-bell-tower', nodes: [] };
 
 export type PyoaSpineNodeId = string;
@@ -261,7 +262,7 @@ export function spineBibleSupported(bibleId: string | undefined | null): boolean
 }
 
 export function isAuthoredPyoaBook(bibleId: string | undefined | null): boolean {
-  return bibleId === 'umbra-protocol';
+  return isAuthoredPyoaBookId(bibleId);
 }
 
 export function getSpineNode(id: string | undefined | null): PyoaSpineNode | undefined {

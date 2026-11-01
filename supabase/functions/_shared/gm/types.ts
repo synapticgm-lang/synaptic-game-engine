@@ -1085,6 +1085,8 @@ export interface GameState {
   pyoaBranchLedger?: import('./pyoaBranchLedger.ts').PyoaBranchLedger;
   /** PYOA spine v1 — Thornferry curated nodes (other bibles omit). */
   pyoaSpine?: import('./pyoaSpine.ts').PyoaSpineState;
+  /** Authored offline PYOA book play (six bundled gamebooks: pick + 2d6 dice). */
+  pyoaBookPlay?: import('./pyoaBookTypes.ts').PyoaBookPlayState;
   /** Frozen opening invariants for this run. */
   campaignContract?: import('./campaignContract.ts').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */

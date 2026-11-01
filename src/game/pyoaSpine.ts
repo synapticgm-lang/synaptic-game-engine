@@ -7,8 +7,8 @@ import type { GameState } from './types';
 import { aimsAtSelf } from './intentParser';
 import { setPlayPhase } from './playPhase';
 import { pyoaCondHolds, resolvePyoaPage, type PyoaCond, type PyoaPageVariant } from './pyoaCond';
-import umbraBook from '@/data/pyoa/umbraBook.json';
 import { isAuthoredPyoaBookId } from './pyoaBookCatalog';
+import umbraBook from '@/data/pyoa/umbraBook.json';
 
 export type PyoaSpineNodeId = string;
 
