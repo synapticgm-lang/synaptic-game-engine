@@ -1,0 +1,88 @@
+{
+ "batch": "vh-6-1-3-10",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-1-3-10": {
+   "title": "The Granary Hound",
+   "text": "Coarse rye crumbs scatter across damp flags as a starving stray hound lowers its wedge-shaped head, baring yellow teeth and snarling directly at your travel-worn boots. The creature stands over a crust of moldy bread beneath the deep, soot-greased stone arch of the lower granary, its ribs heaving beneath matted fur while the bronze clapper hums a low, sympathetic vibration against your spine. Biscuit stamps a stubborn hoof in the rising mud, ears pinned back against the chill river wind. You must decide how to deal with the snarling beast blocking the narrow path forward.\n\nDo you step past the snapping jaws and risk a torn hem, offer a scrap from your rations to quiet the guard dog, or retrace your steps before the rising water cuts off the dry masonry entirely?",
+   "exits": [
+    "Step past the snapping jaws",
+    "Toss a ration scrap",
+    "Quiet the hungry hound gently",
+    "Turn back to the quay"
+   ]
+  },
+  "vh-6-1-3-11": {
+   "title": "The Submerged Shed",
+   "text": "Dark river water laps against the rotting wooden joists of the half-submerged boat-shed, smelling sharply of stagnant silt and old grease. A desperate smuggler named Vetch crouches upon a barrel, his fingers trembling as he begs you to tuck a heavy, canvas-wrapped sack of contraband tin deep beneath your mule blanket. Outside, the slate-grey current rises another notch against the pilings, threatening to swallow the remaining dry floorboards before you can make up your mind. Biscuit huffs a wet breath into the gloom, uneasy at the smell of untaxed metal and wet canvas.\n\nDo you shoulder the smuggler's burden and push onward through the flood, refuse the risky cargo to keep your own path clear, or search the shed for another way out?",
+   "exits": [
+    "Hide the contraband tin",
+    "Refuse the risky cargo"
+   ]
+  },
+  "vh-6-1-3-12": {
+   "title": "The Asleep Winchman",
+   "text": "Heavy iron chains groan against rusted pulleys along the slipway as the river current surges higher against the stone wharves. An exhausted winch-man named Gorm sits slumped upright on a timber baulk, his greasy wool cap pulled down hard over his eyes while his chest rises and falls in deep, ragged breaths. A heavy wrench dangles loosely from his calloused hand, inches from the locking gear that holds the upper cable drum still. Biscuit shifts restlessly behind you, the clapper humming a low, steady note against the chill mountain air.\n\nDo you slip past the sleeping worker without waking him, rouse him to ask about the cable tension, or check the winch drum yourself?",
+   "exits": [
+    "Slip past without waking him",
+    "Wake the tired winch-man",
+    "Turn back to the quay"
+   ]
+  },
+  "vh-6-1-3-13": {
+   "title": "The Catwalk Tally",
+   "text": "Icy spray from a fractured lead drainage pipe pelts your neck as you step across the narrow timber catwalk suspended above the churning tail-race. A nervous clerk named Penn stands ankle-deep in puddles, frantically checking off cargo tallies on a sodden parchment while ink runs in purple streaks down his knuckles. Below the damp planks, the river tears at the foundation stones with a hungry roar, sending tremors up through the wooden framing. Biscuit plants all four hooves firmly on the balks, refusing to take another stride until you decide the route.\n\nDo you hurry across the shaking timber before the pipe bursts further, wait for the clerk to clear the path, or turn back to safer ground?",
+   "exits": [
+    "Hurry across the shaking timber",
+    "Wait for the clerk to move",
+    "Step carefully around the tallies"
+   ]
+  },
+  "vh-6-1-3-14": {
+   "title": "The Cleaver in the Alley",
+   "text": "Sparks from a hidden forge flicker against the slick brickwork of a soot-choked alley behind the foundry. A scarred veteran named Drake sits on an overturned coal tub, methodically drawing a broad meat-cleaver back and forth across a damp sandstone block with a steady, rasping rhythm. The metallic scrape echoes loudly above the distant rumble of the mountain water, and his cold eyes do not leave your boots as you approach. Biscuit flattens his ears against the dark stone walls, sensing the tension in the narrow passage.\n\nDo you greet the veteran with a steady voice and walk past, offer to trade a flask of mountain water, or turn back to the broader lane?",
+   "exits": [
+    "Walk past the scarred veteran"
+   ]
+  },
+  "vh-6-1-3-15": {
+   "title": "The Child by the Peat",
+   "text": "Black peat briquettes tower mountain-high beside the damp foundry wall, shedding fine coal-dust that settles in your eyelashes and greases the mule's flanks. A shivering child named Fay crouches near the stack, holding out a chipped porcelain cup and whispering a dry plea for a single drop of clean water from your skin. The air tastes of sulfur and unburned coal, heavy with the chill breath of the lower gorges. Biscuit lowers his heavy head toward the ground, blowing a warm ring of condensation into the soot.\n\nDo you share your dwindling water with the child, press onward toward the furnace without stopping, or check the peat stacks for a sheltered path?",
+   "exits": [
+    "Share your water with Fay",
+    "Push onward past the stack"
+   ]
+  },
+  "vh-6-1-4-0": {
+   "title": "The Iron Gates",
+   "text": "Thick, acrid smoke rolls across the cobblestones as towering black iron gates loom out of the gloom. A nervous guard named Skel stands just beyond the spiked bars, rapidly firing warning sparks from a heavy flint-lock pistol to drive back a murmuring crowd of desperate townsfolk. Every flash illuminates the scars on his knuckles and the frantic roll of his eyes. Behind him, the great foundry throbs like a wounded animal beneath the weight of the mountain.\n\nDo you call out to the guard to lower the bars, press closer to the iron alongside the crowd, or look for a side entrance?",
+   "exits": [
+    "Call out to the nervous guard"
+   ]
+  },
+  "vh-6-1-4-1": {
+   "title": "The Soot-Caked Hinges",
+   "text": "Heavy soot cakes the massive iron hinges of the outer yard, muffling the rhythmic pound of hammers from within the dark complex. An anxious foreman named Brind runs a blackened finger along a stress-fracture in the metal, muttering curses as another tremor shakes the masonry. The air is thick with the stench of burning coke and heated scale, and the copper clapper on your back hums with a sharp, warning frequency. Biscuit stamps nervously against the gritty flagstones.\n\nDo you offer to help the foreman inspect the buckling frame, push past him into the courtyard, or wait for him to open the way?",
+   "exits": [
+    "Help the foreman inspect the hinges",
+    "Push past into the courtyard"
+   ]
+  },
+  "vh-6-1-4-2": {
+   "title": "The Blistering Portal",
+   "text": "Waves of blistering heat wash over your face from the sealed iron portal, carrying the metallic tang of molten slag and scorched coal. A sweating apprentice named Jora frantically splashes bucket-water onto the glowing bolts, his skin reddened and blistered by the relentless backdraft. Steam hisses violently into the dim chamber, clouding your vision and turning the air to hot soup. The great bronze clapper grows uncomfortably warm within its padded cradle against your shoulder blades.\n\nDo you help the apprentice douse the red-hot bolts, wait for the steam to clear before stepping forward, or retreat from the intense heat?",
+   "exits": [
+    "Help douse the glowing bolts"
+   ]
+  },
+  "vh-6-1-4-3": {
+   "title": "The Warm Buttress",
+   "text": "Massive blocks of dark granite radiate a deep, comforting warmth against your shoulder as you lean for a brief second against the brick buttress. A weary stoker named Kelp sits in the shelter of the masonry, wiping soot from his forehead with a rag and pointing a scarred finger toward the stubborn iron latch of the inner door. The low, continuous roar of the great furnace vibrates through the soles of your boots, drowning out the river below. Biscuit lowers his long ears and lets out a long, shuddering sigh.\n\nDo you reach out to force the stubborn latch, ask the stoker for assistance with the heavy bolt, or pause to rest your aching muscles against the warm stone?",
+   "exits": [
+    "Force the stubborn latch open",
+    "Ask the stoker for help"
+   ]
+  }
+ },
+ "missing": []
+}

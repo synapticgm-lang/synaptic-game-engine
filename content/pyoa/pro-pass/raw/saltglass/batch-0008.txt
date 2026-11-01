@@ -1,0 +1,28 @@
+MODEL Pro
+
+[
+{
+"section": "sg-1-1-2-9",
+"field": "page",
+"old": "stunted, gray thorn-tree",
+"new": "stunted, grey thorn-tree",
+"kind": "prose",
+"reason": "US spelling"
+},
+{
+"section": "sg-1-1-2-9",
+"field": "exit:0",
+"old": "Walk past the ditch-diggers laboring with wooden shovels",
+"new": "Walk past the ditch-diggers labouring with wooden shovels",
+"kind": "choice",
+"reason": "US spelling"
+},
+{
+"section": "sg-1-1-2-10",
+"field": "page",
+"old": "desert hare, marveling at how",
+"new": "desert hare, marvelling at how",
+"kind": "prose",
+"reason": "US spelling "
+}
+]

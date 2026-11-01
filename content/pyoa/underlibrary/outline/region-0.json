@@ -1,0 +1,26 @@
+{
+ "beats": {
+  "ul-0-001": "You stand at the grease-stained Returns Desk as brass clocks chime midnight, sorting damp volumes while the night-porter warms his fingers over a smoky tallow lamp.",
+  "ul-0-017": "A damp, folded parchment left upon your sorting trolley reveals Thessaly Marr's urgent handwriting warning that the Hundredth Door has swung open.",
+  "ul-0-038": "You step past the squeaking wicker gate into the shifting labyrinth of the stack-ways, holding your flickering lamp high as the Long Closing countdown begins."
+ },
+ "hubs": {
+  "ul-0-002": {
+   "place": "The Returns Hall",
+   "situation": "Shelvers sort mounds of newly returned texts under flickering tallow lamps while searching for any clue regarding the missing Archivist."
+  },
+  "ul-0-018": {
+   "place": "The Sorting Annex",
+   "situation": "Overcrowded book-trolleys rattle past towering rows of moving pine shelves while rival junior pages whisper of the opening vault."
+  }
+ },
+ "chains": {
+  "ul-0-002/0": "You inspect the damp invoice pile using sharp scholarly observation, risking a paper cut from a poisoned page to unearth the secret docket.",
+  "ul-0-002/1": "You decipher the smudged marginalia on the ledger's edge through careful academic focus, risking an ink-stain hex to discover a hidden corridor key.",
+  "ul-0-002/2": "You translate the night-porter's cryptic mumbling by studying past roster sheets, risking a bout of exhaustion to secure his old brass sorting stamp.",
+  "ul-0-018/0": "You study the complex Dewey decimal shift patterns to predict the next aisle collision, risking a crushing bookshelf to find a dry leather pouch.",
+  "ul-0-018/1": "You trick the suspicious lending clerk with a clever falsehood about missing fines, risking a public reprimand to pocket a bundle of linen twine.",
+  "ul-0-018/2": "You flatter the grumpy cataloguer into turning a blind eye to your wandering, risking a formal demerit to gain a pinch of protective alum powder.",
+  "ul-0-018/3": "You research the ancient floor-weight equations in the dusty blue folios, risking a collapsed stack to retrieve an ivory bone-handled bookmark."
+ }
+}

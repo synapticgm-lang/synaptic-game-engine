@@ -1,0 +1,117 @@
+{
+ "batch": "ul-2-116",
+ "sections": {
+  "ul-2-116": {
+   "title": "The Sunken Chest",
+   "text": "Dark galleried shelving leans over the ink-sluice like ancient ribs, casting long, wavering shadows across the bubbling surface. Heavy wooden crates and waterlogged ledgers drift in the sluggish black channel, churning against a rusted bulkhead. You prod the swirling current with a spare bracket-pole, guiding a heavy, iron-bound chest away from the suction point. The eddy slackens just enough for the latch to snag upon a rusted mooring ring near the stone bank, yielding a trove of vibrant, sealed wax blocks.\n\nRich purples and deep indigos flake off the wooden lid, smelling faintly of rendered tallow and dried resin, preserved from some long-forgotten departmental audit.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry open the damp wooden latch"
+   ]
+  },
+  "ul-2-117": {
+   "title": "Deceiving the Current",
+   "text": "Swirling black water laps against the crumbling stone plinth where you balance, throwing up thick droplets of iron-scented gall. A heavy, iron-bound chest bobs just beyond arm's reach in the churning backwater, caught in a treacherous vortex of discarded book-scraps. You nudge a floating ledger into the main eddy, hoping the sudden weight will disrupt the suction and force the submerged prize toward the shallow bank. Your fingers tighten around the slippery metal rod as the whirlpool shifts unpredictably beneath the surface.",
+   "check": "Redirect the swirling vortex with debris",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-118": {
+   "title": "Snagged in the Sluice",
+   "text": "Treacherous undercurrents catch the floating ledger and spin it violently against your shins, knocking your boots out from under the stone ledge. Icy writing fluid floods your coat pockets, ruining your spare lamp wicks and soaking deep into your wool trousers. You scramble backward up the slick masonry, coughing up bitter traces of gall as the iron-bound chest slips forever beneath the dark surface. The heavy loss of lamp-oil leaves your lantern sputtering with a thin, yellow flame that barely cuts through the damp haze.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl clear of the black water"
+   ]
+  },
+  "ul-2-119": {
+   "title": "Recovered Sealing Waxes",
+   "text": "Heavy iron-bound wood bumps against the mossy bank, settling firmly into the grit as the dark eddies finally lose their grip. You throw back the swollen lid to find neat rows of preserved sealing sticks nestled in velvet padding, untouched by the biting ink. Fingers trace the cool, smooth surfaces of crimson, amber, and deepest black wax, salvaged from a forgotten departmental archive.\n\nWhether retrieved with effortless cunning or fished from the froth through sheer stubborn endurance, this little prize will open many locked filing drawers ahead.",
+   "check": "",
+   "grant": "assorted coloured sealing waxes",
+   "exits": [
+    "Follow the winding passage onward"
+   ]
+  },
+  "ul-2-120": {
+   "title": "The Shallow Bar",
+   "text": "Sluggish ink-channels divide around a long ridge of grey shale that breaks the black surface like the spine of a sleeping leviathan. Careful inspection of the bubbling ripples reveals a steady, shallow shelf where the current loses its bite against the subterranean masonry. You wade through knee-deep writing fluid, using your long brass measuring rod to probe the sludge for hidden drop-offs. A glint of polished metal catches your eye from a niche between two sunken book-cases near the shale bar.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach into the dark niche"
+   ]
+  },
+  "ul-2-121": {
+   "title": "Reading the Flow",
+   "text": "Bitter mist rises from the ink-weir, stinging your eyes as you study the chaotic geometry of the moving shelves and swirling black pools. A faint, rhythmic bubbling pattern suggests a submerged barrier of solid stone cutting across the turbulent channel just beneath the surface. You map the velocity of the drifting debris with practiced precision, calculating where a dry footing might hold against the pressure. Your boots test the slick edge of the shale bar while the roaring current strains against your shins.",
+   "check": "Calculate the safe stone crossing",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-122": {
+   "title": "Swamped by the Weir",
+   "text": "Sudden turbulence surges over the submerged ridge, sweeping your feet out from under you and plunging you into the icy writing fluid. You kick hard against the heavy current, bruising your ribs sharply against an iron shelving bracket before hauling yourself onto the bank. Your lantern glass cracks in the commotion, leaking precious oil and plunging half the alcove into deep, flickering shadows. The physical toll leaves a dull, throbbing ache in your side and a heavy film of black ink caked over your fingers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself onto the ledge"
+   ]
+  },
+  "ul-2-123": {
+   "title": "The Silver Quill-Case",
+   "text": "Shale footing holds firm beneath your boots, offering a narrow, dry pathway through the heart of the roaring ink-weir. You reach deep into the alcove's recess, fingers closing around a remarkably dry, chased silver cylinder resting upon a forgotten pedestal. The hinged lid springs open with a clean snap, revealing an intact set of matched nibs carved from pale goose bone.\n\nWhether found with calm precision or snatched from the rushing flood through sheer grit, this delicate case promises steady service in the deep stacks.",
+   "check": "",
+   "grant": "intact quill-case of silver",
+   "exits": [
+    "Return to the ink-weir junction"
+   ]
+  },
+  "ul-2-124": {
+   "title": "Across the Dark Spray",
+   "text": "Plunging deeper into the shifting stacks, you find your path blocked by a wide gap of churning ink spanned only by jagged, moss-covered stepping-stones. Dark spray blankets the stonework, making every foothold treacherous and slick with old paper pulp. You time your movement with the rhythmic surge of the black fluid, stepping lightly from one damp outcrop to the next. The air grows thick with the smell of wet parchment and cold stone as the distant lanterns flicker against the damp walls.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance to the next stepping-stone"
+   ]
+  },
+  "ul-2-125": {
+   "title": "The Slick Crossing",
+   "text": "Droplets of dark ink patter against your canvas hood like a steady autumn drizzle from the vaulted ceiling above. You balance carefully on the edge of a basalt block, watching the heavy writing fluid swirl in the deep trough between the foundations. A sudden gust of warm, dry air sweeps up from the lower levels, carrying the faint, dry rustle of a thousand turning pages. You adjust your shoulder strap and take another steadying breath before negotiating the final stretch of the wet causeway.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step toward the darker archway"
+   ]
+  },
+  "ul-2-126": {
+   "title": "Leaping the Spray",
+   "text": "Black spray drenches your wool coat as you launch yourself toward a mossy outcrop jutting from the swirling ink-weir. The landing stone tilts dangerously under your weight, sending a shower of loose mortar fragments tumbling into the dark fluid below. You throw your arms wide to maintain balance, fighting the sudden momentum that threatens to pitch you headfirst into the boiling channel. Your boots slide half an inch on the slick, ink-stained slime before finding a stubborn ridge of rough granite.",
+   "check": "Leap across the slick stones",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-127": {
+   "title": "Slips in the Spray",
+   "text": "Treacherous moss gives way beneath your boot heel, pitching you sideways into the cold, shallow margin of the ink-channel. You scrape your palms raw against the sharp corner of a cast-iron shelving upright, leaving red streaks mixed with black fluid. The sudden impact drives the breath from your lungs, forcing you to huddle against the damp masonry until your ribs stop aching. Although you manage to crawl clear of the channel, your shins are badly bruised and your oilskin cloak is torn at the shoulder.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your breath and stand"
+   ]
+  },
+  "ul-2-128": {
+   "title": "The Oilskin Gaiters",
+   "text": "Surefooted balance carries you lightly across the last slick stone, landing with a soft thud on the dry flagged floor of the outer gallery. A discarded leather bundle lies wedged between two heavy iron shelf-bases, half-buried under a drift of damp catalogue cards. You untie the hemp cord to reveal a sturdy pair of oiled leather gaiters, perfectly preserved and smelling strongly of neat's-foot oil.\n\nWhether crossed with acrobatic grace or managed through frantic, bruising recovery, this protective gear will shield your lower legs from the biting ink-spray.",
+   "check": "",
+   "grant": "pair of oilskin gaiters",
+   "exits": [
+    "Head back to the main ink-weir"
+   ]
+  }
+ },
+ "missing": []
+}

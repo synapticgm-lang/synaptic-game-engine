@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION td-1-152
+TITLE: The Water Smuggler's Debt
+TEXT: Sweat stings your eyes as you heave the brine-slicked crate of river-water up through the trapdoor, your shoulders burning with every inch. The cellar master grunts, marking your labor in chalk on the damp timber, before tossing a heavy brass disk into your palm. It is a worn token stamped with the Gullmouth seal, cool and salt-etched against your skin. // With this token tucked into your belt, the guarded cistern paths open to you without a Customs-Priest demanding a bribe of blood or copper.
+CHECK: You haul a crate of smuggled fresh water from the cellar, proving your worth through brute labour to receive a rare talisman of safe passage.
+GRANT: heavy brass token of safe passage
+EXIT 1: Take the token and head toward the piers
+@@SECTION td-1-153
+TITLE: Crossing the Black Silt
+TEXT: Thick grey sludge bubbles sluggishly on either side of the narrow rib-bone bridge, reeking of ancient weed and stagnant peat. You step light and sure, arms out for balance, boots finding purchase only on the slick calcified spine of a whale. Below, the mud slurps and sucks, desperate to pull a careless scavenger down into the dark. // Your fingers close around the leather strap of the dropped satchel just as the bone beneath your left heel gives a sharp, warning crack.
+CHECK: You cross a narrow ridge between two yawning chasms of black mud, keeping a steady balance to reach a stranded merchant's dropped satchel of
+GRANT: leather merchant's satchel with dry flint and salted beef
+EXIT 1: Pull back from the cracking rib to safer ground
+@@SECTION td-1-154
+TITLE: The Ambergris Dispute
+TEXT: Shouts echo off the salt-bleached clapboard walls as two rival net-menders grapple in the dirt over a greasy lump of sea-wax, fists flying wild and desperate. You wedge your shoulder between them, shoving the heavier brawler back with enough blunt force to break their momentum and rattle their teeth. The crowd falls silent, watching the dust settle around your heavy boots. // Grudgingly, the older of the two spits into the dirt and tosses a jagged chunk of grey ambergris toward your feet as a peace-offering.
+CHECK: You break up a violent brawl between two merchants fighting over a chunk of ambergris, imposing your physical presence to earn a grateful me
+GRANT: jagged chunk of waxy ambergris
+EXIT 1: Pocket the ambergris and walk the market row
+@@SECTION td-1-155
+TITLE: The Pilgrim's Loss
+TEXT: Robes the color of dried kelp whip through the narrow alley as a dozen Drift Pilgrims chant hoarsely to the empty sky, eyes glazed with fevered salt-dreams. You flatten your spine against the damp stone of the fish-market wall, breathing shallow and letting the wild tide of bodies surge past. In the churn of sand and hempen fabric, a small bronze hand-bell drops from a frayed cord into the dry seaweed at your feet. // Your boot slides over the metal, pinning it silently to the cobblestones until the frantic procession vanishes into the salt-fog.
+EXIT 1: Retrieve the bronze bell from the weed
+@@SECTION td-1-156
+TITLE: The Weigher's Peg
+TEXT: Beechwood curls away in pale, fragrant shavings under the steady bite of your draw-knife until the spindle matches the precise taper of the old brass scale. The pawn-widow watches through rheumy eyes, testing the balanced arm with a pinch of lead shot before nodding her approval. She reaches beneath her scarred counter and slides a small, wax-sealed green vial across the scarred oak wood. // The kelp extract inside shifts like thick green oil, smelling faintly of iodine and deep-water moss.
+CHECK: You carve a replacement peg for a broken weighing scale, fashioning the wood perfectly to secure a small vial of rare medicinal kelp extract.
+GRANT: small vial of medicinal kelp extract
+EXIT 1: Slip the green vial into your coat pocket
+@@SECTION td-1-157
+TITLE: The Guildmaster's Test
+TEXT: Veins bulge in your forearms as you lock hands across the greasy trestle table, your boots sliding an inch backward against the salt-crusted floorboards. The guild champion snarls, putting his massive weight behind his wrist, but your joints hold fast against the strain like seasoned oak knees in a gale. With one sudden, lung-emptying heave, you slam his knuckles hard down into the wood with a dull thud. // The gathered wreckers roar their approval, slapping your back and shoving a heavy coil of hemp rope into your arms.
+CHECK: You challenge the guildmaster's champion to an arm-wrestling contest, putting your back into the strain to win a coil of high-quality climbi
+GRANT: coil of high-quality climbing rope
+EXIT 1: Coil the heavy rope over your shoulder
+@@SECTION td-1-158
+TITLE: Claiming the Hull
+TEXT: Two rival salvagers stand with hands hovering over their belt-knives beside the tilted ribs of a stranded mackerel boat, snarling over salvage rights. You step into their narrow circle without a word, your stare cold and flat as a winter sea, refusing to blink or yield an inch of sand. The larger one hesitates, weighing your steady stance against the trouble of a fight, and curses under his breath before turning away. // Nestled in the dry bilge of the abandoned boat lies a heavy iron grappling hook with salt-pitted prongs.
+CHECK: You confront a rival crew claiming a stranded fishing boat, holding your nerve to intimidate them into backing down and securing a sturdy gr
+GRANT: heavy iron grappling hook
+EXIT 1: Take the grappling hook and move on
+@@SECTION td-1-159
+TITLE: The Brineholder's Stare
+TEXT: Silk sleeves flutter in the dry coastal gale as the Brineholder agent smiles a thin, bloodless smile, dangling a leather pouch of silver coins like bait over a barrel. You meet his gaze without flinching, your expression as hard and unyielding as the cliff-face behind you, until the smile falters at the corners of his mouth. Unsettled by your silence, he drops his voice to a low murmur and names the exact shift-time when the western gate guards take their rum-ration. // The valuable secret hangs in the salt-heavy air between you before he snaps his purse shut and retreats toward the pier.
+CHECK: You stare down a bragging Brineholder agent making offers to the locals, refusing to blink and extracting a valuable secret about the patrol
+GRANT: knowledge of western gate guard shift times
+EXIT 1: Store the guard secret in your mind
+@@SECTION td-1-160
+TITLE: The Bell in the Weed
+TEXT: Breath catches in your throat as the tide-monks surge past, their cowls pulled low against the stinging alkali dust that blows in from the dead seabed. You remain frozen like a salt-pillar beside the fish-salting troughs, letting their frantic prayers wash over you until the last swinging lantern fades into the gloom. Bending slowly, your fingers brush the cold metal of the dropped bell where it rests half-buried in grey sand. // The clapper inside is made of carved bone, silent until you give it a deliberate, quiet tap.
+CHECK: You stand perfectly still as a group of frantic Drift Pilgrims rushes past, avoiding their manic zealotry to quietly pocket a dropped ritual
+GRANT: bone-clapper ritual bell
+EXIT 1: Pocket the small ritual bell
+@@SECTION td-2-001
+TITLE: Descent Onto the Low
+TEXT: Earth gives way to grey, salt-crusted silt beneath your boots as you step past the rotting pilings of Gullmouth's abandoned harbor and down onto the naked bed of the world. The seabed stretches out before you to a pale, misty horizon, an endless labyrinth of sun-bleached wrecks, tilted streets, and black mud flats that glitter with dried salt. Far off in the salt-fog, the skeletal ribs of a stranded leviathan loom like the rafters of a sunken cathedral, marking the start of your long search for Orsolya. // Every breath tastes of old brine and dry dust, reminding you that the sea has been gone three long days and might never come back to drown these secrets again.
+EXIT 1: Head across the salt flats toward the leviathan market

@@ -1,0 +1,92 @@
+{
+ "batch": "td-4-112",
+ "sections": {
+  "td-4-112": {
+   "title": "Rusted Iron Alcove",
+   "text": "Thick crusts of grey salt flake off the corrugated bulkhead as you squeeze into a narrower service recess where the gloom smells of stagnant bilge and old oil. Heavy dripping echoes from somewhere out of sight, each drop sounding like a lead shot hitting tin in the damp quiet. You trace your fingers along the cold metal ribs, feeling for any sign of a latch or seam among the encrusted rivets. A stubborn steel locker blocks the rear of the maintenance tunnel, its hinges sealed tight by decades of briny corrosion and wet neglect.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide deeper into the recess"
+   ]
+  },
+  "td-4-113": {
+   "title": "Against the Jammed Seam",
+   "text": "Cold moisture beads heavily on your shoulders while you brace your boots against a rusted bulkhead rib and lean your full weight into the warped door. Iron screeches against iron with a high, teeth-setting groan that vibrates straight up your forearms and scatters flakes of red scale into the dark water. The handle refuses to yield an inch under ordinary pushing, demanding something much heavier than bare hands if you mean to get past this barrier. You wedge your fingers into the narrow gap where the warped latch has buckled outward from the frame.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Brace for a hard heave"
+   ]
+  },
+  "td-4-114": {
+   "title": "Forcing the Vault",
+   "text": "Saltwater drips steadily into your eyes as you wedge the palms of your hands against the swollen frame and gather every ounce of muscle beneath your sodden clothes. The metal biting into your skin is freezing, slick with a greasy film that smells of old grease and dead kelp from the drying seabed miles above. Your breath comes in ragged, shallow hitches while your heels search for purchase on the slimy floor plates. Muscle and bone strain against the immovable mass of rusted iron as you throw your entire weight forward into the wedge.",
+   "check": "Heave the rusted door open",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-115": {
+   "title": "Bruised and Battered",
+   "text": "Pain flares hot across your shoulder as the warped locker gives a sudden, treacherous shudder and slams back against your knuckles with a bruising crack. You stumble backward into the knee-deep sump, gasping for breath as a sharp edge slices a deep red line across your forearm. The heavy iron door remains stubbornly jammed in place, leaving you nursing a fresh, throbbing ache that makes every movement of your arm a trial. You shake the salt water from your smarting eyes and gather your wits against the damp chill settling deep into your bones.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and press onward"
+   ]
+  },
+  "td-4-116": {
+   "title": "Heavy Iron Lever",
+   "text": "Metal yields with a sudden, shrieking pop that echoes down the flooded corridor, leaving your muscles trembling from the sudden release of tension. Inside the dark recess, half-submerged in greasy silt, lies a heavy ribbed prybar forged from blackened ship-iron that looks entirely immune to the rot of the Low. You lift it free from the muck, feeling its solid, reassuring weight settle into your palm as a welcome tool for whatever obstructions still lie ahead.",
+   "check": "",
+   "grant": "Heavy iron prybar",
+   "exits": [
+    "Return to the flooded junction"
+   ]
+  },
+  "td-4-117": {
+   "title": "The Murky Tributary",
+   "text": "Murky water swirls in sluggish eddies around your knees, carrying tiny fragments of yellow lichen and grey froth from some higher drainage pipe. You hold your small salvage torch higher, its yellow beam cutting dimly through the rising mist to illuminate salt-stained pipes running along the curved ceiling. A faint trickling sound guides your attention toward a narrow side passage where the current runs slightly clearer over a bed of smooth stone rubble.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the clearer water current"
+   ]
+  },
+  "td-4-118": {
+   "title": "The Hidden Alcove",
+   "text": "Careful steps keep your boots from sinking into the treacherous silt patches hidden beneath the shallow surface of the stagnant pool. The damp walls here are lined with ancient terracotta tiles, most of them cracked and weeping thin lines of rusty moisture into the gloom. You pause to listen over the steady plop of dripping water, catching the faint, hollow echo of a distant draft that hints at an unsealed chamber nearby.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step through the low archway"
+   ]
+  },
+  "td-4-119": {
+   "title": "Reading the Current",
+   "text": "Water laps softly against your thighs while you study the intricate pattern of ripples washing back from a half-submerged bulkhead ahead. A complicated network of drainage valves and overflow channels disappears into the dark masonry on your left, each pipe carrying its own thin whisper of brine. You trace the direction of the micro-currents with the tip of your finger, trying to calculate which conduit leads to the dry maintenance vault marked on your weathered scrap of chart. The slightest miscalculation could trap you in a dead-end sump filled with freezing black runoff.",
+   "check": "Read the water flow patterns",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-120": {
+   "title": "Choked in the Silt",
+   "text": "A sudden surge of cold water spills over the lip of a hidden drainage trench, sweeping your boots out from under you and plunging you shoulder-deep into thick, foul-smelling silt. You scramble frantically against the slippery brickwork, losing your grip on a leather pouch of dry tinder as the black current drags you down the corridor. Though you manage to haul yourself upright against a rusted handrail, you are left coughing up brackish water and soaked to the skin with greasy mud.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wading out of the choked trench"
+   ]
+  },
+  "td-4-121": {
+   "title": "The Sealed Cache",
+   "text": "Water swirls away from your boots as your careful deductions lead you straight to a small, dry maintenance locker raised safely above the baseline of the flood. Inside, resting on a bed of dry oily rags, sits a small brass oiler filled with amber grease that still moves freely despite the damp chill of the depths. You pocket the tidy instrument with a quiet nod of satisfaction, knowing its contents will keep hinges silent and mechanisms turning when you finally reach the great iron heart of the Sunken Stair.",
+   "check": "",
+   "grant": "Sealed brass oiler",
+   "exits": [
+    "Return to the main corridor"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,174 @@
+Gemini said
+
+@@SECTION td-3-133
+TITLE: The Gaping Void
+TEXT: Iron pipes hiss overhead, leaking rusty condensate that splatters onto the grated walkway with a sharp, hollow ring. Below your boots lies a dizzying drop between two stilt-propped platforms of Saltspire, thirty feet of salt-encrusted emptiness where the sea used to run. A frayed hempen rope sways gently in the draft, anchored to a rusted winch on the opposite scaffolding but swinging tantalizingly out of reach with every gust. Smoke billows from a nearby cook-house, stinging your eyes and coating the damp air in soot. You measure the distance once, judging the weight of your soaked coat and the slick iron edge beneath your heels. // The gap yawns wide, demanding a sudden spring from the wet plating toward the dancing fibers of the line.
+EXIT 1: Leap across the void for the rope
+@@END
+@@SECTION td-3-134
+TITLE: Measure the Span
+TEXT: Staring across the abyss, you mentally map the arc of your weight against the howling wind tunnel between the stilted tenements. Every second counts as heavy footsteps clatter on the metal grating behind you, drawing closer through the acrid fog of the chimney fire. Your calf muscles coil tight, heels hovering over the sheer drop where barnacles crust the iron pillars far below. A misjudged trajectory means plummeting into the bone-dry seabed, while a clean catch leaves you dangling over the open void with guards at your heels. // You crouch low, steadying your breathing as you time the rhythmic sway of the frayed rope dancing in the updraft.
+CHECK: Leap across the gap to the dangling line
+@@END
+@@SECTION td-3-135
+TITLE: Bruised and Breathing
+TEXT: Your boots strike the slippery edge of the far platform rather than solid timber, sending you skidding hard into a rusted iron bracket that leaves a deep, throbbing bruise across your ribs. Pain flares white-hot through your side as your fingers claw desperately at the rough timber until a secure grip takes hold. You haul yourself upward onto the grating, coughing violently from the inhaled soot and spitting gray phlegm onto the metal. The clumsy impact cost you precious gear and a painful wrench to your shoulder, but the pursuers are left shouting on the far side of the chasm.
+EXIT 1: Crawl away along the stilt walkway
+@@END
+@@SECTION td-3-136
+TITLE: Caught in the Fibers
+TEXT: Iron screeching against stone fades behind you as your fingers wrap around the coarse hempen strands, taking the full shock of the drop with a searing friction burn across your palms. You swing across the dizzying gulf in a single fluid arc, slamming heavily into the opposite scaffolding but hooking a boot securely over the lower rail. However narrowly you manage the crossing, your weight settles safely onto the platform just as shouts echo from the mist above. Your fingers sting, but clenched in your bruised fist is a heavy brass shackle pin torn straight from the swaying winch rigging.
+GRANT: Heavy brass shackle pin
+EXIT 1: Flee down the ladder toward the rooftops
+@@END
+@@SECTION td-3-137
+TITLE: Choked in Soot
+TEXT: Thick, yellowish smoke billows from a ruptured flue, turning the narrow stilt-alley into a blinding labyrinth of acrid haze and blistering heat. Ash settles in your hair and cakes your throat with every ragged breath you draw through your sleeve. Wooden walkways groan under the thermal stress, warping outward as flames lick the underside of the hanging balconies. Every blind turn offers a new hazard, from white-hot iron plates to plunging drops into the hazy seabed below. You press your shoulder against the damp timber wall, inching forward through the gloom where the air tastes less like burning pitch.
+EXIT 1: Grope through the choking smoke ahead
+@@END
+@@SECTION td-3-138
+TITLE: Navigating the Blind Maze
+TEXT: Smoke claws at your lungs, reducing visibility to a handspan of soot-blackened timber and glowing iron rivets. You press your palm flat against the exterior wall of a stilted granary, feeling for the familiar grain of salt-weathered oak that marks the concealed maintenance ladder. Somewhere close by, heavy boots stamp against the metal grates, echoing through the hollow superstructure and tracking your retreat. Your chest burns with every shallow inhalation of superheated air, forcing you to rely entirely on memory and touch to map the next step. // You pause at a junction where two venting shafts converge, listening for the shift of wind that reveals an unblocked passage.
+CHECK: Navigate the blinding smoke by touch
+@@END
+@@SECTION td-3-139
+TITLE: Smoke-Scoured Lung
+TEXT: A sudden gust of superheated draft drives a wall of thick, oily soot straight into your face, blinding you and causing you to stumble hard against a protruding iron pipe. The metal strikes your collarbone with a sickening crack, dropping you to your knees on the blistering deck plates. You gasp in pure ash, your throat tearing as you crawl blindly along the bulkhead until your fingers find a drainage scupper. The delay costs you dear in breath and blood, leaving your chest raw and your supplies scorched, but the suffocating pocket clears enough to let you drag yourself onward.
+EXIT 1: Stagger into the damp night air
+@@END
+@@SECTION td-3-140
+TITLE: Finding the Vent
+TEXT: Your fingers trace the familiar cold iron rivets of a maintenance hatch just as the air turns marginally cooler against your sweat-slicked forehead. However narrowly you thread the labyrinth of burning flues, you slip through a narrow gap behind a water tank where the draft runs clean from the seabed below. The heat recedes into a dull roar behind the timber bulkheads, leaving you coughing in the shadows of a silent storage loft. Clutched in your belt is a damp wool rag soaked in vinegar, discarded by some fleeing dock-worker but offering vital relief against the lingering smoke.
+GRANT: Vinegar-soaked filtration rag
+EXIT 1: Drop through the floor hatch downward
+@@END
+@@SECTION td-3-141
+TITLE: Shattering the Glass
+TEXT: Glass starbursts inward in a cascading roar of crystal shards as your boots smash through the domed skylight of the Brineholder Governor's private chamber. You drop heavily onto a Persian carpet threaded with silver wire, scattering porcelain tea sets and overturning an ivory globe that rolls across the polished floor. Across the room, startled courtiers freeze in mid-sentence, while an immaculate elderly man in a velvet doublet lowers a pearl-handled ledger with unblinking composure. Heavy tapestries hang along the curved walls, muffling the distant sounds of alarms ringing across the stilt-city outside. The Governor regards you not with fear, but with the cold, assessing curiosity of a merchant inspecting a damaged crate washed up on the Low.
+EXIT 1: Face the Governor across the shattered glass
+@@END
+@@SECTION td-3-142
+TITLE: The Governor's Solarium
+TEXT: Pale sunlight filters through salt-crusted domes onto dying ferns and imported palms drooping in terracotta pots across the circular chamber. Nervous aristocrats in stiff collars huddle near velvet settees, whispering behind gloved hands while armed guards hover by the bronze-plated doors. The Governor sits at an inlaid mahogany desk, ignoring the scattered glass from your entrance to study a brass-bound tide ledger. Every exit from this sunlit cage offers a desperate gamble, whether through negotiation, stealth, intimidation, or force, while the true prize—and the missing keeper—lurks deeper in the shadows of the stilt-city.
+EXIT 1: Forge a false emissary bargain
+EXIT 2: Jam the heavy brass locking mechanism
+EXIT 3: Stare down the swaggering armed guards
+EXIT 4: Shake down a terrified nobleman
+EXIT 5: Smash the porcelain urn for cover
+EXIT 6: Demand the truth about Orsolya Venn
+@@END
+@@SECTION td-3-143
+TITLE: The Silver Tongue
+TEXT: You straighten your mud-stained coat with deliberate insolence, stepping past the shattered glass as if you own the entire stilt-city of Saltspire. Raising your voice above the murmurs of the trembling aristocrats, you claim to represent a rival syndicate of tide-scavengers holding exclusive rights to the northern sea-lanes. The Governor narrows his eyes, tapping a silver signet ring against the mahogany wood while weighing the audacity of your intrusion. For a tense heartbeat, the guards tense their shoulders, waiting for the order to draw steel and clean the carpet. // Instead, a slow, humorless smile touches the old man's thin lips as he slides a parchment pass across the desk toward your blood-stained fingers.
+EXIT 1: Grab the signed transit pass and run
+@@END
+@@SECTION td-3-144
+TITLE: The Shrewd Pitch
+TEXT: Your tongue moves faster than the guards can draw their cutlasses, spinning a rapid web of forged credentials and exaggerated threats regarding the impending collapse of the Brineholder water monopolies. Sweat beads on your forehead, but your tone remains level, echoing the hardened cadence of Gullmouth wreckers who have bargained with leviathans. The nervous courtiers retreat toward the draped balconies, terrified of being implicated in a commercial war. The Governor dips an ivory pen into black ink, scrawling an official seal onto a blank transit slip with cold, calculated efficiency. // You slide the parchment into your damp pocket, nodding once before turning your back on the armed escort.
+EXIT 1: Slip away through the balcony doors
+@@END
+@@SECTION td-3-145
+TITLE: False Credentials
+TEXT: Bold lies flow from your lips regarding a secret cargo of deep-sea relics salvaged from the very bottom of the Low, offered exclusively to the highest bidder in Saltspire. The Governor listens intently, his fingers tracing the gilded spine of a ledger as he calculates profit margins against the risk of Customs intervention. You stand firm amid the glittering debris of the skylight, playing the part of a hardened smuggler with nothing left to lose. A guard mutters a warning, but the Governor waves him silent with a flick of his lace-trimmed wrist. // An inked token of passage drops onto the polished tabletop, clinking against the wood as your fingers close around its cold metal rim.
+EXIT 1: Pocket the token and head for the stairs
+@@END
+@@SECTION td-3-146
+TITLE: The Emissary's Gamble
+TEXT: You pitch your voice to carry across the vaulted solarium, projecting the hard-bitten authority of a man who has walked the dry seabed and bartered with the Hollow Choir. The aristocrats quiet instantly, staring at your salt-crusted boots and scarred knuckles with a mixture of disgust and fascination. The Governor leans forward, resting his chin on intertwined fingers as he weighs your fabricated authority against the chaos outside the dome. Silence stretches thin over the room, broken only by the distant groaning of iron stilted pylons in the tide wind. // He nods slowly, pushing an open ledger toward you with a demand for terms that changes the game entirely.
+EXIT 1: Accept the terms and claim the route
+@@END
+@@SECTION td-3-147
+TITLE: Silent Tumblers
+TEXT: While the guards rush toward the shattered skylight, you slip silently to the massive brass-studded double doors leading out of the solarium. Your fingers work with frantic speed against the intricate combination lock, feeling for the subtle click of internal iron tumblers. A guard shouts from across the room, catching sight of your movement against the paneled oak. Metal scrapes against leather as a sword clears its scabbard behind you, but your wrist makes one final, decisive twist. // The heavy internal latch gives way with a satisfying thud, throwing the escape route wide open just as steel flashes in the sunlight.
+EXIT 1: Bolt through the newly unlocked doors
+@@END
+@@SECTION td-3-148
+TITLE: The Greased Bolt
+TEXT: Your pocket knife is out and wedged into the door casing before the dust from your skylight plunge has even settled on the carpet. Working by feel alone, you drive the blade deep into the mortise lock, jamming the spring-loaded deadbolt firmly into its open channel. Shouts erupt from the perimeter guards, but their attention is split between the broken glass and your steady hands at the exit. The iron mechanism resists with stubborn friction, threatening to snap your steel blade at any second. // With a sharp snap of oiled timber, the heavy door clicks loose, leaving a clear path to freedom waiting at your fingertips.
+EXIT 1: Kick the door wide and dive out
+@@END
+@@SECTION td-3-149
+TITLE: Whispers in the Lock
+TEXT: Crouched low behind an overgrown decorative fern, you ignore the chaos around the Governor's desk and focus entirely on the brass housing of the floor bolt. Your fingers manipulate a slender hairpin recovered from a previous wreck, probing the brass tumblers until they align with a faint, musical chime. Footsteps pound across the parquet flooring toward your hiding spot, closing the distance with terrifying speed. You hold your breath, giving the internal lever one last microscopic adjustment as a shadow falls across your back. // The heavy security bolt slides home into its housing, sealing the room's primary exit from the outside just in time.
+EXIT 1: Duck behind the velvet drapery
+@@END
+@@SECTION td-3-150
+TITLE: The Iron Barricade
+TEXT: Ignoring the panicked screams of the aristocrats, you haul a heavy iron floor-candelabra across the carpet and wedge its jagged base directly under the handles of the double doors. The guards slam against the exterior from the corridor, hammering on the oak panels with iron-shod fists as they try to force entry. Wood splinters under the impact, but the improvised brace holds firm against the first furious wave of attackers. You use the precious seconds of confusion to scan the room for alternative routes out of the sunlit cage. // The heavy doors shudder under another coordinated blow, screaming in protest as the iron wedge digs deeper into the floorboards.
+EXIT 1: Dive toward the open service hatch
+@@END
+@@SECTION td-3-151
+TITLE: Steel and Stare
+TEXT: A mercenary captain steps forward from the shadows of the arched doorway, drawing a heavy broadsword that catches the harsh light of the dome. You refuse to flinch, planting your boots firmly amid the broken glass and meeting his cold, professional gaze without a flicker of doubt. The blade tip hovers inches from your throat, smelling faintly of machine oil and river damp. Silence grips the solarium as the aristocrats hold their breath, waiting for the crimson spray that usually follows such defiance in Saltspire. // You step forward instead of back, pressing your chest against the razor-sharp edge with a terrifying calm that stalls the mercenary's hand mid-stroke.
+EXIT 1: Disarm the captain with a sudden twist
+@@END
+@@SECTION td-3-152
+TITLE: The Unblinking Eye
+TEXT: The bodyguard lunges with his cutlass, aiming a flat-handed slap to knock you sprawling across the mosaic floor. You duck beneath the sweeping arc of the blade, stepping inside his guard to drive your fist hard into his reinforced breastplate with a hollow thud. The impact rattles his ribs and sends him stumbling backward into a marble pillar, dropping his weapon with a ringing clatter. The other guards hesitate, looking toward the Governor for an execution order that never comes. // You stand tall over the wheezing mercenary, your hands steady and your eyes locked on the old man behind the desk.
+EXIT 1: Demand safe passage from the Governor
+@@END
+@@SECTION td-3-153
+TITLE: Holding the Line
+TEXT: A massive brute of a doorkeeper heaves a spiked mace upward, taking a menacing step toward you while the courtiers scramble for the corners of the room. You don't reach for a weapon; instead, you cross your arms over your chest and spit a glob of blood onto his polished boot-toe. The sheer insolence freezes him in his tracks, his thick brow furrowing as he calculates whether you belong to a more dangerous syndicate than his paymaster lets on. The Governor raises a single yellowed finger, halting the brute before the mace can descend. // A grudging ripple of respect passes through the armed retinue as you hold your ground without a single weapon drawn.
+EXIT 1: Take the offered seat across the desk
+@@END
+@@SECTION td-3-154
+TITLE: The Iron Grin
+TEXT: When the nearest guard swings the pommel of his sword toward your temple, you lean your head just enough to let it graze your ear, then grab his wrist with both hands. Twisting sharply against his thumb joint, you force him to his knees with a sharp cry of pain while using his body as a living shield against the others. The remaining guards level their polearms but dare not strike for fear of impaling their own comrade. You flash a grin that tastes of copper and salt, staring down the entire detachment with unyielding defiance. // The guard captain yields with a grunt, lowering his weapon and gesturing for his men to stand down.
+EXIT 1: Push the kneeling guard aside
+@@END
+@@SECTION td-3-155
+TITLE: Facing the Blade
+TEXT: The blade presses against your collarbone, drawing a single bead of bright red blood that trickles slowly down into the collar of your shirt. You don't blink; you stare straight into the mercenary's scarred eye, whispering a curse from the Gullmouth docks that speaks of drowned ships and unpaid debts. The captain hesitates, recognizing the desperate, salt-bitten look of a man who has nothing left to lose in this dried-up world. The Governor watches the exchange with intense fascination, lowering his ledger onto the mahogany blotter. // The sword retracts by a fraction of an inch, leaving you standing upright and intact within the enemy stronghold.
+EXIT 1: Step past the blade toward the desk
+@@END
+@@SECTION td-3-156
+TITLE: The Desperate Scuffle
+TEXT: A fat nobleman in silk robes tries to bolt for the terrace doors, shrieking in blind panic as he scrambles over the Persian rugs. You leap across the table and tackle him mid-stride, bringing both of you crashing down onto the marble floor in a tangle of limbs and rustling parchment. The nobleman flails wildly, clawing at your face and screaming for the guards to shoot you both where you lie. You ignore the flying elbows, pinning his soft wrist against the floorboards with your knee while your free hand dives deep into his silken coat pockets. // A heavy leather purse stuffed with silver coin falls free into your palm with a satisfying, metallic jingle.
+EXIT 1: Pocket the heavy purse and sprint
+@@END
+@@SECTION td-3-157
+TITLE: The Purse and the Pylon
+TEXT: You grab a frantic merchant by his velvet lapels just as he reaches for the door latch, spinning him around and slamming his back against the oak paneling. He gasps for breath, his eyes wide with terror as your knuckles graze his jawline. Without a word, you shake him twice until a heavy velvet money-bag slips from his inner pocket into your waiting hand. Guards rush forward, but you hold the cowering merchant directly in their line of fire as a human shield. // The purse feels reassuringly heavy against your hip, packed tight with minted silver from the Brineholder treasury.
+EXIT 1: Throw the merchant aside and bolt
+@@END
+@@SECTION td-3-158
+TITLE: Striking the Ledger-Man
+TEXT: A sleek treasury clerk tries to slip past you toward the terrace with a leather cash-box tucked under his arm. You lash out with a swift kick to his ankle, sending him sprawling across the mosaic floor with a crash of dropped coins. As he scrambles to gather his scattered wealth, you drop your boot onto the lid of the brass-bound box, pinning it securely to the floorboards. The clerk whimpers, curling into a ball while you scoop up a double handful of heavy silver slugs. // The stolen coin weighs heavy in your coat, enough to buy passage through any gate in Saltspire.
+EXIT 1: Leap over the balcony railing
+@@END
+@@SECTION td-3-159
+TITLE: The Price of Passage
+TEXT: You catch a fleeing dignitary by his ermine-lined collar, yanking him backward so hard that his powdered wig tumbles off onto the dusty carpet. Before he can summon his guards, you press your forearm against his throat just enough to remind him of the alternative. He frantically reaches into his belt pouch, thrusting a velvet sack filled with heavy silver coins into your hand to buy his release. You release him with a shove that sends him crashing into an ornate potted palm. // The purse rattles with rich coin, heavy with the blood-money of the stilt-city elite.
+EXIT 1: Dash toward the lower service stairs
+@@END
+@@SECTION td-3-160
+TITLE: Squeezing the Elite
+TEXT: You lunge across an inlaid tea table, grabbing the silk-clad merchant by his cravat and hauling him upward until his toes barely touch the floor. He gags, clawing at your iron grip while silver coins spill from his pockets and scatter across the shattered glass. You don't let go until the heavy leather pouch he tried to conceal drops into your open palm with a satisfying thud. The surrounding guards raise their halberds, but the terrified merchant waves them off with desperate, choking gasps. // You land lightly on the carpet, the heavy purse swinging from your belt.
+EXIT 1: Spring toward the maintenance gantry
+@@END
+@@SECTION td-3-161
+TITLE: Shards of Porcelain
+TEXT: You seize a heavy, blue-glazed porcelain urn from its mahogany plinth and hurl it with all your might against the iron radiator beside the main doors. It shatters with an explosive crash, sending a lethal cloud of ceramic shrapnel and dry burial dust flying across the room. The guards throw their arms over their faces, blinded and momentarily deafened by the concussive shock inside the confined chamber. In the swirling cloud of dust, your fingers dart across the Governor's desk, snatching a heavy ceremonial iron key from its velvet groove. // The key feels cold and archaic in your palm, shaped like an old lighthouse latch.
+EXIT 1: Dash through the smoke toward the stairs
+@@END
+@@SECTION td-3-162
+TITLE: The Ceramic Diversion
+TEXT: You smash a massive decorative vase against the stone hearth, creating a deafening crack that draws every eye in the solarium toward the cascading shower of green shards. While the guards instinctively raise their shields against the flying debris, your hand sweeps across the Governor's writing desk. Your fingers close around a heavy iron key resting beside the brass inkwell, lifting it cleanly before anyone can cry out. The smoke from the shattered urn billows across the room, providing instant cover for your next move. // The ancient key burns cold against your palm, bearing the distinct notches of the Sunken Stair locks.
+EXIT 1: Plunge into the smoke toward the exit
+@@END
+@@SECTION td-3-163
+TITLE: The Brass Snatch
+TEXT: You sweep a silver tea tray off the central table, sending pots, cups, and porcelain saucers clattering across the floor in a chaotic storm of metal and china. As the guards wheel around toward the noise, you slide low across the carpeted floor beneath the desk line. Your hand shoots out, ripping a heavy bronze key from the Governor's personal drawer just as his booted foot kicks out to intercept you. You roll clear of the desk, clutching the jagged metal trophy tight against your chest. // The key is scored with deep ritual grooves, matching the descriptions of the seals guarding the Meridian Gear.
+EXIT 1: Scramble through the service hatch
+@@END
+@@SECTION td-3-164
+TITLE: The Urn Smash
+TEXT: With a sudden, explosive heave, you hurl a massive bronze urn straight through the stained-glass window depicting the rise of the Brineholder dynasty. Coloured glass rains down over the terrace in a glittering cascade while the guards turn away from you, blinded by the sudden influx of harsh sunlight and sea wind. In that split second of confusion, your fingers snatch an ornate iron key from the Governor's mahogany blotter. The key carries the unmistakable weight and cold grease of deep-sea machinery. // You pocket the key instantly, blending into the swirling dust motes near the balcony arch.
+EXIT 1: Leap through the broken window frame
+@@END
+@@SECTION td-3-165
+TITLE: The Keeper's Trail
+TEXT: The Governor lowers his pen, his aged eyes fixing on you with a cold, unsettling weariness as the chaos in the room subsides around your standoff. He shakes his head slowly, waving away the remaining guards before they can lower their pikes. Orsolya Venn is not here in the sunlit cage of Saltspire, he explains in a dry, rasping whisper that carries over the sound of the wind outside. Three nights ago, before the guards could secure the upper platforms, she was dragged down the Sunken Stair by the Hollow Choir as a living hostage to jam the great mechanism forever. // The confession hangs heavy in the salt air, shifting your entire mission from rescue to a desperate race against the drowned dead.
+EXIT 1: plunge down the Sunken Stair shaft
+@@END

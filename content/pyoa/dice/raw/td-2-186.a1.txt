@@ -1,0 +1,7 @@
+Gemini said
+
+@@SECTION td-2-186
+TITLE: The Fallen Pillar
+TEXT: Granite dust settles in your lashes as your shoulder blades scream against the cold tonnage of the masonry. You wedge your boot against a cracked riser and throw your full weight into the heave, boots grinding until the pillar finally groans and rolls aside with a dry rattle. Beneath its shadowed belly, tucked into a dry alcove untouched by the sea's ancient salt, rests an old iron-bound box and a broad-bladed harpoon pike wrapped in greasy oiled hide. The metal is cold and grey, untouched by red rust.
+EXIT 1: Take the iron weapon from the dust
+@@END

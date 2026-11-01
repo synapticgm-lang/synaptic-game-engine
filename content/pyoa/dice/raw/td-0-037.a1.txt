@@ -1,0 +1,12 @@
+Gemini said
+
+@@SECTION td-1-002
+TITLE: The Stranded Basin
+TEXT: Barnacle-crusted keels list at sickening angles in the dried silt of Gullmouth Harbour, where the salt-stench of dead weed and black mud clings to the wool of your coat. Shouts echo off the timber pilings as rival wreckers claw through the weed-matted troughs of the seabed, iron bars clinking against stranded anchors and waterlogged chests. Down among the tilted hulls and weeping brine-pipes, every man and his cousin looks for an edge before the tide clock turns its iron tooth. // Scraps of copper and heavy oak timbers lie waiting for the bold or the desperate, half-buried in the silt where the gulls have given up screeching and taken to pacing the dried mud. You must choose where your hands fall first among the wreckage before the basin fills with wolves or water.
+EXIT 1: Face down the snarling rival crew blocking the fishing skiff
+EXIT 2: Rig a tackle-block to patch the hanging hull before the timber splits
+EXIT 3: Shoulder through the swollen cedar door of the abandoned bait-shack
+EXIT 4: Haggle with the mud-stuck ferryman for his survey of the sinkholes
+EXIT 5: Work a stubborn skeleton key into the harbourmaster office lock
+EXIT 6: Enter the smoky hall of the Wreckers Guild to press your claim
+@@END

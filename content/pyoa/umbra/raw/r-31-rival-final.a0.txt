@@ -1,0 +1,20 @@
+Gemini said
+
+@@INSERT up-r-rival-final | witness=bought
+The whispered promise you made to silence the gaol turnkey lingers in your mind; Sable surely squeezed the truth of your route from him to anticipate this very crossroad. She tracks the debt you left unpaid.
+@@END
+@@INSERT up-r-rival-final | witness=dropped
+Blood from the turnkey you shoved from the high slates still stains your cuff, a silent testament to the lengths you have already gone to bury your tracks. Sable surely found his broken body, fuelling the wrath that now sights down a rifle barrel at your chest.
+@@END
+@@INSERT up-r-press-cellar | cabal=known
+Setting the type, you ensure the singular handwriting that unites Lord Valerius and Matron Rigg in the counter-ledgers features prominently on the front page. Their grand illusion of a bitter rivalry will shatter the moment these ink-stained sheets hit the cobblestones.
+@@END
+@@INSERT up-r-press-cellar | witness=let-go
+Above the mechanical thunder of the cylinders, you can hear the shrill whistles of the city watch drawing near. Sparing that turnkey on the rooftops means the Guard knows exactly what you carry, turning this basement into a tightening trap of brass and iron.
+@@END
+@@INSERT up-r-press-cellar | valerius=allied
+Lord Valerius's promise of silk-draped sanctuary feels utterly worthless now that your hands are stained with the machinist's grease of his ruin. You cast his polite menace aside, feeding the Archbishop's damning ledgers into the feed-board regardless of the aristocratic protection you once accepted.
+@@END
+@@INSERT up-r-press-cellar | rigg=allied
+Matron Rigg’s iron-clad backing should have secured your survival, yet here you are feeding her syndicate's darkest warrants straight into the mechanical jaws of the press. Choosing mass exposure means violently tearing up the very writ of protection she granted you in the foundry.
+@@END

@@ -1,0 +1,95 @@
+{
+ "batch": "td-2-089",
+ "sections": {
+  "td-2-089": {
+   "title": "The Bleached Labyrinth",
+   "text": "Jagged calcified ribs and fossilised fan-corals rear from the dry seabed like the teeth of a buried jaw. Beneath these razor-sharp ledges, shadowed tide-pools stagnate in the salty air, smelling faintly of rot and ancient iron. Legions of pale, heavy-shelled scavenging crabs scuttle through the crevices, their segmented claws clicking against the stone with an incessant, unsettling rhythm. Every pathway splits among the white labyrinth, promising either a hidden cache of brine-cured spoils or a nasty pinch from the crustacean guardians waiting in the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick a path through the razor coral",
+    "Climb the high limestone ridge for a view",
+    "Weave a net from discarded fishing lines",
+    "Follow the silent kelp-robed procession ahead"
+   ]
+  },
+  "td-2-090": {
+   "title": "Reading the Fossil Stone",
+   "text": "Salt-rimed grooves trace the ancient stone like a map left behind by a forgotten race of deep-sea dwellers. Careful inspection reveals tiny, dried veins of kelp trapped within the porous white walls, pointing away from the jagged drop-offs toward a sheltered basin. Moving slowly prevents boots from slipping against the abrasive coral teeth that ring the pathway. Somewhere past the next ridge of bone-white calcification lies the promise of a soothing poultice.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance cautiously toward the sheltered basin"
+   ]
+  },
+  "td-2-091": {
+   "title": "Beneath the Shelf",
+   "text": "Overhanging shelves of dead coral cast long shadows across the dry floor, hiding whatever treasures or hazards linger in the gloom. Pale scavenging crabs retreat into dark fissures, their multi-jointed legs scraping against the rock as a heavy, stagnant draft rolls through the crevice. Reaching out to brush aside a tangle of brittle fronds exposes a narrow cleft where something green and medicinal rests against the cold limestone.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach into the dark stone cleft"
+   ]
+  },
+  "td-2-092": {
+   "title": "Testing the Coral Shallows",
+   "text": "Sharp edges of petrified fan-coral scrape against thick leather boots as balance is tested on the uneven floor. A sudden shifting of loose debris beneath your heel threatens to pitch you straight into a jagged cluster of barnacle-encrusted teeth. Eyes narrow against the stinging salt crust while hands grope along the damp rock face for a secure handhold before the entire ledge gives way under your weight.",
+   "check": "Read the coral ridges for footing",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-093": {
+   "title": "Torn by the Reef",
+   "text": "A sudden collapse of calcified stone sends you tumbling hard against a wall of jagged fan-coral, tearing deep into your canvas coat and scraping your skin raw. Pain flares hot and sharp along your forearm as a large scavenging crab snaps aggressively at your dangling boot before scuttling away into the dark. Crawling clear of the debris leaves you bruised, bleeding, and poorer by several vital strips of cloth, but still breathing in the bitter air of the Low.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself toward the open flats"
+   ]
+  },
+  "td-2-094": {
+   "title": "Balm of the Low",
+   "text": "Picking your way past the razor-edged barriers, however narrowly, brings your hand down upon a cool, viscous cluster of healing moss tucked safely inside a dry crevice. Smoothing the damp fronds over your scraped skin immediately dulls the burning throb left behind by the sharp coral teeth. This strange green salvage will serve you well against the infections that fester in the salt-blasted air of the seabed.",
+   "check": "",
+   "grant": "Soothing reef-moss poultice",
+   "exits": [
+    "Join the silent procession on the flats"
+   ]
+  },
+  "td-2-095": {
+   "title": "Harvesting the Dry Fronds",
+   "text": "Brittle fronds of deep-sea fern cling desperately to the vertical limestone wall, bleached silver by an unaccustomed sun. Extending trembling fingers requires absolute stillness to prevent the loose scree above from cascading down upon your shoulders and triggering a dangerous rockfall. Snapping the fragile stems at the base releases a pungent, medicinal aroma that cuts cleanly through the heavy smell of old brine.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the harvest toward the open flats"
+   ]
+  },
+  "td-2-096": {
+   "title": "Reaching for the Fronds",
+   "text": "Fingers hover mere inches from the silvery medicinal fronds while small tremors in the limestone wall threaten to dislodge a ton of razor-sharp scree overhead. Shifting your weight requires absolute precision to avoid sending a noisy avalanche clattering down into the quiet stillness of the trench. Breath catches in your throat as you test the stability of the crumbling ledge beneath your boots.",
+   "check": "Harvest the fronds without slipping",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-097": {
+   "title": "Buried in the Scree",
+   "text": "A sharp crack shatters the quiet as the unstable limestone shelf gives way beneath your boots, burying your legs in a sudden rush of sharp, sliding scree. Bruised muscles protest fiercely as you claw your way free from the gray debris, leaving behind a precious strip of your pack-strap and a good measure of your stamina. The medicinal fronds are yours now, but they cost you dearly in sweat and torn cloth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pull free and limp onward"
+   ]
+  },
+  "td-2-098": {
+   "title": "The Silver Harvest",
+   "text": "Steady hands secure the delicate silver fronds at last, however narrowly avoiding the treacherous cascade of falling stone that rattles into the shadows below. Tucking the fragile leaves safely inside your inner pocket preserves their potent juices against the drying heat of the open seabed. This bitter harvest will mend many a torn hide before your journey reaches its grim end.",
+   "check": "",
+   "grant": "Bundle of dried medicinal fern",
+   "exits": [
+    "Follow the path toward the anchor-bearers"
+   ]
+  }
+ },
+ "missing": []
+}

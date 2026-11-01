@@ -1,0 +1,69 @@
+@@SECTION vh-4-in
+TITLE: The Frozen Stair
+TEXT: Blue ice shelves rise in tiered terraces ahead, fractured by deep crevasses that exhale a steady, sub-zero damp. You adjust the padded cradle on your shoulders, feeling the bronze Clapper hum its low, heavy rhythm against your spine. Biscuit stamps a stubborn hoof against the glazed rock, testing the treacherous footing of the upper glacier. Every breath crystallizes instantly in the thin mountain air, and the wind carries the distant, metallic rattle of ropeways disappearing into the blinding white mists below. // Ahead, the descent splits into several daunting paths through the ice labyrinths. You must choose your next step carefully before the freezing fog closes the narrow ledges.
+EXIT 1: Follow the main stair
+EXIT 2: Cut across the lower ledges
+EXIT 3: Ask the way of a stranger
+EXIT 4: Take the old carriers' path
+@@END
+@@SECTION vh-4-0-0-0
+TITLE: The Winch Shed
+TEXT: Frost grips the lower winch-shed where old Morven greases the iron cable against the impending blue-glacier freeze. The heavy machinery creaks rhythmically as the wind bears down from the seracs, and the smell of rendered tallow mingles with the sharp scent of ozone. Biscuit shifts uncomfortably in the cramped doorway, shaking rime from his long ears while the bronze Clapper resonates in its pack with a faint, sympathetic hum. Morven pauses with his cloth, eyeing your burden and the toll ledgers bound with twine on the rough-hewn desk. // A ledger page flutters in the draft, and the collectors from the Cable Court stir by the corner post. You must decide whether to linger or push onward into the cold.
+EXIT 1: Step past the greased winch and check the rope tension
+EXIT 2: Face the toll collectors who recognize your outstanding debt
+EXIT 3: Slip through the side hatch toward the upper ice ridge
+@@END
+@@SECTION vh-4-0-0-1
+TITLE: The Staging Edge
+TEXT: Loose shale clatters into the blue abyss beneath the lower staging as Biscuit tests the frost-slicked timber. The suspension bridge sways gently in the draft, its weathered planks groaning under the combined weight of your pack and the humming bronze Clapper. Below, the glacier tongue grinds slowly against the canyon walls, a silent river of ancient ice scarred by deep, fathomless cracks. Every movement requires absolute balance, for a single misstep would send you tumbling into the freezing void. // The wooden guardrail is caked in clear glaze, offering little purchase for cold fingers. You tighten your grip on the harness and weigh your options for crossing.
+EXIT 1: Tread carefully across the swaying timber planks
+EXIT 2: Climb the diagonal anchor-cable to bypass the bridge
+@@END
+@@SECTION vh-4-0-0-2
+TITLE: The Hanging Rungs
+TEXT: A sudden downdraft rattles the hanging ladder rungs above the crevasse while the bronze Clapper hums softly against your spine. The metal chains supporting the crossing bite into the ice rim with a sharp, metallic shiver, vibrating in tune with the rising gale. Biscuit tucks his tail against his flanks, bracing his weight against the swaying rungs as powdered snow blinds the view below. The air is so cold it burns your lungs, yet sweat freezes instantly at your temples. // You grip the icy iron links until your knuckles ache, scanning the white expanse for a secure route onward.
+EXIT 1: Scramble across the swaying ladder to the moraine
+EXIT 2: Drop down to the dangling rope-line and shimmy across
+EXIT 3: Lead the mule along the narrow, ice-rimmed shelf
+@@END
+@@SECTION vh-4-0-0-3
+TITLE: The Hemp Coils
+TEXT: Salt-crusted snow drifts across the gravel shelf where the Ropewrights have stacked coils of hemp line for the crossing. The heavy ropes are frozen stiff as iron, coiled neatly beside rusted anchor-spikes driven deep into the permafrost. Biscuit blows a frosty ring into the air, his breath smelling of dry mountain feed while the Clapper hums a deep, warning note against your back. A discarded leather mitten lies half-buried in the drift, reminding you how quickly the cold numbs the unwary traveler. // You must choose between the shelter of the stacked coils and the biting exposure of the open trail ahead.
+EXIT 1: Follow the gray mist toward the glacier anchor-bolts
+EXIT 2: Adjust your shoulder straps and brave the wind-scoured rock
+@@END
+@@SECTION vh-4-0-1-0
+TITLE: The Glacier Snout
+TEXT: Rusted iron cramps bite into the blue glacier snout while a Fog-Warden named Jori clears rime from the signal horn. The brass instrument emits a low, resonant note that dies instantly in the vast white silence of the ice fields. Biscuit plants his hooves firmly against the blue-tinged rime, his ears twitching at the distant cracking of the seracs above. The bronze Clapper on your back responds to the horn's vibration, humming a sympathetic low tone that makes your teeth ache. // Jori points toward three distinct tracks vanishing into the blowing snow. You must decide which way to steer your journey.
+EXIT 1: Pick your way across the brittle frost feathers on the upper serac shelf
+EXIT 2: Clip your harness to the taut cable spanning the glacial gap
+EXIT 3: Edge past the gaping blue crevasse while overhead cables sing
+@@END
+@@SECTION vh-4-0-1-1
+TITLE: The Maintenance Tunnel
+TEXT: Cable Court collectors wave you through an unguarded maintenance tunnel, bypassing the perilous ice-arch altogether. The damp stone walls of the shaft are slick with mineral ooze, and the air smells of old oil and damp wool. Biscuit ducks his head to avoid the low-hanging timber beams while the bronze Clapper hums against your spine, its resonance magnified by the narrow vault. The collectors watch you with sharp, assessing eyes, knowing you carry a debt as heavy as your pack. // A branching series of dark corridors and hidden passages opens up ahead in the dim lantern light.
+EXIT 1: Take the narrow cleft in the ice wall to escape the draft
+EXIT 2: Answer the familiar wind-calls echoing from the high terrace mills
+EXIT 3: Follow the subterranean stream roaring against the deep stone floor
+@@END
+@@SECTION vh-4-0-1-2
+TITLE: The Icy Rail
+TEXT: Frozen spray coats the wooden handrails of the upper bridge while Biscuit digs his stubborn hooves into the blue rime. The wind shrieks through the canyon like a living thing, tearing at your hood and testing your balance with every stride. The Clapper on your back vibrates with a steady, cooling frequency, as if absorbing the mountain's frost into its heavy bronze tongue. Below, the glacial river flashes white and turquoise through gaps in the ice. // You must choose your crossing carefully before the handrails become completely encased in glare ice.
+EXIT 1: Clip your harness to the taut cable spanning the glacial gap
+EXIT 2: Take shelter from the gale in a narrow ice wall cleft
+EXIT 3: Edge past the gaping blue crevasse while overhead cables sing
+@@END
+@@SECTION vh-4-0-1-3
+TITLE: The Frayed Guide
+TEXT: Sharp blue shards flake off the towering wall above the crevasses, threatening to sever the frayed guide-ropes. Every sound is magnified in the frigid air, from the crunch of your boots to the heavy, rhythmic humming of the bronze Clapper. Biscuit stands with lowered head, enduring the stinging spindrift that whips across the ledge. The old ropes show dangerous signs of fraying where they pass over jagged crystal outcrops. // You need to make a fast decision before the falling debris cuts off your retreat entirely.
+EXIT 1: Duck into a narrow ice wall cleft for shelter
+EXIT 2: Follow the secret guide-rope shortcut offered by the wind-callers
+EXIT 3: Persevere across the shattered crystal spikes littering the footway
+@@END
+@@SECTION vh-4-0-1-4
+TITLE: The Larch Bridge
+TEXT: A steep crevasse bridge made of notched larch poles groans under the weight of the bronze Clapper. Frost has turned the bark to bone-white mail, and the chasm below yawns wide enough to swallow a cottage. Biscuit hesitates, his nostrils flaring at the smell of deep ice and moving water far beneath the floorboards. You steady the mule with a quiet word and a firm hand on his halter, feeling the metal tongue hum a steady reassurance against your weary shoulders. // The poles sway alarmingly in the crosswind, demanding your complete concentration for the remaining distance.
+EXIT 1: Press forward across the crystal spikes littering the path
+EXIT 2: Descend into the deep blue ice vault where the stream roars
+EXIT 3: Climb the vertical blue serac using the Ropewright knot-line
+@@END

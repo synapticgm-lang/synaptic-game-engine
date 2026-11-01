@@ -1,0 +1,65 @@
+{
+ "batch": "td-6-023",
+ "sections": {
+  "td-6-023": {
+   "title": "Orsolya's Final Measure",
+   "text": "Under the vast, empty sky, Orsolya's hand remains steady upon the Meridian Gear, guiding its brass teeth back into their ancient, deliberate alignment. The heavy iron groans against centuries of silence, but as the final tooth slips into place, the mechanism gives a deep, resonant sigh that vibrates right through the soles of your boots. The bitter alkali dust in the air settles abruptly, weighted down by a sudden, heavy dampness that smells intensely of cold weed and deep trenches. Far out on the bare seabed, the white salt crust shivers, fracturing along a thousand unseen lines as the earth itself seems to catch its breath. Orsolya does not look at you, her gaze fixed entirely on the bronze face of the tide clock as the pointer trembles and begins to swing backward with gathering speed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the copper dial spin around"
+   ]
+  },
+  "td-6-024": {
+   "title": "The Return of the Deep",
+   "text": "Water comes back not with a wall of white spray, but as a low, continuous rumble that shakes the foundations of Saltspire and rattles the dry timbers of Gullmouth's empty harbour. A dark, smooth line appears at the absolute edge of the western horizon, swallowing the bleached ribs of the sunken leviathan and racing across the flat expanses of the Low with terrifying grace. You stand beside the open shaft of the Sunken Stair, feeling the cold wind rise up from the depths as the sea reclaims its rightful floor. The Brineholders' high platforms on stilts tremble as the surge hits their pilings, sending a sudden mist of spray high into the sunlit air to catch the light in fleeting, brilliant arcs of green and grey.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step back from the rising edge"
+   ]
+  },
+  "td-6-025": {
+   "title": "Salt on the Threshold",
+   "text": "Gullmouth wakes to the sound of water crashing against its stone quays once more, foaming white and thick with weed and small, glittering shells that have not seen the light for a hundred years. The stranded boats in the basin lift and tug at their dry ropes with a joyous, wooden groaning, while net-menders and weeping tavern-keepers crowd the wet cobbles to dip their bare hands into the cold brine. Orsolya is gone from the Sunken Stair, leaving behind only her iron-tipped walking staff propped against the lighthouse door and a single wet footprint on the threshold. You walk down the winding cliff path alone, the salt spray stinging your cheeks and the heavy weight of the tide clock's truth resting entirely upon your shoulders.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk down to the wet shore"
+   ]
+  },
+  "td-6-026": {
+   "title": "The Last Tide",
+   "text": "Orsolya Venn was right about the weight of water, though she did not live to see the grey silt settle over her lighthouse door. You leave the salt-crusted helm of the Meridian Gear locked in its final, unyielding turn, watching from the high stone gallery as the first true rollers heave themselves back against the shingle of Gullmouth. The sea returns not with a roar, but with a heavy, sliding sigh, reclaiming the drowned alleys and the whale-bone shambles until the cliff-town floats once more upon its own narrow shadow. Down in the damp dark of the stairwell, the automaton-archivist folds its brass fingers and goes silent for good, its ink long dried in the well. There are no more charts to draw, no more secrets hidden in the dry salt-pans where the world used to end. You walk back down the cliff path through a mist that tastes of cold weed and old iron, your boots sinking into familiar mud. The tide clock in the tavern square has stopped its frantic ticking, its copper hand pointing straight up at the noon that never fails. Gullmouth is rich, wet, and safe behind its breakwaters, and the horizon is once more just an empty, grey line where the sky meets a flat, indifferent water.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  },
+  "td-6-027": {
+   "title": "The Spoils of the Low",
+   "text": "With a heavy, rhythmic heaving of the great iron levers, you set the Meridian Gear to favour the Wreckers' Guild, locking the brass mechanism into a permanent, lucrative flood tide that keeps the richest wrecks forever shallow and exposed. Down on the seabed, the Brineholders' high stilted city of Saltspire is caught completely unawares as the water surges back in a chaotic, frothing torrent that swamps their lower ladders and sends their clerks scrambling for the roofs. The Gullmouth boats leap from the dry mud with a sharp crack of hemp and timber, their decks instantly slick with black kelp and bright, swirling foam. Your fellow wreckers cheer from the quays, waving iron gaffs and copper salt-scoops in the blinding afternoon glare.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the wealth of the stranded floor"
+   ]
+  },
+  "td-6-028": {
+   "title": "The Wreckers' Kingdom",
+   "text": "Heavy iron levers screech in protest as your crew throws their full weight into the brass teeth of the mechanism, forcing the Meridian Gear into a permanent, greedy lock that drains the outer deeps and heaps the wealth of nations right beneath the Gullmouth docks. Salt-crusted chests of silver and ribs of ancient galleons now sit exposed in perpetual, shallow pools, waiting for the mattocks and the heavy canvas sacks of the Guild. Down on the quays, the pawn-widow rings her brass bell to mark the opening of a market that will never close, trading damp silks and copperplate maps for measures of dried cod and fresh well-water. The Brineholders scream from their stilted towers out on the flats, their water-monopolies broken forever by the constant rush of your engineered tide, but no one listens to men who sell what the sea now gives away for nothing. You stand upon the wet stone of the sea-wall with the spray in your teeth and a heavy purse at your belt, watching the great ships tilt against the mud in neat, orderly rows just where you told them to lie.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the chests in the shallows"
+   ]
+  },
+  "td-6-029": {
+   "title": "The Endless Harvest",
+   "text": "Gullmouth grows fat and defiant on the spoils of a controlled ocean, its stone alleys choked with barrels of salt fish, strange relics from drowned cities, and chests of heavy silver recovered from the unending shallows. The Brineholders send envoys with sealed parchment proposals and heavy bribes, but your crew turns them away at the cliff gate with a laugh and a handful of wet sand. You keep the tide clock locked in the Guildhouse back room, its brass fingers twitching against the glass like the legs of a drowned spider. The sea obeys your hand, rising and falling to order, but at night, when the wind howls against the slate roof, you can still hear the distant, grinding roar of the Meridian Gear waiting for someone to change their mind.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  }
+ },
+ "missing": []
+}

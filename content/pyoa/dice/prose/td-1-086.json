@@ -1,0 +1,108 @@
+{
+ "batch": "td-1-086",
+ "sections": {
+  "td-1-086": {
+   "title": "The Ambergris Scuffle",
+   "text": "Shouts erupt near the rib-cage stalls where two traders tear at a greasy, foul-smelling lump of grey whale fat, their knuckles bloody and eyes wild with greed. You step between them, planting your heavy boots in the salt-crusted sand and pushing broad shoulders against their heaving chests until the struggling merchants stumble back, gasping and blinking in sudden shame. The grateful victor presses a warm, waxy chunk of the prize into your palm at a steep discount before vanishing into the crowd.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip back into the market"
+   ]
+  },
+  "td-1-087": {
+   "title": "Breaking the Dispute",
+   "text": "Shouts shatter the dry air near the rib-cage stalls where two greasy traders claw at each other's throats over a grey, waxy lump of valuable ambergris. You stride directly into the spinning storm of fists and iron nails, intending to drive your solid frame between their chests and force the pair apart before a blade clears leather. Muscles straining against the frantic thrashing of desperate men, you brace your weight against the shifting bone floor and shove with all your might.",
+   "check": "Wedge your solid frame between them",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-088": {
+   "title": "A Heavy Toll",
+   "text": "A stray elbow catches you squarely across the jaw, snapping your head back and sending a hot taste of copper flooding into your mouth as the brawling traders tumble over your boots. You stagger against the sun-baked ribs of a stranded leviathan, clutching a bruised cheek while the valuable ambergris splits into useless, sandy fragments upon the ground. The angry merchants curse your interference and bolt into the narrow alleys, leaving you with a throbbing ache in your jaw and precious hours wasted.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and leave"
+   ]
+  },
+  "td-1-089": {
+   "title": "The Merchant's Grace",
+   "text": "Your iron grip holds firm against the thrashing mob, forcing the combatants apart until they slump against the salt-caked ribs in exhausted submission. The surviving merchant, sweating and trembling with relief, presses a smooth, waxy fragment of grey amber into your palm as a silent token of gratitude before scurrying away into the shadows. You pocket the aromatic prize, knowing its rich scent will fetch a heavy price among the apothecaries of the upper cliffs.",
+   "check": "",
+   "grant": "A fragrant lump of ambergris",
+   "exits": [
+    "Return to the noisy market"
+   ]
+  },
+  "td-1-090": {
+   "title": "The Water-Logged Journal",
+   "text": "Faded leather covers a water-logged journal tossed carelessly among a heap of rusted iron hooks and salt-rotted tackle on a blanket. You carefully flick open the stiff pages, squinting at cramped diagrams and cryptic margins scrawled in a dead sailor's hasty hand. By tracing the jagged ink lines against the known landmarks of the exposed seabed, you uncover a forgotten gully that bypasses the treacherous mud flats altogether.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the secret and move on"
+   ]
+  },
+  "td-1-091": {
+   "title": "Deciphering the Tides",
+   "text": "Faded leather covers a water-logged journal tossed carelessly among a heap of rusted iron hooks and salt-rotted tackle on a dusty blanket. You squint down at the cramped diagrams and strange marginal notes scrawled in a dead sailor's hasty, ink-stained hand, trying to match the looping symbols to the jagged contours of the exposed seabed. Your mind races through forgotten tidal charts and shifting sand patterns, searching for the hidden logic behind the erratic strokes.",
+   "check": "Decipher the dead sailor's hasty notes",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-092": {
+   "title": "Ink-Stained Confusion",
+   "text": "The cryptic symbols blur into a senseless jumble of salt-crushed ink and weeping water-stains that refuse to yield any coherent meaning. Frustration burns behind your eyes as you stare too long at the mocking pages, losing track of the bustling market around you until your head throbs with a dull, persistent ache. The peddler snatches the worthless book back with a snort, leaving you empty-handed and bewildered by the drowned man's scribbles.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Walk away from the stall"
+   ]
+  },
+  "td-1-093": {
+   "title": "Secrets of the Low",
+   "text": "Your mind pieces together the jagged ink strokes and peculiar symbols, revealing a hidden pathway worn deep into the silent seabed. The dead sailor's hasty notes map out a safe passage through the treacherous sucking mud of the southern shallows, avoiding the dangerous sinkholes that swallow unwary wreckers whole. You memorize the winding route, locking the secret navigation marks firmly in your memory before closing the book.",
+   "check": "",
+   "grant": "A secret map of the seabed",
+   "exits": [
+    "Return to the bustling market"
+   ]
+  },
+  "td-1-094": {
+   "title": "The Clockwork Aviator",
+   "text": "A wealthy trader from Saltspire holds out a delicate brass finch whose tiny mechanical wings have jammed mid-flap, its emerald eyes dull and motionless. You draw out your slender bone tweezers and a drop of refined whale oil, peering intently into the intricate clockwork chest of the miniature bird. With a steady hand and patient turns of the tiny screws, you coax the stubborn brass gears back into alignment until the bird gives a cheerful, whirring chirp and flutters its polished wings.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Collect your coin and depart"
+   ]
+  },
+  "td-1-095": {
+   "title": "Repairing the Brass Finch",
+   "text": "A wealthy trader from Saltspire extends a delicate brass finch whose tiny mechanical wings have jammed mid-flap, its precious emerald eyes dull and lifeless. You retrieve your slender bone tweezers and a small vial of refined whale oil, peering intently into the intricate, microscopic clockwork chamber nestled within the bird's hollow breast. You must coax the rusted, salt-fouled gears back into precise alignment without snapping the fragile hair-springs inside.",
+   "check": "Mend the delicate brass mechanism",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-096": {
+   "title": "A Costly Slip",
+   "text": "A microscopic spring suddenly snaps beneath your tweezers with a sharp ping, sending a tiny brass tooth flying into the dusty dirt where it is lost forever. The wealthy trader glowers at the crippled toy in your hands, his mouth tightening into a thin, disappointed line as he tosses a meager copper coin at your boots for the trouble. You are left with a ruined mechanism, a bruised reputation among the out-of-town merchants, and time wasted.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your broken tools"
+   ]
+  },
+  "td-1-097": {
+   "title": "Precision Restored",
+   "text": "Your steady fingers guide the slender tweezers through the intricate brass maze, nudging the stubborn gear until it clicks satisfyingly back into its proper groove. The tiny bird shivers in your palm, its emerald eyes flashing bright and clear before its wings unfold in a whir of perfect motion. The delighted Saltspire trader counts out a heavy purse of bright silver coin, pressing the clinking weight directly into your hand with an appreciative nod.",
+   "check": "",
+   "grant": "A heavy purse of silver coin",
+   "exits": [
+    "Join the mournful procession outside"
+   ]
+  }
+ },
+ "missing": []
+}

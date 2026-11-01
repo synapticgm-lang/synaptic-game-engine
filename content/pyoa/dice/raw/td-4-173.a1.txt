@@ -1,0 +1,32 @@
+Gemini said
+
+@@SECTION td-4-177
+TITLE: The Iron Grip
+TEXT: Orsolya plants her boots against the vibrating housing of the Meridian Gear, her knuckles whitening as she throws her body weight against the primary bronze lever to lock it in place. You lurch forward across the slick, grease-filmed staging, fingers clawing for the cold iron of the crossbar to tear it from her grip before she can trigger the catastrophic release. Muscle tears against metal as you pit your full, salt-hardened strength against hers, the straining gears screaming a high, frantic note of protest while the entire cavern shudders around your boots. // The heavy steel beam vibrates violently between you both, threatening to snap your shoulders or slip from your grasp as the accumulated hydraulic pressure peaks at a deafening pitch.
+CHECK: Wrench the lever from her
+@@SECTION td-4-178
+TITLE: A Broken Stance
+TEXT: Your boots slip on a film of hot oil just as you heave against the beam, sending you crashing hard into the ribbed iron plating with a bruised rib and a mouthful of copper-tasting air. Orsolya maintains her footing with grim, desperate tenacity, her shoulder driving hard against the spar to force the locking mechanism home while you struggle to push yourself back up from the deck. Pain throbs through your side with every ragged breath you draw in the steam-choked air, leaving you kneeling on the vibrating metal with your strength spent and the critical moment slipping away.
+EXIT 1: Lurch past her to the release
+@@SECTION td-4-179
+TITLE: The Seized Bar
+TEXT: Bracing your heels against a bolted rib of the housing, however narrowly you manage to find purchase, you summon every ounce of your wrecking-yard muscle to overcome her stubborn stance. The heavy iron lever groans and shifts beneath your sudden, brutal heave, sliding out of her desperate grasp with a sharp metallic snap that leaves her stumbling backward onto the grating. You stand triumphant over the vibrating core of the machinery, your chest heaving as you secure the heavy locking pin into place.
+GRANT: Orsolya's heavy brass wrench
+EXIT 1: Step down to the final platform
+@@SECTION td-4-180
+TITLE: The Old Statutes
+TEXT: Steam hisses from a hairline fracture in the nearby pipework, wreathing Orsolya in a pale shroud as she stands with her hand resting trembling on the brass handle. You speak the forgotten clauses of the third tidal charter into the damp gloom, naming the ancient obligations that bind every wrecker of the coast to the safety of the mainland ports above. She listens in silence, her eyes fixed on the sluggish dials of the pressure gauge while the logic of the ancient laws settles over the chamber like a cold blanket. Slowly, the fight drains from her rigid posture, and she reaches into her coat to draw out a tarnished brass instrument, thrusting it into your palm with a reluctant, bitter sigh.
+EXIT 1: Take the compass and step forward
+@@SECTION td-4-181
+TITLE: The Test of Logic
+TEXT: Orsolya shakes her head, her voice cutting through the mechanical din as she challenges your interpretation of the ancient statutes with a sharper, harsher reading of the maritime code. You trace a finger over the pitted brass rivets of the console, searching your memory for the exact wording of the harbor-master's decree that governs emergency releases on the dry seabed. Your mind races through the dense tangle of maritime law, trying to weave together a coherent argument before she slams the primary valve shut and locks the mechanism forever. // The heavy silence of the deep shaft hangs in the balance, waiting to see whether your reasoning holds or collapses under the weight of her stark experience.
+CHECK: Argue the ancient tidal law
+@@SECTION td-4-182
+TITLE: Flawed Memory
+TEXT: A crucial clause slips from your tongue as you stumble over the archaic phrasing of the charter, and Orsolya cuts you off with a sharp shake of her grey head. Your faulty logic leaves a dangerous gap in your defense, costing you precious time and forcing you to yield ground on the platform while she presses her own grim advantage. Frustration burns in your throat like brine as you realize your argument has failed to sway her, leaving you with a stinging sense of defeat and a heavy debt of pride.
+EXIT 1: Accept the setback and press on
+@@SECTION td-4-183
+TITLE: The Reluctant Gift
+TEXT: Weaving the fragmented precedents together into an unyielding argument, however narrowly you manage to pierce her defenses, you corner her with the undeniable truth of the old codes. Orsolya lowers her chin in a silent nod of defeat, letting go of the valve wheel and pulling a small, heavy brass casing from her inner pocket to press into your hand. It is an old surveyor compass with a needle that twitches toward the missing water, serving as both a token of her surrender and a guide through the dark mazes ahead.
+GRANT: The surveyor's ticking compass
+EXIT 1: Approach the great iron gear

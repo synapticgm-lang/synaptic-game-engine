@@ -1,0 +1,83 @@
+{
+ "batch": "vh-2-0-4-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-2-0-4-3": {
+   "title": "Torchlight Across The Planks",
+   "text": "Lyra holds a smoking tallow torch high above her head, the grease spitting orange sparks against the damp night air as she illuminates your footing across the frost-slicked wooden boards. The heavy bronze Clapper shifts inside its padded cradle on your back, its faint, deep hum vibrating right through your shoulder blades like a low-toned throat clearing in the dark. Below your boots, the abyss drops away into utter blackness, broken only by the distant, blinking lights of the lower tiers swaying on their hemp tethers.\n\nYou shift your weight carefully, balancing the dead weight of the bell-tongue against the mountain draft while the torch casts long, flickering shadows over the splintered guardrails.",
+   "exits": [
+    "Follow the glowing torch toward the market stalls",
+    "Take the winding ramp past the spinning lofts"
+   ]
+  },
+  "vh-2-0-4-4": {
+   "title": "The Groaning Winch Drum",
+   "text": "Heavy iron gears grind against one another with a teeth-aching shriek as a massive winch-drum rotates, slowly lowering a slatted cargo crate down into the gray abyss of the gorge. You step wide around the turning cable, the vibration of the tensioned hemp singing directly through the soles of your boots and rattling the bronze Clapper in its pack. A thin skim of mountain rime coats the brass housing of the winch, catching the weak amber light of a nearby toll-lantern.\n\nYou keep your balance low against the wind, watching the cargo basket vanish into the clouds below while the winch-boy leans hard on the wooden brake lever.",
+   "exits": [
+    "Pick your way toward the guild's central counter",
+    "Follow the packed snow ledge past the winch house"
+   ]
+  },
+  "vh-2-0-4-5": {
+   "title": "Lanterns In The Gorge",
+   "text": "A heavy brass toll-house lantern swings wildly on its chain overhead, casting long, frantic arcs of light across the padded cradle and your heavy bronze burden. Frost crisps the edges of your woolen collar as the mountain wind funnels violently between the timber struts of the market bridge. Somewhere down in the murky depths, a winch-bell tolls a single, hollow note that seems to answer the faint hum humming against your spine from the Clapper.\n\nYou steady your shoulders against the biting draft, keeping your eyes fixed on the narrow boardwalk ahead where the rope-masters' stalls crowd the cliff edge.",
+   "exits": [
+    "Head toward the guild's central counter",
+    "Take the narrow snow path past the spinning lofts"
+   ]
+  },
+  "vh-2-0-4-6": {
+   "title": "Snow Along The Lofts",
+   "text": "Cold packed snow crunches beneath your boots as you follow a narrow ledge hugging the rear wall of the upper rope-spinning lofts, where the sharp smell of tarred hemp hangs thick in the freezing air. Through the slatted wooden shutters of the loft above, pale lamplight spills across the drift-piled path, accompanied by the steady rhythmic whir of spinning wheels. The bronze Clapper shifts with a dull, muffled thud against your padded harness, reminding you of the ticking minutes before the passes ice over for good.\n\nYou pull your woolen cloak tighter around your chest, weighing the path ahead against the bustling market square behind you.",
+   "exits": [
+    "Descend toward the central guild counter",
+    "Approach the flickering lanterns of the stalls",
+    "Turn back toward the suspended market square"
+   ]
+  },
+  "vh-2-0-4-7": {
+   "title": "The Weary Guard",
+   "text": "A weary guard leans heavily against a frost-rimed wooden post, blowing warm air into cupped leather gloves while pointing a mittened finger toward the cluster of flickering lanterns marking the guild stalls. The wind rattles the wooden signs overhead, where thick knots are painted in faded red and black to show the ropewrights' marks. Your shoulders ache from the unyielding weight of the bronze Clapper, but the steady, low vibration against your back provides a stubborn kind of rhythm to your steps.\n\nYou nod a silent thanks to the sentry and step past the timber post into the drifting snow.",
+   "exits": [
+    "Approach the glowing guild stalls ahead"
+   ]
+  },
+  "vh-2-0-5-0": {
+   "title": "The Knot-Oath Pavilion",
+   "text": "Bright canvas walls snap and crack in the rising gale as you approach the glowing pavilion of the Knot-Oath Stall, where several master ropewrights wait silently by the main cable hub. Thick coils of yellow hemp line the tent posts like coiled serpents, smelling strongly of fish oil and pine pitch. One of the masters steps forward into the flickering light, his knuckles scarred from decades of hauling heavy cordage, his eyes fixed steadily on the bronze burden strapped across your shoulders.\n\nYou come to a halt in the shelter of the canvas awning, feeling the intense scrutiny of the guild elders.",
+   "exits": [
+    "Press on into the stall"
+   ]
+  },
+  "vh-2-0-5-1": {
+   "title": "Hemp Curtains And Oaths",
+   "text": "Heavy hemp curtains part abruptly, and the master of the Knot-Oath Stall steps out into the biting draft, offering safe passage down the mountain in exchange for a single, binding promise tied in cord. The lantern light catches the silver threads woven through the master's woolen stole, marking him as a man of high standing among the cable-riders. The bronze Clapper hums softly against your spine, as if warning you against binding your word to hands that profit from every toll.\n\nYou stand before the parting curtain, considering the cost of a safe descent through the frozen gates.",
+   "exits": [
+    "Press on past the curtains"
+   ]
+  },
+  "vh-2-0-5-2": {
+   "title": "The Central Guild Counter",
+   "text": "You halt before the guild's central counter of polished oak, where a single knotted hemp cord hangs suspended like a judge's scale in the flickering lamplight. Several apprentices murmur quietly behind the timber barrier, sorting through ledgers weighed down with iron tokens and chunks of raw tin. The air smells intensely of cold iron and dry grass, and the heavy weight of the Clapper seems to pull you slightly off balance as you wait for someone to acknowledge your approach.\n\nYou rest your hands on the edge of the frosty counter, watching the swinging cord dance in the draft.",
+   "exits": [
+    "Press on to the counter"
+   ]
+  },
+  "vh-2-0-5-3": {
+   "title": "The Chief Rope-Master",
+   "text": "The chief rope-master blocks your path with an outstretched length of tarred cord, demanding your formal knot-oath before you are permitted to descend any further down the cliff stairs. His weather-beaten face is expressionless beneath a heavy fur cap, and his calloused hands hold the cord taut between his knuckles like a tripwire. The wind howls through the gorge behind him, carrying the distant metallic ring of Lowgate's anvils far below in the freezing gloom.\n\nYou stand toe-to-toe with the guild leader, the heavy bronze Clapper humming an urgent warning against your back.",
+   "exits": [
+    "Press on past the barrier"
+   ]
+  },
+  "vh-2-c1": {
+   "title": "The Knot-Oath Stall",
+   "text": "Inside the sprawling canvas pavilion of the Knot-Oath Stall, the air is thick with the scent of pine pitch and warm wool. Master ropewrights crowd around the central cable hub, their fingers endlessly looping and tucking heavy hemp cords into intricate, unyielding patterns. They offer you immediate shelter, hot barley broth, and safe passage down the ice-slicked cable ways, but the price is absolute: you must swear an oath tied in a sailor's hitch, promising to answer one unspecified request for the guild when you reach Lowgate or return to Vesperhold.\n\nYou can bind your word to theirs and secure a safe, swift passage down the freezing cliff face, or you can refuse their tangled promises and pay the full toll in coin and muscle, trusting only your own strength to carry the humming bronze Clapper down the mountain.",
+   "exits": [
+    "Tie the knot-oath for the Ropewrights' help",
+    "Refuse the oath and pay full price"
+   ]
+  }
+ },
+ "missing": []
+}

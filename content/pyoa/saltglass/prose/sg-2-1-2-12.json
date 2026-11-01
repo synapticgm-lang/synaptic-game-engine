@@ -1,0 +1,88 @@
+{
+ "batch": "sg-2-1-2-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-1-2-12": {
+   "title": "The Brine Crust",
+   "text": "You wipe a crust of salt from your forehead with the back of your glove, tasting bitter brine where the sweat has dried. The midday glare bounces off the flat basin floor like a sheet of white fire, making every distant salt-dome shimmer and waver in the heat. Your canvas pack feels heavier with every league, and the banked coals in your hip-lamp radiate a steady, familiar warmth against your thigh.\n\nAhead, the trail splits between a low wall of fused slag and a narrow defile choked with basalt blocks, forcing you to choose your footing carefully before the wind shifts.",
+   "exits": [
+    "Duck behind the crumbling slag wall",
+    "Pick your way past the basalt slabs"
+   ]
+  },
+  "sg-2-1-2-13": {
+   "title": "The Ash Cairn",
+   "text": "A low stone cairn built by earlier runners marks the boundary where the hard salt ends and the treacherous ash-crust begins. You pause to test the stability of the grey, powdery earth with the toe of your boot, watching tiny puffs of dark dust settle back into the cracks. Somewhere out in the blinding distance, a mirror-signal flashes a brief, sharp greeting that vanishes almost as quickly as it appeared.\n\nThe wind carries the faint metallic tang of old iron and sulfur, urging you to decide whether to seek shelter from the rising gale or push deeper into the grey expanse.",
+   "exits": [
+    "Take cover behind the slag rampart",
+    "Navigate around the blocked defile"
+   ]
+  },
+  "sg-2-1-2-14": {
+   "title": "The Sharp Quartz",
+   "text": "You pause to adjust your canvas gaiters, shaking out a handful of sharp quartz sand that threatens to skin your heels raw. The arid wind whispers across the crystalline flats, carrying tiny grains that hiss against your leather coat like scattered seed. Your fingers brush the cold ceramic shape of the Seedkey in your pocket, reassuring you that your mission remains secure despite the punishing heat.\n\nThree distinct paths beckon across the shimmering pan, each leading toward different hazards in the blinding expanse.",
+   "exits": [
+    "Squeeze past the basalt-choked defile",
+    "Scrape the gypsum crust from your boots",
+    "Head toward the distant drift of wood-smoke"
+   ]
+  },
+  "sg-2-1-2-15": {
+   "title": "The Singing Ground",
+   "text": "A strange singing hum rises from the ground beneath your boots as the midday sun bakes the deeper strata of glass and salt. It sounds like a chorus of distant brass bells buried deep beneath the crust, vibrating through the soles of your feet with a low, rhythmic thrum. You check the glass lens of your belt-lamp to ensure the banked coals are secure against the vibrations.\n\nTwo routes lie open before you, one winding toward an obstacle of stone and the other toward the faint scent of smoke.",
+   "exits": [
+    "Bypass the heavy hand-cart in the gorge",
+    "Investigate the smell of distant wood-smoke"
+   ]
+  },
+  "sg-2-1-3-0": {
+   "title": "The Gray Dancer",
+   "text": "Behind a screen of twisted iron slag, you catch your breath while watching a dust-devil spin across the flat like a grey dancer. The miniature tempest tears up flakes of dried mud and white salt, whirling them into a spinning pillar before dissolving into the empty air. Your throat feels dry as parchment, and you take a small, measured sip from your waterskin to clear the dust.\n\nTwo possible trails wind away from your makeshift shelter into the sun-bleached expanse.",
+   "exits": [
+    "Climb toward the northern timber palisade",
+    "Follow the groaning iron conduit pipe"
+   ]
+  },
+  "sg-2-1-3-1": {
+   "title": "The Empty Guild Crate",
+   "text": "You examine a bleached wooden crate marked with the faded brand of the Candlemere trading guild, found empty in a salt-hollow. The dry air has split its pine staves wide open, leaving it completely useless for storing anything against the coming monsoon. Yet its presence reminds you that other runners from your home town have passed this way before, facing the same relentless glare and thirst.\n\nA single path winds away from the hollow toward the northern ridges of the basin.",
+   "exits": [
+    "Head toward the distant palisade ridge"
+   ]
+  },
+  "sg-2-1-3-2": {
+   "title": "The Desert Grouse",
+   "text": "A flight of pale desert grouse bursts from a sinkhole of dry reeds, startling your hand toward the heavy lamp on your hip. The birds beat their wings against the dry wind before vanishing into the shimmering haze above the salt-domes. You let out a quiet breath, easing your grip on the lantern as the sudden rustle fades into silence.\n\nSeveral tracks diverge from the reed-choked hollow, offering different directions across the flats.",
+   "exits": [
+    "Follow the path beside the groaning conduit",
+    "Inspect the battered tariff warning sign",
+    "Take shelter beneath the deserted lean-to"
+   ]
+  },
+  "sg-2-1-3-3": {
+   "title": "The Emerald Causeway",
+   "text": "You step onto a causeway paved with hexagonal blocks of green bottle-glass that gleam like emeralds under the punishing vertical sun. The ancient glass is cool to the touch despite the heat, fused together by forgotten arts that left the roadway smoother than any natural stone. Your boots click rhythmically against the green tiles as you scan the horizon for any sign of movement.\n\nYou can press onward along the luminous tiles, seek a different route, or retrace your steps.",
+   "exits": [
+    "Descend toward the northern timber palisade",
+    "Continue along the groaning iron pipe",
+    "Turn back toward the acacia ribs"
+   ]
+  },
+  "sg-2-1-3-4": {
+   "title": "The Rusted Spade",
+   "text": "An old salt-scraper's spade stands upright in a mound of tailings, its rusted iron blade stained with orange streaks of oxidized iron. The wooden handle has bleached to a pale silver under decades of unfiltered desert sunlight, driven deep into the crust by someone who never returned to claim it. You touch the cold metal blade as you pass, feeling the absolute stillness of the empty basin pressing in from all sides.\n\nA single trail leads away from the marker toward a shimmering field of pink dust.",
+   "exits": [
+    "Tread carefully across the pink alkali drift"
+   ]
+  },
+  "sg-2-1-3-5": {
+   "title": "The Salt Pillars",
+   "text": "You navigate a labyrinth of jagged salt-pillars that cast razor-sharp blue shadows across the blinding white expanse of the basin. Each pillar stands like a frozen wave of brine, sculpted by centuries of alkali winds into strange, jagged spires that tower overhead. The air trapped between the pillars is dead and hot, smelling faintly of sulfur and ancient sea-salt.\n\nTwo narrow gaps in the salt formation invite you to continue your journey.",
+   "exits": [
+    "Follow the path of the groaning iron conduit",
+    "Step across the bright magenta alkali dust"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,106 @@
+{
+ "batch": "td-4-122",
+ "sections": {
+  "td-4-122": {
+   "title": "The Sunken Bulkhead",
+   "text": "Green brine drips from the ribbed iron ceiling above as you wedge your shoulder against the swollen gasket of the inner hatch. Rusted bolts groan under the steady pressure, resisting every inch of your forward push. A thin stream of brackish water sprays across your cheek, carrying the sharp tang of old grease and stagnant kelp. Beyond the barrier, the dark corridor slopes downward into absolute shadow. You must clear this obstacle to follow the faint scrape of metal echoing from the depths.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force open the jammed bulkhead"
+   ]
+  },
+  "td-4-123": {
+   "title": "Weight of the Deep",
+   "text": "Heavy bronze links rattle against your shins as you haul the heavy dive weight closer to the sunken hatch frame. The air grows noticeably colder here, smelling strongly of ancient rust and sulfurous mud leaking from the floor panels. Slipping your fingers through the ring of the dead weight, you brace your boots against a ribbed bulkhead plate to secure a solid footing for the heavy labor ahead. The silence of the seabed presses down from above like a physical weight.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wedge the heavy brass weight"
+   ]
+  },
+  "td-4-124": {
+   "title": "Strain Against Iron",
+   "text": "Muscles bunch in your shoulders and back as you set your palms flat against the freezing metal of the fallen pillar, leaning your entire body weight into the heave. The stone-encrusted column refuses to budge at first, biting into your calloused palms with sharp barnacle edges. Veins throb at your temples as you draw upon every ounce of raw strength you possess to wrench the obstacle away from the jammed seal.",
+   "check": "Heave the pillar aside",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-125": {
+   "title": "Bruised and Bone-Sore",
+   "text": "The heavy pillar slips from your sweat-slicked grip, crashing back down onto your boot with a jarring thud that sends a white-hot flash of pain up your shin. You stumble backward into the cold brine, gasping for breath as your bruised muscles throb in protest. Though you manage to wrench the obstacle clear on a second desperate lunge, the struggle leaves you limping heavily and nursing a deep, angry purple bruise along your lower leg.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push past the pain downward"
+   ]
+  },
+  "td-4-126": {
+   "title": "Clearance Gained",
+   "text": "With a sudden, protesting screech of sheared iron, the heavy pillar finally rolls sideways into the silt, clearing the path to the inner chamber. You catch your breath, wiping salt-crusted sweat from your forehead with the back of a trembling wrist. The victory is hard-won and leaves your muscles aching, but the way forward stands wide open at last. Resting in the mud beside the cleared frame is a solid brass wedge dropped by an earlier scavenger.",
+   "check": "",
+   "grant": "Heavy brass wedge",
+   "exits": [
+    "Descend into the deeper gloom"
+   ]
+  },
+  "td-4-127": {
+   "title": "Orsolya's Final Trail",
+   "text": "Down in the sheltered recess behind the airlock, a familiar scrap of heavy wool cloth flutters slightly in the draft. It is a torn piece of Orsolya Venn's dark weather-coat, snagged sharply on the jagged edge of a fractured steam pipe. Beside it, smeared across the rusted plating in dark, drying strokes, a hasty arrow points directly downward into the black throat of the stairwell. The handwriting is unmistakably hers, rushed and frantic, warning of something rising from the sump. No voice answers your low call, only the hollow dripping of water echoing from the vaults below. You gather the scrap of fabric and prepare yourself for the final descent.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the blood-marked descent"
+   ]
+  },
+  "td-4-128": {
+   "title": "The Ruined Camp",
+   "text": "A cavernous chamber opens before you, littered with the wreckage of an abandoned expedition. Scattered maps drift in stagnant puddles beside shattered glass lenses and overturned oil lamps. This is Orsolya's ruined camp, left deserted in great haste. A gaping vertical shaft yawns in the center of the floor, exhaling a gust of freezing air that smells of old copper and ozone. Various paths branch outward into the gloom, offering different ways to scavenge the ruins or push deeper toward the heart of the machinery.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Rest briefly in the camp",
+    "Recover the encrypted journal",
+    "Piece together the tidal chart",
+    "Build a working water filter",
+    "Harvest the armored rock-centipede",
+    "Slide down to the Meridian Gear"
+   ]
+  },
+  "td-4-129": {
+   "title": "Shadows of the Camp",
+   "text": "You pull a damp wool blanket over your shoulders and sit down on an overturned crate within the quiet shelter of the deserted campsite. The surrounding silence is heavy and unnatural, filled only with the faint ticking of distant machinery somewhere deep in the rock. Closing your eyes for a brief moment, you force your racing pulse to steady against the rising tide of exhaustion. A small metallic glint catches your eye from beneath a pile of discarded canvas sheets in the corner.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Investigate the canvas heap"
+   ]
+  },
+  "td-4-130": {
+   "title": "Facing the Dark",
+   "text": "Shadows seem to lengthen and writhe along the damp stone walls as the oppressive quiet of the ruined camp presses in upon your thoughts. Terrible visions of the dry seabed and drowning towns flicker uninvited behind your closed eyelids, threatening to break your fragile composure. You grip the edges of your wooden seat until your knuckles turn white, fighting off the phantom terrors that claw at the edges of your mind.",
+   "check": "Suppress the creeping nightmares",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-131": {
+   "title": "Shaken Resolve",
+   "text": "A sudden wave of intense vertigo sends you tumbling sideways off the crate, crashing hard against a stack of discarded brass tubing with a sharp clatter. You lie gasping on the cold stone as dark shapes dance at the edge of your vision, your nerves frayed to a breaking point by the relentless isolation. Although you eventually force yourself back to your feet, the terrifying episode leaves you trembling and drains your remaining stamina.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your scattered wits"
+   ]
+  },
+  "td-4-132": {
+   "title": "The Silver Flask",
+   "text": "Exhaustion pulls you down against the damp timbers of the neglected shelter, where you snatch a few hours of uneasy sleep beneath the weight of relentless, creeping dread. Waking with the taste of salt on your tongue, your fingers brush against a cold, dented object wedged into the corner of the berth: a heavy silver flask smelling faintly of stale port and old iron.\n\nPocketing the small prize, you feel a modest reserve of strength return to your limbs, hardening your resolve against the damp chill that seeps upward from the deep floors below.",
+   "check": "",
+   "grant": "heavy silver flask",
+   "exits": [
+    "Climb down through the iron hatch"
+   ]
+  }
+ },
+ "missing": []
+}

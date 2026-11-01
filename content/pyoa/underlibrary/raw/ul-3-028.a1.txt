@@ -1,0 +1,25 @@
+@@SECTION ul-3-032
+TITLE: The Forged Exemption Seal
+TEXT: Ink dries fast in the drafty corridors of the court, but your hand does not shake as you press the stolen bone nib into the parchment. Beneath the watchful gaze of stone gargoyles and whispering clerks, you mimic the distinctive flourish of the Chief Cataloguer, channeling every ounce of quick wit you possess. The wet black lines settle into official permanence just as heavy iron footsteps echo down the stone threshold, securing your escape with a wax-stamped token tucked safely inside your waistcoat pocket. // You slip past the retreating guards into the lower vaults, clutching the official exemption seal like a fragile talisman against the encroaching gloom.
+GRANT: a wax-stamped exemption seal
+EXIT 1: Slip through the iron portcullis while the registrar is distracted by ledger queries.
+@@END
+
+@@SECTION ul-3-033
+TITLE: Balancing Act of Law
+TEXT: Teetering towers of calfskin-bound volumes threaten to avalanche across the flagstones as you pitch your defense to the silent bench. Every step requires absolute poise to avoid sending decades of parliamentary commentary tumbling into the damp dust. A sympathetic assessor in the second row leans forward, noting your composure with a faint, appreciative nod that acknowledges your precarious triumph over clumsy footing. // The stack settles with a settling groan of ancient timber, leaving you standing upright and poised before the vaulted archway leading deeper into the archives.
+EXIT 1: Step carefully past the teetering ledgers toward the descending spiral staircase.
+@@END
+
+@@SECTION ul-3-036
+TITLE: Grace Before the Bench
+TEXT: Balance deserted you for a heart-stopping second as the top-heavy stacks wobbled, yet your agile recovery turns a potential disaster into a theatrical display of poise. You catch a sliding folio mid-air while addressing the chief magistrate, earning an appreciative murmur from the sympathetic assessor seated nearby. That small display of physical grace leaves you with an unexpected debt of gratitude from an influential scholar who despises the court's rigid rules. // You pocket the scribbled note of introduction left on your bench, knowing it will open doors locked to ordinary shelvers.
+GRANT: a scholar's introductory note
+EXIT 1: Return to the crowded gallery to observe the ongoing tribunal proceedings.
+@@END
+
+@@SECTION ul-3-040
+TITLE: Staring Down the Prosecutor
+TEXT: The prosecutor’s harsh interrogation hammers against your thoughts like a heavy iron mallet striking a cracked bell, draining every ounce of your resolve until your temples throb. A sharp, stinging headache flares behind your eyes as the mental strain forces you to grip the wooden rail just to stay upright. Though you secure the grudging right of passage through the lower arches, the ordeal leaves you battered in spirit and nursing a deep, throbbing weariness that makes every breath feel like drawing dry ash. // You stumble into the shadows of the corridor, swallowing the bitter taste of exhaustion as you press onward.
+EXIT 1: Advance into the dim corridor with a heavy heart and ringing ears.
+@@END

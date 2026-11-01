@@ -1,0 +1,117 @@
+{
+ "batch": "ul-5-050",
+ "sections": {
+  "ul-5-050": {
+   "title": "The Mason's Flaw",
+   "text": "Smoke billows across the vaulted corridor, smelling strongly of scorched vellum and melting tallow. You crouch by the foot of the stone archway, fingers tracing the ancient mortar lines until you locate the weathered keystone that bears the weight of the entire span. With a heavy iron lever pulled from a discarded book-trolley, you wedge the tool deep into the fracture, putting your entire weight behind the heave to bring the heavy masonry crashing down into the void.\n\nThe bridge groans and shatters behind you, cutting off the pursuing zealots with a thick wall of tumbling granite dust. You catch your breath in the gloom and press forward into the shadows.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Sever the stone bridge behind you"
+   ]
+  },
+  "ul-5-051": {
+   "title": "Reading the Arch",
+   "text": "Thick smoke stings your eyes as you crouch beside the low stone archway, frantically recalling every treatise on subterranean architecture you ever shelved in the damp lower stacks. The masonry vibrates underfoot with the heavy tread of pursuers, leaving you seconds to identify which voussoir bears the principal load of the structure. You jam your iron lever into the hairline fracture of the central stone, bracing your boots against the crumbling plinth.\n\nThe wall groans with sudden strain, the ancient mortar protesting against the torsion as you prepare to throw your weight onto the iron bar.",
+   "check": "Pry the keystone from the arch",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-052": {
+   "title": "Crushed by Falling Masonry",
+   "text": "The stone proves far more stubborn than expected, refusing to yield until a sudden shudder of the ceiling sends a jagged shard of granite crashing directly onto your forearm, pinning you against the damp wall with a sharp shock of pain. You bite back a cry, wrenching your arm free from the rubble while leaving behind a wide strip of your heavy woollen sleeve and a fresh, bleeding scrape along your skin.\n\nScrambling through the settling dust, you stumble away from the crumbling ruins, clutching your bruised limb as the distant shouts of your pursuers draw closer through the smoke.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Escape into the suffocating smoke"
+   ]
+  },
+  "ul-5-053": {
+   "title": "The Fallen Keystone",
+   "text": "The masonry yields with a sudden, thunderous crack, the heavy keystone popping free from the arch and sending tons of ancient stone plunging into the abyss below. The walkway behind you vanishes in a billowing cloud of grey dust, effectively isolating you from any pursuit.\n\nAmidst the settling rubble, your fingers brush against a small, heavy object wedged in the fallen mortar: a polished brass pocket-level dropped by some long-forgotten architect. You pocket the cool metal instrument, knowing its plumb-line might yet prove vital in the unstable mazes ahead.",
+   "check": "",
+   "grant": "a polished brass pocket-level",
+   "exits": [
+    "Continue toward the Scriptorium Bridge"
+   ]
+  },
+  "ul-5-054": {
+   "title": "Shadows in the Stack",
+   "text": "A squad of zealots rounds the corner ahead, their torches casting flickering, distorted shadows across the towering wooden bookcases. You slip sideways into the narrow gap between two swollen encyclopaedias, holding your breath as heavy boots tramp past on the uneven floorboards. The acrid stench of lamp-oil hangs thick in the air, masking your scent among the thousands of moldering volumes.\n\nOnce the patrol passes, you emerge into the quiet aisle, reaching into a discarded crate to salvage a bundle of dry lint left behind by the book-binders.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the patrolling zealots"
+   ]
+  },
+  "ul-5-055": {
+   "title": "The Smoke and the Stack",
+   "text": "Distant chanting echoes through the labyrinth of shelves, warning you that the zealots have doubled back to search the intersecting corridors. You duck behind a towering stack of municipal ledgers, listening to the rhythmic thump of iron-shod boots drawing nearer by the heartbeat. The air grows warmer as the fires below lick higher against the lower shelves, turning the old paper brittle and brown at the edges.\n\nWaiting for the precise moment of maximum confusion among the searching crowd, you prepare to make your move across the open junction.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Dart across the open junction"
+   ]
+  },
+  "ul-5-056": {
+   "title": "Distracting the Zealots",
+   "text": "Footsteps echo sharply off the stone flagstones just around the corner, leaving no time to find a proper hiding place among the swaying shelves. You snatch a burning brass lamp from its iron bracket and hurl it hard down the transverse corridor, where it shatters against the floor with a bright explosion of oil and flame. The approaching zealots roar in surprise and rush toward the sudden fire, their attention entirely diverted from your dark corner.\n\nYou crouch silently in the deeper gloom, waiting for the uproar to draw them far enough away for you to slip past unnoticed.",
+   "check": "Toss the lamp into the dark",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-057": {
+   "title": "Caught in the Glare",
+   "text": "The lamp shatters against the flagstones, but the splashing oil catches your own boot-hem, singeing the leather and sending a bright arc of flame dancing uncomfortably close to your trousers. The nearest zealot wheels around at the sound, catching a clear glimpse of your retreating silhouette against the flickering firelight. Shouting an angry curse, the pursuer lunges forward, swinging a heavy iron inkpot that clips your shoulder and sends you sprawling painfully across the dusty floorboards.\n\nYou scramble away into the shadows while the fanatic beats out the clinging flames, leaving you with a scorched trouser-cuff and a dull ache in your back.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee deeper into the shadows"
+   ]
+  },
+  "ul-5-058": {
+   "title": "The Vanishing Act",
+   "text": "The burning lamp shatters against the far flagstones with a brilliant flash, drawing a chorus of startled shouts from the fanatic patrol as they surge toward the sudden fire. Taking advantage of the momentary confusion, you slip past the distracted guards like a wisp of smoke, your boots silent on the carpet of discarded paper.\n\nTucked neatly into a fold of your heavy canvas apron, you discover a small bundle of dry lint and flint left behind by a careless book-binder, dry enough to strike a spark when the darkness closes in.",
+   "check": "",
+   "grant": "a bundle of dry lint",
+   "exits": [
+    "Advance toward the narrowing stacks"
+   ]
+  },
+  "ul-5-059": {
+   "title": "Wits in the Dark",
+   "text": "A frantic pounding comes from behind a jammed iron utility door set into the base of the grand encyclopedia cases. You pause, recognizing the sharp voice of a fellow cataloguer trapped inside by the shifting masonry, and trade a brisk series of sarcastic remarks about their filing habits through the heavy metal grille. The banter restores their nerve, and together you throw your combined weight against the warped frame until the rusted bolts give way with a sharp screech.\n\nYour new companion scrambles free from the cramped recess, brushing soot from their scholar's robes and immediately offering to guide you through the hidden maintenance hatches that bypass the blocked corridors ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the librarian through the hatch"
+   ]
+  },
+  "ul-5-060": {
+   "title": "Trading Wit with the Trapped",
+   "text": "Muffled curses echo from behind a jammed service hatch set low into the oak-paneled base of the theological stacks. You lean against the iron-banded wood, tossing sharp, dry remarks about the librarian's questionable cataloguing methods through the narrow air-slits. An equally acidic retort flies back from the darkness, establishing a fierce, hurried rhythm of mutual mockery as you both work to locate the hidden release spring.\n\nThe internal mechanism clicks beneath your probing fingers, holding the heavy iron latch right on the verge of springing open.",
+   "check": "Match wits with the trapped scholar",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-061": {
+   "title": "A Slap of Sharp Iron",
+   "text": "Your tongue slips on a particularly complex piece of library jargon, and your unseen rival seizes the moment to deliver a biting insult regarding your grandfather's ability to file simple tax receipts. The distraction costs you dearly; as you fumble with the stubborn latch, the heavy iron door drops back into its frame with a bone-jarring slam, catching your knuckles and scraping the skin raw.\n\nYou nurse your throbbing hand in the gloom, enduring a final, muffled jeer from behind the iron before the mechanism finally yields to a second, more desperate heave.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pull open the stubborn hatch"
+   ]
+  },
+  "ul-5-062": {
+   "title": "The Sharp-Tongued Ally",
+   "text": "Your sharp retort matches the prisoner's dry humor blow for blow, keeping spirits high while your fingers locate the hidden brass release pin. The heavy iron door swings inward with a long, rusty sigh, releasing a cloud of stale air and a very flustered senior clerk who immediately begins inspecting their ink-stained cuffs.\n\nGrumbling about the state of the ventilation, the librarian dusts off their waistcoat and presses a small, brass-bound utility key into your palm, swearing to guide you through the secret maintenance bypasses that lead directly to the Scriptorium Bridge.",
+   "check": "",
+   "grant": "a brass-bound utility key",
+   "exits": [
+    "Cross toward the Scriptorium Bridge"
+   ]
+  }
+ },
+ "missing": []
+}

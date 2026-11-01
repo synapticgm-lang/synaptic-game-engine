@@ -1,0 +1,45 @@
+@@SECTION vh-1-0-1-3
+TITLE: Choir-Loft Exit
+TEXT: Sweeping under the low timber of the choir-loft, you dodge a swinging tallow-bucket as the novice-master bellows final warnings about sudden wind-slips on the upper stair. The heavy bronze tongue in its padded cradle hums against your spine, a low vibration that matches the steady pounding of your heart. Ahead lie the stone thresholds leading down the mountain face, and you must decide how to begin your descent.
+EXIT 1: Accept the dried plums and press onward
+EXIT 2: Brace against the glacier gust and stride ahead
+EXIT 3: Thread past the sheep pens and the crooked stick
+@@END
+@@SECTION vh-1-0-1-4
+TITLE: South Cloister Rest
+TEXT: Pressing your back against the warm stone of the cloister chimney, you ease the biting canvas shoulder strap before tackling the vertical drop. The air smells of old lime mortar and woodsmoke drifting from the refectory. Around you, the monastery walls seem to contract, urging you outward into the freezing light of the high tiers.
+EXIT 1: Head past the sheep-dip pens and the shepherd
+EXIT 2: Receive the pewter charm of St. Jude for safety
+EXIT 3: Sidestep the rolling pine logs in the charcoal yard
+@@END
+@@SECTION vh-1-0-1-6
+TITLE: Cistern Awakening
+TEXT: Splashing freezing cistern water over your wrists, you scrub away the last traces of workshop sleep before the long descent begins. Frost crusts the edges of the stone basin, and the distant clatter of mule gear echoes off the cliff face. You shift the heavy bronze clapper on your back, feeling its familiar, steady weight settle between your shoulder blades.
+EXIT 1: Dodge the rolling timber in the charcoal yard
+EXIT 2: Adjust the canvas rain-hood over your precious cradle
+EXIT 3: Skirt the steaming heap of slaking stone by the lime-kiln
+@@END
+@@SECTION vh-1-0-1-7
+TITLE: Dormitory Murmurs
+TEXT: Tightening your leather waist-belt beneath the stone vaulting of the Great Dormitory, you listen to fellow apprentices murmuring quiet wagers on whether you will reach Lowgate intact. The air is thick with the scent of wool grease and old straw pallets. Every eye in the dim hall watches to see how you shoulder the burden of the broken Orison.
+EXIT 1: Skirt the steaming lime-kiln and the white dust
+EXIT 2: Walk past the screeching hawk at the cliff-mews
+@@END
+@@SECTION vh-1-0-1-8
+TITLE: Outer Threshold
+TEXT: Watching the white vapour of your breath dissolve into the high mountain air, you stand upon the threshold of the outer gatehouse before committing to the stone steps. The wind carries a sharp hint of pine resin and coming snow from the upper peaks. Your boots find purchase on the frozen flags as you take the final measure of the monastery walls behind you.
+EXIT 1: Pass the steaming heap of slaking stone
+EXIT 2: Glance at the hooded mountain hawk in the mews
+EXIT 3: Brush the dry snow from the gate-saint's stone beard
+@@END
+@@SECTION vh-1-0-1-9
+TITLE: Brazier Warmth
+TEXT: Warming your stiffened fingers over the glowing charcoal of the brazier-pit, you catch the master bell-founder watching you with a critical, squinting eye. The bitter mountain draft curls around the stone pillars, carrying the metallic tang of hot slag and quenching oil. No words are spoken, for the weight on your shoulders tells the master all he needs to know about your readiness.
+EXIT 1: Brush the drift of dry snow from the gate-saint
+@@END
+@@SECTION vh-1-0-2-0
+TITLE: Rope-Loft Gloom
+TEXT: Inhaling the thick aroma of tarred hemp and mutton tallow, you step into the damp gloom of the rope-loft as Master Hobb dangles a hank of three-ply cordage for your inspection. The low ceiling creaks under the weight of coiled cables overhead, and the distant sound of wind screaming through the mountain gorges fills the shadowy corners. You must choose your rigging before taking the Ninety Steps downward.
+EXIT 1: Step out onto the stone platform of the Ninety Steps
+EXIT 2: Dodge the sliding slate at the butter-stores corner
+@@END

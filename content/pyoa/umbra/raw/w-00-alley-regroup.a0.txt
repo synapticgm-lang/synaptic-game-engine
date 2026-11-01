@@ -1,0 +1,20 @@
+Gemini said
+
+@@INSERT up-w-alley-regroup | witness=bought
+A shadowed figure hurries past the lane's mouth—the Archbishop's almoner, keeping his promised silence for now, but leaving you burdened with a whispered debt that will surely be called due before morning.
+@@END
+@@INSERT up-w-alley-regroup | witness=let-go
+Somewhere close, heavy boots hit the cobblestones in an organised sweep, directed precisely here by the terrified almoner you allowed to flee; the Watch knows exactly who they are hunting tonight.
+@@END
+@@INSERT up-w-alley-regroup | witness=dropped
+Sable shoots you a sideways, wary glance, her eyes lingering on the scuffed knuckles that so recently pushed the snooping almoner to a shattered death upon the lower tiles.
+@@END
+@@INSERT up-w-alley-regroup | cover=tailor
+The disgraced tailor’s debt coat wraps tightly around your shoulders, its heavy velvet and hidden, silver-threaded pockets concealing the brass-bound ledger perfectly against the chill of the soot-stained breeze.
+@@END
+@@INSERT up-w-alley-regroup | cover=livery
+Rough canvas scrapes at your neck as you shift the stolen tome beneath your porter’s livery, grateful that such common, grease-stained attire renders you invisible among the labourers staggering home through the smog.
+@@END
+@@INSERT up-w-alley-regroup | cover=usher
+Stray lamplight catches the braided gold epaulettes of your opera usher’s uniform, a garish disguise that hides the bulky ledger but threatens to betray your presence in this miserable, filth-strewn corner of the city.
+@@END

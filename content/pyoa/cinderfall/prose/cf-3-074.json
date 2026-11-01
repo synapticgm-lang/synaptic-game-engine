@@ -1,0 +1,117 @@
+{
+ "batch": "cf-3-074",
+ "sections": {
+  "cf-3-074": {
+   "title": "The False Signal",
+   "text": "Steam hisses from the rusted brass fittings of your cab as you lean out into the stinging grit of the viaduct, watching the rival engine loom through the grey haze. Its driver peers ahead, trusting the semaphore lamps rather than the wind. You reach for the signal-wire crank, preparing to flick a false amber flag that will trick them into thinking the main track is closing down the line.\n\nThe heavy iron wheels of the Marrowbone rumble against the damp rails while you calculate the exact second to pitch your voice and shout the premature warning across the narrowing gap between the locomotives.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flash the amber semaphore warning"
+   ]
+  },
+  "cf-3-075": {
+   "title": "Shadows on the Bridge",
+   "text": "Iron girders of the Brasswind Viaduct groan under the weight of passing commerce, smelling of hot grease and coal smoke. The rival locomotive drifts closer on the parallel freight track, its boiler venting a sharp whistle that cuts through the continuous roar of the high winds. You keep one hand steady on the regulator valve, ready to exploit any hesitation in the opposing driver's posture as the two iron beasts lock into a dangerous rhythmic stride.\n\nA scatter of grey cinders rattles against your side-glass, marking the exact moment to make your move and force their hand into an early reverse.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Challenge the rival driver now"
+   ]
+  },
+  "cf-3-076": {
+   "title": "A Game of Bluff",
+   "text": "Heavy drops of soot-stained condensation patter against your leather cap while you lean far out over the open drop of the viaduct, waving a red flag with deliberate, maddening slowness. You project an absolute certainty into your posture, shouting a fabricated warning about a collapsed rail-bed just around the blind curve ahead. The rival driver's hand twitches toward their reversing gear, doubt flickering across their soot-grimed face as they weigh the risk of a high-speed derailment against your terrifyingly convincing performance.\n\nYou hold your breath, waiting to see if they swallow the lie and throw their heavy pistons into reverse before they realize the track ahead is clear.",
+   "check": "bait the trap with a false warning",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-077": {
+   "title": "The Tangled Bluff",
+   "text": "Too late, the rival driver spots the empty rails and lets out a furious blast of the steam-whistle, slamming their regulator forward instead of back. Their heavy iron chassis lunges sideways with a sickening screech of tormented steel, clipping the Marrowbone's side-plating and sending a shower of hot sparks across the decking. You scramble for footing as the impact jars your shoulder against the brass boiler, leaving a deep, throbbing bruise and costing you precious minutes of headway.\n\nThe rival engine roars past in a blur of grey smoke, leaving you bruised and battered on the ringing iron road.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Regain your footing and press on"
+   ]
+  },
+  "cf-3-078": {
+   "title": "The Spoils of Deception",
+   "text": "With a startled shriek of protesting metal, the rival engine takes the bait and hauls its reversing gear hard over, its wheels locking and sliding with a smell of scorched iron. The sudden deceleration causes a harmless, grinding shunt that jams their driving rods and leaves their locomotive dead and hissing across the points. You glide past them into the clear air of the viaduct, having successfully bought yourself an unhindered path toward the outer gates.\n\nAmidst the cooling steam, you retrieve a discarded brass oil-can left behind on the junction plating, still half-full of clean machine grease.",
+   "check": "",
+   "grant": "heavy brass oil-can",
+   "exits": [
+    "Steer clear of the wreckage"
+   ]
+  },
+  "cf-3-079": {
+   "title": "Iron in the Works",
+   "text": "Shouts echo from the trailing maintenance carriage as the Rail Barons' enforcers scramble across the coal-tender toward your cab, brandishing heavy spanners and iron links. You ignore their warning cries, dropping low behind the protective steel lip of the tender while your fingers search blindly for the rusted manual switch-pin nestled deep beneath the greasy floor plates.\n\nThe cold wind bites through your woollen coat, carrying the bitter taste of sulphur and old grease as you prepare to throw the heavy iron bar into the mechanism.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Jam the lever into the switch"
+   ]
+  },
+  "cf-3-080": {
+   "title": "The Desperate Wedge",
+   "text": "Muscles strain against the unyielding bite of frozen rust as you drive the iron crowbar deep into the throat of the switch-mechanism, using your entire weight to force the heavy points over. The pursuing enforcers leap across the gap onto your footplate, their boots clattering hard against the steel decking just as the rusted locking tooth begins to groan under the sudden lateral stress.\n\nYou throw your shoulder against the bar, trusting the solid iron to hold while every tendon in your arm burns with the strain.",
+   "check": "force the rusted switch-pin home",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-081": {
+   "title": "A Heavy Cost",
+   "text": "The jammed lever kicks back with brutal force, striking your forearm with a dull crack that echoes above the pounding rhythm of the cylinders. You stumble back against the water-gauge, gasping for breath as a white-hot pain flares through your arm and leaves it hanging uselessly at your side. The enforcers tumble past you into the coal-bin, swearing and scuffling, but your desperate wedge has thrown their pursuing engine onto a dead siding.\n\nYou nurse your throbbing arm while the Marrowbone rattles onward into the grey gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Endure the pain and keep moving"
+   ]
+  },
+  "cf-3-082": {
+   "title": "The Locked Gate",
+   "text": "With a resounding metallic crunch, the heavy iron crowbar bites into the heart of the switch-mechanism, locking the tongue-rails dead against the pursuers' path. The enforcers' engine slams to an abrupt halt against the blocked tracks, its steam-whistle wailing in frustrated fury as you pull away into the safety of the viaduct's high arches.\n\nYou wipe the grease from your brow, leaving a black smear across your forehead, and pocket a heavy iron shackle pin dropped by the retreating crew.",
+   "check": "",
+   "grant": "heavy iron shackle pin",
+   "exits": [
+    "Return to the shunting junction"
+   ]
+  },
+  "cf-3-083": {
+   "title": "The Signalman's Ghost",
+   "text": "High above the clattering tracks, the old gantry lanterns swing in the ash-laden wind like suspended skulls, casting long shadows across the brass-fitted control box. You study the intricate web of copper wires and weighted levers that regulate the viaduct's automated routing system, trying to discern the peculiar rhythm favoured by the nocturnal signalmen who haunt these heights.\n\nEvery pulley and counterweight seems to whisper old secrets of the line, waiting for the careless hand that misreads the night's pattern.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Anticipate the next lever pull"
+   ]
+  },
+  "cf-3-084": {
+   "title": "The Diverting Hand",
+   "text": "Grime and soot coat the polished brass of the telegraph dial while you trace the thread of the main line ahead, where the tracks split toward the toll-barrens and the dark mouth of the lower cuts. You reach out toward the central brass lever, knowing that a single mistimed tug will send the Marrowbone careening into a deserted siding used for storing wrecked carriages.\n\nThe iron floor vibrates rhythmically under your boots, humming with the distant pressure of the approaching storm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Throw the central routing lever"
+   ]
+  },
+  "cf-3-085": {
+   "title": "Reading the Iron Pulse",
+   "text": "Fingers hovering over the notched brass quadrant, you wait for the familiar shudder in the track that signals the approach of the automatic semaphore's change. You must anticipate the exact mechanical pulse of the wire-pulls before the warning bell rings, timing your pull to divert the engine into the hidden passage beneath the toll-bridge.\n\nThe cold air smells of wet slate and ozone as you commit your weight to the handle, risking a fatal misread of the night's coded signals.",
+   "check": "anticipate the signalman's pattern",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-086": {
+   "title": "The Misguided Switch",
+   "text": "The heavy lever slips in your slick palm, throwing the points a fraction of a second too late and sending the Marrowbone crashing onto a rusted spur line choked with abandoned coal-tenders. A shower of sparks blinds you as the engine grinds to a halt against a dead bumper, leaving you stranded in the shadows of the viaduct's upper tiers.\n\nYou curse under your breath as you realize the time lost in reversing out of the trap will cost you dearly before the night is through.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Back out onto the main line"
+   ]
+  }
+ },
+ "missing": []
+}

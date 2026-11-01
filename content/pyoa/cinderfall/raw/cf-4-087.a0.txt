@@ -1,0 +1,56 @@
+@@SECTION cf-4-087
+TITLE: The Barricade Camp
+TEXT: Abandoned sleeping quarters of the early gangers flicker with the blue glow of sulphur braziers, casting long, shivering shadows across rusted iron bunks and frosted glass lanterns. Piles of discarded oilskins smell faintly of stagnant damp and old grease, while overhead, water drips with a dull, rhythmic echo against the arched stone ceiling. // You stand in the centre of this forgotten habitation where five distinct routes branch off into the dark tunnels, each promising its own peril or advantage under the low vaulting. You weigh the damp air and listen to the distant hum of the rails before choosing your path through the subterranean gloom.
+EXIT 1: Unbolt the iron fishplates ahead
+EXIT 2: Search the rusted log lockers
+EXIT 3: Trace the severed signal wire
+EXIT 4: Pry open the heavy sleeper wall
+EXIT 5: Clear the stacked coal-scuttles
+@@END
+@@SECTION cf-4-088
+TITLE: Clearing the Rails
+TEXT: You crouch beside the heavy iron track, working a notched spanner against rusted nuts that protest with a shrill, metallic shriek. Cold grease smears your knuckles as each bolt finally yields, allowing you to slide the hardened steel fishplates free from the rail joints one by one. // A small wooden box containing spare track bolts rattles as you lift it from the ballast, its contents promising structural integrity for the miles ahead. You slide the prize into your canvas satchel and stand, wiping your brow with a soot-stained sleeve before pushing onward into the tunnel.
+EXIT 1: Advance toward the switching basin
+@@END
+@@SECTION cf-4-089
+TITLE: Securing the Line
+TEXT: Heavy iron girders loom out of the shadows like skeletal ribs, dripping with condensed moisture that tastes faintly of copper and old smoke. You work methodically along the fractured rail section, tightening loose bolts with rhythmic, practiced tugs of your heavy spanner. // A small storage crate sits wedged beneath a rotting tie, filled with pristine track bolts that have survived decades of damp isolation. You pocket the heavy steel fastenings and scan the dark throat of the cutting for any sign of shifting shadows.
+EXIT 1: Follow the rails further in
+@@END
+@@SECTION cf-4-090
+TITLE: The Tangled Wiring
+TEXT: Frayed copper cables hang from the damp vault ceiling like dead serpents, sparking intermittently against the masonry with sharp, violet snaps of current. You must trace the live line through the tangled mass without triggering the trip-wire linked to the old maintenance gongs overhead. // Your fingers hover above the copper core while the air grows thick with the smell of ozone and scorched rubber, testing every ounce of your wit to separate the safe strand from the trap.
+CHECK: Trace the live copper wire
+@@END
+@@SECTION cf-4-091
+TITLE: A Shock to the System
+TEXT: A sudden sharp crack echoes through the tunnel as your thumb brushes the wrong terminal, sending a vicious jolt of white-hot current straight up your arm. You stagger backward against the rough stone wall with a sharp intake of breath, your left hand throbbing with a persistent, dull numbness. // The minor burn leaves your palm red and blistered, a stinging reminder to respect the hidden wiring of the old signalmen. You shake out your aching fingers and press forward despite the lingering pain.
+EXIT 1: Press deeper into the damp cutting
+@@END
+@@SECTION cf-4-092
+TITLE: The Cunning Twist
+TEXT: Fingers moving with deliberate precision, you tease the delicate copper strand free from the sparking terminal just as the relay switch clicks harmlessly into place. The sudden darkness swallows the violet sparks, leaving only the steady drip of water and your own measured breathing in the cool subterranean air. // A small brass continuity tag falls into your palm from the junction box, bearing the stamped initials of an old line inspector. You slip the token into your pocket as a silent voucher of your success.
+GRANT: Brass continuity tag
+EXIT 1: Return to the ganger camp
+@@END
+@@SECTION cf-4-093
+TITLE: The Secret Log
+TEXT: Leather-bound and stiff with damp, the old camp log rests atop a discarded grease-tin on a crate table, its pages swelling from the subterranean moisture. You flip carefully through brittle sheets filled with faded pencil tallies until a familiar scrawl catches your eye under the lamplight. // Hesper Quill signed the margin here just weeks ago, noting a hurried change in engine pressure and a midnight departure toward the upper passes. You tear the signed dispatch chit free from the binding and tuck it safely inside your waistcoat.
+EXIT 1: Leave the ruined camp behind
+@@END
+@@SECTION cf-4-094
+TITLE: Reading the Signs
+TEXT: Strange scratch marks score the wooden desk surface beneath the ledger, forming an intricate cipher left by the wandering signal crews who once manned this post. You squint through the gloom, trying to decode the sequence of directional notches before the flickering sulphur brazier sputters out entirely. // Your mind races across the overlapping lines, balancing the old rail codes against the irregular patterns carved into the rotting timber.
+CHECK: Decode the timber scratch marks
+@@END
+@@SECTION cf-4-095
+TITLE: The Faded Cipher
+TEXT: A sudden gust of sulfurous wind sweeps through the ruined quarters, blowing soot across the desk and blurring the crucial pencil marks just as you reach for them. You stumble against the edge of the iron bunk, grazing your hip sharply on a rusted bed-post as you struggle to keep your footing in the sudden gloom. // The bruise begins to throb beneath your heavy woolen trousers, reminding you of the careless second lost to the draft. You gather your breath and push away from the iron frame.
+EXIT 1: Move past the ruined bunk
+@@END
+@@SECTION cf-4-096
+TITLE: The Deciphered Track
+TEXT: Eyes narrowing against the stinging smoke, you trace the final interlocking groove with a blackened fingernail and unlock the hidden meaning of the cipher. The cryptic directions map out the forgotten bypass route used by the night crews during the great ash-storms. // A neat handwritten slip falls from the carved wood into your palm, detailing the secret clearance codes for the upper signal boxes. You pocket the paper tightly, knowing its value on this desolate line.
+GRANT: Secret signal clearance codes
+EXIT 1: Head back to the central junction
+@@END

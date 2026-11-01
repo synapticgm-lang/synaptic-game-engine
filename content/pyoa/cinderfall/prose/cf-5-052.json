@@ -1,0 +1,117 @@
+{
+ "batch": "cf-5-052",
+ "sections": {
+  "cf-5-052": {
+   "title": "The Narrow Culvert",
+   "text": "Choking soot fills the air in a thick, greasy cloud as you push yourself forward into the cramped masonry of the drainage culvert. Your breath comes shallow and hot against your collar while you keep your composure amid the dripping rust and darkness. Groping along the slick stone floor, your fingers brush against a dry, bundled parcel wedged behind a supporting strut. You pull it free to discover a hidden cache of tallow candles, perfectly dry and smelling faintly of mutton fat.\n\nTucking the candles securely inside your jacket, you peer through the gloom toward the end of the tunnel where a faint, watery glow flickers against the wet brickwork. You press onward through the soot.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl toward the watery glow"
+   ]
+  },
+  "cf-5-053": {
+   "title": "Smoke and Control",
+   "text": "Thick, acrid smoke pours from the ruptured flue overhead, burning your throat and blurring your vision as you try to maintain your composure in the suffocating dark. You steady your breathing against the panic rising in your chest, reaching blindly along the hot brick wall for the emergency vent-chain while the ceiling groans above you. The air turns nearly solid with sulfur and soot, testing every ounce of your nerve as your fingers brush the cold iron link. You tighten your grip on the chain, bracing yourself for the sudden release of trapped steam.",
+   "check": "Hold your nerve against the smoke",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-054": {
+   "title": "The Cost of Panic",
+   "text": "The choking air defeats your resolve, and a sudden, violent fit of coughing breaks your concentration just as you reach for the vent-chain. You stumble backward into a heap of sharp scrap metal, scraping your forearm deep enough to draw a bright bead of blood through the soot. The precious minutes slip away in the haze while you catch your breath and bind the stinging scratch with a strip of oily rag. You emerge into the dim service corridor bruised and short of breath, carrying a fresh scar from the pit.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and press on"
+   ]
+  },
+  "cf-5-055": {
+   "title": "Steadfast in the Smokes",
+   "text": "Through iron will and a steady pulse, you master the choking air and keep your composure intact while the soot swirls violently around your ears. You secure the venting valve with a firm, practiced pull, letting the noxious pressure bleed off safely into the lower drains. As the air clears just enough to see, a small tin box tumbles from a rusted bracket above, landing squarely at your feet with a hollow clink. You pocket the prize, knowing it will serve you well in the dark days ahead.",
+   "check": "",
+   "grant": "A tin of dry matches",
+   "exits": [
+    "Advance into the sump-house"
+   ]
+  },
+  "cf-5-056": {
+   "title": "The Pressure Pit",
+   "text": "You stare down the twitching pressure gauges in the dark pit, waiting for the needle to settle as the copper pipes hiss a warning song of superheated steam. Beside you, an old drainage-man in a grease-stained canvas coat watches the brass dial with heavy, tired eyes. The needle finally drops back into the safe green arc with a dull metallic click. The old man offers a silent nod of hard-won respect, acknowledging that you know how to hold a boiler's life in your hands.\n\nNodding back to the grey-haired worker, you turn away from the pit and follow the narrow walkway deeper into the subterranean maze.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the dark walkway deeper"
+   ]
+  },
+  "cf-5-057": {
+   "title": "The Silent Watcher",
+   "text": "Deep within the concrete pit, you watch the erratic twitching of the pressure gauges while the damp air grows heavy with the scent of hot oil and old river silt. The iron needle trembles on the edge of the red zone before slowly settling back as the relief valve kicks in with a shudder. An old drainage-man standing in the shadows leans on his long-handled wrench and gives you a slow, silent nod of approval. Without a word spoken between you, he points a soot-blackened finger toward a narrow maintenance stair leading upward.\n\nYou leave the quiet pit behind and climb the steep iron steps toward the upper levels.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb the steep iron steps"
+   ]
+  },
+  "cf-5-058": {
+   "title": "Watching the Needle",
+   "text": "Sweat cuts pale channels through the soot on your face as you stare down the twitching pressure gauges in the dark pit, waiting for the needle to settle below the danger line. The brass housing vibrates with a high, thin whine that sets your teeth on edge while the copper pipes groan under the strain of the rising flood. An old drainage-man watches from the shadows, his expression unreadable behind a thick mask of coal dust. You reach out a trembling hand toward the main bypass valve, needing absolute calm to turn it without snapping the rusted spindle.",
+   "check": "Wait for the gauge to settle",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-059": {
+   "title": "A Slip in the Pit",
+   "text": "The screech of the overstressed brass dial breaks your focus just as you reach for the valve, and your hand slips on the greasy metal spindle. A sudden jet of scalding steam hisses past your knuckles, blistering your skin and forcing you to leap backward into the filthy bilge water. The old drainage-man shakes his head in silence, tossing you a greasy rag as you nurse your burned hand. You lose precious minutes wringing out your soaked coat and binding the angry red welt on your palm before you can resume your work.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tend your burn and move on"
+   ]
+  },
+  "cf-5-060": {
+   "title": "The Steady Hand",
+   "text": "However narrowly you manage the screaming gauges, you keep your hand steady until the trembling needle finally slips back into the safe zone with a dull thud. The old drainage-man lets out a low whistle through his teeth and offers a silent, grudging nod of respect for your nerve. As you step away from the vibrating panel, he presses a heavy iron token into your palm - a stamped brass check from the old Ashgate line, polished bright by years of carrying. It feels cool and solid against your skin.",
+   "check": "",
+   "grant": "An old railway token",
+   "exits": [
+    "Face the vaulted stair ahead"
+   ]
+  },
+  "cf-5-061": {
+   "title": "The Choked Grate",
+   "text": "Sludge and matted river-weeds choke the drainage intake grate, threatening to back up the entire runoff channel with filthy grey water. You wedge a hooked iron poker into the mesh and heave with all your weight, tearing away a thick mat of foul debris. A dangerous pressure surge bubbles up from beneath the grates, but you manage to step clear just as the foul water drains away with a loud, sucking roar. Among the discarded iron scraps left behind on the grating, you spot a heavy shackle-bolt that has been forged by hand.\n\nYou pocket the iron piece and turn your back on the cleared intake.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the cleared intake grate"
+   ]
+  },
+  "cf-5-062": {
+   "title": "Clearing the Intake",
+   "text": "Working by the dull amber glow of a wall-lamp, you clear the choked intake grate with a hooked poker, scraping away layers of calcified grease and ash-grit. The stagnant water behind the barrier ripples ominously, threatening a dangerous pressure surge if you work too fast. You move with careful deliberation, letting the water trickle through in controlled bursts until the blockage breaks entirely with a wet, heavy thud. A heavy iron shackle-bolt rolls free from the muck at your feet, intact and threaded with a stout nut.\n\nYou pick up the bolt and wipe the black slime from your fingers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the heavy iron bolt"
+   ]
+  },
+  "cf-5-063": {
+   "title": "The Rusted Sluice",
+   "text": "The iron intake grate is wedged tight with a century of calcified ash and twisted wire, blocking the drainage flow while the water behind it swells dangerously high. You wedge your hooked poker into the mesh, testing the resistance against your muscles as the entire frame groans under the hydraulic load. A sudden pressure surge threatens to blow the entire assembly outward into the tunnel, and you must use every trick of your trade to pry the bars without snapping the tool in half. You brace your boot against the masonry and throw your weight onto the handle.",
+   "check": "Clear the choked intake grate",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-064": {
+   "title": "The Broken Poker",
+   "text": "The rusted grate refuses to yield cleanly, and the sudden pressure surge catches your poker with a violent jerk that snaps the iron shaft right at the bend. You tumble backward into the greasy silt, winded and cursing as the foul water spills over your boots. The blocked intake remains only half-cleared, leaving you with a damaged tool and a bruised shoulder to show for your trouble. You salvage what you can of the broken metal and stagger away from the flooded channel.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Salvage the broken metal pieces"
+   ]
+  }
+ },
+ "missing": []
+}

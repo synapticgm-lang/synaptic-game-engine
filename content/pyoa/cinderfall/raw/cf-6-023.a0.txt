@@ -1,0 +1,33 @@
+@@SECTION cf-6-023
+TITLE: The Missing Driver
+TEXT: Smoke drifts lazy from the regulator box as a familiar figure leans against the tender rail, oil-stained cap pulled low against the morning glare. Hesper Quill looks neither surprised nor triumphant, merely tired in the way of someone who has walked a long circle back to where the coal-dust settles thickest. A grease-rag comes out of a pocket, wiping dark smears from knuckles that have held no throttle for days. // There are no explanations offered for the empty depot at Ashgate or the sealed orders left upon the brass gauge-stand. The engine breathes its steady, low-pressure sigh between you, and the smell of hot tallow and wet cinders fills the cab once more as if no miles of ash-steppe had ever rolled beneath the wheels.
+EXIT 1: Step back from the regulator handle
+@@END
+@@SECTION cf-6-024
+TITLE: A Seat Returned
+TEXT: Weight settles onto the driver's bench with the familiar creak of old ash-wood and worn springs. Hesper reaches out a thumb to test the needle on the steam pressure gauge, tapping the glass lightly until the brass pointer settles true. The water glass shows a full gauge, clear and green where the injector feeds the boiler from the newly opened mains below the city. // Not a single word passes between the cab sides about the empty miles or the closed signals that waited in the dark cuts. There is only the routine of the line, the shared knowledge of firebox temperatures, and the slow, heavy settling of iron cooling after a hard run through the passes.
+EXIT 1: Watch the steam pressure rise
+@@END
+@@SECTION cf-6-025
+TITLE: The Line Remembers
+TEXT: Outside the footplate windows, the morning mist lifts from the flooded suburbs to reveal the long, shining parallel of the rails stretching back toward the ash-dunes. Signals along the embankment drop their arms with a sharp, clean click of iron wire, acknowledging a road that is open from the mountain roots to the central platforms. The Marrowbone stands easy in her harness, no longer a fugitive engine carrying a stolen brass key through hostile territory, but a scheduled working on a cleared metal road. // A low rumble vibrates through the deck plates as the injector works its steady rhythm, feeding clean water into the belly of the machine while the fire glows quiet and red behind the iron doors.
+EXIT 1: Hand the brass key back
+@@END
+@@SECTION cf-6-026
+TITLE: Ash and Steam
+TEXT: Hesper takes the heavy brass valve-key from your palm, turning the cold metal over once in calloused fingers before tossing it carelessly onto the tool-shelf beside the grease-pot. The firebox door clicks shut, sealing the white heat inside where it belongs, and the whistle cord hangs quiet above your head. Out across the station apron, the water from the open gates runs clear through every street and alley of Cinderfall, splashing against stone walls and soaking deep into the dry earth until the whole valley smells of wet dust and iron. There are no medals waiting on the platform, no speeches from the Rail Barons or the Stationmaster-General, only the smell of good Welsh coal and the long, straight road home waiting under a quiet sky. The regulator eases forward with a gentle hiss of steam, and the world begins to move again.
+@@END
+@@SECTION cf-6-027
+TITLE: Water in the Streets
+TEXT: Through the open cab windows comes the roar of a thousand long-dry fountains drinking their fill at last, splashing cold and loud against the masonry of the central plaza. The engine stands upon the terminal bridge like a monument of soot and brass, surrounded by people who have dropped their buckets and copper dippers to stare at the grey spray rising from the old stone basins. Water curls around the driving wheels, washing away the stubborn crust of the Ashen Steppe that has baked into the iron since the Long Fire first scorched the lowlands. // A great cheer goes up from the crowded platforms, thin and cracked with old thirst, echoing off the iron roof timbers until the soot flakes down like black snow upon the waiting crowds.
+EXIT 1: Look out across the platform
+@@END
+@@SECTION cf-6-028
+TITLE: The Stationmaster's Ledger
+TEXT: High on the gallery above the terminal tracks, the Stationmaster-General closes her heavy leather ledger with a sharp crack that can be heard over the rushing of the water. The gold-nibbed pen is laid aside in its groove, and the great brass timetable clock on the wall ticks forward into an hour that was never written in the schedules. Down on the footplate, the fire settles into a steady, contented glow that requires no shovelling, burning clear on the draft from the open bay doors. // The Marrowbone has brought her train through every block and signal without a single yellow caution, running strictly to a time that only the old tracks know.
+EXIT 1: Wait for the departure bell
+@@END
+@@SECTION cf-6-029
+TITLE: The Last Schedule
+TEXT: There are no more orders to collect from the ticket-widow, no sealed envelopes left behind on empty desks in the depot at Ashgate, and no red flags waving from the cuttings. The water runs deep and sweet through the conduits beneath Cinderfall, filling every cellar and cistern until the city floats upon its own bright lake like an iron ship anchored in the ash. Hesper Quill is gone again, slipped away down the platform while the steam hissed loud from the cylinders, leaving the engine in your sole care with the fire burning red and clean. You pull the brass whistle cord once, a long, deep roar that shakes the glass in the station roof and rolls out across the grey steppe where the rails run straight into the morning mist. The Marrowbone rolls forward into the cool air, keeping her own time down the long road.
+@@END

@@ -1,0 +1,88 @@
+{
+ "batch": "vh-4-1-1-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-1-1-4": {
+   "title": "The Frozen Winch",
+   "text": "Thick rime locks the oak gears of the traverse winch, leaving the cable slack and silent above the blue abyss. You wedge your belt-knife into the frozen grease of the cogs, scraping away the gray crust until cold iron screeches against steel. Biscuit stomps his iron-shod hooves on the trembling planks, anxious for the span to move. With a final crack of frost, the mechanism shudders loose, but the cable's groan reveals a new fracture in the iron shoes ahead.\n\nYou can test the newly freed winch and risk the main span, or leave the machinery behind to find a safer path around the crevasse.",
+   "exits": [
+    "Chip away the remaining ice to test the winch line",
+    "Leave the frozen winch behind to squeeze through the narrow cleft",
+    "Follow the tattered red pennant along the rocky detour"
+   ]
+  },
+  "vh-4-1-1-5": {
+   "title": "The Howling Chute",
+   "text": "Wild gales shriek down the ice-chute, carrying the distinct metallic tang of Orison's bronze on the draft while needle-sharp sleet stings your exposed cheeks. Every breath feels like drawing shards of glass into your lungs as you lean into the bitter onslaught.\n\nThe heavy clapper shifts slightly in its padded cradle on your back, reminding you of the desperate race against the closing ice-wind season. You need to secure your footing and push onward through the freezing gloom.",
+   "exits": [
+    "Scrape the frozen sweat from your goggles",
+    "Clip your harness line to the iron ringbolt"
+   ]
+  },
+  "vh-4-1-2-0": {
+   "title": "The Stranded Calf",
+   "text": "Trembling against the biting wind, a stray calf belonging to a Terrace Miller stands frozen beside a narrow, crevassed bridge of packed snow. The little beast refuses to budge an inch, its dark eyes wide with terror as the ice groans beneath its hooves.\n\nYou reach into your pocket and break off a hard morsel of your travel crust, offering it out on an open palm to coax the animal into moving. A low, subterranean rumbling echoes up from the depths of the glacier as you wait.",
+   "exits": [
+    "Share a mouthful of lukewarm tea with the stranded warden",
+    "Cross the swaying span of notched pine logs"
+   ]
+  },
+  "vh-4-1-2-1": {
+   "title": "The Chime Fissure",
+   "text": "Blue icicles crowd the narrow walls of the jagged fissure, clicking together like tiny wind-chimes every single time the glacier stirs beneath your soles. The air smells intensely of cold stone and ancient, compressed moisture that has not seen the sun for centuries.\n\nYou turn sideways to squeeze your shoulders and the padded bronze clapper through the gap without snagging your straps. The faint, persistent hum of the heavy metal against your spine vibrates right through your marrow.",
+   "exits": [
+    "Share a mouthful of lukewarm tea with the stranded warden",
+    "Cross the swaying span of notched pine logs"
+   ]
+  },
+  "vh-4-1-2-2": {
+   "title": "The Abandoned Sledge",
+   "text": "Half-swallowed by heavy powder snow, an old wooden sledge lies tilted on its side with its runner iron gleaming dully in the weak, gray mountain light. Right beside it rests a small, weathered cairn of bleached skulls left by some forgotten party of travelers.\n\nThe wind whistles through the jagged stones as you step carefully around the wreckage, keeping a watchful eye out for hidden drop-offs. The mule behind you snorts nervously, catching the strange scent of old iron and bone.",
+   "exits": [
+    "Share a mouthful of lukewarm tea with the stranded warden",
+    "Coax the stubborn mule past the frozen carcass"
+   ]
+  },
+  "vh-4-1-2-3": {
+   "title": "The Slush Tongue",
+   "text": "Brown meltwater chatters noisily beneath a fragile, glistening crust of frost as you haul Biscuit by the halter across a treacherous tongue of grey slush. Every step threatens to break through into freezing water that would soak your boots to the bone.\n\nYou keep the heavy load balanced steadily on your own back while guiding the animal through the shifting mire with quiet, practiced commands. The air grows warmer and heavier here near the lower edge of the ice-flow.",
+   "exits": [
+    "Coax the stubborn mule past the frozen carcass",
+    "Find purchase along the dark vein of volcanic ash"
+   ]
+  },
+  "vh-4-1-2-4": {
+   "title": "The Burnt Beacon",
+   "text": "High upon a wind-scoured shelf of rock stands a blackened, burnt-out signal fire where a Fog-Warden once kept watch over the perilous upper trail. A sturdy coil of dry hemp rope remains securely lashed to a heavy iron stake driven deep into the granite.\n\nYou pause for a brief moment to catch your breath in the thin, freezing air while checking the knots that hold your precious cargo. The valley below is completely choked with an unbroken sea of rolling white clouds.",
+   "exits": [
+    "Find purchase along the dark vein of volcanic ash",
+    "Tighten the leather straps of the clapper cradle"
+   ]
+  },
+  "vh-4-1-2-5": {
+   "title": "The Downdraft Ridge",
+   "text": "Bitter ice-dust rattles violently against your oilskin coat as a sudden, vicious downdraft tries to sweep you straight off the narrow foot-ledge and into the gray abyss. You drop low to the stone, pressing your weight firmly against the mountain face until the gust passes.\n\nThe bronze clapper hums a deep, resonant note in response to the pressure change, its metal singing against the howling gale. You must gather your nerve before standing up on the exposed path again.",
+   "exits": [
+    "Find purchase along the dark vein of volcanic ash",
+    "Inspect the rusted winch-handle near the meltwater"
+   ]
+  },
+  "vh-4-1-2-6": {
+   "title": "The Grease-Box",
+   "text": "Wedged deep into a granite cleft sits a discarded tin grease-box left behind by some hurried cable-rider of the upper courts. You pry it open with a cold fingernail to find a thick, yellowish smear of rendered tallow still soft enough to use.\n\nYou scoop up a dollop with your stiff leather mitts, rubbing the grease into the seams to keep the moisture out and save your skin from cracking. The sharp scent of rendered fat cuts cleanly through the biting mountain chill.",
+   "exits": [
+    "Inspect the rusted winch-handle near the meltwater",
+    "Edge carefully along the overhanging snow cornice"
+   ]
+  },
+  "vh-4-1-2-7": {
+   "title": "The Snow Bridge",
+   "text": "On hands and knees, you crawl slowly across an arched bridge of packed powder that spans a yawning throat of blue ice humming with immense subterranean pressure. Every breath is a calculated risk as you feel the hollow space breathing right beneath your palms.\n\nThe mule follows behind with cautious, rhythmic steps, its hooves packing the snow tightly with every movement. Beyond the far side of the arch, the path finally levels out onto safer stone.",
+   "exits": [
+    "Brace against the sudden flurry of mountain ptarmigan",
+    "Follow the wooden signpost down through the murk"
+   ]
+  }
+ },
+ "missing": []
+}

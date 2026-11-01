@@ -1,0 +1,113 @@
+{
+ "batch": "td-2-154",
+ "sections": {
+  "td-2-154": {
+   "title": "The Organ Lofts",
+   "text": "Dust hangs thick in the vaulted silence, smelling of dried salt and ancient horsehair felt. You wedge your pry-bar into the side panel of the grand bellows, feeling the heavy oak groan under the strain. Above your head, a loose gargoyle wobbles upon its cracked plinth, threatening to let fly a shower of masonry at the slightest tremor. You work the iron bar steadily upward, easing the rusted hinges until the warped wood gives a sudden, dry snap.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pull back the splintered oak"
+   ]
+  },
+  "td-2-155": {
+   "title": "Within the Rusted Pipes",
+   "text": "Shadows gather deep inside the hollow throat of the instrument, cool and smelling faintly of stagnant bilge-water. Reaching your bare hand past rows of tin pipes, your fingers brush against a small velvet-lined recess hidden behind the lower register. Something metallic gleams in the gloom. You slip your thumb and forefinger into the tight gap, curling them around the heavy cold shape of a shaped handle while masonry dust sifts down through the upper bars.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Lift the brass key free"
+   ]
+  },
+  "td-2-156": {
+   "title": "The Collapsing Keystone",
+   "text": "A sudden sharp crack echoes from the high chapel ceiling as a massive block of dressed stone shifts in its mortar. You must keep your hand steady within the narrow recess, using the tip of your blade to lever the jammed brass latch without triggering the weight of the falling arch above you. A single false twitch of your wrist will bring tons of carved granite crashing down directly onto your fingers.",
+   "check": "Pry the latch with craft",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-157": {
+   "title": "Buried Beneath the Rubble",
+   "text": "The stone gives way too fast, slamming down across your knuckles and pinning your sleeve beneath a jagged wedge of slate. You wrench your arm free with a sickening wrench that leaves a long, bleeding graze across your forearm and costs precious minutes clawing your way out from the debris. By the time you stumble back into the damp air, your fingers throb dully and your pack is coated in white grit.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick up the fallen prize"
+   ]
+  },
+  "td-2-158": {
+   "title": "The Sealer's Brass",
+   "text": "Whatever the cost of the falling dust and the narrow margin of your escape, your fingers close firmly around the cool metal shank before the masonry settles into ruin. You pull back your arm just as a shower of old mortar crashes into the recess where your hand had rested a heartbeat before. In your palm lies a heavy, sea-green key cut with teeth like a row of small shark jaws.",
+   "check": "",
+   "grant": "Ornate brass key",
+   "exits": [
+    "Return to the ruined nave"
+   ]
+  },
+  "td-2-159": {
+   "title": "The Choking Tide-Fog",
+   "text": "A dense, grey vapor rolls in from the deeper abyssal trenches, erasing the jagged silhouettes of the wreck-fields and filling the air with the unmistakable stench of rotting kelp and ancient grease. The mist clings to your wool coat like wet wool, turning every distant sound into a hollow murmur that seems to come from all sides at once. Shapes flicker at the edge of vision - hulks of timber shifting in the gloom, or perhaps something walking upon two legs that were never meant to walk dry land. You keep a low profile, treading carefully over crusty salt-pans where the crust gives way to sucking mud beneath.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push forward into the gray"
+   ]
+  },
+  "td-2-160": {
+   "title": "The Trench Edge",
+   "text": "The seabed drops away abruptly into a sheer, black chasm where pale phosphorescent fungi cling to the vertical cliffs of silt and stone. Down in the darkness, strange blue lights pulse with a slow, hypnotic rhythm, while from the deeper gloom comes the rhythmic scraping of unseen things moving through the muck. To your left, a narrow goat-track winds down past weeping salt-springs; straight ahead, the fog swallows the abyss entirely; behind you, the wreck-fields wait in their frozen silence. You must choose your next descent carefully before the shifting vapors close the paths for good.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend the weeping salt track",
+    "Pry open the giant clam shell",
+    "Navigate the patches of glowing fungi",
+    "Follow the map to the spiral shaft"
+   ]
+  },
+  "td-2-161": {
+   "title": "Teeth in the Murk",
+   "text": "A long, pale shape lunges from the fog with terrifying speed, its jaws agape and lined with needle-sharp teeth that glisten with phosphorescent slime. You leap backward onto a slippery ridge of whale-ribs just as the creature snaps shut on empty air. It coils its segmented body in the mud, thrashing its tail to whip up a blinding cloud of black silt while its glowing forehead-lure bobs back and forth like a false star in the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stand firm against the lunging beast"
+   ]
+  },
+  "td-2-162": {
+   "title": "The Lure's Harvest",
+   "text": "You drive your salvage hook deep into the soft cartilage behind the creature's eye, pinning its thrashing head against the rib-bone until the frantic movements slow to a sluggish twitch. Reaching out with your sheath-knife, you slice cleanly through the fleshy stalk of the glowing lure, catching the pulsing pouch before it can fade into dull gray jelly. The beast slides back into the sucking mud with a wet sigh, leaving you alone in the quiet mist with your prize.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Move on into the deeper trench"
+   ]
+  },
+  "td-2-163": {
+   "title": "Wrestling the Abyssal Horror",
+   "text": "The beast strikes with the weight of a falling spar, slamming its bulk against your chest and driving the breath from your lungs in a ragged gasp. You throw your arms around its slick, cold throat, fighting to keep its snapping jaws away from your face while your boots sink deeper into the treacherous grey mire. Every muscle in your back screams against the strain as you try to force its head back against the jagged hull plates.",
+   "check": "Wrest the beast with might",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-164": {
+   "title": "Torn by the Deep",
+   "text": "The creature's jagged teeth rake across your leather jerkin, tearing deep into the meat of your shoulder before you manage to bash its skull with your heavy iron canteen. You stumble backward into a pool of brine, coughing salt water and clutching your torn arm while the beast retreats into the blinding fog with a harsh, clicking hiss. The wound burns fiercely, pulsing in time with your racing heart as you struggle back to your feet.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your breath and move on"
+   ]
+  },
+  "td-2-165": {
+   "title": "The Pulse in the Palm",
+   "text": "However narrowly you escaped its snapping jaws, your fingers close around the pulsing lump of bioluminescent tissue as the beast writhes back into the black water. The soft organ warms your palm, casting a pale green glow over the wet sand and illuminating the strange tracks left by other things that share the trench. You slide the prize into a sealed oilskin pouch, wiping the cold slime from your blade as the silence settles back over the flats.",
+   "check": "",
+   "grant": "Glowing angler lure",
+   "exits": [
+    "Return to the trench edge hub"
+   ]
+  }
+ },
+ "missing": []
+}

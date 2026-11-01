@@ -1,0 +1,90 @@
+{
+ "batch": "sg-1-0-2-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-1-0-2-1": {
+   "title": "The Crossroads Debate",
+   "text": "Heavy iron-bound cart-tracks sink deep into a crust of white salt where idlers gather in the glare. Three dust-caked carters lean against a wooden axle, arguing fiercely over whether the southern mirror-posts have been smashed by salt-storms or looted by desert thieves. You adjust the heavy strap of your ember-lamp, feeling the warmth of its banked coals against your hip while the cold ceramic weight of the Seedkey taps your ribs through your tunic. The open basin stretches ahead, white and blinding under the midday sun.\n\nDecide whether to follow the wheel-ruts toward the glass cliffs or strike out across the open flats where the carters point their heavy thumbs.",
+   "exits": [
+    "Inspect the jagged glass cliff ahead",
+    "Investigate the rusted ore-crusher in the dust"
+   ]
+  },
+  "sg-1-0-2-2": {
+   "title": "The Tinker's Knife",
+   "text": "Beneath the skeletal ribs of an abandoned timber wagon, a traveling tinker sits cross-legged and sharpens a narrow skinning knife against a flat river stone with a rhythmic rasp. He pauses to spit into the dust, muttering dark tales about the singing hollows of the lower flats where the wind plays strange tunes through the shattered glass streets. Your ember-lamp casts a faint, steady heat against your thigh, reminding you of the twenty days left before the monsoon floods the basin.\n\nChoose to heed the tinker's warning and take the upper trail or descend directly toward the low ruins.",
+   "exits": [
+    "Avoid the hollows near the old watch-cabins",
+    "Watch the mirror-guild apprentice practice on the shelf"
+   ]
+  },
+  "sg-1-0-2-3": {
+   "title": "The Shepherd's Warning",
+   "text": "A crumbling limestone marker post leans drunkenly beside the track, and an old shepherd stands near it, shading his rheumy eyes against the glare. He warns you that the salt haze rising from the dead floor can twist a runner's wits before noon if the ember-lamp isn't properly trimmed and tended. You check the small air vent on the lantern, smelling the familiar, comforting scent of banked coal and dried peat.\n\nDecide whether to skirt the abandoned stone cabins or head toward the lonely fire burning near the ore-crusher.",
+   "exits": [
+    "Pass quietly by the abandoned watch-cabins",
+    "Approach the solitary fire by the old crusher"
+   ]
+  },
+  "sg-1-0-2-4": {
+   "title": "The Distant Towers",
+   "text": "A lone sentinel stands upon a gravel ledge overlooking the immense, shimmering expanse of the Basin, peering intently through a cracked brass spyglass at the distant, glittering towers of Prism. The observatory-city catches the light like a cluster of jagged diamonds embedded in the white salt crust. Your fingers brush the cold ceramic Seedkey tucked securely inside your coat, anchoring you against the immense emptiness of the dead sea.\n\nDecide whether to descend toward the smoke rising from the dust or join the apprentice watching the horizon.",
+   "exits": [
+    "Walk down toward the smoke in the dust",
+    "Watch the mirror-guild apprentice flash the signals"
+   ]
+  },
+  "sg-1-0-2-5": {
+   "title": "The Mule-Teamer's Curse",
+   "text": "Near the stone mounting block at the edge of the terrace, a sweating mule-teamer counts his remaining fodder bags and curses the day he signed away his water rights to the Salt Court. His animals stamp restlessly in the fine white dust, their ribs showing sharp beneath dusty hides. You keep your distance, gripping the iron handle of your ember-lamp as you weigh the paths stretching out before you across the blistering rim road.\n\nChoose to walk toward the solitary fire, watch the mirror-guild apprentice, or follow the stray dog down the ridge.",
+   "exits": [
+    "Approach the solitary fire in the white dust",
+    "Observe the mirror-guild apprentice on the limestone shelf",
+    "Follow the stray dog past the traveler's cairn"
+   ]
+  },
+  "sg-1-0-2-6": {
+   "title": "The Ballad-Singer's Verse",
+   "text": "A dead acacia tree hangs heavy with fluttering wool rags that snap dryly in the hot wind, casting jagged shadows over the gravel. Beside the trunk, an itinerant ballad-singer chants a mournful, nasal verse about the drowned kings who sleep beneath the glass streets of the old empire. The haunting melody lingers in the dry air long after you step past him, your ember-lamp swaying gently with your stride.\n\nDecide whether to watch the young mirror-guild apprentice or head toward the old customs post.",
+   "exits": [
+    "Watch the mirror-guild apprentice practice flash signals",
+    "Inspect the broken lintel of the customs post"
+   ]
+  },
+  "sg-1-0-2-7": {
+   "title": "The Prospector's Pyrite",
+   "text": "Under the shade of a rotting canvas awning that flaps in the hot draft, a dusty prospector cleans red salt out of his eyeteeth with a bone splinter. He holds up a worthless chunk of yellow pyrite, trying to sell it to you as a navigation talisman for the glass mazes. You shake your head, keeping your hand firmly on the warm casing of your ember-lamp as you look out over the diverging tracks.\n\nChoose to descend the goat path toward the salt-crust, seek shelter near the wind-scoured arch, or climb the high gravel ridge.",
+   "exits": [
+    "Descend the steep goat path to the salt-crust",
+    "Seek shelter near the wind-scoured limestone arch",
+    "Climb the high gravel ridge where the old axle lies"
+   ]
+  },
+  "sg-1-0-2-8": {
+   "title": "The Nervous Courier",
+   "text": "At the junction where the upper track splits into jagged limestone ribs, a nervous courier from the west halts his panting mule and demands to know if the mountain passes are still choked with red shale. His eyes dart toward the blinding white expanse of the Basin as if expecting pursuit from the Salt Court toll-lords. You offer a noncommittal nod, shifting the weight of the Seedkey against your chest before choosing your footing on the fractured stone.\n\nDecide whether to head toward the customs post or seek out the lonely hermit near the mud-pot.",
+   "exits": [
+    "Inspect the broken lintel of the customs post",
+    "Visit the lonely hermit by the sulfurous mud-pot"
+   ]
+  },
+  "sg-1-0-2-9": {
+   "title": "The Ditcher's Share",
+   "text": "Beside a dry irrigation channel choked with pale tumbleweed, a lonely ditcher sits in the meager shade of a dirt bank, roasting a strip of tough lizard meat over a tiny flame. He offers to share his meager meal if you will pause to tell him the latest news from the valley capital and whether the rains are truly coming. You adjust your coat against the glare, feeling the steady heat of your banked lantern as you weigh the paths ahead.\n\nChoose to descend the goat path, visit the sulfurous mud-pot, or approach the limestone arch.",
+   "exits": [
+    "Descend the steep goat path to the salt-crust",
+    "Visit the lonely hermit by the sulfurous mud-pot",
+    "Approach the displaced herders near the limestone arch"
+   ]
+  },
+  "sg-1-0-2-10": {
+   "title": "The Scout's Warning",
+   "text": "Within the roofless shell of an old storage hut built from sun-baked mud bricks, a weary scout patches his split boot-soles with stiff copper wire. He looks up without smiling, warning you that the northern sinkholes are widening under the heat and the salt crust is dangerously thin in the lower hollows. You thank him quietly, patting the metal casing of your ember-lamp to ensure the coals are still banked and safe for the long road ahead.\n\nDecide whether to follow the high gravel ridge or skirt the edge of the dry sinkhole.",
+   "exits": [
+    "Follow the high gravel ridge across the slope",
+    "Walk past the dry sinkhole with the mule skeleton"
+   ]
+  }
+ },
+ "missing": []
+}

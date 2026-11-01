@@ -1,0 +1,92 @@
+{
+ "batch": "td-5-042",
+ "sections": {
+  "td-5-042": {
+   "title": "Ink Upon Wet Stone",
+   "text": "Salt-crusted diagrams bleed across the damp masonry like bruised lichen, tracing the old underwater conduits that feed the grand machinery. Condensation drips from the vaulted ceiling, striking your sleeve with steady, freezing ticks that mimic a faulty pocket-watch. Orsolya Venn left her crude charcoal annotations in the margins, marking where the sluice-gates channelled the deep currents toward Gullmouth's harbour long before the seabed dried. By matching these erratic markings to the carved relief on the bulkhead, the missing keeper's path through the lower drainage tunnels sharpens out of the gloom.\n\nYou trace the damp chalk lines toward the lower gallery.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the chalk marks downward"
+   ]
+  },
+  "td-5-043": {
+   "title": "Charts In The Silt",
+   "text": "Smudged charcoal and salt-stiffened ink map out the sunken vaults beneath the tower, revealing where the tide currents used to split before the great lock jammed. Your thumb tracks a faint crosshatch pattern near the lowest drainage sump, where Orsolya Venn must have descended while the first dry gales scoured the seabed. The damp stone smells of stagnant bladderwrack and old iron, heavy enough to make the lungs ache with every drawn breath. Every stroke of her hasty cartography points toward the damp chambers where the heavy bronze locks guard the sluices.\n\nThe path leads deeper into the damp dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the lower vaults"
+   ]
+  },
+  "td-5-044": {
+   "title": "Reading The Pale Lines",
+   "text": "Phosphorescent mold grows in jagged veins across the masonry, casting a sickly greenish glow over the faded ink of the navigational charts. Your temples throb with a sharp, blinding ache as you force your vision to untangle the smeared currents and subterranean soundings left behind by the missing keeper. Every line seems to shift and blur under the damp salt air, threatening to pull your thoughts into a dizzying spiral of exhaustion. Gritting your teeth against the mounting pressure behind your eyes, you narrow your focus onto the precise intersection where the flooded tunnels converge beneath the foundation stones.",
+   "check": "Decode the faded navigational charts",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-045": {
+   "title": "The Price Of Sight",
+   "text": "A sudden spike of white-hot agony splits your temples, sending you staggering sideways into the slick stone wall with a hollow thud. Vision swims through a haze of greasy black spots and phantom salt-stars as the overwhelming weight of the charts scrambles your thoughts. You catch your breath on the damp flags, spitting copper-tasting bile while your hands shake violently from the mental strain. The headache lingers like a leaden weight behind your eyes, a harsh reminder that the secrets of the deep do not yield without drawing blood from the unwary.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push onward through the throbbing pain"
+   ]
+  },
+  "td-5-046": {
+   "title": "The Keeper's Trail",
+   "text": "Through sheer willpower and a stubborn refusal to let the dizziness take you, the smeared lines snap into sudden, startling clarity. However narrowly, you isolate the exact subterranean alcove where Orsolya Venn sought shelter before the heavy brass doors jammed fast against the silt. Tucked beneath a protruding ledge of rusted ironwork, you find a small, water-stained navigational book filled with her hurried observations about the jammed mechanism. It is a vital map of the inner conduits that will guide your next steps through the labyrinthine foundations of the tide-gear.",
+   "check": "",
+   "grant": "Water-stained navigational book",
+   "exits": [
+    "Take the book and descend"
+   ]
+  },
+  "td-5-047": {
+   "title": "Shadows In The Archive",
+   "text": "Heavy bronze ledgers line the high cedar shelves of the restricted gallery, guarded only by the rhythmic ticking of the automaton-archivist's brass gears as it turns its eyeless face toward the far corner. You slide between the towering oak reading desks with absolute silence, keeping your boots clear of the scattered paper scraps that might crunch underfoot. The air tastes of dry parchment and ozone, thick with the wealth and secrets of the Brineholders who bought up the water rights before the sea vanished. Your fingers brush the leather spine of the forbidden register, sliding it free from the shelf without disturbing a single leaf of dust.\n\nYou tuck the stolen ledger beneath your oilskin coat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away with the forbidden ledger"
+   ]
+  },
+  "td-5-048": {
+   "title": "The Archivist's Turn",
+   "text": "The mechanical archivist swivels its brass neck with a harsh, grinding screech of gears, its lens-eyes flaring with a sudden, amber search-light beam that sweeps across the flagstones. You freeze mid-stride in the narrow gap between the mahogany shelving units, barely daring to draw breath as the heavy brass plates whir and click only paces away. The slightest shift of your boots against the grit could trigger the weighted trip-wires strung across the threshold, bringing down the entire security lattice upon your head. Your heart hammers hard against your ribs in the suffocating silence as the glowing lens pauses, lingering directly over the shadow where you stand pressed against the cold timber.",
+   "check": "Evade the archivist's turning gaze",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-049": {
+   "title": "Caught In The Lens",
+   "text": "A heavy bronze cog drops from the archivist's cranial housing with a sharp clatter, striking your boot and breaking the stillness. The mechanical watcher snaps its lens directly toward your chest, a piercing shriek of steam and alarms venting from its iron joints as it lunges forward. You twist away just in time, but the jagged edge of its brass gauntlet catches your forearm, tearing through oilskin and flesh in a hot, stinging line. Scrambling backward through the narrow stacks, you leave a dark smear of blood across the oak paneling while the sentinel's heavy footsteps thunder after you into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Escape into the outer corridors"
+   ]
+  },
+  "td-5-050": {
+   "title": "Silence And Ledger",
+   "text": "The heavy brass guardian clicks and settles back into its rusted pivot, its burning lenses dimming just enough for you to dart across the remaining flagstones. However narrowly, you slip past the blind spot in its sweeping patrol, clutching the heavy sheepskin ledger tight against your ribs. The volume is thick with the names, bribes, and water-debts of every high-ranking Brineholder who engineered the great drought for profit. It is a dangerous, heavy thing to carry, but in the right hands, it holds enough poison to shatter their entire mercantile monopoly.",
+   "check": "",
+   "grant": "Stolen Brineholder ledger",
+   "exits": [
+    "Carry the ledger into the depths"
+   ]
+  },
+  "td-5-051": {
+   "title": "Voices From The Brine",
+   "text": "The damp air turns suddenly frigid, frosting the stone walls with a crust of grey salt as the Hollow Choir floods into the chamber from every dark archway. They drift above the flags with waterlogged limbs and hair streaming in an unseen current, their drowned faces contorted in silent, weeping pleas that echo straight inside your skull. A chorus of wet, rattling whispers promises endless peace beneath the waves if you would only let them pull you down into the rising tide. Their cold fingers brush against your wrists like drifting kelp, seeking to anchor you to the floor as the first grey tongues of the returning sea spill across the threshold.\n\nYou wrench your arms free from the clinging dead and scramble toward the iron service ladder.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb away from the drowned choir"
+   ]
+  }
+ },
+ "missing": []
+}

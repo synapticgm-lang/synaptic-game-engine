@@ -1,0 +1,62 @@
+@@SECTION cf-4-016
+TITLE: Clearing the Track
+TEXT: Wood-splinters and water-swollen pulp wedge tight beneath the iron rails where the ledger stack gave way. You plant your boots against the rusted sleeper-ends, hook your fingers into the grain of the largest crate, and heave with your whole back until the timbers groan in protest. The mass shifts grudgingly, dragging iron grit across the ballast with a sound like grinding teeth. Slipping a heavy brass pinch-bar into the widening gap, you lever the obstruction clear of the running edge just as the engine's firebox sighs in the dark.
+EXIT 1: Clear the jammed timber wedge
+@@END
+@@SECTION cf-4-017
+TITLE: Heaving the Heavy Crate
+TEXT: The jammed crate refuses a simple slide, wedged hard between the stock rail and the check-rail in a tangle of swollen cardboard and sodden paper. You drop your weight low, curling your biceps around the slippery timber and driving your boots deep into the grit to find purchase against the sleeper-bed. Muscles bunch across your shoulders and the blood roars in your ears as you haul upward with every ounce of raw strength left in your frame, straining to break the crate's stubborn grip on the track.
+CHECK: Wrench the timber from the gauge
+@@END
+@@SECTION cf-4-018
+TITLE: Strained Sinews and Splinters
+TEXT: A hot stitch stabs deep into your shoulder-blade as the crate slips an inch, its jagged corner raking a raw red line across your forearm before dropping back into the muck with a heavy thud. You lean against the boiler casing, chest heaving and sweat stinging your eyes as you catch your breath against the dull, throbbing ache in your joints. The delay costs precious minutes against the storm clock, leaving you bruised and stiff, but the rail is clear enough now to let the iron wheels turn again.
+EXIT 1: Climb back to the footplate
+@@END
+@@SECTION cf-4-019
+TITLE: The Unyielding Obstruction
+TEXT: Sinews strain to their absolute limit until the stubborn timber finally gives a sharp, dry crack and tears free from the grip of the rail. You stumble backward onto the ballast, clutching a heavy brass pinch-bar as your prize while the blocked gauge opens up before you. Whether through sheer brute force or stubborn luck, the way is clear at last, leaving you bruised in the shoulder but richer by one solid tool for the road ahead.
+GRANT: Heavy brass pinch-bar
+EXIT 1: Push forward into the vaults
+@@END
+@@SECTION cf-4-020
+TITLE: The Signalman's Descent
+TEXT: The Marrowbone shudders to a sudden halt as a pale, oil-soaked figure swings down from the low brick rafters with a green signal lantern in hand. The newcomer dangles just above the smokebox, legs wrapped in canvas bindings that trail greasy threads through the rising steam. A voice like dry parchment rustling in a draught asks whether you carry the dispatch or merely the debt, tilting the lantern to reveal eyes milky with coal-smoke and centuries of underground watch.
+EXIT 1: Answer the hanging signalman
+@@END
+@@SECTION cf-4-021
+TITLE: The Lantern-Roost
+TEXT: Hollow Signalmen hang suspended from iron chains above the boiler hatch, muttering timetables from forgotten decades while their green lanterns cast sickly arcs across the vaulted ceiling. The air smells of lamp-oil, wet soot, and ancient iron, heavy with the weight of unread manifests and phantom departures. Below their swinging boots, several dark paths branch off into the masonry, each one marked by a different flickering signal flame and the distant echo of dripping water.
+EXIT 1: Follow the green branch ahead
+EXIT 2: Seek the vacant stare
+EXIT 3: Quote the old working timetable
+EXIT 4: Purge the choked injector line
+EXIT 5: Reseal the leaking steam gland
+EXIT 6: Approach the flooded grotto
+@@END
+@@SECTION cf-4-022
+TITLE: Matching the Rhythm
+TEXT: You reach up to adjust the brass regulator valve, turning the heavy wheel a fraction at a time until its hiss matches the rhythmic pulse of the signalman's lantern above. The engine settles into a steady, contented thrum as the steam pressure balances out against the damp tunnel air. A tin of thick machine tallow drops from the chains overhead as a silent nod of approval from the rafters, granting you a clear berth through the shadow-swamped junction.
+EXIT 1: Roll past the hanging lanterns
+@@END
+@@SECTION cf-4-023
+TITLE: Through the Iron Vaults
+TEXT: Iron plates clank rhythmically beneath the wheels as the Marrowbone creeps deeper into the vaulted network of the Hollow Cut. The grease-smeared walls press close on either side, studded with rusted brackets and old signal wires that twitch every time a distant train passes through the rock. You keep one hand resting lightly on the brass regulator, watching the grey steam curl back from the cylinders and vanish into the gloom ahead.
+EXIT 1: Check the pressure gauge
+@@END
+@@SECTION cf-4-024
+TITLE: Balancing the Valve
+TEXT: The injector pipe begins to sputter, coughing white steam into the cab as a crust of mineral scale threatens to choke the feed-line entirely. You grab a slender copper wire and a small spanner, leaning out over the throbbing machinery to clear the valve-seat before the water level drops too low in the glass. Fingers working by touch alone in the dim amber light, you feel for the obstruction inside the narrow brass throat, praying the union nut holds against the rising pressure.
+CHECK: Clear the choked injector line
+@@END
+@@SECTION cf-4-025
+TITLE: Choked and Scalded
+TEXT: A sudden hiss of boiling spray spits past your knuckles, scalding the back of your hand and leaving a stinging red welt that throbs in time with the engine's beat. You jerk your arm back with a sharp intake of breath, dropping the spanner into the dark belly of the engine pit as the injector sputters and dies. Precious minutes slip away while you rig a temporary leather wrap to stop the hiss, losing a flask of fresh water and gaining a painful reminder of the boiler's temper.
+EXIT 1: Secure the makeshift repair
+@@END
+@@SECTION cf-4-026
+TITLE: The Clean Adjustment
+TEXT: Fingers working with desperate, practiced speed, you tap the valve seat just right and feel the obstruction break apart beneath the wire. Cool water rushes back down the feed-pipe with a deep, satisfying gulp, restoring the steady heartbeat of the boiler just before the gauge glass could empty. Whether by skill or sheer good fortune, you secure a tin of fresh machine tallow from the rack, leaving the engine humming smoothly as you return to the footplate.
+GRANT: Tin of machine tallow
+EXIT 1: Return to the lantern-roost
+@@END

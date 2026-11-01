@@ -1,0 +1,78 @@
+@@SECTION vh-3-0-5-3
+TITLE: The One-Eyed Packer
+TEXT: A one-eyed packer leans against a dusty sack of barley inside the Rumour Mill, swearing by every knot in the rope-walk that the foundry master has fled south. He taps his glass against the cask and insists the great pits are cold, empty, and choked with ash before you can even catch your breath in the thin air. Biscuit shifts uncomfortably in the narrow aisle, the heavy bronze Clapper humming a faint, steady note against your shoulder blades.
+EXIT 1: Press on down the terrace path
+EXIT 2: Turn back toward the upper stairs
+@@END
+
+@@SECTION vh-3-c1
+TITLE: Whispers in the Flour-Dust
+TEXT: Two contradictory tales drift across the grease-stained tables of the milling-house like mountain mist. One group of millers insists the Lowgate forge remains fully manned and desperate for apprentices, while another swears the entire lower district went under water when the river-wall breached last night. You feel the heavy bronze tongue hum against your back, demanding a decision on which path to trust before the afternoon wind turns bitter. // Your choice here shapes every hard bargain and closed door you will face as you descend the remaining stone steps toward the valley floor.
+EXIT 1: Believe the foundry still stands and is hiring
+EXIT 2: Believe the foundry flooded and went cold
+@@END
+
+@@SECTION vh-3-1-0-0
+TITLE: The Barter of Tin
+TEXT: Miller Garrow stands on the sun-bleached stone of the seventh terrace, his flour-dusted fingers gripping a wooden ledger as he complains about the valley's trade. He mutters that the Lowgate foundry has secretly bartered all its reserve tin to the Cable Court, leaving common apprentices with nothing to work. The cold mountain wind whistles through the wooden slats of the mill, carrying the dry scent of cracked barley and old grease. Biscuit stamps a hoof against the flags, eager to leave the grumblers behind.
+EXIT 1: Ask about the upper cable tolls
+EXIT 2: Inspect the miller's grain-hoppers
+EXIT 3: Slip past toward the lower ladder
+@@END
+
+@@SECTION vh-3-1-0-1
+TITLE: The Mint of Private Tokens
+TEXT: Canvas sails creak overhead as miller-wife Jella leans close beneath the wooden ribs of mill nine, whispering that the forge-masters are hoarding fresh bronze to mint private tokens. She taps her temple knowingly, claiming no bell will ever be recast until the profit-takers have filled their own pockets first. Dust motes dance in the shaft of pale sunlight piercing the loft, and the heavy Clapper gives a sympathetic thrum against your travel-worn leather pack.
+EXIT 1: Slip through the narrow grain aperture
+EXIT 2: Question her about the private mints
+EXIT 3: Lead the mule down the stone ramp
+@@END
+
+@@SECTION vh-3-1-1-0
+TITLE: The Forged Permits
+TEXT: Miller Orlo blocks the doorway beside the stone grain-hopper, squinting suspiciously at the straps of your travel-pack while accusing you of carrying forged trade-permits. His flour-whitened eyebrows draw together in a harsh frown as he demands to inspect your papers before you take another step down the mountain. Biscuit lowers stubborn ears and snorts a cloud of white breath into the freezing air between you.
+EXIT 1: Defend your honest papers
+EXIT 2: Offer a handful of salt
+EXIT 3: Force a path past the hopper
+@@END
+
+@@SECTION vh-3-1-1-1
+TITLE: The Stale Oat-Cake
+TEXT: Tressa stands across the squeaking timber footbridge, holding out a dry piece of stale oat-cake in exchange for any scrap of news from the upper snows. Her fingers are red from the mountain chill, and her eyes scan the dizzying drops behind you with wary curiosity. The ropes of the nearby bridge hum a low, vibrating chord in the rising wind while Biscuit noses at an empty grain sack.
+EXIT 1: Trade news for the oat-cake
+EXIT 2: Ignore her and cross the bridge
+EXIT 3: Share a secret shortcut with her
+@@END
+
+@@SECTION vh-3-1-1-2
+TITLE: The Flour-Chute Toll
+TEXT: A heavy timber winch creaks in the drafty shadow above, where miller Hael bars the way and demands a toll of three copper groats for crossing his flour-chute. He crosses thick, flour-dusted arms over his chest and watches the heavy bronze Clapper in its padded cradle with sharp, assessing eyes. The wind rattles the wooden shingles overhead like loose teeth.
+EXIT 1: Pay the three copper groats
+EXIT 2: Barter with a length of cord
+EXIT 3: Duck beneath the rattling winch
+@@END
+
+@@SECTION vh-3-1-1-3
+TITLE: The Narrow Wheat-Bin
+TEXT: Unburdened by the heavy mule or bulky gear, you slip effortlessly through a narrow wheat-bin aperture, bypassing the blocked miller gate entirely. The passage smells of dry chaff and sweet grain as you squeeze between cool cedar planks into the damp air beyond. Light filters in through cracks in the siding, showing a steep, unused ladder dropping down the cliff face.
+EXIT 1: Descend the hidden cedar ladder
+EXIT 2: Follow the narrow wall ledge
+EXIT 3: Drop onto the lower timber catwalk
+@@END
+
+@@SECTION vh-3-1-1-4
+TITLE: The Salt-Choked Wind-Pipes
+TEXT: Miller Fenn stands beside the sputtering grease-lamp of the flour-store, warning you with frantic gestures that the wind-pipes are choked with salt-dust from the lower flats. He points a soot-stained finger toward the groaning machinery overhead where white powder drifts like winter snow. The air tastes of brine and dry husk, biting the back of your throat with every breath.
+EXIT 1: Clear the jammed wind-pipe
+EXIT 2: Warn the neighboring millers
+EXIT 3: Hurry down the interior steps
+EXIT 4: Check the grease-lamp levels
+@@END
+
+@@SECTION vh-3-1-1-5
+TITLE: The Scattered Barley
+TEXT: Miller Bessa drops a heavy sack of barley on the precipitous limestone stair, sending golden grain scattering in a bright cascade across your travel-worn boots. She mutters an oath against the mountain gales as the golden kernels bounce over the cliff edge into the cloud sea below. Biscuit immediately lowers his head to snap up a stray mouthful before you can catch your balance.
+EXIT 1: Help her gather the spilled grain
+EXIT 2: Step carefully around the golden spill
+EXIT 3: Scold the clumsy miller sharply
+@@END

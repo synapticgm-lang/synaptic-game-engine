@@ -1,0 +1,93 @@
+{
+ "batch": "vh-5-1-3-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-1-3-0": {
+   "title": "The Lichen Bench",
+   "text": "Resting the heavy cradle against cold stone offers a brief sanctuary from the unending downward pull of the mountain. Grey lichen coats the old wooden surface where generations of orchard workers have paused to catch their breath. The bronze Clapper hums softly against your shoulder pads, a low vibration that matches the steady thrum of your own tired pulse. Through the clinging white mist, the path ahead winds deeper into the damp orchard silence.",
+   "exits": [
+    "Follow the fern-fringed gravel toward the guard post"
+   ]
+  },
+  "vh-5-1-3-1": {
+   "title": "Tangled Briars",
+   "text": "Thorny blackberry canes catch at your leather gaiters, binding your feet as you attempt to navigate the narrow terrace lane. Beside the path, an old dry-stone retaining wall leans precariously under the weight of wet earth and winter frost. Stacks of split birch wood release a sharp, clean scent of fresh sap that cuts through the heavy smell of fog and rot.",
+   "exits": [
+    "Approach the fern-fringed guard post along the gravel track",
+    "Step toward the fragrant stacks of fresh birch logs"
+   ]
+  },
+  "vh-5-1-3-2": {
+   "title": "The Fermenting Ditch",
+   "text": "Rotting pears fill the damp air with a sharp, wine-dark sweetness that rises thick from the weed-choked ditch beside your boots. Biscuit halts, blowing a warm, wet breath against your shoulder as the cradle straps strain beneath the bronze clapper's dead weight. The white fog clings to your woollen sleeves, damp and heavy, blurring the orchard rows into a shifting maze of grey trunks and dripping branches.",
+   "exits": [
+    "Follow the fern-veiled gravel path",
+    "Listen for the bone whistle ahead",
+    "Grip the hemp handrail above the drop"
+   ]
+  },
+  "vh-5-1-3-3": {
+   "title": "The Gurgling Drain",
+   "text": "Icy mountain runoff spills from a rusted iron pipe, splashing yellow clay across your shins as you pick your way between the gnarled fruit trees. The heavy bronze clapper hums against your shoulder blades, a faint vibration that numbs the muscles beneath your woollen tunic. Somewhere in the blinding mist ahead, a warden's bone whistle cuts sharp through the wet silence, warning that the path is guarded.",
+   "exits": [
+    "Approach through the stone archway",
+    "Heed the distant bone whistle",
+    "Take the reckless way"
+   ]
+  },
+  "vh-5-1-3-4": {
+   "title": "The Mist-Laced Branches",
+   "text": "Slender threads of spider-silk stretch tight between the pear boughs, heavy with shimmering beads of moisture that catch the pale, diffused light. Every movement shakes a cold shower of condensation down your neck, chilling your skin where the cradle straps bite into the fabric. The ground beneath your boots is slick with fallen leaves and black mud, demanding every ounce of balance as you carry the humming bronze through the silent orchard.",
+   "exits": [
+    "Follow the whistling sound ahead",
+    "Skirt the piles of split birch",
+    "Hold fast to the hemp rope"
+   ]
+  },
+  "vh-5-1-3-5": {
+   "title": "The Sodden Mitten",
+   "text": "A single woollen mitten lies abandoned in the deep mud, soaked through and grey with dirt from the trail. It serves as a quiet warning about the perils of losing one's grip on these slippery mountain slopes. The heavy bronze Clapper shifts in its cradle, pulling your shoulders down as you survey the orchard path.",
+   "exits": [
+    "Make for the stone archway leading to the post",
+    "Inspect the neatly stacked piles of winter firewood",
+    "Squeeze past the frost-rimed plum trees crowding the lane"
+   ]
+  },
+  "vh-5-1-3-6": {
+   "title": "The Alder Bridge",
+   "text": "A single rotting alder plank spans the sunken irrigation ditch, groaning under your boots as you step carefully across the black water. Frost-rimed plum branches crowd the narrow track so tightly that the heavy bronze clapper scrapes against the frozen bark with a dull, ringing thud. Biscuit plants his stubborn hooves at the water's edge, refusing to cross until you haul firmly on his halter rope.",
+   "exits": [
+    "Pass the stacked birch logs",
+    "Take the rope-guided track",
+    "Squeeze past the frozen plums",
+    "Turn back"
+   ]
+  },
+  "vh-5-1-3-7": {
+   "title": "The Fieldfare Flight",
+   "text": "A sudden flurry of brown wings erupts from the dripping hawthorn hedge, startling a flock of fieldfares into the thick white fog above. Their frantic calls fade instantly into the muffled silence of the orchard valley as you adjust the heavy cradle straps on your aching shoulders. The damp air smells of wet earth and frozen wood, cold enough to turn your breath into grey wisps that vanish before they touch the bronze.",
+   "exits": [
+    "Walk past the fragrant wood-piles",
+    "Follow the hemp-lined drop"
+   ]
+  },
+  "vh-5-1-3-8": {
+   "title": "The Water-Channel Path",
+   "text": "Rounded river stones pave the bed of an ancient water-channel, now transformed by autumn rains into a treacherous, slippery footpath. Water slides silently over the green-tinted pebbles, threatening to twist an ankle with every step you take beneath the heavy cradle. The low hum of the bronze clapper vibrates straight through your spine, matching the steady, exhausting rhythm of your boots hitting the wet stone.",
+   "exits": [
+    "Take the rope-railway path",
+    "Thread through the frost-nipped plums"
+   ]
+  },
+  "vh-5-1-3-9": {
+   "title": "The Broken Blade",
+   "text": "Half-swallowed by emerald moss, a rusted pruning knife lies half-buried among the gnarled roots of an ancient plum tree. The damp air presses close from all sides, thick with the scent of frozen soil and decaying vegetation that clings heavily to your woollen cloak. Biscuit shifts behind you, his iron-shod hoof striking a flint stone with a sharp, lonely spark that dies instantly in the mist.",
+   "exits": [
+    "Step toward the stacked birch",
+    "Brush past the frozen branches",
+    "Turn back"
+   ]
+  }
+ },
+ "missing": []
+}

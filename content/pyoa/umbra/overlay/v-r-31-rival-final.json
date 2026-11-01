@@ -1,0 +1,47 @@
+{
+ "batch": "v-r-31-rival-final",
+ "variants": [
+  {
+   "node": "up-r-rival-final",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "The whispered promise you made to silence the gaol turnkey lingers in your mind; Sable surely squeezed the truth of your route from him to anticipate this very crossroad. She tracks the debt you left unpaid."
+  },
+  {
+   "node": "up-r-rival-final",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Blood from the turnkey you shoved from the high slates still stains your cuff, a silent testament to the lengths you have already gone to bury your tracks. Sable surely found his broken body, fuelling the wrath that now sights down a rifle barrel at your chest."
+  },
+  {
+   "node": "up-r-press-cellar",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Setting the type, you ensure the singular handwriting that unites Lord Valerius and Matron Rigg in the counter-ledgers features prominently on the front page. Their grand illusion of a bitter rivalry will shatter the moment these ink-stained sheets hit the cobblestones."
+  },
+  {
+   "node": "up-r-press-cellar",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Above the mechanical thunder of the cylinders, you can hear the shrill whistles of the city watch drawing near. Sparing that turnkey on the rooftops means the Guard knows exactly what you carry, turning this basement into a tightening trap of brass and iron."
+  },
+  {
+   "node": "up-r-press-cellar",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Lord Valerius's promise of silk-draped sanctuary feels utterly worthless now that your hands are stained with the machinist's grease of his ruin. You cast his polite menace aside, feeding the Archbishop's damning ledgers into the feed-board regardless of the aristocratic protection you once accepted."
+  },
+  {
+   "node": "up-r-press-cellar",
+   "when": {
+    "rigg": "allied"
+   },
+   "after": "Matron Rigg's iron-clad backing should have secured your survival, yet here you are feeding her syndicate's darkest warrants straight into the mechanical jaws of the press. Choosing mass exposure means violently tearing up the very writ of protection she granted you in the foundry."
+  }
+ ]
+}

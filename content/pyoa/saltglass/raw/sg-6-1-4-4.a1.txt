@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION sg-6-c2
+TITLE: The Vault Lock Chamber
+TEXT: Heavy air settles in the Lock Chamber, tasting of deep stone and dry centuries. Before you looms the great circular seal of the Rain Vault, its cold face etched with the faded map of a flooded basin. If you carry the memory of the well-song given by the Dune Sisters, your voice can coax the ancient tumblers to turn without friction or fury. Without that fragile covenant, however, the lock demands muscle and patience, forcing you to crank the rusted iron levers by hand while the basalt walls groan around your shoulders. Every choice here carries the weight of the coming harvest, and the chamber watches with silent, expectant stillness.
+EXIT 1: Let the old well-song unlock the heavy stone seal.
+EXIT 2: Turn the heavy iron levers by hand until the mechanism yields.
+@@END

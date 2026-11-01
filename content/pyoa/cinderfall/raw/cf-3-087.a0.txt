@@ -1,0 +1,66 @@
+@@SECTION cf-3-087
+TITLE: Snaring the Rival
+TEXT: Hot iron screams against brake-shoes while you anticipate the rival signalman's next lever pull, reading the grease-smudged pattern of the semaphore tracks just a heartbeat ahead. Your boot slams down upon the auxiliary release, locking their lumbering switcher into a blind siding of dead pig iron while the Marrowbone surges through the clearance gap. You pocket a grease-stained brass tally dropped from their fleeing cab, an official token bearing the private seal of the Rail Barons' western district.
+GRANT: Baronial district brass tally
+EXIT 1: Follow the trembling needle forward
+@@END
+@@SECTION cf-3-088
+TITLE: The Blown Viaduct
+TEXT: Sudden concussion rattles the soot from the cab roof as structural maintenance charges detonate ahead, carving a gaping chasm right through the iron roadbed of the Brasswind Viaduct. Chunks of gray masonry and red-hot rivets cascade into the empty air, leaving two hundred feet of sheer drop where the mainline used to run. Steam hisses from ruptured couplings beneath the Marrowbone as you haul the heavy brass regulator hard into reverse, bringing the shuddering engine to a screaming halt mere inches from the sheared edge of the void.
+EXIT 1: Inspect the chasm edge
+@@END
+@@SECTION cf-3-089
+TITLE: The Severed Span
+TEXT: Cold wind howls through the gap where the railway used to be, stirring drifts of fine gray ash against the stalled bogies. You stand at the edge of a blown-up rail gap where only twisted girders span the terrifying grey void, looking for any conceivable way to bridge the drop. Below, the rusted lattice-work of the lower spans offers narrow footings, while above, the gantry cables sway in the updraft like the rigging of a dead ship.
+EXIT 1: Scramble across the swaying girders
+EXIT 2: Pry loose the demolition tripwires
+EXIT 3: Rig the bridge winch motor
+EXIT 4: Wait for the baronial inspectors
+@@END
+@@SECTION cf-3-090
+TITLE: Crossing the Ribs
+TEXT: Iron plates groan under your heavy boots while you master your vertigo on the swaying girder bridge, keeping your eyes fixed strictly upon the next rusted rivet ahead. A sudden gust from the ash-steppes threatens to peel your coat from your shoulders, but you press your palms flat against the vibrating web of steel until the dizziness passes like a cold sweat. Across the gap, a discarded tow-cable hangs from a gantry cleat, waiting to be hauled home.
+EXIT 1: Reach for the hanging tow-cable
+@@END
+@@SECTION cf-3-091
+TITLE: Reaching the Cleat
+TEXT: Metal dust cakes your eyelashes while you edge along the narrow flange, fingers locked around the greasy ironwork with desperate concentration. Below your boots, the drop falls away into absolute grey nothingness, but the swinging cable now hangs within arm's reach, twitching rhythmically in the thermal updrafts rising from the canyons.
+EXIT 1: Seize the swinging cable end
+@@END
+@@SECTION cf-3-092
+TITLE: Testing the Nerve
+TEXT: Cold sweat slicks your palms as you lean out over the endless drop, fingers closing around the frayed strands of the cable while the wind tears at your breath. Every muscle in your spine knots tight against the panic rising in your throat, threatening to unman you before the heavy iron hook can be lashed to the spar.
+CHECK: Master your vertigo and secure the tow-cable
+@@END
+@@SECTION cf-3-093
+TITLE: Slipping the Footing
+TEXT: Vertigo overwhelms your senses for one blinding second, sending your boots sliding off the narrow flange and leaving you dangling by your fingertips over the sheer abyss. The heavy cable whips free, striking your shoulder with a bruising blow before you manage to haul yourself upward, coughing ash and clutching a wrenched wrist that will ache for leagues.
+EXIT 1: Crawl back to the stable deck
+@@END
+@@SECTION cf-3-094
+TITLE: Finding the Purchase
+TEXT: Fingers lock around the iron eyelet with desperate strength, securing the tow-cable however narrowly before the gust can shake your footing loose upon the span. The heavy wire holds fast, anchored deep within the reinforced bridge-ribs, leaving you with a stout length of braided hemp rope salvaged from the gantry tackle.
+GRANT: Braided gantry hemp rope
+EXIT 1: Return to the severed span
+@@END
+@@SECTION cf-3-095
+TITLE: The Trapped Circuit
+TEXT: Copper wires snake across the ballast like dead vipers while you outsmart the demolition crew's tripwires, tracing each hidden line back to its chemical detonator with painstaking care. The air smells intensely of bitter almonds and stale sweat, and every movement of your grease-knife must be executed without a single tremor of the hand.
+EXIT 1: Harvest the intact steel plates
+@@END
+@@SECTION cf-3-096
+TITLE: Picking the Wires
+TEXT: The miniature spring-loaded firing pin clicks softly beneath your blade, resting on a hair-trigger that could send the remaining bridge supports tumbling into the gorge. You hold your breath, letting your thumb memorize the tension of the copper bridge while the battery hums a low, malicious note against your knuckles.
+CHECK: Disarm the tripwire network without detonating the charges
+@@END
+@@SECTION cf-3-097
+TITLE: The Premature Snap
+TEXT: A sudden spark leaps from the crude battery box, setting off a minor secondary charge that blasts a shower of hot slag across your knuckles and fills the trench with blinding smoke. You scramble backward into the girders, escaping the worst of the flash but leaving behind your primary blade and half an hour of precious daylight.
+EXIT 1: Salvage what remains in the smoke
+@@END
+@@SECTION cf-3-098
+TITLE: The Cleared Hazard
+TEXT: The detonator clicks shut into its safety notch at last, leaving you free to pry three undamaged steel plates loose from the rigged trackbed with a heavy pinch-bar. They are heavy, soot-stained, and scarred by baronial stamps, but they will serve admirably as decking for an improvised crossing.
+GRANT: Three stamped baronial steel plates
+EXIT 1: Face the approaching baronial tax-collectors
+@@END

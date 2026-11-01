@@ -1,0 +1,91 @@
+{
+ "batch": "sg-2-1-2-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-1-2-2": {
+   "title": "The Sulphur Spring",
+   "text": "Yellow brine bubbles from a jagged vent in the floor, venting a heavy stench of rotten kelp and ancient sulphur that coats the back of your throat. You adjust the heavy wick of your banked lamp, its steady warmth a quiet contrast to the cold, mineral air rising from the fissure.\n\nThe crust beneath your boots shudders slightly under the pressure of hidden gases, urging you to choose your footing before the alkaline ground gives way entirely.",
+   "exits": [
+    "Follow the startled desert grouse toward the low reeds",
+    "Step carefully onto the green bottle-glass causeway",
+    "Inspect the rusted salt-scraper's spade in the tailings"
+   ]
+  },
+  "sg-2-1-2-3": {
+   "title": "The Boundary Post",
+   "text": "Weathered boundary posts jut from the alkali crust like broken teeth, their carved notches offering a reliable guide past a dried water-course choked with grey tumble-reeds. You adjust the shoulder strap of your coal-lantern as the midday heat radiates upward through your sandal soles.\n\nAhead, the trail splits where the dry gully meets a sun-bleached expanse of old ruins.",
+   "exits": [
+    "Inspect the old timber crates nearby",
+    "Step onto the green glass causeway"
+   ]
+  },
+  "sg-2-1-2-4": {
+   "title": "The Singing Salt",
+   "text": "Walking entirely alone through the blistering basin leaves you exposed to the vast emptiness, but it gives you something a companion would talk over: the faint, eerie subterranean singing of salt-crystals expanding in the midday heat. Each tiny ping and groan warns your feet away from hollow, unstable ground where the crust hangs perilously thin over subterranean voids.\n\nYou pick your steps with extreme care, listening to the ground beneath you before committing your weight.",
+   "exits": [
+    "Check the rusted tailings spade",
+    "Navigate the jagged salt pillars"
+   ]
+  },
+  "sg-2-1-2-5": {
+   "title": "The Glass-Kelp Sphere",
+   "text": "A stray gust of desert wind sweeps across the white crust, rolling a sphere of dried glass-kelp past your shins like a brittle tumbleweed bound for the southern sink. The fragile sphere chatters musically as it bounces over the salt ridges, reminding you of the brittle beauty hiding everywhere in this dead sea.\n\nYou watch it vanish into the dazzling glare before turning your attention back to the winding trail ahead.",
+   "exits": [
+    "Venture into the pillar labyrinth",
+    "Inspect the tethered leather bag"
+   ]
+  },
+  "sg-2-1-2-6": {
+   "title": "The Cold Seedkey",
+   "text": "Your hand brushes against your pocket, and you pause to check the heavy ceramic Seedkey inside its padded lining, feeling its reassuring, unearthly chill against your sweating thigh through the thick wool. In a landscape where everything radiates punishing heat, that cold little key is your sole anchor to the damp vault waiting at the heart of Prism.\n\nYou secure the flap tightly and press onward through the glaring dust.",
+   "exits": [
+    "Investigate the abandoned tailings spade",
+    "Examine the hanging leather water-bag"
+   ]
+  },
+  "sg-2-1-2-7": {
+   "title": "The Copper Milestone",
+   "text": "An old copper milestone lies half-buried in the white drift, its engraved distance numbers scoured smooth by decades of relentless dust-storms until it is nothing more than a dull green coin in the salt. You pause in its meager shadow to catch your breath, scanning the horizon for any sign of movement. Being entirely by yourself means you catch every subtle disturbance in the landscape that a guide's idle chatter might have masked.",
+   "exits": [
+    "Track the hidden patrol footprints",
+    "Cross the tilting hexagonal tiles"
+   ]
+  },
+  "sg-2-1-2-8": {
+   "title": "The Pink Drainage Ditch",
+   "text": "You wade cautiously through a shallow drainage ditch filled with pink salt-crust that crunches like autumn leaves under your tired sandals, kicking up a fine, stinging dust with every stride. The mineral deposits here stain your shins a faint rose color in the harsh noon light.\n\nThe trench eventually opens up into a wider stretch of fractured flats stretching toward the southern horizon.",
+   "exits": [
+    "Cross the cracked hexagonal tiles",
+    "Approach the Salt Court banner"
+   ]
+  },
+  "sg-2-1-2-9": {
+   "title": "The Mirror Flash",
+   "text": "A sharp flash from a distant glasswright's mirror tower winks three times across the basin, signaling trouble and strict watchfulness on the high plateaus ahead. You shade your eyes against the glare, trying to decipher whether the code warns of shifting salt-storms or approaching toll-collectors.\n\nThe light fades into the shimmering haze, leaving you to decide your immediate path.",
+   "exits": [
+    "Approach the flapping canvas banner",
+    "Measure your remaining water sips",
+    "Take the reckless way"
+   ]
+  },
+  "sg-2-1-2-10": {
+   "title": "The Amethyst Fissure",
+   "text": "You leap gracefully across a jagged fissure in the floor where deep purple mineral water gleams in the dark like liquid amethyst completely out of reach. The damp scent of old sulfur rises from the crack, cool and sharp against the dry air of the flats.\n\nOn the far side, the path branches among various old markers and faint tracks.",
+   "exits": [
+    "Head toward the distant banner",
+    "Check your canteen water level",
+    "Listen to the chattering glass-reeds",
+    "Turn back"
+   ]
+  },
+  "sg-2-1-2-11": {
+   "title": "The Rusted Barrow",
+   "text": "A discarded merchant's barrow with iron-spoked wheels sits completely abandoned in the glare, its canvas tilt shredded into ribbons by relentless alkali gales. Nothing remains inside save for a drift of fine white dust and the skeleton of an old wooden frame.\n\nThe narrow trail winds past the wreckage, leading deeper into the stark white expanse.",
+   "exits": [
+    "Pass the chattering glass-reeds",
+    "Navigate the basalt paving slabs"
+   ]
+  }
+ },
+ "missing": []
+}

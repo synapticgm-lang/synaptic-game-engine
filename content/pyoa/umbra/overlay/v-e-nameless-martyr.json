@@ -1,0 +1,47 @@
+{
+ "batch": "v-e-nameless-martyr",
+ "variants": [
+  {
+   "node": "up-end-nameless-martyr",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Your slipping mind drifts to the deacon you pushed into the abyss hours ago, a secret violently kept. It seems fitting that the same unforgiving heights claim your own life now, trading one rooftop murder for another in the name of the ledger."
+  },
+  {
+   "node": "up-end-nameless-martyr",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Down in the chaotic square, a watchman's brazier illuminates the frantic deacon you spared, pointing a trembling finger up at the cathedral. That singular act of mercy gave the city watch the precise trajectory they needed to end your flight."
+  },
+  {
+   "node": "up-end-nameless-martyr",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "They did not fire blindly into the dawn, for your features had been thoroughly mapped and circulated among the marksmen by the surviving witness. You die knowing your exposed face, not just the ledger, brought the crosshairs directly to your chest."
+  },
+  {
+   "node": "up-end-nameless-martyr",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "At least the rioting mobs carry the absolute truth from the vault's counter-ledgers, exposing Lord Valerius and Matron Rigg as one unified cabal. Your blood stains the slate, but the grand illusion of their polite war dies alongside you."
+  },
+  {
+   "node": "up-end-nameless-martyr",
+   "when": {
+    "cover": "cloak"
+   },
+   "after": "The murdered Archbishop's stolen cloak grows heavy with your own blood, soaking through the fine ecclesiastical velvet. You wore a dead man's vestments to hide from the patrolmen, only to guarantee you would share his sudden and violent fate."
+  },
+  {
+   "node": "up-end-nameless-martyr",
+   "when": {
+    "valerius": "betrayed"
+   },
+   "after": "Through the dimming haze, a clockwork pigeon circles the rifleman's perch, bearing the unmistakable violet ribbons of Lord Valerius's silk houses. Spurning his polite menace bought you this final, fatal leaden gift from a noble who brooks no betrayal."
+  }
+ ]
+}

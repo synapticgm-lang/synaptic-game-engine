@@ -1,0 +1,44 @@
+Gemini said
+
+@@SECTION td-2-111
+TITLE: The Howling on the Salt
+TEXT: Grey hounds with matted pelts and yellow eyes prowl the dried kelp beds, snapping at the heels of the Drift Pilgrims who huddle near a salt-crusted ridge. The beasts are starving, half-mad with the absence of fish and offal, and they scent the lard in the pilgrims' bags. Stones alone will not turn them when hunger makes their jaws foam. You grip your heavy salvage iron, stepping between the shaking zealots and the snarling pack as the lead cur lunges with bared teeth. // Stand your ground against the snarling beasts
+EXIT 1: Strike out with heavy salvage iron
+@@SECTION td-2-112
+TITLE: Blood Upon the Brine
+TEXT: Salt burns in the raw red furrow along your forearm where a yellow-eyed mongrel tore free before your iron could drop it. The pack circles wider now, their low growls vibrating through the wet sand of the Low while the pilgrims chant hasty prayers to the sulking tide. Pain flares hot and steady, a reminder of what the seabed demands for every yard gained. You steady your breathing, keeping the iron high and the dogs back from the huddled faithful. // Hold the line against the circling pack
+EXIT 1: Keep the snarling pack at bay
+@@SECTION td-2-113
+TITLE: Teeth in the Silt
+TEXT: Three large curs leap at once from the grey haze of the dead seabed, aiming straight for your throat with jaws wide and dripping. You tighten your grip on the heavy salvage iron, planting your boots deep into the sucking mud to absorb the impact of the hurtling bodies. Muscles bunch across your back and shoulders as you swing the metal bar in a sweeping arc to intercept the snapping jaws before they tear your flesh. // Swing the iron against the leaping curs
+CHECK: Drive back the leaping feral pack
+@@SECTION td-2-114
+TITLE: Torn Hide and Salt
+TEXT: A snarling hound slips past your guard, its yellow teeth burying deep into your thigh before a crushing blow from your iron sends it yelping into the fog. The wound burns fiercely as grey silt mixes with fresh blood, soaking into your trousers and sapping your speed. You manage to drag the surviving pilgrims clear of the carcass mound, but the cost is a torn leg and a long limp across the desolate flats. // Drag the bleeding survivors to safety
+EXIT 1: Retreat limping through the grey silt
+@@SECTION td-2-115
+TITLE: A Vial of Tears
+TEXT: Steel and muscle connect with bone, sending the remaining curs scattering back into the fog with bruised ribs and broken snouts. The pilgrimage leader steps forward, pressing a small, wax-sealed glass vial into your bloodied hand while muttering a blessing for the open sea's return. Liquid trapped inside glows with a pale, phosphorescent blue against the dull grey light of the seabed. // Accept the blessing and return to the trail
+GRANT: Consecrated vial of seawater
+EXIT 1: Return to the pilgrim camp
+@@SECTION td-2-116
+TITLE: Carving for the Altar
+TEXT: Shavings of salted oak curl onto your knees as your pocketknife pares away the rough outer grain, shaping a shallow offering bowl for the shrine. The Drift Pilgrims watch in silence, their eyes hollow with the exhaustion of a three-day drought while wind whistles through the skeletal masts of nearby wrecks. You smooth the rim with your thumb, ensuring the wood is clean enough to hold whatever small tribute the pilgrims wish to offer their sulking deity. // Hand over the finished wooden bowl
+EXIT 1: Present the carved bowl to the pilgrims
+@@SECTION td-2-117
+TITLE: Smoke Over the Silt
+TEXT: A small driftwood fire crackles outside a ruined fishing smack, sending thin grey smoke into the heavy sea-air. The pilgrims ladle out a bowl of thick lentil broth and hand over a bundle of dried seaweed rations in exchange for your clean woodcraft. Warmth floods your chest as you swallow the salty broth, melting the chill that has settled deep into your bones since leaving Gullmouth. // Finish the warm meal and pack your gear
+EXIT 1: Leave the fire for the open flats
+@@SECTION td-2-118
+TITLE: Shaping the Driftwood
+TEXT: Your blade moves with rhythmic precision across the stubborn heartwood, fighting knots and salt-rot that threaten to split the entire dish before the rim is half-rounded. Every stroke must be measured, for a single slip of the steel will ruin the sacred vessel and leave you empty-handed before the hungry pilgrims. You press your thumb against the grain, feeling the hidden flaws in the timber as the wind hums across the skeletal wrecks. // Carve the stubborn wood with steady hands
+CHECK: Shape the rough timber without splitting it
+@@SECTION td-2-119
+TITLE: Split Grain and Spoiled Meal
+TEXT: The grain catches abruptly on a hidden knot, splitting the oak bowl down the centre with a sharp crack that silences the camp. The pilgrims look away in disappointment, offering only a handful of dry, bitter salt-bread and a cup of lukewarm dregs instead of the promised hot stew. You curse your clumsy blade-work under your breath, stuffing the ruined timber fragments into your pack as you rise from the damp sand. // Pocket the splintered wood and move on
+EXIT 1: Accept the meager dry rations
+@@SECTION td-2-120
+TITLE: A Share of the Provisions
+TEXT: The knife peels away the final shaving of salt-hardened oak, leaving a smooth, perfectly rounded basin that catches the pale light of the low sky. The elder nods in solemn approval, passing over a steaming iron pot of lentil stew and a tightly wrapped parcel of smoked ling. You eat beside their flickering hearth, the hot food restoring your strength while the distant dunes hum their low, melancholy song across the empty seabed. // Gather your replenished stores and depart
+GRANT: Warm meal and dried fish rations
+EXIT 1: Return to the pilgrim camp

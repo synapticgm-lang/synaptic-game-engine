@@ -1,0 +1,97 @@
+{
+ "beats": {
+  "ul-4-001": "You descend the final stairwell into the Deep Annexe where the air tastes of ancient dust and lamp oil.",
+  "ul-4-017": "A chorus of whispering marginalia drifts from the parchment-clad walls, questioning your right to enter.",
+  "ul-4-031": "The floor beneath your boots turns to a mosaic of discarded bookplates that murmur complaints about your heavy tread.",
+  "ul-4-046": "A thick fog of pulverized paper dust fills the corridor, obscuring the oil lamps and choking your breath.",
+  "ul-4-062": "You reach a cavernous hall where towering bookshelves lean against one another in precarious, threatening arches.",
+  "ul-4-086": "The air grows cold and damp as you approach an underground river of glistening black ink that blocks your path.",
+  "ul-4-106": "You find a series of iron-bound trial chambers where the history of the Underlibrary judges every visitor.",
+  "ul-4-125": "The shelves give way to an open amphitheatre where thousands of marginal ghosts debate the fate of the archive.",
+  "ul-4-151": "Ahead lies the threshold of the Last Reader's cell, guarded by an intricate puzzle door made of sliding wooden letters.",
+  "ul-4-175": "You enter the silent inner sanctum where the Last Reader sits among mountains of unread manuscripts.",
+  "ul-4-192": "The Last Reader points a trembling finger toward the Hundredth Door as the deep stacks begin their final, rumbling closure."
+ },
+ "hubs": {
+  "ul-4-002": {
+   "place": "The Iron Threshold",
+   "situation": "You stand before the heavy bulkhead guarding the oldest stacks where whispering voices echo from the masonry."
+  },
+  "ul-4-018": {
+   "place": "The Margin Alcove",
+   "situation": "You enter a narrow nook where disembodied commentary hovers in the air like faint smoke."
+  },
+  "ul-4-032": {
+   "place": "The Ex-Libris Corridor",
+   "situation": "You traverse a narrow gallery paved with thousands of discarded ownership plates shifting underfoot."
+  },
+  "ul-4-047": {
+   "place": "The Dust-Sump",
+   "situation": "You enter a stagnant hollow where centuries of disintegrating pages have settled into shifting dunes."
+  },
+  "ul-4-063": {
+   "place": "The Lean-To Stacks",
+   "situation": "You navigate an unstable cathedral of leaning wooden cases held together only by stubborn friction and old glue."
+  },
+  "ul-4-087": {
+   "place": "The Scriptorium Sluice",
+   "situation": "You stand before a slow-moving current of waste ink draining from the upper writing chambers."
+  },
+  "ul-4-107": {
+   "place": "The Court of the Red Ink",
+   "situation": "You enter a severe judicial chamber where past administrative verdicts echo from the stone walls."
+  },
+  "ul-4-126": {
+   "place": "The Assembly of Marginalia",
+   "situation": "You stand in the centre of a murmuring crowd of disembodied reader opinions and dissenting notes."
+  },
+  "ul-4-152": {
+   "place": "The Labyrinthine Lintel",
+   "situation": "You face a massive wooden portal whose face continually rearranges its alphabet to bar entry."
+  },
+  "ul-4-176": {
+   "place": "The Sanctum of the Last Reader",
+   "situation": "You stand before the ancient, blind scholar who has memorized every word ever written in Quillon."
+  }
+ },
+ "chains": {
+  "ul-4-002/0": "You slip past the rusted latch using silent fingers to avoid the waking sentinel, securing a hidden iron skeleton key.",
+  "ul-4-002/1": "You stand firm against the oppressive wave of historic static pressing on your temples, earning the protective counsel of a phantom scholar.",
+  "ul-4-002/2": "You decipher the carved warning glyphs upon the archway to decode the proper passage phrase, acquiring an annotated translation slip.",
+  "ul-4-018/0": "You endure the bitter reproaches of forgotten readers without flinching, winning a scrap of parchment bearing a forgotten archival shortcut.",
+  "ul-4-018/1": "You dance smoothly between the snapping edges of predatory reference books, retrieving a brass bookmark that repels aggressive ink.",
+  "ul-4-018/2": "You gracefully sidestep a cascade of tumbling folios to pluck a preserved ink-vial from a crumbling wooden ledge.",
+  "ul-4-032/0": "You tread a delicate path across the shifting tiles without breaking a single seal, earning the favor of the resident bookplate sprite.",
+  "ul-4-032/1": "You balance along a narrow beam of petrified oak to bypass the unstable floor, discovering a pouch of scented sealing wax.",
+  "ul-4-032/2": "You trick the mosaic into lowering its protective barrier by misdirecting its queries, securing a master ledger fragment.",
+  "ul-4-047/0": "You navigate the blinding haze by reading the faint phosphorescence of specialized marginal notes, uncovering a hidden brass compass.",
+  "ul-4-047/1": "You outwit the swirling dust devils by redirecting their airflow with a discarded folio cover, retrieving a sealed parchment tube.",
+  "ul-4-047/2": "You analyze the mineral composition of the particulate storm to find the stable limestone floor beneath, gaining an enduring soot-filter mask.",
+  "ul-4-063/0": "You leap across a collapsing gap between swaying shelves with agile precision, securing a bundle of reinforced binding cord.",
+  "ul-4-063/1": "You slide effortlessly along the polished grain of a fallen pilaster to safety, finding a durable horn-handled penknife.",
+  "ul-4-063/2": "You manipulate the leaning timber tension points to bridge the chasm safely, earning a debt of honor from a trapped cataloguer.",
+  "ul-4-063/3": "You calculate the precise weight distribution of the falling texts to predict a safe route, acquiring an architectural diagram of the vaults.",
+  "ul-4-063/4": "You move with fluid grace through the shuddering aisles while books plummet around you, collecting an undamaged vellum journal.",
+  "ul-4-087/0": "You study the chemical flow of the dark tide to locate its shallowest stepping stones, obtaining a water-resistant leather satchel.",
+  "ul-4-087/1": "You leap lightly over the churning ink channel on a drifting shelf board, retrieving an ornamental silver dipping pen.",
+  "ul-4-087/2": "You forge a clever diversion by damming a tributary feeder with heavy encyclopedias, securing a cache of dry blotting paper.",
+  "ul-4-087/3": "You negotiate safe passage with the ink-rower by offering a pinch of salt, winning a ferry token for future crossings.",
+  "ul-4-107/0": "You research the ancient precedents to argue successfully against an unjust citation, earning an official seal of exemption.",
+  "ul-4-107/1": "You parse the complex jurisdictional codes inscribed upon the bench to unlock a hidden drawer containing a silver seal-ring.",
+  "ul-4-107/2": "You maintain unyielding resolve against the accusatory whispers of the automated tribunal, winning the enduring respect of the court ghost.",
+  "ul-4-107/3": "You slip past the mechanical judgment scales with fluid agility, securing a blank writ of passage signed by a dead judge.",
+  "ul-4-126/0": "You trace the logical flaws in the crowd's central argument to win their collective silence, acquiring a transcribed marginal debate.",
+  "ul-4-126/1": "You steel your nerves against the overwhelming psychic cacophony of a thousand competing thoughts, gaining a mental warding charm.",
+  "ul-4-126/2": "You glide through the phantom audience with effortless poise, collecting dropped notes containing secret archival passwords.",
+  "ul-4-126/3": "You withstand the collective gaze of the critical spirits without flinching, earning a promise of warning against upcoming traps.",
+  "ul-4-126/4": "You hold your ground as the spectral crowd surges forward, securing a heavy brass paperweight that anchors your thoughts.",
+  "ul-4-152/0": "You conquer the shifting linguistic puzzle through sheer mental endurance, unlocking a chamber containing a luminous reading prism.",
+  "ul-4-152/1": "You push past the psychic resistance of the locking mechanism with stubborn focus, acquiring an ivory letter-opener.",
+  "ul-4-152/2": "You dance your fingers across the sliding wooden tiles to match the rhythm of the door, securing a master skeleton key.",
+  "ul-4-152/3": "You move in sync with the mechanical shifting of the portal to slip through its gap, retrieving a spool of stout binding thread.",
+  "ul-4-152/4": "You analyze the root etymology of the locking word to force the door open, gaining a definitive dictionary of dead terms.",
+  "ul-4-176/0": "You outlast the scholar's grueling interrogation through sheer willpower, securing a personal letter of introduction to the vault guardian.",
+  "ul-4-176/1": "You interpret the ancient, uncatalogued scrolls scattered around the chair with scholarly precision, winning a fragment of the original Index.",
+  "ul-4-176/2": "You approach the fragile elder with delicate, measured steps that avoid disturbing a single paper stack, gaining a vial of restoration oil."
+ }
+}

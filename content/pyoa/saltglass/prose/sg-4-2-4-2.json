@@ -1,0 +1,86 @@
+{
+ "batch": "sg-4-2-4-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-2-4-2": {
+   "title": "The White Flagstones",
+   "text": "Sunlight breaks through the fading yellow haze, striking a wide apron of smooth white flagstones that stretch toward the silent observatory. You stride away from the scouring gale, your boots clicking sharply against the sun-baked mineral crust. The air feels suddenly still here, smelling faintly of old stone and baked lime. Your ember-lamp swings at your hip, its steady glow dimming against the brightening noon. You must decide whether to approach the grand eastern stairs or seek a quieter entrance near the lower retaining wall.",
+   "exits": [
+    "Climb the broad flight of limestone steps",
+    "Follow the curving shadow of the retaining wall"
+   ]
+  },
+  "sg-4-2-4-3": {
+   "title": "The Fused Slag Ditch",
+   "text": "Fine crystal dust clings to the wool of your tattered traveling cloak, and you pause within a shallow ditch of fused slag-blocks to shake out the stubborn grit. The storm's roar dwindles to a distant, hollow whistling among the glass ruins. Your shoulders ache from the long miles across the Basin, but the ceramic Seedkey rests cool and reassuring against your ribs. Two paths lie open before you through the rubble-strewn hollow.",
+   "exits": [
+    "Scramble up the crumbling embankment toward the upper terrace",
+    "Follow the narrow drainage conduit deeper into the shadows",
+    "Turn back toward the shelter of the outer dunes"
+   ]
+  },
+  "sg-4-2-4-4": {
+   "title": "The Rusted Sluice Wheel",
+   "text": "Cold iron bites into your palm as you press your hand against a rusted sluice-gate wheel half-buried in salt-encrusted silt. Beneath your boots, a deep and steady vibration hums through the bedrock, carrying the ancient heartbeat of subterranean machinery. The Seedkey warms slightly against your palm, responding to the hidden pulse of the vault far below. You can trace the iron conduit toward the upper galleries or descend into the dark machinery pits.",
+   "exits": [
+    "Follow the iron conduit toward the upper galleries",
+    "Descend the steep maintenance ladder into the dark pits"
+   ]
+  },
+  "sg-4-2-4-5": {
+   "title": "The Basalt Lintel",
+   "text": "Deep in the shadow of a low lintel of dark basalt, a lone glasswright named Thistle stands motionless with a small silvered mirror. A quick, blinding flash of reflected sunlight dances across the stone, signaling that the inner path is clear of patrol guards and drifting glass-dust. You nod in silent thanks, adjusting the strap of your ember-lamp as you step past the threshold. You can move deeper into the lower portico or climb the winding maintenance stairs.",
+   "exits": [
+    "Step through the shadowed archway toward the inner portico",
+    "Ascend the winding maintenance stairs toward the archive tier",
+    "Turn back toward the safety of the outer cistern"
+   ]
+  },
+  "sg-4-2-4-6": {
+   "title": "The Ribbed Salt-Terraces",
+   "text": "Smooth ribbons of ancient salt-pans crunch softly underfoot as you leave the screaming mirror storm behind and cross into the silent precinct of Prism's base. Towering glass spires rise overhead like frozen lightning, catching the pale desert light and refracting it into shifting pools of violet and gold. Your breath comes easier now that the abrasive wind has died. Ahead, the terrace splits around a great sunken basin of stagnant green water.",
+   "exits": [
+    "Walk around the western edge of the sunken basin",
+    "Cross the narrow stone bridge spanning the green water",
+    "Pick your way down the stepped ramp toward the lower vault doors"
+   ]
+  },
+  "sg-4-2-4-7": {
+   "title": "The Cyclopean Masonry",
+   "text": "Massive blocks of cyclopean masonry loom overhead, casting long and cool shadows that offer immediate relief from the glaring salt-waste. You steady your weary limbs against the rough-hewn stone, feeling the immense weight of the observatory pressing down from the desert sky above. The final gate of the vault waits just around the corner, its heavy bronze panels scarred by centuries of wind and sand.",
+   "exits": [
+    "Approach the heavy bronze panels of the vault entrance"
+   ]
+  },
+  "sg-4-2-5-0": {
+   "title": "The Great Bronze Wicket",
+   "text": "Heavy bronze rivets catch the amber glow as you stand before the great wicket of the Rain Vault, holding your lantern high to prove the flame survived the scouring Basin. The metal surface is cool and damp, weeping faint beads of condensation from the deep stone recesses. Within the massive frame, a deep mechanical click echoes through the dry air, acknowledging the presence of the Candlemere runner and the warmth of the living coal.",
+   "exits": [
+    "Press on through the heavy bronze wicket"
+   ]
+  },
+  "sg-4-2-5-1": {
+   "title": "The Frost-Etched Panels",
+   "text": "Frost-etched patterns swirl across the thick glass panels of the inner door, blooming under the influence of the cold air rising from the depths. You raise the heavy Seedkey toward the central depression, watching the pale ceramic material drink in the ambient chill. A low, musical hum vibrates through the frame as the ancient locks begin to shift and turn within their frozen housing.",
+   "exits": [
+    "Press on through the frost-etched panels"
+   ]
+  },
+  "sg-4-2-5-2": {
+   "title": "The Towering Pillars",
+   "text": "Slender pillars of black basalt tower above you like ancient sentinels, framing the vaulted ceiling where the last swirls of mirror-dust slowly settle into the cracks of the flagstones. The air smells of damp earth and old iron, entirely cleansed of the stinging salt-grit that plagued your long march. You pause for a single heartbeat to catch your breath before the final descent into the mountain's heart.",
+   "exits": [
+    "Press on between the towering basalt pillars"
+   ]
+  },
+  "sg-4-2-5-3": {
+   "title": "The Deep Seed-Halls",
+   "text": "Cool, damp earth fills your lungs as you draw a long, clean breath upon the threshold of the deep seed-halls, knowing your grueling journey through the salt-waste has finally ended. Row upon row of sealed ceramic jars stretch away into the lantern-lit dark, holding the dormant harvests of a hundred vanished summers. Your fingers tighten around the Seedkey as the silence of the vault closes gently behind you.",
+   "exits": [
+    "Press on into the vaulted seed-halls",
+    "Turn back toward the echoing pipe of the outer drainage"
+   ]
+  }
+ },
+ "missing": []
+}

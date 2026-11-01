@@ -1,0 +1,98 @@
+{
+ "batch": "vh-6-2-0-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-2-0-0": {
+   "title": "The Threshold Strike",
+   "text": "Cold basalt chills your knuckles as you raise the rough cobblestone against the iron-banded threshold of the lower furnace, striking a sharp, ringing blow that vibrates straight up into your aching spine. Beneath your padded leather straps, the heavy bronze clapper hums in response, its deep resonance matching the subterranean pulse of Lowgate. Soot settles in your hair like fine grey snow while orange sparks scatter across your worn boots from an unseen flue above.\n\nYou must decide how to press your claim upon the forge before the heat overwhelms your senses.",
+   "exits": [
+    "Strike the bolt once more for attention",
+    "Shift the heavy bronze burden and wait quietly",
+    "Step past the threshold into the smoky gloom"
+   ]
+  },
+  "vh-6-2-0-1": {
+   "title": "The Iron Latch",
+   "text": "Heavy frost crusts the rusted iron latch of the roaring portal, threatening to snap your knuckles as you jam a jagged crowbar into the frozen gap. The metal groans under your weight, shrieking against decades of accumulated soot and expansion, while a violent gust of superheated air bursts from the seam to singe your eyebrows. Inside that vast, dark chamber, the abbey's voice awaits its restoration, demanding every ounce of your remaining strength to force an entry.\n\nThe barrier gives a fraction of an inch with a dull, echoing crack.",
+   "exits": [
+    "Throw your full weight against the rusted crowbar",
+    "Slide the guild-knotted rope free to show your badge",
+    "Drop the lever and search for a cooler side-entrance"
+   ]
+  },
+  "vh-6-2-1-0": {
+   "title": "The Master's Smoke",
+   "text": "Thick grey haze hangs heavy within the soot-choked antechamber, stinging your raw eyes and tasting of sulfur and wet coal. Through the swirling fog, master smith Garth clears his throat with a harsh, rattling cough, crossing his soot-blackened arms over a leather apron stiff with grease. He demands immediate, undeniable proof that the heavy mass strapped to your back is genuinely Orison's tongue rather than common scrap metal meant for the melting pot.\n\nThe low rumble of the furnace provides a tense backdrop to his scrutiny.",
+   "exits": [
+    "Unbuckle the heavy cradle to show the bronze",
+    "Demand he respect the sacred commission of Vesperhold",
+    "Point to the ancient mountain runes carved on the metal"
+   ]
+  },
+  "vh-6-2-1-1": {
+   "title": "The Slag Trenches",
+   "text": "Steamy condensation drips in heavy droplets from the vaulted brick ceiling onto your smoking leather jerkin as you navigate the treacherous trench between two cooling slag vats. Red light pulses rhythmically from the pits, casting long, distorted shadows of your burden across the glistening flagstones. Every breath burns your lungs with the dry, metallic tang of boiling rock and quenched iron.\n\nYou must choose your footing carefully before the shifting vapors blind you entirely.",
+   "exits": [
+    "Follow the narrow brick ledge past the glowing vat",
+    "Leap across the steaming runoff channel toward the dark alcove",
+    "Pause to adjust the harness before your shoulders give way"
+   ]
+  },
+  "vh-6-2-1-2": {
+   "title": "The Tallow Apron",
+   "text": "A discarded leather apron lies draped across an iron coal-scuttle, reeking heavily of old tallow and burnt hair while erratic sparks dance across the toes of your boots. The surrounding gloom presses in close, broken only by the distant, rhythmic groaning of giant mechanical bellows somewhere deep in the foundry bowels. Your shoulders throb with a dull, steady ache from the long descent down the mountain stairs.\n\nA choice opens up between the main hearth and the labyrinthine service tunnels.",
+   "exits": [
+    "Step past the smoking scuttle toward the central crucible",
+    "Kick the tangled copper wire aside and search for the foreman",
+    "Duck down the low auxiliary passage toward the side-shed"
+   ]
+  },
+  "vh-6-2-1-3": {
+   "title": "The Choking Gust",
+   "text": "A sudden gust of sulfurous coal-gas billows from a low-slung exhaust duct, catching in your raw throat and threatening to choke off your breath entirely. You stagger against the rough stone wall, steadying the heavy wooden cradle on your shoulder with both trembling hands until the noxious cloud clears. The bronze tongue hums faintly against your spine, a steady, cooling anchor amidst the suffocating heat of the Foundry quarter.\n\nYou must clear your lungs and decide your next direction in the dim haze.",
+   "exits": [
+    "Follow the rattling chain of the overhead crane",
+    "Lean your forehead against the cool buttress stone",
+    "Dodge past the stack of refractory bricks into the shadows"
+   ]
+  },
+  "vh-6-2-1-4": {
+   "title": "The Knotted Passport",
+   "text": "Because your hempen bindings are knotted in the precise, intricate loop of the Ropewrights' Guild, the heavily armed foundry guards step aside with a silent, respectful nod to let you pass unhindered. They recognize the authority written in the cordage around your waist, granting you safe passage where others face hostile interrogation and turned backs. The damp air of the inner courtyards feels momentarily lighter against your soot-stained cheeks.\n\nAhead of you, the vast inner workings of the complex open up in a maze of steam and iron.",
+   "exits": [
+    "Slip past the guards toward the roaring hearth",
+    "Pause beside the dark river trough to catch your breath",
+    "Seek out the master's office as the burly hand advised"
+   ]
+  },
+  "vh-6-2-1-5": {
+   "title": "The Hammer Stroke",
+   "text": "A rhythmic, ground-shaking thud echoes through the damp flagstones beneath your boots, vibrating straight up from the foundations into the heavy bronze you carry. Each impact of the distant water-hammer sends a sympathetic chime through the metal against your back, reminding you of the high mountain belfry far above the clouds. The air is thick with flying grit and the smell of hot oil.\n\nYou stand at a crucial junction in the fog-shrouded aisles of Lowgate.",
+   "exits": [
+    "Head toward the dark river trough in the corner",
+    "Locate the master's office past the roaring furnace",
+    "Investigate the rattling metal bins by the anthracite stacks",
+    "Wipe your streaming eyes and push deeper into the maze"
+   ]
+  },
+  "vh-6-2-2-0": {
+   "title": "The Coal Hopper",
+   "text": "Beneath a rusted exhaust hood that drips black grease, apprentice Jory shovels grey coke into the gaping hopper with frantic, exhausted sweeps. He glances nervously over his shoulder at your heavy burden, his young face streaked with sweat and coal-dust that highlights the dark circles under his eyes. The heat radiating from the open hatch is fierce enough to blister exposed skin within seconds.\n\nYou must address the apprentice before he drops his shovel from exhaustion.",
+   "exits": [
+    "Ask the boy where the master smith is hiding",
+    "Offer to take the shovel while he rests his arms",
+    "Step past the hopper toward the glowing river of slag"
+   ]
+  },
+  "vh-6-2-2-1": {
+   "title": "The Greasy Quench",
+   "text": "Your boot heel catches on a slick patch of condensed tallow near the great quenching trough, sending a sudden jolt of panic through your chest as you stumble sideways. Only a desperate twist of your torso keeps the heavy clapper from slamming ruinously against the unforgiving stone wall. Water sloshes over the rim of the trough, hissing loudly as it hits the hot brick floor and wrapping you in a blinding cloud of steam.\n\nYou recover your balance with a sharp intake of breath.",
+   "exits": [
+    "Steady your grip and continue toward the coke stacks",
+    "Press flat against the damp wall until the steam clears",
+    "Check the harness straps to ensure the bronze is secure"
+   ]
+  }
+ },
+ "missing": []
+}

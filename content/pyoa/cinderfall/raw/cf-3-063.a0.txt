@@ -1,0 +1,61 @@
+@@SECTION cf-3-063
+TITLE: Scalding Iron Breath
+TEXT: Superheated fog billows around your ankles, smelling of scorched oil and boiled rivets as the primary gasket fails with a prolonged, shrieked hiss. Your bare hands grope blindly through the blinding white vapor, searching for the screaming joint of the feed-pipe while the deck vibrates violently beneath your boots. Every breath singes your throat, yet you must wrench the loose collar back into alignment before the pressure drops entirely and leaves the Marrowbone stalled on the open viaduct. // Reaching deeper into the scalding fog, your fingers finally wrap around the jagged tooth of the brass valve-collar, ignoring the fierce blisters blooming across your palms as you throw your full weight against the stubborn threading.
+EXIT 1: Wrench the smoking valve home
+@@END
+@@SECTION cf-3-064
+TITLE: The Whiteout Seam
+TEXT: Sweat streams into your stinging eyes, blurring the outlines of the glowing brass union while the ambient temperature climbs past endurance and your heart hammers a frantic rhythm against your ribs. Panic threatens to seize your thoughts, whispering that one wrong twitch of the wrist will strip the thread and bathe your forearms in boiling steam. You force your breathing to slow, steadying your trembling fingers against the scorching metal as you prepare to apply the final, decisive torque to the valve-nut.
+CHECK: Hold steady against the scalding steam
+@@END
+@@SECTION cf-3-065
+TITLE: Scalded and Spent
+TEXT: A sudden surge of scalding mist overwhelms your grip, forcing you to jerk your hands back with a sharp gasp as the searing metal bites deep into your flesh. You collapse against the coal-tender, gasping raggedly for cool air while blisters rise across your palms and fingers, turning every subsequent movement into a dull, throbbing ache. The repair remains botched, leaking a persistent hiss of wasted steam that will cost precious time and fuel to compensate for down the line.
+EXIT 1: Crawl back to the deck
+@@END
+@@SECTION cf-3-066
+TITLE: A Seared Keepsake
+TEXT: Through sheer stubborn endurance, whether cleanly executed or achieved through gritted teeth and raw pain, the recalcitrant valve finally yields and spins home with a reassuring, heavy thud. The roaring hiss dies down to a manageable murmur, leaving your skin flushed and your hands smarting with fresh burns, but the pressure gauge stabilizes in the green. Clutched in your palm is the prize you salvaged from the wreckage, a small token of resilience earned from the belly of the machine.
+GRANT: A scorched brass valve-key
+EXIT 1: Crawl into the smog corridor
+@@END
+@@SECTION cf-3-067
+TITLE: Iron Against Iron
+TEXT: Heavy iron buffers crash together with a teeth-rattling shock that sends loose coal sliding across the footplate as a massive armored cargo tender grinds alongside the Marrowbone. Rail Baron enforcers crowd the opposing deck, heaving heavy shunting poles against your handrails in a brutal attempt to nudge your engine off the narrow single-track bridge and into the empty air. Sparks shower from locked wheel-flanges, illuminating grim, soot-stained faces under peaked caps as they try to force your locomotive toward the precipice. You brace your boots against the shifting deck plates, realizing that passive defense will only end in a long drop into the grey fog.
+EXIT 1: Fight for control of the tracks
+@@END
+@@SECTION cf-3-068
+TITLE: The Shunting Junction
+TEXT: Iron mechanisms shriek and shudder underfoot where the permanent way splits above the abyss, offering a dozen perilous paths through the roaring din of rival exhausts. Ahead lies the tangled heart of the viaduct switching station, where every lever and toggle dictates whether the Marrowbone lives to reach Cinderfall or plunges into the ash-wastes below. The enemy engine looms larger still, its cowcatcher grinding against your flanks while you weigh your next desperate move against the oncoming threat.
+EXIT 1: Leap toward the control levers
+EXIT 2: Shout a reckless bluff across
+EXIT 3: Jam a crowbar in the teeth
+EXIT 4: Anticipate the rival signalman
+EXIT 5: Brace for the structural blasts
+@@END
+@@SECTION cf-3-069
+TITLE: Shifting the Iron
+TEXT: Iron rods groan under tremendous lateral stress as you throw your shoulder against the heavy mechanical linkage, forcing the rusted points to grind sideways amidst a shower of sparks. The Marrowbone trembles, its heavy driving wheels slipping momentarily on the grease-slicked rail before catching traction and surging forward onto the divergent path. Below, the sheer drop of the viaduct gapes like an open mouth, reminding you that a fraction of a second's hesitation will pitch the entire train into the grey void.
+EXIT 1: Follow the diverging spur line
+@@END
+@@SECTION cf-3-070
+TITLE: The Divergent Spur
+TEXT: Clanging guide-bars hammer a frantic rhythm against the frame as the engine rounds the sharp curve, leaving the main thoroughfare behind for the narrower, neglected branch. Dust and ancient soot rise in thick black billows from the neglected roadbed, coating your tongue in the dry taste of old cinders and forgotten traffic. You keep one hand locked around the brass regulator while your eyes scan the ahead rails for any sign of a blocked buffer or an ambush waiting in the gloom.
+EXIT 1: Reach the switch-box controls
+@@END
+@@SECTION cf-3-071
+TITLE: The Binding Linkage
+TEXT: Jagged teeth of iron gearwork grind together with an ominous screech as you attempt to force the jammed selector lever through a warped rusted quadrant. The metal grows burning hot beneath your calloused palms, trembling violently as the strain threatens to shear the primary connecting pin clean in two. Every muscle in your back knots as you lean your full weight into the ironwork, waiting to see whether the mechanism locks true or shatters under the pressure.
+CHECK: Force the jammed linkage home
+@@END
+@@SECTION cf-3-072
+TITLE: Broken Teeth
+TEXT: A sharp, metallic snap echoes above the roar of the boiler as the overworked linkage shears clean through, throwing you sprawling hard across the iron decking. Your shoulder throbs with a deep, grinding ache where you struck the protruding grease-box, and the jammed points remain stubbornly locked in place, refusing your command. You pick yourself up from the soot with a bitter taste in your mouth, knowing the delay has cost you dearly in both time and equipment.
+EXIT 1: Drag yourself back upright
+@@END
+@@SECTION cf-3-073
+TITLE: A Victory in Iron
+TEXT: With a heavy, resonant thud that vibrates straight up through the soles of your boots, the stubborn pins lock into alignment—whether achieved through fluid grace or brute, sweating desperation. The mechanism settles into its housing, securing the track geometry just in time to avert disaster as the trailing wheels rumble past the junction. You catch your breath, wiping grease from your forehead, and pocket a small fragment of sheared pin as a memento of the narrow escape.
+GRANT: A sheared steel locking pin
+EXIT 1: Return to the shunting junction
+@@END

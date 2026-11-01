@@ -1,0 +1,88 @@
+{
+ "batch": "vh-6-0-2-11",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-0-2-11": {
+   "title": "The Salt Warehouse",
+   "text": "Behind the rusted iron gates of the salt warehouse, a guard named Bron inspects leaking sacks of gray crystals, his fingers caked with brine as he scrapes white crust from the damp floorboards. The damp air smells of ancient seas and sharp minerals, stinging your nose while Biscuit shifts restlessly against the heavy bronze Clapper strapped to your spine. You watch the crystals trickle through a torn seam, wondering how much weight a single split sack can lose before the tally-man notices.\n\nBron looks up from his messy ledger, his eyes squinting against the pale harbor light filtering through the high, barred windows. You adjust the padded cradle on your shoulders, feeling the familiar, faint hum of the metal resting against your back. You can slip past the loading bay into the smoky alleyways or wait here until the inspection finishes.",
+   "exits": [
+    "Slip past the loading bay towards the smiths"
+   ]
+  },
+  "vh-6-0-3-0": {
+   "title": "The Tinker's Shack",
+   "text": "Near the smoking chimney of the tinker's shack, a mender named Garreth hammers dents out of battered copper kettles, sending sharp ringing echoes across the muddy lane. Sparks fly from the small charcoal stove, catching briefly in the cold drizzle before dying in the puddles at your feet. Biscuit lowers his head to sniff at a heap of scrap metal while you adjust the heavy bronze Clapper in its padded cradle. Garreth pauses his rhythmic pounding to wipe soot from his forehead with a greasy rag, eyeing the massive tongue of Vesperhold with professional curiosity.\n\nThe metallic clamor fades into a steady, damp quiet as the mender turns his attention back to a split kettle seam. You weigh your options in the chill air, knowing the foundry is close but uncertain whether to seek out the masters now or circle the lower lanes first.",
+   "exits": [
+    "Head towards the shadowed guild courtyard"
+   ]
+  },
+  "vh-6-0-3-1": {
+   "title": "The Boat-Builder's Shed",
+   "text": "Under the dripping thatch of the boat-builder's shed, a shipwright named Hesketh caulks seams with boiling pitch, filling the humid air with the pungent smell of pine tar and smoke. Ribs of half-built river skiffs arch overhead like the skeletal remains of mountain beasts, keeping the worst of the cold drizzle away from your shoulders. Biscuit snorts at the acrid fumes, shaking water from his shaggy ears while you ease the heavy burden of the Clapper against a sturdy timber post. Hesketh dips his iron ladle into the bubbling pot, never taking his shrewd eyes off the massive bronze tongue strapped to your back.\n\nThe thick black pitch cools rapidly in the drafty shed, hardening into glossy ribbons along the hull timbers. You consider lingering by the warm fire pit or pressing onward through the winding alleys of the lower quarters.",
+   "exits": [
+    "Leave the shed for the guild courtyard"
+   ]
+  },
+  "vh-6-0-3-2": {
+   "title": "The Water-Gate Steps",
+   "text": "Beside the flooded steps of the water-gate, a watchman named Dorn blows a cold breath over his frosted brass horn, creating a low, hollow note that blends with the wash of river tides. Green algae coats the lower masonry where the high water laps persistently against the stone, smelling of silt and old iron. You stand balanced on the slippery ledge with Biscuit, feeling the deep, familiar hum of the Clapper resonate through your tired spine. Dorn lowers his horn and taps the bell against his palm, eyeing the gray waters and the various paths winding away from the basin.\n\nThe tide continues its slow, relentless climb up the mossy steps, threatening to submerge the lower landing entirely before dusk. You must decide whether to seek out the cold casting shed, approach the grand furnace pit, or check the mixing floor scales.",
+   "exits": [
+    "Seek out the cold casting shed",
+    "Approach the deep grand furnace pit",
+    "Check the scales on the mixing floor"
+   ]
+  },
+  "vh-6-0-3-3": {
+   "title": "The Rag-Picker's Cellar",
+   "text": "Within the murky gloom of the rag-picker's cellar, an old woman named Martha sorts damp woolens by moonlight, her gnarled fingers deftly separating coarse mountain fleece from lowland cotton. Dust motes dance in the pale shaft of light cutting through the low cellar window, illuminating heaps of discarded textiles that muffle the sounds of the damp street above. You step carefully down the broken stone stairs, the heavy bronze Clapper bumping against the low wooden lintel with a dull, muffled thud. Martha murmurs a low greeting without lifting her head, her fingers still moving swiftly among the woolen rags.\n\nThe stale air is heavy with the scent of dried lavender and wet wool, offering a brief shelter from the biting harbor wind outside. You can press deeper into the working yards toward the iron-roofed casting shed, walk over to the roaring grand furnace, or inspect the quiet mixing floor.",
+   "exits": [
+    "Visit the iron-roofed casting shed",
+    "Walk over to the grand furnace",
+    "Inspect the quiet mixing floor"
+   ]
+  },
+  "vh-6-0-3-4": {
+   "title": "The Lower Embankment",
+   "text": "Along the slippery stone embankment of the lower basin, a net-weaver named Nuala mends torn hemp meshes, her wooden shuttle flying through the gray cords with practiced speed. The cold river water laps against the mossy foundations below, carrying floating bits of marsh grass and wood chips from the upper forests. Biscuit picks his footing carefully along the wet granite blocks while you adjust the straps holding the heavy Clapper to your aching back. Nuala ties a final knot and bites through the cord, watching the mist curl off the dark surface of the river.\n\nThe gray light begins to fade over the water, casting long shadows across the crowded boat docks and alleys. You weigh the fading daylight against the distance remaining to the foundry guild, the iron-roofed casting shed, or the grand furnace pit.",
+   "exits": [
+    "Head towards the bell-founders' guild",
+    "Check the iron-roofed casting shed",
+    "Inspect the grand furnace pit"
+   ]
+  },
+  "vh-6-0-3-5": {
+   "title": "The Clear Ledger",
+   "text": "Because you owe nobody a copper, you stride past the snarling debt-collectors outside the guildhouse with an easy conscience, your pockets light and your steps unhindered by promissory knots. The lenders bare their yellow teeth and finger their heavy account books, but their ledgers contain no claim against your name or the sacred bronze you carry. Biscuit trots briskly behind you on the cobblestones, sensing the absence of pursuit and lifting his head into the crisp mountain air. You feel a rare sense of freedom in the crowded streets of Lowgate, where every other traveler is bound by tangled debts and unfulfilled oaths.\n\nThe great stone doors of the foundry stand open ahead, spilling a dull red glow and the smell of sulfur into the darkening square. You can walk straight to the deep pit of the grand furnace where the old casters work, or step toward the weigh-master's station by the mixing floor.",
+   "exits": [
+    "Approach the deep grand furnace pit",
+    "Visit the weigh-master by the mixing floor"
+   ]
+  },
+  "vh-6-0-3-6": {
+   "title": "The Charcoal Shelter",
+   "text": "Near the smoking hearth of the charcoal-burners' shelter, a worker named Joram roasts dry chestnuts over embers, the rich nutty smell cutting sharply through the sulfurous mountain air. Blue smoke curls lazily from the makeshift brick hearth, warming your frozen fingers as you pause to let Biscuit catch his breath. Joram offers you a warm chestnut with a blackened thumb, nodding respectfully toward the padded cradle and the humming metal within. The steady crackle of the dry hardwood provides a comforting backdrop to the distant, chaotic noise of the lower foundry yards.\n\nThe glowing embers cast dancing red patterns across the soot-stained timber walls of the shelter. You must choose whether to take the path toward the weigh-master's empty bronze scales or follow the soot-stained corridor to the clerk's office.",
+   "exits": [
+    "Walk towards the weigh-master's scales",
+    "Follow the corridor to the clerk's office"
+   ]
+  },
+  "vh-6-0-3-7": {
+   "title": "The Grain Hoist",
+   "text": "Beneath the leaning timber rafters of the grain hoist, a clerk named Orla counts moldy sacks of barley, her quill scratching frantically against a water-stained parchment. Dust hangs thick in the dim air, smelling of stale grain and river dampness, while outside the wind rattles the creaking wooden pulleys of the lift. You stand quietly with Biscuit in the shadows, the heavy bronze Clapper humming a low, steady note that makes the loose grain sacks vibrate slightly. Orla dips her quill into a horn inkwell and glares at a particularly soggy sack with deep irritation.\n\nThe creaking of the overhead machinery rises and falls with every gust of wind sweeping down from the mountain pass. You can leave the dusty hoist behind to visit the grand furnace pit or walk down the soot-stained corridor toward the municipal office.",
+   "exits": [
+    "Head towards the grand furnace pit",
+    "Walk down the soot-stained corridor"
+   ]
+  },
+  "vh-6-0-3-8": {
+   "title": "The Coal-Quay Winch",
+   "text": "Beside the rusted iron winch of the coal-quay, a laborer named Skiff greases dry gears with mutton grease, the thick yellow fat slicking his calloused hands. The heavy iron drum groans in protest as the crank turns, hauling another basket of wet slack up from the barge moored in the murky water below. Biscuit shakes a spray of dirty water from his hide, nearly knocking over a barrel of spare winch pins while you steady the heavy bronze Clapper on your back. Skiff wipes his greasy palms on his canvas trousers and spits into the river, eyeing your mountain gear with silent appraisal.\n\nThe cold wind off the water carries the sharp taste of coal dust and salt deep into your lungs. You can follow the soot-stained corridor to the municipal office, head toward the smoking ventilation shaft of the lower foundry, or retrace your steps back up the mountain path.",
+   "exits": [
+    "Follow the corridor to the municipal office",
+    "Walk towards the lower foundry ventilation shaft",
+    "Turn back up the mountain path"
+   ]
+  }
+ },
+ "missing": []
+}

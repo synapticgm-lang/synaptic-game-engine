@@ -1,0 +1,108 @@
+{
+ "batch": "td-2-033",
+ "sections": {
+  "td-2-033": {
+   "title": "Lifting the Salt Crust",
+   "text": "Thick encrustations of white salt seal the iron-strapped lid of the sea chest against the dead seabed, hiding whatever plunder lies within its dark depths. Working your crowbar into the narrow gap, you throw your weight against the handle, feeling the ancient wood groan under the pressure of decades of dry exposure. The crust fractures with a dry, popping sound like snapping bones, releasing a puff of stagnant air that smells of old brine and rotting kelp.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry open the stubborn lid"
+   ]
+  },
+  "td-2-034": {
+   "title": "Forcing the Seal",
+   "text": "Muscles strain against the unyielding resistance of the hardened salt and rusted hinges, every fiber of your arms trembling under the sudden, brutal weight of the rusted lid. You plant your boots firmly into the damp seabed silt, throwing your full strength into one desperate, final heave to snap the iron lock before the entire casing gives way and buries the prize forever.",
+   "check": "Heave against the salt seal",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-035": {
+   "title": "Bruised and Burdened",
+   "text": "The rusted iron slams shut with a bone-jarring crash, catching your knuckles against the abrasive crust and sending a searing ache up your forearms. You stumble backward into the damp sand, nursing a jagged, bleeding scrape across your hand that will throb for days in the salt air. Valuable daylight slips away as you catch your breath, leaving you empty-handed and sore on the open seabed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press onward across the flats"
+   ]
+  },
+  "td-2-036": {
+   "title": "Claiming the Heavy Blade",
+   "text": "Steel slides free from its rotting velvet bed with a satisfying scrape, heavy and well-balanced despite the years spent beneath the receding tides. You test the edge with a calloused thumb, feeling the faint hum of old metal that has seen far worse than a dry seabed. Stowing the weapon safely at your belt, you leave the empty chest behind to sink back into the grey silt.",
+   "check": "",
+   "grant": "Heavy salt-rusted cutlass",
+   "exits": [
+    "Approach the leviathan bulk"
+   ]
+  },
+  "td-2-037": {
+   "title": "Reaching for the Ledge",
+   "text": "Jagged chunks of limestone crumble beneath a stranded fellow's frantic grip, threatening to plunge them down into the shadowed fissure below the old cliffline. You drop your pack and scramble across the slick rock face, sliding your boots into a narrow crevice to brace yourself against the drop. Reaching down with one outstretched arm, you catch hold of a salt-crusted sleeve just as the climber's footing gives way entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Anchor yourself and pull"
+   ]
+  },
+  "td-2-038": {
+   "title": "Bracing Against the Drop",
+   "text": "Your shoulder muscles burn as the full, dead weight of the falling scavenger drags you perilously close to the jagged edge of the chasm. Digging your boot heels deep into the crumbling sediment, you arch your back and pull with everything you have left, fighting gravity and the treacherous pull of the unstable stone beneath you.",
+   "check": "Tug the climber to safety",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-039": {
+   "title": "Slipping the Margin",
+   "text": "Loose gravel cascades into the dark cleft below as your boot slips an inch, wrenching your shoulder socket with a sudden, agonizing jolt. You manage to drag the gasping stranger onto solid stone, but the violent strain leaves you doubled over and clutching a bruised side that aches with every breath. The cost of the rescue is stamped deep into your muscles as you stand shaking on the ledge.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the ledge behind"
+   ]
+  },
+  "td-2-040": {
+   "title": "Purse of the Rescued",
+   "text": "Gratefully coughing up lungfuls of bitter dust, the rescued wrecker shoves a heavy leather pouch into your palm before vanishing back toward the cliff shadows without a backward glance. Heavy silver coins clink together inside the damp sack, offering a welcome reward for your split-second gamble on the crumbling stone. You secure the bounty tightly inside your coat and look back out across the wide expanse of the Low.",
+   "check": "",
+   "grant": "Pouch of rare coins",
+   "exits": [
+    "Head toward the sinkholes"
+   ]
+  },
+  "td-2-041": {
+   "title": "Breaking the Petrified Hull",
+   "text": "Rotting timbers hardened by decades of salt-soaking offer stubborn resistance to your heavy boots, refusing to yield easily to your assault. You swing your heavy iron-shod pole again and again into the warped ribs of the sunken dinghy, splintering the ancient wood until a dark cavity opens up within the ruined hull. Thick, greenish vapors escape from the breach, stinging your eyes, but you spot the smooth grain of an intact oar wedged inside the ribs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach inside the wreckage"
+   ]
+  },
+  "td-2-042": {
+   "title": "Splitting the Hull",
+   "text": "Trapped air from the sunken dinghy's bowels smells of old bilge and rotten kelp, thick enough to coat your tongue in gray grease. You wedge the heel of your boot against the waterlogged gunwale and swing your heavy iron-shod maul with both arms, putting your back into the blow to shatter the petrified ribs of the craft. A cloud of black silt and stinging vapor bursts from the fracture, but you ignore the burning in your lungs and shove your shoulder into the gap, reaching deep into the dark interior for the clean, dry heft of an unbroken oar.",
+   "check": "Drive your shoulder through the timbers",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-043": {
+   "title": "Choking on the Fumes",
+   "text": "A sudden burst of noxious, yellow gas erupts from the heart of the wreck, blinding you with stinging heat and sending you staggering backward into the mud. You cough until your ribs ache, gasping for clean air while the broken dinghy settles further into the shifting silt. The oar remains trapped inside the wreckage, lost to you along with the time spent hacking at the useless wood.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Turn away from the wreck"
+   ]
+  },
+  "td-2-044": {
+   "title": "Seizing the Sturdy Oar",
+   "text": "Wood snaps cleanly under a final, well-placed blow, freeing the long oar from its cramped berth within the petrified ribs. You pull it free with a triumphant grunt, admiring the polished grain that somehow survived the drowning of the coast untouched by rot. It will serve well as a walking staff across the shifting flats or a lever when the ground turns traitorous beneath your boots.",
+   "check": "",
+   "grant": "Sturdy wooden oar",
+   "exits": [
+    "Advance toward the leviathan"
+   ]
+  }
+ },
+ "missing": []
+}

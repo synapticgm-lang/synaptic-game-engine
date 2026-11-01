@@ -1,0 +1,66 @@
+Gemini said
+
+@@SECTION sg-2-1-4-0
+TITLE: The Northern Palisade
+TEXT: Ridge crests offer a harsh vantage over the low timber palisade of the Salt Court's northern toll-station, where watch-fires smolder against the blinding white expanse. Below, armed wardens patrol the perimeter while wagons laden with blocks of coarse mineral wait in the baking heat for their papers to be stamped. Your ember-lamp feels heavy against your thigh, its banked coals radiating a dull, familiar warmth that matches the sweat stinging your brow. You grip the strap of your pack and consider whether to circle wider around the station or test your luck along the rutted track.
+EXIT 1: Descend the slope toward the timber gate
+@@END
+
+@@SECTION sg-2-1-4-1
+TITLE: The Groaning Pipe
+TEXT: Iron pipes emerge from the fractured salt floor beside your path, groaning softly as midday heat makes the metal expand with a metallic click. Rust flakes off the ancient conduit in orange scales, staining the pristine white crystals beneath your heavy soles. The air shimmers with mirages, bending the horizon into liquid pools that vanish whenever you blink. Adjusting your grip on your ember-lamp, you weigh the wisdom of following this old utility line or cutting across the open crust toward the looming toll-station.
+EXIT 1: Follow the groaning conduit toward the station
+@@END
+
+@@SECTION sg-2-1-4-2
+TITLE: Pink Alkali Dust
+TEXT: Magenta powder drifts across the salt flats in soft dunes, leaving bright, chemical stains across the leather toes of your heavy boots. This alkaline drift burns the nostrils with a sharp, vinegar tang whenever the dry wind shifts. Further ahead, the landscape fractures into deeper trenches of salt and glass, while a faint plume of wood-smoke rises near the perimeter of the Salt Court's station. You must decide whether to skirt the pink dust by heading left toward the smoking chimney or pressing straight ahead.
+EXIT 1: Skirt the pink dust toward the smoke
+EXIT 2: Press straight ahead along the main track
+@@END
+
+@@SECTION sg-2-1-4-3
+TITLE: The Battered Sign
+TEXT: Weathered copper plates nailed to a fence-post warn unauthorized travelers of heavy basin tariffs and mandatory debt registration enforced by the Salt Court. Green verdigris streaks the metal letters, making the stern warnings almost illegible under the harsh glare of the high sun. Beyond the post, the well-worn trail leads directly toward the fortified perimeter of the regional tax-station. You run a thumb over the cold ceramic key in your hidden pocket, wondering if you can slip past the notice unnoticed.
+EXIT 1: Take the side track away from the notice
+EXIT 2: March boldly toward the main gate
+@@END
+
+@@SECTION sg-2-1-4-4
+TITLE: The Corrugated Lean-To
+TEXT: Rusted iron sheets rattle in the hot wind above a deserted toll-keeper's shelter that offers a brief, welcome pocket of shade from the blazing sky. Unrolling a creased salt-stained map across a barrel top, you search for hidden tracks that bypass the watchful eyes of the Salt Court wardens. Outside the makeshift roof, the blinding white glare of the Bitterflats stretches toward a distant horizon of jagged glass spires. You fold the parchment away and prepare to make your next move.
+EXIT 1: Step out and follow the hidden map-track
+EXIT 2: Head directly toward the guarded outpost ahead
+@@END
+
+@@SECTION sg-2-1-4-5
+TITLE: Skulls on a Wire
+TEXT: Bleached camel skulls hang from a rusted wire stretched above the track, clacking together in the hot wind like bone wind-chimes played by a skeleton. Their hollow eye sockets gaze out over the endless expanse of salt and glass with permanent, unblinking indifference. The metallic clatter echoes loudly in the heavy air, warning any approaching traveler of the territory they are entering. You duck beneath the grim barrier and ready your pace for the approach to the outpost.
+EXIT 1: Walk beneath the skulls toward the gate
+EXIT 2: Detour around the bone-strung boundary
+@@END
+
+@@SECTION sg-2-1-4-6
+TITLE: Through the Salt Mound
+TEXT: Jagged mounds of crystallized mineral afford a narrow vantage through which you peer at the low timber palisade of the tax-station less than a hundred paces away. Sentries in boiled-leather jerkins pace the ramparts, swinging brass tally-keys that catch the fierce sunlight in blinding flashes. Your ember-lamp radiates a steady, protective heat against your hip, reminding you of the Candlemere hearths you left behind. You draw back into the shadow of the salt-drift to weigh your options before the guards look your way.
+EXIT 1: Skirt the mound toward the outer fence
+EXIT 2: Approach the station entrance head-on
+@@END
+
+@@SECTION sg-2-1-4-7
+TITLE: The Pacing Guard
+TEXT: Heavy boots crunch against the wooden rampart as a lone guard in a boiled-leather jerkin paces the perimeter of the toll-hut, swinging a heavy brass tally-key by its leather thong. The rhythmic clink of metal against brass punctuates the oppressive silence of the salt basin. Below the platform, the main path narrows into a bottleneck flanked by sharp stakes and barbed wire. You slip into a shallow hollow in the salt crust, waiting for the sentry to turn his back so you can make your move.
+EXIT 1: Wait for the guard to turn and approach
+@@END
+
+@@SECTION sg-2-1-5-0
+TITLE: The Hanging Bell
+TEXT: Heavy timber gates bar the entrance to the compound where a brass bell hangs from a gallows-frame above the dusty, sun-baked track. A thick layer of white dust coats the wood, and the surrounding walls hum with the low murmur of ledger-clerks tallying up traveler debts within. Your fingers graze the cold ceramic surface of the Seedkey in your pocket, steadying your nerves against the coming confrontation. You step up to the threshold and reach for the heavy striker hanging beside the gate.
+EXIT 1: Ring the bell and press on inside
+@@END
+
+@@SECTION sg-2-1-5-1
+TITLE: The Ledger-Clerk
+TEXT: Spectacles gleam behind a barred window set into the thick timber wall of the toll-hut as a ledger-clerk taps a quill against a greasy stack of debt-bonds. The scratch of pen on parchment fills the stifling air of the intake chamber, accompanied by the low hum of flies drawn to the inkpot. Outside the iron bars, you clutch your pack tighter, knowing that every traveler entering this zone must either bargain with the scribes or find another way across. You clear your throat to announce your presence to the man behind the glass.
+EXIT 1: Speak with the clerk and press on
+@@END

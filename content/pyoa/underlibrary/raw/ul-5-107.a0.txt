@@ -1,0 +1,50 @@
+@@SECTION ul-5-107
+TITLE: The Trapped Librarian
+TEXT: Sharp words fly across the gap like dry thorns as you match wits with a stranded scholar pinned beneath a fallen walnut-wood bookcase. You trade pointed jests about cataloguing decimals and overdue fines until the librarian cracks a wry grin, offering a cynical trade of insults for cooperation. Working together with synchronized rhythm, you heave the heavy mahogany frame aside just enough for them to wriggle free. Dust coats your sleeves as your new companion dusts their lapel and points toward a hidden brass hatch flush with the basalt floor, promising safe passage through the vault's forgotten utility flues.
+EXIT 1: Slide through the brass utility hatch
+@@END
+@@SECTION ul-5-108
+TITLE: Snapping Leather Bindings
+TEXT: Heavy calfskin folios lash out from the drifting stack-debris, their stiff clasps snapping shut like iron jaws in the gloom. You slip your fingers past a lunging pair of octavos with sudden, darting grace, your palm brushing against cold paper and dried glue. Your fingertips close securely around a fluttering scrap of vellum just as another tome lunges to bite. Pulling your hand back unscathed, you tuck the warm fragment into your waistcoat pocket, feeling the faint, steady thrum of protective runes stitched into its grain.
+EXIT 1: Step carefully toward the basalt arch
+@@END
+@@SECTION ul-5-109
+TITLE: Grain of Fallen Timbers
+TEXT: Splintered oak and pine beams lie tangled across the basalt floor, groaning under the immense weight of the upper shelves. You trace the complex whorls and stress lines of the ancient wood with a calloused thumb, reading the silent language of structural strain. Finding the exact load-bearing spine of the debris pile, you lift a corner of the collapsed framing with calculated leverage. Beneath the heavy lintel, a velvet-lined mahogany case slides into view, cradling a polished silver bookmark that gleams faintly in the lamp-oil haze.
+EXIT 1: Advance toward the flickering oil lamps
+@@END
+@@SECTION ul-5-110
+TITLE: Chorus of Disgruntled Annotators
+TEXT: Pale translucent figures lean out from the margins of floating flyleaves, muttering bitter complaints about misplaced commas and corrupted cross-references. You match their complaints with a dry, deliberate cadence of sharp retorts and polite legalistic parries, trading verbal barbs until the spectral murmuring subsides into grudging respect. The leading phantom inclines its ghostly chin, sealing a binding oath of absolute silence with a wave of a translucent sleeve. The crowd of annotators fades into the drafting shadows, leaving you free to move unhindered through their territory.
+EXIT 1: Follow the quiet corridor ahead
+@@END
+@@SECTION ul-5-111
+TITLE: Groaning Overhead Masonry
+TEXT: Overhead stonework shivers as a shower of gritty mortar and slate chips rattles against your bent shoulders. You set your jaw against the falling debris, planting your boots firmly on the basalt flags while the vaulted ceiling groans a deep, protesting warning. Through sheer unyielding resolve, you weather the brief seismic spasm without flinching or losing your footing. Reaching into the dust at your feet, you scoop up a sturdy leather pouch clinking heavily with iron pinch-bolts, perfect for securing loose shelving.
+EXIT 1: Proceed past the trembling stone pillars
+@@END
+@@SECTION ul-5-112
+TITLE: Grain of Fallen Timbers
+TEXT: Splintered oak and pine beams lie tangled across the basalt floor, groaning under the immense weight of the upper shelves. You trace the complex whorls and stress lines of the ancient wood with a calloused thumb, reading the silent language of structural strain. Finding the exact load-bearing spine of the debris pile, you lift a corner of the collapsed framing with calculated leverage. Beneath the heavy lintel, a velvet-lined mahogany case slides into view, cradling a polished silver bookmark that gleams faintly in the lamp-oil haze.
+EXIT 1: Advance toward the flickering oil lamps
+@@END
+@@SECTION ul-5-113
+TITLE: Barrage of Ancient Insults
+TEXT: Heavy, leather-bound compilations of forgotten municipal law rise on their edges like offended magistrates, barking dry insults about your lineage and your filing accuracy. You stand your ground against the stinging hail of archaic defamation, letting the verbal abuse wash over you with grim, unshakeable composure. Reaching into the flurry of flying pages, your fingers close around a cold, flat instrument of hammered pewter. You draw out the heavy iron tongue-scraper of silence, pressing its edge against the nearest volume until the bickering library sinks into sullen quiet.
+EXIT 1: Continue down the hushed aisle
+@@END
+@@SECTION ul-5-114
+TITLE: Chorus of Disgruntled Annotators
+TEXT: Pale translucent figures lean out from the margins of floating flyleaves, muttering bitter complaints about misplaced commas and corrupted cross-references. You match their complaints with a dry, deliberate cadence of sharp retorts and polite legalistic parries, trading verbal barbs until the spectral murmuring subsides into grudging respect. The leading phantom inclines its ghostly chin, sealing a binding oath of absolute silence with a wave of a translucent sleeve. The crowd of annotators fades into the drafting shadows, leaving you free to move unhindered through their territory.
+EXIT 1: Follow the quiet corridor ahead
+@@END
+@@SECTION ul-5-115
+TITLE: Self-Important Guardian Ledger
+TEXT: A massive, brass-bound register blocks the narrow entry, its heavy metal clasp locked tight with bureaucratic arrogance. You lean close to the spine and murmur a series of flattering observations regarding its immaculate binding and superior paper weight. The heavy volume flutters its pages with pleased vanity, its stubborn clasp clicking open with a self-satisfied snap. Nestled inside the front pastedown lies a gleaming gold-plated nib, capable of altering even the most stubborn official entries with a single stroke.
+EXIT 1: Step through the newly cleared threshold
+@@END
+@@SECTION ul-5-116
+TITLE: Barrage of Ancient Insults
+TEXT: Heavy, leather-bound compilations of forgotten municipal law rise on their edges like offended magistrates, barking dry insults about your lineage and your filing accuracy. You stand your ground against the stinging hail of archaic defamation, letting the verbal abuse wash over you with grim, unshakeable composure. Reaching into the flurry of flying pages, your fingers close around a cold, flat instrument of hammered pewter. You draw out the heavy iron tongue-scraper of silence, pressing its edge against the nearest volume until the bickering library sinks into sullen quiet.
+EXIT 1: Continue down the hushed aisle
+@@END

@@ -1,0 +1,78 @@
+{
+ "batch": "sg-3-2-4-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-2-4-4": {
+   "title": "The Green Conduit",
+   "text": "Emerald tiles slick with subterranean condensation frame your hurried steps as you trace the subterranean conduit of green glass. A steady, cooling draft carries the distinct mineral tang of the open basin edge, whispering through the narrow passage. Every footfall echoes dully against the vitrified walls, urging you forward while your banked coal-lantern casts long, restless shadows ahead.\n\nYou can follow the draft toward a brighter glimmer of natural light, or duck into a narrower service branch that slopes sharply downward into shadow.",
+   "exits": [
+    "Follow the refreshing draft outward",
+    "Descend into the deeper lateral branch"
+   ]
+  },
+  "sg-3-2-4-5": {
+   "title": "The Falling Crystals",
+   "text": "Sharp shards and heavy crystal beads clatter against your leather pack as you duck beneath a sagging arch of lead and fused glass. A sudden cascade from above shatters into brilliant dust at your boots, warning you of the unstable masonry overhead. You shield your face with a gloved arm, keeping a firm grip on your precious ember-lamp while the air grows thick with fine, abrasive grit.\n\nYou can sprint past the cascading hazard toward the open gap ahead, or seek temporary shelter beneath a firmer stone lintel to the side.",
+   "exits": [
+    "Sprint past the falling crystal cascade",
+    "Seek shelter beneath the reinforced lintel"
+   ]
+  },
+  "sg-3-2-4-6": {
+   "title": "The Singing Pillars",
+   "text": "Eerie, melodic hums vibrate through the soles of your boots as you weave swiftly through a forest of hollow quartz pillars. Each slender tube responds to your passing warmth with haunting musical notes that echo strangely in the dead city air, though you deliberately ignore the phantom choir. The ambient light here refracts in pale lavender beams, fracturing the gloom into a dozen shifting pathways.\n\nYou can press onward straight through the echoing grove, or veer toward a darker cleft between two massive pillars.",
+   "exits": [
+    "Push straight through the echoing grove",
+    "Veer toward the dark lateral cleft"
+   ]
+  },
+  "sg-3-2-4-7": {
+   "title": "The White Plaza",
+   "text": "Blinding white salt crunches beneath your stride as you finally emerge onto a grand plaza strewn with ancient, broken lenses. The gathering shadows of the approaching mirror storm stretch long and dark across the glittering expanse, turning the landscape into a checkerboard of silver and dusk. You raise your hooded ember-lamp higher, readying its steady glow against the growing chill of the squall.\n\nYou can march directly across the open salt-flats toward the looming silhouette of the observatory.",
+   "exits": [
+    "Cross the open salt-flats directly"
+   ]
+  },
+  "sg-3-2-5-0": {
+   "title": "The Final Terrace",
+   "text": "Jagged horizons of fused glass stretch endlessly below as you pause on the final, wind-scoured terrace of the Shard Cities. Rising majestically beyond the shimmering salt plain, the monolithic mass of Prism looms like a mountain carved from a single block of dark crystal. The air hums with the static precursor of the storm, rattling the brass frame of your lamp and biting sharply at your cheeks.\n\nYou can leave the terrace behind to make your final push toward the observatory.",
+   "exits": [
+    "Press on"
+   ]
+  },
+  "sg-3-2-5-1": {
+   "title": "The Glass-Crater",
+   "text": "Faint electric arcs flicker across the southern sky, painting the vast rim of a great glass-crater in sharp, purple strokes. You skirt the perilous edge, catching your breath as the rising gale carries the sharp scent of ozone and crushed silica from the storm front. Your grip tightens instinctively on your coat, guarding the small coal-lantern from the sudden, violent gusts.\n\nYou can forge ahead along the rim toward the waiting gates.",
+   "exits": [
+    "Press on"
+   ]
+  },
+  "sg-3-2-5-2": {
+   "title": "The Salvage Barricade",
+   "text": "Vaulting cleanly over a low, rusted barricade of old salvage crates, you leave the confusing labyrinth of broken towers far behind. The terrain opens abruptly into a wide, glass-paved causeway that leads straight to the monolithic base of the observatory. Your boots ring sharply against the fused ground, keeping pace with the steady, reassuring warmth of the lamp at your belt.\n\nYou can advance rapidly across the open causeway toward the observatory.",
+   "exits": [
+    "Press on"
+   ]
+  },
+  "sg-3-2-5-3": {
+   "title": "The Glass Ridge",
+   "text": "Whipping winds tear at your collar as you stand at the precipice of the last razor-sharp glass ridge, watching the mirror storm break across the basin. Instinctively, your hand dives deep into your coat pocket to curl around the cold, reassuring weight of the Seedkey. It feels solid and enduring against your palm, a solitary anchor amidst the howling wilderness of salt and light.\n\nYou can descend the ridge to make your final approach.",
+   "exits": [
+    "Press on"
+   ]
+  },
+  "sg-d-3-2": {
+   "title": "The Shuddering Span",
+   "text": "Careless haste proves fatal as you sprint across a frail bridge of singing glass that fractures completely beneath your boots. The melodic hum instantly turns into a deafening shriek as the span disintegrates into a cloud of razor-edged dust. You tumble downward through the empty air, swallowed entirely by a bottomless trench of glittering shards.\n\nThe journey ends here in the silent heart of the old city.",
+   "exits": []
+  },
+  "sg-3-out": {
+   "title": "The Mirror Storm",
+   "text": "The shattered labyrinth of the Shard Cities falls behind you as a roaring wall of glass-dust and rising gale swallows the horizon. Ahead lies the vast, untamed expanse of the dune-sea and the looming shadow of Prism, where the ancient Rain Vault waits beneath the dust. You adjust the strap of your ember-lamp, checking the cold weight of the Seedkey one last time before stepping boldly into the blinding squall.\n\nYou can continue your journey into the storm.",
+   "exits": [
+    "Go on"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,93 @@
+{
+ "batch": "vh-6-0-1-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-0-1-1": {
+   "title": "The Granary Clerk",
+   "text": "Within the shadowed arch of the lower granary, a clerk named Orin weighs soggy grain bags against unpaid municipal debts, his inkhorn swinging from a greasy belt. He mutters over ledgers swollen by mountain damp while you shift the heavy bronze Clapper in its padded cradle on your back. The air here tastes of wet chaff and old ledger-glue, thick with the weight of Lowgate's ledger-books. Orin glances up from his figures, eyeing the bronze tongue that hums faintly against your shoulder blades, wondering aloud if church metal can settle the district's arrears.\n\nDo you slip past the clerk toward the potter's lane, or wait to hear his ledger tallies?",
+   "exits": [
+    "Slip past the granary arches toward the potter's lane",
+    "Wait to hear the clerk tally municipal debts"
+   ]
+  },
+  "vh-6-0-1-2": {
+   "title": "The Cautious Ferryman",
+   "text": "Because the white scar across your knuckles proves your crossing over the high glacier, a cautious ferryman grants you immediate passage across the churning lock without demanding the usual copper toll. He steadies the wet gunwale of his flat-bottomed boat with a scarred hand while the grey river boils around the wooden pilings. The Clapper hums softly against your spine, answering the low vibration of the freezing current beneath the hull. You step aboard, balancing the heavy cradle as the ferryman pushes off from the muddy bank toward the opposite wharf.\n\nWill you disembark near the iron chain-locker, or head up toward the wool-combers' loft?",
+   "exits": [
+    "Disembark near the rusted iron chain-locker",
+    "Head up toward the sagging wool-combers' loft"
+   ]
+  },
+  "vh-6-0-1-3": {
+   "title": "The Tallow-Boiler",
+   "text": "Behind the leaning timber tallow-works, a tallow-boiler named Bran scrapes rancid mutton fat from copper vats with a broad wooden spatula. Steam rises in greasy curls into the chill air, smelling of scorched fat and woodsmoke, clinging to your woollen cloak and the padded cradle of the Clapper. Biscuit shifts his weight on the cobblestones nearby, shaking a frosty ear as the mule recognizes the familiar stench of the tanning district. Bran pauses in his scraping, wiping his greasy forearm across his brow while he stares at the heavy bronze tongue on your back.\n\nDo you slip past the guard along the ledges, walk toward the wool-combers' loft, or follow the alley behind the candle-dippers?",
+   "exits": [
+    "Slip past the toll-collector along the hidden ledges",
+    "Walk toward the sagging eaves of the wool-combers' loft",
+    "Follow the narrow alley behind the candle-dippers"
+   ]
+  },
+  "vh-6-0-1-4": {
+   "title": "The Net-Mender",
+   "text": "At the corner of the silt-choked fish market, a net-mender named Sula curses the eels that chewed her linen meshes, her bone needle flashing through gray twine. Silver scales cling to her leather apron and the wet stones around her wooden stool, gleaming dully in the gray river light. The massive bronze Clapper hums a low, persistent note against your spine, startling a flock of gulls from the nearby rotting pilings. Sula looks up from her torn nets, squinting at the heavy cradle on your back and the stubborn mule standing patient at your side.\n\nWill you lead Biscuit past the old mule-stalls, make for the iron chain-locker, or walk toward the wool-combers' loft?",
+   "exits": [
+    "Head toward the rusted iron chain-locker",
+    "Lead Biscuit past the old mule-stalls behind the tannery",
+    "Walk toward the eaves of the wool-combers' loft"
+   ]
+  },
+  "vh-6-0-1-5": {
+   "title": "The Weary Drover",
+   "text": "Beneath the creaking iron sign of the Drowned Ox tavern, a weary drover named Thrum tries to quiet his shivering packhorses while sleet begins to stick to their lathered flanks. The air is heavy with the scent of wet horsehair, cheap ale, and rotting straw spilling from the tavern stable doors. Biscuit stamps a hoof in greeting against the frozen mud, his breath pluming white in the freezing river air. Thrum pulls his sheepskin collar tighter around his throat, casting a sidelong glance at the heavy bronze tongue vibrating within your padded cradle.\n\nDo you lead the mule past the tannery stalls, head toward the candle-dippers' alley, or walk over to the weed-hung timber pier?",
+   "exits": [
+    "Lead the mule past the tannery stalls",
+    "Walk toward the candle-dippers' alley",
+    "Head over to the weed-hung timber pier"
+   ]
+  },
+  "vh-6-0-1-6": {
+   "title": "The Lower Mill",
+   "text": "Beside the broken water-wheel of the lower mill, a miller named Corin shovels gray silt away from the swollen axle while bitter river water surges over the wooden paddles. The great wheel groans under the pressure of the mountain runoff, sending vibrations up through the stone foundation and into your boots. You adjust the heavy Clapper on your back, feeling its steady hum match the rhythmic shudder of the millworks. Corin pauses, leaning on his wooden shovel to wipe his wet face, watching you balance against the rising damp.\n\nWill you walk toward the weed-hung timber pier, or make for the bridge mason?",
+   "exits": [
+    "Walk toward the weed-hung timber pier",
+    "Make for the crumbling stone buttress of the lower bridge"
+   ]
+  },
+  "vh-6-0-1-7": {
+   "title": "The Toll-Office",
+   "text": "Inside the damp brick toll-office, a clerk named Jora stamps manifests for barge-loads of wet peat, her iron hand-stamp falling with a dull thud on soggy parchment. The room smells of stale ink, wet wool, and charcoal smoke venting poorly from a rusted stovepipe. The bronze Clapper hums softly against your shoulder, its vibration rattling the stack of unpaid tolls on the clerk's desk. Jora does not look up from her ink-stained papers, her hand hovering over the next manifest while she waits for your business.\n\nDo you head toward the lower bridge mason, walk to the sail-loft, or seek out the lower foundry forge?",
+   "exits": [
+    "Head toward the lower bridge mason",
+    "Walk toward the shadowy sail-loft",
+    "Seek out the lower foundry forge"
+   ]
+  },
+  "vh-6-0-1-8": {
+   "title": "The Charcoal Sheds",
+   "text": "Near the soot-blackened charcoal sheds, a charcoal-burner named Kael loads damp sacks onto a creaking handcart, black dust smearing across his forehead and canvas tunic. The ground is littered with coal-dust and shattered willow twigs that crunch beneath your boots as you carry the heavy Clapper. A sharp smell of burnt oak hangs heavy in the damp air, sticking to the wool of your cloak and the padding of the bronze cradle. Kael heaves a heavy sack onto the cart, eyeing the massive metal tongue on your back with professional curiosity.\n\nDo you walk toward the lower bridge mason, head to the sail-loft, or continue toward the foundry?",
+   "exits": [
+    "Walk toward the lower bridge mason",
+    "Head toward the shadowy sail-loft",
+    "Continue down the path toward the foundry"
+   ]
+  },
+  "vh-6-0-1-9": {
+   "title": "The Canal Wall",
+   "text": "Along the weed-choked canal wall, a mudlark named Tish washes river silt from a pocketful of copper buttons in the freezing current, her fingers blue and stiff. Bubbles rise from the dark water where old pilings rot beneath the surface, releasing a sharp smell of stagnant mud. The bronze Clapper hums a deep, resonant note that causes the floating debris in the canal to tremble against the stonework. Tish drops her salvaged buttons into a leather pouch, looking up at you with wide eyes as you balance the heavy cradle.\n\nWill you walk toward the shadowy sail-loft, or pass behind the salt warehouse gates?",
+   "exits": [
+    "Walk toward the shadowy sail-loft",
+    "Pass behind the rusted salt warehouse gates"
+   ]
+  },
+  "vh-6-0-2-0": {
+   "title": "The Cooperage",
+   "text": "Within the dripping archway of the cooperage, a cooper named Bran hammers iron hoops onto swollen oak staves, each blow echoing sharply off the wet brick walls. The sharp scent of fresh-cut oak shavings and hot iron mixes with the cold river mist drifting in from the wharf. The Clapper on your back hums in counterpoint to the cooper's mallet, sending a faint vibration through the metal hoops stacked around the floor. Bran strikes another blow, pausing to wipe sweat from his neck while he glances at your heavy burden.\n\nDo you visit the tinker's shack, walk to the boat-builder's shed, or approach the water-gate watchman?",
+   "exits": [
+    "Visit the smoking chimney of the tinker's shack",
+    "Walk to the boat-builder's shed under the dripping thatch",
+    "Approach the watchman by the flooded water-gate"
+   ]
+  }
+ },
+ "missing": []
+}

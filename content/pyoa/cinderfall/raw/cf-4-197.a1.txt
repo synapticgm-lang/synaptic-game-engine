@@ -1,0 +1,5 @@
+@@SECTION cf-5-004
+TITLE: The Jammed Switch
+TEXT: Thick grease slickens your palms as you wedge the heavy iron bar against the rusted pivot of the stubborn siding switch, leaning your full weight into the rusted iron while the steam-lines shriek a warning in your ears. Scalding condensate spits from the joint above, hissing sharply as it spatters against your leather sleeve and threatens to skin your forearm if the back-pressure suddenly snaps the lever. With your teeth clenched hard against the mounting heat, you heave upward once more to force the stubborn wedge home and snatch the spare copper gasket from the trembling groove before the toggle kicks back.
+CHECK: Heave the greasy iron bar against the jammed slide
+@@END

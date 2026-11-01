@@ -1,0 +1,94 @@
+{
+ "batch": "ul-2-208",
+ "sections": {
+  "ul-2-208": {
+   "title": "The Vault Diagram",
+   "text": "Geometric calculations prove their worth as the mahogany floor settles into a momentary, stable alignment against the stone pier. The drifting vectors of the deep stacks resolve into a clear, legible pattern within your mind, revealing a hidden pathway beneath the hanging ledgers. Clutched tightly in your gloved hand is a creased parchment sheet covered in fine ink lines detailing every shift and pivot of the subterranean labyrinth.\n\nThis detailed map of the deep vault remains tucked securely inside your travel satchel, offering a reliable guide through the shifting gloom where ordinary directions fail entirely.",
+   "check": "",
+   "grant": "a detailed map of the deep vault",
+   "exits": [
+    "Follow the mapped route onward"
+   ]
+  },
+  "ul-2-209": {
+   "title": "The Swaying Heights",
+   "text": "Shadows lengthen across the pale dust as the oak shelves tilt toward the abyss in a slow, hypnotic dance. Each foothold demands absolute concentration upon the grain of the wood and the steady rhythm of the distant ink-rivers far below. With a sudden spring of muscle and steady nerve, you vault lightly from one swaying shelf-top to another through the dim haze, capturing a small brass lantern filled with perpetual oil. The cool metal feels reassuringly solid against your palm while the blue-tinted wick flickers with an internal, unchanging flame.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend toward the dark aisle"
+   ]
+  },
+  "ul-2-210": {
+   "title": "The Hanging Stacks",
+   "text": "Iron-bound spines creak in unison as the upper tiers shift sideways like drifting barges upon a sluggish tide. You catch the edge of a projecting mahogany cornice just as the gap widens into a dizzying drop above the pale white mist. Pulling yourself upward with a quiet grunt of exertion, you vault lightly from one swaying shelf-top to another in the dim haze, capturing a small brass lantern filled with perpetual oil before the shelf can slip away. The enclosed flame casts a steady amber glow that beats back the creeping damp of the stack.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed along the drifting tier"
+   ]
+  },
+  "ul-2-211": {
+   "title": "Crossing the Chasm",
+   "text": "The gap between the opposing rows of folios widens alarmingly as a subterranean tremor shakes the entire wing. A narrow mahogany plank suspended by frayed hemp cords offers the only immediate passage across the ink-black void. You gather your breath, eye the swinging distance, and prepare to spring across the swaying expanse before the suspension gives way entirely.",
+   "check": "Leap the swaying abyss",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-212": {
+   "title": "A Heavy Landing",
+   "text": "Hemp cords snap with a sharp whip-like crack as your boots strike the opposite ledge an inch too low, sending a cascade of loose folios tumbling into the mist below. The sudden impact drives the breath entirely from your lungs and leaves a dull, throbbing ache across your ribs as you haul yourself over the timber edge. You lie gasping against the rough boards for a long moment while the lamp-oil seeps sluggishly from a cracked tin in your coat pocket, leaving a fragrant, oily stain against your tunic.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself toward safety"
+   ]
+  },
+  "ul-2-213": {
+   "title": "Whispers in the Smoke",
+   "text": "Dark figures wrapped in soot-stained wool crouch among the trailing cobwebs of a half-collapsed alcove, tending a small brazier fueled by discarded broadsheets. They do not threaten you, but speak in low, deliberate murmurs about the coming purge when every contradictory word recorded in the Index must be turned to fine grey ash. One of them presses a heavy iron strike-flint into your palm with a solemn nod before melting back into the shadows of the uncatalogued stacks.",
+   "check": "",
+   "grant": "a heavy iron strike-flint",
+   "exits": [
+    "Return to the floating archive"
+   ]
+  },
+  "ul-2-214": {
+   "title": "The Great Bronze Threshold",
+   "text": "Massive panels of green-stained bronze loom out of the pale mist, etched with thousands of microscopic procedural entries that shift beneath your gaze like resting insects. The heavy, unmistakable scent of ancient parchment and dried gall-ink hangs thick in the chilled air, signaling the absolute boundary where the shifting labyrinth ends and the restricted vaults begin. Every seam of the metal door is sealed with thick strips of red wax stamped with the emblem of the strict rule-keepers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the sealed inner gates"
+   ]
+  },
+  "ul-2-215": {
+   "title": "The Narrow Leap",
+   "text": "Heavy iron chains clank in the dim distance as the entire mahogany wing lists heavily to the left, threatening to spill its contents into the grey void. You time the momentum of the moving furniture with practiced precision, ignoring the dry scratching of marginal notes echoing from the surrounding shelves. You leap across the narrowing gap between two swaying oak tiers with nimble balance, earning a brass-bound clasp for your travel satchel that keeps the bulging flap securely fastened against the damp air.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue along the upper shelf"
+   ]
+  },
+  "ul-2-216": {
+   "title": "The Rolling Span",
+   "text": "A narrow suspension bridge constructed entirely from the heavy leather spines of discarded encyclopaedias stretches across the dark gulf between two stationary pillars. Each footstep produces a soft, fibrous groaning sound as the old binding glue resists the sudden tension of the hanging span. You glide lightly across the undulating surface while the bridge rolls violently beneath your boots, retrieving a fine steel reading knife wedged securely between two calfskin boards. The slender blade carries the neat maker's mark of the basement bindery.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance past the leather bridge"
+   ]
+  },
+  "ul-2-217": {
+   "title": "The Tension Reader",
+   "text": "Frayed suspension ropes hum like violin strings under the immense weight of the drifting stacks, vibrating with a rhythmic frequency that betrays every upcoming structural shift. You pause on the landing to press your fingertips against the taut leather bindings, feeling the internal tremors that signal when the wooden tiers are about to swap places. By interpreting these subtle mechanical strains, you negotiate a safer crossing by reading the structural tension in the hanging leather, earning the favour of a cautious wandering page who shares a crust of dry bread and a nod of quiet fellowship.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the cautious young page"
+   ]
+  }
+ },
+ "missing": []
+}

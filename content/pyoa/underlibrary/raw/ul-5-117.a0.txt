@@ -1,0 +1,56 @@
+@@SECTION ul-5-117
+TITLE: Facing the Nostalgia Gale
+TEXT: Memories of old paper and vanished friends tear through the corridor like a sudden autumn squall, clawing at your concentration and threatening to sweep your footing away into the drift. You lock your knees against the pressure, steadying your breath until the collective sigh of a thousand forgotten readers passes harmlessly over your shoulders. Reaching down into the depression of the stone floor where a cool vein bubbles through the masonry, you press a small glass phial into the fissure. The crystal-clear spring water fills it to the brim, humming faintly with the pure, untainted chill of the deep source. // With the phial tucked safely into your pouch, you leave the gust behind and push onward through the stacks.
+EXIT 1: Secure the crystal phial
+@@END
+@@SECTION ul-5-118
+TITLE: Dropping the Stone Arch
+TEXT: Thick plumes of lamp-oil smoke billow down the vaulted corridor, blurring the carved inscriptions along the cornices and stinging your eyes. Through the haze, you trace the load-bearing lines of the ancient stone archway and spot a telltale fracture in the masonry where centuries of shifting weight have left the structure vulnerable. Jamming the shaft of a heavy iron bookmark into the fissure, you lean your full weight against the makeshift lever with a silent prayer to the rule-makers. The great keystone groans, slips from its mortar bed, and crashes downward, bringing the entire archway down in a cloud of dust to sever the path behind you. // The smoke clears slightly, leaving a clear route forward over the rubble.
+EXIT 1: Flee across the rubble
+@@END
+@@SECTION ul-5-119
+TITLE: Bargaining in the Smoke
+TEXT: Trapped behind a lattice of fallen shelving, a fellow shelver hurls sharp remarks at the shifting walls while dodging falling volumes of obsolete municipal code. You fire back a dry counter-insult about their filing technique, establishing an instant, pragmatic rapport amid the chaos. Working in frantic tandem, you brace the iron uprights while they slip through a narrow service gap, unlocking a concealed maintenance hatch from the inside. They tumble out into your corridor, dusting off their ink-stained sleeves and muttering a grudging thanks, before offering to guide you through the maze using the hidden utility chutes. // You follow your new companion toward the deeper vaults.
+EXIT 1: Accompany the clever librarian
+@@END
+@@SECTION ul-5-120
+TITLE: Staring Down the Clerk
+TEXT: A translucent senior clerk materializes before the heavy bronze barrier, its ghostly features rigid with bureaucratic severity as it demands your authorization in a voice like dry parchment. You refuse to flinch under its piercing gaze, standing your ground with quiet, stubborn defiance until the phantom falters in its recitation of outdated fines. Snatching a blank slip from your pocket, you press it against the glowing endorsement stamp left unattended on the clerk's lectern. The hot wax sets instantly, bearing the personal seal of the missing Archivist in deep, unmistakable crimson. // The ghost fades with a frustrated hiss, leaving the cleared path open.
+EXIT 1: Claim the stamped waiver
+@@END
+@@SECTION ul-5-121
+TITLE: The Final Descent
+TEXT: The massive bronze doors of the Hundredth Door grind against the stone floor, their slow, inexorable descent echoing like a falling guillotine through the hollow vaults. Time narrows to a single heartbeat as the great binding mechanism of the Index comes within arm's reach, vibrating with the collective weight of every word ever written or erased in Quillon. The long closing is upon you, and the air grows heavy with the scent of hot lamp-oil and ancient dust. Every faction waits in the shadows for the decision that will shape the coming generation, leaving the ultimate fate of memory entirely in your hands. // Choose how the story ends.
+EXIT 1: Remember everything
+EXIT 2: The Great Forgetting
+EXIT 3: The Cataloguers' Century
+EXIT 4: The Burning
+EXIT 5: The Marginalia Speak
+EXIT 6: The Last Reader's Chair
+EXIT 7: Edit One Line
+EXIT 8: Thessaly's Way
+EXIT 9: The Free Shelves
+EXIT 10: The Blank Page
+EXIT 11: Sell the Index
+EXIT 12: Misfiled
+@@END
+@@SECTION ul-6-001
+TITLE: The Weight of All Words
+TEXT: Every sentence ever whispered in the dark corners of the Underlibrary floods back into your consciousness, sharp and undeniable as wet ink. The Index expands beneath your fingertips, refusing to let a single misplaced comma or forgotten grievance slip away into the dark. Quillon awakens to a dawn where no mistake is ever buried and no past is ever truly lost, burdened by the glorious, unbearable clarity of total recall. The shelves lock tight for a generation, sealing you inside with the infinite echo of a universe that remembers everything. // You stand amidst the endless stacks as the final gears lock into place.
+EXIT 1: Accept the endless record
+@@END
+@@SECTION ul-6-002
+TITLE: An Archive Without Sleep
+TEXT: Generations of scholars will now wander these halls without the mercy of oblivion, haunted by the exact words of every insult, debt, and marginal note ever penned. The air grows cold and thick with the scent of old paper as the last lamp flickers and dies in the sealed vault. You trace your fingers along the spine of a register that records your own hesitant breathing, knowing it will never be erased. There is no peace in perfection, only the quiet agony of an archive that never closes its eyes. // The darkness settles deep into the stone around you.
+EXIT 1: Listen to the eternal hum
+@@END
+@@SECTION ul-6-003
+TITLE: The Last Page Turns
+TEXT: Outside these walls, the city lives beneath a crushing avalanche of history, every citizen crushed by the weight of their own unforgotten ancestry. Here in the deep annexe, the dust settles in thick, undisturbed layers over the floorboards while the binding magic finishes its long work. You take a seat in the leather chair, pulling a final blank sheet toward you in the gloom. There is nothing left to write, for every story has already been told and preserved forever in the amber of absolute truth. // The final barrier seals shut against the outside world.
+EXIT 1: Rest in the silence
+@@END
+@@SECTION ul-6-004
+TITLE: Sealed for a Generation
+TEXT: The heavy iron latch falls with a definitive thud, echoing through the empty galleries as the Long Closing claims the Underlibrary for a generation. No more books will be returned, no more fines collected, and no more wanderers will find their way through the shifting stacks. You close your eyes against the dim glow of the Index, resting your hand upon the cold metal of the binding. Let the world outside struggle with its unforgotten past; here in the quiet dark, the work is finally finished. // The book closes on your story.
+EXIT 1: Finish the final chapter
+@@END

@@ -1,0 +1,72 @@
+Gemini said
+
+@@SECTION sg-1-0-2-11
+TITLE: The Signalman's Mirror
+TEXT: Dust devils dance across the platform of the disused relay station as an old signalman meticulously polishes a brass mirror disc with the hem of his faded tunic. He pauses every few seconds to squint toward the distant towers of Prism, searching the blinding morning glare for any answering flash from the Glasswrights. Your ember-lamp rests heavy at your hip, its banked coals radiating a steady, comforting warmth against your thigh. The signalman glances your way, offering a toothless grin and a nod toward the winding tracks ahead. // You can press onward past the relay station toward the distant limestone arch, or turn your steps along the low ridge toward the orange-stained cliff.
+EXIT 1: Follow the path toward the limestone arch
+EXIT 2: Descend toward the cliff overhang
+@@END
+
+@@SECTION sg-1-0-2-12
+TITLE: The Frightened Mule Handler
+TEXT: Beside a dry stone drinking trough where the green algae has turned entirely to grey dust, a panicked mule handler frantically packs his empty crates onto a stubborn beast. He mutters curses under his breath while glancing back toward the barren horizon, eager to turn his animals away from the forbidding basin before the scorching noon heat sets in. Your grip tightens on the Seedkey hidden inside your tunic, its cold ceramic surface a sharp contrast to the stifling air. The handler pauses, casting a wary look at your pack and the glowing lantern at your belt.
+EXIT 1: Take the lower path toward the dry sinkhole
+@@END
+
+@@SECTION sg-1-0-3-0
+TITLE: The Salt-Boiler's Warning
+TEXT: Along the white rim-track where the desert wind hums monotonously through rusted fence wire, a traveling salt-boiler sits cross-legged, sharing a heel of dry, rock-hard bread. He points a stained finger toward the shimmering expanse below, warning you about treacherous quick-crust bogs that swallow unwary travelers whole near the shore. Your ember-lamp flickers slightly in a sudden gust, casting dancing shadows across the cracked earth. The boiler finishes his crust, wiping his hands on his trousers as he watches you weigh his words.
+EXIT 1: Venture between the towering gypsum dunes
+EXIT 2: Approach the rusted drop-bars of the gate
+EXIT 3: Follow the bubbling mineral vent ahead
+@@END
+
+@@SECTION sg-1-0-3-1
+TITLE: The Scavenger's Offering
+TEXT: Beneath a jagged cliff of fused grey glass that glints fiercely in the sunlight, an old scavenger named Hobb sorts through a massive heap of twisted iron hoops. He holds up a crooked iron needle, squinting through rheumy eyes as he offers it to you for your travel pack. The air smells sharply of sulfur and baked earth, and your lamp emits a soft, rhythmic ticking as the coals settle inside their iron housing. Hobb waits patiently, tapping the rusty needle against his knee while he sizes up your journey.
+EXIT 1: Continue between the tall gypsum dunes
+@@END
+
+@@SECTION sg-1-0-3-2
+TITLE: The Watch-Cabin Warning
+TEXT: Near a row of abandoned stone watch-cabins with shattered windows, a nervous teamster crouches in the meager shade, whispering tales of greedy Salt Court patrols. He warns you that their riders have been seizing stray lanterns and imposing cruel taxes on every drop of fuel carried across the rim. Your hand instinctively brushes against the warm iron of your own ember-lamp, guarding the vital fire within. The teamster glances nervously up the trail, urging you to keep your head down and your pace steady.
+EXIT 1: Head toward the abandoned toll-gate
+EXIT 2: Seek shelter near the bronze weather-vane
+@@END
+
+@@SECTION sg-1-0-3-3
+TITLE: The Ore-Crusher Camp
+TEXT: By the rusted hulk of an ancient ore-crusher stranded amid endless white dust, a solitary woman tends a small, smokeless fire of dried camel dung. She stares intently at the northern horizon, tracking the slow crawl of distant dust-devils with practiced calm. Your boots crunch softly on the salt-crust as you approach, drawing a sidelong glance from her weathered, sun-darkened face. She gestures vaguely toward the tracks stretching out beyond the iron ruin.
+EXIT 1: Pass through the old toll-gate aprons
+EXIT 2: Follow the path toward the mineral spring
+@@END
+
+@@SECTION sg-1-0-3-4
+TITLE: The Young Apprentice
+TEXT: On a limestone shelf overlooking the shimmering, bleached flats, a young mirror-guild apprentice practices flashing signals with a pocket looking-glass while her master sleeps nearby. Quick flashes of reflected sunlight dance across the rocky ground, spelling out silent messages to the distant towers. Your ember-lamp radiates a steady, quiet heat against your hip, unnoticed amid the blinding glare. The apprentice lowers her glass for a moment, watching you curiously with bright, alert eyes.
+EXIT 1: Walk toward the rusted iron drop-bars
+EXIT 2: Head past the bubbling mineral water vent
+@@END
+
+@@SECTION sg-1-0-3-5
+TITLE: The Stray's Vigil
+TEXT: Beside a lonely cairn of white stones marking an anonymous traveler's grave, a thin stray dog sniffs the dry earth before fixing its hungry, unblinking yellow eyes upon your boots. The silence of the basin presses down heavily, broken only by the faint crackle of coals inside your lantern. The animal takes a tentative step forward, whining softly as it measures the distance between you and its next meal. You adjust the straps of your pack and prepare your next move.
+EXIT 1: Make your way toward the weather-vane
+EXIT 2: Inspect the deep rock-cut cistern
+@@END
+
+@@SECTION sg-1-0-3-6
+TITLE: The Disgruntled Tax-Watcher
+TEXT: Under the broken lintel of an old customs post, a disgruntled tax-watcher counts his remaining copper slugs and wonders aloud if the coming rainy season will wash away his useless ledgers. The wooden desk before him is warped and cracked by years of merciless sun. Your lamp casts a warm, flickering glow across the peeling paper notices tacked to the stone wall. He looks up from his coins, offering a cynical grimace at your laden pack.
+EXIT 1: Walk past the crooked iron drop-bars
+EXIT 2: Follow the sign toward the mineral vent
+EXIT 3: Rest near the silent bronze weather-vane
+@@END
+
+@@SECTION sg-1-0-3-7
+TITLE: The Exhausted Trader
+TEXT: At the foot of the steep, zig-zag goat path leading down onto the blinding salt-crust, an exhausted trader rests his bleeding heels and rubs his aching calves. He advises you earnestly to wrap your ankles in double layers of linen if you hope to survive the abrasive flats without crippling blisters. Your ember-lamp hums quietly at your belt, providing a steady anchor in the desolate landscape. The trader pulls a fresh strip of cloth from his pouch, nodding encouragingly as you survey the descent.
+EXIT 1: Step out onto the windswept terrace edge
+EXIT 2: Examine the open rock-cut cistern
+EXIT 3: Climb toward the escarpment mirror bank
+@@END

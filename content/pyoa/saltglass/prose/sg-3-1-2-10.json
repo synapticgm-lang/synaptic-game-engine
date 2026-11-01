@@ -1,0 +1,91 @@
+{
+ "batch": "sg-3-1-2-10",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-1-2-10": {
+   "title": "The Sisters of the Well",
+   "text": "Fierce Dune Sisters stand shoulder-to-shoulder across the sun-baked stones of the courtyard, their dark robes stiff with crusts of alkaline salt. They bar the path to the bubbling stone cistern, demanding a binding oath of silence and service before they will let a single drop touch your cracked lips.\n\nThe midday glare bounces blindingly off their bronze armlets, and your canteen hangs at your belt like a dead weight. You must decide whether to swear their bitter covenant, slip away through the rubble to the south, or circle the barricade entirely.",
+   "exits": [
+    "Swear the binding oath to pass",
+    "Slip away southward through the rubble",
+    "Circle wide around the blocked courtyard"
+   ]
+  },
+  "sg-3-1-2-11": {
+   "title": "Mountain of Broken Spectacles",
+   "text": "Piles of discarded spectacle frames rise in jagged mounds across the alley, clattering like dry, hollow bones beneath the heavy tread of your boots. Each step sends a cascade of tiny, wire-rimmed lenses sliding down the slope with a soft, musical chime that echoes off the surrounding glass walls.\n\nThe climb leaves your lungs burning in the thin desert air while the distant silhouette of Prism shimmers through the heat haze above. You must choose whether to scramble down the western drift, press toward a crystalline archway ahead, or haul yourself up a vertical drainpipe.",
+   "exits": [
+    "Scramble down the western slope of lenses",
+    "Press onward toward the distant crystal arch",
+    "Haul yourself up the salt-encrusted drainpipe"
+   ]
+  },
+  "sg-3-1-2-12": {
+   "title": "The Hooded Scavenger",
+   "text": "A hooded figure named Kael crouches in the shade of a leaning mirror-wall, unrolling a creased parchment that smells faintly of old lamp oil. He whispers promises of a secret shortcut through the heart of the shard cities, offering to trade his counterfeit map of Prism for the sturdy wool cloak wrapped around your shoulders.\n\nThe evening wind begins to whistle mournfully through the hollow streets, carrying the bite of approaching cold against your sweat-dampened shirt. You must choose whether to trade your garment, ignore the offer and press down the eastern lane, or scramble up the vertical pipe nearby.",
+   "exits": [
+    "Trade your heavy wool cloak for the parchment",
+    "Ignore the offer and hurry down the eastern lane",
+    "Climb the vertical drainage pipe to escape the alley"
+   ]
+  },
+  "sg-3-1-2-13": {
+   "title": "The Abandoned Larder",
+   "text": "Cool shadows embrace you as you slip through an abandoned larder deep within the foundations of a shattered glass tower. The air here smells faintly of dried lemons and centuries-old vinegar, offering a welcome respite from the scorching glare and alkaline dust of the basin floor.\n\nA narrow passage leads deeper into the subterranean gloom while another route climbs toward a glinting shaft of moonlight. You must decide whether to follow the scent of vinegar into the deeper vaults or seek the flickering lights above.",
+   "exits": [
+    "Follow the dark passage into the deeper vaults",
+    "Climb upward toward the shaft of moonlight"
+   ]
+  },
+  "sg-3-1-2-14": {
+   "title": "The Swinging Crane",
+   "text": "A rusted iron crane hangs precariously from a fractured beam overhead, its dangling chain scraping a rhythmic, grating note against the calcified pavement. Every sway of the heavy boom threatens to dislodge a cascade of loose glass shards from the crumbling cornice far above your head.\n\nYou press your back against the cool surface of a turquoise pillar while watching the iron pendulum arc back and forth across the street. You must choose whether to dart beneath the swinging chain, seek refuge down a narrow side-alley, or wait for the mechanism to jam.",
+   "exits": [
+    "Dart forward beneath the swinging iron chain",
+    "Duck away into the narrow side-alley to the left",
+    "Wait against the pillar for the crane to settle"
+   ]
+  },
+  "sg-3-1-2-15": {
+   "title": "Shadows of Amethyst",
+   "text": "Heavy boots crunch on the crystal pavement as a patrol of toll-lords marches past with heavy pikes gleaming in the pale daylight. You duck quickly into a sunken alcove of deep amethyst glass, holding your breath while the rhythmic clanking of their iron-shod gear fades into the distance.\n\nThe shelter of the alcove is cool and dim, but lingering here accomplishes nothing while the twenty-day monsoon draws closer by the hour. You must decide whether to slip out and follow the patrol at a distance or take a separate twisting passage deeper into the ruins.",
+   "exits": [
+    "Step out and follow the patrol from a distance",
+    "Take the twisting passage deeper into the ruins"
+   ]
+  },
+  "sg-3-1-3-0": {
+   "title": "The Plaza of Sunstones",
+   "text": "Fractured sunstones pave the wide plaza, glowing with a dull, internal amber warmth that makes the surrounding air shimmer like water. A frantic courier stumbles toward you from the shadows of an archway, clutching his side and begging you to carry a vital warning about poisoned cisterns to the authorities in Prism.\n\nThe courier collapses against a milestone, leaving you holding a brass token stamped with the seal of the water-watchers. You must decide whether to accept his urgent plea and rush toward the central bridge or bypass the plaza entirely.",
+   "exits": [
+    "Accept the warning token and rush forward",
+    "Bypass the frantic courier and slip past the plaza"
+   ]
+  },
+  "sg-3-1-3-1": {
+   "title": "The Fissure of Green Bottles",
+   "text": "Jagged edges of fused green wine bottles scrape against your shoulders as you squeeze sideways through a narrow fissure in the ancient wall. A sharp slip tears a long rent in your sleeve and draws a thin line of bright blood down your forearm, mingling with the dry salt crust on your skin.\n\nBeyond the breach lies a wider lane bathed in the harsh white glare of the midday sun. You must decide whether to press onward through the open square or duck immediately behind a massive fallen sun-disc blocking a dark stairwell.",
+   "exits": [
+    "Push forward into the sunlit square ahead",
+    "Duck behind the fallen sun-disc into the stairwell"
+   ]
+  },
+  "sg-3-1-3-2": {
+   "title": "The Glass Sweeper",
+   "text": "A skeletal street-cleaner named Miri sweeps sparkling glass dust into neat, shimmering piles with a tireless twig broom. She does not look up as you approach, singing a dry, crackling little tune to herself about the price of tin and the depth of the dry wells.\n\nA narrow alley winds away past her elbow while a broader avenue stretches toward the shadow of a high signal tower. You must choose whether to speak to the old sweeper, slip quietly down the narrow lane, or dart across the open avenue.",
+   "exits": [
+    "Slip past her broom down the narrow lane",
+    "Dart quickly across the broad avenue ahead"
+   ]
+  },
+  "sg-3-1-3-3": {
+   "title": "The Copper Wire Bridge",
+   "text": "A suspension bridge woven from thick copper wire hums like an angry hornet's nest beneath the cautious placement of your boots. The structure sways gently in the dry thermal drafts, spanning a yawning chasm of shattered glass that glitters far below like frozen ocean waves.\n\nOn the far side, the path splits among a maze of leaning mirror-towers and silent archways. You must decide whether to cross the trembling bridge with steady strides or turn back to find a safer route around the gorge.",
+   "exits": [
+    "Cross the humming copper bridge to the far side",
+    "Turn back from the span to search for another way"
+   ]
+  }
+ },
+ "missing": []
+}

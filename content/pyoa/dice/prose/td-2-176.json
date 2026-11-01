@@ -1,0 +1,97 @@
+{
+ "batch": "td-2-176",
+ "sections": {
+  "td-2-176": {
+   "title": "The Sunken Threshold",
+   "text": "Iron rings bolted into the weeping limestone match every mark recorded in the missing lighthouse keeper's journal. Uncurling the water-stained parchment against the damp rock, you verify the coordinates where the spiral shaft plunges beneath the dead seabed. A heavy iron grate has been levered aside, revealing a vertical drop choked with dry kelp and the faint, copper tang of ancient machinery. Below this jagged maw, the stairs begin their downward spiral into absolute blackness, echoing with the rhythmic, metallic dripping of subterranean brine.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the spiralling darkness"
+   ]
+  },
+  "td-2-177": {
+   "title": "The Sunken Stair",
+   "text": "Spiralling deep into the damp bedrock, the Sunken Stair drops away into absolute gloom, its basalt treads slick with salt-crust and age-old grease. Every footfall echoes against walls carved with the faded crests of forgotten Tidewardens, who left their iron marks to rot long before Gullmouth took its first breath of brine. Somewhere far below, the great brass teeth of the Meridian Gear grind against the dark, calling to anyone desperate enough to command the returning tide.\n\nShadows twist along the winding drop, offering half a dozen paths through the fractured stonework where crumbling masonry and rusted machinery block the descent. You test the air for the smell of old oil and damp iron, weighing each hazard before you commit your weight to the stairs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend by the pressure-slab staircase",
+    "Squeeze through the narrow rock crevice",
+    "Heave the fallen stone pillar aside",
+    "Leap across the gaping stair chasm",
+    "Lower heavy gear with the pulley",
+    "Approach the great brass Meridian Gear"
+   ]
+  },
+  "td-2-178": {
+   "title": "The Alchemist's Step",
+   "text": "Smooth flagstones conceal a pressure-sensitive plate that clicks softly beneath the heel of your boot. Working by the dim, greenish illumination of your lantern, you use a small bone-handled knife to scrape away centuries of salt crust from the triggering mechanism. A delicate glass vial, sealed with red wax and filled with volatile alchemical fire, rests untouched within a recessed niche right beside the trap.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the narrow lower passage"
+   ]
+  },
+  "td-2-179": {
+   "title": "Tampering With Steel",
+   "text": "The delicate linkage of the pressure plate hums under the gentle pressure of your fingertips, resisting every attempt to lift the rusted locking bolt. Sweat drips from your brow, threatening to blind you as you steady your breathing and align the delicate brass teeth of the trap with the edge of your blade. One false twitch will shatter the mechanism and trigger whatever forgotten doom rests within the stone.",
+   "check": "Pick the ancient pressure lock",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-180": {
+   "title": "A Slip in the Dark",
+   "text": "Metal snaps with a sharp, brittle crack that echoes up the damp stairwell, releasing a sudden spray of stinging rust and alkaline dust. You scramble backward just as the stone slab drops into a dark cavity, scraping your forearm hard against the jagged masonry. The sudden strain costs you precious time and leaves a raw, bleeding scratch across your skin, but you keep your footing on the narrow ledge.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed toward the lower landing"
+   ]
+  },
+  "td-2-181": {
+   "title": "Safe Passage Secured",
+   "text": "Metal scrapes softly against stone as your fingers find the hidden seam of the pressure plate, depressing the bronze toggle just in time to hear a distant internal click. The trap settles harmlessly into its groove, leaving the path ahead clear of dart-holes and rusted tripwires. Tucked in the recess behind the mechanism rests a small, heavy flask sealed with red wax, smelling sharply of distilled turpentine and cold fat. You pocket the prize and wipe the greasy black film from your palms, breathing out a slow plume of salted air as the stairs open further into the dark.",
+   "check": "",
+   "grant": "a vial of alchemical fire",
+   "exits": [
+    "Approach the great brass Meridian Gear"
+   ]
+  },
+  "td-2-182": {
+   "title": "The Ribs of Stone",
+   "text": "Jagged walls of granite press inward until the passage narrows to the width of a man's shoulders, smelling intensely of old salt and damp earth. Squeezing through this claustrophobic cleft requires you to strip away your heavy pack and inch forward sideways, feeling the rough rock scrape against your ribs. Wedged in a crevice near the floor is a small, tarnished metal hoop bearing the emblem of an old Tidewarden family.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push onward through the gap"
+   ]
+  },
+  "td-2-183": {
+   "title": "Breath Against the Rock",
+   "text": "The stone walls seem to pulse and tighten around your chest, threatening to pin you in the darkness as panic claws at the back of your throat. Closing your eyes, you force your lungs to take slow, deliberate breaths while your fingers search blindly along the cold crevice for a handhold. The pressure mounts, demanding every ounce of your self-control to prevent a blind retreat.",
+   "check": "Fight the crushing claustrophobia",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-184": {
+   "title": "Narrow Escape",
+   "text": "Terror overcomes reason for a frantic second, and you thrash forward blindly, tearing your woolen coat and scraping the skin raw from your shoulders. You tumble out of the narrow cleft and land hard on the lower flagstones, gasping for cold air with a bruised ribcage. The delay costs you dearly in lost energy, but the obstacle is finally behind you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue down the winding stair"
+   ]
+  },
+  "td-2-185": {
+   "title": "The Found Relic",
+   "text": "Controlling your breathing with iron discipline, you slide smoothly through the crushing stone gap without catching a single strap of your gear. Nestled in the dirt at the far end lies a heavy, rusted signet ring bearing the stamp of a forgotten maritime magistrate. You slip the cold metal onto your finger and press deeper into the shaft.",
+   "check": "",
+   "grant": "Rusted iron signet ring",
+   "exits": [
+    "Approach the turning chamber"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,94 @@
+{
+ "batch": "vh-3-0-1-7",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-0-1-7": {
+   "title": "The Secret Chute",
+   "text": "Recognizing the simple brass ring on your collar that marks you as bound to no greedy guild, the old miller spits into the chaff and jerks his thumb toward a narrow, grease-blackened chute carved straight through the limestone. This steep drainage slide bypasses the lower toll-gates entirely, cutting your descent through the barley terraces cleanly in half.\n\nYou adjust the padded bronze clapper on your back and weigh the damp chill of the stone tunnel against the open path ahead.",
+   "exits": [
+    "Slip down the dark limestone drainage chute",
+    "Leap to assist the struggling miller at the brake-beam",
+    "Balance carefully across the trembling irrigation plank"
+   ]
+  },
+  "vh-3-0-1-8": {
+   "title": "The Tangled Tether",
+   "text": "A frantic pack-mule has slipped its woven halter near the crumbling rim of the terrace, kicking out wildly with iron-shod hooves as its load shifts over the grey emptiness. Every violent thrash threatens to tangle its lead rope with Biscuit's harness, dragging your own stubborn beast toward the sheer drop.\n\nYou brace your boots against the frost-rimmed soil, reaching out a hand to grab the thrashing animal's bridle before the whole ledge gives way.",
+   "exits": [
+    "Seize the panicked pack-mule by its swinging halter",
+    "Duck into the shelter of the silent, skeletal windmill"
+   ]
+  },
+  "vh-3-0-1-9": {
+   "title": "The Screaming Canvas",
+   "text": "Great canvas sails of Mill Ten shriek overhead like trapped gales, tearing at their wooden yardarms as a sudden squall sweeps across the high barley terraces. You press your shoulder against the cold stone wall, steadying your breathing while the heavy bronze clapper on your back hums in sympathetic vibration with the roaring wind.\n\nIce-grit stings your cheeks as you weigh whether to push forward into the blinding white flurry or seek temporary shelter inside the churning mill.",
+   "exits": [
+    "Skirt the edge of the chasm along the vibrating plank",
+    "Duck your head and charge directly into the swirling mist"
+   ]
+  },
+  "vh-3-0-2-0": {
+   "title": "Miller Hobb's Curse",
+   "text": "Miller Hobb leans his greasy shoulders out from an upper stone casement, screaming jagged curses down at the heavy bronze clapper strapped across your spine. He insists that carrying the tongue of a broken sacred bell brings foul weather and blighted grain to every grinding stone in the district.\n\nYou ignore his spittle-flecked warnings, tightening the leather shoulder straps as the bronze hums softly against your jacket, shivering with cold and ancient memory.",
+   "exits": [
+    "Scramble down the shifting grey shale of the scree-slope",
+    "Accept the warm barley-water and trade news with Jago"
+   ]
+  },
+  "vh-3-0-2-1": {
+   "title": "Beneath the Drive-Shaft",
+   "text": "Thick machine-oil drips in slow, heavy plops onto your padded shoulder harness as you crawl on hands and knees beneath the low stone trestle supporting the main drive-shaft. The massive wooden axle groans above your head, turning with a rhythmic, bone-deep thump that rattles your teeth in your gums.\n\nYou squeeze through the grease-stained gap, keeping your profile low to avoid the turning iron bolts of the giant overhead cogs.",
+   "exits": [
+    "Pick your way down the unstable shale slope",
+    "Stop for a steaming mug of barley-water with Jago"
+   ]
+  },
+  "vh-3-0-2-2": {
+   "title": "The Terrace Children",
+   "text": "A cluster of hungry, soot-smudged terrace children swarms around Biscuit, tugging eagerly at the leather straps that secure your precious metal cargo with sticky fingers and wide eyes. Their small voices rise in a piping chorus of demands for crusts of bread or bright bits of scrap bronze.\n\nYou shoo them gently away with a dry word, checking the buckles of the clapper's cradle to ensure no small hands have worked them loose.",
+   "exits": [
+    "Trade stories and news with Miller Jago by the kiln",
+    "Squeeze past the straining winch and the wet grain sacks",
+    "Turn back toward the upper heights against the rising wind"
+   ]
+  },
+  "vh-3-0-2-3": {
+   "title": "The Millstone Grinds to a Halt",
+   "text": "Heavy timbers vibrate beneath your boots on the open gallery of Mill Twelve just as the massive granite millstones grind to a sudden, shrieking halt with a smell of scorched beechwood. The miller curses loudly from the shadowy interior, kicking at a jammed wooden cog while the drive-belt slacks and thrashes.\n\nYou pause against the railing, steadying the hum of the bronze clapper as the mountain wind whistles through the empty grain chutes.",
+   "exits": [
+    "Squeeze past the straining winch and the wet grain sacks",
+    "Fight against the fierce crosswind twisting your shoulder straps",
+    "Turn back uphill toward the frosty axle of the upper wheel"
+   ]
+  },
+  "vh-3-0-2-4": {
+   "title": "The Ice-Glazed Stair",
+   "text": "A precipitous flight of stone steps cuts straight down through the frozen barley fields, glazed thick with blue ice from a burst irrigation pipe. The steepness leaves no room for error, forcing you to unclip Biscuit's lead and guide her down step by careful step by hand.\n\nYour hobnails scratch for purchase on the slippery limestone while the heavy bronze tongue shifts uncomfortably against your padded shoulders.",
+   "exits": [
+    "Navigate the labyrinth of low stone storage sheds",
+    "Show your guild-woven rope to pass the terrace guards"
+   ]
+  },
+  "vh-3-0-2-5": {
+   "title": "Flying Timber",
+   "text": "A massive wooden shutter tears loose from its iron hinges in the howling gale, spinning end-over-end past your face and vanishing into the white abyss of clouds far below. You flatten yourself against the rough stone wall of the mill-house, feeling the back-draft pull at the heavy metal cradle on your spine.\n\nThe thin mountain air burns your lungs as you wait for the gust to break before making your next move down the cliff.",
+   "exits": [
+    "Squeeze past the straining winch and the wet grain sacks",
+    "Navigate the labyrinth of low stone storage sheds",
+    "Show your guild-woven rope to pass the terrace guards",
+    "Turn back along the cliff edge toward the humming wind-pipe"
+   ]
+  },
+  "vh-3-0-2-6": {
+   "title": "Miller Caden's Toll",
+   "text": "Miller Caden plants his stout ash pole firmly across the lower terrace gate, barring the path with a scowl and demanding an exorbitant inspection fee for your heavy bronze cargo. His fingers drum impatiently on the polished wood while he eyes the precious metal on your back with greedy calculation.\n\nYou stand your ground in the thin air, considering whether to pay his steep price or look for a way around his gate.",
+   "exits": [
+    "Wait out the stubborn sheep blocking the narrow stone stair",
+    "Catch your balance on the timber railing near the flour-chutes",
+    "Listen to Miller Voss mutter warnings through his spy-glass",
+    "Turn back against the wind along the upper barley path"
+   ]
+  }
+ },
+ "missing": []
+}

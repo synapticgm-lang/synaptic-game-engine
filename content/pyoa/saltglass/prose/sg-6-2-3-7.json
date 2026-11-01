@@ -1,0 +1,90 @@
+{
+ "batch": "sg-6-2-3-7",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-2-3-7": {
+   "title": "The Condensing Tower",
+   "text": "Under the towering shadow of the great condensing tower, droplets of pure water gather thick on your woolen coat as the subterranean humidity climbs rapidly. The air tastes of cold iron and stagnant centuries, heavy with the breath of hidden pipes. Your ember-lamp sputters in the dampness, its banked coals casting a weak orange halo against the weeping stone walls. You stand at a three-way junction where the dripping masonry gives way to echoing drops and distant mechanical groans.\n\nAhead lies a low service archway choked with condensation, while a sharp draft signals a sudden drop toward the lower drainage sumps to your left, and a thin thread of dry air beckons down a narrow tunnel to your right.",
+   "exits": [
+    "Crawl through the damp archway",
+    "Follow the cold air toward the sumps",
+    "Take the dry passage to the right"
+   ]
+  },
+  "sg-6-2-3-8": {
+   "title": "The Salt-Scratched Path",
+   "text": "Across the floor of polished obsidian, a trail of dried white salt crystals marks the path taken by the previous generation's doomed runner. Their final journey left a crusty scar across the dark glass, fading into the gloom near a pair of branching archways. Your boots crunch softly over the mineral remnants, and your hand instinctively brushes against the cold ceramic key in your pocket as you study the floor.\n\nThe obsidian reflects the dull amber glow of your lantern, magnifying every shadow into a lurking shape. One route leads deeper into the freezing machinery of the vault, while another curves back toward the central hall's salt-encrusted expanses.",
+   "exits": [
+    "Follow the salt trail toward the grand console",
+    "Turn away toward the central hall"
+   ]
+  },
+  "sg-6-2-3-9": {
+   "title": "The Dead Lamp",
+   "text": "Beside the humming dynamo of the lift shaft, a discarded oil lamp flickers out, plunging you into absolute darkness save for your own coals. The steady mechanical thrum vibrates through the floorboards and up into your marrow, drowning out all other sounds in the subterranean shaft. You lift your ember-lamp higher, watching the weak red glow struggle against the ancient iron bulkheads and grease-stained walls.\n\nThree distinct routes diverge from the shadows of the humming machinery, each offering a different escape from the suffocating gloom of the lift bay.",
+   "exits": [
+    "Seek the innermost reliquary in the silence",
+    "Approach the grand obsidian console ahead",
+    "Listen to the singing glass in the hollow pillar"
+   ]
+  },
+  "sg-6-2-3-10": {
+   "title": "The Weeping Statues",
+   "text": "In the alcove of the weeping statues, water slowly trickles from carved stone eyes into a basin that has remained dry for a hundred years. The rhythmic plink of droplets echoes hollowly off the vaulted ceiling, breaking the heavy silence of the sealed vault. Your coat feels damp against your shoulders, and the smell of ancient mineral dust fills your nose as you pause before the stone figures.\n\nBehind the weeping alcove, three paths branch out into the darkness: one leads toward the deep reliquary, another toward the obsidian console, and the third winds back across the salt floor.",
+   "exits": [
+    "Proceed toward the dry reliquary",
+    "Head for the grand obsidian console",
+    "Return toward the central hall's salt floor"
+   ]
+  },
+  "sg-6-2-3-11": {
+   "title": "The Acoustic Tunnel",
+   "text": "Within the narrow service tunnel lined with acoustic tiles, every breath sounds like a thunderclap against the silence of the dead city. The perforated metal walls trap your whispers and bounce them back as a distorted chorus, making your own movements feel unnervingly public. Your ember-lamp casts long, jittery shadows ahead of your boots as you navigate the claustrophobic conduit.\n\nThe passage opens up shortly into three distinct directions, each carrying its own faint acoustic signature from the depths of the complex.",
+   "exits": [
+    "Follow the quiet hum toward the reliquary",
+    "Turn toward the hum of the obsidian console",
+    "Backtrack toward the central hall's damp trail"
+   ]
+  },
+  "sg-6-2-3-12": {
+   "title": "The Biometric Scanner",
+   "text": "Before the secondary biometric scanner, your bare palm presses against the cold metal plate while the system checks your lineage for authority. The metal bites into your skin with an icy nip, and a faint blue luminescence washes over your knuckles as internal cogs click into place. Your breath catches in your throat as you wait for the ancient machinery to either accept your bloodline or sound a harsh alarm.\n\nWhen the green status light finally flickers on, two separate pathways unlock within the recessed wall before you.",
+   "exits": [
+    "Step forward to the grand obsidian console",
+    "Enter the hollow pillar of singing glass"
+   ]
+  },
+  "sg-6-2-3-13": {
+   "title": "The Iron Rail",
+   "text": "Across the threshold of the innermost sanctum, the floor drops away into a sheer pit crossed only by a narrow rail of wrought iron. The drop below is swallowed by absolute blackness, save for the faint red embers of your lantern reflecting off the polished metal bar. The wind howls upward from the chasm with a dry, melodic whistle that rattles the teeth in your jaw.\n\nYou must decide how to cross the dizzying expanse, or if you dare risk a desperate gamble to bypass the safety locks entirely.",
+   "exits": [
+    "Cross toward the singing glass pillar",
+    "Make your way to the final titanium door",
+    "Take the reckless way"
+   ]
+  },
+  "sg-6-2-3-14": {
+   "title": "The Burn Scar",
+   "text": "Because the jagged glass-burn scar across your forearm matches the old protocol, the automated defense turret retracts silently into the ribbed ceiling. The puckered pink skin throbs faintly as if remembering the searing desert storm that carved it into your flesh years ago. A soft pneumatic hiss greets your approach as the heavy machinery recognizes one who survived the glass-wastes.\n\nThe pathway ahead stands clear, inviting you to take the final steps toward the ultimate door of the seed repository.",
+   "exits": [
+    "Approach the final titanium door"
+   ]
+  },
+  "sg-6-2-3-15": {
+   "title": "The Great Balance",
+   "text": "Within the chamber of the great balance, two heavy iron pans hang suspended in stillness, waiting for you to place the seed upon them. The massive brass arms gleam under your lantern light, balanced on a knife-edge that has not tipped for generations. The air here is perfectly dead, smelling of old iron and dried desert blooms preserved in amber silence.\n\nYou must choose whether to retrace your steps toward the open hall or carry your burden directly to the final barrier.",
+   "exits": [
+    "Retrace your steps to the central hall",
+    "Carry the seed to the titanium door"
+   ]
+  },
+  "sg-6-2-4-0": {
+   "title": "The Basalt Lintel",
+   "text": "Under the low-hanging basalt lintel of the sub-vault, your shoulders ache as you heave against the rusted winch of the floodgate. Red flakes of ancient scale peel away under your grip, falling into the dark bilge water below with a dull splash. Your ember-lamp swings wildly from your wrist, casting frantic arcs of orange light across the slick, sweating stone walls.\n\nWith a final wrenching groan, the heavy iron mechanism gives way, opening the path upward to the apex of the central vault platform.",
+   "exits": [
+    "Climb toward the central platform"
+   ]
+  }
+ },
+ "missing": []
+}

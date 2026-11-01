@@ -1,0 +1,63 @@
+Gemini said
+
+@@SECTION td-2-176
+TITLE: The Sunken Threshold
+TEXT: Iron rings bolted into the weeping limestone match every mark recorded in the missing lighthouse keeper's journal. Uncurling the water-stained parchment against the damp rock, you verify the coordinates where the spiral shaft plunges beneath the dead seabed. A heavy iron grate has been levered aside, revealing a vertical drop choked with dry kelp and the faint, copper tang of ancient machinery. Below this jagged maw, the stairs begin their downward spiral into absolute blackness, echoing with the rhythmic, metallic dripping of subterranean brine.
+EXIT 1: Descend into the spiralling darkness
+@@END
+
+@@SECTION td-2-177
+TITLE: The Decaying Descent
+TEXT: Worn steps coil downward into the earth like the ribs of a buried leviathan, slick with centuries of condensation and mineral frost. Every landing offers new choices as branching fractures in the stone lead away from the central shaft into the gloom. Faint echoes of chanting drift up from the lower depths, promising either passage to the great mechanism or hidden perils left by the old Tidewardens.
+EXIT 1: Probe the recessed alcove ahead // EXIT 2: Squeeze through the narrow fissure // EXIT 3: Clear the fallen masonry // EXIT 4: Leap across the broken steps // EXIT 5: Rig the rusted pulley system // EXIT 6: Follow the spiral to the gear
+@@END
+
+@@SECTION td-2-178
+TITLE: The Alchemist's Step
+TEXT: Smooth flagstones conceal a pressure-sensitive plate that clicks softly beneath the heel of your boot. Working by the dim, greenish illumination of your lantern, you use a small bone-handled knife to scrape away centuries of salt crust from the triggering mechanism. A delicate glass vial, sealed with red wax and filled with volatile alchemical fire, rests untouched within a recessed niche right beside the trap.
+EXIT 1: Take the narrow lower passage
+@@END
+
+@@SECTION td-2-179
+TITLE: Tampering With Steel
+TEXT: The delicate linkage of the pressure plate hums under the gentle pressure of your fingertips, resisting every attempt to lift the rusted locking bolt. Sweat drips from your brow, threatening to blind you as you steady your breathing and align the delicate brass teeth of the trap with the edge of your blade. One false twitch will shatter the mechanism and trigger whatever forgotten doom rests within the stone.
+CHECK: Pick the ancient pressure lock
+@@END
+
+@@SECTION td-2-180
+TITLE: A Slip in the Dark
+TEXT: Metal snaps with a sharp, brittle crack that echoes up the damp stairwell, releasing a sudden spray of stinging rust and alkaline dust. You scramble backward just as the stone slab drops into a dark cavity, scraping your forearm hard against the jagged masonry. The sudden strain costs you precious time and leaves a raw, bleeding scratch across your skin, but you keep your footing on the narrow ledge.
+EXIT 1: Proceed toward the lower landing
+@@END
+
+@@SECTION td-2-181
+TITLE: The Sealed Gift
+TEXT: Working with deliberate, measured patience, you lift the heavy metal tongue and render the ancient trap completely harmless. Tucked behind the disabled plate lies a heavy glass vial filled with glowing blue liquid that pulses with a steady, synthetic heartbeat. You pocket the prize and continue your descent into the echoing depths.
+GRANT: Sealed vial of alchemical fire
+EXIT 1: Descend to the great gear
+@@END
+
+@@SECTION td-2-182
+TITLE: The Ribs of Stone
+TEXT: Jagged walls of granite press inward until the passage narrows to the width of a man's shoulders, smelling intensely of old salt and damp earth. Squeezing through this claustrophobic cleft requires you to strip away your heavy pack and inch forward sideways, feeling the rough rock scrape against your ribs. Wedged in a crevice near the floor is a small, tarnished metal hoop bearing the emblem of an old Tidewarden family.
+EXIT 1: Push onward through the gap
+@@END
+
+@@SECTION td-2-183
+TITLE: Breath Against the Rock
+TEXT: The stone walls seem to pulse and tighten around your chest, threatening to pin you in the darkness as panic claws at the back of your throat. Closing your eyes, you force your lungs to take slow, deliberate breaths while your fingers search blindly along the cold crevice for a handhold. The pressure mounts, demanding every ounce of your self-control to prevent a blind retreat.
+CHECK: Fight the crushing claustrophobia
+@@END
+
+@@SECTION td-2-184
+TITLE: Narrow Escape
+TEXT: Terror overcomes reason for a frantic second, and you thrash forward blindly, tearing your woolen coat and scraping the skin raw from your shoulders. You tumble out of the narrow cleft and land hard on the lower flagstones, gasping for cold air with a bruised ribcage. The delay costs you dearly in lost energy, but the obstacle is finally behind you.
+EXIT 1: Continue down the winding stair
+@@END
+
+@@SECTION td-2-185
+TITLE: The Found Relic
+TEXT: Controlling your breathing with iron discipline, you slide smoothly through the crushing stone gap without catching a single strap of your gear. Nestled in the dirt at the far end lies a heavy, rusted signet ring bearing the stamp of a forgotten maritime magistrate. You slip the cold metal onto your finger and press deeper into the shaft.
+GRANT: Rusted iron signet ring
+EXIT 1: Approach the turning chamber
+@@END

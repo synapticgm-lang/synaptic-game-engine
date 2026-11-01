@@ -1,0 +1,61 @@
+@@BEAT cf-4-001 | Locomotive No. 9 plunges into the pitch-black maw of the Hollow Cut where the tunnel walls drip with mineral rot and ancient soot.
+@@HUB cf-4-002 | The Soot-Locker | Stalled baggage trucks block the tracks while oil-lamp smoke clings to the low brick vaulting.
+@@CHAIN cf-4-002/0 | You clear a jammed axle-box using brute leverage against the stone floor, earning an iron wedge and a strained wrist.
+@@CHAIN cf-4-002/1 | You stand motionless while a phantom semaphore arm drops right beside your ear, gaining the confidence of the stone-dust echoes.
+@@CHAIN cf-4-002/2 | You trace the hidden grease-runs along the tunnel footing to bypass the blockade, securing an old railway ledger full of toll-receipts.
+@@CHAIN cf-4-002/3 | You heave the splintered cargo crate out of the gauge with raw shoulder strength, keeping a brass pinch-bar for future leverage.
+@@BEAT cf-4-020 | The Marrowbone shudders to a halt as a pale, oil-soaked figure swings down from the ceiling rafters with a green signal lantern.
+@@HUB cf-4-021 | The Lantern-Roost | Hollow Signalmen hang suspended from iron chains above the boiler hatch, muttering timetables from forgotten decades.
+@@CHAIN cf-4-021/0 | You adjust the regulator valve to match the ghostly signal's rhythmic pulse, winning a tin of machine tallow and a clear berth.
+@@CHAIN cf-4-021/1 | You endure the vacant stare of a hanging keeper without flinching, earning a smudge of protective lime behind your collar.
+@@CHAIN cf-4-021/2 | You negotiate a passage by quoting the 1894 working timetable back to the rafters, securing a map of hidden bypass sidings.
+@@CHAIN cf-4-021/3 | You purge a choked injector line with frantic wire-work before the gauge glass shatters, saving a spare pressure valve.
+@@CHAIN cf-4-021/4 | You reseal the leaking steam gland under a barrage of dripping condensation, retaining a heavy copper gasket for repairs.
+@@BEAT cf-4-045 | The tunnel opens into a vast subterranean grotto where stagnant black water laps against the rusted chassis of derailed coal tenders.
+@@HUB cf-4-046 | The Sump Basin | A subterranean lock-gate stands locked across the permanent way while oily black water rises toward the firebox.
+@@CHAIN cf-4-046/0 | You drag a heavy timber baulk across the mire to shore up the sinking track-bed, securing a dry sack of dry oak kindling.
+@@CHAIN cf-4-046/1 | You haul the sluice chains against a surging tide of bilge-water, keeping a greasy iron shackle and a bruised shoulder.
+@@CHAIN cf-4-046/2 | You wrestle the jammed sluice wheel past its rusted seat until the flood drains away, earning a brass drainage cock.
+@@CHAIN cf-4-046/3 | You rig a system of block and tackle using discarded telegraph wire, securing an intact block and a dry dry-cell battery.
+@@CHAIN cf-4-046/4 | You hold your breath in the rising vapor while steadying the primary bypass valve, winning a waterproof oilskin map case.
+@@BEAT cf-4-071 | Locomotive No. 9 wheezes through a cleft in the limestone where the air tastes sharply of old copper and burnt sage.
+@@HUB cf-4-072 | The Whisper-Vault | Archways carved into the cave walls echo with the recorded voices of every driver who perished here.
+@@CHAIN cf-4-072/0 | You listen to the whispering wall until you catch the cadence of Hesper Quill's familiar voice, gaining a warning about poisoned rails.
+@@CHAIN cf-4-072/1 | You decipher the acoustic reverberations to map the hidden fissures in the rock, earning a small pouch of sparkling pyrite.
+@@CHAIN cf-4-072/2 | You shoulder through a partition of rotten timber blocking a secondary adit, securing a leather-bound logbook of old accidents.
+@@BEAT cf-4-086 | The engine's headlight cuts across a makeshift barricade of iron rail sleepers piled high by unseen hands across the track.
+@@HUB cf-4-087 | The Barricade Camp | Abandoned sleeping quarters of the early gangers flicker with the blue glow of sulphur braziers.
+@@CHAIN cf-4-087/0 | You dismantle the blockade by unbolting the fishplates in correct sequence, securing a box of hardened steel track bolts.
+@@CHAIN cf-4-087/1 | You find the secret camp log detailing the exact night Hesper Quill passed through, winning a signed dispatch chit.
+@@CHAIN cf-4-087/2 | You trace the wire to a dead-man's switch connected to an old detonator, pocketing a length of insulated copper wire.
+@@CHAIN cf-4-087/3 | You tear down the heavy steel sleeper wall with sheer brute lifting, keeping a heavy claw-bar for emergency work.
+@@BEAT cf-4-105 | A towering stack of discarded coal-scuttles rattles violently as Locomotive No. 9 approaches the old maintenance spur.
+@@HUB cf-4-106 | The Cinder-Silo | A mountain of damp slack blocks the side-loading chute while a mechanical counter clicks away in the dark.
+@@CHAIN cf-4-106/0 | You free the jammed hopper gate with a precise hammer blow to the release pawl, securing three buckets of clean Welsh steam-coal.
+@@CHAIN cf-4-106/1 | You stand your ground against the shifting avalanche of rattling slag, earning a heavy iron fender-plate.
+@@CHAIN cf-4-106/2 | You calculate the exact center of gravity to tip the coal-chute without spilling the load, gaining an accurate coal-rake.
+@@BEAT cf-4-121 | The tracks narrow into a single glistening rib of steel flanked by walls of pure, unyielding black basalt.
+@@HUB cf-4-122 | The Basalt Narrows | The rock presses inward so tightly that the cab roof scrapes against jagged outcroppings of ancient stone.
+@@CHAIN cf-4-122/0 | You wedge your shoulder against the rock face to fend off a scraping overhang, securing a jagged chunk of black lodestone.
+@@CHAIN cf-4-122/1 | You tap out the cylinder condensate to squeeze every ounce of power from the pistons, earning an intact pressure gauge.
+@@CHAIN cf-4-122/2 | You guide the engine through the hairpin squeeze by watching the wall reflections, winning a pocket brass plumb-line.
+@@BEAT cf-4-136 | The air grows heavy with the scent of lavender oil and burning tallow as you approach the inner gatehouse.
+@@HUB cf-4-137 | The Keep of the General | The massive oak doors of the Stationmaster-General's subterranean keep bar the rails ahead.
+@@CHAIN cf-4-137/0 | You maintain absolute silence before the portrait of the ancient administrator, earning an ivory-handled carriage key.
+@@CHAIN cf-4-137/1 | You force the warped oak post back into its stone socket with a heavy iron lever, securing a brass grease-gun.
+@@CHAIN cf-4-137/2 | You battering-ram the small wicket gate until the iron latch gives way, keeping a brass-bound clerk's ledger.
+@@CHAIN cf-4-137/3 | You swallow your rising panic while facing the tribunal of silent porters, winning a sealed clearance stamp.
+@@BEAT cf-4-157 | Inside the circular chamber beyond the gate, a tiny woman in a braided coat sits behind a mahogany ticket counter.
+@@HUB cf-4-158 | The Tribunal Desk | The Stationmaster-General awaits your arrival with an ink-stained ledger and a cold, measuring eye.
+@@CHAIN cf-4-158/0 | You adjust the clockwork mechanism of her massive desk chronometer until it chimes true, gaining an official timetable pass.
+@@CHAIN cf-4-158/1 | You stare down the ancient bureaucrat without blinking until she stamps your waybill, earning a cup of hot chicory.
+@@CHAIN cf-4-158/2 | You forge an appropriate entry in the margin of the station log to match her rules, securing a master telegraph code-card.
+@@BEAT cf-4-172 | The Stationmaster-General slides the Water Key across the counter and points toward the final bulkhead doors.
+@@HUB cf-4-173 | The Final Siding | A battery of steam winches and control levers lines the wall beneath a colossal iron bulkhead door.
+@@CHAIN cf-4-173/0 | You overhaul the winch motor until the heavy steel gears mesh with smooth precision, securing a can of fine clock-oil.
+@@CHAIN cf-4-173/1 | You bear the biting lash of escaping high-pressure steam without flinching, winning a thick leather asbestos mitten.
+@@CHAIN cf-4-173/2 | You decode the secret sequence marked on the bulkhead wheel rims, earning the iron combination ring.
+@@CHAIN cf-4-173/3 | You clear the jammed cable drum with a flurry of wrench-work and oily rags, keeping a length of braided steel cable.
+@@CHAIN cf-4-173/4 | You decipher the telegraph ticker tape to find the safe operating pressure, securing a roll of insulation tape.
+@@BEAT cf-4-198 | Locomotive No. 9 bursts through the final iron gates into the roaring white glare of the Cinderfall approach.
+@@DONE

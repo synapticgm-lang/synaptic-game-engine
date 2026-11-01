@@ -1,0 +1,124 @@
+{
+ "batch": "cf-2-215",
+ "sections": {
+  "cf-2-215": {
+   "title": "The Grease Tin",
+   "text": "Heavy canvas flaps snap in the sulfurous gale while you sidestep the circle of card-playing gangers hunched near the banked boiler. Their attention remains fixed on greasy cardboard tokens and disputed tallies of coal-scraps. Your fingers close around the dented rim of a tallow tin sitting half-concealed beneath an overturned crate. Slipping it into your coat pocket without a clink, you earn a rich, yellow paste of beef fat destined for the sliding rods of the valve-gear.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide back into the coal dust"
+   ]
+  },
+  "cf-2-216": {
+   "title": "The Hoist Crank",
+   "text": "Rusted chains groan overhead as you lean your weight against the jammed iron spindle of a smuggler's cargo lift. Grit grinds inside the bronze housing until a sharp crack signals the gears finally biting home. The winch spins true once more, earning a heavy, notched iron pry-bar tossed from the shadows by a grateful handler. This solid wedge of cold metal will serve well enough when rusted bulkhead doors refuse to yield.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the pry-bar and move"
+   ]
+  },
+  "cf-2-217": {
+   "title": "The Shared Valve",
+   "text": "Steam hisses softly from the manifold while the camp guards turn their backs to warm their mittened hands over a brazier. You slip a copper feed-tube past the outer casing of the station boiler, listening to the satisfying gurgle of stolen fluid shifting through the lines. This quiet theft fills your canteens with double the allowance of murky, iron-tasting water before anyone notices the drop in pressure.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Withdraw into the steam haze"
+   ]
+  },
+  "cf-2-218": {
+   "title": "The Float Valve",
+   "text": "Copper scale flakes off the internal wall of the roadside cistern as you tap the jammed float-valve with a brass spanner. Water surges back into the trough with a clean, steady rush that satisfies the waiting tank crews. For your trouble, the foreman drops a handful of smooth copper washers and a sealed tin of dark anti-friction grease into your open palm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the grease and press on"
+   ]
+  },
+  "cf-2-219": {
+   "title": "The Stolen Stream",
+   "text": "Vapor curls thickly around the makeshift encampment while the watchmen argue over a spilled tin of chicory. You drop the flexible copper line into the auxiliary injector and watch the glass gauge climb steadily as the liquid transfers. Securing a double ration of drinking water lightens your immediate worries about the dry miles waiting beyond the dunes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the hissed valve behind"
+   ]
+  },
+  "cf-2-220": {
+   "title": "The Blind Reciter",
+   "text": "Hooded figures sway in unison around a rusted signal-mast while a blind prophet chants timetables of trains that vanished decades ago. You pause in the drifting ash, listening closely to the rhythmic cadence until the hidden pattern of arrivals and cancellations reveals itself. That whispered sequence of platform numbers forms a secret password for the guarded iron gates ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step past the chanting circle"
+   ]
+  },
+  "cf-3-001": {
+   "title": "The Iron Spans",
+   "text": "Locomotive No. 9 crawls heavily onto the monumental lattice of the Brasswind Viaduct, trembling against the sheer drop above the grey expanse. Green signal-lamps blink rhythmically from the toll-gantries high above the boiler roof, challenging your right to cross the gorge. You check the steam pressure and ease the regulator forward, feeling the massive iron bridge hum beneath the wheels as the city of tolls looms out of the blowing ash.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the towering toll-barrier"
+   ]
+  },
+  "cf-3-002": {
+   "title": "The Iron Tollhouse",
+   "text": "Rust flakes from the overhead gantry as the heavy iron gates of the customs depot groan inward, revealing a gauntlet of ledger-clerks and uniformed inspectors demanding heavy transit coin from every engine that dares roll its wheels upon Baronial iron. Steam hisses from the rail-mounts while greasy ledger-pages flutter in the downdraft, and you must decide whether to slip past the inspection booths through cunning, force your way through the bottleneck with brute leverage, or gamble your last drop of patience on a dangerous bribe.\n\nThe soot-stained tracks branch off toward the high-level scaffolding and the lower maintenance pits, each route offering its own sharp hazard and potential salvation under the cold gaze of the gantry-sentinels.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hide extra fuel cells inside the gauge housing",
+    "Hammer a loose rivet to distract the guards",
+    "Purge auxiliary steam lines to create a blinding fog",
+    "Surrender immediately to the regiment of gantry-guards"
+   ]
+  },
+  "cf-3-003": {
+   "title": "The Gauge Housing",
+   "text": "Brass screws turn sluggishly under your screwdriver as you pry open the face of the pressure-gauge housing. The cramped cavity behind the dial offers just enough space to tuck away a pair of contraband fuel cells wrapped in oily rag. You slide the metal lid back into place just as heavy boots echo against the iron decking outside.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the hidden brass token"
+   ]
+  },
+  "cf-3-004": {
+   "title": "Beneath the Brass Dials",
+   "text": "Hot oil and bitter sweat drip onto your boots as you wrench the brass housing off the pressure-gauge, your fingers working entirely by feel in the cramped, trembling gloom beneath the cab floor. Outside the narrow inspection slit, a clerk's nailed boots echo on the iron plating, pausing just long enough for your heart to hammer against your ribs like a loose piston-rod.\n\nYou slide the spare fuel cells into the dark cavity behind the copper tubing, securing the rusted plate with a swift twist of the spanner just as a heavy fist strikes the exterior steel plate with a hollow, demanding clang.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away into the shadow of the gantry"
+   ]
+  },
+  "cf-3-005": {
+   "title": "The Housing Check",
+   "text": "Fingers trembling slightly against the vibrating brass bezel, you work the final retaining screw into the hollowed gauge housing. A sudden clatter of heavy boots on the gantry stairs threatens to expose the hidden fuel cells tucked inside the instrument panel. You hold your breath, relying on steady hands and quick adjustments to keep the inspectors from prying too closely into your work.",
+   "check": "Wrenching the housing shut in time",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-006": {
+   "title": "The Inspector's Glance",
+   "text": "A sharp rap of a brass ruler against the instrument casing shatters your concentration as the senior clerk spots the mismatched thread on the housing bezel. You absorb a stinging reprimand and surrender a small portion of your coal stores to satisfy their suspicion before they finally wave you onward. The delay leaves your knuckles throbbing and your fuel bunkers noticeably lighter.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the loss and move"
+   ]
+  },
+  "cf-3-007": {
+   "title": "The Smuggler's Token",
+   "text": "Your knuckles throb with a dull, persistent ache from the cramped labor inside the housing, yet your palm closes around a small, grease-slick token stamped with the private sigil of a sympathetic track-clerk. The hazardous gamble paid off, leaving you richer by one illicit credential even as the smell of hot sulphur and Baronial tobacco thickens in the damp gantry air around the Marrowbone.\n\nYou tuck the heavy brass disc safely into your waistcoat pocket, keeping your face turned toward the steam-shrouded rails as the path ahead clears enough for a cautious advance toward the viaduct gates.",
+   "check": "",
+   "grant": "smuggled brass token",
+   "exits": [
+    "Advance toward the gantry-guards blocking the line"
+   ]
+  }
+ },
+ "missing": []
+}

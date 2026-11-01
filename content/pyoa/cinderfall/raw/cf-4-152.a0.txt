@@ -1,0 +1,60 @@
+@@SECTION cf-4-152
+TITLE: The Tribunal of Porters
+TEXT: Silence hangs heavy in the vaulted chamber where the grey-faced porters stand in rigid rows, their lantern-jaws set like iron wedges against intruders. Every breath smells of damp ballast and old grease, thick enough to chew, while your bruised shoulder throbs in rhythm with the distant dripping of subterranean water. You force your boots to stay flat upon the flags, refusing to let the trembling in your knees betray the panic clawing at your throat. // One of the senior examiners steps forward, peering past your soot-stained coat with eyes like cold rivets, waiting for a permit that was never issued.
+EXIT 1: Face the silent porters without flinching
+@@END
+@@SECTION cf-4-153
+TITLE: Waiting the Inspection
+TEXT: Cold sweat traces a slow line down your temple, mixing with the grime of the coal-scuttle and the grease of the engine deck. The porters do not speak among themselves, communicating only through the sharp clicking of brass pocket-watches and the subtle shifts of their lantern-poles against the flagstones. You keep your good hand resting casually near your pocket where the heavy brass valve-key rests, feeling its cold contour bite reassuringly through the canvas lining. // The lead examiner taps a thick iron ledger twice with a stubby finger, demanding your clearance without uttering a single syllable above the hiss of steam.
+EXIT 1: Step closer to the waiting ledger
+@@END
+@@SECTION cf-4-154
+TITLE: Holding Your Ground
+TEXT: A bead of dark sweat rolls into your eye as the tribunal leans forward in unison, their scrutiny pressing down upon you like the weight of a loaded coal-tender on a steep grade. You breathe in the stale, underground air, tasting the copper tang of fear, and force your jaw to lock tight against the urge to stammer or step backward into the gloom. Every muscle in your torso aches from the earlier breach, yet you must keep your hands from shaking while the senior examiner reaches for the red ink-stamp and the heavy wooden handle of the seal.
+CHECK: Maintain steady nerve before the tribunal
+@@END
+@@SECTION cf-4-155
+TITLE: The Cost of Hesitation
+TEXT: Your nerve cracks under the relentless, silent weight of their gaze, and a sudden flinch of your shoulder betrays the pain of your torn coat. The lead examiner notices the microscopic shudder, a cynical twitch of a grey mustache marking your weakness before the ink hits the pad. They stamp your waybill with a crooked strike, smudging the red wax and scrawling a punitive surcharge across the margin that will cost you half your remaining rations of dry biscuit. You stagger back a half-pace, nursing your throbbing arm while the porters slowly part to let you pass deeper into the vaults.
+EXIT 1: Accept the flawed pass and move onward
+@@END
+@@SECTION cf-4-156
+TITLE: The Stamped Clearance
+TEXT: However narrowly you manage the ordeal, the heavy brass stamp falls with a dull, final thud that echoes off the limestone arches. The ink is wet and smells of bitter vinegar, but the red emblem of passage is unmistakably complete across the face of your waybill. The lead examiner grunts once—a sound more like a bellows clearing its throat than human speech—and shoves the paper back across the greasy mahogany. You snatch it up before the drying ink can smear, slipping the precious authorization into your breast pocket alongside the warmth of the boiler-iron.
+GRANT: Official red clearance stamp
+EXIT 1: Proceed toward the inner sanctum
+@@END
+@@SECTION cf-4-157
+TITLE: The Stationmaster General
+TEXT: Beyond the vaulted corridor lies a circular chamber lit by a single sputtering arc-lamp suspended from a rusted iron chain. Inside sits a tiny woman wrapped in layers of braided wool and an ancient stationmaster coat that swallows her frail frame entirely. Her desk is a fortress of leather-bound ledgers, brass telegraph keys, and half-burned tallow candles that cast long, dancing shadows across the damp walls. She does not look up as you approach, her dry fingers steadily turning yellowed pages filled with microscopic timetables written in violet ink. // The air here smells of very old paper, peppermint tea, and the sweet, heavy scent of burning tallow, completely removed from the soot and iron of the tracks outside.
+EXIT 1: Approach the mahogany ticket counter
+@@END
+@@SECTION cf-4-158
+TITLE: The Bureaucrat's Domain
+TEXT: The Stationmaster-General’s desk occupies the exact center of the stone rotunda, surrounded by silent tunnels that branch off into the black heart of the mountain. Every surface is buried under drifts of railway warrants, unclaimed baggage tags, and dead chronometers ticking at different speeds. The old woman finally raises her chin, revealing eyes milky with age but sharp enough to pin you like a butterfly specimen to a cork board. You must decide how to handle the keeper of the line before the storm clock outside the high vents ticks away your last remaining minutes.
+EXIT 1: Adjust the great desk chronometer
+EXIT 2: Stare down the ancient bureaucrat without blinking
+EXIT 3: Forge an appropriate entry in the margin
+EXIT 4: Claim the Water Key from the counter
+@@END
+@@SECTION cf-4-159
+TITLE: The Chronometer's Heart
+TEXT: You reach across the cluttered mahogany and slide your fingers into the open brass housing of the master clock that governs the chamber's sluggish pulse. Its gears are fouled with dried oil and fine grey ash that drifted down through the ventilation grates from the surface steppes. With delicate care, you nudge the eccentric cam back into alignment, listening as the erratic rhythm smooths out into a steady, authoritative tick-tock that vibrates through the floorboards. The Stationmaster-General watches your hands with a look of grudging respect, her thin lips parting slightly as the brass works finally strike the true hour. // She slides an official timetable pass across the blotter, nodding once to acknowledge your handiwork.
+EXIT 1: Return to the central desk hub
+@@END
+@@SECTION cf-4-160
+TITLE: Tuning the Master Clock
+TEXT: The main balance wheel shudders violently beneath your fingertips as you try to catch the timing pin while the heavy drive-spring remains under full tension. A single slip will strip the bronze teeth or send a shower of hot mainspring shrapnel into your knuckles, leaving you crippled in the dark beneath the mountains. You hold your breath, squinting through the gloom at the grease-blackened cogs, and time your push against the backlash of the vibrating escapement. The metal groans under your touch as you ease the regulator lever toward the true mark.
+CHECK: Adjust the mainspring escape mechanism
+@@END
+@@SECTION cf-4-161
+TITLE: A Broken Tooth
+TEXT: The escape wheel skips a tooth with a sharp, metallic ping that rings like a pistol shot in the small vault. A stinging graze across your knuckles draws a dark line of blood that drips directly onto the brass casing, fouling the delicate mechanism even further with sticky warmth. The Stationmaster-General lets out a dry, rattling sigh of disappointment, sliding a heavy repair chit across the desk that you must honor with an hour of heavy coal-shoveling later. You suck your bleeding knuckle, cursing the sudden backlash under your breath while the clock stumbles on in its uneven rhythm.
+EXIT 1: Gather your tools and return to the desk
+@@END
+@@SECTION cf-4-162
+TITLE: The Timetable Pass
+TEXT: However narrowly you master the recalcitrant gears, the chronometer settles into a deep, resonant hum that satisfies the exacting standards of the subterranean keeper. As she hands over the stamped timetable pass, a folded slip of blue dispatch paper falls from between her ledger leaves and flutters onto your sleeve. It bears Hesper Quill’s unmistakable cramped handwriting, noting a coal-loading requisition logged only three hours ago at the abandoned siding further down the line. You pocket the scrap quickly before she notices, realizing with a start that your missing driver is still somewhere ahead of you in the dark.
+GRANT: Driver's dispatch scrap
+EXIT 1: Return to the central desk hub
+@@END

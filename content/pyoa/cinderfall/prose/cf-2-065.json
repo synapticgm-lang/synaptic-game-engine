@@ -1,0 +1,92 @@
+{
+ "batch": "cf-2-065",
+ "sections": {
+  "cf-2-065": {
+   "title": "The Crane's Keepsake",
+   "text": "Iron grease smears your palms as the freed winch settles with a heavy, satisfying thud into its seating, however narrowly you avoid the snapping cable. The vendor, a woman wrapped in soot-caked wool, spits into the dust and shoves a heavy tool into your grip, muttering that the Cinder Prophets are right when they say the fire teaches what steel forgets, and that when the Water Gate falls she intends to use the flood to wash away every ledger the Barons ever forged. You slide the cold iron into your coat.\n\n",
+   "check": "",
+   "grant": "heavy steel pinch-bar",
+   "exits": [
+    "Return to the bazaar wagons"
+   ]
+  },
+  "cf-2-066": {
+   "title": "The Iron Sledge",
+   "text": "Stacks of corrugated plate iron demand two strong shoulders and a steady footing across the warped floorboards of the boxcar. Dust gets behind your teeth, tasting of sulphur and ancient coal-smoke while the market boss watches from a dry-box with narrowed eyes, weighing your pace against the sun's slow dip toward the ash-dunes. You heave the final crate onto the pallet, wiping sweat with a sleeve already stiffened by brine and soot. The boss tosses a greasy paper slip onto the counter, grunting that it will keep your pistons from screaming until the next siding.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the lubricating voucher"
+   ]
+  },
+  "cf-2-067": {
+   "title": "Heaving the Dead Weight",
+   "text": "Staggering under the shift of an iron-strapped crate that threatens to burst its wooden seams upon the rusted coupling-pin, you drop your center and lock your knees against the rolling sway of the stagnant train. The rusted metal groans like an old hinge, its dead weight threatening to pin your forearm against the iron sill unless your muscles hold the line against the slide. Every sinew in your neck knots tight as the corner tilts another fraction of an inch toward the gravel.",
+   "check": "Heave the sliding crate",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-068": {
+   "title": "The Slipped Iron",
+   "text": "Pain flares hot across your knuckles as the crate slips its binding and slams into the floorboards, scraping a deep, raw purple bruise across your wrist. You hiss through your teeth, swallowing the curse before the market boss notices the dented corner and docked tally. Time slips away while you wrestle the spilled scrap back into order under the low, merciless sky, leaving your ribs aching and your breath tasting of dry grey dust long after the work is done.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Collect the bruised voucher"
+   ]
+  },
+  "cf-2-069": {
+   "title": "Grease and Gratitude",
+   "text": "Fingers stiff and aching from the dead-lift, you pocket the small grease-voucher with a slow nod to the sullen clerk, however narrowly you managed to keep the load from splitting wide across the track. The slip of paper is gray with thumb-prints and smells faintly of rendered mutton fat, but it represents twenty miles of quiet bearings and cool journals when the Marrowbone starts screaming for oil in the deep cuttings. You fold it into your waistcoat pocket alongside the stub of a tallow candle.",
+   "check": "",
+   "grant": "emergency grease-voucher",
+   "exits": [
+    "Carry voucher to the engine"
+   ]
+  },
+  "cf-2-070": {
+   "title": "The Collector's Coat",
+   "text": "Velvet lapels look entirely out of place amidst the rusted ribs of the freight wagons, worn by a man whose boots are far too clean for the Cinder Steppe. He slips between two timber-cars with a ledger tucked tight against his ribs, pausing only to check a brass pocket-watch that ticks with infuriating precision. You step into his shadow with practiced lightness, your fingers brushing the stiff wool of his outer pocket where a corner of heavy cream paper catches the dim, sulphurous light.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the collector's shadow"
+   ]
+  },
+  "cf-2-071": {
+   "title": "Lifting the Permit",
+   "text": "Slender fingers brush the stiff wool of the hidden pocket while the tax man turns to bargain with a merchant over the price of salt-beef. Your heart thumps a heavy, measured rhythm against your ribs as you slip the corner of the heavy cream paper between your knuckles, waiting for the exact moment the marketplace noise swells to cover the small rasp of fabric. The slightest twitch of his elbow will bring his signet ring down upon your wrist.",
+   "check": "Lift the transit permit",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-072": {
+   "title": "Caught in the Cuffs",
+   "text": "Brass buttons scrape against your knuckles as the collector whips around with a sharp, bird-like cry, catching your wrist in a grip surprisingly hard for a man who lives behind ink-pots. You wrench your arm free with a harsh twist of your shoulder, leaving a scrap of your shirt sleeve caught in his brass cuff-link while he shouts for the station-watch. You scramble over a coupling-chain and into the maze of rusted boxcars, your lungs burning with cold ash as footsteps clatter on iron behind you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee through the boxcars"
+   ]
+  },
+  "cf-2-073": {
+   "title": "The Stolen Seal",
+   "text": "Heavy cream paper rests in your palm, smelling faintly of imported ink and vinegar, however narrowly you avoided the man's sharp gold-nibbed pen. The red wax seal bears the double-eagle stamp of the Rail Barons, granting unhindered passage through every checkpoint between here and the Cinderfall Water Gate. You tuck the folded document deep inside your greasy jacket next to the brass valve-key, feeling the quiet weight of official immunity against your ribs.",
+   "check": "",
+   "grant": "sealed transit permit",
+   "exits": [
+    "Return to the bazaar wagons"
+   ]
+  },
+  "cf-2-074": {
+   "title": "The Ash-Mound Strike",
+   "text": "Iron plates shriek in protest as the Marrowbone's front bogie strikes a high drift of hardened ash left by the burning of the lower yards. The engine rears upward like a startled beast, steam coughing white and hot from the cylinder cocks as the drive wheels lose their grip and spin screaming against the polished railheads. For a terrifying heartbeat the world tilts toward the embankment, threatening to lift the heavy boiler clean off its pins and pitch the coal-tender into the ditch. You throw your weight onto the regulator arm while the whole frame shudders from kelson to smokebox.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb toward Prophet's Cairn"
+   ]
+  }
+ },
+ "missing": []
+}

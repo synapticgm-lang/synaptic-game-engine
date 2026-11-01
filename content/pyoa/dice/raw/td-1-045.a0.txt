@@ -1,0 +1,61 @@
+Gemini said
+
+@@SECTION td-1-045
+TITLE: The Customs-Priest at the Gate
+TEXT: Iron chains drag across the dry cobbles of the sea-gate where the grey water used to lap against the foundation stones. Father Vane stands wrapped in salt-stiffened robes that smell of dead kelp and stale vinegar, his eye sockets hollow beneath a narrow bronze mitre. He blocks the exit with a brass ledger held in skin-tight fingers, demanding the dead-water tax before any living soul sets foot upon the newly exposed seabed. His voice sounds like dry reeds scraping in a winter gale as he insists that the absence of the tide remains taxable under ancient maritime charter. // You press past his outstretched arm, ignoring the low hum of his acolytes chanting hymns to the departed salt, and step out onto the grey, sun-baked expanse of the Low.
+EXIT 1: Step past the toll-gate onto the salt flats
+@@END
+@@SECTION td-1-046
+TITLE: The Crusting Salt-Flats
+TEXT: Miles of grey, baking mud stretch toward a bleached horizon where the seabed has dried into jagged ridges and treacherous hollows. The morning sun beats down without the cooling breath of the missing tide, baking the exposed silt into a crust that hides bottomless pockets of black muck beneath. Strange shapes jut from the hardened sediment—the ribs of ribs and hulls of long-forgotten craft that now lie stranded in the open air. In the distance, figures move like scavengers across a massive carcass, while closer at hand, the salt crust crackles underfoot with every cautious step you take into the vast unknown.
+EXIT 1: Search the muddy shallows for buried salvage
+EXIT 2: Balance along the narrow ridge of dried silt
+EXIT 3: Lash together a makeshift driftwood sledge
+EXIT 4: Pick through the wake of the frantic pilgrims
+EXIT 5: Approach the pawn-widow near the stranded hull
+@@END
+@@SECTION td-1-047
+TITLE: Sunken Riches in the Muck
+TEXT: Dark water pools sluggishly around the corners of a sunken timber frame, where the seabed has given way under the unaccustomed heat. Thick, foul-smelling silt clings to your shins as you wade into the depression, reaching deep into the suction of the mud to find the iron-bound edges of a heavy chest. The salt-crrusted lid resists your initial pull, wedged firmly against a bed of waterlogged stones and broken pottery. You wedge your fingers beneath the rusted clasp, planting your heels securely in the hardening silt to begin the heavy work of extraction.
+EXIT 1: Heave the chest clear of the sucking mire
+@@END
+@@SECTION td-1-048
+TITLE: Hauling the Heavy Chest
+TEXT: Strain pulls hard against your shoulders and back as you lean into the effort, muscles trembling under the dead weight of the sunken burden. The mire surrenders inch by inch, sucking at the timber sides with a wet, gasping sound like lungs drawing air after a drowning. Saltwater drips from the iron straps as the box finally breaks free of the suction, sliding up onto the firmer crust of the salt-flat with a dull, echoing thud. You catch your breath, wiping stinging sweat from your forehead, and flip the rusted latch to see what the retreating sea has left behind.
+EXIT 1: Pocket the heavy silver coins inside
+@@END
+@@SECTION td-1-049
+TITLE: Breaking the Silt's Grasp
+TEXT: Thick, suffocating mud wraps around your boots like cold fingers, threatening to drag the heavy wooden chest back down into the black depths of the pit. You plant your boots deeper into the stabilizing rocks at the edge of the collapse, gathering every ounce of strength in your frame for one final, desperate heave. The wood groans under the strain as you lock your elbows and brace your spine against the downward pull of the sinkhole, praying the rusted handles hold firm for another heartbeat.
+CHECK: Yank the heavy chest from the sinking mud
+@@END
+@@SECTION td-1-050
+TITLE: A Costly Extraction
+TEXT: The chest slips from your sweating palms with a sharp snap of rusted iron, plunging back into the black mire and splashing foul-smelling mud across your face and chest. You stumble backward onto the hard salt crust, coughing and gasping for clean air as the suction swallows the prize out of sight. A sharp edge of buried slate catches your shin through the cloth of your trousers, leaving a hot, throbbing ache and a long, bleeding gash that will take days to heal. You pick yourself up from the dirt, poorer in both time and blood, and press on across the flats.
+EXIT 1: Leave the sunken chest and push onward
+@@END
+@@SECTION td-1-051
+TITLE: The Silver Found
+TEXT: Water drips steadily from the heavy iron corners of the recovered chest as you pry the swollen lid open with your skinning knife, revealing a cache of dull, sea-tarnished coins resting upon rotted velvet. You scoop the heavy silver pieces into your leather pouch, feeling their reassuring weight settle against your hip as proof of a successful salvage. The damp smell of long-submerged wealth rises into the dry air, mingling with the bitter tang of salt and sun-baked mud. With your prize secured against your belt, you turn your gaze back toward the vast expanse of the open seabed.
+EXIT 1: Seek out the pawn-widow near the wreck
+@@END
+@@SECTION td-1-052
+TITLE: The Ridge Between Abysses
+TEXT: A narrow spine of hard-baked silt offers the only safe passage between two yawning craters of black, bubbling sludge that drop away into darkness. The wind whistles across the flat expanse, carrying the distant scent of rotting kelp and the faint sound of iron machinery turning far below the earth. A leather satchel dangles tantalizingly from the broken spar of a stranded merchant skiff wedged on the far side of the chasm. Every step along the razor-thin ridge requires absolute focus, as the crust beneath your soles crumbles and drifts away into the void with every movement.
+EXIT 1: Walk the narrow ridge to reach the satchel
+@@END
+@@SECTION td-1-053
+TITLE: Crossing the Razor Ridge
+TEXT: The wind hits your chest like a solid wall, threatening to tip your balance over the edge of the crumbling mud ridge and into the black mire below. You freeze mid-stride, arms held wide to catch the shifting air currents, fixing your eyes entirely on the weathered leather satchel swaying just yards ahead. Every muscle in your body locks tight as a fresh tremor shakes the salt-flats, threatening to break the fragile bridge of earth beneath your boots into dust.
+CHECK: Keep your balance across the chasm ridge
+@@END
+@@SECTION td-1-054
+TITLE: A Slips on the Edge
+TEXT: A brittle shelf of salt collapses beneath your left boot without warning, sending a shower of grey dust rattling down into the dark abyss below. You throw your weight backward with a sharp gasp, catching your ribs hard against the jagged spine of the ridge as the wind tries to peel you from the rock. Your supplies rattle loose within your pack, and a leather flask of precious fresh water slips from its lashings, tumbling silently into the depths of the mire. Bruised and shaken, you crawl the final few yards on your hands and knees until you reach the safety of solid ground.
+EXIT 1: Gather your breath and continue onward
+@@END
+@@SECTION td-1-055
+TITLE: Reaching the Stranded Satchel
+TEXT: You slide your fingers through the damp leather strap of the merchant's satchel, pulling the prize free from the broken timber spar just as another tremor ripples through the salt-crust. The canvas bag is heavy with dry rations and a bundle of coiled hemp rope, untouched by the brackish water that ruined everything else around it. You sling the strap over your shoulder, feeling the welcome bulk of provisions resting against your back as compensation for the perilous crossing. Turning back toward the main track, you look for the next path across the drying seabed.
+EXIT 1: Return to the main salt-flat crossroads
+@@END

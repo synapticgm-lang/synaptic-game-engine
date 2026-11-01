@@ -1,0 +1,65 @@
+@@SECTION cf-3-170
+TITLE: Waiting in the Rust
+TEXT: Cold iron presses against your ribs as the Baronial patrol passes with a heavy, rhythmic trudge. You stay motionless beneath the greasy canvas, letting the acrid smell of burnt coal fill your mouth rather than risk a premature movement. The searchlights sweep low across the corrugated iron siding, washing the darkness in sharp amber before clicking away. Every muscle in your legs aches from the static tension, coiled like a rusted spring waiting for the precise heartbeat to release. When the last boot-heel fades into the din of distant machinery, you slide silently from beneath the cover, slipping into the narrow shadow of the gantry staircase.
+EXIT 1: Slip into the gantry shadow
+@@END
+@@SECTION cf-3-171
+TITLE: Climbing the Iron Spine
+TEXT: Iron rungs bite into your palms as you haul yourself upward into the skeletal superstructure of the viaduct. Below you, the vast expanse of the Brasswind yards stretches out like a grid of dormant black teeth under a low, bruised sky. Steam hisses from an overhead valve, pluming white against the soot-stained girders and smelling of hot grease. You pause on the narrow maintenance grating, steadying your breathing while a pair of inspectors chat idly fifty feet below. They toss a cigarette butt into the ash-drift, its tiny red ember dying instantly in the grit.
+EXIT 1: Ascend past the steam vent
+@@END
+@@SECTION cf-3-172
+TITLE: The Sweeping Beam
+TEXT: A sudden white glare cuts across the open grating just three strides ahead of your boots. The searchlight from the high tower pivots with an ominous whine, slicing the darkness and hunting for any unauthorized shift in the shadows. Your pulse hammers against your throat, threatening to break your concentration as the beam crawls closer toward your hiding place behind the water pipe. You clamp your teeth together, forcing your breathing to slow to a crawl, and gather your nerve to time the precise gap between sweeps.
+CHECK: Hold steady against the glare
+@@END
+@@SECTION cf-3-173
+TITLE: Caught in the White
+TEXT: A sharp clatter betrays your foot against a loose rivet just as the beam snaps back across the iron floor. Shouts ring out from the gantry above, and heavy boots scramble toward your ledge with alarming speed. You scramble backward into a rusted junction box, taking a jagged scrape across your forearm that stains your sleeve with hot blood. They do not find you in the dark, but the delay costs you dearly in precious minutes, leaving your nerves frayed and your breath burning with raw ash.
+EXIT 1: Flee down the maintenance ladder
+@@END
+@@SECTION cf-3-174
+TITLE: Slipping the Beam
+TEXT: The glaring white light sweeps past your shoulder by a hair's breadth, illuminating only the drifting motes of soot in the heavy air. You time the return stroke with quiet precision, darting across the exposed iron plate just as the lens clicks toward the opposite rail. The danger recedes into the hum of the dynamos, leaving you tucked safely within the recess of an unused signal cabin. Your fingers close around a small, grease-stained brass token dropped by a fleeing gager, cold and heavy with the promise of safe passage through the lower checkpoint.
+GRANT: Brass checkpoint token
+EXIT 1: Advance toward the control house
+@@END
+@@SECTION cf-3-175
+TITLE: The Signalman's Threshold
+TEXT: Heavy oak doors banded in blackened iron block the entrance to the viaduct's central switching nexus. Inside, the rhythmic ticking of a thousand mechanical clocks fills the air, accompanied by the low, subterranean thrum of the regional telegraph lines. A row of brass speaking tubes runs along the back wall, hissing softly with whispered orders from the Baronial dispatchers upstairs. You keep your head down, moving with the measured confidence of someone who belongs among the machinery, blending into the background noise of ticking gears and drifting coal dust. The path splits ahead between the central administrative chutes and the lower maintenance tunnels leading directly toward the Hollow Cut.
+EXIT 1: Proceed toward the central hub
+@@END
+@@SECTION cf-3-176
+TITLE: The Junction of Cogs
+TEXT: Brass dials gleam under the greasy glow of enclosed gas lamps in the heart of the viaduct's control gallery. Overhead, the main cable trays pulse with mechanical life, transmitting signals across the entire span of the rail bridge. Every route away from this chamber offers a different hazard, from the automated security puzzles of the upper signal towers to the heavily guarded master logs where a forged signature might buy you permanent clearance. Down below, the distant shrieks of alarm sirens begin to echo through the stone canyons as the runaway engine draws the full wrath of the Baronial patrols.
+EXIT 1: Enter the gear-chamber for manual override
+EXIT 2: Outwit the tower security puzzles
+EXIT 3: Forge an override signature on the master log
+EXIT 4: Retreat toward the lower escape ladders
+@@END
+@@SECTION cf-3-177
+TITLE: Within the Clockwork Heart
+TEXT: Thousands of brass teeth mesh in endless rotation inside the towering master clock housing, grinding out the rigid schedule of the Rail Barons. You crouch behind the main pendulum case, sheltered from the view of the floor inspectors by swinging brass weights and hanging wire harnesses. The air here tastes heavily of ozone and warm oil, thick enough to coat your tongue with a metallic bitterness. You reach into the intricate maze of levers and rods, searching for the primary cylinder that controls the outbound rail switches for the lower line.
+EXIT 1: Reach into the gear housing
+@@END
+@@SECTION cf-3-178
+TITLE: The Rotating Drum
+TEXT: Heavy brass drums rotate slowly on their steel axles, clicking with every rotation as they log the passage of every train on the line. You trace the grooves with the tip of your thumb, feeling the precise notches where the emergency switches are held in place by mechanical pins. The room smells of hot tallow and old iron, quiet except for the deep, resonant heartbeat of the viaduct's master chronometer overhead. A cluster of warning wires snakes across the casing, pulsing with low-voltage current that demands absolute steadiness in every move you make.
+EXIT 1: Align the final switch cylinder
+@@END
+@@SECTION cf-3-179
+TITLE: The Delicate Tooth
+TEXT: Fine steel tweezers tremble slightly in your gloved hand as you ease them between two interlocking brass cogs under extreme tension. A single slip will jam the primary time-drum, locking every outbound signal red across the entire viaduct and bringing the full weight of the garrison down upon your position. You lean in close, squinting through the dim gaslight to align the micro-lever with the escape notch on the main cylinder. The iron teeth grind together with a menacing groan, waiting for the final push that will either unlock the route or shear the mechanism clean off.
+CHECK: Recode the master gear cylinder
+@@END
+@@SECTION cf-3-180
+TITLE: The Broken Tooth
+TEXT: A sickening snap echoes inside the brass casing as the gear teeth jam hard against the unyielding steel frame. Sparks shower across your knuckles, searing your skin and leaving a jagged, bleeding gash across your thumb that throbs with immediate pain. The master clock stutters, its rhythmic ticking skipping a beat before resuming with a harsh, uneven rattle that immediately draws the attention of the floor guards. You snatch your hand back from the machinery, nursing your injured thumb as you dive behind a stack of spare iron plates to avoid the sweeping beam of a pocket lantern.
+EXIT 1: Retreat into the shadow of the boilers
+@@END
+@@SECTION cf-3-181
+TITLE: The Clean Engagement
+TEXT: The brass lever slips smoothly into its new groove with a satisfying, muffled click that resonates through the entire frame. Across the gantry, a dozen distant signal arms drop simultaneously into the clear position, green glass eyes blinking open against the grey ash-sky. You withdraw your hand cleanly, your thumb intact save for a smear of black machine grease and the adrenaline still hammering in your chest. A small, notched brass key pops free from the liberated tumbler, falling neatly into your open palm as proof of your quiet mastery over the iron.
+GRANT: Master switch key
+EXIT 1: Flee toward the lower escape ladders
+@@END

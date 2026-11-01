@@ -1,0 +1,56 @@
+{
+ "batch": "td-6-011",
+ "sections": {
+  "td-6-011": {
+   "title": "The Iron Hand",
+   "text": "Salt dries white in your eyebrows as your boot rests upon the central cog of the Meridian Gear, heavy and cold as an anchor-stock. Below in the spiral shaft, the Hollow Choir falls silent at last, their watery laments choking down into a dull, rhythmic grinding that shakes the very bedrock of the Sunken Stair. Orsolya Venn would have called this stubbornness; you call it ownership. The Brineholders may send their ledgers and their stilted messengers down from Saltspire, but no clerk's ink can wash away the grease upon your palms or rewrite the oaths written in rust. You hold the brake lever with both hands, locking the great iron teeth into a permanent, immovable clinch that defies the tide clock on the wall.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Lock the heavy iron lever fast"
+   ]
+  },
+  "td-6-012": {
+   "title": "Masters of the Dry",
+   "text": "Out across the Low, where whale bones bleach in the unshaded sun and rusted hulls lie stranded like broken ribs, the world waits for a wet word that never comes. No distant line of white foam darkens the western horizon; the seabed remains yours to roam, a vast desert of ancient mud and drowned streets where a wrecker can walk dry-shod from cliff to cliff. The Drift Pilgrims wander the salt-flats in bewildered clusters, muttering prayers to a sky that offers only glare and silence, while the pawn-widow back in Gullmouth counts out copper for iron spikes you no longer need to pull from timbers. You have turned your back on the water, choosing instead the unyielding sovereignty of the dry.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the empty grey horizon burn"
+   ]
+  },
+  "td-6-013": {
+   "title": "A Kingdom of Salt",
+   "text": "Nights on the high ledges of Gullmouth are quiet now, save for the wind whistling through the empty chimneys and the steady crunch of salt crystals forming in the harbour basins where boats rot in the dust. You sit by the cold hearth with the heavy brass key to the Meridian Gear resting on the flags beside your boots, a dead thing that once commanded the deep. Orsolya is gone, swallowed by the dark or the distance, but the light in the keeper's tower stays dark by your own decree, a warning to anyone who thinks the sea might someday remember its old masters and come rushing back to claim what it lost. Nothing moves upon the flats, nothing stirs in the weed-choked streets, and the silence that fills the vast grey basin is as heavy and complete as a closed tomb.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  },
+  "td-6-014": {
+   "title": "The Price of Water",
+   "text": "Gold coins clink against the bronze casing of the Meridian Gear, heavy as wet clay and stacked in neat, greedy pillars by the Brineholders' factors who crowded down the Sunken Stair with ledgers tucked into their oiled coats. They pay in bright, hard coin minted in Saltspire, buying every fathom of the seabed and every drop of water that might one day return to fill the empty harbours and drown the lowlands once more. You sweep the metal tokens into a leather sack until your shoulders ache under the dead weight of their wealth, trading the ancient power of the tides for a pouch that makes you richer than any wrecker who ever scavenged a rib-bone or stripped a drowned spar.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the heavy bags of coin"
+   ]
+  },
+  "td-6-015": {
+   "title": "Lords on Stilts",
+   "text": "Saltspire celebrates beneath a canopy of flapping oilskin banners as the news travels up the long wooden ladders that the water is at last officially for sale to any town willing to pay the pipe-tax. From the high balconies of the stilted city, you watch the wealthy Brineholders uncork their private casks and toast the new monopoly, their laughter echoing across the vast, dry expanse of the Low where Gullmouth's empty boats lie baking in the mud. The Drift Pilgrims curse your name from the salt-flats, screaming up at the brass balconies where you stand draped in velvet bought with tide-gold, but their dry throats can raise no storm to wash away the ledgers that now bind the sea to a merchant's ledger-book.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Look down upon the dusty flats"
+   ]
+  },
+  "td-6-016": {
+   "title": "The Sold Horizon",
+   "text": "Wealth buys a high seat and a quiet room above the reach of the old tide, but it cannot wash the smell of dried weed from your clothes or make the silence of the seabed feel any less like a judgment. The brass key hangs on a hook by the door, a polished bauble that turned the entire world into a marketplace where everything from a whale carcass to a breaking wave has its price tag pinned to its ribs. Down in Gullmouth, the net-menders have long since gone inland, leaving the grey cliffs to the gulls and the sun, while out on the polished flats the Brineholders drive their iron stakes to mark the boundaries of an ocean they now own by the yard. You sit by the window with a cup of stale water, rich beyond reckoning and poorer than a beggar standing on the naked floor of the world.",
+   "check": "",
+   "grant": "",
+   "exits": []
+  }
+ },
+ "missing": []
+}

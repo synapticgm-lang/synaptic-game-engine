@@ -1,0 +1,18 @@
+Gemini said
+
+@@BEAT td-0-001 | You stand in the salt-crusted lamp room of Gullmouth lighthouse, reading the sealed note Orsolya Venn left before vanishing into the bare seabed.
+@@HUB td-0-002 | Gullmouth Lighthouse | You search the abandoned keeper's quarters for any useful gear or lingering clues before descending the cliff to the dried-out harbour below.
+@@CHAIN td-0-002/0 | You decipher a set of faded navigational charts left scattered across the desk, risking a headache to uncover a hidden safe route through the sinkholes.
+@@CHAIN td-0-002/1 | You try to repair a rusted spyglass found on the balcony, risking cutting your hands to gain a valuable tool for spotting distant scavengers.
+@@CHAIN td-0-002/2 | You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.
+@@BEAT td-0-017 | You climb down the treacherous cliff path to the harbour, greeted by the unsettling silence of stranded fishing boats and the whispering winds.
+@@HUB td-0-018 | The Dry Harbour | You navigate the grounded fleet and desperate rival crews, looking for supplies and information before stepping out onto the vast, exposed seabed.
+@@CHAIN td-0-018/0 | You negotiate with a desperate net-mender for sturdy ropes, risking a harsh argument to secure climbing gear that will help you descend the Sunken Stair.
+@@CHAIN td-0-018/1 | You pry open a sealed smuggler's barrel wedged beneath a rotting hull, risking a collapse to acquire a stash of rare cured meats.
+@@CHAIN td-0-018/2 | You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.
+@@CHAIN td-0-018/3 | You coax a frightened drift pilgrim out of hiding to ask about the Meridian Gear, risking their sudden panic to earn a protective bone talisman.
+@@BEAT td-0-038 | Leaving the shadow of the cliff behind, you step onto the endless salt-flats of the Low to begin your search for the missing lighthouse keeper.
+@@DONE
+
+Plan the first section of the Low
+Yes

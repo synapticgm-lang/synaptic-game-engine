@@ -1,0 +1,13 @@
+@@SECTION ul-1-021
+TITLE: The Authorised Passage
+TEXT: The head archivist lets out a sharp, parchment-dry sigh of exasperation and finally steps aside, leaving the flagged corridor open to your steady advance. Between her ink-stained fingers rests a heavy brass stamp, which descends with a final, echoing thud onto a fresh slip of vellum. That crisp sheet is pressed directly into your palm, still warm from the heavy iron press. It bears the jagged purple seal of the central stacks and a hurried signature in violet gall-ink, certifying your right to pass unhindered through the galleried arches. You tuck the heavy paper inside your woollen tunic as the murmur of distant scholars resumes around you. // That administrative triumph leaves you free to slip past the marble pillars and approach the bustling hub where the day's transactions are sorted.
+GRANT: signed authorization letter
+EXIT 1: Approach the weary lending clerk
+@@END
+
+@@SECTION ul-1-028
+TITLE: The Ledger Secret
+TEXT: Your finger traces the crabbed, archaic script along the margin of the open ledger until the difficult grammar unlocks under your persistent gaze. The rival scholar scowls, muttering an oath about upstart pages, but concedes the translation is remarkably accurate before sliding a scrap of yellowed vellum across the scarred oak table. That torn piece of map shows a dotted line winding through the forgotten lower tiers toward the shadow of the Hundredth Door. You pocket the fragment just as the scholar hastily snaps the heavy book shut and turns away. // Armed with this clandestine cartography, you slip through the shadows of the tall shelves to confront the next barrier in your search.
+GRANT: hidden map fragment
+EXIT 1: Face the proud historian's blockade
+@@END

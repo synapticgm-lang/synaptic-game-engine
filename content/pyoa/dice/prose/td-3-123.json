@@ -1,0 +1,95 @@
+{
+ "batch": "td-3-123",
+ "sections": {
+  "td-3-123": {
+   "title": "Iron Against Bone",
+   "text": "Beneath layers of accumulated grease and salt-crust, the heavy iron bookcase defies ordinary leverage, its hinges seized by decades of damp air off the seabed. Bracing your boot against the rotting floorboards, you haul upward with both hands, muscles straining against the unyielding metal until the rusted bolts give a sudden, protesting shriek.\n\nThe iron door swings wide at last, showering the floor with reddish flakes and revealing a small, dark velvet pouch tucked behind a stack of water-damaged ledgers. Inside, heavy silver coins clink against one another, bearing the stamped profile of an ancient Brineholder magistrate long dead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry open the stubborn iron shelves"
+   ]
+  },
+  "td-3-124": {
+   "title": "The Seized Casement",
+   "text": "Tendons pull tight across your forearms as you wedge a crowbar into the hairline gap of the rusted iron bookcase, seeking purchase against the swollen metal frame. The whole structure groans under your weight, threatening to collapse forward and send a deafening clatter echoing across the stilt-city corridors where guards patrol. Every muscle in your body burns with the effort, trembling as you lean harder into the iron bar to force the stubborn latch.",
+   "check": "Wrench the rusted iron case open",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-125": {
+   "title": "Heavy Metal Toll",
+   "text": "The rusted iron bookcase slips with a vicious bite, catching the skin of your knuckles and sending a jagged shard of metal tearing through your sleeve. A sharp, hot pain blooms along your forearm as a heavy iron shelf drops two inches, pinning your fingers against the unyielding wooden wall. You wrench your hand free with a harsh gasp, leaving behind a smear of dark blood and a fresh, ugly gash that throbs with every heartbeat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee before the iron settles"
+   ]
+  },
+  "td-3-126": {
+   "title": "Spoils of the Stilt-City",
+   "text": "Metal screams against metal as the stubborn bookcase finally yields to your persistence, tipping outward with a heavy, muffled thud that scatters a cloud of ancient dust. Deep within the shadowed recess, your fingers brush against a cold, velvet-wrapped bundle hidden away from the prying eyes of the Brineholders. However narrowly you managed the heave, the prize is yours to pocket before the echoes die away.",
+   "check": "",
+   "grant": "Velvet pouch of old coin",
+   "exits": [
+    "Return to the dusty annex"
+   ]
+  },
+  "td-3-127": {
+   "title": "The Bell Rings Out",
+   "text": "A shrill, brassy clang cuts through the heavy salt air, bouncing off the damp slate roofs and echoing across the narrow stilt-city alleys with merciless clarity. Somewhere below, a guard's whistle shrills in frantic answer, turning the quiet corridors into a waking maze of shouting voices and heavy boots on timber. You throw your weight against the heavy oak door, bursting out onto the open walkways just as a cluster of Brineholder patrolmen rounds the corner with drawn pikes. The grey slate expanse of the upper rooftops offers the only remaining avenue of escape from the converging net.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Scramble up the steep slate roof"
+   ]
+  },
+  "td-3-128": {
+   "title": "The Slate Ridge",
+   "text": "Slanted grey tiles drop away toward the churning abyss below, offering a terrifying expanse of rooftops and rusted gutters where the wind howls unchecked. To your left, a narrow chimney trail winds upward toward the governor's palace, while a dangling hemp rope swings wildly across a yawning chasm ahead. Thick, acrid smoke billows from a lower vent, obscuring potential hiding places in a choking grey fog, and a shattered glass skylight reveals a lavish, chandelier-lit chamber directly below.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Sprint along the sloping rooftop ridge",
+    "Leap across the chasm for the rope",
+    "Plunge into the blinding chimney smoke",
+    "Drop through the shattered glass skylight"
+   ]
+  },
+  "td-3-129": {
+   "title": "The Shattered Tile",
+   "text": "Snatching a heavy, salt-crusted roof tile from the gutter, you wedge it firmly between the iron frame and the latch of the heavy pursuit door just as heavy boots thunder up the wooden stairs. The timber door slams against the improvised obstacle with a dull, splintering crunch, trapping the shouts of your pursuers in the narrow stairwell. Scrambling backward over the slick slate, your hand brushes against a discarded brass scraper left behind by some careless slater.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee across the wet slate tiles"
+   ]
+  },
+  "td-3-130": {
+   "title": "The Jammed Latch",
+   "text": "Your fingers fly over the heavy iron door frame, positioning a jagged shard of roof tile into the narrow gap of the latch just as furious pounding echoes from the other side. The wood shudders under a sudden, violent shoulder-strike, threatening to crush your knuckles against the stone wall if your wedge slips by even a fraction of an inch. Sweat stings your eyes in the damp wind as you hammer the tile home with the heel of your palm, holding your breath against the impending crash.",
+   "check": "Wedge the heavy door shut",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-131": {
+   "title": "Crushed Bone and Iron",
+   "text": "The heavy oak door slams inward with crushing force just as your fingers slip, driving the jagged roof tile deep into your palm and pinning your hand against the rough stone facing. A white-hot agony flares through your wrist, leaving your knuckles bruised and weeping dark blood onto the wet slate. You yank your hand free with a stifled curse, stumbling backward across the slippery roof while the pursuit spills out behind you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stagger away from the pursuit"
+   ]
+  },
+  "td-3-132": {
+   "title": "The Holdfast Wedge",
+   "text": "The jagged tile bites deep into the timber frame, holding the heavy door fast against the fury of the guards with a solid, unyielding groan of tortured wood. However narrowly you managed the placement, the sudden blockade buys you precious heartbeats to put distance between yourself and the shouts behind you. Your fingers throb with a dull ache, but clutched tightly in your left hand is a heavy brass scraper dropped by the fleeing patrols.",
+   "check": "",
+   "grant": "Heavy brass scraper",
+   "exits": [
+    "Drop through the glass skylight below"
+   ]
+  }
+ },
+ "missing": []
+}

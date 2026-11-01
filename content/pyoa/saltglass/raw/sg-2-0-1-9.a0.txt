@@ -1,0 +1,61 @@
+Gemini said
+
+@@SECTION sg-2-0-1-9
+TITLE: The Brand of Authority
+TEXT: A weathered timber stake bearing a faded brand of the Salt Court leans drunkenly in the glare, marking a closed concession where illegal diggers once sought buried glass beads before the bailiffs drove them out. The surrounding ground is pitted with small, shallow craters like the pockmarks of a diseased skin, glinting with discarded shards that catch the cruel midday fire. You wipe the sweat from your forehead with the back of a calloused hand, your fingers brushing against the cold ceramic weight of the Seedkey hidden beneath your tunic. Behind you, the blinding flats stretch endlessly toward a shimmering horizon, while ahead the trail divides amidst the ruined diggings. You must decide whether to press onward toward the ridge or seek shelter among the hollow jars.
+EXIT 1: Climb the steep salt ridge
+EXIT 2: Inspect the abandoned moisture jars
+@@END
+@@SECTION sg-2-0-2-0
+TITLE: The Hidden Seep
+TEXT: Traveling entirely alone across the blinding crust without a guide's chatter to distract you, you spot a faint depression in the salt where a fresh moisture seep has recently softened the surface. A thin film of dark, mineral-rich damp glistens within the hollow, smelling faintly of sulfur and cold earth. Your throat feels like parched sandpaper, yet you know that drinking untamed water in the basin is a gamble with your own endurance. You crouch low to examine the damp earth, listening to the vast and hollow silence of the flats pressing in from all sides. Will you risk a taste of the moisture, or keep your pace steady and leave the seep behind?
+EXIT 1: Slip past the unattended toll-hut // EXIT 1 label must express: Slip past the unattended toll-hut
+@@END
+@@SECTION sg-2-0-2-1
+TITLE: The Slag Mound
+TEXT: You skirt a massive mound of fused green slag that hums with trapped solar heat, casting a long shadow where you stop briefly to wet your parched throat from your rapidly dwindling flask. The strange vitreous mass vibrates with a low, sub-audible drone, a remnant of ancient glassworks that still holds the memory of forgotten fires. Wisps of heated air dance off its glassy slopes, distorting the stark white landscape into wavering ribbons of light. You clutch your canvas cloak tighter around your shoulders, shielding the banked coal-lantern from the thermal backwash. You can either skirt the humming mound to seek a hidden path or plunge directly into the jagged labyrinth of salt pillars nearby.
+EXIT 1: Slip past the unattended toll-hut // EXIT 1 label must express: Slip past the unattended toll-hut
+EXIT 2: Navigate the jagged salt pillars
+@@END
+@@SECTION sg-2-0-2-2
+TITLE: The Salt-Brick Cart
+TEXT: A weather-beaten wooden cart abandoned by desperate refugees stands tilted on a broken axle, its cargo of brittle salt-bricks spilling out like bleached loaves across the blinding white expanse. The sun has baked the timber until it splinters at a touch, and the wheel spokes are choked with fine alkaline dust. You pause in its meager shadow, running a hand over the rough-hewn frame before looking out at the featureless terrain stretching before you. A narrow passage opens between towering salt formations, while further off a solitary figure is visible near a dry cistern. You must choose your next direction carefully.
+EXIT 1: Navigate the jagged salt pillars
+EXIT 2: Approach the wary glass-diver
+@@END
+@@SECTION sg-2-0-2-3
+TITLE: The Alkali Whirl
+TEXT: You dodge a sudden whirl of stinging alkali dust sweeping across the basin, pulling your woollen scarf tight across your nose while navigating entirely by the angle of the blinding midday sun. The stinging grit abrades your cheeks and finds every seam in your travel-worn boots, turning each step into an exercise in stubborn endurance. Through the swirling white haze, the skeletal remains of old structures loom like ghost ships upon a frozen sea. You tighten your grip on your heavy canvas cloak to keep the dust from fouling your banked ember-lamp. Ahead lies a treacherous expanse of thin ice over a dormant brine-pan that demands your absolute concentration.
+EXIT 1: Cross the treacherous brine-pan ice
+@@END
+@@SECTION sg-2-0-2-4
+TITLE: The Singing Lens
+TEXT: An elderly scavenger named Orla sits cross-legged upon a flat salt-pavement, polishing a fragment of singing green lens that chimes musically whenever the hot desert draught sweeps across its razor-thin edge. She glances up with eyes crinkled against the glare, offering a toothless grin and a nod that acknowledges your weary posture without asking for pity. The haunting, bell-like tones echo softly against the surrounding flats, creating an eerie melody in the dead silence of the basin. You stand for a moment in the warm wind, listening to the glass sing of storms that haven't broken in decades. Three distinct routes beckon from her resting place.
+EXIT 1: Navigate the jagged salt pillars
+EXIT 2: Approach the wary glass-diver
+EXIT 3: Visit the abandoned rain-god shrine
+@@END
+@@SECTION sg-2-0-2-5
+TITLE: The Collapsed Conduit
+TEXT: You cross the rotting timbers of an underground brine-conduit that has collapsed inward, revealing a dark subterranean shaft where drops of heavy, bitter water plink against unseen stone far below. The air rising from the fissure is cool and damp, carrying an ancient scent of buried mud that contrasts sharply with the scorching salt crust above. You peer down into the shadowy void, gripping your canvas cloak so the banked coal-lamp does not swing loose against your ribs. The ground around the rim looks unstable, threatening to slough away if you linger too long. You can follow the fractured trench toward a ruined shrine, skirt a smoking sulfur vent, or track a desert fox toward a culvert.
+EXIT 1: Visit the abandoned rain-god shrine
+EXIT 2: Skirt the smoking sulfur vent
+EXIT 3: Follow the inquisitive desert fox
+@@END
+@@SECTION sg-2-0-2-6
+TITLE: The Toll Banner
+TEXT: A tethered, wind-bleached canvas banner bearing the twin serpents of the Salt Court flutters aggressively from an iron pole, marking the outer perimeter of their toll-collection zone ahead. Armed sentries in boiled-leather jerkins pace near a low stone guardhouse, their spears catching the harsh sunlight as they inspect the horizon for unwary travelers. You duck behind a low shelf of fused glass, feeling the familiar weight of the Seedkey against your chest and checking that your coal-lantern is safely banked. You can either approach the checkpoint openly or risk slipping past the patrol in the blinding glare.
+EXIT 1: Visit the abandoned rain-god shrine
+EXIT 2: Sneak past the patrolling toll-lord // EXIT 2 label must express: Sneak past the patrolling toll-lord
+@@END
+@@SECTION sg-2-0-2-7
+TITLE: The Hidden Flagstone Path
+TEXT: Traveling completely alone and unencumbered by a guide, you notice a subtle color shift in the alkali crust that reveals an ancient, buried flagstone path bypassing the main toll-hut entirely. The pale slate stones are worn smooth by centuries of vanished feet, offering firm footing beneath the treacherous white dust. Because no companion is walking beside you to point out the obvious landmarks, your sharp eyes catch the faint geometric edges where the old road re-emerges from the flats. You slip quietly onto the hidden flagstones, leaving the patrols far behind. A low culvert lies ahead, framed by smooth glass lining.
+EXIT 1: Follow the inquisitive desert fox
+@@END
+@@SECTION sg-2-0-2-8
+TITLE: The Glass Reed Ditch
+TEXT: You wade cautiously through a dry drainage ditch choked with razor-sharp glass reeds that rustle like dry parchment, testing your patience and threatening to shred your trousers with every labored step. The translucent stalks clink against one another like wind chimes made of ice whenever your shins brush past them, creating a delicate music that betrays your passage. You keep your hands tucked safely inside your sleeves to avoid cutting your palms on the glittering vegetation. The ditch leads steadily downward into the heart of the flats, offering two distinct ways forward as the reeds thin out.
+EXIT 1: Follow the inquisitive desert fox
+EXIT 2: Cross the ancient basalt pavement
+@@END

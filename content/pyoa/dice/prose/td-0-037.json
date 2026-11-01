@@ -1,0 +1,99 @@
+{
+ "batch": "td-0-037",
+ "sections": {
+  "td-0-037": {
+   "title": "A Pilgrim's Ward",
+   "text": "Breathing a heavy sigh, you let the echo of the pilgrim's shriek fade into the damp air of the cliffs. Whether you spoke too harshly or moved too fast, the panic passes eventually, leaving him shivering and repentant. He murmurs apologies to the absent sea, clawing at his kelp mantle. In exchange for your patience, he presses a small, cold object into your palm before scuttling away towards the deeper shadows of the rocks.\n\nIt is a bleached piece of spine, carved with the symbol of an unfurling wave - a ward against the wrath of the drowned. Tucking the charm into your coat, you turn your attention back to the broader chaos of the cliff-town, ready to seek answers where the water used to be.",
+   "check": "",
+   "grant": "Bleached bone wave talisman",
+   "exits": [
+    "Return to the dry docks"
+   ]
+  },
+  "td-0-038": {
+   "title": "Stepping Onto The Low",
+   "text": "Turning away from the comforting gloom of Gullmouth's sheer stone, you cross the threshold of the known world. Beneath your boots, the ground crunches - a thick crust of white salt stretching out to the bruised horizon where the ocean should be. This is the Low, the naked seabed exposed by the great retreat. A grim landscape of marooned wrecks, jutting whale ribs, and shimmering sinkholes lies waiting under the harsh sun.\n\nSomewhere out there in this vast, desiccated wasteland, Orsolya Venn is searching for the Sunken Stair and the jammed mechanism of the Meridian Gear. The wind howls across the flats, carrying the scent of rotting kelp and dried brine. You pull your collar high against the chill. There is no map for a world turned inside out, only the distant, dark shapes of scavenger camps and the looming silhouettes of coral spires. With every step away from the cliff-town, the reality of the missing sea settles heavier upon your shoulders.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue across the exposed seabed"
+   ]
+  },
+  "td-0-039": {
+   "title": "A Precious Source of Light",
+   "text": "Carefully, you wedge your blade under the tarnished rim of the heavy brass lantern. It is a beautiful old piece of salvage, likely stripped from a nobleman's drowned yacht, but you have no need for decorative metal right now. You need the dark, viscous fuel sloshing in its belly. The hinges are rusted shut with thick green verdigris, requiring a delicate, steady hand to pry open without tipping the reservoir. The subterranean depths beneath the Sunken Stair will be pitch black, and the shadows of the Low are already lengthening. Holding your breath, you prepare to work the stubborn clasp free, hoping to decant the precious oil into your own flask before it can seep into the floorboards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed with dismantling the lantern"
+   ]
+  },
+  "td-0-040": {
+   "title": "The Rusted Spyglass",
+   "text": "Tarnished brass and cracked leather make up the ruined spyglass you find abandoned on the lighthouse balcony. It is jammed completely shut, the extending barrels fused together by years of salt spray and neglect. A scavenger on the Low without a way to spot rivals or landmarks is as good as blind, making this broken instrument highly valuable if you can force it to function. The metal edges are jagged where the housing has split, threatening to slice your palms open if your grip slips. Gritting your teeth, you find a firm hold on both ends, planting your boots wide. If you can just break the seal of rust, the lenses might still be perfectly intact inside.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Attempt to pry open the spyglass"
+   ]
+  },
+  "td-1-001": {
+   "title": "A Dry Harbour Morning",
+   "text": "Silence is the first thing that wakes you. The rhythmic, thunderous crash of waves against the cliffs of Gullmouth has vanished, replaced by an eerie, hollow quiet. Pushing yourself up from your cot, you look out the window and freeze. The harbour is entirely dry. Fishing smacks and smuggler galleons list pathetically in the mud, stranded amidst a vast, steaming expanse of exposed seabed stretching to the horizon.\n\nOn your washstand lies a thick envelope, sealed with the deep blue wax of the lighthouse keeper. Breaking it open, you recognise Orsolya's hurried scrawl. She writes that the Meridian Gear - the great engine of the old Tidewardens - has jammed far beneath the Sunken Stair. The sea has not merely retreated; it is locked out. Whoever turns the ancient wheel will dictate the shape of the returning waters. She has gone ahead, urging you to follow. The fate of the Wrack Coast now rests entirely on who controls the tide.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the stranded harbour"
+   ]
+  },
+  "td-1-002": {
+   "title": "The Stranded Basin",
+   "text": "Barnacle-crusted keels list at sickening angles in the dried silt of Gullmouth Harbour, where the salt-stench of dead weed and black mud clings to the wool of your coat. Shouts echo off the timber pilings as rival wreckers claw through the weed-matted troughs of the seabed, iron bars clinking against stranded anchors and waterlogged chests. Down among the tilted hulls and weeping brine-pipes, every man and his cousin looks for an edge before the tide clock turns its iron tooth.\n\nScraps of copper and heavy oak timbers lie waiting for the bold or the desperate, half-buried in the muck where the gulls have given up screeching and taken to pacing the dried mud. You must choose where your hands fall first among the wreckage before the basin fills with wolves or water.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face down the snarling rival crew blocking the fishing skiff",
+    "Rig a tackle-block to patch the hanging hull before the timber splits",
+    "Shoulder through the swollen cedar door of the abandoned bait-shack",
+    "Haggle with the mud-stuck ferryman for his survey of the sinkholes",
+    "Work a stubborn skeleton key into the harbourmaster office lock",
+    "Enter the smoky hall of the Wreckers Guild to press your claim"
+   ]
+  },
+  "td-1-003": {
+   "title": "Claiming The Stranded Trawler",
+   "text": "Three burly scavengers from the Bilge-Rat crew are already swarming over the hull of a stranded trawler, prying at the valuable brass fittings with crowbars. Looped securely over the prow is a heavy iron grappling hook attached to a thick coil of hemp - a perfect tool for navigating the vertical drops of the exposed sinkholes out on the Low. You need that rope. Striding purposefully across the sucking mud, you call out a sharp challenge, demanding they hand over the gear. The largest of the three pauses, wiping a filthy hand across his jaw, and raises his iron bar in a silent threat. If you flinch now, they will fall upon you like starved gulls. You must stand your ground and make them believe you are the predator here.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stare down the rival crew"
+   ]
+  },
+  "td-1-004": {
+   "title": "A Test of Nerve",
+   "text": "Meeting the gaze of the lead scavenger, you square your shoulders and drop your hand to the heavy iron hook at your belt. You do not blink. You do not speak again. You simply let the cold, flat deadliness of your stare do the talking. The harbour is a brutal place, and blood in the mud is a daily occurrence, but these vultures are opportunists, not hardened killers. You walk slowly toward the hull of the trawler, putting yourself well within striking distance of the crowbar, daring him with your silence to take the swing. The wind whistling through the dry masts above is the only sound as the tension stretches to a breaking point.",
+   "check": "Intimidate them with sheer nerve",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-005": {
+   "title": "Bruised Ribs and Pride",
+   "text": "Hesitation betrays you. The moment your eyes flick toward the heavy crowbar in the scavenger's grip, he smells your uncertainty. With a jeering laugh, he swings the iron bar in a vicious arc, catching you hard across the ribs. Pain explodes through your side, stealing your breath and sending you stumbling backward into the foul-smelling muck. The crew mocks you as you scramble to your feet, coughing and clutching your bruised chest. You have lost face here, and the pain in your ribs will dog you for days, sapping your strength. Wisely deciding not to press your luck against three armed rivals with a compromised stance, you back away, leaving them to their prize.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Limp back to the main harbour"
+   ]
+  },
+  "td-1-006": {
+   "title": "Yielding to the Predator",
+   "text": "Grumbling dark curses, the leader of the scavengers finally breaks eye contact and lowers his weapon. Regardless of how close things came to violence, the sheer force of your will proves too much for their cowardly hearts. They quickly gather their pry-bars and slide down the opposite side of the hull, abandoning their claim in favour of easier pickings elsewhere in the dry harbour. Wiping a smear of mud from your cheek, you step up to the trawler's prow and unhook the heavy iron grapple. The thick hemp rope is dry and perfectly coiled. Hauling it over your shoulder, you feel significantly more prepared to descend into the treacherous depths of the Low.",
+   "check": "",
+   "grant": "Iron grappling hook",
+   "exits": [
+    "Return to the chaotic docks"
+   ]
+  }
+ },
+ "missing": []
+}

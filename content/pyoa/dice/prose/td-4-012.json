@@ -1,0 +1,92 @@
+{
+ "batch": "td-4-012",
+ "sections": {
+  "td-4-012": {
+   "title": "Rust and Seal",
+   "text": "Heavy iron studs crust the bulkhead door like barnacles on a sunken spar. You throw your shoulder against the corroded hinge, planting your boots on the damp stone until your calves tremble with the strain. Metal groans against metal, spraying orange flakes into the drafty gloom of the stairwell. Inside, a narrow guard post smells of stale tallow and ancient salt. You press forward to inspect the gloom.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide through the narrow iron gap"
+   ]
+  },
+  "td-4-013": {
+   "title": "The Guard Post",
+   "text": "Dim phosphor light catches the edge of a racked weapons bench inside the abandoned shelter. Dust coats every surface like fine grey ash, undisturbed since the day the sea withdrew. You step past a rotting leather stool, your fingers trailing along the damp stone wall for any sign of movement or hidden hazards. The air tastes of stagnant bilge and cold iron. Deeper in the shadows, something long and dark rests against the back timber.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the weapon in the dark"
+   ]
+  },
+  "td-4-014": {
+   "title": "Wrenched Iron",
+   "text": "Tendons strain in your forearms as you grip the rusted latch of the inner locker, putting your full weight into the heave to break the seal. The old iron resists with a shrieking grind that echoes up the vertical shaft, threatening to jam permanently or snap the retaining pin. Sweat beads on your forehead despite the subterranean chill as you brace your feet and push harder against the unyielding metal.\n\n",
+   "check": "Heave the jammed iron bulkhead open",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-015": {
+   "title": "Heavy Cost",
+   "text": "The rusted latch gives way with a sudden, vicious snap that sends you stumbling backward against the rough stone wall. A jagged edge of iron catches your forearm, tearing through your sleeve and leaving a hot, stinging gash that oozes dark blood. You clutch your arm, wincing as the salt-laden air bites into the raw skin. Though your breath comes ragged and the wound throbs with a dull ache, you push yourself upright.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Collect the heavy harpoon despite the pain"
+   ]
+  },
+  "td-4-016": {
+   "title": "Deep Iron Barbed",
+   "text": "Your fingers wrap around the cold, salt-pitted shaft of the heavy harpoon resting against the locker wall. The point is forged from dull black glass, sharp enough to pierce the thickest hide of any creature prowling the dry seabed. You slide it free from its mount, feeling its balanced weight settle into your palm as a grim safeguard for the dark miles ahead.\n\n",
+   "check": "",
+   "grant": "Heavy glass-tipped harpoon",
+   "exits": [
+    "Descend toward the silent tide bell"
+   ]
+  },
+  "td-4-017": {
+   "title": "Ribs of the Leviathan",
+   "text": "Giant yellowed ribs arch overhead like the vault of a drowned cathedral, framing the dizzying drop into the bowels of the stairwell. Each footstep on the old whalebone bridge sends a hollow vibration up through the soles of your boots. Below you, the abyss stretches endlessly downward, filled with the faint sound of dripping water and distant, mournful echoes. You keep your eyes fixed on the far side of the span.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the curving bone walkway"
+   ]
+  },
+  "td-4-018": {
+   "title": "The Swinging Span",
+   "text": "A sudden gust of updraft catches your coat, making the suspension ropes groan and sway above the unseen chasm. You lower your center of gravity, spreading your weight evenly across the porous surface of the ancient vertebrae. Every instinct warns against rushing, urging absolute stillness between each measured step. The air grows colder and damper the further you move from the stone threshold.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step carefully onto solid stone again"
+   ]
+  },
+  "td-4-019": {
+   "title": "Breath on the Edge",
+   "text": "A sharp tremor rattles the suspension anchors, sending a shower of bone dust down into the black void below. You freeze mid-stride, centering your weight over the narrowest part of the span as the entire walkway sways rhythmically in the rising draught. Your heart hammers against your ribs like a trapped bird, but you force your breathing to slow, refusing to let panic dictate your balance.\n\n",
+   "check": "Maintain absolute calm across the chasm",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-020": {
+   "title": "Shaken Balance",
+   "text": "A sudden lurch of the bridge throws you sideways, forcing you to drop to your hands and knees on the slick bone surface. Your shoulder slams hard against a protruding rib, knocking the wind from your chest and leaving a deep, aching bruise. You cling tightly to the porous marrow until the swaying subsides, swallowing the metallic taste of fear in your mouth before crawling the final yards to safety.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retrieve the coiled silk rope"
+   ]
+  },
+  "td-4-021": {
+   "title": "Silken Strand",
+   "text": "Your hand closes around a tightly wound coil of salt-resistant silk rope resting atop a stone bollard. The fibers are remarkably supple, showing no rot despite decades in the damp salt air. You sling the coil over your shoulder, feeling the reassuring heft of reliable cordage that might well mean the difference between climbing back out of the deep or remaining down here forever.\n\n",
+   "check": "",
+   "grant": "Perfectly preserved silk rope",
+   "exits": [
+    "Approach the colossal silent bell platform"
+   ]
+  }
+ },
+ "missing": []
+}

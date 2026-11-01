@@ -1,0 +1,55 @@
+@@SECTION ul-3-171
+TITLE: Reaching the Evidence
+TEXT: Cold brass rails press against your ribs as you navigate the narrow gap between the prosecution bench and the stacks of unindexed ledgers. Sharp-eyed scribes lean forward, their quills hovering like needles above parchment, waiting for a stumble that never quite arrives. You plant your heel firmly on the worn oak floorboards, shifting your weight with practiced shelving agility to bypass a dangling loop of red tape. The evidentiary table lies just ahead, cluttered with ink-pots and disputed dockets. // Dust motes drift lazily through the shaft of grey light cutting across the aisle, illuminating the faint smell of vinegar and stale paper that clings to the tribunal's velvet hangings.
+EXIT 1: Inspect the disputed ledgers closely
+@@END
+@@SECTION ul-3-172
+TITLE: Navigating the Trap
+TEXT: Sudden movement rattles the mahogany floor as a sweeping procedural snare uncoils from beneath the bench, aiming directly for your shins with mechanical precision. Shifting your weight instantly, you drop low and attempt to slide across the slick surface, trusting your balance entirely to the muscle memory acquired from years of hauling heavy trolleys through shifting stacks. A sharp draft from the high windows catches your collar, threatening to tip you sideways into the waiting clerks. Every eye in the court freezes on your descent.
+CHECK: Maintain balance despite the sweeping snare
+@@END
+@@SECTION ul-3-173
+TITLE: Cost of a Slip
+TEXT: Rough oak splinters bite deep into your palm as you collide heavily with the edge of the tribunal table, sending a row of brass ink-pots clattering across the floor. Angry whispers ripple through the gallery of Cataloguers as you pick yourself up, brushing dark walnut dust from your bruised shoulder. The chief magistrate scowls, marking a black demerit against your name in the register, costing you precious time and leaving a raw, throbbing scrape along your forearm. You regain your footing amidst the scattered papers, bruised but entirely unbroken.
+EXIT 1: Approach the table with caution
+@@END
+@@SECTION ul-3-174
+TITLE: Graceful Passage
+TEXT: Fluid movement carries you safely past the whipping wooden arm of the trap, allowing you to plant both boots firmly against the legs of the evidentiary table, however narrowly you managed the clearance. The scribes murmur in grudging appreciation of your footwork, while a junior clerk quietly shoves a stray docket aside to clear your path. Resting upon the blotter is a small, folded scrap of heavy rag-paper bearing the private seal of the chief magistrate, granting you a signed exemption pass.
+GRANT: Signed exemption pass
+EXIT 1: Return to the grand tribune
+@@END
+@@SECTION ul-3-175
+TITLE: Seeking the Warrant
+TEXT: Smooth walnut wainscoting reflects the flickering yellow glow of heavy brass wall-lamps as you step closer to the magistrate's elevated chair. The chief magistrate peers over half-moon spectacles, his fingers steepled atop a massive ledger containing centuries of rejected petitions. You keep your tone low, measured, and carefully devoid of defensive urgency, speaking of urgent library business that brooks no bureaucratic delay. A faint crease forms between his bushy white eyebrows as he weighs your lack of formal ink-stamps against the sheer audacity of your request. // The low murmur of the surrounding court fades into an expectant hush while the old man turns a heavy page.
+EXIT 1: Press the argument for travel papers
+@@END
+@@SECTION ul-3-176
+TITLE: Testing the Magistrate
+TEXT: Dangerous skepticism hardens the magistrate's gaze as you weave a plausible tale of administrative oversight and missing archival seals to justify your unaccredited journey into the deep stacks. You lean forward slightly, pitching your voice to mimic the dry cadence of senior rule-keepers, and attempt to coax a signature from him before he summons the guards to check your credentials. Every syllable hangs heavy in the hushed air of the court while he pauses with his nib poised an inch above the parchment.
+CHECK: Persuade the magistrate without formal accreditation
+@@END
+@@SECTION ul-3-177
+TITLE: Flawed Persuasion
+TEXT: Sharp skepticism flashes in the magistrate's eyes as your carefully constructed argument falters over a nonexistent registry clause, exposing your lack of proper credentials. He slams the heavy ink-well down with a dry thud, muttering darkly about forged permissions and impudent juniors. The resulting interrogation delays you for hours in a damp side-chamber, leaving you with a lingering debt of service to the court clerk who eventually intervenes on your behalf. You emerge with your temper frayed and your pride slightly dented, but free to move forward.
+EXIT 1: Proceed toward the lower corridors
+@@END
+@@SECTION ul-3-178
+TITLE: Winning the Argument
+TEXT: Clever phrasing smooths over the glaring absence of your archival seals, however narrowly your polished rhetoric satisfies the weary magistrate's bureaucratic doubts. He grunts softly, muttering a dry concession before scratching a hasty endorsement across the bottom of a blank travel warrant with his iron pen. You accept the crisp parchment before he can change his mind, securing an invaluable official transit signature that opens doors otherwise firmly bolted against junior pages.
+GRANT: Official transit signature
+EXIT 1: Return to the grand tribune
+@@END
+@@SECTION ul-3-179
+TITLE: The Living Barrier
+TEXT: Heavy parchment stretches like taut skin across the archway, pulsing with dark veins of printer's ink that writhe whenever footsteps echo nearby. Strange marginal notes scrawled in vanished hands ripple across its surface, muttering warnings and obscure riddles into the draughty corridor. This ancient ward guards the approach to the deeper stacks, demanding either an authorized blood-seal from a senior cataloguer or the precise utterance of a forgotten password to grant safe passage. The ink thickens and darkens, forming angry clots that resemble watching eyes as you draw near the pulsating barrier. // A faint smell of scorched hair and damp leather rises from the threshold, warning of the sharp penalties awaiting anyone who attempts to force an entry without proper clearance.
+EXIT 1: Confront the parchment barrier directly
+@@END
+@@SECTION ul-3-180
+TITLE: The Vellum Barrier
+TEXT: Thick stretched hide writhes gently against the corridor walls, its surface mapped with pulsing veins of black printer's ink that shiver in the lamp-light. Every surface hums with low, suppressed magic, whispering fragmented phrases of old rules and forgotten prohibitions into the stagnant air. You stand before the obstruction, feeling the cool draft of the deep stacks seeping through its pores while various paths open up around the chamber. Each available route presents its own distinct challenge, calling for nerve, wit, or sheer physical endurance to conquer the obstacle ahead. // The shifting ink clots and reforms into new geometric shapes, daring you to make a choice before the barrier seals entirely.
+EXIT 1: Force the barrier with sheer will
+EXIT 2: Slice open a hidden pocket with grace
+EXIT 3: Dissolve the magic with a verbal paradox
+EXIT 4: Step out onto the grand balcony
+@@END

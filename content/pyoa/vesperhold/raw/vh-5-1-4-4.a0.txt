@@ -1,0 +1,55 @@
+@@SECTION vh-5-1-4-4
+TITLE: Frost-Rimed Plum Trees
+TEXT: Frost-rimed plum trees crowd the path so tightly that your heavy bronze burden scrapes against their frozen bark with a dry, metallic rasp. Each twisting bough hangs low under the grey weight of the cloud-drenched air, trapping you in a silent, freezing tunnel of wood and rime. Biscuit plants his hooves behind you, snorting a warm plume of mist against the damp moss as the branches claw at your canvas straps. You must decide whether to force a narrower passage through the northern thicket or test the slippery footing of the stone run winding down toward the lower terrace.
+EXIT 1: Force a passage through the frozen branches
+EXIT 2: Step carefully down the slick stone run
+@@END
+@@SECTION vh-5-1-4-5
+TITLE: The Blind Signpost
+TEXT: A wooden signpost with worn lettering points blindly into the heavy mist, its directions long since washed away by decades of mountain rain and biting frost. Barely legible grain streaks hint at old paths toward the lower orchards, but the wood is swollen and damp beneath your exploring fingers. Biscuit nudges your shoulder, eager to leave the quiet gloom of the crossing while the air remains still. You can trust the faint impression of an arrow pointing toward the western steps or follow the sound of dripping water past the splintered post.
+EXIT 1: Follow the faint arrow west
+EXIT 2: Walk toward the dripping water
+@@END
+@@SECTION vh-5-1-4-6
+TITLE: The Deceptive Curtain
+TEXT: The rhythmic dripping of moisture from overhead branches creates a deceptive curtain of sound masking the guard-post just beyond the hedgerow. Water droplets strike broad pear leaves with monotonous regularity, turning the muffled silence of the orchard into a steady, whispering screen. You pause to adjust the heavy bronze Clapper on your back, letting the familiar hum steady your breathing against the cold. The temptation to dart past while the acoustics remain tangled in the foliage pulls at your nerves, but the risk of stumbling into an unseen patrol grows with every step.
+EXIT 1: Dart quickly through the dripping screen
+EXIT 2: Creep forward along the sheltered ditch
+@@END
+@@SECTION vh-5-1-4-7
+TITLE: The Draft and Smoke
+TEXT: Cold mountain draft channels down the stone corridor, carrying the sharp tang of woodsmoke and roasted chestnuts from a hearth hidden somewhere in the white gloom. The sudden warmth is a welcome relief against your stiff shoulders, though the heavy iron cradle holding Orison's tongue remains bitterly cold. You lean against the damp masonry to catch your breath while Biscuit stamps an impatient hoof on the flagstones. Beyond the drafty threshold, the path splits between a narrow service stair and a wider mule track half-blocked by fallen crates.
+EXIT 1: Take the narrow stone service stair
+EXIT 2: Follow the wide mule track past the crates
+@@END
+@@SECTION vh-5-1-5-0
+TITLE: Pale Lantern Light
+TEXT: Pale lantern light flickers through the greasy horn windows of the low stone shelter where the whistle-guards wait out the heavy mountain haar. Inside, a low murmur of voices rises over the steady hiss of damp firewood and boiling chicory. You shift the padded straps of your burden, feeling the dull bronze hum against your spine as you weigh your options in the shadow of the eaves. Pressing onward past the lighted window risks drawing the attention of the vigilant wardens, while turning back means losing precious hours before the ice-wind season closes the upper passes.
+EXIT 1: Press on past the lighted window
+EXIT 2: Turn back toward the old orchard roots
+@@END
+@@SECTION vh-5-1-5-1
+TITLE: The Notched Tally Stick
+TEXT: A notched wooden tally stick hangs beside the heavy oak door of the post, recording the day's transit tolls in neat, rough-hewn gashes. The wood smells of resin and old ink, untouched by the drifting fog that clings stubbornly to the lintel and stone jambs. You run a gloved finger over the recent marks, wondering how many carriers have passed this way today with loads heavier than your own. The road ahead vanishes completely into the white soup, leaving you with little choice but to step forward and face whatever lies beyond the threshold.
+EXIT 1: Press on into the dense white fog
+@@END
+@@SECTION vh-5-1-5-2
+TITLE: Piles of Grey Wool
+TEXT: Piles of grey wool blankets sit on a rough bench inside the porch, smelling faintly of sheep lanolin and lingering rain. The shelter offers a brief, dry respite from the relentless chill of the Fogbank Orchards, though the heavy bronze Clapper on your back reminds you that the journey cannot pause for long. Biscuit shakes his head, sending a cascade of droplets from his ears onto the dusty flagstones. You can either shoulder your burden and plunge back into the damp gloom or linger a moment longer to warm your frozen fingers.
+EXIT 1: Press on into the damp grey gloom
+@@END
+@@SECTION vh-5-1-5-3
+TITLE: The Boiling Tin Kettle
+TEXT: A tin kettle boils over on an iron brazier, filling the drafty watch-room with steam and the scent of roasted chicory. The sudden heat fogs your spectacles and dampens your collar, but the warmth sinks gratefully into your aching muscles. Outside the small iron-barred window, the grey mist shifts sluggishly against the glass like a restless animal. You must decide whether to leave the relative comfort of the hearth behind or spend more time warming your boots before tackling the steep drop ahead.
+EXIT 1: Press on into the chilly mountain air
+@@END
+@@SECTION vh-d-5-1
+TITLE: The Blind Leap
+TEXT: Ignoring all the Warden whistle-codes, you bolt headlong through a blind orchard gap in the thickest fog, plunging straight down an unflagged cliff drainage chute. The loose gravel gives way instantly beneath your boots, sending you sliding into a wall of wet limestone. The heavy bronze Clapper breaks free from its rotting straps, shattering against the bedrock below with a dull, mournful shriek that echoes endlessly down the silent mountain.
+@@END
+@@SECTION vh-5-c2
+TITLE: The Warden's Post
+TEXT: Fog-Wardens cluster around the low stone shelter, their polished horn whistles catching the pale light of the hanging lanterns. They are masters of the mist, relying on complex codes and breath-notes to track every traveler who passes between the thirteen hanging towns. The captain steps forward, blocking the narrow track with a steady, unblinking gaze that pierces through your hesitation. // You must choose your next move carefully before the watchful guardians decide your fate for you.
+EXIT 1: Answer the Wardens in wind-call
+EXIT 2: Slip past the Wardens unseen
+@@END

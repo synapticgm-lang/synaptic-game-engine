@@ -1,0 +1,70 @@
+@@SECTION vh-5-2-2-12
+TITLE: The Rushing Flume
+TEXT: Gnarled apple trunks twist into shapes like reaching fingers as you thread your path through the ancient orchard, guided by the steady, rushing sound of a distant water flume. The heavy bronze tongue on your back hums a low, sympathetic vibration against your spine, matching the pulse of the mountain current nearby. // A sudden clatter shatters the muffled stillness of the fog, and you spot danger barreling down the terrace. You must choose how to respond before the momentum catches you.
+EXIT 1: Dive into the alcove from the bounding barrel
+EXIT 2: Verify the Lowgate path by the lichen milestone
+@@END
+
+@@SECTION vh-5-2-2-13
+TITLE: Tallow and Frost
+TEXT: White frost clings to the old scar across your knuckles, a lasting reminder of the bitter glacier crossing that tested your endurance weeks ago. Remembering an old carter's trick, you pause to rub rendered tallow into your boot-soles, ensuring that every step you take through the silent fog remains completely soundless. The weight of the bronze clapper rests securely in its padded cradle, its faint metallic thrum muted by the heavy, damp air of the orchard.
+EXIT 1: Duck away from the bouncing timber barrel
+EXIT 2: Check the weathered milestone for the Lowgate distance
+EXIT 3: Turn back along the mossy irrigation run
+@@END
+
+@@SECTION vh-5-2-2-14
+TITLE: The Cart Above
+TEXT: Low-hanging branches scratch against the canvas of the heavy bell-cradle as you navigate the narrow, twisting animal track through the fog. A heavy farm cart rumbles along the paved terrace directly overhead, its iron-rimmed wheels grinding against frozen gravel and shaking loose droplets of cold dew. You press yourself flat against the damp earth, waiting out the passage of the unseen vehicle before you dare to move forward.
+EXIT 1: Slip through the leather-hinged orchard gate
+EXIT 2: Descend the moss-slick stone stairs toward the rumble
+@@END
+
+@@SECTION vh-5-2-2-15
+TITLE: The Storage Clamp
+TEXT: Root vegetables stored for the winter fill the stone clamp beside you with a sharp, earthy scent that cuts through the thick white gloom. You freeze in place as a heavy timber door creaks open just yards away, casting a pale sliver of lamplight across the wet grass. Holding your breath, you keep your hand steady against the padded frame of the bronze clapper until the footsteps fade back inside.
+EXIT 1: Step quietly through the oiled leather gate
+EXIT 2: Follow the steep stone stairway downward in the mist
+@@END
+
+@@SECTION vh-5-2-3-0
+TITLE: The Drainage Sluice
+TEXT: Wet timber groans beneath your boots as you cross a narrow wooden plank stretched over a roaring mountain drainage sluice. The icy water churns violently below, throwing up a fine mist that mixes with the heavy cloud blanketing the terraces. Every step requires absolute concentration as the heavy bronze cradle on your back shifts its weight against your shoulders.
+EXIT 1: Step out onto the grand limestone staircase
+EXIT 2: Pause to gaze up at the misty mountain face
+@@END
+
+@@SECTION vh-5-2-3-1
+TITLE: The Quince Plantation
+TEXT: Dwarf quinces crowd the damp earth on either side of the narrow path, their stiff branches tangling with your heavy carrying straps. Somewhere near the upper fence, a stray dog barks sharply against the blanket of fog, and you duck low among the leaves to avoid drawing unwanted attention from the orchard guards.
+EXIT 1: Move out onto the wide limestone steps
+EXIT 2: Wipe the condensation away at the stone toll-arch
+EXIT 3: Walk down the paved descent toward the valley floor
+@@END
+
+@@SECTION vh-5-2-3-2
+TITLE: The Tax-Collector
+TEXT: Grey stone offers meager camouflage as you press your back against the retaining wall, listening to the hurried footsteps of a Cable Court tax-collector. He marches past with a thick leather ledger tucked tightly under his arm, muttering complaints about the damp weather and missed toll collections in the fog.
+EXIT 1: Proceed toward the open limestone steps
+EXIT 2: Approach the silent stone toll-arch ahead
+@@END
+
+@@SECTION vh-5-2-3-3
+TITLE: The Fallen Fruit
+TEXT: Thick heaps of rotting fruit turn the muddy terrace into a treacherous obstacle course beneath the heavy gray fog. You clutch at dangling branch-ends with frozen fingers, using every bit of balance you possess to keep the swaying bronze clapper from throwing you off your footing.
+EXIT 1: Climb out onto the grand limestone staircase
+EXIT 2: Reach the stone toll-arch with the silent bells
+@@END
+
+@@SECTION vh-5-2-3-4
+TITLE: The Winch Station
+TEXT: Rusted iron frames a dormant winch station where thick steel cables disappear into the blinding white gulf of the valley. A rhythmic, metallic creak echoes along the line as tension shifts through the unseen machinery suspended over the sheer drop.
+EXIT 1: Look back up toward the heights of Vesperhold
+@@END
+
+@@SECTION vh-5-2-3-5
+TITLE: The Sorting Table
+TEXT: Canvas flaps snap softly in the damp breeze beneath a large fruit-sorting table where you crouch out of sight. A pair of orchard workers stand nearby, their voices carrying through the mist as they grumble bitterly about the unusually early arrival of the freezing mountain weather.
+EXIT 1: Glance up at the distant, misty mountain face
+EXIT 2: Head down the paved descent toward the foundry
+@@END

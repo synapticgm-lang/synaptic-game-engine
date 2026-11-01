@@ -1,0 +1,89 @@
+{
+ "batch": "sg-6-0-2-11",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-0-2-11": {
+   "title": "Shafts of Amber Light",
+   "text": "Shafts of filtered amber light pierce down through narrow ventilation shafts, illuminating floating motes of quartz dust in the stillness of the subterranean hall. Your banked coal-lantern casts a competing red glow against the ancient masonry, warming the damp air.\n\nYou slip behind a stack of slate partition slabs, hiding from the distant, rhythmic clank of automated machinery echoing through the masonry.",
+   "exits": [
+    "Hide behind the slate slabs"
+   ]
+  },
+  "sg-6-0-3-0": {
+   "title": "Copper Treads Ring Softly",
+   "text": "You climb a spiral stair of hollow copper treads that ring like chimes beneath your boots, threatening to wake the silent halls with every careful step. A grand double door of iron-studded oak stands slightly ajar ahead, leaking a smell of dry chaff and ancient preservation. Alternatively, you can scramble down a chute of polished green glass, sliding past rows of empty bin markers cut into the basalt.",
+   "exits": [
+    "Push open the oak doors",
+    "Slide down the green chute"
+   ]
+  },
+  "sg-6-0-3-1": {
+   "title": "Alkaline Drift of Salt",
+   "text": "A stone basin filled with salt crystals blocks the threshold, forcing you to wade through a crunching drift of alkaline powder that stings your ankles. A grand double door of iron-studded oak stands slightly ajar ahead, leaking a smell of dry chaff and ancient preservation. Alternatively, you can scramble down a chute of polished green glass, sliding past rows of empty bin markers cut into the basalt.",
+   "exits": [
+    "Approach the heavy oak doors",
+    "Descend the glass sliding chute"
+   ]
+  },
+  "sg-6-0-3-2": {
+   "title": "Arched Gallery of Lead",
+   "text": "An arched gallery of ribbed lead tubes hums softly with the vibration of distant winds sweeping across the surface above. A grand double door of iron-studded oak stands slightly ajar ahead, leaking a smell of dry chaff and ancient preservation. You can also scramble down a chute of polished green glass, sliding past rows of empty bin markers cut into the basalt, or step through a shattered fanlight into a long gallery where rows of bronze seed-urns stretch into the dim.",
+   "exits": [
+    "Inspect the oak double doors",
+    "Drop into the glass chute",
+    "Step through the shattered fanlight"
+   ]
+  },
+  "sg-6-0-3-3": {
+   "title": "Gypsum Needles in the Fissure",
+   "text": "You squeeze through a fissure in the limestone where glittering gypsum needles brush against your woolen travelling cloak. A grand double door of iron-studded oak stands slightly ajar ahead, leaking a smell of dry chaff and ancient preservation. Alternatively, you can scramble down a chute of polished green glass, sliding past rows of empty bin markers cut into the basalt.",
+   "exits": [
+    "Reach for the oak doors",
+    "Choose the green glass chute"
+   ]
+  },
+  "sg-6-0-3-4": {
+   "title": "Rusted Shears and Glass Beads",
+   "text": "A wooden workbench holds a rusted set of jeweler's shears and a bowl of clouded glass beads left mid-polish by an unknown hand. A rusted winch mechanism spans the corridor nearby, its iron chain sagging into a heap of orange flakes upon the flagstones. You might also follow a narrow service catwalk that hugs the apex of the ceiling, or descend a stone staircase into a thick bank of subterranean mist.",
+   "exits": [
+    "Examine the rusted winch mechanism",
+    "Climb to the high catwalk",
+    "Descend into the misty stairwell"
+   ]
+  },
+  "sg-6-0-3-5": {
+   "title": "Petrified Timber Bridge",
+   "text": "You cross a bridge of petrified timber over a dry irrigation canal, its wooden ribs groaning under your cautious weight in the hollow quiet. You can scramble down a chute of polished green glass, sliding past rows of empty bin markers cut into the basalt, or step through a shattered fanlight into a long gallery where rows of bronze seed-urns stretch into the dim.",
+   "exits": [
+    "Slide down the glass chute",
+    "Walk toward the bronze urns"
+   ]
+  },
+  "sg-6-0-3-6": {
+   "title": "Peeling Fresco of Green Barley",
+   "text": "A fresco of green barley stalks peels from the plaster in long ribbons, revealing dark volcanic rock beneath the grand design. You can step through a shattered fanlight into a long gallery where rows of bronze seed-urns stretch into the dim, follow a narrow service catwalk that hugs the apex of the ceiling, or retrace your steps past a pillar of fused glass where an abandoned cart of rotting wicker baskets holds only dust and grey husks.",
+   "exits": [
+    "Enter the gallery of urns",
+    "Walk the high service catwalk",
+    "Turn back toward the pillar"
+   ]
+  },
+  "sg-6-0-3-7": {
+   "title": "Iron Ringbolt and Drainage Pit",
+   "text": "An iron ringbolt is set into the floor beside a gaping drainage pit, its shank polished bright by heavy ropes that once hauled loads through the dark. You can follow a narrow service catwalk that hugs the apex of the ceiling, offering a bird's-eye view of the vast, silent storage, or descend a stone staircase into a thick bank of subterranean mist that clings to the floor like chilled breath.",
+   "exits": [
+    "Ascend to the ceiling catwalk",
+    "Descend the misty stone stairs"
+   ]
+  },
+  "sg-6-0-3-8": {
+   "title": "Unmonitored Maintenance Hatch",
+   "text": "Owing no debts to the toll-lords allows you to bypass the locked toll-gate entirely, slipping through an unmonitored maintenance hatch into the inner vaults without a murmur of protest. You can step through a shattered fanlight into a long gallery where rows of bronze seed-urns stretch into the dim, or follow a narrow service catwalk that hugs the apex of the ceiling, offering a bird's-eye view of the vast, silent storage below.",
+   "exits": [
+    "Walk among the bronze urns",
+    "Climb the narrow service catwalk"
+   ]
+  }
+ },
+ "missing": []
+}

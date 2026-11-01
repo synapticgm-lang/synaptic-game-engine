@@ -1,0 +1,76 @@
+@@SECTION vh-3-0-0-1
+TITLE: Toll at the Wheel
+TEXT: Frost rims the axle of the uppermost mill-wheel where Miller Garrow demands a toll before you cross his turning blades. The heavy bronze clapper hums against your spine as you shift your stance on the frozen stone, eyeing the blur of canvas sweeping dangerously close to your ear. // Garrow taps an iron coin-tray with a calloused thumb, his eyes narrowed against the biting mountain wind that shrieks across the terraced fields.
+EXIT 1: Pay the toll with a heavy coin
+EXIT 2: Duck beneath the turning wheel's sweep
+EXIT 3: Bargain with the stubborn miller for passage
+@@END
+
+@@SECTION vh-3-0-0-2
+TITLE: The Stubborn Mule
+TEXT: Biscuit digs her stubborn hooves into the grey grit of the barley path as a sudden gust of mountain wind rattles the flour-sacks piled high against the stone wall. The bronze clapper hums a low, sympathetic note against your tired shoulders while you tug gently on the beast's leather halter. // Across the narrow terrace, a row of silent harvest bells sways slightly in the draft, their iron tongues muffled by thick bands of grease and wool.
+EXIT 1: Pull the mule past the gusty gap
+EXIT 2: Wait out the gale in the lee of the wall
+EXIT 3: Slip through the secret drainage past the post
+@@END
+
+@@SECTION vh-3-0-0-3
+TITLE: Voices on the Wind
+TEXT: A rusted iron wind-pipe hums against your ear on the cliff edge, carrying sharp snatches of argument from the miller's courtyard below through the freezing air. You press your shoulder against the damp stone, listening to the bitter dispute over barley prices and broken axle-trees while the weight of the clapper pulls you downward. // The cold metal vibrates with every rising shriek of the gale, singing a thin, metallic tune that matches the rhythm of your own racing pulse.
+EXIT 1: Follow the pipe down to the courtyard
+EXIT 2: Climb the stone parapet to avoid the noise
+EXIT 3: Press onward along the narrow cliff ledge
+@@END
+
+@@SECTION vh-3-0-1-0
+TITLE: Ducking the Canvas
+TEXT: You duck beneath a spinning canvas sweep that groans against the gale, risking a broken rib to save seconds on the downward track. The coarse fabric grazes your woolen cap with a sharp snap, kicking up a flurry of ice crystals that sting your cheeks. // Behind you, the huge wooden arms of the mill continue their rhythmic pounding against the sky like the wings of a trapped giant.
+EXIT 1: Shout insults back at the angry miller
+EXIT 2: Crawl beneath the low stone trestle
+EXIT 3: Step onto the vibrating timber gallery
+@@END
+
+@@SECTION vh-3-0-1-1
+TITLE: The Grain-Store Door
+TEXT: Old Mara blocks the stone door of her grain-store with a flour scoop, refusing passage unless you recite the proper miller's blessing. White dust clings to her eyebrows and eyelashes, making her look like a creature carved from compacted winter sleet. // The bronze clapper rests heavy and cold against your back as you search your memory for the ancient words taught in the high monastery.
+EXIT 1: Crawl beneath the low stone trestle
+EXIT 2: Distract the children clustering near Biscuit
+EXIT 3: Take the steep ice-glazed stone steps downward
+@@END
+
+@@SECTION vh-3-0-1-2
+TITLE: The Narrow Wall
+TEXT: A sudden eddy catches the bronze clapper on your back, threatening to tip you backward off the narrow terrace wall into the gray mist. You throw your weight forward against the cold stone, fingers digging into the frozen mortar between the slate blocks. // Below your dangling boots, nothing exists except a bottomless ocean of clouds churned white by the mountain wind.
+EXIT 1: Shoo away the hungry terrace children
+EXIT 2: Step onto the vibrating timber gallery
+@@END
+
+@@SECTION vh-3-0-1-3
+TITLE: Hard Rye Bread
+TEXT: You shelter in the drafty lee of a barley hopper where a shivering apprentice offers you a crust of hard rye bread for a copper. The boy's fingers are blue with cold as he clutches a wooden oil-lamp that flickers wildly in the drafts whistling through the timber planks. // The smell of damp grain and stale yeast fills your lungs, offering a momentary refuge from the biting gale outside.
+EXIT 1: Descend the steep ice-glazed stone steps
+EXIT 2: Dodge the flying wooden shutter overhead
+EXIT 3: Confront Miller Caden at the lower gate
+@@END
+
+@@SECTION vh-3-0-1-4
+TITLE: The Irrigation Trench
+TEXT: The rope-bridge across the miller's irrigation trench sags dangerously under your weight while freezing meltwater spits from the rocks above. Each hemp strand groans in protest as the icy spray turns the wooden slats slick as river glass. // You keep your center of gravity low, balancing the heavy bronze tongue against the violent swaying of the bridge.
+EXIT 1: Pay the exorbitant inspection fee at the gate
+EXIT 2: Use the private winch-house stairs with your knot-oath
+@@END
+
+@@SECTION vh-3-0-1-5
+TITLE: Blocked Path
+TEXT: Two bickering millers haul sacks of gray grain across your path, neither willing to yield an inch of the slippery limestone ledge. Their angry shouts echo off the stone walls while Biscuit rolls her eyes and snorts plumes of white vapor into the freezing air. // The heavy clapper shifts uneasily in its leather cradle, reminding you of the ticking time before the high passes freeze shut.
+EXIT 1: Unlock the private winch-house stairs proudly
+EXIT 2: Take the steep ice-glazed stone steps downward
+@@END
+
+@@SECTION vh-3-0-1-6
+TITLE: The Narrow Cleft
+TEXT: You squeeze through a narrow cleft between two stone grain-bins where the smell of stale yeast and wet wool hangs thick in the air. The rough granite walls scrape against the leather straps of your burden, testing the stitches that hold the clapper's cradle together. // Emerging on the far side, you find yourself knee-deep in a drift of dry chaff driven here by the relentless gale.
+EXIT 1: Venture into the damp mountain fog
+EXIT 2: Help the frantic miller wedge the brake-beam
+EXIT 3: Pause in the shadow of the silent windmill
+@@END

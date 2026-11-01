@@ -1,0 +1,104 @@
+{
+ "batch": "ul-3-160",
+ "sections": {
+  "ul-3-160": {
+   "title": "The Slick Descent",
+   "text": "Damp lime drips from the vaulted ceiling above, coating the steep stone steps in a thin, greasy slick of condensation and old lamp-oil residue. Far ahead, the rustle of heavy wool and hurried breathing marks the courier's desperate flight toward the lower galleries. Your boots find precarious traction on the edge of each worn riser, while your fingers graze the damp masonry for support. Every movement requires absolute physical composure to prevent a dangerous tumble down the spiral drop.\n\nYou press downward, matching the frantic rhythm of the fleeing messenger against the oppressive gloom of the stone shaft.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pursue the fleeing courier downward"
+   ]
+  },
+  "ul-3-161": {
+   "title": "Following the Runner",
+   "text": "Shadows lengthen across the damp masonry as the gap between your boots and the runner's receding leather heels begins to narrow. Water trickles down the gutter of the stairwell, smelling faintly of stagnant ink and rotting calfskin bindings. You keep your weight centered over your ankles, leaning forward into the descent to maintain momentum without sacrificing control. The air grows noticeably colder, carrying the sharp tang of ozone from some unseen electrical disturbance deep within the foundations.\n\nYou steady your breathing and prepare for the final stretch of the pursuit.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Close the distance on the stairs"
+   ]
+  },
+  "ul-3-162": {
+   "title": "Vaulting the Riser",
+   "text": "Momentum carries you faster than caution permits down the final, rain-slicked turn of the circular staircase where the courier has just leaped across a dangerous gap in the masonry. A sudden gust of updraft catches your jacket, threatening to tilt your center of gravity outward into the empty, echoing vertical shaft. You spring off your leading foot, aiming your landing for the narrow stone lip on the far side while the wet granite offers almost no purchase for your soles.",
+   "check": "Leap across the slick stair gap",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-163": {
+   "title": "Slipping on the Stone",
+   "text": "Heels strike the opposing lip with insufficient force, sending a violent jar up your spine as your boots slide out from under you on the slime. You scramble frantically against the rough granite wall, scraping the skin from your knuckles and tearing the sleeve of your tunic on an iron bracket. Time loses its shape as you drop heavily onto a lower tier, nursing a bruised shoulder and gasping for breath in the damp dark. You survive the tumble, but the courier vanishes into the labyrinth ahead while you collect your scattered wits and bruised limbs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Rise and limp onward"
+   ]
+  },
+  "ul-3-164": {
+   "title": "Landing with Balance",
+   "text": "Toes strike the opposing stone edge with a light, controlled slap that absorbs the shock before your momentum can pull you off balance. You tuck your shoulder, roll through the landing, and come up instantly on one knee with your hand resting securely on the cold masonry. Whether your footing was entirely sure or you caught yourself by a desperate twist of your wrists, you remain upright and unharmed. Hidden within the pocket of the courier's dropped ledger, which you manage to scoop up during the leap, lies a formal seal bearing the high magistrate's private emblem.",
+   "check": "",
+   "grant": "High magistrate's private seal",
+   "exits": [
+    "Return to the archive steps"
+   ]
+  },
+  "ul-3-165": {
+   "title": "The Grand Tribunal Chamber",
+   "text": "Stained-glass panels depicting ancient scribes weighing souls against reams of vellum cast long, colored shadows across the vast marble floor of the tribunal. High above the assembly, the Grand Cataloguer presides from an elevated mahogany dais, studying a shifting, glowing map of the Underlibrary that hovers in the stagnant air like a living cartographic ghost. Rows of stern judges murmur among themselves, their ink-stained fingers tapping rhythmically against polished armrests as armed wardens stand guard at every brass-banded archway. You step into the center of the mosaic floor under the collective weight of dozens of suspicious gazes, acutely aware that your presence here has already been duly noted in the permanent records.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the raised judging bench"
+   ]
+  },
+  "ul-3-166": {
+   "title": "The Tribunal Mosaic",
+   "text": "Golden scales swing in a phantom breeze high above the vaulted ceiling, casting rhythmic arcs of light across the crowded floor of the Grand Tribune. Scholars, prosecutors, and desperate petitioners mill about the base of the judges' dais, whispering nervously beneath the gaze of the towering stained-glass windows. Every archway offers a distinct path deeper into the administrative labyrinth, each guarded by different interpretations of municipal law and custom. You must decide which avenue of approach or escape holds the best promise for reaching the deep annexes before the great seals drop.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Address the judging bench directly",
+    "Sidestep the procedural trap nearby",
+    "Secure a travel warrant from magistrates",
+    "Confront the living parchment barrier"
+   ]
+  },
+  "ul-3-167": {
+   "title": "Crossing the Mosaic Floor",
+   "text": "Polished marble tiles gleam under the amber glow of tallow chandeliers, reflecting your solitary figure as you step forward into the open expanse of the hall. The murmur of the assembled scholars drops to a hushed whisper, leaving only the dull scratching of nibs from the reporting desks at the periphery. You keep your shoulders back and your steps measured, denying the onlookers any sign of hesitation as you approach the towering oak bench where the chief adjudicators sit. The atmosphere grows dense with suspicion and the dry scent of centuries-old parchment.\n\nYou steady your nerves for the interrogation awaiting you at the focal point of the chamber.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stand before the senior adjudicator"
+   ]
+  },
+  "ul-3-168": {
+   "title": "Approaching the Bench",
+   "text": "Every eye in the crowded hall fastens upon your posture as you navigate the narrow corridor between the prosecutors' tables and the massive bronze filing cabinets. A protruding brass drawer left half-open by a careless clerk threatens to catch your coat and spin you into an undignified heap before the judges. You shift your weight with precise calculation, tucking your elbow close to your ribs and sliding past the metal hazard by a narrow margin of cloth and air. The senior adjudicator looks up, pen poised above a massive ledger, waiting to see if you reach the dais with your composure intact.",
+   "check": "Navigate past the open drawer",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-169": {
+   "title": "Tangled in the Filing Ranks",
+   "text": "Fabric catches hard on the brass corner of the open filing drawer, jerking you off stride and sending you stumbling sideways into a stack of heavy wooden folios. The binders crash to the mosaic floor with a resounding clatter that echoes off the vaulted stone ceiling, drawing immediate scowls from the presiding judges. You untangle your coat with hot cheeks, murmuring apologies while gathering the scattered papers under the heavy gaze of the tribunal guard. Though you reach the bench at last, the clumsy stumble costs you precious dignity and leaves you owing a sharp administrative fine to the court bailiff.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Face the adjudicators after the fall"
+   ]
+  },
+  "ul-3-170": {
+   "title": "Poise Before the Judges",
+   "text": "Fabric brushes the brass corner without catching, allowing you to glide past the hazard with a smooth, unbroken stride that draws quiet nods from the observing scribes. Whether your movement was born of flawless balance or you recovered your footing through sheer stubborn luck, you arrive at the base of the bench without a single misstep. The senior adjudicator lowers their spectacles and leans forward over the dark wood, quietly revealing a heavily guarded secret about the inner workings of the vaults. You learn precisely who holds the authority to rewrite a single line of the Index, and the exact method required to reach their chamber.",
+   "check": "",
+   "grant": "Secret of the Index revision",
+   "exits": [
+    "Return to the grand tribunal hub"
+   ]
+  }
+ },
+ "missing": []
+}

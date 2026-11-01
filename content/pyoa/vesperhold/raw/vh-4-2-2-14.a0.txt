@@ -1,0 +1,61 @@
+@@SECTION vh-4-2-2-14
+TITLE: The Green Seracs
+TEXT: Towering walls of ancient blue-green ice loom on either side, casting an unearthly, emerald luminescence over the narrow track. Every breath plumes white in the drafty corridor as you guide Biscuit carefully around jagged pillars that seem to hum with hidden frost. The heavy bronze clapper shifts in its padded cradle, its faint, subterranean ringing vibrating straight down your spine. Ahead, the maze branches into three distinct paths among the frozen monoliths. // One trail leads toward a precarious wire bridge spanning the blue void, another drops down to where a lone winch guard waits, and the third vanishes into an abrupt, absolute hush where the glacier wind dies away entirely.
+EXIT 1: Step onto the trembling wire span
+EXIT 2: Trade snow with the winch guard
+EXIT 3: Listen to the absolute white silence
+@@END
+@@SECTION vh-4-2-2-15
+TITLE: The Bitter Gust
+TEXT: Without warning, a ferocious gale sweeps down the ice face, snatching your woolen cap from your brow and flinging it straight into the gray abyss below. You lean hard against the mountain wall, fingers locking white-knuckled into your pack-straps as the weight of the heavy bronze clapper threatens to pitch you backward off the ledge. Biscuit plants her hooves deep into the frozen rime, ears pinned flat against the screaming wind. // Regaining your footing on the narrow shelf, you face a stark choice between descending toward the lower winch station or pushing upward and over the final lip of the glacier tongue.
+EXIT 1: Reach out to the lower winch guard
+EXIT 2: Climb over the final glacier lip
+@@END
+@@SECTION vh-4-2-3-0
+TITLE: The Black Rime Bridge
+TEXT: Each frozen plank of the swinging rope bridge gleams with a treacherous coat of black rime, slick as polished glass above the roaring crevasse. You test the first timber with the toe of your boot while Biscuit blows a nervous cloud of steam into the crisp air. The hemp ropes groan rhythmically under the tension, swaying with every gust that sweeps up the vertical cliff face. // Beyond the far anchor post, the ice begins to give way to the solid, stone-strewn debris of the lower valley.
+EXIT 1: Cross the frozen planks to the moraine
+@@END
+@@SECTION vh-4-2-3-1
+TITLE: The Miller's Warning
+TEXT: High above on a sunlit outcrop of rock, a terrace miller named Vane cups his hands around his mouth and shouts across the chasm, warning you away from the shifting snow bridges that span the deep glacial moat. The wind carries his voice away in ragged snatches, but the frantic waving of his arms leaves no room for misinterpretation. You pull the mule's lead rope tight, pausing to survey the broken ice field ahead. // The terminal moraine stretches out below like a dark spine, offering two distinct routes away from the treacherous upper ice.
+EXIT 1: Pick a path down the rocky moraine
+EXIT 2: Follow the weathered signpost toward the fog
+@@END
+@@SECTION vh-4-2-3-2
+TITLE: The Ice Cleft
+TEXT: Stinging needles of driven hail force you to dive headfirst into a shallow, vertical cleft in the glacier wall, dragging a reluctant Biscuit in beside you. The cold bites through your woolen coat, but the stone-hard ice offers absolute shelter from the howling squall outside. The bronze clapper rests quietly against your aching shoulders, its faint metallic pulse keeping time with your racing heartbeat. // As the sudden gale subsides and leaves the white world sparkling anew, you can either push down onto the rocky moraine, follow the old signpost into the fog, or pause to gaze back up at the colossal stairway you have descended.
+EXIT 1: Step down onto the frozen moraine
+EXIT 2: Head toward the fog-choked canopy below
+EXIT 3: Look back up the towering glacier ladders
+@@END
+@@SECTION vh-4-2-3-3
+TITLE: The Glare-Ice Slip
+TEXT: Without warning, Biscuit's iron-shod hooves find a hidden sheet of blue glare-ice, her legs kicking out from under her with a sharp snort of panic. The sudden weight of the mule and the heavy bronze clapper drags you backward toward the ragged edge of a dark, bottomless crevasse. You throw yourself flat onto the slope, driving your own boot spikes into the crust with all your might. // The frantic struggle leaves you breathless, with the solid rocks of the lower moraine visible just beyond the hazardous slope.
+EXIT 1: Drag the mule across to the moraine
+EXIT 2: Head down the signposted trail in the mist
+@@END
+@@SECTION vh-4-2-3-4
+TITLE: The Frayed Guide-Cables
+TEXT: Rime-encrusted guide-cables hum in the glacial draft like tightened harp strings while you inspect the hemp windings with numb, aching fingers. The bronze clapper vibrates rhythmically inside its padded cradle against your frost-stiffened coat, answering the mountain's low chord with a sympathetic thrum. Biscuit stamps her grey hooves against the ice, eager to leave the high wind behind. // Downward, the route splits between the final resting place of the pack train and the breathtaking view looking back up the frozen cascade.
+EXIT 1: Unbuckle the cradle at the lower station
+EXIT 2: Look back up the ice-bound cascade
+@@END
+@@SECTION vh-4-2-3-5
+TITLE: The Fog-Warden's Check
+TEXT: Cold, competent hands pat down your pack-straps with practiced familiarity, checking every buckle and lash line against the mountain draft. A fog-warden named Bran nods in grim approval, her breath pluming white as she points an mittened finger down toward the rolling mist-line below. Biscuit shakes the accumulated rime from her grey ears, stepping out onto firmer footing as the worst of the glacier's grip finally loosens. // The path ahead leads directly down to the resting post where you can shed your heavy burdens.
+EXIT 1: Unburden your shoulders at the rest post
+@@END
+@@SECTION vh-4-2-3-6
+TITLE: The Sealed Shelter
+TEXT: Thick, blue drift-snow has completely choked the stone doorway of the old climber's refuge, sealing it into the mountainside like a frozen tomb. You hack fiercely at the compacted crust with the edge of your ice-axe until chunks tumble away into the void, revealing the dark, drafty interior within. The bronze clapper gives a single, resonant thrum against your back as the trapped air inside the shelter escapes. // Beyond the refuge, multiple routes beckon down into the deepening mists of the lower mountain.
+EXIT 1: Look back up the towering glacier ladders
+EXIT 2: Follow the lone fog-warden into the mist
+EXIT 3: Massage your fingers as the clapper hums
+@@END
+@@SECTION vh-4-2-3-7
+TITLE: The Brittle Crust
+TEXT: The iron spikes on your boots strike a submerged boulder with a sharp, metallic ring right beneath the thin and brittle glacier crust. For a heart-stopping moment, the white surface sags under your weight, threatening to drop you both into the blue depths. You lean forward into the harness, coaxing Biscuit past the hollow spot with a low whistle of encouragement. // Once across the hazardous skin of ice, the path divides between the lower rest station and the vantage point looking back at the climb.
+EXIT 1: Unbuckle your harness at the rest post
+EXIT 2: Marvel at the climb from the ridge
+@@END

@@ -1,0 +1,69 @@
+Gemini said
+
+@@SECTION td-1-129
+TITLE: Ribs of the Galley
+TEXT: Heavy timbers of a stranded merchantman rear from the scouring sand like the carcass of some salt-blind beast. Dragging the oiled canvas from your recent find, you lash it firmly across the bleached ribs to block the howling gale. Tucked deep within the lee of the hull lies an ancient, rust-free cutlass, its greased scabbard gleaming faintly despite the grit. You test its balance in your palm, feeling the cold weight of forgotten smithing. The rising howl of the wind insists you push forward before the drift swallows your makeshift shelter entirely.
+EXIT 1: Follow the windbreak into the storm
+@@END
+@@SECTION td-1-130
+TITLE: Shelter in the Hull
+TEXT: Stiff fingers knot the canvas lines tighter against the groaning timber of the sunken wreck. Beneath the arched ribs, the howling gale drops to a dull, subterranean roar, leaving you a narrow pocket of stillness in the whiteout. Your eyes adjust to the gloom, falling upon an ancient, rust-free cutlass half-buried in the damp floorboards. You draw the blade an inch from its sheath; bright steel catches the dim light, untouched by the salt air. There is no time to linger while the dunes shift around you.
+EXIT 1: Crawl past the rusted iron bulkhead
+@@END
+@@SECTION td-1-131
+TITLE: Rigging the Canvas Wall
+TEXT: Knotting the heavy canvas requires every ounce of patience as the gale tries to tear the stiff fabric from your numb hands. Inside the hollow of the half-buried galley, you pull the lashings taut against the iron-hard ribs while probing the debris for the rumored blade. Dust and dried kelp sting your eyes, but your fingers brush against a leather-wrapped hilt buried beneath silt. Steadying your breath against the biting cold, you begin to pry the ancient, rust-free cutlass free from the packed sand before the entire makeshift shelter collapses.
+CHECK: Anchor the canvas and pry the blade
+@@END
+@@SECTION td-1-132
+TITLE: Tangled in the Rigging
+TEXT: A sudden scream of wind tears the canvas from your frozen grip, collapsing the makeshift shelter and burying your hands in abrasive grit. The heavy timber bucks against your shoulder, leaving a dark, weeping bruise across your collarbone as you scramble clear of the falling wreckage. You salvage the ancient, rust-free cutlass from the drift, but the struggle costs you precious time and drains your remaining stamina. Shivering bitterly, you hoist your pack and limp onward into the swirling whiteout.
+EXIT 1: Press onward through the stinging grit
+@@END
+@@SECTION td-1-133
+TITLE: The Unblemished Blade
+TEXT: Securing the canvas with a swift, practiced hitch, you carve out a reliable haven from the screaming gale within the hollow ribs of the wreck. Your fingers trace the clean, oiled leather of the hilt, pulling the ancient, rust-free cutlass from the sand with barely a whisper of friction. It balances with lethal grace, untouched by the corrosive brine that ruins everything else along the coast. Wrapping the weapon securely at your hip, you step back out into the scouring wind, ready for whatever waits in the shifting dunes.
+GRANT: Pristine salt-iron cutlass
+EXIT 1: Push toward the singing dunes
+@@END
+@@SECTION td-1-134
+TITLE: Spring-Trap in the Sand
+TEXT: Half-concealed beneath a drift of white dust, a thin wire trips your boot before you catch yourself. A Brineholder spring-trap rests in the sand, its barbed metal jaws primed to release a trio of poisoned copper darts at the slightest nudge. Kneeling in the grit, you use the tip of your knife to gently lever the tension plate. Each tiny click echoes loudly over the wind as you ease the venomous needles from their housing one by one.
+EXIT 1: Pocket the venomous copper darts
+@@END
+@@SECTION td-1-135
+TITLE: Unpinning the Brineholder Teeth
+TEXT: Sweat cuts pale tracks through the dust on your forehead as you lean over the delicate trigger mechanism of the Brineholder spring-trap. The slightest twitch of your blade could release the poisoned copper darts directly into your wrist. The gale howls overhead, vibrating the metal frame and threatening to ruin your precise adjustments. Holding your breath, you slide the safety pin toward the release housing, your fingers hovering over the deadly needles.
+CHECK: Disarm the delicate trigger mechanism
+@@END
+@@SECTION td-1-136
+TITLE: Poison in the Grain
+TEXT: A metallic snap shatters the silence, and a white-hot sting flares across your forearm as the trap's retaining bar slips. You jerk your hand back just in time, but one poisoned dart grazes your flesh, leaving a dark, swelling welt that burns like brine in an open cut. You manage to crush the spring with your boot heel and salvage the remaining darts, but the venom slows your pulse and leaves you dizzy. Gritting your teeth against the nausea, you press forward.
+EXIT 1: Stagger toward the yawning abyss
+@@END
+@@SECTION td-1-137
+TITLE: Harvest of the Watchers
+TEXT: Your blade slides beneath the locking cam with a microscopic click, rendering the Brineholder spring-trap completely harmless. With careful fingers, you lift the three poisoned copper darts from their chamber and stow them away in a wax-sealed vial. The mechanism is a masterpiece of paranoid engineering, built to keep scavengers away from the deeper secrets of the coast. Fastening the container to your belt, you leave the disarmed shell behind and continue your march toward the dark descent.
+GRANT: Vial of poisoned darts
+EXIT 1: Descend into the yawning abyss
+@@END
+@@SECTION td-1-138
+TITLE: Tracks in the Whiteout
+TEXT: A low clicking sound draws your attention away from the dune crest. Something small and armored scuttles across the wind-packed salt crust, leaving a frantic trail of claw-marks before darting into the ribcage of a ruined skiff. You crouch low, letting the wind mask the crunch of your boots on the crystals. Anticipating its erratic path, you circle wide around the wreck to cut off its retreat toward the deeper dunes.
+EXIT 1: Close in on the skeletal wreck
+@@END
+@@SECTION td-1-139
+TITLE: The Scuttling Shell
+TEXT: The pale creature darts between your boots, its chitinous shell gleaming with a faint, bioluminescent pulse that cuts through the blowing sand. You follow its desperate zig-zags across the flat expanse, watching as it squeezes beneath the warped planking of a sunken longboat. Kneeling at the entry, you peer into the dark hollow where a nest of woven kelp trembles with pale, luminous shapes.
+EXIT 1: Reach into the damp nest
+@@END
+@@SECTION td-1-140
+TITLE: Prowling the Salt-Flats
+TEXT: The bioluminescent scavenger freezes at the edge of its nest, its stalked eyes twitching in your direction as you reach out a slow hand. A single misstep will send it scuttling back into the labyrinth of buried wrecks, losing your only chance at the glowing pearls. The wind shifts abruptly, throwing a cloud of stinging grit directly into your face and blurring your vision at the worst possible moment. Relying entirely on instinct and memory of its shape, you lunge into the darkness of the nest.
+CHECK: Snatch the pearls from the nest
+@@END
+@@SECTION td-1-141
+TITLE: Slips in the Dark
+TEXT: Your fingers graze the smooth sphere of a pearl just as the creature whips around, sinking sharp mandibles deep into the web of your thumb. You yank your hand back with a sharp hiss of pain, sending the nest scattering across the damp sand. The creature vanishes into a crack in the hull, leaving you nursing a bleeding hand and only a single glowing pearl retrieved from the chaos. Wiping the blood on your trousers, you curse the stubborn wildlife of the Low.
+EXIT 1: Pocket the single recovered pearl
+@@END

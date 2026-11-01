@@ -1,0 +1,105 @@
+{
+ "batch": "td-4-055",
+ "sections": {
+  "td-4-055": {
+   "title": "The Unblinking Master",
+   "text": "Salt-crusted eyelids refuse to twitch as the choir master leans forward, his hollow sockets fixing upon your face with the weight of an anchor. The howling dirge washes over your temples like cold bilge water, threatening to scour reason from your skull. Yet you lock your jaw against the pressure, staring straight into the darkness of his hood. A slow, rasping sigh rises from the assembled dead, and the master raises a gray, webbed finger to trace a damp cross upon your brow, granting an eerie quiet to the storm inside your mind.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step past the silent choir"
+   ]
+  },
+  "td-4-056": {
+   "title": "Staring Down the Wail",
+   "text": "That pale, unblinking stare pins you to the slick stone while the choir shifts from a dull murmur to a shrieking wall of sound that rattles your teeth. Every instinct screams to tear your gaze away and plunge your hands over your ears before your sanity cracks down the middle. You fight the overwhelming urge to bolt, forcing your breath to steady as you meet the lead singer's empty glare head-on, testing whether your spirit can outlast a legion of the drowned.",
+   "check": "Meet the leader's gaze",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-057": {
+   "title": "Scoured by the Dirge",
+   "text": "A sudden surge of sonic fury shatters your concentration, driving a spike of white-hot agony through your temples that leaves your ears ringing with the taste of old copper. You stagger backward against the damp masonry, clutching your head as a thin trickle of dark blood winds down your neck. The pain is sharp and lingering, a dull throb that settles deep behind your eyes as a harsh reminder of what the dead demand from the living.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press onward through the ache"
+   ]
+  },
+  "td-4-058": {
+   "title": "The Drowned Blessing",
+   "text": "However narrowly you weather that psychic onslaught, your persistence forces the lead singer to lower his chin in grudging recognition. He reaches into the folds of his rotting vestments and withdraws a small, salt-cured talisman shaped like a coiled whelk, pressing it into your palm with fingers as cold as winter iron. The object hums faintly against your skin, carrying a residual ward that dampens the worst of the subterranean echoes as you leave the chamber behind.",
+   "check": "",
+   "grant": "Salt-cured whelk talisman",
+   "exits": [
+    "Descend into the outer workings"
+   ]
+  },
+  "td-4-059": {
+   "title": "Iron and Oil",
+   "text": "The spiral of worn stone abruptly gives way to colossal walls of riveted bronze and rusted iron, marking the true boundary of the Sunken Stair's inner mechanism. Massive counterweights hang in the dim gloom like slaughtered leviathans, suspended by chains thick as a wrecker's waist and coated in thick, black grease that smells of ancient whale oil. Every inch of metal vibrates with a low, bone-deep thrum that signals the immense power caged just beyond your reach. Steam vents hiss intermittently from narrow gaps in the bulkheads, casting hot, blinding plumes across the rusted catwalks that stretch out over the void.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tread the greasy iron paths"
+   ]
+  },
+  "td-4-060": {
+   "title": "The Grinding Descent",
+   "text": "Giant stationary gears form precarious, jagged bridges over a bottomless drop, slick with ancient grease and populated by territorial blind eels that snap from the shadows. To your left, a rotating shaft hums with lethal speed while a pale pearl gleams temptingly within a nest of wire. Straight ahead, a skeletal mechanic hangs upside down from a snapped harness, clutching a peculiar tuning fork. Below a sputtering steam pipe, a puddle of condensed freshwater begs to be salvaged into empty canteens. Deeper still, a sprawling archive of drowned ledgers blocks the main route, guarded by an automaton with glowing glass eyes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Cross the gear-toothed span",
+    "Pluck the pearl from danger",
+    "Reach for the hanging mechanic",
+    "Harvest the leaking freshwater",
+    "Approach the archive automaton"
+   ]
+  },
+  "td-4-061": {
+   "title": "The Jammed Cog",
+   "text": "A massive iron wheel sits stubbornly wedged between two bulkheads, bringing a secondary sector of the machinery to a complete, ominous halt. Grasping the jagged spokes with both hands, you brace your boots against the slick plating and throw your full weight into the metal. Muscles strain against the unyielding rust until a sharp report echoes through the shaft, and the heavy gear groans back into motion, revealing a heavy maintenance key buried in the grease beneath its axle.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the heavy iron key"
+   ]
+  },
+  "td-4-062": {
+   "title": "Turning the Iron",
+   "text": "Gripping the newly found key, you clamber across a network of vibrating pipes to reach the maintenance panel set into the central pillar. The rusted lock offers initial resistance, protesting with a screech of dry iron before the internal tumblers finally yield to your persistence. Inside the recess lies a series of heavy brass levers, caked in salt and waiting to dictate the flow of pressure through the looming apparatus above.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test the brass control levers"
+   ]
+  },
+  "td-4-063": {
+   "title": "Bracing the Slip",
+   "text": "The entire catwalk shudders violently as the machinery below shifts its weight, threatening to shear your footing away and drop you into the dark machinery wells. You slam your shoulder against the vibrating iron frame, digging your heels into the greasy plating with all your strength to keep the structural beam from buckling under the sudden strain. Every muscle in your torso burns as you pit your raw power against the shifting iron.",
+   "check": "Force the buckling beam back",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-064": {
+   "title": "Strain of Iron",
+   "text": "Raw muscle meets ancient metal with a bone-jarring shriek that echoes down the damp stone shaft. A rusted tooth of the cog catches your shoulder plate, biting hard through leather and wool to score a fresh red line across your flesh. You grunt against the pain, heaving your weight until the iron gear groans and snaps grudgingly into alignment. Your breathing comes ragged in the chill air, and your grip feels slippery with your own warm blood, but the heavy iron maintenance key drops heavily into your palm from the jammed housing.\n\n",
+   "check": "",
+   "grant": "heavy iron maintenance key",
+   "exits": [
+    "Pry the rusted maintenance hatch open"
+   ]
+  },
+  "td-4-065": {
+   "title": "The Iron Wedge",
+   "text": "However narrowly you manage to wedge the heavy component back into alignment, the surrounding machinery settles with a heavy, satisfying thud that restores stability to the walkway. Wedged firmly in the mechanism's housing is a thick, square-headed iron peg stamped with the old Tidewarden seal, forged from rust-resistant alloy that will never corrode in the brine. You pry it free from the housing and tuck it securely into your belt, knowing such solid metal will prove invaluable before your journey ends.",
+   "check": "",
+   "grant": "Tidewarden iron peg",
+   "exits": [
+    "Return to the central crossroads"
+   ]
+  }
+ },
+ "missing": []
+}

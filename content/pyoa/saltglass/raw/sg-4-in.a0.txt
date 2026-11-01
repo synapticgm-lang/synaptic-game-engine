@@ -1,0 +1,73 @@
+Gemini said
+
+@@SECTION sg-4-in
+TITLE: The Mirror Storm Breaks
+TEXT: A wall of singing glass-dust rears against the horizon, turning the pale sky the color of a bruised plum. You pull your thick wool scarf higher across your face as the gale-force wind flings fine crystal grit against your leather coat, testing every seam. Your banked ember-lamp glows a stubborn, warm orange in your gloved grip, and the cold ceramic Seedkey hums lightly against your ribs. The salt-crust beneath your boots shudders under the rising atmospheric pressure as you weigh your next steps into the blinding expanse of the storm.
+EXIT 1: Follow the lamp-lit road
+EXIT 2: Cut across the common ground
+EXIT 3: Ask the way of a stranger
+EXIT 4: Take the old drovers' track
+@@END
+@@SECTION sg-4-0-0-0
+TITLE: Dunes of Razors
+TEXT: Beneath a sulfurous sky, you step onto the razor-crust dunes where the howling wind carries the first singing sting of powdered mirror. The grit scours your exposed skin, while the heavy ember-lamp swings like a pendulum against your thigh, keeping the dark at bay. You press your palm against the pocket holding the cold ceramic Seedkey to ensure it remains safe. The storm thickens ahead, wrapping the shifting landscape in a veil of gray haze.
+EXIT 1: Follow the winding track deeper into the blinding drift
+EXIT 2: Climb the crest of the nearest crystalline dune to look for landmarks
+EXIT 3: Hunker down behind a jagged slab of green glass until the gust passes
+@@END
+@@SECTION sg-4-0-0-1
+TITLE: Silt Obelisk Shelter
+TEXT: You crouch behind a shattered silt-obelisk as a squall of diamond grit scourges the barren flats, threatening to scour the skin from your bones. The ancient stone groans under the abrasive force, shedding fine powdery layers that mix with the howling air. Your lantern flickers low, fed by the banked coals inside, casting dancing shadows against the pitted pillar. Every breath tastes of dry salt and old iron as you wait for a break in the tearing gale.
+EXIT 1: Dash toward a darker hollow between two tilted pillars
+EXIT 2: Crawl along the base of the monument toward a narrow defile
+EXIT 3: Slide down an unexpected depression in the unstable earth
+@@END
+@@SECTION sg-4-0-0-2
+TITLE: Oily Yellow Haze
+TEXT: The ember-lamp flickers wildly in your grip as an oily yellow haze rolls across the jagged salt-flats, narrowing your world to a few glowing feet. The air tastes thick with sulphur and ancient dust, muffling the roar of the distant storm into a low, continuous rumble. You feel the cold ceramic weight of the Seedkey pressing steadily against your chest, anchoring you against the disorientation. Every contour of the salt-crust beneath your boots looks unfamiliar and strange in this jaundiced light.
+EXIT 1: Follow the faint depression where the salt crust dips away
+EXIT 2: Head toward a metallic hum vibrating through the heavy air
+EXIT 3: Step cautiously across a brittle shelf that sounds hollow
+@@END
+@@SECTION sg-4-0-0-3
+TITLE: Vibrating Plain
+TEXT: You press your palm against the cold ceramic Seedkey while a low, vibrating hum rises from the glass-dust plain, warning of an impending squall. The air grows heavy with static electricity, making the hairs on your arms stand upright inside your sleeves. Your ember-lamp casts a steady, comforting circle of orange light against the swirling gray fog encroaching from the east. You must decide whether to seek cover or push forward before the full fury of the gale breaks overhead.
+EXIT 1: Take the hidden seepage-track known to those bound by the well-oath
+EXIT 2: Plunge into the stinging alkali dust cloud relying purely on the lamp
+EXIT 3: Seek refuge within the skeletal ribs of an ancient glass-wagon
+@@END
+@@SECTION sg-4-0-1-0
+TITLE: Salt Court Toll-Hut
+TEXT: An abandoned Salt Court toll-hut offers a cramped lee against the rising gale, though its iron latch is already jammed with hard-packed silica. The wooden beams groan and splinter under the ceaseless onslaught of wind-driven sand, smelling faintly of old brine and dried leather. Inside the small shadow cast by the roofless ruin, you catch your breath and check the fuel in your lantern. The storm outside screams louder, demanding that you either force the rusted door or press back into the open dunes.
+EXIT 1: Inspect the metal pack-frames of a nearby wind-stripped carcass
+EXIT 2: Search for sheltered silt pockets where recent boot-prints might linger
+EXIT 3: Pry at the jammed iron latch with the edge of the Seedkey
+@@END
+@@SECTION sg-4-0-1-1
+TITLE: The Surveyors Cairn
+TEXT: You stumble upon a mummified surveyor half-buried in drift-glass, his brass sighting-rod still pointing toward the impenetrable wall of the approaching storm. His stiff leather coat is bleached white by decades of sun and salt, yet his scientific instruments remain curiously untouched by rust. The ember-lamp casts a warm, flickering glow across the dead man's weathered knuckles. You pull your collar tighter against the bitter draft whistling through the skeletal remains.
+EXIT 1: Search the surveyor for any surviving maps or dry rations
+EXIT 2: Follow the precise line where the brass sighting-rod points
+EXIT 3: Shield the lantern flame and step past the cairn into the gray murk
+@@END
+@@SECTION sg-4-0-1-2
+TITLE: Rusted Wind-Sieve
+TEXT: A rusted wind-sieve clatters against a boulder of fused quartz, offering a dubious shelter where you must mend your frayed canvas gaiters. The metal mesh hums a monotonous, high-pitched note in the howling gale while fine dust sifts down like flour onto your shoulders. Your fingers are stiff and cold, making it difficult to knot the waxed twine around your boots. Every few seconds, a heavier gust rattles the frame, threatening to tear your makeshift sanctuary away into the storm.
+EXIT 1: Squeeze through a narrow fissure between two canted slabs
+EXIT 2: Scramble up a towering ridge of crushed crystal into the wind
+EXIT 3: Abandon the sieve and run toward a dark depression ahead
+@@END
+@@SECTION sg-4-0-1-3
+TITLE: Salt-Tube Labyrinth
+TEXT: You navigate a treacherous labyrinth of hollow salt-tubes that whistle like dying birds under the immense pressure of the dry gale. Each tubular conduit stands like a pipe organ organ-cast from brine and minerals, vibrating under your gloved touch. The air inside the maze is remarkably still, though heavy with the scent of stagnant moisture deep below. You keep your lamp held high, watching for sudden fissures in the crystalline floor.
+EXIT 1: Squeeze through a narrow fissure leading toward the dead-silent basin
+EXIT 2: Examine a discarded shark-skin ledger caught in a stone cairn
+EXIT 3: Climb a steep drift of crushed crystal to survey the storm front
+@@END
+@@SECTION sg-4-0-1-4
+TITLE: The Cistern Fire
+TEXT: A lone scavenger named Vane squats over a small grease-fire in a dry cistern, offering a cup of brackish tea in exchange for news of the western rim. The acrid smoke curls away into the howling void above, barely visible against the churning gray sky. Vane's eyes gleam with sharp amusement behind a crust of dried salt as he gestures toward a crate seat by the flames. The warmth of the fire is an intense, almost painful luxury against your frozen joints.
+EXIT 1: Inspect the salt-skin ledger resting near the scavenger's boots
+EXIT 2: Watch a frantic salt-fox dart past toward the dark horizon
+EXIT 3: Share your meager rations and ask about the safe passes through the basin
+@@END

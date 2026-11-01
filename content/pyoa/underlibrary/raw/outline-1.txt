@@ -1,0 +1,49 @@
+@@BEAT ul-1-001 | You step through the heavy iron doors of the Reading Rooms into a haze of lamp-oil smoke and rustling parchment.
+@@HUB ul-1-002 | The Lending Desk | A weary clerk demands a permit you do not possess while scholars jostle behind you.
+@@CHAIN ul-1-002/0 | You slip past the distracted clerk using agile footwork, risking a reprimand to gain a forged clearance slip.
+@@CHAIN ul-1-002/1 | You dodge a falling stack of overdue folios with quick steps, earning a grateful nod from a fellow shelver.
+@@CHAIN ul-1-002/2 | You stare down the suspicious clerk with steely determination, securing an official visitor badge through sheer stubbornness.
+@@CHAIN ul-1-002/3 | You endure the endless bureaucratic interrogation without flinching, walking away with a signed authorization letter from the head librarian.
+@@BEAT ul-1-022 | You navigate the crowded gallery where rival scholars glare over lecterns laden with damp, whispering manuscripts.
+@@HUB ul-1-023 | The Scholar's Alcove | A proud historian blocks your path, demanding payment for information regarding Thessaly's final research.
+@@CHAIN ul-1-023/0 | You decipher the obscure dialect on the scholar's open ledger, trading a brilliant translation for a hidden map fragment.
+@@CHAIN ul-1-023/1 | You flatter the pompous scholar with clever deception, acquiring a stolen notebook detailing Thessaly's recent inquiries.
+@@CHAIN ul-1-023/2 | You gracefully bypass the scholar's territorial barrier during a heated debate, snatching a discarded bookmark bearing a crucial address.
+@@BEAT ul-1-037 | You descend into the lower scriptoriums where the air grows thick with the scent of iron-gall ink and damp stone.
+@@HUB ul-1-038 | The Ink-Sellers' Stall | Merchants hawk dubious liquids that promise to reveal hidden text or make parchment scream when touched.
+@@CHAIN ul-1-038/0 | You nimbly catch a jar of falling luminescent ink, earning a free vial of ghost-scribe fluid from the impressed merchant.
+@@CHAIN ul-1-038/1 | You identify a rare batch of genuine archive-grade ink by its bitter scent, trading a secret cataloguing tip for a discount.
+@@CHAIN ul-1-038/2 | You slip through the crowded market stalls with fluid grace, pocketing a vial of truth-revealing ink unnoticed.
+@@CHAIN ul-1-038/3 | You barter skillfully with a stubborn ink-seller, trading your spare boots for a flask of permanent index-black.
+@@CHAIN ul-1-038/4 | You trick a greedy merchant into trading his finest invisible ink for a worthless bundle of blank waste-paper.
+@@BEAT ul-1-060 | You cross the narrow bridge suspended over a sluggish canal of discarded black ink that ripples with strange murmurs.
+@@HUB ul-1-061 | The Scriptorium of Strains | Monks in grease-stained robes argue fiercely over whether marginalia should be scraped clean or preserved.
+@@CHAIN ul-1-061/0 | You manipulate the arguing monks with quick wit, convincing them to let you inspect their forbidden scrap-basket.
+@@CHAIN ul-1-061/1 | You parse a complex theological argument carved into the stone wall, gaining insight into the library's foundational flaws.
+@@CHAIN ul-1-061/2 | You weather the monks' furious verbal assault with unwavering resolve, securing an antique bone stylus as an alliance token.
+@@CHAIN ul-1-061/3 | You spot a logical error in the monks' index system, correcting their ledger to earn a safe passage token.
+@@BEAT ul-1-079 | You reach the echoing vault of the Shelvers' Fellowship where your rough comrades nurse bruised knuckles and lukewarm tea.
+@@HUB ul-1-080 | The Fellowship Hearth | Your fellow page Barnaby questions your loyalty after rumors spread that you saw Thessaly's final note.
+@@CHAIN ul-1-080/0 | You correctly identify the cataloguing mark on Barnaby's hidden ledger, proving your competence and earning his hard-won respect.
+@@CHAIN ul-1-080/1 | You stand your ground against Barnaby's aggressive doubts, earning his unwavering trust and a heavy iron latchkey.
+@@CHAIN ul-1-080/2 | You smooth over the tense confrontation with calm diplomacy, securing a spare lantern and a promise of backup.
+@@BEAT ul-1-093 | You slip away into the labyrinthine map-rooms where rolled charts of unmapped corridors unroll themselves like sleeping snakes.
+@@HUB ul-1-094 | The Cartographer's Loft | An eccentric map-maker tries to sell you a chart of corridors that shift whenever someone blinks.
+@@CHAIN ul-1-094/0 | You outsmart the erratic cartographer in a game of riddles, walking away with a map of the non-existent corridors.
+@@CHAIN ul-1-094/1 | You correct a glaring topological error on the master map, earning a detailed sketch of the stairs leading downward.
+@@CHAIN ul-1-094/2 | You study the complex fold patterns of the changing parchment, memorizing the secret route past the cataloguing guards.
+@@CHAIN ul-1-094/3 | You endure the cartographer's maddeningly repetitive tales of lost wings, retaining your sanity and a reliable compass-trolley.
+@@BEAT ul-1-115 | You ascend a spiral staircase carved entirely from the spines of confiscated encyclopedias that creak under your boots.
+@@HUB ul-1-116 | The Binding Gallery | Binders stitch screaming leather to recalcitrant pages while enforcing strict silence with heavy wooden mallets.
+@@CHAIN ul-1-116/0 | You read a complex binding instruction pinned to the wall, mastering a knot that locks doors from the outside.
+@@CHAIN ul-1-116/1 | You resist the deafening pressure of the collective silence spell, pressing forward to secure a roll of reinforced buckram.
+@@CHAIN ul-1-116/2 | You decipher the secret code woven into the binding thread of a master volume, revealing Thessaly's intended destination.
+@@CHAIN ul-1-116/3 | You slip past the mallet-wielding binders with light steps, retrieving a discarded silver bone-folder from the scrap bin.
+@@BEAT ul-1-135 | You pause before the heavy brass gates of the Deep Annexe where the air grows cold and the lamp-oil gutters low.
+@@HUB ul-1-136 | The Gatehouse of Rules | A severe custodian demands proof that you possess the authority to approach the Hundredth Door.
+@@CHAIN ul-1-136/0 | You maintain rigid discipline against the custodian's psychological intimidation, forcing him to stamp your travel manifest.
+@@CHAIN ul-1-136/1 | You endure the grueling cross-examination without breaking character, earning an official seal of transit from the reluctant guard.
+@@CHAIN ul-1-136/2 | You slide past the gatekeeper's blind spot with effortless poise, swiping the iron gate-ring key from his belt.
+@@CHAIN ul-1-136/3 | You spot an unwritten exemption clause in the rule-book on his podium, legally compelling him to open the gate.
+@@BEAT ul-1-156 | You step through the threshold into the deep shadows as the heavy iron doors begin their slow, irreversible descent.
+@@DONE

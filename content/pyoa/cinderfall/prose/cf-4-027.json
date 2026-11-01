@@ -1,0 +1,117 @@
+{
+ "batch": "cf-4-027",
+ "sections": {
+  "cf-4-027": {
+   "title": "The Lime Smudge",
+   "text": "Hanging motionless from the soot-caked roof beams of the tunnel, a signal keeper stares down with eyes like boiled glass. You endure the vacant gaze without flinching, keeping your hand steady upon the brass handrail of the footplate as Marrowbone creeps through the sulfurous dark. A dry, powdery hand descends from the shadows to brush your collar, leaving a thick smudge of protective lime that smells of old mortar and damp stone.\n\nThe silent watcher retreats into the masonry overhead, leaving you alone with the rhythmic, heavy breathing of the boiler as the line dips deeper underground.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Steer past the hanging watcher"
+   ]
+  },
+  "cf-4-028": {
+   "title": "Staring Down The Keeper",
+   "text": "More suspended figures emerge from the gloom ahead, their pale faces catching the amber glare of the firebox door as you rumble toward a junction of rusted switch-levers. A skeletal keeper swings directly into your path, dangling by a frayed harness right above the regulator handle, testing your nerve with a sudden, twitching jerk of its chin. You must hold your gaze steady and keep your pulse from betraying your dread before the figure drops.\n\nPlanting your boots firmly against the ribbed iron floor, you lock your eyes onto the hollow sockets above and reach out to steady the regulator.",
+   "check": "Hold your nerve against the hanging watcher",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-029": {
+   "title": "A Slip in the Dark",
+   "text": "Your nerve breaks for a fraction of a second as the dangling figure brushes hard against your shoulder, sending a jolt of cold sweat down your spine. In that momentary lapse, your boot slips on the grease-slicked deck of the footplate, and your forearm catches hard against the sharp iron lip of the coal bunker. A deep, ugly bruise blooms instantly beneath your sleeve, throbbing in time with the pistons.\n\nYou catch yourself against the brass manifold before falling, but precious seconds have ticked away while the engine drifted unchecked.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Recover your footing and press on"
+   ]
+  },
+  "cf-4-030": {
+   "title": "The Smudge of Safety",
+   "text": "Whether by steady grit or sheer desperate luck, you keep your breathing even and your hand locked to the controls as the swinging figure drifts harmlessly aside into the trailing smoke. The lime-smudge on your collar settles like a cold seal of approval from the vault-dwellers, and the hanging shapes part just enough to let Marrowbone rumble through. For your trouble, you pocket a scrap of chalk-marked canvas dropped from the harness above.",
+   "check": "",
+   "grant": "A keeper's chalk-mark",
+   "exits": [
+    "Follow the rails into the lantern-roost"
+   ]
+  },
+  "cf-4-031": {
+   "title": "Recalling the Rails",
+   "text": "Damp air currents swirl out from a narrow side-tunnel, carrying the faint, metallic scent of stagnant water and old grease. You negotiate a passage through the echoing archway by quoting the 1894 working timetable back to the unseen rafters, reciting train numbers and coal allowances until the stone walls seem to hum in agreement. A folded paper drops from a cleft in the brickwork, landing softly upon the coal shovel.\n\nUnfolding it reveals a detailed map of hidden bypass sidings that loop around the main blockade.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the hidden bypass route"
+   ]
+  },
+  "cf-4-032": {
+   "title": "The Working Timetable",
+   "text": "The tunnel splits into three identical iron-plated bores, each vanishing into absolute blackness with no signal lamps to guide your choice. Only your memory of the old timetables and the subtle pitch of the subterranean drafts can tell you which line leads to the Cinderfall approach without plunging you into a collapsed gallery. You lean out past the cab side, listening for the faint whistle of distant steam that marks the correct passage.\n\nNarrowing your eyes against the acrid drift, you weigh the gradients and reach for the reverser lever.",
+   "check": "Decode the junction by memory and draft",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-033": {
+   "title": "A Wrong Turning",
+   "text": "You misread the subtle drift of the air, mistaking a dead ventilation shaft for the main branch, and Marrowbone noses heavily into a choked dead-end of fallen masonry. Reversing out takes frantic minutes of sweat and cursing, burning precious coal while the engine's firebox coughs a cloud of bitter dust back into your face. The delay leaves a coating of grey ash inside your throat that makes every breath taste of old cinders.\n\nYou haul the lever over and guide the engine back to the proper junction, bruised in pride and short on time.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Back out and take the correct branch"
+   ]
+  },
+  "cf-4-034": {
+   "title": "The Working Timetable",
+   "text": "By reciting the 1894 working timetable from memory, your voice echoing off the soot-stained rafters where the Hollow Signalmen crouch like crows, you earn a begrudging nod from the shadows. A folded slip of grease-stained vellum drops into your palm, bearing the ink-stamped seal of the line's forgotten chief engineer. It details every hidden bypass siding and auxiliary shunt tucked away behind the masonry, offering a clear run through the dark labyrinth ahead.",
+   "check": "",
+   "grant": "map of hidden bypass sidings",
+   "exits": [
+    "Step through into the water-choked grotto"
+   ]
+  },
+  "cf-4-035": {
+   "title": "Clearing the Feed",
+   "text": "White steam hisses angrily from beneath the lagging as mineral scale builds inside the feed-pipe, threatening to choke the water supply to the boiler entirely. You purge the choked injector line with frantic wire-work, scraping away the crust of lime just before the glass gauge shatters from the mounting pressure. A sigh of relief escapes your lips as the water level stabilizes in the column.\n\nYou pocket a spare pressure valve retrieved from the tool locker before checking the steam gauge again.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the steady steam pressure rise"
+   ]
+  },
+  "cf-4-036": {
+   "title": "Through the Damp Arch",
+   "text": "The low roof of the cutting presses down upon the cab like a heavy hand, dripping condensation onto the brass fittings and the deck plates below. You keep your rag moving across the instrument faces, wiping away the grey grime so the dials remain legible in the gloom. Marrowbone labors against the upward gradient, its exhaust thumping rhythmically against the stone ceiling in a steady, reassuring cadence.\n\nAhead, the tunnel opens slightly where an old telegraph alcove gapes empty in the brickwork.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Roll past the empty telegraph alcove"
+   ]
+  },
+  "cf-4-037": {
+   "title": "The Pressure Spike",
+   "text": "The needle on the boiler pressure gauge creeps past the red line, trembling violently as the safety valve sticks fast against its seat in the searing heat. If you cannot tap the valve spindle with precisely the right force using your brass mallet, the copper vessel will rupture in the confined space of the tunnel. You grip the heavy tool and lean over the hot boiler jacket, squinting through the shimmering air toward the jammed housing.\n\nRaising the mallet, you measure the distance and prepare to strike the trembling brass casing.",
+   "check": "Strike the jammed valve housing true",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-038": {
+   "title": "A Burned Knuckle",
+   "text": "Your mallet blow lands an inch off target, glancing harmlessly off the thick iron lagging and sending a sharp vibration straight up your wrist. A jet of scalding steam spits sideways from the housing, searing the skin across your knuckles and leaving a painful, blistering red welt that throbs with every beat of the engine. You drop the mallet onto the deck with a metallic clatter.\n\nYou manage to jam a wooden wedge into the linkage with your other hand just in time, but the pain remains a sharp reminder of the narrow margin.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tend the burn and push forward"
+   ]
+  },
+  "cf-4-039": {
+   "title": "The Spared Valve",
+   "text": "With a sharp crack of tempered metal, your precise tap unseats the jammed valve, and a deafening roar fills the cab as excess steam discharges safely up the chimney. The pressure needle drops back into the green zone while the boiler settles into a steady, rhythmic thrum. You wipe the sweat from your brow with a soot-stained sleeve, richer by a sturdy spare component salvaged from the repair shelf.",
+   "check": "",
+   "grant": "A spare brass pressure valve",
+   "exits": [
+    "Continue toward the subterranean grotto"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,63 @@
+Gemini said
+
+@@SECTION sg-4-1-3-2
+TITLE: The Amber Wave
+TEXT: Across a frozen wave of amber slag, you steady your trembling grip on the hot iron handle of the lamp as the wick flickers dangerously low. Every gust from the salt-choked gale threatens to plunge you into absolute darkness, forcing you to lean your entire weight against the treacherous slope while the cold ceramic Seedkey rattles heavily against your belt. // Ahead, the path splits between a narrow subterranean duct and a jagged glass overlook exposed to the full fury of the storm.
+EXIT 1: Crawl through the low drainage flute
+EXIT 2: Shelter behind the green glass screen
+@@END
+@@SECTION sg-4-1-3-3
+TITLE: The Basalt Cistern
+TEXT: Inside a hollow basalt cistern, a solitary water-drop echoes with maddening slowness, testing your frayed nerves against the relentless roar of the mirror storm. The damp air tastes of ancient lime and stale dust, offering a brief, claustrophobic sanctuary from the howling gale outside while your lamp casts dancing, distorted shadows against the curved stone walls. // You must decide whether to press onward into the blinding fury or risk crossing a frail, buckling framework suspended above the abyss.
+EXIT 1: Face the storm behind green glass
+EXIT 2: Cross the buckled iron framework
+@@END
+@@SECTION sg-4-1-3-4
+TITLE: The Sea-Glass Chime
+TEXT: Beneath a canopy of twisted zinc conduits, an old wind-chime made of sea-glass plays a frantic, discordant tune that threatens to drown out your thoughts. The sharp metallic clatter mingles with the howling wind, creating an unsettling rhythm that urges you to move faster before the unstable overhead structure gives way completely. // Your lamp light catches the vibrating shards above as you weigh your next step across the gale-swept divide.
+EXIT 1: Step onto the buckled iron bridge
+@@END
+@@SECTION sg-4-1-3-5
+TITLE: The Worn Boot-Sole
+TEXT: Beside a mountain of crushed quartz gravel, your right boot-sole peels away from the leather uppers, threatening to leave your heel bare to the abrasive ground. The biting wind whips razor-sharp dust around your ankles, turning every movement into a painful struggle against the shifting terrain and the biting cold. // You must choose whether to brave the open viewing screen or trust your footing across the swaying iron bridge ahead.
+EXIT 1: Seek cover behind the glass screen
+EXIT 2: Cross the buckled iron bridge ahead
+@@END
+@@SECTION sg-4-1-3-6
+TITLE: The Black Courtyard
+TEXT: Within a roofless courtyard of black basalt, a swirling vortex of white sand traps you against a dead wall while your lungs burn for clean air. The heavy dust coats your throat like dry ash, making every breath a desperate effort while the amber light of your lantern struggles to pierce the gritty haze. // Two potential routes beckon through the swirling gloom, each promising an escape from the suffocating trap.
+EXIT 1: Escape into the damp aqueduct junction
+EXIT 2: Seek refuge beneath the milk-glass spire
+@@END
+@@SECTION sg-4-1-3-7
+TITLE: The Translucent Causeway
+TEXT: Across a ribbed causeway of translucent slate, the storm pressure drops suddenly with a loud pop, popping your eardrums and confusing your sense of direction. The pale ground glows faintly underfoot like frozen milk, making it difficult to distinguish solid path from sheer drop as the gale shrieks across the open expanse. // You have a choice of paths leading deeper into the labyrinth of shattered glass and stone.
+EXIT 1: Take shelter behind the green glass screen
+EXIT 2: Push toward the damp masonry junction
+EXIT 3: Wade through the heavy pulverized drifts
+@@END
+@@SECTION sg-4-1-3-8
+TITLE: The Speaking-Tube
+TEXT: Inside a sunken observation post, a rusty brass speaking-tube whistles with the voice of the gale, threatening to disorient you with its unearthly howling. The metallic pipe seems to channel the very breath of the basin, turning the wind's fury into a haunting, hollow drone that vibrates straight through your boots. // You can press forward toward the leaning milk-glass spire or seek the deeper quiet of the fossilized mud alcove.
+EXIT 1: Head toward the leaning milk-glass spire
+EXIT 2: Rest in the fossilized mud alcove
+@@END
+@@SECTION sg-4-1-3-9
+TITLE: The Cantilevered Balcony
+TEXT: Beneath a cantilevered balcony of fused green quartz, you cling to a frozen iron stanchion while a slab of loose glass crashes into the ravine below. The structural groans of the old ruin remind you how fragile this dried sea truly is, leaving your muscles aching from tension as the freezing wind tests your grip. // Several routes offer a way away from the crumbling ledge into safer territory.
+EXIT 1: Retreat to the damp aqueduct junction
+EXIT 2: Climb toward the leaning milk-glass spire
+EXIT 3: Navigate the shifting pulverized quartz
+@@END
+@@SECTION sg-4-1-3-10
+TITLE: The Loiterers' Cleft
+TEXT: Following the faint smell of burnt tallow left by the looters, you slip through a narrow cleft in the storm wall that bypasses the worst of the grit. The sheltered crevice offers a welcome respite from the screaming winds, though the soot-stained walls suggest others passed this way not long before you. // You can follow the sheltered stone paths deeper into the complex while avoiding the worst of the surface gale.
+EXIT 1: Follow the path to the damp aqueduct
+EXIT 2: Advance through the shifting quartz dunes
+@@END
+@@SECTION sg-4-1-3-11
+TITLE: The Sunken Ring
+TEXT: Within a sunken cistern choked with gray salt-drift, your foot strikes a buried metal ring that tolls like a muffled bell against the rushing wind. The strange, resonant clang hangs in the heavy air for a long moment, cutting through the roar of the storm and hinting at forgotten machinery hidden beneath the crust. // The storm continues to press hard against your back, leaving two distinct directions for your escape.
+EXIT 1: Push through the heavy pulverized dunes
+EXIT 2: Cross the iridescent salt-crust pan
+@@END

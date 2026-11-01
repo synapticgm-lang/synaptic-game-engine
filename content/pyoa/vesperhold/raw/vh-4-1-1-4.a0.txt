@@ -1,0 +1,70 @@
+@@SECTION vh-4-1-1-4
+TITLE: The Frozen Winch
+TEXT: Thick rime encrusts the heavy timber housing of the ropeway winch, locking its iron cogs completely and barring the upper traverse. You wedge your belt-knife into the frost-packed teeth, chipping away shards of blue ice until the metal groans and releases its grip. // Below the ledge, the glacier stretches out in a vast expanse of white ripples and deep shadow. You must decide how to proceed past this obstruction before the biting mountain cold freezes your fingers entirely.
+EXIT 1: Carve additional steps into the blue wall
+EXIT 2: Slip through a narrow cleft in the granite [only offered if: the reader travels without the mule, light and quick, and so notices what a pack-animal would crowd out]
+EXIT 3: Follow the tattered red pennant around the collapse
+@@END
+
+@@SECTION vh-4-1-1-5
+TITLE: The Howling Chute
+TEXT: Wild gales shriek down the ice-chute, carrying the distinct metallic tang of Orison's bronze on the draft while needle-sharp sleet stings your exposed cheeks. Every breath feels like drawing shards of glass into your lungs as you lean into the bitter onslaught. // The heavy clapper shifts slightly in its padded cradle on your back, reminding you of the desperate race against the closing ice-wind season. You need to secure your footing and push onward through the freezing gloom.
+EXIT 1: Scrape the frozen sweat from your goggles
+EXIT 2: Clip your harness line to the iron ringbolt
+@@END
+
+@@SECTION vh-4-1-2-0
+TITLE: The Stranded Calf
+TEXT: Trembling against the biting wind, a stray calf belonging to a Terrace Miller stands frozen beside a narrow, crevassed bridge of packed snow. The little beast refuses to budge an inch, its dark eyes wide with terror as the ice groans beneath its hooves. // You reach into your pocket and break off a hard morsel of your travel crust, offering it out on an open palm to coax the animal into moving. A low, subterranean rumbling echoes up from the depths of the glacier as you wait.
+EXIT 1: Share a mouthful of lukewarm tea with the stranded warden
+EXIT 2: Cross the swaying span of notched pine logs
+@@END
+
+@@SECTION vh-4-1-2-1
+TITLE: The Chime Fissure
+TEXT: Blue icicles crowd the narrow walls of the jagged fissure, clicking together like tiny wind-chimes every single time the glacier stirs beneath your soles. The air smells intensely of cold stone and ancient, compressed moisture that has not seen the sun for centuries. // You turn sideways to squeeze your shoulders and the padded bronze clapper through the gap without snagging your straps. The faint, persistent hum of the heavy metal against your spine vibrates right through your marrow.
+EXIT 1: Share a mouthful of lukewarm tea with the stranded warden
+EXIT 2: Cross the swaying span of notched pine logs
+@@END
+
+@@SECTION vh-4-1-2-2
+TITLE: The Abandoned Sledge
+TEXT: Half-swallowed by heavy powder snow, an old wooden sledge lies tilted on its side with its runner iron gleaming dully in the weak, gray mountain light. Right beside it rests a small, weathered cairn of bleached skulls left by some forgotten party of travelers. // The wind whistles through the jagged stones as you step carefully around the wreckage, keeping a watchful eye out for hidden drop-offs. The mule behind you snorts nervously, catching the strange scent of old iron and bone.
+EXIT 1: Share a mouthful of lukewarm tea with the stranded warden
+EXIT 2: Coax the stubborn mule past the frozen carcass
+@@END
+
+@@SECTION vh-4-1-2-3
+TITLE: The Slush Tongue
+TEXT: Brown meltwater chatters noisily beneath a fragile, glistening crust of frost as you haul Biscuit by the halter across a treacherous tongue of grey slush. Every step threatens to break through into freezing water that would soak your boots to the bone. // You keep the heavy load balanced steadily on your own back while guiding the animal through the shifting mire with quiet, practiced commands. The air grows warmer and heavier here near the lower edge of the ice-flow.
+EXIT 1: Coax the stubborn mule past the frozen carcass
+EXIT 2: Find purchase along the dark vein of volcanic ash
+@@END
+
+@@SECTION vh-4-1-2-4
+TITLE: The Burnt Beacon
+TEXT: High upon a wind-scoured shelf of rock stands a blackened, burnt-out signal fire where a Fog-Warden once kept watch over the perilous upper trail. A sturdy coil of dry hemp rope remains securely lashed to a heavy iron stake driven deep into the granite. // You pause for a brief moment to catch your breath in the thin, freezing air while checking the knots that hold your precious cargo. The valley below is completely choked with an unbroken sea of rolling white clouds.
+EXIT 1: Find purchase along the dark vein of volcanic ash
+EXIT 2: Tighten the leather straps of the clapper cradle
+@@END
+
+@@SECTION vh-4-1-2-5
+TITLE: The Downdraft Ridge
+TEXT: Bitter ice-dust rattles violently against your oilskin coat as a sudden, vicious downdraft tries to sweep you straight off the narrow foot-ledge and into the gray abyss. You drop low to the stone, pressing your weight firmly against the mountain face until the gust passes. // The bronze clapper hums a deep, resonant note in response to the pressure change, its metal singing against the howling gale. You must gather your nerve before standing up on the exposed path again.
+EXIT 1: Find purchase along the dark vein of volcanic ash
+EXIT 2: Inspect the rusted winch-handle near the meltwater
+@@END
+
+@@SECTION vh-4-1-2-6
+TITLE: The Grease-Box
+TEXT: Wedged deep into a granite cleft sits a discarded tin grease-box left behind by some hurried cable-rider of the upper courts. You pry it open with a cold fingernail to find a thick, yellowish smear of rendered tallow still soft enough to use. // You scoop up a dollop with your stiff leather mitts, rubbing the grease into the seams to keep the moisture out and save your skin from cracking. The sharp scent of rendered fat cuts cleanly through the biting mountain chill.
+EXIT 1: Inspect the rusted winch-handle near the meltwater
+EXIT 2: Edge carefully along the overhanging snow cornice
+@@END
+
+@@SECTION vh-4-1-2-7
+TITLE: The Snow Bridge
+TEXT: On hands and knees, you crawl slowly across an arched bridge of packed powder that spans a yawning throat of blue ice humming with immense subterranean pressure. Every breath is a calculated risk as you feel the hollow space breathing right beneath your palms. // The mule follows behind with cautious, rhythmic steps, its hooves packing the snow tightly with every movement. Beyond the far side of the arch, the path finally levels out onto safer stone.
+EXIT 1: Brace against the sudden flurry of mountain ptarmigan
+EXIT 2: Follow the wooden signpost down through the murk
+@@END

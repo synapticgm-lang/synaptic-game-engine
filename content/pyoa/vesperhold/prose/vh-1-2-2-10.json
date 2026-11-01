@@ -1,0 +1,87 @@
+{
+ "batch": "vh-1-2-2-10",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-2-2-10": {
+   "title": "The Mason's Wall",
+   "text": "Wet slate clinks against wet slate as mason Toval builds up the crumbling path, his calloused fingers ignoring the chill of the stones. He pauses to wipe mortar from his brow, eyeing the heavy bronze clapper lashed to your back with a sympathetic grimace. The mountain wind funnels through the gap, rattling the loose tools at his belt.\n\nYou must decide whether to press on past his workspace, turn toward the lower courtyard, or seek out the hanging paths.",
+   "exits": [
+    "Step past the guard shelter",
+    "Approach the salt cistern barrels",
+    "Cross toward the wire bridge"
+   ]
+  },
+  "vh-1-2-2-11": {
+   "title": "Noon Through The Squall",
+   "text": "A heavy, muffled bronze toll rolls out from the distant bell-tower of Vesperhold, cutting through the swirling white squall like a blunt stroke of lead. Ice crystals cling to your eyelashes as you squint against the gale, shifting the heavy clapper on your spine to keep your balance on the slick flagstones. The mist swallows the stone parapet just a few paces ahead.\n\nYou can either push forward through the blinding flurry or seek shelter near the span.",
+   "exits": [
+    "Navigate the frosted landing steps",
+    "Head toward the wire bridge"
+   ]
+  },
+  "vh-1-2-2-12": {
+   "title": "The Frayed Guide-Line",
+   "text": "A sudden slackening of the tension whips the guide-line across your knuckles, stinging like a lash of cold iron wire. You draw your hand back sharply, tucking it inside your woolen sleeve while you steady the swinging mass of the clapper against your ribs. The wooden framework of the walkway groans under the relentless pressure of the gale.\n\nYou must choose whether to retreat toward the guarded shelter or inspect the cistern area.",
+   "exits": [
+    "Pass the sleeping sentinel",
+    "Check the cooper's barrels"
+   ]
+  },
+  "vh-1-2-2-13": {
+   "title": "St. Jude's Niche",
+   "text": "The wick of the tallow candle within St. Jude's sheltered stone niche still curls a thin wisp of grey smoke into the frigid air, having guttered out only moments before your arrival. You pause in its meager lee to catch your breath, listening to the faint, continuous hum of the bronze clapper against your shoulder blades. The stone floor of the shrine is powdered with fine drift-snow.\n\nYou can continue across the chasm, inspect the weaver's tally, or descend the frozen stair turn.",
+   "exits": [
+    "Cross the abyss bridge",
+    "Speak with the weaver",
+    "Descend the frozen stair turn"
+   ]
+  },
+  "vh-1-2-2-14": {
+   "title": "The Black Ice Slip",
+   "text": "Your left boot catches hard on a sheet of invisible black ice over the frozen rill, throwing your entire weight and the heavy bronze load dangerously askew. You windmill your arms to recover your balance, your heels grinding into the frost until you finally steady yourself against the rock face. The metallic hum inside the cradle shifts to a sharper, higher pitch.\n\nYou can either move toward the buttress shadow or negotiate the icy stair turn.",
+   "exits": [
+    "Head for the buttress shadow",
+    "Navigate the frozen stair turn"
+   ]
+  },
+  "vh-1-2-2-15": {
+   "title": "The Lime Kiln Flask",
+   "text": "A plume of steam rises from the battered tin flask that local gatherer Ruda shoves cheerfully into your mittened hands, offering a draught of hot, biting pine tea. The warmth eases the cramp in your shoulders where the heavy clapper straps bite through your heavy coat. She points a gloved finger down toward the shadowed descent before returning to her baskets of dried moss.\n\nYou can take the path around the bend toward the stair turn.",
+   "exits": [
+    "Turn down the stone stair"
+   ]
+  },
+  "vh-1-2-3-0": {
+   "title": "The Upper Winch Station",
+   "text": "Operator Brimm leans his weight against the iron brake lever while the heavy hemp cable hums a deep, vibrating note through the frozen winch house. Grease smokes faintly from the grooved wooden drum, smelling of mutton fat and cold iron. The cliff drops away sharply beyond the open loading bay into an endless sea of grey cloud.\n\nYou can continue onward toward the lower gate landing.",
+   "exits": [
+    "Walk to the lower gate landing"
+   ]
+  },
+  "vh-1-2-3-1": {
+   "title": "The Mossy Gully",
+   "text": "A dense cluster of icicles snaps cleanly from the mossy gully overhead, clattering in a shower of sharp crystal shards across the rocky path before your boots. You shield your face with a forearm, feeling the vibration of the great clapper resonate through your chest as the echoes die away into the white abyss.\n\nYou can press on toward the gate merchant or inspect the toll-house awning.",
+   "exits": [
+    "Approach the gate merchant",
+    "Step beneath the toll-house awning"
+   ]
+  },
+  "vh-1-2-3-2": {
+   "title": "The Toll-Clerk's Lamp",
+   "text": "Toll-clerk Nesta licks a thumb stained with purple ink, methodically counting small copper coins by the flickering, greasy light of a fat-lamp inside the stone shelter. The scent of burnt mutton tallow and damp wool fills the cramped recess, shielding you momentarily from the biting mountain draft. He does not look up as your heavy boots scrape the threshold.\n\nYou can continue toward the lower gate or examine the toll permits.",
+   "exits": [
+    "Head toward the lower gate",
+    "Inspect the permit desk"
+   ]
+  },
+  "vh-1-2-3-3": {
+   "title": "Calming The Mule",
+   "text": "Mule-driver Korda murmurs low encouragement, stroking Biscuit's twitching, frost-rimed ears to soothe the stubborn beast against the rising howl of the wind. The mule stamps a heavy hoof against the frozen ground, its breath pluming white and thick in the freezing air while pack-saddles creak under their burden.\n\nYou can move forward toward the lower gate landing or check the toll-house.",
+   "exits": [
+    "Proceed to the gate landing",
+    "Approach the toll-house clerk"
+   ]
+  }
+ },
+ "missing": []
+}

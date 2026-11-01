@@ -1,0 +1,122 @@
+{
+ "batch": "td-2-066",
+ "sections": {
+  "td-2-066": {
+   "title": "The Singing Dunes",
+   "text": "Sweeping ridges of golden sand ripple under the grey sky, rolling toward the horizon in endless, whispering waves. Faint, melodic hums drift across the flats, rising and falling like the voices of drowned sailors calling from beneath the crust. Out among the shifting mounds, pale shapes wander aimlessly, half-swallowed by the dry tides of dust. Every gust stirs up buried relics that gleam briefly before sinking back into the yellow depths.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb toward the higher ridge",
+    "Trace the lowest humming trough",
+    "Follow the trail of footprints",
+    "Dig into the pale sand",
+    "Stand firm against the wind",
+    "Cross toward the jagged reef"
+   ]
+  },
+  "td-2-067": {
+   "title": "Buried Shrine Beneath",
+   "text": "Golden grains pour over your boots as you carve a trench into the side of the slope, unearthing the moss-slicked lintel of an old tide-shrine. Beneath the heavy silt lies a stone altar choked with dry salt and forgotten offerings. You pry loose a small, cool jade idol shaped like a coiled sea-serpent, its polished surface untouched by the abrasive air. Pocketing the relic, you press onward through the drifting dunes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the dunes"
+   ]
+  },
+  "td-2-068": {
+   "title": "Unearthing the Relic",
+   "text": "Heavy tons of sun-baked sand suddenly give way above the partially buried shrine, threatening to bury you alive in a suffocating wave of yellow dust. You brace your shoulders against the shifting weight, planting your boots deep into the firm crust below to fend off the landslide. Every muscle in your back strains as the sliding slope presses down with brutal force.",
+   "check": "Heave against the falling sand",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-069": {
+   "title": "Buried in Dust",
+   "text": "The sliding wall of sand overpowers your footing, burying you up to the chest before you can claw your way clear. You gasp in a mouthful of grit and alkaline dust, your lungs burning as you struggle to wrench your legs free from the heavy trap. By the time you haul yourself onto stable ground, your supplies are fouled with sand and a dull ache throbs through your bruised ribs.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself from the pit"
+   ]
+  },
+  "td-2-070": {
+   "title": "The Jade Serpent",
+   "text": "Staggering free from the shifting collapse, you clutch the cool, heavy jade idol tightly in your fist, its polished surface free of scratches. Whether through careful leverage or sheer stubborn luck, you managed to unseat the relic before the entire slope came down. The carved serpent hums faintly against your palm, a curious prize salvaged from the dry seabed.",
+   "check": "",
+   "grant": "Polished jade serpent idol",
+   "exits": [
+    "Leave the collapsing dunes behind"
+   ]
+  },
+  "td-2-071": {
+   "title": "Listening to the Sands",
+   "text": "Low, melodic vibrations hum through the soles of your boots, warning of hollow cavities and treacherous quicksand hidden beneath the golden ripples. You trace the shifting pitch of the dunes, stepping carefully from one firm shelf of salt-crust to the next. Ahead, the ruins of an abandoned camp emerge from the dust like the ribcage of a beached whale, offering a temporary shelter from the wind.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the abandoned campsite"
+   ]
+  },
+  "td-2-072": {
+   "title": "Navigating the Quicksand",
+   "text": "The ground beneath your feet suddenly softens into a treacherous slurry of fine yellow silt that pulls you down with terrifying speed. You sweep your gaze across the rippling dunes, searching for subtle shifts in color and texture to map a safe route across the basin. Every second counts as the sinkhole bubbles and threatens to swallow your boots.",
+   "check": "Read the shifting sand patterns",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-073": {
+   "title": "Trapped in the Silt",
+   "text": "A misjudged step sends you plunging knee-deep into a hidden pocket of wet quicksand that drains your strength with every frantic wrench. You manage to throw your weight forward onto a sturdy driftwood timber, but the struggle exhausts your muscles and costs you precious time and water. You pull yourself clear, shivering despite the dry heat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl away from the sinkhole"
+   ]
+  },
+  "td-2-074": {
+   "title": "Finding Solid Ground",
+   "text": "Reading the subtle tonal shifts in the sand's hum, you pick a precise path around the churning sinkholes and reach the safety of solid ground. Whether through sharp observation or fortunate intuition, you avoid the worst of the hidden traps without losing your stride. The desolate expanse opens up before you, offering a clear route back to the shifting crossroads.",
+   "check": "",
+   "grant": "Safe passage through dunes",
+   "exits": [
+    "Return to the singing crossroads"
+   ]
+  },
+  "td-2-075": {
+   "title": "Tracking the Lost",
+   "text": "Scattered footprints cross the yellow expanse like the tracks of wandering ghosts, disappearing beneath fresh drifts of wind-blown sand. You study the chaotic trail, noting where boots hesitated or slipped against the steep ridges. Following their meandering path through the maze of dunes, you spot a sturdy wooden staff half-buried in the dust, left behind by some earlier traveller.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retrieve the discarded staff"
+   ]
+  },
+  "td-2-076": {
+   "title": "The Wandering Trail",
+   "text": "Picking your way through the labyrinth of golden hills, you keep your eyes fixed on the faint indentations left by previous wanderers. The wind howls across the crests, wiping away the tracks just as you find them, forcing you to rely on your wits to stay on course. Ahead, the dunes part to reveal a wide basin sheltered from the howling gusts.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Enter the sheltered desert basin"
+   ]
+  },
+  "td-2-077": {
+   "title": "Deciphering the Maze",
+   "text": "The tracks split into a dozen confusing directions as the wind whips the sand into blinding, swirling curtains. You pause to analyze the direction of the ripples and the weight of the footprints, trying to determine which path leads through the labyrinth. A sudden squall of dust descends, obscuring your landmarks entirely as you make your choice.",
+   "check": "Trace the true path forward",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-078": {
+   "title": "Lost in the Squall",
+   "text": "The blinding dust-storm swallows the trail entirely, sending you stumbling in circles until you collide hard against a jagged ridge of sandstone. You lose precious hours huddled against the rock while the gale strips your skin raw and scatters your supplies. When the wind finally dies down, you are left bruised, disoriented, and forced to retrace your steps.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Find the true path onward"
+   ]
+  }
+ },
+ "missing": []
+}

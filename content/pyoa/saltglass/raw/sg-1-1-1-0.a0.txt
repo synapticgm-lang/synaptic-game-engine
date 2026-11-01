@@ -1,0 +1,67 @@
+Gemini said
+
+@@SECTION sg-1-1-1-0
+TITLE: The Tallow-Sellers' Eaves
+TEXT: Under the low thatch of the tallow-sellers, grease-smoke curls thick and sweet from a copper brazier while Pell tests the weight of your copper coin against his knuckles. The glass-diver flips the metal once, listening for the sharp ring of true silver-alloy before sliding it deep into his waistcoat pocket with a knowing nod. Around you, the market noise of Candlemere fades against the relentless dry wind whispering off the white rim. // You tighten the straps of your wool coat over the cold ceramic key hidden in your lining, your eyes fixed on the hazy expanse of the Basin stretching out beyond the rim road. Pell slings his narrow iron-shod staff across his shoulder, waiting to see which direction you intend to take as the dust settles around your boots.
+EXIT 1: Inspect the mule-track with Pell
+EXIT 2: Exchange sharp words with the tinker
+EXIT 3: Step past the kiln ahead of your guide
+@@END
+@@SECTION sg-1-1-1-1
+TITLE: The Blocked Cart-Track
+TEXT: A heavy salt-clogged cart blocks the narrow track, its wooden axle splintered under a mound of crude alkaline blocks that glint cruelly in the sun. Pell leans his full weight against a sturdy ash-pole, planting his boots in the grit as he urges you to help shove the dead weight aside so the road ahead clears. The heat beats down from a cloudless sky, smelling strongly of old brine and sun-baked timber. // With a final heave, the wheel-hub clears the rut and spins free, kicking up a shower of glittering dust that settles on your gaiters. Pell wipes his brow with a greasy rag, nodding toward the diverging tracks that fork out toward the open white desert.
+EXIT 1: Huddle beneath the iron culvert
+EXIT 2: Share a roasted chicory root
+EXIT 3: Pass the green glass milestone
+@@END
+@@SECTION sg-1-1-1-2
+TITLE: Walking Out Alone
+TEXT: Walking out alone past the iron gate of Candlemere, your boots crunch rhythmically over scattered sheep-bells left behind by the morning herds. The gate-warden stands by his post, spitting a dry, indifferent farewell into the alkaline dust before turning his back on your solitary departure. The vast white shell of the dried inland sea opens before you like an immense mirror reflecting the blinding afternoon glare. // You adjust the weight of your ember-lamp against your hip, feeling the banked coals shift safely inside their perforated iron housing. The horizon wavers behind shimmering heat-mirages where the shattered glass cities of the Old Lensfolk catch the light.
+EXIT 1: Pass the green glass milestone marking three leagues
+EXIT 2: Buy brackish water from a widow by the horse-trough
+EXIT 3: Scrape dried salt-cake while signal mirrors flash
+@@END
+@@SECTION sg-1-1-1-3
+TITLE: Dodging the Kelp Mule
+TEXT: You dodge hard to the left as a nervous pack-mule laden with dried kelp lurches past, leaving Pell behind in the press of townfolk as the limestone walls of Candlemere shrink into the desert glare. The animal's iron bells jangle with a frantic, hollow rhythm that echoes off the low hills. You find yourself alone on the gravel path, the wind carrying the sharp scent of iodine and dry scrub. // Pressing onward into the open stretch of the Rim Road, you feel the solitude close around you like a heavy cloak. Every footstep carries you further from the familiar tallow-smoke and stone hearths of home, drawing you deeper into the domain of the Salt Court.
+EXIT 1: Listen to Pell's drover tune echo off limestone
+EXIT 2: Watch a tethered donkey rattle its iron ring
+EXIT 3: Marvel at the preserved whiskers of a dried hare
+@@END
+@@SECTION sg-1-1-1-4
+TITLE: The Cistern-House Warning
+TEXT: Pell catches your elbow with a calloused hand by the moss-grown cistern-house, pulling you back into the shadow of the stone water-trough. He points a sun-darkened finger toward the eastern horizon, where a thick, yellowish salt-squall is rapidly curdling the sky into an angry haze. The wind dies down completely for a breathless heartbeat, replaced by an eerie, heavy stillness that makes the hairs on your arms stand on end. // The coming blow promises to scour the flats clean of any traveler foolish enough to cross without cover. Pell looks sideways at you, waiting to see how you intend to weather the approaching gale before committing your steps to the open track.
+EXIT 1: Inspect the wheel-rut gypsum crystals with Pell
+EXIT 2: Listen to the muffled thrum of a distant salt-mill
+EXIT 3: Trade rye bread with a ragged shepherd
+@@END
+@@SECTION sg-1-1-1-5
+TITLE: The Cattle-Pound Passage
+TEXT: You stride past the abandoned cattle-pound unescorted, your fingers curling protectively around the cold ceramic key hidden safely inside your wool coat lining. The dry wooden fences stand like bleached ribs against the alkaline earth, devoid of beasts or herdsmen in this punishing drought. Every breath tastes faintly of salt and baked lime, reminding you of the desperate harvest failure back at Candlemere. // Ahead, the road splits into faint wagon ruts that vanish into the shimmering distance of the Basin floor. You keep your pace steady and purposeful, knowing that the Seedkey must reach the Rain Vault before the monsoon floods the lowlands.
+EXIT 1: Trade rye bread with a ragged shepherd
+EXIT 2: Note the hermit chimney peeking above salt-drifts
+EXIT 3: Walk boot-to-boot through the narrow silt banks
+@@END
+@@SECTION sg-1-1-2-0
+TITLE: The Mule-Track Shards
+TEXT: Pell kicks a loose, jagged shard of window-slag aside on the dusty mule-track, sending it skittering across the white crust with a thin, metallic ring. He mutters a low curse under his breath, warning that toll-collectors from the Salt Court have been spotted watching the dry ford ahead for unwary travelers. The air here smells of sulfur and sun-baked glass, thick with the heat radiating off the ancient lake-bed. // You check the iron housing of your ember-lamp to ensure the banked coals are secure before pressing forward into the shadow of the crumbling ruins. Every shadow along the track looks like a mounted guard waiting to demand exorbitant passage fees.
+EXIT 1: Hear a grim tale beside the lime-kiln
+EXIT 2: Adjust your pack in the wheel-wright's shack
+@@END
+@@SECTION sg-1-1-2-1
+TITLE: The Tinkering Dispute
+TEXT: You trade sharp insults with a crusty tinker who is busy hammering a dented copper kettle beside the drainage ditch, while Pell methodically inspects his brass compass-dial. The tinker spits into the dirt, complaining bitterly about the rising price of charcoal and the cruelty of the local toll-lords. Pell ignores the grumbling, tapping the glass face of his instrument until the needle settles true toward the southeast. // Leaving the disgruntled artisan to his hammering, you follow your guide away from the ditch as the track begins to slope downward toward the sun-bleached expanse of the Basin floor. The distant towers of Prism glimmer like broken teeth on the horizon.
+EXIT 1: Hear a grim tale beside the lime-kiln
+EXIT 2: Adjust your pack in the wheel-wright's shack
+@@END
+@@SECTION sg-1-1-2-2
+TITLE: The Three-Legged Cur
+TEXT: A mangy, three-legged cur trails closely behind your boots past the abandoned lime-kiln, its tongue lolling dryly in the baking noon heat as it pants for moisture. The poor beast begs with milky, rheumy eyes, but your own skin-flask holds barely enough brackish water to sustain your own march across the flats. The crumbling stone oven radiates a dry, stifling warmth that makes the surrounding air ripple like water. // You step up your pace to shake off the persistent animal, keeping your eyes on the winding track ahead where the horizon blurs into a brilliant, salt-caked glare. Prism's spires rise faintly in the far distance.
+EXIT 1: Duck behind fence-hurdles as riders pass
+EXIT 2: Jump as a startled kestrel launches from a post
+@@END
+@@SECTION sg-1-1-2-3
+TITLE: The Iron Culvert
+TEXT: You huddle low beneath the rust-flaking iron beams of the culvert as a heavy salt-cart rumbles overhead, kicking up a dense, choking cloud of alkaline dust that coats the back of your throat. The wooden wheels groan under their immense burden, shaking the very earth beneath your boots until the cart passes into silence. The taste of salt and iron hangs heavy on your tongue. // Crawling out from the shadowy shelter into the blinding glare, you brush the fine white powder from your sleeves and adjust your pack. The road ahead stretches straight and white toward the shimmering heart of the Saltglass Basin.
+EXIT 1: Pocket a copper eyelet dropped by a runner
+@@END

@@ -1,0 +1,54 @@
+@@SEED vh-5-2-0-0 | Slipping past the Warden post beneath dripping pears, you follow a mossy irrigation run while the bronze clapper hums against your aching shoulder-blades.
+@@SEED vh-5-2-0-1 | Crouching behind a stacked crate of cider-presses, you watch a hooded Warden blow three sharp warning notes into a brass whistle while mist clings to your wool.
+@@SEED vh-5-2-1-0 | Beneath a canopy of frost-bitten russets, you crawl under a split timber rail while the mule's soft snort is muffled by thick white fog.
+@@SEED vh-5-2-1-1 | Edging along a sunken drainage ditch where rotting apples ferment in the damp, you pray the bronze weight on your back remains entirely silent.
+@@SEED vh-5-2-1-2 | Tiptoeing past a sleeping watchdog tethered to a pear trunk, you hold your breath as a wet pine-needle drops against your leather collar.
+@@SEED vh-5-2-1-3 | Ducking under a low trellis strung with grey lichen, you spot a discarded Warden whistle lying in the mud, offering an instant passport if you dare blow it.
+@@SEED vh-5-2-1-4 | Spotting a forgotten smuggler's hatch beneath a root-knotted bank, you slide inside with the heavy clapper to bypass the entire checkpoint via an old cellar.
+@@SEED vh-5-2-1-5 | Skirting the perimeter fence where rusted iron wire hums in the updraft, you slip into a narrow drainage pipe that leads straight down toward the lower groves.
+@@SEED vh-5-2-2-0 | Navigating a labyrinth of blackthorn hedges, you dodge a swinging lantern held by a searcher whose boots squelch heavily in the wet orchard clay.
+@@SEED vh-5-2-2-1 | Hiding inside an abandoned cider-press shed, you listen to water dripping from the cedar eaves while the bronze tongue grows icy against your spine.
+@@SEED vh-5-2-2-2 | Crawling beneath a laden damson tree, you brush past damp leaves that shower cold dew across your neck and threaten to betray your passage.
+@@SEED vh-5-2-2-3 | Balancing on a slippery stone wall dividing two overgrown orchards, you steady the heavy cradle as the fog rolls in thicker from the gorge.
+@@SEED vh-5-2-2-4 | Squeezing through a narrow cleft in the drystone terracing, you scrape your woollen coat against sharp slate while the mule picks its way behind.
+@@SEED vh-5-2-2-5 | Wading through a shallow, ice-rimed irrigation trench, you keep your head low beneath low-slung pear branches while distant whistles echo off the cliff.
+@@SEED vh-5-2-2-6 | Crouching in a patch of wild fennel behind a stone smokehouse, you watch a lantern beam sweep across the grey fog just inches above your cap.
+@@SEED vh-5-2-2-7 | Scrambling down a steep earthen embankment choked with dead brambles, you catch your sleeve on a thorn while the bronze clapper shifts heavily.
+@@SEED vh-5-2-2-8 | Pausing beside a moss-grown stone cistern, you rinse cold mud from your knuckles while the mountain mist tastes of salt and wood-smoke.
+@@SEED vh-5-2-2-9 | Creeping along the edge of a terraced nursery bed, you step lightly over coiled grafting twine that could easily trip you into the briars.
+@@SEED vh-5-2-2-10 | Ducking behind a towering stack of empty apple crates, you watch two Fog-Wardens pass by with muffled lanterns, discussing the morning frost.
+@@SEED vh-5-2-2-11 | Sliding down a slick mud slide between two terraced plots, you use your free hand to brake against mossy roots while the heavy bell-tongue pulls.
+@@SEED vh-5-2-2-12 | Threading your way through an ancient orchard where gnarled trunks look like twisted fingers, you follow the sound of a distant rushing flume.
+@@SEED vh-5-2-2-13 | Spotting an old frostbite scar on your knuckles, you recall a veteran carter's trick of rubbing tallow on your boot-soles to move in absolute silence.
+@@SEED vh-5-2-2-14 | Navigating a narrow animal track beneath low-hanging branches, you press flat against the damp earth as a heavy cart rumbles along the terrace above.
+@@SEED vh-5-2-2-15 | Slipping past a stone storage clamp filled with winter root vegetables, you hold your breath as a door creaks open in the thick white gloom.
+@@SEED vh-5-2-3-0 | Crossing a suspended wooden plank over a roaring drainage sluice, you feel the wet timber groan beneath the heavy bronze cradle on your back.
+@@SEED vh-5-2-3-1 | Weaving through a dense plantation of dwarf quinces, you keep low as a stray dog barks against the fog somewhere near the upper fence.
+@@SEED vh-5-2-3-2 | Clinging to a mossy retaining wall while a Cable Court tax-collector hurries past with a ledger under his arm, you blend into the grey stone.
+@@SEED vh-5-2-3-3 | Navigating a muddy terrace where fallen fruit rots in thick heaps, you keep your balance by clutching dangling branch-ends with frozen fingers.
+@@SEED vh-5-2-3-4 | Squeezing past a rusted iron winch station, you listen to the rhythmic creak of distant cables stretching across the hidden gulf of the valley.
+@@SEED vh-5-2-3-5 | Crouching beneath a canvas fruit-sorting table, you wait out a group of gossiping orchard workers who complain bitterly about the early cold snap.
+@@SEED vh-5-2-3-6 | Creeping along a high box-hedge that shields an old warden's cottage, you catch the scent of burning juniper and roasting barley from the hearth.
+@@SEED vh-5-2-3-7 | Recognizing a Cable Court bailiff who mistakes your brass cradle for a toll-box, you flash a forged token to stride past unchecked down the stone stairs.
+@@SEED vh-5-2-3-8 | Stepping carefully over a maze of lead pipes feeding the valley fountains, you make sure the mule avoids the slippery brass junction-boxes.
+@@SEED vh-5-2-3-9 | Hiding behind a towering stack of willow wicker baskets, you let a patrol of whistle-guards march by before breaking into a steady trot southward.
+@@SEED vh-5-2-3-10 | Trailing your hand along a damp stone wall that marks the boundary of the lower groves, you sense the air growing warmer and less choked with mist.
+@@SEED vh-5-2-3-11 | Wading through a shallow drainage ditch filled with fallen leaves, you emerge onto a wider cobblestone track leading down toward the deep gorge.
+@@SEED vh-5-2-3-12 | Dodging a runaway cider barrel that bounces off a terrace wall, you pull the mule into a shallow alcove just in time to avoid disaster.
+@@SEED vh-5-2-3-13 | Pausing beside a milestone carved with lichen-filled runes, you verify that the path to Lowgate is finally clear of the upper warden patrols.
+@@SEED vh-5-2-3-14 | Slipping through an unlocked orchard gate that swings silently on oiled leather hinges, you leave the misty veil of the upper valley behind.
+@@SEED vh-5-2-3-15 | Descending a steep stone stairway slick with winter moss, you hear the distant, reassuring rumble of the iron foundries echoing up from the river.
+@@SEED vh-5-2-4-0 | Emerging from the dripping fruit-groves onto the great limestone staircase, you adjust the padded cradle as the cloud ceiling lifts above your head.
+@@SEED vh-5-2-4-1 | Pausing at a stone toll-arch where the warden bells hang silent, you wipe the cold condensation from your brow and check the mule's girth-straps.
+@@SEED vh-5-2-4-2 | Looking back up the sheer mountain face where Vesperhold dissolves into white mist, you feel the first clear breeze of the lower gorge strike your cheeks.
+@@SEED vh-5-2-4-3 | Walking briskly down the broad paved descent toward Lowgate, you hear the muffled clank of the great foundry hammers drawing you toward the end of your quest.
+@@SEED vh-5-2-4-4 | Reaching the final stone terrace above the river-fog, you pat the mule's dusty neck as the silhouette of the lower smithies looms through the haze.
+@@SEED vh-5-2-4-5 | Striding past a row of shuttered drying-sheds, you feel the weight of the cracked bronze clapper lighten in your spirit as the descent nears its end.
+@@SEED vh-5-2-4-6 | Crossing the old arch bridge over the white-water torrent, you smell coal-smoke and hot iron rising from the forge-master's yard below.
+@@SEED vh-5-2-4-7 | Standing at the head of the final zig-zag trail down to Lowgate, you take a deep breath of the clear lowland air and prepare to deliver the Orison's tongue.
+@@SEED vh-5-2-5-0 | Reaching the iron-studded gates of the foundry yard, you ring the heavy brass hand-pull and wait for the forge-masters to answer your desperate summons.
+@@SEED vh-5-2-5-1 | Dropping the padded cradle onto the threshold of the casting hall, you watch a scarred smith come forward to inspect the fractured bronze tongue.
+@@SEED vh-5-2-5-2 | Unbuckling the heavy straps from your aching shoulders, you present the humming relic to the master founder just as the first heavy snowflakes begin to fall.
+@@SEED vh-5-2-5-3 | Stepping inside the roaring warmth of the lower foundry, you slide the great clapper onto the iron cooling floor and know that Vesperhold's voice is saved.
+@@SEED vh-d-5-2 | Trying to outrun a mounted warden patrol by leaping across a rotting irrigation flume, you slip on the wet green slime and plunge headfirst into the thorns, shattering the bronze cradle against the stones.
+@@DONE

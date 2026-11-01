@@ -1,0 +1,93 @@
+{
+ "batch": "sg-2-0-0-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-0-0-3": {
+   "title": "The Salt-Peddler's Bargain",
+   "text": "Crouching behind a bleached camel skull, a wandering salt-peddler named Throm offers stale dried melon rinds for a pinch of coal from your lamp. The blinding haze shimmers around his thin frame as he waits anxiously for your decision, clutching his leather pouch of grey crystals.\n\nYou must weigh the value of your precious fuel against the gnawing hunger in your stomach before he loses his nerve and scurries back into the white glare.",
+   "exits": [
+    "Trade a pinch of coal for dried melon rinds",
+    "Refuse the barter and keep your embers banked",
+    "Ignore his frantic whispers and stride past the skull"
+   ]
+  },
+  "sg-2-0-1-0": {
+   "title": "The Heat-Warped Foundation",
+   "text": "Beneath a canopy of heat-warped air, you pass the crumbling foundation of an old watch-tower where a discarded iron bucket rattles in the empty wind. This hollow clatter reminds you how thin the margin is between survival and bone-dry ruin out here on the open flats.\n\nSeveral faint tracks diverge into the shimmering distance, offering different routes through the blinding expanse as the midday heat presses down like lead.",
+   "exits": [
+    "Follow the faint track toward the horizon",
+    "Skirt the massive mound of fused green slag",
+    "Inspect the abandoned refugee cart ahead",
+    "Dodge the sudden whirl of stinging alkali dust"
+   ]
+  },
+  "sg-2-0-1-1": {
+   "title": "The Sleeping Patrol",
+   "text": "Keeping your ember-lamp completely shuttered and cold, you slip silently past a sleeping patrol of Salt Court toll-guards huddled in the deep shade of a basalt monolith. Moving with deliberate care saves both your coal and your anonymity in one lucky stride, leaving the snoring sentries behind in the dust.\n\nThe open basin stretches out before you, presenting multiple winding paths away from the dangerous shadow of the guards.",
+   "exits": [
+    "Head deeper into the silent basin alone",
+    "Inspect the cargo of the abandoned refugee cart",
+    "Approach the elderly scavenger polishing singing glass"
+   ]
+  },
+  "sg-2-0-1-2": {
+   "title": "The Alkali Ridge",
+   "text": "A low ridge of crystallized alkali blocks your direct path, forcing you to scramble over jagged, crumbling mineral teeth that threaten to crush the ceramic Seedkey tucked securely inside your inner belt pouch. Every handhold is sharp enough to slice leather, demanding absolute precision with every step.\n\nBeyond the treacherous crest, the landscape opens into swirling dust and quiet expanses where new directions wait to be chosen.",
+   "exits": [
+    "Push forward into the swirling alkali dust",
+    "Seek out the elderly scavenger resting on the pavement"
+   ]
+  },
+  "sg-2-0-1-3": {
+   "title": "The Glass-Diver's Warning",
+   "text": "An old glass-diver named Corin sits upon a salt-caked crate scraping brine from his goggles, muttering dire warnings about sudden sinkholes opening beneath the crust. His dry cough matches the abrasive whistle of the rising wind as he points a weathered finger toward the treacherous ground ahead.\n\nYou must choose your next route carefully to avoid the hidden cavities yawning beneath the white salt.",
+   "exits": [
+    "Walk toward the flat salt-pavement where Orla sits",
+    "Cross the rotting timbers of the collapsed brine-conduit",
+    "Veer away from the flapping Salt Court banner"
+   ]
+  },
+  "sg-2-0-1-4": {
+   "title": "The Shimmering Snail Trail",
+   "text": "You cross a flat expanse of pink-tinted salt where thousands of crystallized snail shells crunch beneath your soles like broken china, leaving a clear trail that any keen tracker could follow across the blinding flats. The unnerving sound of crushing shells echoes loudly in the heavy air, drawing unwanted attention to your passage.\n\nSeveral paths branch away from the crunching crust, leading toward different hazards in the distance.",
+   "exits": [
+    "Step carefully across the collapsed underground conduit",
+    "Give the snapping Salt Court banner a wide berth",
+    "Wade cautiously into the dry drainage ditch of glass reeds"
+   ]
+  },
+  "sg-2-0-1-5": {
+   "title": "The Humming Boundary",
+   "text": "A solitary metal boundary marker hums softly in the dry heat, vibrating with some residual low-frequency current from the Old Lensfolk days that sets your teeth on edge as you hurry past the humming iron. The strange metallic resonance hangs heavy in the stagnant air, making the skin on your arms prickle.\n\nTraveling completely alone and unencumbered by a guide allows you to notice subtle details that others might miss in the landscape.",
+   "exits": [
+    "Inspect the subtle color shift in the alkali crust",
+    "Wade cautiously through the dry drainage ditch"
+   ]
+  },
+  "sg-2-0-1-6": {
+   "title": "The Split Waterskin",
+   "text": "You pause to examine a discarded leather waterskin split wide open by the sun, its dark stain vanished into the crust long ago, warning you of the brutal thirst awaiting those who misjudge the distance between wells. The empty shell of leather curls like a dead leaf against the harsh white salt.\n\nVarious routes stretch out before you, each carrying its own silent warning about the scarcity of water.",
+   "exits": [
+    "Investigate the subtle color shift in the crust",
+    "Enter the dry drainage ditch choked with glass reeds",
+    "Watch the lone sentry flash a mirror signal"
+   ]
+  },
+  "sg-2-0-1-7": {
+   "title": "The Wheeling Gulls",
+   "text": "A flock of white-feathered alkali gulls wheels overhead against the pale zinc sky, their sharp cries echoing across the empty flats like mockery from creatures that know where every hidden moisture pocket lies. Their wings catch the glaring sunlight as they swoop low over the horizon and vanish into the haze.\n\nA steep ridge of hard-packed salt looms ahead, offering a vantage point to survey the grueling trek.",
+   "exits": [
+    "Climb the steep ridge of salt and pottery fragments"
+   ]
+  },
+  "sg-2-0-1-8": {
+   "title": "The Crusted Slush",
+   "text": "You wade through a shallow basin of crusted alkaline slush that sucks greedily at your boot-heels, threatening to pull you off balance and exhaust your leg muscles before you reach the firm ground beyond. The thick paste clings stubbornly to your leather boots, making every single forward step a heavy battle against suction and weight.\n\nTwo distinct paths lie beyond the sticky basin, leading deeper into the heart of the flats.",
+   "exits": [
+    "Climb the steep ridge of hard-packed salt",
+    "Examine the weathered basalt milestone half-buried in the crust"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,73 @@
+Gemini said
+
+@@SECTION sg-6-1-1-1
+TITLE: Shattered Skylight Vault
+TEXT: Fine white salt sifts through a jagged rent in the overhead vault, dusting your shoulders as you dance across the flagstones. Heavy ceramic tiles break loose from the crumbling sill above, smashing into white shards inches from your boots and threatening to crush the cold ceramic key clutched in your palm. You leap past the falling debris into the deeper gloom, your coal-lantern swinging wildly against your thigh while you weigh your next step toward the lower chambers.
+EXIT 1: Dash past the falling tiles ahead
+EXIT 2: Duck into a shadowy alcove to wait
+EXIT 3: Scramble toward a brass-fitted maintenance pipe
+@@END
+@@SECTION sg-6-1-1-2
+TITLE: The Resonant Latch
+TEXT: The cold ceramic key in your hand gives a sudden, distinct thrum against your palm, vibrating with an ancient harmony that matches the concealed machinery within the masonry. A heavy stone floor panel clicks and pivots open without a sound, revealing a cool, untouched subterranean gallery filled with untouched rows of dark grain bins. You peer down into the unexpected recess where the air tastes of ancient dust and promised life.
+EXIT 1: Descend into the unplundered grain gallery
+EXIT 2: Follow the narrow corridor along the wall
+EXIT 3: Inspect the low basalt archway ahead
+@@END
+@@SECTION sg-6-1-1-3
+TITLE: Frost and Barley Husks
+TEXT: Bitter drafts bite through your coat as you wade through knee-deep drifts of blackened barley husks inside the freezing basalt chamber. Your banked coal-lantern sputters and dims against the damp cold, casting pale, wavering light over frost-rimed walls and twisted iron conduits. You steady the lantern and listen to the hollow crunch of husks beneath your boots, searching for a way through the gloom.
+EXIT 1: Follow the sound of distant water running
+EXIT 2: Step beneath the low salt-crusted basalt arch
+EXIT 3: Present your debt badge to the brass gate
+EXIT 4: Hide behind the empty terracotta seed-bin
+@@END
+@@SECTION sg-6-1-1-4
+TITLE: The Sleeping Stone Fish
+TEXT: A dry stone fountain carved with curling stone fish stands silent under the low vault, its basin choked with pale crystal dust. Your boot kicks against an abandoned copper hoe left in the dust, sending a sharp metallic clatter ringing off the damp walls. The sudden noise hangs heavy in the stillness as you grip your lantern and look down the branching dark tunnels.
+EXIT 1: Descend the narrow spiral staircase downward
+EXIT 2: Skirt the slippery pool of green mineral scum
+EXIT 3: Pocket the heavy bronze gear from the desk
+@@END
+@@SECTION sg-6-1-1-5
+TITLE: Whispering Crystal Dust
+TEXT: Peeling constellations painted in faded lapis and gold arch above your head across the low vaulted ceiling. You step gingerly over undulating drifts of crystal dust that shift and sigh under your weight like sleeping insects. The faint scratching sound follows your heels as you scan the shadows for a clear passage deeper into the vault.
+EXIT 1: Trace the faded blue stencil toward the granary
+EXIT 2: Hurry past the stacks of crumbling wicker hampers
+@@END
+@@SECTION sg-6-1-2-0
+TITLE: The Saltwort Vent
+TEXT: Rusted iron gates secured by long-dead mechanisms bar the main corridor, forcing you to squeeze sideways through a narrow ventilation slit choked with prickly saltwort. Sharp thorns tug at your sleeves and scratch your knuckles while you worm your way through the dry vegetation into the dark space beyond. You shake the stinging burrs from your coat and catch the scent of damp stone and old earth.
+EXIT 1: Emerge into the damp round vestibule
+EXIT 2: Check your Seedkey near the bronze scales
+EXIT 3: Hack through the gray vines ahead
+@@END
+@@SECTION sg-6-1-2-1
+TITLE: Scrolls of the Archive
+TEXT: Fluttering parchment scrolls detach from the rotting shelves like dying moths, brushing against your face and hair in the drafty circular archive. You swat the brittle paper away while keeping your eyes fixed on the shadows for any sign of the lock chamber. The air smells intensely of dry glue and centuries of forgotten records.
+EXIT 1: Cut through the subterranean greenhouse
+EXIT 2: Sidestep the rushing mineral drainage channel
+EXIT 3: Examine the deep dark shaft by the winch
+EXIT 4: Turn back toward the alabaster jars
+@@END
+@@SECTION sg-6-1-2-2
+TITLE: The Dripping Water Clock
+TEXT: An ancient copper water-clock hums quietly beside a bubbling puddle of thick, bitter brine, its slow rhythmic drips marking the relentless approach of the monsoon flood. The metal vessel echoes with every metallic plop, a stark reminder of the twenty days ticking away above the basin. You wipe moisture from your brow and eye the branching tunnels leading onward.
+EXIT 1: Hack through the tangled greenhouse vines
+EXIT 2: Sidestep the rushing mineral drainage channel
+EXIT 3: Peer down the deep dark shaft by the winch
+@@END
+@@SECTION sg-6-1-2-3
+TITLE: Vinegar and Parched Earth
+TEXT: Hanging clusters of dried gourd-flasks sway gently above your head, knocking together with hollow wooden clicks in the draft. The air smells sharply of old vinegar and parched earth rising from the cracks in the flagstones. You lift your coal-lantern to illuminate the open vault alcove and the dark passages stretching outward.
+EXIT 1: Inspect the deep shaft by the rusted winch
+EXIT 2: Search the long gallery of charred oak lockers
+EXIT 3: Wipe the stinging sweat near the white lime
+@@END
+@@SECTION sg-6-1-2-4
+TITLE: The Prism Corridor
+TEXT: Fractured prisms lining the walls catch the weak glow of your lantern, slicing sharp ribbons of red light across the floor. Each step must be placed with absolute care upon the pavement of fragile glass shards that crunch delicately beneath your soles. You hold your breath to keep your balance as the corridor bends toward a fresh expanse of shadow.
+EXIT 1: Check your Seedkey by the ancient scales
+EXIT 2: Sidestep the rushing mineral drainage channel
+EXIT 3: Search the long gallery of charred oak lockers
+@@END

@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-3-070
+TITLE: The Chalk Cache
+TEXT: Dust hangs thick between the salt-encrusted beams, stinging your eyes as you trace Orsolya’s hurried strokes with a grease-stained thumb. Each faded chalk mark cuts through the labyrinth of rotting timber, pointing toward a dry pocket sheltered from the wind's scouring salt. Beneath a loose plank bound in hempen twine, you uncover a small oilcloth pouch. Inside lie dried stalks of bitter-root and blue-veined lungwort, smelling of damp earth and old cellars, ready to be chewed when the lungs burn and the limbs grow heavy with exhaustion. // With the bitter bundles tucked safely into your coat pocket, the narrow gangway ahead opens up toward the swaying rope bridges of the middle tiers.
+GRANT: pouch of bitter-root and lungwort
+EXIT 1: Cross the swaying rope bridge
+@@END

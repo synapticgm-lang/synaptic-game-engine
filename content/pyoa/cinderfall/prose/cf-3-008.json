@@ -1,0 +1,92 @@
+{
+ "batch": "cf-3-008",
+ "sections": {
+  "cf-3-008": {
+   "title": "The Rivet Hammer",
+   "text": "Heavy iron tools lie scattered across the slick metal decking of the chassis, smelling sharply of machine oil and heated coal dust. You pick up the short-peen riveting hammer, its wooden haft worn smooth by years of greasy palms and vibration. The checkpoint guards are distracted by a shouting match further down the gantry, giving you a narrow window to secure the forged permit before the inspector returns\n\nWith calculated precision, you bring the flat face of the hammer down against the protruding iron pin, driving it deep into its socket with a sharp ring that pierces the ambient hum of the viaduct engines.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wedge the forged permit beneath the iron plate"
+   ]
+  },
+  "cf-3-009": {
+   "title": "The Rivet Hammer",
+   "text": "Heavy iron boots clatter against the overhead gantry above the Marrowbone's coal bunker, drawing uncomfortably close to where you crouch in the soot-stained gloom. Gripping the heavy steel hammer, you line its flat face against the protruding stem of a loosened structural rivet on the chassis plate and strike. The ringing blow reverberates through the hollow girderwork like a church bell, echoing sharply across the viaduct to draw the suspicious inspectors away from your hiding place.\n\nYour palm slips slightly against the greasy handle as the vibration jars your forearm, threatening to betray your position with a clumsy clatter.",
+   "check": "Striking the loose chassis rivet",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-010": {
+   "title": "A Mismatched Blow",
+   "text": "The heavy hammer glancing off the iron bolt catches your knuckles against the sharp edge of the chassis plate with a sickening crunch. Pain lances up your forearm, leaving a dark, purple bruise that throbs in time with the pulsing steam pumps. You bite back a sharp curse as the guard's footsteps halt nearby, forcing you to snatch the forged permit from the gap and dive behind a rusted fuel tender while an angry whistle blows overhead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl back toward the firebox deck"
+   ]
+  },
+  "cf-3-011": {
+   "title": "The Iron Tollhouse Reward",
+   "text": "Silence settles back over the rusted gantry rails as the heavy footsteps of the frustrated inspectors fade away down the lower platform stairs, leaving you alone with the rhythmic dripping of oily condensation. Your right hand aches where the hammer-jar struck your thumb bone, yet tucked securely into your belt is a small brass token stamped with the private sigil of a sympathetic track-clerk who looked the other way. It is a heavy, grease-slick disk that grants an unrecorded right of way through the lower switches.",
+   "check": "",
+   "grant": "A track-clerk's brass token",
+   "exits": [
+    "Proceed toward the central platform"
+   ]
+  },
+  "cf-3-012": {
+   "title": "Hissing Valves",
+   "text": "Thick plumes of grey exhaust steam billow out from beneath the engine running board, curling around the rusted iron stanchions of the viaduct like waking serpents. The acrid taste of boiled lime coats your tongue as you twist the auxiliary release valve another half-turn, feeding raw pressure into the discharge pipes. Guards cough loudly through their linen scarves on the upper gantry, their vision completely blinded by the boiling fog rolling across the tracks\n\nYou keep your hand low against the vibrating brass pipework, feeling your way blindly toward the narrow maintenance ladder.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb the ladder through the steam fog"
+   ]
+  },
+  "cf-3-013": {
+   "title": "Scalding Mist",
+   "text": "Heat radiates fiercely from the leaking joint of the auxiliary pipe, turning the surrounding air into a suffocating blanket of moisture and grease. You press your sleeve against your mouth to filter out the stinging vapor, squinting through the white gloom toward the dim silhouette of the toll-gate winch. Every movement requires absolute caution, for a single slip against the hot copper tubing will leave raw, weeping blisters across your skin\n\nYou reach out a trembling hand to test the tension of the heavy iron chain blocking the line.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip beneath the lowered iron chain"
+   ]
+  },
+  "cf-3-014": {
+   "title": "Purging the Auxiliary Lines",
+   "text": "Scalding mist roars through the rusted drainage cocks, wrapping the Marrowbone's flanks in a dense, artificial squall that smells of boiled grease and alkaline scale. Your bare fingers brush the shrieking brass valve-wheel, every nerve screaming as escaping vapor licks the skin while you twist it further into the red zone of pressure. Beyond the swirling white curtain, the shouting of the toll-guards turns to confused curses as iron-shod boots stumble blindly on the wooden ballast.\n\nYou lean your full weight against the shivering pipework, coaxing one final, blinding hiss from the belly of the boiler to mask your stealthy descent into the shadows.",
+   "check": "Wrenching the steam-cock open",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-015": {
+   "title": "A Burned Palm",
+   "text": "A sudden surge of scalding condensate spits past the packing rings, searing across the back of your hand with a sharp, blistering agony. You snatch your arm back with a sharp gasp, dropping your grip on the valve as the pressure blows back into the cab with a deafening shriek. The steam thins just enough for a nearby guard to spot you nursing your ruined skin, forcing a frantic scramble into the shadows of the tender.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat into the smoky engine cabin"
+   ]
+  },
+  "cf-3-016": {
+   "title": "Fog-Born Passage",
+   "text": "Condensation drips heavily from your eyelashes as the artificial tempest slowly dissipates over the rusted iron plating of the viaduct deck, leaving you standing safely in the damp stillness beyond the customs perimeter. Your knuckles throb with a dull, persistent ache beneath a network of raw, pink scalds, but clutched tightly in your stiffening fingers is the proof of your silent trespass. It is a damp, ink-stamped slip of flimsy paper bearing the violet seal of the Baronial Transit Office, marked valid for one unauthorized coal-tender.",
+   "check": "",
+   "grant": "A forged transit slip",
+   "exits": [
+    "Slip back toward the main span"
+   ]
+  },
+  "cf-3-017": {
+   "title": "The Gantry Ultimatum",
+   "text": "Heavy iron links drop into place with a definitive, jarring clang that echoes across the suspended platforms of the viaduct. A dozen Baronial gantry-guards step out from the shadows of the signal box, their polished brass breastplates catching the weak, yellow light of the hanging oil lamps. They form an unbroken wall of authority across the rails, demanding the immediate surrender of the brass Water Key under threat of immediate confiscation\n\nYou rest your hand quietly against the warm copper of the whistle lever, measuring the distance to the dark mouth of the cut ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Defy the gantry guards and pull forward"
+   ]
+  }
+ },
+ "missing": []
+}

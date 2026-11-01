@@ -1,0 +1,62 @@
+@@SECTION cf-2-086
+TITLE: Words in the Ash
+TEXT: Grey flakes settle upon your collar as the blind chanter rattles off the hours of the long-dead trains with terrifying precision. You listen closely to the rhythm of the lament, catching the cadence hidden beneath the soot-clogged verses. A low whisper brushes your ear like hot steam, offering the secret word needed to pass the iron gates without drawing the wrath of the watchmen. You commit the phrase to memory just as the chanter falls silent, turning a sightless face toward the distant smoke of the Steppe.
+EXIT 1: Step past the chanter into the grey
+@@END
+@@SECTION cf-2-087
+TITLE: Listening to Ghosts
+TEXT: Cold sweat cuts through the soot on your brow as the blind chanter's rhythmic rattling threatens to draw unwanted attention from the patrolling zealots in the ash-dunes. You force your breathing to slow down, locking your gaze onto the rusted rails while your mind sifts the whispered syllables from the meaningless drone. Every muscle aches to bolt, but you steady your hands against the hot plating of the tender and strain to catch the full sequence before the patrol rounds the stalled carriage.
+CHECK: Hold your nerve against the noise
+@@END
+@@SECTION cf-2-088
+TITLE: The Price of Panic
+TEXT: Your nerve snaps under the weight of the endless chanting, and a sudden start knocks a heavy iron lantern from the bracket with a sharp, echoing clang. Zealots emerge from the grey haze like shadows, demanding an immediate toll in stolen coal and precious water before they let you crawl away with your skin intact. You leave behind a full skin from your private reserve and a fair portion of your best fuel, watching them swallow the supplies into the ash. The delay costs you precious time against the storm clock, but you manage to scramble back onto the deck of the Marrowbone.
+EXIT 1: Scramble back to the footplate
+@@END
+@@SECTION cf-2-089
+TITLE: The Whispered Key
+TEXT: Through focus and iron nerve, you hold your ground while the chanting swells and fades around you like wind through a broken tunnel. The final syllables settle cleanly into your mind, forming the precise combination required to slip past the locked barriers without raising an alarm. You nod once to the blind figure, receiving a faint, knowing tilt of the head in return as the reward for your patience.
+GRANT: A whispered gate password
+EXIT 1: Return to the waiting engine
+@@END
+@@SECTION cf-2-090
+TITLE: Clearing the Track
+TEXT: Heavy iron frames litter the permanent way ahead, blocking the Marrowbone's path with twisted scrap left behind by the last derailed goods train. You climb down from the warm footplate into the ankle-deep ash, eyeing the bulk of a discarded fire-basket that rests directly against the cowcatcher. Tugging at the rusted metal, you shift the obstacle inch by inch until it rolls clear of the rails, revealing a buried cache of dry kindling-wood preserved beneath the debris.
+EXIT 1: Toss the dry kindling aboard
+@@END
+@@SECTION cf-2-091
+TITLE: Lifting the Iron
+TEXT: Muscles strain against the dead weight of the iron fire-basket as you wedge a pinch-bar beneath its rim and lean your entire weight into the lift. The rusted iron resists with a groaning screech that vibrates up through your boots into your shins, threatening to slip and pin your fingers against the ballast. You dig your heels deeper into the grey soot, bracing your back to heave the obstruction completely clear of the track before the boiler pressure drops too low.
+CHECK: Heave the iron from the rails
+@@END
+@@SECTION cf-2-092
+TITLE: Strain and Rust
+TEXT: The heavy metal slips from your grip at the worst possible moment, crashing back down onto your boot and sending a white-hot spike of pain up your leg. You bite back a curse, dragging your bruised foot away from the debris and nursing a deep, angry purple bruise that will slow your steps for hours. The struggle costs you precious minutes and leaves your muscles trembling with exhaustion as you finally manage to kick the wreckage aside.
+EXIT 1: Climb back onto the engine
+@@END
+@@SECTION cf-2-093
+TITLE: Fuel for the Fire
+TEXT: With a mighty heave, you flip the heavy iron fire-basket off the permanent way and watch it tumble down the ash-dune into the grey waste. Beneath where it lay, a dry bundle of resinous pine sleepers emerges intact from the drift, untouched by the damp rot of the Steppe. You sling the good wood over your shoulder and carry it back to the tender, securing a welcome addition to your dwindling fuel reserve.
+GRANT: A bundle of dry kindling
+EXIT 1: Head back to the main track
+@@END
+@@SECTION cf-2-094
+TITLE: Clearing the Altar
+TEXT: Ragged figures in soot-stained robes hover anxiously near a fallen crossbeam of heavy timber that blocks the approach to a makeshift shrine among the stalled carriages. Stepping forward, you grab the rough-hewn wood and begin to drag it away from the holy ground with slow, deliberate effort. The wandering monks murmur low blessings in the ash-choked air, watching your labour with grateful eyes as the blocked path opens once more to the open rail.
+EXIT 1: Leave the monks to their prayers
+@@END
+@@SECTION cf-2-095
+TITLE: The Debt of Ash
+TEXT: Dust swirls around your boots as you haul the second heavy timber clear of the altar, setting it neatly alongside the rusted chassis of an old passenger car. The robed elders step forward to touch your sleeve in silent gratitude, pressing a small, soot-stained token into your palm as an earnest of their future help. You pocket the token without a word, knowing that a debt of honour from the wandering folk of the Steppe might prove worth more than water before the journey ends.
+EXIT 1: Return to the idling Marrowbone
+@@END
+@@SECTION cf-2-096
+TITLE: Shifting the Beam
+TEXT: You wedge your shoulder against the water-swollen timber, throwing your weight forward to dislodge the heavy beam from where it pins the sanctuary's corner post. The wood groans and shifts sluggishly in the ash, threatening to slide back and trap your arm against the iron stays of the carriage framework. You grit your teeth, muscles burning as you push through the sudden pain of a wrenched shoulder to roll the timber completely out of the way.
+CHECK: Muscle the timber from the altar
+@@END
+@@SECTION cf-2-097
+TITLE: A Wrenched Shoulder
+TEXT: The heavy beam rolls unexpectedly, catching your shoulder a glancing blow that drops you hard into the gritty ash and leaves your arm hanging limp and throbbing. The monks rush forward to help you up, murmuring apologies and binding the joint with a strip of oiled canvas while you struggle to catch your breath. The mishap costs you precious time and leaves you nursing a dull ache in your shoulder joint, but the altar is finally clear and the debt is sealed.
+EXIT 1: Accept the debt and move on
+@@END

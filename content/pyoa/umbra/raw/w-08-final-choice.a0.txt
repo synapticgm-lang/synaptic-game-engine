@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-w-final-choice | witness=dropped
+Sable glances down at the cobblestones far below, the memory of the almoner’s flailing descent a sudden, silent weight between you. Blood already stains your hands, turning this ledger into a prize bought with a shattered skull.
+@@END
+@@INSERT up-w-final-choice | valerius=allied
+A distant flare of emerald gaslight from the silk district reminds you of Lord Valerius’s polite, venomous promise of sanctuary. If you deliver these names to him, his wealth will shield you both, though such velvet cages are rarely unlocked from the inside.
+@@END
+@@INSERT up-w-final-choice | valerius=betrayed
+Below the eaves, a clockwork pigeon whirs past bearing Valerius’s wax seal, a mechanical hunter searching for the thief who spurned his silk-draped empire. His runners are scouring the Exchange roofs, leaving you mere minutes before polite menace gives way to drawn steel.
+@@END
+@@INSERT up-w-final-choice | rigg=allied
+The distant clank of the iron foundry hums through the slate, a steady heartbeat anchoring Matron Rigg’s pledge of protection. Sable touches your shoulder, her eyes burning with the knowledge that the Matron’s gaol books can simply erase her brother’s cell number.
+@@END
+@@INSERT up-w-final-choice | rigg=betrayed
+Iron-shod boots ring loudly on the street beneath your perch, confirming Matron Rigg’s warrants are already actively in circulation. By spurning the iron syndicate, you have guaranteed that every watchman and foundry brute in Veridia is now hunting your silhouette.
+@@END
+@@INSERT up-w-press-run | cabal=known
+Your fingers trace the brass typeset, knowing the scandal will ruin not two warring houses, but a singular, orchestrated tyranny. Revealing the matching handwriting from the vault will finally expose Valerius and Rigg as two monstrous heads of the exact same beast.
+@@END
+
+Are there any specific story branches or mechanics in the press house sequence you would like to flesh out next?

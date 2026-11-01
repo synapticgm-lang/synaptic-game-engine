@@ -1,0 +1,68 @@
+@@SECTION cf-1-085
+TITLE: The Fallen Beam
+TEXT: Heavy oak timbers groan under the dead weight of collapsed siding, trapping the old water-dealer beneath a splintered crossbeam near the dry cistern. Dust hangs thick in the air, tasting of old soot and dry rot while citizens watch from behind rusted oil drums. Stepping into the choking gap, you wedge your shoulder against the splintered pine and brace your boots in the grey ash. The wood screams against your spine, threatening to crush your ribs with every fractional inch you gain in the gloom. // With a final, lung-bursting heave, you shove the timber clear of the pinned merchant, tumbling him into safety just as the remaining roof-strut collapses into empty space. The dealer gasps for breath, pressing a greasy copper token into your palm as a solemn vow of lifelong debt.
+EXIT 1: Pull the heavy timber free
+@@END
+@@SECTION cf-1-086
+TITLE: Strain Against The Oak
+TEXT: Splintered oak pins the old water-dealer against the collapsed brickwork of the cistern wall, and the entire structure settles further into the ash with an ominous groan. You wedge your shoulder beneath the heavy crossbeam, locking your knees into the gritty gravel and feeling the dry heat radiate from the old timbers. Every muscle in your back knots as you prepare to heave against the crushing weight of the fallen roof before the remaining support pillars give way entirely. You take a sharp, soot-choked breath, plant your boots firmly in the dust, and throw your entire weight upward against the unyielding wood.
+CHECK: Heave the crushing timber upward
+@@END
+@@SECTION cf-1-087
+TITLE: Crushed By The Weight
+TEXT: The timber slips against your sweat-slicked canvas jacket, throwing your weight sideways as the heavy oak slams back down into the ash with a bone-rattling thud. You tumble backward into the grit, gasping for breath while a sharp shard of pine slices a deep, bleeding gouge across your forearm. The water-dealer is dragged free by hurried bystanders, but you are left kneeling in the dirt with a bruised shoulder and a torn sleeve that will leak heat all the way to Cinderfall. Time slips through your fingers as you bind the weeping cut with a greasy rag, nursing your aches in the bitter dust.
+EXIT 1: Pick yourself up and press onward
+@@END
+@@SECTION cf-1-088
+TITLE: The Heavy Rescue
+TEXT: Muscle and bone strain against the ancient pine until the beam groans, shifts, and slides free of the trapped merchant with a shower of grey flakes. You manage to drag the coughing water-dealer out from the debris just as the remaining rafters collapse entirely into the empty cistern pit. He grips your wrist with a soot-stained hand, pressing a heavy brass token into your palm and swearing that any well in the township is yours to draw from whenever the thirst gets too sharp to bear.
+GRANT: Water-seller's brass token
+EXIT 1: Return to the dry cistern hub
+@@END
+@@SECTION cf-1-089
+TITLE: Shadows By The Cistern
+TEXT: Grey canvas flaps snap in the dry wind around the abandoned water stalls, masking the cautious movements of a man wearing the stiff grey coat of the Rail Barons. He pauses by a rusted pump handle, his fingers lingering near the concealed leather of a patrol ledger while he watches the crowd with cold, practiced eyes. Ducking behind a stack of empty grease-tins, you study his stance and realize he is waiting for the evening shift-change to seal off the remaining supply lines. Slipping through the narrow gap between two stranded coal tenders, you circle round his flank without a single whisper of movement in the dust.
+EXIT 1: Circle round the watcher's flank
+@@END
+@@SECTION cf-1-090
+TITLE: Watch The Grey Coat
+TEXT: A man in the stiff grey wool of the Barons lingers near the dry water-tanks, his eyes scanning the gathering crowd for anyone carrying railway brass or Union papers. You press your back against the corrugated iron of a stalled freight car, tracking his movements through the gap between a grease-drum and a leaning telegraph pole. If you cross the open apron too quickly, his hand will drop to his dispatch case and every gaffer from here to the junction will know you have the Key. You wait for a gust of ash to sweep across the platform, blurring the air, and ready your stride to slip past his blind spot.
+CHECK: Slip past the watcher unseen
+@@END
+@@SECTION cf-1-091
+TITLE: Spotted In The Dust
+TEXT: A sudden shift in the wind clears the blowing ash away from the platform just as your boot strikes a loose iron rivet, sending a sharp metallic echo rolling across the dry yard. The man in the grey coat spins round instantly, his hand snapping out to catch your sleeve and demanding your travel papers under threat of company arrest. You wrench your arm free with a sharp yank, losing your leather pouch and three precious minutes of daylight as you scramble behind a stack of discarded sleepers. You escape into the labyrinth of stalled carriages, but the Barons' agent now knows your face and your direction.
+EXIT 1: Flee deeper into the carriage maze
+@@END
+@@SECTION cf-1-092
+TITLE: The Unseen Passage
+TEXT: You time your movement with the sudden rising of an ash-squall, melting into the grey haze just as the Barons' agent turns his head toward a distant whistle. Slipping behind his patrol post, your fingers brush against a leather dispatch pouch left unattended on a nail, yielding a folded roster of company informants before he ever realizes you were there. You vanish back into the milling crowd of gangers, leaving the watcher none the wiser as he stares blankly into the swirling dust.
+GRANT: Barons' informant roster
+EXIT 1: Return to the dry cistern hub
+@@END
+@@SECTION cf-1-093
+TITLE: The Bitter Cup
+TEXT: Shouting gangers crowd around the communal distribution pipe, waving empty tins and shoving for position near the last remaining drop of brackish moisture. You stand motionless in the center of the press, letting the insults and flying grit wash over your coat without a single twitch of irritation in your jaw. Your steady gaze meets the clouded eyes of the old clerk running the tap, shaming him into filling your rusted tin before the line is shut down for the evening. You take a slow, bitter sip of the sediment-heavy water, letting the cold iron taste settle your tongue while the brawlers around you exhaust themselves in the dirt.
+EXIT 1: Walk away with the tin
+@@END
+@@SECTION cf-1-094
+TITLE: The Raucous Press
+TEXT: Shouting gangers press hard against the distribution barrier, waving rusted cups and hurling curses at the clerk while the air fills with blinding yellow dust. You need a drop of clean water from the guarded tap to clear the coal-grit from your throat, but the mob is wild and ready to tear apart anyone who tries to cut the queue. Keeping your breathing slow and your hands flat at your sides, you step directly into the surging current of angry men, refusing to flinch as shoulders slam against your ribs and hot spittle lands on your collar. You must hold your ground and lock eyes with the furious clerk before he slams the iron shutter shut for the night.
+CHECK: Hold your ground against the mob
+@@END
+@@SECTION cf-1-095
+TITLE: Swept In The Riot
+TEXT: A sudden surge from the back of the queue catches you off balance, knocking your tin clattering into the gravel and sending you stumbling face-first into the gritty ash. Jeers and rough laughter ripple through the gangers as you pick yourself up, your mouth tasting of dry earth and your palms scraped raw against a jagged iron rail. The distribution tap clangs shut with a definitive iron snap, leaving you with an empty tin, a throbbing jaw, and no water to wash the day's soot from your throat. You swallow the bitter dust and limp away into the gathering gloom.
+EXIT 1: Retreat from the closed tap
+@@END
+@@SECTION cf-1-096
+TITLE: The Unshakable Stride
+TEXT: You remain as still as an iron signal-post while the angry mob surges and curses all around you, your breathing slow and measured against the choking heat of the yard. The clerk behind the counter pauses, startled by your absolute stillness amidst the chaos, and wordlessly reaches beneath the counter to fill your rusted tin with clear, sediment-free water from his private reserve. You pocket the cup with a quiet nod, leaving the disgruntled gangers to wonder at the eerie calm that carried you through their midst.
+GRANT: Tin of pure cistern water
+EXIT 1: Approach the upper signal box
+@@END
+@@SECTION cf-1-097
+TITLE: The Crimson Signal
+TEXT: Iron stairs spiral up the side of the towering lattice mast where the signalman's cabin hangs like an iron lantern over the sprawling rail yard. Above, the crimson warning arm remains locked in defiance of the timetable, casting a bloody wash over the rusted rails leading out toward the Ashen Steppe. Every gear in the box hums with a low, vibrating resonance that speaks of old bargains struck long before Hesper vanished into the depot. You grip the handrail and begin the long climb into the rising smoke, stepping toward the red light that dictates whether No. 9 stays or runs.
+EXIT 1: Climb up to the signal cabin
+@@END

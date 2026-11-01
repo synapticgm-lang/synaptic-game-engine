@@ -1,0 +1,104 @@
+{
+ "batch": "cf-2-170",
+ "sections": {
+  "cf-2-170": {
+   "title": "Ascent Toward the Viaduct",
+   "text": "Locomotive No. 9 pants in the thin, ash-laden air as the gradient steepens toward the massive stone footings of the great viaduct. Hot brass clicks and contracts in the cooling shadows, while the water gauge jitters against its glass mount with every shudder of the heavy boiler. Below the towering arches, the track narrows between drifts of grey gravel and rusted siding furniture abandoned by the Rail Barons' early work gangs. You shovel a fresh measure of low-grade coal into the roaring furnace, watching the orange glow wash over the soot-greased levers and your own tense knuckles. Every breath tastes of sulphur and old iron, reminding you that the ash-storm season is creeping closer across the flat miles of the Cinder Steppe behind.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb into the shadow of the stone footings"
+   ]
+  },
+  "cf-2-171": {
+   "title": "Beneath the Great Arches",
+   "text": "Shadow-drenched encampments tuck deep beneath the colossal stone arches where smugglers cache contraband goods away from the prying eyes of the Rail Barons' patrol engines. Smouldering brazier pots cast long, flickering bars of orange light across stacked wooden crates, grease-stained canvas bundles, and rusted lengths of spare rail. Murmurs drift from behind a makeshift barricade of corrugated tin, mingling with the steady drip of stagnant water from somewhere high above in the masonry. The air is thick with the scent of cheap tobacco, roasting roots, and heavy lubricating grease. You stand beside the idling engine, weighing your options against the ticking of the storm clock in your chest.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Search the gravel near the southern pier",
+    "Approach the huddled figures by the brazier",
+    "Repair the winch mechanism for the local gangers",
+    "Heave the regulator and push up the grade"
+   ]
+  },
+  "cf-2-172": {
+   "title": "The Hidden Iron Ring",
+   "text": "Loose shale and fine grey dust shift beneath your heavy boot as you tread carefully near the moss-slick base of the primary pier. A heavy iron ring, crusted with salt and ancient soot, lies flush against the packed earth beneath a drift of discarded ballast stone. With a sharp tug, you haul against the resistance of packed silt until an oiled wooden trapdoor gives way with a sucking pop. A dank, confined smell rises from the dark cavity below, promising shelter or perhaps something left behind by travelers who vanished long before the Cinder Prophets built their first shrines.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the cool gloom of the cache"
+   ]
+  },
+  "cf-2-173": {
+   "title": "Vault of Refined Oil",
+   "text": "Narrow wooden steps creak under your weight as you lower yourself into the dry masonry alcove beneath the viaduct floor. By the faint amber beam of your pocket lantern, stacked crates emerge from the gloom, their stencils weathered and illegible. Wedged neatly between a pair of water-logged timbers rests a stout tin keg, remarkably unblemished by the surrounding damp and grey rot. A cautious rap against its side produces a dull, heavy slosh that confirms the precious nature of its contents. You haul the sealed vessel free from the dust just as distant iron wheels groan on the rails above.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the track with the prize"
+   ]
+  },
+  "cf-2-174": {
+   "title": "Sifting the Dark Recesses",
+   "text": "Deep shadows stretch long and deceptive across the earthen floor of the hidden cellar as you sweep your lantern beam along the stacked timber crates. A rusted tripwire, strung barely an inch above the floorboards, catches the amber light just as your leading boot sweeps forward into the gloom. You freeze mid-stride, your fingers hovering over the heavy brass canister of refined lamp oil while your mind races to calculate the tension of the concealed spring-lock linked to the bulkhead above.",
+   "check": "Trace the wire and slip past the trap",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-175": {
+   "title": "A Clumsy Misstep",
+   "text": "A sharp metallic snap shatters the silence of the vault as your boot heel clips the hidden wire, releasing a heavy iron toggle that brings a cascade of coarse gravel and sharp slate raining down onto your shoulder. You scramble backward into the dark, cursing under your breath as a jagged splinter of old oak gouges a stinging line across your forearm. The tin keg of lamp oil slips from your grip, denting heavily against the stone floor and leaking a fragrant golden puddle into the dust before you manage to plug the split with a rag.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back to the engine with your bruises"
+   ]
+  },
+  "cf-2-176": {
+   "title": "Salvaged Wealth",
+   "text": "Quick wits and steady fingers save the day however narrowly, allowing you to slip past the hidden snare and hoist the heavy tin keg without disturbing the precarious stack above. The sealed vessel yields to your pocket knife with a satisfying hiss of vacuum-sealed air, revealing clear, refined lamp oil that burns cleaner and hotter than anything issued by the Ashgate stores. You stow the prize securely in the cab locker alongside your spare gasket wire, feeling the quiet satisfaction of a debt settled against the bitter road.",
+   "check": "",
+   "grant": "Keg of refined lamp oil",
+   "exits": [
+    "Return to the viaduct encampment"
+   ]
+  },
+  "cf-2-177": {
+   "title": "Smoke by the Brazier",
+   "text": "Hooded figures in patched greys sit in a loose circle around a smouldering iron brazier, roasting thin strips of salt-cured meat over glowing cinders of dried moss. They watch your approach with guarded, mismatched eyes, their hands resting casually near heavy spanners and grease guns tucked into their belts. A lean woman with an ash-scarred cheek gestures silently with a tin mug toward an empty crate, inviting you to share the warmth while your engine pants softly in the background. You trade quiet words about the road ahead, offering a pinch of genuine tobacco in exchange for small kindnesses and dry provisions.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the bundle of dry kindling"
+   ]
+  },
+  "cf-2-178": {
+   "title": "The Smuggler's Riddle",
+   "text": "The scarred woman leans forward across the glowing brazier, her gaze fixing on the brass Water Key protruding from your coat pocket with calculating intensity. She poses a sharp riddle about the weight of unlaid rails and the price of water in a dying city, waiting to see if your tongue is as quick as your firing arm. You weigh the syllables carefully in your mind, seeking the precise turn of phrase that will satisfy their superstitious code without giving away the true destination of Locomotive No. 9.",
+   "check": "Match wits with the cautious smugglers",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-179": {
+   "title": "A Costly Exchange",
+   "text": "Your clever argument trips over an awkward stutter as the woman lets out a dry, rasping laugh that echoes sharply off the massive stone piers. The barter turns sour in an instant, and instead of friendly trade, you are forced to pay double for every scrap of dry oak kindling and coarse rag they toss across the ash-dusted ground. They strip a handful of copper wire from your tool roll as an impromptu toll, leaving you poorer in supplies but wiser to the sharp dealings of the lower line.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the remaining goods and depart"
+   ]
+  },
+  "cf-2-180": {
+   "title": "Kindling and Comradeship",
+   "text": "Sharp banter wins the day however narrowly, turning the smuggler's own riddle back upon her until she grunts in grudging respect and tosses a bundle of dry oak kindling and a clean cotton rag into your lap. The small concession warms your hands as much as the brazier did, providing the vital dry fuel needed to coax stubborn boiler fires into a fierce, clean roar against the gathering damp. You nod your farewells as the camp sinks back into the shadows of the great stone piers.",
+   "check": "",
+   "grant": "Bundle of dry oak kindling",
+   "exits": [
+    "Heave the regulator and push up the grade"
+   ]
+  }
+ },
+ "missing": []
+}

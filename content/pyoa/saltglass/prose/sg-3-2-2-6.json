@@ -1,0 +1,88 @@
+{
+ "batch": "sg-3-2-2-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-2-2-6": {
+   "title": "The Tilting Gallery",
+   "text": "Concave panes curve outward in a dizzying sequence, swallowing your silhouette and bending your limbs into impossible angles. Your inner ear protests against the deceptive geometry, making every step feel as though the floor beneath your boots is suddenly pitching sideways. You steady yourself against a cool vertical pane, keeping your grip firm on your ember-lamp while the distorted world spins around you.\n\nA warped frame beckons toward a shadowy interior, or you can veer aside to inspect a glinting landmark near the hot exterior wall.",
+   "exits": [
+    "Step through the warped borosilicate frame",
+    "Retreat toward the fractured ruby obelisk"
+   ]
+  },
+  "sg-3-2-2-7": {
+   "title": "The Quartz Balcony",
+   "text": "Sudden movement shatters the silence of the high walkway as a startled scavenger loses his grip on a burlap sack. Grinding sand pours out across the fused quartz flags, hissing softly as it cascades toward your boots and threatens to compromise your footing on the steep ledge. You freeze instantly, holding your breath while the cloud of abrasive grit settles over the sun-bleached masonry.\n\nThe narrow path ahead clears enough for a cautious advance, or you can slip down a parallel ledge to bypass the grit altogether.",
+   "exits": [
+    "Continue forward through the swirling quartz dust",
+    "Sidestep toward the dry obelisk path below"
+   ]
+  },
+  "sg-3-2-2-8": {
+   "title": "The Ribbed Dome",
+   "text": "Twisted ribs of ancient glass arch overhead like the skeleton of some colossal beast beached upon the salt flats. Scrambling upward requires a delicate touch, for every ridge is lined with razor-sharp splinters eager to snag your travel pack and test the weave of your heavy coat. Below you, the basin stretches away in blinding sheets of white, while your boots find precarious purchases upon the glassy skeleton.\n\nTwo distinct upward fractures offer passage through the shattered crown of the dome.",
+   "exits": [
+    "Climb toward the multi-tiered mirror balcony",
+    "Balance across the narrow girder spanning the trench"
+   ]
+  },
+  "sg-3-2-2-9": {
+   "title": "The Sun Trap",
+   "text": "Violet crystals cast long, unmoving shadows across a dry cascade that once channeled cooling brine through the heart of the district. An abandoned mirror-frame catches the midday glare, focusing a concentrated beam of heat that bakes the surrounding air into visible, shimmering ripples. Sweat stings your eyes as you skirt the perimeter of the thermal trap, listening to the faint ping of glass expanding under the intense solar load.\n\nYou can skirt the sun-baked perimeter toward a familiar landmark or risk the narrow metal span across the chasm.",
+   "exits": [
+    "Circle wide past the empty water skin",
+    "Tread carefully across the trembling metal girder"
+   ]
+  },
+  "sg-3-2-2-10": {
+   "title": "The Pillar of Spectacles",
+   "text": "Thousands of discarded lenses form a porous, hollow column that hums faintly under the weight of the ruined ceiling above. A tiny desert gecko darts out from between two stacked monocles, startling you as its cold body brushes against the cold ceramic key tucked safely at your belt. The creature vanishes into the gloom, leaving only the sound of your own measured breathing echoing within the glassy shaft.\n\nThe pillar opens onto two distinct routes deeper into the skeletal ruins.",
+   "exits": [
+    "Venture toward the glittering mirror balconies",
+    "Crawl beneath the low ceiling of leaded panes"
+   ]
+  },
+  "sg-3-2-2-11": {
+   "title": "The Glass-Wool Span",
+   "text": "Fine threads of spun glass-wool weave a treacherous, fibrous carpet across a yawning chasm between two shattered towers. Every footstep sinks softly into the resilient white mesh, threatening to tear the delicate ancient web if you shift your weight too quickly. Below your boots, the deep drop-off breathes up a draft of cool, stagnant air trapped since the Old Lensfolk abandoned their high workshops.\n\nThe delicate web narrows ahead, forcing a choice between the deep trench crossing or the singing wind-plaza.",
+   "exits": [
+    "Cross the trembling metal girder over the trench",
+    "Follow the bridge toward the subsonic wind-harps"
+   ]
+  },
+  "sg-3-2-2-12": {
+   "title": "The Smoky Vault",
+   "text": "Heavy leaded glass darkens the vaulted ceiling overhead, casting the corridor into a twilight gloom thick with the sulfurous stench of old glass-kilns. A warm, greasy draft sweeps through the passage, carrying the faint scent of ash and long-extinguished fires from the lower chambers. Your ember-lamp flickers in response to the pressure shift, its orange flame dancing against the soot-stained masonry of the walls.\n\nTwo distinct drafts pull at your coat, drawing your eye toward different corners of the vaulted hall.",
+   "exits": [
+    "Investigate the steam rising from the hot brine pool",
+    "Walk toward the gallery of stretched portrait-mirrors"
+   ]
+  },
+  "sg-3-2-2-13": {
+   "title": "The Bell Courtyard",
+   "text": "Hollow glass bells hang from rusted iron armatures across the open square, chiming with a pure, crystalline resonance whenever your boots touch the flagged stones. The clear notes ripple outward across the silent basin, carrying far enough to rouse echoes from distant cliff-faces. You pause between strides, letting the resonant vibrations fade before daring your next movement across the ringing pavement.\n\nSeveral exits lead away from the melodic square into the shadowed maze of the district.",
+   "exits": [
+    "Head toward the steaming brine pool below",
+    "Follow Pell through the secure drainage tunnel",
+    "Ascend toward the mother-of-pearl ledge above"
+   ]
+  },
+  "sg-3-2-2-14": {
+   "title": "The Monolith Beam",
+   "text": "A colossal pillar of magnifying glass catches the high desert sun, focusing a blinding column of light that scorches the salt crust mere inches from your boots. Tiny puffs of acrid smoke rise where the concentrated beam licks at the mineral floor, scorching black scars into the white expanse. You duck low beneath the deadly focal point, keeping your travel pack tight against your back as you calculate your dash across the hazard zone.\n\nThe scorching glare forces a choice between two shadowy passages flanking the burning monolith.",
+   "exits": [
+    "Press onward through the distorted portrait gallery",
+    "Scramble upward toward the mother-of-pearl ledge"
+   ]
+  },
+  "sg-3-2-2-15": {
+   "title": "The Optic Cellar",
+   "text": "Preserved optic fluid fills the sunken cellar to ankle depth, forming a heavy, viscous pool that moves sluggishly around your boots. The dense oil smells intensely of stale rosemary and aged resin, clinging to your hems and leaving dark, glossy ripples in your wake. Every movement requires a deliberate effort against the suction of the floor as you wade through the amber-tinted gloom.\n\nThe submerged cellar narrows ahead, offering two distinct paths out of the scented mire.",
+   "exits": [
+    "wade toward the gallery of distorted mirrors",
+    "Climb out onto the iridescent mother-of-pearl ledge"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,47 @@
+{
+ "batch": "v-l-12-empty-garret",
+ "variants": [
+  {
+   "node": "up-l-empty-garret",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "That whispered promise you traded for the terrified deacon's silence hangs heavy in the flickering candlelight, a fresh debt newly minted in the shadows that grants you this temporary, uneasy sanctuary."
+  },
+  {
+   "node": "up-l-empty-garret",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Below, the heavy tramp of watchmen's boots echoes from the cobblestones, confirming that the spared deacon ran straight to the authorities; his loose tongue guarantees you have only moments before they sweep the upper storeys."
+  },
+  {
+   "node": "up-l-empty-garret",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "The sickening thud of the deacon striking the paving stones still echoes in your mind, a ruthless sacrifice that stains the night but ensures no living witness can direct the constables toward your skyward escape."
+  },
+  {
+   "node": "up-l-empty-garret",
+   "when": {
+    "cover": "cloak"
+   },
+   "after": "You pull the dead Archbishop's heavy cloak tighter across your shoulders, acutely aware that its fine weave and ecclesiastical cut mark you as a walking corpse if any patrol spots you lingering near the window."
+  },
+  {
+   "node": "up-l-empty-garret",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "Shrugging the disgraced tailor's debt coat to settle its awkward weight, you note how the mismatched panels blend perfectly into the city's grime, a humble disguise that has miraculously shielded you from passing lanterns."
+  },
+  {
+   "node": "up-l-empty-garret",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Coarse wool chafes your neck as you shift in the rough porter's livery, smelling faintly of river mud and sweat, a degrading but necessary facade to mask the dangerous agility of a true night-crow."
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+Gemini said
+
+@@SECTION td-3-042
+TITLE: The Stilt-City Scuffle
+TEXT: A hooded figure slips between the salt-encrusted beams of the mezzanine, fingers clawing greedily at the brass cylinder strapped to a merchant's leather pack. You leap across the narrow gap of rotting timber, catching the thief's sleeve just as a rusted blade slices deep into your forearm with a hot, stinging hiss of salt-seared blood. You wrench the heavy brass tube free from their grip, tumbling hard onto the wooden slats while the mugger vanishes into the shadowed maze of ladders. // Clutching your bleeding arm, you uncap the battered metal casing on a wet barrel top, spreading out the stiff vellum sheets to reveal the inked layout of the Brineholder aqueducts and the hidden service flumes below.
+CHECK: You intercept a thief trying to steal a merchant's aqueduct map, risking a knife wound to claim the map yourself.
+EXIT 1: Slip into the lower maintenance tunnels
+@@END
+@@SECTION td-3-045
+TITLE: Blood-Earned Cartography
+TEXT: Salt stings the raw gash across your forearm where the thief's blade bit deep, but the heavy brass cylinder resting in your palm is reward enough for the pain. Inside the watertight casing lies an unrolled vellum sheet detailing every concealed drainage pipe and rusted pressure valve winding beneath the stilt-city's foundations. The merchant, too terrified of the Brineholder guards to raise an alarm, presses a small token of iron currency into your palm and scurries away into the fog. // You pocket the inked chart and the blood-stained token, knowing this hidden route bypasses the main gates entirely.
+GRANT: Aqueduct service map
+EXIT 1: Follow the charted route downward
+@@END

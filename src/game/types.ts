@@ -835,6 +835,8 @@ export interface OpeningEstablishment {
   card?: OpeningCardRecord;
   /** The card's opening offer once the player has taken or turned it down; open while unset. */
   offerTaken?: 'accepted' | 'refused';
+  /** Authored first-page prose stored at New Game (PYOA book start / stitch source). */
+  page1?: string;
 }
 /** The card's opening offer compiled once: what is handed over, and the accept and refuse lines. */
 export interface OpeningOfferRecord {
@@ -1090,6 +1092,8 @@ export interface GameState {
   pyoaBranchLedger?: import('./pyoaBranchLedger').PyoaBranchLedger;
   /** PYOA spine v1 — Thornferry curated nodes (other bibles omit). */
   pyoaSpine?: import('./pyoaSpine').PyoaSpineState;
+  /** Authored offline PYOA book play (six bundled gamebooks: pick + 2d6 dice). */
+  pyoaBookPlay?: import('./pyoaBookTypes').PyoaBookPlayState;
   /** Frozen opening invariants for this run. */
   campaignContract?: import('./campaignContract').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */

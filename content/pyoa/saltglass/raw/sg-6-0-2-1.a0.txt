@@ -1,0 +1,64 @@
+Gemini said
+
+@@SECTION sg-6-0-2-1
+TITLE: The Acoustic Vent
+TEXT: Every scrape of your heavy canvas pack echoes like distant thunder against the curved metal plates as you crawl through the low service vent. Acoustic baffles of ribbed felt, stiffened with age and salt-dust, press close from above and below, muffling your breathing into a harsh, rhythmic rasp. Your banked lantern casts a amber pulse along the narrow conduit, catching fine filaments of grey lint that drift in the stagnant draft. Ahead, the metal narrows into two distinct arteries, one breathing a faint current of cold, damp air while the other hums with a deep, subterranean resonance. // You pause to shift your weight off bruised knees, weighing which direction offers a safer passage through the heart of the sealed observatory.
+EXIT 1: Follow the humming metallic conduit
+EXIT 2: Crawl toward the draft of cold air
+@@END
+@@SECTION sg-6-0-2-2
+TITLE: The Empty Archives
+TEXT: Empty brass niches line the perimeter of the circular chamber like open teeth in an ancient skull, once holding the delicate paper rolls and glass plates of the old lens-keepers. A thin skim of white powder coats the flagstones where historical records have long since turned to dust and drifted into the corners. Your lantern light sweeps across the vacant slots, revealing only faint rectangular shadows left by centuries of filtered light. Two narrow exits pierce the weathered limestone wall beyond the ring of shelves, offering a choice of routes deeper into the silent complex.
+EXIT 1: Wade through the crunching salt drift
+EXIT 2: Squeeze into the glittering gypsum fissure
+@@END
+@@SECTION sg-6-0-2-3
+TITLE: The Shard-Littered Floor
+TEXT: Broken ceramic shards crunch beneath your soles with every stride, glinting in the warm lantern-light like shattered stars scattered across the dark basalt floor. The remnants of ancient vessels lie half-buried in grey silt, testimony to some long-forgotten upheaval that emptied the storage vaults of Prism long before the drought took hold. The air here tastes of baked clay and old lime, thick and motionless against your skin. You stand at a junction where the debris parts around two distinct paths leading further into the gloom.
+EXIT 1: Inspect the workbench of clouded beads
+EXIT 2: Cross the petrified timber bridge
+@@END
+@@SECTION sg-6-0-2-4
+TITLE: The Hidden Drop
+TEXT: Traveling entirely alone lets you notice the subtle flaws that a guided party would walk straight past, such as the hairline fracture running through the stone floor-seal. You kneel, pressing your fingertips into the cold grout, and feel the faint downward draft of air that reveals a hollow drop beneath the flags. This narrow void bypasses the groaning, unstable stairway ahead, offering an unmonitored descent into the lower tier of the vaults. The silence of the old observatory presses in around you, heavy with the weight of unmeasured years.
+EXIT 1: Slip down through the hidden floor fracture
+EXIT 2: Bypass the drop for the timber bridge
+@@END
+@@SECTION sg-6-0-2-5
+TITLE: The Salt-Stiffened Curtain
+TEXT: A heavy leather curtain blocks the side gallery, stiffened by decades of creeping salt until it feels less like hide and more like a sheet of hammered iron. When you push against it with your shoulder, it resists with a dry, cracking groan, showering fine white flakes onto your boots. Beyond this rigid barrier lies a deeper alcove where the amber glow of your lamp catches the faint glint of damp masonry. Two possible routes beckon from the shadows past the curtain.
+EXIT 1: Step across the petrified timber bridge
+EXIT 2: Follow the peeling fresco corridor
+@@END
+@@SECTION sg-6-0-2-6
+TITLE: The Ruptured Pipes
+TEXT: Rows of frozen water-pipes stretch down the long gallery, their ruptured bellies split wide like dry seed pods from ancient winter freezes that predated the great heat. Thick collars of grey oxidation crust the jagged metal lips, and the floor beneath them is warped into undulating ridges of hardened silt. Your lantern beam catches the dark mouths of branching corridors cutting away from the central pipe run. A stale draft breathes from behind you, recalling the rusted grating of the secondary tunnel you left not long ago.
+EXIT 1: Walk toward the peeling barley fresco
+EXIT 2: Inspect the polished rope ringbolt
+EXIT 3: Turn back toward the rusted grating
+@@END
+@@SECTION sg-6-0-2-7
+TITLE: The Dead Sconce
+TEXT: An iron sconce holds the stub of a tallow candle that went out centuries ago, leaving a thick, grey pillar of hardened wax congealed upon the limestone block. The flame of your own banked coal-lantern flickers in the thin draft, casting dancing shadows across the pitted stone walls. You stand at a crucial crossroads where the path divides between maintained passages and older, forgotten service ways. Depending on the debts you carry or have managed to avoid, certain doors remain open or barred to your passage.
+EXIT 1: Head toward the polished rope ringbolt
+EXIT 2: Slip through the unmonitored maintenance gate
+@@END
+@@SECTION sg-6-0-2-8
+TITLE: The Turquoise Murals
+TEXT: Glazed ceramic tiles crumble at the mere brush of your sleeve, showering the floor with bright turquoise flakes that tell of long-vanished harvests and rain-swollen rivers. The mural depicts a green valley that has not existed within the memory of any living runner at Candlemere. Beneath your boots, the ground slopes gently toward a series of dark openings carved into the bedrock. You steady your pack and consider the three narrow ways diverging from the crumbling wall.
+EXIT 1: Enter the alcove of stamped amphorae
+EXIT 2: Wade across the dark mineral pool
+EXIT 3: Brace for the heavy ceiling drop
+@@END
+@@SECTION sg-6-0-2-9
+TITLE: The Brick Bulkheads
+TEXT: A labyrinth of low brick bulkheads confronts you, built stoutly across the floor to stem floodwaters that never reached this high before the great drought drained the Basin. You step carefully over each low barrier, your lamp swinging in hand and painting long arcs of amber light across the damp brickwork. The air is remarkably still here, smelling of baked clay and ancient lime mortar. Two passages open beyond the bulkhead maze, each promising a way forward through the subterranean labyrinth.
+EXIT 1: Approach the double-lens stamped amphorae
+EXIT 2: Step into the dark mineral pool
+@@END
+@@SECTION sg-6-0-2-10
+TITLE: The Warden's Door
+TEXT: A heavy brass plaque fixed to a cedar door bears the inscription THE WARDEN OF PITH, but the wood is warped and swollen tightly shut against its stone jamb. Age and humidity have fused the grain, resisting even a determined shoulder shove. To either side, alternative routes wind away into the dim recesses of the observatory basement, bypassing the stubborn barrier altogether. You adjust your grip on your lantern and weigh your remaining options in the silence.
+EXIT 1: Step beneath the dripping bronze grating
+EXIT 2: Hide behind the slate partition slabs
+@@END

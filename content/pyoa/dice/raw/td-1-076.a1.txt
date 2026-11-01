@@ -1,0 +1,12 @@
+Gemini said
+
+@@SECTION td-1-077
+TITLE: Striking the Case
+TEXT: Heavy salt-caked oak and stubborn brass frame the officers' mess, protecting the treasures within from the greedy hands of scavengers. You raise the iron bar high above your shoulder, muscles bunching across your back as you line up the blow against the reinforced glass. With a sharp grunt, you bring the heavy metal down hard upon the center of the display, praying the thick pane shatters before the patrolling guild wardens hear the crash echoing through the hollow ribs of the wrecked frigate.
+CHECK: Swing the iron bar hard
+@@SECTION td-1-085
+TITLE: The Bone Carver's Bargain
+TEXT: Rough gray fingers slide the jagged bone amulet across the sun-bleached rib table while the carver watches you with anxious, bloodshot eyes. You point out the hairline fractures running through the scrimshaw and the stale smell of inferior whale-fat oil, beating his asking price down until he mutters a curse and shoves the trinket into your palm. You tuck the peculiar warding charm safely into your wool lining, leaving the disappointed artisan to curse his bad luck under the blinding noon glare.
+GRANT: A flawed bone amulet
+EXIT 1: Leave the bone carver stall
+@@END

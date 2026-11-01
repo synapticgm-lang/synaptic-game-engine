@@ -1,0 +1,56 @@
+Gemini said
+
+@@SECTION td-5-087
+TITLE: The Final Stand
+TEXT: Orsolya leans against the grease-stained iron of the Meridian Gear, her knuckles smeared with old rust and her breath coming in shallow, rattling gasps. Blood from her shoulder seeps through her canvas tunic, matting the gray hairs at her nape, yet her one good hand still clutches a heavy iron pry-bar raised high above the primary cogs. She means to shatter the timing-teeth and let the ocean rush in unchecked, drowning Gullmouth and the Low in one chaotic, vengeful surge. You step onto the dripping platform with a bruised arm, caught between the duty you owe your mentor and the desperate need to keep your home from the brine. // The heavy machinery groans beneath your boots as the salt-thick air grows colder, pressing down with the weight of an oncoming deluge. You must decide whether to aid her desperate vandalism or wrench the heavy lever from her grasp before the waters break their banks forever.
+EXIT 1: Demand answers from your mentor
+EXIT 2: Pry the heavy charges loose
+EXIT 3: Help her rig the sabotage
+EXIT 4: Wrest the master lever away
+EXIT 5: Wait for the seabed to flood
+@@END
+@@SECTION td-5-088
+TITLE: Shadow of the Keep
+TEXT: Salt crusts the corners of your eyes as you close the distance to the old lighthouse keeper, your boots slipping slightly on the oily grease coating the lower deck. Orsolya turns her head slowly, her expression hardened into something bitter and unforgiving that you have never seen directed at your trade before. You ask her flatly why she vanished into the dark stairwell, demanding an explanation for the sabotage and the secrecy that led you both to this rusted vault. She lets out a dry, rattling laugh that echoes off the iron pillars, her gaze drifting toward the immovable bronze bulk of the Gear. The truth she spits out tastes of ancient brine and old sin, revealing how the first Tidewardens bound the sea with stolen blood, condemning the coast to perpetual thirst so they could rule the dry dust above.
+EXIT 1: Press her for the full history
+@@END
+@@SECTION td-5-089
+TITLE: Staring Down Wrath
+TEXT: Orsolya's eyes narrow to venomous slits, and the iron crowbar in her hand trembles not with weakness, but with a sudden, gathering fury that could crack flint. You plant your boots firmly against the wet metal grating, refusing to flinch as her voice rises over the distant, subterranean rumble of the trapped tide. Staring directly into her wild, bloodshot gaze, you force your shoulders to drop and your breathing to steady, standing your ground against a lifetime of accumulated authority. Every muscle in your body tightens like a strained hawser as you lean into her space, daring her to strike or speak the truth.
+CHECK: Hold your ground against her fury
+@@END
+@@SECTION td-5-090
+TITLE: A Bitter Reprimand
+TEXT: The old woman's patience snaps like a water-rotted hawser, and she swings the heavy iron bar with terrifying speed before you can brace your bruised shoulder. The thick metal catches you square across the ribs with a dull, sickening thud that knocks every ounce of air from your lungs and sends you sprawling onto the greasy grating. Pain flares white and hot through your torso, leaving a deep, purple bruise that will ache every time the weather turns wet. Orsolya towers over you, chest heaving and eyes blazing, while you wheeze for breath on the iron deck, having learned the hard way just how sharp her temper remains.
+EXIT 1: Pick yourself up from the iron
+@@END
+@@SECTION td-5-091
+TITLE: Earning the Hard Truth
+TEXT: You take the blow half on your shoulder and half on your wits, twisting away at the last heartbeat so the heavy bar glances harmlessly off your thick canvas coat with a sharp metallic clang. Orsolya halts her swing mid-air, her chest heaving as she studies your stubborn stance with a reluctant flicker of respect in her rheumy eyes. However narrowly you managed to weather her sudden assault, she lets the crowbar drop against the grating with a heavy clatter and sinks onto a dry crate. For your trouble, she presses a heavy brass token into your palm, the private mark of the old Tidewardens that grants you safe passage through any locked hatch in the lower depths.
+EXIT 1: Return to the main chamber
+@@END
+@@SECTION td-5-092
+TITLE: The Primer Cords
+TEXT: Coils of gray fuse-wire snake across the greasy housing of the primary drive, pinned in place by crude lead weights that Orsolya hung there with meticulous care. You drop to one knee beside the main casing, your fingers slick with condensation and oil as you trace the path of the sputtering detonators. Each wire is knotted with old sailor's hitches that tighten under tension, requiring a delicate touch and absolute stillness to unravel without striking a spark against the ironwork. The metal beneath your palms vibrates with a deep, ominous thrum, warning you that the entire apparatus is teetering on a hair-trigger just waiting for a careless movement.
+EXIT 1: Unravel the tangled fuse wire
+@@END
+@@SECTION td-5-093
+TITLE: Gathering the Charges
+TEXT: With infinite patience and a steady hand, you slip the lead weights from their moorings one by one, letting the grey coils tumble harmlessly into the oily sludge at the base of the machine. The primary drive falls silent save for the heavy dripping of condensation from the vaulted ceiling far above. You scoop up the exposed detonator caps, their brass casings cold and heavy against your palm, and tuck them securely into your canvas pouch. Orsolya watches from the shadows, her expression dark with betrayal, but the machinery remains intact for now.
+EXIT 1: Step back from the disarmed drive
+@@END
+@@SECTION td-5-094
+TITLE: Fingers on the Wire
+TEXT: The copper primer cap sits wedged deep within the iron housing of the primary drive, held fast by a rusted screw that refuses to turn for ordinary thumbs. You draw your salt-pitted knife from its sheath, using the narrow tip to lever against the delicate brass lip while avoiding the sensitive friction-powder packed inside. A single slip of the blade against the iron casing will send a hot spark straight into the volatile core, taking your fingers and half the bulkhead with it. You hold your breath in the damp, echoing vault, applying just enough pressure to coax the cylinder free without setting off the catastrophe.
+CHECK: Pry the live cap loose
+@@END
+@@SECTION td-5-095
+TITLE: A Spark in the Dark
+TEXT: The blade slips with a sharp screech of steel against iron, and a tiny, vicious spark leaps from the housing to bite straight into the sensitive primer grain. A muffled pop fills the cramped recess, scorching your knuckles black and showering your face with stinging metallic grit and hot soot. You jerk your hand back with a curse, clutching a stinging, blackened thumb while the pungent smell of burnt saltpetre fills the damp air. You survive the minor blast with singed skin and a throbbing hand, but the explosive charge remains stubbornly wedged in the mechanism.
+EXIT 1: Nursing your burned fingers
+@@END
+@@SECTION td-5-096
+TITLE: A Prize from the Cogs
+TEXT: You nudge the stubborn brass sleeve with the tip of your knife until it gives a soft click and slides freely into your palm, however narrowly you skirted disaster. The live detonator is cold and heavy, a rare piece of engineering salvaged from the old days before the sea went away. You slip the explosive cap into your coat pocket alongside your salt-hardened rations, feeling the comforting weight of a tool that can breach any lock or bulkhead in the Low. Orsolya mutters a dark curse from the shadows, but the primary drive remains quiet beneath your boots.
+EXIT 1: Return to the central platform
+@@END

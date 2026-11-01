@@ -1,0 +1,6 @@
+@@SECTION ul-2-134
+TITLE: The Silver Bookmark
+TEXT: You squeeze sideways through the narrow cleft with smooth grace, your coat brushing against damp leather spines until you emerge into a patch of dim lamp-light. Beneath a discarded folio lies a slender silver-plated bookmark, finely engraved with the crest of the lending clerk, which you pocket before the metal can chill your fingers.
+GRANT: silver-plated bookmark
+EXIT 1: Squeeze back toward the central aisle
+@@END

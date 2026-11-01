@@ -1,0 +1,7 @@
+Gemini said
+
+@@SECTION td-2-004
+TITLE: The Captains Ledger
+TEXT: Rotting oak groans beneath your boots as you pry open the captain's seaman chest, its salt-crust flaking away to reveal a ledger swollen with dark ink. Every line of crabbed handwriting hides a secret coordinate, but the rusted deck-beams overhead sag dangerously with the weight of collapsed bulkheads. You trace the damp pages for the hidden cache while a sudden shift in the timbers warns that the entire ceiling is about to come down upon your head.
+CHECK: Pry the silver compass from the rotting deck
+@@END

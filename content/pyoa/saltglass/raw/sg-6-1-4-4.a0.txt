@@ -1,0 +1,57 @@
+Gemini said
+
+@@SECTION sg-6-1-4-4
+TITLE: The Open Palms
+TEXT: Beside a row of unlit wall sconces shaped like open palms, you hold your coal-lantern high to pierce the gathering gloom. The yellow light casts long, trembling shadows across carved sandstone reliefs that depict ancient water rites long forgotten by the valley folk. Every surface is caked in a fine, glittering layer of ancient salt crystals, making the very walls look as though they are frosted with rime. You pause to catch your breath, listening for the faint rumble of the distant monsoon waters echoing through the deep basalt strata.
+EXIT 1: Step toward the lower passage
+EXIT 2: Follow the curving eastern gallery
+@@END
+@@SECTION sg-6-1-4-5
+TITLE: The Brass Threshold
+TEXT: Within a vast hemispherical antechamber, the ground slopes gently toward the heavy brass threshold of the vault lock. Above your head, intricate geometric traceries carved into the vaulted ceiling gleam with faint phosphorescence as your lantern approaches. The air here is thin, dry, and bitterly cold, carrying the sharp tang of aged metal and dry desert dust. You steady the strap of your lantern across your shoulder and survey the imposing approaches that fan out into the deep recesses of the underground hall.
+EXIT 1: Approach the central iron cylinder
+EXIT 2: Turn toward the lower passage
+EXIT 3: Follow the curving eastern gallery
+@@END
+@@SECTION sg-6-1-4-6
+TITLE: The Silent Alcoves
+TEXT: Under a dome of dark stone streaked with white mineral veins, you stride past silent sentry alcoves empty of any living guard. The floor beneath your boots is perfectly smooth, polished by centuries of dry desert winds that once whistled through these subterranean avenues before the great seals were dropped. Only the steady sputtering of your coal-lantern breaks the profound silence, casting a warm amber halo against the cold, unyielding masonry on either side.
+EXIT 1: Follow the curving eastern gallery
+@@END
+@@SECTION sg-6-1-4-7
+TITLE: The Monumental Doors
+TEXT: Beside a pair of monumental bronze doors standing slightly ajar, you feel the suction of heavy air rushing into the vault core. The massive metal panels are etched with swirling patterns of rain clouds and lightning bolts, now tarnished to a deep sea-green at their heavy hinges. A thin draft whistles through the narrow gap, carrying the unmistakable scent of deep earth and moisture that heralds the approaching storm.
+EXIT 1: Step toward the lower passage
+EXIT 2: Follow the curving eastern gallery
+@@END
+@@SECTION sg-6-1-5-0
+TITLE: The Iron Cylinder
+TEXT: Across the threshold of the great antechamber, you face the massive iron lock cylinder waiting for your next definitive action. The cold ceramic key in your pouch feels unnaturally heavy against your ribs, a silent reminder of the dried canals and desperate villages waiting far above in the blinding salt light. You raise your lamp to inspect the intricate tumblers, knowing that every choice from this moment forward will decide whether the fields of Candlemere drink again.
+EXIT 1: Proceed to the lock chamber
+@@END
+@@SECTION sg-6-1-5-1
+TITLE: The Central Seal
+TEXT: Before the towering brass face of the central seal, you steady your breathing as the heavy mechanism clicks in response to your approach. The air grows heavier still, vibrating with the latent power stored beneath the silent observatory city. You grip your lantern tighter, feeling the stark contrast between the warmth of your banked coals and the absolute chill radiating from the ancient lock.
+EXIT 1: Proceed to the lock chamber
+EXIT 2: Retrace your steps back
+@@END
+@@SECTION sg-6-1-5-2
+TITLE: The Vault Portal
+TEXT: Within the shadow of the monumental vault portal, you raise your cold ceramic key toward the intricate locking tumbler slots. The smooth stone around the mechanism is worn down by generations of hands that sought the very same deliverance from the unending drought. Every second counts now as the distant rumble of the approaching monsoon grows louder through the rock.
+EXIT 1: Proceed to the lock chamber
+@@END
+@@SECTION sg-6-1-5-3
+TITLE: The Sunken Platform
+TEXT: At the edge of the sunken lock platform, you prepare your hands to work the ancient levers before the rising waters arrive. The polished floor slopes down toward a dark trench where the subterranean runoff channels converge into a single, thirsty drain. You take one last look back at the winding corridors you have traversed, then square your shoulders against the biting draft.
+EXIT 1: Proceed to the lock chamber
+@@END
+@@SECTION sg-d-6-1
+TITLE: The Rusted Valve
+TEXT: Ignoring all structural warnings, you recklessly jam the Seedkey into a rusted pressure valve, triggering a catastrophic collapse that seals your doom forever. A deafening shriek of shearing metal echoes through the chamber as the ancient stone lintels fracture overhead. Tons of glittering salt and shattered glass cascade down from the low ceiling, burying the lantern light and ending your journey in the silent heart of the basin.
+@@END
+@@SECTION sg-6-c2
+TITLE: The Lock Chamber
+TEXT: Standing before the grand mechanism of the vault, you realize the final barrier requires more than mere iron and bone to turn its heavy gears. The ancient door is sealed by a profound intelligence written into its very foundations, waiting for the proper credentials to yield its hoarded deluge.
+EXIT 1: Sing the Sisters' well-song to the lock
+EXIT 2: Work the lock by hand
+@@END

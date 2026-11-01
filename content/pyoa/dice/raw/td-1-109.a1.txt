@@ -1,0 +1,13 @@
+Gemini said
+
+@@SECTION td-1-109
+TITLE: The Coral Trap
+TEXT: Heavy purple branches of fossilised reef groan and shudder as the salt-rotted masonry gives way, pinning a luckless net-mender beneath a jagged block of coral. You brace your shoulder against the porous stone, tasting copper and brine as your muscles strain against the grinding weight until the slab shifts and rolls aside with a hollow thud. The trembling scavenger crawls free from the dust, coughing up grey silt and pressing a cold, trembling palm to your forearm in fierce, silent loyalty. // With the rescue done, you look out across the drying flats toward the salt-crusted ridge where the old tracks lead.
+EXIT 1: Climb the ridge toward the dry track
+@@END
+@@SECTION td-1-118
+TITLE: The Driftwood Idol
+TEXT: Smooth grains of pale driftwood yield to your blade, shaving away under the cold light of the stranded moon until the small, eyeless effigy takes the required shape of a crouching gull. You present the carved offering to the watching pilgrims, who stroke its polished flanks with reverent thumbs and mutter praises to the sulking deep. They nod in quiet satisfaction, handing over a tightly sealed canvas pouch filled with coarse, blessed salt that stings your palm with an ancient, bitter cold.
+GRANT: pouch of blessed salt
+EXIT 1: Return to the tide-pool shrines
+@@END

@@ -1,0 +1,91 @@
+{
+ "batch": "vh-1-0-1-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-0-1-1": {
+   "title": "The High Buttery Threshold",
+   "text": "Passing the high buttery, you snatch a crust of rye bread from a wicker tray while old Brother Thomas mutters a short prayer for the valley road. The coarse crumb sticks in your dry throat, tasting faintly of caraway and cellar dust. Outside the narrow lancet window, the mountain mist coils against the leaded glass like white wool.",
+   "exits": [
+    "Inspect the tarred cordage in the rope-loft",
+    "Follow the cart ruts along the curtain wall"
+   ]
+  },
+  "vh-1-0-1-2": {
+   "title": "Beside the Salt Bins",
+   "text": "Near the salt-bins, you pause to scrape rime from your boot-soles while the iron Clapper hums a dull, shivering note against your spine. The white grains crunch under your heels, dry and bitter-smelling in the freezing draft that sweeps up from the lower gorges. You shift the padded cradle, trying to find a balance before the long descent begins.",
+   "exits": [
+    "Follow the cart ruts along the curtain wall",
+    "Face the bailiff by the winch-tower"
+   ]
+  },
+  "vh-1-0-1-3": {
+   "title": "Choir-Loft Exit",
+   "text": "Sweeping under the low timber of the choir-loft, you dodge a swinging tallow-bucket as the novice-master bellows final warnings about sudden wind-slips on the upper stair. The heavy bronze tongue in its padded cradle hums against your spine, a low vibration that matches the steady pounding of your heart. Ahead lie the stone thresholds leading down the mountain face, and you must decide how to begin your descent.",
+   "exits": [
+    "Accept the dried plums and press onward",
+    "Brace against the glacier gust and stride ahead",
+    "Thread past the sheep pens and the crooked stick"
+   ]
+  },
+  "vh-1-0-1-4": {
+   "title": "South Cloister Rest",
+   "text": "Pressing your back against the warm stone of the cloister chimney, you ease the biting canvas shoulder strap before tackling the vertical drop. The air smells of old lime mortar and woodsmoke drifting from the refectory. Around you, the monastery walls seem to contract, urging you outward into the freezing light of the high tiers.",
+   "exits": [
+    "Head past the sheep-dip pens and the shepherd",
+    "Receive the pewter charm of St. Jude for safety",
+    "Sidestep the rolling pine logs in the charcoal yard"
+   ]
+  },
+  "vh-1-0-1-5": {
+   "title": "Crossing the Library Garth",
+   "text": "Crossing the library garth, you watch jackdaws wheeling through the grey rime while the bronze tongue in your cradle taps a steady, rhythmic tattoo against your ribs. The frozen turf snaps crisply beneath your boots with every stride. Frost feathers cling to the copper sundial in the centre of the lawn, pointing silently toward the west.",
+   "exits": [
+    "Lean hard against the glacier gale in the courtyard",
+    "Pass the sheep pens toward the lower stone path",
+    "Pocket the pewter charm by the frozen fountain"
+   ]
+  },
+  "vh-1-0-1-6": {
+   "title": "Cistern Awakening",
+   "text": "Splashing freezing cistern water over your wrists, you scrub away the last traces of workshop sleep before the long descent begins. Frost crusts the edges of the stone basin, and the distant clatter of mule gear echoes off the cliff face. You shift the heavy bronze clapper on your back, feeling its familiar, steady weight settle between your shoulder blades.",
+   "exits": [
+    "Dodge the rolling timber in the charcoal yard",
+    "Adjust the canvas rain-hood over your precious cradle",
+    "Skirt the steaming heap of slaking stone by the lime-kiln"
+   ]
+  },
+  "vh-1-0-1-7": {
+   "title": "Dormitory Murmurs",
+   "text": "Tightening your leather waist-belt beneath the stone vaulting of the Great Dormitory, you listen to fellow apprentices murmuring quiet wagers on whether you will reach Lowgate intact. The air is thick with the scent of wool grease and old straw pallets. Every eye in the dim hall watches to see how you shoulder the burden of the broken Orison.",
+   "exits": [
+    "Skirt the steaming lime-kiln and the white dust",
+    "Walk past the screeching hawk at the cliff-mews"
+   ]
+  },
+  "vh-1-0-1-8": {
+   "title": "Outer Threshold",
+   "text": "Watching the white vapour of your breath dissolve into the high mountain air, you stand upon the threshold of the outer gatehouse before committing to the stone steps. The wind carries a sharp hint of pine resin and coming snow from the upper peaks. Your boots find purchase on the frozen flags as you take the final measure of the monastery walls behind you.",
+   "exits": [
+    "Pass the steaming heap of slaking stone",
+    "Glance at the hooded mountain hawk in the mews",
+    "Brush the dry snow from the gate-saint's stone beard"
+   ]
+  },
+  "vh-1-0-1-9": {
+   "title": "Brazier Warmth",
+   "text": "Warming your stiffened fingers over the glowing charcoal of the brazier-pit, you catch the master bell-founder watching you with a critical, squinting eye. The bitter mountain draft curls around the stone pillars, carrying the metallic tang of hot slag and quenching oil. No words are spoken, for the weight on your shoulders tells the master all he needs to know about your readiness.",
+   "exits": [
+    "Brush the drift of dry snow from the gate-saint"
+   ]
+  },
+  "vh-1-0-2-0": {
+   "title": "Rope-Loft Gloom",
+   "text": "Inhaling the thick aroma of tarred hemp and mutton tallow, you step into the damp gloom of the rope-loft as Master Hobb dangles a hank of three-ply cordage for your inspection. The low ceiling creaks under the weight of coiled cables overhead, and the distant sound of wind screaming through the mountain gorges fills the shadowy corners. You must choose your rigging before taking the Ninety Steps downward.",
+   "exits": [
+    "Step out onto the stone platform of the Ninety Steps",
+    "Dodge the sliding slate at the butter-stores corner"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,93 @@
+{
+ "batch": "sg-6-2-2-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-2-2-2": {
+   "title": "The Unbound Archivist",
+   "text": "Free of any toll-lord's ledger or well-keeper's oath, you stand before a hooded archivist whose fingers are stained with permanent indigo. Seeing your ledger clean of debt and your name unspooled from the Salt Court's demands, she wordlessly slides a master schematic of the lower seed vaults across the pitted zinc table. The vellum crackles with dry age, mapping every sealed conduit and forgotten bulkhead beneath Prism.\n\nOutside the alcove, the air tastes of ancient dust and the low, resonant thrum of the approaching monsoon begins to vibrate through the floorboards beneath your boots, urging you to choose your route before the tunnels flood.",
+   "exits": [
+    "Follow the path past the quartz chime",
+    "Descend into the sulfur-scented gallery",
+    "Trace the copper veins beneath the green glass"
+   ]
+  },
+  "sg-6-2-2-3": {
+   "title": "The Brine Cistern",
+   "text": "Bitter brine laps against your shins, sending ripples through a floating mosaic of waterlogged paper maps that swirl in the dark water. You wade deeper into the subterranean cistern, holding your ember-lamp high to ward off the chill rising from the flooded floor. Somewhere beneath the surface turbulence, the emergency drainage plug waits to be found and hauled free, though the rusted iron ring might snap under too much strain.\n\nThe dark liquid stirs with every step, and you must decide whether to pry at the stuck drain, wade toward the echoing archway, or turn back before the rising water cuts off your retreat.",
+   "exits": [
+    "Head toward the quartz chime gallery",
+    "Search the sulfur-scented lower chamber",
+    "Seek the vaulted hall of green glass"
+   ]
+  },
+  "sg-6-2-2-4": {
+   "title": "The Frost-Patterned Lock",
+   "text": "Towering slabs of dark basalt etched with the sprawling history of the lensfolk loom before you, dwarfing the narrow stone ledge. Your cold ceramic Seedkey fits snugly into the intricate, frost-patterned keyway, sliding into the ancient tumbler with a satisfying click that echoes down the corridor. A faint blue luminescence creeps along the carved grooves, signaling that the inner mechanism is ready to turn.\n\nThe weight of Candlemere's failed harvests rests entirely on your wrists, and the impending monsoon rattles the distant ventilation grates like a gathering storm.",
+   "exits": [
+    "Enter the green glass vaulted hall",
+    "Approach the condensing tower's shadow"
+   ]
+  },
+  "sg-6-2-2-5": {
+   "title": "The Chamber of Whispering Lenses",
+   "text": "Hundreds of curved, centuries-old mirrors catch your flickering lantern light, refracting a chaotic web of blinding beams across the damp stone floor. Every movement you make sends dazzling arcs of light dancing across the vaulted ceiling, accompanied by a faint, glassine hum like a swarm of metal bees. The brilliant glare makes it difficult to see where the walkways lead, forcing you to navigate by touch and instinct through the maze of optics.\n\nThe air smells of ozone and static electricity, and you must choose which reflected pathway to follow into the dark.",
+   "exits": [
+    "Venture into the sulfur-scented gallery",
+    "Locate the heavy titanium bulkhead"
+   ]
+  },
+  "sg-6-2-2-6": {
+   "title": "The Scaffolding Wedge",
+   "text": "Rusted copper pipes groan and shift as you wrench a sturdy length of rigid tubing free from the collapsed scaffolding overhead. Wedging the metal bar firmly against the jammed secondary locking mechanism, you throw your weight against it until the stubborn gears finally give way with a metallic shriek. Dust billows from the housing, revealing a narrow service gap large enough to squeeze through.\n\nThe subterranean chill bites at your skin, and the distant rumble of the approaching rains warns you that time is running out.",
+   "exits": [
+    "Walk toward the green glass vault",
+    "Step into the condensing tower's shadow"
+   ]
+  },
+  "sg-6-2-2-7": {
+   "title": "The Dry Basin of Rain-Seers",
+   "text": "Carved images of long-forgotten rain-seers stare down from the walls of the alcove, their stone eyes fixed upon an empty stone basin in the center of the floor. A faint residue of old offerings cakes the bottom, waiting for you to decide whether to leave something of value or pass by with empty hands. The silence here is absolute, save for the steady drip of condensation somewhere in the deeper masonry.\n\nEvery instinct tells you that the basin demands a token of your journey before it will grant safe passage further into the vaults.",
+   "exits": [
+    "Follow the dried salt crystal trail",
+    "Inspect the humming lift shaft dynamo",
+    "Examine the weeping statues' basin"
+   ]
+  },
+  "sg-6-2-2-8": {
+   "title": "The Glass Bridge Gale",
+   "text": "A rising gale from the impending monsoon shrieks through the iron struts of the trembling glass bridge, threatening to sweep you off the narrow span. Below your boots, the deep subterranean shaft drops away into absolute blackness, amplifying the howling wind into a deafening roar. You press yourself low against the vibrating handrails, inching forward as the glass beneath you hums with dangerous resonance.\n\nThe storm is breaking through the upper grates, leaving you precious few moments to reach solid ground on the other side.",
+   "exits": [
+    "Cross toward the obsidian floor",
+    "Head for the humming lift dynamo",
+    "Seek out the weeping statues"
+   ]
+  },
+  "sg-6-2-2-9": {
+   "title": "The Dynamo's Pulse",
+   "text": "Heavy cables pulse with residual current beside the humming dynamo of the lift shaft, casting long, jittery shadows across the concrete floor. The mechanical lift cage sits stranded halfway up its rusted tracks, groaning as the rising wind pressures push against the outer intake shafts. Your ember-lamp flickers in the draft, casting a warm amber glow over the control levers and warning plates.\n\nYou must decide whether to tinker with the lift controls, brave the maintenance ladder, or slip into the adjacent corridor before the power fails entirely.",
+   "exits": [
+    "Descend by the lift shaft",
+    "Inspect the weeping stone basin"
+   ]
+  },
+  "sg-6-2-2-10": {
+   "title": "The Weeping Alcove",
+   "text": "Water slowly trickles from the carved stone eyes of ancient bas-reliefs, filling a shallow marble basin that has remained undisturbed for centuries. The steady, rhythmic plink of droplets provides the only sound in the damp alcove, washing over the lingering scent of salt and stagnant air. Your boots leave wet prints on the stone flags as you approach the edge of the pooling water to examine what lies submerged within.\n\nThe vaulted ceiling stretches into darkness above you, hiding several possible exits from the weeping chamber.",
+   "exits": [
+    "Follow the lift shaft shadows",
+    "Inspect the weeping stone basin",
+    "Enter the narrow acoustic service tunnel"
+   ]
+  },
+  "sg-6-2-2-11": {
+   "title": "The Deep Vault Threshold",
+   "text": "Cool air rushes from the dark threshold ahead, carrying the scent of damp earth and unspooling time from the innermost heart of the Seed Vault. Every old promise made by the lensfolk now comes due, hanging heavy in the stillness as your ember-lamp illuminates the massive brass hinges of the inner door. The basin's fate, and the survival of Candlemere's fields, rests entirely on the choice you are about to make.\n\nYou stand at the precipice of history, needing only to take the final step into the vault's core.",
+   "exits": [
+    "Press your palm to the biometric scanner",
+    "Cross the narrow pit on the rope bridge",
+    "Step into the great balance chamber"
+   ]
+  }
+ },
+ "missing": []
+}

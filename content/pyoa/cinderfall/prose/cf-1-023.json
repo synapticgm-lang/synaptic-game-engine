@@ -1,0 +1,96 @@
+{
+ "batch": "cf-1-023",
+ "sections": {
+  "cf-1-023": {
+   "title": "The Copper Hearth",
+   "text": "Grease cakes your knuckles as you probe the rusted bowels of the tavern hearth's auxiliary draught-pump, coaxing a choked copper valve back to life with a brass-bladed screwdriver. The publican watches from behind a stacked tier of clouded mugs, his face soot-creased and hopeful as the stubborn iron diaphragm finally gives way with a deep, shuddering sigh of clean air. A greasy cloud of soot lifts toward the crooked stove-pipe, leaving the kitchen warm and the grease-traps clear of clinkers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the repaired pump housing"
+   ]
+  },
+  "cf-1-024": {
+   "title": "The Seized Valve",
+   "text": "Sweat stings your eyes while you lean into the rusted seating-ring of the pump-gland, applying a delicate torque with your fingers to free the jammed pin without shearing the soft brass threads. The metal groans under the strain, teetering on the edge of a clean turn or a catastrophic fracture that would jam the mechanism forever.",
+   "check": "Turn the delicate brass pin",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-025": {
+   "title": "A Bitter Toll",
+   "text": "The thin brass pin snaps clean against the seating-ring with a sharp, sickening crack that sends a shower of metal splinters into your palm. The publican sighs, docking your promised coal rations by half to pay for a replacement peg from the smiths down the line, leaving your hands smarting from a fresh, jagged scratch that oozes dark grease.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your tools and leave"
+   ]
+  },
+  "cf-1-026": {
+   "title": "The Draft-Pump Repair",
+   "text": "Working the seized brass valve with a slender pin and your knuckles black with graphite, you coax the stubborn draught-pump back into rhythmic life with a dry, satisfying chuff that draws a nod from the tavern keeper. He heaves a heavy sack of graded coal-nuggets across the scarred boards to reward your grease-stained labor, muttering that a good draft keeps the ale-smoke out of his eyes and the hearth honest.\n\nPocketing a grease-paper parcel of tallow-bread he slips you alongside the fuel, you feel the weight of a reliable debt settled in soot and warmth.",
+   "check": "",
+   "grant": "sack of coal-nuggets",
+   "exits": [
+    "Inspect the turnout switches blocked by the clerk"
+   ]
+  },
+  "cf-1-027": {
+   "title": "The Smoke-Room Taunts",
+   "text": "Jeers drift across the sawdust-strewn floor from a knot of rival gangers nursing lukewarm cider by the coal-bunker. You keep your eyes fixed on your mug, breathing in the stale tang of cheap tobacco and cold iron while their barbed remarks bounce off your silence like gravel against a boiler plate. After a tense stretch, the mockers turn away, leaving a grudging sort of peace in the dim tap-room.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Finish your bitter small beer"
+   ]
+  },
+  "cf-1-028": {
+   "title": "The Staring Match",
+   "text": "A heavy-shouldered ganger leans over your bench, breathing fumes of sour mash into your face while the other drinkers fall silent to watch how much insult a Marrowbone man can swallow without swinging a fist. Your pulse hammers against your ribs, but your features remain as blank and grey as the ash-dunes outside the window.",
+   "check": "Hold their aggressive gaze",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-029": {
+   "title": "A Flawed Stride",
+   "text": "A sudden drop in your nerve betrays you, a brief twitch of the jaw that the lead ganger catches with a cruel, broken-toothed grin. They shove your shoulder hard enough to send your mug spilling across the table, costing you a copper coin dropped to cover the mess and a lingering bruise on your collarbone.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the chilly platform"
+   ]
+  },
+  "cf-1-030": {
+   "title": "Silence Wins the Yard",
+   "text": "Stone-cold patience settles over the table like a blanket of fresh ash, wearing down the swagger of the rival crew until they mutter into their beakers and look away. One older ganger tosses a tarnished token onto the wood, a grudging badge of local respect for a guard who knows when to keep his temper cool.",
+   "check": "",
+   "grant": "Tarnished local respect token",
+   "exits": [
+    "Return to the engine shed"
+   ]
+  },
+  "cf-1-031": {
+   "title": "The Barons' Padlock",
+   "text": "Heavy iron chains loop through the turnout levers of the south siding, secured by an official brass padlock stamped with the crest of the Rail Barons. A stiff parchment notice hangs from the shackle, warning that all unauthorized movements out of Ashgate Junction are forbidden until the regional audit concludes. Hesper's engine sits silent behind the barrier, its safety valve weeping a faint wisp of steam into the grey evening air while you stare down the cold metal obstacle.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Find another way around"
+   ]
+  },
+  "cf-1-032": {
+   "title": "The Ticket Window",
+   "text": "Iron bars divide the soot-stained waiting hall from the ticket office, where the ancient widow sorts bundles of damp, yellowed telegrams by the dim glow of an oil lamp. A draft rattles the loose panes of the booking hall, carrying the dry scent of old paper and coal-dust from the tracks outside. You stand before the scarred wooden counter, where every shadow seems to hide a forgotten message or a fresh complication.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Request a forgotten message from Hesper",
+    "Secure a brass platform pass for the yard",
+    "Ask about the upcoming ash-storm warnings",
+    "Fix the jammed ticket-stamping press",
+    "Tend to the Marrowbone's clogged water injector"
+   ]
+  }
+ },
+ "missing": []
+}

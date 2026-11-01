@@ -1,0 +1,106 @@
+{
+ "batch": "td-4-173",
+ "sections": {
+  "td-4-173": {
+   "title": "The Blind Mentor",
+   "text": "Shadows detach themselves from the dripping brickwork of the grand chamber as a familiar silhouette steps into the amber wash of the revived core. Orsolya Venn stands before the iron framework, her lighthouse keeper's coat stiff with dried salt and old seaweed. When she turns her head toward the sound of your boots, the lamplight catches eyes stripped of pigment, rendered entirely milky-white by the deep pressures of the abyss. Her voice rasps like dry gravel scraped across slate as she demands your immediate assistance to throw the main gear. She insists that Saltspire must drown in the returning flood so that Gullmouth and its stranded people might finally breathe again\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step closer to the blinding light"
+   ]
+  },
+  "td-4-174": {
+   "title": "The Final Choice",
+   "text": "Massive iron levers cast long, trembling shadows across the vaulted ceiling of the Sunken Stair as your mentor holds her hand steady over the primary release mechanism. Every faction with a stake in the dry seabed has left its mark upon these stones, yet the ultimate decision of where the waters rush first rests entirely in your blistered hands. The intricate brass teeth of the Meridian Gear grind against each other with a sound like cracking teeth, waiting for the weight of a choice that will remake the world\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the heavy iron arm",
+    "Challenge her dark decree with law",
+    "Smash the descending pilgrim hands",
+    "Heave against the jammed secondary cog",
+    "Brace your back against the tremor",
+    "Wait for the great iron to groan"
+   ]
+  },
+  "td-4-175": {
+   "title": "Wrestling The Iron",
+   "text": "Muscles strain against bone as you lunge forward to intercept her trembling fingers before they can trip the catastrophic release. Orsolya fights with an unnatural, salt-brined strength, her knuckles scraping against the freezing metal as you lock arms in a desperate struggle for supremacy over the mechanism. The heavy bronze lever vibrates with the immense torque of the entire trapped ocean waiting just beyond the stone walls\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the lever to your side"
+   ]
+  },
+  "td-4-176": {
+   "title": "Seizing The Lever",
+   "text": "Iron bites deep into your palm as you throw your entire body weight against the stubborn shaft of the primary control. The mentor gasps, her white eyes widening in shock as your superior leverage forces her hands back from the polished brass knob. Every bolt in the housing groans in protest under the sudden cross-pressure of your competing wills\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test your strength against the mechanism"
+   ]
+  },
+  "td-4-177": {
+   "title": "Iron Against Bone",
+   "text": "Tremors shake the vaulted masonry as your fingers slip along the freezing iron of the primary lever. Orsolya throws her weight downward, her jaw set with the desperate finality of a lighthouse keeper watching her last flame die. Every muscle in your back fires as you plant your boots against the salt-crusted flagstones, striving to wrench the mechanism away from her grip before the counterweight drops into the locking groove.",
+   "check": "Wrench the iron from her grasp",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-178": {
+   "title": "The Slip of Leverage",
+   "text": "Friction burns the skin of your palms as Orsolya's superior leverage forces your arms back in a brutal arc of iron and salt. You stagger away from the console with a bruised shoulder and a shallow gash across your knuckles where the rusted locking pin bit deep. Breath rasps hot in your throat while she holds the heavy bar steady, her eyes steady and unyielding in the damp gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step back and watch her move"
+   ]
+  },
+  "td-4-179": {
+   "title": "Weight of the Lever",
+   "text": "Steel groans in protest as your sheer muscle overrides her desperate resistance, pivoting the heavy bar upward however narrowly. Orsolya stumbles back against the masonry, gasping for breath while her fingers curl into empty air where the control once was. A heavy brass locking pin slides home into the bulkhead with a satisfying thud, securing your authority over the mechanism at last.",
+   "check": "",
+   "grant": "Master of the Iron",
+   "exits": [
+    "Return to the final choice"
+   ]
+  },
+  "td-4-180": {
+   "title": "Words in the Deep",
+   "text": "Silence settles over the damp chamber save for the low, rhythmic dripping of subterranean brine against the stone floor. You lean against the cold iron of the control console, marshaling forgotten clauses from the old Gullmouth harbor ordinances and the ancient salvage pacts of the Tidewardens. Orsolya listens, her gaze dropping slowly from the catastrophic release valve to the pitted brass floorboards as the harsh lines of her resolve soften into reluctant agreement.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press your advantage with ancient law"
+   ]
+  },
+  "td-4-181": {
+   "title": "Parsing the Old Oaths",
+   "text": "Words feel like dry sand in your mouth as you invoke the binding statutes of the first seal, searching for a flaw in her bleak calculation. Orsolya narrows her eyes, weighing your argument against the terrible silence of the dry seabed stretching miles above them. Your logic hangs suspended in the damp air, waiting to see whether she will accept your reasoning or dismiss it with a sweep of her hand.",
+   "check": "Outwit her with ancient statutes",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-182": {
+   "title": "Flawed Arguments",
+   "text": "Your tongue stumbles over a misplaced clause from the forgotten charters, and Orsolya cuts through your reasoning with a single scathing reminder of the costs. A dull ache throbs behind your temples, leaving you drained of breath and carrying the bitter sting of a lost argument. She turns back toward the console, refusing to yield an inch of ground to your faulty logic.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the defeat and watch"
+   ]
+  },
+  "td-4-183": {
+   "title": "The Reluctant concession",
+   "text": "Every syllable of your carefully constructed defense strikes true, slipping past her defensive walls however narrowly until her shoulders slump in exhaustion. She reaches into her oilskin coat and withdraws a heavy brass instrument, pressing its cool casing into your palm without a word of ceremony. It is a tool for finding true north when the seas have vanished from the earth.",
+   "check": "",
+   "grant": "A tarnished tide-compass",
+   "exits": [
+    "Face the turning of the gear"
+   ]
+  }
+ },
+ "missing": []
+}

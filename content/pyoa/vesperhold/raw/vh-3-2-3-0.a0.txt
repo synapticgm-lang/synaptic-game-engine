@@ -1,0 +1,61 @@
+@@SECTION vh-3-2-3-0
+TITLE: The Groaning Cedar Bridge
+TEXT: Crossing a rickety cedar bridge over a gorge of grey mist, you hear the timbers groan under the combined weight of you and Biscuit. The abyss below breathes up a draft of damp air and old pine, making the heavy bronze tongue in your cradle hum a low, sympathetic chord against your spine. // Every plank shifts slightly underfoot, testing your balance and reminding you that one misstep would send both traveler and burden down into the white obscurity.
+EXIT 1: Step carefully off the span
+@@END
+@@SECTION vh-3-2-3-1
+TITLE: The Straw Finger
+TEXT: A tattered scarecrow stuffed with oat-straw points a crooked wooden finger toward the precipitous drop where the ladder-path begins. Its sackcloth head turns slowly in the mountain current, watching you pass while Biscuit gives a low, disgruntled snort at the straw man's empty sleeves. // The wind whistles through the dry stalks, creating a reedy sound that blends with the faint, persistent thrum of the metal against your back.
+EXIT 1: Leave the silent watcher behind
+EXIT 2: Inspect the milestone by the drop
+@@END
+@@SECTION vh-3-2-3-2
+TITLE: Chaff on the Wind
+TEXT: Miller Sedge hurls a handful of dry chaff into the wind to test the draft, narrowly missing your pack and the humming bronze tongue. The golden husks scatter instantly into the abyss, swallowed by the rising updraft from the glacier fields below. // He shakes his head, muttering about the unpredictability of the upper air before turning back to secure his heavy millstones.
+EXIT 1: Continue past the lower stone marker
+EXIT 2: Glance toward the distant ice rungs
+@@END
+@@SECTION vh-3-2-3-3
+TITLE: The Ice-Pellet Squall
+TEXT: You shelter behind a dry-stone retaining wall while a sudden squall of ice-pellets rattles against the heavy bronze clapper like buckshot. The tiny frozen beads bounce off your canvas cradle and skitter across the frosty flags with a sharp, clicking chatter. // Waiting out the brief fury, you press your shoulder against the cold stone and steady the mule against the sudden gust.
+EXIT 1: Resume walking as the air clears
+EXIT 2: Check the milestone at the path edge
+@@END
+@@SECTION vh-3-2-3-4
+TITLE: The Predatory Token
+TEXT: A Cable Court clerk offers a predatory credit token for your mule's shoes, promising safe transit down the remaining cliffs for half your rations. His ink-stained fingers tap impatiently on a brass ledger while his eyes measure the heavy bronze burden on your back with professional greed. // You pat Biscuit's warm neck and decline the thin parchment offer, knowing too well the price of borrowing from the court.
+EXIT 1: Adjust your chest harness firmly
+EXIT 2: Warn the nervous ropewright ahead
+@@END
+@@SECTION vh-3-2-3-5
+TITLE: The Mournful Cadence
+TEXT: Two fog-wardens pass you in the white gloom, their synchronized hand-bells ringing a mournful three-beat cadence to warn of the ice edge. Their wool cloaks are stiff with rime, and their faces are hidden beneath deep leather hoods, revealing only the grim set of their jaws. // They offer a brief nod as they stride past into the freezing vapor, their bells fading into a dull, rhythmic clatter.
+EXIT 1: Secure the heavy leather harness
+EXIT 2: Peer toward the frosted ladder drop
+@@END
+@@SECTION vh-3-2-3-6
+TITLE: The Blue Glacier-Run
+TEXT: The stone path gives way to a slick sheet of blue glacier-run, forcing you to inch forward with your heels locked against the granite. Biscuit finds his footing with a desperate scramble, his iron shoes clicking sharply on the polished sheet of ancient ice. // The drop-off waits just beyond your boots, silent and steep, demanding absolute concentration with every single breath.
+EXIT 1: Test the iron rungs below
+EXIT 2: Speak a quiet word of caution
+EXIT 3: Share water from the iron flask
+@@END
+@@SECTION vh-3-2-3-7
+TITLE: The High Watcher
+TEXT: A stray mountain goat watches from a high ledge, its amber eyes bright and indifferent to your struggle with the heavy metal load. It shifts its weight on tiny, sure-footed hooves, completely unbothered by the sheer drop that makes your own stomach tighten. // As you pause to catch your breath, the animal turns gracefully and bounds upward into the swirling cloud.
+EXIT 1: Tighten the strap across your ribs
+EXIT 2: Look down toward the ice ladders
+@@END
+@@SECTION vh-3-2-3-8
+TITLE: The Frozen Tinker's Hammer
+TEXT: You find a discarded tinker's hammer frozen in a puddle, its wooden handle splintered by frost-expansion but the iron head still sound. Prying it free with your thumb, you test its weight and find it balanced well enough for driving loose pitons into the rock. // You slip the cold tool into your belt pouch alongside a coil of spare hemp line, glancing down the narrowing path.
+EXIT 1: Peer over the edge at the rungs
+EXIT 2: Pass the anxious terrace gate guard
+@@END
+@@SECTION vh-3-2-3-9
+TITLE: The Resonant Thrum
+TEXT: The bronze clapper emits a sudden, low-pitched thrum that makes the loose pebbles at your feet dance in tiny concentric circles. The vibration travels straight through the padded canvas and into your shoulders, setting your teeth on edge with its deep, bell-metal resonance. // Biscuit cocks an ear backward at the sound, stomping a dusty hoof against the frozen ground as if answering a distant call.
+EXIT 1: Adjust the leather harness tightly
+EXIT 2: Approach the nervous terrace gate
+EXIT 3: Accept the iron piton from the miller
+@@END

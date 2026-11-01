@@ -1,0 +1,63 @@
+@@SECTION vh-4-0-3-2
+TITLE: The Glacial Shadow
+TEXT: Frost glazes your knuckles as you tug at the frozen hemp, working free a stubborn overhand knot while the bronze tongue hums an icy thrum against your shoulder-blade. Down in the gloom, pale walls of ancient ice creak and settle under the weight of the mountain. Biscuit stamps a heavy hoof on the packed snow, impatient for movement, breath pluming grey in the bitter draft. You must decide whether to test the descending rungs or edge along the wind-scoured ridge.
+EXIT 1: Scramble down the slanting blue rungs
+EXIT 2: Balance across the upper moraine crest
+@@END
+@@SECTION vh-4-0-3-3
+TITLE: Meltwater Crossing
+TEXT: Slush and black water slide sluggishly between rime-thickened boulders that offer the only solid stepping-stones across the sunken pool of the shifting ice sheet. The heavy bronze Clapper shifts in its cradle, threatening to unbalance your stance with every breath of the alpine wind. Biscuit tests the nearest stone with a cautious grey muzzle, ears flicking back at the sound of cracking crystal beneath the surface. You can press forward toward the freezing heights or seek a safer crossing along the basin edge.
+EXIT 1: Pick a path toward the moraine crest
+EXIT 2: Leap across the cracked timber baulks
+@@END
+@@SECTION vh-4-0-3-4
+TITLE: The Frozen Winch
+TEXT: Iron plates welded to the cliff face are buried in blue rime around the silent winch, its crank handle locked fast by a thick crust of winter ice. The cable disappears down into a narrow fracture where the glacier groans against the bedrock. A faint hum rises from the bronze tongue on your back, vibrating in tune with the frozen machinery beside you. You must choose whether to trust the ancient hemp line down the precipice or cross the remaining timber baulks toward the lower moraine.
+EXIT 1: Descend by the forgotten hemp line
+EXIT 2: Cross the cracked timber baulks
+@@END
+@@SECTION vh-4-0-3-5
+TITLE: The Toll-Warden's Brake
+TEXT: Heavy iron clicking echoes off the blue walls as the Cable Court warden recognizes the notched copper debt token hanging from your coat and wrenches the hidden brake lever. The rusted drum spins in reverse, easing the unbearable weight of the bronze Clapper off your aching spine with a mechanical groan. Biscuit huffs in relief as the harness straps slacken against his ribs. You can follow the wind-whipped ledge upward, cross the final timber bridge, or step into the swirling fog of the crevasse field.
+EXIT 1: Climb toward the windy moraine crest
+EXIT 2: Cross the final timber baulks
+EXIT 3: Step into the shifting crevasse fog
+@@END
+@@SECTION vh-4-0-3-6
+TITLE: The Crevasse Bridge
+TEXT: Packed snow forms a narrow bridge over the dark throat of the central crevasse, while far off down the ice-trough a stray mule bell tinkles a lonely note. The bronze Clapper hums deep against your spine, matching the slow, heavy thrum of the glacier itself. Biscuit plants all four hooves firmly on the white arch, refusing to move until you test the firmness of the crust with your staff. You can plunge into the misty ice field, adjust your chafing harness, or let the bronze vibration guide your pace.
+EXIT 1: Enter the swirling crevasse mist
+EXIT 2: Adjust your stiff leather harness
+EXIT 3: Heed the deep bronze vibration
+@@END
+@@SECTION vh-4-0-3-7
+TITLE: The Sloping Shelves
+TEXT: Blue ice tilts away into a bottomless white haze without so much as a ridge for your boot-heels to catch. The cold air burns your throat with every shallow gasp, and the heavy Clapper threatens to pull you backward into the void. Biscuit scrambles for purchase behind you, iron shoes clicking sharply against the glassy slope. You must choose whether to push blindly into the freezing mist or struggle with the tight harness buckles before your fingers lose all feeling.
+EXIT 1: Venture into the freezing fog
+EXIT 2: Fumble with the frozen harness buckles
+@@END
+@@SECTION vh-4-0-3-8
+TITLE: The Gale Trough
+TEXT: Fine ice-dust drives horizontally down the narrow gully, plastering the padded cradle and freezing hard across your woolen collar. The bronze Clapper hums a sharp, discordant note against your tired muscles as the gales buffet your loaded frame. Biscuit leans his shoulder hard into the wind, head bowed low against the stinging white onslaught. You can plunge forward into the obscured crevasse field or pause to wrestle with the stiff harness straps.
+EXIT 1: Press onward into the misty crevasse field
+EXIT 2: Struggle with the stiff leather harness
+@@END
+@@SECTION vh-4-0-3-9
+TITLE: The Jagged Slate
+TEXT: Black shards of rock jut like broken teeth from the melting edge of the glacier, offering a brief respite from the endless expanse of white. A weathered signpost points with a rusted iron finger down toward the lower stairs, its painted lettering flaked away by decades of storm. The bronze tongue hums steadily against your back, keeping time with your racing pulse. You can follow the upper track toward the cairn, listen to the deep bronze vibration, or step toward the frost-coated threshold.
+EXIT 1: Follow the track to the weathered cairn
+EXIT 2: Heed the deep rhythmic bronze vibration
+EXIT 3: Step toward the slick frost-coated threshold
+@@END
+@@SECTION vh-4-0-3-10
+TITLE: The Freezing Fog
+TEXT: Thick white vapor curls around your eyelashes and freezes instantly into tiny needles that blur the compressed blue walls of the ice-trough. The mule's heavy, rattling breathing echoes close behind, a ragged rhythm against the silence of the high glacier. The heavy bronze Clapper hums a low drone that seems to shake the very ground beneath your boots. You can let the bronze vibrations guide your steps or press forward to the frost-coated stone threshold.
+EXIT 1: Follow the deep rhythmic bronze vibrations
+EXIT 2: Reach for the slick frost-coated stone threshold
+@@END
+@@SECTION vh-4-0-3-11
+TITLE: The Packing Crate
+TEXT: Splintered pine planks from a discarded packing crate bridge a jagged fracture in the blue ice field, groaning under your boots with every cautious step. The freezing air bites deep into your lungs, while the heavy bronze Clapper hums a steady, reassuring note against your spine. Biscuit picks his way across the makeshift timber bridge with ears pinned flat against the wind. You can follow the deep bronze vibrations onward or push toward the stone threshold ahead.
+EXIT 1: Follow the deep rhythmic bronze vibrations
+EXIT 2: Cross toward the slick frost-coated threshold
+@@END

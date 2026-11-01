@@ -1,0 +1,39 @@
+Gemini said
+
+@@SECTION td-4-177
+TITLE: Iron Against Bone
+TEXT: Tremors shake the vaulted masonry as your fingers slip along the freezing iron of the primary lever. Orsolya throws her weight downward, her jaw set with the desperate finality of a lighthouse keeper watching her last flame die. Every muscle in your back fires as you plant your boots against the salt-crusted flagstones, striving to wrench the mechanism away from her grip before the counterweight drops into the locking groove.
+CHECK: Wrench the iron from her grasp
+@@END
+@@SECTION td-4-178
+TITLE: The Slip of Leverage
+TEXT: Friction burns the skin of your palms as Orsolya's superior leverage forces your arms back in a brutal arc of iron and salt. You stagger away from the console with a bruised shoulder and a shallow gash across your knuckles where the rusted locking pin bit deep. Breath rasps hot in your throat while she holds the heavy bar steady, her eyes steady and unyielding in the damp gloom.
+EXIT 1: Step back and watch her move
+@@END
+@@SECTION td-4-179
+TITLE: Weight of the Lever
+TEXT: Steel groans in protest as your sheer muscle overrides her desperate resistance, pivoting the heavy bar upward however narrowly. Orsolya stumbles back against the masonry, gasping for breath while her fingers curl into empty air where the control once was. A heavy brass locking pin slides home into the bulkhead with a satisfying thud, securing your authority over the mechanism at last.
+GRANT: Master of the Iron
+EXIT 1: Return to the final choice
+@@END
+@@SECTION td-4-180
+TITLE: Words in the Deep
+TEXT: Silence settles over the damp chamber save for the low, rhythmic dripping of subterranean brine against the stone floor. You lean against the cold iron of the control console, marshaling forgotten clauses from the old Gullmouth harbor ordinances and the ancient salvage pacts of the Tidewardens. Orsolya listens, her gaze dropping slowly from the catastrophic release valve to the pitted brass floorboards as the harsh lines of her resolve soften into reluctant agreement.
+EXIT 1: Press your advantage with ancient law
+@@END
+@@SECTION td-4-181
+TITLE: Parsing the Old Oaths
+TEXT: Words feel like dry sand in your mouth as you invoke the binding statutes of the first seal, searching for a flaw in her bleak calculation. Orsolya narrows her eyes, weighing your argument against the terrible silence of the dry seabed stretching miles above them. Your logic hangs suspended in the damp air, waiting to see whether she will accept your reasoning or dismiss it with a sweep of her hand.
+CHECK: Outwit her with ancient statutes
+@@END
+@@SECTION td-4-182
+TITLE: Flawed Arguments
+TEXT: Your tongue stumbles over a misplaced clause from the forgotten charters, and Orsolya cuts through your reasoning with a single scathing reminder of the costs. A dull ache throbs behind your temples, leaving you drained of breath and carrying the bitter sting of a lost argument. She turns back toward the console, refusing to yield an inch of ground to your faulty logic.
+EXIT 1: Accept the defeat and watch
+@@END
+@@SECTION td-4-183
+TITLE: The Reluctant concession
+TEXT: Every syllable of your carefully constructed defense strikes true, slipping past her defensive walls however narrowly until her shoulders slump in exhaustion. She reaches into her oilskin coat and withdraws a heavy brass instrument, pressing its cool casing into your palm without a word of ceremony. It is a tool for finding true north when the seas have vanished from the earth.
+GRANT: A tarnished tide-compass
+EXIT 1: Face the turning of the gear
+@@END

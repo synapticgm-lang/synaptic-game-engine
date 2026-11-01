@@ -1,0 +1,64 @@
+@@SECTION vh-4-1-3-2
+TITLE: The Frozen Pack-Goat
+TEXT: Stubborn hooves refuse the turn until you haul on the leading rope, coaxing Biscuit past the rigid carcass of a pack-goat wedged tight into a blue-veined crevice. The cold is a physical presence here, biting at your knuckles through wet wool while the bronze Clapper hums a low, sympathetic vibration against your spine. Keeping your eyes fixed strictly ahead on the shifting grey horizon, you guide the mule forward through the treacherous cleft as the wind howls down the ice-chute.
+EXIT 1: Face the sheer blue-white glass wall
+EXIT 2: Negotiate the narrow wind-lashed ice-ledge
+EXIT 3: Listen to the humming suspension cable
+@@END
+@@SECTION vh-4-1-3-3
+TITLE: The Volcanic Vein
+TEXT: A dark ribbon of volcanic ash slices straight through the pale glacier ice, offering your numbed boots sudden, gritty purchase on the slick, upward-sloping path. You lean into the slope, the heavy bronze tongue shifting in its leather cradle with a dull, resonant thud that jars your shoulder blades. Biscuit picks a cautious way behind you, ears pinned back against the howling gale.
+EXIT 1: Steer the mule along the ledge
+EXIT 2: Heed the humming overhead cable
+EXIT 3: Climb onto the sulfur-scented rock shelf
+@@END
+@@SECTION vh-4-1-3-4
+TITLE: Securing the Bronze
+TEXT: Fingers clumsy with frost, you haul hard on the leather straps of the clapper cradle as a violent mounting vibration threatens to work the heavy bronze free from its padding. The metal sings a thin, complaining note against the gale, demanding your full attention to keep it lashed securely to your frame. Biscuit huddles close against your flank, shaking a crust of rime from his grey muzzle while you double-knot the harness.
+EXIT 1: Guide the mule along the icy ledge
+EXIT 2: Test the straining overhead cable span
+@@END
+@@SECTION vh-4-1-3-5
+TITLE: The Meltwater Tunnel
+TEXT: Half-buried in a drift of crystalline snow near the shadowed mouth of a dark meltwater drainage tunnel, a heavy, rusted winch-handle left by the Cable Court catches the pale light. Water drips with a slow, hollow rhythm from the frozen vault above, echoing the faint hum of the Clapper on your back. You pause for a heartbeat to catch your breath in the sheltered gloom before pressing forward.
+EXIT 1: Follow the path beneath the humming cable
+EXIT 2: Climb up to the sulfur-scented stone shelf
+@@END
+@@SECTION vh-4-1-3-6
+TITLE: The Cornice Edge
+TEXT: You edge carefully along a treacherous cornice of wind-blown powder that overhangs a thousand-foot vertical drop into the mist-shrouded gorge of the lower glacier. Every step must be tested twice to ensure the snow-bridge holds your weight and the heavy bronze burden on your back. Below you, the abyss churns with white vapour and the faint, haunting echo of falling ice.
+EXIT 1: Scramble up to the high rock shelf
+EXIT 2: Press flat against the freezing wall
+@@END
+@@SECTION vh-4-1-3-7
+TITLE: The Ptarmigan Flurry
+TEXT: A sudden explosion of gray mountain ptarmigan bursts straight out from a snow-pocket right beneath your boots, startling the mule with a frantic beating of wings. Biscuit rears back sharply, nearly tipping your heavy bronze burden sideways into the drift. You grab his halter-strap with a shouted warning, planting your heels firmly into the hard-packed crust until the flurry passes.
+EXIT 1: Lead the mule across the narrow ledge
+EXIT 2: Pull yourself up to the rocky shelf
+@@END
+@@SECTION vh-4-1-3-8
+TITLE: The Firn Trench
+TEXT: You carve a hasty trench into the hard firn snow with your belt-hatchet, crouching low to shelter behind its icy lip while a violent squall of needle-ice rakes the exposed mountain face. The wind shrieks overhead like a trapped spirit, driving frozen pellets into the wool of your hood. Biscuit presses his nose into your shoulder, sharing your meager shelter until the worst of the whiteout passes.
+EXIT 1: Crawl out onto the sulfur-scented shelf
+EXIT 2: Leap across the broken hanging ladder
+EXIT 3: Flatten against the freezing rock face
+@@END
+@@SECTION vh-4-1-3-9
+TITLE: The Lowgate Signpost
+TEXT: A sturdy wooden signpost carved with deep, weather-worn letters by Lowgate artisans points down through the thickening murk toward the lower ladder stations and the distant valley floor. The painted arrows are crusted with rime, but the carved destination remains unmistakably clear. You wipe the frost from the wood with a mittened thumb, measuring the remaining daylight against the long descent ahead.
+EXIT 1: Haunt the high rock shelf above
+EXIT 2: Attempt the leap across the broken ladder
+EXIT 3: Hug the freezing wall against the gust
+@@END
+@@SECTION vh-4-1-3-10
+TITLE: Numbed Fingers
+TEXT: You check your fingers one by one for feeling as the biting frost stiffens the knitted wool of your mittens and turns your ragged breath to rattling crystals. The cold seeps deep into your bones, making the straps of the clapper cradle feel heavier with every passing stride. Stamping your feet against the packed ice, you force your stiff joints to move once more along the trail.
+EXIT 1: Press against the wall for the final push
+EXIT 2: Enter the thick bank of freezing fog
+@@END
+@@SECTION vh-4-1-3-11
+TITLE: The Frozen Blanket
+TEXT: A discarded woollen blanket frozen stiff as a rigid board blocks your footing on the narrow track, forcing you to hack it loose with short, sharp blows from your belt-hatchet. Shards of ice fly into the air as the fabric finally tears free and tumbles down the precipice. You steady Biscuit against the resulting shudder of the slope before taking your next step forward into the wind.
+EXIT 1: Lean into the freezing stone wall
+EXIT 2: Plunge into the oncoming freezing fog
+@@END

@@ -1,0 +1,53 @@
+@@SEED vh-3-0-0-0 | On the high stone shelf of Tenth Tier, you step between two shuttered windmills while the heavy bronze clapper shifts against your tired spine.
+@@SEED vh-3-0-0-1 | Frost rims the axle of the uppermost mill-wheel where Miller Garrow demands a toll before you cross his turning blades.
+@@SEED vh-3-0-0-2 | Biscuit digs her stubborn hooves into the grey grit of the barley path as a sudden gust of mountain wind rattles the flour-sacks.
+@@SEED vh-3-0-0-3 | A rusted iron wind-pipe hums against your ear on the cliff edge, carrying sharp snatches of argument from the miller's courtyard below.
+@@SEED vh-3-0-1-0 | You duck beneath a spinning canvas sweep that groans against the gale, risking a broken rib to save seconds on the downward track.
+@@SEED vh-3-0-1-1 | Old Mara blocks the stone door of her grain-store with a flour scoop, refusing passage unless you recite the proper miller's blessing.
+@@SEED vh-3-0-1-2 | A sudden eddy catches the bronze clapper on your back, threatening to tip you backward off the narrow terrace wall into the gray mist.
+@@SEED vh-3-0-1-3 | You shelter in the drafty lee of a barley hopper where a shivering apprentice offers you a crust of hard rye bread for a copper.
+@@SEED vh-3-0-1-4 | The rope-bridge across the miller's irrigation trench sags dangerously under your weight while freezing meltwater spits from the rocks above.
+@@SEED vh-3-0-1-5 | Two bickering millers haul sacks of gray grain across your path, neither willing to yield an inch of the slippery limestone ledge.
+@@SEED vh-3-0-1-6 | You squeeze through a narrow cleft between two stone grain-bins where the smell of stale yeast and wet wool hangs thick in the air.
+@@SEED vh-3-0-1-7 | Because you owe nothing to any guild, a friendly miller waves you past his toll-post through a secret drainage chute that cuts the descent in half.
+@@SEED vh-3-0-1-8 | A small pack-mule has slipped its tether near the cliff edge, and its frantic kicking threatens to send your own beast tumbling into the abyss.
+@@SEED vh-3-0-1-9 | You steady your breathing against the biting frost as the great canvas sails of Mill Ten shriek overhead in a sudden squall.
+@@SEED vh-3-0-2-0 | Miller Hobb leans from an upper window to hurl insults at your heavy burden, claiming the bronze clapper brings bad luck to his grinding stones.
+@@SEED vh-3-0-2-1 | You crawl beneath a low stone trestle supporting the main drive-shaft while greasy machine-oil drips onto your padded shoulder harness.
+@@SEED vh-3-0-2-2 | A group of hungry terrace children cluster around Biscuit, trying to pry loose the leather straps holding your precious metal cargo.
+@@SEED vh-3-0-2-3 | You step onto the vibrating timber gallery of Mill Twelve just as the massive granite millstones grind to a sudden, shrieking halt.
+@@SEED vh-3-0-2-4 | A steep flight of ice-glazed stone steps cuts downward through the barley fields, forcing you to unclip Biscuit and lead her by hand.
+@@SEED vh-3-0-2-5 | You dodge a flying wooden shutter torn loose by the gale, watching it spin end-over-end into the white clouds far below.
+@@SEED vh-3-0-2-6 | Miller Caden blocks the lower terrace gate with a stout ash pole, demanding an exorbitant inspection fee for your heavy bronze cargo.
+@@SEED vh-3-0-2-7 | Because you wear the rope-wrights' knot-oath proudly, the gate-keeper unlocks the private winch-house stairs and lets you descend unhindered.
+@@SEED vh-3-0-2-8 | A damp shroud of mountain fog rolls over the terraces, reducing visibility to a single arm's length and muffling the great wind-pipes.
+@@SEED vh-3-0-2-9 | You help a frantic miller wedge a jammed brake-beam into place before his runaway wheel shatters the entire stone wall.
+@@SEED vh-3-0-2-10 | The path narrows to a single plank bridging a deep irrigation chasm where the roar of rushing glacial meltwater deafens your ears.
+@@SEED vh-3-0-2-11 | You pause in the shadow of a silent windmill whose broken timber vanes hang motionless like the ribs of a starved beast.
+@@SEED vh-3-0-2-12 | A sharp whistle echoes from the mist above, warning all terrace folk to batten down their hatches against an incoming gale.
+@@SEED vh-3-0-3-0 | You scramble across a scree-slope of loose shale that gives way beneath your boots, sending grey stones clattering into the void.
+@@SEED vh-3-0-3-1 | Miller Jago offers a mug of warm barley-water in exchange for news of the storm damage up at Vesperhold's high sanctuary.
+@@SEED vh-3-0-3-2 | You squeeze past a straining winch where two terrace workers struggle to hoist a sodden sack of grain from the valley floor.
+@@SEED vh-3-0-3-3 | A fierce crosswind catches the clapper's cradle, twisting your shoulder straps painfully as you fight to keep your footing on the ice.
+@@SEED vh-3-0-3-4 | You navigate a labyrinth of low stone storage sheds where the pungent aroma of fermented barley mash fills the freezing air.
+@@SEED vh-3-0-3-5 | Because you carry a genuine guild-woven rope, the terrace guards salute your passage and point out a sheltered shortcut through the grain lofts.
+@@SEED vh-3-0-3-6 | A stubborn sheep blocks the narrow stone stair, refusing to budge until Biscuit lowers her head and nudges it aside with a huff.
+@@SEED vh-3-0-3-7 | You slip on a patch of black ice near the flour- chutes, barely catching yourself on a timber railing before dropping your cargo.
+@@SEED vh-3-0-3-8 | Miller Voss peers suspiciously at the bronze clapper through a cracked spy-glass, muttering dark warnings about cursed temple metal.
+@@SEED vh-3-0-3-9 | You hurry past a row of silent, empty windmills whose black apertures stare out across the dizzying drop like sightless eyes.
+@@SEED vh-3-0-3-10 | A sudden flurry of wet snow blinds your eyes, turning the steep stone steps into a treacherous slide of slush and mud.
+@@SEED vh-3-0-3-11 | You pause to retighten Biscuit's pack-girth where the vibration of the great grinding stones has shaken the leather loose.
+@@SEED vh-3-0-3-12 | The wind-pipe beside the trail emits a long, mournful moan as the pressure shifts across the terraces ahead of the storm.
+@@SEED vh-3-0-4-0 | You cross the threshold of the communal weighing-shed where greasy iron scales hang suspended from a blackened cedar beam.
+@@SEED vh-3-0-4-1 | A tired miller rests his calloused hands on a flour-dusted crate, watching your approach with weary, measuring eyes.
+@@SEED vh-3-0-4-2 | You dodge a rolling barley cask that breaks loose from a hand-cart and smashes into the low drystone wall beside the path.
+@@SEED vh-3-0-4-3 | The stone trail flattens into a muddy courtyard where several pack-mules are tethered outside the district's central gathering hall.
+@@SEED vh-3-0-4-4 | You wipe the freezing condensation from your forehead as the air grows thick with the smell of woodsmoke and damp chaff.
+@@SEED vh-3-0-4-5 | A nervous clerk checks names off a long parchment scroll by the light of a flickering tallow candle set in a tin sconce.
+@@SEED vh-3-0-4-6 | You squeeze through a press of gossiping mill-hands who have gathered near the lower archway to escape the biting draft.
+@@SEED vh-3-0-4-7 | The roar of the great valley wind fades into a low hum as you step into the sheltered lee of the Rumour Mill.
+@@SEED vh-3-0-5-0 | Inside the dim rafters of the Rumour Mill, old Tanner whispers that the Lowgate foundry has already run out of tin and will reject all temple bronze.
+@@SEED vh-3-0-5-1 | By the sputtering hearth of the Rumour Mill, a scarred smith claims the foundry furnaces are roaring hotter than ever and eager for the great bell's tongue.
+@@SEED vh-3-0-5-2 | Amidst the clatter of tin mugs in the Rumour Mill, a nervous trader insists the foundry has been seized by the Cable Court to forge debt-shackles.
+@@SEED vh-3-0-5-3 | Leaning against a sack of barley in the Rumour Mill, a one-eyed packer swears the foundry master has fled south, leaving the great pits cold and empty.
+@@DONE

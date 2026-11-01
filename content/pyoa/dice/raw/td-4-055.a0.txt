@@ -1,0 +1,63 @@
+Gemini said
+
+@@SECTION td-4-055
+TITLE: The Unblinking Master
+TEXT: Salt-crusted eyelids refuse to twitch as the choir master leans forward, his hollow sockets fixing upon your face with the weight of an anchor. The howling dirge washes over your temples like cold bilge water, threatening to scour reason from your skull. Yet you lock your jaw against the pressure, staring straight into the darkness of his hood. A slow, rasping sigh rises from the assembled dead, and the master raises a gray, webbed finger to trace a damp cross upon your brow, granting an eerie quiet to the storm inside your mind.
+EXIT 1: Step past the silent choir
+@@END
+@@SECTION td-4-056
+TITLE: Staring Down the Wail
+TEXT: That pale, unblinking stare pins you to the slick stone while the choir shifts from a dull murmur to a shrieking wall of sound that rattles your teeth. Every instinct screams to tear your gaze away and plunge your hands over your ears before your sanity cracks down the middle. You fight the overwhelming urge to bolt, forcing your breath to steady as you meet the lead singer's empty glare head-on, testing whether your spirit can outlast a legion of the drowned.
+CHECK: Meet the leader's gaze
+@@END
+@@SECTION td-4-057
+TITLE: Scoured by the Dirge
+TEXT: A sudden surge of sonic fury shatters your concentration, driving a spike of white-hot agony through your temples that leaves your ears ringing with the taste of old copper. You stagger backward against the damp masonry, clutching your head as a thin trickle of dark blood winds down your neck. The pain is sharp and lingering, a dull throb that settles deep behind your eyes as a harsh reminder of what the dead demand from the living.
+EXIT 1: Press onward through the ache
+@@END
+@@SECTION td-4-058
+TITLE: The Drowned Blessing
+TEXT: However narrowly you weather that psychic onslaught, your persistence forces the lead singer to lower his chin in grudging recognition. He reaches into the folds of his rotting vestments and withdraws a small, salt-cured talisman shaped like a coiled whelk, pressing it into your palm with fingers as cold as winter iron. The object hums faintly against your skin, carrying a residual ward that dampens the worst of the subterranean echoes as you leave the chamber behind.
+GRANT: Salt-cured whelk talisman
+EXIT 1: Descend into the outer workings
+@@END
+@@SECTION td-4-059
+TITLE: Iron and Oil
+TEXT: The spiral of worn stone abruptly gives way to colossal walls of riveted bronze and rusted iron, marking the true boundary of the Sunken Stair's inner mechanism. Massive counterweights hang in the dim gloom like slaughtered leviathans, suspended by chains thick as a wrecker's waist and coated in thick, black grease that smells of ancient whale oil. Every inch of metal vibrates with a low, bone-deep thrum that signals the immense power caged just beyond your reach. Steam vents hiss intermittently from narrow gaps in the bulkheads, casting hot, blinding plumes across the rusted catwalks that stretch out over the void.
+EXIT 1: Tread the greasy iron paths
+@@END
+@@SECTION td-4-060
+TITLE: The Grinding Descent
+TEXT: Giant stationary gears form precarious, jagged bridges over a bottomless drop, slick with ancient grease and populated by territorial blind eels that snap from the shadows. To your left, a rotating shaft hums with lethal speed while a pale pearl gleams temptingly within a nest of wire. Straight ahead, a skeletal mechanic hangs upside down from a snapped harness, clutching a peculiar tuning fork. Below a sputtering steam pipe, a puddle of condensed freshwater begs to be salvaged into empty canteens. Deeper still, a sprawling archive of drowned ledgers blocks the main route, guarded by an automaton with glowing glass eyes.
+EXIT 1: Cross the gear-toothed span
+EXIT 2: Pluck the pearl from danger
+EXIT 3: Reach for the hanging mechanic
+EXIT 4: Harvest the leaking freshwater
+EXIT 5: Approach the archive automaton
+@@END
+@@SECTION td-4-061
+TITLE: The Jammed Cog
+TEXT: A massive iron wheel sits stubbornly wedged between two bulkheads, bringing a secondary sector of the machinery to a complete, ominous halt. Grasping the jagged spokes with both hands, you brace your boots against the slick plating and throw your full weight into the metal. Muscles strain against the unyielding rust until a sharp report echoes through the shaft, and the heavy gear groans back into motion, revealing a heavy maintenance key buried in the grease beneath its axle.
+EXIT 1: Claim the heavy iron key
+@@END
+@@SECTION td-4-062
+TITLE: Turning the Iron
+TEXT: Gripping the newly found key, you clamber across a network of vibrating pipes to reach the maintenance panel set into the central pillar. The rusted lock offers initial resistance, protesting with a screech of dry iron before the internal tumblers finally yield to your persistence. Inside the recess lies a series of heavy brass levers, caked in salt and waiting to dictate the flow of pressure through the looming apparatus above.
+EXIT 1: Test the brass control levers
+@@END
+@@SECTION td-4-063
+TITLE: Bracing the Slip
+TEXT: The entire catwalk shudders violently as the machinery below shifts its weight, threatening to shear your footing away and drop you into the dark machinery wells. You slam your shoulder against the vibrating iron frame, digging your heels into the greasy plating with all your strength to keep the structural beam from buckling under the sudden strain. Every muscle in your torso burns as you pit your raw power against the shifting iron.
+CHECK: Force the buckling beam back
+@@END
+@@SECTION td-4-064
+TITLE: Crushed by the Shift
+TEXT: The heavy iron beam slips from your grip with a deafening screech, slamming against your shoulder and sending you sprawling across the abrasive plating. A deep, ugly bruise blooms instantly beneath your canvas coat, and your breath catches in a painful gasp as you struggle to roll clear of the moving parts. The mishap costs precious time and leaves your body aching from the sudden impact, but you manage to scramble away before the mechanism can claim anything worse.
+EXIT 1: Pick yourself up and continue
+@@END
+@@SECTION td-4-065
+TITLE: The Iron Wedge
+TEXT: However narrowly you manage to wedge the heavy component back into alignment, the surrounding machinery settles with a heavy, satisfying thud that restores stability to the walkway. Wedged firmly in the mechanism's housing is a thick, square-headed iron peg stamped with the old Tidewarden seal, forged from rust-resistant alloy that will never corrode in the brine. You pry it free from the housing and tuck it securely into your belt, knowing such solid metal will prove invaluable before your journey ends.
+GRANT: Tidewarden iron peg
+EXIT 1: Return to the central crossroads
+@@END

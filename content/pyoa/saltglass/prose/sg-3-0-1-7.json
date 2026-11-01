@@ -1,0 +1,88 @@
+{
+ "batch": "sg-3-0-1-7",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-0-1-7": {
+   "title": "The Milky Quartz Plaza",
+   "text": "Shard-dust grinds beneath your boots as you cross an open plaza where the skeletons of ancient trees are preserved entirely in milky quartz. The midday glare bounces off their translucent branches, casting distorted prisms across the cracked flagstones. You adjust the strap of your ember-lamp, feeling the dry heat radiate against your thigh as you weigh the various paths cutting through the silent ruins.",
+   "exits": [
+    "Approach the slate desk of the toll-clerk",
+    "Trade tobacco with the pale hide-map scavenger",
+    "Present your well-seal to the cautious gate-guard",
+    "Climb the dangling rope to the shattered balcony"
+   ]
+  },
+  "sg-3-0-1-8": {
+   "title": "The Unburdened Maintenance Hatch",
+   "text": "Recognizing your unburdened hands and untied debts, an old lens-grinder points out a hidden maintenance hatch that bypasses the toll-fort completely. You carry no heavy loans or creditor's marks upon your skin, leaving your movements entirely your own in this brittle labyrinth. The rusty iron ring of the hatch sits flush with the paving stones, offering an unmonitored drop into the cool sub-levels.",
+   "exits": [
+    "Slip behind the hanging copper workshop chains",
+    "Present your well-seal to the cautious gate-guard"
+   ]
+  },
+  "sg-3-0-1-9": {
+   "title": "The Iron Portcullis",
+   "text": "A heavy iron portcullis blocks the mouth of the sunken street, guarded by a bored Salt Court bailiff who polishes his brass knuckles with a rag. The metal spikes are coated in a fine layer of white salt crystals that flake off with every passing breeze. You pause before the barrier, watching the bailiff eye your travel-stained pack with professional disinterest.",
+   "exits": [
+    "Offer tobacco for the hide map",
+    "Climb the dangling rope to the shattered balcony"
+   ]
+  },
+  "sg-3-0-2-0": {
+   "title": "The Vitrified Spire Stair",
+   "text": "You climb a spiral stair of green vitrified brick that winds inside a hollow spire, emerging onto a narrow walkway overlooking a sea of jagged glass. The wind howls softly through the hollow tubes of the surrounding towers, making the entire structure hum with a low, melancholy resonance. Far below, the glittering streets stretch out toward the horizon like shattered mirrors.",
+   "exits": [
+    "Descend toward the headless bronze magistrate"
+   ]
+  },
+  "sg-3-0-2-1": {
+   "title": "The Cinder Vendor's Stall",
+   "text": "Thick clouds of fragrant grease rise from Vane's bronze brazier, where roasted locusts sizzle beside crusts of salt-bread. The dust-caked vendor pokes the coals with an iron skewer, muttering about the phantom fires that dance above the central observatory each midnight. He offers you a handful of charred insects for a copper farthing, gesturing with his chin toward the towering glass spires ahead.\n\nYour lantern swings at your hip, its banked coals casting a warm, steady circle of light against the grey masonry while the desert wind rattles loose splinters of quartz along the alleyway.",
+   "exits": [
+    "Follow the gleam through the debris",
+    "Leap clear as the masonry gives way"
+   ]
+  },
+  "sg-3-0-2-2": {
+   "title": "The Amethyst Tenement Fissure",
+   "text": "You squeeze through a narrow fissure between two leaning glass tenements, feeling the sharp edges of amethyst panes pluck at your travel-worn tunic. The passage is dim and cool, shielded from the relentless glare of the desert sun by the sheer height of the leaning walls. Every movement must be deliberate to avoid snagging your pack or lantern on the razor-sharp quartz projections.",
+   "exits": [
+    "Let your lantern beam reveal the hidden bronze",
+    "Listen to the blind glass-blower's singing bowl"
+   ]
+  },
+  "sg-3-0-2-3": {
+   "title": "The Scrap Mirror Handcart",
+   "text": "A battered handcart laden with scrap mirrors blocks your route, its wooden wheels jammed tight with fused sand and sharp fragments of green bottle-glass. The tilted surfaces catch fragments of the blinding daylight, throwing fractured flashes of yellow and white across the walls of the nearby ruins. Clearing a path will require careful hands and steady patience.",
+   "exits": [
+    "Use your lantern light to uncover the bronze",
+    "Duck beneath the collapsing upper balcony"
+   ]
+  },
+  "sg-3-0-2-4": {
+   "title": "The Cobalt Mosaic Court",
+   "text": "You cross a courtyard paved with mosaic tiles of blue cobalt glass that ring like tiny bells under the rhythmic crunch of your heavy boots. The deep azure pattern depicts rolling waves from an era long before the sea dried into salt and fused shards. The open space offers little cover from the piercing sky, urging you toward the shadowed archways on the far side.",
+   "exits": [
+    "Seek the blind glass-blower by the brazier",
+    "Avoid the chained desert hound in the courtyard"
+   ]
+  },
+  "sg-3-0-2-5": {
+   "title": "The Dripping Bronze Pipe",
+   "text": "A hollow bronze pipe extends from a ruined facade, leaking a steady drip of lukewarm, mineral-heavy water into a chipped stone basin below. The rhythmic plop-plop echoes off the surrounding stone walls like a mockery of the coming monsoon. You cup your hand beneath the meager stream to test its temperature and taste before deciding your next direction.",
+   "exits": [
+    "Cross the polished obsidian threshold into the dome",
+    "Watch the Salt Court tax-collectors by the fountain"
+   ]
+  },
+  "sg-3-0-2-6": {
+   "title": "The Glass-Marble Children",
+   "text": "A group of children toss polished glass marbles against a leaning wall, pausing their game to stare at the faint orange glow of your hidden lantern. Their faces are smeared with white basin-dust, and their clothes are patched from coarse canvas and salvaged sacking. They whisper among themselves, curious about a traveler carrying fire through the daylight.",
+   "exits": [
+    "Pass the tax-collectors drinking by the fountain",
+    "Squeeze through the jagged weaver's loft window"
+   ]
+  }
+ },
+ "missing": []
+}

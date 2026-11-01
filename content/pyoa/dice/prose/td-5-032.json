@@ -1,0 +1,92 @@
+{
+ "batch": "td-5-032",
+ "sections": {
+  "td-5-032": {
+   "title": "Staring Down The Brass",
+   "text": "Cold brine pools around your boots as the archivist-automaton raises its copper hand, threatening to sluice the subterranean chamber with pressurized bilge. You refuse to blink, planting your feet firmly upon the slick masonry while the metal giant vents a hissing roar of steam that fogs the air. Your silence carries more weight than any shouted threat, reminding the ancient sentinel of the legal authority you wrestled from its gears only moments before. It lowers its arm with a dismal screech of protesting iron.\n\nSeizing the moment, you reach past its heavy shoulder and claim the brass-bound tide-warding lantern sputtering with cold blue fire.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Grab the sputtering blue lantern"
+   ]
+  },
+  "td-5-033": {
+   "title": "Defying The Sluice Gates",
+   "text": "Steam billows around your shoulders, thick and scalding, yet you refuse to retreat an inch from the towering automaton's threatening posture. Every drop of water in the subterranean cistern laps higher against your shins, but your unyielding stare pins the mechanical archivist in place. Authority among wreckers is forged in the teeth of worse gales than this tin-plated relic can conjure. Slowly, the deafening pressure hiss subsides into a sullen hum of defeated gears.\n\nYou stretch out a steady hand to claim the heavy tide-warding lantern before the damp chill settles back into your bones.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the heavy tide warding lantern"
+   ]
+  },
+  "td-5-034": {
+   "title": "The Weight Of Staring Eyes",
+   "text": "Black water creeps past your knees, carrying the bitter reek of old rust and forgotten weed, while the automaton's twin brass lenses glow with a sudden, murderous crimson glare. Valves shriek open along the ceiling, ready to drown the entire stairwell in a torrent of black brine if you show the slightest tremor of doubt. You lock your jaw against the rising panic, meeting the machine's gaze with the stubborn, immovable defiance of a Gullmouth cliff carved by centuries of salt. Your knuckles whiten around the edge of the stone console as you lean directly into the rising pressure, daring the mechanism to make its final move.",
+   "check": "Hold your ground against the torrent",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-035": {
+   "title": "Drenched And Defiant",
+   "text": "Water slams into your chest with the force of an open sea, knocking the wind from your lungs and sweeping you backward into the churning surge. You claw desperately at the slick masonry, swallowing a mouthful of bitter, stagnant brine that burns your throat like alkali before you finally manage to haul yourself back onto the ledge. The automaton's brass jaw clacks shut in mechanical satisfaction, leaving you bruised, shivering, and soaked to the skin with a fresh jagged scrape across your forearm. Yet the lantern remains within reach, waiting for those who refuse to stay down.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Grab the lantern from the ledge"
+   ]
+  },
+  "td-5-036": {
+   "title": "The Lantern Gleams",
+   "text": "Iron valves shriek in submission as the machine's crimson lenses fade back to a dull, bruised amber, acknowledging your immovable grit however narrowly you managed to weather the surge. The water laps harmlessly around your boots once more, leaving you dripping with cold spray but entirely unbroken by the chamber's watery threat. You reach out and lift the heavy brass vessel from its iron cradle, feeling the steady, freezing thrum of trapped sea-magic vibrating through the handle.",
+   "check": "",
+   "grant": "Tide-warding brass lantern",
+   "exits": [
+    "Ascend toward the rumbling mechanism"
+   ]
+  },
+  "td-5-037": {
+   "title": "Weaving The Broken Filaments",
+   "text": "Fine copper threads snap beneath your trembling fingers as you ease open the automaton's cranium casing, exposing a maze of grease-slicked cogs and twitching nerve-wires. A sudden blue spark dances across your knuckle, searing the skin with the sharp smell of ozone and hot tin, but you do not pull away. You delicately twist the fractured memory-coil back into alignment, coaxing the ancient machine's stuttering thoughts into a clean, rhythmic pulse. The heavy brass plating hums softly under your palm, vibrating with gratitude.\n\nA folded parchment slides smoothly from a hidden slot in the chassis, revealing every hidden sinkhole and treacherous salt-flat mapped in meticulous ink.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the map of the seabed"
+   ]
+  },
+  "td-5-038": {
+   "title": "Mending The Copper Brain",
+   "text": "Pliers in hand, you coax the charred filament back into its delicate slot among the whirring clockwork teeth of the automaton's cranial housing. The machine shudders violently, showering your sleeves with hot sparks that bite into the fabric like stinging salt-wasps. You ignore the pain, keeping your wrist steady while the rhythmic clicking inside the brass skull smooths out from a chaotic rattle into a clear, steady cadence. The archivist tilts its head in a gesture of reluctant, mechanical respect.\n\nA leather-backed scroll unfurls from its chestplate, offering a pristine charting of the treacherous seabed below.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the parchment map of the flats"
+   ]
+  },
+  "td-5-039": {
+   "title": "The Spark And The Coil",
+   "text": "Static electricity crawls up your forearms, making the hairs stand on end as you bridge the severed copper veins within the automaton's exposed skull. A single slip of your fingers against the live-wire manifold will unleash enough current to numb your hands for days, yet the memory-coil remains half-detached and blind to the world. You hold your breath, squinting through the acrid blue smoke of burning resin while you guide the final microscopic solder-point into place against the vibrating frame. The entire chassis shudders with a deep, low-frequency hum that threatens to blow the delicate connections apart.",
+   "check": "Splice the delicate copper nerve-coil",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-040": {
+   "title": "Burned By The Spark",
+   "text": "A blinding white flash obliterates the dim chamber as the live-wire manifold arcs violently against your knuckles, throwing you backward onto the stone floor with a scorched, smoking palm. Your ears ring with a high-pitched whine and the smell of singed skin turns your stomach, but you force yourself up through the stinging agony. The automaton's head cycles through a frantic series of clicks before settling into a grudging, stuttering hum. You survived the backlash, though your right hand is wrapped in a tight strip of rag soaked in stinging liniment and the memory-coil is barely holding together.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the charts with trembling fingers"
+   ]
+  },
+  "td-5-041": {
+   "title": "The Rebuilt Brain",
+   "text": "Copper threads cool beneath your fingertips, their bitter ozone sting fading as the automaton's bronze jaw clicks shut with the weight of centuries. It exhales a long, dry hiss of compressed steam and raises a stiff, clockwork hand to trace the air above the slab, projecting a flickering chart of pale light upon the stones. This map reveals every crusted sinkhole, shifting salt-flats hazard, and concealed trench across the entire breadth of the Low with chilling precision. The archivist tilts its copper cranium in a silent nod of absolute recognition, granting you its hard-won cartographic secret before returning its cold gaze to the trembling alignment levers.",
+   "check": "",
+   "grant": "precision map of the low",
+   "exits": [
+    "Step past the seated archivist toward the alignment levers"
+   ]
+  }
+ },
+ "missing": []
+}

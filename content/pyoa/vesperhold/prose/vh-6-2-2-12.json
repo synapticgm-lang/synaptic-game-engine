@@ -1,0 +1,89 @@
+{
+ "batch": "vh-6-2-2-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-2-2-12": {
+   "title": "The Cost of Tin",
+   "text": "Heavy iron doors groan open against the draft as a burly forge-hand named Kaelen points a greasy thumb toward the master's office, warning you that tin prices have doubled since dawn. The weight of the clapper shifts on your aching shoulders as you calculate the meager coins left in your pouch, wondering if Vesperhold's bronze will be enough to buy the smiths' full cooperation or if you must barter with empty promises.\n\nSmoke billows from a nearby quenching trough, stinging your eyes and coating the back of your throat in salt and sulfur. The choice narrows between pressing forward into the heat of negotiation or retreating before the debts crush you.",
+   "exits": [
+    "Approach the master's office door",
+    "Turn back toward the cooler yard"
+   ]
+  },
+  "vh-6-2-2-13": {
+   "title": "The Rafters Shake",
+   "text": "The floor trembles as a fresh load of anthracite crashes into the metal bins outside, rattling the iron cups on a nearby shelf and showering fine coal-dust across your boots. Lowgate's eternal heartbeat - the rhythmic crush of ore and the roar of draft-furnaces - echoes off the damp brickwork, drowning out all thought save for the heavy, humming pull of the bronze tongue upon your back.\n\nA narrow service tunnel yawns to your left, while a broader, soot-slicked corridor leads deeper into the roaring heart of the lower works. You adjust the canvas straps over your bruised shoulders and prepare to move.",
+   "exits": [
+    "Follow the service tunnel inward",
+    "Take the broader corridor past the slag"
+   ]
+  },
+  "vh-6-2-2-14": {
+   "title": "Through the Choking Flues",
+   "text": "You wipe a sleeve across your streaming eyes to clear the stinging coal-dust, pressing deeper into the labyrinth of brick pillars and flues where the air tastes of old ash and hot iron. Every breath burns your lungs, yet the steady, low resonance of the clapper vibrates against your spine like a reassuring hand in the dark.\n\nShadows stretch long and distorted across the masonry as distant workers shout over the din of the bellows. You must decide whether to seek out the quiet perimeter or plunge straight into the central foundry bustle.",
+   "exits": [
+    "Seek the quieter outer perimeter",
+    "Plunge into the central foundry bustle"
+   ]
+  },
+  "vh-6-2-3-0": {
+   "title": "The Tea Seller",
+   "text": "Beside a towering stack of coke sacks, a shivering boy named Pip holds out a tin cup of tepid tea for a copper coin, his wide eyes fixed on the heavy canvas-wrapped bulk upon your back. The sweet, metallic stench of the river-port hangs heavy in the damp air, mingling with the bitter steam rising from his dented kettle.\n\nYou fumble through your pockets for a stray coin while the great engines of the forge thump in slow, rhythmic succession against the stone floor. Time slips away in the chill, demanding your next step.",
+   "exits": [
+    "Trade a coin for the tea and move on"
+   ]
+  },
+  "vh-6-2-3-1": {
+   "title": "The Slag Runoff",
+   "text": "The air grows thick with the sulfurous stink of melting slag as you skirt the lip of a sluggish, glowing runoff trench, casting a harsh orange light across the soot-caked walls. Sparks dance like fireflies above the molten channel, hissing softly whenever stray droplets of condensation fall from the low brick ceiling above.\n\nThe heat bakes through your woollen tunic, making the heavy bronze clapper on your back feel doubly burdensome. Three distinct paths branch away from the trench, each swallowed by darkness and noise.",
+   "exits": [
+    "Take the left path toward the primary crucible",
+    "Follow the trench to the grand pouring pit",
+    "Veer right toward the bubbling bronze cauldron"
+   ]
+  },
+  "vh-6-2-3-2": {
+   "title": "The Wall Bracket",
+   "text": "An unlit tallow lamp flickers in a wall-bracket, casting long, writhing shadows of your heavy load against the soot-blackened masonry as distant machinery groans in protest. The damp cold of the mountain clings to your skin despite the surrounding furnace heat, reminding you that the ice-wind season waits just beyond the valley gates.\n\nAhead, the corridor splits around a massive buttress supporting the upper smelting floors. You can hear the low murmur of voices echoing from somewhere near the casting pits.",
+   "exits": [
+    "Head toward the grand pouring pit",
+    "Approach the bubbling bronze cauldron"
+   ]
+  },
+  "vh-6-2-3-3": {
+   "title": "Squeezing the Gap",
+   "text": "You squeeze through a narrow gap between two cooling ovens, your backpack scraping harshly against the abrasive fire-brick walls and sending a cascade of dry mortar dust down your neck. The intense radiating heat bakes the sweat into your shirt, making every breath feel thick and metallic.\n\nEmerging into a wider chamber, you catch the distant scent of ozone and scorching oil. Two distinct routes lie ahead through the maze of machinery.",
+   "exits": [
+    "Walk toward the grand pouring pit",
+    "Step closer to the bubbling bronze cauldron"
+   ]
+  },
+  "vh-6-2-3-4": {
+   "title": "The Smudged Ledger",
+   "text": "A soot-covered ledger lies open on a nail-keg, its ink smudged by damp air and listing debts that Lowgate can never hope to pay to the ruthless Cable Court. The figures are columns of human misery and broken contracts, written in a cramped, hurried hand that suggests the clerk fled before finishing the page.\n\nYou step past the keg as the floor trembles from the heavy drop of an ore bucket nearby. The corridor continues past a row of silent, cold hearths toward the roaring core.",
+   "exits": [
+    "Approach the bubbling bronze cauldron",
+    "Rest your pack by the great chimney"
+   ]
+  },
+  "vh-6-2-3-5": {
+   "title": "The Supervisors' Dispute",
+   "text": "You hear the muffled clink of coins from a supervisor's office nearby, where Cable Court collectors argue bitterly with the foundry elders over overdue loans and melting rights. The sharp, angry timbre of their voices cuts through the constant background roar of the bellows, highlighting the desperate politics governing every ounce of tin in this place.\n\nA low archway opens beside the office door, offering several ways forward through the tangled architecture of the foundry. You must choose your direction before the argument spills out into the corridor.",
+   "exits": [
+    "Walk toward the primary crucible",
+    "Slip past toward the grand pouring pit",
+    "Head for the bubbling bronze cauldron",
+    "Turn back toward the quieter corridor"
+   ]
+  },
+  "vh-6-2-3-6": {
+   "title": "The Broken Hatch",
+   "text": "A gust of freezing river air sweeps through a broken ventilation hatch, raising goosebumps on your arms beneath your sweat-soaked woollens and bringing the sharp scent of melting snow. The sudden draft makes the overhead gas-flares flutter wildly, casting frantic shadows across the pitted iron floor plates.\n\nYou pull your cloak tighter against the biting chill, eyeing the two remaining paths deeper into the foundry complex. The noise of hammers grows deafening ahead.",
+   "exits": [
+    "Approach the bubbling bronze cauldron",
+    "Stand by the safety flare and hopper"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,391 @@
+2026-10-28T21:59:32.336Z ask outline region 0 (7 lines)
+2026-10-28T21:59:52.345Z done outline region 0: 7/7
+2026-10-28T22:00:00.351Z ask outline region 1 (47 lines)
+2026-10-28T22:00:25.454Z done outline region 1: 47/47
+2026-10-28T22:00:33.471Z ask outline region 2 (63 lines)
+2026-10-28T22:00:58.728Z done outline region 2: 63/63
+2026-10-28T22:01:06.737Z ask outline region 3 (66 lines)
+2026-10-28T22:01:34.428Z done outline region 3: 66/66
+2026-10-28T22:01:42.444Z ask outline region 4 (60 lines)
+2026-10-28T22:02:11.995Z done outline region 4: 60/60
+2026-10-28T22:02:20.007Z ask outline region 5 (34 lines)
+2026-10-28T22:02:42.352Z done outline region 5: 34/34
+2026-10-28T22:02:50.354Z finished outline run: calls 6
+2026-10-28T22:02:50.669Z ask prose cf-0-001..cf-0-011 items=11 attempt=0
+2026-10-28T22:03:23.907Z done cf-0-001: 11/11
+2026-10-28T22:03:23.908Z ask prose cf-0-012..cf-0-021 items=10 attempt=0
+2026-10-28T22:04:02.877Z done cf-0-012: 10/10
+2026-10-28T22:04:02.878Z ask prose cf-0-022..cf-0-031 items=10 attempt=0
+2026-10-28T22:04:50.955Z done cf-0-022: 10/10
+2026-10-28T22:04:50.957Z ask prose cf-0-032..cf-1-001 items=10 attempt=0
+2026-10-28T22:05:21.620Z done cf-0-032: 10/10
+2026-10-28T22:05:21.623Z ask prose cf-1-002..cf-1-011 items=10 attempt=0
+2026-10-28T22:05:58.092Z done cf-1-002: 10/10
+2026-10-28T22:05:58.093Z ask prose cf-1-012..cf-1-022 items=11 attempt=0
+2026-10-28T22:06:28.833Z done cf-1-012: 11/11
+2026-10-28T22:06:28.834Z ask prose cf-1-023..cf-1-032 items=10 attempt=0
+2026-10-28T22:06:56.619Z   reject cf-1-026: words 46
+2026-10-28T22:07:04.622Z ask prose cf-1-023..cf-1-032 items=1 attempt=1
+2026-10-28T22:07:40.040Z done cf-1-023: 10/10
+2026-10-28T22:07:40.041Z ask prose cf-1-033..cf-1-042 items=10 attempt=0
+2026-10-28T22:08:12.443Z   reject cf-1-034: missing
+2026-10-28T22:08:12.445Z   reject cf-1-035: missing
+2026-10-28T22:08:12.445Z   reject cf-1-036: missing
+2026-10-28T22:08:12.446Z   reject cf-1-037: missing
+2026-10-28T22:08:12.446Z   reject cf-1-038: missing
+2026-10-28T22:08:12.446Z   reject cf-1-039: missing
+2026-10-28T22:08:12.447Z   reject cf-1-040: missing
+2026-10-28T22:08:12.447Z   reject cf-1-041: missing
+2026-10-28T22:08:12.447Z   reject cf-1-042: missing
+2026-10-28T22:08:20.456Z ask prose cf-1-033..cf-1-042 items=9 attempt=1
+2026-10-28T22:08:58.583Z done cf-1-033: 10/10
+2026-10-28T22:08:58.586Z ask prose cf-1-043..cf-1-052 items=10 attempt=0
+2026-10-28T22:09:31.831Z done cf-1-043: 10/10
+2026-10-28T22:09:31.833Z ask prose cf-1-053..cf-1-063 items=11 attempt=0
+2026-10-28T22:10:02.476Z done cf-1-053: 11/11
+2026-10-28T22:10:02.477Z ask prose cf-1-064..cf-1-073 items=10 attempt=0
+2026-10-28T22:10:33.112Z done cf-1-064: 10/10
+2026-10-28T22:10:33.114Z ask prose cf-1-074..cf-1-084 items=11 attempt=0
+2026-10-28T22:11:03.734Z done cf-1-074: 11/11
+2026-10-28T22:11:03.736Z ask prose cf-1-085..cf-1-096 items=12 attempt=0
+2026-10-28T22:11:41.285Z done cf-1-085: 12/12
+2026-10-28T22:11:41.287Z ask prose cf-1-097..cf-1-107 items=11 attempt=0
+2026-10-28T22:12:09.209Z STOP refusal/error: Sorry, something went wrong. Please try your request again.
+2026-10-29T05:59:17.091Z finished outline run: calls 0
+2026-10-29T05:59:17.314Z ask prose cf-1-097..cf-1-107 items=11 attempt=0
+2026-10-29T05:59:42.311Z   reject cf-1-098: missing
+2026-10-29T05:59:42.312Z   reject cf-1-099: missing
+2026-10-29T05:59:42.313Z   reject cf-1-100: missing
+2026-10-29T05:59:42.315Z   reject cf-1-101: missing
+2026-10-29T05:59:42.315Z   reject cf-1-102: missing
+2026-10-29T05:59:42.316Z   reject cf-1-103: missing
+2026-10-29T05:59:42.317Z   reject cf-1-104: missing
+2026-10-29T05:59:42.318Z   reject cf-1-105: missing
+2026-10-29T05:59:42.318Z   reject cf-1-106: missing
+2026-10-29T05:59:42.319Z   reject cf-1-107: missing
+2026-10-29T05:59:50.327Z ask prose cf-1-097..cf-1-107 items=10 attempt=1
+2026-10-29T06:00:20.762Z done cf-1-097: 11/11
+2026-10-29T06:00:20.774Z ask prose cf-1-108..cf-1-120 items=13 attempt=0
+2026-10-29T06:00:53.744Z done cf-1-108: 13/13
+2026-10-29T06:00:53.753Z ask prose cf-1-121..cf-1-131 items=11 attempt=0
+2026-10-29T06:01:18.748Z   reject cf-1-122: missing
+2026-10-29T06:01:18.749Z   reject cf-1-123: missing
+2026-10-29T06:01:18.750Z   reject cf-1-124: missing
+2026-10-29T06:01:18.750Z   reject cf-1-125: missing
+2026-10-29T06:01:18.751Z   reject cf-1-126: missing
+2026-10-29T06:01:18.752Z   reject cf-1-127: missing
+2026-10-29T06:01:18.752Z   reject cf-1-128: missing
+2026-10-29T06:01:18.752Z   reject cf-1-129: missing
+2026-10-29T06:01:18.753Z   reject cf-1-130: missing
+2026-10-29T06:01:18.753Z   reject cf-1-131: missing
+2026-10-29T06:01:26.767Z ask prose cf-1-121..cf-1-131 items=10 attempt=1
+2026-10-29T06:01:57.338Z done cf-1-121: 11/11
+2026-10-29T06:01:57.349Z ask prose cf-1-132..cf-1-143 items=12 attempt=0
+2026-10-29T06:02:30.283Z done cf-1-132: 12/12
+2026-10-29T06:02:30.299Z ask prose cf-1-144..cf-1-153 items=10 attempt=0
+2026-10-29T06:03:00.896Z done cf-1-144: 10/10
+2026-10-29T06:03:00.917Z ask prose cf-1-154..cf-2-006 items=13 attempt=0
+2026-10-29T06:03:41.786Z done cf-1-154: 13/13
+2026-10-29T06:03:41.800Z ask prose cf-2-007..cf-2-016 items=10 attempt=0
+2026-10-29T06:04:14.966Z done cf-2-007: 10/10
+2026-10-29T06:04:14.983Z ask prose cf-2-017..cf-2-029 items=13 attempt=0
+2026-10-29T06:04:48.106Z done cf-2-017: 13/13
+2026-10-29T06:04:48.116Z ask prose cf-2-030..cf-2-041 items=12 attempt=0
+2026-10-29T06:05:21.121Z done cf-2-030: 12/12
+2026-10-29T06:05:21.135Z ask prose cf-2-042..cf-2-051 items=10 attempt=0
+2026-10-29T06:05:51.513Z done cf-2-042: 10/10
+2026-10-29T06:05:51.527Z ask prose cf-2-052..cf-2-064 items=13 attempt=0
+2026-10-29T06:06:17.178Z   reject cf-2-053: missing
+2026-10-29T06:06:17.183Z   reject cf-2-054: missing
+2026-10-29T06:06:17.184Z   reject cf-2-055: missing
+2026-10-29T06:06:17.185Z   reject cf-2-056: missing
+2026-10-29T06:06:17.186Z   reject cf-2-057: missing
+2026-10-29T06:06:17.187Z   reject cf-2-058: missing
+2026-10-29T06:06:17.188Z   reject cf-2-059: missing
+2026-10-29T06:06:17.189Z   reject cf-2-060: missing
+2026-10-29T06:06:17.191Z   reject cf-2-061: missing
+2026-10-29T06:06:17.194Z   reject cf-2-062: missing
+2026-10-29T06:06:17.197Z   reject cf-2-063: missing
+2026-10-29T06:06:17.201Z   reject cf-2-064: missing
+2026-10-29T06:06:25.221Z ask prose cf-2-052..cf-2-064 items=12 attempt=1
+2026-10-29T06:06:51.674Z   reject cf-2-060: words 46
+2026-10-29T06:06:51.679Z   reject cf-2-064: words 54
+2026-10-29T06:06:59.710Z done cf-2-052: 11/13 MISSING cf-2-060,cf-2-064
+2026-10-29T06:06:59.885Z ask prose cf-2-065..cf-2-074 items=10 attempt=0
+2026-10-29T06:07:33.752Z done cf-2-065: 10/10
+2026-10-29T06:07:33.770Z ask prose cf-2-075..cf-2-084 items=10 attempt=0
+2026-10-29T06:08:04.411Z done cf-2-075: 10/10
+2026-10-29T06:08:04.425Z ask prose cf-2-085..cf-2-097 items=13 attempt=0
+2026-10-29T06:08:29.448Z   reject cf-2-085: missing
+2026-10-29T06:08:29.450Z   reject cf-2-086: missing
+2026-10-29T06:08:29.450Z   reject cf-2-087: missing
+2026-10-29T06:08:29.450Z   reject cf-2-088: missing
+2026-10-29T06:08:29.451Z   reject cf-2-089: missing
+2026-10-29T06:08:29.452Z   reject cf-2-090: missing
+2026-10-29T06:08:29.453Z   reject cf-2-091: missing
+2026-10-29T06:08:29.453Z   reject cf-2-092: missing
+2026-10-29T06:08:29.454Z   reject cf-2-093: missing
+2026-10-29T06:08:29.454Z   reject cf-2-094: missing
+2026-10-29T06:08:29.455Z   reject cf-2-095: missing
+2026-10-29T06:08:29.455Z   reject cf-2-096: missing
+2026-10-29T06:08:29.456Z   reject cf-2-097: missing
+2026-10-29T06:08:37.472Z ask prose cf-2-085..cf-2-097 items=13 attempt=1
+2026-10-29T06:09:00.041Z   reject cf-2-086: missing
+2026-10-29T06:09:00.047Z   reject cf-2-087: missing
+2026-10-29T06:09:00.049Z   reject cf-2-088: missing
+2026-10-29T06:09:00.050Z   reject cf-2-089: missing
+2026-10-29T06:09:00.051Z   reject cf-2-090: missing
+2026-10-29T06:09:00.058Z   reject cf-2-091: missing
+2026-10-29T06:09:00.065Z   reject cf-2-092: missing
+2026-10-29T06:09:00.070Z   reject cf-2-093: missing
+2026-10-29T06:09:00.075Z   reject cf-2-094: missing
+2026-10-29T06:09:00.077Z   reject cf-2-095: missing
+2026-10-29T06:09:00.079Z   reject cf-2-096: missing
+2026-10-29T06:09:00.089Z   reject cf-2-097: missing
+2026-10-29T06:09:08.123Z done cf-2-085: 1/13 MISSING cf-2-086,cf-2-087,cf-2-088,cf-2-089,cf-2-090,cf-2-091,cf-2-092,cf-2-093,cf-2-094,cf-2-095,cf-2-096,cf-2-097
+2026-10-29T06:09:08.383Z ask prose cf-2-098..cf-2-109 items=12 attempt=0
+2026-10-29T06:09:45.575Z done cf-2-098: 12/12
+2026-10-29T06:09:46.043Z ask prose cf-2-110..cf-2-119 items=10 attempt=0
+2026-10-29T06:10:15.046Z   reject cf-2-110: missing
+2026-10-29T06:10:15.048Z   reject cf-2-111: missing
+2026-10-29T06:10:15.049Z   reject cf-2-112: missing
+2026-10-29T06:10:15.049Z   reject cf-2-113: missing
+2026-10-29T06:10:15.050Z   reject cf-2-114: missing
+2026-10-29T06:10:15.051Z   reject cf-2-115: missing
+2026-10-29T06:10:15.051Z   reject cf-2-116: missing
+2026-10-29T06:10:15.052Z   reject cf-2-117: missing
+2026-10-29T06:10:15.053Z   reject cf-2-118: missing
+2026-10-29T06:10:15.053Z   reject cf-2-119: missing
+2026-10-29T06:10:23.059Z ask prose cf-2-110..cf-2-119 items=10 attempt=1
+2026-10-29T06:10:50.726Z   reject cf-2-110: missing
+2026-10-29T06:10:50.727Z   reject cf-2-111: missing
+2026-10-29T06:10:50.728Z   reject cf-2-112: missing
+2026-10-29T06:10:50.728Z   reject cf-2-113: missing
+2026-10-29T06:10:50.728Z   reject cf-2-114: missing
+2026-10-29T06:10:50.729Z   reject cf-2-115: missing
+2026-10-29T06:10:50.729Z   reject cf-2-116: missing
+2026-10-29T06:10:50.729Z   reject cf-2-117: missing
+2026-10-29T06:10:50.730Z   reject cf-2-118: missing
+2026-10-29T06:10:50.731Z   reject cf-2-119: missing
+2026-10-29T06:10:58.741Z STOP no valid sections for cf-2-110
+2026-10-29T06:24:24.148Z finished outline run: calls 0
+2026-10-29T06:24:24.401Z reused saved replies for cf-2-110: 10/10
+2026-10-29T06:24:24.406Z ask prose cf-2-120..cf-2-130 items=11 attempt=0
+2026-10-29T06:24:57.746Z done cf-2-120: 11/11
+2026-10-29T06:24:57.791Z ask prose cf-2-131..cf-2-143 items=13 attempt=0
+2026-10-29T06:25:31.811Z done cf-2-131: 13/13
+2026-10-29T06:25:31.846Z ask prose cf-2-144..cf-2-156 items=13 attempt=0
+2026-10-29T06:25:54.997Z   reject cf-2-149: words 52
+2026-10-29T06:25:54.999Z   reject cf-2-153: words 46
+2026-10-29T06:25:55.000Z   reject cf-2-156: words 50
+2026-10-29T06:26:03.016Z ask prose cf-2-144..cf-2-156 items=3 attempt=1
+2026-10-29T06:26:31.164Z done cf-2-144: 13/13
+2026-10-29T06:26:31.187Z ask prose cf-2-157..cf-2-169 items=13 attempt=0
+2026-10-29T06:26:53.998Z   reject cf-2-163: words 52
+2026-10-29T06:26:54.000Z   reject cf-2-167: words 54
+2026-10-29T06:27:02.001Z ask prose cf-2-157..cf-2-169 items=2 attempt=1
+2026-10-29T06:27:27.591Z done cf-2-157: 13/13
+2026-10-29T06:27:27.625Z ask prose cf-2-170..cf-2-180 items=11 attempt=0
+2026-10-29T06:28:00.982Z done cf-2-170: 11/11
+2026-10-29T06:28:01.002Z ask prose cf-2-181..cf-2-191 items=11 attempt=0
+2026-10-29T06:28:31.744Z done cf-2-181: 11/11
+2026-10-29T06:28:31.766Z ask prose cf-2-192..cf-2-204 items=13 attempt=0
+2026-10-29T06:29:02.529Z done cf-2-192: 13/13
+2026-10-29T06:29:02.548Z ask prose cf-2-205..cf-2-214 items=10 attempt=0
+2026-10-29T06:29:32.955Z done cf-2-205: 10/10
+2026-10-29T06:29:32.973Z ask prose cf-2-215..cf-3-007 items=13 attempt=0
+2026-10-29T06:29:55.484Z   reject cf-3-002: words 50
+2026-10-29T06:29:55.485Z   reject cf-3-004: words 51
+2026-10-29T06:29:55.485Z   reject cf-3-007: grant
+2026-10-29T06:30:03.501Z ask prose cf-2-215..cf-3-007 items=3 attempt=1
+2026-10-29T06:30:31.202Z done cf-2-215: 13/13
+2026-10-29T06:30:31.225Z ask prose cf-3-008..cf-3-017 items=10 attempt=0
+2026-10-29T06:30:56.306Z   reject cf-3-009: check label
+2026-10-29T06:30:56.307Z   reject cf-3-011: grant
+2026-10-29T06:30:56.307Z   reject cf-3-014: check label
+2026-10-29T06:30:56.308Z   reject cf-3-016: grant
+2026-10-29T06:31:04.313Z ask prose cf-3-008..cf-3-017 items=4 attempt=1
+2026-10-29T06:31:34.637Z done cf-3-008: 10/10
+2026-10-29T06:31:34.657Z ask prose cf-3-018..cf-3-027 items=10 attempt=0
+2026-10-29T06:32:05.147Z done cf-3-018: 10/10
+2026-10-29T06:32:05.168Z ask prose cf-3-028..cf-3-038 items=11 attempt=0
+2026-10-29T06:32:30.068Z   reject cf-3-029: check label
+2026-10-29T06:32:30.070Z   reject cf-3-036: check label
+2026-10-29T06:32:38.077Z ask prose cf-3-028..cf-3-038 items=2 attempt=1
+2026-10-29T06:33:05.793Z done cf-3-028: 11/11
+2026-10-29T06:33:05.811Z ask prose cf-3-039..cf-3-051 items=13 attempt=0
+2026-10-29T06:33:30.823Z   reject cf-3-047: grant
+2026-10-29T06:33:38.836Z ask prose cf-3-039..cf-3-051 items=1 attempt=1
+2026-10-29T06:34:04.286Z done cf-3-039: 13/13
+2026-10-29T06:34:04.316Z ask prose cf-3-052..cf-3-062 items=11 attempt=0
+2026-10-29T06:34:27.794Z   reject cf-3-059: words 53
+2026-10-29T06:34:27.796Z   reject cf-3-062: words 51
+2026-10-29T06:34:35.797Z ask prose cf-3-052..cf-3-062 items=2 attempt=1
+2026-10-29T06:35:06.889Z done cf-3-052: 11/11
+2026-10-29T06:35:06.949Z ask prose cf-3-063..cf-3-073 items=11 attempt=0
+2026-10-29T06:35:40.786Z done cf-3-063: 11/11
+2026-10-29T06:35:40.973Z ask prose cf-3-074..cf-3-086 items=13 attempt=0
+2026-10-29T06:36:16.922Z done cf-3-074: 13/13
+2026-10-29T06:36:17.120Z ask prose cf-3-087..cf-3-098 items=12 attempt=0
+2026-10-29T06:36:43.920Z   reject cf-3-091: words 51
+2026-10-29T06:36:43.922Z   reject cf-3-094: words 51
+2026-10-29T06:36:43.923Z   reject cf-3-095: words 54
+2026-10-29T06:36:43.925Z   reject cf-3-096: words 50
+2026-10-29T06:36:43.927Z   reject cf-3-098: words 48
+2026-10-29T06:36:51.942Z ask prose cf-3-087..cf-3-098 items=5 attempt=1
+2026-10-29T06:37:15.158Z   reject cf-3-096: words 53
+2026-10-29T06:37:15.166Z   reject cf-3-098: words 51
+2026-10-29T06:37:23.216Z done cf-3-087: 10/12 MISSING cf-3-096,cf-3-098
+2026-10-29T06:37:23.415Z ask prose cf-3-099..cf-3-109 items=11 attempt=0
+2026-10-29T06:37:57.798Z done cf-3-099: 11/11
+2026-10-29T06:37:57.854Z ask prose cf-3-110..cf-3-119 items=10 attempt=0
+2026-10-29T06:38:31.938Z done cf-3-110: 10/10
+2026-10-29T06:38:32.033Z ask prose cf-3-120..cf-3-129 items=10 attempt=0
+2026-10-29T06:39:08.393Z done cf-3-120: 10/10
+2026-10-29T06:39:08.499Z ask prose cf-3-130..cf-3-139 items=10 attempt=0
+2026-10-29T06:39:42.009Z done cf-3-130: 10/10
+2026-10-29T06:39:42.055Z ask prose cf-3-140..cf-3-149 items=10 attempt=0
+2026-10-29T06:40:15.451Z done cf-3-140: 10/10
+2026-10-29T06:40:15.480Z ask prose cf-3-150..cf-3-159 items=10 attempt=0
+2026-10-29T06:40:48.807Z done cf-3-150: 10/10
+2026-10-29T06:40:48.830Z ask prose cf-3-160..cf-3-169 items=10 attempt=0
+2026-10-29T06:41:13.765Z   reject cf-3-169: grant
+2026-10-29T06:41:21.769Z ask prose cf-3-160..cf-3-169 items=1 attempt=1
+2026-10-29T06:41:49.944Z done cf-3-160: 10/10
+2026-10-29T06:41:50.316Z ask prose cf-3-170..cf-3-181 items=12 attempt=0
+2026-10-29T06:42:27.528Z done cf-3-170: 12/12
+2026-10-29T06:42:27.890Z ask prose cf-3-182..cf-3-191 items=10 attempt=0
+2026-10-29T06:43:02.846Z done cf-3-182: 10/10
+2026-10-29T06:43:03.056Z ask prose cf-3-192..cf-3-202 items=11 attempt=0
+2026-10-29T06:43:39.974Z done cf-3-192: 11/11
+2026-10-29T06:43:41.572Z ask prose cf-3-203..cf-3-212 items=10 attempt=0
+2026-10-29T06:44:18.011Z done cf-3-203: 10/10
+2026-10-29T06:44:18.421Z ask prose cf-3-213..cf-4-002 items=10 attempt=0
+2026-10-29T06:44:53.789Z done cf-3-213: 10/10
+2026-10-29T06:44:53.861Z ask prose cf-4-003..cf-4-015 items=13 attempt=0
+2026-10-29T06:45:21.708Z   reject cf-4-011: grant
+2026-10-29T06:45:29.712Z ask prose cf-4-003..cf-4-015 items=1 attempt=1
+2026-10-29T06:45:55.337Z done cf-4-003: 13/13
+2026-10-29T06:45:55.373Z ask prose cf-4-016..cf-4-026 items=11 attempt=0
+2026-10-29T06:46:28.769Z done cf-4-016: 11/11
+2026-10-29T06:46:28.799Z ask prose cf-4-027..cf-4-039 items=13 attempt=0
+2026-10-29T06:46:53.877Z   reject cf-4-034: meta words
+2026-10-29T06:47:01.882Z ask prose cf-4-027..cf-4-039 items=1 attempt=1
+2026-10-29T06:47:27.112Z done cf-4-027: 13/13
+2026-10-29T06:47:27.153Z ask prose cf-4-040..cf-4-051 items=12 attempt=0
+2026-10-29T06:48:00.465Z done cf-4-040: 12/12
+2026-10-29T06:48:00.548Z ask prose cf-4-052..cf-4-064 items=13 attempt=0
+2026-10-29T06:48:38.806Z done cf-4-052: 13/13
+2026-10-29T06:48:38.848Z ask prose cf-4-065..cf-4-076 items=12 attempt=0
+2026-10-29T06:49:01.831Z   reject cf-4-076: meta words
+2026-10-29T06:49:09.834Z ask prose cf-4-065..cf-4-076 items=1 attempt=1
+2026-10-29T06:49:26.980Z   reject cf-4-076: exit 1 label
+2026-10-29T06:49:34.994Z done cf-4-065: 11/12 MISSING cf-4-076
+2026-10-29T06:49:35.178Z ask prose cf-4-077..cf-4-086 items=10 attempt=0
+2026-10-29T06:50:01.650Z   reject cf-4-085: grant
+2026-10-29T06:50:09.664Z ask prose cf-4-077..cf-4-086 items=1 attempt=1
+2026-10-29T06:50:37.990Z done cf-4-077: 10/10
+2026-10-29T06:50:38.179Z ask prose cf-4-087..cf-4-096 items=10 attempt=0
+2026-10-29T06:51:02.309Z   reject cf-4-089: meta words
+2026-10-29T06:51:10.322Z ask prose cf-4-087..cf-4-096 items=1 attempt=1
+2026-10-29T06:51:38.529Z done cf-4-087: 10/10
+2026-10-29T06:51:38.568Z ask prose cf-4-097..cf-4-106 items=10 attempt=0
+2026-10-29T06:52:01.223Z   reject cf-4-102: words 50
+2026-10-29T06:52:01.224Z   reject cf-4-104: words 53
+2026-10-29T06:52:01.225Z   reject cf-4-106: words 53
+2026-10-29T06:52:09.228Z ask prose cf-4-097..cf-4-106 items=3 attempt=1
+2026-10-29T06:52:28.969Z   reject cf-4-104: exit 1 label
+2026-10-29T06:52:28.971Z   reject cf-4-106: exit 1 label,exit 2 label,exit 3 label,exit 4 label
+2026-10-29T06:52:36.976Z done cf-4-097: 8/10 MISSING cf-4-104,cf-4-106
+2026-10-29T06:52:37.005Z ask prose cf-4-107..cf-4-119 items=13 attempt=0
+2026-10-29T06:53:01.890Z   reject cf-4-116: words 50
+2026-10-29T06:53:09.901Z ask prose cf-4-107..cf-4-119 items=1 attempt=1
+2026-10-29T06:53:35.086Z done cf-4-107: 13/13
+2026-10-29T06:53:35.117Z ask prose cf-4-120..cf-4-131 items=12 attempt=0
+2026-10-29T06:54:08.096Z done cf-4-120: 12/12
+2026-10-29T06:54:08.130Z ask prose cf-4-132..cf-4-141 items=10 attempt=0
+2026-10-29T06:54:30.591Z   reject cf-4-139: words 54
+2026-10-29T06:54:30.595Z   reject cf-4-140: words 52
+2026-10-29T06:54:30.596Z   reject cf-4-141: words 50
+2026-10-29T06:54:38.600Z ask prose cf-4-132..cf-4-141 items=3 attempt=1
+2026-10-29T06:55:06.452Z done cf-4-132: 10/10
+2026-10-29T06:55:06.514Z ask prose cf-4-142..cf-4-151 items=10 attempt=0
+2026-10-29T06:55:29.381Z   reject cf-4-150: words 53
+2026-10-29T06:55:37.385Z ask prose cf-4-142..cf-4-151 items=1 attempt=1
+2026-10-29T06:56:02.511Z done cf-4-142: 10/10
+2026-10-29T06:56:02.544Z ask prose cf-4-152..cf-4-162 items=11 attempt=0
+2026-10-29T06:56:35.510Z done cf-4-152: 11/11
+2026-10-29T06:56:35.547Z ask prose cf-4-163..cf-4-172 items=10 attempt=0
+2026-10-29T06:57:11.175Z done cf-4-163: 10/10
+2026-10-29T06:57:11.210Z ask prose cf-4-173..cf-4-183 items=11 attempt=0
+2026-10-29T06:57:44.144Z done cf-4-173: 11/11
+2026-10-29T06:57:44.176Z ask prose cf-4-184..cf-4-196 items=13 attempt=0
+2026-10-29T06:58:09.166Z   reject cf-4-192: words 52
+2026-10-29T06:58:17.176Z ask prose cf-4-184..cf-4-196 items=1 attempt=1
+2026-10-29T06:58:45.465Z done cf-4-184: 13/13
+2026-10-29T06:58:45.708Z ask prose cf-4-197..cf-5-006 items=10 attempt=0
+2026-10-29T06:59:16.715Z   reject cf-5-004: words 47
+2026-10-29T06:59:24.721Z ask prose cf-4-197..cf-5-006 items=1 attempt=1
+2026-10-29T07:00:00.302Z done cf-4-197: 10/10
+2026-10-29T07:00:00.340Z ask prose cf-5-007..cf-5-016 items=10 attempt=0
+2026-10-29T07:00:40.791Z done cf-5-007: 10/10
+2026-10-29T07:00:40.826Z ask prose cf-5-017..cf-5-026 items=10 attempt=0
+2026-10-29T07:01:21.286Z done cf-5-017: 10/10
+2026-10-29T07:01:21.675Z ask prose cf-5-027..cf-5-039 items=13 attempt=0
+2026-10-29T07:02:05.913Z done cf-5-027: 13/13
+2026-10-29T07:02:06.253Z ask prose cf-5-040..cf-5-051 items=12 attempt=0
+2026-10-29T07:02:50.475Z done cf-5-040: 12/12
+2026-10-29T07:02:50.519Z ask prose cf-5-052..cf-5-064 items=13 attempt=0
+2026-10-29T07:03:33.576Z done cf-5-052: 13/13
+2026-10-29T07:03:33.613Z ask prose cf-5-065..cf-5-076 items=12 attempt=0
+2026-10-29T07:04:14.075Z done cf-5-065: 12/12
+2026-10-29T07:04:14.111Z ask prose cf-5-077..cf-5-086 items=10 attempt=0
+2026-10-29T07:04:31.523Z   reject cf-5-077: missing
+2026-10-29T07:04:31.524Z   reject cf-5-078: missing
+2026-10-29T07:04:31.525Z   reject cf-5-079: missing
+2026-10-29T07:04:31.526Z   reject cf-5-080: missing
+2026-10-29T07:04:31.526Z   reject cf-5-081: missing
+2026-10-29T07:04:31.527Z   reject cf-5-082: missing
+2026-10-29T07:04:31.527Z   reject cf-5-083: missing
+2026-10-29T07:04:31.528Z   reject cf-5-084: missing
+2026-10-29T07:04:31.528Z   reject cf-5-085: missing
+2026-10-29T07:04:31.529Z   reject cf-5-086: missing
+2026-10-29T07:04:39.532Z ask prose cf-5-077..cf-5-086 items=10 attempt=1
+2026-10-29T07:05:17.504Z done cf-5-077: 10/10
+2026-10-29T07:05:17.545Z ask prose cf-5-087..cf-5-096 items=10 attempt=0
+2026-10-29T07:05:50.436Z done cf-5-087: 10/10
+2026-10-29T07:05:50.835Z ask prose cf-5-097..cf-5-106 items=10 attempt=0
+2026-10-29T07:06:27.011Z done cf-5-097: 10/10
+2026-10-29T07:06:27.577Z ask prose cf-5-107..cf-5-116 items=10 attempt=0
+2026-10-29T07:06:55.991Z   reject cf-5-107: meta words
+2026-10-29T07:07:04.008Z ask prose cf-5-107..cf-5-116 items=1 attempt=1
+2026-10-29T07:07:31.722Z done cf-5-107: 10/10
+2026-10-29T07:07:31.787Z ask prose cf-5-117..cf-6-004 items=9 attempt=0
+2026-10-29T07:07:56.809Z   reject cf-5-120: exit 1 label
+2026-10-29T07:08:04.824Z ask prose cf-5-117..cf-6-004 items=1 attempt=1
+2026-10-29T07:08:35.207Z done cf-5-117: 9/9
+2026-10-29T07:08:35.247Z ask prose cf-6-005..cf-6-010 items=6 attempt=0
+2026-10-29T07:09:08.144Z done cf-6-005: 6/6
+2026-10-29T07:09:08.185Z ask prose cf-6-011..cf-6-016 items=6 attempt=0
+2026-10-29T07:09:40.980Z done cf-6-011: 6/6
+2026-10-29T07:09:41.027Z ask prose cf-6-017..cf-6-022 items=6 attempt=0
+2026-10-29T07:10:11.411Z done cf-6-017: 6/6
+2026-10-29T07:10:11.455Z ask prose cf-6-023..cf-6-029 items=7 attempt=0
+2026-10-29T07:10:44.470Z done cf-6-023: 7/7
+2026-10-29T07:10:44.510Z ask prose cf-6-030..cf-6-035 items=6 attempt=0
+2026-10-29T07:11:17.273Z done cf-6-030: 6/6
+2026-10-29T07:11:17.312Z ask prose cf-6-036..cf-6-039 items=4 attempt=0
+2026-10-29T07:11:49.976Z done cf-6-036: 4/4
+2026-10-29T07:11:50.024Z finished prose run: calls 87, batches done 93/93
+2026-10-29T07:11:52.606Z ask fill cf-2-052.json items=2
+2026-10-29T07:12:14.735Z filled cf-2-052.json: still missing 0
+2026-10-29T07:12:22.786Z ask fill cf-2-085.json items=12
+2026-10-29T07:12:55.443Z filled cf-2-085.json: still missing 0
+2026-10-29T07:13:03.636Z ask fill cf-3-087.json items=2
+2026-10-29T07:13:24.401Z filled cf-3-087.json: still missing 0
+2026-10-29T07:13:32.554Z ask fill cf-4-065.json items=1
+2026-10-29T07:13:52.387Z filled cf-4-065.json: still missing 0
+2026-10-29T07:14:00.478Z ask fill cf-4-097.json items=2
+2026-10-29T07:14:22.679Z filled cf-4-097.json: still missing 0
+2026-10-29T07:14:30.796Z finished fill run: calls 5
+2026-10-29T07:14:33.023Z merge: sections 1000, with prose 1000, missing 0, words 90096

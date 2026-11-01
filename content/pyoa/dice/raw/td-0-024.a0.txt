@@ -1,0 +1,81 @@
+Gemini said
+
+@@SECTION td-0-024
+TITLE: The Trapped Barrel
+TEXT: Wading through the treacherous mud of the lower docks, you spot the unmistakable shape of a smuggler’s barrel. It is wedged tight beneath the rotting, algae-slick ribs of a grounded trawler. The vessel leans at a precarious angle, its timbers groaning softly in the coastal wind. If that hull shifts, it will crush anything beneath it into the seabed. Still, the salt-crusted wax seal on the barrel promises goods of high quality, preserved against the damp. // It is a tempting prize for a wrecker preparing to walk the Low. You creep closer, testing the stability of the mud beneath your boots, and calculate the angle of the trapped cask.
+EXIT 1: Approach the trapped barrel
+@@END
+
+@@SECTION td-0-025
+TITLE: A Precarious Prize
+TEXT: Kneeling in the shadow of the overarching hull, you press your hands against the swollen wood of the barrel. The scent of brine and old pitch is heavy here. Above you, the ship’s ribs creak ominously, shedding flakes of dried rot onto your shoulders. The gap is too narrow to simply roll the cask free; it must be opened in place. // You slide your prybar into the narrow seam beneath the heavy wooden lid. The rusted iron hoops binding the cask resist your initial pressure, groaning loudly in the quiet harbour. You will need to apply deliberate, careful leverage to pop the seal without disturbing the massive dead weight resting just inches above your head.
+EXIT 1: Prepare to break the seal
+@@END
+
+@@SECTION td-0-026
+TITLE: Shifting Timbers
+TEXT: Applying steady force to the prybar, you feel the iron rim bite into the wood. The barrel's lid begins to budge, but the sudden shift sends a harsh vibration straight up into the trawler's damaged hull. A terrifying groan echoes through the timbers above. // Dust and splinters rain down as the ship's massive weight begins to settle downward, threatening to collapse entirely. You must control the tension, easing the lid off the barrel while simultaneously bracing the adjacent planks so the entire structure does not come crashing down upon you. It is a delicate balance of applied force and structural intuition.
+CHECK: Extract the goods carefully
+@@END
+
+@@SECTION td-0-027
+TITLE: Buried Beneath Rot
+TEXT: Wood shrieks as the trawler shifts violently. The massive hull drops a crucial few inches, pinning your prybar and clipping your shoulder with brutal force. You throw yourself backward into the mud just as the ribs cave in, burying the smuggler's barrel beneath a pile of splintered debris. // Gasping for breath, you clutch your bruised shoulder. The prize is completely crushed, the rare meats ruined in the muck and shattered timber. Your arm throbs with a deep, aching pain that will slow your progress on the flats. Shaking the mud from your coat, you leave the collapsed wreck behind, nursing your fresh injury and carrying nothing but frustration.
+EXIT 1: Limp away from the debris
+@@END
+
+@@SECTION td-0-028
+TITLE: A Hearty Provision
+TEXT: With a final, muted pop, the heavy lid comes free just as the hull groans and settles. You snatch the contents and scramble backward into the pale sunlight before the trawler's ribs buckle inward, sending a shower of rotted wood into the mud where you just knelt. // Safe from the collapse, you inspect your prize. Wrapped tightly in oiled canvas are several thick slabs of cured, spiced meat, perfectly preserved and highly valuable in these lean times. It is a hearty provision that will keep your strength up on the long walk ahead, a rare comfort pulled from the wreckage of the dry harbour.
+GRANT: Wrapped Spiced Meats
+EXIT 1: Return to the dry harbour
+@@END
+
+@@SECTION td-0-029
+TITLE: Shadows and Secrets
+TEXT: Crouched behind a stack of barnacle-encrusted crates, you watch a trio of rival wreckers from the Hook-and-Line crew. They are huddled around a lantern, arguing over a scrap of parchment. You recognise their leader, a scarred net-mender named Silas, tracing a jagged line across the paper with a grimy finger. // "The Sunken Stair is this way," Silas mutters, his voice carrying on the salty breeze. "Past the singing dunes and the old coral beds." That parchment is a hand-drawn chart of the newly exposed seabed, tracking hazards and stable paths. If you can get a closer look, or perhaps snatch it while they are distracted, your journey would be vastly safer.
+EXIT 1: Eavesdrop on their plans
+@@END
+
+@@SECTION td-0-030
+TITLE: A Stolen Glance
+TEXT: Edging along the shadows of the crates, you try to memorise the crude topography Silas has sketched. The light from their lantern flickers, casting long, distorted shadows across the dry docks. You need more than just a fleeting glance to understand the safe routes through the sinkholes. // One of the crew members turns his head, a sudden motion as a gull cries out overhead. You freeze, pressing your back flat against the damp wood. You must carefully track their sightlines, timing your movements to the rhythm of their argument so you can snatch the chart from the barrelhead the moment Silas looks away.
+CHECK: Memorise or snatch the chart
+@@END
+
+@@SECTION td-0-031
+TITLE: Chased from the Docks
+TEXT: A stray pebble crunches loudly beneath your heel. Silas snaps his head around, his eyes narrowing as he spots you lurking in the gloom. "Spying for your own crew, are you?" he barks, drawing a rusted gutting knife. // You are forced to bolt, scrambling over the crates as the rival wreckers hurl stones and curses at your back. One jagged rock catches you sharply on the temple, leaving a bleeding graze. You escape into the labyrinth of the dry docks, but your head spins and you have lost precious time. Worse, you carry no map, leaving you to navigate the perilous Low entirely blind.
+EXIT 1: Flee into the winding alleys
+@@END
+
+@@SECTION td-0-032
+TITLE: Paths of the Low
+TEXT: Slipping back into the deeper shadows just as Silas turns, you hold your breath. An argument breaks out among the rivals over a shared flask, and in their momentary distraction, you commit the final details of the route to memory. // Retreating safely to a quiet alley, you quickly sketch the vital paths onto a scrap of sailcloth using a piece of charcoal. You now possess a reliable guide through the treacherous salt-flats and sinkholes leading toward the Sunken Stair. Breathing a quiet sigh of relief, you secure the rough chart inside your coat.
+GRANT: Charcoal Route Map
+EXIT 1: Head out onto the flats
+@@END
+
+@@SECTION td-0-033
+TITLE: The Mourning Believer
+TEXT: Huddled beneath the shadow of a stranded ferry, a figure wrapped in tattered, salt-stained kelp rocks back and forth. It is a Drift Pilgrim, one of the devoted who mourn the retreating sea. He clutches something tightly to his chest, muttering prayers to the dry wind. // You approach slowly, palms open to show you mean no harm. The pilgrims know the deep lore of the waters, and this one might possess knowledge of the Meridian Gear or the path to the Sunken Stair. However, they are a skittish sort, their minds often frayed by the sudden vanishing of their god. You will need a gentle touch.
+EXIT 1: Speak softly to the pilgrim
+@@END
+
+@@SECTION td-0-034
+TITLE: Trembling Faith
+TEXT: Hearing your footsteps, the pilgrim flinches, pulling his kelp mantle tighter around his thin shoulders. His eyes are wide and frantic, darting toward the open expanse of the Low. "The breath is gone," he whispers hoarsely, his voice trembling. "The great lung has collapsed." // You crouch at a respectful distance, speaking in low, soothing tones. You ask him about the great mechanism, the Gear that controls the waters. He whimpers, shaking his head violently, clearly terrified of the ancient Tidewarden machinery. You must find the right words to calm his religious panic and draw the truth from his rambling sorrow.
+EXIT 1: Try to calm his fears
+@@END
+
+@@SECTION td-0-035
+TITLE: Heresy and Hope
+TEXT: Carefully measuring your tone, you speak of the sea returning, of restoring the balance through the Meridian Gear. The pilgrim's eyes fix on yours, filled with a volatile mix of hope and absolute terror. He clutches a carved piece of whalebone in his trembling hands, a sacred ward. // "To touch the Gear is heresy," he stammers, rising to his knees. He looks ready to bolt or perhaps strike out in a frenzy of religious fervour. You must guide the conversation with precision, easing his frantic mind before he erupts into a panicked shout that will draw unwanted attention from the town guards or rival wreckers.
+CHECK: Soothe the frantic believer
+@@END
+
+@@SECTION td-0-036
+TITLE: A Shriek in the Harbour
+TEXT: Before you can finish your sentence, the pilgrim lets out a piercing, mournful wail. "Blasphemy!" he shrieks, throwing a handful of stinging salt directly into your eyes. // You stagger backward, blinded and cursing, frantically rubbing the burning grit from your vision. By the time your tears clear the sting, the pilgrim has vanished into the maze of stranded boats, leaving you with red, aching eyes. The commotion has drawn the hostile stares of nearby scavengers, marking you as a troublemaker. You have gained no answers, only a persistent ache that makes the glaring light of the seabed almost unbearable.
+EXIT 1: Rub your stinging eyes
+@@END

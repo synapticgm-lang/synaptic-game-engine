@@ -1,0 +1,66 @@
+Gemini said
+
+@@SECTION sg-4-1-3-12
+TITLE: The White Alkali
+TEXT: Across an open expanse of blistered white alkali, the gale hits with the force of a slammed door, driving millions of glass needles into your leather coat. Your banked coal-lantern rattles against your hip, sending weak orange flickers across the crusted ground as you struggle to keep your footing against the horizontal shriek of the storm.
+EXIT 1: Push forward into the blinding drift
+EXIT 2: Veer toward the low ridges of fused slag
+EXIT 3: Seek refuge within the dark mud alcove
+@@END
+@@SECTION sg-4-1-3-13
+TITLE: The Copper Cylinder
+TEXT: Inside a hollowed copper cylinder that once held a solar lens, you press your back to the curved wall while the tempest shrieks through the open ends. The metal hums with a deep, vibrating resonance that matches the frantic beating of your heart, offering a brief, echoing pocket away from the direct fury of the gale.
+EXIT 1: Step out into the churning grit
+EXIT 2: Follow the rumbling pipe deeper inward
+EXIT 3: Cross the ribbed pan of purple salt
+@@END
+@@SECTION sg-4-1-3-14
+TITLE: The Rusted Iron Flange
+TEXT: Beneath a massive flange of rusted iron pipe, you pause to lash the Seedkey securely inside your tunic with a length of braided hemp cord. The cold ceramic piece warms slightly against your ribs, reminding you of the green vaults waiting at the basin's heart while the metal overhead groans under the weight of the wind.
+EXIT 1: Crawl along the shelter of the conduit
+EXIT 2: Head toward the bruised purple salt-pan
+EXIT 3: Take the reckless way
+@@END
+@@SECTION sg-4-1-3-15
+TITLE: The Sulfur Fissure
+TEXT: Beside a cliff of yellow crystal slag, an eddy of warm, sulfurous air rises from a deep fissure, threatening to suffocate you with the breath of the dead basin. You pull your collar high across your nose and mouth, tasting the alkaline dust and ancient minerals as you weigh the foul heat against the freezing bite of the open storm.
+EXIT 1: Breast the dune of pulverized quartz
+EXIT 2: Turn toward the darkening salt expanse
+@@END
+@@SECTION sg-4-1-4-0
+TITLE: The Drainage Flute
+TEXT: Within the throat of a colossal drainage flute, the howling wind compresses into a screaming pipe that tests your courage and threatens your balance. Every step forward requires leaning hard into the pressure, using your lantern as a counterweight while the rusted iron walls vibrate with a metallic shriek.
+EXIT 1: Plunge toward the narrow iron hatch
+EXIT 2: Brace against the warped station door
+@@END
+@@SECTION sg-4-1-4-1
+TITLE: The Glass Screen
+TEXT: Behind a jagged screen of sea-green plate glass, you watch the full fury of the storm scour the basin floor while your lantern oil begins to smoke. The thick emerald barrier muffles the roar of the gale to a dull, subterranean thrum, letting you catch your breath and steady your grip on the precious metal handle.
+EXIT 1: Press onward to the deep siphon tube
+EXIT 2: Seek the battered mirror-station shelter
+@@END
+@@SECTION sg-4-1-4-2
+TITLE: The Buckled Bridge
+TEXT: Across a narrow bridge of buckled iron framework, the gale buffets your shoulders with physical blows, threatening to pitch you into the dark trench below. You keep your center of gravity low, boots scraping against the frost-bitten rivets as the entire structure shudders under the endless assault of glass-dust.
+EXIT 1: Navigate toward the iron hatchway
+EXIT 2: Face the windward lip of the depression
+@@END
+@@SECTION sg-4-1-4-3
+TITLE: The Vaulted Junction
+TEXT: Inside a vaulted junction of salt-encrusted aqueducts, you catch your breath against the damp masonry while the storm above rattles the concrete ceiling. Trickles of grey grit sift down through the hairline cracks overhead, dusting your shoulders as you listen to the multi-toned whistle of the wind through the branching tunnels.
+EXIT 1: Follow the windward depression trail
+EXIT 2: Approach the massive copper intake valve
+@@END
+@@SECTION sg-4-1-4-4
+TITLE: The Milk-Glass Spire
+TEXT: Beneath a leaning spire of milk-glass, your fingers grow numb and clumsy against the cold brass of the lamp handle as the temperature drops sharply. The translucent structure glows with a ghostly, diffused luminescence from the trapped storm-light above, casting long, wavering shadows across the frozen salt around your boots.
+EXIT 1: Face the wind-scoured central ridge
+EXIT 2: Hold fast by the warped station door
+@@END
+@@SECTION sg-4-1-4-5
+TITLE: The Quartz Mountain
+TEXT: Beside a mountain of pulverized quartz, a sudden shift in the dune buries your shins in heavy grit, anchoring you fast against the rushing wind-wall. You wrench your right boot free with a sucking sound, shielding your glowing coal-lantern with your body to prevent the fine white powder from snuffing out the last ember of Candlemere.
+EXIT 1: Struggle toward the Grand Siphon tube
+EXIT 2: Climb the windward depression edge
+EXIT 3: Lean against the battered mirror door
+@@END

@@ -1,0 +1,96 @@
+{
+ "batch": "td-4-153",
+ "sections": {
+  "td-4-153": {
+   "title": "The Stalled Gear Housing",
+   "text": "Colossal brass rings and salt-frosted teeth dominate the vast, echoing chamber, locked in a heavy silence that smells of stagnant bilge and oxidized copper. Pale phosphorescent lichens bleed a sickly green light across the ancient iron flooring, illuminating the motionless bulk of the Meridian Gear. Faint whispers drift from the shadows where drowned engineers linger in frozen postures, their sightless eyes fixed upon the immovable central spindle. Every shadow breathes with the immense weight of the dry ocean pressing down upon the rock above.\n\nYou can inspect the primary spindle alignment with calculated scrutiny, probe the encrusted relay housing with delicate tools, decipher the weather-worn warnings etched into the control console, reconnect a severed hydraulic line with salvaged fittings, or turn to face the unexpected presence emerging from the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the primary spindle alignment",
+    "Probe the encrusted relay housing",
+    "Decipher the etched console warnings",
+    "Reconnect the severed hydraulic line",
+    "Confront the figure stepping from shadows"
+   ]
+  },
+  "td-4-154": {
+   "title": "The Spindle Alignment",
+   "text": "Towering brass braces frame the central axis where the massive weight of the ocean meets the ancient machinery of the Tidewardens. Fine white salt dust drifts through the damp air, settling upon grease-stained indicator rings and notched brass dials that refuse to turn. Your fingers trace the cold grooves of the primary housing, feeling the subtle vibration of subterranean pressures grinding against the locked teeth. Hidden behind a thick shroud of crystalline buildup, a delicate instrument catches the sparse green luminescence, its intricate brass rings trembling as if sensing the distant pull of water. You reach out toward the glinting metal, seeking a clear path past the jagged mineral growths that lock the spindle in place.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the trembling golden device"
+   ]
+  },
+  "td-4-155": {
+   "title": "Reaching For The Astrolabe",
+   "text": "Razor-sharp salt crystals sheath the delicate brass housing like teeth, waiting to tear through leather and flesh at the slightest miscalculation. You steady your breathing against the damp chill, peering closely through the gloom to map the exact stress fractures webbed across the metal plate. A single heavy tremor ripples through the subterranean floor, threatening to dislodge the jagged mineral spikes directly above your knuckles. Your fingers hover inches from the glinting instrument, calculating the precise angle needed to slip past the grinding pressure without snapping the fragile internal linkages.",
+   "check": "Calculate the clearance and pry free the astrolabe",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-156": {
+   "title": "A Slip In The Salt",
+   "text": "Sudden vibration rattles the brass framework, sending a cascade of needle-sharp salt splinters raining down across your knuckles. You wrench your hand backward with a sharp hiss, but not before a jagged edge opens a long, weeping gash across your skin. Warm blood drips onto the ancient iron plates, smelling faintly of salt and copper as the throbbing ache settles into your bones. The delicate instrument remains wedged tight within the mineral crust, its brass rings protesting with a shrill metallic scrape that echoes through the vast chamber. You bind the torn flesh with a strip of damp canvas, gritting your teeth against the persistent sting as you step back to survey the stubborn jam.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the central engine floor"
+   ]
+  },
+  "td-4-157": {
+   "title": "The Golden Astrolabe",
+   "text": "Nimble fingers navigate the hazardous mineral growths, slipping past the jagged edges with careful precision until the metal loosens from its stony bed. The intricate brass instrument lifts free into your palm, feeling surprisingly heavy and cold with an internal gyroscopic balance that hums faintly against your skin. However narrowly you managed the extraction, the ancient device remains intact, its inscribed rings tracking invisible celestial tides that no longer exist above the dry seabed. You slip the cold metal into your pouch, feeling the quiet assurance of a relic that remembers how the waters moved before the world went still.",
+   "check": "",
+   "grant": "Golden celestial astrolabe",
+   "exits": [
+    "Return to the central engine floor"
+   ]
+  },
+  "td-4-158": {
+   "title": "The Encrusted Relay",
+   "text": "Thick layers of pale grey salt seal the junction box like hardened mortar, hiding the intricate mechanical switches that govern the lower sluices. You trace the hairline cracks in the mineral crust, listening to the hollow resonance beneath the metal as you search for a vulnerable seam. Condensation drips rhythmically from an overhead rivet, splashing into stagnant puddles that reflect the sickly green phosphorescence of the cavern walls. Small, jointed carapaces twitch briefly in the gloom nearby, drawn by the faint warmth of your skin before scuttling away into the rusted machinery frames. You select a narrow scraper from your belt, preparing to chip away the suffocating buildup without damaging the fragile brass contacts within.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Begin chipping the mineral seal"
+   ]
+  },
+  "td-4-159": {
+   "title": "Clearing The Contacts",
+   "text": "Tiny flakes of crystalline salt scatter across your boots with every measured tap of the hardened steel blade. Beneath the grey crust, the copper housing gleams with a dull, greenish patina that speaks of centuries spent breathing damp subterranean air. A tiny internal spring shifts with a sharp click, releasing a small cogwheel that had been locked fast by mineral expansion. You brush away the remaining debris with your sleeve, revealing a compact assembly of interlocking brass plates that still retain their original oil and balance. The mechanism looks entirely salvageable, provided you can extract it before the shifting weight of the chamber settles further.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test the freedom of the gear mechanism"
+   ]
+  },
+  "td-4-160": {
+   "title": "Freeing The Mechanism",
+   "text": "Minute tolerances govern the seating of the brass relay, demanding absolute steadiness while the surrounding iron framework groans under the weight of the dry abyss. You wedge the flat edge of your tool beneath the assembly, applying slow, measured pressure to coax the corroded pins from their sockets. A sudden screech of stressed metal echoes through the silence as the housing shifts half a hair's breadth, threatening to shear the delicate teeth if your hand trembles even slightly. The damp air grows colder against the back of your neck as you hold the precise angle, waiting for the final stubborn burr to snap free.",
+   "check": "Pry the relay housing with delicate precision",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-161": {
+   "title": "A Broken Tooth",
+   "text": "A dry, metallic snap shatters the silence as one of the tiny brass teeth shears away under your tool, sending a sharp jolt straight up your wrist. The relay housing jars sideways, wedging itself even tighter into the rusted mount while a shower of fine metal shavings dusts your knuckles. You let out a slow breath, shaking out the dull ache in your fingers as you inspect the minor damage to the assembly. Although the salvaged piece bears a fresh scar, the core mechanism remains intact enough to serve your purpose, even if it will require careful adjustment later. You tuck the stubborn artifact into your pocket alongside your remaining tools.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the central engine floor"
+   ]
+  },
+  "td-4-162": {
+   "title": "The Specialized Relay",
+   "text": "Subtle leverage and patient fingers do the work where brute force would have shattered the delicate brass components into useless scrap. The assembly slides free from its mount with a soft, satisfying click, releasing a whiff of stagnant oil that has lingered in the dark since the Tidewardens built the place. However narrowly you managed the extraction, the specialized gear mechanism rests safely in your hand, its tiny teeth perfectly aligned and ready for repurposing. You wipe the residual grime onto your trousers, securing the prize as an invaluable asset for whatever lies ahead in the deep machinery.",
+   "check": "",
+   "grant": "Specialized brass gear relay",
+   "exits": [
+    "Return to the central engine floor"
+   ]
+  }
+ },
+ "missing": []
+}

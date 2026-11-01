@@ -1,0 +1,87 @@
+{
+ "batch": "sg-2-0-2-9",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-0-2-9": {
+   "title": "The Signal Mirror",
+   "text": "High upon a weathered rise of white gypsum, a lone sentry from the glasswright signal towers stands motionless. In one hand, a small polished disk catches the blinding noon glare, flicking swift, rhythmic warnings across the horizon about dust storms gathering near the Basin center. You pause in the lee of the mound to catch your breath, adjusting the heavy canvas strap of your banked coal-lamp as the mirrored flashes cease and the watcher turns a pair of goggles down toward your path.",
+   "exits": [
+    "Inspect the rusted crane structure ahead",
+    "Approach the weary traveler in the shade",
+    "Push through the brittle salt-fern thicket"
+   ]
+  },
+  "sg-2-0-2-10": {
+   "title": "Ridge of Broken Pottery",
+   "text": "Sharp shards of ancient ceramic crunch beneath your boots as you crest a steep ridge of hard-packed salt and crushed red pottery fragments. From this dusty vantage point, you scan the shimmering, heat-warped expanse below for any sign of the telltale green pennants marking the Dune Sisters' well-stations. The air dances with mirages, making distant salt-pillars look like towering spires, while your throat feels as dry and cracked as the ground beneath you.",
+   "exits": [
+    "Cross the cracked hexagonal stone pavement",
+    "Examine the orange lichen on the glass block"
+   ]
+  },
+  "sg-2-0-2-11": {
+   "title": "The Basalt Milestone",
+   "text": "Half-buried in the blinding crust of the alkali flat, a weathered milestone carved from grey basalt bears a deep, ancient distance tally pointing toward Prism. The worn glyphs remind you of the grueling leagues that still separate your tired legs from the Rain Vault, urging you to push onward despite the burning ache in your thighs. Around the stone, the white desert stretches away into an empty glare that seems to swallow the horizon whole.",
+   "exits": [
+    "Head toward the rusted iron crane arm",
+    "Seek out the traveler resting under shade-cloth"
+   ]
+  },
+  "sg-2-0-2-12": {
+   "title": "The Hollow Ceramic Jars",
+   "text": "Rows of hollow ceramic jars, left behind by forgotten generations of travelers as emergency moisture traps, line the edge of a dry basin. You pry the stopper from the nearest vessel, only to find it bone-dry and packed with fine white dust that billows out in a sudden, choking cloud. Coughing into your scarf, you kick the empty earthenware aside and wonder how many others before you reached into these jars and found only emptiness.",
+   "exits": [
+    "Inspect the lichen-covered block of fused glass",
+    "Pick a path through the fossilized salt-ferns"
+   ]
+  },
+  "sg-2-0-3-0": {
+   "title": "Unattended Toll-Post",
+   "text": "Keeping your banked coal-lamp securely hidden beneath the heavy folds of your canvas cloak, you slip past an unattended Salt Court toll-post while the guards doze heavily inside their striped canvas awning. The toll-rope lies slack across the white track, inviting you to cross without paying the exorbitant passage fees demanded by the toll-lords. Your heart thrums a rapid rhythm against your ribs as you leave the sleeping sentries behind and quicken your pace toward the open basin.",
+   "exits": [
+    "Step onto the smooth well-head apron",
+    "Follow the converging pilgrim footprints"
+   ]
+  },
+  "sg-2-0-3-1": {
+   "title": "Salt Pillar Labyrinth",
+   "text": "Jagged white pillars of pure salt, sculpted by centuries of abrasive desert winds, tower above your head to form a blinding, confusing labyrinth. You duck through narrow white alleys that smell faintly of ancient brine and sun-baked stone, keeping your hand brushing against the cool crystalline walls to guide your way. Every turn looks identical to the last, demanding absolute concentration if you are to avoid wandering in circles until your water skin runs empty.",
+   "exits": [
+    "Step out onto the cool outer apron"
+   ]
+  },
+  "sg-2-0-3-2": {
+   "title": "The Glass-Diver's Cistern",
+   "text": "Crouched within the cool shadow of a dry stone cistern, a wary glass-diver named Joran sharpens a notched brass scraping tool with deliberate care. He watches your approach with piercing eyes, instantly measuring the weight of your pack and the glint of your hidden lamp. A faint smell of silica dust and stale water hangs in the sunken recess, contrasting sharply with the blazing heat radiating from the open flats above.",
+   "exits": [
+    "Step out onto the white apron of the well",
+    "Approach the low stone wall of the compound"
+   ]
+  },
+  "sg-2-0-3-3": {
+   "title": "The Brine-Pan Crust",
+   "text": "A treacherous sheet of thin white ice stretches across a dormant brine-pan, crackling ominously under the heavy tread of your boots. You spread your arms for balance and shorten your stride, stepping as lightly as possible to avoid fracturing the brittle crust and plunging knee-deep into corrosive liquor. Every breath sounds unnaturally loud in the silent expanse, amplifying the tension of each cautious step forward.",
+   "exits": [
+    "Approach the low stone compound wall",
+    "Cross the smooth expanse of salt plaster"
+   ]
+  },
+  "sg-2-0-3-4": {
+   "title": "The Abandoned Shrine",
+   "text": "Weathered timbers and sun-bleached animal bones mark the remains of a forgotten shrine dedicated to ancient rain-gods, standing forlornly amidst the endless white. Cracked pottery bowls filled with drift-sand sit before a blank stone altar where countless desperate suppliants once prayed for a deluge. You pause for a brief moment in the shelter of its sagging roof, listening to the dry wind whistle through the empty gaps in the woodwork.",
+   "exits": [
+    "Step out onto the smooth stone apron",
+    "Follow the converging pilgrim tracks onward",
+    "Turn back toward the earlier watch-tower ruins"
+   ]
+  },
+  "sg-2-0-3-5": {
+   "title": "The Sulfur Vent",
+   "text": "A thin plume of acrid, yellowish smoke hisses from a fissure in the crust, filling the dry air with the sharp, unmistakable stench of rotten eggs. You yank your woven scarf higher across your nose and mouth, quickening your stride across the discolored flat to escape the irritating fumes before they catch in your chest. The ground beneath your boots grows noticeably warmer here, vibrating with the faint, deep rumble of the restless earth below.",
+   "exits": [
+    "Pass through the weathered cedar gate"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,12 @@
+@@SECTION ul-2-067
+TITLE: The Tallow Cache
+TEXT: Working with the thin blade of a bone paper-knife, you expertly pick the rusted iron latch on a locked journal cabinet set deep within the wainscot. The stubborn hinge yields with a dry, protesting rasp, releasing a faint cloud of ancient dust that smells of dried lavender and old leather. Within the cedar-lined recess lies a tightly bound bundle of dry tallow tapers, wrapped in a broadsheet of discarded shipping manifests. They are remarkably well preserved against the damp air of the lower stacks, promising a steady, bright flame when your own lamp begins to sputter in the drafty corridors ahead. // Pocketing the bundle carefully among your loose papers, you leave the hollow cabinet behind and slip back into the shifting gloom of the stacks.
+GRANT: bundle of dry tallow tapers
+EXIT 1: Take shelter in the sooted alcove
+@@END
+@@SECTION ul-2-071
+TITLE: The Herbal Compress
+TEXT: Stifling a cough against the bitter sulfur that lingers in the aisles, you maintain your steady focus through the choking darkness until your fingers brush against a stray bundle hanging from a peg on the end-panel. Unknotting the hemp cord with stiff fingers, you secure a long woollen scarf thoroughly soaked in soothing herbal oil, its sharp mint and eucalyptus scent cutting right through the smoke. Pressing the damp fabric against your mouth and nose clears your smarting eyes and calms your ragged breathing, turning a hazardous stretch of the drift into a manageable climb. // Breathing easier through the scented wool, you watch as the timber frames around you begin their slow, groaning rotation.
+GRANT: woollen scarf soaked in herbal oil
+EXIT 1: Navigate the rotating wooden labyrinth
+@@END

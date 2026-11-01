@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-3-032
+TITLE: Splintered Stilettos and Brine
+TEXT: Iron ladders frost over with salt-rime as you climb into the lower tiers of Saltspire. Beneath your boots, the suspended timber walkways groan under the shifting weight of thousands of refugees and greedy Brineholders jostling for purchase. Shouts echo off the damp iron pylons where a cask of preserved eels has burst across the planking, drawing a ravenous mob of scavengers. You duck low beneath a swinging cargo hoist, tasting the metallic tang of fog and bilge on your tongue.
+EXIT 1: Squeeze past the shouting throng
+@@END
+@@SECTION td-3-033
+TITLE: Slippery Timber and Shouts
+TEXT: Heavy hemp ropes slap against the rotting stilt-posts with the rhythm of a failing heart. The crowd surges forward like a black wave, boots sliding on the greasy residue of crushed brine-fish and spilled oil. Somewhere in the crush, a woman shrieks as her basket of rusted ironmongery tips into the abyss below. You keep your shoulders square and your elbows tucked tight, navigating the churning human tide while the air grows thick with the smell of unwashed wool and panic.
+EXIT 1: Shoulder deeper into the crush
+@@END
+@@SECTION td-3-034
+TITLE: Plucked from the Scramble
+TEXT: Directly ahead, a splintered oak barrel lies cracked open upon the boards, spilling a heap of tarnished household plate and a heavy, chased silver cup that catches the weak grey light. A burly Brineholder guard reaches for the prize with a hand like a meat-hook, his thick leather coat brushing against your chest. Without pausing to weigh the peril, you hurl your weight against his ribs, planting your boot-heel firmly on a slick patch of fish-guts to wrench the gleaming vessel from the timber before he closes his grip.
+CHECK: Heave against the guard's bulk
+@@END
+@@SECTION td-3-035
+TITLE: Bruised Shins and Splinters
+TEXT: The guard's dense frame barely budges, and his elbow catches you squarely in the ribs with the force of a falling spar. You stumble backward over a coil of wet mooring line, gasping for breath as a sharp iron hoop tears a long, jagged gash across your forearm. The silver cup rolls away into the grasping hands of another scavenger, leaving you clutching your bleeding arm while the crowd tramples past your boots without a backward glance.
+EXIT 1: Drag yourself toward the market
+@@END
+@@SECTION td-3-036
+TITLE: A Gleaming Trophy
+TEXT: Your sudden impact catches the guard off balance, and he crashes sideways into the wooden railing with a muffled oath. Your fingers close around the cold, chased metal of the silver cup just as his heavy gauntlet grazes your sleeve. Slipping backward into the shadows of a drying-rack, you tuck the prize safely inside your woollen coat, feeling the heavy, satisfying weight of stolen luxury against your ribs, however narrowly you managed to snatch it from the brawl.
+GRANT: Chased silver cup
+EXIT 1: Carry your prize to the market
+@@END
+@@SECTION td-3-037
+TITLE: Ink and Rusted Files
+TEXT: Dim candlelight flickers across a workbench cluttered with scraps of trimmed parchment and dried cuttlefish bone inside a dry cooperage. Outside, the endless grey expanse of the Low stretches toward a horizon devoid of water, while a suspicious vendor demands strict token-payment for every dram of flour. You pull a notched copper scraping tool from your pocket, smoothing down the jagged edge of a counterfeit seal until it mimics the official stamp of the salt-miners' syndicate.
+EXIT 1: Scrape the counterfeit metal edge
+@@END
+@@SECTION td-3-038
+TITLE: The Counterfeiter's Bench
+TEXT: Fine brass shavings fall like golden snow onto the stained timber table as you carve the finishing notch into the soft lead-tin alloy. Every creak of the stilt-city's frame sounds like the heavy tread of a Brineholder inspector coming to check permits. Your palms grow slick with nervous sweat, but your hands steady as you rub a pinch of greasy soot into the fresh cuts to age the metal and hide the bright, betraying gleam of new work.
+EXIT 1: Smear soot across the token
+@@END
+@@SECTION td-3-039
+TITLE: The Forger's Final Stroke
+TEXT: The critical moment hangs by a thread as you press the heated iron die against the soft metal disc, praying the alloy does not crack under the pressure. A fraction of a millimetre too deep and the fake will snap; too shallow and the emblem will look like a child's scratch. You hold your breath, applying firm, even weight with the palm of your hand while the metal glows dull red in the dim lantern-light.
+CHECK: Press the heated die down
+@@END
+@@SECTION td-3-040
+TITLE: Cracked Lead and Suspicion
+TEXT: The metal gives a sharp, dry snap beneath the die, splitting straight across the forged emblem into two useless pieces of scrap. The vendor narrows his eyes at the sudden noise, his hand drifting toward the heavy iron whistle hanging from his belt. You snatch up the ruined fragments before he can raise the alarm, leaving a small copper coin behind to cover your hasty retreat into the shadows of the salt-sheds.
+EXIT 1: Flee into the shadowy alleys
+@@END
+@@SECTION td-3-041
+TITLE: A Weight of Forged Coin
+TEXT: The heated die bites cleanly into the soft alloy, leaving a crisp, flawless impression of the syndicate's rampant whale emblem stamped into the metal. You lift the token to the lantern-light, turning it over to admire the dull, authentic sheen that would fool any clerk from here to the cliffs, however narrowly you avoided cracking the soft alloy under the press.
+GRANT: Forged syndicate token
+EXIT 1: Take your forged token outward
+@@END

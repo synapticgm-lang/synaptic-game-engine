@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION td-2-143
+TITLE: The Drowned Cathedral
+TEXT: Massive gothic ribs lean at a dizzying angle into the dried mud of the seabed, their shattered stained-glass windows gaping like blind sockets toward the dead horizon. Inside this leaning hull of stone and salt, damp prayer halls echo with the thin, reedy murmur of voices that belong to no living throat. A narrow archway beckons toward the echoing depths below, while a fractured spiral ramp twists upward into the salt-rimed vaulting. Further out, a heavy brass key gleams amidst the debris of a dismantled organ, and a thick, freezing mist begins to billow across the sunken nave.
+EXIT 1: Descend into the echoing crypts
+EXIT 2: Climb the high limestone rafters
+EXIT 3: Pry free the brass key
+EXIT 4: Wade into the creeping fog
+@@END
+@@SECTION td-2-144
+TITLE: Echoes in the Dark
+TEXT: Shadows cling to the dripping limestone walls of the crypt as you navigate the narrow passage between fallen pillars. A pale, shifting luminescence detaches itself from the masonry, taking the wavering silhouette of a drowned soul belonging to the Hollow Choir. It opens a mouth choked with silt and weed, whispering secrets of the tide before lunging with fingers like frozen iron to test your resolve.
+EXIT 1: Stand firm against the apparition
+@@END
+@@SECTION td-2-145
+TITLE: Reaching the Relic
+TEXT: With the lingering chill of the spirit still prickling your skin, you step past the threshold of the inner vault where a tarnished silver chalice rests upon an altar of black stone. The vessel is cold and heavy, crusted with ancient marine growth yet gleaming faintly under the weak subterranean light. Pocketing the prize, you turn your back on the whispering shadows and retrace your steps toward the ruined nave.
+EXIT 1: Return to the cathedral ruins
+@@END
+@@SECTION td-2-146
+TITLE: Facing the Choir
+TEXT: The spectral figure presses inward, filling your ears with the roar of a thousand phantom breakers crashing against unseen rocks. You force your breath to steady, planting your boots firmly in the wet silt as you reach out a hand toward the silver chalice resting on the altar. Every instinct screams to flee the crushing pressure of the tomb, but you grit your teeth against the rising panic.
+CHECK: Withstand the phantom chill
+@@END
+@@SECTION td-2-147
+TITLE: The Cost of Terror
+TEXT: Panic breaks your concentration, sending you stumbling backward against a jagged slab of fallen masonry that tears deep into your shoulder. The phantom shrieks as it dissolves back into the dripping stone walls, leaving you gasping for air in the damp dark. You clutch the bleeding wound, binding it tightly with a strip of oiled canvas while nursing a throbbing ache that will remind you of this damp vault for days.
+EXIT 1: Recover in the gloom
+@@END
+@@SECTION td-2-148
+TITLE: A Prize Retrieved
+TEXT: Your fingers close around the rim of the tarnished silver chalice, and the hostile spirit recoils into the masonry with a hiss of escaping steam. However narrowly you managed the confrontation, the vessel is yours now, heavy with ancient weight and smelling faintly of brine and old coin. You stow it carefully among your gear before turning back toward the relative safety of the cathedral floor.
+GRANT: Tarnished silver chalice
+EXIT 1: Return to the grand nave
+@@END
+@@SECTION td-2-149
+TITLE: The High Ascent
+TEXT: Stone steps spiral upward into the skeletal roof of the cathedral, slick with centuries of condensation and sea salt. Below you, the muddy floor drops away into absolute shadow, while above, the ruined bell tower sways slightly in the heavy subterranean draft. You grip the rusted iron handrail, testing each fractured slab of masonry before committing your weight to the climb.
+EXIT 1: Push toward the bell tower
+@@END
+@@SECTION td-2-150
+TITLE: Among the Rafters
+TEXT: High above the drowned floor, wooden beams groan under the weight of accumulated salt and time. Nestled in the tangled wreckage of the belfry, a leather-bound Tidewarden journal lies half-buried beneath bird droppings and dried kelp. You brush away the crust of salt, revealing pages covered in frantic ink annotations detailing the secret workings of the Meridian Gear.
+EXIT 1: Secure the old journal
+@@END
+@@SECTION td-2-151
+TITLE: Walking the Beam
+TEXT: A single rotten timber spans the dizzying gap between the nave wall and the isolated belfry platform. The drop below is enough to break a body twice over, and the damp air makes your boots slick on the ancient wood. You steady your breathing, locking your gaze on the opposite ledge as you take the first tentative step across the void.
+CHECK: Cross the rotting beam
+@@END
+@@SECTION td-2-152
+TITLE: A Slip on High
+TEXT: The timber cracks beneath your boot with a sickening pop, pitching you sideways into a jagged tangle of iron reinforcement rods. You manage to hook an arm over a sturdy crossbeam just as the lower plank plunges into the darkness below. Bruised and scraped, you haul yourself onto the platform with a sharp gasp, your heart hammering against your ribs like a trapped gull.
+EXIT 1: Gather your scattered breath
+@@END
+@@SECTION td-2-153
+TITLE: The Tidewarden's Record
+TEXT: Your fingers close over the leather spine of the journal, pulling it free from the masonry just as a gust of salt wind rattles the skeletal framework overhead. However narrowly you maintained your balance across the chasm, the fragile book is now safe within your satchel, its dried pages packed with invaluable secrets regarding the great mechanism below.
+GRANT: Forgotten Tidewarden journal
+EXIT 1: Leave the high rafters
+@@END

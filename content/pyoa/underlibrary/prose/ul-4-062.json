@@ -1,0 +1,106 @@
+{
+ "batch": "ul-4-062",
+ "sections": {
+  "ul-4-062": {
+   "title": "The Lean-To Vaults",
+   "text": "Towering bookshelves lean against one another in precarious, threatening arches across a cavernous subterranean hall where the air smells of old paste and damp plaster. Heavy oak cases tilt at alarming angles, their top cornices wedged against the opposite masonry like the ribs of a collapsed cathedral. Every slight shift of your weight sends fine dust trickling down from the high ledges, accompanied by the dry ticking of worm-eaten spines settling into new tensions. Somewhere above, a loose folio flutters through the gloom like a dying moth, caught in an upward draft of cold air from the deeper strata. You press flat against a leaning pine upright, listening to the wood groan softly under the immense dead weight of thousands of forgotten volumes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Navigate the leaning wooden arches"
+   ]
+  },
+  "ul-4-063": {
+   "title": "The Leaning Spires",
+   "text": "Stacks of massive octavos tilt in a great circle around you, forming an unstable cathedral of leaning wooden cases held together only by stubborn friction and old glue. Every timber creaks with a dry, complaining resonance as distant air currents shift through the vast chamber. A sliver of pale lamplight filters from a crack far overhead, glinting off copper clasps and leather bindings that threaten to slide down upon your shoulders at any second. You must choose your path through this frozen avalanche of paper and timber before the friction fails entirely and the whole structure collapses into the abyss.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leap across the swaying shelf gap",
+    "Slide down the polished oak pilaster",
+    "Bridge the chasm with timber tension",
+    "Calculate the falling text weights",
+    "Thread the shuddering aisles with grace",
+    "Approach the black ink river below"
+   ]
+  },
+  "ul-4-064": {
+   "title": "The Swaying Gap",
+   "text": "Heavy pine shelves sway rhythmically above a dark crevice, held only by frayed hemp cord and stubborn gravity. You steady your breathing against the smell of ancient leather and rosin, timing your movement to the slow oscillation of the wooden monoliths. A bundle of reinforced binding cord lies caught upon a jagged splinter of oak just within arm's reach across the void. With a sharp intake of breath, you prepare your footing on the sloping veneer, ignoring the dry rattle of sliding folios echoing from the deeper dark below.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the heavy binding cord"
+   ]
+  },
+  "ul-4-065": {
+   "title": "Across the Abyssal Shelf",
+   "text": "Suspended timber frames groan in protest as you plant your boots firmly upon the narrow edge of a fallen bookcase spine. The damp air of the deep stacks chills your forehead, smelling strongly of gall ink and decomposing vellum. You gather the reinforced binding cord close to your chest, feeling its rough hemp fibers bite into your canvas coat as you edge past a protruding row of ecclesiastical registers. Every movement must be calculated to the inch, lest a sudden shift send the entire stack cascading into the blackness beneath.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach the stable landing beyond"
+   ]
+  },
+  "ul-4-066": {
+   "title": "The Shifting Span",
+   "text": "A sudden tremor runs through the leaning stacks, causing the precarious bridge of books beneath your feet to tilt sharply toward the void. You throw your weight backward, arms windmilling to catch your balance as centuries-old volumes cascade like heavy dominoes into the darkness. Your boots slip on a slick cover of stamped calfskin, and you fling yourself forward toward the opposite ledge, trusting entirely in your agility to bridge the treacherous gap before the timber gives way beneath you.",
+   "check": "Leap across the swaying gap with absolute agility",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-067": {
+   "title": "A Heavy Toll",
+   "text": "Your fingers miss the far ledge by a hair's breadth, and you drop hard against a jagged stack of projecting ledgers with a bruising impact. Sharp pasteboard edges tear through your sleeve, leaving a long, stinging scrape down your forearm while a small avalanche of theological pamphlets buries your ankles. You haul yourself upward with a dry curse, clutching your bruised side as you realize the mishap cost you precious minutes and left your left sleeve in tatters. The stacks settle around you with a final, menacing groan, leaving you bruised but intact.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the leaning stack junction"
+   ]
+  },
+  "ul-4-068": {
+   "title": "The Narrow Crossing",
+   "text": "You clear the treacherous gap with a sudden, fluid bound, landing securely upon the stable oak flooring of the opposite gallery, however narrowly. Your heart hammers against your ribs in the hushed gloom, but your grip remains firm on the prize you came for. Tucked securely into your belt is a length of sturdy hemp cord that will serve you well in the dark mazes ahead. You turn your back on the settling timber and retrace your steps toward the central junction.",
+   "check": "",
+   "grant": "reinforced binding cord",
+   "exits": [
+    "Return to the leaning stack junction"
+   ]
+  },
+  "ul-4-069": {
+   "title": "The Polished Pilaster",
+   "text": "A fallen pilaster of polished cherrywood bridges a narrow chasm between two listing cases, its surface gleaming faintly in the dim lamp-oil haze. You sit astride the smooth timber, sliding downward with controlled momentum past rows of forgotten medical treatises and municipal rolls. Halfway down, your gloved hand brushes against a small metal object wedged into a crack in the grain - a durable horn-handled penknife left behind by some long-forgotten cataloguer. You snatch it free on the fly without breaking your descent, landing neatly in the dust of the lower tier.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the penknife in the gloom"
+   ]
+  },
+  "ul-4-070": {
+   "title": "The Pillar Descent",
+   "text": "The cherrywood pilaster wobbles beneath your weight, threatening to tip sideways into the open shaft of the lower stacks. You lean your torso back against the grain, spreading your limbs to increase friction as the timber accelerates faster than you intended toward a pile of loose pamphlets. The darkness below swallows the landing point entirely, requiring a split-second shift of your center of gravity to avoid a jagged tier of iron-clasp ledgers rushing up to meet you.",
+   "check": "Balance along the sliding pilaster grain",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-071": {
+   "title": "A Grazed Descent",
+   "text": "The pilaster lurches unpredictably near the end of the slide, dumping you unceremoniously into a heap of discarded cataloguing slips and torn parchment. A sharp iron corner catches your shoulder as you tumble, tearing your jacket and leaving a dull, throbbing ache across your collarbone. You pick yourself up from the paper drift, brushing dust from your hair while muttering a dry oath about the shoddy carpentry of the early cataloguers. Though your pride and your shoulder are smarting, you press on toward the dark river.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue toward the black ink river"
+   ]
+  },
+  "ul-4-072": {
+   "title": "The Clean Slide",
+   "text": "You control the descent with expert precision, shedding momentum smoothly at the base of the pillar and landing upright without a single misstep, however narrowly. As you steady yourself in the dust, you pocket a durable horn-handled penknife found wedged in the grain, its blade keen and ready for cutting stubborn binding threads. In the quiet shadows beyond, an old, blind figure stirs from a high-backed chair, recognizing your quiet footfall and bestowing upon you an unexpected nod of profound trust alongside a solemn promise to read the Index aloud, complete and unedited when the time arrives.",
+   "check": "",
+   "grant": "the Last Reader's trust",
+   "exits": [
+    "Approach the black ink river"
+   ]
+  }
+ },
+ "missing": []
+}

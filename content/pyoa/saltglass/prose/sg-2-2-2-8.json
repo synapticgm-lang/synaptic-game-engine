@@ -1,0 +1,91 @@
+{
+ "batch": "sg-2-2-2-8",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-2-2-8": {
+   "title": "The Sleeping Sentry",
+   "text": "Your ember-lamp remains banked and completely dark, its heat trapped beneath a tight lid as you pad softly across the crust. A towering stack of burlap salt-sacks forms a convenient screen against the wind and the toll-house light. Slumped directly against the cargo is a snoring sentry in a heavy wool coat, his brass tally-counter dangling idly from a leather thong. You move with absolute quiet, your boots brushing the white dust without making a sound until the guard's ragged breath fades behind you into the dry air.\n\nThe salt flats stretch onward beneath a blinding afternoon sky, offering two distinct paths through the glare.",
+   "exits": [
+    "Follow the northern telegraph poles",
+    "Bypass the toll-station quietly"
+   ]
+  },
+  "sg-2-2-2-9": {
+   "title": "The Hexagonal Silt",
+   "text": "Cracked earth stretches in every direction like a colossal, sun-baked mosaic of interlocking hexagonal tiles, each one rimmed in white salt. The ground crunches faintly under your boots, shifting with a dry, papery rattle across the ancient lakebed. Heat ripples distort the horizon where the jagged silhouettes of the glass cities shimmer like floating islands. You pause for a breath, listening to the hollow echo of your own heartbeat in the vast emptiness.\n\nThree distinct routes diverge across the cracked silt basin, each leading toward different hazards in the blinding glare.",
+   "exits": [
+    "Cross the warped iron girder bridge",
+    "Skirt past the distant guard patrol",
+    "Thread through the copper pipe forest"
+   ]
+  },
+  "sg-2-2-2-10": {
+   "title": "The Buried Courtyard",
+   "text": "A solitary roof made of overlapping glass shingles juts out from the white pan like a jagged tombstone marking a buried courtyard below. The panes gleam with an eerie, sea-green luminescence despite the decades of scouring wind and abrasive dust. Peering down through a narrow gap between the warped framing, you see only deep shadow and the glint of ancient metal stairways leading down into the cool dark.\n\nThe glaring expanse continues around the sunken ruin, offering paths deeper into the white salt.",
+   "exits": [
+    "Slip past the resting tax-collectors",
+    "Pick your way through the copper pipes"
+   ]
+  },
+  "sg-2-2-2-11": {
+   "title": "The Crystal Ridge",
+   "text": "Crushed crystal waste forms a treacherous, loose-shingled ridge that slides and crumbles beneath every hurried footstep you take. Jagged shards of amber and green glass clink together musically with every shift in your weight, threatening to betray your passage to anyone listening across the flats. You lean forward into the slope, using your balanced weight to keep from slipping down the steep bank of glittering debris.\n\nThe crest of the ridge reveals two stark paths descending into the shimmering basin below.",
+   "exits": [
+    "Head toward the broken signpost",
+    "Traverse the black obsidian terrace"
+   ]
+  },
+  "sg-2-2-2-12": {
+   "title": "The Sealed Well",
+   "text": "A rusted winch frame creaks rhythmically in the dry desert breeze above a stone well-head sealed tightly with thick lead mortar. Stamped heavily into the lead is the official seal of the Salt Court, marking the water as private property bought and paid for with heavy tolls. A faint smell of stagnant moisture rises from beneath the seal, reminding you sharply of the thirst burning in your throat.\n\nSeveral options lie open before you under the relentless glare of the midday sun.",
+   "exits": [
+    "Navigate through the copper pipe maze",
+    "Follow the path toward the broken signpost",
+    "Wipe your brow and press onward",
+    "Take the reckless way"
+   ]
+  },
+  "sg-2-2-2-13": {
+   "title": "The Obsidian Ridge",
+   "text": "A patrol of mounted toll-wardens trots across the distant horizon, their lances catching the harsh sunlight in brief, blinding flashes. You duck low behind a towering stack of wooden packing crates, holding your breath while the rhythmic thud of hooves reverberates through the salt crust. Once the riders vanish behind a swell of white dunes, you let out a slow, quiet breath and check the seal on your canvas pack.\n\nThe flat expanse stretches away from your hiding spot toward two distinct routes.",
+   "exits": [
+    "Cross the sun-baked obsidian terrace",
+    "Follow the wind-blown ledger page"
+   ]
+  },
+  "sg-2-2-2-14": {
+   "title": "The Shimmering Mirage",
+   "text": "Heat-mirages twist the landscape until a distant line of telegraph poles appears as towering glass giants wading waist-deep through an illusory sea. The air shimmers and dances just above the salt crust, making distances impossible to judge with any real certainty. Your eyes ache from the relentless glare bouncing off the endless white expanse around you.\n\nThree tracks lead away from the shimmering heat distortion into the dry basin.",
+   "exits": [
+    "Walk across the black obsidian terrace",
+    "Chase the fluttering white ledger page",
+    "Duck beneath the swinging copper cable"
+   ]
+  },
+  "sg-2-2-2-15": {
+   "title": "The Humming Wire",
+   "text": "A low, melodic hum resonates through a taut telegraph wire strung between two leaning iron pylons that pierce the white salt crust. You navigate entirely by that steady acoustic vibration, using the metallic sound as a guide through the blinding glare when the horizon blurs into nothingness. The wire shivers slightly under the force of a dry thermal updraft as you keep your footing steady on the crust.\n\nThe humming line guides you directly toward a dangling obstacle swaying in the wind.",
+   "exits": [
+    "Pass beneath the swinging copper cable"
+   ]
+  },
+  "sg-2-2-3-0": {
+   "title": "The Solar Basin",
+   "text": "Beneath a shattered solar-collector dish that curves toward the sky like a broken metal shell, you pause to share a precious swallow of lukewarm water with a stranded muleteer. The traveler's pack-mule stands patiently beside the wreckage, its ribs showing faintly beneath a dusty grey hide. You trade brief nods of solidarity against the harshness of the basin before checking your bearings for the journey ahead.\n\nThe basin splits into three distinct paths around the wreckage of the solar dish.",
+   "exits": [
+    "Trace the edge of the dried silt basin",
+    "Squeeze through the crumbling brick wall",
+    "Turn back toward the old salt-pan"
+   ]
+  },
+  "sg-2-2-3-1": {
+   "title": "The Hissing Fumarole",
+   "text": "Sulfur-laden gas hisses sharply through a jagged fracture in the crystalline basin floor, puffing small clouds of yellow dust into the stifling air. You skirt wide around the steaming fumarole, keeping your nose wrapped in a dry cloth to filter out the stinging chemical stench. The ground beneath your boots feels warm and hollow here, as if a subterranean furnace were burning just inches below the salt crust.\n\nThe steaming vent leaves you with a choice of two directions across the white flats.",
+   "exits": [
+    "Follow the edge of the fissured silt plates",
+    "Turn back toward the old salt-pan"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -11,6 +11,8 @@ import {
   getCampaignBlurb,
   type CampaignBible,
 } from '@/data/campaigns';
+import { listPyoaAuthoredBooks, isAuthoredPyoaBookId } from '@/game/pyoaBookCatalog';
+import type { PyoaBookId } from '@/game/pyoaBookTypes';
 import { CustomTabletopRulesField } from './CustomTabletopRulesField';
 import { ExpertCustomPanel } from './ExpertCustomPanel';
 import { memorableToggleEnabled, memorableWeeklyCapLabel } from '@/game/capacityLedger';
@@ -175,7 +177,18 @@ export function NewGameModal({ contentMode, onStart, onClose, settings, onSettin
     o.value === (path === 'custom' ? customArchetype : archetype),
   );
   const premadeBibles = useMemo(
-    () => getCampaignBiblesByEngineMode(engineMode, contentMode),
+    () => {
+      const list = getCampaignBiblesByEngineMode(engineMode, contentMode);
+      if (engineMode !== 'pyoa') return list;
+      const authored = list.filter(
+        (b): b is CampaignBible & { id: PyoaBookId } => isAuthoredPyoaBookId(b.id),
+      );
+      const rest = list.filter((b) => !isAuthoredPyoaBookId(b.id));
+      // Stable: catalog order for the six, then other PYOA premades
+      const order = listPyoaAuthoredBooks().map((b) => b.id);
+      authored.sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+      return [...authored, ...rest];
+    },
     [engineMode, contentMode],
   );
   const selectedPremade = useMemo(

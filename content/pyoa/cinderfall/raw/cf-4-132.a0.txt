@@ -1,0 +1,56 @@
+@@SECTION cf-4-132
+TITLE: Wall Reflections
+TEXT: Black basalt walls press close against the boiler plates as the Marrowbone creeps through the narrowest throat of the Hollow Cut. Instead of looking ahead into the coal-smoke, you watch the polished brass of the running gear cast sliding arcs of yellow illumination across the wet stone. Every contour of the rock reveals itself through these drifting reflections, guiding your hand on the regulator with absolute precision.
+EXIT 1: Steer by the sliding brass lights
+@@END
+@@SECTION cf-4-133
+TITLE: Squeezing the Throat
+TEXT: Jagged teeth of ancient granite loom out of the dark, threatening to shear the tender's corner-irons away if you misjudge the drift by a single inch. You squint past the trembling pressure gauge, trying to match the engine's rhythmic sway to the subtle slant of the wall shadows while the wheels screech against the ungreased rail.
+CHECK: Read the stone shadows to steer
+@@END
+@@SECTION cf-4-134
+TITLE: Scraping the Ribs
+TEXT: A sickening screech of torn steel echoes off the vaulted ceiling as a jutting shoulder of granite catches the tender's side, denting the water tank and showering the cab floor with grit. You slam the reverse lever halfway, fighting the swinging deck until the engine clears the obstruction with a shudder that leaves your shoulder bruised against the brass manifold.
+EXIT 1: Clear the granite and press onward
+@@END
+@@SECTION cf-4-135
+TITLE: The Plumb Line
+TEXT: Smooth stone walls slide past the running board at last, leaving behind only the smell of hot oil and the memory of that razor-thin clearance in the dark. Resting on a narrow wooden bracket near the grease-box, you spot an old brass plumb-line left behind by some forgotten track-gang, its finely spun cord and heavy metal bob intact.
+GRANT: pocket brass plumb-line
+EXIT 1: Return to the narrow rock passage
+@@END
+@@SECTION cf-4-136
+TITLE: Scents of the Inner Gate
+TEXT: Thick coils of lavender oil and burning tallow drift down the stone-lined corridor as the Marrowbone rolls past the rusted iron brackets of the inner gatehouse. The air grows heavy and warm, carrying the distinct hum of distant machinery and the muffled scratching of pens behind thick oak panels. Hollow Signalmen in grey coats stand sentinel beside the tracks, their lanterns flickering with a pale, steady blue flame that reveals no shadows. You slow the engine to a crawl, letting the heavy tread of the drive wheels announce your arrival to whatever authority waits behind the massive threshold.
+EXIT 1: Approach the subterranean oak doors
+@@END
+@@SECTION cf-4-137
+TITLE: The General's Keep
+TEXT: Massive oak doors barred with strap-iron block the rails ahead, standing before the subterranean domain of the Stationmaster-General like a mountain cliff. A single pale lamp casts its light across several narrow side passages and small wicket gates cut into the heavy timber. To the left, a low wicket stands ajar with a dusting of grey ash on the stone sill; straight ahead, the great doors await some token of passage; to the right, a shadowy side-arch leads toward the filing rooms and the tribunal chambers. Every option calls out with its own promise of entry into the deep heart of Cinderfall's defenses.
+EXIT 1: Push through the warped oak post
+EXIT 2: Batter the small iron wicket gate
+EXIT 3: Face the tribunal of silent porters
+EXIT 4: Enter the circular chamber beyond
+EXIT 5: Approach the heavy oak panels directly
+@@END
+@@SECTION cf-4-138
+TITLE: Silence Before the Portrait
+TEXT: Dust motes dance in the amber glow of a wall-bracket as you step down onto the stone flags before a towering oil painting of an ancient, severe-looking administrator. The eyes in the canvas seem to track your movements through the damp air, demanding complete stillness and absolute respect from anyone seeking passage through these sealed tunnels. You stand straight, keeping your breathing slow and your hands steady at your sides while the distant drip of water echoes down the corridor.
+EXIT 1: Stand quietly before the painted frame
+@@END
+@@SECTION cf-4-139
+TITLE: The Gaze of the Past
+TEXT: A low, grating whisper echoes from the dark corners of the hall, testing your nerves while the painted administrator stares down with an expression of unyielding judgment. You lock your jaw and force your pulse to slow down, refusing to let the creeping chill in the room disturb your stance or betray your haste.
+CHECK: Hold stillness under the painted gaze
+@@END
+@@SECTION cf-4-140
+TITLE: Shaken Resolve
+TEXT: A sudden metallic clatter from the ceiling startles your concentration, breaking your nerve and sending a cold shiver down your spine that leaves you breathless. The portrait seems to darken in disapproval, and though you regain your footing and push onward, the lapse costs you dearly in lost time and frayed nerves.
+EXIT 1: Recover your footing and move on
+@@END
+@@SECTION cf-4-141
+TITLE: The Ivory Key
+TEXT: You hold your ground with quiet determination until the oppressive weight in the corridor lifts, leaving only the steady hum of the steam lines in the distance. Resting upon a small stone pedestal beneath the frame, an old ivory-handled carriage key waits for whoever can pass the test of silence.
+GRANT: ivory-handled carriage key
+EXIT 1: Return to the great oak doors
+@@END

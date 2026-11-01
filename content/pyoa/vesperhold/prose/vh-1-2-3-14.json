@@ -1,0 +1,88 @@
+{
+ "batch": "vh-1-2-3-14",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-2-3-14": {
+   "title": "The Knotted Tally",
+   "text": "Within the shadow of the buttress, weaver Milla checks her knotted tally-cord against the rising wind. The hemp loops are stiff with cold moisture, clicking against her knuckles like dry bone as she counts off the yardage for the upper cables. She tucks the cord into her belt and glances up at the burdened cradle on your back, her expression tightening into a careful frown.\n\nWill you step past her toward the lower scaffolding, or follow the outer wall toward the stairs?",
+   "exits": [
+    "Descend by the lower scaffolding path",
+    "Follow the outer wall toward the stairs"
+   ]
+  },
+  "vh-1-2-3-15": {
+   "title": "The Frozen Mitten",
+   "text": "At the turn of the stone stair, a discarded leather mitten lies frozen stiff in the rime. The wind howls against the masonry, scouring the frost-white steps until they shine like polished glass under the pale sky. A few paces further down, the stone narrows sharply between two iron brackets where the handrail disappears beneath an accumulated drift of dry snow.\n\nDo you press onward down the icy steps, seek a safer shelter from the gale, or retrace your steps toward the upper courtyard?",
+   "exits": [
+    "Press onward down the frozen steps",
+    "Seek shelter near the sheltered alcove",
+    "Turn back toward the upper courtyard"
+   ]
+  },
+  "vh-1-2-4-0": {
+   "title": "The Chicory Bales",
+   "text": "On the broad stone landing above the lower gate, merchant Vane weighs bundles of dried chicory. The sweet, bitter scent of the roots drifts across the cobblestones, masking the sharper tang of mountain sulfur and wet wool. He pauses mid-lift, his calloused thumbs resting on the brass scales while he eyes the heavy bronze Clapper secured in your leather harness.\n\nWill you pause to inspect his dried stores, or continue past the scales toward the road?",
+   "exits": [
+    "Continue past the weighing scales toward the road"
+   ]
+  },
+  "vh-1-2-4-1": {
+   "title": "The Frozen Ink",
+   "text": "Beneath the wooden awning of the toll-house, a clerk stamps travel permits with frozen red ink. Each blow of the wooden mallet sounds flat and dull against the frozen timber framing, while the queue of weary travellers shifts uneasily in the biting draft. The clerk does not look up when you approach, merely tapping the edge of the inkpad with a yellowed fingernail.\n\nDo you wait patiently to have your papers stamped, slip past the queue to the winch platform, or take the side path down the ridge?",
+   "exits": [
+    "Wait in line for your papers",
+    "Slip past toward the winch platform",
+    "Take the side path down the ridge"
+   ]
+  },
+  "vh-1-2-4-2": {
+   "title": "The Grey Coat",
+   "text": "Beside the tethering ring, Biscuit shakes the frost from his grey coat while you adjust the harness. The mule blows a long, whistling plume of steam into the crisp air, his ears flicking backward to catch the familiar clink of the heavy bronze Clapper against your padded frame. The leather straps are stiff with rime, requiring a firm tug to set the buckles right against his shaggy ribs.\n\nWill you lead the mule toward the main archway, or check the cinch-straps once more before leaving?",
+   "exits": [
+    "Lead the mule toward the main archway",
+    "Check the cinch-straps once more"
+   ]
+  },
+  "vh-1-2-4-3": {
+   "title": "The Mist-Shimmered Stalls",
+   "text": "Through the gap in the stone parapet, the first cluster of rope-market stalls shimmers in the mist. Lanterns sway from the canvas eaves, casting long, dancing streaks of amber light across the damp ropes coiled in every doorway. The muffled shouting of the cable-merchants rises from the depths, competing with the steady, mournful drone of the mountain wind.\n\nDo you step through the gap into the market stalls, or keep to the upper stone path?",
+   "exits": [
+    "Step through the gap into the market stalls",
+    "Keep to the upper stone path"
+   ]
+  },
+  "vh-1-2-4-4": {
+   "title": "The Monastery Seal",
+   "text": "At the head of the lower stair, guard Captain Selby inspects your monastery seal with tired eyes. He runs a thick, calloused thumb over the hot red wax, checking the impression against the daylight before nodding a slow, grudging approval. The wind tugs at his heavy woollen cloak as he gestures toward the open gate behind him.\n\nWill you pass through the gate toward the central winch, or pause to ask about the lower trail conditions?",
+   "exits": [
+    "Pass through the gate toward the central winch",
+    "Pause to ask about the lower trail conditions"
+   ]
+  },
+  "vh-1-2-4-5": {
+   "title": "The Wool-Shed",
+   "text": "Inside the drafty wool-shed, sorter Elva combs burrs from a fleece while listening for your approach. The air is thick with the rich, lanolin smell of unwashed sheep's wool and the dry rustle of discarded straw. She pauses her work, her fingers stained deep grey from the grease, and watches you step out of the howling draft.\n\nDo you speak with Elva among the wool bales, or head straight for the exit?",
+   "exits": [
+    "Speak with Elva among the wool bales",
+    "Head straight for the exit doors"
+   ]
+  },
+  "vh-1-2-4-6": {
+   "title": "The Water-Mills",
+   "text": "Over the wooden footbridge, the rhythmic thrum of distant water-mills vibrates through the damp air. The frozen spray from the wheel-race glazes the wooden handrails in a thin, translucent crust that crackles under your boots. Below the bridge, the grey slate roofs of the terrace millers cling precariously to the vertical stone face like swallows' nests.\n\nWill you cross the bridge toward the milling terraces, or turn away along the cliff edge?",
+   "exits": [
+    "Cross the bridge toward the milling terraces",
+    "Turn away along the cliff edge path"
+   ]
+  },
+  "vh-1-2-4-7": {
+   "title": "The Flapping Decree",
+   "text": "Against the cliff-side notice board, a fresh parchment decree flaps violently in the rising gales. The iron nails groan in their timber seat as the wind attempts to rip the proclamation loose, exposing jagged lines of black ink detailing new toll rates for the descent. Several frozen fingers of wax seal the bottom corner to the splintered wood.\n\nDo you stop to read the flapping decree, or hurry past against the biting wind?",
+   "exits": [
+    "Stop to read the flapping decree",
+    "Hurry past against the biting wind"
+   ]
+  }
+ },
+ "missing": []
+}

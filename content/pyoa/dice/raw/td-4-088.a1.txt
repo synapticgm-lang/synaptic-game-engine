@@ -1,0 +1,19 @@
+Gemini said
+
+@@SECTION td-4-088
+TITLE: The Paradox of Tides
+TEXT: You trace a grease-stained margin in the open ledger, reading aloud the Tidewarden's own contradictory decree concerning seas that rise while falling. The brass archivist halts its lumbering advance, its gears emitting a high, strained whine as the internal logic loops upon itself. While the machine's amber lenses flicker in sudden confusion, your fingers slide deftly across the oak table to lift a vellum chart marked with uncharted deep-water trenches. // You tuck the rolled parchment inside your salted jacket before the heavy clockwork mechanism can reset its calculation.
+EXIT 1: Slip past the humming brass archivist
+@@END
+@@SECTION td-4-092
+TITLE: The Ledger Thief
+TEXT: Dust hangs heavy in the damp air as you slide away from the towering racks, clutching the vellum map beneath your coat like a stolen heartbeat. The automaton stands frozen in its circular track, its internal cylinders still clicking through the impossible riddle you laid before its brass ears. You have slipped past its iron scrutiny, however narrowly, leaving behind only the echo of your boots on the sunken tiles and a singular prize secured from the very teeth of the archive.
+GRANT: The Deep-Water Trench Chart
+EXIT 1: Return to the vaulted archive hall
+@@END
+@@SECTION td-4-096
+TITLE: Weight of the Past
+TEXT: Timbers groan and groan again as the towering stack lists sideways, threatening to bury you beneath centuries of damp paper and crumbling calfskin. You throw your shoulder against the leaning mahogany shelf, muscles straining against the descending avalanche until your breath rasps raw in your throat. Through sheer stubborn grit you hold the frame steady long enough to snatch a heavy leather-bound chronicle from the shelf, securing the fragile history as the timber finally splinters into the dark.
+GRANT: The Drowned Chronicles
+EXIT 1: Descend into the pressure-locked chambers
+@@END

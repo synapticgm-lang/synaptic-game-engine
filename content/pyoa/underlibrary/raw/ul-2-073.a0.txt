@@ -1,0 +1,71 @@
+@@SECTION ul-2-073
+TITLE: The Carousel of Tomes
+TEXT: Heavy mahogany housings whirl in endless concentric circles, throwing long shadows across the stone floor as encyclopaedias of forgotten fauna blur into a wall of calfskin and gold leaf. The air smells of warm lamp-oil and pulverized vellum, thick with the grinding shriek of iron axles turning beneath the flags. Through the spinning gaps, tantalizing vistas beckon from the shifting maze, each passage promising a way forward before the turning walls swallow it whole. You grip your sputtering oil-lamp tighter against the draft, weighing which rotating gap to intercept before the machinery shifts its rhythm once more.
+EXIT 1: Jam the spinning iron gears
+EXIT 2: Wait for the correct alignment
+EXIT 3: Leap through the turning gap
+EXIT 4: Drift toward the chaotic heaps
+@@END
+@@SECTION ul-2-074
+TITLE: The Jammed Teeth
+TEXT: Heavy iron gears screech as they grind against the subterranean floorboards, sending vibrations straight up through the soles of your boots. Seizing a jagged fragment of masonry from a fallen plinth, you lean in close against the churning pressure and wedge the stone directly into the primary brass cogs. The deafening rotation stutters with a violent metallic groan, forcing the adjacent rows of shelving to lock rigid in a crooked, uneven alignment. A stray cataloguer's brass stamp lies wedged on the stationary ledge just beyond the jammed mechanism, glinting dully in the amber light of your lamp.
+EXIT 1: Reach for the brass stamp
+@@END
+@@SECTION ul-2-075
+TITLE: Seizing the Brass Stamp
+TEXT: Iron teeth grind violently against your makeshift stone wedge, threatening to shatter the masonry and send the heavy mahogany shelves spinning back into motion with bone-crushing force. You calculate the exact tolerance of the straining brass cogs, timing your reach to slip past the biting pinch-point while the frame shudders. Muscles tense in your forearm as you thrust your fingers into the churning gap to snatch the heavy metal stamp before the jam gives way.
+CHECK: Snatch the brass stamp
+@@END
+@@SECTION ul-2-076
+TITLE: A Crushed Finger
+TEXT: Metal teeth bite down with unforgiving speed, shattering your stone wedge and catching the edge of your knuckles before you can jerk your hand back. A sharp spike of pain flares through your fingers as the heavy brass stamp is knocked deeper into the churning machinery, lost forever to the grinding cogs. You stumble backward onto the ash-strewn floor, nursing a badly bruised hand and leaving a smear of dark blood on the edge of the shelf. The rotation resumes with a mocking shudder, costing you precious lamp-oil and steady nerves as you limp away into the dim aisles.
+EXIT 1: Return to the rotating hub
+@@END
+@@SECTION ul-2-077
+TITLE: The Heavy Seal
+TEXT: Fingers darting past the straining iron cogs with desperate precision, your hand closes firmly around the heavy brass stamp just as the stone wedge finally crumbles into gray powder. You yank your arm back an instant before the entire wall of shelving lunges forward with a renewed, deafening roar. In your palm rests a cold, heavy cataloguer's seal, carved with the insignia of the lower indices and notched with a curious private mark. You slip the recovered implement into your pocket, feeling the reassuring weight of official authority as you trace your steps back to the spinning hub.
+GRANT: Heavy cataloguer's seal
+EXIT 1: Return to the revolving chamber
+@@END
+@@SECTION ul-2-078
+TITLE: The Patient Watch
+TEXT: Standing motionless in the shadow of a towering atlas case, you let the rhythmic thunder of the revolving stacks wash over you while dust motes dance in your lamp-light. Hours seem to dissolve into the smell of drying ink and ancient glue as entire rows of history and geography whirl past in a dizzying succession of leather spines. You watch the intersecting sightlines with steady concentration, waiting for the momentary pause when the chaotic geometry of the aisles resolves into a clear, straight corridor. Across the gap, a discarded pocket compass rests on a tilting bracket, its needle spinning wildly before settling toward some hidden magnetic north.
+EXIT 1: Step through the aligned opening
+@@END
+@@SECTION ul-2-079
+TITLE: The Steady Vigil
+TEXT: The turning shelves groan as they shift positions once again, creating a claustrophobic corridor that threatens to pin you against the cold stone wall if your footing slips. A sudden gust of sulfurous wind sweeps down from the upper stacks, flickering your lamp and threatening to plunge you into total darkness while you wait for the final doorway to lock into place. You force your breathing to remain slow and even, fighting the rising panic that urges you to run blindly into the revolving maze.
+CHECK: Wait for the doorway
+@@END
+@@SECTION ul-2-080
+TITLE: Blinded by the Dust
+TEXT: A sudden choking cloud of dry paper-dust billows from the revolving shelves, stinging your eyes and breaking your concentration at the crucial moment of alignment. You stumble forward into a closing gap, dropping your spare flask of lamp-oil as the heavy wooden panel slams shut against your shoulder with a dull thud. Bruised and disoriented in the growing gloom, you spend long, agonizing minutes groping along the cold timber until you find your bearings. The delay costs you half your remaining fuel and leaves you coughing in the stagnant air, but you drag yourself back toward the central chamber.
+EXIT 1: Return to the revolving hub
+@@END
+@@SECTION ul-2-081
+TITLE: The True North
+TEXT: Unwavering patience pays off as the spinning wooden rows settle into a momentary, crystalline stillness, opening a direct line of sight straight through the heart of the rotating maze. You step forward through the newly formed gap, your boots making scarcely a sound on the dust-covered floorboards before the machinery dares to move again. Resting on the bracket is a sturdy brass pocket compass, its glass face unscratched and its needle locked firmly onto the faint magnetic pull of the deep stacks. You pocket the instrument with quiet satisfaction, turning your steps back toward the central chamber.
+GRANT: Reliable pocket compass
+EXIT 1: Return to the revolving chamber
+@@END
+@@SECTION ul-2-082
+TITLE: The Graceful Gap
+TEXT: Heavy leather-bound volumes shift and grind on either side of you, creating a narrow corridor that opens and closes like a mechanical jaw with every rotation of the stack. You measure the rhythmic cadence of the turning timber, watching the narrow slit where a glint of polished bone catches the amber glow of your lamp. Waiting for the precise heartbeat when the gap reaches its widest span, you prepare your limbs for a sudden, fluid movement that will carry you past the grinding teeth of the shelves. A small, intricately carved bone paper-knife rests on the receding ledge, waiting to be claimed by anyone daring enough to catch it on the wing.
+EXIT 1: Leap through the revolving gap
+@@END
+@@SECTION ul-2-083
+TITLE: The Flawless Arch
+TEXT: The gap in the rotating shelving narrows abruptly, transforming a generous opening into a razor-thin fissure of moving wood and iron trim. You launch yourself forward into the narrowing space, twisting your torso with instantaneous agility to slide between the crushing panels before the latch catches. The edge of the moving shelf clips your coat-tail with a sharp snap, but your momentum carries you cleanly into the recess.
+CHECK: Leap through the narrowing gap
+@@END
+@@SECTION ul-2-084
+TITLE: Caught in the Timber
+TEXT: The gap snaps shut a fraction too fast, catching the hem of your tunic and pinning you hard against the rough wooden spine of a massive ledger. You wrench yourself away with a desperate heave, tearing the fabric free and leaving a long strip of cloth wedged deep within the unyielding cogs. The sudden struggle wrenches your shoulder painfully, leaving a dull ache that echoes down your spine as you tumble into the dusty recess. Though bruised and missing a piece of your coat, you gather your breath and limp back toward the central junction.
+EXIT 1: Return to the revolving hub
+@@END
+@@SECTION ul-2-085
+TITLE: The Ivory Blade
+TEXT: Fluid motion carries you effortlessly through the closing timber, your shoulder brushing the warm leather spines as you slip into the recess like a shadow through a keyhole. The heavy shelf groans and locks into position just behind your heels, sealing off the passage with a final, echoing thud. Resting in your palm is an intricately carved bone paper-knife, its surface covered in microscopic marginalia that seem to shift and rewrite themselves under your gaze. You pocket the strange blade, feeling its faint chill against your ribs as you retrace your steps to the revolving hub.
+GRANT: Carved bone paper-knife
+EXIT 1: Return to the revolving chamber
+@@END

@@ -1,0 +1,117 @@
+{
+ "batch": "ul-2-195",
+ "sections": {
+  "ul-2-195": {
+   "title": "The Swaying Mahogany Beam",
+   "text": "Heavy iron chains groan overhead as another towering stack drifts past through the pale, lamp-lit mist. Dust motes dance in the amber glow of your oil lantern while your boots find steady purchase upon a slick expanse of oak flooring. Somewhere down in the hidden depths below, an ink-river laps rhythmically against the stone foundations of the Unfiled Wing. You adjust the heavy strap of your leather satchel and eye the widening gap where the next shelf ought to drift.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step across the drifting gap"
+   ]
+  },
+  "ul-2-196": {
+   "title": "Beyond the Ink River",
+   "text": "Thick vapors curl upward from the black, slow-moving channel of discarded ink that separates the upper and lower tiers. Shelves shift with a low, mechanical grinding sound, exposing vertical rows of leather-bound volumes whose spines whisper forgotten titles into the damp air. You test the stability of a protruding mahogany molding, feeling the timber shudder gently under your weight as the entire architectural assembly settles into a new alignment.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb toward the higher ledge"
+   ]
+  },
+  "ul-2-197": {
+   "title": "Across the Chasm",
+   "text": "Pale mist swirls below your boots like driven wool, swallowing the lower reaches of the stacks in an indifferent white silence. The gap between the swaying shelves widens by the heartbeat, leaving only a turbulent void of damp air and the faint, coppery scent of old ink drifting up from the depths. Balancing your weight on the narrow, vibrating oak edge, you gather your breath, coil your muscles, and prepare to hurl yourself across the immense chasm toward a hanging rope ladder trembling in the draft.",
+   "check": "Leap across the swirling void",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-198": {
+   "title": "The Bitter Fall",
+   "text": "Gravity proves too swift for your frantic scramble as your fingers brush the opposite molding and slip on the dust-slicked lacquer. You drop hard against a lower crossbeam, bruising your ribs against protruding brass brackets and dropping your spare flask of lamp-oil into the pale haze below. Stifling a sharp groan, you haul yourself onto firm timber, left with a dull ache in your side and a torn sleeve.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and press onward"
+   ]
+  },
+  "ul-2-199": {
+   "title": "The Tangled Ascent",
+   "text": "Wind tears at your jacket as your fingers finally close around the rough hemp of the swinging ladder, swinging you hard against the wooden rungs with a heavy rattle. Your ribs ache from the impact, and the oil-lamp at your belt sputters alarmingly, but you hold fast against the void below, hauling yourself up onto the stable timber of the upper shelf. Suspended there in the dim stillness, you secure a sturdy silk rope-ladder with polished wooden rungs, retrieved just before the chasm parted further.",
+   "check": "",
+   "grant": "silk rope-ladder with wooden rungs",
+   "exits": [
+    "Climb higher into the stacks"
+   ]
+  },
+  "ul-2-200": {
+   "title": "Down the Iron Pipe",
+   "text": "A rusted vertical conduit descends steeply through the heart of the shifting stacks, vibrating with the muffled hum of distant cataloguing machinery. You wrap your leather-gloved hands around the cold iron tube, testing its rigid support against the surrounding chaos of drifting bookcases and whispered margins. The air smells sharply of machine grease and oxidized brass.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide down the metal conduit"
+   ]
+  },
+  "ul-2-201": {
+   "title": "The Iron Descent",
+   "text": "Rivets groan in the rusted conduit above as the entire row of mahogany shelving lurches sideways toward the abyss. Below, an ink-river cuts a dark, shining channel through the gloom, its surface skinning over with a dull, iridescent sheen. Clamping your legs around the grease-slicked iron of the drainage pipe, you slide downward into the freezing draft, aiming for a small metal latch where a heavy pouch of dry flints and steel hangs from a protruding bracket.",
+   "check": "Slide down the groaning conduit",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-202": {
+   "title": "Scraped and Stranded",
+   "text": "The mounting bracket shears away from the wall with a deafening screech, spilling you sideways into a disorderly drift of misfiled folios. You land heavily on your shoulder, tearing your jacket and scattering several pages of notes into the dark shadows. Bruised and cursing softly, you salvage what remains of your gear from the dusty floorboards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl out from the fallen folios"
+   ]
+  },
+  "ul-2-203": {
+   "title": "Sparks in the Gloom",
+   "text": "Friction burns hot against your palms before you slam to a halt beside the mounting bracket, your boots skidding across the iron plates with a shower of sparks. The conduit shudders and pulls away into the fog just as your fingers curl around the heavy canvas pouch, securing it safely against your chest despite the stinging scrapes on your skin. Within the leather wrappings, dry flints and thick steel strike together with a reassuring weight, promising warmth against the damp chill of the deep stacks.",
+   "check": "",
+   "grant": "heavy pouch of dry flints and steel",
+   "exits": [
+    "Approach the great bronze threshold"
+   ]
+  },
+  "ul-2-204": {
+   "title": "Mapping the Drift",
+   "text": "Dust motes dance in the amber beam of your lamp as you unfold a grease-stained vellum chart across the top of a tilted ledger-desk. The surrounding bookcases groan and shift like timber in a heavy swell, altering the labyrinth of the Unshelved Stacks minute by minute. By measuring the angle of the ink-rivers against the drifting mahogany columns, you calculate the invisible drift vectors that govern the vault's perpetual motion, tracing a clean, deliberate path through the chaos toward the restricted zones beyond.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the calculated route onward"
+   ]
+  },
+  "ul-2-205": {
+   "title": "The Charted Corridor",
+   "text": "Measured steps carry you deeper into the interior of the moving labyrinth, past towering stacks of forgotten treatises and leather-bound ledgers that whisper softly as you pass. The vellum map in your hand remains steady, its freshly inked lines offering a reliable anchor against the bewildering architectural shifts of the great hall. Ahead, a narrow maintenance gantry spans a wide fissure where several tiers of shelving intersect in a complex, temporary knot of wood and iron.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Cross the intersecting shelving gantry"
+   ]
+  },
+  "ul-2-206": {
+   "title": "Calculating the Vectors",
+   "text": "Numbers and geometric angles blur in your mind as the shelf beneath your boots begins an abrupt, alarming lateral slide toward a towering wall of ledgers. The drift vectors you laboriously mapped moments ago shift wildly as a fresh tremor rattles the iron bracing overhead, threatening to close your intended passage in a matter of seconds. Squinting against the swirling paper-dust, you must instantly recalculate the precise trajectory of the moving stacks before the entire corridor shears apart.",
+   "check": "Recalculate the shifting drift vectors",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-207": {
+   "title": "The Cost of Miscalculation",
+   "text": "A sudden lurch of the mahogany flooring catches you entirely off balance, pitching you violently sideways into a sharp stack of protruding ledgers. Heavy leather spines slam against your shoulder, bruising the bone and tearing your sleeve while sending your ink-flask spinning into the dark abyss below. Shaking off the dull ache and brushing gray paper-dust from your coat, you pick yourself up from the tilted floor, poorer by a flask of ink and a precious measure of time.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retrieve the detailed map of the vault"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,47 @@
+{
+ "batch": "v-r-32-bid-room",
+ "variants": [
+  {
+   "node": "up-r-bid-room",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "The ink on those counter-ledgers proved the silk and iron houses share one master, making this transaction a hollow farce. Whoever claims the brass-bound volume tonight merely passes it from the right hand of the cabal to the left."
+  },
+  {
+   "node": "up-r-bid-room",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Under the polite, suffocating patronage of Lord Valerius, you ought to feel secure clutching this new fortune. Instead, the faint scent of his spiced wine clings to your coat, a cloying reminder that his protection rarely extends beyond the parlour doors."
+  },
+  {
+   "node": "up-r-bid-room",
+   "when": {
+    "valerius": "betrayed"
+   },
+   "after": "Spurning the silk lord's wine earlier left a bitter aftertaste, guaranteeing his fleet-footed runners are already watching the street below. You listen for the soft scrape of their velvet slippers on the floorboards, knowing Valerius exacts a high price for defiance."
+  },
+  {
+   "node": "up-r-bid-room",
+   "when": {
+    "rigg": "allied"
+   },
+   "after": "Matron Rigg's iron-clad backing should guarantee a safe exit, yet her foundry thugs are nowhere to be seen in the gloom. You pocket the stipend with grim certainty, well aware her warrants cover your crimes but not your life."
+  },
+  {
+   "node": "up-r-bid-room",
+   "when": {
+    "rigg": "betrayed"
+   },
+   "after": "Crossing the foundry matron ensures every heavy-booted gaoler in her syndicate is eager to strip this wealth from your corpse. The shadows seem to reek of furnace smoke and pending warrants, promising a brutal ambush before you ever reach the carriage."
+  },
+  {
+   "node": "up-r-bid-room",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "A quiet dread gnaws at you, born of that whispered oath to the turnkey who processed Sable's arrest. This newfound stipend will easily clear your immediate debts, but a blackmailer holding the keys to the city gaol always comes collecting."
+  }
+ ]
+}

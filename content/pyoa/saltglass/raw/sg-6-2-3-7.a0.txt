@@ -1,0 +1,74 @@
+Gemini said
+
+@@SECTION sg-6-2-3-7
+TITLE: The Condensing Tower Shadow
+TEXT: Heavy drops of pure water gather on your wool coat as subterranean humidity climbs rapidly beneath the great condensing tower. The air tastes of cold iron and wet lime, thick enough to chew. Your boots slip slightly on the moisture-slicked floor tiles while you weigh your next move in the dark.
+EXIT 1: Climb toward the upper catwalk
+EXIT 2: Follow the drainage channels south
+EXIT 3: Inspect the sealed reliquary doors
+@@END
+
+@@SECTION sg-6-2-3-8
+TITLE: The Obsidian Path
+TEXT: A narrow trail of dried white salt crystals marks the path across the polished obsidian floor, tracing the exact footsteps of the previous generation's doomed runner. Your lantern flame casts long, dancing shadows against the dark, reflective stone. Every breath echoes softly in the vaulted stillness around you.
+EXIT 1: Approach the grand console
+EXIT 2: Step onto the damp salt crust
+@@END
+
+@@SECTION sg-6-2-3-9
+TITLE: The Lift Shaft Dark
+TEXT: A discarded oil lamp flickers out beside the humming dynamo of the lift shaft, plunging you into absolute darkness save for the warm glow of your own coals. You stand frozen, listening to the deep mechanical thrum vibrating through the floorboards beneath your heels.
+EXIT 1: Seek the innermost reliquary
+EXIT 2: Turn toward the obsidian console
+EXIT 3: Listen near the singing pillar
+@@END
+
+@@SECTION sg-6-2-3-10
+TITLE: The Weeping Statues
+TEXT: Water slowly trickles from carved stone eyes into a basin that has remained bone dry for a hundred years, splashing with a hollow, rhythmic ping. The damp chill clings to your skin as you watch the tiny pool grow dark and deep.
+EXIT 1: Walk toward the dry reliquary
+EXIT 2: Examine the obsidian control desk
+EXIT 3: Follow the wet footprints ahead
+@@END
+
+@@SECTION sg-6-2-3-11
+TITLE: The Acoustic Tunnel
+TEXT: Every breath sounds like a thunderclap against the absolute silence of the dead city within this narrow service tunnel lined with acoustic tiles. The rough ribbed walls press in close on either side, demanding that you move with care.
+EXIT 1: Press onward to the reliquary
+EXIT 2: Head for the central console
+EXIT 3: Track the damp floor ahead
+@@END
+
+@@SECTION sg-6-2-3-12
+TITLE: The Biometric Scanner
+TEXT: Your bare palm presses firmly against the cold metal plate of the secondary biometric scanner while the ancient system checks your lineage for authority. A faint blue glow sweeps across your skin, measuring the old bloodlines against its stone memory.
+EXIT 1: Step toward the obsidian desk
+EXIT 2: Touch the singing glass pillar
+@@END
+
+@@SECTION sg-6-2-3-13
+TITLE: The Innermost Sanctum
+TEXT: The floor drops away into a sheer, echoing pit crossed only by a narrow rail of wrought iron as you cross the threshold of the innermost sanctum. Below, faint currents of warm air rise to brush against your face.
+EXIT 1: Listen by the singing glass
+EXIT 2: Approach the heavy titanium door
+EXIT 3: Take the reckless way
+@@END
+
+@@SECTION sg-6-2-3-14
+TITLE: The Glass-Burn Protocol
+TEXT: The jagged glass-burn scar across your forearm matches the old protocol, prompting the automated defense turret to retract smoothly into the ribbed ceiling with a soft mechanical sigh. You let out a slow breath as the red targeting beam vanishes from your chest.
+EXIT 1: Approach the final titanium door
+@@END
+
+@@SECTION sg-6-2-3-15
+TITLE: The Great Balance
+TEXT: Two heavy iron pans hang suspended in absolute stillness within the chamber of the great balance, waiting for you to place the seed upon them. The air here smells of ancient dust and copper filings.
+EXIT 1: Retrace your steps outward
+EXIT 2: Approach the heavy titanium door
+@@END
+
+@@SECTION sg-6-2-4-0
+TITLE: The Basalt Lintel
+TEXT: Your shoulders ache as you heave against the rusted winch of the floodgate under the low-hanging basalt lintel of the sub-vault. Iron teeth grind together with a screech of protest as the mechanism slowly yields to your strength.
+EXIT 1: Climb to the central platform
+@@END

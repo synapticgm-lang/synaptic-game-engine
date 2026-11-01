@@ -1,0 +1,105 @@
+{
+ "batch": "cf-3-028",
+ "sections": {
+  "cf-3-028": {
+   "title": "The Dispatcher's Tongue",
+   "text": "Gravel crunches beneath heavy boots as you step past the iron barrier, throat tight with the specific rasp of a Baronial dispatcher. Every syllable must carry the weight of authority, flat and clipped, mimicking the men who sit in warm brick offices counting rivets while the world freezes. You swallow the bitter taste of coal-dust and pitch your voice to ring against the corrugated tin of the checkpoint booth. The sentry narrows his eyes, squinting through grease-smeared glass at your soot-blackened coat, waiting for a misplaced vowel that might betray your loyalties to the line.\n\n\n\nLeaning hard against the wooden counter, you force your jaw to stay rigid and bark out a demand for immediate track clearance.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step through the iron checkpoint gate"
+   ]
+  },
+  "cf-3-029": {
+   "title": "The Baronial Dispatch",
+   "text": "Heavy iron gates loom ahead, draped in the blue bunting of the Rail Barons while armed toll-takers lean against the brass telegraph box with bored expressions. Your fingers tighten over the brass valve-key tucked inside your coat, feeling its cool weight against your ribs as you lean out from the footplate of the Marrowbone. You rasp out a string of fabricated dispatch codes, mimicking the gravelly nasal cadence of a senior Baronial line-inspector to cow the guards into dropping the barrier without checking your manifests.\n\nSweat beads along your hairline, stinging your eyes against the acrid soot while the guard captain squints up at your grease-stained cap, his hand drifting toward the heavy signal horn at his hip as he weighs the truth of your crisp bureaucratic consonants against the soot on your nose.",
+   "check": "Shout the forged dispatch codes",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-030": {
+   "title": "A Flash of White Solder",
+   "text": "Sparks shower across your knuckles in a blinding white cascade as the circuit violently rejects your clumsy adjustment, searing deep across the skin of your wrist. A sharp, chemical smell of scorched wool and ozone fills the cramped booth as you jerk your hand back with a sharp hiss of pain. The relay box remains stubborn, its iron casing clicking shut with a finality that costs you precious minutes and leaves a weeping red welt across your forearm. You clutch the injured limb to your chest, blinking back the glare-spots dancing in your vision while the heavy boots of a patrol grow louder down the metal walkway.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself past the locked gate"
+   ]
+  },
+  "cf-3-031": {
+   "title": "The Dispatcher's Seal",
+   "text": "Heavy iron latches drop back with a dull, echoing clatter, however narrowly you managed to keep your hand steady against the humming copper relay. The sentry spits a wad of dark tobacco onto the ballast and shoves a heavy brass-stamped waybill across the stained counter without so much as a second glance. It is an old, ink-stained pass bearing the personal stamp of a district inspector who vanished months ago, a heavy piece of authority that carries quiet weight among the gangers. You tuck the paper into your breast pocket, feeling the cold metal of its seal press against your ribs like an unspoken promise.",
+   "check": "",
+   "grant": "Dispatcher's stamped waybill",
+   "exits": [
+    "Survey the suspended cargo platforms"
+   ]
+  },
+  "cf-3-032": {
+   "title": "The Crane Yard's Grip",
+   "text": "Heavy iron jaws plunge from the grey fog above, slamming onto the polished steel shoulders of the tender with a shriek of tortured metal. The Marrowbone shunts violently onto a rusted siding that hangs suspended over a thousand-foot drop into the misty canyon, rocking on her springs as the massive overhead hoisting chains take her weight. Steam screams from the ruptured exhaust lines of the gantry engines, filling the damp air with white billows that smell of hot oil and wet coal. Down below, tiny figures move along the slender catwalks, shouting commands through copper-funnel megaphones while the great crane-drums whine, hauling your engine bodily off the iron road.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Navigate the swinging cargo derricks"
+   ]
+  },
+  "cf-3-033": {
+   "title": "The Gantry Labyrinth",
+   "text": "Iron catwalks stretch out across the misty abyss like the ribs of some ancient, stranded leviathan, vibrating constantly with the deep, mechanical heartbeat of the viaduct below. Steam hisses from unseen vent-pipes, curling around greasy handrails that slick the palms of your gloves with black condensation. Every direction offers a desperate gamble: above, the crane operators squint through greasy goggles; below, the roaring gears of the hoisting winches offer a dangerous shortcut to the lower tracks. The bitter smell of sulfur drifts up from the canyon floor, mingling with the sharp tang of hot grease from the pulleys.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb the suspended maintenance ladder",
+    "Override the hoisting winch hydraulics",
+    "Shoulder the jammed emergency release",
+    "Bleed the steam brakes to slide",
+    "Pick through the chemical smog maze"
+   ]
+  },
+  "cf-3-034": {
+   "title": "Across the Iron Beam",
+   "text": "A narrow I-beam spans the dizzying gap between the gantry platform and the crane cabin, slick with a fine film of grey coal-dust and freezing mist. On the far side, the crane operator stands with one hand resting on the brass control wheel, his face half-hidden behind a respirator that hisses with every shallow breath. You edge forward, boots scraping against the cold iron while the canyon wind tears at the heavy skirts of your coat. Below your heels, the drop is absolute, nothing between you and the jagged rocks a thousand feet down except a thin lattice of rusted girders.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step closer to the crane booth"
+   ]
+  },
+  "cf-3-035": {
+   "title": "Staring Down the Crane",
+   "text": "The crane man stops turning his brass wheel, his dull eyes fixing on your soot-streaked face through the small rectangular window of his steel cabin. Neither of you moves, caught in the tense silence between the rhythmic thud of distant piston strokes and the whistle of wind through the bridge bracing. You lock your gaze onto his, refusing to blink as the cold sweat freezes on your temples, keeping your posture rigid despite the trembling in your knees. Every second on the narrow span stretches like hot wire, testing whether your nerve will hold before his does.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Hold the operator's steady gaze"
+   ]
+  },
+  "cf-3-036": {
+   "title": "The Crane Operator",
+   "text": "Overhead, a massive steam-driven hoisting gantry clanks against its rusted track, suspended over a terrifying drop that plunges straight down through the latticed girders of Brasswind Viaduct into the grey mist below. A young toll-operator grips the brake-lever of the crane with white-knuckled panic, his eyes darting toward your heavy engine with trembling indecision while he threatens to drop your track-sling into the void. You step out onto the narrow timber footway, locking your gaze onto his darting eyes and breathing out a slow, deliberate cloud of pipe-smoke as you force your shoulders to drop and your posture to harden into absolute stillness.\n\nThe plank beneath your boots groans under the wind, and you keep your breathing even and heavy, projecting the cold, immovable authority of a man who has stared down boiler explosions and never blinked once.",
+   "check": "Stare down the shaking operator",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-037": {
+   "title": "A Fracture of Will",
+   "text": "Your vision blurs at the edges as a sharp wave of vertigo hits you, forcing you to blink and lean heavily against the cold iron handrail with a dry sob. The crane operator catches the momentary weakness in your stance, his shoulders relaxing as he spits through the gap in his teeth and reaches for the lowering lever. A deep-seated fatigue settles into your bones, leaving your thoughts scattered like dry ash while the massive steel jaws above you drop another foot with a terrifying metallic groan. You stagger back onto the gantry grating, chest heaving and hands trembling from the strain of a standoff lost.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the gantry platform"
+   ]
+  },
+  "cf-3-038": {
+   "title": "Breaking the Standoff",
+   "text": "The operator looks away first, his shoulders slumping as he releases the tension on the brass control wheel with a dry metallic click, however narrowly you managed to hold your ground. He mumbles something unintelligible through his respirator and jerks his chin toward the side exit, gesturing to a coil of greasy hemp rope hanging from the gantry frame. It is a rough, practical tool left behind by careless trackmen, frayed at the ends but stout enough to lash a valve shut or rig a makeshift hoist when the steam goes down. You coil the stiff rope over your shoulder, feeling its rough fibers bite through your coat as you turn back toward the waiting engine.",
+   "check": "",
+   "grant": "Frayed hemp track-rope",
+   "exits": [
+    "Return to the gantry platform"
+   ]
+  }
+ },
+ "missing": []
+}

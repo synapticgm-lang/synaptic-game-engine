@@ -1,0 +1,65 @@
+@@SECTION vh-1-1-4-2
+TITLE: The Tarred Coil
+TEXT: Bespoke grease and sea-salt cling to the grey twine coiled beside the salted winch in the cordage yard, heavy with the reek of deep-sea rigging. Your fingers test the stiff twist, wondering if the cheap price hides a silent trap or a binding oath written in the trade-lore of the cliff. The cold wind bites through your woollen tunic as you weigh the risk of taking a line that demands more than simple silver.
+EXIT 1: Buy the salted grey twine
+EXIT 2: Leave the strange coil behind
+EXIT 3: Inspect the inner strands closer
+@@END
+
+@@SECTION vh-1-1-4-3
+TITLE: The Frayed Bundle
+TEXT: Pungent hemp dust rises from the combing benches where an apprentice shuffles a loose, cheap bundle toward your boots, murmuring warnings about frostbite and sudden snapping under tension. The guild's bargain line looks deceptive, pale and loosely spun against the mountain chill, yet your purse grows painfully light with every step through Vesperhold. You consider whether a frayed lifeline is better than none at all when the descent begins in earnest.
+EXIT 1: Take the cheap frayed bundle
+EXIT 2: Refuse the risky bargain line
+@@END
+
+@@SECTION vh-1-1-4-4
+TITLE: The Heavy Tow-Line
+TEXT: Heavy tar coats your bare skin with a sticky, dark residue as you stroke the rigid fibers of a three-strand tow-line running through the draughty corridor of the rope storehouse. This massive cable could haul an ox down the cliff face, but its sheer bulk threatens to slow your pace before you even reach the first stair-town. The bronze Clapper hums against your shoulder blades, urging you toward a lighter path while the cold stone walls sweat moisture into the dim air.
+EXIT 1: Wrap the stiff tow-line
+@@END
+
+@@SECTION vh-1-1-4-5
+TITLE: The Ledger Desk
+TEXT: Ink wells bubble slightly in the freezing draft beside the iron weighing scale, where the guild master taps a parchment scroll with an impatient fingernail. Your thumb hovers over the damp ink pad, required to seal an agreement before a single foot of hemp passes into your pack. The mountain silence presses down hard on the rafters, broken only by the distant, mournful chime of a high tower bell answering the wind.
+EXIT 1: Press your thumb to parchment
+EXIT 2: Step away from the ledger
+EXIT 3: Offer coin instead of a mark
+@@END
+
+@@SECTION vh-1-1-4-6
+TITLE: The Loft Rafters
+TEXT: Rafters creak overhead in the dim rope-loft as the clock chimes a slow, metallic hour into the freezing dusk. You compare your own travel-worn backup rope against the stiff, pale perfection of the official guild stock hanging from iron pegs. One is familiar and soft with use, while the other gleams with untried strength and the rigid guarantee of makers who never leave the mountain top.
+EXIT 1: Choose the familiar backup rope
+EXIT 2: Swap for the official stock
+@@END
+
+@@SECTION vh-1-1-4-7
+TITLE: The Cable Wicket
+TEXT: Oak wood splinters slightly under your grip at the heavy wicket of the cable court office, where a toll-lord watches your hesitation with calculating, hooded eyes. Free municipal twine sits in a dusty barrel by the door, contrasting sharply with the fine, branded guild lines locked behind the iron grating. Every choice here carries a toll, whether paid in coin, freedom, or the watchful malice of men who own the ropes.
+EXIT 1: Claim the free municipal twine
+@@END
+
+@@SECTION vh-1-1-5-0
+TITLE: The Guild Ledger
+TEXT: Cold iron scratches against parchment on the frosty threshold of the cordage hall as you sign away a portion of your freedom in exchange for certified strength. The guild master nods once, his face carved from old habit and winter shadows, before shoving the heavy coil into your arms. Your journey is now bound to strict terms, heavy penalties, and the unbroken trust of the makers who forge the vertical world's lifelines.
+EXIT 1: Press on
+@@END
+
+@@SECTION vh-1-1-5-1
+TITLE: The Worn Rope
+TEXT: Tarred hemp coils lie forgotten as you toss your own battered, trusty rope over your shoulder with a sharp, defiant breath that mists in the freezing air. You reject the guild's formal seal and its endless rolls of parchment, trusting instead the frayed spots you have patched yourself through many seasons on the cliff. The bronze Clapper hums approval against your back, feeling lighter now that no ink-stained master holds a claim on your journey.
+EXIT 1: Press on
+@@END
+
+@@SECTION vh-1-1-5-2
+TITLE: The Mid-Tier Flax
+TEXT: Flax fibers feel smooth and golden beneath your fingertips under the lintel of the rope-master's lodge, purchased with half your remaining coppers to keep the tax-collectors at bay. This mid-tier coil steers a middle course between the costly tyranny of the guild and the dangerous fraying of the municipal barrel. You loop the balanced length securely over your pack, ready to face the ninety steps with a clear conscience and a lighter purse.
+EXIT 1: Press on
+@@END
+
+@@SECTION vh-1-1-5-3
+TITLE: The Unbranded Line
+TEXT: Iron winches grind somewhere below in the lower courtyard as you knot a length of unbranded line securely around your waist, testing every hitch with practiced fingers. Trusting your own knots feels safer than deciphering the hidden clauses and cruel terms tucked inside the cable lords' ledgers. The wind howls up through the stone stairwell, carrying the smell of snow and the distant, silver call of the lower bells.
+EXIT 1: Press on
+@@END

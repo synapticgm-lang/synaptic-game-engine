@@ -1,0 +1,89 @@
+{
+ "batch": "sg-5-0-1-3",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-0-1-3": {
+   "title": "The Glass-Burn Hatch",
+   "text": "Your salt-blistered arm catches a beam from the high beacons, exposing the iridescent web of glass-burn scars left by your old crossing of the Storm. The sentry standing watch near the limestone pilasters draws in a sharp, startled breath, recognizing the mark of the wasteland survivors upon your skin. Without a word, he throws his weight against a concealed bronze lever, sliding open a hidden service hatch that drops away into the cool gloom beneath Prism.\n\nYou grip your banked ember-lamp tightly against your chest, stepping past the iron-bound frame before the heavy latch can swing shut again.",
+   "exits": [
+    "Descend into the frozen light well",
+    "Seek the colonnade where the singing pillar hums",
+    "Check the ceramic key in the keeper vestibule"
+   ]
+  },
+  "sg-5-0-1-4": {
+   "title": "The Courtyard of Mirrors",
+   "text": "Beside a dry bronze fountain in the sun-baked Courtyard of Mirrors, rival toll-agents trade loud, venomous insults while guarding the main avenue that leads up to the observatory. They wear heavy brass badges of the Salt Court, their tempers fraying under the relentless noon glare and the bitter knowledge that every runner in the Basin is hunting for the Rain Vault. You pull your cloak tighter around your shoulders, keeping your banked ember-lamp hidden from their greedy eyes as you weigh your next move.\n\nThe stone beneath your boots radiates trapped heat, shimmering with mirages of cool water that vanish the moment you blink.",
+   "exits": [
+    "Slip past the keeper vestibule while they argue",
+    "Crawl beneath the terrace of singing mirrors"
+   ]
+  },
+  "sg-5-0-1-5": {
+   "title": "The Scriptorium of Charts",
+   "text": "Inside a ruined scriptorium choked with shifting drift-sand, you decipher ancient glass-charts detailing the underground service conduits that spider-web beneath the high lens-halls. The parchment crumbles to grey dust under your calloused fingertips, but the scratched lines of the master draftsman remain clear enough to trace by the orange glow of your banked ember-lamp. You trace a narrow tunnel route with your thumb, knowing it could bypass every major checkpoint if the masonry hasn't collapsed.\n\nSomewhere above your head, heavy boots crunch against loose shards of optical glass, reminding you that you are not alone in these hollow halls.",
+   "exits": [
+    "Crawl across the blinding terrace of singing mirrors",
+    "Meet Pell near the collapsed solar furnace",
+    "Enter the chilly crypt of the lens-founders"
+   ]
+  },
+  "sg-5-0-1-6": {
+   "title": "The Swaying Bridge",
+   "text": "Across the swaying rope bridge of the Great Void, a nervous Salt Court clerk drops his heavy ledgers into the yawning salt-crust far below, watching them spiral down like wounded birds. The hemp cables groan under your weight as a sudden gust of wind from the Basin sweeps through the gorge, threatening to tear your banked ember-lamp from your aching fingers. You steady your balance against the fraying guide-rope, breathing in the scent of hot iron and old dust.\n\nOn the far side of the abyss, carved basalt archways lead deeper into the stone heart of Prism.",
+   "exits": [
+    "Dodge the iron chains in the salt-encrusted vault",
+    "Descend into the chilly crypt of the lens-founders"
+   ]
+  },
+  "sg-5-0-1-7": {
+   "title": "The Sentinel's Gift",
+   "text": "Beneath the towering prismatic spire, a wounded Glasswright sentinel presses a singing prism into your palm before sliding into quiet unconsciousness against the cool stone skirting. The small crystal vibrates faintly against your calloused skin, humming with a pure, sorrowful note that seems to chase away the ringing in your ears. Your banked ember-lamp casts long, dancing shadows across his grease-stained tunic as you check for a pulse.\n\nThe corridor stretches onward into deep darkness, framed by shattered panels of stained window-glass.",
+   "exits": [
+    "Advance into the salt-encrusted ceiling vault",
+    "Search near the broken sluice-gates of the Lower Basin"
+   ]
+  },
+  "sg-5-0-1-8": {
+   "title": "The Meridian Porch",
+   "text": "Within the cool shade of the Meridian Porch, you trade flat remarks with Pell about the strange silence echoing from the inner vaults where the water-halls ought to be roaring. He flicks a pebble off the stone balustrade, watching it bounce across the glaring white flats far below with a dry, humorless smirk. Your banked ember-lamp smokes gently in the draft, smelling of old peat and sulfur.\n\nA narrow doorway opens behind the stone pillars, leading toward the heart of the observatory.",
+   "exits": [
+    "Enter the cedar-lined alcove of the archive",
+    "Cross the open floor of the great refractor"
+   ]
+  },
+  "sg-5-0-1-9": {
+   "title": "The Western Bulwark",
+   "text": "Near the western basalt bulwark, a group of tired well-keepers light a small signal fire to guide their straggling companions through the blinding glare of the afternoon salt flats. The acrid smell of burning camel-dung mingles with the sharp tang of the dry basin wind, stinging your watering eyes. You keep your head down, clutching your banked ember-lamp close to your ribs so its amber glow won't attract unwanted questions from the guardians of the well-network.\n\nThe shadow of the massive basalt wall offers a brief respite from the murderous sun.",
+   "exits": [
+    "Cross the open floor toward the great refractor"
+   ]
+  },
+  "sg-5-0-2-0": {
+   "title": "The Maintenance Slit",
+   "text": "Through a narrow maintenance slit in the copper wall, you peer into a tense chamber where salt-lords argue over forged keys and hollow promises of rain-taxes. Their embroidered robes are stiff with dried sweat and encrusted alkali, their voices sharp and desperate as they bicker over who holds the true claim to the vault. You press your shoulder against the cold metal plating, holding your breath so your banked ember-lamp doesn't give away your hiding spot in the shadows.\n\nThe corridor behind you stretches back toward the dusty stairwells of the lower rings.",
+   "exits": [
+    "Climb down the steep stairs of the ocular tower",
+    "Turn back toward the fractured lens and the dune sister"
+   ]
+  },
+  "sg-5-0-2-1": {
+   "title": "The Vault of Certainty",
+   "text": "Believing with absolute, unshakable conviction that the Rain Vault still holds deep, untouched water for Candlemere, you stride boldly past a nervous checkpoint without breaking your stride. The guards mistake your absolute certainty and upright posture for royal authority, stepping back and lowering their pikes as if you belong to the long-dead priesthood of the Lensfolk. Your banked ember-lamp swings steadily at your side, its warm light steady against the grey stone walls.\n\nAhead of you, a heavy bronze portal stands slightly ajar, welcoming your approach.",
+   "exits": [
+    "Ascend the steep spiral stairs of the ocular tower",
+    "Enter the vaulted hall of tides and singing pipes"
+   ]
+  },
+  "sg-5-0-2-2": {
+   "title": "The Star-Clock",
+   "text": "Within the echoing vault of the Star-Clock, massive brass cogs the size of cartwheels grind to a sudden, permanent halt under a heavy drift of dry white salt. The silence that follows is absolute, broken only by the faint ticking of your own pulse and the steady heat radiating from your banked ember-lamp. You trace the rim of a frozen gear, feeling the grit of centuries grinding beneath your thumb.\n\nThree distinct archways lead away from the silent machinery into the dim bowels of the observatory.",
+   "exits": [
+    "Climb the steep stairs of the ocular tower",
+    "Walk toward the hall of tides and singing pipes",
+    "Cross the threshold of the warm amber gallery"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,13 @@
+@@SECTION vh-4-0-2-5
+TITLE: Shards of Blue Ice
+TEXT: Shattered crystal spikes litter the glacier footway, their razor edges catching the pale mountain light as the heavy bronze Clapper shifts against your shoulders. Every step onto the frozen debris threatens to break your rhythm, forcing you to lean hard into the padded cradle while Biscuit picks a cautious path among the glittering detritus. Frost rimes your eyebrows, and the sheer weight of the bell-tongue pulls your spine toward the cold stone. // A rusted iron winch stands sentinel over the lower glacier drop, its cable frozen fast in a blue sheath. You could try to clear the mechanism yourself or look for another way down the slope.
+EXIT 1: Approach the frozen iron winch
+EXIT 2: Show your token to the toll warden
+@@END
+@@SECTION vh-4-0-2-6
+TITLE: Beneath the Ice Vault
+TEXT: Deep beneath the blue ice vault, a subterranean stream roars against the ancient stone while the bronze Clapper vibrates persistently on your back, humming in tune with the rushing water. The air smells of wet slate and mountain chill, thick with the sound of unseen currents carving through the heart of the glacier. Your boots slide slightly on the damp floor, and you steady yourself against the freezing wall as the heavy metal tongue tugs at your harness. // Hard-packed snow bridges the central crevasse where a stray mule bell tinkles faintly in the distance, offering a fragile path across the abyss.
+EXIT 1: Present your debt token for the winch brake
+EXIT 2: Cross the snow bridge toward the tinkling bell
+EXIT 3: Step carefully down the sloping blue ice shelves
+@@END

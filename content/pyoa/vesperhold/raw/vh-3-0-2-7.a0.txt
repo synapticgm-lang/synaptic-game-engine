@@ -1,0 +1,61 @@
+@@SECTION vh-3-0-2-7
+TITLE: The Knotted Gate
+TEXT: Because you wear the rope-wrights' knot-oath proudly pinned to your woollen collar, the old gate-keeper recognizes the binding loop at a glance and unlocks the private winch-house stairs without a single grumble about tolls or cargo weights. You slip past the heavy iron latch, leaving the main terrace track behind as you descend into the shadowed stone stairwell where the air smells of hemp, tallow, and cold mountain grease. // The heavy bronze clapper shifts gently in its padded cradle on your back, its faint, deep hum vibrating against your spine as you test the first frost-slick step with your boot.
+EXIT 1: Descend the private winch-house stairs carefully
+@@END
+@@SECTION vh-3-0-2-8
+TITLE: Shrouded Terraces
+TEXT: A damp shroud of mountain fog rolls suddenly over the barley terraces, reducing visibility to a single arm's length and muffling the great wooden wind-pipes until they sound like distant, groaning giants. The familiar stone path dissolves into grey nothingness on either side of your boots, leaving you to guide your steps entirely by the rhythmic crunch of gravel and the dull, comforting weight of the bronze clapper on your back. // You pause to listen through the thick mist, trying to distinguish the whistle of a guide-rope from the treacherous drop of the outer retaining wall.
+EXIT 1: Peer through the cracked spy-glass ahead
+EXIT 2: Hurry past the silent, empty windmills
+EXIT 3: Brace against the flurry of wet snow
+@@END
+@@SECTION vh-3-0-2-9
+TITLE: The Runaway Wheel
+TEXT: You throw your shoulder against a straining wooden beam just as a frantic miller screams for help, wedging the jammed brake-shoe firmly back into place before the screaming runaway wheel can shatter the entire terrace wall into the abyss. The miller gasps his thanks, wiping flour and sweat from his forehead with a sleeve while the massive oak blades above slow their frantic rotation with a deep, shuddering groan. // The bronze clapper rattles once in its cradle from the sudden jolt, but the straps hold fast as you catch your breath against the cold stone.
+EXIT 1: Slip past near the flour chutes
+EXIT 2: Hurry past the silent empty windmills
+@@END
+@@SECTION vh-3-0-2-10
+TITLE: The Glacier Chasm
+TEXT: The path narrows abruptly to a single wet pine plank bridging a deep irrigation chasm, where the deafening roar of rushing glacial meltwater shakes the very air in your lungs and sends freezing spray across your face. You grip the guide-rope with frozen fingers, balancing the heavy bronze tongue of the great bell against the violent updraft as you inch across the roaring void one careful boot-length at a time. // Below the wooden bridge, white water smashes against jagged boulders before plunging over the edge of the terrace tier.
+EXIT 1: Inspect the path through the spy-glass
+EXIT 2: Face the sudden flurry of wet snow
+@@END
+@@SECTION vh-3-0-2-11
+TITLE: The Skeleton Mill
+TEXT: You pause in the shadow of a silent windmill whose broken timber vanes hang motionless like the bleached ribs of a starved beast against the grey sky. The wind has died away entirely in this rocky pocket, leaving only the sound of your own ragged breathing and the faint, persistent hum of the heavy bronze clapper against your spine. // The mule, Biscuit, shakes his dusty ears and stamps a hoof against the frozen dirt, eager to leave the dead machinery behind.
+EXIT 1: Step into the flurry of wet snow
+EXIT 2: Retighten the pack-girth on Biscuit
+EXIT 3: Listen to the mournful wind-pipe ahead
+@@END
+@@SECTION vh-3-0-2-12
+TITLE: The Warning Whistle
+TEXT: A sharp, piercing whistle echoes down from the mist above, carrying the unmistakable terrace signal that warns all folk to batten down their hatches against an incoming gale. Across the barley shelves, shutters slam and heavy timber bars drop into place with hollow thuds that ripple through the mountain face like small drumbeats. // You pull your woollen hood lower over your forehead and lean hard into the mounting pressure of the cold air rushing up from the valley floor.
+EXIT 1: Follow the mournful moan of the wind-pipe
+@@END
+@@SECTION vh-3-0-3-0
+TITLE: The Shifting Scree
+TEXT: You scramble across a treacherous scree-slope of loose shale that gives way suddenly beneath your boots, sending a cascade of grey stones clattering out into the blinding white void of the cloud sea. Your arms pinwheel for a frantic second as you fight to keep your balance, leaning back against the heavy bronze clapper to save yourself from sliding down the steep incline. // The shale settles with a final, hollow rattle, leaving you clinging to the rock face with shaking fingers.
+EXIT 1: Cross the threshold of the weighing-shed
+EXIT 2: Approach the tired miller by the crate
+@@END
+@@SECTION vh-3-0-3-1
+TITLE: The Miller's Mug
+TEXT: Miller Jago offers a steaming mug of warm barley-water across a flour-dusted counter in exchange for news of the storm damage up at Vesperhold's high sanctuary. The thick, sweet liquid burns agreeably in your frozen throat as you recount the tearing of the great roof timbers and the silent crack in the shoulder of Orison. // The old miller nods slowly, his scarred hands wrapping around his own cup while he gazes up toward the cloud-shrouded peak with quiet dread.
+EXIT 1: Enter the communal weighing-shed
+EXIT 2: Speak with the weary miller near the crate
+@@END
+@@SECTION vh-3-0-3-2
+TITLE: The Hoisting Winch
+TEXT: You squeeze past a straining wooden winch where two terrace workers grunt in rhythm, desperately trying to hoist a sodden sack of un-milled grain up from the lower cable-way before the tension snaps. Hemp ropes groan under the immense strain, shedding frayed fibers that drift down into the misty depths like grey snow. // You tuck your elbows tight to your ribs to protect the clapper's cradle from the swinging cargo bags.
+EXIT 1: Step inside the communal weighing-shed
+EXIT 2: Approach the tired miller by the crate
+EXIT 3: Dodge the rolling barley cask near the wall
+@@END
+@@SECTION vh-3-0-3-3
+TITLE: The Crosswind Ridge
+TEXT: A fierce, erratic crosswind sweeps across the open terrace shelf, catching the heavy bronze clapper's cradle and twisting your leather shoulder straps painfully into your flesh. You plant your staff deep into the frozen mud, leaning your entire body weight sideways to fight the sudden gust before it can sweep you off the narrow path. // Biscuit braces his sturdy legs against the stone wall, blowing a cloud of frosty steam from his nostrils as the gale shriek fades into a low whistle.
+EXIT 1: Approach the weary miller by the crate
+EXIT 2: Dodge the rolling barley cask near the wall
+@@END

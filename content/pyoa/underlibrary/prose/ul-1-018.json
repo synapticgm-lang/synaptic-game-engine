@@ -1,0 +1,104 @@
+{
+ "batch": "ul-1-018",
+ "sections": {
+  "ul-1-018": {
+   "title": "The Signed Parchment",
+   "text": "Ink-stained fingers press the heavy brass seal against the damp red wax, confirming the dry scratch of authority upon your clearance slip. The head librarian's ledger closes with a dull thud that echoes off the vaulted stone ceiling, releasing a fine cloud of ancient dust into the lamp-lit air. You retrieve the official authorization letter, tucking the crisp parchment securely within your canvas satchel alongside your spare nibs and charcoal sticks.\n\nStepping away from the high mahogany counter, you leave behind the sharp scent of vinegar-based ink and head deeper into the labyrinthine galleries where the murmurs of restless scholars drift like rising smoke.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the heavy oak doors"
+   ]
+  },
+  "ul-1-019": {
+   "title": "Withstanding the Scrutiny",
+   "text": "Heavy stares from the surrounding cataloguers weigh upon your shoulders like wet wool while the senior archivist leans across the high desk, demanding an immediate explanation for your presence in the restricted stacks. You tighten your grip on the edge of the mahogany counter, refusing to let your gaze waver under the cold, assessing glare that promises immediate expulsion for the slightest sign of hesitation. The air grows thick with the metallic tang of lamp-oil and rising tension as you channel every ounce of stubborn endurance into keeping your breathing steady and your posture unyielding.\n\nYour jaw sets against the rising panic while you steady your nerves for the inevitable test of authority.",
+   "check": "Maintain an unblinking composure before the archivist",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-020": {
+   "title": "The Cost of Hesitation",
+   "text": "A sudden tremor in your stance betrays your inner strain, drawing a sharp, triumphant smirk from the senior archivist across the desk. Your momentary slip costs you dearly as she seizes upon your weakness, stripping away three precious hours of your shift in administrative detention and confiscating your favorite steel pen nib. You emerge from the ordeal with a throbbing headache and an empty satchel, your patience wearing as thin as the worm-eaten pages stacked upon the nearby sorting tables.\n\nTrudging away into the dim corridors, you nurse your grievances and count the lost hours against the relentless ticking of the deep-stack clocks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the shadowed sorting aisles"
+   ]
+  },
+  "ul-1-021": {
+   "title": "The Authorised Passage",
+   "text": "The head archivist lets out a sharp, parchment-dry sigh of exasperation and finally steps aside, leaving the flagged corridor open to your steady advance. Between her ink-stained fingers rests a heavy brass stamp, which descends with a final, echoing thud onto a fresh slip of vellum. That crisp sheet is pressed directly into your palm, still warm from the heavy iron press. It bears the jagged purple seal of the central stacks and a hurried signature in violet gall-ink, certifying your right to pass unhindered through the galleried arches. You tuck the heavy paper inside your woollen tunic as the murmur of distant scholars resumes around you.\n\nThat administrative triumph leaves you free to slip past the marble pillars and approach the bustling hub where the day's transactions are sorted.",
+   "check": "",
+   "grant": "signed authorization letter",
+   "exits": [
+    "Approach the weary lending clerk"
+   ]
+  },
+  "ul-1-022": {
+   "title": "Whispers in the Gallery",
+   "text": "Elevated walkways creak beneath the hurried footsteps of rival scholars who lean across iron-railed balconies to hiss competing theories about Thessaly Marr and the sudden awakening of the Hundredth Door. Below your boots, damp manuscripts lie heaped upon central reading tables like fallen leaves, their margins whispering faint, disjointed phrases whenever a draft sweeps through the galleried hall. Every archivist and page seems to be watching you from behind towering stacks of overdue ledgers, their eyes sharp with suspicion and greed for the lost Index.\n\nYou keep your head down and your fingers brushing against the cold stone wall, navigating the narrow gap between a group of arguing scribes and a towering pillar covered in pasted-over notices. The air tastes of old paper and copper, heavy with the quiet desperation of a library preparing to seal its vaults for a generation.\n\nPushing past a heavy velvet drape, you enter a quieter alcove where the shadows stretch long and thin across the mosaic floor.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step into the quiet scholar alcove"
+   ]
+  },
+  "ul-1-023": {
+   "title": "The Scholar's Alcove",
+   "text": "Piled high with grease-stained folios and flickering tallow lamps, the cramped alcove smells intensely of rancid mutton fat and oxidized gall-ink. A notoriously proud historian blocks the narrow archway with an imposing stack of forbidden codices, demanding an extortionate fee in copper or secrets before he will share what he overheard regarding Thessaly's final research. The surrounding shelves lean inward as if straining to eavesdrop on the confrontation, their leather spines clicking softly in the gloom.\n\nYou weigh your options carefully while the historian taps a long, ink-stained fingernail impatiently against the edge of his reading desk, waiting to see how you will pierce his defenses.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Offer a brilliant translation for passage",
+    "Flatter the pompous scholar with clever deception",
+    "Gracefully bypass the territorial barrier",
+    "Descend into the lower scriptoriums"
+   ]
+  },
+  "ul-1-024": {
+   "title": "The Obscure Ledger",
+   "text": "Open before you upon the scarred writing desk lies a massive, calfskin-bound ledger written in the notoriously convoluted dialect of the early cataloguers. You trace the cramped, sloping cursive with the tip of a dry quill, piecing together the archaic vocabulary of cross-references and misfiled entries that points directly toward the lower stacks. The historian watches your progress with a mixture of professional jealousy and grudging respect, his fingers twitching toward the margins where the vital map fragment is tucked.\n\nSecuring the torn scrap of parchment, you commit the surrounding annotations to memory before turning away from the cluttered desk.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the map into the stacks"
+   ]
+  },
+  "ul-1-025": {
+   "title": "The Translated Page",
+   "text": "Sunlight filtering through the high clerestory windows catches the motes of dust dancing above the open ledger as you deftly untangle the dense web of obsolete grammatical structures. The historian lets out a sharp whistle of astonishment, sliding the requested map fragment across the wooden surface with a resigned nod of acknowledgment. You slip the brittle scrap into your pocket, feeling the jagged edges of the paper confirm your success before the ink has even fully dried on your translation sheets.\n\nWalking away from the alcove, you leave the defeated scholar muttering bitterly over his abandoned dictionaries.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Journey deeper into the misfiled wing"
+   ]
+  },
+  "ul-1-026": {
+   "title": "Decoding the Marginalia",
+   "text": "Faded ink scrawled in the margins of the open ledger begins to twist and writhe under your gaze, forming complex linguistic traps designed to confuse uninitiated readers. You lean closer to the parchment, squinting through the dim lamp-light while trying to separate the genuine historical citations from the mischievous whispers of the marginalia ghosts. The symbols shift shape every time you blink, demanding absolute concentration to prevent the true meaning from dissolving into meaningless scribbles before your eyes.\n\nYour temples throb with the strain of deciphering the archaic script while the deadline for your answer draws perilously near.",
+   "check": "Decipher the shifting marginalia dialect",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-027": {
+   "title": "The Tangled Translation",
+   "text": "Your eyes blur under the relentless assault of the shifting marginalia, causing you to misread a critical cataloguing code and write down a disastrously flawed translation. The historian sneers, snatching the ruined paper from your hands and demanding an exorbitant penalty fee in rare ink-sticks for your carelessness. You spend the next hour paying off the debt by sorting a towering pile of biting manuscripts, emerging from the task with ink-stained fingers and a bruised ego.\n\nShaking off the lingering frustration, you gather your remaining belongings and prepare to move onward through the galleries.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the alcove empty-handed"
+   ]
+  },
+  "ul-1-028": {
+   "title": "The Ledger Secret",
+   "text": "Your finger traces the crabbed, archaic script along the margin of the open ledger until the difficult grammar unlocks under your persistent gaze. The rival scholar scowls, muttering an oath about upstart pages, but concedes the translation is remarkably accurate before sliding a scrap of yellowed vellum across the scarred oak table. That torn piece of map shows a dotted line winding through the forgotten lower tiers toward the shadow of the Hundredth Door. You pocket the fragment just as the scholar hastily snaps the heavy book shut and turns away.\n\nArmed with this clandestine cartography, you slip through the shadows of the tall shelves to confront the next barrier in your search.",
+   "check": "",
+   "grant": "hidden map fragment",
+   "exits": [
+    "Face the proud historian's blockade"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,56 @@
+@@SECTION vh-6-0-4-6
+TITLE: The Stoker's Hopper
+TEXT: Thick gray soot billows from the ventilation shaft, stinging your eyes as the heat of the lower foundry washes over your wool coat. Fenn heaves a heavy wooden shovel, sending a cloud of wet slack spinning into the roaring iron hopper with a dull thud. He pauses, wiping black grease from his forehead with a sleeve, and glances at the heavy bronze Clapper resting in its padded cradle on your back. The surrounding air hums with a deep, subterranean vibration that rattles the loose bolts in the masonry. You must decide whether to approach the working stoker directly or slip past the roaring furnace into the deeper shadows of the hall. // Will you speak to the grimy stoker // Or slip past the roaring furnace
+EXIT 1: Speak to the grimy stoker
+EXIT 2: Slip past the roaring furnace
+@@END
+@@SECTION vh-6-0-4-7
+TITLE: The Bilge-Pole
+TEXT: Sluggish brown water laps against the slippery stone banks of the casting floor as Krell plants his wooden bilge-pole deep into the drainage trench. With a rhythmic grunt, he heaves his weight against the pole, forcing a foul-smelling stream of runoff toward the sluice gates. The damp chill of the river pierces your boots, contrasting sharply with the dry, baked heat radiating from the brickwork nearby. Krell stops for a moment, resting his calloused hands on the wood while he eyes the heavy bundle secured to your shoulders with unconcealed curiosity. You can wait for him to finish his grueling work or step around the muddy trench to seek out the master smiths. // Will you wait for the laborer to finish // Or step around the muddy trench
+EXIT 1: Wait for the laborer to finish
+EXIT 2: Step around the muddy trench
+@@END
+@@SECTION vh-6-0-5-0
+TITLE: The Primary Pit
+TEXT: Heavy iron chains dangle from the soot-blackened rafters above the primary casting pit, casting long, wavering shadows across the stone floor. Master Morzan stands with his arms crossed over a leather apron, his sharp gaze fixed upon you as you approach the boundary of his domain. The immense circular pit yawns open like an ancient grave, smelling powerfully of old charcoal, sulfur, and melted slag. He raises a gloved hand, demanding to inspect your cracked bell-metal before he will permit the heavy iron gates to swing open. You can present the fragments of Orison for his exacting inspection or turn back into the crowded gloom of the passage. // Will you present your cracked bell-metal // Or turn back into the gloom
+EXIT 1: Press on and present the fragments
+@@END
+@@SECTION vh-6-0-5-1
+TITLE: The Iron Crane
+TEXT: Towering above the main furnace, the great iron crane groans under the weight of suspended crucibles and rusted counterweights. Tormund stands near the base of the massive machinery, rubbing a tired hand across his stubbled jaw as he listens to the faint, persistent humming of the bronze Clapper on your back. The furnace fire roars behind him, casting a dull red glow over his scarred face and grease-stained tunic. He gestures toward the heavy load you carry, demanding to know its exact provenance before he allows the work to proceed. You can explain your long mountain journey to the weary master or challenge his authority with a swift demand for entry. // Will you explain your long mountain journey // Or challenge his authority with a demand
+EXIT 1: Press on and explain your journey
+@@END
+@@SECTION vh-6-0-5-2
+TITLE: The Soot-Choked Vestibule
+TEXT: Yellow tallow lamps flicker weakly through the thick haze inside the foundry vestibule, casting dancing shadows across water-stained stone walls. Orin stands behind a rickety desk piled high with grease-spotted manifests, blocking the inner doorway with an ink-stained ledger in his hands. He peers at you over the rim of a pair of wire-rimmed spectacles, demanding to see your official guild permits before allowing a single further step. The air smells strongly of vinegar-cured ink and damp wool, heavy with the oppressive weight of municipal bureaucracy. You can hand over your travel papers for inspection or attempt to brush past the nervous clerk. // Will you hand over your travel papers // Or attempt to brush past the clerk
+EXIT 1: Press on and hand over your papers
+@@END
+@@SECTION vh-6-0-5-3
+TITLE: The Grand Hearth
+TEXT: Radiant heat rolls in heavy waves from the grand brick hearth, warming your frozen fingers even as the acrid smell of burning coal catches in your throat. Vane stands beside the glowing masonry, a thick leather glove shielding his scarred forearm as he stares angrily into the empty tin bins. His weathered face tightens into a grimace as he compares the desperate urgency of your arrival against the pitiful lack of metal in the stores. He taps a heavy iron poker against the hearthstone, weighing whether your burden is worth the expenditure of his last precious fuel. You can offer the heavy bronze Clapper to his inspection or demand immediate assistance for the mountain's need. // Will you offer your heavy bronze Clapper // Or demand immediate assistance for the mountain
+EXIT 1: Press on and offer your heavy bronze
+@@END
+@@SECTION vh-6-c1
+TITLE: The Foundry Quarter
+TEXT: Blackened gables lean precariously over the narrow, soot-stained lanes of the lower foundry quarter, where the constant drip of mountain runoff mixes with the industrial residue of centuries of metalwork. The air tastes of copper and wet coal-dust, thick with the distant rumbling of heavy machinery and the shouts of weary laborers hauling slag to the riverbank. You stand at a critical crossroads in the heart of the district, where every previous assumption about the warmth of the welcome or the emptiness of the bins must finally face the test of reality. You must decide whether to seek out the promised hiring halls or search the freezing ruins for whatever scraps might still survive. // Will you walk the hiring foundry you believed in // Or search the cold flooded foundry for what survives
+EXIT 1: Walk the hiring foundry you believed in
+EXIT 2: Search the cold flooded foundry for what survives
+@@END
+@@SECTION vh-6-1-0-0
+TITLE: The Murky Watergate
+TEXT: Murky green water laps lazily against the slimy stone pilings of the watergate, carrying scraps of straw and floating cinders out toward the distant valley floor. Orris shivers beneath a patched canvas cloak, holding out a dry barley biscuit toward you in exchange for any fresh tidbits of news regarding the upper snows. The damp wind blowing off the river carries the sharp scent of rotting reeds and woodsmoke, chilling you right through your woolen tunic. He watches you eagerly, his eyes bright with anxiety about the closing of the mountain passes. You can trade your mountain news for his dry biscuit or ignore his plea and press deeper into the foggy wharf district. // Will you trade your mountain news for biscuits // Or ignore his plea and press deeper
+EXIT 1: Trade your mountain news for biscuits
+EXIT 2: Ignore his plea and press deeper onward
+@@END
+@@SECTION vh-6-1-0-1
+TITLE: The Drowned Alleyway
+TEXT: Stagnant gray water fills the narrow alleyway almost to the doorframes, reflecting the pale, watery light of the overcast sky above. Jael sits inside the stern of a rusted iron skiff, holding a notched wooden paddle and gesturing toward the murky expanse of the sluice before the evening tide turns. The hull of the boat scrapes softly against a submerged stone step, making a harsh, grating sound that echoes off the damp brick walls. He calls out in a raspy voice, offering to ferry you across the hazard for a small token of gratitude. You can step into the rusted skiff to cross the water or turn away to seek another path along the flooded margin. // Will you step into the rusted iron skiff // Or turn away to seek another path
+EXIT 1: Step into the rusted iron skiff
+EXIT 2: Turn away to seek another path
+@@END
+@@SECTION vh-6-1-1-0
+TITLE: The Cooperage Eaves
+TEXT: Water drips in a steady, monotonous rhythm from the overhanging wooden eaves of the cooperage, splashing into puddles of dark mire below. A wary young apprentice steps out from the shadows of stacked barrel staves, blocking your forward progress with a sturdy wooden stave held horizontally. He narrows his eyes, demanding to see whether your travel documents bear the official mountain seal before letting you pass into the lane. The smell of fresh oak shavings mingles unpleasantly with the damp rot of the canal banks. You can present your stamped mountain papers to the cautious boy or attempt to slip past him through the narrow gap between the staves. // Will you present your stamped mountain papers // Or attempt to slip past through the gap
+EXIT 1: Present your stamped mountain papers
+EXIT 2: Attempt to slip past through the gap
+@@END

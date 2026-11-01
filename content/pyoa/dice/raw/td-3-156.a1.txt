@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-3-164
+TITLE: The Brazen Key
+TEXT: Terracotta shards fly like gravel against your boots as the heavy storage urn shatters across the mosaic tiles, drawing every armed eye in the chamber toward the noise. In that sudden, frantic shift of attention, your hand darts across the carved mahogany table to close around a heavy ceremonial key of dull bronze, its teeth filed into the shape of a breaking wave. A Brineholder captain shouts an oath, but you are already backing toward the arched doorway, your fingers curled tightly around the cold metal keepsake that now binds the house's fortunes to your own.
+GRANT: ceremonial bronze wave-key
+EXIT 1: Slip through the sunlit archway
+@@END

@@ -1,0 +1,95 @@
+{
+ "batch": "ul-2-041",
+ "sections": {
+  "ul-2-041": {
+   "title": "The Ledger Span",
+   "text": "Heavy calfskin bindings groan beneath your boots, stitched together with waxed cord that hums with old legal disputes. Below this precarious suspension bridge, a chasm of shifting shadows exhales the cold scent of damp rag paper and oxidized copper ink. Every step sends a tremor through the woven spines of discarded ledgers, setting loose a flurry of marginal notes that drift upward like pale moths. You grip your lamp tighter as the vertical walls begin to slide against one another, narrowing the passage until the leather handrails writhe like live eels.\n\nThe oil in your reservoir sloshes against the tin, casting long, jittery shadows across the embossed titles of forgotten bankruptcies and royal decrees. There is no turning back toward the relative safety of the flooded ink-channels, for the shelves behind you have already retracted into the masonry.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Tread the groaning leather spine"
+   ]
+  },
+  "ul-2-042": {
+   "title": "The Spine Span",
+   "text": "Trembling bindings sway violently over a bottomless vertical shaft where thousands of loose-leaf papers rustle in the updraft. The air here tastes of iron filings and ancient parchment dust, thick enough to coat your teeth. Across the void, shadowy corridors branch away into the gloom, each promising a different route through the erratic heart of the Uncatalogued Stacks. Your lamp flame flickers low, starved of fresh oxygen by the deep stone vents.\n\nYou must choose your footing carefully before the vibration of the hanging bridge alerts whatever dwells in the hanging stacks above.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the narrow binding path",
+    "Climb toward the higher stacks",
+    "Glide across the rolling surface",
+    "Enter the carbon-smoked corridor"
+   ]
+  },
+  "ul-2-043": {
+   "title": "The Flawed Lashing",
+   "text": "Tucked behind a swinging stack of quarto volumes, the heavy hempen lashings holding the gantry slacken ominously under the weight of drifting iron shelves. You trace the fraying strands with cautious fingers, bypassing the treacherous span entirely by stepping onto a rigid bracket of old oak. Lodged between two chained ledgers lies an ivory bookmark, its surface cool to the touch and finely etched with wards that prickle against your skin with the faint taste of copper.\n\nSlip the engraved talisman into your coat pocket and leave the sagging timber behind.",
+   "check": "You spot a hidden structural flaw in the lashings and bypass the weakest section, securing an ivory bookmark engraved with secret wards.",
+   "grant": "ivory bookmark",
+   "exits": [
+    "Climb along the reinforced oak bracket"
+   ]
+  },
+  "ul-2-044": {
+   "title": "Reading the Stitches",
+   "text": "The suspension cords groan under a sudden gust of dry, paper-scented wind rising from the abyss below. You press yourself flat against the vertical stack-face, trying to calculate the exact tension required to cross the frayed gap without snapping the remaining threads. Your fingers trace the embossed lettering on a nearby spine, searching for the hidden structural pins that hold the entire hanging bridge in equilibrium.\n\n",
+   "check": "Test the tension by touch",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-045": {
+   "title": "A Slipping Grasp",
+   "text": "The leather loop gives way with a wet snap, dropping your lead boot into empty space and sending a shower of loose index cards into the dark. You catch yourself by the elbows against a jutting mahogany shelf, but the sudden jolt sends your tin oil flask clattering into the depths. A sharp splinter of dry oak pierces your left sleeve, leaving a shallow, burning scratch across your forearm. You haul yourself back onto solid timber, panting as the shelves grind shut behind you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push onward through the dust"
+   ]
+  },
+  "ul-2-046": {
+   "title": "The Secured Binding",
+   "text": "However narrowly you manage to keep your footing against the shifting architecture of the stacks, your quick fingers secure a tangible prize from the edge of the gap. The tension in the leather relaxes just enough for you to scramble onto safer timber, leaving the trembling chasm behind. Tucked securely into your palm is a small, heavy token that hums faintly against your skin whenever the library lamps flare.\n\n",
+   "check": "",
+   "grant": "An ivory ward-marked bookmark",
+   "exits": [
+    "Return to the trembling span"
+   ]
+  },
+  "ul-2-047": {
+   "title": "Tension in the Leather",
+   "text": "Suspended chains creak as you test the weight of the hanging leather footway, its thick hide stretched tight across a chasm of dark ink-water. By reading the subtle grain of the dried hide and the rhythmic tremor of the links, you adjust your pace and offer a quiet nod to a nervous wandering page crouched near the guide-rope. The stranger relaxes, sharing a dry crust of bread and a nod of mutual respect for your steady footwork over the abyss.\n\nLeave the cautious page to tend their lantern and press forward across the span.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Cross the hanging leather to safety"
+   ]
+  },
+  "ul-2-048": {
+   "title": "Measuring the Drift",
+   "text": "The entire row of shelves shudders sideways, threatening to pinch your shoulders between two heavy oak presses. You watch the rhythm of the swinging spines, trying to anticipate the exact moment the gap between the hanging walkways will briefly narrow. Your mind races through the cataloguing codes for structural movement while the floorboards beneath your boots tilt at an alarming angle.\n\n",
+   "check": "Time the shifting shelves",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-049": {
+   "title": "Caught in the Press",
+   "text": "The heavy oak shelves slam together a fraction too soon, catching the brim of your cap and tearing your canvas satchel at the seam. You wrench yourself free with a hard twist, leaving behind a valuable bundle of salvaged blank leaves crushed between the wooden blocks. The impact leaves your shoulder bruised and aching, throbbing in time with the low mechanical heartbeat echoing through the stone floor.\n\n",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl through the narrow gap"
+   ]
+  },
+  "ul-2-050": {
+   "title": "The Cleared Margin",
+   "text": "However narrowly you manage to slip through the grinding timber frames, your determination secures a safe passage into the adjacent alcove. The stranger in the ink-stained coat watches your escape with dry approval, tossing a small token across the widening gap before melting back into the shadows. You catch it cleanly in your palm, feeling the cold weight of a borrowed brass key designed to fit the subsidiary locks of the lower stacks.\n\n",
+   "check": "",
+   "grant": "A brass subsidiary key",
+   "exits": [
+    "Return to the central span"
+   ]
+  }
+ },
+ "missing": []
+}

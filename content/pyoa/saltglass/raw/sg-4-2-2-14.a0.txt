@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION sg-4-2-2-14
+TITLE: The Dust-Choked Ridge
+TEXT: Whipping gales of microscopic glass-dust scour your exposed skin, turning every breath into a fiery trial inside your aching lungs. Your banked coal-lantern sputters against the pressure, its tiny red eye threatening to die in the roaring murk. Deep within your tunic, the cold ceramic Seedkey hums with a stubborn frost that defies the howling heat of the storm. You must choose between weaving carefully through the jagged hazards ahead or making a desperate dash across the open dunes.
+EXIT 1: Thread through the sharp glass stakes
+EXIT 2: Surge toward the distant outer wall
+@@END
+@@SECTION sg-4-2-2-15
+TITLE: The Howling Barrier
+TEXT: Blinding clouds of powdered crystal obscure the horizon, reducing the ancient basin to a churning abyss of grey and white. Every muscle in your body screams under the ceaseless battering of the tempest, and your ember-lamp requires both hands to keep its precious spark from scattering into the wind. The ceramic key against your breastbone pulses with an icy dampness, reminding you of the distant Rain Vault waiting at the center of the ruins. You press forward into the roaring blindness, seeking any route that will carry you closer to safety.
+EXIT 1: Dash across the swelling salt-dune
+@@END
+@@SECTION sg-4-2-3-0
+TITLE: The Singing Spire
+TEXT: Wind-driven grit rattles against your leather coat as the metal vane overhead moans a high, haunting note into the gale. You cup trembling hands around your battered lamp, coaxing the dying coals back into a steady crimson glow. The cold ceramic key rests heavily against your ribs, vibrating in rhythm with the low drone of the storm-swept basin. Ahead, the tumult eases slightly into a heavier, rolling roar that shakes the very ground beneath your travel-worn boots.
+EXIT 1: Push past the buried brass gear
+@@END
+@@SECTION sg-4-2-3-1
+TITLE: The Charred Trail
+TEXT: Jagged splinters of violet glass crunch beneath your heavy boots as you follow the burnt wooden pegs left by someone who walked this desolate waste before you. The scouring wind tears at your cloak, testing your stamina and threatening to tear the precious lantern from your numb fingers. Deep beneath your damp tunic, the Seedkey maintains a chill so profound it numbs your skin. The trail dips lower into a shadowed trough where the screaming gale loses some of its immediate fury.
+EXIT 1: Follow the peg-marked trench onward
+@@END
+@@SECTION sg-4-2-3-2
+TITLE: The Crystal Hollow
+TEXT: Fine crystal meal fills every fold of your travel-worn garments while you pause to scrape encrusted salt from your burning eyelids. Your muscles ache with a profound weariness, yet the ember-lamp still holds its vital coal against the swirling dark. The ceramic key feels like a block of river-ice against your chest, anchoring you to your mission as the storm shrieks overhead. Several uncertain paths branch out into the roaring haze, each offering a different gamble against the elements.
+EXIT 1: Press past the half-swallowed gear
+EXIT 2: Step beneath the green bottle-glass arch
+EXIT 3: Striding toward the smooth white flagstones
+EXIT 4: Take the reckless way
+@@END
+@@SECTION sg-4-2-3-3
+TITLE: The Green Cataract
+TEXT: A frozen waterfall of pale green glass towers over you, offering a brief, silent lee against the screaming fury of the mirror storm. A lone scout named Garrow stands near the base, his face etched with salt-burns as he gestures toward a smoother trench cutting through the waste. Your tired body craves the shelter of the deeper passage, while your lamp burns low and steady in your aching grip. The cold ceramic key presses against your ribs like a silent promise of water and life.
+EXIT 1: Step out under the green arch
+EXIT 2: Head toward the quiet flagstone shadow
+@@END
+@@SECTION sg-4-2-3-4
+TITLE: The Mica Veil
+TEXT: Choking clouds of mica flakes blind your eyes and coat your tongue in dry dust as you stumble through the blinding squall. The Seedkey sends a damp, reviving chill through your burning breastbone, easing the fierce ache in your tired muscles. You shield your flickering coal-lantern with your body, determined to keep the tiny flame alive against the mounting gale. Several faint openings appear through the swirling grey, promising temporary relief from the punishing storm.
+EXIT 1: Make for the quiet white flagstones
+EXIT 2: Shake the dust in the slag-block ditch
+EXIT 3: Press your hand against the cold key
+@@END
+@@SECTION sg-4-2-3-5
+TITLE: The Stained Vault
+TEXT: Shards of colored glass crunch underfoot inside the ruined vault where you pause to clean your lamp-lens with a corner of your salt-stiffened cloak. The storm beats relentlessly against the broken arches above, filling the hollow space with a deep, vibrating roar. Your body feels hollow with exhaustion, yet the cold Seedkey against your chest reassures you that the journey is not yet lost. Two potential routes lead out into the scouring white waste, each demanding a firm decision.
+EXIT 1: Walk toward the white flagstone shadow
+EXIT 2: Feel the distant vibration near the wheel
+@@END
+@@SECTION sg-4-2-3-6
+TITLE: The Drainage Furrow
+TEXT: Crusted foam forms a jagged ridge above you as you slide down into a deep drainage furrow that mercifully spares your eyes from the stinging squall. Your weary limbs find a momentary respite from the heavy wind, though your heart still hammers a frantic rhythm against your ribs. The ember-lamp casts a weak, comforting glow against the damp earthen walls, and the heavy Seedkey remains cold and steady beneath your tunic. Ahead, the trench splits into different directions through the blinding murk.
+EXIT 1: Enter the ditch of fused slag-blocks
+EXIT 2: Answer the glasswright's flashing signal
+@@END
+@@SECTION sg-4-2-3-7
+TITLE: The Earthen Pipe
+TEXT: The storm whistles through the hollow earthenware pipe like a massive organ, filling your ears with a strange, mournful music. You sit cramped in the gloom, checking your meager fuel supply and coaxing the dwindling coals of your lamp back to life. Your tired muscles tremble with fatigue, but the icy touch of the Seedkey keeps your mind sharp and clear. Outside the pipe's narrow mouth, the whirling dust storm continues its relentless assault on the salt basin.
+EXIT 1: Step beneath the green bottle-glass arch
+EXIT 2: Venture into the fused slag-block ditch
+@@END

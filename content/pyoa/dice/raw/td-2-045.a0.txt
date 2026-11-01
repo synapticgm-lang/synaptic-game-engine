@@ -1,0 +1,63 @@
+Gemini said
+
+@@SECTION td-2-045
+TITLE: The Ribs of Goliath
+TEXT: Gray skies press down upon the exposed seabed like a wet wool blanket, smelling sharply of old decay and salt-crrusted mud. Ahead of you, the colossal carcass of a stranded leviathan looms against the horizon, its bleached ribs arching into the air like the vaulted nave of a drowned cathedral. Blackened blubber drips slowly from the jaw-bones, pooling into slick puddles that reflect the dull, sunless light. Scavengers scurry like beetles along the spine, dragging iron hooks and coiled hemp through the massive ribcage. Every step through the clinging ooze drags at your boots, reminding you that the open sea has vanished, leaving only this monument of flesh and bone to mark the passing of the deep. // You edge closer to the towering skeletal barrier, seeking passage through the heart of the beast where the noise of trade and haggling begins to swell over the silence of the Low.
+EXIT 1: Push into the roaring beast-market
+@@END
+@@SECTION td-2-046
+TITLE: The Leviathan Belly
+TEXT: Inside the colossal ribcage, a chaotic bazaar thrives amidst the drying sinew and grease-slicked ribs. Merchants shout over the din of clinking copper and rasping saws, hawking salted scraps of meat, rusted anchors, and cloudy glass vials of distilled brine. The air is thick with smoke from fat-lamps and the heavy stench of rendered oil that clings to the back of your throat. Every shadow holds a bargain or a blade, and the crowd presses close, eager to strip whatever value remains from the dead giant before the tide decides to return. You stand at a crossroads of bone and mire, weighing where your next desperate step must fall.
+EXIT 1: Hunt for fuel near the tallow-vats
+EXIT 2: Seek a map from the pawn-widow
+EXIT 3: Fix the broken water-still
+EXIT 4: Intervene against the aggressive thugs
+EXIT 5: Leave for the humming dunes
+@@END
+@@SECTION td-2-047
+TITLE: Smoke and Sinew
+TEXT: Shadows stretch long across the grease-soaked floor as you edge deeper into the cavernous ribcage, dodging carriers hauling heavy tubs of rendering fat. A sharp, feral snarl cuts through the hubbub from the darker recesses beneath a dropped shoulder-blade. There, a lean, salt-scabby hound with yellow eyes crouches over a thick, blood-matted slab of blubber, teeth bared in warning as you draw near. The beast blocks the narrow trail leading toward the outer rib-path, its muscles bunched and ready to spring if you show the slightest hesitation.
+EXIT 1: Advance on the snarling beast
+@@END
+@@SECTION td-2-048
+TITLE: The Snarling Guardian
+TEXT: Pacing slowly through the slick mire, you keep your eyes locked on the hound while your fingers curl around the haft of your heavy iron-shod oar. The creature drops its head low, saliva dripping from yellow fangs into the dark mud as it circles you with unsettling patience. Every movement inside the cavernous belly seems to hush, leaving only the wet sucking sound of paws and boots in the grease. You raise the oar like a barrier, waiting for the split second the animal launches its scarred frame at your throat.
+EXIT 1: Strike before the hound leaps
+@@END
+@@SECTION td-2-049
+TITLE: Bracing Against Jaws
+TEXT: You heave your weight forward, thrusting the heavy wooden oar straight at the lunging hound while the beast snaps viciously at your forearms. Claws rake across your leather jerkin, tearing thick hide as hot breath fogs the damp air between you. Straining every muscle in your back and shoulders, you fight to pin the snarling weight against a ribbed pillar of bone before its teeth find flesh.
+CHECK: Shove the snarling beast away
+@@END
+@@SECTION td-2-050
+TITLE: Torn Flesh and Mud
+TEXT: Teeth sink deep into your forearm before you can bring the heavy oar around, sending a white-hot flare of agony shooting up your shoulder. You lash out desperately with a booted heel, catching the creature squarely in the ribs and sending it howling away into the shadows of the rotting hull. The victory is yours, but your sleeve is soaked in dark blood, and a jagged tear in your skin throbs with the bitter sting of salt-rot.
+EXIT 1: Press onward through the ribs
+@@END
+@@SECTION td-2-051
+TITLE: Heavy-Earned Spoils
+TEXT: You wrench the thick slab of gray blubber free from the animal's grip, feeling the heavy lump of fat slide into your hempen sack. Though your knuckles are bruised and your breath comes in ragged gasps, the prize is secure, offering both valuable fuel for the long trek ahead and a hard-won proof of your resolve.
+GRANT: Slab of rendered blubber
+EXIT 1: Leave for the humming dunes
+@@END
+@@SECTION td-2-052
+TITLE: The Widow's Stall
+TEXT: Curtains of dried shark-skin rattle in the drafty gloom of a pelvic arch where a hunched pawn-widow presides over piles of tarnished brass and salt-flecked parchment. Her clouded eyes track your approach with practiced suspicion while bony fingers tap rhythmically against a counter made of a sawed-off jawbone. You need her hand-drawn map of the singing dunes if you want to cross the shifting salt-flats without getting swallowed by a dry-sinkhole, but she deals exclusively in rare leverage or hard coin.
+EXIT 1: Begin the dangerous negotiation
+@@END
+@@SECTION td-2-053
+TITLE: Weighing Every Word
+TEXT: You meet the widow's cold, calculating stare without flinching, laying a polished brass sextant frame onto the bone counter as your opening bid. She tilts her head, her breath smelling of stale kelp and dried mint, while she weighs the metal in a palm scarred by fishhooks. Any sign of desperation in your voice will double her price or send her reaching for the copper-bladed knife tucked beneath her greasy shawl.
+CHECK: Outwit the suspicious pawn-widow
+@@END
+@@SECTION td-2-054
+TITLE: A Bitter Exchange
+TEXT: Your voice wavers slightly as she dismisses your first offer with a raspy laugh, forcing you to surrender not only the brass frame but also a length of precious copper wire just to seal the trade. The widow snatches the items away with lightning speed, shoving a rolled scrap of greasy vellum into your chest with a mocking grin. Your supplies are lighter and your pride stings from the poor bargain, but the map is finally in your grip.
+EXIT 1: Return to the noisy market bustle
+@@END
+@@SECTION td-2-055
+TITLE: The Scavenger's Ledger
+TEXT: You hold your ground with an unblinking gaze, matching her silence until she grunts in reluctant respect and shoves a rolled, wax-sealed vellum across the bone counter. The trade costs you a heavy piece of salvaged gear, however narrowly, but the detailed sketch of safe paths across the vibrating flats rests safely in your palm.
+GRANT: Map of the singing dunes
+EXIT 1: Return to the noisy market bustle
+@@END

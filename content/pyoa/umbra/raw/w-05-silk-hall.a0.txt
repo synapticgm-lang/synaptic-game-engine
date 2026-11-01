@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-w-silk-hall | cabal=known
+Listening to his honeyed complaints about the foundry's aggression, bile rises in your throat; you have seen the vault's counter-ledgers, and his looping, elegant penmanship perfectly matches the syndicate's private ink. The bloody war between the great houses is an utter sham.
+@@END
+@@INSERT up-w-silk-hall | faceKnown=yes
+He does not bother asking your name, thanks to the Archbishop's almoner fleeing the scene with a perfect mental sketch of your features. The silk lord's agents already know exactly who they have cornered in this plush, gilded trap.
+@@END
+@@INSERT up-w-foundry-gate | rigg=allied
+Your earlier decision to accept her heavy iron token guarantees a momentary truce, staying the heavy cudgels of her enforcers at the perimeter. She expects absolute loyalty for that privilege, tapping her soot-stained fingers impatiently against the desk.
+@@END
+@@INSERT up-w-foundry-gate | cabal=known
+Despite her loud curses directed at the silk estates, the counter-ledgers you uncovered prove this fierce rivalry is merely profitable theatre. You recognise the precise handwriting on her gaol lists as the exact same ink flow used in Lord Valerius's private correspondences.
+@@END
+@@INSERT up-w-foundry-gate | faceKnown=yes
+Pinned to a nearby support pillar is a fresh charcoal sketch of your unmasked face, painstakingly detailed by the terrified almoner. Matron Rigg smirks at the drawing, entirely aware she holds the most hunted night-crow in Veridia.
+@@END
+@@INSERT up-w-eclipse-approach | valerius=allied
+Clutching the silk lord's heavy signet gives you safe passage past his patrolling bravos, who merely nod as the shadows swallow the streets. Valerius's private enforcers are turning a blind eye to your movements, letting the panicking city watch stumble aimlessly.
+@@END
+
+Would you like me to write inserts for the remaining choice permutations across these pages, or focus on a different set of scenes?

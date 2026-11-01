@@ -1,0 +1,55 @@
+@@SECTION vh-4-1-4-6
+TITLE: The Humming Bronze
+TEXT: Frantic rhythm pounds against your exhausted ribs as the internal bronze hum of the Clapper vibrates directly against your spine. Every step across the tilting ladder rungs makes the heavy metal sing a low, warning note that matches your racing pulse. Ice crystals gather on your collar while the wind drives a bitter spray from the glacier depths below. // Between the howling gusts, you must decide whether to lean into the gale and push forward across the exposed span or pause to secure the swaying pack before the cold locks your joints entirely.
+EXIT 1: Step carefully across the swaying span
+EXIT 2: Pause to check the heavy pack
+@@END
+@@SECTION vh-4-1-4-7
+TITLE: Swallowed by the Fog
+TEXT: Thick banks of freezing fog roll relentlessly up from the lower valleys, swallowing the weathered trail markers and plunging the entire ladderway into absolute white. You can no longer see the anchor posts or the edge of the abyss, relying entirely on the taut hemp guideline vibrating beneath your gloved fingers. Biscuit stumbles behind you, blowing warm, anxious clouds into the frozen air as the visibility drops to zero. // The world has shrunk to the immediate length of your rope and the heavy weight of Orison's tongue pressing against your shoulders. You need to choose your next footing carefully before the whiteout completely erases the path.
+EXIT 1: Follow the vibrating guide-rope onward
+@@END
+@@SECTION vh-4-1-5-0
+TITLE: Tethering the Mule
+TEXT: Iron rings bite into the frozen granite as you lash Biscuit's lead-rope securely, anchoring the stubborn mule while the rising whiteout swallows the last visible marker posts of the upper route. The wind shrieks through the icy gap, tearing at your woollen hood and coating your eyelashes in instant frost. Biscuit stamps a hoof against the blue ice, her ears pinned back against the gale. // You stand alone at the precipice of the moving glacier, facing a blinding expanse of white where the trail vanishes into the mist.
+EXIT 1: Press on into the blinding white
+@@END
+@@SECTION vh-4-1-5-1
+TITLE: Howling Vacuum
+TEXT: Blinding white fog slams into the cliff-face like a physical wall, instantly obliterating the rope-bridge rails and leaving you stranded in a howling vacuum. Your breath freezes in white plumes before your face as you grope blindly for anything solid to steady your balance. The Clapper hums a dull, stubborn note against your back, cutting through the roar of the wind. // With the path ahead completely swallowed by the storm, standing still means freezing to the stone, while moving forward means stepping blindly into the white void.
+EXIT 1: Press on through the freezing fog
+@@END
+@@SECTION vh-4-1-5-2
+TITLE: Numbed to Bone
+TEXT: Frozen hemp guidelines cut into your palms as you tighten your grip, the whiteout turning the entire world into featureless milk and numbing your fingers straight through to the bone. Every breath tastes of iron and sharp frost. The heavy bronze tongue shifts in its padded cradle, throwing your center of gravity toward the dizzying drop of the crevasse. // You must keep moving before the biting cold seizes your limbs completely and turns you into another permanent fixture of the glacier stairs.
+EXIT 1: Press on despite the biting cold
+@@END
+@@SECTION vh-4-1-5-3
+TITLE: Jaws of the Storm
+TEXT: White jaws of the storm close around the ladderway, demanding that you hold the guide-line with every ounce of remaining strength or cast off your heavy pack just to survive. Ice rime cakes your woolen coat, turning your garments into stiff armor that restricts your breathing. Biscuit lets out a distressed bray that is instantly shredded by the gale-force winds whipping across the crevasse. // The choice is stark and immediate as the ice groans beneath your boots.
+EXIT 1: Press on while holding the line
+@@END
+@@SECTION vh-d-4-1
+TITLE: The Blue Abyss
+TEXT: Desperate to outrun the freezing gale, you unclip your safety tether and bolt blindly across the trembling ice-bridge, your boots sliding out from under you on a slick tongue of hidden rime. The heavy bronze Clapper tears the padded cradle from your shoulders, spinning away into the hazy blue depths like a falling star. You plunge headlong after it into the silent, yawning abyss, swallowed entirely by the glacier's cold white throat.
+@@END
+@@SECTION vh-4-c2
+TITLE: The Whiteout Choice
+TEXT: Freezing winds howl across the swaying rope-bridge, turning the glacier into a swirling desert of blinding white where earth and sky dissolve into one terrifying void. Your fingers are nearly black with cold, and the sheer weight of the bronze Clapper threatens to pitch you backward into the abyss at any second. Biscuit plants her hooves stubbornly against the icy deck, trembling with exhaustion as the gale hammers your flanks. // You cannot stay here without freezing to the stone, and you cannot carry both yourself and the full burden forward without paying a terrible price to the mountain.
+EXIT 1: Hold the line through the whiteout with your own hands
+EXIT 2: Cut Biscuit's lead and save yourself
+@@END
+@@SECTION vh-4-2-0-0
+TITLE: Shattered Ice Shelf
+TEXT: Frost coats your eyelashes on the shattered ice shelf as you drag the humming bronze clapper past a yawning blue crevasse, your bare fingers stuck fast to the hemp line until you rip them free with a sharp gasp. The wind drops to a low, whining moan, leaving the crisp air sparkling with diamond dust kicked up from the glacier's slow march. Every muscle in your back aches with a deep, frozen fatigue. // Ahead, the path splits around a towering blue serac where the glint of distant cable-work catches the pale mountain light.
+EXIT 1: Seek shelter beneath the overhanging ice
+EXIT 2: Fight your way across the buried ladder
+EXIT 3: Balance across the narrow ice-bridge
+@@END
+@@SECTION vh-4-2-0-1
+TITLE: Sliding Firn
+TEXT: Biscuit digs her iron hooves into the sliding firn while the gale tries to strip the heavy woollen cradle from your frozen back. Without the mule to share the burden of the pace, the climb feels steeper and the air thinner, yet you move with a lighter, unhindered agility across the fractured rungs. The bronze Clapper hums a steady, rhythmic beat against your shoulder-blades, keeping time with your rapid stride. // The trail narrows sharply as it approaches a jagged corner of dark granite where the wind funnels through with renewed fury.
+EXIT 1: Pay the toll at the narrow cornice
+EXIT 2: Squeeze through the tight blue ice-tunnel
+EXIT 3: Chip a fresh path up the vertical wall
+@@END

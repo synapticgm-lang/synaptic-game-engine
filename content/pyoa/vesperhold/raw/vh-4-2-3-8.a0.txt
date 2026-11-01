@@ -1,0 +1,63 @@
+@@SECTION vh-4-2-3-8
+TITLE: The Icy Col
+TEXT: Heavy canvas straps bite into your aching shoulders as you hoist the padded cradle higher, shifting your weight against the biting mountain gale. The gradient steepens sharply toward the narrow notch of the final icy col, where blue-tinted ice meets the grey glare of the high sky. Biscuit plants her hooves stubbornly in the crust, blowing a plume of warm steam into the freezing air while the bronze clapper hums a low, sympathetic vibration against your spine. // Every breath burns your chest, yet the summit of this frozen pass lies only a short, punishing scramble away. You must decide whether to press onward with the stubborn mule, seek guidance from the border watchers, or retrace your steps away from the gathering storm.
+EXIT 1: Rest the mule and unbuckle the heavy cradle
+EXIT 2: Seek the fog-warden by the stone marker
+EXIT 3: Turn back through the narrow ice-tunnel
+@@END
+@@SECTION vh-4-2-3-9
+TITLE: Whispers in the Rock
+TEXT: High-pitched whistling notes carry across the steep gorge, echoing the traditional signals of the terrace millers as they manage their distant wind-engines. Matching your breath to the pattern, you catch the secret rhythm of the notes and find a hidden, sheltered path weaving through the solid rock ribs of the cliff. The biting wind drops instantly behind the natural stone bulwarks, sparing you and Biscuit the worst of the frozen onslaught. // The narrow passage offers several distinct directions away from the heights, each carrying the faint scent of damp earth or distant woodsmoke. You can continue down the steep track, look for the local warden, seek the lower orchards, or retrace your steps toward the upper ledges.
+EXIT 1: Marvel at the glacier ladders from the ledge
+EXIT 2: Meet the lone warden by the boundary marker
+EXIT 3: Descend toward the mist-shrouded orchard valley
+EXIT 4: Turn back along the narrow cornice trail
+@@END
+@@SECTION vh-4-2-3-10
+TITLE: The Bronze Resonance
+TEXT: A sudden, deep tremor ripples upward through the glacier ice, vibrating sharply through your iron-spiked boots and setting the heavy bronze clapper into a sustained, low-pitched hum. The sound fills your skull and numbs your teeth, carrying the ancient memory of Vesperhold's high belfry over the silent white expanse. Biscuit tosses her grey head uneasily as the ice settles beneath her hooves, small powdery avalanches hissing down the distant crevasses. // The ringing fades slowly into the thin air, leaving you standing at a crucial junction where the path divides ahead of the final descent. You can tend to your frozen fingers before moving on, or step directly onto the muddy track leading away from the glacier's reach.
+EXIT 1: Massage the numbness from your frost-nipped fingers
+EXIT 2: Step past the stone threshold onto the muddy path
+@@END
+@@SECTION vh-4-2-3-11
+TITLE: The Wire Bridge
+TEXT: You guide the stubborn mule step by careful step across a trembling bridge constructed from braided iron wire and frozen larch timber. Below your boots, a grey abyss opens where glacial meltwater roars unseen beneath thick green ice. Biscuit's iron shoes click sharply against the frozen wood, and every sway of the suspension cables sends a sympathetic shiver through the heavy metal clapper strapped to your back. // Reaching the far side safely brings you to a quiet stone platform overlooking the descending slopes. A lonely figure waits near the boundary marker, while the path beyond offers a chance to recover your warmth.
+EXIT 1: Approach the lone fog-warden by the stone marker
+EXIT 2: Pause to warm your frost-nipped fingers in the shelter
+@@END
+@@SECTION vh-4-2-3-12
+TITLE: The Hanging Crevasse
+TEXT: A patch of rotten firn collapses suddenly beneath your leading foot with a hollow, echoing crunch, leaving you dangling by your taut safety line over empty, blue-shadowed space. Your heart leaps into your throat as loose ice tinkles down into the unseen depths below. Scrambling desperately against the slick vertical wall, you haul your weight back onto firm ice while Biscuit braces the tension from above with steady, stubborn grace. // The immediate danger passes, leaving you breathless on solid ground with two distinct ways open before you. One route leads down toward the damp, apple-scented breeze of the lower valleys, while the other crosses the stony threshold away from the glacier entirely.
+EXIT 1: Follow the apple-scented breeze toward the orchards
+EXIT 2: Step past the stone threshold onto the lower path
+@@END
+@@SECTION vh-4-2-3-13
+TITLE: The Lower Winch
+TEXT: You pause beside the heavy timber housing of the lower glacier winch, trading a mouthful of melted snow from your skin flask with a weary rope-tender named Miri. Her fingers are thick with grease and hemp-tar, and she nods respectfully at the padded cradle on your back before testing the tension of the steel cables humming in the wind. The air here feels slightly less brittle, carrying the first faint hints of mud and vegetation from the world below. // The winch platform provides a secure resting place before the final descent into the valley fog. From here, the path slopes gently downward toward the mist-shrouded orchards where the air grows mild.
+EXIT 1: Descend toward the mist-shrouded orchard valley
+@@END
+@@SECTION vh-4-2-3-14
+TITLE: The Great Silence
+TEXT: The howling gale drops away in a single breath, leaving an absolute and ringing silence over the vast, jagged expanse of white ice. The sudden quiet feels heavier than the wind, broken only by the rhythmic puff of Biscuit's breath and the faint, residual hum of the bronze clapper against your shoulders. All around you, the mountain peaks stand like silent sentinels under a pale, cloudless sky. // The stillness offers a rare moment of clarity as you survey the winding descent ahead. You can massage your stiff fingers, step out onto the lower path, or choose to turn back toward the upper heights.
+EXIT 1: Massage the numbness from your frost-nipped fingers
+EXIT 2: Step past the stone threshold onto the muddy path
+EXIT 3: Turn back through the narrow ice-tunnel
+@@END
+@@SECTION vh-4-2-3-15
+TITLE: The Glacier Tongue
+TEXT: You haul yourself over the final rounded lip of the glacier tongue, leaving the freezing labyrinth of aluminum ladders and crevasse bridges behind. The ice here is dirty and grey, scored by ancient rock streams and streaked with wind-blown moraine dust. Biscuit shakes the remaining rime from her grey ears with a vigorous shudder, clearly relieved to feel solid earth beneath her hooves at last. // The frozen grip of the upper mountain finally releases you to the lower slopes. A clear stone threshold marks the beginning of the muddy track leading down into the misty world below.
+EXIT 1: Step past the stone threshold onto the lower path
+@@END
+@@SECTION vh-4-2-4-0
+TITLE: The Terminal Moraine
+TEXT: You stumble out onto the frozen, rocky expanse of the terminal moraine at the foot of the glacier, where the air grows noticeably heavier and less brittle in your lungs. The towering white wall of ice looms behind you like a receding frozen wave, while the ground shifts from blue-veined sheets to tumbled grey scree and damp earth. Biscuit picks her way cautiously among the boulders, her iron shoes clacking against stones freed from the retreating ice after centuries of sleep. // Several distinct tracks branch out across the moraine toward the lower altitudes. You can lead the mule down the winding stone track, listen for the distant warden bells, or plunge directly into the wet canopy of the fogbank orchards.
+EXIT 1: Lead the mule down the winding stone track
+EXIT 2: Follow the dull toll of the distant warden bell
+EXIT 3: Enter the wet canopy of the fogbank orchards
+@@END
+@@SECTION vh-4-2-4-1
+TITLE: The Weathered Signpost
+TEXT: A weathered timber signpost, crusted in grey lichen and frozen deep into the terminal moraine, points down toward the distant, fog-choked canopy of the orchard valleys. Its carved arrows are worn smooth by decades of wind-blown sleet, but the downward direction remains unmistakable. The heavy bronze clapper shifts comfortably in its padded cradle as you pause to catch your breath and check the straps. // The path splits here among the tumbled grey boulders of the moraine. You can choose to lead the mule down the winding stone track or follow the dull toll of the fog-warden's bell from below.
+EXIT 1: Lead the mule down the winding stone track
+EXIT 2: Follow the dull toll of the distant warden bell
+@@END

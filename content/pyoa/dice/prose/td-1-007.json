@@ -1,0 +1,117 @@
+{
+ "batch": "td-1-007",
+ "sections": {
+  "td-1-007": {
+   "title": "Splintered Ribs of Wood",
+   "text": "Salt cakes thick upon the hemp ropes as you grip the pulley, hauling your weight against the dry frame of the pier. Below, the skiff hangs suspended in the salt-blistered air, its hull scarred by a hundred bruising encounters with the reef. You need to drop it gently onto the cracked mud of the Low without snapping the remaining ribs.\n\nReaching into your coat, you draw a length of oiled leather twine and loop it through the tackle to slow the sudden, grinding descent. You must guide the vessel down inch by inch while the dry wind howls through the empty pilings of Gullmouth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Lower the skiff to the mud"
+   ]
+  },
+  "td-1-008": {
+   "title": "The Rigging Holds",
+   "text": "Heavy hemp groans beneath the strain as the wooden hull swings slightly in the coastal draft, settling closer to the grey, exposed silt of the seabed. Your fingers work swiftly through the complex knots of the tackle, adjusting the tension before the whole weight can slip and shatter against a protruding piling.\n\nA bundle of salt-cured rations rests on the thwart inside the boat, wrapped in grease-stained canvas and smelling faintly of old brine. You secure the line to an iron bollard on the dock, preparing to descend into the hull and claim your provisions.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step down into the vessel"
+   ]
+  },
+  "td-1-009": {
+   "title": "Tying the Fraying Line",
+   "text": "Ropes dry out and turn brittle when the sea abandons its shore for three long days, and the tackle you hold is no exception. With the skiff dangling precariously above the hardened mud, you must whip the frayed strands together with swift, precise knots before the whole rig snaps under the sudden weight. A single clumsy twist will send the vessel crashing down into the rocks below, ruining your only means of crossing the Low.\n\nDrawing a length of spare twine from your pocket, you steady your breathing against the biting wind and begin to wrap the core.",
+   "check": "Mend the fraying tackle",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-010": {
+   "title": "Snap of the Hemp",
+   "text": "Sudden friction betrays your hurried fingers, and the hemp rope parting with a sharp crack sends the skiff plunging sideways into the dry timbers of the pier. Splintered wood explodes outward, spraying shards across the mud and tearing a jagged gash in your shoulder as you dive out of the path of the falling wreckage.\n\nYou pull yourself up from the grey silt, brushing salt from the raw, bleeding wound while your precious rations scatter into the dust. The mishap costs you both time and skin, leaving you poorer by a bundle of provisions and nursing a fresh, stinging wound.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the ruined gear"
+   ]
+  },
+  "td-1-011": {
+   "title": "Rigging the Dry Pier",
+   "text": "Splintered pine groans under your weight as you brace against the hull of the hanging skiff, sweating despite the bitter salt chill off the empty seabed. By lashing a spare winch-cable through a rusted block and tackle, you manage to swing the heavy craft clear of the rotting timber supports without snapping the brittle stays. A canvas grease-sack tucked beneath the floorboards yields three thick slabs of salt-cured cod and a half-skin of foul-tasting vinegar water.\n\nHauling the prize onto the gravel embankment, you catch the eye of a passing net-mender who nods slowly at your handiwork, leaving behind a small bone needle tucked into a crack in the quay as an unspoken token of professional respect.",
+   "check": "",
+   "grant": "salt-cured cod rations",
+   "exits": [
+    "Drag the skiff down toward the muddy harbour"
+   ]
+  },
+  "td-1-012": {
+   "title": "Iron Against Timber",
+   "text": "Rust has welded the heavy iron anchor to the rotting boards of the bait-shack porch, sealing the door shut against anyone seeking shelter or hidden gear. You plant your boots against the warped threshold and reach for the cold metal ring, bracing your legs for a hard heave. Gullmouth remains quiet around you, save for the distant shouting of rival crews arguing over stranded lobster pots down on the flats.\n\nDust flakes off the iron in orange scales as you put your back into the lift, straining to break the decades-old corrosion.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the rusted door open"
+   ]
+  },
+  "td-1-013": {
+   "title": "Heaving the Anchor",
+   "text": "The heavy iron fluke is wedged deep into the swollen timber of the shack's threshold, locked fast by layers of dried salt and ancient rust. You plant your boots firmly against the splintered floorboards, grip the cold metal ring with both hands, and lean your entire weight into the lift to wrench the obstacle free. Every muscle in your back strains against the stubborn mass as you prepare to break its grip on the door.",
+   "check": "Dislodge the heavy anchor",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-014": {
+   "title": "Strain and Slip",
+   "text": "Your boots slide on a patch of encrusted salt just as you heave, throwing your weight forward against the jagged iron fluke instead of lifting it. A sharp wrench tears through your lower back, dropping you to your knees in the grit with a breathless gasp.\n\nBy the time you manage to kick the heavy anchor aside, the door is open, but the exertion has left you bruised and aching. The delay costs you precious daylight, and the lantern inside the shack proves to be cracked and dry of oil.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Limp into the dusty shack"
+   ]
+  },
+  "td-1-015": {
+   "title": "Threshold Cleared",
+   "text": "Metal screams against dry wood as the heavy anchor finally tears free from the swollen boards, tumbling off the porch and sinking deep into the grey mud below. You kick the warped door inward, sending a cloud of ancient dust billowing out into the salt-laden air of the cliff-town.\n\nOn a low bench just inside the threshold sits a heavy brass-hooded lantern, its glass intact and its reservoir still half-full of clean whale oil. You pick it up, testing its weight, and slip it onto your belt as a reliable companion for the dark miles ahead.",
+   "check": "",
+   "grant": "Whale-oil brass lantern",
+   "exits": [
+    "Return to the bustling harbour"
+   ]
+  },
+  "td-1-016": {
+   "title": "The Ferryman of the Mud",
+   "text": "Stagnant river-stench rises from the gray silt where the ferryman rests his bottom on the thwart, his long ash pole jammed uselessly deep into the dry riverbed like a dead tree. He refuses to meet your gaze, counting greasy copper coins over and over in his cracked palm while muttering complaints about the lack of current and the insolence of eels. You lean your forearm against his gunwale, matching his stubborn silence until the rhythmic clicking of his copper tokens finally stumbles and stops.\n\nWithout a word, he slides a stiff sheet of beaten copper across the damp bench, its surface etched with the treacherous maze of sinkholes that now scar the upper seabed.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the etched copper down the slope"
+   ]
+  },
+  "td-1-017": {
+   "title": "Tracing the Drowned Channels",
+   "text": "Cold brine flakes off the copper sheet as your thumb traces the jagged scratches marking where the old harbor channel used to run before the sea withdrew. Every line represents a fathom of treacherous mud where the silt crusts over deep brine-pits waiting to swallow an unwary scavenger whole. You fold the heavy metal sheet into your coat pocket, feeling its sharp corner press against your ribs with every stride you take toward the drop-off.\n\nDown below, the vast gray expanse of the Low stretches toward the horizon under a pale, greasy sky, littered with the black ribs of stranded brigs and forgotten wharves.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend the cliff path toward the open seabed"
+   ]
+  },
+  "td-1-018": {
+   "title": "Meeting the Ferryman's Gaze",
+   "text": "The ferryman is an old fixture of Gullmouth who has ferried the dead and the desperate across the channel for forty years, and he knows how to break a younger wrecker's nerve with a single flat stare. He demands twice your remaining coin for a scrap of paper showing where the sinkholes hide beneath the salt-crust of the Low.\n\nYou stand your ground on the dry mud beside his stranded boat, locking your eyes onto his without flinching, refusing to show the desperation gnawing at your ribs.",
+   "check": "Outstare the stubborn ferryman",
+   "grant": "",
+   "exits": []
+  },
+  "td-1-019": {
+   "title": "The Price of Mud",
+   "text": "The ferryman does not blink as he names a price that leaves your pockets stinging with loss and your skin crawling with salt-rash. When you finally snatch the rusted copper map from his grease-stained palm, a jagged edge of the metal slices deep into the meat of your thumb, drawing thick, dark blood that immediately crusts over with grey rime. The delay has cost you half your morning and a good portion of your remaining water skin, leaving your throat dry and your temper short as the salt-stiffened mud sucks at your boots.",
+   "check": "",
+   "grant": "a rusted map of the sinkholes",
+   "exits": [
+    "Climb back up to the cliff-top"
+   ]
+  }
+ },
+ "missing": []
+}

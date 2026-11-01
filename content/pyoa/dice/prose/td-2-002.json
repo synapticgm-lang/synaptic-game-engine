@@ -1,0 +1,96 @@
+{
+ "batch": "td-2-002",
+ "sections": {
+  "td-2-002": {
+   "title": "The Albatross Ribs",
+   "text": "Iron ribs arch over the silt like the skeleton of some drowned beast, shielding the lee of the merchant hull from the scouring brine-wind. Scavengers huddle near rusted windlasses, whispering of fresh water springs beneath the seabed and sharpening rusted blades against the salt-crust. Every shadow cast by the listing bulwarks hides a rival crew or a watcher from the Brineholders.\n\nBetween the cracked strakes and rusted anchor chains, narrow gaps invite you deeper into the wreck's dry belly, or outward toward the open salt-flats where the horizon shimmers under the leaden sky.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip through the splintered timber gap",
+    "Climb the rusted starboard deck",
+    "Watch rival crews from hiding",
+    "Navigate the treacherous cargo hold",
+    "Cross the quaking seabed flats"
+   ]
+  },
+  "td-2-003": {
+   "title": "Waterlogged Ledger",
+   "text": "Thick parchment swollen with salt sticks together like salted hides, demanding careful fingers to pry each page apart without tearing the ink. Heavy beams groan overhead in the wind, threatening to drop tons of rotten oak onto your stooped shoulders while you peer into the gloom. By the faint grey light filtering through a fractured scuttle, strange symbols emerge from the damp pulp. You trace a faded diagram pointing toward the captain's private chart chest tucked beneath the flooring.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry open the hidden floor panel"
+   ]
+  },
+  "td-2-004": {
+   "title": "The Captains Ledger",
+   "text": "Rotting oak groans beneath your boots as you pry open the captain's seaman chest, its salt-crust flaking away to reveal a ledger swollen with dark ink. Every line of crabbed handwriting hides a secret coordinate, but the rusted deck-beams overhead sag dangerously with the weight of collapsed bulkheads. You trace the damp pages for the hidden cache while a sudden shift in the timbers warns that the entire ceiling is about to come down upon your head.",
+   "check": "Pry the silver compass from the rotting deck",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-005": {
+   "title": "A Heavy Cost",
+   "text": "Timbers splinter violently beneath your boots as the floor drops away, plunging you knee-deep into jagged debris and tearing a deep, bleeding gash across your shin. You haul yourself free from the settling wreckage with aching muscles, gasping for breath in the salt-choked air while precious supplies spill into the dark mud below. The wound burns fiercely, a stark reminder of the seabed's hidden teeth, but you keep moving before the rest of the hull collapses.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the wreckage behind limping"
+   ]
+  },
+  "td-2-006": {
+   "title": "The Silver Compass",
+   "text": "Dust settles around the shattered timbers as your fingers close securely around the cold metal casing nestled in the velvet lining. A delicate glass face reveals a needle spinning wildly over a rusted dial, refusing to point north in a world where the sea has vanished. You slip the heavy keepsake into your coat pocket, feeling its reassuring weight against your ribs as you step back out into the open air.",
+   "check": "",
+   "grant": "heavy silver compass",
+   "exits": [
+    "Advance toward the distant dunes"
+   ]
+  },
+  "td-2-007": {
+   "title": "Cargo Hold Glyphs",
+   "text": "Heavy cedar crates stamped with the seal of the Brineholders fill the dark lower deck, their iron bands furred with green corrosion. Strange symbols are carved into the timber lids, warning of volatile compounds or cursed contraband meant for the wealthy enclaves. You kneel in the damp gloom, turning a tallow candle over in your fingers to inspect the wax seals before touching the latch.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the sealed cargo boxes"
+   ]
+  },
+  "td-2-008": {
+   "title": "The Iron Sealing",
+   "text": "Thick wax flakes away under your thumbnail to reveal heavy iron latches forged in the shape of coiling sea-serpents. A faint hiss escapes from the seam as fresh air hits the interior, releasing the sharp scent of damp wool and old spices. You slide the heavy bolts back one by one, mindful of any hidden triggers or poisoned needles left behind by cautious merchants.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Unlatch the heavy iron lid"
+   ]
+  },
+  "td-2-009": {
+   "title": "The Serpent Latch",
+   "text": "Cold metal resists your fingers as you turn the ornate serpent clasp, feeling a slight spring tension beneath the rusted iron plate. One wrong twitch could snap a concealed copper wire and trigger whatever mechanical trap the old merchants rigged to guard their wares. You steady your breathing in the silent hull, testing the resistance of the bolt against the palm of your hand.",
+   "check": "Disarm the rusted cargo latch",
+   "grant": "",
+   "exits": []
+  },
+  "td-2-010": {
+   "title": "Snapped Wire",
+   "text": "A sharp click echoes through the dark hold a fraction too late, and a heavy iron spring lashes out across your knuckles, drawing a sharp line of blood. You jerk your hand back with a sharp intake of breath, clutching your throbbing wrist while your precious tallow candle tumbles into the dark silt and extinguishes. The trap is sprung, leaving you to finish unsealing the crate by the dim grey light of the bulkhead gap.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Recover in the dark hold"
+   ]
+  },
+  "td-2-011": {
+   "title": "Waterproof Matches",
+   "text": "Smooth wooden sticks tipped with dark sulfur emerge from the wax-sealed tin, completely untouched by the damp salt air that rots everything else on the Low. You slide the snug lid back into place, pocketing the dry treasures alongside your remaining gear with a quiet sigh of relief. Every scrap of dry tinder is worth its weight in silver out here on the barren seabed.",
+   "check": "",
+   "grant": "tin of dry matches",
+   "exits": [
+    "Press onward across the mud"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,60 @@
+Gemini said
+
+@@SECTION sg-1-1-4-2
+TITLE: Striking the Flint
+TEXT: Darkness pools in the hollows of the rim road while a sharp draft carries the alkaline sting of the dry basin. Cold fingers fumble with the tin tinder-box, scraping flint against iron to coax a stubborn spark from the charred cloth within. Each tiny flash illuminates the frosted salt crust underfoot and the heavy ceramic Seedkey pressing cold against your ribs. // Before the ember catches or dies in the wind, a decision must be made regarding the lantern's glow and the long miles ahead.
+EXIT 1: Open the draft vent wide
+EXIT 2: Slide the heavy shutter closed
+EXIT 3: Press on into the starlight
+@@END
+@@SECTION sg-1-1-4-3
+TITLE: Pell's Sharp Warning
+TEXT: Metal clinks against metal as Pell taps a gloved knuckle sharply against the iron casing of your lantern. The glass-diver leans in close, smelling faintly of brine and sun-bleached rope, muttering that every lit coal on the crust acts as a beacon for wandering well-thieves and mirror-sentries alike. The warning hangs heavy in the settling frost while the vast white expanse waits silently beyond the ridge. // You eye the glowing seam of the lantern and weigh the risk of visibility against the encroaching night.
+EXIT 1: Slide the iron shutter closed
+EXIT 2: March out with grey smoke
+@@END
+@@SECTION sg-1-1-4-4
+TITLE: Wings Over Salt
+TEXT: Sudden thrumming breaks the stillness as a flock of startled sand-grouse erupts from a dry gully, their pale wings beating against the heavy evening air. Long violet shadows stretch quickly across the blinding white salt, swallowing the last bruised traces of sunset behind the western hills. The sudden movement leaves the stony track unnaturally quiet, save for the crunch of your heavy boots on the crust. // Standing amid the fading light, you must choose how to manage your flame before complete darkness falls.
+EXIT 1: Strike a sulphur match
+EXIT 2: March out into the starlight
+@@END
+@@SECTION sg-1-1-4-5
+TITLE: The Crossroads Dust
+TEXT: Loose gravel shifts beneath your soles where the worn cart-track finally dissolves into the trackless, glittering pan of the great basin. Your thumb tests the sharp edge of your flint and steel, ensuring the striker is ready for whatever the salt wastes might demand. A low whistling wind carries the distant scent of ancient dust across the flat horizon. // With the civilized road behind you, a choice of how to carry your light into the wilderness must be made.
+EXIT 1: Slide the heavy shutter closed
+EXIT 2: Strike a sulphur match to wake the tin
+@@END
+@@SECTION sg-1-1-4-6
+TITLE: Amber on the Rim
+TEXT: Far across the pale curvature of the basin, a sharp amber blink stabs through the gathering dusk like a needle of fire. Pell points a weather-roughened finger toward the distant horizon, noting that the Glasswrights are swapping their high night-watches upon the spires of Prism. The signal flashes twice more before dissolving back into the purple haze of the upper ridges. // You adjust the leather strap of your pack and decide how to proceed with the journey.
+EXIT 1: Wake the tin lantern with a match
+EXIT 2: Press the iron damper shut
+@@END
+@@SECTION sg-1-1-4-7
+TITLE: The Edge of Night
+TEXT: Earth and salt drop away into an absolute hush as the winding track terminates abruptly at the lip of the great white pan. Night does not creep here; it rushes down from the jagged hills in one stroke, leaving no room for twilight or hesitation. The air turns instantly crisp and biting, smelling of ancient mineral beds and frozen dew. // Facing the vast, dark emptiness ahead, you consider the best way to handle your lamp.
+EXIT 1: Bank the coals into a dark secret
+EXIT 2: March out with only thin smoke
+@@END
+@@SECTION sg-1-1-5-0
+TITLE: The Ruby Glow
+TEXT: Iron screeches softly as you spin the draft-vent wide open against the biting chill of the plateau. A brilliant ruby-red glare spills from the coal-pan, casting long dancing shadows across the weathered timber walls of the Last Lamp-Stall and warming your numbed fingers. The sudden brightness feels defiant against the encroaching dark of the basin. // With your lantern blazing brightly, the path forward calls for immediate action.
+EXIT 1: Press on across the salt
+@@END
+@@SECTION sg-1-1-5-1
+TITLE: The Smoldering Secret
+TEXT: Heavy iron slides home with a dull metallic thud beside the weathered tethering-post of the Last Lamp-Stall. You bank the glowing coals into a dark, smoky secret, trapping the heat within thick plates so no wandering sentry on the ridges can spot your passing. The surrounding night closes in thick and black, demanding absolute reliance on memory and touch. // Enveloped in shadows with only a wisp of grey exhaust, you prepare to move out.
+EXIT 1: Press on into the dark
+@@END
+@@SECTION sg-1-1-5-2
+TITLE: The Sulphur Match
+TEXT: Thick aromas of roasting barley and mutton-tallow hang heavy in the air around the Last Lamp-Stall as you scratch a sulphur match against the rough wood. A sharp, chemical hiss flares into a bright yellow flame, which you promptly feed to the wick and tin burner of your traveling lamp. The metal vessel warms reassuringly in your palms as the yellow glow cuts through the yard-dust. // With the lantern fully awake, you ready yourself to leave the safety of the stalls.
+EXIT 1: Press on toward the basin
+@@END
+@@SECTION sg-1-1-5-3
+TITLE: The Iron Damper
+TEXT: Rough timber beams of the Last Lamp-Stall creak overhead as you press the heavy iron damper firmly shut with your thumb. Only a thin, escaping wisp of grey smoke betrays the banked heat within the metal casing as you step boldly out into the freezing starlight. The vast, salt-crystalled plain stretches endlessly before you, silent and waiting. // Leaving the warmth of the outpost behind, you weigh whether to continue forward or retrace your steps.
+EXIT 1: Press on into the starlight
+EXIT 2: Turn back toward the shelter
+@@END

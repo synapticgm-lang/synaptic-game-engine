@@ -1,0 +1,95 @@
+{
+ "batch": "td-4-045",
+ "sections": {
+  "td-4-045": {
+   "title": "Song from the Pit",
+   "text": "Cold water drips from the moss-choked vault above, carrying the faint, metallic tang of deep rust and old salt. Rising from the spiralling abyss beneath your boots comes a thin, reedy vibration that sets your teeth on edge. It is a chord of many voices, harmonising in a language spoken only by things that have forgotten the sky. Pale shapes detach themselves from the weeping stonework, their waterlogged garments heavy with silt and clinging weed. These are the ones who never left, guarding the descent with mouths open in perpetual, silent song.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Descend into the echoing lower tiers"
+   ]
+  },
+  "td-4-046": {
+   "title": "The Whispering Tiers",
+   "text": "Gloom wraps tightly around the stone steps as the vanguard of the Hollow Choir forms a shifting wall of damp wool and bloated flesh. Their endless chant reverberates within your skull, threatening to dissolve every coherent thought into a wash of brine and sorrow. Below them, the spiral staircase plunges deeper into the roaring dark toward the great mechanism. You can force a brutal path through their ranks by sheer muscle, or attempt to outwit their hypnotic cadence with a clever distraction. The chorus waits, swaying in unison with the nonexistent tides.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force a passage through the choristers",
+    "Distract the singing assembly with noise",
+    "Endure the piercing gaze without flinching",
+    "Slip past into the outer workings"
+   ]
+  },
+  "td-4-047": {
+   "title": "Torn Silver",
+   "text": "Salt-rimed fingers graze your collar, cold as winter weed, but you twist away with a sharp heave of breath. Snagging a heavy fold of damp fabric, you wrench the figure forward into the dim light. A tarnished silver pendant hangs from its swollen neck, catching the faint phosphorescence of the damp walls. Tugging hard against the unyielding chain, you snap the metal links with a dry crack that echoes against the vaulted masonry. The chorister emits a low, wet sigh that smells of stagnant harbour mud.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb higher among the weeping stones"
+   ]
+  },
+  "td-4-048": {
+   "title": "Breaking the Grip",
+   "text": "Heavy, waterlogged arms close around your chest like bands of wet iron, dragging you backward into the crushing press of the assembly. You plant your boots firmly against the slick flagstones, gathering every ounce of strain in your muscles to shatter their collective hold. Bracing your shoulder against the nearest bloated chest, you prepare to hurl your entire weight forward against the tide of bodies.",
+   "check": "Wrench free from the grasping choir",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-049": {
+   "title": "Dragged to the Silt",
+   "text": "The collective weight proves too great, dragging your boots out from under you as you crash hard against the mossy stones. Choking spray fills your lungs, and a jagged edge of masonry tears a deep, burning gash across your forearm. You kick out wildly, catching a pale jaw with your heel, and scramble back to your feet while the choir regains its rhythm. The struggle costs you precious breath and leaves a stinging red reminder of the depths.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreated to the upper landing"
+   ]
+  },
+  "td-4-050": {
+   "title": "A Token of Resistance",
+   "text": "Breaking free from the clutching hands with a final, desperate heave, you stagger forward onto drier stone, breathing raggedly. Clutched tightly in your fist is a heavy pewter crucifix torn from the vestments of the lead chorister, cold and slick with river slime. The haunting melody fades slightly into the background damp, leaving your ears ringing with a dry, pulsing silence. You pocket the heavy trinket as proof of your passage through the lower gloom.",
+   "check": "",
+   "grant": "Heavy pewter crucifix",
+   "exits": [
+    "Return to the upper tier landing"
+   ]
+  },
+  "td-4-051": {
+   "title": "Scrap Metal Harmony",
+   "text": "Shivering in the damp draft, you pull loose pieces of rusted iron and discarded bell-metal from your pack, wiring them together with stiff copper wire. Striking the makeshift contraption against the stone wall produces a jagged, discordant screech that cuts right through the mournful harmony of the choir. The waterlogged priests hesitate, their voices faltering as the harsh metallic clatter scrambles their overlapping tones. In the sudden confusion, a small clay flask of clear anointing oil rolls across the flags toward your boots.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step past the hesitant assembly"
+   ]
+  },
+  "td-4-052": {
+   "title": "Tuning the Discord",
+   "text": "Quick fingers bend the jagged scrap metal into alignment, testing the tension of the wire with frantic precision as the choir's chant swells back toward a crescendo. You raise the crude instrument into the draft, waiting for the exact moment when the acoustic resonance of the stairwell will amplify the false note. A single false turn of the wire will blend your noise into their song instead of shattering it.",
+   "check": "Construct a disruptive scrap noisemaker",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-053": {
+   "title": "False Notes",
+   "text": "The wire slips from your numb fingers with a sharp ping, tangling hopelessly just as the choir unleashes a wave of resonant sound. The sudden feedback strikes your eardrums like a physical blow, sending you stumbling against the damp wall with a bruised shoulder and a ringing head. Splinters of rusted iron scatter across the flagstones, lost in the murky water pooling at the edge of the stair. You bite back a curse and push onward through the lingering echoes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Recover your wits on the landing"
+   ]
+  },
+  "td-4-054": {
+   "title": "The Oil Flask",
+   "text": "The makeshift contraption holds together just long enough to emit a piercing, rhythmic screech that breaks the hypnotic spell of the singing dead. They recoil into the shadows, hissing like trapped eels as you step cleanly past their ragged circle into the clearer air below. Resting in the recess where they stood is a small, sealed vial of clear anointing oil left by some forgotten pilgrim. You pocket the glass container before the choir can resume its dismal tune.",
+   "check": "",
+   "grant": "Vial of sacred oil",
+   "exits": [
+    "Return to the stair junction"
+   ]
+  }
+ },
+ "missing": []
+}

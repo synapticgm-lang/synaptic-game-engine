@@ -1,0 +1,6 @@
+@@SECTION cf-1-026
+TITLE: The Draft-Pump Repair
+TEXT: Working the seized brass valve with a slender pin and your knuckles black with graphite, you coax the stubborn draught-pump back into rhythmic life with a dry, satisfying chuff that draws a nod from the tavern keeper. He heaves a heavy sack of graded coal-nuggets across the scarred boards to reward your grease-stained labor, muttering that a good draft keeps the ale-smoke out of his eyes and the hearth honest. // Pocketing a grease-paper parcel of tallow-bread he slips you alongside the fuel, you feel the weight of a reliable debt settled in soot and warmth.
+GRANT: sack of coal-nuggets
+EXIT 1: Inspect the turnout switches blocked by the clerk
+@@END

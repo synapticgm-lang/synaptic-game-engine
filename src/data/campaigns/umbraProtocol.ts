@@ -10,7 +10,7 @@ export const umbraProtocol: CampaignBible = {
   archetype: 'custom_world',
   engineMode: 'pyoa',
   difficulty: 'Standard',
-  genreTag: 'Rooftop assassin',
+  genreTag: 'Gamebook · pick',
   ageRating: 16,
   tagline: 'To kill a king, you only need a blade; to kill an empire, you need the names of its architects.',
   shortDescription:

@@ -1,0 +1,6 @@
+@@SECTION cf-5-120
+TITLE: The Drainage Culvert
+TEXT: Choking soot fills the narrow iron-ribbed culvert as you force your way forward on hands and knees, every breath scraping your throat like dry pumice. Maintaining your composure against the rising panic of the dark, your fingers brush against a rough wooden crate wedged deep beneath the masonry. You pry the lid open to find a hidden cache of thick tallow candles, smelling faintly of rendered mutton and dry cellar dust. // Shoving a pair of the candles into your canvas jacket, you press on through the gloom toward the faint grey glimmer of light at the far end of the pipe.
+CHECK: Maintain your composure against the soot
+EXIT 1: Crawl through to the outlet below the tracks
+@@END

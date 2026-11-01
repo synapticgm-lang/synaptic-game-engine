@@ -1,0 +1,96 @@
+{
+ "batch": "cf-2-007",
+ "sections": {
+  "cf-2-007": {
+   "title": "Smoke and Spittle",
+   "text": "Tobacco ash drifts from the corner of a ruined mail-van where an old ganger sits wheezing into a greasy woollen muffler, telling the same endless story of the Long Fire that scorched the steppes to grey gravel. His rheumy eyes fix upon your soot-stained collar while he recounts how the rails warped like ribbons in the heat, demanding an answer to every rambling complaint about lost wages and broken signals.\n\nPatience wears thin as his phlegmy cough drags on, yet beneath the drone of his grievances lies a sharp, urgent warning about shifted rails hidden under the upcoming ash-dunes.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Nod slowly and step away"
+   ]
+  },
+  "cf-2-008": {
+   "title": "The Long Listener",
+   "text": "Heavy silence settles over the rusted floorboards as the old man pauses, waiting to see if your strained grin will crack into open fury under the weight of his endless, pointless recollections. Every muscle in your jaw tightens against the stinging smell of cheap tobacco and stale sweat while you force your breathing to slow, nodding through another meandering anecdote about the vanished days of the Ashgate run.\n\nThe seconds stretch like hot wire, testing whether your boiling temper will spill over and ruin the chance to extract that vital warning about the track ahead.",
+   "check": "Swallow your anger and listen",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-009": {
+   "title": "A Bitter Price",
+   "text": "Harsh words slip past your teeth before you can catch them, cutting off the old ganger's rambling tale with a sharp, stinging rebuke about his useless memory and idle complaints. He falls silent at once, spitting dark juice onto the floorboards and nursing a sudden grudge that costs you precious minutes of time you can ill afford to lose while the engine idles outside.\n\nYou leave his carriage with a hot flush of shame burning your neck and a lingering debt of bad blood heavy on your shoulders as you climb back down to the line.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb back to the footplate"
+   ]
+  },
+  "cf-2-010": {
+   "title": "The Greasy Warning",
+   "text": "Controlled breathing keeps your face stone-steady through the final, rambling stretches of his story until he finally leans forward and taps a grime-blackened finger against your palm, murmuring a precise description of where the ballast gave way under the third mileage post. You tuck the valuable tip away in your mind, knowing exactly which stretch of track to ease the throttle over before the wheels can drop into a hidden sink.\n\nHowever narrowly you managed to keep your tongue, the secret proves its worth as you step back out into the cold steppe air.",
+   "check": "",
+   "grant": "Shifted-rail warning secret",
+   "exits": [
+    "Walk back to the engine"
+   ]
+  },
+  "cf-2-011": {
+   "title": "The Rusted Locker",
+   "text": "Heavy shadows pool beneath the bench of the abandoned tool-shed where a iron locker sits sealed shut by decades of orange rust and stubborn neglect, hiding its contents from prying eyes. Kneeling on the grit-strewn floor, you wedge your fingers into the pitted seam, working the stubborn metal back and forth until the rusted latch finally gives way with a sharp, protesting screech.\n\nInside lies a heavy, soot-blackened wrenching-bar forged of cold-hammered steel, perfectly shaped to fit the stubborn bolts of the tender hatch.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Grab the heavy iron bar"
+   ]
+  },
+  "cf-2-012": {
+   "title": "The Jammed Seam",
+   "text": "Corroded iron bites into your palms as you wrench the heavy steel bar into the narrow gap of the locker door, throwing your weight against the leverage while trying not to scrape the metal loud enough to draw the gangers from the nearby depot. The rusted hinge groans under the sudden strain, trembling on the verge of snapping clear or locking solid in a twist of jagged shrapnel.\n\nEvery nerve sings with tension as you hold the balance between a clean break and a noisy disaster that will bring boots running across the cinders.",
+   "check": "Pry the locker open quietly",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-013": {
+   "title": "A Heavy Cost",
+   "text": "Metal screams in the stillness as the rusted hinge suddenly shears off at an angle, catching your knuckles against the sharp edge of the frame and drawing a bright line of blood across your skin. The noise echoes too loudly across the silent yard, costing you valuable time as you freeze in place, waiting to see if the nearby gangers heard the clatter.\n\nYou nurse your scraped hand with a grimace, leaving a smear of red across the iron as you snatch the tool and retreat into the grey gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat into the shadows"
+   ]
+  },
+  "cf-2-014": {
+   "title": "The Clean Pry",
+   "text": "Steel slips smoothly into the rusted groove, and with one fluid, quiet heave, the stubborn door swings back without a single echo carrying across the yard to betray your presence among the ruins. You reach inside and lift out the heavy tool, testing its solid balance against your palm with quiet satisfaction.\n\nHowever narrowly you avoided a noisy slip, the heavy wrenching-bar is yours now, fitting the tender hatch bolts as if it were cast for them.",
+   "check": "",
+   "grant": "Heavy steel wrenching-bar",
+   "exits": [
+    "Head toward the dead saloon"
+   ]
+  },
+  "cf-2-015": {
+   "title": "The Hungry Firebox",
+   "text": "A sudden drop in steam pressure drains the life from the gauges as the Marrowbone shudders violently on the uneven ballast, threatening to stall right here in the open grey wastes. You swing the heavy iron fire-door wide, letting a blast of searing heat wash over your face as you heave damp sulfur-coal into the roaring belly of the firebox with frantic, practiced strokes.\n\nSparks dance in the gloom while the needle on the copper dial crawls slowly back toward the working mark, and the engine settles into a steady, throbbing rhythm once more, ready to roll on into the haze.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Check the steam gauges"
+   ]
+  },
+  "cf-2-016": {
+   "title": "The Sulphur Sinks",
+   "text": "Bubbling yellow pools hiss beside the tracks, steaming with acrid fumes that coat your teeth in bitter mineral dust and turn the low sky the color of old brass. The iron road forks and frays across this steaming waste, offering a choice of ruined paths where the air tastes of sulfur and ancient steam.\n\nStalled carriages loom through the vapors like ribs of leviathans, and every direction holds its own hazard and reward for a guard with a key to carry.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick the path of the sputtering valve",
+    "Choose the route of the shifting ballast",
+    "Take the track past the scavenging trader",
+    "Follow the line of the subterranean vents",
+    "Watch the storm clock on the backhead"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,92 @@
+{
+ "batch": "cf-4-142",
+ "sections": {
+  "cf-4-142": {
+   "title": "The Grease-Gun Lever",
+   "text": "Heavy drops of black oil bead along the cold basalt ribs of the tunnel, smelling faintly of stale tallow and old coal-gas. You wedge the thick timber post back into its dry stone socket, using every ounce of leverage the iron bar affords against the stubborn ground. Grime cakes your palms as the wood groans, settling into alignment with a dull, echoing thud that rattles through the sleepers. A brass grease-gun hangs from a rusted peg nearby, dripping amber fluid into the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the narrow maintenance drift"
+   ]
+  },
+  "cf-4-143": {
+   "title": "Slipping the Fastening",
+   "text": "Shadows stretch long and crooked across the tunnel floor as your lantern flame flickers against a damp draft from the ventilation shafts. You secure the brass grease-gun to your belt loop, its brass barrel cold against your hip, while your fingers test the stability of the braced timber. The silence here is heavy, broken only by the distant, rhythmic dripping of subterranean water somewhere beyond the partition walls.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance along the timber-shored siding"
+   ]
+  },
+  "cf-4-144": {
+   "title": "Strain Against the Oak",
+   "text": "A sudden lateral shift in the tunnel wall sends a cascade of loose shale rattling down across the tracks, threatening to jam the entire frame. You brace your boots against the rotting sleeper-ends, throw your shoulder against the warped timber post, and heave with all your might to force the jammed joint home before the masonry buckles entirely.",
+   "check": "Shove the warped timber post home",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-145": {
+   "title": "The Cost of the Shift",
+   "text": "The timber gives way with a vicious snap, catching your forearm a sharp blow that leaves a purple welt beneath your soot-stained sleeve. Loose ash and sharp fragments of stone shower over your shoulders, filling your collar and grinding painfully against your skin. You stumble backward onto the ballasted gravel, coughing violently as the dust settles, poorer by a wrench slipped from your pocket and lost forever in the dark ballast.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and press onward"
+   ]
+  },
+  "cf-4-146": {
+   "title": "The Signalman's Token",
+   "text": "However narrowly you manage the struggle, the warped timber finally slides into its iron seat with a resonant ring that quiets the shifting earth. A small figure in a braided cap steps from the murky alcove, pressing a cold, grease-stained brass token into your palm without a word of greeting. It is an old signalman's pass, notched with the private sigil of the night-shift crews, offering an unspoken berth among the ghostly watchers of the line whenever the final siding is reached.",
+   "check": "",
+   "grant": "A signalman's notched brass token",
+   "exits": [
+    "Walk toward the circular chamber ahead"
+   ]
+  },
+  "cf-4-147": {
+   "title": "The Wicket Gate",
+   "text": "Rusted wire mesh rattles within its iron frame as you square your shoulders before the small barrier blocking the side-passage. The air tastes sharply of old paper and dry vinegar, remnants of some forgotten dispatch office long abandoned by the company clerks. You adjust the heavy brass-bound ledger tucked beneath your arm, keeping your footing secure upon the greasy ties.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Strike the wicket frame with your shoulder"
+   ]
+  },
+  "cf-4-148": {
+   "title": "Beyond the Broken Latch",
+   "text": "Dust billows up in a thick yellow cloud as the iron latch shatters under your impact, showering the ballast with flakes of rusted paint. You step through the splintered opening into a narrow office lit only by the amber glow of your hand-lamp. Stacks of yellowed waybills and unread manifests carpet the floor like autumn leaves, whispering dryly beneath your heavy boots.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the paper-strewn track toward the keep"
+   ]
+  },
+  "cf-4-149": {
+   "title": "Breaching the Barrier",
+   "text": "Splintering wood groans under the sudden, brutal impact of your charge, but the stubborn iron latch holds fast against the first blow, biting deep into your shoulder. You pull back for a second, harder rush, tightening your grip on the leather spine of the clerk's ledger tucked securely at your side while the tunnel walls seem to lean inward.",
+   "check": "Smash through the stubborn wicket gate",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-150": {
+   "title": "The Ledger's Cost",
+   "text": "The heavy oak of the wicket gate splinters into your shoulder with a dry, vicious crack that leaves your left arm hanging numb and useless in your greasy coat sleeve. You stumble through the dust into the cramped clerk's booth, clutching the brass-bound ledger to your ribs while a sharp, stinging pain flares across your collarbone where a rusted hinge bit deep through wool and skin. Every breath smells of stale mutton-tallow and damp coal-dust, and the storm clock outside ticks with an unhurried malice that reminds you how much precious time has bled into the floorboards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Scramble through the records room with your aching shoulder"
+   ]
+  },
+  "cf-4-151": {
+   "title": "The Ledger's Secret",
+   "text": "However narrowly you manage the breach, the small gate swings wide to reveal the vaulted corridor leading straight to the heart of the subterranean domain. Tucked safely inside the heavy leather cover of the clerk's ledger is a handwritten margin note detailing the secret release mechanism of the inner freight doors, signed with the initials of a clerk who vanished decades ago.",
+   "check": "",
+   "grant": "A margin note on secret door releases",
+   "exits": [
+    "Approach the massive oak doors of the keep"
+   ]
+  }
+ },
+ "missing": []
+}

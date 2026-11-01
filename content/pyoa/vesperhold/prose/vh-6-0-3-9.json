@@ -1,0 +1,87 @@
+{
+ "batch": "vh-6-0-3-9",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-0-3-9": {
+   "title": "The Shrine Alcove",
+   "text": "Damp stones weep moisture against your shoulder inside the candle-lit alcove where a pilgrim named Vesper presses a dried mountain iris into a crack in the masonry for safe travel. The delicate purple petals smell of high altitude and old snow, contrasting sharply with the thick smell of coal-smoke drifting up from the lower foundries. Biscuit shakes his harness bells outside, the light bronze clatter echoing against the wet slate. You adjust the heavy padded cradle holding the great Clapper on your back, feeling its faint, steady hum vibrate through your spine like a distant heartbeat.",
+   "exits": [
+    "Step past the pilgrim toward the lower courtyard",
+    "Follow the narrow brick path down toward the ventilation shaft",
+    "Take the slippery stone steps toward the drainage trench"
+   ]
+  },
+  "vh-6-0-3-10": {
+   "title": "The Tannery Lane",
+   "text": "Thick yellow salt cakes the stiff, heavy pelts of ox hides lining the muddy lane behind the tanneries, where a hide-salter named Cadan scrapes crusts of brine with a dull iron blade. The air is heavy with the pungent tang of tanning liquor and wet leather, making the cold mountain wind taste thick and salt-laden. Your boots sink deep into the slush as Biscuit tests the footing with a cautious hoof, his ears flicking at the rhythmic scraping sound. You shift the burden of the Clapper on your back, keeping the canvas dry against the swirling mist.",
+   "exits": [
+    "Pick your way past the pelts toward the smoke-vent",
+    "Turn down the alleyway toward the flooded trench"
+   ]
+  },
+  "vh-6-0-3-11": {
+   "title": "The Timber-Yard Crane",
+   "text": "Creaking timbers groan overhead as a loader named Tavis heaves soggy pine logs into a towering stack beside the timber-yard crane. Water streams from the bark, pooling in the black mud around your boots while the heavy iron chain of the winch swings slowly in the damp draft. Biscuit lowers his head against the moisture, blowing a wet breath through his nostrils that mists in the chill air. The heavy metal tongue resting in your back cradle hums a low, persistent note that seems to match the deep thrum of the river below.",
+   "exits": [
+    "Walk across the timber yard toward the lower courtyard",
+    "Head down the lane toward the smoking ventilation shaft"
+   ]
+  },
+  "vh-6-0-3-12": {
+   "title": "The Smiths' Alley",
+   "text": "Blackened stones radiate a meager, damp warmth inside the narrow alley where an apprentice named Bram frantically fans a dying charcoal brazier with a cracked leather paddle. Orange sparks rise sluggishly into the fog before dying out against the wet brick walls. Biscuit shifts his weight on the cobblestones, rattling his pack-frames while you steady the heavy cradle containing the humming Clapper. The sharp smell of sulfur and wet coke clings to your wool coat, chilling you to the bone despite the proximity of the coals.",
+   "exits": [
+    "Leave the flickering brazier for the courtyard ahead",
+    "Follow the alley toward the pumping station"
+   ]
+  },
+  "vh-6-0-4-0": {
+   "title": "The Founders' Courtyard",
+   "text": "Empty tin bins clatter slightly in the draft of the shadowed courtyard where a bell-founders' guild master named Morzan stares down into his empty ledger with a furious scowl. The surrounding workshop doors stand half-open, revealing cold hearths and silent benches where desperate artisans huddle in the gloom. Biscuit stamps a hoof against the flagstones, breaking the tense silence of the square. You stand before the master with the heavy Clapper secured to your spine, its faint bronze thrum vibrating against your tired muscles.",
+   "exits": [
+    "Approach the primary casting pit to present your metal"
+   ]
+  },
+  "vh-6-0-4-1": {
+   "title": "The Casting Shed",
+   "text": "Flakes of gray slag hiss as a journeyman named Cael scrapes them from the rim of a cold, soot-blackened crucible under the leaking iron roof of the casting shed. Rainwater drips steadily through rusted joints, pooling on the cracked concrete floor where discarded molds lie broken in the shadows. The massive weight of the Clapper pulls at your shoulders, its low, comforting hum offering a stark contrast to the dreary silence of the workshop.",
+   "exits": [
+    "Approach the master at the primary casting pit",
+    "Seek out the exhausted forge-master by the iron crane",
+    "Speak with the scarred master beside the grand hearth"
+   ]
+  },
+  "vh-6-0-4-2": {
+   "title": "The Grand Furnace Pit",
+   "text": "Gray ash billows in a sluggish cloud as an old caster named Tormund stirs the cooling embers of the deep furnace pit with a long iron poker. The brickwork radiates a dry, exhausted heat that barely warms the damp chill creeping in from the river-gates. Biscuit lets out a low, weary snort, echoing the heavy metallic sighs of the cooling machinery around you. You balance the weight of the Clapper on your back, feeling its familiar, steady pulse thrum against your shoulder blades.",
+   "exits": [
+    "Approach the primary casting pit with your burden",
+    "Walk over to the main furnace crane for inspection"
+   ]
+  },
+  "vh-6-0-4-3": {
+   "title": "The Mixing Floor",
+   "text": "Empty bronze scales swing idly in the damp draft near the cracked stone wall of the mixing floor, where a weigh-master named Sula taps her metal stylus against an unwritten tally board. The silence of the vast chamber is broken only by the steady drip of condensation falling from the overhead roof trusses. You pause near the entrance, letting Biscuit catch his breath while the Clapper hums softly against your padded leather frame.",
+   "exits": [
+    "Step forward to present your bell-metal at the pit",
+    "Make your way toward the main furnace crane"
+   ]
+  },
+  "vh-6-0-4-4": {
+   "title": "The Forge-Masters' Office",
+   "text": "Yellow candlelight flickers over stacks of unpaid municipal warrants across the soot-stained desk where a clerk named Orin runs a ink-stained finger down a long column of debts. Outside the narrow window, the murky river laps against the stone pilings of the foundry quarter in a monotonous rhythm. You adjust the heavy cradle on your back, feeling the bronze tongue hum against the quiet tension of the room.",
+   "exits": [
+    "Step past the desk toward the inner vestibule"
+   ]
+  },
+  "vh-6-0-4-5": {
+   "title": "The Cool-Room Doors",
+   "text": "Heavy iron bolts secure the frost-rimmed doors of the cool-room, where an apprentice named Jory stands guard over the final remaining scrap of precious bell-metal. His breath fogs in the freezing air spilling from the unheated storage chamber, smelling faintly of old oil and oxidized copper. Biscuit paws impatiently at the frozen puddles on the flagstones, his harness jingling softly in the dim corridor. You steady the heavy Clapper on your back, its quiet hum offering a steady rhythm against the biting cold.",
+   "exits": [
+    "Present your cracked bell-metal at the casting pit",
+    "Enter the soot-choked vestibule to face the clerk"
+   ]
+  }
+ },
+ "missing": []
+}

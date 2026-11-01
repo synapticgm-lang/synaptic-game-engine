@@ -1,0 +1,14 @@
+Gemini said
+
+@@SECTION td-4-070
+TITLE: The Blind Eel's Pearl
+TEXT: Shafts of cold green light filter through the salt-crrusted ironwork as you step carefully across the turning brass axle, ignoring the wet snapping of blind eels striking blindly at your boots. By keeping your breathing shallow and your stance low, you reach into the slime-lined cavity of a dormant valve and pluck out a large, heavy pearl veined with streaks of oil. The smooth, cold sphere pulses faintly against your palm, carrying the trapped chill of a forgotten ocean depth.
+GRANT: oiled sea pearl
+EXIT 1: Climb back to the central junction
+@@END
+@@SECTION td-4-075
+TITLE: The Skeleton's Tuning Fork
+TEXT: Metal shudders beneath your fingers as you drop over the open edge of the walkway, dangling by one elbow above the black abyss of the shaft. You swing slightly to catch the harness of a long-dead mechanic slumped against a brass beam, holding your breath against the foul stench of stagnant copper. With careful, trembling fingers, you slip a heavy iron tuning fork from his stiff leather belt just before the entire bracket groans and slips further into the dark.
+GRANT: rusted iron tuning fork
+EXIT 1: Pull yourself back to safety
+@@END

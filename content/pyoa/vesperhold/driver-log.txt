@@ -1,0 +1,26 @@
+2026-10-28T20:45:32.580Z driver start pick vesperhold
+2026-10-28T20:45:32.588Z step outline
+2026-10-28T20:55:57.076Z step prose
+2026-10-28T21:55:49.773Z refill round: 3 batches had missing sections
+2026-10-28T21:58:50.010Z step merge
+sections 1000, with prose 995, states 81855, endings 20/20 reachable
+flags set: mule=biscuit,alone; rope=guild,own; oath=sworn,free; debt=owed,clear; rumor=true,false; calls=y,n; bell=wrapped,bare; scar=y
+flags read: mule=biscuit,alone; rope=guild,own; debt=clear,owed; oath=sworn; calls=y; rumor=false,true; scar=y; bell=bare,wrapped
+ERRORS 0
+WARNINGS 2
+  W vh-6-1-1-2: meta wording
+  W title "The Ninety Steps" x4
+2026-10-28T21:58:52.076Z lint exit 0
+2026-10-29T05:57:29.334Z driver start pick vesperhold
+2026-10-29T05:57:29.337Z step outline
+2026-10-29T05:57:29.666Z step prose
+2026-10-29T05:57:29.950Z step fill
+2026-10-29T05:58:37.532Z step merge
+sections 1000, with prose 1000, states 81855, endings 20/20 reachable
+flags set: mule=biscuit,alone; rope=guild,own; oath=sworn,free; debt=owed,clear; rumor=true,false; calls=y,n; bell=wrapped,bare; scar=y
+flags read: mule=biscuit,alone; rope=guild,own; debt=clear,owed; oath=sworn; calls=y; rumor=false,true; scar=y; bell=bare,wrapped
+ERRORS 0
+WARNINGS 2
+  W vh-6-1-1-2: meta wording
+  W title "The Ninety Steps" x4
+2026-10-29T05:58:38.131Z lint exit 0

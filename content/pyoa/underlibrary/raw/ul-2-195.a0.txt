@@ -1,0 +1,54 @@
+@@SECTION ul-2-195
+TITLE: The Swaying Mahogany Beam
+TEXT: Heavy iron chains groan overhead as another towering stack drifts past through the pale, lamp-lit mist. Dust motes dance in the amber glow of your oil lantern while your boots find steady purchase upon a slick expanse of oak flooring. Somewhere down in the hidden depths below, an ink-river laps rhythmically against the stone foundations of the Unfiled Wing. You adjust the heavy strap of your leather satchel and eye the widening gap where the next shelf ought to drift.
+EXIT 1: Step across the drifting gap
+@@SECTION ul-2-196
+TITLE: Beyond the Ink River
+TEXT: Thick vapors curl upward from the black, slow-moving channel of discarded ink that separates the upper and lower tiers. Shelves shift with a low, mechanical grinding sound, exposing vertical rows of leather-bound volumes whose spines whisper forgotten titles into the damp air. You test the stability of a protruding mahogany molding, feeling the timber shudder gently under your weight as the entire architectural assembly settles into a new alignment.
+EXIT 1: Climb toward the higher ledge
+@@SECTION ul-2-197
+TITLE: Leaping the Chasm
+TEXT: A sudden lateral shudder rolls through the suspended bookcases, widening the chasm before you into an abyss of pale white fog. Without a moment for hesitation, you gather your muscles, crouch low against the splintered grain of the oak planking, and launch yourself outward into the swirling drafts above the emptiness.
+CHECK: Leap across the swirling mist
+@@SECTION ul-2-198
+TITLE: The Bitter Fall
+TEXT: Gravity proves too swift for your frantic scramble as your fingers brush the opposite molding and slip on the dust-slicked lacquer. You drop hard against a lower crossbeam, bruising your ribs against protruding brass brackets and dropping your spare flask of lamp-oil into the pale haze below. Stifling a sharp groan, you haul yourself onto firm timber, left with a dull ache in your side and a torn sleeve.
+EXIT 1: Pick yourself up and press onward
+@@SECTION ul-2-199
+TITLE: The Rung of Safety
+TEXT: Your fingertips catch the polished mahogany edge with desperate precision, hauling you over the threshold just as the two shelves grind together in a thunderous metallic sigh. A length of woven cord sags from a brass ring overhead, dangling a sturdy hand-knotted climbing aid right into your palm.
+GRANT: silk rope-ladder with wooden rungs
+EXIT 1: Climb upward into the archives
+@@SECTION ul-2-200
+TITLE: Down the Iron Pipe
+TEXT: A rusted vertical conduit descends steeply through the heart of the shifting stacks, vibrating with the muffled hum of distant cataloguing machinery. You wrap your leather-gloved hands around the cold iron tube, testing its rigid support against the surrounding chaos of drifting bookcases and whispered margins. The air smells sharply of machine grease and oxidized brass.
+EXIT 1: Slide down the metal conduit
+@@SECTION ul-2-201
+TITLE: Descending into the Drafts
+TEXT: Friction burns through your thick gloves as you plunge downward along the vertical iron tube, plunging straight into a dense bank of grey mist that obscures the lower levels. The conduit begins to rattle violently in its mounts, threatening to tear free from the masonry behind the stacks just as you near the bottom.
+CHECK: Slide down the iron conduit
+@@SECTION ul-2-202
+TITLE: Scraped and Stranded
+TEXT: The mounting bracket shears away from the wall with a deafening screech, spilling you sideways into a disorderly drift of misfiled folios. You land heavily on your shoulder, tearing your jacket and scattering several pages of notes into the dark shadows. Bruised and cursing softly, you salvage what remains of your gear from the dusty floorboards.
+EXIT 1: Crawl out from the fallen folios
+@@SECTION ul-2-203
+TITLE: The Spark in the Dark
+TEXT: You brake your descent with a final desperate friction-grip, landing lightly upon a stationary stone landing amidst the drifting stacks. Tucked neatly into a brass bracket beside the rusted mounting plate rests a small, tightly sealed container left behind by a previous shelver.
+GRANT: heavy pouch of dry flints
+EXIT 1: Approach the deep bronze threshold
+@@SECTION ul-2-204
+TITLE: Mapping the Drift
+TEXT: Countless rows of towering mahogany shelves drift past in slow, predictable mathematical rhythms across the vast subterranean cavern. You steady your lantern on a protruding shelf-end and spread a damp parchment chart across your knee, measuring the angular velocities of the approaching stacks with a brass rule.
+EXIT 1: Trace the path across the gap
+@@SECTION ul-2-205
+TITLE: Calculating the Silence
+TEXT: The low, rhythmic grinding of timber on brass echoes through the stacks like the heartbeat of some dormant mechanical beast. You trace a charcoal pencil across your parchment, noting the exact intersection where two independent rows of folios will briefly bridge the chasm within the next few minutes.
+EXIT 1: Wait for the alignment to shift
+@@SECTION ul-2-206
+TITLE: Charting the Vaults
+TEXT: The shifting timbers groan and settle into a temporary alignment, offering a narrow, treacherous pathway across the swirling white abyss. You study the complex geometry of the moving stacks, calculating the precise second when the drifting bridge will hold steady enough for a rapid crossing.
+CHECK: Calculate the drift vectors
+@@SECTION ul-2-207
+TITLE: Miscalculated Momentum
+TEXT: A sudden unexpected shift in the underground air currents sends the entire row of bookcases lurching sideways before your calculations are complete. You scramble frantically to keep your footing as your carefully drawn map tears in half, leaving you stranded in a labyrinth of misplaced volumes without a guide.
+EXIT 1: Retrieve the lost map fragments

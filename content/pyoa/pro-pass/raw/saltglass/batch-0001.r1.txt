@@ -1,0 +1,12 @@
+MODEL Pro
+
+[
+{
+"section": "sg-1-0-4-0",
+"field": "exit:0",
+"old": "Follow the deep wagon ruts deeper into the narrows.",
+"new": "Follow the wagon ruts deeper into the narrows.",
+"kind": "choice",
+"reason": "filler repeat (deep/deeper)"
+}
+]

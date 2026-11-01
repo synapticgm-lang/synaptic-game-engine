@@ -1,0 +1,91 @@
+{
+ "batch": "sg-6-0-1-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-6-0-1-1": {
+   "title": "The Wheat Vault Corridor",
+   "text": "A flickering blue gas-jet casts long, wavering shadows across an arched corridor where carved wheat sheaves line the vaulted ceiling, their stone husks grey with ancient dust. Your banked coal-lantern sputters in the draught, throwing weak orange light against the masonry as you weigh your next step in the quiet dark.\n\nYou can press onward through a tight, acoustic service passage or investigate the circular chamber up ahead where brass niches stand empty and waiting.",
+   "exits": [
+    "Crawl through the low acoustic vent",
+    "Enter the circular brass niche chamber"
+   ]
+  },
+  "sg-6-0-1-2": {
+   "title": "The Mineral Seep",
+   "text": "You squeeze past a collapsed masonry archway where fallen blocks of white sandstone trap a trickle of bitter, mineral-stained water that pools in the hollows of the floor. The air here tastes of wet lime and old iron, heavy with the chill of deep stone.\n\nTwo distinct paths diverge beyond the rubble, while a heavy salt-stiffened curtain tempts you toward a side gallery where hidden draughts stir the gloom.",
+   "exits": [
+    "Squeeze into the low service vent",
+    "Pick your way across the ceramic shards",
+    "Push past the stiff leather curtain"
+   ]
+  },
+  "sg-6-0-1-3": {
+   "title": "The Scored Alcove",
+   "text": "An iron door hangs ajar on screaming hinges, revealing an empty alcove scored with deep, frantic claw marks from some desperate predecessor who found no way out before the drought took hold. The metallic tang of rust fills your nose as you shine your banked lantern into the shadowed recess.\n\nYou can advance toward the circular chamber or risk a hidden floor-drop if you are traveling entirely alone without a companion to distract your eye.",
+   "exits": [
+    "Step toward the circular brass chamber",
+    "Drop through the hairline floor-seal alone"
+   ]
+  },
+  "sg-6-0-1-4": {
+   "title": "The Hidden Shortcut",
+   "text": "Your glass-burn scar tingles against the chill wall, responding to some latent heat in the dressed stones as a concealed latch swings a panel outward to a hidden shortcut. Dust cascades from the pivot as the dark gap widens, offering a route past the main corridors.\n\nYou can step through into the field of broken ceramic shards, risk the concealed floor-drop if you are traveling alone, or slip behind the heavy leather curtain of the side gallery.",
+   "exits": [
+    "Tread across the glittering ceramic shards",
+    "Step through the hairline floor-seal alone",
+    "Part the stiff leather curtain of the gallery"
+   ]
+  },
+  "sg-6-0-1-5": {
+   "title": "The Black Brine Quay",
+   "text": "A subterranean cistern of black brine laps against a stone quay, reflecting the weak yellow glow of your banked coal-lantern in oily ripples. The heavy scent of salt and stagnant depth rises from the dark water, untouched by the surface winds for centuries.\n\nYou can follow the frozen pipe gallery where ruptured bellies split wide like dry pods, or head toward an old iron sconce holding a grey pillar of ancient wax.",
+   "exits": [
+    "Walk among the frozen water-pipes",
+    "Approach the iron sconce and wax pillar"
+   ]
+  },
+  "sg-6-0-1-6": {
+   "title": "The Stained Glass Mosaic",
+   "text": "Overhead, a mosaic of stained glass depicts the legendary First Monsoon, its cobalt panels casting a cool, ocean-deep hue over the flagstones beneath your boots. The lead cames binding the colored panes hum faintly whenever a stray subterranean current brushes the ceiling vault.\n\nAhead lies a crumbling mural of turquoise ceramic flakes or a labyrinth of low brick bulkheads designed to hold back ancient floods.",
+   "exits": [
+    "Inspect the crumbling turquoise mural",
+    "Navigate the low brick flood bulkheads"
+   ]
+  },
+  "sg-6-0-1-7": {
+   "title": "The Auditor's Tally",
+   "text": "A pile of discarded copper tally sticks clatters under your boot, left behind by salt-tax auditors who never returned from the deep when the wells failed. The dull clink echoes sharply through the high corridor, disturbing only the quiet accumulation of grey dust.\n\nYou can examine the iron sconce with its grey wax stub, thread your way through the low brick bulkheads, or follow narrow ventilation shafts where filtered amber light catches floating motes of quartz.",
+   "exits": [
+    "Examine the old iron tallow sconce",
+    "Traverse the maze of brick bulkheads",
+    "Seek the shafts of filtered amber light"
+   ]
+  },
+  "sg-6-0-1-8": {
+   "title": "The Bronze Pipe Crossing",
+   "text": "You balance along a narrow bronze pipe spanning a chasm, listening to the hollow groan of subterranean metal shifting in the dark below. Every footstep requires absolute care as your banked lantern swings, casting erratic arcs of light against the far abyss wall.\n\nAcross the span, you face a warped cedar door bearing an old warden plaque or the narrow ventilation shafts where amber light filters down.",
+   "exits": [
+    "Reach for the warped warden door",
+    "Follow the shafts of filtered amber light"
+   ]
+  },
+  "sg-6-0-1-9": {
+   "title": "The Flaking Mirror",
+   "text": "An old mirror-frame hangs crookedly on the damp wall, its silvered backing flaking away to reveal a cold, empty cavity behind the stone where no reflection lingers. Your own tired face appears only as a blurred shadow against the dark glass as you pause to catch your breath.\n\nYou can test the warped cedar door of the Pith warden or press toward the shafts of amber light piercing down from above.",
+   "exits": [
+    "Try the warped cedar door of the warden",
+    "Head toward the filtered amber shafts"
+   ]
+  },
+  "sg-6-0-2-0": {
+   "title": "The Silt Trench",
+   "text": "A stone-lined drainage trench cuts across the floor, carrying a sluggish stream of grey silt toward some unseen sump far below in the heart of Prism. The damp air smells of wet earth and old lime, thick with the silence of the sealed vault.\n\nThree distinct routes open before you: a spiral stair of hollow copper treads, a threshold choked with crunching salt crystals, or an arched gallery humming with distant winds.",
+   "exits": [
+    "Ascend the hollow copper spiral stair",
+    "Wade through the drift of salt crystals",
+    "Follow the ribbed lead tube gallery"
+   ]
+  }
+ },
+ "missing": []
+}

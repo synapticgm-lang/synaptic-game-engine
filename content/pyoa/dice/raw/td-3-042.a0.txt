@@ -1,0 +1,58 @@
+Gemini said
+
+@@SECTION td-3-042
+TITLE: The Aqueduct Map
+TEXT: Shadows stretch long across the wooden planking of Saltspire's middle tier as a hooded figure brushes past a damp linen stall, clutching a rolled vellum cylinder. That parchment bears the precise blue ink of a Brineholder aqueduct map, detailing every hidden pipe and dry valve beneath the stilt-city. The courier stumbles against a salt-crusted post, dropping his grip for a single heartbeat, and you lunge forward from the shadows to intercept him before he vanishes into the maze of ladders. // He wheels around with a snarl, dragging a rusted belt-dagger clear of its greasy sheath, its edge gleaming dully in the pale glare of a whale-oil lantern. You need that map to chart a dry path down to the Sunken Stair, but the thief is fast, desperate, and standing squarely between you and the stairwell drop.
+EXIT 1: Seize the map from the thief
+@@END
+@@SECTION td-3-043
+TITLE: Intercepting the Courier
+TEXT: Steel flashes in the cramped corridor as you hurl your weight forward, aiming to pin the courier's knife-arm against the damp timber rail before he can find your ribs. He twists sideways with eel-like speed, driving his shoulder into your chest while his free hand slashes an erratic, blinding arc through the stagnant air. You catch his wrist mid-air, muscles straining against bone and leather as the dagger's point hovers inches from your throat, every ounce of your physical strength required to keep the blade from sinking home.
+CHECK: Wrestle the blade from his grip
+@@END
+@@SECTION td-3-044
+TITLE: A Costly Struggle
+TEXT: The courier proves too slick, wrenching his arm free and driving the pommel of his dagger hard into your collarbone with a sickening crack of bone and leather strain. You stumble backward against a sagging rain-barrel, gasping for breath as a hot line of blood spills down your shoulder, soaking your jacket in salt-stiffened fabric. The thief scrambles over the low wooden balustrade and drops toward the lower netting, leaving you clutching a torn scrap of the map and nursing a deep, throbbing ache in your chest.
+EXIT 1: Follow the path toward the canopy
+@@END
+@@SECTION td-3-045
+TITLE: The Stolen Blueprint
+TEXT: Muscle and resolve win the day, however narrowly, as you twist the courier's arm until the blade clatters harmlessly down through the rope mesh into the abyss below. He groans in defeat, dropping the heavy vellum roll into your outstretched hand before slipping away into the crowded gloom of the market tiers. You unroll the damp parchment against a salt-whitened post, tracing the intricate ink lines that mark every concealed pipe and dry drainage shaft leading straight toward the upper levels.
+GRANT: Stolen aqueduct map
+EXIT 1: Ascend toward the upper tiers
+@@END
+@@SECTION td-3-046
+TITLE: The Canvas Catch
+TEXT: High above the yawning emptiness of the seabed, a massive expanse of tattered canvas flaps wildly against its iron moorings, threatening to tear free and deprive a wealthy water-baron's terrace of precious condensation. You climb out onto the swaying wooden crossbeams, the wind roaring up from the dry abyss like the breath of a buried leviathan. Securing the fluttering fabric requires absolute steady hands and a cool head, as the ropes groan and fray beneath your boots with every violent gust of salt air. // Below you, a cluster of privileged water-merchants watch from a dry balcony, their faces masked against the alkaline dust. Repairing this tear before the canvas gives way entirely will earn you the direct attention of the household master and a vital opening into their heavily guarded district.
+EXIT 1: Mend the torn canvas roof
+@@END
+@@SECTION td-3-047
+TITLE: Weaving the Rain-Catcher
+TEXT: Hanging suspended over empty space, you thread a thick needle of bone through the wet, heavy duck-cloth, pulling the hemp cord tight against the howling gale. Every stitch demands precise calculation as the frayed edges strain under the immense weight of trapped moisture, threatening to rip the entire quadrant free at once. Your fingers grow numb against the frozen metal of the eyelets, and a single clumsy knot will unravel the whole repair while the watching barons murmur impatiently from their dry ledge.
+CHECK: Stitch the canvas under tension
+@@END
+@@SECTION td-3-048
+TITLE: A Shredded Mend
+TEXT: A sudden, vicious gale rips through the scaffolding just as you pull the final knot taut, snapping the heavy hemp line and sending a shower of coarse canvas shards fluttering down into the dark. The water-baron's overseer shouts an angry oath from the balcony, docking your expected standing and leaving your hands raw, bleeding, and stiff from the abrasive salt-twine. You scramble back to the safety of the wooden platform with bruised knuckles and a torn sleeve, having lost precious time to the unforgiving winds.
+EXIT 1: Retreat to the lower scaffolding
+@@END
+@@SECTION td-3-049
+TITLE: The Baron's Ledger
+TEXT: Your quick fingers tie off the last reinforced seam just as the squall crests, leaving the massive rain-catcher taut, secure, and funneling precious trickles of clean water into the central cistern. However narrowly you managed the repair, the overseer nods in grudging approval, tossing a heavy brass tally token onto the planks as a token of the household's gratitude. This token grants you temporary passage through the guarded brass gates that bar the route toward the upper tiers and the missing lighthouse keeper.
+GRANT: Water-baron's brass tally
+EXIT 1: Enter the Drip Markets
+@@END
+@@SECTION td-3-050
+TITLE: The Chalk Trail
+TEXT: Moving cautiously past the guarded gates of the middle tier, you spot a faint, powdery smear of pale blue chalk upon a timber pillar, shaped into the distinct, jagged glyph of an old Gullmouth tide-mark. It is Orsolya's hand, unmistakable in its hurried angles, pointing straight up toward the gilded balconies where the Brineholder elite hold court. Inquiry among the net-menders confirms that a stern escort of armed enforcers marched an old woman with a brass-rimmed spyglass through these very arches only hours ago. // The trail leads deeper into the labyrinth of suspended walkways, away from the open air and into the echoing stone corridors of the high administration towers. Every sentinel you pass wears the silver whale emblem of the water-lords, their eyes sharp for interlopers from the cliff-town. If Orsolya was brought this way, she is being held within the inner sanctum where the mechanisms of Saltspire are controlled.
+EXIT 1: Follow the chalk marks upward
+@@END
+@@SECTION td-3-051
+TITLE: The Swaying Bridges
+TEXT: A dizzying web of thick hemp ropes and salt-bleached cedar planks links the middle tiers across a sheer drop where the seabed lies thousands of feet below. Sudden, freezing salt gales howl through the gap, setting the entire causeway shuddering like a hooked shark on a line. Distant lantern light flickers through the gray haze, illuminating narrow crossings that offer several desperate routes deeper into the stilt-city's core. Every path is fraught with hazard, and every span requires absolute nerve to cross before the rising squall tears the moorings free.
+EXIT 1: Sprint across the snapping bridge
+EXIT 2: Weave fallen planks into a path
+EXIT 3: Hold the tearing rope steady
+EXIT 4: Decipher Orsolya's faded chalk marks
+EXIT 5: Confront the Brineholder patrol
+@@END

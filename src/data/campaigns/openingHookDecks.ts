@@ -1149,4 +1149,35 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
     { text: 'A blank first page. Your Codex is canon. Open in the room you actually want, not a default street.' },
     { text: 'A door. Your rules. The camera is HERE once you say where HERE is.' },
   ],
+  // Authored offline gamebooks (PI2) — catalog floor only; play uses compiled pages, not AI openers.
+  'saltglass': [
+    { location: 'the Saltglass verge', text: 'The last lamp is lit. Salt flats ahead. The glass tide is a rumor with teeth. Chip your way across — authored pages only.' },
+    { location: 'a lamp-post on the Saltglass verge', text: 'Ember-lamp in hand. The verge road forks three ways. No writer invents this book; the next page is already written.' },
+    { location: 'Saltglass wind-cut shelter', text: 'Shelter first. The flats wait. Carry the lamp, or the tide of glass will not wait for you.' },
+    { location: 'a salt-crust mile-marker', text: 'Mile-marker. Lamp warm. The hold of the flats is already listening for which fork you take.' },
+  ],
+  'vesperhold': [
+    { location: 'the Vesperhold bell-walk', text: 'Bronze tongue above. Dusk seal coming. Lower the bell before the hold locks — authored forks only.' },
+    { location: 'Vesperhold stair to the bell', text: 'Stair. Rope. The hold is listening. The next page is climb, cut, or call.' },
+    { location: 'the Vesperhold yard at first bell', text: 'Yard. First bell already rung. The bronze must come down before the seal. Chips, not invention.' },
+    { location: 'a Vesperhold watch alcove', text: 'Alcove. Bell-walk in sight. Dusk is a countdown. The book already chose the forks.' },
+  ],
+  'tide-that-did-not-return': [
+    { location: 'the Gullmouth desk', text: 'Gullmouth desk. Crusted flats beyond. 2d6 will test Might, Wit, Nerve, Craft — the engine rolls, never the prose.' },
+    { location: 'Gullmouth quay at low water', text: 'Quay. The tide that did not return left a path of checks. Stamina and luck are ledger facts.' },
+    { location: 'a Gullmouth chart-room', text: 'Chart-room. Flats marked in chalk. First page is the desk; first test is the engine’s.' },
+    { location: 'salt steps off Gullmouth', text: 'Salt steps. Desk behind. The flats ahead. Keepakes wait on honest rolls.' },
+  ],
+  'cinderfall': [
+    { location: 'the Cinderfall platform', text: 'Last train. Boilers complaining. Brawn, Cunning, Composure, Mechanics — engine rolls only.' },
+    { location: 'Cinderfall ticket cage', text: 'Ticket cage. Steam. The line will not wait. Authored carriages; dice decide which you keep.' },
+    { location: 'a Cinderfall coal chute', text: 'Coal chute. Platform above. The train is already late. First chip is board or check the gauge.' },
+    { location: 'Cinderfall caboose rail', text: 'Caboose rail. Platform receding in memory. The boilers still have a say — through the engine, not the book.' },
+  ],
+  'underlibrary': [
+    { location: 'the Underlibrary porter desk', text: 'Porter desk. Hundred doors below. Study, Will, Guile, Grace — 2d6 by the engine alone.' },
+    { location: 'Underlibrary stairwell lamp', text: 'Stair lamp. Stacks breathing. One door should stay shut. The book is already written.' },
+    { location: 'a reading alcove above the Underlibrary', text: 'Alcove. Desk below. The hundredth door is a rumor with a number. Chips open pages.' },
+    { location: 'Underlibrary stack aisle zero', text: 'Aisle zero. Porter’s stamp still wet. The next page is descend, ask, or test your sheet.' },
+  ],
 };

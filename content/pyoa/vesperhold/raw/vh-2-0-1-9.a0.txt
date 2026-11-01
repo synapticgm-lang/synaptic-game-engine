@@ -1,0 +1,65 @@
+@@SECTION vh-2-0-1-9
+TITLE: The Brass Scales
+TEXT: Heavy iron weights clink against a groaning brass scale as a Cable Court guard drops your pack onto the pan. His colleague leans over the counter, eyes narrowing at the pale green patina of the bronze Clapper strapped to your spine. The metal gives a low, sympathetic thrum against your shoulder blades, vibrating through the wood and canvas as the beam teeters, threatening an exorbitant toll for every pound of sacred metal you carry down the mountain face. // A frantic winch-boy drops his tallow bucket right across your path as a heavy basket screeches downward.
+EXIT 1: Rush past the sliding bucket
+@@END
+@@SECTION vh-2-0-2-0
+TITLE: The Anchor Stone
+TEXT: Frigid gales sweep across the open marketplace, causing a thick iron cable overhead to sing a high, piercing note that sets your teeth on edge. You duck quickly inside a hollow anchor-stone, finding a brief sanctuary from the biting wind and the watchful eyes of the toll-collectors patrolling the suspension bridges. The heavy bronze Clapper hums quietly against your padded cradle, answering the distant vibration of the mountain's frozen heart.
+EXIT 1: Slip behind the woodpile
+EXIT 2: Accept the bitter chicory water
+@@END
+@@SECTION vh-2-0-2-1
+TITLE: The Rope-Master
+TEXT: A one-eyed rope-master named Tallow steps into your path, coughing dryly into a woollen knuckle as he inspects your backpack cradle with professional interest. His gnarled fingers trace the hemp lashings securing the bronze Clapper, testing the tension with the ease of a man who has spent fifty years binding the vertical world together against the abyss. He mutters something about winter gales before nodding at your burden.
+EXIT 1: Duck into the shadowy alcove
+EXIT 2: Take a cup of chicory water
+@@END
+@@SECTION vh-2-0-2-2
+TITLE: Yellow Hemp Flags
+TEXT: Hundreds of hanks of bright yellow hemp flutter like prayer flags above the suspended market square, filling the crisp mountain air with the sharp scent of fresh tar and dry grass. You pick your way carefully across the swinging timber planks, keeping a steady hand on the padded cradle where the heavy bronze Clapper hums its low, continuous note against your tired muscles.
+EXIT 1: Skirt the edge of the great timber wheel
+EXIT 2: Guide Biscuit past the salted hides
+@@END
+@@SECTION vh-2-0-2-3
+TITLE: The Nervous Clerk
+TEXT: Ink splatters across the rough pine counter as a nervous clerk named Pip drops his tally-chalk, startled by the deep, resonant hum of the bronze Clapper against your shoulder-straps. The cold mountain wind whips through the open-air bazaar, rustling stacks of transit permits while you stand waiting for your descent to be logged.
+EXIT 1: Skirt the edge of the wheel
+EXIT 2: Face the sergeant with the spiked pole
+EXIT 3: Watch the weaver tie a heavy load
+EXIT 4: Turn back toward the upper lane
+@@END
+@@SECTION vh-2-0-2-4
+TITLE: The Greasy Capstan
+TEXT: Iron shoes slide across a grease-slicked capstan while a team of winch-hands heave in unison against the stubborn mountain draft, their breath pluming white in the freezing air. You step carefully over the spinning wooden drum, keeping your balance anchored against the swinging weight of the bronze Clapper strapped tight to your back.
+EXIT 1: Stop before the spiked pole
+EXIT 2: Lead the mule past the hides
+@@END
+@@SECTION vh-2-0-2-5
+TITLE: The Tallow Stall
+TEXT: Smells of rendered mutton fat and dried mountain moss drift from a sheltered stall tucked hard against the cliff face, offering a warm corner away from the biting gorge wind. You pause by the counter to rub your aching shoulders, feeling the bronze Clapper pulse against your coat like a living heart.
+EXIT 1: Confront the sergeant blocking the alley
+EXIT 2: Walk past the piles of salted hides
+EXIT 3: Learn the secret knot from the weaver
+EXIT 4: Turn back to the upper plankway
+@@END
+@@SECTION vh-2-0-2-6
+TITLE: The Swinging Counter-Weight
+TEXT: Heavy iron groans overhead as a massive swinging counter-weight crashes into the timber framing with a hollow, booming thud that shakes the entire platform under your boots. You flatten yourself against the rough planking, waiting for the rebound before darting forward through the freezing spray of ice-pellets.
+EXIT 1: Dash across the slatted pine platform
+EXIT 2: Hide the smuggled wire in your cradle
+@@END
+@@SECTION vh-2-0-2-7
+TITLE: The Frozen Winch
+TEXT: Weather-beaten ropes creak under immense tension as an old cable-rider named Nesta leans on her gaff, warning you that the lower winches are jammed hard with frozen grease and mountain sleet. She points a mittened finger down the narrowing gorge where the path grows steeper and the wind howls louder through the iron stays.
+EXIT 1: Study the heavy load knot
+EXIT 2: Show your braided guild-rope
+EXIT 3: Take the smuggled wire beneath the bronze
+@@END
+@@SECTION vh-2-0-2-8
+TITLE: The Willow Bridge
+TEXT: Slender willow withes twist together to form a trembling suspension bridge that sways rhythmically while the bottomless abyss yawns directly below your heavy boots. You take slow, measured breaths, keeping your center of gravity low beneath the weight of the bronze Clapper as the gorge wind attempts to sweep your legs out from under you.
+EXIT 1: Conceal the merchant wire in your pack
+EXIT 2: Climb the wooden pegs hammered into granite
+EXIT 3: Squeeze between the warm pine tar shacks
+@@END

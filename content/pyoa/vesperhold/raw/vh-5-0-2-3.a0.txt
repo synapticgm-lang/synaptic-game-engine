@@ -1,0 +1,69 @@
+@@SECTION vh-5-0-2-3
+TITLE: The Drainage Ditch
+TEXT: Hauling your heavy pack clear of black water before the freezing silt sucks you down, you scramble up the muddy lip of a sunken drainage ditch. The bronze clapper hums a dull, shivering note against your shoulder blades as you catch your breath in the damp orchard air. // Biscuit shakes a spray of cold droplets from floppy ears, stamping impatient hooves into the wet leaf-mould while the fog swirls thick and grey around your boots.
+EXIT 1: Follow Biscuit down the hidden mule-track
+EXIT 2: Retrieve the oilskin pouch from the bracken
+EXIT 3: Adjust the padded cradle straps on your back
+@@END
+@@SECTION vh-5-0-2-4
+TITLE: The Moss-Grown Milestone
+TEXT: Pausing beside a moss-grown milestone carved with faded mountain runes, you let the weight of the bronze clapper settle comfortably against its leather cradle. The thick mist muffles every distant sound, turning the drip of moisture from frozen boughs into a rhythmic, solitary heartbeat. // A sudden clatter echoes through the grey gloom, warning you that the orchard paths remain full of unexpected hazards and hurried travellers.
+EXIT 1: Dodge the rolling barrel of winter apples
+EXIT 2: Search the bracken for the dropped oilskin pouch
+EXIT 3: Adjust the padded cradle straps to ease your load
+EXIT 4: Turn back toward the upper ridge
+@@END
+@@SECTION vh-5-0-2-5
+TITLE: The Arbor of Vines
+TEXT: Dodging a crate of rotten pears dropped hurriedly by a fleeing rival carrier, you press flat against a wooden post beneath an arbor of dormant vines heavy with frost. The bitter smell of bruised fruit rises sharply through the chill air, mingling with the low, steady hum of the heavy bronze tongue strapped to your back. // Biscuit shifts uneasily in the mist, eager to leave the littered clearing behind before more trouble finds you in the fog.
+EXIT 1: Follow Biscuit down the secluded bypass trail
+EXIT 2: Adjust your cargo straps and check the mounting
+EXIT 3: Inspect the freshly notched guide-post in the glade
+@@END
+@@SECTION vh-5-0-2-6
+TITLE: The Unencumbered Path
+TEXT: Striding past a protesting toll-keeper into a neglected orchard shortcut where no rival dares to follow, you feel the rare, crisp freedom of walking entirely free from debt or bargain. No cable-lord holds a lien upon your time, and no guild ledger records your passage through the dripping trees. // The path grows narrower and greener, winding deeper into the silent mist where only independent travellers dare tread.
+EXIT 1: Listen for the three-tone warden's call ahead
+EXIT 2: Watch the wild ducks rise from the steaming pond
+@@END
+@@SECTION vh-5-0-2-7
+TITLE: The Twitching Rope
+TEXT: Pulling your woollen cloak tighter against the wet chill within a grey fog-shrouded clearing, you watch a distant bell-rope twitch sharply against an unseen wooden post. The damp air carries no sound of whoever pulled the line, leaving only the swaying hemp and the cold grey stillness of the orchard. // The bronze clapper gives a faint, sympathetic thrum against your spine as the hidden signal dies away into the mist.
+EXIT 1: Pause to listen for the warden's three-tone call
+EXIT 2: Search the glade for the freshly notched guide-post
+@@END
+@@SECTION vh-5-0-2-8
+TITLE: The Frozen Sheep-Dip
+TEXT: Scraping thick mud from your boot soles beside a frozen sheep-dip filled with grey slush, you pause to listen for the faint, tin whistle of the lower terrace. The air tastes of wet wool and decaying autumn leaves, sharp and cold against the back of your throat. // A distant creak of timber reminds you that the mountain paths are never truly empty, even when the fog hides everything beyond arm's reach.
+EXIT 1: Follow the path toward the notched guide-post
+EXIT 2: Investigate the steam rising from the irrigation pond
+EXIT 3: Check the security of your heavy bronze cargo
+EXIT 4: Turn back to the previous ridge path
+@@END
+@@SECTION vh-5-0-2-9
+TITLE: The Snagged Guide-Wire
+TEXT: Helping an old Fog-Warden untangle a snagged guide-wire under a low trellis of dripping pear trees, you work quickly before the drifting fog thickens into freezing sleet. The warden nods a silent, gruff thank-you, tapping a wooden whistle against stained leather as the tension returns to the line. // The surrounding orchard remains quiet and muffled, offering several dim directions through the grey labyrinth.
+EXIT 1: Check your cargo beneath the dripping pear tree
+EXIT 2: Inspect the stone mounting block by the path
+EXIT 3: Step over the tangled heap of abandoned hemp rope
+EXIT 4: Turn back toward the cider press
+@@END
+@@SECTION vh-5-0-2-10
+TITLE: The Stone Fruit-Store
+TEXT: Resting the heavy bronze clapper against a cider cask inside a hollow stone fruit-store smelling of vinegar and straw, you let your aching shoulders finally thaw. The thick walls keep out the raw mountain wind, wrapping you in a cool, earthy quiet that feels miles away from the damp trails. // Narrow exits lead out from the dim shelter back into the grey, mist-choked orchards.
+EXIT 1: Approach the steam-shrouded irrigation pond
+EXIT 2: Squeeze past the stranded timber sledge outside
+@@END
+@@SECTION vh-5-0-2-11
+Title: The Abandoned Scarf
+TEXT: Spotting a discarded woollen scarf left behind by someone who bolted into the mist, you pause beside a broken wicker gate half-buried in dead leaves. The knitted wool is damp to the touch, hinting at a hasty flight through the slippery orchard rows just moments before your arrival. // The grey fog swirls lazily around the gateposts, hiding whatever rushed away into the damp silence.
+EXIT 1: Squeeze past the stranded timber sledge ahead
+EXIT 2: Inspect the green-slimed stone mounting block
+EXIT 3: Turn back toward the upper orchard trees
+@@END
+@@SECTION vh-5-0-2-12
+TITLE: The Waterwheel's Thud
+TEXT: Listening to the rhythmic thud of a distant waterwheel churning sluggishly through the valley mud, you stand beneath a grey expanse of dripping branches. The low, heavy vibrations travel through the damp soil right up into the soles of your boots, matching the steady thrum of the clapper on your back. // Two distinct paths vanish into the wet gloom ahead, each swallowed by the relentless mountain mist.
+EXIT 1: Check the stone mounting block for directions
+EXIT 2: Step carefully over the tangled heap of hemp rope
+@@END

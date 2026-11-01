@@ -10,11 +10,19 @@ declare module '@/data/pyoa/umbraBook.json' {
       endingId?: string | null;
       majorFork?: boolean;
       page?: string;
+      variants?: Array<{
+        when: Record<string, unknown>;
+        replace?: string;
+        before?: string;
+        after?: string;
+      }>;
+      place?: string;
       exits: Array<{
         id: string;
         label: string;
         to: string;
         setFlags?: Record<string, string | boolean>;
+        when?: Record<string, unknown>;
       }>;
     }>;
   };

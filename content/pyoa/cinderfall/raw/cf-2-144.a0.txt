@@ -1,0 +1,72 @@
+@@SECTION cf-2-144
+TITLE: The Repaired Valve
+TEXT: Perseverance pays against the stubborn friction of rusted metal, leaving the float-valve seated true and firm within its housing. Hot water ceases its wasteful hiss, settling into a steady, pressurized hum that steadies the boiler gauge. A handful of heavy copper washers and a stout tin of yellow anti-friction grease are your reward for the trouble, tucked safely into the tool-chest before you step back onto the footplate.
+GRANT: handful of copper washers
+EXIT 1: Climb back to the footplate
+@@END
+@@SECTION cf-2-145
+TITLE: Beneath the Iron Tank
+TEXT: Thick crusts of grey alkali flake away beneath your scraper as you clear the choked drainage pipe beneath the roadside water tank. Stagnant moisture breaks free at last with a foul, heavy gurgle, spilling into the dry ballast below and clearing the drain-hole at long last. Probing the recess reveals a stout, oil-stained tool wedged in the mud, which proves upon inspection to be a rusted but serviceable brass grease-gun.
+EXIT 1: Crawl out from the chassis
+@@END
+@@SECTION cf-2-146
+TITLE: The Clogged Drain
+TEXT: Sludge and cinders have packed the overflow channel beneath the massive tender until it resembles hard cement. Working the bent iron poker back and forth loosens the plug of debris, letting foul water drain away from the axle-boxes where it might otherwise cause dangerous rot. The cleared pipe breathes out a damp, mineral smell of sulfur and cold earth into the dry wind.
+EXIT 1: Stow the clearing poker
+@@END
+@@SECTION cf-2-147
+TITLE: Clearing the Blocked Pipe
+TEXT: Stubborn corrosion locks the lower drain-cock tight, threatening to twist the copper feed-line right off its mounting brackets if you apply too much force. You brace your boot against the iron chassis plate, grip the heavy pipe-wrench with both hands, and lean all your weight into a slow, measured torque while the ancient metal groans beneath the strain.
+CHECK: Wrench the rusted pipe-fitting
+@@END
+@@SECTION cf-2-148
+TITLE: The Snapped Feed-Line
+TEXT: The seized brass fitting shears clean off with a sharp crack, spraying a jet of scalding, greasy water across your sleeve and scalding your wrist before you can wrench the shut-off valve closed. Precious steam pressure bleeds away into the alkali dust, and you are left binding the weeping joint with soaked hemp cord and cursing the unforgiving metal.
+EXIT 1: Patch the leaking joint
+@@END
+@@SECTION cf-2-149
+TITLE: The Grease-Gun Found
+TEXT: Mud and grease smear your forearms as you salvage the forgotten brass grease-gun from the sludge beneath the water tank, wiping the nozzle clean with an oily rag. Despite the pitting on its barrel, the internal plunger still slides with a reassuring suction that promises many miles of smooth axle lubrication ahead.
+GRANT: serviceable brass grease-gun
+EXIT 1: Take the water-wagon track
+@@END
+@@SECTION cf-2-150
+TITLE: Midnight on the Steppe
+TEXT: The storm clock hanging above the fire-door clicks its heavy iron tooth toward midnight, shaking loose a fine drift of grey soot across the brass dial. Far across the grey flats, from the direction of the towering viaduct, a deep metallic groaning rolls through the ground like the turning of a subterranean engine. The horizon shivers under a low bank of bruised purple clouds where the ash-storm season gathers its strength. // You check the water glass one more time, feeling the steady thrum of the copper boiler against your palms as the Marrowbone waits for the signal to move.
+EXIT 1: Advance toward the viaduct
+@@END
+@@SECTION cf-2-151
+TITLE: The Iron Scriptorium
+TEXT: A derelict telegraph carriage sits abandoned beside the tracks, its windows frosted with alkali and salt, yet a single yellow lamp still burns behind the warped wooden door. Inside, a lone clerk in a frayed uniform records the passage of phantom trains in a ledger that never ends, surrounded by ticking sounders and mountains of damp paper. The place smells of stale tobacco and ozone, offering shelter from the rising wind and multiple paths deeper into the ash-steppeland.
+EXIT 1: Inspect the clicking telegraph
+EXIT 2: Haul the heavy coal crate
+EXIT 3: Search the dusty dispatch drawers
+EXIT 4: Match wits with the clerk
+EXIT 5: Climb toward the massive viaduct
+@@END
+@@SECTION cf-2-152
+TITLE: The Flickering Sounder
+TEXT: Brass arms twitch erratically across the glass-covered dial as the telegraph key chatters out a rapid, fractured sequence of dots and dashes. By watching the rhythm of the stuttering needle, you piece together a warning meant for the patrol posts up-line about railhead blockades and armed patrols moving out from the viaduct. The knowledge rests heavy in your mind as the paper ribbon falls silent.
+EXIT 1: Gather your coal-scuttle
+@@END
+@@SECTION cf-2-153
+TITLE: The Ticking Wire
+TEXT: Copper wires hum overhead in the dry wind, carrying faint electrical whispers from junction boxes buried miles out across the dead flats. The telegraph carriage groans on its rotting timbers, swaying slightly as a sudden gust of ash scours the weathered siding walls outside the glass.
+EXIT 1: Step back onto the iron
+@@END
+@@SECTION cf-2-154
+TITLE: Decoding the Wire
+TEXT: The paper ribbon feeds through the embossing machine too fast, smudging the ink dots into an unintelligible blur of Morse code while the signal needle chatters frantically against its brass stop. You squint through the dim lamplight, trying to isolate the code-groups for military patrols from the random static of the atmospheric storm before the needle drops dead.
+CHECK: Decipher the frantic telegraph chatter
+@@END
+@@SECTION cf-2-155
+TITLE: The Static Blur
+TEXT: Static discharge leaps from the brass sounder with a sharp snap, charring the paper tape to black ash and leaving your ears ringing with a high, thin whine. You stumble back against the shelving, scattering a dozen outdated waybills across the floorboards and losing precious minutes to the confusion before you can steady your breathing.
+EXIT 1: Gather the scattered papers
+@@END
+@@SECTION cf-2-156
+TITLE: The Decoded Warning
+TEXT: Patience and a steady thumb untangle the overlapping dashes until the patrol routes stand clear in your notebook like a map of hidden hazards. You fold the slip of paper carefully into your breast pocket, knowing exactly which sidings to avoid when the Rail Barons move their armored inspection cars.
+GRANT: advance warning of Rail Baron blockades
+EXIT 1: Return to the scriptorium
+@@END

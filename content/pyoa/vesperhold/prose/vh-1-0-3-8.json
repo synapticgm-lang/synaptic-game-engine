@@ -1,0 +1,87 @@
+{
+ "batch": "vh-1-0-3-8",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-0-3-8": {
+   "title": "The Sluice Gate",
+   "text": "Beside the drainage sluice, yellow ice coats the iron grating while water gurgles sluggishly through the dark masonry under your boots. The heavy bronze Clapper shifts in its padded cradle, its cold hum vibrating directly into your shoulder blades against the bite of the mountain air. You test the grip of your left heel on the rimed stone, deciding whether to press directly toward the lower courts or loop back around the outer wall.",
+   "exits": [
+    "Descend toward the lower mule yard",
+    "Cut across toward the stone chimneys"
+   ]
+  },
+  "vh-1-0-3-9": {
+   "title": "The Salt-Store Shelter",
+   "text": "In the shelter of the salt-store wall, you pull your woollen muffler higher across your nose to keep out the biting needle-wind off the glacier. Grains of fine frost drift across the packed snow, stinging your exposed cheeks as you adjust the heavy straps of your carrying frame. The weight is balanced, but the descent ahead promises steeper pitches and deeper shadows where the cliff-face curves away into the grey vapor.",
+   "exits": [
+    "Face the downdraft on the upper ledge",
+    "Head down toward the steaming mule yard"
+   ]
+  },
+  "vh-1-0-3-10": {
+   "title": "The Broken Block",
+   "text": "Near the broken mounting-block, a stray orange kitten watches you from a sled-runner with unblinking yellow eyes through the drifting rime. You shift the weight of the Clapper on your back, feeling the familiar, low-pitched resonance hum against your spine as the animal blinks slowly against the cold. The path forks ahead between the shuttered grain-store and the steep, frost-rimed descent toward the terrace level.",
+   "exits": [
+    "Walk toward the distant stone chimneys",
+    "Step down to the lower terrace landing"
+   ]
+  },
+  "vh-1-0-3-11": {
+   "title": "The Frayed Ring",
+   "text": "At the junction of the high mule-track, you pause to inspect a frayed mooring-ring set deep into the granite face by the old road-makers. Long-frozen strands of hemp curl outward from the iron eye, grey with age and brittle under your leather-gloved thumb. You glance down the winding track where the cloud layer hides the lower steps, weighing whether to brave the open shelf or seek shelter near the upper wall.",
+   "exits": [
+    "Follow the narrow shelf into the wind",
+    "Make for the haze of the mule yard"
+   ]
+  },
+  "vh-1-0-3-12": {
+   "title": "The Timber Racks",
+   "text": "By the timber drying racks, empty fish-hurdles rattle in the draft while you shoulder the Clapper and step firmly onto the head of the stair. The world below drops away into a thick floor of white cloud, broken only by the jagged tips of the lower chimney-stacks and the dark thread of the cable-ways. You can push onward into the descent, turn back toward the warmth of the cloisters, or seek the lower terrace gates.",
+   "exits": [
+    "Brace against the sharp downdraft",
+    "Drop down to the terrace landing",
+    "Turn back toward the cloisters"
+   ]
+  },
+  "vh-1-0-4-0": {
+   "title": "The Ninety Steps",
+   "text": "Descending the initial granite gradient, you grip the frozen iron hand-rail as your boots strike the first of each of the Ninety Steps with a hollow ring. The bronze Clapper taps rhythmically against your pack-frame, keeping a stubborn time against the whistle of the draft. Below you, the stone steps vanish into the milky grey of the cloud-deck, leaving only the cold iron and your own breath for company.",
+   "exits": [
+    "Approach the heavy oak mule yard doors",
+    "Wait in the freezing stable draft"
+   ]
+  },
+  "vh-1-0-4-1": {
+   "title": "The Third Landing",
+   "text": "Slipping on a patch of black frost near the third landing, you catch your balance against the damp cliff-face with a sharp intake of breath. The heavy bronze tongue shifts in its cradle, threatening to throw you off balance if you do not steady your footing immediately. You catch your breath, wipe your palm on your woollen trousers, and look toward the paths diverging through the mist.",
+   "exits": [
+    "Head directly for the high mule yard",
+    "Step toward the stable entrance draft"
+   ]
+  },
+  "vh-1-0-4-2": {
+   "title": "The Abbot's Niche",
+   "text": "Passing a niche carved with the image of the first abbot, you touch the mossy stone for luck before plunging deeper into the mountain shadow. The stone saint's weathered features are choked with rime, his carved blessing worn down by centuries of driving sleet and frozen spray. You adjust the heavy burden on your spine and prepare for the next steep stretch of the descent.",
+   "exits": [
+    "Peer through the mule yard wicket-gate",
+    "Rest your load by the mounting-block"
+   ]
+  },
+  "vh-1-0-4-3": {
+   "title": "The Extra Fold",
+   "text": "Hearing the iron Clapper resonate against your carrying frame, you pause to pad the lower rim with an extra fold of greasy wool. The muffled thud satisfies you, deadening the bronze hum that has buzzed in your teeth since you left the bell-tower. With the load secured against the jarring stone, you scan the mist for the familiar low buildings of the staging post.",
+   "exits": [
+    "Watch the grooms through the wicket",
+    "Rest the bronze against the stone block"
+   ]
+  },
+  "vh-1-0-4-4": {
+   "title": "The Pine Boughs",
+   "text": "Stepping around a heap of wind-shattered pine boughs, you keep your eyes fixed on the narrow riband of stone winding down toward the mule yard. The sharp scent of resin cuts momentarily through the freezing air, reminding you of the warmer valleys far below the cloud line. You check the lashings of your pack before taking the next curving flight of steps.",
+   "exits": [
+    "Weigh the merits of the stable entrance"
+   ]
+  }
+ },
+ "missing": []
+}

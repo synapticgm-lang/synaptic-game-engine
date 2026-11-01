@@ -1,0 +1,113 @@
+{
+ "batch": "ul-0-001",
+ "sections": {
+  "ul-0-001": {
+   "title": "The Midnight Desk",
+   "text": "Brass clocks beneath the city of Quillon chime a heavy, grease-stained midnight while you stand at the Returns Desk sorting damp volumes of forgotten philosophy. The night-porter warms his thin knuckles over a smoky tallow lamp, muttering about the cold draft drifting up from the lower stacks where the catalogues have begun to rewrite themselves. Every ledger smells of old paper, lamp-oil, and dried ink, heavy with the quiet dread of the missing Archivist, Thessaly Marr. Among the returned arrears lies a damp, folded parchment bearing her urgent handwriting, warning that the Hundredth Door has swung open of its own accord and whoever reads the original Index will decide the world's memory.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the porter's warning note"
+   ]
+  },
+  "ul-0-002": {
+   "title": "The Returns Hall",
+   "text": "Shelvers crowd the damp stone hall under flickering tallow lamps, sorting towering mounds of newly returned texts while whispers circulate about Thessaly Marr's sudden disappearance into the deep stacks. Shadows stretch across the timber sorting trolleys where low magic lingers in the binding glue and margins occasionally hiss when touched. Every scholar here knows the Long Closing approaches, sealing the library for a generation, and the race for the Index has quietly begun among the rival factions.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Investigate the suspicious invoice pile",
+    "Decipher the smudged marginalia",
+    "Consult the night-porter's old roster",
+    "Read the archivist's folded parchment"
+   ]
+  },
+  "ul-0-003": {
+   "title": "Piling the Arrears",
+   "text": "Stacks of wet parchment smell sharply of rancid tallow and iron-gall ink as you flip through the damp invoice pile with sharp scholarly observation. Each leaf clings to the next like wet skin, refusing to yield its secrets easily while the ambient murmurs of the hall fade into a hushed stillness. Hidden between two volumes of municipal tax law rests a thin, uncatalogued docket tied with coarse twine, pulsing with a faint, low-magic warmth.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pull the hidden docket free"
+   ]
+  },
+  "ul-0-004": {
+   "title": "The Uncatalogued Docket",
+   "text": "Cold damp rises from the stone flags as you isolate the strange docket from the rest of the wet papers, feeling the paper grain shift unnaturally beneath your fingertips. A faint scratching noise, like an insect trapped inside a dry binding, emanates from the creases where the ink has turned an unusual shade of violet. Careful attention reveals tiny, venomous barbs hidden along the margin edge, waiting to punish clumsy fingers that rush the work.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Prepare to lift the folded flap"
+   ]
+  },
+  "ul-0-005": {
+   "title": "The Poisoned Margin",
+   "text": "Holding your breath against the rising smell of bitter almond and old dust, you angle the tallow lamp closer to illuminate the dangerous fold in the parchment. Your thumb hovers millimetres from a jagged paper edge that gleams with a greenish, venomous film left by a disgruntled reader. Concentration strains your mind as you gauge the exact angle required to slip a bone paper-knife beneath the seal without triggering the trap.",
+   "check": "Study the poisoned margin edge",
+   "grant": "",
+   "exits": []
+  },
+  "ul-0-006": {
+   "title": "A Stinging Oversight",
+   "text": "Sharp pain bites into your thumb as the poisoned page slips, leaving a thin, burning scratch that instantly darkens the skin to the color of stale ink. Time slows in the smoky air while you suck the sting from the wound, cursing your momentary lapse in focus as the venom dulls your senses. Even so, the fold gives way under the pressure, leaving you with a throbbing ache and a valuable lesson in library caution.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the secret docket anyway"
+   ]
+  },
+  "ul-0-007": {
+   "title": "Clean Extraction",
+   "text": "Precision wins the day as the bone knife slides cleanly through the stubborn gummed fold, releasing the secret docket without a single drop of blood drawn. The paper unfolds to reveal a neat, handwritten schedule of restricted stack rotations signed in Thessaly Marr's familiar, hurried hand. You pocket the prize with a quiet sense of triumph, securing an invaluable key to the lower corridors before anyone else notices.",
+   "check": "",
+   "grant": "Restricted stack rotation schedule",
+   "exits": [
+    "Return to the main sorting hall"
+   ]
+  },
+  "ul-0-008": {
+   "title": "Smudged Marginalia",
+   "text": "Faded ink sprawls across the lower margins of an ancient ledger detailing municipal water rights, overwritten so many times the words crawl across the page like drowsy spiders. Careful academic focus helps you separate the original scribe's hand from the angry scrawls added later by a disgruntled borrower who clearly knew too much about the deep stacks. Hidden within the cramped commentary lies a reference to a misplaced corridor key.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the inked cipher lines"
+   ]
+  },
+  "ul-0-009": {
+   "title": "The Ciphered Margin",
+   "text": "Lamp-oil flickers as you lean closer to the binding, letting your eyes follow the erratic loops of ink that point toward a forgotten alcove near the binding room. The marginal notes begin to whisper faint, disjointed phrases about shifting shelves and locked doors, warning of traps laid by the rule-bound Cataloguers. Every movement must be calculated precisely to avoid activating the dormant ink-stain hex woven into the parchment.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the hidden key slot"
+   ]
+  },
+  "ul-0-010": {
+   "title": "The Ink-Stain Hex",
+   "text": "Dark vapors begin to rise from the written words, swirling into a miniature cloud of reactive iron-gall that threatens to stain your skin permanently and blind your eyes with acidic smoke. Your mind races through arcane classifications and grammatical counter-spells, searching for the exact mental anchor needed to neutralize the hex before it triggers. One false thought will unleash a torrent of cursed ink across the entire desk.",
+   "check": "Decipher the ink hex safely",
+   "grant": "",
+   "exits": []
+  },
+  "ul-0-011": {
+   "title": "The Cost of Curiosity",
+   "text": "Purple vapors burst outward with a sharp hiss, staining your fingers and knuckles a deep, indelible violet that no pumice stone will wash away for weeks. The hex drains your concentration and leaves a dull ache behind your eyes, but the defensive ward collapses before it can do any worse damage. You shake out your stinging hands and retrieve the prize from the settling soot.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the tarnished brass key"
+   ]
+  },
+  "ul-0-012": {
+   "title": "Untouched by the Bind",
+   "text": "Words settle back into harmless silence as your focused willpower shatters the activation rune before the curse can take full hold of the page. Resting in the crease of the old ledger is a small, heavy brass key shaped like a quill nib, cool to the touch and smelling faintly of library dust. You slip it into your waistcoat pocket, gaining a quiet advantage for the corridors ahead.",
+   "check": "",
+   "grant": "Quilled brass corridor key",
+   "exits": [
+    "Step back to the central hall"
+   ]
+  }
+ },
+ "missing": []
+}

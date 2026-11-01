@@ -1,0 +1,56 @@
+Gemini said
+
+@@SEED sg-1-1-0-0 | Beside the tallow-scratched gatepost, Pell offers a weather-cracked hand to guide you across the white flats for half a copper jar.
+@@SEED sg-1-1-0-1 | You turn your back on the glass-diver's grin, stepping past the iron post alone into the grey haze of the Rim Road.
+@@SEED sg-1-1-1-0 | Under the eaves of the tallow-sellers, Pell tests the weight of your copper while grease-smoke curls from a copper brazier.
+@@SEED sg-1-1-1-1 | A salt-clogged cart blocks the cart-track, and Pell leans on an ash-pole to help you shove the timber aside.
+@@SEED sg-1-1-1-2 | Walking out alone, your boots crunch on dropped sheep-bells while the gate-warden spits a dry farewell into the dust.
+@@SEED sg-1-1-1-3 | You dodge a nervous mule laden with dried kelp, leaving Pell behind as the town walls shrink into the glare.
+@@SEED sg-1-1-1-4 | Pell catches your elbow by the cistern-house, pointing out a salt-squall curdling the eastern horizon before you commit.
+@@SEED sg-1-1-1-5 | You stride past the cattle-pound unescorted, your fingers curling around the cold ceramic key hidden in your wool coat.
+@@SEED sg-1-1-2-0 | Pell kicks a loose shard of window-slag aside on the mule-track, muttering about toll-collectors waiting near the dry ford.
+@@SEED sg-1-1-2-1 | You trade insults with a crusty tinker mending a copper kettle by the ditch while Pell inspects his compass-dial.
+@@SEED sg-1-1-2-2 | A three-legged cur trails your boots past the abandoned kiln, its tongue lolling dryly in the baking noon heat.
+@@SEED sg-1-1-2-3 | You huddle beneath an iron-beamed culvert as a salt-cart rumbles past, kicking up a choking cloud of alkaline dust.
+@@SEED sg-1-1-2-4 | Pell shares a roasted chicory root from his leather wallet while you check the hemp straps of your water-cask.
+@@SEED sg-1-1-2-5 | Solitary and brisk, you pass a milestone carved from green bottle-glass that marks three leagues from Candlemere's church.
+@@SEED sg-1-1-2-6 | A widow sells parched beans from a tin bucket by the horse-trough, asking double for a cup of brackish well-water.
+@@SEED sg-1-1-2-7 | You pause to scrape dried salt-cake from your gaiters while distant signal mirrors flash three sharp warnings from a ridge.
+@@SEED sg-1-1-2-8 | Pell whistles an old drover's tune that skips off the limestone banks, keeping your lagging spirits steady against the sun.
+@@SEED sg-1-1-2-9 | A tethered donkey brays at your passing shadow, rattling its iron ring against a stunted thorn-tree in the gully.
+@@SEED sg-1-1-2-10 | You step over the carcass of a dried hare, marveling at how the salt has preserved its whiskers like copper wire.
+@@SEED sg-1-1-2-11 | Pell kneels to inspect a wheel-rut filled with glittering gypsum crystals, warning you that heavy wagons have cut deep traps.
+@@SEED sg-1-1-2-12 | Walking alone, you hear the muffled thrum of a distant salt-mill grinding through the windless afternoon silence.
+@@SEED sg-1-1-2-13 | You trade a crust of rye bread with a ragged shepherd whose sheep have wool stiffened with alkaline crust.
+@@SEED sg-1-1-2-14 | Pell points out a chimney peeking above the salt-drifts where a hermit once boiled seawater for tax-free crystals.
+@@SEED sg-1-1-2-15 | The track narrows between two high banks of wind-piled silt, forcing you to walk boot-to-boot with your hired guide.
+@@SEED sg-1-1-3-0 | Beside a crumbling lime-kiln, Pell tells a grim tale of the Salt Court’s enforcers collecting teeth for back-taxes.
+@@SEED sg-1-1-3-1 | A wheel-wright’s abandoned shack offers a scrap of shade where you adjust your pack-straps before the basin opens.
+@@SEED sg-1-1-3-2 | You duck behind a stacked pile of fence-hurdles as three Salt Court riders trot past on long-legged desert ponies.
+@@SEED sg-1-1-3-3 | Pell stoops to pick up a copper shoe-eyelet dropped by an earlier runner, pocketing it with a cynical wink.
+@@SEED sg-1-1-3-4 | Walking without company, you jump as a startled kestrel launches from a hollow fence-post into the glaring blue sky.
+@@SEED sg-1-1-3-5 | You share a mouthful of lukewarm water from your tin flask while Pell scans the white flats for mirage-shimmers.
+@@SEED sg-1-1-3-6 | A faded sign nailed to a fence-rail warns travelers that all dry wells belong by decree to the Salt Court.
+@@SEED sg-1-1-3-7 | Pell uses his iron-shod staff to test the crust of a suspicious sinkhole yawning beside the cart-track.
+@@SEED sg-1-1-3-8 | You pass a team of weary ditch-diggers clearing alkali silt from a choked stone culvert with wooden shovels.
+@@SEED sg-1-1-3-9 | Solitary and sweating, you count your paces against the rhythmic crunch of gravel beneath your heavy walking boots.
+@@SEED sg-1-1-3-10 | Pell points toward a distant smudge of smoke where charcoal burners are smothering scrub-oak in earthen pits.
+@@SEED sg-1-1-3-11 | You stumble over a buried lintel of green glass, the remnant of some old farmstead swallowed by the creeping salt.
+@@SEED sg-1-1-3-12 | A ragged boy runs alongside the track trying to sell dried locusts threaded on a grass stalk for a farthing.
+@@SEED sg-1-1-3-13 | Pell dips a stained rag into his canteen to wipe the alkaline rime from your stinging, dust-reddened eyelids.
+@@SEED sg-1-1-3-14 | You pause by a dry stone wall where wild caper bushes cling desperately to the calcified mortar joints.
+@@SEED sg-1-1-3-15 | The wind drops entirely, leaving the dry basin to hum with the thin, singing vibration of sun-baked window-shards.
+@@SEED sg-1-1-4-0 | Near the broken water-gate, Pell advises you to douse your lantern before the glass-sentries on the ridge spot the glare.
+@@SEED sg-1-1-4-1 | You crouch behind a low windbreak of stacked slate, debating whether the coming dusk requires the ember-lamp's warmth.
+@@SEED sg-1-1-4-2 | Solitary in the deepening gloom, you reach for your tinder-box while a cold evening draft stirs the alkaline dust.
+@@SEED sg-1-1-4-3 | Pell taps the iron casing of your lantern, reminding you that lit coals draw both well-thieves and mirror-sentries.
+@@SEED sg-1-1-4-4 | A flock of startled sand-grouse erupts from a dry gully as the first violet shadows stretch across the white salt.
+@@SEED sg-1-1-4-5 | You stand at the crossroads where the cart-track dissolves into the trackless basin, checking your flint and steel.
+@@SEED sg-1-1-4-6 | Pell points out a distant amber blink on the horizon, signaling that the Glasswrights are swapping night-watches on Prism.
+@@SEED sg-1-1-4-7 | The track ends abruptly at the edge of the great white pan, where night rushes down from the hills without twilight.
+@@SEED sg-1-1-5-0 | At the Last Lamp-Stall, you spin the draft-vent wide open, letting the coal-pan glow ruby-red against the biting night chill.
+@@SEED sg-1-1-5-1 | By the tethering-post of the Last Lamp-Stall, you slide the heavy iron shutter closed, banking the coals into a dark, smoky secret.
+@@SEED sg-1-1-5-2 | Amid the smell of mutton-tallow and roasting barley at the Last Lamp-Stall, you strike a sulphur match to wake the tin lantern.
+@@SEED sg-1-1-5-3 | Under the creaking sign of the Last Lamp-Stall, you press the iron damper shut, marching out into the starlight with only a thin wisp of grey smoke.
+@@SEED sg-d-1-1 | Ignoring Pell's warning, you swing your blazing lamp high above your head to spite the toll-riders, drawing a volley of poisoned sling-stones from the dark and cracking your water-cask against a limestone boulder.
+@@DONE

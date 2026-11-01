@@ -1,0 +1,62 @@
+@@SECTION cf-0-022
+TITLE: The Union Locker
+TEXT: Heavy iron hinges groan as you pry open Hesper Quill's rusted locker, kicking up a grey flurry of old coal-dust and grease-stained manifests. Across the narrow aisle, a union clerk narrows his eyes behind tinted spectacles, pencil poised above a tally sheet to catch any pilfering hands. You slide your fingers past crumpled work-shirts and empty tobacco tins until they brush against cold, machined metal wedged deep behind the back panel. Pulling it free reveals a greasy spare regulator valve, preserved in heavy tallow and ready for the long road. // You pocket the heavy brass piece before the clerk can look up from his ledger, turning your back on the office to stride back toward the idling engine.
+CHECK: CUNNING
+GRANT: greasy spare regulator valve
+EXIT 1: Slip the heavy brass valve into your pocket
+@@END
+@@SECTION cf-0-023
+TITLE: Beneath the Firebox
+TEXT: Soot flakes drift down like black snow as you squeeze your shoulders under the iron belly of the Marrowbone, crawling into the choking dark directly beneath the roaring firebox. Scalding drops of rusty water hiss against your knuckles, and the radiant heat from the ash-pan bakes your skin until your breath catches dry in your throat. Reaching blindly through the acrid steam, your fingers locate the loose injector nozzle vibrating violently against its copper seat. With a sharp twist and sheer stubborn grit, you wedge your wrench into the gap and haul until the leaking joint seals tight. // You scramble back out into the cool depot air, wiping black grease from your brow as you claim the heavy copper wrench left behind by the fitters.
+CHECK: MECHANICS
+GRANT: heavy copper wrench
+EXIT 1: Crawl out from beneath the engine deck
+@@END
+@@SECTION cf-0-024
+TITLE: The Ticket-Widow's Whisper
+TEXT: Through the narrow brass slit of the ticket office, the widow's eyes dart toward the empty corner where Hesper Quill's coat used to hang before the disappearance. Her fingers drum a nervous tattoo against the scarred wood of the counter, refusing to meet your steady gaze as the station clock ticks heavily in the gloom. You lean in close, lowering your voice beneath the hiss of distant steam lines to match her cautious rhythm. Slowly, her resistance crumbles into a dry whisper, and she passes a scratched tin token across the ledge along with the secret signal-pass used by the night-shifters. // You memorize the cadence of the low whistle before turning away from the window into the crowded soot-choked platform.
+CHECK: CUNNING
+GRANT: secret signal-pass
+EXIT 1: Pocket the token and leave the window
+@@END
+@@SECTION cf-0-025
+TITLE: Searching the Iron Locker
+TEXT: Iron panels rattle as you force Hesper Quill's personal locker door open, disturbing a nest of dry roach-wings and stale pipe smoke. In the adjacent watch-box, a watchful union clerk taps his wooden ruler against the partition, keeping a sharp eye on your movements to ensure no company property vanishes. You ignore his suspicious glare, sliding your palm along the dark timber lining until your fingertips graze a cold, oiled lump wedged in the corner. It is a greasy spare regulator valve, tucked away behind old route maps and forgotten overtime chits. // You withdraw your hand smoothly, tucking the heavy metal prize into your work-trousers just as the clerk turns his back.
+CHECK: CUNNING
+GRANT: greasy spare regulator valve
+EXIT 1: Secure the valve and step away
+@@END
+@@SECTION cf-0-026
+TITLE: Questioning the Widow
+TEXT: Pale light catches the edge of the ticket-widow's brass spectacles as she stares past your shoulder, pretending your urgent questions about Hesper are merely wind in the eaves. Her knuckles whiten where she grips the edge of her wooden ledger, guarding the depot's gossip like a dragon over cold coals. You press your advantage with a low, unhurried question about who was seen slipping out the back gate after midnight. Reluctantly, she leans forward, her papery lips brushing the brass grille to murmur a secret signal-pass that unlocks the guarded side-tracks. // You nod your thanks to the shadowed glass and walk out into the hissing steam.
+CHECK: CUNNING
+GRANT: secret signal-pass
+EXIT 1: Walk out into the hissing steam
+@@END
+@@SECTION cf-0-027
+TITLE: The Water-Seller's Skin
+TEXT: Barrels of thick, grey ditch-water line the platform where the water-seller hawks his lukewarm draughts to weary gangers with parched throats. You tap the side of his largest canvas skin with your knuckle, challenging his tall tales about mountain springs and untainted runoff from the upper ridges. He squints at you with rheumy eyes, spinning another impossible yarn about where he hauled it from, but your knowing stare pins him down. Grumbling under his breath, he drops his price and tosses you a small, tightly sewn skin of heavy lubricating oil instead of the foul water you refused. // You heft the oily container, testing its weight against the swing of your arm before heading for the tender.
+CHECK: CUNNING
+GRANT: skin of oil
+EXIT 1: Take the oil skin and turn away
+@@END
+@@SECTION cf-0-028
+TITLE: Rafters of Ashgate
+TEXT: Dust motes dance in the shaft of amber light piercing the depot roof as you finish sorting through Hesper Quill's abandoned effects. The union clerk across the platform clears his throat with a dry rattle, folding his ledger shut to signal that your time at the locker has drawn to a close. You grip the greasy spare regulator valve tightly in your hand, feeling the cold weight of the metal anchor you against the mounting panic of the yard. There is nothing more to find among the old rosters and rusted padlocks, leaving only the iron road stretching south toward the grey horizon. // You swing down from the locker staging and head toward the footplate of the Marrowbone.
+EXIT 1: Step down from the locker staging
+@@END
+@@SECTION cf-0-029
+TITLE: Tending the Tender
+TEXT: Sludge-filled buckets clatter along the platform edge as the water-seller retreats into the shadows, leaving you alone with your prize beside the towering iron flanks of the Marrowbone. You unstopper the skin of oil, sniffing the thick, dark fluid to verify its purity before pouring it carefully into the main lubricator cup. Every joint and bearing along the valve gear must run smooth if you are to beat the coming ash-storms down the line. The engine responds with a low, contented shudder as the fresh oil reaches its thirsty brass journals. // You wipe your hands on an oily rag and climb up the iron ladder to the deck plates.
+EXIT 1: Climb up the iron ladder
+@@END
+@@SECTION cf-0-030
+TITLE: Under the Boiler Deck
+TEXT: Dripping condensation from the boiler shell plasters your hair to your forehead as you wriggle backward out from beneath the heavy iron chassis. Your fingers ache around the handle of the heavy copper wrench, the metal still warm from the relentless radiated heat of the fire-bed. Down the line, a distant signal arm drops with a hollow clank, reminding you that the schedule waits for no one, not even a stalled engine with a bleeding injector. You stash the wrench in the tool box by the coal bunker, ready to throw the boiler feeds whenever the pressure calls for it. // You stand tall on the iron deck and check the water glass.
+EXIT 1: Stand tall on the iron deck
+@@END
+@@SECTION cf-0-031
+TITLE: Filling the Tender
+TEXT: Grey ripples settle inside the Marrowbone's massive tender tank as the last drop of liquid sloshes home against the riveted iron plates. You secure the heavy canvas hatch cover, lashing it down with a damp hemp cord so the dust of the Cinder Steppe cannot foul the reserves. The oil skin rests safely in your kit bag, its contents promising smooth running through the dry miles ahead where grease is worth more than gold. Ashgate Junction slumbers beneath its blanket of soot, indifferent to the single engine preparing to break the baronial blockade. // You reach for the heavy iron fire-rake and check your ash-pan.
+EXIT 1: Reach for the heavy iron fire-rake
+@@END

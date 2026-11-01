@@ -1,0 +1,54 @@
+Gemini said
+
+@@SECTION td-4-163
+TITLE: Etched Warnings In Iron
+TEXT: Deep chisel marks scar the bronze plate beneath your fingers, recording the bitter lessons of the builders who watched the salt rise too high. Their warning speaks of misaligned relays and the catastrophic backlash that follows a hasty torque upon the main drum. You trace the jagged lettering through the grease, recognizing the exact geometry of a trap meant to keep the curious from breaking what remains of the sea's lung. // That hard-won clarity lets you spot the hair-thin fractures spider-webbing across the secondary manifold before your thumb brushes against them.
+EXIT 1: Trace the jagged warning lines
+@@END
+@@SECTION td-4-164
+TITLE: The Builder's Legacy
+TEXT: Faded verdigris cakes the ancient instructions until they read like a sailor's superstition carved into sheet metal, yet the core logic holds true for anyone with the salt-sense to decode it. The old Tidewardens designed their machinery to punish impatience, punishing any hand that attempts to force the gear without first bleeding the residual pressure from the brine lines. You adjust your stance against the vibrating deck-plates, letting the rhythmic groaning of the distant gears guide your eye to the hidden bypass valve.
+EXIT 1: Reach for the bypass valve
+@@END
+@@SECTION td-4-165
+TITLE: Decoding The Iron Cipher
+TEXT: Sweat stings your eyes as you lean closer to the dim control console, squinting against the grime to decipher the worn glyphs that dictate the sequence of the main release. One misread symbol could lock the entire mechanism permanently or trigger a counter-weight drop that would shatter your fingers into pulp against the housing. You press your sleeve against the greasy metal, weighing the strange maritime notation against everything Orsolya taught you in the salt-damp stillness of the Gullmouth lighthouse.
+CHECK: Decipher the ancient console glyphs
+@@END
+@@SECTION td-4-166
+TITLE: A Costly Misreading
+TEXT: A sudden shift in the iron foundation betrays your concentration, and your sleeve catches on a jagged burr of steel as the ancient glyphs blur into meaningless scratches. The heavy steel casing judders violently against your knuckles, leaving a deep, weeping graze across your forearm that smells faintly of old brine and iron oxide. You pull your arm back with a sharp hiss of breath, nursing the bruised limb while the console clicks into a stubborn, locked stance that demands more time and patience to bypass.
+EXIT 1: Press past the bruising slip
+@@END
+@@SECTION td-4-167
+TITLE: The Hidden Glyph
+TEXT: Your fingers trace the worn indentation of the final symbol just as the locking tumbler drops into place with a hollow, satisfying thud that resonates through the floor. The mechanism yields its secret without further resistance, granting you a profound clarity regarding the ancient builder's intent and the exact tolerances of the great gear. You pocket the small, grease-stained brass tally dropped by some forgotten artificer, feeling the weight of their forgotten knowledge settle into your palm.
+GRANT: Brass artificer's tally
+EXIT 1: Return to the gear housing
+@@END
+@@SECTION td-4-168
+TITLE: The Severed Conduit
+TEXT: High-pressure mist hisses from the ruptured hydraulic line, spraying lukewarm, oily brine across the rusted floor grates and filling the cramped recess with the metallic tang of stagnation. You reach into your satchel for a length of braided copper wire and a heavy rubber sleeve salvaged from a wrecked trawler's winch housing near the Low. Kneeling in the wet grit, you square your shoulders against the vibrating bulkhead and prepare to bind the weeping joint before the pressure drops entirely.
+EXIT 1: Bind the weeping hydraulic joint
+@@END
+@@SECTION td-4-169
+TITLE: Rebuilding The Circuit
+TEXT: Working by the faint, pulsing glow of the exposed armature, you slip the salvaged fittings over the torn rubber and clamp them down with steady, practiced movements born of long years fixing nets in the Gullmouth wind. Every screw turns smoothly beneath your calloused fingers, bridging the gap between the dead auxiliary pump and the pulsing core of the machinery. A low, resonant hum begins to build beneath the floorboards as life slowly returns to the forgotten conduit.
+EXIT 1: Secure the final brass clamp
+@@END
+@@SECTION td-4-170
+TITLE: Patching The Vein
+TEXT: The copper wire slips on the slick, grease-coated pipe, threatening to unseat the fragile rubber seal just as the internal pressure surges with a sudden, alarming shriek. If the makeshift patch gives way now, the boiling spray will scald your skin and leave the secondary pump starved of the fluid it needs to turn the main gear. You plant your boot firmly against the iron bulkhead, using both hands to apply agonizingly even pressure to the failing joint as the metal groans under the strain.
+CHECK: Clamp the high-pressure line
+@@END
+@@SECTION td-4-171
+TITLE: A Scorched Finger
+TEXT: A jet of superheated brine spits past the failing seal, catching the back of your hand and leaving a raw, blistering red welt that throbs in time with your racing pulse. You curse into the damp gloom, shaking the stinging hand before grabbing a dry rag to wrench the retaining collar home by sheer stubborn muscle. The leak finally slows to a greasy drip, but the hurried fix costs you precious ointment and leaves your knuckles stiff and throbbing.
+EXIT 1: Accept the burn and press on
+@@END
+@@SECTION td-4-172
+TITLE: The Glowing Core
+TEXT: The repaired line holds firm against the surging pressure, sealing the circuit and bathing the dark recess in a steady, amber pulse of revived mechanical energy. You detach the humming crystal battery from the secondary housing, feeling its residual warmth hum pleasantly against your palm like a sleeping ember pulled from a hearth. It is a rare, perfectly preserved piece of old-world hardware that will draw a heavy pouch of coin or favors anywhere from the Low to Saltspire.
+GRANT: Pulsing crystal battery
+EXIT 1: Ascend back to the housing
+@@END

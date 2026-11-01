@@ -1,0 +1,87 @@
+{
+ "batch": "sg-2-2-3-12",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-2-2-3-12": {
+   "title": "The White Glare",
+   "text": "You wipe a film of fine white salt from your brow as the afternoon heat beats down mercilessly across the cracked basin. The distant hum of the copper pipes fades behind you, replaced by an oppressive silence that stretches toward the shimmering horizon. Your water skin feels light against your hip, a reminder of the dry miles yet to cross before dusk settles over the salt flats.\n\nTwo distinct paths lie ahead through the white crust, each promising an arduous trudge through the glare. You must decide whether to climb the jagged industrial remnants or keep to the old transport track.",
+   "exits": [
+    "Climb the jagged embankment of fused slag",
+    "Follow the deep cart-rut along the glass road"
+   ]
+  },
+  "sg-2-2-3-13": {
+   "title": "The Obsidian Terrace",
+   "text": "You traverse a broad terrace of black obsidian tiles that absorb the sun's glare and radiate intense dry heat right through the soles of your boots. The polished stone mirrors the blinding sky above, turning the ground beneath you into a vast sheet of dark glass that shimmers with phantom vapors. Every step requires concentration to avoid the sharp fractures where the old pavement has buckled under centuries of thermal stress.\n\nThe terrace narrows ahead where a cluster of ruined structures casts a long, welcome strip of shadow. You can push straight toward the crumbling courtyard or swing outward across the open crust.",
+   "exits": [
+    "Pause beside the dried-up rose quartz fountain",
+    "Scramble up the jagged slag embankment"
+   ]
+  },
+  "sg-2-2-3-14": {
+   "title": "The Bleached Ledger",
+   "text": "A discarded ledger page flutters past your ankles, its ink completely bleached white by decades of glaring sun and dry desert air. You watch it skitter across the crusted salt before getting snagged on a jagged shard of green bottle-glass. The stillness of the basin presses down on your shoulders, broken only by the faint, rhythmic ticking of your banked coal-lantern cooling in the wind.\n\nAhead, the trail splits among the skeletal foundations of a sunken storehouse. You can press forward toward the flashing signals in the distance or keep your head down along the old trade tracks.",
+   "exits": [
+    "Watch the distant mirror-signal flash across the flats",
+    "Follow the deep cart-rut carved into the ancient glass road"
+   ]
+  },
+  "sg-2-2-3-15": {
+   "title": "The Swinging Cable",
+   "text": "You duck beneath a dangling length of copper cable that swings rhythmically in the dry desert breeze, humming a low, mournful note with every arc. The oxidized metal leaves a faint greenish stain on your shoulder as you brush past it into the open glare of the flats. Salt dust clings to your eyelashes, stinging with every blink as you scan the horizon for any landmark that might confirm your course toward Prism.\n\nThe path ahead winds between low mounds of wind-blown silt and shattered masonry. You can press onward along the cart-rut or seek a different bearing across the crust.",
+   "exits": [
+    "Follow the deep cart-rut toward the looming horizon"
+   ]
+  },
+  "sg-2-2-4-0": {
+   "title": "The Polygonal Silt",
+   "text": "You trace the edge of a deep drainage basin where the silt has dried into deep, fissured polygonal plates that crack sharply under your weight like thin ice. The air here smells of old minerals and baked clay, devoid of any moisture or living green. Your ember-lamp rests heavy and warm against your chest, its banked coals a steady, reliable heartbeat in the vast emptiness.\n\nThree separate routes diverge near the lip of the dry basin, leading deeper into the labyrinth of the outer shard districts. You must choose which direction to pursue as the light begins to tilt toward evening.",
+   "exits": [
+    "Head toward the rusted iron threshold of the outer gate",
+    "Approach the perimeter where the sentry lowers a barrier pole",
+    "Step onto the polished obsidian paving stones of the outer avenue"
+   ]
+  },
+  "sg-2-2-4-1": {
+   "title": "The Scout's Warning",
+   "text": "A nervous caravan scout named Hale warns you that the northern shard gates are bolted against late travellers and those without proper salt-tithes to pay. He wipes sweat from his neck with a dirty rag, eyeing your heavy coal-lantern with undisguised suspicion before gesturing back toward the open flats. The wind carries a faint metallic tang from the manufacturing quarters deeper within the ruins.\n\nYou can heed the scout's cautious advice and seek a different entry point or press on toward the main gates regardless.",
+   "exits": [
+    "Head toward the rusted iron threshold of the outer gate anyway",
+    "Step onto the polished obsidian paving stones of the outer avenue"
+   ]
+  },
+  "sg-2-2-4-2": {
+   "title": "The Crumbling Wall",
+   "text": "You squeeze through a narrow breach in a crumbling brick boundary wall choked with wind-blown crystal sand and dried desert scrub. The abrasive grit rasps against your canvas coat as you force your way into the shadowed alley beyond, leaving the blinding expanse of the bitterflats at your back. A stale, trapped heat hangs between the leaning towers like a woolen blanket.\n\nThe alley splits ahead into a pair of narrow corridors winding through the abandoned masonry. You can approach the guarded perimeter or make for the polished avenues further in.",
+   "exits": [
+    "Approach the perimeter where the sentry lowers a barrier pole",
+    "Step onto the polished obsidian paving stones of the outer avenue"
+   ]
+  },
+  "sg-2-2-4-3": {
+   "title": "The Glass Beads",
+   "text": "Your boots crunch over millions of tiny glass beads that roll beneath your soles like frozen morning dew, scattering in every direction with a sound like breaking waves. The ground here glitters with an iridescent sheen that hurts the eyes even through squinted lids. In the distance, the skeletal silhouettes of the Shard Cities rise against the pale sky like jagged teeth.\n\nTwo distinct gates present themselves across the shimmering expanse of beads. You must decide which checkpoint to approach before the failing light makes navigation treacherous.",
+   "exits": [
+    "Head toward the rusted iron threshold of the outer gate",
+    "Approach the perimeter where the sentry lowers a barrier pole"
+   ]
+  },
+  "sg-2-2-4-4": {
+   "title": "The Rose Fountain",
+   "text": "You pause beside a dried-up fountain carved from rose quartz, now filled only with fine white alkali dust and a scattering of dead copper leaves. The stone is cool to the touch despite the surrounding heat, offering a brief, illusory sense of comfort in an otherwise unforgiving landscape. Your hand rests on the cold ceramic Seedkey in your pocket, reassuring yourself of its weight before continuing.\n\nThe dry plaza opens into two distinct thoroughfares leading toward the heart of the ruined city. You can choose to seek the main gates or take the obsidian avenue.",
+   "exits": [
+    "Head toward the rusted iron threshold of the outer gate",
+    "Step onto the polished obsidian paving stones of the outer avenue"
+   ]
+  },
+  "sg-2-2-4-5": {
+   "title": "The Coded Glints",
+   "text": "A distant flash of mirror-signal from a shard tower cuts across the white flats, spelling warnings in coded glints that flicker and die before you can fully translate them. The Glasswrights clearly watch the approaches from their high perches, measuring every traveller who dares cross the basin before the monsoon arrives. You adjust the straps of your pack and quicken your pace across the crusted salt.\n\nThe signal leaves two possible directions open as you near the outskirts of the towering spires. You must decide where to direct your steps next.",
+   "exits": [
+    "Head toward the rusted iron threshold of the outer gate",
+    "Step onto the polished obsidian paving stones of the outer avenue"
+   ]
+  }
+ },
+ "missing": []
+}

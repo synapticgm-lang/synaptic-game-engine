@@ -1,0 +1,71 @@
+Gemini said
+
+@@SECTION sg-2-1-0-0
+TITLE: The Brine Dune
+TEXT: Beside the steaming well-mouth, you shoulder your lamp and skirt a dune of purple brine where discarded clay cups crunch beneath your boots. The heavy air smells of boiled lime and old sediment, clinging to your damp wool collar like a wet hand. Overhead, the sky stretches like an unpolished tin plate, hammering down a flat and merciless glare that makes the distant horizon waver and warp.
+EXIT 1: Climb the upper crust ridge
+EXIT 2: Follow Pell toward the sunken track
+EXIT 3: Plunge directly into the blinding glare
+@@END
+@@SECTION sg-2-1-0-1
+TITLE: The Brittle Mask
+TEXT: Leaving the sisterly oath behind, you strike across the blinding crust while your damp scarf stiffens into a brittle mask of salt. Every step forward produces a sharp, glassine crack that echoes thinly across the empty pan. Your canteen swings heavy and lukewarm against your hip, a liquid reminder of how quickly wells turn sour in this parched expanse.
+EXIT 1: Tread softly past the limestone sink
+EXIT 2: Veer toward the shimmering heat-mirages
+EXIT 3: Press onward straight into the white haze
+@@END
+@@SECTION sg-2-1-1-0
+TITLE: The Acacia Rib
+TEXT: Beneath a rib of bleached acacia wood, you dodge a drift of stinging powder that bites your eyes before your goggles seal. The wind here carries a dry, metallic whistle through the hollow timber frame, sounding almost like human breath trapped in metal lungs. You check the leather straps of your lamp to ensure no stray grit has fouled the vents where the red coals breathe.
+EXIT 1: Skirt the edge of the timber shadow
+EXIT 2: Follow the wind into the open salt-pan
+EXIT 3: Search the hollow root for hidden water
+EXIT 4: Cut across the dry water-course below
+@@END
+@@SECTION sg-2-1-1-1
+TITLE: The Basalt Track
+TEXT: Pell whistles softly, guiding your boots onto an ancient basalt track hidden beneath the shifting salt-crust where blisters will not form. Having a glass-diver at your shoulder turns this lethal maze into a manageable puzzle, especially when he points out the subtle violet discoloration that warns of soft mire below. The dark stones feel firm and trustworthy beneath your tired soles, a rare luxury in the Basin.
+EXIT 1: Follow the dark stones forward
+EXIT 2: Step aside to listen to the singing earth
+EXIT 3: Chase the rolling sphere of dried glass-kelp
+@@END
+@@SECTION sg-2-1-1-2
+TITLE: The Ivory Ribs
+TEXT: A discarded mule-skeleton stripped to clean ivory points the way toward a cluster of heat-mirages dancing on the horizon. The sun beats down with punishing weight, turning the salt flats into a glaring mirror that reflects the blinding white sky right back into your face. You grip your lamp handle tighter, feeling the steady, reassuring warmth of the banked embers against your knuckles.
+EXIT 1: Pause to listen to the salt crystals
+EXIT 2: Kick the rolling tumbleweed of kelp aside
+EXIT 3: Check the ceramic key in your pocket
+EXIT 4: Trace the numbers on the copper milestone
+@@END
+@@SECTION sg-2-1-1-3
+TITLE: The Iron Crust
+TEXT: You step carefully across a crust that rings like iron beneath your soles, fearing the hollow drum of a sunken brine-pit below. The landscape here is a monochromatic waste of stark white and pale silver, broken only by the occasional flash of distant mirrors. Your breathing sounds loud inside your scarf, a rhythmic rasp that marks each painful league toward the centre.
+EXIT 1: Wade through the pink drainage ditch
+EXIT 2: Watch the distant mirror flashes blink
+EXIT 3: Leap across the purple mineral fissure
+@@END
+@@SECTION sg-2-1-1-4
+TITLE: The Red Sherds
+TEXT: A small earthenware flask rolls from your pack, shattering into red sherds that vanish instantly in the searing glare of noon. There is no time to mourn the lost water; the salt greedily drinks whatever moisture touches the ground before it can even form a puddle. You quicken your pace, keeping your eyes fixed on the hazy outline of the distant observatory spires.
+EXIT 1: Inspect the abandoned merchant barrow
+EXIT 2: Wipe the stinging brine from your brow
+EXIT 3: Pass the old stone boundary cairn
+@@END
+@@SECTION sg-2-1-1-5
+TITLE: The Iron Grille
+TEXT: You pause to scrape thick salt-rime from your ember-lamp's iron grille, ensuring the banked coals retain their vital breath of warmth. The tiny glow inside is your only true companion against the encroaching dark and the biting alkaline dust. Far off across the flats, a low hum begins to vibrate through the earth, singing a strange and ancient tune of cooling glass.
+EXIT 1: Shake the sharp quartz from your gaiters
+EXIT 2: Listen to the deep strata humming below
+@@END
+@@SECTION sg-2-1-2-0
+TITLE: The Cubic Crystals
+TEXT: Within the shadow of a basalt boulder, you find an abandoned surveyor's tripod encrusted with sparkling cubic crystals that mock your thirst. The metal legs are fused solid into the salt floor, held fast by decades of mineral growth that no hammer could break. You rest your shoulder against the cool stone, letting the brief shade reset your breath.
+EXIT 1: Duck behind the screen of iron slag
+EXIT 2: Examine the empty Candlemere crate
+@@END
+@@SECTION sg-2-1-2-1
+TITLE: The White-Eyed Raven
+TEXT: A solitary raven with white-rimmed eyes circles above your head, waiting for a runner who stumbles in the glaring alkali flats. Its harsh croak cuts through the ringing silence of the basin like a dry knife. You ignore the bird and keep your boots moving, knowing better than to invite the company of scavengers before your journey is half done.
+EXIT 1: Seek refuge behind the slag screen
+EXIT 2: Check the branded trading guild crate
+@@END

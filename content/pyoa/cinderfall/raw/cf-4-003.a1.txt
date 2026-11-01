@@ -1,0 +1,6 @@
+@@SECTION cf-4-011
+TITLE: The Dropped Arm
+TEXT: Heavy silence settles over the damp stone as the final clank of counterweights fades into the masonry, leaving only the slow drip of lime-water from the vaulted ceiling above. Right beside your ear, a rusted semaphore blade of grey iron shivers once and drops cleanly into the clear position, its signal-glass catching the pale flare of your inspection lamp. This phantom clearance grants you an undisturbed passage through the dead junction, leaving a small measure of spectral favor clinging to your sleeve. // You pocket a brass signal-token, smooth-edged from a century of thumb-rubbing, before stepping back toward the idling tender.
+GRANT: a brass signal-token
+EXIT 1: Inspect the stalled baggage trucks again
+@@END

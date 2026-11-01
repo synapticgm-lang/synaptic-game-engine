@@ -1,0 +1,20 @@
+MODEL Pro
+
+[
+{
+"section": "td-0-005",
+"field": "page",
+"old": "blinding migraine",
+"new": "searing migraine",
+"kind": "prose",
+"reason": "Avoids repeating 'blinding' from the scene title."
+},
+{
+"section": "td-0-007",
+"field": "exit:0",
+"old": "Prepare to force the mechanism",
+"new": "Force the mechanism open",
+"kind": "choice",
+"reason": "Removes repetitive 'prepare' (already used in the preceding sentence) to make the exit action punchier."
+}
+]

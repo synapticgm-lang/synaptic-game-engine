@@ -1,0 +1,92 @@
+{
+ "batch": "ul-3-074",
+ "sections": {
+  "ul-3-074": {
+   "title": "The Carved Floorboards",
+   "text": "Cold drafts whistle through the intersecting alleyways of the lower archives, carrying the sharp tang of gall ink and damp masonry. Beneath your ink-stained boots, the wooden floorboards bear a labyrinth of deep-chiselled symbols, shifting their angles each time the distant water-clocks chime. These marks denote the rigid taxonomy of the Cataloguers, separating history from fiction by fractions of a degree. You kneel beside a particularly stubborn glyph that pulses with a faint, amber luminescence, tracing its contours with a gloved finger while overhead iron chains groan against unseen weights.\n\nTo secure your path toward the restricted corridors without triggering a tribunal alarm, you must interpret the sequence before the floor sections slide apart into absolute darkness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the shifting floor symbols"
+   ]
+  },
+  "ul-3-075": {
+   "title": "The Ciphered Path",
+   "text": "Shadows lengthen across the pine planks as the categorization marks begin to bleed thin lines of red sealing wax into the grain. Your fingers trace the complex geometries, feeling the faint vibration of subterranean machinery shifting tons of vellum and parchment deep beneath the foundations of Quillon. Every symbol represents a category of forbidden thought, a dangerous taxonomy meant to keep unruly volumes in their proper stalls. A low, rhythmic scratching sound echoes from the adjacent stack, reminding you that the rule-keepers are never far behind.\n\nYou steady your lamp, letting its warm oil-light illuminate the next junction where the floorboards split into three distinct paths of logic.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the amber floor markers"
+   ]
+  },
+  "ul-3-076": {
+   "title": "Reading The Runes",
+   "text": "Sweats collects at your temples as the floorboards beneath your knees begin to tilt sideways, threatening to slide your boots into a yawning crevice of uncatalogued pamphlets. You press your palms flat against the restless oak, frantically cross-referencing the drifting symbols against the memory of every classification manual you ever memorized as a junior page. The rules are ancient, contradictory, and fiercely enforced by the invisible tribunal watching from the high balconies. Your eyes dart across the carved sequence, desperately seeking the single logical thread that binds the chaotic taxonomy together before the entire floor rotates into the abyss.",
+   "check": "Decipher the shifting floor symbols",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-077": {
+   "title": "The Cost Of Confusion",
+   "text": "A sudden wrenching shudder of the timbers betrays your faulty calculation, sending you sprawling across the abrasive oak planks as a row of heavy shelf-dividers snaps shut like teeth. The sharp edge of a brass classification plate slices a jagged line across your knuckles, drawing a bright line of crimson that immediately stains the sacred wood. You scramble backward with a sharp intake of breath, clutching your bleeding hand while the floor settles into a crooked, unstable angle. The mistake costs you precious minutes and leaves a dull, throbbing ache in your fingers, but the path ahead finally locks into a grudging, permanent alignment.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance along the crooked boards"
+   ]
+  },
+  "ul-3-078": {
+   "title": "The Scholar's Key",
+   "text": "Your mind cuts through the complex web of cross-references with absolute precision, translating the erratic floor carvings into a clean, flawless vector across the trembling chamber. However narrowly you manage the transition, your boots find purchase on the exact center of each stable plank just as the surrounding rows lock into place with a heavy, satisfying thud. In the groove of the final timber, your fingers brush against a small, forgotten object wedged deep within the grain - a heavy iron key bearing the stamp of the lower stacks.",
+   "check": "",
+   "grant": "A stamped iron key",
+   "exits": [
+    "Return to the shifting stacks"
+   ]
+  },
+  "ul-3-079": {
+   "title": "The Rails Of Brass",
+   "text": "High above the stone floor, the polished brass guide rails of the moving bookcases hum with a steady, low-frequency vibration that rattles your teeth. You hook your heels over the top timber of a towering oak case, balancing your weight against the dizzying drop into the shadowy aisles below. A discarded brass compass lies gleaming just out of reach on a parallel rail that is slowly drifting away across a yawning gap of empty air. The damp air smells strongly of old paper and lamp-oil, heavy with the quiet menace of a place that has forgotten the sun.\n\nYou tighten your grip on your leather satchel and prepare to bridge the widening chasm with a calculated shift of your center of gravity.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slide along the polished rail"
+   ]
+  },
+  "ul-3-080": {
+   "title": "The Gleaming Needle",
+   "text": "Metal screeches against metal as the neighboring stack shifts two inches to the left, narrowing the gap between your precarious perch and the lost brass compass. Below you, the endless rows of leather-bound volumes look like the teeth of a sleeping leviathan waiting for a careless shelver to slip. You steady your breathing, keeping your eyes fixed on the small, spinning needle that stubbornly points toward some hidden magnetic north within the heart of the Underlibrary. Every movement of the overhead chains threatens to unbalance your stance, demanding absolute concentration on the narrow strip of brass beneath your soles.\n\nYou crouch lower, shifting your weight forward to shorten the distance to the prize before the tracks grind into their next configuration.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the dropped compass"
+   ]
+  },
+  "ul-3-081": {
+   "title": "Balancing On The Beam",
+   "text": "You throw your weight forward along the greasy brass pipe, letting momentum carry you across the growing void while the iron shelf beneath your knees shudders violently from side to side. The wind of the moving stacks whips at your coat tails, threatening to pitch you headfirst into the dark abyss of the unmapped tiers. Your fingers stretch toward the spinning compass as the rail beneath it dips sharply downward, testing your equilibrium to its absolute limit in the hushed, dusty gloom.",
+   "check": "Retrieve the dropped brass compass",
+   "grant": "",
+   "exits": []
+  },
+  "ul-3-082": {
+   "title": "A Clumsy Tumble",
+   "text": "Your boot slips on a film of spilled gall ink coating the brass rail, sending you tumbling sideways into a dense thicket of protruding shelf brackets. You catch yourself with a bruised shoulder, dangling by one arm over the drop while your leather satchel swings loose and scatters a handful of crumpled catalog slips into the dark below. The loss of your notes leaves a stinging humiliation, and your shoulder flares with a sharp ache as you haul yourself awkwardly back onto a solid wooden ledge. You are battered and lighter by several useful memos, but you survive the fall with your determination intact.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl away from the rail"
+   ]
+  },
+  "ul-3-083": {
+   "title": "The Steady Hand",
+   "text": "Your fingers close securely around the cold metal ring of the compass just as the rails lock together with a resounding clang that echoes through the hollow vaults. However narrowly you manage the recovery, your balance holds true on the narrow track, leaving you safely crouched atop the towering mahogany case with your prize firmly in hand. The compass needle spins erratically before settling on a steady bearing that points straight through a narrow, unlisted archway ahead.",
+   "check": "",
+   "grant": "A reliable brass compass",
+   "exits": [
+    "Approach the red-robed enforcers"
+   ]
+  }
+ },
+ "missing": []
+}

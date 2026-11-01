@@ -1,0 +1,68 @@
+@@SECTION cf-5-040
+TITLE: The Iron Bracket
+TEXT: Muscle strains against rusted iron as you wrench the heavy mounting bracket from the damp masonry, shattering the stubborn door-lock with a sharp metallic clatter. Dust and powdered mortar billow into the stale air around your boots, coating your trousers in grey film. Within the splintered recess lies a grease-stained leather tool-roll, untouched by the damp for years. Fingers unbuckle the dry straps to reveal heavy-set spanners and a spare valve-needle wrapped in oily rag. You tuck the prize securely beneath your belt, stepping back onto the gantry just as the structural bolts groan in protest.
+GRANT: heavy leather tool-roll
+EXIT 1: Climb upward toward the gantry watch
+@@END
+@@SECTION cf-5-041
+TITLE: Three Heavy Notes
+TEXT: Heavy shadows stretch across the damp masonry as the overhead sky darkens to the bruised, sickly purple of the approaching ash-storm. Far above the great reservoir, the massive mechanical storm clock stirs in its iron cage, striking three heavy, vibrating notes that reverberate through the echoing vaults like hammer-blows on an anvil. Dust sifts down from the vaulted ceilings, settling on your shoulders and stinging your eyes in the thin air. The rising pressure of the gale howls through the intake pipes outside, warning that time has nearly run out for the walled city and its silent generators. You grip the railing tighter, bracing against the draft as the subterranean world holds its collective breath.
+EXIT 1: Descend into the roaring sump-house
+@@END
+@@SECTION cf-5-042
+TITLE: The Sump-House
+TEXT: Scalding steam vents from rusted flanges into the darkness, filling the vast chamber with a thick, choking mist that smells of boiled sulfur and old oil. Sludge-choked drainage tunnels beneath the great reservoir roar with the sound of boiling runoff and escaping pressure, shaking the metal walkways beneath your boots. Every shadow seems to shift and breathe in the flickering amber glow of the distant pilot lights. The narrow pathways branch off into the gloom toward churning machinery, hidden alcoves, and steep, greasy ladders disappearing into the upper gloom. You must choose your footing carefully before the gathering damp chills you to the bone.
+EXIT 1: Inspect the jammed sluice-chain
+EXIT 2: Wade into the scalding bilge-water
+EXIT 3: Crawl through the narrow drainage culvert
+EXIT 4: Stare down the twitching pressure gauges
+EXIT 5: Clear the choked intake grate with a poker
+EXIT 6: Confront the Cinder Prophets on the stair
+@@END
+@@SECTION cf-5-043
+TITLE: The Jammed Sprocket
+TEXT: Steam hisses from a cracked elbow joint nearby, wreathing your face in white mist as you crouch beside the sluggish machinery. With a sudden grunt of effort, you swing the heavy brass spanner against the jammed sluice-chain, hammering it back onto its iron sprocket. A shower of hot sparks flies into the dark bilge-water below, accompanied by the metallic shriek of links biting home. The rusted mechanism shudders, catches, and finally begins to turn with a deep, rhythmic groaning sound. You wipe the greasy sweat from your forehead with a soot-stained sleeve, catching your breath in the humid air.
+EXIT 1: Follow the turning chain deeper inward
+@@END
+@@SECTION cf-5-044
+TITLE: The Sluice-Chain's Turn
+TEXT: Heavy grease coats your fingers as you guide the heavy iron links across the rattling gear teeth, ensuring the mechanism holds true against the relentless pull of the runoff. The air grows warmer here, thick with the smell of hot lard and friction, pressing against your chest with every breath. Drops of condensation drip rhythmically from the ceiling pipes onto your cap, splashing cold against the back of your neck. Ahead, a narrow maintenance hatch stands half-open in the bulkhead, spilling a dull yellow beam of light across the slippery floor plates. You steady your stance on the vibrating iron deck and press forward into the hum of the pumps.
+EXIT 1: Step through the open maintenance hatch
+@@END
+@@SECTION cf-5-045
+TITLE: The Sprocket's Grip
+TEXT: The heavy brass spanner slips against the slick, grease-coated iron link, threatening to jam the entire secondary gear train in a shriek of stripped teeth. You throw your full weight against the lever arm, straining every muscle in your back while the ancient machine groans and fights back with sudden, violent jerks. Steam vents whistle shrilly beside your ear, blinding you with a sudden wall of white heat that smells of scorching oil. Your hands burn against the cold metal as you try to force the stubborn cog into alignment before the housing cracks.
+CHECK: Force the jammed gear mechanism home
+@@END
+@@SECTION cf-5-046
+TITLE: The Slipping Cog
+TEXT: The seized cog jumps violently under your weight, striking your knuckles hard against the sharp iron housing with a dull, sickening thud. A sharp ache shoots up your forearm, leaving your fingers throbbing and stiff as you snatch your hand back from the dangerous pinch-point. Hot water splashes across your boots from a ruptured gasket nearby, soaking your woolen socks with scalding runoff before you can retreat. You nurse your bruised hand against your chest, breathing heavily through your teeth while the machinery clatters on in rhythmic mockery of your clumsy failure.
+EXIT 1: Retreat to the main drainage platform
+@@END
+@@SECTION cf-5-047
+TITLE: The Oily Prize
+TEXT: Despite the stinging pain in your bruised fingers, your persistence pays off as the stubborn chain finally drops smoothly into its oiled groove with a heavy, satisfying clunk. The drainage pump coughs twice, spits a cloud of gray vapor, and settles into a steady, powerful rhythm that drains the sump below. Resting on the grease-splattered deck beside the mounting bracket is a heavy brass oil-can, its spout bright and polished from careful use. You pick it up, finding it nearly full of clean machine oil that gleams faintly in the gloom.
+GRANT: heavy brass oil-can
+EXIT 1: Return to the roaring sump-house
+@@END
+@@SECTION cf-5-048
+TITLE: The Scalding Bilge
+TEXT: Murky water swirls around your shins, carrying flakes of grey ash and globules of waste oil from the churning turbines deeper within the vault. You step gingerly across the submerged floor plates, feeling for hidden gaps in the grating with the toe of your heavy boot. A discarded woollen muffler, heavy with soot and wet grime, floats near a rusted stanchion, catching on a jagged rivet. You fish it out with your free hand, wringing out the foul-smelling water before stuffing the damp cloth into your coat pocket for later warmth. The low humming of the distant dynamos vibrates through the soles of your feet.
+EXIT 1: Follow the submerged trench onward
+@@END
+@@SECTION cf-5-049
+TITLE: The Rising Dark
+TEXT: The water level climbs steadily around your thighs as a sudden surge from the upper sluices pours into the chamber without warning. Pitch-black shadows lengthen across the dripping brick walls, distorted by the flickering amber glow of the emergency pilot lights overhead. You press your back flat against the cold masonry, fighting down the rising panic in your chest as the roaring tide laps against your belt line. Every instinct screams at you to turn and scramble back to safety before the darkness closes in completely.
+CHECK: Maintain nerve against the rising dark
+@@END
+@@SECTION cf-5-050
+TITLE: The Chilling Tide
+TEXT: The sudden rush of icy water knocks your feet out from under you, plunging you waist-deep into the filthy bilge with a sharp gasp. Your heart hammers against your ribs as you scramble frantically for purchase on the slick, weed-choked brickwork, scraping your palms raw against the stone. The dampness penetrates your woolen coat instantly, sending a bone-deep chill through your limbs that makes your teeth chatter. You haul yourself upright with a ragged breath, coughing up foul-tasting mist while the dark water swirls around your hips like a hungry animal.
+EXIT 1: Drag yourself onto the higher platform
+@@END
+@@SECTION cf-5-051
+TITLE: The Dry Keepsake
+TEXT: You keep your footing through the surge, gritting your teeth against the biting cold until the water level drops back to a manageable trickle. Clutched in your fist is the damp woollen muffler you fished from the scum, smelling faintly of coal-smoke and old wool. Despite the soaking, the thick fabric offers a welcome layer of insulation against the raw draft howling through the drainage tunnel. You wrap it tightly around your neck, feeling its dry warmth begin to thaw the chill in your bones.
+GRANT: dry woollen muffler
+EXIT 1: Return to the roaring sump-house
+@@END

@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION td-2-033
+TITLE: Lifting the Salt Crust
+TEXT: Thick encrustations of white salt seal the iron-strapped lid of the sea chest against the dead seabed, hiding whatever plunder lies within its dark depths. Working your crowbar into the narrow gap, you throw your weight against the handle, feeling the ancient wood groan under the pressure of decades of dry exposure. The crust fractures with a dry, popping sound like snapping bones, releasing a puff of stagnant air that smells of old brine and rotting kelp.
+EXIT 1: Pry open the stubborn lid
+@@END
+@@SECTION td-2-034
+TITLE: Forcing the Seal
+TEXT: Muscles strain against the unyielding resistance of the hardened salt and rusted hinges, every fiber of your arms trembling under the sudden, brutal weight of the rusted lid. You plant your boots firmly into the damp seabed silt, throwing your full strength into one desperate, final heave to snap the iron lock before the entire casing gives way and buries the prize forever.
+CHECK: Heave against the salt seal
+@@END
+@@SECTION td-2-035
+TITLE: Bruised and Burdened
+TEXT: The rusted iron slams shut with a bone-jarring crash, catching your knuckles against the abrasive crust and sending a searing ache up your forearms. You stumble backward into the damp sand, nursing a jagged, bleeding scrape across your hand that will throb for days in the salt air. Valuable daylight slips away as you catch your breath, leaving you empty-handed and sore on the open seabed.
+EXIT 1: Press onward across the flats
+@@END
+@@SECTION td-2-036
+TITLE: Claiming the Heavy Blade
+TEXT: Steel slides free from its rotting velvet bed with a satisfying scrape, heavy and well-balanced despite the years spent beneath the receding tides. You test the edge with a calloused thumb, feeling the faint hum of old metal that has seen far worse than a dry seabed. Stowing the weapon safely at your belt, you leave the empty chest behind to sink back into the grey silt.
+GRANT: Heavy salt-rusted cutlass
+EXIT 1: Approach the leviathan bulk
+@@END
+@@SECTION td-2-037
+TITLE: Reaching for the Ledge
+TEXT: Jagged chunks of limestone crumble beneath a stranded fellow's frantic grip, threatening to plunge them down into the shadowed fissure below the old cliffline. You drop your pack and scramble across the slick rock face, sliding your boots into a narrow crevice to brace yourself against the drop. Reaching down with one outstretched arm, you catch hold of a salt-crusted sleeve just as the climber's footing gives way entirely.
+EXIT 1: Anchor yourself and pull
+@@END
+@@SECTION td-2-038
+TITLE: Bracing Against the Drop
+TEXT: Your shoulder muscles burn as the full, dead weight of the falling scavenger drags you perilously close to the jagged edge of the chasm. Digging your boot heels deep into the crumbling sediment, you arch your back and pull with everything you have left, fighting gravity and the treacherous pull of the unstable stone beneath you.
+CHECK: Tug the climber to safety
+@@END
+@@SECTION td-2-039
+TITLE: Slipping the Margin
+TEXT: Loose gravel cascades into the dark cleft below as your boot slips an inch, wrenching your shoulder socket with a sudden, agonizing jolt. You manage to drag the gasping stranger onto solid stone, but the violent strain leaves you doubled over and clutching a bruised side that aches with every breath. The cost of the rescue is stamped deep into your muscles as you stand shaking on the ledge.
+EXIT 1: Leave the ledge behind
+@@END
+@@SECTION td-2-040
+TITLE: Purse of the Rescued
+TEXT: Gratefully coughing up lungfuls of bitter dust, the rescued wrecker shoves a heavy leather pouch into your palm before vanishing back toward the cliff shadows without a backward glance. Heavy silver coins clink together inside the damp sack, offering a welcome reward for your split-second gamble on the crumbling stone. You secure the bounty tightly inside your coat and look back out across the wide expanse of the Low.
+GRANT: Pouch of rare coins
+EXIT 1: Head toward the sinkholes
+@@END
+@@SECTION td-2-041
+TITLE: Breaking the Petrified Hull
+TEXT: Rotting timbers hardened by decades of salt-soaking offer stubborn resistance to your heavy boots, refusing to yield easily to your assault. You swing your heavy iron-shod pole again and again into the warped ribs of the sunken dinghy, splintering the ancient wood until a dark cavity opens up within the ruined hull. Thick, greenish vapors escape from the breach, stinging your eyes, but you spot the smooth grain of an intact oar wedged inside the ribs.
+EXIT 1: Reach inside the wreckage
+@@END
+@@SECTION td-2-042
+TITLE: Rending the Timbers
+TEXT: Splintering wood groans under the relentless impact of your heavy strikes, showering your jacket with dry, grey flakes of ancient salt. You throw your shoulder against the fractured frame, using your entire body weight to force the warped planks apart before the foul air in the hull overwhelms your senses completely.
+CHECK: Force open the warped hull
+@@END
+@@SECTION td-2-043
+TITLE: Choking on the Fumes
+TEXT: A sudden burst of noxious, yellow gas erupts from the heart of the wreck, blinding you with stinging heat and sending you staggering backward into the mud. You cough until your ribs ache, gasping for clean air while the broken dinghy settles further into the shifting silt. The oar remains trapped inside the wreckage, lost to you along with the time spent hacking at the useless wood.
+EXIT 1: Turn away from the wreck
+@@END
+@@SECTION td-2-044
+TITLE: Seizing the Sturdy Oar
+TEXT: Wood snaps cleanly under a final, well-placed blow, freeing the long oar from its cramped berth within the petrified ribs. You pull it free with a triumphant grunt, admiring the polished grain that somehow survived the drowning of the coast untouched by rot. It will serve well as a walking staff across the shifting flats or a lever when the ground turns traitorous beneath your boots.
+GRANT: Sturdy wooden oar
+EXIT 1: Advance toward the leviathan
+@@END

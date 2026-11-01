@@ -1,0 +1,85 @@
+{
+ "batch": "vh-3-1-5-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-1-5-0": {
+   "title": "The Final Windy Platform",
+   "text": "Master miller Morvath points a flour-dusted finger toward the distant, fog-shrouded roofs of Lowgate far below, his breath pluming white against the biting air. The massive bronze clapper on your back hums a low, sympathetic vibration in response to the whistling gale slicing across the terrace. Every stone here is rimed with gray frost, and the steep drop-offs of the mountain face yawn wide and indifferent to your errand.\n\nYou adjust the heavy padded straps cutting into your shoulders, feeling the chill seep deep into your woollen tunic. Biscuit stamps a stubborn hoof against the frozen slate, eager to leave the high ridges behind before the weather turns truly foul.",
+   "exits": [
+    "Descend toward the lower mist"
+   ]
+  },
+  "vh-3-1-5-1": {
+   "title": "The Wind-Chime Mill",
+   "text": "Beside the massive stone wind-chime of mill forty-nine, miller Hestia listens intently for the low-frequency drone that heralds an alpine storm. Hollow brass tubes clatter softly in the rising draft, striking a discordant tune that makes the hair on your arms stand up. The bronze clapper in its cradle vibrates against your spine like a sleeping animal waking to danger.\n\nHestia pulls her fleece cap tighter over her ears and gestures sharply toward the path dropping away into the gray haze. The wind tears the words from her mouth, leaving only the metallic ringing of the chimes and the dull thud of your own boots on the ice-crusted stone.",
+   "exits": [
+    "Follow the cliff path downward"
+   ]
+  },
+  "vh-3-1-5-2": {
+   "title": "The Granary Lamp",
+   "text": "Within the echoing stone granary of mill fifty, miller-wife Jessa sorts through withered seed-corn by the flickering light of a tallow dip. The air smells intensely of dry chaff, stored grain, and the cold damp of the mountain wall pressing against the back of the bins. Outside, the wind howls across the tiers, but here in the dim shelter, only the occasional drip of melting frost breaks the quiet.\n\nJessa glances up from her wooden sorting tray, her eyes dark and tired in the yellow flame, and nods toward the heavy iron-banded door leading back out to the open air. The bronze clapper rests heavily against your shoulder blades, a dead weight reminding you of the ticking clock.",
+   "exits": [
+    "Step out into the freezing wind"
+   ]
+  },
+  "vh-3-1-5-3": {
+   "title": "The Threshold of Mist",
+   "text": "Across the frost-slick stone threshold of the final miller's lodge, you glimpse the winding stair descending into the gray mist below like a spine of broken bone. Ice coats the handrails, and the muffled roar of distant glacier water rises from the hidden depths of the gorge. Biscuit shifts uneasily behind you, his iron shoes scraping a sharp spark from the frozen flagstones.\n\nThe urge to turn back to the warmth of the flour-bins tugs hard at your chest, but the cracked bell in Vesperhold waits for its tongue. Every breath stings your throat as the altitude wind presses relentlessly against your laden frame.",
+   "exits": [
+    "Venture down into the fog",
+    "Retreat to the shelter above"
+   ]
+  },
+  "vh-d-3-1": {
+   "title": "The Broken Tier",
+   "text": "Ignoring the warning wind-calls echoing from the higher mills, you attempt to cross the exposed terrace while a sudden gathering gale tears at your cloak. The heavy bronze clapper catches the fierce crosswind like a sail, throwing your footing entirely off balance on the slick black ice. You pitch forward against the low stone parapet, and the momentum drags you and your precious burden over the rim.\n\nFor one weightless heartbeat, the screaming wind falls completely silent as the mountain drops away beneath your boots. Then the dark abyss swallows you whole, leaving only the faint, fading hum of bronze against the empty air.",
+   "exits": []
+  },
+  "vh-3-c2": {
+   "title": "The Miller's Bargain",
+   "text": "On the eighth barley tier, an old miller blocks the narrow stair with a wooden measuring-rod, offering to teach the secret grammar of gale-notes in a single night. The instruction promises safe passage through the treacherous wind-funnels ahead, but trading the hours means losing a full day against the fast-approaching ice-season. The heavy bronze clapper hums against your spine, impatient with every moment spent standing still on the frozen slate.\n\nBiscuit lowers his head to nuzzle a patch of crusted snow, indifferent to the hard choice hanging in the thin mountain air. You must decide whether to spend the night learning the miller's craft or push onward into the gathering gloom without it.",
+   "exits": [
+    "Stay a night and learn the wind-calls",
+    "Press on without the lesson"
+   ]
+  },
+  "vh-3-2-0-0": {
+   "title": "The Ninth Tier Tutorial",
+   "text": "On the ninth barley tier, old Miller Bram offers a midnight tutorial in wind-whistles while your bronze clapper grows heavy and cold against your aching muscles. The wind screams through the stone flues of the mill, and Bram demonstrates how to purse your lips to match the pitch of the cliff drafts. Hours slip away in the freezing dark as you practice the strange, breathy notes meant to calm the upper gales.\n\nBiscuit stands dozing in the draughty lean-to, his hide frosted with rime under the pale starlight. When the lesson finally ends, the night is deeper and the air is sharper, but you carry a new, subtle command of the mountain's voice in your lungs.",
+   "exits": [
+    "Leave the mill at dawn",
+    "Check the frozen water-wheel",
+    "Listen to the miller's warning"
+   ]
+  },
+  "vh-3-2-0-1": {
+   "title": "The Skeletal Arms of Mill Six",
+   "text": "Beneath the skeletal arms of Mill Six, miller Thrum bargains a day of your youth for the secret grammar of gale-notes, his fingers tapping an impatient rhythm on a wooden grain scoop. The wind rattles the canvas sails overhead like dry bones rattling in a crypt. Refusing the offer leaves you with your precious time intact, but forces you to face the unpredictable upper drafts entirely on your own wits.\n\nThe bronze clapper hums a warning note against your back as you weigh the value of every single hour remaining before the passes seal shut. Thrum watches you with narrowed eyes, waiting to see whether you will trade your schedule or turn your back on his wisdom.",
+   "exits": [
+    "Weigh the cost of schooling",
+    "Pass safely through the gate",
+    "Slip down the grain-chute"
+   ]
+  },
+  "vh-3-2-1-0": {
+   "title": "The Hopper Stones",
+   "text": "Stumbling past frost-rimed hopper stones, you trade precious hours for a miller's lesson while Biscuit chews salted straw in the dark. The rhythmic grinding of the basalt wheels fills the small loft with a hypnotic, bone-deep thrumming. Outside, the sky begins to pale with a sickly gray light that promises little warmth for the day's march.\n\nYou hoist the heavy padded cradle back onto your shoulders, feeling the extra burden of lost time settling into your lower back. The terrace path below winds down toward the next dizzying drop, glazed in fresh rime from the night's freeze.",
+   "exits": [
+    "Step out onto the glazed steps",
+    "Watch the frozen water-wheel",
+    "Heed the miller's bitter warning"
+   ]
+  },
+  "vh-3-2-1-1": {
+   "title": "The Hornet's Nest",
+   "text": "Amid grinding gears that hum like trapped hornets, miller Jael demands twenty-four hours of your schedule to teach the high-altitude whistle. Iron axles screech against oiled oak, filling the loft with a acrid smell of hot grease and ancient dust. You spend the long night bent over a clay pipe, learning how to pitch your breath against the mountain's scream.\n\nWhen the lesson finally concludes, your lungs ache and your head swims from the lack of oxygen and sleep. Jael nods stiffly toward the exit chute, offering no parting kindness as you stumble back out into the freezing dawn.",
+   "exits": [
+    "Dodge the falling middlings sack",
+    "Mind the bronze clapper against the lintel",
+    "Face the Cable Court guard"
+   ]
+  }
+ },
+ "missing": []
+}

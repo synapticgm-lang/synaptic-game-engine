@@ -1,0 +1,92 @@
+{
+ "batch": "ul-1-105",
+ "sections": {
+  "ul-1-105": {
+   "title": "The Changing Parchment",
+   "text": "Delicate vellum creases beneath your fingertips, revealing tiny diagrams that writhe like silverfish. You trace the complex fold patterns of the changing parchment, memorizing the secret route past the cataloguing guards who patrol the lower galleries with brass lanterns. Every tuck and fold shifts the geography of the ink-rivers below, whispering instructions that only a trained shelver could hope to parse before the night-porter changes the locks.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the hidden pathways"
+   ]
+  },
+  "ul-1-106": {
+   "title": "Folded Geographies",
+   "text": "Shadows lengthen across the reading tables as you repeat the sequence of creases over and over in your head. You study the complex fold patterns of the changing parchment, memorizing the secret route past the cataloguing guards whose heavy woolen coats smell faintly of floor wax and dried lavender. A stray marginal note scrawled in the margin suddenly bites your thumb, drawing a single bead of dark ink that matches the security seal ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the inked crease"
+   ]
+  },
+  "ul-1-107": {
+   "title": "Memorizing the Route",
+   "text": "Heavy iron keys jingle in the corridor outside, warning of the impending patrol change among the strict cataloguers. You press the vellum flat against your chest, concentrating on the intricate labyrinth of folds that offers the only passage through the restricted archway. Closing your eyes, you test your recollection of every secret turn against the rising tide of nervous sweat on your palms, right as a shadow looms across the frosted glass panel.",
+   "check": "Memorise the folding map",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-108": {
+   "title": "A Misplaced Turn",
+   "text": "A sudden heel-click on the stone flags breaks your concentration, causing your thumb to slip and tear the delicate corner of the map. The guard's lantern swings wide, catching you unawares and forcing a frantic scramble behind a towering stack of unbound gazettes. You escape detection by diving into a damp alcove, but the delay costs you precious time and leaves your left sleeve permanently stained with corrosive gall-ink that burns through the fabric.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the patrolling guard"
+   ]
+  },
+  "ul-1-109": {
+   "title": "The Folded Key",
+   "text": "Breath held against the smell of old glue and damp wool, you slip through the iron-bound gap just as the cataloguing patrol turns the corner, however narrowly avoiding discovery. Your fingers close around a crisp, folded slip of paper left behind by an anonymous sympathiser in the fellowship. It is a master key drawn in fading iron-gall ink that grants access to the restricted winding stairs.",
+   "check": "",
+   "grant": "Master folding key",
+   "exits": [
+    "Ascend the spiralling encyclopedias"
+   ]
+  },
+  "ul-1-110": {
+   "title": "Tales of Lost Wings",
+   "text": "Dust motes dance in the amber lamplight while the old cartographer leans heavily upon his brass-rimmed compass-trolley, clearing his throat for yet another interminable yarn about the wing that drifted into the western abyss. You endure the cartographer's maddeningly repetitive tales of lost wings, retaining your sanity and a reliable compass-trolley through sheer stubborn endurance and the quiet rhythm of nodding at regular intervals.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Patiently bear the endless stories"
+   ]
+  },
+  "ul-1-111": {
+   "title": "The Compass Trolley",
+   "text": "Brass wheels squeak against the flagstones as the old man points a trembling finger toward the shifting dark of the northern stacks. You endure the cartographer's maddeningly repetitive tales of lost wings, retaining your sanity and a reliable compass-trolley by focusing entirely on the tiny magnetic needle spinning wildly within its glass housing. A final wheezing sigh from the teller signals your release from the conversation.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push the rattling cart onwards"
+   ]
+  },
+  "ul-1-112": {
+   "title": "The Endless Yarn",
+   "text": "Monotonous descriptions of drifting corridors threaten to swallow your resolve as the cartographer restarts his favorite story about the library wing that vanished during the great flood of ink. You tighten your grip on the handles of the brass apparatus, fighting off a sudden wave of numbing exhaustion that blurs the edges of the room. Your willpower frays against the relentless drone of misplaced shelves and forgotten architectural plans.",
+   "check": "Maintain sanity against repetition",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-113": {
+   "title": "A Lapse in Will",
+   "text": "Your mind drifts for a fatal second into the monotonous cadence, letting a wave of intense fatigue drain your defenses and leave you owing a heavy favor to the exhausted lending clerk for covering your shift. The cartographer notices your distraction and presses a broken quill into your pocket as a debt that must be settled before the night is through. You shake off the mental fog, poorer in time and temper.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Recover from the mental exhaustion"
+   ]
+  },
+  "ul-1-114": {
+   "title": "The Steady Hand",
+   "text": "Wisdom prevails against the mind-numbing drone of ancient geography, however narrowly preserving your mental equilibrium intact. The old man nods approvingly, mistaking your sheer endurance for genuine fascination, and shoves a heavy iron-spoked wheel into your hands as a parting gift. It is an enchanted brass trammel that points true north even when the ceiling rotates.",
+   "check": "",
+   "grant": "The spinning brass trammel",
+   "exits": [
+    "Return to the cartographer loft"
+   ]
+  }
+ },
+ "missing": []
+}

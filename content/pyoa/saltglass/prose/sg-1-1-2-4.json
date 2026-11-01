@@ -1,0 +1,92 @@
+{
+ "batch": "sg-1-1-2-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-1-1-2-4": {
+   "title": "The Glass-Diver's Share",
+   "text": "Pell splits a roasted chicory root from his battered leather wallet, offering you the bitterer half while your thumbs test the hemp straps of your water-cask. The dry heat pulls moisture from every pore, but the roots keep the tongue active against the alkaline dust.\n\nThe road stretches ahead through the blinding white glare of the salt flats, empty save for the heat-shimmers dancing over the abandoned boundary stones. You need to decide whether to push forward directly or keep to the lower scrub-line.",
+   "exits": [
+    "Duck through the fence-hurdles to slip past mounted riders",
+    "Pocket the copper shoe-eyelet Pell found and press onward",
+    "Follow the lonely ridge where the kestrel flew"
+   ]
+  },
+  "sg-1-1-2-5": {
+   "title": "The Bottle-Glass Milestone",
+   "text": "Solitary and brisk, you pass a stout milestone carved from green bottle-glass that marks exactly three leagues from Candlemere's tilting church tower. The transparent pillar glows with trapped bubbles from a forgotten kiln, casting pale emerald light across the grey gravel of the Rim Road.\n\nThe horizon wavers beneath a shimmering wall of dry air, blurring the distance where the vast salt basin begins. You pause by the glassy post to weigh your next stride.",
+   "exits": [
+    "Retrieve the lost copper eyelet from the dust and continue",
+    "Share lukewarm tin-flask water while scanning the pale mirage flats",
+    "Turn back toward the lamp-town shadows"
+   ]
+  },
+  "sg-1-1-2-6": {
+   "title": "The Parched Well-Head",
+   "text": "A weary widow sits by the horse-trough selling parched beans from a greasy tin bucket, demanding double coin for a single cup of brackish well-water. Her skin is baked the colour of dried clay, and her fingers tremble as she measures out the meagre portions to passing runners.\n\nThe smell of stagnant lime water hangs heavy in the still noon air. You must decide whether to trade for the salty sustenance or move away from the guarded basin.",
+   "exits": [
+    "Inspect the warning sign nailed to the nearby rail",
+    "Step past the ditch-diggers clearing choked stone culverts"
+   ]
+  },
+  "sg-1-1-2-7": {
+   "title": "Signals on the Ridge",
+   "text": "You pause on the alkaline slope to scrape thick, dried salt-cake from your gaiters with a flat slate shard. Far across the pale basin rim, distant signal mirrors flash three sharp warnings from a craggy limestone ridge, cutting bright arcs through the hazy blue sky.\n\nThe coded flashes hint at watchers guarding the approaches to Prism. You gather your pack straps tighter against your shoulders as you weigh the path ahead.",
+   "exits": [
+    "Read the decree nailed near the dry well-head",
+    "Watch Pell test the hollow crust beside the track"
+   ]
+  },
+  "sg-1-1-2-8": {
+   "title": "Drover's Tune",
+   "text": "Pell whistles an old, skipping drover's tune that bounces off the bleached limestone banks, keeping your lagging spirits steady against the merciless weight of the sun. The ancient melody speaks of green pastures that haven't existed since the great drying began.\n\nThe dust devils swirl around your boots as the road winds deeper into the sun-baked hills. You keep step with the music, looking ahead to where the path narrows.",
+   "exits": [
+    "Pass the weary ditch-diggers clearing alkali silt"
+   ]
+  },
+  "sg-1-1-2-9": {
+   "title": "The Tethered Beast",
+   "text": "A tethered donkey brays sharply at your passing shadow, rattling its iron neck-ring against the trunk of a stunted, grey thorn-tree in the dry gully. The animal's ribs show like barrel hoops beneath a coat stiffened by wind-blown salt.\n\nThe gully offers a moment of brief, dusty shade before the road climbs back into the open glare. You study the diverging tracks branching out beyond the thorn-tree.",
+   "exits": [
+    "Walk past the ditch-diggers labouring with wooden shovels",
+    "Count your heavy paces against the rhythmic crunch of gravel",
+    "Watch Pell point toward the distant charcoal burners' smoke",
+    "Turn back toward the safety of the western rim"
+   ]
+  },
+  "sg-1-1-2-10": {
+   "title": "The Wire-Whiskered Hare",
+   "text": "You step carefully over the stiffened carcass of a desert hare, marvelling at how the concentrated salt has preserved its long whiskers like fine copper wire. Its unblinking eyes have glazed into tiny beads of clouded amber under the relentless sun.\n\nThe empty track stretches onward through the silent basin borderlands. You must choose between pressing your pace or slowing down to match the difficult terrain.",
+   "exits": [
+    "Keep counting your rhythmic paces against the gravel",
+    "Follow Pell's gaze toward the smudge of distant smoke"
+   ]
+  },
+  "sg-1-1-2-11": {
+   "title": "Gypsum Traps",
+   "text": "Pell drops to one knee to inspect a deep wheel-rut filled with glittering gypsum crystals, warning you that heavy freight wagons have cut treacherous traps into the crust. The razor-edged mineral can slice through stout boot leather with a single misstep.\n\nThe bright morning glare makes the crystalline rime sparkle with deceptive beauty. You watch your footing carefully as you weigh the safest course around the fracture.",
+   "exits": [
+    "Steer clear of the buried glass lintel ahead",
+    "Buy dried locusts from the ragged boy selling them on a stalk"
+   ]
+  },
+  "sg-1-1-2-12": {
+   "title": "The Distant Mill",
+   "text": "Walking entirely alone, you catch the low, muffled thrum of a distant salt-mill grinding heavy stones through the windless afternoon silence. The mechanical groan vibrates up through the soles of your boots like the heartbeat of a sleeping leviathan.\n\nThe open track offers several distinct directions as the grinding noise fades into the dry air. You consider your options before taking another step into the heat.",
+   "exits": [
+    "Head toward the smudge of smoke from the earthen pits",
+    "Avoid the buried green glass remnant of the old farmstead",
+    "Buy dried locusts from the ragged boy by the track",
+    "Take the reckless way"
+   ]
+  },
+  "sg-1-1-2-13": {
+   "title": "The Shepherding Trade",
+   "text": "You trade a crust of dry rye bread from your pocket with a ragged shepherd whose sheep have wool stiffened into solid plates of alkaline crust. He points wordlessly toward the shimmering horizon with a crook made of polished juniper wood.\n\nThe trade leaves your pack a little lighter, but the local knowledge is worth the sacrifice of grain. You survey the branching tracks before you move on.",
+   "exits": [
+    "Let Pell wipe the alkaline rime from your stinging eyelids",
+    "Pause by the dry stone wall where wild caper bushes cling"
+   ]
+  }
+ },
+ "missing": []
+}

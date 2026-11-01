@@ -1,0 +1,23 @@
+Gemini said
+
+@@INSERT up-l-vault-antechamber | faceKnown=yes
+Your uncovered face feels exposed in the chill air, a liability now being described to the city watch above. The Archbishop's stolen cloak does nothing to hide the features that a frightened survivor has already etched into the guards' memories.
+@@END
+@@INSERT up-l-faction-letters | cabal=known
+Staring at the rival wax seals, the grand illusion shatters against the identical, looping penstrokes you saw in the vault's hidden ledgers. Silk and iron are merely two hands of the same monster, rendering this bitter bidding war an elaborate, deadly theatre.
+@@END
+@@INSERT up-l-faction-letters | faceKnown=yes
+Both wax-sealed demands carry a sinister urgency, driven by the inescapable fact that every constable and informant in Veridia now possesses a thorough description of your face. Remaining anonymous is no longer a luxury the night-crow can afford in this exposed territory.
+@@END
+@@INSERT up-l-faction-letters | witness=bought
+Somewhere across the city, a frightened deacon nurses a whispered promise you must eventually honour, adding an unseen weight to these noble demands. Whoever you choose to answer must possess enough influence to help you settle that secret debt before the blackmailer speaks.
+@@END
+@@INSERT up-l-faction-letters | witness=let-go
+Distant shouts echo from the cobblestones below, a direct consequence of letting that panicked deacon flee straight to the city watch. Time bleeds away rapidly; the guards are actively hunting the Archbishop's stolen cloak while these aristocrats calmly await your written obedience.
+@@END
+@@INSERT up-l-faction-letters | witness=dropped
+Blood from a shattered deacon already stains your hands tonight, a ruthless plunge that kept your solitary flight a secret from the watch. These polite envelopes feel absurdly delicate compared to the brutal, breathless murder required just to reach this slate ridge unseen.
+@@END
+
+Want to know more about the clockwork pigeons?
+Yes

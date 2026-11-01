@@ -1,0 +1,90 @@
+{
+ "batch": "vh-3-2-3-10",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-3-2-3-10": {
+   "title": "The Mountain Mother Shrine",
+   "text": "Three tallow candles gutter within a low stone alcove dedicated to the Mountain Mother, their frail flames shielded from the biting draughts by cracked slate tiles. The bronze clapper on your back hums a steady, low note that seems to quiet the wax smoke before it can drift into your face. Biscuit shifts his weight on the gravel, blowing warm air against your frozen shoulder as you weigh the paths stretching out beyond the altar.\n\nYou can pause to leave a copper coin among the tallow stubs, press onward toward the steep ladder drops, or seek out the last miller before the stone gates close.",
+   "exits": [
+    "Approach the freezing ladder edge",
+    "Share water with Biscuit",
+    "Accept the miller's piton"
+   ]
+  },
+  "vh-3-2-3-11": {
+   "title": "The Mule's Challenge",
+   "text": "A harsh, echoing bray tears from Biscuit's throat, bouncing off the limestone canyon walls and startling a dense flock of white-feathered choughs from their ledges. The sudden flutter of wings leaves the high air ringing, while the bronze clapper on your back responds with a sympathetic thrum that sets your teeth on edge. The mule stamps his hoof against the frozen earth, eager to put the barley terraces behind him and test the open drops below.\n\nYou tighten your grip on the leading tether, calming the beast with a firm hand on his dusty flank as the wind howls through the stone gaps.",
+   "exits": [
+    "Descend toward the darkening ladders",
+    "Rest and water the mule"
+   ]
+  },
+  "vh-3-2-3-12": {
+   "title": "Scraping the Treads",
+   "text": "Crusted mud and crushed barley hulls cake your boot treads, making the uneven stone path slick as you shiver in your woven wool tunic. The damp mountain air clings to your skin, turning every breath into a plume of white fog that vanishes instantly into the vast emptiness of the gorge. You lean against the retaining wall to scrape the frozen clay away with an iron flake, keeping the heavy clapper balanced steady across your shoulders.\n\nThe stone track narrows sharply here, offering a choice between pressing on into the gathering shadows or returning to the bitter shelter of the mill-houses.",
+   "exits": [
+    "Take the miller's iron piton",
+    "Step through the lowest terrace gate",
+    "Turn back toward the upper mill"
+   ]
+  },
+  "vh-3-2-3-13": {
+   "title": "The Clever Path",
+   "text": "Following Biscuit's infallible mule instinct down a treacherous goat-track forbidden to human boots, you bypass a glittering sheet of black ice that would have broken an ankle. The detour saves a precious hour of daylight, bringing you out safely below the worst of the terrace winds with the heavy clapper riding comfortably in its cradle. Biscuit picks his way sure-footedly over the shale, his long ears twitching to catch the distant signals of the ropeway stalls.\n\nYou pat his warm, dusty grey neck in silent gratitude as the ground levels out near the boundary gates.",
+   "exits": [
+    "Accept the miller's iron piton",
+    "Step through the lowest terrace gate"
+   ]
+  },
+  "vh-3-2-3-14": {
+   "title": "The Leaping Trout",
+   "text": "A rusted iron wind-vane shaped like a leaping trout spins erratically upon its lichen-spotted spindle, squeaking a dry, frantic warning of the storm still gathering above the peaks. Frost crystals feather its metal tail, catching the pale grey light of the high altitude afternoon. The bronze clapper shifts slightly in its padded frame, answering the metallic squeal with a deep, subterranean vibration that travels straight down your spine.\n\nYou pull your wool collar tighter against the rising gale, eyeing the shadowed descents that wind away from the silent mills.",
+   "exits": [
+    "Share water with Biscuit",
+    "Step through the lowest terrace gate"
+   ]
+  },
+  "vh-3-2-3-15": {
+   "title": "The Thrumming Wall",
+   "text": "Your palm presses flat against the icy terrace retaining wall, and the ancient, mortarless stones vibrate beneath your glove with the low underground hum of the falling mountain. It is a steady, ancient pulse that matches the rhythm of the heavy bronze tongue resting against your spine. Far below, the cloud sea churns in grey silence, hiding the destination you must reach before the passes seal for winter.\n\nYou flex your cold fingers and adjust the harness straps, preparing for the long vertical stretches ahead.",
+   "exits": [
+    "Accept the miller's piton",
+    "Step through the lowest terrace gate"
+   ]
+  },
+  "vh-3-2-4-0": {
+   "title": "The Silent Mills",
+   "text": "The windmills fall silent behind you one by one, their giant wooden sails lashed fast with thick hemp rope against the coming mountain gale. Not a single miller remains on the open platforms, leaving only the whistling of the high wind through the empty framing and the dry scrape of gravel underfoot. The bronze clapper on your back feels heavier with every yard, a constant reminder of the bronze weight awaiting the Lowgate forge-masters.\n\nYou reach the hard edge of the stone path where the world drops away into mist and vertical ice.",
+   "exits": [
+    "Step out onto the swaying ladder",
+    "Peer down into the cloud sea"
+   ]
+  },
+  "vh-3-2-4-1": {
+   "title": "The Iron Milestone",
+   "text": "A solitary iron milestone, hammered deep into the living rock of the cliffside, marks the final boundary of the barley terraces and the start of the vertical ice. Blackened by decades of mountain weather, its embossed numbers are worn smooth by the passage of countless boots and mule trains. The air here has a sharp, metallic edge that smells of frozen snow and ancient stone.\n\nYou pause beside the iron bolt to catch your breath before committing your weight to the frozen abyss.",
+   "exits": [
+    "Step out onto the swaying ladder",
+    "Grip the uppermost rungs"
+   ]
+  },
+  "vh-3-2-4-2": {
+   "title": "Securing the Harness",
+   "text": "You tighten the leather harness across your chest until the broad straps bite into your wool tunic, ensuring the heavy clapper cannot shift or throw you off balance as you prepare for the steep descent. The metal tongue gives a faint, comforting hum against the padding, acknowledging the careful knotwork of your binding. Biscuit stands quietly beside you, his breath pluming white in the freezing air as he waits for the signal to move.\n\nThe stone pathway ends abruptly at the threshold of the open gulf, leaving only vertical rungs and cableways below.",
+   "exits": [
+    "Step out onto the swaying ladder",
+    "Grip the uppermost rungs",
+    "Descend with Biscuit on the chain"
+   ]
+  },
+  "vh-3-2-4-3": {
+   "title": "The Clearing Fog",
+   "text": "The mountain fog parts for a single, breathtaking heartbeat, revealing the dizzying drop to the glacier ladders where iron rungs frost over in the gathering dusk. Far below, tiny structural timbers of the lower cable stations jut from the blue-white ice like splinters in a frozen wound. The bronze clapper on your back catches a stray shaft of pale sunlight, flashing a dull amber glow against the gray cliffs.\n\nYou steady your boots on the rim of the precipice, choosing your exact line down the freezing iron.",
+   "exits": [
+    "Step out onto the swaying ladder",
+    "Grip the uppermost rungs"
+   ]
+  }
+ },
+ "missing": []
+}

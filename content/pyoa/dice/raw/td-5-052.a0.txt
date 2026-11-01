@@ -1,0 +1,73 @@
+Gemini said
+
+@@SECTION td-5-052
+TITLE: The Flooding Atrium
+TEXT: Frigid salt-spray lashes the cracked flagstones as the first dark tongues of the returning ocean breach the rusted pressure seals. Shivering spectres of the Hollow Choir swarm the crumbling control room, their mournful weeping drowned out by the rising roar of pressurized brine. Every shadow flickers with drowned intent, clawing towards the high gears while the central tide clock ticks with frantic menace. You stand ankle-deep in the surging overflow, forced to choose your path before the chamber goes entirely under.
+EXIT 1: Wade through the freezing ghosts
+EXIT 2: Jam the spitting pressure valves
+EXIT 3: Listen to the maddening song
+EXIT 4: Threaten the central tide clock
+EXIT 5: Face the arriving faction delegates
+@@END
+@@SECTION td-5-053
+TITLE: Among the Drowned
+TEXT: Icy wisps curl around your ankles as you push deeper into the swirling congregation of spectres, ignoring the bone-deep numbness creeping up your shins. The air smells intensely of stagnant weed and ancient copper, thick enough to choke an unseasoned wrecker. Ahead of you, a hollow alcove glows with faint luminescence beneath a cascade of dripping brine. You reach through the freezing mist towards the shape resting in the stone, your fingers brushing against slick stone and encrusted metal.
+EXIT 1: Reach for the coral mask
+@@END
+@@SECTION td-5-054
+TITLE: The Ghostly Gauntlet
+TEXT: Spectral hands reach from the freezing mist, their long fingers brushing your coat like trailing seaweed as you stride past the wailing congregation. Frost crusts instantly upon your eyelashes, and every breath burns your lungs as though you had swallowed dry salt. You lunge forward through the biting chill toward the recessed alcove where the coral-encrusted breathing mask waits in the gloom. You must steel your spirit against the paralyzing cold before the ghostly horde closes the gap around your shoulders.
+CHECK: Push through the freezing spectres
+@@END
+@@SECTION td-5-055
+TITLE: Frostbitten Retreat
+TEXT: Numbness seizes your limbs, and a sudden, violent shudder rattles your teeth as the phantom chill pierces your coat. You stumble backward out of the freezing alcove, gasping for breath as a sharp pain spikes through your ribs like a rusted nail. The ghostly crowd presses in closer, forcing you to retreat empty-handed while the bitter brine claims the ledge. You stagger back into the central atrium, nursing a raw, aching burn across your chest that will leave a pale, scaly scar.
+EXIT 1: Return to the flooded hall
+@@END
+@@SECTION td-5-056
+TITLE: Salvaged Relic
+TEXT: Determination hardens your stride against the biting frost, and you wrench the encrusted relic free from the stony recess just as the ghostly fingers graze your collar. The freezing mist recoils from the artifact's pale, pulsing glow, leaving you gasping in the damp air with the prize clutched tightly in your fist. You turn back toward the swirling atrium, your lungs burning but your resolve unbroken by the spectral ordeal.
+GRANT: Coral breathing mask
+EXIT 1: Return to the main hall
+@@END
+@@SECTION td-5-057
+TITLE: Valves Under Pressure
+TEXT: Hissing jets of salt-water shoot horizontally across the narrow chamber, cutting through the gloom like steel wire. You leap over a groaning conduit and skid across the slick iron plates toward the primary intake manifold, where the rusted pressure valves are screaming under the strain. Heavy scrap metal lies scattered across the deck, waiting for someone desperate enough to wedge it into the collapsing machinery before the bulkhead gives way entirely.
+EXIT 1: Wedge the screaming pressure valves
+@@END
+@@SECTION td-5-058
+TITLE: Bracing the Rupture
+TEXT: Sweat mixes with cold brine on your forehead as you slam a heavy iron gear wedge into the shrieking seam of the primary valve. The metal screeches in protest, bending inward under the colossal weight of the incoming sea while the surrounding rivets pop like dry bone. You lean your entire weight against the makeshift brace, hammering it deeper with a heavy wrench just as the casing begins to fracture.
+CHECK: Jam the failing pressure valves
+@@END
+@@SECTION td-5-059
+TITLE: Groaning Metal
+TEXT: A deafening shriek splits the air as the rusted iron wedge snaps in half, sending jagged shrapnel flying past your ear to gouge a deep red furrow into your forearm. Boiling brine sprays across your face, blinding you momentarily and filling your mouth with the taste of old blood and copper. You stumble back, clutching your bleeding arm as water floods around your boots, having bought only a few seconds of hollow safety at a painful cost.
+EXIT 1: Retreat to the flooded atrium
+@@END
+@@SECTION td-5-060
+TITLE: Watertight Prize
+TEXT: Hammering the jagged scrap metal deep into the screaming seam with one decisive blow, you force the straining valve back into its iron housing. The violent hiss subsides into a sullen gurgle, sealing off the worst of the spray and leaving a heavy leather satchel wedged safely within the dry recess behind the manifold. You snatch the pouch from its nook, checking its contents as water laps against your shins.
+GRANT: Watertight leather satchel
+EXIT 1: Return to the central atrium
+@@END
+@@SECTION td-5-061
+TITLE: Voices in the Spray
+TEXT: Eerie melodies ripple through the rising water, carrying the cadence of a thousand drowned voices singing in hollow unison. You press your back against the dripping stone wall, closing your eyes to shut out the swirling phantoms while you strain to isolate the repeating cadence hidden beneath the wails. The song speaks of iron teeth and deep trenches, offering a dangerous glimpse into the ancient language that commands the locks.
+EXIT 1: Listen closer to the chant
+@@END
+@@SECTION td-5-062
+TITLE: The Drowned Cadence
+TEXT: Water laps higher against your knees, cold and relentless, but you remain motionless amidst the floating debris, letting the strange rhythm wash over your mind. The voices shift from weeping to a rhythmic, mechanical chant, repeating a sequence of harsh, guttural syllables that vibrates directly behind your temples. Every instinct warns you to block your ears, yet the secret architecture of the lock unfolds syllable by syllable within your memory.
+EXIT 1: Memorize the ancient lock command
+@@END
+@@SECTION td-5-063
+TITLE: Deciphering the Choir
+TEXT: The chaotic chorus rises to a deafening crescendo, threatening to splinter your thoughts into jagged shards of salt and memory. You bite your tongue until you taste copper, forcing your racing mind to track the hidden pattern within the endless dirge of the drowned. The correct phrase hovers just beyond your grasp in the freezing air, waiting to be snared before the madness takes root.
+CHECK: Recall the ancient lock command
+@@END
+@@SECTION td-5-064
+TITLE: Shattered Focus
+TEXT: A piercing shriek echoes inside your skull, driving you to your knees in the swirling water as a wave of vertigo shatters your concentration. You gasp for air, clutching your temples as the haunting song dissolves into a chaotic jumble of meaningless noise, leaving you drained and disoriented. The opportunity slips away into the depths, and a throbbing ache settles behind your eyes that will linger for days.
+EXIT 1: Fall back to the atrium
+@@END

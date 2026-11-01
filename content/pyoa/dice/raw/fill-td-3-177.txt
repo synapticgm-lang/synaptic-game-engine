@@ -1,0 +1,7 @@
+Gemini said
+
+@@SECTION td-3-184
+TITLE: Edge of the Platform
+TEXT: Rough canvas rubs raw against your ribs as the scavenger lunges from the shadow of a salt-crusted oil drum, fingers clawing fiercely for the straps of your bulging pack. You slam your bootheel down onto the damp, slick timber of the stilt-walk, throwing your shoulder forward to meet the sudden impact with every ounce of muscle you possess. The brine-soaked boards groan beneath your combined weight while the dizzy drop to the dry seabed yawns just inches away, threatening to swallow you both whole in the dark.
+CHECK: Shove the desperate scavenger backward
+@@END

@@ -1,0 +1,47 @@
+{
+ "batch": "v-l-21-forger-desk",
+ "variants": [
+  {
+   "node": "up-l-forger-desk",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "The stiff, embroidered cuffs of the disgraced tailor's debt coat brush against the parchment, the heavy fabric a constant weight on your shoulders as you bend the city's fate to your will."
+  },
+  {
+   "node": "up-l-forger-desk",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Coarse threads from your borrowed porter's livery catch on the edge of the mahogany desk, chafing your wrists as a supposed dock labourer quietly seals the doom of Veridia's highest lords."
+  },
+  {
+   "node": "up-l-forger-desk",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Somewhere below the exchange roofs, the deacon's corpse lies shattered on the cobblestones where you dropped him, but that brutal silence was the blood price required to reach this quiet, omnipotent desk."
+  },
+  {
+   "node": "up-l-buyer-room",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Beneath your impassive stare lies the cold truth gleaned from the vault's counter-ledgers; whether you enrich the silk halls or the iron syndicate, the exact same hidden cabal ultimately reaps the profit."
+  },
+  {
+   "node": "up-l-buyer-room",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Lord Valerius's previous promise of protection hangs heavily in the warm air, the faint taste of his exquisite wine still lingering as his silk-clad representative offers a subtle, expectant nod towards your satchel."
+  },
+  {
+   "node": "up-l-buyer-room",
+   "when": {
+    "valerius": "betrayed"
+   },
+   "after": "Across the hearth, the silk lord's emissary offers a smile sharper than cut glass, masking the bitter reality that Valerius's runners are currently scouring the gaslit alleys for your head following your earlier defiance."
+  }
+ ]
+}

@@ -1,0 +1,92 @@
+{
+ "batch": "ul-4-052",
+ "sections": {
+  "ul-4-052": {
+   "title": "The Folio Shield",
+   "text": "Heavy vellum flakes strike your lantern glass with the sound of driven hail, stinging your knuckles whenever you reach out to steady yourself against the tilting stacks. You spot a discarded calfskin folio cover wedged half-buried in a drift of gritty ink-dust, its stiff edges scarred by old damp. Snatching the cover from the debris, you snap it hard into a crude wedge against the churning air current, feeling the mini-cyclone split and veer away from your face. A cylindrical length of heavy parchment rolls free from the eddy, tapping against the toe of your boot.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry the rolled parchment free"
+   ]
+  },
+  "ul-4-053": {
+   "title": "Sealed in Wax",
+   "text": "Thick red lamp-wax seals both ends of the retrieved cylinder, stamped with the blunt thumb-print of an anonymous cataloguer who clearly did not expect anyone to come looking. The air around you grows colder, carrying the unmistakable tang of oxidised copper and old tallow that marks the deeper passages of the Annexe. You turn the heavy tube over in your palms, listening to a faint scratching sound from within, as if a trapped silverfish were trying to chew its way through sixty years of bureaucracy.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the wax seal closely"
+   ]
+  },
+  "ul-4-054": {
+   "title": "Diverting the Gale",
+   "text": "Miniature gales of shredded index cards scream past your ears, threatening to tear the heavy folio cover right out of your aching grip and blind you with flying pulp. Instead of fighting the turbulence head-on, you angle the stiff leather against the vortex's primary spin, banking on your knowledge of draft patterns in the narrow aisles to create a momentary vacuum. Your fingers tighten over the greasy parchment tube while the vortex twists violently, threatening to wrench your shoulder from its socket as you test your leverage against the roaring air.",
+   "check": "Redirect the vortex with leather",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-055": {
+   "title": "A Blind Lunge",
+   "text": "The wind shears past your guard with a vicious snap, tearing the folio cover from your fingers and sending it spinning away into the grey dark. A sharp edge of flying card stock catches the skin of your forearm, slicing a clean red line across your sleeve before you manage to scramble backward into the shelter of a limestone pillar. You are left nursing a stinging cut and breathing air thick with grit, but the parchment tube remains clutched tight in your left fist despite the bruising impact.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the pillar shadow"
+   ]
+  },
+  "ul-4-056": {
+   "title": "Salvaged Secrets",
+   "text": "Through grit in your teeth and the dull throb of exertion, you secure the heavy cylinder against your chest just as the local turbulence collapses into a harmless scatter of grey flakes. Whether won by clever leverage or sheer stubborn persistence, the prize is yours to carry into the gloom ahead. The wax seal yields with a satisfying crack under your thumb, revealing a cramped slip of paper detailing the forgotten route past the sealed masonry.",
+   "check": "",
+   "grant": "A sealed route slip",
+   "exits": [
+    "Follow the path of the slip"
+   ]
+  },
+  "ul-4-057": {
+   "title": "Limestone Footing",
+   "text": "Gritty dust coats your eyelashes, but your fingers trace the coarse texture of the floor tiles beneath the drifts until you feel the smooth, unmistakable cold of solid bedrock. By reading the grain of the particulate fallout against the baseboards, you deduce where the ancient ventilation flues still pull a steady draft from the city above. You press your boot heel down firmly, finding a secure foundation amidst the shifting paper dunes that threaten to swallow every landmark in sight.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed along the solid floor"
+   ]
+  },
+  "ul-4-058": {
+   "title": "The Grey Blanket",
+   "text": "Every surface wears a deep fleece of pulverized print, silencing your footsteps until you seem to be walking through an underwater world of drowned ink and forgotten vocabulary. You wipe a smear of grey grime from your spectacles with a corner of your neckerchief, squinting into the gloom where distant rows of shelving loom like the ribs of stranded whales. The air tastes faintly of iron filings and vinegar, reminding you that these texts have been quietly fermenting in the dark for centuries.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance into the looming stacks"
+   ]
+  },
+  "ul-4-059": {
+   "title": "Reading the Particulate",
+   "text": "Tiny flecks of red and black ink drift through the hazy air like ash from a dying forge, settling in intricate patterns upon the ledges of the low bookcases. You crouch down close to the floor tiles, squinting through the stinging haze to calculate the precise mineral density and fallout drift of the paper-rot. Your mind races through shelf-indices and geologic strata maps, trying to predict exactly where the underlying limestone floor holds true beneath the treacherous drifts.",
+   "check": "Calculate the stable limestone floor",
+   "grant": "",
+   "exits": []
+  },
+  "ul-4-060": {
+   "title": "A Miscalculated Step",
+   "text": "Your boots misjudge the density of the particulate crust, and with a sickening crunch, your right leg plunges through a hollow pocket of discarded pamphlets straight down to the knee. A cloud of choking white dust erupts around your face, filling your nose and mouth with the dry, bitter taste of centuries-old rag paper. You haul yourself out with a grunt, leaving behind a stained boot-strap and a small debt of lost time as you limp onward into the haze.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself from the drift"
+   ]
+  },
+  "ul-4-061": {
+   "title": "Filtered Breath",
+   "text": "Your careful analysis pays off as you tie a damp strip of flannel tightly across your nose and mouth, instantly filtering out the stinging cloud of paper-rot. Whether through precise deduction or a lucky guess in the blinding grey, you now possess a sturdy, soot-darkened filter mask that keeps your lungs clear and steady. The suffocating air turns manageable, allowing you to breathe deeply as you navigate the treacherous floor.",
+   "check": "",
+   "grant": "An enduring soot-filter mask",
+   "exits": [
+    "Return to the stagnant hollow"
+   ]
+  }
+ },
+ "missing": []
+}

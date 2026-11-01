@@ -1,0 +1,58 @@
+@@SECTION ul-4-031
+TITLE: The Murmuring Mastic Floor
+TEXT: Underneath your heavy boots, the solid stone gives way to a shifting mosaic of discarded bookplates that whisper sharp, paper-dry complaints about your clumsy tread. Each tiny square of gummed paper protests its displacement, grumbling of glue and heraldry against the soles of your shoes. You keep your lamp steady as the floorboards ripple like water, shifting patterns of faded crests and latin mottoes sliding this way and that across the gloom. The air tastes strongly of old paste and copper-gall ink, thick enough to coat your tongue while the subterranean vaults echo with the collective murmuring of thousands of disgruntled past owners. You press forward into the heart of the Deep Annexe, where the walls itself seem to listen to the paper chatter beneath your feet.
+EXIT 1: Follow the murmuring mosaic deeper inward
+@@END
+@@SECTION ul-4-032
+TITLE: The Ex-Libris Corridor
+TEXT: Thousands of discarded ownership plates pave this narrow gallery, shifting and rustling underfoot like dry leaves in an autumn gale. Every tile bears a different coat of arms or solemn pledge of collection, now loose and restless under the dim glow of your swinging lamp. Ahead, multiple passages branch into the deep shadows of the oldest stacks, each promising a different route through the ancient paper labyrinth. The air is thick with the scent of rancid glue and aged vellum, whispering hints of secrets half-forgotten by the city above. You must choose your next direction carefully before the shifting floor decides for you.
+EXIT 1: Tread lightly across the shifting paper tiles
+EXIT 2: Balance along the petrified oak beam above
+EXIT 3: Trick the mosaic into lowering its barrier
+EXIT 4: Press through the thick fog of pulverized dust
+@@END
+@@SECTION ul-4-033
+TITLE: The Sprite's Favor
+TEXT: Delicate and measured steps carry you across the shifting tiles without disturbing a single gummed corner or tearing an aged paper edge. A tiny, rustling creature no larger than your hand emerges from a crevice between the floorboards, its body woven from vintage leather bindings and gold-leaf trim. It tilts a head fashioned from a marbled endpaper, inspecting your cautious advance with sharp, ink-stained eyes. Recognizing your respect for its fragile domain, the sprite gives a silent nod of approval and flits ahead to guide your path. You follow its flickering golden silhouette through the labyrinthine gloom of the Annexe.
+EXIT 1: Follow the nimble guide through the stacks
+@@END
+@@SECTION ul-4-034
+TITLE: The Gilded Passage
+TEXT: Golden light spills from hairline cracks in the masonry, catching motes of drifting paper dust that dance lazily in the stagnant air. Your companion flits from shelf to shelf, its paper wings rustling softly like turning pages in a silent reading room. The surrounding shelves loom tall and crooked, burdened with massive folios bound in calfskin that has darkened to the color of strong tea. Every surface hums with a faint, residual static charge, making the hairs on your arms stand on end as you pass. You keep your gaze fixed on the glowing sprite, trusting its uncanny knowledge of the shifting architecture.
+EXIT 1: Descend toward the whispering alcove below
+@@END
+@@SECTION ul-4-035
+TITLE: Balancing on the Edge
+TEXT: A sudden drop in the floor leaves only a slick, moss-grown spine of an ancient ledger bridging the dark chasm ahead. You test the narrow bridge with the toe of your boot, feeling the centuries-old parchment sag and groan under your weight above the black abyss. Balancing your lamp in one hand, you stretch your arms wide to catch any stray draft that might throw you off course. Every muscle in your body tightens as you prepare to cross the dangerous span without losing your footing in the dark.
+CHECK: Step carefully across the parchment bridge
+@@END
+@@SECTION ul-4-036
+TITLE: The Torn Spine
+TEXT: The ancient ledger spine gives way beneath your sudden shift in weight, tearing with a wet, fibrous snap that echoes in the vault. You lurch wildly, arms windmilling as you drop to your knees on the jagged stone ledge just beyond the chasm. A shower of loose pages and heavy iron bookmarks clatters down into the darkness below, leaving your shins bruised and your lamp-oil leaking onto the dusty floor. You pull yourself up, panting heavily, realizing that speed cost you dearly in both skin and supplies.
+EXIT 1: Drag yourself toward the flickering light
+@@END
+@@SECTION ul-4-037
+TITLE: Across the Chasm
+TEXT: Your boots find purchase on the far side of the gap just as the fragile ledger bridge collapses entirely into the shadows below. You steady your breathing, brushing stray flakes of ancient parchment from your coat sleeves while checking your equipment in the dim lamplight. Tucked safely into your belt pouch rests a small, bone-handled stylus dropped by some previous scholar, its tip still damp with silver ink. The narrow escape leaves your heart hammering against your ribs, yet the path ahead remains open.
+EXIT 1: Return to the Ex-Libris Corridor junction
+@@END
+@@SECTION ul-4-038
+TITLE: The Petrified Beam
+TEXT: A thick beam of petrified oak spans the unstable expanse, offering a dry and rigid highway above the restless paper floor. You hoist your lamp higher, testing the ancient wood with a tentative hand before hoisting yourself up onto its rounded surface. Halfway across, your fingers brush against a small, forgotten leather pouch wedged into a knot in the timber. Untying the drawstring reveals a cache of scented sealing wax, fragrant with crushed cloves and dried lavender, perfectly preserved in the cool subterranean air. You pocket the prize and continue your steady progress across the span.
+EXIT 1: Follow the oak beam to the far ledge
+@@END
+@@SECTION ul-4-039
+TITLE: The Narrow Crossing
+TEXT: The timber beam narrows sharply as it approaches a vertical stack of encyclopedias leaning precariously over the void. A sudden gust of cold air sweeps through the stacks, threatening to unbalance your stance on the slick, petrified wood. You freeze in place, shifting your weight low and centering your breathing against the sway of the hanging lamp. Your boots cling to the rounded grain while you measure the final leap to safety across the remaining gap.
+CHECK: Leap across the remaining timber gap
+@@END
+@@SECTION ul-4-040
+TITLE: A Heavy Fall
+TEXT: The gust catches your coat at the worst possible moment, tipping your balance and sending you skidding off the rounded timber. You tumble hard onto a massive pile of discarded folios, the impact knocking the wind from your chest and cracking the glass of your oil lamp. Scrambling upright with a bruised shoulder and a torn sleeve, you watch the last drops of fuel soak uselessly into the thirsty paper beneath you. You survive the clumsy landing, but the shadows crowd closer now that your light burns dimmer.
+EXIT 1: Gather your wits in the dim gloom
+@@END
+@@SECTION ul-4-041
+TITLE: The Safe Landing
+TEXT: Your boots strike the stone ledge with a sharp crunch, and you roll neatly to absorb the momentum of the crossing. You rise without serious injury, dusting off your trousers while clutching the small pouch of scented wax safely in your fist. The narrow timber bridge now lies behind you, crossed with whatever combination of skill and fortune brought you safely through the dark. You take a moment to secure your equipment before pressing forward into the branching corridors of the Annexe.
+EXIT 1: Head back to the central Ex-Libris Corridor
+@@END

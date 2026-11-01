@@ -1,0 +1,60 @@
+@@SECTION vh-4-1-3-12
+TITLE: The Groaning Seracs
+TEXT: Jagged towers of shimmering blue ice rise on every side, shifting and groaning like living bone under the relentless weight of the moving glacier. Deep beneath your boots, a muffled subterranean crack echoes through the frozen canyon, setting the heavy bronze Clapper humming in its padded cradle against your spine. You must pick your path through this unstable labyrinth before the shifting walls close entirely.
+EXIT 1: Weave carefully between the cracking seracs
+EXIT 2: Climb higher to bypass the moving ice maze
+EXIT 3: Take the reckless way across the trembling span
+@@END
+@@SECTION vh-4-1-3-13
+TITLE: The Hidden Wedge
+TEXT: Doubting whether the lower foundry fires still burn through this bitter freeze, you pause behind a frost-rimed outcrop to cache your spare gear. With numb fingers, you tuck a heavy bronze wedge deep into a secure rock cairn, ensuring you have a backup plan if you must recast Orison yourself. The wind howls down the gully, urging you onward into the white expanse.
+EXIT 1: Leave the cairn and press downward
+EXIT 2: Retrace your steps toward the open ridge
+@@END
+@@SECTION vh-4-1-3-14
+TITLE: The Frayed Hand-Line
+TEXT: Frigid gales tear across the glacial saddle, threatening to peel you straight off the mountainside with every breath. A single frayed hemp hand-line, secured only by an iced-over piton, offers the sole slender thread of safety against the abyss. You grip the hemp tightly as frost rime gathers thick upon your sleeves.
+EXIT 1: Traverse hand over hand along the hemp
+@@END
+@@SECTION vh-4-1-3-15
+TITLE: Corrugated Iron Crossing
+TEXT: Beneath Biscuit's stubborn hooves, a sheet of corrugated iron laid across a widening crevasse clatters loudly against the frozen lips of the abyss. The mule's ears flatten against the howling wind as the thin metal flexes perilously over empty space. You hold your breath, guiding the laden beast step by cautious step.
+EXIT 1: Urge the mule toward firm ground ahead
+EXIT 2: Pause to check the ice anchors below
+EXIT 3: Retreat slightly to test a safer footing
+@@END
+@@SECTION vh-4-1-4-0
+TITLE: The Vertical Glass
+TEXT: The path ahead vanishes into a sheer wall of blue-white glacier glass where every single handhold must be chipped fresh out of the unyielding rime. Your belt-hatchet rings sharply against the frozen surface, sending tiny diamond shards scattering into the deep void below. The weight of the bronze Clapper pulls heavily at your aching shoulders.
+EXIT 1: Hew a staircase upward into the blue wall
+@@END
+@@SECTION vh-4-1-4-1
+TITLE: Stinging Diamond-Dust
+TEXT: Blinding gusts whip fine ice crystals straight into your watering eyes, turning the narrow ledge into a blurred hazard of white. You lean hard into the mountain face, talking in low, steady murmurs to keep the mule from bolting on the slick stone. Every breath burns your chest with raw, frozen air.
+EXIT 1: Inch forward while shielding your face
+@@END
+@@SECTION vh-4-1-4-2
+TITLE: The Singing Cable
+TEXT: Overhead, a rusted suspension cable hums like a plucked harp-string as the upper span strains violently against the freezing gale. The metallic resonance vibrates straight down into your teeth, matching the strange internal hum of the heavy Clapper on your back. Below your boots, the glacier drops away into bottomless grey shadow.
+EXIT 1: Hurry past beneath the vibrating span
+EXIT 2: Hold tight to the cable anchor point
+@@END
+@@SECTION vh-4-1-4-3
+TITLE: Sulfur and Cold Stone
+TEXT: Strong arms haul you over the jagged lip of glacier ice onto a sheltered rock shelf where the air smells faintly of sulfur and cold damp stone. The sudden absence of the roaring wind is almost deafening as you catch your ragged breath against the cliff face. Here, the mountain feels ancient, solid, and still.
+EXIT 1: Follow the rock shelf deeper inward
+EXIT 2: Descend the stone steps toward the gorge
+@@END
+@@SECTION vh-4-1-4-4
+TITLE: The Broken Rung
+TEXT: A snapped ladder-rung dangles by a single frayed strand of hemp over empty air, blocking the descent with a terrifying gap. Crossing it requires a sudden, lunging leap while carrying the dead, heavy weight of the bronze Clapper. Below the dangling timber, the glacier floor waits in silent white judgment.
+EXIT 1: Leap across the gap to the lower ladder
+EXIT 2: Search for an alternate anchor to climb around
+@@END
+@@SECTION vh-4-1-4-5
+TITLE: The Gatehouse Shelter
+TEXT: Shielded temporarily by a jutting buttress of black granite, you press your back against the freezing rock wall to let a violent gust pass. Just ahead lies the final icy crossing toward the heavy timber of the lower gatehouse. The bronze Clapper hums softly against your spine, sensing the proximity of masonry and old hearths.
+EXIT 1: Cross the final bridge to the gates
+EXIT 2: Take shelter inside the stone alcove
+EXIT 3: Climb the upper embankment to get your bearings
+@@END

@@ -1,0 +1,87 @@
+{
+ "batch": "vh-1-1-2-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-1-2-4": {
+   "title": "The Cider Press Turn",
+   "text": "Cold cider vinegar and bruised apple pulp hang heavy in the air by the old stone press. You yank the lead-rope, hauling Biscuit past a jagged iron axle left half-buried in frozen mud. The mule snorts a cloud of white mist, planting his hooves against the paving stones as the bronze tongue hums softly between your shoulder blades. You rub your aching ribs, wondering briefly if traveling unburdened by four legs and a bad temper would have spared you this misery.",
+   "exits": [
+    "Pull the mule toward the sheltered wind-break",
+    "Tug the stubborn animal past the rock buttress"
+   ]
+  },
+  "vh-1-1-2-5": {
+   "title": "The Drying Kiln Lee",
+   "text": "Pine smoke drifts from the drying kiln, wrapping you in a pungent, warm shroud against the mountain wind. You lean back against a dry timber wall, adjusting the wool-padded shoulder straps that bite into your collarbones. Behind you, the heavy iron clapper pulses with a deep, sympathetic vibration, humming a low warning note that resonates straight through your ribs. The path ahead dips sharply into the grey shadow of the cliffs, where the wind howls without mercy across open stone.",
+   "exits": [
+    "Leave a copper coin at the three sisters shrine",
+    "Lean your weight into the harness across the gale"
+   ]
+  },
+  "vh-1-1-2-6": {
+   "title": "The Lower Trough Timber-Stack",
+   "text": "Splinters of resinous pine crunch under your boots beside the communal watering trough. A novice monk thrusts a clay mug of lukewarm chicory into your hand, urging you to swallow fast before the midday sun loosens the giant icicles hanging from the roof eaves. You hand back the empty cup with a nod, feeling the weight of Orison's tongue dragging you slightly forward as Biscuit tosses his shaggy head in protest.",
+   "exits": [
+    "Pull the mule past the narrow stone buttress",
+    "Step carefully beside the frozen monastery drain"
+   ]
+  },
+  "vh-1-1-2-7": {
+   "title": "The Tanners' Quarter Alley",
+   "text": "Stiff salted hides line the narrow alley walls, filling your nose with a sharp, alkaline tang that makes Biscuit roll his wild eyes in absolute terror. You plant your boots in the slush and haul with all your strength on the lead rope, dragging the balking beast away from a towering stack of goat pelts. The iron clapper shifts heavily in its felt cradle, reminding you with a dull thud that every wasted moment brings the ice-wind closer.",
+   "exits": [
+    "Meet the fog-warden climbing with winter pears",
+    "Adjust your aching shoulder cushioning in the shadow"
+   ]
+  },
+  "vh-1-1-2-8": {
+   "title": "The Tallow-Chandler's Lane",
+   "text": "Scented tallow and rendered fat coat the steep cobblestones, turning the lane into a treacherous slide of yellow grease. You dodge a handcart piled high with leaking barrels just as Biscuit locks his knees and refuses to take another step downward. The iron tongue hums a steady, rhythmic note against your spine, matching the frantic beat of your own pulse in the thin air.",
+   "exits": [
+    "Pick your way past the frozen drainage cascade",
+    "Shift the heavy bronze tongue in its cradle"
+   ]
+  },
+  "vh-1-1-2-9": {
+   "title": "The Cooperage Lintel",
+   "text": "Shavings of sweet oak crunch underfoot beneath the heavy timber lintel of the cooperage. You pause to yank the leather breast-band tighter across your chest, wincing as the raw hemp-and-leather straps bite straight through your thick woollen tunic. Biscuit stamps his iron-shod hoof against the flagstones, eager to bolt down the mountain before the weather closes in for good.",
+   "exits": [
+    "Check the horizon by the rusted iron crane",
+    "Guide the nervous animal along the high ledge"
+   ]
+  },
+  "vh-1-1-2-10": {
+   "title": "The Drainage Culvert Drop",
+   "text": "Slush and black ice choke the stone drainage culvert, spilling freezing water across the descending path. You throw your full weight against the lead rope, wrestling the grey mule away from a crumbling parapet that drops straight down into the dizzying abyss of the first cliff tier. The bronze clapper hums a warning vibration against your back, echoing the terrifying depth of the drop below.",
+   "exits": [
+    "Check the gathering storm clouds by the crane",
+    "Seek shelter across the threshold of the lower grotto",
+    "Lead the nervous beast along the cantilevered ledge"
+   ]
+  },
+  "vh-1-1-2-11": {
+   "title": "The Charcoal Burners' Yard",
+   "text": "Soot and black coal-dust stain the melting snow grey as you cross the open yard of the charcoal burners. A gust of wind catches the charcoal grit, stinging your eyes and sending Biscuit lunging sideways toward the safety of the upper stables. You dig your heels into the slush, hauling the stubborn animal back onto the downward track with both hands.",
+   "exits": [
+    "Lead the nervous animal along the high ledge"
+   ]
+  },
+  "vh-1-1-2-12": {
+   "title": "The Dry-Stone Retaining Wall",
+   "text": "Weathered grey stones form a low retaining wall that keeps the mountain from sliding down upon the monastery path. An old shepherd leans against the masonry, his face lined like parchment, warning you that the descending stairs are slick with sheep grease and melting rime from the upper snowfields. The iron clapper hums a low, resonant chord against your spine as you weigh your next step.",
+   "exits": [
+    "Check your leather bindings by the ancient marker post",
+    "Join the shivering monks around the rock-cut brazier",
+    "Turn back toward the security of the stable door"
+   ]
+  },
+  "vh-1-1-2-13": {
+   "title": "The Provision Store Slate Roof",
+   "text": "Drips of cold meltwater fall rhythmically from the grey slate eaves onto your woolen hood. You check the thick hemp lashings binding the bronze tongue into its felt cradle one last time, making sure the heavy metal will not shift during the plunge. The mountain air tastes of ozone and old ice, daring you to take the first real step down into the winding stair-towns.",
+   "exits": [
+    "Rest by the brazier in the rock-cut shelter"
+   ]
+  }
+ },
+ "missing": []
+}

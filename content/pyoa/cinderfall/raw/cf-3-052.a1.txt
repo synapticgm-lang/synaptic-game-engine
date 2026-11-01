@@ -1,0 +1,12 @@
+@@SECTION cf-3-059
+TITLE: The Iron Rung
+TEXT: Acrid sulphur claws at your throat until spots dance behind your eyelids, threatening to pitch you into the dark beneath the iron plates. You clamp your teeth against the burn, forcing your ribs to expand in slow, agonizing pulls while your scorched fingers sweep the greasy brickwork of the pier. Blindly your knuckles strike cold iron, locating the riveted stiles of the narrow maintenance ladder bolted straight into the bridge's spine.
+CHECK: You steady your breathing against the lung-burning fumes, risking blacking out to maintain focus and locate the hidden maintenance ladder.
+EXIT 1: Climb upward through the chokesmoke toward the gantry.
+@@END
+@@SECTION cf-3-062
+TITLE: A Handhold in the Smog
+TEXT: Thick soot cakes your skin and the bitter vapors sear your chest, yet you keep your footing on the wet iron despite the dizzying void below. Your searching fingers close around a discarded brass inspection token left behind by a sympathetic toll-man, its rim notched with a secret rebate that bypasses the lower gate locks. This small wedge of salvaged metal offers a quiet passage through the lower arcades where the Baron guards rarely tread.
+GRANT: notched brass inspection token
+EXIT 1: Slip along the vaulted masonry toward the Smog Corridor.
+@@END

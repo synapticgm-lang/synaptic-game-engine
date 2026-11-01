@@ -1,0 +1,96 @@
+{
+ "batch": "td-5-087",
+ "sections": {
+  "td-5-087": {
+   "title": "The Final Stand",
+   "text": "Orsolya leans against the grease-stained iron of the Meridian Gear, her knuckles smeared with old rust and her breath coming in shallow, rattling gasps. Blood from her shoulder seeps through her canvas tunic, matting the gray hairs at her nape, yet her one good hand still clutches a heavy iron pry-bar raised high above the primary cogs. She means to shatter the timing-teeth and let the ocean rush in unchecked, drowning Gullmouth and the Low in one chaotic, vengeful surge. You step onto the dripping platform with a bruised arm, caught between the duty you owe your mentor and the desperate need to keep your home from the brine.\n\nThe heavy machinery groans beneath your boots as the salt-thick air grows colder, pressing down with the weight of an oncoming deluge. You must decide whether to aid her desperate vandalism or wrench the heavy lever from her grasp before the waters break their banks forever.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Demand answers from your mentor",
+    "Pry the heavy charges loose",
+    "Help her rig the sabotage",
+    "Wrest the master lever away",
+    "Wait for the seabed to flood"
+   ]
+  },
+  "td-5-088": {
+   "title": "Shadow of the Keep",
+   "text": "Salt crusts the corners of your eyes as you close the distance to the old lighthouse keeper, your boots slipping slightly on the oily grease coating the lower deck. Orsolya turns her head slowly, her expression hardened into something bitter and unforgiving that you have never seen directed at your trade before. You ask her flatly why she vanished into the dark stairwell, demanding an explanation for the sabotage and the secrecy that led you both to this rusted vault. She lets out a dry, rattling laugh that echoes off the iron pillars, her gaze drifting toward the immovable bronze bulk of the Gear. The truth she spits out tastes of ancient brine and old sin, revealing how the first Tidewardens bound the sea with stolen blood, condemning the coast to perpetual thirst so they could rule the dry dust above.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press her for the full history"
+   ]
+  },
+  "td-5-089": {
+   "title": "Staring Down Wrath",
+   "text": "Orsolya's eyes narrow to venomous slits, and the iron crowbar in her hand trembles not with weakness, but with a sudden, gathering fury that could crack flint. You plant your boots firmly against the wet metal grating, refusing to flinch as her voice rises over the distant, subterranean rumble of the trapped tide. Staring directly into her wild, bloodshot gaze, you force your shoulders to drop and your breathing to steady, standing your ground against a lifetime of accumulated authority. Every muscle in your body tightens like a strained hawser as you lean into her space, daring her to strike or speak the truth.",
+   "check": "Hold your ground against her fury",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-090": {
+   "title": "A Bitter Reprimand",
+   "text": "The old woman's patience snaps like a water-rotted hawser, and she swings the heavy iron bar with terrifying speed before you can brace your bruised shoulder. The thick metal catches you square across the ribs with a dull, sickening thud that knocks every ounce of air from your lungs and sends you sprawling onto the greasy grating. Pain flares white and hot through your torso, leaving a deep, purple bruise that will ache every time the weather turns wet. Orsolya towers over you, chest heaving and eyes blazing, while you wheeze for breath on the iron deck, having learned the hard way just how sharp her temper remains.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up from the iron"
+   ]
+  },
+  "td-5-091": {
+   "title": "The Keeper's Burden",
+   "text": "Salt-crusted brows furrow beneath the lamplight as you demand an accounting from your old mentor, pushing past her fierce glare to extract the heavy truth of the ancient Tidewardens' original watery sin. Her voice rasps like dry pebbles against the masonry, revealing how the sea was first bound by a cruel bargain struck in the deep trenches. For your trouble, she presses a heavy brass key into your palm - a token that once unlocked the inner vaults of the Saltspire.\n\n",
+   "check": "",
+   "grant": "brass vault key",
+   "exits": [
+    "Demand she stand down and explain the full cost of her silence"
+   ]
+  },
+  "td-5-092": {
+   "title": "The Primer Cords",
+   "text": "Coils of gray fuse-wire snake across the greasy housing of the primary drive, pinned in place by crude lead weights that Orsolya hung there with meticulous care. You drop to one knee beside the main casing, your fingers slick with condensation and oil as you trace the path of the sputtering detonators. Each wire is knotted with old sailor's hitches that tighten under tension, requiring a delicate touch and absolute stillness to unravel without striking a spark against the ironwork. The metal beneath your palms vibrates with a deep, ominous thrum, warning you that the entire apparatus is teetering on a hair-trigger just waiting for a careless movement.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Unravel the tangled fuse wire"
+   ]
+  },
+  "td-5-093": {
+   "title": "Gathering the Charges",
+   "text": "With infinite patience and a steady hand, you slip the lead weights from their moorings one by one, letting the grey coils tumble harmlessly into the oily sludge at the base of the machine. The primary drive falls silent save for the heavy dripping of condensation from the vaulted ceiling far above. You scoop up the exposed detonator caps, their brass casings cold and heavy against your palm, and tuck them securely into your canvas pouch. Orsolya watches from the shadows, her expression dark with betrayal, but the machinery remains intact for now.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step back from the disarmed drive"
+   ]
+  },
+  "td-5-094": {
+   "title": "Fingers on the Wire",
+   "text": "The copper primer cap sits wedged deep within the iron housing of the primary drive, held fast by a rusted screw that refuses to turn for ordinary thumbs. You draw your salt-pitted knife from its sheath, using the narrow tip to lever against the delicate brass lip while avoiding the sensitive friction-powder packed inside. A single slip of the blade against the iron casing will send a hot spark straight into the volatile core, taking your fingers and half the bulkhead with it. You hold your breath in the damp, echoing vault, applying just enough pressure to coax the cylinder free without setting off the catastrophe.",
+   "check": "Pry the live cap loose",
+   "grant": "",
+   "exits": []
+  },
+  "td-5-095": {
+   "title": "A Spark in the Dark",
+   "text": "The blade slips with a sharp screech of steel against iron, and a tiny, vicious spark leaps from the housing to bite straight into the sensitive primer grain. A muffled pop fills the cramped recess, scorching your knuckles black and showering your face with stinging metallic grit and hot soot. You jerk your hand back with a curse, clutching a stinging, blackened thumb while the pungent smell of burnt saltpetre fills the damp air. You survive the minor blast with singed skin and a throbbing hand, but the explosive charge remains stubbornly wedged in the mechanism.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Nursing your burned fingers"
+   ]
+  },
+  "td-5-096": {
+   "title": "The Unexploded Spark",
+   "text": "Cool sweat prickles your neck as your fingers work with agonizing care to unseat the volatile charges wired into the primary drive, averting a premature blast that would have buried the mechanism forever. Your heart hammers against your ribs like a trapped gull against a pane, yet your hands remain steady until the final copper wire is slipped free. Tucked safely into your coat pocket rests a heavy, unexploded brass blast-cap, salvaged from the very jaws of ruin.\n\n",
+   "check": "",
+   "grant": "heavy brass blast-cap",
+   "exits": [
+    "Confront your mentor before she can trigger another catastrophe"
+   ]
+  }
+ },
+ "missing": []
+}

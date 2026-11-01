@@ -1,0 +1,56 @@
+{
+ "beats": {
+  "td-5-001": "You finally reach the cavernous bottom of the Sunken Stair, standing before the vast, silent brass teeth of the Meridian Gear.",
+  "td-5-025": "With the outer debris finally cleared, the Last Tidewarden emerges from the damp shadows, demanding your solemn oaths before permitting access to the inner workings.",
+  "td-5-051": "The Hollow Choir suddenly descends upon the echoing chamber, their drowned voices singing terrible promises as they attempt to drag you into the rising water.",
+  "td-5-070": "As the dark water rises, desperate representatives from the rival factions burst into the dripping chamber, turning the precarious control room into a deadly standoff.",
+  "td-5-086": "Orsolya Venn finally appears from the flooding shadows, badly wounded and clutching the master lever, revealing her radical plan to destroy the Meridian Gear entirely.",
+  "td-5-106": "A truly deafening roar echoes down the dark shaft as the open seabed finally floods, and the ancient Meridian Gear shudders violently to life beneath your hands.",
+  "td-5-121": "With the black sea violently crashing against the reinforced glass, you grab the vibrating controls to make the ultimate, irrevocable choice of where the water falls."
+ },
+ "hubs": {
+  "td-5-002": {
+   "place": "The Gear's Threshold",
+   "situation": "The immense mechanism is jammed tight with centuries of deep-sea debris and salt crust, requiring immediate physical clearing before any cogs can turn."
+  },
+  "td-5-026": {
+   "place": "The Warden's Archive",
+   "situation": "The ancient automaton-archivist fiercely guards the alignment levers, forcing you to prove your worth or cleverly trick it to manipulate the returning ocean's path."
+  },
+  "td-5-052": {
+   "place": "The Flooding Atrium",
+   "situation": "The drowned spirits swarm the crumbling control room as the very first trickles of the returning sea begin to breach the rusted pressure seals."
+  },
+  "td-5-071": {
+   "place": "The Standoff at the Gear",
+   "situation": "The wealthy Brineholders, fanatic Drift Pilgrims, and your own Wreckers' Guild clash violently over the controls, demanding you choose a side before the sea crashes down."
+  },
+  "td-5-087": {
+   "place": "Orsolya's Final Stand",
+   "situation": "Your bleeding mentor stands ready to shatter the machine and let the ocean run wild, forcing you to urgently either help her or stop her."
+  }
+ },
+ "chains": {
+  "td-5-002/0": "You heave a wrecked galleon's mast out of the primary cogs, risking severe exhaustion, to uncover a masterfully forged wrecker's hook trapped beneath.",
+  "td-5-002/1": "You force a calcified alignment wheel to rotate by sheer strength, risking crushed hands, to gain vital access to the central pressure valve.",
+  "td-5-002/2": "You smash apart a massive colony of iron-shelled barnacles blocking the drive shaft, risking deep cuts, to harvest a cluster of razor-sharp shell-blades.",
+  "td-5-002/3": "You drag a petrified leviathan rib from the heavy counterweights, risking a crushing fall, to claim a rare marrow-stone amulet snagged on the bone.",
+  "td-5-002/4": "You carefully dismantle a broken bathysphere lodged between the great gears, risking sudden structural collapse, to salvage a precious spool of pristine copper wire.",
+  "td-5-026/0": "You debate obscure ancient maritime laws with the weary Tidewarden, risking its mechanical wrath, to earn a heavy brass access key to the lower shafts.",
+  "td-5-026/1": "You stare down the towering automaton when it threatens to flood the chamber, risking sudden drowning, to assert your absolute authority and claim a tide-warding lantern.",
+  "td-5-026/2": "You diligently repair the automaton's damaged memory-coil, risking a painful electrical surge, to receive a flawlessly accurate map of the seabed's shifting salt-flats and sinkholes.",
+  "td-5-026/3": "You decipher the faded navigational charts scrawled on the wet walls, risking severe mental strain, to pinpoint the exact location of your missing mentor.",
+  "td-5-026/4": "You quietly slip past the distracted archivist to steal a forbidden ledger, risking immediate lethal detection, to gain powerful blackmail material against the wealthy Brineholders.",
+  "td-5-052/0": "You walk directly through the shivering ghostly congregation, risking the freezing chill of sudden death, to snatch a coral-encrusted breathing mask from a flooded alcove.",
+  "td-5-052/1": "You frantically jam the breaching pressure valves with heavy scrap metal, risking a lethal blowout, to buy precious time and secure a watertight leather satchel.",
+  "td-5-052/2": "You listen closely to the Choir's maddening song for operational clues, risking your own sanity, to learn the ancient spoken command for the main lock.",
+  "td-5-052/3": "You threaten to completely shatter the central tide clock, risking the Choir's violent frenzy, to force the spirits into yielding a glowing spectral compass.",
+  "td-5-071/0": "You carefully negotiate a fragile temporary truce between the screaming factions, risking sudden betrayal, to secure a sworn pledge of support from the fanatic Drift Pilgrims.",
+  "td-5-071/1": "You brutally intimidate the Brineholder mercenaries into slowly backing down, risking a fatal stab in the dark, to confiscate their heavy iron lockboxes of coin.",
+  "td-5-071/2": "You physically bar the rusted iron doors against incoming rival wrecker crews, risking badly battered limbs, to ensure you maintain total control over the main console.",
+  "td-5-087/0": "You bravely confront Orsolya about her sudden disappearance, risking her remarkably volatile temper, to learn the devastating truth concerning the ancient Tidewardens' original watery sin.",
+  "td-5-087/1": "You carefully disarm the volatile explosive charges she planted on the primary drive, risking a premature detonation, to save the mechanism and pocket a rare blast-cap.",
+  "td-5-087/2": "You help her quietly rig the final sabotage on the release valves, risking being crushed by falling masonry, to earn her deepest trust and a master-work wrench.",
+  "td-5-087/3": "You desperately wrestle the master lever away from her trembling hands, risking a broken jaw in the struggle, to take absolute physical command of the returning tide."
+ }
+}

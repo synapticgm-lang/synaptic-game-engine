@@ -1,0 +1,98 @@
+{
+ "batch": "cf-5-117",
+ "sections": {
+  "cf-5-117": {
+   "title": "The Narrow Drain",
+   "text": "Squeezing your shoulders through the iron-bound masonry of the drainage culvert, you swallow the alkaline taste of soot that coats your tongue like dry plaster. The storm rages against the surface above, but down here the silence is absolute save for the slow drip of stagnant condensate. Steadying your breath against the rising panic in your chest, you reach into the dark alcove and your fingers brush the cold wax and rough wick of a hidden cache of tallow candles.\n\nTucking the salvage safely into your oilskin pocket, you turn your boot toward the junction ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Creep along the masonry wall"
+   ]
+  },
+  "cf-5-118": {
+   "title": "The Iron Switch",
+   "text": "Leaning your full weight against the heavy grease-bar, you force the rusted switch-point as it shrieks in protest against decades of accumulated coal-dust and scale. A sudden hiss of superheated steam spits from the failing joint beside your knuckles, threatening to scald your skin if the pressure backfires into the pit. Grit your teeth against the blistering heat, you throw your hip into the lever until the tongue snaps home with a satisfying iron thud.\n\nSlipping the spare copper gasket from the spindle-slot, you secure your prize in your pocket.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry the jammed iron free"
+   ]
+  },
+  "cf-5-119": {
+   "title": "The Clerk's Ledger",
+   "text": "Sliding the dog-eared railway rule-book across the scarred oak counter, you tap a grease-stained thumb against paragraph four of the emergency schedule. The clerk blinks behind his spectacles, his pen hovering uncertainly over the ledger as he weighs your authority against the rising fury of the storm outside. You hold his gaze with unblinking resolve until he sighs, dips his nib into the violet ink, and stamps the heavy paper with the station seal.\n\nFolding the signed bill of indemnity, you tuck it inside your waistcoat.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the stamped official paper"
+   ]
+  },
+  "cf-5-120": {
+   "title": "The Drainage Culvert",
+   "text": "Choking soot fills the narrow iron-ribbed culvert as you force your way forward on hands and knees, every breath scraping your throat like dry pumice. Maintaining your composure against the rising panic of the dark, your fingers brush against a rough wooden crate wedged deep beneath the masonry. You pry the lid open to find a hidden cache of thick tallow candles, smelling faintly of rendered mutton and dry cellar dust.\n\nShoving a pair of the candles into your canvas jacket, you press on through the gloom toward the faint grey glimmer of light at the far end of the pipe.",
+   "check": "Maintain your composure against the soot",
+   "grant": "",
+   "exits": [
+    "Crawl through to the outlet below the tracks"
+   ]
+  },
+  "cf-5-121": {
+   "title": "The Bronze Pillar",
+   "text": "Standing before the immense bronze pillar of the Water Gate, you feel the cold heft of the brass key in your palm as the storm clock ticks down its final, hollow beats. Cinderfall holds its breath behind the titanic bulk of the dam, while the low rumble of the approaching ash-tempest shakes the foundations of the terminal cliff. Every faction watches from the shadows, waiting to see whether you will turn the spindle to wash the grey steppes or seal the doom of the iron road forever. The gear awaits your hand.\n\nTurn the great brass key",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Open the final bronze lock",
+    "Strike a bargain with the barons",
+    "Smash the tracks with fire",
+    "Raise the gangers to rule",
+    "Feed the prophetic pyre",
+    "Join the signalmen in dark",
+    "Board the last escaping train",
+    "Search for missing Hesper",
+    "Let the deep waters drown all",
+    "Retire to a quiet siding",
+    "Claim the stationmaster throne",
+    "Let the iron engines die"
+   ]
+  },
+  "cf-6-001": {
+   "title": "The First Turn",
+   "text": "The brass key engages the bronze tumblers with a shriek that echoes off the vaulted limestone ceiling of the terminal. Old scale flakes away from the ancient threads, falling like black snow onto the soot-stained flags beneath your boots. You throw your entire weight against the long arm of the valve, feeling the immense hydraulic pressure of the reservoir straining against decades of neglect. Water begins to weep from the cracked seals, smelling of mountain moss and pristine snow.\n\nThe heavy pillar shudders, groaning as the long-stalled mechanism finally breaks its rust-bound sleep.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the valve another turn"
+   ]
+  },
+  "cf-6-002": {
+   "title": "The Rushing Tide",
+   "text": "A white plume of pent-up spray bursts from the high gallery, instantly washing away the choking grey ash that has smothered Cinderfall for generations. Down in the gulley, the rusted rails gleam under the sudden deluge, turning from dull iron to glistening silver as the fresh current scours the tracks clean. The people of the city crowd the iron balconies, pressing their faces into the cool, damp wind with shouts of disbelief and weeping laughter. You lean against the trembling pillar, watching the grey desert transform beneath the rushing tide.\n\nThe great basin empties its heart into the dry valleys below, drowning the dust.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Watch the water claim the line"
+   ]
+  },
+  "cf-6-003": {
+   "title": "The Cleansing Wash",
+   "text": "Torrents of crystal water roar through the lower viaducts, sweeping away the stranded wrecks and the burnt-out hulks of the Grey Bazaar like drifted straw. The low sky cracks open above the terminal, letting a pale, true sunlight pierce the broken clouds for the first time since the Long Fire began its reign. Steam rises in thick white billows where the cold flood meets the hot cinders of the steppes, wrapping the valley in a clean, breathable fog. The iron road is flooded, but the land finally drinks.\n\nStand firm as the deluge surrounds the engine",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step down into the cool flow"
+   ]
+  },
+  "cf-6-004": {
+   "title": "The Last Arrival",
+   "text": "Locomotive No. 9 rests quietly in the wash of the great spillway, her boiler cooling at last as the fires within her belly die down to a peaceful, embers-glow. You leave the brass key where it rests in the turned valve, its teeth gleaming bright against the dark green metal of the gate. The Marrowbone has brought her charge home through ash and iron, fulfilling the old debt under a sky washed clear of soot. There are no more schedules to keep, no more signals to read in the dark, and the water runs deep and cold through the streets of Cinderfall.\n\nThe journey is finished, and the long road rests beneath the water.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Rest beside the quiet engine"
+   ]
+  }
+ },
+ "missing": []
+}

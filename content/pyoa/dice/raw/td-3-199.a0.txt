@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION td-3-199
+TITLE: Kelp and Grease
+TEXT: Strands of salt-cured kelp coil thick around your forearm, slick with rancid whale fat scooped from a discarded cooper's tub. The mixture smells of old rot and cold oil, clinging to your skin like a second coat of grime. You twist the fibrous ribbons tighter into a makeshift brand, packing the grease deep into the weed's hollow stems to feed a steady, smoky flame. This subterranean gloom under Saltspire demands more than a Gullmouth wrecker's ordinary spark if you mean to see what watches from the stilt-shadows. // Striking flint against iron until a bright yellow ember catches, you watch the fat begin to bubble and spit dark smoke.
+EXIT 1: Scrape together the smoking fuel
+@@END
+@@SECTION td-3-200
+TITLE: Binding the Flame
+TEXT: Smoke billows thick and acrid from the twisted kelp torch, stinging your eyes and coating the back of your throat in greasy soot as the volatile whale fat begins to render too fast. You must steady your trembling hands, shaping the makeshift wick against a sudden flare that threatens to ignite the entire bundle in your grip and sear your flesh to the bone. Every muscle in your arm aches with the strain of keeping the sputtering flame under tight control.
+CHECK: Fashion a stable torch
+@@END
+@@SECTION td-3-201
+TITLE: Searing Backlash
+TEXT: A sudden sputter of boiling grease spatters your knuckles, blistering the skin with white-hot agony and forcing a sharp hiss through your clenched teeth. You drop the burning kelp bundle onto the damp salt-floor with a curse, stamping out the stray sparks before they can catch on your canvas trousers. Your palm throbs with a angry red burn that will leave a stiff, puckered scar for the rest of your days. Wiping the greasy soot from your eyes, you retrieve the smoking remnant and press onward into the cold dark.
+EXIT 1: Follow the dark root-passage forward
+@@END
+@@SECTION td-3-202
+TITLE: Steady Torchlight
+TEXT: Hot oil spatters dangerously close to your knuckles, but your calloused fingers hold firm against the heat until the kelp settles into a slow, rhythmic burn. The thick green flame casts long, wavering shadows across the petrified timber foundations of the city above, illuminating the salt-crusted alleys of the stilt-roots. However narrowly you managed the flare, you now hold a dependable beacon to pierce the blackness.
+GRANT: Smoldering kelp torch
+EXIT 1: Pick a path through the stilt-roots
+@@END
+@@SECTION td-3-203
+TITLE: Into the Silt
+TEXT: Thick petrified roots arch overhead like the ribs of a beached leviathan, shutting out whatever faint light filters down from the stilt-city above. You drop to your hands and knees, crawling into a passage barely wider than your shoulders where the air tastes of ancient dust and stagnant brine. The claustrophobic weight of the damp earth presses against your spine, threatening to bring a cold sweat to your neck as you inch forward through the pitch-black silence. // Something metallic grates against your knee amid the damp silt.
+EXIT 1: Reach into the cold mud
+@@END
+@@SECTION td-3-204
+TITLE: Narrow Tunnel Dread
+TEXT: The low wooden ceiling seems to drop lower with every inch, pressing into your shoulders and choking your lungs with the dry, suffocating scent of centuries-old rot. Panic rises in your throat like bitter gall, whispering of cave-ins and unbreathing dark, but you force your limbs to move through the suffocating squeeze. You reach blindly into the black silt where something small and hard lies half-buried in the muck.
+CHECK: Crawl through the tight squeeze
+@@END
+@@SECTION td-3-205
+TITLE: Choking Panic
+TEXT: A sudden wave of blind terror seizes your chest, making your breath come in ragged, shallow gasps that echo off the tight wooden walls. You thrash backward in panic, scraping your spine hard against a jagged knot of petrified oak and leaving a raw, bleeding scratch across your shoulder blades. By the time you claw your way back out into slightly wider air, your chest heaves and your palms are slick with nervous sweat.
+EXIT 1: Search the muck once more
+@@END
+@@SECTION td-3-206
+TITLE: Deep Archive Relic
+TEXT: The dark tunnel presses like a tomb against your ribs, yet your breathing remains steady enough to guide your groping fingers through the freezing mud. However narrowly you fought down the rising panic, your hand closes around a heavy metal band buried deep in the silt. Pulling it free into the faint gloom, you turn the cold circle over in your palm and trace the worn grooves of an old office.
+GRANT: Ancient Tidewarden signet ring
+EXIT 1: Descend the spiralling stone steps
+@@END
+@@SECTION td-3-207
+TITLE: Iron and Barnacle
+TEXT: Massive barnacles encrust the heavy oak chest like jagged white teeth, sealing the lid shut against anyone seeking to plunder the Brineholders' hidden stores. You wedge the flat of your heavy wrecking bar beneath the iron clasp, leaning your full weight into the rusted iron. The ancient wood groans under the strain, resisting your push with stubborn, stubborn malice before the encrustation finally cracks with a dry, splintering pop. // The iron lid falls back to reveal a gleaming hoard of heavy silver coinage.
+EXIT 1: Gather the loose silver coins
+@@END
+@@SECTION td-3-208
+TITLE: Breaking the Seal
+TEXT: The encrusted barnacles lock the heavy iron clasp tight against the rotting lid of the strongbox, refusing to yield to ordinary leverage. You plant your boots firmly against the salt-crusted floor, heave with every ounce of muscle in your back, and throw your weight against the jammed iron bar. The locked chest shudders under your assault, but the rusted hinges scream a sharp protest that threatens to give way entirely.
+CHECK: Pry open the rusted chest
+@@END
+@@SECTION td-3-209
+TITLE: Crushed Claws
+TEXT: A heavy lump of encrusted shell gives way without warning, sending your hands smashing hard against the jagged iron corner of the strongbox. Pain shoots up your forearms, and you pull your bleeding knuckles back with a sharp hiss as dark blood wells from a deep, ragged gouge. The heavy box remains sealed for now, its secret contents hidden behind a barrier of salt and stubborn age.
+EXIT 1: Wrench the iron lid open
+@@END
+@@SECTION td-3-210
+TITLE: Spoils of the Stilt
+TEXT: The stubborn iron lid wrenches free with a final, screeching groan of rusted metal, scattering flakes of old red paint across the salt-floor. However narrowly you avoided crushing your fingers in the snapping clasp, your prize sits waiting in the dark interior. You scoop up a heavy handful of stamped silver coin, feeling the cool weight settle deep into your canvas pouch.
+GRANT: Heavy pouch of silver
+EXIT 1: Return to the stilt-roots
+@@END

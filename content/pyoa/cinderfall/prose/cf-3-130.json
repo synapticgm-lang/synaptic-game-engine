@@ -1,0 +1,92 @@
+{
+ "batch": "cf-3-130",
+ "sections": {
+  "cf-3-130": {
+   "title": "Clearing the Throat",
+   "text": "Sulphur dust settles in the narrow gaps of the floorboards while the Marrowbone shudders against the rising gradient of the viaduct. Steam hisses from a leaky joint near the floor, smelling of boiled iron and old oil. Your fingers are cramped from the sudden wrenching strain, but the brass water-key remains heavy and cold in your coat pocket. Outside, the gantries of the Rail Barons loom through the yellow haze like ribs of dead cattle. You reach for the slim cleaning wire tucked behind the gauge lamp, testing its temper against your thumb.\n\nThe copper feed-line vibrates with a dull, hollow thrum that signals trouble within the injector assembly.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Probe the clogged copper feed-line"
+   ]
+  },
+  "cf-3-131": {
+   "title": "The Thin Wire",
+   "text": "Bending low beneath the grease-stained deckhead, you peer into the shadowed recess where the primary water feed meets the firebox throat. The metal is hot enough to bake skin at a hand's breadth, radiating a dry, punishing heat that parches your throat instantly. You slide the flexible wire into the narrow nozzle-opening, feeling for the crust of baked mineral scale that chokes the flow. Every jolt of the engine threatens to drive the sharp tip deep into your knuckle.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push deeper into the valve"
+   ]
+  },
+  "cf-3-132": {
+   "title": "Testing the Brass",
+   "text": "Sweat runs into your eyes as you work the thin steel probe back and forth within the blindingly hot injector throat, feeling the gritty resistance of calcified salt give way only to catch harder against some stubborn slag. The engine gives a violent lurch as it strikes a warped rail-joint on the viaduct, threatening to throw your hand off-balance and weld your skin to the bronze casting. With the pressure gauge trembling near the red line, you grip the wire tighter and shove with all your weight against the blockage.",
+   "check": "Jab the probe against the scale",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-133": {
+   "title": "Scored and Scalded",
+   "text": "A vicious hiss of scalding vapour erupts around your knuckles as the blockage shifts too fast, driving a jet of boiling water straight across the back of your hand. You jerk back with a sharp curse, clutching the stinging flesh to your chest while the Marrowbone wheezes in protest. The burn leaves a bright, blistering welt across your skin, costing precious minutes and leaving the feed-line only half-cleared. You wipe the sweat from your forehead with a soot-stained sleeve and reach grimly for the wrench again.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Patch the feed with grease-cloth"
+   ]
+  },
+  "cf-3-134": {
+   "title": "Clear Through the Core",
+   "text": "With a sudden, ringing snap, the calcified plug shatters inside the nozzle and washes away into the roaring firebox in a torrent of clean water. The frantic screaming of the pump drops instantly into a deep, steady heartbeat, and the pressure needles settle back to a safe, rhythmic crawl. You pull your hand back just in time, nursing a minor scorch that throbs in time with the pistons. Tucked behind the injector flange, your fingers brush against a discarded tally-check left by a previous crew - a scrap of stamped brass bearing the private mark of the Gangers' Union.",
+   "check": "",
+   "grant": "Union tally-check",
+   "exits": [
+    "Return to the pressure vault"
+   ]
+  },
+  "cf-3-135": {
+   "title": "The Dancing Governor",
+   "text": "High above the clattering bogies, the engine governor whirls in its brass housing, throwing its weighted arms wide as the steam pressure climbs toward danger. The spring inside groans under the relentless tension, threatening to snap and send the cylinders running wild. You wipe soot from your eyes and eye the adjustment nut sitting squarely between two rattling steam-pipes. The heat in this corner of the cab is thick enough to taste, tasting of copper and dry coal-dust.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach for the regulator spring"
+   ]
+  },
+  "cf-3-136": {
+   "title": "Heat on the Iron",
+   "text": "Metal plates beneath your boots thrum with the frantic rhythm of the pistons below, sending shivers up your shins. You lean in close to the oscillating arm, timing your movements to the shudder of the deck so your fingers do not clip the spinning counterweight. The air smells sharply of scorched oil and the bitter dust of the Cinder Steppe drifting through the ventilator slats. With a pair of heavy leather mitts, you steady your grip on the brass adjustment screw.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Turn the binding screw"
+   ]
+  },
+  "cf-3-137": {
+   "title": "Restraining the Iron Heart",
+   "text": "The heavy spring coils and uncoils with terrifying speed, whining like a trapped hornet as you apply the spanner to its stubborn base-nut. Every rattle of the viaduct tries to throw your wrist off the flats, and a single slip will jam the governor wide open and blow the cylinders. With your teeth clenched against the radiant heat baking your face, you throw your shoulder into the cramped casing and haul the spanner toward the locking notch.",
+   "check": "Wrenches against the howling governor",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-138": {
+   "title": "The Price of Slip",
+   "text": "The spanner slips from the greasy nut with a harsh screech, rapping your knuckles hard against the hot iron housing and leaving a dark, weeping bruise across your thumb. The governor bounces wildly, throwing a sudden surge of unmeasured steam into the chest that makes the Marrowbone leap like a startled horse. You spend long, frantic moments wrestling the throttle shut by hand to calm the beast, losing precious steam and earning a dull, persistent ache in your right arm.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Ease the throttle back down"
+   ]
+  },
+  "cf-3-139": {
+   "title": "The Quiet Pulse",
+   "text": "The heavy spring yields at last under your steady pressure, settling into a smooth, disciplined hum as the governor arms drop back to their proper span. The engine settles into a steady roll, its iron lungs breathing evenly against the long climb of the viaduct. As you wipe the greasy tool clean, your eye catches a faded timetable scrawled in chalk on the back of the coal-hopper door - not for the blockade runners, but for an old coal-shuttle rumored to slip east through the mountains after the ash-storm season breaks.",
+   "check": "",
+   "grant": "Eastern coal-shuttle schedule",
+   "exits": [
+    "Drop back down the vault"
+   ]
+  }
+ },
+ "missing": []
+}

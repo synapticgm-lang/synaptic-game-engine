@@ -1,0 +1,91 @@
+{
+ "batch": "vh-5-2-3-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-2-3-6": {
+   "title": "The Juniper Hedge",
+   "text": "Creeping along a high box-hedge that shields an old warden's cottage, you catch the scent of burning juniper and roasting barley from the hearth. The heavy bronze clapper hums against your shoulder blades inside its padded cradle, its vibration steady and cold despite the warmth drifting from the chimney. The mist clings thick to the stone pathway, muting your footsteps as you weigh the safest route further down the mountain.\n\nThree distinct trails diverge ahead through the dripping orchards, each offering a different way past the silent sentinel posts of the valley.",
+   "exits": [
+    "Take the limestone stair path",
+    "Pass by the silent toll-arch",
+    "Follow the broad paved descent"
+   ]
+  },
+  "vh-5-2-3-7": {
+   "title": "The Bailiff's Mistake",
+   "text": "Recognizing a Cable Court bailiff who mistakes your brass cradle for a toll-box, you flash a forged token to stride past unchecked down the stone stairs. The collector narrows his eyes behind a fog-frosted visor, his hand hovering near his ledger strap, but the dull gleam of the counterfeit seal satisfies him enough to let you through with a gruff nod. You owe these toll-lords a bitter debt, making every second spent under their gaze a tense gamble with your precious cargo.\n\nThe path drops steeply into the gray gloom, leaving the checkpoint behind as the mountain air grows thin and sharp.",
+   "exits": [
+    "Look back up the mountain",
+    "Walk toward the distant foundry",
+    "Ease the weight on your shoulders"
+   ]
+  },
+  "vh-5-2-3-8": {
+   "title": "The Fountain Pipes",
+   "text": "Stepping carefully over a maze of lead pipes feeding the valley fountains, you make sure the mule avoids the slippery brass junction-boxes. Water leaks from a rusted joint, hissing softly as it hits the cold limestone and turning the path into a slick hazard for iron-shod hooves. Biscuit tests the footing with a cautious hoof, ears flicking back and forth to catch any sign of pursuit through the thick gray fog.\n\nAhead, the trail splits toward the lower terraces and the growing warmth of the river gorge.",
+   "exits": [
+    "Glance upward into the mist",
+    "Press onward down the main paving",
+    "Pat the mule near the final terrace"
+   ]
+  },
+  "vh-5-2-3-9": {
+   "title": "The Wicker Stack",
+   "text": "Hiding behind a towering stack of willow wicker baskets, you let a patrol of whistle-guards march by before breaking into a steady trot southward. Their signal whistles trill softly in the damp air, a three-note code that fades away as the wardens vanish into the white shroud of the orchards. The bronze clapper stirs within its leather straps, a low and melancholy thrum that matches the steady rhythm of your breathing.\n\nThe path ahead opens into a clear lane free of watchers.",
+   "exits": [
+    "Stop by the lower stone terrace",
+    "Cross the old arch bridge"
+   ]
+  },
+  "vh-5-2-3-10": {
+   "title": "The Boundary Wall",
+   "text": "Trailing your hand along a damp stone wall that marks the boundary of the lower groves, you sense the air growing warmer and less choked with mist. The persistent dampness of Vesperhold begins to yield to the dry, coal-scented updrafts rising from the foundry town far below. Every stone here is slick with centuries of mountain runoff and autumn leaves, demanding absolute concentration with every step you take.\n\nThree separate ways beckon through the thinning vapor as the descent continues.",
+   "exits": [
+    "Rest beside the final stone terrace",
+    "Check the weight of the bronze",
+    "Head toward the white-water torrent"
+   ]
+  },
+  "vh-5-2-3-11": {
+   "title": "The Drainage Ditch",
+   "text": "Wading through a shallow drainage ditch filled with fallen leaves, you emerge onto a wider cobblestone track leading down toward the deep gorge. The water runs clear and cold around your boots, washing away the stubborn mountain mud that has clung to your soles since the upper gate. Biscuit shakes her shaggy head, spraying droplets into the misty air as she finds firmer ground on the paved road.\n\nThe lower valley opens its gray arms before you, offering several distinct paths toward the safety of the forge-masters.",
+   "exits": [
+    "Pause near the stone terrace edge",
+    "Adjust the cradle straps carefully",
+    "Descend the zig-zag trail to Lowgate"
+   ]
+  },
+  "vh-5-2-3-12": {
+   "title": "The Runaway Barrel",
+   "text": "Dodging a runaway cider barrel that bounces off a terrace wall, you pull the mule into a shallow alcove just in time to avoid disaster. The heavy oak cask shatters against a stone marker with a thunderous crack, spilling sweet fermented pulp across the flagstones just inches from Biscuit's trailing hooves. Shouts echo from an upper orchard as unseen workers argue over the clumsy mishap, reminding you that danger comes in many forms here.\n\nYou can cross the bridge toward the safety of the smoke, or make a desperate leap across the irrigation flume to outrun the commotion.",
+   "exits": [
+    "Cross the arch bridge toward the smoke",
+    "Take the reckless way"
+   ]
+  },
+  "vh-5-2-3-13": {
+   "title": "The Lichen Milestone",
+   "text": "Pausing beside a milestone carved with lichen-filled runes, you verify that the path to Lowgate is finally clear of the upper warden patrols. The ancient stone bears the chisel marks of forgotten guilds, measuring the distance in bell-beats rather than miles down the sheer cliff face. The mule exhales a long, warm sigh, lowering its muzzle to nibble at a hardy tuft of moss growing beside the plinth.\n\nThe route ahead splits into a pair of clear tracks winding through the lower fruit groves.",
+   "exits": [
+    "Approach the final stone terrace",
+    "Walk toward the white-water torrent"
+   ]
+  },
+  "vh-5-2-3-14": {
+   "title": "The Leather Hinges",
+   "text": "Slipping through an unlocked orchard gate that swings silently on oiled leather hinges, you leave the misty veil of the upper valley behind. The thick canopy of pear and apple trees gives way to open scrubland where the mountain wind sweeps clean and cold across the rocks. The heavy bronze clapper feels slightly lighter against your back now that the steepest cliffs have been successfully navigated.\n\nTwo descending tracks offer passage toward the rumbling iron foundries of the gorge.",
+   "exits": [
+    "Cross the torrent toward the coal-smoke",
+    "Step onto the final zig-zag trail"
+   ]
+  },
+  "vh-5-2-3-15": {
+   "title": "The Iron Rumble",
+   "text": "Descending a steep stone stairway slick with winter moss, you hear the distant, reassuring rumble of the iron foundries echoing up from the river. The harsh scent of sulfur and coke replaces the sweet rot of fallen orchard fruit, signaling that the end of your arduous journey is finally within reach. Every muscle in your back aches from the dead weight of the Orison's tongue, but the rhythmic hum of the bronze keeps fatigue at bay.\n\nA single steep track remains between you and the roaring heart of Lowgate.",
+   "exits": [
+    "Take the final zig-zag trail down"
+   ]
+  }
+ },
+ "missing": []
+}

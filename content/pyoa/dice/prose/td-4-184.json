@@ -1,0 +1,92 @@
+{
+ "batch": "td-4-184",
+ "sections": {
+  "td-4-184": {
+   "title": "Footsteps On The Iron",
+   "text": "Heavy, salt-crusted boots ring out against the damp spiral treads of the stair above, carrying the low, murmuring prayers of the Drift Pilgrims who seek to unmake the work of generations. Their cowls are stiff with dried brine, and iron crowbars gleam dull in the lantern-light as they descend with single-minded fury toward the great console. Orsolya shouts a harsh warning, her fingers still locked upon the trembling brass housing of the primary indicators, but the intruders press downward through the gloom. Dust shakes loose from the vaulted brickwork overhead with every stride they take upon the rusted iron gratings.\n\nSweat stings your eyes as you plant your boots firmly against the condensation-slick plate, bracing your shoulders to block the narrow landing before the main gear-housing.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Bar the path of the zealots"
+   ]
+  },
+  "td-4-185": {
+   "title": "Shouting Through The Damp",
+   "text": "Cold air whistles through the vertical shaft, smelling sharply of ancient mud and stagnant sea-muck stirred up from the deep tunnels below. The lead Pilgrim snarls an oath against the false idols of the Tide-wardens, hefting a notched breaker's bar as his followers crowd close behind him on the narrow gallery. There is no room here for subtlety or polite bargaining; the vaulted stone walls press in tight, throwing back the hollow echoes of your ragged breathing. Orsolya glances back from her post with a sharp, assessing squint, her jaw set hard against the encroaching tide of zealotry.\n\nYou drop your centre of gravity, flexing your fingers into iron fists as the foremost intruder lunges forward into the dim circle of yellow lamplight.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Meet the charge with hard bone"
+   ]
+  },
+  "td-4-186": {
+   "title": "Holding The Lower Landing",
+   "text": "Bone grinds against gristly muscle as the lead pilgrim slams his full body weight into your chest, aiming to drive you backward into the delicate brass linkages of the primary console. Your heels skid across the condensation-slick plating of the platform, teeth bared against the sudden, brutal shock of impact. Iron bars clatter against stone walls in the narrow shaft, and the air fills with the acrid stench of old sweat and wet wool. You hook a heavy boot behind the intruder's ankle, throwing every ounce of your strength into a desperate counter-shove that threatens to crack ribs on both sides.\n\nStraining against the sudden dead weight, you must force the heavy frame back before their crowbars smash the control housing.",
+   "check": "Shove the intruders back",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-187": {
+   "title": "Bruised On The Sump-Plates",
+   "text": "A vicious blow from a heavy iron crowbar catches your shoulder, sending a white-hot flare of agony down your arm and driving the air from your lungs in a ragged gasp. You stumble backward over a protruding bolt-head, slamming your hip hard against the sharp edge of the brass casing and tasting copper in the back of your throat. The pilgrim pushes forward through the gap, his boots splashing into oily puddle-water as he raises his weapon toward the trembling glass dials. Orsolya moves with sudden, savage grace to intercept him, buying you the precious heartbeat needed to haul your bruised frame back up from the deck.\n\nNursing a deep, throbbing ache in your shoulder, you drag yourself back to your feet and rejoin the desperate struggle for the console.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Rise and press the fight"
+   ]
+  },
+  "td-4-188": {
+   "title": "The Unyielding Barricade",
+   "text": "Flesh and bone prove harder than iron fanaticism as you throw your entire weight into a crushing counter-leverage, sending the lead pilgrim tumbling backward over the slippery edge of the lower landing. The rest hesitate just long enough, dismayed by the brutal finality of your defence and the cold glare in your mentor's eyes. Orsolya lets out a sharp, grudging breath that sounds almost like respect, her calloused fingers tightening over the bronze valve-wheel as the immediate peril passes into the damp shadows. You stand shoulder-to-shoulder against the cold iron frame, chest heaving in the salt-heavy air, master and scavenger holding the heart of the world between them.\n\nA heavy iron pry-bar clatters to the deck at your feet, left behind in the hasty retreat of the broken zealots.",
+   "check": "",
+   "grant": "Bent iron pry-bar",
+   "exits": [
+    "Turn the great bronze valve"
+   ]
+  },
+  "td-4-189": {
+   "title": "Straining Against The Cogs",
+   "text": "Thick grease blackens your knuckles as you wedge your fingers into the freezing tooth-gap of the secondary transfer wheel, seeking leverage where the ancient iron has warped against its housing. The metal is freezing cold, drawing the heat straight out of your skin with every second you maintain your grip. Across the pit, Orsolya throws her weight against the opposite spoke, her face pale and strained beneath the flickering glare of the gimbal lamp. Deep underground, something massive and aquatic shifts within the sealed bedrock, sending a long, shuddering vibration straight up through the stone foundations.\n\nYou brace your boots against the slimy concrete lip of the pit, preparing for the final, bone-cracking heave.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Heave against the frozen cog"
+   ]
+  },
+  "td-4-190": {
+   "title": "Metal Screaming In The Dark",
+   "text": "Rusted scale flakes off the primary drive-train like dried fish skin, raining down into the oily bilge-water as the massive gears groan under the strain of your combined efforts. The smell of hot axle-tallow rises thick and suffocating in the enclosed vault, stinging your nostrils and making your eyes water in the gloom. Orsolya grunts through clenched teeth, her shoulder pressed hard against the iron spoke to prevent the mechanism from slipping back into its deadly lock. Every muscle in your back hums with dangerous tension, stretched to the very limit of endurance by the dead weight of the sea-machine.\n\nGathering your resolve for one final push, you signal your mentor to lock her fingers alongside yours.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the jammed teeth home"
+   ]
+  },
+  "td-4-191": {
+   "title": "The Teeth Of The World",
+   "text": "Sinners and salvagers alike have cursed this iron labyrinth for three long days, but the mechanism cares nothing for prayers or salt-tears. You throw your chest against the freezing spoke, feeling the solid oak lever bow and splinter slightly beneath your ribs as the seized teeth begin to inch forward with a sound like tearing tin. The dark water sloshes in the deep drain channels below, echoing the erratic rhythm of your own pounding pulse. A fraction of an inch more will seat the locking pin, but the rusty housing threatens to shatter into razor-sharp shards at any second.\n\nPutting every ounce of muscle and desperate will into the gap, you force the frozen iron toward its home.",
+   "check": "Wrest the jammed cog home",
+   "grant": "",
+   "exits": []
+  },
+  "td-4-192": {
+   "title": "Splintered Ash And Blood",
+   "text": "The wooden lever snaps with a deafening crack that echoes like a musket shot through the vaulted stair, throwing you violently backward against the stone bulkhead. A jagged splinter rips a deep, ragged gash across your forearm, and dark blood wells up instantly to mix with the greasy grime coating your skin. Orsolya catches the spinning spoke just in time with her bare hands, her palms blistering raw as she prevents the whole mechanism from unwinding into chaos. You pick yourself up from the wet flagstones, clutching your bleeding arm while the bitter taste of failure coats your tongue.\n\nGritting your teeth against the fiery sting of the new wound, you reach out to steady the trembling iron rod alongside her.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the broken lever back"
+   ]
+  },
+  "td-4-193": {
+   "title": "The Iron Seated True",
+   "text": "With a sudden, shuddering lurch that rattles the loose teeth in your jaws, the massive gear slides home into its oil-blackened housing and locks with a satisfying, resonant thud. The vibration travels up through the stone soles of your boots, deep and steady like the heartbeat of a sleeping leviathan buried beneath the seabed. Orsolya exhales a long, trembling breath, wiping a smear of grease and sweat from her forehead with the back of her sleeve. She tosses a heavy, salt-pitted brass pin into your open palm without a word, acknowledging in her own grim fashion that you pulled your weight in the dark.\n\nA heavy brass locking-pin rests in your palm, cold and notched with the maker's ancient seal.",
+   "check": "",
+   "grant": "Notched brass locking-pin",
+   "exits": [
+    "Face the final choice above"
+   ]
+  }
+ },
+ "missing": []
+}

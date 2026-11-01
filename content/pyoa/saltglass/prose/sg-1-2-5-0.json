@@ -1,0 +1,84 @@
+{
+ "batch": "sg-1-2-5-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-1-2-5-0": {
+   "title": "The Bitterflats Threshold",
+   "text": "Hard salt crust rings like iron under your boots as the vast white desert opens before you, stretching toward a pale horizon blurred by rising heat haze. The cold ceramic Seedkey rests heavy in your pocket, a reassuring weight against the dry wind that starts to scour the flat expanse. Behind you, the rim road fades into greythorn scrub, leaving only the endless glare of the ancient basin.\n\nAdjusting the strap of your ember-lamp, you test the weight of your pack and prepare for the long crossing ahead.",
+   "exits": [
+    "Step out onto the blinding white crust"
+   ]
+  },
+  "sg-1-2-5-1": {
+   "title": "Glint of the Basin",
+   "text": "Shimmering salt-marsh gives way to the first true reaches of the basin floor, where your lantern beam catches the jagged glint of shattered glass dunes stretching far into the distance. Sharp fragments of ancient mirrors crunch beneath your soles, flashing brief points of reflected sunlight back at a pale sky. The air smells intensely of dry minerals and old dust, thick with the promise of the long drought.\n\nYou grip the handle of your banked lantern and weigh the long miles remaining before nightfall.",
+   "exits": [
+    "Follow the glittering trail into the flats"
+   ]
+  },
+  "sg-1-2-5-2": {
+   "title": "The Mule Skull",
+   "text": "Bleached bone of a baggage-mule juts from the thick salt crust like a fencepost left behind by forgotten travellers, marking the final boundary of the cultivated slopes. You pause beside it to take your last steady breath of damp town air before the harsh, dry wind of the open basin strikes your face. The ember-lamp swings softly from your fingers, its banked coals keeping a steady, hidden warmth against the deepening chill.\n\nWith a final glance back at the shadowed hills, you step past the skeletal remains.",
+   "exits": [
+    "Leave the marker behind and walk forward"
+   ]
+  },
+  "sg-1-2-5-3": {
+   "title": "Lights of Candlemere",
+   "text": "Crumbling earth gives way at the edge of the great descent, and the familiar lights of Candlemere wink out one by one behind a fold of grey hills. Only the blinding salt-glare ahead and the deepening dark remain to guide your boots over the uneven ground. Your fingers trace the cold ceramic outline of the Seedkey, reminding you of the desperate harvest waiting at the heart of the basin.\n\nYou adjust your pack and descend into the vast silence of the desert.",
+   "exits": [
+    "Head down into the vast empty basin"
+   ]
+  },
+  "sg-d-1-2": {
+   "title": "Flash in the Lime-Kiln",
+   "text": "Striking your lamp within the volatile gas-pocket of the old lime-kiln, you trigger a sudden, blinding flash that roars through the hollow stone chamber with terrifying speed. The concussive wave shatters your gear, sending shards of metal and glass clattering across the floor while thick white dust fills the air. Left completely blind and stranded in the stifling heat, you listen to the silence close in around you as your journey ends here.",
+   "exits": []
+  },
+  "sg-1-out": {
+   "title": "Leaving the Rim Road",
+   "text": "Candlemere and the familiar safety of the Rim Road fall entirely behind you as you cross the threshold into the great white expanse of the Bitterflats. Every familiar landmark disappears into the vibrating heat haze, leaving only the endless salt crust and the distant gleam of the glass cities. You check your provisions and ensure your ember-lamp is secure, knowing that turning back is no longer an option.\n\nThe vast journey toward the centre of the Basin has truly begun.",
+   "exits": [
+    "Proceed deeper into the shimmering desert"
+   ]
+  },
+  "sg-2-in": {
+   "title": "Arrival in the Bitterflats",
+   "text": "White salt flats stretch in every direction under a heavy zinc sky, playing tricks on your eyes with shimmering mirages of nonexistent lakes and soaring towers. In the distance, the low stone huts of the Dune Sisters mark their guarded wells, while a solitary Salt Court toll-hut cuts a sharp silhouette against the blinding horizon. Rumours of the deep vault whisper on the hot wind, drawing you onward into the heart of the ancient basin.\n\nSeveral distinct tracks branch out across the crusted salt before you.",
+   "exits": [
+    "Follow the clear lamp-lit road ahead",
+    "Cut directly across the open common ground",
+    "Hail a nearby traveller to ask the way",
+    "Take the old drovers' track through the salt"
+   ]
+  },
+  "sg-2-0-0-0": {
+   "title": "Salt Crust and Shimmer",
+   "text": "Blinding salt crust crumbles beneath your boots while distant mirages distort the horizon, painting false lakes of water that threaten to drain your flask if you chase them. The dry white dust kicked up by your stride coats your ankles, and the sun beats down relentlessly upon your shoulders. You must keep your eyes fixed firmly on the ground to avoid hidden sinkholes and jagged crystal ridges.\n\nA choice of paths opens before you amid the glaring expanse.",
+   "exits": [
+    "Pass the crumbling foundation of an old watch-tower",
+    "Slip silently past the sleeping patrol with a dark lamp",
+    "Scramble over a jagged ridge of crystallized alkali"
+   ]
+  },
+  "sg-2-0-0-1": {
+   "title": "The Crooked Signpost",
+   "text": "Skeletal copper signpost hammered crooked into the brine marks the frontier, its rusted arrow pointing stubbornly toward the distant territory of the Dune Sisters. The midday heat begins to bake your shoulders through your wool tunic, making every breath taste of dry salt and old iron. Small swirls of white dust dance across the flat ground around the metal post, driven by erratic gusts of wind.\n\nYou survey the branching tracks stretching away from the marker.",
+   "exits": [
+    "Climb over the jagged ridge of alkali blocks",
+    "Approach the glass-diver scraping brine from his goggles",
+    "Cross the pink-tinted expanse of crystal shells"
+   ]
+  },
+  "sg-2-0-0-2": {
+   "title": "The Fused Glass Trench",
+   "text": "Jagged trench of fused glass runs alongside your path, its ancient mirror shards catching the glaring sunlight and throwing blinding reflections in every direction. One false step on the glassy slope risks a deep slice into your shins, forcing you to tread with absolute care along the edge. The air here hums with a faint, residual heat trapped within the melted silica.\n\nThe trench narrows ahead, forcing a decision on your route.",
+   "exits": [
+    "Inspect the humming metal boundary marker nearby",
+    "Examine the sun-split leather waterskin on the salt",
+    "Watch the white-feathered gulls wheeling overhead"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,94 @@
+{
+ "batch": "cf-5-107",
+ "sections": {
+  "cf-5-107": {
+   "title": "The Rule of Ink",
+   "text": "The clerk's fountain pen hovers above the ledger like a dead crane's leg, twitching at every rattle of distant rolling stock. You slide the dog-eared manual across the grease-stained counter, pointing a soot-blackened finger directly at Paragraph Twelve of the Emergency Transit Act of Ninety-Four. He squints through thick, grease-smeared spectacles, his thin lips moving silently as he traces the obsolete clauses regarding emergency cargo clearance. The weight of your silence presses heavily against the small wicket window until he finally mutters a curse beneath his breath. With a sharp scratch of steel nib on yellowed parchment, he scrawls his signature across the bill of indemnity and slams an iron stamp into the wax. You snatch the paper before the ink can dry, tucking the cold proof of passage securely into your waistcoat pocket as the platform bell tolls once for departure.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away into the gathering steam"
+   ]
+  },
+  "cf-5-108": {
+   "title": "Ink and Iron Law",
+   "text": "Pages flutter like trapped sparrows under the clerk's nervous fingers as you lay the open manual flat upon the counter, pressing down hard on the binding with your knuckles. The binding cracks with a dry snap that mimics a distant rail-joint breaking under frost, silencing the petty clerk's rising objections before they can take root in the stale air. You trace a soot-darkened nail along the margin notes scribbled by some long-dead superintendent, demanding the immediate issuance of the mandated indemnity. Defeated by the iron logic of the text, he dips his pen and scratches his signature across the yellowed slip.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the signed permit and leave"
+   ]
+  },
+  "cf-5-109": {
+   "title": "Reading the Fine Print",
+   "text": "Dust motes dance in the narrow beam of the tallow candle as you lean across the high mahogany counter, pressing the stationmaster's clerk with a rapid recitation of obscure bylaws that even the old hands have forgotten. Your voice remains low and level, cutting through the distant groan of settling ironwork and the rising whine of the wind against the eaves. Every word is weighed against the risk of an alarm, your eyes fixed on the clerk's twitching thumb as he hovers indecisively over the call-bell on his desk.",
+   "check": "Recite the emergency clauses before he rings",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-110": {
+   "title": "A Costly Dispute",
+   "text": "A sudden slip of the tongue mangles a crucial clause in the tariff code, and the clerk's face hardens from hesitation into outright defiance as he slams the heavy wooden shutter down in your face. You curse under your breath, dropping to one knee just as a brass inkwell comes flying through the high grille to shatter against the stone bulkhead beside your ear. The delay costs precious minutes in the suffocating dark, and when you finally wrench the wicket open from the side and snatch the signed paper, a sharp shard of glass has carved a bleeding crescent across the back of your hand.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather your papers and press onward"
+   ]
+  },
+  "cf-5-111": {
+   "title": "The Stamped Indemnity",
+   "text": "Whatever doubts troubled the clerk dissolve beneath the unyielding pressure of your calculated interpretation, leaving him no choice but to sign and stamp the paper with a heavy iron die. The parchment is thick and smells faintly of stale pipe-smoke and damp wool, but the ink is fresh and the official seal is unbroken. You tuck the precious document securely inside your waistcoat pocket, feeling its reassuring stiffness against your ribs as the distant storm growls through the iron framework of the terminus roof.",
+   "check": "",
+   "grant": "Signed bill of indemnity",
+   "exits": [
+    "Take the slip and move deeper"
+   ]
+  },
+  "cf-5-112": {
+   "title": "The Outer Terminal",
+   "text": "Gale-force ash strikes the high glass roof of the grand terminus with the deafening roar of a thousand shovels emptying coal into an iron tender, plunging the cavernous platforms into absolute twilight. Only the cherry-red glare of the Marrowbone's firebox keeps the immediate darkness at bay, casting long, writhing shadows across the stacked crates of abandoned baggage and rusted signal gantries. The air tastes of sulphur and wet soot, sticking to the roof of your mouth with every labored breath you draw in the freezing draft.\n\nSomewhere above, in the iron rafters, a loose sheet of corrugated iron screeches against its bolts like an injured animal, while ahead lies the final descent to the bronze pillar of the Water Gate. Every muscle in your back aches from the long run, and the storm clock ticks down its final merciless minutes in the engine's housing.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the bronze pillar with purpose"
+   ]
+  },
+  "cf-5-113": {
+   "title": "Through the Culvert",
+   "text": "Narrow and black as a boiler flue, the drainage culvert offers a desperate passage beneath the sprawling weight of the administrative offices while the ash-storm batters the corrugated iron above. You drop to hands and knees, crawling through a gritty soup of old coal-dust and grease while keeping your breathing slow and even to conserve the stale air in your lungs. Your fingers brush against something cold and cylindrical tucked behind a limestone block, revealing a small bundle of dry tallow candles wrapped in oily rag.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl on with the dry candles"
+   ]
+  },
+  "cf-5-114": {
+   "title": "The Ancient Stationmaster",
+   "text": "Granite-faced and smelling of dry tea and coal-smoke, the old woman who rules this terminal branch sits behind a barricade of ledgers that reach almost to the soot-stained ceiling. You stand your ground against her bitter, rattling reproaches without shifting your weight, letting her sharp tongue wear itself out against your stubborn silence like waves against a breakwater. At last, seeing that neither threats nor insults will dislodge you, she pulls a heavy iron seal-ring from her wrinkled thumb and drops it onto the blotter with a dull thud.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Claim the heavy iron seal-ring"
+   ]
+  },
+  "cf-5-115": {
+   "title": "The Watchmaker's Tin",
+   "text": "Metal screeches against metal in the shadowed bays of the repair shed, but you keep your stride measured and your elbows tucked tight against your ribs, ignoring the phantom hazards in the dark. Your fingers sweep along the edge of a carpenter's workbench until they strike the familiar tin lid of a watchmaker's oil-can left behind by some vanished fitter. You lift it gently without a single metallic click, testing its weight to find it still half-full of clear, pale lubricant.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the tin and keep moving"
+   ]
+  },
+  "cf-5-116": {
+   "title": "The Pressure Pit",
+   "text": "Steam hisses from a fractured seal nearby, filling the sunken inspection pit with a blinding white shroud that smells of boiled grease and old scale. You stand motionless on the iron grid, staring down at the twitching brass needle of the drainage pressure gauge until its erratic oscillations finally settle into a steady, rhythmic thrum. A stooped old drainage-man squatting in the recess watches you from beneath his grease-blackened brows, then gives a slow, wordless nod of grudging respect.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Accept the nod and move ahead"
+   ]
+  }
+ },
+ "missing": []
+}

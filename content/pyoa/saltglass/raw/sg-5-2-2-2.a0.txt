@@ -1,0 +1,63 @@
+Gemini said
+
+@@SECTION sg-5-2-2-2
+TITLE: The Quartz Lens
+TEXT: Sunlight hums through a massive quartz lens that skews the desert horizon into a violet smear. Beside the heavy frame, a weary sentry doats over a square tin of dried figs, utterly ignoring your silent scramble across the cool stone sill. The scent of roasted barley and dry dust hangs thick in the draft. // You must choose your next direction before the sentinel finishes his snack and turns his gaze toward the sill.
+EXIT 1: Slip past the humming lens toward the shadow.
+EXIT 2: Drop down behind the heavy brass astrolabe wheel.
+@@END
+@@SECTION sg-5-2-2-3
+TITLE: The Singing Crystal
+TEXT: A heavy bronze chandelier of singing crystal dangles overhead, chiming faintly with every tremor of the high masonry. A sudden beam of focused sunlight sweeps the floor like a burning searcher, forcing you to huddle low against the wainscot. The air tastes of ozone and hot glass. // You must find cover before the searing arc swings back across your boots.
+EXIT 1: Scramble toward the humming pillar in the corner.
+EXIT 2: Duck behind the painted archway where the water-seller waits.
+@@END
+@@SECTION sg-5-2-2-4
+TITLE: The Weather Proverb
+TEXT: Dust-caked astrolabes line the gallery walls like skeletons of strange metal birds. An old woman named Thora mutters ancient weather proverbs to herself, blocking the sole egress toward the descending stone stairs with her heavy wool skirts. Her rheumy eyes fix on the horizon, missing your approach entirely. // You must decide whether to wait out her mumbling or find another way around.
+EXIT 1: Creep behind the stacked lead weights to avoid notice.
+@@END
+@@SECTION sg-5-2-2-5
+TITLE: The Frozen Clock
+TEXT: A frozen water-clock drips no longer, smelling only of stale silt and ancient lime. You slide behind a carved basalt pillar just as heavy iron boots echo from the gallery entrance, their rhythm steady and merciless. The shadows here are cool and deep, offering a brief reprieve from the blinding glare outside. // You must choose your route before the patrol rounds the corner.
+EXIT 1: Dart through the narrow archway into the whispering rotunda.
+EXIT 2: Crawl behind the heavy lead weights near the wall.
+EXIT 3: Squeeze through the narrow slot-window overlooking the dead basin.
+@@END
+@@SECTION sg-5-2-2-6
+TITLE: The Mirror Chamber
+TEXT: Hollow mirrors multiply your reflection into a fractured crowd of strangers. A nervous runner from an eastern post mistakes your shadow for a Salt Court spy and draws a jagged glass dagger with a sharp scrape of metal on stone. The reflections shimmer and warp in the harsh light. // You must act quickly to defuse the tension before the blade strikes.
+EXIT 1: Retreat softly beneath the hanging brass wind-chimes.
+EXIT 2: Show your well-oath brand to prove your allegiance.
+@@END
+@@SECTION sg-5-2-2-7
+TITLE: The Masonry Ledge
+TEXT: Quartz tuning-forks vibrate with a low, tooth-aching hum that fills the high air. You balance along a narrow masonry ledge high above a dry subterranean atrium where guard dogs pace and snarl in the gloom. A single misstep would send you crashing onto the stone flags below. // You must maintain your precarious balance and choose where to drop.
+EXIT 1: Ease along the ledge toward the dim antechamber ahead.
+EXIT 2: Display your well-oath brand to the sentry watching from below.
+@@END
+@@SECTION sg-5-2-2-8
+TITLE: The Bitter Tea
+TEXT: Brass sand-glasses trickle silently in their wooden frames, measuring out the slow collapse of the city. A weary glass-maker named Skene offers a cup of bitter salt-tea in exchange for news from the western rim, his eyes bright with curiosity. The earthenware cup rattles against his trembling fingers. // You must decide whether to tarry with the glass-maker or press onward.
+EXIT 1: Slip away toward the dim antechamber of the archives.
+EXIT 2: Flash your well-oath brand to secure safe passage through the gate.
+@@END
+@@SECTION sg-5-2-2-9
+TITLE: The Lead Folios
+TEXT: Lead-bound folios line the subterranean library shelves like heavy bricks of grey metal. A Dune Sister refugee named Sula tends a flickering tallow dip, her fingers stained with ink as she warns you of treacherous sinkholes lurking in the dark ahead. The smell of melted fat and old paper fills the confined space. // You must choose which path to follow into the depths.
+EXIT 1: Slide past the rusted mining gear in the hollow pier.
+EXIT 2: Scramble over the tumbled pile of masonry beneath the mosaic.
+@@END
+@@SECTION sg-5-2-2-10
+TITLE: The Sleeping Bailiff
+TEXT: A great bronze quadrant points an empty metal arm at the blank sky. You slip past a sleeping bailiff whose loud snoring rattles the brass astrolabes on their stands. The air is heavy with the dust of centuries and the smell of stale wine. // You must choose your direction before the bailiff wakes from his slumber.
+EXIT 1: Show your well-oath brand to the guard at the iron latch.
+EXIT 2: Duck behind the yellow quartz solar fountain to avoid notice.
+EXIT 3: Drop down toward the ventilation shaft smelling of damp earth.
+@@END
+@@SECTION sg-5-2-2-11
+TITLE: The Desert Pigeons
+TEXT: Wind-blown salt cakes the edges of a shattered skylight overhead. A flock of desert pigeons startles into noisy flight, their beating wings drawing sharp queries from a guard stationed on the tier below. The sudden commotion shatters the quiet of the high gallery. // You must move fast before the guard investigates the noise.
+EXIT 1: Skirt the yellow quartz solar fountain to find cover.
+EXIT 2: Climb over the tumbled pile of masonry under the mosaic.
+@@END

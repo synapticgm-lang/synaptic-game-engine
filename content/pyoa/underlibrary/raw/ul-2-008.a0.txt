@@ -1,0 +1,57 @@
+@@SECTION ul-2-008
+TITLE: The Swinging Oak Tiers
+TEXT: Nimble balance carries you across the widening void between two swaying oak tiers as the floorboards shudder and groan underfoot. Dust motes dance in the amber glare of your sputtering lamp while heavy volumes shift with a dull thud in the gloom. Among the scattered debris on the far ledge, a discarded brass-bound clasp catches the dim light, promising a secure fastening for your travel satchel. You tuck the gleaming metal piece into your pocket, feeling the cold weight of it reassure your fingers before you peer into the drifting shadows ahead.
+EXIT 1: Clamber across the swaying timber ledge
+@@END
+@@SECTION ul-2-009
+TITLE: Leap Across the Gap
+TEXT: A sudden tremor shakes the towering oak shelves, widening the chasm between the swaying cases until the dark drop below gapes like an open mouth. You crouch low on the trembling floorboards, measuring the distance with a sharp eye while the smell of old paper and lamp-oil thickens in the damp air. Tense muscles bunch in your thighs as you prepare to spring across the void before the gap widens beyond reach.
+CHECK: Leap across the swaying bookcases
+@@END
+@@SECTION ul-2-010
+TITLE: Stumbling on the Timbers
+TEXT: Your boots strike the slick edge of the opposite shelf at an awkward angle, sending a shower of loose parchment fluttering down into the black abyss. Pain shoots up your ankle as you slam hard against the heavy oak upright, nearly dropping your precious lamp-oil into the dark. You drag yourself over the lip of the tier with a grimace, nursing a bruised shoulder while the groaning shelves settle back into their grinding routine.
+EXIT 1: Pick yourself up and press onward
+@@END
+@@SECTION ul-2-011
+TITLE: The Firm Landing
+TEXT: Lightness carries your boots across the hazardous void just as the heavy oak tiers grind to a sudden, jarring halt against one another. You land with secure footing on the dusty ledge, your fingers closing around a sturdy brass-bound clasp left behind by a previous shelver. This small prize fastens securely to your travel satchel, offering a reliable latch for the long hours ahead in the shifting stacks.
+GRANT: Brass-bound satchel clasp
+EXIT 1: Follow the narrowing stack edge forward
+@@END
+@@SECTION ul-2-012
+TITLE: Bracing Against the Timber
+TEXT: Grinding timber presses against your shoulder as an entire wall of encyclopedias begins to slide sideways with relentless, crushing force. You lean your full weight into the leather-bound spines, halting the slow migration of knowledge with straining muscles and gritted teeth. A fellow shelver's chalked warning on the adjacent shelf points out a safer route through the rattling stacks. You memorize the faded arrow before the heavy case resumes its slow journey into the dark.
+EXIT 1: Slip past the halting encyclopedias
+@@END
+@@SECTION ul-2-013
+TITLE: Halt the Shifting Wall
+TEXT: Iron gears shriek behind the oak panels as a towering wall of heavy encyclopedias surges forward, threatening to pin you against the stone pillar. You plant both palms flat against the cold leather spines, summoning every ounce of stubborn resolve to check the crushing momentum. The timber shudders beneath your weight, resisting your push with the accumulated gravity of ten thousand forgotten facts.
+CHECK: Hold back the sliding bookshelves
+@@END
+@@SECTION ul-2-014
+TITLE: Pinned by the Tomes
+TEXT: The heavy bookcase surges forward despite your desperate shove, slamming into your shoulder and leaving a dull, throbbing ache that makes your breath catch. You squeeze sideways through the narrow gap just in time, leaving a torn scrap of your sleeve wedged tight between the iron shelves. Dust fills your lungs, making you cough hoarsely in the damp gloom as you stumble away from the treacherous timber.
+EXIT 1: Drag yourself past the jammed case
+@@END
+@@SECTION ul-2-015
+TITLE: The Steadfast Hold
+TEXT: Stubborn pressure brings the sliding wall of encyclopedias to a groaning halt just inches from your chest, proving your resolve matches the ancient timber. Carved into the wooden upright near your hand is a helpful tip on local navigation left by an earlier visitor. You trace the scratched arrows with your thumb, committing the secret path through the moving stacks to memory before moving on.
+GRANT: Tip on local navigation
+EXIT 1: Advance toward the iron junction
+@@END
+@@SECTION ul-2-016
+TITLE: The Iron Bulkhead
+TEXT: Heavy iron panels slide together across the vaulted passage with a final, echoing crash that vibrates through the soles of your boots. A narrow transom remains open near the ceiling, through which thick, dark lamp-oil drips in a slow rhythm into a stagnant pool below. The acrid scent of mineral grease and ancient ink fills the stale air, marking the boundary where the orderly rows give way to the flooded sumps. You wipe a smear of soot from your forehead and peer through the iron gap into the darkness beyond.
+EXIT 1: Crawl through the dripping transom
+@@END
+@@SECTION ul-2-017
+TITLE: The Sump of Pages
+TEXT: Soggy drifts of discarded manuscripts carpet the damp floor around a sluggish stream of black ink that swallows stray footsteps without a sound. Faint whispers rise from the wet pages, murmuring forgotten arguments and unread tragedies into the gloom. Every surface gleams with a slick, greasy sheen under the feeble light of your lamp, offering several uncertain paths across the mire. You must choose how to navigate the drifting debris before the tide rises further.
+EXIT 1: Wade through the black ink stream
+EXIT 2: Push through the waterlogged treatises
+EXIT 3: Trace the swirling ink patterns carefully
+EXIT 4: Brave the bitter cold of the rising tide
+EXIT 5: Salvage intact cartography from the muck
+EXIT 6: Cross the chasm on the bridge of spines
+@@END

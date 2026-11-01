@@ -1,0 +1,92 @@
+{
+ "batch": "cf-1-033",
+ "sections": {
+  "cf-1-033": {
+   "title": "The Widow's Ledger",
+   "text": "Grey dust settles on the heavy oak counter as the ticket-widow taps a yellowed telegram against her teeth. Her rheumy eyes narrow behind wire spectacles, searching your face for any sign of fracture or impatience. You keep your shoulders level, letting the rhythmic pounding of a shunting engine outside fill the silence between you.\n\nBeneath the iron bars, her wrinkled hands slide a bundle of damp papers aside to reveal a corner of faded parchment tucked beneath an inkpot.",
+   "check": "Hold your ground against the widow",
+   "grant": "Hesper's hidden rendezvous note",
+   "exits": [
+    "Return to the ticket window hall"
+   ]
+  },
+  "cf-1-034": {
+   "title": "The Widow's Ledger",
+   "text": "Grey dust coats the wooden ledge where the ticket-widow rests her mottled hands, her fingers twitching among damp bundles of telegrams that smell of stale tallow. She rasps a complaint about the soot settling on her counter, her voice like gravel shifting under a boot-heel. You meet her milky glare without flinching, absorbing every barbed word in heavy silence while the oil lamp flickers against the grease-stained walls.\n\nSlowly, her chin trembles and the hostility drains into the floorboards as she reaches beneath the partition to slide a forgotten scrap of paper across the wood.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the faded telegram sheet"
+   ]
+  },
+  "cf-1-035": {
+   "title": "Reaching Across the Glass",
+   "text": "Sudden commotion rattles the station rafters as a heavy squad of the Barons' yard police tramps down the outer corridor, their iron-shod boots heavy upon the floorboards. The old woman's eyes widen in terror and she starts to snatch the yellowed message back from the slit in the glass before your fingers can close around it. Your breath catches in your throat, and you must hold your nerve absolutely steady against the rising panic of the moment while the shouting draws dangerously closer to the ticket wicket.",
+   "check": "Reach through the iron bars",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-036": {
+   "title": "A Slip of the Tongue",
+   "text": "Panic snatches at your breath just as the iron-shod boots halt directly outside the window, and your hand jerks back, knocking a heavy brass inkwell across the counter. Dark ink floods the wooden boards, soaking into the widow's precious bundles of damp telegrams and drawing an immediate, furious shriek from behind the iron bars. The yard police hammer their truncheons against the exterior wall to investigate the racket, costing you precious minutes and leaving your fingers permanently stained with violet ink before you manage to slip away into the smoky shadows.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat into the smoky siding"
+   ]
+  },
+  "cf-1-037": {
+   "title": "The Hidden Dispatch",
+   "text": "Despite the sudden shouting in the corridor and the heart-stopping clatter of the Barons' patrol outside, your fingers hold firm, slipping through the iron bars to snatch the scrap of paper just as the widow lets go. You tuck the damp dispatch into your greasy jacket lining, however narrowly escaping notice as the heavy footsteps pass the window without stopping to peer inside. The paper is cold to the touch, bearing Hesper Quill's hurried handwriting in grease-pencil.",
+   "check": "",
+   "grant": "Hesper's forgotten dispatch",
+   "exits": [
+    "Return to the ticket window"
+   ]
+  },
+  "cf-1-038": {
+   "title": "Beneath the Iron Awning",
+   "text": "Shadows lengthen across the platform as coal dust drifts through the rusted girders overhead, settling on the brim of your cap like a fine grey snow. The ticket-widow continues her endless monologue about the rising price of lamp oil and the laziness of the track crews, expecting an argument to fuel her afternoon. You lean against the stained brick pillar, your face a mask of dull obedience, offering neither agreement nor insult to break the steady rhythm of her complaining.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Listen to the endless complaints"
+   ]
+  },
+  "cf-1-039": {
+   "title": "The Heavy Air of Ashgate",
+   "text": "Time stretches thin in the stagnant heat of the station hall, thick with the smell of scorched coal and damp wool. The old woman pauses to hawk up a mouthful of phlegm and wipe her spectacles on her apron, watching you closely for any sign of rebellion or impatience. You keep your shoulders loose and your breathing slow, matching the steady, mournful wheeze of a distant shunt-engine idling on the middle line.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wait for her next demand"
+   ]
+  },
+  "cf-1-040": {
+   "title": "The Inspector's Shadow",
+   "text": "Heavy footsteps crunch upon the gravel outside the ticket office as a senior inspector from the Rail Barons approaches, swinging a brass-capped cane with an aggressive rhythm. The ticket-widow freezes mid-sentence, her rheumy eyes darting toward the open door where the inspector's shadow falls long and sharp across the threshold. You must keep your posture entirely serene and your breathing even, concealing the trembling of your hands behind your back while the heavy footsteps draw closer to the counter.",
+   "check": "Maintain absolute outward calm",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-041": {
+   "title": "A Costly Hesitation",
+   "text": "A sudden gust of wind rattles the corrugated tin roof, blowing a cloud of stinging ash through the ticket window and causing you to blink sharply at the worst possible second. The movement catches the inspector's eye, and he raps his brass-capped cane hard against the wooden counter, demanding your travel papers and docking a day's wages for loitering near the restricted platforms. You swallow the bitter taste of defeat as he pockets your coinage, leaving you poorer and nursing a dull ache in your shoulder where his guard shoved you aside.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the angry inspector"
+   ]
+  },
+  "cf-1-042": {
+   "title": "The Brass Token",
+   "text": "Through the rising cloud of soot and the sharp rap of the inspector's cane, your composure remains unbroken, projecting the dull, indifferent air of a worker beneath notice. The inspector grunts in disappointment, turns on his heel, and marches away down the platform without demanding your papers. The ancient widow, grudgingly impressed by your iron patience, reaches into a rusted tin box and slides a heavy, notched brass token across the wood that opens the yard gates.",
+   "check": "",
+   "grant": "Yard platform pass token",
+   "exits": [
+    "Return to the ticket window"
+   ]
+  }
+ },
+ "missing": []
+}

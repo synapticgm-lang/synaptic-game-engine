@@ -36,6 +36,8 @@ import {
   formatPyoaSpineSnapshotLines,
   spineBibleSupported,
 } from './pyoaSpine';
+import { advanceAuthoredPyoa } from './pyoaAuthoredRuntime';
+import { isAuthoredPyoaBookId } from './pyoaBookCatalog';
 import {
   applySocialMilestone,
   detectSocialMilestone,
@@ -936,8 +938,10 @@ export function runArcDirectorBeforeGm(
   working = recordPyoaBranchChoice(working, playerInput);
   working = lockPyoaBranchOnCrisis(working);
   working = exhaustDelayPads(working, playerInput);
-  // PYOA spine v1 — Thornferry curated nodes (other bibles unchanged)
-  if (spineBibleSupported(working.campaignBibleId)) {
+  // PYOA authored gamebooks (six) + Thornferry spine
+  if (working.pyoaBookPlay && isAuthoredPyoaBookId(working.campaignBibleId)) {
+    working = advanceAuthoredPyoa(working, playerInput).state;
+  } else if (spineBibleSupported(working.campaignBibleId)) {
     working = ensurePyoaSpine(working);
     working = advancePyoaSpine(working, playerInput);
   }

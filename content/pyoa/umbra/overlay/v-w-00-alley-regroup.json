@@ -1,0 +1,47 @@
+{
+ "batch": "v-w-00-alley-regroup",
+ "variants": [
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "A shadowed figure hurries past the lane's mouth - the Archbishop's almoner, keeping his promised silence for now, but leaving you burdened with a whispered debt that will surely be called due before morning."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Somewhere close, heavy boots hit the cobblestones in an organised sweep, directed precisely here by the terrified almoner you allowed to flee; the Watch knows exactly who they are hunting tonight."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Sable shoots you a sideways, wary glance, her eyes lingering on the scuffed knuckles that so recently pushed the snooping almoner to a shattered death upon the lower tiles."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "cover": "tailor"
+   },
+   "after": "The disgraced tailor's debt coat wraps tightly around your shoulders, its heavy velvet and hidden, silver-threaded pockets concealing the brass-bound ledger perfectly against the chill of the soot-stained breeze."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "Rough canvas scrapes at your neck as you shift the stolen tome beneath your porter's livery, grateful that such common, grease-stained attire renders you invisible among the labourers staggering home through the smog."
+  },
+  {
+   "node": "up-w-alley-regroup",
+   "when": {
+    "cover": "usher"
+   },
+   "after": "Stray lamplight catches the braided gold epaulettes of your opera usher's uniform, a garish disguise that hides the bulky ledger but threatens to betray your presence in this miserable, filth-strewn corner of the city."
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-w-eclipse-approach | valerius=betrayed
+Below, amidst the surging crowds, a flash of Valerius’s signature crimson silk catches your eye. Sable nudges your shoulder, gesturing towards the Lord's private runners who scan the awnings, still hunting you for refusing his polite, venomous offer of sanctuary.
+@@END
+@@INSERT up-w-eclipse-approach | rigg=allied
+Matron Rigg’s heavy-booted warrant officers march through the confusion below, securing the perimeter exactly as she promised. Sable watches them deploy into the gloom, quietly tightening her grip on the masonry as she anticipates the negotiated pardon for her brother.
+@@END
+@@INSERT up-w-eclipse-approach | rigg=betrayed
+The shadows offer little comfort, for the Matron's iron-jawed gaol-men have already commandeered the cross streets in retribution for your defiance. They swing heavy bullseye lanterns through the twilight, their beams raking the clockwork pigeons in a relentless search for the rogue night-crow.
+@@END
+@@INSERT up-w-eclipse-approach | vault=breached
+Panic in the plaza is compounded by the shrill blowing of watch-whistles echoing from the Exchange. Word of the grandmaster's shattered lock has leaked out, and the frantic constables are now hunting a phantom who dared force the sealed undervault.
+@@END
+@@INSERT up-w-eclipse-roofs | valerius=betrayed
+Even worse, one of the sentries sipping from a silver flask wears the elegant livery of Lord Valerius. He peers into the plunging darkness, a polite and lethal proxy ensuring that turning down his master's protection carries a steep, bloody price.
+@@END
+@@INSERT up-w-eclipse-roofs | rigg=betrayed
+You spot a stack of iron-forged warrants pinned to the brazier, stamped with Matron Rigg's undeniable seal. She has mobilised the city's riflemen against you, transforming every sloped rooftop and fortified nest into a snare to drag you straight to the gaol books.
+@@END
+
+Would you like me to write inserts for the remaining paths or explore the Archbishop's almoner encounter on the Sable track?

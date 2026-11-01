@@ -1,0 +1,92 @@
+{
+ "batch": "ul-2-031",
+ "sections": {
+  "ul-2-031": {
+   "title": "The Sump Edge",
+   "text": "Frost clings to the iron bolts of the masonry as the black current laps against your boots with a weight like lead. Shivering in the draft from the deep stacks, you reach into the oily sludge and draw out a heavy wad of coarse linen rags, stiffened by decades of damp and printer's paste. They smell faintly of turpentine and old tallow. Squeezing the dark moisture from the fabric requires both hands and a stubborn disregard for the cold sinking into your marrow.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Wring out the damp linen"
+   ]
+  },
+  "ul-2-032": {
+   "title": "Pressing the Fabric",
+   "text": "With the sodden rags cleared of the worst black grit, you spread them across a dry ledge of flagstone to catch the feeble warmth of your hurricane lamp. The oil flame flickers low, casting long, wavering shadows against shelves that seem to shift slightly when unobserved. Every surface in this wing is coated in a fine grey grime composed of pulverized book-dust and soot. By folding the coarse cloths into tight pads, you create a makeshift barrier against the corrosive ink-spray drifting from the swollen channel nearby.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the rags for travel"
+   ]
+  },
+  "ul-2-033": {
+   "title": "Resisting the Current",
+   "text": "A sudden tremor shakes the basalt floor beneath your feet, sending a fresh surge of black grease spilling over the edge of the sump to wet your ankles. The air grows abruptly heavy, thick with the dry, choking scent of burning juniper and the whispers of unseen marginalia hissing from the darkness behind the stacks. You plant your boots firmly against the greasy stone, tightening your grip on the salvaged bundle while the relentless tide threatens to sweep your footing away into the deep drains.",
+   "check": "Hold fast against the tide",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-034": {
+   "title": "A Bitter Toll",
+   "text": "The surge proves too fierce for your footing, slamming your shoulder hard against a projecting corner of iron shelving and wrenching a sharp gasp from your throat. The impact tears your coat sleeve and scatters your newly gathered linen rags into the black torrent, where they dissolve instantly into grey pulp. Nursing a dull, bruising throb in your shoulder and shivering from the chill, you drag yourself back onto the dry path, poorer by a bundle of supplies but still breathing.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and continue"
+   ]
+  },
+  "ul-2-035": {
+   "title": "The Clean Extraction",
+   "text": "Whatever the cost in cold sweat and strained muscle, your stubborn endurance pays off as the black wave breaks harmlessly against your boots and recedes back into the depths. Tucking the dry bundle of linen securely beneath your arm, you find that the struggle has left you with something unexpected: a tightly rolled sheaf of water-resistant parchment wedged inside the rags, covered in neat, unfamiliar cataloguing symbols.",
+   "check": "",
+   "grant": "Waterproof cataloguing notes",
+   "exits": [
+    "Return to the ink stream hub"
+   ]
+  },
+  "ul-2-036": {
+   "title": "Voices in the Silt",
+   "text": "Whispers drift from the damp crevices between the stone blocks, repeating fragments of sentences you read yesterday in volumes that have since changed their text. Ignoring the faint, papery rustle of unseen pages turning in the dark, you probe the sludge near the base of a sagging wooden case. Your fingers encounter the stiff, water-swollen leather of a binding that refuses to yield to the rot, wedged tight beneath a collapsed tier of discarded ledgers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry the heavy volume free"
+   ]
+  },
+  "ul-2-037": {
+   "title": "Cartography of Ruin",
+   "text": "Pulling the thick volume clear of the muck, you scrape away a crust of dried ink with your thumbnail to reveal faded copperplate cartography stamped onto calfskin. The maps depict corridors and archive rooms that do not exist in the current catalogue, their ink lines shifting slightly under the lamplight as if recording a geography that continues to redraw itself while you watch. The binding groans under your touch, warm with a low, faint pulse like a sleeping heart.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Examine the shifting parchment lines"
+   ]
+  },
+  "ul-2-038": {
+   "title": "The Whispering Murk",
+   "text": "A sudden, chorus-like murmur rises from the margins of the salvaged maps, a swarm of tiny voices warning you that the ink-channel is about to flood its banks entirely. The lamp-oil gutters low, sputtering against the damp air as shadows lengthen and begin to detach themselves from the rows of silent shelves. You must close your mind to the enticing, false directions hissed by the paper ghosts and trust only the steady memory of your own footsteps in the dark.",
+   "check": "Shut out the whispering pages",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-039": {
+   "title": "The Price of Hesitation",
+   "text": "Distracted by the persuasive voices whispering from the margins, you misjudge your step on the slick stone and plunge knee-deep into a stagnant pocket of black runoff. The ancient cartography slips from your numbed fingers, tumbling into the viscous fluid where it dissolves into a greasy smudge before you can snatch it back. Soaking wet and cursing under your breath, you haul yourself out onto higher ground, poorer in patience and supplies.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself from the sludge"
+   ]
+  },
+  "ul-2-040": {
+   "title": "Salvaged Secrets",
+   "text": "However narrowly you manage to keep your footing against the tide of whispering voices, your determination secures a tangible prize from the edge of the muck. Tucked safely inside the back cover of the ancient volume before it could ruin is a slender bone stylus tipped with hardened silver, etched with the official mark of a long-vanished junior cataloguer. It hums with a faint, residual static whenever it passes close to the ink-channels.",
+   "check": "",
+   "grant": "Silver-tipped bone stylus",
+   "exits": [
+    "Return to the ink stream hub"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION sg-5-0-4-7
+TITLE: The Brass Conduits
+TEXT: Within the cramped junction box of the brass conduits, your cold ceramic key hums faintly as it comes close to the sealed vault mechanism. The metal beneath your fingertips feels preternaturally cold, vibrating with a low, sub-audible thrum that echoes the approaching monsoon's distant drums. Around you, the dark machinery of Prism ticks and groans like a living creature waking from a century-long sleep. You must decide whether to force the tumblers with raw leverage or trace the delicate internal wiring. // Will you wedge a heavy iron chisel into the primary seam, or carefully slide the ceramic key into the central alignment groove?
+EXIT 1: Force the rusted tumblers with a heavy iron wedge
+EXIT 2: Carefully slide the ceramic key into the central groove
+@@END
+@@SECTION sg-5-0-5-0
+TITLE: The Lens-Hall Door
+TEXT: Before the towering bronze panels of the Lens-Hall Door, an intricate maze of interlocking optical gears blocks every straightforward approach. Sunlight caught by distant rooftop mirrors strikes the polished metal face, casting blinding geometric patterns across the flagstones. Every cog and ratchet is fitted with mathematical precision, designed to lock out anyone who lacks the patience to decode its shifting equations. // Do you study the alignment marks carved into the bronze rim, or search for a hidden seam along the outer framing?
+EXIT 1: Press on by deciphering the geometric alignment marks
+@@END
+@@SECTION sg-5-0-5-1
+TITLE: The Hidden Grille
+TEXT: Facing the locked portals of the inner sanctum, Pell traces a forgotten Glasswright maintenance tunnel hidden behind a rusted brass grille. The air spilling from the dark aperture smells of ozone and ancient dry dust, promising a way around the impenetrable bronze barrier ahead. Your companion's fingers move with practiced ease, unlatching the corroded bolts without making a single sound. // Will you slip into the dark conduit right behind Pell, or pause to secure your lamp strap before entering?
+EXIT 1: Press on through the hidden maintenance tunnel with Pell
+@@END
+@@SECTION sg-5-0-5-2
+TITLE: The Fading Window
+TEXT: At the threshold of the massive lens-hall doors, you fumble with improvised tools while rival footsteps echo louder down the corridor behind you. The iron scraper in your hand slips against the grease-slicked brass, sending a sharp metallic ping ringing through the vaulted chamber. Time is running out as heavy boots draw nearer from the shadows of the lower stairwell. // Do you redouble your efforts on the stubborn latch, or prepare to slip sideways into the gloom?
+EXIT 1: Press on by forcing the stubborn latch despite the noise
+@@END
+@@SECTION sg-5-0-5-3
+TITLE: The Adamantine Latch
+TEXT: Standing before the heavy adamantine latch of the vault entrance, you raise your cold ceramic key as the great clockwork mechanism begins to groan. Heavy rings of dark metal shift within the wall, aligning with a series of deep, satisfying clicks that vibrate straight through your boots. The heavy door slowly breathes outward, releasing a gust of refrigerated air that smells faintly of rain and long-buried earth. // Will you step directly into the rising mist of the interior chamber, or wait for the mechanism to finish its cycle?
+EXIT 1: Press on into the cool mist of the vault interior
+@@END
+@@SECTION sg-5-c1
+TITLE: The Maze of Lenses
+TEXT: Mandatory scene at the Lens-Hall Door: the lens-hall maze; those with Pell have a guide who knows the Glasswright maintenance ways, those without must improvise. Shifting arrays of magnifying glass and silvered plates stretch out ahead like a labyrinth of mirrors, reflecting your single ember-lamp into a thousand anxious duplicates. Every path splits into confusing angles of refraction where a single misstep could send you stumbling into a drop or tripping an acoustic wire. // Will you trust your hired companion to thread the needle through the service ways, or strike out independently across the open optical floors?
+EXIT 1: Pell knows the way through the lens-hall
+EXIT 2: Find your own way through the lens-hall
+@@END
+@@SECTION sg-5-1-0-0
+TITLE: The Humming Gallery
+TEXT: In the humming blue gallery, Pell pries open a maintenance hatch while shifting lens-segments groan overhead. The entire vaulted ceiling seems to breathe, adjusting its immense focal plates to catch the pale light filtering down through the upper domes. Your guide gestures urgently toward the narrow opening before the shifting glass can crush the passage shut. // Do you scramble through the gap immediately, or wait for Pell to clear away a dangling wire?
+EXIT 1: Squeeze quickly through the open maintenance hatch
+EXIT 2: Wait for Pell to clear the dangling wire first
+EXIT 3: Squeeze past a jammed prism-shutter whose sharp edges threaten to sever your precious ember-lamp strap.
+@@END
+@@SECTION sg-5-1-0-1
+TITLE: The Fractured Dome
+TEXT: Beneath the fractured dome, you dodge a swinging focusing plate while groping for a hidden maintenance ladder. Shards of green glass crunch under your boots, and the sound of rival climbers echoes faintly from the stairwells below. You need to find a vertical route upward before the main corridors become completely impassable. // Do you leap for the rungs of the swinging ladder, or duck into a low alcove to let the falling debris settle?
+EXIT 1: A collapsed ceiling of bottle-green cullet forces you to crawl beneath jagged pendants that swing like pendulu
+EXIT 2: Unencumbered by debts or escorts, you spot a forgotten maintenance duct that bypasses the noisy main gear-room
+EXIT 3: You stumble into an abandoned observatory ward where rusted brass rings obscure the upward escape route comple
+@@END
+@@SECTION sg-5-1-1-0
+TITLE: The Cool Conduit
+TEXT: Pell leads you through a cool conduit where singing glass reverberates against your ribs with warning tones. The walls here are lined with thin glass laminae that hum at a pitch that sets your teeth on edge whenever you brush against them. Ahead, the tunnel splits around a massive cooling pillar that vents stale air from the observatory's heart. // Will you follow Pell down the left branch toward the lower flues, or test the singing glass on the right wall?
+EXIT 1: Pell taps a hollow ceramic flue, unlocking a narrow service chute that bypasses three patrols of nervous sentr
+EXIT 2: You climb a spiral ramp of fused sand while distant signal-flashes bounce blindingly off polished brass walls.
+EXIT 3: A rusted bulkhead blocks the ventilation conduit, demanding all your strength to force its warped hinges open.
+@@END
+@@SECTION sg-5-1-1-1
+TITLE: The Tilted Mirror-Vault
+TEXT: In a tilted mirror-vault, your guide spots a greasy grease-slick left by previous rivals scrambling upward. The floor tilts at an unsettling angle, forcing you to lean heavily against the cool glass walls to keep your balance. Somewhere above, a heavy iron counterweight swings with a rhythmic, bone-jarring thud. // Do you slide carefully across the greasy incline, or look for handholds along the carved window frames?
+EXIT 1: Pell coaxes open a stubborn floor-grate, revealing a steep drop into the cooling flues of the great lens.
+EXIT 2: You scramble over a ridge of fused green slag while distant foghorns moan across the empty salt basin.
+EXIT 3: In a narrow utility shaft, your shoulder bumps a hanging brass chime that reverberates like an alarm bell.
+@@END

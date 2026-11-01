@@ -1,0 +1,10 @@
+Gemini said
+
+@@SECTION td-3-072
+TITLE: The Vent Shafts
+TEXT: Narrow iron tubes snake upward into the gloom like the entrails of a colossal beast, hissing with pressurized heat and carrying the thin, frantic cries of gulls trapped in the metal labyrinth. Every seam weeps rusty condensation that scalds your skin, and the air tastes thick of copper and old grease. You stand at a critical junction where choices divide into steam-choked darkness.
+EXIT 1: Squeeze through the dangerously narrow boiling pipe
+EXIT 2: Follow the changing air currents through intersecting vents
+EXIT 3: Dismantle the rusted grating for a makeshift shield
+EXIT 4: Ascend toward the glittering glass-domed water reservoirs
+@@END

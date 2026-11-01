@@ -1,0 +1,68 @@
+Gemini said
+
+@@SECTION td-4-076
+TITLE: Steam and Solder
+TEXT: Hissing plumes of superheated mist obscure the rusted ladder rungs, smelling of boiled iron and old grease. You wrap a length of greasy leather tightly around the fractured joint of the vertical steam pipe, binding it fast with thin copper wire. Water beads rapidly against the makeshift bandage, hissing and spitting into the gloom. // Pulling your metal canteen from your belt, you hold the mouth directly beneath the slow, rhythmic dripping of condensed freshwater. Each heavy drop echoes in the hollow stairwell like a struck bell, slowly filling the dry vessel with lukewarm, mineral-tasting sustenance.
+EXIT 1: Secure the leaking steam line
+@@END
+@@SECTION td-4-077
+TITLE: Droplets in the Dark
+TEXT: Scalding droplets spatter against your knuckles as you press the leather seal harder into the split metal seam. The shriek of escaping pressure softens to a steady, manageable gurgle as the wire bites into the damp hide. You catch your breath in the humid damp, wiping sweat and soot from your forehead with a soot-stained sleeve. // Below the leaking joint, your canteen fills slowly, ounce by precious ounce, drawing the sweet moisture out of the dying machinery. The metal plates of the walkway vibrate underfoot with the heavy, grinding heartbeat of the Meridian Gear somewhere far beneath the floor.
+EXIT 1: Take the filled canteen forward
+@@END
+@@SECTION td-4-078
+TITLE: Binding the Iron Vein
+TEXT: Boiling vapour scorches your fingers as you yank the copper wire taut with your bare hands, trying to cinch the leather patch over the widening split before the whole joint bursts. The metal screeches in protest, the fracture gaping wider under the mounting pressure of the trapped steam. You must force the stubborn wire to bite into the slick, vibrating pipe without slipping and burning your flesh to the bone.
+CHECK: Bind the high pressure leak
+@@END
+@@SECTION td-4-079
+TITLE: Scalded and Spent
+TEXT: The wire slips from your slick fingers with a sharp snap, and a jet of scalding steam lashes across your forearm, leaving a mottled, throbbing burn. You stumble backward against the wet bulkhead, gasping for air as your canteen clatters against the iron grating, spilling half its contents into the dark abyss below. The repair holds only in part, leaking a steady, frustrating hiss that drains your remaining energy and leaves your skin raw.
+EXIT 1: Gather your breath and move
+@@END
+@@SECTION td-4-080
+TITLE: A Dry Victory
+TEXT: Your fingers ache and your palms sting from the fierce heat, but the wire holds firm against the shuddering iron of the pipe. The furious shriek of escaping steam fades to a low, sullen murmur, leaving a steady trickle of clear, lukewarm water to pool inside your canteen. However narrowly you managed the repair, the salvaged moisture sits heavy and life-giving at your belt.
+GRANT: Sealed water canteen
+EXIT 1: Climb down the ladder
+@@END
+@@SECTION td-4-081
+TITLE: The Hall of Ledgers
+TEXT: Endless rows of water-swollen ledgers stretch out into the gloom, bound in moldering sharkskin and stacked upon rusted iron shelves that groan under the weight of centuries. A colossal automaton archivist stands sentinel among the paper tombs, its multi-jointed brass limbs shifting with a sound like grinding teeth. Twin glass lenses glow a dull, baleful amber in the damp air, tracking your every movement as you step onto the damp floor. It lowers a heavy, ledger-stamped palm to block your path, waiting in absolute silence for an accounting of your presence in the deep.
+EXIT 1: Approach the great bronze archivist
+@@END
+@@SECTION td-4-082
+TITLE: The Drowned Archive
+TEXT: Towering shelves of waterlogged records loom like grey cliffs beneath the vault, lit by the amber glow of the archivist's unblinking lenses. The vast chamber hums with the stagnant breath of a thousand forgotten tides, offering multiple ways deeper into the cold heart of the stair. You can challenge the towering machine with unblinking defiance, present a contradictory paradox from the drowned books, brace your back against a collapsing shelf to save a rare history, realign its damaged ocular lens with delicate skill, or request formal permission to enter the pressure-locked chambers.
+EXIT 1: Stand your ground before the archivist
+EXIT 2: Confuse the machine with a ledger paradox
+EXIT 3: Save the falling shelf from collapse
+EXIT 4: Realignthe damaged ocular lens
+EXIT 5: Request descent into the pressure locks
+@@END
+@@SECTION td-4-083
+TITLE: The Unblinking Gaze
+TEXT: You square your shoulders and fix your eyes squarely on the glowing amber lenses of the towering archivist, refusing to shrink back from its mechanical bulk. The massive brass frame whirs and clicks as it processes your defiant posture, its multi-jointed fingers twitching above a collection of heavy stamps. The heavy silence stretches thin across the damp vault, broken only by the rhythmic dripping of distant bilge water from the ceiling above. // Slowly, the machine lowers a heavy arm and presses a jagged token of stamped brass into your palm, acknowledging your grit with a deep, pneumatic sigh that stirs the dust around your boots.
+EXIT 1: Take the token and advance
+@@END
+@@SECTION td-4-084
+TITLE: Weight of the Token
+TEXT: The cold brass token feels heavy and sharp-edged against your calloused palm, stamped with the faded seal of the old Tidewardens. You slip it securely into your pocket, feeling the watchful eyes of the brass archivist follow your silhouette as you thread your way past the towering stacks of drowned ledgers. The air grows noticeably cooler here, smelling sharply of ozone and old salt. // Ahead, the rusted iron floor grating gives way to a solid stone pathway that slopes downward into the absolute dark, leading toward the lower chambers where the great mechanism waits.
+EXIT 1: Follow the downward stone path
+@@END
+@@SECTION td-4-085
+TITLE: Meeting the Amber Eye
+TEXT: The archivist leans forward on its heavy brass tracks, bringing its glowing amber lenses inches from your face in a silent, suffocating test of wills. Every instinct screams at you to look away, to break the gaze and yield the floor to the terrifying machine before it strikes. You must hold your ground without flinching, matching the unfeeling stare of the drowned world's librarian until it grants you passage.
+CHECK: Stare down the bronze archivist
+@@END
+@@SECTION td-4-086
+TITLE: Broken Focus
+TEXT: Your nerve cracks under the oppressive heat of those amber lenses, and you avert your eyes with a sharp gasp, stumbling backward against a stack of ledgers. The heavy books tumble down in a cloud of choking mold and dust, burying your boots and bruising your shin against the iron frame. The archivist emits a low, mocking hiss of steam from its vents, marking your failure with a harsh, grating chime before blocking the aisle entirely.
+EXIT 1: Recover from the falling books
+@@END
+@@SECTION td-4-087
+TITLE: A Grudging Pass
+TEXT: You hold your stance through the agonizing stillness until the machine's internal cogs shift with a heavy, resonant clank of approval. However narrowly you endured its piercing glare, the archivist steps aside and presses a heavy stamped token into your palm. The cold metal bears the mark of the deep archives, granting you unhindered access to the lower vaults.
+GRANT: Archivist token
+EXIT 1: Return to the archive hub
+@@END

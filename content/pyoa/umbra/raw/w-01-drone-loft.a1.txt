@@ -1,0 +1,22 @@
+Gemini said
+
+@@INSERT up-w-drone-loft | faceKnown=yes
+Prying open one incoming cylinder, you find a freshly printed charcoal sketch of your own face inside. Sable peers over your shoulder, her breath catching as she recognises the detailed likeness currently circulating to every watchhouse in Veridia.
+@@END
+@@INSERT up-w-drone-loft | witness=dropped
+Unfurling an intercepted message, your eye catches a grim report confirming the almoner's shattered body was discovered upon the pavement. Sable glances at the heavy ledger in your grip, a sudden, cold understanding tightening her jaw at the lengths you will go.
+@@END
+@@INSERT up-w-beggar-corner | cover=tailor
+Drawing the heavy velvet of the tailor's debt coat tighter, you notice the blind man tilting his chin to catch its expensive scent. He murmurs a dry greeting to the disgraced silk, acknowledging a disguise that carries its own infamous weight.
+@@END
+@@INSERT up-w-beggar-corner | cover=livery
+Your rough porter's livery scrapes against the brickwork, the coarse canvas blending seamlessly into the working grime of the alley. Sable nudges you as the musician pauses, his sharp ears easily mistaking your heavy tread for just another dockhand dragging goods through the eclipse.
+@@END
+@@INSERT up-w-beggar-corner | cover=usher
+Catching the faint scent of theatrical powder clinging to your opera usher's uniform, the musician offers a mocking, sweeping bow. The brass buttons on your fitted waistcoat clink softly, a sound he instantly places as far too polished for this miserable stretch of cobbles.
+@@END
+@@INSERT up-w-beggar-corner | faceKnown=yes
+Even without sight, the old man knows exactly who approaches; he quietly recites the very physical descriptions the city watch are presently shouting across the plaza. Sable pulls her hood down further, acutely aware that your exposed identity makes every lingering conversation a fatal risk.
+@@END
+
+Would you like me to draft inserts for Matron Rigg's or Lord Valerius's specific pursuers next?

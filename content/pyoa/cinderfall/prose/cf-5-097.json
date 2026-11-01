@@ -1,0 +1,92 @@
+{
+ "batch": "cf-5-097",
+ "sections": {
+  "cf-5-097": {
+   "title": "The Drafty Spans",
+   "text": "High above the stone flags of the terminus, the breached roof-lights rattle in a gale straight off the Cinder Steppe, spilling freezing drafts down your neck as you reach for the main feed-valve. Frost riming the copper seams turns the metal slick beneath your calloused fingers, demanding a firm grip and a level head to keep the pressure steady against the rising shriek of the wind. Tucked safely inside your greasy boiler-jacket, the oiled leather ledger-cover presses against your ribs like a flat, dry shield, keeping the damp at bay while the great hall groans in iron agony around you.\n\nStepping carefully across the vibrating iron walkway, you test the securing bolts on the auxiliary pipework, listening for any sign of a pressure drop that might betray the engine's labored rhythm to the watchers below.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step across the iron walkway"
+   ]
+  },
+  "cf-5-098": {
+   "title": "Adjusting The Feed",
+   "text": "Frost continues to coat the overhead ribs of the station skeleton, but your attention remains fixed on the brass wheel of the main feed-valve, which turns with a deep, protesting grind of dry threads. A sudden gust billows through the broken panes overhead, carrying the bitter taste of old soot and frozen alkali straight into your teeth, yet your hands stay steady on the spoke. Against your chest, the stiff edges of the oiled leather ledger-cover shift with every breath, reminding you of the records you carry through the gathering storm.\n\nPausing to wipe a smear of black grease from your brow, you peer through the dim haze toward the distant platform edge where the shadows bunch thickest.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Peer through the dim haze"
+   ]
+  },
+  "cf-5-099": {
+   "title": "Keeping A Steady Head",
+   "text": "Bitter drafts whistle through the shattered glass above, biting deep into your fingers as you work the main feed-valve to keep the stubborn boiler from choking on the rising cold. A sudden clatter of loose slate from the roof-lights startles the shadows below, and out of the corner of your eye you catch the glint of brass buttons shifting in the gloom, waiting for any sign that your resolve is slipping. You clamp your teeth together, forcing your breathing into a slow, measured rhythm while your hand stays clamped to the metal wheel, shielding the oiled leather ledger-cover pressed tight against your ribs.",
+   "check": "Keep your nerve against the cold",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-100": {
+   "title": "The Bitter Frostbite",
+   "text": "The sudden screech of twisting iron overhead breaks your concentration, sending a sharp shiver through your arms that wrenches the main feed-valve too far to the left, flooding the chamber with scalding steam and bitter damp. As you stumble backward against the bulkhead, a jagged edge of the breached roof-frame catches your shoulder, tearing through your heavy canvas coat and leaving a long, stinging welt that burns like hot coal. The loss of precious moments leaves your chest aching and your temper frayed, but you drag yourself upright with a dry cough, clutching the damp leather ledger-cover tighter as the engine settles into a heavy, uneven cough.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself upright and move on"
+   ]
+  },
+  "cf-5-101": {
+   "title": "Through The Draft",
+   "text": "Whether you weathered the biting gale with steady hands or fought your way through the sudden shriek of freezing air, you manage to secure the main feed-valve before the pressure dips into dangerous ground. The oiled leather ledger-cover remains tucked securely against your ribs, its stiff corners dry and intact despite the biting frost that coats the rest of the ironwork. With the valve locked into position, you catch your breath in the dim gloom and feel a hard knot of stubborn pride settle in your chest as the platform looms closer through the haze.",
+   "check": "",
+   "grant": "Oiled leather ledger",
+   "exits": [
+    "Walk down to the platform"
+   ]
+  },
+  "cf-5-102": {
+   "title": "Shadows On The Siding",
+   "text": "Slipping past the silent coal hoppers, you pull a short, sharp blast from the brass signal-whistle hung at your hip, mimicking the distinct code of an incoming ballast train. The remaining platform guards instantly snap to attention in the gloom, turning their lanterns toward the deserted dead-end siding on the far side of the yards where the echo dies against the rusted buffer-stops. While their backs are turned and their boots crunch hurriedly across the gravel toward the phantom noise, you drop flat against the side of the tender and slip your fingers into the unattended watchman box.\n\nResting right beside an empty tin cup sits a heavy silver pocket-watch, its cold metal ticking in slow, steady defiance of the dead air around you.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pocket the heavy silver watch"
+   ]
+  },
+  "cf-5-103": {
+   "title": "The False Alarm",
+   "text": "Echoes of your false whistle still hang in the cold air above the tracks, drawing the remaining platform guards further down the line toward the wrong siding with shouts of rough annoyance. You crouch low behind a rusted coal-tender, letting the confusion swallow the sound of your boots as you sweep your hand across the deserted watchman desk. Your fingers brush against a heavy silver pocket-watch left behind in the scramble, its hinged case cold and weighty as you lift it into the safety of your coat pocket.\n\nWaiting until the last bobbing lantern disappears into the foggy distance, you stand up straight and check the clear strip of track ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step out onto the clear track"
+   ]
+  },
+  "cf-5-104": {
+   "title": "A Risky Diversion",
+   "text": "False whistles echo off the rusted iron sheds, drawing the remaining guards away from the main platform, but one heavy-set watchman hesitates, turning his lantern back toward your hiding place with a suspicious squint. You freeze against the side of the tender, holding your breath while your fingers slide silently toward the heavy silver pocket-watch resting on the watchman box, knowing that a single metallic clink or scrape of gravel will bring his boots straight down your way. The distance between you narrows as he takes a slow, deliberate step in your direction, his eyes scanning the gloom.",
+   "check": "Trick the guard and snatch the watch",
+   "grant": "",
+   "exits": []
+  },
+  "cf-5-105": {
+   "title": "Caught In The Glint",
+   "text": "The heavy-set watchman catches the sudden silver flash of your movement in the dark and barks an abrupt challenge, forcing you to snatch the pocket-watch and scramble backward through a narrow gap between two rusted carriages. As you squeeze past a jagged iron latch, it tears a deep, bleeding gouge across your forearm, stealing your breath and costing you precious minutes in the shadowed maze. You bite down hard on a curse, clutching your wounded arm as you dive into the shelter of the coaling stage, leaving the angry shouts of the guard behind you in the ash-choked fog.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away into the coaling stage"
+   ]
+  },
+  "cf-5-106": {
+   "title": "The Silver Prize",
+   "text": "Whether you slipped away cleanly in the confusion or snatched the prize right from under the watchman's nose despite the sudden scrape, the heavy silver pocket-watch now rests safely in your greasy palm. Its cold, engraved casing bears the worn monogram of the Rail Barons' logistics branch, a neat little piece of stolen property that might buy you a moment of hesitation from the gate guards if played just right. With the watch tucked securely into your waistcoat, you turn your face toward the vaulted arches of the terminus where the final platform waits.",
+   "check": "",
+   "grant": "Heavy silver pocket-watch",
+   "exits": [
+    "Advance to the final platform"
+   ]
+  }
+ },
+ "missing": []
+}

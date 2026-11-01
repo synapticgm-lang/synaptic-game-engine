@@ -1,0 +1,56 @@
+@@SECTION vh-e-A3-1
+TITLE: The Cracked Note
+TEXT: Heavy bronze slides from the padded leather into the heat of the Lowgate forge, where the master strikes the metal with a scarred thumb and finds the small, pale nick left by the glacier stairs. Sparks spit orange against the soot-caked rafters while the bellows groan like tired lungs, feeding a fire that turns the tongue of Orison into liquid gold. When the recast bronze cools in its sand bed, it carries that ancient scar within its grain, a faint imperfection born of the high winds and the long descent. You stand by the cooling pit with soot on your sleeves and the smell of hot slag in your nose, watching the smiths lift the heavy core into the sling for the return haul. // Read on, to see how the mountain greets its slightly altered voice.
+EXIT 1: Step forward to witness the valley's reaction
+@@END
+@@SECTION vh-e-A3-2
+TITLE: The Cracked Note
+TEXT: Weeks after the hoisting cables stop singing, the new bell speaks across the thirteen stair-towns at dusk, and every window-shutter in Vesperhold rattles with a strange, sweet tremor. The note is not the clean, pure peal the abbots rehearsed in drafty choir stalls, but rather a deep, double-throated murmur that catches on the icicles and lingers until the valley goats look up from their sparse grass. Children in the terrace orchards mimic the small hitch in the middle of the chime, laughing as the sound bounces back from the granite face with a charming, accidental stutter. Even the Cable Court toll-collectors pause their ledgers when the evening air wobbles, admitting quietly that a bell with a secret in its throat is harder to forget. // Read on, for the final resting place of the sound.
+EXIT 1: Turn the page for the closing image
+@@END
+@@SECTION vh-e-A3-3
+TITLE: The Cracked Note
+TEXT: High above the cloud line, the great iron scaffolding holds the metal steady against the bite of the ice-wind, gleaming under a pale winter moon that turns the snowfields to silver. You sit on a low stone wall with empty hands and a cold pipe, listening to the midnight hour roll down from the heights through every tier of the sleeping world. The flawed note rolls down the mountain like a rolling stone that refuses to settle, warm and human in its crookedness, echoing off stone walls and frozen pine roots alike. Down in the dark orchards, a single bell-rope stirs in the draft, and the world holds its breath just long enough to hear the metal breathe. Here the long stairs end, and the mountain keeps its own time at last.
+@@END
+@@SECTION vh-e-B1-1
+TITLE: Biscuit Carries It Home
+TEXT: Rather than feed the sacred tongue to the hungry mouths of Lowgate, you hoist the padded cradle back onto the patient shoulders of Biscuit, who sets his square jaw against the return climb. The mule does not complain, but plants his iron shoes firmly into the slush of the lower road, testing the weight with a low, vibrating groan that matches the bronze inside the leather. Forge-masters shout after you from the flooded doorways, waving scraps of tin and offering curses that freeze before they hit the slush, but your boots find the rhythm of the uphill grade. Every step homeward is a heavy heave against gravity, yet the cold air tastes clean and thin as you leave the smoke of the smelters far behind. // Read on, to follow the mule's steady plod.
+EXIT 1: Follow the mule toward the upper snows
+@@END
+@@SECTION vh-e-B1-2
+TITLE: Biscuit Carries It Home
+TEXT: Up through the frozen orchards and the rattling ropeways, the return of the uncast Clapper becomes a quiet legend told around grease-lamps in the terrace shelters. Vesperhold's scaffolding remains empty, a stark wooden rib cage against the grey sky, but the people find a strange comfort in the silent metal resting under a tarp in the stable yard. Biscuit spends his days eating dry mash in the warmest corner of the barn, rubbing his scarred neck against the fence while children come by just to press a hand against the cold leather casing. The guild masters send formal letters of complaint that get lost in the snowdrifts, while the mountain goes about its business without needing a single bronze tongue to tell it when to sleep. // Read on, for the final view from the stables.
+EXIT 1: Turn to the last page of the journey
+@@END
+@@SECTION vh-e-B1-3
+TITLE: Biscuit Carries It Home
+TEXT: Winter settles deep into the granite bones of Vesperhold, wrapping the empty bell-frame in thick white blankets that muffle the whistling of the high gales. You lean against the stable door with a mug of chicory tea, watching Biscuit blow soft, gray clouds of steam into the dim, straw-scented air. The heavy bronze tongue stays silent inside its cradle, a cold and massive secret that refuses to be hammered into someone else's song. Out across the darkening precipice, the thirteen stair-towns glimmer with tiny yellow grease-lights, hanging like distant stars against the vast, quiet face of the night. Nothing is broken, nothing is finished, and the mule stands guard over a voice that has chosen to keep its own counsel.
+@@END
+@@SECTION vh-e-B2-1
+TITLE: The Long Way Up
+TEXT: Leaving the foundry smoke to dissolve in the river mist, you take the heavy bronze strap across your own shoulders and turn your face resolutely toward the white teeth of the upper stair-towns. The climb is a slow, bone-weary punishment of ice and wind, each stone step demanding a fresh trade of sweat for a few inches of altitude. By the time you pass the third terrace-mill, the strap has worn a familiar, raw groove through your heavy wool coat, and your legs feel as hollow as dry reeds. Nobody accompanies you this time; the guilds are busy arguing over empty ledgers down below, and the mountain has grown too cold for company. You simply walk, lifting one frozen boot after another, carrying the past back to where the air turns thin. // Read on, to see the summit receive its burden.
+EXIT 1: Climb onward into the gathering snow
+@@END
+@@SECTION vh-e-B2-2
+TITLE: The Long Way Up
+TEXT: Weeks after your return, the monastery courtyard is as quiet as a forgotten tomb, save for the dry whistle of snow skittering across the flagstones. The heavy Clapper rests on two wooden trestles in the cloisters, untouched by grease or fire, gathering a delicate gray pelt of frost that nobody bothers to brush away. The monks have stopped talking about the missing bell, finding other ways to measure the passing of the hours by the slant of the sun and the rumbling growl of distant avalanches. You walk the ramparts with empty hands, feeling lighter than a dry leaf, though the muscles in your shoulders still remember every single ledge and frozen stair. The world below feels like a story someone else told in a very different season. // Read on, for the final silence of the mountain.
+EXIT 1: Read the final page of the book
+@@END
+@@SECTION vh-e-B2-3
+TITLE: The Long Way Up
+TEXT: Night falls like an iron shutter over the peaks, plunging Vesperhold into a profound, ringing stillness that needs no metal to enforce its peace. You stand at the edge of the stone balcony, looking down through the cloud line where the thirteen stair-towns twinkle like faint embers in a dying hearth. The great bronze tongue lies behind you in the dark, cold to the touch and silent as a sleeping dog, content to hold its heavy music until the world changes its mind. A single gust of wind brushes past your cheek, carrying the distant smell of pine resin and woodsmoke from the valley floor. Here at the top of everything, there is nothing left to carry and nowhere else to climb.
+@@END
+@@SECTION vh-e-C1-1
+TITLE: Ploughshares, No Strings
+TEXT: The forge-master's hammer falls with a heavy, satisfying thud, flattening the ancient bronze of Orison against the anvil until its sacred hum dissolves into a shower of yellow sparks. You watch the tongue of the great bell transform into long, curved blades of dark metal, each one designed to bite deep into the stubborn terrace soil rather than call the guilds to prayer. The Terrace Millers stand by the quench-tubs with flour-dusted sleeves, grinning through their hunger as they count the new ploughshares coming off the cooling rack. No toll-lords hold a claim on this iron, and no rope-maker has tied an oath around its neck; it is simply metal, meant for the turning of earth and the sprouting of barley. // Read on, to follow the iron into the furrows.
+EXIT 1: Step out into the newly turned valley
+@@END
+@@SECTION vh-e-C1-2
+TITLE: Ploughshares, No Strings
+TEXT: When the spring thaw finally softens the frozen ledges of the middle tiers, the new ploughshares bite into the dark mountain earth with a clean, eager scrape that wakes the sleeping worms. The millers drive their teams across the terraces from dawn until dusk, turning long, rich brown furrows where stubborn rock and thin moss used to rule. Without a bell to summon them to labor or prayer, the villagers set their own pace by the sun and the smell of wet soil, trading handfuls of heavy grain across the stone walls. Down in Lowgate, the Cable Court grumbles over lost monopolies, but their ledgers cannot sprout barley, and the mountain smells of turned loam instead of melting tin. // Read on, for the final harvest of the year.
+EXIT 1: Turn to the last page of the ledger
+@@END
+@@SECTION vh-e-C1-3
+TITLE: Ploughshares, No Strings
+TEXT: Green shoots push through the dark mountain earth in long, trembling rows that stretch from the fifth tier all the way down to the orchard borders. You sit on a low stone retaining wall with dirt under your fingernails and a crust of barley bread in your pocket, watching the wind ripple across the young crops like water in a shallow basin. The great scaffolding up at Vesperhold stands bare against the sky, a wooden skeleton that has forgotten how to make a noise, and nobody seems to miss the voice it lost. Down in the furrows, the transformed bronze does its silent work beneath the roots, feeding the valley with something far more lasting than music. The mountain breathes deep, smells of green life, and lets the old stories drift away on the wind.
+@@END

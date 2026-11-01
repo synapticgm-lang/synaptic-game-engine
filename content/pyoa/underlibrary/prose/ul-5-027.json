@@ -1,0 +1,108 @@
+{
+ "batch": "ul-5-027",
+ "sections": {
+  "ul-5-027": {
+   "title": "Blood Red Warning",
+   "text": "Heavy iron shelving shifts and grinds against the masonry, exposing a narrow fissure in the wall where an ancient folio hangs suspended by threads of dried gum. Its pages flutter wildly in a draft that smells of stale lamp-oil and copper. Upon its vellum surface, a jagged warning has been scrawled in thick, blood-red ink that still appears wet to the touch. You trace the complex syntax of the script, recognizing the archaic dialect of the early Cataloguers who first mapped these vaults. The characters rearrange themselves even as you watch, threatening to dissolve into meaningless blotches unless you commit the precise sequence to memory.\n\nStepping closer to the trembling folio, you prepare to decipher the hidden cipher that will unlock the outer wards.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Decipher the blood-red folio warning"
+   ]
+  },
+  "ul-5-028": {
+   "title": "The Crimson Cipher",
+   "text": "Staring down at the shifting script, your eyes burn from the heavy fumes of old paper and copper-laced ink that rise from the binding. The folio writhes between your fingers, its crimson characters mutating into deceptive traps designed to confuse the unwary scholar. You must piece together the fragmented grammar before the text loops backward into total illegibility and seals the corridor forever. Your mind races through centuries of marginal notes and forbidden lexical rules, searching for the single hidden key that unlocks the ward. With the air growing thin and the surrounding shelves closing in on your position, you concentrate every ounce of your intellect on the blood-red riddle.",
+   "check": "Decipher the blood-red warning cipher",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-029": {
+   "title": "Ink Stained Failure",
+   "text": "A sudden spasm in the folio's spine sends a thick spray of crimson ink directly into your eyes, blinding you with a searing, bitter heat. You stumble backward against an iron upright, dropping your lamp as the metal casing cracks against the stone floor and spills its precious oil. The warning scrawl mocks you from the shelf, its letters rearranging themselves into mocking shapes while your vision slowly clears through a haze of stinging tears. You press a sleeve to your smarting face, swallowing the bitter taste of iron and soot that lingers in your throat. Though your pride suffers a sharp sting and your hands are permanently stained with a rust-coloured dye, you pick yourself up and press onward into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue past the bleeding folio"
+   ]
+  },
+  "ul-5-030": {
+   "title": "The Ward Unlocked",
+   "text": "Moving with careful precision, however narrowly you avoid the snapping edges of the folio, your finger traces the final hidden syllable of the crimson text. The heavy iron ward lets out a long, metallic sigh, its ancient tumblers clicking into place as the barrier slides smoothly into the masonry. A quiet hush falls over the alcove as the danger subsides, leaving behind a subtle pulse of residual magic in the air. Pressed firmly against the back of the binding is a small, folded slip of paper detailing the forgotten administration codes of the early Underlibrary. You pocket the fragile slip before turning your attention back toward the main chamber.",
+   "check": "",
+   "grant": "Forgotten administration codes",
+   "exits": [
+    "Return to the obsidian ring"
+   ]
+  },
+  "ul-5-031": {
+   "title": "The Flattering Ledger",
+   "text": "Thick leather bindings groan and shift upon a high mahogany bracket, revealing a massive ledger whose golden clasps snap shut like iron jaws whenever a hand approaches. It fancies itself the sole arbiter of this corridor, preening beneath a coating of dust and old lamp-oil. You lean against the cold timber, adopting the courtly, deferential cadence common among senior scholars who wish to avoid a heavy fine. Whispering soft praises into its cracked spine, you stroke the dry leather until the metal fasteners loosen with a reluctant, shivering click. You ease the cover open just enough to slide your fingers inside the velvet-lined pocket.\n\nSecuring your prize, you prepare to leave the haughty volume behind.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the flattering ledger behind"
+   ]
+  },
+  "ul-5-032": {
+   "title": "Tongue Of Silk",
+   "text": "Whispering honeyed falsehoods into the ear of a towering, self-important ledger, you attempt to charm your way past its snapping brass clasps. The heavy volume bristles with indignation, its thick pages rustling like dry autumn leaves as it weighs every syllable of your elaborate flattery against its endless rulebook. One wrong word of modern or coarse phrasing will cause the iron covers to snap shut like a trap, crushing bone and parchment alike. You match its pompous rhythm with an equally affected cadence, coaxing the stubborn binding with practiced grace and smooth deception while sweat beads upon your forehead.",
+   "check": "Charm the self important ledger",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-033": {
+   "title": "A Bitten Hand",
+   "text": "The ledger detects a trace of insincerity in your cadence and snaps its heavy brass clasps together with the force of a falling portcullis. You jerk your hand back just in time, but the iron-edged cover clips your knuckles, drawing a bright line of blood that stains the dusty floorboards. The volume lets out a dry, rattling chuckle that echoes down the empty alcove, retreating into its shelf with an air of absolute triumph. Cursing under your breath, you bind your throbbing fingers with a strip of spare linen from your shelver's tunic. The wound aches fiercely, and the delay costs you precious minutes against the looming shadow of the Closing, but you refuse to let the book defeat you entirely.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee the snapping ledger bindings"
+   ]
+  },
+  "ul-5-034": {
+   "title": "The Golden Nib",
+   "text": "Navigating the ledger's vanity with smooth flattery, however narrowly you avoid its snapping brass teeth, you coax the massive volume into parting with its most prized possession. The heavy cover lifts on well-oiled hinges, revealing a small, recessed compartment lined with faded velvet. Resting within the hollow is a slender, gold-plated pen nib that shimmers with a faint, iridescent glow beneath the amber light of your lamp. You lift the delicate instrument from its resting place, feeling its unusual balance and knowing it possesses the rare authority to alter official entries within the catalogue. You secure the nib safely inside your waistcoat pocket before stepping away from the shelf.",
+   "check": "",
+   "grant": "A gold plated pen nib",
+   "exits": [
+    "Advance toward the lower parapet"
+   ]
+  },
+  "ul-5-035": {
+   "title": "The Stray Parchment",
+   "text": "Piles of discarded vellum drift across the stone floor like autumn leaves swept by an underground gale, stirred by the ceaseless shifting of the surrounding stacks. Amidst the fluttering debris, a single scrap of parchment catches the amber light of your lamp, bearing complex protective runes that hum with a faint, rhythmic vibration. Several heavy leather bindings snap shut nearby like predatory jaws, eager to shred any stray hand that lingers too long among the forgotten papers. You time your movement to the pulsing rhythm of the floor beneath your boots, reaching out past the snapping leather to intercept the drifting prize before it vanishes into a dark fissure.\n\nTucking the vellum safely away, you prepare to move deeper into the annex.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the snapping bindings"
+   ]
+  },
+  "ul-5-036": {
+   "title": "Snatching The Runes",
+   "text": "Leaning far out over a churning river of black ink, you measure the erratic distance between two violently shifting stacks of vellum. The scrap of parchment dances just beyond your fingertips, carried aloft by a sudden updraft of stale lamp-oil fumes and whispering drafts. Every muscle in your body coils tight as you prepare to spring across the gap, relying entirely on balance and split-second agility to avoid plunging into the dark, viscous fluid below. The leather bindings snap and writhe along the shelves like trapped serpents, snapping at your sleeves as you commit your weight to the air.",
+   "check": "Leap past the snapping bindings",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-037": {
+   "title": "A Heavy Cost",
+   "text": "A violent tremor shakes the stack just as your boots leave the stone, throwing your timing entirely off balance and sending you crashing sideways into a jagged oak upright. You manage to snatch the parchment from the air with your teeth, but your shoulder takes the brunt of the impact against the sharp timber, tearing your tunic and leaving a deep, purple bruise. The black ink-river below splashes upward, coating your boots and stockings in a foul-smelling sludge that burns your skin. Gasping for breath in the dust-choked air, you haul yourself back onto the narrow pathway. Though bruised and foully stained, you clutch the rune-inscribed vellum tightly in your fist as you limp forward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Escape the churning ink river"
+   ]
+  },
+  "ul-5-038": {
+   "title": "The Runed Vellum",
+   "text": "Darting your hand through the fluttering chaos, however narrowly you avoid the snapping jaws of the leather bindings, your fingers close securely around the drifting scrap of parchment. The violent motion of the surrounding stacks settles instantly into a low, steady hum as the protective runes upon the vellum flare with a brief, soothing light. You lift the prize toward your lamp, examining the intricate geometric patterns drawn in permanent ink that shield the bearer from wandering curses. It is a rare and potent safeguard, carved by some forgotten scholar who feared the final sealing of the library. You tuck the vellum securely inside your leather pouch, feeling a quiet reassurance settle over your tired limbs.",
+   "check": "",
+   "grant": "A scrap of runed vellum",
+   "exits": [
+    "Return to the obsidian ring"
+   ]
+  }
+ },
+ "missing": []
+}

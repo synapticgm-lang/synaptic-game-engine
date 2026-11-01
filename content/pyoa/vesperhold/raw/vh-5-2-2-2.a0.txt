@@ -1,0 +1,64 @@
+@@SECTION vh-5-2-2-2
+TITLE: The Laden Damson
+TEXT: Crawling beneath a laden damson tree, you brush past damp leaves that shower cold dew across your neck and threaten to betray your passage. The weight of the bronze clapper pulls low against your shoulder blades inside its padded cradle, its metal cold enough to numb your spine through your woollen tunic. A stray dog barks against the fog somewhere down the slope, its sharp yapping muffled by thick layers of cloud. // You must decide whether to press deeper into the dwarf quinces or seek cover by the mossy retaining walls where the Cable Court tax-collectors are known to patrol.
+EXIT 1: Slip away through the dwarf quinces
+EXIT 2: Hide beside the mossy retaining wall
+@@END
+@@SECTION vh-5-2-2-3
+TITLE: The Slippery Wall
+TEXT: Balancing on a slippery stone wall dividing two overgrown orchards, you steady the heavy cradle as the fog rolls in thicker from the gorge. Below your boots, the drop falls away into gray nothingness, broken only by the skeletal branches of neglected fruit trees. The cold air tastes of rotting pulp and mountain water, sharp enough to make your lungs ache with every measured breath. // You must choose between dropping down near the tax-collector's path or pushing onward toward the muddy terraces where rotten fruit lies in deep, treacherous heaps.
+EXIT 1: Duck past the tax-collector's path
+EXIT 2: Traverse the muddy fruit terraces
+@@END
+@@SECTION vh-5-2-2-4
+TITLE: The Narrow Cleft
+TEXT: Squeezing through a narrow cleft in the drystone terracing, you scrape your woollen coat against sharp slate while the mule picks its way behind. The animal snorts softly, its breath puffing white in the chilled mountain air as the bronze tongue hums a low, sympathetic vibration against your spine. Distant cables stretch across the void, humming a taut chord that drowns out the sounds of the valley below. // You can skirt the old winch station, slip along the warden's box-hedge, or flash your forged token if the toll-collectors challenge your passage.
+EXIT 1: Pass close to the iron winch
+EXIT 2: Creep along the box-hedge cottage
+EXIT 3: Flash your forged toll token
+@@END
+@@SECTION vh-5-2-2-5
+TITLE: The Ice-Rimed Trench
+TEXT: Wading through a shallow, ice-rimed irrigation trench, you keep your head low beneath low-slung pear branches while distant whistles echo off the cliff. The freezing water numbs your ankles, but the soft mud swallows the sound of your boots entirely. Fog-Wardens patrol these upper lines with practiced rhythm, their silver whistles cutting through the damp air like thin wire. // You wait for a break in the whistling before deciding where to make your next move beneath the sorting tables.
+EXIT 1: Wait out the orchard workers
+@@END
+@@SECTION vh-5-2-2-6
+TITLE: The Fennel Patch
+TEXT: Crouching in a patch of wild fennel behind a stone smokehouse, you watch a lantern beam sweep across the grey fog just inches above your cap. The dry stalks scratch against your face, and the smell of crushed anise mixes with the damp mountain mist. Somewhere nearby, a wood-fire crackles softly in a warden's hearth, offering a fleeting reminder of warmth. // You have a clear window to slip past the sorting tables, hug the high box-hedges, or deal with the Cable Court bailiffs if your debt catches up with you.
+EXIT 1: Crawl beneath the fruit-sorting tables
+EXIT 2: Sneak past the box-hedge cottage
+EXIT 3: Deal with the bailiff using your forged token
+@@END
+@@SECTION vh-5-2-2-7
+TITLE: The Earthen Embankment
+TEXT: Scrambling down a steep earthen embankment choked with dead brambles, you catch your sleeve on a thorn while the bronze clapper shifts heavily. The metal tongue hums against its padding, a deep and mournful note that seems to resonate with the stones underfoot. Below, the orchard paths twist through a maze of hanging mist and damp timber, hiding both friends and toll-collectors alike. // You must choose whether to bluff the approaching bailiff with your forged token or slip quietly past the willow baskets where the whistle-guards patrol.
+EXIT 1: Present your forged token to the bailiff
+EXIT 2: Duck behind the towering willow baskets
+@@END
+@@SECTION vh-5-2-2-8
+TITLE: The Stone Cistern
+TEXT: Pausing beside a moss-grown stone cistern, you rinse cold mud from your knuckles while the mountain mist tastes of salt and wood-smoke. The water inside is black and still, reflecting nothing of the grey sky above. The heavy bronze tongue rests against your spine, cold and steady, reminding you of the miles still remaining before Lowgate's forges. // You can risk the toll-collectors, navigate the lead fountain pipes, or turn back up the mountain toward the upper ridges.
+EXIT 1: Present your forged token to the bailiff
+EXIT 2: Step carefully over the lead pipes
+EXIT 3: Turn back toward the upper wardens
+@@END
+@@SECTION vh-5-2-2-9
+TITLE: The Terraced Nursery
+TEXT: Creeping along the edge of a terraced nursery bed, you step lightly over coiled grafting twine that could easily trip you into the briars. The delicate saplings brush against your sleeves like skeletal fingers, and the damp soil clings to your boots with every cautious step. Down in the valley, unseen bells toll the hour in muffled, hollow notes that fade quickly into the mist. // You must decide whether to hide among the willow wicker baskets or wade through the drainage ditch toward the cobblestone track.
+EXIT 1: Hide behind the willow wicker baskets
+EXIT 2: Follow the drainage ditch to the cobblestones
+@@END
+@@SECTION vh-5-2-2-10
+TITLE: The Apple Crates
+TEXT: Ducking behind a towering stack of empty apple crates, you watch two Fog-Wardens pass by with muffled lanterns, discussing the morning frost. The wood smells of sweet decay and stored autumn harvests, thick and cloying in the damp air. Your shoulders ache from the cradle's weight, but the silence of the fog offers a safe cloak for your passage. // You can slip past the willow baskets, follow the boundary wall into the lower groves, or dodge into an alcove if the runaway barrel threatens your path.
+EXIT 1: Hide behind the willow wicker baskets
+EXIT 2: Trail your hand along the boundary wall
+EXIT 3: Duck into the shallow stone alcove
+@@END
+@@SECTION vh-5-2-2-11
+TITLE: The Mud Slide
+TEXT: Sliding down a slick mud slide between two terraced plots, you use your free hand to brake against mossy roots while the heavy bell-tongue pulls. The wet earth smells of rich loam and crushed leaves, cold and slick beneath your palms. Below you, the orchard paths branch out into the fog, offering several routes toward the lower valley levels. // You can seek cover behind the willow baskets, follow the boundary wall, or take the drainage ditch toward the cobblestones.
+EXIT 1: Hide behind the willow wicker baskets
+EXIT 2: Follow the damp boundary wall
+EXIT 3: Take the drainage ditch to the track
+@@END

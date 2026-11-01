@@ -1,0 +1,69 @@
+@@SECTION vh-3-2-1-2
+TITLE: The Blocked Stair
+TEXT: Granitic dust coats your tongue as a gaunt miller named Cribb plants his heavy boots squarely across the narrow stone stair. He offers the intricate craft of high-altitude wind-calls, but only in exchange for an entire day spent toiling at his sluggish, groaning millstone. The heavy bronze clapper hums a dull warning against your shoulder blades, reminding you of the twenty-day window before the mountain passes freeze solid. // Below your feet, the mountain drops away into an abyss of cold grey cloud where no sound rises save for the distant clatter of unseen wind-wheels turning in the thin air.
+EXIT 1: Share goat cheese with a warder
+EXIT 2: Slip past the narrow granite gap
+@@END
+@@SECTION vh-3-2-1-3
+TITLE: The Drafty Loft
+TEXT: Freezing draughts whistle through the slatted timber walls of the flour-loft, chilling your fingers as you weigh the price of the miller's nocturnal schooling. Every hour spent memorising whistle pitches eats into the dangerously brief span of your twenty-day journey to Lowgate foundry. Outside, the wind howls a sharp complaint across the barley terraces, rattling the loose roof-tiles and setting the bronze clapper in its cradle to thrum with a sympathetic, metallic ache.
+EXIT 1: Inspect the rusted hatchway below
+EXIT 2: Flash your guild cord to pass
+EXIT 3: Soothe the stubborn mule by the fire
+EXIT 4: Brave the scouring flurry of snow
+@@END
+@@SECTION vh-3-2-1-4
+TITLE: The Knot-Master's Shortcut
+TEXT: Spotting the intricate rope-knot carved proudly onto your leather pack, a friendly knot-master steps from the shadow of the hopper stones and steers you deftly past the miller's time-trap. He leads you toward an untaxed winch-slide that bypasses the toll-barriers entirely, muttering a brief blessing of hemp and tension for the road ahead. The heavy bronze clapper shifts in its padded cradle, its cold bronze tongue humming a low note of approval at your sudden stroke of good fortune.
+EXIT 1: Step out into the swirling snow
+EXIT 2: Pocket the strange iron relic
+EXIT 3: Listen to the old weather rhymes
+@@END
+@@SECTION vh-3-2-1-5
+TITLE: The Grain-Chute Descent
+TEXT: Refusing to barter away precious daylight for the miller's hollow promises, you dive headfirst into the slick darkness of a steep grain-chute. The wooden walls rush past in a blur of powdered barley and splinters, while the heavy bronze clapper strapped to your back hums a steady, vibrating warning against the encroaching frost. You emerge breathlessly onto a lower terrace, tasting dust and cold mountain air with every gasp.
+EXIT 1: Pocket the heavy iron relic
+EXIT 2: Heed the old weather-teller's warnings
+EXIT 3: Track the distant smell of foundry smoke
+EXIT 4: Adjust the slipping canvas cradle
+@@END
+@@SECTION vh-3-2-2-0
+TITLE: Rime Upon the Steps
+TEXT: Staggering outward from the stifling miller's loft, you discover that precious hours have vanished and left the stone steps sheathed in dangerous, glassy rime. A thick valley mist rolls upward from the gorges below, swallowing the lower terraces and turning every distant windmill into a skeletal shadow against the pale sky. The bronze clapper rests heavily against your spine, humming a cold note that matches the shiver running down your neck.
+EXIT 1: Cross the rickety cedar bridge
+EXIT 2: Follow the scarecrow's wooden finger
+EXIT 3: Dodge the flying chaff of dry grain
+EXIT 4: Turn back to the upper mill
+@@END
+@@SECTION vh-3-2-2-1
+TITLE: The Dripping Water-Wheel
+TEXT: Giant crystal spears hang menacingly from a frozen water-wheel that groans beside the narrow track, threatening to slash the leather straps of your precious bronze burden if you misjudge your step. Water drips sluggishly from the upper ledges, instantly turning to razor-sharp ice as it strikes the stone. You press your shoulder against the cliff face, shielding the heavy clapper while your boots search for a secure foothold on the slick path.
+EXIT 1: Follow the scarecrow toward the drop
+EXIT 2: Duck beneath the flying chaff
+EXIT 3: Shelter behind the retaining wall
+@@END
+@@SECTION vh-3-2-2-2
+TITLE: Korr's Grim Warning
+TEXT: Miller Korr spits a mouthful of dark phlegm into the barley bin and warns you with a flat stare that the glacier ladders spanning the lower chasms are already snapping in the vicious night freeze. The wind carries a bitter edge that promises frozen skin within minutes if you do not find shelter or descend with absolute speed. Your shoulders ache under the unyielding weight of the heavy bronze tongue as you weigh the terrible risk of the drop ahead.
+EXIT 1: Dodge the cloud of dry chaff
+EXIT 2: Take shelter behind the stone wall
+EXIT 3: Take the reckless way
+@@END
+@@SECTION vh-3-2-2-3
+TITLE: The Stolen Spoon
+TEXT: Damp middlings rain down from above as two terrace boys grapple fiercely near the sheer cliff edge over a battered pewter spoon, nearly tumbling into the empty air. You flatten yourself against the rough stone wall to avoid the flying sacks, feeling the heavy bronze clapper vibrate against your spine in time with the boys' frantic breathing. The mountain wind howls through the narrow gap between the mills, smelling sharply of wet grain and old iron.
+EXIT 1: Hide behind the dry-stone wall
+EXIT 2: Watch the fog-wardens pass by
+@@END
+@@SECTION vh-3-2-2-4
+TITLE: The Weaver's Scowl
+TEXT: A sudden metallic clang echoes across the terrace as the heavy bronze clapper strikes a protruding stone lintel, drawing sharp, suspicious glares from local weavers mending large wind-nets. They pause their rhythmic knotting, watching your laden shoulders with guarded eyes that mistrust strangers carrying metal meant for the forge. You mutter a quiet apology and quicken your pace along the narrow ledge, keeping your hand firmly on the padded cradle straps.
+EXIT 1: Accept the clerk's credit token
+EXIT 2: Traverse the sheet of blue ice
+@@END
+@@SECTION vh-3-2-2-5
+TITLE: The Cable Court Inspector
+TEXT: Sitting atop an empty nail-keg with a ledger spread across his knees, a solitary guard from the Cable Court watches your approach with cold, calculating eyes. He demands an immediate inspection fee for the massive bronze mass strapped to your tired shoulders, tapping an ink-stained finger against a wooden toll-box. The mountain air grows noticeably colder as the sun dips behind the jagged ridge above the terrace.
+EXIT 1: Meet the synchronized hand-bells
+EXIT 2: Ignore the stray mountain goat
+@@END

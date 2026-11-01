@@ -1,0 +1,64 @@
+@@SECTION vh-2-2-1-4
+TITLE: The Untaxed Pauper's Gate
+TEXT: Toll-clerks peer out from their frost-rimed wooden booth, their eyes sweeping over your travel-worn pack and the simple length of ordinary hemp coiled on your shoulder. Because you carry no precious metal or dutiable cargo to tempt their greed, they dismiss you with a lazy wave of a mittened hand, letting you slip past the barrier without a sideways glance. The bustling market lane opens wider ahead, choked with the smell of pine tar and wet wool. // You adjust your heavy burden as the icy wind howls through the rigging above, wondering which path through the hanging bazaar will take you deeper into the gorge.
+EXIT 1: Take the lower stair toward the misty abyss
+EXIT 2: Dodge the swinging freight basket and dart left
+EXIT 3: Watch the guildmaster inspect the iron cable
+@@END
+@@SECTION vh-2-2-1-5
+TITLE: The Frantic Winch-Boy's Plea
+TEXT: A frantic winch-boy named Tolly intercepts you near the capstan house, thrusting a handful of tallow-soaked twine directly into your numb palm. He begs you to inspect a frayed anchor-line that threatens to snap under the weight of the dangling cargo baskets. The cold air bites at your cheeks while the boy chatters nervously about the rising gale-force winds battering the market platforms. // You must decide whether to stop and lend your hands to the repair or press onward down the mountain before the squall worsens.
+EXIT 1: Step clear of the capstan and run right
+EXIT 2: Pause to help the boy mend the line
+EXIT 3: Face the blind squall along the limestone wall
+EXIT 4: Balance across the narrow fir pole bridge
+@@END
+@@SECTION vh-2-2-2-0
+TITLE: The Suspended Timber Gallery
+TEXT: You navigate a suspended timber gallery where towering stacks of resin-smelling coils rest against the sheer, dripping mountain face like dark sleeping serpents. The wooden planks groan under your boots with every step, vibrating with the distant thunder of the massive cable winches hauling freight between the hanging towns. // The damp chill clings to your clothes while you look for a way through the tangle of ropes.
+EXIT 1: Scramble across the dripping timber gantry
+@@END
+@@SECTION vh-2-2-2-1
+TITLE: The Toll-Collector's Demand
+TEXT: Master weaver Elden blocks the narrow plankway with a bundle of heavy wire-cored cables, his arms crossed over his chest and a stubborn scowl on his weathered face. He demands a double toll for any bronze passing through his section of the market, his sharp eyes fixed suspiciously on the covered cradle strapped to your back. // You have to choose how to handle the demanding weaver before a crowd blocks the passage entirely.
+EXIT 1: Climb over the dripping timber gantry
+EXIT 2: Crawl through the greasy drainage chute
+@@END
+@@SECTION vh-2-2-2-2
+TITLE: The Heavy Draft Mules
+TEXT: A sudden team of heavy draft mules clatters across the overhead trestle, their iron-shod hooves showering your shoulders with frozen grit and loose horseshoe nails. You press yourself tightly against the freezing limestone wall as the beasts thunder past, their breath pluming white in the thin mountain air. // The clatter fades into the howling wind, leaving you standing at a slippery junction in the market walkways.
+EXIT 1: Follow the mule tracks toward the canvas tent
+EXIT 2: Careen down the sloped central tramway
+EXIT 3: Accept the greasy protective leather pad
+@@END
+@@SECTION vh-2-2-2-3
+TITLE: The Guild's Knotted Token
+TEXT: Because you bear the Ropewrights' Guild's sacred knotted token proudly displayed on your jacket, the armed rope-guards snap their splicing mallets to attention as you approach. They clear a direct, unimpeded passage across the swaying gorge bridge, nodding respectfully to the heavy burden you carry. // The open walkway stretches before you, free of the usual tolls and delays that plague ordinary travelers in this hanging market.
+EXIT 1: Hurry down the sloped central tramway
+EXIT 2: Meet the heavily laden ore basket at the platform
+@@END
+@@SECTION vh-2-2-2-4
+TITLE: The Hidden Alcove
+TEXT: You slip quietly into a narrow alcove behind a tallow-chandler's booth while two Cable Court enforcers angrily argue over ledger tallies in the freezing drizzle. Their voices echo off the damp rock face, discussing tax rates and seized bronze with menacing intensity. // Crouched in the shadows with your heavy burden, you wait for them to clear the path ahead.
+EXIT 1: Squirm through the greasy drainage chute
+EXIT 2: Approach the canvas watch-tent cautiously
+EXIT 3: Take the leather pad from the old braider
+@@END
+@@SECTION vh-2-2-2-5
+TITLE: The Screeching Pulley
+TEXT: A frozen pulley screeches overhead, showering bright orange sparks onto the canvas roof above your head as a heavy timber crate swings violently past on a frayed tow-line. The acrid scent of burning hemp smoke fills the air while workers shout warnings back and forth across the chasm. // You need to pick your footing carefully before another stray crate comes hurtling out of the fog.
+EXIT 1: Step toward the busy winch-station platform
+EXIT 2: Press flat against the shadowed alcove wall
+@@END
+@@SECTION vh-2-2-2-6
+TITLE: The Curious Apprentice
+TEXT: Apprentice Kenal offers you a warm cup of bitter chicory water from a dented tin mug in exchange for news of the broken bell-metal ticking softly inside your canvas cradle. The young weaver leans against a wooden post, blowing on his steaming cup while the icy wind tugs at his woolen scarf. // You consider whether to share the tale of the shattered Orison or keep your silence and move on.
+EXIT 1: Follow the mule past the ropeway stalls
+EXIT 2: Dodge the whipping guide-line ahead
+@@END
+@@SECTION vh-2-2-2-7
+TITLE: The Splicers' Trestle
+TEXT: You crawl beneath a slumping timber trestle where three veteran weavers are splicing a thick hemp hawser with bone needles while shouting over the roar of the gale. Strands of grey fiber swirl around you like winter snow as the great ropes groan under the weight of the suspended city. // Emerging on the other side of the trestle, you face two distinct routes deeper into the market labyrinth.
+EXIT 1: Walk past the shadowed alcove wall
+EXIT 2: Duck under the whipping guide-line
+@@END

@@ -1,0 +1,96 @@
+{
+ "batch": "ul-2-129",
+ "sections": {
+  "ul-2-129": {
+   "title": "The Vertical Cleft",
+   "text": "Stone walls press inward from both flanks until the air tastes of dry lime and old mortar. The stacks narrow dramatically into a vertical cleft where your shoulders brush cold, weeping masonry on every step. Faint, dry breath sounds drift from the hairline fractures in the stone, murmuring archaic warnings about books that remember forgotten names. Your lantern beam catches scrawled marginalia bleeding directly from the rock face into the darkness ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Squeeze forward through the whispering stone"
+   ]
+  },
+  "ul-2-130": {
+   "title": "The Narrowing Cleft",
+   "text": "A claustrophobic fissure between two massive stone book-presses forces you to squeeze through side-on in total darkness. The scent of lamp-oil hangs thick in your wool coat as you weigh the narrow paths stretching into the gloom. To your left, a jagged passage leads toward a shimmering curtain of dust and iron bindings. Straight ahead, the fissure splits into darker crevices where the ink-sellers' routes are said to cross. Choose your footing carefully before the walls decide to shift again.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip sideways into the tightest gap",
+    "Navigate the jagged stone protrusions",
+    "Slide past the projecting shelf-ends",
+    "Bend your posture to the curve",
+    "Emerge into the vaulted scriptorium"
+   ]
+  },
+  "ul-2-131": {
+   "title": "The Silver Bookmark",
+   "text": "Smooth stone slides against your sleeve as you slip sideways through the tightest portion of the cleft with measured grace. A faint metallic gleam catches the pale light of your brass lamp from a crevice near the floor. Reaching down, your fingers brush against a dropped silver-plated bookmark of fine make, engraved with the stamp of the Cataloguers' Court. It hums with a faint, residual chill against your palm before you tuck it securely into your pocket.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance deeper into the gloom"
+   ]
+  },
+  "ul-2-132": {
+   "title": "The Slippery Ledger",
+   "text": "Loose pages from a displaced ledger flutter across the narrow floor, slick with a film of dark, stagnant condensation. You must balance your weight precisely on the balls of your feet to cross the hazard without sliding into the jagged masonry. Lifting your lantern high, you test the slick stone edge with your boot heel while the surrounding shelves groan and shift.",
+   "check": "Balance carefully across the slick pages",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-133": {
+   "title": "A Heavy Stumble",
+   "text": "Your boot slips on the wet vellum, pitching you heavily against a protruding corner of iron-bound shelving. A sharp pain flares along your ribs as you catch your breath against the cold stone, losing precious lamp-oil from your battered tin flask. The bruising will linger for days, serving as a bitter reminder of the Underlibrary's shifting floors. You pick yourself up from the dusty floorboards, dusting your wool coat with a grimace.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drag yourself toward the passage"
+   ]
+  },
+  "ul-2-134": {
+   "title": "The Silver Bookmark",
+   "text": "You slip sideways through the tightest portion with smooth grace, your shoulder grazing the damp leather spines of forgotten folios until your bootheels find firm flagstones once more. Dust motes dance in the amber glare of your lantern, settling over the endless labyrinth of drifting stacks that stretch out into the gloom. Clutched tightly in your palm is a silver-plated bookmark of fine make, rescued from the gap just as the shelves shifted their iron-bound joints. It hums faintly against your skin like a trapped bee, carrying the secret weight of a librarian's forgotten favor.",
+   "check": "",
+   "grant": "silver-plated bookmark of fine make",
+   "exits": [
+    "Squeeze back through the narrow fissure"
+   ]
+  },
+  "ul-2-135": {
+   "title": "The Fig Stash",
+   "text": "Jagged stone protrusions jut from the walls like the teeth of an ancient mechanism, requiring careful observation with every step. You navigate the obstacle using balanced footwork, testing each handhold before trusting your weight to the ancient masonry. Wedged behind a stack of untagged pamphlets, your fingers brush against a small, wrapped bundle. Opening it reveals a forgotten stash of sweet dried figs, surprisingly moist and smelling of honey and old paper.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue along the winding ledge"
+   ]
+  },
+  "ul-2-136": {
+   "title": "Crossing the Gap",
+   "text": "A wide gap opens between the stone shelves where the floor has drifted away into black emptiness. You test the stability of a narrow wooden plank bridging the chasm, watching tiny motes of dust spin into the abyss. Holding your breath, you prepare to step onto the trembling timber while the lamp flame flickers dangerously in the draft.",
+   "check": "Step lightly across the trembling plank",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-137": {
+   "title": "A Bitter Drop",
+   "text": "The timber groans under your weight and tips sharply, sending you tumbling onto a rough pile of discarded parchment rolls. A sharp paper-cut stings across your palm, drawing a bead of dark blood, and your spare tin of lamp-oil cracks against the floor. You salvage what remains of your supplies with trembling fingers, nursing your bruised hand in the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl away from the chasm"
+   ]
+  },
+  "ul-2-138": {
+   "title": "Across the Timber",
+   "text": "Your footwork holds true as you glide across the plank, reaching the far side with a steady thud of your heels. The crossing is treacherous, however narrowly you managed to keep your balance above the drop. Among the litter of the ledge, you discover a small, leather-bound notebook filled with helpful shortcut notes left by a friendly clerk.",
+   "check": "",
+   "grant": "A book of secret shortcuts",
+   "exits": [
+    "Step through the arched doorway"
+   ]
+  }
+ },
+ "missing": []
+}

@@ -1,0 +1,89 @@
+{
+ "batch": "sg-5-1-3-10",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-5-1-3-10": {
+   "title": "The Ozone Chamber",
+   "text": "Pungent ozone fills a chamber where broken copper wires spit faint blue sparks into the dry air. Every snap of electricity illuminates the flaking lead paint on the low ceiling, casting jagged shadows across your boots. You shield your face with a forearm as a particularly bright arc leaps toward a rusted conduit, leaving a metallic taste at the back of your throat.",
+   "exits": [
+    "Crawl through the sparking gap",
+    "Climb toward the scorching upper terrace",
+    "Slip behind the stack of spare lenses"
+   ]
+  },
+  "sg-5-1-3-11": {
+   "title": "The Marching Patrol",
+   "text": "You flatten yourself against a fluted pillar as a patrol of mirror-bearers marches past with rhythmic clinking. Polished brass plates hang at their hips, catching the stray shafts of sunlight that pierce the ruined vault above. Their heavy boots strike the fused glass floor in unison, a steady drumbeat that vibrates straight through the soles of your feet until they turn a corner and the echoes finally fade into the vast silence of the tower.",
+   "exits": [
+    "Hide near the arguing glass-diver",
+    "Reach for the crumbling stone balustrade",
+    "Step out onto the Sentry Terrace"
+   ]
+  },
+  "sg-5-1-3-12": {
+   "title": "The Stubborn Latch",
+   "text": "A stubborn latch on a ventilation grille requires you to risk a noisy strike with your heavy tool. You tap the rusted hinge once, twice, holding your breath as the metal protests with a sharp, ringing ping that seems to carry for miles through the hollow shaft. A draft of stale air greets your face, smelling of old dust and distant rain, urging you to pull the stubborn grating open before anyone investigates the sound.",
+   "exits": [
+    "Head toward the blazing solar terrace",
+    "Duck behind the stack of spare lenses",
+    "Grasp the crumbling outer balustrade"
+   ]
+  },
+  "sg-5-1-3-13": {
+   "title": "The Greasy Cable-Run",
+   "text": "You scramble up a vertical cable-run while greasy soot makes every handhold a slippery, terrifying gamble. Your fingers find purchase along the braided steel strands, but ancient lubricants smear your palms, threatening to peel your grip away with every upward pull. Below you, the shaft drops into absolute darkness, while above, a pale smudge of daylight marks the edge of the terrace you need to reach.",
+   "exits": [
+    "Approach the scorching collector terrace",
+    "Test the weight of the stone balustrade",
+    "Take the reckless way"
+   ]
+  },
+  "sg-5-1-3-14": {
+   "title": "The Resonant Quartz",
+   "text": "The Seedkey vibrates warmly against your chest, reacting to a hidden network of resonant quartz veins nearby. The ceramic surface pulses with a faint, steady rhythm that matches the thrum of ancient machinery buried deep within the observatory walls. This subtle tug draws your gaze toward a narrow aperture where the blue-tinted light shifts as though filtered through deep water.",
+   "exits": [
+    "Duck behind the stack of spare lenses",
+    "Step out onto the Sentry Terrace"
+   ]
+  },
+  "sg-5-1-3-15": {
+   "title": "The Blind Aperture",
+   "text": "You squeeze through an aperture so narrow you must extinguish your ember-lamp and crawl blind in pitch black. The cold stone sides press tightly against your shoulders and back, leaving no room to turn or even lift an arm. Every inch forward requires a deliberate heave, relying entirely on the scrape of your knees against the grit and the faint smell of sun-baked dust guiding you onward.",
+   "exits": [
+    "Emerge onto the sunlit Sentry Terrace"
+   ]
+  },
+  "sg-5-1-4-0": {
+   "title": "The Whistling Gale",
+   "text": "High above the Basin floor, a whistling gale through the broken roof tests your footing on slick glass. The wind tears at your cloak, howling through the twisted iron ribs of the dome as though trying to peel you away from the heights and cast you down into the immense dry emptiness below. You lean your weight hard into the blast, planting each boot with desperate care.",
+   "exits": [
+    "Crouch behind the low sun-shield",
+    "Edge along the outer parapet"
+   ]
+  },
+  "sg-5-1-4-1": {
+   "title": "The Iron Framework",
+   "text": "You climb a leaning framework of iron girders toward the blinding white glare of the upper terraces. Rust flakes off beneath your grip, raining down into the dizzying void as you haul yourself upward hand over hand. The air grows noticeably thinner here, smelling intensely of baked metal and the ozone tang of high-altitude mirrors catching the noon sun.",
+   "exits": [
+    "Take cover behind the sun-shield",
+    "Turn back down the shaft"
+   ]
+  },
+  "sg-5-1-4-2": {
+   "title": "The Sweeping Mirror",
+   "text": "A sentinel's mirror-flash sweeps across your hiding alcove, forcing you to freeze amid dangling copper wires. The brilliant beam of reflected sunlight paints the walls in harsh white light before sliding past, leaving black spots dancing before your eyes. You wait in the sudden gloom, listening intently for the crunch of boots on glass that might signal you have been spotted.",
+   "exits": [
+    "Face the veteran sentry's demand"
+   ]
+  },
+  "sg-5-1-4-3": {
+   "title": "The Choked Flue",
+   "text": "You claw your way up a choked drainage flue that smells faintly of ancient oil and dried desert lime. Sharp fragments of old mortar bite into your knuckles as you scramble over a mound of wind-blown silt, dragging your heavy pack through the narrow constriction. Above you, a square of harsh daylight opens like an eye, promising an exit from the stifling dark.",
+   "exits": [
+    "Face the veteran sentry's demand",
+    "Mirror the sentry's complex code"
+   ]
+  }
+ },
+ "missing": []
+}

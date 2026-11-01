@@ -1,0 +1,70 @@
+Gemini said
+
+@@SECTION td-3-211
+TITLE: The Sunken Stair
+TEXT: Iron rings bite into grease and moisture as you lower yourself past the final guard-house of Saltspire, leaving the stilt-city's lantern-lit underside to vanish into the deep salt-haze. Below you, the Sunken Stair uncoils into the bedrock like the ribs of some immense, buried Leviathan. The air grows cold and thick with the smell of stagnant bilge and oxidized copper, heavy enough to weigh down your tongue. Far down in the grey gloom, a faint, rhythmic thrumming vibrates through the cold masonry, shaking the stone under your boots. Orsolya Venn is somewhere down there in the dark, and the great mechanism awaits the hand that dares to turn it.
+EXIT 1: Begin the long drop into the dark
+@@END
+@@SECTION td-3-212
+TITLE: Braking the Spindle
+TEXT: Heavy iron levers hum under your palms, cold grease coating your knuckles as the counterweights groan overhead. You lean your weight against the rusted teeth, courting a sudden, bone-shattering drop just to save a few precious heartbeats on the clock. Sparks spit from the iron brake-shoe, smelling of hot sulphur in the damp air. Below the cage, precious brass linkages dangle within reach of the drop, waiting for a daring hand to snatch them before the descent settles.
+CHECK: CRAFT
+GRANT: spare brass gears
+EXIT 1: Snatch the hanging metal pieces
+@@END
+@@SECTION td-3-213
+TITLE: Rotting Ledger
+TEXT: Brittle pages flake away into black dust beneath your fingertips, releasing a sharp, lung-clogging reek of green mold. You squint through watery eyes at the fading ink, racing against the absolute decay of the paper to find the numbers that govern the vault door. A grey spore-cloud billows from the spine, stinging your throat with every shallow breath you draw in the dim alcove.
+CHECK: WIT
+GRANT: vault combination notes
+EXIT 1: Trust the cracked and fading numbers
+@@END
+@@SECTION td-3-214
+TITLE: The Glass Ledge
+TEXT: Smooth green glass spans the open gap above the black, unmoving reservoir, slick with condensation from the damp air. Your boots slide an inch before finding purchase against the brittle surface, suspended over a terrifying drop where drowned iron shapes loom in the dark water. A heavy leather toolbelt dangles from a rusted stanchion on the far side, half-submerged in the greenish film.
+CHECK: NERVE
+GRANT: drowned worker's toolbelt
+EXIT 1: Reach across the gap for leather
+@@END
+@@SECTION td-3-215
+TITLE: Barnacle Strongbox
+TEXT: Jagged shells crusting the iron lid tear through the thick leather of your gloves, drawing sudden warmth across your palms. You wedge a cold chisel into the seam, throwing your shoulders against the rusted iron while the sharp edges threaten to splinter bone. A thick layer of grey scale falls away at last, exposing the heavy lock and the promise of hidden wealth within.
+CHECK: MIGHT
+GRANT: emergency coin cache
+EXIT 1: Force the heavy encrusted latch open
+@@END
+@@SECTION td-3-216
+TITLE: The Tidal Cabinet
+TEXT: Thin brass tumblers click softly under your improvised wire, echoing too loudly in the narrow, echoing corridor of the stilt-city. A drop of dark liquid beads at the tip of a hidden poison needle poised just above the keyhole, waiting for a single slip of your fingers. You hold your breath, steadying your pulse as the final pin lifts with a faint, satisfying snap.
+CHECK: CRAFT
+GRANT: ancient brass compass
+EXIT 1: Lift the brass compass from velvet
+@@END
+@@SECTION td-3-217
+TITLE: Shadows on the Walk
+TEXT: Heavy boots strike the iron grating just around the rusted corner, their muffled voices discussing the rotation schedules of the deep guards. You press your shoulder flat against the damp stone of the bulkhead, praying the shadows swallow the outline of your coat. Every detail of the patrol timing falls clear and distinct into the damp air between their slow, measured footsteps.
+CHECK: WIT
+GRANT: guard patrol schedule
+EXIT 1: Slip away before the lanterns turn
+@@END
+@@SECTION td-3-218
+TITLE: The Rusted Bookcase
+TEXT: Iron edges bite into the wooden floorboards as you haul your weight against the jammed frame, praying the noise stays swallowed by the distant rumble of the tide. A cascade of heavy ledgers tumbles into the dark salt-dust, followed by the dull, metallic clatter of a hidden tin box rolling free. You freeze, listening hard for the sound of boots on the stairs while your heart hammers against your ribs.
+CHECK: MIGHT
+GRANT: hidden coin cache
+EXIT 1: Grab the heavy tin box quickly
+@@END
+@@SECTION td-3-219
+TITLE: Picking the Solarium
+TEXT: Fine wire twists within the brass housing of the latch, guided only by the faint click of internal springs and your own sense of touch. You keep one eye on the moonlit corridor outside, ensuring the patrolling Brineholder guards remain out of sight while you work. The bolt slides back with a whisper of oiled metal, leaving the heavy door ready to swing wide whenever you choose to return.
+CHECK: CRAFT
+GRANT: cleared escape route
+EXIT 1: Leave the solarium door unlatched
+@@END
+@@SECTION td-3-220
+TITLE: Securing the Passage
+TEXT: Cold oil coats your fingertips as you adjust the hidden latch, ensuring the heavy door will yield to a swift shoulder-push later tonight. Faint strains of music drift down from the upper terraces of Saltspire, masking the faint mechanical sigh of the retreating bolt. You test the gap with a fingernail, satisfied that your path back from the inner sanctum is clear of locks.
+CHECK: NERVE
+GRANT: secondary escape route
+EXIT 1: Step away into the dim corridor
+@@END

@@ -1,0 +1,106 @@
+{
+ "batch": "ul-2-159",
+ "sections": {
+  "ul-2-159": {
+   "title": "Phantoms of the Shelf",
+   "text": "Dust hangs thick in the aisle, smelling of lamp-oil and parched hides, while pale silhouettes lean over invisible desks. These writing phantoms scratch furiously at the air, recording every breath and shift of your boots in rustling prose. You press your shoulder against a shifting mahogany stack, sliding past a cluster of spectral scribes whose pens never touch tangible paper. Your fingers trace the cool wood until they brush against a glass jar of gold leaf dust resting upon a stray ledge. Securing the tiny vessel into your satchel, you keep your breathing shallow and watch the drifting shelves part ahead.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step carefully through the gap"
+   ]
+  },
+  "ul-2-160": {
+   "title": "The Gilded Passage",
+   "text": "Shadows stretch long across the floorboards as the adjacent stack groans and grinds its iron wheels against hidden floor-grooves. Pale ink drips from an overhead shelf, forming dark, glossy pools that threaten to stain your boots if you linger. You step lightly over the dark puddles, keeping your eyes fixed on the narrow lane between towering folios. The air grows cold and tastes strongly of metallic copper and old rag paper. A faint whispering rises from the margins of the nearest books, urging you to turn back before the shifting architecture seals this corridor for good.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the narrow gap onward"
+   ]
+  },
+  "ul-2-161": {
+   "title": "Tread of Shadows",
+   "text": "Motes of gold dust cling to your fingertips as you edge past a phalanx of luminous scribes whose quills stroke the empty air with frantic speed. A single false step will trigger the scratching entities to turn their eyeless faces toward your presence. Balancing your weight evenly across the warped oak boards, you inch forward while the floor beneath your feet begins a slow, lateral drift. Your muscles tense against the sudden lurch of the shelves, requiring absolute stillness to avoid clipping the hanging brass lamp.",
+   "check": "Balance quietly past the phantoms",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-162": {
+   "title": "Heavy Footsteps",
+   "text": "A sudden lurch of the drifting shelving throws you off balance, your boot heel coming down hard upon a loose iron plate with a sharp ring. The writing phantoms halt their furious scratching in unison, their hollow gazes snapping directly toward your position. You stumble sideways into a protruding stack, grazing your shoulder against a row of sharp-edged ledgers and dropping your precious lamp-oil flask onto the floorboards. It shatters with a dull clatter, leaving you with a stinging scrape and a darkened corridor to navigate by touch alone.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee down the darkened aisle"
+   ]
+  },
+  "ul-2-163": {
+   "title": "Silent Navigation",
+   "text": "Your weight shifts with perfect equilibrium, your boots gliding over the vibrating oak planks without disturbing a single grain of dust or drawing the notice of the scribbling phantoms. You slip through the narrow gap between the moving stacks, keeping your breathing slow and controlled against the heavy smell of old ink. The danger recedes behind you as the shelves settle into a temporary alignment, leaving you safe in the dim stillness. Tucked securely within your palm is the prize you came for, gleaming faintly in the gloom.",
+   "check": "",
+   "grant": "jar of gold leaf dust",
+   "exits": [
+    "Return to the echoing scriptorium"
+   ]
+  },
+  "ul-2-164": {
+   "title": "The Iron Barricade",
+   "text": "Heavy iron cabinets block the forward passage, their double doors secured by massive padlocks and inscribed with shifting riddles about the forgotten catalogue. Each metal face bears deep scratches from previous scholars who tried and failed to force the springs. The air here tastes of cold rust and burnt lamp-oil, heavy with the quiet despair of the deep stacks. You trace the intricate script carved into the steel, reading lines that question the very nature of memory and record. The riddles shift beneath your fingertips, demanding an answer before the corridor shifts its walls and traps you permanently among the locked files.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Solve the iron cabinet riddles"
+   ]
+  },
+  "ul-2-165": {
+   "title": "The Iron Grille",
+   "text": "A massive barrier of interlocking security gates bars the forward passage, featuring heavy padlocks and intricate keyholes that gleam in the dim lamp-oil light. The metal framework vibrates with a low, rhythmic hum as the surrounding stacks shift their positions in the gloom. Beyond the barrier, narrow corridors branch off into the depths of the Unshelved Stacks, each offering a different path through the labyrinth of forgotten literature. The heavy iron bars smell of old grease and cold sweat, demanding a deliberate choice from anyone wishing to proceed deeper before the Long Closing seals the vaults.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Unpick the central security gate",
+    "Pry open the rusted latch",
+    "Slip past the floor pressure-plates",
+    "Force the hidden maintenance hatch",
+    "Decipher the ancient cataloguing marks",
+    "Descend into the floating archipelago"
+   ]
+  },
+  "ul-2-166": {
+   "title": "Master of the Lock",
+   "text": "You stare intently at the complex cryptographic riddle engraved upon the central padlock, letting your focus shut out the surrounding hum of the moving shelves. The cryptic verses shift under your gaze, challenging the logic of the Index and the memory of the city above. By sheer force of will, you parse the hidden grammar of the puzzle and align the heavy iron tumblers within the mechanism. A satisfying internal click echoes through the quiet aisle as the massive shackle springs open, granting you full access to the hidden mechanism within.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Take the heavy iron master-key"
+   ]
+  },
+  "ul-2-167": {
+   "title": "Mind Against Metal",
+   "text": "The heavy padlock resists your initial mental push, its ancient brass tumblers grinding stubbornly against the internal steel springs. A cold headache blooms behind your temples as the puzzle shifts its terms, demanding an absolute exertion of your mental stamina to prevent the mechanism from locking permanently. You focus every ounce of your concentration on the tiny alignment notches, ignoring the distant groaning of the shifting stacks around you. The cold iron radiates a biting chill into your fingers as you hold your mental grip at the very edge of failure.",
+   "check": "Force the lock with sheer willpower",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-168": {
+   "title": "Mental Strain",
+   "text": "The stubborn lock defeats your mental assault with a sharp, metallic snap that sends a piercing shockwave through your thoughts. A dull, persistent ache throbs behind your eyes, and your fingers tremble with sudden exhaustion against the cold iron shackle. The padlock remains stubbornly sealed, mocking your effort and consuming precious minutes while the distant stacks continue their slow, relentless drift. You pull your hand back, nursing a numbed thumb and a bruised spirit, but the corridor still waits for your next move.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat to the iron grille"
+   ]
+  },
+  "ul-2-169": {
+   "title": "The Master Key",
+   "text": "Your mental discipline holds firm against the ancient puzzle, forcing every stubborn tumbler into its proper alignment with a crisp, echoing click. The heavy iron shackle springs open in your palm, releasing a cloud of grey dust that smells of ancient parchment and dry ink. You lift the heavy artifact free from its hasp, feeling its cold, solid weight settle securely into your hand. This key will open doors that have remained shut since the founding of Quillon, offering safe passage through the most heavily guarded sections of the Underlibrary.",
+   "check": "",
+   "grant": "heavy iron master-key",
+   "exits": [
+    "Step back to the security gate"
+   ]
+  }
+ },
+ "missing": []
+}

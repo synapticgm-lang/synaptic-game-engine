@@ -1,0 +1,66 @@
+Gemini said
+
+@@SECTION sg-1-2-2-0
+TITLE: The Three-Mile Well
+TEXT: Dusty wrinkles crease the old crone's face as she hawks leathery salt-pears from a rush basket at the three-mile crossroads. Her rheumy gaze fastens instantly on the yellow glow leaking through the perforated iron chimney of your burner, weighing your chances against the long miles ahead. She offers a withered fruit for a copper, muttering warnings about the dry wash beyond the ridge. // The cold ceramic weight of the Seedkey taps reassuringly against your ribs while the desert wind begins to carry the bitter scent of baked alkali.
+EXIT 1: Climb the marl ridge toward the dark
+EXIT 2: Skirt the relay stump by the starlight
+@@END
+@@SECTION sg-1-2-2-1
+TITLE: The Fallen Lime-Kiln
+TEXT: Sharp shards of tumbled masonry crunch beneath your heavy boot-heels among the ruins of the old lime-kiln. A lean, mangy cur emerges from the lime-dust, sniffing eagerly at your cuff while your banked lantern remains tightly shuttered and dark against prying eyes. The night air tastes of stale lime and dry earth, thick with the silence of a dying frontier. // You grip the strap of your pack and listen closely for any sound of pursuit from the lamp-town behind you.
+EXIT 1: Descend beneath the old aqueduct arch
+EXIT 2: Pick a path across the alkali flat
+@@END
+@@SECTION sg-1-2-2-2
+TITLE: The Salt-Wain Ribs
+TEXT: Rusted iron ribs of an abandoned salt-wain arch overhead like the skeleton of some prehistoric beast stranded in the dust. Crouched in their meager shadow, a nervous pedlar thrusts forward a scratched, brass-bound spyglass, begging to trade it for your spare oil-skin before the weather breaks. His fingers tremble as he watches the amber flicker of your belt-lamp throw long, jittery shadows across the parched earth. // The option to retrace your steps lingers in your mind as the wind groans through the metal frame.
+EXIT 1: Inspect the mirror by the relay post
+EXIT 2: Traverse the loose gravel of the quarry
+EXIT 3: Head back toward the dim town lamps
+@@END
+@@SECTION sg-1-2-2-3
+TITLE: The Chalk-Kiln Wall
+TEXT: Harsh grinding sounds pierce the quiet as a debt-collector from the salt court hones a heavy skinning knife against the chalk-kiln wall. The sudden, brilliant yellow flare of your wick catches his eye, illuminating a cruel grin beneath his wide-brimmed hat. He pauses his work, testing the razor edge with a scarred thumb while sizing up your gear and your mission. // Every instinct urges you to move before he decides to claim a toll in blood instead of coin.
+EXIT 1: Slip past toward the relay stump
+EXIT 2: Push onward across the empty flat
+@@END
+@@SECTION sg-1-2-2-4
+TITLE: The Brackish Horse-Pond
+TEXT: Thick, foul-smelling mud claims your left boot up to the ankle by the margins of the stagnant horse-pond. As you wrench your foot free with a wet sucking sound, your dark lantern strikes a loose iron belt-ring with a sharp, echoing metallic ping. Mosquitoes buzz sluggishly in the heavy air above the brackish scum, and the distant hum of the basin seems to press in from all sides. // You balance your weight carefully on solid ground and search for a cleaner path.
+EXIT 1: Head into the pitch-dark aqueduct
+EXIT 2: Make for the distant signal mirror
+EXIT 3: Pick your way toward the lower pit
+@@END
+@@SECTION sg-1-2-2-5
+TITLE: The Leaning Pole
+TEXT: High above your lifted flame, a green signal light blinks in rhythmic pulses from the mirror-guild's leaning telegraph pole on the ridge. The sharp scent of ozone and heated copper drifts down through the lattice of wires as the automated relay chatters to itself in coded flashes. You shield your coal-lamp with a gloved hand, wondering if the message overhead speaks of trouble on the salt crust or merely routine weather reports. // The dark track stretches onward into the looming shadows of the basin.
+EXIT 1: Walk out onto the wind-swept flat
+EXIT 2: Inspect the scrawled cattle-gate warning
+@@END
+@@SECTION sg-1-2-2-6
+TITLE: The Drying Sheds
+TEXT: Sharp whiffs of charred coal smoke billow from your ventilation vents as you squeeze through the narrow passage between two collapsed drying sheds. A stray donkey tethered in the rubble lets out a raspy, discordant bray at the scent, startling a flock of dust-sparrows from the thatch. The cramped walls radiate the day's trapped heat, making the air stifling and close around your woolen travel coat. // You quicken your pace as the alley opens up toward the rugged wasteland.
+EXIT 1: Follow the cliff overhang into the dark
+EXIT 2: Navigate the rusted sheep-dip wire
+@@END
+@@SECTION sg-1-2-2-7
+TITLE: The Miller's Mound
+TEXT: Loose gravel shifts beneath your tread as you climb the slope of the miller's mound, keeping your lantern closely hooded against the skyline. A bulky shadow suddenly detaches itself from the rotting timber of the great mill-wheel, pausing to listen in the breathless desert hush. You freeze in your tracks, hand hovering near your belt as you wait to see if the figure is friend, foe, or mere illusion. // The path splits ahead, offering two distinct ways around the obstruction.
+EXIT 1: Check the warning by the gate post
+EXIT 2: Step carefully around the wire tangle
+@@END
+@@SECTION sg-1-2-2-8
+TITLE: The Parish Boundary
+TEXT: Weathered stone marks the ancient parish boundary where the cultivated loam finally gives way to the barren white salt crust. A deep boot scrape crusted with dry brine mars the dirt beside the marker, suggesting someone turned back in frantic haste just moments before. Your lantern flame dips and dances in a sudden eddy of cold air rolling down from the basin interior. // You weigh the silent warning left by whoever walked this way before you.
+EXIT 1: Follow the silt-cliff overhang forward
+EXIT 2: Bypass the barbed wire near the dip
+EXIT 3: Brace against the gust on the wash lip
+@@END
+@@SECTION sg-1-2-2-9
+TITLE: The Wire-Fence
+TEXT: High-tension wires hum an electric song overhead, vibrating faintly in the dry desert draft that whips across the abandoned tanner's paddock. A discarded ledger page, yellowed and brittle, snaps loose from a thorn bush and flutters sharply against your shin. Beyond the broken stone wall, an old brass button gleams dull and green in the downward pool of light cast by your lantern. // The open trail beckons past the rusted boundary fences.
+EXIT 1: Read the charcoal warning on the timber
+EXIT 2: Step past the tangled sheep-dip wire
+EXIT 3: Search the paddock wall for more relics
+@@END

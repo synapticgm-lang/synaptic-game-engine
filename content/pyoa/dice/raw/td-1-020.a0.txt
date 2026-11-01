@@ -1,0 +1,69 @@
+Gemini said
+
+@@SECTION td-1-020
+TITLE: The Ferryman's Price
+TEXT: Bargaining with the old man requires a steady tongue and a willingness to match his stubborn silence. You lean against the wet timber of the gunwale, offering a small twist of cured tobacco and a sharp knife in exchange for his accumulated wisdom of the silt-channels. He turns the blade over in his palm, testing its edge against a horny thumb, before spitting a brown stream into the gray muck. With a grunt, he slides a grease-stained, stiffened goatskin map across the thwart. It details the treacherous sinkholes and hidden drops where careless scavengers lose their boots to the suction. // You pocket the chart, knowing the paths it reveals will keep your feet out of the suffocating mire.
+GRANT: rusted map of the sinkholes
+EXIT 1: Take the map and move on
+@@END
+@@SECTION td-1-021
+TITLE: Office of Tides
+TEXT: The heavy oak door of the harbourmaster's abandoned office resists your tug until you wedge a crowbar into the swollen frame and throw your weight against the iron. Inside, the air smells of moldering ledgers and stagnant vinegar, untouched since the water vanished from the sills. You kneel before the brass-bound strongbox set into the floorboards, pulling a set of fine wire picks from your belt. Your fingers work by feel alone, listening for the faint clicks of the internal levers as a tripwire of thin copper wire waits just above the keyhole. You ease the tension bar, nudge the final tumbler aside, and lift the heavy iron lid. A tidy stack of silver coins rests within the velvet-lined well.
+EXIT 1: Pocket the silver and leave
+@@END
+@@SECTION td-1-022
+TITLE: The Harbor Office
+TEXT: Sunlight cuts through the grimy salt-crusted windows of the harbourmaster's abandoned office, illuminating dust motes dancing above scattered papers. You step carefully over a discarded ledger, keeping your eyes on the open strongbox where the silver coins gleam in the dim light. Reaching down, you gather the heavy metal pieces into a leather pouch, their pleasant clink breaking the heavy silence of the stranded waterfront. The room holds nothing else of immediate value, save for a brass spyglass mounted on a tripod facing the empty bay. You take a final look across the dry silt before turning your back on the quiet desk.
+EXIT 1: Return to the bustling harbour
+@@END
+@@SECTION td-1-023
+TITLE: Picking the Lock
+TEXT: Crouched in the dim gloom of the harbourmaster's abandoned office, you study the intricate brass mechanism of the floor safe. A hair-thin wire connects the lock tumbler to a loaded spring-gun nestled in the wainscoting, ready to fire at the slightest misstep. You slide your thinnest pick into the keyhole, holding your breath as sweat stings your eyes. Every shift of the metal demands absolute steadiness, balancing the tumbler tension against the hidden trigger. Your pulse thrums in your ears as you apply pressure to the final internal tooth, waiting to see if the trap holds or springs.
+CHECK: Disarm the trap and pick the lock
+@@END
+@@SECTION td-1-024
+TITLE: A Slip of the Pick
+TEXT: A sudden metallic snap echoes through the empty office as the tripwire catches your sleeve, triggering a small poisoned dart that grazes your forearm. You hiss in pain, yanking your hand back just as the dart embeds itself deep into the wooden wainscoting behind you. Blackened venom begins to burn through your blood, forcing you to bind the stinging scratch tight with a strip of rag from your coat. The strongbox remains sealed, mocking your haste, and the lost time leaves your nerves frayed and your supplies lighter. You stagger out into the salt-air, carrying a dull ache and a hard lesson about old harbor traps.
+EXIT 1: Retreat from the ruined office
+@@END
+@@SECTION td-1-025
+TITLE: Spoils of the Office
+TEXT: Working with meticulous care, you manage to bypass the concealed tripwire and trip the internal levers with a satisfying double click. The heavy iron lid pops upward on rusted hinges, releasing a puff of stale air and revealing a neat leather pouch of heavy silver coins. You slip the purse into your coat, feeling its reassuring weight against your ribs as you survey the quiet, abandoned room. The risk was high, but the reward ensures you can buy whatever provisions or gear you need before venturing out onto the dried seabed. With the prize secured, you re-examine the heavy door and slip back out into the salty breeze.
+GRANT: pouch of recovered silver
+EXIT 1: Head down to the docks
+@@END
+@@SECTION td-1-026
+TITLE: The Guildmaster's Ledger
+TEXT: Heavy oak doors swing inward to the Wreckers' Guild, where peat smoke hangs thick above scarred tables and men smell of old brine and cheap ale. You push through the crowd to the high counter of driftwood where the guildmaster sits, his fingers stained black with ink and tar. He looks you over with milky eyes, demanding to know what right you have to claim the deep basin where Orsolya vanished. You slap your salvaged papers onto the scarred wood, stating your intentions with a steady voice that brooks no argument from the seated elders. He grunts, dipping his quill into a horn of ink to log your name among the authorized salvage crews of Gullmouth.
+EXIT 1: Step into the smoky guildhall
+@@END
+@@SECTION td-1-027
+TITLE: Smoke and Rumours
+TEXT: The smoky guildhall of Gullmouth hums with low murmurs and the clink of horn mugs as scavengers place heavy wagers on what lies exposed beneath the vanished sea. Shadows stretch long across the floorboards from the hearth fire, where weathered men argue over tide charts and the strange silence of the horizon. You stand near the center of the room, weighing your options as various factions and desperate locals eye your boots with cautious interest. Every corner offers a different path into the dry abyss, whether through brawn, quick wits, or quiet bargains with the townsfolk. The air tastes of dried kelp and impending trouble.
+EXIT 1: Approach the bragging Brineholder agent
+EXIT 2: Intervene in the net-menders quarrel
+EXIT 3: Challenge the guildmaster's champion
+EXIT 4: Haul water crates from the cellar
+EXIT 5: Face the Customs-Priest at the gates
+@@END
+@@SECTION td-1-028
+TITLE: Staring Down the Brineholder
+TEXT: A slick Brineholder agent in an immaculate salt-silk coat leans against a pillar, tossing silver coins in the air and mocking the ruined harbor. You step directly into his path, planting your boots firmly on the floorboards and fixing him with a cold, unblinking stare that wipes the smirk from his face. The surrounding conversations die down as the two of you lock eyes, neither man willing to show weakness in front of the guild. Under the relentless pressure of your gaze, the agent shifts uncomfortably and lets slip the exact departure times and patrol routes of the Brineholder water-wagons heading out onto the Low. You commit every detail to memory before turning away with a dry smile.
+EXIT 1: Walk away with the secret
+@@END
+@@SECTION td-1-029
+TITLE: The Staring Match
+TEXT: You square your shoulders opposite the wealthy Brineholder agent, refusing to drop your gaze as he tries to stare you down with arrogant condescension. The tavern grows dead silent, every wrecker watching to see whose nerve breaks first against the polished outsider. Sweat beads on your forehead, but you keep your breathing even, matching his haughty grin with a flat, dangerous expression born of the salt-cliffs. The tension stretches thin as gut-string, and you must hold your ground against his psychological games before he yields the information you need.
+CHECK: Stare down the Brineholder agent
+@@END
+@@SECTION td-1-030
+TITLE: Breaking Gaze
+TEXT: A sudden twitch in your eye betrays your concentration, and the Brineholder agent lets out a sharp, mocking laugh that echoes off the timber walls. You blink, the spell broken, leaving you flushing with anger as the tavern resumes its noisy chatter around you. The agent pockets his silver with a sneer, refusing to share anything useful and leaving you with a throbbing headache and bruised pride. The failure costs you precious time and sets your nerves on edge among the watchful locals. You pull back from the table, vowing to find another way to learn what the wealthy interlopers are planning.
+EXIT 1: Leave the tavern humiliated
+@@END
+@@SECTION td-1-031
+TITLE: The Agent's Slip
+TEXT: Unable to break your iron stare, the Brineholder agent finally averts his eyes with a muttered curse, tossing a crumpled parchment onto the sticky table in frustration. You snatch it up before he can snatch it back, seeing the detailed patrol schedules and guard rotations for the deep seabed routes. It is a vital piece of leverage that will let you slip past their checkpoints without paying their exorbitant tolls. You tuck the paper safely inside your jacket, leaving the defeated agent to nurse his bruised ego in the corner.
+GRANT: Brineholder patrol route secret
+EXIT 1: Head toward the town gates
+@@END

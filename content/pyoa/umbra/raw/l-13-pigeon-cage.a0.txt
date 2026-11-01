@@ -1,0 +1,20 @@
+Gemini said
+
+@@INSERT up-l-pigeon-cage | faceKnown=yes
+As you unspool the ribbon, the brass-stamped letters spell out your exact features, confirming the surviving witness has already spoken to the Guard. The great houses know precisely whose face to hunt across the rooftops tonight.
+@@END
+@@INSERT up-l-pigeon-cage | witness=dropped
+Scanning the original text, your blood runs cold at the mention of a crushed deacon beneath the bell tower. They have found the body you pushed, and this mechanical messenger was carrying a warrant for a murderer, not a mere thief.
+@@END
+@@INSERT up-l-portraitist | cover=cloak
+Beneath the harsh glare of the lamps, the heavy velvet and gold embroidery of the murdered Archbishop’s mantle catches the painter's sharp eye. He raises a brow at the stolen ecclesiastical finery, undoubtedly factoring the severe risk of harbouring you into his rapidly calculating price.
+@@END
+@@INSERT up-l-portraitist | cover=tailor
+The artist's gaze lingers on the uneven stitching of your disgraced tailor's debt coat, a garment that marks you as a creature of the city's underbelly. He sneers slightly at the cheap wool, knowing immediately that you must pay for your subterranean salvation in brass coin rather than credit.
+@@END
+@@INSERT up-l-portraitist | cover=livery
+Dressed in a porter's rough, mud-splattered livery, you look absurdly out of place among the gilded frames and drying aristocratic portraits. The artist visibly stiffens at the intrusion of a common labourer into his sanctum, clutching his sable brush like a weapon against the soot you bring.
+@@END
+@@INSERT up-l-portraitist | witness=bought
+Having already traded a dangerous whispered promise to buy the deacon's silence tonight, you dread incurring yet another heavy debt. Nevertheless, the painter's expectant silence demands payment, forcing you to wager even more of your future against the encroaching watchmen.
+@@END

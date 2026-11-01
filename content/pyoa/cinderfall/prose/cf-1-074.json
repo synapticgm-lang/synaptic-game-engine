@@ -1,0 +1,106 @@
+{
+ "batch": "cf-1-074",
+ "sections": {
+  "cf-1-074": {
+   "title": "The Barons Blockade",
+   "text": "Heavy iron wheels grind against the rail-heads as a black-plated inspection carriage halts across the junction throat, its brass lamps hissing in the grey drizzle. Uniformed enforcers step down onto the ballast, their leather greatcoats smelling of ozone and ink-stamps, blocking any forward movement with crossed pikes and stamped parchment warrants. They tap the side of your cab with a silvered baton, demanding to see the engine's manifest and your personal charter before you can clear the points.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step down to face the enforcers"
+   ]
+  },
+  "cf-1-075": {
+   "title": "The Water-Seller Pit",
+   "text": "Steam rises in thin, bitter curls from the sun-baked ditch where the town's dry cistern lies exposed to the rust-laden wind. Citizens crowd the lip with cracked leather flasks and rusted pails, thrusting bits of scrap brass toward the shadowed depths where the water-seller counts every precious drop. The air tastes of copper and stale dust, heavy with the murmurs of people who have forgotten the sound of rain.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the jeering crowd with care",
+    "Speak quietly with the crippled merchant",
+    "Lift the fallen beam to help",
+    "Watch for hidden watchers in the dust",
+    "Stand firm against the choking drift",
+    "Turn back toward the main junction line"
+   ]
+  },
+  "cf-1-076": {
+   "title": "Dust and Cinders",
+   "text": "Grey grit coats your tongue as you push through the press of desperate laborers, keeping your eyes fixed on the rusted rim of the empty oil tin in your hand. Someone spits a curse into the dust near your boots, but you let your shoulders drop and keep your breathing slow and even against the rising heat. The merchant takes the metal with a scarred thumb, sliding a warm skin of bitter well-water across the stained workbench.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Carry the water skin toward the tender"
+   ]
+  },
+  "cf-1-077": {
+   "title": "The Weight of Silence",
+   "text": "Jeers rise from the parched onlookers like steam from a neglected relief valve, hot and sharp enough to strip the skin from your temper. You stand motionless amid the press, anchoring your breathing as a ragged laborer lunges forward to knock the empty tin from your grip. Your fingers tighten on the strap while every nerve in your neck strains against the sudden urge to shove back.",
+   "check": "Keep your breathing level and quiet",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-078": {
+   "title": "A Bitter Toll",
+   "text": "A sudden shove catches you off balance, sending you stumbling hard against the jagged rim of a discarded coal hopper that tears a long, bleeding gouge across your forearm. The crowd jeers louder at your stumble, forcing you to surrender half your spare scrap brass just to buy a clear path through the crush. You clutch the torn sleeve to your chest, tasting copper and dust as you limp away from the jeering circle with a fresh, stinging ache.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreated to the shelter of the siding"
+   ]
+  },
+  "cf-1-079": {
+   "title": "The Steady Hand",
+   "text": "Whether through pure stubbornness or the quiet rhythm of your breathing, the hostile crowd parts just enough for you to press through without dropping your prize. The water-seller grunts a begrudging nod, sliding a sealed clay flask across the greasy counter into your palm. You tuck the cool clay against your coat, feeling the solid weight of an unexpected advantage gained through sheer steadfastness.",
+   "check": "",
+   "grant": "A sealed clay flask",
+   "exits": [
+    "Watch the red signal arm drop"
+   ]
+  },
+  "cf-1-080": {
+   "title": "The Merchant's Ledger",
+   "text": "A hooded figure sits beside the dry cistern, tapping a blunt pencil against the margins of a dog-eared ledger filled with water-debt tallies. You lean against the timber frame, matching your voice to the low, rasping whistle of a distant shunt engine while you discuss the price of clean boiler-fluid. The old man squints through grease-smeared spectacles, weighing your offer against the empty barrels stacked behind his stool.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press the trade talk a little further"
+   ]
+  },
+  "cf-1-081": {
+   "title": "Brass and Brine",
+   "text": "Words pass back and forth across the splintered desk like coins dropped into a deep coffer, measured and careful to avoid waking the sleeping tempers of the yard. The seller traces a yellowed invoice with a blackened nail, pointing toward a sealed cask tucked away in the damp shadow of the water-house. You nod once, keeping your tone level as you seal the bargain with a flick of your wrist.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the sealed cask of water"
+   ]
+  },
+  "cf-1-082": {
+   "title": "The Shadow Bargain",
+   "text": "Your fingers trace the rim of an empty grease tin while you spin a plausible tale about a broken feed-pump on the lower line, watching the old man's eyes dart toward the heavy padlock on the cask. He hesitates, his pencil hovering over a column of figures as he tries to calculate whether your story holds more truth than the Barons' patrol reports. You hold his gaze across the dusty counter, measuring the exact moment to drop your final argument.",
+   "check": "Weave a convincing trade story",
+   "grant": "",
+   "exits": []
+  },
+  "cf-1-083": {
+   "title": "A Flawed Trade",
+   "text": "The merchant catches the slip in your arithmetic before the words have even fully left your mouth, letting out a dry, rattling laugh that draws unwanted eyes from the gangers' union post. He doubles the price on the spot, forcing you to hand over your favorite spanner just to secure a half-filled cask of cloudy brine. You tuck the heavy, foul-smelling barrel onto your shoulder, cursing your own haste as the metal bites into your aching shoulder.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Haul the cloudy cask away"
+   ]
+  },
+  "cf-1-084": {
+   "title": "The Clean Cask",
+   "text": "Whether through clever phrasing or sheer good fortune, your words strike the exact note the old merchant wants to hear, unlocking a hidden latch beneath his counter. He hefts a wooden bung free with a sharp pop, revealing clear, sediment-free boiler-water that catches the pale sunlight like melted glass. You heave the heavy cask onto your shoulder, carrying away a vital prize that will keep the Marrowbone's flues clean for leagues.",
+   "check": "",
+   "grant": "A cask of clean water",
+   "exits": [
+    "Return to the bustling junction center"
+   ]
+  }
+ },
+ "missing": []
+}

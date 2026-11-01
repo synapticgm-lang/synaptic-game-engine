@@ -1,0 +1,61 @@
+@@SECTION vh-1-2-3-14
+TITLE: The Knotted Tally
+TEXT: Within the shadow of the buttress, weaver Milla checks her knotted tally-cord against the rising wind. The hemp loops are stiff with cold moisture, clicking against her knuckles like dry bone as she counts off the yardage for the upper cables. She tucks the cord into her belt and glances up at the burdened cradle on your back, her expression tightening into a careful frown. // Will you step past her toward the lower scaffolding, or follow the outer wall toward the stairs?
+EXIT 1: Descend by the lower scaffolding path
+EXIT 2: Follow the outer wall toward the stairs
+@@END
+@@SECTION vh-1-2-3-15
+TITLE: The Frozen Mitten
+TEXT: At the turn of the stone stair, a discarded leather mitten lies frozen stiff in the rime. The wind howls against the masonry, scouring the frost-white steps until they shine like polished glass under the pale sky. A few paces further down, the stone narrows sharply between two iron brackets where the handrail disappears beneath an accumulated drift of dry snow. // Do you press onward down the icy steps, seek a safer shelter from the gale, or retrace your steps toward the upper courtyard?
+EXIT 1: Press onward down the frozen steps
+EXIT 2: Seek shelter near the sheltered alcove
+EXIT 3: Turn back toward the upper courtyard
+@@END
+@@SECTION vh-1-2-4-0
+TITLE: The Chicory Bales
+TEXT: On the broad stone landing above the lower gate, merchant Vane weighs bundles of dried chicory. The sweet, bitter scent of the roots drifts across the cobblestones, masking the sharper tang of mountain sulfur and wet wool. He pauses mid-lift, his calloused thumbs resting on the brass scales while he eyes the heavy bronze Clapper secured in your leather harness. // Will you pause to inspect his dried stores, or continue past the scales toward the road?
+EXIT 1: Continue past the weighing scales toward the road
+@@END
+@@SECTION vh-1-2-4-1
+TITLE: The Frozen Ink
+TEXT: Beneath the wooden awning of the toll-house, a clerk stamps travel permits with frozen red ink. Each blow of the wooden mallet sounds flat and dull against the frozen timber framing, while the queue of weary travellers shifts uneasily in the biting draft. The clerk does not look up when you approach, merely tapping the edge of the inkpad with a yellowed fingernail. // Do you wait patiently to have your papers stamped, slip past the queue to the winch platform, or take the side path down the ridge?
+EXIT 1: Wait in line for your papers
+EXIT 2: Slip past toward the winch platform
+EXIT 3: Take the side path down the ridge
+@@END
+@@SECTION vh-1-2-4-2
+TITLE: The Grey Coat
+TEXT: Beside the tethering ring, Biscuit shakes the frost from his grey coat while you adjust the harness. The mule blows a long, whistling plume of steam into the crisp air, his ears flicking backward to catch the familiar clink of the heavy bronze Clapper against your padded frame. The leather straps are stiff with rime, requiring a firm tug to set the buckles right against his shaggy ribs. // Will you lead the mule toward the main archway, or check the cinch-straps once more before leaving?
+EXIT 1: Lead the mule toward the main archway
+EXIT 2: Check the cinch-straps once more
+@@END
+@@SECTION vh-1-2-4-3
+TITLE: The Mist-Shimmered Stalls
+TEXT: Through the gap in the stone parapet, the first cluster of rope-market stalls shimmers in the mist. Lanterns sway from the canvas eaves, casting long, dancing streaks of amber light across the damp ropes coiled in every doorway. The muffled shouting of the cable-merchants rises from the depths, competing with the steady, mournful drone of the mountain wind. // Do you step through the gap into the market stalls, or keep to the upper stone path?
+EXIT 1: Step through the gap into the market stalls
+EXIT 2: Keep to the upper stone path
+@@END
+@@SECTION vh-1-2-4-4
+TITLE: The Monastery Seal
+TEXT: At the head of the lower stair, guard Captain Selby inspects your monastery seal with tired eyes. He runs a thick, calloused thumb over the hot red wax, checking the impression against the daylight before nodding a slow, grudging approval. The wind tugs at his heavy woollen cloak as he gestures toward the open gate behind him. // Will you pass through the gate toward the central winch, or pause to ask about the lower trail conditions?
+EXIT 1: Pass through the gate toward the central winch
+EXIT 2: Pause to ask about the lower trail conditions
+@@END
+@@SECTION vh-1-2-4-5
+TITLE: The Wool-Shed
+TEXT: Inside the drafty wool-shed, sorter Elva combs burrs from a fleece while listening for your approach. The air is thick with the rich, lanolin smell of unwashed sheep's wool and the dry rustle of discarded straw. She pauses her work, her fingers stained deep grey from the grease, and watches you step out of the howling draft. // Do you speak with Elva among the wool bales, or head straight for the exit?
+EXIT 1: Speak with Elva among the wool bales
+EXIT 2: Head straight for the exit doors
+@@END
+@@SECTION vh-1-2-4-6
+TITLE: The Water-Mills
+TEXT: Over the wooden footbridge, the rhythmic thrum of distant water-mills vibrates through the damp air. The frozen spray from the wheel-race glazes the wooden handrails in a thin, translucent crust that crackles under your boots. Below the bridge, the grey slate roofs of the terrace millers cling precariously to the vertical stone face like swallows' nests. // Will you cross the bridge toward the milling terraces, or turn away along the cliff edge?
+EXIT 1: Cross the bridge toward the milling terraces
+EXIT 2: Turn away along the cliff edge path
+@@END
+@@SECTION vh-1-2-4-7
+TITLE: The Flapping Decree
+TEXT: Against the cliff-side notice board, a fresh parchment decree flaps violently in the rising gales. The iron nails groan in their timber seat as the wind attempts to rip the proclamation loose, exposing jagged lines of black ink detailing new toll rates for the descent. Several frozen fingers of wax seal the bottom corner to the splintered wood. // Do you stop to read the flapping decree, or hurry past against the biting wind?
+EXIT 1: Stop to read the flapping decree
+EXIT 2: Hurry past against the biting wind
+@@END

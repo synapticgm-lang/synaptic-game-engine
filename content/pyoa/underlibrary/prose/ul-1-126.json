@@ -1,0 +1,92 @@
+{
+ "batch": "ul-1-126",
+ "sections": {
+  "ul-1-126": {
+   "title": "Threads of Iron",
+   "text": "Raw pigskin twine twists through the heavy spine of the registry, dyed with crushed galls and walnut husks. Your thumb traces the peculiar triple-knot along the headband, feeling the hitch where the thread doubles back against the grain. Such stitching is never decorative in the lower stacks; it marks a route through the blind alcoves where the catalogue loses its grip. By tilting the volume toward your horn-lantern, the tiny indigo gaps between stitches resolve into names of forgotten stairwells. Thessaly left this physical cipher behind for anyone sharp enough to read the seams.\n\nA final twist of the binding wire exposes the initial waypoint of her descent, waiting patiently within the shadow of the gallery pillars.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the indigo thread carefully forward"
+   ]
+  },
+  "ul-1-127": {
+   "title": "The Crimson Stitch",
+   "text": "Crimson silk replaces ordinary linen within the hinge, woven with a stubborn regularity that speaks of haste and deliberate secrecy. Each loop catches the lamp-light, glinting with traces of powdered antimony beaten directly into the fibre. It is a binder's shorthand, taught only to senior clerks before they are sworn to absolute discretion in the dark. The pattern points away from the public desks and down toward the damp foundations where the uncatalogued manuscripts rot in heaps. You follow the sequence of knots with your fingernail, verifying the direction against the tilt of the draft.\n\nThe thread terminates abruptly at a rusted staple, pointing straight into the mouth of a disused service chute.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the rusted service chute down"
+   ]
+  },
+  "ul-1-128": {
+   "title": "Deciphering the Binding Coded Seam",
+   "text": "Close scrutiny reveals that the crimson thread is not merely decorative stitching, but a precise map of subterranean turnings disguised as standard bookbinding practice. The lamp-oil gutters low as you lean closer, the acrid scent of old glue filling your nose while your eyes strain against the shifting gloom of the stacks. Every knot corresponds to a corridor shift, requiring absolute mental reconstruction of the library's turning architecture before the final route clarifies itself. A single misread twist will throw your reckoning directly into the path of the wandering partitions. Your focus sharpens into a knife-edge as you tally the twists.",
+   "check": "Decode the hidden binding stitches",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-129": {
+   "title": "Tangled in False Seams",
+   "text": "Confusion takes root as the tiny stitches blur together under the smoking wick, leading your tired eyes down a deceptive counter-fold in the calfskin. A sudden shudder runs through the nearby shelves, jarring your elbow and sending your lamp crashing against the stone floor with a sharp hiss of dying oil. You stumble backward into a stack of heavy quartos, bruising your ribs against a protruding iron bracket and leaving a jagged tear across your sleeve. The correct path slips from your mind, replaced by a dull, throbbing ache and the lingering taste of lamp-soot. You salvage your dented tin lantern from the debris and press on regardless.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick up your lantern and press onward"
+   ]
+  },
+  "ul-1-130": {
+   "title": "The Corrected Pattern",
+   "text": "Patience and steady breathing pierce the maze of knots, revealing Thessaly's intended route with startling clarity despite the flickering shadows. The pattern locks into place within your memory just as the surrounding shelves give a heavy, settling groan. You pocket the deciphered fragment with quiet satisfaction, knowing the exact sequence of turns needed to reach the lower thresholds before the Long Closing seals the stone. A thin bone stylus left behind by the archivist drops from the binding fold into your open palm.",
+   "check": "",
+   "grant": "Deciphered Waypoint Note",
+   "exits": [
+    "Return toward the Binding Gallery"
+   ]
+  },
+  "ul-1-131": {
+   "title": "Silence in the Bindery",
+   "text": "Heavy oak mallets thump against wet sheepskin in a rhythmic, bone-rattling pulse across the long oak tables. You skirt the edge of the pit where the binders work with dampened rags tied over their mouths, their eyes fixed solely upon the recalcitrant pages they strive to tame. A pile of discarded brass-headed needles and metal shavings hides the scrap bin where offcuts and broken tools are tossed without ceremony. Your boots make no sound against the thick carpet of leather scrapings as you approach the overflowing wicker hamper near the glue-pots.\n\nResting among the trimmings lies a smooth, curved slip of silvered bone, polished bright by years of thumb-contact.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Lift the silver tool from the scrap"
+   ]
+  },
+  "ul-1-132": {
+   "title": "Stealing Past the Mallets",
+   "text": "One false step upon a stray offcut of calfskin will send a sharp crunch echoing through the solemn vault, drawing the heavy mallets down upon your skull. You balance your weight entirely upon the balls of your feet, gliding past a towering stack of drying folios while holding your breath against the rising smell of hot glue. A binder pauses mid-swing, turning a heavy blindfold-wrapped head in your direction as a loose floorboard complains beneath your heel. You freeze instantly, every muscle locked in suspension while the mallet hovers in the dim air.",
+   "check": "Slip past the binders without sound",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-133": {
+   "title": "Caught by the Mallet",
+   "text": "A sudden sharp crack rings out as your heel catches the rim of an iron glue-pot, sending a shower of wood-shavings across the flagstones. The nearest binder drops his wooden mallet with a dull thud and seizes your shoulder in a grip like an iron vice, demanding an immediate accounting for your presence. You wrench yourself free at the cost of a torn jerkin and a stinging welt across your forearm, tumbling into the shadow of a towering book-press. The binders return to their pounding without another word, leaving you bruised and nursing your smarting arm in the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Retreat into the deeper shadows"
+   ]
+  },
+  "ul-1-134": {
+   "title": "The Silver Tool",
+   "text": "Lightness of foot carries you past the rows of stooped binders without a single board crying out beneath your tread. Your fingers dip into the deep wicker bin and close around the smooth, cold surface of the bone-folder just as a heavy timber beam settles overhead. You slide the recovered tool into your pocket alongside your tally-chalk, feeling its clean weight steady your pulse against the hushed gloom of the workrooms. It is an implement meant for smoothing stubborn creases, yet it will serve well enough to force a recalcitrant latch when the need arises.",
+   "check": "",
+   "grant": "Silver Bone-Folder Tool",
+   "exits": [
+    "Make your way back to the Binding Gallery"
+   ]
+  },
+  "ul-1-135": {
+   "title": "The Gates of the Deep Annexe",
+   "text": "Iron gates tall as three men loom before you at the terminus of the vaulted corridor, their surfaces etched with faded rules that shift and rewrite themselves in the gloom. The air here tastes of cold stone and ancient tallow, growing so thin that your lamp-flame shrinks to a pale blue bead within its horn panes. Beyond the bars, the floor drops away into an absolute darkness where no shelves have been built, only a vast, echoing void that swallows sound before it can leave your lips. A brass plaque riveted to the left pillar bears the cold warning that unauthorised passage invites immediate shelving among the uncatalogued dead. You clutch your tally-slate closer to your chest as the hinges give a low, metallic shiver.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the severe custodian at the gatehouse"
+   ]
+  }
+ },
+ "missing": []
+}

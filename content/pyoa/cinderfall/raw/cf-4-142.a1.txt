@@ -1,0 +1,4 @@
+@@SECTION cf-4-150
+TITLE: The Ledger's Cost
+TEXT: The heavy oak of the wicket gate splinters into your shoulder with a dry, vicious crack that leaves your left arm hanging numb and useless in your greasy coat sleeve. You stumble through the dust into the cramped clerk's booth, clutching the brass-bound ledger to your ribs while a sharp, stinging pain flares across your collarbone where a rusted hinge bit deep through wool and skin. Every breath smells of stale mutton-tallow and damp coal-dust, and the storm clock outside ticks with an unhurried malice that reminds you how much precious time has bled into the floorboards.
+EXIT 1: Scramble through the records room with your aching shoulder

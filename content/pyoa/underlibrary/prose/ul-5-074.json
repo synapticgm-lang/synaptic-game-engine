@@ -1,0 +1,97 @@
+{
+ "batch": "ul-5-074",
+ "sections": {
+  "ul-5-074": {
+   "title": "The Iron Jack",
+   "text": "Plunging your shoulder against the makeshift iron jack, you heave until the jammed timber groans and snaps outward, sending a dense cloud of grey mortar dust swirling into your face. You blink against the stinging grit, wiping your brow with a stained sleeve as you sweep your hand across the floorboards. Your fingers close around a heavy brass paperweight shaped like a crouching lion, its dense mass reassuring in your palm and ready to serve if anything lunges from the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry the jammed beam wider"
+   ]
+  },
+  "ul-5-075": {
+   "title": "Shoring the Ruin",
+   "text": "Heavy mahogany lintels settle with a ominous screech above your head, threatening to bury the narrow crawlspace beneath tons of compressed literature and pulverized plaster. Gritting your teeth against the rising panic, you wedge your shoulder beneath a sagging crossbeam, planting your boots firmly on the scattered folios while the air grows thick with blinding dust. Every muscle in your frame trembles under the mounting pressure of the fallen stacks as you brace for the final shift.",
+   "check": "Brace against the falling timber",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-076": {
+   "title": "A Costly Clearance",
+   "text": "The beam slips with a deafening crack, pinning your hand against the rough masonry and carving a deep, burning crimson line across your forearm before you wrench yourself free. You stumble back into the choking gloom, clutching your bleeding arm while precious minutes tick away in the suffocating silence of the ruined stacks. The wound throbs with a steady, dull heat, but the path ahead finally stands clear enough to crawl through.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl through the settling dust"
+   ]
+  },
+  "ul-5-077": {
+   "title": "The Salvaged Weight",
+   "text": "Straining every sinew against the descending masonry, you manage to shift the dead weight just enough to slide through the narrow breach before the whole archway collapses for good. Tucked beneath a pile of discarded broadsheets, your fingers brush against a cold, velvet-lined case containing a solid silver bookmark shaped like an open quill. You tuck the gleaming keepsake into your coat pocket as the dust slowly settles around your boots.",
+   "check": "",
+   "grant": "Solid silver bookmark",
+   "exits": [
+    "Return to the main corridor"
+   ]
+  },
+  "ul-5-078": {
+   "title": "The Sturdy Pouch",
+   "text": "Acrid lamp-oil smoke stings your eyes as the ceiling plaster rains down in fine, grey granules, coating your collar and hair in the detritus of forgotten centuries. You flatten your back against a tilted bookcase, letting the worst of the falling debris clatter harmlessly off your leather satchel while you search the rubble at your feet. Your hand fastens upon a stout leather pouch bulging with heavy iron pinch-bolts, a welcome find for securing loose hinges or sealing doors against the drafts.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Secure the heavy iron bolts"
+   ]
+  },
+  "ul-5-079": {
+   "title": "The Groaning Vault",
+   "text": "Overhead masonry shifts with the ominous sound of tearing parchment and cracking stone, threatening to bring the vaulted ceiling down upon your head at any second. You clamp your jaw shut, steadying your breathing while you reach blindly into the cascade of falling rubble to snatch up a leather pouch before the crush becomes absolute. The roof beams settle another agonizing inch, demanding every ounce of your inner fortitude to hold your ground.",
+   "check": "Steel your nerves against debris",
+   "grant": "",
+   "exits": []
+  },
+  "ul-5-080": {
+   "title": "A Brutal Rebuff",
+   "text": "A sudden lateral shudder of the masonry catches you off balance, knocking you violently against a jagged iron shelf and leaving a deep, throbbing bruise across your ribs. You gasp for breath in the dust-choked air, clutching your side as the leather pouch slips from your fumbling fingers and scatters its iron bolts into an inaccessible crevice. Though bruised and battered by the falling archive, you pick yourself up and push forward into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press onward through the debris"
+   ]
+  },
+  "ul-5-081": {
+   "title": "The Iron Harvest",
+   "text": "Heavy chunks of plaster pelt the stone flags at your feet, yet you manage to steady your balance before the archway shears apart completely. Bending low beneath the groaning lintel, your fingers graze a dropped leather kit wedged between the iron shelving. Inside rests a heavy handful of cold, threaded pinch-bolts, solid enough to anchor any vibrating bracket in the deep stacks.",
+   "check": "",
+   "grant": "heavy iron pinch-bolts",
+   "exits": [
+    "Step through the fluttering ink-moths"
+   ]
+  },
+  "ul-5-082": {
+   "title": "The Murmuring Air",
+   "text": "Invisible presences crowd the narrow corridor like a swarm of restless ink-moths, their collective whispers brushing against your ears with the dry rustle of forgotten manuscript pages. Thousands of marginal notes, penned by readers long dead, murmur competing secrets and frantic entreaties from the darkness, begging you to transcribe their names and grievances into the pages of the waking world. You press your hands to your temples to shut out the rising tide of disembodied voices, wading through an atmosphere thick with nostalgia and old ink as you approach the heart of the vault.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the singing chamber"
+   ]
+  },
+  "ul-5-083": {
+   "title": "The Gallery of Whispers",
+   "text": "Suspended high above the dark abyss, an iron walkway vibrates continuously with the low, choral hum of every bitter or brilliant commentary ever scrawled in the margins of a dying book. The metallic floor plates shudder beneath your boots, and each arching span tempts you toward a different hazard or hidden passage branching off into the gloom. A clever wordplay might buy safe passage, wax earplugs could shut out the madness, crystal water might steady your pulse, or a swift leap across the rusted gaps could save precious time, but every choice carries its own quiet price.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Bargain with the disgruntled annotators",
+    "Seal your ears against the chorus",
+    "Hold fast against the psychic gale",
+    "Step gracefully across the rusted gap",
+    "Dance through the tempest of pages",
+    "Stand before the pedestal of the Index"
+   ]
+  }
+ },
+ "missing": []
+}

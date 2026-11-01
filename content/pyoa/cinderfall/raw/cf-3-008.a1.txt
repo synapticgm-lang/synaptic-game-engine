@@ -1,0 +1,22 @@
+@@SECTION cf-3-014
+TITLE: Purging the Auxiliary Lines
+TEXT: Scalding mist roars through the rusted drainage cocks, wrapping the Marrowbone's flanks in a dense, artificial squall that smells of boiled grease and alkaline scale. Your bare fingers brush the shrieking brass valve-wheel, every nerve screaming as escaping vapor licks the skin while you twist it further into the red zone of pressure. Beyond the swirling white curtain, the shouting of the toll-guards turns to confused curses as iron-shod boots stumble blindly on the wooden ballast. // You lean your full weight against the shivering pipework, coaxing one final, blinding hiss from the belly of the boiler to mask your stealthy descent into the shadows.
+CHECK: Wrenching the steam-cock open
+@@END
+@@SECTION cf-3-016
+TITLE: Fog-Born Passage
+TEXT: Condensation drips heavily from your eyelashes as the artificial tempest slowly dissipates over the rusted iron plating of the viaduct deck, leaving you standing safely in the damp stillness beyond the customs perimeter. Your knuckles throb with a dull, persistent ache beneath a network of raw, pink scalds, but clutched tightly in your stiffening fingers is the proof of your silent trespass. It is a damp, ink-stamped slip of flimsy paper bearing the violet seal of the Baronial Transit Office, marked valid for one unauthorized coal-tender.
+GRANT: A forged transit slip
+EXIT 1: Slip back toward the main span
+@@END
+@@SECTION cf-3-009
+TITLE: The Rivet Hammer
+TEXT: Heavy iron boots clatter against the overhead gantry above the Marrowbone's coal bunker, drawing uncomfortably close to where you crouch in the soot-stained gloom. Gripping the heavy steel hammer, you line its flat face against the protruding stem of a loosened structural rivet on the chassis plate and strike. The ringing blow reverberates through the hollow girderwork like a church bell, echoing sharply across the viaduct to draw the suspicious inspectors away from your hiding place. // Your palm slips slightly against the greasy handle as the vibration jars your forearm, threatening to betray your position with a clumsy clatter.
+CHECK: Striking the loose chassis rivet
+@@END
+@@SECTION cf-3-011
+TITLE: The Iron Tollhouse Reward
+TEXT: Silence settles back over the rusted gantry rails as the heavy footsteps of the frustrated inspectors fade away down the lower platform stairs, leaving you alone with the rhythmic dripping of oily condensation. Your right hand aches where the hammer-jar struck your thumb bone, yet tucked securely into your belt is a small brass token stamped with the private sigil of a sympathetic track-clerk who looked the other way. It is a heavy, grease-slick disk that grants an unrecorded right of way through the lower switches.
+GRANT: A track-clerk's brass token
+EXIT 1: Proceed toward the central platform
+@@END

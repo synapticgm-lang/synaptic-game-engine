@@ -1,0 +1,91 @@
+{
+ "batch": "vh-4-0-5-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-0-5-1": {
+   "title": "The Glacier Throat",
+   "text": "Jagged teeth of rime-glazed ice frame the narrow approach to the glacier throat, where the wind smells of absolute cold and crushed stone. You stand at the absolute margin of the drop, weighing whether to bind the heavy bronze closer against the rising gale or leave its padded harness loose for an unhindered sprint across the shifting floor. Biscuit stamps a heavy hoof behind you, shivering against the grey squall rolling up from the lower valleys.",
+   "exits": [
+    "Press on through the biting wind and shifting ice"
+   ]
+  },
+  "vh-4-0-5-2": {
+   "title": "Howling Frost",
+   "text": "Bitter drafts shriek through the frozen ribs of the ice cradle, scouring the blue slopes with needles of wind-driven snow. You lean your weight against the biting gust, considering whether to trade swift mobility for thicker layers of wool and hide against the creeping numbness in your fingers. The bronze clapper hums a low, resonant note against your spine, vibrating in time with the distant groaning of the glacier's deep throat.",
+   "exits": [
+    "Press on across the freezing expanse despite the gale"
+   ]
+  },
+  "vh-4-0-5-3": {
+   "title": "Shifting Blue Expanse",
+   "text": "Shimmering waves of turquoise ice stretch downward into the blinding white mist, hiding the deadly jaws of unseen crevasses beneath a thin skin of powder. Before taking that first precarious step onto the unstable slope, you must decide how best to secure the sacred metal against the hazards of the descent. The air is so thin and sharp that every breath burns your lungs like cold iron.",
+   "exits": [
+    "Press on into the heart of the white wasteland"
+   ]
+  },
+  "vh-4-c1": {
+   "title": "The Ice Cradle Choice",
+   "text": "The frozen tongue of the glacier begins here in earnest, sweeping downward between walls of ancient blue-green ice that groan under immense pressure. You must decide right now how to carry Orison's heavy bronze tongue through the treacherous miles ahead, knowing that every choice carries its own punishing weight. Wrap the clapper tight to protect its sacred metal from the biting frost and abrasive ice, or leave it bare to keep your fingers free for the dangerous climbs ahead.",
+   "exits": [
+    "Wrap the Clapper tight against the cold",
+    "Leave it bare and keep your hands free"
+   ]
+  },
+  "vh-4-1-0-0": {
+   "title": "Ribbed Blue Ice",
+   "text": "Turquoise cracks snake beneath your boots on the ribbed snout of the glacier as you pick a careful path across the frozen wave. The wrapped clapper rests heavily against your shoulder-blades, its muffled hum vibrating through your woollen tunic with every careful stride. A pale sun glints off the high ridges, offering no warmth to counter the biting alpine draft.",
+   "exits": [
+    "Step carefully toward the dripping ice-arch ahead",
+    "Test the swinging hazel-withe ladder across the blue shaft",
+    "Slip away onto the quiet smugglers' shelf free of debt"
+   ]
+  },
+  "vh-4-1-0-1": {
+   "title": "Terminal Moraine",
+   "text": "Heavy frost coats Biscuit's long ears as the stubborn mule drives its iron-shod hooves into the sliding grey gravel of the terminal moraine. Loose stones clatter down into the shadows of a yawning crevasse while you steady the padded frame on your back. The mountain air tastes of ozone and old bronze, sharp enough to make your teeth ache.",
+   "exits": [
+    "Guide the mule along the glass-smooth cutting wall",
+    "Approach the timber housing of the frozen winch",
+    "Face the roaring ice-chute where the wind stings your cheek"
+   ]
+  },
+  "vh-4-1-1-0": {
+   "title": "The Dripping Arch",
+   "text": "Icy water drips in slow, rhythmic pulses from a low, translucent arch of ancient glacier ice overhead. Jorren, an old cable-rider wrapped in oilskins and salt-cured wool, waits near the threshold, warning you of shifting seracs before offering a warming dram of parsnip brandy from a dented tin flask. The bronze clapper hums softly against your back, answering the subterranean music of the moving mountain.",
+   "exits": [
+    "Follow the ice-track where a stray calf shivers by a bridge",
+    "Squeeze through a narrow fissure where blue icicles chime",
+    "Inspect an abandoned sledge half-swallowed by powder snow"
+   ]
+  },
+  "vh-4-1-1-1": {
+   "title": "The Hazel Ladder",
+   "text": "A suspended ladder of braided hazel-withe swings outward over a bottomless shaft of deep blue ice, groaning as the wind catches its frozen rungs. Every time you shift your weight, the heavy bronze Clapper hums against its padded frame, threatening to throw your balance into the empty air. Biscuit plants all four hooves at the threshold, refusing to budge until you pull the lead rope hard enough to test the knots. The cold bites through your mittens, and the abyss below breathes a steady, freezing draft that smells of ancient stone and snow.\n\nYou must decide whether to trust the swaying ladder, turn aside toward a slushy tongue of meltwater, or seek another way around the icy rift.",
+   "exits": [
+    "Lead the mule across the slush",
+    "Search the burnt signal fire shelf",
+    "Battle the downdraft on the foot-ledge"
+   ]
+  },
+  "vh-4-1-1-2": {
+   "title": "The Debt-Free Shelf",
+   "text": "Walking completely unburdened by a pack-animal or heavy debts, you stride freely across the ice without anyone holding a claim over your labor. Tucked away against a stone buttress lies a dry smugglers' shelf, untouched by the rime, where an abandoned toolkit gleams invitingly in the pale light. The peace of owing nothing to the Cable Court or the millers makes the thin mountain air feel lighter in your chest.",
+   "exits": [
+    "Ascend toward the signal fire and the coil of dry hemp",
+    "Examine the discarded grease-box wedged into a dark cleft",
+    "Crawl across the packed snow bridge arching over the blue throat"
+   ]
+  },
+  "vh-4-1-1-3": {
+   "title": "The Glass Wall",
+   "text": "Your iron-shod boots find shallow purchase in hand-carved steps on a vertical wall of blue-black ice that mirrors the grey clouds above. A deep subterranean groan rolls through the frozen heart of the glacier, vibrating in your teeth and setting the bronze Clapper humming on your back like a trapped wasp. Biscuit scrabbles desperately behind you, his iron shoes scraping a sharp rhythm against the cliff face as the wind tears at your oilskins. You hug the glassy stone closely, searching for any handhold that might prevent a slip into the pale void below.\n\nYou can reach for a discarded grease-box in a cleft, inspect a locked stone shelter, steady the mule against black ice, or pause beside a frozen waterfall that hums in tune with the bronze.",
+   "exits": [
+    "Grab the tin grease-box in the cleft",
+    "Inspect the locked Cable Court shelter",
+    "Steady Biscuit against the black ice",
+    "Listen to the frozen organ-pipe fall"
+   ]
+  }
+ },
+ "missing": []
+}

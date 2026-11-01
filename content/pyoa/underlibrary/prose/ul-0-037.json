@@ -1,0 +1,107 @@
+{
+ "batch": "ul-0-037",
+ "sections": {
+  "ul-0-037": {
+   "title": "The Bone Bookmark",
+   "text": "Dust hangs thick in the beam of your lantern as your fingers trace the heavy blue folios, calculating the dangerous load distributions of the shifting stacks. With immense care, you slide an ivory bone-handled bookmark free from the collapsing seam of the binding before the entire tier groans and settles back into place. Your breathing slows in the dim silence as you pocket the smooth relic, knowing how easily the floor could have given way beneath your boots.",
+   "check": "",
+   "grant": "ivory bone-handled bookmark",
+   "exits": [
+    "Step cautiously into the shifting stack-ways"
+   ]
+  },
+  "ul-0-038": {
+   "title": "Into the Moving Stacks",
+   "text": "Squeaking wicker gives way beneath your weight as you step past the threshold into the great labyrinth of the stack-ways, holding your flickering lamp high above your head. All around you, towering shelves groan and slide across recessed floor-tracks, rearranging themselves according to an invisible and restless logic. Far above in the vaulted darkness, the great clock of the Long Closing tolls its muffled warning, reminding you that time is slipping away faster than the whispered notes in the margins. The air tastes of hot lamp-oil and scorched paper as you forge deeper into the maze.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance toward the iron reading doors"
+   ]
+  },
+  "ul-0-039": {
+   "title": "The Linen Twine",
+   "text": "The lending clerk narrows rheumy eyes behind spectacles thick as bottle-glass, muttering about misplaced ledgers and overdue fines from the lower tiers. You lean across the mahogany counter, spinning a plausible web about misplaced administrative rolls in the eastern wing to distract his wandering attention. While his hand hesitates over the ink-pot, your fingers dart sideways to snatch a sturdy bundle of linen twine resting near the stamp-pad. Pocketing the prize with a smooth motion, you offer a polite nod and turn away before suspicion hardens into a public reprimand.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip away down the corridor"
+   ]
+  },
+  "ul-0-040": {
+   "title": "Borrowed Twine and Trouble",
+   "text": "Suspicions linger in the wrinkled face of the lending clerk, who continues to peer suspiciously over the rim of his spectacles at your ink-stained cuffs. You maintain an air of absolute calm, spinning another elaborate falsehood concerning missing library fines to keep his attention firmly fixed on the ledger. As he turns to leaf through a stack of yellowed slips, your hand closes securely around the coil of rough linen twine resting near the brass paper-weights. Slipping it into your coat pocket, you offer a crisp, formal bow and make your escape into the dim corridors before he can demand verification.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Proceed toward the central hall"
+   ]
+  },
+  "ul-1-001": {
+   "title": "Haze of Lamp-Oil",
+   "text": "Heavy iron doors swing inward with a sluggish, protesting groan, releasing a dense wave of lamp-oil smoke and the dry, rustling chatter of a hundred turning pages. You step into the grand Reading Rooms, where galleried tiers rise into the shadowy vaulting and scholars hunch over lecterns like brooding crows. Dust motes dance in the amber glow of brass lamps suspended from iron chains, casting long and erratic shadows across the stone floor. Every scholar here is searching for a clue to the missing Archivist, and the air hums with a quiet, desperate rivalry.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the central lending desk"
+   ]
+  },
+  "ul-1-002": {
+   "title": "The Lending Desk",
+   "text": "A towering barricade of returned ledgers surrounds the central lending desk, where a weary clerk demands a formal visitor permit you do not possess. Behind you, an impatient queue of rival scholars jostles and mutters, their arms laden with damp, whispering manuscripts that snap and rustle like trapped birds. The clerk taps an ink-stained finger against the counter, waiting for credentials you have not been issued while the clock in the tower counts down the minutes. Every available path outward presents its own immediate hazard, demanding either quick footwork, absolute stubbornness, or diplomatic endurance.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip past the distracted clerk",
+    "Dodge the falling overdue folios",
+    "Stare down the suspicious official",
+    "Endure the endless interrogation",
+    "Navigate the crowded rival gallery"
+   ]
+  },
+  "ul-1-003": {
+   "title": "Quick Footwork",
+   "text": "Waiting for the harried clerk to turn his attention toward an argumentative scholar, you drop low and dart past the corner of the heavy wooden barrier. Your boots make scarcely a sound against the flagstones as you weave through the narrow gap between stacked trolleys and towering dictionary stands. A sharp reprimand echoes behind you, but you keep moving, your hand brushing against a loose pile of paper slips that nearly spills across the floor. You duck behind a pillar, breathless and clutching a forged clearance slip acquired through sheer agility.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue deeper into the annex"
+   ]
+  },
+  "ul-1-004": {
+   "title": "The Narrow Gap",
+   "text": "A second obstruction looms ahead where two moving shelving units have jammed together, leaving only a razor-thin passage of shadow and dust. You squeeze sideways through the gap, feeling the rough pine wood scrape against your coat while the distant scratching of pens fills the background. The forged clearance slip stays clutched tightly in your fist, its wet ink smelling strongly of vinegar and crushed galls. Shadows lengthen across the flagstones as the automated stack-ways resume their slow, grinding crawl toward the center of the hall.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the threshold of the risk"
+   ]
+  },
+  "ul-1-005": {
+   "title": "Reaching the Clearance Slip",
+   "text": "The final obstacle stands before you: a narrow ledge slick with spilled ink, bridging a gap between two shifting tiers of shelving where a misstep means tumbling into the dark. You steady your breathing, measuring the distance with a practiced eye as the ledge begins to slide sideways in response to the subterranean tremors. You crouch low, preparing to launch yourself across the widening chasm of air and shadow just as the lamp overhead flickers out.",
+   "check": "Leap across the ink-slick ledge",
+   "grant": "",
+   "exits": []
+  },
+  "ul-1-006": {
+   "title": "A Costly Slip",
+   "text": "Your boot-heel catches the edge of the slick stone, sending a cascade of loose ink-vials clattering down into the dark machinery below. You tumble hard against the rough wooden backing of a moving shelf, scraping your shoulder and tearing the sleeve of your coat on a protruding iron bracket. The forged clearance slip flutters from your grasp, swallowed instantly by the shifting gloom between the stacks. Bruised and empty-handed, you pick yourself up from the dusty floor as the machinery grinds to a halt.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick yourself up and press on"
+   ]
+  },
+  "ul-1-007": {
+   "title": "Narrowly Cleared",
+   "text": "Your fingers close around the rough edge of the wooden shelf just as the ground shifts beneath your boots, throwing you off balance for one terrifying heartbeat. However narrowly you manage to secure your footing, the desperate leap succeeds, leaving you panting against the cool stone of the inner wall. Clutched tightly in your fist is a small, damp scrap of paper bearing the official wax seal of the upper tiers - a fragile passport into the restricted zones.",
+   "check": "",
+   "grant": "damp official wax seal",
+   "exits": [
+    "Return to the central desk"
+   ]
+  }
+ },
+ "missing": []
+}

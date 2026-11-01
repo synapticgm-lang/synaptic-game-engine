@@ -1,0 +1,61 @@
+@@SECTION cf-2-205
+TITLE: The Click of Truth
+TEXT: Copper coils hum and settle as the restored current flows through the telegraph armature with a sharp, rhythmic chatter. The tiny brass lever taps out a steady sequence, bringing the dead line back to life despite the surrounding decay. // You pocket the resulting prize, knowing how narrowly you salvaged the connection from the soot-clogged terminals.
+GRANT: a functioning copper telegraph key
+EXIT 1: Climb back down into the tender
+@@END
+
+@@SECTION cf-2-206
+TITLE: Iron from the Ash
+TEXT: Shivering in the drafty recess of the cabin base, you set your boots against the jammed iron fire-door and throw your weight behind the push. It gives with a sharp, protesting shriek of rusted hinges, falling inward to reveal a thick, soot-blackened poker forged from solid boiler iron. // You haul the heavy tool free from the debris, testing its balance in your soot-stained grip before climbing back toward the deck plates.
+EXIT 1: Haul the heavy poker aboard
+@@END
+
+@@SECTION cf-2-207
+TITLE: Heaving the Iron Door
+TEXT: Resistance meets your every muscle as you lean your full weight into the warped iron frame, sweat cutting clean channels through the grime on your face. The frozen latch refuses to budge, holding fast against the dead-bolted seal while the cold wind howls through the gaps in the timber walls. // You brace your boots deeper into the ash-strewn flooring, drawing on every ounce of muscle to force the barrier open against the grip of rust.
+CHECK: Throw your weight against the iron door
+@@END
+
+@@SECTION cf-2-208
+TITLE: The Wrenched Shoulder
+TEXT: A sudden slip sends your shoulder crashing violently into the iron jamb, driving the wind from your lungs in a sharp, ragged gasp. The jammed door remains obstinately shut, leaving you nursing a bruised joint and a deep, throbbing ache that settles heavily into your bones. // You shake off the dizziness, wiping sweat and grey dust from your forehead as you prepare to tackle the stubborn obstacle once more.
+EXIT 1: Pick yourself up and try again
+@@END
+
+@@SECTION cf-2-209
+TITLE: The Prize Within
+TEXT: Clearing away the heavy flakes of rust, you slide your fingers into the recess and draw out a long, heavy iron poker that bears the authentic stamp of the Ashgate foundries. It is cold to the touch yet carries a reassuring weight, promising many hours of hard service at the firebox mouth. // You slide the implement into the deck rack, securing a valuable asset for the long miles ahead across the barren steppe.
+GRANT: a heavy forged iron poker
+EXIT 1: Return to the main engine deck
+@@END
+
+@@SECTION cf-2-210
+TITLE: Crossing the Ridge
+TEXT: Steam hisses from the relief valves as Locomotive No. 9 gathers its remaining strength and begins the long, arduous climb toward the crest of the final ridge. Below you, the vast, grey expanse of the Ashen Steppe rolls away into the smoke-choked horizon, a desolate wasteland of stalled carcasses and grey grass-stubble. // With a final, triumphant shriek of the whistle, the engine breaks over the summit and begins its descent toward the lowlands. Far ahead, cutting sharply across the ash-dunes, the monumental iron spans of the Brasswind Viaduct loom through the yellow haze, their gantries bristling with the watchful lanterns of the Rail Barons.
+EXIT 1: Crawl onto the great iron spans
+@@END
+
+@@SECTION cf-2-211
+TITLE: Wits Across the Wire
+TEXT: Exchanging sharp, coded pleasantries with the weary operator across the desk, you match his dry humor with a steady stream of trackside gossip. He yields with a grudging grin, sliding a heavy brass pocket-compass across the scarred wood of the counter. // The needle spins lazily before settling true, pointing an unwavering finger toward magnetic north through the thick cabin air.
+EXIT 1: Pocket the compass and depart
+@@END
+
+@@SECTION cf-2-212
+TITLE: The Heat of Devotion
+TEXT: Standing motionless within the blinding halo of the prayer-fire, you endure the searing wave of dry heat without flinching under the watchful gazes of the robed zealots. One of the elders nods slowly, recognizing your endurance, and presses a heavy tin of dense fire-clay into your open palm. // The sealant will patch the worst of the boiler leaks when the pressure climbs too high on the downgrade.
+EXIT 1: Secure the tin and turn away
+@@END
+
+@@SECTION cf-2-213
+TITLE: Whispers on the Line
+TEXT: The receiver clicks rhythmically in the dim light as you parse the fractured sequence of dashes and dots detailing armored patrols moving along the southern embankment. It is a vital advance warning of the blockades waiting near the lower junctions. // You memorize the sequence before clearing the slate, stepping back into the drafty corridor with your mind sharp and prepared.
+EXIT 1: Head back to the cab deck
+@@END
+
+@@SECTION cf-2-214
+TITLE: Greasing the Sheaves
+TEXT: Frigid winds whip across the open scaffolding as you work tallow deep into the frozen cable pulleys of the upper signal bracket, your fingers numb against the metal. With a sharp groan, the rusted iron arm yields to your leverage and drops cleanly into the clear position. // A heavy brass signal-lantern, left behind by a vanished tender crew, hangs securely from the newly greased bracket as your reward.
+EXIT 1: Claim the lantern and descend
+@@END

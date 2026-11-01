@@ -1,0 +1,92 @@
+{
+ "batch": "ul-2-149",
+ "sections": {
+  "ul-2-149": {
+   "title": "The Dripping Rafters",
+   "text": "Hundreds of suspended nibs hang above the stone floor like stalactites of iron and brass, weeping dark droplets into shallow copper basins. Each splash sends a tiny ripple through the pooled ink, reflecting strange, non-existent constellations that shift whenever you blink. The air smells strongly of copper filings and ancient gall, catching in the back of your throat with every inhalation. You step carefully between the brimming basins, watching your boots avoid the dark puddles while a phantom draft hums low through the metal tines.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Trace the edge of the copper basins"
+   ]
+  },
+  "ul-2-150": {
+   "title": "Currents of Gall",
+   "text": "Heavy drops of gall strike the flagstones with the rhythmic persistence of a slow clock, forming dark patterns that dissolve before your eyes can quite capture their meaning. Ahead lies a curtain of falling ink, thick and unbroken as grease, sealing the narrow gap between two stone pillars. You pause to watch the endless descending gray, wondering how many reams of paper have been ground down to feed this subterranean precipitation. Your fingers trace the damp stone of the pillar, feeling the vibration of thousands of unseen writers scratching away in the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step closer to the descending gray curtain"
+   ]
+  },
+  "ul-2-151": {
+   "title": "Reading the Scribe",
+   "text": "You crouch low beneath the low-slung iron rafters, narrowing your eyes against the heavy mist of falling gall that coats your lashes in a fine, dark grit. The collective scratching of a thousand invisible quills surrounds you, forming a complex auditory lattice of intersecting strokes, loops, and furious crosshatchings. By mapping the cadence of the descent, you attempt to discern the brief, rhythmic pauses where the heavy ink-fall thins enough to grant safe passage through the curtain.",
+   "check": "Decipher the frantic quill strokes in the gloom",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-152": {
+   "title": "Splattered Flagstones",
+   "text": "A sudden surge in the overhead pressure causes the iron quills to spit a heavy, blinding squall of gall directly into your face, stinging your eyes and soaking your collar through. You stumble backward into a copper basin, tipping the dark contents across the flagstones and ruining your boots with permanent, indelible stains. The bitter taste of iron fills your mouth as you wipe the stinging fluid from your brow, losing precious minutes while your lamp-oil dwindles in its reservoir.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Recover your footing and press onward"
+   ]
+  },
+  "ul-2-153": {
+   "title": "The Unblunting Nib",
+   "text": "Steady patience rewards your careful observation, allowing you to slip through the dense shower of gall just as a stray, self-writing nib detaches itself from the invisible air and drops neatly into your open palm. The metal is cool to the touch and possesses a fine, needle-sharp point that never dulls against the hardest vellum. You pocket the strange instrument, feeling its faint, rhythmic thrum against your ribs like a captured heartbeat, however narrowly you managed the crossing.",
+   "check": "",
+   "grant": "an enchanted quill that never blunts",
+   "exits": [
+    "Follow the corridor toward the echoing chamber"
+   ]
+  },
+  "ul-2-154": {
+   "title": "The Unattended Desk",
+   "text": "A heavy oak desk sits abandoned amid the drifting shadows, its surface littered with loose scraps of parchment and discarded nibs caked in dried black crusts. The ambient scratching noise from the ceiling fills the space with a ceaseless, nervous rustle that rattles the edges of every sheet left behind. You approach the writing surface, your lamp casting a long, wavering shadow across the grain while the smell of vinegar-based ink rises thick from the wood.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Inspect the stacks of loose vellum sheets"
+   ]
+  },
+  "ul-2-155": {
+   "title": "Whispering Margins",
+   "text": "Countless sheets of blank vellum flutter slightly in the draft, their pristine edges catching the pale yellow glow of your hurricane lamp like small, pale sails. Faint marginal notes scrawled in the very wood of the table seem to murmur warnings about the dangers of taking more than your share, though the voices are too quiet to make out clearly. You brush a thumb across the smooth, heavy grain of the uppermost sheet, feeling the fine tooth of the paper beneath your skin.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach out to gather the loose sheets"
+   ]
+  },
+  "ul-2-156": {
+   "title": "The Deafening Scratch",
+   "text": "The chaotic scratching of the unseen quills swells suddenly into a deafening roar, vibrating straight through the floorboards and rattling your teeth in your skull. You press your palms hard against your ears, fighting back the rising panic as the surrounding shadows seem to close in and mimic the sound of rushing water. With your breath coming short and sharp, you reach across the littered desk to scoop up the unblemished vellum before the noise overwhelms your senses entirely.",
+   "check": "Steel your mind against the deafening scratch",
+   "grant": "",
+   "exits": []
+  },
+  "ul-2-157": {
+   "title": "Scattered Harvest",
+   "text": "The overwhelming metallic shriek pierces your mental defenses, causing your hands to jerk violently and send a cascade of vellum tumbling down into a dark drainage slot. You lurch after the sliding sheets, managing to snatch only a handful of creased and ink-smeared fragments before the rest vanish into the gloom below. The sudden exertion leaves your chest aching and your lamp guttering dangerously low, casting a meager, flickering yellow light across the damp flagstones.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Gather the remaining scraps and move on"
+   ]
+  },
+  "ul-2-158": {
+   "title": "Pristine Bundles",
+   "text": "Your steady resolve holds firm against the auditory assault, allowing you to bundle a neat stack of unmarked vellum into your satchel without losing a single sheet to the floor. The paper feels heavy and cool against your hip, smelling faintly of clean linen and fresh rag-pulp, however narrowly you managed to tune out the overwhelming din. You secure the leather flap tightly, leaving the abandoned desk behind in the shadows while the relentless scratching fades to a distant murmur.",
+   "check": "",
+   "grant": "a sheaf of pristine vellum",
+   "exits": [
+    "Approach the barricade of locked iron cabinets"
+   ]
+  }
+ },
+ "missing": []
+}

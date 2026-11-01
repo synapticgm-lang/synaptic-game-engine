@@ -1,0 +1,71 @@
+Gemini said
+
+@@SECTION sg-2-0-2-9
+TITLE: The Signal Mirror
+TEXT: High upon a weathered rise of white gypsum, a lone sentry from the glasswright signal towers stands motionless. In one hand, a small polished disk catches the blinding noon glare, flicking swift, rhythmic warnings across the horizon about dust storms gathering near the Basin center. You pause in the lee of the mound to catch your breath, adjusting the heavy canvas strap of your banked coal-lamp as the mirrored flashes cease and the watcher turns a pair of goggles down toward your path.
+EXIT 1: Inspect the rusted crane structure ahead
+EXIT 2: Approach the weary traveler in the shade
+EXIT 3: Push through the brittle salt-fern thicket
+@@END
+
+@@SECTION sg-2-0-2-10
+TITLE: Ridge of Broken Pottery
+TEXT: Sharp shards of ancient ceramic crunch beneath your boots as you crest a steep ridge of hard-packed salt and crushed red pottery fragments. From this dusty vantage point, you scan the shimmering, heat-warped expanse below for any sign of the telltale green pennants marking the Dune Sisters' well-stations. The air dances with mirages, making distant salt-pillars look like towering spires, while your throat feels as dry and cracked as the ground beneath you.
+EXIT 1: Cross the cracked hexagonal stone pavement
+EXIT 2: Examine the orange lichen on the glass block
+@@END
+
+@@SECTION sg-2-0-2-11
+TITLE: The Basalt Milestone
+TEXT: Half-buried in the blinding crust of the alkali flat, a weathered milestone carved from grey basalt bears a deep, ancient distance tally pointing toward Prism. The worn glyphs remind you of the grueling leagues that still separate your tired legs from the Rain Vault, urging you to push onward despite the burning ache in your thighs. Around the stone, the white desert stretches away into an empty glare that seems to swallow the horizon whole.
+EXIT 1: Head toward the rusted iron crane arm
+EXIT 2: Seek out the traveler resting under shade-cloth
+@@END
+
+@@SECTION sg-2-0-2-12
+TITLE: The Hollow Ceramic Jars
+TEXT: Rows of hollow ceramic jars, left behind by forgotten generations of travelers as emergency moisture traps, line the edge of a dry basin. You pry the stopper from the nearest vessel, only to find it bone-dry and packed with fine white dust that billows out in a sudden, choking cloud. Coughing into your scarf, you kick the empty earthenware aside and wonder how many others before you reached into these jars and found only emptiness.
+EXIT 1: Inspect the lichen-covered block of fused glass
+EXIT 2: Pick a path through the fossilized salt-ferns
+@@END
+
+@@SECTION sg-2-0-3-0
+TITLE: Unattended Toll-Post
+TEXT: Keeping your banked coal-lamp securely hidden beneath the heavy folds of your canvas cloak, you slip past an unattended Salt Court toll-post while the guards doze heavily inside their striped canvas awning. The toll-rope lies slack across the white track, inviting you to cross without paying the exorbitant passage fees demanded by the toll-lords. Your heart thrums a rapid rhythm against your ribs as you leave the sleeping sentries behind and quicken your pace toward the open basin.
+EXIT 1: Step onto the smooth well-head apron
+EXIT 2: Follow the converging pilgrim footprints
+@@END
+
+@@SECTION sg-2-0-3-1
+TITLE: Salt Pillar Labyrinth
+TEXT: Jagged white pillars of pure salt, sculpted by centuries of abrasive desert winds, tower above your head to form a blinding, confusing labyrinth. You duck through narrow white alleys that smell faintly of ancient brine and sun-baked stone, keeping your hand brushing against the cool crystalline walls to guide your way. Every turn looks identical to the last, demanding absolute concentration if you are to avoid wandering in circles until your water skin runs empty.
+EXIT 1: Step out onto the cool outer apron
+@@END
+
+@@SECTION sg-2-0-3-2
+TITLE: The Glass-Diver's Cistern
+TEXT: Crouched within the cool shadow of a dry stone cistern, a wary glass-diver named Joran sharpens a notched brass scraping tool with deliberate care. He watches your approach with piercing eyes, instantly measuring the weight of your pack and the glint of your hidden lamp. A faint smell of silica dust and stale water hangs in the sunken recess, contrasting sharply with the blazing heat radiating from the open flats above.
+EXIT 1: Step out onto the white apron of the well
+EXIT 2: Approach the low stone wall of the compound
+@@END
+
+@@SECTION sg-2-0-3-3
+TITLE: The Brine-Pan Crust
+TEXT: A treacherous sheet of thin white ice stretches across a dormant brine-pan, crackling ominously under the heavy tread of your boots. You spread your arms for balance and shorten your stride, stepping as lightly as possible to avoid fracturing the brittle crust and plunging knee-deep into corrosive liquor. Every breath sounds unnaturally loud in the silent expanse, amplifying the tension of each cautious step forward.
+EXIT 1: Approach the low stone compound wall
+EXIT 2: Cross the smooth expanse of salt plaster
+@@END
+
+@@SECTION sg-2-0-3-4
+TITLE: The Abandoned Shrine
+TEXT: Weathered timbers and sun-bleached animal bones mark the remains of a forgotten shrine dedicated to ancient rain-gods, standing forlornly amidst the endless white. Cracked pottery bowls filled with drift-sand sit before a blank stone altar where countless desperate suppliants once prayed for a deluge. You pause for a brief moment in the shelter of its sagging roof, listening to the dry wind whistle through the empty gaps in the woodwork.
+EXIT 1: Step out onto the smooth stone apron
+EXIT 2: Follow the converging pilgrim tracks onward
+EXIT 3: Turn back toward the earlier watch-tower ruins
+@@END
+
+@@SECTION sg-2-0-3-5
+TITLE: The Sulfur Vent
+TEXT: A thin plume of acrid, yellowish smoke hisses from a fissure in the crust, filling the dry air with the sharp, unmistakable stench of rotten eggs. You yank your woven scarf higher across your nose and mouth, quickening your stride across the discolored flat to escape the irritating fumes before they catch in your chest. The ground beneath your boots grows noticeably warmer here, vibrating with the faint, deep rumble of the restless earth below.
+EXIT 1: Pass through the weathered cedar gate
+@@END

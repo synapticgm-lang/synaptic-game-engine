@@ -1,0 +1,74 @@
+Gemini said
+
+@@SECTION sg-1-0-1-1
+TITLE: The Pitch-Pots
+TEXT: Thick black smoke drifts from the boiling pitch-pots of the upper square, smelling of hot resin and sulfur. Beside the bubbling vats, a grease-stained tanner wipes his brow and tries to trade his spare mule for a share of whatever rain-seed you might bring back from Prism. He swears the beast is sure-footed over white crust, though its ribs look like barrel hoops under the harsh daylight. You touch the cold ceramic key hidden in your vest and weigh his desperate offer against the heavy miles waiting beyond the rim.
+EXIT 1: Lead the skinny mule down toward the cart-tracks.
+EXIT 2: Refuse the beast and walk past the boiling vats alone.
+@@END
+
+@@SECTION sg-1-0-1-2
+TITLE: The Blind Owl
+TEXT: Under the creaking wooden sign of the Blind Owl tavern, the morning air tastes of baked dust and old beer lees. A desperate barley-grower intercepts you near the lintel, pressing a cracked stone whetstone into your pocket with trembling fingers in exchange for a solemn promise of future irrigation when the vault opens. His fields are cracked plates of grey mud, and his eyes hold the hollow look of men who have watched their wells turn to brine. You must decide whether to carry his heavy token out onto the salt flats or leave it with the tavernkeeper.
+EXIT 1: Accept the stone and head toward the old milestone.
+EXIT 2: Leave the whetstone on the lintel and climb the gravel ledge.
+EXIT 3: Turn back toward the terrace mounting block to check your pack.
+@@END
+
+@@SECTION sg-1-0-1-3
+TITLE: The Cooperage Alley
+TEXT: Deep in the narrow stone alley behind the cooperage, the shade offers little relief from the furnace glare of the sky. An old woman named Morwen catches your sleeve, thrusting a coarse linen pouch of dried mint leaves against your chest to ward off the dry dust cough that waits on the open salt flats. She mutters ancient cautions about the dry wind while her spotted fingers trace the leather harness over your ribs. The passage opens ahead into brighter light, splitting toward the rim and the high ledges.
+EXIT 1: Step past her out onto the gravel ledge overlooking the white Basin.
+EXIT 2: Follow the steep alley toward the stone mounting block by the terrace edge.
+EXIT 3: Veer toward the rotting canvas awning where the prospector sits.
+@@END
+
+@@SECTION sg-1-0-1-4
+TITLE: The Washing Troughs
+TEXT: At the communal washing troughs where the grey silt settles into dry crusts, the water is long gone and only salt-rings remain on the stone. Your younger sister waits by the deepest basin, slipping a lucky copper button into your collar lining to keep the dry wind from freezing your lungs on the march. Her hands are cold despite the heat, and her smile is too thin for comfort. The track leads away from the familiar stone walls toward the open desert and the distant, shimmering ruins of the old lensfolk.
+EXIT 1: Walk past the fluttering wool rags on the dead acacia tree.
+EXIT 2: Take the upper track where the path splits into jagged limestone ribs.
+@@END
+
+@@SECTION sg-1-0-1-5
+TITLE: The Public Bakehouse
+TEXT: Near the public bakehouse where the hearths have been cold for weeks, a nervous baker grabs your arm and begs you to confirm whether the Glasswrights of Prism are still sending mirror signals across the Basin. His flour bins are empty, and he fears the sky-watchers have abandoned their posts in the glass towers. You look across the white expanse where the mirages dance before answering him. The road stretches out below, demanding a choice between the lower mule tracks and the rough terrace paths.
+EXIT 1: Head toward the stone mounting block at the edge of the terrace.
+EXIT 2: Make your way toward the rotting canvas awning near the old bakehouse wall.
+@@END
+
+@@SECTION sg-1-0-1-6
+TITLE: The Apothecary Stall
+TEXT: Across the threshold of the apothecary stall, shelves of dried roots and sealed earthen jars rattle in the rising draft. A sharp-eyed herbalist offers you a small vial of bitter willow oil if you promise to scout for her missing brother near the old wharves where the salt crust thickens. She holds the glass up to the light to show its clear amber depth before corking it tight with red wax. The path outside divides among the ruins, offering three distinct ways down toward the edge of the dried sea.
+EXIT 1: Take the upper track toward the limestone ribs.
+EXIT 2: Choose the dry irrigation channel choked with tumbleweed.
+EXIT 3: Climb to the dusty platform of the disused relay station.
+@@END
+
+@@SECTION sg-1-0-1-7
+TITLE: The Sheep-Pens
+TEXT: Behind the timber stockade where the sheep-pens stand empty and smelling of old dung, a weary herdsman hands you a greasy wool blanket rolled into a tight sausage. He warns you in a gravelly whisper that the desert nights on the salt flats are as sharp as broken glass and just as cold. The wind rattles the dry thorn bushes beyond the fence where the Rim Road begins its long descent. You must choose how to wrap your gear before the sun climbs any higher into the copper sky.
+EXIT 1: Carry the blanket toward the roofless shell of the old storage hut.
+EXIT 2: Head down to the stone drinking trough where the green algae has turned to grey dust.
+@@END
+
+@@SECTION sg-1-0-1-8
+TITLE: The Salt-Warehouse Porch
+TEXT: In the deep shadows of the salt-warehouse porch, a debt-collector from the valley below measures your stride with greedy eyes and calculates how much your sturdy boots will fetch at auction if you fail to return. He taps a brass ledger against his knee and remarks that many runners start this journey with lighter packs than yours. The road lies open before you, running past the old relay station and down toward the grey drinking troughs where the last livestock was watered.
+EXIT 1: Walk past the old signalman polishing his brass mirror disc.
+EXIT 2: Pass the dry stone drinking trough where the mule handler packs his gear.
+@@END
+
+@@SECTION sg-1-0-1-9
+TITLE: The Public Well
+TEXT: By the public well whose iron handle hangs slack and dry against the stonework, a weeping child presses a smooth river pebble into your hand and asks if the rain is truly coming back this year. The wooden bucket rests at the bottom of the empty shaft, kicking up a hollow echo when the wind blows across the rim. You close your fist around the cool stone and step away from the curb, facing the long road that winds down into the white glare of the Basin.
+EXIT 1: Pick your way toward the roofless shell of the old storage hut.
+EXIT 2: Head for the stone drinking trough where the mule handler prepares to leave.
+@@END
+
+@@SECTION sg-1-0-2-0
+TITLE: The Outer Drying Racks
+TEXT: Past the outer drying racks where white fish-skins stiffen in the glare, a Dune Sister wrapped in coarse grey wool blocks your path. She offers you a cup of brackish well-water from a skin flask in exchange for a binding oath of silence regarding the hidden desert wells. Her eyes are pale as salt crystals, and her fingers do not release the leather strap until you give your word. The white road stretches away from the racks, humming with the dry vibration of the Rim.
+EXIT 1: Follow the white rim-track where the wind hums through fence wire.
+EXIT 2: Step past the salt-boiler and take the lower cart-track into the Basin.
+@@END

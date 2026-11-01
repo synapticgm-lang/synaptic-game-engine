@@ -1,0 +1,106 @@
+{
+ "batch": "cf-2-120",
+ "sections": {
+  "cf-2-120": {
+   "title": "The Sleeping Foreman",
+   "text": "Heavy canvas flaps shield the Union bunkhouse from the biting grit of the Cinder Steppe, trapping a thick fog of cheap tobacco and tallow smoke. Near the cold cast-iron stove, the shift foreman snores heavily into his rolled-up wool coat, a brass pocket-watch chain glinting across his stained waistcoat. Beneath his dangling hand rests the stolen timber ledger, its leather cover cracked and gray with fine mineral dust. You slip inside on silent boots, keeping your eyes fixed on the rhythmic rise and fall of his broad chest as you reach down to slide the heavy book from his grasp without waking him.\n\nThe pages flutter slightly in the draft, revealing a series of neat tally marks beside a pencilled sequence of numbers that outline the tumblers of the rear locker.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Lift the ledger from his fingers"
+   ]
+  },
+  "cf-2-121": {
+   "title": "Secrets in the Dust",
+   "text": "Sunlight filters through the begrimed clerestory windows, casting long, dusty shafts across the cluttered interior of the supply car. Holding the recovered ledger close to your face, you squint against the gloom to decipher the faded pencil notes left by the night clerks. The combination is scribbled across the margin in a hasty, slanted hand, tucked beneath a freight manifest for heavy slag-irons. Every floorboard beneath your boots groans at the slightest shift of your weight, threatening to alert the sleeping crew in the adjoining compartment. You memorize the numbers quickly, turning the sequence over in your head until it burns into your memory like hot coals.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the locked supply cabinet"
+   ]
+  },
+  "cf-2-122": {
+   "title": "Turning the Iron Dial",
+   "text": "The heavy steel door of the supply locker stands before you, its brass combination dial pitted with green corrosion and stubborn age. Breathing evenly through your nose to steady your racing pulse, you set your fingers against the cold metal ring and begin to click through the combination found in the ledger. Each notch falls into place with a dry, metallic thud that sounds unnaturally loud in the silent car. From the corner, the foreman shifts his bulk on the cot, letting out a low, gravelly grunt that freezes your hand mid-turn on the final digit.\n\nYou must commit to the last click before he wakes fully.",
+   "check": "Twist the dial to final drop",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-123": {
+   "title": "A Clattering Mistake",
+   "text": "Your thumb slips on the greasy rim of the brass dial at the worst possible moment, sending a sharp, echoing snap through the hollow metal casing. The foreman jolts upright with a hoarse curse, his hand diving instinctively beneath his wool pillow for his heavy iron spanner. You wrench the locker door open in a desperate rush, grabbing whatever loose supplies your fingers find before diving out through the narrow freight hatch into the blinding ash-light. The heavy iron spanner strikes the steel wall just inches above your shoulder, leaving a deep, ringing dent as you tumble headfirst into the grey drifts below.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Flee across the ballast tracks"
+   ]
+  },
+  "cf-2-124": {
+   "title": "Cleanly Picked",
+   "text": "The brass mechanism yields with a smooth, satisfying click, allowing the heavy iron door to swing open on well-oiled hinges. Inside, neat rows of wrapped tallow candles, fresh gasket cord, and sealed tins of machine grease wait in the dimness. You reach past the ordinary stores to claim a compact, brass-cased pocket level left behind by an itinerant surveyor, sliding it quietly into your canvas jacket. The foreman stirs on his cot but settles back into his heavy slumber without discovering the breach. You retreat into the grey haze of the yard, carrying your prize without a sound.",
+   "check": "",
+   "grant": "Surveyor brass pocket level",
+   "exits": [
+    "Return to Siding Nine"
+   ]
+  },
+  "cf-2-125": {
+   "title": "The Carcass of the Tender",
+   "text": "A sudden flurry of slate-grey wings erupts from the rusted ribs of an overturned coal tender, scattering a fine cloud of old soot into the freezing air. The skeletal iron frame lies half-buried in the shifting dunes like the carcass of some prehistoric leviathan, its water tanks split wide by ancient frost. As the soot-gulls wheel wildly into the leaden sky, a low, metallic groaning reverberates through the ground beneath your boots, reminding you how thin the crust of civilization is out here on the Cinder Steppe. You pause beside the rusted ruin, wiping a film of greasy black dust from your goggles while the wind howls through the twisted stays. Ahead, the tracks curve away toward the distant murmur of the Grey Bazaar, where smoke curls lazily from thousands of makeshift chimneys built into stalled freight cars.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Continue toward the Grey Bazaar"
+   ]
+  },
+  "cf-2-126": {
+   "title": "The Water-Wagon Cistern",
+   "text": "A massive bogie-tender, stripped of its wheels and shored up with timber blocks, dominates the centre of the sprawling camp as a communal water tank. Armed guards with hollow, thirsty eyes pace the perimeter catwalks, resting their hands on heavy iron wrenches and watching every stranger with unwavering suspicion. The air smells of wet rust, boiled salt, and the sharp tang of sweat. Down in the muddy trenches around the base of the iron giant, people barter desperately with chipped tokens and scraps of copper for a single dripping measure of liquid. The entire settlement hums with a desperate, pent-up energy under the low, bruised sky.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Patch the weeping cistern rivet",
+    "Wait in line for the heavy mallet",
+    "Siphon extra water from the camp boiler",
+    "Calibrate the brass float-valve for tokens",
+    "Clear the blocked drainage pipe beneath",
+    "Listen to the storm clock groan"
+   ]
+  },
+  "cf-2-127": {
+   "title": "Weeping Rivet",
+   "text": "You climb the slick iron ladder of the great water-tender, balancing your weight carefully against the damp side plate where a stubborn rivet has begun to weep a steady stream of precious moisture. Pulling a stick of lead-tin solder and a small paraffin torch from your tool kit, you clear away the crust of green oxidation with a wire brush until clean metal shows. The flame roars softly in the wind, casting a warm, flickering light against the towering iron wall as the solder flows smoothly into the gap. When you test the seal with the flat of your thumb, the leak is gone entirely, leaving only a dark, damp stain on the dry plate below.\n\nThe grateful guard leaning against the valve-housing tosses you a heavy leather skin filled with cool, sweet well water in payment.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the central water platform"
+   ]
+  },
+  "cf-2-128": {
+   "title": "Sealing the Seam",
+   "text": "The metal is dangerously thin around the corroded seam, and the heat of your torch threatens to blow out a larger hole in the ancient plate if you linger a second too long. Sweat runs down your forehead, stinging your eyes as you feather the flame with one hand while pressing the solder stick firmly into the joint with the other. The pressure inside the cistern groans against the interior walls, vibrating through your fingertips like a living pulse that refuses to be tamed.\n\nYou hold your breath, waiting to see whether the metal holds or gives way under the thermal shock.",
+   "check": "Melt and hold the lead seal",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-129": {
+   "title": "Blown Solder",
+   "text": "The brittle iron plate gives way with a sharp hiss of escaping steam, blasting a shower of molten lead solder directly across your knuckles. You pull your hand back with a sharp gasp, dropping your torch into the grey mud below as a stinging, red burn flares across your skin. The guard above mutters a dry curse at the wasted water leaking from the fresh breach, tossing you a dirty rag and ordering you off the ladder before you do any more damage. You nurse your scorched hand in the cold wind, poorer by a tool and richer by a painful lesson in haste.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Climb down from the cistern"
+   ]
+  },
+  "cf-2-130": {
+   "title": "A Full Leather Skin",
+   "text": "The solder cools to a dull grey finish, perfectly sealing the weeping seam against the constant internal pressure of the giant tank. The guard nods in grim approval, reaching down to unhook a heavy, plump leather skin from the rail and dropping it directly into your waiting arms. The water inside sloshes with a cool, heavy promise that eases the dry ache in your throat just by its weight. You sling the strap over your shoulder, feeling the solid value of honest work well done as you climb back down to the crowded yard.",
+   "check": "",
+   "grant": "Leather skin of sweet water",
+   "exits": [
+    "Return to the central water platform"
+   ]
+  }
+ },
+ "missing": []
+}

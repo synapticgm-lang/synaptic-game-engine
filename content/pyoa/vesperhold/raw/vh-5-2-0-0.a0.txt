@@ -1,0 +1,70 @@
+@@SECTION vh-5-2-0-0
+TITLE: The Mossy Run
+TEXT: Slipping past the Warden post beneath dripping pears, you follow a mossy irrigation run while the bronze clapper hums against your aching shoulder-blades. The cold mountain air smells of wet bark and crushed leaves, thick enough to taste on your tongue. Every breath comes sharp and shallow, matching the steady rhythm of water trickling over grey river stones. Ahead, the path splits around a dense thicket of blackthorn where lanterns flicker against the creeping white fog. // You must decide whether to force your way through the dense thorns, follow the winding water channel further down into the grey haze, or scramble up the slick earthen bank to seek a clearer view of the lower groves.
+EXIT 1: Push through the blackthorn thicket
+EXIT 2: Follow the winding water channel
+EXIT 3: Scramble up the slick earthen bank
+@@END
+@@SECTION vh-5-2-0-1
+TITLE: Behind the Presses
+TEXT: Crouching behind a stacked crate of cider-presses, you watch a hooded Warden blow three sharp warning notes into a brass whistle while mist clings to your wool. The piercing shrill echoes off the damp stone walls, swallowed quickly by the heavy veil of the orchard cloud. Your muscles cramp from the strain of keeping still with the heavy bronze tongue strapped tight against your spine. Biscuit stamps a hoof softly in the gloom, impatient for open ground. // The notes fade into a tense silence across the terrace. You can wait out the search in the shadows of the press, risk the freezing mountain tracks believing the lower forge has gone cold and seeking another way, or slip past the wooden frames into the deeper orchard fog.
+EXIT 1: Wait out the search here
+EXIT 2: Seek another way to recast the bell
+EXIT 3: Slip deeper into the orchard fog
+@@END
+@@SECTION vh-5-2-1-0
+TITLE: Beneath the Russets
+TEXT: Beneath a canopy of frost-bitten russets, you crawl under a split timber rail while the mule's soft snort is muffled by thick white fog. Frozen apples crunch beneath your knees, releasing a sharp tang of fermented cider into the damp air. The weight of the bronze clapper shifts uncomfortably, pulling your balance toward the muddy earth. Somewhere through the grey gloom, a heavy boot-heel grates against slate, drawing uncomfortably close to your hiding spot. // You need to decide how to move before the unseen patrol spots your tracks in the mud or hears the faint hum of the metal resting against your back.
+EXIT 1: Crawl deeper beneath the low branches
+EXIT 2: Skirt the edge of the timber fence
+EXIT 3: Follow the mule toward the lower terrace
+@@END
+@@SECTION vh-5-2-1-1
+TITLE: The Sunken Ditch
+TEXT: Edging along a sunken drainage ditch where rotting apples ferment in the damp, you pray the bronze weight on your back remains entirely silent. The heavy fog presses down from the mountain heights, blurring the gnarled shapes of the orchard trees into towering phantoms. Cold moisture drips steadily from your woollen cap, finding a path down the back of your neck. Every movement requires absolute care to avoid disturbing the loose shale lining the trench walls. // The path ahead branches into three distinct directions, each swallowed entirely by the impenetrable mountain mist.
+EXIT 1: Balance across the slippery stone wall
+EXIT 2: Squeeze through the narrow cleft in slate
+EXIT 3: Wade through the shallow irrigation trench
+@@END
+@@SECTION vh-5-2-1-2
+TITLE: The Sleeping Watchdog
+TEXT: Tiptoeing past a sleeping watchdog tethered to a pear trunk, you hold your breath as a wet pine-needle drops against your leather collar. The animal lets out a low, rumbling sigh in its sleep, its flank rising and falling against the damp moss. The bronze clapper feels like an anchor strapped to your spine, threatening to throw you off balance if you make a single false step. The fog wraps tightly around the orchard, muting every sound except the frantic beating of your own heart. // You must choose your next footing carefully before the dog wakes or another patrol rounds the mossy stone shed.
+EXIT 2: Scramble down the steep earthen embankment
+EXIT 3: Pause beside the moss-grown stone cistern
+EXIT 1: Hide in the patch of wild fennel
+@@END
+@@SECTION vh-5-2-1-3
+TITLE: The Discarded Whistle
+TEXT: Ducking under a low trellis strung with grey lichen, you spot a discarded Warden whistle lying in the mud, offering an instant passport if you dare blow it. The brass instrument gleams faintly through the fog, smudged with dried mud and greenish tarnish. Picking it up means you might mimic their signals, but a false note will bring every patrol in the orchard down upon your head. The heavy bell-tongue hums softly against your jacket, vibrating with a cold, insistent pulse. // You can pocket the whistle and risk the signals, creep along the nursery beds, duck behind empty crates, or slide down the muddy bank into the gloom.
+EXIT 1: Pocket the whistle and risk the signals
+EXIT 2: Creep along the nursery beds
+EXIT 3: Duck behind the empty apple crates
+EXIT 4: Slide down the slick mud slide
+@@END
+@@SECTION vh-5-2-1-4
+TITLE: The Smuggler's Hatch
+TEXT: Spotting a forgotten smuggler's hatch beneath a root-knotted bank, you slide inside with the heavy clapper to bypass the entire checkpoint via an old cellar. The air inside smells of dry straw, spilled mash, and centuries of mountain dampness. Because you believe the low forge has gone cold and you must look elsewhere for a way to recast the bell, this hidden route offers a vital reprieve from the watchful eyes of the Fog-Wardens. Stone steps descend into absolute darkness beneath your boots. // You can follow the dark cellar tunnel forward, search the earthen walls for old handholds, or test your knuckles against the damp mortar as you adjust your heavy burden.
+EXIT 1: Follow the dark cellar tunnel forward
+EXIT 2: Search the earthen walls for old handholds
+EXIT 3: Rub tallow on your frostbitten knuckles
+@@END
+@@SECTION vh-5-2-1-5
+TITLE: The Drainage Pipe
+TEXT: Skirting the perimeter fence where rusted iron wire hums in the updraft, you slip into a narrow drainage pipe that leads straight down toward the lower groves. The corrugated metal scrapes against the padded cradle of the bell-tongue with a harsh metallic whisper. Frigid air rushes upward through the cylinder, carrying the unmistakable scent of woodsmoke and damp earth from the valley floor. Your shoulders ache from hunching low to fit within the cramped iron tube. // You must choose how to exit the pipe and continue your descent through the treacherous fog-drowned orchards.
+EXIT 1: Follow the twisted orchard path
+EXIT 2: Apply carter's tallow to numb hands
+EXIT 3: Press flat against the damp earth
+EXIT 4: Slip past the stone storage clamp
+@@END
+@@SECTION vh-5-2-2-0
+TITLE: The Blackthorn Labyrinth
+TEXT: Navigating a labyrinth of blackthorn hedges, you dodge a swinging lantern held by a searcher whose boots squelch heavily in the wet orchard clay. The orange light sweeps across the low-hanging branches just inches above your head, painting the fog in sickly amber hues. Thorns catch at your coat sleeves, threatening to tear the wool as you squeeze sideways through the narrow gaps. The bronze clapper hums a warning note against your spine, vibrating with the cold mountain air. // You need to decide whether to cross the roaring drainage sluice or weave deeper into the dwarf quince plantation to lose the searcher entirely.
+EXIT 1: Cross the suspended wooden plank
+EXIT 2: Weave through the dwarf quince plantation
+@@END
+@@SECTION vh-5-2-2-1
+TITLE: The Abandoned Press
+TEXT: Hiding inside an abandoned cider-press shed, you listen to water dripping from the cedar eaves while the bronze tongue grows icy against your spine. Dust motes dance in the thin slivers of grey light piercing the cracked slat walls. Outside, the muffled shouts of the Wardens fade into the rhythmic drip of moisture and the distant hum of wind through the upper cables. The heavy bronze weight feels colder by the minute, drawing the heat straight out of your back. // You must decide whether to slip back out into the quince plantation or cling to the mossy retaining wall to avoid the tax-collector.
+EXIT 1: Slip back into the quince plantation
+EXIT 2: Cling to the mossy retaining wall
+@@END

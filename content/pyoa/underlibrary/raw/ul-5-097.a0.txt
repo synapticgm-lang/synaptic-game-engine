@@ -1,0 +1,52 @@
+@@SECTION ul-5-097
+TITLE: The Rusted Threshold
+TEXT: Iron plates have long since crumbled into copper lace across the chasm, leaving only raw air between one tier of stacks and the next. You catch the glint of something pale snagged on a stray bolt-end hanging over the void. Shifting your weight, you place the soles of your boots carefully on a narrow rib of structural girder, ignoring the deep, resonant hum of the vault below. Your fingers stretch out into the cold draft, searching for a purchase that will carry you safely across the gap without testing the remaining metal too severely. // A slender wooden spool, wound tight with grey silken thread that hums softly against your fingertips, waits within arm's reach on the opposite ledge.
+EXIT 1: Retrieve the silken spool carefully
+@@END
+@@SECTION ul-5-098
+TITLE: Across the Iron Rib
+TEXT: The remaining girder groans beneath your boots as you lean out over the open drop, testing the balance of your shoulders against the steady upward draft from the deep stacks. Every rivet in the ironwork feels loose, trembling with the distant vibration of the closing doors and the weight of millions of misplaced volumes. You have to thread your way across a two-inch rib of rusted steel while keeping your lamp steady against your hip and your eyes fixed on the silken spool waiting on the far bracket. // You take a slow, calculated breath, shifting your center of mass forward into the cold air just as the girder gives a sharp, warning metallic shiver beneath your left heel.
+CHECK: Balance across the rusted girder
+@@END
+@@SECTION ul-5-099
+TITLE: The Slip on the Grating
+TEXT: Your left boot heel finds only loose flake-rust instead of solid metal, sliding off the edge with a dry scrape that echoes sharply down the brick-lined shaft. For a heartbeat your weight hangs entirely on your grip, and the heavy brass lamp swings wildly against your ribs, bruising your side before the iron chain snaps tight. You haul yourself upward with a sharp grunt, scraping the skin of your knuckles raw against a protruding bolt, but you manage to scramble onto the firm timber of the opposite floor. // The silken spool is yours, though your side aches and a smear of fresh blood stains the cuff of your grey shelver's tunic.
+EXIT 1: Proceed toward the whispering gallery
+@@END
+@@SECTION ul-5-100
+TITLE: The Silken Spool
+TEXT: You maintain your footing with a steady, quiet discipline, placing each step with exact precision until your boots touch the solid oak planking of the far tier. Resting on a dusty shelf bracket right where the ironwork ends is the object you spotted, small and unassuming yet humming with a faint, steady vibration when you lift it from the dust. It is a spool of grey spider-silk, impervious to ink and damp, prized by binders for mending the torn spines of forbidden folios. // You slip the spool into your pocket, feeling its strange, cool weight steadying your pulse as the distant machinery of the vault grinds on.
+GRANT: Spool of spider-silk
+EXIT 1: Follow the iron walkway onward
+@@END
+@@SECTION ul-5-101
+TITLE: The Page-Storm
+TEXT: Loose sheets torn from centuries of uncatalogued ledgers boil up from the lower flues like a flock of frantic white gulls caught in a chimney draft. They whip past your ears with dry paper slaps, smelling faintly of old gall-ink and vinegar, threatening to knock the chimney from your brass lamp and plunge the aisle into darkness. You lower your head into the storm, letting the swirling blizzard of parchment guide your steps while your fingers twitch outward into the papery chaos. // Somewhere in the thick of the whirling leaves, a bright flash of white feather catches the lamplight.
+EXIT 1: Reach into the swirling paper storm
+@@END
+@@SECTION ul-5-102
+TITLE: The Feather in the Wind
+TEXT: The storm of loose leaves thickens into a blinding wall of white text, every page scrawled with hurried marginalia that seems to mutter and complain as it flies past your face. You keep your elbow crooked tight over your lamp-glass, shielding the precious flame from the downdraft while you track the erratic path of the bright object tumbling through the aisle. The floor beneath your soles is slick with fallen paper dust, sliding like dry snow under your boots with every stride you take toward the deeper stacks. // A long, pristine quill, plucked from the wing of a golden swan and glowing with a faint amber aura, bobs just above the level of your chest.
+EXIT 1: Snatch the golden quill mid-air
+@@END
+@@SECTION ul-5-103
+TITLE: Catching the Swan Quill
+TEXT: The paper tempest surges around your shoulders, lifting stray pages into your hair and blurring the narrow aisles until you can see nothing but a frantic flurry of ink. You time your movement to the rhythmic pulsing of the vault's ventilation flues, waiting for the split second when the draft stills enough for a clean reach. Your fingers stretch straight into the heart of the flying debris, aiming to pluck the glowing quill from the center of the vortex before the next gust scatters it into the abyss. // You snap your hand forward through the paper cloud just as a sudden counter-current shears violently across the aisle.
+CHECK: Snatch the swan quill
+@@END
+@@SECTION ul-5-104
+TITLE: Torn Pages and Bruised Ribs
+TEXT: The paper-storm batters your forearms like a flight of angry daggers, slicing thin red lines across your skin and forcing your eyes shut against the stinging cloud of dry dust. You stumble hard against the corner of a projecting oak bookcase, driving the corner into your ribs and sending your lamp clattering three paces away before it catches upright on its iron base. The golden quill slips through your fingers twice before you finally trap it against the wooden shelving with your palm, breathing hard through the acrid taste of paper-dust in your throat. // You clutch the prize to your chest, nursing a dull, throbbing ache in your side as the paper flurry slowly settles into drifts around your boots.
+EXIT 1: Leave the paper drifts behind
+@@END
+@@SECTION ul-5-105
+TITLE: The Swan Quill's Gift
+TEXT: You move through the flying blizzard of loose-leaf pages with smooth, unbroken rhythm, your hand darting into the center of the vortex with effortless precision. Your fingers close cleanly around the shaft of the quill, and the moment your skin touches the gold-sheened vane, the surrounding paper-storm instantly drops to the floor like dead leaves. It is a pristine quill plucked from a golden swan, its nib eternally charged with ink that never dries and never requires dipping. // You tuck the precious instrument safely into your lapel pocket, feeling its faint, warm pulse matching the steady beat of your heart.
+GRANT: Pristine golden swan quill
+EXIT 1: Walk toward the whispering gallery
+@@END
+@@SECTION ul-5-106
+TITLE: The Vault of the Index
+TEXT: The stacks end abruptly at a vast, circular floor of black basalt where the air smells heavily of cold lamp-oil, ozone, and ancient dust. In the very center stands a heavy stone pedestal carved with the twisted shapes of sleeping hounds, and upon it rests the Index, its pages bound in iron-grey leather that seems to breathe in the dim light. Thessaly Marr waits beside the pedestal, her fingers resting lightly on the cold cover while her lamp sputters its final, dying blue spark into the gloom. Her face is pale and drawn with exhaustion, yet her eyes hold the absolute stillness of someone who has read the final sentence of history. Beyond her, the massive bronze doors of the vault begin their heavy, groaning descent into the floor, sealing off the world outside for a generation. // She looks up as your boots touch the basalt, sliding a heavy iron key across the stone toward your feet without a word.
+EXIT 1: Step forward to claim the Index
+@@END

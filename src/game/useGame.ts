@@ -33,6 +33,13 @@ import {
   isAuthoredPyoaBook,
   spineChoiceLabels,
 } from './pyoaSpine';
+import {
+  advanceAuthoredPyoa,
+  authoredPyoaChoiceLabels,
+  authoredPyoaDiceLine,
+  authoredPyoaPageText,
+  initAuthoredPyoaGameState,
+} from './pyoaAuthoredRuntime';
 import { withLitrpgSystemWindow } from './litrpgSystemWindow';
 import {
   syncGameToCloud,
@@ -3023,9 +3030,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       };
       // 08d Silent Engine — receipt only; skip DeepSeek micro-flavor entirely.
       const authoredBook = isAuthoredPyoaBook(liveCurrent.campaignBibleId);
-      const authoredBeat = authoredBook
-        ? (authoredPageText(liveCurrent) || authoredStartPage()).trim()
+      const authoredBeatRaw = authoredBook
+        ? (authoredPyoaPageText(liveCurrent) || authoredPageText(liveCurrent) || authoredStartPage()).trim()
         : '';
+      const authoredDice = authoredBook ? authoredPyoaDiceLine(liveCurrent) : undefined;
+      const authoredBeat = authoredDice
+        ? `${authoredBeatRaw}\n\n${authoredDice}`.trim()
+        : authoredBeatRaw;
       let writerRemaining: string[] = [];
       let writerProse: string | null = null;
       let writerSpeech: SpokenLine[] | undefined;
@@ -5276,18 +5287,31 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       aloneArrival,
       namedSeeded.seed ?? namedSeeded.saveId ?? '0'
     );
-    const umbraBookNew = (bible?.id ?? namedSeeded.campaignBibleId) === 'umbra-protocol';
+    const authoredBibleId = bible?.id ?? namedSeeded.campaignBibleId;
+    const umbraBookNew = isAuthoredPyoaBook(authoredBibleId);
     const pendingCovers = umbraBookNew
       ? []
       : pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
-    const umbraSpine = umbraBookNew ? initUmbraSpine() : undefined;
-    const umbraStartChips = umbraBookNew
-      ? spineChoiceLabels({
-          ...namedSeeded,
-          engineMode: 'pyoa',
-          campaignBibleId: 'umbra-protocol',
-          pyoaSpine: umbraSpine,
-        })
+    const authoredBoot = umbraBookNew
+      ? initAuthoredPyoaGameState(
+          {
+            ...namedSeeded,
+            engineMode: 'pyoa',
+            campaignBibleId: authoredBibleId,
+          },
+          authoredBibleId!
+        )
+      : null;
+    const umbraSpine = authoredBoot?.pyoaSpine;
+    const umbraStartChips = authoredBoot
+      ? (authoredPyoaChoiceLabels(authoredBoot).length
+          ? authoredPyoaChoiceLabels(authoredBoot)
+          : spineChoiceLabels({
+              ...namedSeeded,
+              engineMode: 'pyoa',
+              campaignBibleId: authoredBibleId,
+              pyoaSpine: umbraSpine,
+            }))
       : [];
     const pickedHook = picked?.text;
     const pickedHookFallback = picked?.page1 || picked?.fallback;
@@ -5321,6 +5345,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ? establishmentChoices(pendingCovers, namedSeeded)
           : [],
       pyoaSpine: umbraSpine ?? namedSeeded.pyoaSpine,
+      pyoaBookPlay: authoredBoot?.pyoaBookPlay ?? namedSeeded.pyoaBookPlay,
       log: [],
       worldLedger: seedWorldLedgerFactions(emptyWorldLedger(), bible),
       places: seedStoryPlaces(
@@ -5484,7 +5509,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         openingText = filterKidModeText(openingText);
       }
       if (umbraBookNew) {
-        openingText = authoredStartPage() || stitchText;
+        openingText =
+          authoredPyoaPageText(authoredBoot ?? newState) ||
+          authoredStartPage() ||
+          stitchText;
+        const diceOpen = authoredPyoaDiceLine(authoredBoot ?? newState);
+        if (diceOpen) openingText = `${openingText}\n\n${diceOpen}`;
       }
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);

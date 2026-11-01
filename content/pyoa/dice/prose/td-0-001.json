@@ -1,0 +1,104 @@
+{
+ "batch": "td-0-001",
+ "sections": {
+  "td-0-001": {
+   "title": "The Keeper's Final Note",
+   "text": "Salt crusts the heavy glass of the Gullmouth lighthouse lamp room, frosting the windows against a horizon that should be blue water but is only brown, baked mud. Three days ago, the sea simply emptied out. Now, the Low stretches bare to the edge of the world, littered with the rotting ribs of stranded ships and bloated whale carcasses. You stand in the suffocating quiet of the high tower, holding a folded piece of parchment sealed with Orsolya Venn's heavy wax stamp. Your mentor is gone. Her note is brief, jagged with haste. It speaks of the Meridian Gear, the ancient mechanism the old Tidewardens built beneath the Sunken Stair. She writes that it has jammed, and whoever forces the great brass wheel to turn will decide which coast the ocean claims first. Orsolya has gone down into the dry deep to find it. As a licensed wrecker, your duty is to salvage what is left behind, but this is a prize that could reshape the world.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Turn away from the glass"
+   ]
+  },
+  "td-0-002": {
+   "title": "The Keeper's Quarters",
+   "text": "Dust motes drift in the cold beams of sunlight piercing the keeper's quarters. Orsolya left in a hurry; her heavy woollen shawl still hangs over the chair, smelling faint of pipe smoke and dried kelp. Beyond the salt-rimed window, the dry expanse of the Low stretches out, a vast brown scab where the sea used to be. You need to gather what you can before descending the cliff path to the dead harbour.\n\nThe room is a clutter of the old keeper's eccentricities. A scattering of faded navigational charts litters the heavy oak desk, tracing routes through sinkholes and reefs now exposed to the open air. On the stone balcony, a rusted brass spyglass lies abandoned beside a coiled rope. By the hearth, a heavy lantern sits half-dismantled, sloshing with precious whale oil. The path down to the boats waits outside, steep and unforgiving.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Decipher the scattered navigational charts",
+    "Repair the rusted brass spyglass",
+    "Dismantle the heavy lantern for oil",
+    "Climb down the treacherous cliff path"
+   ]
+  },
+  "td-0-003": {
+   "title": "Faded Navigational Charts",
+   "text": "Parchment crackles under your fingers as you smooth out the oversized maps on Orsolya's drafting table. Most of the documents depict the Wrack Coast as it was four days ago, covered in deep, treacherous currents. However, one heavy vellum sheet has been frantically scrawled over with fresh charcoal. Orsolya has attempted to map the newly exposed Low. The drawing marks the terrifying sinkholes that have opened up in the salt-flats, craters that swallow scavengers whole. A winding, convoluted path weaves through the hazard, but the notation is incredibly dense, layered with tide-clock calculations and obscure wrecker shorthand. Deciphering this route will require intense focus. Staring at the tiny, frantic numbers is already making your vision swim and a dull ache throb behind your eyes.\n\nYou need to understand this path if you want to navigate the dry seabed without falling into the dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Try to read the safe route"
+   ]
+  },
+  "td-0-004": {
+   "title": "Deciphering the Route",
+   "text": "Squinting against the glare of the morning sun, you lean heavily over the desk and try to force the charcoal symbols to make sense. The calculations are erratic, mixing standard fathom-depths with bizarre astrological symbols the Drift Pilgrims use to track the moon. To make matters worse, Orsolya's handwriting degrades near the edges of the page, turning into a frantic scribble. You rub your temples, trying to push through the mounting pressure in your skull. If you cannot parse the logic behind these markings, you will be walking blind into a terrain that has not seen the sky in a thousand years. You trace a soot-stained finger along the jagged line, holding your breath as you try to anticipate the old lighthouse keeper's frantic train of thought.",
+   "check": "Trace the hidden path",
+   "grant": "",
+   "exits": []
+  },
+  "td-0-005": {
+   "title": "A Blinding Headache",
+   "text": "Pain spikes sharply behind your eyes, a sudden and searing migraine that forces you to stagger back from the desk. You knock an inkwell to the floor, shattering the glass and ruining a pile of blank ledgers. The charcoal numbers on the map blur into a meaningless grey smudge. You spend nearly an hour sitting on the floor with your head between your knees, waiting for the nausea and the throbbing ache to pass. By the time you can see straight again, the sun has climbed much higher in the sky, wasting precious daylight. You have lost the thread of Orsolya's logic, leaving the safe path through the sinkholes a mystery. With a frustrated sigh, you push yourself upright, knowing you will have to trust your own instincts on the salt-flats.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the desk behind"
+   ]
+  },
+  "td-0-006": {
+   "title": "The Safe Path",
+   "text": "Suddenly, the chaotic scribbles align into a terrifyingly clear picture. You blink away the lingering strain in your eyes, tracing the final charcoal line to a rocky outcropping near the Singing Dunes. Orsolya was using the shadow of the stranded leviathan carcass to triangulate the stable ground. You carefully fold the vellum map and tuck it inside your coat, a hard-won prize that might just keep you from plummeting into a lightless subterranean sea. Whether you grasped the entire formula or just barely pieced together the landmarks, the knowledge is yours. You step away from the drafting table, feeling a grim sense of readiness. The Low is a deathtrap, but you now hold the key to navigating its most treacherous expanse.",
+   "check": "",
+   "grant": "Annotated Sinkhole Map",
+   "exits": [
+    "Turn back to the room"
+   ]
+  },
+  "td-0-007": {
+   "title": "The Rusted Spyglass",
+   "text": "Outside on the balcony, the wind tastes entirely of dry salt and dead kelp. Resting on a salt-rimed crate is a collapsible brass spyglass, a heavy, expensive piece of equipment that Orsolya must have dropped in her haste. When you pick it up, the metal is cold and stubbornly rigid. The sea-spray has corroded the sliding joints, fusing the brass cylinders together. Spotting rival wrecker crews or aggressive Drift Pilgrims from a distance would be an immense advantage out on the open seabed. However, the brass edges are sharp and jagged where the casing has split. Forcing the mechanism open is going to take leverage and raw strength, and one slip could slice your palms open on the rusted metal.\n\nYou grip the heavy casing, preparing to twist.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Force the mechanism open"
+   ]
+  },
+  "td-0-008": {
+   "title": "A Delicate Operation",
+   "text": "Bracing the spyglass against the wooden railing, you examine the corroded mechanism more closely. The salt crust is thickest near the primary lens housing, sealing the fragile glass behind a wall of green verdigris. To truly make this tool useful, you will need to dismantle the housing completely and clean the internal tracks. It is delicate, frustrating work that requires steady hands, and the rusted edges of the brass casing are sharp enough to easily slice through a wrecker's thick calluses. A deep cut would invite infection from the stagnant rock pools down below.\n\nThe harbour waits quietly in the distance, a reminder that time is slipping away while you stand here tinkering with broken glass.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Attempt the delicate repair"
+   ]
+  },
+  "td-0-009": {
+   "title": "Forcing the Mechanism",
+   "text": "Wrapping a scrap of heavy sailcloth around your palm for protection, you wedge your fingers into the cracked brass housing. The metal whines in protest, a terrible screeching sound that echoes off the empty lighthouse walls. You try to apply pressure evenly, working the corroded cylinders back and forth to break the seal of dried salt without shattering the delicate lenses inside. The verdigris flakes away like green snow, but the inner track remains stubbornly jammed. You grit your teeth and push harder, feeling the sharp, jagged edge of the split casing bite through the sailcloth and press dangerously against your skin. You need to snap the rust bond before the metal slices into your hand.",
+   "check": "Force the brass cylinders",
+   "grant": "",
+   "exits": []
+  },
+  "td-0-010": {
+   "title": "A Costly Slip",
+   "text": "Blood wells up instantly as the brittle brass casing collapses under your grip. The jagged metal tears right through your makeshift sailcloth protection, slicing a deep, agonizing gash across the meaty part of your palm. You hiss through your teeth, dropping the ruined spyglass onto the balcony where the main lens cracks against the wooden boards. The tool is completely useless now. You spend a frustrating, painful ten minutes wrapping your bleeding hand in clean bandages, pulling the linen tight to stop the red flow. Every movement sends a stinging jolt up your arm. It is a foolish, sloppy mistake, and you will have to navigate the dangerous depths of the Low with a compromised grip.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Nurse your injured hand"
+   ]
+  },
+  "td-0-011": {
+   "title": "Clear Vision",
+   "text": "Grinding loudly, the salt-fused cylinders finally give way with a harsh crack. You manage to ease off the pressure just before the sharp casing bites into your palm, keeping your hands completely intact. Sliding the mechanism back and forth, you clear out the worst of the green verdigris until the spyglass extends smoothly. You lift it to your eye, peering down at the distant, dried-out seabed. Through the slightly cloudy glass, the stranded ships and distant scavengers leap into sharp focus. This is a tremendous advantage. You collapse the spyglass with a satisfying click and slide it securely into your belt, ready to spot danger long before it can reach you out on the bare sand.",
+   "check": "",
+   "grant": "Restored Brass Spyglass",
+   "exits": [
+    "Return to the room"
+   ]
+  }
+ },
+ "missing": []
+}

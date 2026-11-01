@@ -1,0 +1,56 @@
+Gemini said
+
+@@SEED sg-4-1-0-0 | Among towering dunes of razor-fine quartz, you crawl through a buried culvert while biting shards pelt your woolen cloak, risking the loss of the Seedkey.
+@@SEED sg-4-1-0-1 | In a bowl of singing crystal debris, you crouch behind a shattered pillar while the abrasive white gale howls, risking the flame within your ember-lamp.
+@@SEED sg-4-1-1-0 | Beneath a crescent ridge of fused sand, an old salt-miner named Barnaby offers shelter for a pinch of tobacco, but his cough heralds lung-rot.
+@@SEED sg-4-1-1-1 | Within a hollow archway of milk-glass, you wipe the stinging grit from your smarting eyes while the gale tests the ceramic Seedkey in your pocket.
+@@SEED sg-4-1-1-2 | Beside a frozen cascade of green slag, a stranded cart from the Salt Court blocks the trench, threatening to delay your march against the mounting tempest.
+@@SEED sg-4-1-1-3 | Behind a tumbled solar-reflector, you notice a fresh boot-print left by the alleged vault-looters pointing straight toward a hidden drainage flute.
+@@SEED sg-4-1-1-4 | Across a ribbed flat of blistered alkali, a singing telegraph pole vibrates with a high shriek, threatening to shatter your equilibrium in the blowing dust.
+@@SEED sg-4-1-1-5 | Within the lee of a sunken glass barge, you check your oil flask against the rising dark, knowing the dwindling fuel will barely outlast the gale.
+@@SEED sg-4-1-2-0 | Inside a hollowed optic dome, a blind dromedary tethered to an iron ring stamps nervously, threatening to bolt into the blinding white fury outside.
+@@SEED sg-4-1-2-1 | Upon a ridge of violet glass shingles, you dodge tumbling panes that whistle like daggers, risking a deep slice across your unprotected knuckles.
+@@SEED sg-4-1-2-2 | Within a collapsed warehouse of dried kelp-cake, a scuttling dune-crab clicks its claws at your lantern-light, threatening to knock your precious embers into the dust.
+@@SEED sg-4-1-2-3 | Under a leaning sun-tower, an abandoned water-skin flutters like a white tongue, tempting you to taste its bitter contents while the salt dries your throat.
+@@SEED sg-4-1-2-4 | Beside a crater of fused green sand, a rusted surveying tripod hums in the gale, masking the stealthy crunch of something heavy moving in the drift.
+@@SEED sg-4-1-2-5 | Within a sunken corridor of mirror-slate, your boots crunch on millions of tiny prisms, threatening to reveal your footsteps to any watchers in the storm.
+@@SEED sg-4-1-2-6 | Under a shelf of yellow salt-crust, a shivering desert-fox watches your lamp with wide amber eyes, reminding you that life endures even in this grinding waste.
+@@SEED sg-4-1-2-7 | Across a bridge of warped copper rails, the screaming wind threatens to lift you bodily into the air and hurl you against the jagged basin floor.
+@@SEED sg-4-1-2-8 | Inside a hollow bronze valve-housing, you shelter from a sudden vortex of glass-dust that scours the paint from your lantern and tests your endurance.
+@@SEED sg-4-1-2-9 | Beside a cairn of cracked spectacles, an inked leather ledger flutters loose in the gust, threatening to scatter vital cartography across the blinding dunes.
+@@SEED sg-4-1-2-10 | Within a vaulted cistern of green vitrified mud, a puddle of thick brine reflects your soot-stained face, warning you of the dehydration creeping into your veins.
+@@SEED sg-4-1-2-11 | Wandering off the track to escape the wind-shriek, your bootheel clicks against a concealed bronze latch marking the lost secondary cache of Prism.
+@@SEED sg-4-1-2-12 | Under a sagging framework of corrugated tin, a broken mirror flashes erratic violet signals into the murk, threatening to draw unwanted attention from signal-sentries.
+@@SEED sg-4-1-2-13 | Across a slope of shifting pearl-grit, your ankles sink into treacherous quick-salt that pulls against your every step while the gale presses hard your back.
+@@SEED sg-4-1-2-14 | Inside a ruined dispensary of the old Lensfolk, green crystal dust coats your tongue with copper bitterness, threatening to choke your breath in the dark.
+@@SEED sg-4-1-2-15 | Beside a monumental basalt cogwheel, an iron winch spins uselessly in the howling draft, warning you that the mechanical pathways ahead are jammed with debris.
+@@SEED sg-4-1-3-0 | Within a subterranean drainage pipe of salt-glazed clay, you crawl through choking darkness while the Seedkey bangs against your ribs like a cold fist.
+@@SEED sg-4-1-3-1 | Behind a bulwark of discarded mirror frames, a whistling gust tries to rip your woolen scarf away, exposing your neck to the scouring glass-dust.
+@@SEED sg-4-1-3-2 | Across a frozen wave of amber slag, you steady your trembling grip on the hot iron handle of the lamp as the wick flickers dangerously low.
+@@SEED sg-4-1-3-3 | Inside a hollow basalt cistern, a solitary water-drop echoes with maddening slowness, testing your frayed nerves against the relentless roar of the mirror storm.
+@@SEED sg-4-1-3-4 | Beneath a canopy of twisted zinc conduits, an old wind-chime made of sea-glass plays a frantic, discordant tune that threatens to drown out your thoughts.
+@@SEED sg-4-1-3-5 | Beside a mountain of crushed quartz gravel, your right boot-sole peels away from the leather uppers, threatening to leave your heel bare to the abrasive ground.
+@@SEED sg-4-1-3-6 | Within a roofless courtyard of black basalt, a swirling vortex of white sand traps you against a dead wall while your lungs burn for clean air.
+@@SEED sg-4-1-3-7 | Across a ribbed causeway of translucent slate, the storm pressure drops suddenly with a loud pop, popping your eardrums and confusing your sense of direction.
+@@SEED sg-4-1-3-8 | Inside a sunken observation post, a rusty brass speaking-tube whistles with the voice of the gale, threatening to disorient you with its unearthly howling.
+@@SEED sg-4-1-3-9 | Beneath a cantilevered balcony of fused green quartz, you cling to a frozen iron stanchion while a slab of loose glass crashes into the ravine below.
+@@SEED sg-4-1-3-10 | Following the faint smell of burnt tallow left by the looters, you slip through a narrow cleft in the storm wall that bypasses the worst of the grit.
+@@SEED sg-4-1-3-11 | Within a sunken cistern choked with gray salt-drift, your foot strikes a buried metal ring that tolls like a muffled bell against the rushing wind.
+@@SEED sg-4-1-3-12 | Across an open expanse of blistered white alkali, the gale hits with the force of a slammed door, driving millions of glass needles into your leather coat.
+@@SEED sg-4-1-3-13 | Inside a hollowed copper cylinder that once held a solar lens, you press your back to the curved wall while the tempest shrieks through the open ends.
+@@SEED sg-4-1-3-14 | Beneath a massive flange of rusted iron pipe, you pause to lash the Seedkey securely inside your tunic with a length of braided hemp cord.
+@@SEED sg-4-1-3-15 | Beside a cliff of yellow crystal slag, an eddy of warm, sulfurous air rises from a deep fissure, threatening to suffocate you with the breath of the dead basin.
+@@SEED sg-4-1-4-0 | Within the throat of a colossal drainage flute, the howling wind compresses into a screaming pipe that tests your courage and threatens your balance.
+@@SEED sg-4-1-4-1 | Behind a jagged screen of sea-green plate glass, you watch the full fury of the storm scour the basin floor while your lantern oil begins to smoke.
+@@SEED sg-4-1-4-2 | Across a narrow bridge of buckled iron framework, the gale buffets your shoulders with physical blows, threatening to pitch you into the dark trench below.
+@@SEED sg-4-1-4-3 | Inside a vaulted junction of salt-encrusted aqueducts, you catch your breath against the damp masonry while the storm above rattles the concrete ceiling.
+@@SEED sg-4-1-4-4 | Beneath a leaning spire of milk-glass, your fingers grow numb and clumsy against the cold brass of the lamp handle as the temperature drops sharply.
+@@SEED sg-4-1-4-5 | Beside a mountain of pulverized quartz, a sudden shift in the dune buries your shins in heavy grit, anchoring you fast against the rushing wind-wall.
+@@SEED sg-4-1-4-6 | Within an alcove carved from fossilized mud, you press the ceramic Seedkey to your chest for warmth while the glass-dust scratches the stone outside.
+@@SEED sg-4-1-4-7 | Across a ribbed pan of iridescent salt-crust, the storm light turns from blinding white to a bruised purple, signaling the climax of the mirror gale.
+@@SEED sg-4-1-5-0 | At the mouth of the Grand Siphon tube, the howling vortex funnels into a narrow iron hatch, testing your ability to reach the latch against the draft.
+@@SEED sg-4-1-5-1 | On the windward lip of the central depression, the storm strips the leather cover from your lamp, exposing the hot coals directly to the flying glass.
+@@SEED sg-4-1-5-2 | Inside the shelter of a battered mirror-station door, you brace your weight against the warped hinges while the gale hammers furiously on the exterior plates.
+@@SEED sg-4-1-5-3 | Beside the massive copper intake valve of Prism, the roaring wind creates a pocket of relative calm where your ember-lamp gutters in the thin air.
+@@SEED sg-d-4-1 | Racing recklessly through the heart of the mirror storm without shielding your face or lamp, you stumble into a sheer drop of broken glass and smash both your bones and your ember into useless dust.
+@@DONE

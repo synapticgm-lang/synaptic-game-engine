@@ -1,0 +1,95 @@
+{
+ "batch": "vh-4-2-1-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-4-2-1-0": {
+   "title": "Splicing in the Shelter",
+   "text": "Frost glazes your knuckles as you huddle beneath an overhanging blue serac where a shivering ropewright named Orry works with numb, reddened fingers to splice a frayed guyline. The heavy bronze clapper on your back hums a steady, low vibration against your spine, matching the distant groan of the moving glacier beneath your boots. Orry glances up from his twisted hemp cords, offering a brief, wry nod as the wind howls past your ice-bound sanctuary.\n\nThree distinct paths branch out from the shelter: one drops steeply across a glittering frost-crusted slope, another winds upward toward a trembling rope bridge swaying over the void, and the third skirts a precarious ledge of blue pack-ice.",
+   "exits": [
+    "Descend the glittering frost slope",
+    "Climb the swaying rope bridge",
+    "Traverse the blue pack-ice ledge"
+   ]
+  },
+  "vh-4-2-1-1": {
+   "title": "Blinded by Powder",
+   "text": "A sudden, violent avalanche of powdery snow sweeps across the lower ladder, burying your iron traction spikes and blinding you in a swirl of white just as daylight fails completely. The weight of the bronze clapper pulls you forward into the drift while Biscuit lets out a distressed snort behind you in the freezing dark. You must feel your way blindly along the buried guide-rail before the shifting slope gives way entirely beneath your boots.\n\nTwo distinct courses remain open before you in the choking whiteout, each demanding an immediate and perilous choice.",
+   "exits": [
+    "Follow the buried guide-rail",
+    "Pull the blindfold over Biscuit",
+    "Repair the snapped guide-rope"
+   ]
+  },
+  "vh-4-2-1-2": {
+   "title": "The Slick Ice-Bridge",
+   "text": "Your boots slide tentatively across a razor-thin ice-bridge spanning a bottomless blue abyss, while the bronze clapper hums a sharp, warning note directly against your spine. Every breath plumes into ice crystals in the thin air, and the sheer drop on either side threatens to dizzy even the steadiest head. Across the gap, the ladder continues its jagged ascent into the frozen gloom.\n\nThree distinct routes lie before you, each demanding a different measure of caution and endurance.",
+   "exits": [
+    "Skirt the groaning glass pillar",
+    "Take the secret ropewright chute",
+    "Hack fresh steps in the ice"
+   ]
+  },
+  "vh-4-2-1-3": {
+   "title": "The Cable-Lord's Toll",
+   "text": "An old cable-lord named Kimmich plants his iron-shod staff firmly across the narrow mountain cornice, barring your progress and demanding an exorbitant toll in silver or trade for the maintenance of the swaying hemp handrails. Behind him, the glacier winds whip viciously through the ropes, creating a high-pitched, singing shriek that drowns out the hum of your heavy bronze cargo. You must decide how to deal with the stubborn toll-lord before the biting cold freezes you to the rock face.\n\nFour distinct paths or responses are open to you as you face the blocked cornice.",
+   "exits": [
+    "Slide down the steep firn chute",
+    "Hack through the frozen waterfall",
+    "Share a ration with Hauer",
+    "Dodge the shifting glacier fissure"
+   ]
+  },
+  "vh-4-2-1-4": {
+   "title": "The Narrow Blue Tunnel",
+   "text": "Unencumbered by a pack-animal's bulk, you squeeze your shoulders through a tight, glistening blue ice-tunnel that bypasses the treacherous, gale-swept ridge entirely. The heavy bronze clapper scrapes lightly against the frosty ceiling above you, its internal hum amplified by the tight chamber into a resonant chord that vibrates in your teeth. Emerging from the narrow passage, you find yourself at a critical junction in the upper ice field.\n\nThree distinct routes unfold before you out of the tunnel mouth.",
+   "exits": [
+    "Step carefully near the fresh fissure",
+    "Haul the mule across the snow bridge",
+    "Inspect the abandoned supply sledge"
+   ]
+  },
+  "vh-4-2-1-5": {
+   "title": "Chipping the Vertical Wall",
+   "text": "Your hammer strikes the vertical blue wall of ice with dull, rhythmic thuds, sending brittle shards cascading into the abyss as you chip out fresh rungs against the screaming mountain wind. The bronze clapper feels heavier with every vertical inch you gain, its deep vibration syncing with the steady pounding of your own heart. Hanging suspended between cloud and crevasse, you peer upward to choose your next grueling maneuver.\n\nFour distinct paths present themselves along the frozen precipice.",
+   "exits": [
+    "Lead the mule across the snow bridge",
+    "Investigate the half-buried supply sledge",
+    "Navigate the maze of towering seracs",
+    "Wrestle the clapper along the narrow ledge"
+   ]
+  },
+  "vh-4-2-2-0": {
+   "title": "Scorched Barley Tea",
+   "text": "A terrace miller named Joram steps out from behind a wind-break built of stacked blue ice blocks, handing you a small tin cup of scorched, bitter barley tea that burns delightfully down your throat. The heat thaws your stiffening jaw while the heavy bronze clapper rests against the ice behind you, its low hum briefly harmonizing with the wind singing over the terrace walls. Joram points a mittened finger toward the dangerous paths ahead.\n\nOne clear route leads onward from the wind-break across the frozen expanse.",
+   "exits": [
+    "Cross the black rime bridge"
+   ]
+  },
+  "vh-4-2-2-1": {
+   "title": "Shuddering Hemp",
+   "text": "The old hemp bridge shudders violently beneath your boots under a sudden, savage gust of wind, threatening to pitch both you and the humming bronze clapper into the grey white void below. You lock your fingers into the frozen guide-lines, pressing your body flat against the vibrating strands until the worst of the squall passes. Two onward routes beckon through the swirling drift ahead.\n\nChoose your next direction carefully across the chasm.",
+   "exits": [
+    "Tread the black rime bridge",
+    "Heed the miller's loud warnings"
+   ]
+  },
+  "vh-4-2-2-2": {
+   "title": "Crawling the Ribbon",
+   "text": "You drop to your belly, crawling across a perilous, narrow ribbon of blue ice while loose crystals roar down the steep couloir directly beside you like a miniature waterfall. The bronze clapper is strapped tightly against your spine, scraping against the hard crust with every inch of forward progress. Two distinct paths open up from the far side of the icy ribbon.\n\nSelect how you will proceed through the storm.",
+   "exits": [
+    "Heed the warnings from Vane",
+    "Wedge into the narrow ice cleft"
+   ]
+  },
+  "vh-4-2-2-3": {
+   "title": "The Fog-Warden's Bell",
+   "text": "A fog-warden named Tilda cuts through the blinding whiteout with the sharp, clear note of a bronze hand-bell, guiding your stumbling boots safely away from a hidden, jaw-like crevasse. Her heavy woollen cloak is crusted with rime, but her grip on your sleeve is steady and sure as she points out the remaining hazards of the glacier ladder. Three distinct choices face you in the swirling fog.\n\nSelect your path onward from the warden's sanctuary.",
+   "exits": [
+    "Wedge into the narrow ice cleft",
+    "Lead Biscuit past the dark chasm",
+    "Take the reckless way"
+   ]
+  }
+ },
+ "missing": []
+}

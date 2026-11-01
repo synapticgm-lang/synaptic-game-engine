@@ -1,0 +1,96 @@
+{
+ "batch": "cf-4-132",
+ "sections": {
+  "cf-4-132": {
+   "title": "Wall Reflections",
+   "text": "Black basalt walls press close against the boiler plates as the Marrowbone creeps through the narrowest throat of the Hollow Cut. Instead of looking ahead into the coal-smoke, you watch the polished brass of the running gear cast sliding arcs of yellow illumination across the wet stone. Every contour of the rock reveals itself through these drifting reflections, guiding your hand on the regulator with absolute precision.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Steer by the sliding brass lights"
+   ]
+  },
+  "cf-4-133": {
+   "title": "Squeezing the Throat",
+   "text": "Jagged teeth of ancient granite loom out of the dark, threatening to shear the tender's corner-irons away if you misjudge the drift by a single inch. You squint past the trembling pressure gauge, trying to match the engine's rhythmic sway to the subtle slant of the wall shadows while the wheels screech against the ungreased rail.",
+   "check": "Read the stone shadows to steer",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-134": {
+   "title": "Scraping the Ribs",
+   "text": "A sickening screech of torn steel echoes off the vaulted ceiling as a jutting shoulder of granite catches the tender's side, denting the water tank and showering the cab floor with grit. You slam the reverse lever halfway, fighting the swinging deck until the engine clears the obstruction with a shudder that leaves your shoulder bruised against the brass manifold.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Clear the granite and press onward"
+   ]
+  },
+  "cf-4-135": {
+   "title": "The Plumb Line",
+   "text": "Smooth stone walls slide past the running board at last, leaving behind only the smell of hot oil and the memory of that razor-thin clearance in the dark. Resting on a narrow wooden bracket near the grease-box, you spot an old brass plumb-line left behind by some forgotten track-gang, its finely spun cord and heavy metal bob intact.",
+   "check": "",
+   "grant": "pocket brass plumb-line",
+   "exits": [
+    "Return to the narrow rock passage"
+   ]
+  },
+  "cf-4-136": {
+   "title": "Scents of the Inner Gate",
+   "text": "Thick coils of lavender oil and burning tallow drift down the stone-lined corridor as the Marrowbone rolls past the rusted iron brackets of the inner gatehouse. The air grows heavy and warm, carrying the distinct hum of distant machinery and the muffled scratching of pens behind thick oak panels. Hollow Signalmen in grey coats stand sentinel beside the tracks, their lanterns flickering with a pale, steady blue flame that reveals no shadows. You slow the engine to a crawl, letting the heavy tread of the drive wheels announce your arrival to whatever authority waits behind the massive threshold.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Approach the subterranean oak doors"
+   ]
+  },
+  "cf-4-137": {
+   "title": "The General's Keep",
+   "text": "Massive oak doors barred with strap-iron block the rails ahead, standing before the subterranean domain of the Stationmaster-General like a mountain cliff. A single pale lamp casts its light across several narrow side passages and small wicket gates cut into the heavy timber. To the left, a low wicket stands ajar with a dusting of grey ash on the stone sill; straight ahead, the great doors await some token of passage; to the right, a shadowy side-arch leads toward the filing rooms and the tribunal chambers. Every option calls out with its own promise of entry into the deep heart of Cinderfall's defenses.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Push through the warped oak post",
+    "Batter the small iron wicket gate",
+    "Face the tribunal of silent porters",
+    "Enter the circular chamber beyond",
+    "Approach the heavy oak panels directly"
+   ]
+  },
+  "cf-4-138": {
+   "title": "Silence Before the Portrait",
+   "text": "Dust motes dance in the amber glow of a wall-bracket as you step down onto the stone flags before a towering oil painting of an ancient, severe-looking administrator. The eyes in the canvas seem to track your movements through the damp air, demanding complete stillness and absolute respect from anyone seeking passage through these sealed tunnels. You stand straight, keeping your breathing slow and your hands steady at your sides while the distant drip of water echoes down the corridor.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Stand quietly before the painted frame"
+   ]
+  },
+  "cf-4-139": {
+   "title": "The Painted Silence",
+   "text": "Oil paint cracks like dried mud across the heavy cheekbones of the Stationmaster-General's portrait, an enormous canvas hung where the tunnel narrows to a choke-point and the soot settles thickest. Her painted gaze fixes upon the brass pressure gauge on your hip with an unyielding, bureaucratic scrutiny that seems to measure the very air in your lungs. You clamp your jaws together, biting back the reflex cough that rises against the sulphur-grit in the dark, and lock your knees against the vibration of the idling firebox. Every muscle in your throat strains to remain motionless while the grey shadows of the Hollow Signalmen flicker through the coal-dust at the edge of your vision, whispering names you used to know.\n\nThe pressure in your ears builds to a dull roar, and you must hold this absolute stone-still quiet before the canvas eye or let your nerves crack entirely.",
+   "check": "Hold your breath against the canvas gaze",
+   "grant": "",
+   "exits": []
+  },
+  "cf-4-140": {
+   "title": "A Cough in the Dust",
+   "text": "A sudden rattle in your chest betrays you, and the cough bursts out like a dry coal-shot against the stillness, shattering the heavy silence of the tunnel. The oil portrait seems to lean down from its heavy frame as the failure catches in your throat, leaving you gasping for air while a sharp flake of falling slate slices a long, clean line across the back of your hand. Blood mixes with the grey soot on your knuckles, a small and stinging reminder that the old administration exacts its toll in slow measures even when you try to stand like a pillar. You wipe the salt from your lip, poorer by a drop of blood and a vital breath of time, but the tunnel ahead remains open for the iron wheels to turn.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Step past the frame into the lower siding"
+   ]
+  },
+  "cf-4-141": {
+   "title": "The Ivory Key",
+   "text": "You hold your breath until the red sparks behind your eyelids fade to a dull charcoal grey, matching the ancient administrator's painted stare with an iron stillness that brooks no argument from the dark. The canvas does not shift, yet a small click behind the heavy wainscot announces that the test has been met, however narrowly, and the debt of silence is paid in full. From a greasy brass peg beneath the frame, you lift a heavy, yellowed key carved from old whale-ivory with a grip shaped like a carriage door-latch. It fits nowhere upon the Marrowbone itself, but it carries the unmistakable weight of a pass that opens doors closed to ordinary gangers.",
+   "check": "",
+   "grant": "an ivory-handled carriage key",
+   "exits": [
+    "Approach the great oak doors of the keep"
+   ]
+  }
+ },
+ "missing": []
+}

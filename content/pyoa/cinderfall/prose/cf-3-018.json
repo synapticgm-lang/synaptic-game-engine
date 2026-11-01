@@ -1,0 +1,95 @@
+{
+ "batch": "cf-3-018",
+ "sections": {
+  "cf-3-018": {
+   "title": "The Gantry Watch",
+   "text": "Heavy iron gantries stretch across the roaring void of the viaduct like skeletal ribs, dripping with greasy condensate and the bitter tang of coal-gas. Armed guards pace the suspended wooden duckboards, their bayonets catching the pale glare of acetylene lamps as they inspect every passing freight car for contraband and hidden passengers. Below this iron cage, the grey abyss drops away toward invisible river-beds where old steam-boilers rust in the mud. You linger in the shadow of a water crane, weighing the risk of forging the manifests against the danger of tampering with the electric signal-boxes.\n\nEvery path forward demands a price in sweat or nerve, and the storm clock above the toll-office ticks steadily closer to zero.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Forge a false shipping manifest",
+    "Rewire the station signal-box",
+    "Bluff your way past checkpoint",
+    "Submit to crane-jaw inspection"
+   ]
+  },
+  "cf-3-019": {
+   "title": "Ink And Ambition",
+   "text": "Stale soot-ink cakes the bottom of your tin cup, thick and black as lamp-black grease. You dip a split nib onto the rough, fibrous surface of a confiscated Rail Baron bill of lading, pressing lightly to mimic the stiff, bureaucratic script favored by the toll-inspectors. Outside the cramped cabin, boots crunch on the iron grating as a patrol sergeant checks seals and signatures with bored hostility. Your hand trembles slightly from the heat of the firebox and the weight of old debts, but the strokes form legible lines that might just fool an exhausted clerk.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Present the forged papers"
+   ]
+  },
+  "cf-3-020": {
+   "title": "The False Seal",
+   "text": "Sweat stings your eyes as you slide the freshly inked manifest across the zinc-topped counter beneath the flickering gas mantle. The sergeant's thumb traces the forged stamp with lazy suspicion, his gaze lingering on the peculiar slant of the capital letters where your pen hesitated. You hold your breath, forcing your shoulders to drop while your fingers curl around the brass valve-key hidden inside your coat pocket, ready for whatever alarm might follow.",
+   "check": "Match the Baronial dispatch script",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-021": {
+   "title": "Smudged Carbon",
+   "text": "A greasy smear of black ink ruins the forged stamp just as the sergeant leans in closer with his magnifying glass. He curses softly, sniffing the paper for the raw stench of lamp-black and saliva before slamming a heavy brass rejection stamp onto the wood. You pay for the slip with a sharp cuff across the ear that leaves your temple throbbing and a three-hour delay logged in the station ledger while they strip-search the tender. The guards shove you back toward the maintenance ladder, poorer in time and temper but still breathing.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the gantry hub"
+   ]
+  },
+  "cf-3-022": {
+   "title": "Accepted at the Gate",
+   "text": "The sergeant grunts, his heavy red thumb leaving a greasy print directly over your imitation seal before he tosses the manifest onto the stack of cleared cargo. The iron turnstile clanks open with a heavy, protesting groan, welcoming you past the customs barrier and into the heart of the viaduct. However narrowly you managed the deception, the ledger-ghosts let you pass without a second glance. Tucked into your waistcoat pocket now rests a damp paper slip bearing the red wax mark of the toll-office.",
+   "check": "",
+   "grant": "Toll-office clearance slip",
+   "exits": [
+    "Return to the gantry hub"
+   ]
+  },
+  "cf-3-023": {
+   "title": "Sparks in the Box",
+   "text": "Wires hiss and spit blue fire inside the cast-iron housing of the junction relay as you strip back the rubber insulation with a pocket knife. The signal-box smells of ozone, hot copper, and thirty years of accumulated dust from the ash-steppes. Outside, the patrol guards grumble as the semaphore arms above begin to twitch and jerk in an erratic rhythm, signaling a fictitious line blockage three miles up the track. You need only cross the open platform while they scramble to investigate the phantom warning.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Slip across the open platform"
+   ]
+  },
+  "cf-3-024": {
+   "title": "The Flickering Semaphore",
+   "text": "Red signal lamps flicker and die along the iron gantry, plunging the lower walkways into a shifting gloom of shadows and steam. Guards scramble up the ladderways with heavy iron wrenches and curses on their lips, their attention fully absorbed by the sudden electrical failure in the signal-box. You keep your head down, moving with the rhythmic clank of distant shunting engines so you blend seamlessly into the cadre of harassed track-workers.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach the control relay"
+   ]
+  },
+  "cf-3-025": {
+   "title": "Rewiring the Relay",
+   "text": "Bare copper wires spark against the iron casing, showering your knuckles with white-hot droplets of solder that sear the skin. You bridge the gap between the main accumulator and the emergency klaxon with a hairpin, listening for the deep, resonant hum that means the circuit is holding. One wrong touch against the damp wall will ground the charge through your own boots, bringing the full voltage of the viaduct grid down upon your nervous system.",
+   "check": "Bridge the high-tension terminals",
+   "grant": "",
+   "exits": []
+  },
+  "cf-3-026": {
+   "title": "A Flash of Bad Wiring",
+   "text": "A blinding white arc leaps from the copper terminal, snapping against your wrist with the force of a hammer-blow and charring the sleeve of your wool coat. You tumble backward against the coal-trolley, hissing through your teeth as the smell of burnt hair and ozone fills the cramped cabin. The short-circuit plunges half the gantry into darkness, drawing a storm of angry whistles from the guards who pull you out by your collar and fine you two days' water rations for sabotage.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Return to the gantry hub"
+   ]
+  },
+  "cf-3-027": {
+   "title": "The Hum of Current",
+   "text": "The heavy copper switch seats itself with a deep, satisfying thud that sends a low vibration straight through the floorboards and into the soles of your boots. However narrowly you managed the insulation, the emergency klaxon wails its false warning across the viaduct, drawing every guard away from the lower freight gates in a blind panic. Tucked into your palm is a discarded brass contact lug picked straight from the relay floor.",
+   "check": "",
+   "grant": "Brass relay contact lug",
+   "exits": [
+    "Return to the gantry hub"
+   ]
+  }
+ },
+ "missing": []
+}

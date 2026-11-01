@@ -1,0 +1,72 @@
+Gemini said
+
+@@SECTION sg-3-1-3-14
+TITLE: Prisms in the Dust
+TEXT: Thousands of tiny prisms dangle from the fractured ribwork of the gallery ceiling, catching the pale desert moon and scattering it into blinding, violet arcs across the floor. Every step crunches against brittle shards that hum like tuning forks under your boots. The air tastes of ozone and dry alkali, thick enough to coat your tongue. Ahead, the corridor splinters into two distinct paths, while the way you entered lies silent behind a veil of drifting crystalline dust.
+EXIT 1: Follow the northern passage through the amber haze
+EXIT 2: Creep down the descending stair toward the darker vaults
+EXIT 3: Turn back toward the obsidian balcony
+@@END
+@@SECTION sg-3-1-3-15
+TITLE: The Rusted Barrier
+TEXT: A heavy iron gate blocks the mouth of the alley, its thick bars crusted with decades of orange rust born from the biting alkaline desert winds. The padlock is a solid lump of corrosion that refuses to yield@@SECTION sg-3-1-3-14
+TITLE: The Prismatic Gallery
+TEXT: Thousands of tiny prisms dangle from rusted iron frameworks overhead, catching the high desert moonlight and scattering it into blinding, overlapping arcs of ruby and emerald. Each step on the quartz tile floor sends a sharp, musical tinkle echoing through the hollow ruins, warning any hidden listeners of your progress. You press your hand against your coat, feeling the cold ceramic weight of the Seedkey as you weigh your next direction through the splintered halls.
+EXIT 1: Advance deeper toward the glowing halls
+EXIT 2: Take the narrow ledge above the courtyard
+EXIT 3: Retreat toward the shadowed obsidian balcony
+@@END
+@@SECTION sg-3-1-3-15
+TITLE: The Rusted Barricade
+TEXT: A heavy iron gate blocks the mouth of the alley, its thick bars pitted and rusted solid by decades of alkaline desert winds blowing across the Basin. Coarse salt crystals crust the hinges, locking the metal in a stubborn grip that refuses to budge under a casual shove. You test the bars with your shoulder, the dry metal cold and unyielding against your heavy canvas coat.
+EXIT 1: Squeeze past the jammed iron barrier
+@@END
+@@SECTION sg-3-1-4-0
+TITLE: Falling Shards
+TEXT: Jagged chunks of stained glass hang precariously overhead in a vaulted ceiling rendered fragile by thermal shock and endless salt-storms. A sudden crack echoes above, and you throw yourself sideways as a massive fragment plummets, bursting into a cloud of razor-sharp dust that settles over your boots. Breathing heavily in the alkaline air, you look up to find your route divided by the debris.
+EXIT 1: Climb the spiralling glass stairs
+EXIT 2: Press flat against the warm wall
+@@END
+@@SECTION sg-3-1-4-1
+TITLE: The Sentry at the Lens
+TEXT: A lone glass-diver named Vane stands beside a brass telescope mounted on a pedestal of fused green slag, ignoring your presence entirely as he tracks the horizon for signal flashes. His coat is stiff with dried salt and his fingers are bandaged with strips of oiled linen. You crouch low in the shadow of a basalt buttress, waiting for a chance to slip past his narrow field of vision.
+EXIT 1: Dash toward the humming signal-tower
+@@END
+@@SECTION sg-3-1-4-2
+TITLE: The Sun-Disc Ascent
+TEXT: Massive fragments of a fallen solar mirror lean against the masonry like giant bronze coins dropped by some careless titan of the old world. You squeeze your frame through the narrow gap behind the heavy metal, discovering a set of subterranean stone stairs descending into darkness. The air rising from the depths smells of damp earth and old copper rather than dry salt.
+EXIT 1: Descend into the bronze-scented stairwell
+EXIT 2: Slip sideways along the sun-warmed wall
+@@END
+@@SECTION sg-3-1-4-3
+TITLE: Howling Glass Canyons
+TEXT: The wind tears through the vertical street between two hollow glass towers, shrieking like a trapped animal and nearly lifting you from your footing on the slick salt crust. Grit stings your cheeks as you lean your weight forward against the gale, clutching your banked coal-lantern tightly to keep the dim warmth alive.
+EXIT 1: Scale the spiralling steps of the tower
+EXIT 2: Seek shelter near the open bronze door
+@@END
+@@SECTION sg-3-1-4-4
+TITLE: Slag and Drums
+TEXT: Your boots slide across a steep incline of blue glass slag that shatters beneath your weight with the sound of breaking porcelain. Far off across the white flats, deep rhythmic drums beat against the stone, signalling an armed patrol of the Salt Court moving between the lower tiers. You drop to one knee, letting the silence swallow your breath as you choose where to run.
+EXIT 1: Flatten against the warm glass facade
+EXIT 2: Hurry toward the glowing sanctum threshold
+@@END
+@@SECTION sg-3-1-4-5
+TITLE: The Talisman Broker
+TEXT: A nervous broker named Jora steps out from behind a shattered archway, waving a string of hollow glass beads and whispering frantic offers of protection against the coming monsoon floods. His eyes dart nervously toward the upper balconies while he thrusts the worthless trinket toward your chest. You brush past his outstretched hands, keeping your gaze fixed on the paths ahead.
+EXIT 1: Ascend the spiralling stair toward the tower
+EXIT 2: Press flat against the sun-baked wall
+@@END
+@@SECTION sg-3-1-4-6
+TITLE: The Foundry Postern
+TEXT: A low postern gate stands half-open in the massive exterior wall of the old lens-foundry, its hinges greased with animal fat to keep them silent. You slip through the narrow opening into a courtyard strewn with discarded prisms and cooling vats. Faint light spills from an interior doorway, cutting a sharp beam across the grey flagstones.
+EXIT 1: Approach the beacon at the base
+EXIT 2: Enter the glowing tower threshold
+EXIT 3: Retrace your steps past the basalt pillar
+@@END
+@@SECTION sg-3-1-4-7
+TITLE: The Salt-Edge Path
+TEXT: The ground narrows until it becomes a razor-edge ridge of packed white salt, dropping away on both sides into the dark, silent abyss of the dry sea basin. Every step requires absolute concentration as the salt crust crumbles beneath your heels into powdery dust. You keep your arms outstretched for balance, your eyes fixed on the stable structures rising ahead.
+EXIT 1: Climb the winding glass stairs
+EXIT 2: Head toward the open bronze doorway
+EXIT 3: Step inside the glowing sanctum entrance
+@@END

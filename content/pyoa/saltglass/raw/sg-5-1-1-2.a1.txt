@@ -1,0 +1,23 @@
+Gemini said
+
+@@SECTION sg-5-1-2-3
+TITLE: The Flue Drop
+TEXT: Rust flakes drift from the iron hinge as Pell drives the heel of his palm against the warped iron grille, coaxing the stubborn floor-grate upward with a dry shriek of metal. Beneath the gap lies a steep plunge into the dark, smelling sharply of baked soot and ancient lime where the cooling flues of the great lens funnel down toward the foundations. Your ember-lamp casts a weak, reddish glow over the soot-blackened brickwork, while the distant, hollow dripping of water echoes from somewhere far below. Pell wipes his grease-stained brow with a sleeve and gestures silently down into the shaft. // Do you slide into the soot-choked flues behind your guide, or pause to test the draught from a hairline masonry crack nearby?
+EXIT 1: Descend the steep flues into the darkness
+EXIT 2: Slip away to investigate the masonry draught alone
+@@END
+
+@@SECTION sg-5-1-2-4
+TITLE: The Slag Ridge
+TEXT: Jagged ribs of fused green slag tear at your boots as you scramble over the ridge, the glassy stone cooling into queer, twisted shapes beneath a pale, bleached sky. Across the empty salt basin, distant foghorns moan a low, mournful warning that vibrates in the hollows of your chest. The wind is picking up grit from the flats, hissing against your woollen coat and threatening to blow out your amber-lamp if you do not shield the iron door with your hand. You crouch behind a shattered parapet of old lens-glass to catch your breath and survey the jagged descent toward the observatory's lower tiers. // Do you move quickly down the slope before the fog thickens, or crawl carefully to avoid disturbing the loose debris?
+EXIT 1: Tread lightly past the cascading glass beads
+EXIT 2: Pick your way through the maze of convex mirrors
+@@END
+
+@@SECTION sg-5-1-2-5
+TITLE: The Chime Shaft
+TEXT: Heavy brass catches the point of your shoulder in the tight utility shaft, sending a sudden, brazen chime ringing off the curved brickwork with the persistence of an alarm bell. The metallic note hangs heavy in the confined air, vibrating against your ribs and dying away into a nervous silence that feels far too loud. You stand frozen in the gloom, clutching your banking coal-lantern tighter as dust motes swirl in the reddish light. The narrow passage splits ahead into several grim directions, each smelling of stale salt and old iron. // Do you slip through the narrow crack in the masonry to hide, plunge deeper into the hall of distorting mirrors, or hurry across the crunching salt floor of the forgotten archive?
+EXIT 1: Slip away through the whispering wall fracture
+EXIT 2: Duck into the labyrinth of convex mirrors
+EXIT 3: Cross the crunching salt archive floor in haste
+@@END

@@ -1,0 +1,42 @@
+@@SECTION cf-5-007
+TITLE: The Frozen Crank
+TEXT: Frost jackets the heavy iron ballast-crank until it resembles an old bone half-buried in grey grit. You set your boot against the rusted sleeper, reach down with mittened fingers, and grip the handle with all your might. The cold seeps straight through the wool into your bones, biting sharply against your recent burns. You haul upward, gritting your teeth as the metal groans in protest against the decades of accumulated soot and ice. // Slowly, grudgingly, the stubborn joint shifts half an inch, showering frozen flakes into the ballast bed. You pull again, feeling the muscles in your shoulder bunch and strain until the stubborn mechanism surrenders with a sharp snap, releasing a cloud of stale vapor from the subsurface pipes.
+EXIT 1: Step across the iron sleeper
+@@SECTION cf-5-008
+TITLE: The Iron Bar
+TEXT: Resting within the recess of the ballast-bed lies the prize you freed from the grip of the ice. You drop to one knee in the grit, sweeping away a drift of dry ash to reveal a heavy iron pinch-bar, scarred by slag and pitted with ancient rust. Your fingers close around the cold metal, testing its weight against the pull of gravity. It is thick enough to force any jammed latch or pry open a rusted bypass valve when the need arises. // You tuck the tool securely beneath your leather belt, feeling its solid, reassuring heft press against your hip as you stand back up. The low rumble of the approaching ash-storm hums through the steel rails beneath your boots, urging you onward toward the terminus.
+EXIT 1: Return to the engine deck
+@@SECTION cf-5-009
+TITLE: Wrenching the Ballast-Lever
+TEXT: The main switch-box is completely choked with impacted slag and frozen condensation, refusing every gentle nudge you offer it. You wedge the heavy iron pinch-bar deep into the rusted fulcrum, bracing your boots against the warped iron ties of the track bed. Every muscle in your back tightens like a coiled spring as you throw your entire body weight against the bar, praying the rusted pin does not shear under the sudden stress. // The metal screams a high, thin note of protest, bending slightly under the strain while the stubborn pivot remains locked fast in its bed of frozen ash.
+CHECK: Haul hard against the iron bar
+@@SECTION cf-5-010
+TITLE: A Heavy Cost
+TEXT: The rusted pin snaps with the crack of a pistol, sending you stumbling backward into the abrasive drifts of the ash-dune. A jagged corner of the broken lever catches your forearm, tearing a long, bleeding gash through your sleeve and staining the grey dust a dark, wet crimson. You pick yourself up from the ground, hissing through your teeth as the bitter cold instantly bites into the fresh wound. Time has slipped through your fingers like dry soot, and the rising shriek of the wind warns you that the storm is drawing closer still.
+EXIT 1: Climb back aboard the footplate
+@@SECTION cf-5-011
+TITLE: The Severed Link
+TEXT: You throw your weight into the pinch-bar one final time, and however narrowly, the stubborn assembly gives way with a metallic crash that echoes across the quiet yard. The wedge pops free, leaving you staggering slightly in the ash but holding firm to your prize. You wipe the greasy sweat from your brow, leaving a streak of black soot across your forehead as you pocket the tool. // For your trouble, you have pried loose more than just a rusted latch from the dead tracks.
+GRANT: A scarred iron pinch-bar
+EXIT 1: Push forward to the iron basin
+@@SECTION cf-5-012
+TITLE: The Trembling Regulator
+TEXT: The cab air smells of scorched oil and stale water, thick enough to coat the back of your throat with a bitter film. You steady your trembling hands against the chattering brass regulator, feeling the violent vibrations of the boiler pulse right through your palms. Outside the cracked window-glass, the grey world blurs beneath a low, bruised sky that threatens to break open at any second. // You take a slow, measured breath, holding it deep in your chest to steady your nerves while the steam-vent hisses a steady, warning rhythm overhead.
+EXIT 1: Reach for the tallow-stub
+@@SECTION cf-5-013
+TITLE: The Tallow Stub
+TEXT: Wedged behind the pressure gauge rests a dry stub of tallow-wax, forgotten by whoever fled this cab before you. You pick it up between your thumb and forefinger, noting how the grease is hardened by the relentless chill of the high-altitude air. It is not much, but in a world where friction can seize a piston block in minutes, a lump of fat is worth more than a drawer full of paper scrip. // You rub the wax between your palms to soften it slightly before pocketing it in your waistcoat lining, keeping your eyes fixed on the empty track ahead.
+EXIT 1: Brace for the regulator test
+@@SECTION cf-5-014
+TITLE: Calming the Iron Beast
+TEXT: The needle on the primary steam-gauge dances wildly into the red sector, shivering as the pressure threatens to blow the cylinder-heads off the Marrowbone. You have to lock your knees against the rolling deck, reaching out with one hand to ease the main valve without letting the sudden drop starve the pistons. The heat rolls over your face in a suffocating wave, smelling of scorched packing and boiling scale. // Your heart hammers against your ribs like a loose eccentric rod as you inch your fingers toward the vibrating brass handle, waiting for the precise second to make your move.
+CHECK: Steady the screaming boiler pressure
+@@SECTION cf-5-015
+TITLE: Scalded Nerves
+TEXT: A sudden lurch of the engine throws your hand off-mark, and a jet of boiling condensation spits from the packing-gland directly across your knuckles. You pull back with a sharp cry, cradling your burning hand against your chest while the needle hovers dangerously near the pin. The pain flares hot and sharp, leaving you shaken and dizzy in the dim cab light. Valuable minutes tick away as you wait for the trembling in your fingers to subside enough to finish the work.
+EXIT 1: Grip the regulator once more
+@@SECTION cf-5-016
+TITLE: The Soot-Hardened Will
+TEXT: You lock your jaw against the rising panic, and however narrowly, your fingers find the exact balance point on the brass handle. The wild rattling of the needle eases into a steady, rhythmic thrum as the pressure stabilizes within safe margins. You let out a long, shuddering breath that clears the last of the foul air from your lungs. // Through cool nerve and steady focus, you have claimed something far more valuable than mere time out here in the ash.
+GRANT: A steady hand and tallow-stub
+EXIT 1: Face the armed rail-guards ahead

@@ -1,0 +1,60 @@
+Gemini said
+
+@@SECTION sg-1-0-4-5
+TITLE: The Bleached Pages
+TEXT: Beside a deep rock-cut cistern whose iron grille has been wrenched off by thieves, a discarded traveler's ledger lies open to pages bleached entirely blank by the sun. The dry wind rattles the stiff parchment edges like dry leaves, while below in the dark stone well, water laps against green slime with a hollow, teasing sound. Your fingers tighten around the cold ceramic key in your pack as you consider whether to linger by the water-hole or retrace your steps toward the perimeter wall.
+EXIT 1: Step past the open cistern and descend toward the lower track.
+EXIT 2: Follow the narrow goat path winding down to the dust.
+EXIT 3: Turn back toward the limestone watchtower.
+@@END
+@@SECTION sg-1-0-4-6
+TITLE: The Solar Glare
+TEXT: On the windswept shoulder of the western escarpment, a bank of solar mirrors catches the morning glare and throws blinding shards of white light across the lower track. The angled brass frames hum faintly under the heat, focusing stray rays into burning focal points that dance over the grey dust. Squinting against the brilliant reflection, you grip your ember-lamp tighter as you look for a secure footing down the steep, chalky slope.
+EXIT 1: Pick your way carefully down the sun-drenched slope.
+@@END
+@@SECTION sg-1-0-4-7
+TITLE: The Milestone
+TEXT: Where the wagon road finally descends onto the flat crust of the Basin, a lonely stone milestone marked with eroded ancient numbers stands half-buried in drifting powder. Salt crystals crust its weathered face, blurring the destination carvings that once pointed travelers toward the glass cities of the interior. The air grows noticeably drier here, carrying the faint, metallic taste of old brine and sun-baked dust.
+EXIT 1: March straight onto the blinding white expanse.
+EXIT 2: Follow the wheel ruts curving toward the lower basin.
+@@END
+@@SECTION sg-1-0-5-0
+TITLE: The Lamp-Post Gate
+TEXT: At the Lamp-Post Gate where the iron lanterns are being snuffed for the day, the wry glass-diver Pell leans against a stone pillar and cleans his salt-goggles with an oily rag. He watches you approach with one eyebrow arched in quiet amusement, his canvas pack resting squarely against his boots. The morning air smells of tallow smoke and dry earth, marking the absolute edge of the town's failing harvest.
+EXIT 1: Press on into the widening glare.
+@@END
+@@SECTION sg-1-0-5-1
+TITLE: The Oil Keg
+TEXT: By the heavy timber gates of Candlemere, Pell sits on an overturned oil keg whistling a dry tune while tossing a heavy brass sounding-lead from hand to hand. The rhythmic clink of metal against brass echoes softly against the grain of the reinforced wood. He pauses as your shadow falls across his boots, offering a crooked, knowing grin that betrays his familiarity with the treacherous flats ahead.
+EXIT 1: Press on past the timber barricade.
+@@END
+@@SECTION sg-1-0-5-2
+TITLE: The Western Gatehouse
+TEXT: Under the iron arch of the western gatehouse, Pell adjusts his wide-brimmed wicker hat and asks if you are fool enough to cross the white flats without a guide. His salt-crusted canvas jacket smells faintly of old brine and dried kelp, marking him as someone who knows the perilous shifting crust of the old sea. He taps the side of his copper map-tube with a calloused thumb, waiting for your answer.
+EXIT 1: Press on toward the open Basin.
+@@END
+@@SECTION sg-1-0-5-3
+TITLE: The Guarded Portal
+TEXT: In the dust just outside the guarded portal, Pell stands with his canvas pack already strapped tight, offering a crooked grin and a weathered copper map-tube if you need him. The distant salt-flats shimmer behind him like a vast sheet of hammered tin under the mounting sun. He shifts his weight onto one heel, balancing an ash-wood pole across his shoulder with casual expertise.
+EXIT 1: Press on into the bright haze.
+@@END
+@@SECTION sg-1-c1
+TITLE: The Diver's Offer
+TEXT: The heavy timber gates of Candlemere stand wide behind you, framing the vast, blinding expanse of the Saltglass Basin where your journey truly begins. Pell lingers by the stone post, his brass sounding-lead swinging in a slow, hypnotic arc as he waits to see whether you intend to face the treacherous salt-crust alone or secure his seasoned company. Every traveler who has crossed these flats warns of hidden sinkholes and deceptive mirages, making the choice of companionship a matter of survival before the monsoon twenty days away. // You feel the reassuring cold weight of the Seedkey resting in your travelling pack, reminding you that failure is not an option for the parched lamp-town of Candlemere.
+EXIT 1: Hire Pell the glass-diver as guide to lead the way across the white flats.
+EXIT 2: Go alone, trusting your own feet to navigate the perilous basin.
+@@END
+@@SECTION sg-1-1-0-0
+TITLE: The Weather-Cracked Hand
+TEXT: Beside the tallow-scratched gatepost, Pell offers a weather-cracked hand to guide you across the white flats for half a copper jar. His dry laugh cuts through the morning silence as he slings his canvas pack higher onto his shoulder and adjusts his wide-brimmed hat. Together, you step off the solid stone of the rim road and onto the dazzling, brittle crust of the dead sea.
+EXIT 1: Follow Pell as he strides onto the white salt.
+EXIT 2: Stay close behind your guide as a salt-clogged cart looms ahead.
+EXIT 3: Step out independently with the glass-diver at your shoulder.
+@@END
+@@SECTION sg-1-1-0-1
+TITLE: The Lonely Rim Road
+TEXT: You turn your back on the glass-diver's grin, stepping past the iron post alone into the grey haze of the Rim Road. The silence of the abandoned highway closes in quickly, broken only by the crunch of salt beneath your solitary boots. Ahead, the pale horizon dissolves into a shimmering mirage where the shattered spires of the old lensfolk pierce the sky.
+EXIT 1: Keep moving before a nervous mule train blocks the track.
+EXIT 2: Glance back one last time as a sudden salt-squall curdling the eastern sky warns of trouble.
+EXIT 3: Walk on unescorted with your fingers curled around the hidden ceramic key.
+@@END

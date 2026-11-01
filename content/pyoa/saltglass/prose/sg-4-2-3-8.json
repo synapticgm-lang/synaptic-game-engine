@@ -1,0 +1,87 @@
+{
+ "batch": "sg-4-2-3-8",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-4-2-3-8": {
+   "title": "The Fused Quartz Arch",
+   "text": "Beneath a tilted arch of fused quartz, a weary scavenger named Miri leans against the warm stone and trades a dry crust for a momentary glimpse of your ember. The wind howls outside this fragile shelter, scattering salt against the glass panes like handfuls of gravel, but here the air is still and smells of old dust and baked clay. You share a brief, silent nod with her before checking the hemp cord around your coat. The storm continues to batter the outer ruins, leaving you to decide whether to brave the open flagstones or seek out the underground drainage machinery.",
+   "exits": [
+    "Cross the white flagstones toward the quiet shadow.",
+    "Press your hand against the cold Seedkey by the sluice wheel."
+   ]
+  },
+  "sg-4-2-3-9": {
+   "title": "The Glittering Sand Drift",
+   "text": "Through a dense drift of glittering sand, you forge ahead with your teeth clenched, ignoring the deep ache in your scorched palms. The storm-whipped quartz dust stings your skin, turning every breath into a gritty challenge against the vast emptiness of the Basin. You keep your head lowered, letting the bulk of your coat shield the precious ember-lamp tucked against your ribs while your fingers brush the cold ceramic edge of the Seedkey.",
+   "exits": [
+    "Trace the vibration of distance near the rusted sluice-wheel.",
+    "Watch the brief flash of mirror-signals by the basalt lintel.",
+    "Steady your weary limbs within the shadow of the cyclopean masonry."
+   ]
+  },
+  "sg-4-2-3-10": {
+   "title": "The Narrow Drainage Culvert",
+   "text": "Traveling entirely alone without a guide to clutter your thoughts, you notice a narrow drainage culvert free of drift-piles that lets you bypass the worst of the howling gale. The stone sides are slick with old moisture, offering a hidden trench where the wind can barely reach your face or threaten your flickering coal-lantern. Moving in this quiet solitude gives you a clear sense of purpose as you weigh your next step toward the observatory.",
+   "exits": [
+    "Head toward the dark basalt lintel where the glasswright waits.",
+    "Step away from the screaming mirror storm onto the ribbed salt-terraces."
+   ]
+  },
+  "sg-4-2-3-11": {
+   "title": "The Grey Basalt Tiles",
+   "text": "Across a plateau of grey basalt tiles, you fight for every stride against a wall of air thick with pulverized mirror-dust. The ground beneath your boots is slick and treacherous, forcing you to lean heavily into the tempest while your lantern swings wildly from your bruised hand. Every breath tastes of salt and ancient iron, testing the limits of your endurance as you push toward the heart of the dead city.",
+   "exits": [
+    "Approach the low dark lintel where the lone glasswright stands.",
+    "Leave the screaming mirror storm behind for the quiet salt-pans."
+   ]
+  },
+  "sg-4-2-3-12": {
+   "title": "The Hollow Slag-Iron Bowl",
+   "text": "Inside a hollowed bowl of slag-iron, you tend your flickering flame while the tempest rattles the metal plates overhead. The tiny pocket of relative calm allows you to warm your stiff fingers against the lantern chimney and catch your breath before the next leg of your journey across the glass-strewn flats. Outside, the world is a white blur of scouring dust and howling air.",
+   "exits": [
+    "Seek out the lone glasswright beneath the dark basalt lintel.",
+    "Step out across the ribbed terrace of old salt-pans."
+   ]
+  },
+  "sg-4-2-3-13": {
+   "title": "The Drooping Wire-Mesh Awning",
+   "text": "Beneath a drooping wire-mesh awning, a weathered courier named Hale nods once before disappearing into the blinding white dust-sea. The metal framework groans under the weight of the wind, showering fine grit onto your shoulders as you adjust the heavy strap of your pack. You clutch your lantern closer to your chest, guarding the dying heat of the coals against the biting chill.",
+   "exits": [
+    "Step across the ribbed salt-terraces away from the storm.",
+    "Steady your limbs within the shadow of the massive cyclopean masonry."
+   ]
+  },
+  "sg-4-2-3-14": {
+   "title": "The Maze of Glass Stakes",
+   "text": "Through a maze of upright glass stakes, you pick your path with agonizing care to protect your sole remaining box of matches. Each transparent shard rises from the salt-crust like a jagged tooth, catching the pale, filtered light of the storm and refracting it into blinding needles of white glare. You move with delicate precision, knowing that a single slip could shatter your supplies and leave you in the dark.",
+   "exits": [
+    "Step across the ribbed salt-terraces into the quiet air.",
+    "Prepare to face the formidable walls within the cyclopean shadow."
+   ]
+  },
+  "sg-4-2-3-15": {
+   "title": "The Swelling Salt-Dune",
+   "text": "Over a swelling dune of fine salt-crust, you surge toward the dark silhouette of Prism's outer wall looming through the murk. The ground shifts treacherously beneath your boots, threatening to slide backward with every upward stride, but the sheer gravity of your mission pulls you forward. You grip the Seedkey tightly in your pocket, feeling its reassuring chill against your knuckles as the great stone barrier draws closer.",
+   "exits": [
+    "Steady your weary limbs within the shadow of the cyclopean masonry."
+   ]
+  },
+  "sg-4-2-4-0": {
+   "title": "The Colossal Brass Gear",
+   "text": "Beside a colossal brass gear half-swallowed by sand, you catch your breath as the mirror storm begins its slow, ragged dying. The heavy roar of the wind drops to a low, mournful sigh, leaving the air thick with suspended diamond-dust that sparkles in the returning light. You wipe the grime from your eyes and look up toward the towering architecture of the central observatory now visible through the haze.",
+   "exits": [
+    "Hold up your steady ember-lamp before the great bronze wicket.",
+    "Watch the last swirls of mirror-dust settle between the pillars."
+   ]
+  },
+  "sg-4-2-4-1": {
+   "title": "The Green Bottle-Glass Arch",
+   "text": "Under a towering arch of green bottle-glass, you check your ember-lamp one last time before stepping onto the dry approach. The air is suddenly still, carrying only the faint scent of baked earth and ancient copper as the great storm finally exhausts its fury across the salt-flats. You adjust your coat and take a deep, steadying breath, knowing the hardest part of the journey lies just ahead.",
+   "exits": [
+    "Present your steady ember-lamp before the great bronze wicket.",
+    "Watch the settling mirror-dust between the observatory pillars."
+   ]
+  }
+ },
+ "missing": []
+}

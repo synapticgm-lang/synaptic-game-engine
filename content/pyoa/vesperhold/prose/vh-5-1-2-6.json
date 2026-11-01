@@ -1,0 +1,90 @@
+{
+ "batch": "vh-5-1-2-6",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-5-1-2-6": {
+   "title": "The Pruned Wood",
+   "text": "Piles of pruned apple wood smell sharply of sap, offering a greasy handhold as you scramble up a slippery bank. The heavy bronze Clapper shifts in its padded cradle on your back, its cold weight threatening to pitch you backward into the mud. Biscuit plants his stubborn hooves against the incline, ears pinned flat against the mist while the damp air wraps around the orchard in a heavy, silent blanket.",
+   "exits": [
+    "Cross the hidden ditch via the rotting alder plank",
+    "Chase the startled fieldfares into the dripping hawthorn hedge"
+   ]
+  },
+  "vh-5-1-2-7": {
+   "title": "The Iron Bell-Pull",
+   "text": "An iron bell-pull dangles from a rotting pear trunk, swaying lifelessly in the stagnant air of the fogbank. You reach out a stiffened hand, tempted to ring it and rouse whatever Fog-Warden might be sheltering nearby, but the metal is encrusted with cold green rust. The bronze Clapper hums a faint, responsive vibration against your shoulder-blades, answering the silence with its own deep resonance.",
+   "exits": [
+    "Step carefully across the single rotting alder plank over the ditch",
+    "Push through the dripping leaves rustling with hidden fieldfares"
+   ]
+  },
+  "vh-5-1-2-8": {
+   "title": "The Greenhouse Glass",
+   "text": "Shards of broken glass glint beneath the rotting leaves where a greenhouse once stood against the cliff. Every movement must be calculated to avoid slicing your boots or turning the mule's delicate ankles on the treacherous debris. Heavy vapor curls around the shattered window frames, smelling of wet earth and ancient ironwork while the mountain wind remains locked far above.",
+   "exits": [
+    "Follow the slippery river stones down the forgotten water-channel",
+    "Press onward as grey vapor rolls heavily over the terrace steps",
+    "Inspect the rusted wind-vane shaped like a leaping trout"
+   ]
+  },
+  "vh-5-1-2-9": {
+   "title": "The Mist Stampede",
+   "text": "A flock of startled sheep stampede through the mist, their bells clanking wildly before vanishing into the white void. The sudden noise sets Biscuit snorting in alarm, nearly tangling your pack-straps in the low-hanging branches of a gnarled plum tree. You steady the mule with a quiet word and a firm hand on his halter, waiting for the frantic clatter to fade into the damp distance.",
+   "exits": [
+    "Search among the plum roots where a broken pruning knife gleams",
+    "Slip sideways through the narrow gap between the stone buttresses"
+   ]
+  },
+  "vh-5-1-2-10": {
+   "title": "The Sheep Dip",
+   "text": "Slick clay sucks at your heels near an old sheep dip, threatening to pull you down under the bronze weight of the Clapper. The stone basin is filled with stagnant, greyish water that laps against its mossy sides with a dismal sound. Biscuit tests the footing with one cautious hoof, ears twitching at the muffled sounds of the orchard.",
+   "exits": [
+    "Advance into the heavy vapor rolling down the stone steps",
+    "Approach the rusted wind-vane creaking atop the wooden post",
+    "Skirt the boggy ground where yellowed dock leaves brush your knees"
+   ]
+  },
+  "vh-5-1-2-11": {
+   "title": "The Falling Slate",
+   "text": "A slate roof tile slips from an unseen shed above, shattering inches from your heavy boots on the flags. You jerk backward, the padded cradle of the Clapper shifting uncomfortably against your spine as the echoes die instantly in the thick fog. Somewhere above, a drip of water from the unseen eaves falls with a steady, maddening rhythm.",
+   "exits": [
+    "Advance through the heavy vapor rolling down the terrace steps",
+    "Squeeze through the narrow gap between the stone buttresses",
+    "Turn back toward the dripping pear trees and the mossy fence line"
+   ]
+  },
+  "vh-5-1-2-12": {
+   "title": "The River-Boat Ribs",
+   "text": "Rusted iron hoops lie half-buried in the humus like the ribs of stranded river-boats left behind by some ancient flood. The ground here has a hollow, spongy feel beneath the leaf-mold, whispering of buried wood and forgotten masonry. You adjust the heavy straps over your shoulders, keeping a tight grip on Biscuit's lead rope as the white silence presses in from every side.",
+   "exits": [
+    "Investigate the rusted wind-vane creaking atop the rotting post"
+   ]
+  },
+  "vh-5-1-2-13": {
+   "title": "The Woolly Soup",
+   "text": "The fog thickens to a woolly grey soup, forcing you to trail your fingers along a damp retaining wall to keep your bearings. The stones are slick with cold slime, but they offer a reassuring line through the featureless grey world. Biscuit plods blindly behind you, his breath coming in warm, rhythmic puffs that vanish instantly into the mist.",
+   "exits": [
+    "Slip sideways through the narrow gap between the stone buttresses",
+    "Head toward the creaking wind-vane atop the rotting wooden post",
+    "Skirt the patch of boggy ground near the lower terrace"
+   ]
+  },
+  "vh-5-1-2-14": {
+   "title": "The Scarecrow Guard",
+   "text": "A weathered scarecrow stuffed with damp straw watches you pass with empty, buttonless eye sockets. Its crooked wooden arms jut out into the fog like a hesitant signpost pointing toward the lower reaches of the valley. The bronze Clapper gives a low, sympathetic thrum against your back as if greeting this silent guardian of the blighted orchard.",
+   "exits": [
+    "Follow the path toward the warmth of the crumbling brick kiln",
+    "Walk toward the stone shelters tasting of wood-smoke and wet wool"
+   ]
+  },
+  "vh-5-1-2-15": {
+   "title": "The Heavy Drops",
+   "text": "Thick condensation beads on your woollen cloak, soaking through to your shoulders where the heavy cradle straps bite into the fabric. Every breath tastes of cold moisture and the faint, sweet decay of fallen fruit rotting in the damp grass. You shift the burden slightly, trying to find a drier patch of cloth against your aching back while the fog swallows the path ahead.",
+   "exits": [
+    "Skirt the patch of boggy ground near the lower terrace",
+    "Seek out the stone shelters where wood-smoke scents the air"
+   ]
+  }
+ },
+ "missing": []
+}

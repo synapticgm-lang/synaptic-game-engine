@@ -1,0 +1,93 @@
+{
+ "batch": "sg-3-0-0-1",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-0-0-1": {
+   "title": "The Mule Train Pass",
+   "text": "Low murmurs rise from the glass-shingle dunes as a string of laden pack-mules picks its way past an ash-filled courtyard. Hooves crunch rhythmically against shards of green and amber crystal, kicking up a fine white dust that coats your woollen cloak. The lead driver, swathed in indigo linen to ward off the glare, shouts a raspy warning to steer clear of the swinging crates.\n\nYou press your back against a cool pillar of vitrified brick, shielding your hooded ember-lamp as the beasts shuffle past. The alley splits three ways ahead through the jagged ruins, each path choked with drifting salt and sharp debris.",
+   "exits": [
+    "Follow the footprints toward the lower bazaar",
+    "Dodge behind the laden mules into the narrow eastern lane",
+    "Climb the shattered steps toward the silent watchtower"
+   ]
+  },
+  "sg-3-0-0-2": {
+   "title": "The Obsidian Arch",
+   "text": "Ducking beneath an arch of fused obsidian, you step into the sudden, cool shadow of a collapsed warehouse. High above your head, a Glasswright mirror flashes a sharp, rhythmic warning across the baking expanse of the basin, painting the stone walls with brilliant stabs of white light. The air here smells faintly of ozone and old, dry lime.\n\nA narrow gap between two leaning tenements offers a way deeper into the shard maze, while a wider cobblestone passage leads toward the hum of distant traffic. Your fingers brush the cold ceramic key in your pocket for comfort as you weigh the silence.",
+   "exits": [
+    "Slip through the narrow gap between the leaning walls",
+    "Step out onto the sunlit cobblestone passage",
+    "Duck into the shadowed cellarway beneath the arch"
+   ]
+  },
+  "sg-3-0-0-3": {
+   "title": "The Crystal Echoes",
+   "text": "Salty wind whistles through the hollow window frames of translucent crystal, chilling your fingers around the cold ceramic Seedkey in your pocket. The ruins around you hum a faint, eerie note whenever a stray gust catches the razor-thin edges of the glass spires. Dust motes dance in the slanting beams of harsh midday light, turning the stagnant air into a shimmering haze of gold and grey.\n\nTwo distinct paths lie before you through the silent skeleton of the district, one winding downward into the cool gloom and the other rising toward a guarded thoroughfare.",
+   "exits": [
+    "Search for the hidden maintenance hatch in the floor",
+    "Head toward the guarded thoroughfare ahead"
+   ]
+  },
+  "sg-3-0-1-0": {
+   "title": "The Ruby Slag Heap",
+   "text": "Barefoot scraper Mallow crouches by a heap of ruby slag, offering to trade a scrap of dried melon for your coal-lantern with a gap-toothed grin. The jagged glass fragments around his ankles click together like teeth as he shifts his weight, holding out a sticky, reddish rind on the flat of a calloused palm. The heat radiating off the slag heap makes the air ripple above his head.\n\nYou shake your head at the offer, keeping your grip firm on the iron handle of your lamp while the dust settles around your boots. Three distinct routes beckon away from the radiant mound.",
+   "exits": [
+    "Climb the spiral stair of green vitrified brick",
+    "Approach the vendor roasting locusts near the bronze brazier",
+    "Squeeze through the narrow fissure between the amethyst tenements"
+   ]
+  },
+  "sg-3-0-1-1": {
+   "title": "The Salt Court Gate",
+   "text": "Salt Court sentries bar the narrow alley with a brass-bound gate, demanding a silver penny or three hours of your labor to pass through their toll-zone. They lean lazily against pikes tipped with dark iron, their canvas uniforms stiff with crusted brine. Beyond their heavy barrier, the street widens into a sun-bleached plaza lined with silent workshops.\n\nYou eye the heavy locks and the bored, sun-baked expressions of the guards, considering whether your coin-pouch or your time is worth the toll. Two alternative routes curve away from the blocked threshold.",
+   "exits": [
+    "Squeeze through the narrow fissure in the nearby wall",
+    "Turn back toward the cart laden with scrap mirrors"
+   ]
+  },
+  "sg-3-0-1-2": {
+   "title": "The Humming Bridge",
+   "text": "A cantilevered glass bridge shimmers above a dry trench, its transparent span humming whenever the midday heat makes the joints contract beneath your boots. Looking down, you can see the dizzying depth of a forgotten cellar far below, its floor carpeted in glittering white dust. The air over the span is dead still and intensely hot.\n\nYou steady your breathing and test the firmness of the glassy rail with one glove before taking a step onto the vibrating surface. Beyond the far side, the path fractures into three distinct directions.",
+   "exits": [
+    "Pick your way past the jammed handcart of mirrors",
+    "Cross into the courtyard paved with mosaic tiles",
+    "Investigate the dripping bronze pipe in the ruined facade"
+   ]
+  },
+  "sg-3-0-1-3": {
+   "title": "The Gutted Observatory",
+   "text": "Two scavengers argue fiercely over a heap of copper wire inside a gutted observatory, completely ignoring the blinding glare reflected off the broken dome above. Their voices bounce off the curved metal walls in harsh, jagged echoes that set your teeth on edge. Piles of discarded brass cogs and shattered lenses litter the soot-stained floor around their boots.\n\nYou keep your footsteps light as you skirt the edge of the bickering pair, searching for an exit away from the rising tension in the dome. Three routes lead out of the ruined chamber into the quiet alleys.",
+   "exits": [
+    "Squeeze through the narrow fissure in the outer wall",
+    "Step out onto the cobalt mosaic courtyard",
+    "Follow the drip toward the leaking bronze pipe"
+   ]
+  },
+  "sg-3-0-1-4": {
+   "title": "The Subterranean Pipe",
+   "text": "Crawling through a subterranean drainage pipe lined with green sea-glass, you emerge into a choked courtyard smelling sharply of stagnant sulfur. The damp stone walls are coated in a pale crust of salt crystals that flake off at the slightest touch. A harsh shaft of sunlight pierces the gloom from a collapsed ceiling high above.\n\nYou shake the gritty dust from your sleeves and stand up slowly, wiping your palms on your trousers. Two distinct ways lead onward from the foul-smelling courtyard into the labyrinth.",
+   "exits": [
+    "Watch the children playing with polished glass marbles",
+    "Navigate the perilous ledge of translucent roofing tiles"
+   ]
+  },
+  "sg-3-0-1-5": {
+   "title": "The Heliograph Flash",
+   "text": "A solitary Glasswright on a high stone balcony swings a brass heliograph mirror, flashing a silent code that makes your temples throb in rhythm with the glare. Every sweep of the polished metal sends a blinding bolt of reflected sunlight dancing across the crumbling facades around you. The air smells intensely of sun-baked stone and hot copper.\n\nYou shield your eyes with a raised forearm, ducking low against a pillar to avoid catching the full glare in your gaze. Three paths branch outward from the base of the balcony tower.",
+   "exits": [
+    "Head toward the dripping bronze pipe in the wall",
+    "Watch the children playing marbles near the leaning wall",
+    "Step onto the perilous ledge of translucent roofing tiles"
+   ]
+  },
+  "sg-3-0-1-6": {
+   "title": "The Well-Keeper's Goat",
+   "text": "A tethered goat belonging to a nomadic well-keeper chews patiently on a strip of canvas near a dry stone basin where a thin trickle of brackish water gathers. The animal gives you a dull, golden-eyed stare as you approach, its horns scraping against a rusted iron ring in the pavement. The meager puddle in the basin barely reflects the pale sky above.\n\nYou give the beast a wide berth, keeping your hand steady on your ember-lamp while the heat beats down on your neck. Two quiet routes lead away from the lonely watering spot.",
+   "exits": [
+    "Approach the toll-lord's clerk at the slate desk",
+    "Slip behind the hanging copper chains in the workshop"
+   ]
+  }
+ },
+ "missing": []
+}

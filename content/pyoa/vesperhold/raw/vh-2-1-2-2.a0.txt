@@ -1,0 +1,71 @@
+@@SECTION vh-2-1-2-2
+TITLE: The Oiler's Staging Post
+TEXT: High winds whistle across the exposed timber platform as an oiler named Corin dips a stiff hog-bristle brush into an iron pail of tallow. He splashes machine grease directly onto your cradle runners with a wet slap, keeping the salt-air spray from seizing your iron fittings. The heavy bronze Clapper shifts against your spine, a solid dead weight humming a low, constant note that matches the vibration of the tensioned cables all around you. // Corin wipes his greasy palms on his canvas apron and nods toward three separate paths leading deeper into the roaring market maze. You can head down the smoking tar-row, watch the mail-baskets cross the gorge, or seek shelter from the rising sleet.
+EXIT 1: Follow the smoking tar-pots down
+EXIT 2: Watch the mail-baskets cross the gap
+EXIT 3: Seek shelter from the wet sleet
+@@END
+
+@@SECTION vh-2-1-2-3
+TITLE: The Unmonitored Hatch
+TEXT: Plain unbranded hemp binds your simple carrying frame, lacking any flashy guild seal or stamped brass token. Because you carry only ordinary frayed cordage rather than the expensive imported flax, the busy toll-inspectors dismiss you as a local errand-runner and wave you right past their checkpoint. You slip quietly through an unmonitored maintenance hatch behind a stack of spare winches, leaving the noisy customs queue behind in the freezing mist. // The narrow service catwalk hums underfoot, offering three distinct directions away from the gatehouse before anyone thinks to look twice at your burden.
+EXIT 1: Pull your canvas cover tight against the sleet
+EXIT 2: Approach the winch-platform where the clerk argues
+EXIT 3: Step carefully through the tangled guy-ropes
+@@END
+
+@@SECTION vh-2-1-2-4
+TITLE: The Flax-Fringe Rations
+TEXT: Fluttering strands of pale grey flax hang like a damp curtain overhead, catching the moisture off the mountain wall. Beneath this natural shelter, you share a tough strip of dried mutton with an exhausted winch-tender named Hasty, whose fingers are permanently stained with hemp-oil and iron-dust. The two of you chew in silence while the great capstans groan above the market square, hauling invisible tons of cargo through the grey cloud-bank. // Hasty points a calloused thumb toward the lower tiers as soon as the last gristle is gone, indicating two routes deeper into the clamour of the rope-markets.
+EXIT 1: Head toward the argument on the winch-platform
+EXIT 2: Watch the massive towline wind onto the drum
+@@END
+
+@@SECTION vh-2-1-2-5
+TITLE: The Swinging Bridge
+TEXT: Grey mist rolls up from the unfathomable depth of the gorge as a swaying rope-bridge dips sharply beneath your boots. A train of pack mules clatters onto the opposite end of the span, their iron-shod hooves striking the pine planks with a hollow, vibrating rhythm that threatens to knock you off balance. You press your shoulder against the cold cliff wall, holding the cradle steady while the canvas-wrapped Clapper hums in response to the bridge's violent sway. // The mule train passes with a smell of wet leather and sweat, leaving you a choice between the upper guy-wires and the guarded foot-bridge ahead.
+EXIT 1: Pick your way past the tangled guy-ropes
+EXIT 2: Cross the split-pine bridge toward the guard
+@@END
+
+@@SECTION vh-2-1-2-6
+TITLE: The Turning Capstan
+TEXT: A giant oak capstan turns with a rhythmic creak that shakes the very rock under your heels, its grease-blackened drum hauling miles of hidden cable through the mountain stone. You stop in its deep shadow to tighten your slipping hip-belt, adjusting the weight of the bronze Clapper against your tired back. As the massive wooden gear completes another rotation, the metal tongue inside your cradle gives a low, sympathetic thrum that vibrates straight through your ribs. // The path leads onward beside the open machinery pit where the main towline feeds into the dark interior of the cliff.
+EXIT 1: Follow the massive braided towline down
+@@END
+
+@@SECTION vh-2-1-2-7
+TITLE: The Stacking Yard
+TEXT: Creosoted pine poles are stacked in neat, pitch-scented pyramids beside the cliff edge, dripping black tears in the cold air. A market bailiff in a stiff wool coat intercepts you here, tapping a wooden tally-stick against your cargo frame while checking your straps for the proper municipal stamp. He squints at the canvas covering the heavy bronze tongue, weighing your papers against the regulations of the Cable Court. // The bailiff finally shrugs and gestures toward the machinery workings, giving you a clear run toward the lower levels.
+EXIT 1: Step past the open winch-pit and towline
+EXIT 2: Approach the split-pine foot-bridge and guard
+@@END
+
+@@SECTION vh-2-1-2-8
+TITLE: The Lattice Beams
+TEXT: An open lattice of larch beams provides a dizzying view of the cloud-filled void far below your boots. Without warning, a slackened tow-line snaps upward with a vicious crack, its whipping steel tail hissing through the air like an angry hornet just inches from your canvas pack. You duck instinctively, clinging to the wet timbers as the heavy bronze Clapper hums a sharp warning note against your spine. // The vibrating framework settles back into place, leaving three narrow paths branching out across the scaffolding.
+EXIT 1: Walk beside the open winch-pit
+EXIT 2: Step into the sheltered alcove of hemp bales
+EXIT 3: Head toward the boiling vat of black pitch
+@@END
+
+@@SECTION vh-2-1-2-9
+TITLE: The Salt-Shed
+TEXT: Coarse white salt crystals coat the floor of the cavernous shed, crunching like dry snow under your leather boots as you brush the crusts from your hem. Deep in the gloom, a row of hawser-spinners chant rhythmically together, their weathered hands feeding damp hemp fibres into spinning wheels with hypnotic speed. The salty air bites at your throat, but the draft is sheltered from the worst of the mountain gale. // Two narrow exits pierce the back wall of the shed, one leading out to an exposed stone staging and the other toward the boiling pitch-vats.
+EXIT 1: Step out onto the exposed stone staging
+EXIT 2: Move toward the boiling vat of black pitch
+@@END
+
+@@SECTION vh-2-1-2-10
+TITLE: The Ledge Repairer
+TEXT: A pulley-repairer sits upon a high stone ledge overlooking the lower precipice, rhythmically whetting a razor-sharp draw-knife against an oiled oilstone. The metallic scraping sound rings close to your mule's twitching ears, making the animal sidestep nervously toward the sheer drop. You grab the halter-rope with one hand while steadying the heavy cradle with the other, keeping your footing secure on the frosted rock. // The repairer dips his chin toward two routes leading further down the mountain face.
+EXIT 1: Walk past the boiling pitch-vat
+EXIT 2: Enter the vaulted transit shed ahead
+@@END
+
+@@SECTION vh-2-1-2-11
+TITLE: The Juniper Child
+TEXT: A web of thin guide-wires sings a high, eerie note overhead in the mountain draft as a shivering child steps out from behind a winch-house. The small figure thrusts a handful of bruised, purple juniper berries toward your pocket, whispering a plea for a half-penny to buy a warm bowl of barley broth. The child's fingers are blue with cold, yet bright watchful eyes scan your heavy cradle with sharp curiosity. // You murmur a brief refusal and look past the child to the two paths stretching out across the dizzying network of cables.
+EXIT 1: Step out onto the exposed stone staging
+EXIT 2: Follow the suspension cables across the gap
+@@END

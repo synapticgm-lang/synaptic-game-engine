@@ -1,0 +1,386 @@
+2026-10-28T20:45:33.728Z ask outline r1s0 (52 seeds)
+2026-10-28T20:46:06.673Z done outline r1s0: 52/52 model=Flash-Lite
+2026-10-28T20:46:12.687Z ask outline r1s1 (53 seeds)
+2026-10-28T20:46:40.450Z done outline r1s1: 50/53 model=Flash-Lite
+2026-10-28T20:46:46.460Z ask outline r1s2 (53 seeds)
+2026-10-28T20:47:11.588Z done outline r1s2: 53/53 model=Flash-Lite
+2026-10-28T20:47:17.593Z ask outline r2s0 (52 seeds)
+2026-10-28T20:47:45.664Z done outline r2s0: 52/52 model=Flash-Lite
+2026-10-28T20:47:51.668Z ask outline r2s1 (53 seeds)
+2026-10-28T20:48:22.117Z done outline r2s1: 53/53 model=Flash-Lite
+2026-10-28T20:48:28.132Z ask outline r2s2 (53 seeds)
+2026-10-28T20:48:56.440Z done outline r2s2: 52/53 model=Flash-Lite
+2026-10-28T20:49:02.446Z ask outline r3s0 (52 seeds)
+2026-10-28T20:49:35.363Z done outline r3s0: 52/52 model=Flash-Lite
+2026-10-28T20:49:41.369Z ask outline r3s1 (53 seeds)
+2026-10-28T20:50:12.325Z done outline r3s1: 53/53 model=Flash-Lite
+2026-10-28T20:50:18.338Z ask outline r3s2 (53 seeds)
+2026-10-28T20:50:48.982Z done outline r3s2: 53/53 model=Flash-Lite
+2026-10-28T20:50:54.987Z ask outline r4s0 (52 seeds)
+2026-10-28T20:51:22.797Z done outline r4s0: 52/52 model=Flash-Lite
+2026-10-28T20:51:28.805Z ask outline r4s1 (53 seeds)
+2026-10-28T20:51:58.001Z done outline r4s1: 53/53 model=Flash-Lite
+2026-10-28T20:52:04.007Z ask outline r4s2 (53 seeds)
+2026-10-28T20:52:31.913Z done outline r4s2: 53/53 model=Flash-Lite
+2026-10-28T20:52:37.927Z ask outline r5s0 (52 seeds)
+2026-10-28T20:53:09.365Z done outline r5s0: 52/52 model=Flash-Lite
+2026-10-28T20:53:15.379Z ask outline r5s1 (53 seeds)
+2026-10-28T20:53:40.731Z done outline r5s1: 53/53 model=Flash-Lite
+2026-10-28T20:53:46.734Z ask outline r5s2 (53 seeds)
+2026-10-28T20:54:12.575Z done outline r5s2: 53/53 model=Flash-Lite
+2026-10-28T20:54:18.587Z ask outline r6s0 (51 seeds)
+2026-10-28T20:54:46.338Z done outline r6s0: 50/51 model=Flash-Lite
+2026-10-28T20:54:52.354Z ask outline r6s1 (52 seeds)
+2026-10-28T20:55:17.438Z done outline r6s1: 52/52 model=Flash-Lite
+2026-10-28T20:55:23.448Z ask outline r6s2 (52 seeds)
+2026-10-28T20:55:51.031Z done outline r6s2: 52/52 model=Flash-Lite
+2026-10-28T20:55:57.044Z finished outline run: calls 18
+2026-10-28T20:56:00.035Z ask prose vh-p1..vh-1-0-1-0 items=10 attempt=0
+2026-10-28T20:56:22.819Z   reject vh-1-0-0-0: exit 3 label
+2026-10-28T20:56:28.825Z ask prose vh-p1..vh-1-0-1-0 items=1 attempt=1
+2026-10-28T20:56:51.981Z done vh-p1: 10/10 model=Flash-Lite
+2026-10-28T20:56:51.982Z ask prose vh-1-0-1-1..vh-1-0-2-0 items=10 attempt=0
+2026-10-28T20:57:12.228Z   reject vh-1-0-1-3: words 48
+2026-10-28T20:57:12.230Z   reject vh-1-0-1-4: words 53
+2026-10-28T20:57:12.230Z   reject vh-1-0-1-6: words 49
+2026-10-28T20:57:12.231Z   reject vh-1-0-1-7: words 54
+2026-10-28T20:57:12.231Z   reject vh-1-0-1-8: words 54
+2026-10-28T20:57:12.232Z   reject vh-1-0-1-9: words 52
+2026-10-28T20:57:12.232Z   reject vh-1-0-2-0: words 54
+2026-10-28T20:57:18.234Z ask prose vh-1-0-1-1..vh-1-0-2-0 items=7 attempt=1
+2026-10-28T20:57:44.275Z done vh-1-0-1-1: 10/10 model=Flash-Lite
+2026-10-28T20:57:44.276Z ask prose vh-1-0-2-1..vh-1-0-2-10 items=10 attempt=0
+2026-10-28T20:58:13.044Z done vh-1-0-2-1: 10/10 model=Flash-Lite
+2026-10-28T20:58:13.046Z ask prose vh-1-0-2-11..vh-1-0-3-7 items=10 attempt=0
+2026-10-28T20:58:41.677Z done vh-1-0-2-11: 10/10 model=Flash-Lite
+2026-10-28T20:58:41.678Z ask prose vh-1-0-3-8..vh-1-0-4-4 items=10 attempt=0
+2026-10-28T20:59:10.445Z done vh-1-0-3-8: 10/10 model=Flash-Lite
+2026-10-28T20:59:10.446Z ask prose vh-1-0-4-5..vh-1-1-0-1 items=10 attempt=0
+2026-10-28T20:59:38.906Z done vh-1-0-4-5: 10/10 model=Flash-Lite
+2026-10-28T20:59:38.907Z ask prose vh-1-1-1-0..vh-1-1-2-3 items=10 attempt=0
+2026-10-28T21:00:09.834Z done vh-1-1-1-0: 10/10 model=Flash-Lite
+2026-10-28T21:00:09.835Z ask prose vh-1-1-2-4..vh-1-1-2-13 items=10 attempt=0
+2026-10-28T21:00:38.655Z done vh-1-1-2-4: 10/10 model=Flash-Lite
+2026-10-28T21:00:38.674Z ask prose vh-1-1-2-14..vh-1-1-3-7 items=10 attempt=0
+2026-10-28T21:01:11.252Z done vh-1-1-2-14: 10/10 model=Flash-Lite
+2026-10-28T21:01:11.254Z ask prose vh-1-1-3-8..vh-1-1-4-1 items=10 attempt=0
+2026-10-28T21:01:36.285Z   reject vh-1-1-3-11: exit 1 label
+2026-10-28T21:01:42.296Z ask prose vh-1-1-3-8..vh-1-1-4-1 items=1 attempt=1
+2026-10-28T21:02:07.929Z done vh-1-1-3-8: 10/10 model=Flash-Lite
+2026-10-28T21:02:07.931Z ask prose vh-1-1-4-2..vh-1-1-5-3 items=10 attempt=0
+2026-10-28T21:02:36.776Z done vh-1-1-4-2: 10/10 model=Flash-Lite
+2026-10-28T21:02:36.777Z ask prose vh-d-1-1..vh-1-2-1-5 items=10 attempt=0
+2026-10-28T21:02:59.972Z   reject vh-1-2-1-1: words 49
+2026-10-28T21:02:59.974Z   reject vh-1-2-1-2: words 47
+2026-10-28T21:02:59.974Z   reject vh-1-2-1-3: words 48
+2026-10-28T21:02:59.975Z   reject vh-1-2-1-4: words 44
+2026-10-28T21:02:59.975Z   reject vh-1-2-1-5: words 43
+2026-10-28T21:03:05.982Z ask prose vh-d-1-1..vh-1-2-1-5 items=5 attempt=1
+2026-10-28T21:03:34.999Z done vh-d-1-1: 10/10 model=Flash-Lite
+2026-10-28T21:03:35.000Z ask prose vh-1-2-2-0..vh-1-2-2-9 items=10 attempt=0
+2026-10-28T21:04:05.658Z done vh-1-2-2-0: 10/10 model=Flash-Lite
+2026-10-28T21:04:05.660Z ask prose vh-1-2-2-10..vh-1-2-3-3 items=10 attempt=0
+2026-10-28T21:04:34.226Z done vh-1-2-2-10: 10/10 model=Flash-Lite
+2026-10-28T21:04:34.235Z ask prose vh-1-2-3-4..vh-1-2-3-13 items=10 attempt=0
+2026-10-28T21:05:04.066Z   reject vh-1-2-3-11: words 54
+2026-10-28T21:05:10.082Z ask prose vh-1-2-3-4..vh-1-2-3-13 items=1 attempt=1
+2026-10-28T21:05:39.984Z done vh-1-2-3-4: 10/10 model=Flash-Lite
+2026-10-28T21:05:39.991Z ask prose vh-1-2-3-14..vh-1-2-4-7 items=10 attempt=0
+2026-10-28T21:06:12.415Z done vh-1-2-3-14: 10/10 model=Flash-Lite
+2026-10-28T21:06:12.417Z ask prose vh-1-2-5-0..vh-2-0-0-2 items=10 attempt=0
+2026-10-28T21:06:43.984Z done vh-1-2-5-0: 10/10 model=Flash-Lite
+2026-10-28T21:06:43.987Z ask prose vh-2-0-0-3..vh-2-0-1-8 items=10 attempt=0
+2026-10-28T21:07:12.827Z done vh-2-0-0-3: 10/10 model=Flash-Lite
+2026-10-28T21:07:12.829Z ask prose vh-2-0-1-9..vh-2-0-2-8 items=10 attempt=0
+2026-10-28T21:07:35.405Z   reject vh-2-0-2-3: words 53
+2026-10-28T21:07:35.406Z   reject vh-2-0-2-4: words 53
+2026-10-28T21:07:35.406Z   reject vh-2-0-2-5: words 52
+2026-10-28T21:07:35.407Z   reject vh-2-0-2-6: words 47
+2026-10-28T21:07:35.407Z   reject vh-2-0-2-7: words 54
+2026-10-28T21:07:41.419Z ask prose vh-2-0-1-9..vh-2-0-2-8 items=5 attempt=1
+2026-10-28T21:08:07.278Z done vh-2-0-1-9: 10/10 model=Flash-Lite
+2026-10-28T21:08:07.281Z ask prose vh-2-0-2-9..vh-2-0-3-5 items=10 attempt=0
+2026-10-28T21:08:32.385Z   reject vh-2-0-2-10: words 49
+2026-10-28T21:08:32.387Z   reject vh-2-0-2-11: words 53
+2026-10-28T21:08:32.387Z   reject vh-2-0-3-0: words 51
+2026-10-28T21:08:32.387Z   reject vh-2-0-3-2: words 50
+2026-10-28T21:08:32.388Z   reject vh-2-0-3-3: words 48
+2026-10-28T21:08:32.388Z   reject vh-2-0-3-4: words 48
+2026-10-28T21:08:32.389Z   reject vh-2-0-3-5: words 48
+2026-10-28T21:08:38.399Z ask prose vh-2-0-2-9..vh-2-0-3-5 items=7 attempt=1
+2026-10-28T21:09:06.832Z done vh-2-0-2-9: 10/10 model=Flash-Lite
+2026-10-28T21:09:06.833Z ask prose vh-2-0-3-6..vh-2-0-4-2 items=10 attempt=0
+2026-10-28T21:09:35.241Z done vh-2-0-3-6: 10/10 model=Flash-Lite
+2026-10-28T21:09:35.243Z ask prose vh-2-0-4-3..vh-2-c1 items=10 attempt=0
+2026-10-28T21:10:06.159Z done vh-2-0-4-3: 10/10 model=Flash-Lite
+2026-10-28T21:10:06.161Z ask prose vh-2-1-0-0..vh-2-1-2-1 items=10 attempt=0
+2026-10-28T21:10:37.924Z done vh-2-1-0-0: 10/10 model=Flash-Lite
+2026-10-28T21:10:37.929Z ask prose vh-2-1-2-2..vh-2-1-2-11 items=10 attempt=0
+2026-10-28T21:11:11.408Z done vh-2-1-2-2: 10/10 model=Flash-Lite
+2026-10-28T21:11:11.410Z ask prose vh-2-1-2-12..vh-2-1-3-5 items=10 attempt=0
+2026-10-28T21:11:40.197Z done vh-2-1-2-12: 10/10 model=Flash-Lite
+2026-10-28T21:11:40.200Z ask prose vh-2-1-3-6..vh-2-1-3-15 items=10 attempt=0
+2026-10-28T21:12:08.614Z done vh-2-1-3-6: 10/10 model=Flash-Lite
+2026-10-28T21:12:08.617Z ask prose vh-2-1-4-0..vh-2-1-5-1 items=10 attempt=0
+2026-10-28T21:12:39.026Z done vh-2-1-4-0: 10/10 model=Flash-Lite
+2026-10-28T21:12:39.030Z ask prose vh-2-1-5-2..vh-2-2-1-3 items=10 attempt=0
+2026-10-28T21:13:04.273Z   reject vh-d-2-1: meta words
+2026-10-28T21:13:10.282Z ask prose vh-2-1-5-2..vh-2-2-1-3 items=1 attempt=1
+2026-10-28T21:13:29.866Z   reject vh-d-2-1: meta words
+2026-10-28T21:13:35.883Z done vh-2-1-5-2: 9/10 model=Flash-Lite MISSING vh-d-2-1
+2026-10-28T21:13:35.885Z ask prose vh-2-2-1-4..vh-2-2-2-7 items=10 attempt=0
+2026-10-28T21:13:58.530Z   reject vh-2-2-2-1: meta words
+2026-10-28T21:14:04.540Z ask prose vh-2-2-1-4..vh-2-2-2-7 items=1 attempt=1
+2026-10-28T21:14:27.648Z done vh-2-2-1-4: 10/10 model=Flash-Lite
+2026-10-28T21:14:27.650Z ask prose vh-2-2-2-8..vh-2-2-3-1 items=10 attempt=0
+2026-10-28T21:15:08.864Z done vh-2-2-2-8: 10/10 model=Flash-Lite
+2026-10-28T21:15:08.865Z ask prose vh-2-2-3-2..vh-2-2-3-11 items=10 attempt=0
+2026-10-28T21:15:37.313Z done vh-2-2-3-2: 10/10 model=Flash-Lite
+2026-10-28T21:15:37.315Z ask prose vh-2-2-3-12..vh-2-2-4-5 items=10 attempt=0
+2026-10-28T21:16:02.618Z   reject vh-2-2-4-1: words 50
+2026-10-28T21:16:02.619Z   reject vh-2-2-4-2: words 51
+2026-10-28T21:16:02.620Z   reject vh-2-2-4-3: words 49
+2026-10-28T21:16:02.620Z   reject vh-2-2-4-4: words 53
+2026-10-28T21:16:02.620Z   reject vh-2-2-4-5: words 50
+2026-10-28T21:16:08.627Z ask prose vh-2-2-3-12..vh-2-2-4-5 items=5 attempt=1
+2026-10-28T21:16:34.412Z done vh-2-2-3-12: 10/10 model=Flash-Lite
+2026-10-28T21:16:34.413Z ask prose vh-2-2-4-6..vh-3-0-0-0 items=10 attempt=0
+2026-10-28T21:17:02.968Z done vh-2-2-4-6: 10/10 model=Flash-Lite
+2026-10-28T21:17:02.969Z ask prose vh-3-0-0-1..vh-3-0-1-6 items=10 attempt=0
+2026-10-28T21:17:31.480Z done vh-3-0-0-1: 10/10 model=Flash-Lite
+2026-10-28T21:17:31.482Z ask prose vh-3-0-1-7..vh-3-0-2-6 items=10 attempt=0
+2026-10-28T21:18:02.410Z done vh-3-0-1-7: 10/10 model=Flash-Lite
+2026-10-28T21:18:02.412Z ask prose vh-3-0-2-7..vh-3-0-3-3 items=10 attempt=0
+2026-10-28T21:18:30.887Z done vh-3-0-2-7: 10/10 model=Flash-Lite
+2026-10-28T21:18:30.889Z ask prose vh-3-0-3-4..vh-3-0-4-0 items=10 attempt=0
+2026-10-28T21:18:53.378Z   reject vh-3-0-3-10: words 54
+2026-10-28T21:18:53.379Z   reject vh-3-0-4-0: words 53
+2026-10-28T21:18:59.384Z ask prose vh-3-0-3-4..vh-3-0-4-0 items=2 attempt=1
+2026-10-28T21:19:25.056Z done vh-3-0-3-4: 10/10 model=Flash-Lite
+2026-10-28T21:19:25.058Z ask prose vh-3-0-4-1..vh-3-0-5-2 items=10 attempt=0
+2026-10-28T21:19:47.462Z   reject vh-3-0-5-2: words 54
+2026-10-28T21:19:53.476Z ask prose vh-3-0-4-1..vh-3-0-5-2 items=1 attempt=1
+2026-10-28T21:20:16.713Z done vh-3-0-4-1: 10/10 model=Flash-Lite
+2026-10-28T21:20:16.715Z ask prose vh-3-0-5-3..vh-3-1-1-5 items=10 attempt=0
+2026-10-28T21:20:45.090Z done vh-3-0-5-3: 10/10 model=Flash-Lite
+2026-10-28T21:20:45.091Z ask prose vh-3-1-2-0..vh-3-1-2-9 items=10 attempt=0
+2026-10-28T21:21:18.607Z done vh-3-1-2-0: 10/10 model=Flash-Lite
+2026-10-28T21:21:18.609Z ask prose vh-3-1-2-10..vh-3-1-3-3 items=10 attempt=0
+2026-10-28T21:21:54.607Z done vh-3-1-2-10: 10/10 model=Flash-Lite
+2026-10-28T21:21:54.609Z ask prose vh-3-1-3-4..vh-3-1-3-13 items=10 attempt=0
+2026-10-28T21:22:23.024Z done vh-3-1-3-4: 10/10 model=Flash-Lite
+2026-10-28T21:22:23.026Z ask prose vh-3-1-3-14..vh-3-1-4-7 items=10 attempt=0
+2026-10-28T21:22:53.382Z done vh-3-1-3-14: 10/10 model=Flash-Lite
+2026-10-28T21:22:53.385Z ask prose vh-3-1-5-0..vh-3-2-1-1 items=10 attempt=0
+2026-10-28T21:23:24.250Z done vh-3-1-5-0: 10/10 model=Flash-Lite
+2026-10-28T21:23:24.252Z ask prose vh-3-2-1-2..vh-3-2-2-5 items=10 attempt=0
+2026-10-28T21:23:52.695Z done vh-3-2-1-2: 10/10 model=Flash-Lite
+2026-10-28T21:23:52.697Z ask prose vh-3-2-2-6..vh-3-2-2-15 items=10 attempt=0
+2026-10-28T21:24:23.693Z done vh-3-2-2-6: 10/10 model=Flash-Lite
+2026-10-28T21:24:23.695Z ask prose vh-3-2-3-0..vh-3-2-3-9 items=10 attempt=0
+2026-10-28T21:24:52.201Z done vh-3-2-3-0: 10/10 model=Flash-Lite
+2026-10-28T21:24:52.204Z ask prose vh-3-2-3-10..vh-3-2-4-3 items=10 attempt=0
+2026-10-28T21:25:23.304Z done vh-3-2-3-10: 10/10 model=Flash-Lite
+2026-10-28T21:25:23.306Z ask prose vh-3-2-4-4..vh-3-out items=10 attempt=0
+2026-10-28T21:25:51.675Z done vh-3-2-4-4: 10/10 model=Flash-Lite
+2026-10-28T21:25:51.677Z ask prose vh-4-in..vh-4-0-1-4 items=10 attempt=0
+2026-10-28T21:26:22.702Z done vh-4-in: 10/10 model=Flash-Lite
+2026-10-28T21:26:22.704Z ask prose vh-4-0-1-5..vh-4-0-2-4 items=10 attempt=0
+2026-10-28T21:26:51.125Z done vh-4-0-1-5: 10/10 model=Flash-Lite
+2026-10-28T21:26:51.127Z ask prose vh-4-0-2-5..vh-4-0-3-1 items=10 attempt=0
+2026-10-28T21:27:13.436Z   reject vh-4-0-2-5: exit 2 label
+2026-10-28T21:27:13.438Z   reject vh-4-0-2-6: exit 1 label
+2026-10-28T21:27:19.447Z ask prose vh-4-0-2-5..vh-4-0-3-1 items=2 attempt=1
+2026-10-28T21:27:36.903Z   reject vh-4-0-2-5: exit 2 label
+2026-10-28T21:27:36.904Z   reject vh-4-0-2-6: exit 3 label
+2026-10-28T21:27:42.914Z done vh-4-0-2-5: 8/10 model=Flash-Lite MISSING vh-4-0-2-5,vh-4-0-2-6
+2026-10-28T21:27:42.915Z ask prose vh-4-0-3-2..vh-4-0-3-11 items=10 attempt=0
+2026-10-28T21:28:11.723Z done vh-4-0-3-2: 10/10 model=Flash-Lite
+2026-10-28T21:28:11.724Z ask prose vh-4-0-3-12..vh-4-0-5-0 items=10 attempt=0
+2026-10-28T21:28:40.499Z done vh-4-0-3-12: 10/10 model=Flash-Lite
+2026-10-28T21:28:40.501Z ask prose vh-4-0-5-1..vh-4-1-1-3 items=10 attempt=0
+2026-10-28T21:29:02.993Z   reject vh-4-1-1-1: words 52
+2026-10-28T21:29:02.994Z   reject vh-4-1-1-3: words 53
+2026-10-28T21:29:08.998Z ask prose vh-4-0-5-1..vh-4-1-1-3 items=2 attempt=1
+2026-10-28T21:29:34.808Z done vh-4-0-5-1: 10/10 model=Flash-Lite
+2026-10-28T21:29:34.811Z ask prose vh-4-1-1-4..vh-4-1-2-7 items=10 attempt=0
+2026-10-28T21:29:57.363Z   reject vh-4-1-1-4: exit 2 label
+2026-10-28T21:30:03.376Z ask prose vh-4-1-1-4..vh-4-1-2-7 items=1 attempt=1
+2026-10-28T21:30:26.565Z done vh-4-1-1-4: 10/10 model=Flash-Lite
+2026-10-28T21:30:26.567Z ask prose vh-4-1-2-8..vh-4-1-3-1 items=10 attempt=0
+2026-10-28T21:30:48.985Z   reject vh-4-1-2-12: words 53
+2026-10-28T21:30:48.986Z   reject vh-4-1-2-13: words 54
+2026-10-28T21:30:48.987Z   reject vh-4-1-2-15: words 53
+2026-10-28T21:30:48.987Z   reject vh-4-1-3-0: words 49
+2026-10-28T21:30:48.987Z   reject vh-4-1-3-1: words 51
+2026-10-28T21:30:54.992Z ask prose vh-4-1-2-8..vh-4-1-3-1 items=5 attempt=1
+2026-10-28T21:31:23.345Z done vh-4-1-2-8: 10/10 model=Flash-Lite
+2026-10-28T21:31:23.346Z ask prose vh-4-1-3-2..vh-4-1-3-11 items=10 attempt=0
+2026-10-28T21:31:51.754Z done vh-4-1-3-2: 10/10 model=Flash-Lite
+2026-10-28T21:31:51.756Z ask prose vh-4-1-3-12..vh-4-1-4-5 items=10 attempt=0
+2026-10-28T21:32:14.139Z   reject vh-4-1-3-14: words 52
+2026-10-28T21:32:14.141Z   reject vh-4-1-3-15: words 52
+2026-10-28T21:32:14.141Z   reject vh-4-1-4-1: words 52
+2026-10-28T21:32:14.142Z   reject vh-4-1-4-2: words 52
+2026-10-28T21:32:14.142Z   reject vh-4-1-4-4: words 50
+2026-10-28T21:32:20.145Z ask prose vh-4-1-3-12..vh-4-1-4-5 items=5 attempt=1
+2026-10-28T21:32:48.493Z done vh-4-1-3-12: 10/10 model=Flash-Lite
+2026-10-28T21:32:48.495Z ask prose vh-4-1-4-6..vh-4-2-0-1 items=10 attempt=0
+2026-10-28T21:33:16.830Z done vh-4-1-4-6: 10/10 model=Flash-Lite
+2026-10-28T21:33:16.831Z ask prose vh-4-2-1-0..vh-4-2-2-3 items=10 attempt=0
+2026-10-28T21:33:45.259Z done vh-4-2-1-0: 10/10 model=Flash-Lite
+2026-10-28T21:33:45.261Z ask prose vh-4-2-2-4..vh-4-2-2-13 items=10 attempt=0
+2026-10-28T21:34:13.689Z done vh-4-2-2-4: 10/10 model=Flash-Lite
+2026-10-28T21:34:13.691Z ask prose vh-4-2-2-14..vh-4-2-3-7 items=10 attempt=0
+2026-10-28T21:34:47.169Z done vh-4-2-2-14: 10/10 model=Flash-Lite
+2026-10-28T21:34:47.171Z ask prose vh-4-2-3-8..vh-4-2-4-1 items=10 attempt=0
+2026-10-28T21:35:18.233Z done vh-4-2-3-8: 10/10 model=Flash-Lite
+2026-10-28T21:35:18.235Z ask prose vh-4-2-4-2..vh-4-2-5-3 items=10 attempt=0
+2026-10-28T21:35:46.623Z done vh-4-2-4-2: 10/10 model=Flash-Lite
+2026-10-28T21:35:46.626Z ask prose vh-d-4-2..vh-5-0-1-2 items=10 attempt=0
+2026-10-28T21:36:22.528Z done vh-d-4-2: 10/10 model=Flash-Lite
+2026-10-28T21:36:22.531Z ask prose vh-5-0-1-3..vh-5-0-2-2 items=10 attempt=0
+2026-10-28T21:36:44.945Z   reject vh-5-0-1-3: missing
+2026-10-28T21:36:44.946Z   reject vh-5-0-1-4: missing
+2026-10-28T21:36:44.946Z   reject vh-5-0-1-5: missing
+2026-10-28T21:36:44.947Z   reject vh-5-0-1-6: missing
+2026-10-28T21:36:44.948Z   reject vh-5-0-1-7: missing
+2026-10-28T21:36:44.948Z   reject vh-5-0-1-8: missing
+2026-10-28T21:36:44.948Z   reject vh-5-0-1-9: missing
+2026-10-28T21:36:44.949Z   reject vh-5-0-2-0: missing
+2026-10-28T21:36:44.949Z   reject vh-5-0-2-1: missing
+2026-10-28T21:36:44.949Z   reject vh-5-0-2-2: missing
+2026-10-28T21:36:50.961Z ask prose vh-5-0-1-3..vh-5-0-2-2 items=10 attempt=1
+2026-10-28T21:37:13.487Z   reject vh-5-0-1-6: words 54
+2026-10-28T21:37:13.487Z   reject vh-5-0-1-9: words 53
+2026-10-28T21:37:13.488Z   reject vh-5-0-2-0: words 50
+2026-10-28T21:37:13.488Z   reject vh-5-0-2-1: words 52
+2026-10-28T21:37:13.489Z   reject vh-5-0-2-2: words 53
+2026-10-28T21:37:19.492Z done vh-5-0-1-3: 5/10 model=Flash-Lite MISSING vh-5-0-1-6,vh-5-0-1-9,vh-5-0-2-0,vh-5-0-2-1,vh-5-0-2-2
+2026-10-28T21:37:19.495Z ask prose vh-5-0-2-3..vh-5-0-2-12 items=10 attempt=0
+2026-10-28T21:37:41.953Z   reject vh-5-0-2-11: title
+2026-10-28T21:37:47.961Z ask prose vh-5-0-2-3..vh-5-0-2-12 items=1 attempt=1
+2026-10-28T21:38:11.159Z done vh-5-0-2-3: 10/10 model=Flash-Lite
+2026-10-28T21:38:11.160Z ask prose vh-5-0-3-0..vh-5-0-3-9 items=10 attempt=0
+2026-10-28T21:38:39.839Z done vh-5-0-3-0: 10/10 model=Flash-Lite
+2026-10-28T21:38:39.841Z ask prose vh-5-0-3-10..vh-5-0-4-6 items=10 attempt=0
+2026-10-28T21:39:08.314Z done vh-5-0-3-10: 10/10 model=Flash-Lite
+2026-10-28T21:39:08.316Z ask prose vh-5-0-4-7..vh-5-1-1-1 items=10 attempt=0
+2026-10-28T21:39:30.680Z   reject vh-5-1-0-0: exit 3 label
+2026-10-28T21:39:30.681Z   reject vh-5-1-1-0: exit 3 label
+2026-10-28T21:39:30.682Z   reject vh-5-1-1-1: exit 3 label
+2026-10-28T21:39:36.689Z ask prose vh-5-0-4-7..vh-5-1-1-1 items=3 attempt=1
+2026-10-28T21:40:02.383Z done vh-5-0-4-7: 10/10 model=Flash-Lite
+2026-10-28T21:40:02.385Z ask prose vh-5-1-1-2..vh-5-1-2-5 items=10 attempt=0
+2026-10-28T21:40:30.939Z done vh-5-1-1-2: 10/10 model=Flash-Lite
+2026-10-28T21:40:30.941Z ask prose vh-5-1-2-6..vh-5-1-2-15 items=10 attempt=0
+2026-10-28T21:40:59.418Z done vh-5-1-2-6: 10/10 model=Flash-Lite
+2026-10-28T21:40:59.420Z ask prose vh-5-1-3-0..vh-5-1-3-9 items=10 attempt=0
+2026-10-28T21:41:21.951Z   reject vh-5-1-3-2: words 54
+2026-10-28T21:41:21.953Z   reject vh-5-1-3-3: words 52
+2026-10-28T21:41:21.953Z   reject vh-5-1-3-4: words 48
+2026-10-28T21:41:21.954Z   reject vh-5-1-3-6: words 51
+2026-10-28T21:41:21.954Z   reject vh-5-1-3-7: words 52
+2026-10-28T21:41:21.955Z   reject vh-5-1-3-8: words 50
+2026-10-28T21:41:21.955Z   reject vh-5-1-3-9: words 54
+2026-10-28T21:41:27.962Z ask prose vh-5-1-3-0..vh-5-1-3-9 items=7 attempt=1
+2026-10-28T21:41:53.830Z done vh-5-1-3-0: 10/10 model=Flash-Lite
+2026-10-28T21:41:53.832Z ask prose vh-5-1-3-10..vh-5-1-4-3 items=10 attempt=0
+2026-10-28T21:42:16.365Z   reject vh-5-1-3-13: exit 1 label
+2026-10-28T21:42:22.382Z ask prose vh-5-1-3-10..vh-5-1-4-3 items=1 attempt=1
+2026-10-28T21:42:45.616Z done vh-5-1-3-10: 10/10 model=Flash-Lite
+2026-10-28T21:42:45.618Z ask prose vh-5-1-4-4..vh-5-c2 items=10 attempt=0
+2026-10-28T21:43:14.081Z done vh-5-1-4-4: 10/10 model=Flash-Lite
+2026-10-28T21:43:14.083Z ask prose vh-5-2-0-0..vh-5-2-2-1 items=10 attempt=0
+2026-10-28T21:43:42.617Z done vh-5-2-0-0: 10/10 model=Flash-Lite
+2026-10-28T21:43:42.624Z ask prose vh-5-2-2-2..vh-5-2-2-11 items=10 attempt=0
+2026-10-28T21:44:11.187Z done vh-5-2-2-2: 10/10 model=Flash-Lite
+2026-10-28T21:44:11.189Z ask prose vh-5-2-2-12..vh-5-2-3-5 items=10 attempt=0
+2026-10-28T21:44:33.807Z   reject vh-5-2-3-1: words 53
+2026-10-28T21:44:33.808Z   reject vh-5-2-3-2: words 50
+2026-10-28T21:44:33.808Z   reject vh-5-2-3-3: words 46
+2026-10-28T21:44:33.809Z   reject vh-5-2-3-4: words 40
+2026-10-28T21:44:33.809Z   reject vh-5-2-3-5: words 46
+2026-10-28T21:44:39.819Z ask prose vh-5-2-2-12..vh-5-2-3-5 items=5 attempt=1
+2026-10-28T21:45:05.568Z done vh-5-2-2-12: 10/10 model=Flash-Lite
+2026-10-28T21:45:05.571Z ask prose vh-5-2-3-6..vh-5-2-3-15 items=10 attempt=0
+2026-10-28T21:45:33.955Z done vh-5-2-3-6: 10/10 model=Flash-Lite
+2026-10-28T21:45:33.958Z ask prose vh-5-2-4-0..vh-5-2-5-1 items=10 attempt=0
+2026-10-28T21:46:02.268Z done vh-5-2-4-0: 10/10 model=Flash-Lite
+2026-10-28T21:46:02.271Z ask prose vh-5-2-5-2..vh-6-0-1-0 items=10 attempt=0
+2026-10-28T21:46:30.765Z done vh-5-2-5-2: 10/10 model=Flash-Lite
+2026-10-28T21:46:30.767Z ask prose vh-6-0-1-1..vh-6-0-2-0 items=10 attempt=0
+2026-10-28T21:47:01.794Z done vh-6-0-1-1: 10/10 model=Flash-Lite
+2026-10-28T21:47:01.797Z ask prose vh-6-0-2-1..vh-6-0-2-10 items=10 attempt=0
+2026-10-28T21:47:30.322Z done vh-6-0-2-1: 10/10 model=Flash-Lite
+2026-10-28T21:47:30.324Z ask prose vh-6-0-2-11..vh-6-0-3-8 items=10 attempt=0
+2026-10-28T21:48:01.352Z done vh-6-0-2-11: 10/10 model=Flash-Lite
+2026-10-28T21:48:01.354Z ask prose vh-6-0-3-9..vh-6-0-4-5 items=10 attempt=0
+2026-10-28T21:48:29.873Z done vh-6-0-3-9: 10/10 model=Flash-Lite
+2026-10-28T21:48:29.875Z ask prose vh-6-0-4-6..vh-6-1-1-0 items=10 attempt=0
+2026-10-28T21:48:54.807Z   reject vh-6-1-0-0: exit 3 label
+2026-10-28T21:48:54.808Z   reject vh-6-1-0-1: exit 3 label
+2026-10-28T21:48:54.809Z   reject vh-6-1-1-0: exit 3 label
+2026-10-28T21:49:00.814Z ask prose vh-6-0-4-6..vh-6-1-1-0 items=3 attempt=1
+2026-10-28T21:49:26.580Z done vh-6-0-4-6: 10/10 model=Flash-Lite
+2026-10-28T21:49:26.582Z ask prose vh-6-1-1-1..vh-6-1-2-4 items=10 attempt=0
+2026-10-28T21:49:54.970Z done vh-6-1-1-1: 10/10 model=Flash-Lite
+2026-10-28T21:49:54.972Z ask prose vh-6-1-2-5..vh-6-1-2-14 items=10 attempt=0
+2026-10-28T21:50:25.937Z done vh-6-1-2-5: 10/10 model=Flash-Lite
+2026-10-28T21:50:25.939Z ask prose vh-6-1-3-0..vh-6-1-3-9 items=10 attempt=0
+2026-10-28T21:50:54.389Z done vh-6-1-3-0: 10/10 model=Flash-Lite
+2026-10-28T21:50:54.391Z ask prose vh-6-1-3-10..vh-6-1-4-3 items=10 attempt=0
+2026-10-28T21:51:25.237Z done vh-6-1-3-10: 10/10 model=Flash-Lite
+2026-10-28T21:51:25.238Z ask prose vh-6-1-4-4..vh-6-c2 items=10 attempt=0
+2026-10-28T21:51:53.597Z done vh-6-1-4-4: 10/10 model=Flash-Lite
+2026-10-28T21:51:53.599Z ask prose vh-6-2-0-0..vh-6-2-2-1 items=10 attempt=0
+2026-10-28T21:52:22.080Z done vh-6-2-0-0: 10/10 model=Flash-Lite
+2026-10-28T21:52:22.082Z ask prose vh-6-2-2-2..vh-6-2-2-11 items=10 attempt=0
+2026-10-28T21:52:50.543Z done vh-6-2-2-2: 10/10 model=Flash-Lite
+2026-10-28T21:52:50.545Z ask prose vh-6-2-2-12..vh-6-2-3-6 items=10 attempt=0
+2026-10-28T21:53:18.990Z done vh-6-2-2-12: 10/10 model=Flash-Lite
+2026-10-28T21:53:18.993Z ask prose vh-6-2-3-7..vh-6-2-4-0 items=10 attempt=0
+2026-10-28T21:53:47.409Z done vh-6-2-3-7: 10/10 model=Flash-Lite
+2026-10-28T21:53:47.411Z ask prose vh-6-2-4-1..vh-6-2-5-2 items=10 attempt=0
+2026-10-28T21:54:15.742Z done vh-6-2-4-1: 10/10 model=Flash-Lite
+2026-10-28T21:54:15.744Z ask prose vh-6-2-5-3..vh-e-A2-3 items=12 attempt=0
+2026-10-28T21:54:47.070Z done vh-6-2-5-3: 12/12 model=Flash-Lite
+2026-10-28T21:54:47.071Z ask prose vh-e-A3-1..vh-e-C1-3 items=12 attempt=0
+2026-10-28T21:55:20.953Z done vh-e-A3-1: 12/12 model=Flash-Lite
+2026-10-28T21:55:20.955Z ask prose vh-e-C2-1..vh-e-C3-3 items=6 attempt=0
+2026-10-28T21:55:49.548Z done vh-e-C2-1: 6/6 model=Flash-Lite
+2026-10-28T21:55:49.549Z finished prose run: calls 124, batches done 100/100
+2026-10-28T21:55:52.813Z ask prose vh-2-1-5-2..vh-2-2-1-3 items=10 attempt=0
+2026-10-28T21:56:15.772Z   reject vh-d-2-1: meta words
+2026-10-28T21:56:21.789Z ask prose vh-2-1-5-2..vh-2-2-1-3 items=1 attempt=1
+2026-10-28T21:56:53.056Z done vh-2-1-5-2: 10/10 model=Flash-Lite
+2026-10-28T21:56:53.079Z ask prose vh-4-0-2-5..vh-4-0-3-1 items=10 attempt=0
+2026-10-28T21:57:19.979Z   reject vh-4-0-2-5: exit 2 label
+2026-10-28T21:57:19.981Z   reject vh-4-0-2-6: exit 1 label
+2026-10-28T21:57:26.007Z ask prose vh-4-0-2-5..vh-4-0-3-1 items=2 attempt=1
+2026-10-28T21:57:52.072Z done vh-4-0-2-5: 10/10 model=Flash-Lite
+2026-10-28T21:57:52.079Z ask prose vh-5-0-1-3..vh-5-0-2-2 items=10 attempt=0
+2026-10-28T21:58:15.149Z   reject vh-5-0-1-3: words 53
+2026-10-28T21:58:15.150Z   reject vh-5-0-1-5: words 51
+2026-10-28T21:58:15.151Z   reject vh-5-0-1-6: words 49
+2026-10-28T21:58:15.151Z   reject vh-5-0-1-7: words 51
+2026-10-28T21:58:15.152Z   reject vh-5-0-1-8: words 48
+2026-10-28T21:58:15.152Z   reject vh-5-0-1-9: words 53
+2026-10-28T21:58:15.153Z   reject vh-5-0-2-0: words 50
+2026-10-28T21:58:15.153Z   reject vh-5-0-2-1: words 49
+2026-10-28T21:58:15.154Z   reject vh-5-0-2-2: words 49
+2026-10-28T21:58:21.163Z ask prose vh-5-0-1-3..vh-5-0-2-2 items=9 attempt=1
+2026-10-28T21:58:43.811Z   reject vh-5-0-1-7: words 54
+2026-10-28T21:58:43.812Z   reject vh-5-0-1-8: words 50
+2026-10-28T21:58:43.813Z   reject vh-5-0-2-0: words 48,exit 2 label
+2026-10-28T21:58:43.813Z   reject vh-5-0-2-1: words 52
+2026-10-28T21:58:43.814Z   reject vh-5-0-2-2: words 49
+2026-10-28T21:58:49.834Z done vh-5-0-1-3: 5/10 model=Flash-Lite MISSING vh-5-0-1-7,vh-5-0-1-8,vh-5-0-2-0,vh-5-0-2-1,vh-5-0-2-2
+2026-10-28T21:58:49.864Z finished prose run: calls 6, batches done 100/100
+2026-10-28T21:58:50.995Z merge: sections 1000, with prose 995, missing 5, words 83746
+2026-10-29T05:57:29.580Z finished outline run: calls 0
+2026-10-29T05:57:29.890Z finished prose run: calls 0, batches done 100/100
+2026-10-29T05:57:30.222Z fill round 0: 3 sections missing
+2026-10-29T05:57:30.225Z ask fill r0 vh-5-0-2-0 items=3
+2026-10-29T05:58:37.468Z fill finished: 0 sections still without prose
+2026-10-29T05:58:37.808Z merge: sections 1000, with prose 1000, missing 0, words 84085

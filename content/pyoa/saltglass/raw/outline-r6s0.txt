@@ -1,0 +1,54 @@
+Gemini said
+
+@@SEED sg-6-0-0-0 | You step through the brass lintel of the Rain Vault, where the air smells of ozone and ancient stone, and the Seedkey warms in your palm.
+@@SEED sg-6-0-0-1 | Downward stairs of ribbed slate descend into the dark, echoing with the rhythmic drip of condensation that mocks the thirsty towns above.
+@@SEED sg-6-0-0-2 | A rusted grating blocks the secondary tunnel, rattling under the pressure of subterranean draughts that carry the sharp scent of damp earth.
+@@SEED sg-6-0-0-3 | You slide through a fractured lens-partition, emerging onto a narrow catwalk suspended above an abyss of jagged, silent quartz stalactites.
+@@SEED sg-6-0-1-0 | Beside a pillar of fused glass, an abandoned cart of rotting wicker baskets holds only dust and the grey husks of forgotten gourds.
+@@SEED sg-6-0-1-1 | A flickering blue gas-jet casts long, wavering shadows across an arched corridor where carved wheat sheaves line the vaulted ceiling.
+@@SEED sg-6-0-1-2 | You squeeze past a collapsed masonry archway where fallen blocks of white sandstone trap a trickle of bitter, mineral-stained water.
+@@SEED sg-6-0-1-3 | An iron door hangs ajar on screaming hinges, revealing an empty alcove scored with deep, frantic claw marks from some desperate predecessor.
+@@SEED sg-6-0-1-4 | Your glass-burn scar tingles against the chill wall, revealing a concealed latch that swings a panel outward to a hidden shortcut.
+@@SEED sg-6-0-1-5 | A subterranean cistern of black brine laps against a stone quay, reflecting the weak yellow glow of your banked coal-lantern.
+@@SEED sg-6-0-1-6 | Overhead, a mosaic of stained glass depicts the legendary First Monsoon, its cobalt panels casting a cool, ocean-deep hue over the flagstones.
+@@SEED sg-6-0-1-7 | A pile of discarded copper tally sticks clatters under your boot, left behind by salt-tax auditors who never returned from the deep.
+@@SEED sg-6-0-1-8 | You balance along a narrow bronze pipe spanning a chasm, listening to the hollow groan of subterranean metal shifting in the dark.
+@@SEED sg-6-0-1-9 | An old mirror-frame hangs crookedly on the damp wall, its silvered backing flaking away to reveal a cold, empty cavity behind the stone.
+@@SEED sg-6-0-2-0 | A stone-lined drainage trench cuts across the floor, carrying a sluggish stream of grey silt toward some unseen sump far below.
+@@SEED sg-6-0-2-1 | You crawl through a low service vent lined with acoustic baffles, where every scrape of your pack echoes like distant thunder.
+@@SEED sg-6-0-2-2 | A circular chamber opens before you, its perimeter lined with empty brass niches that once held the archives of the old lens-keepers.
+@@SEED sg-6-0-2-3 | Broken ceramic shards crunch beneath your soles, glinting in the lantern-light like shattered stars scattered across the basalt floor.
+@@SEED sg-6-0-2-4 | Traveling alone lets you spot the hairline crack in the floor-seal, revealing a hollow drop that bypasses the unstable stairway ahead.
+@@SEED sg-6-0-2-5 | A heavy leather curtain blocks a side gallery, stiffened by age and salt until it feels like a sheet of hammered iron.
+@@SEED sg-6-0-2-6 | You step into a gallery of frozen water-pipes, their ruptured bellies split wide like dry seed pods from ancient winter freezes.
+@@SEED sg-6-0-2-7 | An iron sconce holds the stub of a tallow candle that went out centuries ago, leaving a grey wax pillar on the limestone block.
+@@SEED sg-6-0-2-8 | A mural of glazed ceramic tiles crumbles at your touch, showering the floor with turquoise flakes that tell of long-vanished harvests.
+@@SEED sg-6-0-2-9 | You navigate a maze of low brick bulkheads, designed to stem floods that never reached this high before the great drought.
+@@SEED sg-6-0-2-10 | A brass plaque on a cedar door reads THE WARDEN OF PITH, but the wood is warped and swollen shut against the jamb.
+@@SEED sg-6-0-2-11 | Shafts of filtered amber light pierce down through narrow ventilation shafts, illuminating floating motes of quartz dust in the stillness.
+@@SEED sg-6-0-3-0 | You climb a spiral stair of hollow copper treads that ring like chimes beneath your boots, threatening to wake the silent halls.
+@@SEED sg-6-0-3-1 | A stone basin filled with salt crystals blocks the threshold, forcing you to wade through a crunching drift of alkaline powder.
+@@SEED sg-6-0-3-2 | An arched gallery of ribbed lead tubes hums softly with the vibration of distant winds sweeping across the surface above.
+@@SEED sg-6-0-3-3 | You squeeze through a fissure in the limestone where glittering gypsum needles brush against your woolen travelling cloak.
+@@SEED sg-6-0-3-4 | A wooden workbench holds a rusted set of jeweler’s shears and a bowl of clouded glass beads left mid-polish by an unknown hand.
+@@SEED sg-6-0-3-5 | You cross a bridge of petrified timber over a dry irrigation canal, its wooden ribs groaning under your cautious weight.
+@@SEED sg-6-0-3-6 | A fresco of green barley stalks peels from the plaster in long ribbons, revealing dark volcanic rock beneath the grand design.
+@@SEED sg-6-0-3-7 | An iron ringbolt is set into the floor beside a gaping drainage pit, its shank polished bright by ropes that pulled heavy loads.
+@@SEED sg-6-0-3-8 | Owing no debts allows you to bypass the locked toll-gate entirely, slipping through an unmonitored maintenance hatch into the inner vaults.
+@@SEED sg-6-0-3-9 | A stone alcove contains a row of empty amphorae, their clay sides stamped with the double-lens seal of the ancient Prism magistrates.
+@@SEED sg-6-0-3-10 | You wade through a shallow pool of mineral water that mirrors the vaulted brickwork like a sheet of dark, liquid obsidian.
+@@SEED sg-6-0-3-11 | A bronze grating set into the ceiling drops a single, heavy drop of water directly onto the shoulder of your damp jacket.
+@@SEED sg-6-0-3-12 | You slip behind a stack of slate partition slabs, hiding from the distant, rhythmic clank of automated machinery that refuses to stop.
+@@SEED sg-6-0-4-0 | A grand double door of iron-studded oak stands slightly ajar, leaking a smell of dry chaff and ancient, preserved grain hulls.
+@@SEED sg-6-0-4-1 | You scramble down a chute of polished green glass, sliding past rows of empty bin markers cut into the basalt rock-face.
+@@SEED sg-6-0-4-2 | A rusted winch mechanism spans the corridor, its iron chain sagging into a heap of orange flakes upon the flagstone floor.
+@@SEED sg-6-0-4-3 | You step through a shattered fanlight into a long gallery where rows of bronze seed-urns stretch into the dim distance.
+@@SEED sg-6-0-4-4 | A narrow service cat-walk hugs the apex of the ceiling, offering a bird’s-eye view of the vast, silent storage vaults below.
+@@SEED sg-6-0-4-5 | You push past a heavy wool drape stiffened with salt- crust, entering a chamber where the air tastes startlingly sweet and cold.
+@@SEED sg-6-0-4-6 | A stone staircase descends into a thick bank of subterranean mist that clings to the floor like chilled breath in winter.
+@@SEED sg-6-0-4-7 | You follow a groove in the floor where heavy iron transport trucks once ran, leading straight toward the heart of the seed halls.
+@@SEED sg-6-0-5-0 | You stand before the outer bronze gate of the Great Seed Hall, where the cold ceramic Seedkey hums in your trembling grip.
+@@SEED sg-6-0-5-1 | The heavy doors of the central granary loom before you, their surfaces carved with hollow depressions that await the true key.
+@@SEED sg-6-0-5-2 | You reach the threshold of the primary vault, wondering whether the ancient bins hold life-giving grain or only centuries of ash.
+@@SEED sg-6-0-5-3 | The massive seal of the Rain Vault fills the corridor ahead, presenting the final barrier between Candlemere and total ruin.
+@@DONE

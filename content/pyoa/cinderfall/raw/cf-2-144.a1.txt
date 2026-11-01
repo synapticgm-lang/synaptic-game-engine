@@ -1,0 +1,17 @@
+@@SECTION cf-2-149
+TITLE: The Grease-Gun
+TEXT: Thick rust flakes fall from the drainpipe into your palm as the choked channel finally spits its foul sediment into the ash-dune below. The pressure gauge on the side of the boiler settles into a steadier rhythm, sighing with relief as the trapped water finds its proper course. Among the grit and discarded scrap beneath the valve housing, your fingers close around a heavy iron cylinder wrapped in greasy rag. It is a battered but serviceable brass grease-gun, its leather plunger still supple enough to force lubricant into stubborn journal-boxes when the mileage mounts. // Wiping the nozzle on your trouser leg, you secure the tool in the cab locker alongside the spare oil can.
+GRANT: a rusted brass grease-gun
+EXIT 1: Climb back onto the footplate
+@@END
+@@SECTION cf-2-153
+TITLE: The Flickering Needle
+TEXT: Glass tremors in the brass frame as the telegraph relay chatters out a frantic staccato against the wooden wall of the waystation. The paper tape uncoils in a jerky dance, punching neat holes that spell out the movements of the armored patrol cars stationed three miles up the line. Every strike of the armature sounds like a dry knuckle rapping on a coffin lid, marking the precise hours the Barons intend to lock the junction switches. You commit the sequence of dots and dashes to memory, watching the ink fade into the cheap pulp paper as the needle finally falls still.
+EXIT 1: Pocket the decoded slip and run
+@@END
+@@SECTION cf-2-156
+TITLE: The Scriptorium Ink
+TEXT: Blue ink dries slowly on the damp parchment of the ledger while the telegraph key chatters its warning from across the deserted carriage. You trace the freshly stamped route manifest with a soot-stained thumb, noting the specific hours the armored patrol carriages clear the lower embankment. The clerk has already packed his inkwells into a leather satchel, leaving behind only the carbon copy of the dispatch and a silent nod of complicity. It is a precarious edge to walk, but knowing which switch-lever the Barons plan to drop next gives you a narrow channel through the grey waste.
+GRANT: an advance warning dispatch
+EXIT 1: Step back out to the platform
+@@END

@@ -1,0 +1,86 @@
+{
+ "batch": "sg-3-0-3-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "sg-3-0-3-4": {
+   "title": "The Hound's Yard",
+   "text": "A tethered desert hound bares its sharp teeth from a vine-wrapped courtyard, straining against a rusty chain anchored to a massive block of green slag. Its tawny coat is matted with white alkali dust, and a low, rattling growl vibrates deep within its narrow chest whenever your boots crunch against the gravel. The high stone walls offer no alternate route around the beast, forcing you to choose between facing the snapping animal directly or retreating back into the twisting alleys of the glass district before it breaks its moorings entirely.",
+   "exits": [
+    "Slip past the snapping hound // sg-3-0-4-2"
+   ]
+  },
+  "sg-3-0-3-5": {
+   "title": "The Obsidian Vestibule",
+   "text": "You step across a threshold of polished obsidian into a cool, domed vestibule where the air smells faintly of old parchment and dried lavender. Sunlight filters through amber-tinted ceiling panes, casting long geometric shadows across mosaic floors inlaid with mother-of-pearl. The sudden quiet of the chamber is a sharp relief from the harsh glare and wind outside, yet the absolute stillness feels heavy with forgotten secrets. A narrow arched corridor leads deeper into the silent heart of the building.",
+   "exits": [
+    "Follow the quiet arched corridor // sg-3-0-4-3"
+   ]
+  },
+  "sg-3-0-3-6": {
+   "title": "The Salt Court's Rest",
+   "text": "A trio of Salt Court tax-collectors lounge by a dry fountain, drinking tepid goat milk from earthenware jugs while watching the perimeter walls with bored vigilance. Their heavy brass breastplates gleam dully under the glaring afternoon sky, and their ledger books lie half-open on the stone rim beside a pair of weighted scales. They have not yet noticed your approach, but any sudden movement will draw their sharp eyes and uncomfortable questions about your permits and baggage.",
+   "exits": [
+    "Sidestep toward the pillared portico // sg-3-0-4-3",
+    "Cross the dry canal bed quietly // sg-3-0-4-4"
+   ]
+  },
+  "sg-3-0-3-7": {
+   "title": "The Weaver's Loft",
+   "text": "You squeeze through a jagged window frame into a weaver's loft strewn with tangled threads of spun glass that glitter like frozen cobwebs across the floorboards. Every footfall must be measured and light to avoid snapping the delicate filaments that ring out like tiny crystal chimes in the stale air. Sunlight catches the suspended threads, creating an intricate maze of rainbow refractions that obscure the farther corners of the room.",
+   "exits": [
+    "Pick a path toward the pillared portico // sg-3-0-4-3",
+    "Head down toward the dry canal bed // sg-3-0-4-4"
+   ]
+  },
+  "sg-3-0-3-8": {
+   "title": "The Creaking Signboard",
+   "text": "A rusted iron signboard swings on a single hinge above a boarded doorway, groaning rhythmically in the dry wind blowing off the salt flats. Below it, the wooden threshold is choked with drifts of fine white dust and dried tumble-weeds that rustle against your shins. The building appears long abandoned, yet a faint curl of grey smoke rises from a cracked chimney pipe further down the row, suggesting you are not entirely alone in this desolate lane.",
+   "exits": [
+    "Cross the dry canal bed // sg-3-0-4-4",
+    "Squeeze past the sweating laborers // sg-3-0-4-6"
+   ]
+  },
+  "sg-3-0-3-9": {
+   "title": "The Cedar Beam",
+   "text": "You balance on a narrow cedar beam bridging a deep gap between two leaning glass towers, keeping your eyes fixed firmly on the far wall. Far below, the jagged floor of the basin glitters with shards of ancient green and amber bottle-glass, offering a terrifying drop if your footing should slip. The wind picks up suddenly, tugging at the straps of your pack and testing your equilibrium with every deliberate step you take across the void.",
+   "exits": [
+    "Head toward the bustling central plaza // sg-3-0-4-5",
+    "Squeeze past the sweating laborers // sg-3-0-4-6",
+    "Seek the brightly painted canvas awning // sg-3-0-4-7"
+   ]
+  },
+  "sg-3-0-3-10": {
+   "title": "The Ash Mound",
+   "text": "A hooded scavenger pokes through a mound of ash with a long iron spit, unearthing a string of heavy ceramic beads that clink softly together. The acrid scent of burnt bone and dry peat hangs thick in the stagnant air around the hearth-pit. The scavenger pauses, glancing sideways from beneath a frayed hood to measure your worth and see whether you carry anything worth trading for a handful of ash-glass beads.",
+   "exits": [
+    "Squeeze past the sweating laborers // sg-3-0-4-6"
+   ]
+  },
+  "sg-3-0-3-11": {
+   "title": "The Solar Mirror",
+   "text": "You pause within the shadow of a colossal solar mirror, feeling its immense curved surface radiate residual heat long after the sun has shifted. The polished metal plates are bolted to a massive stone gantry that towers above the ruined rooftops like the ribcage of some metallic beast. This towering relic once focused the desert glare to power the old city's furnaces, and standing beneath its concave dish makes the back of your neck prickle with phantom warmth.",
+   "exits": [
+    "Head toward the bustling central plaza // sg-3-0-4-5",
+    "Squeeze past the sweating laborers // sg-3-0-4-6",
+    "Seek the brightly painted canvas awning // sg-3-0-4-7"
+   ]
+  },
+  "sg-3-0-3-12": {
+   "title": "The Urchin's Offering",
+   "text": "A ragged urchin darts out from behind a stack of empty crates, thrusting a bruised yellow plum toward you before scurrying back into the gloom. The fruit is dusty and small, yet its sweet, fermented aroma cuts sharply through the dry alkali stench of the alley. Before you can offer a coin or a word of thanks, the child vanishes into a narrow gap between two cracked masonry walls, leaving only the sound of pattering bare feet behind.",
+   "exits": [
+    "Squeeze past the sweating laborers // sg-3-0-4-6",
+    "Seek the brightly painted canvas awning // sg-3-0-4-7"
+   ]
+  },
+  "sg-3-0-4-0": {
+   "title": "The Salt Steps",
+   "text": "You descend a steep flight of stone steps slick with white salt crust, entering a subterranean marketplace echoing with the low murmur of tradesmen. Oil lamps flicker from iron brackets along the damp walls, casting amber glints over stalls piled high with dried herbs, copper wire, and sealed jars of brackish water. The air down here is cooler than the burning streets above, heavy with the mingling scents of cardamom, sheep fat, and old earth.",
+   "exits": [
+    "Dive into the noisy rumor market // sg-3-0-5-0",
+    "Seek a quiet corner away from the crowd // sg-3-0-5-2"
+   ]
+  }
+ },
+ "missing": []
+}

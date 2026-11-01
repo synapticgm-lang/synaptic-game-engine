@@ -1,0 +1,46 @@
+@@SECTION ul-2-129
+TITLE: The Vertical Cleft
+TEXT: Stone walls press inward from both flanks until the air tastes of dry lime and old mortar. The stacks narrow dramatically into a vertical cleft where your shoulders brush cold, weeping masonry on every step. Faint, dry breath sounds drift from the hairline fractures in the stone, murmuring archaic warnings about books that remember forgotten names. Your lantern beam catches scrawled marginalia bleeding directly from the rock face into the darkness ahead.
+EXIT 1: Squeeze forward through the whispering stone
+@@SECTION ul-2-130
+TITLE: The Narrowing Cleft
+TEXT: A claustrophobic fissure between two massive stone book-presses forces you to squeeze through side-on in total darkness. The scent of lamp-oil hangs thick in your wool coat as you weigh the narrow paths stretching into the gloom. To your left, a jagged passage leads toward a shimmering curtain of dust and iron bindings. Straight ahead, the fissure splits into darker crevices where the ink-sellers' routes are said to cross. Choose your footing carefully before the walls decide to shift again.
+EXIT 1: Slip sideways into the tightest gap
+EXIT 2: Navigate the jagged stone protrusions
+EXIT 3: Slide past the projecting shelf-ends
+EXIT 4: Bend your posture to the curve
+EXIT 5: Emerge into the vaulted scriptorium
+@@SECTION ul-2-131
+TITLE: The Silver Bookmark
+TEXT: Smooth stone slides against your sleeve as you slip sideways through the tightest portion of the cleft with measured grace. A faint metallic gleam catches the pale light of your brass lamp from a crevice near the floor. Reaching down, your fingers brush against a dropped silver-plated bookmark of fine make, engraved with the stamp of the Cataloguers' Court. It hums with a faint, residual chill against your palm before you tuck it securely into your pocket.
+EXIT 1: Advance deeper into the gloom
+@@SECTION ul-2-132
+TITLE: The Slippery Ledger
+TEXT: Loose pages from a displaced ledger flutter across the narrow floor, slick with a film of dark, stagnant condensation. You must balance your weight precisely on the balls of your feet to cross the hazard without sliding into the jagged masonry. Lifting your lantern high, you test the slick stone edge with your boot heel while the surrounding shelves groan and shift.
+CHECK: Balance carefully across the slick pages
+@@SECTION ul-2-133
+TITLE: A Heavy Stumble
+TEXT: Your boot slips on the wet vellum, pitching you heavily against a protruding corner of iron-bound shelving. A sharp pain flares along your ribs as you catch your breath against the cold stone, losing precious lamp-oil from your battered tin flask. The bruising will linger for days, serving as a bitter reminder of the Underlibrary's shifting floors. You pick yourself up from the dusty floorboards, dusting your wool coat with a grimace.
+EXIT 1: Drag yourself toward the passage
+@@SECTION ul-2-134
+TITLE: Light on Your Feet
+TEXT: Your boots find purchase on the narrow ledge, carrying you past the hazard with steady composure. The damp chill clings to your wool coat, however narrowly you managed to avoid a worse tumble among the jagged stacks. Tucked into a crevice beside your landing spot lies a small token left by a previous shelver.
+GRANT: A brass measuring cord
+EXIT 1: Return to the central cleft
+@@SECTION ul-2-135
+TITLE: The Fig Stash
+TEXT: Jagged stone protrusions jut from the walls like the teeth of an ancient mechanism, requiring careful observation with every step. You navigate the obstacle using balanced footwork, testing each handhold before trusting your weight to the ancient masonry. Wedged behind a stack of untagged pamphlets, your fingers brush against a small, wrapped bundle. Opening it reveals a forgotten stash of sweet dried figs, surprisingly moist and smelling of honey and old paper.
+EXIT 1: Continue along the winding ledge
+@@SECTION ul-2-136
+TITLE: Crossing the Gap
+TEXT: A wide gap opens between the stone shelves where the floor has drifted away into black emptiness. You test the stability of a narrow wooden plank bridging the chasm, watching tiny motes of dust spin into the abyss. Holding your breath, you prepare to step onto the trembling timber while the lamp flame flickers dangerously in the draft.
+CHECK: Step lightly across the trembling plank
+@@SECTION ul-2-137
+TITLE: A Bitter Drop
+TEXT: The timber groans under your weight and tips sharply, sending you tumbling onto a rough pile of discarded parchment rolls. A sharp paper-cut stings across your palm, drawing a bead of dark blood, and your spare tin of lamp-oil cracks against the floor. You salvage what remains of your supplies with trembling fingers, nursing your bruised hand in the gloom.
+EXIT 1: Crawl away from the chasm
+@@SECTION ul-2-138
+TITLE: Across the Timber
+TEXT: Your footwork holds true as you glide across the plank, reaching the far side with a steady thud of your heels. The crossing is treacherous, however narrowly you managed to keep your balance above the drop. Among the litter of the ledge, you discover a small, leather-bound notebook filled with helpful shortcut notes left by a friendly clerk.
+GRANT: A book of secret shortcuts
+EXIT 1: Step through the arched doorway

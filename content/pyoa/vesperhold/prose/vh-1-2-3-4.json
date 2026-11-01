@@ -1,0 +1,92 @@
+{
+ "batch": "vh-1-2-3-4",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-1-2-3-4": {
+   "title": "The Shepherd's Peg",
+   "text": "Under the granite overhang, an old shepherd named Daveth whittles a replacement peg for his pack frame, shaving thin curls of juniper that smell sharp against the mountain chill. The bronze Clapper on your back hums a low, sympathetic vibration into your shoulder blades as you pause to catch your breath. Daveth does not look up from his work, merely gesturing with his crooked thumb toward the paths diverging before you in the grey mist.",
+   "exits": [
+    "Walk past the merchant weighing dried chicory",
+    "Check the mule harness beside the iron ring"
+   ]
+  },
+  "vh-1-2-3-5": {
+   "title": "The Burning Thighs",
+   "text": "On the steep slate stairs, your thighs burn with every downward step under the crushing bronze weight of Orison's tongue. Frost clings to the edges of your heavy woolen coat, and the rhythmic clack of your boots provides the only steady measure against the howling wind. Ahead, the stairway plunges deeper into the shadow of the mountain wall where the air tastes of old snow and damp stone.",
+   "exits": [
+    "Approach the toll-house beneath the wooden awning",
+    "Attend to the mule by the frost-covered tethering ring"
+   ]
+  },
+  "vh-1-2-3-6": {
+   "title": "The Rolling Mist",
+   "text": "Past the rusted iron crane, the valley mist rolls upward like a grey woolen blanket, swallowing the lower steps and blurring the edge of the abyss. The weight of the Clapper pulls you slightly forward, demanding constant balance on the slick stone. Somewhere in the white gloom, a bell-rope creaks against a hidden timber, answered only by the faint, deep thrum of the bronze you carry.",
+   "exits": [
+    "Seek shelter beneath the toll-house awning",
+    "Adjust the grey mule's frozen harness",
+    "Step toward the glimmering rope-market stalls"
+   ]
+  },
+  "vh-1-2-3-7": {
+   "title": "The Three Winds",
+   "text": "At the crossroads of the three winds, a painted signpost points toward the lower stair-towns with fading black letters. The gales buffet your loaded back, trying to pry you away from the cliff face, but you lean firmly into the stone. Scraps of ice skitter across the flags, clinking softly against your gaiters like tiny glass bells.",
+   "exits": [
+    "Head toward the mist-shrouded market stalls",
+    "Listen for the wool-sorter inside the drafty shed",
+    "Inspect the flapping parchment on the notice board"
+   ]
+  },
+  "vh-1-2-3-8": {
+   "title": "The Boundary Stone",
+   "text": "Within the alcove of the weathered boundary stone, someone has left a fresh sprig of dried rosemary, its herbal scent cutting cleanly through the bitter mountain air. The bronze Clapper hums against your spine, vibrating in tune with some unseen chord hidden deep within the mountain rock. You trace the mossy letters carved into the granite before weighing your next move.",
+   "exits": [
+    "Make for the misty rope-market cluster",
+    "Present your monastery seal to the guard captain",
+    "Cross the wooden footbridge toward the mills"
+   ]
+  },
+  "vh-1-2-3-9": {
+   "title": "The Loose Handrail",
+   "text": "Beside the sheer drop of the Ninety Steps, a loose handrail swings wildly in the mountain gust, clanging rhythmically against rusted iron brackets. Every muscle in your body tightens as you hug the rock face, careful not to let the swinging bronze weight destabilize your footing on the icy stair. The drop below is a bottomless gray expanse of cloud and void.",
+   "exits": [
+    "Calm the mule near the tethering ring",
+    "Speak with the guard captain by the lower stair",
+    "Check on the wool-sorter inside the shed"
+   ]
+  },
+  "vh-1-2-3-10": {
+   "title": "The Guard Shelter",
+   "text": "Under the low lintel of the guard-shelter, a sleeping sentinel jerks awake as your boots crunch on the frozen gravel. The guard blinks away the sleep, wrapping a threadbare blanket tighter around narrow shoulders while eyeing the heavy cradle on your back. A small brazier of glowing charcoal inside the stone nook casts a brief, warm red light across the threshold.",
+   "exits": [
+    "Head out toward the rope-market in the mist",
+    "Visit the wool-sorter inside the drafty shed"
+   ]
+  },
+  "vh-1-2-3-11": {
+   "title": "The Frosted Landing",
+   "text": "Frost glazes the splintered pine landing where a sudden clatter of dark wings erupts as a flock of mountain jackdaws scatters into the grey gloom, leaving the cold air vibrating with their sharp calls. Below your heavy wool cloak, the bronze Clapper rests in its padded cradle, its faint, rhythmic hum pressing against your shoulder blades like a sleeping heartbeat. Two paths diverge beyond the scattered feathers, each drawing your eye downward into the swirling mountain mist.\n\nYou adjust the leather straps of the load and weigh the chill wind against the demands of the long descent ahead.",
+   "exits": [
+    "Present your monastery seal for inspection at the lower stair",
+    "Seek out the drafty wool-shed where Elva combs the fleeces"
+   ]
+  },
+  "vh-1-2-3-12": {
+   "title": "The Salt Cistern",
+   "text": "Near the salt-encrusted cistern, cooper Thram patches a leaking barrel with fresh birch hoops, whistling a dour mountain tune between missing teeth. The smell of wet oak and brine mingles with the high-altitude ozone. He pauses to glance at the bronze tongue on your back, offering a brief, knowing nod before returning to his mallet work.",
+   "exits": [
+    "Report to the guard captain at the stair head",
+    "Cross the footbridge toward the distant water-mills",
+    "Read the decree on the cliff-side notice board"
+   ]
+  },
+  "vh-1-2-3-13": {
+   "title": "The Wire Bridge",
+   "text": "Across the dizzying wire bridge, the first tier of the rope-market hangs above the abyss like a spider's web strung with lanterns. The cable hums beneath your boots, vibrating with every gust that sweeps up from the gorge. Stalls draped in heavy canvas sway gently in the draft, smelling of hemp, tallow, and dried mountain herbs.",
+   "exits": [
+    "Follow the path toward the rhythmic water-mills",
+    "Examine the fluttering decree on the notice board"
+   ]
+  }
+ },
+ "missing": []
+}

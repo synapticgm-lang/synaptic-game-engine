@@ -1,0 +1,21 @@
+@@SECTION vh-5-1-0-0
+TITLE: The Dripping Orchards
+TEXT: Drenched pear branches lean low across the muddy track, their heavy leaves weeping cold dew onto your woolen collar. You pause by a rotting larch fence, testing a moss-slick post that yields slightly to your pressure while the bronze Clapper hums a low, sympathetic vibration against your aching shoulder blades. Somewhere out in the dense white smother, a Fog-Warden blows a two-tone copper whistle, the reedy call shifting directions as the valley draft twists through the dormant trees.
+EXIT 1: Follow the reedy whistle into the mist
+EXIT 2: Keep close to the rotting fence line
+EXIT 3: Pay the tax clerk and move along
+@@END
+@@SECTION vh-5-1-1-0
+TITLE: The Old Cider Press
+TEXT: Heavy wooden beams and a massive iron screw block the sunken lane, weeping thick amber juice into the soaked mulch beneath your boots. A damp chill rises from the rotting apple pomace, clinging to your woolens as you edge around the rusted machinery. The bronze Clapper shifts in its padded cradle, its deep resonant hum answering some hidden frequency within the dripping valley walls.
+EXIT 1: Climb over the slippery timbers of the press
+EXIT 2: Slip through the narrow gap near the stone wall
+EXIT 3: Wait out the chill while the cider drips
+@@END
+@@SECTION vh-5-1-1-1
+TITLE: The Empty Shed
+TEXT: Frost-bitten boughs claw sharply at your sleeves as you pick your way past a boarded fruit-shed stacked with rows of empty wooden crates. The air tastes of wet cedar and cold peat, completely muffled by the heavy blanket of cloud pressing down upon the valley floor. Your boots slide slightly in the slick clay, and you lean your weight forward to keep the heavy bronze tongue balanced against your spine.
+EXIT 1: Skirt the edge of the empty crates
+EXIT 2: Silence the ringing bronze with your gloved hand
+EXIT 3: Step firmly onto the firmer turf ahead
+@@END

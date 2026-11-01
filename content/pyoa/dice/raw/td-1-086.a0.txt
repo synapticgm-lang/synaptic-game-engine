@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION td-1-086
+TITLE: The Ambergris Scuffle
+TEXT: Shouts erupt near the rib-cage stalls where two traders tear at a greasy, foul-smelling lump of grey whale fat, their knuckles bloody and eyes wild with greed. You step between them, planting your heavy boots in the salt-crusted sand and pushing broad shoulders against their heaving chests until the struggling merchants stumble back, gasping and blinking in sudden shame. The grateful victor presses a warm, waxy chunk of the prize into your palm at a steep discount before vanishing into the crowd.
+EXIT 1: Slip back into the market
+@@END
+@@SECTION td-1-087
+TITLE: Breaking the Dispute
+TEXT: Shouts shatter the dry air near the rib-cage stalls where two greasy traders claw at each other's throats over a grey, waxy lump of valuable ambergris. You stride directly into the spinning storm of fists and iron nails, intending to drive your solid frame between their chests and force the pair apart before a blade clears leather. Muscles straining against the frantic thrashing of desperate men, you brace your weight against the shifting bone floor and shove with all your might.
+CHECK: Wedge your solid frame between them
+@@END
+@@SECTION td-1-088
+TITLE: A Heavy Toll
+TEXT: A stray elbow catches you squarely across the jaw, snapping your head back and sending a hot taste of copper flooding into your mouth as the brawling traders tumble over your boots. You stagger against the sun-baked ribs of a stranded leviathan, clutching a bruised cheek while the valuable ambergris splits into useless, sandy fragments upon the ground. The angry merchants curse your interference and bolt into the narrow alleys, leaving you with a throbbing ache in your jaw and precious hours wasted.
+EXIT 1: Pick yourself up and leave
+@@END
+@@SECTION td-1-089
+TITLE: The Merchant's Grace
+TEXT: Your iron grip holds firm against the thrashing mob, forcing the combatants apart until they slump against the salt-caked ribs in exhausted submission. The surviving merchant, sweating and trembling with relief, presses a smooth, waxy fragment of grey amber into your palm as a silent token of gratitude before scurrying away into the shadows. You pocket the aromatic prize, knowing its rich scent will fetch a heavy price among the apothecaries of the upper cliffs.
+GRANT: A fragrant lump of ambergris
+EXIT 1: Return to the noisy market
+@@END
+@@SECTION td-1-090
+TITLE: The Water-Logged Journal
+TEXT: Faded leather covers a water-logged journal tossed carelessly among a heap of rusted iron hooks and salt-rotted tackle on a blanket. You carefully flick open the stiff pages, squinting at cramped diagrams and cryptic margins scrawled in a dead sailor's hasty hand. By tracing the jagged ink lines against the known landmarks of the exposed seabed, you uncover a forgotten gully that bypasses the treacherous mud flats altogether.
+EXIT 1: Pocket the secret and move on
+@@END
+@@SECTION td-1-091
+TITLE: Deciphering the Tides
+TEXT: Faded leather covers a water-logged journal tossed carelessly among a heap of rusted iron hooks and salt-rotted tackle on a dusty blanket. You squint down at the cramped diagrams and strange marginal notes scrawled in a dead sailor's hasty, ink-stained hand, trying to match the looping symbols to the jagged contours of the exposed seabed. Your mind races through forgotten tidal charts and shifting sand patterns, searching for the hidden logic behind the erratic strokes.
+CHECK: Decipher the dead sailor's hasty notes
+@@END
+@@SECTION td-1-092
+TITLE: Ink-Stained Confusion
+TEXT: The cryptic symbols blur into a senseless jumble of salt-crushed ink and weeping water-stains that refuse to yield any coherent meaning. Frustration burns behind your eyes as you stare too long at the mocking pages, losing track of the bustling market around you until your head throbs with a dull, persistent ache. The peddler snatches the worthless book back with a snort, leaving you empty-handed and bewildered by the drowned man's scribbles.
+EXIT 1: Walk away from the stall
+@@END
+@@SECTION td-1-093
+TITLE: Secrets of the Low
+TEXT: Your mind pieces together the jagged ink strokes and peculiar symbols, revealing a hidden pathway worn deep into the silent seabed. The dead sailor's hasty notes map out a safe passage through the treacherous sucking mud of the southern shallows, avoiding the dangerous sinkholes that swallow unwary wreckers whole. You memorize the winding route, locking the secret navigation marks firmly in your memory before closing the book.
+GRANT: A secret map of the seabed
+EXIT 1: Return to the bustling market
+@@END
+@@SECTION td-1-094
+TITLE: The Clockwork Aviator
+TEXT: A wealthy trader from Saltspire holds out a delicate brass finch whose tiny mechanical wings have jammed mid-flap, its emerald eyes dull and motionless. You draw out your slender bone tweezers and a drop of refined whale oil, peering intently into the intricate clockwork chest of the miniature bird. With a steady hand and patient turns of the tiny screws, you coax the stubborn brass gears back into alignment until the bird gives a cheerful, whirring chirp and flutters its polished wings.
+EXIT 1: Collect your coin and depart
+@@END
+@@SECTION td-1-095
+TITLE: Repairing the Brass Finch
+TEXT: A wealthy trader from Saltspire extends a delicate brass finch whose tiny mechanical wings have jammed mid-flap, its precious emerald eyes dull and lifeless. You retrieve your slender bone tweezers and a small vial of refined whale oil, peering intently into the intricate, microscopic clockwork chamber nestled within the bird's hollow breast. You must coax the rusted, salt-fouled gears back into precise alignment without snapping the fragile hair-springs inside.
+CHECK: Mend the delicate brass mechanism
+@@END
+@@SECTION td-1-096
+TITLE: A Costly Slip
+TEXT: A microscopic spring suddenly snaps beneath your tweezers with a sharp ping, sending a tiny brass tooth flying into the dusty dirt where it is lost forever. The wealthy trader glowers at the crippled toy in your hands, his mouth tightening into a thin, disappointed line as he tosses a meager copper coin at your boots for the trouble. You are left with a ruined mechanism, a bruised reputation among the out-of-town merchants, and time wasted.
+EXIT 1: Gather your broken tools
+@@END
+@@SECTION td-1-097
+TITLE: Precision Restored
+TEXT: Your steady fingers guide the slender tweezers through the intricate brass maze, nudging the stubborn gear until it clicks satisfyingly back into its proper groove. The tiny bird shivers in your palm, its emerald eyes flashing bright and clear before its wings unfold in a whir of perfect motion. The delighted Saltspire trader counts out a heavy purse of bright silver coin, pressing the clinking weight directly into your hand with an appreciative nod.
+GRANT: A heavy purse of silver coin
+EXIT 1: Join the mournful procession outside
+@@END

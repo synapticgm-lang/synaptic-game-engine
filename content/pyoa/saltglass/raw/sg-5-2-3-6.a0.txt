@@ -1,0 +1,62 @@
+Gemini said
+
+@@SECTION sg-5-2-3-6
+TITLE: The Chime-Stwn Corridor
+TEXT: Beneath a hanging array of brass wind-chimes, you step carefully across a floor of brittle salt-crust that threatens to crack under your travel-worn boots. Every shift of your weight sends tiny, bell-like fractures ringing through the vaulted silence, echoing up toward the high, smoke-stained ceiling where old mirrors catch the grey twilight. You adjust the heavy strap of your pack, keeping your banked coal-lantern steady against your hip as you eye the narrow passage ahead.
+EXIT 1: Barter oil with the lens guard
+EXIT 2: Slip through the grinding gear hatch
+@@END
+@@SECTION sg-5-2-3-7
+TITLE: The Archivist's Threshold
+TEXT: In a dim antechamber smelling of hot copper and old wool, a wary Glasswright archivist named Neris bars the vault threshold with pointed questions. Her eyes narrow at the sight of your travel-stained coat and the soot-smudged lantern in your hand, weighing whether you are a legitimate seeker or an uninvited scavenger from the dry rim. You stand your ground against her suspicious gaze, feeling the cold weight of the seedkey pressing securely through the fabric of your inner pocket.
+EXIT 1: Trade fresh fuel for passage
+EXIT 2: Dodge past the heavy gears
+@@END
+@@SECTION sg-5-2-3-8
+TITLE: The Sister's Gate
+TEXT: Recognizing your Dune Sister well-oath brand on your forearm, a sympathetic sentry quietly lowers the iron latch of the inner service gate for you. The heavy metal bar lifts with a dull, grating clatter that seems startlingly loud in the hushed corridor, opening a narrow way deeper into the heart of Prism. You offer a silent nod of gratitude to the guard, whose skin is deeply creased by decades of desert wind, before stepping through into the shadowed recesses beyond.
+EXIT 1: Seek the elder in the fragrant gallery
+EXIT 2: Approach the rival at the stagnant cistern
+EXIT 3: Press onward to the heavy bronze vault doors
+@@END
+@@SECTION sg-5-2-3-9
+TITLE: The Hollow Pier
+TEXT: Within a hollow foundation pier filled with echoing drafts, you slide past a heap of rusted mining gear just as a distant brass gong sounds. The deep, resonant note vibrates through the cold masonry under your boots, setting the loose metal fragments shivering in the gloom. You crouch low in the shadows, waiting for the reverberations to fade before deciding your next direction through the maze of old architecture.
+EXIT 1: Enter the juniper-scented gallery
+EXIT 2: Face the rival at the dry cistern
+@@END
+@@SECTION sg-5-2-3-10
+TITLE: The Tax-Collector's Demand
+TEXT: Beside a frozen solar fountain carved from yellow quartz, a Salt Court tax-collector named Olen demands an inventory of your pack contents. His rich velvet tunic is stiff with white salt crystals, and his ledger book rests open on the rim of the dry basin while his ink-fingers twitch with impatience. You keep your hand near your lantern's iron handle, measuring the distance between yourselves and the narrow escape routes flickering in the gloom.
+EXIT 1: Slip through the maintenance hatch
+EXIT 2: Confront the runner at the water-cistern
+@@END
+@@SECTION sg-5-2-3-11
+TITLE: The Masonry scramble
+TEXT: Under the gaze of a faded mosaic depicting the ancient sea-kings, you scramble over a tumbled pile of masonry blocks to avoid a patrolling squad. Loose chunks of carved limestone clatter down the slope behind you, threatening to betray your hurried ascent to the guards patrolling the upper tier. You haul yourself over the jagged ridge and drop silently into the dust of the corridor beyond.
+EXIT 1: Find the elder in the gallery
+EXIT 2: Locate the rival by the cistern
+@@END
+@@SECTION sg-5-2-3-12
+TITLE: The Sooty Passage
+TEXT: Within a narrow service gallery lined with soot-stained grease-lamps, a coughing watchman named Haze mistakes your lantern for an inspector's signal. He snaps to a ragged attention, clutching a bundle of damp rags and squinting through the greasy yellow smoke without asking for your name or credentials. You offer a crisp nod to satisfy his brief inspection before glancing down the diverging corridors that stretch into the dark.
+EXIT 1: Seek out the rival at the cistern
+EXIT 2: Duck into the stone-lined cutting
+EXIT 3: Head toward the central vault doors
+@@END
+@@SECTION sg-5-2-3-13
+TITLE: The Ventilation Shaft
+TEXT: Beside an open ventilation shaft that smells of damp earth and coming rain, you pause to catch your breath while distant alarms ring above. Cool drafts sweep up from the dark depths of the Basin, carrying the sharp, metallic tang of approaching moisture that confirms the monsoon's relentless advance. You grip your lantern tightly, weighing the risks of the upper galleries against the dark descent below.
+EXIT 1: Enter the juniper-scented hall
+EXIT 2: Take the downward stone cutting
+@@END
+@@SECTION sg-5-2-3-14
+TITLE: The Singing Mirrors
+TEXT: Within a circular gallery of singing mirrors, a confused apprentice named Telli spins in circles, trying to answer flashing signals from the upper terrace. The polished glass surfaces hum with a low, resonant vibration that sets your teeth on edge, reflecting fragments of your tired face a hundred times over in the shimmering light. You weave carefully between the humming frames, keeping your eyes fixed on the monumental archway ahead.
+EXIT 1: Reach the heavy bronze vault doors
+@@END
+@@SECTION sg-5-2-3-15
+TITLE: The Lintel Ambush
+TEXT: Underneath a heavy timber lintel carved with sun-burst glyphs, you press your back against the cool stone as Salt Court guards march past. Their heavy boots strike rhythmically against the stone flags just yards away, their voices low and sharp as they discuss the price of water rights in the outer rim. You hold your breath until the sound of their passing fades into the vast echoing spaces of the citadel.
+EXIT 1: Advance to the central bronze doors
+@@END

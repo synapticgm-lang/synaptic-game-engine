@@ -1,0 +1,47 @@
+{
+ "batch": "v-r-25-exchange-parapet",
+ "variants": [
+  {
+   "node": "up-r-exchange-parapet",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Scattered among the chalked numbers are crude, unmistakable sketches of your profile, proving the houses have already purchased your description from the witness who escaped. They are not bidding blind; they know exactly what you look like."
+  },
+  {
+   "node": "up-r-exchange-parapet",
+   "when": {
+    "witness": "let-go"
+   },
+   "after": "Down in the cobbled streets, the watchmen are marching in tightened cordons, their lanterns sweeping the eaves because that terrified turnkey blabbed to the Guard. Sable is counting on their tightened net to flush you into her sights."
+  },
+  {
+   "node": "up-r-exchange-parapet",
+   "when": {
+    "vault": "breached"
+   },
+   "after": "Fresh brass-dust still clings to your cuffs from shattering the grandmaster's lock, a brazen entry that has clearly accelerated the bidding. The broken undervault has terrified the factions, turning their usual calculated offers into desperate, jagged slashes of chalk."
+  },
+  {
+   "node": "up-r-exchange-parapet",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Watching Silk and Iron ostensibly outbid each other is a hollow pantomime, given the counter-ledgers proved they share the same master handwriting. Sable thinks she is manipulating a war, oblivious to the fact that this rivalry is entirely staged."
+  },
+  {
+   "node": "up-r-faction-bid",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Surrendering the ledger to the silk houses or the iron foundry amounts to the exact same betrayal, as the undervault's hidden records exposed their unified cabal. Whoever steps forward to claim the brass-bound prize merely represents two hands of the same unseen master."
+  },
+  {
+   "node": "up-r-faction-bid",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Because a fleeing witness memorised your features, melting back into the anonymous smog of Veridia is no longer a viable escape. Every gaol-keeper and silk-merchant now possesses your portrait, making the suffocating protection of a great house your only reliable camouflage."
+  }
+ ]
+}

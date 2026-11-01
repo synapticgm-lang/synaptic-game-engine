@@ -1,0 +1,8 @@
+Gemini said
+
+@@SECTION td-4-132
+TITLE: The Silver Flask
+TEXT: Exhaustion pulls you down against the damp timbers of the neglected shelter, where you snatch a few hours of uneasy sleep beneath the weight of relentless, creeping dread. Waking with the taste of salt on your tongue, your fingers brush against a cold, dented object wedged into the corner of the berth: a heavy silver flask smelling faintly of stale port and old iron. // Pocketing the small prize, you feel a modest reserve of strength return to your limbs, hardening your resolve against the damp chill that seeps upward from the deep floors below.
+GRANT: heavy silver flask
+EXIT 1: Climb down through the iron hatch
+@@END

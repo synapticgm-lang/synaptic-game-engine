@@ -1,0 +1,60 @@
+@@SECTION ul-3-126
+TITLE: Spine Span Passage
+TEXT: Heavy calfskin bindings, reinforced with rusted iron bands and pressed vellum, form a rigid arch over the slow, viscous creep of the black ink-river below. Faint odors of lamp-oil and oxidized iron rise from the dark currents, clinging to your coat as you step onto the trembling bridge. Every footfall elicits a dry, papery groan from the compacted encyclopedias beneath your boots, reminding you of the thousands of forgotten definitions and obsolete facts locked tight within their compressed pages.
+EXIT 1: Tread carefully across the bound volumes
+@@END
+@@SECTION ul-3-127
+TITLE: The Spine Bridge Junction
+TEXT: Sluggish currents of black printing ink slide beneath a precarious crossing formed entirely from massive, clamped volumes of forgotten lore. The heavy leather bindings shift underfoot with every drop of moisture, exhaling faint clouds of yellowed dust and old paper scent into the damp air. To your left, a narrow toll-booth looms through the gloom, while ahead the bridge dips toward a swaying, ink-stained span that invites a lighter, more daring traversal.
+EXIT 1: Approach the nervous toll-keeper ahead
+EXIT 2: Step lightly across the swaying spines
+EXIT 3: Outwit the toll-troll using bylaws
+EXIT 4: Descend the fossilised paper stairs
+@@END
+@@SECTION ul-3-128
+TITLE: The Reluctant Gatekeeper
+TEXT: Shadows flicker against the wooden panels of the small booth where a junior clerk sits wringing ink-stained hands over a ledger of fines. You lean in close, speaking with all the measured authority of a senior rule-keeper inspecting compliance records. The clerk pauses, staring suspiciously at your borrowed master key before casting a nervous glance toward the dark waters of the ink-river below.
+EXIT 1: Persuade the clerk to drop the span
+@@END
+@@SECTION ul-3-129
+TITLE: Bending the Rules
+TEXT: Your tongue moves with practiced smoothness, weaving a plausible fiction about emergency cataloguing amendments and retroactive exemptions that completely overwhelms the tired clerk's defenses. You lean heavier against the wooden counter, matching your breathing to the slow drip of ink from the ceiling while fixing the clerk with an unblinking, bureaucratic stare. The clerk's fingers hover indecisively over the heavy brass lever that controls the bridge span, trembling between strict duty and the fear of making a costly administrative error.
+CHECK: Talk your way past the toll
+@@END
+@@SECTION ul-3-130
+TITLE: A Costly Deception
+TEXT: A sudden, sharp snort from behind the partition shatters your practiced composure, and the clerk's hand jerks downward on the wrong lever. The heavy brass gate slams shut with a bone-jarring crash, catching your sleeve and tearing the sturdy fabric away from your wrist with a sharp rip. You retreat hastily into the shadows, rubbing a raw, ink-stained graze where the iron grazed your skin, poorer in time and temper but still free to seek another path deeper into the stacks.
+EXIT 1: Slip away toward the main junction
+@@END
+@@SECTION ul-3-131
+TITLE: The Cleared Passage
+TEXT: The heavy iron lever yields with a reluctant groan, sliding smoothly into its slot as the clerk hastily stamps a forged exemption slip and thrusts it into your hand. You pocket the damp paper with practiced indifference, nodding crisply before stepping past the barrier into the gloom of the inner stacks.
+GRANT: Forged toll exemption slip
+EXIT 1: Return to the central bridge junction
+@@END
+@@SECTION ul-3-132
+TITLE: Dancing on Words
+TEXT: Slender leather volumes sway under your boots like stepping stones across a peat bog, each one threatening to tilt and slide into the thick black current. You keep your center of gravity low, arms spread wide to catch your balance as the distant sound of dripping ink echoes off the vaulted stone ceiling. Ahead, a waterlogged notebook bobs lazily against a protruding metal spine, its sodden pages fluttering like trapped moths.
+EXIT 1: Step closer to the floating notebook
+@@END
+@@SECTION ul-3-133
+TITLE: Reaching for the Tides
+TEXT: The damp air smells strongly of gall ink and rotting parchment as you crouch low upon the trembling arch of encyclopedias. Below you, the dark river crawls in absolute silence, occasionally swallowing a stray scrap of paper with a wet, sucking sound. You extend a cautious hand toward the bobbing prize, watching the ink ripple outward in small, concentric rings from its sodden cover.
+EXIT 1: Balance carefully to snatch the book
+@@END
+@@SECTION ul-3-134
+TITLE: Walking the Razor Spine
+TEXT: You shift your weight onto the narrow edge of an open atlas, trusting your momentum and light footing to carry you across the gap before the binding gives way. The leather surface is slick with condensation, and a sudden draft from the lower tunnels threatens to sweep your feet out from under you. You steady your breath, lifting your heels just enough to skim across the treacherous surface toward the drifting notebook.
+CHECK: Cross the swaying spine bridge
+@@END
+@@SECTION ul-3-135
+TITLE: Slip in the Ink
+TEXT: A treacherous patch of damp calfskin betrays your footing at the worst possible moment, sending your heel sliding off the edge into the black, sluggish current. You snatch your boot back with a sharp gasp, but not before a heavy splash of ink drenches your trousers and stains your ankles a permanent, indelible purple. You scramble back onto the firm center of the bridge, shivering with cold and dripping with the bitter taste of oxidized iron.
+EXIT 1: Press onward toward the lower stairs
+@@END
+@@SECTION ul-3-136
+TITLE: The Drifting Prize
+TEXT: Your fingers close firmly around the soggy cardboard cover just as the bridge beneath your boots gives a sympathetic lurch. You pull the waterlogged notebook free from the current with a sharp tug, tucking the damp prize securely into your coat pocket before regaining your balance on the solid stone ledge beyond.
+GRANT: Waterlogged handwritten notebook
+EXIT 1: Descend the fossilised paper stairs
+@@END

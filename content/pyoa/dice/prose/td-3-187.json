@@ -1,0 +1,114 @@
+{
+ "batch": "td-3-187",
+ "sections": {
+  "td-3-187": {
+   "title": "Glimmer in the Shaft",
+   "text": "Rust flakes drift like gray snow from the heavy iron braces of the Saltspire hoist as you catch a strange, milky luminescence pulsing deep within a cracked timber strut. Someone wedged a raw lumen-crystal into the framework years ago, perhaps to illuminate a clandestine repair or to hide a stolen cache from Brineholder tax-men. The temptation to stop is sharp, though the massive chains above groan with the restless weight of the hanging carriage.\n\nCarefully sliding the tip of your skinning knife into the narrow seam of the rotting wood, you begin to pry the damp fibers apart to reach the pale, throbbing mineral before the winch master notices your delay.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pry the glowing mineral loose"
+   ]
+  },
+  "td-3-188": {
+   "title": "The Trembling Beam",
+   "text": "Droplets of brackish condensation patter steadily against your oilskin shoulders while your fingers work the stubborn grain of the petrified support beam. Every tremor in the stilt-city above sends a dull vibration down the iron cables, shaking loose flakes of dried salt that sting your eyes. Yet the crystal remains stubbornly wedged in its dark nest, held fast by centuries of mineral buildup and swollen timber.\n\nWorking by touch alone in the damp gloom, you shift your weight onto a narrow iron rivet and reach deeper into the shadowed crevice.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach deeper into the crack"
+   ]
+  },
+  "td-3-189": {
+   "title": "Shifting the Timber",
+   "text": "Pale light washes over your knuckles as the crystal yields a fraction of an inch, revealing a web of hairline fractures spreading through the surrounding structural brace with an ominous, cracking hiss. Stopping now means leaving a valuable prize behind, but pulling harder threatens to collapse the rusted iron housing right onto your fingers. You study the grain of the petrified wood and the angle of the iron bolts, searching for the exact fulcrum that will release the prize without bringing the whole shaft down around your ears.\n\nWith your blade wedged tight and your breath held against the rising dust, you apply steady pressure and prepare to wrench the mineral free.",
+   "check": "Wrench the lumen crystal free",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-190": {
+   "title": "Snap of the Brace",
+   "text": "A sudden, sharp crack splits the air as the rotted timber gives way entirely, sending a shower of jagged splinters tearing across the back of your hand and nearly pitching you off the narrow metal rung. The lumen-crystal slips from your grasp, plunging down into the lightless void beneath the stilt-city with a distant, hollow clatter. You cling to the vibrating iron cable with your uninjured arm, gasping for breath as a dull, throbbing ache blooms across your knuckles.\n\nWiping the smear of dark blood onto your trousers, you haul yourself back onto the maintenance platform and press onward.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Leave the shattered timber behind"
+   ]
+  },
+  "td-3-191": {
+   "title": "Cold Blue Light",
+   "text": "The mineral yields with a soft, wet pop, sliding neatly into your palm and casting a cold, steady blue glow over the damp iron walls of the elevator shaft. However narrowly you managed the extraction, the prize is yours - unbroken and burning with a steady, deep-sea luminescence that will illuminate the darkest passages ahead. You tuck the glowing treasure safely into your canvas pouch alongside your salt-hardened rations, feeling the comforting warmth of its strange energy against your hip.\n\nSqueezing past the ruined brace, you signal the winch operator to resume the descent.",
+   "check": "",
+   "grant": "Glowing lumen-crystal",
+   "exits": [
+    "Descend to the seabed floor"
+   ]
+  },
+  "td-3-192": {
+   "title": "Roots of the Spire",
+   "text": "Iron cables screech in protest as the heavy lift drops you out of the salt-crusted salt-winds and into the permanent twilight beneath Saltspire, where colossal roots of petrified wood and tangled red coral form an artificial forest as dense as any cliff-side thicket. The air down here tastes of ancient mud, stale bilge, and the metallic tang of standing water. Above, the city hangs suspended on its thousands of stilts like a inverted mountain of timber and lanterns; below, the dry seabed stretches out toward the black maw of the Sunken Stair.\n\nGuards in lacquered brass helms pace the upper walkways, their long polearms glinting in the lantern-glow, while the shadowy passages between the roots lie open and unguarded to anyone bold enough to walk them.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Enter the stilt-root labyrinth"
+   ]
+  },
+  "td-3-193": {
+   "title": "The Stilt-Root Labyrinth",
+   "text": "Endless pillars of drowned timber and calcified weed rear up around you like the ribs of forgotten leviathans, casting long, twisting shadows across the cracked mud of the Low. Faint murmurs drift from distant trading posts run by Brineholder agents, while narrower, unlit gaps plunge deeper into the gloom toward the foot of the Sunken Stair. Every direction hums with the suppressed panic of a city that knows its water supply hangs on a knife-edge.\n\nYou must choose your path through the tangled roots carefully before the guards take notice of a stray wrecker in their foundations.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Follow the marked coral trail deeper",
+    "Fashion a torch from kelp and fat",
+    "Crawl through a narrow root tunnel",
+    "Pry a barnacle from a buried chest",
+    "Approach the spiralling abyss directly"
+   ]
+  },
+  "td-3-194": {
+   "title": "Carving the Way",
+   "text": "Deep shadows cling to the base of the massive coral pillars as you draw your skinning knife and begin to score sharp, deliberate crosses into the calcified surface of the wood. The blade bites into centuries of salt-crust with a gritty rasp, leaving bright white scars that stand out sharply against the dark, weed-choked background. Every mark must be clear enough to guide your retreat through this maze of dead roots when the tide or the Brineholder patrols turn against you.\n\nWiping a stray shaving of coral from your brow, you check the edge of your blade for nicks before moving deeper into the gloom.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Deepen the marks on the pillars"
+   ]
+  },
+  "td-3-195": {
+   "title": "Deeper into the Stale Dark",
+   "text": "The air grows cooler and heavier as you press further past the outer ring of stilts, leaving the distant rumble of the city lifts behind in favor of absolute, echoing silence. Strange shapes loom in the gray murk - discarded cargo nets stiffened into stone, skeletal whale-ribs draped in strands of dried kelp, and the occasional rusted winch housing left behind by forgotten scavengers. You pause every few paces to carve another guiding rune into the damp timber, ensuring your route back remains unmistakable.\n\nA sudden scuttling sound echoes from a dark recess nearby, prompting you to grip your knife handle tighter.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Test the strength of your blade"
+   ]
+  },
+  "td-3-196": {
+   "title": "The Hard Grain",
+   "text": "Your knife bites deep into a stubborn knot of petrified oak, but the hardened wood resists the blade with a sudden, vicious shudder that threatens to snap the steel clean across at the hilt. Rushing the cut now will ruin your only dependable tool miles away from any blacksmith, yet leaving the pillar unmarked means losing your way in the twisting dark. You ease your grip, adjusting your wrist to match the stubborn grain of the ancient timber while the metal groans under the strain.\n\nWith your muscles tensed against the resistance of the wood, you apply a final, measured pressure to complete the guiding rune.",
+   "check": "Carve the guiding rune cleanly",
+   "grant": "",
+   "exits": []
+  },
+  "td-3-197": {
+   "title": "A Snapped Blade",
+   "text": "The tip of your knife snaps off with a dry metallic ping, clattering away across the salt-crusted floor and leaving you with a jagged, useless stump of steel. Frustration flares in your chest as you realize the cost of your haste, forced to abandon your favorite tool in the dark heart of the stilt-city's foundations. Fortunately, the rough gouge you managed to carve into the timber pillar is still deep enough to serve as a beacon, even if your equipment is poorer for the effort.\n\nYou pocket the ruined hilt and continue your cautious exploration through the shadows.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Press on without your blade"
+   ]
+  },
+  "td-3-198": {
+   "title": "A Sharp Notch",
+   "text": "The steel sings a low, clear note as the final stroke bites deep into the petrified wood, leaving a clean, unmistakable rune that catches the faint ambient glow from above. However narrowly you avoided snapping the blade, the notch is perfect - deep, crisp, and unmistakable in the gloom. You wipe the blade clean on your sleeve and slide it back into its leather sheath, knowing you now possess a reliable trail through the labyrinthine roots.\n\nTurning away from your handiwork, you retrace your steps toward the central junction.",
+   "check": "",
+   "grant": "Carved navigation marks",
+   "exits": [
+    "Return to the root junction"
+   ]
+  }
+ },
+ "missing": []
+}

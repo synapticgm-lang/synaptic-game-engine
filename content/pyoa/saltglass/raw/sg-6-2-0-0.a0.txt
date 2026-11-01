@@ -1,0 +1,72 @@
+Gemini said
+
+@@SECTION sg-6-2-0-0
+TITLE: The Obsidian Antechamber
+TEXT: Within the echoing obsidian antechamber, cold ceramic tiles hum against your boots as you weigh the final sacrifice of the seed. The air smells intensely of dry minerals and ancient stone, carrying a faint vibration through the floorboards from deep beneath the vault. Your fingers tighten around the cold ceramic key, feeling its weight and stillness against the rising tension in the chamber. Shadows stretch long and sharp across the polished walls as your banked lantern throws a dim circle of warmth over the floor. You must decide how to proceed before the silence breaks entirely.
+EXIT 1: Strike the floor with the cold ceramic key
+EXIT 2: Slip quietly past the watcher using your dark lamp
+EXIT 3: Lay the seed down upon the central obsidian pedestal
+@@END
+@@SECTION sg-6-2-0-1
+TITLE: The Basalt Gears
+TEXT: Beside the grinding basalt gears of the inner vault, a forgotten ledger lies open, detailing the bitter cost of past harvests in faded ink. The heavy machinery groans with a low, rhythmic vibration that rattles the dust motes suspended in the dim air. You trace the dry pages with a thumb, noting the columns of numbers and names of forgotten towns that perished when the rains failed generations ago. The smell of old paper and machine oil thickens around you, pressing close against your skin like a physical weight. Every gear turn brings the imminent arrival of the monsoon closer to the surface.
+EXIT 1: Turn the heavy basalt wheel clockwise
+EXIT 2: Tear the final page from the open ledger
+EXIT 3: Wedge your ember-lamp between the massive cogs
+@@END
+@@SECTION sg-6-2-1-0
+TITLE: Fractured Prisms
+TEXT: Beneath a chandelier of fractured prisms, rusted iron levers groan under your grip while the heavy air tastes of ozone and dry salt. Sharp slivers of amber light scatter across your shoulders as the overhead fixture sways slightly from subterranean drafts. Your muscles strain against the stubborn metal, locked in place by decades of neglect and mineral buildup. Every breath burns your throat with the fine dust of the dried sea basin. You have to force the mechanism to move or find another way forward before the corridor seals itself.
+EXIT 1: Pull the rusted iron lever with both hands
+EXIT 2: Smash the lowest hanging prism to clear the mechanism
+EXIT 3: Request the master schematic from the wary archivist
+EXIT 4: Wade through the floating fragments of old maps in the brine
+@@END
+@@SECTION sg-6-2-1-1
+TITLE: The Maintenance Hatch
+TEXT: Slipping past the sentry's blind spot with your darkened lantern, you discover an unsealed maintenance hatch bypassing the grinding bronze seals. The narrow metal corridor beyond smells of cool grease and stagnant subterranean damp, offering a quiet route away from the guarded main gates. Your fingers brush against the cold rivet heads as you slide sideways into the gloom, keeping your footsteps light and silent. The distant hum of the vault's inner machinery vibrates faintly through the floor beneath your boots. Ahead lies a choice of paths into the heart of the structure.
+EXIT 1: Bargain freely with the wary archivist for the schematic
+EXIT 2: Wade through the bitter brine of the subterranean cistern
+EXIT 3: Fit your cold ceramic key into the towering vault doors
+@@END
+@@SECTION sg-6-2-1-2
+TITLE: Weeping Crystals
+TEXT: In the alcove of weeping crystals, a saline condensation drips onto your bare shoulders as you inspect the cracked pneumatic seals. Each droplet hits the stone floor with a sharp, echoing ping that sounds unnaturally loud in the narrow corridor. The air here is heavy with moisture and the sharp tang of mineral salts. You run a finger along the fractured casing, feeling the faint hiss of escaping pressure from deep within the wall. A decision must be made before the seal gives way entirely.
+EXIT 1: Insert your cold ceramic key into the vault door
+EXIT 2: Step into the chamber of whispering lenses and bright reflections
+EXIT 3: Wedge a rigid copper tube against the jammed pneumatic seal
+EXIT 4: Leave an offering in the dry basin of the rain-seers
+@@END
+@@SECTION sg-6-2-1-3
+TITLE: Singing Glass
+TEXT: Across a chasm of singing glass plates, a spectral reflection mimics your every hesitation while the abyss hums a low, warning note. The transparent floor beneath your boots vibrates in tune with the resonant tones rising from the dark depths. Every movement sends a shimmering wave of musical sound bouncing off the distant walls. You grip your lantern tightly, watching your own distorted image shift and fracture across the glass expanse. The path ahead requires an absolute commitment of balance and nerve.
+EXIT 1: Leave a tribute in the dry rain-seer basin
+EXIT 2: Cross the trembling glass bridge above the deep shaft
+EXIT 3: Drop your ember-lamp into the singing abyss below
+@@END
+@@SECTION sg-6-2-1-4
+TITLE: Fused Silica Mural
+TEXT: Beside a mural of fused silica depicting the ancient drought, you pry open a maintenance box to expose the sputtering control circuits. Sparks of white light snap against your knuckles, casting brief, erratic shadows across the carved glass figures of starving citizens. The smell of scorched copper and ozone fills the cramped alcove as the wires buzz with unstable current. Your fingers hover over the exposed toggles, each one connected to a vital sector of the subterranean complex. You must act quickly before the circuitry fries completely.
+EXIT 1: Cut the glowing red wire in the box
+EXIT 2: Reset the sputtering control circuit with a firm push
+EXIT 3: Close the metal maintenance box and walk away
+@@END
+@@SECTION sg-6-2-1-5
+TITLE: White Salt Flue
+TEXT: Within the narrow ventilation flue choked with white salt dust, your cramped fingers search for the hidden latch that releases the pressure valve. The abrasive powder coats your skin and throat, making every breath a dry, ragged cough. Above you, the heavy metal plates of the ceiling groan under the weight of the city resting overhead. You slide your palm along the cold interior wall, feeling for the tiny notch carved into the ironwork. The space is claustrophobic, leaving no room for error or hesitation.
+EXIT 1: Press hard against the hidden iron latch
+EXIT 2: Kick outward with your boot against the ventilation wall
+@@END
+@@SECTION sg-6-2-2-0
+TITLE: Hollow Resonators
+TEXT: In the vaulted gallery of hollow resonators, your heavy footsteps trigger a cascade of melodic echoes that threaten to wake the lower guardians. Ceramic vessels built into the stone walls catch and multiply every sound, turning a simple shuffle into a rolling chord of alarm. The air is cool and still, carrying the scent of ancient clay and dust. You freeze in place, waiting to see if the reverberations fade into the masonry or draw unwanted attention from the depths. A choice of directions opens before you in the dim light.
+EXIT 1: Move forward into the lower residential tier
+EXIT 2: Enter the blind panopticon of dead indicator lights
+EXIT 3: Investigate the mournful chime near the shattered quartz
+@@END
+@@SECTION sg-6-2-2-1
+TITLE: Emergency Beacons
+TEXT: Under the flickering amber glow of emergency beacons, a corroded brass valve resists your straining muscles as boiling steam hisses overhead. The harsh light turns the shadows into violent, jagged shapes that dance across the riveted iron walls. Scalding mist burns your forearms, and the metallic taste of hot condensation coats your tongue. You lean your entire body weight against the turning wheel, desperate to shut off the hazardous leak. The heat in the corridor is becoming unbearable.
+EXIT 1: Descend into the freezing deep refrigeration tier
+EXIT 2: Enter the sunken gallery where sulfur fills the air
+@@END

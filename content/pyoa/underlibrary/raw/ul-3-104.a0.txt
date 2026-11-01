@@ -1,0 +1,65 @@
+@@SECTION ul-3-104
+TITLE: The Quartermaster's Ledger
+TEXT: Ranks of heavy iron lockers gleam under the greasy yellow glow of brass bulkhead lamps. The armory quartermaster sits behind a high oak counter, dipping a thick nib into a well of purple ink while sharpening a brass-handled letter opener with steady, rhythmic strokes. Every fiber of your training warns you that a single hesitation will bring the watch-guards down upon your shoulders before you can draw breath. You lean against the counter, adopting the bored slouch of a senior auditor inspecting surplus inventory, and let your fingers trace the edge of a forged requisition slip tucked inside your sleeve.
+EXIT 1: Forge a path through lies
+@@END
+@@SECTION ul-3-105
+TITLE: Polished Brass and Bluff
+TEXT: Shadows stretch long across the flagstones, smelling faintly of gun-oil and dry wool. The quartermaster pauses his rhythmic sharpening, his rheumy eyes narrowing behind tinted spectacles as he studies your uniform with suspicious slowness. You pitch your voice to a dull, bureaucratic drone, complaining loudly about missing inventory schedules and uncalibrated brass weights in the lower sectors. The old man grunts, muttering something about cataloguing delays, and reaches beneath the high timber shelf where a heavy ring of iron keys hangs from a steel hook.
+EXIT 1: Reach for the hanging keys
+@@END
+@@SECTION ul-3-106
+TITLE: Testing the Quartermaster's Patience
+TEXT: Sweat cools at the small of your back while the quartermaster's thick, ink-stained fingers hover inches from the dangling ring of duplicate keys. One false syllable, a twitch too many of your jaw, or a flicker of panic in your gaze will shatter the flimsy illusion of authority you have so carefully constructed. You point an accusatory finger toward a ledger on the far side of the room, manufacturing a fake discrepancy in the quarterly brass allocation to draw his clouded eyes away from your outstretched hand. Your fingers brush the cold iron loop as you wait for the reckoning.
+CHECK: Distract the guard with false audits
+@@END
+@@SECTION ul-3-107
+TITLE: The Cost of a Flawed Lie
+TEXT: The quartermaster jerks his hand back with a sharp snort of disbelief, catching your fingers mid-reach against the cold iron loop. Alarms clang dully down the stone corridor, and rough hands seize your shoulders, dragging you toward the holding cells while a heavy brass ledger drops hard across your knuckles, leaving a swollen, purple bruise that pulses with hot agony. You manage to slip your bonds in the confusion of a shifting stack-shift ten minutes later, but you emerge poorer by a pouch of copper slugs and burdened with a stinging ache in your right hand.
+EXIT 1: Slip away into the stacks
+@@END
+@@SECTION ul-3-108
+TITLE: Keys of the Iron Vault
+TEXT: Your fabricated tale holds together by a thread of pure audacity, folding the old man's suspicions back upon himself just long enough for your fingers to close around the cold iron ring. He nods dismissively, muttering a curse about bureaucratic inspections, and turns back to his ledgers without a backward glance. You pocket the heavy duplicate keys with quiet speed, melting back into the shadows of the armory corridor before the illusion can unravel entirely around you.
+GRANT: Duplicate armory keys
+EXIT 1: Return to the Enforcers Barracks
+@@END
+@@SECTION ul-3-109
+TITLE: The Rotunda of Cards
+TEXT: Immense pillars of yellowed index cards rise like ancient tree trunks to support a vaulted stone ceiling lost in perpetual gloom. Millions of handwritten slips flutter like trapped moths in the persistent drafts stirred by unseen subterranean vents, whispering unintelligible fragments of history, forgotten debts, and names of people who never drew breath. A low, collective hum vibrates through the flagstones beneath your boots, as if the very foundations of Quillon are cataloguing themselves syllable by syllable. You walk between towering walls of drawers, feeling the immense, crushing weight of institutional memory pressing down upon your shoulders like an invisible mantle of lead.
+EXIT 1: Step into the humming rotunda
+@@END
+@@SECTION ul-3-110
+TITLE: The Rotunda of Records
+TEXT: Endless rows of cabinets stretch out into the gloom, their countless drawers sliding open and shut of their own accord with a dry, rhythmic clicking. Somewhere in the deep shadows, an unseen clerk stamps endless documents with a heavy iron seal that echoes like distant thunder. The air is thick with floating paper-dust and the sharp tang of fresh walnut ink, tempting you to lose yourself among the records or seek a passage deeper into the stone.
+EXIT 1: Approach the automated filing desks
+EXIT 2: Withstand the whispering name chamber
+EXIT 3: Trick the chief card sorter
+EXIT 4: Cross the encyclopedia spine bridge
+@@END
+@@SECTION ul-3-111
+TITLE: The Mechanical Scribe
+TEXT: A brass-plated automaton with articulated fingers and glass lenses for eyes sits rigidly behind a high mahogany desk, endlessly stamping triplicate forms with mechanical precision. You step into its field of vision, assuming the brisk, impatient posture of a visiting inspector from the high archives. The automaton's internal clockwork grinds and clicks as its glass lenses whir, focusing on your face while steam hisses softly from a copper valve behind its metal ear. You invent a fictitious supervisory mandate concerning misfiled genealogies, reciting the fabricated codes with steady, practiced indifference.
+EXIT 1: Feed false credentials to the machine
+@@END
+@@SECTION ul-3-112
+TITLE: Gears and Counterspells
+TEXT: Steam curls lazily from the automaton's joints, smelling faintly of warm lard and old oil as its steel fingers begin to tap out your new classification on a strip of parchment. You stand perfectly still, offering a curt nod whenever its glass lenses swivel in your direction to verify your imaginary credentials. The machine pauses, its internal gears slipping with a metallic screech that sets your teeth on edge, before it stamps an iridescent seal of administrative clearance onto your sleeve.
+EXIT 1: Claim your administrative clearance
+@@END
+@@SECTION ul-3-113
+TITLE: Testing the Automaton's Logic
+TEXT: The automaton's jaw clicks open, and a thin brass tongue extends to taste the air for forged signatures and unauthorized ink compounds. If its internal logic detects the faint chemical signature of your true shelver's badge, pneumatic clamps will snap shut around your wrists and lock you into the permanent indexing queue. You lean closer to the humming housing, feeding it a stream of complex administrative jargon designed to loop its mechanical reasoning into an endless verification cycle. You hold your breath as the steel fingers hover over the final approval stamp.
+CHECK: Override the automaton's logic gates
+@@END
+@@SECTION ul-3-114
+TITLE: Caught in the Logic Loop
+TEXT: A sharp mechanical whistle pierces the air as the automaton rejects your fabricated codes, its steel claws snapping shut on your sleeve and tearing away a strip of cloth. You wrench your arm free with a violent heave, leaving behind a button and a patch of skin grazed raw by the jagged brass housing. The machine lets out a dismal clank, locking its drawers and sealing the local transit conduit behind a heavy iron grille, forcing you to limp away empty-handed and nursing a smarting scratch on your forearm.
+EXIT 1: Retreat toward the ink bridge
+@@END
+@@SECTION ul-3-115
+TITLE: The Stamped Pass
+TEXT: The automaton's internal gears click in reluctant harmony, accepting your convoluted narrative with a soft, pneumatic sigh of resignation. It stamps your collar with a permanent seal of administrative privilege, granting you unhindered access to the restricted administrative conduits that bypass the lower checkpoints entirely. You tuck the warm, ink-stained pass beneath your collar and stride past the clicking cabinets with newfound authority.
+GRANT: Permanent administrative clearance
+EXIT 1: Cross the encyclopedia spine bridge
+@@END

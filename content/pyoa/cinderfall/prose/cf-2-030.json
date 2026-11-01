@@ -1,0 +1,113 @@
+{
+ "batch": "cf-2-030",
+ "sections": {
+  "cf-2-030": {
+   "title": "Tallow in the Dark",
+   "text": "Shadows stretch long across the rusted ballast as you secure the small canvas sack from where it slipped behind the bulkhead, feeling its dense, fatty weight against your palm. However narrowly you managed to outmaneuver the wary scavenger in the fumes, the prize is yours: a generous lump of sweet-smelling animal tallow, thick and yellow, perfectly suited for greasing the stubborn valve gear when the heat climbs. Beneath the grease-stained wrapping, a scrap of paper scrawled by an old track-walker marks where the sub-bed of the line runs dry and brittle near the salt-pans, whispering of how a handful of sulphur-soaked rags and a stray spark could turn miles of iron ties into a roaring wall of fire.",
+   "check": "",
+   "grant": "sweet-smelling tallow pouch",
+   "exits": [
+    "Follow the steaming track toward the Sulphur Sinks"
+   ]
+  },
+  "cf-2-031": {
+   "title": "Hissing in the Cinder",
+   "text": "Sulfur vapors rise from the crust of the earth in rhythmic pulses, matching the steady thrum of the engine beneath your boots. Every hiss from the yellow vents tells a story of underground pressure and shifting heat, mapping a perilous corridor through the steaming marshes where a careless wheel will bog down in grey mire. You trace the cadence with the edge of your heavy boot, noting how the vents blow clear in three-beat intervals, offering a narrow window of stable footing across the scalded flats.\n\nThe air grows thick with mineral damp, coating your throat in dust as you guide the heavy frame forward, keeping close to the steaming bank where the ground holds firm against the weight of the iron.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick a path between the steaming vents"
+   ]
+  },
+  "cf-2-032": {
+   "title": "Steam-Marshes and Smoke",
+   "text": "Low clouds of grey steam drift across the tracks, obscuring the rusted skeleton of a derailed coal hopper that lists sharply toward the bog. The rhythmic hissing of the vents guides your eyes through the white haze, revealing patches of firm basalt ballast amid the treacherous quagmire of sulfur-mud. You keep the regulator notched just so, nursing a steady head of steam while the firebox roars behind you with a dry, hungry appetite.\n\nEvery yard gained through the mist feels earned, measured in the steady drop of the water gauge and the comforting rattle of copper pipes in the cab.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Advance deeper into the sulfuric haze"
+   ]
+  },
+  "cf-2-033": {
+   "title": "Reading the Sulfur Vents",
+   "text": "The ground ahead shimmers beneath a dense blanket of yellow vapor, hiding the treacherous chasms where boiling mud meets the iron rails. You lean out from the narrow cab doorway, squinting against the acrid sting in your eyes to match the rhythmic gasps of the earth with the pulsing tremor of the boiler plates. A miscalculation here will sink the driving wheels into a scalding mire from which no engine can haul itself back alone. You gather your focus, weighing the steam pressure against the shifting echoes of the vents to find the hidden stone bridge beneath the drift.",
+   "check": "Read the vent rhythms to cross safely",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-034": {
+   "title": "Mires of the Steppe",
+   "text": "A sudden shift in the underground pressure catches you off guard, sending a dense plume of scalding vapor directly into the cab window and blinding you to the alignment of the rails. The engine's forward wheels lurch sickeningly sideways, sinking deep into a hidden pocket of boiling sulfur-mud with a dull, heavy thud. You scramble to reverse the gear and shovel frantic loads of dry sand beneath the slipping treads, coughing bitterly as the grey dust coats your tongue. You drag the heavy machine free at last, though the ordeal leaves your left shoulder bruised against the iron bulkhead and the tender short on precious water.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pull the groaning engine back onto solid ballast"
+   ]
+  },
+  "cf-2-035": {
+   "title": "The Vent-Master's Token",
+   "text": "Steam swirls lazily around the running board as the engine steadies itself upon solid stone, leaving the worst of the bubbling quagmire behind. However narrowly you threaded the labyrinth of sulfur vents, you emerge with a small forged tin token bearing the notched stamp of the old track-finders, pressed into your hand by a silent figure fading back into the grey mist. It is a simple piece of stamped tin, yet it carries the unspoken weight of safe passage through the lower marshlands, recognized by every signalman and ganger who still honors the old road.",
+   "check": "",
+   "grant": "forged tin marsh-token",
+   "exits": [
+    "Return to the main line near the Sulphur Sinks"
+   ]
+  },
+  "cf-2-036": {
+   "title": "The Grey Wall Rolls In",
+   "text": "High above the jagged horizon, the storm clock's brass face clicks with a sharp, metallic finality that carries across the silent steppe. A towering wall of grey ash-dust, miles wide and dark as a winter twilight, swallows the distant telegraph poles one by one as it sweeps down upon the track. You slam the heavy cab doors shut against the rising gale, feeling the massive iron frame of the locomotive tremble as the first dry particles strike the boiler jacket like handfuls of buckshot. The world shrinks to the circle of light cast by the flickering headlamp and the red glow of the open firebox door.\n\nThere is no turning back now, nor any shelter to be found across the open flats; you must drive straight into the heart of the grey haze before the storm seals the cutting for good.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Drive straight into the oncoming ash-storm"
+   ]
+  },
+  "cf-2-037": {
+   "title": "The Ribcage of Iron",
+   "text": "Twisted ribs of collapsed rolling stock loom out of the swirling ash like the skeleton of some ancient leviathan, forming a sheltered tunnel where the wind shrieks through rusted gaps with the voice of a lost express. The air inside smells of old grease and dry soot, undisturbed for years save for the drifting grey silt that carpets the buckled floorboards. Shadows stretch long and strange beneath the iron arches, and every choice forward offers a different gamble against the rising storm and the failing light.\n\nYou can inspect the tangled wreckage for salvage, venture into the deeper shadows where the wind howls loudest, or keep the fire hot and push onward through the howling dark.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Pick a path deeper through the rusted iron ribs",
+    "Rewire the dead telegraph pole inside the wreck",
+    "Patch the blown steam line with asbestos tape",
+    "Drop the canvas cab curtains against the grit"
+   ]
+  },
+  "cf-2-038": {
+   "title": "Shadows in the Skeleton",
+   "text": "Heavy iron beams overhead groan under the immense weight of drifted ash, shifting slightly with every gust that sweeps across the skeletal remains of the carriage. You wedge your shoulder beneath a sagging cross-brace, throwing your weight against the cold metal to keep the buckling roof from crashing down onto the tender's coal-bunk. The strain makes your muscles burn, but the gap holds long enough for you to scramble clear into the darker reaches of the wreck.\n\nAmong the splintered wood and twisted brackets, something small and sturdy catches the amber gleam of your lantern, half-buried in dry soot.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Reach into the gloom for the hidden tool"
+   ]
+  },
+  "cf-2-039": {
+   "title": "Bracing the Falling Iron",
+   "text": "The rusted roof-beam slips another half-inch with a sharp shriek of stressed metal, threatening to bring the entire side of the collapsed carriage down across the running board. You brace your boots firmly against the uneven ballast, thrusting your shoulder upward into the angle of the joint to bear the crushing weight before the whole structure folds. The iron bites hard through your coat, demanding every ounce of strength you possess to keep the passage clear for the engine. You must hold the line against the falling steel or risk pinning the locomotive beneath a ton of jagged scrap.",
+   "check": "Brace the sagging beam with your shoulder",
+   "grant": "",
+   "exits": []
+  },
+  "cf-2-040": {
+   "title": "Crushed Iron and Bent Metal",
+   "text": "The rusted cross-beam gives way with a deafening screech, slamming downward and catching your shoulder a glancing blow that sends you sprawling hard into the grit. Dust and dry flakes of paint fill the air, blinding you as you scramble back from the debris with a torn coat and a dull, throbbing ache in your arm. The wreckage settles into a permanent, crooked hunch, blocking the direct path and forcing you to claw your way out through a narrow gap in the rusted siding. You survive the collapse, but the delay costs precious minutes against the storm clock and leaves you nursing a deep, bruised stiffness.",
+   "check": "",
+   "grant": "",
+   "exits": [
+    "Crawl clear of the fallen wreckage"
+   ]
+  },
+  "cf-2-041": {
+   "title": "The Grease-Gun's Weight",
+   "text": "The heavy iron beam settles only a fraction before locking solid against a stout steel stanchion, leaving a narrow, safe archway through which you tumble safely into the dim interior. Clutched in the dust near your boot is a sturdy brass grease-gun, its lever smooth and its reservoir still half-full of clean, golden lubricant. However narrowly you managed the collapse, the tool is yours now, a solid piece of gear salvaged from the old maintenance trains that will keep the driving rods sliding smooth when the sand gets into the bearings.",
+   "check": "",
+   "grant": "sturdy brass grease-gun",
+   "exits": [
+    "Return to the Ribcage and weigh your next move"
+   ]
+  }
+ },
+ "missing": []
+}

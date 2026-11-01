@@ -1,0 +1,17 @@
+Gemini said
+
+@@INSERT up-l-harbor-statue | cover=cloak
+The murdered Archbishop’s heavy velvet weighs upon your shoulders, a grim reminder of the blood spilled for the Ledger. You pull the embroidered hood low, knowing the deacon who dressed the old man still hunts the city for this very garment.
+@@END
+@@INSERT up-l-harbor-statue | cover=tailor
+Beneath the hazy harbour lamps, the disgraced tailor’s stiff debt coat itches against your neck, offering poor warmth against the sea breeze. Yet its unremarkable cut has served its purpose, transforming a hunted night-crow into just another desperate soul seeking passage.
+@@END
+@@INSERT up-l-harbor-statue | cover=livery
+Stiff canvas and stale sweat cling to your skin, the rough porter's livery an uncomfortable disguise that smells of the docks. A passing harbourmaster barely spares you a second glance, seeing only a tired labourer resting by the chains instead of a hunted fugitive.
+@@END
+@@INSERT up-l-harbor-statue | valerius=betrayed
+Glancing back toward the Exchange roofs, you catch the faint gleam of a silk cravat beneath a distant lamppost—Lord Valerius’s runners are combing the wharves. Rejecting his polite menace has made the waterfront a deadly snare, forcing you to keep to the deepest shadows.
+@@END
+@@INSERT up-l-harbor-statue | rigg=betrayed
+Heavy hobnailed boots echo along the cobblestone pier as Matron Rigg’s foundry-hardened enforcers flash their iron warrants at the moored barges. Crossing the gaol mistress ensures no captain will take you openly, leaving the colossal monument as your only immediate refuge.
+@@END

@@ -1,0 +1,91 @@
+{
+ "batch": "vh-6-1-3-0",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-6-1-3-0": {
+   "title": "The Barge Lock Watch",
+   "text": "Beneath the rusted iron ribs of the barge-lock, a soaked watchman named Bael demands a copper coin for every foot of rope you carry. The damp air smells of stagnant river silt and tar, clinging to your woollen coat as Biscuit stamps restlessly against the slick stone. You shift the heavy bronze tongue in its padded cradle, feeling its dull hum vibrate against your spine while you weigh Bael's steep toll against the narrow escape routes leading deeper into the foundry quarter.",
+   "exits": [
+    "Pay the coin and head toward the gates",
+    "Dodge past the watchman toward the outer yard"
+   ]
+  },
+  "vh-6-1-3-1": {
+   "title": "The Steam Vent Barter",
+   "text": "Beside a bubbling vent of sulphurous steam, a frantic tinker named Darr attempts to barter a cracked soldering iron for your mule's halter. The heat wraps around your face like a wet blanket, smelling strongly of boiled iron and sulfur while Biscuit lowers his head and huffs a cloud of white vapor into the mist. You adjust the heavy cradle on your shoulders, glancing between the steaming vent and the various paths winding onward through the sprawling, soot-dusted industrial yard.",
+   "exits": [
+    "Ignore the tinker and head for the black gates",
+    "Turn toward the soot-stained threshold of the outer yard",
+    "Seek a cooler route past the blistering portal"
+   ]
+  },
+  "vh-6-1-3-2": {
+   "title": "The Singing Clapper",
+   "text": "The chipped bronze clapper suddenly emits a low, resonant thrum that startles a flock of roosting gulls and reveals a dry maintenance ladder. Uncovered and battered from the long descent down the thirteen stair-towns, the heavy metal tongue complains in the damp fog, its raw edges vibrating with a ghostly chill that sets your teeth on edge. The sudden sound echoes off the slick masonry walls, drawing uneasy glances from the shadows as you stare down the available paths.",
+   "exits": [
+    "Step carefully past the iron gates",
+    "Hurry toward the soot-darkened yard ahead"
+   ]
+  },
+  "vh-6-1-3-3": {
+   "title": "The Water Wheel Debris",
+   "text": "In the shadow of the great water-wheel, a mud-caked miller named Crix curses the clogged paddles and begs you to help clear the debris. Splintered pine branches and wet barley straw wrap tightly around the massive wooden spokes, groaning under the heavy pressure of the swollen canal. You steady the strapped bronze clapper on your back, feeling the cold weight shift slightly as you weigh whether to spare a moment for the struggling miller.",
+   "exits": [
+    "Walk past the wheel toward the black gates",
+    "Skirt the mill channel and enter the outer yard"
+   ]
+  },
+  "vh-6-1-3-4": {
+   "title": "The Charcoal Bunker Secret",
+   "text": "Within a soot-stained charcoal bunker, a nervous apprentice named Ren hides from his master while clutching a stolen pouch of flux-dust. Fine black powder coats his trembling fingers and dusts his eyelashes, making him look like a phantom carved from fireplace ash in the dim gloom. You keep your footsteps light to avoid startling him further, listening to the distant roar of the massive blast furnaces while deciding where to direct your next steps.",
+   "exits": [
+    "Approach the blistering heat of the sealed portal",
+    "Move deeper into the vibrating shadow of the furnace wall"
+   ]
+  },
+  "vh-6-1-3-5": {
+   "title": "The Salt Boiler Hearth",
+   "text": "Beside a flooded winch-pit, an old salt-boiler named Hobb warms his arthritic hands over a brazier of damp coke and offers you shelter. Steam rises in grey curls from his sodden canvas apron, mixing with the sharp tang of boiling brine that hangs thick in the damp air. Biscuit shakes his long ears, sending droplets flying as you pause by the meager warmth, weighing the comfort of the fire against the urgency of your descent.",
+   "exits": [
+    "Leave the brazier and approach the iron gates",
+    "Head toward the soot-caked threshold of the yard",
+    "Pass the glowing coals and seek the sealed portal"
+   ]
+  },
+  "vh-6-1-3-6": {
+   "title": "The Rope Loft Weaver",
+   "text": "Under the sagging rafters of the rope-loft, a blind weaver named Mellie runs her fingers over your pack-straps to test the quality of your twine. Her calloused thumbs trace the mountain knots with practiced ease, checking for fraying fibers caused by the biting mountain ice and granite edges above. The scent of hemp oil and dried tallow fills the dim alcove, offering a brief respite from the freezing drizzle outside before you must choose your next direction.",
+   "exits": [
+    "Leave the loft and make for the iron gates",
+    "Proceed toward the soot-stained outer yard",
+    "Follow the brick buttress toward the warm masonry"
+   ]
+  },
+  "vh-6-1-3-7": {
+   "title": "The Slippery Landing",
+   "text": "Across a slippery stone landing, a harassed dock-marshal named Tarsus threatens to impound your mule unless you clear the gangway immediately. Grey river spray lashes the timber planks, soaking your trouser hems while Biscuit plants his stubborn hooves firmly against the wet stone. Tarsus rests a heavy hand on his brass tally-stick, glaring impatiently at your heavily laden frame as you search for a way around him.",
+   "exits": [
+    "Follow the stoker past the brick buttress",
+    "Slip past the marshal toward the roaring flues"
+   ]
+  },
+  "vh-6-1-3-8": {
+   "title": "The Cooperage Surge",
+   "text": "Inside a damp cooperage, a frightened journeyman named Kelt drops his adze as the floorboards shudder beneath a sudden surge of river water. Unfinished oak staves float like giant wooden ribs across the flooded floor, clattering against one another with a hollow wooden rhythm. You tighten the canvas straps holding the heavy bronze clapper to your shoulders, bracing yourself against the sudden tremor as you look for an exit from the rising tide.",
+   "exits": [
+    "Wade toward the vibrating furnace wall",
+    "Head across the threshold into the roaring foundry"
+   ]
+  },
+  "vh-6-1-3-9": {
+   "title": "The Lime Pit Mishap",
+   "text": "Beside a hissing lime-pit, an anxious messenger named Stannard drops his leather satchel of dispatches into the caustic white sludge. Bubbles of boiling gas burst lazily from the thick paste, sending up choking plumes of vapor that sting your eyes and throat. You step back instinctively, steadying Biscuit by the halter while considering which path will take you furthest from the noxious fumes.",
+   "exits": [
+    "Hurry past the lime toward the sealed portal",
+    "Take the path beside the warm brick buttress",
+    "Head toward the shadow of the vibrating furnace wall"
+   ]
+  }
+ },
+ "missing": []
+}

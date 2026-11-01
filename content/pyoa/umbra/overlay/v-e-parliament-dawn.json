@@ -1,0 +1,54 @@
+{
+ "batch": "v-e-parliament-dawn",
+ "variants": [
+  {
+   "node": "up-end-parliament-dawn",
+   "when": {
+    "witness": "bought"
+   },
+   "after": "Yet, as you navigate the crowded alleys, the memory of the almoner's terrified eyes lingers; the whispered promise you traded for his silence remains a dangerous, unpaid debt waiting in the shadows."
+  },
+  {
+   "node": "up-end-parliament-dawn",
+   "when": {
+    "witness": "dropped"
+   },
+   "after": "Far below the roaring crowds, the almoner's broken body lies undiscovered upon the cobblestones, a grim and silent secret that ensures your fatal push will never be traced back to you."
+  },
+  {
+   "node": "up-end-parliament-dawn",
+   "when": {
+    "faceKnown": "yes"
+   },
+   "after": "Even amidst the riotous distraction, you keep your collar turned high against the morning chill, keenly aware that your uncovered features are already circulating on fresh warrants across the city."
+  },
+  {
+   "node": "up-end-parliament-dawn",
+   "when": {
+    "cabal": "known"
+   },
+   "after": "Watching the mob tear at the estates of Valerius and Rigg, you share a grim smile with Sable, burdened by the secret knowledge of the vault's counter-ledgers: the warring houses were always a single, orchestrated cabal."
+  },
+  {
+   "node": "up-end-parliament-dawn",
+   "when": {
+    "valerius": "allied"
+   },
+   "after": "Tucked safely in your pocket is a heavy seal of Valerian silk, a quiet guarantee from the polite lord that his hidden enforcers will look the other way as you and Sable disappear into the smoke."
+  },
+  {
+   "node": "up-end-parliament-dawn",
+   "when": {
+    "rigg": "allied"
+   },
+   "after": "Matron Rigg's iron-stamped warrant of transit sits heavy against your ribs, a brutal but effective shield guaranteeing that her foundry guards will ignore your quiet exodus from the bleeding district."
+  },
+  {
+   "node": "up-end-parliament-dawn",
+   "when": {
+    "cover": "livery"
+   },
+   "after": "The rough wool of your porter's livery blends seamlessly with the soot-stained attire of the rioting dockworkers, transforming you into just another nameless labourer among the angry, surging masses."
+  }
+ ]
+}

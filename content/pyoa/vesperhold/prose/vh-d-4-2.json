@@ -1,0 +1,90 @@
+{
+ "batch": "vh-d-4-2",
+ "model": "Flash-Lite",
+ "sections": {
+  "vh-d-4-2": {
+   "title": "The Blue Slip",
+   "text": "Your iron-shod boot finds only slick blue air as the frozen crust gives way beneath the bronze tongue's immense weight. There is no time to shout, only the sharp hiss of tearing rime and the sudden, stomach-churning drop into the throat of the glacier. The world tilts into a clean, blinding sapphire, spinning you gently through walls of ancient, whispering ice where the light dies into a deep, velvety indigo. You fall without terror, cradled by the very cold that shaped the mountain, while the heavy clapper hums one last, long note against your shoulder before the blue silence takes you entirely.",
+   "exits": []
+  },
+  "vh-4-out": {
+   "title": "Leaving the Ice",
+   "text": "The frozen rungs of the ladder-world finally give way beneath your boots as you drop below the reach of the scouring gales. Ice-rimed ropes slacken into damp hemp, and the unyielding white glare softens into a pearly, motionless gloom. You pat the heavy bronze cradle on your back, feeling the quiet, persistent warmth that lingers within the metal despite the frost. Ahead, the world softens into gray dripping shapes and the smell of fermenting windfalls, marking the true boundary of the middle mountain.\n\nThe long descent of the ice stairs is behind you now, leaving your shoulders aching and your breath coming easier in the thickening mist.",
+   "exits": [
+    "Go on deeper into the mist"
+   ]
+  },
+  "vh-5-in": {
+   "title": "The Cloud Valley",
+   "text": "Thick, wool-white vapor rolls through gnarled apple orchards that cling to the steep, stepped hillsides of the middle altitude. Muffled whistles drift across the damp air, answered by the dull, bronze clinking of guide-bells tied to hidden fence posts. This is the domain of the Fog-Wardens, who thread these dripping alleys by sound alone, sharing the gray quiet with rival carriers and silent harvesters. You stand at a damp crossroads where the descending steps split into several uncertain directions, each swallowed entirely by the creeping cloud bank.",
+   "exits": [
+    "Follow the main stair",
+    "Cut across the lower ledges",
+    "Ask the way of a stranger",
+    "Take the old carriers' path"
+   ]
+  },
+  "vh-5-0-0-0": {
+   "title": "Drip and Bronze",
+   "text": "Gray apple trees drip silent moisture onto your leather cap while the heavy bronze clapper shifts uneasily in its padded frame. Far off through the thick wool of the fog, unseen bell-towers toll low, rhythmic warnings about hidden drops and crumbling terrace walls. You test the leather straps across your chest, making sure the metal tongue is lashed tight against the biting damp. The path splits before you into three distinct tracks, each swallowed instantly by the pale, swallowing gloom.",
+   "exits": [
+    "Step down the central lane",
+    "Follow the orchard fence line",
+    "Plunge into the gray thicket"
+   ]
+  },
+  "vh-5-0-0-1": {
+   "title": "The Cider Press",
+   "text": "A rusted wooden wheel looms out of the mist like the skeleton of a great prehistoric beast, dripping moisture onto the flat stones below. You share a handful of dried pears with a bundled carter whose mule stands trembling, whites of its eyes showing as it stares into the impenetrable white wall. The damp air tastes of vinegar and old apples, sticking to the wool of your tunic and chilling your fingers. Several faint tracks lead away from the press into the gray gloom, offering an escape from the silent watcher and his frightened beast.",
+   "exits": [
+    "Follow the narrow dry stone culver",
+    "Grip the hempen fence-rope",
+    "Duck beneath the sagging timber shed"
+   ]
+  },
+  "vh-5-0-0-2": {
+   "title": "Tangled Boughs",
+   "text": "Low-hanging fruit branches heavy with frost catch at your shoulder straps as you struggle to free a frozen leather rein from a gnarled pear tree. The gray damp clings to your eyelashes and sinks straight through your wool coat to chill your marrow. Moisture drips with a steady, maddening rhythm from the canopy above into the mud at your feet. Three murky paths branch away into the silent orchards, each promising either shelter or deeper confusion in the mist.",
+   "exits": [
+    "Duck beneath the sagging timber shed",
+    "Scrape your boots by the stone trough",
+    "Strap on the abandoned wicker hurdle"
+   ]
+  },
+  "vh-5-0-0-3": {
+   "title": "The Warden's Hollow",
+   "text": "Two sharp whistles cut through the thick gray damp from somewhere down in the sunken orchard hollow, warning unwary travellers away from the hidden sinkholes. Mud squelches beneath your boots as you steady the bronze clapper against your spine, listening intently to the fading echoes in the fog. The air smells of rich, rotting mulch and cold stone, heavy with the weight of the cloud bank. Two distinct tracks skirt the edge of the depression, vanishing into the gray curtains of the valley.",
+   "exits": [
+    "Trace the frayed guide-rope",
+    "Watch the cursing rival carrier"
+   ]
+  },
+  "vh-5-0-1-0": {
+   "title": "The Sledge Tracks",
+   "text": "Deep ruts filled with rotting gray pears and black mud mark the floor of this drowned orchard lane where visibility barely reaches your outstretched hand. A careening timber sledge suddenly bursts out of the fog with a sharp snap as its iron shoe shears off against a hidden root. You throw yourself flat against a mossy trunk to let the runaway slide past into the gloom. The lane continues forward, splitting around the remains of an ancient stone wall half-buried in wet leaves.",
+   "exits": [
+    "Follow the rhythmic warden whistle",
+    "Tighten the heavy bronze harness",
+    "Haul your pack clear of the ditch"
+   ]
+  },
+  "vh-5-0-1-1": {
+   "title": "Lichen and Salt",
+   "text": "Moss-bearded pear trees form a low, dripping canopy overhead that traps the damp breath of the valley like a wet wool blanket. You trade a pinch of coarse salt from your pocket with an old warden for a handful of dry lichen to stuff into the gaps in your leaking boots. The warden nods once without speaking, his eyes milky with age and mountain cataract. Two muddy tracks lead onward through the dripping orchard rows, vanishing into the gray distance.",
+   "exits": [
+    "Share a crust of rye bread",
+    "Haul your pack clear of the ditch"
+   ]
+  },
+  "vh-5-0-1-2": {
+   "title": "The Whispering Well",
+   "text": "Cold water splashes against stone deep underground as a stone bucket rattles against the wall of an old well choked with fallen leaves. A rival carrier steps out from behind the mossy brickwork, eyeing the padded bronze cradle on your back with calculating hunger. You shift your footing in the wet muck, keeping your hands free while the thick mist swirls around your ankles. The path continues past the wellhead, dividing into several uncertain directions among the gray trunks.",
+   "exits": [
+    "Haul your pack clear of the ditch",
+    "Pause by the carved mountain milestone",
+    "Dodge the falling crate of pears"
+   ]
+  }
+ },
+ "missing": []
+}

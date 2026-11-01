@@ -1,0 +1,65 @@
+Gemini said
+
+@@SECTION sg-2-1-3-6
+TITLE: The Empty Waterskin
+TEXT: A tethered leather water-bag hangs from a dead telegraph pole, swaying gently in the dry thermal drafts that sweep across the Bitterflats. When you lift the cracked pouch by its hempen cord, you find only dry dust and bitter disappointment sifting through the seams. Your ember-lamp knocks softly against your thigh as you look ahead along the white, baking expanse.
+EXIT 1: Follow the weathered boundary markers toward the tariff fence
+EXIT 2: Seek temporary shelter beneath the corrugated iron lean-to
+@@END
+@@SECTION sg-2-1-3-7
+TITLE: The Solitary Tracks
+TEXT: Walking completely alone leaves your thoughts entirely to yourself, undisturbed by any companion's chatter or the clink of hired gear. Moving in this unbroken silence lets you spot the faint boot-prints of a Salt Court patrol veering off toward the east, cutting a sharp line across the alkali crust. You adjust the heavy strap of your ember-lamp and weigh your solitary path against the shimmering horizon.
+EXIT 1: Take the path past the weathered copper tariff warnings
+@@END
+@@SECTION sg-2-1-3-8
+TITLE: The Hexagonal Tiles
+TEXT: You cross a flat expanse where the salt has cracked into giant hexagonal tiles that tilt crazily like stepping-stones over damp gray mud. Every step demands careful balance to avoid slipping into the pungent, mineral-laden mire beneath the crust. The heat radiates upward from the white ground, making the distant ridges shimmer like water.
+EXIT 1: Head toward the corrugated iron lean-to for a brief respite
+EXIT 2: Follow the wire strung with dried camel skulls into the track
+@@END
+@@SECTION sg-2-1-3-9
+TITLE: The Salt Court Banner
+TEXT: A tattered canvas banner bearing the scales of the Salt Court flutters feebly from a rusted iron stake planted deep in an alkali mound. The fabric is bleached bone-white by the relentless basin sun, its painted emblems flaking away into the dust. You pull your collar higher against the glare and grip your ember-lamp tightly as you survey the branching tracks ahead.
+EXIT 1: Cut toward the corrugated iron lean-to by the old track
+EXIT 2: Follow the wire strung with clacking camel skulls further north
+EXIT 3: Circle closer to the wooden rampart of the toll-hut
+@@END
+@@SECTION sg-2-1-3-10
+TITLE: Measuring the Sips
+TEXT: You dip your fingers into your canteen, measuring your remaining sips against the long miles remaining before the toll-hut appears through the haze. The cool metal feels precious against your skin, reminding you just how few drops stand between you and the thirst of the basin. The road stretches onward through blinding white salt-pans under a pitiless sky.
+EXIT 1: Follow the wire hung with dried camel skulls along the track
+EXIT 2: Peer through the gap in the salt-mound toward the tax-station
+EXIT 3: Approach the wooden rampart where the lone guard paces
+@@END
+@@SECTION sg-2-1-3-11
+TITLE: The Singing Glass-Reeds
+TEXT: A cluster of dried glass-reeds chatters musically in the hot draft, sounding like wind chimes hung in an abandoned temple porch. Their hollow, crystalline voices ring out with strange clarity across the otherwise silent expanse of the Bitterflats. You pause for a heartbeat to listen to the eerie music before checking the heavy cold ceramic shape of the Seedkey in your pocket.
+EXIT 1: Make your way toward the corrugated iron lean-to ahead
+EXIT 2: Take the track marked by the string of dried camel skulls
+@@END
+@@SECTION sg-2-1-3-12
+TITLE: The Slag Wall
+TEXT: You duck behind a crumbling retaining wall of fused slag as a sudden gust of wind whips the white dust into a choking fog. The sharp grit stings your cheeks and coats your eyelashes, blotting out the glaring sun for a few tense moments. As the pale storm begins to settle, the familiar shapes of the basin edge loom closer through the haze.
+EXIT 1: Inspect the low palisade of the nearby tax-station
+EXIT 2: Advance cautiously toward the wooden rampart of the toll-hut
+@@END
+@@SECTION sg-2-1-3-13
+TITLE: The Basalt Blockade
+TEXT: An abandoned hand-cart loaded with heavy basalt paving slabs blocks the narrow defile between two salt-domes you must traverse. The wooden wheels have long since warped and split in the dry heat, leaving the cargo stranded squarely across your path. You squeeze past the jagged stone edges, making sure your ember-lamp does not strike the rough basalt.
+EXIT 1: Slip past the cart toward the corrugated iron shelter
+EXIT 2: Follow the track past the wire strung with camel skulls
+EXIT 3: Move forward to inspect the palisade of the tax-station
+@@END
+@@SECTION sg-2-1-3-14
+TITLE: The Gypsum Crust
+TEXT: You scrape a layer of crystalline gypsum off your leather boots to lighten your load before tackling the steeper incline ahead. The hardened flakes fall away in small white scales, clinking softly against the salt floor as you work with your pocket-knife. With your footing restored, you hoist the strap of your ember-lamp and look up at the bright horizon.
+EXIT 1: Head toward the copper sign warning of basin tariffs
+EXIT 2: Take the winding track beneath the clacking camel skulls
+EXIT 3: Approach the wooden rampart of the nearby toll-hut
+@@END
+@@SECTION sg-2-1-3-15
+TITLE: The Wood-Smoke Drift
+TEXT: A faint smell of wood-smoke drifts across the salt-pans from an unseen hearth hidden somewhere in the shimmering heat haze. It is an unexpected scent in this vast desert of salt and glass, carrying a faint tang of burning scrub-root. You test the air for a moment, wondering who else might be burning fuel in the Bitterflats before pressing on.
+EXIT 1: Examine the low palisade of the tax-station ahead
+EXIT 2: Approach the wooden rampart where the guard keeps watch
+@@END

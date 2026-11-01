@@ -1,0 +1,45 @@
+Gemini said
+
+@@SECTION td-1-142
+TITLE: Nest of the Scuttling Shell
+TEXT: Blood beads on the web of your thumb where the creature clamped its chitinous mandibles, but you do not let go. With your free hand, you rake through the damp sand of the hollow beneath the ribbed ribs of an old pinnace until your knuckles strike stone. Three smooth pearls roll into your palm, still leaking cold phosphorescence in the salt-heavy dark. The beast writhes once before slipping away into a crease of the drying seabed, leaving you to nurse your stinging thumb and pocket the harvest. //
+GRANT: Bioluminescent seabed pearls
+EXIT 1: Climb back toward the shifting dunes
+@@SECTION td-1-143
+TITLE: Voices in the Low
+TEXT: Low, rhythmic wails crawl up from the salt-pans, mimicking the desperate cries of sailors caught beneath capsized hulls three winters ago. You plug your ears with greasy wool and keep your eyes fixed on the rusted iron tooth of a wreck jutting from the crust. Footsteps echo behind your heels in perfect cadence with your own, yet when you whirl around with bated breath, only drifting froth greets the pale morning light. You spot a glint of gold wedged between two sun-baked ribs of kelp. //
+EXIT 1: Retrieve the Brineholder signet ring
+@@SECTION td-1-144
+TITLE: The False Sinking
+TEXT: Waterlogged timbers shift beneath your boots like breathing ribs, and the phantom cries swell into a deafening chorus of drowning kin calling your exact name from the brine-crust. You kneel in the choking silt, running your fingers along the salt-rimed hull to separate the true grain of the wrecked merchantman from the shimmering illusions woven by the tide-ghosts. //
+CHECK: Discern true echoes from false ones
+@@SECTION td-1-145
+TITLE: Salt in the Wound
+TEXT: A sudden shriek breaks from the dunes, shattering your focus just as your fingers brush the cold metal, and a heavy timber heaves upward beneath your knee with vicious force. You stumble backward into the stinging brine, spitting grey silt and nursing a torn tendon that flares white-hot with every pulse. The false voices fade into mocking laughter, leaving you bruised, poorer in patience, and lighter by a pouch of dried rations lost to the mud. //
+EXIT 1: Retreat from the singing dunes
+@@SECTION td-1-146
+TITLE: Recovered Gold
+TEXT: Patience and cold grease win the day as you trace the true grain of the timber past the phantom wails, your fingers closing around the heavy gold band before the illusion dissolves into sea-smoke. The Brineholder signet ring bears the stamp of the high sluice-keepers, cold and unyielding against your calloused palm. You slip it into your waistcoat pocket, knowing it will buy answers or trouble depending on who you hand it to first. //
+GRANT: Heavy Brineholder signet ring
+EXIT 1: Leave the singing dunes behind
+@@SECTION td-1-147
+TITLE: The Sunken Stair
+TEXT: Iron gates groan on rusted hinges where the cliffs drop away into the subterranean throat of the old town, revealing a damp spiral shaft plunging deep into the limestone. Cold drafts rise from the dark, smelling of stagnant kelp and ancient grease that has not felt a cleansing wave since the sea packed its bags. Somewhere down those winding, salt-crusted steps lies the heavy iron housing of the Meridian Gear, waiting for hands bold or desperate enough to turn it. You adjust your harness, check the remaining weight of your waterskin, and step over the threshold. //
+EXIT 1: Descend into the dark stairwell
+@@SECTION td-1-148
+TITLE: Woodcarver's Tribute
+TEXT: Grey driftwood yields smoothly beneath the edge of your skinning knife, curling away in pale ribbons until a faceless river-idol takes shape with hollow eyes and folded hands. You press the damp carving into the outstretched palm of the old pilgrim leader, who turns it over three times in the gloom to test its weight against the drought. A nod of gnarled approval follows, and a small leather pouch of blessed, bitter-smelling salt is dropped heavily into your keeping. //
+EXIT 1: Trade the token with pilgrims
+@@SECTION td-1-149
+TITLE: The Balance Peg
+TEXT: A seasoned length of bog-oak turns softly on the lathe until the tapered pin matches the worn brass socket of the scale down to a hair's breadth. The pawn-widow tests it with a thumb-thick lump of copper slag, watching the needle swing true and steady before she grunts her satisfaction. She slides a small, stoppered glass vial across the greasy counter, its interior filled with a thick, green kelp extract that smells of iodine and river mud. //
+EXIT 1: Accept the medicinal kelp extract
+@@SECTION td-1-150
+TITLE: Smuggler's Sweat
+TEXT: Heavy wooden crates slide across the flagstones with a dull grating groan that sets your teeth on edge, testing every muscle in your back and shoulders until the sweat stings your eyes. You shove the final crate into the shadowed corner behind the barrels of salt-pork, wiping your palms on your trousers as the cellar master tosses you a heavy iron token notched with a wave. It is proof enough of honest toil and a quiet tongue, granting safe passage through the lower alleys when the watch is about. //
+EXIT 1: Take the notched wave token
+@@SECTION td-1-151
+TITLE: The Harbourmaster's Safe
+TEXT: A thin wire slips into the old brass tumbler with a faint, greasy click that vibrates straight up through your fingertips. You ease the rusted latch aside just an inch, holding your breath against the stale dust of a room abandoned the moment the water vanished from the harbour wall. Inside the velvet-lined recess sits a small cache of clipped silver groats, left behind by officials who fled before the ships could bottom out in the mud. //
+EXIT 1: Pocket the hidden silver groats
+@@END
