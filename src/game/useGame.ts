@@ -476,21 +476,24 @@ function sessionZeroOf(sz: SessionZero | null | undefined): SessionZero | null {
   return lines.length || veils.length || sheetId ? { lines, veils, sheetId } : null;
 }
 /**
- * Real time away: tabletop at a safe stop takes a rest; story RPG and LitRPG get a recap. Either way the row is
- * engine facts only.
+ * Real time away: tabletop at a safe stop still takes a rest (state + rest receipt in the log).
+ * Welcome-back lines are UI-only (T10RECAP) — buildAwayRecap never mutates the save.
  */
-function withAwayRest(state: GameState, awayMs: number): GameState {
+function withAwayRest(state: GameState, awayMs: number): { state: GameState; welcomeBack: string[] | null } {
   const away = applyAwayRest(state, awayMs);
-  if (!away) {
-    const recap = buildAwayRecap(state, awayMs);
-    if (!recap) return state;
-    const at = Date.now();
-    const row: LogEntry = { id: uid(), turn: state.turn, role: 'system', content: recap.join('\n'), timestamp: at };
-    return { ...state, log: [...state.log, row], lastUpdated: at };
+  let next = state;
+  if (away) {
+    const now = Date.now();
+    const row: LogEntry = {
+      id: uid(),
+      turn: away.state.turn,
+      role: 'system',
+      content: away.recap.join('\n'),
+      timestamp: now,
+    };
+    next = { ...away.state, log: [...away.state.log, row], lastUpdated: now };
   }
-  const now = Date.now();
-  const recap: LogEntry = { id: uid(), turn: away.state.turn, role: 'system', content: away.recap.join('\n'), timestamp: now };
-  return { ...away.state, log: [...away.state.log, recap], lastUpdated: now };
+  return { state: next, welcomeBack: buildAwayRecap(next, awayMs) };
 }
 interface ActionHabit {
   action: string;
@@ -702,6 +705,8 @@ export function useGame() {
   const [showMerchantWindow, setShowMerchantWindow] = useState(false);
   const [unlockedQuests, setUnlockedQuests] = useState<Quest[]>([]);
   const [failedQuests, setFailedQuests] = useState<Quest[]>([]);
+  /** T10RECAP — session-only welcome-back lines; dismiss clears; never written into the save. */
+  const [welcomeBackRecap, setWelcomeBackRecap] = useState<string[] | null>(null);
   const [syncPhase, setSyncPhase] = useState<SyncPhase>('idle');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [outOfTurnsAdOffer, setOutOfTurnsAdOffer] = useState(false);
@@ -925,11 +930,12 @@ export function useGame() {
       }
       const live = stateRef.current;
       if (!hiddenAt || !live || !isHydratedRef.current || turnInFlightRef.current) return;
-      const next = withAwayRest(live, Date.now() - Math.max(hiddenAt, live.lastUpdated || 0));
+      const away = withAwayRest(live, Date.now() - Math.max(hiddenAt, live.lastUpdated || 0));
       hiddenAt = 0;
-      if (next === live) return;
-      stateRef.current = next;
-      setState(next);
+      if (away.welcomeBack) setWelcomeBackRecap(away.welcomeBack);
+      if (away.state === live) return;
+      stateRef.current = away.state;
+      setState(away.state);
     };
     document.addEventListener('visibilitychange', onVisibility);
     return () => document.removeEventListener('visibilitychange', onVisibility);
@@ -5187,6 +5193,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     sessionZero?: SessionZero | null,
   ) => {
     debugLogger.beginPlaySession('new-game');
+    setWelcomeBackRecap(null);
     if (settingsRef.current.ttsEnabled) {
       voice.primeTts();
     }
@@ -6114,6 +6121,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     isHydratedRef.current = false;
     setState(null);
     stateRef.current = null;
+    setWelcomeBackRecap(null);
     setBootPhase('hub');
     setShowSettings(false);
     isHydratedRef.current = true;
@@ -6154,6 +6162,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         recovered = { ...recovered, lastSeenSaveRepairRevision: CURRENT_SAVE_REPAIR_REVISION };
       }
       recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
+      const awayMs = recovered.lastUpdated ? Date.now() - recovered.lastUpdated : 0;
+      const away = withAwayRest(recovered, awayMs);
+      recovered = away.state;
+      setWelcomeBackRecap(away.welcomeBack);
       setState(recovered);
       stateRef.current = recovered;
       clearActionDraft();
@@ -6232,6 +6244,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow,
     unlockedQuests, dismissUnlockedQuests: () => setUnlockedQuests([]),
     failedQuests, dismissFailedQuests: () => setFailedQuests([]),
+    welcomeBackRecap,
+    dismissWelcomeBackRecap: () => setWelcomeBackRecap(null),
     syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
     outOfTurnsAdOffer,
     dismissOutOfTurnsAdOffer: () => setOutOfTurnsAdOffer(false),
@@ -6464,8 +6478,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           addToast(`Using your saved name (${profileMerged.state.character.name}).`, 'info');
         }
         const lastActive = saved.lastUpdated || (useCloud ? cloudTs : 0);
-        recovered = withAwayRest(recovered, lastActive ? Date.now() - lastActive : 0);
-        recovered = ensurePlaceOnMap(recovered, recovered.currentLocation);
+        const away = withAwayRest(recovered, lastActive ? Date.now() - lastActive : 0);
+        recovered = ensurePlaceOnMap(away.state, away.state.currentLocation);
+        setWelcomeBackRecap(away.welcomeBack);
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.
           const nextSettings: Settings = {

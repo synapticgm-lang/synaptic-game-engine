@@ -38,6 +38,7 @@ import { modeProfile } from '@/game/rules/modeProfile';
 import { creationRng } from '@/game/tabletop/characterBuild';
 import type { SavedSheet } from '@/game/tabletop/sheetLibrary';
 import { CharacterBuilderPanel } from './CharacterBuilderPanel';
+import { WelcomeBackCard } from './WelcomeBackCard';
 import { DicePreview, liveDiceItem } from './DicePreview';
 import { RollLine, RollDisplayContext, RollHintLine } from './RollDie';
 
@@ -132,9 +133,12 @@ interface Props {
   showPlayerLines?: boolean;
   /** Tabletop inn-book creation: a sheet from the builder page goes to the same confirm page as the chips. */
   onUseBuiltSheet?: (sheet: SavedSheet) => void;
+  /** T10RECAP — session-only welcome-back lines from buildAwayRecap. */
+  welcomeBackRecap?: string[] | null;
+  onDismissWelcomeBack?: () => void;
 }
 
-export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, showPlayerLines = false, onUseBuiltSheet }: Props) {
+export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, showPlayerLines = false, onUseBuiltSheet, welcomeBackRecap = null, onDismissWelcomeBack }: Props) {
   const [input, setInput] = useState('');
   const [sttNoticeOpen, setSttNoticeOpen] = useState(false);
   const actionInputRef = useRef<HTMLTextAreaElement>(null);
@@ -274,6 +278,13 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           />
         </div>
       )}
+      {welcomeBackRecap && welcomeBackRecap.length > 0 && onDismissWelcomeBack ? (
+        <div className="relative z-20 shrink-0 px-3 pt-3 sm:px-6">
+          <div className="mx-auto max-w-2xl">
+            <WelcomeBackCard lines={welcomeBackRecap} onDismiss={onDismissWelcomeBack} />
+          </div>
+        </div>
+      ) : null}
       {comicMode ? (
         <div className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-hidden">
             <ComicGrid
