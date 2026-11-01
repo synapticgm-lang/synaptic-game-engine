@@ -7599,7 +7599,7 @@
    "kind": "scene",
    "title": "The Hidden Iron Ring",
    "brief": "Spotting the hidden trapdoor in the gravel under the arch lets you recover a hidden keg of refined lamp oil.",
-   "page": "Loose shale and fine grey dust shift beneath your heavy boot as you tread carefully near the moss-slick base of the primary pier. An iron ring crusted with salt and ancient soot lies flush in the packed earth under a drift of discarded ballast. With a sharp tug, you haul against the resistance of packed silt until an oiled wooden trapdoor gives way with a sucking pop. A dank, confined smell rises from the dark cavity below, promising shelter or perhaps something left behind by travelers who vanished long before the Cinder Prophets built their first shrines.",
+   "page": "Loose shale and fine grey dust shift beneath your boot as you tread near the moss-slick base of the primary pier. An iron ring crusted with salt and ancient soot lies flush in the packed earth under a drift of discarded ballast. You haul against packed silt. An oiled wooden trapdoor gives way with a sucking pop. Dank, confined smell rises from the dark cavity below, the sort of cache travelers left before the Cinder Prophets built their first shrines. The open hatch frames black air.",
    "exits": [
     {
      "label": "Descend into the cool gloom of the cache",
@@ -8894,7 +8894,7 @@
    "kind": "hub",
    "title": "The Gantry Watch",
    "brief": "The Gantry Watch: You survey the suspended platforms where armed guards inspect every passing freight car for contraband.",
-   "page": "Heavy iron gantries stretch across the roaring void of the viaduct like skeletal ribs, dripping with greasy condensate and the bitter tang of coal-gas. Armed guards pace the suspended wooden duckboards, their bayonets catching the pale glare of acetylene lamps as they inspect every passing freight car for contraband and hidden passengers. Below this iron cage, the grey abyss drops away toward invisible river-beds where old steam-boilers rust in the mud. You linger in the shadow of a water crane, weighing the risk of forging the manifests against the danger of tampering with the electric signal-boxes.\n\nThe storm clock above the toll-office ticks down toward zero, and the next move will cost sweat or nerve.",
+   "page": "Iron gantries stretch across the roaring void of the viaduct like skeletal ribs, dripping with greasy condensate and the bitter tang of coal-gas. Armed guards pace the suspended wooden duckboards. Bayonets catch the pale glare of acetylene lamps as they inspect every passing freight car for contraband and hidden passengers. Below this iron cage the grey abyss drops away toward invisible river-beds where old steam-boilers rust in the mud. You linger in the shadow of a water crane and turn over the risk of forging the manifests against the danger of tampering with the electric signal-boxes.\n\nThe storm clock above the toll-office ticks toward zero.",
    "exits": [
     {
      "label": "Forge a false shipping manifest",
@@ -12019,7 +12019,7 @@
    "kind": "recovery",
    "title": "The Raucous Hack",
    "brief": "You hide beneath a steaming tarp as patrols pass by, risking a nervous cough to avoid detection by the armed guards.",
-   "page": "A sudden, irrepressible cough tears through your clenched teeth, echoing loudly against the hollow iron floor of the mineral wagon. Heavy boots halt abruptly on the gravel outside, followed by the sharp click of a rifle bolt being drawn back in the gloom. You scramble out from under the tarp just as a bayonet rips through the coarse canvas where your shoulder had rested an instant before.\n\nScrambling away on hands and knees into the choking soot-smoke, you leave behind a stray leather strap and a ragged breath, nursing a raw throat as you flee the immediate sector.",
+   "page": "A sudden cough tears through your clenched teeth and cracks against the hollow iron floor of the mineral wagon. Boots halt on the gravel outside. A rifle bolt clicks back in the gloom. You scramble out from under the tarp just as a bayonet rips through the coarse canvas where your shoulder rested an instant before.\n\nHands and knees take you into the choking soot-smoke. A stray leather strap stays behind. You flee the immediate sector with a raw throat and a ragged breath.",
    "exits": [
     {
      "label": "Scramble away into the smoke",
@@ -12621,7 +12621,7 @@
    "kind": "reward",
    "title": "The Repaired Line",
    "brief": "You repair the severed throttle cable amid blinding sparks, risking electrocution to regain full speed before guards close in.",
-   "page": "The cable holds firm beneath your taped fingers, sending a clean, steady surge straight to the primary injectors. However narrowly, you have cheated the electrical bite and restored full mechanical response to the engine's iron heart. You wipe the grease from your brow, clutching a small piece of salvaged copper wire that hums faintly with residual current.",
+   "page": "The cable holds firm beneath your taped fingers, and a clean surge runs straight along it to the primary injectors without a spark back into your palms. You cheated the electrical bite. Full mechanical response is back in the engine's iron heart. Grease leaves your brow on your sleeve. In your hand a small piece of salvaged copper wire still carries residual current.",
    "exits": [
     {
      "label": "Return to the control deck",
@@ -13575,7 +13575,7 @@
    "kind": "reward",
    "title": "The Clean Adjustment",
    "brief": "You adjust the regulator valve to match the ghostly signal's rhythmic pulse, winning a tin of machine tallow and a clear berth.",
-   "page": "Fingers working with desperate, practiced speed, you tap the valve seat just right and feel the obstruction break apart beneath the wire. Cool water rushes back down the feed-pipe with a deep gulp and restores the boiler's pulse just before the gauge glass could empty. Whether by skill or sheer good fortune, you secure a tin of fresh machine tallow from the rack, leaving the engine humming smoothly as you return to the footplate.",
+   "page": "Fingers work at practiced speed. You tap the valve seat just right, and the obstruction breaks apart beneath the wire. Cool water rushes back down the feed-pipe with a deep gulp and restores the boiler's pulse just before the gauge glass could empty. A tin of fresh machine tallow comes off the rack. You return to the footplate with it, engine running smooth.",
    "exits": [
     {
      "label": "Return to the lantern-roost",
@@ -14625,7 +14625,7 @@
    "kind": "scene",
    "title": "The Stone Sieve",
    "brief": "You decipher the acoustic reverberations to map the hidden fissures in the rock, earning a small pouch of sparkling pyrite.",
-   "page": "Moisture beads along the limestone ribs overhead and drops with a hollow rhythm into the oily puddles between the ties. You press your palms against the damp masonry of the drift, feeling the subterranean pulse where the cold rock meets the iron frame of the Cutting. A pale seam of quartz snakes through the grey shale, humming faintly with the draft of distant air-shafts. By leaning your ear against the partition, you can trace the hollow resonance of unseen chambers branching off into the dark.\n\nFollowing this acoustic thread leads you past a forgotten inspection nook where the strata fracture cleanly into natural shelves. You reach out to test the integrity of the stone face, probing the deep clefts with a pocket-knife until the shale yields to your touch.",
+   "page": "Moisture beads along the limestone ribs overhead and drops with a hollow rhythm into the oily puddles between the ties. Palms find the damp masonry. Cold rock meets the iron frame of the Cutting there, and a faint pulse moves through stone and iron alike under your hands. A pale seam of quartz snakes through the grey shale and takes the draft of distant air-shafts. Ear to the partition, you hear chambers that branch off into the dark.\n\nThat acoustic thread leads past a forgotten inspection nook where the strata fracture cleanly into natural shelves. You work the deep clefts with a pocket-knife. The shale yields.",
    "exits": [
     {
      "label": "Trace the quartz seam deeper into the dark",
@@ -15408,7 +15408,7 @@
    "kind": "recovery",
    "title": "Battered by the Slide",
    "brief": "You stand your ground against the shifting avalanche of rattling slag, earning a heavy iron fender-plate.",
-   "page": "The weight of the falling slag proves too great for your stance, slamming the heavy iron fender-plate against your knee and knocking the wind from your ribs. You hit the ballast hard, scraping your palms against the sharp ballast stones while dust fills the air around you. It takes long, agonizing moments to drag yourself upright, nursing a deep bruise that will throb with every step of the road.",
+   "page": "Falling slag overwhelms your stance and slams the iron fender-plate against your knee, and the wind goes clean out of your ribs. You hit the ballast hard. Palms scrape on sharp stones while dust fills the air. Long moments pass before you drag yourself upright. A deep bruise will answer every step of the road.",
    "exits": [
     {
      "label": "Climb back onto the footplate",
@@ -15950,7 +15950,7 @@
    "kind": "recovery",
    "title": "A Cough in the Dust",
    "brief": "You maintain absolute silence before the portrait of the ancient administrator, earning an ivory-handled carriage key.",
-   "page": "A sudden rattle in your chest betrays you, and the cough bursts out like a dry coal-shot, cracking the tunnel's silence open. The oil portrait seems to lean from its frame as the failure catches in your throat. You gasp for air while a sharp flake of falling slate slices a long, clean line across the back of your hand. Blood mixes with the grey soot on your knuckles, a small and stinging reminder that the old administration exacts its toll in slow measures even when you try to stand like a pillar. You wipe the salt from your lip, poorer by a drop of blood and a vital breath of time, but the tunnel ahead remains open for the iron wheels to turn.",
+   "page": "A sudden rattle in your chest betrays you, and the cough bursts out like a dry coal-shot, cracking the tunnel's silence open. The oil portrait seems to lean from its frame. Failure catches in your throat. You gasp while a flake of falling slate slices a long, clean line across the back of your hand, and blood mixes with the grey soot on your knuckles. The old administration exacts its toll in slow measures. You wipe the salt from your lip. Poorer by a drop of blood and a breath of time, you still have the tunnel open ahead for the iron wheels.",
    "exits": [
     {
      "label": "Step past the frame into the lower siding",
@@ -15997,7 +15997,7 @@
    "kind": "scene",
    "title": "Slipping the Fastening",
    "brief": "You force the warped oak post back into its stone socket with a heavy iron lever, securing a brass grease-gun.",
-   "page": "Shadows stretch long and crooked across the tunnel floor as your lantern flame flickers against a damp draft from the ventilation shafts. You secure the brass grease-gun to your belt loop, its brass barrel cold against your hip, while your fingers test the stability of the braced timber. The silence here is heavy, broken only by the distant, rhythmic dripping of subterranean water somewhere beyond the partition walls.",
+   "page": "Shadows stretch long and crooked across the tunnel floor as your lantern flame flickers against a damp draft from the ventilation shafts. The brass grease-gun clips to your belt loop, barrel cold against your hip. Fingers test the braced timber. Beyond the partition walls, subterranean water drips in a distant rhythm.",
    "exits": [
     {
      "label": "Advance along the timber-shored siding",
@@ -16342,7 +16342,7 @@
    "kind": "check",
    "title": "Tuning the Master Clock",
    "brief": "You adjust the clockwork mechanism of her massive desk chronometer until it chimes true, gaining an official timetable pass.",
-   "page": "The main balance wheel shudders violently beneath your fingertips as you try to catch the timing pin while the heavy drive-spring remains under full tension. A single slip will strip the bronze teeth or send a shower of hot mainspring shrapnel into your knuckles, leaving you crippled in the dark beneath the mountains. You hold your breath, squinting through the gloom at the grease-blackened cogs, and time your push against the backlash of the vibrating escapement. The metal groans under your touch as you ease the regulator lever toward the true mark.",
+   "page": "The main balance wheel shudders beneath your fingertips as you try to catch the timing pin while the drive-spring stays under full tension. One slip strips the bronze teeth or throws hot mainspring shrapnel into your knuckles. You would be crippled in the dark beneath the mountains. Breath held, you watch the grease-blackened cogs through the gloom and time your push against the backlash of the vibrating escapement. The metal groans. You ease the regulator lever toward the true mark.",
    "exits": [
     {
      "label": "check-full",
@@ -17978,7 +17978,7 @@
    "kind": "recovery",
    "title": "The Snapped Claw",
    "brief": "You wrench the iron mounting bracket from the wall with brute force, shattering the door-lock, and retrieve a heavy leather tool-roll.",
-   "page": "The tool slips off the greasy lead seal with a sharp metallic crack, barking your knuckles hard against the sharp edge of the iron casing. A hot trickle of blood mixes with the soot on your hand as you stumble back against the gantry rail, cursing softly in the dim amber light. The heavy junction box remains firmly locked, its lead seal mocking your effort while the lost time ticks away against the approaching storm. You suck on your bleeding knuckles, nursing the sharp sting as you look for another way to force the mechanism.",
+   "page": "The tool slips off the greasy lead seal with a metallic crack and barks your knuckles against the edge of the iron casing. Blood mixes with soot. You stumble back against the gantry rail and curse in the dim amber light. The junction box stays locked, lead seal intact, while lost time ticks against the approaching storm. Bleeding knuckles go to your mouth. You scan the casing for another way to force the mechanism.",
    "exits": [
     {
      "label": "Press onward through the bitter cold",
