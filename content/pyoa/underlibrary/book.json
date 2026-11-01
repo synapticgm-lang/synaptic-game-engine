@@ -8999,7 +8999,7 @@
    "kind": "bottleneck",
    "title": "The Water-Clock Antechamber",
    "brief": "Armed beadles intercept your progress down the vaulted corridor, escorting you into a dim antechamber filled with the ticking of a hundred water-clocks.",
-   "page": "Heavy oak doors swing shut behind you with a dull boom as armed beadles in stiff grey uniforms escort you into a remarkably austere antechamber carved directly from the living rock of Quillon's foundations. The air here is thick with the rhythmic, hypnotic ticking of a hundred water-clocks, their brass-and-glass reservoirs dripping dark, ink-like fluid into pewter basins to measure the unyielding passage of the Long Closing. Spectators murmur quietly from shadowy alcoves as you are led toward the center of the mosaic floor, where the tribunal awaits to weigh your transgressions against the ancient laws of the library.",
+   "page": "Oak doors swing shut behind you with a dull boom. Armed beadles in stiff grey uniforms escort you into an austere antechamber carved from the living rock of Quillon's foundations. A hundred water-clocks tick in the chamber, brass-and-glass reservoirs dripping dark, ink-like fluid into pewter basins that mark the passage of the Long Closing. Spectators murmur from shadowy alcoves as you are led to the center of the mosaic floor, where the tribunal waits to weigh your transgressions against the ancient laws of the library.",
    "exits": [
     {
      "label": "Face the waiting tribunal judges",
@@ -11751,7 +11751,7 @@
    "kind": "recovery",
    "title": "The Cost of Fatigue",
    "brief": "You remain steadfast against the psychic pressure of the whispering walls, risking mental fatigue, to find a hidden alcove containing supplies.",
-   "page": "Mental exhaustion overwhelms your defences just as your fingers brush against a cold metal flask, sending a sharp wave of vertigo crashing through your skull. You stumble backward against the rough shelving, dropping your lamp and spilling precious oil across the stone floor in a sputtering hiss. The darkness closes in for a breathless moment before your vision clears, leaving a dull throbbing behind your eyes and a scorched burn across your palm where hot metal grazed your skin.\n\nShaken and bruised by the sudden backlash, you salvage what little remains of the scattered provisions and press onward into the gloom.",
+   "page": "Mental exhaustion overwhelms your defences just as your fingers brush against a cold metal flask. Vertigo arrives in a sharp wave. You stumble backward against the rough shelving, drop your lamp, and spill precious oil across the stone floor in a sputtering hiss. Darkness closes in for a moment. When your vision clears, a scorched burn marks your palm where the hot metal grazed your skin.\n\nShaken and bruised by the sudden backlash, you salvage what little remains of the scattered provisions and press onward into the gloom.",
    "exits": [
     {
      "label": "Continue onward through the gloom",
