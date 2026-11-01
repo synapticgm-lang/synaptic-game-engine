@@ -772,7 +772,7 @@
    "kind": "reward",
    "title": "A Pilgrim's Ward",
    "brief": "You coax a frightened drift pilgrim out of hiding to ask about the Meridian Gear, risking their sudden panic to earn a protective bone talisman.",
-   "page": "Breathing a heavy sigh, you let the echo of the pilgrim's shriek fade into the damp air of the cliffs. Whether you spoke too harshly or moved too fast, the panic passes eventually, leaving him shivering and repentant. He murmurs apologies to the absent sea, clawing at his kelp mantle. In exchange for your patience, he presses a small, cold object into your palm before scuttling away towards the deeper shadows of the rocks.\n\nIt is a bleached piece of spine, carved with the symbol of an unfurling wave - a ward against the wrath of the drowned. Tucking the charm into your coat, you turn your attention back to the broader chaos of the cliff-town, ready to seek answers where the water used to be.",
+   "page": "You let the pilgrim's shriek die in the damp air of the cliffs. His panic passes. He stands shivering and repentant, murmuring apologies to the absent sea, clawing at his kelp mantle. For your patience he presses a small cold object into your palm, then scuttles away toward the deeper shadows of the rocks.\n\nIt is a bleached piece of spine, carved with the symbol of an unfurling wave - a ward against the wrath of the drowned. You tuck the charm into your coat and turn back to the cliff-town, where the water used to be.",
    "exits": [
     {
      "label": "Return to the dry docks",
@@ -8170,7 +8170,7 @@
    "kind": "recovery",
    "title": "Snapped Cables",
    "brief": "You repair a shattered pulley mechanism to lower your heavy gear safely, dodging snapping cables to ensure your supplies remain intact.",
-   "page": "The heavy winch shrieks in high agony as the iron pawns shear off, sending your supply pack plunging into the darkness with a distant, echoing crash. A whip-like steel cable lashes across your forearm, tearing through your woolen sleeve and leaving a burning crimson welt across your skin. You press your hand against the smarting cut, cursing quietly in the damp dark as you realize half your rations are now scattered across the unseen floor far below. Shaking your head, you gather the remaining gear and resume your careful descent down the shaft.",
+   "page": "The winch shrieks as the iron pawns shear off. Your supply pack plunges into the darkness and hits far below. A whip-like steel cable lashes across your forearm, tears through your woolen sleeve, and opens a burning crimson welt across your skin. You press your hand against the smarting cut and curse in the damp dark. Half your rations now lie scattered across the unseen floor far below. You gather the remaining gear and resume your careful descent down the shaft.",
    "exits": [
     {
      "label": "Continue down the broken shaft",
@@ -9803,7 +9803,7 @@
    "kind": "scene",
    "title": "The Fraying Hawser",
    "brief": "You physically hold a tearing rope steady for a panicked citizen, risking torn muscles to receive a vital Brineholder password.",
-   "page": "Hemp fibres shriek against iron stanchions as a heavy cargo net swings wild over the abyss between Saltspire's leaning piers. A merchant clerk, pinned by his own panic, clings to a snapping guideline while the wind tears at his fine wool coat. Below lies the empty grey floor of the Low, far enough down that a falling body would be nothing more than a wet splash against salt. You lurch forward across the shivering planks, boots skidding on encrusted rime, and slam your shoulder against the post just as the hemp begins to unravel into thin white hairs.\n\nYour fingers claw into the greasy strands, twisting the damp rope around your forearm to create a desperate friction brake. The vibration travels straight up your bones, numbing your palms as the weight of the dangling hoist fights your grip. If you let go now, the cargo and the clerk go over together, leaving you with nothing but a torn hide and a screaming conscience.",
+   "page": "Hemp fibres shriek against iron stanchions as a cargo net swings wild over the abyss between Saltspire's leaning piers. A merchant clerk, pinned by his own panic, clings to a snapping guideline while the wind tears at his fine wool coat. Below lies the empty grey floor of the Low, far enough down that a falling body would be nothing more than a wet splash against salt. You lurch forward across the shivering planks, boots skidding on encrusted rime, and slam your shoulder against the post just as the hemp begins to unravel into thin white hairs.\n\nYou dig into the greasy strands and twist the damp rope around your forearm for a friction brake. The dangling hoist pulls hard. Your palms go numb. Let go now and the cargo and the clerk go over together.",
    "exits": [
     {
      "label": "Brace against the vibrating hemp",
@@ -9871,7 +9871,7 @@
    "kind": "recovery",
    "title": "Torn Tendons and Salt",
    "brief": "You physically hold a tearing rope steady for a panicked citizen, risking torn muscles to receive a vital Brineholder password.",
-   "page": "The rope snaps with the crack of a dry branch, whipping back to lash across your forearm and leaving a hot, weeping welt through your torn jacket. You stumble hard against the railing, breath knocked from your lungs as the heavy load crashes into the empty air below with a hollow, distant thud. Your muscles burn with a deep, sullen ache that settles into your joints like winter damp, reminding you of the cost of interference. The clerk vanishes into the grey mist before you can demand your due, leaving you bruised and nursing a smarting arm on the swaying boards.",
+   "page": "The rope snaps with the crack of a dry branch and whips back across your forearm. A hot weeping welt opens through your torn jacket. You stumble hard against the railing, breath knocked from your lungs. The load crashes into the empty air below with a hollow distant thud. Your muscles burn; a sullen ache settles into your joints like winter damp. The clerk vanishes into the grey mist before you can demand your due. Bruised, you nurse a smarting arm on the swaying boards.",
    "exits": [
     {
      "label": "Continue toward the lower tiers",
@@ -10544,7 +10544,7 @@
    "kind": "scene",
    "title": "The Watchman's Turning",
    "brief": "You distract a pacing watchman with a thrown piece of debris, risking an alarm to slip inside a secure archivist office.",
-   "page": "Heavy iron lanterns swing in the salty updraft, casting long, fractured shadows across the high walkways of Saltspire. A solitary watchman paces his beat with mechanical regularity, his boots clicking against the riveted plating just ten paces from the restricted archivist doors. You reach down and pry a loose rusted rivet from the timber decking, feeling its satisfying weight in your palm. With a sharp flick of your wrist, you send the iron scrap clattering into a distant empty bucket, creating a metallic echo that draws the guard instantly away from his post.",
+   "page": "Iron lanterns swing in the salty updraft and throw fractured light across the high walkways of Saltspire. A solitary watchman paces his beat with mechanical regularity, his boots clicking against the riveted plating just ten paces from the restricted archivist doors. You pry a loose rusted rivet from the timber decking. Cold iron sits in your palm. A sharp flick of the wrist sends the scrap into a distant empty bucket. Metal clatters on metal. The guard leaves his post at once and goes after the noise.",
    "exits": [
     {
      "label": "Dart toward the heavy door",
@@ -11200,7 +11200,7 @@
    "kind": "check",
    "title": "The Jammed Latch",
    "brief": "You attempt to jam a pursuit door with a shattered roof tile, risking crushed fingers to buy precious time and a discarded weapon.",
-   "page": "Your fingers fly over the heavy iron door frame, positioning a jagged shard of roof tile into the narrow gap of the latch just as furious pounding echoes from the other side. The wood shudders under a sudden, violent shoulder-strike, threatening to crush your knuckles against the stone wall if your wedge slips by even a fraction of an inch. Sweat stings your eyes in the damp wind as you hammer the tile home with the heel of your palm, holding your breath against the impending crash.",
+   "page": "You work a jagged shard of roof tile into the narrow gap of the latch in the iron door frame. Furious pounding hits the other side. The wood shudders under a sudden violent shoulder-strike. If the wedge slips even a fraction, the door will crush your hands against the stone wall. Damp wind puts salt in your eyes. You hammer the tile home with the heel of your palm and hold your breath for the next crash.",
    "exits": [
     {
      "label": "check-full",
@@ -12556,7 +12556,7 @@
    "kind": "scene",
    "title": "Deeper into the Stale Dark",
    "brief": "You carve a series of guiding marks into the coral pillars, risking a ruined blade to ensure you can find your way back.",
-   "page": "The air grows cooler and heavier as you press further past the outer ring of stilts, leaving the distant rumble of the city lifts behind in favor of absolute, echoing silence. Strange shapes loom in the gray murk - discarded cargo nets stiffened into stone, skeletal whale-ribs draped in strands of dried kelp, and the occasional rusted winch housing left behind by forgotten scavengers. You pause every few paces to carve another guiding rune into the damp timber, ensuring your route back remains unmistakable.\n\nA sudden scuttling sound echoes from a dark recess nearby, prompting you to grip your knife handle tighter.",
+   "page": "The air cools as you press further past the outer ring of stilts. The distant sound of the city lifts falls away. Absolute silence takes its place. Strange shapes loom in the gray murk - discarded cargo nets stiffened into stone, skeletal whale-ribs draped in strands of dried kelp, and the occasional rusted winch housing left by forgotten scavengers. Every few paces you carve another guiding rune into the damp timber so the route back stays clear.\n\nA sudden scuttling comes from a dark recess nearby. Your hand finds the knife handle and holds it.",
    "exits": [
     {
      "label": "Test the strength of your blade",
@@ -13533,7 +13533,7 @@
    "kind": "recovery",
    "title": "Sinking into the Trap",
    "brief": "You study a mosaic of the old Tidewardens to deduce the correct pressure plate path, using your sharp mind to uncover a hidden cache of medicinal kelp.",
-   "page": "A sudden metallic snap echoes beneath your heel as a false stone gives way, plunging your boot into a narrow, grease-lined pit. Sharp iron teeth snap shut against your shin, tearing a ragged line through your trousers and drawing a dark line of blood. You wrench your leg free with a desperate heave, leaving a strip of wool and a spray of crimson behind in the darkness as the trap resets with a heavy, hollow thud.",
+   "page": "A metallic snap under your heel as a false stone gives way. Your boot drops into a narrow grease-lined pit. Sharp iron teeth clamp shut against your shin, tear a ragged line through your trousers, and draw a dark line of blood. You wrench your leg free with a desperate heave. A strip of wool and a spray of crimson stay behind in the darkness. The trap resets with a hollow thud.",
    "exits": [
     {
      "label": "Pull free from the trap",
@@ -14857,7 +14857,7 @@
    "kind": "scene",
    "title": "The Logician's Ledger",
    "brief": "You present a contradictory paradox from one of the ruined ledgers to confuse the automaton, utilizing sharp logic to steal a rare oceanic map.",
-   "page": "Iron hinges groan in the chill subterranean draft as you slide the water-warped ledger across the frost-filmed brass of the desk, pointing a grease-stained thumb at the impossible ink marks of the third equinox. You note how the tide-tables of seventy years ago demand a flood where these very columns record a permanent ebb, creating a closed loop of clerical error that the mechanical archivist cannot compute. The automaton's brass cogs stutter and click, its heavy copper eyelids fluttering as its logic-engine chews the contradiction, leaving its internal mirrors entirely unattended. Snatching the rolled vellum chart of the deep trenches from beneath its inactive claws, you tuck the prize safely inside your woollen waistcoat just before the machine begins to grind anew.",
+   "page": "Iron hinges groan in the chill subterranean draft as you slide the water-warped ledger across the frost-filmed brass of the desk. A grease-stained thumb finds the impossible ink marks of the third equinox. The tide-tables of seventy years ago demand a flood where these columns record a permanent ebb: a closed loop of clerical error the mechanical archivist cannot compute. The automaton's brass cogs stutter and click. Copper eyelids flutter while its logic-engine chews the contradiction, and its internal mirrors sit free. You snatch the rolled vellum chart of the deep trenches from beneath its inactive claws and slide the prize inside your woollen waistcoat. The machine starts to grind again.",
    "exits": [
     {
      "label": "Slip back into the stairwell shadows",
@@ -17668,7 +17668,7 @@
    "kind": "reward",
    "title": "Spoils Of The Wreckage",
    "brief": "You carefully dismantle a broken bathysphere lodged between the great gears, risking sudden structural collapse, to salvage a precious spool of pristine copper wire.",
-   "page": "Fingers cramped and aching from the tense struggle against the ruined hull, you pull the last pristine coil of copper wire free from the wreckage with a sharp, echoing tug. However narrowly you avoided bringing the whole twisted apparatus down upon your head, the prize rests safely in your grip. The metal shines with an unblemished, reddish glow, completely untouched by the corrosive brine that has eaten away everything else in this drowned vault for generations. It is a rare find, worth a heavy handful of coin or a dozen favors back in the cliff-town.",
+   "page": "Your hands ache from the struggle against the ruined hull. You pull the last pristine coil of copper wire free with a sharp tug. The twisted apparatus stays put overhead. The prize rests in your grip. The metal shines with an unblemished reddish glow, untouched by the corrosive brine that has eaten away everything else in this drowned vault for generations. Back in the cliff-town a coil like this buys a fat purse of coin or a dozen favors.",
    "exits": [
     {
      "label": "Return to the main threshold",
@@ -19741,7 +19741,7 @@
    "kind": "ending-part",
    "title": "Saltspire Beneath the Surge",
    "brief": "Ending \"Drown Saltspire\"",
-   "page": "Water does not ask for permission when it reclaims its throne; it simply rises, swallowing the wooden stilts of Saltspire with a long, wet groan of timber and iron. The wealthy Brineholders who traded in bottled rain and hoarded moisture find their high balconies suddenly level with a churning, grey-green sea that cares nothing for ledgers or sealed wells. From your vantage point on the shore, you watch the proud stilt-city shudder as the first great wall of brine hits its lower ladders, sending baskets of precious water tumbling into the foam. No bell rings for them, and no ferryman waits; the tide simply climbs higher, turning parlours into tide-pools and drowning the ledgers where the price of thirst was calculated. The water tastes of ancient slate and bitter vengeance, grey and heavy with silt, filling every doorway until Saltspire is nothing more than a cluster of drowning chimneys poking through the froth.",
+   "page": "Water does not ask when it takes Saltspire back. It simply rises, and the wooden stilts answer with a long wet groan of timber and iron. The wealthy Brineholders who traded in bottled rain and hoarded moisture find their high balconies suddenly level with a churning grey-green sea that cares nothing for ledgers or sealed wells. From your vantage on the shore you watch the proud stilt-city shudder as the first great wall of brine hits its lower ladders. Baskets of precious water tumble into the foam. No bell rings for them. No ferryman waits. The tide climbs higher, turns parlours into tide-pools, and drowns the ledgers where the price of thirst was calculated. The water tastes of ancient slate and silt. It fills every doorway until Saltspire is nothing more than a cluster of drowning chimneys poking through the froth.",
    "exits": [
     {
      "label": "Watch the stilt-city go under",
