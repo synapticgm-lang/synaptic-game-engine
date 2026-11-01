@@ -3317,7 +3317,7 @@
    "kind": "recovery",
    "title": "The Frayed Cord",
    "brief": "You read a complex binding instruction pinned to the wall, mastering a knot that locks doors from the outside.",
-   "page": "Hemp snaps with a dry crack, and the heavy door swings outward, catching you off balance and sending you sprawling across the gritty floorboards. A sharp edge of the iron staple catches your forearm, leaving a shallow, burning scratch that immediately begins to ooze dark printer's ink instead of blood. You scramble back as the door rebounds, clutching your throbbing arm and nursing a fresh debt to the lending clerk for the ruined cord.\n\nDust motes settle slowly over the scattered fragments of your failed knot.",
+   "page": "Hemp snaps with a dry crack. The door swings outward, catches you off balance, and dumps you across the gritty floorboards. A sharp edge of the iron staple rakes your forearm and leaves a shallow burning scratch that starts to ooze dark printer's ink instead of blood. You scramble back as the door rebounds, clutch the arm, and already owe the lending clerk for the ruined cord.\n\nDust settles on the scattered scraps of your failed knot.",
    "exits": [
     {
      "label": "Retreat toward the gallery lights",
@@ -3506,7 +3506,7 @@
    "kind": "recovery",
    "title": "Tangled in False Seams",
    "brief": "You decipher the secret code woven into the binding thread of a master volume, revealing Thessaly's intended destination.",
-   "page": "Confusion takes root as the tiny stitches blur together under the smoking wick, leading your tired eyes down a deceptive counter-fold in the calfskin. A sudden shudder runs through the nearby shelves, jarring your elbow and sending your lamp crashing against the stone floor with a sharp hiss of dying oil. You stumble backward into a stack of heavy quartos, bruising your ribs against a protruding iron bracket and leaving a jagged tear across your sleeve. The correct path slips from your mind, replaced by a dull, throbbing ache and the lingering taste of lamp-soot. You salvage your dented tin lantern from the debris and press on regardless.",
+   "page": "Confusion takes root as the tiny stitches blur under the smoking wick and lead your tired eyes down a deceptive counter-fold in the calfskin. A sudden shudder runs through the nearby shelves. Your elbow jars and the lamp crashes against the stone floor with a sharp hiss of dying oil. You stumble backward into a stack of quartos, bruise your ribs on a protruding iron bracket, and tear a jagged line across your sleeve. The correct path slips from your mind. Lamp-soot coats your tongue.\n\nYou salvage your dented tin lantern from the debris and press on.",
    "exits": [
     {
      "label": "Pick up your lantern and press onward",
@@ -9763,7 +9763,7 @@
    "kind": "scene",
    "title": "Ink on the Sleeve",
    "brief": "You resist the temptation to falsify your own travel records under intense interrogation, risking your nerve, to earn the secret respect of a senior clerk.",
-   "page": "Cold lamplight catches brass spectacle frames as the examiner leans in and taps an ink-stained finger on the suspicious gap in your movement logs. Between the tall bookshelves the silence holds gum arabic and dried gall. You do not drop your gaze from the clerk whose pale palm carries your administrative fate.\n\nA draft from the ventilation shafts makes the oil lamps jump. Shadows climb the rows of card-drawers behind the tribunal dais. The senior official tilts his head, matching your mute defiance against the easy convenience of a forged confession.",
+   "page": "Cold lamplight catches brass spectacle frames as the examiner leans in and taps an ink-stained finger on the suspicious gap in your movement logs. Between the tall bookshelves the silence holds gum arabic and dried gall. You hold his gaze. His pale palm carries your administrative fate.\n\nA draft from the ventilation shafts makes the oil lamps jump. Shadows climb the rows of card-drawers behind the tribunal dais. The senior official tilts his head, matching your mute defiance against the easy convenience of a forged confession.",
    "exits": [
     {
      "label": "Meet the cold gaze without flinching",
@@ -10246,7 +10246,7 @@
    "kind": "recovery",
    "title": "The Cost Of Confusion",
    "brief": "You decipher the shifting categorical symbols carved into the floorboards, risking profound confusion, to map the safest route forward.",
-   "page": "A sudden wrenching shudder of the timbers betrays your faulty calculation. You sprawl across the abrasive oak planks as a row of shelf-dividers snaps shut like teeth. The sharp edge of a brass classification plate slices a jagged line across your knuckles, drawing a bright line of crimson that immediately stains the sacred wood. You scramble backward with a sharp intake of breath, clutching your bleeding hand while the floor settles into a crooked, unstable angle. The mistake costs you precious minutes and leaves a dull, throbbing ache in your fingers, but the path ahead finally locks into a grudging, permanent alignment.",
+   "page": "A sudden wrenching shudder of the timbers betrays your faulty calculation. You sprawl across the abrasive oak planks. A row of shelf-dividers snaps shut like teeth. The sharp edge of a brass classification plate slices a jagged line across your knuckles and draws a bright line of crimson that stains the sacred wood. You scramble backward with a sharp intake of breath, clutch your bleeding hand, and feel the floor settle into a crooked unstable angle. Precious minutes are gone. Ache sits in your fingers, but the path ahead finally locks into a grudging permanent alignment.",
    "exits": [
     {
      "label": "Advance along the crooked boards",
@@ -17776,7 +17776,7 @@
    "kind": "recovery",
    "title": "Broken Resolve",
    "brief": "You stare down the whispering phantom of a senior clerk guarding the seal, testing your resolve, and you acquire a stamped waiver bearing the Archivist's own seal.",
-   "page": "A sudden surge of ancient authority shatters your concentration, driving you to your knees with a crushing weight upon your shoulders as old memories of reprimands flood your mind. The phantom clerk's voice rises in a triumphant screech, mocking your humble station among the shelvers and demanding an impossible toll in overdue stamps. You grit your teeth against the blinding headache and crawl forward through the freezing draft until your fingers graze the oak base of the lectern. The spirit retreats an inch, leaving you shaken and drained, but alive enough to continue.",
+   "page": "A surge of old authority breaks your focus and drives you to your knees as memories of reprimands flood your mind. The phantom clerk's voice rises in a triumphant screech that mocks your humble station among the shelvers. \"An impossible toll in overdue stamps,\" it demands. You grit your teeth against the blinding headache and crawl forward through the freezing draft until your fingers graze the oak base of the lectern. The spirit yields an inch. You stay on the flagstones and catch your breath beside the wood.",
    "exits": [
     {
      "label": "Collect the stamped parchment slip",
