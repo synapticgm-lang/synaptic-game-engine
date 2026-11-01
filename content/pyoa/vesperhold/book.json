@@ -813,7 +813,7 @@
     }
    ],
    "title": "Pewter Charm on Stone",
-   "page": "A nervous novice presses a pewter charm of St. Jude into your palm by the frozen fountain to ward off the rock-slides on the Ninety Steps. The metal is bitterly cold against your skin, stamped with the crude image of a fisherman and a heavy oar. You slip the trinket into your mitten, offering a brief, silent nod to the boy before looking down the dizzying drop.\n\nThe fountain ice cracks with a sharp, pistol-like report."
+   "page": "A nervous novice presses a pewter charm of St. Jude into your palm by the frozen fountain to ward off the rock-slides on the Ninety Steps. The metal bites. It is stamped with the crude image of a fisherman and an oar. You slip the trinket into your mitten, offer a brief silent nod to the boy, and look down the dizzying drop.\n\nThe fountain ice cracks. The report is sharp as a pistol shot."
   },
   {
    "id": "vh-1-0-2-8",
@@ -11690,7 +11690,7 @@
     }
    ],
    "title": "The Skeletal Arms of Mill Six",
-   "page": "Beneath the skeletal arms of Mill Six, miller Thrum bargains a day of your youth for the secret grammar of gale-notes, his fingers tapping an impatient rhythm on a wooden grain scoop. The wind rattles the canvas sails overhead like dry bones rattling in a crypt. Refusing the offer leaves you with your precious time intact, but forces you to face the unpredictable upper drafts entirely on your own wits.\n\nThe bronze clapper gives a warning note against your back as you count every hour left before the passes seal shut. Thrum watches you with narrowed eyes, waiting to see whether you will trade your schedule or turn your back on his wisdom."
+   "page": "Beneath the skeletal arms of Mill Six, miller Thrum bargains a day of your youth for the secret grammar of gale-notes, and his fingers tap an impatient rhythm on a wooden grain scoop. He says, \"A day of youth for gale-notes.\" Canvas sails rattle overhead like dry bones in a crypt. Refuse and your hours stay yours, but the upper drafts will meet you alone.\n\nThe bronze clapper gives a warning note against your back as you count every hour left before the passes seal shut. Thrum's eyes narrow. He waits for your answer."
   },
   {
    "id": "vh-3-2-1-0",
@@ -13055,7 +13055,7 @@
    "endingId": "doom-3-1",
    "exits": [],
    "title": "The Broken Tier",
-   "page": "Ignoring the warning wind-calls echoing from the higher mills, you attempt to cross the exposed terrace while a sudden gathering gale tears at your cloak. The bronze clapper catches the fierce crosswind like a sail and throws your footing off the slick black ice. You pitch forward against the low stone parapet, and the momentum drags you and your precious burden over the rim.\n\nFor one weightless heartbeat, the screaming wind falls completely silent as the mountain drops away beneath your boots. Then the dark abyss swallows you whole, and only a faint bronze note fades against the empty air."
+   "page": "You ignore the warning wind-calls from the higher mills and try to cross the exposed terrace while a sudden gale tears at your cloak. The bronze clapper catches the fierce crosswind like a sail and throws your footing off the slick black ice before you can dig a heel in. You pitch forward against the low stone parapet. Momentum takes you. It drags you and your precious burden over the rim.\n\nFor one weightless heartbeat the screaming wind falls silent as the mountain drops away beneath your boots. Then the dark abyss swallows you whole. Only a faint bronze note fades against the empty air."
   },
   {
    "id": "vh-d-3-2",
@@ -15301,7 +15301,7 @@
     }
    ],
    "title": "The Fog-Warden's Hearth",
-   "page": "Sheltered in the lee of an azure ice-rib, a lone Fog-Warden sits bundled in grey wool, trying to clear the choked mouth of a bone signal horn with a wire pin. You share a draught of lukewarm chicory tea from your flask, tasting the bitter chicory and the metallic tang of the mountain air as the stranger nods in silent gratitude. The glacier all around you creaks and groans, settling into new shapes under the weight of the coming winter night. The steep wall ahead demands absolute focus, while the narrow ice-ledge offers a perilously wind-swept alternative.\n\nYou can tackle the vertical glass wall or coax the mule along the narrow ledge."
+   "page": "Sheltered in the lee of an azure ice-rib, a lone Fog-Warden sits bundled in grey wool and works a wire pin through the choked mouth of a bone signal horn. You share lukewarm chicory tea. Bitter chicory and the metallic tang of mountain air meet your tongue as the stranger nods in silent thanks. The glacier creaks. It groans all around you as winter night draws near and new shapes form under the white. Ahead, the steep wall wants your full attention, and the narrow ice-ledge offers a wind-swept alternative.\n\nThe vertical glass waits. So does the ledge."
   },
   {
    "id": "vh-4-1-3-1",
@@ -17104,7 +17104,7 @@
     }
    ],
    "title": "The Great Silence",
-   "page": "The howling gale drops away in a single breath, leaving an absolute and ringing silence over the vast, jagged expanse of white ice. The sudden quiet presses harder than the wind, broken only by the rhythmic puff of Biscuit's breath and the faint residual knock of the bronze clapper against your shoulders. All around you, the mountain peaks stand like silent sentinels under a pale, cloudless sky.\n\nThe stillness offers a rare moment of clarity as you survey the winding descent ahead. You can massage your stiff fingers, step out onto the lower path, or choose to turn back toward the upper heights."
+   "page": "The howling gale drops away in a single breath. Absolute quiet lies over the vast, jagged expanse of white ice. That hush presses harder than the wind, broken only by the puff of Biscuit's breath and the faint residual knock of the bronze clapper against your shoulders. All around you, the mountain peaks stand under a pale, cloudless sky like mute watchers on a pale field.\n\nClarity comes as you survey the winding descent ahead. Stiff fingers need kneading. The lower path waits, and the upper heights still hold their claim."
   },
   {
    "id": "vh-4-2-3-15",
@@ -17349,7 +17349,7 @@
     }
    ],
    "title": "Upper Orchard Fences",
-   "page": "You lead the mule down the winding stone track. Gray shapes of the upper orchard fences show through the rising mist. Moss-covered apple trees crowd either side of the path, their branches bent under late, frost-bitten fruit. The world above has vanished behind a curtain of white cloud. Only the click of hooves on wet slate remains.\n\nA wooden gate stands slightly ajar ahead at the edge of the lower tier's managed lands."
+   "page": "You lead the mule down the winding stone track as gray shapes of the upper orchard fences show through the rising mist and moss-covered apple trees crowd either side of the path with branches bent under late, frost-bitten fruit. The world above has vanished. Only the click of hooves on wet slate remains behind a curtain of white cloud.\n\nA wooden gate stands slightly ajar ahead at the edge of the lower tier's managed lands."
   },
   {
    "id": "vh-4-2-5-1",
@@ -22890,7 +22890,7 @@
     }
    ],
    "title": "The Lower Embankment",
-   "page": "Along the slippery stone embankment of the lower basin, a net-weaver named Nuala mends torn hemp meshes, her wooden shuttle flying through the gray cords with practiced speed. The cold river water laps against the mossy foundations below, carrying floating bits of marsh grass and wood chips from the upper forests. Biscuit picks his footing along the wet granite blocks while you hitch the straps that hold the Clapper to your aching back. Nuala ties a final knot and bites through the cord, watching the mist curl off the dark surface of the river.\n\nThe gray light begins to fade over the water, casting long shadows across the crowded boat docks and alleys. You weigh the fading daylight against the distance remaining to the foundry guild, the iron-roofed casting shed, or the grand furnace pit."
+   "page": "Along the slippery stone embankment of the lower basin, a net-weaver named Nuala mends torn hemp meshes, and her wooden shuttle flies through the gray cords with practiced speed. Cold water laps below. It carries marsh grass and wood chips from the upper forests. Biscuit picks his footing along the wet granite blocks while you hitch the straps that hold the Clapper to your aching back. Nuala ties a final knot and bites through the cord. Mist curls off the dark surface of the river.\n\nGray light fades over the water. Long shadows stretch across the crowded boat docks and alleys, and the foundry quarter still lies a hard walk off."
   },
   {
    "id": "vh-6-0-3-5",
@@ -23360,7 +23360,7 @@
     }
    ],
    "title": "The Soot-Choked Vestibule",
-   "page": "Yellow tallow lamps flicker weakly through the thick haze inside the foundry vestibule, casting dancing shadows across water-stained stone walls. Orin stands behind a rickety desk piled high with grease-spotted manifests, blocking the inner doorway with an ink-stained ledger in his hands. He peers at you over the rim of a pair of wire-rimmed spectacles, demanding to see your official guild permits before allowing a single further step. The air smells of vinegar-cured ink and damp wool, the sort of damp that clings to municipal paper and clerks' sleeves. You can hand over your travel papers for inspection or attempt to brush past the nervous clerk."
+   "page": "Yellow tallow lamps flicker through the haze inside the foundry vestibule and throw shifting shadows across water-stained stone walls. Orin blocks the doorway. He stands behind a rickety desk piled high with grease-spotted manifests, an ink-stained ledger in his hands, and peers at you over wire-rimmed spectacles while he demands your official guild permits before any further step. Vinegar-cured ink and damp wool hang in the room. The damp clings to municipal paper and clerks' sleeves.\n\nTravel papers sit in your mitt."
   },
   {
    "id": "vh-6-0-5-3",
@@ -24662,7 +24662,7 @@
     }
    ],
    "title": "The Glowing Gap",
-   "page": "Deafening roars roll down from the overhead flues as a soot-blackened artisan named Fenn tries to wedge a steel crowbar into the glowing gap of the portal. The metal groans under the immense pressure, turning a dull cherry-red while tiny beads of sweat carve pale tracks through the grime on his forehead. Every breath tastes of sulfur and old coke, making your lungs ache as you stand frozen in the blinding heat of the chamber."
+   "page": "Deafening roars roll down from the overhead flues as a soot-blackened artisan named Fenn tries to wedge a steel crowbar into the glowing gap of the portal. The metal groans under the pressure and turns a dull cherry-red while tiny beads of sweat carve pale tracks through the grime on his forehead. Every breath tastes of sulfur and old coke. Your lungs ache in the chamber's heat.\n\nThe crowbar tip glows in the gap."
   },
   {
    "id": "vh-6-1-4-6",
@@ -25163,7 +25163,7 @@
     }
    ],
    "title": "The Hissing Vents",
-   "page": "High-pressure steam vents hiss sharply from a fractured brass pipe overhead, bathing the dark stone alcove in a blinding veil of scalding white vapour. You shield your face with a soot-stained sleeve as the damp heat clings instantly to your woollen garments, making it hard to draw a clean breath. Through the rushing roar of escaping steam, the distant rhythmic pounding of the great forge hammers vibrates straight through the flagged floorboards.\n\nThe blinding cloud begins to thin slightly, revealing narrow paths leading deeper into the foundry's dim labyrinth."
+   "page": "High-pressure steam vents hiss sharply from a fractured brass pipe overhead and bathe the dark stone alcove in a veil of scalding white vapour. You shield your face with a soot-stained sleeve as the damp heat clings at once to your woollen garments. Clean breath is hard to find. Through the rushing roar of escaping steam, the distant pounding of the great forge hammers runs straight through the flagged floorboards.\n\nThe white cloud begins to thin. Narrow stone underfoot shows again."
   },
   {
    "id": "vh-6-2-2-4",
@@ -26697,7 +26697,7 @@
    "exits": [],
    "endingId": "end-C2",
    "title": "The Song in the Metal",
-   "page": "Dusk settles over the thirteen hanging towns like a cool hand laid upon a fevered brow, silencing the noise of the winches and the chatter of the market squares. High above the cloud line, the jagged stone ribs of Orisonhold stand dark and empty against the fading orange of the western sky, stripped of the great voice they once trusted above all else. Yet down in the furrows where the barley pushes through the cold dirt, a faint, rhythmic vibration travels from root to root, steady as a heartbeat in the dark. Biscuit lowers his muzzle to the damp grass by the stone wall, his breath rising in a small, soft cloud that dissolves into the night air. The mountain holds its breath, waiting for no one, while the earth sings its quiet song to the stones."
+   "page": "Dusk settles over the thirteen hanging towns like a cool hand on a fevered brow, and it stills the winches and the chatter of the market squares. High above the cloud line, the jagged stone ribs of Orisonhold stand dark and empty against the fading orange of the western sky, stripped of the great voice they once trusted above all else. Down in the furrows where the barley pushes through the cold dirt, a faint pulse travels from root to root. Biscuit lowers his muzzle to the damp grass by the stone wall. His breath rises in a soft cloud that dissolves into the night air.\n\nBarley tips brush the wall stones."
   },
   {
    "id": "vh-e-C3-1",
@@ -26748,7 +26748,7 @@
    "exits": [],
    "endingId": "end-C3",
    "title": "Bronze and Silence",
-   "page": "Night falls without fanfare over the thirteen stair-towns, wrapping the hanging balconies and the steep slate roofs in an impenetrable mantle of fog and frost. High above the world, Orisonhold rests in absolute quiet, its empty belfry open to the stars and the biting wind that sweeps down from the upper passes. Down in the silent furrows, the unblessed iron rests deep in the dark earth, cold and mute beneath a blanket of winter snow that grows thicker with every passing hour. Biscuit shifts in the shadowed stable and blows a warm breath into the dark; it hangs a moment, then vanishes into the frost. The mountain stands cold and tall against the night, keeping its own counsel while the world sleeps on beneath the heavy ice."
+   "page": "Night falls without fanfare over the thirteen stair-towns, and fog and frost wrap the hanging balconies and the steep slate roofs. High above the world, Orisonhold rests in absolute quiet. Its empty belfry opens to the stars and the biting wind that sweeps down from the upper passes. Down in the silent furrows, the unblessed iron rests deep in the dark earth, cold and mute beneath winter snow that grows thicker with every hour. Biscuit shifts in the shadowed stable and blows a warm breath into the dark; it hangs a moment, then vanishes into the frost.\n\nIce crusts the mule's water pail."
   }
  ]
 }
