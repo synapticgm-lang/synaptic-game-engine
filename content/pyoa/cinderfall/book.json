@@ -588,7 +588,7 @@
    "kind": "scene",
    "title": "Under the Boiler Deck",
    "brief": "You crawl beneath the firebox to fix a leaking injector nozzle, testing your MECHANICS against the searing heat to earn a heavy copper wrench.",
-   "page": "Condensation dripping from the boiler shell plasters your hair to your forehead as you wriggle out from under the iron chassis. Your fingers ache around the handle of the heavy copper wrench, the metal still warm from the relentless radiated heat of the fire-bed. Down the line, a distant signal arm drops with a hollow clank, reminding you that the schedule waits for no one, not even a stalled engine with a bleeding injector. You stash the wrench in the tool box by the coal bunker, ready to throw the boiler feeds whenever the pressure calls for it.\n\nYou stand tall on the iron deck and check the water glass.",
+   "page": "Condensation off the boiler shell plasters your hair flat as you wriggle out from under the iron chassis. The copper wrench is still warm from the fire-bed, and your grip on its handle aches. Down the line a signal arm drops with a hollow clank. The schedule will not wait for a stalled engine with a bleeding injector. You stash the wrench in the tool box by the coal bunker, ready for the boiler feeds when pressure asks for them.\n\nOn the iron deck you turn to the water glass.",
    "exits": [
     {
      "label": "Stand tall on the iron deck",
@@ -650,7 +650,7 @@
    "kind": "scene",
    "title": "Checking the Empty Locker",
    "brief": "You search Hesper Quill's empty locker for hidden notes, testing your CUNNING against a watchful union clerk to secure a greasy spare regulator valve.",
-   "page": "Shadows stretch long across the wooden floorboards of the clerk's office as you pry open the latch on Hesper Quill's rusted locker. The union clerk stands just outside the perimeter wire, leaning heavily on a rolled ledger and watching your every move with dull suspicion. You ignore the weight of his gaze, sliding your fingers along the dark internal seam until they catch on a loose bolt. With a quiet snap of old pine, the false back drops forward, revealing a greasy spare regulator valve left tucked out of sight.",
+   "page": "Long shadows lie across the wooden floorboards of the clerk's office while you pry open the latch on Hesper Quill's rusted locker. The union clerk stands just outside the perimeter wire, propped on a rolled ledger, and tracks each of your moves with dull suspicion. You work past his stare and run a hand along the dark internal seam until it catches a loose bolt. Old pine gives a short snap. The false back drops forward. Behind it sits a greasy spare regulator valve, tucked out of sight.",
    "exits": [
     {
      "label": "Slip the valve into your coat",
@@ -803,7 +803,7 @@
    "kind": "scene",
    "title": "Ledgers of Ashgate",
    "brief": "You sift through discarded ledgers using quick wits to find a hidden timetable noting Hesper's secret night route, gaining a coded destination memo.",
-   "page": "Yellowed leaves of heavy rag paper flutter beneath your fingers as you turn back the moldering covers of the dead stationmaster's personal log. Ink smeared by old moisture tells a story of midnight amendments, unofficial coal allocations, and private memos concerning Hesper Quill's movements through the junction's western switches. A folded leaf of cardstock slips from the binding, bearing a series of railway shorthand marks that hint at a destination far beyond the ordinary timetables. You pocket the scrap just as a floorboard groans overhead, signaling that your time in the office is running short.",
+   "page": "Yellowed leaves of rag paper flutter under your hand as you turn back the moldering covers of the dead stationmaster's personal log. Ink smeared by old moisture records midnight amendments and unofficial coal allocations. Private memos note Hesper Quill's movements through the junction's western switches. A folded leaf of cardstock slips from the binding, marked in railway shorthand that points past the ordinary timetables. You pocket the scrap. Overhead a floorboard groans. Time in the office is nearly spent.",
    "exits": [
     {
      "label": "Examine the hidden schedule card",
@@ -4440,7 +4440,7 @@
    "kind": "recovery",
    "title": "Strained Muscle and Steam",
    "brief": "Wrestling a stuck intake valve clear of sulfur crust prevents a blockage, earning a sealed flask of clean distilled boiler water.",
-   "page": "The wrench slips with a sharp metallic shriek that sets your teeth on edge, sending you stumbling backward against the hot boiler casing. A searing scrape burns across your knuckles, leaving a dark red line that beads quickly through the grey soot on your skin. You catch your breath against the pain and press your bleeding hand into your trousers while the engine drops back into an exhausted, uneven rhythm. Valuable minutes have slipped away into the empty waste, and your knuckles throb with a dull, persistent ache that will stay with you long after the journey ends.",
+   "page": "The wrench slips with a sharp metallic shriek that sets your teeth on edge. You stumble backward into the hot boiler casing. A searing scrape burns across your knuckles; a dark red line beads through the grey soot on your skin. You catch your breath and press the bleeding hand into your trousers. The engine drops back into an exhausted, uneven rhythm. Valuable minutes are gone into the empty waste. Grey soot cakes over the raw knuckles.",
    "exits": [
     {
      "label": "Tend your raw knuckles and press on",
@@ -6592,7 +6592,7 @@
    "kind": "recovery",
    "title": "A Clattering Mistake",
    "brief": "Stealing past the sleeping foreman to retrieve a stolen ledger reveals the hidden combination to the supply locker.",
-   "page": "Your thumb slips on the greasy rim of the brass dial at the worst possible moment, sending a sharp, echoing snap through the hollow metal casing. The foreman jolts upright with a hoarse curse and dives a hand beneath his wool pillow for his iron spanner. You wrench the locker door open in a desperate rush, grabbing whatever loose supplies your fingers find before diving out through the narrow freight hatch into the blinding ash-light. An iron spanner strikes the steel wall just inches above your shoulder and digs a deep, ringing dent as you tumble headfirst into the grey drifts below.",
+   "page": "Your thumb slips on the greasy rim of the brass dial at the worst possible moment. A sharp snap cracks through the hollow metal casing. The foreman jolts upright with a hoarse curse and dives a hand beneath his wool pillow for his iron spanner. You wrench the locker door open in a desperate rush, scoop what loose supplies you can, and dive out through the narrow freight hatch into the blinding ash-light. An iron spanner strikes the steel wall just inches above your shoulder and digs a deep dent. You tumble headfirst into the grey drifts below.",
    "exits": [
     {
      "label": "Flee across the ballast tracks",
@@ -8709,7 +8709,7 @@
    "kind": "check",
    "title": "The Rivet Hammer",
    "brief": "You hammer a loose rivet into the chassis to distract the guards, risking a snapped knuckle to secure an illicit passage permit.",
-   "page": "Iron boots clatter on the overhead gantry above the Marrowbone's coal bunker, drawing close to where you crouch in the soot-stained gloom. You grip the steel hammer, line its flat face against the protruding stem of a loosened structural rivet on the chassis plate, and strike. The ringing blow reverberates through the hollow girderwork like a church bell, echoing sharply across the viaduct to draw the suspicious inspectors away from your hiding place.\n\nYour palm slips slightly against the greasy handle as the vibration jars your forearm, threatening to betray your position with a clumsy clatter.",
+   "page": "Iron boots clatter on the overhead gantry above the Marrowbone's coal bunker and draw close to where you crouch in the soot-stained gloom. You grip the steel hammer, line its flat face against the protruding stem of a loosened structural rivet on the chassis plate, and strike. The ringing blow runs through the hollow girderwork and carries across the viaduct, pulling the suspicious inspectors off your hiding place.\n\nYour grip slips on the greasy handle. Vibration jars your forearm. One clumsy clatter could give you away.",
    "exits": [
     {
      "label": "check-full",
@@ -11066,7 +11066,7 @@
    "kind": "check",
    "title": "Testing the Nerve",
    "brief": "You keep your wits about you in the claustrophobic iron drum, risking claustrophobic terror to locate the sabotage mechanism.",
-   "page": "Panic scratches at the inside of your throat, threatening to lock your jaw as the claustrophobic walls seem to press closer together in the gloom. You close your eyes for a single heartbeat, forcing the hot, metallic taste of fear back down into your stomach while your fingers map the intricate tangle of sabotage wire in total darkness. The slightest slip of your hand will jam the mechanism forever or tear your knuckles against the razor-sharp plate edge.\n\nBiting your lip until copper-tasted warmth fills your mouth, you ready your fingers to untangle the snare without triggering the spring-loaded trap.",
+   "page": "Panic scratches the inside of your throat. Your jaw wants to lock. The iron walls lean in through the gloom. You close your eyes for a single heartbeat and push the hot metallic taste of fear back down into your stomach. In total darkness your hands trace the tangle of sabotage wire. One slip could jam the mechanism forever. Another could tear skin against the razor-sharp plate edge.\n\nYou bite your lip until copper-tasted warmth fills your mouth, then ready your hands to untangle the snare without springing the trap.",
    "exits": [
     {
      "label": "check-full",
@@ -13287,7 +13287,7 @@
    "kind": "check",
    "title": "Navigating the Toll Archive",
    "brief": "You trace the hidden grease-runs along the tunnel footing to bypass the blockade, securing an old railway ledger full of toll-receipts.",
-   "page": "Piling through the clutter of abandoned ledgers and water-damaged manifest sheets, you search for the emergency clearance code that might unlock the bulkhead ahead. The air is thick with the scent of rotting paper and dry rot, making your throat scratch with every intake of breath while the faint ticking of a hidden clock echoes through the masonry. Every instinct warns you that pulling the wrong ledger from the stacked archive could trigger a trip-wire connected to an old warning flare or a fallen stack of iron plate.",
+   "page": "You pile through abandoned ledgers and water-damaged manifest sheets for the emergency clearance code that might unlock the bulkhead ahead. Rotting paper and dry rot scent the room until each breath scratches your throat. A faint clock ticks somewhere in the masonry. Pull the wrong ledger from the stacked archive and you could trip a wire to an old warning flare, or bring down a stack of iron plate.",
    "exits": [
     {
      "label": "check-full",
@@ -13929,7 +13929,7 @@
    "kind": "recovery",
    "title": "A Wrenched Wrist",
    "brief": "You reseal the leaking steam gland under a barrage of dripping condensation, retaining a heavy copper gasket for repairs.",
-   "page": "A vicious crack echoes through the cramped housing as the spanner slips from the rounded nut, sending your knuckles smashing hard into the sharp edge of the cylinder casing. A hot bolt of pain shoots straight up your forearm, leaving you gasping against the iron bulkhead while steam hisses angrily from the imperfect seal. You clutch your throbbing hand to your chest, tasting copper and ash in the damp air.\n\nAlthough the leak continues to weep a thin, stubborn stream of grey condensation across your boots, the engine chugs onward through the darkness.",
+   "page": "A vicious crack fills the cramped housing as the spanner slips from the rounded nut. Your knuckles smash hard into the sharp edge of the cylinder casing. A hot bolt of pain shoots straight up your forearm. You gasp against the iron bulkhead while steam hisses from the imperfect seal. You clutch the hurt hand to your chest and taste copper and ash in the damp air.\n\nThe leak still weeps a thin, stubborn stream of grey condensation across your boots. The engine chugs onward through the darkness.",
    "exits": [
     {
      "label": "Wipe the blood and press on",
@@ -19879,7 +19879,7 @@
    "kind": "ending-part",
    "title": "Without a Master",
    "brief": "Ending \"The Gangers' Republic\"",
-   "page": "No whistle blows to mark the passing hours, because time has ceased to belong to the men in tall hats who kept the clocks in the back offices. You shovel fine coal into the belly of the Marrowbone, watching the orange glow reflect in the wet eyes of companions who have traded their rations for a share in the road. Cinderfall's great Water Gate remains unlatched at last, its heavy bronze gears turned by many hands rather than a single tyrant's decree, letting the cool mountain water run free through the rusted sluices to refresh the gray flats below. There is no applause from the parapets, only the steady hiss of steam escaping into the dusk and the sound of hammers ringing against the iron plates as the unions carve their own names into the tender-frames. Old debts are paid in sweat and shared bread, leaving the slate clean enough to write upon with chalk.",
+   "page": "Whistle hours pass unmarked. Clocks in the back offices no longer set the day for the men in tall hats. You shovel fine coal into the belly of the Marrowbone and catch the orange glow in the wet eyes of companions who traded their rations for a share in the road. Cinderfall's great Water Gate stands unlatched at last. Many hands turned the bronze gears that once answered a single tyrant, and cool mountain water runs free through the rusted sluices onto the gray flats below. The parapets stay quiet. Steam slips into the dusk in a thin hiss while hammers ring against the iron plates and the unions carve their own names into the tender-frames. Old debts settle in sweat and shared bread. The slate is clean enough for chalk.",
    "exits": [
     {
      "label": "Sit upon the iron bench as evening falls",
@@ -19907,7 +19907,7 @@
    "kind": "ending-part",
    "title": "Ashes of the Law",
    "brief": "Ending \"The Prophets' Pyre\"",
-   "page": "Flames leap high from the burning station-house at Ashgate, casting long, writhing shadows of soot across the ruined platforms where the old schedule-books feed the pyre. You watch the charred pages drift into the grey upper air like flocks of black swallows seeking a season that never comes. The Cinder Prophets gather around the blaze with their faces smeared in grease and red clay, chanting low hymns that celebrate the great burning as a sacred clearing of the ground. The heavy iron of the rails glows cherry-red in the heat, twisting and warping until no engine could ever travel upon them again, returning the metal to the earth from which it was dragged so many years ago. Every ledger, ticket-punch, and iron desk is consumed by the cleansing heat, leaving nothing behind but the clean smell of wood-smoke and the dry rattle of cinder-dust in the wind.",
+   "page": "Flames climb from the burning station-house at Ashgate. Long soot shadows crawl the ruined platforms where the old schedule-books feed the pyre. You watch charred pages drift into the grey upper air. The Cinder Prophets stand around the blaze with faces smeared in grease and red clay, chanting low hymns that name the burning a sacred clearing of the ground. Rail iron glows cherry-red in the heat and twists until no engine could travel it again; the metal settles back toward the earth that gave it up years ago. Ledgers vanish into the fire. Ticket-punches and iron desks go with them. Nothing is left but the clean smell of wood-smoke and the dry rattle of cinder-dust in the wind.",
    "exits": [
     {
      "label": "Feed another ledger to the hungry flames",
