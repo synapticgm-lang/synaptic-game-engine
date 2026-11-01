@@ -3274,7 +3274,7 @@
    "kind": "hub",
    "title": "The Engine Sheds",
    "brief": "The Engine Sheds: You return to the roaring smoky depths of the primary roundhouse for final locomotive maintenance.",
-   "page": "Black condensation drips from iron girders above the roundhouse floor, where the Marrowbone stands hissing in the soot-stained dark. Around her flank, the smell of hot grease and damp coal mixes with the distant rumble of the station clock grinding through its gears. You stand amid the silent pits where grease-traps bubble and pressure gauges twitch under flickering gaslamps. Every shadow between the stalled tenders seems to watch your next move with quiet impatience.\n\nSteaming oil drips onto the flagged stone while the vast depot breathes its heavy, iron-lunged breath around you.",
+   "page": "Black condensation drips from iron girders above the roundhouse floor. The Marrowbone stands hissing in the soot-stained dark. Hot grease and damp coal hang on her flank, mixed with the distant grind of the station clock chewing through its gears. Silent pits open around you; grease-traps bubble, and pressure gauges twitch under flickering gaslamps. Between the stalled tenders, the dark sits still enough to notice.\n\nSteaming oil spatters the flagged stone. The depot walls sweat iron and soot.",
    "exits": [
     {
      "label": "Inspect the leaking steam header",
@@ -4572,7 +4572,7 @@
    "kind": "scene",
    "title": "The Hollow Bargain",
    "brief": "Outwitting a scavenging trader hiding among the vapours lets you acquire a pouch of sweet-smelling tallow for the valve gear.",
-   "page": "Yellow vapors swirl around the base of the abandoned hopper car, blurring the scavenger's silhouette into a shifting grey phantom against the dunes. You offer a handful of heavy iron washers from your kit, holding them out flat on your palm so the metal catches the pale, brassy glare of the low sun. The peddler tests the weight of the iron with a grey fingernail, nodding slowly as they slide the pouch across the rusted rail toward your boots.\n\nIt smells faintly of rendered mutton and sweet resin, exactly what the groaning valve gear needs if you are to stop the shrieking metal from seizing up in the dry heat.",
+   "page": "Yellow vapors coil around the abandoned hopper car and smear the scavenger into a grey blot against the dunes. From your kit you offer a handful of iron washers, held flat so the metal catches the pale brassy glare of the low sun. The peddler scrapes a grey fingernail across the washers, nods once, and slides the pouch along the rusted rail to your boots.\n\nRendered mutton and sweet resin lift from the pouch, exactly what the groaning valve gear needs before the shrieking metal seizes in the dry heat.",
    "exits": [
     {
      "label": "Claim the sweet tallow pouch",
@@ -5719,7 +5719,7 @@
    "kind": "scene",
    "title": "The Censer Chain",
    "brief": "Adjusting the smoking iron censers to keep the holy fire burning earns a consecrated brass tallow-dipper for the cylinders.",
-   "page": "Heavy links clink against one another as you guide the smoking iron censer back into its proper alignment above the track. Sulphur smoke swirls around your wrists, stinging minor cuts and coating your skin in a greasy film of black soot. The ground beneath your boots vibrates with the distant, ghostly pulse of an oncoming train that never quite arrives. You wipe your brow with a soiled sleeve, leaving a dark smudge across your forehead while the air grows heavier still. A final adjustment remains before the mechanism runs true.",
+   "page": "Iron links clink as you guide the smoking censer back into line above the track. Sulphur smoke wraps your wrists, finds the minor cuts, and leaves a greasy film of black soot on the skin. Under your boots the ground ticks with a far pulse, as if a train were coming that never does. A soiled sleeve across your brow paints a dark smudge on your forehead. One more turn of the pivot and the mechanism will run true.",
    "exits": [
     {
      "label": "Secure the final rusted pivot",
@@ -5820,7 +5820,7 @@
    "kind": "scene",
    "title": "Words in the Ash",
    "brief": "Listening to a blind prophet recite the schedule of the dead secures a whispered password for the iron gates ahead.",
-   "page": "Grey flakes settle upon your collar as the blind chanter rattles off the hours of the long-dead trains with terrifying precision. You listen closely to the rhythm of the lament, catching the cadence hidden beneath the soot-clogged verses. A low whisper brushes your ear like hot steam, offering the secret word needed to pass the iron gates without drawing the wrath of the watchmen. You commit the phrase to memory just as the chanter falls silent, turning a sightless face toward the distant smoke of the Steppe.",
+   "page": "Grey flakes settle on your collar. The blind chanter rattles off the hours of the long-dead trains, each one exact. You catch the cadence under the soot-clogged verses of the lament. Then a thin whisper reaches your ear, hot as steam, and names the secret word that will pass the iron gates without the watchmen. You lock the phrase away. The chanter goes quiet and turns a sightless face toward the distant smoke of the Steppe.",
    "exits": [
     {
      "label": "Step past the chanter into the grey",
@@ -6624,7 +6624,7 @@
    "kind": "bottleneck",
    "title": "The Carcass of the Tender",
    "brief": "A flock of soot-gulls startles from the carcass of an overturned tender, wheeling wildly into the ash-choked grey sky above.",
-   "page": "A sudden flurry of slate-grey wings erupts from the rusted ribs of an overturned coal tender, scattering a fine cloud of old soot into the freezing air. The skeletal iron frame lies half-buried in the shifting dunes like the carcass of some prehistoric leviathan, its water tanks split wide by ancient frost. As the soot-gulls wheel wildly into the leaden sky, a low, metallic groaning reverberates through the ground beneath your boots, reminding you how thin the crust of civilization is out here on the Cinder Steppe. You pause beside the rusted ruin, wiping a film of greasy black dust from your goggles while the wind howls through the twisted stays. Ahead, the tracks curve away toward the distant murmur of the Grey Bazaar, where smoke curls lazily from thousands of makeshift chimneys built into stalled freight cars.",
+   "page": "Slate-grey wings burst from the rusted ribs of an overturned coal tender and throw old soot into the freezing air. The skeletal iron frame lies half-buried in the shifting dunes, water tanks split wide by old frost. Soot-gulls climb into a flat grey sky. The ground under your boots picks up a short metallic knock from somewhere under the crust of the Cinder Steppe. You pause by the ruin and wipe greasy black dust from your goggles while the wind works the twisted stays. Ahead the tracks bend toward the Grey Bazaar. Smoke lifts from thousands of makeshift chimneys built into stalled freight cars.",
    "exits": [
     {
      "label": "Continue toward the Grey Bazaar",
@@ -6858,7 +6858,7 @@
    "kind": "scene",
    "title": "Beyond the Boiling Vats",
    "brief": "Trickling extra water into the camp boiler while no one looks lets you siphon off a double ration of drinking water.",
-   "page": "Steam curls in lazy plumes from the safety valves of the station boilers, casting long, wavering shadows across the gravel bed where the supply teams camp. You shoulder your canvas kit, feeling the satisfying shift of the extra water bladder against your spine as you navigate the narrow gap between two rusted coal hoppers. The air tastes of scorched grease and wet iron, and the low murmur of the card players fades behind the rattling rhythm of a shunting crane further down the line.\n\nYou follow the rusted spur curving away toward the silent water-wagon.",
+   "page": "Steam lifts from the safety valves of the station boilers in thin plumes. Long shadows waver across the gravel bed where the supply teams camp. You shoulder the canvas kit; the extra water bladder settles against your spine as you squeeze the gap between two rusted coal hoppers. Scorched grease and wet iron sit on the tongue. Card talk thins out behind you, replaced by the rattle of a shunting crane further down the line.\n\nThe rusted spur curves toward the silent water-wagon. You take it.",
    "exits": [
     {
      "label": "Approach the great communal cistern",
@@ -8794,7 +8794,7 @@
    "kind": "scene",
    "title": "Scalding Mist",
    "brief": "You purge the auxiliary steam lines to create a blinding fog, risking scalded fingers to slip past the toll-gate unnoticed.",
-   "page": "Heat radiates fiercely from the leaking joint of the auxiliary pipe, turning the surrounding air into a suffocating blanket of moisture and grease. You press your sleeve against your mouth to filter out the stinging vapor, squinting through the white gloom toward the dim silhouette of the toll-gate winch. Every movement requires absolute caution, for a single slip against the hot copper tubing will leave raw, weeping blisters across your skin\n\nYou reach out a trembling hand to test the tension of the heavy iron chain blocking the line.",
+   "page": "Heat pours from the leaking joint of the auxiliary pipe. Moisture and grease turn the air into a wet curtain you can barely see through. You press your sleeve to your mouth against the vapor and squint through the white gloom toward the dim outline of the toll-gate winch. Slip once against the hot copper tubing and raw weeping blisters will open on your skin.\n\nA trembling hand finds the iron chain blocking the line and tests its tension.",
    "exits": [
     {
      "label": "Slip beneath the lowered iron chain",
@@ -15440,7 +15440,7 @@
    "kind": "scene",
    "title": "The Coal Chute",
    "brief": "You calculate the exact center of gravity to tip the coal-chute without spilling the load, gaining an accurate coal-rake.",
-   "page": "Iron dust clings to your palms as you test the balance of the suspended hopper above the tender deck. By shifting your weight and bracing the iron lever against the rusted ratchet-tooth, you find the exact pivot-point where the heavy chute yields without spilling a single nugget of coal into the ballast. The balance settles with a satisfying metallic chime, leaving you with a straight, true coal-rake whose tip is worn bright by years of honest service.\n\nStepping back onto the footplate, you secure the implement against the bulkhead where it belongs.",
+   "page": "Iron dust cakes your palms while you test the suspended hopper above the tender deck. You shift stance, brace the iron lever on the rusted ratchet-tooth, and find the pivot where the chute tips without dropping a single nugget of coal into the ballast. The balance settles. A clean metallic chime answers. The coal-rake comes free straight and true, tip worn bright from years of work.\n\nBack on the footplate, you rack the implement against the bulkhead where it belongs.",
    "exits": [
     {
      "label": "Pull the coal-rake free and climb back to the deck",
