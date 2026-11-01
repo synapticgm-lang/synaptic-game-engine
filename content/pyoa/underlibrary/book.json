@@ -5274,7 +5274,7 @@
    "kind": "bottleneck",
    "title": "The Soot-Choked Conduit",
    "brief": "The air grows thick with stinging carbon grit as you enter a narrow corridor flanked by unlit wall sconces and heavy soot.",
-   "page": "Thick clouds of grey carbon grit billow from the low ceiling as you force your way into a narrow corridor flanked by unlit wall sconces and heavy soot. The air tastes of scorched parchment and ancient lamp-oil, coating your tongue with a bitter, metallic film that makes every breath an effort. Along the blackened stonework, bronze sconces drip with cold grease, their unlit wicks sending up thin, oily wisps of smoke that swirl into fantastic shapes above your head. Strange scratching noises issue from behind the wainscot, as though industrious little teeth were gnawing through the backing boards of the lowest shelves.\n\nYou press your shoulder against the warm, vibration-riddled masonry, keeping your hood pulled low to protect your eyes from the stinging soot while the corridor narrows steadily ahead.",
+   "page": "Grey carbon grit billows from the low ceiling as you force your way into a narrow corridor flanked by unlit wall sconces and banks of soot. The air tastes of scorched parchment and ancient lamp-oil. Bitter film coats the tongue. Along the blackened stonework, bronze sconces drip with cold grease, and their unlit wicks send up thin oily wisps of smoke that swirl into strange shapes above your head. Scratching noises issue from behind the wainscot, as though little teeth were gnawing through the backing boards of the lowest shelves.\n\nYou press your shoulder against the warm masonry that trembles under your palm. Your hood stays low against the grit. The corridor narrows ahead.",
    "exits": [
     {
      "label": "Push deeper into soot",
@@ -10697,7 +10697,7 @@
    "kind": "scene",
    "title": "Staring Down the Commander",
    "brief": "You stare down the intimidating garrison commander during a tense standoff, risking your mental fortitude, to win an unhindered departure.",
-   "page": "Heavy oak doors loom at the end of the vaulted corridor, barred by two towering sentries and overseen by the senior garrison commander whose reputation for cruelty is etched into every line of his scarred face. He stands beside a brazier of glowing coals, his folded arms resting across a chest adorned with disciplinary medals forged from old printer's lead. The silence in the stone-walled foyer is absolute, broken only by the crackle of burning coke and a slow drip of water from an unseen leak in the high vaulting. His dark, unblinking eyes lock onto yours with the weight of an inquisitor inspecting heresy in a marginal note.\n\nYou refuse to drop your gaze, holding your ground as the commander steps forward, his boots clicking like clockwork against the paving stones.",
+   "page": "Oak doors loom at the end of the vaulted corridor, barred by two towering sentries and overseen by the senior garrison commander whose reputation for cruelty is etched into every line of his scarred face. He stands beside a brazier of glowing coals. His folded arms rest across a chest adorned with disciplinary medals forged from old printer's lead. Silence fills the stone-walled foyer, broken only by the crackle of burning coke and a slow drip of water from an unseen leak in the high vaulting. His dark, unblinking eyes lock onto yours the way an inquisitor inspects heresy in a marginal note.\n\nYou refuse to drop your gaze. The commander steps forward. His boots click against the paving stones.",
    "exits": [
     {
      "label": "Meet the commander's gaze head-on",
@@ -10712,7 +10712,7 @@
    "kind": "scene",
    "title": "The Weight of Unblinking Eyes",
    "brief": "You stare down the intimidating garrison commander during a tense standoff, risking your mental fortitude, to win an unhindered departure.",
-   "page": "Tension stretches like a dry bowstring across the narrow hall as the commander measures your worth with a slow, calculating sneer. The ambient hum of the endless stacks seems to recede, leaving only the sound of your own measured breathing and the hiss of the nearby brazier. He tilts his head slightly, testing whether your nerve will shatter under the sheer intimidation of his presence and the implied threat of the deep cells below. Every instinct screams at you to look away, to bow your head and murmur excuses for your intrusion into the restricted administrative wards.\n\nInstead, you plant your heels firmly on the stone, keeping your chin raised and your expression entirely blank.",
+   "page": "Tension stretches like a dry bowstring across the narrow hall as the commander measures your worth with a slow, calculating sneer. The stacks fall back. Only your breath and the hiss of the nearby brazier remain. He tilts his head slightly and tests whether your nerve will shatter under the intimidation of his presence and the implied threat of the deep cells below. Every instinct screams at you to look away, to bow your head and murmur excuses for your intrusion into the restricted administrative wards.\n\nYou plant your heels on the stone. Your chin stays raised. Your expression stays blank.",
    "exits": [
     {
      "label": "Stand firm against his silent scrutiny",
@@ -15931,7 +15931,7 @@
    "kind": "scene",
    "title": "Whispers of the Stacks",
    "brief": "You steel your nerves against the overwhelming psychic cacophony of a thousand competing thoughts, gaining a mental warding charm.",
-   "page": "Sound presses against your skull like heavy parchment folded too tightly. Disembodied opinions brush past your temples, murmuring endless critiques, retractions, and bitter footnotes left behind by generations of departed scholars. Every shelf around you seems to vibrate with a distinct, discordant frequency of mental static. Breathing becomes a deliberate act of survival amid the rising tide of unvoiced doubts. You press your palms hard against your ears, seeking an anchor in the howling gale of other people's thoughts.",
+   "page": "Sound presses against your skull like parchment folded too tightly, and disembodied opinions brush past your temples with endless critiques, retractions, and bitter footnotes left by generations of departed scholars. Every shelf around you seems to vibrate with its own discordant frequency of mental static. You force each breath. Your palms press hard against your ears while you hunt for an anchor in the howling gale of other people's thoughts.",
    "exits": [
     {
      "label": "Trace the edge of thought",
@@ -18007,7 +18007,7 @@
    "kind": "reward",
    "title": "The Golden Nib",
    "brief": "You flatter a self-important guardian ledger into opening its clasp, testing your cunning, and you receive a gold-plated nib that can alter official entries.",
-   "page": "Smooth flattery soothes the ledger's vanity, and you coax the massive volume into parting with its most prized possession past its snapping brass teeth. The heavy cover lifts on well-oiled hinges, revealing a small, recessed compartment lined with faded velvet. Resting within the hollow is a slender, gold-plated pen nib that shimmers with a faint, iridescent glow beneath the amber light of your lamp. You lift the delicate instrument from its resting place, feeling its unusual balance and knowing it possesses the rare authority to alter official entries within the catalogue. You secure the nib safely inside your waistcoat pocket before stepping away from the shelf.",
+   "page": "Smooth flattery soothes the ledger's vanity, and you coax the massive volume into parting with its most prized possession past its snapping brass teeth. The cover lifts on well-oiled hinges. Inside a small recessed compartment lined with faded velvet rests a slender gold-plated pen nib that shimmers with a faint iridescent glow beneath the amber light of your lamp. You lift the delicate instrument. Its balance is odd, and it holds the rare authority to alter official entries within the catalogue. You secure the nib inside your waistcoat pocket. You step away from the shelf.",
    "exits": [
     {
      "label": "Advance toward the lower parapet",
@@ -20371,7 +20371,7 @@
    "kind": "ending",
    "title": "The Misfiled Coda",
    "brief": "Ending \"Misfiled\"",
-   "page": "You remain where the catalogues end, tucked between a ledger of forgotten weather and a drawer of unclaimed surnames. The world above continues its hurried partitions, trading streets and churchyards for ink-stamped paper, but down here the light settles like grey wool. Dust motes settle on your sleeve, heavy with the scent of mutton fat and damp cellar-floors. No one comes to check your trolley, and the night-porter has long since finished his dry whistle and bolted the outer wicket. You are neither remembered nor erased, simply misplaced in the vast, shifting architecture of the stacks, a marginal note that the index failed to classify. The ink on your fingers dries to the color of old pewter.\n\nBeyond the lowest shelf, the dark grows deep and quiet, smelling of cold stone and forgotten ink-wells. You fold your hands over your apron and wait for the shelves to drift again.",
+   "page": "You remain where the catalogues end, tucked between a ledger of forgotten weather and a drawer of unclaimed surnames. The world above continues its hurried partitions, trading streets and churchyards for ink-stamped paper, but down here the light settles like grey wool. Dust motes land on your sleeve with the scent of mutton fat and damp cellar-floors. No one checks your trolley. The night-porter has long since finished his dry whistle and bolted the outer wicket. You are neither remembered nor erased, simply misplaced in the vast shifting architecture of the stacks, a marginal note that the index failed to classify. Ink on your fingers dries to the color of old pewter.\n\nBeyond the lowest shelf the dark grows deep and still, smelling of cold stone and forgotten ink-wells. You fold your hands over your apron. You wait for the shelves to drift again.",
    "exits": [],
    "endingKey": "misfiled",
    "endingTitle": "Misfiled",
