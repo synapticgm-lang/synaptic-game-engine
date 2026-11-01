@@ -6530,7 +6530,7 @@
    "kind": "scene",
    "title": "The Sunken Chest",
    "brief": "You trick the swirling eddies into depositing a sunken chest onto the bank, claiming an assortment of coloured sealing waxes.",
-   "page": "Dark galleried shelving leans over the ink-sluice like ancient ribs, casting long, wavering shadows across the bubbling surface. Heavy wooden crates and waterlogged ledgers drift in the sluggish black channel, churning against a rusted bulkhead. You prod the swirling current with a spare bracket-pole and nudge an iron-bound chest away from the suction point. The eddy slackens just enough for the latch to snag upon a rusted mooring ring near the stone bank, yielding a trove of sealed wax blocks in bold colour.\n\nRich purples and deep indigos flake off the wooden lid, smelling faintly of rendered tallow and dried resin, preserved from some long-forgotten departmental audit.",
+   "page": "Dark galleried shelving leans over the ink-sluice like ancient ribs and casts long wavering shadows across the bubbling surface. Wooden crates and waterlogged ledgers drift in the sluggish black channel and churn against a rusted bulkhead. You prod the current. An iron-bound chest nudges away from the suction point.\n\nThe eddy slackens just enough for the latch to snag upon a rusted mooring ring near the stone bank, and a trove of sealed wax blocks in bold colour comes with it. Rich purples and deep indigos flake off the wooden lid, smelling faintly of rendered tallow and dried resin from some long-forgotten departmental audit.",
    "exits": [
     {
      "label": "Pry open the damp wooden latch",
@@ -10378,7 +10378,7 @@
    "kind": "bottleneck",
    "title": "Red Robes At The Gate",
    "brief": "A detachment of red-robed enforcers blocks the archway, demanding you surrender all notes pertaining to the missing Archivist.",
-   "page": "Heavy wool cloaks dyed the color of dried cinnabar block the narrow stone archway, their brass fasteners catching the weak yellow glare of corridor lamps. Three enforcers of the Cataloguers' Court stand shoulder to shoulder, their iron-tipped staves planted firmly against the flagged floor. Their leader, a scarred veteran with ink-stained knuckles, holds out an open palm demanding the rough paper scraps tucked inside your damp sleeve. These are the illicit notes concerning Thessaly Marr and her frantic scribblings about the vault, gathered from the edge of the Misfiled Wing. Every breath tastes of lamp-oil and stale dust as iron armor shifts ominously in the cramped passage.\n\nSurrender is unthinkable, yet stepping past that wall of red wool requires threading a needle through a falling portcullis. You tighten your grip on your leather pouch, feeling the hard edges of the stolen leaves press against your palm. The enforcers watch you with cold, practiced disinterest; they know the deep stacks will soon seal their iron grilles for a generation.",
+   "page": "Wool cloaks dyed the color of dried cinnabar block the narrow stone archway, and their brass fasteners catch the weak yellow glare of corridor lamps. Three enforcers of the Cataloguers' Court stand shoulder to shoulder, their iron-tipped staves planted against the flagged floor. Their leader, a scarred veteran with ink-stained knuckles, holds out an open palm. He wants the scraps.\n\nThese are the illicit notes concerning Thessaly Marr and her frantic scribblings about the vault, gathered from the edge of the Misfiled Wing. Every breath tastes of lamp-oil and stale dust as iron armor shifts in the cramped passage. Surrender is unthinkable. Stepping past that wall of red wool means threading a needle through a falling portcullis, and you tighten your grip on your leather pouch until the hard edges of the stolen leaves press against your palm. The enforcers watch you with cold practiced disinterest; they know the deep stacks will soon seal their iron grilles for a generation.",
    "exits": [
     {
      "label": "Slip past the crimson guard line",
@@ -13563,7 +13563,7 @@
    "kind": "scene",
    "title": "Echoes of Reproach",
    "brief": "You endure the bitter reproaches of forgotten readers without flinching, winning a scrap of parchment bearing a forgotten archival shortcut.",
-   "page": "Bitter reproaches drift from the parchment-clad walls, hissing sharp critiques about your sloppy shelving and unscholarly haste. You stand your ground against the spectral scolding, enduring the endless catalog of petty grievances without flinching. One particularly stern voice, belonging to a long-forgotten reader, eventually falters into grudging respect. It drops a scrap of yellowed parchment into your open palm before dissolving back into the binding. This scrap bears a forgotten archival shortcut through the twisting labyrinth of the Deep Annexe.",
+   "page": "Bitter reproaches drift from the parchment-clad walls. They hiss sharp critiques about your sloppy shelving and unscholarly haste while you stand your ground and take every petty grievance without a flinch. You do not move. One particularly stern voice, belonging to a long-forgotten reader, falters into grudging respect.\n\n\"Your shelving is a disgrace,\" it says, then drops a scrap of yellowed parchment into your open palm before it dissolves back into the binding. The scrap bears a forgotten archival shortcut through the twisting labyrinth of the Deep Annexe.",
    "exits": [
     {
      "label": "Follow the hidden archival shortcut",
@@ -13874,7 +13874,7 @@
    "kind": "scene",
    "title": "The Gilded Passage",
    "brief": "You tread a delicate path across the shifting tiles without breaking a single seal, earning the favor of the resident bookplate sprite.",
-   "page": "Golden light spills from hairline cracks in the masonry, catching motes of drifting paper dust that dance lazily in the stagnant air. Your companion flits from shelf to shelf, its paper wings rustling softly like turning pages in a silent reading room. The surrounding shelves loom tall and crooked, burdened with massive folios bound in calfskin that has darkened to the color of strong tea. Every surface hums with a faint, residual static charge, making the hairs on your arms stand on end as you pass. You keep your gaze fixed on the glowing sprite, trusting its uncanny knowledge of the shifting architecture.",
+   "page": "Golden light spills from hairline cracks in the masonry and catches motes of paper dust in the still air. Your companion flits from shelf to shelf, its paper wings rustling like turning pages in a silent reading room. The surrounding shelves loom tall and crooked, stacked with massive folios bound in calfskin darkened to the color of strong tea. A faint residual static charge lifts the hairs on your arms as you pass. You watch the sprite. Its uncanny knowledge of the shifting architecture is what you trust.",
    "exits": [
     {
      "label": "Descend toward the whispering alcove below",
@@ -14174,7 +14174,7 @@
    "kind": "scene",
    "title": "The Phosphorescent Path",
    "brief": "You navigate the blinding haze by reading the faint phosphorescence of specialized marginal notes, uncovering a hidden brass compass.",
-   "page": "Dropping to one knee in the knee-deep drifts, you sweep away the surface grey to reveal faint, glowing instructions scrawled in phosphorescent ink across the flagstones by some long-dead scholar. The pale blue light traces a winding trail between towering stacks that lean drunkenly toward one another like tired gossips. Following the luminous prompts, your fingers brush against a cold metal object half-buried in the paper dust near a rotten baseboard. You unearth a heavy brass compass whose needle does not point north, but rather twitches frantically toward the hidden heart of the archives whenever a distant book is pulled from its shelf. The compass clicks softly in your palm, its glass face warm to the touch and fogged with a delicate condensation that smells faintly of rain.",
+   "page": "You drop to one knee in the knee-deep drifts and sweep away the surface grey to reveal faint, glowing instructions scrawled in phosphorescent ink across the flagstones by some long-dead scholar. Pale blue light traces a winding trail between towering stacks that lean toward one another. You follow.\n\nYour fingers brush a cold metal object half-buried in the paper dust near a rotten baseboard. You unearth a brass compass whose needle does not point north, but twitches toward the hidden heart of the archives whenever a distant book is pulled from its shelf. The compass clicks in your palm. Its glass face is warm and fogged with condensation that smells faintly of rain.",
    "exits": [
     {
      "label": "Follow the compass needle onward",
@@ -19692,7 +19692,7 @@
    "kind": "scene",
    "title": "Dropping the Stone Arch",
    "brief": "You spot a structural weakness in the ancient stone arch beneath the smoke, testing your erudition, and you lever a keystone to drop the bridge behind you.",
-   "page": "Thick plumes of lamp-oil smoke billow down the vaulted corridor, blurring the carved inscriptions along the cornices and stinging your eyes. Through the haze, you trace the load-bearing lines of the ancient stone archway and spot a telltale fracture in the masonry where centuries of shifting weight have left the structure vulnerable. You jam the shaft of an iron bookmark into the fissure and lean your full weight against the makeshift lever with a silent prayer to the rule-makers. The great keystone groans, slips from its mortar bed, and crashes downward, bringing the entire archway down in a cloud of dust to sever the path behind you.\n\nThe smoke clears slightly, leaving a clear route forward over the rubble.",
+   "page": "Lamp-oil smoke billows down the vaulted corridor and blurs the carved inscriptions along the cornices until your eyes water. Through the haze you trace the load-bearing lines of the ancient stone archway and spot a telltale fracture in the masonry where centuries of shifting loads have left the structure open to a lever.\n\nYou jam the shaft of an iron bookmark into the fissure and lean against the makeshift lever with a silent prayer to the rule-makers. The great keystone groans. It slips from its mortar bed and crashes downward, and the whole archway comes down in a cloud of dust that severs the path behind you. Smoke thins. Rubble fills the gap ahead.",
    "exits": [
     {
      "label": "Flee across the rubble",
@@ -20211,7 +20211,7 @@
    "kind": "ending",
    "title": "The Unwritten Morning",
    "brief": "Ending \"Thessaly's Way\"",
-   "page": "Morning comes to Quillon without bells or proclamations, bringing only a grey, clear light that catches the dust dancing in the narrow alleys between the old timber gables. Down in the dark heart of the stone, the shelves hold their places, their titles rearranged just enough to make every scholar scratch their head and reach for a fresh pot of ink. You sit once more at the edge of the returns desk with a dry cloth and a jar of neat-foot oil, wiping the grime from a stray volume whose pages are completely blank from cover to cover. It waits for whatever story happens to walk past its spine, perfectly willing to record the day as it unfolds without asking permission from a single rule-keeper in the court. The ink on your thumb refuses to wash away entirely, leaving a dark, stubborn crescent that stays with you through every shift, every quiet afternoon, and every turn of the unsealed world.",
+   "page": "Morning comes to Quillon without bells or proclamations. Grey clear light catches dust in the narrow alleys between the old timber gables. Down in the dark heart of the stone, the shelves hold their places, and their titles are rearranged just enough to make every scholar scratch their head and reach for a fresh pot of ink.\n\nYou sit once more at the edge of the returns desk with a dry cloth and a jar of neat-foot oil, wiping the grime from a stray volume whose pages are completely blank from cover to cover. The book will take whatever story walks past its spine, and it will record the day as it unfolds without asking permission from a single rule-keeper in the court. Ink stays put. A dark stubborn crescent marks your thumb through every shift and every turn of the unsealed world.",
    "exits": [],
    "endingKey": "thessalys-way",
    "endingTitle": "Thessaly's Way",
