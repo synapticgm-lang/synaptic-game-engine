@@ -462,7 +462,7 @@
    "kind": "scene",
    "title": "The Union Locker",
    "brief": "You search Hesper Quill's empty locker for hidden notes, testing your CUNNING against a watchful union clerk to secure a greasy spare regulator valve.",
-   "page": "The iron hinges complain as you pry open Hesper Quill's rusted locker, and a grey flurry of old coal-dust and grease-stained manifests lifts into the air. Across the narrow aisle, a union clerk narrows his eyes behind tinted spectacles, pencil poised above a tally sheet to catch any pilfering hands. You slide your fingers past crumpled work-shirts and empty tobacco tins until they brush against cold, machined metal wedged deep behind the back panel. You pull it free: a greasy spare regulator valve, packed in tallow and ready for the long road.\n\nYou pocket the brass piece before the clerk can look up from his ledger, then turn your back on the office and stride toward the idling engine.",
+   "page": "Iron hinges complain as you pry open Hesper Quill's rusted locker. A grey flurry of old coal-dust and grease-stained manifests lifts into the air. Across the narrow aisle a union clerk narrows his eyes behind tinted spectacles, pencil poised above a tally sheet for any pilfering hands. Your fingers slide past crumpled work-shirts and empty tobacco tins until they brush cold machined metal wedged deep behind the back panel.\n\nYou pull it free. A greasy spare regulator valve, packed in tallow and ready for the long road. You pocket the brass piece before the clerk can look up from his ledger, then turn from the office toward the idling engine.",
    "exits": [
     {
      "label": "Slip the heavy brass valve into your pocket",
@@ -478,7 +478,7 @@
    "kind": "scene",
    "title": "Beneath the Firebox",
    "brief": "You crawl beneath the firebox to fix a leaking injector nozzle, testing your MECHANICS against the searing heat to earn a heavy copper wrench.",
-   "page": "Soot flakes drift down like black snow as you squeeze your shoulders under the iron belly of the Marrowbone, crawling into the choking dark directly beneath the roaring firebox. Scalding drops of rusty water hiss against your knuckles, and the radiant heat from the ash-pan bakes your skin until your breath catches dry in your throat. Reaching blindly through the acrid steam, your fingers locate the loose injector nozzle vibrating violently against its copper seat. With a sharp twist and sheer stubborn grit, you wedge your wrench into the gap and haul until the leaking joint seals tight.\n\nYou scramble back out into the cool depot air, wiping black grease from your brow as you claim the heavy copper wrench left behind by the fitters.",
+   "page": "Soot flakes drift under the iron belly of the Marrowbone like black snow as you squeeze your shoulders into the dark beneath the roaring firebox. Scalding rusty water hisses on your knuckles. The ash-pan bakes your skin until your breath catches dry in your throat, and through the acrid steam your fingers find the loose injector nozzle shaking hard against its copper seat. You wedge your wrench into the gap, twist with stubborn grit, and haul until the leaking joint seals tight.\n\nCool depot air meets you as you scramble out. Black grease comes off your brow. The copper wrench the fitters left rests in your hand.",
    "exits": [
     {
      "label": "Crawl out from beneath the engine deck",
@@ -510,7 +510,7 @@
    "kind": "scene",
    "title": "Searching the Iron Locker",
    "brief": "You search Hesper Quill's empty locker for hidden notes, testing your CUNNING against a watchful union clerk to secure a greasy spare regulator valve.",
-   "page": "Iron panels rattle as you force Hesper Quill's personal locker door open, disturbing a nest of dry roach-wings and stale pipe smoke. In the adjacent watch-box, a watchful union clerk taps his wooden ruler against the partition, keeping a sharp eye on your movements to ensure no company property vanishes. You ignore his suspicious glare, sliding your palm along the dark timber lining until your fingertips graze a cold, oiled lump wedged in the corner. It is a greasy spare regulator valve, tucked away behind old route maps and forgotten overtime chits.\n\nYou withdraw your hand smoothly, tucking the heavy metal prize into your work-trousers just as the clerk turns his back.",
+   "page": "Iron panels rattle as you force Hesper Quill's personal locker door open and stir a nest of dry roach-wings and stale pipe smoke. In the adjacent watch-box a union clerk taps his wooden ruler against the partition and keeps a sharp eye on your hands so no company property vanishes. You ignore the glare. Palm along the dark timber lining, your fingertips graze a cold, oiled lump wedged in the corner.\n\nIt is a greasy spare regulator valve behind old route maps and forgotten overtime chits. You draw it out and tuck the metal prize into your work-trousers as the clerk turns his back.",
    "exits": [
     {
      "label": "Secure the valve and step away",
@@ -2769,7 +2769,7 @@
    "kind": "hub",
    "title": "The Elevated Control Cabin",
    "brief": "The Signal Box: You climb the creaking wooden stairs to the elevated control cabin where mechanical levers govern the yard.",
-   "page": "Greasy iron stairs climb steeply into the gloom of the signal box, where copper pipes hiss and heavy pine levers reach toward the soot-stained glass like skeletal fingers. Below, the sprawling tracks of Ashgate Junction rumble with the restless shunting of stalled goods wagons. Every movement of the overhead arms governs the iron road ahead, offering paths into the thickening dust-storms or toward the guarded switches of the yard. Faint lamplight flickers across rows of brass indicator plates that remember every train that ever passed through this dismal junction.\n\nYou can study the intricate track diagrams pinned to the back wall, seek out the maintenance catwalks overlooking the northern approach, or peer through the frosted windows toward the distant coal tipples. Weigh your next course before the yardmaster notices unauthorized boots on his boards.",
+   "page": "Greasy iron stairs climb into the gloom of the signal box, where copper pipes hiss and pine levers reach toward the soot-stained glass. Below, the tracks of Ashgate Junction rumble with stalled goods wagons under restless shunting. Overhead arms set the iron road ahead, some into the thickening dust-storms, some toward the guarded switches of the yard. Faint lamplight moves across rows of brass indicator plates that remember every train that ever passed through this junction.\n\nTrack diagrams hang pinned on the back wall. Maintenance catwalks overlook the northern approach. Frosted windows face the distant coal tipples. The yardmaster has not yet noticed unauthorized boots on his boards.",
    "exits": [
     {
      "label": "Inspect the rusted terminal switches",
@@ -12807,7 +12807,7 @@
    "kind": "scene",
    "title": "Smoke and Iron",
    "brief": "You trick the pursuers with a decoy steam release, risking a failed deception to buy precious minutes for your escape.",
-   "page": "Cunning requires a delicate touch when dealing with men who live by the schedule and die by the ledger. You yank the auxiliary whistle chain twice, sending a sharp, defiant shriek echoing off the rusted corrugated roofs of the toll-city. Instantly, a secondary steam-release valve under the footplate opens wide, dumping a massive cloud of grey vapor directly across the parallel maintenance line where the pursuers' handcar waits. The decoy plume billows thick and false, smelling fiercely of wet lime and scorched tallow to trick the watchers into firing their signal flares at empty track.\n\nWheel the steering gear hard over and dive into the labyrinth of side-tracks.",
+   "page": "Men who live by the schedule and die by the ledger need a careful hand. You yank the auxiliary whistle chain twice. A sharp defiant shriek bangs off the rusted corrugated roofs of the toll-city. At once a secondary steam-release valve under the footplate opens wide and dumps a massive cloud of grey vapor across the parallel maintenance line where the pursuers' handcar waits. The decoy plume billows thick and false, fierce with wet lime and scorched tallow, so the watchers fire their signal flares at empty track.\n\nYou wheel the steering gear hard over. Side-tracks open in a tangle ahead.",
    "exits": [
     {
      "label": "Dive into the side-tracks",
@@ -17314,7 +17314,7 @@
    "kind": "scene",
    "title": "The Frozen Crank",
    "brief": "You heave your weight against the frozen ballast-crank, straining shoulder-muscles until the mechanism yields, and claim a heavy iron pinch-bar.",
-   "page": "Frost jackets the heavy iron ballast-crank until it resembles an old bone half-buried in grey grit. You set your boot against the rusted sleeper, reach down with mittened fingers, and grip the handle with all your might. The cold seeps straight through the wool into your bones, biting sharply against your recent burns. You haul upward, gritting your teeth as the metal groans in protest against the decades of accumulated soot and ice.\n\nSlowly, grudgingly, the stubborn joint shifts half an inch, showering frozen flakes into the ballast bed. You pull again, feeling the muscles in your shoulder bunch and strain until the stubborn mechanism surrenders with a sharp snap, releasing a cloud of stale vapor from the subsurface pipes.",
+   "page": "Frost jackets the iron ballast-crank until it looks like an old bone half-buried in grey grit. You set your boot against the rusted sleeper, reach down with mittened fingers, and grip the handle hard. Cold cuts straight through the wool into your bones and finds your recent burns. You haul upward. The metal groans against decades of soot and ice.\n\nThe joint shifts half an inch and sheds frozen flakes into the ballast bed. Another pull bunches the muscles in your shoulder until the mechanism gives with a sharp snap and a cloud of stale vapor lifts from the subsurface pipes.",
    "exits": [
     {
      "label": "Step across the iron sleeper",
@@ -19278,7 +19278,7 @@
    "kind": "scene",
    "title": "Shadows On The Siding",
    "brief": "You trick the remaining platform guards into checking the wrong siding with a false whistle-signal, and pocket a heavy silver pocket-watch.",
-   "page": "Slipping past the silent coal hoppers, you pull a short, sharp blast from the brass signal-whistle hung at your hip, mimicking the distinct code of an incoming ballast train. The remaining platform guards instantly snap to attention in the gloom, turning their lanterns toward the deserted dead-end siding on the far side of the yards where the echo dies against the rusted buffer-stops. While their backs are turned and their boots crunch hurriedly across the gravel toward the phantom noise, you drop flat against the side of the tender and slip your fingers into the unattended watchman box.\n\nBeside an empty tin cup sits a silver pocket-watch, its cold metal ticking slow defiance of the dead air around you.",
+   "page": "Past the silent coal hoppers you pull a short sharp blast from the brass signal-whistle at your hip, copying the code of an incoming ballast train. Platform guards snap to attention in the gloom. Their lanterns swing toward the deserted dead-end siding on the far side of the yards, where the blast fades against the rusted buffer-stops. While their boots crunch across the gravel toward the phantom noise, you drop flat against the side of the tender and slip your fingers into the unattended watchman box.\n\nBeside an empty tin cup sits a silver pocket-watch. Cold metal ticks in your palm.",
    "exits": [
     {
      "label": "Pocket the heavy silver watch",
@@ -19478,7 +19478,7 @@
    "kind": "bottleneck",
    "title": "The Outer Terminal",
    "brief": "The storm strikes the glass roof with the roar of a thousand shovels, plunging the terminus into absolute darkness save for the glow of the firebox.",
-   "page": "Gale-force ash strikes the high glass roof of the grand terminus with the deafening roar of a thousand shovels emptying coal into an iron tender, plunging the cavernous platforms into absolute twilight. Only the cherry-red glare of the Marrowbone's firebox keeps the immediate darkness at bay, casting long, writhing shadows across the stacked crates of abandoned baggage and rusted signal gantries. The air tastes of sulphur and wet soot, sticking to the roof of your mouth with every labored breath you draw in the freezing draft.\n\nSomewhere above, in the iron rafters, a loose sheet of corrugated iron screeches against its bolts like an injured animal, while ahead lies the final descent to the bronze pillar of the Water Gate. Every muscle in your back aches from the long run, and the storm clock ticks down its final merciless minutes in the engine's housing.",
+   "page": "Gale-force ash strikes the high glass roof of the grand terminus with the roar of a thousand shovels emptying coal into an iron tender. The cavernous platforms fall into absolute twilight. Only the cherry-red glare of the Marrowbone's firebox holds the near dark at bay and throws long shadows across stacked crates of abandoned baggage and rusted signal gantries. Sulphur and wet soot stick to the roof of your mouth with every breath in the freezing draft.\n\nAbove, in the iron rafters, a loose sheet of corrugated iron screeches against its bolts. Ahead lies the final descent to the bronze pillar of the Water Gate. Your back aches from the long run. In the engine's housing the storm clock ticks down its final minutes.",
    "exits": [
     {
      "label": "Approach the bronze pillar with purpose",
@@ -19493,7 +19493,7 @@
    "kind": "scene",
    "title": "Through the Culvert",
    "brief": "You crawl through the narrow drainage culvert while choking soot fills the air, maintaining your composure, and find a hidden cache of tallow candles.",
-   "page": "Narrow and black as a boiler flue, the drainage culvert offers a desperate passage beneath the sprawling weight of the administrative offices while the ash-storm batters the corrugated iron above. You drop to hands and knees, crawling through a gritty soup of old coal-dust and grease while keeping your breathing slow and even to conserve the stale air in your lungs. Your fingers brush against something cold and cylindrical tucked behind a limestone block, revealing a small bundle of dry tallow candles wrapped in oily rag.",
+   "page": "Narrow and black as a boiler flue, the drainage culvert offers a passage beneath the sprawling administrative offices while the ash-storm batters the corrugated iron above. You drop to hands and knees. Gritty soup of old coal-dust and grease takes you as you crawl, and you keep your breathing slow to spare the stale air in your lungs. Fingers brush something cold and cylindrical tucked behind a limestone block.\n\nYou pull free a small bundle of dry tallow candles wrapped in oily rag.",
    "exits": [
     {
      "label": "Crawl on with the dry candles",
@@ -19508,7 +19508,7 @@
    "kind": "scene",
    "title": "The Ancient Stationmaster",
    "brief": "You weather the bitter reproaches of the ancient stationmaster without flinching, standing your ground, and win her heavy iron seal-ring.",
-   "page": "Granite-faced and smelling of dry tea and coal-smoke, the old woman who rules this terminal branch sits behind a barricade of ledgers that reach almost to the soot-stained ceiling. You stand your ground against her bitter, rattling reproaches without shifting your weight, letting her sharp tongue wear itself out against your stubborn silence like waves against a breakwater. At last, seeing that neither threats nor insults will dislodge you, she pulls a heavy iron seal-ring from her wrinkled thumb and drops it onto the blotter with a dull thud.",
+   "page": "Granite-faced and smelling of dry tea and coal-smoke, the old woman who rules this terminal branch sits behind a barricade of ledgers that reach almost to the soot-stained ceiling. You hold your ground against her bitter rattling reproaches without shifting your stance. Her sharp tongue wears itself out on your silence.\n\nThreats fail. Insults fail. At last she pulls an iron seal-ring from her wrinkled thumb and drops it onto the blotter. The thud is dull and final.",
    "exits": [
     {
      "label": "Claim the heavy iron seal-ring",
@@ -19863,7 +19863,7 @@
    "kind": "ending-part",
    "title": "The Iron Fellowship",
    "brief": "Ending \"The Gangers' Republic\"",
-   "page": "Ash settles thick upon the discarded ledgers of the Rail Barons, sealing their ledgers in a grey shroud of rust and cancelled debt. You stand on the footplate of the Marrowbone. The brass valve-key rests in its cradle, a plain tool now for the people who mend the ties. Around you, the gangers of the Union gather with their shovels and oil-cans, their laughter tasting of grease and bitter tea as they pull down the high semaphore gates that once dictated every heartbeat on the line. The iron does not fall with a crash; it yields slowly to the crowd's pull, bending like old grass under a late autumn frost. Every signal box between Ashgate and the high wall of Cinderfall stands dark tonight, its glass empty of watchers, leaving the road wide and unmeasured beneath a low, indifferent sky.",
+   "page": "Ash settles on the discarded ledgers of the Rail Barons and seals them in a grey shroud of rust and cancelled debt. You stand on the footplate. The brass valve-key rests in its cradle on the Marrowbone, a plain tool now for the people who mend the ties. Around you the gangers of the Union gather with shovels and oil-cans, their laughter tasting of grease and bitter tea as they pull down the high semaphore gates that once set every beat on the line.\n\nThe iron does not crash. It yields to the crowd's pull, bending like old grass under a late autumn frost. Every signal box between Ashgate and the high wall of Cinderfall stands dark tonight. Glass empty of watchers. The road lies wide and unmeasured under a low sky.",
    "exits": [
     {
      "label": "Watch the semaphore blades fall into the dust",
