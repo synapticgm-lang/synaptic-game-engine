@@ -3668,7 +3668,7 @@
    "kind": "scene",
    "title": "Before the Iron Lectern",
    "brief": "You maintain rigid discipline against the custodian's psychological intimidation, forcing him to stamp your travel manifest.",
-   "page": "Brass scales balance upon the edge of the register, tipping slightly with every draft that whistles up from the deep sub-basements. You keep your hands flat against the grain of the wooden counter, avoiding the temptation to fidget with your sleeve or glance toward the shadowy archways. The custodian squints through his magnifying lens, examining the frayed edges of your indenture ribbons with a slow, deliberate skepticism that invites impatience. Instead of pulling away, you let your breathing settle into the rhythmic cadence of the room, matching the faint ticking of the wall-clock that measures out the hours of the Long Closing. Every scrap of paper on the desk smells faintly of rancid tallow and old iron filings.\n\nA dry cough rattles from the back of the custodian's throat as he reaches slowly for his heavy red stamping block.",
+   "page": "Brass scales balance on the edge of the register and tip with every draft that whistles up from the deep sub-basements. Your hands stay flat. You do not fidget with your sleeve or glance toward the shadowy archways. The custodian squints through his magnifying lens and examines the frayed edges of your indenture ribbons with a slow skepticism that invites impatience. You let your breathing settle into the cadence of the room and match the faint ticking of the wall-clock that measures the hours of the Long Closing. Every scrap of paper on the desk smells of rancid tallow and old iron filings.\n\nA dry cough rattles from the back of the custodian's throat. He reaches for his red stamping block.",
    "exits": [
     {
      "label": "Wait for the stamp to descend",
@@ -3783,7 +3783,7 @@
    "kind": "scene",
    "title": "Shadows of the Stacks",
    "brief": "You endure the grueling cross-examination without breaking character, earning an official seal of transit from the reluctant guard.",
-   "page": "Dust hangs in the narrow corridors, caught in long shafts of light that pierce the high clerestory windows from the city streets far above. You ease your trolley past a stack of quartos that lean at a perilous angle and look ready to spill across the flagstones if anything knocks them. Boot-heels tap the vaulted ceiling's return, softened by leather-bound volumes from floor to crown. Somewhere ahead a small bell chimes three times, marking the change of the cataloguing shift across the district.\n\nA side-passage opens toward the ink-sellers' booths, where glowing vials of luminescent gall-ink throw green reflections on the damp stone walls.",
+   "page": "Dust hangs in the narrow corridors. Long shafts of light pierce the high clerestory windows from the city streets far above. You ease your trolley past a stack of quartos that lean at a perilous angle and look ready to spill across the flagstones if anything knocks them. Boot-heels tap the vaulted ceiling's return, softened by leather-bound volumes from floor to crown. Somewhere ahead a small bell chimes three times. It marks the change of the cataloguing shift across the district.\n\nA side-passage opens toward the ink-sellers' booths. Glowing vials of luminescent gall-ink throw green reflections on the damp stone walls.",
    "exits": [
     {
      "label": "Inspect the ink-sellers stalls",
@@ -5896,7 +5896,7 @@
    "kind": "bottleneck",
    "title": "The Misfiled Wing",
    "brief": "You stumble into the Misfiled Wing where misdirected histories and misplaced maps pile high in chaotic, unclassifiable heaps.",
-   "page": "Drifts of uncatalogued maps and misdirected histories rise into chaotic, sloping ramparts across the flagged floor. Loose vellum crunches beneath your boots like autumn leaves, hiding the proper seams of the flagstones. Somewhere within these towering mounds of discarded paper, the natural order of the stacks has completely unraveled, leaving only a vast wilderness of forgotten ink and displaced geography. Every surface is coated in a fine, grey film of old dust that smells faintly of rancid lamp-oil and dried gall. You pick your way forward with extreme caution, mindful that a single careless step could bring an entire mountain of orphan folios crashing down upon your shoulders.",
+   "page": "Drifts of uncatalogued maps and misdirected histories rise into chaotic sloping ramparts across the flagged floor. Loose vellum crunches beneath your boots like autumn leaves and hides the proper seams of the flagstones under drifts of misfiled paper. You stop short. Somewhere within these towering mounds of discarded paper the natural order of the stacks has completely unraveled, and only a vast wilderness of forgotten ink and displaced geography remains. Every surface wears a fine grey film of old dust that smells of rancid lamp-oil and dried gall. You pick your way. One careless step could bring a mountain of orphan folios down on your shoulders.",
    "exits": [
     {
      "label": "Climb higher into the drifting paper mounds",
@@ -12151,7 +12151,7 @@
    "kind": "recovery",
    "title": "Tangled in the Filing Ranks",
    "brief": "You move with exquisite poise across the echoing mosaic floor, risking an embarrassing stumble, to present your case directly to the bench.",
-   "page": "Fabric catches hard on the brass corner of the open filing drawer and jerks you off stride. You stumble sideways into a stack of wooden folios. The binders crash to the mosaic floor with a resounding clatter that echoes off the vaulted stone ceiling, drawing immediate scowls from the presiding judges. You untangle your coat with hot cheeks, murmuring apologies while gathering the scattered papers under the heavy gaze of the tribunal guard. Though you reach the bench at last, the clumsy stumble costs you precious dignity and leaves you owing a sharp administrative fine to the court bailiff.",
+   "page": "Fabric catches hard on the brass corner of the open filing drawer and jerks you off stride. You stumble sideways into a stack of wooden folios. The binders crash to the mosaic floor with a resounding clatter that fills the vaulted stone ceiling and draws scowls from the presiding judges. Your cheeks burn. You untangle your coat, murmuring apologies while you gather the scattered papers under the gaze of the tribunal guard. Though you reach the bench at last, the clumsy stumble costs you dignity and leaves you owing a sharp administrative fine to the court bailiff.",
    "exits": [
     {
      "label": "Face the adjudicators after the fall",
@@ -13402,7 +13402,7 @@
    "kind": "reward",
    "title": "The Phantom Scholar",
    "brief": "You stand firm against the oppressive wave of historic static pressing on your temples, earning the protective counsel of a phantom scholar.",
-   "page": "Pressure drains from your temples like lamp-oil soaking into dry blotting paper as the historic static recedes into the masonry. Standing firm against that oppressive wave earns you the quiet respect of a phantom scholar whose ink-stained fingers materialize long enough to press an invitation into your palm. They whisper of a permanent seat among the ancient folios, offering you the chance to read until the stars themselves go out. You slip the phantom counsel into your pocket, knowing this quiet debt might anchor you when the deep stacks finally close their heavy bindings for good.",
+   "page": "Pressure drains from your temples like lamp-oil soaking into dry blotting paper as the historic static recedes into the masonry. You hold firm against that wave and earn the respect of a phantom scholar whose ink-stained fingers materialize long enough to press an invitation into your palm. They whisper, \"A seat among the ancient folios.\" They offer you the chance to read until the stars themselves go out. You pocket the counsel. The invitation rests against your side for the day the deep stacks close their bindings.",
    "exits": [
     {
      "label": "Step through the heavy iron bulkhead",
@@ -15527,7 +15527,7 @@
    "kind": "check",
    "title": "Parsing the Codes",
    "brief": "You parse the complex jurisdictional codes inscribed upon the bench to unlock a hidden drawer containing a silver seal-ring.",
-   "page": "The symbols engraved upon the silver hoop match the intricate jurisdictional codes carved into the rim of the writing desk. As you turn the ring against the metal grooves, a series of internal clicks echoes through the hollow core of the furniture like falling pins. A hidden compartment springs open in the base of the desk, but a cloud of fine, grey preservative powder billows upward into your face. You slow your breath and read the remaining sequence of glyphs before the chemical dust blinds you completely. The air grows thick and choking, testing every ounce of your scholarly concentration.",
+   "page": "The symbols engraved on the silver hoop match the jurisdictional codes carved into the rim of the writing desk. As you turn the ring against the metal grooves, a series of internal clicks runs through the hollow core of the furniture like falling pins. A hidden compartment springs open. Fine grey preservative powder billows into your face. You slow your breath and read the remaining sequence of glyphs before the chemical dust blinds you completely. The next glyph swims half-seen in the powder cloud.",
    "exits": [
     {
      "label": "check-full",
@@ -18092,7 +18092,7 @@
    "kind": "reward",
    "title": "The Runed Vellum",
    "brief": "You thread your fingers past snapping leather bindings to snatch a stray parchment, testing your agility, and you pocket a scrap of vellum inscribed with protective runes.",
-   "page": "Your hand darts through the fluttering chaos, and your fingers close around the drifting scrap of parchment past the snapping jaws of the leather bindings. The violent motion of the surrounding stacks dies at once as the protective runes upon the vellum flare with a brief, soothing light. You lift the prize toward your lamp and examine the geometric patterns drawn in permanent ink that shield the bearer from wandering curses. It is a rare and potent safeguard, carved by some forgotten scholar who feared the final sealing of the library. You tuck the vellum securely inside your leather pouch, feeling a quiet reassurance settle over your tired limbs.",
+   "page": "Your hand darts through the fluttering chaos. Fingers close around the drifting scrap of parchment past the snapping jaws of the leather bindings. The violent motion of the surrounding stacks dies at once as the protective runes upon the vellum flare with a brief light. You lift the prize. Geometric patterns in permanent ink shield the bearer from wandering curses. It is a rare safeguard, carved by some forgotten scholar who feared the final sealing of the library. You tuck the vellum inside your leather pouch.",
    "exits": [
     {
      "label": "Return to the obsidian ring",
@@ -20283,7 +20283,7 @@
    "kind": "ending-part",
    "title": "Silence in the Stacks",
    "brief": "Ending \"The Blank Page\"",
-   "page": "Down in the deep galleries, the shelves have ceased their restless sliding and stand locked in a great, peaceful stillness, their leather spines whitening as the last traces of print sink inward like dew dried by the sun. No marginal notes whisper insults from the margins of old folios, and the biting grammars of the North have grown as docile as stuffed owls. Thessaly Marr's empty chair at the Index desk remains dusted with fine gray flakes where the final register finally let go of its history. You slide your bare hands across the unscribed tables and taste the relief of a room where no one will ever hand you a summons, a late fee, or a decree. The Long Closing has come not with the snap of iron bolts, but as a vast, breathable emptiness that swallows the very need for names.",
+   "page": "Down in the deep galleries the shelves have ceased their restless sliding and stand locked in a great peaceful stillness, leather spines whitening as the last traces of print sink inward. The insults have stopped. No marginal notes whisper from the margins of old folios, and the biting grammars of the North have grown as docile as stuffed owls. Thessaly Marr's empty chair at the Index desk remains dusted with fine gray flakes where the final register finally let go of its history. You slide your bare hands across the unscribed tables. You say, \"No summons, no late fee.\" The Long Closing has come not with the snap of iron bolts, but as a vast breathable emptiness that swallows the need for names.",
    "exits": [
     {
      "label": "Leave the empty desk behind",
