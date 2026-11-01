@@ -21,7 +21,7 @@ import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
-import { fightLootClause, weaponInHand } from './infoSheet';
+import { formatLootStatusLine } from './lootTableRegistry';
 import { isRoadFoe, meetingMoveBase, roadFoeForEngine, roadMeetingMove, settleRoadMeeting } from './travelJourney';
 import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
@@ -496,9 +496,9 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     const money = lootMoneyText(result.goldGained, result.coinsGained);
     if (money) receipts.push(`Gold Gained: ${money}`);
     if (result.loot.length) {
-      receipts.push(
-        `Loot: ${result.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')} — ${fightLootClause(weaponInHand(working))}`
-      );
+      // T10LOOT — player STATUS shows rarity+name (x2 collapse); fightLootClause stays writer/checker-only.
+      const lootLine = formatLootStatusLine(result.loot);
+      if (lootLine) receipts.push(lootLine);
     }
     receipts.push(...(result.lootLines ?? []));
     const bits = [
