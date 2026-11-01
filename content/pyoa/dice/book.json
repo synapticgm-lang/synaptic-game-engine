@@ -4419,7 +4419,7 @@
    "kind": "reward",
    "title": "Scavenged Sight",
    "brief": "You study the scavenging patterns of rival crews to slip past their lookouts, securing an intact spyglass for your journey.",
-   "page": "Movement must be ghost-silent when other boots walk these same dead waters, and you pick your footing with the care of a man crossing thin ice over a winter marsh. Whether you slipped past their notice like a drifting shadow or scrambled clear with a torn coat and a stinging shoulder, you reach the far side of the wreck-field with your prize intact. In your grip rests a long, heavy brass spyglass, its lenses clear enough to pick out the distant ladders of Saltspire against the horizon haze.",
+   "page": "Other boots walk these same dead waters. Movement has to stay ghost-silent among the wreck ribs and stranded keels. You pick your footing the way a man crosses thin ice over a winter marsh, testing each plank before the next. The far side of the wreck-field arrives underfoot with the prize intact. A long brass spyglass rests in your grip, lenses clear enough to pick out the distant ladders of Saltspire against the horizon haze.",
    "exits": [
     {
      "label": "Push toward the rumbling sinkholes",
@@ -5442,7 +5442,7 @@
    "kind": "bottleneck",
    "title": "The Singing Wastes",
    "brief": "Leaving the market behind, you enter a vast stretch of sand that hums and vibrates with an eerie, mournful resonance.",
-   "page": "Leaving the foul-smelling bustle of the leviathan carcass far behind, you stride out onto a vast, desolate expanse of pale yellow sand that stretches toward the murky horizon. Underfoot, the sediment begins to shift and tremble, sending a strange, low-frequency hum vibrating straight up through the soles of your boots and into your teeth. It is a mournful, undulating sound like a thousand drowned organs playing beneath the crust of the earth, echoing the sorrow of the vanished tide. Faint silhouettes of wandering pilgrims and half-buried skeletal masts blur through the rising haze of salt dust as you press deeper into the barren flats.",
+   "page": "The foul-smelling bustle of the leviathan carcass falls behind you. Ahead, pale yellow sand opens in a desolate expanse that runs out to the murky horizon. Sediment underfoot starts to shift and tremble. A slow knock climbs through boot soles into your teeth, uneven as a drowned organ under the crust. Faint silhouettes of wandering pilgrims and half-buried skeletal masts blur through the rising haze of salt dust. Deeper into the barren flats. The buried knock stays with every step.",
    "exits": [
     {
      "label": "Follow the hum across dunes",
@@ -7597,7 +7597,7 @@
    "kind": "reward",
    "title": "The Midnight Sphere",
    "brief": "You pry a massive clam shell open with your bare hands, struggling against its tremendous grip to extract a flawless black pearl.",
-   "page": "Whether you pried the prize free with clean strength or tore it loose with skin scraped raw against the jagged nacre, your fingers finally close around the heavy, cold weight of the anomaly. It is no true pearl, but a dense globule of hardened brine and deep-sea phosphorescence that pulses with an oily, midnight sheen when held up to the pale sky of the Low. Slip it into your waxed canvas pouch, where its faint internal warmth presses against your ribs like the heartbeat of something drowned and forgotten.",
+   "page": "At last the anomaly comes free of the shell. Your hand closes on cold mineral, dense and slick. It is no true pearl, but a dense globule of hardened brine and deep-sea phosphorescence. Held up to the pale sky of the Low, it pulses with an oily midnight sheen. Into the waxed canvas pouch it goes. Faint warmth finds your ribs through the cloth, the beat of something drowned and long forgotten.",
    "exits": [
     {
      "label": "Follow the map downward",
@@ -7713,7 +7713,7 @@
    "kind": "bottleneck",
    "title": "The Sunken Threshold",
    "brief": "Following the map from the journal, you finally locate the entrance to the spiral shaft leading down into the darkness.",
-   "page": "Iron rings bolted into the weeping limestone match every mark recorded in the missing lighthouse keeper's journal. Uncurling the water-stained parchment against the damp rock, you verify the coordinates where the spiral shaft plunges beneath the dead seabed. A heavy iron grate has been levered aside, revealing a vertical drop choked with dry kelp and the faint, copper tang of ancient machinery. Below this jagged maw, the stairs begin their downward spiral into absolute blackness, echoing with the rhythmic, metallic dripping of subterranean brine.",
+   "page": "Iron rings bolted into the weeping limestone match every mark in the missing lighthouse keeper's journal. You uncurl the water-stained parchment against the damp rock and check the coordinates. Here the spiral shaft plunges beneath the dead seabed. An iron grate has been levered aside. Below, a vertical drop choked with dry kelp carries the faint copper tang of ancient machinery. Under that jagged opening the stairs spiral down into absolute blackness. Metallic drips of subterranean brine mark the dark in slow ticks.",
    "exits": [
     {
      "label": "Descend into the spiralling darkness",
@@ -8202,7 +8202,7 @@
    "kind": "bottleneck",
    "title": "The Meridian Gear",
    "brief": "At the bottom of the stair, the massive brass teeth of the Meridian Gear loom in the shadows, waiting to be turned.",
-   "page": "Colossal brass teeth rise from the drowned flagstones, green-veined with copper rot and weeping cold condensate into the dark. This is the heart of the Sunken Stair, a labyrinth of dead weight and silent levers that has governed the deep currents since the old days. Every notch on the great rim smells of old tallow and oxidized salt, waiting for a hand to force the movement. Somewhere above, the tide clock ticks its frantic measure, while shadows lengthen across the vast machinery\n\nYou reach out to touch the cold metal, feeling the faint, hollow thrum of the mechanism beneath the earth. The air smells of ozone and ancient oil, thick with the weight of a decision that will wake the sleeping ocean.",
+   "page": "Brass teeth the size of doors stand from the drowned flagstones, green with copper rot, cold water beading off their edges into the dark. This is the heart of the Sunken Stair: a maze of silent levers and dead iron that has steered the deep currents since the old days. Each notch on the great rim smells of old tallow and oxidized salt. Somewhere above, the tide clock ticks in a hurry. Across the machinery the light slips further back.\n\nYou set a hand on the cold metal. Under the earth something knocks once, hollow, then again. Ozone and old oil cut the nose. The sleeping ocean waits on a turn of this rim.",
    "exits": [
     {
      "label": "Reach for the rusted brass lever",
@@ -9051,7 +9051,7 @@
    "kind": "bottleneck",
    "title": "The Thirst of Saltspire",
    "brief": "Ascending into the lower districts, you realise Saltspire is parched, and the Brineholders strictly ration all freshwater to control the populace.",
-   "page": "Iron ladders and rusted catwalks spiral upward into the copper haze, revealing a city dying of terrible thirst while surrounded by an empty ocean. Every pipe, trough, and gutter in Saltspire funnels strictly downward to the heavily guarded private cisterns of the Brineholders, leaving the lower stilt-dwellers to lick moisture from cold metal plates. Armed enforcers patrol every major junction with drawn harpoons, ensuring no common scavenger dares siphon a single drop of the precious condensation. Battered wooden shanties cling like barnacles to the structural beams, packed with hollow-cheeked citizens who trade their last scraps of rusted copper for drops of muddy water. You pull your canvas hood lower over your forehead, navigating the humid shadows while the constant drip of distant, inaccessible valves mocks every dry swallow in your throat.",
+   "page": "Iron ladders and rusted catwalks climb into the copper haze. Saltspire sits dying of thirst beside an empty ocean. Every pipe, trough, and gutter funnels straight down to the private cisterns of the Brineholders, locked and watched day and night. Lower stilt-dwellers lick moisture from cold metal plates. Armed enforcers patrol every major junction with drawn harpoons. No common scavenger dares siphon a drop of the condensation. Battered wooden shanties cling like barnacles to the structural beams. Hollow-cheeked citizens trade their last scraps of rusted copper for muddy water. You pull your canvas hood lower. Humid shadow takes you in. Far off, valves drip where you cannot reach them, and each dry swallow tastes of nothing.",
    "exits": [
     {
      "label": "Descend into the chaotic market",
@@ -9956,7 +9956,7 @@
    "kind": "recovery",
    "title": "Lost in the Stilt-Mazes",
    "brief": "You decipher Orsolya's faded chalk marks through the swirling dust, risking lost time to find a hidden cache of Vigor-restoring herbs.",
-   "page": "The dust shifts under your boot, revealing only a dead-end alcove filled with discarded nets and rusted crab-pots while the pale light fades further from the gaps in the planking. You wasted precious minutes chasing a false trail left by some net-mender's idle chalk, and now your legs feel heavy with fatigue and the biting cold of the upper air. No hidden cache waits here, only the hollow sound of distant waves that refuse to return. You turn back toward the main thoroughfare, poorer in time and breath.",
+   "page": "Dust shifts under your boot. A dead-end alcove holds discarded nets and rusted crab-pots. Pale light fades from the gaps in the planking. Precious minutes gone on a false trail some net-mender chalked for no reason. Your legs ache from the climb and the cold of the upper air. No hidden cache waits here. Distant waves knock once against the stilts and fall quiet. You turn back toward the main thoroughfare, poorer in time and breath.",
    "exits": [
     {
      "label": "Return to the main walkway",
@@ -10874,7 +10874,7 @@
    "kind": "scene",
    "title": "The Restricted Alveolar",
    "brief": "You carefully pick the brass lock of a restricted tidal cabinet, risking a triggered poison needle to claim an ancient brass compass.",
-   "page": "Beneath the overhang of a stilt-supported walkway, this secluded alcove holds treasures abandoned by fleeing Brineholders. The cabinet door hangs ajar on green-corroded hinges, revealing velvet-lined slots that once cradled delicate navigational tools. A faint hiss of escaping gas whispers from a tiny concealed tube near the hinge, reminding you how sharply this city punishes uninvited fingers.\n\nYou slide your palm into the velvet recess, closing your cold fingers around the heavy brass body of the old compass before the air can turn foul.",
+   "page": "Under the overhang of a stilt-supported walkway, an alcove keeps treasures the fleeing Brineholders abandoned. The cabinet door hangs ajar on green-corroded hinges. Velvet-lined slots inside once cradled delicate navigational tools. Near the hinge a tiny concealed tube lets out a thin hiss of gas. Saltspire cuts hard at anyone who opens the wrong latch.\n\nYou reach into the velvet recess and take the brass body of the old compass before the air turns foul.",
    "exits": [
     {
      "label": "Pocket the heavy brass compass",
@@ -11270,7 +11270,7 @@
    "kind": "scene",
    "title": "The Gaping Void",
    "brief": "You calculate the exact trajectory for a desperate leap across a gap, risking a fatal miss to grab a dangling escape rope.",
-   "page": "Iron pipes hiss overhead, leaking rusty condensate that splatters onto the grated walkway with a sharp, hollow ring. Below your boots lies a dizzying drop between two stilt-propped platforms of Saltspire, thirty feet of salt-encrusted emptiness where the sea used to run. A frayed hempen rope sways gently in the draft, anchored to a rusted winch on the opposite scaffolding but swinging tantalizingly out of reach with every gust. Smoke billows from a nearby cook-house, stinging your eyes and coating the damp air in soot. You measure the distance once, judging the weight of your soaked coat and the slick iron edge beneath your heels.\n\nThe gap yawns wide, demanding a sudden spring from the wet plating toward the dancing fibers of the line.",
+   "page": "Iron pipes leak overhead. Rusty condensate hits the grated walkway with a sharp hollow ring. Between two stilt-propped platforms of Saltspire a drop opens under your boots: thirty feet of salt-encrusted emptiness where the sea used to run. A frayed hempen rope hangs from a rusted winch on the opposite scaffolding and swings out of reach with every gust. Smoke rolls from a nearby cook-house. Soot coats the damp air and your eyes water. You measure the distance once. Soaked coat, slick iron edge under the heels.\n\nYou set your heels on the wet plating and fix on the frayed end of the line.",
    "exits": [
     {
      "label": "Leap across the void for the rope",
@@ -14957,7 +14957,7 @@
    "kind": "scene",
    "title": "Shoring the Racks",
    "brief": "You brace your back against a collapsing bookshelf to prevent it from crushing you, using pure physical endurance to save a leather-bound history text.",
-   "page": "Centuries of salt-rot have weakened the oak uprights supporting thousands of heavy, leather-clad volumes of tide history. A low groan vibrates through the floorboards as the towering shelf behind you begins to list forward, threatening to bury you beneath a crushing avalanche of ancient pulp. You drop your shoulder against the buckling timber, planting your boots firmly on the damp flagstones as the weight presses down with the fury of a collapsed bulkhead.\n\nThe groaning wood strains against your spine, demanding every ounce of strength you possess to keep the disaster at bay.",
+   "page": "Centuries of salt-rot have weakened the oak uprights that hold thousands of leather-clad volumes of tide history. Floorboards complain. The towering shelf behind you starts to list forward, ready to bury you under a crush of ancient pulp. You drop your shoulder against the buckling timber and plant your boots on the damp flagstones. The rack presses down like a collapsed bulkhead.\n\nWood digs into your spine. You shove back and hold the shelf where it stands.",
    "exits": [
     {
      "label": "Shove the shelf back upright",
@@ -15810,7 +15810,7 @@
    "kind": "scene",
    "title": "Unyielding Anchor",
    "brief": "You haul a heavy, submerged iron lockbox out of a dark pool within the camp, using immense strength to uncover Orsolya's encrypted journal.",
-   "page": "Cold brine stings your knuckles as you strain against the suction of the water-filled cavity. The iron box refuses to budge, locked fast by the weight of shifting rubble and mud that has settled over it like a shroud. Every muscle in your back tightens as you throw your weight backward, testing the stubborn resistance of the buried chest. The water ripples violently, sending dark sediment swirling around your forearms and clouding the pool in sudden gloom.\n\nTaking a slow breath, you adjust your footing on the slick moss and prepare for a harder heave.",
+   "page": "You strain against the suction of the water-filled cavity. Cold brine gets into the scrapes across your knuckles. The iron box will not move. Shifting rubble and mud have settled over it and locked it down. Your back tightens as you haul backward against the buried chest. Water ripples hard. Dark sediment lifts around your forearms and the pool goes murky.\n\nYou plant both feet on the slick moss, draw one slow breath, and set for a harder heave.",
    "exits": [
     {
      "label": "Strain once more against the suction",
@@ -16167,7 +16167,7 @@
    "kind": "reward",
    "title": "The Luminous Vial",
    "brief": "You brutally smash a creeping, armored rock-centipede that invaded the campsite, relying on sudden violence to extract its valuable phosphorescent venom sac.",
-   "page": "The heavy boot-heel crushes the final layer of armor, leaving the segmented carcass twitching feebly in the gloom while you slice free the pulsing, blue-tinged gland from beneath its throat. It rests in your palm like a cold pearl, radiating a steady, phosphorescent glow that cuts through the surrounding shadows without a flicker of smoke. You pocket the strange prize, knowing its eerie light will serve you well where ordinary torches fail.",
+   "page": "Your boot-heel crushes the final layer of armor. The segmented carcass twitches once in the gloom. You slice free the pulsing blue-tinged gland from beneath its throat. It sits in your palm like a cold pearl. Phosphorescent glow cuts the shadows without a flicker of smoke. Into a pocket it goes. Where ordinary torches fail, this light will still show the next step.",
    "exits": [
     {
      "label": "Return to the ruined shelter",
@@ -16500,7 +16500,7 @@
    "kind": "reward",
    "title": "The Hidden Glyph",
    "brief": "You decipher the final warnings etched into the control console by the ancient builders, gaining critical knowledge that grants you a significant tactical advantage.",
-   "page": "Your fingers trace the worn indentation of the final symbol just as the locking tumbler drops into place with a hollow, satisfying thud that resonates through the floor. The mechanism yields its secret without further resistance, and you can read the ancient builder's intent in the exact tolerances of the great gear. You pocket the small, grease-stained brass tally dropped by some forgotten artificer, feeling the weight of their forgotten knowledge settle into your palm.",
+   "page": "You find the worn indentation of the final symbol and press it home. The locking tumbler drops with a hollow thud that runs through the floorboards. No further catch holds. Exact tolerances on the great gear lay out the ancient builder's intent in plain metal. Into a pocket goes the small grease-stained brass tally some forgotten artificer left behind. Scratched numerals catch the lamp light on your way out.",
    "exits": [
     {
      "label": "Return to the gear housing",
@@ -18533,7 +18533,7 @@
    "kind": "scene",
    "title": "The Compass of Bones",
    "brief": "You threaten to completely shatter the central tide clock, risking the Choir's violent frenzy, to force the spirits into yielding a glowing spectral compass.",
-   "page": "Cold fingers close around the rim of the central tide clock while you press the edge of your heavy scraper against the vibrating brass. The entire chamber holds its breath as the spirits of the Hollow Choir surge forward in a wave of blinding phosphorescence, threatening to tear your mind apart for your audacity.\n\nYou do not blink, holding your ground until the spectral entities recoil from the sheer stubbornness of your threat, leaving behind a small, pulsing compass carved from whale-bone that drifts lazily into your waiting palm.",
+   "page": "Cold hands lock on the rim of the central tide clock. You press the edge of your scraper against brass that shivers under the blade. The chamber goes still. Spirits of the Hollow Choir rush forward in a wave of blinding phosphorescence, ready to tear your mind apart for the insult.\n\nYou do not blink. You hold. The spectral entities recoil from that stubborn threat. A small pulsing compass carved from whale-bone drifts into your open hand.",
    "exits": [
     {
      "label": "Follow the glowing spectral compass",
