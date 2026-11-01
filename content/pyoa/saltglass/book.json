@@ -569,7 +569,7 @@
     }
    ],
    "title": "The Public Well",
-   "page": "By the public well whose iron handle hangs slack and dry against the stonework, a weeping child presses a smooth river pebble into your hand and asks if the rain is truly coming back this year. The wooden bucket rests at the bottom of the empty shaft, kicking up a hollow echo when the wind blows across the rim. You close your fist around the cool stone and step away from the curb, facing the long road that winds down into the white glare of the Basin."
+   "page": "By the public well whose iron handle hangs slack and dry against the stonework, a weeping child presses a smooth river pebble into your hand. \"Is the rain coming back this year?\" the child asks. The wooden bucket rests at the bottom of the empty shaft, and the wind across the rim draws a hollow note from the deep well. You close your fist around the cool pebble and step away from the curb, facing the long road that winds down into the white glare of the Basin."
   },
   {
    "id": "sg-1-0-2-0",
@@ -881,7 +881,7 @@
     }
    ],
    "title": "The Signalman's Mirror",
-   "page": "Dust spirals skip across the platform of the disused relay station while an old signalman polishes a brass mirror disc with the hem of his faded tunic. He pauses every few seconds to squint toward the distant towers of Prism, searching the blinding morning glare for any answering flash from the Glasswrights. Your ember-lamp rests at your hip, banked coals warming your thigh through the cloth. The signalman glances your way, offering a toothless grin and a nod toward the winding tracks ahead.\n\nYou can press onward past the relay station toward the distant limestone arch, or turn your steps along the low ridge toward the orange-stained cliff."
+   "page": "Dust spirals skip across the platform of the disused relay station while an old signalman polishes a brass mirror disc with the hem of his faded tunic. Every few seconds he pauses to squint at the distant towers of Prism and searches the blinding morning glare for any answering flash from the Glasswrights. Your ember-lamp rests at your hip. Banked coals warm your thigh through the cloth. He glances your way, offers a toothless grin, and nods at the winding tracks ahead.\n\nPast the station the tracks run on to a distant limestone arch, and a low ridge climbs toward an orange-stained cliff."
   },
   {
    "id": "sg-1-0-2-12",
@@ -2378,7 +2378,7 @@
     }
    ],
    "title": "The Iron Staff",
-   "page": "Dust devils spin lazy spirals across the abandoned cart-track while Calder uses his heavy iron-shod staff to test the crust of a suspicious sinkhole yawning nearby. The wood-and-iron pole punches through the hollow crust with a brittle snap, revealing a dark drop where ancient brine once pooled beneath the salt. He steps back with a dry whistle, shaking dust from the iron tip.\n\nThe path ahead requires wary footing and a sharp eye for hidden traps in the white expanse."
+   "page": "Dust devils spin lazy spirals across the abandoned cart-track while Calder uses his iron-shod staff to test the crust of a suspicious sinkhole nearby. The wood-and-iron pole punches through the hollow crust with a brittle snap and shows a dark drop where ancient brine once pooled beneath the salt. He steps back with a dry whistle and shakes dust from the iron tip.\n\nWary footing still matters here. You scan the white expanse for traps."
   },
   {
    "id": "sg-1-1-3-8",
@@ -4291,7 +4291,7 @@
    "endingId": "doom-1-1",
    "exits": [],
    "title": "The High Swing",
-   "page": "Ignoring Calder's warning, you swing your blazing lamp high above your head to spite the toll-riders. A volley of poisoned sling-stones answers from the dark, and your water-cask cracks against a limestone boulder. Cool, bitter brine soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your grip turns slick where the dampness spreads. The frantic rattling of your belt-lantern sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. Darkness closes in with the taste of gypsum, and your journey ends right here in the white grit."
+   "page": "You ignore Calder's warning and swing your blazing lamp high above your head to spite the toll-riders. A volley of poisoned sling-stones answers from the dark, and your water-cask cracks against a limestone boulder. Cool bitter brine soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your grip turns slick where the dampness spreads. The belt-lantern rattles. It sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. Darkness closes in with the taste of gypsum, and your journey ends right here in the white grit."
   },
   {
    "id": "sg-d-1-2",
@@ -8408,7 +8408,7 @@
     }
    ],
    "title": "The Crumbling Wall",
-   "page": "You squeeze through a narrow breach in a crumbling brick boundary wall choked with wind-blown crystal sand and dried desert scrub. The abrasive grit rasps against your canvas coat as you force your way into the shadowed alley beyond, leaving the blinding expanse of the bitterflats at your back. A stale, trapped heat hangs between the leaning towers like a woolen blanket.\n\nThe alley splits ahead into a pair of narrow corridors winding through the abandoned masonry. You can approach the guarded perimeter or make for the polished avenues further in."
+   "page": "You squeeze through a narrow breach in a crumbling brick boundary wall choked with wind-blown crystal sand and dried desert scrub. The abrasive grit rasps against your canvas coat as you force your way into the shadowed alley beyond. The bitterflats fall behind you. A stale trapped heat hangs between the leaning towers like a woolen blanket.\n\nThe alley splits ahead into a pair of narrow corridors. They wind through the abandoned masonry."
   },
   {
    "id": "sg-2-2-4-3",
@@ -8834,7 +8834,7 @@
     }
    ],
    "title": "The Obsidian Arch",
-   "page": "Ducking beneath an arch of fused obsidian, you step into the sudden, cool shadow of a collapsed warehouse. High above your head, a Glasswright mirror flashes a sharp, rhythmic warning across the baking expanse of the basin, painting the stone walls with brilliant stabs of white light. The air here smells faintly of ozone and old, dry lime.\n\nA narrow gap between two leaning tenements offers a way deeper into the shard maze, while a wider cobblestone passage leads toward the hum of distant traffic. Your fingers brush the cold ceramic key in your pocket for comfort as you weigh the silence."
+   "page": "You duck beneath an arch of fused obsidian and step into the cool shadow of a collapsed warehouse. High above, a Glasswright mirror throws a sharp warning across the baking basin, and the stone walls take it as brief white stabs of light. Ozone and old dry lime hang here.\n\nA narrow gap between two leaning tenements opens deeper into the shard maze. Wider cobbles run toward distant traffic. The ceramic key is cold. Your fingers find it in your pocket as you pause."
   },
   {
    "id": "sg-3-0-0-3",
@@ -9487,7 +9487,7 @@
     "why": "the reader is bound by the Dune Sisters' well-oath, and is known for it"
    },
    "title": "The Sacred Seal",
-   "page": "The sacred water-oath inked upon your wrist catches the eye of the well-guard stationed at the postern gate, marking you as a friend of the Dune Sisters. Without a word of demand for tolls or taxes, the weary sentry turns a heavy iron crank and swings the reinforced postern wide. Cool air drifts briefly from the protected courtyard beyond, offering a welcome respite from the baking street.\n\nYou step through the threshold into the shaded passage beyond."
+   "page": "The sacred water-oath inked upon your wrist catches the eye of the well-guard stationed at the postern gate and marks you as a friend of the Dune Sisters. He asks for no tolls or taxes. The weary sentry turns an iron crank and swings the reinforced postern wide. Cool air drifts briefly from the protected courtyard beyond, a short break from the baking street.\n\nYou step through the threshold into the shaded passage beyond."
   },
   {
    "id": "sg-3-0-2-12",
@@ -11753,7 +11753,7 @@
     }
    ],
    "title": "The Green Glass Chasm",
-   "page": "Jagged plates of fused green glass form a sheer drop above the lower industrial terraces. A rusted pulley-crane hangs out over the emptiness, its iron cable groaning in the dry wind. You test the swinging arm with a gloved hand, weighing whether its momentum can carry you across the gap before the rusted pivot snaps.\n\nTo your left, a tilting gallery of concave panes distorts your sight into dizzying waves, while a nervous scavenger on a quartz balcony fumbles with a heavy sack of grinding sand. Ahead, the hollow ribs of an ancient dome offer a narrow, razor-sharp scramble upward."
+   "page": "Jagged plates of fused green glass form a sheer drop above the lower industrial terraces. A rusted pulley-crane hangs out over the emptiness, and its iron cable groans in the dry wind. You test the swinging arm with a gloved hand and gauge whether its momentum can carry you across the gap before the rusted pivot snaps.\n\nTo your left a tilting gallery of concave panes bends your sight into dizzying waves. A nervous scavenger on a quartz balcony fumbles a sack of grinding sand. Dome ribs rise ahead. They offer a narrow, razor-sharp scramble upward."
   },
   {
    "id": "sg-3-2-1-3",
@@ -12020,7 +12020,7 @@
     "why": "the reader's ember-lamp is burning and draws or reveals something"
    },
    "title": "The Solder Seam",
-   "page": "Your ember-lamp burns with a steady, comforting warmth, casting a rich orange glow against the grey masonry. The flickering light catches a faint, dull gleam within a narrow corner: a hidden vein of soft lead solder framing a secret crawlway long forgotten by the city's scavengers. You push against the pliable metal with your fingers, finding it gives way just enough to admit a determined runner.\n\nThe concealed passage leads toward either a workshop filled with metallic fumes or a steep, sliding slope of salt and glass beads."
+   "page": "Your ember-lamp burns with a comforting warmth and casts a rich orange glow against the grey masonry. The flickering light catches a faint dull gleam within a narrow corner: a hidden vein of soft lead solder frames a secret crawlway long forgotten by the city's scavengers. You push against the pliable metal with your fingers. It gives just enough.\n\nThe concealed passage leads toward a workshop filled with metallic fumes, and also toward a steep sliding slope of salt and glass beads."
   },
   {
    "id": "sg-3-2-2-6",
@@ -12195,7 +12195,7 @@
     }
    ],
    "title": "The Smoky Vault",
-   "page": "Leaded glass darkens the vaulted ceiling and puts the corridor into twilight. Sulfur from old glass-kilns hangs in the gloom. A warm, greasy draft sweeps the passage and brings ash and the scent of long-dead fires from the lower chambers. Your ember-lamp flickers at the pressure shift; its orange flame leans on the soot-stained masonry.\n\nOne draft tugs your coat left, another right, each from a different corner of the vaulted hall."
+   "page": "Leaded glass darkens the vaulted ceiling and puts the corridor into twilight. Sulfur from old glass-kilns hangs in the gloom. A warm greasy draft sweeps the passage and brings ash and the scent of long-dead fires from the lower chambers while your ember-lamp flickers at the pressure shift and its orange flame leans on the soot-stained masonry.\n\nOne draft tugs your coat left. Another pulls right from a far corner of the vaulted hall."
   },
   {
    "id": "sg-3-2-2-13",
@@ -17029,7 +17029,7 @@
     }
    ],
    "title": "The Colossal Brass Gear",
-   "page": "Beside a colossal brass gear half-swallowed by sand, you stop as the mirror storm dies in slow, ragged scraps. The roar of the wind thins to a mournful sigh. Diamond-dust hangs in the air and sparkles in the returning light. You wipe grime from your eyes and look up. Through the haze the towers of the central observatory stand clear."
+   "page": "Beside a colossal brass gear half-swallowed by sand, you stop as the mirror storm dies in slow, ragged scraps and the roar of the wind thins to a mournful sigh. Diamond-dust hangs in the air. It sparkles in the returning light. You wipe grime from your eyes and look up. Through the haze the towers of the central observatory stand clear."
   },
   {
    "id": "sg-4-2-4-1",
@@ -24749,7 +24749,7 @@
     }
    ],
    "title": "The Basalt Gears",
-   "page": "Beside the grinding basalt gears of the inner vault, a forgotten ledger lies open, detailing the bitter cost of past harvests in faded ink. The heavy machinery groans with a low, rhythmic vibration that rattles the dust motes suspended in the dim air. You trace the dry pages with a thumb, noting the columns of numbers and names of forgotten towns that perished when the rains failed generations ago. The smell of old paper and machine oil thickens around you, pressing close against your skin like a physical weight. Every gear turn brings the imminent arrival of the monsoon closer to the surface."
+   "page": "Beside the grinding basalt gears of the inner vault, a forgotten ledger lies open and details the bitter cost of past harvests in faded ink. Machinery groans in the dim air and rattles the dust motes that hang there. You trace the dry pages with a thumb and note the columns of numbers and the names of forgotten towns that perished when the rains failed generations ago. Old paper and machine oil smell sharp. Every gear turn brings the monsoon closer to the surface."
   },
   {
    "id": "sg-6-2-1-0",
@@ -24899,7 +24899,7 @@
     }
    ],
    "title": "Singing Glass",
-   "page": "Across a chasm of singing glass plates, a spectral reflection mimics your every hesitation while the abyss hums a low, warning note. The transparent floor beneath your boots vibrates in tune with the resonant tones rising from the dark depths. Every movement sends a shimmering wave of musical sound bouncing off the distant walls. You grip your lantern tightly, watching your own distorted image shift and fracture across the glass expanse. The path ahead requires an absolute commitment of balance and nerve."
+   "page": "Across a chasm of singing glass plates, a spectral reflection mimics your every hesitation while a low warning note rises from the abyss below and the transparent floor beneath your boots shakes in tune with tones that climb from the dark. Every movement sends a shimmering wave of musical sound off the distant walls. You grip your lantern. Your own distorted image shifts and fractures across the glass expanse."
   },
   {
    "id": "sg-6-2-1-4",
@@ -24955,7 +24955,7 @@
     }
    ],
    "title": "White Salt Flue",
-   "page": "White salt dust chokes the narrow ventilation flue as you hunt for the hidden latch that releases the pressure valve. Abrasive powder coats your skin and throat; each breath turns into a dry, ragged cough. Metal plates in the ceiling groan under the city resting overhead. Along the cold interior wall you find the tiny notch carved into the ironwork. The flue gives almost no space to turn."
+   "page": "White salt dust chokes the narrow ventilation flue as you hunt for the hidden latch that releases the pressure valve, and abrasive powder coats your skin and throat until each breath turns into a dry, ragged cough. Metal plates in the ceiling groan under the city resting overhead. Along the cold interior wall you find the tiny notch carved into the ironwork. Almost no room to turn."
   },
   {
    "id": "sg-6-2-2-0",
