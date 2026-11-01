@@ -3775,7 +3775,7 @@
    "kind": "recovery",
    "title": "Slips in the Dark",
    "brief": "You track a strange scuttling creature across the shifting dunes, anticipating its sudden turns to locate its nest and claim a cluster of glowing pearls.",
-   "page": "Your fingers graze the smooth sphere of a pearl just as the creature whips around, sinking sharp mandibles deep into the web of your thumb. You yank your hand back with a sharp hiss of pain, sending the nest scattering across the damp sand. The creature vanishes into a crack in the hull, leaving you nursing a bleeding hand and only a single glowing pearl retrieved from the chaos. Wiping the blood on your trousers, you curse the stubborn wildlife of the Low.",
+   "page": "Your fingers graze the smooth sphere of a pearl just as the creature whips around and drives sharp mandibles deep into the web of your thumb. You yank your hand back with a sharp hiss of pain. The nest scatters across the damp sand. The creature vanishes into a crack in the hull, and you are left with a bleeding hand and only a single glowing pearl from the mess. You wipe the blood on your trousers and curse the stubborn wildlife of the Low.",
    "exits": [
     {
      "label": "Pocket the single recovered pearl",
@@ -5946,7 +5946,7 @@
    "kind": "hub",
    "title": "The Bleached Labyrinth",
    "brief": "The Bleached Reef: Razor-sharp coral formations create a treacherous labyrinth, harbouring hidden tide-pools and aggressive, overgrown scavenging crabs.",
-   "page": "Jagged calcified ribs and fossilised fan-corals rear from the dry seabed like the teeth of a buried jaw. Beneath these razor-sharp ledges, shadowed tide-pools stagnate in the salty air, smelling faintly of rot and ancient iron. Legions of pale, heavy-shelled scavenging crabs scuttle through the crevices, their segmented claws clicking against the stone with an incessant, unsettling rhythm. Every pathway splits among the white labyrinth, promising either a hidden cache of brine-cured spoils or a nasty pinch from the crustacean guardians waiting in the gloom.",
+   "page": "Jagged calcified ribs and fossilised fan-corals rear from the dry seabed like the teeth of a buried jaw, and beneath those razor ledges the shadowed tide-pools stagnate in salty air that smells of rot and ancient iron. Pale scavenging crabs with thick shells scuttle through the crevices. Their segmented claws click against the stone without pause. Every pathway splits among the white labyrinth. One fork may hide a cache of brine-cured spoils; the gloom of another holds crustacean guardians and a nasty pinch.",
    "exits": [
     {
      "label": "Pick a path through the razor coral",
@@ -6861,7 +6861,7 @@
    "kind": "scene",
    "title": "Pressure in the Pipe",
    "brief": "You force open a jammed, rusted water valve on the city's perimeter, battling the heavy pressure to fill your own flasks.",
-   "page": "Condensation drips steadily onto your neck as you lean your full shoulder into the stubborn conduit, muscles straining against the unyielding cold of the metal. The valve groans, a dry, sharding screech that echoes across the skeletal stilts above, threatening to draw unwanted eyes from the sentinels patrolling the walkways. You ignore the rising panic and plant your heels deeper into the brine-crusted silt.\n\nAnother desperate heave sends a sharp vibration up your spine, and the sealed joint finally gives a fraction of a rotation, spitting a thin, hissing jet of foul-tasting brackish water across your knuckles.",
+   "page": "Condensation drips onto your neck as you lean your full shoulder into the stubborn conduit, and your muscles strain against the cold of the metal. The valve groans. A dry, sharding screech carries across the skeletal stilts above, loud enough to pull eyes from the sentinels on the walkways. You plant your heels deeper into the brine-crusted silt.\n\nAnother desperate heave runs a sharp vibration up your spine, and the sealed joint finally gives a fraction of a rotation. A thin, hissing jet of foul-tasting brackish water spits across your knuckles.",
    "exits": [
     {
      "label": "Force the stubborn valve open",
@@ -9203,7 +9203,7 @@
    "kind": "scene",
    "title": "Slippery Timber and Shouts",
    "brief": "You push through a desperate crowd fighting over a spilled barrel, risking broken ribs to grab an ornate silver cup.",
-   "page": "Heavy hemp ropes slap against the rotting stilt-posts with the rhythm of a failing heart. The crowd surges forward like a black wave, boots sliding on the greasy residue of crushed brine-fish and spilled oil. Somewhere in the crush, a woman shrieks as her basket of rusted ironmongery tips into the abyss below. You keep your shoulders square and your elbows tucked tight, navigating the churning human tide while the air grows thick with the smell of unwashed wool and panic.",
+   "page": "Hemp ropes slap the rotting stilt-posts out of time. The crowd surges forward like a black wave, and boots slide on the greasy residue of crushed brine-fish and spilled oil. Somewhere in the crush a woman shrieks as her basket of rusted ironmongery tips into the abyss below. You keep your shoulders square and your elbows tucked tight. Unwashed wool and panic hit your nose. You push on through the crush.",
    "exits": [
     {
      "label": "Shoulder deeper into the crush",
@@ -11558,7 +11558,7 @@
    "kind": "reward",
    "title": "The Forged Seal",
    "brief": "You bluff your way into joining the negotiation as an emissary, risking immediate execution to secure a signed transit pass.",
-   "page": "The chief factor grunts, rubs his salt-roughened chin, and drives his signet into warm red wax to validate your passage with reluctant authority. You tuck the parchment inside your jacket alongside your pounding heartbeat, offering a stiff, mocking bow before the nervous aristocrats have time to reconsider their cowardice. The ink dries quickly in the salt breeze drifting through the open casement, leaving you with a weapon far sharper than any rusted blade in Gullmouth.",
+   "page": "The chief factor grunts, rubs his salt-roughened chin, and drives his signet into warm red wax to validate your passage with reluctant authority. You tuck the parchment inside your jacket beside your heartbeat and offer a stiff, mocking bow before the nervous aristocrats have time to reconsider their cowardice. The ink dries fast. Salt breeze moves through the open casement. You button your jacket over the warm wax seal of Gullmouth.",
    "exits": [
     {
      "label": "Return to the solarium floor",
@@ -12296,7 +12296,7 @@
    "kind": "scene",
    "title": "The Desperate Leap",
    "brief": "You fight off a desperate scavenger trying to hijack the platform, risking a lethal shove to keep your hard-won Supplies intact.",
-   "page": "A heavy shadow lunges from behind a support beam, gloved hands slamming hard against your chest to knock you backward toward the open drop. Salty air rushes past your ears as you twist violently at the last fraction of a second, catching the attacker by the collar of their sodden oilskin coat.\n\nThe stilt-city walkway sways under the sudden, brutal impact, threatening to send your hard-earned packs tumbling into the empty abyss below.",
+   "page": "A dark shape lunges from behind a support beam, and gloved hands slam hard against your chest to knock you backward toward the open drop. Salty air rushes past your ears as you twist at the last fraction of a second and catch the attacker by the collar of their sodden oilskin coat.\n\nThe stilt-city walkway sways. Your hard-earned packs slide toward the empty abyss below.",
    "exits": [
     {
      "label": "Shove the assailant away hard",
@@ -13610,7 +13610,7 @@
    "kind": "scene",
    "title": "The Carapace Shield",
    "brief": "You wrestle a massive pale crab away from a hollowed-out sea chest, using pure force to secure a pair of heavy brass diving gauntlets.",
-   "page": "Razor-sharp claws slash through the dim air, missing your throat by a hair as you drive your shoulder hard into the underside of the massive pale crab. The creature clicks in fury, its heavy shell scraping against the flagstones as you force it back from the wooden chest. You wedge your heel into its hinge-joint, twisting the beast off balance until it skitters away into the dark, leaving the prize unguarded.",
+   "page": "Razor-sharp claws slash through the dim air and miss your throat by a hair as you drive your shoulder hard into the underside of the massive pale crab. The creature clicks in fury. Its shell scrapes against the flagstones while you force it back from the wooden chest. You wedge your heel into its hinge-joint and twist until the beast skitters off into the dark. The chest sits unguarded.",
    "exits": [
     {
      "label": "Reach inside the iron chest",
@@ -13663,7 +13663,7 @@
    "kind": "recovery",
    "title": "Pinioned by the Claws",
    "brief": "You wrestle a massive pale crab away from a hollowed-out sea chest, using pure force to secure a pair of heavy brass diving gauntlets.",
-   "page": "A blinding pinch catches your forearm as the crustacean's pincer closes through your sleeve, biting deep into the flesh. You grunt through clenched teeth, swinging the butt of your heavy iron pry-bar against its eyestalk until the beast releases its grip with a wet shriek. Blood wells from the ragged notch in your arm, warm and sticky against the freezing air, leaving you bruised and gasping for breath on the wet stone.",
+   "page": "A blinding pinch catches your forearm as the crustacean's pincer closes through your sleeve and bites deep into the flesh. You grunt through clenched teeth and swing the butt of your iron pry-bar against its eyestalk until the beast releases with a wet shriek. Blood wells from the ragged notch in your arm, warm and sticky in the freezing air. You kneel bruised on the wet stone. Breath comes in hard pulls.",
    "exits": [
     {
      "label": "Retreat to the open terrace",
@@ -13895,7 +13895,7 @@
    "kind": "check",
    "title": "Clearing the Sealed Alcove",
    "brief": "You smash through a calcified wall of barnacles blocking a side alcove, driving your shoulders forward to uncover a stash of salted provisions.",
-   "page": "Driving your shoulder repeatedly into the stubborn crust of barnacles, you feel the solid mass begin to fracture along invisible stress lines within the old mortar. Sharp edges of ancient shell bite through your heavy canvas jacket, scoring the skin beneath as you put every ounce of muscle into forcing the blockade inward. The wall groans and shifts, threatening to collapse entirely upon your boots or give way to whatever stagnant air has pooled behind the barrier for years.",
+   "page": "You drive your shoulder again and again into the stubborn crust of barnacles until the solid mass begins to fracture along invisible stress lines in the old mortar. Sharp edges of ancient shell bite through your canvas jacket and score the skin beneath as you put every ounce of muscle into forcing the blockade inward. The wall groans. It may fall onto your boots, or it may open onto the stagnant air that has pooled behind the barrier for years.",
    "exits": [
     {
      "label": "check-full",
@@ -15725,7 +15725,7 @@
    "kind": "check",
    "title": "Facing the Dark",
    "brief": "You sleep briefly in the unsettling silence of the abandoned camp, suppressing terrible nightmares to recover your stamina and find a hidden silver flask.",
-   "page": "Shadows seem to lengthen and writhe along the damp stone walls as the oppressive quiet of the ruined camp presses in upon your thoughts. Terrible visions of the dry seabed and drowning towns flicker uninvited behind your closed eyelids, threatening to break your fragile composure. You grip the edges of your wooden seat until your knuckles turn white, fighting off the phantom terrors that claw at the edges of your mind.",
+   "page": "Along the damp stone walls the shadows lengthen and writhe while the quiet of the ruined camp presses on your thoughts. Behind closed eyelids, terrible visions of the dry seabed and drowning towns arrive uninvited. Your composure nearly fails. You grip the wooden seat until your knuckles pale. The phantom terrors claw at the rim of your mind, and you hold them off.",
    "exits": [
     {
      "label": "check-full",
