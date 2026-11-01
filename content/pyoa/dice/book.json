@@ -158,7 +158,7 @@
    "kind": "scene",
    "title": "The Rusted Spyglass",
    "brief": "You try to repair a rusted spyglass found on the balcony, risking cutting your hands to gain a valuable tool for spotting distant scavengers.",
-   "page": "Outside on the balcony, the wind tastes entirely of dry salt and dead kelp. Resting on a salt-rimed crate is a collapsible brass spyglass, a heavy, expensive piece of equipment that Orsolya must have dropped in her haste. When you pick it up, the metal is cold and stubbornly rigid. The sea-spray has corroded the sliding joints, fusing the brass cylinders together. Spotting rival wrecker crews or aggressive Drift Pilgrims from a distance would be an immense advantage out on the open seabed. However, the brass edges are sharp and jagged where the casing has split. Forcing the mechanism open is going to take leverage and raw strength, and one slip could slice your palms open on the rusted metal.\n\nBoth hands find the casing, and you prepare to twist.",
+   "page": "Outside on the balcony the wind tastes of dry salt and dead kelp. Resting on a salt-rimed crate is a collapsible brass spyglass, an expensive piece Orsolya must have dropped in her haste. When you pick it up the metal is cold and stubbornly rigid. Sea-spray has corroded the sliding joints and fused the cylinders together. Spotting rival wrecker crews or aggressive Drift Pilgrims from a distance would be an immense advantage out on the open seabed, yet the edges are sharp and jagged where the casing has split. Forcing the mechanism will take leverage and raw strength, and one slip could slice your palms open on the rusted metal.\n\nBoth hands find the casing. You prepare to twist.",
    "exits": [
     {
      "label": "Force the mechanism open",
@@ -603,7 +603,7 @@
    "kind": "scene",
    "title": "Shadows and Secrets",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "Crouched behind a stack of barnacle-encrusted crates, you watch a trio of rival wreckers from the Hook-and-Line crew. They are huddled around a lantern, arguing over a scrap of parchment. You recognise their leader, a scarred net-mender named Harlan, tracing a jagged line across the paper with a grimy finger.\n\n\"The Sunken Stair is this way,\" Harlan mutters, his voice carrying on the salty breeze. \"Past the singing dunes and the old coral beds.\" That parchment is a hand-drawn chart of the newly exposed seabed, tracking hazards and stable paths. If you can get a closer look, or perhaps snatch it while they are distracted, your journey would be vastly safer.",
+   "page": "Crouched behind a stack of barnacle-encrusted crates, you watch a trio of rival wreckers from the Hook-and-Line crew. They huddle around a lantern. Argument over a scrap of parchment runs hot between them, and you recognise their leader, a scarred net-mender named Harlan, as he traces a jagged line across the paper with a grimy finger.\n\n\"The Sunken Stair is this way,\" Harlan mutters, his voice carrying on the salty breeze. \"Past the singing dunes and the old coral beds.\" That parchment is a hand-drawn chart of the newly exposed seabed. It tracks hazards and stable paths. A closer look, or a snatch while they are distracted, would make your journey vastly safer.",
    "exits": [
     {
      "label": "Sneak closer for a better look",
@@ -803,7 +803,7 @@
    "kind": "scene",
    "title": "A Precious Source of Light",
    "brief": "You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.",
-   "page": "Carefully, you wedge your blade under the tarnished rim of the heavy brass lantern. It is a beautiful old piece of salvage, likely stripped from a nobleman's drowned yacht, but you have no need for decorative metal right now. You need the dark, viscous fuel sloshing in its belly. The hinges are rusted shut with thick green verdigris, requiring a delicate, steady hand to pry open without tipping the reservoir. The subterranean depths beneath the Sunken Stair will be pitch black, and the shadows of the Low are already lengthening. Holding your breath, you prepare to work the stubborn clasp free, hoping to decant the precious oil into your own flask before it can seep into the floorboards.",
+   "page": "You wedge your blade under the tarnished rim of the brass lantern. Fine salvage, likely stripped from a nobleman's drowned yacht, but you have no need for decorative metal right now. You need the fuel. Dark viscous oil sloshes in its belly, and the hinges are rusted shut with thick green verdigris so you must pry them open without tipping the reservoir. The subterranean depths beneath the Sunken Stair will be pitch black. Shadows of the Low already lengthen while you hold your breath and work the stubborn clasp free so you can decant the oil into your own flask before it seeps into the floorboards.",
    "exits": [
     {
      "label": "Proceed with dismantling the lantern",
@@ -1038,7 +1038,7 @@
    "kind": "recovery",
    "title": "Snap of the Hemp",
    "brief": "You patch a splintered skiff that hangs uselessly from the dry pier, using clever rigging to lower it and scavenging a bundle of salt-cured rations.",
-   "page": "Sudden friction betrays your hurried fingers, and the hemp rope parting with a sharp crack sends the skiff plunging sideways into the dry timbers of the pier. Splintered wood explodes outward, spraying shards across the mud and tearing a jagged gash in your shoulder as you dive out of the path of the falling wreckage.\n\nYou pull yourself up from the grey silt, brushing salt from the raw, bleeding wound while your precious rations scatter into the dust. The mishap costs you both time and skin, leaving you poorer by a bundle of provisions and nursing a fresh, stinging wound.",
+   "page": "Sudden friction betrays your hurried fingers, and the hemp rope parts with a sharp crack that sends the skiff plunging sideways into the dry timbers of the pier. Splintered wood explodes outward. Shards spray across the mud and tear a jagged gash in your shoulder as you dive out of the path of the falling wreckage.\n\nYou pull yourself up from the grey silt and brush salt from the raw bleeding wound while your precious rations scatter into the dust. The mishap costs you time, skin, and a bundle of provisions. Fresh blood runs from the cut.",
    "exits": [
     {
      "label": "Gather the ruined gear",
@@ -1223,7 +1223,7 @@
    "kind": "recovery",
    "title": "The Price of Mud",
    "brief": "You negotiate with the ferryman who sits in his boat upon the mud, staring down his demands to gain a rusted map of the sinkholes.",
-   "page": "The ferryman does not blink as he names a price that leaves your pockets stinging with loss and your skin crawling with salt-rash. When you finally snatch the rusted copper map from his grease-stained palm, a jagged edge of the metal slices deep into the meat of your thumb, drawing thick, dark blood that immediately crusts over with grey rime. The delay has cost you half your morning and a good portion of your remaining water skin, leaving your throat dry and your temper short as the salt-stiffened mud sucks at your boots.",
+   "page": "The ferryman does not blink as he names a price that empties your pockets and leaves your skin crawling with salt-rash. When you finally snatch the rusted copper map from his grease-stained palm, a jagged edge of the metal slices deep into the meat of your thumb and draws thick dark blood that immediately crusts over with grey rime. Half your morning is gone. A good portion of your remaining water skin is gone too, and your throat is dry as the salt-stiffened mud sucks at your boots.",
    "exits": [
     {
      "label": "Climb back up to the cliff-top",
@@ -2873,7 +2873,7 @@
    "kind": "scene",
    "title": "The Scale Peg",
    "brief": "You carve a replacement peg for a broken weighing scale, fashioning the wood perfectly to secure a small vial of rare medicinal kelp extract.",
-   "page": "Seasoned boxwood rests beneath your calloused thumbs as the small knife blade curls pale shavings onto the workbench. Every stroke requires absolute patience to match the tapered pin of the apothecary scale, ensuring the tiny brass sleeve holds tight against the weight of precious kelp extract. Outside, the dry wind scrapes salt-grit across the windowpanes like sand in a sieve.",
+   "page": "Seasoned boxwood rests beneath your calloused thumbs as the small knife blade curls pale shavings onto the workbench. Every stroke must match the tapered pin of the apothecary scale so the tiny brass sleeve holds tight against precious kelp extract. Outside, the dry wind scrapes salt-grit across the windowpanes like sand in a sieve.",
    "exits": [
     {
      "label": "Secure the scale peg firmly",
@@ -3218,7 +3218,7 @@
    "kind": "scene",
    "title": "The Pilgrim's Bargain",
    "brief": "You carve an offering from a piece of pale driftwood, shaping the idol perfectly to satisfy the pilgrims and secure a pouch of blessed salt.",
-   "page": "In the salt-fog the hooded zealots gather close, woolen cloaks stiff with dried froth and smelling of old storms. They pass the pale wooden idol from hand to hand with reverent fingers, murmuring low incantations to the empty horizon where the tide used to lie. Pleased by the stark craftsmanship and the unmistakable tang of sacred driftwood, their leader tips a measure of glittering white crystals from a leather pouch into your waiting palm. This blessed salt commands a high price among the inland folk who still fear the thirst of the dry seabed.\n\nYou pocket the precious grains and turn your steps back toward the bustling clamor of the shore.",
+   "page": "In the salt-fog the hooded zealots gather close, woolen cloaks stiff with dried froth and smelling of old storms. They pass the pale wooden idol from hand to hand. Low murmurs rise toward the empty horizon where the tide used to lie, and their leader, pleased by the stark craftsmanship and the unmistakable tang of sacred driftwood, tips a measure of glittering white crystals from a leather pouch into your waiting palm. This blessed salt fetches a high price among the inland folk who still fear the thirst of the dry seabed.\n\nYou pocket the grains. Then you turn back toward the shore.",
    "exits": [
     {
      "label": "Walk back toward the shore",
@@ -6705,7 +6705,7 @@
    "kind": "bottleneck",
    "title": "Beyond The Dust Shallows",
    "brief": "As the pilgrim camp fades in the distance, you spot the towering, stilt-supported structures of a wealthy outpost looming ahead.",
-   "page": "The ragged tents of the drift folk shrink into grey smudges behind you as the low seabed flattens into a hard expanse of bleached shell-grit. Rising from this barren floor like the ribcage of an ancient leviathan, the immense iron stilts of Saltspire pierce the hazy sky. Heavy wooden walkways and suspended rope-bridges connect the towering platforms overhead, where the wealthy Brineholders oversee their guarded water-engines and pump-houses. Armed wardens pace the lower ladders, their brass-trimmed helmets catching the pale, sunless glare reflected off the salt-flats. You pull your cloak tighter around your shoulders, stepping carefully into the long, cold shadows cast by the sprawling metropolis of water-mongers.",
+   "page": "The ragged tents of the drift folk shrink into grey smudges behind you as the low seabed flattens into a hard expanse of bleached shell-grit. Saltspire rises ahead. Immense iron stilts pierce the hazy sky like the ribcage of an ancient leviathan, and wooden walkways and suspended rope-bridges connect the towering platforms overhead where the wealthy Brineholders oversee their guarded water-engines and pump-houses. Armed wardens pace the lower ladders, brass-trimmed helmets catching the pale sunless glare off the salt-flats. You pull your cloak tighter and step into the long cold shadows cast by that sprawling city of water-mongers.",
    "exits": [
     {
      "label": "Approach the guarded stilt-city",
@@ -10729,7 +10729,7 @@
    "kind": "bottleneck",
    "title": "The Governors Ink",
    "brief": "Inside the archives, you discover documents proving the Brineholders know the Meridian Gear is jammed and intend to destroy it.",
-   "page": "Heavy iron-bound ledgers lie scattered across the mahogany table of the inner chamber, bearing the neat, ruthless script of the Brineholder magistracy. Parchment maps pinned to the cedar walls reveal that the great pumping engine at the foot of the Sunken Stair has not merely jammed by accident, but has been deliberately welded shut by royal decree. The water barons intend to shatter the mechanism entirely, locking the seabed dry forever while they control the last stagnant cisterns above. Every page confirms that Gullmouth is meant to die of thirst while these high platforms hoard the remnant tide. A single iron-keyed corridor leads deeper into the stilt-city core past the patrols.",
+   "page": "Iron-bound ledgers lie scattered across the mahogany table of the inner chamber. The script is ruthless. Neat hand of the Brineholder magistracy fills their pages, and parchment maps pinned to the cedar walls show that the great pumping engine at the foot of the Sunken Stair has not merely jammed by accident, but has been deliberately welded shut by royal decree. The water barons intend to shatter the mechanism entirely and lock the seabed dry forever while they control the last stagnant cisterns above. Every page confirms that Gullmouth is meant to die of thirst while these high platforms hoard the remnant tide. A single iron-keyed corridor leads deeper into the stilt-city core past the patrols.",
    "exits": [
     {
      "label": "Slip past the iron door",
@@ -10874,7 +10874,7 @@
    "kind": "scene",
    "title": "The Restricted Alveolar",
    "brief": "You carefully pick the brass lock of a restricted tidal cabinet, risking a triggered poison needle to claim an ancient brass compass.",
-   "page": "Under the overhang of a stilt-supported walkway, an alcove keeps treasures the fleeing Brineholders abandoned. The cabinet door hangs ajar on green-corroded hinges. Velvet-lined slots inside once cradled delicate navigational tools. Near the hinge a tiny concealed tube lets out a thin hiss of gas. Saltspire cuts hard at anyone who opens the wrong latch.\n\nYou reach into the velvet recess and take the brass body of the old compass before the air turns foul.",
+   "page": "Under the overhang of a stilt-supported walkway, an alcove keeps treasures the fleeing Brineholders abandoned when they ran for higher platforms. The cabinet door hangs ajar. Green-corroded hinges creak. Velvet-lined slots inside once cradled delicate navigational tools, and near the hinge a tiny concealed tube lets out a thin hiss of gas. Saltspire cuts hard at anyone who opens the wrong latch.\n\nYou reach into the velvet recess and take the brass body of the old compass before the air turns foul.",
    "exits": [
     {
      "label": "Pocket the heavy brass compass",
@@ -11285,7 +11285,7 @@
    "kind": "check",
    "title": "Measure the Span",
    "brief": "You calculate the exact trajectory for a desperate leap across a gap, risking a fatal miss to grab a dangling escape rope.",
-   "page": "Staring across the abyss, you mentally map the arc of your weight against the howling wind tunnel between the stilted tenements. Every second counts as heavy footsteps clatter on the metal grating behind you, drawing closer through the acrid fog of the chimney fire. Your calf muscles coil tight, heels hovering over the sheer drop where barnacles crust the iron pillars far below. A misjudged trajectory means plummeting into the bone-dry seabed, while a clean catch leaves you dangling over the open void with guards at your heels.\n\nYou crouch low, steadying your breathing as you time the rhythmic sway of the frayed rope dancing in the updraft.",
+   "page": "Across the abyss you map the arc of your body against the howling wind tunnel between the stilted tenements. Footsteps clatter behind you. They draw closer through the acrid fog of the chimney fire, and every second matters as your calf muscles coil tight with heels hovering over the sheer drop where barnacles crust the iron pillars far below. A misjudged line means a fall into the bone-dry seabed. A clean catch leaves you dangling over the open void with guards at your heels.\n\nYou crouch low and time the sway of the frayed rope as it dances in the updraft.",
    "exits": [
     {
      "label": "check-full",
@@ -13061,7 +13061,7 @@
    "kind": "hub",
    "title": "The Upper Landings",
    "brief": "The Upper Landings: A vast spiral of slick basalt steps descends into darkness, cluttered with the discarded detritus of desperate scavengers who turned back.",
-   "page": "A vast well of slick basalt steps drops away into absolute shadow, choked with the discarded junk of desperate scavengers who lost their nerve and turned back. Rusted iron spikes and waterlogged packs litter the stone landings, telling silent stories of those who misjudged the climb. The air here hangs heavy and still, smelling of wet slate and old bone. Shadows twist unnaturally against the curved walls as your lantern flickers against the damp draft. Several passages branch away into the dark architecture, each promising a different route toward the heart of the machinery.",
+   "page": "A vast well of slick basalt steps drops away into absolute shadow, choked with the discarded junk of desperate scavengers who lost their nerve and turned back. Rusted iron spikes and waterlogged packs litter the stone landings. Each pile marks a climb that failed. The air here hangs still and smells of wet slate and old bone, while your lantern flickers against the damp draft and the curved walls shift in the light. Several passages branch away into the dark architecture, each a different route toward the heart of the machinery.",
    "exits": [
     {
      "label": "Clear the jammed metal beam ahead",
@@ -14279,7 +14279,7 @@
    "kind": "hub",
    "title": "The Grinding Descent",
    "brief": "The Grinding Descent: Massive stationary gears form precarious walkways over a bottomless drop, slick with ancient grease and populated by territorial blind eels.",
-   "page": "Giant stationary gears form precarious, jagged bridges over a bottomless drop, slick with ancient grease and populated by territorial blind eels that snap from the shadows. To your left, a rotating shaft hums with lethal speed while a pale pearl gleams temptingly within a nest of wire. Straight ahead, a skeletal mechanic hangs upside down from a snapped harness, clutching a peculiar tuning fork. Below a sputtering steam pipe, a puddle of condensed freshwater begs to be salvaged into empty canteens. Deeper still, a sprawling archive of drowned ledgers blocks the main route, guarded by an automaton with glowing glass eyes.",
+   "page": "Giant stationary gears form jagged bridges over a bottomless drop, slick with ancient grease and watched by territorial blind eels that snap from the dark. To your left a rotating shaft spins at lethal speed while a pale pearl gleams inside a nest of wire. Straight ahead a skeletal mechanic hangs upside down from a snapped harness. He still clutches a peculiar tuning fork. Below a sputtering steam pipe a puddle of condensed freshwater waits for empty canteens, and deeper still a sprawling archive of drowned ledgers blocks the main route, guarded by an automaton with glowing glass eyes.",
    "exits": [
     {
      "label": "Cross the gear-toothed span",
@@ -16865,7 +16865,7 @@
    "kind": "scene",
    "title": "Shouting Through The Damp",
    "brief": "You physically block a group of descending Drift Pilgrims aiming to sabotage the controls, using brute force to protect the console and earn Orsolya's grudging respect.",
-   "page": "Cold air whistles through the vertical shaft, smelling sharply of ancient mud and stagnant sea-muck stirred up from the deep tunnels below. The lead Pilgrim snarls an oath against the false idols of the Tide-wardens, hefting a notched breaker's bar as his followers crowd close behind him on the narrow gallery. There is no room here for subtlety or polite bargaining; the vaulted stone walls press in tight, throwing back the hollow echoes of your ragged breathing. Orsolya glances back from her post with a sharp, assessing squint, her jaw set hard against the encroaching tide of zealotry.\n\nYou drop your centre of gravity, flexing your fingers into iron fists as the foremost intruder lunges forward into the dim circle of yellow lamplight.",
+   "page": "Cold air whistles through the vertical shaft, sharp with ancient mud and stagnant sea-muck stirred up from the deep tunnels below. The lead Pilgrim snarls an oath against the false idols of the Tide-wardens and hefts a notched breaker's bar as his followers crowd close behind him on the narrow gallery. No room here for subtlety. The vaulted stone walls press in tight and throw back the scrape of your own ragged breathing. Orsolya glances back from her post with a sharp assessing squint, jaw set hard against the encroaching tide of zealotry.\n\nYou drop your centre of gravity and flex your fingers as the foremost intruder lunges into the dim circle of yellow lamplight.",
    "exits": [
     {
      "label": "Meet the charge with hard bone",
@@ -18959,7 +18959,7 @@
    "kind": "hub",
    "title": "The Final Stand",
    "brief": "Orsolya's Final Stand: Your bleeding mentor stands ready to shatter the machine and let the ocean run wild, forcing you to urgently either help her or stop her.",
-   "page": "Orsolya leans against the grease-stained iron of the Meridian Gear, her knuckles smeared with old rust and her breath coming in shallow, rattling gasps. Blood from her shoulder seeps through her canvas tunic, matting the gray hairs at her nape, yet her one good hand still clutches a heavy iron pry-bar raised high above the primary cogs. She means to shatter the timing-teeth and let the ocean rush in unchecked, drowning Gullmouth and the Low in one chaotic, vengeful surge. You step onto the dripping platform with a bruised arm, caught between the duty you owe your mentor and the desperate need to keep your home from the brine.\n\nMachinery groans beneath your boots as the salt-thick air turns colder, a coming deluge pressing at the chamber.",
+   "page": "Orsolya leans against the grease-stained iron of the Meridian Gear, knuckles smeared with old rust and breath coming in shallow rattling gasps. Blood from her shoulder seeps through her canvas tunic and mats the gray hairs at her nape. Her one good hand still clutches an iron pry-bar raised high above the primary cogs. She means to shatter the timing-teeth and let the ocean rush in unchecked so Gullmouth and the Low drown in one chaotic vengeful surge. You step onto the dripping platform with a bruised arm, caught between the duty you owe your mentor and the need to keep your home from the brine.\n\nMachinery groans beneath your boots.",
    "exits": [
     {
      "label": "Demand answers from your mentor",
@@ -19933,7 +19933,7 @@
    "kind": "ending-part",
    "title": "Below the Salt",
    "brief": "Ending \"The Choir's Choir\"",
-   "page": "Water laps against your chest now, grey and opaque with silt, turning the dark shafts into a submerged cathedral where only the dead have standing room. The Brineholders' ledgers drift past your shoulders like bloated white fish, their gold ink dissolving into the swell before the clerks can reckon the price of an inch of lift. There is no air left to breathe that does not taste of salt and iron, yet your lungs refuse to give up the ghost, held by some strange bargain struck in the dark with the things that stayed behind when the tide went out. Above, the sky is a narrow strip of pale slate, shrinking as the sea reclaims its chambers and locks the doors against the sun. You let your feet leave the bottom, trusting the lift of the brine to carry you where it will among the rafters of the sunken world.",
+   "page": "Water laps against your chest now, grey and opaque with silt. The dark shafts feel like a submerged cathedral where only the dead have standing room, and the Brineholders' ledgers drift past your shoulders as bloated white pages while their gold ink dissolves into the swell before the clerks can reckon the price of an inch of lift. No clean air remains. What you draw still tastes of salt and iron, yet your lungs refuse to quit, held by some strange bargain struck in the dark with the things that stayed behind when the tide went out. Above, the sky is a narrow strip of pale slate that shrinks as the sea reclaims its chambers and locks the doors against the sun. You let your feet leave the bottom and trust the brine to carry you among the rafters of the sunken world.",
    "exits": [
     {
      "label": "Drift with the rising tide",
@@ -20005,7 +20005,7 @@
    "kind": "ending-part",
    "title": "Orsolya's Final Measure",
    "brief": "Ending \"Orsolya's Way\"",
-   "page": "Under the vast, empty sky, Orsolya's hand remains steady upon the Meridian Gear, guiding its brass teeth back into their ancient, deliberate alignment. The iron groans against centuries of silence, but as the final tooth slips into place the mechanism lets out a deep sigh that travels right through the soles of your boots. Bitter alkali dust in the air settles abruptly under a sudden dampness that smells intensely of cold weed and deep trenches. Far out on the bare seabed, the white salt crust shivers, fracturing along a thousand unseen lines as the earth itself seems to catch its breath. Orsolya does not look at you, her gaze fixed entirely on the bronze face of the tide clock as the pointer trembles and begins to swing backward with gathering speed.",
+   "page": "Under the vast empty sky Orsolya's hand rests on the Meridian Gear and guides its brass teeth back into their ancient deliberate alignment. The iron groans against centuries of silence. As the final tooth slips into place the mechanism lets out a deep sigh that travels right through the soles of your boots, and bitter alkali dust in the air settles under a sudden dampness that smells of cold weed and deep trenches. Far out on the bare seabed the white salt crust shivers and fractures along a thousand unseen lines as the earth itself seems to catch its breath. Orsolya does not look at you. Her gaze stays fixed on the bronze face of the tide clock as the pointer trembles and begins to swing backward with gathering speed.",
    "exits": [
     {
      "label": "Watch the copper dial spin around",
