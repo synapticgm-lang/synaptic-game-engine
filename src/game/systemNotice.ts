@@ -43,6 +43,96 @@ export function systemNotice(line: string): string {
   return line;
 }
 
+/**
+ * True for a character level-up or skill rank-up STATUS / system line (engine or LitRPG presenter).
+ * False for per-use practice, Technique used, XP ticks, and other chrome.
+ */
+export function isLevelOrRankUpLine(line: string): boolean {
+  const t = (line ?? '').trim();
+  if (!t) return false;
+  if (/^Level\s*up\b|^Level Up!/i.test(t)) return true;
+  if (/^Skill\s+(?:up|rank\s*up)\b/i.test(t)) return true;
+  if (/^(?:You\s+)?leveled?\s*up\b/i.test(t)) return true;
+  return false;
+}
+
+/** Per-use technique / practice receipts — never System notifications. */
+export function isPerUseSkillLine(line: string): boolean {
+  const t = (line ?? '').trim();
+  return /^Technique used\b/i.test(t) || /^Skill used\b/i.test(t);
+}
+
+/**
+ * True when a STATUS line belongs in the Check System / notices panel:
+ * level-up, skill rank-up, quest complete, XP / loot / gold rewards.
+ * Display helper only — does not change engine awards.
+ */
+export function isSystemNotificationLine(line: string): boolean {
+  const t = (line ?? '').trim();
+  if (!t || isPerUseSkillLine(t)) return false;
+  if (isLevelOrRankUpLine(t)) return true;
+  if (/^Quest complete\b/i.test(t)) return true;
+  if (/^XP(?:\s*Gained)?\s*[—:\-]/i.test(t) && !/^XP\s*Gained:\s*0\b/i.test(t)) return true;
+  if (/^Loot\b/i.test(t)) return true;
+  if (/^Gold Gained\b/i.test(t)) return true;
+  return false;
+}
+
+/** Modes that collapse reward STATUS into a brief cue + Check System chip. Tabletop / PYOA stay unchanged. */
+export function usesSystemNoticeChip(engineMode: EngineMode | undefined): boolean {
+  return engineMode === 'litrpg' || engineMode === 'rpg';
+}
+
+export function briefSystemNoticeCue(engineMode: EngineMode | undefined): string {
+  return engineMode === 'rpg' ? 'You have a new notice.' : 'You have a new System notification.';
+}
+
+export function checkSystemChipLabel(engineMode: EngineMode | undefined, unread: number): string {
+  const base = engineMode === 'rpg' ? 'Check notices' : 'Check System';
+  return unread > 0 ? `${base} (${unread})` : base;
+}
+
+/** Presented notification lines from a turn's STATUS (display derivation only). */
+export function deriveSystemNotifications(
+  lines: string[],
+  engineMode: EngineMode | undefined,
+): string[] {
+  if (!usesSystemNoticeChip(engineMode)) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of lines) {
+    if (!isSystemNotificationLine(raw)) continue;
+    const shown = engineMode === 'litrpg' ? systemNotice(raw) : raw;
+    const key = shown.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(shown);
+  }
+  return out;
+}
+
+/**
+ * Chat/STATUS display: replace notification lines with one brief cue; leave other STATUS lines alone.
+ * Tabletop / PYOA: passthrough.
+ */
+export function collapseNotificationStatus(
+  lines: string[],
+  engineMode: EngineMode | undefined,
+): string[] {
+  if (!usesSystemNoticeChip(engineMode)) return lines;
+  let had = false;
+  const kept: string[] = [];
+  for (const line of lines) {
+    if (isSystemNotificationLine(line)) {
+      had = true;
+      continue;
+    }
+    kept.push(line);
+  }
+  if (!had) return lines;
+  return [briefSystemNoticeCue(engineMode), ...kept];
+}
+
 export function presentSystemNotices(lines: string[], engineMode: EngineMode | undefined): string[] {
   return engineMode === 'litrpg' ? lines.map(systemNotice) : lines;
 }
