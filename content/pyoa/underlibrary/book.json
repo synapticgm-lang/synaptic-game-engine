@@ -5315,7 +5315,7 @@
    "kind": "scene",
    "title": "The Charred Wainscot",
    "brief": "You interpret the faded annotations on a charred manuscript to locate a hidden cache of refined lamp-oil behind the wainscot.",
-   "page": "Kneeling beside the smoke-stained biographies, you trace the faded marginal annotations scrawled in the margins of a burnt theological manuscript. The ink has taken on a faint, luminous green tinge in the gloom, pointing an unambiguous finger toward a loose oak panel near the floorboards. You slide your fingers into the narrow gap, feeling the cold draft of air that signals a hidden cavity behind the wall. With a gentle tug, the panel swings inward on silent, well-oiled hinges, revealing the dull glint of glass flasks stored safely in the dark recesses.\n\nA row of heavy glass phials filled with refined lamp-oil rests neatly upon a bed of shredded news-sheets, untouched by the soot and grime of the surrounding corridor.",
+   "page": "You kneel beside the smoke-stained biographies and trace the faded annotations on a burnt theological manuscript. Green ink marks the way. In the gloom it holds a faint luminous tinge and points you toward a loose oak panel near the floorboards. Your fingers slide into the narrow gap. A cold draft proves a cavity waits behind the wall. One gentle tug swings the panel inward on silent, well-oiled hinges, and glass flasks throw a dull glint from the dark recesses.\n\nA row of glass phials filled with refined lamp-oil rests on shredded news-sheets, clear of the soot that coats the corridor outside.",
    "exits": [
     {
      "label": "Reach into the recess",
@@ -7675,7 +7675,7 @@
    "kind": "scene",
    "title": "Pincers of the Smith",
    "brief": "You force open a rusted latch with dogged persistence, earning a sturdy pair of blacksmith-forged pincers.",
-   "page": "Heavy blacksmith-forged pincers settle securely into your leather belt, their iron jaws cold against your hip. The narrow service corridor smells intensely of stagnant lamp-oil and damp wool, the drifting shelves shifting slightly in the distance like slow wooden leviathans. You adjust your oil-lamp, watching the amber flame flicker against long rows of uncatalogued ledgers that line the walls. Every movement here requires caution, for the floorboards groan under the weight of misplaced knowledge and forgotten appendices. Ahead, a secondary latch catches the dim light, offering passage deeper into the maze of stacks.",
+   "page": "Blacksmith-forged pincers settle into your leather belt, their iron jaws cold against your hip. The narrow service corridor smells of stagnant lamp-oil and damp wool, and drifting shelves shift in the distance like slow wooden ships. You adjust your oil-lamp. Amber flame flickers against long rows of uncatalogued ledgers that line the walls while floorboards groan under misplaced knowledge and forgotten appendices. You take care. Ahead, a secondary latch catches the dim light and offers passage deeper into the maze of stacks.",
    "exits": [
     {
      "label": "Inspect the lower fastener",
@@ -14227,7 +14227,7 @@
    "kind": "recovery",
    "title": "Blind Misstep",
    "brief": "You navigate the blinding haze by reading the faint phosphorescence of specialized marginal notes, uncovering a hidden brass compass.",
-   "page": "A sudden shift in the paper dunes pulls the floor-tiles out from under your boots, sending you plunging sideways into a knee-deep drift of razor-sharp card catalogues. Sharp edges slice into your shins through your trousers, drawing a line of hot, stinging cuts that burn with the salt of old paper-dye. You wrench yourself free with a harsh gasp, scattering priceless records into the dark as you scramble back onto the firmer masonry of the walkway. Your lamp flickers and dies in the impact, plunging you into an inky gloom where only the faint blue glow of the floor-notes guides your bruised and trembling hands. You sit for a long moment in the dark, catching your breath while the dust settles over your torn uniform like a shroud.",
+   "page": "A sudden shift in the paper dunes pulls the floor-tiles out from under your boots, and you plunge sideways into a knee-deep drift of razor-sharp card catalogues. Sharp edges slice your shins. Hot cuts burn with the salt of old paper-dye. You wrench yourself free with a harsh gasp and scatter priceless records into the dark as you scramble back onto the firmer masonry of the walkway. Your lamp flickers and dies in the impact. Inky gloom takes the aisle, and only the faint blue glow of the floor-notes guides your bruised and trembling hands. You sit a long moment. Dust coats your torn uniform.",
    "exits": [
     {
      "label": "Stand up and limp onward",
@@ -15480,7 +15480,7 @@
    "kind": "recovery",
    "title": "A Heavy Penalty",
    "brief": "You research the ancient precedents to argue successfully against an unjust citation, earning an official seal of exemption.",
-   "page": "The brass claws strike with sudden, bone-numbing force, catching your sleeve and tearing away a strip of coarse wool alongside a heavy toll of precious time. You wrench your arm free, gasping as the automated register stamps a harsh red debt mark across the back of your hand. Hours slip away in the gloom while you wait for the machinery to reset its cogs, leaving you stiff-jointed and nursing a raw, stinging welt that smells faintly of copper. The temporary exemption slips through your fingers, replaced by a lingering sense of administrative grievance. Yet the machinery grinds to a halt at last, allowing you to stumble onward into the dim corridors.",
+   "page": "The brass claws strike with sudden, bone-numbing force, catch your sleeve, and tear away a strip of coarse wool along with a steep toll of precious time. You wrench your arm free. The automated register stamps a harsh red debt mark across the back of your hand. Hours slip away in the gloom while you wait for the machinery to reset its cogs. Your joints stiffen. A raw welt on the skin smells faintly of copper. The temporary exemption slips through your fingers. Administrative grievance lingers in its place. The machinery grinds to a halt at last, and you stumble onward into the dim corridors.",
    "exits": [
     {
      "label": "Follow the damp corridor",
