@@ -618,7 +618,7 @@
    "kind": "scene",
    "title": "Beneath the Firebox",
    "brief": "You crawl beneath the firebox to fix a leaking injector nozzle, testing your MECHANICS against the searing heat to earn a heavy copper wrench.",
-   "page": "Heat pours off the ash-clogged grate like an open furnace door as you squeeze into the narrow gap beneath the Marrowbone. Soot cakes your eyelashes and sweat carves clean channels through the grime on your cheeks. You reach blindly past the weeping copper unions until your fingers find the loose injector nozzle, vibrating and hissing live steam into the dark. Working by touch alone against the blistering iron, you twist the seating until the shriek cuts off into a dry, obedient cough. Your palm comes away blackened and scored, but clamped in your fist is a heavy copper wrench that fits the valve-shafts with a solid, satisfying weight.",
+   "page": "Heat pours off the ash-clogged grate like an open furnace door as you squeeze into the narrow gap beneath the Marrowbone. Soot cakes your eyelashes. Sweat carves clean channels through the grime on your cheeks. Blind past the weeping copper unions, your fingers find the loose injector nozzle, shaking and hissing live steam into the dark. Working by touch alone against the blistering iron, you twist the seating until the shriek cuts off into a dry obedient cough. Your palm comes away blackened and scored. A copper wrench sits clamped in your fist, fitted to the valve-shafts.",
    "exits": [
     {
      "label": "Slide back into the depot gloom",
@@ -2753,7 +2753,7 @@
    "kind": "bottleneck",
    "title": "The Crimson Arm",
    "brief": "The signal box above the junction drops a blood-red warning arm despite the clear track ahead.",
-   "page": "Overhead, the iron lattice of the signal box shudders under a sudden gust of sulfurous wind, and the semaphore arm snaps down with a dry, metallic clatter to paint the clear sky with a stroke of wet blood. No train should halt here on the mainline, yet the signal arm hangs across the tracks and mocks the idling breath of the Marrowbone. Thick grease drips from the pivot-pin onto the wooden ties below, pooling in the grit like dark oil. You tighten your grip on your oil-stained canvas gauntlets, squinting up through the yellow haze toward the darkened cabin windows where someone watches in silence.\n\nThe whole junction holds its breath beneath the dropping sun, waiting to see whether you will force the iron or wait for a ghost to clear the line.",
+   "page": "Overhead, the iron lattice of the signal box shudders under a sulfurous gust, and the semaphore arm snaps down with a dry metallic clatter that paints the clear sky with a stroke of wet blood. No train should halt here. The arm hangs across the mainline anyway and mocks the idle breath of the Marrowbone, and thick grease drips from the pivot-pin onto the wooden ties below until it pools in the grit like dark oil. You tighten your grip on your oil-stained canvas gauntlets. Through the yellow haze the darkened cabin windows show someone watching.\n\nThe sun drops over the junction. The red arm stays locked across the rails.",
    "exits": [
     {
      "label": "Return to the control cabin",
@@ -13325,7 +13325,7 @@
    "kind": "recovery",
    "title": "The Ledger Collapse",
    "brief": "You trace the hidden grease-runs along the tunnel footing to bypass the blockade, securing an old railway ledger full of toll-receipts.",
-   "page": "Your fingers catch on the corner of a rotting wooden crate and pull it just an inch too far. The whole stack of railway ledgers collapses into the muck with a dull thud. Black mold and choking ash billow into your face. A fit of violent coughing wracks your ribs and waters your eyes in the dark. You scramble clear before the remaining shelves give way, but the noise rolls on and on down the empty brick vault.",
+   "page": "Your fingers catch on the corner of a rotting wooden crate and pull it just an inch too far. The whole stack of railway ledgers collapses into the muck. A dull thud. Black mold and choking ash billow into your face, and a fit of violent coughing wracks your ribs and waters your eyes in the dark. You scramble clear before the remaining shelves give way, but the noise rolls on and on down the empty brick vault.",
    "exits": [
     {
      "label": "Escape the falling paper stack",
@@ -14110,7 +14110,7 @@
    "kind": "scene",
    "title": "The Sluice Chains",
    "brief": "You haul the sluice chains against a surging tide of bilge-water, keeping a greasy iron shackle and a bruised shoulder.",
-   "page": "Heavy drops of condensation patter against your neck like cold grease as you grope along the dripping masonry of the culvert. Beneath the floorboards, the black water surges with a rhythmic, throat-deep roar, smelling strongly of old oil and drowned lime. Your fingers find the salted iron of the primary sluice chain, slick with slime and crusted with decades of mineral scale. Every fiber in your shoulders aches from the preceding heave, but the level of the sump continues to inch upward toward the trembling ashpan doors of the engine. Pulling this line asks for every ounce you have left and firm footing on the slime-slick duckboards. You loop the cold links twice around your raw palms, brace your boots against a stanchion of rusted angle-iron, and throw your entire weight backward into the dark.",
+   "page": "Cold drops of condensation patter against your neck like grease as you grope along the dripping masonry of the culvert. Beneath the floorboards the black water surges with a throat-deep roar and smells of old oil and drowned lime. Your fingers find the salted iron of the primary sluice chain, slick with slime and crusted with decades of mineral scale. Your shoulders ache. The sump keeps rising toward the trembling ashpan doors of the engine. Pulling this line asks for all you have left and firm footing on the slime-slick duckboards. You loop the cold links twice around your raw palms, brace your boots against a stanchion of rusted angle-iron, and throw your whole body backward into the dark.",
    "exits": [
     {
      "label": "Haul upon the slimy chain links",
@@ -14210,7 +14210,7 @@
    "kind": "scene",
    "title": "The Rusted Wheel",
    "brief": "You wrestle the jammed sluice wheel past its rusted seat until the flood drains away, earning a brass drainage cock.",
-   "page": "Turning the brass drainage wheel demands a slow, agonizing rotation against decades of accumulated lime-scale and dried boiler compound. Your knuckles scrape raw against the damp limestone wall as you apply every ounce of leverage you possess, coaxing the stubborn mechanism around one millimeter at a time. A thin, high-pitched squeal rises from the packing-gland, turning into a wet gurgle as stagnant water finally begins to weep past the valve seat and trickle away into the dark below. The air clears slightly of the worst sulphur stench, replaced by the clean, metallic tang of cold brass and wet stone. You take a ragged breath, letting the chill subterranean damp settle deep into your woolen waistcoat while you wait for the pressure to equalize.",
+   "page": "Turning the brass drainage wheel demands a slow agonizing rotation against decades of accumulated lime-scale and dried boiler compound. Your knuckles scrape raw against the damp limestone wall as you put every ounce of leverage you have into the job. The packing-gland starts with a thin high squeal. Then stagnant water weeps past the valve seat in a wet gurgle and trickles away into the dark below. The sulphur stench thins, replaced by the clean metallic tang of cold brass and wet stone. You take a ragged breath. Chill subterranean damp settles into your woolen waistcoat while you wait for the pressure to equalize.",
    "exits": [
     {
      "label": "Follow the clearing drainage channel",
@@ -16500,7 +16500,7 @@
    "kind": "reward",
    "title": "The Stamp of Approval",
    "brief": "You stare down the ancient bureaucrat without blinking until she stamps your waybill, earning a cup of hot chicory.",
-   "page": "The rubber stamp comes down with a resounding thud that makes the inkpot jump. A crisp violet seal lands squarely across your transit manifest. A dry papery sigh escapes the ancient clerk as she slides the authorized papers back into your palm. She reaches beneath the ledger and pushes a small, grease-stained brass token across the wood toward your knuckles. Her face stays as blank as a slab of basalt. A rare concession from a system that rarely gives anything away for free.\n\nYou tuck the token into your breast pocket beside your watch. Cold metal sits against your ribs. Between two rows of dormant signal levers the corridor stretches ahead.",
+   "page": "The rubber stamp comes down with a resounding thud that makes the inkpot jump, and a crisp violet seal lands squarely across your transit manifest while a dry papery sigh escapes the ancient clerk as she slides the authorized papers back into your palm. She reaches beneath the ledger and pushes a small grease-stained brass token across the wood toward your knuckles. Her face stays blank as a slab of basalt, a rare concession from a system that rarely gives anything away for free.\n\nYou tuck the token into your breast pocket beside your watch. Cold metal sits against your ribs. Between two rows of dormant signal levers the corridor stretches ahead.",
    "exits": [
     {
      "label": "Follow the corridor to the junction",
@@ -16569,7 +16569,7 @@
    "kind": "recovery",
    "title": "Smudged Ink and Scrutiny",
    "brief": "You forge an appropriate entry in the margin of the station log to match her rules, securing a master telegraph code-card.",
-   "page": "The pen slips at the final loop, leaving an ugly, blotched tail that smears across the official seal like a crushed beetle. The clerk spots the error immediately, her nose wrinkling in disgust as she pulls the ledger back toward her chest with a sharp snap of her wrists. You spend the next hour standing in the damp draft of the sorting room while she drafts a formal reprimand, docking your supply rations and leaving you with a stinging ink-stain on your thumb that will not scrub out. The delay eats deep into your dwindling margin against the approaching ash-storm season.\n\nWhen she finally waves you away with the back of her hand, your patience is worn paper-thin and your fingers ache from the chill. You slip out of the wicket before she can change her mind again, nursing your bruised pride down the tracks.",
+   "page": "The pen slips at the final loop. An ugly blotched tail smears across the official seal like a crushed beetle. The clerk spots the error at once, her nose wrinkles in disgust, and she pulls the ledger back toward her chest with a sharp snap of her wrists. \"Your supply rations are docked,\" she says, and you spend the next hour standing in the damp draft of the sorting room while she drafts the formal reprimand that also leaves an ink-stain on your thumb that will not scrub out. The delay eats deep into your dwindling margin against the approaching ash-storm season.\n\nShe waves you off with the back of her hand. Your fingers ache from the chill. You slip out of the wicket before she can change her mind again.",
    "exits": [
     {
      "label": "Push onward through the damp archway",
@@ -19705,7 +19705,7 @@
    "kind": "ending-part",
    "title": "The First Turn",
    "brief": "Ending \"Open the Water Gate\"",
-   "page": "The brass key engages the bronze tumblers with a shriek that echoes off the vaulted limestone ceiling of the terminal. Old scale flakes away from the ancient threads, falling like black snow onto the soot-stained flags beneath your boots. You throw your entire weight against the long arm of the valve, feeling the immense hydraulic pressure of the reservoir straining against decades of neglect. Water begins to weep from the cracked seals, smelling of mountain moss and pristine snow.\n\nThe heavy pillar shudders, groaning as the long-stalled mechanism finally breaks its rust-bound sleep.",
+   "page": "The brass key engages the bronze tumblers with a shriek that snaps around the vaulted limestone ceiling of the terminal. Old scale flakes away from the ancient threads and falls like black snow onto the soot-stained flags beneath your boots. You throw your whole body against the long arm of the valve, and the hydraulic pressure of the reservoir strains against decades of neglect. Water weeps from the cracked seals. It smells of mountain moss and pristine snow.\n\nThe pillar shudders. Rust gives way. The long-stalled mechanism turns under your hands.",
    "exits": [
     {
      "label": "Force the valve another turn",
@@ -19967,7 +19967,7 @@
    "kind": "ending-part",
    "title": "The Permanent Way",
    "brief": "Ending \"Signalman Eternal\"",
-   "page": "Night has no beginning here, only a deeper shade of soot that settles between the sleepers and coats the ballast in a fine, grey powder. You tend the fire, casting shovelfuls of dry slack into the amber roar of the belly while the pressure needle hovers at the exact red mark the old timetables demanded. Down the line, past the rusted gantries and the silent water-towers, the rails stretch out like twin threads of polished silver under a sky that has forgotten how to clear. No schedule is posted on the wall of this cab, for time has stopped ticking in the brass clock, leaving only the rhythm of the exhaust and the quiet company of those who watch from the shadows of the telegraph poles.",
+   "page": "Night has no beginning here, only a deeper shade of soot that settles between the sleepers and coats the ballast in a fine grey powder. You tend the fire and cast shovelfuls of dry slack into the amber roar of the belly while the pressure needle hovers at the exact red mark the old timetables demanded. Down the line, past the rusted gantries and the silent water-towers, the rails stretch out like twin threads of polished silver under a sky that has forgotten how to clear. No schedule is posted on the wall of this cab. The brass clock has stopped. Exhaust beats its own time. Figures watch from the shadows of the telegraph poles.",
    "exits": [
     {
      "label": "Ride the rhythm of the endless rail",
@@ -20271,7 +20271,7 @@
    "kind": "ending",
    "title": "Schedule and Sovereign",
    "brief": "Ending \"The Baron's Bargain\"",
-   "page": "The ledger lies open on the polished walnut desk, pages ruled in neat columns of black and red ink that account for every ton of coal and every gallon of water left in the hills. The Rail Barons' agent nods once, a curt tip of a chin above a stiff linen collar, and sets his thumb over the brass key you have placed on the green baize. Outside the high tall windows, the marshalling yards begin to shift with the smooth, oiled precision of a well-kept timetable as fresh locomotives back into the sidings to haul away the surplus. You receive your sealed discharge and a modest purse of minted copper, the legal price of an engine surrendered and a debt duly paid according to the rule of the line. The Marrowbone is someone else's property now, her fire drawn and her brass polished for a master who cares nothing for the ash-storms, leaving you to turn your back on the tracks and find your way into a city that runs by someone else's clock.",
+   "page": "The ledger lies open on the polished walnut desk, pages ruled in neat columns of black and red ink that account for every ton of coal and every gallon of water left in the hills. The Rail Barons' agent nods once, a curt tip of a chin above a stiff linen collar, and sets his thumb over the brass key you have placed on the green baize. Outside the tall windows the marshalling yards begin to shift with the oiled precision of a kept timetable as fresh locomotives back into the sidings to haul away the surplus. You receive your sealed discharge and a modest purse of minted copper, the legal price of an engine surrendered and a debt paid by the rule of the line.\n\nThe Marrowbone belongs to someone else now. Her fire is drawn. Her brass is polished for a master who cares nothing for the ash-storms. You turn your back on the tracks and walk into a city that runs by someone else's clock.",
    "exits": [],
    "endingKey": "baron-bargain",
    "endingTitle": "The Baron's Bargain",
