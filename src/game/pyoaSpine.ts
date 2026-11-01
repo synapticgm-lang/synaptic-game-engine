@@ -8,6 +8,7 @@ import { aimsAtSelf } from './intentParser';
 import { setPlayPhase } from './playPhase';
 import { pyoaCondHolds, resolvePyoaPage, type PyoaCond, type PyoaPageVariant } from './pyoaCond';
 import umbraBook from '@/data/pyoa/umbraBook.json';
+import { isAuthoredPyoaBookId } from './pyoaBookCatalog';
 
 export type PyoaSpineNodeId = string;
 
@@ -261,7 +262,7 @@ export function spineBibleSupported(bibleId: string | undefined | null): boolean
 }
 
 export function isAuthoredPyoaBook(bibleId: string | undefined | null): boolean {
-  return bibleId === 'umbra-protocol';
+  return isAuthoredPyoaBookId(bibleId);
 }
 
 export function getSpineNode(id: string | undefined | null): PyoaSpineNode | undefined {

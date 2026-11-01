@@ -22,6 +22,13 @@ import { giltwoodEstate } from './giltwoodEstate';
 import { nullParameterProtocol } from './nullParameterProtocol';
 import { resinSonata } from './resinSonata';
 import { umbraProtocol } from './umbraProtocol';
+import {
+  saltglassBook,
+  vesperholdBook,
+  tideThatDidNotReturnBook,
+  cinderfallBook,
+  underlibraryBook,
+} from './pyoaAuthoredBooks';
 import { crimsonNocturne } from './crimsonNocturne';
 import { onyxBloodCovenant } from './onyxBloodCovenant';
 import {
@@ -67,6 +74,11 @@ export {
   nullParameterProtocol,
   resinSonata,
   umbraProtocol,
+  saltglassBook,
+  vesperholdBook,
+  tideThatDidNotReturnBook,
+  cinderfallBook,
+  underlibraryBook,
   crimsonNocturne,
   onyxBloodCovenant,
   ascendingSpire,
@@ -117,6 +129,11 @@ export const RAW_CAMPAIGN_BIBLES: CampaignBible[] = [
   nullParameterProtocol,
   resinSonata,
   umbraProtocol,
+  saltglassBook,
+  vesperholdBook,
+  tideThatDidNotReturnBook,
+  cinderfallBook,
+  underlibraryBook,
   crimsonNocturne,
   onyxBloodCovenant,
   // Story RPG (fiction-first, multi-genre)

@@ -48,6 +48,8 @@ import {
   spineForceEdgeAfterDelay,
   isSpineDelayPad,
 } from './pyoaSpine';
+import { authoredPyoaChoiceLabels } from './pyoaAuthoredRuntime';
+import { isAuthoredPyoaBookId } from './pyoaBookCatalog';
 import {
   isCombatFamilyPad,
   isHallTalkPlayerLine,
@@ -1139,6 +1141,17 @@ export function compileChoices(
       }
       return true;
     });
+  }
+  // Authored offline gamebooks (pick + dice) — chips from pyoaBookPlay
+  if (!engaged && state.engineMode === 'pyoa' && isAuthoredPyoaBookId(state.campaignBibleId) && state.pyoaBookPlay) {
+    const authored = authoredPyoaChoiceLabels(state).slice(0, 6);
+    if (authored.length) {
+      return {
+        choices: authored,
+        notes: [...notes, 'PYOA authored book — chips only'],
+        intentEnums: authored.map((c) => inferIntent(c)),
+      };
+    }
   }
   // PYOA spine v1 — Thornferry pads = legal exits (Fate = turn the page)
   if (!engaged && state.engineMode === 'pyoa' && spineBibleSupported(state.campaignBibleId)) {
