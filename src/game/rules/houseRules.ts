@@ -11,6 +11,15 @@ import { turnRng } from '../seededRng';
 import { levelSidekick } from './sidekick';
 import { settlePurse } from './coins';
 
+/** Real hours away before the welcome-back card shows (default; HouseRules.recapAfterHours overrides). */
+export const RECAP_AFTER_HOURS = 6;
+
+/** Clamp the welcome-back threshold (1 hour … 7 days). Lives here so edge sync of houseRules never pulls awayRecap. */
+export function clampRecapAfterHours(n: unknown): number {
+  const v = typeof n === 'number' && Number.isFinite(n) ? Math.round(n) : RECAP_AFTER_HOURS;
+  return Math.max(1, Math.min(168, v));
+}
+
 export const DEFAULT_HOUSE_RULES: HouseRules = {
   secretDeathSaves: false,
   cleave: false,
@@ -36,6 +45,8 @@ export const DEFAULT_HOUSE_RULES: HouseRules = {
   travelPace: 'normal',
   /** T10PUSH — every tabletop choice point (fights included); free text always allowed. */
   choiceCountLimit: 3,
+  /** T10RECAP — welcome-back card after this many real hours away. */
+  recapAfterHours: RECAP_AFTER_HOURS,
 };
 
 /** Clamp the tabletop choice-count limit (John 31 Oct: min 2, max 6, default 3). */
@@ -73,6 +84,9 @@ export function houseRulesFromSettings(s: Partial<Settings> | null | undefined):
     heroicInspiration: s?.ttHeroicInspiration !== false,
     travelPace: oneOf(s?.ttTravelPace, ['fast', 'normal', 'slow'] as const, 'normal'),
     choiceCountLimit: clampChoiceCountLimit(s?.ttChoiceCountLimit),
+    recapAfterHours: clampRecapAfterHours(
+      s?.recapAfterHours == null ? RECAP_AFTER_HOURS : s.recapAfterHours,
+    ),
   };
 }
 

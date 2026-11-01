@@ -408,6 +408,8 @@ export default function App() {
             onDismissBeautyOffer={game.dismissBeautyOffer}
             contentMode={game.settings.contentMode}
             showPlayerLines={!!game.settings.showPlayerLines}
+            welcomeBackRecap={game.welcomeBackRecap}
+            onDismissWelcomeBack={game.dismissWelcomeBackRecap}
             onUpdatePanelOverlay={game.updatePanelOverlay}
             onSend={game.sendAction}
             onUseBuiltSheet={game.applyBuiltSheet}

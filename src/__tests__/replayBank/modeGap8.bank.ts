@@ -163,32 +163,36 @@ describe('replay bank mode-gap 8 (recap, main-quest popup, P1)', () => {
     expect(romancePad(r.state, true)).toBeNull();
   });
 
-  it('[story rpg ds150 T21 | mode-gap 8] recap on return: prose of engine facts after an hour away; nothing under an hour', () => {
+  it('[story rpg ds150 T21 | mode-gap 8] welcome-back recap after 6 hours (T10RECAP); nothing under the threshold', () => {
     const s = turn(R.after(3), 'Refuse Vessa and keep your own counsel').state;
     expect(buildAwayRecap(s, 30 * 60_000)).toBeNull();
-    const recap = buildAwayRecap(s, 3 * HOUR)!;
-    expect(recap[0]).toBe(`When you last stopped, 3 hours ago, you were at ${s.currentLocation}.`);
-    expect(recap).toContain('Lately: you refused Vessa.');
-    expect(recap).toContain('Vessa has not forgotten what you did.');
-    expect(recap.join('\n')).not.toMatch(/\[System\]|\bHP\b|trust/);
-    expect(buildAwayRecap(s, 72 * HOUR)![0]).toMatch(/^When you last stopped, 3 days ago,/);
-    expect(RECAP_AFTER_HOURS).toBe(1);
+    expect(buildAwayRecap(s, 5 * HOUR)).toBeNull();
+    const recap = buildAwayRecap(s, 7 * HOUR)!;
+    expect(recap[0]).toBe(`You are at ${s.currentLocation}.`);
+    expect(recap.join('\n')).not.toMatch(/\[System\]|\bHP\b/);
+    expect(buildAwayRecap(s, 72 * HOUR)![0]).toBe(`You are at ${s.currentLocation}.`);
+    expect(RECAP_AFTER_HOURS).toBe(6);
   });
 
-  it('[litrpg s150 | mode-gap 8] recap on return is a System log built from the System window lines', () => {
+  it('[litrpg s150 | mode-gap 8] welcome-back recap is plain ledger lines (T10RECAP), not a System dump', () => {
     const s = lastOf(L);
-    const recap = buildAwayRecap(s, 5 * HOUR)!;
-    expect(recap[0]).toBe('[System] Session resumed. Time away: 5 hours.');
-    expect(recap.every((l) => l.startsWith('[System] '))).toBe(true);
-    const win = buildLitrpgSystemWindow(s)!.lines;
-    for (const l of win.filter((x) => /^(?:Name|Level|HP)\b/.test(x))) expect(recap).toContain(`[System] ${l}`);
+    expect(buildAwayRecap(s, 5 * HOUR)).toBeNull();
+    const recap = buildAwayRecap(s, 7 * HOUR)!;
+    expect(recap[0]).toMatch(/^You are at /);
+    expect(recap.every((l) => !l.startsWith('[System] '))).toBe(true);
+    expect(recap.length).toBeGreaterThanOrEqual(1);
+    expect(recap.length).toBeLessThanOrEqual(4);
   });
 
-  it('[tabletop ds151 | mode-gap 8] tabletop keeps its away rest and gets no recap; play-over saves get none', () => {
+  it('[tabletop ds151 | mode-gap 8] tabletop keeps away rest and also gets welcome-back after 6h; play-over gets none', () => {
     const s = lastOf(T);
-    expect(buildAwayRecap(s, 10 * HOUR)).toBeNull();
     const rest = applyAwayRest(s, 10 * HOUR);
     if (rest) expect(rest.recap[0]).toMatch(/^While you were away/);
+    const recap = buildAwayRecap(s, 10 * HOUR);
+    if (s.openingEstablishment?.complete && s.playPhase !== 'ended' && s.playPhase !== 'down') {
+      expect(recap).not.toBeNull();
+      expect(recap![0]).toMatch(/^You are at /);
+    }
     expect(buildAwayRecap({ ...lastOf(R), playPhase: 'ended' }, 10 * HOUR)).toBeNull();
   });
 
