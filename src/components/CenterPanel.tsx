@@ -5,8 +5,15 @@ import { EnemyTargetFrame } from './EnemyTargetFrame';
 
 import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtStylePreset, StatVerbosity, ComicOverlayEdit, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { filterSystemLogForEngine, statusLinesForVerbosity } from '@/game/systemLog';
-import { presentSystemNotices } from '@/game/systemNotice';
+import {
+  collapseNotificationStatus,
+  deriveSystemNotifications,
+  presentSystemNotices,
+  usesSystemNoticeChip,
+} from '@/game/systemNotice';
 import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
+import { CheckSystemChip } from './CheckSystemChip';
+import { SystemNoticeWindow } from './SystemNoticeWindow';
 import { proseForSpeech, type VoiceState } from '@/game/useVoice';
 import { liveRegionPoliteness } from '@/game/accessibility';
 import { FormattedText } from './FormattedText';
@@ -38,6 +45,7 @@ import { modeProfile } from '@/game/rules/modeProfile';
 import { creationRng } from '@/game/tabletop/characterBuild';
 import type { SavedSheet } from '@/game/tabletop/sheetLibrary';
 import { CharacterBuilderPanel } from './CharacterBuilderPanel';
+import { WelcomeBackCard } from './WelcomeBackCard';
 import { DicePreview, liveDiceItem } from './DicePreview';
 import { RollLine, RollDisplayContext, RollHintLine } from './RollDie';
 
@@ -120,6 +128,8 @@ interface Props {
   sessionPresentationLocked?: boolean;
   onAutoFight: () => void;
   onOpenCharacter: () => void;
+  /** Opens CharacterWindow on the sheet tab (from System notice panel). */
+  onOpenCharacterSheet?: (tab: 'sheet') => void;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
   onRetryMemorableImage?: (entryId: string) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
@@ -132,11 +142,18 @@ interface Props {
   showPlayerLines?: boolean;
   /** Tabletop inn-book creation: a sheet from the builder page goes to the same confirm page as the chips. */
   onUseBuiltSheet?: (sheet: SavedSheet) => void;
+  /** T10RECAP — session-only welcome-back lines from buildAwayRecap. */
+  welcomeBackRecap?: string[] | null;
+  onDismissWelcomeBack?: () => void;
 }
 
-export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, showPlayerLines = false, onUseBuiltSheet }: Props) {
+export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onOpenCharacterSheet, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, showPlayerLines = false, onUseBuiltSheet, welcomeBackRecap = null, onDismissWelcomeBack }: Props) {
   const [input, setInput] = useState('');
   const [sttNoticeOpen, setSttNoticeOpen] = useState(false);
+  const [unreadSystemNotices, setUnreadSystemNotices] = useState(0);
+  const [recentSystemNotices, setRecentSystemNotices] = useState<string[]>([]);
+  const [systemNoticeOpen, setSystemNoticeOpen] = useState(false);
+  const lastCountedNoticeGmId = useRef<string | null>(null);
   const actionInputRef = useRef<HTMLTextAreaElement>(null);
   const onMicStart = () => {
     if (sttNoticeAccepted()) onStartListening();
@@ -147,6 +164,29 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   const statMethod = houseRulesOf(state).statMethod;
   const lastGmId = useMemo(() => [...state.log].reverse().find((e) => e.role === 'gm')?.id ?? null, [state.log]);
   const rollDisplay = useMemo(() => ({ mode: diceAnimation, newestEntryId: lastGmId }), [diceAnimation, lastGmId]);
+
+  // UI-only unread stack for LitRPG / RPG System notifications (not scene-choice pads, not save schema).
+  useEffect(() => {
+    setUnreadSystemNotices(0);
+    setRecentSystemNotices([]);
+    setSystemNoticeOpen(false);
+    lastCountedNoticeGmId.current = null;
+  }, [state.saveId]);
+
+  useEffect(() => {
+    if (!usesSystemNoticeChip(engineMode)) return;
+    const lastGm = [...state.log].reverse().find((e) => e.role === 'gm');
+    if (!lastGm || lastGm.id === lastCountedNoticeGmId.current) return;
+    lastCountedNoticeGmId.current = lastGm.id;
+    const notices = deriveSystemNotifications(
+      filterSystemLogForEngine(lastGm.systemLog ?? [], engineMode),
+      engineMode,
+    );
+    if (!notices.length) return;
+    setRecentSystemNotices((prev) => [...prev, ...notices].slice(-40));
+    setUnreadSystemNotices((n) => n + notices.length);
+  }, [state.log, engineMode]);
+
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [dismissedImage, setDismissedImage] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
@@ -274,6 +314,13 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           />
         </div>
       )}
+      {welcomeBackRecap && welcomeBackRecap.length > 0 && onDismissWelcomeBack ? (
+        <div className="relative z-20 shrink-0 px-3 pt-3 sm:px-6">
+          <div className="mx-auto max-w-2xl">
+            <WelcomeBackCard lines={welcomeBackRecap} onDismiss={onDismissWelcomeBack} />
+          </div>
+        </div>
+      ) : null}
       {comicMode ? (
         <div className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-hidden">
             <ComicGrid
@@ -536,6 +583,17 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
 
           <LooseItemsBar state={state} busy={busy || !!state.pendingTurn} onPickUp={onSend} />
 
+          {usesSystemNoticeChip(engineMode) && !hideOptions && (
+            <CheckSystemChip
+              engineMode={engineMode}
+              unread={unreadSystemNotices}
+              onOpen={() => {
+                setSystemNoticeOpen(true);
+                setUnreadSystemNotices(0);
+              }}
+            />
+          )}
+
           {state.playPhase !== 'ended' && state.playPhase !== 'down' && (
           <ActionBar
             state={state}
@@ -669,6 +727,18 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           )}
         </div>
       </div>
+      {usesSystemNoticeChip(engineMode) && (
+        <SystemNoticeWindow
+          open={systemNoticeOpen}
+          lines={recentSystemNotices}
+          engineMode={engineMode}
+          onClose={() => setSystemNoticeOpen(false)}
+          onOpenCharacterSheet={() => {
+            if (onOpenCharacterSheet) onOpenCharacterSheet('sheet');
+            else onOpenCharacter();
+          }}
+        />
+      )}
     </div>
     </RollDisplayContext.Provider>
   );
@@ -787,9 +857,15 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
         </div>
       )}
       {hasRealGmStory(entry) && showSystemLog && (() => {
-        const lines = presentSystemNotices(filterSystemLogForEngine(entry.systemLog ?? [], engineMode), engineMode);
+        const lines = collapseNotificationStatus(
+          presentSystemNotices(
+            statusLinesForVerbosity(filterSystemLogForEngine(entry.systemLog ?? [], engineMode), statVerbosity),
+            engineMode,
+          ),
+          engineMode,
+        );
         return lines.length > 0 ? (
-          <SystemLogPanel lines={lines} verbosity={statVerbosity} entryId={entry.id} rollHint={entry.rollHint} />
+          <SystemLogPanel lines={lines} verbosity="detailed" entryId={entry.id} rollHint={entry.rollHint} />
         ) : null;
       })()}
       {saveId && hasRealGmStory(entry) && !isRevealing && (

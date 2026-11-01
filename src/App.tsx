@@ -61,6 +61,7 @@ export default function App() {
   const [showGMLibrary, setShowGMLibrary] = useState(false);
   const [showAutoFightTip, setShowAutoFightTip] = useState(false);
   const [showPlayerLinesTip, setShowPlayerLinesTip] = useState(false);
+  const [characterInitialTab, setCharacterInitialTab] = useState<'character' | 'sheet'>('character');
 
   useEffect(() => {
     if (!game.showLoadingOverlay) { setElapsed(0); return; }
@@ -349,7 +350,10 @@ export default function App() {
           setShowQuestLog(true);
         }}
         onOpenWorldMap={state.worldAtlas ? () => setShowWorldMap(true) : undefined}
-        onOpenCharacter={() => game.setShowCharacterWindow(true)}
+        onOpenCharacter={() => {
+          setCharacterInitialTab('character');
+          game.setShowCharacterWindow(true);
+        }}
         onOpenMerchant={() => {
           // shop-b: tabletop trades only with a merchant at this place (NPC records + role), never via prose.
           if (!canOpenMerchant(state)) {
@@ -408,6 +412,8 @@ export default function App() {
             onDismissBeautyOffer={game.dismissBeautyOffer}
             contentMode={game.settings.contentMode}
             showPlayerLines={!!game.settings.showPlayerLines}
+            welcomeBackRecap={game.welcomeBackRecap}
+            onDismissWelcomeBack={game.dismissWelcomeBackRecap}
             onUpdatePanelOverlay={game.updatePanelOverlay}
             onSend={game.sendAction}
             onUseBuiltSheet={game.applyBuiltSheet}
@@ -445,7 +451,14 @@ export default function App() {
               }
             }}
             onAutoFight={() => game.autoFight()}
-            onOpenCharacter={() => game.setShowCharacterWindow(true)}
+            onOpenCharacter={() => {
+              setCharacterInitialTab('character');
+              game.setShowCharacterWindow(true);
+            }}
+            onOpenCharacterSheet={(tab) => {
+              setCharacterInitialTab(tab);
+              game.setShowCharacterWindow(true);
+            }}
           />
           </div>
           {(() => {
@@ -656,7 +669,7 @@ export default function App() {
             onClose={() => game.setShowCharacterWindow(false)}
             state={state}
             settings={game.settings}
-            initialTab="character"
+            initialTab={characterInitialTab}
           />
         </Suspense>
       )}

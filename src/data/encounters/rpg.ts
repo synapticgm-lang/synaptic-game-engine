@@ -27,6 +27,6 @@ export const RPG_ENCOUNTERS: EncounterSeed[] = [
   { id: 'RPG-TRASH-009', mode: 'rpg', tier: 'trash', title: 'Salt Lane Purse', foeName: 'Salt Lane Cutpurse', premise: 'A lane cutpurse wants the sealed pouch more than the walk.', xpReward: T, goldReward: 5, cooldown: 14 },
   { id: 'RPG-TRASH-010', mode: 'rpg', tier: 'trash', title: 'Dock Rope', foeName: 'Dock Rope Tough', premise: 'A dock tough tries to walk you into the ropes.', xpReward: T, goldReward: 4, cooldown: 14 },
   { id: 'RPG-ELITE-006', mode: 'rpg', tier: 'elite', title: 'Ledger Knife', foeName: 'Ledger Knife', premise: 'Someone who can read the tax book wants you silent.', xpReward: E, goldReward: 18, cooldown: 20 },
-  { id: 'RPG-ELITE-007', mode: 'rpg', tier: 'elite', title: 'Road Claim', foeName: 'Road Claim Bravo', premise: 'The salt road already has an owner tonight.', xpReward: E, goldReward: 16, cooldown: 20 },
+  { id: 'RPG-ELITE-007', mode: 'rpg', tier: 'elite', title: 'Road Claim', foeName: 'Road Claim Guard', premise: 'The salt road already has an owner tonight.', xpReward: E, goldReward: 16, cooldown: 20 },
   ...MANUS_RPG_EXTRAS,
 ];

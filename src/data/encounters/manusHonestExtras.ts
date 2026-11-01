@@ -33,9 +33,9 @@ export const MANUS_DND_EXTRAS: EncounterSeed[] = [
 export const MANUS_RPG_EXTRAS: EncounterSeed[] = [
   { id: 'RPG-TRASH-011', mode: 'rpg', tier: 'trash', title: 'Dock Union', foeName: 'Dock Union Enforcer', premise: 'A dock union enforcer wants the sealed pouch or a broken hand.', xpReward: T, goldReward: 6, cooldown: 16 },
   { id: 'RPG-TRASH-012', mode: 'rpg', tier: 'trash', title: 'Night Market', foeName: 'Night Market Seizer', premise: 'A night-market seizer tries to claim the tax crate as contraband.', xpReward: T, goldReward: 6, cooldown: 16 },
-  { id: 'RPG-ELITE-008', mode: 'rpg', tier: 'elite', title: 'Salt Clerk Steel', foeName: 'Salt Clerk Bravo', premise: 'A salt clerk who can read the levy book wants you silent.', xpReward: E, goldReward: 18, cooldown: 20 },
+  { id: 'RPG-ELITE-008', mode: 'rpg', tier: 'elite', title: 'Salt Clerk Steel', foeName: 'Salt Clerk (2)', premise: 'A salt clerk who can read the levy book wants you silent.', xpReward: E, goldReward: 18, cooldown: 20 },
   { id: 'RPG-ELITE-009', mode: 'rpg', tier: 'elite', title: 'Black Ledger', foeName: 'Black Ledger Knife', premise: 'Someone who already copied the black ledger wants the original burned.', xpReward: E, goldReward: 20, cooldown: 22 },
-  { id: 'RPG-ELITE-010', mode: 'rpg', tier: 'elite', title: 'Silk Lane', foeName: 'Silk Lane Bravo', premise: 'A silk-lane bravo ambushes the approach to the harbor fence.', xpReward: E, goldReward: 16, cooldown: 20 },
+  { id: 'RPG-ELITE-010', mode: 'rpg', tier: 'elite', title: 'Silk Lane', foeName: 'Silk Lane Tough', premise: 'A silk-lane tough ambushes the approach to the harbor fence.', xpReward: E, goldReward: 16, cooldown: 20 },
   { id: 'RPG-BOSS-004', mode: 'rpg', tier: 'boss', title: 'Harbormaster Claim', foeName: 'Harbormaster Claimant', premise: 'The harbormaster’s last claimant will not lose the levy night.', xpReward: B, goldReward: 55, cooldown: 42 },
 ];
 

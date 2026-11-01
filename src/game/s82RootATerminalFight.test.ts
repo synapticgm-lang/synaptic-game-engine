@@ -22,7 +22,7 @@ const T13_RECEIPTS = [
   `Encounter cleared: ${FOE} (victory)`,
   `XP Gained: 40 (defeated ${FOE})`,
   'Gold Gained: 5',
-  'Loot: [Common] Worn Hand Axe — found after the blow; not in hand before it; not the weapon that won. In hand before the blow: bare hands.',
+  'Loot: [Common] Worn Hand Axe',
 ];
 
 /** The accepted s82 T13 beat: Jax running, the scavenger still gripping his collar. */

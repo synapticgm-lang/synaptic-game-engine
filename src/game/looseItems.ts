@@ -10,6 +10,8 @@ import { matchesLastKillName } from './combatAuthority';
 import { exitPlaceNames } from './placeNames';
 import { addCoins, gainLootMoney, lootMoneyFound, lootMoneyText } from './rules/coins';
 import { isRewardBoxOpenLine } from './rules/achievements';
+import { parsePlayerIntent } from './intentParser';
+import { runPlayerCheck } from './checkMath';
 
 function updateNodeLooseItems(
   state: GameState,
@@ -239,6 +241,24 @@ function searchOutsideDungeon(
   if (isSearchTargetEmpty(state.sceneFacts, target)) {
     return { state: { ...state, sceneFacts: facts }, receipts: [`Search: you searched ${what} again and found nothing new.`] };
   }
+  // T10LOOT — tabletop "Search the area" (ground): SRD Investigation roll → clue/hint only.
+  // No items, coins, or XP. Containers keep the existing loot roll. LitRPG/RPG ground search unchanged.
+  // SRD 5.2.1 Ability Checks (WotC, CC BY 4.0): the DM calls for an ability check when a character
+  // attempts something other than an attack that has a chance of failure; Investigation covers
+  // searching for clues and making deductions.
+  if (state.engineMode === 'dnd' && !container) {
+    const intent = parsePlayerIntent(text, state);
+    const check = runPlayerCheck(state, intent, text);
+    const receipts: string[] = [];
+    if (check.displayLine) receipts.push(check.displayLine);
+    const clue = tabletopSearchClue(state, what);
+    if (check.isSuccess) {
+      receipts.push(`Search: you searched ${what} and notice ${clue}.`);
+    } else {
+      receipts.push(`Search: you searched ${what} and find no useful sign.`);
+    }
+    return { state: { ...state, sceneFacts: facts }, receipts };
+  }
   const loot = rollLoot({
     profile: container ? 'chestBronze' : 'mob',
     state,
@@ -261,4 +281,15 @@ function searchOutsideDungeon(
   if (money) receipts.push(`Gold Gained: ${money}`);
   if (next.engineMode === 'dnd') receipts.push(...loot.displayLines);
   return { state: next, receipts };
+}
+
+/** Engine clue for a tabletop ground search — scene props / exits / presence, never loot. */
+function tabletopSearchClue(state: GameState, where: string): string {
+  const prop = (state.sceneFacts?.props ?? []).map((p) => (p ?? '').trim()).find(Boolean);
+  if (prop) return `${prop} near ${where}`;
+  const ways = exitPlaceNames(state).map((w) => w.replace(/\s+/g, ' ').trim()).filter(Boolean).slice(0, 2);
+  if (ways.length) return `the way toward ${ways.join(' and ')} from here`;
+  const who = (state.sceneFacts?.present ?? []).map((p) => (p ?? '').trim()).find(Boolean);
+  if (who) return `signs that ${who} passed through recently`;
+  return `a small detail of the ground at ${where}`;
 }

@@ -10,7 +10,7 @@ import { rollVictoryLoot } from '../combat';
 import { profileForEncounter } from '../lootTableRegistry';
 import { formatCheckRecord, growWeaponFamiliarity, resolveCheckRecord, weaponCategory } from '../checkRules';
 import { pushCombatStateTx } from '../stateTx';
-import { fightLootClause, weaponInHand } from '../infoSheet';
+import { formatLootStatusLine } from '../lootTableRegistry';
 import { tickEncounterTerminal } from '../encounterTerminalFsm';
 import { registerFightRoundRules } from '../fightRoundRules';
 import { advanceClock, isRoadFoe, settleRoadMeeting } from '../travelJourney';
@@ -22,6 +22,7 @@ import { turnRng } from '../seededRng';
 import { rollDice } from '../rules/dice';
 import { blockWithinXp, statBlockForEncounter, type StatBlock } from '../rules/srdMonsters';
 import { encounterXpBudget, foesWithinBudget } from '../xpRules';
+import { firstFightStatBlock, isFirstTabletopFight } from '../rules/firstFightChoice';
 import { playRound, rollDeathSave, rollInitiative, type PcProfile, type PcSpell, type RoundAction, type RoundFeatures, type RoundResult } from '../rules/roundCombat';
 import { atWillSpells, spendSlot, SPELLS } from '../rules/spells';
 import { casterKit, resolveCastRequest, slotsLine } from './spellCasting';
@@ -41,8 +42,7 @@ import { ammoFor, ammoLeft, fitCarry, spendAmmo } from '../rules/encumbrance';
 import { carriedCoinLb, gainLootMoney, lootMoneyText } from '../rules/coins';
 import { sceneLight, type SceneLight } from '../rules/exploration';
 import { exhaustionD20, exhaustionSpeed, weatherRuleOf } from '../rules/travelDay';
-import { fightAlly, healingPotion, pcCantripName, pcWeaponName, wearsHeavyArmor } from './combatChips';
-import { presentNpcNames } from '../npcRelationships';
+import { fightAlly, healingPotion, pcCantripName, pcWeaponName, stabiliseHelpers, wearsHeavyArmor } from './combatChips';
 import { classifyRoundAction } from './roundActionClass';
 import { interpretRoundTyped } from './roundTyped';
 export { classifyRoundAction } from './roundActionClass';
@@ -239,10 +239,17 @@ export function scaledEncounter(baseCount: number, baseHp: number, house: Pick<H
 /** SRD 5.2.1 budget band for the table's difficulty: Easy is Low, Normal Moderate, Hard and Deadly High. */
 const BUDGET_BAND: Record<HouseRules['encounterDifficulty'], 0 | 1 | 2> = { easy: 0, normal: 1, hard: 2, deadly: 2 };
 
-function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: 'foes' | 'pc' | null, house: HouseRules, level: number): FoeSetup & { notes: string[] } {
+function startCombat(enc: ActiveEncounter, pc: PcProfile, rng: Rng, surprised: 'foes' | 'pc' | null, house: HouseRules, level: number, state?: GameState): FoeSetup & { notes: string[] } {
   const party = 1 + (pc.ally || pc.sidekick ? 1 : 0);
-  const budgetXp = encounterXpBudget(level, party, BUDGET_BAND[house.encounterDifficulty]);
-  const srdBase = statBlockForEncounter(enc);
+  // T10TABFIGHT — first solo L1 fight uses Easy (Low) budget; later fights keep the table difficulty band.
+  // SRD 5.2.1 XP Budget per Character: level 1 Low/Moderate/High = 50/75/100.
+  const firstSafe = state && isFirstTabletopFight(state);
+  const budgetXp = encounterXpBudget(
+    level,
+    party,
+    firstSafe ? 0 : BUDGET_BAND[house.encounterDifficulty]
+  );
+  const srdBase = firstSafe && state ? firstFightStatBlock(enc, state) : statBlockForEncounter(enc);
   const base = blockWithinXp(srdBase, budgetXp);
   const shift = ENCOUNTER_DIFFICULTY[house.encounterDifficulty].toHit;
   const block = shiftedBlock(base, shift);
@@ -357,7 +364,9 @@ export function resolveRoundFight(
   const pc = pcCombatProfile({ ...working, character: { ...working.character, conditions: baseConditions } }, light.seen === 'dark' ? ['Blinded'] : []);
   if (!pc) return null;
   const house = houseRulesOf(working);
-  const started = live ? null : startCombat(enc, pc, rng, opts.surprised ?? null, house, working.character.level || 1);
+  const started = live
+    ? null
+    : startCombat(enc, pc, rng, opts.surprised ?? null, house, working.character.level || 1, working);
   if (started && light.ambient === 'dark') started.notes.push(fightLightNote(light, enc, started));
   const setup = live ? resumeCombat(enc, live) : started!;
   // q75: once rounds are live, typed lines resolve via interpretRoundTyped (speech free; Influence / SRD / improvise).
@@ -529,7 +538,11 @@ export function resolveRoundFight(
     next = paid.state;
     receipts.push(...paid.receipts);
     if (money) receipts.push(`Gold Gained: ${money}`);
-    if (won.loot.length) receipts.push(`Loot: ${won.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')} — ${fightLootClause(weaponInHand(working))}`);
+    // T10LOOT — player STATUS shows rarity+name (x2 collapse); fightLootClause stays writer/checker-only.
+    if (won.loot.length) {
+      const lootLine = formatLootStatusLine(won.loot);
+      if (lootLine) receipts.push(lootLine);
+    }
     receipts.push(...(won.lootLines ?? []));
     // The amount is on STATUS (Gold Gained); the writer only hears that there was coin.
     const bits = [...won.loot.map((l) => l.name), ...(money ? ['some coin'] : [])];
@@ -639,19 +652,12 @@ export function resolveDeathSaveTurn(state: GameState, rng: Rng = turnRng(state,
       noTerminal: true,
     };
   }
-  // A present ally (engine presence, not the prose) may stabilise. Anyone else is a death save.
+  // A present ally able to act (same stabiliseHelpers as the chip pool) may stabilise.
   let ally = '';
   if (line.includes('stabil') || line.includes('medicine')) {
-    const pc = (state.character.name || '').trim().toLowerCase();
-    for (const name of presentNpcNames(state)) {
+    for (const name of stabiliseHelpers(state)) {
       const key = name.trim().toLowerCase();
-      if (key && key !== pc && line.includes(key)) { ally = name.trim(); break; }
-    }
-    if (!ally) {
-      for (const c of state.companions ?? []) {
-        const key = (c.name ?? '').trim().toLowerCase();
-        if (key && key !== pc && (c.hp ?? 0) > 0 && line.includes(key)) { ally = c.name.trim(); break; }
-      }
+      if (key && line.includes(key)) { ally = name.trim(); break; }
     }
   }
   if (ally) {

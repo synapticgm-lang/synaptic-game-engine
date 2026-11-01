@@ -246,6 +246,11 @@ export interface HouseRules {
    * Default 3; clamp 2..6. Free text is always allowed beside the chips.
    */
   choiceCountLimit: number;
+  /**
+   * T10RECAP — real hours away before the welcome-back card shows (default 6).
+   * House-rules menu can reach this later; engine reads it only through recapAfterHoursOf.
+   */
+  recapAfterHours: number;
 }
 /** Coins by denomination (rules/coins). */
 export interface CoinPurse {
@@ -963,6 +968,16 @@ export interface GameState {
     nextLevel: number;
     consequence: string;
   } | null;
+  /**
+   * T10TABFIGHT — level-1 tabletop first-fight gate (Back off / Talk / Fight).
+   * Parked instead of going live; cleared when the player picks an option.
+   */
+  pendingFirstFight?: {
+    encounter: ActiveEncounter;
+    warning: string;
+  } | null;
+  /** True after the first-fight triad was answered with Talk or Fight (Back off leaves it open). */
+  firstFightGateDone?: boolean;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];
@@ -2523,6 +2538,8 @@ export interface Settings extends AccessibilitySettings {
   ttTravelPace?: HouseRules['travelPace'];
   /** T10PUSH — max chips at a tabletop choice point (2–6, default 3). */
   ttChoiceCountLimit?: number;
+  /** T10RECAP — hours away before welcome-back card (default 6; house-rules menu later). */
+  recapAfterHours?: number;
   /** When true, skip post-commit sentence reveal and show full GM prose immediately. */
   preferFullResponse?: boolean;
   /**

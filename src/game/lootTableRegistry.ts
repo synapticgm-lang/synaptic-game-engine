@@ -658,9 +658,16 @@ export function rollLoot(input: {
   if (row.noDropPct > 0 && rng() * 100 < row.noDropPct) {
     return result({ noDrop: true });
   }
+  const rpg = state.engineMode === 'rpg';
+  // T10LOOT — Story RPG only: rarity follows foe tier; one item per fight (non-boss); Epic/Legendary from bosses.
+  // LitRPG / PYOA / D&D paths above stay unchanged.
   const bonus = profile === 'boss' || profile === 'miniBoss' ? diff.bossRarityTierBonus : row.tierBonus;
   const tier = Math.min(4, baseTier + bonus);
-  const rolls = row.rolls + (isBoss ? diff.lootExtraBossRolls : 0);
+  const rawRolls = row.rolls + (isBoss ? diff.lootExtraBossRolls : 0);
+  const rolls =
+    rpg && !isBoss && (profile === 'mob' || profile === 'miniBoss' || profile === 'rareSpawn' || profile === 'rareEncounter')
+      ? 1
+      : rawRolls;
   let pity = pityBefore;
   const rarities: Rarity[] = [];
   for (let i = 0; i < rolls; i++) {
@@ -678,11 +685,55 @@ export function rollLoot(input: {
       if (rarityIdx(rarities[i]!) > rarityIdx(cap)) rarities[i] = cap;
     }
   }
+  if (rpg) {
+    // Ordinary goons → Common/Uncommon; named/elite → Rare max; bosses keep Epic/Legendary.
+    const rpgCap: Rarity | null =
+      profile === 'mob'
+        ? 'Uncommon'
+        : profile === 'miniBoss' || profile === 'rareSpawn' || profile === 'rareEncounter'
+          ? 'Rare'
+          : null;
+    if (rpgCap) {
+      for (let i = 0; i < rarities.length; i++) {
+        if (rarityIdx(rarities[i]!) > rarityIdx(rpgCap)) rarities[i] = rpgCap;
+      }
+    }
+  }
   if (rarities.some((r) => r === 'Epic' || r === 'Legendary')) pity = 0;
   if (row.resetsPity) pity = 0;
   for (const r of rarities) push(r);
   return result({
-    displayLines: items.map((i) => `${row.boxLabel ? `${row.boxLabel} chest: ` : ''}[${i.rarity}] ${i.name}`),
+    displayLines: formatLootDisplayLines(items, row.boxLabel),
     nextPity: pity,
   });
+}
+
+/** Collapse duplicate name+rarity into `Jerkin x2` for STATUS / display lines. */
+export function formatLootDisplayLines(
+  items: ReadonlyArray<{ name: string; rarity: Rarity }>,
+  boxLabel?: 'Bronze' | 'Silver' | 'Gold'
+): string[] {
+  const prefix = boxLabel ? `${boxLabel} chest: ` : '';
+  const order: string[] = [];
+  const counts = new Map<string, { rarity: Rarity; name: string; n: number }>();
+  for (const i of items) {
+    const key = `${i.rarity}\0${i.name}`;
+    const cur = counts.get(key);
+    if (cur) cur.n += 1;
+    else {
+      counts.set(key, { rarity: i.rarity, name: i.name, n: 1 });
+      order.push(key);
+    }
+  }
+  return order.map((k) => {
+    const c = counts.get(k)!;
+    const tag = `[${c.rarity}] ${c.name}`;
+    return `${prefix}${c.n > 1 ? `${tag} x${c.n}` : tag}`;
+  });
+}
+
+/** One STATUS loot line with x2 collapse (no internal fight-loot clause). */
+export function formatLootStatusLine(items: ReadonlyArray<{ name: string; rarity: Rarity }>): string {
+  const parts = formatLootDisplayLines(items);
+  return parts.length ? `Loot: ${parts.join(', ')}` : '';
 }

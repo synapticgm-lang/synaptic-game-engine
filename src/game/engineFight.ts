@@ -21,7 +21,7 @@ import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
 import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
-import { fightLootClause, weaponInHand } from './infoSheet';
+import { formatLootStatusLine } from './lootTableRegistry';
 import { isRoadFoe, meetingMoveBase, roadFoeForEngine, roadMeetingMove, settleRoadMeeting } from './travelJourney';
 import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
@@ -29,6 +29,10 @@ import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, 
 import { isFightCast } from './tabletop/spellCasting';
 import { USE_SOMETHING_CHIP } from './tabletop/combatChips';
 import { afterFightCompanion, combatCompanion } from './rules/companions';
+import {
+  firstFightGateActive,
+  resolveFirstFightChoice,
+} from './rules/firstFightChoice';
 import { abilityModOf, realEncounterCr, statBlockForEncounter } from './rules/srdMonsters';
 import { deriveTabletopSheet } from './tabletop/characterBuild';
 import { turnRng } from './seededRng';
@@ -278,6 +282,25 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     const end = commitDeath(state, 'self', turnRng(state, 'self-stop'));
     return { state: end.state, receipts: end.receipts, facts: `${SELF_STOP_HEAD} ${end.fact}`, noTerminal: true };
   }
+  // T10TABFIGHT — Back off / Talk / Fight before the first solo L1 tabletop fight.
+  if (firstFightGateActive(state)) {
+    const gate = resolveFirstFightChoice(state, input);
+    if (gate.handled) {
+      return {
+        state: gate.state,
+        receipts: gate.receipts,
+        facts: `ENGINE OUTCOME (facts): ${gate.facts.join(' ')}`,
+        noTerminal: true,
+      };
+    }
+    // Unmapped free text: keep the gate; do not start the fight this turn.
+    return {
+      state,
+      receipts: [state.pendingFirstFight?.warning ?? 'Danger is close.'],
+      facts: `ENGINE OUTCOME (facts): ${state.pendingFirstFight?.warning ?? 'Danger is close.'} Choose Back off, Talk, or Fight.`,
+      noTerminal: true,
+    };
+  }
   const roundMode = usesRoundCombat(state);
   // SRD 5.2.1 Death Saving Throws (WotC, CC BY 4.0): whenever you start your turn with 0 Hit
   // Points you make a death saving throw. Tabletop round-combat path only (usesRoundCombat =
@@ -473,9 +496,9 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     const money = lootMoneyText(result.goldGained, result.coinsGained);
     if (money) receipts.push(`Gold Gained: ${money}`);
     if (result.loot.length) {
-      receipts.push(
-        `Loot: ${result.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')} — ${fightLootClause(weaponInHand(working))}`
-      );
+      // T10LOOT — player STATUS shows rarity+name (x2 collapse); fightLootClause stays writer/checker-only.
+      const lootLine = formatLootStatusLine(result.loot);
+      if (lootLine) receipts.push(lootLine);
     }
     receipts.push(...(result.lootLines ?? []));
     const bits = [
