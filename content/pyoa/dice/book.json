@@ -142,7 +142,7 @@
    "kind": "reward",
    "title": "The Safe Path",
    "brief": "You decipher a set of faded navigational charts left scattered across the desk, risking a headache to uncover a hidden safe route through the sinkholes.",
-   "page": "Suddenly, the chaotic scribbles align into a terrifyingly clear picture. You blink away the lingering strain in your eyes, tracing the final charcoal line to a rocky outcropping near the Singing Dunes. Orsolya was using the shadow of the stranded leviathan carcass to triangulate the stable ground. You carefully fold the vellum map and tuck it inside your coat, a hard-won prize that might just keep you from plummeting into a lightless subterranean sea. Whether you grasped the entire formula or just barely pieced together the landmarks, the knowledge is yours. You step away from the drafting table, feeling a grim sense of readiness. The Low is a deathtrap, but you now hold the key to navigating its most treacherous expanse.",
+   "page": "Suddenly the chaotic scribbles align into a clear picture. Your eyes clear. The final charcoal line traces to a rocky outcropping near the Singing Dunes. Orsolya was using the shadow of the stranded leviathan carcass to triangulate the stable ground beneath that mark. You fold the vellum map and tuck it inside your coat, a prize that might keep you from plummeting into a lightless subterranean sea. The knowledge is yours. You step away from the drafting table. The Low is a deathtrap, but you now hold the key to navigating its most treacherous expanse.",
    "exits": [
     {
      "label": "Turn back to the room",
@@ -487,7 +487,7 @@
    "kind": "reward",
    "title": "A Fair Accord",
    "brief": "You negotiate with a desperate net-mender for sturdy ropes, risking a harsh argument to secure climbing gear that will help you descend the Sunken Stair.",
-   "page": "You gather the prize into your arms and make it fast. However narrowly you managed to conclude the tense negotiation, the net-mender finally nods and accepts your terms. You sling the thick, black-tarred rope over your shoulder. It reeks of pitch and dead salt, but the weight of it is immensely reassuring. This line will hold your weight in the deepest shafts of the Sunken Stair. You leave the alleyway, the old woman already muttering quietly as she returns to her useless nets.",
+   "page": "You gather the prize into your arms and make it fast. The net-mender turns your terms over once more, then nods and takes them. You sling the black-tarred rope over your shoulder. It reeks of pitch and dead salt, but the coil sits firm against your back, and you trust it for the deepest shafts of the Sunken Stair. You leave the alleyway. Behind you the old woman already mutters as she returns to her useless nets.",
    "exits": [
     {
      "label": "Return to the grounded fleet",
@@ -8277,7 +8277,7 @@
    "kind": "scene",
    "title": "Cargo Hold Glyphs",
    "brief": "You translate the strange markings on the cargo crates, avoiding a trapped mechanism to secure a bundle of waterproof matches.",
-   "page": "Faint crimson symbols glow faintly across the water-logged timber of the stacked cargo crates, warning of volatile contents sealed within. You scrape away the thick barnacles covering the central rune, deciphering the old maritime shorthand just in time to bypass the tripwire. Nestled inside the dry straw lining is a tightly wrapped bundle of waterproof matches.",
+   "page": "Faint crimson symbols glow across the water-logged timber of the stacked cargo crates and warn of volatile contents sealed within. You scrape the barnacles off. The old maritime shorthand resolves just in time, and you bypass the tripwire before it can spring. Inside the dry straw lining sits a tightly wrapped bundle of waterproof matches.",
    "exits": [
     {
      "label": "Secure the waterproof match bundle",
@@ -9871,7 +9871,7 @@
    "kind": "recovery",
    "title": "Torn Tendons and Salt",
    "brief": "You physically hold a tearing rope steady for a panicked citizen, risking torn muscles to receive a vital Brineholder password.",
-   "page": "The rope snaps with the crack of a dry branch and whips back across your forearm. A hot weeping welt opens through your torn jacket. You stumble hard against the railing, breath knocked from your lungs. The load crashes into the empty air below with a hollow distant thud. Your muscles burn; a sullen ache settles into your joints like winter damp. The clerk vanishes into the grey mist before you can demand your due. Bruised, you nurse a smarting arm on the swaying boards.",
+   "page": "The rope snaps with the crack of a dry branch and whips back across your forearm. A hot welt opens. You stumble hard against the railing, and the breath leaves your lungs as the load crashes into the empty air below with a hollow distant thud. Your muscles burn; a sullen ache settles into your joints like winter damp. The clerk vanishes into the grey mist before you can demand your due. Bruised, you nurse a smarting arm on the swaying boards.",
    "exits": [
     {
      "label": "Continue toward the lower tiers",
@@ -13965,7 +13965,7 @@
    "kind": "bottleneck",
    "title": "Song from the Pit",
    "brief": "A haunting melody drifts upward from the abyss, echoing off the damp walls as the first pale members of the Hollow Choir emerge from the gloom.",
-   "page": "Cold water drips from the moss-choked vault above, carrying the faint, metallic tang of deep rust and old salt. Rising from the spiralling abyss beneath your boots comes a thin, reedy vibration that sets your teeth on edge. It is a chord of many voices, harmonising in a language spoken only by things that have forgotten the sky. Pale shapes detach themselves from the weeping stonework, their waterlogged garments heavy with silt and clinging weed. These are the ones who never left, guarding the descent with mouths open in perpetual, silent song.",
+   "page": "Cold water drips from the moss-choked vault above, carrying the faint metallic tang of deep rust and old salt. From the spiralling abyss beneath your boots a thin reedy vibration climbs and sets your teeth on edge. It is a chord of many voices, and they harmonise in a language spoken only by things that have forgotten the sky. Pale shapes detach from the weeping stonework. Their waterlogged garments hang with silt and clinging weed. These are the ones who never left, and they guard the descent with mouths open in perpetual silent song.",
    "exits": [
     {
      "label": "Descend into the echoing lower tiers",
@@ -14627,7 +14627,7 @@
    "kind": "scene",
    "title": "Droplets in the Dark",
    "brief": "You repair a fractured steam pipe using scraps of leather and wire, sealing the leak to safely harvest condensed freshwater for your empty canteen.",
-   "page": "Scalding droplets spatter against your knuckles as you press the leather seal harder into the split metal seam. The shriek of escaping pressure softens to a steady, manageable gurgle as the wire bites into the damp hide. You catch your breath in the humid damp, wiping sweat and soot from your forehead with a soot-stained sleeve.\n\nBelow the leaking joint, your canteen fills slowly, ounce by precious ounce, drawing the sweet moisture out of the dying machinery. The metal plates of the walkway vibrate underfoot with the heavy, grinding heartbeat of the Meridian Gear somewhere far beneath the floor.",
+   "page": "Scalding droplets spatter against your knuckles as you press the leather seal harder into the split metal seam, and the shriek of escaping pressure softens to a manageable gurgle once the wire bites into the damp hide. You catch your breath. In the humid damp you wipe sweat and soot from your forehead with a soot-stained sleeve.\n\nBelow the leaking joint your canteen fills slowly, ounce by precious ounce, and the sweet moisture leaves the dying machinery for your flask. The metal plates of the walkway take the grind of the Meridian Gear somewhere far beneath. Water beads on the canteen rim.",
    "exits": [
     {
      "label": "Take the filled canteen forward",
@@ -16381,7 +16381,7 @@
    "kind": "recovery",
    "title": "A Broken Tooth",
    "brief": "You chisel away the suffocating salt crust from a delicate relay switch, applying careful precision to free a specialized gear mechanism for your own use.",
-   "page": "A dry, metallic snap shatters the silence as one of the tiny brass teeth shears away under your tool, sending a sharp jolt straight up your wrist. The relay housing jars sideways, wedging itself even tighter into the rusted mount while a shower of fine metal shavings dusts your knuckles. You let out a slow breath, shaking out the dull ache in your fingers as you inspect the minor damage to the assembly. Although the salvaged piece bears a fresh scar, the core mechanism remains intact enough to serve your purpose, even if it will require careful adjustment later. You tuck the stubborn artifact into your pocket alongside your remaining tools.",
+   "page": "A dry metallic snap shatters the silence as one of the tiny brass teeth shears away under your tool. A sharp jolt runs straight up your wrist. The relay housing jars sideways and wedges itself even tighter into the rusted mount while a shower of fine metal shavings dusts your knuckles. You let out a slow breath. You shake out your fingers and inspect the minor damage to the assembly. The salvaged piece bears a fresh scar, but the core mechanism remains intact enough to serve your purpose even if it will need careful adjustment later. You tuck the stubborn artifact into your pocket alongside your remaining tools.",
    "exits": [
     {
      "label": "Return to the central engine floor",
@@ -17313,7 +17313,7 @@
    "kind": "reward",
    "title": "Cleared Mast And Iron",
    "brief": "You heave a wrecked galleon's mast out of the primary cogs, risking severe exhaustion, to uncover a masterfully forged wrecker's hook trapped beneath.",
-   "page": "Splintering wood groans under your final, frantic heave, releasing its iron-toothed grip on the primary cogs with a sharp, echoing snap that vibrates through the soles of your boots. You stumble backward into the damp gloom, chest heaving and palms raw, clutching the prize you wrested from the wreck. Beneath the fallen timber lies a masterfully forged wrecker's hook, its curved steel edge gleaming with a faint, oily sheen in the salt-fog. It is an instrument born of Gullmouth's trade, heavy and perfectly balanced for tearing open stubborn hulls. You tuck it firmly against your belt, knowing well the exhaustion you paid to claim it.",
+   "page": "Splintering wood groans under your final frantic heave and releases its iron-toothed grip on the primary cogs with a sharp snap that runs through the soles of your boots. You stumble backward into the damp gloom. Chest heaving and palms raw, you clutch the prize you wrested from the wreck. Beneath the fallen timber lies a masterfully forged wrecker's hook, its curved steel edge gleaming with a faint oily sheen in the salt-fog. It is an instrument born of Gullmouth's trade, forged for tearing open stubborn hulls. You tuck it firmly against your belt.",
    "exits": [
     {
      "label": "Return to the thrumming gear mechanism",
@@ -20169,7 +20169,7 @@
    "kind": "ending",
    "title": "Spent at the Root",
    "brief": "Ending \"Spent\"",
-   "page": "Steps lead upward through the dark, but your knees refuse the climb, trembling like old timber under a falling roof. You sink down against the damp brickwork of the Sunken Stair, listening to the small, rhythmic drip of the seal-oil lantern as it gutters toward its final spark. Somewhere above, Gullmouth is growing fat on the silver and salt-fish you bought with your marrow, its taverns roaring with the laughter of men who never saw the bottom of the deep. You close your eyes and feel the immense weight of the earth and the locked sea pressing down from every side, heavy as a mountain of wet sand. The cold creeps up through your boots, quiet and gray, turning your blood to brine and settling the salt behind your tongue until there is nothing left to say.",
+   "page": "Steps lead upward through the dark, but your knees refuse the climb. They tremble like old timber under a falling roof. You sink down against the damp brickwork of the Sunken Stair. The seal-oil lantern drips toward its final spark. Somewhere above, Gullmouth grows fat on the silver and salt-fish you bought with your marrow, and its taverns roar with the laughter of men who never saw the bottom of the deep. You close your eyes. Earth and locked sea press from every side, cold as wet sand stacked to a mountain. Cold creeps up through your boots until salt settles behind your tongue. The lantern gutters once more.",
    "exits": [],
    "endingKey": "spent",
    "endingTitle": "Spent",
@@ -20213,7 +20213,7 @@
    "kind": "ending-part",
    "title": "Leaving the Shore Behind",
    "brief": "Ending \"The Quiet Sand\"",
-   "page": "Miles of bare seabed stretch between the old cliffs and the deep water that refuses to return to its accustomed bed. You keep your head down and your boots moving, letting the rhythm of the march push the memory of Orsolya and the Meridian Gear down into the dark. Every gull overhead sounds like it is crying for something it lost before the world was mapped. The salt-crust breaks beneath your heels with a sound like dry biscuit-tin lids snapping underfoot, white dust puffing into the still air. Behind you, the smoke from Gullmouth's chimneys rises straight and thin into the heavy gray sky, marking the place where people still argue over who owns the mud.",
+   "page": "Miles of bare seabed stretch between the old cliffs and the deep water that refuses to return to its accustomed bed, and you keep your head down while your boots move. The march pushes the memory of Orsolya and the Meridian Gear down into the dark. Every gull overhead cries for something lost before the world was mapped. The salt-crust breaks beneath your heels with a sound like dry biscuit-tin lids snapping underfoot, white dust puffing into the still air. Behind you, smoke from Gullmouth's chimneys rises straight and thin into the gray sky. People there still argue over who owns the mud. Your boots keep moving.",
    "exits": [
     {
      "label": "Step out into the open gray",
