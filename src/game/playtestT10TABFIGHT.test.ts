@@ -4,7 +4,8 @@
  * SRD 5.2.1 XP Budget per Character (WotC, CC BY 4.0): level 1 Low/Moderate/High = 50/75/100.
  */
 import { describe, expect, it } from 'vitest';
-import type { ActiveEncounter, GameState } from './types';
+import { createInitialState } from './defaults';
+import type { ActiveEncounter, Character, GameState, HouseRules, SceneFacts } from './types';
 import {
   BACK_OFF_CHIP,
   FIGHT_CHIP,
@@ -18,39 +19,74 @@ import {
   resolveFirstFightChoice,
   softenFirstFightEncounter,
 } from './rules/firstFightChoice';
-import { choiceCountLimitOf } from './rules/houseRules';
+import { choiceCountLimitOf, DEFAULT_HOUSE_RULES } from './rules/houseRules';
 import { crToXp, encounterXpBudget } from './xpRules';
 import { roundCombatChips, stabiliseHelpers } from './tabletop/combatChips';
+import { applyTabletopSheet, resolveSheet } from './tabletop/characterBuild';
 import { tickEncounterTerminal } from './encounterTerminalFsm';
 import { engineChips } from './choicePipeline';
 import { startDying } from './rules/death';
 
-function baseState(over: Partial<GameState> = {}): GameState {
+/** Halfling Rogue (Criminal) — same picks as PREGENS owner, built through resolveSheet. */
+function rogueSheet() {
+  return resolveSheet({
+    classId: 'rogue',
+    speciesId: 'halfling',
+    backgroundId: 'criminal',
+    method: 'point-buy',
+    baseScores: { STR: 8, DEX: 15, CON: 14, INT: 10, WIS: 12, CHA: 10 },
+    kitId: 'A',
+    source: 'build',
+  });
+}
+
+type BaseOver = Omit<Partial<GameState>, 'character' | 'sceneFacts' | 'houseRules'> & {
+  character?: Partial<Character>;
+  sceneFacts?: Partial<SceneFacts>;
+  houseRules?: Partial<HouseRules>;
+};
+
+function baseState(over: BaseOver = {}): GameState {
+  const s0 = createInitialState(undefined, 'dnd');
+  const applied = applyTabletopSheet(
+    {
+      ...s0,
+      seed: 't10tabfight',
+      engineMode: 'dnd',
+      turn: 19,
+      houseRules: { ...DEFAULT_HOUSE_RULES, choiceCountLimit: 3 },
+    },
+    rogueSheet(),
+  );
+  const { character: charOver, sceneFacts: factsOver, houseRules: rulesOver, ...rest } = over;
+  const sceneFacts: SceneFacts = {
+    crowd: 'none',
+    noise: 'quiet',
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: 19,
+    ...(applied.sceneFacts ?? {}),
+    ...factsOver,
+  };
   return {
-    engineMode: 'dnd',
-    turn: 19,
+    ...applied,
+    companions: [],
+    arcDirector: { ...(applied.arcDirector ?? {}), encounterClearedReceipts: [] },
+    log: [],
+    ...rest,
     character: {
+      ...applied.character,
       name: 'Jax',
       level: 1,
       hp: 10,
       maxHp: 10,
-      srd: { classId: 'rogue', speciesId: 'halfling', backgroundId: 'criminal' },
+      ...charOver,
+      srd: charOver?.srd ?? applied.character.srd,
     },
-    inventory: [],
-    companions: [],
-    houseRules: { choiceCountLimit: 3 },
-    sceneFacts: {
-      crowd: 'none',
-      noise: 'quiet',
-      present: [],
-      props: [],
-      lastBeat: '',
-      updatedTurn: 19,
-    },
-    arcDirector: { encounterClearedReceipts: [] },
-    log: [],
-    ...over,
-  } as unknown as GameState;
+    sceneFacts,
+    houseRules: { ...DEFAULT_HOUSE_RULES, choiceCountLimit: 3, ...rulesOver },
+  };
 }
 
 const stalker: ActiveEncounter = {
@@ -81,8 +117,8 @@ describe('T10TABFIGHT first-fight triad', () => {
   it('property: first-fight option set never exceeds choiceCountLimit (2..6)', () => {
     for (const limit of [2, 3, 4, 5, 6]) {
       const gated = openFirstFightGate(
-        baseState({ houseRules: { choiceCountLimit: limit } as GameState['houseRules'] }),
-        stalker
+        baseState({ houseRules: { ...DEFAULT_HOUSE_RULES, choiceCountLimit: limit } }),
+        stalker,
       );
       const set = firstFightChoiceSet(gated);
       expect(set.options.length).toBeLessThanOrEqual(limit);
@@ -127,8 +163,8 @@ describe('T10TABFIGHT no ghost Ask-foe stabilise', () => {
     const live = baseState({
       activeEncounter: stalker,
       sceneFacts: {
-        crowd: 'few',
-        noise: 'loud',
+        crowd: 'sparse',
+        noise: 'shouting',
         present: ['Wilds Stalker'],
         props: [],
         lastBeat: 'the beast dropped them flat',
@@ -139,7 +175,6 @@ describe('T10TABFIGHT no ghost Ask-foe stabilise', () => {
         level: 1,
         hp: 0,
         maxHp: 10,
-        srd: { classId: 'rogue', speciesId: 'halfling', backgroundId: 'criminal' },
       },
     });
     const cleared = tickEncounterTerminal(live, 'wait', { playerDead: true });
