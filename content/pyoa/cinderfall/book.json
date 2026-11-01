@@ -315,7 +315,7 @@
    "kind": "recovery",
    "title": "A Sour Bargain in the Ash",
    "brief": "You negotiate with the water-seller for enough grey water to fill the tender, testing your CUNNING against his lies to acquire a skin of oil.",
-   "page": "The water-seller catches your hesitation and bares yellow teeth in a grin of absolute triumph, slamming his thumb over the neck of the flask to double his price in heavy copper wire. You find yourself conceding the extra turn of wire just to save the hour, your temper flaring hot enough to singe the hairs on your forearms as you hand over the precious metal. When he finally shoves the greasy hide into your chest, the stiff leather seam catches your thumb-joint, carving a raw, bleeding split across the skin that immediately fills with black soot.\n\nYou hiss through your teeth, clutching the stinging hand while he cackles and retreats behind his zinc counter, leaving you poorer in wire and thicker in scars.",
+   "page": "The water-seller catches your hesitation and bares yellow teeth in a grin of absolute triumph. His thumb slams over the neck of the flask and doubles the price in copper wire. You concede the extra turn of wire just to save the hour. Temper runs hot enough to singe the hairs on your forearms as you hand over the metal. He shoves the greasy hide into your chest. The stiff leather seam catches your thumb-joint and carves a raw, bleeding split that fills at once with black soot.\n\nYou hiss through your teeth and clutch the cut while he cackles and retreats behind his zinc counter. Poorer in wire. Thicker in scars.",
    "exits": [
     {
      "label": "Pocket the stinging oil-skin",
@@ -1283,7 +1283,7 @@
    "kind": "reward",
    "title": "The Draft-Pump Repair",
    "brief": "You tinker with a broken draught-pump using fine mechanics to earn free coal rations from the grateful tavern keeper.",
-   "page": "Working the seized brass valve with a slender pin and your knuckles black with graphite, you coax the stubborn draught-pump back into rhythmic life with a dry, satisfying chuff that draws a nod from the tavern keeper. He heaves a heavy sack of graded coal-nuggets across the scarred boards to reward your grease-stained labor, muttering that a good draft keeps the ale-smoke out of his eyes and the hearth honest.\n\nPocketing a grease-paper parcel of tallow-bread he slips you alongside the fuel, you feel the weight of a reliable debt settled in soot and warmth.",
+   "page": "A slender pin works the seized brass valve. Graphite blacks your knuckles. The stubborn draught-pump answers with a dry chuff, and the tavern keeper nods. He heaves a sack of graded coal-nuggets across the scarred boards for the grease-stained work, muttering that a good draft keeps the ale-smoke out of his eyes and the hearth honest.\n\nHe slips you a grease-paper parcel of tallow-bread alongside the fuel. You pocket it. The debt is paid in coal and bread.",
    "exits": [
     {
      "label": "Inspect the turnout switches blocked by the clerk",
@@ -2972,7 +2972,7 @@
    "kind": "reward",
    "title": "Unwavering Iron Nerve",
    "brief": "You stand your ground against a corrupt signalman keeping strict composure, forcing him to hand over the switch keys.",
-   "page": "The old clerk's gaze finally wavers under your unblinking stare, and he lets out a dry, rattling sigh that smells of stale chicory. He pulls a heavy brass switch key from his waistcoat pocket and tosses it onto the scarred wooden desktop with a dull clink. You pocket the cold metal without a word; composure alone has bought you safe passage through the most closely guarded switch in the junction. It is a quiet victory won entirely through stillness, leaving you richer by one essential token of authority.",
+   "page": "The old clerk's gaze wavers under your unblinking stare. A dry rattling sigh escapes him, stale chicory on the breath. From his waistcoat pocket he draws a brass switch key and tosses it onto the scarred wooden desktop with a dull clink. You pocket the cold metal without a word. Composure alone has bought safe passage through the most closely guarded switch in the junction. Stillness did the work. One token of authority sits in your coat.",
    "exits": [
     {
      "label": "Return to the lower platform",
@@ -3126,7 +3126,7 @@
    "kind": "recovery",
    "title": "Rafters and Rusted Iron",
    "brief": "You maintain quiet composure while locked in the tiny cabin during an inspection, overhearing the Barons' transit schedule.",
-   "page": "The latch gives with a loud metallic snap under the inspector's rough yank, and you spill onto the floorboards in a tangle of limbs and grease rags. He barks an angry curse, demanding to know your business in the private transit office before slamming a heavy iron ledger down onto your knuckles as a rough warning. You bite back a sharp cry of pain, nursing bruised fingers while he marches off down the platform to summon the yard police, leaving you poorer by a pocketknife and twenty precious minutes of lost time.",
+   "page": "The latch gives under the inspector's rough yank. Loud metallic snap. You spill onto the floorboards among grease rags. He barks an angry curse and wants your business in the private transit office. An iron ledger slams down onto your knuckles as a rough warning. You bite back a sharp cry. Bruised fingers curl against your palm. He marches off down the platform to summon the yard police. The cost is a pocketknife and twenty precious minutes of lost time.",
    "exits": [
     {
      "label": "Crawl beneath the sorting table",
@@ -14094,7 +14094,7 @@
    "kind": "reward",
    "title": "The Oak Kindling",
    "brief": "You drag a heavy timber baulk across the mire to shore up the sinking track-bed, securing a dry sack of dry oak kindling.",
-   "page": "With a mighty heave of your back and shoulders, you wrench the heavy timber clear of the sucking mire and slam it home beneath the sinking rail joint. The track holds firm against the weight of the locomotive, keeping the firebox high and dry above the black water. You salvage a dry canvas sack of seasoned oak kindling from the ledge above, shaking the grey dust from its folds.\n\nThe Marrowbone hums appreciatively as you toss a handful of the dry wood into the open furnace door.",
+   "page": "You dig into the mire and wrench the timber clear, then slam it home beneath the sinking rail joint. The track holds. The locomotive stays put, firebox high and dry above the black water. From the ledge above you salvage a dry canvas sack of seasoned oak kindling and shake the grey dust from its folds.\n\nA handful of the dry wood goes into the open furnace door. The Marrowbone answers with a clean crackle from the firebox.",
    "exits": [
     {
      "label": "Return to the central sump basin",
@@ -15270,7 +15270,7 @@
    "kind": "scene",
    "title": "Echoes in the Dark",
    "brief": "You free the jammed hopper gate with a precise hammer blow to the release pawl, securing three buckets of clean Welsh steam-coal.",
-   "page": "Metal rings against metal with a dull, hollow thud that reverberates down the damp masonry of the Hollow Cut. Dust flakes from the curved ceiling, settling like grey snow over your shoulders and cap. The jammed mechanism groans, iron teeth shifting within their grease-clotted housing as the weight of the fuel above begins to settle. You lean your weight against the timber frame, waiting to see whether the chute will yield its contents or stay frozen shut.",
+   "page": "Metal hits metal in the Hollow Cut. The hollow thud runs down the damp masonry. Dust flakes from the curved ceiling and lands grey on your shoulders and cap. The jammed mechanism groans. Iron teeth shift in their grease-clotted housing as the fuel above begins to settle. You lean into the timber frame and wait. The chute will either give up its load or stay frozen shut.",
    "exits": [
     {
      "label": "Catch the falling coal buckets",
@@ -16665,7 +16665,7 @@
    "kind": "scene",
    "title": "The Greased Cogs",
    "brief": "You overhaul the winch motor until the heavy steel gears mesh with smooth precision, securing a can of fine clock-oil.",
-   "page": "Narrow iron steps lead upward alongside the secondary winch housing, slick with a film of condensation and fine coal dust. Every movement means you keep one hand locked on the cold handrail to avoid slipping against the jagged masonry of the tunnel wall. Below you, the great brass gears continue their rhythmic turning, throwing long, skeletal shadows across the arched ceiling. The air grows warmer here, carrying the sharp tang of hot axle-grease and burning friction tape from some hidden circuit overhead.\n\nYou pause on the landing to wipe your palms on your trousers, listening to the muffled ticking of pocket-watches echoing from the Stationmaster-General's distant sanctum. The metalwork here is older, riveted plates bolted together by hands that have long since turned to dust in the ash-dunes. A faint click resonates through the floorboards, signaling that the machinery ahead is waiting for your touch.",
+   "page": "Narrow iron steps climb beside the secondary winch housing, slick with condensation and fine coal dust. One hand stays locked on the cold handrail; a slip would put you against the jagged masonry of the tunnel wall. Below, the great brass gears keep their rhythm. Long skeletal shadows crawl across the arched ceiling. The air warms. Hot axle-grease and burning friction tape cut sharp from some circuit overhead.\n\nOn the landing you wipe your palms on your trousers. Muffled ticking of pocket-watches carries from the Stationmaster-General's distant sanctum. The metalwork here is older, riveted plates bolted by hands that turned to dust in the ash-dunes long ago. A faint click travels through the floorboards. The machinery ahead waits for a touch.",
    "exits": [
     {
      "label": "Approach the secondary control box",
@@ -16765,7 +16765,7 @@
    "kind": "scene",
    "title": "Beyond the Valve",
    "brief": "You bear the biting lash of escaping high-pressure steam without flinching, winning a thick leather asbestos mitten.",
-   "page": "The steam thins into a wet drizzle as your fingers close around the ribbed rim of the shut-off valve, turning it through stubborn layers of rust and scale. A final, shuddering gasp echoes through the pipework as the pressure drops, leaving behind an eerie, dripping silence in the tunnel. You shake the moisture from your sleeves and peer into the gloomy alcove revealed by the clearing fog. An abandoned worker's station sits half-buried in grey ash, its wooden desktop cluttered with discarded ledgers and broken tallow candles.\n\nYou pause to examine the faded ink marks on the nearest page, wondering what hurried hand abandoned the logbook mid-sentence. The silence of the Hollow Cut presses down heavily, broken only by the distant, rhythmic ticking of the Stationmaster-General's watches. You pocket a thick leather asbestos mitten left hanging on a rusted peg before turning back toward the main junction.",
+   "page": "Steam thins into a wet drizzle. Your grip finds the ribbed rim of the shut-off valve and turns it through stubborn rust and scale. Pressure drops. A last shuddering gasp runs the length of the pipework, then only drips remain in the tunnel. You shake moisture from your sleeves and peer into the gloomy alcove the clearing fog reveals. An abandoned worker's station sits half-buried in grey ash, its wooden desktop cluttered with discarded ledgers and broken tallow candles.\n\nFaded ink marks cover the nearest page. The logbook stops mid-sentence. In the Hollow Cut the quiet stays close, broken only by the distant rhythmic ticking of the Stationmaster-General's watches. A thick leather asbestos mitten hangs on a rusted peg. You pocket it and turn back toward the main junction.",
    "exits": [
     {
      "label": "Return to the central chamber",
@@ -17614,7 +17614,7 @@
    "kind": "scene",
    "title": "Coals of the Steppe",
    "brief": "You tap the seized governor-valve with a brass hammer until the needle drops, averting a boiler blowout, and scavenge a bundle of braided wick.",
-   "page": "Cinders tap against the thick glass of the cab windows like dry fingers seeking entrance from the howling waste outside. You secure the bundle of braided wick in your belt-pouch, running a gloved hand over the damp brass of the instrument panel to test its readiness. The furnace bed glows with a dull, stubborn cherry light, casting long shadows across the deck as the heavy locomotive prepares for the final push toward the walled city.",
+   "page": "Cinders tap the thick glass of the cab windows from the howling waste outside. You tuck the bundle of braided wick into your belt-pouch and run a gloved hand over the damp brass of the instrument panel. It feels ready. The furnace bed holds a stubborn cherry glow. Long shadows cut across the deck. The locomotive stands set for the final push toward the walled city.",
    "exits": [
     {
      "label": "Inspect the steam injector",
@@ -19362,7 +19362,7 @@
    "kind": "reward",
    "title": "The Silver Prize",
    "brief": "You trick the remaining platform guards into checking the wrong siding with a false whistle-signal, and pocket a heavy silver pocket-watch.",
-   "page": "Whether you slipped away cleanly in the confusion or snatched the prize right from under the watchman's nose despite the sudden scrape, the heavy silver pocket-watch now rests safely in your greasy palm. Its cold, engraved casing bears the worn monogram of the Rail Barons' logistics branch, a neat little piece of stolen property that might buy you a moment of hesitation from the gate guards if played just right. With the watch tucked securely into your waistcoat, you turn your face toward the vaulted arches of the terminus where the final platform waits.",
+   "page": "The silver pocket-watch rests in your greasy palm. Cold engraved casing bears the worn monogram of the Rail Barons' logistics branch, stolen property that might buy a pause from the gate guards if you play it right. You tuck the watch into your waistcoat and turn toward the vaulted arches of the terminus. The final platform waits beyond.",
    "exits": [
     {
      "label": "Advance to the final platform",
@@ -19568,7 +19568,7 @@
    "kind": "scene",
    "title": "The Iron Switch",
    "brief": "You force the jammed switch with a heavy grease-bar, risking a scalded arm if the pressure backfires, and secure a spare copper gasket.",
-   "page": "Leaning your full weight against the heavy grease-bar, you force the rusted switch-point as it shrieks in protest against decades of accumulated coal-dust and scale. A sudden hiss of superheated steam spits from the failing joint beside your knuckles, threatening to scald your skin if the pressure backfires into the pit. Grit your teeth against the blistering heat, you throw your hip into the lever until the tongue snaps home with a satisfying iron thud.\n\nSlipping the spare copper gasket from the spindle-slot, you secure your prize in your pocket.",
+   "page": "You put your full weight on the grease-bar and force the rusted switch-point. It shrieks against decades of coal-dust and scale. Superheated steam spits from the failing joint beside your knuckles. If the pressure backfires into the pit, that jet will scald. You grit your teeth against the blistering heat and throw your hip into the lever. The tongue snaps home with an iron thud.\n\nThe spare copper gasket comes free of the spindle-slot. You put it in your pocket.",
    "exits": [
     {
      "label": "Pry the jammed iron free",
@@ -19770,7 +19770,7 @@
    "kind": "ending-part",
    "title": "The Ledger of Iron",
    "brief": "Ending \"The Baron's Bargain\"",
-   "page": "Ledger books bound in pigskin slide across the mahogany counter with the weight of tombstones, closed by men whose cuffs are stiff with dried ink and coal dust. The Rail Barons do not shout; they negotiate in the quiet click of brass abacuses and the steady scratching of nibs that record every gallon of water now flowing down the masonry. Your boots leave wet prints upon their patterned carpet, smelling of river silt and old grease, entirely out of place among the velvet and polished rosewood. They offer you a desk near the high windows, a silver watch on a heavy chain, and a title that sounds remarkably like a life sentence served in comfortable slippers.",
+   "page": "Ledger books bound in pigskin slide across the mahogany counter like tombstones, closed by men whose cuffs are stiff with dried ink and coal dust. The Rail Barons do not shout. They negotiate in the quiet click of brass abacuses and the scratch of nibs that record every gallon of water now flowing down the masonry. Your boots leave wet prints on their patterned carpet, smelling of river silt and old grease among the velvet and polished rosewood. They offer you a desk near the high windows, a silver watch on a thick chain, and a title that sounds remarkably like a life sentence served in comfortable slippers.",
    "exits": [
     {
      "label": "Sign your name in black ink",
@@ -20159,7 +20159,7 @@
    "kind": "ending-part",
    "title": "Beyond the Last Buffer",
    "brief": "Ending \"The Quiet Siding\"",
-   "page": "Silence settles over the cab, thick with the smell of scorched oil, burnt coal-dust, and the sharp copper tang of a journey well-run. Hesper Quill is nowhere in the ash-grey shadows, yet the empty seat beside the fire-door feels less like an abandonment and more like a place kept warm for another shift that never quite arrives. Outside, the soot-stained roofs of the last walled city stretch out beneath a low, unmoving cloud-blanket, indifferent to the history you have dragged through their gates on ten tons of steel and boiler-plate. You wipe your palms on a greasy rag, leaving dark smears of soot that will take weeks of hard scrubbing - or perhaps no scrubbing at all - to wash away from your skin.",
+   "page": "Scorched oil, burnt coal-dust, and a sharp copper tang fill the cab after a journey well-run. Hesper Quill is nowhere in the ash-grey shadows. The empty seat beside the fire-door still looks warmed for a shift that never quite arrives. Outside, soot-stained roofs of the last walled city stretch under a low unmoving cloud-blanket, indifferent to the history you dragged through their gates on ten tons of steel and boiler-plate. You wipe your palms on a greasy rag. Dark smears of soot stay on the cloth. Weeks of hard scrubbing might clear your skin. Or none at all.",
    "exits": [
     {
      "label": "Leave the engine to the ash",
