@@ -403,7 +403,7 @@
    "kind": "scene",
    "title": "The Bitter Net-Mender",
    "brief": "You negotiate with a desperate net-mender for sturdy ropes, risking a harsh argument to secure climbing gear that will help you descend the Sunken Stair.",
-   "page": "Tucked in an alley behind the Customs-Priest's shuttered tollhouse, you find a hunched net-mender frantically sorting through a tangle of hemp and wire. The old woman's hands are a blur of calluses and twine. With no water, there are no fish, and her livelihood has vanished overnight. Still, she possesses the finest climbing ropes in Gullmouth, braided strong enough to haul a leviathan carcass. You approach carefully, eyeing a thick coil of black-tarred rope resting by her stool. The Sunken Stair is deep and treacherous; you will not survive the descent without it.",
+   "page": "In an alley behind the Customs-Priest's shuttered tollhouse, a hunched net-mender sorts through a tangle of hemp and wire. Her hands are a blur. Calluses and twine move without pause. With no water there are no fish, and her livelihood has vanished overnight, yet she still owns the finest climbing ropes in Gullmouth, braided strong enough to haul a leviathan carcass. A thick coil of black-tarred rope rests by her stool. The Sunken Stair runs deep; without that coil the descent will kill you.",
    "exits": [
     {
      "label": "Ask for her price",
@@ -718,7 +718,7 @@
    "kind": "check",
    "title": "Heresy and Hope",
    "brief": "You coax a frightened drift pilgrim out of hiding to ask about the Meridian Gear, risking their sudden panic to earn a protective bone talisman.",
-   "page": "Carefully measuring your tone, you speak of the sea returning, of restoring the balance through the Meridian Gear. The pilgrim's eyes fix on yours, filled with a volatile mix of hope and absolute terror. He clutches a carved piece of whalebone in his trembling hands, a sacred ward.\n\n\"To touch the Gear is heresy,\" he stammers, rising to his knees. He looks ready to bolt or perhaps strike out in a frenzy of religious fervour. You must guide the conversation with precision, easing his frantic mind before he erupts into a panicked shout that will draw unwanted attention from the town guards or rival wreckers.",
+   "page": "You measure your tone and speak of the sea returning, of restoring the balance through the Meridian Gear. The pilgrim's eyes fix on yours. Hope and absolute terror share the same stare. He clutches a carved piece of whalebone in his trembling hands, a sacred ward.\n\n\"To touch the Gear is heresy,\" he stammers, rising to his knees. He looks ready to bolt or to strike out in a frenzy of religious fervour, and one slip will push him into a panicked shout that brings the town guards or rival wreckers.",
    "exits": [
     {
      "label": "check-full",
@@ -1570,7 +1570,7 @@
    "kind": "scene",
    "title": "The Guildmaster's Table",
    "brief": "You challenge the guildmaster's champion to an arm-wrestling contest, putting your back into the strain to win a coil of high-quality climbing rope.",
-   "page": "Thick oak groans beneath the weight of two straining forearms as the guildmaster's champion grins across the grease-stained tavern table, his muscles bunched like oiled cables. You lock your fingers into his massive grip, planting your boots firmly against the uneven floorboards while the smoky taproom falls silent around the wager. Every eye in Gullmouth watches the sweat bead on your forehead as you throw your weight behind the push, fighting inch by grueling inch against an adversary who has broken better wreckers than you. The contest leaves your arm trembling and your lungs burning with stale ale and salt-dust, but victory remains within your desperate grasp as you shove his knuckles down toward the scarred wood.",
+   "page": "Thick oak groans under two straining forearms as the guildmaster's champion grins across the grease-stained tavern table, muscles bunched like oiled cables. You lock your fingers into his massive grip and plant your boots against the uneven floorboards while the smoky taproom falls silent around the wager. Sweat beads on your forehead. Every eye in Gullmouth watches as you shove inch by inch against an adversary who has broken better wreckers than you, until your arm trembles and your lungs burn with stale ale and salt-dust, and still his knuckles drift down toward the scarred wood.",
    "exits": [
     {
      "label": "Claim your prize from the tavern keeper",
@@ -1600,7 +1600,7 @@
    "kind": "check",
    "title": "Bending the Iron Arm",
    "brief": "You challenge the guildmaster's champion to an arm-wrestling contest, putting your back into the strain to win a coil of high-quality climbing rope.",
-   "page": "Oak splinters groan beneath your elbow as you lock palms with the guildmaster's champion across the scarred tavern table, your forearm trembling under the weight of his granite-hard muscles. Blue veins bulge against your skin while the crowd of salt-cured wreckers leans in close, smelling of stale ale and dried weed as they roar their wagers into the smoky air. You grind your teeth, plant your boots firmly into the damp rushes, and throw every ounce of your shoulder strength into turning his knuckles back toward the wood.",
+   "page": "Oak splinters under your elbow as you lock palms with the guildmaster's champion across the scarred tavern table. Your forearm shakes under his granite-hard muscles. Blue veins bulge against your skin while salt-cured wreckers lean in close, smelling of stale ale and dried weed as they roar their wagers into the smoky air, and you grind your teeth, plant your boots in the damp rushes, and throw every ounce of shoulder strength into turning his knuckles back toward the wood.",
    "exits": [
     {
      "label": "check-full",
@@ -2038,7 +2038,7 @@
    "kind": "recovery",
    "title": "Sinking into the Gray",
    "brief": "You construct a makeshift sledge from driftwood planks, lashing the wood together to safely cross a patch of soft silt and recover an ivory spyglass.",
-   "page": "The timber tips too far, sliding off the frozen crust and plunging your left arm deep into the cold, foul-smelling mire up to the elbow. You wrench yourself backward with a grunt, abandoning the slipping oars as the silt swallows half your makeshift sledge into the dark underbelly of the Low. Mud coats your sleeve and chills your bones, leaving you bruised and encumbered by heavy, reeking grey grime. Yet you manage to scramble back onto solid ground, clutching the damp wooden spar you managed to salvage.",
+   "page": "The timber tips too far, slides off the frozen crust, and plunges your left arm deep into the cold, foul-smelling mire up to the elbow. You wrench yourself backward with a grunt and abandon the slipping oars as the silt swallows half your makeshift sledge into the dark underbelly of the Low. Mud coats your sleeve. The reeking grey grime chills you to the bone and leaves you bruised. You scramble back onto solid ground with the damp wooden spar still in your fist.",
    "exits": [
     {
      "label": "Crawl away from the mire",
@@ -2687,7 +2687,7 @@
    "kind": "reward",
    "title": "The Merchant's Grace",
    "brief": "You break up a violent brawl between two merchants fighting over a chunk of ambergris, imposing your physical presence to earn a grateful merchant's discount.",
-   "page": "Your iron grip holds firm against the thrashing mob, forcing the combatants apart until they slump against the salt-caked ribs in exhausted submission. The surviving merchant, sweating and trembling with relief, presses a smooth, waxy fragment of grey amber into your palm as a silent token of gratitude before scurrying away into the shadows. You pocket the aromatic prize, knowing its rich scent will fetch a heavy price among the apothecaries of the upper cliffs.",
+   "page": "Your grip holds the thrashing mob apart until the combatants slump against the salt-caked ribs in exhausted submission. The surviving merchant sweats and trembles with relief. He presses a smooth, waxy fragment of grey amber into your palm as a silent token of gratitude, then scurries away into the shadows. You pocket the aromatic prize. Among the apothecaries of the upper cliffs that scent will sell.",
    "exits": [
     {
      "label": "Return to the noisy market",
@@ -3303,7 +3303,7 @@
    "kind": "scene",
    "title": "The Murky Shallows",
    "brief": "You wade into a sacred pool filled with biting blind-eels, ignoring the painful nips to retrieve a sunken idol that the pilgrims revere.",
-   "page": "Cold brine stings your ankles as you step into the sacred pool, disturbing a thick silt that clouds the dark water. Sleek, pale shapes dart between your shins with sudden, vicious hunger, their tiny jaws snapping against your leather boots and bare skin. Ignoring the sharp nips that draw thin lines of crimson into the pool, you plunge your hands deep into the heavy mud until your fingers brush the smooth edges of the venerated driftwood effigy.",
+   "page": "Cold brine bites your ankles as you step into the sacred pool and disturb a thick silt that clouds the dark water. Sleek pale shapes dart between your shins. Their tiny jaws snap against your leather boots and bare skin with sudden vicious hunger. Thin lines of crimson thread into the pool from the nips, and you plunge your hands deep into the mud until your fingers brush the smooth edges of the venerated driftwood effigy.",
    "exits": [
     {
      "label": "Pull the idol free",
@@ -3522,7 +3522,7 @@
    "kind": "scene",
    "title": "Ribs of the Galley",
    "brief": "You construct a windbreak from the ribs of a half-buried galley, weaving canvas tightly to shelter yourself and discovering an ancient, rust-free cutlass inside.",
-   "page": "Timbers of a stranded merchantman rear out of the scouring sand like the carcass of some salt-blind beast. Dragging the oiled canvas from your recent find, you lash it firmly across the bleached ribs to block the howling gale. Tucked deep within the lee of the hull lies an ancient, rust-free cutlass, its greased scabbard gleaming faintly despite the grit. You test its balance in your palm, feeling the cold weight of forgotten smithing. The rising howl of the wind insists you push forward before the drift swallows your makeshift shelter entirely.",
+   "page": "Timbers of a stranded merchantman rear out of the scouring sand like the carcass of some salt-blind beast. You drag the oiled canvas from your recent find and lash it firmly across the bleached ribs to block the gale. The howling drops a notch. Deep in the lee of the hull lies an ancient, rust-free cutlass, its greased scabbard still faintly bright despite the grit. You test its balance in your palm and feel cold forgotten smithing in the blade, then the rising wind insists you push forward before the drift swallows your makeshift shelter entirely.",
    "exits": [
     {
      "label": "Follow the windbreak into the storm",
@@ -3590,7 +3590,7 @@
    "kind": "recovery",
    "title": "Tangled in the Rigging",
    "brief": "You construct a windbreak from the ribs of a half-buried galley, weaving canvas tightly to shelter yourself and discovering an ancient, rust-free cutlass inside.",
-   "page": "A sudden scream of wind tears the canvas from your frozen grip, collapsing the makeshift shelter and burying your hands in abrasive grit. The heavy timber bucks against your shoulder, leaving a dark, weeping bruise across your collarbone as you scramble clear of the falling wreckage. You salvage the ancient, rust-free cutlass from the drift, but the struggle costs you precious time and drains your remaining strength. Shivering bitterly, you hoist your pack and limp onward into the swirling whiteout.",
+   "page": "A sudden scream of wind tears the canvas from your frozen grip. The shelter collapses. Abrasive grit buries your hands while timber bucks against your shoulder and leaves a dark weeping bruise across your collarbone as you scramble clear of the falling wreckage. You salvage the ancient rust-free cutlass from the drift, though the struggle costs precious time and drains what strength you had left. You hoist your pack and limp onward into the swirling whiteout.",
    "exits": [
     {
      "label": "Press onward through the stinging grit",
@@ -4216,7 +4216,7 @@
    "kind": "reward",
    "title": "The Silver Compass",
    "brief": "You decipher the captain's waterlogged ledger to find a hidden cache, risking a sudden deck collapse to claim a silver compass.",
-   "page": "Dust settles around the shattered timbers as your fingers close on the cold metal casing set in the velvet lining. A delicate glass face reveals a needle spinning wildly over a rusted dial, refusing to point north in a world where the sea has vanished. You slip the heavy keepsake into your coat pocket, feeling its reassuring weight against your ribs as you step back out into the open air.",
+   "page": "Dust settles around the shattered timbers as your fingers close on the cold metal casing set in the velvet lining. Behind a delicate glass face a needle spins wildly over a rusted dial and refuses to point north in a world where the sea has vanished. You pocket the keepsake. The casing rests against your ribs as you step back into the open air.",
    "exits": [
     {
      "label": "Advance toward the distant dunes",
@@ -4335,7 +4335,7 @@
    "kind": "scene",
    "title": "Watchers in the Hull",
    "brief": "You study the scavenging patterns of rival crews to slip past their lookouts, securing an intact spyglass for your journey.",
-   "page": "Salt-rimed timbers creak beneath your boots as you crouch behind the ribs of a three-masted merchantman stranded on its beam-ends. Across the dry silt, two rival scavengers from the Brineholder payroll pick their way through a drift of waterlogged barrels, their copper lanterns swinging with rhythmic caution. You wait until their backs turn toward a tangled shroud of rigging before darting across the open rib-valley.\n\nTucked inside a canvas creel lashed to a dead man's spar rests an intact brass spyglass, its lenses clouded with film but completely free of salt-pitting. You slip it into your coat pocket as the lookouts shift their patrol.",
+   "page": "Salt-rimed timbers creak beneath your boots as you crouch behind the ribs of a three-masted merchantman stranded on its beam-ends. Across the dry silt, two rival scavengers from the Brineholder payroll pick their way through a drift of waterlogged barrels, copper lanterns swinging. You hold still. When their backs turn toward a tangled shroud of rigging, you dart across the open rib-valley.\n\nTucked inside a canvas creel lashed to a dead man's spar rests an intact brass spyglass, lenses clouded with film but free of salt-pitting. You slip it into your coat pocket as the lookouts shift their patrol.",
    "exits": [
     {
      "label": "Crawl through the rusted winch-gap",
@@ -4699,7 +4699,7 @@
    "kind": "check",
    "title": "Striking the Rusted Metal",
    "brief": "You dismantle a rusted winch mechanism near the edge, carefully avoiding jagged metal to extract a heavy iron gear.",
-   "page": "The rusted housing of the winch groans under the bite of your blade and refuses to yield its inner workings to an impatient hand. Jagged flakes of iron scale fly through the air as you hammer the wedge deeper into the rusted seam, feeling the ancient metal resist every blow. The whole frame shudders on its mounting bolts, threatening to collapse and trap your fingers in the grinding mechanism if you misjudge the next strike.",
+   "page": "The rusted housing of the winch groans under the bite of your blade and refuses to yield its inner workings to an impatient hand. Jagged flakes of iron scale fly through the air as you hammer the wedge deeper into the rusted seam and feel the ancient metal resist every blow. The frame shudders. On its mounting bolts the whole housing can collapse and trap your fingers in the grinding mechanism if the next strike goes wrong.",
    "exits": [
     {
      "label": "check-full",
@@ -4822,7 +4822,7 @@
    "kind": "recovery",
    "title": "Bruised and Burdened",
    "brief": "You pry open a half-buried sea chest embedded in the crust, straining against the hardened salt to claim a heavy cutlass.",
-   "page": "The rusted iron slams shut with a bone-jarring crash, catching your knuckles against the abrasive crust and sending a searing ache up your forearms. You stumble backward into the damp sand, nursing a jagged, bleeding scrape across your hand that will throb for days in the salt air. Valuable daylight slips away as you catch your breath, leaving you empty-handed and sore on the open seabed.",
+   "page": "The rusted iron slams shut with a bone-jarring crash and catches your knuckles against the abrasive crust. A searing ache runs up your forearms. You stumble backward into the damp sand. Across your hand a jagged bleeding scrape will burn for days in the salt air, and valuable daylight slips away while you stand empty-handed and sore on the open seabed.",
    "exits": [
     {
      "label": "Press onward across the flats",
@@ -16167,7 +16167,7 @@
    "kind": "reward",
    "title": "The Luminous Vial",
    "brief": "You brutally smash a creeping, armored rock-centipede that invaded the campsite, relying on sudden violence to extract its valuable phosphorescent venom sac.",
-   "page": "Your boot-heel crushes the final layer of armor. The segmented carcass twitches once in the gloom. You slice free the pulsing blue-tinged gland from beneath its throat. It sits in your palm like a cold pearl. Phosphorescent glow cuts the shadows without a flicker of smoke. Into a pocket it goes. Where ordinary torches fail, this light will still show the next step.",
+   "page": "Your boot-heel crushes the final layer of armor. The carcass twitches once. You slice free the pulsing blue-tinged gland from beneath its throat and it sits in your palm like a cold pearl while phosphorescent glow cuts the shadows without a flicker of smoke. Into a pocket it goes. Where ordinary torches fail, this light will still show the next step.",
    "exits": [
     {
      "label": "Return to the ruined shelter",
@@ -17034,7 +17034,7 @@
    "kind": "reward",
    "title": "The Iron Seated True",
    "brief": "You heave against a secondary jammed cog to assist her terrible plan, straining every muscle to align the teeth and claim a piece of the mechanism.",
-   "page": "With a sudden, shuddering lurch that rattles the loose teeth in your jaws, the massive gear slides home into its oil-blackened housing and locks with a satisfying, resonant thud. The vibration travels up through the stone soles of your boots from deep under the seabed. Orsolya exhales a long, trembling breath, wiping a smear of grease and sweat from her forehead with the back of her sleeve. Without a word she tosses a salt-pitted brass pin into your open palm, grim proof that you earned your keep in the dark.\n\nIn your palm rests a brass locking-pin, cold metal notched with the maker's ancient seal.",
+   "page": "A sudden, shuddering lurch rattles the loose teeth in your jaws as the massive gear slides home into its oil-blackened housing and locks with a solid thud. Vibration climbs from deep under the seabed into the stone soles of your boots. Orsolya exhales a long, trembling breath. She wipes a smear of grease and sweat from her forehead with the back of her sleeve, then without a word tosses a salt-pitted brass pin into your open palm, grim proof that you earned your keep in the dark.\n\nIn your palm rests a brass locking-pin, cold metal notched with the maker's ancient seal.",
    "exits": [
     {
      "label": "Face the final choice above",
@@ -19977,7 +19977,7 @@
    "kind": "ending-part",
    "title": "Bone and Alkali",
    "brief": "Ending \"The Long Dry\"",
-   "page": "Salt cakes the windows of the cliff-houses until they are as opaque as sheep-skull bone, shutting out the merciless glare of a sky that has forgotten how to cloud over. You walk the empty floor of the bay where the great leviathan carcass rots into the silt, its ribs standing against the pale air like the skeleton of an unfinished church. The ferryman sits by his dry dock with an oar across his knees, sharpening the blade with a dry stone that screeches through the stillness like a dying gull. Everyone stays indoors now, hoarding the last drops of brackish water in earthenware jars and listening to the wind whistle through the empty chimneys of a town that has nothing left to sell. The world has grown narrow and dry, reduced to the thickness of a dried skin stretched tight over a wooden frame, waiting for a rain that never gathers in the upper air.",
+   "page": "Salt cakes the cliff-house windows until they go opaque and shut out a sky that has forgotten how to cloud over. You walk the empty floor of the bay where the great leviathan carcass rots into the silt, ribs standing against the pale air. The ferryman sits by his dry dock with an oar across his knees. He sharpens the blade with a dry stone that screeches through the stillness. Everyone stays indoors now. They hoard the last drops of brackish water in earthenware jars and listen to the wind whistle through the empty chimneys of a town that has nothing left to sell, while the world shrinks to a dried skin stretched tight over a wooden frame and rain never gathers above.",
    "exits": [
     {
      "label": "Cross the white flats to the silence",
