@@ -7143,7 +7143,7 @@
    "kind": "bottleneck",
    "title": "Midnight on the Steppe",
    "brief": "The storm clock clicks toward midnight as a low, metallic groaning echoes across the dunes from the direction of the viaduct.",
-   "page": "The storm clock hanging above the fire-door clicks its heavy iron tooth toward midnight, shaking loose a fine drift of grey soot across the brass dial. Far across the grey flats, from the direction of the towering viaduct, a deep metallic groaning rolls through the ground like the turning of a subterranean engine. The horizon shivers under a low bank of bruised purple clouds where the ash-storm season gathers its strength.\n\nYou check the water glass one more time, feeling the steady thrum of the copper boiler against your palms as the Marrowbone waits for the signal to move.",
+   "page": "The storm clock above the fire-door clicks its iron tooth toward midnight, and a fine drift of grey soot shakes loose across the brass dial. Far across the grey flats, from the direction of the towering viaduct, a deep metallic groan rolls through the ground like the turning of a subterranean engine. Bruised purple clouds bank low on the horizon where the ash-storm season gathers.\n\nYou check the water glass. Copper boiler heat presses your palms while the Marrowbone waits for the signal to move.",
    "exits": [
     {
      "label": "Advance toward the viaduct",
@@ -7752,7 +7752,7 @@
    "kind": "recovery",
    "title": "A Costly Exchange",
    "brief": "Negotiating passage with the suspicious smugglers gains a bundle of dry oak kindling and a dry rag.",
-   "page": "Your clever argument trips over an awkward stutter as the woman lets out a dry, rasping laugh that echoes sharply off the massive stone piers. The barter turns sour in an instant, and instead of friendly trade, you are forced to pay double for every scrap of dry oak kindling and coarse rag they toss across the ash-dusted ground. They strip a handful of copper wire from your tool roll as an impromptu toll, leaving you poorer in supplies but wiser to the sharp dealings of the lower line.",
+   "page": "Your clever argument trips into an awkward stutter, and the woman lets out a dry, rasping laugh that snaps off the massive stone piers. The barter turns sour in an instant. Instead of friendly trade, you pay double for every scrap of dry oak kindling and coarse rag they toss across the ash-dusted ground. They strip a handful of copper wire from your tool roll as an impromptu toll. You leave poorer in supplies. The kindling and rag sit under your arm.",
    "exits": [
     {
      "label": "Gather the remaining goods and depart",
@@ -9765,7 +9765,7 @@
    "kind": "check",
    "title": "Steadying the Mind",
    "brief": "You steady your breathing against the lung-burning fumes, risking blacking out to maintain focus and locate the hidden maintenance ladder.",
-   "page": "Vertigo coils in your stomach as the distant screech of grinding metal echoes up from the abyss beneath the viaduct. Your temples throb in time with the wheezing boilers, threatening to pull you down into a shivering panic as the toxic haze grows thicker. Closing your eyes against the stinging vapors, you force your lungs to take one slow, deliberate draw of the foul air.",
+   "page": "Vertigo coils in your stomach. From the abyss beneath the viaduct a distant screech of grinding metal climbs the stonework. Your temples throb in time with the wheezing boilers, and the toxic haze grows thicker until panic starts to pull at you. You close your eyes against the foul vapors. One slow, deliberate draw fills your lungs.",
    "exits": [
     {
      "label": "check-full",
@@ -10350,7 +10350,7 @@
    "kind": "bottleneck",
    "title": "The Blown Viaduct",
    "brief": "The bridge shudders as structural maintenance charges detonate ahead, carving a gaping chasm right through the iron roadbed.",
-   "page": "Sudden concussion rattles the soot from the cab roof as structural maintenance charges detonate ahead, carving a gaping chasm right through the iron roadbed of the Brasswind Viaduct. Chunks of gray masonry and red-hot rivets cascade into the empty air, leaving two hundred feet of sheer drop where the mainline used to run. Steam hisses from ruptured couplings beneath the Marrowbone as you haul the heavy brass regulator hard into reverse, bringing the shuddering engine to a screaming halt mere inches from the sheared edge of the void.",
+   "page": "Sudden concussion rattles the soot from the cab roof as structural maintenance charges detonate ahead and carve a gaping chasm right through the iron roadbed of the Brasswind Viaduct. Chunks of gray masonry and red-hot rivets cascade into the empty air. Two hundred feet of sheer drop open where the mainline used to run. Steam hisses from ruptured couplings beneath the Marrowbone. You slam the brass regulator into reverse. The shuddering engine screams to a halt mere inches from the sheared edge of the void.",
    "exits": [
     {
      "label": "Inspect the chasm edge",
@@ -11620,7 +11620,7 @@
    "kind": "reward",
    "title": "The Sprocket Yields",
    "brief": "You heave against the rusted brake drum with all your might, risking a muscle tear to manually lower the heavy platform.",
-   "page": "Iron teeth engage with a satisfying, deep-throated thud as the heavy platform begins its controlled descent into the gloom. The screech of the brake drum settles into a steady, rhythmic mechanical purr that vibrates pleasantly through the soles of your boots. You flex your aching fingers, feeling the familiar burn of honest work in your muscles as the misty tiers of the viaduct slide past your window. That hard-won mechanical advantage leaves you bruised but functional, ready for whatever lies waiting in the iron corridors ahead.",
+   "page": "Iron teeth engage with a deep-throated thud as the platform begins its controlled descent into the gloom, and the screech of the brake drum settles into a mechanical purr that works through the soles of your boots. You flex your aching fingers. Misty tiers of the viaduct slide past your window while that burn of honest work sits in your muscles. You are bruised but functional. The corridor door stands ahead of the cage.",
    "exits": [
     {
      "label": "Navigate the hot iron corridors",
@@ -13117,7 +13117,7 @@
    "kind": "check",
    "title": "Realigning the Valve Gear",
    "brief": "You clear a jammed axle-box using brute leverage against the stone floor, earning an iron wedge and a strained wrist.",
-   "page": "The eccentric rod on the port side has slipped its keeper, rattling wildly against the motion plate with every labored pulse of the pistons. You crouch in the narrow clearance between the churning machinery and the damp brickwork, fingers slick with grease as you fumble for the adjusting screw in the pitch-dark shadows. The engine bucks beneath your boots, threatening to crush your knuckles against the iron framing if the timing slips another fraction of an inch while you tighten the locking nut by feel alone.",
+   "page": "The eccentric rod on the port side has slipped its keeper, and it rattles against the motion plate with every labored pulse of the pistons. You crouch in the narrow clearance between the churning machinery and the damp brickwork, fingers slick with grease as you fumble for the adjusting screw in the pitch-dark shadows. The engine bucks beneath your boots. One more slip of the timing and the iron framing will crush your knuckles. You tighten the locking nut by feel alone.",
    "exits": [
     {
      "label": "check-full",
@@ -13457,7 +13457,7 @@
    "kind": "hub",
    "title": "The Lantern-Roost",
    "brief": "The Lantern-Roost: Hollow Signalmen hang suspended from iron chains above the boiler hatch, muttering timetables from forgotten decades.",
-   "page": "Hollow Signalmen hang suspended from iron chains above the boiler hatch, muttering timetables from forgotten decades while their green lanterns cast sickly arcs across the vaulted ceiling. Lamp-oil, wet soot, and ancient iron scent the air, along with the ghost of unread manifests and phantom departures. Below their swinging boots, several dark paths branch off into the masonry, each one marked by a different flickering signal flame and the distant echo of dripping water.",
+   "page": "Hollow Signalmen hang from iron chains above the boiler hatch, muttering timetables from forgotten decades while their green lanterns cast sickly arcs across the vaulted ceiling. Lamp-oil, wet soot, and ancient iron scent the air, along with the ghost of unread manifests and phantom departures. Below their swinging boots several dark paths branch off into the masonry. Each one bears a flickering signal flame. Water drips down the nearest passage.",
    "exits": [
     {
      "label": "Follow the green branch ahead",
@@ -15836,7 +15836,7 @@
    "kind": "reward",
    "title": "The Plumb Line",
    "brief": "You guide the engine through the hairpin squeeze by watching the wall reflections, winning a pocket brass plumb-line.",
-   "page": "Smooth stone walls slide past the running board at last, leaving behind only the smell of hot oil and the memory of that razor-thin clearance in the dark. Resting on a narrow wooden bracket near the grease-box, you spot an old brass plumb-line left behind by some forgotten track-gang, its finely spun cord and heavy metal bob intact.",
+   "page": "Smooth stone walls slide past the running board at last. Only the smell of hot oil remains, plus the memory of that razor-thin clearance in the dark. On a narrow wooden bracket near the grease-box you spot an old brass plumb-line left behind by some forgotten track-gang. Its finely spun cord and metal bob are intact.",
    "exits": [
     {
      "label": "Return to the narrow rock passage",
@@ -16865,7 +16865,7 @@
    "kind": "check",
    "title": "Decoding the Tumblers",
    "brief": "You decode the secret sequence marked on the bulkhead wheel rims, earning the iron combination ring.",
-   "page": "Cold sweat beads on your forehead as you align the rusted wheel rims, matching the sequence notched into the bulkhead against the fading memory of Hesper's logbook. A sudden tremor shakes the rock above, and a shower of grit rattles down your collar, threatening to throw your alignment out by a hair's breadth. With the heavy locking bar trembling under the immense weight of the water-works behind it, you must commit your weight and wits to the final adjustment.",
+   "page": "Cold sweat beads on your forehead as you align the rusted wheel rims and match the sequence notched into the bulkhead against the fading memory of Hesper's logbook. A sudden tremor shakes the rock above. A shower of grit rattles down your collar and nearly throws your alignment out by a hair's breadth. The locking bar trembles under the water-works behind it. You put your mass and wits into the final adjustment.",
    "exits": [
     {
      "label": "check-full",
@@ -18828,7 +18828,7 @@
    "kind": "reward",
    "title": "The Bitter Leaf Secured",
    "brief": "You spin a clever tale about the engine's sacred duty to the line, convincing the elders, and obtain a pouch of dried bitter-leaf.",
-   "page": "The council accepts your sacred purpose, and the transaction closes with a hard thump of approval on the bench. You slip the coarse pouch into your inner pocket, feeling the dry rustle of the leaves against your ribs as a reminder of the narrow escape. The elders turn back to their cold braziers without another word, leaving you free to navigate the smoky aisles back toward the waiting iron.",
+   "page": "The council accepts your sacred purpose, and the transaction closes with a hard thump of approval on the bench. You slip the coarse pouch into your inner pocket. Dry leaves rustle against your ribs. The elders turn back to their cold braziers without another word, and the smoky aisles lead you back toward the waiting iron of the line.",
    "exits": [
     {
      "label": "Return through the ash-shrine corridor",
@@ -19246,7 +19246,7 @@
    "kind": "recovery",
    "title": "The Bitter Frostbite",
    "brief": "You endure the freezing draft from the breached roof-lights while adjusting the main feed-valve, and retain an oiled leather ledger-cover.",
-   "page": "The sudden screech of twisting iron overhead breaks your concentration, sending a sharp shiver through your arms that wrenches the main feed-valve too far to the left, flooding the chamber with scalding steam and bitter damp. As you stumble backward against the bulkhead, a jagged edge of the breached roof-frame catches your shoulder, tearing through your canvas coat. A long welt burns like hot coal along the cut. The loss of precious moments leaves your chest aching and your temper frayed, but you drag yourself upright with a dry cough, clutching the damp leather ledger-cover tighter as the engine settles into a heavy, uneven cough.",
+   "page": "The sudden screech of twisting iron overhead breaks your concentration. A sharp shiver runs through your arms and wrenches the main feed-valve too far to the left, so the chamber floods with scalding steam and bitter damp. You stumble backward against the bulkhead. A jagged edge of the breached roof-frame catches your shoulder and tears through your canvas coat. A long welt burns like hot coal along the cut. Your chest aches and your temper frays. You drag yourself upright with a dry cough. The damp leather ledger-cover stays tight in your fist as the engine settles into an uneven cough.",
    "exits": [
     {
      "label": "Drag yourself upright and move on",
@@ -20099,7 +20099,7 @@
    "kind": "ending-part",
    "title": "Water in the Streets",
    "brief": "Ending \"The Flooded Terminus\"",
-   "page": "Through the open cab windows comes the roar of a thousand long-dry fountains drinking their fill at last, splashing cold and loud against the masonry of the central plaza. The engine stands upon the terminal bridge like a monument of soot and brass, surrounded by people who have dropped their buckets and copper dippers to stare at the grey spray rising from the old stone basins. Water curls around the driving wheels, washing away the stubborn crust of the Ashen Steppe that has baked into the iron since the Long Fire first scorched the lowlands.\n\nA great cheer goes up from the crowded platforms, thin and cracked with old thirst, echoing off the iron roof timbers until the soot flakes down like black snow upon the waiting crowds.",
+   "page": "Through the open cab windows comes the roar of a thousand long-dry fountains as they drink their fill at last and splash cold and loud against the masonry of the central plaza. The engine stands upon the terminal bridge, a mass of soot and brass, surrounded by people who have dropped their buckets and copper dippers to stare at the grey spray that rises from the old stone basins. Water curls around the driving wheels and washes away the stubborn crust of the Ashen Steppe that has baked into the iron since the Long Fire first scorched the lowlands.\n\nA great cheer goes up from the crowded platforms, thin and cracked with old thirst. It climbs the iron roof timbers. Soot flakes drift down onto the waiting crowds.",
    "exits": [
     {
      "label": "Look out across the platform",
