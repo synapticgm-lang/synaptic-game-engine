@@ -972,7 +972,7 @@
    "kind": "reward",
    "title": "Earning Their Nod",
    "brief": "You face an angry union steward while maintaining steady composure to avoid a brawl, earning the respect of the local gangers.",
-   "page": "Quiet endurance turns the edge of their hostility, softening the hard lines around the steward's mouth into a reluctant, weather-beaten grin. However narrowly you held your temper against their provocation, your refusal to flinch or reach for steel has earned their hard-won respect. The steward claps a coal-blackened hand onto your shoulder, and the grease-smudge he leaves carries a promise of safe passage through the yards. You step back into the main office with a valuable ally notched into your belt.",
+   "page": "Their hostility softens at the edges. The hard lines around the steward's mouth break into a reluctant, weather-beaten grin, and your refusal to flinch or reach for steel has earned their respect. The steward claps a coal-blackened hand onto your shoulder. The grease-smudge he leaves carries a promise of safe passage through the yards. You step back into the main office with a valuable ally notched into your belt.",
    "exits": [
     {
      "label": "Return to the main office",
@@ -6524,7 +6524,7 @@
    "kind": "scene",
    "title": "The Sleeping Foreman",
    "brief": "Stealing past the sleeping foreman to retrieve a stolen ledger reveals the hidden combination to the supply locker.",
-   "page": "Canvas flaps keep the biting grit of the Cinder Steppe out of the Union bunkhouse, trapping a fog of cheap tobacco and tallow smoke. Near the cold cast-iron stove, the shift foreman snores heavily into his rolled-up wool coat, a brass pocket-watch chain glinting across his stained waistcoat. Beneath his dangling hand rests the stolen timber ledger, its leather cover cracked and gray with fine mineral dust. You slip inside on silent boots, keeping your eyes fixed on the rhythmic rise and fall of his broad chest as you reach down to slide the heavy book from his grasp without waking him.\n\nThe pages flutter slightly in the draft, revealing a series of neat tally marks beside a pencilled sequence of numbers that outline the tumblers of the rear locker.",
+   "page": "Canvas flaps keep the grit of the Cinder Steppe out of the Union bunkhouse and trap a fog of cheap tobacco and tallow smoke. Near the cold cast-iron stove, the shift foreman snores into his rolled-up wool coat, a brass pocket-watch chain glinting across his stained waistcoat. Beneath his dangling hand rests the stolen timber ledger, its leather cover cracked and gray with fine mineral dust. You slip inside on silent boots. His chest rises and falls in a slow rhythm as you reach down and slide the book from his grasp without waking him.\n\nThe pages flutter in the draft. Neat tally marks sit beside a pencilled sequence of numbers that outline the tumblers of the rear locker.",
    "exits": [
     {
      "label": "Lift the ledger from his fingers",
@@ -7573,7 +7573,7 @@
    "kind": "hub",
    "title": "Beneath the Great Arches",
    "brief": "Viaduct Foot: A shadow-drenched encampment tucked beneath the colossal stone arches where smugglers cache contraband goods.",
-   "page": "Shadow-drenched encampments tuck deep beneath the colossal stone arches where smugglers cache contraband goods away from the prying eyes of the Rail Barons' patrol engines. Smouldering brazier pots cast long, flickering bars of orange light across stacked wooden crates, grease-stained canvas bundles, and rusted lengths of spare rail. Murmurs drift from behind a makeshift barricade of corrugated tin, and stagnant water taps from somewhere high in the masonry. The air is thick with the scent of cheap tobacco, roasting roots, and heavy lubricating grease. You stand beside the idling engine, weighing your options against the ticking of the storm clock in your chest.",
+   "page": "Shadow-drenched encampments tuck deep beneath the colossal stone arches where smugglers cache contraband goods away from the prying eyes of the Rail Barons' patrol engines. Smouldering brazier pots cast long flickering bars of orange light across stacked wooden crates, grease-stained canvas bundles, and rusted lengths of spare rail. Murmurs drift from behind a makeshift barricade of corrugated tin. Stagnant water taps from somewhere high in the masonry. Cheap tobacco, roasting roots, and lubricating grease scent the place.\n\nYou stand beside the idling engine. The storm clock ticks in your chest.",
    "exits": [
     {
      "label": "Search the gravel near the southern pier",
@@ -13341,7 +13341,7 @@
    "kind": "reward",
    "title": "The Toll-Receipt Ledger",
    "brief": "You trace the hidden grease-runs along the tunnel footing to bypass the blockade, securing an old railway ledger full of toll-receipts.",
-   "page": "With delicate precision, you slide the leather-bound book free from the damp stack without disturbing the precarious balance of the surrounding debris. Opening the brittle cover by the dim light of your pocket lamp, you reveal page after page of meticulous handwritten toll-receipts signed by the old Stationmaster-General's deputies. It is a useless stack of debt records to anyone else, but tucked inside the back cover is a handwritten routing slip detailing every hidden maintenance hatch through the upper ridge.",
+   "page": "You slide the leather-bound book free from the damp stack. The surrounding debris holds its balance. By the dim light of your pocket lamp the brittle cover opens on page after page of handwritten toll-receipts signed by the old Stationmaster-General's deputies, a useless stack of debt records to anyone else, yet tucked inside the back cover is a handwritten routing slip detailing every hidden maintenance hatch through the upper ridge.",
    "exits": [
     {
      "label": "Return to the engine halt",
@@ -14729,7 +14729,7 @@
    "kind": "scene",
    "title": "The Rotten Wall",
    "brief": "You shoulder through a partition of rotten timber blocking a secondary adit, securing a leather-bound logbook of old accidents.",
-   "page": "Timbers shored up during the old administration have swollen with dampness, their wood turning to sodden sponge that smells of ancient rot and dry-rot fungus. You plant your boot against the base of a warped prop and lean your weight into the barrier until the iron nails shriek in their rusty beds. The partition groans, shedding flakes of grey fungus like ash before giving way with a hollow, splintering crash that echoes down the empty adit.\n\nBeyond the wreckage lies a dry alcove untouched by the general seepage, containing a low bench and a leather-bound logbook resting upon a rusted bracket. You brush the mildew from the cover, revealing the faded gold lettering of the old Line Maintenance records.",
+   "page": "Timbers shored up during the old administration have swollen with dampness, their wood turning to sodden sponge that smells of ancient rot and dry-rot fungus. You plant your boot against the base of a warped prop and lean into the barrier until the iron nails shriek in their rusty beds. The partition groans and sheds flakes of grey fungus like ash, then gives way with a hollow splintering crash that runs down the empty adit.\n\nBeyond the wreckage lies a dry alcove untouched by the general seepage, with a low bench and a leather-bound logbook resting upon a rusted bracket. You brush the mildew from the cover. Faded gold lettering names the old Line Maintenance records.",
    "exits": [
     {
      "label": "Inspect the leather logbook on the bracket",
@@ -15751,7 +15751,7 @@
    "kind": "reward",
    "title": "The True Ring",
    "brief": "You tap out the cylinder condensate to squeeze every ounce of power from the pistons, earning an intact pressure gauge.",
-   "page": "The valve housing gives a deep, musical chime under the mallet and settles smoothly into its bed with a satisfying hiss of released pressure. However narrowly you timed the adjustment, the cylinders now fire in perfect, synchronized harmony, driving the Marrowbone forward with renewed vigor through the dark rock. Half-buried in the grease-pan beneath the assembly lies an intact pressure gauge, glass face unblemished, needle resting true at zero.",
+   "page": "The valve housing gives a deep musical chime under the mallet and settles into its bed with a hiss of released pressure. The cylinders now fire in sync, driving the Marrowbone forward with renewed vigor through the dark rock. Half-buried in the grease-pan beneath the assembly lies an intact pressure gauge. Glass face unblemished. The needle rests true at zero.",
    "exits": [
     {
      "label": "Approach the inner gatehouse ahead",
@@ -18429,7 +18429,7 @@
    "kind": "scene",
    "title": "The Choked Grate",
    "brief": "You clear the choked intake grate with a hooked poker, avoiding a dangerous pressure surge, and keep a heavy iron shackle-bolt.",
-   "page": "Sludge and matted river-weeds choke the drainage intake grate, threatening to back up the entire runoff channel with filthy grey water. You wedge a hooked iron poker into the mesh and heave with all your weight, tearing away a thick mat of foul debris. A dangerous pressure surge bubbles up from beneath the grates, but you manage to step clear just as the foul water drains away with a loud, sucking roar. Among the discarded iron scraps left behind on the grating, you spot a heavy shackle-bolt that has been forged by hand.\n\nYou pocket the iron piece and turn your back on the cleared intake.",
+   "page": "Sludge and matted river-weeds choke the drainage intake grate and threaten to back up the entire runoff channel with filthy grey water. You wedge a hooked iron poker into the mesh and heave with all you have. A thick mat of foul debris tears free. A dangerous pressure surge bubbles up from beneath the grates, but you step clear just as the foul water drains away with a loud sucking roar. Among the discarded iron scraps left on the grating sits a shackle-bolt forged by hand.\n\nYou pocket the iron piece. The cleared intake is behind you.",
    "exits": [
     {
      "label": "Leave the cleared intake grate",
