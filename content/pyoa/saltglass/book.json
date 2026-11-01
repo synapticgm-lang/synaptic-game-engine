@@ -71,7 +71,7 @@
     }
    ],
    "title": "Dawn on the Rim",
-   "page": "Dawn breaks hard and white over the western rim of the Saltglass Basin, casting long shadows across the dry dust of Candlemere. Your neighbours stand in quiet clusters by the paddock fence, watching you secure the leather water-skin and bank the glowing coals within your tin lantern. The horizon stretches out like a sheet of hammered tin, blinding in the early glare."
+   "page": "Dawn breaks hard and white over the western rim of the Saltglass Basin. Long shadows fall across the dry dust of Candlemere. Your neighbours stand in clusters by the paddock fence while you secure the leather water-skin and bank the glowing coals within your tin lantern. The horizon stretches out like a sheet of hammered tin, blinding in the early glare."
   },
   {
    "id": "sg-1-in",
@@ -161,7 +161,7 @@
     }
    ],
    "title": "The Lamp-Stall Choice",
-   "page": "Thick tallow smoke curls around the wooden beams of the Last Lamp-Stall as you weigh your departure. To blaze your path with the lamp's exposed flame invites every eye across the basin, yet keeps the bitter night chill at bay. Alternatively, banking the lantern deep within its case preserves your precious oil and cloaks your passage in secrecy, leaving you to feel your way blindly through the rising wind."
+   "page": "Thick tallow smoke curls around the wooden beams of the Last Lamp-Stall as you weigh your departure. An exposed flame would blaze your path and invite every eye across the basin, yet it would also keep the bitter night chill at bay. Banking the lantern deep in its case preserves your oil and cloaks your passage. The iron housing sits cold in your palm."
   },
   {
    "id": "sg-1-out",
@@ -270,7 +270,7 @@
     }
    ],
    "title": "The Grand Cistern",
-   "page": "Upon the salt-crusted limestone steps of the Grand Cistern, the village elder hands you a water-skin that tastes of iron and entrusts you with the survival of the valley. The stone basin below is cracked and bone-dry, echoing with the hollow sound of your own boots. Every household has contributed a drop from their dwindling reserves to fill your flask for the long trek across the Basin."
+   "page": "On the salt-crusted limestone steps of the Grand Cistern, the village elder hands you a water-skin that tastes of iron and entrusts you with the survival of the valley. The stone basin below is cracked and bone-dry. Your boots sound hollow on the empty floor. Every household has contributed a drop from their dwindling reserves to fill your flask for the long trek across the Basin."
   },
   {
    "id": "sg-1-0-0-3",
@@ -2171,7 +2171,7 @@
     }
    ],
    "title": "The Narrow Silt-Banks",
-   "page": "Towering ramparts of wind-piled silt close in on either side, pinching the cart-track until it becomes a narrow trench of grey dust and shadow. You walk boot-to-boot with Calder, the two of you kicking up fine clouds of alkaline powder that cling to your woollen trousers. Between the high banks the silence sits close and enclosed, smelling of ancient dust and sun-baked clay.\n\nA sudden hush falls over the trench as the wind dies completely, leaving only the sound of your own measured breathing."
+   "page": "Towering ramparts of wind-piled silt close in on either side and pinch the cart-track into a narrow trench of grey dust and shadow. You walk boot-to-boot with Calder, the two of you kicking up fine clouds of alkaline powder that cling to your woollen trousers. Between the high banks the silence sits close and enclosed, and it smells of ancient dust and sun-baked clay.\n\nThe wind dies. Only your measured breathing remains."
   },
   {
    "id": "sg-1-1-3-0",
@@ -4873,7 +4873,7 @@
     }
    ],
    "title": "The Slag Mound",
-   "page": "Shimmering heat rolls off a massive mound of fused green slag that still holds trapped solar warmth, casting a long shadow where you stop briefly to wet your parched throat from your rapidly dwindling flask. The strange glassy rock vibrates faintly beneath your palms, storing the fierce daylight of the Basin within its twisted, bubbles-pocked green belly. To the left, the open flats stretch away in a glare of absolute white, while to the right, a tighter maze of wind-carved pillars offers a cooler, more shadowed route that demands constant twisting and ducking."
+   "page": "Heat rolls off a massive mound of fused green slag that still holds trapped solar warmth, and you pause in its long shadow to wet your parched throat from your dwindling flask. The glassy rock quivers under your palms. Daylight of the Basin sits stored in its twisted, bubbles-pocked green belly. To the left the open flats stretch away in a glare of absolute white, while to the right a tighter maze of wind-carved pillars offers a cooler, more shadowed route that forces you to twist and duck as you go."
   },
   {
    "id": "sg-2-0-2-2",
@@ -6938,7 +6938,7 @@
     }
    ],
    "title": "The Northern Palisade",
-   "page": "Ridge crests offer a harsh vantage over the low timber palisade of the Salt Court's northern toll-station, where watch-fires smolder against the blinding white expanse. Below, armed wardens patrol the perimeter while wagons laden with blocks of coarse mineral wait in the baking heat for their papers to be stamped. Your ember-lamp feels heavy against your thigh, its banked coals radiating a dull, familiar warmth that matches the sweat stinging your brow. You grip the strap of your pack and consider whether to circle wider around the station or test your luck along the rutted track."
+   "page": "Ridge crests give a harsh view over the low timber palisade of the Salt Court's northern toll-station, where watch-fires smolder against the blinding white expanse. Below, armed wardens patrol the perimeter while wagons laden with blocks of coarse mineral wait in the baking heat for their papers to be stamped. Your ember-lamp digs against your thigh, banked coals warm on skin already wet with sweat. You grip the strap of your pack. The rutted track runs on below."
   },
   {
    "id": "sg-2-1-4-1",
@@ -8981,7 +8981,7 @@
     }
    ],
    "title": "The Gutted Observatory",
-   "page": "Two scavengers argue fiercely over a heap of copper wire inside a gutted observatory, completely ignoring the blinding glare reflected off the broken dome above. Their voices bounce off the curved metal walls in harsh, jagged echoes that set your teeth on edge. Piles of discarded brass cogs and shattered lenses litter the soot-stained floor around their boots.\n\nYou keep your footsteps light as you skirt the edge of the bickering pair, searching for an exit away from the rising tension in the dome. Three routes lead out of the ruined chamber into the quiet alleys."
+   "page": "Inside the gutted observatory two scavengers argue over a heap of copper wire and never glance up at the blinding glare that pours off the broken dome above them. Their shouts slap the curved metal walls and set your teeth on edge. Brass cogs and shattered lenses litter the soot-stained floor around their boots.\n\nYou keep your footsteps light and skirt the bickering pair. An exit would help. Three routes lead out of the ruined chamber into the quiet alleys."
   },
   {
    "id": "sg-3-0-1-4",
@@ -21255,7 +21255,7 @@
     "why": "the reader is bound by the Dune Sisters' well-oath, and is known for it"
    },
    "title": "The Sister's Gate",
-   "page": "Recognizing your Dune Sister well-oath brand on your forearm, a sympathetic sentry quietly lowers the iron latch of the inner service gate for you. The heavy metal bar lifts with a dull, grating clatter that seems startlingly loud in the hushed corridor, opening a narrow way deeper into the heart of Prism. You offer a silent nod of gratitude to the guard, whose skin is deeply creased by decades of desert wind, before stepping through into the shadowed recesses beyond."
+   "page": "A sympathetic sentry sees the Dune Sister well-oath brand on your forearm and lowers the iron latch of the inner service gate. \"Go through,\" she says. The metal bar lifts with a dull, grating clatter that seems loud in the hushed corridor and opens a narrow way deeper into the heart of Prism. You nod thanks to the guard, whose skin is deeply creased by decades of desert wind, and step into the shadowed recesses beyond."
   },
   {
    "id": "sg-5-2-3-9",
@@ -25580,7 +25580,7 @@
     }
    ],
    "title": "The Titanium Bulkhead",
-   "page": "Before the sealed titanium bulkhead of the primary seed repository, a row of manual override cranks waits for someone strong enough to turn them against centuries of accumulated grime. The heavy metal surface is scored with ancient scratch marks, telling silent stories of past runners who fought to reach the grain before the monsoon closed the basin. Your breath fogs slightly in the drafty corridor as you grip the cold iron handles.\n\nTwo passages offer a way forward into the chilling depths of the seed vaults."
+   "page": "Before the sealed titanium bulkhead of the primary seed repository, a row of manual override cranks waits for someone strong enough to turn them against centuries of accumulated grime. Ancient scratch marks score the metal, scars from past runners who fought to reach the grain before the monsoon closed the basin. Your breath fogs in the drafty corridor. You grip the cold iron handles.\n\nTwo passages open into the seed vaults."
   },
   {
    "id": "sg-6-2-3-7",
