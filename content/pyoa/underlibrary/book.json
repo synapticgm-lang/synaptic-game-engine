@@ -1623,7 +1623,7 @@
    "kind": "scene",
    "title": "The Tumbling Glass",
    "brief": "You nimbly catch a jar of falling luminescent ink, earning a free vial of ghost-scribe fluid from the impressed merchant.",
-   "page": "Heavy canvas awnings snap in the grease-laden draft while merchants bark hoarse claims across the narrow aisle. A rusted iron hoop strikes a merchant's crate nearby, sending a bulbous glass vessel tumbling from its high plank toward the stone flagstones. You lurch forward without thinking, hands snapping out to intercept the descent before the fragile neck shatters against the grit. Luminescent blue fluid swirls inside the stoppered bulb, casting an eerie azure light across your knuckles. The relieved vendor nods, sliding a stoppered vial of ghost-scribe fluid into your palm as recompense for your quick reflexes.",
+   "page": "Canvas awnings crack and flap in the grease-laden draft while merchants bark hoarse claims across the narrow aisle. A rusted iron hoop strikes a merchant's crate nearby, sending a bulbous glass vessel tumbling from its high plank toward the stone flagstones. You lurch forward without thinking, hands snapping out to intercept the descent before the fragile neck shatters against the grit. Luminescent blue fluid swirls inside the stoppered bulb, casting an eerie azure light across your knuckles. The relieved vendor nods, sliding a stoppered vial of ghost-scribe fluid into your palm as recompense for your quick reflexes.",
    "exits": [
     {
      "label": "Pocket the glowing ghost-fluid",
@@ -2589,7 +2589,7 @@
    "kind": "scene",
    "title": "Standing Firm",
    "brief": "You stand your ground against Barnaby's aggressive doubts, earning his unwavering trust and a heavy iron latchkey.",
-   "page": "Heavy boots creak on the floorboards as Barnaby leans over the battered desk, trying to stare you down with the full weight of his seniority. You meet his gaze without flinching, and your voice drops to a calm register that cuts cleanly through the ambient murmur of the reading hall. The defiance in your posture slowly takes the wind out of his blustering accusation, forcing him to reconsider whether you are merely a frightened page or someone worth trusting in deep water. He exhales a long, whistling breath that smells of stale pipe-weed and ink.",
+   "page": "Barnaby's boots creak on the floorboards as he leans over the battered desk and tries to stare you down with every year of his seniority. You meet his gaze without flinching, and your voice drops to a calm register that cuts cleanly through the ambient murmur of the reading hall. The defiance in your posture slowly takes the wind out of his blustering accusation, forcing him to reconsider whether you are merely a frightened page or someone worth trusting in deep water. He exhales a long, whistling breath that smells of stale pipe-weed and ink.",
    "exits": [
     {
      "label": "Accept the heavy iron latchkey",
@@ -2658,7 +2658,7 @@
    "kind": "reward",
    "title": "Unwavering Trust",
    "brief": "You stand your ground against Barnaby's aggressive doubts, earning his unwavering trust and a heavy iron latchkey.",
-   "page": "Steel meets stone in your steady gaze, however narrowly convincing the hardened shelver that your loyalties remain anchored where they belong. Barnaby spits into the sawdust and reaches into his deep coat pocket, drawing out a cold, heavy lump of forged iron attached to a knotted hemp cord. He drops it into your palm with a dull clink that seals your newfound standing within the fellowship of the stacks.\n\nYou curl your fingers around the metal, feeling the weight of the responsibility settling into your grip.",
+   "page": "Steel meets stone in your steady gaze, however narrowly convincing the hardened shelver that your loyalties remain anchored where they belong. Barnaby spits into the sawdust and digs in his deep coat pocket, pulling free a cold lump of forged iron on a knotted hemp cord. He drops it into your palm with a dull clink that seals your newfound standing within the fellowship of the stacks.\n\nYou curl your fingers around the metal, feeling the weight of the responsibility settling into your grip.",
    "exits": [
     {
      "label": "Return to the fellowship hearth",
@@ -3249,7 +3249,7 @@
    "kind": "scene",
    "title": "The Paste-Pot Corner",
    "brief": "You read a complex binding instruction pinned to the wall, mastering a knot that locks doors from the outside.",
-   "page": "Varnish tins and heavy linen strips litter the low bench where you pause to catch your breath away from the bustling tables. You study a complex binding instruction pinned to the damp wall with a rusted bodkin, tracing the intricate loops with a soot-stained fingertip. Mastering this particular knot will allow you to secure doors from the outside without drawing the attention of the rule-keepers.\n\nThe parchment whispers dry warnings about what happens when a knot slips under pressure.",
+   "page": "Varnish tins and heavy linen strips litter the low bench where you pause to catch your breath away from the bustling tables. A rusted bodkin pins a complex binding instruction to the damp wall, and you follow its loops with a soot-stained fingertip. Mastering this particular knot will allow you to secure doors from the outside without drawing the attention of the rule-keepers.\n\nThe parchment whispers dry warnings about what happens when a knot slips under pressure.",
    "exits": [
     {
      "label": "Practice the knot on the latch",
@@ -4053,7 +4053,7 @@
    "kind": "bottleneck",
    "title": "The Descending Vault",
    "brief": "You step through the threshold into the deep shadows as the heavy iron doors begin their slow, irreversible descent.",
-   "page": "You cross the damp stone threshold just as the massive iron counterweights begin their deep, grinding descent into the floor-slots. Dust cascades from the carved lintel like gray snow, stinging your eyes and coating your tongue with the taste of century-old lime and iron filings. Behind you, the familiar hum of the Reading Rooms dies away into a profound, suffocating hush as the corridor narrows and the walls begin to sweat with cold moisture. The air grows noticeably thinner here, smelling strongly of charred willow-bark and ancient parchment that has never seen a living flame. You pull your collar tight against the draft, knowing the return path is sealing itself shut behind you for an entire generation.",
+   "page": "You cross the damp stone threshold just as the massive iron counterweights begin their deep, grinding descent into the floor-slots. Dust cascades from the carved lintel like gray snow, stinging your eyes and coating your tongue with the taste of century-old lime and iron filings. Behind you the Reading Rooms fall quiet into a suffocating hush as the corridor narrows and the walls sweat cold moisture. The air grows noticeably thinner here, smelling strongly of charred willow-bark and ancient parchment that has never seen a living flame. You pull your collar tight against the draft, knowing the return path is sealing itself shut behind you for an entire generation.",
    "exits": [
     {
      "label": "Advance into the shifting stacks",
@@ -4792,7 +4792,7 @@
    "kind": "check",
    "title": "Resisting the Current",
    "brief": "You endure the bitter cold of the rising black tide without flinching, securing a bundle of dry linen rags for cleaning.",
-   "page": "A sudden tremor shakes the basalt floor beneath your feet, sending a fresh surge of black grease spilling over the edge of the sump to wet your ankles. The air grows abruptly heavy, thick with the dry, choking scent of burning juniper and the whispers of unseen marginalia hissing from the darkness behind the stacks. You plant your boots firmly against the greasy stone, tightening your grip on the salvaged bundle while the relentless tide threatens to sweep your footing away into the deep drains.",
+   "page": "A sudden tremor shakes the basalt floor beneath your feet, sending a fresh surge of black grease spilling over the edge of the sump to wet your ankles. Burning juniper smells dry and choking all at once, while unseen marginalia hiss their whispers from the darkness behind the stacks. You plant your boots firmly against the greasy stone, tightening your grip on the salvaged bundle while the relentless tide threatens to sweep your footing away into the deep drains.",
    "exits": [
     {
      "label": "check-full",
@@ -6999,7 +6999,7 @@
    "kind": "reward",
    "title": "Across the Timber",
    "brief": "You navigate the jagged stone protrusions using balanced footwork, finding a forgotten stash of sweet dried figs.",
-   "page": "Your footwork holds true as you glide across the plank, reaching the far side with a steady thud of your heels. The crossing is treacherous, however narrowly you managed to keep your balance above the drop. Among the litter of the ledge, you discover a small, leather-bound notebook filled with helpful shortcut notes left by a friendly clerk.",
+   "page": "Your footwork holds true as you glide across the plank, and your heels land with a solid thud on the far side. The crossing is treacherous, however narrowly you managed to keep your balance above the drop. Among the litter of the ledge, you discover a small, leather-bound notebook filled with helpful shortcut notes left by a friendly clerk.",
    "exits": [
     {
      "label": "Step through the arched doorway",
@@ -12901,7 +12901,7 @@
    "kind": "reward",
    "title": "Securing the Iron Hook",
    "brief": "You trick the balcony guard into looking the other way with a clever distraction, risking discovery, to secure a grappling hook.",
-   "page": "Fingers close around the cold, oil-slicked metal of the grappling hook just as the guard pivots toward the sound, his heavy brass lantern sweeping empty air where you stood a heartbeat prior. You slip away into the labyrinthine shadows of the carved pillars, clutching your prize tightly against your chest in breathless relief. The notched flukes of the forged steel gleam faintly in the dim lamp-light, offering a reliable means of descent into the cavernous depths below.",
+   "page": "Cold, oil-slicked metal of the grappling hook fills your hand as the guard pivots toward the sound, his brass lantern sweeping empty air where you stood a heartbeat prior. You slip away into the labyrinthine shadows of the carved pillars, clutching your prize tightly against your chest in breathless relief. The notched flukes of the forged steel gleam faintly in the dim lamp-light, offering a reliable means of descent into the cavernous depths below.",
    "exits": [
     {
      "label": "Descend into the deep stacks",
@@ -16015,7 +16015,7 @@
    "kind": "reward",
    "title": "The Warding Spark",
    "brief": "You steel your nerves against the overwhelming psychic cacophony of a thousand competing thoughts, gaining a mental warding charm.",
-   "page": "Iron discipline holds your thoughts intact against the overwhelming swell of intellectual pressure. The chaotic noise subsides into a distant, harmless hum, leaving behind a profound and crystalline stillness in your mind. Between the leaves of a discarded volume near your boot, a scrap of paper catches your eye. You retrieve it, recognizing the precise, familiar handwriting of the missing Archivist detailing a hidden mental ward.",
+   "page": "Iron discipline holds your thoughts intact against the overwhelming swell of intellectual pressure. The chaotic noise drops away into the distance, and a crystalline stillness settles in your mind. Between the leaves of a discarded volume near your boot, a scrap of paper catches your eye. You retrieve it, recognizing the precise, familiar handwriting of the missing Archivist detailing a hidden mental ward.",
    "exits": [
     {
      "label": "Return to the whispering assembly",
