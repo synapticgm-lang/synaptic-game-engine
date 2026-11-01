@@ -20,7 +20,6 @@ function baseSave(over: Partial<GameState> & { engineMode: EngineMode }): GameSt
     storyName: 'Recap Test',
     turn: 12,
     seed: '42',
-    engineMode: over.engineMode,
     currentLocation: 'Greyhollow Inn',
     character: { name: 'Jax', hp: 10, maxHp: 10 } as GameState['character'],
     log: [],
@@ -33,7 +32,7 @@ function baseSave(over: Partial<GameState> & { engineMode: EngineMode }): GameSt
     inventory: [],
     openingEstablishment: { complete: true } as GameState['openingEstablishment'],
     sceneFacts: {
-      crowd: 'few',
+      crowd: 'sparse',
       noise: 'quiet',
       present: ['Vessa'],
       props: [],
@@ -82,7 +81,7 @@ describe('T10RECAP welcome-back recap', () => {
       engineMode: 'rpg',
       quests: [mainQuest('Case the Caravan', 'Pick an approach')],
       sceneFacts: {
-        crowd: 'few',
+        crowd: 'sparse',
         noise: 'quiet',
         present: ['Vessa'],
         props: [],
@@ -131,7 +130,7 @@ describe('T10RECAP welcome-back recap', () => {
       engineMode: 'litrpg',
       currentLocation: '   ',
       sceneFacts: {
-        crowd: 'empty',
+        crowd: 'none',
         noise: 'quiet',
         present: ['Nobody', '', 'undefined', '  '],
         props: [],

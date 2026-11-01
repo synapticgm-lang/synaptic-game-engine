@@ -10,7 +10,15 @@ import { resolveCheckRecord, type CheckResultRecord } from '../checkRules';
 import { turnRng } from '../seededRng';
 import { levelSidekick } from './sidekick';
 import { settlePurse } from './coins';
-import { clampRecapAfterHours, RECAP_AFTER_HOURS } from '../awayRecap';
+
+/** Real hours away before the welcome-back card shows (default; HouseRules.recapAfterHours overrides). */
+export const RECAP_AFTER_HOURS = 6;
+
+/** Clamp the welcome-back threshold (1 hour … 7 days). Lives here so edge sync of houseRules never pulls awayRecap. */
+export function clampRecapAfterHours(n: unknown): number {
+  const v = typeof n === 'number' && Number.isFinite(n) ? Math.round(n) : RECAP_AFTER_HOURS;
+  return Math.max(1, Math.min(168, v));
+}
 
 export const DEFAULT_HOUSE_RULES: HouseRules = {
   secretDeathSaves: false,
@@ -38,7 +46,7 @@ export const DEFAULT_HOUSE_RULES: HouseRules = {
   /** T10PUSH — every tabletop choice point (fights included); free text always allowed. */
   choiceCountLimit: 3,
   /** T10RECAP — welcome-back card after this many real hours away. */
-  recapAfterHours: 6,
+  recapAfterHours: RECAP_AFTER_HOURS,
 };
 
 /** Clamp the tabletop choice-count limit (John 31 Oct: min 2, max 6, default 3). */

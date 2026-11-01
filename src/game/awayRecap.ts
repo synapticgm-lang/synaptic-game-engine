@@ -10,17 +10,11 @@ import type { GameState, LogEntry } from './types';
 import { resumeMainQuestFocus } from './questPlay';
 import { recruitedCompanions } from './rules/companions';
 import { peopleHere } from './scenePresence';
+import { clampRecapAfterHours, RECAP_AFTER_HOURS } from './rules/houseRules';
+
+export { clampRecapAfterHours, RECAP_AFTER_HOURS };
 
 const HOUR_MS = 3_600_000;
-
-/** Real hours away before the welcome-back card shows (default; HouseRules.recapAfterHours overrides). */
-export const RECAP_AFTER_HOURS = 6;
-
-/** Clamp the welcome-back threshold (1 hour … 7 days). */
-export function clampRecapAfterHours(n: unknown): number {
-  const v = typeof n === 'number' && Number.isFinite(n) ? Math.round(n) : RECAP_AFTER_HOURS;
-  return Math.max(1, Math.min(168, v));
-}
 
 /** ONE owner for the welcome-back hours threshold (houseRules on the save). */
 export function recapAfterHoursOf(state: Pick<GameState, 'houseRules'> | null | undefined): number {
