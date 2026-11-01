@@ -788,7 +788,7 @@
    "kind": "bottleneck",
    "title": "Stepping Onto The Low",
    "brief": "Leaving the shadow of the cliff behind, you step onto the endless salt-flats of the Low to begin your search for the missing lighthouse keeper.",
-   "page": "Turning away from the comforting gloom of Gullmouth's sheer stone, you cross the threshold of the known world. Beneath your boots, the ground crunches - a thick crust of white salt stretching out to the bruised horizon where the ocean should be. This is the Low, the naked seabed exposed by the great retreat. A grim landscape of marooned wrecks, jutting whale ribs, and shimmering sinkholes lies waiting under the harsh sun.\n\nSomewhere out there in this vast, desiccated wasteland, Orsolya Venn is searching for the Sunken Stair and the jammed mechanism of the Meridian Gear. The wind howls across the flats, carrying the scent of rotting kelp and dried brine. You pull your collar high against the chill. There is no map for a world turned inside out, only the distant, dark shapes of scavenger camps and the looming silhouettes of coral spires. With every step away from the cliff-town, the reality of the missing sea settles heavier upon your shoulders.",
+   "page": "You turn from the gloom of Gullmouth's sheer stone and cross the threshold of the known world. Salt crunches underfoot. A white crust runs to the bruised horizon where the ocean should be. This is the Low, the naked seabed the great retreat left bare. Marooned wrecks, jutting whale ribs, and shimmering sinkholes lie under the harsh sun.\n\nSomewhere out in that desiccated wasteland Orsolya Venn searches for the Sunken Stair and the jammed mechanism of the Meridian Gear. Wind howls across the flats, carrying the scent of rotting kelp and dried brine. You pull your collar high. There is no map for a world turned inside out, only the distant dark shapes of scavenger camps and the looming silhouettes of coral spires. Each step from the cliff-town leaves more dry seabed under your heel.",
    "exits": [
     {
      "label": "Continue across the exposed seabed",
@@ -3203,7 +3203,7 @@
    "kind": "scene",
    "title": "Carving the Pale Driftwood",
    "brief": "You carve an offering from a piece of pale driftwood, shaping the idol perfectly to satisfy the pilgrims and secure a pouch of blessed salt.",
-   "page": "Sitting on an overturned crab-pot outside the edge of the salt-flats, you turn a smooth piece of grey driftwood over in your calloused hands. Brine has soaked the grain dense and dark, polished to a dull sheen by years of rolling in the surf before the sea vanished. Using a narrow skinning knife, you shave away thin curls of pale wood to reveal a faceless idol meant to appease the wandering pilgrims of the deep. The sharp scent of resin fills the damp air as the crude likeness of a drowned saint begins to emerge from the timber.\n\nYou carefully pare the final details into the wooden surface before offering the small carving to the waiting crowd.",
+   "page": "Sitting on an overturned crab-pot at the edge of the salt-flats, you turn a smooth piece of grey driftwood over in your calloused hands. Brine soaked the grain dense and dark. Years of surf polished it to a dull sheen before the sea vanished. With a narrow skinning knife you shave thin curls of pale wood to reveal a faceless idol meant to appease the wandering pilgrims of the deep. Sharp resin scent fills the damp air as the crude likeness of a drowned saint emerges from the timber.\n\nYou pare the final details into the wooden surface. The small carving goes to the waiting crowd.",
    "exits": [
     {
      "label": "Present the wooden carved idol",
@@ -4435,7 +4435,7 @@
    "kind": "scene",
    "title": "Down the Water-Stair",
    "brief": "You recall old tide maps to navigate the treacherous cargo hold, dodging a falling mast to find a sealed jar of lantern oil.",
-   "page": "Memory is the only lamp that matters when the tide is gone and the old sea-roads rot in the open air. You mentally trace the lines of the cargo hold from the coastal charts Orsolya pinned to the lighthouse wall, stepping over rotting crates of dried salt-cod and displaced ballast stones. A sharp groan above makes you jerk backward just as a massive pine mast snaps from its rusted iron collar, crashing down across the exact spot where your boots stood a heartbeat prior.\n\nBeneath a tangle of wet canvas in the forward locker, you find a small, heavy jar of refined lantern oil sealed with thick green wax.",
+   "page": "Memory is the only lamp that matters once the tide has gone and the old sea-roads rot in open air. From the coastal charts Orsolya pinned to the lighthouse wall you trace the cargo hold's lines, and you step over rotting crates of dried salt-cod and displaced ballast stones. A sharp groan starts above. You jerk back. A massive pine mast snaps from its rusted iron collar and crashes down across the exact spot your boots left a moment ago.\n\nUnder a tangle of wet canvas in the forward locker sits a small jar of refined lantern oil, sealed with thick green wax.",
    "exits": [
     {
      "label": "Climb through the splintered hatchway",
@@ -4939,7 +4939,7 @@
    "kind": "scene",
    "title": "Breaking the Petrified Hull",
    "brief": "You smash through the petrified hull of a sunken dinghy, ignoring the toxic fumes to grab a sturdy wooden oar.",
-   "page": "Rotting timbers hardened by decades of salt-soaking offer stubborn resistance to your heavy boots, refusing to yield easily to your assault. Again and again you swing the iron-shod pole into the warped ribs of the sunken dinghy, splintering the ancient wood until a dark cavity opens inside the ruined hull. Thick, greenish vapors escape from the breach, stinging your eyes, but you spot the smooth grain of an intact oar wedged inside the ribs.",
+   "page": "Rotting timbers, hardened by decades in salt, fight your boots and will not yield. You swing the iron-shod pole into the warped ribs of the sunken dinghy again and again until the ancient wood splits and a dark cavity opens in the ruined hull. Greenish vapor pours from the breach. Your eyes water. Wedged inside the ribs, the smooth grain of an intact oar shows clear.",
    "exits": [
     {
      "label": "Reach inside the wreckage",
@@ -6946,7 +6946,7 @@
    "kind": "scene",
    "title": "The Sealed Chest",
    "brief": "You pick the complex lock on an abandoned storage crate, avoiding a poison needle trap to steal a cache of dried meat.",
-   "page": "Half-buried in a drift of grey kelp and dried barnacles sits a heavy naval crate bearing the faded crest of the old Gullmouth fleet. Its brass has turned the pale green of a bruised apple, and the keyhole is choked tight with salt-grit and hardened grease. You kneel in the damp gloom, drawing your thin wire picks from their lining to probe the intricate inner tumblers by touch alone.\n\nA faint, sweetish odour drifts up from the lid's edge - the unmistakable tang of preserved lard and poison-damp that warns of a crude needle trap waiting behind the brass plate.",
+   "page": "Half-buried in a drift of grey kelp and dried barnacles sits a naval crate bearing the faded crest of the old Gullmouth fleet. Its brass has gone the pale green of a bruised apple, and the keyhole is choked tight with salt-grit and hardened grease. You kneel in the damp gloom and draw thin wire picks from their lining to probe the inner tumblers by touch alone.\n\nA faint, sweetish odour drifts up from the lid's edge. Preserved lard and poison-damp. Behind the brass plate a crude needle trap waits.",
    "exits": [
     {
      "label": "Pick the salt-choked lock",
@@ -7528,7 +7528,7 @@
    "kind": "scene",
    "title": "Deep Shell Secrets",
    "brief": "You pry a massive clam shell open with your bare hands, struggling against its tremendous grip to extract a flawless black pearl.",
-   "page": "Heedless of the suction that threatens to snap your wrists, you dig your fingers deeper into the cold, pulsing meat of the bivalve to snare the prize before the stubborn shell snaps shut again. The brute thing shudders in the muck, exhaling a foul gust of stagnant water that coats your oilskins in a film of grey silt. Your boots slide an inch in the ooze, but you wrench your arm backward with a savage grunt, tearing the heavy pearl free from its ligament just as the great jaws slam together with the hollow crack of a falling spar.",
+   "page": "Heedless of the suction that could snap your wrists, you dig your fingers deeper into the cold meat of the bivalve to snare the prize before the shell clamps shut again. The brute shudders in the muck. It exhales a foul gust of stagnant water that coats your oilskins in grey silt, and your boots slide an inch in the ooze as you wrench your arm back with a grunt. The pearl tears free from its ligament. The great jaws slam together with the hollow crack of a falling spar.",
    "exits": [
     {
      "label": "Secure the pearl in your pouch",
@@ -8132,7 +8132,7 @@
    "kind": "check",
    "title": "Mending the Tackle",
    "brief": "You repair a shattered pulley mechanism to lower your heavy gear safely, dodging snapping cables to ensure your supplies remain intact.",
-   "page": "Iron cables groan and snap under sudden tension, spraying showers of rusted sparks across the dark stone floor around your boots. You desperately work your knife into the jammed cogs of the overhead winch, trying to free the fouled line before the heavy cargo breaks loose and plunges into the dark. The metal teeth bite into your palm through your gloves, and the entire iron housing shudders violently as the weight slips another terrifying inch toward the abyss. Your fingers move with desperate speed, trying to force the locking lever home before the whole assembly gives way.",
+   "page": "Iron cables groan and snap under sudden tension, spraying rusted sparks across the dark stone floor around your boots. You work your knife into the jammed cogs of the overhead winch to free the fouled line before the cargo breaks loose and plunges into the dark. Metal teeth bite your palm through the gloves. The whole iron housing shudders as the load slips another inch toward the abyss, and your fingers race to force the locking lever home before the assembly gives way.",
    "exits": [
     {
      "label": "check-full",
@@ -8186,7 +8186,7 @@
    "kind": "reward",
    "title": "Smooth Lowering",
    "brief": "You repair a shattered pulley mechanism to lower your heavy gear safely, dodging snapping cables to ensure your supplies remain intact.",
-   "page": "Your swift fingers find the jammed safety pin just in time, wedging it firmly between the grinding cogs to lock the heavy winch in place. The iron cables ease and lower your pack onto the stone landing without a single tear or loss of supplies. As you untie the rig, your fingers brush against a small brass token wedged into the pulley housing, stamped with the crest of the old Gullmouth harbor masters. Into your pocket goes the token; the right person might trade safe passage or answers for it.",
+   "page": "Your fingers find the jammed safety pin just in time and wedge it between the grinding cogs to lock the winch in place. The iron cables ease. Your pack settles onto the stone landing without a tear or lost supply. As you untie the rig, your fingers brush a small brass token wedged into the pulley housing, stamped with the crest of the old Gullmouth harbor masters. Into your pocket goes the token; the right person might trade safe passage or answers for it.",
    "exits": [
     {
      "label": "Return to the main descent",
@@ -8457,7 +8457,7 @@
    "kind": "scene",
    "title": "The Reef Crab Trap",
    "brief": "You construct a makeshift net from discarded fishing lines, risking a severe pinch to capture a large, edible reef crab.",
-   "page": "Twisted monofilament lines from a dozen snapped nets lie tangled across a salt-crusted trench, offering strong, flexible cordage if you have the patience to untangle them without snagging your skin. Working quickly with cold fingers, you weave a crude drop-basket and bait it with a scrap of salted skate, lowering it into a churning tide-pool where dark shapes scuttle beneath the foam. A heavy, armored reef-crab snaps its claws against the mesh, fighting fiercely as you haul the impromptu trap onto the dry shale.",
+   "page": "Twisted monofilament lines from a dozen snapped nets lie tangled across a salt-crusted trench, strong flexible cordage if you can free them without snagging skin. Cold fingers work fast. You weave a crude drop-basket, bait it with a scrap of salted skate, and lower it into a churning tide-pool where dark shapes scuttle beneath the foam. An armored reef-crab snaps its claws against the mesh. You haul the trap onto the dry shale.",
    "exits": [
     {
      "label": "Secure the heavy reef crab",
@@ -9633,7 +9633,7 @@
    "kind": "check",
    "title": "Grasping the Wind-Torn Span",
    "brief": "You sprint across a snapping bridge during a sudden squall, risking a plummet to reach an abandoned courier's satchel.",
-   "page": "Water lashes your face as you lunge across the tilting boards, fingers stretching out toward the swinging satchel while the bridge drops sickeningly beneath your weight. The cedar snaps with a wet crack behind you, leaving only a single frayed tether holding your footing to the tier. You must throw your full weight forward and trust your balance to span the remaining gap before the wind pitches you into the open air.",
+   "page": "Water lashes your face as you lunge across the tilting boards, fingers reaching for the swinging satchel while the bridge drops under you. Behind you the cedar snaps with a wet crack. Only a single frayed tether still holds your footing to the tier. You throw your full weight forward. The remaining gap must be crossed before the wind pitches you into open air.",
    "exits": [
     {
      "label": "check-full",
@@ -14680,7 +14680,7 @@
    "kind": "recovery",
    "title": "Scalded and Spent",
    "brief": "You repair a fractured steam pipe using scraps of leather and wire, sealing the leak to safely harvest condensed freshwater for your empty canteen.",
-   "page": "The wire slips from your slick fingers with a sharp snap, and a jet of scalding steam lashes across your forearm, leaving a mottled, throbbing burn. You stumble backward against the wet bulkhead, gasping for air as your canteen clatters against the iron grating, spilling half its contents into the dark abyss below. The repair only half holds; a frustrating hiss leaks out, drains what energy you have left, and leaves your skin raw.",
+   "page": "The wire slips from your slick fingers with a sharp snap, and a jet of scalding steam lashes across your forearm. A mottled burn rises on the skin. You stumble back against the wet bulkhead, gasp for air, and hear your canteen clatter on the iron grating as half its contents spill into the dark below. The repair only half holds. A hiss still leaks out, your strength drains with it, and your skin stays raw.",
    "exits": [
     {
      "label": "Gather your breath and move",
@@ -19058,7 +19058,7 @@
    "kind": "reward",
    "title": "The Keeper's Burden",
    "brief": "You bravely confront Orsolya about her sudden disappearance, risking her remarkably volatile temper, to learn the devastating truth concerning the ancient Tidewardens' original watery sin.",
-   "page": "Salt-crusted brows furrow beneath the lamplight as you demand an accounting from your old mentor, pushing past her fierce glare to draw out the truth of the ancient Tidewardens' original watery sin. Her voice rasps like dry pebbles against the masonry, revealing how the sea was first bound by a cruel bargain struck in the deep trenches. She presses a brass key into your palm for your trouble, a token that once unlocked the inner vaults of the Saltspire.",
+   "page": "Salt-crusted brows furrow beneath the lamplight as you demand an accounting from your old mentor and push past her fierce glare to draw out the truth of the ancient Tidewardens' original watery sin. Her voice rasps like dry pebbles against the masonry. \"The sea was first bound by a cruel bargain in the deep trenches,\" she says. She presses a brass key into your palm for your trouble, a token that once unlocked the inner vaults of the Saltspire.",
    "exits": [
     {
      "label": "Demand she stand down and explain the full cost of her silence",
@@ -19773,7 +19773,7 @@
    "kind": "ending",
    "title": "The Endless Wet Horizon",
    "brief": "Ending \"Drown Saltspire\"",
-   "page": "Gullmouth remains perched upon its high white cliffs, safe and salt-cured above the vast, restored ocean that stretches away to the grey horizon without a single break. Down below, the harbour is full once more, its stranded hulls lifting on the swell and knocking their wooden ribs together like old friends gossiping after a long absence. Orsolya Venn is still gone, vanished into the damp silence of the coast, but her lighthouse lamp burns bright again each evening, sweeping a yellow beam across the dark water to guide the returning boats home. You sit on the edge of the stone slipway with a mug of chicory and a dry pair of boots, listening to the familiar slap of the waves against the pilings. Water is back in the world, the tide clock ticks in the dark, and on the grey brine the wrecks wait for tomorrow's low tide to show what else the deep has swallowed.",
+   "page": "Gullmouth remains perched on its high white cliffs, safe and salt-cured above the vast restored ocean that stretches away to the grey horizon without a single break. The harbour is full again. Down below, stranded hulls lift on the swell and knock their wooden ribs together like old friends gossiping after a long absence. Orsolya Venn is still gone. She vanished into the damp silence of the coast, yet her lighthouse lamp burns bright each evening and sweeps a yellow beam across the dark brine to guide the returning boats home. You sit on the edge of the stone slipway with a mug of chicory and a dry pair of boots, and you listen to the familiar slap of waves against the pilings. The tide clock ticks in the dark, and on the grey brine the wrecks wait for tomorrow's low tide to show what else the deep has swallowed.",
    "exits": [],
    "endingKey": "drown-saltspire",
    "endingTitle": "Drown Saltspire",
@@ -19993,7 +19993,7 @@
    "kind": "ending",
    "title": "The Quiet Shore",
    "brief": "Ending \"The Long Dry\"",
-   "page": "There is no salt left in the air, only the bitter taste of limestone dust and the dry smell of old wreckage baking in the sun until the timber cracks. You reach the outer edge of the Low where the sea used to begin, but there is nothing there now except more flat, white earth stretching away under a brassy heaven toward an invisible edge. Orsolya Venn's lighthouse stands upon its cliff like a blind man's eye, looking out over a world that has traded its tides for stone and silence. You drop your wrecker's hook into the dust; it hits the hard ground with a dull clack, raising no spray and making no ripple in the air. The tide clock on the shelf in the hall has stopped at low water, its copper hand pointing forever toward a dry horizon that swallows the sun without a hiss.",
+   "page": "There is no salt left in the air, only the bitter taste of limestone dust and the dry smell of old wreckage baking in the sun until the timber cracks. You reach the outer edge of the Low where the sea used to begin. Nothing is there. More flat white earth runs on under a brassy heaven toward an invisible edge. Orsolya Venn's lighthouse stands upon its cliff like a blind man's eye, looking out over a world that has traded its tides for stone and silence. You drop your wrecker's hook. It hits the hard ground with a dull clack, raises no spray, and makes no ripple in the air. The tide clock on the shelf in the hall has stopped at low water, its copper hand pointing forever toward a dry horizon that swallows the sun without a hiss.",
    "exits": [],
    "endingKey": "long-dry",
    "endingTitle": "The Long Dry",
