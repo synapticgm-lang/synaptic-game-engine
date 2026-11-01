@@ -3366,7 +3366,7 @@
     }
    ],
    "title": "The High Conduit",
-   "page": "Dripping icicles shatter against the frozen masonry of the high conduit as a startled rook bursts from the stonework with a harsh, barking cry. Your boots crunch over frozen gravel, echoing sharply in the thin, cold air between the buttressed walls."
+   "page": "Dripping icicles shatter against the frozen masonry of the high conduit. A startled rook bursts from the stonework with a harsh, barking cry. Your boots crunch over frozen gravel. The sound carries sharp between the buttressed walls."
   },
   {
    "id": "vh-1-2-2-9",
@@ -6589,7 +6589,7 @@
     }
    ],
    "title": "Shelter from Sleet",
-   "page": "Within a dim timber shelter, you adjust the bronze Clapper's canvas cover against a flurry of wet sleet. Through the cloth the metal pulses a low beat that seems to match your own tired heartbeat. Outside, the storm whips the hanging ropes into a whistling frenzy, making the wooden walls tremble from floor to rafter."
+   "page": "Within a dim timber shelter, you adjust the bronze Clapper's canvas cover against a flurry of wet sleet. Through the cloth the metal pulses a low beat that seems to match your own tired heartbeat. Outside, the storm whips the hanging ropes into a whistling frenzy, and the wooden walls tremble from floor to rafter. Sleet ticks on the roof."
   },
   {
    "id": "vh-2-1-3-4",
@@ -6772,7 +6772,7 @@
     }
    ],
    "title": "The Boiling Pitch",
-   "page": "Beside a boiling vat of waterproofing pitch, an apprentice stirs the black brew with a notched pine paddle. Thick, acrid smoke curls up into the open air, stinging your eyes and mixing with the cold mountain drafts. The bubbling resin pops rhythmically, casting oily glints across the timber framing of the lower stalls."
+   "page": "Beside a boiling vat of waterproofing pitch, an apprentice stirs the black brew with a notched pine paddle. Acrid smoke curls up into the open air and mixes with the cold mountain drafts until your eyes water hard. The bubbling resin pops. Oily glints run across the timber framing of the lower stalls."
   },
   {
    "id": "vh-2-1-3-11",
@@ -7011,7 +7011,7 @@
     }
    ],
    "title": "The Toll-House Bell",
-   "page": "High overhead, a small brass bell chimes a sharp warning note whenever a new traveler steps onto the swinging platform. Beside the toll-house warden's high desk, stacked ledgers threaten to topple into the abyss below. You steady the cradle on your back while the warden looks up from his papers, eyeing the bronze tongue with professional suspicion. The cold air bites through your woolen tunic, making every breath plume like wood-smoke."
+   "page": "High overhead, a small brass bell chimes a sharp warning note whenever a new traveler steps onto the swinging platform. Beside the toll-house warden's high desk, stacked ledgers lean toward the abyss below. You fix the cradle on your back while the warden looks up from his papers and eyes the bronze tongue with professional suspicion. Cold air cuts through your woolen tunic. Every breath plumes like wood-smoke."
   },
   {
    "id": "vh-2-1-4-4",
@@ -7599,7 +7599,7 @@
     }
    ],
    "title": "The Hidden Alcove",
-   "page": "You slip quietly into a narrow alcove behind a tallow-chandler's booth while two Cable Court enforcers angrily argue over ledger tallies in the freezing drizzle. Their voices echo off the damp rock face, discussing tax rates and seized bronze with menacing intensity.\n\nCrouched in the shadows with your heavy burden, you wait for them to clear the path ahead."
+   "page": "You slip into a narrow alcove behind a tallow-chandler's booth while two Cable Court enforcers argue over ledger tallies in the freezing drizzle. Their voices bounce off the damp rock face as they trade tax rates and seized bronze.\n\nYou crouch in the shadows with your burden. The path ahead stays blocked until they move."
   },
   {
    "id": "vh-2-2-2-5",
@@ -17179,7 +17179,7 @@
     }
    ],
    "title": "The Weathered Signpost",
-   "page": "A weathered timber signpost, crusted in grey lichen and frozen deep into the terminal moraine, points down toward the distant, fog-choked canopy of the orchard valleys. Its carved arrows are worn smooth by decades of wind-blown sleet, but the downward direction remains unmistakable. The heavy bronze clapper shifts comfortably in its padded cradle as you pause to catch your breath and check the straps.\n\nThe path splits here among the tumbled grey boulders of the moraine. You can choose to lead the mule down the winding stone track or follow the dull toll of the fog-warden's bell from below."
+   "page": "A weathered timber signpost, crusted in grey lichen and frozen deep into the terminal moraine, points down toward the distant, fog-choked canopy of the orchard valleys. Its carved arrows are worn smooth by decades of wind-blown sleet. The downward direction remains unmistakable. You pause to catch your breath and check the straps while the bronze clapper shifts in its padded cradle.\n\nThe path splits here among the tumbled grey boulders of the moraine. A winding stone track drops away for the mule. Below, a fog-warden's bell tolls dull and far."
   },
   {
    "id": "vh-4-2-4-2",
@@ -18422,7 +18422,7 @@
     }
    ],
    "title": "The Rolling Barrel",
-   "page": "Frost-tipped boughs shake overhead as a stray barrel of winter apples, broken loose from an unattended timber cart, comes rolling swiftly through the wet grass. You leap sideways into the soggy brush just in time, watching the heavy wood crash into a rotting stump and splinter wide. The damp air fills with the sharp, sweet scent of crushed fruit mixed with cold mountain mud.\n\nAhead, the lane splits around a moss-grown outbuilding half-lost in the swirling grey mist. You can push past the wreckage toward the western gate or circle wide through the orchard rows."
+   "page": "Frost-tipped boughs shake overhead. A stray barrel of winter apples, broken loose from an unattended timber cart, comes rolling through the wet grass. You leap sideways into the soggy brush just in time, and the wood crashes into a rotting stump and splinters wide. The damp air fills with the sharp, sweet scent of crushed fruit mixed with cold mountain mud.\n\nAhead, the lane splits around a moss-grown outbuilding half-lost in the swirling grey mist. Wreckage blocks the western gate. Orchard rows open to the side."
   },
   {
    "id": "vh-5-0-3-3",
@@ -26130,7 +26130,7 @@
     }
    ],
    "title": "The White-Hot Crucible",
-   "page": "You heave the cracked clapper straight into the white-hot crucible, letting the old bronze melt down instantly so Orison can be reborn without the heavy debts of the mountain. Sparks explode toward the blackened rafters in a brilliant cascade of green and gold, illuminating the astonished faces of the watching smiths. The weight leaves your shoulders entirely, leaving you standing empty-handed in the roaring heat."
+   "page": "You heave the cracked clapper straight into the white-hot crucible. Old bronze runs at once so Orison can be reborn without the debts of the mountain. Sparks explode toward the blackened rafters in a cascade of green and gold, and the watching smiths stare with open mouths. Your hands are empty. Heat from the crucible bangs against your face."
   },
   {
    "id": "vh-6-2-5-1",
@@ -26633,7 +26633,7 @@
     }
    ],
    "title": "Ploughshares, No Strings",
-   "page": "When the spring thaw finally softens the frozen ledges of the middle tiers, the new ploughshares bite into the dark mountain earth with a clean, eager scrape that wakes the sleeping worms. The millers drive their teams across the terraces from dawn until dusk, turning long, rich brown furrows where stubborn rock and thin moss used to rule. With no bell for labor or prayer, the villagers take their pace from the sun and the smell of wet soil, and they pass grain by the handful across the stone walls. Down in Lowgate, the Cable Court grumbles over lost monopolies, but their ledgers cannot sprout barley, and the mountain smells of turned loam instead of melting tin.\n\nRead on, for the final harvest of the year."
+   "page": "When the spring thaw softens the frozen ledges of the middle tiers, the new ploughshares bite into the dark mountain earth with a clean scrape. Worms wake in the turned soil. The millers drive their teams across the terraces from dawn until dusk, and long brown furrows open where stubborn rock and thin moss used to rule. With no bell for labor or prayer, the villagers take their pace from the sun and the smell of wet soil, and they pass grain by the handful across the stone walls. Down in Lowgate the Cable Court grumbles over lost monopolies, but their ledgers cannot sprout barley, and the mountain smells of turned loam instead of melting tin.\n\nBarley stands where the ledgers cannot."
   },
   {
    "id": "vh-e-C1-3",
