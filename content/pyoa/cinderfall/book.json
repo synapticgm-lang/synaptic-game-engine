@@ -526,7 +526,7 @@
    "kind": "scene",
    "title": "Questioning the Widow",
    "brief": "You question the nervous ticket-widow about who was seen leaving Hesper's office, testing your CUNNING against her silence to learn a secret signal-pass.",
-   "page": "Pale light catches the edge of the ticket-widow's brass spectacles as she stares past your shoulder, pretending your urgent questions about Hesper are merely wind in the eaves. Her knuckles whiten where she grips the edge of her wooden ledger, guarding the depot's gossip like a dragon over cold coals. You press your advantage with a low, unhurried question about who was seen slipping out the back gate after midnight. Reluctantly, she leans forward, her papery lips brushing the brass grille to murmur a secret signal-pass that unlocks the guarded side-tracks.\n\nYou nod your thanks to the shadowed glass and walk out into the hissing steam.",
+   "page": "Pale light catches the edge of the ticket-widow's brass spectacles as she stares past your shoulder, pretending your urgent questions about Hesper are merely wind in the eaves. Her knuckles whiten on the wooden ledger. She guards the depot's gossip like a dragon over cold coals. You press with a low question about who was seen slipping out the back gate after midnight. She leans forward at last. Papery lips brush the brass grille and murmur a secret signal-pass that unlocks the guarded side-tracks.\n\nYou tip your head toward the shadowed glass and step into the hissing steam outside.",
    "exits": [
     {
      "label": "Walk out into the hissing steam",
@@ -1645,7 +1645,7 @@
    "kind": "scene",
    "title": "Beneath the Tin Roof",
    "brief": "You absorb her cryptic warnings about the upcoming ash-storm with steady composure, earning an old oil-skin coat for the road.",
-   "page": "Condensation drips against the rusted corrugated iron above, smelling sharply of damp soot and old coal-gas. The widow's warning hangs heavily in the gloom, filled with dark tales of signal-wires snapping under the strain of frozen ash and engines found cold and empty miles out on the barren steppes. You nod slowly, keeping your weight balanced evenly on the balls of your boots, neither rushing her words nor offering false comfort. Beneath the battered counter, her hand rummages among dusty ledgers before emerging with a garment that smells powerfully of mutton fat and paraffin.\n\nShe drops the heavy oil-skin onto the scratched wood between you, a tangible shield against the coming gales.",
+   "page": "Condensation drips against the rusted corrugated iron above and smells sharply of damp soot and old coal-gas. The widow's warning hangs in the gloom, full of dark tales of signal-wires snapping under frozen ash and of engines found cold and empty miles out on the barren steppes. You nod once. Your boots stay planted on the balls of your feet, neither rushing her words nor offering false comfort. Beneath the battered counter her hand rummages among dusty ledgers and comes up with a garment that smells of mutton fat and paraffin.\n\nShe drops the oil-skin onto the scratched wood between you. It lands with a slap.",
    "exits": [
     {
      "label": "Gather the oil-skin coat",
@@ -6554,7 +6554,7 @@
    "kind": "check",
    "title": "Turning the Iron Dial",
    "brief": "Stealing past the sleeping foreman to retrieve a stolen ledger reveals the hidden combination to the supply locker.",
-   "page": "The heavy steel door of the supply locker stands before you, its brass combination dial pitted with green corrosion and stubborn age. Breathing even through your nose to quiet your racing pulse, you set your fingers on the cold metal ring and click through the combination found in the ledger. Each notch falls into place with a dry, metallic thud that sounds unnaturally loud in the silent car. From the corner, the foreman shifts his bulk on the cot, letting out a low, gravelly grunt that freezes your hand mid-turn on the final digit.\n\nYou must commit to the last click before he wakes fully.",
+   "page": "The steel door of the supply locker stands before you, its brass combination dial pitted with green corrosion and stubborn age. You breathe through your nose and set your fingers on the cold metal ring, then click through the combination found in the ledger. Each notch falls into place with a dry metallic thud. The sound carries far in the silent car. From the corner the foreman shifts his bulk on the cot and lets out a low gravelly grunt that freezes your hand mid-turn on the final digit.\n\nThe last click waits under your thumb.",
    "exits": [
     {
      "label": "check-full",
@@ -11189,7 +11189,7 @@
    "kind": "recovery",
    "title": "The Cost of Shakes",
    "brief": "You steady your nerves against the terrifying screech of failing metal, risking a panic attack to restart the auxiliary pump.",
-   "page": "A sudden violent heave of the bulkhead throws you sideways into a jagged corner of the iron casing, driving the wind entirely from your lungs. You slump against the coal-scuttle in a heap, gasping for air while a dark purple bruise blooms across your ribs. The pump settles down with a sullen, wheezing groan, leaving you alive but battered by the violent motion.\n\nYou pick yourself up slowly, rubbing your aching side with a grimace. The immediate danger has passed, but the cost is etched deep into your sore muscles and the lost minutes ticking away on the distant storm clock.",
+   "page": "A sudden violent heave of the bulkhead throws you sideways into a jagged corner of the iron casing and drives the wind entirely from your lungs. You slump against the coal-scuttle in a heap. Air comes back in ragged pulls while a dark purple bruise blooms across your ribs. The pump settles with a sullen wheezing groan. You stay alive.\n\nYou pick yourself up and rub your sore side with a grimace. Immediate danger has passed, but the cost is written into your sore muscles and into the minutes the distant storm clock keeps eating.",
    "exits": [
     {
      "label": "Drag yourself back to the vault",
@@ -12051,7 +12051,7 @@
    "kind": "scene",
    "title": "Waiting in the Rust",
    "brief": "You resist the temptation to bolt prematurely from cover, risking a loss of nerve to time your dash past the searchlights.",
-   "page": "Cold iron presses against your ribs as the Baronial patrol passes with a rhythmic trudge of boots. You stay motionless beneath the greasy canvas, letting the acrid smell of burnt coal fill your mouth rather than risk a premature movement. The searchlights sweep low across the corrugated iron siding, washing the darkness in sharp amber before clicking away. Every muscle in your legs aches from the static tension, coiled like a rusted spring waiting for the precise heartbeat to release. When the last boot-heel fades into the din of distant machinery, you slide silently from beneath the cover, slipping into the narrow shadow of the gantry staircase.",
+   "page": "Cold iron presses against your ribs as the Baronial patrol passes with a trudge of boots. You stay still beneath the greasy canvas. Burnt coal fills your mouth rather than risk a premature shift. Searchlights sweep low across the corrugated iron siding and wash the dark in sharp amber. The lights click away. Every muscle in your legs aches from holding still, coiled like a rusted spring that waits for the precise heartbeat to release. When the last boot-heel fades into the din of distant machinery, you slide from beneath the cover and slip into the narrow shadow of the gantry staircase.",
    "exits": [
     {
      "label": "Slip into the gantry shadow",
@@ -13426,7 +13426,7 @@
    "kind": "reward",
    "title": "The Unyielding Obstruction",
    "brief": "You heave the splintered cargo crate out of the gauge with raw shoulder strength, keeping a brass pinch-bar for future leverage.",
-   "page": "Sinews strain to their absolute limit until the stubborn timber finally gives a sharp, dry crack and tears free from the grip of the rail. You stumble backward onto the ballast, clutching a heavy brass pinch-bar as your prize while the blocked gauge opens up before you. Whether through sheer brute force or stubborn luck, the way is clear at last, leaving you bruised in the shoulder but richer by one solid tool for the road ahead.",
+   "page": "Sinews strain until the timber finally gives a sharp dry crack and tears free from the grip of the rail. You stumble back onto the ballast. The brass pinch-bar stays clenched in your fists while the blocked gauge opens wide in front of you and shows clear track beyond the splinters. Brute force or stubborn luck cleared the obstruction. Your bruised shoulder aches as the bar cools against your palm.",
    "exits": [
     {
      "label": "Push forward into the vaults",
@@ -14889,7 +14889,7 @@
    "kind": "check",
    "title": "The Tangled Wiring",
    "brief": "You dismantle the blockade by unbolting the fishplates in correct sequence, securing a box of hardened steel track bolts.",
-   "page": "Frayed copper cables hang from the damp vault ceiling like dead serpents, sparking intermittently against the masonry with sharp, violet snaps of current. You must trace the live line through the tangled mass without triggering the trip-wire linked to the old maintenance gongs overhead.\n\nYour fingers hover above the copper core while the air grows thick with the smell of ozone and scorched rubber, testing every ounce of your wit to separate the safe strand from the trap.",
+   "page": "Frayed copper cables hang from the damp vault ceiling like dead serpents, sparking against the masonry with sharp violet snaps of current. You trace the live line through the tangled mass. The trip-wire still links to the old maintenance gongs overhead.\n\nYour fingers hover above the copper core while ozone and scorched rubber fill the air, and you test each strand to separate the safe one from the trap. One cool strand waits under your fingertip.",
    "exits": [
     {
      "label": "check-full",
@@ -16327,7 +16327,7 @@
    "kind": "scene",
    "title": "The Chronometer's Heart",
    "brief": "You adjust the clockwork mechanism of her massive desk chronometer until it chimes true, gaining an official timetable pass.",
-   "page": "You reach across the cluttered mahogany and slide your fingers into the open brass housing of the master clock that governs the chamber's sluggish pulse. Its gears are fouled with dried oil and fine grey ash that drifted down through the ventilation grates from the surface steppes. With delicate care, you nudge the eccentric cam back into alignment, listening as the erratic rhythm smooths out into a steady, authoritative tick-tock that vibrates through the floorboards. The Stationmaster-General watches your hands with a look of grudging respect, her thin lips parting slightly as the brass works finally strike the true hour.\n\nShe slides an official timetable pass across the blotter, nodding once to acknowledge your handiwork.",
+   "page": "You reach across the cluttered mahogany and slide your fingers into the open brass housing of the master clock that governs the chamber. Its gears are fouled with dried oil and fine grey ash that drifted down through the ventilation grates from the surface steppes. You nudge the eccentric cam back into alignment and listen as the erratic rhythm smooths into a clear tick-tock that travels through the floorboards under your boots. The Stationmaster-General watches your hands with grudging respect. Her thin lips part as the brass works finally strike the true hour.\n\nShe slides an official timetable pass across the blotter. She nods once.",
    "exits": [
     {
      "label": "Return to the central desk hub",
@@ -16431,7 +16431,7 @@
    "kind": "scene",
    "title": "Bitter Brew and Ink",
    "brief": "You stare down the ancient bureaucrat without blinking until she stamps your waybill, earning a cup of hot chicory.",
-   "page": "The chicory is thick, dark, and tastes overwhelmingly of roasted root and iron filings, scalding the tongue just enough to cut through the subterranean chill. Across the narrow iron table, the old clerk dips her steel pen once more into a horn inkwell, the greenish fluid catching the pale light of an acetylene lamp. She watches you over the rims of her thick lenses with eyes like two dried sloes, weighing whether your presence here is a nuisance or a breach of protocol. You set the heavy tin cup down upon the grease-stained wood with a faint clink.\n\nThe steam from the mug curls toward the low brick ceiling, dissolving into the greasy soot that coats every surface down in the Hollow Cut. She folds her hands over the ledger and nods toward the narrow service hatch cut into the rear stone wall.",
+   "page": "The chicory is dark and tastes of roasted root and iron filings, scalding the tongue just enough to cut through the subterranean chill. Across the narrow iron table the old clerk dips her steel pen once more into a horn inkwell, and the greenish fluid catches the pale light of an acetylene lamp. She watches you over the rims of her lenses with eyes like two dried sloes, weighing whether your presence is a nuisance or a breach of protocol. You set the tin cup down on the grease-stained wood. It clinks once.\n\nThe steam from the mug curls toward the low brick ceiling and dissolves into the greasy soot that coats every surface down in the Hollow Cut. She folds her hands over the ledger. She nods toward the narrow service hatch cut into the rear stone wall.",
    "exits": [
     {
      "label": "Step through the low service hatch",
@@ -17994,7 +17994,7 @@
    "kind": "reward",
    "title": "The Iron Bracket",
    "brief": "You wrench the iron mounting bracket from the wall with brute force, shattering the door-lock, and retrieve a heavy leather tool-roll.",
-   "page": "Muscle strains against rusted iron as you wrench the mounting bracket from the damp masonry, and the stubborn door-lock shatters with a sharp metallic clatter. Dust and powdered mortar billow into the stale air around your boots, coating your trousers in grey film. Within the splintered recess lies a grease-stained leather tool-roll, untouched by the damp for years. Fingers unbuckle the dry straps and turn up chunky spanners plus a spare valve-needle wrapped in oily rag. You tuck the prize securely beneath your belt, stepping back onto the gantry just as the structural bolts groan in protest.",
+   "page": "Muscle strains against rusted iron as you wrench the mounting bracket from the damp masonry, and the door-lock shatters with a sharp metallic clatter. Dust and powdered mortar billow around your boots. Grey film coats your trousers. Within the splintered recess lies a grease-stained leather tool-roll, untouched by the damp for years. Fingers unbuckle the dry straps and turn up chunky spanners plus a spare valve-needle wrapped in oily rag. You tuck the prize beneath your belt and step back onto the gantry just as the structural bolts groan in protest.",
    "exits": [
     {
      "label": "Climb upward toward the gantry watch",
@@ -20231,7 +20231,7 @@
    "kind": "ending-part",
    "title": "The Ledger Closes",
    "brief": "Ending \"Dead Steam\"",
-   "page": "Silence settles over the high vaulted room like a blanket of grey wool among unreadable debts and dry parchment. The Stationmaster-General watches the dark ink settle into the grain of the page, her ancient fingers resting entirely still beside the bone-handled pen. Below your boots, the deep thrum of the engine dies away into a faint, shivering rattle as the last measure of pressure bleeds from the regulator and leaves the brass cold to the touch. There is no water rising in the dry basins, and the massive valves remain stubbornly bolted against the dust of the steppes.\n\nYou stand alone in the quiet gloom with a brass key that has lost its purpose and a furnace that will never draw another breath, while the low sky outside darkens toward an endless winter of ash and iron.",
+   "page": "Silence settles over the high vaulted room like a blanket of grey wool among unreadable debts and dry parchment. The Stationmaster-General watches the dark ink settle into the grain of the page, her ancient fingers still beside the bone-handled pen. Below your boots the engine dies away into a faint shivering rattle as the last measure of pressure bleeds from the regulator and leaves the metal cold to the touch. The basins stay dry. Massive valves remain bolted against the dust of the steppes.\n\nYou stand alone in the quiet gloom with a brass key that has lost its purpose and a furnace that will never draw another breath. Outside, the low sky darkens. The key rests cold in your palm.",
    "exits": [
     {
      "label": "Leave the silent keep by the heavy oak doors",
