@@ -71,7 +71,7 @@
     }
    ],
    "title": "Dawn at the Gate",
-   "page": "Dawn breaks over the cloister gate in a pale streak of saffron light while the older ringers and sleepy novices gather to see you off into the biting frost. You hitch the padded cradle on your shoulders and check that the bronze tongue is lashed tight beside your spare water skin and dried rye biscuits. Ninety sheer stone steps stretch down from the threshold into the churning grey mist, marking the beginning of the long, perilous road to the lowlands. The watchers offer quiet nods and silent prayers, their breath pluming white in the freezing air as you prepare to cross the threshold."
+   "page": "Dawn breaks over the cloister gate in a pale streak of saffron light while the older ringers and sleepy novices gather to see you off into the frost. You hitch the padded cradle on your shoulders and check that the bronze tongue is lashed tight beside your spare water skin and dried rye biscuits. Ninety sheer stone steps drop into the churning grey mist. An older ringer says, \"We see you off.\" Breath plumes white. You cross the threshold."
   },
   {
    "id": "vh-1-in",
@@ -6362,7 +6362,7 @@
     }
    ],
    "title": "The Ledge Repairer",
-   "page": "A pulley-repairer sits upon a high stone ledge overlooking the lower precipice, rhythmically whetting a razor-sharp draw-knife against an oiled oilstone. The metallic scraping sound rings close to your mule's twitching ears, making the animal sidestep nervously toward the sheer drop. You grab the halter-rope with one hand while steadying the heavy cradle with the other, keeping your footing secure on the frosted rock.\n\nThe repairer dips his chin toward two routes leading further down the mountain face."
+   "page": "A pulley-repairer sits on a high stone ledge above the lower precipice and draws a razor-sharp draw-knife across an oiled oilstone in long strokes that ring near your mule's twitching ears. The animal sidesteps toward the sheer drop. You grab the halter-rope with one hand and brace the cradle with the other so your boots hold on the frosted rock.\n\nThe repairer dips his chin toward two routes that lead further down the mountain face."
   },
   {
    "id": "vh-2-1-2-11",
@@ -8628,7 +8628,7 @@
     }
    ],
    "title": "Draft from the Barley Terraces",
-   "page": "Cold draft rushes up from the barley terraces below, smelling of damp earth, woodsmoke, and the distant turning of giant wooden sails. The wind here has an unobstructed sweep across the cliff face, testing your balance and tugging hard at the heavy cradle strapped to your back. Scraps of old straw and frozen stubble cling to the stone lips of the path, marking the boundary where the bustling markets yield to the lonely agricultural ledges.\n\nYou grip the shoulder straps tighter, bracing against the sudden gusts."
+   "page": "Cold draft rushes up. Damp earth, woodsmoke, and the distant turning of giant wooden sails ride with it from the barley terraces below. Across the cliff face the wind has a free sweep, and it tests your balance while it tugs hard at the cradle strapped to your back. Scraps of old straw and frozen stubble cling to the stone lips of the path where the bustling markets yield to the lonely agricultural ledges.\n\nYou grip the shoulder straps tighter and brace against the sudden gusts."
   },
   {
    "id": "vh-2-2-5-3",
@@ -9443,7 +9443,7 @@
     "why": "the reader swore the knot-oath and is known by the ropewrights for it"
    },
    "title": "The Knotted Gate",
-   "page": "Because you wear the rope-wrights' knot-oath proudly pinned to your woollen collar, the old gate-keeper recognizes the binding loop at a glance and unlocks the private winch-house stairs without a single grumble about tolls or cargo weights. You slip past the heavy iron latch, leaving the main terrace track behind as you descend into the shadowed stone stairwell where the air smells of hemp, tallow, and cold mountain grease.\n\nThe bronze clapper shifts in its padded cradle on your back and knocks faintly against your spine as you test the first frost-slick step."
+   "page": "Because you wear the rope-wrights' knot-oath pinned to your woollen collar, the old gate-keeper recognizes the binding loop at a glance and unlocks the private winch-house stairs without a single grumble about tolls or cargo weights. You slip past the iron latch. The main terrace track falls behind as you descend into the shadowed stone stairwell where the air smells of hemp, tallow, and cold mountain grease.\n\nThe bronze clapper shifts in its padded cradle on your back and knocks faintly against your spine as you test the first frost-slick step."
   },
   {
    "id": "vh-3-0-2-8",
@@ -11478,7 +11478,7 @@
     }
    ],
    "title": "The Lost Tally",
-   "page": "On the dizzying suspension bridge near mill forty-five, miller-boy Kian drops a wooden tally-stick into the foggy abyss, watching it vanish into the gray nothingness below with a small gasp. The hempen ropes sway violently underfoot in the gusting mountain draft, making the heavy bronze Clapper shift uneasily in its padded cradle. Kian turns to you with wide eyes, gripping the handrail tightly as the bridge heaves in the wind."
+   "page": "On the suspension bridge near mill forty-five, miller-boy Kian drops a wooden tally-stick into the foggy abyss, and it vanishes into the gray nothingness below while he draws a small gasp. Hempen ropes sway hard. The bronze Clapper shifts in its padded cradle as the mountain draft works the planks. Kian turns to you with wide eyes and grips the handrail as the bridge heaves in the wind."
   },
   {
    "id": "vh-3-1-4-5",
@@ -13231,7 +13231,7 @@
     }
    ],
    "title": "The Staging Edge",
-   "page": "Loose shale clatters into the blue abyss beneath the lower staging as Biscuit tests the frost-slicked timber. The suspension bridge sways gently in the draft, its weathered planks groaning under your pack and the bronze Clapper together. Below, the glacier tongue grinds slowly against the canyon walls, a silent river of ancient ice scarred by deep, fathomless cracks. Every movement requires absolute balance, for a single misstep would send you tumbling into the freezing void.\n\nThe wooden guardrail is caked in clear glaze, offering little purchase for cold fingers. You tighten your grip on the harness and weigh your options for crossing."
+   "page": "Loose shale clatters into the blue abyss beneath the lower staging as Biscuit tests the frost-slicked timber. The suspension bridge sways in the draft. Weathered planks groan under your pack and the bronze Clapper together. Below, the glacier tongue grinds against the canyon walls as a silent river of ancient ice scarred by deep cracks that vanish into blue. Your footing is thin. A single misstep would send you tumbling into the freezing void.\n\nThe wooden guardrail is caked in clear glaze and offers little purchase for cold fingers. You tighten your grip on the harness."
   },
   {
    "id": "vh-4-0-0-2",
@@ -16378,7 +16378,7 @@
     }
    ],
    "title": "The Blindfolded Mule",
-   "page": "Biscuit plants his stubborn hooves hard against the grey crust of the old avalanche chute, refusing to take another step onto the treacherous, wind-scoured ice. You coax her with soft words, but her ears pin back against the howling gale. Reaching into your coat, you pull out a stiff, frozen wool scarf and wrap it gently around her wide eyes. Deprived of the terrifying white drop before her, she gives a low, rumbling huff and finally steps forward onto the slope.\n\nThe bronze clapper knocks against your spine as you push her on through the biting cold."
+   "page": "Biscuit plants his stubborn hooves hard on the grey crust of the old avalanche chute and refuses another step onto the wind-scoured ice. Soft words do not move her. Her ears pin back in the gale. You pull a stiff frozen wool scarf from your coat and wrap it around her wide eyes. Blind to the white drop before her, she gives a low rumbling huff and steps forward onto the slope.\n\nThe bronze clapper knocks on your spine as you push her on through the cold."
   },
   {
    "id": "vh-4-2-2-5",
@@ -22447,7 +22447,7 @@
     }
    ],
    "title": "The Cooperage",
-   "page": "Within the dripping archway of the cooperage, a cooper named Bran hammers iron hoops onto swollen oak staves, each blow echoing sharply off the wet brick walls. The sharp scent of fresh-cut oak shavings and hot iron mixes with the cold river mist drifting in from the wharf. The Clapper on your back knocks in counterpoint to the cooper's mallet, and a faint vibration runs through the metal hoops stacked around the floor. Bran strikes another blow, pausing to wipe sweat from his neck while he glances at your heavy burden."
+   "page": "Within the dripping archway of the cooperage, a cooper named Bran hammers iron hoops onto swollen oak staves, and each blow cracks off the wet brick walls. Fresh-cut oak shavings and hot iron mix with cold river mist that drifts in from the wharf. The Clapper on your back knocks in counterpoint to the cooper's mallet, and a faint shake runs through the metal hoops stacked around the floor. Bran strikes again. He wipes sweat from his neck and glances at the load on your shoulders."
   },
   {
    "id": "vh-6-0-2-1",
@@ -23303,7 +23303,7 @@
     }
    ],
    "title": "The Bilge-Pole",
-   "page": "Sluggish brown water laps against the slippery stone banks of the casting floor as Krell plants his wooden bilge-pole deep into the drainage trench. With a rhythmic grunt, he heaves his weight against the pole, forcing a foul-smelling stream of runoff toward the sluice gates. The damp chill of the river pierces your boots, contrasting sharply with the dry, baked heat radiating from the brickwork nearby. Krell pauses with calloused hands on the wood and eyes the bundle secured to your shoulders with unconcealed curiosity. You can wait for him to finish his grueling work or step around the muddy trench to seek out the master smiths."
+   "page": "Sluggish brown water laps against the slippery stone banks of the casting floor as Krell plants his wooden bilge-pole deep into the drainage trench. With a grunt he heaves his bulk against the pole until a foul-smelling stream of runoff runs toward the sluice gates and slides under the brick lip. River chill pierces your boots. Dry heat bakes off the brickwork nearby and warms one side of your face while the trench stays cold. Krell pauses with calloused hands on the wood and eyes the bundle secured to your shoulders with unconcealed curiosity."
   },
   {
    "id": "vh-6-0-5-0",
@@ -23476,7 +23476,7 @@
     }
    ],
    "title": "The Cooperage Guard",
-   "page": "Drips from the sagging cedar eaves patter on the dirt as a wary apprentice steps from the shadow of the cooperage and plants an ash stave across your path. His eyes flick to the bronze Clapper riding upon your back before dropping to demand the official mountain seal stamped upon your parchment travel papers. Damp air smells of fermented oak shavings and vinegar and clings to the wool of your collar.\n\nYou can show your stamped papers to pass the guard toward the salt-crusted crane, or turn away to help the desperate mother with her coughing infant. You might also slip past the timber lean-to where the exhausted scribe struggles with ruined ledgers."
+   "page": "Drips from the sagging cedar eaves patter on the dirt as a wary apprentice steps from the shadow of the cooperage and plants an ash stave across your path. His eyes flick to the bronze Clapper on your back, then drop. \"Your travel papers need the mountain seal,\" he says. Damp air smells of fermented oak shavings and vinegar and clings to the wool of your collar.\n\nA salt-crusted crane stands beyond him. The desperate mother waits. She holds a coughing infant, and at a timber lean-to an exhausted scribe works over ruined ledgers under a wet thatch edge."
   },
   {
    "id": "vh-6-1-1-1",
@@ -24499,7 +24499,7 @@
     }
    ],
    "title": "The Cleaver in the Alley",
-   "page": "Sparks from a hidden forge flicker against the slick brickwork of a soot-choked alley behind the foundry. A scarred veteran named Drake sits on an overturned coal tub and draws a broad meat-cleaver back and forth across a damp sandstone block in a rasping rhythm. The metallic scrape echoes loudly above the distant rumble of the mountain water, and his cold eyes do not leave your boots as you approach. Biscuit flattens his ears against the dark stone walls, sensing the tension in the narrow passage."
+   "page": "Sparks from a hidden forge flicker against the slick brickwork of a soot-choked alley behind the foundry. A scarred veteran named Drake sits on an overturned coal tub and draws a broad meat-cleaver back and forth across a damp sandstone block in a rasping rhythm. The metallic scrape carries loudly above the distant rush of the mountain water, and his cold eyes do not leave your boots as you approach. Biscuit flattens his ears. The dark stone walls of the narrow passage hold him close."
   },
   {
    "id": "vh-6-1-3-15",
@@ -24789,7 +24789,7 @@
     }
    ],
    "title": "The Heavy Clapper",
-   "page": "Warmth still lives in the cobblestones under your boots as you set the bronze clapper on the ground and raise your fist to strike the stubborn iron of the furnace door. The metal tickles faintly against your knuckles, answering the heat and the nearness of the forge where it was first shaped long ago. All around you, the low murmur of the foundry falls silent as the final moment arrives."
+   "page": "Warmth still lives in the cobblestones under your boots as you set the bronze clapper on the ground and raise your fist to strike the stubborn iron of the furnace door. The metal tickles faintly against your knuckles and answers the heat from the forge where this tongue was first shaped long ago. The foundry falls silent. Your fist hangs over the iron."
   },
   {
    "id": "vh-6-2-0-0",
@@ -25138,7 +25138,7 @@
     }
    ],
    "title": "The Blind Weaver",
-   "page": "Marda the blind weaver sits beside the towering heaps of grey coal-bins and runs calloused fingers across the coarse wool of your coat to sort honest trade from bitter trouble. Her sightless eyes turn toward the bronze clapper strapped against your spine, sensing Orisonhold resting upon your shoulders. The surrounding air carries the sharp, metallic tang of unrefined ore and damp stone, reminding you that time grows short in the cavernous halls of Lowgate."
+   "page": "Marda the blind weaver sits beside the towering heaps of grey coal-bins and runs calloused fingers across the coarse wool of your coat to sort honest trade from bitter trouble. Her sightless eyes turn toward the bronze clapper strapped against your spine. Orisonhold rests upon your shoulders. The air carries the sharp metallic tang of unrefined ore and damp stone through the cavernous halls of Lowgate."
   },
   {
    "id": "vh-6-2-2-3",
@@ -25697,7 +25697,7 @@
     }
    ],
    "title": "The Silent Forges",
-   "page": "Thick soot coats the rafters, and the empty casting floor holds still where no fires burn this evening. You steady your breathing against the lung-burning smog, counting your paces past the deadweight of silenced hammers and idle casting tables. Each footstep comes back thin off the damp stone walls. The bronze tongue has ridden a long way with you from the frozen heights of Orisonhold.\n\nAhead, multiple paths branch through the gloom of the foundry quarter, each offering a different way forward through the maze of machinery and shadowed archways."
+   "page": "Thick soot coats the rafters. The empty casting floor holds still where no fires burn this evening, and you draw breath against the lung-burning smog while you count your paces past silenced hammers and idle casting tables with no spark left in them. Each footstep comes back thin off the damp stone walls. The bronze tongue has ridden a long way with you from the frozen heights of Orisonhold.\n\nPaths branch ahead through the gloom among machinery and shadowed archways."
   },
   {
    "id": "vh-6-2-3-8",
