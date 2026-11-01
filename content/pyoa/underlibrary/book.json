@@ -1623,7 +1623,7 @@
    "kind": "scene",
    "title": "The Tumbling Glass",
    "brief": "You nimbly catch a jar of falling luminescent ink, earning a free vial of ghost-scribe fluid from the impressed merchant.",
-   "page": "Canvas awnings crack and flap in the grease-laden draft while merchants bark hoarse claims across the narrow aisle. A rusted iron hoop strikes a merchant's crate nearby, sending a bulbous glass vessel tumbling from its high plank toward the stone flagstones. You lurch forward without thinking, hands snapping out to intercept the descent before the fragile neck shatters against the grit. Luminescent blue fluid swirls inside the stoppered bulb, casting an eerie azure light across your knuckles. The relieved vendor nods, sliding a stoppered vial of ghost-scribe fluid into your palm as recompense for your quick reflexes.",
+   "page": "Canvas awnings crack and flap in the grease-laden draft while merchants bark hoarse claims across the narrow aisle. A rusted iron hoop strikes a merchant's crate nearby, and a bulbous glass vessel tumbles from its high plank toward the stone flagstones. You lurch forward. Hands snap out and catch the neck before grit can shatter it. Luminescent blue fluid swirls inside the stoppered bulb and throws an azure light across your knuckles. The relieved vendor nods and slides a stoppered vial of ghost-scribe fluid into your palm as pay for the catch.",
    "exits": [
     {
      "label": "Pocket the glowing ghost-fluid",
@@ -10193,7 +10193,7 @@
    "kind": "scene",
    "title": "The Ciphered Path",
    "brief": "You decipher the shifting categorical symbols carved into the floorboards, risking profound confusion, to map the safest route forward.",
-   "page": "Shadows lengthen across the pine planks as the categorization marks begin to bleed thin lines of red sealing wax into the grain. Your fingers trace the complex geometries, feeling the faint vibration of subterranean machinery shifting tons of vellum and parchment deep beneath the foundations of Quillon. Every symbol represents a category of forbidden thought, a dangerous taxonomy meant to keep unruly volumes in their proper stalls. A low, rhythmic scratching sound echoes from the adjacent stack, reminding you that the rule-keepers are never far behind.\n\nYou steady your lamp, letting its warm oil-light illuminate the next junction where the floorboards split into three distinct paths of logic.",
+   "page": "Shadows lengthen across the pine planks as the categorization marks bleed thin lines of red sealing wax into the grain. Your fingers trace the complex geometries. Far below Quillon, subterranean machinery shifts tons of vellum and parchment, and a faint vibration rises through the floor. Every symbol stands for a category of forbidden thought, a dangerous taxonomy meant to keep unruly volumes in their proper stalls. From the adjacent stack comes a low, rhythmic scratching. Rule-keepers are close.\n\nYou raise your lamp. Warm oil-light shows the next junction, where the floorboards split into three forks of logic.",
    "exits": [
     {
      "label": "Follow the amber floor markers",
@@ -15782,7 +15782,7 @@
    "kind": "bottleneck",
    "title": "The Amphitheatre of Whispers",
    "brief": "The shelves give way to an open amphitheatre where thousands of marginal ghosts debate the fate of the archive.",
-   "page": "Stone tiers rise into the gloom, crowded with thousands of pale, translucent figures leaning forward from shadowed alcoves. These are the Marginalia, the disembodied thoughts and caustic comments of readers long dead, their voices merging into a low, continuous surf of criticism and debate. They argue fiercely over what Thessaly Marr sought in the deep vaults, their spectral fingers pointing toward the lower darkness. Every shelf here is crusted with salt-peter and old ink-stains, and the air hums with the electric static of unvoiced opinions. You stand at the focal point of their collective gaze, feeling the weight of centuries of commentary pressing against your resolve.",
+   "page": "Stone tiers rise into the gloom, crowded with thousands of pale, translucent figures leaning forward from shadowed alcoves. These are the Marginalia, the disembodied thoughts and caustic comments of readers long dead, and their voices merge into a low continuous surf of criticism and debate. They argue fiercely over what Thessaly Marr sought in the deep vaults. Spectral fingers point at the lower darkness. Salt-peter and old ink-stains crust every shelf. Unvoiced opinions prickle the air. You tip your chin toward the dark they indicate.",
    "exits": [
     {
      "label": "Face the assembly of shifting ghosts",
@@ -16235,7 +16235,7 @@
    "kind": "scene",
    "title": "Weight of the Past",
    "brief": "You hold your ground as the spectral crowd surges forward, securing a heavy brass paperweight that anchors your thoughts.",
-   "page": "Several heavy bronze card-drawers slide outward from the nearby stack-ends of their own accord, dropping iron-heavy paperweights onto the flagstones around your boots. You hold your ground without flinching, letting the metal artifacts clatter harmlessly past your shins while the phantom onlookers watch from the gloom. Reaching down amidst the settling dust, your fingers close around the coolest, heaviest paperweight of the lot, its surface engraved with obsolete cataloguing runes. The metal feels reassuringly solid against your palm, grounding your scattered thoughts as the surrounding shelves give a slow, settling groan.\n\nThe ambient murmur of the marginalia softens into a respectful hush, acknowledging that you cannot be easily cowed by falling stationery or phantom theatrics. You slip the bronze object into your deep coat pocket, and the mass of it anchors you against the shifting draft.",
+   "page": "Several bronze card-drawers slide outward from the nearby stack-ends of their own accord, dropping iron paperweights onto the flagstones around your boots. You hold your ground. Metal clatters past your shins while phantom onlookers watch from the gloom. Amid the settling dust your fingers close on the coolest paperweight of the lot, its surface engraved with obsolete cataloguing runes. The metal sits solid against your palm as the surrounding shelves give a slow, settling groan.\n\nThe murmur of the marginalia softens into a respectful hush. You slip the bronze object into your deep coat pocket, and its mass anchors you against the shifting draft.",
    "exits": [
     {
      "label": "Carry the heavy bronze artifact",
@@ -17922,7 +17922,7 @@
    "kind": "reward",
    "title": "The Ward Unlocked",
    "brief": "You decipher a warning scrawled in blood-red ink across a shifting folio, testing your erudition, and you learn the secret cipher to bypass the outer wards.",
-   "page": "Your finger traces the final hidden syllable of the crimson text past the snapping edges of the folio. The heavy iron ward lets out a long, metallic sigh, its ancient tumblers clicking into place as the barrier slides smoothly into the masonry. A quiet hush falls over the alcove as the danger subsides, leaving behind a subtle pulse of residual magic in the air. Pressed firmly against the back of the binding is a small, folded slip of paper detailing the forgotten administration codes of the early Underlibrary. You pocket the fragile slip before turning your attention back toward the main chamber.",
+   "page": "Your finger traces the final hidden syllable of the crimson text past the snapping edges of the folio. The iron ward lets out a long, metallic sigh. Ancient tumblers click into place as the barrier slides into the masonry. A hush falls over the alcove. A faint pulse of residual magic stays in the air. Pressed against the back of the binding is a small folded slip of paper that lists the forgotten administration codes of the early Underlibrary. You pocket the fragile slip before you turn back toward the main chamber.",
    "exits": [
     {
      "label": "Return to the obsidian ring",
@@ -18712,7 +18712,7 @@
    "kind": "bottleneck",
    "title": "The Shifting Vault",
    "brief": "The ceiling cracks with a sound like thunder as tons of upper masonry shift, narrowing the gap through the stacks and quickening the relentless pulse of the Long Closing.",
-   "page": "Thunder rolls through the deep foundations as tons of upper masonry groan and grind against one another, showering the floor with gritty dust and splinters of ancient oak. The gap through the stacks narrows by half, squeezing the remaining space until the shelves press inward like the ribs of a dying leviathan. A relentless pulse beats through the stone beneath your boots, marking the steady countdown of the Long Closing with every tremor.\n\nYou scramble over a tumbled drift of leather-bound folios, gasping for breathable air as the heavy scent of old paper thickens into a choking fog. The walls themselves seem to lean inward, eager to swallow anyone foolish enough to linger in the corridors of power.",
+   "page": "Thunder rolls in the deep foundations as tons of upper masonry groan and grind against one another, and grit and oak splinters rain onto the floor. The gap halves. Shelves press inward like the ribs of a dying leviathan until almost no path remains. A pulse beats under your boots and marks the countdown of the Long Closing with every tremor.\n\nYou scramble over a tumbled drift of leather-bound folios and gasp for breathable air as the scent of old paper thickens into a choking fog. The walls lean inward, ready to take anyone who lingers in these corridors of power.",
    "exits": [
     {
      "label": "Navigate the collapsing corridor",
@@ -19327,7 +19327,7 @@
    "kind": "scene",
    "title": "The Rusted Threshold",
    "brief": "You step gracefully across a gap where the iron floor has rusted away into nothingness, testing your agility, and you retrieve a spool of fine silken thread.",
-   "page": "Iron plates have long since crumbled into copper lace across the chasm, leaving only raw air between one tier of stacks and the next. You catch the glint of something pale snagged on a stray bolt-end hanging over the void. Shifting your weight, you place the soles of your boots carefully on a narrow rib of structural girder, ignoring the deep, resonant hum of the vault below. Your fingers stretch out into the cold draft, searching for a purchase that will carry you safely across the gap without testing the remaining metal too severely.\n\nA slender wooden spool, wound tight with grey silken thread that hums softly against your fingertips, waits within arm's reach on the opposite ledge.",
+   "page": "Iron plates have long since crumbled into copper lace across the chasm, and only raw air hangs between one tier of stacks and the next. You catch the glint of something pale snagged on a stray bolt-end over the void. Boot soles find a narrow rib of structural girder. The girder holds. Cold draft washes your fingers as they stretch for a purchase that will carry you across the gap without testing the remaining metal too hard.\n\nA slender wooden spool, wound tight with grey silken thread, waits within arm's reach on the opposite ledge.",
    "exits": [
     {
      "label": "Retrieve the silken spool carefully",
