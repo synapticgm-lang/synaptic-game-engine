@@ -1,6 +1,6 @@
 /**
  * Normalized PYOA authored-book types (pick + dice).
- * Adapters map Umbra / Saltglass-Vesperhold / Tide-Cinderfall-Underlibrary shapes here.
+ * Adapters map Umbra / Saltglass-Orisonhold / Tide-Cinderfall-Underlibrary shapes here.
  */
 
 import type { PyoaCond, PyoaPageVariant } from './pyoaCond.ts';
