@@ -9888,7 +9888,7 @@
    "kind": "recovery",
    "title": "Scalded and Spent",
    "brief": "You endure the suffocating heat of a leaking steam pipe, risking heat exhaustion to salvage a functional pressure valve.",
-   "page": "A sudden surge of scalding mist overwhelms your grip, forcing you to jerk your hands back with a sharp gasp as the searing metal bites deep into your flesh. You collapse against the coal-tender, gasping raggedly for cool air while blisters rise across your palms and fingers, turning every subsequent movement into a dull, throbbing ache. The repair remains botched, leaking a persistent hiss of wasted steam that will cost precious time and fuel to compensate for down the line.",
+   "page": "Scalding mist breaks your grip. You jerk your hands back with a sharp gasp as the searing metal bites deep into your flesh. Against the coal-tender you collapse and gulp for cool air. Blisters rise across your palms and fingers. Each later movement hurts. A hiss of wasted steam still leaks from the botched repair, and it will cost you time and fuel farther down the line.",
    "exits": [
     {
      "label": "Crawl back to the deck",
@@ -9965,7 +9965,7 @@
    "kind": "scene",
    "title": "Shifting the Iron",
    "brief": "You readjust the points-lever timing while wheels spin, risking a broken linkage to divert the enemy engine onto a dead-end spur.",
-   "page": "Iron rods groan as you throw your shoulder against the mechanical linkage, and the rusted points grind sideways in a shower of sparks. The Marrowbone trembles; its driving wheels slip a moment on the grease-slicked rail, then catch and surge forward onto the divergent path. Below, the sheer drop of the viaduct gapes like an open mouth, reminding you that a fraction of a second's hesitation will pitch the entire train into the grey void.",
+   "page": "Iron rods groan as you throw your shoulder against the mechanical linkage, and the rusted points grind sideways in a shower of sparks. The Marrowbone trembles. Below the sheer drop of the viaduct gapes, and a fraction of a second's pause would pitch the entire train into the grey void. Driving wheels slip a moment on the grease-slicked rail. Then they catch and surge forward onto the divergent path.",
    "exits": [
     {
      "label": "Follow the diverging spur line",
@@ -12937,7 +12937,7 @@
    "kind": "scene",
    "title": "The Sealed Carriage Door",
    "brief": "You pick the rusty padlock on a sealed carriage door, risking a jammed pick to find a hidden cache of heavy lubricants.",
-   "page": "Thick grime coats the iron latch of the compartment door, hiding decades of weather and neglect from casual view. You wedge the hooked tip of your steel tool into the frozen mechanism and press on while the rusted tumblers refuse to yield. A sharp ping echoes in the quiet siding as the metal pick bends slightly under the strain, threatening to wedge permanently in the lock. One final twist of your wrist, and the rusted iron bar gives way with a blunt thud, sliding back to show a dark interior stacked high with grease-sealed wooden crates.",
+   "page": "Thick grime coats the iron latch of the compartment door and hides decades of weather and neglect from casual view. Into the frozen mechanism you wedge the hooked tip of your steel tool and press on, but the rusted tumblers refuse to yield. A sharp ping sounds in the quiet siding. The metal pick bends under the strain. It could wedge for good in the lock. One final twist of your wrist frees the rusted iron bar with a blunt thud, and the bar slides back to show a dark interior stacked high with grease-sealed wooden crates.",
    "exits": [
     {
      "label": "Pry open the stubborn iron latch",
@@ -13087,7 +13087,7 @@
    "kind": "scene",
    "title": "The Jammed Bearing",
    "brief": "You clear a jammed axle-box using brute leverage against the stone floor, earning an iron wedge and a strained wrist.",
-   "page": "Beneath the weeping vault of the tunnel, the forward journal-box groans with a dry, metallic scream that cuts through the hiss of the boiler. You wedge a pinch-bar between the chassis frame and the scorching iron housing and throw your weight against the cold stone floor to force the seized roller back into alignment. Sweat burns your eyes through the thick soot as the metal yields with a sharp, echoing crack. Your wrist aches, and an iron wedge sits jammed securely into the gap.",
+   "page": "Beneath the weeping vault of the tunnel, the forward journal-box groans with a dry metallic scream that cuts through the hiss of the boiler. You wedge a pinch-bar between the chassis frame and the scorching iron housing and throw yourself against the cold stone floor to force the seized roller back into alignment. Sweat burns your eyes through the thick soot. The metal yields. A sharp crack answers. Your wrist aches, and an iron wedge sits jammed in the gap.",
    "exits": [
     {
      "label": "Pry the jammed housing loose",
@@ -13240,7 +13240,7 @@
    "kind": "recovery",
    "title": "A Shaken Resolve",
    "brief": "You stand motionless while a phantom semaphore arm drops right beside your ear, gaining the confidence of the stone-dust echoes.",
-   "page": "The sudden clang of an unseen junction bell hits your ears like a physical blow, shattering your focus and sending you stumbling backward against the sharp edge of a coal bunker. A cold sweat breaks across your shoulders as phantom footsteps march past in the dark, leaving you gasping for air in the sulfurous gloom. Though you regain your footing before the echoes fade, the encounter leaves a lingering tremor in your hands and a dull ache behind your temples that takes a long time to shake.",
+   "page": "The sudden clang of an unseen junction bell hits your ears like a physical blow. Your focus shatters. You stumble backward against the sharp edge of a coal bunker. Cold sweat breaks across your shoulders as phantom footsteps march past in the dark, and you gasp for air in the sulfurous gloom. You regain your footing before the clang dies. A tremor stays in your hands. Behind your temples the pain holds for a long while.",
    "exits": [
     {
      "label": "Drag yourself toward the tunnel exit",
@@ -13644,7 +13644,7 @@
    "kind": "recovery",
    "title": "A Slip in the Dark",
    "brief": "You endure the vacant stare of a hanging keeper without flinching, earning a smudge of protective lime behind your collar.",
-   "page": "Your nerve breaks for a fraction of a second as the dangling figure brushes hard against your shoulder, sending a jolt of cold sweat down your spine. In that momentary lapse, your boot slips on the grease-slicked deck of the footplate, and your forearm catches hard against the sharp iron lip of the coal bunker. A deep, ugly bruise blooms instantly beneath your sleeve, throbbing in time with the pistons.\n\nYou catch yourself against the brass manifold before falling, but precious seconds have ticked away while the engine drifted unchecked.",
+   "page": "Nerve breaks for a fraction of a second as the dangling figure brushes hard against your shoulder. Cold sweat runs down your spine. In that momentary lapse your boot slips on the grease-slicked deck of the footplate, and your forearm catches on the sharp iron lip of the coal bunker. A deep ugly bruise blooms at once beneath your sleeve. It pulses with the pistons.\n\nAgainst the brass manifold you catch yourself before a fall, but precious seconds have ticked away while the engine drifted unchecked.",
    "exits": [
     {
      "label": "Recover your footing and press on",
@@ -13891,7 +13891,7 @@
    "kind": "check",
    "title": "The Sealing Torque",
    "brief": "You reseal the leaking steam gland under a barrage of dripping condensation, retaining a heavy copper gasket for repairs.",
-   "page": "Sweat runs down your spine. You seat a box spanner on the final retaining nut and brace your boots against the vibrating floorplate. The threads bind hard against rust and old scale, threatening to strip entirely if you apply an ounce too much force, yet leaving them loose invites a catastrophic blow-out under full boiler load. You draw a slow breath of sulphurous air, plant your shoulder against the bulkhead, and throw your weight onto the wrench handle.",
+   "page": "Sweat runs down your spine. A box spanner seats on the final retaining nut as you brace your boots against the vibrating floorplate. The threads bind hard against rust and old scale. Too much force could strip them entirely, but leave them loose and you invite a catastrophic blow-out under full boiler load. You draw a slow breath of sulphurous air. Shoulder against the bulkhead, you throw yourself onto the wrench handle.",
    "exits": [
     {
      "label": "check-full",
@@ -14467,7 +14467,7 @@
    "kind": "recovery",
    "title": "The Scald-Burn",
    "brief": "You hold your breath in the rising vapor while steadying the primary bypass valve, winning a waterproof oilskin map case.",
-   "page": "Boiling vapor bites through your canvas sleeve with a sharp hiss, leaving a red, stinging welt across your forearm that throbs with every beat of your pulse. You lose your grip on the spinning wheel as the pressure slams the metal casing, venting a hot cloud that leaves you coughing and groping blindly in the grey gloom. The engine stutters, burning precious time and leaving you bruised.",
+   "page": "Boiling vapor bites through your canvas sleeve with a sharp hiss. A red welt rises. It runs across your forearm and beats with your pulse. Grip fails on the spinning wheel as the pressure slams the metal casing and vents a hot cloud that leaves you coughing and groping blind in the grey gloom. The engine stutters. Precious time burns, and you are left bruised.",
    "exits": [
     {
      "label": "Gather your breath and press forward",
@@ -14782,7 +14782,7 @@
    "kind": "recovery",
    "title": "The Splintered Trap",
    "brief": "You shoulder through a partition of rotten timber blocking a secondary adit, securing a leather-bound logbook of old accidents.",
-   "page": "The rotted beam collapses too suddenly, catching your shoulder a glancing blow and spilling you hard onto the jagged granite ballast. A sharp splinter of oak tears through your sleeve, leaving a long, stinging scratch across your arm that begins to well with dark blood. Your lantern goes out in the scuffle, plunging the narrow drift into absolute ink-blackness while the dust settles in your throat like dry sand. You spend precious minutes fumbling in the dark for your flint and steel, nursing a bruised shoulder and a torn coat before the wick catches once more.",
+   "page": "The rotted beam collapses too suddenly, catches your shoulder a glancing blow, and spills you hard onto the jagged granite ballast. A sharp splinter of oak tears through your sleeve. A long scratch opens across your arm. Dark blood wells. Your lantern goes out in the scuffle, and the narrow drift falls into absolute ink-blackness while dust settles in your throat like dry sand. You spend precious minutes fumbling in the dark for your flint and steel with a bruised shoulder and a torn coat. The wick catches once more.",
    "exits": [
     {
      "label": "Pick up the lantern and crawl through",
@@ -14874,7 +14874,7 @@
    "kind": "scene",
    "title": "The Fishplate Bolts",
    "brief": "You dismantle the blockade by unbolting the fishplates in correct sequence, securing a box of hardened steel track bolts.",
-   "page": "Rust has fused the joint-plates into a stubborn, scabby ridge that defies the wrench until you tap the shanks with a cold chisel, sending up tiny sparks of sulfur. One by one, the square-headed bolts yield with a dry, metallic shriek, clattering into the palm of your hand still greased with old graphite. You lift the fishplate away, setting it aside on the ballast, and slide a fresh box of hardened steel track bolts from the wedge-trench into your canvas kit, feeling the cold metal settle in your palm.\n\nThe line ahead lies clear of the iron barricade, presenting a narrow corridor of light between the soot-stained retaining walls.",
+   "page": "Rust has fused the joint-plates into a stubborn scabby ridge that defies the wrench until you tap the shanks with a cold chisel. Tiny sparks of sulfur jump. One by one the square-headed bolts yield with a dry metallic shriek and clatter into your palm, still greased with old graphite. You lift the fishplate away and set it on the ballast. From the wedge-trench a fresh box of hardened steel track bolts slides into your canvas kit. Cold metal settles in your palm.\n\nThe line ahead lies clear of the iron barricade. Between the soot-stained retaining walls a narrow corridor of light opens.",
    "exits": [
     {
      "label": "Haul the kit aboard and push forward into the cut.",
@@ -15144,7 +15144,7 @@
    "kind": "check",
    "title": "The Iron Obstruction",
    "brief": "You tear down the heavy steel sleeper wall with sheer brute lifting, keeping a heavy claw-bar for emergency work.",
-   "page": "Heavy iron rails and warped steel sleepers pile three men high across the mouth of the tunnel, sealing the dark like a set of broken teeth. You wedge the hooked bill of your claw-bar beneath the lowest girder, planting your boots hard against the loose ballast and sulfur-stained tie-plates. Every muscle in your back hums and twitches under the strain as you lean your full weight into the iron shaft, feeling the dead weight of the barricade groan and shift against the bedrock. The air tastes of dry copper and old sweat while the metal bites deep into your palms.",
+   "page": "Iron rails and warped steel sleepers pile three men high across the mouth of the tunnel and seal the dark like a set of broken teeth. Beneath the lowest girder you wedge the hooked bill of your claw-bar. Boots plant hard against the loose ballast and sulfur-stained tie-plates. Every muscle in your back twitches under the strain as you lean into the iron shaft, and the barricade groans and shifts against the bedrock. Dry copper and old sweat flavor the air. Metal bites your palms.",
    "exits": [
     {
      "label": "check-full",
@@ -15198,7 +15198,7 @@
    "kind": "reward",
    "title": "The Iron Barricade",
    "brief": "You tear down the heavy steel sleeper wall with sheer brute lifting, keeping a heavy claw-bar for emergency work.",
-   "page": "Iron splinters scream against your leather gloves as you heave the warped rails upward, your muscles singing with the strain of old steel and ancient soot. You wrench the final beam clear of the mouth, tossing it aside to ring hollowly against the ballast. Slipping a heavy claw-bar from the rack, you secure it at your belt for whatever waits in the gloom ahead.\n\nThe tunnel breathes a lungful of damp grease and coal-gas against your face, welcoming you into the dark.",
+   "page": "Iron splinters scream against your leather gloves as you heave the warped rails upward, and your muscles burn with the strain of old steel and ancient soot. You wrench the final beam clear of the mouth and toss it aside to ring hollow against the ballast. From the rack you take a claw-bar. It rides at your belt.\n\nDamp grease and coal-gas push from the tunnel against your face.",
    "exits": [
     {
      "label": "Clamber back onto the footplate",
