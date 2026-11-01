@@ -1404,7 +1404,7 @@
    "kind": "scene",
    "title": "Flattery in the Stacks",
    "brief": "You flatter the pompous scholar with clever deception, acquiring a stolen notebook detailing Thessaly's recent inquiries.",
-   "page": "Praise costs nothing when spent upon a scholar whose vanity outstrips his intellect. You lean against the varnished mahogany of the reading desk, offering smooth, unearned compliments regarding his monograph on forgotten scripts. His chest swells beneath his stiff linen waistcoat, and his fingers loosen their jealous grip upon the leather-bound notebook resting beside his inkwell. It details Thessaly Marr's recent inquiries into the vault protocols.\n\nThe opportunity sits within arm's reach, wrapped in twine and dust, awaiting a steady hand.",
+   "page": "Praise costs nothing when spent upon a scholar whose vanity outstrips his intellect. You lean against the varnished mahogany of the reading desk and offer smooth, unearned compliments on his monograph on forgotten scripts. His chest swells. Fingers loosen their jealous grip on the leather-bound notebook resting beside his inkwell. It details Thessaly Marr's recent inquiries into the vault protocols.\n\nThe notebook sits within arm's reach, wrapped in twine and dust.",
    "exits": [
     {
      "label": "Reach quietly for the leather notebook",
@@ -5189,7 +5189,7 @@
    "kind": "scene",
    "title": "Crossing the Ribs",
    "brief": "You glide lightly across the undulating surface while the bridge rolls violently beneath your boots, retrieving a fine steel reading knife.",
-   "page": "Slipping past the trembling margins of the bridge, your boots find purchase on a spine-bound rail that pitches wildly in the draft. The reading knife is already tucked securely into your belt, its tempered edge humming with a faint, low-pitched vibration against your ribs. Loose pages swirl in a miniature tempest around your ankles, whispering fragments of forgotten histories that dissolve before they can be fully read. Below, the vertical shaft yawns wide, smelling powerfully of old leather, dried paste, and damp lime.\n\nEvery muscle in your legs strains to compensate for the erratic motion of the suspended floor until you finally reach the firm stone of the adjoining alcove.",
+   "page": "Past the trembling margins of the bridge, your boots find purchase on a spine-bound rail that pitches wildly in the draft, and the reading knife sits tucked into your belt with its tempered edge ticking a faint vibration against your ribs. Loose pages swirl around your ankles. Fragments of forgotten histories whisper past and dissolve before they can be fully read. Below, the vertical shaft yawns wide, smelling of old leather, dried paste, and damp lime.\n\nEvery muscle in your legs strains against the erratic motion of the suspended floor until you finally reach the firm stone of the adjoining alcove.",
    "exits": [
     {
      "label": "Step onto steady masonry",
@@ -13207,7 +13207,7 @@
    "kind": "hub",
    "title": "The Iron Threshold",
    "brief": "The Iron Threshold: You stand before the heavy bulkhead guarding the oldest stacks where whispering voices echo from the masonry.",
-   "page": "Heavy iron plating blocks the end of the passage, bearing the deep indentations of ancient locks and seals that have long since rusted into immovable red crusts. Wisps of vapor curl from the narrow gap beneath the door, carrying faint, overlapping murmurs of voices that speak in languages no living scholar remembers. The corridor behind you grows colder still, as though the air itself is being drawn forward into the sealed vault by some unseen draft. To pass further requires more than a steady hand and a turned key; it demands a reckoning with the architecture of the deep dark.",
+   "page": "Iron plating blocks the end of the passage, bearing the deep indentations of ancient locks and seals that have long since rusted into immovable red crusts. Wisps of vapor curl from the narrow gap beneath the door. A voice says, \"No living scholar remembers this tongue.\" Faint overlapping murmurs ride that vapor, and the corridor behind you grows colder still as the air itself is drawn forward into the sealed vault by some unseen draft.",
    "exits": [
     {
      "label": "Turn the rusted iron latch",
@@ -15012,7 +15012,7 @@
    "kind": "scene",
    "title": "The Chemical Current",
    "brief": "You study the chemical flow of the dark tide to locate its shallowest stepping stones, obtaining a water-resistant leather satchel.",
-   "page": "Careful observation of the dark tide reveals a regular rhythm to the swirling eddies, governed by some distant sluice-master's schedule. You crouch near the brink, dipping a testing finger into the runoff to gauge its density and temperature. Among the discarded debris trapped in an eddy, a water-resistant leather satchel floats wedged between two sodden ledgers of local tariffs. You hook it out with the toe of your boot, shaking away a cluster of damp cataloguing slips. Inside, the lining remains dry, offering a safe vessel for whatever fragile notes you might gather from the shelves.",
+   "page": "The dark tide shows a regular pulse in its swirling eddies, governed by some distant sluice-master's schedule, so you crouch near the brink and dip a testing finger into the runoff to gauge density and temperature. Debris spins in an eddy. A water-resistant leather satchel floats wedged between two sodden ledgers of local tariffs. You hook it out with the toe of your boot and shake free a cluster of damp cataloguing slips. Inside, the lining remains dry, a safe vessel for whatever fragile notes you might gather from the shelves.",
    "exits": [
     {
      "label": "Step out upon the narrow stone ledge",
@@ -16103,7 +16103,7 @@
    "kind": "recovery",
    "title": "Stumbled Ledger",
    "brief": "You glide through the phantom audience with effortless poise, collecting dropped notes containing secret archival passwords.",
-   "page": "A misjudged step catches the hem of your coat on an unyielding brass bracket, sending you lurching awkwardly into a stack of loose papers. The phantom examiners turn their collective gaze upon you with chilling unanimity, their silent scolds stinging worse than physical blows. You snatch up what you can, your fingers scraping raw against the rough grain of the shelf in your hasty recovery. Though your dignity suffers a severe fracture and your ribs ache from the strain, you break free into the gloom.",
+   "page": "A misjudged step catches the hem of your coat on a brass bracket. You pitch into a stack of loose papers. The phantom examiners turn upon you as one, and their silent scolds cut worse than any blow. You snatch what you can. Fingers scrape raw against the rough grain of the shelf in the scramble, dignity in pieces and ribs sore, until you break free into the gloom.",
    "exits": [
     {
      "label": "Retreat to safer shadows",
@@ -19975,7 +19975,7 @@
    "kind": "ending",
    "title": "The Final Shelf-Mark",
    "brief": "Ending \"The Cataloguers' Century\"",
-   "page": "The heavy iron latch falls home with a dry, satisfying click that seals the catalogued centuries into their permanent boxes. There are no more doors left to open and no more wandering corridors to trick the unwary page. You place your brass quill-knife in the velvet-lined drawer, turn the key twice, and slide the bolt into its groove. The library sleeps at last beneath a mountain of stone and ink, perfect, immobile, and dead. You turn your back on the stacks and walk out into the quiet city, carrying nothing with you save the cold taste of rules and the immaculate, terrifying peace of a world that has been put entirely in its place.",
+   "page": "The iron latch falls home with a dry click that seals the catalogued centuries into their permanent boxes. No doors remain. There are no wandering corridors left to trick the unwary page. You place your brass quill-knife in the velvet-lined drawer, turn the key twice, and slide the bolt into its groove. The library sleeps at last beneath a mountain of stone and ink, perfect, immobile, and dead. You turn your back on the stacks and walk out into the quiet city, carrying nothing save the cold taste of rules and the immaculate, terrifying peace of a world put entirely in its place.",
    "exits": [],
    "endingKey": "cataloguers-century",
    "endingTitle": "The Cataloguers' Century",
