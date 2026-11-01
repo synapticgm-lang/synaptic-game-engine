@@ -173,7 +173,7 @@
    "kind": "scene",
    "title": "A Delicate Operation",
    "brief": "You try to repair a rusted spyglass found on the balcony, risking cutting your hands to gain a valuable tool for spotting distant scavengers.",
-   "page": "Bracing the spyglass against the wooden railing, you examine the corroded mechanism more closely. The salt crust is thickest near the primary lens housing, sealing the fragile glass behind a wall of green verdigris. To truly make this tool useful, you will need to dismantle the housing completely and clean the internal tracks. The work is delicate and frustrating, and the rusted edges of the brass casing are sharp enough to slice a wrecker's thick calluses if a finger slips. A deep cut would invite infection from the stagnant rock pools down below.\n\nThe harbour waits quietly in the distance, a reminder that time is slipping away while you stand here tinkering with broken glass.",
+   "page": "You brace the spyglass against the wooden railing and examine the corroded mechanism more closely. The salt crust is thickest near the primary lens housing and seals the fragile glass behind a wall of green verdigris. To make this tool useful you will need to dismantle the housing completely and clean the internal tracks. The work is delicate and frustrating. Rusted edges of the brass casing are sharp enough to slice a wrecker's thick calluses if a finger slips, and a deep cut would invite infection from the stagnant rock pools down below.\n\nFar off, the harbour sits dry and still while you stand here with broken glass in your hands.",
    "exits": [
     {
      "label": "Attempt the delicate repair",
@@ -618,7 +618,7 @@
    "kind": "check",
    "title": "A Stolen Glance",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "Edging along the shadows of the crates, you try to memorise the crude topography Harlan has sketched. The light from their lantern flickers, casting long, distorted shadows across the dry docks. You need more than just a fleeting glance to understand the safe routes through the sinkholes.\n\nOne of the crew members turns his head, a sudden motion as a gull cries out overhead. You freeze, pressing your back flat against the damp wood. You must carefully track their sightlines, timing your movements to the rhythm of their argument so you can memorise the chart on the barrelhead the moment Harlan looks away.",
+   "page": "You edge along the shadows of the crates and try to memorise the crude topography Harlan has sketched. Their lantern flickers. Long distorted shadows crawl across the dry docks. A fleeting glance will not teach you the safe routes through the sinkholes.\n\nOne of the crew turns his head when a gull cries out overhead. You freeze. Your back presses flat against the damp wood while you track their sightlines and time each step to the rise and fall of their argument, so you can take in the chart on the barrelhead the moment Harlan looks away.",
    "exits": [
     {
      "label": "check-full",
@@ -1538,7 +1538,7 @@
    "kind": "recovery",
    "title": "A Slip in the Salt",
    "brief": "You intervene in a knife-point argument between two net-menders, keeping calm to defuse the tension and earning the loyalty of a tough local guide.",
-   "page": "Steel catches the dreary grey light, and a sudden, jagged jerk from the older mender bypasses your defences entirely, slicing a deep, burning furrow across your forearm before you can pin his wrist. Blood wells instantly, hot and bright against the brine-caked wool of your sleeve, while the crowd gasps and surges backward in alarm. You stagger against a stack of rotting hemp nets and clutch the cut as the combatants break apart, thoroughly shamed by your sudden spilling of blood. The cost is heavy in both torn flesh and lost time, leaving you throbbing and breathless as you bind the tear with a dirty rag.",
+   "page": "Steel catches the dreary grey light. A sudden jagged jerk from the older mender bypasses your defences and slices a deep burning furrow across your forearm before you can pin his wrist. Blood wells at once, hot and bright against the brine-caked wool of your sleeve, while the crowd gasps and surges backward. You stagger against a stack of rotting hemp nets and clutch the cut as the combatants break apart, shamed by the sudden spill of blood. Torn flesh and lost time both tax you. You bind the tear with a dirty rag and catch your breath.",
    "exits": [
     {
      "label": "Bind your bleeding arm and push onward",
@@ -1915,7 +1915,7 @@
    "kind": "check",
    "title": "Crossing the Razor Ridge",
    "brief": "You cross a narrow ridge between two yawning chasms of black mud, keeping a steady balance to reach a stranded merchant's dropped satchel of supplies.",
-   "page": "The wind hits your chest like a solid wall, threatening to tip your balance over the edge of the crumbling mud ridge and into the black mire below. You freeze mid-stride, arms held wide to catch the shifting air currents, fixing your eyes entirely on the weathered leather satchel swaying just yards ahead. Every muscle in your body locks tight as a fresh tremor shakes the salt-flats, threatening to break the fragile bridge of earth beneath your boots into dust.",
+   "page": "The wind hits your chest like a solid wall and tries to tip you over the edge of the crumbling mud ridge into the black mire below. You freeze mid-stride. Arms held wide, you catch the shifting air and fix your eyes on the weathered leather satchel swaying just yards ahead. Every muscle locks tight as a fresh tremor shakes the salt-flats, and the fragile bridge of earth under your boots threatens to break into dust.",
    "exits": [
     {
      "label": "check-full",
@@ -4232,7 +4232,7 @@
    "kind": "scene",
    "title": "Cargo Hold Glyphs",
    "brief": "You translate the strange markings on the cargo crates, avoiding a trapped mechanism to secure a bundle of waterproof matches.",
-   "page": "Heavy cedar crates stamped with the seal of the Brineholders fill the dark lower deck, their iron bands furred with green corrosion. Strange symbols are carved into the timber lids, warning of volatile compounds or cursed contraband meant for the wealthy enclaves. You kneel in the damp gloom, turning a tallow candle over in your fingers to inspect the wax seals before touching the latch.",
+   "page": "Cedar crates stamped with the seal of the Brineholders fill the dark lower deck, their iron bands furred with green corrosion. Strange symbols are carved into the timber lids and warn of volatile compounds or cursed contraband meant for the wealthy enclaves. You kneel in the damp gloom. A tallow candle turns in your fingers as you inspect the wax seals before you touch the latch.",
    "exits": [
     {
      "label": "Examine the sealed cargo boxes",
@@ -6761,7 +6761,7 @@
    "kind": "scene",
    "title": "Steps Upon Iron",
    "brief": "You bluff your way past a suspicious Brineholder guard, risking imprisonment to smuggle a canteen of pure, fresh water.",
-   "page": "The sentinel squints at the ink-stamped paper in your hand, muttering a dry curse about the endless clerical nonsense of the upper levels before stepping aside with a sluggish wave. You climb the creaking iron rungs of the ladder as fast as dignity allows, leaving the watchful eyes of the checkpoint behind in the damp gloom. A narrow maintenance catwalk stretches before you, lined with condensation-slick pipes that hum with the distant vibration of heavy machinery.",
+   "page": "The sentinel squints at the ink-stamped paper in your hand, mutters a dry curse about the endless clerical nonsense of the upper levels, then steps aside with a sluggish wave. You climb the creaking iron rungs of the ladder as fast as dignity allows. The checkpoint drops away into damp gloom behind you. Ahead, a narrow maintenance catwalk stretches out, lined with condensation-slick pipes that carry the distant knock of big machines.",
    "exits": [
     {
      "label": "Follow the damp catwalk",
@@ -9372,7 +9372,7 @@
    "kind": "reward",
    "title": "A Weight of Forged Coin",
    "brief": "You forge a quick counterfeit rationing token to fool a vendor, risking arrest to secure extra Supplies for your journey.",
-   "page": "The heated die bites cleanly into the soft alloy, leaving a crisp, flawless impression of the syndicate's rampant whale emblem stamped into the metal. You lift the token to the lantern-light, turning it over to admire the dull, authentic sheen that would fool any clerk from here to the cliffs.",
+   "page": "The heated die bites cleanly into the soft alloy. A crisp flawless impression of the syndicate's rampant whale emblem sits stamped in the metal. You lift the token to the lantern-light and turn it over. The dull authentic sheen would fool any clerk from here to the cliffs.",
    "exits": [
     {
      "label": "Take your forged token outward",
@@ -12264,7 +12264,7 @@
    "kind": "recovery",
    "title": "Torn Tendons and Rust",
    "brief": "You crank a rusted manual override wheel to force the winch down, risking severe muscle tearing to reach a hidden maintenance alcove.",
-   "page": "A sharp pop echoes inside your shoulder joint, followed by a wave of white-hot agony that robs the breath straight from your lungs. Your grip fails, and you stumble backward against the wet iron railing, clutching your wrenched arm as the override wheel spins violently back into place.\n\nPain flares with every heartbeat, leaving you weakened and gasping on the cold deck, yet alive enough to press onward through the gloom.",
+   "page": "A sharp pop cracks inside your shoulder joint, then a wave of white-hot agony robs the breath straight from your lungs. Your grip fails. You stumble backward against the wet iron railing and clutch your wrenched arm as the override wheel spins hard back into place.\n\nPain flares with every heartbeat. You stay on the cold deck, gasping, then press onward through the gloom.",
    "exits": [
     {
      "label": "Crawl toward the hidden alcove",
@@ -14527,7 +14527,7 @@
    "kind": "scene",
    "title": "Swinging Over the Abyss",
    "brief": "You dangle over the abyss to reach a skeletal mechanic hanging from a harness, holding your breath to retrieve his specialized tuning fork.",
-   "page": "You grip a rusted stay-wire with one hand and lean out over the empty dark, letting your boots drift above the invisible floor of the shaft. Below, the distant grinding of the Meridian Gear echoes like the heartbeat of a buried leviathan. The skeleton rocks in its harness as your fingers brush against its sleeve, sending a shower of flaky salt and dry cloth fragments spiraling down into the black abyss.",
+   "page": "You grip a rusted stay-wire with one hand and lean out over the empty dark while your boots drift above the invisible floor of the shaft. Below, the Meridian Gear grinds far off, a buried machine working through stone. The skeleton rocks in its harness as your fingers brush its sleeve. Flaky salt and dry cloth fragments spiral down into the black.",
    "exits": [
     {
      "label": "Pry the metal from stiff fingers",
@@ -15445,7 +15445,7 @@
    "kind": "reward",
    "title": "Heavy Iron Lever",
    "brief": "You pry open a deformed metal locker with sheer force, tearing the hinges apart to acquire a heavy iron prybar for future obstacles.",
-   "page": "Metal yields with a sudden, shrieking pop that echoes down the flooded corridor, leaving your muscles trembling from the sudden release of tension. Inside the dark recess, half-submerged in greasy silt, lies a heavy ribbed prybar forged from blackened ship-iron that looks entirely immune to the rot of the Low. You lift it free from the muck, feeling its solid, reassuring weight settle into your palm as a welcome tool for whatever obstructions still lie ahead.",
+   "page": "Metal yields with a sudden shrieking pop that runs down the flooded corridor, and your muscles tremble from the release. Inside the dark recess, half-submerged in greasy silt, lies a ribbed prybar forged from blackened ship-iron that looks immune to the rot of the Low. You lift it free from the muck. The solid bar settles into your palm, ready for whatever still blocks the way.",
    "exits": [
     {
      "label": "Return to the flooded junction",
@@ -15476,7 +15476,7 @@
    "kind": "scene",
    "title": "The Hidden Alcove",
    "brief": "You analyze the flow of leaking water to determine the safe path through a compromised corridor, reasoning your way to a hidden tool cache.",
-   "page": "Careful steps keep your boots from sinking into the treacherous silt patches hidden beneath the shallow surface of the stagnant pool. The damp walls here are lined with ancient terracotta tiles, most of them cracked and weeping thin lines of rusty moisture into the gloom. You pause to listen over the steady plop of dripping water, catching the faint, hollow echo of a distant draft that hints at an unsealed chamber nearby.",
+   "page": "Careful steps keep your boots from sinking into silt patches hidden under the shallow surface of the stagnant pool. The damp walls here are lined with ancient terracotta tiles, most of them cracked and weeping thin lines of rusty moisture into the gloom. You pause. Over the plop of dripping water you catch a faint hollow draft that hints at an unsealed chamber nearby.",
    "exits": [
     {
      "label": "Step through the low archway",
@@ -15561,7 +15561,7 @@
    "kind": "scene",
    "title": "The Sunken Bulkhead",
    "brief": "You heave a submerged fallen pillar aside to free a trapped airlock door, relying on raw power to secure a heavy brass dive weight.",
-   "page": "Green brine drips from the ribbed iron ceiling above as you wedge your shoulder against the swollen gasket of the inner hatch. Rusted bolts groan under the steady pressure, resisting every inch of your forward push. A thin stream of brackish water sprays across your cheek, carrying the sharp tang of old grease and stagnant kelp. Beyond the barrier, the dark corridor slopes downward into absolute shadow. You must clear this obstacle to follow the faint scrape of metal echoing from the depths.",
+   "page": "Green brine drips from the ribbed iron ceiling as you wedge your shoulder against the swollen gasket of the inner hatch. Rusted bolts groan under your push. They fight every inch. A thin stream of brackish water sprays across your cheek with the sharp tang of old grease and stagnant kelp. Beyond the barrier the dark corridor slopes downward into absolute shadow, and you still need this hatch clear if you mean to follow the faint scrape of metal from the depths.",
    "exits": [
     {
      "label": "Force open the jammed bulkhead",
@@ -16066,7 +16066,7 @@
    "kind": "recovery",
    "title": "A Bitter Draft",
    "brief": "You salvage parts from a smashed water purifier to build a working filter, demonstrating mechanical ingenuity to gain a reliable source of clean drinking water.",
-   "page": "A sudden high-pitched squeal splits the quiet as the ceramic core fractures down the middle, unleashing a dirty torrent that floods across your knuckles and soaks your sleeves in foul gray muck. You pull your hand back with a sharp hiss of pain as a jagged brass burr slices a shallow red line across your palm. The precious water drains away into the porous stone below, leaving you empty-handed and wiping sticky mud from your stinging skin while the damp cold settles deep into the new scratch.",
+   "page": "A sudden high-pitched squeal splits the quiet as the ceramic core fractures down the middle and a dirty torrent floods across your knuckles, soaking your sleeves in foul gray muck. You pull your hand back with a sharp hiss of pain as a jagged brass burr slices a shallow red line across your palm. The precious water drains away into the porous stone below. You wipe sticky mud from the new scratch while damp cold settles into the cut.",
    "exits": [
     {
      "label": "Gather your ruined tools slowly",
