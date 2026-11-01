@@ -5704,7 +5704,7 @@
    "kind": "scene",
    "title": "Smoke and Iron",
    "brief": "Adjusting the smoking iron censers to keep the holy fire burning earns a consecrated brass tallow-dipper for the cylinders.",
-   "page": "Rusted iron censers hang from crooked chains above the line, sputtering green-tinged flames that smell of burning pitch and old railway ties. You reach out with a leather-gloved hand to steady a swinging vessel before its searing rim strikes the side of a stalled coal tender. Ash flakes drift thickly through the air, settling upon your cap and shoulders like a shroud of fine grey dust. The mechanism of the hanging burner groans in protest, rusted joints binding together under layers of accumulated soot. You need to adjust the flow before the entire apparatus jams fast.",
+   "page": "Rusted iron censers hang from crooked chains above the line, sputtering green-tinged flames that smell of burning pitch and old railway ties. You reach out with a leather-gloved hand and catch a swinging vessel before its searing rim strikes the side of a stalled coal tender. Ash flakes drift through the air and settle on your cap and shoulders in a fine grey dust. The hanging burner groans. Rusted joints bind under layers of soot, and you must adjust the flow before the entire apparatus jams fast.",
    "exits": [
     {
      "label": "Adjust the smoking iron censer",
@@ -6608,7 +6608,7 @@
    "kind": "reward",
    "title": "Cleanly Picked",
    "brief": "Stealing past the sleeping foreman to retrieve a stolen ledger reveals the hidden combination to the supply locker.",
-   "page": "The brass mechanism yields with a smooth click, and the iron door swings open on well-oiled hinges. Inside, neat rows of wrapped tallow candles, fresh gasket cord, and sealed tins of machine grease wait in the dimness. You reach past the ordinary stores to claim a compact, brass-cased pocket level left behind by an itinerant surveyor, sliding it quietly into your canvas jacket. The foreman stirs on his cot, then sinks back into sleep without discovering the breach. You retreat into the grey haze of the yard, carrying your prize without a sound.",
+   "page": "The brass mechanism yields with a smooth click, and the iron door swings open on well-oiled hinges. Inside sit neat rows of wrapped tallow candles, fresh gasket cord, and sealed tins of machine grease. You reach past the ordinary stores to claim a compact brass-cased pocket level left behind by an itinerant surveyor, and you slide it into your canvas jacket. The foreman stirs on his cot. Then he sinks back into sleep without discovering the breach, and you retreat into the grey haze of the yard with your prize.",
    "exits": [
     {
      "label": "Return to Siding Nine",
@@ -6927,7 +6927,7 @@
    "kind": "reward",
    "title": "A Stolen Drought",
    "brief": "Trickling extra water into the camp boiler while no one looks lets you siphon off a double ration of drinking water.",
-   "page": "The hose runs silent and heavy until the canvas side swells tight against your ribs, plump with cool condensation scavenged from the station boilers. You snap the brass clip home just as boots crunch on the gravel behind you, but the roundsman only grunts and passes without a second glance. The extra water sloshes against your spine, a precious little reserve against the dry miles ahead on the Cinder Steppe.\n\nYou secure the neck of the bladder with a stout hemp cord and merge back into the shifting crowd.",
+   "page": "The hose runs silent until the canvas side swells tight against your ribs, plump with cool condensation scavenged from the station boilers. You snap the brass clip home just as boots crunch on the gravel behind you, but the roundsman only grunts and passes without a second glance. Extra water sloshes against your spine, a little reserve against the dry miles ahead on the Cinder Steppe.\n\nA stout hemp cord ties the bladder neck shut as you merge back into the shifting crowd.",
    "exits": [
     {
      "label": "Return to the water-wagon depot",
@@ -8594,7 +8594,7 @@
    "kind": "scene",
    "title": "The Gauge Housing",
    "brief": "You dismantle the pressure-gauge housing to hide extra fuel cells, risking discovery by suspicious clerks to earn a hidden brass token.",
-   "page": "Brass screws turn sluggishly under your screwdriver as you pry open the face of the pressure-gauge housing. The cramped cavity behind the dial offers just enough space to tuck away a pair of contraband fuel cells wrapped in oily rag. You slide the metal lid back into place just as heavy boots echo against the iron decking outside.",
+   "page": "Brass screws turn sluggishly under your screwdriver as you pry open the face of the pressure-gauge housing. The cramped cavity behind the dial offers just enough space to tuck away a pair of contraband fuel cells wrapped in oily rag. You slide the metal lid back into place. Outside, boots strike the iron decking.",
    "exits": [
     {
      "label": "Pocket the hidden brass token",
@@ -12066,7 +12066,7 @@
    "kind": "scene",
    "title": "Climbing the Iron Spine",
    "brief": "You resist the temptation to bolt prematurely from cover, risking a loss of nerve to time your dash past the searchlights.",
-   "page": "Iron rungs bite into your palms as you haul yourself upward into the skeletal superstructure of the viaduct. Below you, the vast expanse of the Brasswind yards stretches out like a grid of dormant black teeth under a low, bruised sky. Steam hisses from an overhead valve, pluming white against the soot-stained girders and smelling of hot grease. You pause on the narrow maintenance grating, steadying your breathing while a pair of inspectors chat idly fifty feet below. They toss a cigarette butt into the ash-drift, its tiny red ember dying instantly in the grit.",
+   "page": "Iron rungs bite into your palms as you haul yourself upward into the skeletal superstructure of the viaduct. Below, the vast expanse of the Brasswind yards stretches out like a grid of dormant black teeth under a low bruised sky. Steam hisses from an overhead valve, pluming white against the soot-stained girders and smelling of hot grease. You pause on the narrow maintenance grating. Fifty feet below, a pair of inspectors chat idle and toss a cigarette butt into the ash-drift, its tiny red ember dying instantly in the grit.",
    "exits": [
     {
      "label": "Ascend past the steam vent",
@@ -15214,7 +15214,7 @@
    "kind": "bottleneck",
    "title": "The Maintenance Spur",
    "brief": "A towering stack of discarded coal-scuttles rattles violently as Locomotive No. 9 approaches the old maintenance spur.",
-   "page": "A towering stack of discarded coal-scuttles rattles violently as Locomotive No. 9 approaches the old maintenance spur. The rusted metal vessels begin to slide down the embankment in a noisy cascade, threatening to foul the pistons and block the track entirely. You scramble along the running board with a heavy iron poker, batting away bouncing buckets before they can wedge themselves beneath the driving wheels. The engine pants softly in the confined space, its brass fittings gleaming under the soot as you clear the final obstacle from the rails.",
+   "page": "A towering stack of discarded coal-scuttles rattles as Locomotive No. 9 approaches the old maintenance spur. The rusted metal vessels slide down the embankment in a noisy cascade. They will foul the pistons and block the track if they reach the rails. You scramble along the running board with an iron poker, batting away bouncing buckets before they can wedge beneath the driving wheels, and the engine pants in the confined space while its brass fittings gleam under the soot. The final obstacle clears from the rails.",
    "exits": [
     {
      "label": "Continue toward the coal silo",
@@ -17894,7 +17894,7 @@
    "kind": "reward",
    "title": "The Heavy Iron Key",
    "brief": "You shoulder past the barricade before the guards can level their iron poles, absorbing a sharp blow to the ribs, and snatch a heavy key-ring.",
-   "page": "However narrowly, your muscles hold against the dead weight of the ironwork, and the rusted hinge yields with a sharp, echoing snap that shatters the silence of the dry culvert. The gate tilts upward just enough for you to squeeze through into the inner vaults. A deep scratch marks your forearm, and a prize stays clenched in your fist. An old brass key rests in your grip, notched for the high service locks that only the senior engineers are supposed to carry.",
+   "page": "Your muscles hold against the ironwork, and the rusted hinge yields with a sharp snap that breaks the hush of the dry culvert. The gate tilts upward just enough for you to squeeze through into the inner vaults. A deep scratch marks your forearm. An old brass key stays clenched in your fist, notched for the high service locks that only the senior engineers are supposed to carry.",
    "exits": [
     {
      "label": "Return to the gantry crossroads",
