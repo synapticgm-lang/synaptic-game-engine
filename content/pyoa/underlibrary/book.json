@@ -32,7 +32,7 @@
    "kind": "bottleneck",
    "title": "The Midnight Desk",
    "brief": "You stand at the grease-stained Returns Desk as brass clocks chime midnight, sorting damp volumes while the night-porter warms his fingers over a smoky tallow lamp.",
-   "page": "Brass clocks beneath the city of Quillon chime a heavy, grease-stained midnight while you stand at the Returns Desk sorting damp volumes of forgotten philosophy. The night-porter warms his thin knuckles over a smoky tallow lamp, muttering about the cold draft drifting up from the lower stacks where the catalogues have begun to rewrite themselves. Every ledger smells of old paper, lamp-oil, and dried ink, heavy with the quiet dread of the missing Archivist, Thessaly Marr. Among the returned arrears lies a damp, folded parchment bearing her urgent handwriting, warning that the Hundredth Door has swung open of its own accord and whoever reads the original Index will decide the world's memory.",
+   "page": "Brass clocks beneath the city of Quillon chime a heavy, grease-stained midnight while you stand at the Returns Desk sorting damp volumes of forgotten philosophy. The night-porter warms his thin knuckles over a smoky tallow lamp, muttering about the cold draft drifting up from the lower stacks where the catalogues have begun to rewrite themselves. Every ledger smells of old paper, lamp-oil, and dried ink, and under it all sits the quiet dread of the missing Archivist, Thessaly Marr. Among the returned arrears lies a damp, folded parchment bearing her urgent handwriting, warning that the Hundredth Door has swung open of its own accord and whoever reads the original Index will decide the world's memory.",
    "exits": [
     {
      "label": "Examine the porter's warning note",
@@ -273,7 +273,7 @@
    "kind": "scene",
    "title": "Decoding the Night-Porter",
    "brief": "You translate the night-porter's cryptic mumbling by studying past roster sheets, risking a bout of exhaustion to secure his old brass sorting stamp.",
-   "page": "Lamp-oil pools in amber circles upon the scarred oak of the Returns Desk while the night-porter mutters his endless cataloguing nonsense into his mutton-chop whiskers. Behind him, stacked columns of past fortnightly roster sheets threaten to avalanche into the ink-wells. You sift through the yellowed records, matching his slurred mutterings of misplaced folios to old duty rotations, your temples throbbing with the strain of deciphering the cramped handwriting.\n\nThe goal is within reach among the clutter, requiring a final steady push through the columns of names and shift numbers to claim the heavy brass sorting stamp before he wakes fully.",
+   "page": "Lamp-oil pools in amber circles upon the scarred oak of the Returns Desk while the night-porter mutters his endless cataloguing nonsense into his mutton-chop whiskers. Behind him, stacked columns of past fortnightly roster sheets threaten to avalanche into the ink-wells. You sift through the yellowed records, matching his slurred mutterings of misplaced folios to old duty rotations, your temples throbbing with the strain of deciphering the cramped handwriting.\n\nThe goal sits among the clutter: one last push through columns of names and shift numbers to claim the brass sorting stamp before he wakes fully.",
    "exits": [
     {
      "label": "Inspect the roster columns closely",
@@ -1093,7 +1093,7 @@
    "kind": "scene",
    "title": "The Heavy Ledger",
    "brief": "You stare down the suspicious clerk with steely determination, securing an official visitor badge through sheer stubbornness.",
-   "page": "Heavy vellum registers bound in green calfskin lie stacked in towering columns across every available square inch of the counter. You slide your newly acquired badge onto your lapel, listening to the monotonous scratching of dozens of quill pens wielded by unseen scribes in the alcoves. A sharp smell of vinegar and gall fills your nose as a nearby scholar drops a heavy commentary that begins to whisper insults in an ancient dialect. Ignoring the petulant book, you focus entirely on finding the trail left by Thessaly Marr before the cataloguers notice her absence.",
+   "page": "Heavy vellum registers bound in green calfskin lie stacked in towering columns across every available square inch of the counter. You slide your newly acquired badge onto your lapel, listening to the monotonous scratching of dozens of quill pens wielded by unseen scribes in the alcoves. Vinegar and gall hit your nose as a nearby scholar drops a fat commentary that begins to whisper insults in an ancient dialect. Ignoring the petulant book, you focus entirely on finding the trail left by Thessaly Marr before the cataloguers notice her absence.",
    "exits": [
     {
      "label": "Follow the corridor of whispering folios",
@@ -1247,7 +1247,7 @@
    "kind": "reward",
    "title": "The Authorised Passage",
    "brief": "You endure the endless bureaucratic interrogation without flinching, walking away with a signed authorization letter from the head librarian.",
-   "page": "The head archivist lets out a sharp, parchment-dry sigh of exasperation and finally steps aside, leaving the flagged corridor open to your steady advance. Between her ink-stained fingers rests a heavy brass stamp, which descends with a final, echoing thud onto a fresh slip of vellum. That crisp sheet is pressed directly into your palm, still warm from the heavy iron press. It bears the jagged purple seal of the central stacks and a hurried signature in violet gall-ink, certifying your right to pass unhindered through the galleried arches. You tuck the heavy paper inside your woollen tunic as the murmur of distant scholars resumes around you.\n\nThat administrative triumph leaves you free to slip past the marble pillars and approach the bustling hub where the day's transactions are sorted.",
+   "page": "The head archivist lets out a sharp, parchment-dry sigh of exasperation and finally steps aside, leaving the flagged corridor open to your steady advance. Between her ink-stained fingers rests a brass stamp that comes down with a final, echoing thud onto a fresh slip of vellum. The crisp sheet lands in your palm still warm from the iron press. It bears the jagged purple seal of the central stacks and a hurried signature in violet gall-ink, certifying your right to pass unhindered through the galleried arches. You slide the paper under your woollen tunic as distant scholars begin to murmur again.\n\nThat administrative triumph leaves you free to slip past the marble pillars and approach the bustling hub where the day's transactions are sorted.",
    "exits": [
     {
      "label": "Approach the weary lending clerk",
@@ -1457,7 +1457,7 @@
    "kind": "recovery",
    "title": "A Flawed Deception",
    "brief": "You flatter the pompous scholar with clever deception, acquiring a stolen notebook detailing Thessaly's recent inquiries.",
-   "page": "Your fingers graze the leather cover just as the scholar pivots back with a suspicious scowl, wrenching the notebook from your reach with a sharp slap of his palm. He narrows his eyes, muttering about audacious shelvers who mistake politeness for permission. The rebuff leaves your wrist stinging from his heavy signet ring, and you lose valuable minutes standing stiffly while he lectures you on library etiquette before finally turning away. You salvage your pride, though the encounter leaves you nursing a bruised wrist and a heightened wariness among the rival scholars.",
+   "page": "Your fingers graze the leather cover just as the scholar pivots back with a suspicious scowl, wrenching the notebook from your reach with a sharp slap of his palm. He narrows his eyes, muttering about audacious shelvers who mistake politeness for permission. The rebuff leaves your wrist smarting from his signet ring, and you lose valuable minutes standing stiff while he lectures you on library etiquette before he turns away. You salvage your pride, though the encounter leaves you nursing a bruised wrist and a heightened wariness among the rival scholars.",
    "exits": [
     {
      "label": "Retreat empty-handed into the crowded aisle",
@@ -1793,7 +1793,7 @@
    "kind": "scene",
    "title": "The Shadowy Passage",
    "brief": "You slip through the crowded market stalls with fluid grace, pocketing a vial of truth-revealing ink unnoticed.",
-   "page": "Heavy velvet draperies separate the noisy main aisle from the shadowy alcoves where merchants trade in illicit draughts that compel confessions from stubborn books. You drop your shoulders, sliding sideways through a knot of argumentative scholars with practiced ease, your soft-soled boots making no sound upon the grit. A heavy glass bottle rests unguarded upon a velvet cushion, its pale contents shifting like liquid moonlight waiting for a careless hand.",
+   "page": "Velvet draperies wall off the noisy main aisle from the shadowy alcoves where merchants trade in illicit draughts that compel confessions from stubborn books. You drop your shoulders, sliding sideways through a knot of argumentative scholars with practiced ease, your soft-soled boots making no sound upon the grit. A heavy glass bottle rests unguarded upon a velvet cushion, its pale contents shifting like liquid moonlight waiting for a careless hand.",
    "exits": [
     {
      "label": "Slip away with the prize",
@@ -2431,7 +2431,7 @@
    "kind": "recovery",
    "title": "Miscalculated Lines",
    "brief": "You spot a logical error in the monks' index system, correcting their ledger to earn a safe passage token.",
-   "page": "Exhaustion blurs your vision, causing you to misread a crucial cross-reference and plunge your ink-pen straight through the vellum surface. The clerks cry out in alarm at the ruined page, forcing you to spend a tedious hour meticulously scraping the ink away with a dull penknife while they dock your weekly lamp-oil allowance. You leave the desk with smarting fingers and a lingering headache from the close inspection.",
+   "page": "Exhaustion blurs your vision; you misread a cross-reference and plunge your ink-pen straight through the vellum surface. The clerks cry out at the ruined page and make you spend a tedious hour scraping the ink away with a dull penknife while they dock your weekly lamp-oil allowance. You leave the desk with smarting fingers and a lingering headache from the close inspection.",
    "exits": [
     {
      "label": "Pocket your ruined notes and press on",
@@ -2519,7 +2519,7 @@
    "kind": "check",
    "title": "Deciphering the Binding",
    "brief": "You correctly identify the cataloguing mark on Barnaby's hidden ledger, proving your competence and earning his hard-won respect.",
-   "page": "Dust motes dance in the amber glare of the corner lamp as you lean millimeters from the cracked leather spine, searching for the faint, acid-etched monogram of the renegade cataloguer. Every breath feels heavy with the scent of vinegar and old parchment, and your fingers hover over the textured grain while you calculate the precise angle of the binder's iron stamp. A single wrong guess about the provincial press mark will expose your ignorance to Barnaby and ruin any hope of an alliance. You steady your breathing, squinting against the stinging glare of the sputtering wick to parse the faded ink before the oil burns completely dry.",
+   "page": "Dust motes dance in the amber glare of the corner lamp as you lean millimeters from the cracked leather spine, searching for the faint, acid-etched monogram of the renegade cataloguer. Every breath feels heavy with the scent of vinegar and old parchment, and your fingers hover over the textured grain while you calculate the precise angle of the binder's iron stamp. A single wrong guess about the provincial press mark will expose your ignorance to Barnaby and ruin any hope of an alliance. You slow your breath and squint against the glare of the sputtering wick to parse the faded ink before the oil burns completely dry.",
    "exits": [
     {
      "label": "check-full",
@@ -2557,7 +2557,7 @@
    "kind": "recovery",
    "title": "A Costly Oversight",
    "brief": "You correctly identify the cataloguing mark on Barnaby's hidden ledger, proving your competence and earning his hard-won respect.",
-   "page": "Your fingertips slip against the greasy leather, sending a cascade of loose slips clattering across the flagged floor into the shadows. Barnaby lets out a sharp, disappointed hiss through his teeth, snatching the volume away before you can recover your balance. The abrupt motion leaves a jagged paper-cut across your thumb, welling dark and bright against the grime of your palm as a lasting reminder of your clumsiness. You bite back a curse, nursing the stinging wound while the precious minutes tick away in the heavy silence of the alcove.",
+   "page": "Your fingertips slip against the greasy leather, sending a cascade of loose slips clattering across the flagged floor into the shadows. Barnaby lets out a sharp, disappointed hiss through his teeth, snatching the volume away before you can recover your balance. The abrupt motion leaves a jagged paper-cut across your thumb, welling dark and bright against the grime of your palm as a lasting reminder of your clumsiness. You bite back a curse and nurse the cut while precious minutes tick away in the silence of the alcove.",
    "exits": [
     {
      "label": "Retreat to the hearthside shadows",
@@ -2573,7 +2573,7 @@
    "kind": "reward",
    "title": "The Proven Competence",
    "brief": "You correctly identify the cataloguing mark on Barnaby's hidden ledger, proving your competence and earning his hard-won respect.",
-   "page": "Sharp eyes catch the minute discrepancy in the numbering sequence just as the candle gutters, however narrowly securing the truth of the matter from the fading ink. Barnaby grunts, his heavy shoulders dropping as he acknowledges your sharp eye and steady nerve with a slow, respectful nod of his head. He shoves a small, dog-eared memorandum across the grain of the table into your palm, offering proof of his clandestine trade without another word of argument.\n\nYou pocket the paper quickly, knowing the debt between you has shifted forever.",
+   "page": "Sharp eyes catch the minute discrepancy in the numbering sequence just as the candle gutters, however narrowly securing the truth of the matter from the fading ink. Barnaby grunts, his shoulders dropping as he grants your sharp eye and cool nerve a slow, respectful nod. He shoves a small, dog-eared memorandum across the grain of the table into your palm, offering proof of his clandestine trade without another word of argument.\n\nYou pocket the paper quickly, knowing the debt between you has shifted forever.",
    "exits": [
     {
      "label": "Slip away into the map-rooms",
@@ -3868,7 +3868,7 @@
    "kind": "scene",
    "title": "The Blind Spot",
    "brief": "You slide past the gatekeeper's blind spot with effortless poise, swiping the iron gate-ring key from his belt.",
-   "page": "Dust hangs thick in the lantern-light where the gatekeeper doats over a heavy ledger of fines, his ear-trumpet twitching to the scratching of his own steel nib. Shadows lengthen across the stone flags, offering a narrow strip of absolute dark that slips right past his high wooden booth. You adjust the heavy strap of your canvas shoulder-bag, keeping your breathing shallow and even as the scent of stale lamp-oil and dried ink fills your nose. The iron gate-ring key hangs from his belt by a grease-darkened leather thong, swaying rhythmically with every heavy nod of his drowsy head.",
+   "page": "Dust hangs in the lantern-light where the gatekeeper doats over a ledger of fines, his ear-trumpet twitching to the scratch of his own steel nib. Shadows lengthen across the stone flags, offering a narrow strip of absolute dark that slips right past his high wooden booth. You hitch the strap of your canvas shoulder-bag and keep your breathing shallow as stale lamp-oil and dried ink fill your nose. The iron gate-ring key hangs from his belt by a grease-darkened leather thong and sways with each drowsy nod of his head.",
    "exits": [
     {
      "label": "Step into the deep shadow",
@@ -4021,7 +4021,7 @@
    "kind": "recovery",
    "title": "A Flawed Precedent",
    "brief": "You spot an unwritten exemption clause in the rule-book on his podium, legally compelling him to open the gate.",
-   "page": "The custodian slams his heavy bone paper-knife against the mahogany desk with a dry, cracking sound that echoes sharply down the corridor. He points a trembling, ink-blackened finger at a later addendum scrawled in red ink across the flyleaf, proving that the clause you cited was formally repealed during the Great Binder's Strike. Your ears burn with mild humiliation as he slaps a heavy fine-slip onto your ledger-board, demanding two hours of tedious sorting in the damp basement among the moldering parish registers before you are permitted another step.",
+   "page": "The custodian slams his heavy bone paper-knife against the mahogany desk with a dry, cracking sound that echoes sharply down the corridor. He points a trembling, ink-blackened finger at a later addendum scrawled in red ink across the flyleaf, proving that the clause you cited was formally repealed during the Great Binder's Strike. Your ears burn with mild humiliation as he slaps a fine-slip onto your ledger-board and demands two hours of tedious sorting in the damp basement among the moldering parish registers before you may take another step.",
    "exits": [
     {
      "label": "Submit to the tedious punishment",
@@ -4128,7 +4128,7 @@
    "kind": "bottleneck",
    "title": "The Sliding Stacks",
    "brief": "You emerge into the shifting expanse of the Unshelved Stacks where towering mahogany bookcases slide across stone floors to block old pathways.",
-   "page": "Towering mahogany bookcases grind across the flagged floor with the groaning resonance of shifting tectonic plates, parting briefly to reveal narrow chasms of gloom before slamming shut again to seal off yesterday's thoroughfares. You lift your tin lamp higher, wincing as a cascade of dislodged octavos rains down from the upper shelves to shatter against the damp flags with sharp, papery reports. The air tastes thick of copper-gall ink and scorched tallow, heavy with the motion of countless uncatalogued volumes sliding into new, unauthorized geometries. Ahead, several massive iron cases converge upon a central junction, their heavy steel feet scraping deep furrows into the stone as they threaten to crush your glass chimney if you misjudge their relentless timing.",
+   "page": "Towering mahogany bookcases grind across the flagged floor with the groaning resonance of shifting tectonic plates, parting briefly to reveal narrow chasms of gloom before slamming shut again to seal off yesterday's thoroughfares. You lift your tin lamp higher, wincing as a cascade of dislodged octavos rains down from the upper shelves to shatter against the damp flags with sharp, papery reports. The air tastes of copper-gall ink and scorched tallow while countless uncatalogued volumes slide into new, unauthorized geometries. Ahead, several massive iron cases converge upon a central junction, their heavy steel feet scraping deep furrows into the stone as they threaten to crush your glass chimney if you misjudge their relentless timing.",
    "exits": [
     {
      "label": "Dash across before the iron cases lock",
@@ -4630,7 +4630,7 @@
    "kind": "recovery",
    "title": "Buried in Pulp",
    "brief": "You push through a thick wall of waterlogged treatises with quiet determination, uncovering a hidden pouch of silver coinage.",
-   "page": "The unstable wall of books finally gives way with a wet, heavy thud, burying your arms in a freezing slurry of ink and decaying paper that tears your coat sleeve and leaves a deep, stinging scratch across your wrist. You claw your way back to the surface gasping for air, poorer by a day's worth of dried rations that dissolved into the grey slush during the scramble.",
+   "page": "The unstable wall of books finally gives way with a wet thud, burying your arms in a freezing slurry of ink and decaying paper that tears your coat sleeve and opens a deep scratch across your wrist. You claw your way back to the surface gasping for air, poorer by a day's worth of dried rations that dissolved into the grey slush during the scramble.",
    "exits": [
     {
      "label": "Drag yourself from the damp ruins",
@@ -5003,7 +5003,7 @@
    "kind": "scene",
    "title": "The Flawed Lashing",
    "brief": "You spot a hidden structural flaw in the lashings and bypass the weakest section, securing an ivory bookmark engraved with secret wards.",
-   "page": "Tucked behind a swinging stack of quarto volumes, the heavy hempen lashings holding the gantry slacken ominously under the weight of drifting iron shelves. You trace the fraying strands with cautious fingers, bypassing the treacherous span entirely by stepping onto a rigid bracket of old oak. Lodged between two chained ledgers lies an ivory bookmark, its surface cool to the touch and finely etched with wards that prickle against your skin with the faint taste of copper.\n\nSlip the engraved talisman into your coat pocket and leave the sagging timber behind.",
+   "page": "Tucked behind a swinging stack of quarto volumes, the hempen lashings on the gantry go slack as drifting iron shelves load them down. You trace the fraying strands with cautious fingers, bypassing the treacherous span entirely by stepping onto a rigid bracket of old oak. Lodged between two chained ledgers lies an ivory bookmark, its surface cool to the touch and finely etched with wards that prickle against your skin with the faint taste of copper.\n\nSlip the engraved talisman into your coat pocket and leave the sagging timber behind.",
    "exits": [
     {
      "label": "Climb along the reinforced oak bracket",
@@ -5445,7 +5445,7 @@
    "kind": "check",
    "title": "Reaching Through the Gap",
    "brief": "You expertly pick the rusted latch on a locked journal cabinet to find a bundle of dry tallow tapers inside.",
-   "page": "Shadows lengthen across the floorboards as the neighbouring bookshelf shudders and begins its slow, mechanical drift toward the adjoining alcove. Snatch your hand back too soon and the prize stays locked forever; hesitate too long and the shifting oak frame will pin your wrist against the stone wall. Drawing a steady breath, you slide your fingers back into the narrow gap of the cabinet while the heavy timber groans and grinds its teeth against the floor.\n\nYou angle your fingers toward the hidden brass lever deep within the shadowed recess, testing the weight of the mechanism as the gap narrows.",
+   "page": "Shadows lengthen across the floorboards as the neighbouring bookshelf shudders and begins its slow, mechanical drift toward the adjoining alcove. Snatch your hand back too soon and the prize stays locked forever; hesitate too long and the shifting oak frame will pin your wrist against the stone wall. You take one measured breath and slide your fingers back into the narrow gap of the cabinet while the timber groans and grinds its teeth against the floor.\n\nYou angle your fingers toward the hidden brass lever deep within the shadowed recess, testing the weight of the mechanism as the gap narrows.",
    "exits": [
     {
      "label": "check-full",
@@ -5483,7 +5483,7 @@
    "kind": "recovery",
    "title": "Caught in the Timber",
    "brief": "You expertly pick the rusted latch on a locked journal cabinet to find a bundle of dry tallow tapers inside.",
-   "page": "The heavy oak frame catches your sleeve with sudden malice, dragging your forearm hard against the iron latch and leaving a dull, stinging purple bruise across your skin. A sharp splinter of ancient deal bites deep into your palm, drawing a bright drop of blood that immediately stains the paper cuff of your jacket. You wrench your arm free with a frantic heave just as the shelves slam together with a hollow thud, crushing your last spare bottle of lamp-oil into fragrant shards.\n\nGathering your wits amidst the scattered glass and spilled oil, you nurse your bruised arm and limp onward into the gloom.",
+   "page": "The oak frame catches your sleeve with sudden malice, drags your forearm hard against the iron latch, and prints a purple bruise across your skin. A sharp splinter of ancient deal bites deep into your palm, drawing a bright drop of blood that immediately stains the paper cuff of your jacket. You wrench your arm free with a frantic heave just as the shelves slam together with a hollow thud, crushing your last spare bottle of lamp-oil into fragrant shards.\n\nGathering your wits amidst the scattered glass and spilled oil, you nurse your bruised arm and limp onward into the gloom.",
    "exits": [
     {
      "label": "Retreat from the pinching shelves",
@@ -5530,7 +5530,7 @@
    "kind": "check",
    "title": "Breathing Through the Haze",
    "brief": "You maintain your focus through the choking darkness to secure a woollen scarf soaked in soothing herbal oil.",
-   "page": "The air turns thick with the grey, suffocating dust of burnt paper as a distant shelf collapses into a heap of smouldering fragments. Your lungs burn for clean oxygen, and every instinct urges you to turn back toward the safety of the main stairwell. Closing your eyes against the stinging soot, you force your chest to remain steady, clamping the herbal-soaked scarf tight against your nose and mouth while the heat presses in from all sides.\n\nYou steel your resolve against the panic scratching at your throat, standing firm as the suffocating cloud billows around your shoulders.",
+   "page": "The air turns thick with the grey, suffocating dust of burnt paper as a distant shelf collapses into a heap of smouldering fragments. Your lungs burn for clean oxygen, and every instinct urges you to turn back toward the safety of the main stairwell. You shut your eyes against the soot, clamp the herbal-soaked scarf tight over your nose and mouth, and keep your chest from heaving while the heat presses in from all sides.\n\nYou steel your resolve against the panic scratching at your throat, standing firm as the suffocating cloud billows around your shoulders.",
    "exits": [
     {
      "label": "check-full",
@@ -5568,7 +5568,7 @@
    "kind": "recovery",
    "title": "Choking on the Ash",
    "brief": "You maintain your focus through the choking darkness to secure a woollen scarf soaked in soothing herbal oil.",
-   "page": "A sudden, violent gust of sulfurous air tears the protective scarf from your grip, swirling the hot ash directly into your face. You stumble backward against a stack of heavy folios, gasping reflexively and swallowing a mouthful of bitter, choking soot that leaves your throat raw. The delay costs you precious time and wastes half your remaining water flask just to rinse the grit from your mouth.\n\nWiping the black grime from your streaming eyes, you stagger forward with a heavy chest and a lingering cough.",
+   "page": "A sudden, violent gust of sulfurous air tears the protective scarf from your grip, swirling the hot ash directly into your face. You stumble backward against a stack of heavy folios, gasping reflexively and swallowing a mouthful of bitter, choking soot that leaves your throat raw. The delay costs you precious time and wastes half your remaining water flask just to rinse the grit from your mouth.\n\nYou wipe the black grime from your streaming eyes and stagger forward with a tight chest and a lingering cough.",
    "exits": [
     {
      "label": "Recover breath in the gloom",
@@ -5710,7 +5710,7 @@
    "kind": "reward",
    "title": "The Heavy Seal",
    "brief": "You trick the rotation mechanism by tossing a heavy stone into the gear-teeth, capturing a stray cataloguer's brass stamp.",
-   "page": "Fingers darting past the straining iron cogs with desperate precision, your hand closes firmly around the heavy brass stamp just as the stone wedge finally crumbles into gray powder. You yank your arm back an instant before the entire wall of shelving lunges forward with a renewed, deafening roar. In your palm rests a cold, heavy cataloguer's seal, carved with the insignia of the lower indices and notched with a curious private mark. You slip the recovered implement into your pocket, feeling the reassuring weight of official authority as you trace your steps back to the spinning hub.",
+   "page": "Fingers darting past the straining iron cogs with desperate precision, your hand closes firmly around the heavy brass stamp just as the stone wedge finally crumbles into gray powder. You yank your arm back an instant before the entire wall of shelving lunges forward with a renewed, deafening roar. A cold cataloguer's seal rests in your palm, carved with the insignia of the lower indices and notched with a curious private mark. You slip the recovered implement into your pocket, feeling the reassuring weight of official authority as you trace your steps back to the spinning hub.",
    "exits": [
     {
      "label": "Return to the revolving chamber",
@@ -5779,7 +5779,7 @@
    "kind": "recovery",
    "title": "Blinded by the Dust",
    "brief": "You wait with unwavering patience until the correct doorway aligns with your position, earning a reliable pocket compass.",
-   "page": "A sudden choking cloud of dry paper-dust billows from the revolving shelves, stinging your eyes and breaking your concentration at the crucial moment of alignment. You stumble forward into a closing gap, dropping your spare flask of lamp-oil as the heavy wooden panel slams shut against your shoulder with a dull thud. Bruised and disoriented in the growing gloom, you spend long, agonizing minutes groping along the cold timber until you find your bearings. The delay costs you half your remaining fuel and leaves you coughing in the stagnant air, but you drag yourself back toward the central chamber.",
+   "page": "A choking cloud of dry paper-dust billows from the revolving shelves, watering your eyes and breaking your concentration at the exact moment of alignment. You stumble forward into a closing gap, dropping your spare flask of lamp-oil as the heavy wooden panel slams shut against your shoulder with a dull thud. Bruised and disoriented in the growing gloom, you spend long, agonizing minutes groping along the cold timber until you find your bearings. The delay costs you half your remaining fuel and leaves you coughing in the stagnant air, but you drag yourself back toward the central chamber.",
    "exits": [
     {
      "label": "Return to the revolving hub",
@@ -6095,7 +6095,7 @@
    "kind": "reward",
    "title": "The Accountant's Ledger",
    "brief": "You deftly navigate the unstable drifts of loose paper without triggering a collapse, unearthing a leather-bound tally book.",
-   "page": "Light steps dance across the sliding vellum, finding solid purchase on hidden flagstones just as the paper wave threatens to break beneath your weight. You scoop up the leather-bound tally book with a smooth, practiced motion, tucking it securely against your chest as the surrounding drifts settle into quiet stillness. The heavy volume feels reassuringly dense, its pages crammed with meticulous notes on forgotten debts and lost shipments from the upper city.",
+   "page": "Light steps dance across the sliding vellum, finding solid purchase on hidden flagstones just as the paper wave threatens to break beneath your weight. You scoop up the leather-bound tally book with a smooth, practiced motion, tucking it securely against your chest as the surrounding drifts settle into quiet stillness. The volume feels dense in your hands, its pages crammed with cramped notes on forgotten debts and lost shipments from the upper city.",
    "exits": [
     {
      "label": "Return to the cluttered crossroads",
@@ -6226,7 +6226,7 @@
    "kind": "check",
    "title": "Snatching the Brass Lens",
    "brief": "You manoeuvre past snapping volumes with clever sleight of hand to recover a heavy brass reading glass.",
-   "page": "You wait for the exact moment the flanking volumes part their leather jaws, then dart your hand straight into the gap toward the gleaming brass. The heavy reading glass sits nestled against a spine that shivers violently under your knuckles, sensing the intrusion. You slide your fingers beneath the cold metal frame, holding your breath as the surrounding covers begin to angle inward to trap your wrist against the shelf.",
+   "page": "You wait for the exact moment the flanking volumes part their leather jaws, then dart your hand straight into the gap toward the gleaming brass. The reading glass presses against a spine that shivers hard under your knuckles, sensing the intrusion. You slide your fingers beneath the cold metal frame, holding your breath as the surrounding covers begin to angle inward to trap your wrist against the shelf.",
    "exits": [
     {
      "label": "check-full",
@@ -6280,7 +6280,7 @@
    "kind": "reward",
    "title": "Secured Brass Lens",
    "brief": "You manoeuvre past snapping volumes with clever sleight of hand to recover a heavy brass reading glass.",
-   "page": "Your fingers close securely around the cool handle, slipping the heavy brass glass free from its nest just as the snapping covers slam shut on empty air. Whether you moved with absolute feline grace or snatched it away amidst a flurry of paper bites, the prize is yours. The lens is heavy, its glass thick enough to magnify the tiniest marginal notes hidden in the darkest corners of the stacks. You pocket the instrument, feeling the quiet satisfaction of a successful acquisition.",
+   "page": "Your fingers close around the cool handle and slip the brass glass free from its nest just as the snapping covers slam shut on empty air. Whether you moved with absolute feline grace or snatched it away amidst a flurry of paper bites, the prize is yours. The lens has glass thick enough to magnify the tiniest marginal notes hidden in the darkest corners of the stacks. You pocket the instrument, feeling the quiet satisfaction of a successful acquisition.",
    "exits": [
     {
      "label": "Return to the misfiled wing",
@@ -6530,7 +6530,7 @@
    "kind": "scene",
    "title": "The Sunken Chest",
    "brief": "You trick the swirling eddies into depositing a sunken chest onto the bank, claiming an assortment of coloured sealing waxes.",
-   "page": "Dark galleried shelving leans over the ink-sluice like ancient ribs, casting long, wavering shadows across the bubbling surface. Heavy wooden crates and waterlogged ledgers drift in the sluggish black channel, churning against a rusted bulkhead. You prod the swirling current with a spare bracket-pole, guiding a heavy, iron-bound chest away from the suction point. The eddy slackens just enough for the latch to snag upon a rusted mooring ring near the stone bank, yielding a trove of vibrant, sealed wax blocks.\n\nRich purples and deep indigos flake off the wooden lid, smelling faintly of rendered tallow and dried resin, preserved from some long-forgotten departmental audit.",
+   "page": "Dark galleried shelving leans over the ink-sluice like ancient ribs, casting long, wavering shadows across the bubbling surface. Heavy wooden crates and waterlogged ledgers drift in the sluggish black channel, churning against a rusted bulkhead. You prod the swirling current with a spare bracket-pole and nudge an iron-bound chest away from the suction point. The eddy slackens just enough for the latch to snag upon a rusted mooring ring near the stone bank, yielding a trove of vibrant, sealed wax blocks.\n\nRich purples and deep indigos flake off the wooden lid, smelling faintly of rendered tallow and dried resin, preserved from some long-forgotten departmental audit.",
    "exits": [
     {
      "label": "Pry open the damp wooden latch",
@@ -6668,7 +6668,7 @@
    "kind": "recovery",
    "title": "Swamped by the Weir",
    "brief": "You analyze the flow rate to find a shallow stone bar across the weir, retrieving an intact quill-case of silver.",
-   "page": "Sudden turbulence surges over the submerged ridge, sweeping your feet out from under you and plunging you into the icy writing fluid. You kick hard against the heavy current, bruising your ribs sharply against an iron shelving bracket before hauling yourself onto the bank. Your lantern glass cracks in the commotion, leaking precious oil and plunging half the alcove into deep, flickering shadows. The physical toll leaves a dull, throbbing ache in your side and a heavy film of black ink caked over your fingers.",
+   "page": "Sudden turbulence surges over the submerged ridge, sweeping your feet out from under you and plunging you into the icy writing fluid. You kick hard against the current, bruise your ribs on an iron shelving bracket, then haul yourself onto the bank. Your lantern glass cracks in the commotion, leaking precious oil and plunging half the alcove into deep, flickering shadows. The physical toll leaves a dull, throbbing ache in your side and a heavy film of black ink caked over your fingers.",
    "exits": [
     {
      "label": "Drag yourself onto the ledge",
@@ -7115,7 +7115,7 @@
    "kind": "check",
    "title": "The Vaulted Spring",
    "brief": "You bend your posture to match the curving stone vault with elegant poise, earning a sturdy leather wrist-guard.",
-   "page": "Overhead masonry dips perilously low, forcing you to compress your frame into a tight, fluid arc to clear the jagged keystones. The air grows heavy with the scent of stagnant ink and scorched lamp-wick, stinging your eyes as you crouch low. Shadows stretch long and distorted across the vellum-packed shelves as your lamp flickers in the draft. You gather your muscles for a sudden, sweeping slide beneath the descending stone arch, measuring the distance with a practiced eye.",
+   "page": "Overhead masonry dips perilously low, forcing you to compress your frame into a tight, fluid arc to clear the jagged keystones. Stagnant ink and scorched lamp-wick smell sharp enough to water your eyes as you crouch low. Shadows stretch long and distorted across the vellum-packed shelves as your lamp flickers in the draft. You gather your muscles for a sudden, sweeping slide beneath the descending stone arch, measuring the distance with a practiced eye.",
    "exits": [
     {
      "label": "check-full",
@@ -7256,7 +7256,7 @@
    "kind": "check",
    "title": "Reading the Scribe",
    "brief": "You study the scribbling patterns to deduce a safe path through the phantom ink-fall, capturing an enchanted quill that never blunts.",
-   "page": "You crouch low beneath the low-slung iron rafters, narrowing your eyes against the heavy mist of falling gall that coats your lashes in a fine, dark grit. The collective scratching of a thousand invisible quills surrounds you, forming a complex auditory lattice of intersecting strokes, loops, and furious crosshatchings. By mapping the cadence of the descent, you attempt to discern the brief, rhythmic pauses where the heavy ink-fall thins enough to grant safe passage through the curtain.",
+   "page": "You crouch low beneath the low-slung iron rafters, narrowing your eyes against the heavy mist of falling gall that coats your lashes in a fine, dark grit. The collective scratching of a thousand invisible quills surrounds you, forming a complex auditory lattice of intersecting strokes, loops, and furious crosshatchings. By mapping the cadence of the descent, you try to catch the brief pauses where the ink-fall thins enough to grant safe passage through the curtain.",
    "exits": [
     {
      "label": "check-full",
@@ -7294,7 +7294,7 @@
    "kind": "recovery",
    "title": "Splattered Flagstones",
    "brief": "You study the scribbling patterns to deduce a safe path through the phantom ink-fall, capturing an enchanted quill that never blunts.",
-   "page": "A sudden surge in the overhead pressure causes the iron quills to spit a heavy, blinding squall of gall directly into your face, stinging your eyes and soaking your collar through. You stumble backward into a copper basin, tipping the dark contents across the flagstones and ruining your boots with permanent, indelible stains. The bitter taste of iron fills your mouth as you wipe the stinging fluid from your brow, losing precious minutes while your lamp-oil dwindles in its reservoir.",
+   "page": "A surge in the overhead pressure makes the iron quills spit a blinding squall of gall straight into your face, burning your eyes and soaking your collar through. You stumble backward into a copper basin, tipping the dark contents across the flagstones and ruining your boots with permanent, indelible stains. The bitter taste of iron fills your mouth as you wipe the stinging fluid from your brow, losing precious minutes while your lamp-oil dwindles in its reservoir.",
    "exits": [
     {
      "label": "Recover your footing and press onward",
@@ -7526,7 +7526,7 @@
    "kind": "bottleneck",
    "title": "The Iron Barricade",
    "brief": "A barricade of locked iron cabinets blocks the exit, each door inscribed with riddles about the forgotten catalogue.",
-   "page": "Heavy iron cabinets block the forward passage, their double doors secured by massive padlocks and inscribed with shifting riddles about the forgotten catalogue. Each metal face bears deep scratches from previous scholars who tried and failed to force the springs. The air here tastes of cold rust and burnt lamp-oil, heavy with the quiet despair of the deep stacks. You trace the intricate script carved into the steel, reading lines that question the very nature of memory and record. The riddles shift beneath your fingertips, demanding an answer before the corridor shifts its walls and traps you permanently among the locked files.",
+   "page": "Iron cabinets bar the way ahead, double doors locked with massive padlocks and inscribed with shifting riddles about the forgotten catalogue. Each metal face bears deep scratches from previous scholars who tried and failed to force the springs. The air here tastes of cold rust and burnt lamp-oil, heavy with the quiet despair of the deep stacks. You trace the intricate script carved into the steel, reading lines that question the very nature of memory and record. The riddles shift beneath your fingertips, demanding an answer before the corridor shifts its walls and traps you permanently among the locked files.",
    "exits": [
     {
      "label": "Solve the iron cabinet riddles",
@@ -7541,7 +7541,7 @@
    "kind": "hub",
    "title": "The Iron Grille",
    "brief": "The Iron Grille: A massive barrier of interlocking security gates bars the forward passage with heavy padlocks and intricate keyholes.",
-   "page": "A massive barrier of interlocking security gates bars the forward passage, featuring heavy padlocks and intricate keyholes that gleam in the dim lamp-oil light. The metal framework vibrates with a low, rhythmic hum as the surrounding stacks shift their positions in the gloom. Beyond the barrier, narrow corridors branch off into the depths of the Unshelved Stacks, each offering a different path through the labyrinth of forgotten literature. The heavy iron bars smell of old grease and cold sweat, demanding a deliberate choice from anyone wishing to proceed deeper before the Long Closing seals the vaults.",
+   "page": "Interlocking security gates bar the forward passage, their padlocks and cut keyholes gleaming in the dim lamp-oil light. The metal framework vibrates with a low, rhythmic hum as the surrounding stacks shift their positions in the gloom. Beyond the barrier, narrow corridors branch off into the depths of the Unshelved Stacks, each offering a different path through the labyrinth of forgotten literature. The iron bars smell of old grease and cold sweat as the corridors wait beyond, and the Long Closing will seal the vaults soon enough.",
    "exits": [
     {
      "label": "Unpick the central security gate",
@@ -7945,7 +7945,7 @@
    "kind": "scene",
    "title": "Tripping the Release Spring",
    "brief": "You decipher the ancient cataloguing marks on the frame to trip the internal release spring, securing an illustrated manual of locks.",
-   "page": "Steady pressure applied to the crescent notch causes a deep, muffled clunk to resonate through the hollow metal frame. The rusted tongue within the casing withdraws from its socket with a dry, papery slide, freed from decades of accumulated grime and stagnant lamp-oil. You slide your fingers into the widening gap, pulling back the heavy iron plate to reveal the dark interior where your prize rests untouched by the damp air of the stacks.",
+   "page": "Pressure on the crescent notch sends a deep, muffled clunk through the hollow metal frame. The rusted tongue within the casing withdraws from its socket with a dry, papery slide, freed from decades of accumulated grime and stagnant lamp-oil. You slide your fingers into the widening gap, pulling back the heavy iron plate to reveal the dark interior where your prize rests untouched by the damp air of the stacks.",
    "exits": [
     {
      "label": "Reach inside the open housing",
@@ -8014,7 +8014,7 @@
    "kind": "reward",
    "title": "Securing the Illustrated Manual",
    "brief": "You decipher the ancient cataloguing marks on the frame to trip the internal release spring, securing an illustrated manual of locks.",
-   "page": "The frozen tumblers yield with a sharp, satisfying snap, swinging the heavy inspection hatch wide to reveal your prize nestled in the velvet-lined recess. You lift out a heavy, leather-bound manual detailing every forgotten lock, latch, and security seal ever devised by the early Cataloguers. Your fingers ache from the relentless chill, but tucking this volume into your coat gives you a quiet, enduring advantage against the closed doors ahead.",
+   "page": "The frozen tumblers yield with a sharp snap, and the inspection hatch swings wide to show your prize in the velvet-lined recess. You lift out a heavy, leather-bound manual detailing every forgotten lock, latch, and security seal ever devised by the early Cataloguers. Your fingers ache from the relentless chill, but tucking this volume into your coat gives you a quiet, enduring advantage against the closed doors ahead.",
    "exits": [
     {
      "label": "Advance toward the iron grille",
@@ -8179,7 +8179,7 @@
    "kind": "scene",
    "title": "The Swaying Mahogany Beam",
    "brief": "You leap across the swirling sea of mist with daring balance, earning a silk rope-ladder with wooden rungs.",
-   "page": "Heavy iron chains groan overhead as another towering stack drifts past through the pale, lamp-lit mist. Dust motes dance in the amber glow of your oil lantern while your boots find steady purchase upon a slick expanse of oak flooring. Somewhere down in the hidden depths below, an ink-river laps rhythmically against the stone foundations of the Unfiled Wing. You adjust the heavy strap of your leather satchel and eye the widening gap where the next shelf ought to drift.",
+   "page": "Iron chains creak overhead while another towering stack drifts past through the pale, lamp-lit mist. Dust motes dance in the amber glow of your oil lantern while your boots find steady purchase upon a slick expanse of oak flooring. Somewhere down in the hidden depths below, an ink-river laps rhythmically against the stone foundations of the Unfiled Wing. You adjust the heavy strap of your leather satchel and eye the widening gap where the next shelf ought to drift.",
    "exits": [
     {
      "label": "Step across the drifting gap",
@@ -8348,7 +8348,7 @@
    "kind": "reward",
    "title": "Sparks in the Gloom",
    "brief": "You slide down a suspended iron conduit with practiced agility, retrieving a heavy pouch of dry flints and steel.",
-   "page": "Friction burns hot against your palms before you slam to a halt beside the mounting bracket, your boots skidding across the iron plates with a shower of sparks. The conduit shudders and pulls away into the fog just as your fingers curl around the heavy canvas pouch, securing it safely against your chest despite the stinging scrapes on your skin. Within the leather wrappings, dry flints and thick steel strike together with a reassuring weight, promising warmth against the damp chill of the deep stacks.",
+   "page": "Friction burns hot against your palms before you slam to a halt beside the mounting bracket, your boots skidding across the iron plates with a shower of sparks. The conduit shudders and pulls away into the fog just as your fingers curl around the canvas pouch, and you clutch it to your chest despite the scrapes on your skin. Within the leather wrappings, dry flints and thick steel strike together with a reassuring weight, promising warmth against the damp chill of the deep stacks.",
    "exits": [
     {
      "label": "Approach the great bronze threshold",
@@ -8658,7 +8658,7 @@
    "kind": "scene",
    "title": "The Overhead Tracks",
    "brief": "You bypass the raging current by climbing the overhead iron tracks, acquiring a long iron pole with a hooked end.",
-   "page": "Frothing black water rushes too fiercely across the lower stacks to permit any crossing by foot or makeshift raft. Abandoning the floor entirely, you leap upward to catch the overhead brass tracks where the heavy sliding ladders are suspended. Hand over hand, you haul your weight along the grease-slicked rail while the dark flood hisses below your dangling boots. A discarded iron pole with a heavy hooked end hangs from a bracket just ahead, waiting within arm's reach.",
+   "page": "Frothing black water rushes too fiercely across the lower stacks to permit any crossing by foot or makeshift raft. You abandon the floor entirely and leap upward to catch the overhead brass tracks where the sliding ladders hang. Hand over hand, you haul your weight along the grease-slicked rail while the dark flood hisses below your dangling boots. A discarded iron pole with a heavy hooked end hangs from a bracket just ahead, waiting within arm's reach.",
    "exits": [
     {
      "label": "Snag the hanging iron pole",
@@ -8673,7 +8673,7 @@
    "kind": "bottleneck",
    "title": "Threshold of the Court",
    "brief": "You stand before the towering bronze doors of the Cataloguers' Court, where a stern clerk demands your travel permit and searches your belongings for illicit manuscripts.",
-   "page": "Heavy bronze doors inscribed with endless lists of prohibited topics loom before you like the gateway to a tomb. A stern cataloguer in stiff, ink-stained cuffs steps out from the shadows, barring your path with a clipboard of black walnut. Demand for travel permits echoes hollowly off the vaulted stone ceiling while the clerk meticulously inspects the seams of your coat for illicit manuscripts. Every confiscated margin-note and smuggled scrap of paper feels suddenly heavy in your pockets under that unblinking, bureaucratic glare.",
+   "page": "Heavy bronze doors inscribed with endless lists of prohibited topics loom before you like the gateway to a tomb. A stern cataloguer in stiff, ink-stained cuffs steps out from the shadows, barring your path with a clipboard of black walnut. Demand for travel permits echoes hollowly off the vaulted stone ceiling while the clerk meticulously inspects the seams of your coat for illicit manuscripts. Every confiscated margin-note and smuggled scrap of paper sits conspicuous in your pockets under that unblinking, bureaucratic glare.",
    "exits": [
     {
      "label": "Present your papers for inspection",
@@ -9063,7 +9063,7 @@
    "kind": "check",
    "title": "Reordering the Indictment",
    "brief": "You manipulate the clerk of court into misfiling your indictment papers, risking public exposure, to secure a key to the lower archive stairs.",
-   "page": "Your fingers hover over the heavy iron ring of keys while the clerk's ink-stained quill scratches a slow, rhythmic tally just inches away. A single misstep will scatter the precarious columns of ledgers across the flagstones, drawing the sharp eyes of the armed beadles stationed at the archway. You lean forward into the suffocating scent of lamp-oil and gum arabic, timing your movement to the heavy chime of the distant water-clock as you slide your palm toward the brass ring.",
+   "page": "Your fingers hover over the heavy iron ring of keys while the clerk's ink-stained quill scratches a slow, rhythmic tally just inches away. A single misstep will scatter the precarious columns of ledgers across the flagstones, drawing the sharp eyes of the armed beadles stationed at the archway. You lean into the reek of lamp-oil and gum arabic and time your reach to the chime of the distant water-clock as your palm slides toward the brass ring.",
    "exits": [
     {
      "label": "check-full",
@@ -9133,7 +9133,7 @@
    "kind": "scene",
    "title": "The Piercing Gaze",
    "brief": "You maintain absolute composure under the piercing gaze of the Chief Cataloguer, risking your inner resolve, to gain a written pardon for past offenses.",
-   "page": "Cold yellow lamplight flickers across the polished mahogany of the dock where you stand under the uncompromising scrutiny of the Chief Cataloguer. Around you, the court falls into a heavy, suffocating hush, broken only by the distant drip of moisture from the cave ceiling and the steady scratching of a recording scribe. The Chief Cataloguer's sharp eyes narrow behind wire spectacles, searching every fold of your shelver's tunic for any sign of hesitation or guilt regarding the lost indexing notes.",
+   "page": "Cold yellow lamplight flickers across the polished mahogany of the dock where you stand under the uncompromising scrutiny of the Chief Cataloguer. Around you the court goes silent, broken only by a distant drip from the cave ceiling and the scratch of a recording scribe's quill. The Chief Cataloguer's sharp eyes narrow behind wire spectacles, searching every fold of your shelver's tunic for any sign of hesitation or guilt regarding the lost indexing notes.",
    "exits": [
     {
      "label": "Meet the chief judge's gaze",
@@ -9217,7 +9217,7 @@
    "kind": "reward",
    "title": "The Signed Acquittal",
    "brief": "You maintain absolute composure under the piercing gaze of the Chief Cataloguer, risking your inner resolve, to gain a written pardon for past offenses.",
-   "page": "Your steady gaze meets the magistrate's eyes until the Chief Cataloguer lets out a dry, reluctant sigh and dips a bone pen into the black well. A formal pardon is scratched onto heavy rag paper, sealed with a glob of hot crimson wax that smells faintly of burnt resin. You accept the document with a steady hand, however narrowly avoiding a humiliating public reprimand as the court bailiff steps aside to clear your path toward the iron depths.",
+   "page": "Your steady gaze meets the magistrate's eyes until the Chief Cataloguer lets out a dry, reluctant sigh and dips a bone pen into the black well. A formal pardon is scratched onto heavy rag paper, sealed with a glob of hot crimson wax that smells faintly of burnt resin. You take the document cleanly as the court bailiff steps aside and clears your path toward the iron depths, no public reprimand spoken.",
    "exits": [
     {
      "label": "Approach the iron portcullis barrier",
@@ -9317,7 +9317,7 @@
    "kind": "reward",
    "title": "The Forged Exemption Seal",
    "brief": "You forge an official signature on a confiscated warrant using quick wit, risking discovery by guards, to obtain an exemption seal.",
-   "page": "Ink stains smear across your fingertips as you scratch the final, crucial loop of the Chief Cataloguer's signature onto the confiscated warrant, your heart hammering a frantic rhythm against your ribs. Heavy boots echo just beyond the arched oak partition, yet your hand remains steady enough to press the brass stamp into the hot red wax, sealing the document with a forged authority that might buy your passage or condemn you to the deepest cells.\n\nPocketing the cool parchment exemption seal before the sentries round the corner, you slip away into the shadows of the card-drawers with a dry throat and a dangerously acquired leverage that no tribunal clerk can easily dispute.",
+   "page": "Ink stains smear across your fingertips as you scratch the final, crucial loop of the Chief Cataloguer's signature onto the confiscated warrant, your heart hammering a frantic rhythm against your ribs. Boots echo just beyond the arched oak partition, yet your hand holds firm enough to press the brass stamp into the hot red wax, sealing the document with a forged authority that might buy your passage or condemn you to the deepest cells.\n\nPocketing the cool parchment exemption seal before the sentries round the corner, you slip away into the shadows of the card-drawers with a dry throat and a dangerously acquired leverage that no tribunal clerk can easily dispute.",
    "exits": [
     {
      "label": "Slip past the mechanical registrar",
@@ -9518,7 +9518,7 @@
    "kind": "bottleneck",
    "title": "The Iron Portcullis",
    "brief": "A massive iron portcullis slams shut ahead of you, operated by a mechanical registrar who demands a heavy toll of rare marginalia.",
-   "page": "Heavy iron links groan overhead as a towering mechanical registrar blocks your forward advance with a wall of spikes and cold grey metal. The clockwork figure extends a brass hand, demanding a heavy toll of rare marginalia torn straight from the margins of forbidden volumes before it will grant permission to pass. You search your pockets, sacrificing precious hand-scrawled notes left behind by ancient readers to appease the greedy mechanism. With a dry, grinding shriek of gears, the heavy portcullis drags itself upward into the stone ceiling, clearing the path ahead.",
+   "page": "Iron links groan overhead while a towering mechanical registrar bars the way with spikes and cold grey metal. The clockwork figure extends a brass hand and demands a steep toll of rare marginalia torn straight from the margins of forbidden volumes before it will grant permission to pass. You search your pockets, sacrificing precious hand-scrawled notes left behind by ancient readers to appease the greedy mechanism. Gears shriek dry and grinding as the portcullis drags itself upward into the stone ceiling and clears the path ahead.",
    "exits": [
     {
      "label": "Walk beneath the raised gate",
@@ -10046,7 +10046,7 @@
    "kind": "recovery",
    "title": "A Crushing Misstep",
    "brief": "You study the complex mechanical rhythm of the moving shelving units, risking miscalculation, to discover a hidden maintenance hatch.",
-   "page": "Your fingers slip against the greased iron just as the heavy case lurches forward, catching your sleeve and pinning your shoulder hard against the rough oak upright with a sickening jolt. Pain flares sharply across your collarbone, leaving a deep purple bruise and tearing a ragged strip from your heavy shelver's coat. You wrench yourself free with a desperate heave, tumbling sideways into the dust as the massive timber grinds past, leaving you battered, winded, and poorer by a good jacket.",
+   "page": "Your fingers slip against the greased iron just as the case lurches forward, catches your sleeve, and pins your shoulder hard against the rough oak upright with a sickening jolt. Pain flares sharply across your collarbone, leaving a deep purple bruise and tearing a ragged strip from your heavy shelver's coat. You wrench yourself free with a desperate heave, tumbling sideways into the dust as the massive timber grinds past, leaving you battered, winded, and poorer by a good jacket.",
    "exits": [
     {
      "label": "Crawl through the clearance gap",
@@ -10427,7 +10427,7 @@
    "kind": "scene",
    "title": "Shadows In The Barracks",
    "brief": "You steel your nerves against the intimidating threats of the watch captain, risking your composure, to secure a stolen patrol schedule.",
-   "page": "Cold drafts sweep across the timber floorboards as you press your shoulder against the damp stone wall of the dormitory annex. The watch captain's sharp voice echoes from the inner office, barking orders about confiscated registers and the impending closure of the lower vaults. You wait in the gloom until the junior orderly hurries away toward the mess hall, leaving the heavy oak door slightly ajar. Moonlight filters through a narrow, barred slit high above, illuminating dust motes dancing over a rogue sheaf of parchment resting on the corner desk.\n\nSlipping inside feels like walking across thin ice above a bottomless ink-well, but the prize outweighs the danger of discovery. Your fingers trace the edge of the wooden threshold as you prepare to confront the heavy gaze of the man who holds the keys to the inner patrol routes.",
+   "page": "Cold drafts sweep across the timber floorboards as you press your shoulder against the damp stone wall of the dormitory annex. The watch captain's sharp voice echoes from the inner office, barking orders about confiscated registers and the impending closure of the lower vaults. You wait in the gloom until the junior orderly hurries away toward the mess hall and leaves the oak door slightly ajar. Moonlight filters through a narrow, barred slit high above, illuminating dust motes dancing over a rogue sheaf of parchment resting on the corner desk.\n\nSlipping inside feels like walking across thin ice above a bottomless ink-well, but the prize outweighs the danger of discovery. Your fingers trace the edge of the wooden threshold as you prepare to confront the heavy gaze of the man who holds the keys to the inner patrol routes.",
    "exits": [
     {
      "label": "Stand your ground before the captain",
@@ -10665,7 +10665,7 @@
    "kind": "recovery",
    "title": "The Cost of a Blundered Leap",
    "brief": "You dodge between swinging halberds to snatch a bundle of confiscated dispatches, risking a heavy blow, to acquire vital intelligence.",
-   "page": "A heavy steel haft catches you squarely across the ribs, driving the breath from your lungs in a ragged gasp and sending you sprawling hard onto the cold flagstones. The bundle of dispatches scatters across the floor, loose ink-slips fluttering like wounded crows before a pair of iron-plated boots pins them down. You scramble backward on hands and knees, tasting copper and dust while a sharp, throbbing ache blooms along your left side. The guards haul you to your feet with bruising rough-hands, relieving you of your remaining spare quills and leaving a deep, purple bruise over your ribs that will ache every time you lift a heavy volume for weeks to come.",
+   "page": "A steel haft catches you squarely across the ribs, drives the breath from your lungs in a ragged gasp, and knocks you sprawling hard onto the cold flagstones. The bundle of dispatches scatters across the floor, loose ink-slips fluttering like wounded crows before a pair of iron-plated boots pins them down. You scramble backward on hands and knees, tasting copper and dust while a sharp, throbbing ache blooms along your left side. The guards haul you to your feet with bruising rough-hands, relieving you of your remaining spare quills and leaving a deep, purple bruise over your ribs that will ache every time you lift a heavy volume for weeks to come.",
    "exits": [
     {
      "label": "Pick up the scattered fragments",
@@ -10697,7 +10697,7 @@
    "kind": "scene",
    "title": "Staring Down the Commander",
    "brief": "You stare down the intimidating garrison commander during a tense standoff, risking your mental fortitude, to win an unhindered departure.",
-   "page": "Heavy oak doors loom at the end of the vaulted corridor, barred by two towering sentries and overseen by the senior garrison commander whose reputation for cruelty is etched into every line of his scarred face. He stands beside a brazier of glowing coals, his folded arms resting across a chest adorned with disciplinary medals forged from old printer's lead. The silence in the stone-walled foyer is absolute, broken only by the crackle of burning coke and the slow, heavy drip of water from an unseen leak somewhere in the high vaulting. His dark, unblinking eyes lock onto yours with the weight of an inquisitor inspecting heresy in a marginal note.\n\nYou refuse to drop your gaze, holding your ground as the commander steps forward, his boots clicking like clockwork against the paving stones.",
+   "page": "Heavy oak doors loom at the end of the vaulted corridor, barred by two towering sentries and overseen by the senior garrison commander whose reputation for cruelty is etched into every line of his scarred face. He stands beside a brazier of glowing coals, his folded arms resting across a chest adorned with disciplinary medals forged from old printer's lead. The silence in the stone-walled foyer is absolute, broken only by the crackle of burning coke and a slow drip of water from an unseen leak in the high vaulting. His dark, unblinking eyes lock onto yours with the weight of an inquisitor inspecting heresy in a marginal note.\n\nYou refuse to drop your gaze, holding your ground as the commander steps forward, his boots clicking like clockwork against the paving stones.",
    "exits": [
     {
      "label": "Meet the commander's gaze head-on",
@@ -12272,7 +12272,7 @@
    "kind": "scene",
    "title": "Seeking the Warrant",
    "brief": "You sweet-talk the chief magistrate into overlooking your lack of formal accreditation, risking swift rejection, to secure a travel warrant.",
-   "page": "Smooth walnut wainscoting reflects the flickering yellow glow of heavy brass wall-lamps as you step closer to the magistrate's elevated chair. The chief magistrate peers over half-moon spectacles, his fingers steepled atop a massive ledger containing centuries of rejected petitions. You keep your tone low, measured, and carefully devoid of defensive urgency, speaking of urgent library business that brooks no bureaucratic delay. A faint crease forms between his bushy white eyebrows as he weighs your lack of formal ink-stamps against the sheer audacity of your request.\n\nThe low murmur of the surrounding court fades into an expectant hush while the old man turns a heavy page.",
+   "page": "Smooth walnut wainscoting reflects the flickering yellow glow of heavy brass wall-lamps as you step closer to the magistrate's elevated chair. The chief magistrate peers over half-moon spectacles, his fingers steepled atop a massive ledger containing centuries of rejected petitions. You keep your tone low, measured, and carefully devoid of defensive urgency, speaking of urgent library business that brooks no bureaucratic delay. A faint crease forms between his bushy white eyebrows as he weighs your lack of formal ink-stamps against the sheer audacity of your request.\n\nMurmurs around the court die back while the old man turns a page.",
    "exits": [
     {
      "label": "Press the argument for travel papers",
@@ -12832,7 +12832,7 @@
    "kind": "scene",
    "title": "The Guarded Balcony",
    "brief": "You trick the balcony guard into looking the other way with a clever distraction, risking discovery, to secure a grappling hook.",
-   "page": "Heavy iron lanterns cast long, flickering shadows across the marble gallery where the balcony guard paces with mechanical regularity. His brass-buckled tunic smells faintly of mutton grease and dry parchment, and his eyes remain fixed upon the upper clerestory windows. Resting upon a low stone plinth just beyond his reach sits the three-pronged grappling hook of cold forged steel, its coil of hempen rope coiled neatly like a sleeping adder. Slipping past him requires a sudden, calculated disruption to draw his heavy boots toward the opposite balustrade.",
+   "page": "Iron lanterns throw long flickering shadows across the marble gallery where the balcony guard paces on his circuit. His brass-buckled tunic smells faintly of mutton grease and dry parchment, and his eyes remain fixed upon the upper clerestory windows. Resting upon a low stone plinth just beyond his reach sits the three-pronged grappling hook of cold forged steel, its coil of hempen rope coiled neatly like a sleeping adder. Slipping past him requires a sudden, calculated disruption to draw his heavy boots toward the opposite balustrade.",
    "exits": [
     {
      "label": "Create a clatter of fallen folios",
@@ -14097,7 +14097,7 @@
    "kind": "recovery",
    "title": "The Cost of Deceit",
    "brief": "You trick the mosaic into lowering its protective barrier by misdirecting its queries, securing a master ledger fragment.",
-   "page": "A sudden snap of ceramic teeth catches the edge of your heavy canvas sleeve, tearing a deep, jagged strip from fabric to skin before you wrench your arm back with a sharp gasp. Pain flares white and hot across your forearm, mingling with the bitter sting of lamp-oil and dried ink ground into the fresh scratch. The mosaic settles back into place with a sullen rattle, its angry amber glow dimming to a dull, bruised purple as it retains the shredded scrap of your coat as forfeit. You press a stained rag against the bleeding line, swallowing the metallic taste of panic in the heavy air of the deep stacks. Though your pulse hammers hard against your ribs and your sleeve hangs in tatters, the path ahead clears enough for you to stumble forward into the dust.",
+   "page": "A snap of ceramic teeth catches the edge of your canvas sleeve and tears a deep, jagged strip from fabric to skin before you wrench your arm back with a sharp gasp. Pain flares white and hot across your forearm, mingling with the bitter sting of lamp-oil and dried ink ground into the fresh scratch. The mosaic settles back into place with a sullen rattle, its angry amber glow dimming to a dull, bruised purple as it retains the shredded scrap of your coat as forfeit. You press a stained rag against the bleeding line, swallowing the metallic taste of panic in the heavy air of the deep stacks. Though your pulse hammers hard against your ribs and your sleeve hangs in tatters, the path ahead clears enough for you to stumble forward into the dust.",
    "exits": [
     {
      "label": "Push deeper into the stacks",
@@ -14243,7 +14243,7 @@
    "kind": "reward",
    "title": "The Guiding Needle",
    "brief": "You navigate the blinding haze by reading the faint phosphorescence of specialized marginal notes, uncovering a hidden brass compass.",
-   "page": "Moving with careful, deliberate steps through the swirling grey, you let the rhythmic ticking of the brass compass pull you safely out of the blinding storm. Whether you slipped through the stinging dust with unbothered grace or dragged yourself out of the drifts bruised and coughing, the prize remains firm in your pocket. The compass settles in your palm, its glowing needle pointing steadily down a previously unseen corridor of iron-ribbed shelving where the air turns suddenly crisp and cold. You stow the instrument away, feeling its steady vibration against your ribs like a small, mechanical heart keeping time with your own.",
+   "page": "Moving with careful, deliberate steps through the swirling grey, you let the rhythmic ticking of the brass compass pull you safely out of the blinding storm. Whether you slipped through the stinging dust with unbothered grace or dragged yourself out of the drifts bruised and coughing, the prize remains firm in your pocket. The compass settles in your palm, its glowing needle fixed on a previously unseen corridor of iron-ribbed shelving where the air turns suddenly crisp and cold. You stow the instrument away, and a small mechanical pulse ticks against your ribs in time with your own.",
    "exits": [
     {
      "label": "Return to the stagnant hollow",
@@ -14259,7 +14259,7 @@
    "kind": "scene",
    "title": "The Folio Shield",
    "brief": "You outwit the swirling dust devils by redirecting their airflow with a discarded folio cover, retrieving a sealed parchment tube.",
-   "page": "Heavy vellum flakes strike your lantern glass with the sound of driven hail, stinging your knuckles whenever you reach out to steady yourself against the tilting stacks. You spot a discarded calfskin folio cover wedged half-buried in a drift of gritty ink-dust, its stiff edges scarred by old damp. Snatching the cover from the debris, you snap it hard into a crude wedge against the churning air current, feeling the mini-cyclone split and veer away from your face. A cylindrical length of heavy parchment rolls free from the eddy, tapping against the toe of your boot.",
+   "page": "Vellum flakes slap your lantern glass like hail and nick your knuckles whenever you brace against the tilting stacks. You spot a discarded calfskin folio cover wedged half-buried in a drift of gritty ink-dust, its stiff edges scarred by old damp. Snatching the cover from the debris, you snap it hard into a crude wedge against the churning air current, feeling the mini-cyclone split and veer away from your face. A cylindrical length of heavy parchment rolls free from the eddy, tapping against the toe of your boot.",
    "exits": [
     {
      "label": "Pry the rolled parchment free",
@@ -15097,7 +15097,7 @@
    "kind": "scene",
    "title": "The Drifting Plank",
    "brief": "You leap lightly over the churning ink channel on a drifting shelf board, retrieving an ornamental silver dipping pen.",
-   "page": "Loose shelving boards bob sluggishly upon the oily surface of the ink-channel, held together by strands of rotted hemp and dried paste. You steady a long oak plank with the butt of a heavy ledger, testing its buoyancy against the steady pull of the underground drain. Glinting beneath a tangle of waterlogged parchment near the middle of the span lies an ornamental silver dipping pen, its nib intact and untarnished by the corrosive fluid around it. The wood groans softly under your weight as you shift your stance to secure the prize.",
+   "page": "Loose shelving boards bob sluggishly upon the oily surface of the ink-channel, held together by strands of rotted hemp and dried paste. You brace a long oak plank with the butt of a ledger and test whether it will float against the underground drain's pull. Glinting beneath a tangle of waterlogged parchment near the middle of the span lies an ornamental silver dipping pen, its nib intact and untarnished by the corrosive fluid around it. The wood groans softly under your weight as you shift your stance to secure the prize.",
    "exits": [
     {
      "label": "Retrieve the silver dipping pen",
@@ -16203,7 +16203,7 @@
    "kind": "recovery",
    "title": "Bruised and Bound",
    "brief": "You withstand the collective gaze of the critical spirits without flinching, earning a promise of warning against upcoming traps.",
-   "page": "The weight of collective disapproval proves too heavy to shrug off entirely, slamming into your chest like a swinging oak door. You stagger backward, your shoulder blades colliding hard with a jutting iron bracket that tears a jagged hole in your coat lining and leaves a dull, throbbing ache along your ribs. Several loose sheets of paper flutter down around you, mocking your stumble with dry, rustling whispers. Catching your breath in the dusty gloom, you press a hand to your bruised side and force yourself upright. The trial demands its toll in pain and lost moments, but the living blood still pumps through your veins, and the path forward remains open.",
+   "page": "Collective disapproval hits too hard to shrug off, slamming into your chest like a swinging oak door. You stagger backward, your shoulder blades colliding hard with a jutting iron bracket that tears a jagged hole in your coat lining and leaves a dull, throbbing ache along your ribs. Several loose sheets of paper flutter down around you, mocking your stumble with dry, rustling whispers. Catching your breath in the dusty gloom, you press a hand to your bruised side and force yourself upright. The trial demands its toll in pain and lost moments, but the living blood still pumps through your veins, and the path forward remains open.",
    "exits": [
     {
      "label": "Drag yourself toward the exit",
@@ -16235,7 +16235,7 @@
    "kind": "scene",
    "title": "Weight of the Past",
    "brief": "You hold your ground as the spectral crowd surges forward, securing a heavy brass paperweight that anchors your thoughts.",
-   "page": "Several heavy bronze card-drawers slide outward from the nearby stack-ends of their own accord, dropping iron-heavy paperweights onto the flagstones around your boots. You hold your ground without flinching, letting the metal artifacts clatter harmlessly past your shins while the phantom onlookers watch from the gloom. Reaching down amidst the settling dust, your fingers close around the coolest, heaviest paperweight of the lot, its surface engraved with obsolete cataloguing runes. The metal feels reassuringly solid against your palm, grounding your scattered thoughts as the surrounding shelves give a slow, settling groan.\n\nThe ambient murmur of the marginalia softens into a respectful hush, acknowledging that you cannot be easily cowed by falling stationery or phantom theatrics. You slip the heavy bronze object into your deep coat pocket, where its steady weight helps keep your balance true against the shifting draft.",
+   "page": "Several heavy bronze card-drawers slide outward from the nearby stack-ends of their own accord, dropping iron-heavy paperweights onto the flagstones around your boots. You hold your ground without flinching, letting the metal artifacts clatter harmlessly past your shins while the phantom onlookers watch from the gloom. Reaching down amidst the settling dust, your fingers close around the coolest, heaviest paperweight of the lot, its surface engraved with obsolete cataloguing runes. The metal feels reassuringly solid against your palm, grounding your scattered thoughts as the surrounding shelves give a slow, settling groan.\n\nThe ambient murmur of the marginalia softens into a respectful hush, acknowledging that you cannot be easily cowed by falling stationery or phantom theatrics. You slip the bronze object into your deep coat pocket, and the mass of it anchors you against the shifting draft.",
    "exits": [
     {
      "label": "Carry the heavy bronze artifact",
@@ -16324,7 +16324,7 @@
    "kind": "bottleneck",
    "title": "The Threshold of Letters",
    "brief": "Ahead lies the threshold of the Last Reader's cell, guarded by an intricate puzzle door made of sliding wooden letters.",
-   "page": "Beyond the final colonnade of the deep annexe stands the heavy wooden threshold of the Last Reader's cell, blocking your advance with an intricate puzzle of sliding brass letters. The characters carved into its surface constantly crawl and rearrange themselves across the oak paneling, spelling out shifting aphorisms and dead languages that mock your haste. Lamp-oil burns low in your hand, casting long, jittery shadows against the grain of the door as you study the chaotic shifting of the alphabet. Somewhere behind this labyrinthine barrier sits the ancient scholar who remembers everything, holding the answers to Thessaly's disappearance and the opening of the vault. You must decipher the moving puzzle before the shifting letters lock you out for good.",
+   "page": "Beyond the final colonnade of the deep annexe stands the wooden threshold of the Last Reader's cell, blocked by a puzzle of sliding brass letters. The characters carved into its surface constantly crawl and rearrange themselves across the oak paneling, spelling out shifting aphorisms and dead languages that mock your haste. Lamp-oil burns low in your hand, casting long, jittery shadows against the grain of the door as you study the chaotic shifting of the alphabet. Somewhere behind this labyrinthine barrier sits the ancient scholar who remembers everything, holding the answers to Thessaly's disappearance and the opening of the vault. You must decipher the moving puzzle before the shifting letters lock you out for good.",
    "exits": [
     {
      "label": "Approach the shifting alphabet portal",
@@ -16388,7 +16388,7 @@
    "kind": "scene",
    "title": "The Luminous Prism",
    "brief": "You conquer the shifting linguistic puzzle through sheer mental endurance, unlocking a chamber containing a luminous reading prism.",
-   "page": "Pale light spills from the small chamber beyond the puzzle-door, illuminating dust motes that drift lazily in the stagnant air of the deep annexe. Resting upon a scarred mahogany pedestal sits a heavy, multifaceted reading prism, catching every stray flicker of your oil lamp and refracting it into sharp, violet beams. The glass hums faintly against your skin, resonating with the quiet melancholy of unread manuscripts piled high around the floor. You lift the instrument from its velvet rest, feeling its surprising heft and the steady warmth it radiates against your palm. The surrounding darkness seems to retreat a fraction, leaving only the sound of your own boots on the flagstones and the distant, grinding shift of distant shelves.",
+   "page": "Pale light spills from the small chamber beyond the puzzle-door, illuminating dust motes that drift lazily in the stagnant air of the deep annexe. On a scarred mahogany pedestal sits a reading prism that catches every stray flicker of your oil lamp and breaks it into sharp violet beams. The glass hums faintly against your skin, resonating with the quiet melancholy of unread manuscripts piled high around the floor. You lift the instrument from its velvet rest, feeling its surprising heft and the steady warmth it radiates against your palm. The surrounding darkness seems to retreat a fraction, leaving only the sound of your own boots on the flagstones and the distant, grinding shift of distant shelves.",
    "exits": [
     {
      "label": "Inspect the glowing glass core",
@@ -16488,7 +16488,7 @@
    "kind": "check",
    "title": "Resisting the Lock",
    "brief": "You push past the psychic resistance of the locking mechanism with stubborn focus, acquiring an ivory letter-opener.",
-   "page": "A sudden surge of psychic cold rushes through the crack in the door, trying to freeze your thoughts and drive you back into the echoing corridors of the stack. You dig your heels into the mortar between the flagstones, clenching your jaw until your teeth ache with the strain. The weight of the entire archive seems to press down upon your shoulders, testing every boundary of your will as you fight to keep the heavy timbers from snapping shut again. The locking mechanism chatters furiously like a nest of mechanical teeth, demanding absolute mental dominance before it will grant passage.",
+   "page": "A sudden surge of psychic cold rushes through the crack in the door, trying to freeze your thoughts and drive you back into the echoing corridors of the stack. You dig your heels into the mortar between the flagstones, clenching your jaw until your teeth ache with the strain. The whole archive seems to lean on your shoulders as you fight to keep the timbers from snapping shut again. The locking mechanism chatters furiously like a nest of mechanical teeth, demanding absolute mental dominance before it will grant passage.",
    "exits": [
     {
      "label": "check-full",
@@ -16696,7 +16696,7 @@
    "kind": "recovery",
    "title": "The Toll Of The Jam",
    "brief": "You move in sync with the mechanical shifting of the portal to slip through its gap, retrieving a spool of stout binding thread.",
-   "page": "A heavy wooden edge clips your shoulder with bone-numbing force as the portal snaps shut a fraction too soon, tearing your coat and leaving a jagged, stinging welt across your back. You stumble backward onto the cold flagstones, gasping for breath while the spool of thread rolls haphazardly against your boot. The bruising ache settles deep into your muscle, reminding you sharply of the library's absolute indifference to trespassers. You pick yourself up from the dust, rubbing the sore spot through the torn wool.",
+   "page": "A wooden edge clips your shoulder with bone-numbing force as the portal snaps shut a fraction too soon, tearing your coat and raising a jagged welt across your back. You stumble backward onto the cold flagstones, gasping for breath while the spool of thread rolls haphazardly against your boot. The bruising ache settles deep into your muscle, reminding you sharply of the library's absolute indifference to trespassers. You pick yourself up from the dust, rubbing the sore spot through the torn wool.",
    "exits": [
     {
      "label": "Gather the thread and press onward",
@@ -17538,7 +17538,7 @@
    "kind": "scene",
    "title": "The Freezing Latch",
    "brief": "You brace your shoulder against the shivering latch while magical cold drains your warmth, testing your resolve, and you earn an insulating wool shawl soaked in lamp-oil.",
-   "page": "Frost feathers across the iron surface of the heavy portal, spinning intricate, crystalline webs that whisper of ancient winters locked away in the deep annexe. The air grows preternaturally cold, drawing the heat straight from your marrow and turning every exhalation into a thick cloud of white mist that clings to the ancient timber. You stare at the massive frosted latch, feeling the magical chill bite straight through your thin shelver's tunic, numbing your collarbones and stiffening the joints in your fingers. The silence here is absolute, broken only by the faint, rhythmic ticking of a clock buried deep within the masonry.",
+   "page": "Frost feathers across the iron surface of the portal, spinning crystalline webs that speak of old winters locked away in the deep annexe. The air grows preternaturally cold, drawing the heat straight from your marrow and turning every exhalation into a thick cloud of white mist that clings to the ancient timber. You stare at the massive frosted latch, feeling the magical chill bite straight through your thin shelver's tunic, numbing your collarbones and stiffening the joints in your fingers. The silence here is absolute, broken only by the faint, rhythmic ticking of a clock buried deep within the masonry.",
    "exits": [
     {
      "label": "Lean hard against the frost",
@@ -17622,7 +17622,7 @@
    "kind": "reward",
    "title": "The Oiled Shawl",
    "brief": "You brace your shoulder against the shivering latch while magical cold drains your warmth, testing your resolve, and you earn an insulating wool shawl soaked in lamp-oil.",
-   "page": "You heave against the frost-locked latch with a final surge of effort until the frozen mechanism groans and gives way with a sharp crack of splintering ice. However narrowly you endured the biting cold, you stand victorious over the threshold, your breathing ragged in the frozen air. As you steady yourself, your hand brushes against a heavy, oil-soaked wool shawl draped over a discarded reading stand nearby. You wrap the thick, pungent garment tightly around your shoulders, instantly feeling the heavy grease block out the lingering supernatural chill.",
+   "page": "You heave against the frost-locked latch with a final surge of effort until the frozen mechanism groans and gives way with a sharp crack of splintering ice. However narrowly you endured the biting cold, you stand victorious over the threshold, your breathing ragged in the frozen air. As you catch your footing, your hand brushes an oil-soaked wool shawl draped over a discarded reading stand nearby. You wrap the thick, pungent garment tightly around your shoulders, instantly feeling the heavy grease block out the lingering supernatural chill.",
    "exits": [
     {
      "label": "Return to the threshold arch",
@@ -18108,7 +18108,7 @@
    "kind": "scene",
    "title": "The Ancient Rebuke",
    "brief": "You endure a barrage of ancient insults hurled by bound volumes of forgotten law, testing your resolve, and you secure an iron tongue-scraper of silence.",
-   "page": "Leather-bound folios snap shut upon the stone like heavy jaws, spitting archaic insults about your parentage and the grease on your sleeves. Volumes of forgotten municipal law flutter past your ears with the sharpness of dry razor-blades, howling ancient curses that demand your immediate banishment into the ink-rivers. You grit your teeth against the rising tide of whispered vitriol, pressing your palms over your ears as the pages rustle in a furious crescendo. Amidst the fluttering storm of parchment, your fingers strike cold iron lodged between two defiant volumes.\n\nYanking the heavy metal free from the biting bindings, you secure a tarnished tongue-scraper of heavy iron, its edge dulled by centuries of silencing malicious gossip.",
+   "page": "Leather-bound folios clap shut on the stone like jaws and spit archaic insults about your parentage and the grease on your sleeves. Volumes of forgotten municipal law flutter past your ears with the sharpness of dry razor-blades, howling ancient curses that demand your immediate banishment into the ink-rivers. You grit your teeth against the rising tide of whispered vitriol, pressing your palms over your ears as the pages rustle in a furious crescendo. Amidst the fluttering storm of parchment, your fingers strike cold iron lodged between two defiant volumes.\n\nYanking the metal free from the biting bindings, you secure a tarnished iron tongue-scraper, its edge dulled by centuries of silencing malicious gossip.",
    "exits": [
     {
      "label": "Step through the fluttering storm",
@@ -18177,7 +18177,7 @@
    "kind": "reward",
    "title": "The Iron Silence",
    "brief": "You endure a barrage of ancient insults hurled by bound volumes of forgotten law, testing your resolve, and you secure an iron tongue-scraper of silence.",
-   "page": "Biting leaves and screaming legalities fill the air as you push forward past snapping leather spines that nip at your heels. The flying insults beat against your leather coat like hail against a slate roof, yet your concentration remains intact as you carve a narrow path through the literary storm. Reaching into the flurry, your fingers close firmly around a heavy piece of cold iron wedged deeply between two rebellious folios, silencing their petty grievances with a single wrench. You slip the heavy instrument into your pocket, feeling the peculiar weight of absolute quiet settle over your bruised fingers.",
+   "page": "Biting leaves and screaming legalities fill the air as you push forward past snapping leather spines that nip at your heels. The flying insults beat against your leather coat like hail against a slate roof, yet your concentration remains intact as you carve a narrow path through the literary storm. Reaching into the flurry, your fingers close firmly around a heavy piece of cold iron wedged deeply between two rebellious folios, silencing their petty grievances with a single wrench. You slip the instrument into your pocket, and a peculiar absolute quiet settles over your bruised fingers.",
    "exits": [
     {
      "label": "Return to the obsidian ring",
@@ -18193,7 +18193,7 @@
    "kind": "bottleneck",
    "title": "Breaching The Lower Parapet",
    "brief": "Burner zealots breach the lower parapet with torches and heavy mallets, shouting that all memory must turn to ash so that humanity may begin anew without its burdens.",
-   "page": "Heavy wooden mallets strike the ancient limestone wall with a concussive boom that rattles the dust from the high vaulted arches above. Shouts of crude zeal echo up the stairwells as Burner zealots drive heavy iron wedges into the mortar joints, their torches casting flickering orange smears across the endless ranks of classified ledgers. Smoke drifts through the aisles, smelling of burning buckram and rancid tallow, signaling the arrival of those who believe every word ever written must be purged to save mankind from its own history. The defending scholars scatter like autumn leaves, abandoning their ink-pots and brass stamps as the main gateway shatters inward under a final, coordinated blow of timber and iron.",
+   "page": "Wooden mallets pound the ancient limestone wall, and a concussive boom rattles dust from the high vaulted arches above. Shouts of crude zeal echo up the stairwells as Burner zealots drive heavy iron wedges into the mortar joints, their torches casting flickering orange smears across the endless ranks of classified ledgers. Smoke drifts through the aisles, smelling of burning buckram and rancid tallow, signaling the arrival of those who believe every word ever written must be purged to save mankind from its own history. The defending scholars scatter like autumn leaves, abandoning their ink-pots and brass stamps as the main gateway shatters inward under a final, coordinated blow of timber and iron.",
    "exits": [
     {
      "label": "Approach the smoking stone bridge",
@@ -18272,7 +18272,7 @@
    "kind": "check",
    "title": "The Fiery Stand",
    "brief": "You stand your ground against a fanatic swinging a flaming brand, testing your resolve, and you drive them back to claim their heavy iron oil-flask.",
-   "page": "Another fanatic steps forward to block your path, brandishing a heavy iron mace in one hand and a sputtering torch in the other, roaring hymns of universal erasure. The heat is stifling, and the stone floor beneath your boots vibrates as the great subterranean machinery shifts its weight in the dark below. You steady your breathing, raising your newly acquired iron flask like a shield against the impending rush, locking your eyes onto the zealot's wild gaze. Just as the heavy mace begins its downward arc toward your skull, you tense every muscle to meet the blow.",
+   "page": "Another fanatic steps into your path with an iron mace in one hand and a sputtering torch in the other, roaring hymns of universal erasure. The heat is stifling, and the stone floor beneath your boots vibrates as the great subterranean machinery shifts its weight in the dark below. You steady your breathing, raising your newly acquired iron flask like a shield against the impending rush, locking your eyes onto the zealot's wild gaze. Just as the heavy mace begins its downward arc toward your skull, you tense every muscle to meet the blow.",
    "exits": [
     {
      "label": "check-full",
@@ -18992,7 +18992,7 @@
    "kind": "reward",
    "title": "The Iron Harvest",
    "brief": "You steel your nerves against the falling debris as the roof groans overhead, testing your resolve, and you salvage a sturdy leather pouch filled with iron pinch-bolts.",
-   "page": "Heavy chunks of plaster pelt the stone flags at your feet, yet you manage to steady your balance before the archway shears apart completely. Bending low beneath the groaning lintel, your fingers graze a dropped leather kit wedged between the iron shelving. Inside rests a heavy handful of cold, threaded pinch-bolts, solid enough to anchor any vibrating bracket in the deep stacks.",
+   "page": "Chunks of plaster pelt the stone flags at your feet, yet you plant yourself before the archway shears apart completely. Bending low beneath the groaning lintel, your fingers graze a dropped leather kit wedged between the iron shelving. Inside rests a heavy handful of cold, threaded pinch-bolts, solid enough to anchor any vibrating bracket in the deep stacks.",
    "exits": [
     {
      "label": "Step through the fluttering ink-moths",
@@ -19110,7 +19110,7 @@
    "kind": "recovery",
    "title": "Scratched by Quills",
    "brief": "You bargain with a chorus of disgruntled annotators using clever wordplay, testing your cunning, and you win a binding oath of silence from the spectral crowd.",
-   "page": "A sharp retort escapes your lips a fraction too late, and the enraged annotators swarm forward like a cloud of stinging hornets. Their spectral quills rake fiercely across your forearm, leaving fine, burning paper-cuts that weep pale blue ink. You stumble backward against a stack of ledgers, clutching your bleeding arm as the air fills with malicious sniggers. Though the encounter leaves you nursing a fresh, stinging wound and a profound sense of exhaustion, you manage to push yourself upright and stumble away into the gloom.",
+   "page": "A sharp retort escapes your lips a fraction too late, and the enraged annotators swarm forward like a cloud of stinging hornets. Their spectral quills rake fiercely across your forearm, leaving fine, burning paper-cuts that weep pale blue ink. You stumble backward against a stack of ledgers, clutching your bleeding arm as the air fills with malicious sniggers. The encounter leaves you nursing a fresh wound and bone-deep exhaustion, yet you push yourself upright and stumble away into the gloom.",
    "exits": [
     {
      "label": "Flee down the dusty aisle",
@@ -19342,7 +19342,7 @@
    "kind": "check",
    "title": "Across the Iron Rib",
    "brief": "You step gracefully across a gap where the iron floor has rusted away into nothingness, testing your agility, and you retrieve a spool of fine silken thread.",
-   "page": "The remaining girder groans beneath your boots as you lean out over the open drop, testing the balance of your shoulders against the steady upward draft from the deep stacks. Every rivet in the ironwork feels loose, trembling with the distant vibration of the closing doors and the weight of millions of misplaced volumes. You have to thread your way across a two-inch rib of rusted steel while keeping your lamp steady against your hip and your eyes fixed on the silken spool waiting on the far bracket.\n\nYou take a slow, calculated breath, shifting your center of mass forward into the cold air just as the girder gives a sharp, warning metallic shiver beneath your left heel.",
+   "page": "The remaining girder groans beneath your boots as you lean out over the open drop, testing the balance of your shoulders against the steady upward draft from the deep stacks. Every rivet in the ironwork feels loose, trembling with the distant vibration of the closing doors and the weight of millions of misplaced volumes. You have to thread your way across a two-inch rib of rusted steel, lamp clamped against your hip, eyes fixed on the silken spool waiting on the far bracket.\n\nYou take a slow, calculated breath, shifting your center of mass forward into the cold air just as the girder gives a sharp, warning metallic shiver beneath your left heel.",
    "exits": [
     {
      "label": "check-full",
@@ -19396,7 +19396,7 @@
    "kind": "reward",
    "title": "The Silken Spool",
    "brief": "You step gracefully across a gap where the iron floor has rusted away into nothingness, testing your agility, and you retrieve a spool of fine silken thread.",
-   "page": "You maintain your footing with a steady, quiet discipline, placing each step with exact precision until your boots touch the solid oak planking of the far tier. Resting on a dusty shelf bracket right where the ironwork ends is the object you spotted, small and unassuming yet humming with a faint, steady vibration when you lift it from the dust. It is a spool of grey spider-silk, impervious to ink and damp, prized by binders for mending the torn spines of forbidden folios.\n\nYou slip the spool into your pocket, feeling its strange, cool weight steadying your pulse as the distant machinery of the vault grinds on.",
+   "page": "You place each step with care until your boots touch the solid oak planking of the far tier. On a dusty shelf bracket right where the ironwork ends sits the object you spotted, small and plain, yet it ticks faintly in your hand when you lift it from the dust. It is a spool of grey spider-silk, impervious to ink and damp, prized by binders for mending the torn spines of forbidden folios.\n\nYou slip the spool into your pocket, feeling its strange, cool weight steadying your pulse as the distant machinery of the vault grinds on.",
    "exits": [
     {
      "label": "Follow the iron walkway onward",
@@ -19512,7 +19512,7 @@
    "kind": "bottleneck",
    "title": "The Vault of the Index",
    "brief": "You stand at the absolute center of the vault before the pedestal of the Index, where Thessaly Marr waits in the flickering shadows with her lamp guttering out.",
-   "page": "The stacks end abruptly at a vast, circular floor of black basalt where the air smells heavily of cold lamp-oil, ozone, and ancient dust. In the very center stands a heavy stone pedestal carved with the twisted shapes of sleeping hounds, and upon it rests the Index, its pages bound in iron-grey leather that seems to breathe in the dim light. Thessaly Marr waits beside the pedestal, her fingers resting lightly on the cold cover while her lamp sputters its final, dying blue spark into the gloom. Her face is pale and drawn with exhaustion, yet her eyes hold the absolute stillness of someone who has read the final sentence of history. Beyond her, the massive bronze doors of the vault begin their heavy, groaning descent into the floor, sealing off the world outside for a generation.\n\nShe looks up as your boots touch the basalt, sliding a heavy iron key across the stone toward your feet without a word.",
+   "page": "The stacks end abruptly at a vast, circular floor of black basalt where the air smells heavily of cold lamp-oil, ozone, and ancient dust. In the very center stands a stone pedestal carved with twisted shapes of sleeping hounds, and upon it rests the Index, pages bound in iron-grey leather that seems to breathe in the dim light. Thessaly Marr waits beside the pedestal, her fingers resting lightly on the cold cover while her lamp sputters its final, dying blue spark into the gloom. Her face is pale and drawn with exhaustion, yet her eyes hold the absolute stillness of someone who has read the final sentence of history. Beyond her, the massive bronze doors of the vault groan as they sink into the floor, sealing off the world outside for a generation.\n\nShe looks up as your boots touch the basalt and slides an iron key across the stone toward your feet without a word.",
    "exits": [
     {
      "label": "Step forward to claim the Index",
@@ -19617,7 +19617,7 @@
    "kind": "scene",
    "title": "Barrage of Ancient Insults",
    "brief": "You endure a barrage of ancient insults hurled by bound volumes of forgotten law, testing your resolve, and you secure an iron tongue-scraper of silence.",
-   "page": "Heavy, leather-bound compilations of forgotten municipal law rise on their edges like offended magistrates, barking dry insults about your lineage and your filing accuracy. You stand your ground against the stinging hail of archaic defamation, letting the verbal abuse wash over you with grim, unshakeable composure. Reaching into the flurry of flying pages, your fingers close around a cold, flat instrument of hammered pewter. You draw out the heavy iron tongue-scraper of silence, pressing its edge against the nearest volume until the bickering library sinks into sullen quiet.",
+   "page": "Leather-bound tomes of forgotten municipal law tip onto their edges like offended magistrates and bark dry insults about your lineage and your filing accuracy. You stand your ground against the stinging hail of archaic defamation, letting the verbal abuse wash over you with grim, unshakeable composure. Reaching into the flurry of flying pages, your fingers close around a cold, flat instrument of hammered pewter. You draw out the iron tongue-scraper of silence and press its edge against the nearest volume until the bickering library sinks into sullen quiet.",
    "exits": [
     {
      "label": "Continue down the hushed aisle",
@@ -19647,7 +19647,7 @@
    "kind": "scene",
    "title": "Self-Important Guardian Ledger",
    "brief": "You flatter a self-important guardian ledger into opening its clasp, testing your cunning, and you receive a gold-plated nib that can alter official entries.",
-   "page": "A massive, brass-bound register blocks the narrow entry, its heavy metal clasp locked tight with bureaucratic arrogance. You lean close to the spine and murmur a series of flattering observations regarding its immaculate binding and superior paper weight. The heavy volume flutters its pages with pleased vanity, its stubborn clasp clicking open with a self-satisfied snap. Nestled inside the front pastedown lies a gleaming gold-plated nib, capable of altering even the most stubborn official entries with a single stroke.",
+   "page": "A massive brass-bound register blocks the narrow entry, metal clasp locked with bureaucratic arrogance. You lean close to the spine and murmur a series of flattering observations regarding its immaculate binding and superior paper weight. The volume flutters its pages with pleased vanity, and its stubborn clasp clicks open with a self-satisfied snap. Nestled inside the front pastedown lies a gleaming gold-plated nib, capable of altering even the most stubborn official entries with a single stroke.",
    "exits": [
     {
      "label": "Step through the newly cleared threshold",
@@ -19975,7 +19975,7 @@
    "kind": "ending",
    "title": "The Final Shelf-Mark",
    "brief": "Ending \"The Cataloguers' Century\"",
-   "page": "The heavy iron latch falls home with a dry, satisfying click that seals the catalogued centuries into their permanent boxes. There are no more doors left to open and no more wandering corridors to trick the unwary page. You place your brass quill-knife in the velvet-lined drawer and turn the key twice, sliding the heavy bolt into its groove. The library sleeps at last beneath a mountain of stone and ink, perfect, immobile, and dead. You turn your back on the stacks and walk out into the quiet city, carrying nothing with you save the cold taste of rules and the immaculate, terrifying peace of a world that has been put entirely in its place.",
+   "page": "The heavy iron latch falls home with a dry, satisfying click that seals the catalogued centuries into their permanent boxes. There are no more doors left to open and no more wandering corridors to trick the unwary page. You place your brass quill-knife in the velvet-lined drawer, turn the key twice, and slide the bolt into its groove. The library sleeps at last beneath a mountain of stone and ink, perfect, immobile, and dead. You turn your back on the stacks and walk out into the quiet city, carrying nothing with you save the cold taste of rules and the immaculate, terrifying peace of a world that has been put entirely in its place.",
    "exits": [],
    "endingKey": "cataloguers-century",
    "endingTitle": "The Cataloguers' Century",
