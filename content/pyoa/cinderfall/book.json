@@ -7127,7 +7127,7 @@
    "kind": "reward",
    "title": "The Grease-Gun",
    "brief": "Clearing a blocked drainage pipe beneath the iron tank gains a rusted but serviceable brass grease-gun.",
-   "page": "Thick rust flakes fall from the drainpipe into your palm as the choked channel finally spits its foul sediment into the ash-dune below. The pressure gauge on the side of the boiler settles into a steadier rhythm, sighing with relief as the trapped water finds its proper course. Among the grit and discarded scrap beneath the valve housing, your fingers close around a heavy iron cylinder wrapped in greasy rag. It is a battered but serviceable brass grease-gun, its leather plunger still supple enough to force lubricant into stubborn journal-boxes when the mileage mounts.\n\nWiping the nozzle on your trouser leg, you secure the tool in the cab locker alongside the spare oil can.",
+   "page": "Thick rust flakes fall from the drainpipe into your palm as the choked channel finally spits its foul sediment into the ash-dune below. The pressure gauge on the side of the boiler settles into an even rhythm. Trapped water finds its proper course. Among the grit and discarded scrap beneath the valve housing, your fingers close around an iron cylinder wrapped in greasy rag. It is a battered but serviceable brass grease-gun, its leather plunger still supple enough to force lubricant into stubborn journal-boxes when the mileage mounts.\n\nYou wipe the nozzle on your trouser leg. The tool goes into the cab locker alongside the spare oil can.",
    "exits": [
     {
      "label": "Climb back onto the footplate",
@@ -11931,7 +11931,7 @@
    "kind": "reward",
    "title": "The Greased Palm",
    "brief": "You pick the rusty padlock on a sealed carriage door, risking a jammed pick to find a hidden cache of heavy lubricants.",
-   "page": "The heavy brass shackle yields at last with a dry, protesting rasp, swinging open to reveal row upon row of sealed metal tins. You snatch a jar of refined axle lubricant and tuck the cold tin deep inside your canvas coat against the biting draught of the viaduct. However narrowly you managed the trick, the quick-witted acquisition leaves you well-equipped for whatever friction lies ahead on the iron road.\n\nA low whistle from the overhead gantry reminds you not to linger among the stalled freight, prompting a swift retreat back into the tangled heart of the siding.",
+   "page": "The brass shackle yields at last with a dry, protesting rasp and swings open on its hinge. Sealed metal tins line the rack. You snatch a jar of refined axle lubricant. The cold tin goes deep inside your canvas coat against the draught of the viaduct, and the acquisition leaves you well-equipped for whatever friction lies ahead on the iron road.\n\nA low whistle from the overhead gantry cuts across the stalled freight. You retreat into the tangled heart of the siding.",
    "exits": [
     {
      "label": "Return to the central junction",
@@ -14655,7 +14655,7 @@
    "kind": "check",
    "title": "Reading the Fault",
    "brief": "You decipher the acoustic reverberations to map the hidden fissures in the rock, earning a small pouch of sparkling pyrite.",
-   "page": "Sound carries differently through compressed slate than through soft earth, and you tilt your head to catch the returning whistle of air currents threading through the blind fractures. Every stone shelf behaves like a tuning fork, ringing with the pressure of the overburden above the line. You close your eyes to shut out the flicker of the oil lamp, letting the low thrum of the mountain guide your fingertips across the damp face of the rock. A subtle change in pitch shows where the fault-line splits, and a hidden vein of ore opens behind the partition.\n\nYou wedge your iron pry-bar into the primary fissure, testing the resistance of the stubborn strata with a calculated twist of wrist and shoulder while the ceiling groans in response.",
+   "page": "Sound differs here. You tilt your head to catch the returning whistle of air currents threading through the blind fractures in the compressed slate, for every stone shelf behaves like a tuning fork and rings with the pressure of the overburden above the line. Eyes close against the flicker of the oil lamp. Fingertips travel the damp face of the rock until a subtle change in pitch shows where the fault-line splits, and a hidden vein of ore opens behind the partition.\n\nThe iron pry-bar wedges into the primary fissure. Wrist and shoulder twist against the strata. The ceiling groans.",
    "exits": [
     {
      "label": "check-full",
@@ -16286,7 +16286,7 @@
    "kind": "bottleneck",
    "title": "The Stationmaster General",
    "brief": "Inside the circular chamber beyond the gate, a tiny woman in a braided coat sits behind a mahogany ticket counter.",
-   "page": "Beyond the vaulted corridor lies a circular chamber lit by a single sputtering arc-lamp suspended from a rusted iron chain. Inside sits a tiny woman wrapped in layers of braided wool and an ancient stationmaster coat that swallows her frail frame entirely. Her desk is a fortress of leather-bound ledgers, brass telegraph keys, and half-burned tallow candles that cast long, dancing shadows across the damp walls. She does not look up as you approach, her dry fingers steadily turning yellowed pages filled with microscopic timetables written in violet ink.\n\nThe air here smells of very old paper, peppermint tea, and the sweet, heavy scent of burning tallow, completely removed from the soot and iron of the tracks outside.",
+   "page": "Beyond the vaulted corridor lies a circular chamber lit by a single sputtering arc-lamp suspended from a rusted iron chain. Inside sits a tiny woman wrapped in layers of braided wool and an ancient stationmaster coat that swallows her frail frame entirely. Her desk is a fortress of leather-bound ledgers, brass telegraph keys, and half-burned tallow candles. Long shadows cross the damp walls. She does not look up as you approach. Dry fingers turn yellowed pages filled with microscopic timetables written in violet ink.\n\nThe air smells of very old paper, peppermint tea, and burning tallow. Her fingertip rests on a violet numeral.",
    "exits": [
     {
      "label": "Approach the mahogany ticket counter",
@@ -16750,7 +16750,7 @@
    "kind": "scene",
    "title": "The Hissing Pipe",
    "brief": "You bear the biting lash of escaping high-pressure steam without flinching, winning a thick leather asbestos mitten.",
-   "page": "White plumes of high-pressure steam erupt from a fractured union joint, filling the narrow corridor with a blinding, roaring fog. You crouch low against the damp stone floor, letting the worst of the scalding blast pass overhead while the smell of hot iron fills your lungs. The fierce heat radiates outward from the rupture, baking the moisture from your skin and turning the air dense and hard to breathe. Through the swirling white haze, the outline of the secondary control valve gleams dimly like a drowned moon.\n\nMoving with deliberate care, you inch forward through the dense vapor, keeping your shoulder pressed against the cold rock to maintain your bearings. The steady thrum of the engine vibrates through the soles of your boots, grounding you against the disorienting hiss of the leak. You reach out blindly into the damp heat, feeling for the cold metal wheel of the safety shut-off.",
+   "page": "White plumes of high-pressure steam erupt from a fractured union joint and fill the narrow corridor with a blinding, roaring fog. You crouch low. The worst of the scalding blast passes overhead, and the smell of hot iron fills your lungs while fierce heat radiates from the rupture until moisture bakes from your skin and the air turns hard to breathe. Through the swirling white haze, the outline of the secondary control valve gleams dimly like a drowned moon.\n\nYour shoulder stays pressed against the cold rock as you inch forward through the vapor and the engine knocks through the soles of your boots. Blind fingers hunt. The cold metal wheel of the safety shut-off waits in the damp heat.",
    "exits": [
     {
      "label": "Reach through the steam cloud",
@@ -18344,7 +18344,7 @@
    "kind": "scene",
    "title": "The Silent Watcher",
    "brief": "You stare down the twitching pressure gauges in the dark pit, waiting for the needle to settle, and earn the silent nod of an old drainage-man.",
-   "page": "Deep within the concrete pit, you watch the erratic twitching of the pressure gauges while the damp air grows heavy with the scent of hot oil and old river silt. The iron needle trembles on the edge of the red zone before slowly settling back as the relief valve kicks in with a shudder. An old drainage-man standing in the shadows leans on his long-handled wrench and gives you a slow, silent nod of approval. Without a word spoken between you, he points a soot-blackened finger toward a narrow maintenance stair leading upward.\n\nYou leave the quiet pit behind and climb the steep iron steps toward the upper levels.",
+   "page": "Deep within the concrete pit, you watch the erratic twitching of the pressure gauges. Damp air carries the scent of hot oil and old river silt. The iron needle trembles on the edge of the red zone before it settles back as the relief valve kicks in with a shudder. An old drainage-man standing in the shadows leans on his long-handled wrench and gives you a slow, silent nod of approval. Without a word between you, he points a soot-blackened finger toward a narrow maintenance stair leading upward.\n\nYou leave the quiet pit behind. Steep iron steps climb toward the upper levels.",
    "exits": [
     {
      "label": "Climb the steep iron steps",
@@ -20087,7 +20087,7 @@
    "kind": "ending",
    "title": "Ash and Steam",
    "brief": "Ending \"Hesper's Return\"",
-   "page": "Hesper takes the heavy brass valve-key from your palm, turning the cold metal over once in calloused fingers before tossing it carelessly onto the tool-shelf beside the grease-pot. The firebox door clicks shut, sealing the white heat inside where it belongs, and the whistle cord hangs quiet above your head. Out across the station apron, the water from the open gates runs clear through every street and alley of Cinderfall, splashing against stone walls and soaking deep into the dry earth until the whole valley smells of wet dust and iron. There are no medals waiting on the platform, no speeches from the Rail Barons or the Stationmaster-General, only the smell of good Welsh coal and the long, straight road home waiting under a quiet sky. The regulator eases forward with a gentle hiss of steam, and the world begins to move again.",
+   "page": "Hesper takes the brass valve-key from your palm, turns the cold metal over once in calloused fingers, then tosses it onto the tool-shelf beside the grease-pot. The firebox door clicks shut. White heat stays sealed where it belongs, and the whistle cord hangs quiet above your head. Out across the station apron, the water from the open gates runs clear through every street and alley of Cinderfall, splashing against stone walls and soaking deep into the dry earth until the whole valley smells of wet dust and iron. There are no medals on the platform, no speeches from the Rail Barons or the Stationmaster-General, only the smell of good Welsh coal and the long, straight road home under a quiet sky.\n\nThe regulator eases forward with a gentle hiss of steam. The world begins to move again.",
    "exits": [],
    "endingKey": "hesper-returns",
    "endingTitle": "Hesper's Return",
@@ -20131,7 +20131,7 @@
    "kind": "ending",
    "title": "The Last Schedule",
    "brief": "Ending \"The Flooded Terminus\"",
-   "page": "There are no more orders to collect from the ticket-widow, no sealed envelopes left behind on empty desks in the depot at Ashgate, and no red flags waving from the cuttings. The water runs deep and sweet through the conduits beneath Cinderfall, filling every cellar and cistern until the city floats upon its own bright lake like an iron ship anchored in the ash. Hesper Quill is gone again, slipped away down the platform while the steam hissed loud from the cylinders, leaving the engine in your sole care with the fire burning red and clean. You pull the brass whistle cord once, a long, deep roar that shakes the glass in the station roof and rolls out across the grey steppe where the rails run straight into the morning mist. The Marrowbone rolls forward into the cool air, keeping her own time down the long road.",
+   "page": "There are no more orders to collect from the ticket-widow, no sealed envelopes left behind on empty desks in the depot at Ashgate, and no red flags waving from the cuttings. The water runs deep and sweet through the conduits beneath Cinderfall. Every cellar and cistern fills until the city floats upon its own bright lake like an iron ship anchored in the ash. Hesper Quill is gone again. She slipped away down the platform while the steam hissed loud from the cylinders, and the engine sits in your sole care with the fire burning red and clean. You pull the brass whistle cord once. A long, deep roar shakes the glass in the station roof and rolls out across the grey steppe where the rails run straight into the morning mist.\n\nThe Marrowbone rolls forward into the cool air. She keeps her own time down the long road.",
    "exits": [],
    "endingKey": "gate-flood",
    "endingTitle": "The Flooded Terminus",
