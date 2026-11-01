@@ -4948,7 +4948,7 @@
     }
    ],
    "title": "The Singing Lens",
-   "page": "An elderly scavenger named Orla sits cross-legged upon a flat salt-pavement, polishing a fragment of singing green lens that chimes musically whenever the hot desert draught sweeps across its razor-thin edge. She glances up with eyes crinkled against the glare, offering a toothless grin and a nod that acknowledges your weary posture without asking for pity. The haunting, bell-like tones echo softly against the surrounding flats, creating an eerie melody in the dead silence of the basin. You stand for a moment in the warm wind, listening to the glass sing of storms that haven't broken in decades. Three distinct routes beckon from her resting place."
+   "page": "An elderly scavenger named Orla sits cross-legged on a flat salt-pavement, polishing a fragment of singing green lens that chimes whenever the hot desert draught sweeps across its razor-thin edge. She glances up with eyes crinkled against the glare. A toothless grin and a nod take in your posture without asking for pity. Bell-like tones carry across the surrounding flats. You stand a moment in the warm wind and listen to the glass sing of storms that have not broken in decades.\n\nOrla does not rise. Routes fan out from her place."
   },
   {
    "id": "sg-2-0-2-5",
@@ -6720,7 +6720,7 @@
     }
    ],
    "title": "The Tilting Tiles",
-   "page": "Giant hexagonal tiles of crusted salt heave upward from the grey mud like the carapaces of buried tortoises, tilting at sharp, treacherous angles across the blinding flat. Your boots slip on the damp, alkaline seams between the tilting plates, sending small cascades of salt-dust rattling into the black mire below. Your banked ember-lamp digs into your thigh, its mild warmth set against the freezing glare of the basin. Ahead, the path bifurcates around a rusted iron lean-to slumped against a heap of tailings, while off to the right, a dry wire hums in the rising thermal wind above a clattering row of sun-bleached skulls.\n\nYou pause on a tilted slab to test the slick mud beneath your left heel before deciding which direction to press through the white furnace."
+   "page": "Giant hexagonal tiles of crusted salt heave upward from the grey mud like the carapaces of buried tortoises, and they tilt at sharp angles across the blinding flat. Your boots slip on the damp alkaline seams between the plates. Salt-dust rattles down. Your banked ember-lamp digs into your thigh, its mild warmth set against the freezing glare of the basin. Ahead the path splits around a rusted iron lean-to slumped against a heap of tailings, while off to the right a dry wire twangs in the rising thermal wind above a clattering row of sun-bleached skulls.\n\nYou pause on a tilted slab and test the slick mud under your left heel."
   },
   {
    "id": "sg-2-1-3-9",
@@ -13709,7 +13709,7 @@
     }
    ],
    "title": "Cleaning the Lamp Gasket",
-   "page": "You pause behind a shattered pillar and scrape the accumulated glass-dust from your lamp gasket. The tiny red glow of your banked coals holds against the encroaching gloom. Wind shrieks through the skeletal ruins around you like a chorus of hollow voices. The cold Seedkey in your tunic presses colder against your ribs with every passing hour. Every breath tastes of alkaline dust and old salt. The monsoon draws closer by the day, and pale grit still clings under your nail from the gasket."
+   "page": "You pause behind a shattered pillar and scrape the glass-dust from your lamp gasket. The banked coals hold a tiny red glow against the gloom. Wind shrieks through the skeletal ruins around you like a chorus of hollow voices, and the cold Seedkey in your tunic presses colder against your ribs with every passing hour while pale grit still clings under your nail from the gasket. Every breath tastes of alkaline dust and old salt.\n\nThe monsoon draws closer by the day."
   },
   {
    "id": "sg-4-0-2-8",
@@ -14902,7 +14902,7 @@
     }
    ],
    "title": "The Green Crater",
-   "page": "Fused green sand circles a vast depression where an ancient solar furnace melted the basin floor into smooth, radioactive glass. A rusted surveying tripod stands at the crater's rim, humming a low, discordant note in the gale that masks any approaching footfalls. Something heavy drags itself through the drifting white dust just beyond your vision, crunching against the brittle salt-crust with deliberate weight. Your grip tightens instinctively around the iron handle of your lamp.\n\nThe hidden movement in the drift leaves no time for hesitation."
+   "page": "Fused green sand circles a vast depression where an ancient solar furnace melted the basin floor into smooth, radioactive glass. A rusted surveying tripod stands at the crater's rim and sings a low discordant note in the gale that masks any approaching footfalls. Something large drags itself through the drifting white dust just beyond your vision, crunching against the brittle salt-crust with care. Your grip tightens on the iron handle of your lamp.\n\nThe drift keeps moving."
   },
   {
    "id": "sg-4-1-2-5",
@@ -15412,7 +15412,7 @@
     }
    ],
    "title": "The Speaking-Tube",
-   "page": "Inside a sunken observation post, a rusty brass speaking-tube whistles with the voice of the gale, threatening to disorient you with its unearthly howling. The metallic pipe seems to channel the very breath of the basin, turning the wind's fury into a haunting, hollow drone that vibrates straight through your boots.\n\nYou can press forward toward the leaning milk-glass spire or seek the deeper quiet of the fossilized mud alcove."
+   "page": "Inside a sunken observation post, a rusty brass speaking-tube whistles with the gale. The metallic pipe channels the breath of the basin until the wind's fury arrives as a hollow howl that runs straight up through your boots. The tube calls, \"The basin is breathing.\"\n\nA leaning milk-glass spire stands ahead. The fossilized mud alcove sits deeper and still."
   },
   {
    "id": "sg-4-1-3-9",
@@ -17431,7 +17431,7 @@
     }
    ],
    "title": "Leaving the Observatory",
-   "page": "Leaving Prism for the Rain Vault, you close this part of your long journey and look ahead to the dark chambers waiting beneath the ruined city. The heavy doors swing inward with a low, groaning scrape of ancient bronze upon stone, welcoming the draft of cool, damp air that pours upward from the deep seed halls. Every footstep echoes hollowly against the ribbed vaults as you leave the dry, sun-baked surface world behind you for good.\n\nBelow your boots, the hidden maze of the old reservoir stretches out in absolute silence, holding the forgotten wealth of a hundred dead towns in its stone bins. Your lantern beam cuts a narrow yellow lane through the clinging mist, guiding your hand toward the final doors that hold the survival of Candlemere."
+   "page": "You leave Prism for the Rain Vault and close this part of the long journey as you look ahead to the dark chambers beneath the ruined city. The doors swing inward with a low scrape of ancient bronze on stone, and a draft of cool damp air pours up from the deep seed halls. Footsteps ring hollow against the ribbed vaults. You leave the dry sun-baked surface world behind for good.\n\nBelow your boots the hidden maze of the old reservoir stretches out in silence, and the stone bins hold the forgotten wealth of a hundred dead towns. Your lantern beam cuts a narrow yellow lane through the mist toward the final doors that hold the survival of Candlemere."
   },
   {
    "id": "sg-5-0-0-0",
@@ -19470,7 +19470,7 @@
     }
    ],
    "title": "The Salt Flurry",
-   "page": "A vicious gust of wind whips across the open ledge, driving a blinding flurry of crystalline salt directly into your face and stinging your eyes raw. You clamp one hand over your goggles and press your spine flat against the fluted stone pillar to keep from being swept into the empty air. Somewhere nearby, heavy boots crunch against grit, warning that the passage is not entirely deserted.\n\nThe grit settles slightly in the pale light, leaving you to choose between plunging into the gloom or slipping past unseen sentries."
+   "page": "A vicious gust of wind whips across the open ledge and drives a blinding flurry of crystalline salt straight into your face. Your eyes water raw. You clamp one hand over your goggles and press your spine flat against the fluted stone pillar so the gust cannot sweep you into empty air. Somewhere nearby, boots crunch against grit. The passage is not empty.\n\nThe grit settles in the pale light."
   },
   {
    "id": "sg-5-1-2-12",
@@ -19893,7 +19893,7 @@
     }
    ],
    "title": "The Ozone Chamber",
-   "page": "Pungent ozone fills a chamber where broken copper wires spit faint blue sparks into the dry air. Every snap of electricity illuminates the flaking lead paint on the low ceiling, casting jagged shadows across your boots. You shield your face with a forearm as a particularly bright arc leaps toward a rusted conduit, leaving a metallic taste at the back of your throat."
+   "page": "Pungent ozone fills a chamber where broken copper wires spit faint blue sparks into the dry air. Every snap of electricity lights the flaking lead paint on the low ceiling and throws jagged shadows across your boots. You shield your face with a forearm as a bright arc leaps toward a rusted conduit.\n\nA metallic taste sits at the back of your throat."
   },
   {
    "id": "sg-5-1-3-11",
@@ -24986,7 +24986,7 @@
     }
    ],
    "title": "Hollow Resonators",
-   "page": "In the vaulted gallery of hollow vessels, each footfall sets off a cascade of melodic echoes that could wake the lower guardians. Ceramic vessels built into the stone walls catch and multiply every sound, turning a simple shuffle into a rolling chord of alarm. The air is cool and still, carrying the scent of ancient clay and dust. You freeze in place, waiting to see if the reverberations fade into the masonry or draw unwanted attention from the depths. A choice of directions opens before you in the dim light."
+   "page": "In the vaulted gallery of hollow vessels, each footfall sets off a cascade of melodic notes that could wake the lower guardians. Ceramic vessels built into the stone walls catch and multiply every sound, and a simple shuffle becomes a rolling chord of alarm. The air is cool and still. It carries the scent of ancient clay and dust. You freeze in place and wait to learn whether the noise fades into the masonry or draws notice from the depths.\n\nPassages branch in the dim light."
   },
   {
    "id": "sg-6-2-2-1",
