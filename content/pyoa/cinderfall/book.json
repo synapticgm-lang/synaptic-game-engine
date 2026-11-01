@@ -4372,7 +4372,7 @@
    "kind": "scene",
    "title": "Crust and Copper",
    "brief": "Wrestling a stuck intake valve clear of sulfur crust prevents a blockage, earning a sealed flask of clean distilled boiler water.",
-   "page": "Thick yellow incrustations choke the main intake line, hardening into brittle mineral glass that threatens to starve the boiler of moisture entirely. You crouch on the rocking running plate with a short brass chisel, chipping away at the calcified sulfur deposits while the Marrowbone groans beneath your boots. Every strike sends sharp, acrid flakes stinging against your cheeks and into your hair, tasting of old matches and wet earth.\n\nThe grey expanse stretches out on all sides under the low, bruised sky, offering no shelter from the bitter wind that carries the scent of distant ash-dunes. You wipe your streaming eyes with a soot-stained sleeve and reach down to test the heavy valve-wheel, feeling it grind stubbornly against its seat.",
+   "page": "Yellow incrustations choke the main intake line and harden into brittle mineral glass that would starve the boiler of moisture if left alone. You crouch on the rocking running plate with a short brass chisel and chip at the calcified sulfur deposits while the Marrowbone groans beneath your boots. Every strike sends sharp acrid flakes against your cheeks and into your hair. They taste of old matches and wet earth.\n\nGrey land stretches out on all sides under the low bruised sky, and a bitter wind brings the scent of distant ash-dunes. You wipe your streaming eyes with a soot-stained sleeve. The valve-wheel grinds. Seat metal bites your palm.",
    "exits": [
     {
      "label": "Clear the stubborn mineral crust",
@@ -5619,7 +5619,7 @@
    "kind": "scene",
    "title": "Heat of the Pyre",
    "brief": "Enduring the blistering heat of the prayer-fire without flinching wins the zealots trust and a heavy tin of fire-clay.",
-   "page": "Waves of searing air ripple across your skin as you step closer to the towering cairn of charred sleepers. Cinder Prophets chant in low, rattling cadences, ignoring the blistering embers that drift down like black snow. Your boots crackle upon crusts of saltpetre while you steady your breathing against the suffocating sulphur fumes. The zealots watch you with unblinking, ash-dusted eyes, testing your resolve with every breath you draw in the furnace-wind. You must step forward now into the shimmering haze before the oppressive heat overcomes your senses entirely.",
+   "page": "Waves of searing air ripple across your skin as you step closer to the towering cairn of charred sleepers, and Cinder Prophets chant in low rattling cadences while blistering embers drift down like black snow. Your boots crackle on crusts of saltpetre. Sulphur fumes push at your lungs. The zealots watch you with unblinking ash-dusted eyes and test your resolve with every breath you draw in the furnace-wind, so you step forward into the shimmering haze before the heat takes the rest of your senses.\n\nEmbers land on your sleeves.",
    "exits": [
     {
      "label": "Step closer to the blazing shrine",
@@ -12119,7 +12119,7 @@
    "kind": "recovery",
    "title": "Caught in the White",
    "brief": "You resist the temptation to bolt prematurely from cover, risking a loss of nerve to time your dash past the searchlights.",
-   "page": "A sharp clatter betrays your foot against a loose rivet just as the beam snaps back across the iron floor. Shouts ring out from the gantry above, and heavy boots scramble toward your ledge with alarming speed. You scramble backward into a rusted junction box, taking a jagged scrape across your forearm that stains your sleeve with hot blood. They do not find you in the dark, but the delay costs you dearly in precious minutes, leaving your nerves frayed and your breath burning with raw ash.",
+   "page": "A sharp clatter betrays your foot against a loose rivet just as the beam snaps back across the iron floor. Shouts ring out from the gantry above. Someone yells, \"On the ledge,\" and boots scramble toward you at speed. You scramble backward into a rusted junction box and take a jagged scrape across your forearm that stains your sleeve with hot blood.\n\nThey do not find you in the dark. The delay still costs you dear minutes. Raw ash burns in your breath.",
    "exits": [
     {
      "label": "Flee down the maintenance ladder",
@@ -12922,7 +12922,7 @@
    "kind": "scene",
    "title": "Beneath the Steaming Tarp",
    "brief": "You hide beneath a steaming tarp as patrols pass by, risking a nervous cough to avoid detection by the armed guards.",
-   "page": "Canvas gives off the stale heat of a boiler room while thick grey vapor rolls across the gantry floor. You pull the rough wool of your collar high against your chin and wait for the patrol's boots to clatter past the coupling. A sudden tickle builds behind your ribs, sharp and insistent, threatening to give away your hiding place in the shadows of the tender. You swallow hard, biting the inside of your cheek until the copper taste of blood chases the cough away. When the lanterns swing past without pausing, you slide quietly from beneath the protective canvas and slip into the narrow corridor beyond.",
+   "page": "Canvas gives off the stale heat of a boiler room while grey vapor rolls across the gantry floor. You pull the rough wool of your collar high against your chin and wait for the patrol's boots to clatter past the coupling. A tickle builds behind your ribs. It wants out. It would give away your hiding place in the shadows of the tender if it broke free.\n\nYou swallow hard and bite the inside of your cheek until the copper taste of blood chases the cough away. When the lanterns swing past without pausing, you slide from beneath the protective canvas and slip into the narrow corridor beyond.",
    "exits": [
     {
      "label": "Crawl beneath the grey canvas curtain",
@@ -14125,7 +14125,7 @@
    "kind": "scene",
    "title": "Dragging the Iron",
    "brief": "You haul the sluice chains against a surging tide of bilge-water, keeping a greasy iron shackle and a bruised shoulder.",
-   "page": "Iron groans against stone as the links slip through your bleeding grip, yielding inches of grudging progress against the immense hydrostatic weight pressing from beyond the bulkhead. The cold air inside the tunnel vibrates with the low-frequency thrum of the Marrowbone idling in the gloom behind you. Somewhere up in the vaulted brickwork, a single green signal lamp flickers erratically, casting long, wavering shadows across the greasy surface of the rising flood. You take another turn of the chain around your forearm, ignoring the sharp bite of the metal against bruised skin, and strain for the critical notch where the dog-catch finally seats itself. The water laps eagerly at your boot-tops, carrying flecks of gray ash and oily scum that cling to your trousers like a shroud.",
+   "page": "Iron groans against stone as the links slip through your bleeding grip, and each turn buys only inches against the hydrostatic press from beyond the bulkhead. Cold air inside the tunnel carries the knock of the Marrowbone idling in the gloom behind you. One green signal lamp flickers high in the vaulted brickwork. Long shadows cross the flood.\n\nYou wrap the chain once more around your forearm. The links cut deep. Bruised skin takes the metal as you strain for the notch where the dog-catch finally seats itself. Water laps at your boot-tops and leaves flecks of gray ash and oily scum on your trousers.",
    "exits": [
     {
      "label": "Force the dog into its notch",
@@ -14709,7 +14709,7 @@
    "kind": "reward",
    "title": "The Glittering Seam",
    "brief": "You decipher the acoustic reverberations to map the hidden fissures in the rock, earning a small pouch of sparkling pyrite.",
-   "page": "Your fingers trace the exact line where the vibration falters, finding the hidden toggle of stone that releases the stubborn wedge with a dull metallic click. The shelf gives way inward, spilling a small, heavy sack of sparkling pyrite into your waiting hands. The mineral dust coats your palms with a fine golden film that glimmers faintly in the yellow lantern light. As you heft the pouch, an old inscription carved into the lintel catches your eye, warning of the catastrophic deluge that follows when the Cinderfall sluices are wrenched open before the pressure drops.\n\nYou tuck the little sack into your coat pocket alongside your rations, carrying the ruined reservoir's design with you into the deeper shadows.",
+   "page": "Your fingers trace the exact line where the vibration falters and find the hidden toggle of stone that releases the stubborn wedge with a dull metallic click. The shelf gives way inward. A small sack of sparkling pyrite spills into your waiting hands. Mineral dust coats your palms with a fine golden film that glimmers in the yellow lantern light, and as you lift the pouch an old inscription carved into the lintel catches your eye, a warning of the catastrophic deluge that follows when the Cinderfall sluices are wrenched open before the pressure drops.\n\nYou tuck the little sack into your coat pocket alongside your rations. The ruined reservoir's design goes with you into the deeper shadows.",
    "exits": [
     {
      "label": "Return to the whispering stone archways",
@@ -16850,7 +16850,7 @@
    "kind": "scene",
    "title": "The Bulkhead Markings",
    "brief": "You decode the secret sequence marked on the bulkhead wheel rims, earning the iron combination ring.",
-   "page": "Dim amber lamps flicker along the grease-slicked walls of the tunnel and cast long, wavering shadows across the steel doors. Fine soot settles on your collar as you lean close to inspect the rusted wheel rims of the bulkhead. Indented into the cold metal are tiny, interlocking notches and faint, hand-punched tallies left by generations of signalmen. Your fingers trace the worn grooves, feeling the distinct pattern of a forgotten lock sequence hidden within the soot.\n\nThe air tastes of stale iron and damp coal dust, pressing heavily against your eardrums as the distant rumble of the engine reverberates through the rock. You must interpret the code before the accumulating pressure forces a shift in the locking tumblers.",
+   "page": "Dim amber lamps flicker along the grease-slicked walls of the tunnel and cast long wavering shadows across the steel doors. Fine soot settles on your collar as you lean close to inspect the rusted wheel rims of the bulkhead. Notches sit in the cold metal. Faint hand-punched tallies left by generations of signalmen run beside them, and your fingers trace the worn grooves until a forgotten lock sequence shows through the soot.\n\nThe air tastes of stale iron and damp coal dust. Far off, the engine rumbles through the rock. Read the code before the locking tumblers shift.",
    "exits": [
     {
      "label": "Decipher the notched sequence on the wheel rims",
@@ -18074,7 +18074,7 @@
    "kind": "scene",
    "title": "The Sluice-Chain's Turn",
    "brief": "You hammer the jammed sluice-chain back onto its sprocket with a heavy brass spanner, risking a crushed knuckle, and win a heavy brass oil-can.",
-   "page": "Grease coats your fingers as you feed the iron links across the rattling gear teeth. The mechanism holds true against the relentless pull of the runoff. The air grows warmer here, thick with the smell of hot lard and friction, pressing against your chest with every breath. Drops of condensation drip rhythmically from the ceiling pipes onto your cap, splashing cold against the back of your neck. Ahead, a narrow maintenance hatch stands half-open in the bulkhead, spilling a dull yellow beam of light across the slippery floor plates. You plant your boots on the vibrating iron deck and press forward into the knock of the pumps.",
+   "page": "Grease coats your fingers as you feed the iron links across the rattling gear teeth. The mechanism holds true against the pull of the runoff. Warmth gathers here, full of the smell of hot lard and friction, and it presses against your chest with every breath. Condensation falls from the ceiling pipes onto your cap. Cold hits the back of your neck.\n\nAhead, a narrow maintenance hatch stands half-open in the bulkhead and spills a dull yellow beam across the slippery floor plates. You plant your boots on the vibrating iron deck and press forward into the knock of the pumps.",
    "exits": [
     {
      "label": "Step through the open maintenance hatch",
@@ -19262,7 +19262,7 @@
    "kind": "reward",
    "title": "Through The Draft",
    "brief": "You endure the freezing draft from the breached roof-lights while adjusting the main feed-valve, and retain an oiled leather ledger-cover.",
-   "page": "Whether you weathered the biting gale with steady hands or fought your way through the sudden shriek of freezing air, you manage to secure the main feed-valve before the pressure dips into dangerous ground. The oiled leather ledger-cover remains tucked securely against your ribs, its stiff corners dry and intact despite the biting frost that coats the rest of the ironwork. With the valve locked into position, you catch your breath in the dim gloom and feel a hard knot of stubborn pride settle in your chest as the platform looms closer through the haze.",
+   "page": "You lock the main feed-valve before the pressure dips into dangerous ground, while the gale tears at the ironwork and a sudden shriek of freezing air cuts across the boards. The oiled leather ledger-cover stays tucked against your ribs, its stiff corners dry and intact despite the frost that coats the rest of the metal. You catch your breath in the dim gloom.\n\nPride settles hard in your chest. The platform looms closer through the haze.",
    "exits": [
     {
      "label": "Walk down to the platform",
@@ -19939,7 +19939,7 @@
    "kind": "ending",
    "title": "A Clean Slate",
    "brief": "Ending \"The Prophets' Pyre\"",
-   "page": "Silence follows the great fire, a vast and heavy quiet that settles over the blackened plain like a blanket of cold wool. The Marrowbone stands cold upon its dead track, its brass fittings dulled by soot and its boiler silent forever, a monument to the age of iron that burned itself out to the last coal. You walk away from the smoking ruins toward the open hills, leaving the brass key half-melted in the embers of the great pyre where the old world held its final class. There are no roads left to follow and no schedules to keep, only the endless expanse of grey dust stretching out beneath a sky that has forgotten the color of smoke. The prophets have gone ahead into the dark, singing their ragged songs to the wind, and you walk behind them into a morning that has no need of whistles or destinations.",
+   "page": "Silence follows the great fire, a vast quiet that settles over the blackened plain like a blanket of cold wool. The Marrowbone stands cold upon its dead track, brass fittings dulled by soot and boiler mute forever, a monument to the age of iron that burned itself out to the last coal. You walk away from the smoking ruins toward the open hills. The brass key lies half-melted in the embers of the great pyre where the old world held its final class.\n\nNo roads remain. No schedules either, only grey dust under a sky that has forgotten the color of smoke. The prophets have gone ahead into the dark with ragged songs for the wind, and you walk behind them into a morning without whistles. Dust coats your boots.",
    "exits": [],
    "endingKey": "prophets-pyre",
    "endingTitle": "The Prophets' Pyre",
@@ -19951,7 +19951,7 @@
    "kind": "ending-part",
    "title": "The Lanterns Below",
    "brief": "Ending \"Signalman Eternal\"",
-   "page": "Cold iron beneath your palms has the familiar weight of a service long kept, each rivet singing the same low tune against the vibration of the rail. You pull the heavy brass lever two notches back, letting the green signal-arm drop into its slot with a hollow clatter that echoes off the tunnel walls. Above you, in the high timber of the roof, the Hollow Signalmen move without sound, their lanterns swinging in slow, deliberate arcs that map a road no living man was ever meant to walk alone. The smoke from the firebox drifts back through the cab, tasting of old coke and damp earth, mingling with the grease on your sleeves until you cannot tell where your coat ends and the engine begins. Every red eye along the permanent way turns green as you pass, acknowledging the hand that never left the iron.",
+   "page": "Cold iron under your palms still knows a long service, each rivet answering the knock of the rail in the same low tune. You pull the brass lever two notches back. The green signal-arm drops into its slot with a hollow clatter that hardens off the tunnel walls. Above you, in the high timber of the roof, the Hollow Signalmen move without sound, their lanterns swinging in slow deliberate arcs that map a road no living man was ever meant to walk alone, and the smoke from the firebox drifts back through the cab tasting of old coke and damp earth until grease on your sleeves and coat and engine blur into one.\n\nEvery red eye along the permanent way turns green as you pass. Clearance takes the line. The lamps might as well say, \"The hand stayed on the iron.\"",
    "exits": [
     {
      "label": "Step into the green light of the junction",
