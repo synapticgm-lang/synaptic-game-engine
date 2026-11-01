@@ -83,7 +83,7 @@ for (const it of items) {
     cur.items.push(it);
     continue;
   }
-  if (!cur || cur.ending || cur.track !== it.track || (cur.items.length >= 6 && cur.lastNode !== it.node)) {
+  if (!cur || cur.ending || cur.track !== it.track || cur.items.length >= 6) {
     cur = { key: null, track: it.track, items: [] };
     groups.push(cur);
   }
@@ -106,14 +106,14 @@ for (const g of groups) {
     log(`ask ${g.id} items=${missing.length} attempt=${attempt}`);
     let reply;
     try {
-      reply = await ask(prompt, { fresh: calls % 6 === 0 });
+      reply = await ask(prompt, { fresh: true });
     } catch (e) {
       log(`STOP ${e.kind || 'error'}: ${e.message}`);
       process.exit(e instanceof GeminiStop ? 3 : 4);
     }
     calls++;
     writeFileSync(join(DIR, 'raw', `${g.id}.a${attempt}.txt`), reply);
-    if (/something went wrong|having a hard time fulfilling|can't help with|cannot help with/i.test(reply) && !/@@INSERT/.test(reply)) { log('STOP refusal: ' + reply.slice(0, 120).replace(/\s+/g, ' ')); process.exit(5); }
+    if (/something went wrong|encountering an error|having a hard time fulfilling|can't help with|cannot help with/i.test(reply) && !/@@INSERT/.test(reply)) { log('STOP refusal: ' + reply.slice(0, 120).replace(/\s+/g, ' ')); process.exit(5); }
     const p = parse(reply);
     for (const it of missing) {
       const t = p.get(`${it.node}|${it.flag}=${it.value}`);
@@ -122,6 +122,7 @@ for (const g of groups) {
     missing = missing.filter((it) => !got.has(`${it.node}|${it.flag}=${it.value}`));
     await new Promise((r) => setTimeout(r, 8000));
   }
+  if (got.size === 0) { log('STOP no valid inserts for ' + g.id); process.exit(5); }
   const overlay = {
     batch: `v-${g.id}`,
     variants: g.items.filter((it) => got.has(`${it.node}|${it.flag}=${it.value}`)).map((it) => ({
@@ -135,6 +136,8 @@ for (const g of groups) {
   done++;
 }
 log(`finished run: calls ${calls}, groups done ${done}/${groups.length}`);
+
+
 
 
 

@@ -1,29 +1,3 @@
 Gemini said
 
-@@INSERT up-w-portrait-map | witness=bought
-Trading your future for the almoner's silence means you must stay entirely unseen, making these undocumented subterranean routes vital to outrunning your rapidly accumulating debts.
-@@END
-@@INSERT up-w-portrait-map | witness=dropped
-Bloodstains from the almoner's fatal fall remain crusted on your knuckles, making a quiet, unseen route beneath the streets far more appealing than facing the enraged constabulary above.
-@@END
-@@INSERT up-w-portrait-map | cover=tailor
-Squinting at the canvas, you pull the disgraced tailor's coat tighter, grateful that its unassuming cut blends so naturally into the bohemian clutter of the turpentine-soaked studio.
-@@END
-@@INSERT up-w-portrait-map | cover=livery
-The artist casts a disdainful glance at your coarse canvas porter's livery, clearly doubting whether a common coal-hauler possesses the coin required for such specialised architectural secrets.
-@@END
-@@INSERT up-w-portrait-map | cover=usher
-Tarnished brass buttons on your opera usher's uniform catch the studio lamplight, prompting a raised eyebrow from the painter who rarely sees such theatrical finery down in his cramped workspace.
-@@END
-@@INSERT up-w-exchange-roofs | faceKnown=yes
-Because your exact features have been circulated to the guards and great houses alike, slipping into these proposed meetings as an anonymous shadow will be nearly impossible.
-@@END
-@@INSERT up-w-exchange-roofs | vault=breached
-Knowing the grandmaster's lock on the undervault below has already been shattered by your hand, you realise the factions summoning you are likely negotiating over a compromised prize.
-@@END
-@@INSERT up-w-exchange-roofs | witness=let-go
-Distant whistles from the cathedral confirm the almoner has unleashed the watch, meaning Matron Rigg’s catchpoles are sweeping the streets below while you linger dangerously on the slates.
-@@END
-
-Want to create more inserts for Sable's companion quest?
-Yes
+Sorry, something went wrong. Please try your request again.
