@@ -196,7 +196,7 @@ describe('T10DIR director', () => {
   });
 
   it('BUILD_STAMP literal stays; BUILD_ID is tag+sha', () => {
-    expect(BUILD_STAMP).toBe('2026-11-01c');
+    expect(BUILD_STAMP).toBe('2026-11-01d');
     expect(BUILD_ID.startsWith(`${BUILD_STAMP}+`)).toBe(true);
   });
 
