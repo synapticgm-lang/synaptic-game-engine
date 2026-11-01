@@ -7728,7 +7728,7 @@
    "kind": "recovery",
    "title": "Bitter Frost and Strain",
    "brief": "You force open a rusted latch with dogged persistence, earning a sturdy pair of blacksmith-forged pincers.",
-   "page": "A sudden, vicious slip sends a jarring vibration straight up your forearm, throwing your shoulder hard against the jagged iron corner of the shelving unit. A sharp pain flares across your skin, leaving a deep, weeping graze that quickly stains your sleeve with dark crimson. You stumble back into the reeking gloom, nursing your bruised arm while precious lamp-oil splatters uselessly onto the dusty floorboards. The latch remains sealed in defiance, mocking your hasty strain with its silent, frozen grin. Shaking off the lingering dizziness, you gather your wits and push onward through the suffocating gloom.",
+   "page": "A sudden, vicious slip sends a jarring vibration straight up your forearm and throws your shoulder hard against the jagged iron corner of the shelving unit. Pain flares across your skin. A deep, weeping graze quickly stains your sleeve with dark crimson. You stumble back into the reeking gloom while precious lamp-oil splatters onto the dusty floorboards. The latch remains sealed. Its frozen grin does not move. You gather yourself and push onward through the gloom.",
    "exits": [
     {
      "label": "Proceed past the jammed hatch",
@@ -12240,7 +12240,7 @@
    "kind": "recovery",
    "title": "Cost of a Slip",
    "brief": "You gracefully sidestep a sweeping procedural trap laid by the prosecutors, risking your balance, to reach the evidentiary table.",
-   "page": "Rough oak splinters bite deep into your palm as you collide heavily with the edge of the tribunal table, sending a row of brass ink-pots clattering across the floor. Angry whispers ripple through the gallery of Cataloguers as you pick yourself up, brushing dark walnut dust from your bruised shoulder. The chief magistrate scowls, marking a black demerit against your name in the register, costing you precious time and leaving a raw, throbbing scrape along your forearm. You regain your footing amidst the scattered papers, bruised but entirely unbroken.",
+   "page": "Rough oak splinters bite deep into your palm as you collide with the edge of the tribunal table, and a row of brass ink-pots clatters across the floor. Angry whispers ripple through the gallery of Cataloguers as you pick yourself up and brush dark walnut dust from your bruised shoulder. The chief magistrate scowls. \"A black demerit against your name,\" he says, and marks it in the register. The note costs you precious time, and a raw scrape runs along your forearm. You regain your footing amidst the scattered papers, bruised but unbroken.",
    "exits": [
     {
      "label": "Approach the table with caution",
@@ -12357,7 +12357,7 @@
    "kind": "bottleneck",
    "title": "The Living Barrier",
    "brief": "A wall of living parchment blocks the exit, requiring a blood-seal or a classified password to grant further access.",
-   "page": "Heavy parchment stretches like taut skin across the archway, pulsing with dark veins of printer's ink that writhe whenever footsteps echo nearby. Strange marginal notes scrawled in vanished hands ripple across its surface, muttering warnings and obscure riddles into the draughty corridor. This ancient ward guards the approach to the deeper stacks, demanding either an authorized blood-seal from a senior cataloguer or the precise utterance of a forgotten password to grant safe passage. The ink thickens and darkens, forming angry clots that resemble watching eyes as you draw near the pulsating barrier.\n\nA faint smell of scorched hair and damp leather rises from the threshold, warning of the sharp penalties awaiting anyone who attempts to force an entry without proper clearance.",
+   "page": "Parchment stretches like taut skin across the archway, and dark veins of printer's ink writhe whenever footsteps sound nearby. Strange marginal notes scrawled in vanished hands ripple across its surface and mutter warnings and obscure riddles into the draughty corridor. The ward holds fast. It demands either an authorized blood-seal from a senior cataloguer or the precise utterance of a forgotten password to grant safe passage to the deeper stacks. The ink thickens and darkens, forming angry clots shaped as eyes as you draw near the barrier.\n\nA faint smell of scorched hair and damp leather rises from the threshold.",
    "exits": [
     {
      "label": "Confront the parchment barrier directly",
@@ -13701,7 +13701,7 @@
    "kind": "recovery",
    "title": "Caught in the Binding",
    "brief": "You dance smoothly between the snapping edges of predatory reference books, retrieving a brass bookmark that repels aggressive ink.",
-   "page": "A sudden shift in the shelving throws off your balance, and a heavy dictionary snaps shut viciously over your knuckles before you can pull back. You wrench your hand free with a sharp hiss of pain, leaving a bit of fabric and skin behind in the greedy leather mouth. The injury throbs painfully with every heartbeat, slowing your steps and reminding you of the library's unyielding appetite for careless visitors.",
+   "page": "A sudden shift in the shelving throws off your balance, and a dictionary snaps shut over your knuckles before you can pull back. You wrench your hand free. \"The binding has my skin,\" you hiss. A bit of fabric and skin stays behind in the greedy leather mouth. The injury flares with every heartbeat and slows your steps. The scrap still sits in the binding.",
    "exits": [
     {
      "label": "Retreat to the alcove to nurse fingers",
@@ -14327,7 +14327,7 @@
    "kind": "recovery",
    "title": "A Blind Lunge",
    "brief": "You outwit the swirling dust devils by redirecting their airflow with a discarded folio cover, retrieving a sealed parchment tube.",
-   "page": "The wind shears past your guard with a vicious snap, tearing the folio cover from your fingers and sending it spinning away into the grey dark. A sharp edge of flying card stock catches the skin of your forearm, slicing a clean red line across your sleeve before you manage to scramble backward into the shelter of a limestone pillar. You are left nursing a stinging cut and breathing air thick with grit, but the parchment tube remains clutched tight in your left fist despite the bruising impact.",
+   "page": "The wind shears past your guard with a vicious snap, tears the folio cover from your fingers, and sends it spinning away into the grey dark. A sharp edge of flying card stock catches the skin of your forearm and slices a clean red line across your sleeve before you scramble backward into the shelter of a limestone pillar. Grit fills the air. The parchment tube stays clutched tight in your left fist.",
    "exits": [
     {
      "label": "Retreat to the pillar shadow",
