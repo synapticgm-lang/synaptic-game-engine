@@ -9621,7 +9621,7 @@
      "to": "sg-3-0-4-2",
      "intent": "",
      "id": "x0",
-     "label": "Slip past the snapping hound // sg-3-0-4-2"
+     "label": "Slip past the snapping hound"
     }
    ],
    "title": "The Hound's Yard",
@@ -9640,7 +9640,7 @@
      "to": "sg-3-0-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Follow the quiet arched corridor // sg-3-0-4-3"
+     "label": "Follow the quiet arched corridor"
     }
    ],
    "title": "The Obsidian Vestibule",
@@ -9659,13 +9659,13 @@
      "to": "sg-3-0-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Sidestep toward the pillared portico // sg-3-0-4-3"
+     "label": "Sidestep toward the pillared portico"
     },
     {
      "to": "sg-3-0-4-4",
      "intent": "",
      "id": "x1",
-     "label": "Cross the dry canal bed quietly // sg-3-0-4-4"
+     "label": "Cross the dry canal bed quietly"
     }
    ],
    "title": "The Salt Court's Rest",
@@ -9684,13 +9684,13 @@
      "to": "sg-3-0-4-3",
      "intent": "",
      "id": "x0",
-     "label": "Pick a path toward the pillared portico // sg-3-0-4-3"
+     "label": "Pick a path toward the pillared portico"
     },
     {
      "to": "sg-3-0-4-4",
      "intent": "",
      "id": "x1",
-     "label": "Head down toward the dry canal bed // sg-3-0-4-4"
+     "label": "Head down toward the dry canal bed"
     }
    ],
    "title": "The Weaver's Loft",
@@ -9709,13 +9709,13 @@
      "to": "sg-3-0-4-4",
      "intent": "",
      "id": "x0",
-     "label": "Cross the dry canal bed // sg-3-0-4-4"
+     "label": "Cross the dry canal bed"
     },
     {
      "to": "sg-3-0-4-6",
      "intent": "",
      "id": "x1",
-     "label": "Squeeze past the sweating laborers // sg-3-0-4-6"
+     "label": "Squeeze past the sweating laborers"
     }
    ],
    "title": "The Creaking Signboard",
@@ -9734,19 +9734,19 @@
      "to": "sg-3-0-4-5",
      "intent": "",
      "id": "x0",
-     "label": "Head toward the bustling central plaza // sg-3-0-4-5"
+     "label": "Head toward the bustling central plaza"
     },
     {
      "to": "sg-3-0-4-6",
      "intent": "",
      "id": "x1",
-     "label": "Squeeze past the sweating laborers // sg-3-0-4-6"
+     "label": "Squeeze past the sweating laborers"
     },
     {
      "to": "sg-3-0-4-7",
      "intent": "",
      "id": "x2",
-     "label": "Seek the brightly painted canvas awning // sg-3-0-4-7"
+     "label": "Seek the brightly painted canvas awning"
     }
    ],
    "title": "The Cedar Beam",
@@ -9765,7 +9765,7 @@
      "to": "sg-3-0-4-6",
      "intent": "",
      "id": "x0",
-     "label": "Squeeze past the sweating laborers // sg-3-0-4-6"
+     "label": "Squeeze past the sweating laborers"
     }
    ],
    "title": "The Ash Mound",
@@ -9784,19 +9784,19 @@
      "to": "sg-3-0-4-5",
      "intent": "",
      "id": "x0",
-     "label": "Head toward the bustling central plaza // sg-3-0-4-5"
+     "label": "Head toward the bustling central plaza"
     },
     {
      "to": "sg-3-0-4-6",
      "intent": "",
      "id": "x1",
-     "label": "Squeeze past the sweating laborers // sg-3-0-4-6"
+     "label": "Squeeze past the sweating laborers"
     },
     {
      "to": "sg-3-0-4-7",
      "intent": "",
      "id": "x2",
-     "label": "Seek the brightly painted canvas awning // sg-3-0-4-7"
+     "label": "Seek the brightly painted canvas awning"
     }
    ],
    "title": "The Solar Mirror",
@@ -9815,13 +9815,13 @@
      "to": "sg-3-0-4-6",
      "intent": "",
      "id": "x0",
-     "label": "Squeeze past the sweating laborers // sg-3-0-4-6"
+     "label": "Squeeze past the sweating laborers"
     },
     {
      "to": "sg-3-0-4-7",
      "intent": "",
      "id": "x1",
-     "label": "Seek the brightly painted canvas awning // sg-3-0-4-7"
+     "label": "Seek the brightly painted canvas awning"
     }
    ],
    "title": "The Urchin's Offering",
@@ -9840,13 +9840,13 @@
      "to": "sg-3-0-5-0",
      "intent": "",
      "id": "x0",
-     "label": "Dive into the noisy rumor market // sg-3-0-5-0"
+     "label": "Dive into the noisy rumor market"
     },
     {
      "to": "sg-3-0-5-2",
      "intent": "",
      "id": "x1",
-     "label": "Seek a quiet corner away from the crowd // sg-3-0-5-2"
+     "label": "Seek a quiet corner away from the crowd"
     }
    ],
    "title": "The Salt Steps",

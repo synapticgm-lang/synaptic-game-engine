@@ -1881,7 +1881,7 @@
    "page": "Lamp-oil fumes hang thick over the stall where the ink-seller squints through a jeweller's lens at your worn leather boots. You press the heel of your left sole against the rough wooden counter to hide the split seam, letting the dim amber glow catch the polished grain of the calfskin. The merchant taps a stained fingernail against a heavy ceramic jar marked with the sigil of the permanent trade.\n\nWeighing his interest against the rising chill of the Reading Rooms, you offer the boots with a solemn nod, suggesting they will outlast three pairs of these damp market slippers.",
    "exits": [
     {
-     "label": "Inspect the heavy ceramic jar //",
+     "label": "Inspect the heavy ceramic jar",
      "to": "ul-1-052"
     }
    ],
@@ -1896,7 +1896,7 @@
    "page": "Thick soot flakes drift down from the iron lamps, settling on the brim of your shelver's cap as the merchant runs a suspicious thumb over the welt of your spare boot. He mutters something about shoddy stitching in the lower tiers, yet his nostrils flare at the genuine scent of neatsfoot oil. You fold your arms across your chest, feigning indifference while your toes ache in the thin stockings.\n\nThe flask of index-black sits just beyond his elbow, its leaden stopper sealed with purple wax that smells faintly of old cloves.",
    "exits": [
     {
-     "label": "Push the boots a little closer //",
+     "label": "Push the boots a little closer",
      "to": "ul-1-053"
     }
    ],
@@ -1908,7 +1908,7 @@
    "kind": "check",
    "title": "A Bargain Struck",
    "brief": "You barter skillfully with a stubborn ink-seller, trading your spare boots for a flask of permanent index-black.",
-   "page": "Cold sweat beads at the back of your neck as you match the merchant's unblinking stare, sliding the second boot forward with deliberate, unhurried grace. You speak of cataloguing quotas and the strict rules of the Returns Desk, weaving an elaborate fiction about a shortage of proper footwear in the deep stacks that demands an immediate exchange of equal value. His fingers twitch toward the wax-sealed flask, hovering just above the rim while he decides whether your bold front is genuine authority or desperate bluffing.\n\n",
+   "page": "Cold sweat beads at the back of your neck as you match the merchant's unblinking stare, sliding the second boot forward with deliberate, unhurried grace. You speak of cataloguing quotas and the strict rules of the Returns Desk, weaving an elaborate fiction about a shortage of proper footwear in the deep stacks that demands an immediate exchange of equal value. His fingers twitch toward the wax-sealed flask, hovering just above the rim while he decides whether your bold front is genuine authority or desperate bluffing.",
    "exits": [
     {
      "label": "check-full",
@@ -1949,7 +1949,7 @@
    "page": "Your tongue slips on a technical term from the library code, and the merchant's eyes snap wide with sudden, sharp amusement. He snorts, tossing your boots back onto the dusty floorboards with a dismissive flick of his wrist. If you want his finest ink-black now, he demands double the toll, forcing you to hand over your last silver penny and a bundle of precious parchment scraps meant for your evening notes. You stagger away poorer and wiser, your pockets lighter by more than coin.",
    "exits": [
     {
-     "label": "Retreat into the smoky crowd //",
+     "label": "Retreat into the smoky crowd",
      "to": "ul-1-055",
      "cost": true
     }
@@ -1962,10 +1962,10 @@
    "kind": "reward",
    "title": "The Darkest Ink",
    "brief": "You barter skillfully with a stubborn ink-seller, trading your spare boots for a flask of permanent index-black.",
-   "page": "The merchant grunts in grudging surrender, sweeping your spare boots into a greasy crate beneath his counter and thrusting the heavy ceramic flask into your open palms. It settles there with a satisfying, leaden weight, cold enough to numb your fingers through your tunic sleeve. However narrowly you managed the transaction, the prize is yours, sealed with a sharp nod of mutual disrespect.\n\n",
+   "page": "The merchant grunts in grudging surrender, sweeping your spare boots into a greasy crate beneath his counter and thrusting the heavy ceramic flask into your open palms. It settles there with a satisfying, leaden weight, cold enough to numb your fingers through your tunic sleeve. However narrowly you managed the transaction, the prize is yours, sealed with a sharp nod of mutual disrespect.",
    "exits": [
     {
-     "label": "Return to the bustling stall rows //",
+     "label": "Return to the bustling stall rows",
      "to": "ul-1-038"
     }
    ],
@@ -1978,10 +1978,10 @@
    "kind": "scene",
    "title": "The Blank Facade",
    "brief": "You trick a greedy merchant into trading his finest invisible ink for a worthless bundle of blank waste-paper.",
-   "page": "Smooth sheets of cheap rag paper rustle between your trembling fingers as you fan out the worthless bundle across the counter, making them look like pristine vellum under the flickering lantern light. The greedy merchant leans in close, his grease-stained spectacles sliding down his nose as he inspects the blank margins with hungry eyes. You whisper tales of a lost cartography manual destined for the Index, keeping your voice low and conspiratorial.\n\n",
+   "page": "Smooth sheets of cheap rag paper rustle between your trembling fingers as you fan out the worthless bundle across the counter, making them look like pristine vellum under the flickering lantern light. The greedy merchant leans in close, his grease-stained spectacles sliding down his nose as he inspects the blank margins with hungry eyes. You whisper tales of a lost cartography manual destined for the Index, keeping your voice low and conspiratorial.",
    "exits": [
     {
-     "label": "Push the blank bundle forward //",
+     "label": "Push the blank bundle forward",
      "to": "ul-1-057"
     }
    ],
@@ -1993,7 +1993,7 @@
    "kind": "check",
    "title": "The False Ledger",
    "brief": "You trick a greedy merchant into trading his finest invisible ink for a worthless bundle of blank waste-paper.",
-   "page": "Heart hammering against your ribs, you point a confident finger at the empty corners of the paper, murmuring that the invisible script requires the heat of a breath to appear. The merchant reaches eagerly for the prize, his fat fingers almost grazing the topmost sheet while suspicion flickers briefly in his rheumy eyes. You hold your breath, forcing your hands to remain steady on the counter edge as he weighs the gamble.\n\n",
+   "page": "Heart hammering against your ribs, you point a confident finger at the empty corners of the paper, murmuring that the invisible script requires the heat of a breath to appear. The merchant reaches eagerly for the prize, his fat fingers almost grazing the topmost sheet while suspicion flickers briefly in his rheumy eyes. You hold your breath, forcing your hands to remain steady on the counter edge as he weighs the gamble.",
    "exits": [
     {
      "label": "check-full",
@@ -2034,7 +2034,7 @@
    "page": "A corner of the top sheet catches on a dry splinter, tearing away to reveal the utterly blank, coarse grain beneath. The merchant lets out a sharp whistle of outrage that brings two burly porters charging through the linen drapes behind the stall. You snatch up what you can and bolt, leaving your spare woollen scarf behind in the merchant's furious fist as a token of your hasty retreat.",
    "exits": [
     {
-     "label": "Flee down the shadowy lane //",
+     "label": "Flee down the shadowy lane",
      "to": "ul-1-059",
      "cost": true
     }
@@ -2047,10 +2047,10 @@
    "kind": "reward",
    "title": "The Stolen Secret",
    "brief": "You trick a greedy merchant into trading his finest invisible ink for a worthless bundle of blank waste-paper.",
-   "page": "The merchant snatches the bundle, grins a yellow-toothed grin of absolute triumph, and shoves a heavy glass vial of clear, stinging fluid into your pocket before he can change his mind. However narrowly you avoided his wrath, the precious draught of invisible ink is safely tucked against your ribs. You slip away into the shifting crowd of scholars before he thinks to test the paper under an open flame.\n\n",
+   "page": "The merchant snatches the bundle, grins a yellow-toothed grin of absolute triumph, and shoves a heavy glass vial of clear, stinging fluid into your pocket before he can change his mind. However narrowly you avoided his wrath, the precious draught of invisible ink is safely tucked against your ribs. You slip away into the shifting crowd of scholars before he thinks to test the paper under an open flame.",
    "exits": [
     {
-     "label": "Drift back toward the stalls //",
+     "label": "Drift back toward the stalls",
      "to": "ul-1-038"
     }
    ],
@@ -2066,7 +2066,7 @@
    "page": "Heavy iron girders groan overhead as you step onto the swaying span constructed entirely from discarded, iron-clasped library bindings lashed together with hemp rope. Below you, a sluggish canal of discarded black ink rolls in thick, glistening waves, whispering disjointed phrases from forgotten treatises against the stone footings. The air tastes of copper and old glue, and every footstep sends a dry, paper-crackle shudder through the makeshift bridge. You keep your eyes fixed on the distant lantern light of the scriptorium, ignoring the frantic scratching sounds echoing from the dark water beneath your boots.",
    "exits": [
     {
-     "label": "Cross toward the scriptorium arches //",
+     "label": "Cross toward the scriptorium arches",
      "to": "ul-1-061"
     }
    ],
@@ -5019,7 +5019,7 @@
    "kind": "check",
    "title": "Reading the Stitches",
    "brief": "You spot a hidden structural flaw in the lashings and bypass the weakest section, securing an ivory bookmark engraved with secret wards.",
-   "page": "The suspension cords groan under a sudden gust of dry, paper-scented wind rising from the abyss below. You press yourself flat against the vertical stack-face, trying to calculate the exact tension required to cross the frayed gap without snapping the remaining threads. Your fingers trace the embossed lettering on a nearby spine, searching for the hidden structural pins that hold the entire hanging bridge in equilibrium.\n\n",
+   "page": "The suspension cords groan under a sudden gust of dry, paper-scented wind rising from the abyss below. You press yourself flat against the vertical stack-face, trying to calculate the exact tension required to cross the frayed gap without snapping the remaining threads. Your fingers trace the embossed lettering on a nearby spine, searching for the hidden structural pins that hold the entire hanging bridge in equilibrium.",
    "exits": [
     {
      "label": "check-full",
@@ -5073,7 +5073,7 @@
    "kind": "reward",
    "title": "The Secured Binding",
    "brief": "You spot a hidden structural flaw in the lashings and bypass the weakest section, securing an ivory bookmark engraved with secret wards.",
-   "page": "However narrowly you manage to keep your footing against the shifting architecture of the stacks, your quick fingers secure a tangible prize from the edge of the gap. The tension in the leather relaxes just enough for you to scramble onto safer timber, leaving the trembling chasm behind. Tucked securely into your palm is a small, heavy token that hums faintly against your skin whenever the library lamps flare.\n\n",
+   "page": "However narrowly you manage to keep your footing against the shifting architecture of the stacks, your quick fingers secure a tangible prize from the edge of the gap. The tension in the leather relaxes just enough for you to scramble onto safer timber, leaving the trembling chasm behind. Tucked securely into your palm is a small, heavy token that hums faintly against your skin whenever the library lamps flare.",
    "exits": [
     {
      "label": "Return to the trembling span",
@@ -5104,7 +5104,7 @@
    "kind": "check",
    "title": "Measuring the Drift",
    "brief": "You negotiate a safer crossing by reading the structural tension in the hanging leather, earning the favour of a cautious wandering page.",
-   "page": "The entire row of shelves shudders sideways, threatening to pinch your shoulders between two heavy oak presses. You watch the rhythm of the swinging spines, trying to anticipate the exact moment the gap between the hanging walkways will briefly narrow. Your mind races through the cataloguing codes for structural movement while the floorboards beneath your boots tilt at an alarming angle.\n\n",
+   "page": "The entire row of shelves shudders sideways, threatening to pinch your shoulders between two heavy oak presses. You watch the rhythm of the swinging spines, trying to anticipate the exact moment the gap between the hanging walkways will briefly narrow. Your mind races through the cataloguing codes for structural movement while the floorboards beneath your boots tilt at an alarming angle.",
    "exits": [
     {
      "label": "check-full",
@@ -5142,7 +5142,7 @@
    "kind": "recovery",
    "title": "Caught in the Press",
    "brief": "You negotiate a safer crossing by reading the structural tension in the hanging leather, earning the favour of a cautious wandering page.",
-   "page": "The heavy oak shelves slam together a fraction too soon, catching the brim of your cap and tearing your canvas satchel at the seam. You wrench yourself free with a hard twist, leaving behind a valuable bundle of salvaged blank leaves crushed between the wooden blocks. The impact leaves your shoulder bruised and aching, throbbing in time with the low mechanical heartbeat echoing through the stone floor.\n\n",
+   "page": "The heavy oak shelves slam together a fraction too soon, catching the brim of your cap and tearing your canvas satchel at the seam. You wrench yourself free with a hard twist, leaving behind a valuable bundle of salvaged blank leaves crushed between the wooden blocks. The impact leaves your shoulder bruised and aching, throbbing in time with the low mechanical heartbeat echoing through the stone floor.",
    "exits": [
     {
      "label": "Crawl through the narrow gap",
@@ -5158,7 +5158,7 @@
    "kind": "reward",
    "title": "The Cleared Margin",
    "brief": "You negotiate a safer crossing by reading the structural tension in the hanging leather, earning the favour of a cautious wandering page.",
-   "page": "However narrowly you manage to slip through the grinding timber frames, your determination secures a safe passage into the adjacent alcove. The stranger in the ink-stained coat watches your escape with dry approval, tossing a small token across the widening gap before melting back into the shadows. You catch it cleanly in your palm, feeling the cold weight of a borrowed brass key designed to fit the subsidiary locks of the lower stacks.\n\n",
+   "page": "However narrowly you manage to slip through the grinding timber frames, your determination secures a safe passage into the adjacent alcove. The stranger in the ink-stained coat watches your escape with dry approval, tossing a small token across the widening gap before melting back into the shadows. You catch it cleanly in your palm, feeling the cold weight of a borrowed brass key designed to fit the subsidiary locks of the lower stacks.",
    "exits": [
     {
      "label": "Return to the central span",
@@ -6375,7 +6375,7 @@
    "kind": "check",
    "title": "Lash the Drifting Timbers",
    "brief": "You construct a makeshift raft from floating ledger boards using clever knots, securing a waterproof canvas sack.",
-   "page": "Swift fingers loop tarred cord around water-swollen ledger boards, drawing the knots tight while the current surges against your boots. The binding threatens to slip as a sudden wave of black fluid spills over the makeshift deck, soaking your sleeves in bitter ink. You pull the final hitch taut with your teeth, bracing your weight against the shifting frame just as the craft breaks free from the shelving leg\n\n",
+   "page": "Swift fingers loop tarred cord around water-swollen ledger boards, drawing the knots tight while the current surges against your boots. The binding threatens to slip as a sudden wave of black fluid spills over the makeshift deck, soaking your sleeves in bitter ink. You pull the final hitch taut with your teeth, bracing your weight against the shifting frame just as the craft breaks free from the shelving leg.",
    "exits": [
     {
      "label": "check-full",
@@ -6429,7 +6429,7 @@
    "kind": "reward",
    "title": "Bound in Waterproof Canvas",
    "brief": "You construct a makeshift raft from floating ledger boards using clever knots, securing a waterproof canvas sack.",
-   "page": "Your makeshift vessel holds together through the worst of the turbulence, scraping gently against a protruding iron shelf until you secure the painter line. Inside the waterproof canvas sack, your spare lamp-oil and dry chalk remain untouched by the bitter fluid of the weir. You shake the dark droplets from your coat, pocketing a small lead seal found pressed into the corner of the wreckage\n\n",
+   "page": "Your makeshift vessel holds together through the worst of the turbulence, scraping gently against a protruding iron shelf until you secure the painter line. Inside the waterproof canvas sack, your spare lamp-oil and dry chalk remain untouched by the bitter fluid of the weir. You shake the dark droplets from your coat, pocketing a small lead seal found pressed into the corner of the wreckage.",
    "exits": [
     {
      "label": "Follow the narrow vertical cleft",
@@ -6460,7 +6460,7 @@
    "kind": "check",
    "title": "Reach for the Overhead Rail",
    "brief": "You bypass the raging current by climbing the overhead iron tracks, acquiring a long iron pole with a hooked end.",
-   "page": "Fingers close around the grease-slicked iron bar just as the ledge crumbles beneath your heels, leaving your entire weight dangling above the ink-sluice. Your shoulders burn with sudden strain while the heavy brass glass swings from your belt, clattering loudly against the stone masonry. You hook one knee over the cold metal, searching for a firmer grip in the dim light\n\n",
+   "page": "Fingers close around the grease-slicked iron bar just as the ledge crumbles beneath your heels, leaving your entire weight dangling above the ink-sluice. Your shoulders burn with sudden strain while the heavy brass glass swings from your belt, clattering loudly against the stone masonry. You hook one knee over the cold metal, searching for a firmer grip in the dim light.",
    "exits": [
     {
      "label": "check-full",
@@ -6514,7 +6514,7 @@
    "kind": "reward",
    "title": "Hooked from the Current",
    "brief": "You bypass the raging current by climbing the overhead iron tracks, acquiring a long iron pole with a hooked end.",
-   "page": "Strong fingers secure the iron rod against the overhead bracket, letting you swing past the worst of the boiling weir with minimal effort. Below your swinging boots, the ink-river flows in thick, sluggish folds toward the lower stacks, leaving you untouched by its damp reach. You drop down onto the far pathway with a soft thud, your palms blackened by old lamp-grease\n\n",
+   "page": "Strong fingers secure the iron rod against the overhead bracket, letting you swing past the worst of the boiling weir with minimal effort. Below your swinging boots, the ink-river flows in thick, sluggish folds toward the lower stacks, leaving you untouched by its damp reach. You drop down onto the far pathway with a soft thud, your palms blackened by old lamp-grease.",
    "exits": [
     {
      "label": "Return to the central weir",
@@ -11153,7 +11153,7 @@
    "kind": "scene",
    "title": "Beyond the Card Index",
    "brief": "You deceive the chief card-sorter with a fabricated counter-directive, risking exposure, to acquire a master key for the lower levels.",
-   "page": "The forged seal on the counter-directive holds against the sorter's scrutiny, gleaming dully under the amber glow of the desk lamps. With a disgruntled grunt, he reaches into a locked brass drawer and tosses a heavy iron ring of keys onto the blotter without another word. You scoop them up quickly before he can change his mind, feeling the cold metal bite into your palm. The way down to the lower stacks lies open before you, veiled in thick shadows and the scent of damp leather.\n\nDescend into the restricted lower stacks",
+   "page": "The forged seal on the counter-directive holds against the sorter's scrutiny, gleaming dully under the amber glow of the desk lamps. With a disgruntled grunt, he reaches into a locked brass drawer and tosses a heavy iron ring of keys onto the blotter without another word. You scoop them up quickly before he can change his mind, feeling the cold metal bite into your palm. The way down to the lower stacks lies open before you, veiled in thick shadows and the scent of damp leather.",
    "exits": [
     {
      "label": "Descend into the restricted stacks",
@@ -11206,7 +11206,7 @@
    "kind": "recovery",
    "title": "Caught in the Bureaucracy",
    "brief": "You deceive the chief card-sorter with a fabricated counter-directive, risking exposure, to acquire a master key for the lower levels.",
-   "page": "A sudden twitch of the sorter's eyebrow betrays the lie a fraction too late, and the rubber-stamped rejection mark comes down upon your paperwork with a sharp, echoing crack. Alarms begin to chime softly within the wooden cabinets, setting thousands of index cards fluttering like trapped moths in panic. You snatch your ruined papers back from the desk, leaving behind a strip of your sleeve caught in the brass sorting mechanism as you turn and flee into the labyrinth of aisles.\n\nRetreat into the shadowed filing aisles",
+   "page": "A sudden twitch of the sorter's eyebrow betrays the lie a fraction too late, and the rubber-stamped rejection mark comes down upon your paperwork with a sharp, echoing crack. Alarms begin to chime softly within the wooden cabinets, setting thousands of index cards fluttering like trapped moths in panic. You snatch your ruined papers back from the desk, leaving behind a strip of your sleeve caught in the brass sorting mechanism as you turn and flee into the labyrinth of aisles.",
    "exits": [
     {
      "label": "Flee into the shadow aisles",
@@ -14044,7 +14044,7 @@
    "kind": "scene",
    "title": "The Mosaic Barrier",
    "brief": "You trick the mosaic into lowering its protective barrier by misdirecting its queries, securing a master ledger fragment.",
-   "page": "Glazed ceramic tiles interlock across the archway, forming a restless mosaic of crimson and ochre beasts that snap their jaws at your approach. Each query the surface throws out demands a historical falsehood about the city's foundation, written in sharp-edged lettering that burns against the gloom. Instead of answering with truth or silence, you feed the wall a web of deliberate misdirections culled from corrupted duplicate folios tucked in your pockets. The ceramic creatures snarl, confused by the cascade of contradictory dates and phantom dynasties, their glowing mortar fracturing with a soft sigh of exhausted alchemy. The barrier droops downward into the floor-grooves, leaving behind a jagged, rectangular sliver of heavy calfskin inscribed with ink that refuses to dry.\n\n",
+   "page": "Glazed ceramic tiles interlock across the archway, forming a restless mosaic of crimson and ochre beasts that snap their jaws at your approach. Each query the surface throws out demands a historical falsehood about the city's foundation, written in sharp-edged lettering that burns against the gloom. Instead of answering with truth or silence, you feed the wall a web of deliberate misdirections culled from corrupted duplicate folios tucked in your pockets. The ceramic creatures snarl, confused by the cascade of contradictory dates and phantom dynasties, their glowing mortar fracturing with a soft sigh of exhausted alchemy. The barrier droops downward into the floor-grooves, leaving behind a jagged, rectangular sliver of heavy calfskin inscribed with ink that refuses to dry.",
    "exits": [
     {
      "label": "Step through the lowered ceramic barrier",
@@ -15197,7 +15197,7 @@
    "kind": "scene",
    "title": "The Heavy Tomes",
    "brief": "You forge a clever diversion by damming a tributary feeder with heavy encyclopedias, securing a cache of dry blotting paper.",
-   "page": "Thick calfskin volumes settle with a sodden thud into the black channel, their gold-leafed spines absorbing the dark liquor of the tributary feeder. You wedge the massive encyclopedias between two trembling iron pillars, diverting the greasy current into a temporary backwater where the surface skims clear. Carefully, you press sheets of dry blotting paper across the damp flagstones, soaking up the residual sheen until the slate is workable. The lamp-oil gutters low in your brass lantern, casting long, wavering shadows against the towering stacks of forgotten geography.\n\n",
+   "page": "Thick calfskin volumes settle with a sodden thud into the black channel, their gold-leafed spines absorbing the dark liquor of the tributary feeder. You wedge the massive encyclopedias between two trembling iron pillars, diverting the greasy current into a temporary backwater where the surface skims clear. Carefully, you press sheets of dry blotting paper across the damp flagstones, soaking up the residual sheen until the slate is workable. The lamp-oil gutters low in your brass lantern, casting long, wavering shadows against the towering stacks of forgotten geography.",
    "exits": [
     {
      "label": "Step across the dry stone path",
@@ -15212,7 +15212,7 @@
    "kind": "scene",
    "title": "The Dammed Rill",
    "brief": "You forge a clever diversion by damming a tributary feeder with heavy encyclopedias, securing a cache of dry blotting paper.",
-   "page": "Heavy iron-clasped geographies serve as your temporary masonry, dropped one by one into the pulsing throat of the feeder until the black fluid slows to a sluggish trickle. You work with frantic haste, your fingers stained deep with walnut-brown gall, stacking damp folios to block every escaping rivulet. Across the makeshift timber-and-paper barrier, a pocket of clean air opens above a dry stretch of flooring. You slide your remaining stack of blotting paper into the sheltered recess, keeping the fragile sheets safe from the drifting spray.\n\n",
+   "page": "Heavy iron-clasped geographies serve as your temporary masonry, dropped one by one into the pulsing throat of the feeder until the black fluid slows to a sluggish trickle. You work with frantic haste, your fingers stained deep with walnut-brown gall, stacking damp folios to block every escaping rivulet. Across the makeshift timber-and-paper barrier, a pocket of clean air opens above a dry stretch of flooring. You slide your remaining stack of blotting paper into the sheltered recess, keeping the fragile sheets safe from the drifting spray.",
    "exits": [
     {
      "label": "Follow the cleared ledge forward",
@@ -15227,7 +15227,7 @@
    "kind": "check",
    "title": "Choking the Sluice",
    "brief": "You forge a clever diversion by damming a tributary feeder with heavy encyclopedias, securing a cache of dry blotting paper.",
-   "page": "Swelling pressure from the upstream feeder threatens to blow your hasty dam apart as black fluid bubbles furiously around the edges of the heavy encyclopedias. You throw your full weight against the spine of a massive biographical dictionary, trying to wedge it deeper into the groove before the entire barricade gives way under the rising tide. The soaked paper groans and slips beneath your palms, threatening to burst the seal and wash your dry cache into the void.\n\n",
+   "page": "Swelling pressure from the upstream feeder threatens to blow your hasty dam apart as black fluid bubbles furiously around the edges of the heavy encyclopedias. You throw your full weight against the spine of a massive biographical dictionary, trying to wedge it deeper into the groove before the entire barricade gives way under the rising tide. The soaked paper groans and slips beneath your palms, threatening to burst the seal and wash your dry cache into the void.",
    "exits": [
     {
      "label": "check-full",
@@ -15265,7 +15265,7 @@
    "kind": "recovery",
    "title": "Soaking the Stash",
    "brief": "You forge a clever diversion by damming a tributary feeder with heavy encyclopedias, securing a cache of dry blotting paper.",
-   "page": "A sudden surge of black liquor punches right through the center of your barricade, showering your boots and clothes in bitter, staining sludge. The precious cache of dry blotting paper drinks the overflow in an instant, swelling into a useless, soggy pulp that falls apart in your hands. You scramble backward up the slippery stone slope, coughing against the sharp smell of iron gall and lamp-oil, poorer by a dozen sheets and half your breath.\n\n",
+   "page": "A sudden surge of black liquor punches right through the center of your barricade, showering your boots and clothes in bitter, staining sludge. The precious cache of dry blotting paper drinks the overflow in an instant, swelling into a useless, soggy pulp that falls apart in your hands. You scramble backward up the slippery stone slope, coughing against the sharp smell of iron gall and lamp-oil, poorer by a dozen sheets and half your breath.",
    "exits": [
     {
      "label": "Retrieve the ruined paper scraps",
@@ -15297,7 +15297,7 @@
    "kind": "scene",
    "title": "The Ferryman's Toll",
    "brief": "You negotiate safe passage with the ink-rower by offering a pinch of salt, winning a ferry token for future crossings.",
-   "page": "A flat-bottomed punt drifts out from the shadow of the iron stacks, poled by a silent figure draped in grease-stained canvas. You reach into your pocket and draw out a twisted pinch of coarse grey salt, holding it flat upon your palm until the rower's dark eyes catch the glint of mineral. A gnarled hand reaches across the gunwale to accept the trade, dropping a small notched bone disc into your palm in return.\n\n",
+   "page": "A flat-bottomed punt drifts out from the shadow of the iron stacks, poled by a silent figure draped in grease-stained canvas. You reach into your pocket and draw out a twisted pinch of coarse grey salt, holding it flat upon your palm until the rower's dark eyes catch the glint of mineral. A gnarled hand reaches across the gunwale to accept the trade, dropping a small notched bone disc into your palm in return.",
    "exits": [
     {
      "label": "Step aboard the narrow ferry",
@@ -15312,7 +15312,7 @@
    "kind": "check",
    "title": "Bargaining in Ink",
    "brief": "You negotiate safe passage with the ink-rower by offering a pinch of salt, winning a ferry token for future crossings.",
-   "page": "The hooded rower pauses his long ash pole inches from the stone shelf, watching you with the suspicious stillness of a gargoyle. You offer the pinch of grey salt across the dark gap, pitching your voice to a low, respectful murmur that will not disturb the whispering margins around you. The ferryman cocks his head, weighing your sincerity against the rising tide of the ink-rivers below.\n\n",
+   "page": "The hooded rower pauses his long ash pole inches from the stone shelf, watching you with the suspicious stillness of a gargoyle. You offer the pinch of grey salt across the dark gap, pitching your voice to a low, respectful murmur that will not disturb the whispering margins around you. The ferryman cocks his head, weighing your sincerity against the rising tide of the ink-rivers below.",
    "exits": [
     {
      "label": "check-full",
@@ -15350,7 +15350,7 @@
    "kind": "recovery",
    "title": "A Sour Trade",
    "brief": "You negotiate safe passage with the ink-rower by offering a pinch of salt, winning a ferry token for future crossings.",
-   "page": "Your hand slips on the damp stone as you reach out, spilling half the precious salt into the dark current where it dissolves in an instant. The rower scowls, a harsh sound like dry parchment tearing, and pushes the punt an arm's length away from the ledge. You are left standing alone with wet boots and a lighter pouch, forced to find another way across the channel without a token.\n\n",
+   "page": "Your hand slips on the damp stone as you reach out, spilling half the precious salt into the dark current where it dissolves in an instant. The rower scowls, a harsh sound like dry parchment tearing, and pushes the punt an arm's length away from the ledge. You are left standing alone with wet boots and a lighter pouch, forced to find another way across the channel without a token.",
    "exits": [
     {
      "label": "Scramble along the lower ledge",
@@ -15382,7 +15382,7 @@
    "kind": "bottleneck",
    "title": "The Iron Trial",
    "brief": "You find a series of iron-bound trial chambers where the history of the Underlibrary judges every visitor.",
-   "page": "Heavy iron doors stand ajar within the deepest roots of the annexe, revealing a succession of vaulted chambers where the history of the Underlibrary sits in silent judgment. Every stone surface is carved with ancient administrative verdicts, echoing softly with the voices of forgotten cataloguers who weighed the worth of every manuscript ever shelved. You step across the threshold into the chill draft of the tribunal, feeling the weight of centuries pressing against your conscience. The walls themselves seem to watch you, noting every hesitation as you search for any trace of Thessaly Marr among the dusty records.\n\n",
+   "page": "Heavy iron doors stand ajar within the deepest roots of the annexe, revealing a succession of vaulted chambers where the history of the Underlibrary sits in silent judgment. Every stone surface is carved with ancient administrative verdicts, echoing softly with the voices of forgotten cataloguers who weighed the worth of every manuscript ever shelved. You step across the threshold into the chill draft of the tribunal, feeling the weight of centuries pressing against your conscience. The walls themselves seem to watch you, noting every hesitation as you search for any trace of Thessaly Marr among the dusty records.",
    "exits": [
     {
      "label": "Enter the court of red ink",
@@ -20270,7 +20270,7 @@
    "page": "Stacks of untreated vellum drift across the public squares of Quillon like fallen snow, their surfaces entirely free of ink, rule, or register. Every ordinance issued by the Cataloguers' Court has blurred into a pale gray smear, leaving the merchants and street-children to barter in silent nods over blank ledgers. You stand in the centre of the market-cross holding a pen that refuses to leave a mark upon the air, watching the old street names dissolve from the cornerstones into clean, unblemished stone. The ink-sellers have closed their shutters, their bottles now filled with nothing more dangerous than rainwater and gray shadow. Without an Index to keep the tally of births, fines, and forgotten treaties, the city forgets what day of the week it is, and nobody seems particularly anxious to be reminded.",
    "exits": [
     {
-     "label": "Watch the clean stone fade //",
+     "label": "Watch the clean stone fade",
      "to": "ul-6-031"
     }
    ],
@@ -20286,7 +20286,7 @@
    "page": "Down in the deep galleries, the shelves have ceased their restless sliding and stand locked in a great, peaceful stillness, their leather spines whitening as the last traces of print sink inward like dew dried by the sun. No marginal notes whisper insults from the margins of old folios, and the biting grammars of the North have grown as docile as stuffed owls. Thessaly Marr's empty chair at the Index desk remains dusted with fine gray flakes where the final register finally let go of its history. You slide your bare hands across the unscribed tables, feeling the profound relief of a room where no one will ever hand you a summons, a late fee, or a decree. The Long Closing has come not with the snap of iron bolts, but as a vast, breathable emptiness that swallows the very need for names.",
    "exits": [
     {
-     "label": "Leave the empty desk behind //",
+     "label": "Leave the empty desk behind",
      "to": "ul-6-032"
     }
    ],
@@ -20314,7 +20314,7 @@
    "page": "Heavy ironbound chests, filled to the lid with heavy silver sovereigns and damp bundles of promissory notes, change hands across the scarred walnut of the Returns Desk while the night-porter looks on with a dry whistle. The lending clerk from the Reading Rooms counts the stack twice, his fingers black with grease-money rather than gall-ink, before nodding toward the three heavily guarded wagons waiting in the courtyard. Every title deed in Quillon, every mortgage and ancestral grudge recorded since the founding of the city, has been bundled into coarse sacks and sold to the highest bidder without a single stamp to mark the transaction. Outside, the rival scholars line up in the rain, clutching heavy purses and shouting bids for the right to remember whose grandfather owned the orchard and whose family never paid their tithe.",
    "exits": [
     {
-     "label": "Count the heavy silver coin //",
+     "label": "Count the heavy silver coin",
      "to": "ul-6-034"
     }
    ],
@@ -20330,7 +20330,7 @@
    "page": "Wealth of this magnitude smells distinctly of old mutton fat and damp cellar-floors, no matter how many crests are stamped into the sealing wax. The buyers are men with ink-stains behind their ears and avarice in their gray eyes, men who intend to auction off the memories of saints and murderers to the highest-bidding guilds in the upper districts. You pocket your share of the plunder - enough to buy a tavern or a fleet of coal barges - while the Shelvers' Fellowship gathers around the stove to divide the small change left over from the great transaction. No one speaks of the Hundredth Door now, nor of the Index that could rewrite the stars; there is simply too much gold on the table to care whether the past was accurate or merely expensive.",
    "exits": [
     {
-     "label": "Walk out with the gold //",
+     "label": "Walk out with the gold",
      "to": "ul-6-035"
     }
    ],
