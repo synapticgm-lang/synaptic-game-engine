@@ -672,7 +672,7 @@
    "kind": "reward",
    "title": "Paths of the Low",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "Slipping back into the deeper shadows just as Harlan turns, you hold your breath. An argument breaks out among the rivals over a shared flask, and in their momentary distraction, you commit the final details of the route to memory.\n\nRetreating safely to a quiet alley, you quickly sketch the vital paths onto a scrap of sailcloth using a piece of charcoal. You now possess a reliable guide through the treacherous salt-flats and sinkholes leading toward the Sunken Stair. Breathing a quiet sigh of relief, you secure the rough chart inside your coat.",
+   "page": "You slip into deeper shadow just as Harlan turns. You hold still. An argument breaks out among the rivals over a shared flask, and in that brief distraction you commit the final details of the route to memory.\n\nBack in an alley you sketch the vital paths onto a scrap of sailcloth with a piece of charcoal, and the chart covers the treacherous salt-flats and sinkholes leading toward the Sunken Stair. You tuck the rough chart inside your coat.",
    "exits": [
     {
      "label": "Head out onto the flats",
@@ -2123,7 +2123,7 @@
    "kind": "recovery",
    "title": "Spotted by the Zealous",
    "brief": "You stand perfectly still as a group of frantic Drift Pilgrims rushes past, avoiding their manic zealotry to quietly pocket a dropped ritual bell.",
-   "page": "A sudden twitch of your boot against a loose pebble echoes sharply in the salt-air, drawing the pilgrim's glazed stare straight to your hiding place. He lunges forward with a hoarse shout, striking your shoulder with the heavy iron censer before stumbling onward in his blind march toward the horizon. The blow leaves a deep, throbbing ache across your collarbone and scatters your rations into the dust. You recover your footing in the salt-drifts, nursing your bruised arm as the chant fades away.",
+   "page": "A sudden twitch of your boot against a loose pebble cracks loud in the salt-air and draws the pilgrim's glazed stare straight to your hiding place. He lunges forward and shouts, \"I see you!\" then strikes your shoulder with the iron censer before stumbling onward in his blind march toward the horizon. The blow leaves a deep ache across your collarbone and scatters your rations into the dust. You recover your footing in the salt-drifts and nurse your bruised arm as the chant fades away.",
    "exits": [
     {
      "label": "Brush the dust from your coat",
@@ -6720,7 +6720,7 @@
    "kind": "hub",
    "title": "Saltspire Outskirts",
    "brief": "Saltspire Outskirts: The towering stilt-city of the Brineholders casts long shadows over a cluster of desperate squatter camps and guarded water-pumps.",
-   "page": "Desperate squatter camps cling to the massive rusted iron feet of the city like barnacles on a stranded hull, their inhabitants boiling brackish sludge over small fires of driftwood. Armed guards in polished bronze breastplates stand before the primary ladder-lifts, turning away anyone without heavy coin or a water-debt token. To your left, a leaking distribution pipe drips precious moisture into waiting copper basins, while narrow service hatches lead into the dark underbelly of the stilt-city. Further out, the seabed drops away into a deep, shadowy canyon where strange metal structures protrude from the silt.",
+   "page": "Squatter camps cling to the rusted iron feet of the city like barnacles on a stranded hull, and folk boil brackish sludge over small fires of driftwood while the stilts throw long shade across the mud. Guards block the primary ladder-lifts. Polished bronze breastplates catch what light there is, and they turn away anyone without enough coin or a water-debt token. To your left a leaking distribution pipe drips precious moisture into waiting copper basins. Narrow service hatches open under the stilt-city. Further out the seabed drops away into a deep shadowy canyon where strange metal structures protrude from the silt.",
    "exits": [
     {
      "label": "Slip past the lower guards",
@@ -10713,7 +10713,7 @@
    "kind": "reward",
    "title": "The Glass Ledge",
    "brief": "You carefully traverse a thin glass ledge above the reservoir, risking a terrifying plunge to recover a drowned worker's toolbelt.",
-   "page": "Your boots slide with a sickening screech against the curved pane, suspended high above the echoing vault of the reservoir. Down in the dark, black water laps against lead walls, waiting for anyone foolish enough to lose their footing. Every breath is a struggle against the damp chill rising from the depths, yet your trembling fingers finally close around the heavy leather straps of the drowned worker's toolbelt. Hauling it up onto solid stone, you secure a grease-stained brass wedge - a simple keepsake that might just jam a lock when the time is right.",
+   "page": "Your boots slide with a sickening screech against the curved pane high above the vault of the reservoir. Down in the dark, black water laps against lead walls. Lose your footing and you fall. Every breath fights the damp chill that rises from those depths, yet your trembling fingers finally close around the leather straps of the drowned worker's toolbelt. You haul the belt onto solid stone and secure a grease-stained brass wedge, a simple keepsake that might jam a lock when the time is right.",
    "exits": [
     {
      "label": "Slip back into the dusty annex",
@@ -11759,7 +11759,7 @@
    "kind": "scene",
    "title": "Panic On The Branch",
    "brief": "You physically restrain a panicked nobleman who tries to flee, risking a brutal scuffle to extort a heavy purse of Coin.",
-   "page": "Silk rustles like dry kelp as the nobleman scrambles backward over the carved railing of the stilt-way, his eyes wide and milky with saltwater terror. Below him, the exposed seabed yawns like an open grave, tempting him to jump or bolt into the shadowed lattice of Saltspire's lower struts. You catch the hem of his velvet doublet before his heels can find purchase on the slick iron rungs, hauling him back onto the wooden planks with a sharp twist of his embroidered collar. He thrashes like a hooked cod, his expensive rings flashing in the dim gloom of the high walkway.\n\nWhile he gasps for air you wedge your forearm across his chest, pin him against the damp cedar wall, and demand the purse swinging from his belt as toll for your silence.",
+   "page": "Silk rustles like dry kelp as the nobleman scrambles backward over the carved railing of the stilt-way, his eyes wide and milky with saltwater terror. Below him the exposed seabed yawns. He could jump, or bolt into the shadowed lattice of Saltspire's lower struts. You catch the hem of his velvet doublet before his heels find the slick iron rungs, and you haul him back onto the wooden planks with a sharp twist of his embroidered collar. He thrashes hard. Expensive rings flash in the dim gloom of the high walkway.\n\nWhile he gasps for air you wedge your forearm across his chest, pin him against the damp cedar wall, and say, \"The purse. Toll for silence.\"",
    "exits": [
     {
      "label": "Twist his arm for coin",
@@ -12911,7 +12911,7 @@
    "kind": "scene",
    "title": "Braking the Spindle",
    "brief": "You study the complex braking levers to control the descent speed, risking a free-fall to salvage some precious mechanical parts.",
-   "page": "Heavy iron levers hum under your palms, cold grease coating your knuckles as the counterweights groan overhead. You lean your weight against the rusted teeth, courting a sudden, bone-shattering drop just to save a few precious heartbeats on the clock. Sparks spit from the iron brake-shoe, smelling of hot sulphur in the damp air. Below the cage, precious brass linkages dangle within reach of the drop, waiting for a daring hand to snatch them before the descent settles.",
+   "page": "Iron levers sit cold under your palms, and grease coats your knuckles while the counterweights groan overhead. You lean into the rusted teeth and court a sudden bone-shattering drop just to save a few precious heartbeats on the clock. Sparks spit from the iron brake-shoe. Hot sulphur smells sharp in the damp air. Below the cage, brass linkages dangle within reach of the drop, and a daring hand could snatch them before the descent settles.",
    "exits": [
     {
      "label": "Snatch the hanging metal pieces",
@@ -16531,7 +16531,7 @@
    "kind": "scene",
    "title": "Rebuilding The Circuit",
    "brief": "You reattach a severed hydraulic line using salvaged fittings, demonstrating expert technical skill to restore partial power and claim a glowing crystal battery.",
-   "page": "Working by the faint, pulsing glow of the exposed armature, you slip the salvaged fittings over the torn rubber and clamp them down with steady, practiced movements born of long years fixing nets in the Gullmouth wind. Every screw turns smoothly beneath your calloused fingers, bridging the gap between the dead auxiliary pump and the pulsing core of the machinery. A low, resonant hum begins to build beneath the floorboards as life slowly returns to the forgotten conduit.",
+   "page": "By the faint pulsing glow of the exposed armature you slip the salvaged fittings over the torn rubber and clamp them with the practiced grip you learned fixing nets in the Gullmouth wind for long years. Each screw turns under your calloused fingers. The dead auxiliary pump bridges to the pulsing core of the machinery. A knock builds under the floorboards as life returns to the forgotten conduit.",
    "exits": [
     {
      "label": "Secure the final brass clamp",
@@ -16600,7 +16600,7 @@
    "kind": "reward",
    "title": "The Glowing Core",
    "brief": "You reattach a severed hydraulic line using salvaged fittings, demonstrating expert technical skill to restore partial power and claim a glowing crystal battery.",
-   "page": "The repaired line holds firm against the surging pressure, sealing the circuit and bathing the dark recess in a steady, amber pulse of revived mechanical energy. You detach the humming crystal battery from the secondary housing, feeling its residual warmth hum pleasantly against your palm like a sleeping ember pulled from a hearth. Rare and perfectly preserved, this piece of old-world hardware will draw a fat pouch of coin or favors from the Low to Saltspire.",
+   "page": "The repaired line holds against the surging pressure and seals the circuit, and an amber pulse of revived mechanical energy fills the dark recess. Warmth stays put. You detach the crystal battery from the secondary housing, and residual heat sits against your palm like a sleeping ember pulled from a hearth. Rare and perfectly preserved, this old-world piece will draw a fat pouch of coin or favors from the Low to Saltspire.",
    "exits": [
     {
      "label": "Ascend back to the housing",
@@ -17948,7 +17948,7 @@
    "kind": "scene",
    "title": "Mending The Copper Brain",
    "brief": "You diligently repair the automaton's damaged memory-coil, risking a painful electrical surge, to receive a flawlessly accurate map of the seabed's shifting salt-flats and sinkholes.",
-   "page": "Pliers in hand, you coax the charred filament back into its delicate slot among the whirring clockwork teeth of the automaton's cranial housing. The machine shudders violently, showering your sleeves with hot sparks that bite into the fabric like stinging salt-wasps. You ignore the pain, hold your wrist firm, and listen as the rhythmic clicking inside the brass skull smooths from a chaotic rattle into a clear, even cadence. The archivist tilts its head in a gesture of reluctant, mechanical respect.\n\nA leather-backed scroll unfurls from its chestplate, offering a pristine charting of the treacherous seabed below.",
+   "page": "Pliers in hand, you coax the charred filament back into its delicate slot among the whirring clockwork teeth of the automaton's cranial housing. The machine shudders. Hot sparks shower your sleeves and bite the fabric. You ignore the pain, hold your wrist firm, and listen as the rhythmic clicking inside the brass skull smooths from a chaotic rattle into a clear even cadence. The archivist tilts its head in a gesture of reluctant mechanical respect.\n\nA leather-backed scroll unfurls from its chestplate with a pristine charting of the treacherous seabed below.",
    "exits": [
     {
      "label": "Take the parchment map of the flats",
@@ -17963,7 +17963,7 @@
    "kind": "check",
    "title": "The Spark And The Coil",
    "brief": "You diligently repair the automaton's damaged memory-coil, risking a painful electrical surge, to receive a flawlessly accurate map of the seabed's shifting salt-flats and sinkholes.",
-   "page": "Static electricity crawls up your forearms, making the hairs stand on end as you bridge the severed copper veins within the automaton's exposed skull. A single slip of your fingers against the live-wire manifold will unleash enough current to numb your hands for days, yet the memory-coil remains half-detached and blind to the world. You hold your breath, squinting through the acrid blue smoke of burning resin while you guide the final microscopic solder-point into place against the vibrating frame. The entire chassis shudders with a deep, low-frequency hum that threatens to blow the delicate connections apart.",
+   "page": "Static crawls up your forearms. Hair stands on end as you bridge the severed copper veins within the automaton's exposed skull. A single slip of your fingers against the live-wire manifold will unleash enough current to numb your hands for days, yet the memory-coil remains half-detached and blind to the world. You hold your breath and squint through the acrid blue smoke of burning resin while you guide the final microscopic solder-point into place against the vibrating frame. The whole chassis shudders. The delicate connections nearly blow apart.",
    "exits": [
     {
      "label": "check-full",
@@ -18759,7 +18759,7 @@
    "kind": "scene",
    "title": "Iron in the Grip",
    "brief": "You brutally intimidate the Brineholder mercenaries into slowly backing down, risking a fatal stab in the dark, to confiscate their heavy iron lockboxes of coin.",
-   "page": "Stepping hard into the mercs' personal space, you keep your eyes locked on their leader while your fingers curl around the cold hilt of your scraper. Between them sit piles of iron lockboxes, brimming with silver coin that could buy a dozen boats back in Gullmouth. Every breath smells of damp wool and rising panic.\n\nOne lunge in the dark could open your ribs, yet you refuse to give an inch of wet stone. You press forward until their boots slide back on the brine-slick floor and the coin chests fall to you.",
+   "page": "You step hard into the mercs' personal space and keep your eyes on their leader while your fingers curl around the cold hilt of your scraper. Iron lockboxes sit between them. Silver inside could buy a dozen boats back in Gullmouth. Breath smells of damp wool and rising panic.\n\nOne lunge in the dark could open your ribs. You give no inch of wet stone. You press forward until their boots slide back on the brine-slick floor and the coin chests fall to you.",
    "exits": [
     {
      "label": "Seize the heavy coin chests",
@@ -19569,7 +19569,7 @@
    "kind": "scene",
    "title": "Mending the Memory Coil",
    "brief": "You diligently repair the automaton's damaged memory-coil, risking a painful electrical surge, to receive a flawlessly accurate map of the seabed's shifting salt-flats and sinkholes.",
-   "page": "Sparks spit from the exposed wiring of the automaton, stinging your knuckles with sharp, needle-like bursts of current. You keep your teeth gritted, steadying the delicate copper filament with a pair of salt-crusted pliers until the sputtering spark settles into a steady, rhythmic hum. The machine's glass optics flare to life, whirring as long-buried memory-coils align with a soft click. Out spills a flawlessly detailed map of the seabed's shifting salt-flats and hidden sinkholes, etched in fine blue light upon the damp flags.",
+   "page": "Sparks spit from the exposed wiring of the automaton and needle your knuckles with sharp bursts of current. You keep your teeth gritted and hold the delicate copper filament with a pair of salt-crusted pliers until the sputtering spark settles into an even rhythm. Optics flare to life. Long-buried memory-coils align with a soft click. Out spills a flawlessly detailed map of the seabed's shifting salt-flats and hidden sinkholes, etched in fine blue light upon the damp flags.",
    "exits": [
     {
      "label": "Take the glowing seabed map",
