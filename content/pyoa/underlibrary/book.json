@@ -3683,7 +3683,7 @@
    "kind": "scene",
    "title": "The Weight of Scrutiny",
    "brief": "You maintain rigid discipline against the custodian's psychological intimidation, forcing him to stamp your travel manifest.",
-   "page": "Shadows stretch across the flagstones as the central chandelier flickers, casting long, wavering shapes over the rows of waiting petitioners. Your travel manifest lies squarely between the ink-pot and the leaden paperweight, its faded margins curling slightly from the dry heat of the overhead lamps. The custodian leans forward, his breath carrying the distinct aroma of peppermint leaves and dried ink-powder. You keep your spine straight, refusing to shrink back from his piercing gaze or show any sign of haste that might arouse his administrative suspicion. The surrounding silence is absolute, save for the dull scratching of a nib somewhere in the adjacent clerk-room.\n\nHe turns the document over twice, inspecting the watermark against the weak amber glow of the corner sconce.",
+   "page": "Shadows stretch across the flagstones as the central chandelier flickers. Long shapes cross the rows of waiting petitioners. Your travel manifest lies between the ink-pot and the metal paperweight, its faded margins curling from the dry heat of the overhead lamps. The custodian leans forward. His breath carries peppermint leaves and dried ink-powder. You keep your spine straight and refuse to shrink from his gaze or show haste that might wake his administrative suspicion. In the adjacent clerk-room a nib scratches. Nothing else moves.\n\nHe turns the document over twice and holds the watermark to the weak amber glow of the corner sconce.",
    "exits": [
     {
      "label": "Endure the final inspection",
@@ -5584,7 +5584,7 @@
    "kind": "reward",
    "title": "The Herbal Compress",
    "brief": "You maintain your focus through the choking darkness to secure a woollen scarf soaked in soothing herbal oil.",
-   "page": "Stifling a cough against the bitter sulfur that lingers in the aisles, you maintain your steady focus through the choking darkness until your fingers brush against a stray bundle hanging from a peg on the end-panel. Unknotting the hemp cord with stiff fingers, you secure a long woollen scarf thoroughly soaked in soothing herbal oil, its sharp mint and eucalyptus scent cutting right through the smoke. Pressing the damp fabric against your mouth and nose clears your smarting eyes and calms your ragged breathing, turning a hazardous stretch of the drift into a manageable climb.\n\nBreathing easier through the scented wool, you watch as the timber frames around you begin their slow, groaning rotation.",
+   "page": "Bitter sulfur still hangs in the aisles. You hold your focus through the dark until your fingers brush a stray bundle on a peg at the end-panel. The hemp cord yields under stiff fingers, and you take a long woollen scarf soaked in herbal oil, mint and eucalyptus sharp enough to cut the smoke. You press the damp fabric to mouth and nose. Eyes stop watering. Breath settles into short pulls, and the worst stretch of the drift turns into a climb you can manage.\n\nThrough the scented wool the timber frames around you start a slow rotation, wood on wood.",
    "exits": [
     {
      "label": "Navigate the rotating wooden labyrinth",
@@ -11464,7 +11464,7 @@
    "kind": "scene",
    "title": "The Toll of the Stack",
    "brief": "You outwit a toll-troll by exploiting a loophole in the library bylaws, risking a challenge, to secure safe passage for your fellowship.",
-   "page": "Heavy iron chains bar the narrow junction where the shelf-branch meets the outer wall, guarded by a hulking toll-troll whose fingers are stained with permanent blue ink and printer's grease. Instead of reaching for a coin or drawing a blade, you unfold a dog-eared pamphlet containing the municipal codex of Quillon. You point out a forgotten statute granting junior shelvers unhindered passage during the third hour of the ink-tide. The creature blinks its massive yellow eyes, muttering curses as it consults the binding, trying to find a loophole to refute your claim.\n\nYou stand your ground against the snarling guard, trusting the literal phrasing of the bylaws to carry your fellowship safely past the barrier.",
+   "page": "Iron chains bar the narrow junction where the shelf-branch meets the outer wall, and a hulking toll-troll guards them with fingers stained in permanent blue ink and printer's grease. Coin and blade stay put. Instead you unfold a dog-eared pamphlet containing the municipal codex of Quillon and point out a forgotten statute granting junior shelvers unhindered passage during the third hour of the ink-tide. The creature blinks its massive yellow eyes. It mutters curses while it consults the binding for a loophole to refute your claim.\n\nYou stand your ground against the snarling guard, and the literal phrasing of the bylaws carries your fellowship past the barrier.",
    "exits": [
     {
      "label": "Step past the grumbling toll-troll",
@@ -12272,7 +12272,7 @@
    "kind": "scene",
    "title": "Seeking the Warrant",
    "brief": "You sweet-talk the chief magistrate into overlooking your lack of formal accreditation, risking swift rejection, to secure a travel warrant.",
-   "page": "Smooth walnut wainscoting reflects the flickering yellow glow of heavy brass wall-lamps as you step closer to the magistrate's elevated chair. The chief magistrate peers over half-moon spectacles, his fingers steepled atop a massive ledger containing centuries of rejected petitions. You keep your tone low, measured, and carefully devoid of defensive urgency, speaking of urgent library business that brooks no bureaucratic delay. A faint crease forms between his bushy white eyebrows as he weighs your lack of formal ink-stamps against the sheer audacity of your request.\n\nMurmurs around the court die back while the old man turns a page.",
+   "page": "Smooth walnut wainscoting takes the yellow glow of brass wall-lamps as you step closer to the magistrate's elevated chair. The chief magistrate peers over half-moon spectacles. His fingers rest steepled atop a massive ledger of rejected petitions spanning centuries. You keep your tone low and plain. Urgent library business, you tell him, brooks no bureaucratic delay. A faint crease forms between his bushy white eyebrows as he weighs your lack of formal ink-stamps against the sheer audacity of your request.\n\nMurmurs around the court die back while the old man turns a page.",
    "exits": [
     {
      "label": "Press the argument for travel papers",
@@ -20267,7 +20267,7 @@
    "kind": "ending-part",
    "title": "The Unwritten World",
    "brief": "Ending \"The Blank Page\"",
-   "page": "Stacks of untreated vellum drift across the public squares of Quillon like fallen snow, their surfaces entirely free of ink, rule, or register. Every ordinance issued by the Cataloguers' Court has blurred into a pale gray smear, leaving the merchants and street-children to barter in silent nods over blank ledgers. You stand in the centre of the market-cross holding a pen that refuses to leave a mark upon the air, watching the old street names dissolve from the cornerstones into clean, unblemished stone. The ink-sellers have closed their shutters, their bottles now filled with nothing more dangerous than rainwater and gray shadow. Without an Index to keep the tally of births, fines, and forgotten treaties, the city forgets what day of the week it is, and nobody seems particularly anxious to be reminded.",
+   "page": "Stacks of untreated vellum drift across the public squares of Quillon like fallen snow, their surfaces free of ink, rule, or register. Every ordinance from the Cataloguers' Court has blurred into a pale gray smear. Merchants and street-children barter in silent nods over blank ledgers. You stand in the centre of the market-cross holding a pen that refuses to leave a mark upon the air, and you watch the old street names dissolve from the cornerstones into clean stone. The ink-sellers have closed their shutters. Their bottles hold nothing more dangerous than rainwater and gray shadow. Without an Index to keep the tally of births, fines, and forgotten treaties, the city forgets what day of the week it is, and nobody seems anxious to be reminded.",
    "exits": [
     {
      "label": "Watch the clean stone fade",
@@ -20355,7 +20355,7 @@
    "kind": "ending-part",
    "title": "Filed Among the Lost",
    "brief": "Ending \"Misfiled\"",
-   "page": "Slips of pasteboard and bundles of damp promissory notes drift around your ankles like autumn leaves in a cellar draught. You are sorted by surname into a drawer that smells faintly of old tallow and dried lavender, wedged tightly between a basket of unreturned ledgers and a shelf of forgotten minutes. The Cataloguers' Court has stamped your forehead with a small, neat seal of red wax, marking you as property recovered from an incorrect heading. Above, the city syndicates divide the paving stones, but down here in the dark, the misfiled items find a strange, quiet fellowship among the torn endpapers and broken spines. You feel your edges softening into the paper, your skin taking on the texture of rag-paper left too long in the damp.\n\nA dry rustle passes through the rows of boxes as the night-porter slides the bolt home on the lower door.",
+   "page": "Slips of pasteboard and bundles of damp promissory notes drift around your ankles like autumn leaves in a cellar draught. They sort you by surname into a drawer that smells of old tallow and dried lavender. The fit is tight. You sit wedged between a basket of unreturned ledgers and a shelf of forgotten minutes. The Cataloguers' Court has stamped your forehead with a small, neat seal of red wax, and the mark names you property recovered from an incorrect heading. Above, the city syndicates divide the paving stones, but down here the misfiled items find a strange fellowship among torn endpapers and broken spines. Your edges soften. Skin takes on the texture of rag-paper left too long in the damp.\n\nA dry rustle passes through the rows of boxes as the night-porter slides the bolt home on the lower door.",
    "exits": [
     {
      "label": "Remain quietly in the dark",
