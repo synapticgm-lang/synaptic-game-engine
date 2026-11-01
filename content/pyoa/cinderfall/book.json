@@ -777,7 +777,7 @@
    "kind": "hub",
    "title": "The Iron Office",
    "brief": "The Iron Office: You search the stationmaster's abandoned office for missing papers concerning Hesper.",
-   "page": "Dust hangs thick in the abandoned stationmaster's office, coating the brass inkwells and the green-shaded desklamps in a fine grey silt. Through the cracked windowpanes, the silent bulk of the Marrowbone broods against the platform edge, her boiler ticking softly as she cools in the draft. Every surface bears the stale imprint of authority abandoned in haste, from ledger-stacks tumbling across the floorboards to the iron-bound door standing slightly ajar. Somewhere down the line, a signal-wire pings a thin, metallic warning into the empty air, drawing your gaze toward the paths waiting to be walked.\n\nShadows pool deep beneath the mahogany shelving where private correspondence lies half-shredded by mice and time. The air tastes of dry paper, old tobacco, and the faint, bitter tang of coal-gas leaking from a neglected stove. You can linger here among the ghosts of management, or step back out into the soot-stained corridors of Ashgate Junction where other interests stir.",
+   "page": "Dust coats the abandoned stationmaster's office, a fine grey silt on the brass inkwells and the green-shaded desklamps. Through the cracked windowpanes the silent bulk of the Marrowbone broods against the platform edge, and her boiler ticks as she cools in the draft. Every surface bears the stale imprint of authority left in haste, from ledger-stacks tumbling across the floorboards to the iron-bound door standing slightly ajar. Down the line a signal-wire pings a thin metallic warning into the empty air.\n\nShadows pool deep beneath the mahogany shelving where private correspondence lies half-shredded by mice and time. Dry paper tastes sharp on the tongue. Old tobacco mixes with the faint bitter tang of coal-gas leaking from a neglected stove, and beyond the ajar door the soot-stained corridors of Ashgate Junction run on where other interests stir.",
    "exits": [
     {
      "label": "Search the cluttered ledger shelves",
@@ -1129,7 +1129,7 @@
    "kind": "scene",
    "title": "Shadows Behind the Chutes",
    "brief": "You listen to drunk track-hands using sharp cunning to separate truth from boasts, learning where Hesper bought extra fuel.",
-   "page": "Rusting iron girders tower overhead like the skeleton of some prehistoric beast, dripping with oily condensation from the damp night air. Footsteps crunch softly upon the ash-strewn ballast as you stalk the periphery of the abandoned loading bays. A low murmur of voices drifts from behind a stack of rotting sleepers, confirming that the men you seek are resting just out of sight.",
+   "page": "Rusting iron girders tower overhead like the skeleton of some prehistoric beast, and oily condensation drips from them in the damp night air. Footsteps crunch on the ash-strewn ballast as you stalk the edge of the abandoned loading bays. Voices murmur behind rotting sleepers. The men you seek rest just out of sight.",
    "exits": [
     {
      "label": "Step out from the girders",
@@ -1299,7 +1299,7 @@
    "kind": "scene",
    "title": "The Smoke-Room Taunts",
    "brief": "You endure the taunts of rival crewmen with cold composure until they back down, winning a round of bitter small beer and local sympathy.",
-   "page": "Jeers drift across the sawdust-strewn floor from a knot of rival gangers nursing lukewarm cider by the coal-bunker. You keep your eyes fixed on your mug, breathing in the stale tang of cheap tobacco and cold iron while their barbed remarks bounce off your silence like gravel against a boiler plate. After a tense stretch, the mockers turn away, leaving a grudging sort of peace in the dim tap-room.",
+   "page": "Jeers drift across the sawdust-strewn floor from a knot of rival gangers nursing lukewarm cider by the coal-bunker. You keep your eyes on your mug. Stale cheap tobacco and cold iron fill your nose while their barbed remarks bounce off your silence like gravel against a boiler plate. After a tense stretch the mockers turn away. Their chairs scrape back toward the coal-bunker.",
    "exits": [
     {
      "label": "Finish your bitter small beer",
@@ -1514,7 +1514,7 @@
    "kind": "reward",
    "title": "The Hidden Dispatch",
    "brief": "You withstand the widow's sharp tongue with unwavering composure until she slips you a forgotten telegram from Hesper.",
-   "page": "Despite the sudden shouting in the corridor and the heart-stopping clatter of the Barons' patrol outside, your fingers hold firm, slipping through the iron bars to snatch the scrap of paper just as the widow lets go. You tuck the damp dispatch into your greasy jacket lining, however narrowly escaping notice as the heavy footsteps pass the window without stopping to peer inside. The paper is cold to the touch, bearing Hesper Quill's hurried handwriting in grease-pencil.",
+   "page": "Shouting breaks out in the corridor. The Barons' patrol clatters outside, yet your fingers hold firm and slip through the iron bars to snatch the scrap of paper just as the widow lets go. You tuck the damp dispatch into your greasy jacket lining as the footsteps pass the window without stopping to peer inside. The paper is cold. It bears Hesper Quill's hurried handwriting in grease-pencil.",
    "exits": [
     {
      "label": "Return to the ticket window",
@@ -2032,7 +2032,7 @@
    "kind": "recovery",
    "title": "Hammer and Rust",
    "brief": "You repair a jammed vestibule coupling using solid mechanics to free an old cargo truck loaded with dry briquettes.",
-   "page": "The drift-punch slips sideways on the slick, greasy metal surface, catching your knuckles a glancing blow against the jagged iron edge of the brake-standard. A dull, throbbing ache flares through your hand as skin splits against the cold steel, leaving a dark bruise that blooms beneath the soot. You drop the hammer with a curse and shake your throbbing fingers while the jammed coupling stays as fixed as the bedrock beneath the track.",
+   "page": "The drift-punch slips sideways on the slick greasy metal surface and catches your knuckles a glancing blow against the jagged iron edge of the brake-standard. Skin splits on the cold steel. A dark bruise blooms beneath the soot. You drop the hammer with a curse and shake your fingers while the jammed coupling stays as fixed as the bedrock beneath the track.",
    "exits": [
     {
      "label": "Pick up your tools and limp away",
@@ -2366,7 +2366,7 @@
    "kind": "recovery",
    "title": "A Bitter Toll",
    "brief": "You endure the harsh insults of the desperate crowd with unbroken composure, trading an empty oil tin for a skin of bitter water.",
-   "page": "A sudden shove catches you off balance, sending you stumbling hard against the jagged rim of a discarded coal hopper that tears a long, bleeding gouge across your forearm. The crowd jeers louder at your stumble, forcing you to surrender half your spare scrap brass just to buy a clear path through the crush. You clutch the torn sleeve to your chest, tasting copper and dust as you limp away from the jeering circle with a fresh, stinging ache.",
+   "page": "A sudden shove catches you off balance. You hit the jagged rim of a discarded coal hopper hard, and it tears a long bleeding gouge across your forearm. The crowd jeers louder at your stumble, and you surrender half your spare scrap brass just to buy a clear path through the crush. You clutch the torn sleeve to your chest, taste copper and dust, and limp away from the jeering circle with a fresh ache in the cut.",
    "exits": [
     {
      "label": "Retreated to the shelter of the siding",
@@ -2668,7 +2668,7 @@
    "kind": "scene",
    "title": "The Bitter Cup",
    "brief": "You withstand the suffocating dust and jeers with quiet composure, securing a rusted tin cup of sediment-free water.",
-   "page": "Shouting gangers crowd around the communal distribution pipe, waving empty tins and shoving for position near the last remaining drop of brackish moisture. You stand motionless in the center of the press, letting the insults and flying grit wash over your coat without a single twitch of irritation in your jaw. Your steady gaze meets the clouded eyes of the old clerk running the tap, shaming him into filling your rusted tin before the line is shut down for the evening. You take a slow, bitter sip of the sediment-heavy water, letting the cold iron taste settle your tongue while the brawlers around you exhaust themselves in the dirt.",
+   "page": "Shouting gangers crowd around the communal distribution pipe, waving empty tins and shoving for position near the last remaining drop of brackish moisture. You stand still in the center of the press. Insults and flying grit wash over your coat, and your jaw does not twitch. Your gaze meets the clouded eyes of the old clerk running the tap, and shame drives him to fill your rusted tin before the line is shut down for the evening. You take a slow bitter sip of the water and its sediment. Cold iron sits on your tongue.",
    "exits": [
     {
      "label": "Walk away with the tin",
@@ -3158,7 +3158,7 @@
    "kind": "scene",
    "title": "Slipping the Switch",
    "brief": "You outwit the cabin guard using clever cunning to slip past the locked switchboard, securing the main line clearance token.",
-   "page": "Brass gears grind softly behind the green-painted switchboard as you work a bent hairpin into the brass tumbler of the maintenance lock. The tiny latch yields with a faint, greasy click that barely rises above the telegraph wires overhead. The metal panel swings open just enough for your fingers to find the copper clearance token on its velvet-lined pegs inside the terminal box.\n\nDust motes dance in the amber glow of the panel light as you lift the heavy metal token free, feeling its cold weight settle into your palm like an old debt waiting to be settled.",
+   "page": "Brass gears grind behind the green-painted switchboard as you work a bent hairpin into the brass tumbler of the maintenance lock. The tiny latch yields with a faint greasy click that barely rises above the telegraph wires overhead. The metal panel swings open just enough for your fingers to find the copper clearance token on its velvet-lined pegs inside the terminal box.\n\nAmber light from the panel falls across the dust. You lift the metal token free. It sits cold in your palm.",
    "exits": [
     {
      "label": "Pocket the brass token",
@@ -3173,7 +3173,7 @@
    "kind": "scene",
    "title": "Down the Dark Corridor",
    "brief": "You outwit the cabin guard using clever cunning to slip past the locked switchboard, securing the main line clearance token.",
-   "page": "Floorboards creak beneath your boots as you move swiftly away from the switchboard enclosure, keeping close to the damp brick wall of the signal tower. Outside the tall arched windows, the grey light of the ash-steppe stretches toward the horizon under a low, bruised sky that smells of sulphur and wet coal dust. You tuck the heavy brass token deep inside your oilskin pocket, feeling it knock against your thigh with every purposeful stride toward the exit stairway.",
+   "page": "Floorboards creak beneath your boots as you move away from the switchboard enclosure, keeping close to the damp brick wall of the signal tower. Outside the tall arched windows the grey light of the ash-steppe stretches toward the horizon under a bruised sky that smells of sulphur and wet coal dust. You tuck the brass token deep inside your oilskin pocket. It knocks against your thigh on every stride toward the exit stairway.",
    "exits": [
     {
      "label": "Descend the iron stair treads",
@@ -3188,7 +3188,7 @@
    "kind": "check",
    "title": "The Sentry at the Board",
    "brief": "You outwit the cabin guard using clever cunning to slip past the locked switchboard, securing the main line clearance token.",
-   "page": "Soft leather soles pad quietly around the corner of the switchboard row just as your fingers brush the cold rim of the brass clearance token inside the open panel. The night watchman halts abruptly, his hand hovering over the heavy brass alarm plunger on the mahogany desk while his sharp eyes sweep the dim interior. You freeze halfway between the open metal door and the shadowy pillar, every muscle tensing for the sudden lunge that will either secure the line or bring the yard guards down upon your head.",
+   "page": "Soft leather soles pad around the corner of the switchboard row just as your fingers brush the cold rim of the brass clearance token inside the open panel. The night watchman halts. His hand hovers over the brass alarm plunger on the mahogany desk while his sharp eyes sweep the dim interior. You freeze halfway between the open metal door and the pillar, every muscle tight for the lunge that will either secure the line or bring the yard guards down upon your head.",
    "exits": [
     {
      "label": "check-full",
@@ -4210,7 +4210,7 @@
    "kind": "recovery",
    "title": "A Bitter Price",
    "brief": "Listen to the old ganger's coughing tales of the Long Fire without losing your temper, gaining a warning about shifted rails ahead.",
-   "page": "Harsh words slip past your teeth before you can catch them, cutting off the old ganger's rambling tale with a sharp, stinging rebuke about his useless memory and idle complaints. He falls silent at once, spitting dark juice onto the floorboards and nursing a sudden grudge that costs you precious minutes of time you can ill afford to lose while the engine idles outside.\n\nYou leave his carriage with a hot flush of shame burning your neck and a lingering debt of bad blood heavy on your shoulders as you climb back down to the line.",
+   "page": "Harsh words slip past your teeth before you can catch them, and they cut off the old ganger's rambling tale with a sharp rebuke about his useless memory and idle complaints. He falls silent at once, spits dark juice onto the floorboards, and nurses a sudden grudge that costs you precious minutes you can ill afford to lose while the engine idles outside.\n\nYou leave his carriage with shame burning your neck. Bad blood follows as you climb back down to the line.",
    "exits": [
     {
      "label": "Climb back to the footplate",
@@ -4327,7 +4327,7 @@
    "kind": "bottleneck",
    "title": "The Hungry Firebox",
    "brief": "A sudden drop in boiler pressure forces you to shovel damp sulfur-coal into the roaring firebox while the engine bucks on uneven ballast.",
-   "page": "A sudden drop in steam pressure drains the life from the gauges as the Marrowbone shudders violently on the uneven ballast, threatening to stall right here in the open grey wastes. You swing the iron fire-door wide. A blast of searing heat washes over your face as you heave damp sulfur-coal into the roaring belly of the firebox with frantic, practiced strokes.\n\nSparks dance in the gloom while the needle on the copper dial crawls slowly back toward the working mark, and the engine settles into a steady, throbbing rhythm once more, ready to roll on into the haze.",
+   "page": "A sudden drop in steam pressure drains the life from the gauges as the Marrowbone shudders on the uneven ballast and threatens to stall right here in the open grey wastes. You swing the iron fire-door wide. A blast of searing heat washes over your face as you heave damp sulfur-coal into the roaring belly of the firebox with frantic practiced strokes.\n\nSparks lift in the gloom while the needle on the copper dial crawls back toward the working mark, and the engine finds its rhythm again as it rolls on into the haze.",
    "exits": [
     {
      "label": "Check the steam gauges",
@@ -4745,7 +4745,7 @@
    "kind": "reward",
    "title": "The Vent-Master's Token",
    "brief": "Mapping the subterranean sulfur vents by their rhythmic hissing grants a shortcut token through the hazardous steam-marshes.",
-   "page": "Steam swirls lazily around the running board as the engine steadies itself upon solid stone, leaving the worst of the bubbling quagmire behind. You emerge with a small forged tin token bearing the notched stamp of the old track-finders, pressed into your hand by a silent figure fading back into the grey mist. It is a simple piece of stamped tin, yet it carries the unspoken weight of safe passage through the lower marshlands, recognized by every signalman and ganger who still honors the old road.",
+   "page": "Steam swirls around the running board as the engine finds solid stone and leaves the worst of the bubbling quagmire behind. You emerge with a small forged tin token bearing the notched stamp of the old track-finders, pressed into your hand by a silent figure who fades back into the grey mist. The token is stamped tin. Every signalman and ganger who still honors the old road will know it for safe passage through the lower marshlands.",
    "exits": [
     {
      "label": "Return to the main line near the Sulphur Sinks",
@@ -4940,7 +4940,7 @@
    "kind": "recovery",
    "title": "Scored by the Surge",
    "brief": "Rewiring a dead telegraph pole inside the wreck restores a faint clicking signal that reveals a clear block ahead.",
-   "page": "A vicious blue arc leaps from the terminal box, burning a jagged red line across your forearm and shaking the iron rib-work of the carriage. You stumble backward into the choking dust, clutching your scorched skin while the telegraph instrument falls silent once more, leaving only the dull roar of the ash-wind outside. The delay eats precious minutes from the storm clock, and the stinging burn leaves a stiff, throbbing reminder of how easily the road breaks those who rush it.",
+   "page": "A vicious blue arc leaps from the terminal box, burns a jagged red line across your forearm, and shakes the iron rib-work of the carriage. You stumble backward into the choking dust and clutch your scorched skin. The telegraph instrument falls silent once more, and outside only the dull roar of the ash-wind remains. The delay eats precious minutes from the storm clock. The burn stiffens along your forearm.",
    "exits": [
     {
      "label": "Crawl back to the running board",
@@ -4972,7 +4972,7 @@
    "kind": "scene",
    "title": "Sealing the Vent",
    "brief": "Patching a blown steam line with asbestos tape and copper wire secures a spare pressure gauge for the cab roof.",
-   "page": "Steam hisses from the fractured pipe-joint like an angry adder, filling the dim service alcove with blinding white mist that smells of boiled grease and old scale. Wrapping layers of sticky asbestos tape around the weeping metal, you haul the copper wire tight with your pliers until the pulsing leaks choked into silence. The repaired line holds firm against the rising pressure, steadying the gauge needle as the engine thrums beneath your boots.",
+   "page": "Steam hisses from the fractured pipe-joint like an angry adder, and it fills the dim service alcove with blinding white mist that smells of boiled grease and old scale. You wrap layers of sticky asbestos tape around the weeping metal and haul the copper wire tight with your pliers until the leaks choke into silence. The repaired line holds firm. The gauge needle climbs as the engine works beneath your boots.",
    "exits": [
     {
      "label": "Secure the copper binding wire",
@@ -17714,7 +17714,7 @@
    "kind": "hub",
    "title": "The Gantry Watch",
    "brief": "The Gantry Watch: Heavily fortified blockhouses choke the high platforms above the water vaults, and the Baron's guards hold the lower stairs.",
-   "page": "Iron blockhouses loom above the vaulted waterworks and throw long shadows across the grease-slicked platforms where grey-coated guards pace with fixed bayonets. Smoke coils lazily from steam vents, smelling of sulphur and stale oil. Below these high metal terraces, the lower stairs remain choked with restless crowds and patrolled checkpoints, sealing the approaches to the reservoir. You measure the distance between the sentry posts, weighing your options against the ticking storm clock overhead.\n\nEvery shadow offers a potential route forward, though each path demands a different toll in nerve and muscle. An upper passage climbs into the dark, a side corridor hides behind a nervous clerk's desk, and the bulkhead doors wait for whoever will force them with iron and muscle.",
+   "page": "Iron blockhouses stand above the vaulted waterworks and throw long shadows across the grease-slicked platforms where grey-coated guards pace with fixed bayonets, and smoke coils from steam vents that smell of sulphur and stale oil. Below the high metal terraces the lower stairs stay choked with restless crowds and patrolled checkpoints that seal the approaches to the reservoir. You measure the gap between the sentry posts. The storm clock ticks overhead.\n\nEvery shadow might offer a way forward, yet each route will cost nerve and muscle in a different coin. An upper passage climbs into the dark, a side corridor hides behind a nervous clerk's desk, and the bulkhead doors wait for whoever forces them with iron and muscle.",
    "exits": [
     {
      "label": "Step toward the nervous clerk",
