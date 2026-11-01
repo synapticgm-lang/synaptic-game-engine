@@ -835,6 +835,8 @@ export interface OpeningEstablishment {
   card?: OpeningCardRecord;
   /** The card's opening offer once the player has taken or turned it down; open while unset. */
   offerTaken?: 'accepted' | 'refused';
+  /** Authored first-page prose stored at New Game (PYOA book start / stitch source). */
+  page1?: string;
 }
 /** The card's opening offer compiled once: what is handed over, and the accept and refuse lines. */
 export interface OpeningOfferRecord {

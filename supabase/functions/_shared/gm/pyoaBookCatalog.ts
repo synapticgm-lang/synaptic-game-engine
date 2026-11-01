@@ -67,8 +67,12 @@ export const PYOA_AUTHORED_BOOKS: readonly PyoaBookCatalogEntry[] = [
   },
 ] as const;
 
-const BY_ID = new Map(PYOA_AUTHORED_BOOKS.map((e) => [e.id, e]));
-const BY_BIBLE = new Map(PYOA_AUTHORED_BOOKS.map((e) => [e.bibleId, e]));
+const BY_ID = new Map<string, PyoaBookCatalogEntry>(
+  PYOA_AUTHORED_BOOKS.map((e) => [e.id, e]),
+);
+const BY_BIBLE = new Map<string, PyoaBookCatalogEntry>(
+  PYOA_AUTHORED_BOOKS.map((e) => [e.bibleId, e]),
+);
 
 export function listPyoaAuthoredBooks(): readonly PyoaBookCatalogEntry[] {
   return PYOA_AUTHORED_BOOKS;
@@ -78,10 +82,11 @@ export function getPyoaBookCatalogEntry(
   id: string | null | undefined
 ): PyoaBookCatalogEntry | undefined {
   if (!id) return undefined;
-  return BY_ID.get(id as PyoaBookId) ?? BY_BIBLE.get(id as PyoaBookId);
+  return BY_ID.get(id) ?? BY_BIBLE.get(id);
 }
 
-export function isAuthoredPyoaBookId(id: string | null | undefined): boolean {
+/** Narrows UI/state/JSON string ids to the authored six. */
+export function isAuthoredPyoaBookId(id: string | null | undefined): id is PyoaBookId {
   return !!getPyoaBookCatalogEntry(id);
 }
 
