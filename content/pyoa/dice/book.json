@@ -571,7 +571,7 @@
    "kind": "recovery",
    "title": "Buried Beneath Rot",
    "brief": "You pry open a sealed smuggler's barrel wedged beneath a rotting hull, risking a collapse to acquire a stash of rare cured meats.",
-   "page": "Wood shrieks as the trawler shifts violently. The massive hull drops a crucial few inches, pinning your prybar and clipping your shoulder with brutal force. You throw yourself backward into the mud just as the ribs cave in, burying the smuggler's barrel beneath a pile of splintered debris.\n\nGasping for breath, you clutch your bruised shoulder. The prize is completely crushed, the rare meats ruined in the muck and shattered timber. Your arm throbs with a deep, aching pain that will slow your progress on the flats. Shaking the mud from your coat, you leave the collapsed wreck behind, nursing your fresh injury and carrying nothing but frustration.",
+   "page": "Wood shrieks as the trawler shifts violently. The massive hull drops a few inches, pins your prybar, and clips your shoulder with brutal force. You throw yourself backward into the mud just as the ribs cave in, burying the smuggler's barrel beneath a pile of splintered debris.\n\nGasping for breath, you clutch your bruised shoulder. The prize is completely crushed, the rare meats ruined in the muck and shattered timber. Your arm throbs with a deep, aching pain that will slow your progress on the flats. Shaking the mud from your coat, you leave the collapsed wreck behind, nursing your fresh injury and carrying nothing but frustration.",
    "exits": [
     {
      "label": "Limp away from the debris",
@@ -1554,7 +1554,7 @@
    "kind": "reward",
    "title": "The Net-Menders' Dispute",
    "brief": "You intervene in a knife-point argument between two net-menders, keeping calm to defuse the tension and earning the loyalty of a tough local guide.",
-   "page": "Cold brine drips from the rafters as the rusted fish-hook flashes between the two bickering net-menders, their hoarse voices rising above the scrape of mending needles against stone. You step between the squared shoulders without drawing steel, speaking in the quiet, level tone of someone who has hauled bodies from the surf before. Silence settles over the greasy flagstones as the taller of the two lowers his blade with a muttered apology, recognizing the authority of a seasoned scavenger. For your steady nerve, the younger mender presses a notched bone whistle into your palm, swearing to answer whenever you blow it against the damp harbor mists.",
+   "page": "Cold brine drips from the rafters as the rusted fish-hook flashes between the two bickering net-menders, their hoarse voices rising above the scrape of mending needles against stone. You step between the squared shoulders without drawing steel, speaking in the quiet, level tone of someone who has hauled bodies from the surf before. Silence settles over the greasy flagstones as the taller of the two lowers his blade with a muttered apology, recognizing the authority of a seasoned scavenger. The younger mender presses a notched bone whistle into your palm and swears to answer whenever you blow it against the damp harbor mists.",
    "exits": [
     {
      "label": "Seek the warmth of the guildhall",
@@ -2586,7 +2586,7 @@
    "kind": "recovery",
    "title": "The Flawed Trade",
    "brief": "You haggle with a desperate bone-carver over a peculiar amulet, spotting the flaws in his bluff to acquire a warding charm at a fraction of the cost.",
-   "page": "Your challenge misses its mark as the old carver suddenly turns the tables, spinning a tearful tale of his starving grandchildren until shame and exhaustion cloud your judgment. You pay twice what the jagged bone is worth just to escape his weeping pleas, clutching a heavy, useless trinket that feels suspiciously soft and damp in the palm of your hand. The coin pouch feels noticeably lighter at your hip as you slip away from his stall, poorer in silver and richer only in experience.",
+   "page": "Your challenge misses its mark as the old carver suddenly turns the tables, spinning a tearful tale of his starving grandchildren until shame and exhaustion cloud your judgment. You pay twice what the jagged bone is worth just to escape his weeping pleas, and end up clutching a useless trinket that feels suspiciously soft and damp in your palm. The coin pouch feels noticeably lighter at your hip as you slip away from his stall, poorer in silver and richer only in experience.",
    "exits": [
     {
      "label": "Leave the stall with a lighter purse",
@@ -2788,7 +2788,7 @@
    "kind": "scene",
    "title": "The Clockwork Aviator",
    "brief": "You repair a delicate clockwork bird for a wealthy trader from Saltspire, using tiny tools to fix the gears and earning a hefty purse of coin.",
-   "page": "A wealthy trader from Saltspire holds out a delicate brass finch whose tiny mechanical wings have jammed mid-flap, its emerald eyes dull and motionless. You draw out your slender bone tweezers and a drop of refined whale oil, peering intently into the intricate clockwork chest of the miniature bird. With patient turns of the tiny screws, you coax the stubborn brass gears back into alignment until the bird gives a cheerful, whirring chirp and flutters its polished wings.",
+   "page": "A wealthy trader from Saltspire holds out a delicate brass finch whose tiny mechanical wings have jammed mid-flap, its emerald eyes dull and motionless. Slender bone tweezers and a drop of refined whale oil come out of your kit as you peer into the packed clockwork chest of the miniature bird. With patient turns of the tiny screws, you coax the stubborn brass gears back into alignment until the bird gives a cheerful, whirring chirp and flutters its polished wings.",
    "exits": [
     {
      "label": "Collect your coin and depart",
@@ -5325,7 +5325,7 @@
    "kind": "recovery",
    "title": "A Bitter Patch",
    "brief": "You repair a merchant's broken water-still using discarded bones, carefully balancing the delicate components to earn a full canteen.",
-   "page": "Bone shatters under the clumsy blow, spraying sharp white splinters across the greasy timber and rupturing the primary distillation chamber with a sudden hiss of steam. The merchant curses through chapped lips as precious condensation escapes into the thirsty air, leaving you both empty-handed and short on time. You spend an hour scavenging scrap lead and fat from your kit to bodge a clumsy replacement sleeve that barely holds together under heat.\n\nThe repair is ugly and leaks a steady drip, but it functions well enough to earn you a begrudging half-measure of tepid water and a sour look from the stall-owner.",
+   "page": "Bone shatters under the clumsy blow, spraying sharp white splinters across the greasy timber and rupturing the primary distillation chamber with a sudden hiss of steam. The merchant curses through chapped lips as precious condensation escapes into the thirsty air, leaving you both empty-handed and short on time. You spend an hour scavenging scrap lead and fat from your kit to bodge a clumsy replacement sleeve that barely holds together under heat.\n\nThe repair is ugly and drips without pause, yet it works well enough to earn you a begrudging half-measure of tepid water and a sour look from the stall-owner.",
    "exits": [
     {
      "label": "Leave the sputtering stall behind",
@@ -6257,7 +6257,7 @@
    "kind": "bottleneck",
    "title": "The March of Kelp",
    "brief": "You encounter a solemn procession of figures wearing kelp robes, dragging an ornate anchor across the dry seabed in silent devotion.",
-   "page": "Iron scrapes across the flat expanse of the seabed and shakes the salt crust under your boots. Through the pale mist emerge the Drift Pilgrims, their hunched figures draped in heavy cloaks woven from dried bladderwrack and brine-soaked wool. They move in unison, chanting a low, rhythmic dirge that sounds like waves dragging shingle back into the deep. At the front of the procession, half a dozen robed backs strain against thick hemp ropes tied to an enormous, rusted anchor bearing the crest of an old Gullmouth cutter. They drag the iron dead-weight across the dry mud, seeking the lost tide with every step of their bare, calloused feet. You must slip past their slow, melancholic march or find yourself drawn into the orbit of their prayer.",
+   "page": "Iron scrapes across the flat expanse of the seabed and shakes the salt crust under your boots. Out of the pale mist come the Drift Pilgrims, hunched under cloaks of dried bladderwrack and brine-soaked wool. They move in unison, chanting a low, rhythmic dirge that sounds like waves dragging shingle back into the deep. At the front of the procession, half a dozen robed backs strain against thick hemp ropes tied to an enormous, rusted anchor bearing the crest of an old Gullmouth cutter. They drag the iron dead-weight across the dry mud, seeking the lost tide with every step of their bare, calloused feet. You must slip past their slow, melancholic march or find yourself drawn into the orbit of their prayer.",
    "exits": [
     {
      "label": "Walk alongside the silent procession",
@@ -7187,7 +7187,7 @@
    "kind": "scene",
    "title": "Among the Rafters",
    "brief": "You walk the crumbling upper rafters to reach the bell tower, ignoring the dizzying drop to retrieve a forgotten Tidewarden journal.",
-   "page": "High above the drowned floor, wooden beams groan under the weight of accumulated salt and time. Nestled in the tangled wreckage of the belfry, a leather-bound Tidewarden journal lies half-buried beneath bird droppings and dried kelp. You brush away the crust of salt, revealing pages covered in frantic ink annotations detailing the secret workings of the Meridian Gear.",
+   "page": "High above the drowned floor, wooden beams groan under the weight of accumulated salt and time. Half-buried in the tangled wreckage of the belfry, a leather-bound Tidewarden journal sits under bird droppings and dried kelp. You brush away the crust of salt, revealing pages covered in frantic ink annotations detailing the secret workings of the Meridian Gear.",
    "exits": [
     {
      "label": "Secure the old journal",
@@ -7947,7 +7947,7 @@
    "kind": "scene",
    "title": "Clearing the Debris",
    "brief": "You push a massive fallen pillar out of the stairwell, straining your muscles to the limit to uncover a hidden weapon cache.",
-   "page": "Dust hangs thick in the stale air, smelling of ancient brine and iron ore. Kneeling beside the shifted masonry, you clear away the remaining grit to expose the full length of the cache nestled inside the rock. A rusted latch gives way beneath your calloused fingers, revealing oiled leather wrapping that protects the gear from the damp rot of the seabed. You pause to catch your breath, listening intently for any echo rising from the depths before reaching out to claim the hidden store.\n\nThe metal inside is cold and heavy, forged in an era before the sea retreated from the cliffs of Gullmouth. Gathering the items close, you ready yourself for the next downward leg of your descent toward the great mechanism.",
+   "page": "Dust hangs thick in the stale air, smelling of ancient brine and iron ore. Kneeling beside the shifted masonry, you clear away the remaining grit until the full length of the cache shows inside the rock. A rusted latch gives way beneath your calloused fingers, revealing oiled leather wrapping that protects the gear from the damp rot of the seabed. You pause to catch your breath, listening intently for any echo rising from the depths before reaching out to claim the hidden store.\n\nThe metal inside is cold and heavy, forged in an era before the sea retreated from the cliffs of Gullmouth. Gathering the items close, you ready yourself for the next downward leg of your descent toward the great mechanism.",
    "exits": [
     {
      "label": "Descend deeper into the stairwell",
@@ -8665,7 +8665,7 @@
    "kind": "reward",
    "title": "The Rusted Key",
    "brief": "You try forcing a jammed cargo lift to bypass the guards, risking a fatal plunge to earn a rusted access key.",
-   "page": "The stubborn iron mechanism finally yields with a wet metallic pop, dropping the heavy lift plate an inch into place. Reaching quickly into the greasy recess, your fingers close around a cold, oil-slicked key that fits the lower maintenance gates. However narrowly, you have secured the means to bypass the primary checkpoint without paying the exorbitant merchant toll.",
+   "page": "The stubborn iron mechanism finally yields with a wet metallic pop, and the lift plate drops an inch into place. Reaching quickly into the greasy recess, your fingers close around a cold, oil-slicked key that fits the lower maintenance gates. However narrowly, you have secured the means to bypass the primary checkpoint without paying the exorbitant merchant toll.",
    "exits": [
     {
      "label": "Return to the shanty hub",
@@ -9115,7 +9115,7 @@
    "kind": "check",
    "title": "The Quick Repair",
    "brief": "You attempt to jury-rig a broken condensation trap, risking angry merchants to claim a full flask of clean water.",
-   "page": "Your calloused fingers work with frantic speed against the vibrating, superheated copper while boiling drops spit against your forearms. The rusted union sleeve threatens to shear completely under the pressure of the escaping steam, requiring absolute precision with your hemp cord and sealing wax. You bite your lower lip, ignoring the searing heat of the metal as you thread the final knot around the spitting seam, holding your breath at the crucial moment before the entire apparatus either holds or bursts.",
+   "page": "Your calloused fingers work with frantic speed against the vibrating, superheated copper while boiling drops spit against your forearms. The rusted union sleeve threatens to shear completely under the pressure of the escaping steam, requiring absolute precision with your hemp cord and sealing wax. You bite your lower lip, ignore the searing heat of the metal, and thread the final knot around the spitting seam, then hold your breath as the whole apparatus holds or bursts.",
    "exits": [
     {
      "label": "check-full",
@@ -10474,7 +10474,7 @@
    "kind": "check",
    "title": "Listening Through the Brine",
    "brief": "You eavesdrop on two elite guards discussing the Sunken Stair, risking discovery to learn the precise schedule of the patrols.",
-   "page": "Condensation drips from the iron conduits above, splashing cold against your neck as you press your shoulder harder into the damp timber wall. The guards shift their weight, their conversation turning toward the precise timing of the change of guard at the lower security threshold. A sudden gust of salt-laden wind howls through the structural struts, nearly drowning out their crucial words about the password and the patrol routes. You strain every sense, calculating the gaps in their speech and trying to catch the hidden schedule before their boots turn back toward your hiding spot.",
+   "page": "Condensation drips from the iron conduits above, splashing cold against your neck as you press your shoulder harder into the damp timber wall. The guards shift their weight, their conversation turning toward the precise timing of the change of guard at the lower security threshold. A sudden gust of salt-laden wind howls through the structural struts and nearly drowns out their words about the password and the patrol routes. You strain every sense, calculating the gaps in their speech and trying to catch the hidden schedule before their boots turn back toward your hiding spot.",
    "exits": [
     {
      "label": "check-full",
@@ -10889,7 +10889,7 @@
    "kind": "check",
    "title": "Testing the Brass Tumblers",
    "brief": "You carefully pick the brass lock of a restricted tidal cabinet, risking a triggered poison needle to claim an ancient brass compass.",
-   "page": "Your fingers trace the intricate channel of the brass faceplate, searching for the hidden pressure release that guards the central mechanism. One false shift of the wire could trip the poison spring nestled deep within the damp timber casing, spraying venom across your knuckles before you can jerk your hand away. Sweat runs into your eyes in the salt-fouled air as you apply the final, delicate pressure to the stubborn bronze tumbler.\n\nYou hold your breath, waiting for the internal click to confirm whether your touch has bypassed the trap or awakened it.",
+   "page": "Your fingers trace the intricate channel of the brass faceplate, searching for the hidden pressure release that guards the central mechanism. One false shift of the wire could trip the poison spring deep in the damp timber casing and spray venom across your knuckles before you can jerk your hand away. Sweat runs into your eyes in the salt-fouled air as you apply the final, delicate pressure to the stubborn bronze tumbler.\n\nYou hold your breath, waiting for the internal click to confirm whether your touch has bypassed the trap or awakened it.",
    "exits": [
     {
      "label": "check-full",
@@ -11043,7 +11043,7 @@
    "kind": "reward",
    "title": "Secrets of the Descent",
    "brief": "You construct a makeshift magnifying lens from broken spectacles, risking eye strain to decipher a microscopic map of the Sunken Stair.",
-   "page": "The cracked lens holds firm against your thumb, focusing the dim lamplight into a sharp beam that lays bare the hidden architectural secrets of the abyss. The map yields its deepest mystery, showing you a forgotten maintenance hatch that bypasses the guarded upper gates of the Stair. You fold the fragile parchment with practiced care, securing the crucial knowledge inside your coat.\n\nYou pocket the secret route and retrace your steps toward the dusty annex.",
+   "page": "The cracked lens holds firm against your thumb, focusing the dim lamplight into a sharp beam that lays bare the hidden architectural secrets of the abyss. The map yields its deepest mystery, showing you a forgotten maintenance hatch that bypasses the guarded upper gates of the Stair. You fold the fragile parchment with practiced care and tuck the knowledge inside your coat.\n\nYou pocket the secret route and retrace your steps toward the dusty annex.",
    "exits": [
     {
      "label": "Head back to the annex",
@@ -11643,7 +11643,7 @@
    "kind": "reward",
    "title": "The Oiled Bolt",
    "brief": "You subtly disable the intricate locking mechanism of the solarium door, risking detection to ensure a clear escape route for later.",
-   "page": "The brass tumblers yield with a whisper of well-oiled grease, leaving the heavy iron tongue retracted flush within its mortise plate. You withdraw your wire tools with clean precision, wiping the soot from your fingers onto your trousers without leaving a single mark upon the polished timber. The escape route remains entirely yours, quiet and unguarded, offering a clear path out of the stilt-city when the inevitable reckoning arrives.",
+   "page": "The brass tumblers give with a whisper of well-oiled grease, and the iron tongue slides back flush into its mortise plate. You withdraw your wire tools with clean precision, wiping the soot from your fingers onto your trousers without leaving a single mark upon the polished timber. The escape route remains entirely yours, quiet and unguarded, offering a clear path out of the stilt-city when the inevitable reckoning arrives.",
    "exits": [
     {
      "label": "Approach the inner iron gate",
@@ -12096,7 +12096,7 @@
    "kind": "scene",
    "title": "The Brake House",
    "brief": "You study the complex braking levers to control the descent speed, risking a free-fall to salvage some precious mechanical parts.",
-   "page": "Thick iron cables hum with unbearable tension inside the wooden control shed perched above the gaping shaft. Heavy brass levers, green with centuries of oxidation, control the descent rate of every cage hanging beneath Saltspire. Piles of discarded oil rags and broken gear teeth litter the floorboards, smelling strongly of stale fish-oil and heated metal. You trace the intricate linkage rods with a careful eye, searching for a mechanical shortcut hidden among the grease and grime.",
+   "page": "Thick iron cables hum with unbearable tension inside the wooden control shed perched above the gaping shaft. Heavy brass levers, green with centuries of oxidation, control the descent rate of every cage hanging beneath Saltspire. Piles of discarded oil rags and broken gear teeth litter the floorboards, smelling strongly of stale fish-oil and heated metal. You follow each linkage rod with a careful eye, hunting for a mechanical shortcut under the grease and grime.",
    "exits": [
     {
      "label": "Study the complex braking levers",
@@ -12180,7 +12180,7 @@
    "kind": "reward",
    "title": "The Precision Slip",
    "brief": "You study the complex braking levers to control the descent speed, risking a free-fall to salvage some precious mechanical parts.",
-   "page": "The heavy brass lever slides home with a satisfying, muffled click, easing the screech of the main cables down to a low, rhythmic thrum. Nestled neatly within the open maintenance tray lies a marvel of old engineering, untouched by the salt-rot that ruins everything else in this drowned world. Whether through brilliant calculation or a blessed stroke of fortune, the mechanism yields its secrets without breaking your fingers. You pocket your prize, feeling the subtle weight of mechanical insight settling into your bones.",
+   "page": "The heavy brass lever slides home with a satisfying, muffled click, easing the screech of the main cables down to a low, rhythmic thrum. Inside the open maintenance tray sits a marvel of old engineering, untouched by the salt-rot that ruins everything else in this drowned world. Whether through brilliant calculation or a blessed stroke of fortune, the mechanism yields its secrets without breaking your fingers. You pocket your prize, feeling the subtle weight of mechanical insight settling into your bones.",
    "exits": [
     {
      "label": "Return to the winch hub",
@@ -14872,7 +14872,7 @@
    "kind": "scene",
    "title": "Distracting the Archivist",
    "brief": "You present a contradictory paradox from one of the ruined ledgers to confuse the automaton, utilizing sharp logic to steal a rare oceanic map.",
-   "page": "Smoke from your oil lamp drifts across the glowing amber lenses, blurring the machine's piercing vision for a crucial heartbeat. You repeat the paradoxical decree about the sea returning before it departs, weaponizing the rigid logic of its own forgotten laws against its brass brain. The brass torso swivels a fraction, distracted by the recursive error written across your torn ledger page.\n\nThe precious parchment map rests untouched on the pitted steel workbench, ready for whoever claims it next.",
+   "page": "Smoke from your oil lamp drifts across the glowing amber lenses and blurs the machine's piercing vision for a heartbeat. You repeat the paradoxical decree about the sea returning before it departs, weaponizing the rigid logic of its own forgotten laws against its brass brain. The brass torso swivels a fraction, distracted by the recursive error written across your torn ledger page.\n\nThe precious parchment map rests untouched on the pitted steel workbench, ready for whoever claims it next.",
    "exits": [
     {
      "label": "Reach for the rolled parchment",
@@ -15710,7 +15710,7 @@
    "kind": "scene",
    "title": "Shadows of the Camp",
    "brief": "You sleep briefly in the unsettling silence of the abandoned camp, suppressing terrible nightmares to recover your stamina and find a hidden silver flask.",
-   "page": "You pull a damp wool blanket over your shoulders and sit down on an overturned crate within the quiet shelter of the deserted campsite. The surrounding silence is heavy and unnatural, filled only with the faint ticking of distant machinery somewhere deep in the rock. Closing your eyes for a brief moment, you force your racing pulse to steady against the rising tide of exhaustion. A small metallic glint catches your eye from beneath a pile of discarded canvas sheets in the corner.",
+   "page": "You pull a damp wool blanket over your shoulders and sit down on an overturned crate within the quiet shelter of the deserted campsite. Around you the silence feels wrong, broken only by faint ticking from machinery buried deep in the rock. Closing your eyes for a brief moment, you force your racing pulse to steady against the rising tide of exhaustion. A small metallic glint catches your eye from beneath a pile of discarded canvas sheets in the corner.",
    "exits": [
     {
      "label": "Investigate the canvas heap",
@@ -15898,7 +15898,7 @@
    "kind": "scene",
    "title": "Scattered Charts",
    "brief": "You piece together the torn fragments of a tidal chart left near the bedroll, using keen observation to learn the exact timing of the currents.",
-   "page": "Torn fragments of parchment lie scattered across the camp bedroll like fallen autumn leaves, curling at the edges from the damp salt air. You kneel beside the makeshift table, carefully arranging the fragile strips of ink-stained paper into something resembling a coherent map. The diagrams depict strange, unfamiliar lunar alignments and intricate tidal vectors that bear no resemblance to the old almanacs of Gullmouth. By the dim light of your lantern, you trace the faint, hurried annotations penned in Orsolya's familiar, cramped hand.\n\nThe scattered lines begin to reveal a hidden pattern beneath the messy ink.",
+   "page": "Torn fragments of parchment lie scattered across the camp bedroll like fallen autumn leaves, curling at the edges from the damp salt air. You kneel beside the makeshift table, carefully arranging the fragile strips of ink-stained paper into something resembling a coherent map. The diagrams show strange lunar alignments and tidal vectors foreign to the old almanacs of Gullmouth. By the dim light of your lantern, you trace the faint, hurried annotations penned in Orsolya's familiar, cramped hand.\n\nThe scattered lines begin to reveal a hidden pattern beneath the messy ink.",
    "exits": [
     {
      "label": "Trace the alignment of the ink lines",
@@ -15913,7 +15913,7 @@
    "kind": "scene",
    "title": "The Missing Vector",
    "brief": "You piece together the torn fragments of a tidal chart left near the bedroll, using keen observation to learn the exact timing of the currents.",
-   "page": "Faded ink smudges beneath your fingertips as you try to align the jagged edges of a torn coastal chart. A crucial corner is missing, leaving a blank gap where the deepest channel of the Low should be marked with soundings. You squint against the flickering amber flame of your lamp, searching the dust beneath the cot for the lost scrap of paper. Every shadow along the stone wall seems to stretch and distort in the draft, making the tiny symbols dance confusingly before your tired eyes.\n\nYou steady your hand and look closer at the overlapping ink strokes left behind on the remaining fragments.",
+   "page": "Faded ink smudges beneath your fingertips as you try to align the jagged edges of a torn coastal chart. One corner is gone, and a blank gap sits where the deepest channel of the Low should be marked with soundings. You squint against the flickering amber flame of your lamp, searching the dust beneath the cot for the lost scrap of paper. Every shadow along the stone wall seems to stretch and distort in the draft, making the tiny symbols dance confusingly before your tired eyes.\n\nYou steady your hand and look closer at the overlapping ink strokes left behind on the remaining fragments.",
    "exits": [
     {
      "label": "Study the faint marks in the dust",
@@ -17583,7 +17583,7 @@
    "kind": "reward",
    "title": "Marrow Stone Secret",
    "brief": "You drag a petrified leviathan rib from the heavy counterweights, risking a crushing fall, to claim a rare marrow-stone amulet snagged on the bone.",
-   "page": "Fingers trace the cold, calcified ridge where the ancient rib wedged tight against the heavy iron counterweights, scraping away salt crust and encrusted barnacles until your nails find the purchase they need. As the grinding stone shifts and settles, a cold pulse yields to your tug. Nestled deep within the porous grey marrow lies a smooth, pale pebble pulsing with a faint, briny luminescence that smells faintly of old rain and deep sea trenches. You pry the small relic free and slide it safely into your pocket as the machinery settles with a protesting sigh.",
+   "page": "Fingers trace the cold, calcified ridge where the ancient rib wedged tight against the heavy iron counterweights, scraping away salt crust and encrusted barnacles until your nails find the purchase they need. As the grinding stone shifts and settles, a cold pulse yields to your tug. Deep in the porous grey marrow sits a smooth, pale pebble that glows with a faint briny light and smells of old rain and deep sea trenches. You pry the small relic free and slide it safely into your pocket as the machinery settles with a protesting sigh.",
    "exits": [
     {
      "label": "Slip into the inner chamber",
@@ -17933,7 +17933,7 @@
    "kind": "scene",
    "title": "Weaving The Broken Filaments",
    "brief": "You diligently repair the automaton's damaged memory-coil, risking a painful electrical surge, to receive a flawlessly accurate map of the seabed's shifting salt-flats and sinkholes.",
-   "page": "Fine copper threads snap beneath your trembling fingers as you ease open the automaton's cranium casing, exposing a maze of grease-slicked cogs and twitching nerve-wires. A sudden blue spark dances across your knuckle, searing the skin with the sharp smell of ozone and hot tin, but you do not pull away. You delicately twist the fractured memory-coil back into alignment, coaxing the ancient machine's stuttering thoughts into a clean, rhythmic pulse. Under your palm the brass plating warms and gives a soft grateful shiver.\n\nA folded parchment slides smoothly from a hidden slot in the chassis, revealing every hidden sinkhole and treacherous salt-flat mapped in meticulous ink.",
+   "page": "Fine copper threads snap beneath your trembling fingers as you ease open the automaton's cranium casing, exposing a maze of grease-slicked cogs and twitching nerve-wires. A sudden blue spark dances across your knuckle, searing the skin with the sharp smell of ozone and hot tin, but you do not pull away. You delicately twist the fractured memory-coil back into alignment, coaxing the ancient machine's stuttering thoughts into a clean, rhythmic pulse. Under your palm the brass plating warms and gives a soft grateful shiver.\n\nA folded parchment slides from a hidden slot in the chassis, and every sinkhole and treacherous salt-flat shows mapped on it in black ink.",
    "exits": [
     {
      "label": "Pocket the map of the seabed",
@@ -19074,7 +19074,7 @@
    "kind": "scene",
    "title": "The Primer Cords",
    "brief": "You carefully disarm the volatile explosive charges she planted on the primary drive, risking a premature detonation, to save the mechanism and pocket a rare blast-cap.",
-   "page": "Coils of gray fuse-wire snake across the greasy housing of the primary drive, pinned in place by crude lead weights that Orsolya hung there with meticulous care. You drop to one knee beside the main casing, your fingers slick with condensation and oil as you trace the path of the sputtering detonators. Each wire is knotted with old sailor's hitches that tighten under tension, requiring a delicate touch and absolute stillness to unravel without striking a spark against the ironwork. The metal beneath your palms vibrates with a deep, ominous thrum, warning you that the entire apparatus is teetering on a hair-trigger just waiting for a careless movement.",
+   "page": "Coils of gray fuse-wire snake across the greasy housing of the primary drive, pinned by crude lead weights Orsolya hung there herself, each one set just so. You drop to one knee beside the main casing, your fingers slick with condensation and oil as you trace the path of the sputtering detonators. Each wire is knotted with old sailor's hitches that tighten under tension, requiring a delicate touch and absolute stillness to unravel without striking a spark against the ironwork. The metal beneath your palms vibrates with a deep, ominous thrum, warning you that the entire apparatus is teetering on a hair-trigger just waiting for a careless movement.",
    "exits": [
     {
      "label": "Unravel the tangled fuse wire",
