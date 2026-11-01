@@ -315,7 +315,7 @@
    "kind": "recovery",
    "title": "A Sour Bargain in the Ash",
    "brief": "You negotiate with the water-seller for enough grey water to fill the tender, testing your CUNNING against his lies to acquire a skin of oil.",
-   "page": "The water-seller catches your hesitation and bares yellow teeth in a grin of absolute triumph. His thumb slams over the neck of the flask and doubles the price in copper wire. You concede the extra turn of wire just to save the hour. Temper runs hot enough to singe the hairs on your forearms as you hand over the metal. He shoves the greasy hide into your chest. The stiff leather seam catches your thumb-joint and carves a raw, bleeding split that fills at once with black soot.\n\nYou hiss through your teeth and clutch the cut while he cackles and retreats behind his zinc counter. Poorer in wire. Thicker in scars.",
+   "page": "The water-seller catches your hesitation and bares yellow teeth in a grin of absolute triumph. His thumb slams over the neck of the flask and doubles the price in copper wire. You concede the extra turn of wire just to save the hour, temper running hot enough to singe the hairs on your forearms as you hand over the metal and take what he offers. He shoves the greasy hide into your chest. The stiff leather seam catches your thumb-joint and carves a raw, bleeding split that fills at once with black soot.\n\nYou hiss through your teeth and clutch the cut while he cackles and retreats behind his zinc counter. Poorer in wire. Thicker in scars.",
    "exits": [
     {
      "label": "Pocket the stinging oil-skin",
@@ -331,7 +331,7 @@
    "kind": "reward",
    "title": "The Greasy Prize",
    "brief": "You negotiate with the water-seller for enough grey water to fill the tender, testing your CUNNING against his lies to acquire a skin of oil.",
-   "page": "You hold his eye until the water-seller's bluff collapses. He coughs into a rag and slides the goatskin across the zinc counter with a grumpy grunt. You secure the stopper with a twist of hemp string; the dark lubricant inside will keep the Marrowbone's valve-stems sliding smooth against the grit. It is a foul-smelling trade, but the thick, rancid fat will grease a dozen high-stress joints before you reach the edge of the steppes.\n\nYou haul the hide onto your shoulder and turn away from the dry carts.",
+   "page": "You hold his eye until the water-seller's bluff collapses. He coughs into a rag. The goatskin slides across the zinc counter with a grumpy grunt. You secure the stopper with a twist of hemp string; the dark lubricant inside will keep the Marrowbone's valve-stems sliding smooth against the grit. It is a foul-smelling trade, but the rancid fat will grease a dozen high-stress joints before you reach the edge of the steppes.\n\nYou haul the hide onto your shoulder and turn away from the dry carts.",
    "exits": [
     {
      "label": "Carry the oil to the cab",
@@ -1144,7 +1144,7 @@
    "kind": "check",
    "title": "Sifting the Rumors",
    "brief": "You listen to drunk track-hands using sharp cunning to separate truth from boasts, learning where Hesper bought extra fuel.",
-   "page": "Drunken arguments flare up around the scarred oak table, blurring the line between honest recollections and boastful tall tales. You sift through the conflicting stories with practiced care, watching every shift of eye and gesture to catch the ring of truth. The air grows thick with stale tobacco as you press for details regarding Hesper's secret transactions, risking a swift escalation if your questions prove too sharp.",
+   "page": "Drunken arguments flare up around the scarred oak table and blur the line between honest recollections and boastful tall tales. You sift the conflicting stories with care, watching every shift of eye and gesture for the ring of truth. Stale tobacco fills the room. You press for details of Hesper's secret transactions, and one wrong question could raise fists at once.",
    "exits": [
     {
      "label": "check-full",
@@ -1819,7 +1819,7 @@
    "kind": "bottleneck",
    "title": "The Choked Injector",
    "brief": "The Marrowbone's water injector clogs with dry ash just as you prepare to clear the yard.",
-   "page": "You climb back onto the footplate of Locomotive No. 9, wiping the coal dust from your brow as the brass boiler throws comforting heat against the chill of the yard. You reach for the water injector valve to prime the feed before building up a full head of steam for the run to the steppes, but your hand pauses at the strange, dead silence of the pipework. Instead of the familiar high-pitched hiss of rushing water, there is only a dull, choked gurgle and a plume of dry, grey dust puffing out from the overflow cock. Fine ash has drifted into the tender tank during the night, baking hard within the copper feed-tubes into a stubborn plug of grey cement. The Marrowbone stands helpless with an empty belly, and the steam gauge climbs steadily toward the red line while the yard signals begin to drop for your departure.",
+   "page": "You climb back onto the footplate of Locomotive No. 9 and wipe coal dust from your brow while the brass boiler throws heat against the chill of the yard. You reach for the water injector valve to prime the feed before building up a full head of steam for the run to the steppes, but your hand pauses. The pipework is dead silent. Instead of the familiar high-pitched hiss of rushing water, there is only a dull choked gurgle and a plume of dry grey dust puffing out from the overflow cock. Fine ash has drifted into the tender tank during the night and baked hard within the copper feed-tubes into a stubborn plug of grey cement. The Marrowbone stands with an empty belly. The steam gauge climbs toward the red line while the yard signals begin to drop for your departure.",
    "exits": [
     {
      "label": "Inspect the clogged tender feed",
@@ -18059,7 +18059,7 @@
    "kind": "scene",
    "title": "The Jammed Sprocket",
    "brief": "You hammer the jammed sluice-chain back onto its sprocket with a heavy brass spanner, risking a crushed knuckle, and win a heavy brass oil-can.",
-   "page": "Steam hisses from a cracked elbow joint nearby, wreathing your face in white mist as you crouch beside the sluggish machinery. With a sudden grunt of effort, you swing the brass spanner against the jammed sluice-chain and hammer the links back onto the iron sprocket. A shower of hot sparks flies into the dark bilge-water below, accompanied by the metallic shriek of links biting home. The rusted mechanism shudders, catches, and finally begins to turn with a deep, rhythmic groaning sound. You wipe the greasy sweat from your forehead with a soot-stained sleeve, catching your breath in the humid air.",
+   "page": "Steam hisses from a cracked elbow joint nearby and wreaths your face in white mist as you crouch beside the sluggish machinery. You grunt, swing the brass spanner against the jammed sluice-chain, and hammer the links back onto the iron sprocket. Sparks hit the bilge-water. Links bite home with a metallic shriek. The rusted mechanism shudders, catches, and at last begins to turn with a deep groaning sound that runs through the plates under your boots. You wipe greasy sweat from your forehead with a soot-stained sleeve and catch your breath in the damp air.",
    "exits": [
     {
      "label": "Follow the turning chain deeper inward",
@@ -20187,7 +20187,7 @@
    "kind": "ending-part",
    "title": "The Stationmaster's Heir",
    "brief": "Ending \"The Stationmaster's Heir\"",
-   "page": "Oak doors swing shut hard enough to shake dust from the arched cornices above the gallery, sealing you within the cool, paper-scented shadows of the keep. The Stationmaster-General sits motionless in her high-backed chair of carved mahogany, her ancient hands folded over the leather spine of the great ledger as if holding down the very floorboards of Cinderfall. She does not offer praise, nor does she ask for the names of the gangers who fell beside the iron road, for the ledgers of the city record only balances struck and debts cleared. You lay the heavy brass Water Key across her desk, its metal still warm from the long run through the ash-storm.",
+   "page": "Oak doors swing shut hard enough to shake dust from the arched cornices above the gallery and seal you within the cool, paper-scented dark of the keep. The Stationmaster-General sits motionless in her high-backed chair of carved mahogany, ancient hands folded over the leather spine of the great ledger as if holding down the floorboards of Cinderfall. She offers no praise. \"The books keep balances, not names,\" she says, and she does not ask after the gangers who fell beside the iron road. You lay the brass Water Key across her desk. The metal is still warm from the long run through the ash-storm.",
    "exits": [
     {
      "label": "Accept the ledger-keeper's heavy seal",
