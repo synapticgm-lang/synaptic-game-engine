@@ -3600,7 +3600,7 @@
    "kind": "hub",
    "title": "The Coal Stacks",
    "brief": "The Coal Stacks: You rush to top off your tender from the dwindling municipal coal reserves before the gates close.",
-   "page": "Towering black mounds of municipal fuel loom against the bruised twilight, guarded by frozen gangers and shivering ticket-widows who eye your tender with hungry desperation. You must secure your furnace provisions before the loading chutes freeze solid for the night. Down the western line, distant shunting whistles shriek through the ash-mist toward the depot tracks. Across the yard, the stationmaster's private siding sits dark and silent behind rusted iron gates. Beyond the water-column, the open grey expanse of the Cinder Steppe waits under a low, choking sky.",
+   "page": "Towering black mounds of municipal fuel loom against the bruised twilight, guarded by frozen gangers and shivering ticket-widows who eye your tender with hungry desperation. Night closes fast. Furnace stores belong aboard before the loading chutes freeze solid. Down the western line, distant shunting whistles shriek through the ash-mist toward the depot tracks while across the yard the stationmaster's private siding sits dark and silent behind rusted iron gates. Beyond the water-column the Cinder Steppe is a grey open sheet under a low, choking sky.",
    "exits": [
     {
      "label": "Shoveling the municipal bunker",
@@ -5126,7 +5126,7 @@
    "kind": "scene",
    "title": "The Peddler's Dust",
    "brief": "Staring down a nervous peddler trying to sell fake boiler compound wins his respect and a bag of dry pit-coal.",
-   "page": "Grey canvas flaps slat against a rusted iron counter where a hump-backed peddler hawks grey bricks of supposed boiler compound. He taps a lumpy grey packet against his palm, swearing by the old track that it will clean any scaled-up firebox from Ashgate to the wall. You cross your arms on the brass sill of the Marrowbone and watch him through the blowing grit.\n\nThe man wilts under your soot-streaked stare, drops his voice from a greasy roar to a dry wheeze, then slides a genuine sack of dry pit-coal across the planks. You lean out to scoop the fuel up.",
+   "page": "Canvas flaps slat against a rusted iron counter where a hump-backed peddler hawks bricks of supposed boiler compound. He taps the lumpy packet once. \"It will clean any scaled-up firebox from Ashgate to the wall,\" he swears by the old track. You cross your arms on the brass sill of the Marrowbone and watch him through the blowing grit.\n\nThe man wilts under your soot-streaked stare, drops his voice from a greasy roar to a dry wheeze, then slides a genuine sack of dry pit-coal across the planks. You scoop the fuel up.",
    "exits": [
     {
      "label": "Haul the pit-coal aboard the cab",
@@ -11525,7 +11525,7 @@
    "kind": "hub",
    "title": "The Hoisting Abyss",
    "brief": "The Lift Platform: You survey the precarious hoisting machinery dangling over the misty chasm with no visible means of descent.",
-   "page": "Rust flakes drift like dark snow into the grey nothingness surrounding the stranded platform, where four distinct paths offer uncertain escape from the dangling cage. A rusted access ladder snakes upward into the gloom toward the upper gantry, while a narrow service catwalk hugs the sheer rock face toward the mountain roots. Across the gap, a heavy maintenance cable sways invitingly in the updraft, and a sealed iron bulkhead bears the fresh weld marks of Baron enforcers. Each way forward costs nerve and muscle, and the structural groans beneath the engine grow louder by the heartbeat.",
+   "page": "Rust flakes drift like dark snow into the grey nothingness around the stranded platform. The cage hangs. A rusted access ladder snakes upward into the gloom toward the upper gantry, while a narrow service catwalk hugs the sheer rock face toward the mountain roots and, across the gap, a maintenance cable sways in the updraft. A sealed iron bulkhead bears the fresh weld marks of Baron enforcers. Under the engine the structure groans again, louder with each beat.",
    "exits": [
     {
      "label": "Climb the rusted access ladder",
@@ -12722,7 +12722,7 @@
    "kind": "scene",
    "title": "Smothered in White",
    "brief": "You maintain iron composure while searchlights sweep the cab, risking a panic attack to keep the engine hidden in steam.",
-   "page": "White plumes hiss from the ruptured manifold and wrap the iron ribs of the Marrowbone in a dense, artificial fog. Scorching oil and wet packing cut sharp at the nose. Yellow searchlights sweep the curved iron roof of the cab and throw long, frantic bars of light through the greasy windows. Your lungs go tight and dry in the sudden ambush, yet your fingers stay hooked around the brass regulator. You force each breath into a slow, deliberate rhythm that matches the knock of the piston-rods under the floor plates.\n\nThe side injector valve sits under your hand. Flood the track with vapour before the Rail Barons catch your silhouette.",
+   "page": "White plumes hiss from the ruptured manifold and wrap the iron ribs of the Marrowbone in a dense, artificial fog. Oil cuts sharp. Yellow searchlights sweep the curved iron roof of the cab and throw long, frantic bars of light through the greasy windows. Your lungs go tight and dry. Still your fingers stay hooked around the brass regulator, and you force each breath into a slow count that matches the knock of the piston-rods under the floor plates.\n\nThe side injector valve sits under your hand. Flood the track with vapour before the Rail Barons catch your silhouette.",
    "exits": [
     {
      "label": "Drown the track in thick steam",
@@ -14225,7 +14225,7 @@
    "kind": "check",
    "title": "The Valve Seat",
    "brief": "You wrestle the jammed sluice wheel past its rusted seat until the flood drains away, earning a brass drainage cock.",
-   "page": "The brass wheel sticks hard at the three-quarter mark, jammed immovably by a grit-encrusted thread that refuses to yield to ordinary persuasion. Beyond the partition, the water level taps a steady, menacing tattoo against the lower boiler plating, warning that time has nearly run out for the engine's draft. You grab a short length of rusted iron pipe from the debris at your feet, slip it over the spoke of the wheel to gain extra leverage, and lean your full weight into the improvised extension with your eyes fixed on the stubborn seating. The metal of the wheel shudders under the strain, balanced precisely between stripping the ancient threads entirely or clearing the obstruction with one sudden snap.",
+   "page": "The brass wheel sticks hard at the three-quarter mark, jammed by a grit-encrusted thread that refuses ordinary persuasion. Beyond the partition, water taps a menacing tattoo against the lower boiler plating. Draft time is nearly gone. You grab a short length of rusted iron pipe from the debris at your feet, slip it over the spoke to gain leverage, and lean into the improvised extension with your eyes fixed on the stubborn seating. Metal shudders under the strain, caught between stripping the ancient threads entirely or clearing the obstruction with one sudden snap.",
    "exits": [
     {
      "label": "check-full",
@@ -16484,7 +16484,7 @@
    "kind": "recovery",
    "title": "The Price of a Staredown",
    "brief": "You stare down the ancient bureaucrat without blinking until she stamps your waybill, earning a cup of hot chicory.",
-   "page": "Your eyelids flutter against your will, a microscopic betrayal that the ancient clerk catches instantly with a triumphant twitch of her thin mouth. She marks a sharp red cross across your travel papers with a vicious stroke of her nib, declaring your credentials insufficient for passage through the lower conduits. The reprimand costs you precious minutes and leaves a dull, throbbing ache behind your temples as she forces you to wait while she painstakingly re-logs every entry from scratch. You bite back the hot retort rising in your throat, knowing that anger here only feeds the bureaucratic machinery.\n\nBy the time she finally shoves the papers back across the blotter, your nerves are frayed and your uniform jacket smells heavily of stale soot and defeat. You gather your gear with stiff fingers and turn away from the desk into the damp gloom of the corridor.",
+   "page": "Your eyelids flutter against your will. The ancient clerk catches that microscopic betrayal at once, and a triumphant twitch pulls at her thin mouth. She marks a sharp red cross across your travel papers with a vicious stroke of her nib and deems your credentials insufficient for passage through the lower conduits. The reprimand costs you precious minutes. A raw pulse settles behind your temples while she forces you to wait and re-logs every entry from scratch, and you bite back the hot retort rising in your throat because anger here only feeds the bureaucratic machinery.\n\nBy the time she finally shoves the papers back across the blotter, your nerves are frayed and your uniform jacket smells of stale soot and defeat. You gather your gear with stiff fingers. Then you turn away from the desk into the damp gloom of the corridor.",
    "exits": [
     {
      "label": "Move past the registry desk",
@@ -19193,7 +19193,7 @@
    "kind": "scene",
    "title": "Adjusting The Feed",
    "brief": "You endure the freezing draft from the breached roof-lights while adjusting the main feed-valve, and retain an oiled leather ledger-cover.",
-   "page": "Frost continues to coat the overhead ribs of the station skeleton, but your attention remains fixed on the brass wheel of the main feed-valve, which turns with a deep, protesting grind of dry threads. A sudden gust billows through the broken panes overhead, carrying the bitter taste of old soot and frozen alkali straight into your teeth, yet your hands keep their hold on the spoke. Against your chest, the stiff edges of the oiled leather ledger-cover shift with every breath, reminding you of the records you carry through the gathering storm.\n\nPausing to wipe a smear of black grease from your brow, you peer through the dim haze toward the distant platform edge where the shadows bunch thickest.",
+   "page": "Frost still coats the overhead ribs. Your attention stays on the brass wheel of the main feed-valve, which turns with a deep, protesting grind of dry threads. A sudden gust billows in from the broken panes overhead and carries the bitter taste of old soot and frozen alkali straight into your teeth, yet your hands keep their hold on the spoke. Against your chest the stiff edges of the oiled leather ledger-cover shift with every breath. Those records ride with you into the gathering storm.\n\nGrease smears your brow. You wipe it, then peer into the dim haze toward the distant platform edge where the shadows bunch thickest.",
    "exits": [
     {
      "label": "Peer through the dim haze",
@@ -20259,7 +20259,7 @@
    "kind": "ending",
    "title": "The Water Rises",
    "brief": "Ending \"Open the Water Gate\"",
-   "page": "A long, deep groan shakes the foundations of the ancient masonry as the massive brass valves finally turn under the leverage of your tired arms, biting through decades of green scale and dried grease with a sharp, metallic shriek. For a breathless moment nothing moves. Then a subterranean shudder runs through the stone channels beneath your boots, and dark water leaps from the deep mountain springs into the empty reservoirs with a sudden roar. The spray catches the dim light of the high clerestory windows, turning the drifting dust to gold as the cool, sweet scent of wet earth and living river fills the damp galleries. Down in the city below, distant shouts rise from the courtyards as the dry fountains begin to gush and the garden beds drink their fill after years of thirst. You wipe the black grease from your forehead with a soot-stained sleeve and lean against the massive wheel, listening to the music of the rushing water that has finally come home.",
+   "page": "A long, deep groan shakes the foundations of the ancient masonry as the massive brass valves finally turn under the leverage of your tired arms and bite through decades of green scale and dried grease with a sharp, metallic shriek. For a breathless moment nothing moves. Then a subterranean shudder runs through the stone channels beneath your boots, and dark water leaps from the deep mountain springs into the empty reservoirs with a sudden roar. Spray catches the dim light of the high clerestory windows. Drifting dust goes gold. The cool, sweet scent of wet earth and living river fills the damp galleries. Down in the city below, distant shouts rise from the courtyards. \"The fountains!\" someone calls, as the dry basins begin to gush and the garden beds drink their fill after years of thirst. You wipe the black grease from your forehead with a soot-stained sleeve and lean against the great wheel. The rush of water has finally come home.",
    "exits": [],
    "endingKey": "open-the-gate",
    "endingTitle": "Open the Water Gate",
