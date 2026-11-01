@@ -13195,7 +13195,7 @@
    "kind": "scene",
    "title": "The Fungal Shelf",
    "brief": "You brave a crumbling ledge to retrieve a glowing fungal lantern, steadying your trembling hands to gain a light source that never requires oil.",
-   "page": "A narrow stone ledge juts out over a pitch-black chasm, its surface slick with slimy phosphorescent moss that casts a sickly green glow. Suspended from a rusted iron bracket at the far end hangs a wild cluster of bioluminescent fungi, throbbing with a steady, pulsing light. No oil feeds the uncanny bloom, making it a priceless prize for anyone brave enough to cross the drop. The stone beneath your boots crumbles silently into the abyss below at the slightest touch.",
+   "page": "A narrow stone ledge juts over a pitch-black chasm, slick with slimy phosphorescent moss that throws a sickly green cast. At the far end a rusted iron bracket holds a wild cluster of bioluminescent fungi, and the bloom flares and dims on its own. No oil feeds that light. The prize is rare for anyone who can cross the drop, yet the stone under your boots flakes into the abyss at the slightest touch.",
    "exits": [
     {
      "label": "Step carefully along the narrow ledge",
@@ -14712,7 +14712,7 @@
    "kind": "bottleneck",
    "title": "The Hall of Ledgers",
    "brief": "A sprawling archive of drowned ledgers blocks the way, watched over by a massive automaton archivist with glowing glass eyes and multiple brass limbs.",
-   "page": "Endless rows of water-swollen ledgers stretch out into the gloom, bound in moldering sharkskin and stacked upon rusted iron shelves that groan under the weight of centuries. A colossal automaton archivist stands sentinel among the paper tombs, its multi-jointed brass limbs shifting with a sound like grinding teeth. Twin glass lenses glow a dull, baleful amber in the damp air, tracking your every movement as you step onto the damp floor. It lowers a ledger-stamped palm to block your path and waits in absolute silence for an accounting of your presence in the deep.",
+   "page": "Water-swollen ledgers pack the gloom in endless rows, bound in moldering sharkskin and stacked on rusted iron shelves that creak under centuries of paper. A colossal automaton archivist stands among those paper tombs. Its multi-jointed brass limbs shift with a sound like grinding teeth, and twin glass lenses glow a dull baleful amber while they track you across the damp floor. It lowers a ledger-stamped palm to block your path. The hall stays mute. It waits for an accounting of your presence in the deep.",
    "exits": [
     {
      "label": "Approach the great bronze archivist",
@@ -14772,7 +14772,7 @@
    "kind": "scene",
    "title": "Weight of the Token",
    "brief": "You firmly assert your right to pass without breaking eye contact with the towering machine, demonstrating unwavering resolve to receive a stamped brass token.",
-   "page": "The cold brass token feels heavy and sharp-edged against your calloused palm, stamped with the faded seal of the old Tidewardens. You slip it securely into your pocket, feeling the watchful eyes of the brass archivist follow your silhouette as you thread your way past the towering stacks of drowned ledgers. The air grows noticeably cooler here, smelling sharply of ozone and old salt.\n\nAhead, the rusted iron floor grating gives way to a solid stone pathway that slopes downward into the absolute dark, leading toward the lower chambers where the great mechanism waits.",
+   "page": "The cold brass token bites sharp-edged against your calloused palm, stamped with the faded seal of the old Tidewardens. You slip it into your pocket. The archivist's lenses stay on your silhouette as you thread past the towering stacks of drowned ledgers, and the air turns cooler here with a sharp smell of ozone and old salt.\n\nAhead the rusted iron floor grating ends, and a solid stone pathway slopes into the absolute dark toward the lower chambers and the great mechanism.",
    "exits": [
     {
      "label": "Follow the downward stone path",
@@ -16665,7 +16665,7 @@
    "kind": "scene",
    "title": "Wrestling The Iron",
    "brief": "You forcefully wrestle the primary lever away from Orsolya, using your superior strength to take control of the mechanism and secure your own authority.",
-   "page": "Muscles strain against bone as you lunge forward to intercept her trembling fingers before they can trip the catastrophic release. Orsolya fights with an unnatural, salt-brined strength, her knuckles scraping against the freezing metal as you lock arms in a desperate struggle for supremacy over the mechanism. The heavy bronze lever vibrates with the immense torque of the entire trapped ocean waiting just beyond the stone walls.",
+   "page": "Muscles strain against bone as you lunge forward to intercept her trembling fingers before they can trip the catastrophic release. Orsolya fights with an unnatural salt-brined strength, and her knuckles scrape the freezing metal while you lock arms in a hard struggle over the mechanism. The bronze lever shakes. Torque from the trapped ocean presses through the stone walls into the bar.",
    "exits": [
     {
      "label": "Force the lever to your side",
@@ -16818,7 +16818,7 @@
    "kind": "recovery",
    "title": "Flawed Arguments",
    "brief": "You argue against her apocalyptic logic using fragments of old tidal law, winning a battle of words to earn her reluctant submission and a rare compass.",
-   "page": "Your tongue stumbles over a misplaced clause from the forgotten charters, and Orsolya cuts through your reasoning with a single scathing reminder of the costs. A dull ache throbs behind your temples, leaving you drained of breath and carrying the bitter sting of a lost argument. She turns back toward the console, refusing to yield an inch of ground to your faulty logic.",
+   "page": "Your tongue stumbles over a misplaced clause from the forgotten charters, and Orsolya cuts through your reasoning with a single scathing reminder of the costs. Pain flares behind your temples. Breath runs thin, and the lost argument leaves a bitter taste. She turns back toward the console and refuses to yield an inch of ground to your faulty logic.",
    "exits": [
     {
      "label": "Accept the defeat and watch",
@@ -17398,7 +17398,7 @@
    "kind": "reward",
    "title": "Turning The Iron Valve",
    "brief": "You force a calcified alignment wheel to rotate by sheer strength, risking crushed hands, to gain vital access to the central pressure valve.",
-   "page": "Iron screams against iron as your renewed effort catches the internal teeth just right, bringing the calcified alignment wheel around in a full, satisfying rotation. A deep, subterranean shudder passes through the foundations of the stair, followed by the hissing release of pent-up steam and brine from the central pressure valve. Clutched in your palm or secured safely within your pack rests a tangible token of your struggle: a heavy bronze seal-ring bearing the crest of the ancient Tidewardens, cool to the touch and gleaming faintly through the grime. You pocket the relic, knowing the path back to the great mechanism lies open before you.",
+   "page": "Iron screams against iron as your renewed effort catches the internal teeth just right, and the calcified alignment wheel comes around in a full rotation. A deep subterranean shudder runs through the stair foundations, and then pent-up steam and brine hiss from the central pressure valve. Clutched in your palm or secured in your pack rests a bronze seal-ring bearing the crest of the ancient Tidewardens, cool to the touch and gleaming faintly through the grime. You pocket the relic. The route back to the great mechanism stands clear.",
    "exits": [
     {
      "label": "Return to the main mechanism",
@@ -17483,7 +17483,7 @@
    "kind": "reward",
    "title": "Harvesting The Shell Blades",
    "brief": "You smash apart a massive colony of iron-shelled barnacles blocking the drive shaft, risking deep cuts, to harvest a cluster of razor-sharp shell-blades.",
-   "page": "Your perseverance pays off as the last stubborn crust of barnacles shatters completely, leaving the drive shaft turning smoothly in its oiled bed. Sorting through the wreckage of the colony, you unearth a cluster of razor-sharp shell-blades, perfectly preserved by the deep-sea minerals and notched like a wrecker's knife. You tuck the deadly curved fragments into your belt pouch, securing a versatile new tool born from the ruins of the deep. With the obstruction cleared, you turn your steps back toward the towering core of the mechanism.",
+   "page": "The last stubborn crust of barnacles shatters. The drive shaft turns smoothly in its oiled bed. You sort through the wreckage of the colony and unearth a cluster of razor-sharp shell-blades, preserved by the deep-sea minerals and notched like a wrecker's knife. You tuck the curved fragments into your belt pouch. With the obstruction cleared, you turn back toward the towering core of the mechanism.",
    "exits": [
     {
      "label": "Return to the central mechanism",
@@ -17801,7 +17801,7 @@
    "kind": "recovery",
    "title": "A Flawed Citation And A Heavy Cost",
    "brief": "You debate obscure ancient maritime laws with the weary Tidewarden, risking its mechanical wrath, to earn a heavy brass access key to the lower shafts.",
-   "page": "A sharp clunk echoes through the chamber as the automaton rejects your legal citation with a blast of pressurized steam that leaves your ears ringing and your throat raw. You stumble backward across the slippery stone, coughing violently as the hot vapor scalds your skin and leaves a persistent, aching tightness in your chest. The machine's amber eyes narrow down to cold, unmoving pinpricks of light, signaling that its patience has worn dangerously thin. You clutch your burning chest, bruised and chastised, realizing you must find another way past its relentless sentinel guard.",
+   "page": "A sharp clunk cracks through the chamber as the automaton rejects your legal citation with a blast of pressurized steam that leaves your ears ringing and your throat raw. You stumble backward across the slippery stone and cough hard as the hot vapor scalds your skin and leaves a tight ache in your chest. The machine's amber eyes narrow to cold unmoving pinpricks of light. Patience is gone. You clutch your burning chest, bruised and chastised, and look for another way past its sentinel guard.",
    "exits": [
     {
      "label": "Fall back into the shadows",
@@ -18501,7 +18501,7 @@
    "kind": "recovery",
    "title": "Shattered Focus",
    "brief": "You listen closely to the Choir's maddening song for operational clues, risking your own sanity, to learn the ancient spoken command for the main lock.",
-   "page": "A piercing shriek echoes inside your skull, driving you to your knees in the swirling water as a wave of vertigo shatters your concentration. You gasp for air, clutching your temples as the haunting song dissolves into a chaotic jumble of meaningless noise, leaving you drained and disoriented. The opportunity slips away into the depths, and a throbbing ache settles behind your eyes that will linger for days.",
+   "page": "A piercing shriek splits inside your skull and drives you to your knees in the swirling water as a wave of vertigo shatters your concentration. Breath comes in gasps. You clutch your temples while the haunting song dissolves into a chaotic jumble of meaningless noise. The opportunity slips into the depths. An ache settles behind your eyes that will linger for days.",
    "exits": [
     {
      "label": "Fall back to the atrium",
@@ -18727,7 +18727,7 @@
    "kind": "recovery",
    "title": "Shattered Words",
    "brief": "You carefully negotiate a fragile temporary truce between the screaming factions, risking sudden betrayal, to secure a sworn pledge of support from the fanatic Drift Pilgrims.",
-   "page": "A Brineholder officer spits a foul curse into the damp air, dismissing your careful diplomacy with a sudden, vicious thrust of his pike handle into your shoulder. The fragile peace shatters instantly as shouting erupts from all sides, and you are forced to scramble backward to avoid a flurry of jagged iron. You escape with your life, but the opportunity to reason with the factions is gone, leaving you bruised, winded, and surrounded by hostile enemies who now view you as a primary threat.",
+   "page": "A Brineholder officer spits a foul curse into the damp air and dismisses your careful diplomacy with a sudden vicious thrust of his pike handle into your shoulder. The fragile peace shatters at once. Shouting erupts from all sides, and you scramble backward to avoid a flurry of jagged iron. You escape with your life, bruised and winded. Hostile fighters ring you now and treat you as a primary threat.",
    "exits": [
     {
      "label": "Retreat to the shadows",
@@ -18789,7 +18789,7 @@
    "kind": "check",
    "title": "Staring Down the Blade",
    "brief": "You brutally intimidate the Brineholder mercenaries into slowly backing down, risking a fatal stab in the dark, to confiscate their heavy iron lockboxes of coin.",
-   "page": "Shadows writhe along the damp corridor while you lean your chest against the mercenaries' leveled pikes, daring them to strike through the gloom. A single misjudged twitch of a forearm means a six-inch spike driven straight through your lungs, but you refuse to blink or show a flicker of doubt.\n\nYour fingers hover inches from the heavy iron lockboxes while you lock eyes with the lead mercenary, waiting to see if his nerve breaks first.",
+   "page": "Shadows writhe along the damp corridor while you lean your chest against the mercenaries' leveled pikes, daring them to strike through the gloom. One misjudged twitch of a forearm means a six-inch spike driven straight through your lungs, and still you refuse to blink or show a flicker of doubt.\n\nYour fingers hover inches from the iron lockboxes. Eyes stay on the lead mercenary. Neither of you looks away.",
    "exits": [
     {
      "label": "check-full",
