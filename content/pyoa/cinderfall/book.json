@@ -558,7 +558,7 @@
    "kind": "scene",
    "title": "Rafters of Ashgate",
    "brief": "You search Hesper Quill's empty locker for hidden notes, testing your CUNNING against a watchful union clerk to secure a greasy spare regulator valve.",
-   "page": "Dust motes dance in the shaft of amber light piercing the depot roof as you finish sorting through Hesper Quill's abandoned effects. The union clerk across the platform clears his throat with a dry rattle, folding his ledger shut to signal that your time at the locker has drawn to a close. You grip the greasy spare regulator valve tightly in your hand, feeling the cold weight of the metal anchor you against the mounting panic of the yard. There is nothing more to find among the old rosters and rusted padlocks, leaving only the iron road stretching south toward the grey horizon.\n\nYou swing down from the locker staging and head toward the footplate of the Marrowbone.",
+   "page": "Dust motes hang in the shaft of amber light piercing the depot roof as you finish sorting through Hesper Quill's abandoned effects. Across the platform the union clerk clears his throat with a dry rattle and folds his ledger shut; your time at the locker is done. You grip the greasy spare regulator valve. Cold metal sits in your palm. Among the old rosters and rusted padlocks there is nothing more to find, and the iron road stretches south toward the grey horizon.\n\nYou swing down from the locker staging and head toward the footplate of the Marrowbone.",
    "exits": [
     {
      "label": "Step down from the locker staging",
@@ -1994,7 +1994,7 @@
    "kind": "check",
    "title": "The Frozen Pin",
    "brief": "You repair a jammed vestibule coupling using solid mechanics to free an old cargo truck loaded with dry briquettes.",
-   "page": "The wedge-pin of the vestibule coupling is welded together by decades of rust and expansion, resisting every ounce of force you put into the brass-faced mallet. You brace your boots against the rotting wooden buffer-beam, heaving upward with both hands while driving the heavy drift-punch squarely into the seized pivot hole. The metal screeches in protest, sending hot vibrations up your forearms as the rusted collar threatens to shear off entirely inside the sleeve.",
+   "page": "The wedge-pin of the vestibule coupling is welded together by decades of rust and expansion, and it resists every ounce of force you put into the brass-faced mallet. You brace your boots against the rotting wooden buffer-beam, heaving upward with both hands while driving the drift-punch squarely into the seized pivot hole. The metal screeches hard. Hot vibration runs up your forearms as the rusted collar threatens to shear off entirely inside the sleeve.",
    "exits": [
     {
      "label": "check-full",
@@ -3400,7 +3400,7 @@
    "kind": "scene",
    "title": "Shadows in the Bunker",
    "brief": "You anticipate a sabotage attempt in the shadows using quick cunning, catching the saboteur red-handed with a heavy iron wedge.",
-   "page": "A low scrape of boot leather against slack coal alerts you just before a dark silhouette detaches itself from behind the tender's rear ladder. You freeze beside the firebox door, watching a gloved hand slide a jagged iron wedge between the motion-bars where it could jam the valve gear instantly. The intruder pauses, sensing your presence in the gloom, but has not yet turned to face the glow of the open fire-door.\n\nThe scent of stale tobacco and railway grease hangs heavy in the narrow space between the tenders. You shift your weight onto the iron floorplate, keeping your movements silent as you prepare to strike before the wedge drops.",
+   "page": "A low scrape of boot leather against slack coal alerts you just before a dark silhouette detaches itself from behind the tender's rear ladder. You go still. Beside the firebox door you watch a gloved hand slide a jagged iron wedge between the motion-bars where it could jam the valve gear instantly, and the intruder pauses, sensing your presence in the gloom, but has not yet turned to face the glow of the open fire-door.\n\nStale tobacco and railway grease scent the narrow space between the tenders. You shift onto the iron floorplate. The wedge has not dropped yet.",
    "exits": [
     {
      "label": "Spring forward to catch the saboteur",
@@ -3641,7 +3641,7 @@
    "kind": "scene",
    "title": "Stoking the Edges",
    "brief": "You shovel heavy wet coal into the bunker using sheer brawn, filling the tender right to the brim before the guards arrive.",
-   "page": "Pushing deeper into the damp slack-heap, you drive the shovel blade home with the heel of your boot and heave another heavy load into the rising black pyramid. The Marrowbone's boiler groans softly under the growing mass, retaining heat against the bitter night wind sweeping down from the northern ranges. You level the edges with the back of the iron blade, making certain nothing spills over the side-plates before you lock the bunker hatch.",
+   "page": "Pushing deeper into the damp slack-heap, you drive the shovel blade home with the heel of your boot and heave another load into the rising black pyramid. The Marrowbone's boiler groans under the growing mass and keeps heat against the bitter night wind sweeping down from the northern ranges. You level the edges with the back of the iron blade. Nothing spills over the side-plates. You lock the bunker hatch.",
    "exits": [
     {
      "label": "Step down from the tender",
@@ -3956,7 +3956,7 @@
    "kind": "scene",
    "title": "The Fallen Beam",
    "brief": "You lift a fallen support beam to rescue a trapped water-dealer using raw brawn, earning a lasting debt of honor.",
-   "page": "Splintered timber pins the old water-seller against the side of a stranded carriage, his breath coming in shallow, rattling gasps amid the drifting soot. You wedge your shoulder beneath the heavy oak balk, gritting your teeth as splinters bite through your canvas coat, and heave upward with all your strength. The timber rolls clear into the ash with a dull thud, freeing the coughing man to clutch a grateful hand to your sleeve.",
+   "page": "Splintered timber pins the old water-seller against the side of a stranded carriage, his breath coming in shallow, rattling gasps amid the drifting soot. You wedge your shoulder beneath the oak balk, grit your teeth as splinters bite through your canvas coat, and heave upward with all your strength. The timber rolls clear into the ash with a dull thud. The coughing man clutches a grateful hand to your sleeve.",
    "exits": [
     {
      "label": "Helping the dazed merchant up",
@@ -4871,7 +4871,7 @@
    "kind": "reward",
    "title": "The Grease-Gun's Weight",
    "brief": "Bracing a sagging iron beam with your shoulder keeps the tunnel from collapsing, earning a sturdy brass grease-gun.",
-   "page": "The heavy iron beam settles only a fraction before locking solid against a stout steel stanchion, leaving a narrow, safe archway through which you tumble safely into the dim interior. Clutched in the dust near your boot is a sturdy brass grease-gun, its lever smooth and its reservoir still half-full of clean, golden lubricant. The tool is yours now, a solid piece of gear salvaged from the old maintenance trains that will keep the driving rods sliding smooth when the sand gets into the bearings.",
+   "page": "The iron beam settles only a fraction before locking solid against a stout steel stanchion. You tumble through the narrow safe archway into the dim interior. Near your boot in the dust sits a sturdy brass grease-gun, its lever smooth and its reservoir still half-full of clean, golden lubricant from the old maintenance trains. The tool is yours. You close your hand around the grease-gun.",
    "exits": [
     {
      "label": "Return to the Ribcage and weigh your next move",
@@ -6639,7 +6639,7 @@
    "kind": "hub",
    "title": "The Water-Wagon Cistern",
    "brief": "The Water-Wagon: A massive rusted tender converted into a communal cistern guarded by armed men with thirsty, hollow eyes.",
-   "page": "A massive bogie-tender, stripped of its wheels and shored up with timber blocks, dominates the centre of the sprawling camp as a communal water tank. Armed guards with hollow, thirsty eyes pace the perimeter catwalks, resting their hands on heavy iron wrenches and watching every stranger with unwavering suspicion. The air smells of wet rust, boiled salt, and the sharp tang of sweat. Down in the muddy trenches around the base of the iron giant, people barter desperately with chipped tokens and scraps of copper for a single dripping measure of liquid. The entire settlement hums with a desperate, pent-up energy under the low, bruised sky.",
+   "page": "A massive bogie-tender, stripped of its wheels and shored up with timber blocks, dominates the centre of the sprawling camp as a communal water tank. Armed guards with hollow, thirsty eyes pace the perimeter catwalks. Hands rest on iron wrenches. Wet rust, boiled salt, and the sharp tang of sweat hang in the air while, down in the muddy trenches around the base of the iron giant, people barter desperately with chipped tokens and scraps of copper for a single dripping measure of liquid. The bruised sky hangs low over the settlement.",
    "exits": [
     {
      "label": "Patch the weeping cistern rivet",
@@ -17825,7 +17825,7 @@
    "kind": "scene",
    "title": "The Barricaded Stair",
    "brief": "You shoulder past the barricade before the guards can level their iron poles, absorbing a sharp blow to the ribs, and snatch a heavy key-ring.",
-   "page": "Your iron boots ring against the checkerplate steel as you charge the improvised barricade before the guards can bring their pikes to bear. A sentry lunges forward, catching you a glancing blow to the ribs that drives the breath from your lungs in a hot, ragged gasp. Ignoring the sharp ache in your side, you throw your weight against the timber-and-iron hurdle, sending crates of spare fittings clattering across the walkway.\n\nIn the sudden clatter and shouting, your hand brushes a brass key-ring dangling from an unattended hook on the bulkhead. You snatch the iron-ringed prize free just as boots scramble behind you.",
+   "page": "Your iron boots ring against the checkerplate steel as you charge the improvised barricade before the guards can bring their pikes to bear. A sentry lunges forward and catches you a glancing blow to the ribs that drives the breath from your lungs in a hot, ragged gasp. Your side aches. You throw yourself against the timber-and-iron hurdle, and crates of spare fittings clatter across the walkway.\n\nIn the sudden clatter and shouting, your hand brushes a brass key-ring dangling from an unattended hook on the bulkhead. You snatch the iron-ringed prize free. Boots scramble behind you.",
    "exits": [
     {
      "label": "Dash down the metal corridor",
@@ -19895,7 +19895,7 @@
    "kind": "ending",
    "title": "The Last Fire",
    "brief": "Ending \"The Gangers' Republic\"",
-   "page": "Night settles deep over the Ashen Steppe, but the darkness is no longer lonely or watched by cold electric eyes from distant gantries. The Marrowbone idles at the platform's edge, its furnace breathing a steady, warm red into the drafty air while the grease-lamps flicker along the open corridor where no tickets are ever checked again. You leave your heavy leather gloves on the grease-board and step down into the grey dust, your boots crunching on ballast that now belongs to nobody and everybody all at once. Far down the track, a single signal arm stays fixed half-raised in an eternal, useless greeting to the empty horizon, too stubborn to drop and too tired to care. The road stretches out before you toward the hills, silent, patient, and entirely your own.",
+   "page": "Night settles deep over the Ashen Steppe, but the darkness is no longer lonely or watched by cold electric eyes from distant gantries. At the platform's edge the Marrowbone idles, its furnace breathing a warm red into the drafty air while grease-lamps flicker along the open corridor where no tickets are ever checked again. You leave the leather gloves on the grease-board. Grey dust takes your boots, and they crunch on ballast that belongs to nobody and everybody all at once. Far down the track a single signal arm stays fixed half-raised in a useless greeting to the empty horizon, too stubborn to drop and too tired to care. The road runs toward the hills.",
    "exits": [],
    "endingKey": "ganger-republic",
    "endingTitle": "The Gangers' Republic",
