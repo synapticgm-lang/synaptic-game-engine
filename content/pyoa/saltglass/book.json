@@ -8919,7 +8919,7 @@
     }
    ],
    "title": "The Salt Court Gate",
-   "page": "Salt Court sentries bar the narrow alley with a brass-bound gate, demanding a silver penny or three hours of your labor to pass through their toll-zone. They lean lazily against pikes tipped with dark iron, their canvas uniforms stiff with crusted brine. Past their barrier the street opens into a sun-bleached plaza lined with silent workshops.\n\nYou eye the heavy locks and the bored, sun-baked expressions of the guards, considering whether your coin-pouch or your time is worth the toll. Two alternative routes curve away from the blocked threshold."
+   "page": "Salt Court sentries bar the narrow alley with a brass-bound gate and demand a silver penny or three hours of your labor to pass through their toll-zone. They lean lazily against pikes tipped with dark iron. Canvas uniforms stay stiff with crusted brine. Past their barrier the street opens into a sun-bleached plaza lined with silent workshops.\n\nYou eye the locks and the bored, sun-baked faces of the guards while the toll still stands on their lips, and two other routes curve away from the blocked threshold."
   },
   {
    "id": "sg-3-0-1-2",
@@ -16101,7 +16101,7 @@
     }
    ],
    "title": "The Blue Slag Arch",
-   "page": "Behind a tumbled arch of blue slag, you bind your burned fingers with hempen cloth while the gale strips the dunes of their powdery crests. The sharp scent of ozone and crushed salt fills the air as the tempest beats relentlessly against your makeshift cover. You draw the cold ceramic Seedkey closer to your ribs, feeling its dead chill contrast sharply against the feverish throb of your injured hand.\n\nThe howling outside dips into a lower, more threatening moan, signaling that the lull is temporary and the open expanse awaits your crossing."
+   "page": "Behind a tumbled arch of blue slag you bind your burned fingers with hempen cloth, and the gale strips powdery crests from the dunes while ozone and crushed salt cut sharp through every breath. The tempest beats your cover. You draw the cold ceramic Seedkey closer to your ribs, and its dead chill meets the fever heat in your injured hand.\n\nOutside the howl drops to a lower moan. Grey grit sheets past the arch rim."
   },
   {
    "id": "sg-4-2-1-4",
@@ -16723,7 +16723,7 @@
     }
    ],
    "title": "The Mica Veil",
-   "page": "Choking clouds of mica flakes blind your eyes and coat your tongue in dry dust as you stumble through the blinding squall. The Seedkey sends a damp, reviving chill through your burning breastbone, easing the fierce ache in your tired muscles. You shield your flickering coal-lantern with your body, determined to keep the tiny flame alive against the mounting gale. Several faint openings appear through the swirling grey, promising temporary relief from the punishing storm."
+   "page": "Mica flakes choke the squall and coat your tongue in dry dust while you stumble with raw eyes, and the Seedkey presses a damp chill through your burning breastbone until the ache in your tired muscles eases a notch. You shield the flickering coal-lantern with your body so the tiny flame holds against the mounting gale. The grey keeps swirling. Faint openings show through it."
   },
   {
    "id": "sg-4-2-3-5",
@@ -18324,7 +18324,7 @@
     "why": "the reader carries the glass-burn scar that marks them as one who crossed the Storm"
    },
    "title": "The Scars Legacy",
-   "page": "The jagged glass-burn scar on your forearm catches the low-angle prism light, illuminating a hidden spring-latch on the heavy brass door. You remember the howling tempests of the crossing, the shrieking shards that bit deep into your skin when you traversed the outer wastes alone. The panel clicks open under your thumb, revealing a concealed service chamber smelling of ozone and old tallow. Two pathways lie beyond the hidden threshold, waiting in the stillness."
+   "page": "The jagged glass-burn scar on your forearm catches the low-angle prism light and shows a hidden spring-latch on the brass door. You remember the howling tempests of the crossing, and the shrieking shards that bit deep into your skin when you traversed the outer wastes alone. The panel clicks open under your thumb. Beyond it a concealed service chamber smells of ozone and old tallow. Two pathways lie past the hidden threshold."
   },
   {
    "id": "sg-5-0-3-4",
@@ -18568,7 +18568,7 @@
     }
    ],
    "title": "The Basalt Threshold",
-   "page": "Basalt blocks of the inner threshold loom cold and massive, framing a scene of careless ruin. A dropped merchant lantern sputters in a shallow puddle of spilled lamp-oil, sending greasy black smoke curling up toward the blackened lintel and fouling the dry, breathless air. The glass fragments crunch underfoot like crushed eggshells as you step closer to the heavy iron barrier.\n\nYou can either skirt the burning oil by climbing a narrow ledge to the left or squeeze past the smoking wreckage straight ahead into the gloom."
+   "page": "Basalt blocks of the inner threshold loom cold and massive around a scene of careless ruin while a dropped merchant lantern sputters in a shallow puddle of spilled lamp-oil, and greasy black smoke curls up toward the blackened lintel and fouls the dry, breathless air.\n\nGlass fragments crunch underfoot like crushed eggshells. You step closer to the iron barrier, and burning oil still blocks the middle of the floor while a narrow ledge runs left and smoking wreckage fills the way straight ahead."
   },
   {
    "id": "sg-5-0-4-0",
@@ -19046,7 +19046,7 @@
     }
    ],
    "title": "The Green Cullet Ceiling",
-   "page": "Bottle-green shards hang overhead like frozen icicles of glass, swinging with a faint, musical chime every time a draft sweeps through the cavity. You drop low onto your hands and knees, dragging your banked coal-lantern carefully behind you to avoid clipping the razor-sharp pendants. The floor beneath your palms is a mosaic of tiny, fused beads that roll and shift unpredictably, turning every inch of forward movement into a delicate exercise in balance."
+   "page": "Bottle-green shards hang overhead like frozen icicles of glass, and a faint musical chime answers every time a draft sweeps the cavity. You drop onto hands and knees. The banked coal-lantern trails behind you so you do not clip the razor-sharp pendants. Tiny fused beads mosaic the floor under your palms, and they roll and shift until each inch forward costs you your balance."
   },
   {
    "id": "sg-5-1-1-4",
@@ -19149,7 +19149,7 @@
     }
    ],
    "title": "The Hollow Ceramic Flue",
-   "page": "Sharp knuckle-taps echo softly against the baked clay as Calder locates the secret seam in the flue wall. With a sharp wrench, the ceramic panel slips inward, revealing a cramped vertical drop that completely bypasses three different sentry posts of the nervous Glasswrights. The darkness inside smells of cool soot and baked earth, offering a silent corridor away from watchful eyes."
+   "page": "Calder finds the secret seam in the flue wall with sharp knuckle-taps on the baked clay. One sharp wrench slips the ceramic panel inward. Beyond it a cramped vertical drop opens, and that chute completely bypasses three different sentry posts of the nervous Glasswrights until only cool soot and baked earth scent the dark inside."
   },
   {
    "id": "sg-5-1-2-1",
@@ -19607,7 +19607,7 @@
     }
    ],
    "title": "The Dormant Automaton",
-   "page": "Silent and towering in the gloom, a dormant brass automaton blocks the corridor, its faceted glass eyes catching the faint, sputtering glow of your coal-lantern. You ease past its frozen limbs, listening to the hollow echo of your own breathing against the chill masonry.\n\nThe path splits ahead, offering a choice between a howling draught from the heights, an exposed iron climb, or a tight squeeze where a sentinel's mirror sweeps."
+   "page": "A dormant brass automaton blocks the corridor, silent and towering in the gloom, and its faceted glass eyes catch the faint sputtering glow of your coal-lantern. You ease past its frozen limbs. Your own breath sounds hollow against the chill masonry.\n\nAhead the path splits. A howling draught falls from the heights, an exposed iron climb rises, and a tight squeeze sits where a sentinel's mirror sweeps."
   },
   {
    "id": "sg-5-1-3-1",
@@ -19632,7 +19632,7 @@
     }
    ],
    "title": "The Dripping Cistern",
-   "page": "Heavy drops of black condensation fall with rhythmic malice from the vaulted brickwork of the dim cistern-room, threatening to drown the sole remaining source of heat and light you carry from Candlemere. You cup your hand over the lantern's trembling coal, sheltering the orange glow as the moisture pools around your boots.\n\nThe damp air presses close, forcing you to choose your next direction before the cold extinguishes your only defense."
+   "page": "Black drops of condensation fall from the vaulted brickwork of the dim cistern-room, and each one aims for the sole remaining source of heat and light you carry from Candlemere. You cup your hand over the lantern's trembling coal. Orange glow holds under your palm while moisture pools around your boots.\n\nDamp air presses close. The cold works at the coal."
   },
   {
    "id": "sg-5-1-3-2",
@@ -20588,7 +20588,7 @@
     }
    ],
    "title": "The Focusing Dish",
-   "page": "The afternoon sun beats down mercilessly against a massive copper focusing dish that tracks the sky with slow, whining gears, filling the air with the smell of scorched metal and heated air. You squeeze your frame tightly behind a stack of spare concave reflectors, holding your breath as heavy, measured boots pace back and forth across the stone terrace directly above your head. Every shift of your weight threatens to rattle the loose metal plates and betray your hiding place to the patrolling bailiffs. You can wait patiently for the patrol to complete its circuit, risk a quick crawl toward the nearby service hatch, or tap a soft rhythm on the copper dish to create a diversion."
+   "page": "Afternoon sun beats mercilessly on a massive copper focusing dish that tracks the sky with slow, whining gears, and the smell of scorched metal rides the heated air while you squeeze your frame tightly behind a stack of spare concave reflectors. Measured boots pace back and forth across the stone terrace directly above your head without pause. You hold your breath. Every shift of your weight could rattle the loose metal plates and betray your hiding place to the patrolling bailiffs. One loose plate ticks against its neighbour."
   },
   {
    "id": "sg-5-2-2-0",
@@ -20613,7 +20613,7 @@
     }
    ],
    "title": "The Whispering Rotunda",
-   "page": "Echoes bounce endlessly around the curved stone walls of the rotunda, magnifying every breath you take until it sounds like a rushing gale. An anxious young apprentice named Joram stumbles backward as you step into the light, dropping his heavy signalling mirror with a loud clatter that threatens to summon every Glasswright guard in the complex to your hidden alcove. His eyes widen in sheer panic as he scrambles on the floor among the glittering fragments, trying to silence the ringing echoes. You can lunge forward to help him gather the broken glass, dart past him toward the descending spiral stair, or press your back against the curved wall and stay perfectly still."
+   "page": "Your breath comes back off the curved stone walls of the rotunda and grows until each inhale sounds like a rushing gale. An anxious young apprentice named Joram stumbles backward as you step into the light, and he drops his signalling mirror with a loud clatter that could summon every Glasswright guard in the complex to your hidden alcove. His eyes widen. He scrambles among the glittering fragments on the floor and tries to stop the ringing. Broken glass covers the flags. The spiral stair drops away behind him."
   },
   {
    "id": "sg-5-2-2-1",
@@ -20910,7 +20910,7 @@
     }
    ],
    "title": "The Shattered Skylight",
-   "page": "Loose salt rattles against your boots as you lean too heavily against the rim of a collapsed dome, sending a sudden grey cloud of grit down into the hollow beneath. A frantic rustle of wings erupts from the chasm as a flock of pale desert pigeons scatter toward the blinding sky, their startled cooing echoing sharply off the quartz walls. Immediately, a harsh challenge rings up from the sentry post below, the sound of iron-shod boots scraping against stone warning you that the Glasswrights are alert. You can either slip sideways through a narrow gap between two leaning pillars to avoid the courtyard entirely, or drop flat onto the sun-baked tiles and crawl toward the shadow of an old mirror-mount."
+   "page": "Loose salt rattles against your boots as you lean on the rim of a collapsed dome, and a sudden grey cloud of grit falls into the hollow beneath. Pale desert pigeons burst from the chasm in a frantic rustle of wings and scatter toward the blinding sky. Startled coos slap off the quartz walls. A harsh challenge rings up from the sentry post below. Iron-shod boots scrape stone. The Glasswrights are alert. Between two leaning pillars a narrow gap opens sideways from the courtyard, and the shadow of an old mirror-mount lies across sun-baked tiles."
   },
   {
    "id": "sg-5-2-2-12",
@@ -21024,7 +21024,7 @@
     }
    ],
    "title": "The Resin Storeroom",
-   "page": "Crates of dried pine resin and spare lamp-wicks tower around you in the suffocating dimness of the supply alcove. Through a narrow gap between two stacked hampers, you watch the yellow glow of hooked lanterns sweep across the floorboards as a patrol searches the racks for intruders. Your fingers tighten instinctively around the cold ceramic seedkey in your satchel while the distant murmur of boots draws closer by the second."
+   "page": "Crates of dried pine resin and spare lamp-wicks tower around you in the dim supply alcove. Through a narrow gap between two stacked hampers you watch hooked lanterns throw yellow glow across the floorboards, and a patrol searches the racks for intruders. Your fingers tighten around the cold ceramic seedkey in your satchel. Boot murmur draws nearer. Floorboards creak one bay over."
   },
   {
    "id": "sg-5-2-3-0",
@@ -21524,7 +21524,7 @@
     }
    ],
    "title": "The Brass Hatch",
-   "page": "Air whistles through narrow conduits as you slip a maintenance hatch the moment the mechanisms roar into their evening rotation. Grease and metal shavings coat your palms as you squeeze past vibrating brass pistons that dwarf a grown person. Heat from the steam-channels cuts the damp chill of the lower tiers, and hot oil scent sticks to every breath. Blind turns loom in the gloom ahead, promising either safety or a dead end among the turning cogs."
+   "page": "Air whistles through narrow conduits as you slip a maintenance hatch the moment the mechanisms roar into their evening rotation. Grease and metal shavings coat your palms. You squeeze past vibrating brass pistons that dwarf a grown person, and heat from the steam-channels cuts the damp chill of the lower tiers while hot oil scent sticks to every breath. Blind turns loom in the gloom ahead. Turning cogs fill the nearest mouth."
   },
   {
    "id": "sg-5-2-4-4",
@@ -22165,7 +22165,7 @@
     }
    ],
    "title": "The Black Brine Quay",
-   "page": "A subterranean cistern of black brine laps against a stone quay, reflecting the weak yellow glow of your banked coal-lantern in oily ripples. The heavy scent of salt and stagnant depth rises from the dark water, untouched by the surface winds for centuries.\n\nYou can follow the frozen pipe gallery where ruptured bellies split wide like dry pods, or head toward an old iron sconce holding a grey pillar of ancient wax."
+   "page": "A subterranean cistern of black brine laps against a stone quay, and the weak yellow glow of your banked coal-lantern breaks across it in oily ripples while salt and stagnant depth rise from the dark water. Surface winds have not touched this place for centuries.\n\nFrozen pipes line one gallery. Ruptured bellies split wide like dry pods. An old iron sconce holds a grey pillar of ancient wax."
   },
   {
    "id": "sg-6-0-1-6",
@@ -22302,7 +22302,7 @@
     }
    ],
    "title": "The Silt Trench",
-   "page": "A stone-lined drainage trench cuts across the floor, carrying a sluggish stream of grey silt toward some unseen sump far below in the heart of Prism. The damp air smells of wet earth and old lime, thick with the silence of the sealed vault.\n\nThree distinct routes open before you: a spiral stair of hollow copper treads, a threshold choked with crunching salt crystals, or an arched gallery humming with distant winds."
+   "page": "A stone-lined drainage trench cuts across the floor, and a sluggish stream of grey silt runs toward some unseen sump far below in the heart of Prism. Damp air smells of wet earth and old lime. The sealed vault holds its silence.\n\nA spiral stair of hollow copper treads rises at one side. Salt crystals choke a threshold. An arched gallery carries distant wind."
   },
   {
    "id": "sg-6-0-2-1",
@@ -23127,7 +23127,7 @@
     }
    ],
    "title": "Mist Along the Stairs",
-   "page": "Cool moisture dampens your brow as a stone staircase descends into a thick bank of subterranean mist that clings to the floor like chilled breath in winter. Every downward step muffles your boots against the flagstones, trading the dry alkaline grit of the upper levels for the dense, stagnant damp of the deep vaults. Faint shadows shift beyond the reaches of your ember-lamp, suggesting massive pillars or towering granary walls hidden just beneath the grey haze."
+   "page": "Cool moisture dampens your brow as a stone staircase descends into a thick bank of subterranean mist that clings to the floor like chilled breath in winter. Each downward step muffles your boots against the flagstones. Dry alkaline grit of the upper levels gives way to the dense, stagnant damp of the deep vaults. Faint shadows shift past your ember-lamp. Massive pillars or towering granary walls stand just under the grey haze."
   },
   {
    "id": "sg-6-0-4-7",
@@ -24362,7 +24362,7 @@
     }
    ],
    "title": "The Scored Hatch",
-   "page": "Amber light flickers across a heavy iron hatch, revealing deep, erratic claw marks and thick crusts of white salt rot baked into the hinges. You hold your coal-lantern closer to inspect the seal, wondering what desperate hands once tried to tear the metal open from the other side. The air here tastes dry and old, yet a faint, cool draught stirs the soot around your boots.\n\nThree separate tunnels beckon from this junction point into the dark."
+   "page": "Amber light flickers across an iron hatch and shows deep, erratic claw marks and thick crusts of white salt rot baked into the hinges while you hold your coal-lantern closer to inspect the seal. Desperate hands once tried to tear the metal open from the other side. The air tastes dry and old.\n\nA faint cool draught stirs soot around your boots, and three separate tunnels leave this junction into the dark."
   },
   {
    "id": "sg-6-1-3-14",
@@ -24556,7 +24556,7 @@
     }
    ],
    "title": "The Brass Threshold",
-   "page": "Within a vast hemispherical antechamber, the ground slopes gently toward the heavy brass threshold of the vault lock. Above your head, intricate geometric traceries carved into the vaulted ceiling gleam with faint phosphorescence as your lantern approaches. The air here is thin, dry, and bitterly cold, carrying the sharp tang of aged metal and dry desert dust. You steady the strap of your lantern across your shoulder and survey the imposing approaches that fan out into the deep recesses of the underground hall."
+   "page": "Within a vast hemispherical antechamber the ground slopes gently toward the brass threshold of the vault lock, and above your head geometric traceries carved into the vaulted ceiling gleam with faint phosphorescence as your lantern approaches. The air here is thin, dry, and bitterly cold, and a sharp tang of aged metal and dry desert dust hangs in it. You hitch the strap of your lantern across your shoulder. Dust coats the brass. Approaches fan into the deep recesses of the underground hall."
   },
   {
    "id": "sg-6-1-4-6",
