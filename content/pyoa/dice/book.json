@@ -273,7 +273,7 @@
    "kind": "scene",
    "title": "A Stubborn Seal",
    "brief": "You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.",
-   "page": "Setting the lantern onto the scarred oak table, you rummage through your pack for a rusted iron pry bar. The brass is cold and unforgiving under your hands. You wedge the flattened edge of your tool against the locked reservoir cap, applying a slow, deliberate pressure. A sudden snap echoes in the quiet room as the mechanism protests. You pause, wiping a bead of sweat from your brow, acutely aware that one wrong angle could shatter the glass housing or spill the precious fuel across the floorboards. The cap gives slightly, revealing a dark, viscous slit smelling sharply of rendered blubber.",
+   "page": "You set the lantern on the scarred oak table and dig through your pack for a rusted iron pry bar. Brass bites cold under your palms. You seat the flattened edge against the locked reservoir cap and lean on it with slow care. The catch pops once in the quiet room. You wipe a bead of sweat from your brow, because one wrong angle could crack the glass housing or pour the fuel across the floorboards. The cap shifts. A dark, viscous slit opens, sharp with the smell of rendered blubber.",
    "exits": [
     {
      "label": "Pry the cap off completely",
@@ -326,7 +326,7 @@
    "kind": "recovery",
    "title": "A Messy Spill",
    "brief": "You dismantle a heavy brass lantern to extract its precious oil, risking a spill to secure a vital light source for the dark days ahead.",
-   "page": "Metal shrieks as the cap suddenly gives way entirely, throwing your weight off balance. The lantern tips, and before you can right it, a thick arc of amber oil sloshes over the rim. It pools over your knuckles and splashes down onto the floorboards, soaking immediately into the dry wood with a sickening hiss. You scramble to right the heavy brass base, but the damage is done. A significant portion of the precious fuel is gone, leaving you with only a meagre puddle in the bottom of the reservoir and hands stinking heavily of whale fat. The stench will linger for days, a constant reminder of your clumsy haste.",
+   "page": "Metal shrieks as the cap gives way entirely and throws you off balance. The lantern tips. Before you can right it, a thick arc of amber oil sloshes over the rim, pools over your knuckles, and splashes onto the floorboards, where it soaks into the dry wood with a sickening hiss. You scramble to right the brass base, but the damage is done. Most of the precious fuel is gone. Only a meagre puddle remains in the reservoir, and your hands reek of whale fat.\n\nThe smell will stay for days.",
    "exits": [
     {
      "label": "Salvage what remains",
@@ -503,7 +503,7 @@
    "kind": "scene",
    "title": "The Trapped Barrel",
    "brief": "You pry open a sealed smuggler's barrel wedged beneath a rotting hull, risking a collapse to acquire a stash of rare cured meats.",
-   "page": "Wading through the treacherous mud of the lower docks, you spot the unmistakable shape of a smuggler's barrel. It is wedged tight beneath the rotting, algae-slick ribs of a grounded trawler. The vessel leans at a precarious angle, its timbers groaning softly in the coastal wind. If that hull shifts, it will crush anything beneath it into the seabed. Still, the salt-crusted wax seal on the barrel promises goods of high quality, preserved against the damp.\n\nIt is a tempting prize for a wrecker preparing to walk the Low. You creep closer, testing the stability of the mud beneath your boots, and calculate the angle of the trapped cask.",
+   "page": "Lower-dock mud pulls at your calves as you spot the shape of a smuggler's barrel wedged tight beneath the rotting, algae-slick ribs of a grounded trawler. The vessel leans hard. Its timbers groan in the coastal wind, and if that hull shifts it will crush anything beneath it into the seabed before you can drag clear. Still, the salt-crusted wax seal on the barrel promises goods kept sound against the damp.\n\nA tempting prize for a wrecker bound for the Low. You creep closer, testing the mud under your boots, and eye the angle of the trapped cask.",
    "exits": [
     {
      "label": "Approach the trapped barrel",
@@ -1485,7 +1485,7 @@
    "kind": "scene",
    "title": "Blood on the Net",
    "brief": "You intervene in a knife-point argument between two net-menders, keeping calm to defuse the tension and earning the loyalty of a tough local guide.",
-   "page": "Voices crackle like dried kelp beneath the wooden docks where the drying frames cast long, skeletal shadows. Two net-menders stand chest-to-chest, iron fish-knives drawn and glinting with pale salt-crust under the grey Gullmouth sky. Passers-by edge away, muttering into woolen collars, leaving the dispute to fester in the salty air. You step between them with slow, deliberate palms held open, watching the twitch of tendon and knuckle as razor edges hover inches from wet wool.\n\nA scarred local guide named Bran, leaning against a salt-cured piling with a coil of hemp over his shoulder, narrows his eyes and watches how steadily you hold your ground while the steel stays high.",
+   "page": "Voices crackle like dried kelp beneath the wooden docks where the drying frames cast long, skeletal shadows. Two net-menders stand chest-to-chest, iron fish-knives drawn and glinting with pale salt-crust under the grey Gullmouth sky. Passers-by edge away and mutter into woolen collars. The dispute is theirs alone now. You step between them with slow palms held open and watch the twitch of tendon and knuckle as razor edges hover inches from wet wool.\n\nA scarred local guide named Bran leans against a salt-cured piling with a coil of hemp over his shoulder. He narrows his eyes. Your ground holds while the steel stays high.",
    "exits": [
     {
      "label": "Return to the smoky guildhall",
@@ -3118,7 +3118,7 @@
    "kind": "scene",
    "title": "Beneath the Weight",
    "brief": "You rescue a trapped scavenger from a collapsing coral altar, lifting the heavy stone away to gain the grateful survivor as a loyal companion.",
-   "page": "Slumping shoulders against the porous stone, you brace your boots deep into the dried brine and grip the jagged edge of the fallen pillar. The calcified mass is dense with ancient barnacles that bite into your palms through thick leather, drawing beads of dark blood. Every muscle in your back hums with strain as the pillar shifts a fraction of an inch, revealing a pale face smeared with mud and salt-tears. The trapped scavenger reaches out with a trembling hand, whispering a frantic prayer to the retreating ocean.\n\nYou summon every ounce of your strength to heave the dead weight off their crushed limbs.",
+   "page": "You brace your boots deep into the dried brine and grip the jagged edge of the fallen pillar, shoulders hard against the porous stone. Ancient barnacles bite into your palms through leather and draw beads of dark blood. The pillar shifts a fraction of an inch. A pale face shows, smeared with mud and salt-tears. The trapped scavenger reaches out with a trembling hand and whispers a frantic prayer to the retreating ocean while you gather for the lift.\n\nYou heave hard. The dead mass has to leave their crushed limbs.",
    "exits": [
     {
      "label": "Heave the stone aside now",
@@ -3171,7 +3171,7 @@
    "kind": "recovery",
    "title": "The Slip of the Stone",
    "brief": "You rescue a trapped scavenger from a collapsing coral altar, lifting the heavy stone away to gain the grateful survivor as a loyal companion.",
-   "page": "The damp earth gives way beneath your boots with a wet sucking sound, sending a sharp jolt of pain through your lower back as the heavy coral slips back into place. A jagged fragment of shell rakes a deep red line across your forearm, warm blood instantly cooling in the salty air. You stagger backward into the reedy sludge, coughing violently as a cloud of ancient lime dust settles over your hair and clothes. The trapped scavenger groans in despair from beneath the debris, though they are still breathing.\n\nYou grit your teeth against the dull ache in your muscles and prepare to haul the masonry once more.",
+   "page": "The damp earth gives way beneath your boots with a wet sucking sound, and a sharp jolt runs through your lower back as the coral slips back into place. A jagged fragment of shell rakes a deep red line across your forearm. Warm blood cools in the salty air. You stagger backward into the reedy sludge and cough as a cloud of ancient lime dust settles over your hair and clothes. The trapped scavenger groans from beneath the debris. They are still breathing.\n\nYou grit your teeth. The masonry waits for another haul.",
    "exits": [
     {
      "label": "Haul the heavy stone again",
@@ -5931,7 +5931,7 @@
    "kind": "bottleneck",
    "title": "The Coral Boundary",
    "brief": "The dunes give way to a jagged reef of colourful coral, now bleached and crumbling beneath the unrelenting grey sky.",
-   "page": "The golden sea of dunes finally gives way to a sprawling expanse of jagged, coral-encrusted rock that stretches as far as the grey sky permits. Once submerged beneath fathoms of green water, these massive branching formations now stand bleached and chalky under the sunless day, forming a labyrinth of sharp ridges and deep, shadowed trenches. Salt has crusted every pore of the stony thicket, sparkling dully like crushed glass whenever the wind shifts across the flats. Faint echoes of distant metal grinding drift up from the crevices, reminding you that the path to the Sunken Stair lies somewhere beyond this stony maze.\n\nNavigating the dry reef requires cautious footwork to avoid shredding your boots on the razor-sharp branches.",
+   "page": "The golden sea of dunes gives way at last to a sprawling expanse of jagged, coral-encrusted rock that runs as far as the grey sky allows. Once submerged beneath fathoms of green water, these massive branching formations now stand bleached and chalky under the sunless day, a labyrinth of sharp ridges and deep trenches. Salt crusts every pore. It sparks dull as crushed glass when the wind moves across the flats. From the crevices comes a faint grind of distant metal, and the path to the Sunken Stair lies somewhere beyond this maze.\n\nDry reef underfoot. Watch the razor branches or they will shred your boots.",
    "exits": [
     {
      "label": "Navigate the bleached coral labyrinth",
@@ -10789,7 +10789,7 @@
    "kind": "check",
    "title": "The Cipher in Ash",
    "brief": "You speed-read through a decaying ledger before it crumbles, risking toxic mold exposure to glean the secret combination to the vault.",
-   "page": "Black spores cling to your eyelashes as you hunch over the rotting spine of the ledger, your fingers burning from the salt-acid eating the paper. Every breath draws more of the choking rot into your lungs, threatening to force a cough that would bring the Brineholder guards outside the alcove. Yet the faded ink of the final water-tax tally reveals the repeating numerical sequence of the vault tumbler, half-erased by damp. You brace your shaking hands on the wooden desk and squint through streaming tears to catch the last digit before the remaining text dissolves into grey sludge.\n\nWith your lungs locking up and the parchment crumbling into useless ash beneath your fingertips, you throw your weight against the hidden latch to test the sequence.",
+   "page": "Black spores cling to your eyelashes as you hunch over the rotting spine of the ledger, fingers burning from the salt-acid that eats the paper. Each breath pulls more rot into your lungs. A cough would bring the Brineholder guards outside the alcove. Yet the faded ink of the final water-tax tally still shows the repeating numerical sequence of the vault tumbler, half-erased by damp. You brace your shaking hands on the wooden desk and squint through streaming tears. You catch the last digit. The remaining text dissolves into grey sludge.\n\nYour lungs lock. The parchment crumbles to ash under your fingertips as you throw yourself against the hidden latch to test the sequence.",
    "exits": [
     {
      "label": "check-full",
@@ -11440,7 +11440,7 @@
    "kind": "bottleneck",
    "title": "Shattering the Glass",
    "brief": "You crash through a skylight into the opulent chambers of the Brineholder Governor, finding him locked in a tense negotiation.",
-   "page": "Glass starbursts inward in a cascading roar of crystal shards as your boots smash through the domed skylight of the Brineholder Governor's private chamber. You drop heavily onto a Persian carpet threaded with silver wire, scattering porcelain tea sets and overturning an ivory globe that rolls across the polished floor. Across the room, startled courtiers freeze in mid-sentence, while an immaculate elderly man in a velvet doublet lowers a pearl-handled ledger with unblinking composure. Heavy tapestries hang along the curved walls, muffling the distant sounds of alarms ringing across the stilt-city outside. The Governor regards you not with fear, but with the cold, assessing curiosity of a merchant inspecting a damaged crate washed up on the Low.",
+   "page": "Glass starbursts inward in a cascading roar of crystal shards as your boots smash through the domed skylight of the Brineholder Governor's private chamber. You drop onto a Persian carpet threaded with silver wire. Porcelain tea sets scatter. An ivory globe rolls across the polished floor. Across the room, startled courtiers freeze mid-sentence, while an immaculate elderly man in a velvet doublet lowers a pearl-handled ledger with unblinking composure. Cloth hangings along the curved walls muffle distant alarms from the stilt-city outside. The Governor regards you with the cold, assessing curiosity of a merchant inspecting a damaged crate washed up on the Low.",
    "exits": [
     {
      "label": "Face the Governor across the shattered glass",
@@ -15142,7 +15142,7 @@
    "kind": "bottleneck",
    "title": "The Pressure-Locked Chambers",
    "brief": "The archivist permits your descent into the pressure-locked chambers, where the air grows agonizingly thick and your mentor's presence feels tangibly close.",
-   "page": "Iron bolts grind back with the groan of centuries, and the archivist lets you descend into the pressure-locked chambers below. The air here grows agonizingly thick, tasting of old ozone and compressed brine that coats the back of your throat with every inhalation. Every shadow seems to stretch and breathe in the dim, pulsing light of ceiling lanterns. Your mentor's presence feels tangibly close now, lingering in the faint scent of pipe tobacco and damp wool that drifts up from the lower shaft. The bulkheads hiss as they seal themselves behind you, leaving only the downward spiral into the deep.",
+   "page": "Iron bolts grind back with the groan of centuries, and the archivist lets you descend into the pressure-locked chambers below. Old ozone and compressed brine coat the back of your throat on every breath. Ceiling lanterns throw a dim pulse along the walls. Pipe tobacco and damp wool drift up from the lower shaft, and your mentor's presence rides that scent from somewhere close below. The bulkheads hiss. They seal behind you. The spiral stair goes down into the deep.",
    "exits": [
     {
      "label": "Follow the spiraling descent downward",
@@ -16880,7 +16880,7 @@
    "kind": "check",
    "title": "Holding The Lower Landing",
    "brief": "You physically block a group of descending Drift Pilgrims aiming to sabotage the controls, using brute force to protect the console and earn Orsolya's grudging respect.",
-   "page": "Bone grinds against gristly muscle as the lead pilgrim slams his full body weight into your chest, aiming to drive you backward into the delicate brass linkages of the primary console. Your heels skid across the condensation-slick plating of the platform, teeth bared against the sudden, brutal shock of impact. Iron bars clatter against stone walls in the narrow shaft, and the air fills with the acrid stench of old sweat and wet wool. You hook a boot behind the intruder's ankle and throw every ounce of your strength into a desperate counter-shove that threatens to crack ribs on both sides.\n\nStraining against the sudden dead weight, you must force the heavy frame back before their crowbars smash the control housing.",
+   "page": "Bone grinds against gristly muscle as the lead pilgrim slams his full body into your chest, aiming to drive you back into the delicate brass linkages of the primary console. Your heels skid across the condensation-slick plating. Teeth bare against the shock. Iron bars clatter against stone walls in the narrow shaft, and the air fills with the acrid stench of old sweat and wet wool. You hook a boot behind the intruder's ankle and throw your strength into a counter-shove that could crack ribs on both sides.\n\nHis frame is dead weight against you. You push before their crowbars smash the control housing.",
    "exits": [
     {
      "label": "check-full",
@@ -19524,7 +19524,7 @@
    "kind": "scene",
    "title": "Splintering the Dial",
    "brief": "You threaten to completely shatter the central tide clock, risking the Choir's violent frenzy, to force the spirits into yielding a glowing spectral compass.",
-   "page": "Shadows writhe within the glass face of the central tide clock as cold fingers of mist lap at your boots. Lifting a jagged iron crowbar, you take aim directly at the ticking brass gears, threatening to shatter the heart of the mechanism into a thousand useless shards. The Hollow Choir shrieks in unison, a wall of drowning wails that threatens to burst your eardrums and crack the stone vault. Yet under the sheer weight of your menace, the spectral voices falter and fold back into the damp masonry. A pale, spectral compass drifts out from the trembling dial, glowing with a cold, ghost-blue light that pierces the perpetual gloom.",
+   "page": "Shadows writhe inside the glass face of the central tide clock. Cold mist laps at your boots. You lift a jagged iron crowbar and aim it at the ticking brass gears, and the heart of the mechanism could come apart in a thousand useless shards. The Hollow Choir shrieks in unison, a wall of drowning wails fit to burst your eardrums and crack the stone vault. Under that menace the spectral voices falter and fold back into the damp masonry. A pale compass drifts from the trembling dial, its ghost-blue light hard through the gloom.",
    "exits": [
     {
      "label": "Take the pale compass",
@@ -20229,7 +20229,7 @@
    "kind": "ending",
    "title": "The Unreturning Tide",
    "brief": "Ending \"The Quiet Sand\"",
-   "page": "Nothing waits at the end of the dry seabed except more sand and the pale glitter of sun-bleached shells turning slowly to powder in the wind. You walk until your legs are stiff and your skin is caked in salt-rime, moving deeper into the empty country where no tides have washed the stones for a hundred years. The sun hangs low and red in the west like an unwashed eye peering through greasy window-glass, casting long shadows across the ribbed dunes. Let the Wreckers keep their silver and let the Brineholders guard their empty pipes; the world has turned another way, and you are simply walking with it. There is no sound now except the steady crunch of your boots on the crust and the dry whistling of the wind across the floor of the lost sea.",
+   "page": "Nothing waits at the end of the dry seabed except more sand and the pale glitter of sun-bleached shells that turn to powder in the wind. You walk until your legs are stiff and your skin is caked in salt-rime. The empty country runs on. No tides have washed these stones for a hundred years. The sun hangs low and red in the west like an unwashed eye behind greasy glass, and long shadows lie across the ribbed dunes. Let the Wreckers keep their silver and let the Brineholders guard their empty pipes; the world has turned another way, and you walk with it.\n\nBoots crunch the crust. Wind works dry across the floor of the lost sea.",
    "exits": [],
    "endingKey": "quiet-sand",
    "endingTitle": "The Quiet Sand",
