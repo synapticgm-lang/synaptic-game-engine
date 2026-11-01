@@ -98,6 +98,19 @@ export function shouldAttachLitrpgSystemWindow(args: {
   return false;
 }
 
+/** XP-D1 OPEN — rite completion chrome for the turn it lands (all housings, incl. leftover_pocket). */
+function openingRiteWindowLines(state: GameState): string[] {
+  const rite = state.openingRite;
+  if (!rite?.done || rite.completedAtTurn == null || rite.completedAtTurn !== (state.turn ?? 0)) {
+    return [];
+  }
+  const lines: string[] = [];
+  if (rite.title) lines.push(`Quest complete: ${rite.title}`);
+  if ((rite.xpPaid ?? 0) > 0) lines.push(`+${rite.xpPaid} XP`);
+  if ((state.character?.level ?? 1) >= 2) lines.push('Level 2 reached');
+  return lines;
+}
+
 export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | null {
   if (state.engineMode !== 'litrpg') return null;
   const c = state.character;
@@ -105,7 +118,10 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
   const registered = !!name;
   const housing = state.systemHousing;
   if (housing?.housing === 'leftover_pocket') {
-    return { heading: 'SYSTEM', lines: [`Name: ${name ?? '—'}`, pocketLine(state, false)] };
+    return {
+      heading: 'SYSTEM',
+      lines: [`Name: ${name ?? '—'}`, pocketLine(state, false), ...openingRiteWindowLines(state)],
+    };
   }
   const on = (part: SystemPartId) => !housing || isPartOn(housing, part);
   const lines: string[] = [`Name: ${name ?? '—'}`];
@@ -146,13 +162,7 @@ export function buildLitrpgSystemWindow(state: GameState): LitrpgSystemWindow | 
     lines.push(registered ? 'Interface: online' : 'Interface: online — awaiting designation');
   }
   if (on('experience')) lines.push(`XP ${c?.xp ?? 0}/${c?.xpToNext ?? 0}`);
-  // XP-D1 OPEN — show rite completion + XP + Level 2 on the turn it lands.
-  const rite = state.openingRite;
-  if (rite?.done && rite.completedAtTurn != null && rite.completedAtTurn === (state.turn ?? 0)) {
-    if (rite.title) lines.push(`Quest complete: ${rite.title}`);
-    if ((rite.xpPaid ?? 0) > 0) lines.push(`+${rite.xpPaid} XP`);
-    if ((c?.level ?? 1) >= 2) lines.push('Level 2 reached');
-  }
+  lines.push(...openingRiteWindowLines(state));
   // The floor line is the first to go when the window would run past its limit.
   return { heading: 'SYSTEM', lines: lines.length > SYSTEM_WINDOW_MAX_LINES ? lines.filter((l) => l !== floor) : lines };
 }
