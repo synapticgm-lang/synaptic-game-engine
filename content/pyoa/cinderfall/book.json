@@ -2737,7 +2737,7 @@
    "kind": "reward",
    "title": "The Unshakable Stride",
    "brief": "You withstand the suffocating dust and jeers with quiet composure, securing a rusted tin cup of sediment-free water.",
-   "page": "You remain as still as an iron signal-post while the angry mob surges and curses all around you, your breathing slow and measured against the choking heat of the yard. The clerk behind the counter pauses, startled by your absolute stillness amidst the chaos, and wordlessly reaches beneath the counter to fill your rusted tin with clear, sediment-free water from his private reserve. You pocket the cup with a quiet nod, leaving the disgruntled gangers to wonder at the eerie calm that carried you through their midst.",
+   "page": "You stand as still as an iron signal-post while the angry mob surges and curses around you, and your breath stays slow against the yard's choking heat. The clerk behind the counter pauses. Your stillness startles him. Without a word he reaches under the counter and fills your rusted tin from his private reserve with clear, sediment-free water. You pocket the cup. A single nod answers him before you step clear of the crush.",
    "exits": [
     {
      "label": "Approach the upper signal box",
@@ -3003,7 +3003,7 @@
    "kind": "check",
    "title": "Holding Against the Chill",
    "brief": "You endure the freezing draft and flickering oil lamps with steady composure, memorizing the safe night clearance codes.",
-   "page": "Gale-force drafts howl through the ill-fitting door seals, threatening to snuff out your only candle and plunge the small compartment into absolute darkness. The old wooden floorboards groan under sudden pressure as boots tramp up the outside stair landing and pause right outside your thin wooden partition. You force your lungs to slow, clamping your jaw tight against the shiver rising up your spine while you steady the grease-smeared ledger on your knees.",
+   "page": "Gale-force drafts howl through the ill-fitting door seals and lean hard on your only candle, ready to kill the flame and leave the small compartment black. Old wooden floorboards groan under sudden pressure. Boots tramp up the outside stair landing and stop right outside your thin wooden partition. You force your lungs to slow. Your jaw clamps against the shiver that climbs your spine. The grease-smeared ledger stays flat on your knees.",
    "exits": [
     {
      "label": "check-full",
@@ -6827,7 +6827,7 @@
    "kind": "reward",
    "title": "The Weight of Iron",
    "brief": "Enduring the armed guards hostile stares while waiting in line secures a heavy wooden mallet for driving track pins.",
-   "page": "Your fingers close around the seasoned hickory handle of the mallet, the balanced weight reassuring against your palm despite the hostile glares burning into your back. You lift it clear of the zinc counter without a single tremor in your wrist, earning a grudging nod from the sergeant as he swipes a greasy ledger shut. The tool is scarred with old burn marks and notched from driving countless thousands of track pins into the frozen ash-beds, but the grain is solid and true.\n\nYou tuck the heavy head beneath your arm and turn away into the grey gloom before anyone can change their mind.",
+   "page": "Your fingers close around the seasoned hickory handle of the mallet, and the tool sits true in your palm even while hostile glares burn into your back. You lift it clear of the zinc counter. Not a tremor shows in your wrist. The sergeant gives a grudging nod as he swipes a greasy ledger shut. Old burn marks scar the tool, and notches from driving countless thousands of track pins into the frozen ash-beds mark the head, but the grain is solid and true.\n\nYou tuck the head beneath your arm and turn into the grey gloom. Nobody speaks to stop you.",
    "exits": [
     {
      "label": "Carry the mallet back trackside",
@@ -7373,7 +7373,7 @@
    "kind": "scene",
    "title": "Dusty Dispatch Drawers",
    "brief": "Searching through dusty dispatch drawers yields an outdated schedule signed by the old Stationmaster-General herself.",
-   "page": "Rusted brass handles pull away from the rotting mahogany desk with a dry shriek that echoes through the abandoned station office. Inside the lowest drawer, buried beneath layers of grey silt and dead insects, lies a bundle of stiff parchment schedules bound with brittle twine.\n\nYou brush the soot from the uppermost page, revealing precise ink stamps and formal routing notes bearing the unmistakable, spidery signature of the old Stationmaster-General herself.",
+   "page": "Rusted brass handles pull away from the rotting mahogany desk with a dry shriek that runs the length of the abandoned station office. Inside the lowest drawer, buried beneath layers of grey silt and dead insects, lies a bundle of stiff parchment schedules bound with brittle twine.\n\nYou brush the soot from the uppermost page. Precise ink stamps and formal routing notes sit under the spidery signature of the old Stationmaster-General herself.",
    "exits": [
     {
      "label": "Examine the old timetable closely",
@@ -8747,7 +8747,7 @@
    "kind": "recovery",
    "title": "A Mismatched Blow",
    "brief": "You hammer a loose rivet into the chassis to distract the guards, risking a snapped knuckle to secure an illicit passage permit.",
-   "page": "The heavy hammer glancing off the iron bolt catches your knuckles against the sharp edge of the chassis plate with a sickening crunch. Pain lances up your forearm, leaving a dark, purple bruise that throbs in time with the pulsing steam pumps. You bite back a sharp curse as the guard's footsteps halt nearby, forcing you to snatch the forged permit from the gap and dive behind a rusted fuel tender while an angry whistle blows overhead.",
+   "page": "The hammer glances off the iron bolt and catches your knuckles against the sharp edge of the chassis plate with a sickening crunch. Pain lances up your forearm. A dark purple bruise spreads there and keeps time with the pulsing steam pumps. You bite back a sharp curse as the guard's footsteps halt nearby. The forged permit comes out of the gap in one snatch, and you dive behind a rusted fuel tender while an angry whistle blows overhead.",
    "exits": [
     {
      "label": "Crawl back toward the firebox deck",
@@ -9904,7 +9904,7 @@
    "kind": "reward",
    "title": "A Seared Keepsake",
    "brief": "You endure the suffocating heat of a leaking steam pipe, risking heat exhaustion to salvage a functional pressure valve.",
-   "page": "Through sheer stubborn endurance, whether cleanly executed or achieved through gritted teeth and raw pain, the recalcitrant valve finally yields and spins home with a reassuring, heavy thud. The roaring hiss dies down to a manageable murmur, leaving your skin flushed and your hands smarting with fresh burns, but the pressure gauge stabilizes in the green. Clutched in your palm is the prize you salvaged from the wreckage, a small token of resilience earned from the belly of the machine.",
+   "page": "Through sheer stubborn endurance the recalcitrant valve finally yields and spins home with a solid thud. The roaring hiss dies down to a manageable murmur while your skin flushes and your hands smart with fresh burns, but the pressure gauge sits in the green. The prize rests in your palm. You salvaged it from the wreckage, a small token from the belly of the machine.",
    "exits": [
     {
      "label": "Crawl into the smog corridor",
@@ -10702,7 +10702,7 @@
    "kind": "scene",
    "title": "Ink and Cold Iron",
    "brief": "You maintain absolute calm while an inspector eyes the false bottom, risking a nervous twitch to protect the hidden Water Key.",
-   "page": "A heavy ledger drops onto the work-shelf with a dull thud that rattles the pressure gauges. The senior inspector runs a dry thumb down a column of figures, his eyes fixed on the grease-stained floorboards where your boots stand planted. Outside the narrow glass, the vast iron lattice of the viaduct stretches away into the grey haze of the valley.",
+   "page": "A ledger drops onto the work-shelf. The dull thud rattles the pressure gauges. The senior inspector runs a dry thumb down a column of figures, and his eyes stay fixed on the grease-stained floorboards where your boots stand planted while the narrow glass shows the vast iron lattice of the viaduct stretching away into the grey haze of the valley.",
    "exits": [
     {
      "label": "Watch the inspector turn the page",
@@ -13057,7 +13057,7 @@
    "kind": "hub",
    "title": "The Soot-Locker",
    "brief": "The Soot-Locker: Stalled baggage trucks block the tracks while oil-lamp smoke clings to the low brick vaulting.",
-   "page": "Stalled baggage trucks block the tracks with rusted iron wheels while thick oil-lamp smoke clings to the low, weeping brick vaulting of the subterranean hall. The air tastes of wet coal-dust and forgotten years, heavy with the quiet melancholy of a station that time passed by. Every shadowed alcove holds the promise of hidden salvage or ancient hazard, tempting you to leave the safety of the footplate and explore the damp recesses of the mountain. Faint sounds drift down the converging maintenance shafts, offering various paths through the heart of the stone labyrinth.",
+   "page": "Stalled baggage trucks block the tracks with rusted iron wheels while thick oil-lamp smoke clings to the low, weeping brick vaulting of the subterranean hall. The air tastes of wet coal-dust and forgotten years. Time passed this station by. Every shadowed alcove hints at hidden salvage or ancient hazard beyond the footplate. Faint sounds drift down the converging maintenance shafts into the stone heart of the mountain.",
    "exits": [
     {
      "label": "Clear the jammed axle-box with leverage",
@@ -13102,7 +13102,7 @@
    "kind": "scene",
    "title": "The Resilient Metal",
    "brief": "You clear a jammed axle-box using brute leverage against the stone floor, earning an iron wedge and a strained wrist.",
-   "page": "Steam hisses from a leaky gasket nearby, filling the damp air with the taste of sulfur and boiled oil while you work the rusted screw-jacks into the ballast. Every muscle in your back knots against the strain as you lift the dead weight of the engine's lead axle just enough to clear the fouled brake-shoe. The stone beneath your boots is slick with coal-dust and ancient moisture, but the persistent screech finally subsides into a low, rhythmic hum that satisfies the ear. You retrieve your grease-stained tools and steady your breathing in the dark.",
+   "page": "Steam hisses from a leaky gasket nearby and fills the damp air with the taste of sulfur and boiled oil while you work the rusted screw-jacks into the ballast. Every muscle in your back knots against the strain as you lift the dead mass of the engine's lead axle just enough to clear the fouled brake-shoe. The stone beneath your boots is slick with coal-dust and ancient moisture. The persistent screech finally dies. You retrieve your grease-stained tools and draw a long breath in the dark.",
    "exits": [
     {
      "label": "Advance down the brick vault",
