@@ -3506,7 +3506,7 @@
    "kind": "reward",
    "title": "Buried Provisions",
    "brief": "You walk blindly through a blinding sandstorm while resisting the urge to run, trusting your instincts to find a buried stash of emergency rations.",
-   "page": "Your fingers scrape against oiled canvas buried deep beneath the drifting dune, revealing a tightly sealed bundle left behind by earlier scouts. However narrowly you navigate the blinding fury of the storm, your steady patience pays off as you haul the dry canvas sack free from the grasping sands. Inside lies a small cache of unspoiled salt-meat and fresh water, providing a vital lifeline against the harsh emptiness of the Low.",
+   "page": "Your fingers scrape against oiled canvas buried deep beneath the drifting dune, revealing a tightly sealed bundle left behind by earlier scouts. Through the storm's blinding fury you haul the dry canvas sack free from the grasping sands. Inside lies a small cache of unspoiled salt-meat and fresh water, providing a vital lifeline against the harsh emptiness of the Low.",
    "exits": [
     {
      "label": "Return to the singing dunes",
@@ -4519,7 +4519,7 @@
    "kind": "reward",
    "title": "Oil in the Silt",
    "brief": "You recall old tide maps to navigate the treacherous cargo hold, dodging a falling mast to find a sealed jar of lantern oil.",
-   "page": "Every salvage run extracts its toll from those who walk the naked seabed, whether paid in skin, time, or the cold sweat of a near miss. However narrowly you managed to thread the falling timber and the dark hazards of the cargo hold, you emerge from the wreck with your prize secured against the coming night. Firmly clutched in your hand is a thick earthenware jar of clear lantern oil, sealed tight with green apothecary wax to keep the salt rot from spoiling the fuel.",
+   "page": "Every salvage run extracts its toll from those who walk the naked seabed, whether paid in skin, time, or the cold sweat of a near miss. You clear falling timber and the dark hazards of the cargo hold, then emerge from the wreck with your prize secured against the coming night. Firmly clutched in your hand is a thick earthenware jar of clear lantern oil, sealed tight with green apothecary wax to keep the salt rot from spoiling the fuel.",
    "exits": [
     {
      "label": "Press on toward the rumbling plains",
@@ -7697,7 +7697,7 @@
    "kind": "reward",
    "title": "The Hidden Alcove",
    "brief": "You navigate the confusing patches of glowing fungi to find a safe descent, avoiding hallucinogenic spores to discover a hidden cave shelter.",
-   "page": "Whether you picked your way through the shimmering haze with cool precision or blundered through the worst of the fog with ringing ears, you reach the far side of the grotto and find a dry, sheltered alcove tucked behind an iron bulkhead. The air here is still and free of the sweet, rotting reek of the spores, offering a safe place to catch your breath away from the scouring wind of the seabed. Tucked into a crevice in the stonework, forgotten by whoever fled the tower before the tide vanished, lies a dry bundle wrapped in oilskin.",
+   "page": "Past shimmering haze and fog you reach the far side of the grotto and find a dry, sheltered alcove tucked behind an iron bulkhead. The air here is still and free of the sweet, rotting reek of the spores, offering a safe place to catch your breath away from the scouring wind of the seabed. Tucked into a crevice in the stonework, forgotten by whoever fled the tower before the tide vanished, lies a dry bundle wrapped in oilskin.",
    "exits": [
     {
      "label": "Follow the map downward",
@@ -8850,7 +8850,7 @@
    "kind": "reward",
    "title": "The Smuggler's Cache",
    "brief": "You work to repair a broken rope-pulley left by smugglers, risking exhaustion to secure a hidden climbing harness.",
-   "page": "Metal yields to your careful pressure with a dry, satisfying snap, leaving the repaired rope-pulley swinging true and silent in the draft. You secure the heavy leather climbing harness around your shoulders, checking every buckle and knot to ensure it will bear your weight into the upper heights. However narrowly you managed the repair, the gear is now fit for service and ready to bear the strain. A small token of old illicit trade rolls free from the mechanism into your palm as you finish.",
+   "page": "Metal yields to your careful pressure with a dry, satisfying snap, leaving the repaired rope-pulley swinging true and silent in the draft. You secure the heavy leather climbing harness around your shoulders, checking every buckle and knot to ensure it will bear your weight into the upper heights. Repair done, the gear is fit for service and ready to bear the strain. A small token of old illicit trade rolls free from the mechanism into your palm as you finish.",
    "exits": [
     {
      "label": "Climb up toward the stilt slums",
@@ -10628,7 +10628,7 @@
    "kind": "reward",
    "title": "Through the Narrow Gap",
    "brief": "You distract a pacing watchman with a thrown piece of debris, risking an alarm to slip inside a secure archivist office.",
-   "page": "The heavy oak door gives way with a muted creak as you throw your weight against it, slipping past the threshold just as the sentinel's boots return to the corridor outside. You press your back against the cool stone wall of the interior archive, listening to the heavy thud of his patrol fading into the distance. However narrowly you managed to time the diversion, the inner sanctum is now yours to explore. Resting on a mahogany side table within arm's reach is a heavy leather folio bearing the seal of the high magistrates.",
+   "page": "The heavy oak door gives way with a muted creak as you throw your weight against it, slipping past the threshold just as the sentinel's boots return to the corridor outside. You press your back against the cool stone wall of the interior archive, listening to the heavy thud of his patrol fading into the distance. With the diversion still running, the inner sanctum is yours to explore. Resting on a mahogany side table within arm's reach is a heavy leather folio bearing the seal of the high magistrates.",
    "exits": [
     {
      "label": "Search the inner record room",
@@ -11128,7 +11128,7 @@
    "kind": "reward",
    "title": "Spoils of the Stilt-City",
    "brief": "You force open a rusted iron bookcase that has sealed shut, risking a deafening crash to uncover a hidden cache of Coin.",
-   "page": "Metal screams against metal as the stubborn bookcase finally yields to your persistence, tipping outward with a heavy, muffled thud that scatters a cloud of ancient dust. Deep within the shadowed recess, your fingers brush against a cold, velvet-wrapped bundle hidden away from the prying eyes of the Brineholders. However narrowly you managed the heave, the prize is yours to pocket before the echoes die away.",
+   "page": "Metal screams against metal as the stubborn bookcase finally yields to your persistence, tipping outward with a heavy, muffled thud that scatters a cloud of ancient dust. Deep within the shadowed recess, your fingers brush against a cold, velvet-wrapped bundle hidden away from the prying eyes of the Brineholders. Prize goes into your pocket before the echoes die away.",
    "exits": [
     {
      "label": "Return to the dusty annex",
@@ -12380,7 +12380,7 @@
    "kind": "reward",
    "title": "The Spoils of Scrimmage",
    "brief": "You fight off a desperate scavenger trying to hijack the platform, risking a lethal shove to keep your hard-won Supplies intact.",
-   "page": "The scuffle ends with a sudden, breathless thud as your adversary tumbles away into the gloom, leaving behind a heavy canvas pouch dropped in the rush. However narrowly you survived the brutal push, your supplies remain intact and your grip is firm upon the prize left in the wake of the fight.\n\nPocket the recovered token of survival.",
+   "page": "The scuffle ends with a sudden, breathless thud as your adversary tumbles away into the gloom, leaving behind a heavy canvas pouch dropped in the rush. Supplies intact, you keep a firm grip on the prize left in the wake of the fight.\n\nPocket the recovered token of survival.",
    "exits": [
     {
      "label": "Descend toward the lower foundations",
@@ -12880,7 +12880,7 @@
    "kind": "reward",
    "title": "Spoils of the Stilt",
    "brief": "You pry a massive, crushing barnacle off a buried strongbox, risking crushed hands to loot a hefty sum of emergency Coin.",
-   "page": "The stubborn iron lid wrenches free with a final, screeching groan of rusted metal, scattering flakes of old red paint across the salt-floor. However narrowly you avoided crushing your fingers in the snapping clasp, your prize sits waiting in the dark interior. You scoop up a heavy handful of stamped silver coin, feeling the cool weight settle deep into your canvas pouch.",
+   "page": "The stubborn iron lid wrenches free with a final, screeching groan of rusted metal, scattering flakes of old red paint across the salt-floor. Fingers clear of the snapping clasp, you find your prize waiting in the dark interior. You scoop up a heavy handful of stamped silver coin, feeling the cool weight settle deep into your canvas pouch.",
    "exits": [
     {
      "label": "Return to the stilt-roots",
@@ -17583,7 +17583,7 @@
    "kind": "reward",
    "title": "Marrow Stone Secret",
    "brief": "You drag a petrified leviathan rib from the heavy counterweights, risking a crushing fall, to claim a rare marrow-stone amulet snagged on the bone.",
-   "page": "Fingers trace the cold, calcified ridge where the ancient rib wedged tight against the heavy iron counterweights, scraping away salt crust and encrusted barnacles until your nails find the purchase they need. However narrowly you escape the sudden shift of grinding stone, a heavy pulse of cold weight yields to your tug. Nestled deep within the porous grey marrow lies a smooth, pale pebble pulsing with a faint, briny luminescence that smells faintly of old rain and deep sea trenches. You pry the small relic free, sliding it safely into your pocket as the machinery settles with a heavy, protesting sigh.",
+   "page": "Fingers trace the cold, calcified ridge where the ancient rib wedged tight against the heavy iron counterweights, scraping away salt crust and encrusted barnacles until your nails find the purchase they need. As the grinding stone shifts and settles, a cold pulse yields to your tug. Nestled deep within the porous grey marrow lies a smooth, pale pebble pulsing with a faint, briny luminescence that smells faintly of old rain and deep sea trenches. You pry the small relic free, sliding it safely into your pocket as the machinery settles with a heavy, protesting sigh.",
    "exits": [
     {
      "label": "Slip into the inner chamber",
