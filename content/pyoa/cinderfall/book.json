@@ -10817,7 +10817,7 @@
    "kind": "check",
    "title": "A Steady Pulse",
    "brief": "You endure the humiliating interrogation with steady poise, risking a loss of temper to convince them you are simple gangers.",
-   "page": "The senior inspector taps his brass-headed cane sharply against your shin, hunting for a flinch or a curse under sudden provocation. Your teeth grind together until the jawbone aches, but you swallow the bitter retort rising in your throat, fixing your eyes instead on a grease-smear upon the boiler jacket. A single hot word could ruin everything and bring the whole station guard down upon the Marrowbone. You lock your fingers into your palms, keeping every muscle iron-still as the heavy brass watch ticks inside his waistcoat pocket.",
+   "page": "The senior inspector taps his brass-headed cane hard against your shin. He hunts for a flinch or a curse under sudden provocation. Your teeth grind until the jawbone aches. You swallow the bitter retort and fix your eyes on a grease-smear upon the boiler jacket, because one hot word could ruin everything and bring the whole station guard down upon the Marrowbone. Fingers lock into your palms. Inside his waistcoat pocket the brass watch ticks.",
    "exits": [
     {
      "label": "check-full",
@@ -11120,7 +11120,7 @@
    "kind": "reward",
    "title": "The Clear Passage",
    "brief": "You keep your wits about you in the claustrophobic iron drum, risking claustrophobic terror to locate the sabotage mechanism.",
-   "page": "Fingers moving with practiced precision, however narrowly, you unhook the final turn of copper wire and feel the jammed valve spring back into its proper seating with a clean, satisfying thunk. A sudden rush of warm, revitalised steam floods through the newly opened channel, washing over your soot-stained face like an old friend's greeting.\n\nYou squeeze backward out of the tight iron throat, dragging yourself into the dim light of the compartment with aching muscles. Clutched in your palm is a small, heavy token of your triumph over the sabotaged machinery.",
+   "page": "Fingers work the last turn of copper wire free, and the jammed valve springs back into its proper seating with a clean thunk. Warm steam floods the newly opened channel and washes across your soot-stained face.\n\nYou squeeze backward out of the tight iron throat and drag yourself into the dim light of the compartment. Your muscles ache. In your palm sits a small token taken from the sabotaged machinery.",
    "exits": [
     {
      "label": "Return to the pressure vault hub",
@@ -11720,7 +11720,7 @@
    "kind": "reward",
    "title": "The Iron Grip",
    "brief": "You steady your breathing while hanging off the edge of the lift frame, risking a dizzy spell to secure the dangling safety chains.",
-   "page": "Willpower holds against the rising tide of panic, anchoring your focus until the vertigo recedes into a dull, manageable thrum behind your eyes. Your hand shoots out through the greasy gloom, catching the swinging link with a sharp, metallic clatter that rings along the girders. With a grunt you haul the chain toward the eyelet and drop the brass pin into place just as the gale threatens to whip it away. The mechanism locks solid with a reassuring, heavy thud.",
+   "page": "Panic still rises. You hold focus until the vertigo fades to a faint knock behind your eyes. Your hand shoots through the greasy gloom and catches the swinging link with a sharp metallic clatter that rings along the girders. With a grunt you haul the chain toward the eyelet and drop the brass pin into place just as the gale tries to whip it away. The mechanism locks solid. The thud runs up through the pin.",
    "exits": [
     {
      "label": "Leave the secure platform behind",
@@ -11736,7 +11736,7 @@
    "kind": "scene",
    "title": "Strain on the Cable",
    "brief": "You maintain a cool head while the cable groans under stress, risking a mental break to calculate the exact weight distribution.",
-   "page": "Iron cables sing a high, dangerous note overhead as the whole gantry hangs by a few frayed strands of wire. You keep your weight balanced evenly across the ribbed plate, watching the grease bubble and slide down the hot housing of the pulley. Every adjustment of your posture sends a tremor through the suspension framework, echoing down into the dark guts of the toll-city. There is no room for haste here, only the careful calculation of balance against the groaning iron.",
+   "page": "Iron cables sing a high, dangerous note overhead. The whole gantry hangs by a few frayed strands of wire. You keep your stance even across the ribbed plate while grease bubbles and slides down the hot housing of the pulley. Every shift of posture sends a tremor through the suspension framework, and the noise travels down into the dark guts of the toll-city. Haste has no room here. The iron groans under your boots.",
    "exits": [
     {
      "label": "Navigate past the humming pulley housing",
@@ -16301,7 +16301,7 @@
    "kind": "hub",
    "title": "The Bureaucrat's Domain",
    "brief": "The Tribunal Desk: The Stationmaster-General awaits your arrival with an ink-stained ledger and a cold, measuring eye.",
-   "page": "The Stationmaster-General's desk occupies the exact center of the stone rotunda, surrounded by silent tunnels that branch off into the black heart of the mountain. Every surface is buried under drifts of railway warrants, unclaimed baggage tags, and dead chronometers ticking at different speeds. The old woman finally raises her chin, revealing eyes milky with age but sharp enough to pin you like a butterfly specimen to a cork board.",
+   "page": "The Stationmaster-General's desk occupies the exact center of the stone rotunda, and silent tunnels branch off into the black heart of the mountain all around it. Drifts of railway warrants, unclaimed baggage tags, and dead chronometers ticking at different speeds bury every surface. The old woman raises her chin. Her eyes are milky with age but sharp enough to pin you like a butterfly specimen to a cork board. She does not look away.",
    "exits": [
     {
      "label": "Adjust the great desk chronometer",
@@ -17482,7 +17482,7 @@
    "kind": "recovery",
    "title": "Scalded Nerves",
    "brief": "You steady your trembling hands against the chattering regulator, holding your breath through the steam-vent hiss, and recover a dry stub of tallow-wax.",
-   "page": "A sudden lurch of the engine throws your hand off-mark, and a jet of boiling condensation spits from the packing-gland directly across your knuckles. You pull back with a sharp cry, cradling your burning hand against your chest while the needle hovers dangerously near the pin. The pain flares hot and sharp, leaving you shaken and dizzy in the dim cab light. Valuable minutes tick away as you wait for the trembling in your fingers to subside enough to finish the work.",
+   "page": "A sudden lurch of the engine throws your hand off-mark, and a jet of boiling condensation spits from the packing-gland straight across your knuckles. You pull back with a sharp cry and cradle your burning hand against your chest. The needle hovers near the pin. Pain flares hot and sharp. You stand shaken and dizzy in the dim cab light while valuable minutes tick away, and you wait for the tremble in your fingers to ease enough to finish the work.",
    "exits": [
     {
      "label": "Grip the regulator once more",
@@ -18127,7 +18127,7 @@
    "kind": "recovery",
    "title": "The Slipping Cog",
    "brief": "You hammer the jammed sluice-chain back onto its sprocket with a heavy brass spanner, risking a crushed knuckle, and win a heavy brass oil-can.",
-   "page": "The seized cog jumps violently under your weight, striking your knuckles hard against the sharp iron housing with a dull, sickening thud. A sharp ache shoots up your forearm, leaving your fingers throbbing and stiff as you snatch your hand back from the dangerous pinch-point. Hot water splashes across your boots from a ruptured gasket nearby, soaking your woolen socks with scalding runoff before you can retreat. You nurse your bruised hand against your chest, breathing heavily through your teeth while the machinery clatters on in rhythmic mockery of your clumsy failure.",
+   "page": "The seized cog jumps under your weight and strikes your knuckles hard against the sharp iron housing with a dull, sickening thud. A sharp ache shoots up your forearm. You snatch your hand back from the pinch-point. Fingers stay stiff. Hot water splashes across your boots from a ruptured gasket nearby and soaks your woolen socks with scalding runoff before you can retreat. You nurse the bruise against your chest and breathe hard through your teeth while the machinery clatters on.",
    "exits": [
     {
      "label": "Retreat to the main drainage platform",
@@ -18727,7 +18727,7 @@
    "kind": "recovery",
    "title": "The Bitter Shock",
    "brief": "You rewire the smoking altar-lamp before the sparks catch the dry wreaths, burning your fingertips, and pocket a heavy brass crucifix-wrench.",
-   "page": "A violent shock runs up your forearms, throwing you backward onto the iron grating with a choked cry as the wrench sparks brightly. The smell of burned leather and singed hair fills your nose, and your right hand hangs limp and numb, stinging fiercely from fingertip to palm. You lie there for a long moment watching soot drift down through the pale beam of a distant signal-lamp, gathering your breath before you manage to push yourself up.",
+   "page": "A violent shock runs up your forearms and throws you backward onto the iron grating with a choked cry as the wrench sparks brightly. Burned leather and singed hair fill your nose. Your right hand hangs limp and numb from fingertip to palm. You lie still. Soot drifts down through the pale beam of a distant signal-lamp. Then you push yourself up.",
    "exits": [
     {
      "label": "Gather your tools and move on",
@@ -19308,7 +19308,7 @@
    "kind": "check",
    "title": "A Risky Diversion",
    "brief": "You trick the remaining platform guards into checking the wrong siding with a false whistle-signal, and pocket a heavy silver pocket-watch.",
-   "page": "False whistles echo off the rusted iron sheds, drawing the remaining guards away from the main platform, but one broad-shouldered watchman hesitates and turns his lantern back toward your hiding place with a suspicious squint. You freeze against the side of the tender, holding your breath while your fingers slide silently toward the heavy silver pocket-watch resting on the watchman box, knowing that a single metallic clink or scrape of gravel will bring his boots straight down your way. The distance between you narrows as he takes a slow, deliberate step in your direction, his eyes scanning the gloom.",
+   "page": "False whistles bounce off the rusted iron sheds and draw the remaining guards away from the main platform, but one broad-shouldered watchman hesitates and turns his lantern back toward your hiding place with a suspicious squint. You freeze against the side of the tender. Your breath locks. Fingers slide toward the silver pocket-watch resting on the watchman box, and a single metallic clink or scrape of gravel will bring his boots straight down your way. He takes a slow step in your direction. His eyes scan the gloom.",
    "exits": [
     {
      "label": "check-full",
@@ -19613,7 +19613,7 @@
    "kind": "bottleneck",
    "title": "The Bronze Pillar",
    "brief": "You stand before the bronze pillar of the Water Gate with the heavy brass key in your hand, ready to make the final choice for Cinderfall.",
-   "page": "Standing before the immense bronze pillar of the Water Gate, you feel the cold heft of the brass key in your palm as the storm clock ticks down its final, hollow beats. Cinderfall holds its breath behind the titanic bulk of the dam, while the low rumble of the approaching ash-tempest shakes the foundations of the terminal cliff. From the shadows every faction watches the spindle that can wash the grey steppes or seal the doom of the iron road forever. The gear awaits your hand.\n\nTurn the great brass key.",
+   "page": "Before the immense bronze pillar of the Water Gate, the cold brass key sits in your palm as the storm clock ticks down its final hollow beats. Cinderfall holds its breath behind the titanic bulk of the dam while the ash-tempest shakes the foundations of the terminal cliff. From the shadows every faction watches the spindle that can wash the grey steppes or seal the doom of the iron road forever. The gear sits under your hand.\n\nThe brass key touches the lock.",
    "exits": [
     {
      "label": "Open the final bronze lock",
@@ -20175,7 +20175,7 @@
    "kind": "ending",
    "title": "The End of the Line",
    "brief": "Ending \"The Quiet Siding\"",
-   "page": "There are no more timetables to keep, no sealed orders tucked beneath greasy cushions, and no frantic gangers waving red flags from the cuttings. You walk the length of the silent train one last time, your boots crunching softly upon the fallen ash that drifts across the tracks like grey snow. The iron road ends here, swallowed by the great grey steppes and the quiet persistence of a world that remembers its own dead. You pull your collar high against the rising chill, turning your face toward the open track beyond the buffers, where the horizon dissolves into a seamless wash of earth and sky, and wait for whatever morning chooses to find you.",
+   "page": "There are no more timetables to keep, no sealed orders tucked beneath greasy cushions, and no frantic gangers waving red flags from the cuttings. You walk the length of the silent train one last time. Boots crunch on the fallen ash that drifts across the tracks like grey snow. The iron road ends here. The great grey steppes take it. You pull your collar high against the chill and turn your face toward the open track beyond the buffers, where the horizon softens into a wash of earth and sky.",
    "exits": [],
    "endingKey": "quiet-siding",
    "endingTitle": "The Quiet Siding",
