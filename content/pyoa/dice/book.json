@@ -2264,7 +2264,7 @@
    "kind": "recovery",
    "title": "The Price of Clumsiness",
    "brief": "You slip past a sleeping crew of rival wreckers guarding the captain's cabin, holding your breath to steal a preserved jar of medicinal leeches.",
-   "page": "Wood splinters beneath your heel with a loud crack that shatters the cabin's silence, waking the guard with a drunken curse and a sweep of a heavy iron wrench. The blow glances off your shoulder, leaving a hot, tearing ache in the muscle and a purple bruise that blooms instantly through your wet wool sleeve. You stumble backward out the shattered stern-gallery and into the salt-crusted alleys of the hull, lungs burning as you leave your quarry behind.",
+   "page": "Wood splinters under your heel. The crack wakes the guard, who answers with a drunken curse and a sweep of an iron wrench. The blow glances off your shoulder and a hot, tearing ache spreads through the muscle while a purple bruise blooms through your wet wool sleeve. You stumble backward out the shattered stern-gallery and into the salt-crusted alleys of the hull, lungs burning, and your quarry stays behind.",
    "exits": [
     {
      "label": "Retreat to the coral deck",
@@ -3552,7 +3552,7 @@
    "kind": "check",
    "title": "Rigging the Canvas Wall",
    "brief": "You construct a windbreak from the ribs of a half-buried galley, weaving canvas tightly to shelter yourself and discovering an ancient, rust-free cutlass inside.",
-   "page": "Knotting the heavy canvas requires every ounce of patience as the gale tries to tear the stiff fabric from your numb hands. Inside the hollow of the half-buried galley, you pull the lashings taut against the iron-hard ribs while probing the debris for the rumored blade. Dust and dried kelp sting your eyes, but your fingers brush against a leather-wrapped hilt buried beneath silt. Steadying your breath against the biting cold, you begin to pry the ancient, rust-free cutlass free from the packed sand before the entire makeshift shelter collapses.",
+   "page": "Stiff canvas fights you in the gale as you knot it, and the wind tries to tear the fabric from your numb hands. Inside the hollow of the half-buried galley you haul the lashings taut against the iron-hard ribs and sift the debris for the rumored blade. Dust and dried kelp grit your eyes. Fingers brush a leather-wrapped hilt under the silt. You pry the ancient, rust-free cutlass free of the packed sand before the makeshift shelter can fall in.",
    "exits": [
     {
      "label": "check-full",
@@ -5506,7 +5506,7 @@
    "kind": "check",
    "title": "Unearthing the Relic",
    "brief": "You dig furiously through a sudden sandslide to uncover a buried shrine, exhausting your muscles to claim a jade idol.",
-   "page": "Heavy tons of sun-baked sand suddenly give way above the partially buried shrine, threatening to bury you alive in a suffocating wave of yellow dust. You brace your shoulders against the shifting weight, planting your boots deep into the firm crust below to fend off the landslide. Every muscle in your back strains as the sliding slope presses down with brutal force.",
+   "page": "Tons of sun-baked sand give way above the partially buried shrine and a wave of yellow dust slides in, ready to bury you alive. You brace your shoulders against the slide and plant your boots deep in the firm crust below. Your back strains. The slope presses down with brutal force.",
    "exits": [
     {
      "label": "check-full",
@@ -7356,7 +7356,7 @@
    "kind": "reward",
    "title": "The Sealer's Brass",
    "brief": "You carefully dismantle a rusted pipe organ to access a hidden compartment, avoiding the collapsing masonry to find an ornate brass key.",
-   "page": "Whatever the cost of the falling dust and the narrow margin of your escape, your fingers close firmly around the cool metal shank before the masonry settles into ruin. You pull back your arm just as a shower of old mortar crashes into the recess where your hand had rested a heartbeat before. In your palm lies a heavy, sea-green key cut with teeth like a row of small shark jaws.",
+   "page": "Your fingers close around the cool metal shank before the masonry settles into ruin. You pull your arm back just as a shower of old mortar crashes into the recess where your hand had rested a heartbeat before. The shank is yours. In your palm lies a sea-green key cut with teeth like a row of small shark jaws.",
    "exits": [
     {
      "label": "Return to the ruined nave",
@@ -8950,7 +8950,7 @@
    "kind": "reward",
    "title": "The Plundered Seam",
    "brief": "You brave a treacherous climb up the barnacle-encrusted central pillar, risking a nasty fall to discover a dropped purse of Coin.",
-   "page": "Your fingers hook securely around the leather cord of the hidden purse just as the foothold crumbles beneath your boot, leaving you swinging for a heartbeat before hauling yourself flush against the metal. Your hand comes away clutching a salt-stiffened pouch filled with old coinage left behind by some careless traveller. The small hoard will buy passage or silence when you finally reach the gates above.",
+   "page": "Your fingers hook the leather cord of the hidden purse just as the foothold crumbles under your boot. For a heartbeat you swing free. Then you haul yourself flush against the metal, and your hand comes away with a salt-stiffened pouch of old coinage some careless traveller left behind. The small hoard will buy passage or silence when you reach the gates above.",
    "exits": [
     {
      "label": "Advance into the parched districts",
@@ -10697,7 +10697,7 @@
    "kind": "recovery",
    "title": "Slip on the Pane",
    "brief": "You carefully traverse a thin glass ledge above the reservoir, risking a terrifying plunge to recover a drowned worker's toolbelt.",
-   "page": "A sudden tremor in the stilt-work sends the boots skidding across the condensation-slicked glass before purchase can be found. Arms windmill wildly against the void, catching hard against a rusted iron bracket that leaves a deep, stinging purple bruise across the forearm. The belt slides off the far rivet and drops silently into the deep water below. Only bruised ribs and a bitter taste of rust remain in the mouth. Shivering and breathless, the foothold is finally secured on the far platform.",
+   "page": "A tremor runs through the stilt-work and your boots skate on the condensation-slicked glass. Arms flail over the void. You catch a rusted iron bracket hard enough to leave a deep purple bruise across your forearm, and the belt slides off the far rivet and drops into the deep water below. Rust tastes bitter in your mouth. You shiver, ribs bruised, until a boot finds the far platform.",
    "exits": [
     {
      "label": "Pull yourself onto the platform",
@@ -10943,7 +10943,7 @@
    "kind": "reward",
    "title": "The Navigator's Prize",
    "brief": "You carefully pick the brass lock of a restricted tidal cabinet, risking a triggered poison needle to claim an ancient brass compass.",
-   "page": "Your fingers find the exact balance of the internal mechanism, coaxing the stubborn brass tumblers aside without disturbing the venomous barb tucked behind the faceplate. The heavy door swings open with a soft, oiled sigh, offering up its prize to the dim light filtering through the floor planks. The ancient instrument rests in your palm at last, its needle spinning wildly toward the dry abyss.\n\nYou pocket the relic and turn your back on the ruined cabinet, carrying your new prize toward the dusty annex.",
+   "page": "Your fingers find the balance of the internal mechanism and coax the stubborn brass tumblers aside without touching the venomous barb tucked behind the faceplate. The door swings open on oiled hinges and shows its prize in the dim light that filters through the floor planks. The ancient instrument rests in your palm. Its needle spins wildly toward the dry abyss.\n\nYou pocket the relic, turn from the ruined cabinet, and take the prize toward the dusty annex.",
    "exits": [
     {
      "label": "Return to the dusty annex",
@@ -11323,7 +11323,7 @@
    "kind": "recovery",
    "title": "Bruised and Breathing",
    "brief": "You calculate the exact trajectory for a desperate leap across a gap, risking a fatal miss to grab a dangling escape rope.",
-   "page": "Your boots strike the slippery edge of the far platform rather than solid timber, sending you skidding hard into a rusted iron bracket that leaves a deep, throbbing bruise across your ribs. Pain flares white-hot through your side as your fingers claw desperately at the rough timber until a secure grip takes hold. You haul yourself upward onto the grating, coughing violently from the inhaled soot and spitting gray phlegm onto the metal. The clumsy impact cost you precious gear and a painful wrench to your shoulder, but the pursuers are left shouting on the far side of the chasm.",
+   "page": "Your boots hit the slippery edge of the far platform rather than solid timber, and you skid hard into a rusted iron bracket that leaves a deep bruise across your ribs. Pain flares white-hot through your side. Fingers claw at the rough timber until a grip takes hold, and you haul yourself up onto the grating. Soot scrapes your throat. You spit gray phlegm onto the metal, short of precious gear and with a wrench of the shoulder, while the pursuers shout on the far side of the chasm.",
    "exits": [
     {
      "label": "Crawl away along the stilt walkway",
@@ -11408,7 +11408,7 @@
    "kind": "recovery",
    "title": "Smoke-Scoured Lung",
    "brief": "You rapidly plan a route through the blinding smoke of a chimney fire, risking asphyxiation to find a safe hideout.",
-   "page": "A sudden gust of superheated draft drives a wall of thick, oily soot straight into your face, blinding you and causing you to stumble hard against a protruding iron pipe. The metal strikes your collarbone with a sickening crack, dropping you to your knees on the blistering deck plates. You gasp in pure ash, your throat tearing as you crawl blindly along the bulkhead until your fingers find a drainage scupper. The delay costs you dear in breath and blood, leaving your chest raw and your supplies scorched, but the suffocating pocket clears enough to let you drag yourself onward.",
+   "page": "A gust of superheated draft drives a wall of oily soot straight into your face and blinds you so you stumble hard against a protruding iron pipe. The metal strikes your collarbone with a sickening crack and drops you to your knees on the blistering deck plates. You gasp pure ash. Throat tearing, you crawl along the bulkhead until your fingers find a drainage scupper. Breath and blood run thin. Chest raw, supplies scorched, you drag yourself onward once the soot pocket thins enough to crawl.",
    "exits": [
     {
      "label": "Stagger into the damp night air",
@@ -12326,7 +12326,7 @@
    "kind": "check",
    "title": "Edge of the Platform",
    "brief": "You fight off a desperate scavenger trying to hijack the platform, risking a lethal shove to keep your hard-won Supplies intact.",
-   "page": "Rough canvas rubs raw against your ribs as the scavenger lunges from the shadow of a salt-crusted oil drum, fingers clawing fiercely for the straps of your bulging pack. You slam your bootheel down onto the damp, slick timber of the stilt-walk, throwing your shoulder forward to meet the sudden impact with every ounce of muscle you possess. The brine-soaked boards groan beneath your combined weight while the dizzy drop to the dry seabed yawns just inches away, threatening to swallow you both whole in the dark.",
+   "page": "Rough canvas rubs raw against your ribs as a scavenger lunges from the shadow of a salt-crusted oil drum and claws for the straps of your bulging pack. You slam your bootheel down onto the damp, slick timber of the stilt-walk and throw your shoulder forward into the impact with every ounce of muscle you have. Boards groan under you both. The dry seabed is only inches under the boards.",
    "exits": [
     {
      "label": "check-full",
@@ -12779,7 +12779,7 @@
    "kind": "recovery",
    "title": "Choking Panic",
    "brief": "You brave the suffocating darkness to crawl through a narrow root-tunnel, risking a panic attack to discover an ancient Tidewarden signet ring.",
-   "page": "A sudden wave of blind terror seizes your chest, making your breath come in ragged, shallow gasps that echo off the tight wooden walls. You thrash backward in panic, scraping your spine hard against a jagged knot of petrified oak and leaving a raw, bleeding scratch across your shoulder blades. By the time you claw your way back out into slightly wider air, your chest heaves and your palms are slick with nervous sweat.",
+   "page": "Blind terror seizes your chest. Breath comes in ragged, shallow gasps that slap off the tight wooden walls. You thrash backward in panic and scrape your spine hard against a jagged knot of petrified oak, and a raw, bleeding scratch opens across your shoulder blades. By the time you claw your way back out into slightly wider air, your chest heaves and your palms are slick with nervous sweat.",
    "exits": [
     {
      "label": "Search the muck once more",
@@ -13710,7 +13710,7 @@
    "kind": "scene",
    "title": "Extracting the Resonant Core",
    "brief": "You carefully dismantle the rusted clapper mechanism of the great bell, using your tools to extract a flawless resonating crystal useful for bartering.",
-   "page": "Deep within the heart of the iron assembly lies a milky quartz crystal, snug against the bronze and shimmering with a faint, trapped luminescence. Your fingers work methodically around its mounting brackets, brushing away centuries of grey silt and encrusted salt crystals that threaten to scratch the delicate mineral surface. The chamber feels intensely still, save for the distant, phantom dripping of water somewhere far below in the sunless shaft. With a final twist of your pliers, the mineral block slips free from its housing into your waiting palm, cool and humming with a faint internal vibration.",
+   "page": "Deep within the heart of the iron assembly a milky quartz crystal sits snug against the bronze with a faint, trapped glow. Your fingers work around its mounting brackets and brush away centuries of grey silt and encrusted salt that could scratch the mineral surface. Drips sound from the sunless shaft. With a final twist of your pliers the mineral block slips free of its housing into your waiting palm, cool against the skin.",
    "exits": [
     {
      "label": "Pocket the resonating crystal",
@@ -13763,7 +13763,7 @@
    "kind": "recovery",
    "title": "A Shattered Prize",
    "brief": "You carefully dismantle the rusted clapper mechanism of the great bell, using your tools to extract a flawless resonating crystal useful for bartering.",
-   "page": "Metal screams against metal as the stubborn pin shears off mid-turn, sending a sharp shard of hot iron slicing across the back of your hand. Blood wells instantly into the salt-crusted skin, stinging sharply in the damp air as you pull your arm back with a sharp hiss. The valuable crystal fractures down its middle with a dry pop, its inner glow winking out into a dull, grey opacity. You are left sucking at the bleeding scratch in the gloom, richer by only a jagged stone and a fresh, throbbing ache in your knuckles.",
+   "page": "Metal screams against metal as the stubborn pin shears off mid-turn, and a sharp shard of hot iron slices across the back of your hand. Blood wells into the salt-crusted skin. You pull your arm back with a sharp hiss. The crystal fractures down its middle with a dry pop, and its inner glow winks out into a dull, grey opacity. You suck at the bleeding scratch in the gloom, left with a jagged stone and a fresh ache in your knuckles.",
    "exits": [
     {
      "label": "Return to the stone terrace",
@@ -14144,7 +14144,7 @@
    "kind": "recovery",
    "title": "False Notes",
    "brief": "You assemble a crude noisemaker from scrap metal to disrupt their unified chanting, earning safe passage and a vial of sacred anointing oil.",
-   "page": "The wire slips from your numb fingers with a sharp ping, tangling hopelessly just as the choir unleashes a wave of resonant sound. The sudden feedback strikes your eardrums like a physical blow, sending you stumbling against the damp wall with a bruised shoulder and a ringing head. Splinters of rusted iron scatter across the flagstones, lost in the murky water pooling at the edge of the stair. You bite back a curse and push onward through the lingering echoes.",
+   "page": "The wire slips from your numb fingers with a sharp ping and tangles hopelessly just as the choir unleashes a wave of sound. Feedback hits like a physical blow on your eardrums. You stumble against the damp wall. Shoulder bruised, head ringing, you watch splinters of rusted iron scatter across the flagstones and vanish into the murky water pooling at the edge of the stair. You bite back a curse and push onward past the iron.",
    "exits": [
     {
      "label": "Recover your wits on the landing",
@@ -14191,7 +14191,7 @@
    "kind": "check",
    "title": "Staring Down the Wail",
    "brief": "You endure the piercing gaze of the choir master without flinching, hardening your mind against the song to earn a cryptic blessing of protection.",
-   "page": "That pale, unblinking stare pins you to the slick stone while the choir shifts from a dull murmur to a shrieking wall of sound that rattles your teeth. Every instinct screams to tear your gaze away and plunge your hands over your ears before your sanity cracks down the middle. You fight the overwhelming urge to bolt, forcing your breath to steady as you meet the lead singer's empty glare head-on, testing whether your spirit can outlast a legion of the drowned.",
+   "page": "That pale, unblinking stare pins you to the slick stone while the choir shifts from a dull murmur to a shrieking wall of sound that rattles your teeth. Every instinct screams to tear your gaze away and clap your hands over your ears before your sanity cracks down the middle. You fight the urge to bolt. Breath by breath you meet the lead singer's empty glare head-on, and test whether your spirit can outlast a legion of the drowned.",
    "exits": [
     {
      "label": "check-full",
@@ -14512,7 +14512,7 @@
    "kind": "scene",
    "title": "The Hanging Harness",
    "brief": "You dangle over the abyss to reach a skeletal mechanic hanging from a harness, holding your breath to retrieve his specialized tuning fork.",
-   "page": "A tattered leather strap dangles over the bottomless drop, supporting a small iron frame where a skeletal mechanic still sits slumped inside a rusted safety harness. The figure is long dead, dried to leather by the salt draft, but a peculiar metal implement remains gripped tightly in its rigid fingers. The abyss breathes upward with a cold, hollow roar, making the harness sway gently on its cable like a pendulum over an open grave.",
+   "page": "A tattered leather strap dangles over the bottomless drop and holds a small iron frame where a skeletal mechanic still sits slumped inside a rusted safety harness. The figure is long dead, dried to leather by the salt draft, but a peculiar metal implement remains gripped tight in its rigid fingers. Cold air roars up from the abyss. The harness sways on its cable.",
    "exits": [
     {
      "label": "Reach for the dangling frame",
