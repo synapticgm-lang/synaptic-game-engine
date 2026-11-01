@@ -11002,7 +11002,7 @@
    "kind": "hub",
    "title": "The Pressure Vault",
    "brief": "The Pressure Vault: You crawl inside the auxiliary boiler casing to hunt down the hidden blockage halting the steam flow.",
-   "page": "Darkness smells of baked scale and old grease inside the auxiliary boiler casing, where the silence is heavy enough to weigh upon your shoulders. Steam hisses through unseen hairline fractures, painting the curved iron plates in ghostly white ribbons of heat. Every breath tastes of iron filings and dry soot. You must decide where to direct your desperate hands before the last faint pulse of pressure bleeds away entirely.\n\nCrawling deeper into the narrow drum demands steady nerves to face the claustrophobic dark. Alternatively, reaching back toward the manifold offers a different hazard against the shrieking metal. Other paths wait beyond, promising temporary relief through careful work, wire-poking, spring-tuning, asbestos-patching, or battling the swaying freight elevator overhead.",
+   "page": "Darkness smells of baked scale and old grease inside the auxiliary boiler casing, where the silence presses on your shoulders. Steam hisses through unseen hairline fractures, painting the curved iron plates in ghostly white ribbons of heat. Every breath tastes of iron filings and dry soot. Wire and asbestos tape sit loose beside a spring that still has give.\n\nYour palm finds a warm rivet row. Ahead the drum narrows; the manifold shrieks behind; overhead a freight cable ticks as the elevator sways.",
    "exits": [
     {
      "label": "Crawl deep into the iron drum",
