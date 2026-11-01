@@ -126,7 +126,7 @@
    "kind": "recovery",
    "title": "A Blinding Headache",
    "brief": "You decipher a set of faded navigational charts left scattered across the desk, risking a headache to uncover a hidden safe route through the sinkholes.",
-   "page": "Pain spikes sharply behind your eyes, a sudden and searing migraine that forces you to stagger back from the desk. You knock an inkwell to the floor, shattering the glass and ruining a pile of blank ledgers. The charcoal numbers on the map blur into a meaningless grey smudge. You spend nearly an hour sitting on the floor with your head between your knees, waiting for the nausea and the throbbing ache to pass. By the time you can see straight again, the sun has climbed much higher in the sky, wasting precious daylight. You have lost the thread of Orsolya's logic, leaving the safe path through the sinkholes a mystery. With a frustrated sigh, you push yourself upright, knowing you will have to trust your own instincts on the salt-flats.",
+   "page": "Pain spikes behind your eyes. A sudden searing migraine forces you to stagger back from the desk. You knock an inkwell to the floor. Glass shatters and ruins a pile of blank ledgers. The charcoal numbers on the map blur into a meaningless grey smudge. You spend nearly an hour on the floor with your head between your knees while the nausea passes. By the time you can see straight again, the sun has climbed much higher in the sky, and precious daylight is gone. You have lost the thread of Orsolya's logic, and the safe path through the sinkholes stays a mystery. You push yourself upright. On the salt-flats you will have to trust your own instincts.",
    "exits": [
     {
      "label": "Leave the desk behind",
@@ -1239,7 +1239,7 @@
    "kind": "reward",
    "title": "The Ferryman's Price",
    "brief": "You negotiate with the ferryman who sits in his boat upon the mud, staring down his demands to gain a rusted map of the sinkholes.",
-   "page": "Bargaining with the old man requires a steady tongue and a willingness to match his stubborn silence. You lean against the wet timber of the gunwale, offering a small twist of cured tobacco and a sharp knife in exchange for his accumulated wisdom of the silt-channels. He turns the blade over in his palm, testing its edge against a horny thumb, before spitting a brown stream into the gray muck. With a grunt, he slides a grease-stained, stiffened goatskin map across the thwart. It details the treacherous sinkholes and hidden drops where careless scavengers lose their boots to the suction.\n\nYou pocket the chart, knowing the paths it reveals will keep your feet out of the suffocating mire.",
+   "page": "Bargaining with the old man takes a firm tongue and a willingness to match his stubborn silence. You lean against the wet timber of the gunwale and offer a small twist of cured tobacco and a sharp knife for his knowledge of the silt-channels. He turns the blade over in his palm and tests its edge against a horny thumb, then spits a brown stream into the gray muck. He grunts once. A grease-stained, stiffened goatskin map slides across the thwart. It marks the treacherous sinkholes and hidden drops where careless scavengers lose their boots to the suction.\n\nYou pocket the chart. The paths on it keep feet out of the suffocating mire.",
    "exits": [
     {
      "label": "Take the map and move on",
@@ -1323,7 +1323,7 @@
    "kind": "recovery",
    "title": "A Slip of the Pick",
    "brief": "You pick the rusted lock on the harbourmaster's abandoned office, relying on careful hands to disarm a simple trap and claiming a stash of coin.",
-   "page": "A sudden metallic snap echoes through the empty office as the tripwire catches your sleeve, triggering a small poisoned dart that grazes your forearm. You hiss in pain, yanking your hand back just as the dart embeds itself deep into the wooden wainscoting behind you. Blackened venom begins to burn through your blood, so you bind the raw scratch tight with a strip of rag from your coat. The strongbox remains sealed, mocking your haste, and the lost time leaves your nerves frayed and your supplies lighter. You stagger out into the salt-air, carrying a dull ache and a hard lesson about old harbor traps.",
+   "page": "A metallic crack sounds in the empty office as the tripwire catches your sleeve and a small poisoned dart grazes your forearm. You hiss, \"poison in the scratch already.\" The dart embeds itself deep in the wooden wainscoting behind you. Blackened venom begins to burn through your blood, so you bind the raw scratch tight with a strip of rag from your coat. The strongbox stays sealed. Lost time frays your nerves and lightens your supplies. You stagger out into the salt-air with torn skin and a hard lesson about old harbor traps.",
    "exits": [
     {
      "label": "Retreat from the ruined office",
@@ -1469,7 +1469,7 @@
    "kind": "reward",
    "title": "The Agent's Slip",
    "brief": "You stare down a bragging Brineholder agent making offers to the locals, refusing to blink and extracting a valuable secret about the patrol routes.",
-   "page": "Unable to break your iron stare, the Brineholder agent finally averts his eyes with a muttered curse, tossing a crumpled parchment onto the sticky table in frustration. You snatch it up before he can snatch it back, seeing the detailed patrol schedules and guard rotations for the deep seabed routes. It is a vital piece of leverage that will let you slip past their checkpoints without paying their exorbitant tolls. You tuck the paper safely inside your jacket, leaving the defeated agent to nurse his bruised ego in the corner.",
+   "page": "Unable to break your gaze, the Brineholder agent finally averts his eyes and mutters, \"curse your iron stare,\" then tosses a crumpled parchment onto the sticky table. You snatch it up. He cannot take it back. Detailed patrol schedules and guard rotations for the deep seabed routes cover the page, and that leverage will let you slip past their checkpoints without paying their exorbitant tolls. You tuck the paper inside your jacket. The agent stays in the corner with his bruised ego.",
    "exits": [
     {
      "label": "Head toward the town gates",
@@ -6405,7 +6405,7 @@
    "kind": "scene",
    "title": "Hounds of the Low",
    "brief": "You physically defend the pilgrimage from a desperate pack of wild dogs, risking deep bites to receive a consecrated vial of seawater.",
-   "page": "Gaunt shapes detach themselves from the salt-crusted shadow of a turned hull, snarling with jaws dripping gray foam and sea-foulness. These beasts have lived on what the retreating brine spat ashore, growing bolder and leaner as the dry months stretch their hunger. They circle the small band of Drift Pilgrims, yellow eyes fixed upon the trembling children huddled beneath coarse wool cloaks. Your hand drops automatically to the heavy iron-shod timber staff at your side, planting your boots firmly into the damp, sucking silt. The lead hound lunges, a blur of matted fur and yellowed teeth, aiming straight for the nearest pilgrim's throat.",
+   "page": "Gaunt shapes peel from the salt-crusted shadow of a turned hull. Jaws drip gray foam and sea-foulness. These beasts have lived on what the retreating brine spat ashore, and the dry months have left them bolder and leaner. They circle the small band of Drift Pilgrims, yellow eyes fixed on the trembling children huddled beneath coarse wool cloaks. Your hand finds the iron-shod timber staff at your side, and you plant your boots in the damp, sucking silt. The lead hound lunges. Matted fur and yellowed teeth aim straight for the nearest pilgrim's throat.",
    "exits": [
     {
      "label": "Strike hard against the lead hound",
@@ -7728,7 +7728,7 @@
    "kind": "hub",
    "title": "The Sunken Stair",
    "brief": "The Sunken Stair Descent: A treacherous, spiralling staircase carved into the bedrock descends toward the Meridian Gear, guarded by ancient traps and brittle stone.",
-   "page": "Spiralling deep into the damp bedrock, the Sunken Stair drops away into absolute gloom, its basalt treads slick with salt-crust and age-old grease. Every footfall echoes against walls carved with the faded crests of forgotten Tidewardens, who left their iron marks to rot long before Gullmouth took its first breath of brine. Somewhere far below, the great brass teeth of the Meridian Gear grind against the dark, calling to anyone desperate enough to command the returning tide.\n\nShadows twist along the winding drop, offering half a dozen paths through the fractured stonework where crumbling masonry and rusted machinery block the descent. You test the air for the smell of old oil and damp iron, weighing each hazard before you commit your weight to the stairs.",
+   "page": "The Sunken Stair drops deep into damp bedrock and absolute gloom. Basalt treads stay slick with salt-crust and age-old grease. Every footfall answers from walls carved with the faded crests of forgotten Tidewardens, who left their iron marks to rot long before Gullmouth took its first breath of brine. Far below, the great brass teeth of the Meridian Gear grind against the dark and call to anyone desperate enough to command the returning tide.\n\nShadows twist along the winding drop. Half a dozen routes cut through the fractured stonework where crumbling masonry and rusted machinery block the descent. You test the air for old oil and damp iron before you put your weight on the next stair.",
    "exits": [
     {
      "label": "Descend by the pressure-slab staircase",
@@ -10283,7 +10283,7 @@
    "kind": "reward",
    "title": "Shielding Metal",
    "brief": "You dismantle a rusted vent grating to create a makeshift shield, risking a noise that attracts guards to gain vital protection.",
-   "page": "Fingers locked tight around the jagged crossbar, you manage to tear the heavy grating free from its mounting just as a patrol lantern sweeps the corridor. The thick iron plate absorbs a glancing blow from a Brineholder halberd with a dull, echoing thud that leaves your teeth aching. Breathing hard in the stagnant air, you shoulder the improvised barrier and slip into the shadows.",
+   "page": "Fingers locked tight around the jagged crossbar, you tear the grating free from its mounting just as a patrol lantern sweeps the corridor. The thick iron plate takes a glancing blow from a Brineholder halberd. The hit jars your teeth. You shoulder the improvised barrier in the stagnant air and slip into the shadows.",
    "exits": [
     {
      "label": "Slip deeper into the flues",
@@ -10299,7 +10299,7 @@
    "kind": "bottleneck",
    "title": "Dome of Glass",
    "brief": "Emerging near the upper canopy, you behold the magnificent, glass-domed water reservoirs of the Brineholders, glittering under the harsh sun.",
-   "page": "Emerging near the upper canopy through a service hatch, you behold the magnificent, glass-domed water reservoirs of the Brineholders glittering under the harsh sun. Vast oceans of crystal-clear water are held aloft in ribs of wrought iron and sealed glass, casting shifting blue refractions across the towering walkways. Armed sentries in polished brass breastplates pace the perimeters, guarding the pristine liquid against the desperate thirst of the seabed below. Every surface gleams with wealth and strict order, contrasting sharply with the salt-crusted ruin of Gullmouth. You linger in the shadows of a massive support pillar, mapping the patrols and plotting your path toward the Sunken Stair.",
+   "page": "A service hatch drops you near the upper canopy, and the glass-domed reservoirs of the Brineholders catch the harsh sun. Vast oceans of crystal-clear water sit aloft in ribs of wrought iron and sealed glass, and blue refractions slide across the towering walkways. Sentries pace the perimeters. Brass breastplates flash as they guard that pristine liquid from the desperate thirst of the seabed below. Wealth and strict order gleam on every surface, set hard against the salt-crusted ruin of Gullmouth. You linger in the shadow of a massive support pillar, map the patrols, and set a path toward the Sunken Stair.",
    "exits": [
     {
      "label": "Follow the upper promenade",
@@ -11947,7 +11947,7 @@
    "kind": "bottleneck",
    "title": "The Governor's Confession",
    "brief": "Orsolya is not here, but the Governor reveals she was taken down the Sunken Stair by the Hollow Choir as a hostage.",
-   "page": "High above the dry seabed, the sun-drenched solarium smells of scorched citrus leaves and the cold sweat of terrified aristocrats. The governor sits slumped in a wicker chair, his powdered wig askew, staring blankly out at the empty horizon where the grey ocean used to be. Orsolya Venn is not here among the fluttering palms and trembling sycophants, but when you press the blade of your intent against his ribs, the old man speaks her name with a shudder. He confesses that the lighthouse keeper was cornered on the cliffs three nights ago and dragged down the Sunken Stair by the Hollow Choir as an offering to the jammed Meridian Gear. The drowned dead wanted someone who knew how the machinery sang before they turned it to drown the world once more.\n\nThe only way down to chase them is through the great iron winch dangling over the abyss.",
+   "page": "High above the dry seabed, the sun-drenched solarium smells of scorched citrus leaves and the cold sweat of terrified aristocrats. The governor sits slumped in a wicker chair, powdered wig askew, staring out at the empty horizon where the grey ocean used to be. Orsolya Venn is not here. You press the blade of your intent against his ribs. He speaks now. He says, \"The Choir dragged her down.\" He tells the rest: the lighthouse keeper was cornered on the cliffs three nights ago and dragged down the Sunken Stair by the Hollow Choir as an offering to the jammed Meridian Gear. The drowned dead wanted someone who knew how the machinery sang before they turned it to drown the world once more.\n\nThe only way down to chase them is the great iron winch over the abyss.",
    "exits": [
     {
      "label": "Descend the rusty iron winch",
@@ -11962,7 +11962,7 @@
    "kind": "hub",
    "title": "The Descent Winch",
    "brief": "The Descent Winch: A massive, groaning mechanical elevator meant to lower brave souls directly towards the exposed seabed.",
-   "page": "Iron cables thick as a hangman's noose groan against grease-blackened pulleys above the great drop. This towering contraption serves as Saltspire's mechanical lung, hauling cargo and caged nobility between the stilt-city and the rotting seabed. Rust flakes drift downward like red snow into the abyss, where the shadowed mouth of the Sunken Stair waits like an open grave. Steam hisses from rusted pressure valves nearby, smelling of boiled salt and scorching tallow. You stand at the precipice of the loading stage, weighing every heavy choice before the platform lunges into the damp void.",
+   "page": "Iron cables thick as a hangman's noose groan against grease-blackened pulleys above the great drop. This towering frame is Saltspire's mechanical lung, and it hauls cargo and caged nobility between the stilt-city and the rotting seabed. Rust flakes drift down like red snow into the abyss. Below, the shadowed mouth of the Sunken Stair stands open. Steam hisses from rusted pressure valves nearby. Boiled salt and scorching tallow ride the air. You stand at the lip of the loading stage. The platform hangs over the damp void.",
    "exits": [
     {
      "label": "Step onto the swaying platform",
@@ -12641,7 +12641,7 @@
    "kind": "scene",
    "title": "Kelp and Grease",
    "brief": "You fashion a makeshift torch from dried kelp and whale fat, risking a nasty burn to acquire reliable illumination for the depths.",
-   "page": "Strands of salt-cured kelp coil thick around your forearm, slick with rancid whale fat scooped from a discarded cooper's tub. The mixture smells of old rot and cold oil, clinging to your skin like a second coat of grime. You twist the fibrous ribbons tighter into a makeshift brand, packing the grease deep into the weed's hollow stems to feed a steady, smoky flame. This subterranean gloom under Saltspire demands more than a Gullmouth wrecker's ordinary spark if you mean to see what watches from the stilt-shadows.\n\nStriking flint against iron until a bright yellow ember catches, you watch the fat begin to bubble and spit dark smoke.",
+   "page": "Salt-cured kelp coils around your forearm, slick with rancid whale fat scooped from a discarded cooper's tub. Old rot and cold oil cling like a second coat of grime. You twist the fibrous ribbons into a makeshift brand and pack grease deep into the weed's hollow stems so a smoky flame can feed. Under Saltspire this gloom needs more than a Gullmouth wrecker's ordinary spark if you mean to see what watches from the stilt-shadows. Grease fills the stems.\n\nYou strike flint against iron until a bright yellow ember catches, and the fat begins to bubble and spit dark smoke.",
    "exits": [
     {
      "label": "Scrape together the smoking fuel",
@@ -16098,7 +16098,7 @@
    "kind": "scene",
    "title": "Shell And Sinew",
    "brief": "You brutally smash a creeping, armored rock-centipede that invaded the campsite, relying on sudden violence to extract its valuable phosphorescent venom sac.",
-   "page": "Hard jointed armor scrapes against the dry masonry of the lower alcove, signaling the sudden, scuttling advance of a pale centipede with antennae twitching like frayed wire. You waste no time weighing risk: an iron belaying pin is in your hand and then hard across the creature's segmented back with a dull, echoing crunch. Yellowish fluid bubbles from the cracked shell, smelling sharply of vinegar and old copper.",
+   "page": "Hard jointed armor scrapes the dry masonry of the lower alcove as a pale centipede rushes in with antennae twitching like frayed wire. An iron belaying pin is already in your hand. You drive it hard across the creature's segmented back. The shell gives a crunch. Yellowish fluid bubbles from the cracked plates and the smell of vinegar and old copper fills the alcove.",
    "exits": [
     {
      "label": "Pry the glowing sac free",
@@ -17382,7 +17382,7 @@
    "kind": "recovery",
    "title": "Broken Grip And Salt",
    "brief": "You force a calcified alignment wheel to rotate by sheer strength, risking crushed hands, to gain vital access to the central pressure valve.",
-   "page": "The frozen wheel bites back with brutal suddenness, slipping from your strained grip and spinning backward with a bone-jarring metallic shriek that echoes off the wet stone walls. You stumble hard against the jagged iron housing, a sharp, white-hot pain shooting across your knuckles and tearing the skin from your palms. Warm blood mingles instantly with the greasy brine coating your hands, leaving a stinging reminder of your failure against the ancient machinery. You drag yourself upright, breathing heavily through the salt-choked air, and press onward despite the fresh injury throbbing in your hands.",
+   "page": "The frozen wheel bites back without warning, slips from your strained grip, and spins backward with a bone-jarring metallic shriek that rebounds off the wet stone walls. You stumble hard against the jagged iron housing as sharp white-hot pain shoots across your knuckles and tears the skin from your palms. Warm blood mixes at once with the greasy brine on your hands, a raw mark of how the ancient machinery beat you. You drag yourself upright through the salt-choked air and press onward with the fresh injury still alive in your palms.",
    "exits": [
     {
      "label": "Move past the stubborn valve",
@@ -17933,7 +17933,7 @@
    "kind": "scene",
    "title": "Weaving The Broken Filaments",
    "brief": "You diligently repair the automaton's damaged memory-coil, risking a painful electrical surge, to receive a flawlessly accurate map of the seabed's shifting salt-flats and sinkholes.",
-   "page": "Fine copper threads snap beneath your trembling fingers as you ease open the automaton's cranium casing, exposing a maze of grease-slicked cogs and twitching nerve-wires. A sudden blue spark dances across your knuckle, searing the skin with the sharp smell of ozone and hot tin, but you do not pull away. You delicately twist the fractured memory-coil back into alignment, coaxing the ancient machine's stuttering thoughts into a clean, rhythmic pulse. Under your palm the brass plating warms and gives a soft grateful shiver.\n\nA folded parchment slides from a hidden slot in the chassis, and every sinkhole and treacherous salt-flat shows mapped on it in black ink.",
+   "page": "Fine copper threads part under your fingers as you ease open the automaton's cranium casing. Grease-slicked cogs twitch. Nerve-wires fill the shell. A sudden blue spark dances across your knuckle and sears the skin with the sharp smell of ozone and hot tin, but you do not pull away. You twist the fractured memory-coil back into alignment until the ancient machine's stuttering thoughts settle into a clean pulse. Brass plating warms under your palm and gives a soft shiver.\n\nA folded parchment slides from a hidden slot in the chassis, and every sinkhole and treacherous salt-flat shows mapped on it in black ink.",
    "exits": [
     {
      "label": "Pocket the map of the seabed",
@@ -18218,7 +18218,7 @@
    "kind": "bottleneck",
    "title": "Voices From The Brine",
    "brief": "The Hollow Choir suddenly descends upon the echoing chamber, their drowned voices singing terrible promises as they attempt to drag you into the rising water.",
-   "page": "The damp air turns suddenly frigid, frosting the stone walls with a crust of grey salt as the Hollow Choir floods into the chamber from every dark archway. They drift above the flags with waterlogged limbs and hair streaming in an unseen current, their drowned faces contorted in silent, weeping pleas that echo straight inside your skull. A chorus of wet, rattling whispers promises endless peace beneath the waves if you would only let them pull you down into the rising tide. Their cold fingers brush against your wrists like drifting kelp, seeking to anchor you to the floor as the first grey tongues of the returning sea spill across the threshold.\n\nYou wrench your arms free from the clinging dead and scramble toward the iron service ladder.",
+   "page": "The damp air turns frigid without warning. Grey salt crusts the stone walls as the Hollow Choir floods the chamber from every dark archway. They drift above the flags with waterlogged limbs and hair streaming in an unseen current, and their drowned faces twist in silent weeping pleas that press straight into your skull. One wet rasp finds you. \"The waves hold endless peace,\" it says, if you will only let them pull you down. Cold fingers brush your wrists like drifting kelp and try to pin you to the floor as the first grey tongues of returning sea spill across the threshold.\n\nYou wrench your arms free from the clinging dead and scramble toward the iron service ladder.",
    "exits": [
     {
      "label": "Climb away from the drowned choir",
@@ -18827,7 +18827,7 @@
    "kind": "recovery",
    "title": "Paid in Red",
    "brief": "You brutally intimidate the Brineholder mercenaries into slowly backing down, risking a fatal stab in the dark, to confiscate their heavy iron lockboxes of coin.",
-   "page": "Cold steel bites deep into your shoulder before you can twist clear, leaving a jagged red slash that sears like boiling brine. The mercenaries snatch up their iron lockboxes and vanish into the shadows, leaving you gasping against the damp wall with a fresh wound weeping through your jacket.\n\nPain throbs in rhythm with your pounding heart, a sharp reminder that the Low extracts a toll from every scavenger who tries to play the big game.",
+   "page": "Cold steel bites deep into your shoulder before you can twist clear, and a jagged red slash opens that sears like boiling brine. The mercenaries snatch their iron lockboxes. They vanish into the shadows while you gasp against the damp wall, and a fresh wound weeps through your jacket.\n\nBlood darkens the cloth at your shoulder, a cut the Low will remember.",
    "exits": [
     {
      "label": "Clutch the bleeding shoulder wound",
@@ -19509,7 +19509,7 @@
    "kind": "scene",
    "title": "Breaking the Mercenaries",
    "brief": "You brutally intimidate the Brineholder mercenaries into slowly backing down, risking a fatal stab in the dark, to confiscate their heavy iron lockboxes of coin.",
-   "page": "Brineholder mercenaries grip their short-swords in the dripping gloom, their eyes fixed on your chest with cold calculation as you step into their path. You do not reach for a weapon; instead, you let a cruel, humorless grin touch your mouth as you name the bounty on their captains back in Gullmouth. A nervous twitch runs through the lead enforcer's shoulder, his blade dipping an inch as doubt eats away at his greed. He drops two heavy iron lockboxes of coin onto the wet flagstones with a dull thud, backing away into the dark with his men close behind.",
+   "page": "Brineholder mercenaries grip their short-swords in the dripping gloom, eyes fixed on your chest as you step into their path. You do not reach for a weapon; a cruel, humorless grin touches your mouth as you name the bounty on their captains back in Gullmouth. A nervous twitch runs through the lead enforcer's shoulder, and his blade dips an inch as doubt eats at his greed. He drops two iron lockboxes of coin onto the wet flagstones with a dull thud, and his men follow him into the dark.",
    "exits": [
     {
      "label": "Confiscate the heavy lockboxes of coin",
@@ -19917,7 +19917,7 @@
    "kind": "ending-part",
    "title": "The Choir's Choir",
    "brief": "Ending \"The Choir's Choir\"",
-   "page": "Voices rise from the salt-crusted masonry of the Sunken Stair, thin and clear as grease-light on iron, singing the water back to a bed that has forgotten its weight. You stand knee-deep in the rising brine while the Hollow Choir weave their harmonies from old ribs and drowned brass, each note drawing the grey ocean up through the spiral floor with the steady pull of an anchor-chain. Orsolya Venn would have called this foolishness, but Orsolya is gone into the spray, and only the tread of her boots stays in your memory. The tide comes not as a conqueror or a gift, but as a long-withheld confession spilling out between the stone teeth of the coast. The chill climbs your shins, tasting of old kelp and copper filings, enough water to drown a town or wash a debt clean off the slate.",
+   "page": "Voices rise from the salt-crusted masonry of the Sunken Stair, thin and clear as grease-light on iron, and they sing the water back to a bed that has forgotten its old depth. You stand knee-deep in the rising brine. The Hollow Choir weave their harmonies from old ribs and drowned brass, and each note draws the grey ocean up through the spiral floor on a slow haul. Orsolya Venn would have called this foolishness. Orsolya is gone into the spray, and only the tread of her boots stays in your memory. The tide comes not as a conqueror or a gift, but as a long-withheld confession that spills out between the stone teeth of the coast. The chill climbs your shins. It tastes of old kelp and copper filings, enough water to drown a town or wash a debt clean off the slate.",
    "exits": [
     {
      "label": "Listen to the drowned voices rise",
@@ -20021,7 +20021,7 @@
    "kind": "ending-part",
    "title": "The Return of the Deep",
    "brief": "Ending \"Orsolya's Way\"",
-   "page": "Water comes back not with a wall of white spray, but as a low, continuous rumble that shakes the foundations of Saltspire and rattles the dry timbers of Gullmouth's empty harbour. A dark, smooth line appears at the absolute edge of the western horizon, swallowing the bleached ribs of the sunken leviathan and racing across the flat expanses of the Low with terrifying grace. You stand beside the open shaft of the Sunken Stair, feeling the cold wind rise up from the depths as the sea reclaims its rightful floor. The Brineholders' high platforms on stilts tremble as the surge hits their pilings, sending a sudden mist of spray high into the sunlit air to catch the light in fleeting, brilliant arcs of green and grey.",
+   "page": "Water comes back. Not as a wall of white spray, but as a rumble that shakes the foundations of Saltspire and rattles the dry timbers of Gullmouth's empty harbour. At the far western horizon a dark smooth line appears, and it swallows the bleached ribs of the sunken leviathan then races across the flat expanses of the Low. You stand beside the open shaft of the Sunken Stair. Cold wind climbs from the depths as the sea takes back its floor. The Brineholders' high platforms shake when the surge hits their stilts, and spray leaps into the sunlit air in brief arcs of green and grey.",
    "exits": [
     {
      "label": "Step back from the rising edge",
@@ -20141,7 +20141,7 @@
    "kind": "ending",
    "title": "Kingdom of the Dry Horizon",
    "brief": "Ending \"Pilgrim King\"",
-   "page": "Silence settles over the great Low until the only sound is the slow, dripping trickle of brine leaking from the rusted joints of the Meridian Gear far below. You have given Gullmouth its eternal feast and the pilgrims their sullen god, leaving the rest of the world to choke on dry air and memory. The sea lies tamed at your feet like a beaten hound, held in a perpetual, unmoving shallow that yields its silver without a struggle. No further storms will ever batter the cliff-town, and no stranger will ever arrive from across the water with news of a greener shore. Here you remain, king of the salt-pans and master of the locked tide, watching the gray mist swallow the last faint smudge of the horizon until nothing is left but you, the mud, and the unchanging dark.",
+   "page": "Silence settles over the great Low. The only sound is the slow drip of brine from the rusted joints of the Meridian Gear far below. You have given Gullmouth its eternal feast and the pilgrims their sullen god, and the rest of the world can choke on dry air and memory. The sea lies tamed at your feet like a beaten hound, held in a perpetual shallow that yields its silver without a struggle. No further storms will batter the cliff-town. No stranger will arrive from across the water with news of a greener shore. You remain king of the salt-pans and master of the locked tide. Grey mist swallows the last faint smudge of the horizon until nothing remains but you, the mud, and the unchanging dark.",
    "exits": [],
    "endingKey": "pilgrim-king",
    "endingTitle": "Pilgrim King",
