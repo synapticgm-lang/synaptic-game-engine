@@ -2658,7 +2658,7 @@
    "kind": "reward",
    "title": "Unwavering Trust",
    "brief": "You stand your ground against Barnaby's aggressive doubts, earning his unwavering trust and a heavy iron latchkey.",
-   "page": "Steel meets stone in your steady gaze, however narrowly convincing the hardened shelver that your loyalties remain anchored where they belong. Barnaby spits into the sawdust and digs in his deep coat pocket, pulling free a cold lump of forged iron on a knotted hemp cord. He drops it into your palm with a dull clink that seals your newfound standing within the fellowship of the stacks.\n\nYou curl your fingers around the metal, feeling the weight of the responsibility settling into your grip.",
+   "page": "Barnaby meets your stare and decides your loyalties still sit with the stacks where they belong. He spits into the sawdust, digs in his deep coat pocket, and draws out a cold lump of forged iron on a knotted hemp cord. The latchkey lands in your palm with a dull clink that marks your place in the fellowship of the stacks.\n\nYour fingers close around the iron.",
    "exits": [
     {
      "label": "Return to the fellowship hearth",
@@ -6126,7 +6126,7 @@
    "kind": "check",
    "title": "Tracing the Royal Seal",
    "brief": "You identify the true provenance of a misplaced royal decree beneath the rubbish, winning a valuable information debt from a scholar.",
-   "page": "Dust hangs heavy in the dim lamp-light while you sift through the crumbling layers of discarded state papers, searching for the hidden margins that reveal the true origin of the royal proclamation. A sudden draft from the lower stacks threatens to scatter the delicate fragments across the floor, making every movement perilous. You lean closer to the fragile vellum, squinting past the flaking ink to parse the faded scribbles of the royal scribe. Your fingers hover over the torn edge, ready to lift the document before the shifting currents of paper bury it completely.",
+   "page": "Dust hangs in the dim lamp-light while you sift crumbling layers of discarded state papers for the hidden margins that name the true origin of the royal proclamation. A draft from the lower stacks lifts the fragile scraps. You lean in over the vellum and squint past flaking ink to read the faded scribbles of the royal scribe. Your fingers hover at the torn edge. You mean to lift the document before the paper drift covers it.",
    "exits": [
     {
      "label": "check-full",
@@ -6164,7 +6164,7 @@
    "kind": "recovery",
    "title": "Buried Under Old Statecraft",
    "brief": "You identify the true provenance of a misplaced royal decree beneath the rubbish, winning a valuable information debt from a scholar.",
-   "page": "The paper mound collapses with a dry, papery sigh, sending a thick cloud of centuries-old dust billowing into your eyes and lungs. You stagger backward, coughing violently as loose folios cascade over your boots and pin your hem to the flagged floor. By the time you claw your way free from the literary avalanche, precious minutes have slipped away, and your lamp oil runs dangerously low. The rival scholar watches your clumsy exit with a cold, superior smirk, leaving you with an embarrassing bruise and a lingering obligation you would rather have avoided.",
+   "page": "The paper mound falls with a dry, papery sigh, and centuries-old dust floods your eyes and lungs until you can hardly see the aisle. You stagger back. Loose folios cascade over your boots and pin your hem to the flagged floor, and by the time you claw free, minutes have gone and your lamp oil runs low. The rival scholar watches your exit with a cold, superior smirk. You leave with a bruise and an obligation you would rather have skipped.",
    "exits": [
     {
      "label": "Escape the collapsing paper drift",
@@ -6700,7 +6700,7 @@
    "kind": "scene",
    "title": "Across the Dark Spray",
    "brief": "You leap gracefully across the slick stepping-stones amidst the dark spray, earning a pair of oilskin gaiters.",
-   "page": "Plunging deeper into the shifting stacks, you find your path blocked by a wide gap of churning ink spanned only by jagged, moss-covered stepping-stones. Dark spray blankets the stonework, making every foothold treacherous and slick with old paper pulp. You time your movement with the rhythmic surge of the black fluid, stepping lightly from one damp outcrop to the next. The air grows thick with the smell of wet parchment and cold stone as the distant lanterns flicker against the damp walls.",
+   "page": "Deeper in the shifting stacks a wide gap of churning ink blocks the path, spanned only by jagged, moss-covered stepping-stones. Dark spray coats the stonework. Each foothold is slick with old paper pulp. You wait for the black fluid to surge, then step from one damp outcrop to the next while wet parchment and cold stone fill your nose and distant lanterns flicker on the damp walls.",
    "exits": [
     {
      "label": "Advance to the next stepping-stone",
@@ -11953,7 +11953,7 @@
    "kind": "scene",
    "title": "The Slick Descent",
    "brief": "You descend the slick, damp steps with effortless grace, risking a nasty slip, to catch up with a fleeing courier.",
-   "page": "Damp lime drips from the vaulted ceiling above, coating the steep stone steps in a thin, greasy slick of condensation and old lamp-oil residue. Far ahead, the rustle of heavy wool and hurried breathing marks the courier's desperate flight toward the lower galleries. Your boots find precarious traction on the edge of each worn riser, while your fingers graze the damp masonry for support. Every movement requires absolute physical composure to prevent a dangerous tumble down the spiral drop.\n\nYou press downward, matching the frantic rhythm of the fleeing messenger against the oppressive gloom of the stone shaft.",
+   "page": "Damp lime drips from the vaulted ceiling and leaves the steep stone steps greasy with condensation and old lamp-oil residue. Far ahead, wool rustles and breath comes short as the courier flees toward the lower galleries. Traction is thin. Your boots catch the edge of each worn riser while your fingers graze the damp masonry for support, and any slip would send you down the spiral drop.\n\nYou press downward, matching the fleeing messenger step for step in the stone shaft.",
    "exits": [
     {
      "label": "Pursue the fleeing courier downward",
@@ -12985,7 +12985,7 @@
    "kind": "recovery",
    "title": "Slipping on the Rime",
    "brief": "You balance precariously along the frost-slicked stone railing with perfect grace, risking a fatal fall, to retrieve a lost spyglass.",
-   "page": "A sudden gust of icy air from the lower flues catches your shoulder off balance, sending your front foot skidding wildly across the glazed stone. You drop hard onto your knee to arrest the fall, scraping skin raw against the jagged masonry and tearing a deep, jagged rent in your trousers. The spyglass rattles away into the darkness below, leaving you bruised, shaken, and nursing a bleeding kneecap as you crawl back to safety.",
+   "page": "An icy gust from the lower flues catches your shoulder and your front foot skids across the glazed stone. You drop hard onto your knee to stop the fall, scrape skin raw on the jagged masonry, and tear a deep rent in your trousers. The spyglass rattles away into the dark below. Blood runs from your kneecap as you crawl back to solid stone.",
    "exits": [
     {
      "label": "Crawl back to solid ground",
@@ -13786,7 +13786,7 @@
    "kind": "recovery",
    "title": "Buried in Paper",
    "brief": "You gracefully sidestep a cascade of tumbling folios to pluck a preserved ink-vial from a crumbling wooden ledge.",
-   "page": "The crumbling ledge gives way entirely under your weight, sending a shower of splinters and old paper cascading over your shoulders as you scramble to safety. You tumble hard against a cold stone pillar, scraping your knee and losing a portion of your supplies to the encroaching drifts of loose text. Dust fills your lungs, making you cough as you brush off the ruined pages clinging to your coat.",
+   "page": "The crumbling ledge breaks under you, and splinters and old paper shower your shoulders as you scramble clear. You tumble hard against a cold stone pillar, scrape your knee, and lose a portion of your supplies to the drifts of loose text. Dust fills your lungs. You cough, then brush the ruined pages from your coat.",
    "exits": [
     {
      "label": "Dust yourself off and move on",
@@ -14427,7 +14427,7 @@
    "kind": "recovery",
    "title": "A Miscalculated Step",
    "brief": "You analyze the mineral composition of the particulate storm to find the stable limestone floor beneath, gaining an enduring soot-filter mask.",
-   "page": "Your boots misjudge the density of the particulate crust, and with a sickening crunch, your right leg plunges through a hollow pocket of discarded pamphlets straight down to the knee. A cloud of choking white dust erupts around your face, filling your nose and mouth with the dry, bitter taste of centuries-old rag paper. You haul yourself out with a grunt, leaving behind a stained boot-strap and a small debt of lost time as you limp onward into the haze.",
+   "page": "Your boots misjudge the particulate crust. With a sickening crunch your right leg plunges through a hollow pocket of discarded pamphlets straight down to the knee. White dust erupts around your face and fills your nose and mouth with the dry, bitter taste of centuries-old rag paper. You haul yourself out with a grunt. A stained boot-strap stays behind, and you limp onward into the haze short on time.",
    "exits": [
     {
      "label": "Drag yourself from the drift",
@@ -14850,7 +14850,7 @@
    "kind": "recovery",
    "title": "The Weight of Paper",
    "brief": "You calculate the precise weight distribution of the falling texts to predict a safe route, acquiring an architectural diagram of the vaults.",
-   "page": "The cascading folios shift beneath your boots like scree on a slate roof, and a sudden avalanche of heavy folio volumes sweeps your feet out from under you. You scramble to latch onto a protruding iron bracket, but your fingers slip on the greasy film of lamp-oil and old dust coating the metalwork. You tumble into a narrow recess between two tilting oak cases, bruising your ribs against a protruding drawer-handle and losing your tin of spare nibs in the darkness. The air smells of crushed vellum and damp earth as you haul yourself upright, nursing a smarting shoulder while the distant rumble of the stacks settles into an uneasy silence.",
+   "page": "Cascading folios shift under your boots like scree on a slate roof, and an avalanche of folio volumes sweeps your feet out from under you. You scramble for a protruding iron bracket, but lamp-oil and old dust grease the metal and your fingers slip. You tumble into a narrow recess between two tilting oak cases, bruise your ribs on a drawer-handle, and lose your tin of spare nibs in the dark. Crushed vellum and damp earth fill the air. You haul yourself upright. Your shoulder aches while the distant rumble of the stacks fades.",
    "exits": [
     {
      "label": "Follow the tilting aisle northward",
@@ -14982,7 +14982,7 @@
    "kind": "hub",
    "title": "The Scriptorium Sluice",
    "brief": "The Scriptorium Sluice: You stand before a slow-moving current of waste ink draining from the upper writing chambers.",
-   "page": "Stagnant vapours curl around iron sluice-gates that drip with dark, viscous residue draining from the writing chambers above. To your left, a narrow ledge hugs the limestone wall where ink-crusted stepping stones break the current. Straight ahead, a smoother stone pathway winds toward the deeper subterranean vaults where the air tastes of ancient dust. Beyond a partition of warped oak, a ferry-rope sags slack over the black stream, promising a different crossing for those with the stomach for it. You grip your satchel tightly, weighing the relative dangers of each dubious route through the darkening stacks.",
+   "page": "Stagnant vapours curl around iron sluice-gates that drip with dark, viscous residue draining from the writing chambers above into the black current at your feet. To your left a narrow ledge hugs the limestone wall, and ink-crusted stepping stones break the flow. Straight ahead a smoother stone pathway winds toward the deeper subterranean vaults. Dust coats your tongue. Beyond a partition of warped oak a ferry-rope sags slack over the stream. You grip your satchel.",
    "exits": [
     {
      "label": "Follow the narrow stone ledge",
@@ -15227,7 +15227,7 @@
    "kind": "check",
    "title": "Choking the Sluice",
    "brief": "You forge a clever diversion by damming a tributary feeder with heavy encyclopedias, securing a cache of dry blotting paper.",
-   "page": "Swelling pressure from the upstream feeder threatens to blow your hasty dam apart as black fluid bubbles furiously around the edges of the heavy encyclopedias. You throw your full weight against the spine of a massive biographical dictionary, trying to wedge it deeper into the groove before the entire barricade gives way under the rising tide. The soaked paper groans and slips beneath your palms, threatening to burst the seal and wash your dry cache into the void.",
+   "page": "Pressure from the upstream feeder swells against your hasty dam as black fluid bubbles hard around the edges of the encyclopedias. You shove against the spine of a massive biographical dictionary and try to wedge it deeper into the groove before the barricade yields to the rising tide. The soaked paper groans and slips under your palms. The seal could burst and wash your dry cache into the void.",
    "exits": [
     {
      "label": "check-full",
@@ -16050,7 +16050,7 @@
    "kind": "scene",
    "title": "Silent Footfalls",
    "brief": "You glide through the phantom audience with effortless poise, collecting dropped notes containing secret archival passwords.",
-   "page": "Dropped scraps of parchment flutter down through the dim air like dying autumn leaves. You track their erratic descent with sharp eyes, timing your stride to intercept them before they dissolve into the floorboards. The air smells intensely of cold iron and dry cellulose, thick with the weight of centuries. Maintaining an immaculate rhythm, you slip past a cluster of disapproving spectral examiners whose eyes track your passage with cold curiosity.",
+   "page": "Dropped scraps of parchment flutter down through the dim air like dying autumn leaves. You track their erratic fall. You time your stride and intercept them before they dissolve into the floorboards, while cold iron and dry cellulose scent the corridor and a cluster of disapproving spectral examiners follows your passage with cold curiosity.",
    "exits": [
     {
      "label": "Reach for the falling notes",
@@ -17084,7 +17084,7 @@
    "kind": "scene",
    "title": "The Oiled Hinge",
    "brief": "You approach the fragile elder with delicate, measured steps that avoid disturbing a single paper stack, gaining a vial of restoration oil.",
-   "page": "Shadows flicker against the high stone walls as you navigate the narrow gap between the leaning stacks of discarded treatises. Your fingers grip the small glass vial of restoration oil, feeling the cool weight of the amber liquid inside against your palm. The air tastes of dried lavender and stale lamp-oil, heavy with the centuries of forgotten lore resting upon these towering shelves. Ahead, the corridor deepens into absolute quiet, broken only by the faint, rhythmic ticking of a clockwork beetle somewhere behind the wainscot.",
+   "page": "Shadows flicker on the high stone walls as you pick your way through the narrow gap between leaning stacks of discarded treatises. Your fingers grip the small glass vial of restoration oil, the amber liquid cool against your palm. Dried lavender and stale lamp-oil sit on the tongue among these towering shelves. Ahead the corridor goes still, broken only by the faint ticking of a clockwork beetle somewhere behind the wainscot.",
    "exits": [
     {
      "label": "Advance toward the distant reading desk",
@@ -17137,7 +17137,7 @@
    "kind": "recovery",
    "title": "Paper Cuts and Stumbles",
    "brief": "You approach the fragile elder with delicate, measured steps that avoid disturbing a single paper stack, gaining a vial of restoration oil.",
-   "page": "A sudden shift in the stack sends a heavy leather-bound volume sliding across your path, catching your ankle and sending you sprawling awkwardly into a drift of loose leaves. Your lamp rattles violently against the flagstones, spilling a thin circle of oil that flares briefly before dying out in the dust. You pick yourself up with a bruised shin and a palm scraped raw by jagged paper edges, leaving behind a small smear of blood on an ancient treatise of forgotten laws.",
+   "page": "A shift in the stack sends a leather-bound volume sliding across your path. It catches your ankle and drops you into a drift of loose leaves. Your lamp rattles on the flagstones and spills a thin circle of oil that flares once, then dies in the dust. Your shin is bruised. You rise with a palm scraped raw by jagged paper edges, and a small smear of blood marks an ancient treatise of forgotten laws.",
    "exits": [
     {
      "label": "Gather your spilled belongings and stand",
@@ -17853,7 +17853,7 @@
    "kind": "scene",
    "title": "Blood Red Warning",
    "brief": "You decipher a warning scrawled in blood-red ink across a shifting folio, testing your erudition, and you learn the secret cipher to bypass the outer wards.",
-   "page": "Iron shelving shifts and grinds against the masonry, opening a narrow fissure in the wall where an ancient folio hangs by threads of dried gum. Its pages flutter wildly in a draft that smells of stale lamp-oil and copper. Upon its vellum surface, a jagged warning has been scrawled in thick, blood-red ink that still appears wet to the touch. You trace the complex syntax of the script, recognizing the archaic dialect of the early Cataloguers who first mapped these vaults. The characters rearrange themselves even as you watch, threatening to dissolve into meaningless blotches unless you commit the precise sequence to memory.\n\nStepping closer to the trembling folio, you prepare to decipher the hidden cipher that will unlock the outer wards.",
+   "page": "Iron shelving shifts and grinds against the masonry, opening a narrow fissure in the wall where an ancient folio hangs by threads of dried gum. Its pages flutter in a draft that smells of stale lamp-oil and copper. A jagged warning covers the vellum in blood-red ink that still looks wet. You trace the syntax and know the archaic dialect of the early Cataloguers who first mapped these vaults. The characters rearrange as you watch. They will dissolve into blotches unless you fix the precise sequence in memory.\n\nYou step closer to the trembling folio to take the cipher that unlocks the outer wards.",
    "exits": [
     {
      "label": "Decipher the blood-red folio warning",
@@ -19072,7 +19072,7 @@
    "kind": "check",
    "title": "Trading With Phantoms",
    "brief": "You bargain with a chorus of disgruntled annotators using clever wordplay, testing your cunning, and you win a binding oath of silence from the spectral crowd.",
-   "page": "Countless ink-faint faces peer from the margins of nearby folios, their collective commentary rising to a deafening pitch that threatens to unravel your thoughts. You lean against a vibrating upright beam, marshaling your sharpest wits to outmaneuver their chaotic logic with calculated verbal parries. Every syllable must be weighed with absolute precision to convince the spectral host to stay their hand. As the air grows heavy with the scent of iron-gall ink and old vinegar, you launch into a complex rhetorical trap designed to catch their inquisitive minds.",
+   "page": "Ink-faint faces peer from the margins of nearby folios, and their commentary climbs to a pitch that threatens to unravel your thoughts. You lean against a vibrating upright beam and match their chaotic logic with sharp verbal parries. Each syllable counts. Iron-gall ink and old vinegar scent the air while you spring the rhetorical trap meant to catch their inquisitive minds and convince the spectral host to stay its hand.",
    "exits": [
     {
      "label": "check-full",
