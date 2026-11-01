@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import type { LogEntry } from '@/types';
 import type { EngineMode, StatVerbosity } from '@/game/types';
 import { filterSystemLogForEngine, statusLinesForVerbosity } from '@/game/systemLog';
-import { presentSystemNotices } from '@/game/systemNotice';
+import { collapseNotificationStatus, presentSystemNotices } from '@/game/systemNotice';
 import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
 import {
   isTurnUiBlocked,
@@ -204,7 +204,10 @@ function DmNarration({ entry, engineMode, statVerbosity, showTurnAsk, streamingR
   const { text: displayContent, isRevealing } = resolveRevealContent(entry.id, entry.content, streamingReveal);
   const segments = useMemo(() => parseSegments(stripTurnCloser(displayContent)), [displayContent]);
   const systemLines = useMemo(
-    () => presentSystemNotices(statusLinesForVerbosity(filterSystemLogForEngine(entry.systemLog ?? [], engineMode), statVerbosity), engineMode),
+    () => collapseNotificationStatus(
+      presentSystemNotices(statusLinesForVerbosity(filterSystemLogForEngine(entry.systemLog ?? [], engineMode), statVerbosity), engineMode),
+      engineMode,
+    ),
     [entry.systemLog, engineMode, statVerbosity],
   );
   const hasSystemLog = systemLines.length > 0 || !!entry.rollHint;
