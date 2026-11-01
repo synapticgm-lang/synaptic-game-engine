@@ -96,7 +96,32 @@ How we will measure it (per mode, T50 on LitRPG and RPG, same seeds before and a
 If XP-D1 fails, alternatives already researched and not yet tried here: (a) milestone levels with no XP bar (D&D milestone, Cradle style named tiers); (b) quality-based progress (Fallen London change points, 1-6 per challenge, level n costs n); (c) per-stat use progression (AI Dungeon); (d) collection and card evolution (Hidden Door); (e) kill-only scaled XP (Primal Hunter / Defiance of the Fall) with quests as titles instead of XP.
 
 ## XP-D1 results
-(Appended after the T50 runs. Empty until then.)
+
+### 1 Nov 2026 — XP-D1 phase A T50 (free path) — MISS
+
+Runs (branch `xp/design`, build `2026-11-01f+4885a6bf`, free writer, no paid AI):
+- LitRPG: `scripts/fate-autoplay/runs/2026-11-01T20-29-20-537Z_summoned-pact_cold-system_s7201` (seed 7201, Summoned Pact)
+- Story RPG: `scripts/fate-autoplay/runs/2026-11-01T20-36-12-145Z_salt-road-heist_chilled-gm_s7202` (seed 7202, Salt Road Heist)
+
+Measured from `turns.jsonl` `XP Gained:` lines (matches `xpGained` field totals) and final save sheet.
+
+| Mode | L2 turn | L3 turn | Turns L2→L3 | Total XP | Quest steps | Quest completes | Fights | Other (achievements) | Quest share (steps+completes) |
+|---|---|---|---|---|---|---|---|---|---|
+| LitRPG | **33** | 49 | 16 | 386 | 81 | 93 | 112 | 100 (First Kill 25 + First Steps 75) | **45.1%** |
+| Story RPG | **36** | — | — (still L2 @ T50, 42/187 into bar) | 192 | 100 | 0 | 92 | 0 | **52.1%** |
+
+LitRPG awards by turn: T6 fight thugs 50 + First Kill 25; T33 quest step 50 + First Steps 75 (L2); T34 quest step 31 + quest complete Circle’s Price 93; T49 fight Palace Stair Warden 62 (L3). Story RPG: T7 fight thugs 50; T35–36 quest steps 50+50 (L2 at T36); T37 Road Bandit 21; T42 thugs again 21.
+
+**Vs targets**
+- LitRPG L2 at turns 4–8: **MISS** (33).
+- LitRPG L3–9 ~15–25 turns/level: L2→L3 = 16 **OK** (only span reached).
+- Quest XP share 60–70% (tol. 55–80%): LitRPG 45.1% **MISS**; Story RPG 52.1% **MISS**.
+- Story RPG ~1.5× slower from L2: **not measurable** (no L3/L4 by T50). L2 itself also late (36).
+- Farming: no full same-quest XP double-dip. Story RPG repeated “the thugs” (50 then 21) — reduced payout (grey/repeat), not a full farm. LitRPG System bounty `gen-ds-trouble-34` completed with stage lines but **no XP** (quest floor / payout hole), which starved quest share and delayed L2. Flat-80 gone (L1 fight 50; L2 grey/repeat 21; L3 warden 62).
+
+**Verdict: MISS** — primary offs: LitRPG L2 turn 33 (want 4–8); quest share both modes below 55% tolerance.
+
+**Next attempt (one line):** Pay starter-quest steps earlier on the free path (first real objective before ~T8) and route generated bounty completions through engine `milestoneXp` so L2 lands in 4–8 and quest share returns to ≥55%.
 
 ## XP-D1 build notes (phase A, 1 Nov 2026)
 
