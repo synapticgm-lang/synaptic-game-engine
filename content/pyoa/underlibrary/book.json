@@ -3438,7 +3438,7 @@
    "kind": "scene",
    "title": "Threads of Iron",
    "brief": "You decipher the secret code woven into the binding thread of a master volume, revealing Thessaly's intended destination.",
-   "page": "Raw pigskin twine twists through the heavy spine of the registry, dyed with crushed galls and walnut husks. Your thumb traces the peculiar triple-knot along the headband, feeling the hitch where the thread doubles back against the grain. Such stitching is never decorative in the lower stacks; it marks a route through the blind alcoves where the catalogue loses its grip. By tilting the volume toward your horn-lantern, the tiny indigo gaps between stitches resolve into names of forgotten stairwells. Thessaly left this physical cipher behind for anyone sharp enough to read the seams.\n\nA final twist of the binding wire exposes the initial waypoint of her descent, waiting patiently within the shadow of the gallery pillars.",
+   "page": "Raw pigskin twine twists through the spine of the registry, dyed with crushed galls and walnut husks. Your thumb finds the triple-knot along the headband. The hitch doubles back. Lower-stack stitching is never for show; it marks a route through the blind alcoves where the catalogue loses its grip, and by tilting the volume toward your horn-lantern the tiny indigo gaps between stitches resolve into names of forgotten stairwells. Thessaly left this physical cipher for anyone sharp enough to read the seams.\n\nA final twist of the binding wire exposes the initial waypoint of her descent in the shadow of the gallery pillars.",
    "exits": [
     {
      "label": "Trace the indigo thread carefully forward",
@@ -7813,7 +7813,7 @@
    "kind": "recovery",
    "title": "Springing the Trap",
    "brief": "You slip past the pressure-plate triggers in the floor with clever timing, retrieving a velvet-lined cache of spare brass tumblers.",
-   "page": "A metallic click shatters the silence of the stack, instantly followed by the vicious snap of a tripwire wrapping tightly around your ankle. You tumble forward onto the dusty boards, skinning your palms and scattering your spare tinder across the floor while the warning bell above tolls a muffled, rhythmic alarm. Dust billows up from the ancient floorboards, coating your throat in dry soot as you scramble to free your entangled boot from the brass jaws. You manage to wrench yourself loose, leaving behind a torn strip of leather and a lingering ache in your heel as you retreat into safety.",
+   "page": "A metallic click breaks the silence of the stack, and at once a tripwire snaps tight around your ankle. You tumble forward onto the dusty boards. Your palms skin raw, and spare tinder scatters across the floor while the warning bell above tolls a muffled alarm. Dust billows up from the ancient floorboards and coats your throat in dry soot as you scramble to free your boot from the brass jaws. You wrench yourself loose. A torn strip of leather stays in the trap as you retreat to safer boards.",
    "exits": [
     {
      "label": "Retreat to safer ground",
@@ -10293,7 +10293,7 @@
    "kind": "scene",
    "title": "The Gleaming Needle",
    "brief": "You slide along the top rail of a moving bookcase with practiced balance, risking a clumsy tumble, to retrieve a dropped brass compass.",
-   "page": "Metal screeches against metal as the neighboring stack shifts two inches to the left, narrowing the gap between your precarious perch and the lost brass compass. Below you, the endless rows of leather-bound volumes look like the teeth of a sleeping leviathan waiting for a careless shelver to slip. You steady your breathing, keeping your eyes fixed on the small, spinning needle that stubbornly points toward some hidden magnetic north within the heart of the Underlibrary. Every movement of the overhead chains threatens to unbalance your stance, demanding absolute concentration on the narrow strip of brass beneath your soles.\n\nYou crouch lower, shifting your weight forward to shorten the distance to the prize before the tracks grind into their next configuration.",
+   "page": "Metal screeches against metal as the neighboring stack shifts two inches to the left and narrows the gap between your perch and the lost brass compass. Below you the leather-bound rows look like the teeth of a sleeping leviathan. You slow your breath. The needle keeps spinning. Eyes stay on that small point of brass as it aims toward some hidden magnetic north in the heart of the Underlibrary, while overhead chains tug at your balance on the narrow strip beneath your soles.\n\nYou crouch lower and lean forward to shorten the reach to the prize before the tracks grind into their next layout.",
    "exits": [
     {
      "label": "Reach for the dropped compass",
@@ -13132,7 +13132,7 @@
    "kind": "scene",
    "title": "Threading the Vellum",
    "brief": "You glide past the defensive tendrils of the vellum with fluid grace, risking a painful lash, to slice open a hidden pocket.",
-   "page": "Coiled ribbons of stiff parchment snap outward from the shelf like the guard-springs of an offended animal, hissing softly as they sweep through the damp air. You dip your shoulder and slide past the sweeping edge with practiced lightness, your coat brushing the parchment with barely a sound. Reaching deep into the layered binding, your fingers locate the concealed opening of the hidden slip-pocket. A quick flick of your blade parts the last stubborn threads, revealing the prize tucked securely within the dry folds.",
+   "page": "Coiled ribbons of stiff parchment snap outward from the shelf like the guard-springs of an offended animal, and they hiss as they sweep through the damp air. You dip your shoulder and slide past the sweeping edge with practiced lightness, your coat brushing the parchment with barely a sound. Deep in the layered binding your fingers find the concealed opening of the hidden slip-pocket. A quick flick of your blade parts the last stubborn threads. The prize sits inside.",
    "exits": [
     {
      "label": "Examine the hidden prize",
@@ -13301,7 +13301,7 @@
    "kind": "recovery",
    "title": "Caught in the Vellum",
    "brief": "You slip past the rusted latch using silent fingers to avoid the waking sentinel, securing a hidden iron skeleton key.",
-   "page": "A dry, papery snap shatters the silence as the sentinel volume slams shut with vicious speed, catching your sleeve and pinning your arm against the cold iron shelving. Pain shoots through your shoulder as you wrench yourself free, leaving a ragged strip of heavy wool behind in the snapping jaws of the book. You stumble back against the opposite stack, clutching a bleeding forearm while the dark pages rustle with a mocking, dry chatter in the gloom.",
+   "page": "A dry, papery snap breaks the silence as the sentinel volume slams shut with vicious speed, catches your sleeve, and pins your arm against the cold iron shelving. Pain shoots through your shoulder. You wrench yourself free. A ragged strip of wool stays behind in the snapping jaws of the book. You stumble back against the opposite stack and clutch a bleeding forearm while the dark pages rustle with a dry chatter in the gloom.",
    "exits": [
     {
      "label": "Retreat to the side passage",
@@ -14148,7 +14148,7 @@
    "kind": "hub",
    "title": "The Dust-Sump",
    "brief": "The Dust-Sump: You enter a stagnant hollow where centuries of disintegrating pages have settled into shifting dunes.",
-   "page": "Stumbling out of the choking white fog, you reach a vast, stagnant hollow where centuries of disintegrating paper have settled into undulating dunes of grey powder. Ghostly drifts rise and fall with every breath of subterranean air, burying the lower shelves in silent, shifting drifts that whisper softly whenever your boots disturb their surface. To your left, a narrow rift opens between two leaning folio-cases where a faint bluish phosphorescence pulses rhythmically from the floor. Straight ahead, a steep mound of pulverized index cards spills toward a dark gap in the masonry, while a narrow catwalk of lashed book-spines stretches off to the right above a bottomless black drop. The air here is dead and cold, smelling powerfully of old linen and dried glue, inviting you to choose your next direction carefully before the shifting dunes swallow your tracks entirely.",
+   "page": "You stumble out of the choking white fog into a vast stagnant hollow where centuries of disintegrating paper have settled into undulating dunes of grey powder. Ghostly drifts rise and fall with every breath of subterranean air and bury the lower shelves in silent shifting piles that hiss when your boots disturb them. To your left a narrow rift opens between two leaning folio-cases. Faint bluish phosphorescence pulses from the floor there. Straight ahead a steep mound of pulverized index cards spills toward a dark gap in the masonry, while a narrow catwalk of lashed book-spines stretches off to the right above a black drop. The air here is dead and cold. It smells of old linen and dried glue. Your tracks fill in behind you.",
    "exits": [
     {
      "label": "Climb the mound of index cards",
@@ -14967,7 +14967,7 @@
    "kind": "bottleneck",
    "title": "The Black Sluice",
    "brief": "The air grows cold and damp as you approach an underground river of glistening black ink that blocks your path.",
-   "page": "Frost forms along the margins of the paving stones, hardening the soot into crystalline crusts that crunch beneath your aching boots. Thickening vapours rise from a trench carved deep into the limestone floor, carrying the bitter tang of copper, lamp-oil, and boiled gall-nuts. Before you flows an underground river of glistening black ink, its sluggish surface reflecting the dull amber glow of distant wall-brackets without returning any warmth. Bubbles of forgotten prose break lazily against the slick stone banks, releasing faint, dry whispers that dissolve before their meaning can be caught. You press your shoulder against the cold masonry, testing the air for any sign of a bridge or stepping-way across the dark tide.",
+   "page": "Frost forms along the margins of the paving stones and hardens the soot into crystalline crusts that crunch beneath your boots. Vapours rise from a trench carved deep into the limestone floor and bring the bitter tang of copper, lamp-oil, and boiled gall-nuts. Before you flows an underground river of glistening black ink, and its sluggish surface catches the dull amber glow of distant wall-brackets without returning any warmth. Bubbles of forgotten prose break lazily against the slick stone banks and release faint dry sounds that fade before any meaning arrives. You press your shoulder against the cold masonry. Nothing crosses the tide.",
    "exits": [
     {
      "label": "Trace the sluggish channel westward",
@@ -16457,7 +16457,7 @@
    "kind": "reward",
    "title": "Prism of Clarity",
    "brief": "You conquer the shifting linguistic puzzle through sheer mental endurance, unlocking a chamber containing a luminous reading prism.",
-   "page": "Cool glass rests steadily in your palm, its violet beams cutting a clean path through the clinging shadows of the deep annexe. Whatever resistance the object offered has dissolved into a cooperative hum, aligning itself with your thoughts and sharpening your senses against the gloom. You slip the instrument into your canvas satchel and leave the alcove behind. Ahead the corridor opens toward the heart of the archives; the air cools, and the silence turns watchful.",
+   "page": "Cool glass rests in your palm, and its violet beams cut a clean path through the clinging shadows of the deep annexe. Whatever resistance the object offered has gone; it now answers your grip and sharpens what you can make out in the gloom. You slip the instrument into your canvas satchel and leave the alcove behind. Ahead the corridor opens toward the heart of the archives. The air cools. Stone underfoot turns slick.",
    "exits": [
     {
      "label": "Enter the silent inner sanctum",
@@ -17319,7 +17319,7 @@
    "kind": "hub",
    "title": "The Threshold Arch",
    "brief": "The Threshold Arch: The lintel is choked with iron chains and heavy padlocks left by the Cataloguers, requiring steady hands and iron resolve to clear a path.",
-   "page": "The heavy stone lintel above is thoroughly choked with rusted iron chains and thick padlocks left behind by generations of cautious Cataloguers. Clearing a viable path forward demands steady hands and an unyielding will against the lingering curses woven into the metalwork. Each potential route away from this choked gateway offers its own trials, whether through hidden mechanisms, freezing drafts, or the sheer weight of institutional dread hanging in the vaulted gloom.",
+   "page": "The stone lintel above is thoroughly choked with rusted iron chains and thick padlocks left by generations of cautious Cataloguers. Clearing a viable path forward asks for careful hands and an unyielding will against the lingering curses still bound into the old metalwork around the gateway. A freezing draft slides through. One padlock hangs askew on the leftmost chain.",
    "exits": [
     {
      "label": "Clear the padlocked iron chains",
@@ -19380,7 +19380,7 @@
    "kind": "recovery",
    "title": "The Slip on the Grating",
    "brief": "You step gracefully across a gap where the iron floor has rusted away into nothingness, testing your agility, and you retrieve a spool of fine silken thread.",
-   "page": "Your left boot heel finds only loose flake-rust instead of solid metal, sliding off the edge with a dry scrape that echoes sharply down the brick-lined shaft. For a heartbeat you hang by your grip alone; the brass lamp swings into your ribs and bruises your side before the iron chain snaps tight. You haul yourself upward with a sharp grunt, scraping the skin of your knuckles raw against a protruding bolt, but you manage to scramble onto the firm timber of the opposite floor.\n\nThe silken spool is yours, though your side aches and a smear of fresh blood stains the cuff of your grey shelver's tunic.",
+   "page": "Your left boot heel finds only loose flake-rust instead of solid metal and slides off the edge with a dry scrape that rattles down the brick-lined shaft. For a heartbeat you hang by your grip alone; the brass lamp swings into your ribs and bruises your side before the iron chain snaps tight. You haul yourself upward with a sharp grunt. A protruding bolt scrapes your knuckles raw before you scramble onto the firm timber of the opposite floor.\n\nThe silken spool is yours. Blood stains the cuff of your grey shelver's tunic.",
    "exits": [
     {
      "label": "Proceed toward the whispering gallery",
