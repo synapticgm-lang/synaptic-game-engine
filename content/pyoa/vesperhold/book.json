@@ -8502,7 +8502,7 @@
     }
    ],
    "title": "The Lookout's Horn",
-   "page": "A flat, mournful blast from the Cable Court horn rolls over the swinging stalls, setting the hemp cables vibrating beneath your boots. A lookout leans over a timber rail in the mist, marking your passage in a grease-stained tally book with a blunt piece of chalk. The bronze clapper hums in response to the brass horn, a sympathetic vibration that rattles straight through your spine. You stand at the crossroads of the market shelf, where several paths carve their way into the white abyss."
+   "page": "A flat, mournful blast from the Cable Court horn rolls over the swinging stalls, and the hemp cables kick under your boots. A lookout leans over a timber rail in the mist. Chalk scrapes the page. He marks your passage in a grease-stained tally book with a blunt piece of chalk while the bronze clapper answers the brass horn and rattles straight through your spine. You stand at the crossroads of the market shelf, where several paths carve into the white abyss."
   },
   {
    "id": "vh-2-2-4-5",
@@ -16877,7 +16877,7 @@
     }
    ],
    "title": "The Sealed Shelter",
-   "page": "Thick, blue drift-snow has completely choked the stone doorway of the old climber's refuge, sealing it into the mountainside like a frozen tomb. You hack fiercely at the compacted crust with the edge of your ice-axe until chunks tumble away into the void, revealing the dark, drafty interior within. The bronze clapper gives a single, resonant thrum against your back as the trapped air inside the shelter escapes.\n\nBeyond the refuge, multiple routes beckon down into the deepening mists of the lower mountain."
+   "page": "Thick blue drift-snow has choked the stone doorway of the old climber's refuge and locked it into the mountainside like a frozen tomb. You hack at the compacted crust with the edge of your ice-axe. Chunks tumble into the void. The dark, drafty interior shows itself once the crust gives, and the bronze clapper knocks once against your back as the trapped air inside the shelter escapes.\n\nBeyond the refuge, multiple routes drop into the deepening mists of the lower mountain."
   },
   {
    "id": "vh-4-2-3-7",
@@ -21834,7 +21834,7 @@
     }
    ],
    "title": "The Master Founder's Judgment",
-   "page": "You unbuckle the straps from your aching shoulders and hand the relic to the master founder just as the first snowflakes begin to fall. The old smith runs calloused fingers down the scored bronze, testing the weight of the tongue that once woke Orisonhold through mountain blizzards. Around you, apprentices stoke the coke-beds until the cavernous arch glows like a captured sunset.\n\nThere is no time to linger by the hearth, for the low pass threatens to seal entirely before dawn breaks."
+   "page": "You unbuckle the straps from your aching shoulders and hand the relic to the master founder just as the first snowflakes begin to fall. The old smith runs calloused fingers down the scored bronze. He tests the tongue. That tongue once woke Orisonhold through mountain blizzards, and around you apprentices stoke the coke-beds until the cavernous arch glows like a captured sunset.\n\nThere is no time to linger by the hearth. The low pass threatens to seal entirely before dawn breaks."
   },
   {
    "id": "vh-5-2-5-3",
@@ -24354,7 +24354,7 @@
     }
    ],
    "title": "The Lime Pit Mishap",
-   "page": "Beside a hissing lime-pit, an anxious messenger named Stannard drops his leather satchel of dispatches into the caustic white sludge. Bubbles of boiling gas burst lazily from the thick paste, sending up choking plumes of vapor that sting your eyes and throat. You step back instinctively, steadying Biscuit by the halter while considering which path will take you furthest from the noxious fumes."
+   "page": "Beside a hissing lime-pit, an anxious messenger named Stannard drops his leather satchel of dispatches into the caustic white sludge. Bubbles of boiling gas burst from the thick paste. Vapor climbs in choking plumes. Your eyes and throat burn, so you step back, take Biscuit by the halter, and put more space between yourself and the noxious fumes."
   },
   {
    "id": "vh-6-1-3-10",
@@ -25754,7 +25754,7 @@
     }
    ],
    "title": "The Subterranean Channel",
-   "page": "Water drips rhythmically from the ceiling vaults, echoing through the cavernous gloom of the lower works. You cross a wet wooden grating that spans a deep subterranean drainage channel, hearing the sullen rush of river water far below. The timber planks groan under your boots, slippery with spray and fine coal dust carried up from the active furnace chambers deeper in the mountain's roots.\n\nBeyond the grating, the passage splits into two distinct routes lit by the faint, flickering glow of distant safety flares."
+   "page": "Water drips from the ceiling vaults in a slow count that fills the cavernous gloom of the lower works. You cross a wet wooden grating that spans a deep subterranean drainage channel. River water rushes below. The timber planks groan under your boots, slippery with spray and fine coal dust that the active furnace chambers deeper in the mountain's roots have pushed upward.\n\nBeyond the grating, the passage splits under the faint, flickering glow of distant safety flares."
   },
   {
    "id": "vh-6-2-3-10",
@@ -25986,7 +25986,7 @@
     }
    ],
    "title": "The Bailiff's Ledger",
-   "page": "Beside the bubbling bronze cauldron, a Cable Court bailiff taps his ledger with a sharp silver pen, demanding immediate toll for the metal's descent down the mountain stairs. Steam rises from the quench-troughs to cloud his spectacles, yet his hand remains outstretched for payment or collateral. The surrounding forge-masters step back into the shadows, leaving you alone to weigh the cost of passage against the integrity of the monastery's bell."
+   "page": "Beside the bubbling bronze cauldron, a Cable Court bailiff taps his ledger with a sharp silver pen and demands immediate toll for the metal's descent down the mountain stairs. Steam rises from the quench-troughs to cloud his spectacles. His hand stays out. He waits for payment or collateral while the surrounding forge-masters step back into the shadows. You are left alone with the monastery's bell."
   },
   {
    "id": "vh-6-2-4-3",
@@ -26442,7 +26442,7 @@
    "exits": [],
    "endingId": "end-A2",
    "title": "A True Bell, No Choir",
-   "page": "The fire in the hearth burns low, casting long, flickering shadows across the rafters as the mountain wind rattles the frozen windowpanes outside. Somewhere up in the grey mists the un-hung bell murmurs, and you wonder if the metal itself regrets coming down the long stairs. There are no grand songs sung for your return, only the steady ticking of the clock and the quiet patience of an apprentice who has learned the cost of walking alone. You pull your wool blanket tighter and let the silence take the room."
+   "page": "The fire in the hearth burns low. Long flickering shadows cross the rafters as the mountain wind rattles the frozen windowpanes outside. Somewhere up in the grey mists the un-hung bell murmurs, and you wonder if the metal itself regrets coming down the long stairs. There are no grand songs sung for your return, only the ticking of the clock and the patience of an apprentice who has learned the cost of walking alone. You pull your wool blanket tighter."
   },
   {
    "id": "vh-e-A3-1",
@@ -26614,7 +26614,7 @@
     }
    ],
    "title": "Ploughshares, No Strings",
-   "page": "The forge-master's hammer comes down with a satisfying thud and flattens the ancient bronze of Orison on the anvil, and the sacred note breaks apart into a shower of yellow sparks. You watch the tongue of the great bell transform into long, curved blades of dark metal, each one designed to bite deep into the stubborn terrace soil rather than call the guilds to prayer. The Terrace Millers stand by the quench-tubs with flour-dusted sleeves, grinning through their hunger as they count the new ploughshares coming off the cooling rack. No toll-lords hold a claim on this iron, and no rope-maker has tied an oath around its neck; it is simply metal, meant for the turning of earth and the sprouting of barley.\n\nRead on, to follow the iron into the furrows."
+   "page": "The forge-master's hammer comes down with a satisfying thud and flattens the ancient bronze of Orison on the anvil, and the sacred note breaks apart into a shower of yellow sparks. Sparks hit the floor. You watch the tongue of the great bell become long, curved blades of dark metal meant to bite deep into the stubborn terrace soil, not to call the guilds to prayer. The Terrace Millers stand by the quench-tubs with flour-dusted sleeves. They grin through hunger. They count the new ploughshares coming off the cooling rack. No toll-lords hold a claim on this iron, and no rope-maker has tied an oath around its neck, for it is simply metal meant for the turning of earth and the sprouting of barley.\n\nRead on, to follow the iron into the furrows."
   },
   {
    "id": "vh-e-C1-2",
