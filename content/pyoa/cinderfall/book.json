@@ -4440,7 +4440,7 @@
    "kind": "recovery",
    "title": "Strained Muscle and Steam",
    "brief": "Wrestling a stuck intake valve clear of sulfur crust prevents a blockage, earning a sealed flask of clean distilled boiler water.",
-   "page": "The wrench slips with a sharp metallic shriek that sets your teeth on edge. You stumble backward into the hot boiler casing. A searing scrape burns across your knuckles; a dark red line beads through the grey soot on your skin. You catch your breath and press the bleeding hand into your trousers. The engine drops back into an exhausted, uneven rhythm. Valuable minutes are gone into the empty waste. Grey soot cakes over the raw knuckles.",
+   "page": "The wrench slips with a sharp metallic shriek that sets your teeth on edge, and you stumble backward into the hot boiler casing. A searing scrape burns across your knuckles. A dark red line beads through the grey soot on your skin. You catch your breath and press the bleeding hand into your trousers. The engine drops back into an exhausted, uneven rhythm while valuable minutes drain into the empty waste. Grey soot cakes over the raw knuckles.",
    "exits": [
     {
      "label": "Tend your raw knuckles and press on",
@@ -5326,7 +5326,7 @@
    "kind": "check",
    "title": "The Gripping Gear",
    "brief": "Repairing a broken hand-cranked crane for a grateful vendor earns a heavy steel pinch-bar for unseating jammed switches.",
-   "page": "Teeth screech against dry bronze inside the winch-box as you force the jammed hand-crank to turn against a mountain of rusted slag. The rusted pinions bind tight, threatening to snap the main shaft and spray red-hot iron shards across your knuckles. You brace your shoulder against the iron housing, throwing your weight into the crank while the metal screeches in protest.",
+   "page": "Teeth screech against dry bronze inside the winch-box as you force the jammed hand-crank to turn against a mountain of rusted slag. The pinions bind tight. \"Do not snap the shaft,\" you tell yourself, because hot iron shards would spray across your knuckles. You brace your shoulder against the iron housing and throw your weight into the crank while the metal screams in protest.",
    "exits": [
     {
      "label": "check-full",
@@ -14429,7 +14429,7 @@
    "kind": "check",
    "title": "The Scalding Bypass",
    "brief": "You hold your breath in the rising vapor while steadying the primary bypass valve, winning a waterproof oilskin map case.",
-   "page": "Scald-heat rolls off the brass housing in heavy, suffocating waves, fogging your goggles and slicking the deck plates with greasy condensate. Your hands hover over the screaming valve while the pressure needle pins itself hard against the red sector, threatening to split the copper elbow wide open. You slow your breathing against the roar of the boiler and reach out your fingers to catch the spinning wheel.",
+   "page": "Scald-heat rolls off the brass housing in waves that fog your goggles and slick the deck plates with greasy condensate. Your hands hover over the screaming valve. The pressure needle pins itself hard against the red sector, and the copper elbow sits a breath from splitting wide open. Against the roar of the boiler you slow your breathing and reach your fingers out to catch the spinning wheel.",
    "exits": [
     {
      "label": "check-full",
@@ -15270,7 +15270,7 @@
    "kind": "scene",
    "title": "Echoes in the Dark",
    "brief": "You free the jammed hopper gate with a precise hammer blow to the release pawl, securing three buckets of clean Welsh steam-coal.",
-   "page": "Metal hits metal in the Hollow Cut. The hollow thud runs down the damp masonry. Dust flakes from the curved ceiling and lands grey on your shoulders and cap. The jammed mechanism groans. Iron teeth shift in their grease-clotted housing as the fuel above begins to settle. You lean into the timber frame and wait. The chute will either give up its load or stay frozen shut.",
+   "page": "Metal hits metal in the Hollow Cut, and the hollow thud runs down the damp masonry while dust flakes from the curved ceiling and lands grey on your shoulders and cap. The jammed mechanism groans. Iron teeth shift in their grease-clotted housing as the fuel above begins to settle. You lean into the timber frame and wait. The chute will either give up its load or stay frozen shut.",
    "exits": [
     {
      "label": "Catch the falling coal buckets",
@@ -18089,7 +18089,7 @@
    "kind": "check",
    "title": "The Sprocket's Grip",
    "brief": "You hammer the jammed sluice-chain back onto its sprocket with a heavy brass spanner, risking a crushed knuckle, and win a heavy brass oil-can.",
-   "page": "The heavy brass spanner slips against the slick, grease-coated iron link, threatening to jam the entire secondary gear train in a shriek of stripped teeth. You throw your full weight against the lever arm, straining every muscle in your back while the ancient machine groans and fights back with sudden, violent jerks. Steam vents whistle shrilly beside your ear, blinding you with a sudden wall of white heat that smells of scorching oil. Your hands burn against the cold metal as you try to force the stubborn cog into alignment before the housing cracks.",
+   "page": "The brass spanner slips against the slick, grease-coated iron link and nearly jams the whole secondary gear train in a shriek of stripped teeth. You throw yourself against the lever arm. Every muscle in your back works while the ancient machine groans and jerks with sudden violence. Steam vents whistle shrilly beside your ear and a wall of white heat blinds you. It smells of scorched oil. Cold metal burns your palms as you try to force the stubborn cog into alignment before the housing cracks.",
    "exits": [
     {
      "label": "check-full",
@@ -18159,7 +18159,7 @@
    "kind": "scene",
    "title": "The Scalding Bilge",
    "brief": "You wade into the scalding bilge-water while holding your nerve against the rising dark, and salvage a dry woollen muffler.",
-   "page": "Murky water swirls around your shins, carrying flakes of grey ash and globules of waste oil from the churning turbines deeper within the vault. You pick your way across the submerged floor plates, testing for hidden gaps in the grating with the toe of your boot. A discarded woollen muffler, caked in soot and wet grime, floats near a rusted stanchion and catches on a jagged rivet. You fish it out with your free hand, wringing out the foul-smelling water before stuffing the damp cloth into your coat pocket for later warmth. The low humming of the distant dynamos vibrates through the soles of your feet.",
+   "page": "Murky water swirls around your shins. Flakes of grey ash and globules of waste oil ride in from the churning turbines deeper within the vault as you pick your way across the submerged floor plates and test for hidden gaps in the grating with the toe of your boot. A discarded woollen muffler, caked in soot and wet grime, floats near a rusted stanchion and catches on a jagged rivet. You fish it out with your free hand, wring the foul-smelling water from it, and stuff the damp cloth into your coat pocket for later warmth. Distant dynamos knock through the soles of your feet.",
    "exits": [
     {
      "label": "Follow the submerged trench onward",
@@ -20011,7 +20011,7 @@
    "kind": "ending-part",
    "title": "The Smoke Clear",
    "brief": "Ending \"The Last Train Out\"",
-   "page": "Behind the engine, the great walled city opens its dry throat to the flood, drinking deep from the black reservoirs while the steam whistle blows a long, triumphant blast that rattles the glass in every window from the market square to the summit. You wipe the grease from your forehead with the back of a blackened hand, feeling the heat of the firebox die down to a steady, manageable glow as the pressure eases in the copper tubes. The ash-storm season breaks against the battlements and falls away like spent coal, leaving the tracks clear toward the western horizon where the sky finally shows a pale, washed strip of blue.",
+   "page": "Behind the engine, the great walled city opens its dry throat to the flood and drinks deep from the black reservoirs while the steam whistle blows a long, triumphant blast that rattles the glass in every window from the market square to the summit. You wipe the grease from your forehead with the back of a blackened hand. Heat in the firebox dies down to a manageable glow as the pressure eases in the copper tubes. The ash-storm season breaks against the battlements and falls away like spent coal. Tracks stand clear toward the western horizon. There the sky shows a pale, washed strip of blue.",
    "exits": [
     {
      "label": "Drive the engine past the final signal",
