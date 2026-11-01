@@ -6845,7 +6845,7 @@
    "kind": "scene",
    "title": "The Silver Bookmark",
    "brief": "You slip sideways through the tightest portion with smooth grace, recovering a dropped silver-plated bookmark of fine make.",
-   "page": "Smooth stone slides against your sleeve as you slip sideways through the tightest portion of the cleft with measured grace. A faint metallic gleam catches the pale light of your brass lamp from a crevice near the floor. Reaching down, your fingers brush against a dropped silver-plated bookmark of fine make, engraved with the stamp of the Cataloguers' Court. It hums with a faint, residual chill against your palm before you tuck it securely into your pocket.",
+   "page": "Smooth stone slides against your sleeve as you edge sideways through the tightest portion of the cleft, brass lamp pale at your side. A metallic gleam shows in a crevice near the floor. You reach down and your fingers brush a dropped silver-plated bookmark engraved with the stamp of the Cataloguers' Court. The metal is cold. You tuck it into your pocket.",
    "exits": [
     {
      "label": "Advance deeper into the gloom",
@@ -9348,7 +9348,7 @@
    "kind": "check",
    "title": "Crossing the Collapsing Stacks",
    "brief": "You gracefully navigate a stack of collapsing reference ledgers while addressing the bench, risking physical stumbling, to impress a sympathetic assessor.",
-   "page": "More heavy volumes slide from their rotting shelves, creating an unpredictable hazard of shifting leather and sharp paper edges right across the gallery floor. You leap across a chasm of spilled folios while keeping your gaze fixed firmly on the sympathetic assessor's attentive face. A single misstep will send you crashing into the rows of stacked authorities below.",
+   "page": "More volumes slide from their rotting shelves. Leather and sharp paper edges spill across the gallery floor in a shifting hazard. You leap a chasm of spilled folios while your gaze stays fixed on the sympathetic assessor's attentive face, and one misstep will send you crashing into the rows of stacked authorities below.",
    "exits": [
     {
      "label": "check-full",
@@ -10046,7 +10046,7 @@
    "kind": "recovery",
    "title": "A Crushing Misstep",
    "brief": "You study the complex mechanical rhythm of the moving shelving units, risking miscalculation, to discover a hidden maintenance hatch.",
-   "page": "Your fingers slip against the greased iron just as the case lurches forward, catches your sleeve, and pins your shoulder hard against the rough oak upright with a sickening jolt. Pain flares sharply across your collarbone. A deep purple bruise spreads, and a ragged strip tears from your shelver's coat. You wrench yourself free with a desperate heave, tumbling sideways into the dust as the massive timber grinds past, leaving you battered, winded, and poorer by a good jacket.",
+   "page": "Your fingers slip against the greased iron just as the case lurches forward, catches your sleeve, and pins your shoulder hard against the rough oak upright. Pain flares across your collarbone. A deep purple bruise spreads, and a ragged strip tears from your shelver's coat. You wrench yourself free with a desperate heave and tumble sideways into the dust. The massive timber grinds past. You are battered, winded, and poorer by a good jacket.",
    "exits": [
     {
      "label": "Crawl through the clearance gap",
@@ -10480,7 +10480,7 @@
    "kind": "recovery",
    "title": "A Flawed Resolve",
    "brief": "You steel your nerves against the intimidating threats of the watch captain, risking your composure, to secure a stolen patrol schedule.",
-   "page": "Your nerve fractures just as the captain slams a heavy fist down upon the oak desk, sending a cloud of dried blotting sand into the air. The sudden violence shatters your focus, and you stumble backward against a stack of discarded penalty slips, scattering white paper across the flags. The captain's laughter is dry and bitter as he seizes your arm, relieving you of a handful of copper coins and your only tin of restorative ink by way of a summary fine. You limp out into the drafty corridor a moment later, bruised in spirit and poorer by several farthings, but still breathing.",
+   "page": "Your nerve fractures just as the captain slams a fist down upon the oak desk. Dried blotting sand leaps into the air. The sudden violence shatters your focus, and you stumble backward against a stack of discarded penalty slips that scatter white paper across the flags. His laughter is dry and bitter. He seizes your arm and takes a handful of copper coins and your only tin of restorative ink by way of a summary fine. You limp out into the drafty corridor a moment later, bruised in spirit and poorer by several farthings, but still breathing.",
    "exits": [
     {
      "label": "Return to the smoky dormitory",
@@ -11432,7 +11432,7 @@
    "kind": "recovery",
    "title": "Slip in the Ink",
    "brief": "You cross the swaying bridge of old book spines with light, dancing steps, risking a fall into the ink, to retrieve a floating notebook.",
-   "page": "A treacherous patch of damp calfskin betrays your footing at the worst possible moment, sending your heel sliding off the edge into the black, sluggish current. You snatch your boot back with a sharp gasp, but not before a heavy splash of ink drenches your trousers and stains your ankles a permanent, indelible purple. You scramble back onto the firm center of the bridge, shivering with cold and dripping with the bitter taste of oxidized iron.",
+   "page": "Damp calfskin betrays your footing. Your heel slides off the edge into the black, sluggish current. You snatch your boot back with a sharp gasp, but not before a splash of ink drenches your trousers and stains your ankles a permanent, indelible purple. You scramble back onto the firm center of the bridge. Cold ink drips from you, bitter with the taste of oxidized iron.",
    "exits": [
     {
      "label": "Press onward toward the lower stairs",
@@ -12202,7 +12202,7 @@
    "kind": "check",
    "title": "Navigating the Trap",
    "brief": "You gracefully sidestep a sweeping procedural trap laid by the prosecutors, risking your balance, to reach the evidentiary table.",
-   "page": "Sudden movement rattles the mahogany floor as a sweeping procedural snare uncoils from beneath the bench, aiming directly for your shins with mechanical precision. Shifting your weight instantly, you drop low and attempt to slide across the slick surface, trusting your balance entirely to the muscle memory acquired from years of hauling heavy trolleys through shifting stacks. A sharp draft from the high windows catches your collar, threatening to tip you sideways into the waiting clerks. Every eye in the court freezes on your descent.",
+   "page": "Sudden movement rattles the mahogany floor as a sweeping procedural snare uncoils from beneath the bench and aims for your shins. You drop low. You try to slide across the slick surface, and muscle memory from years of hauling trolleys through shifting stacks has to hold your balance while a sharp draft from the high windows catches your collar and nearly tips you sideways into the waiting clerks. Every eye in the court freezes on your descent.",
    "exits": [
     {
      "label": "check-full",
@@ -12528,7 +12528,7 @@
    "kind": "check",
    "title": "Threading the Ink Tendrils",
    "brief": "You glide past the defensive tendrils of the vellum with fluid grace, risking a painful lash, to slice open a hidden pocket.",
-   "page": "Black printer's ink pools and drips from the twitching margin-lines as you glide toward the narrow crease in the barrier's hide. A sudden tremor shakes the wall, sending a vicious lash of vellum whipping through the air directly toward your exposed wrist. You shift your weight onto the ball of your foot, twisting your torso in a fluid arc to evade the stinging strike while reaching blindly into the hidden pouch. The lash brushes your sleeve just as your fingers find purchase inside the fold.",
+   "page": "Black printer's ink pools and drips from the twitching margin-lines as you glide toward the narrow crease in the barrier's hide. A sudden tremor shakes the wall. A vicious lash of vellum whips through the air toward your exposed wrist. You shift onto the ball of your foot and twist your torso in a fluid arc to evade the strike, and your free hand reaches blindly into the hidden pouch. The lash brushes your sleeve just as your fingers find purchase inside the fold.",
    "exits": [
     {
      "label": "check-full",
@@ -12671,7 +12671,7 @@
    "kind": "reward",
    "title": "Unravelling the Vellum Shield",
    "brief": "You outsmart the barrier's magical defenses with a clever verbal paradox, risking linguistic backlash, to cause it to dissolve harmlessly.",
-   "page": "Silence floods the narrow corridor as the defensive hide yields entirely to your clever verbal assault, parting like heavy velvet to reveal the shadowed stackways beyond. Whether achieved with effortless precision or through a heart-stopping stutter of logic, the barrier is gone, leaving behind a tangible proof of your ingenuity. You retrieve a stray fragment of vellum that floats down from the collapse and pocket it.",
+   "page": "Silence floods the narrow corridor as the defensive hide yields entirely to your clever verbal assault and parts like velvet to reveal the shadowed stackways beyond. The barrier is gone. A stray fragment of vellum floats down from the collapse, and you retrieve the scrap and pocket it.",
    "exits": [
     {
      "label": "Return to the vellum barrier hub",
@@ -14274,7 +14274,7 @@
    "kind": "scene",
    "title": "Sealed in Wax",
    "brief": "You outwit the swirling dust devils by redirecting their airflow with a discarded folio cover, retrieving a sealed parchment tube.",
-   "page": "Thick red lamp-wax seals both ends of the retrieved cylinder, stamped with the blunt thumb-print of an anonymous cataloguer who clearly did not expect anyone to come looking. The air around you grows colder, carrying the unmistakable tang of oxidised copper and old tallow that marks the deeper passages of the Annexe. You turn the heavy tube over in your palms, listening to a faint scratching sound from within, as if a trapped silverfish were trying to chew its way through sixty years of bureaucracy.",
+   "page": "Thick red lamp-wax seals both ends of the retrieved cylinder, stamped with the blunt thumb-print of an anonymous cataloguer who clearly did not expect anyone to come looking. Around you the air grows colder and carries the tang of oxidised copper and old tallow that marks the deeper passages of the Annexe. You turn the tube over in your palms. From within comes a faint scratching, like a silverfish chewing through sixty years of bureaucracy. The wax holds.",
    "exits": [
     {
      "label": "Examine the wax seal closely",
@@ -14781,7 +14781,7 @@
    "kind": "reward",
    "title": "A Debt Of Honour",
    "brief": "You manipulate the leaning timber tension points to bridge the chasm safely, earning a debt of honor from a trapped cataloguer.",
-   "page": "Solid stone rises to meet your boots as you haul yourself across the gap, however narrowly avoiding a plunge into the dark. The rescued cataloguer brushes the dust from their severe woollen robes and presses an embossed brass token into your palm. This official seal binds the rule-keeper to your cause, ensuring safe passage through any future disputes.",
+   "page": "Solid stone rises to meet your boots as you haul yourself across the gap, clear of a plunge into the dark. The rescued cataloguer brushes dust from their severe woollen robes and presses an embossed brass token into your palm. The official seal binds the rule-keeper to your cause for safe passage through any future disputes. The brass rests in your hand.",
    "exits": [
     {
      "label": "Follow the corridor into shadow",
