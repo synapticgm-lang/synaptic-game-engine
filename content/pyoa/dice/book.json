@@ -11370,7 +11370,7 @@
    "kind": "check",
    "title": "Navigating the Blind Maze",
    "brief": "You rapidly plan a route through the blinding smoke of a chimney fire, risking asphyxiation to find a safe hideout.",
-   "page": "Smoke claws at your lungs, reducing visibility to a handspan of soot-blackened timber and glowing iron rivets. You press your palm flat against the exterior wall of a stilted granary, feeling for the familiar grain of salt-weathered oak that marks the concealed maintenance ladder. Somewhere close by, heavy boots stamp against the metal grates, echoing through the hollow superstructure and tracking your retreat. Your chest burns with every shallow inhalation of superheated air, forcing you to rely entirely on memory and touch to map the next step.\n\nYou pause at a junction where two venting shafts converge, listening for the shift of wind that reveals an unblocked passage.",
+   "page": "Smoke claws at your lungs and cuts visibility to a handspan of soot-blackened timber and glowing iron rivets. You press your palm flat against the exterior wall of a stilted granary and feel for the familiar grain of salt-weathered oak that marks the concealed maintenance ladder. Boots stamp nearby. The sound carries through the hollow superstructure and tracks your retreat. Your chest burns with every shallow breath of superheated air, so you map the next step by memory and touch alone.\n\nYou pause at a junction where two venting shafts converge. A shift of wind marks an unblocked passage.",
    "exits": [
     {
      "label": "check-full",
@@ -11996,7 +11996,7 @@
    "kind": "scene",
    "title": "Iron on the Wind",
    "brief": "You step onto the swaying, unrailed platform as it violently descends, risking debilitating vertigo to secure a sturdy iron prybar.",
-   "page": "Oak timbers shake under your boots as the hoist platform shears free of the stilt-city's wooden skirts. The sheer drop sucks the breath from your throat while the salt-crrusted winds whip your jacket against your ribs. Far below, the dry seabed resembles a cracked white skull under the bruised sky. Your fingers search the shivering iron guardrail for purchase, sliding past greasy grease-stains left by a thousand previous descents. A loose bracket rattles furiously beside your knee, threatening to tear free and plunge into the gray nothingness.",
+   "page": "Oak timbers shake under your boots as the hoist platform shears free of the stilt-city's wooden skirts. Breath leaves your throat. Far below, the dry seabed resembles a cracked white skull under the bruised sky while salt-crusted winds whip your jacket against your ribs. Your fingers search the shivering iron guardrail for purchase and slide past greasy grease-stains left by a thousand previous descents. A loose bracket rattles beside your knee. It could tear free and plunge into the gray nothingness.",
    "exits": [
     {
      "label": "Reach for the hanging iron prybar",
@@ -13580,7 +13580,7 @@
    "kind": "hub",
    "title": "The Bell Toll Terrace",
    "brief": "The Bell Toll: An expansive stone terrace surrounds the silent bronze bell, its surface etched with deep grooves and guarded by aggressive, oversized scavenger crabs.",
-   "page": "Scavenger crabs the size of wagon wheels scuttle across the flagstones, their multifaceted eyes catching the faint bioluminescence clinging to the damp walls. To the left, a heavy sea chest sits jammed beneath the crushing weight of a fallen gargoyle. Straight ahead, the massive bronze bell broods in the centre of the stone circle, its rusted clapper begging for a closer inspection. Narrow stairwells and shadowed alcoves branch off into the gloom, offering paths deeper into the salt-crrusted ruins where the air grows colder still.",
+   "page": "Scavenger crabs the size of wagon wheels scuttle across the flagstones, and their clustered eyes catch the faint bioluminescence clinging to the damp walls. A sea chest sits jammed to the left beneath a fallen gargoyle. The bronze bell broods ahead. It fills the centre of the stone circle, and its rusted clapper begs a closer look while narrow stairwells and shadowed alcoves branch off into the gloom of the salt-crusted ruins where the air grows colder still.",
    "exits": [
     {
      "label": "Search the crushed sea chest",
@@ -15126,7 +15126,7 @@
    "kind": "reward",
    "title": "The Lens-Maker's Art",
    "brief": "You delicately realign the damaged ocular lens on the automaton's secondary face, employing technical skill to earn a spool of unbreakable copper wire.",
-   "page": "With care borrowed from years of mending nets, you ease the warped brass housing back until the threads seat clean. The tiny screw seats itself with a clean, satisfying click that echoes off the basalt walls of the vault. Dust motes dance in the amber glow of the automaton's remaining optic. However narrowly you managed the delicate repair, the machine acknowledges your craftsmanship with a low, grinding hum of approval. It reaches into its copper-ribbed breast and offers a spool of unbreakable copper wire, its surface shining with an oily, stubborn sheen.",
+   "page": "With care borrowed from years of mending nets, you ease the warped brass housing back until the threads seat clean. The tiny screw clicks home. Dust motes drift in the amber glow of the automaton's remaining optic against the basalt walls of the vault. It reaches into its copper-ribbed breast and offers a spool of unbreakable copper wire whose surface shines with an oily, stubborn sheen. \"Your craft holds,\" it grinds.",
    "exits": [
     {
      "label": "Step through the heavy archive doors",
@@ -15913,7 +15913,7 @@
    "kind": "scene",
    "title": "The Missing Vector",
    "brief": "You piece together the torn fragments of a tidal chart left near the bedroll, using keen observation to learn the exact timing of the currents.",
-   "page": "Faded ink smudges beneath your fingertips as you try to align the jagged edges of a torn coastal chart. One corner is gone, and a blank gap sits where the deepest channel of the Low should be marked with soundings. You squint against the flickering amber flame of your lamp, searching the dust beneath the cot for the lost scrap of paper. Every shadow along the stone wall seems to stretch and distort in the draft, making the tiny symbols dance confusingly before your tired eyes.\n\nYou steady your hand and look closer at the overlapping ink strokes left behind on the remaining fragments.",
+   "page": "Faded ink smudges beneath your fingertips as you try to align the jagged edges of a torn coastal chart. One corner is gone. A blank gap sits where the deepest channel of the Low should be marked with soundings. You squint against the flickering amber flame of your lamp and search the dust beneath the cot for the lost scrap of paper. Every shadow along the stone wall stretches and distorts in the draft, and the tiny symbols slide confusingly before your tired eyes.\n\nYou brace your hand and look closer at the overlapping ink strokes left behind on the remaining fragments.",
    "exits": [
     {
      "label": "Study the faint marks in the dust",
@@ -16281,7 +16281,7 @@
    "kind": "recovery",
    "title": "A Slip In The Salt",
    "brief": "You study the alignment of the central spindle to find the primary jam, employing sharp intellect to discover a beautifully crafted golden astrolabe.",
-   "page": "Sudden vibration rattles the brass framework, sending a cascade of needle-sharp salt splinters raining down across your knuckles. You wrench your hand backward with a sharp hiss, but not before a jagged edge opens a long, weeping gash across your skin. Warm blood drips onto the ancient iron plates, smelling faintly of salt and copper as the throbbing ache settles into your bones. The delicate instrument remains wedged tight within the mineral crust, its brass rings protesting with a shrill metallic scrape that echoes through the vast chamber. You bind the torn flesh with a strip of damp canvas, gritting your teeth against the persistent sting as you step back to survey the stubborn jam.",
+   "page": "Sudden vibration rattles the brass framework. Needle-sharp salt splinters rain down across your knuckles. You wrench your hand backward with a sharp hiss, but not before a jagged edge opens a long, weeping gash across your skin. Warm blood drips onto the ancient iron plates and smells faintly of salt and copper. The ache settles into your bones. The delicate instrument remains wedged tight within the mineral crust, and its brass rings protest with a shrill metallic scrape that fills the vast chamber. You bind the torn flesh with a strip of damp canvas and grit your teeth as you step back to survey the stubborn jam.",
    "exits": [
     {
      "label": "Return to the central engine floor",
@@ -16918,7 +16918,7 @@
    "kind": "recovery",
    "title": "Bruised On The Sump-Plates",
    "brief": "You physically block a group of descending Drift Pilgrims aiming to sabotage the controls, using brute force to protect the console and earn Orsolya's grudging respect.",
-   "page": "A vicious blow from a heavy iron crowbar catches your shoulder, sending a white-hot flare of agony down your arm and driving the air from your lungs in a ragged gasp. You stumble backward over a protruding bolt-head, slamming your hip hard against the sharp edge of the brass casing and tasting copper in the back of your throat. The pilgrim pushes forward through the gap, his boots splashing into oily puddle-water as he raises his weapon toward the trembling glass dials. Orsolya moves with sudden, savage grace to intercept him, buying you the precious heartbeat needed to haul your bruised frame back up from the deck.\n\nNursing a deep, throbbing ache in your shoulder, you drag yourself back to your feet and rejoin the desperate struggle for the console.",
+   "page": "An iron crowbar catches your shoulder. White-hot agony flares down your arm and drives the air from your lungs in a ragged gasp while you stumble backward over a protruding bolt-head, slam your hip hard against the sharp edge of the brass casing, and taste copper in the back of your throat. The pilgrim pushes forward through the gap, his boots splashing into oily puddle-water as he raises his weapon toward the trembling glass dials. Orsolya moves with sudden, savage grace to intercept him, and she buys you the precious heartbeat you need to haul your bruised frame back up from the deck.\n\nYour shoulder aches deep as you drag yourself to your feet and rejoin the desperate struggle for the console.",
    "exits": [
     {
      "label": "Rise and press the fight",
@@ -17833,7 +17833,7 @@
    "kind": "scene",
    "title": "Staring Down The Brass",
    "brief": "You stare down the towering automaton when it threatens to flood the chamber, risking sudden drowning, to assert your absolute authority and claim a tide-warding lantern.",
-   "page": "Cold brine pools around your boots as the archivist-automaton raises its copper hand, threatening to sluice the subterranean chamber with pressurized bilge. You refuse to blink, planting your feet firmly upon the slick masonry while the metal giant vents a hissing roar of steam that fogs the air. Your silence carries more weight than any shouted threat, reminding the ancient sentinel of the legal authority you wrestled from its gears only moments before. It lowers its arm with a dismal screech of protesting iron.\n\nYou seize the moment, reach past its plated shoulder, and take the brass-bound tide-warding lantern that sputters with cold blue fire.",
+   "page": "Cold brine pools around your boots as the archivist-automaton raises its copper hand. \"I will sluice this chamber,\" it warns. You refuse to blink. You plant your feet on the slick masonry while the metal giant vents a hissing roar of steam that fogs the air. Your silence works harder than any shouted threat; the ancient sentinel still remembers the legal authority you wrestled from its gears only moments before. It lowers its arm with a dismal screech of protesting iron.\n\nYou seize the moment, reach past its plated shoulder, and take the brass-bound tide-warding lantern that sputters with cold blue fire.",
    "exits": [
     {
      "label": "Grab the sputtering blue lantern",
