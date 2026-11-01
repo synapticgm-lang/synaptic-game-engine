@@ -123,6 +123,39 @@ LitRPG awards by turn: T6 fight thugs 50 + First Kill 25; T33 quest step 50 + Fi
 
 **Next attempt (one line):** Pay starter-quest steps earlier on the free path (first real objective before ~T8) and route generated bounty completions through engine `milestoneXp` so L2 lands in 4–8 and quest share returns to ≥55%.
 
+### 1 Nov 2026 — XP-D1 attempt 1 results (free path 4×T50) — MISS
+
+Attempt 1 code (from `merge-logs/xp-design/a1/A1-report.md`, commit `0b2ad780` on `xp/design`): pay same-turn bounty steps/completes when the quest was missing from `questsBefore`; LitRPG/Story RPG story chip skips bearings so the first XP-paying starter step can chip; `questComplete` 3→4 units, L2+ encounter 0.85 unit, unitsPerLevel retune; `LITRPG_MILESTONE_XP.questComplete` L1 snapshot 150→200; edge xpPace/xpRules synced. Tabletop/PYOA untouched.
+
+Runs (build `2026-11-01g+1c153125`, free writer, no paid AI):
+- LitRPG 7201: `scripts/fate-autoplay/runs/2026-11-01T21-14-36-678Z_summoned-pact_cold-system_s7201`
+- Story RPG 7202: `scripts/fate-autoplay/runs/2026-11-01T21-18-15-579Z_salt-road-heist_chilled-gm_s7202`
+- LitRPG 7203: `scripts/fate-autoplay/runs/2026-11-01T21-22-09-003Z_summoned-pact_cold-system_s7203`
+- Story RPG 7204: `scripts/fate-autoplay/runs/2026-11-01T21-25-49-630Z_salt-road-heist_chilled-gm_s7204`
+
+Measured from `turns.jsonl` `xpGained` + `XP Gained:` systemLog + `level` / `characterXp`.
+
+| Run | Mode | L2 | L3 | L4 | Turns/level | Total XP | Steps | Completes | Fights | Ach/other | Quest share | Fight share |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7201 | LitRPG | **42** | — | — | — | 206 | 0 | 0 | 150 | 56 | **0%** | **72.8%** |
+| 7203 | LitRPG | **29** | **29** | 39 | L2→L3 **0**; L3→L4 **10** | 736 | 220 | 364 | 57 | 95 | **79.3%** | **7.7%** |
+| 7202 | Story RPG | **33** | — | — | — | 224 | 11 | 0 | 213 | 0 | **4.9%** | **95.1%** |
+| 7204 | Story RPG | **26** | **30** | — | L2→L3 **4** | 443 | 148 | 270 | 0 | 25 | **94.4%** | **0%** |
+
+Per-mode averages: LitRPG L2 **35.5**, quest share **39.7%**, fight share **40.3%**. Story RPG L2 **29.5**, quest share **49.7%**, fight share **47.6%**.
+
+Zero-pay / stuck: 7201 never left Circle’s Price bearings (0 quest XP all run). 7203 T7 bearings stage completed with 0 XP (expected no-pay step). A1 same-turn bounty pay held on 7203 (Newcomers arrive / Dangerous discovery paid steps+completes).
+
+Farming: 7202 fight repeats reduced (Rival Heist Crew 100→22; thugs 50→10→9). 7204 **Vessa's favour** same giver+quest ×3 — completes 44→26 (~50% OK); steps 11→13→13 full unit pay on repeats (**not** 50/25/10). 7203 bounty titles differed (full pay OK under giver+quest identity).
+
+**Vs targets:** LitRPG L2 4–8 **MISS** (35.5). L3–9 spans 15–25 **MISS** (0 / 10 / 4). Quest share 55–80% tol. **MISS** (mode avgs 39.7% / 49.7%). Fights 15–30% **MISS** (40.3% / 47.6%). Story RPG ~1.5× slower from L2 **not shown** (L2 late; only L3 is early, not slower). Farming ladder **MISS** on 7204 favour steps.
+
+**Verdict: MISS** — offs: LitRPG L2 avg 35.5; quest-share avgs 39.7%/49.7%; fight-share avgs 40.3%/47.6%; level spans 0/4/10; 7204 favour full-pay step repeats.
+
+**Next attempt (one line):** Auto-clear or skip no-XP bearings by ~T4 so the starter XP step can land L2 in 4–8 on free path, and apply the 100/50/25/10 identity ladder to regenerated same-giver favour/bounty clones (steps included), not only completes.
+
+Plain summary also at `merge-logs/xp-design/a1/T50-report.md`.
+
 ## XP-D1 build notes (phase A, 1 Nov 2026)
 
 Branch `xp/design`. Unit table in `src/game/rules/xpPace.ts`; `milestoneXp` for litrpg/rpg reads units × xpUnit × contentScale (+ tough-foe bonus on fights); difficulty xpScale still after. Curve: levelBar L1=150 then ×1.25 (`characterXp`). LOW_FOE / OVER_LEVEL removed from MODE_XP litrpg/rpg (dnd/pyoa unchanged).
