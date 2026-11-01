@@ -2085,7 +2085,7 @@
    "kind": "check",
    "title": "Silence in the Ranks",
    "brief": "You stand perfectly still as a group of frantic Drift Pilgrims rushes past, avoiding their manic zealotry to quietly pocket a dropped ritual bell.",
-   "page": "A towering pilgrim with eyes wild and salt-caked pauses abruptly within arm's reach, turning his hollow gaze toward the very ribcage where you stand pressed into the gloom. His hand drifts toward a rusted iron censer swinging from his wrist, fingers twitching as though he senses the breath trapped in your throat. You swallow hard, keeping your muscles locked in absolute stillness while the dry wind hums through the hollow whale ribs between you.",
+   "page": "A towering pilgrim with eyes wild and salt-caked pauses abruptly within arm's reach, and his hollow gaze turns toward the very ribcage where you stand pressed into the gloom. His hand drifts toward a rusted iron censer on his wrist, fingers twitching as though he senses the breath trapped in your throat. You swallow hard. Your muscles stay locked. Dry wind moves among the hollow whale ribs between you.",
    "exits": [
     {
      "label": "check-full",
@@ -3003,7 +3003,7 @@
    "kind": "scene",
    "title": "The Zealous Warden",
    "brief": "You debate scripture with a zealous priest standing in a drying pool, remembering old coastal hymns to impress him and win a blessed iron nail.",
-   "page": "Standing ankle-deep in warm, receding brine, a priest in oilskin vestments recites verses from the Book of the Ebb while waving a rusted censer. You recall an ancient coastal hymn about the third flooding of Gullmouth, humming the resonant cadence to catch his attention. He pauses his chanting, turning a cloudy eye toward you as he weighs your understanding of the old ways against the silence of the horizon.",
+   "page": "A priest in oilskin vestments stands ankle-deep in warm receding brine and recites verses from the Book of the Ebb while he waves a rusted censer. You recall an ancient coastal hymn about the third flooding of Gullmouth, and you match its cadence to catch his attention. He pauses. A cloudy eye turns toward you. He tests your grasp of the old ways against the silence of the horizon, then the rusted censer cools in his fist.",
    "exits": [
     {
      "label": "Answer with the second verse",
@@ -4147,7 +4147,7 @@
    "kind": "scene",
    "title": "Waterlogged Ledger",
    "brief": "You decipher the captain's waterlogged ledger to find a hidden cache, risking a sudden deck collapse to claim a silver compass.",
-   "page": "Thick parchment swollen with salt sticks together like salted hides, demanding careful fingers to pry each page apart without tearing the ink. Heavy beams groan overhead in the wind, threatening to drop tons of rotten oak onto your stooped shoulders while you peer into the gloom. By the faint grey light filtering through a fractured scuttle, strange symbols emerge from the damp pulp. You trace a faded diagram pointing toward the captain's private chart chest tucked beneath the flooring.",
+   "page": "Thick parchment swollen with salt sticks together like salted hides, and you need careful fingers to pry each page apart without tearing the ink. Beams groan overhead in the wind. Tons of rotten oak could drop onto your stooped shoulders while you peer into the gloom. By the faint grey light that slips through a fractured scuttle, strange symbols emerge from the damp pulp. You trace a faded diagram. It points toward the captain's private chart chest under the flooring.",
    "exits": [
     {
      "label": "Pry open the hidden floor panel",
@@ -4637,7 +4637,7 @@
    "kind": "recovery",
    "title": "Slipping into the Grey",
    "brief": "You fashion a sturdy grappling hook from scattered debris, risking a fatal plunge to retrieve a preserved coil of rope.",
-   "page": "The frozen mud gives way without warning, plunging your boots into a sudden slide of loose shale and sharp debris. You throw your weight backward, scraping your palms raw against the jagged edge of the salt-crust as you scramble desperately for purchase. The coil of rope tumbles further down into the gloom, leaving you breathless and nursing a deep, stinging gash across your knuckles. Though you manage to haul yourself back onto solid ground, the mishap costs precious time and leaves your muscles aching with a bitter chill.",
+   "page": "The frozen mud gives way without warning. Your boots plunge into a sudden slide of loose shale and sharp debris. You throw your weight backward and scrape your palms raw against the jagged edge of the salt-crust as you scramble for purchase. The coil of rope tumbles further down into the gloom. A deep gash opens across your knuckles. You haul yourself back onto solid ground, but the mishap costs precious time, and a bitter chill settles into your muscles.",
    "exits": [
     {
      "label": "Retreat to the stable flats",
@@ -6914,7 +6914,7 @@
    "kind": "recovery",
    "title": "A Bitter Spray",
    "brief": "You force open a jammed, rusted water valve on the city's perimeter, battling the heavy pressure to fill your own flasks.",
-   "page": "Iron screams as the frozen stem shears clean off in your grip, sending you tumbling backward into the thick, foul-smelling mud of the seabed. A ferocious geyser of high-pressure brine erupts from the ruptured pipe, drenching your pack and scouring a deep, stinging gash across your forearm before you can scramble out of the way. You lie coughing in the wet filth for a long moment, tasting copper and salt, poorer in strength and supplies than you were a minute ago.",
+   "page": "Iron screams as the frozen stem shears clean off in your grip. You tumble backward into the thick foul-smelling mud of the seabed. A ferocious geyser of high-pressure brine erupts from the ruptured pipe, and it drenches your pack and scours a deep gash across your forearm before you can scramble clear. You lie coughing in the wet filth for a long moment. Copper and salt coat your tongue. Your pack is soaked, and your strength is spent.",
    "exits": [
     {
      "label": "Crawl away from the geyser",
@@ -6961,7 +6961,7 @@
    "kind": "check",
    "title": "The Poison Needle",
    "brief": "You pick the complex lock on an abandoned storage crate, avoiding a poison needle trap to steal a cache of dried meat.",
-   "page": "Your fingertips dance lightly over the jammed tumblers, feeling the tiny shivers of tension in the rusted springs beneath the heavy lid. A single false click will trip the poisoned brass barb hidden within the groove, leaving your arm numb before you can even claim the rations locked inside. You hold your breath, sliding the slender wire deeper into the dark gap while your heart hammers against your ribs.",
+   "page": "Your fingertips dance lightly over the jammed tumblers and feel the tiny shivers of tension in the rusted springs beneath the lid. A single false click will trip the poisoned brass barb hidden within the groove. Your arm would go numb before you could claim the rations locked inside. You hold your breath. The slender wire slides deeper into the dark gap. Your heart hammers against your ribs.",
    "exits": [
     {
      "label": "check-full",
@@ -10229,7 +10229,7 @@
    "kind": "check",
    "title": "Forced Entry",
    "brief": "You dismantle a rusted vent grating to create a makeshift shield, risking a noise that attracts guards to gain vital protection.",
-   "page": "Rusted bolts scream in protest as you apply calculated pressure with your knuckles and palms, coaxing the stubborn iron framework apart without triggering a collapse. Heavy footfalls echo from the upper catwalks, drawing dangerously close as the patrol swings their lanterns across the damp stilt-beams. You wedge your fingers into the widening gap, muscles trembling under the sudden strain of the rusted barrier.",
+   "page": "Rusted bolts scream in protest as you apply pressure with your knuckles and palms, coaxing the stubborn iron framework apart without triggering a collapse. Footfalls clang from the upper catwalks. The patrol swings their lanterns across the damp stilt-beams and draws dangerously close. You wedge your fingers into the widening gap, and your muscles tremble under the sudden strain of the rusted barrier.",
    "exits": [
     {
      "label": "check-full",
@@ -11627,7 +11627,7 @@
    "kind": "recovery",
    "title": "Caught in the Cogs",
    "brief": "You subtly disable the intricate locking mechanism of the solarium door, risking detection to ensure a clear escape route for later.",
-   "page": "A sudden snap shatters the silence as the delicate pick jams fast inside the brass housing, shearing off the tip and leaving the lock permanently fouled. Alarms chime softly in the corridor outside, and rough hands seize your collar before you can twist away from the door. You wrench yourself free at the cost of a torn sleeve and a nasty graze across your knuckles, tumbling into a storage alcove amid crates of imported linens. The guards sweep past the wrong archway, leaving you breathless, bruised, and nursing a throbbing hand in the gloom.",
+   "page": "A sudden snap breaks the hush as the pick jams fast inside the brass housing. The tip shears off. The lock is permanently fouled. Alarms chime in the corridor outside, and rough hands seize your collar before you can twist away from the door. \"We have you now,\" a guard grunts. You wrench yourself free at the cost of a torn sleeve and a nasty graze across your knuckles, then tumble into a storage alcove amid crates of imported linens. The guards sweep past the wrong archway. You crouch in the gloom with a bruised hand and a torn cuff.",
    "exits": [
     {
      "label": "Slip out through the service hatch",
@@ -11827,7 +11827,7 @@
    "kind": "recovery",
    "title": "Bruised Pride",
    "brief": "You physically restrain a panicked nobleman who tries to flee, risking a brutal scuffle to extort a heavy purse of Coin.",
-   "page": "Your footing slips on a patch of green slime coating the cedar planks, sending you stumbling hard against a rusted iron water-pipe. The nobleman breaks free with a ragged shriek, leaving a fistful of your jacket behind as he scrambles away down the ladder-well like a frightened crab. You pick yourself up from the deck, rubbing a deep, purple bruise blossoming across your ribs where the pipe bit into your flesh. Still dangling from his retreating belt, the purse is a bitter loss that costs you valuable time and your pride.",
+   "page": "Your footing slips on a patch of green slime coating the cedar planks. You stumble hard against a rusted iron water-pipe. The nobleman breaks free with a ragged shriek and leaves a fistful of your jacket behind as he scrambles away down the ladder-well like a frightened crab. You pick yourself up from the deck. A deep purple bruise blossoms across your ribs where the pipe bit into your flesh. The purse still dangles from his retreating belt, a bitter loss of time and pride.",
    "exits": [
     {
      "label": "Pursue him down the iron rungs",
