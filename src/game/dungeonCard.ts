@@ -37,6 +37,11 @@ import { CHEST_GRADE_LABELS, lootableLockedFor } from './dungeonSeed';
 import { resolveLockAttempt } from './lockAttempt';
 import { climbFloor } from './rules/litrpgFloors';
 import { BIOME_FAMILIES, HUB_TEXT_BIOMES, THREAT_MODIFIERS, biomeKey, type ThreatModifier } from '@/data/dungeonBiomes';
+import {
+  needsFirstFightSafety,
+  openFirstFightGate,
+  softenFirstFightEncounter,
+} from './rules/firstFightChoice';
 
 export const DUNGEON_CARD_BLUEPRINT = 'dungeon-card';
 
@@ -667,7 +672,15 @@ function spawnFoe(state: GameState, mob: NodeHidden['mobs'][number]): GameState 
     ...h,
     mobs: h.mobs.map((m) => (m.id === mob.id ? { ...m, spawned: true } : m)),
   }));
-  return { ...state, activeEncounter: encounter, activeDungeon: dungeon };
+  const withDungeon = { ...state, activeDungeon: dungeon };
+  // T10TABFIGHT — first solo L1 tabletop fight: telegraph triad before going live.
+  // Re-entry of an already-parked/wounded foe is not the first telegraph — go live.
+  const reengagingParked =
+    !!mob.spawned || (typeof mob.hpRemaining === 'number' && mob.hpRemaining > 0);
+  if (needsFirstFightSafety(withDungeon) && !reengagingParked) {
+    return openFirstFightGate(withDungeon, softenFirstFightEncounter(encounter, withDungeon));
+  }
+  return { ...withDungeon, activeEncounter: encounter };
 }
 
 /** The current room's card facts for the writer (one line). */

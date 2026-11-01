@@ -46,6 +46,7 @@ import { travelEngineChip } from './rules/travelDay';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { isDying } from './tabletop/roundFight';
 import { roundCombatChips } from './tabletop/combatChips';
+import { firstFightChoiceSet } from './rules/firstFightChoice';
 import { parsePlayerIntent } from './intentParser';
 import {
   allocateAffordanceSlots,
@@ -473,6 +474,28 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     }
     lastEngineChips = { state, key, chips: dying, labels: seenDying };
     return dying;
+  }
+  // T10TABFIGHT — first L1 tabletop fight gate owns the pad (Back off / Talk / Fight ≤ choiceCountLimit).
+  const firstFight = firstFightChoiceSet(state);
+  if (firstFight.active && firstFight.options.length) {
+    const ffChips: EngineChip[] = [];
+    const seenFf = new Set<string>();
+    for (const raw of firstFight.options) {
+      const label = sanitizeChoiceLabel(raw);
+      if (!label) continue;
+      const low = label.toLowerCase();
+      if (seenFf.has(low)) continue;
+      seenFf.add(low);
+      ffChips.push({
+        label,
+        action: `first-fight:${low}`,
+        kind: 'system',
+        check: null,
+        slotCategory: 'act',
+      });
+    }
+    lastEngineChips = { state, key, chips: ffChips, labels: seenFf };
+    return ffChips;
   }
   // T10W: origin setup owns the pad until recorded (session-zero; same exclusive shape as dying).
   const originOnly = originPad(state);

@@ -1324,6 +1324,7 @@ export async function headlessFateTurn(
       dyingTurn
       || arcState.activeEncounter
       || !!arcState.sceneFacts?.pendingEncounter
+      || !!arcState.pendingFirstFight
       || !!parkedThreatHere(arcState)
     ) {
       const fight = resolveEngineFight(arcState, playerInput);

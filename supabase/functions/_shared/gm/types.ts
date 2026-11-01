@@ -963,6 +963,16 @@ export interface GameState {
     nextLevel: number;
     consequence: string;
   } | null;
+  /**
+   * T10TABFIGHT — level-1 tabletop first-fight gate (Back off / Talk / Fight).
+   * Parked instead of going live; cleared when the player picks an option.
+   */
+  pendingFirstFight?: {
+    encounter: ActiveEncounter;
+    warning: string;
+  } | null;
+  /** True after the first-fight triad was answered with Talk or Fight (Back off leaves it open). */
+  firstFightGateDone?: boolean;
   lorebook: LoreCard[];
   /** Append-only factual event timeline (compressed memory). */
   timeline?: TimelineFact[];
