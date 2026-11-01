@@ -156,6 +156,39 @@ Farming: 7202 fight repeats reduced (Rival Heist Crew 100→22; thugs 50→10→
 
 Plain summary also at `merge-logs/xp-design/a1/T50-report.md`.
 
+### 1 Nov 2026 — XP-D1 attempt 2 results (free path 4×T50) — MISS
+
+Attempt 2 code (from `merge-logs/xp-design/a2/A2-report.md`, commits `285aa430` / follow-ups on `xp/design`): pin quest chips (Ask fall-through, opener travel, top-3 pin); bearings/Ping pay as quest step once; single XP event ≤60% bar + one level per apply (surplus cap); `questComplete` back to 3 units; unitsPerLevel retune; same giver+quest step identity ladder 100/50/25/10; edge xpPace/xpRules synced. Tabletop/PYOA untouched.
+
+Runs (build `2026-11-01h+f0af0417`, free writer, no paid AI):
+- LitRPG 7201: `scripts/fate-autoplay/runs/2026-11-01T22-13-44-509Z_summoned-pact_cold-system_s7201`
+- Story RPG 7202: `scripts/fate-autoplay/runs/2026-11-01T22-19-34-907Z_salt-road-heist_chilled-gm_s7202`
+- LitRPG 7203: `scripts/fate-autoplay/runs/2026-11-01T22-23-28-230Z_summoned-pact_cold-system_s7203`
+- Story RPG 7204: `scripts/fate-autoplay/runs/2026-11-01T22-29-44-652Z_salt-road-heist_chilled-gm_s7204`
+
+Measured from `turns.jsonl` `xpGained` + `XP Gained:` systemLog + `level` / `characterXp` (parley “resolved …” counted as fight).
+
+| Run | Mode | L2 | L3 | L4 | Turns/level | Total XP | Steps | Completes | Fights | Ach/other | Quest share | Fight share |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7201 | LitRPG | **43** | — | — | — (still L2 @ T51, 54 into bar) | 204 | 50 | 0 | 68 | 86 | **24.5%** | **33.3%** |
+| 7203 | LitRPG | **39** | — | — | — (still L2 @ T50, 115 into bar) | 265 | 66 | 63 | 50 | 86 | **48.7%** | **18.9%** |
+| 7202 | Story RPG | **42** | — | — | — (still L2 @ T50, 51 into bar) | 201 | 75 | 0 | 126 | 0 | **37.3%** | **62.7%** |
+| 7204 | Story RPG | **26** | — | — | — (still L2 @ T50, 102 into bar) | 252 | 78 | 149 | 0 | 25 | **90.1%** | **0%** |
+
+Per-mode averages: LitRPG L2 **41**, quest share **36.6%**, fight share **26.1%**. Story RPG L2 **34**, quest share **63.7%**, fight share **31.4%**.
+
+Zero-pay / stuck: no quest step or complete advanced at 0 XP. Bearings paid once (7201 T21 / 7203 T24 Ping — A2 fix held) but still late for the L2 band. One-level cap held: 7204 T26 Fake Cargo 140 XP → L2 only (not A1’s same-turn double level).
+
+Farming: 7204 **Vessa's favour** ×3 same giver+quest — steps 13→7→3 then 1/1/1 then 1/1; completes 39→20 (ladder engaged, **no full-pay repeats**). 7202 thugs 50 then 50 on different road stretches (place+foe identity differs — not scored as full farm).
+
+**Vs targets:** LitRPG L2 4–8 **MISS** (avg 41). L3–9 spans 15–25 **MISS** (no run reached L3). Quest share 55–80% tol. **MISS** on LitRPG avg 36.6% (Story RPG avg 63.7% inside). Fights 15–30%: LitRPG avg 26.1% OK; Story RPG avg 31.4% slightly over / uneven (62.7 / 0). Story RPG ~1.5× slower from L2 **not shown** (L2 late; no L3). Farming ladder **OK** this attempt.
+
+**Verdict: MISS** — offs: LitRPG L2 avg 41 (want 4–8); LitRPG quest-share avg 36.6% (want ≥55%); no L3–9 spans; Story RPG L2 avg 34 and fight-share avg 31.4%.
+
+**Next attempt (one line):** Clear or skip bearings by ~T3–4 and pin Hear-reason / first paying Circle’s Price step so starter complete can land L2 inside turns 4–8 before mid-run fights or favour loops dominate.
+
+Plain summary also at `merge-logs/xp-design/a2/T50-report.md`.
+
 ## XP-D1 build notes (phase A, 1 Nov 2026)
 
 Branch `xp/design`. Unit table in `src/game/rules/xpPace.ts`; `milestoneXp` for litrpg/rpg reads units × xpUnit × contentScale (+ tough-foe bonus on fights); difficulty xpScale still after. Curve: levelBar L1=150 then ×1.25 (`characterXp`). LOW_FOE / OVER_LEVEL removed from MODE_XP litrpg/rpg (dnd/pyoa unchanged).
