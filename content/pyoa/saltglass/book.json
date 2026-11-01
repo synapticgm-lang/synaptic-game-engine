@@ -1775,7 +1775,7 @@
     }
    ],
    "title": "The Mule-Track Shards",
-   "page": "Calder kicks a loose, jagged shard of window-slag aside on the dusty mule-track, sending it skittering across the white crust with a thin, metallic ring. He mutters a low curse under his breath, warning that toll-collectors from the Salt Court have been spotted watching the dry ford ahead for unwary travellers. The air here smells of sulphur and sun-baked glass, thick with the heat radiating off the ancient lake-bed.\n\nYou check the iron housing of your ember-lamp to ensure the banked coals are secure before pressing forward into the shadow of the crumbling ruins. Every shadow along the track looks like a mounted guard waiting to demand exorbitant passage fees."
+   "page": "Calder kicks a loose, jagged shard of window-slag aside on the dusty mule-track. It skitters across the white crust with a thin, metallic ring. He mutters a low curse under his breath and warns that toll-collectors from the Salt Court have been spotted watching the dry ford ahead for unwary travellers. The air here smells of sulphur and sun-baked glass, heat radiating off the ancient lake-bed.\n\nYou check the iron housing of your ember-lamp so the banked coals stay secure, then press forward into the shadow of the crumbling ruins. Every shadow along the track looks like a mounted guard waiting to demand exorbitant passage fees."
   },
   {
    "id": "sg-1-1-2-1",
@@ -4291,7 +4291,7 @@
    "endingId": "doom-1-1",
    "exits": [],
    "title": "The High Swing",
-   "page": "Ignoring Calder's warning, you swing your blazing lamp high above your head to spite the toll-riders, drawing a volley of poisoned sling-stones from the dark and cracking your water-cask against a limestone boulder. Cool, bitter brine immediately soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your fingers grow slippery where the dampness spreads, and the frantic rattling of your belt-lantern sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. The darkness closes in swiftly, heavy with the taste of gypsum and the quiet certainty that your journey ends right here in the white grit."
+   "page": "Ignoring Calder's warning, you swing your blazing lamp high above your head to spite the toll-riders. A volley of poisoned sling-stones answers from the dark, and your water-cask cracks against a limestone boulder. Cool, bitter brine soaks into the thirsty dust around your boots, smelling of old salt-pans and finality. Your grip turns slick where the dampness spreads. The frantic rattling of your belt-lantern sounds hollow against the vast night. There will be no drinking from this skin when the sun climbs high tomorrow, nor any reaching the distant glass spires of Prism. Darkness closes in with the taste of gypsum, and your journey ends right here in the white grit."
   },
   {
    "id": "sg-d-1-2",
@@ -4696,7 +4696,7 @@
     }
    ],
    "title": "The Shimmering Snail Trail",
-   "page": "You cross a flat expanse of pink-tinted salt where thousands of crystallized snail shells crunch beneath your soles like broken china, leaving a clear trail that any keen tracker could follow across the blinding flats. The unnerving sound of crushing shells echoes loudly in the heavy air, drawing unwanted attention to your passage.\n\nSeveral paths branch away from the crunching crust, leading toward different hazards in the distance."
+   "page": "You cross a flat expanse of pink-tinted salt where thousands of crystallized snail shells crunch beneath your soles like broken china. A clear trail of smashed shells marks your passage for any keen tracker across the blinding flats. Each step pops another shell underfoot. The sound carries far across the still heat.\n\nThe pink crust forks ahead toward different hazards in the distance."
   },
   {
    "id": "sg-2-0-1-5",
@@ -8189,7 +8189,7 @@
     "why": "the reader walks with a banked, dark lamp and slips through unseen"
    },
    "title": "The Shadow of the Beacon",
-   "page": "Walking with your ember-lamp safely banked and cold, you blend into the long shadows cast by a crumbling foundation and slip past a patrol of tax-collectors resting near a glowing survey beacon. Their brass instruments catch the harsh sunlight, but their eyes are heavy with boredom and heat, missing your silent passage entirely in the blinding white glare. You keep your head down and your breathing steady until the bright flare of their signal lamp is safely behind a ridge of fused slag."
+   "page": "Ember-lamp banked and cold, you melt into the long shadows of a crumbling foundation and slip past a patrol of tax-collectors resting near a glowing survey beacon. Their brass instruments flash in the harsh sunlight. Boredom and heat have glazed their eyes; they miss your silent passage in the blinding white glare. Head down, breath held short, you put the bright flare of their signal lamp behind a ridge of fused slag."
   },
   {
    "id": "sg-2-2-3-10",
@@ -8625,7 +8625,7 @@
    "endingId": "doom-2-1",
    "exits": [],
    "title": "The Hollow Sinks",
-   "page": "Ignoring all warning signs of unstable salt-crust and the faint hollow echo beneath your boots, you sprint recklessly across a fragile sink-basin in a desperate bid for speed. The white crust shatters instantly beneath your weight like thin window-glass, plunging you straight down into a boiling, suffocating pit of subterranean brine. The heavy air fills with choking sulfur and the sharp tang of hot salt as the white walls close in around you, swallowing your footsteps and your lamp-light forever."
+   "page": "Ignoring all warning signs of unstable salt-crust and the faint hollow answer beneath your boots, you sprint recklessly across a fragile sink-basin in a desperate bid for speed. The white crust shatters instantly beneath you like thin window-glass, and you plunge straight down into a boiling, suffocating pit of subterranean brine. Choking sulfur and the sharp tang of hot salt fill the pit. The white walls close in around you and swallow your footsteps and your lamp-light forever."
   },
   {
    "id": "sg-d-2-2",
@@ -13709,7 +13709,7 @@
     }
    ],
    "title": "Cleaning the Lamp Gasket",
-   "page": "You pause behind a shattered pillar to scrape the accumulated glass-dust from your lamp gasket, watching the tiny red glow of your banked coals battle against the encroaching gloom. The wind shrieks through the skeletal ruins around you like a chorus of hollow voices, and the weight of the cold Seedkey in your tunic feels heavier with every passing hour. Every breath tastes of alkaline dust and old salt, reminding you that the monsoon's arrival draws closer by the day."
+   "page": "You pause behind a shattered pillar and scrape the accumulated glass-dust from your lamp gasket. The tiny red glow of your banked coals holds against the encroaching gloom. Wind shrieks through the skeletal ruins around you like a chorus of hollow voices. The cold Seedkey in your tunic presses colder against your ribs with every passing hour. Every breath tastes of alkaline dust and old salt. The monsoon draws closer by the day, and pale grit still clings under your nail from the gasket."
   },
   {
    "id": "sg-4-0-2-8",
@@ -13734,7 +13734,7 @@
     }
    ],
    "title": "The Sunken Observatory Pointer",
-   "page": "A rusted iron signpost leans at a sharp angle, pointing toward the sunken observatory of Prism while its lettering has been bitten away by decades of abrasive wind-scour. Fine grains of white crystal whisper across the metal post, creating a constant, eerie hum in the dead air. You adjust the heavy strap of your lantern and check the seal on your water flask, knowing that every league brings you closer to the heart of the dried sea."
+   "page": "A rusted iron signpost leans at a sharp angle toward the sunken observatory of Prism. Decades of abrasive wind-scour have bitten its lettering away. Fine grains of white crystal whisper across the metal post and scratch a thin, eerie note in the dead air. You hitch the strap of your lantern and check the seal on your water flask. Each league brings you closer to the heart of the dried sea, and the bitten lettering still points the way."
   },
   {
    "id": "sg-4-0-2-9",
@@ -13931,7 +13931,7 @@
     }
    ],
    "title": "The Vitrified Pave",
-   "page": "Shards of purple vitrified mud splinter like thin ice beneath your boots, sending sharp, echoing cracks across the empty basin. You shield your flickering lamp against the drafting wind while navigating the brittle crust, keeping a firm grip on the cold Seedkey tucked inside your pack. The air smells intensely of sulfur and baked alkali, warning you that the deep weather is shifting toward the ridges.\n\nA choice lies before you as the ground shudders underfoot: you can press directly toward the rising shale slopes, skirt a gaping fissure that cuts across your path, or dive into the shelter of a collapsed warehouse foundation to escape a sudden local vortex."
+   "page": "Shards of purple vitrified mud splinter like thin ice beneath your boots. Sharp cracks race across the empty basin. You shield your flickering lamp against the drafting wind while you cross the brittle crust, and keep a firm grip on the cold Seedkey tucked inside your pack. The air smells intensely of sulfur and baked alkali; the deep weather is shifting toward the ridges.\n\nThe ground shudders underfoot. Rising shale slopes stand ahead. A gaping fissure cuts your path. Collapsed warehouse walls offer a low lee from a sudden local vortex."
   },
   {
    "id": "sg-4-0-3-3",
@@ -16064,7 +16064,7 @@
     "why": "the reader travels alone and so notices what a guide would talk over"
    },
    "title": "The Amber Drain",
-   "page": "Walking entirely alone through the howling waste, you spot a dry drainage pipe choked with amber beads that shields your fragile flame from the screaming drift. No companion speaks to distract your thoughts or share the burden of the navigation, leaving only the crunch of salt beneath your boots and the frantic rattling of the glass beads in the pipe. You tuck your chin into your collar, guarding the amber lantern with your free hand as the wind tries to rip the very coat from your shoulders.\n\nThe quiet isolation presses hard against your temples, reminding you that every choice across this shifting desert rests entirely upon your own weary judgment."
+   "page": "Alone through the howling waste, you spot a dry drainage pipe choked with amber beads that shields your fragile flame from the screaming drift. No companion speaks to distract your thoughts or share the navigation. Salt crunches under your boots. Glass beads rattle frantic in the pipe. You tuck your chin into your collar and guard the amber lantern with your free hand while the wind tries to rip the coat from your shoulders.\n\nSalt grit cakes your temples. The lantern glass ticks once against the beads as you lean into the pipe's mouth."
   },
   {
    "id": "sg-4-2-1-3",
@@ -17559,7 +17559,7 @@
     }
    ],
    "title": "The Fractured Lens",
-   "page": "Colossal shards of a fractured objective lens lean against one another like fallen monoliths, casting distorted reflections across the dry ground. A Dune Sister waits quietly in their blue shade, offering safe shelter if you will only swear a binding oath to her well-keepers. In the distance, the greedy glare of approaching scavenger lanterns flickers across the salt-crust, leaving little time for hesitation."
+   "page": "Colossal shards of a fractured objective lens lean against one another like fallen monoliths. Distorted reflections spill across the dry ground. A Dune Sister waits in their blue shade and offers safe shelter if you swear a binding oath to her well-keepers. Across the salt-crust, scavenger lanterns already throw a greedy glare your way."
   },
   {
    "id": "sg-5-0-1-0",
@@ -18518,7 +18518,7 @@
     }
    ],
    "title": "The Copper Wedge",
-   "page": "Heavy bronze valves of the lower conduits sweat with ancient damp, casting a metallic tang into the stagnant air. Beside a rusted hatch, Calder drives a copper wedge into the jammed seam with steady, practiced strikes of a mallet. Metal groans against metal, spraying a fine rust across his scarred knuckles as the seal finally gives way with a sharp hiss.\n\nBeyond the widening gap, two distinct routes beckon into the dim interior: one dips sharply downward into a narrow drainage pipe choked with white salt crusts, while the other leads along a soot-blackened catwalk toward a flickering lantern."
+   "page": "Bronze valves of the lower conduits sweat with ancient damp and throw a metallic tang into the stagnant air. Beside a rusted hatch, Calder drives a copper wedge into the jammed seam with practiced strikes of a mallet. Metal groans against metal. Fine rust sprays across his scarred knuckles as the seal gives way with a sharp hiss.\n\nBeyond the widening gap, one way dips sharply downward into a narrow drainage pipe choked with white salt crusts. The other runs along a soot-blackened catwalk toward a flickering lantern."
   },
   {
    "id": "sg-5-0-3-11",
@@ -20638,7 +20638,7 @@
     }
    ],
    "title": "The Copper Alcove",
-   "page": "The air in the damp alcove is thick with the verdigris smell of old copper and stagnant dampness, clinging to the back of your throat like fine salt. In the dim light, a Salt Court hireling named Morvath sits sharpening a wide bone-handled blade against a whetstone, humming a dry desert tune while he waits for you to stumble directly into his trap. His eyes glint with cruel amusement in the flickering amber glow of your lantern, knowing you have nowhere else to run on this sealed level. You can draw your own heavy travel knife and face him head-on, extinguish your lamp and try to slip past him in total darkness, or throw a handful of salt into his face and bolt."
+   "page": "In the damp alcove the verdigris smell of old copper and stagnant dampness sticks to the back of your throat like fine salt. Dim light finds a Salt Court hireling named Morvath sharpening a wide bone-handled blade against a whetstone. A dry desert tune slips between his teeth while he waits for you to stumble into his trap. His eyes glint with cruel amusement in the flickering amber glow of your lantern; he knows this sealed level offers nowhere else to run. Your travel knife sits ready. The lamp could go dark. A handful of salt could hit his face before you bolt."
   },
   {
    "id": "sg-5-2-2-2",
