@@ -12,15 +12,104 @@ import { translateStateToNarrative, isUiLabel, choiceContainsUngroundedReference
 import { buildEntityCast, getCastSummary } from '../game/entityCast';
 import { injectLoiterDelta, buildLoiterDeltaDirective, needsLoiterDelta } from '../game/loiterDeltaDirective';
 import { buildPovRails, hasPovViolations, scrubBodyPartPossession } from '../game/povRails';
-import type { GameState } from '../game/types';
+import type {
+  ActiveEncounter,
+  GameState,
+  Item,
+  LogEntry,
+  OpeningEstablishment,
+  PlaceRecord,
+  SceneFacts,
+} from '../game/types';
 
 /** The NAMED CHARACTERS section of a CAST block (anonymous groups and threats excluded). */
 function namedSection(cast: string): string {
   return cast.match(/NAMED CHARACTERS[^\n]*\n((?:- [^\n]*\n)*)/)?.[1] ?? '';
 }
 
-// Mock GameState factory
-function mockGameState(overrides: Partial<GameState> = {}): GameState {
+/** Test overrides allow nested partials; assembled into a cast GameState. */
+type MockOverrides = {
+  turn?: number;
+  character?: Partial<GameState['character']>;
+  sceneFacts?: Partial<SceneFacts>;
+  location?: string;
+  currentLocation?: string;
+  campaignBibleId?: string;
+  locationSheet?: GameState['locationSheet'];
+  npcMemories?: GameState['npcMemories'];
+  inventory?: Item[];
+  quests?: GameState['quests'];
+  questFocus?: string;
+  gold?: number;
+  materials?: GameState['materials'];
+  companions?: GameState['companions'];
+  log?: Array<Pick<LogEntry, 'role' | 'content'> & Partial<LogEntry>>;
+  places?: Array<Partial<PlaceRecord> & Pick<PlaceRecord, 'name'>>;
+  /** povRails reads settings.perspective off the cast object (not a GameState field). */
+  settings?: { perspective?: 'second' | 'third' };
+  engineMode?: GameState['engineMode'];
+  openingEstablishment?: Partial<OpeningEstablishment>;
+  activeEncounter?: Partial<ActiveEncounter> | null;
+};
+
+function mockGameState(overrides: MockOverrides = {}): GameState {
+  const sceneFacts: SceneFacts = {
+    crowd: 'sparse',
+    noise: 'voices',
+    present: ['Vessa', 'Just'],
+    props: [],
+    lastBeat: '',
+    updatedTurn: 10,
+    crowdCount: 4,
+    tension: 'tense',
+    indoor: false,
+    timeOfDay: 'afternoon',
+    weather: 'clear',
+    ...overrides.sceneFacts,
+  };
+
+  const openingEstablishment: OpeningEstablishment | undefined = overrides.openingEstablishment
+    ? {
+        pending: [],
+        answers: {},
+        complete: false,
+        ...overrides.openingEstablishment,
+      }
+    : undefined;
+
+  const activeEncounter: ActiveEncounter | null | undefined =
+    overrides.activeEncounter === null
+      ? null
+      : overrides.activeEncounter
+        ? {
+            name: 'Foe',
+            level: 1,
+            hp: 10,
+            maxHp: 10,
+            armorClass: 12,
+            strength: 10,
+            dexterity: 10,
+            constitution: 10,
+            xpReward: 0,
+            goldReward: 0,
+            ...overrides.activeEncounter,
+          }
+        : undefined;
+
+  const places: PlaceRecord[] | undefined = overrides.places?.map((p, i) => ({
+    ...p,
+    id: p.id ?? `place-${i}-${p.name}`,
+    name: p.name,
+  }));
+
+  const log: LogEntry[] | undefined = overrides.log?.map((entry, i) => ({
+    id: entry.id ?? `log-${i}`,
+    turn: entry.turn ?? i,
+    timestamp: entry.timestamp ?? i,
+    role: entry.role,
+    content: entry.content,
+  }));
+
   return {
     turn: 10,
     character: {
@@ -36,18 +125,11 @@ function mockGameState(overrides: Partial<GameState> = {}): GameState {
       maxSp: 50,
       attributes: { STR: 12, DEX: 14, CON: 13, INT: 10, WIS: 11, CHA: 9 },
       conditions: [],
+      ...overrides.character,
     },
-    sceneFacts: {
-      present: ['Vessa', 'Just'],
-      crowdCount: 4,
-      tension: 'high',
-      indoor: false,
-      timeOfDay: 'afternoon',
-      weather: 'clear',
-      noise: 'moderate',
-    },
-    location: 'Consul Caravan Camp',
-    locationSheet: {
+    sceneFacts,
+    location: overrides.location ?? 'Consul Caravan Camp',
+    locationSheet: overrides.locationSheet ?? {
       name: 'Consul Caravan Camp',
       biome: 'desert camp',
       exits: [
@@ -56,15 +138,15 @@ function mockGameState(overrides: Partial<GameState> = {}): GameState {
       ],
       interactables: [],
     },
-    npcMemories: [
+    npcMemories: overrides.npcMemories ?? [
       { npcName: 'Vessa', role: 'contact', disposition: 'neutral' },
       { npcName: 'Just', role: 'associate', disposition: 'intimidating' },
     ],
-    inventory: [
-      { name: 'worn clothes', quantity: 1, rarity: 'common', equipped: true, slot: 'body' },
-      { name: 'Bag', quantity: 1, rarity: 'common', sealed: true },
+    inventory: overrides.inventory ?? [
+      { id: 'worn-clothes', name: 'worn clothes', quantity: 1, rarity: 'Common', equipped: true, slot: 'body' },
+      { id: 'bag', name: 'Bag', quantity: 1, rarity: 'Common', sealed: true },
     ],
-    quests: [
+    quests: overrides.quests ?? [
       {
         id: 'heist-001',
         name: 'Salt Road Ledger Retrieval',
@@ -74,27 +156,27 @@ function mockGameState(overrides: Partial<GameState> = {}): GameState {
         objectiveText: 'Steal the ledger from the locked wagon',
       },
     ],
-    questFocus: 'heist-001',
-    gold: 50,
-    materials: [],
-    companions: [],
-    log: [],
-    timeline: [],
-    places: [
+    questFocus: overrides.questFocus ?? 'heist-001',
+    gold: overrides.gold ?? 50,
+    materials: overrides.materials ?? [],
+    companions: overrides.companions ?? [],
+    log: log ?? [],
+    places: places ?? [
       {
+        id: 'consul-caravan-camp',
         name: 'Consul Caravan Camp',
         description: 'A dusty desert camp operated by the Consul faction',
-        coordinates: { x: 100, y: 200 },
-        scale: 'local',
-        discovered: true,
       },
     ],
-    settings: {
+    settings: overrides.settings ?? {
       perspective: 'second',
     },
-    engineMode: 'rpg',
-    ...overrides,
-  } as GameState;
+    engineMode: overrides.engineMode ?? 'rpg',
+    currentLocation: overrides.currentLocation,
+    campaignBibleId: overrides.campaignBibleId,
+    openingEstablishment,
+    activeEncounter,
+  } as unknown as GameState;
 }
 
 describe('narrativeTranslator', () => {
@@ -135,7 +217,7 @@ describe('narrativeTranslator', () => {
     const choice = 'Inspect the crystals on the street';
     const lastGmStory = 'You stand in a dusty room with barrels and crates.';
     const sceneFacts = { props: ['barrels', 'crates'], location: 'Room' };
-    const inventory = [];
+    const inventory: Item[] = [];
     
     const isUngrounded = choiceContainsUngroundedReferences(
       choice,
@@ -151,7 +233,7 @@ describe('narrativeTranslator', () => {
     const choice = 'Inspect the barrels carefully';
     const lastGmStory = 'You stand in a dusty room with barrels and crates.';
     const sceneFacts = { props: ['barrels', 'crates'], location: 'Room' };
-    const inventory = [];
+    const inventory: Item[] = [];
     
     const isUngrounded = choiceContainsUngroundedReferences(
       choice,
@@ -166,8 +248,7 @@ describe('narrativeTranslator', () => {
 
 describe('entityCast', () => {
   test('builds CAST block with named and anonymous entities', () => {
-    const base = mockGameState();
-    const state = mockGameState({ sceneFacts: { ...base.sceneFacts, present: ['Vessa', 'Just', 'Consul'] } });
+    const state = mockGameState({ sceneFacts: { present: ['Vessa', 'Just', 'Consul'] } });
     const cast = buildEntityCast(state);
     
     expect(cast).toContain('<CAST>');
@@ -195,11 +276,11 @@ describe('entityCast', () => {
   test('includes active encounter as threat', () => {
     const state = mockGameState({
       activeEncounter: {
-        id: 'enc-001',
         name: 'Pact Hunter',
         level: 5,
         hp: 60,
         maxHp: 80,
+        encounterId: 'enc-001',
       },
     });
     const cast = buildEntityCast(state);
@@ -220,11 +301,9 @@ describe('entityCast', () => {
       },
       places: [
         {
+          id: 'lowmarket',
           name: 'Lowmarket',
           description: 'A trading hub',
-          coordinates: { x: 100, y: 200 },
-          scale: 'hub',
-          discovered: true,
         },
       ],
     });
@@ -254,8 +333,7 @@ describe('entityCast', () => {
   });
   
   test('getCastSummary returns correct counts', () => {
-    const base = mockGameState();
-    const state = mockGameState({ sceneFacts: { ...base.sceneFacts, present: ['Vessa', 'Just', 'Consul'] } });
+    const state = mockGameState({ sceneFacts: { present: ['Vessa', 'Just', 'Consul'] } });
     const summary = getCastSummary(state);
     
     expect(summary.namedCount).toBe(1); // Vessa ('Just' is a UI label)

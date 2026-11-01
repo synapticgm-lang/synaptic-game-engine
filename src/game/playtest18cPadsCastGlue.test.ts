@@ -439,14 +439,14 @@ describe('playtest18c — pads refill and CAST glue', () => {
     const state = namedWatchtower();
     const line = 'I look the handler in the eye. What happens if I walk away?';
     const resort = lastResortStoryBody(state, buildCompletedEventPacket(state, line), line);
-    expect(resort.prose).not.toMatch(/You look for Good|You close with |Contract Hall Bravo|You go down/i);
+    expect(resort.prose).not.toMatch(/You look for Good|You close with |Contract Hall Tough|You go down/i);
     const close = bookBodyAfterWriterMiss(
       state,
       buildCompletedEventPacket(state, 'I walk through the nearest exit.'),
       'I walk through the nearest exit.',
-      'You close with Contract Hall Bravo. Contract Hall Bravo keeps the body type the name already has. The exchange is short. Contract Hall Bravo drops. The body stays on the floor — loot is legal.'
+      'You close with Contract Hall Tough. Contract Hall Tough keeps the body type the name already has. The exchange is short. Contract Hall Tough drops. The body stays on the floor — loot is legal.'
     );
-    expect(close.prose).not.toMatch(/Contract Hall Bravo|loot is legal/i);
+    expect(close.prose).not.toMatch(/Contract Hall Tough|loot is legal/i);
   });
 
   it('graph pads skip this room and last-resort names the dest room once', () => {

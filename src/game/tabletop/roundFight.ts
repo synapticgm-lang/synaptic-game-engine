@@ -10,7 +10,7 @@ import { rollVictoryLoot } from '../combat';
 import { profileForEncounter } from '../lootTableRegistry';
 import { formatCheckRecord, growWeaponFamiliarity, resolveCheckRecord, weaponCategory } from '../checkRules';
 import { pushCombatStateTx } from '../stateTx';
-import { fightLootClause, weaponInHand } from '../infoSheet';
+import { formatLootStatusLine } from '../lootTableRegistry';
 import { tickEncounterTerminal } from '../encounterTerminalFsm';
 import { registerFightRoundRules } from '../fightRoundRules';
 import { advanceClock, isRoadFoe, settleRoadMeeting } from '../travelJourney';
@@ -538,7 +538,11 @@ export function resolveRoundFight(
     next = paid.state;
     receipts.push(...paid.receipts);
     if (money) receipts.push(`Gold Gained: ${money}`);
-    if (won.loot.length) receipts.push(`Loot: ${won.loot.map((l) => `[${l.rarity}] ${l.name}`).join(', ')} — ${fightLootClause(weaponInHand(working))}`);
+    // T10LOOT — player STATUS shows rarity+name (x2 collapse); fightLootClause stays writer/checker-only.
+    if (won.loot.length) {
+      const lootLine = formatLootStatusLine(won.loot);
+      if (lootLine) receipts.push(lootLine);
+    }
     receipts.push(...(won.lootLines ?? []));
     // The amount is on STATUS (Gold Gained); the writer only hears that there was coin.
     const bits = [...won.loot.map((l) => l.name), ...(money ? ['some coin'] : [])];

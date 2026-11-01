@@ -88,12 +88,12 @@ describe("seed 93 writer facts", () => {
     });
     const fought = resolveEngineFight(live, "Press the attack");
     expect(fought).toBeTruthy();
+    // T10LOOT — player STATUS loot line is rarity+name only; fightLootClause stays checker/writer-side.
     const loot = fought!.receipts.find((r) => r.startsWith("Loot:"));
     if (loot) {
-      expect(loot).toMatch(/not the weapon that won/);
-      const inHand = loot.match(/In hand before the blow: ([^.]+)\./)?.[1] ?? '';
-      expect(inHand).toBe(weaponInHand(live));
-      expect(loot.split(' — ')[0]).not.toContain(`] ${inHand}`);
+      expect(loot).not.toMatch(/found after the blow|not the weapon that won/);
+      expect(fightLootClause(weaponInHand(live))).toMatch(/not the weapon that won/);
+      expect(loot).not.toContain(`] ${weaponInHand(live)}`);
     }
   });
 
