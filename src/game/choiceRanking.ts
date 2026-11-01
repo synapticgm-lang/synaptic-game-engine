@@ -311,7 +311,7 @@ function travelDest(chip: string): string | null {
   return m ? m[1]!.replace(/[.!?]+$/, '').trim() : null;
 }
 
-/** Orientation steps pay no XP and must not starve the first real starter-quest chip (LitRPG / Story RPG). */
+/** Orientation steps — LitRPG/RPG still skip them for the *chip* so Hear/Scout can show; they pay XP separately. */
 function isBearingsChipStep(description: string): boolean {
   const d = (description ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
   return !!d && (/\bbearings?\b/.test(d) || /\borient(?:ation|ing)?\b/.test(d));
@@ -330,6 +330,20 @@ function storyObjectiveIndex(state: GameState, quest: { objectives?: QuestObject
   return -1;
 }
 
+function chipAlreadyPlayed(state: GameState, chip: string): boolean {
+  const said = chip.toLowerCase();
+  return (state.log ?? []).some(
+    (e) => e.role === 'player' && String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === said
+  );
+}
+
+/** Active starter / main first, then any accepted revealed quest (LitRPG / Story RPG). */
+function storyQuestForChip(state: GameState) {
+  if (state.engineMode === 'dnd') return mainSpineQuest(state);
+  const live = (state.quests ?? []).filter((q) => q.status === 'active' && q.revealed);
+  return live.find((q) => q.type === 'main') ?? live[0] ?? null;
+}
+
 /** The quest's next step as one chip, when the engine knows one. */
 export function storyChip(state: GameState): string | null {
   if (state.activeEncounter) return null;
@@ -340,10 +354,7 @@ export function storyChip(state: GameState): string | null {
   if (tabletopStep) return tabletopStep;
   // Tabletop: the main quest the step tracker follows, so no chip speaks for another quest's step.
   // (dnd chip set unchanged — tabletopStepChip above owns TT pads; this branch is LitRPG/RPG.)
-  const quest =
-    state.engineMode === 'dnd'
-      ? mainSpineQuest(state)
-      : (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
+  const quest = storyQuestForChip(state);
   if (!quest) return null;
   const here = (state.currentLocation ?? '').toLowerCase();
   const objIdx = storyObjectiveIndex(state, quest);
@@ -354,10 +365,25 @@ export function storyChip(state: GameState): string | null {
   // A talk stage whose giver stands here is done here, before any trip to the quest's site.
   if (!giverHere) {
     const hubs = hubsForBibleId(state.campaignBibleId);
-    // Tabletop: the trip is to where the open step is taken, which may be past the quest's own place.
-    const leads = (state.engineMode === 'dnd' && obj ? tabletopStepAnchor(state, quest, objIdx).place : null) ?? questTravelSite(quest);
+    // LitRPG/RPG talk stage: travel to the opener place (giver home) before a generic quest site.
+    const opener = (state.openingEstablishment?.answers?.where ?? '').trim();
+    const leads =
+      (state.engineMode === 'dnd' && obj ? tabletopStepAnchor(state, quest, objIdx).place : null)
+      ?? (talkStage && (state.engineMode === 'litrpg' || state.engineMode === 'rpg') ? opener || null : null)
+      ?? questTravelSite(quest);
     const site = leads ? matchHub(hubs, leads) : null;
-    if (site && !here.includes(site.name.toLowerCase())) return `Travel toward ${site.name}`;
+    if (site && !here.includes(site.name.toLowerCase()) && !samePlace(here, site.name.toLowerCase())) {
+      return `Travel toward ${site.name}`;
+    }
+    // Opener string may not be a hub — still offer Travel toward <opener> when away.
+    if (
+      talkStage
+      && (state.engineMode === 'litrpg' || state.engineMode === 'rpg')
+      && opener
+      && !samePlace(here, opener.toLowerCase())
+    ) {
+      return `Travel toward ${opener}`;
+    }
     const linked = hubs.find((h) => h.linkedQuestIds?.includes(quest.id) && !here.includes(h.name.toLowerCase()));
     if (!site && linked) return `Travel toward ${linked.name}`;
     if (talkStage) return null;
@@ -365,15 +391,44 @@ export function storyChip(state: GameState): string | null {
   // At the opening card's place the card's talk chip carries the stage: one label for one topic.
   const cardPlace = (state.openingEstablishment?.answers?.where ?? '').trim().toLowerCase();
   const atCard = giverHere && samePlace(here, cardPlace) && !hallTopicAlreadyAnswered(state, 'want');
-  const chip = obj ? (atCard ? 'Ask what they want' : stepChip(obj)) : null;
+  // XP-D1 A2: if Ask-what-they-want was already played, fall through to the XP-paying step chip
+  // (do not return null and starve Hear their reason / Scout…).
+  let chip = obj ? (atCard ? 'Ask what they want' : stepChip(obj)) : null;
+  if (chip && atCard && chipAlreadyPlayed(state, chip)) {
+    chip = stepChip(obj!);
+  }
   if (!chip) return null;
   // Offered only when an engine action carries it out: a talk to its giver here, a move, or opening the site here.
   if (!talkStage && !travelChipMoves(state, chip) && !objectiveOpensInterior(state, chip)) return null;
-  const said = chip.toLowerCase();
-  const played = (state.log ?? []).some(
-    (e) => e.role === 'player' && String(e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === said
-  );
-  return played ? null : chip;
+  return chipAlreadyPlayed(state, chip) ? null : chip;
+}
+
+const FREE_INPUT_CHIP = /^(?:say something|do something else)/i;
+
+/**
+ * XP-D1 A2 — LitRPG / Story RPG: keep the quest step (or travel-to-step) chip in the top N.
+ * Drops a lower pad when injecting; tabletop / PYOA unchanged.
+ */
+export function pinStoryChipInTop(state: GameState, choices: string[], topN = 3): string[] {
+  if (state.engineMode !== 'litrpg' && state.engineMode !== 'rpg') return choices;
+  if (state.activeEncounter || !choices.length) return choices;
+  const story = storyChip(state);
+  if (!story) return choices;
+  const list = [...choices];
+  const want = story.toLowerCase();
+  const idx = list.findIndex((c) => c.toLowerCase() === want);
+  if (idx >= 0 && idx < topN) return list;
+  if (idx >= 0) list.splice(idx, 1);
+  list.unshift(story);
+  if (list.length > choices.length) {
+    for (let i = list.length - 1; i >= topN; i--) {
+      const c = list[i]!;
+      if (FREE_INPUT_CHIP.test(c) || c.toLowerCase() === want) continue;
+      list.splice(i, 1);
+      break;
+    }
+  }
+  return list;
 }
 
 const OBJECTIVE_TAIL =
@@ -640,6 +695,9 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
   // The offered list shows four chips; inside a dungeon card its way out is always one of them (ranked last of the four).
   const exitAt = ranked.findIndex((c) => CARD_EXIT.test(c));
   if (exitAt > SHOWN_CHIPS - 1) ranked.splice(SHOWN_CHIPS - 1, 0, ...ranked.splice(exitAt, 1));
-  if (ranked.join('|') !== choices.join('|')) notes.push('Anti-circling rank');
-  return { choices: ranked, notes };
+  // XP-D1 A2 — pin starter/quest step (or travel-to-it) into the top 3 for LitRPG / Story RPG.
+  const pinned = pinStoryChipInTop(state, ranked, 3);
+  if (pinned.join('|') !== ranked.join('|')) notes.push('Quest step chip pinned top-3');
+  if (pinned.join('|') !== choices.join('|')) notes.push('Anti-circling rank');
+  return { choices: pinned, notes };
 }

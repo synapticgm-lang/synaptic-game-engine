@@ -34,16 +34,16 @@ export const REPEAT_SHARES = [1, 0.5, 0.25, 0.1] as const;
  * Story RPG matches L1, then ceil(1.5 × LitRPG) from L2.
  */
 /**
- * Tuned by xpPace.test.ts — higher early units slow L3–9 into the 15–25 turn band.
- * A1: complete=4 units; L2 band raised so L2→L3 stays ≥5 turns under heavier completes.
+ * Tuned by xpPace.test.ts — engaged mix (~2.5 quest events per fight) lands L3–9 in 15–25 turns.
+ * A2: complete back to 3 units; L2+ units raised so spans stay in band under frequent completes.
  */
 const LITRPG_UNITS_PER_LEVEL: ReadonlyArray<{ maxLevel: number; units: number }> = [
   { maxLevel: 1, units: 3 },
-  { maxLevel: 2, units: 11 },
-  { maxLevel: 3, units: 12 },
+  { maxLevel: 2, units: 9 },
+  { maxLevel: 3, units: 11 },
   { maxLevel: 4, units: 13 },
-  { maxLevel: 6, units: 14 },
-  { maxLevel: 9, units: 20 },
+  { maxLevel: 6, units: 15 },
+  { maxLevel: 9, units: 18 },
   { maxLevel: 14, units: 26 },
   { maxLevel: 19, units: 30 },
   { maxLevel: Number.POSITIVE_INFINITY, units: 34 },
@@ -58,8 +58,8 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
   dungeonEntry: 0.5,
   roomCleared: 0.5,
   questStep: 1,
-  /** Completes weigh more than fights so mixed pace lands ~60–70% quest XP. */
-  questComplete: 4,
+  /** Completes 3 units; with steps 1 + fights 0.85@L2+ → ~65% quest / ~25% fight XP share. */
+  questComplete: 3,
   significantPerson: 0.5,
   significantPlace: 0.5,
   achievement: 1.5,
@@ -67,10 +67,15 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
 };
 
 /**
- * L2+ on-level fights: 0.85 unit so completes (4) hold quest XP share near 60–70%.
- * L1 stays 1 (fight 50 + First Kill + step + First Steps → L2).
+ * L2+ on-level fights: 0.85 unit so completes (3) + steps hold quest XP share near 60–70%.
+ * L1 stays 1 (fight 50 + First Kill + bearings + step + First Steps → L2).
  */
 export const ENCOUNTER_UNITS_L2_PLUS = 0.85;
+
+/** One XP event may not exceed this share of the current level bar (LitRPG / Story RPG). */
+export const XP_EVENT_BAR_CAP = 0.6;
+/** After one level-up in a turn, surplus into the next bar is capped at this share. */
+export const XP_TURN_SURPLUS_CAP = 0.5;
 
 /** Story RPG zeros (same as prior STORY_RPG_MILESTONE_XP policy). */
 export const STORY_RPG_UNIT_ZERO: ReadonlySet<MilestoneKind> = new Set([
@@ -182,6 +187,18 @@ export function unitAwardFor(
  * LitRPG / Story RPG milestone amount before difficulty xpScale.
  * Fights also take tough-foe bonus; every kind with a content level takes contentScale.
  */
+/** Cap a single XP event at XP_EVENT_BAR_CAP of the current bar (LitRPG / Story RPG only). */
+export function capXpEventAmount(
+  mode: EngineMode | undefined,
+  playerLevel: number,
+  amount: number
+): number {
+  if (!isUnitXpMode(mode) || amount <= 0) return amount;
+  const bar = levelBar(mode, playerLevel);
+  const cap = Math.max(1, Math.floor(bar * XP_EVENT_BAR_CAP));
+  return Math.min(amount, cap);
+}
+
 export function unitMilestoneAmount(
   mode: EngineMode | undefined,
   kind: MilestoneKind,
@@ -213,7 +230,7 @@ export function unitMilestoneAmount(
   if (isFight) {
     amount = Math.max(1, Math.round(amount * toughFoeScale(playerLevel, clamped)));
   }
-  return amount;
+  return capXpEventAmount(mode, playerLevel, amount);
 }
 
 export function repeatShare(completionIndex: number): number {
@@ -263,6 +280,11 @@ export function questCompleteRepeatKey(identity: string, n: number): string {
   return `quest-complete:${identity}:${n}`;
 }
 
+/** Same giver+quest step ladder key (100/50/25/10 across repeats). */
+export function questStepRepeatKey(identity: string, n: number): string {
+  return `quest-step:${identity}:${n}`;
+}
+
 export function fightRepeatKey(placeId: string, foeName: string): string {
   return `fight:${normalizeIdentityPart(placeId) || 'here'}:${normalizeIdentityPart(foeName) || 'foe'}`;
 }
@@ -270,6 +292,18 @@ export function fightRepeatKey(placeId: string, foeName: string): string {
 /** Count prior completions of this identity from sandbox award keys. */
 export function countIdentityCompletions(awardKeys: string[] | undefined, identity: string): number {
   const prefix = `quest-complete:${identity}:`;
+  let max = -1;
+  for (const k of awardKeys ?? []) {
+    if (!k.startsWith(prefix)) continue;
+    const n = Number(k.slice(prefix.length));
+    if (Number.isFinite(n)) max = Math.max(max, n);
+  }
+  return max + 1;
+}
+
+/** Count prior same-giver+quest step pays (ladder index for the next step award). */
+export function countIdentitySteps(awardKeys: string[] | undefined, identity: string): number {
+  const prefix = `quest-step:${identity}:`;
   let max = -1;
   for (const k of awardKeys ?? []) {
     if (!k.startsWith(prefix)) continue;

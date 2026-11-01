@@ -71,7 +71,8 @@ describe('XP-D1 design', () => {
     const onLevel = milestoneXp('rpg', 'encounter', { level: 1, playerLevel: 1, foeLevel: 1 }).amount;
     const mini = milestoneXp('rpg', 'miniBoss', { level: 1, playerLevel: 1, foeLevel: 1 }).amount;
     expect(onLevel).toBe(50);
-    expect(mini).toBe(100);
+    // 2 units × 50 = 100, event-capped at 60% of L1 bar (90).
+    expect(mini).toBe(90);
     expect(onLevel).not.toBe(80);
     const high = milestoneXp('litrpg', 'encounter', { level: 5, playerLevel: 5, foeLevel: 5 }).amount;
     const low = milestoneXp('litrpg', 'encounter', { level: 5, playerLevel: 5, foeLevel: 1 }).amount;
@@ -107,7 +108,9 @@ describe('XP-D1 design', () => {
       turn: 5,
     });
     const first = r.xp;
-    expect(first).toBe(LITRPG_MILESTONE_XP.questComplete);
+    expect(first).toBe(
+      milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount
+    );
 
     state = { ...state, sandboxAwardKeys: r.awardKeys };
     const before2 = [makeQuest('q-mira-2', 'Mira')];
@@ -212,7 +215,9 @@ describe('XP-D1 design', () => {
         turn: 2,
       }
     );
-    expect(r.xp).toBe(LITRPG_MILESTONE_XP.questComplete);
+    expect(r.xp).toBe(
+      milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount
+    );
     expect(r.xp).not.toBe(99999);
   });
 
@@ -256,7 +261,7 @@ describe('XP-D1 design', () => {
     expect(hard).toBe(Math.round(plain * 1.25));
   });
 
-  it('A1: System bounty born+completed this turn still pays step + complete once (AI xp ignored)', () => {
+  it('A1/A2: System bounty born+completed this turn still pays step + complete once (AI xp ignored)', () => {
     const bounty = (status: 'active' | 'completed', allDone: boolean): Quest =>
       ({
         id: 'gen-ds-trouble-34',
@@ -288,7 +293,7 @@ describe('XP-D1 design', () => {
     expect(r.notes.filter((n) => /quest step:/.test(n))).toHaveLength(3);
     expect(r.notes.some((n) => /quest complete: System bounty/i.test(n))).toBe(true);
 
-    // Replay / same identity ladders on a second bounty with the same giver+task.
+    // Replay / same identity ladders steps + complete (100/50/…).
     const again = applySandboxXpAwards(
       { ...baseState(), sandboxAwardKeys: r.awardKeys },
       {
@@ -305,7 +310,9 @@ describe('XP-D1 design', () => {
         turn: 43,
       }
     );
-    expect(again.xp).toBe(step * 3 + Math.max(1, Math.round(complete * 0.5)));
+    const halfStep = Math.max(1, Math.round(step * 0.5));
+    const halfComplete = Math.max(1, Math.round(complete * 0.5));
+    expect(again.xp).toBe(halfStep * 3 + halfComplete);
   });
 
   it('A1: Story RPG quest complete pays engine units (not 0)', () => {
@@ -347,9 +354,11 @@ describe('XP-D1 design', () => {
     expect(r.xp).not.toBe(99999);
   });
 
-  it('A1: L1 fight stays 50; L2+ encounter uses 0.85 unit; complete is 4 units', () => {
+  it('A2: L1 fight stays 50; L2+ encounter uses 0.85 unit; complete is 3 units (event-capped)', () => {
     expect(milestoneXp('litrpg', 'encounter', { level: 1, playerLevel: 1, foeLevel: 1 }).amount).toBe(50);
-    expect(milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount).toBe(200);
+    // 3 units × 50 = 150, capped at 60% of L1 bar (90).
+    expect(milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount).toBe(90);
+    expect(LITRPG_MILESTONE_XP.questComplete).toBe(150);
     const l2Fight = milestoneXp('litrpg', 'encounter', { level: 2, playerLevel: 2, foeLevel: 2 }).amount;
     const l2Unit = xpUnit('litrpg', 2);
     expect(l2Fight).toBe(Math.max(1, Math.round(0.85 * l2Unit)));

@@ -16,6 +16,7 @@ import {
   resolveHubArrival,
 } from './hubEncounters';
 import { applySandboxXpAwards, SANDBOX_XP } from './sandboxXp';
+import { milestoneXp } from './xpRules';
 import {
   revealQuestsFromBanks,
   seedLocalStarterQuest,
@@ -277,7 +278,10 @@ describe('Act-3 off-spine XP', () => {
         turn: 6,
       }
     );
-    expect(done.xp).toBe(SANDBOX_XP.questCompleteSide);
+    // XP-D1 A2: live complete is unit-paid then event-capped (60% of bar); snapshot table stays 150.
+    expect(done.xp).toBe(
+      milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount
+    );
   });
 });
 

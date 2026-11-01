@@ -82,7 +82,7 @@ import { craftProgressionPolicy, isCraftStarvedPad } from './craftBookCompiler';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
-import { rankChoices } from './choiceRanking';
+import { pinStoryChipInTop, rankChoices } from './choiceRanking';
 import { withRememberedThreatChip } from './placeThreats';
 import { isJourneyUnderway, withJourneyPads, withMarchWarnPads } from './travelJourney';
 import { ENGINE_COMBAT_CHIP } from './chipLegality';
@@ -1374,6 +1374,14 @@ export function compileChoices(
       if (finalChoices.some((c) => isFreeInputChip(c) && c.toLowerCase() === free.toLowerCase())) continue;
       finalChoices = [...finalChoices, free];
       notes.push(`Free-input restore: ${free}`);
+    }
+  }
+  // XP-D1 A2 — after director / named-talk / free-input, re-pin quest step into top 3 (litrpg/rpg only).
+  {
+    const before = finalChoices;
+    finalChoices = pinStoryChipInTop(state, finalChoices, 3);
+    if (finalChoices !== before && finalChoices.join('|') !== before.join('|')) {
+      notes.push('Quest step chip pinned top-3');
     }
   }
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context

@@ -33,7 +33,7 @@ import {
   xpRequiredForLevel,
   checkLevelUp,
 } from './xpPolicy';
-import { LITRPG_MILESTONE_XP } from './xpRules';
+import { LITRPG_MILESTONE_XP, milestoneXp } from './xpRules';
 import { PlayerIntent } from './intentEnums';
 import type { GameState } from './types';
 
@@ -240,9 +240,15 @@ describe('Phase 4: Fast XP loop', () => {
     const state = createInitialState();
     // 2026-10-14e — one table (LITRPG_MILESTONE_XP); accepting a quest is not effort.
     expect(awardCombatXp(state, 'trash').xp).toBe(LITRPG_MILESTONE_XP.encounter);
-    expect(awardCombatXp(state, 'boss').xp).toBe(LITRPG_MILESTONE_XP.boss);
+    // XP-D1 A2: boss / complete live-pay through milestoneXp (event-capped at 60% of bar).
+    expect(awardCombatXp(state, 'boss').xp).toBe(
+      milestoneXp('litrpg', 'boss', { level: 1, playerLevel: 1, foeLevel: 1 }).amount
+    );
     expect(awardQuestXp(state, 'accept').xp).toBe(0);
-    expect(awardQuestXp(state, 'complete').xp).toBe(LITRPG_MILESTONE_XP.questComplete);
+    expect(LITRPG_MILESTONE_XP.questComplete).toBe(150);
+    expect(awardQuestXp(state, 'complete').xp).toBe(
+      milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount
+    );
   });
 
   it('checkLevelUp triggers at 150 XP', () => {

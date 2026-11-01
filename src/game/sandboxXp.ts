@@ -27,10 +27,12 @@ import { LITRPG_MILESTONE_XP, NO_CR_XP_REASON, deedXp, encounterKind, milestoneX
 import {
   countFightRepeats,
   countIdentityCompletions,
+  countIdentitySteps,
   engineQuestLevel,
   fightRepeatKey,
   questCompleteRepeatKey,
   questIdentity,
+  questStepRepeatKey,
   repeatShare,
 } from './rules/xpPace';
 import { realEncounterCr } from './rules/srdMonsters';
@@ -382,18 +384,26 @@ export function applySandboxXpAwards(
     // AI-supplied rewards.xp must never become the paid amount (kept on the quest for item hints only).
     void after.rewards?.xp;
     const qLevel = engineQuestLevel(level, after, areaOpts.areaLevel);
+    // Same giver+quest identity: one ladder index for all steps of this instance (not per objective).
+    const identity = questIdentity(after);
+    const stepN = mode === 'dnd' || mode === 'pyoa' ? 0 : countIdentitySteps(awardKeys, identity);
+    const stepShare = mode === 'dnd' || mode === 'pyoa' ? 1 : repeatShare(stepN);
+    let pushedStepRound = mode === 'dnd' || mode === 'pyoa';
     for (const obj of after.objectives ?? []) {
       if (!obj.completed || beforeDone.has(obj.id)) continue;
-      // Bearings / look-around ticks are orientation, not a milestone.
-      if (lookAround || isBearingsStyleObjective(obj.description)) continue;
+      // Look-around must not pay a non-bearings tick that happened to flip on a scout line.
+      // XP-D1 A2: bearings / orient objectives pay 1 unit once as a normal quest step.
+      if (lookAround && !isBearingsStyleObjective(obj.description)) continue;
       const label = stepChip(obj) ?? obj.description.replace(/\s+/g, ' ').replace(/[.!?]+$/, '').trim();
       pay(`quest-tick:${after.id}:${obj.id}`, 'questStep', `quest step: ${label}`, undefined, undefined, undefined, {
         contentLevel: qLevel,
+        repeatShare: stepShare,
+        alsoKeys: pushedStepRound ? [] : [questStepRepeatKey(identity, stepN)],
       });
+      pushedStepRound = true;
     }
     if (after.status === 'completed' && beforeStatus !== 'completed') {
       // Per-quest-id idempotency (one instance never pays twice) + giver::task identity ladder.
-      const identity = questIdentity(after);
       const n = countIdentityCompletions(awardKeys, identity);
       const share = mode === 'dnd' || mode === 'pyoa' ? 1 : repeatShare(n);
       pay(`quest-complete:${after.id}`, 'questComplete', `quest complete: ${after.name}`, undefined, undefined, undefined, {
