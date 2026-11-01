@@ -92,7 +92,7 @@
    "kind": "scene",
    "title": "The Union Locker",
    "brief": "You search Hesper Quill's empty locker for hidden notes, testing your CUNNING against a watchful union clerk to secure a greasy spare regulator valve.",
-   "page": "Rusted iron hinges shriek as you pry open Hesper Quill's locker, stirring up a dry cloud of tobacco dust and old rail schedules. Inside, grease-stained logbooks lie piled beneath a heap of spare rags, their margins scrawled with cryptic notes about signal boxes that no longer exist on the company maps. A watchful union clerk lingers by the far doorway, arms crossed over a greasy canvas vest, his yellow eyes tracking your every reach in the gloom. You need to slip your fingers past his suspicious stare to find the spare valve hidden beneath the rubbish.",
+   "page": "Behind the union clerk's turned shoulder you dig past the grease-stained logbooks and rags until your fingers find the spare valve cool and oily under the rubbish. Hesper Quill's cryptic notes on vanished signal boxes crackle as you shift them aside. Tobacco dust settles on your cuffs while you pocket the valve and ease the locker shut before those yellow eyes look back from the doorway.",
    "exits": [
     {
      "label": "Search Hesper Quill's hidden notes",
@@ -3986,7 +3986,7 @@
    "kind": "scene",
    "title": "The Fallen Beam",
    "brief": "You lift a fallen support beam to rescue a trapped water-dealer using raw brawn, earning a lasting debt of honor.",
-   "page": "Splintered timber pins the old water-seller against the side of a stranded carriage, his breath coming in shallow, rattling gasps amid the drifting soot. You wedge your shoulder beneath the heavy oak balk, gritting your teeth as splinters bite through your canvas coat, and heave upward with all your strength. The timber rolls clear into the ash with a dull thud, freeing the coughing man to clutch a grateful hand to your sleeve.",
+   "page": "The old water-seller coughs ash into his sleeve as you haul him upright against the stranded carriage, one arm under his shoulders. Splinters still cling to your canvas coat from the oak balk you rolled into the ash. He keeps a grateful hand on your sleeve until his rattling breath settles enough for him to stand alone beside the dry cistern.",
    "exits": [
     {
      "label": "Leaving the merchant to catch breath",
@@ -10560,7 +10560,7 @@
    "kind": "reward",
    "title": "The Iron Harvest",
    "brief": "You outsmart the demolition crew's tripwires, risking an accidental detonation to salvage undamaged steel plates for a makeshift bridge.",
-   "page": "However narrowly you evade the sudden lurch of the wind-scoured girders, you manage to secure the vital connection and pull yourself back onto solid footing with trembling hands. The heavy steel plates lie stacked in the grit at your boots, notched and sound, ready to bridge the gap between the severed rails. Clutched in your palm is a heavy brass transit-token stamped with the crown and pinion of the high surveyors, cold as winter rain and marked with a private cipher that might buy you a moment's grace at the toll-gates.\n\nYou slide the salvaged iron into the coal-tender alongside your shovel and wipe the black grime from your eyes, listening to the steady, rhythmic thrum of the Marrowbone waiting below.",
+   "page": "You duck the sudden lurch of the wind-scoured girders, lock the vital connection into place, and pull yourself back onto solid footing with trembling hands. The heavy steel plates lie stacked in the grit at your boots, notched and sound, ready to bridge the gap between the severed rails. Clutched in your palm is a heavy brass transit-token stamped with the crown and pinion of the high surveyors, cold as winter rain and marked with a private cipher that might buy you a moment's grace at the toll-gates.\n\nYou slide the salvaged iron into the coal-tender alongside your shovel and wipe the black grime from your eyes, listening to the steady, rhythmic thrum of the Marrowbone waiting below.",
    "exits": [
     {
      "label": "Haul the plates toward the tender",
@@ -19613,7 +19613,7 @@
    "kind": "bottleneck",
    "title": "The Bronze Pillar",
    "brief": "You stand before the bronze pillar of the Water Gate with the heavy brass key in your hand, ready to make the final choice for Cinderfall.",
-   "page": "Standing before the immense bronze pillar of the Water Gate, you feel the cold heft of the brass key in your palm as the storm clock ticks down its final, hollow beats. Cinderfall holds its breath behind the titanic bulk of the dam, while the low rumble of the approaching ash-tempest shakes the foundations of the terminal cliff. Every faction watches from the shadows, waiting to see whether you will turn the spindle to wash the grey steppes or seal the doom of the iron road forever. The gear awaits your hand.\n\nTurn the great brass key",
+   "page": "Standing before the immense bronze pillar of the Water Gate, you feel the cold heft of the brass key in your palm as the storm clock ticks down its final, hollow beats. Cinderfall holds its breath behind the titanic bulk of the dam, while the low rumble of the approaching ash-tempest shakes the foundations of the terminal cliff. Every faction watches from the shadows, waiting to see whether you will turn the spindle to wash the grey steppes or seal the doom of the iron road forever. The gear awaits your hand.\n\nTurn the great brass key.",
    "exits": [
     {
      "label": "Open the final bronze lock",
@@ -19737,7 +19737,7 @@
    "kind": "ending-part",
    "title": "The Cleansing Wash",
    "brief": "Ending \"Open the Water Gate\"",
-   "page": "Torrents of crystal water roar through the lower viaducts, sweeping away the stranded wrecks and the burnt-out hulks of the Grey Bazaar like drifted straw. The low sky cracks open above the terminal, letting a pale, true sunlight pierce the broken clouds for the first time since the Long Fire began its reign. Steam rises in thick white billows where the cold flood meets the hot cinders of the steppes, wrapping the valley in a clean, breathable fog. The iron road is flooded, but the land finally drinks.\n\nStand firm as the deluge surrounds the engine",
+   "page": "Torrents of crystal water roar through the lower viaducts, sweeping away the stranded wrecks and the burnt-out hulks of the Grey Bazaar like drifted straw. The low sky cracks open above the terminal, letting a pale, true sunlight pierce the broken clouds for the first time since the Long Fire began its reign. Steam rises in thick white billows where the cold flood meets the hot cinders of the steppes, wrapping the valley in a clean, breathable fog. The iron road is flooded, but the land finally drinks.\n\nStand firm as the deluge surrounds the engine.",
    "exits": [
     {
      "label": "Step down into the cool flow",

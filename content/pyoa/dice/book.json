@@ -4684,7 +4684,7 @@
    "kind": "scene",
    "title": "Turning the Iron",
    "brief": "You dismantle a rusted winch mechanism near the edge, carefully avoiding jagged metal to extract a heavy iron gear.",
-   "page": "Heavy iron plates and frozen grease lock the old winch mechanism in a stubborn grip at the edge of the dry basin. Using the flat of your blade as a wedge, you hammer away the thick encrustation of salt until the rusted housing finally gives way with a metallic shriek. Inside the battered casing lies a heavy, tooth-cut gear, still greased against the salt-rot and remarkably sound. You pry it free from its housing, feeling the gratifying heft of solid iron in your palms.",
+   "page": "The tooth-cut gear rides cold against your hip as you leave the winch housing behind and pick a path down the cracked basin rim. Salt crust breaks under each step, and the greased iron ticks against your canteen with every stride. You keep one hand on the strap that holds it, scanning the haze for a clear route across the flats toward the next low ground. Wind off the dry basin lifts white grit into your teeth as you carry the salvage on.",
    "exits": [
     {
      "label": "Carry the gear across the low",
@@ -6172,7 +6172,7 @@
    "kind": "scene",
    "title": "Snaring the Shell",
    "brief": "You construct a makeshift net from discarded fishing lines, risking a severe pinch to capture a large, edible reef crab.",
-   "page": "Coiled strands of frayed hemp and copper wire drift among the calcified ribs of a sunken ketch, offering the raw materials for a snare. Tangled in the kelp below, a mottled reef crab tests the water with twitching feelers, its heavy pincers snapping at the currents of air. Kneeling in the wet silt, fingers loop the discarded twine into a crude but serviceable noose, sliding it steadily toward the twitching shell while avoiding the razor edges of barnacles that encrust the hull timbers.",
+   "page": "The noose of frayed hemp and copper wire settles around the reef crab's mottled claw as you draw the slack tight from your knees in the wet silt. The pincers snap once at empty air, then the shell jerks against the loop. You ease back from the barnacle-crusted ribs of the ketch, keeping the line taut so the catch cannot slip free into the kelp below.",
    "exits": [
     {
      "label": "Haul the captive onto the silt",
@@ -6317,7 +6317,7 @@
    "kind": "scene",
    "title": "Heaving the Anchor",
    "brief": "You help the pilgrims drag their massive anchor up a steep incline, straining your back to earn their sacred blessing of protection.",
-   "page": "Heavy hemp bites hard into raw palms as you take your place among the robed figures, throwing your weight against the thick tow-rope. The rusted anchor catches on a ridge of buried ballast stone, sending a jarring vibration up your spine while the pilgrims beside you hum an unceasing, low-pitched drone. Sweat stings your eyes in the damp air as you heave together, forcing the massive iron fluke to break free from the suction of the grey silt.",
+   "page": "The fluke finally clears the buried ballast, and the tow-rope jumps as the pilgrims haul the freed anchor across the grey silt. Raw palms burn where the hemp has bitten, and you match their stride as the rusted mass scrapes a dark trail behind you. Robed shoulders lean in together, and the anchor-bearers push on toward the next ridge of salt.",
    "exits": [
     {
      "label": "Follow the weary anchor-bearers onward",
@@ -12364,7 +12364,7 @@
    "kind": "recovery",
    "title": "Bruised and Battered",
    "brief": "You fight off a desperate scavenger trying to hijack the platform, risking a lethal shove to keep your hard-won Supplies intact.",
-   "page": "A vicious blow catches you across the ribs, winding you instantly and forcing you to release your grip as your attacker scrambles away into the shadows. You slump against the cold iron stanchion, gasping for air while checking your gear bags. Several precious items are crushed or lost over the edge, leaving your provisions lighter and your body aching from the violent exchange.\n\nGather your breath and stand up",
+   "page": "A vicious blow catches you across the ribs, winding you instantly and forcing you to release your grip as your attacker scrambles away into the shadows. You slump against the cold iron stanchion, gasping for air while checking your gear bags. Several precious items are crushed or lost over the edge, leaving your provisions lighter and your body aching from the violent exchange.\n\nGather your breath and stand up.",
    "exits": [
     {
      "label": "Trace the path downward",
@@ -15126,7 +15126,7 @@
    "kind": "reward",
    "title": "The Lens-Maker's Art",
    "brief": "You delicately realign the damaged ocular lens on the automaton's secondary face, employing technical skill to earn a spool of unbreakable copper wire.",
-   "page": "Your fingers move with the practiced precision of a net-mender working fine linen, coaxing the warped brass housing back into true alignment. The tiny screw seats itself with a clean, satisfying click that echoes off the basalt walls of the vault. Dust motes dance in the amber glow of the automaton's remaining optic. However narrowly you managed the delicate repair, the machine acknowledges your craftsmanship with a low, grinding hum of approval. It reaches into its copper-ribbed breast and offers a spool of unbreakable copper wire, its surface shining with an oily, stubborn sheen.",
+   "page": "With care borrowed from years of mending nets, you ease the warped brass housing back until the threads seat clean. The tiny screw seats itself with a clean, satisfying click that echoes off the basalt walls of the vault. Dust motes dance in the amber glow of the automaton's remaining optic. However narrowly you managed the delicate repair, the machine acknowledges your craftsmanship with a low, grinding hum of approval. It reaches into its copper-ribbed breast and offers a spool of unbreakable copper wire, its surface shining with an oily, stubborn sheen.",
    "exits": [
     {
      "label": "Step through the heavy archive doors",

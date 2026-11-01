@@ -55,7 +55,8 @@ const KIND_RULE = {
   out: '90 to 150 words. Close this stage of the journey and look ahead to the next.',
   wide: '80 to 140 words. Self-contained: the reader may arrive from several different earlier scenes, so open with the situation, not "after ...". Ends with the reader facing a clear choice.',
   doom: '80 to 140 words. The reader\'s gamble fails and the journey ends here: vivid, a little poignant, not gruesome. No exits.',
-  final: '110 to 170 words. The final reckoning: the seed is within reach and the reader must decide its fate; each exit is one stance.',
+  // C1: do not cue "must decide" — that phrase leaked into page closers
+  final: '110 to 170 words. The final reckoning: the seed is within reach and its fate hangs on the stance the reader takes; each exit is one stance.',
   finalstance: '90 to 150 words. The reader carries out the stance they chose; consequences are about to fall.',
   endingpart: '100 to 170 words. Part of an ending; evocative and final in tone.',
   ending: '110 to 190 words. The last page of the book; a closing image; no exits.',
@@ -133,12 +134,14 @@ function prosePrompt(batch, S, prevDigest) {
   const r0 = batch[0].region;
   const L = [WORLD, '', r0 >= 1 ? `CURRENT REGION ${r0}: ${REGIONS[r0].name}. ${REGIONS[r0].theme}.` : 'PROLOGUE.'];
   if (prevDigest) L.push('', 'FOR CONTINUITY ONLY (the previous scenes written, do not repeat):', prevDigest);
+  // C1: ban label "// id" leaks, Will-you/Or stubs, decide-closers, truncated endings
   L.push('', 'Write the scenes below. They are linked pages; the exits list where each leads, so the prose must set up those moves. Rules:',
     '- Second person, present tense, concrete and sensory; vary openings and rhythm; no two scenes in this batch may start with the same word.',
     '- Obey each scene\'s word range. One or two paragraphs. No lists. Never mention game mechanics, flags, sections, pages or dice.',
     '- Follow each brief; do not contradict it. Scenes stand alone: do not assume which earlier scene the reader came from, and do not decide anything big for the reader.',
     '- Keep invented names simple and consistent; a name introduced in one scene may only be reused in that scene.',
-    '- Each EXIT line gets a short imperative label (3 to 9 words), in the order listed; labels in one scene must differ and must not name the destination id. If an exit has a "must express" note, the label must clearly express it. Gated exits ("only offered if") should read naturally as an option the reader has earned.', '');
+    '- Never write "you must decide/choose", "decide whether", "will you ... or ...", or a lone "Or ..." line; the EXIT labels are the choices. End on a concrete action or image, with a full stop (no trailing spaces, no cut-off sentence).',
+    '- Each EXIT line gets a short imperative label (3 to 9 words), in the order listed; labels in one scene must differ; never put "//", a section id, or destination id in a label. If an exit has a "must express" note, the label must clearly express it. Gated exits ("only offered if") should read naturally as an option the reader has earned.', '');
   for (const n of batch) {
     L.push(`SECTION ${n.id} | kind: ${n.kind} | ${KIND_RULE[n.kind]}`);
     const b = briefOf(n, S); if (b) L.push(`  brief: ${b}`);
@@ -158,7 +161,8 @@ function prosePrompt(batch, S, prevDigest) {
     if (!n.exits.length) L.push('  (no exits: this ends the book.)');
     L.push('');
   }
-  L.push('OUTPUT FORMAT, exactly, no preamble, no markdown, one block per scene in the order given:', '@@SECTION <id>', 'TITLE: <2 to 5 words>', 'TEXT: <the prose, one paragraph or two separated by " // ">', 'EXIT 1: <label>', 'EXIT 2: <label>   (as many as the scene has exits)', '@@END');
+  // C1: " // " is TEXT-only paragraph glue; models were copying it into EXIT labels and Will-you stubs
+  L.push('OUTPUT FORMAT, exactly, no preamble, no markdown, one block per scene in the order given:', '@@SECTION <id>', 'TITLE: <2 to 5 words>', 'TEXT: <the prose; if two paragraphs, join them with the three characters space-slash-slash-space, and nowhere else>', 'EXIT 1: <label>', 'EXIT 2: <label>   (as many as the scene has exits)', '@@END');
   return L.join('\n');
 }
 function parseProse(raw) {
@@ -180,7 +184,14 @@ function problems(n, p, minW = 55) {
   if (w < minW || w > 280) e.push(`words ${w}`);
   if (!p.title || p.title.length > 48) e.push('title');
   if (/@@|\b(dice|you rolled|stat check|target number|flag)\b|as an ai|\bsection\b/i.test(p.text)) e.push('meta words');
-  for (let i = 0; i < n.exits.length; i++) if (!p.exits[i] || p.exits[i].length < 4 || p.exits[i].length > 76) e.push(`exit ${i + 1} label`);
+  // C1: reject leaked "// id" labels, Will-you/Or stubs, decide-closers, truncated endings
+  if (/\byou must (?:now )?(?:decide|choose)\b|decide whether|\bwill you\b|\n\nOr /i.test(p.text)) e.push('signpost stub');
+  if (p.text !== p.text.trimEnd() || !/[.!?]"?$/.test(p.text.trimEnd())) e.push('trailing ws/nopunct');
+  for (let i = 0; i < n.exits.length; i++) {
+    const lab = p.exits[i] || '';
+    if (!lab || lab.length < 4 || lab.length > 76) e.push(`exit ${i + 1} label`);
+    else if (/\/\//.test(lab) || /\b[a-z]{2}-\d/.test(lab)) e.push(`exit ${i + 1} id-leak`);
+  }
   return e;
 }
 function markFlash(ids, batchId) {

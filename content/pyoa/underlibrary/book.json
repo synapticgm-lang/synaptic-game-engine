@@ -17274,7 +17274,7 @@
    "kind": "scene",
    "title": "Steps Among the Stacks",
    "brief": "You approach the fragile elder with delicate, measured steps that avoid disturbing a single paper stack, gaining a vial of restoration oil.",
-   "page": "Careful balance guides your approach toward the fragile elder hunched over a desk of rotted deal, ensuring your boots make not a single whisper upon the loose paper sheets scattered across the stone floor. Every motion is deliberate, measured to avoid disturbing the towering stacks of vellum that threaten to cascade at a vibration. Your restraint is noted with a dry nod from the bent figure, who wordlessly reaches into the folds of a moth-eaten robe and extends a small, stoppered vial of amber restoration oil.\n\nThe glass feels cool and heavy against your palm as you slip it safely into your pocket, ready for whatever decay lies ahead.",
+   "page": "The bent elder presses the stoppered vial of amber restoration oil into your palm and closes your fingers over the cool glass with a dry nod. Moth-eaten robe folds fall back into place as he turns to his desk of rotted deal. You slip the vial into your pocket without a whisper of boots on the loose paper sheets, then leave the towering vellum stacks undisturbed behind you.",
    "exits": [
     {
      "label": "Accept the amber oil quietly",
@@ -17289,7 +17289,7 @@
    "kind": "scene",
    "title": "Static on the Temples",
    "brief": "You stand firm against the oppressive wave of historic static pressing on your temples, earning the protective counsel of a phantom scholar.",
-   "page": "Heavy historic static thrums against your temples like a trapped wasp, threatening to unseat your thoughts with every breath you draw in the deep stacks. Yet you stand firm, planting your heels into the carpet of damp rag-paper as the ambient pressure peaks around you. A ghostly scholar materialized from the margins of a hovering folio speaks in low, dry tones, offering counsel on how to anchor your mind against the weight of unremembered centuries.\n\nAbsorbing this quiet protection, you feel the roaring in your ears recede into a manageable hum, leaving you steady enough to push deeper into the ancient annex.",
+   "page": "The phantom scholar beckons you past the hovering folio into a narrower aisle where damp rag-paper carpets the basalt. The roar that pressed your temples fades until you can hear the folio's rustle again. His dry counsel still sits in your ears as you plant each heel and follow him deeper into the annex stacks.",
    "exits": [
     {
      "label": "Follow the phantom scholar inward",
@@ -19602,7 +19602,7 @@
    "kind": "scene",
    "title": "Grain of Fallen Timbers",
    "brief": "You read the architectural grain of the fallen timbers to find the safe load-bearing line, testing your erudition, and you uncover a velvet-lined case holding a silver bookmark.",
-   "page": "Splintered oak and pine beams lie tangled across the basalt floor, groaning under the immense weight of the upper shelves. You trace the complex whorls and stress lines of the ancient wood with a calloused thumb, reading the silent language of structural strain. Finding the exact load-bearing spine of the debris pile, you lift a corner of the collapsed framing with calculated leverage. Beneath the heavy lintel, a velvet-lined mahogany case slides into view, cradling a polished silver bookmark that gleams faintly in the lamp-oil haze.",
+   "page": "The polished silver bookmark rests cold against your palm as you ease out from under the splintered oak and pine beams. Velvet from the mahogany case leaves a dark smear on your cuff. Ahead, oil lamps flicker along the basalt corridor, and you step that way with the case left open in the debris behind you.",
    "exits": [
     {
      "label": "Advance toward the flickering oil lamps",
@@ -19632,7 +19632,7 @@
    "kind": "scene",
    "title": "Chorus of Disgruntled Annotators",
    "brief": "You bargain with a chorus of disgruntled annotators using clever wordplay, testing your cunning, and you win a binding oath of silence from the spectral crowd.",
-   "page": "Pale translucent figures lean out from the margins of floating flyleaves, muttering bitter complaints about misplaced commas and corrupted cross-references. You match their complaints with a dry, deliberate cadence of sharp retorts and polite legalistic parries, trading verbal barbs until the spectral murmuring subsides into grudging respect. The leading phantom inclines its ghostly chin, sealing a binding oath of absolute silence with a wave of a translucent sleeve. The crowd of annotators fades into the drafting shadows, leaving you free to move unhindered through their territory.",
+   "page": "With the annotators faded into the drafting shadows, the corridor ahead lies open and still. You tuck away the memory of their bitter complaints about commas and cross-references and walk on between silent iron shelves. The leading phantom's waved sleeve left a cool draft that dies as you take the next turn.",
    "exits": [
     {
      "label": "Follow the quiet corridor ahead",
@@ -19662,7 +19662,7 @@
    "kind": "scene",
    "title": "Barrage of Ancient Insults",
    "brief": "You endure a barrage of ancient insults hurled by bound volumes of forgotten law, testing your resolve, and you secure an iron tongue-scraper of silence.",
-   "page": "Heavy, leather-bound compilations of forgotten municipal law rise on their edges like offended magistrates, barking dry insults about your lineage and your filing accuracy. You stand your ground against the stinging hail of archaic defamation, letting the verbal abuse wash over you with grim, unshakeable composure. Reaching into the flurry of flying pages, your fingers close around a cold, flat instrument of hammered pewter. You draw out the heavy iron tongue-scraper of silence, pressing its edge against the nearest volume until the bickering library sinks into sullen quiet.",
+   "page": "The iron tongue-scraper of silence lies flat in your grip, pewter edge still cool from the flurry of flying pages. Municipal law volumes settle back onto their shelves in sullen rows as you walk the hushed aisle. Archaic insults die out behind you, and only the lamp-oil haze marks the path ahead.",
    "exits": [
     {
      "label": "Continue down the hushed aisle",

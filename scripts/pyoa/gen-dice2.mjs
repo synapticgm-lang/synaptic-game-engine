@@ -122,7 +122,8 @@ const KIND_RULE = {
   scene: 'An ordinary scene on a branch. 80 to 150 words. Ends with a clear single move on.',
   check: 'A risky moment: the reader must attempt something using the named stat. 80 to 140 words describing the danger and what they try, ending at the instant before the outcome. Give CHECK label (3 to 8 words, the attempt). Do NOT say how it turns out.',
   recovery: 'The reader FAILED the risk. 80 to 140 words: what goes wrong and what it costs them (a wound, lost time, lost supplies, a debt, a scar). They survive and the story goes on. Never a dead end, never a death.',
-  reward: 'The reader got through (cleanly, or at a small cost). 80 to 140 words, written so it reads right either way ("however narrowly"), and gives them one concrete keepsake: an item, ally, secret, favour or debt. Give GRANT: a short noun phrase (2 to 5 words) naming it.',
+  // C1: do not cue "however narrowly" / "whether you ... or ..." — those leaked into reward prose as template tells
+  reward: 'The reader got through (cleanly, or at a small cost). 80 to 140 words that read true after a clean win and after a narrow one alike, without saying how close it was; never write "however narrowly" or "whether you ... or ...". Give one concrete keepsake: an item, ally, secret, favour or debt. Give GRANT: a short noun phrase (2 to 5 words) naming it.',
   'ending-part': 'A part of an ending sequence (verdict, aftermath). 100 to 170 words, evocative and final in tone, continuing from the previous part.',
   ending: 'The final section of an ending. 110 to 190 words, a coda that closes the book; no exits.',
 };
@@ -131,12 +132,14 @@ function prosePrompt(batch, O, prevDigest) {
   const inB = new Set(batch.map((n) => n.id));
   const L = [WORLD, '', REGION_NOTE[batch[0].region] || ''];
   if (prevDigest) L.push('', 'THE STORY JUST BEFORE THIS BATCH (for continuity, do not repeat):', prevDigest);
+  // C1: ban label "// id" leaks, Will-you/Or stubs, decide-closers, and trailing-space / truncated endings
   L.push('', 'Write the sections below. They are linked pages of the gamebook; exits list where each leads, so the prose must set up those moves. Rules:',
     '- Second person, present tense, concrete and sensory; vary openings and sentence rhythm; no section may start with the same word as another in this batch.',
     '- Obey each section\'s word range. One or two paragraphs. No lists. Do not mention game mechanics, stats, numbers, dice or "sections".',
     '- Follow the brief given for each section; do not contradict neighbouring sections. Do not decide anything big for the reader.',
     '- Characters and places may be referred to only as given in the briefs or the world notes; if you invent a name, keep it simple and use it consistently.',
-    '- Each EXIT line gives a short imperative label (3 to 8 words) for that exit, in the order listed; labels in one section must differ and must not name the destination id.', '');
+    '- Never write "you must decide/choose", "decide whether", "will you ... or ...", or a lone "Or ..." line; the EXIT labels are the choices. End on a concrete action or image, with a full stop (no trailing spaces, no cut-off sentence).',
+    '- Each EXIT line gives a short imperative label (3 to 8 words) for that exit, in the order listed; labels in one section must differ; never put "//", a section id, or destination id in a label.', '');
   for (const n of batch) {
     L.push(`SECTION ${n.id} | kind: ${n.kind} | ${KIND_RULE[n.kind]}`);
     const b = briefOf(n, O); if (b) L.push(`  brief: ${b}`);
@@ -154,8 +157,9 @@ function prosePrompt(batch, O, prevDigest) {
     if (n.ending) L.push('  (no exits: this ends the book.)');
     L.push('');
   }
+  // C1: " // " is TEXT-only paragraph glue; models were copying it into EXIT labels and Will-you stubs
   L.push('OUTPUT FORMAT, exactly, no preamble, no markdown, one block per section in the order given:',
-    '@@SECTION <id>', 'TITLE: <2 to 5 words>', 'TEXT: <the prose, one paragraph or two separated by " // ">', 'CHECK: <label>   (check sections only)', 'GRANT: <noun phrase>   (reward sections only)', 'EXIT 1: <label>', 'EXIT 2: <label>   (as many as the section has exits)', '@@END');
+    '@@SECTION <id>', 'TITLE: <2 to 5 words>', 'TEXT: <the prose; if two paragraphs, join them with the three characters space-slash-slash-space, and nowhere else>', 'CHECK: <label>   (check sections only)', 'GRANT: <noun phrase>   (reward sections only)', 'EXIT 1: <label>', 'EXIT 2: <label>   (as many as the section has exits)', '@@END');
   return L.join('\n');
 }
 
@@ -179,9 +183,16 @@ function problems(n, p, minW = 55) {
   if (w < minW || w > 280) e.push(`words ${w}`);
   if (!p.title || p.title.length > 48) e.push('title');
   if (/@@|\b(dice|you rolled|2d6|d20|stat check|target number)\b|as an ai|\bsection\b/i.test(p.text)) e.push('meta words');
+  // C1: reject reward-template tells, Will-you/Or stubs, "// id" labels, truncated endings
+  if (/\bhowever narrowly\b|\bwhether you\b[\s\S]{0,100}\bor\b|\byou must (?:now )?(?:decide|choose)\b|decide whether|\bwill you\b|\n\nOr /i.test(p.text)) e.push('template/signpost');
+  if (p.text !== p.text.trimEnd() || !/[.!?]"?$/.test(p.text.trimEnd())) e.push('trailing ws/nopunct');
   if (n.kind === 'check' && (!p.check || p.check.length < 8 || p.check.length > 70)) e.push('check label');
   if (n.kind === 'reward' && (!p.grant || p.grant.length > 48)) e.push('grant');
-  if (n.kind !== 'check' && !n.ending) for (let i = 0; i < n.exits.length; i++) if (!p.exits[i] || p.exits[i].length < 6 || p.exits[i].length > 72) e.push(`exit ${i + 1} label`);
+  if (n.kind !== 'check' && !n.ending) for (let i = 0; i < n.exits.length; i++) {
+    const lab = p.exits[i] || '';
+    if (!lab || lab.length < 6 || lab.length > 72) e.push(`exit ${i + 1} label`);
+    else if (/\/\//.test(lab) || /\b[a-z]{2}-\d/.test(lab)) e.push(`exit ${i + 1} id-leak`);
+  }
   return e;
 }
 
