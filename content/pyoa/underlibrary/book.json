@@ -756,7 +756,7 @@
    "kind": "recovery",
    "title": "Tremors in the Stack",
    "brief": "You research the ancient floor-weight equations in the dusty blue folios, risking a collapsed stack to retrieve an ivory bone-handled bookmark.",
-   "page": "The floor-weight calculations prove treacherous, and as your fingers close around the bookmark, the towering stack of blue folios shifts with a sudden, sickening slide. A cascade of heavy leather-bound volumes crashes onto the flagstones, kicking up a blinding cloud of ancient dust and pinning your sleeve beneath a jagged corner of masonry.\n\nYou wrench your arm free with a sharp yank, leaving a torn scrap of fabric behind, though your frantic grasp manages to secure the slender ivory marker just as the shelving settles back into place.",
+   "page": "The floor-weight calculations prove treacherous. As your fingers close around the bookmark, the towering stack of blue folios shifts with a sudden slide that turns the stomach. A cascade of leather-bound volumes crashes onto the flagstones, kicks up a blinding cloud of ancient dust, and pins your sleeve beneath a jagged corner of masonry.\n\nYou wrench your arm free with a sharp yank. A torn scrap of fabric stays behind. Your grasp still secures the slender ivory marker as the shelving settles back into place.",
    "exits": [
     {
      "label": "Proceed to the reward",
@@ -3852,7 +3852,7 @@
    "kind": "reward",
    "title": "The Official Seal of Transit",
    "brief": "You endure the grueling cross-examination without breaking character, earning an official seal of transit from the reluctant guard.",
-   "page": "Your calm, unhurried demeanor disarms the scholar completely, turning his aggressive questioning into a grudging appreciation for your professional poise. He reaches into his satchel and presses a small metal counter into your hand, stamping your travel manifest with a purple cipher that denotes high-level clearance. The seal gleams dully in the dim light, smelling faintly of cold metal and elderberry wine. He dips his head in a brief, respectful nod before melting back into the shadows of the manuscript racks without offering his name.\n\nA small leaden counter stamped with the seal of the rival scholars' guild rests heavily in your palm.",
+   "page": "Your calm, unhurried manner disarms the scholar completely. His aggressive questioning turns into grudging appreciation for your professional poise. He reaches into his satchel and presses a small counter into your hand, then stamps your travel manifest with a purple cipher that marks high-level clearance. The seal gleams dull. It smells faintly of cold alloy and elderberry wine. He dips his head in a brief, respectful nod and slips back into the shadows of the manuscript racks without offering his name.\n\nA rival scholars' guild seal sits stamped on the counter in your palm.",
    "exits": [
     {
      "label": "Step through the threshold into the deep shadows",
@@ -4962,7 +4962,7 @@
    "kind": "bottleneck",
    "title": "The Ledger Span",
    "brief": "You cross a narrow chasm on a precarious suspension bridge woven entirely from the heavy leather spines of discarded ledgers.",
-   "page": "Calfskin bindings groan beneath your boots, stitched together with waxed cord that still carries the murmur of old legal disputes. Below this precarious suspension bridge, a chasm of shifting shadows exhales the cold scent of damp rag paper and oxidized copper ink. Every step sends a tremor through the woven spines of discarded ledgers, setting loose a flurry of marginal notes that drift upward like pale moths. You grip your lamp tighter as the vertical walls begin to slide against one another, narrowing the passage until the leather handrails writhe like live eels.\n\nThe oil in your reservoir sloshes against the tin, casting long, jittery shadows across the embossed titles of forgotten bankruptcies and royal decrees. There is no turning back toward the relative safety of the flooded ink-channels, for the shelves behind you have already retracted into the masonry.",
+   "page": "Calfskin bindings groan beneath your boots. Waxed cord still carries the murmur of old legal disputes. Below this precarious suspension bridge, a chasm of shifting shadows exhales the cold scent of damp rag paper and oxidized copper ink. Every step sends a tremor through the woven spines of discarded ledgers, and a flurry of marginal notes drifts upward, pale and frantic. You grip your lamp tighter. Vertical walls begin to slide against one another until the passage narrows and the leather handrails writhe like live eels.\n\nOil sloshes in the tin. Long, jittery shadows fall across the embossed titles of forgotten bankruptcies and royal decrees. There is no turning back toward the flooded ink-channels. The shelves behind you have already retracted into the masonry.",
    "exits": [
     {
      "label": "Tread the groaning leather spine",
@@ -11053,7 +11053,7 @@
    "kind": "scene",
    "title": "Threshold of the Past",
    "brief": "You withstand the psychic weight of a million forgotten names whispering in unison, risking your sanity, to extract a true historical record.",
-   "page": "Cold drafts sweep through the aisle, carrying the dry scent of centuries-old paper and the metallic tang of dried blood on forgotten decrees. The psychic pressure inside your skull lessens just enough to let you draw a full, ragged breath without tasting copper. Ahead, a narrow iron gate stands half-open, revealing shelves piled high with unindexed folios that tremble in the gloom. You grip your leather satchel tighter, feeling the solid reassurance of your shelver's stamps against your hip as you prepare to cross the threshold.\n\nSlip through the iron gate before the shelves shift their alignment again.",
+   "page": "Cold drafts sweep through the aisle. They bring the dry scent of centuries-old paper and the metallic tang of dried blood on forgotten decrees. Psychic pressure inside your skull lessens just enough to let you draw a full, ragged breath without tasting copper on the tongue. Ahead, a narrow iron gate stands half-open. Shelves pile high beyond it. Unindexed folios tremble in the gloom. Your leather satchel rides tight at your hip, and shelver's stamps knock solid against your side as you prepare to cross the threshold.\n\nSlip through the iron gate before the shelves shift their alignment again.",
    "exits": [
     {
      "label": "Slip through the iron gate",
@@ -13537,7 +13537,7 @@
    "kind": "hub",
    "title": "The Margin Alcove",
    "brief": "The Margin Alcove: You enter a narrow nook where disembodied commentary hovers in the air like faint smoke.",
-   "page": "Air thick with the smell of scorched vellum and lamp-oil surrounds you in this narrow nook, where disembodied commentary hovers like faint smoke. Murmurs from unseen readers argue in the shadows, their dry voices debating the proper categorization of lost thoughts. Shadows stretch across the wooden shelves, pulsing softly with every flicker of your failing wick. Every surface bears the restless ghost-ink of past annotations, tempting you to linger or press deeper into the oldest stacks.\n\nThe way forward splits into distinct corridors of inquiry, each promising its own burden of secrets before the Long Closing seals these chambers forever.",
+   "page": "Scorched vellum and lamp-oil smell sharp in this narrow nook, where disembodied commentary hangs like faint smoke and drifts between the shelves without a body to own it. Murmurs argue in the shadows. Dry voices debate how lost thoughts ought to be filed, sorted, and named, and they never quite agree. Shadows stretch across the wooden shelves and pulse with every flicker of your failing wick. Ghost-ink frets on every surface.\n\nCorridors of inquiry open ahead. Each one carries its own burden of secrets before the Long Closing seals these chambers forever.",
    "exits": [
     {
      "label": "Listen to the whispering walls",
@@ -13959,7 +13959,7 @@
    "kind": "scene",
    "title": "The Petrified Beam",
    "brief": "You balance along a narrow beam of petrified oak to bypass the unstable floor, discovering a pouch of scented sealing wax.",
-   "page": "A thick beam of petrified oak spans the unstable expanse, offering a dry and rigid highway above the restless paper floor. You hoist your lamp higher, testing the ancient wood with a tentative hand before hoisting yourself up onto its rounded surface. Halfway across, your fingers brush against a small, forgotten leather pouch wedged into a knot in the timber. Untying the drawstring reveals a cache of scented sealing wax, fragrant with crushed cloves and dried lavender, perfectly preserved in the cool subterranean air. You pocket the prize and continue your steady progress across the span.",
+   "page": "A beam of petrified oak spans the unstable expanse and offers a dry and rigid highway above the restless paper floor. You hoist your lamp higher. Ancient wood takes a tentative hand, and then you climb onto its rounded surface and ease out over the drop. Halfway across, your fingers brush a small, forgotten leather pouch wedged into a knot in the timber. The drawstring gives. Inside lies a cache of scented sealing wax, fragrant with crushed cloves and dried lavender, perfectly preserved in the cool subterranean air. You pocket the prize and continue across the span.",
    "exits": [
     {
      "label": "Follow the oak beam to the far ledge",
@@ -15612,7 +15612,7 @@
    "kind": "check",
    "title": "The Unyielding Will",
    "brief": "You maintain unyielding resolve against the accusatory whispers of the automated tribunal, winning the enduring respect of the court ghost.",
-   "page": "The phantom voices swell into a deafening chorus of censure, conjuring visions of endless stacks collapsing into ink-rivers and catalogues rewriting themselves into oblivion. The floor beneath your boots trembles as if the entire foundation of the Underlibrary is testing your inner strength. You must lock your jaw and refuse to give ground against the psychic pressure, holding fast to your identity as a shelver of the deep stacks. The spiritual weight bears down upon your chest, threatening to force a confession of guilt for crimes you never committed. You tighten your grip on your lapel and brace for the breaking point.",
+   "page": "The phantom voices swell into a deafening chorus of censure. They conjure visions of endless stacks collapsing into ink-rivers and catalogues rewriting themselves into oblivion. The floor beneath your boots trembles as if the entire foundation of the Underlibrary is testing your inner strength. Lock your jaw. Refuse to give ground against the psychic pressure, and hold fast to your identity as a shelver of the deep stacks. Spiritual force bears down upon your chest and tries to force a confession of guilt for crimes you never committed. You tighten your grip on your lapel and brace for the breaking point.",
    "exits": [
     {
      "label": "check-full",
@@ -16150,7 +16150,7 @@
    "kind": "scene",
    "title": "Whispers from the Margin",
    "brief": "You withstand the collective gaze of the critical spirits without flinching, earning a promise of warning against upcoming traps.",
-   "page": "Pale ink-marks drift off the nearby vertical bindings like startled midges, hovering in the stagnant air around your ears. They hum with the collective irritation of scholars whose corrections were ignored by generations of lazy cataloguers. Yet your unwavering calm keeps them from settling into your hair or stinging your exposed skin. The lead shade raises a pale, ink-stained hand, sketching a quick circle in the dust to signify a truce between the living shelver and the restless dead. You nod once, accepting their unspoken terms without lowering your guard against the damp chill creeping up from the foundations.\n\nThis fragile accord grants safe passage through the next gallery, provided you respect the margins and tread lightly over the fallen flyleaves. The phantoms part just enough to reveal a narrow gap between two leaning folios, where the oil lamp flickers against the encroaching dark.",
+   "page": "Pale ink-marks drift off the nearby vertical bindings like startled midges and hang in the stagnant air around your ears. They carry the collective irritation of scholars whose corrections were ignored by generations of lazy cataloguers. Your calm keeps them from settling into your hair or nipping exposed skin. The lead shade raises a pale, ink-stained hand and sketches a quick circle in the dust to mark a truce between the living shelver and the restless dead. You nod once. Their terms stand. You keep your guard up against the damp chill that creeps up from the foundations.\n\nSafe passage holds through the next gallery if you respect the margins and tread lightly over the fallen flyleaves. The phantoms part just enough to reveal a narrow gap between two leaning folios, and the oil lamp flickers there against the encroaching dark.",
    "exits": [
     {
      "label": "Slip through the parting folios",
@@ -17723,7 +17723,7 @@
    "kind": "scene",
    "title": "The Phantom Clerk",
    "brief": "You stare down the whispering phantom of a senior clerk guarding the seal, testing your resolve, and you acquire a stamped waiver bearing the Archivist's own seal.",
-   "page": "Translucent grey fingers grip the edges of a towering oak lectern while pale eyes glare from a face composed entirely of dried vellum and ink-stains. The phantom clerk blocks the seal with an imperious frown, muttering complaints about overdue returns and improper ink usage that echo hollowly off the stone vault. You produce the folded slip signed by Thessaly Marr, holding it steady despite the unnatural chill radiating from the apparition's cuffs. A low sigh rattles through the empty hall as the spirit grudgingly dips an invisible stamp into phantom red wax.\n\nThe official document drops onto the reading desk, bearing the unmistakable imprint of the Archivist's office.",
+   "page": "Translucent grey fingers grip the edges of a towering oak lectern while pale eyes glare from a face composed entirely of dried vellum and ink-stains. The phantom clerk blocks the seal. He mutters about overdue returns and improper ink usage, and the complaint carries hollow off the stone vault until it thins and dies. You produce the folded slip signed by Thessaly Marr. The chill from the apparition's cuffs bites, yet you keep the slip firm. A low sigh rattles through the empty hall as the spirit dips an invisible stamp into phantom red wax.\n\nThe document drops. It bears the unmistakable imprint of the Archivist's office.",
    "exits": [
     {
      "label": "Proceed through the sealed barrier",
@@ -17868,7 +17868,7 @@
    "kind": "check",
    "title": "The Crimson Cipher",
    "brief": "You decipher a warning scrawled in blood-red ink across a shifting folio, testing your erudition, and you learn the secret cipher to bypass the outer wards.",
-   "page": "Staring down at the shifting script, your eyes burn from the heavy fumes of old paper and copper-laced ink that rise from the binding. The folio writhes between your fingers, its crimson characters mutating into deceptive traps designed to confuse the unwary scholar. You must piece together the fragmented grammar before the text loops backward into total illegibility and seals the corridor forever. Your mind races through centuries of marginal notes and forbidden lexical rules, searching for the single hidden key that unlocks the ward. With the air growing thin and the surrounding shelves closing in on your position, you concentrate every ounce of your intellect on the blood-red riddle.",
+   "page": "You stare down at the shifting script. Your eyes burn from the fumes of old paper and copper-laced ink that rise from the binding. The folio writhes between your fingers. Its crimson characters mutate into deceptive traps meant to confuse the unwary scholar. Fragmented grammar has to be pieced together before the text loops backward into total illegibility and seals the corridor forever. Your mind races through centuries of marginal notes and forbidden lexical rules for the single hidden key that unlocks the ward. Air grows thin. Surrounding shelves close in on your position. You put every scrap of intellect on the blood-red riddle.",
    "exits": [
     {
      "label": "check-full",
@@ -17906,7 +17906,7 @@
    "kind": "recovery",
    "title": "Ink Stained Failure",
    "brief": "You decipher a warning scrawled in blood-red ink across a shifting folio, testing your erudition, and you learn the secret cipher to bypass the outer wards.",
-   "page": "A sudden spasm in the folio's spine sends a thick spray of crimson ink directly into your eyes, blinding you with a searing, bitter heat. You stumble backward against an iron upright, dropping your lamp as the metal casing cracks against the stone floor and spills its precious oil. The warning scrawl mocks you from the shelf, its letters rearranging themselves into mocking shapes while your vision slowly clears through a haze of stinging tears. You press a sleeve to your smarting face, swallowing the bitter taste of iron and soot that lingers in your throat. Though your pride suffers a sharp sting and your hands are permanently stained with a rust-coloured dye, you pick yourself up and press onward into the gloom.",
+   "page": "A sudden spasm in the folio's spine sends a thick spray of crimson ink directly into your eyes, and a searing, bitter heat blinds you. You stumble backward against an iron upright. Your lamp drops as the metal casing cracks against the stone floor and spills its precious oil. The warning scrawl mocks you from the shelf. Its letters rearrange themselves into mocking shapes while your vision clears through a haze of tears. You press a sleeve to your smarting face and swallow the bitter taste of iron and soot that lingers in your throat. Pride takes a hard knock, and your hands are permanently stained with a rust-coloured dye, but you pick yourself up and press onward into the gloom.",
    "exits": [
     {
      "label": "Continue past the bleeding folio",
@@ -18342,7 +18342,7 @@
    "kind": "scene",
    "title": "The Mason's Flaw",
    "brief": "You spot a structural weakness in the ancient stone arch beneath the smoke, testing your erudition, and you lever a keystone to drop the bridge behind you.",
-   "page": "Smoke billows across the vaulted corridor, smelling strongly of scorched vellum and melting tallow. You crouch by the foot of the stone archway, fingers tracing the ancient mortar lines until you locate the weathered keystone that bears the weight of the entire span. You pull an iron lever from a discarded book-trolley, wedge it deep into the fracture, and heave until the masonry crashes down into the void.\n\nThe bridge groans and shatters behind you, cutting off the pursuing zealots with a thick wall of tumbling granite dust. You catch your breath in the gloom and press forward into the shadows.",
+   "page": "Smoke billows across the vaulted corridor. It smells strongly of scorched vellum and melting tallow. You crouch by the foot of the stone archway. Fingers trace the ancient mortar lines until you locate the weathered keystone that bears the whole span. You pull an iron lever from a discarded book-trolley, wedge it deep into the fracture, and heave until the masonry crashes down into the void.\n\nThe bridge groans and shatters behind you. Tumbling granite dust cuts off the pursuing zealots. You catch your breath in the gloom and press forward into the shadows.",
    "exits": [
     {
      "label": "Sever the stone bridge behind you",
@@ -18411,7 +18411,7 @@
    "kind": "reward",
    "title": "The Fallen Keystone",
    "brief": "You spot a structural weakness in the ancient stone arch beneath the smoke, testing your erudition, and you lever a keystone to drop the bridge behind you.",
-   "page": "The masonry yields with a sudden, thunderous crack. The keystone pops free from the arch, and tons of ancient stone plunge into the abyss below. The walkway behind you vanishes in a billowing cloud of grey dust, effectively isolating you from any pursuit.\n\nAmidst the settling rubble, your fingers brush against a small, heavy object wedged in the fallen mortar: a polished brass pocket-level dropped by some long-forgotten architect. You pocket the cool metal instrument, knowing its plumb-line might yet prove vital in the unstable mazes ahead.",
+   "page": "The masonry yields with a sudden, thunderous crack. The keystone pops free. Tons of ancient stone plunge into the abyss below. The walkway behind you vanishes in a billowing cloud of grey dust, and pursuit stops cold.\n\nAmidst the settling rubble, your fingers brush a small object wedged in the fallen mortar: a polished brass pocket-level dropped by some long-forgotten architect. You pocket the cool metal instrument. Its plumb-line may yet prove useful in the unstable mazes ahead.",
    "exits": [
     {
      "label": "Continue toward the Scriptorium Bridge",
@@ -19845,7 +19845,7 @@
    "kind": "ending-part",
    "title": "An Archive Without Sleep",
    "brief": "Ending \"Remember Everything\"",
-   "page": "Generations of scholars will now wander these halls without the mercy of oblivion, haunted by the exact words of every insult, debt, and marginal note ever penned. The air grows cold and thick with the scent of old paper as the last lamp flickers and dies in the sealed vault. You trace your fingers along the spine of a register that records your own hesitant breathing, knowing it will never be erased. There is no peace in perfection, only the quiet agony of an archive that never closes its eyes.\n\nThe darkness settles deep into the stone around you.",
+   "page": "Generations of scholars will now wander these halls without the mercy of oblivion, haunted by the exact words of every insult, debt, and marginal note ever penned. Cold air carries the scent of old paper as the last lamp flickers and dies in the sealed vault. You trace your fingers along the spine of a register that records your own hesitant breathing. That record will never be erased. There is no peace in perfection, only the long agony of an archive that never closes its eyes.\n\nDarkness sits in the stone around you.",
    "exits": [
     {
      "label": "Listen to the eternal hum",
@@ -19877,7 +19877,7 @@
    "kind": "ending-part",
    "title": "Sealed for a Generation",
    "brief": "Ending \"Remember Everything\"",
-   "page": "The heavy iron latch falls with a definitive thud, echoing through the empty galleries as the Long Closing claims the Underlibrary for a generation. No more books will be returned, no more fines collected, and no more wanderers will find their way through the shifting stacks. You close your eyes against the dim glow of the Index, resting your hand upon the cold metal of the binding. Let the world outside struggle with its unforgotten past; here in the quiet dark, the work is finally finished.\n\nThe book closes on your story.",
+   "page": "The iron latch falls. A definitive thud runs through the empty galleries as the Long Closing claims the Underlibrary for a generation. No more books will be returned, no more fines collected, and no more wanderers will find their way through the shifting stacks. You close your eyes against the dim glow of the Index and rest your hand on the cold metal of the binding while the last light thins. Let the world outside struggle with its unforgotten past. Here in the dark, the work is finally finished.\n\nThe book closes on your story.",
    "exits": [
     {
      "label": "Finish the final chapter",
