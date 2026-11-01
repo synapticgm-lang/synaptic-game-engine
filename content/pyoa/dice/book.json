@@ -518,7 +518,7 @@
    "kind": "scene",
    "title": "The Smuggler's Stash",
    "brief": "You pry open a sealed smuggler's barrel wedged beneath a rotting hull, risking a collapse to acquire a stash of rare cured meats.",
-   "page": "Wedged deep beneath the splintered ribs of a stranded cog, a smuggler's barrel sits half-buried in the silt. The ship's hull groans in the wind, a rotting cage threatening to collapse at the slightest disturbance. You slide your crowbar under the rusted iron hoop of the barrel, testing the weight above. A shower of barnacles and dry rot rains down on your shoulders as you apply pressure.\n\nWith a wet crack, the timber lid gives way. Inside, wrapped in oilcloth, lies a small fortune in the current days of famine: a stash of rare, salt-cured meats from the southern archipelagos, untouched by the sea's sudden retreat. Bundles come up fast into your arms while you watch the buckling beams groan in the breeze, and you get clear before the ship becomes your tomb.",
+   "page": "Wedged deep beneath the splintered ribs of a stranded cog, a smuggler's barrel sits half-buried in the silt. The ship's hull complains in the wind. It is a rotting cage that could collapse at the slightest nudge. You slide your crowbar under the rusted iron hoop of the barrel and test what rests above. Barnacles and dry rot rain onto your shoulders as you push.\n\nThe lid cracks open. Inside, wrapped in oilcloth, lies a small fortune in these days of famine: a stash of rare, salt-cured meats from the southern archipelagos, untouched by the sea's sudden retreat. Bundles come up fast. You watch the buckling beams shift in the breeze and get clear before the ship becomes your tomb.",
    "exits": [
     {
      "label": "Slip away from the groaning wreckage",
@@ -1285,7 +1285,7 @@
    "kind": "check",
    "title": "Picking the Lock",
    "brief": "You pick the rusted lock on the harbourmaster's abandoned office, relying on careful hands to disarm a simple trap and claiming a stash of coin.",
-   "page": "Crouched in the harbourmaster's abandoned office, you study the brass works of the floor safe. A hair-thin wire runs from the lock tumbler to a loaded spring-gun set into the wainscoting. You slide your thinnest pick into the keyhole and hold your breath while sweat runs into your eyes. Each shift of metal balances tumbler tension against the hidden trigger. Your pulse knocks in your ears as you press the final internal tooth and feel for whether the trap will hold or spring.",
+   "page": "Crouched in the harbourmaster's abandoned office, you study the brass works of the floor safe. A hair-thin wire runs from the lock tumbler to a loaded spring-gun set into the wainscoting. You slide your thinnest pick into the keyhole. Sweat runs into your eyes. Each shift of metal balances tumbler tension against the hidden trigger, and your pulse knocks in your ears while you press the final internal tooth and feel for whether the trap will hold or spring.",
    "exits": [
     {
      "label": "check-full",
@@ -2280,7 +2280,7 @@
    "kind": "reward",
    "title": "The Stolen Jar",
    "brief": "You slip past a sleeping crew of rival wreckers guarding the captain's cabin, holding your breath to steal a preserved jar of medicinal leeches.",
-   "page": "Glass cold as winter sea-water meets your palm while the snoring guard kicks at empty air. Slipping backward through the shattered stern-window into the grey light, you tuck the heavy jar of medicinal leeches safely beneath your oilskin coat. It is a foul and squirming prize, but one that will buy patience or medicine in the alleys of Gullmouth when the fever sets in.",
+   "page": "Glass cold as winter sea-water meets your palm. The snoring guard kicks at empty air. You slip backward through the shattered stern-window into the grey light and tuck the jar of medicinal leeches beneath your oilskin coat. It is a foul and squirming prize. Patience or medicine will buy its worth in the alleys of Gullmouth when the fever sets in.",
    "exits": [
     {
      "label": "Climb back to the deck",
@@ -2671,7 +2671,7 @@
    "kind": "recovery",
    "title": "A Heavy Toll",
    "brief": "You break up a violent brawl between two merchants fighting over a chunk of ambergris, imposing your physical presence to earn a grateful merchant's discount.",
-   "page": "A stray elbow catches you squarely across the jaw, snapping your head back and sending a hot taste of copper flooding into your mouth as the brawling traders tumble over your boots. You stagger against the sun-baked ribs of a stranded leviathan, clutching a bruised cheek while the valuable ambergris splits into useless, sandy fragments upon the ground. The angry merchants curse your interference and bolt into the narrow alleys, leaving you with a throbbing ache in your jaw and precious hours wasted.",
+   "page": "A stray elbow catches you squarely across the jaw, snaps your head back, and floods your mouth with a hot taste of copper as the brawling traders tumble over your boots. You stagger against the sun-baked ribs of a stranded leviathan and clutch a bruised cheek. The valuable ambergris splits into useless, sandy fragments on the ground. Angry merchants curse your interference and bolt into the narrow alleys. Your jaw aches. Precious hours are gone.",
    "exits": [
     {
      "label": "Pick yourself up and leave",
@@ -2756,7 +2756,7 @@
    "kind": "recovery",
    "title": "Ink-Stained Confusion",
    "brief": "You decipher the strange markings on a dead sailor's journal being sold for scrap, piecing together the cryptic language to learn a hidden tidal route.",
-   "page": "The cryptic symbols blur into a senseless jumble of salt-crushed ink and weeping water-stains that refuse to yield any coherent meaning. Frustration burns behind your eyes as you stare too long at the mocking pages, losing track of the bustling market around you until your head throbs with a dull, persistent ache. The peddler snatches the worthless book back with a snort, leaving you empty-handed and bewildered by the drowned man's scribbles.",
+   "page": "The cryptic symbols blur into a senseless jumble of salt-crushed ink and weeping water-stains that refuse to yield any coherent meaning. You stare too long at the mocking pages. Frustration burns behind your eyes, and you lose track of the bustling market until your head pounds. The peddler snatches the worthless book back with a snort. Your hands are empty. The drowned man's scribbles stay unread.",
    "exits": [
     {
      "label": "Walk away from the stall",
@@ -2857,7 +2857,7 @@
    "kind": "reward",
    "title": "Precision Restored",
    "brief": "You repair a delicate clockwork bird for a wealthy trader from Saltspire, using tiny tools to fix the gears and earning a hefty purse of coin.",
-   "page": "Your fingers guide the slender tweezers through the brass maze, nudging the stubborn gear until it clicks back into its proper groove. The tiny bird shivers in your palm, its emerald eyes flashing bright and clear before its wings unfold in a whir of perfect motion. The delighted Saltspire trader counts out a heavy purse of bright silver coin, pressing the clinking weight directly into your hand with an appreciative nod.",
+   "page": "Your fingers guide the slender tweezers through the brass maze and nudge the stubborn gear until it clicks back into its proper groove. The tiny bird shivers in your palm, its emerald eyes flashing bright and clear before its wings unfold in a whir of perfect motion. The delighted Saltspire trader counts out a purse of bright silver coin. He presses the clinking purse into your hand. The nod is brief.",
    "exits": [
     {
      "label": "Join the mournful procession outside",
@@ -3452,7 +3452,7 @@
    "kind": "check",
    "title": "Blinded by the Gale",
    "brief": "You walk blindly through a blinding sandstorm while resisting the urge to run, trusting your instincts to find a buried stash of emergency rations.",
-   "page": "The sandstorm thickens into a screaming vortex that scourges your skin and fills your eyes with stinging grit, entirely erasing the landmarks you relied upon. Panic threatens to take root as the ground shifts treacherously beneath your boots, hinting at hidden drop-offs into the empty sea-caves below. You force yourself to stand completely still amidst the howling white fury, listening to the subtle pitch of the wind against nearby wreckage to find your bearing.",
+   "page": "The sandstorm thickens into a screaming vortex that scourges your skin and packs your eyes with grit, and every landmark you relied upon vanishes. Panic presses close as the ground shifts under your boots toward hidden drop-offs into the empty sea-caves below. You force yourself to stand still in the howling white fury. Nearby wreckage cuts the wind at a pitch you can use. That sound gives you a bearing.",
    "exits": [
     {
      "label": "check-full",
@@ -4535,7 +4535,7 @@
    "kind": "bottleneck",
    "title": "The Earth Gives Way",
    "brief": "A distant rumble echoes across the plains as a massive sinkhole opens ahead, swallowing a cluster of drowned homes.",
-   "page": "Tremors pulse through the damp floor of the Low, shaking loose the crust of salt and ancient silt. Far ahead, a deep subterranean groan splits the silence, followed by the terrifying sound of snapping timber and falling stone. A cluster of drowned timber houses, long preserved in the suffocating quiet of the seabed, tilts crazily into a sudden, yawning chasm. Grey dust billows into the heavy air, carrying the sharp stench of stagnant mud and rotting kelp as the earth swallows whole streets in a heartbeat.",
+   "page": "Tremors pulse through the damp floor of the Low and shake loose the crust of salt and ancient silt. Far ahead, a deep subterranean groan splits the silence, then timber snaps and stone falls. A cluster of drowned timber houses, long preserved in the quiet of the seabed, tilts crazily into a sudden, yawning chasm. Grey dust billows up. It carries the sharp stench of stagnant mud and rotting kelp. Whole streets drop out of sight in a heartbeat. Salt crust slides into the hole.",
    "exits": [
     {
      "label": "Pick a path around the dust",
@@ -4923,7 +4923,7 @@
    "kind": "reward",
    "title": "Purse of the Rescued",
    "brief": "You haul a trapped scavenger from a crumbling ledge, risking your own footing to earn a pouch of rare coins.",
-   "page": "Gratefully coughing up lungfuls of bitter dust, the rescued wrecker shoves a heavy leather pouch into your palm before vanishing back toward the cliff shadows without a backward glance. Silver coins clink inside the damp sack, a welcome purse for your split-second gamble on the crumbling stone. You secure the bounty tightly inside your coat and look back out across the wide expanse of the Low.",
+   "page": "Coughing up lungfuls of bitter dust, the rescued wrecker shoves a leather pouch into your palm and vanishes back toward the cliff shadows without a backward glance. Silver coins clink inside. The damp sack is a purse for your split-second gamble on the crumbling stone. You secure the bounty inside your coat. The Low stretches wide ahead.",
    "exits": [
     {
      "label": "Head toward the sinkholes",
@@ -5084,7 +5084,7 @@
    "kind": "scene",
    "title": "The Snarling Guardian",
    "brief": "You wrestle a massive slab of blubber away from a territorial hound, taking heavy bruises to secure a valuable fuel source.",
-   "page": "You pace the slick mire with eyes locked on the hound, fingers curled around the haft of your iron-shod oar. The creature drops its head low, saliva dripping from yellow fangs into the dark mud as it circles you with unsettling patience. Every movement inside the cavernous belly seems to hush, leaving only the wet sucking sound of paws and boots in the grease. You raise the oar like a barrier, waiting for the split second the animal launches its scarred frame at your throat.",
+   "page": "You pace the slick mire with eyes locked on the hound, fingers curled around the haft of your iron-shod oar. The creature drops its head low, and saliva drips from yellow fangs into the dark mud as it circles you around the grease. All other noise hushes. Only the wet suck of paws and boots remains. You raise the oar like a barrier. The scarred frame will launch at your throat in a split second.",
    "exits": [
     {
      "label": "Strike before the hound leaps",
@@ -5776,7 +5776,7 @@
    "kind": "check",
    "title": "The Whispering Crest",
    "brief": "You ignore the maddening whispers echoing from the dunes, fighting off a creeping panic to pocket a gleaming white pearl.",
-   "page": "Voices swell from the shifting sand, mimicking the exact pitch of Orsolya's warnings when the tide-bell used to crack in the salt-gale. A pale, luminous pearl rests atop the ridge, but the ground beneath it shivers like water over a sinkhole, threatening to slide away into the dark hollows below.\n\nBracing your shoulders against the rising wind, you focus your breathing and reach out a steady hand to snatch the treasure before the dune collapses.",
+   "page": "Voices swell from the shifting sand and take the exact pitch of Orsolya's warnings from when the tide-bell used to crack in the salt-gale. A pale, luminous pearl rests atop the ridge. Ground beneath it shivers like water over a sinkhole and may slide into the dark hollows below.\n\nYou brace your shoulders against the rising wind. Your breath settles. Your hand reaches for the treasure before the dune collapses.",
    "exits": [
     {
      "label": "check-full",
@@ -13095,7 +13095,7 @@
    "kind": "scene",
    "title": "Beneath the Fallen Beam",
    "brief": "You heave a fallen brass beam off a crushed smuggler, testing your strength against rusted metal, claiming a sealed pouch of untainted water as reward.",
-   "page": "Iron girders choke the narrow archway and pin the crushed remains of a long-dead smuggler against the masonry. You wedge your shoulder beneath a rusted brass beam, feeling the cold metal bite through your jacket as you strain every muscle. Dust and dried salt shower down from the vaulted ceiling with every fraction of an inch you gain. A sealed leather pouch hangs untouched at the dead man's belt, bulging with the unmistakable shape of precious supplies. You plant your boots firmly against the stone and push with everything you have.",
+   "page": "Iron girders choke the narrow archway. They pin the crushed remains of a long-dead smuggler against the masonry. You wedge your shoulder beneath a rusted brass beam, and the cold metal bites through your jacket as you strain every muscle for each fraction of an inch. Dust and dried salt shower down from the vaulted ceiling. A sealed leather pouch hangs at the dead man's belt. It bulges with supplies. You plant your boots against the stone and push with everything you have.",
    "exits": [
     {
      "label": "Wrench the beam clear of the remains",
@@ -14176,7 +14176,7 @@
    "kind": "scene",
    "title": "The Unblinking Master",
    "brief": "You endure the piercing gaze of the choir master without flinching, hardening your mind against the song to earn a cryptic blessing of protection.",
-   "page": "Salt-crusted eyelids refuse to twitch as the choir master leans forward, his hollow sockets fixed on your face. The howling dirge washes over your temples like cold bilge water and tries to scour reason from your skull. You lock your jaw against it and stare straight into the darkness of his hood. A slow, rasping sigh rises from the assembled dead. The master raises a gray, webbed finger and traces a damp cross upon your brow. The noise behind your eyes goes still.",
+   "page": "Salt-crusted eyelids refuse to twitch as the choir master leans forward, and his hollow sockets stay fixed on your face while the howling dirge washes over your temples like cold bilge water and tries to scour reason from your skull. You lock your jaw against it. Straight into the dark of his hood you stare. From the assembled dead a slow, rasping sigh rises. The master raises a gray, webbed finger and traces a damp cross upon your brow. The noise behind your eyes goes still.",
    "exits": [
     {
      "label": "Step past the silent choir",
@@ -18133,7 +18133,7 @@
    "kind": "scene",
    "title": "Shadows In The Archive",
    "brief": "You quietly slip past the distracted archivist to steal a forbidden ledger, risking immediate lethal detection, to gain powerful blackmail material against the wealthy Brineholders.",
-   "page": "Bronze ledgers pack the high cedar shelves of the restricted gallery. The automaton-archivist ticks through its brass gears and turns its eyeless face toward the far corner. You slide between the towering oak reading desks, boots clear of paper scraps that would crunch. Dry parchment and ozone sit on your tongue; the Brineholders bought the water rights before the sea vanished, and their secrets live in these books. Your hand finds the leather spine of the forbidden register and draws it free without lifting a leaf of dust.\n\nYou tuck the stolen ledger beneath your oilskin coat.",
+   "page": "Bronze ledgers pack the high cedar shelves of the restricted gallery. The automaton-archivist ticks through its brass gears and turns its eyeless face toward the far corner. You slide between the towering oak reading desks, boots clear of paper scraps that would crunch. Dry parchment and ozone sit on your tongue, for the Brineholders bought the water rights before the sea vanished and their secrets live in these books. Your hand finds the leather spine of the forbidden register and draws it free. No dust lifts.\n\nYou tuck the stolen ledger beneath your oilskin coat.",
    "exits": [
     {
      "label": "Slip away with the forbidden ledger",
@@ -19961,7 +19961,7 @@
    "kind": "ending-part",
    "title": "The Long Dry",
    "brief": "Ending \"The Long Dry\"",
-   "page": "Dust settles over Gullmouth like a grey fleece, thick enough to blunt the sound of footsteps on the cobbles and choke the remaining wells until they cough up only dry sand. The Low stretches out to the horizon like an unplowed field of white bones and rusted iron, baking under a sun that refuses to set or soften its glare. Down in the town square, the net-menders sit on overturned tubs with empty bowls between their knees, staring at the dry harbour where the gulls have died of thirst upon the mud-banks. No water comes through the pipes, and no ships come up the channel, for the Brineholders have locked their cisterns behind iron grates and left the poor to chew on leather straps and memories of foam. You wipe the alkali from your cracked lips and watch the horizon shimmer with heat-ghosts that look for all the world like white-capped waves.",
+   "page": "Dust settles over Gullmouth in a grey fleece that blunts footsteps on the cobbles and chokes the remaining wells until they cough up only dry sand. The Low stretches out to the horizon, an unplowed field of white bones and rusted iron baking under a sun that refuses to set or soften its glare. Down in the town square the net-menders sit on overturned tubs with empty bowls between their knees. The harbour is dry. Gulls have died of thirst upon the mud-banks. No water comes through the pipes, and no ships come up the channel, because the Brineholders have locked their cisterns behind iron grates and left the poor to chew on leather straps and memories of foam. You wipe the alkali from your cracked lips and watch the horizon shimmer with heat-ghosts that look for all the world like white-capped waves.",
    "exits": [
     {
      "label": "Walk out onto the dry seabed",
