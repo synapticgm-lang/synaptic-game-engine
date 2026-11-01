@@ -1698,7 +1698,7 @@
    "kind": "recovery",
    "title": "Scoured by Grit",
    "brief": "You absorb her cryptic warnings about the upcoming ash-storm with steady composure, earning an old oil-skin coat for the road.",
-   "page": "The stinging grit finds the corners of your eyes, forcing a sharp, involuntary blink and a sudden, ragged cough that rattles in your raw chest. Outside on the gravel, the inspector's cane hits the stones with an angry double-rap, and boots swing toward the little wicket window. You stumble backward against a stack of discarded mail crates, knocking a tin box of spare nibs clattering across the floorboards. The noise draws an immediate, sharp hiss from the widow, who ducks below her counter with a curse. You snatch up the dropped oil-skin just as a fist rattles the locked outer door. The price is a bruised shoulder and a racing pulse.",
+   "page": "Grit finds the corners of your eyes. It forces a sharp involuntary blink and a ragged cough that rattles in your raw chest. Outside on the gravel the inspector's cane hits the stones with an angry double-rap, and boots swing toward the little wicket window while you stumble back into discarded mail crates. A tin box of spare nibs clatters across the floorboards. The widow hisses. She ducks below her counter with a curse. You snatch up the dropped oil-skin just as a fist rattles the locked outer door, and a bruised shoulder plus a racing pulse are what you keep.",
    "exits": [
     {
      "label": "Slip away down the siding",
@@ -1749,7 +1749,7 @@
    "kind": "check",
    "title": "The Jammed Cogs",
    "brief": "You fix her jammed ticket-stamping press using clever mechanics, receiving a stamped pass that grants access to the restricted sidings.",
-   "page": "Your thumb guides the slender steel file into the heart of the brass mechanism, scraping away a jagged ridge of copper burr that has locked the stamping die fast. The metal is freezing cold to the touch, and the dim light from the grease-lamp flickers dangerously as another tremor shakes the station floorboards from the yards outside. If you press too hard, the delicate tooth will snap off entirely, leaving the press an inert lump of scrap and cutting off your only legal route through the restricted sidings. You hold your breath, steadying the tiny file against the palm of your hand as you apply the final, delicate pressure to the stubborn bronze pawl.",
+   "page": "Your thumb guides the slender steel file into the heart of the brass mechanism and scrapes away a jagged ridge of copper burr that has locked the stamping die fast. The metal is freezing cold to the touch. Dim light from the grease-lamp flickers as another tremor shakes the station floorboards from the yards outside. Press too hard and the delicate tooth will snap off entirely, and the press will sit as an inert lump of scrap, and your only legal route through the restricted sidings will close. You hold your breath. The tiny file rests against the palm of your hand as you apply the final delicate pressure to the stubborn bronze pawl.",
    "exits": [
     {
      "label": "check-full",
@@ -3368,7 +3368,7 @@
    "kind": "recovery",
    "title": "Scalded and Bent",
    "brief": "You patch a leaking steam header using precise mechanics and asbestos tape, restoring full boiler pressure for the run.",
-   "page": "A sudden surge of scalding spray forces your hand aside, searing the skin of your wrist and driving a sharp curse from your throat. You stumble back into the coal bunker with a bruised shoulder, coughing against the thick cloud of white steam that fills the cramped cab. The gasket is wedged crookedly in its seat, and a thin hiss leaks out to mock your hurried efforts.\n\nYou bind the burn with a greasy rag and reach for a heavier drift-pin to hammer the stubborn seating back into true alignment. The repair holds after a fashion, though the delay costs you precious coal and leaves a dull, throbbing ache in your forearm.",
+   "page": "A sudden surge of scalding spray forces your hand aside. It sears the skin of your wrist and drives a sharp curse from your throat. You stumble back into the coal bunker with a bruised shoulder and cough against the white steam that fills the cramped cab. The gasket sits crookedly in its seat. A thin hiss leaks out to mock your hurried efforts.\n\nYou bind the burn with a greasy rag and reach for a larger drift-pin to hammer the stubborn seating back into true alignment. The repair holds after a fashion. The delay costs you precious coal, and your forearm keeps the ache.",
    "exits": [
     {
      "label": "Return to the roundhouse floor",
@@ -6773,7 +6773,7 @@
    "kind": "check",
    "title": "The Quartermaster's Stare",
    "brief": "Enduring the armed guards hostile stares while waiting in line secures a heavy wooden mallet for driving track pins.",
-   "page": "The sergeant's eyes remain fixed on your knuckles while you reach out toward the hickory-handled mallet resting among the rusted spikes on the zinc table. A sudden murmur ripples through the guard detail behind you, and a heavy hand grips the flat of a bayonet blade with a dry rasp of steel against leather. Heat climbs the back of your neck. You clamp down on your pulse and keep your fingers from twitching under the sharp scrutiny. A single false move will bring the iron down upon your wrists before your palm can close around the seasoned wood.",
+   "page": "The sergeant's eyes stay on your knuckles. You reach toward the hickory-handled mallet resting among the rusted spikes on the zinc table. A murmur ripples through the guard detail behind you, and a hand grips the flat of a bayonet blade with a dry rasp of steel against leather. Heat climbs the back of your neck. You clamp down on your pulse and keep your fingers from twitching under the sharp scrutiny, because a single false move will bring the iron down upon your wrists before your palm can close around the seasoned wood.",
    "exits": [
     {
      "label": "check-full",
@@ -7341,7 +7341,7 @@
    "kind": "recovery",
    "title": "Burden of the Slip",
    "brief": "Hauling a heavy crate of coal up the embankment secures a bundle of dry waxed paper for lighting fires.",
-   "page": "Gravity wins the struggle, and the crate rolls back down the embankment, dragging you through the abrasive grey grit and scraping your knuckles raw against the jagged ballast. You pull yourself up with a bruised shoulder and sore ribs, coughing up a mouthful of bitter dust while the timber settles deeper into the ash-dune.\n\nThe spilled fuel is lost to the slope, leaving you with only a torn coat and a bruised forearm to show for the effort.",
+   "page": "Gravity wins the fight. The crate rolls back down the embankment and hauls you through abrasive grey grit, and your knuckles go raw on the jagged ballast. You pull yourself up with a bruised shoulder and sore ribs, spit a mouthful of bitter dust, and watch the timber settle deeper into the ash-dune.\n\nSpilled fuel runs off the slope. A torn coat and a bruised forearm remain.",
    "exits": [
     {
      "label": "Return empty-handed to the engine cab",
@@ -14414,7 +14414,7 @@
    "kind": "scene",
    "title": "The Steaming Valve",
    "brief": "You hold your breath in the rising vapor while steadying the primary bypass valve, winning a waterproof oilskin map case.",
-   "page": "Condensation drips from the copper ceiling, striking your shoulders like cold needles as you navigate the narrow walkway beside the boiler. The air is thick enough to chew, smelling sharply of heated grease and mineral scale. Moving with deliberate caution, you secure the loose coupling on the pressure line before the temperature climbs any higher in the enclosed space.",
+   "page": "Condensation drips from the copper ceiling. It hits your shoulders like cold needles as you pick along the narrow walkway beside the boiler and smell heated grease and mineral scale sharp enough to chew. You secure the loose coupling on the pressure line before the temperature climbs any higher in the enclosed space.",
    "exits": [
     {
      "label": "Advance deeper into the tunnel mist",
@@ -15556,7 +15556,7 @@
    "kind": "hub",
    "title": "The Basalt Narrows",
    "brief": "The Basalt Narrows: The rock presses inward so tightly that the cab roof scrapes against jagged outcroppings of ancient stone.",
-   "page": "The rock presses inward so tightly that the cab roof scrapes against jagged outcroppings of ancient stone, showering sparks over the running board whenever the boiler lists to port. Ahead, the dark corridor splinters into several distinct paths through the living mountain, each marked by faint, ghostly glimmers of oil lamps or the distant echo of steam hissing through unseen valves. You can nurse the regulator straight ahead into the tightest cleft, risk the higher ledge where the iron rails look dangerously thin, or scout the lower maintenance spurs where the air smells faintly of old grease and forgotten grease-traps.",
+   "page": "The rock presses inward so tightly that the cab roof scrapes against jagged outcroppings of ancient stone and showers sparks over the running board whenever the boiler lists to port. Ahead the dark corridor splinters through the living mountain. Faint oil lamps glimmer on one route, and elsewhere steam hisses through unseen valves. The tightest cleft runs straight ahead. Higher up, iron rails look dangerously thin along a ledge. Lower maintenance spurs smell of old grease and forgotten grease-traps.",
    "exits": [
     {
      "label": "Creep through the central cleft",
@@ -18897,7 +18897,7 @@
    "kind": "recovery",
    "title": "The Smoking Ruin",
    "brief": "You repair the broken copper incense-burner with a quick tap of the hammer, preventing a panic, and secure a bundle of resinous pine-splints.",
-   "page": "The hammer blow lands a fraction too hard, splitting the fatigued copper seam wide open and showering your boots with sparks and hot ash. You curse under your breath as smoke billows thick and blinding through the cramped carriage, driving the panicked passengers out into the freezing draft of the corridor. You salvage what you can from the smoking ruin, coughing violently and nursing a nasty burn across your knuckles, leaving the wrecked burner behind in the haze.",
+   "page": "The hammer blow lands a fraction too hard. It splits the fatigued copper seam wide open and showers your boots with sparks and hot ash. You curse under your breath as smoke billows through the cramped carriage, thick and blinding, and drives the panicked passengers out into the freezing draft of the corridor. You salvage what you can from the smoking ruin. A nasty burn crosses your knuckles. The wrecked burner stays behind in the haze.",
    "exits": [
     {
      "label": "Escape the smoky compartment fast",
@@ -19008,7 +19008,7 @@
    "kind": "check",
    "title": "The Final Valve-Turn",
    "brief": "You patch a ruptured steam line on the emergency generator under a hail of falling soot, and secure a heavy brass cylinder-cock.",
-   "page": "A sudden tremor shakes the iron floorplates under your knees as the wind outside hurls another fistful of ash against the siding walls. The generator's main housing bulges, threatening to blow its gasket entirely if you do not seat the final cylinder-cock home against the rising pressure. You steady your breathing, grip the vibrating brass wheel with both palms, and commit every ounce of leverage you possess to forcing the thread straight.",
+   "page": "A sudden tremor shakes the iron floorplates under your knees as the wind outside hurls another fistful of ash against the siding walls. The generator's main housing bulges. The gasket will blow entirely if you do not seat the final cylinder-cock home against the rising pressure. You slow your breath, grip the brass wheel with both palms, and commit every ounce of leverage you possess to force the thread straight.",
    "exits": [
     {
      "label": "check-full",
