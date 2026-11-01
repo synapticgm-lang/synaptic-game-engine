@@ -1545,7 +1545,7 @@
    "kind": "scene",
    "title": "The Heavy Air of Ashgate",
    "brief": "You sit quietly through her endless complaints maintaining deep composure, securing a brass platform pass that bypasses the yard police.",
-   "page": "Time stretches thin in the stagnant heat of the station hall, thick with the smell of scorched coal and damp wool. The old woman pauses to hawk up a mouthful of phlegm and wipe her spectacles on her apron, watching you closely for any sign of rebellion or impatience. You keep your shoulders loose and your breathing slow, matching the steady, mournful wheeze of a distant shunt-engine idling on the middle line.",
+   "page": "Scorched coal and damp wool fill the station hall. Time crawls on. The old woman pauses to hawk up a mouthful of phlegm and wipe her spectacles on her apron while she watches you for any sign of rebellion or impatience. You keep your shoulders loose. Your breathing stays slow as you match the mournful wheeze of a distant shunt-engine idling on the middle line.",
    "exits": [
     {
      "label": "Wait for her next demand",
@@ -1598,7 +1598,7 @@
    "kind": "recovery",
    "title": "A Costly Hesitation",
    "brief": "You sit quietly through her endless complaints maintaining deep composure, securing a brass platform pass that bypasses the yard police.",
-   "page": "A sudden gust of wind rattles the corrugated tin roof, blowing a cloud of stinging ash through the ticket window and causing you to blink sharply at the worst possible second. The movement catches the inspector's eye, and he raps his brass-capped cane hard against the wooden counter, demanding your travel papers and docking a day's wages for loitering near the restricted platforms. You swallow the bitter taste of defeat as he pockets your coinage, leaving you poorer and nursing a dull ache in your shoulder where his guard shoved you aside.",
+   "page": "A sudden gust of wind rattles the corrugated tin roof and blows a cloud of ash through the ticket window. You blink at the worst second. The movement catches the inspector's eye. He raps his brass-capped cane hard against the wooden counter and demands your travel papers, then docks a day's wages for loitering near the restricted platforms. He pockets your coinage. His guard has already shoved you aside, and your shoulder still hurts from the blow.",
    "exits": [
     {
      "label": "Slip past the angry inspector",
@@ -4487,7 +4487,7 @@
    "kind": "check",
    "title": "Shoveling the Sinking Grey",
    "brief": "Shoveling heavy gravel ballast to shore up a sinking rail bed secures a rusted iron wedge for tightening tender couplings.",
-   "page": "You shovel iron plate and broken stone into the slurry beneath the ties, driving the blade down in frantic urgency as the engine tilts further toward the sulfur pool. The ground shifts treacherously under your boots, threatening to slide away and drag you down into the warm, bubbling mire. You brace your legs wide against the sliding ash, heaving a massive block of basalt into place to shore up the rail before the whole embankment gives way beneath the heavy locomotive.",
+   "page": "You shovel iron plate and broken stone into the slurry beneath the ties, and you drive the blade down hard as the engine tilts further toward the sulfur pool. The ground shifts under your boots. Ash slides toward the warm, bubbling mire. You brace your legs wide against the sliding ash and heave a massive block of basalt into place to shore up the rail before the whole embankment gives way beneath the locomotive.",
    "exits": [
     {
      "label": "check-full",
@@ -5364,7 +5364,7 @@
    "kind": "recovery",
    "title": "The Slipped Gear",
    "brief": "Repairing a broken hand-cranked crane for a grateful vendor earns a heavy steel pinch-bar for unseating jammed switches.",
-   "page": "The seized bronze tooth of the winch-box refuses your persuasion, snapping with a sound like a pistol shot and catching your knuckle a glancing, skin-splitting blow against the iron frame. Steam hisses from a nearby union in a mocking whistle as you suck the salt-blood from your thumb, staring at the ruin of the gear with dry resignation. Time slips through your fingers like dry ash while you bind the scrape with a dirty rag, leaving you short on minutes and carrying a fresh, throbbing ache that will remind you of the Cinder Steppe long after the engine reaches the water gate.",
+   "page": "The seized bronze tooth of the winch-box refuses your persuasion. It snaps with a sound like a pistol shot and catches your knuckle a glancing blow against the iron frame. Steam hisses from a nearby union in a mocking whistle as you suck the salt-blood from your thumb and stare at the ruin of the gear. You bind the scrape with a dirty rag. Minutes are short now. A fresh ache in the knuckle will outlast the run to the water gate across the Cinder Steppe.",
    "exits": [
     {
      "label": "Pocket the heavy steel pinch-bar and move forward",
@@ -6207,7 +6207,7 @@
    "kind": "recovery",
    "title": "A Shattered Chisel",
    "brief": "Realigning a jammed spring-switch with a cold chisel and hammer clears the track and earns a box of matches.",
-   "page": "A sharp crack splits the air as the cold chisel snaps in two, sending a jagged piece of steel whistling past your ear to bury itself in the grey bank of an ash-dune. The spring-switch remains locked solid, and the sudden jolt sends a stinging pain shooting up your forearm while your knuckles scrape raw against the ballast. You stumble back, sucking at the torn skin as precious minutes slip away into the ash-choked wind. The Marrowbone waits, her boiler groaning under the strain of delay.",
+   "page": "A sharp crack splits the air as the cold chisel snaps in two. A jagged piece of steel whistles past your ear and buries itself in the grey bank of an ash-dune. The spring-switch stays locked solid. The jolt drives pain up your forearm and your knuckles scrape raw against the ballast. You stumble back and suck at the torn skin while precious minutes slip away into the ash-choked wind off the dunes. The Marrowbone sits on the blocked line. Her boiler groans under the delay.",
    "exits": [
     {
      "label": "Gather your broken tools",
@@ -7027,7 +7027,7 @@
    "kind": "reward",
    "title": "The Repaired Valve",
    "brief": "Calibrating the cistern's brass float-valve earns a handful of copper washers and a tin of anti-friction grease.",
-   "page": "Perseverance pays against the stubborn friction of rusted metal, leaving the float-valve seated true and firm within its housing. Hot water ceases its wasteful hiss. Pressurized quiet takes its place, and the boiler gauge holds true. A handful of heavy copper washers and a stout tin of yellow anti-friction grease are your reward for the trouble, tucked safely into the tool-chest before you step back onto the footplate.",
+   "page": "You seat the float-valve true and firm within its housing after a long fight against the rusted metal, and hot water ceases its wasteful hiss. Pressurized quiet takes its place. The boiler gauge holds. A handful of copper washers and a stout tin of yellow anti-friction grease go into the tool-chest as your reward. You step back onto the footplate.",
    "exits": [
     {
      "label": "Climb back to the footplate",
@@ -13929,7 +13929,7 @@
    "kind": "recovery",
    "title": "A Wrenched Wrist",
    "brief": "You reseal the leaking steam gland under a barrage of dripping condensation, retaining a heavy copper gasket for repairs.",
-   "page": "A vicious crack fills the cramped housing as the spanner slips from the rounded nut. Your knuckles smash hard into the sharp edge of the cylinder casing. A hot bolt of pain shoots straight up your forearm. You gasp against the iron bulkhead while steam hisses from the imperfect seal. You clutch the hurt hand to your chest and taste copper and ash in the damp air.\n\nThe leak still weeps a thin, stubborn stream of grey condensation across your boots. The engine chugs onward through the darkness.",
+   "page": "A vicious crack fills the cramped housing as the spanner slips from the rounded nut and your knuckles smash hard into the sharp edge of the cylinder casing. Hot pain shoots up your forearm. You gasp against the iron bulkhead while steam hisses from the imperfect seal, and you clutch the hurt hand to your chest and taste copper and ash in the damp air.\n\nThe leak still weeps a thin stream of grey condensation across your boots. The engine chugs onward through the darkness.",
    "exits": [
     {
      "label": "Wipe the blood and press on",
