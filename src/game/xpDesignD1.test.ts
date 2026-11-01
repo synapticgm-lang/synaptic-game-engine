@@ -255,4 +255,103 @@ describe('XP-D1 design', () => {
     }).amount;
     expect(hard).toBe(Math.round(plain * 1.25));
   });
+
+  it('A1: System bounty born+completed this turn still pays step + complete once (AI xp ignored)', () => {
+    const bounty = (status: 'active' | 'completed', allDone: boolean): Quest =>
+      ({
+        id: 'gen-ds-trouble-34',
+        name: 'System bounty: A leader falls',
+        description: 'a leader falls',
+        status,
+        type: 'side',
+        giver: 'High Chanter Orel Vane',
+        rewards: { xp: 99999 },
+        objectives: [
+          { id: 'gen-ds-trouble-34-obj-1', description: "Hear High Chanter Orel Vane's concern", completed: allDone },
+          { id: 'gen-ds-trouble-34-obj-2', description: 'Study the signs at Cathedral Close', completed: allDone },
+          { id: 'gen-ds-trouble-34-obj-3', description: 'Bring proof to High Chanter Orel Vane', completed: allDone },
+        ],
+      }) as Quest;
+
+    const after = bounty('completed', true);
+    const r = applySandboxXpAwards(baseState({ sandboxAwardKeys: ['achv:first-steps'] }), {
+      playerAction: 'Read High Chanter Orel Vane',
+      questsBefore: [], // not in before — generated this turn
+      questsAfter: [after],
+      events: [],
+      turn: 35,
+    });
+    const step = milestoneXp('litrpg', 'questStep', { level: 1, playerLevel: 1, contentLevel: 1 }).amount;
+    const complete = milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount;
+    expect(r.xp).toBe(step * 3 + complete);
+    expect(r.xp).not.toBe(99999);
+    expect(r.notes.filter((n) => /quest step:/.test(n))).toHaveLength(3);
+    expect(r.notes.some((n) => /quest complete: System bounty/i.test(n))).toBe(true);
+
+    // Replay / same identity ladders on a second bounty with the same giver+task.
+    const again = applySandboxXpAwards(
+      { ...baseState(), sandboxAwardKeys: r.awardKeys },
+      {
+        playerAction: 'hand in another leader falls bounty',
+        questsBefore: [],
+        questsAfter: [
+          {
+            ...bounty('completed', true),
+            id: 'gen-ds-trouble-99',
+            name: 'System bounty: A leader falls again',
+          } as Quest,
+        ],
+        events: [],
+        turn: 43,
+      }
+    );
+    expect(again.xp).toBe(step * 3 + Math.max(1, Math.round(complete * 0.5)));
+  });
+
+  it('A1: Story RPG quest complete pays engine units (not 0)', () => {
+    const q = {
+      id: 'salt-road-heist-quest-1',
+      name: 'Case the Caravan',
+      description: 'case the caravan',
+      status: 'completed' as const,
+      type: 'main' as const,
+      giver: 'Vessa',
+      objectives: [
+        { id: 'o1', description: 'Scout the caravan', completed: true },
+        { id: 'o2', description: 'Pick an approach', completed: true },
+        { id: 'o3', description: 'Commit to the heist night', completed: true },
+      ],
+      rewards: { xp: 99999 },
+    };
+    const before = [
+      {
+        ...q,
+        status: 'active' as const,
+        objectives: q.objectives.map((o, i) => ({ ...o, completed: i < 2 })),
+      },
+    ];
+    const r = applySandboxXpAwards(
+      baseState({ engineMode: 'rpg', sandboxAwardKeys: [] }),
+      {
+        playerAction: 'Commit to the heist night',
+        questsBefore: before,
+        questsAfter: [q],
+        events: [],
+        turn: 40,
+      }
+    );
+    const step = milestoneXp('rpg', 'questStep', { level: 1, playerLevel: 1, contentLevel: 1 }).amount;
+    const complete = milestoneXp('rpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount;
+    expect(complete).toBeGreaterThan(0);
+    expect(r.xp).toBe(step + complete);
+    expect(r.xp).not.toBe(99999);
+  });
+
+  it('A1: L1 fight stays 50; L2+ encounter uses 0.85 unit; complete is 4 units', () => {
+    expect(milestoneXp('litrpg', 'encounter', { level: 1, playerLevel: 1, foeLevel: 1 }).amount).toBe(50);
+    expect(milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount).toBe(200);
+    const l2Fight = milestoneXp('litrpg', 'encounter', { level: 2, playerLevel: 2, foeLevel: 2 }).amount;
+    const l2Unit = xpUnit('litrpg', 2);
+    expect(l2Fight).toBe(Math.max(1, Math.round(0.85 * l2Unit)));
+  });
 });

@@ -64,6 +64,7 @@ export const DND_XP_BUDGET_PER_CHARACTER: readonly (readonly [number, number, nu
  * LitRPG L1 reference amounts (xpUnit L1 = 50). Live litrpg/rpg pay uses unitMilestoneAmount;
  * this table is the L1 snapshot / FAST_XP + SANDBOX_XP alias surface (one owner via xpPace).
  */
+/** L1 snapshot of units × xpUnit (questComplete = 4 units after XP-D1 A1 mix tune). */
 export const LITRPG_MILESTONE_XP: Readonly<Record<MilestoneKind, number>> = {
   encounter: 50,
   miniBoss: 100,
@@ -72,7 +73,7 @@ export const LITRPG_MILESTONE_XP: Readonly<Record<MilestoneKind, number>> = {
   dungeonEntry: 25,
   roomCleared: 25,
   questStep: 50,
-  questComplete: 150,
+  questComplete: 200,
   significantPerson: 25,
   significantPlace: 25,
   achievement: 75,

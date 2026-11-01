@@ -33,17 +33,20 @@ export const REPEAT_SHARES = [1, 0.5, 0.25, 0.1] as const;
  * LitRPG L1 = 3 keeps quest-step ≈ 50 and First Steps ≈ 75 at the L1 unit.
  * Story RPG matches L1, then ceil(1.5 × LitRPG) from L2.
  */
-/** Tuned by xpPace.test.ts — higher early units slow L3–9 into the 15–25 turn band. */
+/**
+ * Tuned by xpPace.test.ts — higher early units slow L3–9 into the 15–25 turn band.
+ * A1: complete=4 units; L2 band raised so L2→L3 stays ≥5 turns under heavier completes.
+ */
 const LITRPG_UNITS_PER_LEVEL: ReadonlyArray<{ maxLevel: number; units: number }> = [
   { maxLevel: 1, units: 3 },
-  { maxLevel: 2, units: 6 },
-  { maxLevel: 3, units: 8 },
-  { maxLevel: 4, units: 10 },
-  { maxLevel: 6, units: 12 },
-  { maxLevel: 9, units: 14 },
-  { maxLevel: 14, units: 20 },
-  { maxLevel: 19, units: 24 },
-  { maxLevel: Number.POSITIVE_INFINITY, units: 28 },
+  { maxLevel: 2, units: 11 },
+  { maxLevel: 3, units: 12 },
+  { maxLevel: 4, units: 13 },
+  { maxLevel: 6, units: 14 },
+  { maxLevel: 9, units: 20 },
+  { maxLevel: 14, units: 26 },
+  { maxLevel: 19, units: 30 },
+  { maxLevel: Number.POSITIVE_INFINITY, units: 34 },
 ];
 
 /** Award sizes in units of xpUnit (L1 unit = 50). Fractions allowed; pay rounds to whole XP. */
@@ -55,12 +58,19 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
   dungeonEntry: 0.5,
   roomCleared: 0.5,
   questStep: 1,
-  questComplete: 3,
+  /** Completes weigh more than fights so mixed pace lands ~60–70% quest XP. */
+  questComplete: 4,
   significantPerson: 0.5,
   significantPlace: 0.5,
   achievement: 1.5,
   deed: 0,
 };
+
+/**
+ * L2+ on-level fights: 0.85 unit so completes (4) hold quest XP share near 60–70%.
+ * L1 stays 1 (fight 50 + First Kill + step + First Steps → L2).
+ */
+export const ENCOUNTER_UNITS_L2_PLUS = 0.85;
 
 /** Story RPG zeros (same as prior STORY_RPG_MILESTONE_XP policy). */
 export const STORY_RPG_UNIT_ZERO: ReadonlySet<MilestoneKind> = new Set([
@@ -158,9 +168,13 @@ export function unitsToXp(units: number, unitValue: number): number {
 
 export function unitAwardFor(
   mode: EngineMode | undefined,
-  kind: MilestoneKind
+  kind: MilestoneKind,
+  playerLevel?: number
 ): number {
   if (mode === 'rpg' && STORY_RPG_UNIT_ZERO.has(kind)) return 0;
+  if (kind === 'encounter' && Math.max(1, Math.floor(playerLevel ?? 1)) >= 2) {
+    return ENCOUNTER_UNITS_L2_PLUS;
+  }
   return XP_UNIT_AWARDS[kind] ?? 0;
 }
 
@@ -178,9 +192,9 @@ export function unitMilestoneAmount(
     areaLevel?: number | null;
   } = {}
 ): number {
-  const units = unitAwardFor(mode, kind);
-  if (units <= 0) return 0;
   const playerLevel = Math.max(1, Math.floor(opts.playerLevel ?? 1));
+  const units = unitAwardFor(mode, kind, playerLevel);
+  if (units <= 0) return 0;
   const unit = xpUnit(mode, playerLevel);
   let amount = unitsToXp(units, unit);
 

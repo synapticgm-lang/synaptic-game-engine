@@ -371,14 +371,17 @@ export function applySandboxXpAwards(
   }
 
   // Quest steps and quest completion. Engine owns XP — Quest.rewards.xp is ignored (AI hint only).
+  // A quest born this turn (floor bounty / favour / reveal) is not in questsBefore — still pay when
+  // stages or completion flip on this turn. Spacing-window deferrals never swallow XP.
   const beforeById = new Map(opts.questsBefore.map((q) => [q.id, q]));
   for (const after of opts.questsAfter) {
     const before = beforeById.get(after.id);
-    if (!before) continue;
+    // Missing before ⇒ treat as brand-new active with nothing done yet.
+    const beforeStatus = before?.status ?? 'active';
+    const beforeDone = new Set((before?.objectives ?? []).filter((o) => o.completed).map((o) => o.id));
     // AI-supplied rewards.xp must never become the paid amount (kept on the quest for item hints only).
     void after.rewards?.xp;
     const qLevel = engineQuestLevel(level, after, areaOpts.areaLevel);
-    const beforeDone = new Set((before.objectives ?? []).filter((o) => o.completed).map((o) => o.id));
     for (const obj of after.objectives ?? []) {
       if (!obj.completed || beforeDone.has(obj.id)) continue;
       // Bearings / look-around ticks are orientation, not a milestone.
@@ -388,7 +391,7 @@ export function applySandboxXpAwards(
         contentLevel: qLevel,
       });
     }
-    if (after.status === 'completed' && before.status !== 'completed') {
+    if (after.status === 'completed' && beforeStatus !== 'completed') {
       // Per-quest-id idempotency (one instance never pays twice) + giver::task identity ladder.
       const identity = questIdentity(after);
       const n = countIdentityCompletions(awardKeys, identity);

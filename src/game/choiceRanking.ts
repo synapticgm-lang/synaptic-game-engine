@@ -311,6 +311,25 @@ function travelDest(chip: string): string | null {
   return m ? m[1]!.replace(/[.!?]+$/, '').trim() : null;
 }
 
+/** Orientation steps pay no XP and must not starve the first real starter-quest chip (LitRPG / Story RPG). */
+function isBearingsChipStep(description: string): boolean {
+  const d = (description ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  return !!d && (/\bbearings?\b/.test(d) || /\borient(?:ation|ing)?\b/.test(d));
+}
+
+/** Next open objective index; LitRPG/RPG skip bearings so Hear their reason / Scout… can show early. */
+function storyObjectiveIndex(state: GameState, quest: { objectives?: QuestObjective[] }): number {
+  const objs = quest.objectives ?? [];
+  const skipBearings = state.engineMode === 'litrpg' || state.engineMode === 'rpg';
+  for (let i = 0; i < objs.length; i++) {
+    const o = objs[i]!;
+    if (o.completed || o.optional) continue;
+    if (skipBearings && isBearingsChipStep(o.description)) continue;
+    return i;
+  }
+  return -1;
+}
+
 /** The quest's next step as one chip, when the engine knows one. */
 export function storyChip(state: GameState): string | null {
   if (state.activeEncounter) return null;
@@ -320,13 +339,14 @@ export function storyChip(state: GameState): string | null {
   const tabletopStep = tabletopStepChip(state);
   if (tabletopStep) return tabletopStep;
   // Tabletop: the main quest the step tracker follows, so no chip speaks for another quest's step.
+  // (dnd chip set unchanged — tabletopStepChip above owns TT pads; this branch is LitRPG/RPG.)
   const quest =
     state.engineMode === 'dnd'
       ? mainSpineQuest(state)
       : (state.quests ?? []).find((q) => q.status === 'active' && q.revealed);
   if (!quest) return null;
   const here = (state.currentLocation ?? '').toLowerCase();
-  const objIdx = quest.objectives?.findIndex((o) => !o.completed && !o.optional) ?? -1;
+  const objIdx = storyObjectiveIndex(state, quest);
   const obj = objIdx >= 0 ? quest.objectives![objIdx] : undefined;
   const talkStage = !!obj && isTalkStageObjective(state, quest.id, objIdx);
   const giver = talkStage ? talkStageGiver(state, quest.id, objIdx) : null;

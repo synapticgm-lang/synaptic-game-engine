@@ -20,8 +20,11 @@ import type { Character, EngineMode } from './types';
 
 /** One XP event every 2.2 turns (calibrated from design note + typical Fate density). */
 const TURN_GAP = 2.2;
-/** 65% quest-shaped events (steps + completes), 35% fights. */
-const QUEST_SHARE = 0.65;
+/**
+ * Quest-shaped event rate. Completes are 4 units (fights 0.85@L2+), so ~58% quest events
+ * lands XP share near 60–70%; 65% overshoots once completes weigh more than steps.
+ */
+const QUEST_SHARE = 0.58;
 
 function simulate(
   mode: EngineMode,
@@ -136,8 +139,8 @@ describe('XP-D1 pace model', () => {
       expect(cur, `reached L${L}`).toBeTypeOf('number');
       const span = (cur as number) - (prev as number);
       // Tolerance ±10 around 15–25 → accept 5–35 (seed variance on quest/fight mix)
-      expect(span).toBeGreaterThanOrEqual(5);
-      expect(span).toBeLessThanOrEqual(35);
+      expect(span, `L${L - 1}→L${L} span`).toBeGreaterThanOrEqual(5);
+      expect(span, `L${L - 1}→L${L} span`).toBeLessThanOrEqual(35);
     }
     for (let L = 10; L <= Math.min(15, [...levelAt.keys()].sort((a, b) => a - b).at(-1) ?? 10); L++) {
       const prev = levelAt.get(L - 1);
