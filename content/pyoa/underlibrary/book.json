@@ -2774,7 +2774,7 @@
    "kind": "hub",
    "title": "The Cartographer's Loft",
    "brief": "The Cartographer's Loft: An eccentric map-maker tries to sell you a chart of corridors that shift whenever someone blinks.",
-   "page": "Piles of yellowed vellum block the draughty corners of the loft, where an eccentric map-maker mutters over a brass compass that spins wildly on its mount. He tries to sell you a chart of corridors that shift whenever someone blinks, his ink-stained fingers tapping impatiently on the mahogany counter. Outside his window, the endless stacks rumble as another bay reorders itself in the damp subterranean air. You need a reliable route through this maze before the Long Closing seals the archives. Choose your path carefully among the shifting cartography.",
+   "page": "Piles of yellowed vellum block the draughty corners of the loft, where an eccentric map-maker mutters over a brass compass that spins wildly on its mount. He tries to sell you a chart of corridors that shift whenever someone blinks, his ink-stained fingers tapping impatiently on the mahogany counter. Outside his window, the endless stacks rumble as another bay reorders itself in the damp subterranean air. You need a reliable route through this maze before the Long Closing seals the archives.",
    "exits": [
     {
      "label": "Match wits with the erratic map-maker",
@@ -4454,7 +4454,7 @@
    "kind": "hub",
    "title": "The Sump of Pages",
    "brief": "The Sump of Pages: Discarded manuscripts form soggy drifts around a sluggish stream of black ink that swallows stray footsteps.",
-   "page": "Soggy drifts of discarded manuscripts carpet the damp floor around a sluggish stream of black ink that swallows stray footsteps without a sound. Faint whispers rise from the wet pages, murmuring forgotten arguments and unread tragedies into the gloom. Every surface gleams with a slick, greasy sheen under the feeble light of your lamp, offering several uncertain paths across the mire. You must choose how to navigate the drifting debris before the tide rises further.",
+   "page": "Soggy drifts of discarded manuscripts carpet the damp floor around a sluggish stream of black ink that swallows stray footsteps without a sound. Faint whispers rise from the wet pages, murmuring forgotten arguments and unread tragedies into the gloom. Every surface gleams with a slick, greasy sheen under the feeble light of your lamp, offering several uncertain paths across the mire.",
    "exits": [
     {
      "label": "Wade through the black ink stream",
@@ -4977,7 +4977,7 @@
    "kind": "hub",
    "title": "The Spine Span",
    "brief": "The Spine Span: A trembling bridge of stitched bindings sways over a bottomless vertical shaft filled with rustling loose-leaf papers.",
-   "page": "Trembling bindings sway violently over a bottomless vertical shaft where thousands of loose-leaf papers rustle in the updraft. The air here tastes of iron filings and ancient parchment dust, thick enough to coat your teeth. Across the void, shadowy corridors branch away into the gloom, each promising a different route through the erratic heart of the Uncatalogued Stacks. Your lamp flame flickers low, starved of fresh oxygen by the deep stone vents.\n\nYou must choose your footing carefully before the vibration of the hanging bridge alerts whatever dwells in the hanging stacks above.",
+   "page": "Trembling bindings sway violently over a bottomless vertical shaft where thousands of loose-leaf papers rustle in the updraft. The air here tastes of iron filings and ancient parchment dust, thick enough to coat your teeth. Across the void, shadowy corridors branch away into the gloom, each promising a different route through the erratic heart of the Uncatalogued Stacks. Your lamp flame flickers low, starved of fresh oxygen by the deep stone vents.",
    "exits": [
     {
      "label": "Follow the narrow binding path",
@@ -6815,7 +6815,7 @@
    "kind": "hub",
    "title": "The Narrowing Cleft",
    "brief": "The Narrowing Cleft: A claustrophobic fissure between two massive stone book-presses forces you to squeeze through side-on in total darkness.",
-   "page": "A claustrophobic fissure between two massive stone book-presses forces you to squeeze through side-on in total darkness. The scent of lamp-oil hangs thick in your wool coat as you weigh the narrow paths stretching into the gloom. To your left, a jagged passage leads toward a shimmering curtain of dust and iron bindings. Straight ahead, the fissure splits into darker crevices where the ink-sellers' routes are said to cross. Choose your footing carefully before the walls decide to shift again.",
+   "page": "A claustrophobic fissure between two massive stone book-presses forces you to squeeze through side-on in total darkness. The scent of lamp-oil hangs thick in your wool coat as you weigh the narrow paths stretching into the gloom. To your left, a jagged passage leads toward a shimmering curtain of dust and iron bindings. Straight ahead, the fissure splits into darker crevices where the ink-sellers' routes are said to cross.",
    "exits": [
     {
      "label": "Slip sideways into the tightest gap",
@@ -10393,7 +10393,7 @@
    "kind": "hub",
    "title": "Linseed And Polished Brass",
    "brief": "The Enforcers' Barracks: Armor clinks against wooden bunks in a long, smoke-filled dormitory smelling of linseed oil and polished brass.",
-   "page": "Rows of heavy wooden bunks line the long, timber-vaulted dormitory, their blankets folded with severe military precision. The air hangs thick with the sharp tang of linseed oil used to preserve leather scabbards and the metallic bite of brass polish rubbed into uniform buttons. Iron lanterns swing gently from overhead beams, casting long, wavering shadows across scarred tables where off-duty guards usually mend their gear. Faint murmurs drift from the far alcoves, mingling with the steady drip of condensation leaking through the ancient stone ceiling above.\n\nThis place serves as the beating heart of the enforcers' domain, yet every shadowed corner offers a choice of desperate pathways deeper into the stony labyrinth. You must decide whether to seek out the secure muster rolls, slip toward the subterranean depths, or force a confrontation with the patrolling garrison before the long closing seals the iron doors forever.",
+   "page": "Rows of heavy wooden bunks line the long, timber-vaulted dormitory, their blankets folded with severe military precision. The air hangs thick with the sharp tang of linseed oil used to preserve leather scabbards and the metallic bite of brass polish rubbed into uniform buttons. Iron lanterns swing gently from overhead beams, casting long, wavering shadows across scarred tables where off-duty guards usually mend their gear. Faint murmurs drift from the far alcoves, mingling with the steady drip of condensation leaking through the ancient stone ceiling above.\n\nThis place serves as the beating heart of the enforcers' domain, yet every shadowed corner offers a choice of desperate pathways deeper into the stony labyrinth.",
    "exits": [
     {
      "label": "Inspect the captain's private quarters",
@@ -12072,7 +12072,7 @@
    "kind": "hub",
    "title": "The Tribunal Mosaic",
    "brief": "The Grand Tribune: High stained-glass windows depict legendary librarians sorting the stars while golden scales hang motionless above the judges.",
-   "page": "Golden scales swing in a phantom breeze high above the vaulted ceiling, casting rhythmic arcs of light across the crowded floor of the Grand Tribune. Scholars, prosecutors, and desperate petitioners mill about the base of the judges' dais, whispering nervously beneath the gaze of the towering stained-glass windows. Every archway offers a distinct path deeper into the administrative labyrinth, each guarded by different interpretations of municipal law and custom. You must decide which avenue of approach or escape holds the best promise for reaching the deep annexes before the great seals drop.",
+   "page": "Golden scales swing in a phantom breeze high above the vaulted ceiling, casting rhythmic arcs of light across the crowded floor of the Grand Tribune. Scholars, prosecutors, and desperate petitioners mill about the base of the judges' dais, whispering nervously beneath the gaze of the towering stained-glass windows. Every archway offers a distinct path deeper into the administrative labyrinth, each guarded by different interpretations of municipal law and custom.",
    "exits": [
     {
      "label": "Address the judging bench directly",
@@ -13833,7 +13833,7 @@
    "kind": "hub",
    "title": "The Ex-Libris Corridor",
    "brief": "The Ex-Libris Corridor: You traverse a narrow gallery paved with thousands of discarded ownership plates shifting underfoot.",
-   "page": "Thousands of discarded ownership plates pave this narrow gallery, shifting and rustling underfoot like dry leaves in an autumn gale. Every tile bears a different coat of arms or solemn pledge of collection, now loose and restless under the dim glow of your swinging lamp. Ahead, multiple passages branch into the deep shadows of the oldest stacks, each promising a different route through the ancient paper labyrinth. The air is thick with the scent of rancid glue and aged vellum, whispering hints of secrets half-forgotten by the city above. You must choose your next direction carefully before the shifting floor decides for you.",
+   "page": "Thousands of discarded ownership plates pave this narrow gallery, shifting and rustling underfoot like dry leaves in an autumn gale. Every tile bears a different coat of arms or solemn pledge of collection, now loose and restless under the dim glow of your swinging lamp. Ahead, multiple passages branch into the deep shadows of the oldest stacks, each promising a different route through the ancient paper labyrinth. The air is thick with the scent of rancid glue and aged vellum, whispering hints of secrets half-forgotten by the city above.",
    "exits": [
     {
      "label": "Tread lightly across the shifting paper tiles",
@@ -14474,7 +14474,7 @@
    "kind": "hub",
    "title": "The Leaning Spires",
    "brief": "The Lean-To Stacks: You navigate an unstable cathedral of leaning wooden cases held together only by stubborn friction and old glue.",
-   "page": "Stacks of massive octavos tilt in a great circle around you, forming an unstable cathedral of leaning wooden cases held together only by stubborn friction and old glue. Every timber creaks with a dry, complaining resonance as distant air currents shift through the vast chamber. A sliver of pale lamplight filters from a crack far overhead, glinting off copper clasps and leather bindings that threaten to slide down upon your shoulders at any second. You must choose your path through this frozen avalanche of paper and timber before the friction fails entirely and the whole structure collapses into the abyss.",
+   "page": "Stacks of massive octavos tilt in a great circle around you, forming an unstable cathedral of leaning wooden cases held together only by stubborn friction and old glue. Every timber creaks with a dry, complaining resonance as distant air currents shift through the vast chamber. A sliver of pale lamplight filters from a crack far overhead, glinting off copper clasps and leather bindings that threaten to slide down upon your shoulders at any second.",
    "exits": [
     {
      "label": "Leap across the swaying shelf gap",
@@ -15797,7 +15797,7 @@
    "kind": "hub",
    "title": "The Assembly of Marginalia",
    "brief": "The Assembly of Marginalia: You stand in the centre of a murmuring crowd of disembodied reader opinions and dissenting notes.",
-   "page": "Murmurs swell and recede around you like tide water against shelving iron, each ghostly voice offering conflicting advice on how to approach the inner sanctum. Some figures lean close to murmur warnings about trapped passages, while others gesture toward hidden alcoves where forgotten papers lie half-buried in dust. The air grows thick with the scent of old leather and burning rush-lights, and every shadow seems to shift with intent. You must choose which path or counsel to follow before the restless crowd turns its collective scrutiny elsewhere.",
+   "page": "Murmurs swell and recede around you like tide water against shelving iron, each ghostly voice offering conflicting advice on how to approach the inner sanctum. Some figures lean close to murmur warnings about trapped passages, while others gesture toward hidden alcoves where forgotten papers lie half-buried in dust. The air grows thick with the scent of old leather and burning rush-lights, and every shadow seems to shift with intent.",
    "exits": [
     {
      "label": "Listen to the shifting debate",

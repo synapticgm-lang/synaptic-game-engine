@@ -262,7 +262,7 @@
    "kind": "scene",
    "title": "The Water-Seller's Ruse",
    "brief": "You negotiate with the water-seller for enough grey water to fill the tender, testing your CUNNING against his lies to acquire a skin of oil.",
-   "page": "Thick grey dust settles on your boots as you approach the collapsible zinc cart where the water-seller sits, his leather skin-bags smelling faintly of stagnant alkali and dead moss. He spits a dark stream into the cinders and swears the grey liquid in his barrels is drawn fresh from the deep mountain wells, though you can see the crust of alkaline salt whitening the seams. You tap the side of your tin measure against his rusted hoop, letting the hollow clink challenge his boast before you offer a handful of heavy iron nuts for a skin of his best oil.\n\nHe squints at the metal, calculating whether your need outweighs his greed, then reaches beneath the canvas flap to haul out a greasy goatskin flask that smells of tallow. You must decide whether to accept his terms or press him further for a cleaner measure.",
+   "page": "Thick grey dust settles on your boots as you approach the collapsible zinc cart where the water-seller sits, his leather skin-bags smelling faintly of stagnant alkali and dead moss. He spits a dark stream into the cinders and swears the grey liquid in his barrels is drawn fresh from the deep mountain wells, though you can see the crust of alkaline salt whitening the seams. You tap the side of your tin measure against his rusted hoop, letting the hollow clink challenge his boast before you offer a handful of heavy iron nuts for a skin of his best oil.\n\nHe squints at the metal, calculating whether your need outweighs his greed, then reaches beneath the canvas flap to haul out a greasy goatskin flask that smells of tallow.",
    "exits": [
     {
      "label": "Take the greasy oil-skin",
@@ -3274,7 +3274,7 @@
    "kind": "hub",
    "title": "The Engine Sheds",
    "brief": "The Engine Sheds: You return to the roaring smoky depths of the primary roundhouse for final locomotive maintenance.",
-   "page": "Heavy iron girders drip with black condensation above the roundhouse floor, where the Marrowbone stands hissing in the soot-stained dark. Around her flank, the smell of hot grease and damp coal mixes with the distant rumble of the station clock grinding through its gears. You stand amid the silent pits where grease-traps bubble and pressure gauges twitch under flickering gaslamps. Every shadow between the stalled tenders seems to watch your next move with quiet impatience.\n\nSteaming oil drips onto the flagged stone while the vast depot breathes its heavy, iron-lunged breath around you. Decide where the work or the danger calls you now from this smoky heart of the yards.",
+   "page": "Heavy iron girders drip with black condensation above the roundhouse floor, where the Marrowbone stands hissing in the soot-stained dark. Around her flank, the smell of hot grease and damp coal mixes with the distant rumble of the station clock grinding through its gears. You stand amid the silent pits where grease-traps bubble and pressure gauges twitch under flickering gaslamps. Every shadow between the stalled tenders seems to watch your next move with quiet impatience.\n\nSteaming oil drips onto the flagged stone while the vast depot breathes its heavy, iron-lunged breath around you.",
    "exits": [
     {
      "label": "Inspect the leaking steam header",
@@ -12507,7 +12507,7 @@
    "kind": "hub",
    "title": "The Siren Station",
    "brief": "The Siren Station: You man the locomotive controls through a blinding storm of flashing red lights and blaring steam sirens.",
-   "page": "Steam hisses from the manifold while red lights flash against the soot-greased walls of the cabin. The throttle bars vibrate beneath your palms, hot and demanding in the din of the alarms. Outside the thick glass, the iron road splits into several distinct paths through the gantries, each offering its own desperate hazard against the closing net of the Rail Barons.\n\nYou must choose your immediate course through the maze of signals and blinding lights before the searchlights find your boiler.",
+   "page": "Steam hisses from the manifold while red lights flash against the soot-greased walls of the cabin. The throttle bars vibrate beneath your palms, hot and demanding in the din of the alarms. Outside the thick glass, the iron road splits into several distinct paths through the gantries, each offering its own desperate hazard against the closing net of the Rail Barons.",
    "exits": [
     {
      "label": "Repair the damaged cable wires",
@@ -13976,7 +13976,7 @@
    "kind": "hub",
    "title": "The Sump Basin",
    "brief": "The Sump Basin: A subterranean lock-gate stands locked across the permanent way while oily black water rises toward the firebox.",
-   "page": "A subterranean lock-gate stands locked across the permanent way while oily black water rises steadily toward the glowing ashpan of the firebox. Iron catwalks stretch away into the Stygian gloom, hung with rusted chains and the pale, silent shapes of the Hollow Signalmen peering down from their perches. Every shadow seems to reach toward the warmth of the boiler, whispering old timetables and forgotten debts from the days before the ash-storms.\n\nYou must choose your path across the basin carefully before the rising bilge swamps the grate and drowns the fire.",
+   "page": "A subterranean lock-gate stands locked across the permanent way while oily black water rises steadily toward the glowing ashpan of the firebox. Iron catwalks stretch away into the Stygian gloom, hung with rusted chains and the pale, silent shapes of the Hollow Signalmen peering down from their perches. Every shadow seems to reach toward the warmth of the boiler, whispering old timetables and forgotten debts from the days before the ash-storms.",
    "exits": [
     {
      "label": "Wade through the rising bilge water",
@@ -16301,7 +16301,7 @@
    "kind": "hub",
    "title": "The Bureaucrat's Domain",
    "brief": "The Tribunal Desk: The Stationmaster-General awaits your arrival with an ink-stained ledger and a cold, measuring eye.",
-   "page": "The Stationmaster-General's desk occupies the exact center of the stone rotunda, surrounded by silent tunnels that branch off into the black heart of the mountain. Every surface is buried under drifts of railway warrants, unclaimed baggage tags, and dead chronometers ticking at different speeds. The old woman finally raises her chin, revealing eyes milky with age but sharp enough to pin you like a butterfly specimen to a cork board. You must decide how to handle the keeper of the line before the storm clock outside the high vents ticks away your last remaining minutes.",
+   "page": "The Stationmaster-General's desk occupies the exact center of the stone rotunda, surrounded by silent tunnels that branch off into the black heart of the mountain. Every surface is buried under drifts of railway warrants, unclaimed baggage tags, and dead chronometers ticking at different speeds. The old woman finally raises her chin, revealing eyes milky with age but sharp enough to pin you like a butterfly specimen to a cork board.",
    "exits": [
     {
      "label": "Adjust the great desk chronometer",
@@ -16616,7 +16616,7 @@
    "kind": "hub",
    "title": "The Final Siding",
    "brief": "The Final Siding: A battery of steam winches and control levers lines the wall beneath a colossal iron bulkhead door.",
-   "page": "Heavy iron swing-doors loom above the tracks, flanked by a battery of steam winches and thick brass control levers that hiss softly in the gloom. The massive bulkhead door bears deep scoring marks where decades of heavy chains have dragged across its face. Steam hangs low in the vaulted chamber, smelling faintly of sulfur and stale machine oil. Every path forward demands a firm hand on the machinery or a sharp eye for the hidden latches that bar the way to Cinderfall.\n\nSeveral options present themselves along the stone wall, each promising a different method to clear the barrier before the storm clock runs down. You must decide whether to test the winch mechanisms, brave the venting steam pipes, or seek another route through the iron-clad maze.",
+   "page": "Heavy iron swing-doors loom above the tracks, flanked by a battery of steam winches and thick brass control levers that hiss softly in the gloom. The massive bulkhead door bears deep scoring marks where decades of heavy chains have dragged across its face. Steam hangs low in the vaulted chamber, smelling faintly of sulfur and stale machine oil. Every path forward demands a firm hand on the machinery or a sharp eye for the hidden latches that bar the way to Cinderfall.\n\nSeveral options present themselves along the stone wall, each promising a different method to clear the barrier before the storm clock runs down.",
    "exits": [
     {
      "label": "Examine the heavy brass winches",
@@ -18025,7 +18025,7 @@
    "kind": "hub",
    "title": "The Sump-House",
    "brief": "The Sump-House: Sludge-choked drainage tunnels beneath the great reservoir roar with the sound of boiling runoff and escaping steam.",
-   "page": "Scalding steam vents from rusted flanges into the darkness, filling the vast chamber with a thick, choking mist that smells of boiled sulfur and old oil. Sludge-choked drainage tunnels beneath the great reservoir roar with the sound of boiling runoff and escaping pressure, shaking the metal walkways beneath your boots. Every shadow seems to shift and breathe in the flickering amber glow of the distant pilot lights. The narrow pathways branch off into the gloom toward churning machinery, hidden alcoves, and steep, greasy ladders disappearing into the upper gloom. You must choose your footing carefully before the gathering damp chills you to the bone.",
+   "page": "Scalding steam vents from rusted flanges into the darkness, filling the vast chamber with a thick, choking mist that smells of boiled sulfur and old oil. Sludge-choked drainage tunnels beneath the great reservoir roar with the sound of boiling runoff and escaping pressure, shaking the metal walkways beneath your boots. Every shadow seems to shift and breathe in the flickering amber glow of the distant pilot lights. The narrow pathways branch off into the gloom toward churning machinery, hidden alcoves, and steep, greasy ladders disappearing into the upper gloom.",
    "exits": [
     {
      "label": "Inspect the jammed sluice-chain",

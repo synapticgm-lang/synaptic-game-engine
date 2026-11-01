@@ -848,7 +848,7 @@
    "kind": "hub",
    "title": "The Stranded Basin",
    "brief": "Gullmouth Harbour: The stranded docks are chaotic as rival wrecker crews argue over the exposed seabed and scavenge whatever they can reach first.",
-   "page": "Barnacle-crusted keels list at sickening angles in the dried silt of Gullmouth Harbour, where the salt-stench of dead weed and black mud clings to the wool of your coat. Shouts echo off the timber pilings as rival wreckers claw through the weed-matted troughs of the seabed, iron bars clinking against stranded anchors and waterlogged chests. Down among the tilted hulls and weeping brine-pipes, every man and his cousin looks for an edge before the tide clock turns its iron tooth.\n\nScraps of copper and heavy oak timbers lie waiting for the bold or the desperate, half-buried in the muck where the gulls have given up screeching and taken to pacing the dried mud. You must choose where your hands fall first among the wreckage before the basin fills with wolves or water.",
+   "page": "Barnacle-crusted keels list at sickening angles in the dried silt of Gullmouth Harbour, where the salt-stench of dead weed and black mud clings to the wool of your coat. Shouts echo off the timber pilings as rival wreckers claw through the weed-matted troughs of the seabed, iron bars clinking against stranded anchors and waterlogged chests. Down among the tilted hulls and weeping brine-pipes, every man and his cousin looks for an edge before the tide clock turns its iron tooth.\n\nScraps of copper and heavy oak timbers lie waiting for the bold or the desperate, half-buried in the muck where the gulls have given up screeching and taken to pacing the dried mud.",
    "exits": [
     {
      "label": "Face down the snarling rival crew blocking the fishing skiff",
@@ -2958,7 +2958,7 @@
    "kind": "bottleneck",
    "title": "Pilgrims of the Sulk",
    "brief": "A procession of mournful Drift Pilgrims blocks your path, demanding that you participate in a bleak ritual to appease the sulking ocean before proceeding.",
-   "page": "Hooded figures in salt-stiffened wool crowd the cobblestones, chanting mournful dirges into the hollow air where waves once broke against the quay. Their leader thrusts an iron brazier forward, demanding tribute for the offended deep before any traveler may pass further onto the exposed seabed. Thick grey smoke smells of burnt bladderwrack and old brine, stinging your eyes and coating your tongue with the taste of copper. You must decide whether to join their bleak chorus or force a way through their ranks.",
+   "page": "Hooded figures in salt-stiffened wool crowd the cobblestones, chanting mournful dirges into the hollow air where waves once broke against the quay. Their leader thrusts an iron brazier forward, demanding tribute for the offended deep before any traveler may pass further onto the exposed seabed. Thick grey smoke smells of burnt bladderwrack and old brine, stinging your eyes and coating your tongue with the taste of copper.",
    "exits": [
     {
      "label": "Push past the mournful crowd",
@@ -2973,7 +2973,7 @@
    "kind": "hub",
    "title": "Basins of the Faithful",
    "brief": "The Tide-pool Shrines: Shallow basins of trapped seawater serve as makeshift altars where fanatics offer sacrifices to the absent tide, creating tense and dangerous encounters.",
-   "page": "Stagnant pools of grey seawater cling to the salt-flats like weeping eyes, reflecting the pale, cloudless dome of the sunless sky. Fanatics kneel by the rims, whispering desperate bargains to the vanished tide while black weed dries into brittle crusts along the margins. Every path away from this basin offers its own peculiar peril, whether through the guarded shrines, the biting shallows, or onward to the howling dunes. Choose your route carefully before the watchers take notice of your lingering presence.",
+   "page": "Stagnant pools of grey seawater cling to the salt-flats like weeping eyes, reflecting the pale, cloudless dome of the sunless sky. Fanatics kneel by the rims, whispering desperate bargains to the vanished tide while black weed dries into brittle crusts along the margins. Every path away from this basin offers its own peculiar peril, whether through the guarded shrines, the biting shallows, or onward to the howling dunes.",
    "exits": [
     {
      "label": "Inspect the drying shrines",
@@ -3403,7 +3403,7 @@
    "kind": "hub",
    "title": "Heart of the Whispers",
    "brief": "The Singing Dunes: Shifting sands hide the remnants of ancient wrecks, and the strange acoustic phenomena threaten to disorient anyone who lingers too long.",
-   "page": "Towering drifts of pale sand shift continuously under a bruised sky, burying old masts and swallowing the echoes of the coast. The acoustic trickery of the dunes plays strange games with your ears, turning the whistle of the wind into distant laughter or the splash of unseen waves. Every direction offers a different hazard and a different prize across the vast, undulating desert of the low seabed. You must decide how to navigate this treacherous expanse before the shifting sands wipe away your only landmarks.",
+   "page": "Towering drifts of pale sand shift continuously under a bruised sky, burying old masts and swallowing the echoes of the coast. The acoustic trickery of the dunes plays strange games with your ears, turning the whistle of the wind into distant laughter or the splash of unseen waves. Every direction offers a different hazard and a different prize across the vast, undulating desert of the low seabed.",
    "exits": [
     {
      "label": "Push deeper into the white dust",
@@ -4550,7 +4550,7 @@
    "kind": "hub",
    "title": "The Salt-Flats Sinkholes",
    "brief": "The Salt-Flats Sinkholes: A sprawling expanse of brittle white crust hides deep, treacherous pits that vent strange, intoxicating gases into the cold air.",
-   "page": "Brittle crusts of white salt stretch out toward the hazy horizon, concealing bottomless pits where strange, intoxicating gases hiss into the cold air. The ground here feels dangerously thin beneath your boots, whispering with the pressure of trapped vapors from below. Every direction offers a perilous temptation, from half-buried treasures glinting in the pale light to the looming, cathedral ribs of the great leviathan far across the flats. You must choose your footing carefully before the creeping vapors dull your senses completely.",
+   "page": "Brittle crusts of white salt stretch out toward the hazy horizon, concealing bottomless pits where strange, intoxicating gases hiss into the cold air. The ground here feels dangerously thin beneath your boots, whispering with the pressure of trapped vapors from below. Every direction offers a perilous temptation, from half-buried treasures glinting in the pale light to the looming, cathedral ribs of the great leviathan far across the flats.",
    "exits": [
     {
      "label": "Scavenge the buried sea chest",
@@ -7387,7 +7387,7 @@
    "kind": "hub",
    "title": "The Trench Edge",
    "brief": "The Trench Edge: The seabed drops off into an impenetrable abyss where strange, phosphorescent fungi grow and unseen predators stalk the gloom.",
-   "page": "The seabed drops away abruptly into a sheer, black chasm where pale phosphorescent fungi cling to the vertical cliffs of silt and stone. Down in the darkness, strange blue lights pulse with a slow, hypnotic rhythm, while from the deeper gloom comes the rhythmic scraping of unseen things moving through the muck. To your left, a narrow goat-track winds down past weeping salt-springs; straight ahead, the fog swallows the abyss entirely; behind you, the wreck-fields wait in their frozen silence. You must choose your next descent carefully before the shifting vapors close the paths for good.",
+   "page": "The seabed drops away abruptly into a sheer, black chasm where pale phosphorescent fungi cling to the vertical cliffs of silt and stone. Down in the darkness, strange blue lights pulse with a slow, hypnotic rhythm, while from the deeper gloom comes the rhythmic scraping of unseen things moving through the muck. To your left, a narrow goat-track winds down past weeping salt-springs; straight ahead, the fog swallows the abyss entirely; behind you, the wreck-fields wait in their frozen silence.",
    "exits": [
     {
      "label": "Descend the weeping salt track",
@@ -9066,7 +9066,7 @@
    "kind": "hub",
    "title": "The Drip Markets",
    "brief": "The Drip Markets: A chaotic bazaar suspended on netting, where desperate citizens trade salvage for tiny measures of precious, muddy water.",
-   "page": "Frayed fishing nets stretch between rusted iron pylons to form a swaying, crowded plaza where desperate souls barter salvage for tiny, measured vials of murky water. A sharp reek of unwashed bodies, rotting kelp, and boiling brine hangs heavy in the damp air, thick enough to chew. Shouts echo from every corner as merchants weigh dull iron nails against drops of condensation, while desperate scavengers eye your pockets with hungry, sunken eyes. You must decide where to spend your energy in this maze of thirst before the Brineholder enforcers clear the nets.",
+   "page": "Frayed fishing nets stretch between rusted iron pylons to form a swaying, crowded plaza where desperate souls barter salvage for tiny, measured vials of murky water. A sharp reek of unwashed bodies, rotting kelp, and boiling brine hangs heavy in the damp air, thick enough to chew. Shouts echo from every corner as merchants weigh dull iron nails against drops of condensation, while desperate scavengers eye your pockets with hungry, sunken eyes.",
    "exits": [
     {
      "label": "Jury-rig a broken condensation trap",
@@ -10314,7 +10314,7 @@
    "kind": "hub",
    "title": "Cistern Walk",
    "brief": "The Cistern Walk: A grand, patrolled promenade wrapping around the immense glass water tanks, offering incredible views and terrible danger.",
-   "page": "The Cistern Walk stretches as a grand, patrolled promenade wrapping around the immense glass water tanks, offering incredible views and terrible danger. Sunlight reflects blindingly off the vast liquid domes, where Brineholder wardens march in rhythmic unison and merchants haggle over sealed water skins. Every archway offers a tempting route deeper into the stilt-city's administrative heart, though a single misstep could plunge you into the dry abyss below. You must choose whether to slip past the guards toward the archives, eavesdrop on the patrol captains, or test your nerve along the dizzying glass ledges.",
+   "page": "The Cistern Walk stretches as a grand, patrolled promenade wrapping around the immense glass water tanks, offering incredible views and terrible danger. Sunlight reflects blindingly off the vast liquid domes, where Brineholder wardens march in rhythmic unison and merchants haggle over sealed water skins. Every archway offers a tempting route deeper into the stilt-city's administrative heart, though a single misstep could plunge you into the dry abyss below.",
    "exits": [
     {
      "label": "Walk the glittering glass promenade",
@@ -12511,7 +12511,7 @@
    "kind": "hub",
    "title": "The Stilt-Root Labyrinth",
    "brief": "The Stilt-Roots: A gloomy labyrinth of petrified wood and coral forming the foundation of the city in the dry dark.",
-   "page": "Endless pillars of drowned timber and calcified weed rear up around you like the ribs of forgotten leviathans, casting long, twisting shadows across the cracked mud of the Low. Faint murmurs drift from distant trading posts run by Brineholder agents, while narrower, unlit gaps plunge deeper into the gloom toward the foot of the Sunken Stair. Every direction hums with the suppressed panic of a city that knows its water supply hangs on a knife-edge.\n\nYou must choose your path through the tangled roots carefully before the guards take notice of a stray wrecker in their foundations.",
+   "page": "Endless pillars of drowned timber and calcified weed rear up around you like the ribs of forgotten leviathans, casting long, twisting shadows across the cracked mud of the Low. Faint murmurs drift from distant trading posts run by Brineholder agents, while narrower, unlit gaps plunge deeper into the gloom toward the foot of the Sunken Stair. Every direction hums with the suppressed panic of a city that knows its water supply hangs on a knife-edge.",
    "exits": [
     {
      "label": "Follow the marked coral trail deeper",
@@ -15157,7 +15157,7 @@
    "kind": "hub",
    "title": "The Pressure Locks",
    "brief": "The Pressure Locks: A series of reinforced bulkheads and flooded antechambers creates a maze of dead ends, hiding secrets of the ancient tide engineers.",
-   "page": "Water drips in a slow, monotonous rhythm from the vaulted ceiling of the pressure locks, pooling around a maze of reinforced bulkheads and flooded antechambers. The damp stone corridors twist in baffling directions, hiding secrets of the ancient tide engineers behind rusted iron doors and weed-choked grates. Faint mechanical sighs echo through the conduits, tempting you to pry open forgotten lockers or brave the flooded lateral tunnels. Every passage promises a different path deeper into the guts of the stair, though none of them look safe. You must choose how to navigate this subterranean labyrinth before the air grows entirely stale.",
+   "page": "Water drips in a slow, monotonous rhythm from the vaulted ceiling of the pressure locks, pooling around a maze of reinforced bulkheads and flooded antechambers. The damp stone corridors twist in baffling directions, hiding secrets of the ancient tide engineers behind rusted iron doors and weed-choked grates. Faint mechanical sighs echo through the conduits, tempting you to pry open forgotten lockers or brave the flooded lateral tunnels. Every passage promises a different path deeper into the guts of the stair, though none of them look safe.",
    "exits": [
     {
      "label": "Force open the jammed metal locker",
@@ -18959,7 +18959,7 @@
    "kind": "hub",
    "title": "The Final Stand",
    "brief": "Orsolya's Final Stand: Your bleeding mentor stands ready to shatter the machine and let the ocean run wild, forcing you to urgently either help her or stop her.",
-   "page": "Orsolya leans against the grease-stained iron of the Meridian Gear, her knuckles smeared with old rust and her breath coming in shallow, rattling gasps. Blood from her shoulder seeps through her canvas tunic, matting the gray hairs at her nape, yet her one good hand still clutches a heavy iron pry-bar raised high above the primary cogs. She means to shatter the timing-teeth and let the ocean rush in unchecked, drowning Gullmouth and the Low in one chaotic, vengeful surge. You step onto the dripping platform with a bruised arm, caught between the duty you owe your mentor and the desperate need to keep your home from the brine.\n\nThe heavy machinery groans beneath your boots as the salt-thick air grows colder, pressing down with the weight of an oncoming deluge. You must decide whether to aid her desperate vandalism or wrench the heavy lever from her grasp before the waters break their banks forever.",
+   "page": "Orsolya leans against the grease-stained iron of the Meridian Gear, her knuckles smeared with old rust and her breath coming in shallow, rattling gasps. Blood from her shoulder seeps through her canvas tunic, matting the gray hairs at her nape, yet her one good hand still clutches a heavy iron pry-bar raised high above the primary cogs. She means to shatter the timing-teeth and let the ocean rush in unchecked, drowning Gullmouth and the Low in one chaotic, vengeful surge. You step onto the dripping platform with a bruised arm, caught between the duty you owe your mentor and the desperate need to keep your home from the brine.\n\nThe heavy machinery groans beneath your boots as the salt-thick air grows colder, pressing down with the weight of an oncoming deluge.",
    "exits": [
     {
      "label": "Demand answers from your mentor",
