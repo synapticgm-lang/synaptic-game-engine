@@ -1088,7 +1088,7 @@
    "kind": "hub",
    "title": "Smoke and Small Beer",
    "brief": "The Cinder Tap: You visit the local watering hole where off-duty firemen share rumors about missing drivers.",
-   "page": "Warm steam and the sharp stench of cheap sulphur hang heavy inside the low-ceilinged room where off-duty firemen huddle around scarred wooden tables. Lanterns flicker through the haze, casting long shadows across walls stained by decades of tobacco smoke and coal dust. Rumors drift between mugs of bitter small beer like drifting ash, offering several promising paths through the troubled junction.",
+   "page": "Warm steam and the sharp stench of cheap sulphur fill the low-ceilinged room where off-duty firemen huddle around scarred wooden tables. Lanterns flicker through the haze. Long shadows lie across walls stained by decades of tobacco smoke and coal dust. Between mugs of bitter small beer, rumors pass like ash about several promising paths through the troubled junction.",
    "exits": [
     {
      "label": "Listen in on the corner table",
@@ -2818,7 +2818,7 @@
    "kind": "scene",
    "title": "Clearing the Main Line",
    "brief": "You force open a rusted interlocking lever using immense brawn, resetting the semaphore to clear your departure route.",
-   "page": "A metallic shriek echoes across the ballast as the stubborn iron arm finally slips into its new slot with a satisfying, heavy thud. The semaphore blade overhead jerks sharply upright, clearing the departure signal for the Marrowbone to edge out of the choked depot sidings. Acrid coal smoke drifts past the cabin windows from an idling switcher down the line, stinging your eyes in the thin desert air. You wipe your soot-stained brow with the back of a calloused hand and step back from the smoking machinery to survey the open track.",
+   "page": "A metallic shriek cuts across the ballast as the stubborn iron arm slips into its new slot with a hard thud. The semaphore blade overhead jerks upright. That clears the departure signal, and the Marrowbone can edge out of the choked depot sidings. Acrid coal smoke drifts past the cabin windows from an idling switcher down the line and bites at your eyes in the thin desert air. You wipe your soot-stained brow with the back of a calloused hand and step back from the smoking machinery. The open track lies clear ahead.",
    "exits": [
     {
      "label": "Heave the heavy turnout completely open",
@@ -7683,7 +7683,7 @@
    "kind": "reward",
    "title": "Salvaged Wealth",
    "brief": "Spotting the hidden trapdoor in the gravel under the arch lets you recover a hidden keg of refined lamp oil.",
-   "page": "Quick wits and careful fingers get you past the hidden snare, and you hoist the tin keg without disturbing the precarious stack above. The sealed vessel yields to your pocket knife with a satisfying hiss of vacuum-sealed air, revealing clear, refined lamp oil that burns cleaner and hotter than anything issued by the Ashgate stores. You stow the prize securely in the cab locker alongside your spare gasket wire, feeling the quiet satisfaction of a debt settled against the bitter road.",
+   "page": "Quick wits and careful fingers get you past the hidden snare, and you hoist the tin keg without disturbing the precarious stack above. Your pocket knife opens the sealed vessel. Vacuum-sealed air hisses out. Clear refined lamp oil sits inside, and it burns cleaner and hotter than anything issued by the Ashgate stores. You stow the prize in the cab locker alongside your spare gasket wire. The bitter road owes you one less debt.",
    "exits": [
     {
      "label": "Return to the viaduct encampment",
@@ -11336,7 +11336,7 @@
    "kind": "scene",
    "title": "Heat on the Iron",
    "brief": "You recalibrate the governor spring under intense heat, risking steam burns to stabilize the erratic engine pressure.",
-   "page": "Metal plates beneath your boots thrum with the frantic rhythm of the pistons below, sending shivers up your shins. You lean in close to the oscillating arm, timing your movements to the shudder of the deck so your fingers do not clip the spinning counterweight. The air smells sharply of scorched oil and the bitter dust of the Cinder Steppe drifting through the ventilator slats. Leather mitts on, you set your grip on the brass adjustment screw.",
+   "page": "Metal plates beneath your boots pick up the frantic rhythm of the pistons below. Shivers climb your shins. You lean in close to the oscillating arm and time your movements to the shudder of the deck so your fingers do not clip the spinning counterweight. Scorched oil fills the air, and bitter dust from the Cinder Steppe comes through the ventilator slats. Leather mitts on, you set your grip on the brass adjustment screw.",
    "exits": [
     {
      "label": "Turn the binding screw",
@@ -11440,7 +11440,7 @@
    "kind": "check",
    "title": "Silence in the Valve",
    "brief": "You patch a cracked cylinder drain using asbestos tape, risking toxic inhalation to keep the pistons firing smoothly.",
-   "page": "Fine threads of asbestos dance in the hot updraft as you press your palms against the vibrating brass housing, listening for the internal rhythm of the piston. A sudden shudder rattles the entire assembly, threatening to tear your makeshift binding away before the adhesive sets in the heat. Your fingers hover over the toggle, balancing the need for absolute tightness against the risk of cracking the casting altogether. You draw a careful breath through your teeth, steadying your wrists against the bucking iron frame as the pressure gauge ticks upward into the red.",
+   "page": "Fine threads of asbestos dance in the hot updraft. Palms press against the vibrating brass housing while you listen for the internal rhythm of the piston. A sudden shudder rattles the entire assembly and nearly tears your makeshift binding away before the adhesive sets in the heat. Fingers hover over the toggle. Absolute tightness matters, but too much force cracks the casting. You draw a careful breath through your teeth and brace your wrists on the bucking iron frame as the pressure gauge ticks upward into the red.",
    "exits": [
     {
      "label": "check-full",
@@ -12135,7 +12135,7 @@
    "kind": "reward",
    "title": "Slipping the Beam",
    "brief": "You resist the temptation to bolt prematurely from cover, risking a loss of nerve to time your dash past the searchlights.",
-   "page": "The glaring white light sweeps past your shoulder by a hair's breadth and catches only the drifting motes of soot in the air. You time the return stroke with quiet precision, darting across the exposed iron plate just as the lens clicks toward the opposite rail. The danger recedes into the hum of the dynamos, leaving you tucked safely within the recess of an unused signal cabin. Your fingers close around a small, grease-stained brass token dropped by a fleeing gager, cold metal that hints at safe passage through the lower checkpoint.",
+   "page": "The glaring white light sweeps past your shoulder by a hair's breadth and catches only motes of soot in the air. You time the return stroke with care and dart across the exposed iron plate just as the lens clicks toward the opposite rail. Dynamos grind somewhere behind you. You tuck into the recess of an unused signal cabin. Your fingers close around a small grease-stained brass token dropped by a fleeing gager. The brass is cold. It hints at safe passage through the lower checkpoint.",
    "exits": [
     {
      "label": "Advance toward the control house",
@@ -14140,7 +14140,7 @@
    "kind": "check",
    "title": "The Sluice Gate Leap",
    "brief": "You haul the sluice chains against a surging tide of bilge-water, keeping a greasy iron shackle and a bruised shoulder.",
-   "page": "Water boils up around your thighs with the force of a small mill-race, threatening to sweep your footing away from the narrow drainage ledge altogether. The heavy cast-iron dog-catch hovers just an inch shy of its retaining slot, vibrating with the immense strain of the backed-up bilge. If the bolt slips now, the surge will slam back into the pit with enough force to swamp the firebox and leave the Marrowbone dead in the water beneath the mountain. You bunch your muscles, grit your teeth against the raw pain in your shoulder, and launch your entire body weight upward to drive the stubborn locking pin home into its rusted socket before the current rips the chain from your grasp.",
+   "page": "Water boils up around your thighs with the force of a small mill-race and nearly sweeps your footing from the narrow drainage ledge. The cast-iron dog-catch hovers just an inch shy of its retaining slot and vibrates under the strain of the backed-up bilge. If the bolt slips now, the surge will slam back into the pit with enough force to swamp the firebox and leave the Marrowbone dead in the water beneath the mountain. You bunch your muscles. Raw pain hits your shoulder. You grit your teeth and launch upward to drive the stubborn locking pin home into its rusted socket before the current rips the chain from your grasp.",
    "exits": [
     {
      "label": "check-full",
@@ -14279,7 +14279,7 @@
    "kind": "reward",
    "title": "The Drainage Cock",
    "brief": "You wrestle the jammed sluice wheel past its rusted seat until the flood drains away, earning a brass drainage cock.",
-   "page": "However narrowly, the wheel breaks past its rusted seat with a sharp report, and the blocked channel opens wide to vent the accumulated filth into the deep sumps. As the water level drops away from the lower stays, your hand encounters a loose fitting in the debris - an intact, heavy brass drainage cock with its ground-glass core still bright and unblemished beneath the grime. You pocket the small prize, recognizing the fine work of the old Ashgate shops before the Rail Barons standardized everything to cheap cast iron. As you pocket it, an old signalman sitting in the recess of the archway nods approvingly, recognizing the care you take with machinery and noting your respect for the old timetables.",
+   "page": "The wheel breaks past its rusted seat with a sharp report, and the blocked channel opens wide to vent the accumulated filth into the deep sumps. Water drops away from the lower stays. Your hand finds a loose fitting in the debris: an intact brass drainage cock with its ground-glass core still bright and unblemished beneath the grime. You pocket the small prize. It is fine work from the old Ashgate shops, from before the Rail Barons standardized everything to cheap cast iron. An old signalman sits in the recess of the archway. He nods at the care you take with machinery and at your respect for the old timetables.",
    "exits": [
     {
      "label": "Advance toward the limestone cleft",
