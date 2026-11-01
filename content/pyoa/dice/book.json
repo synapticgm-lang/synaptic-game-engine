@@ -818,7 +818,7 @@
    "kind": "scene",
    "title": "The Rusted Spyglass",
    "brief": "You try to repair a rusted spyglass found on the balcony, risking cutting your hands to gain a valuable tool for spotting distant scavengers.",
-   "page": "Tarnished brass and cracked leather make up the ruined spyglass you find abandoned on the lighthouse balcony. It is jammed completely shut, the extending barrels fused together by years of salt spray and neglect. A scavenger on the Low without a way to spot rivals or landmarks is as good as blind, making this broken instrument highly valuable if you can force it to function. The metal edges are jagged where the housing has split, threatening to slice your palms open if your grip slips. Gritting your teeth, you find a firm hold on both ends, planting your boots wide. If you can just break the seal of rust, the lenses might still be perfectly intact inside.",
+   "page": "Tarnished brass and cracked leather make up the ruined spyglass abandoned on the lighthouse balcony. It is jammed shut. The extending barrels have fused from years of salt spray and neglect. On the Low, a scavenger without a way to spot rivals or landmarks might as well be blind, so a broken instrument like this is still a prize if you can force it to work. Where the housing has split, the metal edges are jagged enough to open your palms if your grip slips. You plant your boots wide and take a firm hold on both ends. Break the seal of rust and the lenses inside might still be intact.",
    "exits": [
     {
      "label": "Attempt to pry open the spyglass",
@@ -14696,7 +14696,7 @@
    "kind": "reward",
    "title": "A Dry Victory",
    "brief": "You repair a fractured steam pipe using scraps of leather and wire, sealing the leak to safely harvest condensed freshwater for your empty canteen.",
-   "page": "Your fingers ache and your palms sting from the fierce heat, but the wire holds firm against the shuddering iron of the pipe. The furious shriek of escaping steam fades to a low, sullen murmur, leaving a steady trickle of clear, lukewarm water to pool inside your canteen. The salvaged moisture sits full and life-giving at your belt.",
+   "page": "Heat still burns your palms where the leather and wire pressed into place, yet the wrap holds against the shuddering iron of the pipe. Escaping steam drops from a shriek to a sullen murmur. Clear lukewarm water pools in your canteen, drip by drip, until the salvaged moisture sits full at your belt.",
    "exits": [
     {
      "label": "Climb down the ladder",
@@ -14925,7 +14925,7 @@
    "kind": "recovery",
    "title": "A Flawed Deduction",
    "brief": "You present a contradictory paradox from one of the ruined ledgers to confuse the automaton, utilizing sharp logic to steal a rare oceanic map.",
-   "page": "A sharp, metallic click shatters your concentration as the automaton pierces through your flawed reasoning like salt eating through iron. Heavy brass jaws snap shut inches from your knuckles, and you jerk your hand back with a sharp hiss of pain, leaving a strip of skin caught on a jagged cog. The machine emits a low, mocking hum of corrected error.\n\nYou clutch your bleeding thumb to your chest, retreating into the shadows with your prize secured at too high a cost.",
+   "page": "A sharp metallic click cuts through your concentration. The automaton finds the flaw in your reasoning the way salt finds iron. Brass jaws snap shut inches from your knuckles and you jerk your hand back with a hiss of pain. A strip of skin hangs on a jagged cog. The machine vents a short corrected-error note, dry and smug.\n\nYou clutch your bleeding thumb to your chest and fall back into the shadows. The prize sits secured against you, bought in skin.",
    "exits": [
     {
      "label": "Slip away into the damp shadows",
@@ -16343,7 +16343,7 @@
    "kind": "check",
    "title": "Freeing The Mechanism",
    "brief": "You chisel away the suffocating salt crust from a delicate relay switch, applying careful precision to free a specialized gear mechanism for your own use.",
-   "page": "Minute tolerances govern the seating of the brass relay, demanding absolute steadiness while the surrounding iron framework groans under the weight of the dry abyss. You wedge the flat edge of your tool beneath the assembly, applying slow, measured pressure to coax the corroded pins from their sockets. A sudden screech of stressed metal echoes through the silence as the housing shifts half a hair's breadth, threatening to shear the delicate teeth if your hand trembles even slightly. The damp air grows colder against the back of your neck as you hold the precise angle, waiting for the final stubborn burr to snap free.",
+   "page": "Minute tolerances govern how the brass relay seats. Around you the iron framework groans as if the dry abyss itself presses on it. You wedge the flat edge of your tool beneath the assembly and push, slow and measured, to coax the corroded pins from their sockets. Stressed metal screeches. The housing shifts half a hair's breadth. One wrong tremor shears the delicate teeth. Damp air cools the back of your neck while you hold the angle and wait for the last stubborn burr to snap free.",
    "exits": [
     {
      "label": "check-full",
@@ -17050,7 +17050,7 @@
    "kind": "scene",
    "title": "Weight Of The Deep",
    "brief": "You stand your ground as the immense pressure of the turning gear threatens to crush the chamber, maintaining iron resolve to grab a fallen royal seal.",
-   "page": "Stone dust powders your shoulders as the massive brass collar grinds against its seating, threatening to flatten you into the masonry. Your knuckles turn white where you brace against the tremor, muscles singing with strain as the air grows thick with ancient rust. Through the haze of particulate matter, a glint of gold catches your eye amidst the rubble, resting perilously close to the crushing edge. Dropping lower to escape the brunt of the weight, you reach out across the trembling flagstones to snatch the royal seal before the machinery shifts again.",
+   "page": "Stone dust powders your shoulders as the brass collar grinds in its seating. Slip now and it flattens you into the masonry. You brace until your knuckles ache, muscles tight with strain, while rust flakes hang in the air. Through the particulate haze a glint of gold shows in the rubble, close to the crushing edge. You drop lower, reach across the trembling flagstones, and snatch the royal seal before the machinery moves again.",
    "exits": [
     {
      "label": "Seize the fallen gold",
@@ -17344,7 +17344,7 @@
    "kind": "check",
    "title": "Forcing The Frozen Spokes",
    "brief": "You force a calcified alignment wheel to rotate by sheer strength, risking crushed hands, to gain vital access to the central pressure valve.",
-   "page": "Every muscle in your back and shoulders knots as you pit your full strength against the immovable iron wheel, your boots slipping slightly in the greasy silt coating the chamber floor. The calcified spokes groan beneath your palms, threatening to snap or tear the skin from your fingers as the rusted internal gears screech in protest against the sudden, violent torque. The pressure mounts against your chest, turning the air in your lungs to fire as you try to force the alignment wheel past its ancient, salt-locked dead center.",
+   "page": "Your back and shoulders knot as you throw everything you have against the iron wheel. Boots slip a little in the greasy silt on the chamber floor. Calcified spokes groan under your palms; they could snap, or peel skin from your fingers, while the rusted gears inside screech against the sudden torque. Pressure climbs against your chest. Air in your lungs turns to fire as you shove the alignment wheel toward its salt-locked dead center.",
    "exits": [
     {
      "label": "check-full",
@@ -19389,7 +19389,7 @@
    "kind": "scene",
    "title": "Rigging the Valves",
    "brief": "You help her quietly rig the final sabotage on the release valves, risking being crushed by falling masonry, to earn her deepest trust and a master-work wrench.",
-   "page": "Heavy drops of condensation patter against your shoulders as you crouch beside Orsolya in the shadowed recess of the lower bulkhead. Together you wedge the final explosive charge into the hairline fractures of the main release valve, moving in desperate, synchronized silence while the ceiling groans overhead. A shower of loose mortar dust stings your eyes, threatening to bury you both as the foundation shudders under an immense, unseen weight. She meets your gaze through the gloom and slides an oil-stained master wrench into your palm with a sharp nod of absolute trust.",
+   "page": "Condensation drops patter on your shoulders as you crouch beside Orsolya in the shadowed recess of the lower bulkhead. Together you wedge the final explosive charge into the hairline fractures of the main release valve, working in short shared silence while the ceiling groans overhead. Loose mortar dust showers into your eyes as the foundation shudders; the masonry above could bury you both. She meets your gaze through the gloom and slides an oil-stained master wrench into your palm with a sharp nod of trust.",
    "exits": [
     {
      "label": "Secure the master wrench and stand ready",
