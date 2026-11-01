@@ -14825,7 +14825,7 @@
    "kind": "recovery",
    "title": "Broken Focus",
    "brief": "You firmly assert your right to pass without breaking eye contact with the towering machine, demonstrating unwavering resolve to receive a stamped brass token.",
-   "page": "Your nerve cracks under the oppressive heat of those amber lenses, and you avert your eyes with a sharp gasp, stumbling backward against a stack of ledgers. Ledgers tumble down in a cloud of choking mold and dust, burying your boots and bruising your shin against the iron frame. The archivist emits a low, mocking hiss of steam from its vents, marking your failure with a harsh, grating chime before blocking the aisle entirely.",
+   "page": "Those amber lenses press heat into your face until your nerve cracks, and you gasp and look away as you fall back into a stack of ledgers. The books tumble. Mold and dust choke the air as they bury your boots and your shin bangs the iron frame. From its vents the archivist lets out a mocking hiss of steam, then a harsh grating chime, and its bulk fills the aisle so nothing can pass.",
    "exits": [
     {
      "label": "Recover from the falling books",
@@ -18001,7 +18001,7 @@
    "kind": "recovery",
    "title": "Burned By The Spark",
    "brief": "You diligently repair the automaton's damaged memory-coil, risking a painful electrical surge, to receive a flawlessly accurate map of the seabed's shifting salt-flats and sinkholes.",
-   "page": "A blinding white flash obliterates the dim chamber as the live-wire manifold arcs violently against your knuckles, throwing you backward onto the stone floor with a scorched, smoking palm. A high-pitched whine rings in your ears and singed skin turns your stomach, but you force yourself up through the raw burn. The automaton's head cycles through a frantic series of clicks before settling into a grudging, stuttering hum. You survived the backlash, though your right hand is wrapped in a tight strip of rag soaked in stinging liniment and the memory-coil is barely holding together.",
+   "page": "A blinding white flash fills the dim chamber as the live-wire manifold arcs against your knuckles and flings you onto the stone floor with a scorched, smoking palm. A high-pitched whine fills your ears. Singed skin turns your stomach, but you push up through the raw burn. The automaton's head runs a frantic series of clicks, then settles into a grudging stutter of gears. You are still upright after the backlash, though your right hand sits in a tight strip of rag soaked in liniment and the memory-coil barely holds together.",
    "exits": [
     {
      "label": "Gather the charts with trembling fingers",
@@ -19089,7 +19089,7 @@
    "kind": "scene",
    "title": "Gathering the Charges",
    "brief": "You carefully disarm the volatile explosive charges she planted on the primary drive, risking a premature detonation, to save the mechanism and pocket a rare blast-cap.",
-   "page": "With infinite patience you slip the lead weights from their moorings one by one, letting the grey coils tumble harmlessly into the oily sludge at the base of the machine. The primary drive falls silent save for condensation dripping from the vaulted ceiling far above. You scoop up the exposed detonator caps, their brass casings cold and heavy against your palm, and tuck them securely into your canvas pouch. Orsolya watches from the shadows, her expression dark with betrayal, but the machinery remains intact for now.",
+   "page": "One by one you slip the lead weights from their moorings, and the grey coils tumble into the oily sludge at the base of the machine without a spark. The primary drive goes quiet. Far above, condensation drips from the vaulted ceiling while you scoop the exposed detonator caps, brass casings cold against your palm, and tuck them into your canvas pouch. Orsolya watches from the shadows. Her face is dark with betrayal, yet the machinery stays intact for now.",
    "exits": [
     {
      "label": "Step back from the disarmed drive",
