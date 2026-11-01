@@ -718,7 +718,7 @@
    "kind": "check",
    "title": "Calculating the Abyss",
    "brief": "You research the ancient floor-weight equations in the dusty blue folios, risking a collapsed stack to retrieve an ivory bone-handled bookmark.",
-   "page": "The ancient floor-weight equations scrawled across the dusty blue folios require absolute precision, for a single miscalculation in the load distribution of the moving stacks could bring down an entire tier of shelving into the ink-rivers below. You trace the intricate geometric proofs by the feeble light of your lamp, your mind racing through load-bearing limits and stone-density ratios while the floorboards beneath your boots emit a faint, ominous groan. Reaching deep into the gutter of the binding where the rarest diagrams reside, you try to extract the ivory bone-handled bookmark without disturbing the precarious stack of heavy volumes leaning against your elbow.",
+   "page": "The ancient floor-weight equations scrawled across the dusty blue folios demand absolute precision, for a single miscalculation in the load distribution of the moving stacks could bring down an entire tier of shelving into the ink-rivers below. Your lamp is feeble. You trace the geometric proofs, mind racing through load-bearing limits and stone-density ratios while the floorboards beneath your boots emit a faint, ominous groan. Deep in the gutter of the binding where the rarest diagrams reside, you try to extract the ivory bone-handled bookmark without disturbing the precarious stack of volumes leaning against your elbow.",
    "exits": [
     {
      "label": "check-full",
@@ -2031,7 +2031,7 @@
    "kind": "recovery",
    "title": "Discovered Deception",
    "brief": "You trick a greedy merchant into trading his finest invisible ink for a worthless bundle of blank waste-paper.",
-   "page": "A corner of the top sheet catches on a dry splinter, tearing away to reveal the utterly blank, coarse grain beneath. The merchant lets out a sharp whistle of outrage that brings two burly porters charging through the linen drapes behind the stall. You snatch up what you can and bolt, leaving your spare woollen scarf behind in the merchant's furious fist as a token of your hasty retreat.",
+   "page": "A corner of the top sheet catches on a dry splinter and tears away, laying bare the blank, coarse grain beneath. The merchant lets out a sharp whistle of outrage that brings two burly porters charging through the linen drapes behind the stall. You snatch what you can and bolt. Your spare woollen scarf stays behind in the merchant's furious fist.",
    "exits": [
     {
      "label": "Flee down the shadowy lane",
@@ -5694,7 +5694,7 @@
    "kind": "recovery",
    "title": "A Crushed Finger",
    "brief": "You trick the rotation mechanism by tossing a heavy stone into the gear-teeth, capturing a stray cataloguer's brass stamp.",
-   "page": "Metal teeth bite down with unforgiving speed, shattering your stone wedge and catching the edge of your knuckles before you can jerk your hand back. Pain spikes through your fingers as the brass stamp is knocked deeper into the churning machinery, lost forever to the grinding cogs. You stumble backward onto the ash-strewn floor, nursing a badly bruised hand and leaving a smear of dark blood on the edge of the shelf. The rotation resumes with a mocking shudder, costing you precious lamp-oil and steady nerves as you limp away into the dim aisles.",
+   "page": "Metal teeth bite down with unforgiving speed, shatter your stone wedge, and catch the edge of your knuckles before you can jerk your hand back. Pain spikes through your fingers as the brass stamp is knocked deeper into the churning machinery, lost forever to the grinding cogs. You stumble onto the ash-strewn floor. A smear of dark blood marks the shelf edge while you nurse a badly bruised hand, and the rotation resumes with a mocking shudder that costs you precious lamp-oil as you limp away into the dim aisles.",
    "exits": [
     {
      "label": "Return to the rotating hub",
@@ -7185,7 +7185,7 @@
    "kind": "bottleneck",
    "title": "The Scriptorium of Echoes",
    "brief": "You emerge into a vaulted scriptorium where hundreds of disembodied quills scratch frantically across empty vellum sheets.",
-   "page": "Vaulted ceilings arch high above a vast, stone-flagged chamber where hundreds of disembodied iron quills scratch frantically across endless sheets of blank vellum. The air vibrates with a continuous, dry rustling sound, like thousands of beetles scuttling behind ancient wainscoting. Ghostly inkwells hover unsupported above rows of vacant desks, spilling drops of luminescent blue fluid that evaporate before they touch the floor. You step cautiously across the threshold, careful not to disturb the invisible currents that guide the phantom writers. Every footstep you take is mirrored instantly by a dozen scratching nibs in the darkness, recording your journey in neat, cursive script upon the drifting rolls. A carved oak archway stands at the far end of the hall, flanked by towering stacks of uncatalogued pamphlets.",
+   "page": "Vaulted ceilings arch high above a vast, stone-flagged chamber where hundreds of disembodied iron quills scratch frantically across endless sheets of blank vellum. The rustle never stops. It sounds like thousands of beetles scuttling behind ancient wainscoting. Ghostly inkwells hover unsupported above rows of vacant desks and spill drops of luminescent blue fluid that evaporate before they touch the floor. You cross the threshold with care, wary of the invisible currents that guide the phantom writers, and every footstep is mirrored at once by a dozen scratching nibs in the darkness that record your journey in neat cursive upon the drifting rolls. A carved oak archway stands at the far end of the hall, flanked by towering stacks of uncatalogued pamphlets.",
    "exits": [
     {
      "label": "Approach the carved oak archway",
@@ -7226,7 +7226,7 @@
    "kind": "scene",
    "title": "The Dripping Rafters",
    "brief": "You study the scribbling patterns to deduce a safe path through the phantom ink-fall, capturing an enchanted quill that never blunts.",
-   "page": "Hundreds of suspended nibs hang above the stone floor like stalactites of iron and brass, weeping dark droplets into shallow copper basins. Each splash sends a tiny ripple through the pooled ink, reflecting strange, non-existent constellations that shift whenever you blink. The air smells strongly of copper filings and ancient gall, catching in the back of your throat with every inhalation. You step carefully between the brimming basins, watching your boots avoid the dark puddles while a phantom draft hums low through the metal tines.",
+   "page": "Hundreds of suspended nibs hang above the stone floor like stalactites of iron and brass, weeping dark droplets into shallow copper basins. Each splash sends a tiny ripple through the pooled ink. Strange constellations shift there whenever you blink, though none of them exist in any real sky. Copper filings and ancient gall catch in the back of your throat with every breath as you pick a path between the brimming basins, boots clear of the dark puddles while a phantom draft moves low through the metal tines.",
    "exits": [
     {
      "label": "Trace the edge of the copper basins",
@@ -7394,7 +7394,7 @@
    "kind": "recovery",
    "title": "Scattered Harvest",
    "brief": "You steel your mind against the deafening scratching noise to harvest blank vellum sheets from an unattended desk.",
-   "page": "The overwhelming metallic shriek pierces your mental defenses, causing your hands to jerk violently and send a cascade of vellum tumbling down into a dark drainage slot. You lurch after the sliding sheets, managing to snatch only a handful of creased and ink-smeared fragments before the rest vanish into the gloom below. The sudden exertion leaves your chest aching and your lamp guttering dangerously low, casting a meager, flickering yellow light across the damp flagstones.",
+   "page": "The overwhelming metallic shriek pierces your mental defenses. Your hands jerk hard and send a cascade of vellum tumbling down into a dark drainage slot. You lurch after the sliding sheets and manage to snatch only a handful of creased and ink-smeared fragments before the rest vanish into the gloom below. Your chest aches from the sudden exertion. The lamp gutters. A meager yellow flicker crosses the damp flagstones.",
    "exits": [
     {
      "label": "Gather the remaining scraps and move on",
@@ -8094,7 +8094,7 @@
    "kind": "scene",
    "title": "Bridging the Widest Gap",
    "brief": "You manipulate the anchor chains of a drifting bookcase to bridge the widest gap, securing a telescope made of brass and horn.",
-   "page": "You snub the iron chain around a rusted floor stanchion and lock the floating bookcase against your ledge. A narrow gap remains, spanned only by the polished oak spine of an oversized folio that bridges the chasm like a perilous beam. You test the sturdy leather binding with the toe of your boot, ensuring it can bear your full weight before stepping out over the open drop.",
+   "page": "You snub the iron chain around a rusted floor stanchion and lock the floating bookcase against your ledge. A narrow gap remains. Only the polished oak spine of an oversized folio spans that chasm like a perilous beam, and you test the sturdy leather binding with the toe of your boot until you trust it will bear you. The binding holds under your toe. Then you step out over the open drop.",
    "exits": [
     {
      "label": "Cross over the folio bridge",
@@ -8179,7 +8179,7 @@
    "kind": "scene",
    "title": "The Swaying Mahogany Beam",
    "brief": "You leap across the swirling sea of mist with daring balance, earning a silk rope-ladder with wooden rungs.",
-   "page": "Iron chains creak overhead while another towering stack drifts past through the pale, lamp-lit mist. Dust motes dance in the amber glow of your oil lantern while your boots find steady purchase upon a slick expanse of oak flooring. Somewhere down in the hidden depths below, an ink-river laps rhythmically against the stone foundations of the Unfiled Wing. You adjust the heavy strap of your leather satchel and eye the widening gap where the next shelf ought to drift.",
+   "page": "Iron chains creak overhead while another towering stack drifts past through the pale, lamp-lit mist. Dust motes drift in the amber glow of your oil lantern while your boots find firm purchase upon a slick expanse of oak flooring. Somewhere down in the hidden depths below, an ink-river laps against the stone foundations of the Unfiled Wing. You adjust the strap of your leather satchel. The gap widens.",
    "exits": [
     {
      "label": "Step across the drifting gap",
@@ -8448,7 +8448,7 @@
    "kind": "reward",
    "title": "The Vault Diagram",
    "brief": "You calculate the drift vectors of the floating stacks to chart a direct route across, acquiring a detailed map of the deep vault.",
-   "page": "Geometric calculations prove their worth as the mahogany floor settles into a momentary, stable alignment against the stone pier. The drifting vectors of the deep stacks resolve into a clear, legible pattern within your mind, revealing a hidden pathway beneath the hanging ledgers. Clutched tightly in your gloved hand is a creased parchment sheet covered in fine ink lines detailing every shift and pivot of the subterranean labyrinth.\n\nThis detailed map of the deep vault remains tucked securely inside your travel satchel, offering a reliable guide through the shifting gloom where ordinary directions fail entirely.",
+   "page": "Geometric calculations prove their worth as the mahogany floor settles into a momentary, stable alignment against the stone pier. The drifting vectors of the deep stacks resolve into a clear, legible pattern within your mind and reveal a hidden pathway beneath the hanging ledgers. Your gloved hand clutches a creased parchment sheet covered in fine ink lines that detail every shift and pivot of the subterranean labyrinth.\n\nThe deep-vault diagram rests inside your travel satchel. Ordinary directions fail here. This sheet does not.",
    "exits": [
     {
      "label": "Follow the mapped route onward",
@@ -9148,7 +9148,7 @@
    "kind": "scene",
    "title": "Silence in the Dock",
    "brief": "You maintain absolute composure under the piercing gaze of the Chief Cataloguer, risking your inner resolve, to gain a written pardon for past offenses.",
-   "page": "Dust motes dance in the shaft of greasy light cutting across the wooden barrier, settling upon the ink-stained cuffs of your uniform. The senior magistrates lean together, muttering dry legalities concerning the misplacement of historical volumes and the unauthorized reading of restricted margins. You keep your shoulders squared against the damp chill radiating from the masonry behind you, listening to the soft murmur of rival scholars whispering from the rear benches about your impending sentence.",
+   "page": "Dust motes hang in the shaft of greasy light that cuts across the wooden barrier and settle upon the ink-stained cuffs of your uniform. The senior magistrates lean together and mutter dry legalities concerning the misplacement of historical volumes and the unauthorized reading of restricted margins. Your shoulders stay squared. Damp chill radiates from the masonry behind you while rival scholars whisper from the rear benches about your impending sentence.",
    "exits": [
     {
      "label": "Step closer to the bench",
@@ -9233,7 +9233,7 @@
    "kind": "scene",
    "title": "The Confiscated Warrant",
    "brief": "You forge an official signature on a confiscated warrant using quick wit, risking discovery by guards, to obtain an exemption seal.",
-   "page": "Ink smells of iron and vinegar in the small vestibule behind the magistrate's bench, where discarded requisitions pile like fallen leaves. Your fingers trace the damp margin of the confiscated warrant while a guard's heavy boots echo on the floorboards outside. Every second spent holding the bone pen risks discovery by watchful officials who patrol the corridors.",
+   "page": "Ink smells of iron and vinegar in the small vestibule behind the magistrate's bench, where discarded requisitions pile like fallen leaves. Your fingers trace the damp margin of the confiscated warrant while a guard's boots thud on the floorboards outside. Time is short. Every second spent holding the bone pen risks discovery by watchful officials who patrol the corridors.",
    "exits": [
     {
      "label": "Press the nib to parchment",
@@ -9648,7 +9648,7 @@
    "kind": "scene",
    "title": "The Procedural Code",
    "brief": "You decipher an ancient clause in the procedural code hidden within a massive tome, risking mental fatigue, to unlock a restricted passage.",
-   "page": "Yellowed pages turn with a dry rustle beneath your trembling fingertips as you scan lines of dense, archaic legal prose written by forgotten judges. The heavy leather-bound tome rests on a sloping lectern, its iron chains clinking softly against the stone floor with every breath you draw. Somewhere within these tangled clauses lies the exact wording needed to unlock the restricted passage ahead, provided your mind does not buckle under the sheer weight of the bureaucracy.",
+   "page": "Yellowed pages turn with a dry rustle beneath your trembling fingertips as you scan lines of dense, archaic legal prose written by forgotten judges. The leather-bound tome rests on a sloping lectern, and its iron chains clink against the stone floor with every breath you draw. Tangled clauses fill the volume. Somewhere among them sits the exact wording needed to unlock the restricted passage ahead, if your mind can hold the bureaucracy without buckling.",
    "exits": [
     {
      "label": "Read deeper into the volume",
@@ -9732,7 +9732,7 @@
    "kind": "reward",
    "title": "The Secret Clearance",
    "brief": "You decipher an ancient clause in the procedural code hidden within a massive tome, risking mental fatigue, to unlock a restricted passage.",
-   "page": "The dense legal jargon yields in your head, and the hidden mechanism gives a thud that unlatches a narrow vertical door in the oak paneling. The secret passage swings outward on well-oiled hinges, revealing a dark stone stairwell descending into the restricted stacks. You pocket your notes and step through the gap before the librarian notices the breach.",
+   "page": "The dense legal jargon yields in your head, and the hidden mechanism gives a thud that unlatches a narrow vertical door in the oak paneling. The secret passage swings outward on well-oiled hinges. A dark stone stairwell drops beyond it into the restricted stacks. You pocket your notes and step through the gap before the librarian notices the breach.",
    "exits": [
     {
      "label": "Return to the central scriptorium",
@@ -9963,7 +9963,7 @@
    "kind": "hub",
    "title": "The Shifting Stacks",
    "brief": "The Shifting Stacks: Rows of heavy oak bookcases glide across recessed tracks, rearranging the geography of the entire chamber.",
-   "page": "Oak bookcases glide along recessed iron tracks, redrawing the geography of the vaulted chamber with a rhythmic, mechanical sigh that smells of dust and machine oil. Faint glimmers of copper light catch the edges of moving shelves where distant scholars or unseen mechanisms alter the categorisation of the entire floor. You stand at a temporary nexus of converging corridors, weighing which uncertain path might lead deeper into the masonry. Every partition is restless, promising either a swift passage or a labyrinthine trap among the forgotten folios.",
+   "page": "Oak bookcases glide along recessed iron tracks and redraw the geography of the vaulted chamber with a rhythmic, mechanical sigh that smells of dust and machine oil. Faint glimmers of copper light catch the edges of moving shelves where distant scholars or unseen mechanisms alter the categorisation of the entire floor. You stand at a temporary nexus of converging corridors. Each partition shifts again. One may open a swift passage; another may trap you among forgotten folios.",
    "exits": [
     {
      "label": "Inspect the rhythmic mechanism nearby",
@@ -10078,7 +10078,7 @@
    "kind": "scene",
    "title": "Across the Chasm",
    "brief": "You leap across a widening chasm between two parting bookcases with agile grace, risking a dangerous plunge, to reach a suspended catwalk.",
-   "page": "Two towering shelving units part abruptly with a screech of iron wheels, exposing a black, echoing drop where the stone floor has fallen away into the under-stacks. Far below, rivers of stagnant ink gleam faintly under the pale grease-lamps of the lower tiers, while a thin iron catwalk dangles by rusted wire across the void. You step back to gain momentum on the shifting oak boards, fixing your gaze upon the narrow walkway swaying in the draft.",
+   "page": "Two towering shelving units part abruptly with a screech of iron wheels and expose a black drop where the stone floor has fallen away into the under-stacks. Far below, rivers of stagnant ink gleam faintly under the pale grease-lamps of the lower tiers, while a thin iron catwalk dangles by rusted wire across the void. You step back. Shifting oak boards take your weight as your eyes fix on the narrow walkway that sways in the draft.",
    "exits": [
     {
      "label": "Sprint toward the parting bookcases",
@@ -10093,7 +10093,7 @@
    "kind": "scene",
    "title": "The Parting Stacks",
    "brief": "You leap across a widening chasm between two parting bookcases with agile grace, risking a dangerous plunge, to reach a suspended catwalk.",
-   "page": "Mahogany timber groans and splits as oak bookcases grind apart in opposite directions, carving a jagged black void through the heart of the aisle. The gap widens with every second, revealing only the misty, ink-stained abyss far below where the floorboards ought to be. Trusting in quick feet and steady balance, you kick off the trembling edge of the retreating shelf, launching yourself outward over the chasm with arms outstretched.",
+   "page": "Mahogany timber groans and splits as oak bookcases grind apart in opposite directions and carve a jagged black void through the heart of the aisle. The gap widens with every second. Below, where the floorboards ought to be, a misty, ink-stained abyss opens. You trust quick feet and firm balance, kick off the trembling edge of the retreating shelf, and launch yourself outward over the chasm with arms outstretched.",
    "exits": [
     {
      "label": "Scramble onto the trembling iron grating.",
