@@ -4226,7 +4226,7 @@
    "kind": "reward",
    "title": "The Greasy Warning",
    "brief": "Listen to the old ganger's coughing tales of the Long Fire without losing your temper, gaining a warning about shifted rails ahead.",
-   "page": "Controlled breathing keeps your face stone-steady through the final, rambling stretches of his story until he finally leans forward and taps a grime-blackened finger against your palm, murmuring a precise description of where the ballast gave way under the third mileage post. You tuck the valuable tip away in your mind, knowing exactly which stretch of track to ease the throttle over before the wheels can drop into a hidden sink.\n\nHowever narrowly you managed to keep your tongue, the secret proves its worth as you step back out into the cold steppe air.",
+   "page": "Controlled breathing keeps your face stone-steady through the final, rambling stretches of his story until he finally leans forward and taps a grime-blackened finger against your palm, murmuring a precise description of where the ballast gave way under the third mileage post. You tuck the valuable tip away in your mind, knowing exactly which stretch of track to ease the throttle over before the wheels can drop into a hidden sink.\n\nThe secret earns its keep as you step back out into the cold steppe air.",
    "exits": [
     {
      "label": "Walk back to the engine",
@@ -10475,7 +10475,7 @@
    "kind": "reward",
    "title": "The Price of Height",
    "brief": "You master your vertigo on the swaying girder bridge, risking a paralyzing panic attack to cross and secure a tow-cable.",
-   "page": "However narrowly you evade the sudden lurch of the wind-scoured girders, you manage to secure the vital connection and pull yourself back onto solid footing with trembling hands. Tucked into the greasy pocket of your canvas jacket is a heavy iron signal-token stamped with the crest of the Brasswind toll-keepers, a small token of passage that will quiet the guards further down the line.",
+   "page": "Wind-scoured girders lurch under you. You lock the connection and haul yourself back onto solid footing with trembling hands. Tucked into the greasy pocket of your canvas jacket is a heavy iron signal-token stamped with the crest of the Brasswind toll-keepers, a small token of passage that will quiet the guards further down the line.",
    "exits": [
     {
      "label": "Clamber back down to the footplate",
