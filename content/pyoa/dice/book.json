@@ -656,7 +656,7 @@
    "kind": "recovery",
    "title": "Chased from the Docks",
    "brief": "You observe a group of rival Wreckers' Guild members to learn their intended path, risking detection to gain a valuable map of the Low.",
-   "page": "A stray pebble crunches loudly beneath your heel. Harlan snaps his head around, his eyes narrowing as he spots you lurking in the gloom. \"Spying for your own crew, are you?\" he barks, drawing a rusted gutting knife.\n\nYou are forced to bolt, scrambling over the crates as the rival wreckers hurl stones and curses at your back. One jagged rock catches you sharply on the temple, leaving a bleeding graze. You escape into the labyrinth of the dry docks, but your head spins and you have lost precious time. Worse, you carry no map, forcing you to navigate the perilous Low entirely blind.",
+   "page": "A pebble crunches under your heel. Harlan whirls, spots you in the gloom, and draws a rusted gutting knife. \"Spying for your own crew, are you?\" he barks.\n\nYou bolt over the crates while rival wreckers hurl stones and curses at your back, and one jagged rock clips your temple hard enough to open a bleeding graze. The dry docks swallow you. Your head spins and you have lost time, and worse, you carry no map, so the Low ahead is entirely blind.",
    "exits": [
     {
      "label": "Flee into the winding alleys",
@@ -756,7 +756,7 @@
    "kind": "recovery",
    "title": "A Shriek in the Harbour",
    "brief": "You coax a frightened drift pilgrim out of hiding to ask about the Meridian Gear, risking their sudden panic to earn a protective bone talisman.",
-   "page": "Before you can finish your sentence, the pilgrim lets out a piercing, mournful wail. \"Blasphemy!\" he shrieks, flinging a handful of coarse salt straight into your eyes.\n\nYou stagger backwards, blinded and cursing, frantically rubbing the burning grit from your vision. By the time your tears clear the pain, the pilgrim has vanished into the maze of stranded boats, leaving you with red, aching eyes. The commotion has drawn the hostile stares of nearby scavengers, marking you as a troublemaker. You have gained no answers, only a persistent ache that makes the glaring light of the seabed almost unbearable.",
+   "page": "Before you can finish your sentence, the pilgrim lets out a piercing mournful wail. \"Blasphemy!\" he shrieks, and a handful of coarse salt hits your eyes.\n\nYou stagger backwards, blinded and cursing. You claw the grit from your vision, and by the time tears clear the pain the pilgrim has vanished into the maze of stranded boats and left you with red aching eyes. Hostile stares from nearby scavengers mark you as a troublemaker. You have gained no answers. Only a persistent ache remains under the glare of the seabed.",
    "exits": [
     {
      "label": "Stumble away empty-handed",
@@ -4300,7 +4300,7 @@
    "kind": "recovery",
    "title": "Snapped Wire",
    "brief": "You translate the strange markings on the cargo crates, avoiding a trapped mechanism to secure a bundle of waterproof matches.",
-   "page": "A sharp click echoes through the dark hold a fraction too late, and a heavy iron spring lashes out across your knuckles, drawing a sharp line of blood. You jerk your hand back with a sharp intake of breath, clutching your throbbing wrist while your precious tallow candle tumbles into the dark silt and extinguishes. The trap is sprung, leaving you to finish unsealing the crate by the dim grey light of the bulkhead gap.",
+   "page": "A click sounds in the dark hold a fraction too late, and an iron spring lashes out across your knuckles and draws a line of blood. You jerk your hand back with a hiss of breath and clutch your wrist while your tallow candle tumbles into the dark silt and dies. The trap is sprung. You finish unsealing the crate by the dim grey light of the bulkhead gap.",
    "exits": [
     {
      "label": "Recover in the dark hold",
@@ -5024,7 +5024,7 @@
    "kind": "bottleneck",
    "title": "The Ribs of Goliath",
    "brief": "The horizon darkens as you approach the immense, decaying bulk of a stranded leviathan, its pale ribs towering like a cathedral.",
-   "page": "Gray skies press down upon the exposed seabed like a wet wool blanket, smelling sharply of old decay and salt-crrusted mud. Ahead of you, the colossal carcass of a stranded leviathan looms against the horizon, its bleached ribs arching into the air like the vaulted nave of a drowned cathedral. Blackened blubber drips slowly from the jaw-bones, pooling into slick puddles that reflect the dull, sunless light. Scavengers scurry like beetles along the spine, dragging iron hooks and coiled hemp through the massive ribcage. Every step through the clinging ooze drags at your boots, reminding you that the open sea has vanished, leaving only this monument of flesh and bone to mark the passing of the deep.\n\nYou edge closer to the towering skeletal barrier, seeking passage through the heart of the beast where the noise of trade and haggling begins to swell over the silence of the Low.",
+   "page": "Gray skies press down on the exposed seabed and smell sharply of old decay and salt-crusted mud. Ahead the colossal carcass of a stranded leviathan looms against the horizon, and its bleached ribs rise into the air like the vaulted nave of a drowned cathedral. Blackened blubber drips from the jaw-bones into slick puddles that take the dull sunless light. Scavengers hurry along the spine with iron hooks and coiled hemp through the massive ribcage. Ooze drags at your boots. The open sea is gone, and only this monument of flesh and bone marks where the deep once stood.\n\nYou edge closer to the towering skeletal barrier, and through the heart of the beast the noise of trade and haggling begins to swell over the silence of the Low.",
    "exits": [
     {
      "label": "Push into the roaring beast-market",
@@ -8117,7 +8117,7 @@
    "kind": "scene",
    "title": "The Iron Pulley",
    "brief": "You repair a shattered pulley mechanism to lower your heavy gear safely, dodging snapping cables to ensure your supplies remain intact.",
-   "page": "Rusted chains and rotting hemp hang in loops down the center of the deep vertical shaft, threatening to tangle around your limbs with every step. You spot a jammed iron pulley system overhead, its brass wheels stuck fast in a thick crust of green verdigris and dried salt. Quick fingers pry the rusted teeth apart with your knife, clearing away the stubborn corrosion until the cylinder spins true once more. The metal screeches in protest, but the mechanism holds, offering a safe passage to lower depths.\n\nYou secure your supply pack to the newly freed hook, watching it descend smoothly into the gloom before following down the ladder.",
+   "page": "Rusted chains and rotting hemp hang in loops down the center of the deep vertical shaft, and they can tangle around your limbs with every step. Overhead a jammed iron pulley waits, its brass wheels stuck fast in a thick crust of green verdigris and dried salt. Quick fingers pry the rusted teeth apart with your knife and clear the corrosion until the cylinder spins true once more. The metal screeches. The mechanism holds for a passage into the lower depths.\n\nYou secure your supply pack to the newly freed hook, watch it drop smoothly into the gloom, and follow down the ladder.",
    "exits": [
     {
      "label": "Climb down the iron ladder",
@@ -14006,7 +14006,7 @@
    "kind": "scene",
    "title": "Torn Silver",
    "brief": "You violently push your way through the grasping hands of a bloated chorister, using brute strength to rip a silver amulet from its neck.",
-   "page": "Salt-rimed fingers graze your collar, cold as winter weed, but you twist away with a sharp heave of breath. Snagging a heavy fold of damp fabric, you wrench the figure forward into the dim light. A tarnished silver pendant hangs from its swollen neck, catching the faint phosphorescence of the damp walls. Tugging hard against the unyielding chain, you snap the metal links with a dry crack that echoes against the vaulted masonry. The chorister emits a low, wet sigh that smells of stagnant harbour mud.",
+   "page": "Salt-rimed fingers graze your collar, cold as winter weed, but you twist away with a sharp heave of breath and snag a fold of damp fabric to wrench the figure forward into the dim light. A tarnished silver pendant hangs from its swollen neck. It catches the faint phosphorescence of the damp walls. You tug hard against the chain. The metal links snap with a dry crack off the vaulted masonry, and the chorister murmurs, \"The links are broken,\" in a low wet breath that smells of stagnant harbour mud.",
    "exits": [
     {
      "label": "Climb higher among the weeping stones",
@@ -16198,7 +16198,7 @@
    "kind": "hub",
    "title": "The Stalled Gear Housing",
    "brief": "The Gear Housing: The magnificent, stalled heart of the ocean rests here, locked by massive salt crystals and guarded by the ghosts of drowned engineers.",
-   "page": "Colossal brass rings and salt-frosted teeth dominate the vast, echoing chamber, locked in a heavy silence that smells of stagnant bilge and oxidized copper. Pale phosphorescent lichens bleed a sickly green light across the ancient iron flooring, illuminating the motionless bulk of the Meridian Gear. Faint whispers drift from the shadows where drowned engineers linger in frozen postures, their sightless eyes fixed upon the immovable central spindle. Every shadow breathes with the immense weight of the dry ocean pressing down upon the rock above.\n\nYou can inspect the primary spindle alignment with calculated scrutiny, probe the encrusted relay housing with delicate tools, decipher the weather-worn warnings etched into the control console, reconnect a severed hydraulic line with salvaged fittings, or turn to face the unexpected presence emerging from the gloom.",
+   "page": "Colossal brass rings and salt-frosted teeth dominate the vast chamber, locked in a silence that smells of stagnant bilge and oxidized copper. Pale phosphorescent lichens bleed a sickly green light across the ancient iron flooring, and the motionless bulk of the Meridian Gear takes that green without answering. The housing is still. In the shadows drowned engineers linger in frozen postures, and one whispers, \"The spindle will not move,\" while sightless eyes stay fixed on the immovable central spindle. The dry ocean presses hard on the rock above the chamber. From the gloom an unexpected presence steps into view.",
    "exits": [
     {
      "label": "Inspect the primary spindle alignment",
@@ -16850,7 +16850,7 @@
    "kind": "scene",
    "title": "Footsteps On The Iron",
    "brief": "You physically block a group of descending Drift Pilgrims aiming to sabotage the controls, using brute force to protect the console and earn Orsolya's grudging respect.",
-   "page": "Heavy, salt-crusted boots ring out against the damp spiral treads of the stair above, carrying the low, murmuring prayers of the Drift Pilgrims who seek to unmake the work of generations. Their cowls are stiff with dried brine, and iron crowbars gleam dull in the lantern-light as they descend with single-minded fury toward the great console. Orsolya shouts a harsh warning, her fingers still locked upon the trembling brass housing of the primary indicators, but the intruders press downward through the gloom. Dust shakes loose from the vaulted brickwork overhead with every stride they take upon the rusted iron gratings.\n\nSweat stings your eyes as you plant your boots firmly against the condensation-slick plate, bracing your shoulders to block the narrow landing before the main gear-housing.",
+   "page": "Salt-crusted boots ring against the damp spiral treads of the stair above, and with them come the low murmuring prayers of the Drift Pilgrims who seek to unmake the work of generations. Their cowls are stiff with dried brine, and iron crowbars gleam dull in the lantern-light as they descend with fury toward the great console. Orsolya shouts, \"Drift Pilgrims on the stair!\" Her fingers stay locked on the trembling brass housing of the primary indicators, but the intruders press downward through the gloom. Dust shakes loose from the vaulted brickwork overhead with every stride they take on the rusted iron gratings.\n\nSweat runs into your eyes as you plant your boots against the condensation-slick plate and brace your shoulders across the narrow landing before the main gear-housing.",
    "exits": [
     {
      "label": "Bar the path of the zealots",
@@ -19785,7 +19785,7 @@
    "kind": "ending-part",
    "title": "Gullmouth Under the Green Wall",
    "brief": "Ending \"Drown Gullmouth\"",
-   "page": "The cliff-town of Gullmouth does not die quietly; it goes down beneath a towering wall of green-black water that smells of old weed and rusted anchors. The narrow stone alleys where net-menders gossiped only yesterday are choked with foam, and the whitewashed cottages are smashed like eggshells against the limestone cliffs by the fury of the returning flood. You scramble up the steep sheep-tracks toward the very top of the ridge, watching your home vanish beneath a churning froth that tears roofs from rafters and drags the tavern stools out to sea. Down on the slipway, the old boats that had rested so comfortably in the mud are suddenly snatched up, battered against the stone quays, and splintered into matchwood by the weight of the ocean. There is no time to save a single kettle or a single coil of rope as the tide rushes in to fill every corner of the town with bitter, freezing brine.",
+   "page": "The cliff-town of Gullmouth goes down beneath a towering wall of green-black water that smells of old weed and rusted anchors. The narrow stone alleys where net-menders gossiped only yesterday choke with foam, and the whitewashed cottages smash like eggshells against the limestone cliffs under the returning flood. You scramble up the steep sheep-tracks toward the top of the ridge. Your home vanishes beneath a churning froth that tears roofs from rafters and drags the tavern stools out to sea. Down on the slipway the old boats that rested in the mud are snatched up, battered against the stone quays, and splintered into matchwood by the ocean. There is no time. You save neither kettle nor coil of rope as bitter freezing brine fills every corner of the town.",
    "exits": [
     {
      "label": "Climb higher above the roaring surf",
@@ -19801,7 +19801,7 @@
    "kind": "ending-part",
    "title": "The Drowned Cliffs",
    "brief": "Ending \"Drown Gullmouth\"",
-   "page": "From the high ledge where you cling to a stunted thorn bush, the whole of Gullmouth is now a grey, churning lake dotted with floating barrels, stray thatch, and the bobbing wreckage of a hundred lives. The sea covers the marketplace, the pawn-widow's shop, and the fish-salting sheds, turning the bay into a vast, indifferent graveyard where nothing moves except the gulls wheeling frantically overhead. Down in the depths, the streets where you grew up are choked with weed and drowned furniture, visited only by curious cod and the silent shades of the Hollow Choir. You wipe the salt spray from your eyes and feel the cold wind whistling off the water, carrying the distant, hollow clang of the lighthouse bell as it dips beneath the rising flood. The world has chosen its path, and the town that bred you is nothing more than a memory swallowed by the brine.",
+   "page": "From the high ledge where you cling to a stunted thorn bush, Gullmouth lies under a grey churning lake dotted with floating barrels, stray thatch, and the bobbing wreckage of a hundred lives. The marketplace is gone. Sea covers the pawn-widow's shop and the fish-salting sheds, and nothing moves except the gulls that wheel overhead across a bay that has become a vast graveyard. Down in the depths the streets where you grew up choke with weed and drowned furniture, and curious cod and the silent shades of the Hollow Choir are the only visitors left. You wipe salt spray from your eyes. A cold wind comes off the water, and the lighthouse bell clangs once as it dips beneath the rising flood. The brine takes the last dry roof.",
    "exits": [
     {
      "label": "Walk the lonely path away inland",
@@ -20053,7 +20053,7 @@
    "kind": "ending",
    "title": "The Last Tide",
    "brief": "Ending \"Orsolya's Way\"",
-   "page": "Orsolya Venn was right about the weight of water, though she did not live to see the grey silt settle over her lighthouse door. You leave the salt-crusted helm of the Meridian Gear locked in its final, unyielding turn, watching from the high stone gallery as the first true rollers heave themselves back against the shingle of Gullmouth. The sea comes back not roaring but with a long sliding sigh, reclaiming drowned alleys and whale-bone shambles until the cliff-town floats once more on its own narrow shadow. Down in the damp dark of the stairwell, the automaton-archivist folds its brass fingers and goes silent for good, its ink long dried in the well. There are no more charts to draw, no more secrets hidden in the dry salt-pans where the world used to end. You walk back down the cliff path through a mist that tastes of cold weed and old iron, your boots sinking into familiar mud. The tide clock in the tavern square has stopped its frantic ticking, its copper hand pointing straight up at the noon that never fails. Gullmouth is rich, wet, and safe behind its breakwaters, and the horizon is once more just an empty, grey line where the sky meets a flat, indifferent water.",
+   "page": "Orsolya Venn was right about water, though she did not live to see the grey silt settle over her lighthouse door. You leave the salt-crusted helm of the Meridian Gear locked in its final unyielding turn. From the high stone gallery you watch the first true rollers heave themselves back against the shingle of Gullmouth, and the sea comes not roaring but with a long sliding sigh that reclaims drowned alleys and whale-bone shambles until the cliff-town floats once more on its own narrow shadow. Down in the damp dark of the stairwell the automaton-archivist folds its brass fingers and goes silent for good. Its ink has dried. There are no more charts. No secrets hide in the dry salt-pans where the world used to end. You walk back down the cliff path through a mist that tastes of cold weed and old iron, and your boots sink into familiar mud while in the tavern square the tide clock has stopped its frantic ticking with its copper hand pointed straight up at the noon that never fails. Gullmouth is rich, wet, and safe behind its breakwaters. The horizon is once more just an empty grey line where the sky meets flat indifferent water.",
    "exits": [],
    "endingKey": "orsolyas-way",
    "endingTitle": "Orsolya's Way",
@@ -20197,7 +20197,7 @@
    "kind": "ending-part",
    "title": "Beyond the Wreck-Fields",
    "brief": "Ending \"The Quiet Sand\"",
-   "page": "Rusted anchors and the ribs of stranded sloops rise from the dried mud like the cage-work of some monstrous beast buried by a careless tide. You pass them without a glance, your pockets empty of silver and your hands clean of brass grease for the first time since the water left the coast. A cold wind begins to moan through the Singing Dunes away to the west, lifting gray dust into the air like wood-smoke from a damp hearth. In the distance, the stilt-legs of Saltspire loom through the haze, their ladders dangling uselessly above the dry silt where no skiff has docked for days. The Brineholders have locked their doors and gone inland, leaving their glass towers to the gulls and the wandering salt-drift.",
+   "page": "Rusted anchors and the ribs of stranded sloops rise from the dried mud like the cage-work of some monstrous beast buried by a careless tide. You pass them without a glance. Your pockets are empty of silver, and your hands are clean of brass grease for the first time since the water left the coast. A cold wind moans through the Singing Dunes away to the west and lifts gray dust into the air. In the distance the stilt-legs of Saltspire loom through the haze, their ladders dangling above the dry silt where no skiff has docked for days. The Brineholders have locked their doors and gone inland. Gulls claim the glass towers, and salt-drift wanders the steps.",
    "exits": [
     {
      "label": "Cross the line of the old harbor",
