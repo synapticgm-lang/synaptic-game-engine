@@ -542,7 +542,7 @@
    "kind": "scene",
    "title": "The Water-Seller's Skin",
    "brief": "You negotiate with the water-seller for enough grey water to fill the tender, testing your CUNNING against his lies to acquire a skin of oil.",
-   "page": "Barrels of thick, grey ditch-water line the platform where the water-seller hawks his lukewarm draughts to weary gangers with parched throats. You tap the side of his largest canvas skin with your knuckle, challenging his tall tales about mountain springs and untainted runoff from the upper ridges. He squints at you with rheumy eyes, spinning another impossible yarn about where he hauled it from, but your knowing stare pins him down. He grumbles, drops his price, and tosses you a small, tightly sewn skin of lubricating oil instead of the foul water you refused.\n\nYou heft the oily container, testing its weight against the swing of your arm before heading for the tender.",
+   "page": "Barrels of thick grey ditch-water line the platform. The water-seller hawks lukewarm draughts to weary gangers with parched throats. You tap the side of his largest canvas skin with your knuckle and challenge his tall tales about mountain springs and untainted runoff from the upper ridges. He squints with rheumy eyes. Another impossible yarn about where he hauled it from dies under your stare. He grumbles, drops his price, and tosses you a small tightly sewn skin of lubricating oil instead of the foul draught you refused.\n\nYou swing the oily container once against your arm. Then you head for the tender.",
    "exits": [
     {
      "label": "Take the oil skin and turn away",
@@ -1214,7 +1214,7 @@
    "kind": "scene",
    "title": "The Copper Hearth",
    "brief": "You tinker with a broken draught-pump using fine mechanics to earn free coal rations from the grateful tavern keeper.",
-   "page": "Grease cakes your knuckles as you probe the rusted bowels of the tavern hearth's auxiliary draught-pump, coaxing a choked copper valve back to life with a brass-bladed screwdriver. The publican watches from behind a stacked tier of clouded mugs, his face soot-creased and hopeful as the stubborn iron diaphragm finally gives way with a deep, shuddering sigh of clean air. A greasy cloud of soot lifts toward the crooked stove-pipe, leaving the kitchen warm and the grease-traps clear of clinkers.",
+   "page": "Grease cakes your knuckles as you probe the rusted bowels of the tavern hearth's auxiliary draught-pump. A brass-bladed screwdriver works the choked copper valve back to life. The publican watches from behind a stacked tier of clouded mugs, his face soot-creased and hopeful, while the stubborn iron diaphragm finally gives way with a deep shuddering sigh of clean air. A greasy cloud of soot lifts toward the crooked stove-pipe. The kitchen is warm. Grease-traps sit clear of clinkers.",
    "exits": [
     {
      "label": "Inspect the repaired pump housing",
@@ -2232,7 +2232,7 @@
    "kind": "recovery",
    "title": "A Scalding Slip",
    "brief": "You overhaul a rusted steam-heating valve using expert mechanics, securing a spare pressure gauge for the cab console.",
-   "page": "The wrench slips with a sharp crack, barking your knuckles against the iron bracket while a jet of hot water spits sideways across your sleeve, leaving a dull, stinging red welt. You curse under your breath in the gloom, shutting the secondary cock with a wrench of your shoulder, but the replacement gauge is cracked and useless now.\n\nYou salvage what brass fittings you can carry and step back onto the ballast to let the steam vent clear.",
+   "page": "The wrench slips with a sharp crack and barks your knuckles against the iron bracket while a jet of hot water spits sideways across your sleeve. A raw red welt rises. You curse under your breath in the gloom. Your shoulder wrenches the secondary cock shut, but the replacement gauge is cracked and useless now.\n\nYou salvage what brass fittings you can carry and step back onto the ballast. Steam vents clear beside the rail.",
    "exits": [
     {
      "label": "Climb back onto the footplate",
@@ -2652,7 +2652,7 @@
    "kind": "reward",
    "title": "The Unseen Passage",
    "brief": "You spot a disguised Barons' agent lurking near the dry cistern using sharp cunning, avoiding a costly ambush.",
-   "page": "You time your movement with the sudden rising of an ash-squall, melting into the grey haze just as the Barons' agent turns his head toward a distant whistle. Slipping behind his patrol post, your fingers brush against a leather dispatch pouch left unattended on a nail, yielding a folded roster of company informants before he ever realizes you were there. You vanish back into the milling crowd of gangers, leaving the watcher none the wiser as he stares blankly into the swirling dust.",
+   "page": "You time your movement with the sudden rising of an ash-squall. Grey haze takes you just as the Barons' agent turns his head toward a distant whistle. Behind his patrol post your fingers brush a leather dispatch pouch left unattended on a nail, and you pull a folded roster of company informants before he ever realizes you were there. You vanish back into the milling crowd of gangers. He stares blankly into the swirling dust.",
    "exits": [
     {
      "label": "Return to the dry cistern hub",
@@ -2903,7 +2903,7 @@
    "kind": "scene",
    "title": "The Signalman's Corner",
    "brief": "You stand your ground against a corrupt signalman keeping strict composure, forcing him to hand over the switch keys.",
-   "page": "Stale pipe smoke and damp wool fill the small glass-walled office where the night signalman sits hunched over his grease-smeared ledger books. A single tallow candle flickers against the draft, casting long, wavering shadows across the rows of brass telegraph keys on his desk. Your boots creak across the warped floorboards; he keeps his eyes down, but his fingers halt mid-tap over the cold brass tapper. You stand quietly in the doorway, letting the oppressive silence weigh heavily upon him until he chooses to acknowledge your presence.",
+   "page": "Stale pipe smoke and damp wool fill the small glass-walled office where the night signalman sits hunched over his grease-smeared ledger books. A single tallow candle flickers against the draft. Long wavering shadows cross the rows of brass telegraph keys on his desk. Your boots creak across the warped floorboards. His eyes stay down. Fingers halt mid-tap over the cold brass tapper. You stand in the doorway until he chooses to acknowledge your presence.",
    "exits": [
     {
      "label": "Demand the transit token without speaking",
@@ -3794,7 +3794,7 @@
    "kind": "recovery",
    "title": "Strain and Splinter",
    "brief": "You heave a massive iron coal-chute back into position using raw brawn, securing enough fuel for the grueling crossing ahead.",
-   "page": "The sprocket gives way with a vicious metal shriek, spinning backward and rapping your knuckles hard against the iron guard-rail. You hiss through your teeth, clutching your bruised hand to your chest as a sharp line of heat flares across your skin. The coal-chute drops three inches and jams solid in the crooked tracks, leaving the loading half-finished and your shoulder aching with a deep, dull throb that will follow you all the way to the border.",
+   "page": "The sprocket gives way with a vicious metal shriek, spins backward, and raps your knuckles hard against the iron guard-rail. You hiss through your teeth. Your bruised hand presses to your chest as a sharp line of heat flares across your skin. The coal-chute drops three inches and jams solid in the crooked tracks, so the loading is left half-finished and your shoulder carries a deep ache that will follow you all the way to the border. The chute will not move.",
    "exits": [
     {
      "label": "Clear the jammed iron slide",
@@ -4311,7 +4311,7 @@
    "kind": "reward",
    "title": "The Clean Pry",
    "brief": "Prying open a rusted floor-locker while avoiding notice yields a heavy wrenching-bar that fits the tender hatch bolts.",
-   "page": "Steel slips smoothly into the rusted groove, and with one fluid, quiet heave, the stubborn door swings back without a single echo carrying across the yard to betray your presence among the ruins. You reach inside and lift out the tool, testing its solid balance against your palm.\n\nThe wrenching-bar is yours now, fitting the tender hatch bolts as if it were cast for them.",
+   "page": "Steel slips into the rusted groove. With one fluid heave the stubborn door swings back, and no sound carries across the yard to betray your presence among the ruins. You reach inside and lift out the tool, then test its solid balance against your palm.\n\nThe wrenching-bar is yours. It fits the tender hatch bolts as if cast for them.",
    "exits": [
     {
      "label": "Head toward the dead saloon",
@@ -4387,7 +4387,7 @@
    "kind": "scene",
    "title": "The Caking Valve",
    "brief": "Wrestling a stuck intake valve clear of sulfur crust prevents a blockage, earning a sealed flask of clean distilled boiler water.",
-   "page": "Fine sulfur dust coats the exposed copper fittings in a powdery yellow pall, sticking thick to your sweating palms as you grip the wrench. The valve resists every turn, rusted solid by years of acrid steam leaks and baking desert heat from the low wastes. You throw your weight against the long iron handle, feeling the metal bite hard into your calloused palms while the engine coughs a cloud of grey exhaust.\n\nA sudden hiss of released pressure whistles past your ear, smelling sharply of rotten eggs and boiled metal. The crust is breaking free in jagged shards, exposing the bright, scarred brass underneath.",
+   "page": "Fine sulfur dust coats the exposed copper fittings in a powdery yellow pall. It cakes on your sweating palms as you grip the wrench. The valve resists every turn. Years of acrid steam leaks and baking desert heat from the low wastes have rusted it solid. You lean hard into the long iron handle until the metal bites your calloused palms and the engine coughs a cloud of grey exhaust.\n\nA sudden hiss of released pressure whistles past your ear. It smells of rotten eggs and boiled metal. The crust breaks free in jagged shards. Bright scarred brass shows underneath.",
    "exits": [
     {
      "label": "Wrench the rusted intake clear",
@@ -4625,7 +4625,7 @@
    "kind": "recovery",
    "title": "The Slippery Trade",
    "brief": "Outwitting a scavenging trader hiding among the vapours lets you acquire a pouch of sweet-smelling tallow for the valve gear.",
-   "page": "The scavenger slips through the dense sulfur vapors like smoke between your fingers, vanishing into the maze of abandoned carriages before you can close your hand around the pouch. You find only a greasy rag left behind in the dirt, smelling faintly of rendered fat and old regret. The loss costs you valuable time in the gathering gloom, leaving you empty-handed and listening to the mournful whistle of the wind through the skeleton trains.",
+   "page": "The scavenger slips through the dense sulfur vapors like smoke between your fingers and vanishes into the maze of abandoned carriages before you can close your hand around the pouch. You find only a greasy rag left behind in the dirt. It smells faintly of rendered fat and old regret. Valuable time burns away in the gathering gloom. Your hands are empty. Wind whistles through the skeleton trains.",
    "exits": [
     {
      "label": "Return empty handed to the engine",
@@ -6020,7 +6020,7 @@
    "kind": "check",
    "title": "Shifting the Beam",
    "brief": "Dragging a collapsed timber crossbeam away from the holy altar gains a debt of honour from the ragged wandering monks.",
-   "page": "You wedge your shoulder against the water-swollen timber, throwing your weight forward to dislodge the heavy beam from where it pins the sanctuary's corner post. The wood groans and shifts sluggishly in the ash, threatening to slide back and trap your arm against the iron stays of the carriage framework. You grit your teeth, muscles burning as you push through the sudden pain of a wrenched shoulder to roll the timber completely out of the way.",
+   "page": "You wedge your shoulder against the water-swollen timber and throw yourself forward to dislodge the beam from where it pins the sanctuary's corner post. The wood groans and shifts sluggishly in the ash. It tries to slide back and trap your arm against the iron stays of the carriage framework. You grit your teeth. Muscles burn as you push through the sudden pain of a wrenched shoulder and roll the timber completely out of the way. The beam lies clear of the post.",
    "exits": [
     {
      "label": "check-full",
@@ -6139,7 +6139,7 @@
    "kind": "scene",
    "title": "The Jammed Point",
    "brief": "Realigning a jammed spring-switch with a cold chisel and hammer clears the track and earns a box of matches.",
-   "page": "Iron filings grate against your knuckles as you drop to your knees beside the spring-switch, finding the mechanism choked solid with hard-baked ash and grit. A cold chisel from your belt rings sharp against the frozen metal, sending sparks dancing into the gloom like dying fireflies. Every hammer blow echoes off the rusted ribs of stalled carriages nearby, punctuated by the mournful whistle of the wind through the dunes. You drive the chisel deeper into the stubborn joint until the mechanism shudders and finally yields to your hand.",
+   "page": "Iron filings grate against your knuckles as you drop to your knees beside the spring-switch. The mechanism is choked solid with hard-baked ash and grit. A cold chisel from your belt rings sharp against the frozen metal. Sparks jump into the gloom. Every hammer blow answers from the rusted ribs of stalled carriages nearby, and the wind keeps up its mournful whistle through the dunes. You drive the chisel deeper into the stubborn joint until the mechanism shudders and finally yields to your hand. The switch sits free.",
    "exits": [
     {
      "label": "Clear the track and proceed",
@@ -6292,7 +6292,7 @@
    "kind": "recovery",
    "title": "A Split Seam",
    "brief": "Fixing a broken water pump for the exhausted gangers secures two leather buckets of brackish cooling water.",
-   "page": "A dull thud echoes through the pump housing as the water-starved brass casing splits down the side, spraying a fine mist of foul-smelling grease and rusty water across your face. You leap back with a curse, wiping the greasy filth from your eyes as the last hope of an easy fill drains away into the ash. The lost time weighs heavier than any physical blow, and your shoulders ache with the cold.",
+   "page": "A dull thud runs through the pump housing as the water-starved brass casing splits down the side and sprays a fine mist of foul-smelling grease and rusty water across your face. You leap back with a curse. Greasy filth comes off your eyes as you wipe, and the last hope of an easy fill drains away into the ash. Lost time hits harder than any physical blow. Your shoulders ache with the cold.",
    "exits": [
     {
      "label": "Salvage what remains",
