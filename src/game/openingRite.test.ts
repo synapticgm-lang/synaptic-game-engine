@@ -140,16 +140,47 @@ describe('XP-D1 OPEN completion paths', () => {
     expect(receipts.some((r) => /seals the pact for you|registers you/i.test(r))).toBe(true);
   });
 
-  it('backstop completes by end of player turn 4', () => {
-    let s = litrpgState('hero-awakening');
-    for (const line of ['who are you?', 'what is this?', 'Look around', 'Wait']) {
+  it('backstop completes by end of player turn 3', () => {
+    let s = litrpgState('hero-awakening', { turn: 0 });
+    for (const line of ['who are you?', 'what is this?', 'Look around']) {
       const r = applyOpeningRiteTurn(s, line);
       s = r.state;
+      if (!s.openingRite?.done) s = { ...s, turn: (s.turn ?? 0) + 1 };
     }
     expect(s.openingRite?.done).toBe(true);
     expect(s.openingRite?.forced).toBe(true);
-    expect(s.openingRite?.turn).toBe(4);
+    expect(s.openingRite?.turn).toBeLessThanOrEqual(3);
     expect(s.character.level).toBe(2);
+  });
+
+  it('every LitRPG authored rite completes by turn 3 in the simulated none-flow', () => {
+    for (const entry of OPENING_RITE_TABLE) {
+      let s = litrpgState(entry.scenarioId, { turn: 1 });
+      for (let i = 0; i < 3; i++) {
+        if (s.openingRite?.done) break;
+        const r = applyOpeningRiteTurn(s, 'Look around');
+        s = r.state;
+        if (!s.openingRite?.done) s = { ...s, turn: (s.turn ?? 0) + 1 };
+      }
+      expect(s.openingRite?.done, entry.scenarioId).toBe(true);
+      expect(s.character.level, entry.scenarioId).toBe(2);
+      expect(s.openingRite?.completedAtTurn ?? 99, entry.scenarioId).toBeLessThanOrEqual(3);
+    }
+  });
+
+  it('rite fill alone lands L2 with 0 into the next bar (no quest double-pay)', () => {
+    const before = litrpgState('system-integration', {
+      character: {
+        ...createInitialState().character!,
+        name: 'Jax',
+        level: 1,
+        xp: 0,
+        xpToNext: 150,
+      },
+    });
+    const { state } = applyOpeningRiteTurn(before, 'Give your name and register');
+    expect(state.character.level).toBe(2);
+    expect(state.character.xp).toBe(0);
   });
 
   it('rite XP is exempt from the 60% event cap (full remaining bar)', () => {
@@ -265,5 +296,56 @@ describe('XP-D1 OPEN quest profile pick', () => {
       pickQuestProfileChoice(['Look around', 'Hear their reason'], done, () => 'Look around', 'Hear their reason')
     ).toBe('Hear their reason');
     expect(pickQuestProfileChoice(['Look around', 'Wait'], done, () => 'Wait', null)).toBe('Wait');
+  });
+
+  it('OPEN2: prefers progress chips over a just-taken no-progress Use chip', () => {
+    const state = litrpgState('system-integration', {
+      openingRite: { id: 'opening-rite:system-integration', done: true, turn: 1 },
+      log: [{ id: 'p1', turn: 1, role: 'player', content: 'Use Silver Reward Box', timestamp: 1 }],
+    } as Partial<GameState>);
+    const offered = ['Use Silver Reward Box', 'Travel toward Metro Hub', 'Search the scene for signs'];
+    expect(
+      pickQuestProfileChoice(offered, state as GameState, () => 'Use Silver Reward Box', null)
+    ).toBe('Travel toward Metro Hub');
+  });
+});
+
+describe('XP-D1 OPEN cover pin', () => {
+  it('coverContinuePads pins Registration when the card has no Accept offer', async () => {
+    const { coverContinuePads } = await import('./openingEstablishment');
+    const state = litrpgState('system-integration', {
+      openingEstablishment: {
+        complete: false,
+        pending: [],
+        answers: { name: 'Jax' },
+        sceneWritten: true,
+        // No card.offer → no Accept the {noun}; Registration must pin.
+      } as GameState['openingEstablishment'],
+    });
+    const pads = coverContinuePads(state);
+    expect(pads[0]?.toLowerCase()).toBe('give your name and register');
+  });
+
+  it('coverContinuePads keeps card Accept/Refuse when the offer is open (SP)', async () => {
+    const { coverContinuePads, openOpeningOffer } = await import('./openingEstablishment');
+    const state = litrpgState('summoned-pact', {
+      currentLocation: 'Sevenfold Circle Hall',
+      openingEstablishment: {
+        complete: false,
+        pending: [],
+        answers: { name: 'Jax' },
+        sceneWritten: true,
+        card: {
+          place: 'Sevenfold Circle Hall',
+          offer: { noun: 'offer', acceptGrants: [], refuseCost: null },
+        },
+      } as GameState['openingEstablishment'],
+    });
+    // If the card offer is open, Accept/Refuse stay first (classifier completes the rite).
+    if (openOpeningOffer(state)) {
+      const pads = coverContinuePads(state);
+      expect(pads.some((p) => /^Accept the /i.test(p))).toBe(true);
+      expect(pads[0]?.toLowerCase()).not.toBe('sign the pact');
+    }
   });
 });

@@ -28,6 +28,7 @@ import { openingPlaceRecord } from './placeNames';
 import { pocketOnlyKit, systemStatusChip } from './systemHousing';
 import { playerCommittedTravel } from './travelAuthority';
 import { hashSeed, hashUnit } from './seededRng';
+import { openingRiteIsOpen, pinOpeningRiteChip } from './openingRite';
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 /**
  * Pack 12: Handle instant quick-response button clicks.
@@ -2087,29 +2088,36 @@ export function isNameCoverChip(label: string): boolean {
 }
 /** Up to three chips for the cover beat — never hub travel, never pad-to-four. */
 export function coverContinuePads(state: GameState): string[] {
+  // XP-D1 OPEN2 — pin Registration (etc.) when the card has no Accept/Refuse offer.
+  // When Accept the {noun} is already on the pad, classifier treats it as rite accept.
+  const finish = (pads: string[]) => {
+    if (!openingRiteIsOpen(state)) return pads;
+    if (openingOfferPads(state).length) return pads;
+    return pinOpeningRiteChip(state, pads);
+  };
   if (isAuthoredPyoaBook(state.campaignBibleId)) {
-    return spineChoiceLabels(ensurePyoaSpine(state));
+    return finish(spineChoiceLabels(ensurePyoaSpine(state)));
   }
   if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) {
     const chips = establishmentChoices(state.openingEstablishment?.pending ?? [], state);
-    if (chips.length) return chips.slice(0, 2);
+    if (chips.length) return finish(chips.slice(0, 2));
     const locked = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
     if (locked && isLockablePcName(locked) && !/unknown survivor/i.test(locked)) {
-      return withOfferPads(state, liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]));
+      return finish(withOfferPads(state, liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)])));
     }
-    return ['Give your name', 'Refuse to give a name'];
+    return finish(['Give your name', 'Refuse to give a name']);
   }
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
     const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e.role === 'player')?.content ?? '';
     if (hallTalkAsksWho(lastPlayer)) {
-      return withOfferPads(state, liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]));
+      return finish(withOfferPads(state, liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)])));
     }
-    return withOfferPads(state, hallTopicAlreadyAnswered(state, 'want')
+    return finish(withOfferPads(state, hallTopicAlreadyAnswered(state, 'want')
       ? liveCoverPads(state, ['Who are you', ...coverLookPads(state)])
-      : liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)]));
+      : liveCoverPads(state, ['Ask what they want', ...coverLookPads(state)])));
   }
-  return ['Give your name', 'Refuse to give a name'];
+  return finish(['Give your name', 'Refuse to give a name']);
 }
 /** The open card offer's accept / refuse chips lead; the cover pads fill the rest, three in all. */
 function withOfferPads(state: GameState, pads: string[]): string[] {

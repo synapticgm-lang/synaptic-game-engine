@@ -29,12 +29,13 @@ import { tabletopStepAnchor, tabletopStepChip } from './tabletopQuestProgress';
 import { mainSpineQuest } from './questPlay';
 import { stallPressureActive } from './openThreads';
 import { directorNudgeIfStuck } from './director';
+import { STALL_N } from './directorConstants';
 
 export type { CirclingMemory } from './types';
 
 const REST_TURNS = 4;
 /** @deprecated T10DIR — stall/nudge threshold lives on director.STALL_N; kept for local stuck helpers. */
-const STUCK_TURNS = 3;
+const STUCK_TURNS = STALL_N;
 
 // T10Q4 — same-turn Face auto-resolve DEFEAT is progress (Fight: VICTORY already was; DEFEAT was the LOOP STOP gap).
 const PROGRESS_RECEIPT = /^(?:XP Gained|Loot:|Gold Gained|Quest|Fight: (?:VICTORY|DEFEAT)|Parley check:.*success|Dungeon: (?:you moved|you opened|you found|search of .*you found (?!nothing))|Dungeon: .* is cleared|Nudge:|.+ pulls away)/i;
@@ -190,7 +191,9 @@ export function actionFamily(input: string): string {
   if (/\b(talk|ask|speak|greet|offer)\b/.test(a)) return 'talk';
   if (/\b(travel|go to|go back|head to|walk to|return to|enter|next unexplored|go through)\b/.test(a)) return 'move';
   if (/\b(attack|fight|strike|flee|parley)\b/.test(a)) return 'fight';
-  if (/\b(search|open|loot)\b/.test(a)) return 'search';
+  // XP-D1 OPEN2 — System trail / scene-search repeats are the same no-progress family as search.
+  if (/\b(search|open|loot|read the system trail)\b/.test(a)) return 'search';
+  if (/^use\b/.test(a)) return 'use';
   return 'other';
 }
 
@@ -643,6 +646,15 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     list = [story, ...list];
     notes.push(`Story chip: ${story.slice(0, 40)}`);
   }
+  // XP-D1 OPEN2 — after a short no-progress run, drop inventory-Use chips so the
+  // Director's way-on / story chip can surface. Search/look/inspect still use the
+  // existing triedAgo rest path (same-result notes) — not a second suppress rule.
+  const stalled = turnsWithoutProgress(state) >= STALL_N;
+  if (stalled) {
+    const before = list.length;
+    list = list.filter((c) => actionFamily(c) !== 'use');
+    if (list.length < before) notes.push('Stall: dropped no-progress Use chips');
+  }
   const exit = wayOnChip(state, list, story);
   if (exit && !list.some((c) => c.toLowerCase() === exit.toLowerCase())) {
     list = [exit, ...list];
@@ -677,7 +689,13 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     }
     kept.push(c);
   }
-  // Never rest below three chips.
+  // Never rest below three chips — but do not re-admit an exact no-progress repeat
+  // (inventory Use / search / System trail) just to fill the pad.
+  while (kept.length < 3 && kept.length < list.length) {
+    const back = list.find((c) => !kept.includes(c) && triedAgo(state, c) == null);
+    if (!back) break;
+    kept.push(back);
+  }
   while (kept.length < 3 && kept.length < list.length) {
     const back = list.find((c) => !kept.includes(c));
     if (!back) break;

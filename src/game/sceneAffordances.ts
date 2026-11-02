@@ -37,6 +37,23 @@ import { capFightChips, legalFightActionsThisRound, roundCombatChips } from './t
 import { choiceCountLimitOf } from './rules/houseRules';
 import { activeHereSpot, stepCloserChip } from './hereSpot';
 import { isSearchTargetEmpty, normalizeSearchTarget } from './searchContinuity';
+import { isRewardBox } from './rules/achievements';
+
+function isRewardBoxItem(item: { id?: string; name?: string } | null | undefined): boolean {
+  return isRewardBox(item as Parameters<typeof isRewardBox>[0]);
+}
+
+/**
+ * Health / healing potions and vials — Use chip only when HP is below max.
+ * No regex literals (sceneAffordances word-list ban); plain includes only.
+ */
+function isHealingConsumableName(name: string): boolean {
+  const n = name.toLowerCase();
+  const heal = n.includes('health') || n.includes('healing') || n.includes('heal');
+  const vessel =
+    n.includes('vial') || n.includes('potion') || n.includes('flask') || n.includes('elixir') || n.includes('tonic');
+  return heal && vessel;
+}
 
 export { presentPersonForRoute } from './questRoutes';
 
@@ -581,11 +598,17 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     });
   }
   const inv = state.inventory ?? [];
+  const hp = state.character?.hp ?? 0;
+  const maxHp = state.character?.maxHp ?? hp;
   for (let i = 0; i < inv.length; i++) {
     const item = inv[i]!;
     if (item.equipped || item.itemType === 'quest' || item.itemType !== 'consumable') continue;
     const name = (item.name ?? '').trim();
     if (!name) continue;
+    // XP-D1 OPEN2 — reward boxes use Open chips only; Use would not consume them.
+    if (isRewardBoxItem(item)) continue;
+    // Healing vials only when they would heal.
+    if (isHealingConsumableName(name) && hp >= maxHp) continue;
     const entityId = item.id || `item:${name}`;
     const label = `Use ${name}`;
     all.push({

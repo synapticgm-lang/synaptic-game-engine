@@ -96,7 +96,11 @@ export function isRewardBox(item: Item | null | undefined): boolean {
 /** True when the typed line is opening a System reward box (not a world crate/chest). */
 export function isRewardBoxOpenLine(input: string): boolean {
   const t = (input ?? '').trim().toLowerCase();
-  return t.includes('open') && t.includes('reward') && t.includes('box');
+  // Open the … reward box (pad) or Use … Reward Box (legacy Use chip).
+  if (t.includes('reward') && t.includes('box')) {
+    return /\b(?:open|use)\b/.test(t);
+  }
+  return t.includes('open') && t.includes('box') && /\breward\b/.test(t);
 }
 
 function boxOpenedKey(boxId: string): string {
@@ -202,10 +206,14 @@ export function rewardBoxPad(state: GameState): string[] | null {
   return tiers.length ? tiers.map(openBoxChip) : null;
 }
 
-/** The box this line opens: the chip, or "open the box" (a named tier picks that tier, else the first held). */
+/** The box this line opens: the chip, or "open/use the box" (a named tier picks that tier, else the first held). */
 function boxForLine(state: GameState, input: string): Item | null {
   const t = (input ?? '').trim();
-  if (!/\bopen\b/i.test(t) || !/\b(?:box|chest|reward|loot\s*box)\b/i.test(t)) return null;
+  if (!/\b(?:open|use)\b/i.test(t) || !/\b(?:box|chest|reward|loot\s*box)\b/i.test(t)) return null;
+  // Bare "Use box" without reward/chest still needs a held reward box name match.
+  if (!/\b(?:reward|chest|loot)\b/i.test(t) && !BOX_TIERS.some((b) => new RegExp(`\\b${b}\\b`, 'i').test(t))) {
+    return null;
+  }
   const held = rewardBoxesHeld(state);
   if (!held.length) return null;
   const tier = BOX_TIERS.find((b) => new RegExp(`\\b${b}\\b`, 'i').test(t));

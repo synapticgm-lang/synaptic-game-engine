@@ -240,7 +240,8 @@ function completeRite(
 /**
  * Apply one player turn against the open rite.
  * Accept → complete now. Refuse → forced complete now (same XP).
- * Neither → count the turn; at turn ≥ 4 force-complete (backstop).
+ * Neither → count the turn; force-complete by player-turn 3 or save turn 3
+ * (whichever comes first) so every LitRPG lands L2 in turns 1–3.
  */
 export function applyOpeningRiteTurn(
   state: GameState,
@@ -253,6 +254,8 @@ export function applyOpeningRiteTurn(
   if (!entry) return { state: next, receipts: [] };
 
   const turnCount = (next.openingRite?.turn ?? 0) + 1;
+  // Upcoming commit turn on the save (apply runs before turn++).
+  const commitTurn = (next.turn ?? 0) + 1;
   next = {
     ...next,
     openingRite: { ...next.openingRite!, turn: turnCount },
@@ -269,8 +272,8 @@ export function applyOpeningRiteTurn(
   if (kind === 'refuse') {
     return completeRite(next, entry, { forced: true, turnCount });
   }
-  // Backstop: end of player turn 4.
-  if (turnCount >= 4) {
+  // Backstop: end of player-turn 3, or save commit turn 3 (covers opening that already advanced turn).
+  if (turnCount >= 3 || commitTurn >= 3) {
     return completeRite(next, entry, { forced: true, turnCount });
   }
   return { state: next, receipts: [] };
@@ -300,15 +303,44 @@ export function pinOpeningRiteChip(state: GameState, choices: string[]): string[
   return list;
 }
 
+/** Chip families that move the story (quest-profile preference after rite / story pin). */
+function isQuestProgressChip(chip: string): boolean {
+  const c = (chip ?? '').trim();
+  if (!c) return false;
+  if (/^(?:travel\s+(?:toward|to)|go\s+to|head\s+(?:to|toward)|walk\s+(?:to|on)|enter|return\s+to|face the|fight the|attack|seek|look for a fight)\b/i.test(c)) {
+    return true;
+  }
+  if (/\b(?:accept|take (?:on |up )?(?:the )?(?:job|work|quest|contract|bounty)|hear (?:their |the )?reason|ask .+ about the lead|report back)\b/i.test(c)) {
+    return true;
+  }
+  if (/^(?:talk to|speak (?:to|with)|ask)\b/i.test(c) && !/\bwhat they want\b/i.test(c)) {
+    return true;
+  }
+  return false;
+}
+
+function lastPlayerChip(state: GameState): string {
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0; i--) {
+    if (log[i]?.role === 'player') {
+      return String(log[i]?.content ?? '').replace(/\s+/g, ' ').trim();
+    }
+  }
+  return '';
+}
+
 /**
- * Quest-seeking autoplay: take the pinned rite chip, else the A2 story chip when offered.
+ * Quest-seeking autoplay: rite chip → A2 story chip → progress chips → fallback.
+ * Never re-picks the exact no-progress chip just taken. Random profile does not use this.
  * `pinnedStory` is the A2 `storyChip(state)` from the caller (avoids a circular import).
+ * `isProgress` optional scorer (chipProgressScore ≤ 2) from choiceRanking when provided.
  */
 export function pickQuestProfileChoice(
   offered: string[],
   state: GameState,
   fallback: () => string,
-  pinnedStory?: string | null
+  pinnedStory?: string | null,
+  isProgress?: (chip: string) => boolean
 ): string {
   if (!offered.length) return fallback();
   const rite = openingRiteAcceptChip(state);
@@ -319,6 +351,19 @@ export function pickQuestProfileChoice(
   if (pinnedStory) {
     const hit = offered.find((c) => c.toLowerCase() === pinnedStory.toLowerCase());
     if (hit) return hit;
+  }
+  const last = lastPlayerChip(state).toLowerCase();
+  const progressOf = isProgress ?? isQuestProgressChip;
+  const progress = offered.filter((c) => progressOf(c) && c.toLowerCase() !== last);
+  if (progress.length) return progress[0]!;
+  // Avoid immediately repeating the exact chip that just yielded nothing.
+  if (last) {
+    const fresh = offered.filter((c) => c.toLowerCase() !== last);
+    if (fresh.length) {
+      const pick = fallback();
+      if (fresh.some((c) => c.toLowerCase() === pick.toLowerCase())) return pick;
+      return fresh[0]!;
+    }
   }
   return fallback();
 }

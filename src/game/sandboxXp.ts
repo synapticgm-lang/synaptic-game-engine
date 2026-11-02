@@ -41,6 +41,7 @@ import { weaponCategory } from './checkRules';
 import { stepChip } from './choiceRanking';
 import { hidesPart } from './systemHousing';
 import { settleDeeds } from './rules/achievements';
+import { isOpeningRiteQuestId } from './openingRite';
 
 /** Reference LitRPG milestone amounts under the old key names (drip keys are 0). */
 export const SANDBOX_XP = {
@@ -389,6 +390,9 @@ export function applySandboxXpAwards(
   // stages or completion flip on this turn. Spacing-window deferrals never swallow XP.
   const beforeById = new Map(opts.questsBefore.map((q) => [q.id, q]));
   for (const after of opts.questsAfter) {
+    // XP-D1 OPEN2 — Opening Rite fill is the only L1→L2 pay for that quest; never also
+    // pay quest-step / quest-complete / First Steps off the rite journal row.
+    if (isOpeningRiteQuestId(after.id)) continue;
     const before = beforeById.get(after.id);
     // Missing before ⇒ treat as brand-new active with nothing done yet.
     const beforeStatus = before?.status ?? 'active';

@@ -1085,7 +1085,8 @@ function pickChipAvoidingLethalRepeat(
           candidates,
           state,
           () => pickGoalOrientedChoice(candidates, state, mode, rng),
-          storyChip(state)
+          storyChip(state),
+          (chip) => chipProgressScore(state, chip) <= 2
         )
       : pickGoalOrientedChoice(candidates, state, mode, rng);
   const pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal, state);

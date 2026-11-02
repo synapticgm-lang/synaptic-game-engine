@@ -188,6 +188,39 @@ describe('XP-D1 pace model', () => {
     expect(questPct).toBeLessThanOrEqual(0.8);
   });
 
+  it('OPEN2 System Integration: Opening Rite then early dungeon-entry quest does not L3 within 3 turns', () => {
+    // Rite at T2 → L2 exactly; then a quest step + complete (dungeon-entry style) within turns 3–5
+    // must leave the player on L2. Engaged mix after that still reaches L3 in 15–25 turns.
+    let char: Character = {
+      name: 'SI',
+      level: 1,
+      xp: 0,
+      xpToNext: levelBar('litrpg', 1),
+      hp: 10,
+      maxHp: 10,
+    } as Character;
+    // Opening Rite fill.
+    char = applyCharacterXpGain(char, levelBar('litrpg', 1), 'litrpg').character;
+    expect(char.level).toBe(2);
+    expect(char.xp).toBe(0);
+    const step = milestoneXp('litrpg', 'questStep', { level: 2, playerLevel: 2, contentLevel: 2 }).amount;
+    const complete = milestoneXp('litrpg', 'questComplete', {
+      level: 2,
+      playerLevel: 2,
+      contentLevel: 2,
+    }).amount;
+    // Same-turn early dungeon quest (step + complete) — must not push to L3.
+    char = applyCharacterXpGain(char, step, 'litrpg').character;
+    char = applyCharacterXpGain(char, complete, 'litrpg').character;
+    expect(char.level).toBe(2);
+    // Engaged mix from here: L2→L3 in 15–25 under the opening-win model.
+    const { levelAt } = simulate('litrpg', 400, 'mixed', rngFrom(7302));
+    const t2 = levelAt.get(2)!;
+    const t3 = levelAt.get(3)!;
+    expect(t3 - t2).toBeGreaterThanOrEqual(5);
+    expect(t3 - t2).toBeLessThanOrEqual(35);
+  });
+
   it('Story RPG is ~1.5× slower from L2; quest-only and fight-only both advance', () => {
     // Story RPG has no Opening Rite; LitRPG compare uses the same opening-win-off baseline.
     const lit = simulate('litrpg', 600, 'mixed', rngFrom(99), { openingWinTurn: 0 });
