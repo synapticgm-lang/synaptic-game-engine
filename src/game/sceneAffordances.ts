@@ -22,7 +22,6 @@ import {
 import { enumerateLegalEdges } from './graphChoices';
 import { exitPlaceNames } from './placeNames';
 import { placeExitRows } from './placeRegistry';
-import { resolvePlace } from './places';
 import { openRouteView, presentPersonForRoute } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './scenePresence';
@@ -88,9 +87,11 @@ export function isWayOut(chip: {
   );
 }
 /**
- * Destination name from a Travel/Return/Go-back chip when it matches a recorded exit
- * (placeExitRows + open quest place via recordedTravelDestinations). Hubless story-place
- * graphs (FORDCAMP sibling / TRAINLOOP) use this — parseTravelDestination only knows hubs.
+ * Destination name from a Travel/Return/Go-back chip when it matches HERE's place exits
+ * (placeExitRows only — not the open quest pin fold-in). Hubless story-place graphs
+ * (FORDCAMP sibling / TRAINLOOP) use this — parseTravelDestination only knows hubs.
+ * Quest-pin Travel toward stays a chip via recordedTravelDestinations salience, but must
+ * not pass wayOutMovesPlayer unless it is also a mapped exit (s84 exits receipt / s85 resume).
  * No regex in this file (C1-7 / OPT1-6); label parse lives in outdoorHubs.
  */
 export function recordedExitTravelDest(state: GameState, label: string): string | null {
@@ -99,7 +100,7 @@ export function recordedExitTravelDest(state: GameState, label: string): string 
   const here = (state.currentLocation ?? '').trim().toLowerCase();
   if (!here || target.toLowerCase() === here) return null;
   if (!isPlaceOpenForExit(state, target)) return null;
-  const rows = recordedTravelDestinations(state);
+  const rows = placeExitRows(state, state.currentLocation);
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]!;
     if (row.label.toLowerCase() === target.toLowerCase()) return row.label;
@@ -134,17 +135,6 @@ function exitEntityId(row: { id?: string; label?: string }): string {
  */
 export function recordedTravelDestinations(state: GameState): PlaceExitRow[] {
   const rows = placeExitRows(state, state.currentLocation);
-  // q44b Bare Room / sealed card: cardBuiltTurn + empty exits is intentional no-MOVE.
-  // Do not invent a quest-pin Travel toward while the place card is sealed empty.
-  const herePlace = resolvePlace(state.places, state.currentLocation);
-  if (
-    rows.length === 0
-    && herePlace
-    && herePlace.cardBuiltTurn != null
-    && (herePlace.exits?.length ?? 0) === 0
-  ) {
-    return [];
-  }
   const open = openRouteView(state);
   const dest = (open?.step.placeId ?? open?.step.place ?? '').trim();
   if (!dest) return rows;
