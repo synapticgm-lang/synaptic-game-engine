@@ -45,7 +45,7 @@ import { isJourneyStepLine, isJourneyUnderway, journeyPads } from './travelJourn
 import { travelEngineChip } from './rules/travelDay';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { isDying } from './tabletop/roundFight';
-import { roundCombatChips } from './tabletop/combatChips';
+import { roundCombatChips, roundFightEngineAction } from './tabletop/combatChips';
 import { firstFightChoiceSet } from './rules/firstFightChoice';
 import { parsePlayerIntent } from './intentParser';
 import {
@@ -488,6 +488,48 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     }
     lastEngineChips = { state, key, chips: dying, labels: seenDying };
     return dying;
+  }
+  // TRAINLOOP3 — live tabletop fight: roundCombatChips own the pad and must bind as fight:* so
+  // applyOptionCooldown's liveFight filter keeps Attack / Use something / Disengage (not empty).
+  if (state.engineMode === 'dnd' && state.character?.srd) {
+    const enc = state.activeEncounter;
+    if (enc && enc.hp > 0 && enc.phase !== 'pending' && enc.phase !== 'terminal') {
+      const round = roundCombatChips(state);
+      if (round?.length) {
+        const fightChips: EngineChip[] = [];
+        const seenFight = new Set<string>();
+        for (const raw of round) {
+          const label = sanitizeChoiceLabel(raw);
+          if (!label) continue;
+          const low = label.toLowerCase();
+          if (seenFight.has(low)) continue;
+          seenFight.add(low);
+          fightChips.push({
+            label,
+            action: roundFightEngineAction(state, label),
+            kind: 'affordance',
+            check: checkForAction(state, parsePlayerIntent(label, state), label),
+            entityId: `foe:${(enc.name ?? 'foe').trim()}`,
+            slotCategory: 'scene',
+          });
+        }
+        for (const raw of [FREE_INPUT_SAY, FREE_INPUT_DO]) {
+          const label = sanitizeChoiceLabel(raw);
+          if (!label) continue;
+          const low = label.toLowerCase();
+          if (seenFight.has(low)) continue;
+          seenFight.add(low);
+          fightChips.push({
+            label,
+            action: label === FREE_INPUT_SAY ? 'free-input:say' : 'free-input:do',
+            kind: 'free-input',
+            check: null,
+          });
+        }
+        lastEngineChips = { state, key, chips: fightChips, labels: seenFight };
+        return fightChips;
+      }
+    }
   }
   // T10TABFIGHT — first L1 tabletop fight gate owns the pad (Back off / Talk / Fight ≤ choiceCountLimit).
   // TRAINLOOP2 — mid-journey: keep journey continue / turn-back / meeting pads bound beside the triad

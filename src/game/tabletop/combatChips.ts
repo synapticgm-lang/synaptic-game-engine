@@ -226,6 +226,45 @@ export function fightUseMenuChips(state: GameState): string[] {
   return capFightChips(extras.length ? extras : legal, limit);
 }
 
+/**
+ * Pads are for the NEXT player turn (= next combat round). Spent Action/Bonus from the round
+ * that just ended must not empty Attack chips (TRAINLOOP3 run-12: Face the threat → empty pad →
+ * Look around forever). "Use something" keeps the mid-round economy.
+ */
+export function stateForNextRoundFightPad(state: GameState): GameState {
+  const rc = state.roundCombat;
+  if (!rc || rc.useMenu) return state;
+  const eco = rc.pcEconomy;
+  if (!eco) return state;
+  if (eco.actionAvailable && eco.bonusAvailable && eco.reactionAvailable) return state;
+  return {
+    ...state,
+    roundCombat: {
+      ...rc,
+      pcEconomy: {
+        actionAvailable: true,
+        bonusAvailable: true,
+        movementFt: eco.movementFt ?? 30,
+        reactionAvailable: true,
+      },
+    },
+  };
+}
+
+/**
+ * Engine actionId for a tabletop round-fight chip so applyOptionCooldown's liveFight filter
+ * keeps it (must start with `fight:` / slotKind fight — T10P / TRAINLOOP3).
+ */
+export function roundFightEngineAction(state: GameState, label: string): string {
+  const foe = (state.activeEncounter?.name ?? 'foe').trim() || 'foe';
+  const low = label.trim().toLowerCase();
+  if (/^attack\b|^reckless\b/i.test(label)) return `fight:foe:${foe}:attack`;
+  if (/^disengage\b/i.test(label) || /^dodge$/i.test(label)) return `fight:foe:${foe}:flee`;
+  if (low === USE_SOMETHING_CHIP.toLowerCase()) return 'fight:round:use-menu';
+  const slug = low.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'act';
+  return `fight:round:${slug}`;
+}
+
 /** The round's chips while a tabletop fight is live; null when no round choice is due. */
 export function roundCombatChips(state: GameState): string[] | null {
   if (state.engineMode !== 'dnd' || !state.character?.srd) return null;
@@ -248,5 +287,6 @@ export function roundCombatChips(state: GameState): string[] | null {
   const enc = state.activeEncounter;
   if (!enc || enc.hp <= 0 || enc.phase === 'pending') return null;
   if (state.roundCombat?.useMenu) return fightUseMenuChips(state);
-  return collapseFightChips(legalFightActionsThisRound(state), limit);
+  // Next-turn pad: refresh spent economy so Attack / Disengage are never an empty list.
+  return collapseFightChips(legalFightActionsThisRound(stateForNextRoundFightPad(state)), limit);
 }

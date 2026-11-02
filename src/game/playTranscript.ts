@@ -152,7 +152,8 @@ export function resolveOfferedChoices(state: GameState): string[] {
 
 function compileOfferedChoices(state: GameState): string[] {
   const roundChips = roundCombatChips(state);
-  if (roundChips) return roundChips;
+  // TRAINLOOP3: empty [] is truthy; spent-economy used to short-circuit to an empty fight pad.
+  if (roundChips?.length) return roundChips;
   const lastPlayer = lastPlayerActionFromLog(state);
   const coverBeat = isOpeningHallTalkTurn(state, lastPlayer);
   const autoNamedOpeningPad =

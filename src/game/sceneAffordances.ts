@@ -33,7 +33,12 @@ import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant, stallPressure
 import { isDying } from './tabletop/roundFight';
 import { originPad } from './rules/rpgOrigin';
 import { travelPadBlocked } from './padUniverse';
-import { capFightChips, legalFightActionsThisRound, roundCombatChips } from './tabletop/combatChips';
+import {
+  capFightChips,
+  legalFightActionsThisRound,
+  roundCombatChips,
+  roundFightEngineAction,
+} from './tabletop/combatChips';
 import { choiceCountLimitOf } from './rules/houseRules';
 import { activeHereSpot, stepCloserChip } from './hereSpot';
 import { isSearchTargetEmpty, normalizeSearchTarget } from './searchContinuity';
@@ -948,6 +953,38 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       work = work.concat([{
         label, actionId, kind: 'affordance', slotKind: 'fight', slotCategory: 'scene',
         entityId: 'foe:' + foe, required: true, rank: e.type === 'attack' ? 100 : e.type === 'flee' ? 99 : 98,
+      } as T]);
+    }
+  }
+  // TRAINLOOP3 — tabletop live fight: inject roundCombatChips (fresh next-round economy) with
+  // fight:* actionIds so the pad cannot collapse to empty when offered labels were unbound.
+  if (liveFight && mode === 'dnd') {
+    const foe = (enc!.name ?? 'foe').trim();
+    const have = new Set<string>();
+    for (let i = 0; i < work.length; i++) {
+      if (work[i]!.actionId) have.add(work[i]!.actionId);
+      const low = (work[i]!.label ?? '').trim().toLowerCase();
+      if (low) have.add('label:' + low);
+    }
+    for (const raw of roundCombatChips(state) ?? []) {
+      const label = (raw ?? '').trim();
+      if (!label) continue;
+      const low = label.toLowerCase();
+      const actionId = roundFightEngineAction(state, label);
+      if (have.has(actionId) || have.has('label:' + low)) continue;
+      have.add(actionId);
+      have.add('label:' + low);
+      // Rank without regex (C1 / OPT1-m: no /…/ in this file). Attack > Disengage > rest.
+      const rank = low.startsWith('attack') ? 100 : low.startsWith('disengage') ? 99 : 90;
+      work = work.concat([{
+        label,
+        actionId,
+        kind: 'affordance',
+        slotKind: 'fight',
+        slotCategory: 'scene',
+        entityId: 'foe:' + foe,
+        required: true,
+        rank,
       } as T]);
     }
   }
