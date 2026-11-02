@@ -67,6 +67,7 @@ import {
   isHuntChip,
   isSeekFightChip,
 } from './choiceRanking';
+import { assembleFourSlotPads } from './fourSlotPads';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -1584,6 +1585,8 @@ export function padChoicesToCount(
   // XP-D1 OPEN7 — hard filler family cap ≤2 at the END of every pad path (journey / affordance /
   // hand-built). Free text never blocked. Hunt / Gather / Seek / Check System / quest / Travel stay.
   cappedEnd = enforceFillerFamilyCap(cappedEnd, state);
+  // FOURSLOT — one final four-slot assembly so journey / affordance / hand-built pads cannot bypass.
+  cappedEnd = assembleFourSlotPads(state, cappedEnd);
   return sealPadUniverse(cappedEnd, state, excluded);
 }
 

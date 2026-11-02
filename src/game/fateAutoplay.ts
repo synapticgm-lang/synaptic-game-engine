@@ -66,6 +66,7 @@ import {
 } from './choicePipeline';
 import { postFilterGmOutput } from './contentPostFilter';
 import { FREE_INPUT_DO, FREE_INPUT_SAY } from './sceneAffordances';
+import { pickFromFourSlots, shouldSkipFourSlot } from './fourSlotPads';
 import { createDefaultSettings, createInitialState, fitKitToHousing } from './defaults';
 /** AI agent goal modes for guided autoplay. */
 export type AiAgentMode = 'default' | 'maxlevel' | 'storyfollower' | 'completionist';
@@ -1189,9 +1190,13 @@ function pickChipAvoidingLethalRepeat(
       }
     }
   }
-  // OPEN7 / OPEN9 — hurt: Rest before Hunt / Travel / Search; Leave still wins via preferHurtRecoveryPick (OPEN7B).
+  // OPEN7 / OPEN9 / FOURSLOT — hurt: Step-back rest when no fight (or flee when fight allows).
+  // Leave still wins via preferHurtRecoveryPick (OPEN7B).
   if (isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0)) {
-    const hurtPick = preferHurtRecoveryPick(candidates, candidates[0] ?? 'Wait', state);
+    const fourPick = shouldSkipFourSlot(state)
+      ? (candidates[0] ?? 'Wait')
+      : pickFromFourSlots(state, candidates, rng);
+    const hurtPick = preferHurtRecoveryPick(candidates, fourPick, state);
     const pick = avoidRepeatLethalPick(candidates, hurtPick, rng, lastAutoPickWasLethal, state);
     lastAutoPickWasLethal = isLethalChipLabel(pick, state);
     lastWildsPick = null;
@@ -1225,6 +1230,7 @@ function pickChipAvoidingLethalRepeat(
       if (aimless) huntGatherPick = gather;
     }
   }
+  // FOURSLOT — default / random profiles pick only from the four slots (weighted).
   const raw =
     huntGatherPick
       ? huntGatherPick
@@ -1236,7 +1242,9 @@ function pickChipAvoidingLethalRepeat(
           storyChip(state),
           (chip) => chipProgressScore(state, chip) <= 2
         )
-      : pickGoalOrientedChoice(candidates, state, mode, rng);
+      : shouldSkipFourSlot(state)
+        ? pickGoalOrientedChoice(candidates, state, mode, rng)
+        : pickFromFourSlots(state, candidates, rng);
   let pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal, state);
   // OPEN9 — never pick a 3rd same-family filler in a row at the same place while another chip exists.
   {
