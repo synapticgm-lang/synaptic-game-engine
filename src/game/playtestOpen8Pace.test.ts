@@ -31,7 +31,7 @@ describe('OPEN8 — L2→L3 pace retune (no hunt cap)', () => {
     expect(unitsPerLevel('litrpg', 4)).toBeGreaterThanOrEqual(unitsPerLevel('litrpg', 3)!);
     expect(QUEST_STEP_UNITS_L2_PLUS).toBeGreaterThanOrEqual(1.35);
     expect(QUEST_COMPLETE_UNITS_L2_PLUS).toBeGreaterThanOrEqual(2.4);
-    expect(ENCOUNTER_UNITS_L2_PLUS).toBe(1.15);
+    expect(ENCOUNTER_UNITS_L2_PLUS).toBe(1.2);
     expect(WILDS_KILL_XP_MULT).toBe(0.48);
   });
 

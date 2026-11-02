@@ -174,7 +174,11 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
  * - quest step / complete lift less than fight so quest share stays 55–80% and L2→L3 ≈ 15–25
  * OPEN3 live was ~3–4 XP/turn post-rite with 1–2 fights; engaged OPEN4 targets ~8–12 XP/turn.
  */
-export const ENCOUNTER_UNITS_L2_PLUS = 1.15;
+/**
+ * OPEN8 gateFix — 1.15→1.2 so same-level L2 fight stays ≥10% of the bar after units 8→12
+ * (xpUnit 16: round(1.15×16)=18 → 9.6%; round(1.2×16)=19 → 10.2%).
+ */
+export const ENCOUNTER_UNITS_L2_PLUS = 1.2;
 /**
  * OPEN7 addendum / OPEN8 — quest-step reach lever for quest/random profiles (L2→L3 15–25).
  * OPEN8 raised 1.2→1.35 so quest share stays 60–70% after L2 units grew (smaller xpUnit).
@@ -348,12 +352,24 @@ export function unitMilestoneAmount(
       : Math.max(1, Math.floor(rawContent));
 
   if (isFight && opts.levelSource === 'table') {
-    // sameLevelKill(P) × R(P,M) × (elite ? 2 : 1) × (elite ? 1 : WILDS_KILL_XP_MULT). Gray → 0.
-    // OPEN7 addendum: trash keeps WILDS_KILL_XP_MULT for quest-share; elite mini-bosses pay full taper ×2
-    // so a zone boss stays worthwhile (not a constant special-case). No budget / event-bar cap.
+    // Design: sameLevelKill(P) × R(P,M) × (elite ? 2 : WILDS_KILL_XP_MULT). Gray → 0.
+    // OPEN7 addendum: trash keeps WILDS_KILL_XP_MULT; elite pays full taper ×2.
+    // OPEN8 gateFix: quantize trash-at-R=1 first, then ×R (and elite as ×2/mult from that
+    // trash quantum) so elite/trash ≈ 2/mult and up/same ≈ R when xpUnit is small.
     const R = killScale(playerLevel, unclamped);
-    const mult = opts.elite ? 1 : WILDS_KILL_XP_MULT;
-    amount = Math.round(amount * R * (opts.elite ? 2 : 1) * mult);
+    if (R <= 0) return 0;
+    const trashSame = Math.max(0, Math.round(amount * WILDS_KILL_XP_MULT));
+    if (opts.elite) {
+      amount = Math.max(
+        1,
+        trashSame > 0
+          ? Math.round(trashSame * R * (2 / WILDS_KILL_XP_MULT))
+          : Math.round(amount * R * 2),
+      );
+    } else {
+      if (trashSame <= 0) return 0;
+      amount = Math.max(0, Math.round(trashSame * R));
+    }
     if (amount <= 0) return 0;
     return amount;
   }
