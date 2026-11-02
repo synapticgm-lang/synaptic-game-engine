@@ -723,8 +723,12 @@ export function stripSpeakerSilence(prose: string, speaker: { label: string }): 
 function isCleanName(p: string): boolean {
   if (!p || /[\n\r?!:;]/.test(p)) return false;
   const words = p.trim().split(/\s+/);
-  if (words.length > 5) return false;
-  return !words.some((w) => QUESTION_OR_CHIP.test(w));
+  // OPEN8 — role phrases on the ledger ("a witness who knows the lead") are 6+ words but still
+  // speak; keep the short-name gate for invents, allow longer when every word is plain.
+  if (words.length > 8) return false;
+  if (words.length > 5 && words.some((w) => QUESTION_OR_CHIP.test(w))) return false;
+  if (words.length <= 5) return !words.some((w) => QUESTION_OR_CHIP.test(w));
+  return !words.some((w) => QUESTION_OR_CHIP.test(w) || /^(?:greyhollow|system|status)$/i.test(w));
 }
 
 /**

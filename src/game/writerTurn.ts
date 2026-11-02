@@ -48,7 +48,8 @@ import { isGiverName } from './questGiver';
 import { motiveAnswer, motiveLinesOf } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
 import { checkPlayCrimes, openingRestatesPlayerAct } from './turnCheck';
-import { mentionsName, peopleHere } from './chipLegality';
+import { chipAddressee, mentionsName, peopleHere } from './chipLegality';
+import { isCrowdFillerToken } from './chromeAuthority';
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 export type WriterDraft = {
   prose: string;
@@ -261,8 +262,13 @@ export function runWriterTurn(opts: {
   const spoken = ensureSpokenAnswer(finishCommittedProse(first.prose, check, packet), check.state, check.playerInput);
   // T10RC8 — seat-list final page (after spoken append); Absent-speaker lines never ship.
   // OPEN7B — strip act-echo openings before accept (product fix; gate stays strict).
+  // OPEN8 — crowd/role Talk must show an answer or acknowledged absence.
   const seated = dropUnseatedSpeakerLines(check.state, spoken.prose);
-  const prose = dropPlayerActEchoOpening(seated, check.playerInput);
+  const prose = ensureCrowdOrRoleTalkAnswered(
+    dropPlayerActEchoOpening(seated, check.playerInput),
+    check.state,
+    check.playerInput,
+  );
   return {
     ...first,
     prose,
@@ -325,6 +331,86 @@ export function dropPlayerActEchoOpening(prose: string, playerInput: string): st
   if (!next || openingRestatesPlayerAct(next, act)) return text;
   return next;
 }
+
+/**
+ * OPEN8 — Talk / Ask / Follow-up to a crowd or role phrase must land either (a) a concrete
+ * present person answering, or (b) a plain acknowledged absence. Deterministic; no new AI call.
+ * Runs beside dropPlayerActEchoOpening after ensureSpokenAnswer.
+ */
+export function ensureCrowdOrRoleTalkAnswered(
+  prose: string,
+  state: GameState,
+  playerInput: string,
+): string {
+  const text = (prose ?? '').replace(/\s+/g, ' ').trim();
+  const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!text || !act) return text;
+  // Only talk / ask / follow-up / answer shapes (not Face / Attack / Look).
+  if (
+    !/^(?:talk(?:\s+to)?|ask|answer|follow up with|speak(?:\s+to)?)\b/i.test(act)
+    && !/\bask(?:ing)?\s+(?:a|the|an)\b/i.test(act)
+  ) {
+    return text;
+  }
+  const addr = chipAddressee(act);
+  const presentAll = peopleHere(state);
+  // Same who-resolution as turnCheck: chip addressee, else a present label named in the act.
+  const who =
+    addr?.kind === 'named' || addr?.kind === 'role'
+      ? addr.who
+      : presentAll.find((p) => mentionsName(act, p))
+        ?? (/\bpeople here\b/i.test(act) ? 'people here' : '');
+  if (!who) return text;
+  const quoted = /["\u201c][^"\u201d]{2,}["\u201d]/.test(text);
+  const whoInProse = mentionsName(text, who) || new RegExp(`\\b${escRe(who)}\\b`, 'i').test(text);
+  const absence =
+    /\bNo one (?:was|is) there to answer\b|\bNobody here can answer\b|\bnot present to answer\b|\bwas not there to answer\b/i.test(
+      text,
+    );
+  const present = peopleHere(state).filter((n) => !isCrowdFillerToken(n));
+  // Prefer a concrete non-crowd person who matches the addressee, else any speakable present.
+  const speaker =
+    present.find((p) => mentionsName(p, who) || mentionsName(who, p) || new RegExp(`\\b${escRe(who)}\\b`, 'i').test(p))
+    ?? present[0]
+    ?? '';
+  // Gate already passes when the addressee appears or someone quoted.
+  if (whoInProse || quoted) {
+    // Wrong absence while a speakable person is here: drop the telegram so the answer stays.
+    if (absence && speaker) {
+      return text
+        .replace(/\bNo one (?:was|is) there to answer\.?/gi, ' ')
+        .replace(/\bNobody here can answer(?:\s+that)?\.?/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+    return text;
+  }
+  if (speaker) {
+    // (a) concrete person answers — name them (and quote when the chip aimed at a crowd
+    // label) so turn-ignored-action clears for both role and "people here" addressees.
+    const crowdAim = /\bpeople here\b/i.test(who);
+    const line = crowdAim
+      ? `${capitalizeTalkLabel(speaker)} spoke for the people here: "Not now."`
+      : mentionsName(speaker, who) || mentionsName(who, speaker) || new RegExp(`\\b${escRe(who)}\\b`, 'i').test(speaker)
+        ? `${capitalizeTalkLabel(speaker)} answered, but kept it short.`
+        : `${capitalizeTalkLabel(speaker)} answered: "Not now."`;
+    const cleaned = text
+      .replace(/\bNo one (?:was|is) there to answer\.?/gi, ' ')
+      .replace(/\bNobody here can answer(?:\s+that)?\.?/gi, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return cleaned ? `${cleaned} ${line}` : line;
+  }
+  // (b) acknowledged absence — plain, once.
+  if (absence) return text;
+  return text ? `${text} Nobody here can answer that.` : 'Nobody here can answer that.';
+}
+
+function capitalizeTalkLabel(label: string): string {
+  const t = (label ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return 'Someone';
+  return t.replace(/^\w/, (c) => c.toUpperCase());
+}
 /** Fight omit rewrite, then repairs, then RC-N3 blocking rewrite / engine-fact fallback. */
 export async function runWriterTurnWithFightRetry(opts: {
   firstRaw: string;
@@ -345,9 +431,14 @@ export async function runWriterTurnWithFightRetry(opts: {
   }
   // T10RC8 — repairs can reintroduce unseated speakers; drop before accept / rewrite gate.
   // OPEN7B — strip act-echo openings after repairs too.
+  // OPEN8 — crowd/role Talk answer seal after repairs.
   {
     const seated = dropUnseatedSpeakerLines(opts.check.state, done.prose);
-    const sealed = dropPlayerActEchoOpening(seated, opts.check.playerInput);
+    const sealed = ensureCrowdOrRoleTalkAnswered(
+      dropPlayerActEchoOpening(seated, opts.check.playerInput),
+      opts.check.state,
+      opts.check.playerInput,
+    );
     if (sealed !== done.prose) {
       done = { ...done, prose: sealed, remaining: writerDraftProblems(sealed, opts.check) };
     }
@@ -455,8 +546,16 @@ export function sealPostWriterProse(
   const spoken = ensureSpokenAnswer(placed, state, playerInput);
   // T10RC8 — after every append/repair/warden seal: drop unseated speaker attribution.
   // OPEN7B — strip act-echo openings on the sealed page too.
+  // OPEN8 — crowd/role Talk answer seal on the sealed page.
   const seated = dropUnseatedSpeakerLines(state, spoken.prose);
-  return { prose: dropPlayerActEchoOpening(seated, playerInput), spoken: spoken.answer };
+  return {
+    prose: ensureCrowdOrRoleTalkAnswered(
+      dropPlayerActEchoOpening(seated, playerInput),
+      state,
+      playerInput,
+    ),
+    spoken: spoken.answer,
+  };
 }
 
 /** Engine moved the player this turn but the beat never names where to — add one plain sentence. */

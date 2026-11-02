@@ -15,6 +15,7 @@ import {
   chipProgressScore,
   chipProgressWeights,
   creditCommittedProgress,
+  creditFillerOffers,
   nudgeIfStuck,
   recordCirclingTurn,
   storyChip,
@@ -2735,6 +2736,13 @@ Do NOT print dice notation or CODE ENFORCED.
       if (r && !filteredSystemLog.includes(r)) filteredSystemLog.push(r);
     }
   }
+  // OPEN8 — final filler cap after every injection path, then credit so the next turn holds ≤2.
+  {
+    const { enforceFillerFamilyCap } = await import('./choicePipeline');
+    finalChoices = enforceFillerFamilyCap(finalChoices, governed);
+    governed = { ...governed, choices: finalChoices };
+  }
+  governed = creditFillerOffers(governed, finalChoices);
   // q43-OCD: same shared pad commit as useGame (pad → stamp → replay hash). Writes recentOfferedActions
   // so LitRPG/RPG cooldown and tabletop 08:41 repeat suppression work in fate-autoplay.
   governed = commitOfferedTurn({ ...governed, choices: finalChoices }, gm.id);
