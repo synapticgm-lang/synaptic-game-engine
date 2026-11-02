@@ -129,8 +129,9 @@ function replayMaxFamily(path: string, mode: 'litrpg' | 'rpg'): { max: number; f
 }
 
 describe('XP-D1 OPEN9 filler family cap', () => {
-  it('Open is its own family; within-pad Open×3 keeps ≤2', () => {
-    expect(actionFamily('Open the bronze reward box')).toBe('open');
+  it('Open shares search family; within-pad Open×3 keeps ≤2', () => {
+    // OPEN3 pin — Open stays on search; OPEN9 place-keyed cap owns the streak.
+    expect(actionFamily('Open the bronze reward box')).toBe('search');
     expect(actionFamily('Search the scene for signs')).toBe('search');
     // OPEN9 — place noun "watch" must not reclassify Search as wait.
     expect(actionFamily('Search a Cape District chapel watch for signs')).toBe('search');
@@ -145,7 +146,7 @@ describe('XP-D1 OPEN9 filler family cap', () => {
       ],
       state
     );
-    expect(kept.filter((c) => actionFamily(c) === 'open')).toHaveLength(2);
+    expect(kept.filter((c) => /^open\b/i.test(c))).toHaveLength(2);
     expect(kept).toContain('Walk on');
     expect(kept).toContain('Leave the scene');
   });
@@ -174,7 +175,7 @@ describe('XP-D1 OPEN9 filler family cap', () => {
       ['Open the bronze reward box', 'Talk to Oda Hask', 'Walk on'],
       state
     );
-    expect(kept.some((c) => actionFamily(c) === 'open')).toBe(false);
+    expect(kept.some((c) => /^open\b/i.test(c))).toBe(false);
     expect(kept).toContain('Walk on');
   });
 

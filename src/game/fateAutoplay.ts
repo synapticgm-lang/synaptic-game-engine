@@ -1087,6 +1087,9 @@ export function preferHurtRecoveryPick(offered: string[], pick: string, state: G
   const maxHp = state.character?.maxHp ?? 0;
   if (!isHurtHp(hp, maxHp)) return pick;
   const pool = offered.length ? offered : [pick];
+  // OPEN7B — Leave the scene still outranks Rest (dead-crowd progress). OPEN9 Rest beats Hunt/Travel/Search.
+  const leave = pool.find((c) => /^leave(?:\s+the\s+scene)?\b/i.test(c));
+  if (leave) return leave;
   const rest = pool.find(
     (c) =>
       isOutdoorRestPad(c)
@@ -1095,8 +1098,7 @@ export function preferHurtRecoveryPick(offered: string[], pick: string, state: G
   if (rest) return rest;
   const travel = pool.find(
     (c) =>
-      /^leave(?:\s+the\s+scene)?\b/i.test(c)
-      || /^travel\b/i.test(c)
+      /^travel\b/i.test(c)
       || /^walk (?:back|on|toward)\b/i.test(c)
       || /^go back\b/i.test(c)
       || isOutdoorRestPad(c)
@@ -1187,13 +1189,9 @@ function pickChipAvoidingLethalRepeat(
       }
     }
   }
-  // OPEN7 / OPEN9 — hurt: Rest before Hunt / Travel / Search (test player only).
+  // OPEN7 / OPEN9 — hurt: Rest before Hunt / Travel / Search; Leave still wins via preferHurtRecoveryPick (OPEN7B).
   if (isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0)) {
-    const rest = candidates.find(
-      (c) => isOutdoorRestPad(c) || /^rest and bind your wounds\b/i.test(c)
-    );
-    const hurtPick = rest
-      ?? preferHurtRecoveryPick(candidates, candidates[0] ?? 'Wait', state);
+    const hurtPick = preferHurtRecoveryPick(candidates, candidates[0] ?? 'Wait', state);
     const pick = avoidRepeatLethalPick(candidates, hurtPick, rng, lastAutoPickWasLethal, state);
     lastAutoPickWasLethal = isLethalChipLabel(pick, state);
     lastWildsPick = null;
@@ -1245,7 +1243,7 @@ function pickChipAvoidingLethalRepeat(
     const fam = actionFamily(pick);
     const place = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/^(?:the|a|an)\s+/, '');
     const isFiller =
-      fam === 'search' || fam === 'open' || fam === 'look' || fam === 'inspect' || fam === 'use';
+      fam === 'search' || fam === 'look' || fam === 'inspect' || fam === 'use';
     if (isFiller && lastFillerFamilyPick && lastFillerFamilyPick.place === place && lastFillerFamilyPick.fam === fam) {
       if (lastFillerFamilyPick.streak >= 2) {
         const other = candidates.find((c) => {

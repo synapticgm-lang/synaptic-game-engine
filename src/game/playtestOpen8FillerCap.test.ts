@@ -159,7 +159,6 @@ describe('OPEN8 — filler family cap ≤2 (credit wired + within-pad)', () => {
       state,
     );
     expect(kept.some((c) => isFillerNoProgressChip(c) && actionFamily(c) === 'search')).toBe(false);
-    expect(kept.some((c) => isFillerNoProgressChip(c) && actionFamily(c) === 'open')).toBe(false);
     expect(kept).toContain('Walk on');
     expect(kept).toContain('Gather herbs and resources nearby');
   });

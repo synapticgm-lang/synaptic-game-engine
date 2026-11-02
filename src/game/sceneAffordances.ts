@@ -49,6 +49,24 @@ function isRewardBoxItem(item: { id?: string; name?: string } | null | undefined
 }
 
 /**
+ * OPEN9 — "Your upperclassman mentor" / "My handler" → "the upperclassman mentor" / "the handler".
+ * String prefix only (no regex — C1-7 / OPT1-6 ban in this file).
+ */
+function plainSecondPersonRoleName(raw: string): string {
+  const t = (raw ?? '').trim();
+  if (!t) return t;
+  const low = t.toLowerCase();
+  let rest = '';
+  if (low.startsWith('your ')) rest = t.slice(5).trim();
+  else if (low.startsWith('my ')) rest = t.slice(3).trim();
+  else return t;
+  if (!rest) return t;
+  const head = rest.charAt(0);
+  const body = head !== head.toLowerCase() ? head.toLowerCase() + rest.slice(1) : rest;
+  return `the ${body}`;
+}
+
+/**
  * Health / healing potions and vials — Use chip only when HP is below max.
  * No regex literals (sceneAffordances word-list ban); plain includes only.
  */
@@ -290,9 +308,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     const canonical = resolveNpcRecord(state, raw.npcName) ?? raw;
     const rawName = (canonical.npcName ?? '').trim();
     // OPEN9 — second-person role labels ("Your upperclassman mentor") → "the upperclassman mentor".
-    const name = /^(?:Your|My)\s+/i.test(rawName)
-      ? `the ${rawName.replace(/^(?:Your|My)\s+/i, '').replace(/^[A-Z]/, (c) => c.toLowerCase())}`
-      : rawName;
+    // Plain startsWith/slice only (C1-7 / OPT1-6: no regex literals in this file).
+    const name = plainSecondPersonRoleName(rawName);
     // T10Q5R — never chip a missing / empty-room / placeholder seat (Nobody, blank name).
     if (!name || isEmptyRoomPersonSlot(name)) continue;
     const entityId = canonical.npcId || `npc:${name}`;

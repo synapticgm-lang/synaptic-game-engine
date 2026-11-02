@@ -214,15 +214,14 @@ export function actionFamily(input: string): string {
   // Talk before look/scout: "Ask Scout about…" must not match \bscout\b as Look filler (OPEN8 gateFix).
   if (/\b(talk|ask|speak|greet|offer)\b/.test(a)) return 'talk';
   if (/\b(look around|look over|survey|scout|scan)\b/.test(a)) return 'look';
-  // OPEN9 — Open-box is its own family so Search/Read cannot share an Open budget (and vice versa).
-  if (/^open\b/.test(a) || /\bopen the .+ reward box\b/.test(a)) return 'open';
   // OPEN8 — Check / Look closer (not Check System) share the search filler budget.
   if (/^check\b/.test(a) || /\blook closer\b/.test(a)) return 'search';
-  // XP-D1 OPEN3/OPEN4 / OPEN9 — Search/Read before wait: place nouns like "chapel watch"
-  // must not steal Search into the wait family via a bare \bwatch\b (attempt 8 / 7502 streak).
+  // XP-D1 OPEN3/OPEN4 / OPEN9 — Search/Read/Open share the search filler family (OPEN3 pin).
+  // Search/Read before wait: place nouns like "chapel watch" must not steal Search into wait
+  // via a bare \bwatch\b (attempt 8 / 7502 streak). Place-keyed offer cap is OPEN9 FIX 1.
   if (
-    /^(?:search|read|analyze|listen|investigate|loot)\b/.test(a)
-    || /\b(search|loot|read the system trail|look inward)\b/.test(a)
+    /^(?:search|read|analyze|open|listen|investigate|loot)\b/.test(a)
+    || /\b(search|loot|read the system trail|open the .+ reward box|look inward)\b/.test(a)
   ) {
     return 'search';
   }
@@ -244,11 +243,11 @@ export function actionFamily(input: string): string {
 /**
  * Search / Read / Analyze / Open / Inspect / Use / Look — no-progress filler (one owner with turnProgress).
  * OPEN8 — Look joins the cap so same-state look/check streaks cannot bypass Search.
- * OPEN9 — Open is its own family under the same offer cap.
+ * OPEN9 — Open stays on the search family (OPEN3); place-keyed offer cap owns the streak.
  */
 export function isFillerNoProgressChip(chip: string): boolean {
   const fam = actionFamily(chip);
-  return fam === 'search' || fam === 'open' || fam === 'use' || fam === 'inspect' || fam === 'look';
+  return fam === 'search' || fam === 'use' || fam === 'inspect' || fam === 'look';
 }
 
 /**
@@ -443,7 +442,7 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
     fillerOfferSceneKey = undefined;
     fillerOfferCounts = {};
   }
-  if (!progressed && (fam === 'search' || fam === 'open' || fam === 'use')) {
+  if (!progressed && (fam === 'search' || fam === 'use')) {
     fillerBlockSceneKey = sceneKey;
     // Family-block Search/Read/Analyze/Open/Use. Inspect/Study use offer-count + tried rest (T10WARDEN2).
     if (!fillerBlockedFamilies.includes(fam)) fillerBlockedFamilies = [...fillerBlockedFamilies, fam];
@@ -676,10 +675,24 @@ export function chipProgressScore(state: GameState, chip: string): number {
     if ((mem?.recentPlaces ?? []).some((p) => samePlace(d, p))) return 8 + repeat;
     const visited = (state.places ?? []).some((p) => p.lastVisitedTurn != null && p.name.toLowerCase() === d);
     // OPEN9 — aimless Walk/Travel while Gather stock exists ranks worse than Gather.
-    if (hasNodeStock(state) && !story) return (visited ? 6 : 5) + repeat;
+    // LitRPG / Story RPG only — tabletop road Walk on must stay ahead of Keep lookout (29w).
+    if (
+      (state.engineMode === 'litrpg' || state.engineMode === 'rpg')
+      && hasNodeStock(state)
+      && !story
+    ) {
+      return (visited ? 6 : 5) + repeat;
+    }
     return (visited ? 4 : 1) + repeat;
   }
-  if (/^walk on\b/i.test(chip) && hasNodeStock(state) && !story) return 5 + repeat;
+  if (
+    /^walk on\b/i.test(chip)
+    && (state.engineMode === 'litrpg' || state.engineMode === 'rpg')
+    && hasNodeStock(state)
+    && !story
+  ) {
+    return 5 + repeat;
+  }
   if (/^(?:enter|next unexplored room|fight the|open the|search the)\b/i.test(chip)) return 1 + repeat;
   const unmet = presentNpcRecords(state).filter((m) => !isMetNpc(m)).map((m) => m.npcName.toLowerCase());
   if (unmet.some((n) => lower.includes(n))) return 2 + repeat;

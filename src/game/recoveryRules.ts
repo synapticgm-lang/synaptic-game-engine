@@ -60,6 +60,8 @@ export function isSafeHubRest(state: GameState, input: string): boolean {
  */
 export function canOutdoorShortRest(state: GameState, input: string): boolean {
   if (state.engineMode !== 'litrpg' && state.engineMode !== 'rpg') return false;
+  // Long-rest wording is SRD hub rest only (clears Weakened) — never this short path.
+  if (tabletopRestKind(input ?? '') === 'long') return false;
   if (!OUTDOOR_SHORT_REST_RE.test(input ?? '') && !/^rest\b/i.test((input ?? '').trim())) return false;
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return false;
   // Quiet dungeon rooms may rest; a live dungeon card with pending fight already blocked above.
@@ -348,9 +350,12 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
  * OPEN7 addendum: LitRPG / Story RPG also accept a short outdoor rest (fraction heal, never a hub long rest).
  */
 export function applyRestHeal(state: GameState, input: string): RestHeal {
-  // OPEN9 — LitRPG / Story RPG outdoor Rest chip (meal + clock) wins over SRD hub rest so a
-  // hurt player always spends food / takes longer when foodless. Tabletop keeps SRD-first.
-  if (state.engineMode === 'litrpg' || state.engineMode === 'rpg') {
+  // OPEN9 — LitRPG / Story RPG short Rest chip (meal + clock) wins over SRD hub short rest.
+  // Long-rest wording ("Rest for the night", sleep, …) still takes SRD long rest so Weakened clears (q65).
+  if (
+    (state.engineMode === 'litrpg' || state.engineMode === 'rpg')
+    && tabletopRestKind(input) !== 'long'
+  ) {
     const outdoor = presentRest(state, applyOutdoorShortRest(state, input));
     if (outdoor.receipt) return outdoor;
   }
