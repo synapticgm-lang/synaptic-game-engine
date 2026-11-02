@@ -520,3 +520,61 @@ Plain summary also at `merge-logs/xp-design/open7/T50-report.md`.
 - **Before / after sim:** bars L1/L2/L3/L4 = 150/187/233/291 (unchanged). Live7401 model: span **11→16**, quest ~**58.8→63.5%**, fight ~**22.7→19.8%**. Grinder sim: **59** kills to L7 (was 57 pre-gateFix2 / 75 under OPEN7); gray cliff unchanged; boss still pays. Details: `merge-logs/xp-design/open8/OPEN8-sim-pace.json`, `OPEN8-sim-grind.json`, `gatefix8b-report.md`.
 - **Formula reference:** attempt 7 WoW Classic entry / `OPEN7-formula.md` (unchanged killScale).
 - **Outcome:** design + unit tests shipped on xp/wilds4; **measure / T50 results TBD** (runner).
+
+### 2 Nov 2026 — LitRPG XP attempt 8 results (crowd talk answered in prose, family cap at most 2, L2L3 pace retune without a hunt cap) — MISS
+
+**John's correction (kept from attempt 7):** Hunting must always give XP except when the player is too high a level for the creature or area (WoW-style grey-mob falloff by level gap). Per-session hunt cap and 0-XP post-cap rule removed. Quest share 60–70% is tuned via hunt XP amounts and level-gap falloff, not a cap. Keep the death-farm fix (no Hunt chip / no hunt XP right after a death).
+
+**John's power-levelling design:** Grinding the starter zone to L6–7 before the quest chain and mini-boss is a valid path. Kill XP keeps paying until the player out-levels the creature, tapering by level gap like WoW grey-mob maths. Starter zones hold creatures 1–2 levels above the spawn level. The 60–70% quest share is the target for quest followers, not for grinders.
+
+**Exact kill-XP formula** (copied from `merge-logs/xp-design/open7/OPEN7-formula.md` / OPEN7-report Addendum; owners `xpPace.ts` killScale / ZD / grayLevel / wowBaseXp + `WILDS_KILL_XP_MULT` in `wildlifeConfig.ts`; elite ×2 in `unitMilestoneAmount`; death-cooldown zeros in `engineFight.payEncounterXp`):
+
+Source: WoW Classic/vanilla mob XP — https://warcraft.wiki.gg/wiki/Mob_experience (S1 Zero Difference / gray / difference factor) and https://warcraft.wiki.gg/wiki/Experience_point (S2 base `(M×5)+45`). Differs from GW2 (no gray cut-off) and FFXIV (smooth gap, no ZD table).
+
+```
+sameLevelUnit = unitAward(encounter at playerLevel) × xpUnit(playerLevel)
+R(P, M) = killScale(P, M)
+  = 0                                 if M ≤ grayLevel(P)
+  = (wowBaseXp(M) / wowBaseXp(P)) × diffFactor   otherwise
+    wowBaseXp(L) = L×5 + 45
+    if M ≥ P: diffFactor = 1 + 0.05 × min(M − P, 4)     // +4 level bonus cap
+    if M <  P: diffFactor = 1 − (P − M) / zeroDifference(P)
+amount = round(sameLevelUnit × R × (elite ? 2 : 1) × (elite ? 1 : WILDS_KILL_XP_MULT))
+```
+
+`WILDS_KILL_XP_MULT = 0.48` applies to trash table kills only. Elite mini-bosses skip the trash mult. No hunt budget, no post-cap 5% floor, no `XP_EVENT_BAR_CAP` on table kills. Only zeros: gray + death-farm cooldown.
+
+**Addendum numbers (from OPEN7-report Addendum; OPEN8 grind retune noted):** Stretch — starter band 1–3; every starter place stocks spawn / spawn+1 / spawn+2 + one elite at spawn+2. Grinder sim OPEN7: **75 kills** to L7 preferring mini-boss; OPEN8 sim (`OPEN8-sim-grind.json`): **59 kills** to L7 (units retune); gray cliff L6 (spawn), L7 (spawn+1), L8 (all including mini-boss). Boss = spawn+2 elite; pays full taper ×2; still pays at L7 (grays at L8). Judge grinder-style only where a run shows it — **not observed** on 7501.
+
+What changed (from `merge-logs/xp-design/open8/OPEN8-report.md`): (1) crowd/role Talk seal — `ensureCrowdOrRoleTalkAnswered` + longer role phrases in `isCleanName`; (2) filler family cap — wire `creditFillerOffers` on Fate/live commit + within-pad count ≤2; Look/Check join filler set; (3) pace — `LITRPG_UNITS_PER_LEVEL` L2 **8→12** (later +4); quest step **1.2→1.35** / complete **2.4→2.5**; no hunt cap; death CD + HP≤50% recovery kept.
+
+Runs (free writer DeepSeek via OpenRouter/gm-turn, no paid AI; **one sample per mode**, next world in rotation — not averages; build **2026-11-02o+58df24b1** ≥ 2026-11-02n):
+- 7501 random inkbound-academy (LitRPG): `scripts/fate-autoplay/runs/2026-11-02T21-40-52-120Z_inkbound-academy_cold-system_s7501`
+- 7502 random cape-district-vigil (Story RPG): `…T21-46-22-799Z_cape-district-vigil_chilled-gm_s7502`
+- 7503 stillroot-veil (tabletop regression; rundir `none`, summary `playerProfile=random`): `…T21-52-33-057Z_stillroot-veil_chilled-gm_s7503`
+
+Measured from `turns.jsonl` (`xpGained`, `XP Gained:` lines, level, Check System, chips, wilds). Quest share = rite + steps + completes. Fight share includes hunts. Bars: L2 **187**. Vs attempt 7: 7401 ascending-spire L2→L3 **11** / filler **3**; 7402 twin-lanterns Gather **18/2** / filler **7**; 7403 broken-crown-keep.
+
+| Run | Profile | Scenario | Build | Rite | L2 | L3 | L2→L3 | Total XP | Rite | Steps | Completes | Fights (hunt) | Other | Quest% | Fight% | Hunt off/take | Gather off/take | Check off/open/max | Filler max | Deaths harness / real | LOOP | readability |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7501 | random | inkbound-academy | 2026-11-02o | **3** chip | **3** | — | **n/a** | 212 | 150 | 0 | 0 | 38 (19) | 24 | **70.8** | **17.9** | **3/2** | 18/1 | **4/4/4** | **5** | 3 / **0** | no | fail p0=4 broken-prose |
+| 7502 | random | cape-district-vigil (rpg) | 2026-11-02o | — | **8** | — | **n/a** | 297 | 0 | 124 | 137 | 36 (0) | 0 | **87.9** | **12.1** | **0/0** | **3/0** | **19/19/6** | **8** | 4 / **1** | no | fail p0=5 (incl. travel-ignore) |
+| 7503 | none/random | stillroot-veil (dnd) | 2026-11-02o | — | — | — | — | (not judged) | — | — | — | — | — | — | — | 0/0 | 0/0 | — | — | 2 / **2** | no | fail p0=2 echo; 50/50 no LOOP |
+
+Hunt XP per win (7501): T10 Barnacle Crawler **9**; T13 Gull Swarm **10** — all >0, none grey, no post-death hunt. Gather (7502): offered at Saltmar with node stock **3** times; taken **0** (Walk on each time); Hunt correctly **0**. Trade ranks: none. Harness `deathCount` matches foe “went down” on victories (false +); real `Fight: DEFEAT` is the death column vs attempt 6.
+
+**Deaths vs attempt 6:** attempt 6 LitRPG 7301–7306 had **29** real DEFEATs with Hunt in the prior 3 turns **29** times. Attempt 8 LitRPG sample: **0** real DEFEATs (deaths still fell). After HP≤50% (7501 T13+ at 9/31) outdoor Rest was never offered; Travel/Walk on used; Hunt not re-offered while hurt. 7502 real death T39: prior picks Search / Talk / Search at 4 HP (no recovery in those 3 pads); Leave/Walk after. 7503 real deaths T19/T44: Attack/Disengage combat pads (tabletop; OPEN7 rest not in scope).
+
+**Stuck / new loops:** 7502 T35/T43/T48 Travel toward a Cape District chapel watch while already HERE → `turn-ignored-action`. 7501 post-hurt Travel treadmill + Open-box family streak (max **5**) blocked L3.
+
+**Grinder-style:** not observed on 7501 (two hunts then hurt travel; stopped at L2). Sim-only: OPEN8 **59** kills → L7; gray cliff as above.
+
+**Vs attempt 6 baseline / targets (LitRPG = single sample 7501 — say so, not an average):** L2@T2 **MISS** (**3**); L2→L3 15–25 **MISS** (never reached L3); quest tol. 55–80% **PASS** (**70.8%**); fight 15–30% **PASS** (**17.9%**); hunt always pays **PASS**; filler ≤2 **MISS** (**5**); Check System **PASS**; no LOOP **PASS**; Story RPG Gather offer+take **MISS** (3/0) + Hunt never **PASS**; tabletop no LOOP/crash **PASS**; LitRPG real deaths down **PASS**.
+
+OpenRouter: no balance or `$` cost figure in logs or run meta (`costUsd` null) at run times 2026-11-02T21:40:52Z / 21:46:22Z / 21:52:33Z.
+
+**Verdict: MISS** — offs: L2@**3**; L2→L3 **n/a**; filler max **5**; Story RPG Gather taken **0**.
+
+**Next attempt (one line):** Keep Open/Search family credit live so same-place Open streaks stay ≤2; inject outdoor Rest when HP≤50% so the L2 bar does not stall on travel; prefer Gather over Walk when node stock exists; seal Travel-to-HERE so chapel-watch ignore cannot fire.
+
+Plain summary also at `merge-logs/xp-design/open8/T50-report.md`.
