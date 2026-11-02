@@ -141,7 +141,9 @@ const LITRPG_UNITS_PER_LEVEL: ReadonlyArray<{ maxLevel: number; units: number }>
   { maxLevel: 1, units: 3 },
   { maxLevel: 2, units: 8 },
   { maxLevel: 3, units: 10 },
-  { maxLevel: 4, units: 11 },
+  // OPEN7 gateFix: L4 was +1 over L3; QUEST_STEP 1.2 made L4→L5 shorter than L3→L4 under seed 7301.
+  // Keep rising gaps (never flatten) so turns-per-level stays non-decreasing.
+  { maxLevel: 4, units: 12 },
   { maxLevel: 6, units: 13 },
   { maxLevel: 9, units: 15 },
   { maxLevel: 14, units: 22 },
