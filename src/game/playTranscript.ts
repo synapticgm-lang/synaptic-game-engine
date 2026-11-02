@@ -15,6 +15,7 @@ import {
   FREE_INPUT_DO,
   FREE_INPUT_SAY,
   isFreeInputChip,
+  wayOutMovesPlayer,
   type AffordanceSlotKind,
   type OptionCooldownChip,
 } from './sceneAffordances';
@@ -277,33 +278,43 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
   const cooled = applyOptionCooldown(state, pad);
   if (!cooled.length) return { ...state, offeredPad: null };
   // FOURSLOT — reshape cooled candidates into exactly four engine slots (+ free-input).
+  // Skip when already ≤4 engine chips (resolveOfferedChoices already assembled) so affordance
+  // actionIds / move slotCategory survive the cooldown stamp (ttOcd / ttMap2).
   let cooledFinal = cooled;
   if (!shouldSkipFourSlot(state)) {
     const cooledLabels = cooled.map((row) => row.label);
-    const four = assembleFourSlotPads(state, cooledLabels);
-    const byLow = new Map(cooled.map((row) => [row.label.trim().toLowerCase(), row]));
-    const reshaped: typeof cooled = [];
-    const seen = new Set<string>();
-    for (const label of four) {
-      const k = label.trim().toLowerCase();
-      if (seen.has(k)) continue;
-      seen.add(k);
-      const prev = byLow.get(k);
-      if (prev) {
-        reshaped.push(prev);
-        continue;
+    const engineN = cooledLabels.filter((l) => l && !isFreeInputChip(l)).length;
+    if (engineN > 4) {
+      const four = assembleFourSlotPads(state, cooledLabels);
+      const byLow = new Map(cooled.map((row) => [row.label.trim().toLowerCase(), row]));
+      const reshaped: typeof cooled = [];
+      const seen = new Set<string>();
+      for (const label of four) {
+        const k = label.trim().toLowerCase();
+        if (seen.has(k)) continue;
+        seen.add(k);
+        const prev = byLow.get(k);
+        if (prev) {
+          reshaped.push(prev);
+          continue;
+        }
+        const travelMove =
+          wayOutMovesPlayer(state, label)
+          || isJourneyOnwardLine(label)
+          || /^(?:travel|leave|turn back)\b/i.test(label);
+        reshaped.push({
+          label,
+          actionId: isFreeInputChip(label)
+            ? (label.trim() === FREE_INPUT_SAY ? 'free-input:say' : 'free-input:do')
+            : ('label:' + k),
+          kind: isFreeInputChip(label) ? 'free-input' : 'compiled',
+          rank: reshaped.length,
+          ...(travelMove ? { slotCategory: 'move' as const } : {}),
+        });
       }
-      reshaped.push({
-        label,
-        actionId: isFreeInputChip(label)
-          ? (label.trim() === FREE_INPUT_SAY ? 'free-input:say' : 'free-input:do')
-          : ('label:' + k),
-        kind: isFreeInputChip(label) ? 'free-input' : 'compiled',
-        rank: reshaped.length,
-      });
-    }
-    if (fourSlotEngineLabels(reshaped.map((row) => row.label)).length >= 4 || reshaped.length) {
-      cooledFinal = reshaped;
+      if (fourSlotEngineLabels(reshaped.map((row) => row.label)).length >= 4 || reshaped.length) {
+        cooledFinal = reshaped;
+      }
     }
   }
   const labels: string[] = [];
