@@ -47,7 +47,7 @@ import { roundCombatChips } from './tabletop/combatChips';
 import { updateCooldowns } from './optionDiversityContract';
 import { isBannedFallbackStub } from './sealedManifest';
 
-const FALLBACK_CHOICE = 'ðŸŽ² Let Fate Decide';
+const FALLBACK_CHOICE = '🎲 Let Fate Decide';
 
 function lastGmStoryProse(state: GameState): string {
   const log = state.log ?? [];
@@ -61,7 +61,7 @@ function lastGmStoryProse(state: GameState): string {
   return '';
 }
 
-/** Last committed GM pad â€” ActionBar must not ignore these when `state.choices` is empty. */
+/** Last committed GM pad — ActionBar must not ignore these when `state.choices` is empty. */
 function lastGmOfferedChoices(state: GameState): string[] {
   for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
     const entry = state.log[i];
@@ -74,7 +74,7 @@ function lastGmOfferedChoices(state: GameState): string[] {
 }
 
 /**
- * Labels the ActionBar will show for this state â€” post-pipeline pad after
+ * Labels the ActionBar will show for this state — post-pipeline pad after
  * sanitize / alone-presence / invented-context filter / pad-to-count.
  * Opening covers use establishment chips when present; otherwise last GM
  * `offeredChoices` (fastSetupChips off used to return [] and hide ActionBar).
@@ -103,14 +103,14 @@ export function resolveOfferedChoices(state: GameState): string[] {
   if (state.engineMode === 'dnd' && ds && !ds.dead && !ds.stable) {
     return roundCombatChips(state) ?? ['Fight for breath'];
   }
-  // T10W â€” origin setup owns the pad until recorded (session-zero; no scene mix).
+  // T10W — origin setup owns the pad until recorded (session-zero; no scene mix).
   const origin = originPad(state);
   if (origin?.length) return origin;
   const chips = storedTurnPad(state) ?? compileOfferedChoices(state);
   const prompt = systemPromptPad(state, classOfferPad(state))?.chips ?? [];
   if (!prompt.length) return chips;
-  // T10AG â€” onward journey chip (Walk on) stays ahead of class/stat/box System chips so the
-  // story-moving pad is never crowded out (s9701 T21â€“T22 Choose Warrior/Berserker/Sorcerer).
+  // T10AG — onward journey chip (Walk on) stays ahead of class/stat/box System chips so the
+  // story-moving pad is never crowded out (s9701 T21–T22 Choose Warrior/Berserker/Sorcerer).
   const movers: string[] = [];
   const rest: string[] = [];
   for (const c of chips) {
@@ -173,7 +173,7 @@ function compileOfferedChoices(state: GameState): string[] {
   const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)))
     .filter((c) => !starveCoverCombat || !isCombatFamilyPad(c));
   const legal = final(deduped);
-  // OPT-1 item 4: when affordances cover, do not first-come slice(0,4) â€” padChoicesToCount merges by kind.
+  // OPT-1 item 4: when affordances cover, do not first-come slice(0,4) — padChoicesToCount merges by kind.
   if (affordancesCoverGenerics(state)) {
     const paddedAff = final(
       padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c))
@@ -276,14 +276,14 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
     qualityGovernance: { ...(state.qualityGovernance ?? {}), optionCooldowns: Object.fromEntries(cooldowns) },
   };
 }
-/** q43-OCD â€” pad, stamp recentOfferedActions, rebind stored pad, then replay hash. */
+/** q43-OCD — pad, stamp recentOfferedActions, rebind stored pad, then replay hash. */
 export function commitOfferedTurn(state: GameState, gmEntryId?: string, storyProse = ''): GameState {
   // XP-D1 OPEN6 — persist wilds/region stock before pads are compiled into the offered record / snapshot.
   const seeded = ensureWildsReady(state);
   const stamped = stampOfferedChipChecks(commitOfferedPad(seeded, gmEntryId, storyProse), storyProse);
   // efeb40bd: rebind after the stamp so a cooled label is not still on the stored pad.
   const rebound = recordReplayHash(commitOfferedPad({ ...stamped, offeredPad: null }, gmEntryId, storyProse));
-  // XP-D1 OPEN4 â€” credit filler offers once per committed pad (offer cap â‰¤2 / meaningful scene).
+  // XP-D1 OPEN4 — credit filler offers once per committed pad (offer cap ≤2 / meaningful scene).
   return creditFillerOffers(rebound, rebound.choices ?? rebound.offeredPad?.choices ?? []);
 }
 
@@ -308,7 +308,7 @@ export function playTranscriptFilename(state: GameState): string {
 }
 
 /**
- * Chronological readable transcript: GM â†’ Options offered â†’ player.
+ * Chronological readable transcript: GM → Options offered → player.
  * Missing `offeredChoices` on old saves omits that section (no crash).
  */
 function playMetaLines(state: GameState): string[] {
@@ -323,7 +323,7 @@ function playMetaLines(state: GameState): string[] {
     `- Stamp: ${state.runManifest?.buildStamp || BUILD_STAMP}`,
     `- Turn: ${state.turn ?? 0}`,
     `- Location: ${state.currentLocation || '(unknown)'}`,
-    `- Character: ${displayAdventurerName(state.character?.name)} Â· Level ${state.character?.level ?? '?'} Â· XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+    `- Character: ${displayAdventurerName(state.character?.name)} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
     `- Quests: ${quests.length ? quests.join('; ') : '(none revealed)'}`,
     ...(state.arcDirector?.t12HookReceipt
       ? [
@@ -350,7 +350,7 @@ export function buildPlayTranscript(state: GameState): string {
     const role = entry.role;
     const content = (typeof entry.content === 'string' ? entry.content : '').trim();
     if (role === 'gm') {
-      lines.push(`## Turn ${entry.turn ?? '?'} â€” GM`);
+      lines.push(`## Turn ${entry.turn ?? '?'} — GM`);
       lines.push('');
       lines.push(content || '_(empty)_');
       lines.push('');
@@ -414,7 +414,7 @@ export function buildStoryReviewExport(
   const personalityId =
     meta?.personalityId ?? state.systemPersonality ?? state.gmPersonality ?? undefined;
   const lines: string[] = [
-    `# Story quality review pack â€” ${title}`,
+    `# Story quality review pack — ${title}`,
     '',
     '## Meta',
     '',
@@ -433,11 +433,11 @@ export function buildStoryReviewExport(
     `- AI agent mode: ${meta?.aiAgentMode ?? 'n/a'}`,
     `- Seed: ${meta?.seed ?? '(n/a)'}`,
     `- Turns completed: ${state.turn ?? 0}`,
-    `- Character: ${displayAdventurerName(state.character?.name)} Â· Level ${state.character?.level ?? '?'} Â· XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
-    `- Code baseline: ${meta?.codeBaseline ?? 'unknown â€” treat findings as baseline-agnostic'}`,
+    `- Character: ${displayAdventurerName(state.character?.name)} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+    `- Code baseline: ${meta?.codeBaseline ?? 'unknown — treat findings as baseline-agnostic'}`,
     `- Exported: ${new Date().toISOString()}`,
     '',
-    '## Critic prompt (follow this â€” then read the transcript)',
+    '## Critic prompt (follow this — then read the transcript)',
     '',
     meta?.reviewPrompt?.trim()
       || buildGeminiCriticPrompt({
@@ -457,7 +457,7 @@ export function buildStoryReviewExport(
     '',
     '## Transcript',
     '',
-    '_Each turn below: Narration â†’ **Options:** (exact choices offered that beat) â†’ **Player:** (what was picked) â†’ optional **STATUS / System.**_',
+    '_Each turn below: Narration → **Options:** (exact choices offered that beat) → **Player:** (what was picked) → optional **STATUS / System.**_',
     '',
   ];
 
@@ -467,7 +467,7 @@ export function buildStoryReviewExport(
     const content = (typeof entry.content === 'string' ? entry.content : '').trim();
     if (role === 'gm') {
       const isMud = entry.presentation === 'mud-receipt';
-      lines.push(`### Turn ${entry.turn ?? '?'} â€” ${isMud ? 'Receipt / Flavor' : 'Narration'}`);
+      lines.push(`### Turn ${entry.turn ?? '?'} — ${isMud ? 'Receipt / Flavor' : 'Narration'}`);
       lines.push('');
       if (isMud) {
         const sys = entry.systemLog;
@@ -485,7 +485,7 @@ export function buildStoryReviewExport(
           lines.push(`_${quote}_`);
           lines.push('');
         } else {
-          lines.push('_(receipt only â€” no flavor quote)_');
+          lines.push('_(receipt only — no flavor quote)_');
           lines.push('');
         }
       } else {
@@ -534,8 +534,8 @@ export function buildStoryReviewExport(
 }
 
 /**
- * Batch D â€” Gemini story-lens paste: Narration bodies only.
- * Collapses consecutive engine recovery / banned stubs to `[engine fallback Ã—N]`.
+ * Batch D — Gemini story-lens paste: Narration bodies only.
+ * Collapses consecutive engine recovery / banned stubs to `[engine fallback ×N]`.
  * Game-lens pastes should keep the full Options/STATUS transcript.
  */
 export function buildNarrationOnlyStoryExport(
@@ -552,7 +552,7 @@ export function buildNarrationOnlyStoryExport(
   const personalityId =
     meta?.personalityId ?? state.systemPersonality ?? state.gmPersonality ?? undefined;
   const header = [
-    `# Story quality review pack (Narration-only) â€” ${title}`,
+    `# Story quality review pack (Narration-only) — ${title}`,
     '',
     '## Meta',
     '',
@@ -593,14 +593,14 @@ export function collapseEngineFallbackNarration(
   const flushStubs = () => {
     if (stubRun <= 0) return;
     if (stubRun === 1) {
-      lines.push(`### Turn ${stubStartTurn} â€” Narration`);
+      lines.push(`### Turn ${stubStartTurn} — Narration`);
       lines.push('');
-      lines.push('[engine fallback Ã—1]');
+      lines.push('[engine fallback ×1]');
       lines.push('');
     } else {
-      lines.push(`### Turns ${stubStartTurn}â€“â€¦ â€” Narration`);
+      lines.push(`### Turns ${stubStartTurn}–… — Narration`);
       lines.push('');
-      lines.push(`[engine fallback Ã—${stubRun}]`);
+      lines.push(`[engine fallback ×${stubRun}]`);
       lines.push('');
     }
     stubRun = 0;
@@ -617,7 +617,7 @@ export function collapseEngineFallbackNarration(
       continue;
     }
     flushStubs();
-    lines.push(`### Turn ${t.turn} â€” Narration`);
+    lines.push(`### Turn ${t.turn} — Narration`);
     lines.push('');
     lines.push(t.body);
     lines.push('');
@@ -628,18 +628,18 @@ export function collapseEngineFallbackNarration(
 
 /**
  * Strip Options/STATUS/Player/Craft from an existing story-for-gemini transcript body
- * and collapse consecutive engine stubs â€” for morning paste tooling.
+ * and collapse consecutive engine stubs — for morning paste tooling.
  */
 export function narrationOnlyFromTranscriptMarkdown(transcriptBody: string): string {
   const chunks = transcriptBody.split(/^### Turn\s+/im);
   const turns: Array<{ turn: number | string; body: string }> = [];
   for (let i = 1; i < chunks.length; i++) {
     const chunk = chunks[i]!;
-    const m = chunk.match(/^(\d+|\?)\s*[â€”-]\s*Narration\s*\n+([\s\S]*?)(?=(?:\n\*\*Options:|\n\*\*Craft:|\n\*\*STATUS|\n\*\*Player:|\n###\s|$))/i);
+    const m = chunk.match(/^(\d+|\?)\s*[—-]\s*Narration\s*\n+([\s\S]*?)(?=(?:\n\*\*Options:|\n\*\*Craft:|\n\*\*STATUS|\n\*\*Player:|\n###\s|$))/i);
     if (!m) {
       const turnMatch = chunk.match(/^(\d+|\?)/);
       const body = chunk
-        .replace(/^(\d+|\?)\s*[â€”-]\s*Narration\s*/i, '')
+        .replace(/^(\d+|\?)\s*[—-]\s*Narration\s*/i, '')
         .replace(/\n\*\*(?:Options|Craft|STATUS \/ System):\*\*[\s\S]*$/i, '')
         .replace(/\n\*\*Player:\*\*[\s\S]*$/i, '')
         .trim();
@@ -768,11 +768,11 @@ function buildLoopReview(state: GameState): string {
   const lines = [
     '## Loop review (from this save)',
     '',
-    `- Player semantic loop: ${loop.isLoop ? `yes (${loop.loopCount}Ã— ${loop.repeatedIntent?.action ?? ''} ${loop.repeatedIntent?.target ?? ''})` : 'no'}`,
+    `- Player semantic loop: ${loop.isLoop ? `yes (${loop.loopCount}× ${loop.repeatedIntent?.action ?? ''} ${loop.repeatedIntent?.target ?? ''})` : 'no'}`,
     `- GM beats similar to an earlier beat: ${recycledBeats}`,
-    `- Top choice families: ${topPads.length ? topPads.map(([k, n]) => `${k}Ã—${n}`).join('; ') : '(none recorded)'}`,
+    `- Top choice families: ${topPads.length ? topPads.map(([k, n]) => `${k}×${n}`).join('; ') : '(none recorded)'}`,
     '',
-    'Live saves do not store per-turn SNAPSHOT, latency, Fate pick, or transport retries â€” those exist only on headless autoplay `turns.jsonl`. The appendix below uses the autoplay field names and leaves those null.',
+    'Live saves do not store per-turn SNAPSHOT, latency, Fate pick, or transport retries — those exist only on headless autoplay `turns.jsonl`. The appendix below uses the autoplay field names and leaves those null.',
     '',
   ];
   return lines.join('\n');

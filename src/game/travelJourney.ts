@@ -632,7 +632,20 @@ export function isJourneyPad(state: Pick<GameState, 'journey'> & Partial<Pick<Ga
   const t = meetingMoveBase(choice).toLowerCase();
   const j = state.journey;
   const met = j?.encounter ? encounterPads(j.encounter, j.terrain, state.engineMode) : [];
-  return WALK_ON.test(t) || /^turn back toward\s+\S/i.test(t) || !!travelEngineChip(t) || met.some((p) => meetingMoveBase(p).toLowerCase() === t);
+  // XP-D1 OPEN6 — Hunt / Gather / Seek Fight on an underway road are wilds-on-the-stretch chips
+  // (s85 exclusive road list still holds; they count as journey pads, not scene invents).
+  const wildsOnStretch =
+    isJourneyUnderway(state) &&
+    (/^hunt the (?:wildlife nearby|animal)\b/i.test(t) ||
+      /^gather herbs and resources nearby$/i.test(t) ||
+      /^look for a fight$/i.test(t));
+  return (
+    WALK_ON.test(t) ||
+    /^turn back toward\s+\S/i.test(t) ||
+    !!travelEngineChip(t) ||
+    met.some((p) => meetingMoveBase(p).toLowerCase() === t) ||
+    wildsOnStretch
+  );
 }
 /** Meetings that can be faced as a fight. */
 const FIGHT_KINDS = new Set<RoadEncounterKind>(['thugs', 'undead', 'monster', 'villain']);
