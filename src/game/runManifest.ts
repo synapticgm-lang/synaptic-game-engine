@@ -6,7 +6,7 @@ import type { EngineMode, GameState } from './types';
 import { GENERATED_BUILD_TIME, GENERATED_GIT_SHA } from './buildInfo.generated';
 
 /** Readable hand-edited tag — tests that assert this literal keep passing. */
-export const BUILD_STAMP = '2026-11-02q';
+export const BUILD_STAMP = '2026-11-02r';
 
 function resolveGitSha(): string {
   if (GENERATED_GIT_SHA && GENERATED_GIT_SHA !== 'dev') return GENERATED_GIT_SHA.slice(0, 8);
