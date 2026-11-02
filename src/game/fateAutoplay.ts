@@ -1092,12 +1092,25 @@ export function preferHurtRecoveryPick(offered: string[], pick: string, state: G
   if (rest) return rest;
   const travel = pool.find(
     (c) =>
-      /^travel\b/i.test(c)
+      /^leave(?:\s+the\s+scene)?\b/i.test(c)
+      || /^travel\b/i.test(c)
       || /^walk (?:back|on|toward)\b/i.test(c)
       || /^go back\b/i.test(c)
       || isOutdoorRestPad(c)
   );
   if (travel) return travel;
+  // OPEN7B — do not spin on crowd-only Talk/Ask when Leave/Honour/Search can move the run on.
+  if (/^(?:talk to|ask|answer|follow up with)\s+the people here\b/i.test(pick) || /^ask the people here\b/i.test(pick)) {
+    const onward = pool.find(
+      (c) =>
+        /^honour\b/i.test(c)
+        || /^follow up:/i.test(c)
+        || /^search\b/i.test(c)
+        || /^leave\b/i.test(c)
+        || /^travel\b/i.test(c)
+    );
+    if (onward) return onward;
+  }
   if (ATTACKISH_CHIP_RE.test(pick) || isHuntPad(pick) || pick === SEEK_FIGHT_CHIP) {
     const safe = pool.find((c) => !ATTACKISH_CHIP_RE.test(c) && !isHuntPad(c) && c !== SEEK_FIGHT_CHIP);
     if (safe) return safe;
