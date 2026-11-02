@@ -407,3 +407,44 @@ OpenRouter: no balance or $ cost figure in logs or run meta (`costUsd` null; tea
 **Next attempt (one line):** Seed `wilds` / region stock on outdoor + journey turns so Hunt (and LitRPG Gather) inject every wilds turn, and credit filler by family on every pad commit so live Search/Read cannot exceed 2.
 
 Plain summary also at `merge-logs/xp-design/open5-wildlife/T50-report.md`.
+
+### 2 Nov 2026 — LitRPG XP attempt 6 (wilds seeded on every outdoor and journey turn, creature-level foes, loot +-2 with tests across the equip line, leatherworking, family repeat cap) results — MISS
+
+What changed (from `merge-logs/xp-design/open6/OPEN6-report.md`, build `2026-11-02j+789732bf` on `xp/wilds2`): `ensureWildsReady` seeds bands + creature stock + nodes on every outdoor/journey turn and persists into the snapshot; `padChoicesToCount` keeps Hunt/Gather/Seek from the merged list (affordance rebuild no longer drops them; journey road pads keep wilds chips); filler family blocks apply on affordance rebuild; Gather refused when pouch full; Hand over the materials pad; loot/equip matrix tests across the line; leatherworking craft path. Bars / killScale / budgets / EQUIP_LEVEL_MARGIN 2 / WORLD_MAX 30 unchanged. Opening rite L1→L2 untouched. Tabletop / PYOA untouched.
+
+Runs (free writer DeepSeek via OpenRouter/gm-turn, no paid AI; seeds 7301–7307; worlds: hero-awakening, hollow-core, redmesa-claim):
+- 7301 random summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T16-54-31-499Z_summoned-pact_cold-system_s7301`
+- 7302 random system-integration: `scripts/fate-autoplay/runs/2026-11-02T17-09-41-539Z_system-integration_cold-system_s7302`
+- 7303 quest summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T17-16-39-230Z_summoned-pact_cold-system_s7303_quest`
+- 7304 quest system-integration: `scripts/fate-autoplay/runs/2026-11-02T17-25-54-912Z_system-integration_cold-system_s7304_quest`
+- 7305 hunt-gather hero-awakening: `scripts/fate-autoplay/runs/2026-11-02T17-40-07-914Z_hero-awakening_cold-system_s7305_huntgather`
+- 7306 hunt-gather hollow-core: `scripts/fate-autoplay/runs/2026-11-02T17-46-22-926Z_hollow-core_cold-system_s7306_huntgather`
+- 7307 random redmesa-claim (Story RPG): `scripts/fate-autoplay/runs/2026-11-02T17-52-22-554Z_redmesa-claim_chilled-gm_s7307`
+
+Measured from `turns.jsonl` (`xpGained`, `XP Gained:` / inferred victory+quest, `level`, Check System, chips, final `wildsByPlace` / `regionLevelBands` / `wildsHuntLedger` / `namedSkills`). Quest share = rite + steps + completes. Fight share includes hunts. Bars: L2 **187** → L3 **233** → L4 **291**.
+
+| Run | Profile | Scenario | Rite | L2 | L3 | L4 | L2→L3 | Total XP | Rite | Steps | Completes | Fights (hunts in) | Ach/other | Quest% | Fight% | Hunt XP | Wins | Hunt off/take | Seek | Gather off/take | Check off/open/max | Filler max | No-prog / max | Deaths | LOOP | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7301 | random | summoned-pact | **2** refuse→forced | **2** | 22 | 40 | **20** | 577 | 150 | 105 | 61 | 261 (hunt 137) | 0 | **54.8** | **45.2** | 137 | 10 (7 hunt) | **17/10** | 0 | 0/0 | **14/14/2** | **4** | 10/1 | 4 | no | wilds stocked; L4; fight share overshot |
+| 7302 | random | system-integration | **2** chip | **2** | 35 | — | **33** | 431 | 150 | 23 | 55 | 133 (hunt 65) | 70 | **52.9** | **30.9** | 65 | 6 (3 hunt) | **13/3** | 0 | **4/2** | **13/13/4** | **3** | 9/1 | 0 | no | Peacebloom + scrap; herbalism r1 |
+| 7303 | quest | summoned-pact | **2** chip | **2** | 41 | — | **39** | 384 | 150 | 23 | 0 | 95 (hunt 63) | 116 | **45.1** | **24.7** | 63 | 12 (10 hunt) | **18/16** | 0 | **14/5** | **17/17/5** | **5** | 5/1 | 6 | no | many hunt defeats; quest share low |
+| 7304 | quest | system-integration | **2** chip | **2** | 46 | — | **44** | 394 | 150 | 58 | 55 | 61 (hunt 61) | 70 | **66.8** | **15.5** | 61 | 8 (8 hunt) | **13/13** | 1 | **17/2** | **17/17/3** | **5** | 4/1 | 6 | no | regular hunt ledger at L2 cap 56 |
+| 7305 | hunt-gather | hero-awakening | **3** chip | **3** | 42 | — | **39** | 526 | 150 | 35 | 158 | 183 (hunt 183) | 0 | **65.2** | **34.8** | 183 | 12 (12 hunt) | **17/17** | 4 | 0/0 | **11/11/5** | **4** | 3/1 | 6 | no | Hunt always taken; no Gather nodes hit |
+| 7306 | hunt-gather | hollow-core | **2** chip | **2** | 46 | — | **44** | 425 | 150 | 0 | 55 | 92 (hunt 63) | 128 | **48.2** | **21.6** | 63 | 13 (9 hunt) | **15/15** | 2 | **14/10** | **19/19/4** | **4** | 5/1 | 7 | no | Gather taken; quest <50%; L2 hunt cap 56 |
+| 7307 | random | redmesa-claim (rpg) | — | **9** | — | — | — | 265 | 0 | 118 | 147 | 0 | 0 | **100** | **0** | 0 | 0 | 0/0 (Hunt LitRPG-only) | 0 | **0/0** | **9/9/2** | **3** | 10/2 | 0 | no | nodes stocked but Gather never offered; same-giver favour tapered |
+
+Per-profile (7301–7304 XP targets): random L2 **2**, L2→L3 **26.5** (20/33), quest **53.9%**, fight **38.1%**, Check sum **27**, Hunt off **17/13**. Quest profile L2 **2**, L2→L3 **41.5** (39/44), quest **56.0%**, fight **20.1%**, Check sum **34**, Hunt off **18/13**. Overall: L2 **2**, L2→L3 avg **34.0**, quest **54.9%**, fight **29.1%**, Check System offered sum **61**, Hunt offered every LitRPG run (outdoor-after-rite 44/35/42/30), fights won **10/6/12/8**, filler max **4/3/5/5**. Final snapshots: `wildsByPlace` + `regionLevelBands` present (stock 174–350); `wildsHuntLedger` regularPaid ≤56 at L2 / ≤38 at L3 (budgets held; challenge 0); no above-line equip; scrap leather / Peacebloom on several runs; `trade-herbalism` r1 on 7302/7303/7306 only; Mining / Skinning / Leatherworking ranks never moved; no Hand-over or Craft pads taken.
+
+Hunt-gather / Story RPG (separate): Hunt offered and taken every wilds chance on 7305/7306; Gather offered/taken on 7306 (and partial on random/quest LitRPG); many hunt defeats (death farm); after regular budget, non-gray kills paid the 5% floor (STATUS “learned what these lands can teach”). 7305 quests ≥50%; 7306 quest **48.2%** under the hunt-gather floor. Story RPG: Hunt correctly absent; Gather **0** despite `nodeStockByPlace` with Peacebloom/tin stock — pad never reached the player.
+
+**Vs open5 baseline (same 7301–7304):** L2@T2 held; Check System **10/15/10/15 → 14/13/17/17** (sum 50→**61**); Hunt+Seek **0 → Hunt 17/13/18/13** (Seek still ~0); fight share **8.0% → 29.1%**; quest share **82.6% → 54.9%** (overshot downward); L2→L3 **39/12/—/41 → 20/33/39/44** (avg 30.7→**34.0**); filler max **6/5/9/9 → 4/3/5/5** (still >2); wilds stock empty → **seeded**; LOOP STOP still none.
+
+**Vs targets:** Rite→L2@T2 **PASS**; L2→L3 15–25 **MISS** (20/33/39/44 avg 34); quest share tol. 55–80% **MISS** (avg 54.9%; 7303 45.1%); fights 15–30% **PASS** on average (29.1%; 7301 alone 45.2% over); Hunt/Seek outdoors **PASS**; filler ≤2 **MISS** (4/3/5/5); Check System **PASS**; no LOOP / streak≤2 **PASS**; no full-pay same-giver farm **PASS**; no zero-pay wins except floor/gray **PASS**; hunt budgets **PASS**; equip above-line **PASS** (0 held above P+2); Story RPG Gather when nodes stocked **MISS** (0); trade ranks beyond herbalism r1 **MISS**.
+
+OpenRouter: no balance or $ cost figure in logs or run meta (costUsd null; teacher deepseek/deepseek-v4.1-flash).
+
+**Verdict: MISS** — offs: L2→L3 **20 / 33 / 39 / 44** (want 15–25); quest-share avg **54.9%** (want ≥55% tol., ideal 60–70%); filler max **4 / 3 / 5 / 5** (want ≤2); hunt-gather deaths and post-cap 1-XP floor farming; Story RPG Gather still 0 with nodes in stock.
+
+**Next attempt (one line):** Stop death-farm Hunt loops (and post-cap outdoor Hunt spam) so L2→L3 lands in 15–25 without fight-share overshoot, harden live filler family credit to ≤2, and make Story RPG Gather actually inject when `nodeStockByPlace` has stock (Herbalism learn + pad path).
+
+Plain summary also at `merge-logs/xp-design/open6/T50-report.md`.
