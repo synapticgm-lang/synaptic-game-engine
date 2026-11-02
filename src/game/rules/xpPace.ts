@@ -141,10 +141,13 @@ const LITRPG_UNITS_PER_LEVEL: ReadonlyArray<{ maxLevel: number; units: number }>
   { maxLevel: 1, units: 3 },
   // OPEN8 — L2 units 8→12 so L2→L3 slows from live ~11 turns into 15–25 without a hunt cap
   // (xpUnit shrinks; bars and BAR_GROWTH 1.25 stay rising). Later rows keep OPEN7 gaps +4.
+  // OPEN8 gateFix2 — L5/L6 shared 17 so L6→L7 could finish shorter than L5→L6 (seed 7301).
+  // Split: L5=17, L6=19 (L7–9 stay 19). Same class as OPEN7 gateFix L4 11→12.
   { maxLevel: 2, units: 12 },
   { maxLevel: 3, units: 14 },
   { maxLevel: 4, units: 16 },
-  { maxLevel: 6, units: 17 },
+  { maxLevel: 5, units: 17 },
+  { maxLevel: 6, units: 19 },
   { maxLevel: 9, units: 19 },
   { maxLevel: 14, units: 22 },
   { maxLevel: 19, units: 26 },

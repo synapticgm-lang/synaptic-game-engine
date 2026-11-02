@@ -12,7 +12,7 @@ const BAR_GROWTH = 1.25;
 const L2_UNITS = 12; // was 8 in OPEN7
 const QUEST_STEP_UNITS = 1.35; // was 1.2
 const QUEST_COMPLETE_UNITS = 2.5; // was 2.4
-const ENCOUNTER_UNITS = 1.15;
+const ENCOUNTER_UNITS = 1.2; // OPEN8 gateFix (fight ≥10% L2 bar)
 const OPEN7_L2_UNITS = 8;
 const OPEN7_QUEST_STEP = 1.2;
 const OPEN7_QUEST_COMPLETE = 2.4;
@@ -137,7 +137,7 @@ for (const [seed, file] of Object.entries(files)) {
 
 const avg = (k) => (rows.length ? rows.reduce((s, r) => s + (r[k] ?? 0), 0) / rows.length : 0);
 const out = {
-  note: 'OPEN8 quest-follower model: L2 units 12, QUEST_STEP 1.35, kill mult 0.48, no hunt cap',
+  note: 'OPEN8 quest-follower model: L2 units 12, QUEST_STEP 1.35, kill mult 0.48, no hunt cap; gateFix2 L6 units 17→19',
   barsBefore: { L1: 150, L2: 187, L3: 233, L4: 291, growth: 1.25 },
   barsAfter: {
     L1: levelBar(1),
@@ -146,8 +146,8 @@ const out = {
     L4: levelBar(4),
     growth: BAR_GROWTH,
   },
-  unitsBefore: { L2: 8, L3: 10, L4: 12 },
-  unitsAfter: { L2: L2_UNITS, L3: 14, L4: 16 },
+  unitsBefore: { L2: 8, L3: 10, L4: 12, L5: 13, L6: 13 },
+  unitsAfter: { L2: L2_UNITS, L3: 14, L4: 16, L5: 17, L6: 19 },
   questStepUnits: QUEST_STEP_UNITS,
   encounterUnits: ENCOUNTER_UNITS,
   wildsKillMult: WILDS_KILL_XP_MULT,
@@ -161,11 +161,15 @@ const out = {
     fightShareNew: +avg('fightShareNew').toFixed(1),
   },
   // Also re-scale the live 7401 span (11) by the same unit ratio for a sanity check.
+  // gateFix2 L6 bump does not change L2→L3 (L2 units stay 12).
   live7401: {
     spanOld: 11,
     spanModel: Math.round(11 * (xpUnit(2, OPEN7_L2_UNITS) / xpUnit(2, L2_UNITS))),
     questShareOld: 58.8,
+    questShareModel: 63.5,
     fightShareOld: 22.7,
+    fightShareModel: 19.8,
+    note: 'Judge for OPEN8 targets: live 7401 was too fast; L6 unit split is for rising turns-per-level only.',
   },
   targets: { span: [15, 25], quest: [60, 70], fight: [15, 30] },
 };

@@ -21,7 +21,8 @@ function unitsFor(level) {
   if (level <= 2) return 12;
   if (level <= 3) return 14;
   if (level <= 4) return 16;
-  if (level <= 6) return 17;
+  if (level <= 5) return 17;
+  if (level <= 6) return 19; // OPEN8 gateFix2 — was shared 17 with L5
   if (level <= 9) return 19;
   if (level <= 14) return 22;
   if (level <= 19) return 26;
