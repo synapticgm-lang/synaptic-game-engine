@@ -452,4 +452,60 @@ Plain summary also at `merge-logs/xp-design/open6/T50-report.md`.
 ### 21. 2 Nov 2026: OPEN7 + power-levelling addendum (branch xp/wilds3)
 - What: Hunt always pays unless WoW gray (killScale / ZD / grayLevel); removed hunt budget + post-cap floor as payout limiters; death-farm Hunt cooldown (3 turns); filler family cap at pipeline end; Story RPG Gather pouch. Addendum: stretch creatures spawn+1/+2 + starter elite mini-boss; trash `WILDS_KILL_XP_MULT=0.48`, elite skips trash mult (full taper x2); outdoor short rest + hurt Hunt withhold (HP <= 50%); autoplay `preferHurtRecoveryPick`; quest-step units 1.2 + pin top 2. Formula logged in `merge-logs/xp-design/open7/OPEN7-formula.md` (WoW Classic citations).
 - Why: attempt 6 MISS (L2->L3 34, quest 54.9%, death farm, filler 3-5, RPG Gather 0); John wants power-levelling grind path and hurt recovery.
-- Outcome: code + vitest on xp/wilds3 (commit follows). T50 / ship owned by runner. Bars / 25% growth unchanged.
+- Outcome: code + vitest on xp/wilds3 (commit follows). T50 / ship owned by runner. Bars / 25% growth unchanged. Results: entry 22 below.
+
+### 2 Nov 2026 — LitRPG XP attempt 7 (hunting always pays unless grey, no hunt cap, death cooldown, pace tuning, filler cap at the end of the pipeline, Story RPG Gather) results — MISS
+
+**John's correction (2 Nov 2026):** Hunting must always give XP except when the player is too high a level for the creature or area (WoW-style grey-mob falloff by level gap). Per-session hunt cap and 0-XP post-cap rule removed. Quest share 60–70% is tuned via hunt XP amounts and level-gap falloff, not a cap. Keep the death-farm fix (no Hunt chip / no hunt XP right after a death).
+
+**John's power-levelling design:** Grinding the starter zone to L6–7 before the quest chain and mini-boss is a valid path. Kill XP keeps paying until the player out-levels the creature, tapering by level gap like WoW grey-mob maths. Starter zones hold creatures 1–2 levels above the spawn level. The 60–70% quest share is the target for quest followers, not for grinders.
+
+**Exact kill-XP formula** (from `merge-logs/xp-design/open7/OPEN7-formula.md`; owners `xpPace.ts` killScale / ZD / grayLevel / wowBaseXp + `WILDS_KILL_XP_MULT` in `wildlifeConfig.ts`; elite ×2 in `unitMilestoneAmount`; death-cooldown zeros in `engineFight.payEncounterXp`):
+
+Source: WoW Classic/vanilla mob XP — https://warcraft.wiki.gg/wiki/Mob_experience (S1 Zero Difference / gray / difference factor) and https://warcraft.wiki.gg/wiki/Experience_point (S2 base `(M×5)+45`). Differs from GW2 (no gray cut-off) and FFXIV (smooth gap, no ZD table).
+
+```
+sameLevelUnit = unitAward(encounter at playerLevel) × xpUnit(playerLevel)
+R(P, M) = killScale(P, M)
+  = 0                                 if M ≤ grayLevel(P)
+  = (wowBaseXp(M) / wowBaseXp(P)) × diffFactor   otherwise
+    wowBaseXp(L) = L×5 + 45
+    if M ≥ P: diffFactor = 1 + 0.05 × min(M − P, 4)     // +4 level bonus cap
+    if M <  P: diffFactor = 1 − (P − M) / zeroDifference(P)
+amount = round(sameLevelUnit × R × (elite ? 2 : 1) × (elite ? 1 : WILDS_KILL_XP_MULT))
+```
+
+`WILDS_KILL_XP_MULT = 0.48` applies to trash table kills only. Elite mini-bosses skip the trash mult. OPEN7: no hunt budget, no post-cap 5% floor, no `XP_EVENT_BAR_CAP` on table kills. Only zeros: gray + death-farm cooldown.
+
+**Addendum numbers (OPEN7-report):** Stretch — starter band 1–3; every starter place stocks spawn / spawn+1 / spawn+2 + one elite at spawn+2. Grinder sim (`OPEN7-sim-grind.json`): **75 kills** to L7 preferring mini-boss; gray cliff L6 (spawn), L7 (spawn+1), L8 (all including mini-boss). Boss = spawn+2 elite; pays full taper ×2; still pays at L7 (grays at L8). Pace levers: `QUEST_STEP_UNITS_L2_PLUS` **1.2**; `pinStoryChipInTop` topN **2**.
+
+What changed (from `merge-logs/xp-design/open7/OPEN7-report.md` + OPEN7B): removed payout use of hunt budgets / post-cap floor; `WILDS_KILL_XP_MULT=0.48`; death cooldown 3 turns (no Hunt chip, typed hunt pays 0 inside CD); `enforceFillerFamilyCap` at end of `padChoicesToCount`; Story RPG `ensureGatherPouch`; hurt HP≤50% withholds Hunt + outdoor short rest + autoplay recovery pick. OPEN7B (after 7401 / first 7402): crowd-only talk starve, Leave places[] fallback, strip player-act echo.
+
+Runs (free writer DeepSeek via OpenRouter/gm-turn, no paid AI; **one sample per mode**, next world in rotation — not averages):
+- 7401 random ascending-spire (LitRPG): `scripts/fate-autoplay/runs/2026-11-02T19-30-46-409Z_ascending-spire_cold-system_s7401` — build **2026-11-02k+9ebcf24e** (pre-OPEN7B)
+- 7402 random twin-lanterns (Story RPG): first run on 2026-11-02k **LOOP STOP** + readability p0=2 turn-echo (`T50-rpg-7402-random.loop1.log`); rerun `…T20-20-49-263Z_twin-lanterns_chilled-gm_s7402` — build **2026-11-02l+16735a9b**
+- 7403 none broken-crown-keep (tabletop regression only): `…T20-28-51-093Z_broken-crown-keep_chilled-gm_s7403` — build **2026-11-02l+16735a9b**
+
+Measured from `turns.jsonl` (`xpGained`, `XP Gained:` lines, level, Check System, chips, wilds). Quest share = rite + steps + completes. Fight share includes hunts. Bars: L2 **187** → L3 **233**.
+
+| Run | Profile | Scenario | Build | Rite | L2 | L3 | L2→L3 | Total XP | Rite | Steps | Completes | Fights (hunt) | Other | Quest% | Fight% | Hunt off/take | Gather off/take | Check off/open/max | Filler max | Deaths harness / real | LOOP | readability |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7401 | random | ascending-spire | 2026-11-02k | **2** chip | **2** | 13 | **11** | 444 | 150 | 56 | 55 | 101 (101) | 82 | **58.8** | **22.7** | **7/5** | 14/0 | **12/12/4** | **3** | 5 / **0** | no | pass p0=0 p1=0 |
+| 7402 | random | twin-lanterns (rpg) | 2026-11-02l | — | **7** | 31 | **24** | 373 | 0 | 94 | 147 | 132 (0) | 0 | **64.6** | **35.4** | **0/0** | **18/2** | **15/15/6** | **7** | 4 / **0** | no | fail p0=2 ignored-action |
+| 7403 | none | broken-crown-keep (dnd) | 2026-11-02l | — | — | — | — | (not judged) | — | — | — | — | — | — | — | 0/0 | 0/0 | — | — | 1 / **1** | no | pass p0=0 p1=0; PLAY ENDED T30 |
+
+Hunt XP per win (7401): T7 Crow 14; T13 Rat King 60; T18 Alley Cat 6; T23 Stray Dog 9; T26 Crow 12 — all >0, none grey, no post-death hunt. Gather takes (7402): T35/T38 Peacebloom; character XP 0 (trade only); Herbalism Novice 1. Harness `deathCount` matches foe “went down” on victories (false +); real `Fight: DEFEAT` is the death column that compares to attempt 6.
+
+**Deaths vs attempt 6:** attempt 6 LitRPG 7301–7306 had **29** real DEFEATs with Hunt in the prior 3 turns **29** times. Attempt 7 LitRPG sample: **0** real DEFEATs (deaths fell). After HP≤50% (7401 T26+ at 10/39) outdoor Rest was never offered; Travel/Walk on used. Hunt@T26 started at **51%** HP (above the ≤50% withhold). 7402 took Make camp / Flee after hurt. 7403 real death T26: prior picks Look around / Wait / Use something (tabletop; OPEN7 rest not in scope).
+
+**Grinder-style:** not observed on 7401 (five hunts then hurt travel; stopped at L3). Sim-only: 75 kills → L7; starter trash grays L6–L8 as above.
+
+**Vs attempt 6 baseline / targets (LitRPG = single sample 7401 — say so, not an average):** L2@T2 **PASS**; L2→L3 15–25 **MISS** (**11**); quest tol. 55–80% **PASS** (**58.8%**, below ideal 60–70); fight 15–30% **PASS** (**22.7%**); hunt always pays **PASS**; filler ≤2 **MISS** (**3**); Check System **PASS**; no LOOP **PASS**; Story RPG Gather **PASS** (18/2) + Hunt never **PASS**; tabletop no LOOP/crash **PASS**; real deaths down **PASS**.
+
+OpenRouter: no balance or `$` cost figure in logs or run meta (`costUsd` null).
+
+**Verdict: MISS** — offs: L2→L3 **11** (want 15–25); filler max **3** (want ≤2).
+
+**Next attempt (one line):** Slow L2→L3 back into 15–25 without reintroducing a hunt cap (quest-step spacing / kill mult), and harden live Open/Search family credit so max same-state offers stay ≤2.
+
+Plain summary also at `merge-logs/xp-design/open7/T50-report.md`.
