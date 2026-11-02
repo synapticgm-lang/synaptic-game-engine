@@ -124,36 +124,12 @@ export function ensureRegionBands(state: GameState): GameState {
   for (const d of hops.values()) maxHop = Math.max(maxHop, d || 1);
   const rng = mulberry(hashSeed(`${state.seed ?? 's'}|region-bands|${startId}`));
 
-  const midOf = new Map<string, number>();
-  for (const r of regions) {
-    const d = hops.get(r.id) ?? 0;
-    const t = d / maxHop;
-    const width = d === 0 ? 4 : Math.min(6, 4 + Math.floor(t * 2));
-    let mid =
-      d === 0
-        ? 2
-        : Math.round(2 + t * (WORLD_MAX_CREATURE_LEVEL - 2) + dangerBoost(r.tags));
-    mid = Math.max(2, Math.min(WORLD_MAX_CREATURE_LEVEL - 1, mid));
-    midOf.set(r.id, mid);
-    void rng;
-    void width;
-  }
+  // Step per hop so the farthest mid reaches near WORLD_MAX. Prefer ≤6; short graphs
+  // (diameter < 5) must use a larger step or the farthest cannot hit level 30.
+  const neededStep = (WORLD_MAX_CREATURE_LEVEL - 2) / maxHop;
+  const midStep = Math.max(1, neededStep);
+  const maxMidDelta = Math.max(6, Math.ceil(midStep));
 
-  // Smooth so connected mids differ by at most 6.
-  for (let pass = 0; pass < 8; pass++) {
-    for (const r of regions) {
-      for (const n of r.connections ?? []) {
-        const a = midOf.get(r.id) ?? 2;
-        const b = midOf.get(n) ?? 2;
-        if (Math.abs(a - b) <= 6) continue;
-        const avg = (a + b) / 2;
-        midOf.set(r.id, Math.round(avg + Math.sign(a - b) * 3));
-        midOf.set(n, Math.round(avg + Math.sign(b - a) * 3));
-      }
-    }
-  }
-
-  // Force farthest to reach WORLD_MAX_CREATURE_LEVEL.
   let farId = startId;
   let farHop = -1;
   for (const [id, d] of hops) {
@@ -162,14 +138,51 @@ export function ensureRegionBands(state: GameState): GameState {
       farId = id;
     }
   }
+
+  const midOf = new Map<string, number>();
+  for (const r of regions) {
+    const d = hops.get(r.id) ?? 0;
+    let mid = d === 0 ? 2 : Math.round(2 + d * midStep + dangerBoost(r.tags) * 0.5);
+    mid = Math.max(2, Math.min(WORLD_MAX_CREATURE_LEVEL - 1, mid));
+    midOf.set(r.id, mid);
+  }
   midOf.set(farId, WORLD_MAX_CREATURE_LEVEL - 2);
+  midOf.set(startId, 2);
+  void rng;
+
+  // Project connected mids so |a-b| ≤ maxMidDelta (6 when the graph is long enough).
+  for (let pass = 0; pass < 24; pass++) {
+    let moved = false;
+    for (const r of regions) {
+      for (const n of r.connections ?? []) {
+        if (r.id === startId && n === startId) continue;
+        let a = midOf.get(r.id) ?? 2;
+        let b = midOf.get(n) ?? 2;
+        if (Math.abs(a - b) <= maxMidDelta) continue;
+        const avg = (a + b) / 2;
+        const half = maxMidDelta / 2;
+        let na = Math.round(avg + Math.sign(a - b) * half);
+        let nb = Math.round(avg + Math.sign(b - a) * half);
+        if (r.id === startId) na = 2;
+        if (n === startId) nb = 2;
+        if (r.id === farId) na = Math.max(na, WORLD_MAX_CREATURE_LEVEL - 2);
+        if (n === farId) nb = Math.max(nb, WORLD_MAX_CREATURE_LEVEL - 2);
+        if (na !== a || nb !== b) moved = true;
+        midOf.set(r.id, Math.max(2, Math.min(WORLD_MAX_CREATURE_LEVEL - 1, na)));
+        midOf.set(n, Math.max(2, Math.min(WORLD_MAX_CREATURE_LEVEL - 1, nb)));
+      }
+    }
+    if (!moved) break;
+  }
+  midOf.set(startId, 2);
+  midOf.set(farId, Math.max(midOf.get(farId) ?? 2, WORLD_MAX_CREATURE_LEVEL - 2));
 
   for (const r of regions) {
     if (existing[r.id]) continue;
     const d = hops.get(r.id) ?? 0;
-    const width = d === 0 ? 4 : Math.min(6, 4 + Math.floor((d / maxHop) * 2));
-    let mid = midOf.get(r.id) ?? 2;
-    if (d === 0) {
+    const width = d === 0 ? 3 : Math.min(6, 4 + Math.floor((d / maxHop) * 2));
+    const mid = midOf.get(r.id) ?? 2;
+    if (d === 0 || r.id === startId) {
       existing[r.id] = { regionId: r.id, low: 1, high: 3 };
       continue;
     }

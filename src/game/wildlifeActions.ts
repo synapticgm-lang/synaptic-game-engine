@@ -376,3 +376,179 @@ export function startGatherFromInput(state: GameState, input: string): HuntStart
     fact: `You gathered ${mat.name} x${1 + bonus} from the ${node.kind === 'ore' ? 'ore seam' : 'herb patch'} here.`,
   };
 }
+
+const CRAFT_RE = /^craft at a workshop\b|^i craft\b|^make (?:a |some )?leather\b/i;
+const BREW_RE = /^brew at camp or inn\b|^i brew\b|^brew (?:a |some )?(?:tonic|restorative|tea)\b/i;
+
+export function isCraftRequest(input: string): boolean {
+  return CRAFT_RE.test((input ?? '').replace(/\s+/g, ' ').trim());
+}
+export function isBrewRequest(input: string): boolean {
+  return BREW_RE.test((input ?? '').replace(/\s+/g, ' ').trim());
+}
+
+function takeMaterials(
+  state: GameState,
+  id: string,
+  qty: number
+): { state: GameState; took: number } {
+  const mats = [...(state.materials ?? [])];
+  let need = qty;
+  for (let i = 0; i < mats.length && need > 0; i++) {
+    const m = mats[i]!;
+    if (m.id !== id) continue;
+    const use = Math.min(m.quantity, need);
+    mats[i] = { ...m, quantity: m.quantity - use };
+    need -= use;
+  }
+  return {
+    state: { ...state, materials: mats.filter((m) => m.quantity > 0) },
+    took: qty - need,
+  };
+}
+
+function professionRank(state: GameState, type: string): number {
+  const p = (state.character?.professions ?? []).find((x) => x.type === type);
+  return Math.max(1, p?.level ?? 1);
+}
+
+/**
+ * Leatherworking craft: consume one hide tier → a Common/Uncommon leather kit item of that tier's itemLevel.
+ * Rank-gated; ranks by use (trade XP only). Settlement workshop / free text.
+ */
+export function startCraftFromInput(state: GameState, input: string): HuntStart | null {
+  if (!gatherModeOk(state)) return null;
+  if (!isCraftRequest(input)) return null;
+  if (state.activeEncounter) return null;
+  const hides = (state.materials ?? []).filter((m) => /leather/i.test(m.id) || /leather/i.test(m.name));
+  if (!hides.length) {
+    return { state, receipts: [], fact: 'You have no hides to work at a workshop.' };
+  }
+  const hide = hides.sort((a, b) => (b.quantity ?? 0) - (a.quantity ?? 0))[0]!;
+  const tier =
+    HIDE_BY_TIER.findIndex((h) => h.id === hide.id) >= 0
+      ? HIDE_BY_TIER.findIndex((h) => h.id === hide.id) + 1
+      : 1;
+  const unlock = gatherUnlockRankForTier(tier);
+  const rank = professionRank(state, 'Leatherworking');
+  if (rank < unlock) {
+    return {
+      state,
+      receipts: [`Wilds: Leatherworking ${unlock} opens this hide tier (you are ${rank})`],
+      fact: `This hide needs more Leatherworking practice before you can shape it.`,
+    };
+  }
+  const spent = takeMaterials(state, hide.id, 1);
+  if (spent.took < 1) {
+    return { state, receipts: [], fact: 'You have no hides to work at a workshop.' };
+  }
+  let s = spent.state;
+  const itemLevel = Math.max(1, tier * 3);
+  const rarity = rank >= unlock + 5 ? 'Uncommon' : 'Common';
+  const id = `craft-leather-${tier}-${s.turn ?? 0}`;
+  const item = {
+    id,
+    name: `Leather kit (tier ${tier})`,
+    rarity: rarity as 'Common' | 'Uncommon',
+    quantity: 1,
+    itemType: 'armor' as const,
+    itemLevel,
+    baseValue: Math.round(5 * (1 + 0.15 * (itemLevel - 1))),
+    provenance: 'Workshop craft',
+  };
+  s = { ...s, inventory: [...(s.inventory ?? []), item] };
+  const charXp = s.character.xp;
+  const settled = settleSkillUse(s, input, {
+    trade: { id: 'trade-leatherworking', name: 'Leatherworking' },
+    success: true,
+    taskLevel: unlock,
+  });
+  s = settled.state;
+  if (s.character.xp !== charXp) s = { ...s, character: { ...s.character, xp: charXp } };
+  // Ensure profession row exists / rises with skill settle if the settle path wrote skills only.
+  const professions = [...(s.character.professions ?? [])];
+  const idx = professions.findIndex((p) => p.type === 'Leatherworking');
+  if (idx < 0) {
+    professions.push({ type: 'Leatherworking', level: Math.min(50, Math.max(rank, 1)), maxLevel: 50 });
+  }
+  s = { ...s, character: { ...s.character, professions } };
+  return {
+    state: s,
+    receipts: [`Craft: ${item.name} (level ${itemLevel}, ${rarity})`, ...settled.receipts],
+    fact: `At the workshop you worked ${hide.name} into ${item.name}.`,
+  };
+}
+
+/** Brew a basic restorative from one herb unit (Herbalism rank-gated). Camp or inn. */
+export function startBrewFromInput(state: GameState, input: string): HuntStart | null {
+  if (!gatherModeOk(state)) return null;
+  if (!isBrewRequest(input)) return null;
+  if (state.activeEncounter) return null;
+  const herbs = (state.materials ?? []).filter((m) =>
+    HERB_BY_TIER.some((h) => h.id === m.id) || /bloom|leaf|root|thorn|blood|herb/i.test(m.name)
+  );
+  if (!herbs.length) {
+    return { state, receipts: [], fact: 'You have no herbs to brew.' };
+  }
+  const herb = herbs[0]!;
+  const tier =
+    HERB_BY_TIER.findIndex((h) => h.id === herb.id) >= 0
+      ? HERB_BY_TIER.findIndex((h) => h.id === herb.id) + 1
+      : 1;
+  const unlock = gatherUnlockRankForTier(Math.max(1, tier));
+  const rank = professionRank(state, 'Herbalism');
+  if (rank < Math.max(1, unlock - 5)) {
+    return {
+      state,
+      receipts: [`Wilds: Herbalism practice opens brewing (you are ${rank})`],
+      fact: 'You are not sure enough of these herbs to brew yet.',
+    };
+  }
+  const spent = takeMaterials(state, herb.id, 1);
+  if (spent.took < 1) return { state, receipts: [], fact: 'You have no herbs to brew.' };
+  let s = spent.state;
+  const item = {
+    id: `brew-tonic-${s.turn ?? 0}`,
+    name: 'Simple restorative',
+    rarity: 'Common' as const,
+    quantity: 1,
+    itemType: 'consumable' as const,
+    provenance: 'Camp brew',
+  };
+  s = { ...s, inventory: [...(s.inventory ?? []), item] };
+  const charXp = s.character.xp;
+  const settled = settleSkillUse(s, input, {
+    trade: { id: 'trade-herbalism', name: 'Herbalism' },
+    success: true,
+    taskLevel: unlock,
+  });
+  s = settled.state;
+  if (s.character.xp !== charXp) s = { ...s, character: { ...s.character, xp: charXp } };
+  return {
+    state: s,
+    receipts: [`Brew: ${item.name} from ${herb.name}`, ...settled.receipts],
+    fact: `You brewed a simple restorative from ${herb.name}.`,
+  };
+}
+
+/**
+ * Consume stored mats when a gather-quest objective names the material.
+ * Same giver repeats: XP reduced via existing quest ladder; different giver pays full (caller).
+ */
+export function consumeGatherQuestMats(
+  state: GameState,
+  materialNameOrId: string,
+  qty = 1
+): { state: GameState; consumed: number; receipts: string[] } {
+  const key = materialNameOrId.toLowerCase();
+  const hit = (state.materials ?? []).find(
+    (m) => m.id.toLowerCase() === key || m.name.toLowerCase() === key || m.name.toLowerCase().includes(key)
+  );
+  if (!hit) return { state, consumed: 0, receipts: [] };
+  const spent = takeMaterials(state, hit.id, qty);
+  return {
+    state: spent.state,
+    consumed: spent.took,
+    receipts: spent.took > 0 ? [`Materials: turned in ${hit.name} x${spent.took}`] : [],
+  };
+}

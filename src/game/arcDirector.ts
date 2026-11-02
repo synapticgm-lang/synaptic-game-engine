@@ -76,7 +76,12 @@ import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
 import { autoFightSpawnPreface, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
-import { startGatherFromInput, startHuntFromInput } from './wildlifeActions';
+import {
+  startBrewFromInput,
+  startCraftFromInput,
+  startGatherFromInput,
+  startHuntFromInput,
+} from './wildlifeActions';
 import { levelUpGearNotices } from './gearEquip';
 import { houseRulesOf, scaledCadence } from './rules/houseRules';
 import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThreats';
@@ -812,7 +817,11 @@ export function runArcDirectorBeforeGm(
   // XP-D1 OPEN5 — a Hunt pad / "I go hunting": the engine picks the creature and opens its fight; the same
   // engine fight below settles it this turn (payEncounterXp pays by the creature's own level).
   // A Gather pad / "I look for ore" resolves first; a guard ambush on it becomes the same hunt fight.
-  const hunt = startGatherFromInput(working, playerInput) ?? startHuntFromInput(working, playerInput);
+  const hunt =
+    startCraftFromInput(working, playerInput)
+    ?? startBrewFromInput(working, playerInput)
+    ?? startGatherFromInput(working, playerInput)
+    ?? startHuntFromInput(working, playerInput);
   if (hunt) {
     working = hunt.state;
     systemReceipts.push(...hunt.receipts);

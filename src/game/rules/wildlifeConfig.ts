@@ -85,6 +85,8 @@ export function itemLevelValueMult(itemLevel: number): number {
 export const HUNT_PAD = 'Hunt the wildlife nearby';
 export const HUNT_ANIMAL_PAD = 'Hunt the animal';
 export const GATHER_PAD = 'Gather herbs and resources nearby';
+export const CRAFT_PAD = 'Craft at a workshop';
+export const BREW_PAD = 'Brew at camp or inn';
 export const SEEK_FIGHT_CHIP = 'Look for a fight';
 
 export function isHuntPad(label: string): boolean {
