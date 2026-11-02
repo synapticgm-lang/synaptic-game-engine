@@ -24,6 +24,7 @@ import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
 import { formatLootStatusLine } from './lootTableRegistry';
 import { isRoadFoe, meetingMoveBase, roadFoeForEngine, roadMeetingMove, roadMeetingOver, settleRoadMeeting } from './travelJourney';
 import { applyWildsHuntBudget, isChallengeHuntKill, killScale } from './rules/xpPace';
+import { HUNT_DEATH_COOLDOWN_TURNS } from './rules/wildlifeConfig';
 import { applyWildsKillExtras } from './wildlifeActions';
 import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
@@ -109,20 +110,34 @@ export function payEncounterXp(
     ...milestoneAreaOpts(state),
     ...(wilds ? { levelSource: 'table' as const, elite: raw.elite } : {}),
   });
-  // OPEN5 — wilds table kills: gray pays 0 (STATUS says why); a spent hunt budget pays the 5% floor.
+  // OPEN5/OPEN7 — wilds table kills: gray pays 0 (STATUS says why). OPEN7: no hunt budget / post-cap floor.
+  // Death-cooldown (and re-fighting the foe that downed you) also pays 0; typed hunt is never rejected.
   let wildsLedger = state.wildsHuntLedger;
   let wildsNote: string | undefined;
   let amount = r.amount;
   if (wilds) {
     const P = state.character.level;
-    const budget = applyWildsHuntBudget(state.engineMode, P, r.amount, {
-      challenge: isChallengeHuntKill(P, raw.level, { elite: raw.elite, rare: raw.rare }),
-      gray: killScale(P, raw.level) <= 0,
-      ledger: state.wildsHuntLedger,
-    });
-    amount = budget.amount;
-    wildsLedger = budget.ledger;
-    wildsNote = budget.status;
+    const turn = state.turn ?? 0;
+    const onDeathCd =
+      typeof state.wildsHuntDeathCooldownUntilTurn === 'number'
+      && turn < state.wildsHuntDeathCooldownUntilTurn;
+    const sameDeathFoe =
+      onDeathCd
+      && !!state.wildsHuntDeathFoeKey
+      && state.wildsHuntDeathFoeKey === nameKey(raw.name);
+    if (onDeathCd || sameDeathFoe) {
+      amount = 0;
+      wildsNote = 'still recovering from the last fight';
+    } else {
+      const budget = applyWildsHuntBudget(state.engineMode, P, r.amount, {
+        challenge: isChallengeHuntKill(P, raw.level, { elite: raw.elite, rare: raw.rare }),
+        gray: killScale(P, raw.level) <= 0,
+        ledger: state.wildsHuntLedger,
+      });
+      amount = budget.amount;
+      wildsLedger = budget.ledger;
+      wildsNote = budget.status;
+    }
   }
   if (amount <= 0) {
     const detail = wildsNote ?? r.detail;
@@ -519,6 +534,15 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   // OPEN5 — "Hunt the animal" on a road wildlife meeting: the hunt settles that meeting like any road fight.
   else if (enc.levelSource === 'table' && state.journey?.encounter?.kind === 'wildlife' && !roadMeetingOver(state.journey.encounter)) {
     next = settleRoadMeeting(next, result.victory ? 'victory' : 'defeat');
+  }
+  // OPEN7 — death-farm lock: after a defeat, Hunt pays 0 and is not pushed for N outdoor turns.
+  if (!result.victory) {
+    const until = (next.turn ?? state.turn ?? 0) + HUNT_DEATH_COOLDOWN_TURNS;
+    next = {
+      ...next,
+      wildsHuntDeathCooldownUntilTurn: until,
+      wildsHuntDeathFoeKey: nameKey(enc.name),
+    };
   }
   let found = '';
   if (result.victory) {

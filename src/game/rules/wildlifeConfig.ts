@@ -6,10 +6,23 @@
 /** World creature level ceiling (farthest region band high). */
 export const WORLD_MAX_CREATURE_LEVEL = 30;
 
-/** Regular wilds kills share of the current level bar (across all regions). */
+/**
+ * XP-D1 OPEN7 — hunt budgets REMOVED as payout limiters (John 2 Nov 2026).
+ * Kept as report-only constants so old ledger fields / docs still name the historical shares.
+ * A non-gray hunt always pays; gray is the only zero. Do not reintroduce a post-cap floor.
+ */
 export const WILDS_HUNT_BAR_SHARE = 0.3;
-/** Challenge kills (M >= P+3, elite, or rare) share of the bar. */
 export const WILDS_CHALLENGE_BAR_SHARE = 0.15;
+
+/**
+ * OPEN7 — table-creature kill XP multiplier vs OPEN4 same-level encounter unit.
+ * Tuned so quest share stays ~60–70% without a hunt cap (see OPEN7-report / sim).
+ * Death cooldown cuts re-hunt farm; this mult keeps remaining kills from washing quests.
+ */
+export const WILDS_KILL_XP_MULT = 0.48;
+
+/** Outdoor turns after a hunt/fight defeat during which Hunt pays 0 and is not pushed as a chip. */
+export const HUNT_DEATH_COOLDOWN_TURNS = 3;
 
 /** Ambush chance while aggressive/pack/territorial guards remain (× share still alive). */
 export const GUARD_AMBUSH_BASE = 0.35;

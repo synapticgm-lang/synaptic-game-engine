@@ -221,6 +221,8 @@ export function ensureWildsReady(state: GameState): GameState {
   if (isOutdoorWildsPlace(next) || next.journey) {
     next = ensureWilds(next);
     next = ensureNodeStock(next);
+    // OPEN7 — Story RPG with no bag still needs a materials pouch so Gather can succeed.
+    next = ensureGatherPouch(next);
   } else if (!(next.regionLevelBands && Object.keys(next.regionLevelBands).length)) {
     // Still stamp bands once so a later outdoor arrival does not re-roll from empty.
     next = ensureRegionBands(next);
@@ -264,6 +266,58 @@ export function wildsHasStock(state: GameState, place?: string): boolean {
   const next = ensureWilds(state, place);
   const w = wildsOf(next, place);
   return !!w && w.slots.some((s) => s.stock > 0);
+}
+
+/**
+ * OPEN7 — true when at least one live stock slot still pays XP (not gray to the player).
+ * Used to stop pushing Hunt as a top chip when everything left is gray / nearly gray.
+ */
+export function wildsHasNonGrayStock(state: GameState, place?: string): boolean {
+  const next = ensureWilds(state, place);
+  const w = wildsOf(next, place);
+  if (!w) return false;
+  const P = Math.max(1, Math.floor(next.character?.level ?? 1));
+  // Lazy import avoided — killScale lives in xpPace; duplicate gray check via grayLevel inline would drift.
+  // Callers that already imported killScale can filter; here we use a local require-free helper.
+  return w.slots.some((s) => s.stock > 0 && s.level > grayLevelLocal(P));
+}
+
+/** Local copy of xpPace.grayLevel so wilds does not import the pace module (edge cycle risk). */
+function grayLevelLocal(charLevel: number): number {
+  const CL = Math.max(1, Math.floor(charLevel || 1));
+  if (CL <= 5) return 0;
+  if (CL <= 39) return CL - Math.floor(CL / 10) - 5;
+  if (CL <= 59) return CL - Math.floor(CL / 5) - 1;
+  return CL - 9;
+}
+
+/**
+ * OPEN7 — Story RPG (and any gatherModeOk save) may have no containers; Gather can only fail.
+ * Ensure one equipped Materials Only pouch so herbs/ore have a home. Idempotent; never strips kit.
+ */
+export function ensureGatherPouch(state: GameState): GameState {
+  const mats = (state.containers ?? []).filter((c) => c.storageType === 'Materials Only' && c.equipped);
+  if (mats.some((c) => (c.capacity ?? 0) > 0)) return state;
+  const general = (state.containers ?? []).filter(
+    (c) => (c.storageType ?? 'General') === 'General' && c.equipped && (c.capacity ?? 0) > 0
+  );
+  // LitRPG already overflows materials into general slots — leave those alone.
+  if (general.length) return state;
+  const id = `gather-pouch-${state.saveId ?? '0'}`;
+  if ((state.containers ?? []).some((c) => c.id === id)) return state;
+  const pouch = {
+    id,
+    name: 'Gathering pouch',
+    capacity: 12,
+    used: 0,
+    modifier: 'none' as const,
+    itemIds: [] as string[],
+    storageType: 'Materials Only' as const,
+    kind: 'physical' as const,
+    equipped: true,
+    slot: 'Container' as const,
+  };
+  return { ...state, containers: [...(state.containers ?? []), pouch] };
 }
 
 // ---------------------------------------------------------------------------

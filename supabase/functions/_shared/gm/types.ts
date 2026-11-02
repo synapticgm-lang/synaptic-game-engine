@@ -1261,8 +1261,18 @@ export interface GameState {
       lastRefillHour: number;
     }
   >;
-  /** XP-D1 OPEN5 — wilds hunt XP paid at the current player level (resets on level-up). Absent = nothing paid. */
+  /**
+   * XP-D1 OPEN5/OPEN7 — wilds hunt XP earned at the current player level (resets on level-up).
+   * OPEN7: report-only (counts / XP earned); never refuses or reduces pay.
+   */
   wildsHuntLedger?: { playerLevel: number; regularPaid: number; challengePaid: number };
+  /**
+   * XP-D1 OPEN7 — after a hunt/fight defeat, Hunt pays 0 and is not pushed until this turn index
+   * (exclusive). Absent / past = no cooldown.
+   */
+  wildsHuntDeathCooldownUntilTurn?: number;
+  /** XP-D1 OPEN7 — foe name key from the defeat that started the death cooldown (same-place re-fight). */
+  wildsHuntDeathFoeKey?: string;
   /** XP-D1 OPEN5 — one-shot plain notices for the next STATUS beat; consumers clear after showing. Absent = none. */
   wildlifeNotices?: string[];
   /** XP-D1 OPEN5 — player level the last "you can now wear X" sweep ran at. Absent = not seen yet. */

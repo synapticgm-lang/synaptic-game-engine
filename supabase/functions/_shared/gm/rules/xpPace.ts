@@ -13,9 +13,10 @@ import type { MilestoneKind } from '../xpRules.ts';
 import {
   WILDS_HUNT_BAR_SHARE,
   WILDS_CHALLENGE_BAR_SHARE,
+  WILDS_KILL_XP_MULT,
 } from './wildlifeConfig.ts';
 
-export { WILDS_HUNT_BAR_SHARE, WILDS_CHALLENGE_BAR_SHARE };
+export { WILDS_HUNT_BAR_SHARE, WILDS_CHALLENGE_BAR_SHARE, WILDS_KILL_XP_MULT };
 
 /** Level 1 → 2 bar stays 150; after that ×1.25 per step. */
 export const L1_BAR = 150;
@@ -341,10 +342,11 @@ export function unitMilestoneAmount(
       : Math.max(1, Math.floor(rawContent));
 
   if (isFight && opts.levelSource === 'table') {
-    // sameLevelKill(P) × R(P,M) × (elite ? 2 : 1). Gray → 0.
+    // sameLevelKill(P) × R(P,M) × (elite ? 2 : 1) × WILDS_KILL_XP_MULT. Gray → 0.
+    // OPEN7: no hunt budget / post-cap floor — level-gap (killScale) is the only zero.
     const R = killScale(playerLevel, unclamped);
-    amount = Math.round(amount * R * (opts.elite ? 2 : 1));
-    if (amount <= 0) return opts.allowZero === false ? 0 : 0;
+    amount = Math.round(amount * R * (opts.elite ? 2 : 1) * WILDS_KILL_XP_MULT);
+    if (amount <= 0) return 0;
     return opts.skipEventCap ? amount : capXpEventAmount(mode, playerLevel, amount);
   }
 
@@ -358,7 +360,10 @@ export function unitMilestoneAmount(
   return opts.skipEventCap ? amount : capXpEventAmount(mode, playerLevel, amount);
 }
 
-/** Regular / challenge hunting budgets for the current player level (one owner). */
+/**
+ * Historical budget sizes (OPEN5). OPEN7 does not use these to refuse or reduce hunt XP —
+ * kept so report / ledger docs can still name the old shares.
+ */
 export function wildsBudgetCaps(mode: EngineMode | undefined, playerLevel: number): {
   regular: number;
   challenge: number;
@@ -371,11 +376,11 @@ export function wildsBudgetCaps(mode: EngineMode | undefined, playerLevel: numbe
 }
 
 /**
- * Apply wilds hunt ledger: after the budget is spent, non-gray kills pay CONTENT_SCALE_FLOOR
- * of the same-level award; gray stays 0. Loot/resources are never capped here.
+ * OPEN7 — wilds hunt ledger is report-only (counts + XP earned). Never refuses or reduces pay.
+ * Gray (killScale 0) is the only zero-pay hunt; death-cooldown zeros are applied in payEncounterXp.
  */
 export function applyWildsHuntBudget(
-  mode: EngineMode | undefined,
+  _mode: EngineMode | undefined,
   playerLevel: number,
   rawAmount: number,
   opts: {
@@ -402,24 +407,11 @@ export function applyWildsHuntBudget(
       status: opts.gray ? 'too weak to teach you anything' : undefined,
     };
   }
-  const caps = wildsBudgetCaps(mode, P);
-  const paid = opts.challenge ? ledger.challengePaid : ledger.regularPaid;
-  const cap = opts.challenge ? caps.challenge : caps.regular;
-  if (paid >= cap) {
-    const floor = Math.max(1, Math.round(unitsToXp(unitAwardFor(mode, 'encounter', P), xpUnit(mode, P)) * CONTENT_SCALE_FLOOR));
-    return {
-      amount: floor,
-      ledger,
-      capped: true,
-      status: 'you have learned what these lands can teach for now',
-    };
-  }
-  const room = cap - paid;
-  const amount = Math.min(rawAmount, room);
+  const amount = Math.max(0, Math.floor(rawAmount));
   const next = opts.challenge
     ? { ...ledger, challengePaid: ledger.challengePaid + amount }
     : { ...ledger, regularPaid: ledger.regularPaid + amount };
-  return { amount, ledger: next, capped: amount < rawAmount };
+  return { amount, ledger: next, capped: false };
 }
 
 export function repeatShare(completionIndex: number): number {

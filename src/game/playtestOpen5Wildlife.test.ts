@@ -207,8 +207,10 @@ describe('OPEN5 3 — elite x2', () => {
   });
 });
 
-describe('OPEN5 4 — hunting budgets', () => {
-  it('regular 30% / challenge 15% of the level bar', () => {
+describe('OPEN5 4 — hunting budgets (OPEN7: report-only, no payout cap)', () => {
+  // OPEN7 (John 2 Nov 2026): remove per-session hunt XP budgets as payout limiters.
+  // Constants remain for historical share naming; applyWildsHuntBudget never refuses/reduces pay.
+  it('regular 30% / challenge 15% constants still name the old shares', () => {
     expect(WILDS_HUNT_BAR_SHARE).toBe(0.3);
     expect(WILDS_CHALLENGE_BAR_SHARE).toBe(0.15);
     for (const P of [2, 5, 10, 20]) {
@@ -219,26 +221,28 @@ describe('OPEN5 4 — hunting budgets', () => {
     }
   });
 
-  it('pays up to the cap, then a 5% floor, and gray stays 0', () => {
+  it('pays full amount every non-gray kill; gray stays 0; never post-cap floor', () => {
     const P = 5;
     const caps = wildsBudgetCaps('litrpg', P);
     const first = applyWildsHuntBudget('litrpg', P, caps.regular + 100, { challenge: false, gray: false });
-    expect(first.amount).toBe(caps.regular);
+    expect(first.amount).toBe(caps.regular + 100);
+    expect(first.capped).toBe(false);
     const next = applyWildsHuntBudget('litrpg', P, 100, { challenge: false, gray: false, ledger: first.ledger });
-    expect(next.capped).toBe(true);
-    expect(next.amount).toBeGreaterThan(0);
-    expect(next.amount).toBeLessThan(caps.regular);
+    expect(next.capped).toBe(false);
+    expect(next.amount).toBe(100);
     const gray = applyWildsHuntBudget('litrpg', P, 100, { challenge: false, gray: true, ledger: first.ledger });
     expect(gray.amount).toBe(0);
   });
 
-  it('challenge kills spend their own ledger', () => {
+  it('challenge kills still track their own ledger (report-only)', () => {
     const P = 5;
     const caps = wildsBudgetCaps('litrpg', P);
     const reg = applyWildsHuntBudget('litrpg', P, caps.regular, { challenge: false, gray: false });
     const chal = applyWildsHuntBudget('litrpg', P, 50, { challenge: true, gray: false, ledger: reg.ledger });
     expect(chal.capped).toBe(false);
-    expect(chal.amount).toBe(Math.min(50, caps.challenge));
+    expect(chal.amount).toBe(50);
+    expect(chal.ledger.challengePaid).toBe(50);
+    expect(chal.ledger.regularPaid).toBe(caps.regular);
   });
 });
 

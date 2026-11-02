@@ -33,8 +33,10 @@ import { STALL_N } from './directorConstants';
 import {
   isOutdoorWildsPlace,
   wildsHasStock,
+  wildsHasNonGrayStock,
   hasNodeStock,
   ensureWilds,
+  ensureGatherPouch,
 } from './wilds';
 import { ensureRegionResources } from './regionLevels';
 import { gatherModeOk, huntModeOk } from './wildlifeActions';
@@ -875,9 +877,15 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
   }
   // XP-D1 OPEN5 — Hunt every outdoor turn (stock permitting); not drought-gated; not filler; never steals
   // quest-progress / Travel / Check System. When Hunt is available, drought Seek Fight hands over to it.
+  // OPEN7 — after a hunt defeat, do not push Hunt/Seek for HUNT_DEATH_COOLDOWN_TURNS; prefer recovery chips.
+  // OPEN7 — do not push Hunt when every live slot is gray to the player.
   {
     const openingDone = state.openingEstablishment?.complete === true;
     const outdoor = isOutdoorWildsPlace(state);
+    const turn = state.turn ?? 0;
+    const deathCd =
+      typeof state.wildsHuntDeathCooldownUntilTurn === 'number'
+      && turn < state.wildsHuntDeathCooldownUntilTurn;
     // Wilds pads: LitRPG + Story RPG may Gather; only LitRPG may Hunt (tabletop dnd / PYOA see neither).
     const canWilds =
       openingDone
@@ -885,12 +893,32 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
       && gatherModeOk(state)
       && !state.activeEncounter
       && !state.activeDungeon;
-    const canHunt = canWilds && huntModeOk(state);
+    const canHunt = canWilds && huntModeOk(state) && !deathCd;
     let huntReady = false;
     if (canWilds) {
-      const s = ensureRegionResources(ensureWilds(state));
-      huntReady = canHunt && wildsHasStock(s);
-      if (huntReady && !list.some((c) => isHuntChip(c))) {
+      let s = ensureGatherPouch(ensureRegionResources(ensureWilds(state)));
+      const hasPayStock = wildsHasNonGrayStock(s);
+      huntReady = canHunt && wildsHasStock(s) && hasPayStock;
+      if (deathCd) {
+        // Recovery chips: rest / heal / quest / travel — never Hunt.
+        list = list.filter((c) => !isHuntChip(c) && !isSeekFightChip(c));
+        const hasRecovery = list.some(
+          (c) =>
+            movesOn(state, c, story)
+            || actionFamily(c) === 'wait'
+            || /\b(rest|heal|bandage|camp|recover)\b/i.test(c)
+            || /^check system\b/i.test(c)
+        );
+        if (!hasRecovery) {
+          const restChip = 'Wait and catch your breath';
+          if (!list.some((c) => /^wait\b/i.test(c))) {
+            list = [restChip, ...list];
+            notes.push('Wilds: recovery after defeat (no Hunt)');
+          }
+        } else {
+          notes.push('Wilds: Hunt withheld (death cooldown)');
+        }
+      } else if (huntReady && !list.some((c) => isHuntChip(c))) {
         // Least useful slot first: dead filler, then idle loiter, and only then a social chip.
         const isIdleLoiter = (c: string) => LOITER.has(actionFamily(c)) && !movesOn(state, c, story);
         let fillerIdx = list.findIndex((c) => isFillerNoProgressChip(c));
@@ -910,9 +938,11 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
           list = [...list.slice(0, insertAt), HUNT_WILDS_CHIP, ...list.slice(insertAt)];
           notes.push('Wilds: Hunt the wildlife nearby');
         }
+      } else if (canHunt && wildsHasStock(s) && !hasPayStock) {
+        notes.push('Wilds: Hunt not pushed (stock gray to player)');
       }
       // Gather when the region has resource nodes in stock.
-      // OPEN6 — do not offer Gather when the pouch cannot take another material (pad would only fail).
+      // OPEN6/OPEN7 — do not offer Gather when the pouch cannot take another material (pad would only fail).
       const hasNodes = hasNodeStock(s);
       const pouchCanTake = canAddMaterials(s, 1).ok;
       if (hasNodes && outdoor && pouchCanTake && !list.some((c) => isGatherChip(c))) {
@@ -937,10 +967,11 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
       }
     }
     // XP-D1 OPEN4 — Look for a fight on drought; OPEN5 hands over to Hunt when wilds are in reach.
+    // OPEN7 — Seek Fight also withheld during death cooldown.
     const sinceCombat = state.arcDirector?.turnsSinceCombatReceipt;
     const alreadySeek = list.some((c) => isSeekFightChip(c) || isHuntChip(c));
     const drought = typeof sinceCombat === 'number' && sinceCombat >= 8;
-    if (openingDone && canSeekFight(state) && drought && !alreadySeek && !huntReady) {
+    if (openingDone && canSeekFight(state) && drought && !alreadySeek && !huntReady && !deathCd) {
       const fillerIdx = list.findIndex(
         (c) => isFillerNoProgressChip(c) || (LOITER.has(actionFamily(c)) && !movesOn(state, c, story))
       );

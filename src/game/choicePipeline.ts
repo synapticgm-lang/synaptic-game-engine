@@ -60,6 +60,8 @@ import {
 import {
   actionFamily,
   fillerOfferExhausted,
+  fillerSceneKey,
+  isFillerNoProgressChip,
   isGatherChip,
   isHuntChip,
   isSeekFightChip,
@@ -1536,7 +1538,36 @@ export function padChoicesToCount(
       if (!has) cappedEnd.push(label);
     }
   }
+  // XP-D1 OPEN7 — hard filler family cap ≤2 at the END of every pad path (journey / affordance /
+  // hand-built). Free text never blocked. Hunt / Gather / Seek / Check System / quest / Travel stay.
+  cappedEnd = enforceFillerFamilyCap(cappedEnd, state);
   return sealPadUniverse(cappedEnd, state, excluded);
+}
+
+/**
+ * OPEN7 — one final owner for Search/Read/Analyze/Open/Inspect family offer cap.
+ * Drops filler labels whose family is exhausted or blocked for this meaningful scene.
+ * Never strips Hunt, Gather, Seek Fight, Check System, quest-progress, Travel, or free-input.
+ */
+export function enforceFillerFamilyCap(choices: string[], state: GameState): string[] {
+  if (state.engineMode !== 'litrpg' && state.engineMode !== 'rpg') return choices;
+  const sceneKey = fillerSceneKey(state);
+  const blocked =
+    state.circling?.fillerBlockSceneKey === sceneKey
+    && state.circling.fillerBlockedFamilies?.length
+      ? new Set(state.circling.fillerBlockedFamilies)
+      : null;
+  return choices.filter((raw) => {
+    const label = (raw ?? '').trim();
+    if (!label) return false;
+    if (isHuntChip(label) || isGatherChip(label) || isSeekFightChip(label)) return true;
+    if (/^check system\b/i.test(label)) return true;
+    if (isFreeInputChip(label)) return true;
+    if (!isFillerNoProgressChip(label)) return true;
+    if (fillerOfferExhausted(state, label)) return false;
+    if (blocked?.has(actionFamily(label))) return false;
+    return true;
+  });
 }
 
 export interface ChoicePipelineResult {
