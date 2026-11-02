@@ -41,7 +41,7 @@ import { inspirationRerollPads } from './rules/houseRules';
 import { systemPromptPad } from './rules/abilityPoints';
 import { classOfferPad } from './rules/characterClass';
 import { originPad } from './rules/rpgOrigin';
-import { isJourneyStepLine, journeyPads } from './travelJourney';
+import { isJourneyStepLine, isJourneyUnderway, journeyPads } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
 import { checkForAction, type CheckSpec } from './checkMath';
 import { isDying } from './tabletop/roundFight';
@@ -488,6 +488,8 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     return dying;
   }
   // T10TABFIGHT — first L1 tabletop fight gate owns the pad (Back off / Talk / Fight ≤ choiceCountLimit).
+  // TRAINLOOP2 — mid-journey: keep journey continue / turn-back / meeting pads bound beside the triad
+  // so a parked first-fight threat cannot starve Walk on / Turn back into dead Inspect chips.
   const firstFight = firstFightChoiceSet(state);
   if (firstFight.active && firstFight.options.length) {
     const ffChips: EngineChip[] = [];
@@ -505,6 +507,23 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
         check: null,
         slotCategory: 'act',
       });
+    }
+    if (isJourneyUnderway(state) && !state.activeEncounter) {
+      for (const raw of journeyPads(state)) {
+        const label = sanitizeChoiceLabel(raw);
+        if (!label) continue;
+        const low = label.toLowerCase();
+        if (seenFf.has(low)) continue;
+        seenFf.add(low);
+        ffChips.push({
+          label,
+          action: engineChipActionKey(label) || `label:${low}`,
+          kind: 'journey',
+          check: null,
+          // Leave slotCategory unset — applyOptionCooldown classifies journey movers;
+          // a forced 'move' tag is stripped while travelPadBlocked (pending threat).
+        });
+      }
     }
     lastEngineChips = { state, key, chips: ffChips, labels: seenFf };
     return ffChips;

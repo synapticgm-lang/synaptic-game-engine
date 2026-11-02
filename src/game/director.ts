@@ -1742,12 +1742,20 @@ export function applyDirectorChipPolicy(
   next = filterDirectorTravelChips(state, next, opts.recentChips ?? []);
   next = replaceNoOpChip(state.directorPlan, next, noOp);
   if (opts.inFight) next = capFightChips(next);
-  // T10RC5 — live/parked foe: never keep Travel on the pad (dry-run first-pad was bouncing Travel
+  // T10RC5 — live/parked foe: never keep Travel-toward on the pad (dry-run first-pad was bouncing Travel
   // while travelPadBlocked → LOOP STOP; prefer merge must not re-inject travelDest chips either).
+  // TRAINLOOP2 — mid-journey continue / turn-back / push-on / camp must survive a parked threat;
+  // only destination Travel chips drop. A live activeEncounter already clears journeyPads upstream.
   const blockTravel = travelPadBlocked(state) || !!engineThreatHere(state);
-  const dropTravel = (c: string) =>
-    !isTravelPad(c) && !/^walk on\b/i.test(c) && !/^turn back toward\b/i.test(c);
-  if (blockTravel) next = next.filter(dropTravel);
+  const journeyMover = (c: string) =>
+    /^walk on\b/i.test(c)
+    || /^push on\b/i.test(c)
+    || /^travel on\.?$/i.test(c)
+    || /^turn back\b/i.test(c)
+    || /^make camp\b/i.test(c);
+  const keepUnderThreat = (c: string) =>
+    journeyMover(c) || (!isTravelPad(c) && !travelDestFromChip(c));
+  if (blockTravel) next = next.filter(keepUnderThreat);
   // Prefer director plan chips first when stall need is active.
   const plan = state.directorPlan;
   if (plan && plan.need !== 'none' && plan.chips.length) {
@@ -1757,6 +1765,7 @@ export function applyDirectorChipPolicy(
       .filter((l) => (l ?? '').trim().length > 0)
       .filter((l) => !/^Face the threat$/i.test(l) || facesThreatChipAllowed(state))
       .filter((l) => {
+        if (journeyMover(l)) return next.includes(l);
         if (blockTravel && (isTravelPad(l) || !!travelDestFromChip(l))) return false;
         return next.includes(l) || (!blockTravel && !!travelDestFromChip(l)) || /^Face the threat$/i.test(l);
       });
@@ -1765,30 +1774,36 @@ export function applyDirectorChipPolicy(
       if (!merged.includes(c)) merged.push(c);
     }
     next = filterDirectorTravelChips(state, merged, opts.recentChips ?? []);
-    if (blockTravel) next = next.filter(dropTravel);
+    if (blockTravel) next = next.filter(keepUnderThreat);
   }
-  // Journey "Walk on" / bare continue is not a travelDest — under stall prefer a plan chip over it.
+  // Journey "Walk on" / bare continue is not a travelDest — under stall prefer a plan chip over it,
+  // but TRAINLOOP2: never drop continue + turn-back while the journey is still underway.
   if (plan && plan.need !== 'none' && plan.chips.length) {
     const planFirst = plan.chips
       .map((c) => c.label)
       .filter((l) => (l ?? '').trim().length > 0)
       .filter((l) => !/^Face the threat$/i.test(l) || facesThreatChipAllowed(state))
-      .filter((l) => !(blockTravel && (isTravelPad(l) || !!travelDestFromChip(l))))
+      .filter((l) => !(blockTravel && !journeyMover(l) && (isTravelPad(l) || !!travelDestFromChip(l))))
       .find((l) => (l ?? '').trim());
     if (planFirst) {
-      const withoutWalk = next.filter((c) => !/^walk on\b/i.test(c) && !/^turn back toward\b/i.test(c));
-      // Keep turn-back only when director travel need names that dest (and travel is legal).
-      const turnBackOk = blockTravel ? [] : next.filter((c) => {
-        if (!/^turn back toward\b/i.test(c)) return false;
-        const dest = travelDestFromChip(c);
-        if (!dest || !plan.development?.placeId) return false;
-        return dest.toLowerCase() === plan.development.placeId.toLowerCase()
-          || matchHub(hubsForBibleId(state.campaignBibleId), dest)?.id === plan.development.placeId;
-      });
+      const roadMovers = isJourneyUnderway(state) && !state.activeEncounter
+        ? next.filter((c) => journeyMover(c))
+        : [];
+      const withoutWalk = next.filter((c) => !journeyMover(c));
+      // Keep turn-back toward a named plan dest when travel is legal (non-journey stall path).
+      const turnBackOk = (blockTravel || roadMovers.length)
+        ? []
+        : next.filter((c) => {
+          if (!/^turn back toward\b/i.test(c)) return false;
+          const dest = travelDestFromChip(c);
+          if (!dest || !plan.development?.placeId) return false;
+          return dest.toLowerCase() === plan.development.placeId.toLowerCase()
+            || matchHub(hubsForBibleId(state.campaignBibleId), dest)?.id === plan.development.placeId;
+        });
       if (plan.need === 'travel' || plan.need === 'lead' || plan.need === 'npc-act' || plan.need === 'threat') {
-        next = [planFirst, ...turnBackOk, ...withoutWalk.filter((c) => c !== planFirst)];
+        next = [planFirst, ...roadMovers, ...turnBackOk, ...withoutWalk.filter((c) => c !== planFirst)];
         next = filterDirectorTravelChips(state, next, opts.recentChips ?? []);
-        if (blockTravel) next = next.filter(dropTravel);
+        if (blockTravel) next = next.filter(keepUnderThreat);
       }
     }
   }
