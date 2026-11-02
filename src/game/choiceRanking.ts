@@ -212,8 +212,11 @@ export function actionFamily(input: string): string {
   // Keep inspect/examine/study as 'inspect' for loiter/stall (29x / 10c); filler cap still covers them.
   if (/\b(inspect|examine|study)\b/.test(a)) return 'inspect';
   if (/\b(wait|ready yourself|watch|hold still|keep watch)\b/.test(a)) return 'wait';
-  if (/\b(look around|look over|survey|scout|scan)\b/.test(a)) return 'look';
+  // Talk before look/scout: "Ask Scout about…" must not match \bscout\b as Look filler (OPEN8 gateFix).
   if (/\b(talk|ask|speak|greet|offer)\b/.test(a)) return 'talk';
+  if (/\b(look around|look over|survey|scout|scan)\b/.test(a)) return 'look';
+  // OPEN8 — Check / Look closer (not Check System) share the search filler budget.
+  if (/^check\b/.test(a) || /\blook closer\b/.test(a)) return 'search';
   if (/\b(travel|go to|go back|head to|walk to|return to|enter|next unexplored|go through)\b/.test(a)) return 'move';
   if (/^hunt the\b/.test(a) || /^i go hunting\b/.test(a)) return 'fight';
   if (/^gather\b/.test(a) || /^i look for (?:ore|herbs|resources)\b/.test(a)) return 'other';
@@ -229,10 +232,13 @@ export function actionFamily(input: string): string {
   return 'other';
 }
 
-/** Search / Read / Analyze / Open / Inspect / Use — no-progress filler (one owner with turnProgress). */
+/**
+ * Search / Read / Analyze / Open / Inspect / Use / Look — no-progress filler (one owner with turnProgress).
+ * OPEN8 — Look joins the cap so same-state look/check streaks cannot bypass Search.
+ */
 export function isFillerNoProgressChip(chip: string): boolean {
   const fam = actionFamily(chip);
-  return fam === 'search' || fam === 'use' || fam === 'inspect';
+  return fam === 'search' || fam === 'use' || fam === 'inspect' || fam === 'look';
 }
 
 /**

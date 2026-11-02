@@ -139,13 +139,16 @@ export function isChallengeHuntKill(
  */
 const LITRPG_UNITS_PER_LEVEL: ReadonlyArray<{ maxLevel: number; units: number }> = [
   { maxLevel: 1, units: 3 },
-  { maxLevel: 2, units: 8 },
-  { maxLevel: 3, units: 10 },
-  // OPEN7 gateFix: L4 was +1 over L3; QUEST_STEP 1.2 made L4→L5 shorter than L3→L4 under seed 7301.
-  // Keep rising gaps (never flatten) so turns-per-level stays non-decreasing.
-  { maxLevel: 4, units: 12 },
-  { maxLevel: 6, units: 13 },
-  { maxLevel: 9, units: 15 },
+  // OPEN8 — L2 units 8→12 so L2→L3 slows from live ~11 turns into 15–25 without a hunt cap
+  // (xpUnit shrinks; bars and BAR_GROWTH 1.25 stay rising). Later rows keep OPEN7 gaps +4.
+  // OPEN8 gateFix2 — L5/L6 shared 17 so L6→L7 could finish shorter than L5→L6 (seed 7301).
+  // Split: L5=17, L6=19 (L7–9 stay 19). Same class as OPEN7 gateFix L4 11→12.
+  { maxLevel: 2, units: 12 },
+  { maxLevel: 3, units: 14 },
+  { maxLevel: 4, units: 16 },
+  { maxLevel: 5, units: 17 },
+  { maxLevel: 6, units: 19 },
+  { maxLevel: 9, units: 19 },
   { maxLevel: 14, units: 22 },
   { maxLevel: 19, units: 26 },
   { maxLevel: Number.POSITIVE_INFINITY, units: 30 },
@@ -174,13 +177,17 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
  * - quest step / complete lift less than fight so quest share stays 55–80% and L2→L3 ≈ 15–25
  * OPEN3 live was ~3–4 XP/turn post-rite with 1–2 fights; engaged OPEN4 targets ~8–12 XP/turn.
  */
-export const ENCOUNTER_UNITS_L2_PLUS = 1.15;
 /**
- * OPEN7 addendum — quest-step reach lever for quest/random profiles (L2→L3 15–25).
- * Raised from 1.0 so followers earn more XP per offered step without touching kill taper.
+ * OPEN8 gateFix — 1.15→1.2 so same-level L2 fight stays ≥10% of the bar after units 8→12
+ * (xpUnit 16: round(1.15×16)=18 → 9.6%; round(1.2×16)=19 → 10.2%).
  */
-export const QUEST_STEP_UNITS_L2_PLUS = 1.2;
-export const QUEST_COMPLETE_UNITS_L2_PLUS = 2.4;
+export const ENCOUNTER_UNITS_L2_PLUS = 1.2;
+/**
+ * OPEN7 addendum / OPEN8 — quest-step reach lever for quest/random profiles (L2→L3 15–25).
+ * OPEN8 raised 1.2→1.35 so quest share stays 60–70% after L2 units grew (smaller xpUnit).
+ */
+export const QUEST_STEP_UNITS_L2_PLUS = 1.35;
+export const QUEST_COMPLETE_UNITS_L2_PLUS = 2.5;
 
 /** One XP event may not exceed this share of the current level bar (LitRPG / Story RPG). */
 export const XP_EVENT_BAR_CAP = 0.6;
@@ -348,12 +355,24 @@ export function unitMilestoneAmount(
       : Math.max(1, Math.floor(rawContent));
 
   if (isFight && opts.levelSource === 'table') {
-    // sameLevelKill(P) × R(P,M) × (elite ? 2 : 1) × (elite ? 1 : WILDS_KILL_XP_MULT). Gray → 0.
-    // OPEN7 addendum: trash keeps WILDS_KILL_XP_MULT for quest-share; elite mini-bosses pay full taper ×2
-    // so a zone boss stays worthwhile (not a constant special-case). No budget / event-bar cap.
+    // Design: sameLevelKill(P) × R(P,M) × (elite ? 2 : WILDS_KILL_XP_MULT). Gray → 0.
+    // OPEN7 addendum: trash keeps WILDS_KILL_XP_MULT; elite pays full taper ×2.
+    // OPEN8 gateFix: quantize trash-at-R=1 first, then ×R (and elite as ×2/mult from that
+    // trash quantum) so elite/trash ≈ 2/mult and up/same ≈ R when xpUnit is small.
     const R = killScale(playerLevel, unclamped);
-    const mult = opts.elite ? 1 : WILDS_KILL_XP_MULT;
-    amount = Math.round(amount * R * (opts.elite ? 2 : 1) * mult);
+    if (R <= 0) return 0;
+    const trashSame = Math.max(0, Math.round(amount * WILDS_KILL_XP_MULT));
+    if (opts.elite) {
+      amount = Math.max(
+        1,
+        trashSame > 0
+          ? Math.round(trashSame * R * (2 / WILDS_KILL_XP_MULT))
+          : Math.round(amount * R * 2),
+      );
+    } else {
+      if (trashSame <= 0) return 0;
+      amount = Math.max(0, Math.round(trashSame * R));
+    }
     if (amount <= 0) return 0;
     return amount;
   }

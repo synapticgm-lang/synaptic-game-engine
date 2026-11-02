@@ -1587,8 +1587,10 @@ export function padChoicesToCount(
 }
 
 /**
- * OPEN7 — one final owner for Search/Read/Analyze/Open/Inspect family offer cap.
+ * OPEN7 / OPEN8 — one final owner for Search/Read/Analyze/Open/Inspect/Look family offer cap.
  * Drops filler labels whose family is exhausted or blocked for this meaningful scene.
+ * OPEN8 — also counts within this pad list so two Open boxes cannot both land when the
+ * family is already at 1, and three cannot land when counts are fresh (cap ≤2 total).
  * Never strips Hunt, Gather, Seek Fight, Check System, quest-progress, Travel, or free-input.
  */
 export function enforceFillerFamilyCap(choices: string[], state: GameState): string[] {
@@ -1599,17 +1601,36 @@ export function enforceFillerFamilyCap(choices: string[], state: GameState): str
     && state.circling.fillerBlockedFamilies?.length
       ? new Set(state.circling.fillerBlockedFamilies)
       : null;
-  return choices.filter((raw) => {
+  const mem = state.circling;
+  const sameScene = !!mem?.fillerOfferSceneKey && mem.fillerOfferSceneKey === sceneKey;
+  const running: Record<string, number> = {};
+  if (sameScene && mem?.fillerOfferCounts) {
+    for (const [k, v] of Object.entries(mem.fillerOfferCounts)) {
+      if (k.startsWith('fam:')) running[k] = v ?? 0;
+    }
+  }
+  const out: string[] = [];
+  for (const raw of choices) {
     const label = (raw ?? '').trim();
-    if (!label) return false;
-    if (isHuntChip(label) || isGatherChip(label) || isSeekFightChip(label)) return true;
-    if (/^check system\b/i.test(label)) return true;
-    if (isFreeInputChip(label)) return true;
-    if (!isFillerNoProgressChip(label)) return true;
-    if (fillerOfferExhausted(state, label)) return false;
-    if (blocked?.has(actionFamily(label))) return false;
-    return true;
-  });
+    if (!label) continue;
+    if (isHuntChip(label) || isGatherChip(label) || isSeekFightChip(label)) {
+      out.push(label);
+      continue;
+    }
+    if (/^check system\b/i.test(label) || isFreeInputChip(label) || !isFillerNoProgressChip(label)) {
+      out.push(label);
+      continue;
+    }
+    const fam = actionFamily(label);
+    if (blocked?.has(fam)) continue;
+    if (fillerOfferExhausted(state, label)) continue;
+    const famKey = `fam:${fam}`;
+    const prior = running[famKey] ?? 0;
+    if (prior >= 2) continue;
+    running[famKey] = prior + 1;
+    out.push(label);
+  }
+  return out;
 }
 
 export interface ChoicePipelineResult {

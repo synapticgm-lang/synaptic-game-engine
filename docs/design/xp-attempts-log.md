@@ -509,3 +509,14 @@ OpenRouter: no balance or `$` cost figure in logs or run meta (`costUsd` null).
 **Next attempt (one line):** Slow L2→L3 back into 15–25 without reintroducing a hunt cap (quest-step spacing / kill mult), and harden live Open/Search family credit so max same-state offers stay ≤2.
 
 Plain summary also at `merge-logs/xp-design/open7/T50-report.md`.
+
+### LitRPG XP attempt 8 (design) — 2 Nov 2026 (OPEN8, branch xp/wilds4)
+- **Why:** Attempt 7 T50 MISS — L2→L3 **11** (want 15–25); filler family max **3**; Story RPG 7402 readability p0=2 turn-ignored-action (witness / people-here Talk). John's power-levelling design from attempt 7 kept: hunts always pay unless grey (WoW Classic `killScale` / ZD — see `OPEN7-formula.md`); no per-session hunt cap; death-farm cooldown + HP≤50% recovery kept; 60–70% quest share is for quest followers, not grinders; L6–7 grind + winnable mini-boss stay valid.
+- **What changed (design, pre-measure):**
+  1. **Talk answer seal:** `ensureCrowdOrRoleTalkAnswered` in `writerTurn` (beside OPEN7B echo strip) + `isCleanName` allows long role phrases on the present ledger so `a witness who knows the lead` can speak; empty seats get plain absence.
+  2. **Filler cap:** wire `creditFillerOffers` on Fate/live commit; running within-pad family count ≤2; Look/Check join Search/Read/Analyze/Open filler set.
+  3. **Pace:** `LITRPG_UNITS_PER_LEVEL` L2 **8→12** (later rows +4 vs OPEN7); bars unchanged (150 ×1.25); `QUEST_STEP_UNITS_L2_PLUS` **1.2→1.35**; `QUEST_COMPLETE` **2.4→2.5**; `WILDS_KILL_XP_MULT` **0.48** unchanged; no hunt cap.
+  4. **gateFix2 (rising curve):** L5/L6 had shared **17** units so seed-7301 L6→L7 (32) finished shorter than L5→L6 (36). Split L5=**17**, L6=**19** (L7–9 stay 19). Same class as OPEN7 gateFix L4 11→12. L2 units untouched → L2→L3 live7401 model still **16**.
+- **Before / after sim:** bars L1/L2/L3/L4 = 150/187/233/291 (unchanged). Live7401 model: span **11→16**, quest ~**58.8→63.5%**, fight ~**22.7→19.8%**. Grinder sim: **59** kills to L7 (was 57 pre-gateFix2 / 75 under OPEN7); gray cliff unchanged; boss still pays. Details: `merge-logs/xp-design/open8/OPEN8-sim-pace.json`, `OPEN8-sim-grind.json`, `gatefix8b-report.md`.
+- **Formula reference:** attempt 7 WoW Classic entry / `OPEN7-formula.md` (unchanged killScale).
+- **Outcome:** design + unit tests shipped on xp/wilds4; **measure / T50 results TBD** (runner).

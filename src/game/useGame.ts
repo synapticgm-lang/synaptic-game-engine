@@ -10,7 +10,7 @@ import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLoc
 import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
 import { resolveLockAttempt } from './lockAttempt';
 import { advanceDungeonCard, isDungeonCard, parkDungeonCard, previewDungeonCard } from './dungeonCard';
-import { creditCommittedProgress, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
+import { creditCommittedProgress, creditFillerOffers, nudgeIfStuck, recordCirclingTurn } from './choiceRanking';
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked, setPlayPhase } from './playPhase';
@@ -4717,7 +4717,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         openingEstablishment: liveCurrent.openingEstablishment,
         log: [...liveCurrent.log, gmLogEntryBase],
       };
-      const heardChoices = dropAbsentListenerChips(committedTurnState, committedChoices, cleanText);
+      let heardChoices = dropAbsentListenerChips(committedTurnState, committedChoices, cleanText);
       const gmLogEntry = withLitrpgSystemWindow(
         withOfferedChoices(gmLogEntryBase, { ...committedTurnState, choices: heardChoices }),
         { ...workingState, ...updates, character: baseChar },
@@ -4925,6 +4925,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           String(mergedState.completedEvent?.engineResult ?? ''),
         ], p.progressed);
       }
+      // OPEN8 — final filler cap after every injection path, then credit so the next turn holds ≤2.
+      {
+        const { enforceFillerFamilyCap } = await import('./choicePipeline');
+        heardChoices = enforceFillerFamilyCap(heardChoices, mergedState);
+      }
+      mergedState = creditFillerOffers(mergedState, heardChoices);
       // q43-OCD: one shared pad commit (pad → stamp offered chips / recentOfferedActions → replay hash).
       mergedState = commitOfferedTurn({ ...mergedState, choices: heardChoices }, gmEntry.id);
       const postCommitImageJobs: ImageGenJob[] = [];

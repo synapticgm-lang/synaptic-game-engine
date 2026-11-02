@@ -87,7 +87,8 @@ describe('OPEN7 addendum — zone mini-boss', () => {
       expect(xp).toBeGreaterThan(0);
       expect(xp).toBeGreaterThan(normalSameMob * 2);
       const ratio = xp / normalSameMob;
-      expect(ratio).toBeGreaterThan(3.5);
+      // Ideal elite/trash ≈ 2/0.48 ≈ 4.17; OPEN8 smaller xpUnit can round the floor toward ~3.2.
+      expect(ratio).toBeGreaterThan(3.0);
       expect(ratio).toBeLessThan(5);
     }
     // Intended arrival (L4): elite full-taper ×2 is at least a quest-step share and beats trash.
