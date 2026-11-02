@@ -1387,7 +1387,7 @@ export function compileChoices(
   // XP-D1 A2 — after director / named-talk / free-input, re-pin quest step into top 3 (litrpg/rpg only).
   {
     const before = finalChoices;
-    finalChoices = pinStoryChipInTop(state, finalChoices, 3);
+    finalChoices = pinStoryChipInTop(state, finalChoices, 2);
     if (finalChoices !== before && finalChoices.join('|') !== before.join('|')) {
       notes.push('Quest step chip pinned top-3');
     }

@@ -247,7 +247,13 @@ import { hashCanonicalState } from './replayHash';
 import { commitTurnRecord } from './stateTx';
 import { validateEvalRun, type EvalHarnessResult } from './evalHarness';
 import { playerInputGateBlock } from './choiceCompiler';
-import { isGatherPad, isHuntPad } from './rules/wildlifeConfig';
+import {
+  isGatherPad,
+  isHuntPad,
+  isHurtHp,
+  isOutdoorRestPad,
+  SEEK_FIGHT_CHIP,
+} from './rules/wildlifeConfig';
 import { equipFromInput } from './gearEquip';
 
 /** Chip-pick profile: random (default), quest (pinned rite / A2 chip), hunt-gather (XP-D1 OPEN5 wilds loop). */
@@ -412,6 +418,9 @@ export type TurnTelemetry = {
   level?: number;
   characterXp?: number;
   xpToNext?: number;
+  /** OPEN7 addendum — HP snapshot after the turn (for T50 death reports). */
+  hp?: number;
+  maxHp?: number;
   /** XP-D1 OPEN3 — Check System chip (outside scene pads); free open, no turn cost. */
   checkSystemOffered?: boolean;
   checkSystemOpened?: boolean;
@@ -519,6 +528,8 @@ export type RunSummary = {
   receiptTotals?: ReceiptCounts;
   evalHarness?: EvalHarnessResult;
   finalReplayHash?: string;
+  /** OPEN7 addendum — Fight: DEFEAT / lifeline count for the T50 report. */
+  deathCount?: number;
   readabilityGate?: {
     pass: boolean;
     p0Count: number;
@@ -1061,6 +1072,45 @@ export function preferDyingStabilise(offered: string[], pick: string, state: Gam
   return pick;
 }
 
+const ATTACKISH_CHIP_RE =
+  /\b(?:hunt the|seek fight|look for a fight|face |press the attack|attack |fight |engage )\b/i;
+
+/**
+ * OPEN7 addendum — test-player only: when HP ≤ 50%, prefer rest/heal/flee/travel over Hunt/Seek/Face.
+ * Does not change free-typed behaviour. Exported for table-driven tests.
+ */
+export function preferHurtRecoveryPick(offered: string[], pick: string, state: GameState): string {
+  const hp = state.character?.hp ?? 0;
+  const maxHp = state.character?.maxHp ?? 0;
+  if (!isHurtHp(hp, maxHp)) return pick;
+  const pool = offered.length ? offered : [pick];
+  const rest = pool.find(
+    (c) =>
+      isOutdoorRestPad(c)
+      || /\b(?:rest|make camp|bind (?:your|my) wounds|heal|vial|potion|drink|bandage|flee|run away|withdraw)\b/i.test(c)
+  );
+  if (rest) return rest;
+  const travel = pool.find(
+    (c) =>
+      /^travel\b/i.test(c)
+      || /^walk (?:back|on|toward)\b/i.test(c)
+      || /^go back\b/i.test(c)
+      || isOutdoorRestPad(c)
+  );
+  if (travel) return travel;
+  if (ATTACKISH_CHIP_RE.test(pick) || isHuntPad(pick) || pick === SEEK_FIGHT_CHIP) {
+    const safe = pool.find((c) => !ATTACKISH_CHIP_RE.test(c) && !isHuntPad(c) && c !== SEEK_FIGHT_CHIP);
+    if (safe) return safe;
+    const wait = pool.find((c) => /^wait\b/i.test(c) || actionFamilyLikeWait(c));
+    if (wait) return wait;
+  }
+  return pick;
+}
+
+function actionFamilyLikeWait(label: string): boolean {
+  return /\b(?:wait|catch (?:your|my) breath|look around)\b/i.test(label);
+}
+
 export function isLethalChipLabel(label: string, state?: GameState): boolean {
   if (state) {
     if (isDeadlyPushOnPick(label, state)) return true;
@@ -1105,6 +1155,14 @@ function pickChipAvoidingLethalRepeat(
   // Prefer the engine's push-on option set when that choice point is live.
   const pool = set.active && set.options.length ? set.options : offered;
   const candidates = chipsOnly(pool.length ? pool : offered);
+  // OPEN7 addendum — hurt: recovery before hunt-gather / quest preference (test player only).
+  if (isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0)) {
+    const hurtPick = preferHurtRecoveryPick(candidates, candidates[0] ?? 'Wait', state);
+    const pick = avoidRepeatLethalPick(candidates, hurtPick, rng, lastAutoPickWasLethal, state);
+    lastAutoPickWasLethal = isLethalChipLabel(pick, state);
+    lastWildsPick = null;
+    return pick;
+  }
   // XP-D1 OPEN5 — hunt-gather: a wilds loop. Hunt when offered, Gather right after a Hunt, else the quest chip.
   let huntGatherPick: string | undefined;
   if (playerProfile === 'hunt-gather') {
@@ -2797,6 +2855,8 @@ Do NOT print dice notation or CODE ENFORCED.
       level: governed.character?.level,
       characterXp: governed.character?.xp,
       xpToNext: governed.character?.xpToNext,
+      hp: governed.character?.hp,
+      maxHp: governed.character?.maxHp,
       checkSystemOffered: checkSystemWasOffered,
       checkSystemOpened,
       unopenedSystemNotices: unopenedBeforeOpen,
@@ -3165,6 +3225,9 @@ export async function runFateAutoplay(opts: {
   const issueTurns = turns
     .filter((t) => t.error || t.failKind)
     .map((t) => ({ turn: t.turn, error: t.error, failKind: t.failKind }));
+  const deathCount = turns.filter((t) =>
+    (t.systemLog ?? []).some((l) => /Fight:\s*DEFEAT|lifeline|went down|you were defeated/i.test(String(l)))
+  ).length;
   const summary: RunSummary = {
     runId,
     bibleId: bible.id,
@@ -3190,6 +3253,7 @@ export async function runFateAutoplay(opts: {
     receiptTotals: countRunReceipts(state),
     finalReplayHash: hashCanonicalState(state),
     pathCounts: tallyResponsePaths(turns),
+    deathCount,
   };
   summary.evalHarness = validateEvalRun(state, summary, turns);
   const readability = readabilityGatePass(state);

@@ -1273,6 +1273,11 @@ export interface GameState {
   wildsHuntDeathCooldownUntilTurn?: number;
   /** XP-D1 OPEN7 — foe name key from the defeat that started the death cooldown (same-place re-fight). */
   wildsHuntDeathFoeKey?: string;
+  /**
+   * XP-D1 OPEN7 addendum — outdoor short rest cooldown (exclusive turn index).
+   * While turn < this, another outdoor short rest is refused (hub long rest still allowed).
+   */
+  outdoorShortRestCooldownUntilTurn?: number;
   /** XP-D1 OPEN5 — one-shot plain notices for the next STATUS beat; consumers clear after showing. Absent = none. */
   wildlifeNotices?: string[];
   /** XP-D1 OPEN5 — player level the last "you can now wear X" sweep ran at. Absent = not seen yet. */

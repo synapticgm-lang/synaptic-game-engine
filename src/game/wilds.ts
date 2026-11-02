@@ -160,6 +160,45 @@ function seedStock(state: GameState, placeId: string, regionId: string, biome: s
     pool.splice(idx, 1);
   }
 
+  // OPEN7 addendum — starter regions (band low≤1, high≤3): always keep spawn, spawn+1, spawn+2
+  // in the stocked slots (deterministic from seed), and never above spawn+2 / band high.
+  const spawn = eff.low;
+  const isStarterBand = eff.low <= 1 && eff.high <= 3;
+  if (isStarterBand) {
+    const needLevels = [spawn, spawn + 1, spawn + 2].filter((L) => L <= eff.high);
+    for (const L of needLevels) {
+      if (picked.some((r) => creatureLevel(r, eff) === L)) continue;
+      const candidate =
+        rows.find((r) => !picked.includes(r) && creatureLevel(r, eff) === L && !r.rare)
+        ?? rows.find((r) => !picked.includes(r) && creatureLevel(r, eff) === L);
+      if (candidate) {
+        if (picked.length >= MAX_SLOTS) {
+          // Drop a duplicate spawn-level non-elite first so stretch / elite can fit.
+          const dropIdx = [...picked]
+            .map((r, i) => ({ r, i }))
+            .reverse()
+            .find((x) => !x.r.elite && !x.r.rare && creatureLevel(x.r, eff) === spawn && x.i > 0)?.i;
+          if (dropIdx != null) picked.splice(dropIdx, 1);
+          else if (picked.length) picked.pop();
+        }
+        picked.push(candidate);
+      }
+    }
+    // Prefer keeping the elite mini-boss when the band has one.
+    const eliteRow = rows.find((r) => r.elite && !r.rare && creatureLevel(r, eff) === spawn + 2);
+    if (eliteRow && !picked.includes(eliteRow)) {
+      if (picked.length >= MAX_SLOTS) {
+        const dropIdx = [...picked]
+          .map((r, i) => ({ r, i }))
+          .reverse()
+          .find((x) => !x.r.elite && creatureLevel(x.r, eff) === spawn && x.i > 0)?.i;
+        if (dropIdx != null) picked.splice(dropIdx, 1);
+        else picked.pop();
+      }
+      picked.push(eliteRow);
+    }
+  }
+
   const slots: WildsSlot[] = picked.map((r) => {
     const max = slotMax(r, areaTier);
     return {

@@ -24,6 +24,37 @@ export const WILDS_KILL_XP_MULT = 0.48;
 /** Outdoor turns after a hunt/fight defeat during which Hunt pays 0 and is not pushed as a chip. */
 export const HUNT_DEATH_COOLDOWN_TURNS = 3;
 
+/**
+ * OPEN7 addendum — outdoor short rest (LitRPG / Story RPG only; never tabletop).
+ * Heals this fraction of max HP (at least 1), advances the world clock by OUTDOOR_SHORT_REST_HOURS,
+ * pays 0 XP, and cannot be repeated until OUTDOOR_SHORT_REST_COOLDOWN_TURNS have passed.
+ */
+export const OUTDOOR_SHORT_REST_HEAL_FRACTION = 0.25;
+export const OUTDOOR_SHORT_REST_HOURS = 1;
+export const OUTDOOR_SHORT_REST_COOLDOWN_TURNS = 3;
+/** Hurt threshold: at or below this share of max HP, Hunt/Seek are withheld and recovery chips are offered. */
+export const HURT_HP_FRACTION = 0.5;
+
+export const OUTDOOR_REST_CHIP = 'Rest and bind your wounds';
+export const OUTDOOR_CAMP_CHIP = 'Make camp';
+export const WALK_BACK_HUB_CHIP = 'Walk back to the hub';
+
+export function isOutdoorRestPad(label: string): boolean {
+  const t = (label ?? '').replace(/\s+/g, ' ').trim();
+  return (
+    /^rest and bind your wounds\b/i.test(t)
+    || /^make camp\b/i.test(t)
+    || /^walk back to the hub\b/i.test(t)
+    || /^i bind my wounds\b/i.test(t)
+  );
+}
+
+export function isHurtHp(hp: number, maxHp: number): boolean {
+  const max = Math.max(1, Math.floor(maxHp || 1));
+  const cur = Math.max(0, Math.floor(hp || 0));
+  return cur * 2 <= max;
+}
+
 /** Ambush chance while aggressive/pack/territorial guards remain (× share still alive). */
 export const GUARD_AMBUSH_BASE = 0.35;
 /** World hours of safe gathering after guards clear (or until stock refills past half). */

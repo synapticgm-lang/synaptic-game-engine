@@ -34,6 +34,7 @@ import {
   SEEK_FIGHT_CHIP,
   WILDS_CHALLENGE_BAR_SHARE,
   WILDS_HUNT_BAR_SHARE,
+  WILDS_KILL_XP_MULT,
   WORLD_MAX_CREATURE_LEVEL,
   isHuntPad,
 } from './rules/wildlifeConfig';
@@ -189,12 +190,14 @@ describe('OPEN5 2 — gray cliff', () => {
 });
 
 describe('OPEN5 3 — elite x2', () => {
-  it('doubles a table kill and is a challenge kill', () => {
+  it('doubles a table kill (elite skips trash WILDS_KILL_XP_MULT) and is a challenge kill', () => {
+    // OPEN7 addendum: trash keeps WILDS_KILL_XP_MULT; elite pays full taper ×2 so zone bosses stay worthwhile.
     const opts = { playerLevel: 8, foeLevel: 8, levelSource: 'table' as const, skipEventCap: true };
     const plain = unitMilestoneAmount('litrpg', 'encounter', opts);
     const elite = unitMilestoneAmount('litrpg', 'encounter', { ...opts, elite: true });
     expect(plain).toBeGreaterThan(0);
-    expect(elite).toBe(plain * 2);
+    expect(elite).toBeGreaterThan(plain * 2);
+    expect(elite / plain).toBeCloseTo(2 / WILDS_KILL_XP_MULT, 1);
     expect(isChallengeHuntKill(8, 8, { elite: true })).toBe(true);
     expect(isChallengeHuntKill(8, 8)).toBe(false);
     expect(isChallengeHuntKill(8, 11)).toBe(true);

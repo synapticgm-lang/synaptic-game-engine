@@ -15,6 +15,12 @@ import { houseRulesOf, REST_HOURS } from './rules/houseRules';
 import { sidekickOf } from './rules/sidekick';
 import { modeProfile } from './rules/modeProfile';
 import { turnRng } from './seededRng';
+import {
+  OUTDOOR_SHORT_REST_COOLDOWN_TURNS,
+  OUTDOOR_SHORT_REST_HEAL_FRACTION,
+  OUTDOOR_SHORT_REST_HOURS,
+} from './rules/wildlifeConfig';
+import { isOutdoorWildsPlace } from './wilds';
 
 export interface RecoveryRow {
   /** Share of max HP recovered after a won fight. */
@@ -37,13 +43,56 @@ export function recoveryRow(mode: EngineMode | undefined): RecoveryRow {
   return RECOVERY_TABLE[mode ?? 'litrpg'] ?? RECOVERY_TABLE.litrpg;
 }
 
-const REST_RE = /\b(rest|wait|sleep|catch (?:your|my) breath|take a breather|recover|ready yourself)\b/i;
+const REST_RE = /\b(rest|wait|sleep|catch (?:your|my) breath|take a breather|recover|ready yourself|make camp|bind (?:your|my) wounds)\b/i;
+const OUTDOOR_SHORT_REST_RE =
+  /\b(?:rest and bind your wounds|make camp|i bind my wounds|bind (?:your|my) wounds|catch (?:your|my) breath|take a breather|short rest|take a short rest)\b/i;
 
 /** Rest / wait at a named hub with no live or pending fight and no open dungeon. */
 export function isSafeHubRest(state: GameState, input: string): boolean {
   if (!REST_RE.test(input ?? '')) return false;
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter || state.activeDungeon) return false;
   return !!matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
+}
+
+/**
+ * OPEN7 addendum — LitRPG / Story RPG may take a SHORT outdoor rest when not in a fight.
+ * Full / long rest still needs a safe hub. Tabletop / dnd / PYOA never use this path.
+ */
+export function canOutdoorShortRest(state: GameState, input: string): boolean {
+  if (state.engineMode !== 'litrpg' && state.engineMode !== 'rpg') return false;
+  if (!OUTDOOR_SHORT_REST_RE.test(input ?? '') && !/^rest\b/i.test((input ?? '').trim())) return false;
+  if (state.activeEncounter || state.sceneFacts?.pendingEncounter || state.activeDungeon) return false;
+  if (!isOutdoorWildsPlace(state) && !state.journey) return false;
+  // Hub long/short rests stay on isSafeHubRest; outdoor path is for non-hub ground.
+  if (matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation)) return false;
+  const until = state.outdoorShortRestCooldownUntilTurn;
+  if (typeof until === 'number' && (state.turn ?? 0) < until) return false;
+  const max = state.character?.maxHp || state.character?.hp || 0;
+  const hp = state.character?.hp ?? 0;
+  if (max <= 0 || hp >= max) return false;
+  return true;
+}
+
+/** Outdoor short rest: heal a configured fraction, advance clock, 0 XP, cooldown. */
+export function applyOutdoorShortRest(state: GameState, input: string): RestHeal {
+  if (!canOutdoorShortRest(state, input)) return { state, receipt: null };
+  const ch = state.character;
+  const max = ch.maxHp || ch.hp;
+  const gain = Math.max(1, Math.floor(max * OUTDOOR_SHORT_REST_HEAL_FRACTION));
+  const hp = Math.min(max, ch.hp + gain);
+  const clock = advanceClock(state, OUTDOOR_SHORT_REST_HOURS);
+  const turn = state.turn ?? 0;
+  const next: GameState = {
+    ...clock.state,
+    character: { ...ch, hp },
+    outdoorShortRestCooldownUntilTurn: turn + OUTDOOR_SHORT_REST_COOLDOWN_TURNS,
+  };
+  const receipt = `Rest: short outdoor rest, ${OUTDOOR_SHORT_REST_HOURS} hour — HP ${ch.hp} → ${hp} (${clock.note})`;
+  return {
+    state: next,
+    receipt,
+    fact: `You rested outdoors for about an hour and bound your wounds${hp < max ? '; you are not fully healed' : ''}.`,
+  };
 }
 
 /**
@@ -275,9 +324,12 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
 /**
  * Heal on a safe-hub rest, by the SRD rest rules in every mode. Receipt for STATUS, or null when nothing changed.
  * Tabletop shows the rest kind, hours, clock and Hit Die; LitRPG and story RPG show the short HP line.
+ * OPEN7 addendum: LitRPG / Story RPG also accept a short outdoor rest (fraction heal, never a hub long rest).
  */
 export function applyRestHeal(state: GameState, input: string): RestHeal {
-  return presentRest(state, applySrdRest(state, input));
+  const hub = presentRest(state, applySrdRest(state, input));
+  if (hub.receipt) return hub;
+  return presentRest(state, applyOutdoorShortRest(state, input));
 }
 
 /**

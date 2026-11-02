@@ -16,7 +16,7 @@
  * - a nudge line already fired this save never fires again unchanged.
  */
 import type { CirclingMemory, GameState, QuestObjective } from './types';
-import { hubsForBibleId, matchHub, placeFirstSight, questTravelSite } from './outdoorHubs';
+import { hubsForBibleId, matchHub, outdoorHubTravelChoices, placeFirstSight, questTravelSite } from './outdoorHubs';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { engineAllowsCombat } from './beatContract';
 import { isRoadLabel } from './travelJourney';
@@ -37,10 +37,18 @@ import {
   hasNodeStock,
   ensureWilds,
   ensureGatherPouch,
+  isGuardBehaviour,
+  wildsStockHere,
 } from './wilds';
 import { ensureRegionResources } from './regionLevels';
 import { gatherModeOk, huntModeOk } from './wildlifeActions';
 import { canAddMaterials } from './inventory';
+import {
+  OUTDOOR_REST_CHIP,
+  WALK_BACK_HUB_CHIP,
+  isHurtHp,
+  isOutdoorRestPad,
+} from './rules/wildlifeConfig';
 
 export type { CirclingMemory } from './types';
 
@@ -560,7 +568,11 @@ const FREE_INPUT_CHIP = /^(?:say something|do something else)/i;
  * XP-D1 A2 — LitRPG / Story RPG: keep the quest step (or travel-to-step) chip in the top N.
  * Drops a lower pad when injecting; tabletop / PYOA unchanged.
  */
-export function pinStoryChipInTop(state: GameState, choices: string[], topN = 3): string[] {
+/**
+ * XP-D1 A2 / OPEN7 addendum — pin quest step into the top N.
+ * Default topN=2 (was 3) so quest/random profiles see the step more often (pace lever).
+ */
+export function pinStoryChipInTop(state: GameState, choices: string[], topN = 2): string[] {
   if (state.engineMode !== 'litrpg' && state.engineMode !== 'rpg') return choices;
   if (state.activeEncounter || !choices.length) return choices;
   const story = storyChip(state);
@@ -879,6 +891,7 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
   // quest-progress / Travel / Check System. When Hunt is available, drought Seek Fight hands over to it.
   // OPEN7 — after a hunt defeat, do not push Hunt/Seek for HUNT_DEATH_COOLDOWN_TURNS; prefer recovery chips.
   // OPEN7 — do not push Hunt when every live slot is gray to the player.
+  // OPEN7 addendum — at HP ≤ 50% (or death cooldown) withhold Hunt/Seek; offer Rest / Walk back high.
   {
     const openingDone = state.openingEstablishment?.complete === true;
     const outdoor = isOutdoorWildsPlace(state);
@@ -886,6 +899,8 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     const deathCd =
       typeof state.wildsHuntDeathCooldownUntilTurn === 'number'
       && turn < state.wildsHuntDeathCooldownUntilTurn;
+    const hurt =
+      isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0) || deathCd;
     // Wilds pads: LitRPG + Story RPG may Gather; only LitRPG may Hunt (tabletop dnd / PYOA see neither).
     const canWilds =
       openingDone
@@ -893,30 +908,52 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
       && gatherModeOk(state)
       && !state.activeEncounter
       && !state.activeDungeon;
-    const canHunt = canWilds && huntModeOk(state) && !deathCd;
+    const canHunt = canWilds && huntModeOk(state) && !hurt;
     let huntReady = false;
     if (canWilds) {
       let s = ensureGatherPouch(ensureRegionResources(ensureWilds(state)));
       const hasPayStock = wildsHasNonGrayStock(s);
       huntReady = canHunt && wildsHasStock(s) && hasPayStock;
-      if (deathCd) {
-        // Recovery chips: rest / heal / quest / travel — never Hunt.
+      if (hurt) {
+        // Recovery chips: Rest / Make camp / Walk back — never Hunt or Seek Fight.
         list = list.filter((c) => !isHuntChip(c) && !isSeekFightChip(c));
+        // Gather only when safe (no live guard stock — ambush risk). Keep Gather when clear.
+        const stock = wildsStockHere(s);
+        const guardThreat = !!stock?.slots.some(
+          (slot) => slot.stock > 0 && isGuardBehaviour(slot.behaviour)
+        );
+        if (guardThreat) {
+          list = list.filter((c) => !isGatherChip(c));
+          notes.push('Wilds: Gather withheld while hurt (guard ambush risk)');
+        }
         const hasRecovery = list.some(
           (c) =>
-            movesOn(state, c, story)
+            isOutdoorRestPad(c)
+            || movesOn(state, c, story)
             || actionFamily(c) === 'wait'
-            || /\b(rest|heal|bandage|camp|recover)\b/i.test(c)
+            || /\b(rest|heal|bandage|camp|recover|walk back)\b/i.test(c)
             || /^check system\b/i.test(c)
         );
-        if (!hasRecovery) {
-          const restChip = 'Wait and catch your breath';
-          if (!list.some((c) => /^wait\b/i.test(c))) {
-            list = [restChip, ...list];
-            notes.push('Wilds: recovery after defeat (no Hunt)');
+        if (!hasRecovery || !list.some((c) => isOutdoorRestPad(c) || /\b(rest|camp|bind)\b/i.test(c))) {
+          const walk =
+            outdoorHubTravelChoices(s, 1)[0]
+            ?? WALK_BACK_HUB_CHIP;
+          const recovery = OUTDOOR_REST_CHIP;
+          // Rank: Check System / urgent quest stay above; recovery next; filler below.
+          const systemIdx = list.findIndex((c) => /^check system\b/i.test(c));
+          const questIdx = list.findIndex((c) => story && c.toLowerCase() === story.toLowerCase());
+          const insertAt = Math.max(
+            0,
+            Math.min(list.length, Math.max(systemIdx, questIdx) + 1)
+          );
+          const inject = [recovery];
+          if (!list.some((c) => movesOn(state, c, story) || /^travel\b/i.test(c) || /^walk\b/i.test(c))) {
+            inject.push(walk.startsWith('Travel') ? walk : WALK_BACK_HUB_CHIP);
           }
+          list = [...list.slice(0, insertAt), ...inject, ...list.slice(insertAt)];
+          notes.push(deathCd ? 'Wilds: recovery after defeat (no Hunt)' : 'Wilds: recovery while hurt (no Hunt)');
         } else {
-          notes.push('Wilds: Hunt withheld (death cooldown)');
+          notes.push(deathCd ? 'Wilds: Hunt withheld (death cooldown)' : 'Wilds: Hunt withheld (hurt)');
         }
       } else if (huntReady && !list.some((c) => isHuntChip(c))) {
         // Least useful slot first: dead filler, then idle loiter, and only then a social chip.
@@ -938,7 +975,9 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
           list = [...list.slice(0, insertAt), HUNT_WILDS_CHIP, ...list.slice(insertAt)];
           notes.push('Wilds: Hunt the wildlife nearby');
         }
-      } else if (canHunt && wildsHasStock(s) && !hasPayStock) {
+      } else if (wildsHasStock(s) && !hasPayStock) {
+        // OPEN7 addendum — strip leftover Hunt chips when everything left is gray.
+        list = list.filter((c) => !isHuntChip(c) && !isSeekFightChip(c));
         notes.push('Wilds: Hunt not pushed (stock gray to player)');
       }
       // Gather when the region has resource nodes in stock.
@@ -971,7 +1010,7 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     const sinceCombat = state.arcDirector?.turnsSinceCombatReceipt;
     const alreadySeek = list.some((c) => isSeekFightChip(c) || isHuntChip(c));
     const drought = typeof sinceCombat === 'number' && sinceCombat >= 8;
-    if (openingDone && canSeekFight(state) && drought && !alreadySeek && !huntReady && !deathCd) {
+    if (openingDone && canSeekFight(state) && drought && !alreadySeek && !huntReady && !hurt) {
       const fillerIdx = list.findIndex(
         (c) => isFillerNoProgressChip(c) || (LOITER.has(actionFamily(c)) && !movesOn(state, c, story))
       );
@@ -1051,7 +1090,7 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
   const exitAt = ranked.findIndex((c) => CARD_EXIT.test(c));
   if (exitAt > SHOWN_CHIPS - 1) ranked.splice(SHOWN_CHIPS - 1, 0, ...ranked.splice(exitAt, 1));
   // XP-D1 A2 — pin starter/quest step (or travel-to-it) into the top 3 for LitRPG / Story RPG.
-  const pinned = pinStoryChipInTop(state, ranked, 3);
+  const pinned = pinStoryChipInTop(state, ranked, 2);
   if (pinned.join('|') !== ranked.join('|')) notes.push('Quest step chip pinned top-3');
   if (pinned.join('|') !== choices.join('|')) notes.push('Anti-circling rank');
   return { choices: pinned, notes };

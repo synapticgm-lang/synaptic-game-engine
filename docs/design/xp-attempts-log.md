@@ -448,3 +448,8 @@ OpenRouter: no balance or $ cost figure in logs or run meta (costUsd null; teach
 **Next attempt (one line):** Stop death-farm Hunt loops (and post-cap outdoor Hunt spam) so L2→L3 lands in 15–25 without fight-share overshoot, harden live filler family credit to ≤2, and make Story RPG Gather actually inject when `nodeStockByPlace` has stock (Herbalism learn + pad path).
 
 Plain summary also at `merge-logs/xp-design/open6/T50-report.md`.
+
+### 21. 2 Nov 2026: OPEN7 + power-levelling addendum (branch xp/wilds3)
+- What: Hunt always pays unless WoW gray (killScale / ZD / grayLevel); removed hunt budget + post-cap floor as payout limiters; death-farm Hunt cooldown (3 turns); filler family cap at pipeline end; Story RPG Gather pouch. Addendum: stretch creatures spawn+1/+2 + starter elite mini-boss; trash `WILDS_KILL_XP_MULT=0.48`, elite skips trash mult (full taper x2); outdoor short rest + hurt Hunt withhold (HP <= 50%); autoplay `preferHurtRecoveryPick`; quest-step units 1.2 + pin top 2. Formula logged in `merge-logs/xp-design/open7/OPEN7-formula.md` (WoW Classic citations).
+- Why: attempt 6 MISS (L2->L3 34, quest 54.9%, death farm, filler 3-5, RPG Gather 0); John wants power-levelling grind path and hurt recovery.
+- Outcome: code + vitest on xp/wilds3 (commit follows). T50 / ship owned by runner. Bars / 25% growth unchanged.

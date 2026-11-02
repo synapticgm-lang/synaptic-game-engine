@@ -173,7 +173,11 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
  * OPEN3 live was ~3–4 XP/turn post-rite with 1–2 fights; engaged OPEN4 targets ~8–12 XP/turn.
  */
 export const ENCOUNTER_UNITS_L2_PLUS = 1.15;
-export const QUEST_STEP_UNITS_L2_PLUS = 1.0;
+/**
+ * OPEN7 addendum — quest-step reach lever for quest/random profiles (L2→L3 15–25).
+ * Raised from 1.0 so followers earn more XP per offered step without touching kill taper.
+ */
+export const QUEST_STEP_UNITS_L2_PLUS = 1.2;
 export const QUEST_COMPLETE_UNITS_L2_PLUS = 2.4;
 
 /** One XP event may not exceed this share of the current level bar (LitRPG / Story RPG). */
@@ -342,12 +346,14 @@ export function unitMilestoneAmount(
       : Math.max(1, Math.floor(rawContent));
 
   if (isFight && opts.levelSource === 'table') {
-    // sameLevelKill(P) × R(P,M) × (elite ? 2 : 1) × WILDS_KILL_XP_MULT. Gray → 0.
-    // OPEN7: no hunt budget / post-cap floor — level-gap (killScale) is the only zero.
+    // sameLevelKill(P) × R(P,M) × (elite ? 2 : 1) × (elite ? 1 : WILDS_KILL_XP_MULT). Gray → 0.
+    // OPEN7 addendum: trash keeps WILDS_KILL_XP_MULT for quest-share; elite mini-bosses pay full taper ×2
+    // so a zone boss stays worthwhile (not a constant special-case). No budget / event-bar cap.
     const R = killScale(playerLevel, unclamped);
-    amount = Math.round(amount * R * (opts.elite ? 2 : 1) * WILDS_KILL_XP_MULT);
+    const mult = opts.elite ? 1 : WILDS_KILL_XP_MULT;
+    amount = Math.round(amount * R * (opts.elite ? 2 : 1) * mult);
     if (amount <= 0) return 0;
-    return opts.skipEventCap ? amount : capXpEventAmount(mode, playerLevel, amount);
+    return amount;
   }
 
   // Grey uses the unclamped content level (same idea as old over-level raw area).

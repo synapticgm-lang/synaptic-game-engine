@@ -116,7 +116,7 @@ const STARTER_ANIMALS: Record<string, RowSeed[]> = {
 /**
  * Species rows for a biome across a level band.
  * - Every trash name gets a row spread over the band; any level still uncovered gets a row.
- * - Elite + rare rows sit in the upper band (skipped for the start band, high <= 3).
+ * - Elite + rare rows sit in the upper band; start bands (high <= 3) still get one elite at spawn+2 (OPEN7 addendum).
  * - Start bands (low <= 1) on plains / forest / urban add starter animals at level 1.
  */
 export function speciesForBiome(biome: string, band: LevelBand): CreatureSpeciesRow[] {
@@ -146,10 +146,16 @@ export function speciesForBiome(biome: string, band: LevelBand): CreatureSpecies
     covered.add(o);
   }
 
-  if (hi > 3) {
+  // OPEN7 addendum — starter bands (1–3) still get one elite at spawn+2 (zone mini-boss).
+  // Wider bands keep elite + rare in the upper half as before.
+  {
     const [elite, rare] = fam.elite;
-    if (elite) add({ name: elite, offset: Math.max(0, width - 2), weight: 3, elite: true });
-    if (rare) add({ name: rare, offset: width - 1, weight: 1, elite: true, rare: true });
+    if (hi <= 3 && lo <= 1) {
+      if (elite) add({ name: elite, offset: Math.max(0, width - 1), weight: 2, elite: true });
+    } else if (hi > 3) {
+      if (elite) add({ name: elite, offset: Math.max(0, width - 2), weight: 3, elite: true });
+      if (rare) add({ name: rare, offset: width - 1, weight: 1, elite: true, rare: true });
+    }
   }
 
   return [...rows.values()];
