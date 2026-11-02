@@ -591,3 +591,61 @@ Plain summary also at `merge-logs/xp-design/open8/T50-report.md`.
 - **Before / after sim:** bars L1/L2/L3/L4 = 150/187/233/291 (unchanged). Units L2=12 … L6=19 unchanged. Quest-follower model L2→L3 still **16** turns / quest ~**63.5%** / fight ~**19.8%**. Grinder still **59** kills → L7. Live 7501 path was blocked by Rest/filler, not the curve. Details: `merge-logs/xp-design/open9/OPEN9-sim-pace.json`, `OPEN9-sim-grind.json`.
 - **Formula reference:** attempt 7 WoW Classic entry / `OPEN7-formula.md` (unchanged killScale).
 - **Outcome:** design + unit tests shipped on xp/wilds5; **measure / T50 results TBD** (runner).
+
+### 2 Nov 2026 — LitRPG XP attempt 9 results (filler cap holds in engine and autoplay, outdoor Rest at HP≤50%, Gather over Walk, no Travel to HERE, L2/L3 pace) — MISS
+
+**John's correction (kept from attempt 7):** Hunting must always give XP except when the player is too high a level for the creature or area (WoW-style grey-mob falloff by level gap). Per-session hunt cap and 0-XP post-cap rule removed. Quest share 60–70% is tuned via hunt XP amounts and level-gap falloff, not a cap. Keep the death-farm fix (no Hunt chip / no hunt XP right after a death).
+
+**John's power-levelling design:** Grinding the starter zone to L6–7 before the quest chain and mini-boss is a valid path. Kill XP keeps paying until the player out-levels the creature, tapering by level gap like WoW grey-mob maths. Starter zones hold creatures 1–2 levels above the spawn level. The 60–70% quest share is the target for quest followers, not for grinders.
+
+**Exact kill-XP formula** (copied from `merge-logs/xp-design/open7/OPEN7-formula.md` / OPEN7-report Addendum; owners `xpPace.ts` killScale / ZD / grayLevel / wowBaseXp + `WILDS_KILL_XP_MULT` in `wildlifeConfig.ts`; elite ×2 in `unitMilestoneAmount`; death-cooldown zeros in `engineFight.payEncounterXp`):
+
+Source: WoW Classic/vanilla mob XP — https://warcraft.wiki.gg/wiki/Mob_experience (S1 Zero Difference / gray / difference factor) and https://warcraft.wiki.gg/wiki/Experience_point (S2 base `(M×5)+45`). Differs from GW2 (no gray cut-off) and FFXIV (smooth gap, no ZD table).
+
+```
+sameLevelUnit = unitAward(encounter at playerLevel) × xpUnit(playerLevel)
+R(P, M) = killScale(P, M)
+  = 0                                 if M ≤ grayLevel(P)
+  = (wowBaseXp(M) / wowBaseXp(P)) × diffFactor   otherwise
+    wowBaseXp(L) = L×5 + 45
+    if M ≥ P: diffFactor = 1 + 0.05 × min(M − P, 4)     // +4 level bonus cap
+    if M <  P: diffFactor = 1 − (P − M) / zeroDifference(P)
+amount = round(sameLevelUnit × R × (elite ? 2 : 1) × (elite ? 1 : WILDS_KILL_XP_MULT))
+```
+
+`WILDS_KILL_XP_MULT = 0.48` applies to trash table kills only. Elite mini-bosses skip the trash mult. No hunt budget, no post-cap 5% floor, no `XP_EVENT_BAR_CAP` on table kills. Only zeros: gray + death-farm cooldown.
+
+**Addendum numbers (from OPEN7-report Addendum; OPEN9 sims unchanged from OPEN8):** Stretch — starter band 1–3; every starter place stocks spawn / spawn+1 / spawn+2 + one elite at spawn+2. Grinder sim OPEN7: **75 kills** to L7 preferring mini-boss; OPEN8/OPEN9 sim (`OPEN9-sim-grind.json`): **59 kills** to L7; gray cliff L6 (spawn), L7 (spawn+1), L8 (all including mini-boss). Boss = spawn+2 elite; pays full taper ×2; still pays at L7 (grays at L8). Judge grinder-style only where a run shows it — **not observed** on 7601.
+
+What changed (from `merge-logs/xp-design/open9/OPEN9-report.md`): (1) filler place-keyed cap — `fillerOfferPlaceKey` + Open family + Fate refuse 3rd same-family; (2) outdoor Rest when HP≤50% no fight + meal from inventory + autoplay prefer Rest; (3) Gather over Walk when stock; (4) Travel ≠ HERE via `isTravelDestHere` + already-here commit; (5) Opening Rite force-complete by turn 2; (6) `Your upperclassman` scrub. Formula / bars / units unchanged.
+
+Runs (free writer DeepSeek via OpenRouter/gm-turn, no paid AI; **one sample per mode**, next world in rotation — not averages; build **2026-11-02q+4b93ac6d** ≥ 2026-11-02q):
+- 7601 random hollow-core (LitRPG): `scripts/fate-autoplay/runs/2026-11-02T22-54-37-413Z_hollow-core_cold-system_s7601`
+- 7602 random wayfarers-map (Story RPG): `…T23-00-06-252Z_wayfarers-map_chilled-gm_s7602`
+- 7603 millstone-road (tabletop regression; rundir `none`, summary `playerProfile=random`): `…T23-06-00-768Z_millstone-road_chilled-gm_s7603`
+
+Measured from `turns.jsonl` (`xpGained`, `XP Gained:` lines, level, Check System, chips, wilds, Rest/Travel). Quest share = rite + steps + completes. Fight share includes hunts. Bars: L2 **187** → L3 **233**. Vs attempt 8: 7501 inkbound-academy L2@3 / never L3 / filler **5**; 7502 cape-district-vigil Gather **3/0** / filler **8** / Travel→HERE; 7503 stillroot-veil.
+
+| Run | Profile | Scenario | Build | Rite | L2 | L3 | L2→L3 | Total XP | Rite | Steps | Completes | Fights (hunt) | Other | Quest% | Fight% | Hunt off/take | Gather off/take | Check off/open/max | Filler max | Travel→HERE | Rest hurt off/take | Deaths harness / real | LOOP | readability |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7601 | random | hollow-core | 2026-11-02q | **2** chip | **2** | **36** | **34** | 408 | 150 | 82 | 80 | 63 (63) | 33 | **76.5** | **15.4** | **4/1** | 4/1 | **14/14/3** | **3** | **0** | **0**/0 (T43–50 @12/41) | 2 / **0** | no | fail p0=10 |
+| 7602 | random | wayfarers-map (rpg) | 2026-11-02q | — | **6** | — | **n/a** | 258 | 0 | 117 | 128 | 13 (0) | 0 | **95.0** | **5.0** | **0/0** | **11/7** | **12/12/5** | **2** | **17** | **1/1** (T27 12→19, no food) | 2 / **0** | no | fail p0=10 |
+| 7603 | none/random | millstone-road (dnd) | 2026-11-02q | — | — | — | — | (not judged) | — | — | — | — | — | — | — | 0/0 | 0/0 | — | — | 1 (T3) | — | 0 / **1** | no | fail p0=2; PLAY ENDED T19 |
+
+Hunt XP per win (7601): T36 Tide Crab Matriarch **43**; T42 Pact-Hunter Skirmisher **20** — all >0, none grey, no post-death hunt. Gather (7602): **11** offered / **7** taken (Peacebloom stock); Hunt correctly **0**. Trade ranks: 7602 herbalism materials Peacebloom×5; 7601 Gather empty. Harness `deathCount` matches foe “went down” on victories (false +); real player death is the death column vs attempt 6.
+
+**Deaths vs attempt 6:** attempt 6 LitRPG 7301–7306 had **29** real DEFEATs with Hunt in the prior 3 turns **29** times. Attempt 9 LitRPG sample: **0** real DEFEATs (deaths still fell). After HP≤50% (7601 T42+ at 12/41) outdoor Rest was **not** kept on the pad (one Rest chip on the clear turn only; Travel/Walk/Open after). 7602 Rest taken at T27 with STATUS `no food — longer rest`. 7603 real death T19: prior picks Scout / berth / Travel on (tabletop exhaustion road death; OPEN9 rest not in scope).
+
+**Stuck / new loops:** 7602 Travel→HERE ×**17** (aliases / unfinished-map / `place_where-this-tale-opens`) → `turn-ignored-action`. 7601 post-hurt Rest miss + Open-box family streak (max **3**) left L2→L3 at **34**.
+
+**Grinder-style:** not observed on 7601 (two hunts; quest-heavy; mid L3). Sim-only: OPEN9 **59** kills → L7; gray cliff as above.
+
+**Vs attempt 6 baseline / targets (LitRPG = single sample 7601 — say so, not an average):** L2@T2 **PASS** (**2**); L2→L3 15–25 **MISS** (**34**); quest tol. 55–80% **PASS** (**76.5%**); fight 15–30% **PASS** (**15.4%**); hunt always pays **PASS**; filler ≤2 **MISS** (**3**); outdoor Rest at HP≤50% **MISS**; Travel→HERE **MISS** (7602 **17**); Check System **PASS**; no LOOP **PASS**; Story RPG Gather offer+take **PASS** (11/7) + Hunt never **PASS**; tabletop no LOOP/crash **PASS**; LitRPG real deaths down **PASS**.
+
+OpenRouter: no balance or `$` cost figure in logs or run meta (`costUsd` null) at run times 2026-11-02T22:54:37Z / 23:00:06Z / 23:06:00Z.
+
+**Verdict: MISS** — offs: L2→L3 **34**; filler max **3**; LitRPG Rest missing while hurt; Story RPG Travel→HERE **17**.
+
+**Next attempt (one line):** Keep Rest on every hurt non-fight pad (including post-clear LitRPG); seal Travel→HERE for Story RPG place aliases; drop Open reward-box family to ≤2; pull L2→L3 under 25 via quest-step spacing.
+
+Plain summary also at `merge-logs/xp-design/open9/T50-report.md`.
