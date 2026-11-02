@@ -209,14 +209,99 @@ let labelSource = null;
 /** Pair-side rows written when --pair is set (other seat's training thumbs). */
 let pairOut = null;
 
+/**
+ * q71-TRAINLOG — owner of calls.jsonl is fate-autoplay (creates the file).
+ * autoThumbs appends job:"judge" rows here, then merges judge_scores onto the writer row
+ * for each judged turn (order: writer/repair rows during the run → judge rows after --notes).
+ */
+function appendCallsJsonl(row) {
+  try {
+    const p = path.join(runDir, 'calls.jsonl');
+    fs.appendFileSync(p, `${JSON.stringify(row)}\n`, { encoding: 'utf8' });
+  } catch {
+    /* never fail the thumbs pass on a log miss */
+  }
+}
+
 async function callJudge(key, model, prompt) {
+  const started = Date.now();
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 12000, temperature: 0 }),
   });
   if (!res.ok) throw new Error(`http ${res.status}`);
-  return parseJudge(replyText(await res.json()));
+  const data = await res.json();
+  const reply = replyText(data);
+  const finish = data?.choices?.[0]?.finish_reason ?? null;
+  const usage = data?.usage ?? {};
+  const judgeId = crypto.randomUUID();
+  appendCallsJsonl({
+    id: judgeId,
+    created_at: new Date().toISOString(),
+    job: 'judge',
+    messages: [
+      { role: 'user', content: prompt },
+      { role: 'assistant', content: reply },
+    ],
+    teacher_model: model,
+    provider: 'openrouter',
+    tokens_in: typeof usage.prompt_tokens === 'number' ? usage.prompt_tokens : null,
+    tokens_out: typeof usage.completion_tokens === 'number' ? usage.completion_tokens : null,
+    tokens_cached: null,
+    cost: typeof usage.cost === 'number' ? usage.cost : null,
+    latency_ms: Date.now() - started,
+    finish_reason: finish,
+    truncated: finish === 'length' || finish === 'max_tokens',
+    lap_id: null,
+    run_id: path.basename(runDir),
+    save_id: null,
+    turn_no: null,
+    mode: null,
+    genre: null,
+    build_stamp: null,
+  });
+  const verdicts = parseJudge(reply);
+  // Merge judge_scores onto existing writer rows in calls.jsonl (same file; rewrite once per batch).
+  try {
+    const p = path.join(runDir, 'calls.jsonl');
+    if (fs.existsSync(p) && verdicts.length) {
+      const lines = fs.readFileSync(p, 'utf8').split(/\r?\n/);
+      const rows = lines.map((line) => {
+        if (!line.trim()) return null;
+        try {
+          return JSON.parse(line);
+        } catch {
+          return null;
+        }
+      });
+      for (const v of verdicts) {
+        const turn = Number(String(v?.turn ?? '').match(/\d+/)?.[0] ?? NaN);
+        if (!Number.isFinite(turn)) continue;
+        const scores = {
+          overall: v.thumb === 'up' ? 1 : v.thumb === 'down' ? 0 : 0.5,
+          ...(typeof v.score === 'number' ? { score: v.score } : {}),
+          ...(v.stiff ? { stiff: 1 } : {}),
+          ...(v.followed === false ? { followed_action: 0 } : v.followed === true ? { followed_action: 1 } : {}),
+        };
+        for (let i = rows.length - 1; i >= 0; i--) {
+          const j = rows[i];
+          if (j && j.job === 'writer' && j.turn_no === turn) {
+            j.judge_scores = { ...(j.judge_scores ?? {}), ...scores };
+            break;
+          }
+        }
+      }
+      fs.writeFileSync(
+        p,
+        rows.filter(Boolean).map((r) => JSON.stringify(r)).join('\n') + '\n',
+        { encoding: 'utf8' }
+      );
+    }
+  } catch {
+    /* keep judge row even if merge fails */
+  }
+  return verdicts;
 }
 
 function applyPairedToSide(sideRows, mark, why, followed) {

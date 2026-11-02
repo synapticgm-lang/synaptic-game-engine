@@ -4,7 +4,8 @@ import { RateLimitError, withRetry } from './aiServiceShared';
 import { logger } from './logger';
 import { resolveWriterModel, getTierDefinition } from './subscriptionTiers';
 import { resolveHostedImageModel } from './hostedImageModel';
-import { effectiveWriterTier, isTestLabEnabled } from './testLab';
+import { effectiveWriterTier, isAutoplayTestLabSession, isTestLabEnabled } from './testLab';
+import { appendTrainLogRows, currentTrainLogJob } from './trainLog';
 import {
   BYOK_TEXT_KEY_REQUIRED,
   canConfigurePlayerAiKeys,
@@ -164,6 +165,17 @@ export async function invokeGmProxy(params: {
           tier,
         });
 
+    // q71-TRAINLOG — narrow body flag only the autoplay/test-lab harness sets; never for real players.
+    const trainLog = isAutoplayTestLabSession();
+    const stackJob = currentTrainLogJob();
+    const trainJob =
+      stackJob !== 'untagged'
+        ? stackJob
+        : params.mode === 'repair'
+          ? 'repair'
+          : params.mode === 'check'
+            ? 'untagged'
+            : 'writer';
     const body = {
       mode: params.mode,
       playerInput: params.playerInput,
@@ -187,6 +199,7 @@ export async function invokeGmProxy(params: {
       clientApiKey: pickClientApiKey(params.settings) || undefined,
       // The turn's strict Token Prose schema (built with zod here; the edge only forwards the JSON).
       tokenSchema: params.mode === 'turn' ? tokenBeatSchemaFor(params.state) : undefined,
+      ...(trainLog ? { trainLog: true, trainJob } : {}),
     };
 
     if (isByokTierWithoutHostedKeys(params.settings) && !body.clientApiKey) {
@@ -251,6 +264,10 @@ export async function invokeGmProxy(params: {
     const payload = parseGmTurnResponse(await res.json().catch(() => ({})));
     noteWriterRawIssue(payload?.rawIssue);
     if (res.ok || payload?.rawIssue) noteWriterUsage(payload?.usage);
+    // Hosted-Free call rows only when we asked for trainLog (autoplay marker).
+    if (trainLog && Array.isArray((payload as { callLog?: unknown }).callLog)) {
+      appendTrainLogRows((payload as { callLog: unknown }).callLog);
+    }
     if (!res.ok) {
       // gm-turn already re-asked the same model once; the caller's plain-prose last resort takes over.
       if (payload?.rawIssue) {

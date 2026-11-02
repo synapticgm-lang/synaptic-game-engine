@@ -5,6 +5,13 @@
  */
 
 import { OPENROUTER_DEEPSEEK_V41_FLASH } from './modelIds.ts';
+import {
+  currentTrainLogMeta,
+  recordModelCall,
+  type TrainLogEngineFacts,
+  type TrainLogJob,
+  type TrainLogRow,
+} from './trainLog.ts';
 
 type ChatPart = { text?: unknown } | string;
 
@@ -371,6 +378,57 @@ export function openRouterChatBody(
     if (opts.n && opts.n > 1) body.n = opts.n;
   }
   return body;
+}
+
+/**
+ * q71-TRAINLOG — chat-body recorder. Every completed model call emits one row through trainLog
+ * (never a per-call-site patch). Job comes from withTrainLogJob / pushTrainLogJob; untagged otherwise.
+ */
+export function recordCompletedChatCall(args: {
+  system?: string | null;
+  user?: string | null;
+  messages?: Array<{ role: string; content: string }> | null;
+  assistant: string;
+  teacher_model?: string | null;
+  provider?: string | null;
+  tokens_in?: number | null;
+  tokens_out?: number | null;
+  tokens_cached?: number | null;
+  cost?: number | null;
+  latency_ms?: number | null;
+  finish_reason?: string | null;
+  truncated?: boolean | null;
+  job?: TrainLogJob | null;
+  engine_facts?: TrainLogEngineFacts | null;
+}): TrainLogRow | null {
+  try {
+    const meta = currentTrainLogMeta();
+    return recordModelCall({
+      job: args.job ?? meta?.job ?? 'untagged',
+      system: args.system,
+      user: args.user,
+      messages: args.messages,
+      assistant: args.assistant,
+      teacher_model: args.teacher_model,
+      provider: args.provider,
+      tokens_in: args.tokens_in,
+      tokens_out: args.tokens_out,
+      tokens_cached: args.tokens_cached,
+      cost: args.cost,
+      latency_ms: args.latency_ms,
+      finish_reason: args.finish_reason,
+      truncated: args.truncated,
+      engine_facts: args.engine_facts ?? meta?.engine_facts ?? null,
+      parent_id: meta?.parent_id,
+      draft: meta?.draft,
+      flagged_error: meta?.flagged_error,
+      correct_fact: meta?.correct_fact,
+      repaired_reply: meta?.repaired_reply,
+      repair_pass: meta?.repair_pass,
+    });
+  } catch {
+    return null;
+  }
 }
 
 /** q50-MAP2 — attach newPlaces in place (same object ref) so callers keep identity. */
