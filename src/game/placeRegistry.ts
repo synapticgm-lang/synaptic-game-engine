@@ -88,9 +88,28 @@ function sheetExitRows(state: GameState, raw: string): PlaceExitRow[] | null {
   return out.length ? out : null;
 }
 
+/** Hubless stories (28p): story-place rows already on the save are the travel graph. */
+function storyPlaceExitLabels(state: GameState, raw: string, hubName: string): string[] {
+  const hereKeys = new Set([raw.toLowerCase(), hubName.toLowerCase()]);
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const p of state.places ?? []) {
+    if (p.settlementKind !== 'story-place') continue;
+    if (p.closed || p.arcStatus === 'closed') continue;
+    const n = tidy(p.name);
+    const key = n.toLowerCase();
+    if (!n || hereKeys.has(key) || seen.has(key)) continue;
+    seen.add(key);
+    out.push(n);
+  }
+  return out;
+}
+
 /**
  * Exits ensurePlaceOnMap would write, without writing.
- * Hub → hub travel targets. Non-hub with a location sheet → that sheet. Else the hub-graph seed.
+ * Hub → hub travel targets. Non-hub with a location sheet → that sheet.
+ * Hubless bible → story-place pool (+ way back). Else the hub-graph seed.
+ * Open outdoor places never seed empty when any linked place exists.
  */
 function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRow[] {
   const hubs = hubsForBibleId(state.campaignBibleId);
@@ -105,33 +124,57 @@ function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRo
   if (sealed) return [];
   const out: PlaceExitRow[] = [];
   const seen = new Set<string>();
+  const notHere = (n: string) => {
+    const key = n.toLowerCase();
+    return !!n && key !== hubName.toLowerCase() && key !== raw.toLowerCase();
+  };
+  // Way back from travel / opening always links first when it is a real other place.
+  const back = tidy(from);
+  if (notHere(back)) pushExit(out, seen, state, back);
   if (hub) {
     const names = hubTravelTargets({ ...state, currentLocation: hub.name });
     for (let i = 0; i < names.length; i++) {
       const n = names[i] ?? '';
-      if (n.toLowerCase() === hubName.toLowerCase() || n.toLowerCase() === raw.toLowerCase()) continue;
+      if (!notHere(n)) continue;
       pushExit(out, seen, state, n);
     }
     return out.slice(0, 5);
   }
   const sheet = sheetExitRows(state, raw);
-  if (sheet) return sheet.slice(0, 5);
-  if (indoorLocal) {
-    if (
-      parentHub
-      && parentHub.toLowerCase() !== hubName.toLowerCase()
-      && parentHub.toLowerCase() !== raw.toLowerCase()
-    ) {
-      pushExit(out, seen, state, parentHub);
+  if (sheet) {
+    for (let i = 0; i < sheet.length; i++) {
+      const row = sheet[i]!;
+      if (!notHere(row.label)) continue;
+      pushExit(out, seen, state, row.label, row.id);
     }
+    if (out.length) return out.slice(0, 5);
+  }
+  if (indoorLocal) {
+    if (notHere(parentHub)) pushExit(out, seen, state, parentHub);
     return out.slice(0, 5);
   }
-  const exitSource = parentHub || hubName;
-  const seed = [parentHub, ...hubTravelTargets({ ...state, currentLocation: exitSource })];
-  for (let i = 0; i < seed.length; i++) {
-    const n = seed[i] ?? '';
-    if (n.toLowerCase() === hubName.toLowerCase() || n.toLowerCase() === raw.toLowerCase()) continue;
-    pushExit(out, seen, state, n);
+  if (!hubs.length) {
+    // 28p / MAP2: hubless worlds keep the story-place graph (Ford Camp → other Millstone places).
+    const story = storyPlaceExitLabels(state, raw, hubName);
+    for (let i = 0; i < story.length; i++) pushExit(out, seen, state, story[i] ?? '');
+  } else {
+    const exitSource = parentHub || hubName;
+    const seed = [parentHub, ...hubTravelTargets({ ...state, currentLocation: exitSource })];
+    for (let i = 0; i < seed.length; i++) {
+      const n = seed[i] ?? '';
+      if (!notHere(n)) continue;
+      pushExit(out, seen, state, n);
+    }
+  }
+  // Last resort: any other open registered place so registration never leaves a dead end.
+  if (!out.length) {
+    for (const p of state.places ?? []) {
+      if (p.closed || p.arcStatus === 'closed') continue;
+      const n = tidy(p.name);
+      if (!notHere(n)) continue;
+      pushExit(out, seen, state, n);
+      if (out.length) break;
+    }
   }
   return out.slice(0, 5);
 }
@@ -150,6 +193,8 @@ export function placeExitRows(state: GameState, name?: string | null): PlaceExit
     if (place.closed || place.arcStatus === 'closed') return [];
     const stored = place.exits ?? [];
     if (stored.length === 0) {
+      // cardBuiltTurn + empty exits is the sealed/built card contract (OCD pads rely on it).
+      // Hubless holes are fixed at write time in ensurePlaceOnMap / seedExitRows — not by re-reading.
       if (place.cardBuiltTurn != null) return [];
       const hub = matchHub(hubs, place.name) ?? matchHub(hubs, raw);
       return hub ? labelsToRows(state, hubTravelTargets({ ...state, currentLocation: hub.name })) : [];
@@ -183,12 +228,14 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
   const sealed = indoorLocal && (isDungeonHub(parentHubRow ?? parentHub) || !parentHub);
   const exits = seedExitRows(state, raw, from ?? undefined).map((row) => row.label);
   const closed = sealed;
+  // Never lock an open place as a built card with zero exits (Ford Camp hubless hole).
+  const lockCard = closed || exits.length > 0;
   if (existing) {
     const patched: PlaceRecord = {
       ...existing,
       exits,
       ...(closed ? { closed: true, arcStatus: 'closed' as const } : {}),
-      cardBuiltTurn: state.turn ?? 0,
+      ...(lockCard ? { cardBuiltTurn: state.turn ?? 0 } : {}),
       parentHub: hub ? existing.parentHub : existing.parentHub || parentHub || undefined,
       aliases: Array.from(new Set([...(existing.aliases ?? []), hubName, raw])).slice(0, 12),
     };
@@ -205,7 +252,7 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
     arcStatus: closed ? 'closed' : 'open',
     ...(closed ? { closed: true } : {}),
     exits,
-    cardBuiltTurn: state.turn ?? 0,
+    ...(lockCard ? { cardBuiltTurn: state.turn ?? 0 } : {}),
     parentHub: hub ? undefined : parentHub || undefined,
   };
   return { ...state, places: [...(state.places ?? []), row] };
