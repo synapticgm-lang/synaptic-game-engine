@@ -254,8 +254,9 @@ describe('q71-TRAINLOG trainLog', () => {
       .filter(Boolean)
       .map((l) => JSON.parse(l));
     expect(parsed).toHaveLength(1);
-    expect(parsed[0]!.messages.at(-1)?.content).toContain('😀');
-    expect(parsed[0]!.messages.at(-1)?.content).toContain('\n');
+    const lastMsg = parsed[0]!.messages[parsed[0]!.messages.length - 1];
+    expect(lastMsg?.content).toContain('😀');
+    expect(lastMsg?.content).toContain('\n');
   });
 
   it('K: recorder disk failure never throws into the game turn', () => {
