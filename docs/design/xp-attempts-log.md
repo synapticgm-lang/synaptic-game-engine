@@ -254,9 +254,40 @@ OpenRouter: no balance or $ cost figure in logs or run meta (writerUsage has tok
 
 Plain summary also at `merge-logs/xp-design/open2/T50-report.md`.
 
-### 2 Nov 2026 — LitRPG XP attempt 3 (fight XP + share + Check System + filler chips) — in-tree
+### 2 Nov 2026 — LitRPG XP attempt 3 (fight XP + share + Check System + filler chips) — in-tree (superseded by results below)
 
-What (from `merge-logs/xp-design/open3/OPEN3-report.md` on `xp/design`): L2+ quest step/complete sized down; on-level fight units kept meaningful (~4–12% of bar); Seek Fight chip offered on drought; alternate-win fight pay; Check System engine inbox + fate telemetry; Search/Read/Analyze/Open suppressed after one no-progress take until scene changes. Opening rite / L1→L2 untouched. Tabletop/RPG/PYOA content untouched (Story RPG shares unit path — covered by pace tests). Free-path T50 still owed after stamp/ship.
+What (from `merge-logs/xp-design/open3/OPEN3-report.md` on `xp/design`): L2+ quest step/complete sized down; on-level fight units kept meaningful (~4–12% of bar); Seek Fight chip offered on drought; alternate-win fight pay; Check System engine inbox + fate telemetry; Search/Read/Analyze/Open suppressed after one no-progress take until scene changes. Opening rite / L1→L2 untouched. Tabletop/RPG/PYOA content untouched (Story RPG shares unit path — covered by pace tests). Free-path T50 ran; see results entry.
 
-Plain summary also at `merge-logs/xp-design/open3/OPEN3-report.md`.
+### 2 Nov 2026 — LitRPG XP attempt 3 results (free path 4×T50) — MISS
+
+What changed (from `merge-logs/xp-design/open3/OPEN3-report.md`, build `2026-11-02b+afc74d3a` on `xp/design`): L2+ `QUEST_STEP_UNITS_L2_PLUS=0.65`, `QUEST_COMPLETE_UNITS_L2_PLUS=1.6`, `ENCOUNTER_UNITS_L2_PLUS=0.85` + unitsPerLevel retune; alternate-win fight pay; `systemNoticeInbox` + fate `checkSystemOffered` / `Opened` / `unopenedSystemNotices`; Search/Read/Analyze/Open → search family with scene-key block after one dead take. Opening rite L1→L2 untouched. Tabletop/RPG/PYOA untouched.
+
+Runs (free writer DeepSeek via OpenRouter/gm-turn, no paid AI; seeds 7301–7304):
+- 7301 random summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T09-47-42-003Z_summoned-pact_cold-system_s7301`
+- 7302 random system-integration: `scripts/fate-autoplay/runs/2026-11-02T09-52-07-377Z_system-integration_cold-system_s7302`
+- 7303 quest summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T09-56-14-884Z_summoned-pact_cold-system_s7303_quest`
+- 7304 quest system-integration: `scripts/fate-autoplay/runs/2026-11-02T10-06-25-036Z_system-integration_cold-system_s7304_quest`
+
+Measured from `turns.jsonl` (`xpGained`, `XP Gained:` / `defeated …` as fight, `level`, `characterXp`, Check System fields, offered chips). Quest share = rite + steps + completes.
+
+| Run | Profile | Scenario | Rite | L2 | L3 | L2→L3 | Total XP | Rite | Steps | Completes | Fights | Ach/other | Quest share | Fight share | Fights won | Check Sys off/open/max | Filler max same-state | No-prog / max | LOOP STOP | Zero-pay win | Farming |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7301 | random | summoned-pact | **2** refuse→forced | **2** | — (143/187) | — | 293 | 150 | 58 | 41 | 32 | 12 | **85.0%** | **10.9%** | 1×32 | **6 / 6 / 3** | **2** | 13 / 1 | no | 0 | none; rite ×1 |
+| 7302 | random | system-integration | **2** chip | **2** | 20 | **18** | 375 | 150 | 72 | 74 | 20 | 59 | **78.9%** | **5.3%** | 1×20 | **12 / 12 / 3** | **3** | 10 / 1 | no | 0 | none; rite ×1 |
+| 7303 | quest | summoned-pact | **2** chip | **2** | — (145/187) | — | 295 | 150 | 27 | 37 | 22 | 59 | **72.5%** | **7.5%** | 1×22 | **10 / 10 / 5** | **3** | 3 / 1 | no | 0 | none; rite ×1 |
+| 7304 | quest | system-integration | **2** chip | **2** | — (178/187) | — | 328 | 150 | 54 | 37 | 40 | 47 | **73.5%** | **12.2%** | 2×20 | **14 / 14 / 4** | **11** | 12 / 1 | no | 0 (T22 defeat) | none; rite ×1 |
+
+Per-profile averages: random L2 **2**, L2→L3 **18** (n=1), quest share **82.0%**, fight share **8.1%**, Check System offered **18**. Quest profile L2 **2**, L2→L3 none, quest share **73.0%**, fight share **9.9%**, Check System offered **24**. Overall: L2 **2**, L2→L3 **18** (n=1), quest share **77.5%**, fight share **9.0%**, Check System offered **42** (apart from scene pads).
+
+**Vs open2 baseline (same seeds):** L2@T2 held; Check System **0 → 6/12/10/14**; quest share **85.5% → 77.5%** (into 55–80% tol.); fight share **4.6% → 9.0%** (still short of 15%); L2→L3 was 39/12/—/30, now —/18/—/— (slower / underleveled); LOOP STOP still none; filler same-state max still **>2** on 3/4 runs (7304 **11×** Read-signs on stuck report-back).
+
+**Vs targets:** Rite→L2@T2 both scenarios **PASS**; quest share tol. **PASS** (77.5%); fights 15–30% **MISS** (9.0%); L2→L3 15–25 **MISS** (only one sample); Check System offered **PASS**; filler ≤2 w/o state change **MISS**; no LOOP STOP / no 5+ streak **PASS**; no full-pay same-giver farm **PASS**; zero-pay fight wins **0**.
+
+OpenRouter: no balance or $ cost figure in logs or run meta (`costUsd` null; teacher `deepseek/deepseek-v4.1-flash`).
+
+**Verdict: MISS** — offs: fight-share avg **9.0%** (want 15–30%); L2→L3 only **18** once, three runs still L2 at T51; filler same-state max **2 / 3 / 3 / 11** (want ≤2).
+
+**Next attempt (one line):** Force steadier on-level fight/threat pads after rite (without stealing Travel) and hard-cap same-scene Search/Read/Analyze/Open offers at 2 so fight share can reach 15%+ and stuck report-back turns stop re-offering filler.
+
+Plain summary also at `merge-logs/xp-design/open3/T50-report.md`.
 
