@@ -49,6 +49,9 @@ import {
   isHurtHp,
   isOutdoorRestPad,
 } from './rules/wildlifeConfig';
+import { canOutdoorShortRest } from './recoveryRules';
+import { isCrowdOnlyTalkPad, speakablePresentPeople } from './chromeAuthority';
+import { peopleHere } from './scenePresence';
 
 export type { CirclingMemory } from './types';
 
@@ -886,6 +889,60 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
   if (exit && !list.some((c) => c.toLowerCase() === exit.toLowerCase())) {
     list = [exit, ...list];
     notes.push(`Stuck exit chip: ${exit.slice(0, 40)}`);
+  }
+  // OPEN7B — never offer a Rest/bind chip that the engine will refuse (heals nothing / wrong place).
+  // Walk-back stays — it is travel, not a rest receipt.
+  {
+    const before = list.length;
+    list = list.filter((c) => {
+      if (/^walk back to the hub\b/i.test(c)) return true;
+      if (!/^rest and bind your wounds\b/i.test(c) && !/^make camp\b/i.test(c) && !/^i bind my wounds\b/i.test(c)) {
+        return true;
+      }
+      return canOutdoorShortRest(state, c);
+    });
+    if (list.length < before) notes.push('OPEN7B: dropped Rest that would heal nothing');
+  }
+  // OPEN7B — hurt indoors (or any non-wilds place): still get a working move-on (Leave / Travel).
+  // Outdoor wilds recovery stays in the Hunt block below; this covers Twin Lanterns–style interiors.
+  {
+    const openingDone = state.openingEstablishment?.complete === true;
+    const hurt =
+      isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0)
+      || (typeof state.wildsHuntDeathCooldownUntilTurn === 'number'
+        && (state.turn ?? 0) < state.wildsHuntDeathCooldownUntilTurn);
+    const modeOk = state.engineMode === 'litrpg' || state.engineMode === 'rpg';
+    if (
+      openingDone
+      && hurt
+      && modeOk
+      && !state.activeEncounter
+      && !isOutdoorWildsPlace(state)
+    ) {
+      list = list.filter((c) => !isHuntChip(c) && !isSeekFightChip(c) && !isCrowdOnlyTalkPad(c));
+      const hasMove = list.some(
+        (c) =>
+          movesOn(state, c, story)
+          || /^leave(?:\s+the\s+scene)?\b/i.test(c)
+          || /^travel\b/i.test(c)
+          || /^walk (?:back|on|toward)\b/i.test(c)
+      );
+      if (!hasMove) {
+        list = ['Leave the scene', ...list];
+        notes.push('OPEN7B: hurt indoors → Leave the scene');
+      }
+    }
+    // Crowd-filler-only room: starve dead talk even when not hurt.
+    if (
+      openingDone
+      && !state.activeEncounter
+      && speakablePresentPeople(peopleHere(state)).length === 0
+      && speakablePresentPeople(state.sceneFacts?.present).length === 0
+    ) {
+      const before = list.length;
+      list = list.filter((c) => !isCrowdOnlyTalkPad(c));
+      if (list.length < before) notes.push('OPEN7B: rank starved crowd-only talk');
+    }
   }
   // XP-D1 OPEN5 — Hunt every outdoor turn (stock permitting); not drought-gated; not filler; never steals
   // quest-progress / Travel / Check System. When Hunt is available, drought Seek Fight hands over to it.

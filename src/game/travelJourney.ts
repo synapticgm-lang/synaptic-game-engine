@@ -2039,9 +2039,22 @@ function storyPlaceTravelDest(state: GameState, input: string, here: string): st
 function leaveDestination(state: GameState, here: string): string | null {
   // s82 Root C — the road (or this trip's HERE words) is never a place to leave for.
   const sheet = resolveLeaveSceneDestination(state);
-  const dest = sheet && !isTripHere(state, sheet)
+  let dest = sheet && !isTripHere(state, sheet)
     ? sheet
     : resolveLeaveSceneDestination({ ...state, previousLocationSheet: null });
+  // OPEN7B — Story RPG bibles with no outdoor hub bank (twin-lanterns etc.): fall back to places[].
+  // A Leave chip that cannot move HERE is a refused chip and must not be the only progress path.
+  if (!dest || isTripHere(state, dest) || dest.toLowerCase() === here.toLowerCase()) {
+    const key = here.toLowerCase();
+    for (const p of state.places ?? []) {
+      const n = (p.name ?? '').replace(/\s+/g, ' ').trim();
+      if (!n || n.toLowerCase() === key) continue;
+      if (isRoadLabel(n) || isTripHere(state, n)) continue;
+      if (p.closed || p.arcStatus === 'closed') continue;
+      dest = n;
+      break;
+    }
+  }
   if (!dest || !endpointFor(state, here).mapped || endpointFor(state, dest).mapped) return dest;
   const hubs = hubsForBibleId(state.campaignBibleId);
   const key = here.toLowerCase();

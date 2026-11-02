@@ -47,7 +47,7 @@ import { engineFactForRepair } from './writerCueLines';
 import { isGiverName } from './questGiver';
 import { motiveAnswer, motiveLinesOf } from './npcSheet';
 import { actionVerb, objectWords, stemHit } from './chipRules';
-import { checkPlayCrimes } from './turnCheck';
+import { checkPlayCrimes, openingRestatesPlayerAct } from './turnCheck';
 import { mentionsName, peopleHere } from './chipLegality';
 const DROPPED_ROLL_PROBLEM = 'The engine rolled hits on you this round: show each hit that landed.';
 export type WriterDraft = {
@@ -260,7 +260,9 @@ export function runWriterTurn(opts: {
   if (!first.prose) return { ...first, outcome: 'empty', problems, remaining: problems, firstDraft: '' };
   const spoken = ensureSpokenAnswer(finishCommittedProse(first.prose, check, packet), check.state, check.playerInput);
   // T10RC8 — seat-list final page (after spoken append); Absent-speaker lines never ship.
-  const prose = dropUnseatedSpeakerLines(check.state, spoken.prose);
+  // OPEN7B — strip act-echo openings before accept (product fix; gate stays strict).
+  const seated = dropUnseatedSpeakerLines(check.state, spoken.prose);
+  const prose = dropPlayerActEchoOpening(seated, check.playerInput);
   return {
     ...first,
     prose,
@@ -297,6 +299,32 @@ export function dropUnseatedSpeakerLines(state: GameState, prose: string): strin
   const next = kept.join(' ').replace(/\s+/g, ' ').trim();
   return next || text;
 }
+
+/**
+ * OPEN7B / T10RC7 product fix — drop leading sentences that restate the player's act
+ * (already shown in the UI). Deterministic strip; no new AI path. Keeps consequence sentences.
+ */
+export function dropPlayerActEchoOpening(prose: string, playerInput: string): string {
+  const text = (prose ?? '').replace(/\s+/g, ' ').trim();
+  const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!text || !act || !openingRestatesPlayerAct(text, act)) return text;
+  const sentences = splitProseSentences(text);
+  if (sentences.length <= 1) return text;
+  let kept = [...sentences];
+  // Peel leading sentences while the opening window still echoes the act.
+  while (kept.length > 1 && openingRestatesPlayerAct(kept.join(' '), act)) {
+    const head = kept[0] ?? '';
+    if (openingRestatesPlayerAct(head, act) || openingRestatesPlayerAct(kept.slice(0, Math.min(3, kept.length)).join(' '), act)) {
+      kept = kept.slice(1);
+      continue;
+    }
+    break;
+  }
+  const next = kept.join(' ').replace(/\s+/g, ' ').trim();
+  // Prefer a non-echo page; if everything echoed, keep the original (gate still flags).
+  if (!next || openingRestatesPlayerAct(next, act)) return text;
+  return next;
+}
 /** Fight omit rewrite, then repairs, then RC-N3 blocking rewrite / engine-fact fallback. */
 export async function runWriterTurnWithFightRetry(opts: {
   firstRaw: string;
@@ -316,8 +344,10 @@ export async function runWriterTurnWithFightRetry(opts: {
     if (prose !== done.prose) done = { ...done, prose, remaining: writerDraftProblems(prose, opts.check) };
   }
   // T10RC8 — repairs can reintroduce unseated speakers; drop before accept / rewrite gate.
+  // OPEN7B — strip act-echo openings after repairs too.
   {
-    const sealed = dropUnseatedSpeakerLines(opts.check.state, done.prose);
+    const seated = dropUnseatedSpeakerLines(opts.check.state, done.prose);
+    const sealed = dropPlayerActEchoOpening(seated, opts.check.playerInput);
     if (sealed !== done.prose) {
       done = { ...done, prose: sealed, remaining: writerDraftProblems(sealed, opts.check) };
     }
@@ -424,7 +454,9 @@ export function sealPostWriterProse(
   const placed = withMoveDestination(state, prose);
   const spoken = ensureSpokenAnswer(placed, state, playerInput);
   // T10RC8 — after every append/repair/warden seal: drop unseated speaker attribution.
-  return { prose: dropUnseatedSpeakerLines(state, spoken.prose), spoken: spoken.answer };
+  // OPEN7B — strip act-echo openings on the sealed page too.
+  const seated = dropUnseatedSpeakerLines(state, spoken.prose);
+  return { prose: dropPlayerActEchoOpening(seated, playerInput), spoken: spoken.answer };
 }
 
 /** Engine moved the player this turn but the beat never names where to — add one plain sentence. */

@@ -317,6 +317,26 @@ export function isCrowdFillerToken(token: string): boolean {
   return false;
 }
 
+/**
+ * OPEN7B — occupancy that can open an NPC reaction slot (not crowd-filler chrome).
+ * When empty, Talk/Ask "the people here" resolves to "not present to answer" and must not be offered.
+ */
+export function speakablePresentPeople(present: string[] | undefined): string[] {
+  return (present ?? [])
+    .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+    .filter((n) => n.length >= 2 && !isCrowdFillerToken(n));
+}
+
+/** Talk / Ask / Answer / Follow-up chips aimed only at crowd occupancy ("the people here"). */
+export function isCrowdOnlyTalkPad(label: string): boolean {
+  const t = (label ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^(?:talk to|answer|ask|follow up with)\s+the people here\b/i.test(t)) return true;
+  if (/^ask the people here\b/i.test(t)) return true;
+  if (/^follow up with the people here\b/i.test(t)) return true;
+  return false;
+}
+
 /** Crowd nouns — not a named speaker slot (never rewrite these to "blue panel"). */
 export function isAggregatePersonToken(token: string): boolean {
   const t = (token ?? '').trim();

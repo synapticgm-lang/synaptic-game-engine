@@ -63,7 +63,13 @@ import {
 import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
 import { filterPadsAgainstOpenVignette } from './vignetteLock';
-import { realPresentPeople } from './chromeAuthority';
+import {
+  isCrowdFillerToken,
+  isCrowdOnlyTalkPad,
+  realPresentPeople,
+  speakablePresentPeople,
+} from './chromeAuthority';
+import { peopleHere } from './scenePresence';
 import { isInteriorMap } from './placeAuthority';
 import { graphExitPads, isCameraRelativePad } from './mapEngine';
 import { dungeonCardChoices, isDungeonCard } from './dungeonCard';
@@ -1398,6 +1404,38 @@ export function compileChoices(
     finalChoices = pinOpeningRiteChip(state, finalChoices);
     if (finalChoices !== before && finalChoices.join('|') !== before.join('|')) {
       notes.push('Opening Rite chip pinned first');
+    }
+  }
+  // OPEN7B — crowd-filler-only occupancy is not a talk scene (speech = "not present to answer").
+  // Starve those pads and pin Leave/Travel first so the pad-4 slice cannot drop the only move-on.
+  // Shared engine (all modes) — different functions from TRAINLOOP3 fight-pad work.
+  if (!engaged) {
+    const speakable = [
+      ...speakablePresentPeople(peopleHere(state)),
+      ...speakablePresentPeople(state.sceneFacts?.present),
+      ...realPresentPeople(state.sceneFacts?.present).filter((n) => !isCrowdFillerToken(n)),
+    ];
+    if (speakable.length === 0) {
+      const before = finalChoices.length;
+      finalChoices = finalChoices.filter((c) => !isCrowdOnlyTalkPad(c));
+      if (finalChoices.length < before) notes.push('OPEN7B: crowd-only talk starved');
+      const isMoveOn = (c: string) =>
+        isTravelPad(c)
+        || isLeaveFamilyPad(c)
+        || /^leave(?:\s+the\s+scene)?\b/i.test(c)
+        || /^travel\b/i.test(c)
+        || /^walk (?:back|on|toward)\b/i.test(c);
+      let moveIdx = finalChoices.findIndex(isMoveOn);
+      if (moveIdx < 0) {
+        finalChoices = ['Leave the scene', ...finalChoices];
+        notes.push('OPEN7B: dead crowd scene → Leave the scene');
+        moveIdx = 0;
+      } else if (moveIdx > 0) {
+        const [move] = finalChoices.splice(moveIdx, 1);
+        finalChoices = [move!, ...finalChoices];
+        notes.push('OPEN7B: pin move-on first');
+      }
+      finalChoices = finalChoices.slice(0, 6);
     }
   }
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
