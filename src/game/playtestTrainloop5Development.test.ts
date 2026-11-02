@@ -328,7 +328,9 @@ describe('TRAINLOOP5 — Director development + unbound social (broken-crown s81
     expect(threads.some((t) => t.id === 'npc-goal:giver-elara-locke')).toBe(false);
   });
 
-  it('SWEEP: premade openings keep development/exit and no unbound social after stall', () => {
+  // Full-suite workers slow openPlay enough that the default 5s vitest timeout
+  // aborts mid-sweep (STACK_TRACE_ERROR / ~5–7s). Assertions unchanged — only the budget.
+  it('SWEEP: premade openings keep development/exit and no unbound social after stall', { timeout: 30_000 }, () => {
     const holes: string[] = [];
     let worlds = 0;
     for (const bible of ALL_CAMPAIGN_BIBLES) {
