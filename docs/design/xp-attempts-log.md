@@ -578,3 +578,16 @@ OpenRouter: no balance or `$` cost figure in logs or run meta (`costUsd` null) a
 **Next attempt (one line):** Keep Open/Search family credit live so same-place Open streaks stay ≤2; inject outdoor Rest when HP≤50% so the L2 bar does not stall on travel; prefer Gather over Walk when node stock exists; seal Travel-to-HERE so chapel-watch ignore cannot fire.
 
 Plain summary also at `merge-logs/xp-design/open8/T50-report.md`.
+
+### LitRPG XP attempt 9 (design) — 2 Nov 2026 (OPEN9, branch xp/wilds5)
+- **Why:** Attempt 8 T50 MISS — LitRPG 7501 L2@T3 and never L3 (HP 9/31 Travel treadmill; Open-box family streak max **5**); Story RPG 7502 filler max **8**, Gather 3/0, Travel-to-HERE ignore P0s, died at 4 HP with no Rest. John's design unchanged: hunts always pay unless grey (WoW Classic `killScale` / ZD — `OPEN7-formula.md`); no per-session hunt cap; death-farm cooldown; power-level to L6–7 before the quest chain; 60–70% quest share for quest followers; Rest needs a safe spot not a fire; rest/eating take time and food.
+- **What changed (design, pre-measure) — behavioral; formula untouched:**
+  1. **Filler place-keyed cap:** `fillerOfferPlaceKey` (place alone) so NPC intro / inventory length no longer resets Open/Search offer counts; `actionFamily` classifies Open separately and ranks Search/Read/Check before bare `\bwatch\b` (chapel-watch place names); `enforceFillerFamilyCap` + Fate pick refuse a 3rd same-family filler at one place.
+  2. **Rest everywhere when HP≤50%:** `canOutdoorShortRest` (LitRPG/RPG, no fight); inject Rest pad; meal from inventory (longer rest if none); autoplay prefers Rest over Hunt/Travel/Search; LitRPG/RPG outdoor Rest wins over SRD hub rest so meal always applies. Tabletop still SRD-first (shared engine file `recoveryRules.ts`; tabletop rules unchanged).
+  3. **Gather over Walk:** `chipProgressScore` + pad front + Fate prefer Gather when node stock exists (not over Rest / quest step).
+  4. **Travel ≠ HERE:** `isTravelDestHere` at affordance emission; stale Travel answers already-here in `commitTravel` (typed dest label when same-place nulls dest).
+  5. **Opening Rite L2~T2:** force-complete by player-turn 2 / save commit turn 2 (was 3).
+  6. **Simple prose:** reject `Your …` harvest; scrub `Your upperclassman` → `the upperclassman` in `applyProseWarden`. Story RPG T7 / tabletop echo P0s **not fixed** (not simple).
+- **Before / after sim:** bars L1/L2/L3/L4 = 150/187/233/291 (unchanged). Units L2=12 … L6=19 unchanged. Quest-follower model L2→L3 still **16** turns / quest ~**63.5%** / fight ~**19.8%**. Grinder still **59** kills → L7. Live 7501 path was blocked by Rest/filler, not the curve. Details: `merge-logs/xp-design/open9/OPEN9-sim-pace.json`, `OPEN9-sim-grind.json`.
+- **Formula reference:** attempt 7 WoW Classic entry / `OPEN7-formula.md` (unchanged killScale).
+- **Outcome:** design + unit tests shipped on xp/wilds5; **measure / T50 results TBD** (runner).

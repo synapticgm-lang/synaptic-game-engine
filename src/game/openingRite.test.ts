@@ -140,9 +140,9 @@ describe('XP-D1 OPEN completion paths', () => {
     expect(receipts.some((r) => /seals the pact for you|registers you/i.test(r))).toBe(true);
   });
 
-  it('backstop completes by end of player turn 3', () => {
+  it('OPEN9: backstop completes by end of player turn 2', () => {
     let s = litrpgState('hero-awakening', { turn: 0 });
-    for (const line of ['who are you?', 'what is this?', 'Look around']) {
+    for (const line of ['who are you?', 'Look around']) {
       const r = applyOpeningRiteTurn(s, line);
       s = r.state;
       if (!s.openingRite?.done) s = { ...s, turn: (s.turn ?? 0) + 1 };

@@ -60,6 +60,7 @@ import {
 import {
   actionFamily,
   fillerOfferExhausted,
+  fillerOfferPlaceKey,
   fillerSceneKey,
   isFillerNoProgressChip,
   isGatherChip,
@@ -1587,8 +1588,8 @@ export function padChoicesToCount(
 }
 
 /**
- * OPEN7 / OPEN8 — one final owner for Search/Read/Analyze/Open/Inspect/Look family offer cap.
- * Drops filler labels whose family is exhausted or blocked for this meaningful scene.
+ * OPEN7 / OPEN8 / OPEN9 — one final owner for Search/Read/Analyze/Open/Inspect/Look family offer cap.
+ * Drops filler labels whose family is exhausted or blocked for this place (OPEN9 place key).
  * OPEN8 — also counts within this pad list so two Open boxes cannot both land when the
  * family is already at 1, and three cannot land when counts are fresh (cap ≤2 total).
  * Never strips Hunt, Gather, Seek Fight, Check System, quest-progress, Travel, or free-input.
@@ -1596,15 +1597,16 @@ export function padChoicesToCount(
 export function enforceFillerFamilyCap(choices: string[], state: GameState): string[] {
   if (state.engineMode !== 'litrpg' && state.engineMode !== 'rpg') return choices;
   const sceneKey = fillerSceneKey(state);
+  const placeOfferKey = fillerOfferPlaceKey(state);
   const blocked =
     state.circling?.fillerBlockSceneKey === sceneKey
     && state.circling.fillerBlockedFamilies?.length
       ? new Set(state.circling.fillerBlockedFamilies)
       : null;
   const mem = state.circling;
-  const sameScene = !!mem?.fillerOfferSceneKey && mem.fillerOfferSceneKey === sceneKey;
+  const samePlace = !!mem?.fillerOfferSceneKey && mem.fillerOfferSceneKey === placeOfferKey;
   const running: Record<string, number> = {};
-  if (sameScene && mem?.fillerOfferCounts) {
+  if (samePlace && mem?.fillerOfferCounts) {
     for (const [k, v] of Object.entries(mem.fillerOfferCounts)) {
       if (k.startsWith('fam:')) running[k] = v ?? 0;
     }

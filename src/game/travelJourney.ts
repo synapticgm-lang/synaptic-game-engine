@@ -2388,6 +2388,13 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
   // FORDCAMP sibling — hubless story-place exits (Village Moot from Overgrown Station) are on the
   // place record, not the hub bank. Resolve them before within-place spots so Travel toward X moves.
   const placeDest = !hub && here ? storyPlaceTravelDest(state, input, here) : null;
+  // OPEN9 — typed dest label even when storyPlaceTravelDest nulls same-place (so already-here answers).
+  const typedDestLabel =
+    input
+      .match(TYPED_DESTINATION)?.[1]
+      ?.replace(/[.!?]+$/, '')
+      .replace(/,\s*but\b.*$/i, '')
+      .trim() ?? null;
   const spot =
     !hub && !placeDest && here && !parkedOnRoad
       ? withinPlaceSpot(input, state.sceneFacts?.lastBeat ?? '')
@@ -2398,7 +2405,32 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
   if (parkedOnRoad && dest && here && dest.toLowerCase() === here.toLowerCase()) {
     return arrive(state, dest, STEP_HOURS, here);
   }
-  if (!dest || dest.toLowerCase() === here.toLowerCase()) {
+  // OPEN9 — stale Travel-to-HERE: engine answers deterministically (no writer cue to ignore).
+  // Inline bare-place compare (avoid placeRegistry import cycle with this file).
+  // storyPlaceTravelDest returns null when typed dest === HERE; still answer from typedDestLabel.
+  const bare = (s: string) =>
+    s.replace(/\s+/g, ' ').trim().toLowerCase().replace(/^(?:the|a|an)\s+/, '');
+  const alreadyCandidate = dest || typedDestLabel;
+  const destIsHere =
+    !!alreadyCandidate
+    && !!here
+    && (() => {
+      const h = bare(here);
+      const d = bare(alreadyCandidate);
+      return !!h && !!d && (h === d || h.includes(d) || d.includes(h));
+    })();
+  if (alreadyCandidate && destIsHere) {
+    const cleared = state.journey ? { ...state, journey: null } : state;
+    return {
+      state: cleared,
+      handled: true,
+      arrived: false,
+      outcome: 'unchanged',
+      receipt: `Travel: already at ${here || alreadyCandidate}`,
+      facts: [`You are already at ${here || alreadyCandidate}. Nothing to travel toward.`],
+    };
+  }
+  if (!dest) {
     return unchanged(state.journey ? { ...state, journey: null } : state);
   }
   const moved = goTo({ ...state, journey: null }, here, dest);

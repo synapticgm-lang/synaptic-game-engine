@@ -12,6 +12,7 @@ import { join } from 'node:path';
 import { clampSystemHousing, isSystemHousingId, rollSystemHousing } from './systemHousing';
 import {
   applyAutoPlayerStallRules,
+  actionFamily,
   chipProgressScore,
   chipProgressWeights,
   creditCommittedProgress,
@@ -229,6 +230,7 @@ import { applyOpeningOfferChoice } from './openingOffer';
 import {
   applyOpeningRiteTurn,
   ensureOpeningRite,
+  openingRiteAcceptChip,
   pickQuestProfileChoice,
 } from './openingRite';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
@@ -1158,6 +1160,9 @@ export function avoidRepeatLethalPick(
   }
   return state ? preferDyingStabilise(offered, next, state) : next;
 }
+/** OPEN9 — consecutive same-family filler picks at one place (autoplay must not take a 3rd). */
+let lastFillerFamilyPick: { place: string; fam: string; streak: number } | null = null;
+
 function pickChipAvoidingLethalRepeat(
   offered: string[],
   state: GameState,
@@ -1169,12 +1174,30 @@ function pickChipAvoidingLethalRepeat(
   // Prefer the engine's push-on option set when that choice point is live.
   const pool = set.active && set.options.length ? set.options : offered;
   const candidates = chipsOnly(pool.length ? pool : offered);
-  // OPEN7 addendum — hurt: recovery before hunt-gather / quest preference (test player only).
+  // OPEN9 — Opening Rite accept chip first while open (all profiles, incl. random).
+  {
+    const rite = openingRiteAcceptChip(state);
+    if (rite) {
+      const hit = candidates.find((c) => c.toLowerCase() === rite.toLowerCase());
+      if (hit) {
+        lastAutoPickWasLethal = isLethalChipLabel(hit, state);
+        lastWildsPick = null;
+        lastFillerFamilyPick = null;
+        return hit;
+      }
+    }
+  }
+  // OPEN7 / OPEN9 — hurt: Rest before Hunt / Travel / Search (test player only).
   if (isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0)) {
-    const hurtPick = preferHurtRecoveryPick(candidates, candidates[0] ?? 'Wait', state);
+    const rest = candidates.find(
+      (c) => isOutdoorRestPad(c) || /^rest and bind your wounds\b/i.test(c)
+    );
+    const hurtPick = rest
+      ?? preferHurtRecoveryPick(candidates, candidates[0] ?? 'Wait', state);
     const pick = avoidRepeatLethalPick(candidates, hurtPick, rng, lastAutoPickWasLethal, state);
     lastAutoPickWasLethal = isLethalChipLabel(pick, state);
     lastWildsPick = null;
+    lastFillerFamilyPick = null;
     return pick;
   }
   // XP-D1 OPEN5 — hunt-gather: a wilds loop. Hunt when offered, Gather right after a Hunt, else the quest chip.
@@ -1189,6 +1212,21 @@ function pickChipAvoidingLethalRepeat(
       ? (isHuntPad(huntGatherPick) ? 'hunt' : 'gather')
       : null;
   }
+  // OPEN9 — when Gather stock exists, prefer Gather over aimless Walk/Travel (not Rest / quest).
+  if (!huntGatherPick) {
+    const gather = candidates.find((c) => isGatherPad(c));
+    const story = storyChip(state);
+    if (
+      gather
+      && !isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0)
+      && !(story && candidates.some((c) => c.toLowerCase() === story.toLowerCase()))
+    ) {
+      const aimless = candidates.find(
+        (c) => /^walk on\b/i.test(c) || /^travel toward\b/i.test(c)
+      );
+      if (aimless) huntGatherPick = gather;
+    }
+  }
   const raw =
     huntGatherPick
       ? huntGatherPick
@@ -1201,9 +1239,38 @@ function pickChipAvoidingLethalRepeat(
           (chip) => chipProgressScore(state, chip) <= 2
         )
       : pickGoalOrientedChoice(candidates, state, mode, rng);
-  const pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal, state);
+  let pick = avoidRepeatLethalPick(candidates, raw, rng, lastAutoPickWasLethal, state);
+  // OPEN9 — never pick a 3rd same-family filler in a row at the same place while another chip exists.
+  {
+    const fam = actionFamily(pick);
+    const place = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/^(?:the|a|an)\s+/, '');
+    const isFiller =
+      fam === 'search' || fam === 'open' || fam === 'look' || fam === 'inspect' || fam === 'use';
+    if (isFiller && lastFillerFamilyPick && lastFillerFamilyPick.place === place && lastFillerFamilyPick.fam === fam) {
+      if (lastFillerFamilyPick.streak >= 2) {
+        const other = candidates.find((c) => {
+          const f = actionFamily(c);
+          return f !== fam && !isFreeInputish(c);
+        });
+        if (other) pick = other;
+      }
+      lastFillerFamilyPick = {
+        place,
+        fam: actionFamily(pick),
+        streak:
+          actionFamily(pick) === fam ? lastFillerFamilyPick.streak + 1 : 1,
+      };
+    } else if (isFiller) {
+      lastFillerFamilyPick = { place, fam, streak: 1 };
+    } else {
+      lastFillerFamilyPick = null;
+    }
+  }
   lastAutoPickWasLethal = isLethalChipLabel(pick, state);
   return pick;
+}
+function isFreeInputish(c: string): boolean {
+  return /^(?:say something|do something else)/i.test((c ?? '').trim());
 }const writerPromptSink: { dir?: string; turn: number } = { turn: 0 };
 async function saveWriterPrompt(state: GameState, payload: string): Promise<void> {
   if (!writerPromptSink.dir) return;

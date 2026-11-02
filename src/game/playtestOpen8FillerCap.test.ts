@@ -134,8 +134,14 @@ describe('OPEN8 — filler family cap ≤2 (credit wired + within-pad)', () => {
   });
 
   it('after 2 credits, third offer of the family is dropped (all injection labels)', () => {
+    // OPEN9 — Open is its own family (not Search/Read). Credit 2 Open + 2 Search separately.
     let state = base('litrpg', 'On the road between places');
-    state = creditFillerOffers(state, ['Open the bronze reward box', 'Read the signs of the threat signs']);
+    state = creditFillerOffers(state, [
+      'Open the bronze reward box',
+      'Open the gold reward box',
+      'Read the signs of the threat signs',
+      'Search Ranking Board for signs',
+    ]);
     expect(fillerOfferExhausted(state, 'Open the silver reward box')).toBe(true);
     expect(fillerOfferExhausted(state, 'Search Ranking Board for signs')).toBe(true);
     expect(fillerOfferExhausted(state, 'Analyze Marshal Kade')).toBe(true);
@@ -153,6 +159,7 @@ describe('OPEN8 — filler family cap ≤2 (credit wired + within-pad)', () => {
       state,
     );
     expect(kept.some((c) => isFillerNoProgressChip(c) && actionFamily(c) === 'search')).toBe(false);
+    expect(kept.some((c) => isFillerNoProgressChip(c) && actionFamily(c) === 'open')).toBe(false);
     expect(kept).toContain('Walk on');
     expect(kept).toContain('Gather herbs and resources nearby');
   });

@@ -240,8 +240,8 @@ function completeRite(
 /**
  * Apply one player turn against the open rite.
  * Accept → complete now. Refuse → forced complete now (same XP).
- * Neither → count the turn; force-complete by player-turn 3 or save turn 3
- * (whichever comes first) so every LitRPG lands L2 in turns 1–3.
+ * Neither → count the turn; force-complete by player-turn 2 or save turn 2
+ * (whichever comes first) so every LitRPG lands L2 around turn 2 (OPEN9).
  */
 export function applyOpeningRiteTurn(
   state: GameState,
@@ -272,20 +272,20 @@ export function applyOpeningRiteTurn(
   if (kind === 'refuse') {
     return completeRite(next, entry, { forced: true, turnCount });
   }
-  // Backstop: end of player-turn 3, or save commit turn 3 (covers opening that already advanced turn).
-  if (turnCount >= 3 || commitTurn >= 3) {
+  // OPEN9 — backstop by player-turn 2 / save commit turn 2 so L2 lands ~T2 (was turn 3).
+  if (turnCount >= 2 || commitTurn >= 2) {
     return completeRite(next, entry, { forced: true, turnCount });
   }
   return { state: next, receipts: [] };
 }
 
 /**
- * Pin the accept chip first while the rite is open (turns 1–3).
+ * Pin the accept chip first while the rite is open (turns 1–2).
  * Does not count against the pad cap — unshift without dropping another chip.
  */
 export function pinOpeningRiteChip(state: GameState, choices: string[]): string[] {
   if (!openingRiteIsOpen(state)) return choices;
-  if ((state.openingRite?.turn ?? 0) >= 4) return choices;
+  if ((state.openingRite?.turn ?? 0) >= 3) return choices;
   const chip = openingRiteAcceptChip(state);
   if (!chip) return choices;
   const list = [...choices];

@@ -211,23 +211,32 @@ export function actionFamily(input: string): string {
   if (/^check system\b/.test(a)) return 'other';
   // Keep inspect/examine/study as 'inspect' for loiter/stall (29x / 10c); filler cap still covers them.
   if (/\b(inspect|examine|study)\b/.test(a)) return 'inspect';
-  if (/\b(wait|ready yourself|watch|hold still|keep watch)\b/.test(a)) return 'wait';
   // Talk before look/scout: "Ask Scout about…" must not match \bscout\b as Look filler (OPEN8 gateFix).
   if (/\b(talk|ask|speak|greet|offer)\b/.test(a)) return 'talk';
   if (/\b(look around|look over|survey|scout|scan)\b/.test(a)) return 'look';
+  // OPEN9 — Open-box is its own family so Search/Read cannot share an Open budget (and vice versa).
+  if (/^open\b/.test(a) || /\bopen the .+ reward box\b/.test(a)) return 'open';
   // OPEN8 — Check / Look closer (not Check System) share the search filler budget.
   if (/^check\b/.test(a) || /\blook closer\b/.test(a)) return 'search';
+  // XP-D1 OPEN3/OPEN4 / OPEN9 — Search/Read before wait: place nouns like "chapel watch"
+  // must not steal Search into the wait family via a bare \bwatch\b (attempt 8 / 7502 streak).
+  if (
+    /^(?:search|read|analyze|listen|investigate|loot)\b/.test(a)
+    || /\b(search|loot|read the system trail|look inward)\b/.test(a)
+  ) {
+    return 'search';
+  }
+  // Wait / keep watch as the *action* — not place names ("a Cape District chapel watch").
+  if (
+    /^(?:wait|ready yourself|hold still|watch)\b/.test(a)
+    || /\b(?:ready yourself|hold still|keep watch)\b/.test(a)
+  ) {
+    return 'wait';
+  }
   if (/\b(travel|go to|go back|head to|walk to|return to|enter|next unexplored|go through)\b/.test(a)) return 'move';
   if (/^hunt the\b/.test(a) || /^i go hunting\b/.test(a)) return 'fight';
   if (/^gather\b/.test(a) || /^i look for (?:ore|herbs|resources)\b/.test(a)) return 'other';
   if (/\b(attack|fight|strike|flee|parley|face the|look for a fight)\b/.test(a)) return 'fight';
-  // XP-D1 OPEN3/OPEN4 — Read / Analyze / Open-box / Search / Listen / Investigate / Loot.
-  if (
-    /^(?:search|read|analyze|open|listen|investigate|loot)\b/.test(a)
-    || /\b(search|loot|read the system trail|open the .+ reward box|look inward)\b/.test(a)
-  ) {
-    return 'search';
-  }
   if (/^use\b/.test(a)) return 'use';
   return 'other';
 }
@@ -235,15 +244,18 @@ export function actionFamily(input: string): string {
 /**
  * Search / Read / Analyze / Open / Inspect / Use / Look — no-progress filler (one owner with turnProgress).
  * OPEN8 — Look joins the cap so same-state look/check streaks cannot bypass Search.
+ * OPEN9 — Open is its own family under the same offer cap.
  */
 export function isFillerNoProgressChip(chip: string): boolean {
   const fam = actionFamily(chip);
-  return fam === 'search' || fam === 'use' || fam === 'inspect' || fam === 'look';
+  return fam === 'search' || fam === 'open' || fam === 'use' || fam === 'inspect' || fam === 'look';
 }
 
 /**
- * Meaningful scene key for filler suppress (OPEN4): place + quest + fight + kit + level.
+ * Meaningful scene key for filler *block-after-no-progress* (OPEN4): place + quest + fight + kit + level.
  * Raw XP ticks do NOT clear the block (open3 leftover).
+ * OPEN9 — offer-cap uses fillerOfferPlaceKey (place only); NPC intro / inventory length must not
+ * reset the consecutive Open/Search streak at the same place (attempt 8 Living Ink / chapel).
  */
 export function fillerSceneKey(state: GameState): string {
   const quest = (state.quests ?? [])
@@ -253,20 +265,18 @@ export function fillerSceneKey(state: GameState): string {
   const enc = state.activeEncounter
     ? `${state.activeEncounter.name}:${state.activeEncounter.hp ?? ''}`
     : state.sceneFacts?.lastKill?.name ?? '-';
-  // NPC beat = met roster size (introSpoken), not flicker-prone present[] labels.
-  const npcBeat = (state.npcMemories ?? [])
-    .filter((n) => n.introSpoken)
-    .map((n) => (n.npcId || n.npcName || '').toLowerCase())
-    .sort()
-    .join(',');
   return [
     placeKey(state),
     quest,
     enc,
-    npcBeat,
     String((state.inventory ?? []).length),
     String(state.character?.level ?? 1),
   ].join('#');
+}
+
+/** OPEN9 — offer-cap scene is the place alone (article-stripped). */
+export function fillerOfferPlaceKey(state: GameState): string {
+  return placeKey(state).replace(/^(?:the|a|an)\s+/, '');
 }
 
 const FILLER_OFFER_CAP = 2;
@@ -276,19 +286,23 @@ function fillerOfferFamilyKey(chip: string): string {
   return `fam:${actionFamily(chip)}`;
 }
 
-/** Credit offered filler labels under the current meaningful scene (call once per committed pad). */
+/** Credit offered filler labels under the current place (call once per committed pad). */
 export function creditFillerOffers(state: GameState, offered: string[]): GameState {
   const mem = state.circling ?? { stale: {}, lastProgressTurn: state.turn ?? 0 };
+  const placeOfferKey = fillerOfferPlaceKey(state);
   const sceneKey = fillerSceneKey(state);
   let offerSceneKey = mem.fillerOfferSceneKey;
   let offerCounts = { ...(mem.fillerOfferCounts ?? {}) };
   let fillerBlockedFamilies = [...(mem.fillerBlockedFamilies ?? [])];
   let fillerBlockSceneKey = mem.fillerBlockSceneKey;
-  if (offerSceneKey && offerSceneKey !== sceneKey) {
-    offerSceneKey = sceneKey;
+  // OPEN9 — reset offer counts only when the place changes (not NPC intro / quest micro-tick).
+  if (offerSceneKey && offerSceneKey !== placeOfferKey) {
+    offerSceneKey = placeOfferKey;
     offerCounts = {};
+    fillerBlockedFamilies = [];
+    fillerBlockSceneKey = undefined;
   }
-  if (!offerSceneKey) offerSceneKey = sceneKey;
+  if (!offerSceneKey) offerSceneKey = placeOfferKey;
   for (const raw of offered) {
     if (!isFillerNoProgressChip(raw)) continue;
     if (isFreeInputChipLabel(raw)) continue;
@@ -323,12 +337,12 @@ function isFreeInputChipLabel(chip: string): boolean {
   return /^(?:say something|do something else)/i.test((chip ?? '').trim());
 }
 
-/** True when this filler label (or its family) has already been offered FILLER_OFFER_CAP times without a meaningful scene change. */
+/** True when this filler label (or its family) has already been offered FILLER_OFFER_CAP times at this place. */
 export function fillerOfferExhausted(state: GameState, chip: string): boolean {
   if (!isFillerNoProgressChip(chip)) return false;
   if (/^hunt the\b|^gather\b|^look for a fight$/i.test((chip ?? '').trim())) return false;
   const mem = state.circling;
-  if (!mem?.fillerOfferSceneKey || mem.fillerOfferSceneKey !== fillerSceneKey(state)) return false;
+  if (!mem?.fillerOfferSceneKey || mem.fillerOfferSceneKey !== fillerOfferPlaceKey(state)) return false;
   const n = mem.fillerOfferCounts?.[actionKey(chip)] ?? 0;
   if (n >= FILLER_OFFER_CAP) return true;
   const famN = mem.fillerOfferCounts?.[fillerOfferFamilyKey(chip)] ?? 0;
@@ -411,24 +425,25 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
     ? before?.journey?.from || mem.lastLeg?.split('>')[0] || mem.prevPlace
     : mem.lastLocation;
   // XP-D1 OPEN3/OPEN4 — dead Search/Read/… take blocks the filler family until a *meaningful* scene change.
-  // Meaningful = fillerSceneKey (no raw XP). Social-only turnProgress does not clear the offer-cap scene.
+  // Meaningful = fillerSceneKey (no raw XP). OPEN9 — offer-cap resets only on place change.
   const sceneKey = fillerSceneKey(state);
+  const placeOfferKey = fillerOfferPlaceKey(state);
   let fillerBlockSceneKey = mem.fillerBlockSceneKey;
   let fillerBlockedFamilies = mem.fillerBlockedFamilies ?? [];
   let fillerOfferSceneKey = mem.fillerOfferSceneKey;
   let fillerOfferCounts = mem.fillerOfferCounts ?? {};
   const meaningfulMoved = !fillerBlockSceneKey || fillerBlockSceneKey !== sceneKey;
-  const offerSceneMoved = !fillerOfferSceneKey || fillerOfferSceneKey !== sceneKey;
-  // Clear offer counts / family block only on meaningful scene change (place/quest/fight/kit/level/NPC beat).
+  const offerPlaceMoved = !fillerOfferSceneKey || fillerOfferSceneKey !== placeOfferKey;
+  // Clear block-after-no-progress on meaningful scene change; offer counts only on place change.
   if (fillerBlockSceneKey && meaningfulMoved) {
     fillerBlockSceneKey = undefined;
     fillerBlockedFamilies = [];
   }
-  if (fillerOfferSceneKey && offerSceneMoved) {
+  if (fillerOfferSceneKey && offerPlaceMoved) {
     fillerOfferSceneKey = undefined;
     fillerOfferCounts = {};
   }
-  if (!progressed && (fam === 'search' || fam === 'use')) {
+  if (!progressed && (fam === 'search' || fam === 'open' || fam === 'use')) {
     fillerBlockSceneKey = sceneKey;
     // Family-block Search/Read/Analyze/Open/Use. Inspect/Study use offer-count + tried rest (T10WARDEN2).
     if (!fillerBlockedFamilies.includes(fam)) fillerBlockedFamilies = [...fillerBlockedFamilies, fam];
@@ -640,6 +655,17 @@ export function chipProgressScore(state: GameState, chip: string): number {
   const sameDead = !!deadAct && actionKey(chip) === deadAct ? 4 : 0;
   const repeat = (triedAgo(state, chip) != null ? 5 : 0) + sameDead;
   if (story && lower === story.toLowerCase()) return repeat;
+  // OPEN9 — Rest while hurt outranks everything except the quest step.
+  if (
+    isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0)
+    && (isOutdoorRestPad(chip) || /^rest and bind your wounds\b/i.test(chip))
+  ) {
+    return 0 + repeat;
+  }
+  // OPEN9 — Gather with live node stock beats aimless Walk / Travel (not Rest, not quest step).
+  if (isGatherChip(chip) && hasNodeStock(state)) {
+    return 1 + repeat;
+  }
   const dest = travelDest(chip);
   if (dest) {
     const d = dest.toLowerCase();
@@ -649,8 +675,11 @@ export function chipProgressScore(state: GameState, chip: string): number {
     if (samePlace(d, prev)) return 9 + repeat;
     if ((mem?.recentPlaces ?? []).some((p) => samePlace(d, p))) return 8 + repeat;
     const visited = (state.places ?? []).some((p) => p.lastVisitedTurn != null && p.name.toLowerCase() === d);
+    // OPEN9 — aimless Walk/Travel while Gather stock exists ranks worse than Gather.
+    if (hasNodeStock(state) && !story) return (visited ? 6 : 5) + repeat;
     return (visited ? 4 : 1) + repeat;
   }
+  if (/^walk on\b/i.test(chip) && hasNodeStock(state) && !story) return 5 + repeat;
   if (/^(?:enter|next unexplored room|fight the|open the|search the)\b/i.test(chip)) return 1 + repeat;
   const unmet = presentNpcRecords(state).filter((m) => !isMetNpc(m)).map((m) => m.npcName.toLowerCase());
   if (unmet.some((n) => lower.includes(n))) return 2 + repeat;
@@ -909,8 +938,8 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     });
     if (list.length < before) notes.push('OPEN7B: dropped Rest that would heal nothing');
   }
-  // OPEN7B — hurt indoors (or any non-wilds place): still get a working move-on (Leave / Travel).
-  // Outdoor wilds recovery stays in the Hunt block below; this covers Twin Lanterns–style interiors.
+  // OPEN7B / OPEN9 — hurt anywhere (hubs, roads, wilds, quiet rooms): Rest when HP ≤ 50% and no fight.
+  // Tabletop / dnd / PYOA never take this path (modeOk). Leave still fills when no move-on exists.
   {
     const openingDone = state.openingEstablishment?.complete === true;
     const hurt =
@@ -923,9 +952,22 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
       && hurt
       && modeOk
       && !state.activeEncounter
-      && !isOutdoorWildsPlace(state)
+      && !state.sceneFacts?.pendingEncounter
     ) {
       list = list.filter((c) => !isHuntChip(c) && !isSeekFightChip(c) && !isCrowdOnlyTalkPad(c));
+      if (
+        canOutdoorShortRest(state, OUTDOOR_REST_CHIP)
+        && !list.some((c) => isOutdoorRestPad(c) || /^rest and bind your wounds\b/i.test(c))
+      ) {
+        const systemIdx = list.findIndex((c) => /^check system\b/i.test(c));
+        const questIdx = list.findIndex((c) => story && c.toLowerCase() === story.toLowerCase());
+        const insertAt = Math.max(
+          0,
+          Math.min(list.length, Math.max(systemIdx, questIdx) + 1)
+        );
+        list = [...list.slice(0, insertAt), OUTDOOR_REST_CHIP, ...list.slice(insertAt)];
+        notes.push('OPEN9: Rest while hurt (safe spot, no fight)');
+      }
       const hasMove = list.some(
         (c) =>
           movesOn(state, c, story)
@@ -933,7 +975,7 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
           || /^travel\b/i.test(c)
           || /^walk (?:back|on|toward)\b/i.test(c)
       );
-      if (!hasMove) {
+      if (!hasMove && !isOutdoorWildsPlace(state)) {
         list = ['Leave the scene', ...list];
         notes.push('OPEN7B: hurt indoors → Leave the scene');
       }
@@ -1045,18 +1087,30 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
       }
       // Gather when the region has resource nodes in stock.
       // OPEN6/OPEN7 — do not offer Gather when the pouch cannot take another material (pad would only fail).
+      // OPEN9 — pin Gather near the front (after Rest / quest / Check System) so it beats aimless Walk.
       const hasNodes = hasNodeStock(s);
       const pouchCanTake = canAddMaterials(s, 1).ok;
       if (hasNodes && outdoor && pouchCanTake && !list.some((c) => isGatherChip(c))) {
         const gatherSlot = list.findIndex(
-          (c) => isFillerNoProgressChip(c) && !isHuntChip(c) && !movesOn(state, c, story)
+          (c) =>
+            (isFillerNoProgressChip(c) || /^walk on\b/i.test(c))
+            && !isHuntChip(c)
+            && !isOutdoorRestPad(c)
+            && !(story && c.toLowerCase() === story.toLowerCase())
         );
         if (gatherSlot >= 0) {
           list = list.map((c, i) => (i === gatherSlot ? GATHER_WILDS_CHIP : c));
           notes.push('Wilds: Gather herbs and resources nearby');
         } else if (list.filter((c) => isHuntChip(c) || isGatherChip(c)).length < 2) {
-          list = [...list, GATHER_WILDS_CHIP];
-          notes.push('Wilds: Gather herbs and resources nearby (extra)');
+          const systemIdx = list.findIndex((c) => /^check system\b/i.test(c));
+          const restIdx = list.findIndex((c) => isOutdoorRestPad(c));
+          const questIdx = list.findIndex((c) => story && c.toLowerCase() === story.toLowerCase());
+          const insertAt = Math.max(
+            0,
+            Math.min(list.length, Math.max(systemIdx, restIdx, questIdx) + 1)
+          );
+          list = [...list.slice(0, insertAt), GATHER_WILDS_CHIP, ...list.slice(insertAt)];
+          notes.push('Wilds: Gather herbs and resources nearby (front)');
         }
       }
       // XP-D1 OPEN6 — gather-quest turn-in when the player holds enough named mats.

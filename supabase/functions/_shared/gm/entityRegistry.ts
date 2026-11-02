@@ -327,6 +327,8 @@ export function canHarvestAsNamedPerson(
   if (!t || t.length < 2) return false;
   // 08d — pad-fragment harvest (Saying Your / Your Name)
   if (/^(?:saying(?:\s+your)?|your(?:\s+name)?|yours)$/i.test(t)) return false;
+  // OPEN9 — second-person role labels ("Your upperclassman mentor") are not person names.
+  if (/^(?:your|my)\s+/i.test(t)) return false;
   if (/^(?:the\s+)?ash(?:\s+court)?(?:\s+priests?)?$/i.test(t)) return false;
   if (isPlannerUiPersonToken(t)) return false;
   if (/^(charter|millstone)$/i.test(t.replace(/^(the|a|an)\s+/i, ''))) return false;

@@ -1457,6 +1457,11 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubArticleCollisions(next);
   next = scrubPronounSubjectSlips(next);
   next = scrubPossessiveDeterminerSlips(next);
+  // OPEN9 — second-person role labels must not stay as Title-Case "Your X" in third-person book prose.
+  next = next.replace(/\bYour\s+(upperclassman(?:\s+mentor)?|mentor|handler|registrar|classmate)\b/g, (_m, role: string) => {
+    const r = String(role || '').trim();
+    return r ? `the ${r.charAt(0).toLowerCase()}${r.slice(1)}` : 'the mentor';
+  });
   next = scrubInternalRefIds(next);
   next = scrubLongPlacePossessive(next);
   if (ctx?.ledgerState) {

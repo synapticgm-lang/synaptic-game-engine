@@ -20,7 +20,6 @@ import {
   OUTDOOR_SHORT_REST_HEAL_FRACTION,
   OUTDOOR_SHORT_REST_HOURS,
 } from './rules/wildlifeConfig';
-import { isOutdoorWildsPlace } from './wilds';
 
 export interface RecoveryRow {
   /** Share of max HP recovered after a won fight. */
@@ -55,16 +54,15 @@ export function isSafeHubRest(state: GameState, input: string): boolean {
 }
 
 /**
- * OPEN7 addendum — LitRPG / Story RPG may take a SHORT outdoor rest when not in a fight.
- * Full / long rest still needs a safe hub. Tabletop / dnd / PYOA never use this path.
+ * OPEN7 / OPEN9 — LitRPG / Story RPG may take a SHORT rest when not in a fight.
+ * OPEN9: towns, hubs, roads, wilds, and quiet dungeons (no live/pending fight) — no fire needed.
+ * Full / long rest still needs a safe hub via isSafeHubRest. Tabletop / dnd / PYOA never use this path.
  */
 export function canOutdoorShortRest(state: GameState, input: string): boolean {
   if (state.engineMode !== 'litrpg' && state.engineMode !== 'rpg') return false;
   if (!OUTDOOR_SHORT_REST_RE.test(input ?? '') && !/^rest\b/i.test((input ?? '').trim())) return false;
-  if (state.activeEncounter || state.sceneFacts?.pendingEncounter || state.activeDungeon) return false;
-  if (!isOutdoorWildsPlace(state) && !state.journey) return false;
-  // Hub long/short rests stay on isSafeHubRest; outdoor path is for non-hub ground.
-  if (matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation)) return false;
+  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return false;
+  // Quiet dungeon rooms may rest; a live dungeon card with pending fight already blocked above.
   const until = state.outdoorShortRestCooldownUntilTurn;
   if (typeof until === 'number' && (state.turn ?? 0) < until) return false;
   const max = state.character?.maxHp || state.character?.hp || 0;
@@ -73,25 +71,48 @@ export function canOutdoorShortRest(state: GameState, input: string): boolean {
   return true;
 }
 
-/** Outdoor short rest: heal a configured fraction, advance clock, 0 XP, cooldown. */
+const MEAL_ITEM_RE = /\b(?:meal|ration|rations|bread|food|traveler'?s stew|dried meat|travel cake|hardtack)\b/i;
+
+/** Prefer a held meal / ration for a short rest; returns the item name when one is spent. */
+function takeRestMeal(state: GameState): { state: GameState; mealName: string | null } {
+  const inv = state.inventory ?? [];
+  const idx = inv.findIndex((it) => MEAL_ITEM_RE.test(it.name ?? '') && (it.quantity ?? 1) > 0);
+  if (idx < 0) return { state, mealName: null };
+  const item = inv[idx]!;
+  const qty = item.quantity ?? 1;
+  const nextInv =
+    qty <= 1
+      ? inv.filter((_, i) => i !== idx)
+      : inv.map((it, i) => (i === idx ? { ...it, quantity: qty - 1 } : it));
+  return { state: { ...state, inventory: nextInv }, mealName: item.name };
+}
+
+/** Outdoor / safe-spot short rest: heal a configured fraction, advance clock, eat a meal if owned, 0 XP, cooldown. */
 export function applyOutdoorShortRest(state: GameState, input: string): RestHeal {
   if (!canOutdoorShortRest(state, input)) return { state, receipt: null };
   const ch = state.character;
   const max = ch.maxHp || ch.hp;
+  const meal = takeRestMeal(state);
+  const hours = meal.mealName ? OUTDOOR_SHORT_REST_HOURS : OUTDOOR_SHORT_REST_HOURS * 2;
   const gain = Math.max(1, Math.floor(max * OUTDOOR_SHORT_REST_HEAL_FRACTION));
   const hp = Math.min(max, ch.hp + gain);
-  const clock = advanceClock(state, OUTDOOR_SHORT_REST_HOURS);
+  const clock = advanceClock(meal.state, hours);
   const turn = state.turn ?? 0;
   const next: GameState = {
     ...clock.state,
     character: { ...ch, hp },
     outdoorShortRestCooldownUntilTurn: turn + OUTDOOR_SHORT_REST_COOLDOWN_TURNS,
   };
-  const receipt = `Rest: short outdoor rest, ${OUTDOOR_SHORT_REST_HOURS} hour — HP ${ch.hp} → ${hp} (${clock.note})`;
+  const mealBit = meal.mealName
+    ? `; ate ${meal.mealName}`
+    : '; no food — longer rest';
+  const receipt = `Rest: short rest, ${hours} hour${hours === 1 ? '' : 's'}${mealBit} — HP ${ch.hp} → ${hp} (${clock.note})`;
   return {
     state: next,
     receipt,
-    fact: `You rested outdoors for about an hour and bound your wounds${hp < max ? '; you are not fully healed' : ''}.`,
+    fact: meal.mealName
+      ? `You rested for about an hour, ate ${meal.mealName}, and bound your wounds${hp < max ? '; you are not fully healed' : ''}.`
+      : `You rested longer with no food on hand and bound your wounds${hp < max ? '; you are not fully healed' : ''}.`,
   };
 }
 
@@ -327,6 +348,12 @@ function srdRest(state: GameState, kind: 'long' | 'short'): RestHeal {
  * OPEN7 addendum: LitRPG / Story RPG also accept a short outdoor rest (fraction heal, never a hub long rest).
  */
 export function applyRestHeal(state: GameState, input: string): RestHeal {
+  // OPEN9 — LitRPG / Story RPG outdoor Rest chip (meal + clock) wins over SRD hub rest so a
+  // hurt player always spends food / takes longer when foodless. Tabletop keeps SRD-first.
+  if (state.engineMode === 'litrpg' || state.engineMode === 'rpg') {
+    const outdoor = presentRest(state, applyOutdoorShortRest(state, input));
+    if (outdoor.receipt) return outdoor;
+  }
   const hub = presentRest(state, applySrdRest(state, input));
   if (hub.receipt) return hub;
   return presentRest(state, applyOutdoorShortRest(state, input));
@@ -344,9 +371,16 @@ function presentRest(state: GameState, rest: RestHeal): RestHeal {
   if (!rest.receipt || modeProfile(state.engineMode).restDetail) return rest;
   const before = state.character.hp;
   const after = rest.state.character.hp;
+  // OPEN9 — keep meal / no-food note on the simplified LitRPG/RPG STATUS line.
+  const ate = rest.receipt.match(/ate\s+([^;—]+)/i)?.[1]?.trim();
+  const mealBit = ate
+    ? `; ate ${ate}`
+    : /no food/i.test(rest.receipt)
+      ? '; no food — longer rest'
+      : '';
   return {
     state: rest.state,
-    receipt: after !== before ? `Rest: HP ${before} → ${after}` : `Rest: HP stays ${after}`,
+    receipt: after !== before ? `Rest: HP ${before} → ${after}${mealBit}` : `Rest: HP stays ${after}${mealBit}`,
     ...(rest.fact ? { fact: rest.fact } : {}),
   };
 }

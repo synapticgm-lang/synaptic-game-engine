@@ -21,7 +21,7 @@ import {
 } from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
 import { exitPlaceNames } from './placeNames';
-import { canonicalTravelDest, placeExitRows } from './placeRegistry';
+import { canonicalTravelDest, isTravelDestHere, placeExitRows } from './placeRegistry';
 import { openRouteView, presentPersonForRoute } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './scenePresence';
@@ -172,9 +172,8 @@ export function recordedTravelDestinations(state: GameState): PlaceExitRow[] {
     canonicalTravelDest(state, rawDest)
     ?? (isLeadPlaceCopy(rawDest) ? null : rawDest);
   if (!dest) return rows;
-  const hereRaw = (state.currentLocation ?? '').trim();
-  const hereCanon = (canonicalTravelDest(state, hereRaw) ?? hereRaw).toLowerCase();
-  if (!hereRaw || dest.toLowerCase() === hereRaw.toLowerCase() || dest.toLowerCase() === hereCanon) {
+  // OPEN9 — quest-pin Travel must not target HERE (articles / aliases).
+  if (!(state.currentLocation ?? '').trim() || isTravelDestHere(state, dest)) {
     return rows;
   }
   if (seen.has(dest.toLowerCase())) return rows;
@@ -289,7 +288,11 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
   for (let i = 0; i < people.length; i++) {
     const raw = people[i]!;
     const canonical = resolveNpcRecord(state, raw.npcName) ?? raw;
-    const name = (canonical.npcName ?? '').trim();
+    const rawName = (canonical.npcName ?? '').trim();
+    // OPEN9 — second-person role labels ("Your upperclassman mentor") → "the upperclassman mentor".
+    const name = /^(?:Your|My)\s+/i.test(rawName)
+      ? `the ${rawName.replace(/^(?:Your|My)\s+/i, '').replace(/^[A-Z]/, (c) => c.toLowerCase())}`
+      : rawName;
     // T10Q5R — never chip a missing / empty-room / placeholder seat (Nobody, blank name).
     if (!name || isEmptyRoomPersonSlot(name)) continue;
     const entityId = canonical.npcId || `npc:${name}`;
@@ -567,9 +570,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
       // Quest-pin Travel (T10AA Front Door) is intentional even when wayOutMovesPlayer is
       // false; only drop unresolved lead descriptions (already filtered in recordedTravelDestinations).
       if (isLeadPlaceCopy(dest)) continue;
-      const hereRaw = (state.currentLocation ?? '').trim();
-      const hereCanon = (canonicalTravelDest(state, hereRaw) ?? hereRaw).toLowerCase();
-      if (dest.toLowerCase() === hereRaw.toLowerCase() || dest.toLowerCase() === hereCanon) continue;
+      // OPEN9 — never offer Travel to the place the player is already in (articles / aliases).
+      if (isTravelDestHere(state, dest)) continue;
       const chip = `Travel toward ${dest}`;
       const entityId = exitEntityId(row) || dest;
       const questBoost = !!questTravelDest && dest.toLowerCase() === questTravelDest;
@@ -616,6 +618,8 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     for (let i = 0; i < names.length; i++) {
       const dest = (names[i] ?? '').trim();
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
+      // OPEN9 — exitPlaceNames refill must not re-inject Travel-to-HERE.
+      if (isTravelDestHere(state, dest)) continue;
       const entityId = dest;
       all.push({
         label: `Travel toward ${dest}`,

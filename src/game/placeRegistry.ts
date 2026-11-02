@@ -14,6 +14,37 @@ function tidy(name: string | undefined | null): string {
   return (name ?? '').replace(/\s+/g, ' ').trim();
 }
 
+/** Article-stripped place key for Travel-HERE compares (OPEN9). */
+export function barePlaceKey(name: string | undefined | null): string {
+  return tidy(name).toLowerCase().replace(/^(?:the|a|an)\s+/, '');
+}
+
+/**
+ * OPEN9 — true when Travel dest is the current place (aliases / articles / canon names).
+ * Used at chip emission and when a stale Travel chip is picked.
+ */
+export function isTravelDestHere(state: GameState, dest: string | null | undefined): boolean {
+  const d = tidy(dest);
+  const here = tidy(state.currentLocation);
+  if (!d || !here) return false;
+  const dBare = barePlaceKey(d);
+  const hereBare = barePlaceKey(here);
+  if (dBare && hereBare && (dBare === hereBare || dBare.includes(hereBare) || hereBare.includes(dBare))) {
+    return true;
+  }
+  const hereCanon = barePlaceKey(canonicalTravelDest(state, here) ?? here);
+  const destCanon = barePlaceKey(canonicalTravelDest(state, d) ?? d);
+  if (destCanon && hereCanon && destCanon === hereCanon) return true;
+  if (destCanon && hereBare && destCanon === hereBare) return true;
+  if (dBare && hereCanon && dBare === hereCanon) return true;
+  // Place-record aliases for HERE.
+  const place = resolvePlace(state.places, here) ?? resolvePlace(state.places, hereCanon || here);
+  for (const a of place?.aliases ?? []) {
+    if (barePlaceKey(a) === dBare || barePlaceKey(a) === destCanon) return true;
+  }
+  return false;
+}
+
 /** Quest/lead copy ("the village moot about the blight"), not an atmospheric HERE name. */
 function isQuestPlaceDescription(t: string): boolean {
   return ` ${t.toLowerCase()} `.includes(' about ');
