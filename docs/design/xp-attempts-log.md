@@ -366,3 +366,44 @@ Branch xp/wildlife (from main c0616d7a, OPEN4 shipped as 2026-11-02c). Order: me
 **Projected (same-level kill under our bars; xpPace, litrpg, skipEventCap):** L2 bar 187, kill 26 (7.2 kills/level, WoW 16); L5 363 / 32 (11.3, WoW 40); L10 1103 / 57 (19.4, WoW 80); L20 10257 / 393 (26.1, WoW 160); L30 95518 / 3662 (26.1, WoW 243). Regular cap per level: L2 56 XP, L5 108, L10 330. Challenge cap: L2 28, L5 54, L10 165. Never-hunts mix: reach (Seek Fight + Hunt chips actually shown) is what lifts fight share from 6.3% toward 15-25% and cuts quest share from 83.4% toward 60-75%; L2->L3 15-25 turns is a TARGET, not yet measured (T50 owed to the runner). Hunt-gather profile judged separately; quests stay >= 50% by the budgets.
 
 Not done in this slice (still owed): Leatherworking craft pad, Brew at camp, gather-quest turn-ins, a road-meeting test for the Hunt the animal pad (pad is wired, LitRPG only), pace-model re-fit tests (mixes a-d), world-coverage tests for generated atlases, grep-level equip-only-reader test.
+
+### 2 Nov 2026 — LitRPG XP attempt 5 (wilds, world creatures, gathering, equip level, OPEN4 misses) results — MISS
+
+What changed (from `merge-logs/xp-design/open5-wildlife/OPEN5-report.md`, build `2026-11-02g+6f9bea6d` on `xp/wildlife`): Seek Fight / Hunt exempt from invented-threat strip; journey pads run `rankChoices`; Hunt every outdoor LitRPG turn after rite (stock permitting); Gather (LitRPG + Story RPG); WoW `killScale` + wilds budgets 0.30/0.15; creature-level `itemLevel` loot + equip margin 2; filler budget keyed by family. Opening rite L1→L2 untouched. Tabletop / PYOA untouched.
+
+Runs (free writer DeepSeek via OpenRouter/gm-turn, no paid AI; seeds 7301–7307; worlds: hero-awakening, dungeon-transport, twin-lanterns):
+- 7301 random summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T14-14-29-289Z_summoned-pact_cold-system_s7301`
+- 7302 random system-integration: `scripts/fate-autoplay/runs/2026-11-02T14-22-38-140Z_system-integration_cold-system_s7302`
+- 7303 quest summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T14-27-32-422Z_summoned-pact_cold-system_s7303_quest`
+- 7304 quest system-integration: `scripts/fate-autoplay/runs/2026-11-02T14-40-52-217Z_system-integration_cold-system_s7304_quest`
+- 7305 hunt-gather hero-awakening: `scripts/fate-autoplay/runs/2026-11-02T14-46-33-726Z_hero-awakening_cold-system_s7305_huntgather`
+- 7306 hunt-gather dungeon-transport: `scripts/fate-autoplay/runs/2026-11-02T14-54-20-137Z_dungeon-transport_cold-system_s7306_huntgather`
+- 7307 random twin-lanterns (Story RPG): `scripts/fate-autoplay/runs/2026-11-02T14-58-47-531Z_twin-lanterns_chilled-gm_s7307`
+
+Measured from `turns.jsonl` (`xpGained`, `XP Gained:` / inferred victory+quest, `level`, Check System, chips). Quest share = rite + steps + completes. Bars: L2 **187** → L3 **233** → L4 **291**.
+
+| Run | Profile | Scenario | Rite | L2 | L3 | L4 | L2→L3 | Total XP | Rite | Steps | Completes | Fights | Ach/other | Quest% | Fight% | Wins | Hunt off/take | Seek | Gather off/take | Check off/open/max | Filler max | No-prog / max | LOOP | Notes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7301 | random | summoned-pact | **2** refuse→forced | **2** | 41 | — | **39** | 523 | 150 | 140 | 183 | 38 | 12 | **90.4** | **7.3** | 1×38 | **0/0** | 0 | 0/0 | **10/10/3** | **6** | 9/1 | no | outdoor-after-rite 40; mats [] |
+| 7302 | random | system-integration | **2** chip | **2** | 14 | 47 | **12** | 606 | 150 | 163 | 220 | 26 | 47 | **88.0** | **4.3** | 1×26 | **0/0** | 0 | 0/0 | **15/15/3** | **5** | 8/1 | no | outdoor-after-rite 20 |
+| 7303 | quest | summoned-pact | **2** chip | **2** | — (184/187) | — | — | 334 | 150 | 41 | 55 | 29 | 59 | **73.7** | **8.7** | 1×29 | **0/0** | 0 | 0/0 | **10/10/5** | **9** | 3/1 | no | outdoor-after-rite 39 |
+| 7304 | quest | system-integration | **2** chip | **2** | 43 | — | **41** | 465 | 150 | 103 | 110 | 55 | 47 | **78.1** | **11.8** | 2×29+26 | **0/0** | 0 | 0/0 | **15/15/4** | **9** | 5/1 | no | outdoor-after-rite 33 |
+| 7305 | hunt-gather | hero-awakening | **3** chip | **3** | 39 | — | **36** | 438 | 150 | 105 | 61 | 122 | 0 | **72.1** | **27.9** | 3×41+29+52 | **0/0** | 0 | 0/0 | **10/10/3** | **9** | 4/1 | no | Hunt/Gather never offered; road fights only |
+| 7306 | hunt-gather | dungeon-transport | **2** chip | **2** | 40 | — | **38** | 354 | 150 | 68 | 55 | 34 | 47 | **77.1** | **9.6** | 1×34 | **0/0** | 0 | 0/0 | **14/14/3** | **8** | 5/1 | no | Hunt/Gather never offered |
+| 7307 | random | twin-lanterns (rpg) | — | **7** | 26 | — | **19** | 505 | 0 | 128 | 214 | 163 | 0 | **67.7** | **32.3** | 6 | 0/0 (Hunt LitRPG-only) | 0 | **15/5** | **21/21/6** | **5** | 9/1 | no | Gather: pack-full refuse ×2; ambush win then death T47; mats [] |
+
+Per-profile (7301–7304 XP targets): random L2 **2**, L2→L3 **25.5** (39/12), quest **89.2%**, fight **5.8%**, Check sum **25**. Quest profile L2 **2**, L2→L3 **41** (n=1), quest **75.9%**, fight **10.3%**, Check sum **25**. Overall: L2 **2**, L2→L3 avg **30.7**, quest **82.6%**, fight **8.0%**, Check System offered sum **50**, Hunt+Seek **0** every run, fights won **1/1/1/2**. Final snapshots: `wilds` / `regionBands` empty; materials []; no equip-above-line; no equip refusals; hunt budgets unused (0 hunt XP).
+
+Hunt-gather / Story RPG (separate): LitRPG Hunt and Gather never reached the pad list (profile could not take them). Quests stayed ≥50% without hunting. Story RPG Gather offered/taken; honest full-pouch refuse; guard ambush real (Shore Eel); one death; no lasting mats or trade ranks.
+
+**Vs open4 baseline (same 7301–7304):** L2@T2 held; Check System **7/15/12/21 → 10/15/10/15**; quest share **83.4% → 82.6%** (still over tol.); fight share **6.3% → 8.0%** (Hunt+Seek still **0**); L2→L3 **39/12/44/27 → 39/12/—/41**; filler max **3/5/4/7 → 6/5/9/9** (family credit still missed live); LOOP STOP still none.
+
+**Vs targets:** Rite→L2@T2 **PASS**; L2→L3 15–25 **MISS**; quest share tol. **MISS** (82.6%); fights 15–30% **MISS** (8.0%); Seek/Hunt outdoors **MISS** (0); filler ≤2 **MISS**; Check System **PASS**; no LOOP / streak≤1 **PASS**; no full-pay same-giver farm **PASS**; no zero-pay wins **PASS**. Equip / hides / hunt budgets: not exercised (no creature-table hunts on LitRPG).
+
+OpenRouter: no balance or $ cost figure in logs or run meta (`costUsd` null; teacher `deepseek/deepseek-v4.1-flash`).
+
+**Verdict: MISS** — offs: L2→L3 **39 / 12 / — / 41**; fight-share avg **8.0%** (Hunt+Seek 0); quest-share avg **82.6%**; filler max **6 / 5 / 9 / 9**.
+
+**Next attempt (one line):** Seed `wilds` / region stock on outdoor + journey turns so Hunt (and LitRPG Gather) inject every wilds turn, and credit filler by family on every pad commit so live Search/Read cannot exceed 2.
+
+Plain summary also at `merge-logs/xp-design/open5-wildlife/T50-report.md`.
