@@ -477,7 +477,22 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
         continue;
       }
       if (route && (route.kind === 'place' || route.kind === 'object')) {
-        if (routePlace && herePlace && routePlace === herePlace) placeSearchHere = true;
+        if (routePlace && herePlace && routePlace === herePlace) {
+          placeSearchHere = true;
+          // TRAINLOOP5 — do not re-offer Search HERE after searchedEmpty (run-14 gatehouse loop).
+          // Plain includes only (no regex — ttC1a / OPT1-6 ban).
+          const routeLabelLow = (row.label ?? '').toLowerCase();
+          if (routeLabelLow.includes('search')) {
+            const searchKey = normalizeSearchTarget(row.label, state.currentLocation ?? '');
+            if (
+              isSearchTargetEmpty(state.sceneFacts, searchKey)
+              || isSearchTargetEmpty(state.sceneFacts, `loc:${herePlace}`)
+              || isSearchTargetEmpty(state.sceneFacts, 'here')
+            ) {
+              continue;
+            }
+          }
+        }
       }
       all.push({
         label: row.label,

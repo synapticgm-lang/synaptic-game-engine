@@ -986,8 +986,12 @@ export function compileChoices(
           supplements.push('Choose the risky fork', 'Buy time', 'Call for help');
         }
       } else if (npcTacticAdvance) {
-        supplements.push('Change the subject');
-        if (!excluded.has('leave')) supplements.push('Walk away with consequence');
+        // TRAINLOOP5 — "Change the subject" is never a bound engine chip (RC-K1 filter drops it).
+        // Offer a state-changing Leave instead so planner and filter agree.
+        if (!excluded.has('leave')) {
+          supplements.push('Leave the scene');
+          supplements.push('Walk away with consequence');
+        }
       } else if (affordancesCoverGenerics(state)) {
         // OPT-1 item 4 / TT-C1 item 5: Scout/Inspect refill deleted when affordances cover.
       } else if (state.engineMode === 'litrpg') {

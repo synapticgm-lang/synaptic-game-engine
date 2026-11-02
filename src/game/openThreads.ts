@@ -214,6 +214,8 @@ export function collectOpenThreads(state: GameState): OpenThread[] {
   for (let i = 0; i < mems.length; i++) {
     const m = mems[i]!;
     if (!m.goal?.motivation) continue;
+    // TRAINLOOP5 — departed / shouldExit NPCs do not keep an open Follow-up thread.
+    if (m.shouldExit) continue;
     const about = npcChipWant(m);
     if (!about) continue;
     const npcId = m.npcId || `npc:${m.npcName}`;

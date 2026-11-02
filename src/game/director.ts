@@ -329,11 +329,10 @@ function threadPlaceLabel(state: GameState, thread: OpenThread): string | null {
 }
 
 function personIsHere(state: GameState, name: string): boolean {
-  const here = peopleHere(state);
-  if (here.some((n) => mentionsName(n, name) || mentionsName(name, n))) return true;
-  return (state.sceneFacts?.present ?? []).some(
-    (n) => mentionsName(n, name) || mentionsName(name, n),
-  );
+  // TRAINLOOP5 — speakable presence only (peopleHere already drops shouldExit / out-of-range).
+  // Bare sceneFacts.present without a speakable record made Answer bind in the planner then
+  // fail the choice filter (unbound), which is how run-14 lost forward social chips.
+  return peopleHere(state).some((n) => mentionsName(n, name) || mentionsName(name, n));
 }
 
 /**
@@ -642,7 +641,7 @@ function commitStallDevelopment(
 
   // dnd npc/lead chose but could not commit — unlock a place lead (never invent a foe).
   {
-    const destRaw = placeLabel || pickLeadFact(working)?.placeId || null;
+    const destRaw = placeLabel || pickLeadFact(working)?.placeId || pickExitLead(working)?.placeId || null;
     const destHub = destRaw ? matchHub(hubsForBibleId(working.campaignBibleId), destRaw) : null;
     let travelName = destHub?.name ?? destRaw;
     let travelHub = destHub;
@@ -651,7 +650,7 @@ function commitStallDevelopment(
       && (travelName.toLowerCase() === hereName.toLowerCase()
         || (destHub && hereId && destHub.id === hereId))
     ) {
-      const alt = pickLeadFact(working);
+      const alt = pickLeadFact(working) ?? pickExitLead(working);
       travelHub = alt?.placeId ? matchHub(hubsForBibleId(working.campaignBibleId), alt.placeId) : null;
       travelName = travelHub?.name ?? alt?.placeId ?? null;
     }
@@ -669,6 +668,17 @@ function commitStallDevelopment(
         places.push({ id: placeKey, name: travelName, mapCanonical: true });
         working = { ...working, places };
       }
+      // Re-open a sealed destination so Travel is legal (closed destinations are not exits).
+      working = {
+        ...working,
+        places: (working.places ?? []).map((p) => {
+          const n = (p.name ?? '').trim().toLowerCase();
+          const id = (p.id ?? '').toLowerCase();
+          if (n !== travelName.toLowerCase() && id !== String(placeKey).toLowerCase()) return p;
+          if (p.arcStatus !== 'closed' && p.closed !== true) return p;
+          return { ...p, arcStatus: 'open' as const, closed: false };
+        }),
+      };
       const fact = `A lead points toward ${travelName}.`;
       working = appendDirectorFact(working, `stall-lead-${turn}`, fact);
       working = recordDevelopment(working, 'lead', travelName, fact);
@@ -686,12 +696,23 @@ function commitStallDevelopment(
       };
     }
   }
-  return {
-    state: working,
-    need: kind === 'lead' ? 'lead' : kind === 'npc-acting' ? 'npc-act' : 'none',
-    forwardIds,
-    stallKind: thread ? 'thread' : 'situation',
-  };
+  // TRAINLOOP5 — never return empty development: Leave the scene is always a state-changing exit.
+  {
+    const fact = `A way out of ${hereName || 'here'} opens.`;
+    working = appendDirectorFact(working, `stall-leave-${turn}`, fact);
+    working = recordDevelopment(working, 'lead', `leave:${hereName || 'here'}`, fact);
+    return {
+      state: working,
+      development: {
+        kind: 'lead',
+        fact: asMustNarrateFact(fact),
+      },
+      need: 'travel',
+      forwardIds: forwardIds.length ? forwardIds : [`stall-leave:${turn}`],
+      stallKind: thread ? 'thread' : 'situation',
+      stallEventId: `stall-leave-${turn}`,
+    };
+  }
 }
 
 function addressedPresentName(state: GameState, playerInput: string): string | null {
@@ -750,6 +771,50 @@ function pickThreatFact(state: GameState, hereName: string): string {
 }
 
 /**
+ * TRAINLOOP5 — hubless / closed-HERE exit lead from discovered or open places (not only hub banks).
+ * Prefer a place that is not HERE so Travel actually changes state.
+ */
+function pickExitLead(state: GameState): { fact: string; placeId: string } | null {
+  const hereId = placeIdOf(state).toLowerCase();
+  const hereName = placeNameOf(state).toLowerCase();
+  const seen = new Set<string>();
+  const candidates: string[] = [];
+  const push = (raw: string | undefined | null) => {
+    const label = (canonicalTravelDest(state, raw ?? '') ?? (raw ?? '')).replace(/\s+/g, ' ').trim();
+    if (!label) return;
+    const low = label.toLowerCase();
+    if (low === hereName || low === hereId || seen.has(low)) return;
+    // Skip destinations that are still sealed closed (cannot travel there yet).
+    const places = state.places ?? [];
+    for (let i = 0; i < places.length; i++) {
+      const p = places[i]!;
+      const n = (p.name ?? '').trim().toLowerCase();
+      const id = (p.id ?? '').toLowerCase();
+      if (n === low || id === low) {
+        if (p.arcStatus === 'closed' || p.closed === true) return;
+        break;
+      }
+    }
+    seen.add(low);
+    candidates.push(label);
+  };
+  for (const d of state.discoveredLocations ?? []) push(d);
+  for (const p of state.places ?? []) {
+    if (p.arcStatus === 'closed' || p.closed === true) continue;
+    push(p.name || p.id);
+  }
+  if (!candidates.length) return null;
+  const pick = candidates[0]!;
+  const speaker = presentNpcRecords(state)[0]?.npcName ?? peopleHere(state)[0] ?? null;
+  return {
+    fact: speaker
+      ? `Nudge: ${speaker} mentions ${pick}.`
+      : `Nudge: a way opens toward ${pick}.`,
+    placeId: pick,
+  };
+}
+
+/**
  * Exhausted-source lead: same engine-fact wording as the hub nudge
  * (`Nudge: <speaker> mentions <place>`), never a stock "word points you toward" line.
  */
@@ -786,6 +851,9 @@ function pickLeadFact(state: GameState): { fact: string; placeId?: string; npcId
       placeId: h.name || h.id,
     };
   }
+  // TRAINLOOP5 — hubless bibles still need a place lead (discovered / open places).
+  const exit = pickExitLead(state);
+  if (exit) return exit;
   const present = presentNpcRecords(state).filter(
     (m) => m.present === true || peopleHere(state).some((n) => mentionsName(n, m.npcName)),
   );
@@ -805,12 +873,23 @@ function pickLeadFact(state: GameState): { fact: string; placeId?: string; npcId
     if (!obj) continue;
     let desc = obj.description;
     while (desc.endsWith('.') || desc.endsWith('!') || desc.endsWith('?')) desc = desc.slice(0, -1);
+    const qPlace = q.location ?? q.leadsTo ?? undefined;
+    // Do not hand back HERE as a "lead" — that collapses to no development on hubless maps.
+    if (qPlace && qPlace.replace(/\s+/g, ' ').trim().toLowerCase() === hereName) {
+      const alt = pickExitLead(state);
+      if (alt) {
+        return {
+          fact: `Nudge: word reaches you about ${q.name}: ${desc}.`,
+          placeId: alt.placeId,
+        };
+      }
+    }
     return {
       fact: `Nudge: word reaches you about ${q.name}: ${desc}.`,
-      placeId: q.location ?? q.leadsTo ?? undefined,
+      placeId: qPlace,
     };
   }
-  return null;
+  return pickExitLead(state);
 }
 
 function pickNpcAct(state: GameState): { fact: string; npcId: string; name: string } | null {
@@ -1354,7 +1433,7 @@ function chipSpecsFromNeed(
       { label: `Decline the job from ${name}`, reason: 'director-quest-decline' },
     );
   }
-  if (need === 'travel' || (development?.kind === 'lead' && development.placeId)) {
+  if (need === 'travel' || development?.kind === 'lead') {
     const dest = development?.placeId;
     if (dest) {
       // TRAINLOOP4 B — Travel label is the registry/hub place name only.
@@ -1366,26 +1445,40 @@ function chipSpecsFromNeed(
       } else {
         // Thread/lead is already HERE — offer a different hub so first-pad can leave the stall
         // (travel-to-here is illegal; injection alone is not progress).
-        const alt = pickLeadFact(state);
+        const alt = pickLeadFact(state) ?? pickExitLead(state);
         if (alt?.placeId) {
           const altLabel = canonicalTravelDest(state, alt.placeId);
           const altHub = altLabel ? matchHub(hubsForBibleId(state.campaignBibleId), altLabel) : null;
           if (altLabel && (!hereHub || hereHub.id !== altHub?.id)) {
             chips.push({ label: `Travel toward ${altLabel}`, reason: 'director-here-thread-lead' });
+          } else {
+            chips.push({ label: 'Leave the scene', reason: 'director-here-leave' });
           }
+        } else {
+          chips.push({ label: 'Leave the scene', reason: 'director-here-leave' });
         }
       }
+    } else if (need === 'travel') {
+      // TRAINLOOP5 — lead without a place still offers a state-changing Leave.
+      chips.push({ label: 'Leave the scene', reason: 'director-leave-exit' });
     }
   }
   if (need === 'npc-act' && development?.npcId) {
     const name =
       (state.npcMemories ?? []).find((m) => (m.npcId || `npc:${m.npcName}`) === development.npcId)?.npcName
       ?? 'them';
-    // TRAINLOOP4 A — Answer is dead when the NPC is not here to speak.
+    // TRAINLOOP4 A / TRAINLOOP5 — Answer only when speakable here; else Leave (never unbound Answer).
     if (name && name !== 'them' && personIsHere(state, name)) {
       chips.push({ label: `Answer ${name}`, reason: 'director-npc-act' });
     } else {
       chips.push({ label: 'Leave the scene', reason: 'director-npc-act-absent' });
+      const alt = pickExitLead(state) ?? pickLeadFact(state);
+      if (alt?.placeId) {
+        const altLabel = canonicalTravelDest(state, alt.placeId) ?? alt.placeId;
+        if (altLabel && altLabel.toLowerCase() !== placeNameOf(state).toLowerCase()) {
+          chips.push({ label: `Travel toward ${altLabel}`, reason: 'director-npc-act-lead' });
+        }
+      }
     }
   }
   // T10RC3/RC5 — Face the threat only to engage a parked/pending foe (not mid-round).
@@ -1740,7 +1833,54 @@ export function directorNudgeIfStuck(state: GameState): {
         notes: [...notes, ...forced.notes, 'Director forced development (old nudge sources exhausted)'],
       };
     }
-    return { state, receipts: [], notes: [...notes, 'Director: no development available this beat'] };
+    // TRAINLOOP5 — "no development available" is never a legal outcome. Open an exit lead.
+    const exit = pickExitLead(state) ?? pickLeadFact(state);
+    const fact =
+      exit?.fact
+      ?? `Nudge: a way opens out of ${placeNameOf(state) || 'here'}.`;
+    const turnNow = state.turn ?? 0;
+    let next = writeDirectorNudge(state, fact, (used + 1) % sourceCount, { countsAsProgress: false });
+    const placeId = exit?.placeId;
+    if (placeId) {
+      const disc = new Set(next.discoveredLocations ?? []);
+      if (!disc.has(placeId)) {
+        next = { ...next, discoveredLocations: [...(next.discoveredLocations ?? []), placeId] };
+      }
+      next = {
+        ...next,
+        places: (next.places ?? []).map((p) => {
+          const n = (p.name ?? '').trim().toLowerCase();
+          const id = (p.id ?? '').toLowerCase();
+          if (n !== placeId.toLowerCase() && id !== placeId.toLowerCase()) return p;
+          if (p.arcStatus !== 'closed' && p.closed !== true) return p;
+          return { ...p, arcStatus: 'open' as const, closed: false };
+        }),
+      };
+    }
+    const leaveLabel = placeId
+      ? `Travel toward ${canonicalTravelDest(next, placeId) ?? placeId}`
+      : 'Leave the scene';
+    const plan: DirectorPlan = {
+      need: 'travel',
+      development: {
+        kind: 'lead',
+        fact: asMustNarrateFact(fact),
+        placeId,
+      },
+      chips: [{ label: leaveLabel, reason: 'director-forced-exit' }],
+      turn: turnNow,
+    };
+    next = writeDirectorPlan(next, plan, {
+      plannedTurn: turnNow,
+      forwardIds: [`stall-exit:${turnNow}`],
+      stallKind: 'situation',
+      stallEventId: `stall-exit-${turnNow}`,
+    });
+    return {
+      state: next,
+      receipts: [fact],
+      notes: [...notes, 'Director forced exit after development sources exhausted'],
+    };
   }
 
   return {
@@ -1766,11 +1906,17 @@ export function applyDirectorChipPolicy(
   // T10RC5 — Face without an engine foe is never a legal pad (stale plan or compiler leftover).
   next = next.filter((c) => !/^Face the threat$/i.test(c) || facesThreatChipAllowed(state));
   // TRAINLOOP4 A — drop Answer-to-absent and Honour-that-cannot-keep.
+  // TRAINLOOP5 — drop unbound social refill ("Change the subject") and Follow-up to absent NPCs.
   next = next.filter((c) => {
     if (isDeadHonourPromiseChip(state, c)) return false;
-    const m = c.match(/^Answer\s+(.+)$/i);
-    if (!m) return true;
-    return personIsHere(state, (m[1] ?? '').trim());
+    if (/^Change the subject$/i.test(c)) return false;
+    const answer = c.match(/^Answer\s+(.+)$/i);
+    if (answer) return personIsHere(state, (answer[1] ?? '').trim());
+    const follow = c.match(/^Follow up with\s+([^:]+?)(?:\s*:|$)/i);
+    if (follow) return personIsHere(state, (follow[1] ?? '').trim());
+    const press = c.match(/^Press your standing with\s+(.+)$/i);
+    if (press) return personIsHere(state, (press[1] ?? '').trim());
+    return true;
   });
   const noOp = opts.noOpChip ?? directorNoOpChip(state);
   next = filterDirectorTravelChips(state, next, opts.recentChips ?? []);
@@ -1857,6 +2003,26 @@ export function applyDirectorChipPolicy(
   } else {
     const face = next.find((c) => /^Face the threat$/i.test(c)) ?? 'Face the threat';
     next = [face, ...next.filter((c) => !/^Face the threat$/i.test(c))];
+  }
+  // TRAINLOOP5 — under stall, always keep at least one state-changing exit/lead chip.
+  if (stallPressureActive(state) && !state.activeEncounter) {
+    const hasForward = next.some(
+      (c) =>
+        /^Leave(?:\s+the\s+scene)?\b/i.test(c)
+        || isTravelPad(c)
+        || !!travelDestFromChip(c)
+        || journeyMover(c)
+        || /^Face the threat$/i.test(c)
+        || /^Pursue\b/i.test(c)
+        || (/^Answer\s+/i.test(c) && personIsHere(state, (c.match(/^Answer\s+(.+)$/i)?.[1] ?? '').trim())),
+    );
+    if (!hasForward) {
+      const alt = pickExitLead(state) ?? pickLeadFact(state);
+      const exitChip = alt?.placeId
+        ? `Travel toward ${canonicalTravelDest(state, alt.placeId) ?? alt.placeId}`
+        : 'Leave the scene';
+      next = [exitChip, ...next];
+    }
   }
   return next;
 }

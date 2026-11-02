@@ -192,9 +192,19 @@ export function seat(state: GameState, npcRefOrNames: string | string[]): GameSt
   let changed = flagged !== next.npcMemories;
   const mems = flagged.map((m) => {
     if (!present.some((p) => memoryMatchesRef(m, p))) return m;
-    if (!here || (m.location ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === hereKey) return m;
+    let row = m;
+    // TRAINLOOP5 — re-entry clears exit flags so speakable records / Answer chips bind.
+    // applyExitedToPresent would otherwise strip the name we just seated (shouldExit stayed true).
+    if (row.shouldExit || row.exitReason) {
+      changed = true;
+      const { shouldExit: _sx, exitReason: _er, ...rest } = row;
+      row = { ...rest, present: true };
+    }
+    if (!here || (row.location ?? '').replace(/\s+/g, ' ').trim().toLowerCase() === hereKey) {
+      return row;
+    }
     changed = true;
-    return { ...m, location: here };
+    return { ...row, location: here };
   });
   return changed ? { ...next, npcMemories: mems } : next;
 }
