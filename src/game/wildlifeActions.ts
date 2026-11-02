@@ -357,8 +357,12 @@ export function startGatherFromInput(state: GameState, input: string): HuntStart
   const bonus = full && rng() < Math.min(0.5, 0.1 + (rank - unlock) * 0.02) ? 1 : 0;
   const put = addMaterials(s, [{ ...mat, quantity: 1 + bonus }]);
   if (put.refused) {
-    receipts.push(`Materials: no room for ${mat.name} (${put.refused})`);
-    return { state: s, receipts, fact: `You found ${mat.name} but your pack has no room for it.` };
+    receipts.push(`Materials: no room for ${mat.name} — free a slot first (${put.refused})`);
+    return {
+      state: s,
+      receipts,
+      fact: `You found ${mat.name} but your pack is full; free a material slot before gathering again.`,
+    };
   }
   s = takeNodeUnit(put.state, node.id);
   receipts.push(`Materials: ${mat.name} x${1 + bonus}`);
@@ -551,4 +555,66 @@ export function consumeGatherQuestMats(
     consumed: spent.took,
     receipts: spent.took > 0 ? [`Materials: turned in ${hit.name} x${spent.took}`] : [],
   };
+}
+
+const HAND_OVER_RE = /^hand over the materials\b/i;
+
+/**
+ * XP-D1 OPEN6 — "Hand over the materials" pad / typed line: spend mats for the matching gather-quest
+ * objective and mark that objective complete. Quest XP stays on the normal quest path (caller / sandbox).
+ */
+export function startHandOverMaterialsFromInput(state: GameState, input: string): HuntStart | null {
+  if (!gatherModeOk(state)) return null;
+  if (!HAND_OVER_RE.test((input ?? '').trim())) return null;
+  const mats = state.materials ?? [];
+  if (!mats.length) {
+    return { state, receipts: [], fact: 'You have no materials to hand over.' };
+  }
+  for (const q of state.quests ?? []) {
+    if (!q.revealed || (q.status !== 'active' && q.status !== 'available')) continue;
+    for (const o of q.objectives ?? []) {
+      if (o.completed) continue;
+      const targetName = typeof o.target === 'object' && o.target ? o.target.name : '';
+      const text = `${o.description ?? ''} ${o.object ?? ''} ${targetName} ${o.id ?? ''}`.toLowerCase();
+      if (!/\b(herb|ore|hide|leather|bloom|peacebloom|copper|iron|gather|collect|deliver|bring)\b/i.test(text)) {
+        continue;
+      }
+      const qtyMatch = text.match(/\b(\d{1,3})\b/);
+      const need = Math.max(1, qtyMatch ? parseInt(qtyMatch[1]!, 10) : 1);
+      const hit = mats.find((m) => {
+        const id = m.id.toLowerCase();
+        const name = m.name.toLowerCase();
+        return (
+          text.includes(id)
+          || text.includes(name)
+          || (/\bherb/.test(text) && /bloom|leaf|herb|thorn|root|blood/.test(id + name))
+          || (/\bore\b/.test(text) && /ore|copper|tin|iron|mithril|thorium/.test(id + name))
+          || (/\b(hide|leather)\b/.test(text) && /leather|hide/.test(id + name))
+        );
+      });
+      if (!hit || (hit.quantity ?? 0) < need) continue;
+      const spent = consumeGatherQuestMats(state, hit.id, need);
+      if (spent.consumed < need) {
+        return { state, receipts: [], fact: `You still need more ${hit.name} before you can hand them over.` };
+      }
+      const quests = (spent.state.quests ?? []).map((qq) => {
+        if (qq.id !== q.id) return qq;
+        const objectives = (qq.objectives ?? []).map((oo) =>
+          oo.id === o.id ? { ...oo, completed: true } : oo
+        );
+        const allDone = objectives.every((oo) => oo.completed || oo.optional);
+        return {
+          ...qq,
+          objectives,
+          status: allDone ? ('completed' as const) : qq.status,
+        };
+      });
+      return {
+        state: { ...spent.state, quests },
+        receipts: [...spent.receipts, `Quest: handed over ${hit.name} x${spent.consumed}`],
+        fact: `You handed over ${hit.name} (x${spent.consumed}) for the job.`,
+      };
+    }
+  }
+  return { state, receipts: [], fact: 'No open job is waiting for these materials right now.' };
 }

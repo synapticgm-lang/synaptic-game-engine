@@ -38,6 +38,7 @@ import {
 } from './wilds';
 import { ensureRegionResources } from './regionLevels';
 import { gatherModeOk, huntModeOk } from './wildlifeActions';
+import { canAddMaterials } from './inventory';
 
 export type { CirclingMemory } from './types';
 
@@ -658,6 +659,8 @@ export const SEEK_FIGHT_CHIP = 'Look for a fight';
 /** XP-D1 OPEN5 — player-chosen hunt (always-on in wilds; not drought-gated, not filler). */
 export const HUNT_WILDS_CHIP = 'Hunt the wildlife nearby';
 export const GATHER_WILDS_CHIP = 'Gather herbs and resources nearby';
+/** XP-D1 OPEN6 — turn in enough mats for a gather-quest objective. */
+export const HAND_OVER_MATERIALS_CHIP = 'Hand over the materials';
 
 export function isSeekFightChip(input: string): boolean {
   return actionKey(input) === actionKey(SEEK_FIGHT_CHIP);
@@ -669,6 +672,45 @@ export function isHuntChip(input: string): boolean {
 
 export function isGatherChip(input: string): boolean {
   return /^gather herbs and resources nearby$/i.test((input ?? '').trim());
+}
+
+export function isHandOverMaterialsChip(input: string): boolean {
+  return /^hand over the materials\b/i.test((input ?? '').trim());
+}
+
+/**
+ * When an active revealed quest objective asks for N of a material the player holds enough of,
+ * offer the Hand over pad. Matches objective text / target against material name or id.
+ */
+export function gatherQuestTurnInChip(state: GameState): string | null {
+  const mats = state.materials ?? [];
+  if (!mats.length) return null;
+  for (const q of state.quests ?? []) {
+    if (!q.revealed || (q.status !== 'active' && q.status !== 'available')) continue;
+    for (const o of q.objectives ?? []) {
+      if (o.completed) continue;
+      const targetName = typeof o.target === 'object' && o.target ? o.target.name : '';
+      const text = `${o.description ?? ''} ${o.object ?? ''} ${targetName} ${o.id ?? ''}`.toLowerCase();
+      if (!/\b(herb|ore|hide|leather|bloom|peacebloom|copper|iron|gather|collect|deliver|bring)\b/i.test(text)) {
+        continue;
+      }
+      const qtyMatch = text.match(/\b(\d{1,3})\b/);
+      const need = Math.max(1, qtyMatch ? parseInt(qtyMatch[1]!, 10) : 1);
+      const hit = mats.find((m) => {
+        const id = m.id.toLowerCase();
+        const name = m.name.toLowerCase();
+        return (
+          text.includes(id)
+          || text.includes(name)
+          || (/\bherb/.test(text) && /bloom|leaf|herb|thorn|root|blood/.test(id + name))
+          || (/\bore\b/.test(text) && /ore|copper|tin|iron|mithril|thorium/.test(id + name))
+          || (/\b(hide|leather)\b/.test(text) && /leather|hide/.test(id + name))
+        );
+      });
+      if (hit && (hit.quantity ?? 0) >= need) return HAND_OVER_MATERIALS_CHIP;
+    }
+  }
+  return null;
 }
 
 /** Visited this save: a place record with a visit turn, or a place the circling memory arrived at. */
@@ -870,8 +912,10 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
         }
       }
       // Gather when the region has resource nodes in stock.
+      // OPEN6 — do not offer Gather when the pouch cannot take another material (pad would only fail).
       const hasNodes = hasNodeStock(s);
-      if (hasNodes && outdoor && !list.some((c) => isGatherChip(c))) {
+      const pouchCanTake = canAddMaterials(s, 1).ok;
+      if (hasNodes && outdoor && pouchCanTake && !list.some((c) => isGatherChip(c))) {
         const gatherSlot = list.findIndex(
           (c) => isFillerNoProgressChip(c) && !isHuntChip(c) && !movesOn(state, c, story)
         );
@@ -881,6 +925,14 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
         } else if (list.filter((c) => isHuntChip(c) || isGatherChip(c)).length < 2) {
           list = [...list, GATHER_WILDS_CHIP];
           notes.push('Wilds: Gather herbs and resources nearby (extra)');
+        }
+      }
+      // XP-D1 OPEN6 — gather-quest turn-in when the player holds enough named mats.
+      {
+        const turnIn = gatherQuestTurnInChip(s);
+        if (turnIn && !list.some((c) => /^hand over the materials\b/i.test(c))) {
+          list = [...list, turnIn];
+          notes.push('Wilds: Hand over the materials');
         }
       }
     }
@@ -918,7 +970,7 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
   const kept: string[] = [];
   for (const c of list) {
     const fam = actionFamily(c);
-    const last = mem?.stale[key]?.[fam];
+    const last = mem?.stale?.[key]?.[fam];
     if (LOITER.has(fam) && last != null && turn - last < REST_TURNS) {
       notes.push(`Rested chip: ${c.slice(0, 32)}`);
       continue;

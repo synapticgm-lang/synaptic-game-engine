@@ -211,6 +211,24 @@ function refillStock(w: WildsStock, nowHour: number): WildsStock {
 }
 
 /**
+ * XP-D1 OPEN6 — one owner that every outdoor / journey turn must run before pads and snapshot.
+ * Idempotent: seed + refill from state.seed + region + place; repairs saves with no record.
+ * Callers must keep the returned state (rankChoices alone used to discard it — OPEN5 T50 miss).
+ */
+export function ensureWildsReady(state: GameState): GameState {
+  let next = ensureRegionBands(state);
+  // Outdoor HERE (or a journey underway): creature stock + resource nodes for this place.
+  if (isOutdoorWildsPlace(next) || next.journey) {
+    next = ensureWilds(next);
+    next = ensureNodeStock(next);
+  } else if (!(next.regionLevelBands && Object.keys(next.regionLevelBands).length)) {
+    // Still stamp bands once so a later outdoor arrival does not re-roll from empty.
+    next = ensureRegionBands(next);
+  }
+  return next;
+}
+
+/**
  * Stock for this place, created on first use and topped up from the world clock.
  * Pure: never mutates the input state. Does not add to state.places.
  */

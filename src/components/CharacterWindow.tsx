@@ -21,6 +21,7 @@ import { carriedCoinLb, usesPurse, wealthLine } from '@/game/rules/coins';
 import { listSheets, setDefaultSheet, sheetFromState } from '@/game/tabletop/sheetLibrary';
 import { keepSheet } from '@/game/tabletop/sheetLibrarySync';
 import { TabletopSheetLayout } from './TabletopSheetLayout';
+import { equipBlockReason } from '@/game/rules/equipLevel';
 
 type BottomTab = 'character' | 'inventory' | 'titles' | 'dnd' | 'sheet' | 'progression';
 
@@ -138,9 +139,22 @@ function EquipSlot({
   );
 }
 
-function ItemInspectCard({ item, slotLabel, onClose }: { item: Item; slotLabel: string; onClose: () => void }) {
+function ItemInspectCard({
+  item,
+  slotLabel,
+  onClose,
+  playerLevel = 1,
+  engineMode,
+}: {
+  item: Item;
+  slotLabel: string;
+  onClose: () => void;
+  playerLevel?: number;
+  engineMode?: GameState['engineMode'];
+}) {
   const rarityColor = RARITY_COLORS[item.rarity];
   const mods = Object.entries(item.modifiers ?? {}).filter(([, v]) => typeof v === 'number' && v !== 0) as [AttributeKey, number][];
+  const levelBlock = equipBlockReason(item, playerLevel, engineMode);
 
   return (
     <div
@@ -156,6 +170,9 @@ function ItemInspectCard({ item, slotLabel, onClose }: { item: Item; slotLabel: 
             {` · ${slotLabel}`}
             {item.itemLevel != null ? ` · iLvl ${item.itemLevel}` : ''}
           </p>
+          {levelBlock && (
+            <p className="mt-1 text-[11px] text-amber-300/90">{levelBlock}</p>
+          )}
         </div>
         <button type="button" onClick={onClose} className="shrink-0 rounded p-1 text-slate-500 hover:bg-slate-800 hover:text-slate-200" title="Close">
           <X size={14} />
@@ -665,6 +682,8 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }
                 item={inspect.item}
                 slotLabel={SLOT_META[inspect.slotKey].label}
                 onClose={() => setInspect(null)}
+                playerLevel={state.character?.level ?? 1}
+                engineMode={state.engineMode}
               />
             </div>
           )}

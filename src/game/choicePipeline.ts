@@ -57,15 +57,22 @@ import {
   isFreeInputChip,
   stampRecentOfferedActions,
 } from './sceneAffordances';
+import {
+  actionFamily,
+  fillerOfferExhausted,
+  isGatherChip,
+  isHuntChip,
+  isSeekFightChip,
+} from './choiceRanking';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
- *   T1 Ground-truth state  — inventory, gold, companions, location, encounter
- *   T2 Info / lore cards   — active matched lore cards only
- *   T3 Turn story prose    — the GM narrative just produced (must ground every option)
- *   T4 Macro scene         — recent log window / active phase
+ *   T1 Ground-truth state  â€” inventory, gold, companions, location, encounter
+ *   T2 Info / lore cards   â€” active matched lore cards only
+ *   T3 Turn story prose    â€” the GM narrative just produced (must ground every option)
+ *   T4 Macro scene         â€” recent log window / active phase
  *
- * The choice tier (post-narrative) may ONLY propose actions supported by T1–T3.
+ * The choice tier (post-narrative) may ONLY propose actions supported by T1â€“T3.
  */
 
 /** Environmental / crisis events that must appear in the story prose before a choice may reference them. */
@@ -146,13 +153,13 @@ export function normalizeStoryCorpus(gmText: string): string {
 
 /** Strip habit/Fate decorative prefixes before grounding checks. */
 export function stripChoiceDecorators(choice: string): string {
-  return choice.replace(/^[\s✨🎲⭐️•\-–—]+/u, '').trim();
+  return choice.replace(/^[\sâœ¨ðŸŽ²â­ï¸â€¢\-â€“â€”]+/u, '').trim();
 }
 
 /** Strip stray "What do you do?" glued onto button labels; fix article mash. */
 export function sanitizeChoiceLabel(choice: string): string {
   return stripChoiceDecorators(choice)
-    .replace(/\s*[—–-]\s*what do you do\??\s*$/i, '')
+    .replace(/\s*[â€”â€“-]\s*what do you do\??\s*$/i, '')
     .replace(/\s+what do you do\??\s*$/i, '')
     .replace(/^\s*what do you do\??\s*$/i, '')
     .replace(/\byour the\b/gi, 'the')
@@ -182,7 +189,7 @@ export function isBrokenChoiceLabel(choice: string): boolean {
   return false;
 }
 
-/** Alone arrival or empty-ruin prose — no crowd / voices / speaker inventions. */
+/** Alone arrival or empty-ruin prose â€” no crowd / voices / speaker inventions. */
 export function isAloneOrEmptyScene(state: GameState, storyProse = ''): boolean {
   // Act-4: mapped outdoor hubs after opening allow city/yard presence (banked contacts).
   if (atMappedHubAfterOpening(state)) return false;
@@ -257,7 +264,7 @@ export function threatChoiceWithoutSetup(
   state: GameState
 ): boolean {
   const cleaned = stripChoiceDecorators(choice);
-  // XP-D1 OPEN5 — engine drought / hunt pads are not "react to a visible foe" chips.
+  // XP-D1 OPEN5 â€” engine drought / hunt pads are not "react to a visible foe" chips.
   // OPEN4 injected "Look for a fight" in rankChoices, then liveChips dropped it here
   // because \bfight\b matched with no threat in prose (open4 T50 Seek Fight offered 0).
   if (/^look for a fight$/i.test(cleaned)) return false;
@@ -321,7 +328,7 @@ export function observeThreatWithoutSetup(
 }
 
 /**
- * Facts established BEFORE this GM reply — used so choices cannot invent NPCs/places
+ * Facts established BEFORE this GM reply â€” used so choices cannot invent NPCs/places
  * that only appear in the same turn's hallucinated prose.
  */
 export function priorEstablishedProse(state: GameState, loreCards: LoreCard[] = []): string {
@@ -340,7 +347,7 @@ export function priorEstablishedProse(state: GameState, loreCards: LoreCard[] = 
       parts.push(`${c.name} ${c.summary ?? ''}`);
     }
   }
-  for (const entry of state.log.slice(-6)) {
+  for (const entry of (state.log ?? []).slice(-6)) {
     if (entry.role === 'gm' || entry.role === 'player') {
       parts.push(stripChoiceList(entry.content).slice(0, 600));
     }
@@ -372,7 +379,7 @@ export function isChoiceGroundedInTurn(
   if (fightChoiceAfterEnemyDead(cleaned, storyProse, state)) return false;
   if (lootChoiceAfterHarvest(cleaned, state)) return false;
   if (exploreStubInCombat(cleaned, state)) return false;
-  // "X dungeon" choices need an active dungeon OR the current turn's story to say so —
+  // "X dungeon" choices need an active dungeon OR the current turn's story to say so â€”
   // not just a quest-card spoiler the player hasn't heard yet.
   if (/\bdungeon\b/i.test(cleaned) && !state.activeDungeon && !/\bdungeon\b/i.test(storyProse)) {
     return false;
@@ -401,7 +408,7 @@ export type EngineChip = {
   entityId?: string;
   /** LitRPG/RPG cooldown floor restore (OPT1-8); never a skill/difficulty tag. */
   cooldownReturn?: boolean;
-  /** q45b-SLOT — move|talk|act|scene. Free-input has none. */
+  /** q45b-SLOT â€” move|talk|act|scene. Free-input has none. */
   slotCategory?: import('./sceneAffordances').SlotCategory;
 };
 
@@ -480,7 +487,7 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
     lastEngineChips = { state, key, chips: dying, labels: seenDying };
     return dying;
   }
-  // T10TABFIGHT — first L1 tabletop fight gate owns the pad (Back off / Talk / Fight ≤ choiceCountLimit).
+  // T10TABFIGHT â€” first L1 tabletop fight gate owns the pad (Back off / Talk / Fight â‰¤ choiceCountLimit).
   const firstFight = firstFightChoiceSet(state);
   if (firstFight.active && firstFight.options.length) {
     const ffChips: EngineChip[] = [];
@@ -544,7 +551,29 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
   ];
   const seen = new Set<string>();
   const chips: EngineChip[] = [];
-  // TT-C1 / OPT-1 / q42-OPT1m: scene affordances bind by actionId + entityId (plan §4);
+  // XP-D1 OPEN6 â€” register Hunt / Gather / Seek Fight before affordances so commitOfferedPad
+  // always has an actionId (OPEN5: ranked Hunt died when affordance flood rebuilt the pad).
+  {
+    const rankedWilds = compileChoices(state, []).choices.filter(
+      (c) => isHuntChip(c) || isGatherChip(c) || isSeekFightChip(c)
+    );
+    for (const raw of rankedWilds) {
+      const label = sanitizeChoiceLabel(raw);
+      if (!label) continue;
+      const low = label.toLowerCase();
+      if (seen.has(low)) continue;
+      seen.add(low);
+      const action = isHuntChip(label)
+        ? 'wilds:hunt'
+        : isGatherChip(label)
+          ? 'wilds:gather'
+          : isSeekFightChip(label)
+            ? 'wilds:seek-fight'
+            : `label:${low}`;
+      chips.push({ label, action, kind: 'compiled', check: null, slotCategory: 'act' });
+    }
+  }
+  // TT-C1 / OPT-1 / q42-OPT1m: scene affordances bind by actionId + entityId (plan Â§4);
   // LitRPG skill/system and RPG standing/contact actions live on the same entity pass.
   for (const a of allocateAffordanceSlots(collectSceneAffordances(state), undefined, state)) {
     const label = sanitizeChoiceLabel(a.label);
@@ -583,12 +612,12 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
       const low = label.toLowerCase();
       if (seen.has(low)) continue;
       seen.add(low);
-      // TT-H1 / free-input: bind by own action id (plan §4), not label-parsed intent.
+      // TT-H1 / free-input: bind by own action id (plan Â§4), not label-parsed intent.
       const action =
         kind === 'inspiration-reroll'
           ? `inspiration-reroll:${low}`
           : engineChipActionKey(label) || `label:${low}`;
-      // VR1-a: CheckSpec from checkForAction (pure). Label stays the plain action (§4 chip contract).
+      // VR1-a: CheckSpec from checkForAction (pure). Label stays the plain action (Â§4 chip contract).
       const check = kind === 'inspiration-reroll' ? null : checkForAction(state, parsePlayerIntent(label, state), label);
       // q45b-SLOT: category from the builder record. Exit/hub move. A journey step
       // (walk on, turn back, travel-on/camp/push-on/job) moves; the meeting on the
@@ -623,7 +652,7 @@ export function engineChips(state: GameState, storyProse = ''): EngineChip[] {
 /**
  * Stamp CheckSpec-by-label onto pad / last GM log beside offeredChoices; record action ids for repeat.
  * Free-input chips (Say something / Do something else) stay on the offered-chip record with kind
- * `free-input` but never enter recentOfferedActions — they are never cooled (q43-OCD / plan §4).
+ * `free-input` but never enter recentOfferedActions â€” they are never cooled (q43-OCD / plan Â§4).
  */
 export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameState {
   const chips = engineChips(state, storyProse);
@@ -663,7 +692,7 @@ export function stampOfferedChipChecks(state: GameState, storyProse = ''): GameS
       offeredChips.push(rec);
     }
   }
-  // T10AB — record which chip the player just picked so insight/agenda cannot re-offer in-scene.
+  // T10AB â€” record which chip the player just picked so insight/agenda cannot re-offer in-scene.
   let pickedActionId: string | undefined;
   {
     const log = state.log ?? [];
@@ -753,7 +782,7 @@ export function isLegalEnginePad(choice: string, state?: GameState, storyProse =
 /** Objects a choice names that the story must have narrated (generic surroundings, gear and wounds excluded). */
 function concreteChoiceObjects(choice: string): string[] {
   const skip = /^(immediate|nearest|nearby|other|another|few|some|your|my|old|new|next|last|same)$/;
-  // Generic place-holders only — not "street" (must be narrated when named).
+  // Generic place-holders only â€” not "street" (must be narrated when named).
   const genericPlace =
     /^(surroundings|environment|area|room|scene|ground|air|cover|gear|inventory|wounds?)$/;
   const out: string[] = [];
@@ -765,8 +794,8 @@ function concreteChoiceObjects(choice: string): string[] {
 }
 
 /**
- * Inspect/examine/check… targets without articles, plus optional place after on/in/at…
- * e.g. "Inspect crystals on street" → crystals, street.
+ * Inspect/examine/checkâ€¦ targets without articles, plus optional place after on/in/atâ€¦
+ * e.g. "Inspect crystals on street" â†’ crystals, street.
  */
 const BARE_PROP_AFTER_VERB =
   /\b(?:inspect|examine|check|study|search|scout|approach|climb|touch|open|close|grab|use|look\s+at|peer\s+at|focus\s+on|pick\s+up|take)\s+(?!the\b|a\b|an\b|your\b|my\b)([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,2}?)(?:\s+(?:on|in|at|near|by|from|under|over|behind|beside|along|across|into|onto)\s+(?!the\b|a\b|an\b|your\b|my\b)([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,2}))?/gi;
@@ -935,7 +964,7 @@ const CHOICE_TIER_SYSTEM = `You are the CHOICE GENERATION TIER (Tier 3) of a 4-t
 You receive:
 - Tier 1 ground-truth state
 - Tier 2 active info/lore cards
-- Tier 3 the CURRENT TURN's story prose (already written — do not rewrite it)
+- Tier 3 the CURRENT TURN's story prose (already written â€” do not rewrite it)
 - Tier 4 brief macro context
 
 Your ONLY job: output 3 or 4 numbered player choices.
@@ -944,7 +973,7 @@ STRICT RULES:
 1. Inspect Tier 3 story prose first. Every choice MUST be an immediate reaction to facts explicitly present there.
 2. If an environmental event (tremor, alarm, explosion, flood, blackout, cave-in, war horn, etc.) is NOT in the Tier 3 prose, you MUST NOT mention it in any choice.
 3. If no creature/enemy/threat is established in Tier 3 prose AND Encounter is "none", do NOT offer hide/sneak/ambush/attack/fight/engage/assess-enemy choices.
-4. Do not invent NPCs, locations, items, creatures, or plot jumps absent from Tier 1–3. Info cards (Tier 2) may inform tone/identity but cannot invent a new crisis.
+4. Do not invent NPCs, locations, items, creatures, or plot jumps absent from Tier 1â€“3. Info cards (Tier 2) may inform tone/identity but cannot invent a new crisis.
 5. NEVER name a weapon (shortsword, dagger, bow, etc.) unless that exact item appears in Tier 1 Inventory.
 6. NEVER name a unique object/interactable (altar, chest, terminal, etc.) unless it appears in Tier 3 prose, Location interactables, or Tier 1 state.
 7. NEVER offer locked or level-gated System features. If something is greyed out, it is not a choice.
@@ -977,7 +1006,7 @@ export async function callSmallModel(
     }
     let model =
       settings.customModelId?.trim() ||
-      // Choices always use Free-tier cheap/fast model — never burn Mid/High writer on buttons
+      // Choices always use Free-tier cheap/fast model â€” never burn Mid/High writer on buttons
       getTierDefinition('free').writerOpenRouterId;
     if (settings.aiProvider === 'gemini' && !settings.openrouterApiKey) {
       provider = 'gemini';
@@ -1106,7 +1135,7 @@ export function sceneSafeFallbacks(
   if (/\b(car|van|vehicle|truck|wreck)\b/i.test(storyProse)) {
     options.push('Search the vehicle more carefully');
   }
-  // Path2 Diplomatic / Trade / Faction — honor alone invent gate + UI context
+  // Path2 Diplomatic / Trade / Faction â€” honor alone invent gate + UI context
   const isUIContext = isUIExaminationContext(storyProse);
   if (!alone && !isUIContext && /\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {
     options.push('Call out to a bystander');
@@ -1194,7 +1223,7 @@ export function sceneSafeFallbacks(
       options.push(alone ? 'Find a way out' : 'Walk away / go another direction');
     }
   }
-  // OPT-1 item 4 cut: prose-regex "Approach cautiously" — affordances cover door/path objects.
+  // OPT-1 item 4 cut: prose-regex "Approach cautiously" â€” affordances cover door/path objects.
   if (!affordancesCoverGenerics(state) && /\b(door|gate|path|corridor|alley|gap|arch)\b/i.test(storyProse)) {
     options.push('Approach cautiously');
   }
@@ -1239,7 +1268,7 @@ function deduplicateChoicesAcrossRecentTurns(
 ): string[] {
   if (!state.recentChoices || state.recentChoices.length === 0) return choices;
 
-  // Count labels across last 8 turns — block spam after 2 offers.
+  // Count labels across last 8 turns â€” block spam after 2 offers.
   const recentWindow = state.recentChoices.slice(-8);
   const recentCounts = new Map<string, number>();
   for (const entry of recentWindow) {
@@ -1296,7 +1325,7 @@ export function padChoicesToCount(
   if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
     merged = merged.filter((c) => !isCameraRelativePad(c));
   }
-  // Act-4: resume main when off-spine — 02i: not if travel is excluded
+  // Act-4: resume main when off-spine â€” 02i: not if travel is excluded
   const resumeChoice = resumeMainTravelChoice(state, merged);
   if (resumeChoice && merged.length < 4 && !isExcludedPadLabel(resumeChoice, excluded)) {
     if (!inventsPresenceOnEmptyScene(resumeChoice, state, storyProse)) {
@@ -1314,7 +1343,7 @@ export function padChoicesToCount(
     if (inventsPresenceOnEmptyScene(hubPad, state, storyProse)) continue;
     if (!merged.some((c) => c.toLowerCase() === hubPad.toLowerCase())) merged.push(hubPad);
   }
-  // Outdoor hub travel pads (Act-3) — only if the universe still allows Travel.
+  // Outdoor hub travel pads (Act-3) â€” only if the universe still allows Travel.
   if (!excluded.has('travel')) {
     for (const hubChoice of outdoorHubTravelChoices(state, 2)) {
       if (merged.length >= 4) break;
@@ -1381,7 +1410,7 @@ export function padChoicesToCount(
   }
 
   let cappedEnd: string[];
-  /** Journey builder owns the pad — exclusive road list (s85); free-input stays off while underway. */
+  /** Journey builder owns the pad â€” exclusive road list (s85); free-input stays off while underway. */
   let roadOwnsPad = false;
   if (!affordancesCoverGenerics(state)) {
     // Stance/path density may invent labels; keep only engine-backed chips (dead-chip contract).
@@ -1400,46 +1429,69 @@ export function padChoicesToCount(
     }
   } else {
     // OPT-1 item 4: entity-bound labels + free chips; no first-come slice(0,4).
-    // Engine-record backing only — stance/path density must not inject unregistered pads
-    // (RPG "Use the situation as leverage" / "Act on faction…" were dead-chip in G-O1-rpg).
-    // Plan §4 item 4: required kinds win over the optional cap. Journey pads are the underway
-    // travel record (Walk on / Face the meeting) — affordances do not replace them. OPT-1m mode
+    // Engine-record backing only â€” stance/path density must not inject unregistered pads
+    // (RPG "Use the situation as leverage" / "Act on factionâ€¦" were dead-chip in G-O1-rpg).
+    // Plan Â§4 item 4: required kinds win over the optional cap. Journey pads are the underway
+    // travel record (Walk on / Face the meeting) â€” affordances do not replace them. OPT-1m mode
     // thirds must not starve the road list when coverGenerics is true.
+    // XP-D1 OPEN6 â€” wilds / Seek Fight chips from rankChoices must survive this rebuild
+    // (OPEN5 T50: affordance dump + roadOwnsPad dropped Hunt every outdoor turn).
+    const isWildsEngineChip = (label: string) =>
+      isHuntChip(label) || isGatherChip(label) || isSeekFightChip(label);
+    const pushUnique = (out: string[], seen: Set<string>, label: string) => {
+      const low = label.toLowerCase();
+      if (seen.has(low)) return;
+      seen.add(low);
+      out.push(label);
+    };
+    const takeWildsFromMerged = (out: string[], seen: Set<string>) => {
+      for (let i = 0; i < merged.length; i++) {
+        const label = sanitizeChoiceLabel(merged[i]!);
+        if (!label || !isWildsEngineChip(label)) continue;
+        // RankChoices already gated outdoor / mode / stock; do not let affordance flood drop them.
+        pushUnique(out, seen, label);
+      }
+    };
     const road = journeyPads(state);
     const out: string[] = [];
     const seen = new Set<string>();
     for (let i = 0; i < road.length; i++) {
       const label = sanitizeChoiceLabel(road[i]!);
       if (!label) continue;
-      const low = label.toLowerCase();
-      if (seen.has(low)) continue;
       if (!isLegalEnginePad(label, state, storyProse)) continue;
-      seen.add(low);
-      out.push(label);
+      pushUnique(out, seen, label);
     }
     if (road.length > 0) {
-      // Underway: the road owns the pad (s85 drought / meeting). Scene quest/search cards stay off.
+      // Underway: road owns travel/meeting chips; still keep Hunt/Gather/Seek from rankChoices.
+      takeWildsFromMerged(out, seen);
       cappedEnd = out;
       roadOwnsPad = true;
     } else {
+      // Wilds first so a crowded CAST cannot starve Hunt / Gather / Seek Fight.
+      takeWildsFromMerged(out, seen);
       const aff = allocateAffordanceSlots(collectSceneAffordances(state), undefined, state);
       for (let i = 0; i < aff.length; i++) {
         const label = sanitizeChoiceLabel(aff[i]!.label);
         if (!label) continue;
-        const low = label.toLowerCase();
-        if (seen.has(low)) continue;
-        seen.add(low);
-        out.push(label);
+        // OPEN6 â€” family filler cap applies on the affordance rebuild (OPEN5 credit was ignored here).
+        if (fillerOfferExhausted(state, label)) continue;
+        const blocked = state.circling?.fillerBlockedFamilies;
+        if (
+          blocked?.length
+          && state.circling?.fillerBlockSceneKey
+          && blocked.includes(actionFamily(label))
+        ) {
+          continue;
+        }
+        pushUnique(out, seen, label);
       }
       for (let i = 0; i < merged.length; i++) {
         const label = sanitizeChoiceLabel(merged[i]!);
-        if (!label || isFreeInputChip(label)) continue;
-        const low = label.toLowerCase();
-        if (seen.has(low)) continue;
+        if (!label || isFreeInputChip(label) || isWildsEngineChip(label)) continue;
+        if (fillerOfferExhausted(state, label)) continue;
         if (!isLegalEnginePad(label, state, storyProse)) continue;
         if (out.length >= 5) break;
-        seen.add(low);
-        out.push(label);
+        pushUnique(out, seen, label);
       }
       cappedEnd = out;
     }
@@ -1490,7 +1542,7 @@ export async function resolvePipelineChoices(params: {
   const firstKept = restoreHarvestedOffers(rawChoices, firstPass.kept);
   // Apply choice deduplication
   const dedupedFirstKept = deduplicateChoicesAcrossRecentTurns(firstKept, state);
-  // Two grounded options are enough — pad locally instead of another model call.
+  // Two grounded options are enough â€” pad locally instead of another model call.
   if (dedupedFirstKept.length >= 2 || rawChoices.some((c) => looksLikeChoiceOffer(c))) {
     return {
       choices: padChoicesToCount(dedupedFirstKept, state, storyProse, 3, lastPlayerAction),
@@ -1499,7 +1551,7 @@ export async function resolvePipelineChoices(params: {
     };
   }
 
-  // Any environmental/plot violation OR too few survivors → regenerate from Tier 3 prose.
+  // Any environmental/plot violation OR too few survivors â†’ regenerate from Tier 3 prose.
   const rejectedSummary = firstPass.rejected
     .map((r) => `- ${r.choice} (${r.reasons.join('; ')})`)
     .join('\n');

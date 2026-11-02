@@ -1,0 +1,68 @@
+{
+ "7301-random": {
+  "seed": 7301,
+  "profile": "random",
+  "bibleId": "summoned-pact",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "Kitchen Saint Alley",
+  "level": 3,
+  "wildsByPlace": null,
+  "regionLevelBands": null
+ },
+ "7302-random": {
+  "seed": 7302,
+  "profile": "random",
+  "bibleId": "system-integration",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "Wave Wall",
+  "level": 4,
+  "wildsByPlace": null,
+  "regionLevelBands": null
+ },
+ "7303-quest": {
+  "seed": 7303,
+  "profile": "quest",
+  "bibleId": "summoned-pact",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "Cathedral Close",
+  "level": 2,
+  "wildsByPlace": null,
+  "regionLevelBands": null
+ },
+ "7304-quest": {
+  "seed": 7304,
+  "profile": "quest",
+  "bibleId": "system-integration",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "Mana Crystal Exchange",
+  "level": 3,
+  "wildsByPlace": null,
+  "regionLevelBands": null
+ },
+ "7305-hunt-gather": {
+  "seed": 7305,
+  "profile": "hunt-gather",
+  "bibleId": "hero-awakening",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "First Threshold Gate",
+  "level": 3,
+  "wildsByPlace": null,
+  "regionLevelBands": null
+ },
+ "7306-hunt-gather": {
+  "seed": 7306,
+  "profile": "hunt-gather",
+  "bibleId": "dungeon-transport",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "Floor 1 Stone Corridor",
+  "level": 3,
+  "wildsByPlace": null,
+  "regionLevelBands": null
+ }
+}

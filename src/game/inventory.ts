@@ -1,5 +1,6 @@
 import type { Container, GameState, Item, Rarity } from './types';
 import { pocketOnlyKit, storeInPocket } from './systemHousing';
+import { canEquipAtLevel } from './rules/equipLevel';
 
 const RARITY_VALUE: Record<Rarity, number> = {
   Common: 1,
@@ -182,7 +183,7 @@ export function computeInventoryCapacity(state: GameState): InventoryCapacity {
   const hasMagicalContainer = containers.some((c) => c.kind === 'magical');
 
   const materialsSlots = materialContainers.reduce((sum, c) => sum + c.capacity, 0);
-  const materialsUsed = state.materials.reduce((sum, m) => sum + m.quantity, 0);
+  const materialsUsed = (state.materials ?? []).reduce((sum, m) => sum + m.quantity, 0);
   const materialsAvailable = Math.max(0, materialsSlots - materialsUsed);
 
   return {
@@ -251,13 +252,21 @@ export function removeItem(state: GameState, itemId: string): GameState {
 }
 
 export function addItem(state: GameState, item: Item): { state: GameState; ok: boolean; reason?: string } {
-  if (pocketOnlyKit(state.systemHousing)) {
-    return { state: syncContainerOccupancy({ ...state, inventory: [...state.inventory, storeInPocket(item)] }), ok: true };
+  // XP-D1 OPEN6 — never auto-wear a drop/buy above playerLevel+2; it stays in the bag.
+  let safe = item;
+  if (
+    safe.equipped
+    && !canEquipAtLevel(safe, state.character?.level ?? 1, state.engineMode)
+  ) {
+    safe = { ...safe, equipped: false };
   }
-  const check = canAddItem(state, item);
+  if (pocketOnlyKit(state.systemHousing)) {
+    return { state: syncContainerOccupancy({ ...state, inventory: [...state.inventory, storeInPocket(safe)] }), ok: true };
+  }
+  const check = canAddItem(state, safe);
   if (!check.ok) return { state, ok: false, reason: check.reason };
-  const bag = findContainerWithSpace(state, item);
-  const nextItem = bag && !item.containerId ? { ...item, containerId: bag.id } : item;
+  const bag = findContainerWithSpace(state, safe);
+  const nextItem = bag && !safe.containerId ? { ...safe, containerId: bag.id } : safe;
   return {
     state: syncContainerOccupancy({ ...state, inventory: [...state.inventory, nextItem] }),
     ok: true,

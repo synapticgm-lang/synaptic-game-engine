@@ -80,8 +80,10 @@ import {
   startBrewFromInput,
   startCraftFromInput,
   startGatherFromInput,
+  startHandOverMaterialsFromInput,
   startHuntFromInput,
 } from './wildlifeActions';
+import { ensureWildsReady } from './wilds';
 import { levelUpGearNotices } from './gearEquip';
 import { houseRulesOf, scaledCadence } from './rules/houseRules';
 import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThreats';
@@ -802,6 +804,8 @@ export function runArcDirectorBeforeGm(
 ): ArcDirectorResult {
   let working = settleOathChoice(ensureRunManifest(state), playerInput);
   working = ensureOpeningNpcPinned(working);
+  // XP-D1 OPEN6 — seed wilds / region bands before hunt-gather resolve and before pads (persisted).
+  working = ensureWildsReady(working);
   // Stays empty: character XP for fights and quests is paid once, by sandboxXp.
   const xpAwards: Array<{ amount: number; reason: string }> = [];
   const systemReceipts: string[] = [];
@@ -818,7 +822,8 @@ export function runArcDirectorBeforeGm(
   // engine fight below settles it this turn (payEncounterXp pays by the creature's own level).
   // A Gather pad / "I look for ore" resolves first; a guard ambush on it becomes the same hunt fight.
   const hunt =
-    startCraftFromInput(working, playerInput)
+    startHandOverMaterialsFromInput(working, playerInput)
+    ?? startCraftFromInput(working, playerInput)
     ?? startBrewFromInput(working, playerInput)
     ?? startGatherFromInput(working, playerInput)
     ?? startHuntFromInput(working, playerInput);
