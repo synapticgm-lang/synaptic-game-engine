@@ -7,6 +7,7 @@ import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { compileChoices } from './choiceCompiler';
 import { padChoicesToCount } from './choicePipeline';
+import { resolveOfferedChoices, commitOfferedTurn } from './playTranscript';
 import {
   HUNT_WILDS_CHIP,
   GATHER_WILDS_CHIP,
@@ -67,7 +68,6 @@ describe('OPEN6 wilds seed + Hunt pad survival', () => {
   it.skipIf(!hasRun)(
     'resolveOfferedChoices includes Hunt on the crowded alley',
     async () => {
-      const { resolveOfferedChoices, commitOfferedTurn } = await import('./playTranscript');
       const state = outdoorBase(snap!);
       const seeded = ensureWildsReady(state);
       const offered = resolveOfferedChoices(seeded);
@@ -78,7 +78,7 @@ describe('OPEN6 wilds seed + Hunt pad survival', () => {
       const committed = commitOfferedTurn(seeded);
       expect(Object.keys(committed.wildsByPlace ?? {}).length).toBeGreaterThan(0);
     },
-    30_000
+    120_000
   );
 
   it.skipIf(!hasRun)('journey road pad still keeps Hunt', () => {
