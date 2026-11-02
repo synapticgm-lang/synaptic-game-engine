@@ -27,7 +27,7 @@ import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './scenePresence';
 import { applyGraphExitTravel } from './mapEngine';
 import { parseTravelDestination, travelDestinationLabel } from './outdoorHubs';
-import { isJourneyOnwardLine, isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
+import { isJourneyOnwardLine, isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, isWildsStretchLabel, mapGapBetween } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant, stallPressureActive } from './openThreads';
 import { isDying } from './tabletop/roundFight';
@@ -913,6 +913,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       if (
         isJourneyUnderway(state)
         && !liveFight
+        && !isWildsStretchLabel(chip.label)
         && (chip.kind === 'journey' || isJourneyPad(state, chip.label) || !!travelEngineChip(chip.label))
       ) {
         kept.push(chip);
@@ -1284,7 +1285,7 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     for (let i = 0; i < work.length; i++) {
       const chip = work[i]!;
       if (!chip.actionId || used.has(chip.actionId)) continue;
-      if (!(chip.kind === 'journey' || isJourneyPad(state, chip.label) || !!travelEngineChip(chip.label))) {
+      if (isWildsStretchLabel(chip.label) || !(chip.kind === 'journey' || isJourneyPad(state, chip.label) || !!travelEngineChip(chip.label))) {
         continue;
       }
       used.add(chip.actionId);

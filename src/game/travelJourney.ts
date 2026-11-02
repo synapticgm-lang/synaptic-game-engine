@@ -627,6 +627,11 @@ export function journeyPads(
   ];
   return withMarchWarnPads(full, pads);
 }
+/** XP-D1 OPEN6 - Hunt / Gather / Seek Fight chips. They ride an underway road but are NOT road movers (never re-attached past the pad cap). */
+export function isWildsStretchLabel(label: string): boolean {
+  const t = label.trim();
+  return /^hunt the (?:wildlife nearby|animal)\b/i.test(t) || /^gather herbs and resources nearby$/i.test(t) || /^look for a fight$/i.test(t);
+}
 /** A ground-between chip: walk on / turn back, travel engine chip, or this stretch's meeting pads. */
 export function isJourneyPad(state: Pick<GameState, 'journey'> & Partial<Pick<GameState, 'engineMode'>>, choice: string): boolean {
   const t = meetingMoveBase(choice).toLowerCase();
@@ -634,11 +639,8 @@ export function isJourneyPad(state: Pick<GameState, 'journey'> & Partial<Pick<Ga
   const met = j?.encounter ? encounterPads(j.encounter, j.terrain, state.engineMode) : [];
   // XP-D1 OPEN6 — Hunt / Gather / Seek Fight on an underway road are wilds-on-the-stretch chips
   // (s85 exclusive road list still holds; they count as journey pads, not scene invents).
-  const wildsOnStretch =
-    isJourneyUnderway(state) &&
-    (/^hunt the (?:wildlife nearby|animal)\b/i.test(t) ||
-      /^gather herbs and resources nearby$/i.test(t) ||
-      /^look for a fight$/i.test(t));
+  const wildsOnStretch = isJourneyUnderway(state) && isWildsStretchLabel(t);
+
   return (
     WALK_ON.test(t) ||
     /^turn back toward\s+\S/i.test(t) ||
