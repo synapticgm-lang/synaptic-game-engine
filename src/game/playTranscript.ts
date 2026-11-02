@@ -40,7 +40,8 @@ import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
 import { creditFillerOffers } from './choiceRanking';
-import { isJourneyOnwardLine, isJourneyUnderway } from './travelJourney';
+import { isJourneyOnwardLine, isJourneyUnderway, journeyPads } from './travelJourney';
+import { firstFightChoiceSet } from './rules/firstFightChoice';
 import { liveChips } from './chipLegality';
 import { roundCombatChips } from './tabletop/combatChips';
 import { updateCooldowns } from './optionDiversityContract';
@@ -102,6 +103,27 @@ export function resolveOfferedChoices(state: GameState): string[] {
   if (state.engineMode === 'dnd' && ds && !ds.dead && !ds.stable) {
     return roundCombatChips(state) ?? ['Fight for breath'];
   }
+  // T10TABFIGHT + TRAINLOOP2 — triad owns the pad; mid-journey movers stay beside it.
+  const firstFight = firstFightChoiceSet(state);
+  if (firstFight.active && firstFight.options.length) {
+    const out: string[] = [];
+    const seen = new Set<string>();
+    for (const raw of firstFight.options) {
+      const low = raw.trim().toLowerCase();
+      if (!low || seen.has(low)) continue;
+      seen.add(low);
+      out.push(raw);
+    }
+    if (isJourneyUnderway(state) && !state.activeEncounter) {
+      for (const raw of journeyPads(state)) {
+        const low = raw.trim().toLowerCase();
+        if (!low || seen.has(low)) continue;
+        seen.add(low);
+        out.push(raw);
+      }
+    }
+    return out;
+  }
   // T10W — origin setup owns the pad until recorded (session-zero; no scene mix).
   const origin = originPad(state);
   if (origin?.length) return origin;
@@ -143,7 +165,7 @@ function compileOfferedChoices(state: GameState): string[] {
   const skipCoverChips =
     (coverBeat || autoNamedOpeningPad) && isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
   if (skipCoverChips && (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state))) return [];
-  if ((coverBeat || autoNamedOpeningPad) && !skipCoverChips) {
+  if ((coverBeat || autoNamedOpeningPad) && !skipCoverChips && !isJourneyUnderway(state)) {
     const coverProse = lastGmStoryProse(state);
     const pads = coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
     const live = new Set(liveChips(state, pads, coverProse));

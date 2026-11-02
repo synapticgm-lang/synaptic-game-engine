@@ -909,6 +909,15 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     for (let i = 0; i < work.length; i++) {
       const chip = work[i]!;
       const id = chip.actionId ?? '';
+      // TRAINLOOP2 — mid-journey continue/turn-back survive a blocked Travel graph (pending threat).
+      if (
+        isJourneyUnderway(state)
+        && !liveFight
+        && (chip.kind === 'journey' || isJourneyPad(state, chip.label) || !!travelEngineChip(chip.label))
+      ) {
+        kept.push(chip);
+        continue;
+      }
       if (chip.slotCategory === 'move' || chip.slotKind === 'exit' || chip.kind === 'exit' || id.includes(':travel')) {
         continue;
       }
@@ -1209,7 +1218,15 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       let last = -1;
       // T10AG — Walk on must not be rested while a journey is underway (class chips must not
       // crowd the chip that moves the story off the MOVE slot; s9701 T21–T22).
-      if (isJourneyUnderway(state) && isJourneyOnwardLine(cands[i]!.label)) situation = true;
+      // TRAINLOOP2 — turn-back / push-on / camp are the same road movers (not resting).
+      if (
+        isJourneyUnderway(state)
+        && (isJourneyOnwardLine(cands[i]!.label)
+          || isJourneyPad(state, cands[i]!.label)
+          || !!travelEngineChip(cands[i]!.label))
+      ) {
+        situation = true;
+      }
       if (cd > 0 && !situation) {
         for (let h = hist.length - 1; h >= 0; h--) {
           const row = hist[h]!;
@@ -1260,6 +1277,19 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
     if (used.has(row.actionId)) continue;
     used.add(row.actionId);
     picked.push(row);
+  }
+  // TRAINLOOP2 — slot fill keeps one MOVE; a live journey needs continue AND turn-back (and
+  // push/camp/meeting pads) on the same pad. Re-attach any travel-engine chips the slots dropped.
+  if (isJourneyUnderway(state) && !state.activeEncounter) {
+    for (let i = 0; i < work.length; i++) {
+      const chip = work[i]!;
+      if (!chip.actionId || used.has(chip.actionId)) continue;
+      if (!(chip.kind === 'journey' || isJourneyPad(state, chip.label) || !!travelEngineChip(chip.label))) {
+        continue;
+      }
+      used.add(chip.actionId);
+      picked.push({ ...chip, cooldownReturn: undefined });
+    }
   }
   for (let i = 0; i < freeIn.length; i++) {
     picked.push({ ...freeIn[i]!, cooldownReturn: undefined });
