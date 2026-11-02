@@ -89,7 +89,7 @@ import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
 import { pinStoryChipInTop, rankChoices } from './choiceRanking';
-import { pinOpeningRiteChip } from './openingRite';
+import { openingRiteIsOpen, pinOpeningRiteChip } from './openingRite';
 import { withRememberedThreatChip } from './placeThreats';
 import { isJourneyUnderway, withJourneyPads, withMarchWarnPads } from './travelJourney';
 import { ENGINE_COMBAT_CHIP } from './chipLegality';
@@ -1398,17 +1398,11 @@ export function compileChoices(
       notes.push('Quest step chip pinned top-3');
     }
   }
-  // XP-D1 OPEN — LitRPG Opening Rite accept chip first; does not count against pad cap.
-  {
-    const before = finalChoices;
-    finalChoices = pinOpeningRiteChip(state, finalChoices);
-    if (finalChoices !== before && finalChoices.join('|') !== before.join('|')) {
-      notes.push('Opening Rite chip pinned first');
-    }
-  }
   // OPEN7B — crowd-filler-only occupancy is not a talk scene (speech = "not present to answer").
   // Starve those pads and pin Leave/Travel first so the pad-4 slice cannot drop the only move-on.
   // Shared engine (all modes) — different functions from TRAINLOOP3 fight-pad work.
+  // Gate move-on on covers done + no open LitRPG Opening Rite: empty speakable is common on
+  // page-1 alone / pre-harvest, and Leave must not steal the rite accept pin (gate XPD1OPEN7B).
   if (!engaged) {
     const speakable = [
       ...speakablePresentPeople(peopleHere(state)),
@@ -1419,23 +1413,35 @@ export function compileChoices(
       const before = finalChoices.length;
       finalChoices = finalChoices.filter((c) => !isCrowdOnlyTalkPad(c));
       if (finalChoices.length < before) notes.push('OPEN7B: crowd-only talk starved');
-      const isMoveOn = (c: string) =>
-        isTravelPad(c)
-        || isLeaveFamilyPad(c)
-        || /^leave(?:\s+the\s+scene)?\b/i.test(c)
-        || /^travel\b/i.test(c)
-        || /^walk (?:back|on|toward)\b/i.test(c);
-      let moveIdx = finalChoices.findIndex(isMoveOn);
-      if (moveIdx < 0) {
-        finalChoices = ['Leave the scene', ...finalChoices];
-        notes.push('OPEN7B: dead crowd scene → Leave the scene');
-        moveIdx = 0;
-      } else if (moveIdx > 0) {
-        const [move] = finalChoices.splice(moveIdx, 1);
-        finalChoices = [move!, ...finalChoices];
-        notes.push('OPEN7B: pin move-on first');
+      const openingDone = state.openingEstablishment?.complete === true;
+      const riteOpen = openingRiteIsOpen(state);
+      if (openingDone && !riteOpen) {
+        const isMoveOn = (c: string) =>
+          isTravelPad(c)
+          || isLeaveFamilyPad(c)
+          || /^leave(?:\s+the\s+scene)?\b/i.test(c)
+          || /^travel\b/i.test(c)
+          || /^walk (?:back|on|toward)\b/i.test(c);
+        let moveIdx = finalChoices.findIndex(isMoveOn);
+        if (moveIdx < 0) {
+          finalChoices = ['Leave the scene', ...finalChoices];
+          notes.push('OPEN7B: dead crowd scene → Leave the scene');
+          moveIdx = 0;
+        } else if (moveIdx > 0) {
+          const [move] = finalChoices.splice(moveIdx, 1);
+          finalChoices = [move!, ...finalChoices];
+          notes.push('OPEN7B: pin move-on first');
+        }
+        finalChoices = finalChoices.slice(0, 6);
       }
-      finalChoices = finalChoices.slice(0, 6);
+    }
+  }
+  // XP-D1 OPEN — LitRPG Opening Rite accept chip first; after OPEN7B so Leave cannot displace it.
+  {
+    const before = finalChoices;
+    finalChoices = pinOpeningRiteChip(state, finalChoices);
+    if (finalChoices !== before && finalChoices.join('|') !== before.join('|')) {
+      notes.push('Opening Rite chip pinned first');
     }
   }
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
