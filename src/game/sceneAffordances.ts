@@ -21,7 +21,7 @@ import {
 } from './storyRpgProgress';
 import { enumerateLegalEdges } from './graphChoices';
 import { exitPlaceNames } from './placeNames';
-import { placeExitRows } from './placeRegistry';
+import { canonicalTravelDest, placeExitRows } from './placeRegistry';
 import { openRouteView, presentPersonForRoute } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './scenePresence';
@@ -138,18 +138,46 @@ function exitEntityId(row: { id?: string; label?: string }): string {
  * placeExitRows (recorded from HERE) plus the open quest step's placeId when off-site
  * (T10AA Front Door travel). Never invent a parallel `place:` entity the gate cannot see.
  */
+/** Lead/quest copy uses " about "; no regex (OPT1-6 / C1-7 ban in this file). */
+function isLeadPlaceCopy(s: string): boolean {
+  return ` ${s.toLowerCase()} `.includes(' about ');
+}
+
 export function recordedTravelDestinations(state: GameState): PlaceExitRow[] {
-  const rows = placeExitRows(state, state.currentLocation);
-  const open = openRouteView(state);
-  const dest = (open?.step.placeId ?? open?.step.place ?? '').trim();
-  if (!dest) return rows;
-  const here = (state.currentLocation ?? '').trim().toLowerCase();
-  if (!here || dest.toLowerCase() === here) return rows;
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i]!;
-    if (row.label.toLowerCase() === dest.toLowerCase()) return rows;
-    if (exitEntityId(row).toLowerCase() === dest.toLowerCase()) return rows;
+  const rawRows = placeExitRows(state, state.currentLocation);
+  const rows: PlaceExitRow[] = [];
+  const seen = new Set<string>();
+  for (let i = 0; i < rawRows.length; i++) {
+    const row = rawRows[i]!;
+    // TRAINLOOP4 B — prefer registry/hub name; keep hubless story exits; drop lead descriptions.
+    const canon =
+      canonicalTravelDest(state, row.label) ?? canonicalTravelDest(state, exitEntityId(row));
+    const raw = (row.label ?? '').split(' ').filter(Boolean).join(' ').trim();
+    let label = canon;
+    if (!label && raw) {
+      // FORDCAMP sibling — exit already on the place record, not a quest description.
+      if (!isLeadPlaceCopy(raw) || raw.split(' ').filter(Boolean).length < 5) label = raw;
+    }
+    if (!label) continue;
+    const key = label.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    rows.push({ ...row, label, id: row.id || label });
   }
+  const open = openRouteView(state);
+  const rawDest = (open?.step.placeId ?? open?.step.place ?? '').trim();
+  if (!rawDest) return rows;
+  // Prefer registry name; keep hubless story quest places (T10AA Front Door); drop lead copy.
+  const dest =
+    canonicalTravelDest(state, rawDest)
+    ?? (isLeadPlaceCopy(rawDest) ? null : rawDest);
+  if (!dest) return rows;
+  const hereRaw = (state.currentLocation ?? '').trim();
+  const hereCanon = (canonicalTravelDest(state, hereRaw) ?? hereRaw).toLowerCase();
+  if (!hereRaw || dest.toLowerCase() === hereRaw.toLowerCase() || dest.toLowerCase() === hereCanon) {
+    return rows;
+  }
+  if (seen.has(dest.toLowerCase())) return rows;
   return [...rows, { id: dest, label: dest }];
 }
 /** q45b-SLOT — one final-pad slot. Free-input chips are not a slot. */
@@ -510,19 +538,25 @@ export function collectSceneAffordances(state: GameState): SceneAffordance[] {
     }
   }
   // T10AC / q50e — MOVE exits from recordedTravelDestinations (placeExitRows + open quest place).
+  const rawQuestPlace = (openRoutes?.step.placeId ?? openRoutes?.step.place ?? '').trim();
   const questTravelDest = (
-    openRoutes?.step.placeId ?? openRoutes?.step.place ?? ''
-  )
-    .trim()
-    .toLowerCase();
+    canonicalTravelDest(state, rawQuestPlace) ?? (isLeadPlaceCopy(rawQuestPlace) ? '' : rawQuestPlace)
+  ).toLowerCase();
   const recordExits = recordedTravelDestinations(state);
   if (recordExits.length) {
     for (let i = 0; i < recordExits.length; i++) {
       const row = recordExits[i]!;
-      const dest = row.label;
+      const dest = canonicalTravelDest(state, row.label) ?? row.label;
       if (!dest || !isPlaceOpenForExit(state, dest)) continue;
-      const entityId = exitEntityId(row);
+      // TRAINLOOP4 B — lead/quest copy never stays as the Travel label (canonical above).
+      // Quest-pin Travel (T10AA Front Door) is intentional even when wayOutMovesPlayer is
+      // false; only drop unresolved lead descriptions (already filtered in recordedTravelDestinations).
+      if (isLeadPlaceCopy(dest)) continue;
+      const hereRaw = (state.currentLocation ?? '').trim();
+      const hereCanon = (canonicalTravelDest(state, hereRaw) ?? hereRaw).toLowerCase();
+      if (dest.toLowerCase() === hereRaw.toLowerCase() || dest.toLowerCase() === hereCanon) continue;
       const chip = `Travel toward ${dest}`;
+      const entityId = exitEntityId(row) || dest;
       const questBoost = !!questTravelDest && dest.toLowerCase() === questTravelDest;
       all.push({
         label: chip,

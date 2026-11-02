@@ -462,7 +462,31 @@ export function forwardThreadAffordance(state: GameState): {
     let label = t.label;
     if (t.kind === 'quest') label = `Pursue ${t.label}`;
     else if (t.kind === 'lead') label = `Follow up: ${t.label}`;
-    else if (t.kind === 'promise') label = `Honour the promise: ${t.label}`;
+    else if (t.kind === 'promise') {
+      // TRAINLOOP4 A — Honour is a no-op when the commitment only keeps on quest-complete
+      // (typed deal records "Deal attempted" and never advances the quest). Offer Pursue instead.
+      const r = t.resolution;
+      if (r.type === 'commitment-kept') {
+        const commits = state.commitments ?? [];
+        let questId: string | null = null;
+        for (let c = 0; c < commits.length; c++) {
+          const row = commits[c]!;
+          if (row.promiseId !== r.promiseId) continue;
+          if (row.condition?.type === 'quest-complete') questId = row.condition.questId;
+          break;
+        }
+        if (questId) {
+          const q = (state.quests ?? []).find((row) => row.id === questId);
+          label = `Pursue ${q?.name ?? t.label}`;
+          return {
+            label,
+            actionId: `thread:quest:${questId}:forward`,
+            entityId: `quest:${questId}`,
+          };
+        }
+      }
+      label = `Honour the promise: ${t.label}`;
+    }
     else if (t.kind === 'npc-goal') label = `Follow up with ${t.label}`;
     else if (t.kind === 'foe') label = `Face ${t.label}`;
     return {

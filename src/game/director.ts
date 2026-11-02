@@ -31,6 +31,7 @@ import { hubsForBibleId, matchHub, placeFirstSight } from './outdoorHubs';
 import { applyPlaceEngineEvent, bindPlanDirector, collectOpenThreads } from './openThreads';
 import { npcChipWant, npcGoalPersonHere } from './openThreadUtils';
 import { parkedThreatHere } from './placeThreats';
+import { canonicalTravelDest } from './placeRegistry';
 import { exitNpc, seat } from './presentAuthority';
 import { applyPressureAgendaAdvance, tickPressureClock } from './pressureClock';
 import { ensureQuestFloor } from './questGenerator';
@@ -437,8 +438,9 @@ function commitStallDevelopment(
       const stallEventId = `stall-npc-${turn}-${name.replace(/\s+/g, '-').toLowerCase()}`;
       // T10RC3 — do not appendNpcAgendaFact (false social progress). Seat + Must-narrate only.
       working = appendDirectorFact(working, stallEventId, fact);
+      // TRAINLOOP4 A / T10RC3 — never depart the stall actor we just seated (Answer would be dead).
       if (hereName && !isJourneyUnderway(working) && !working.activeEncounter) {
-        working = stallDepartPresentNpc(working, turn, playerInput);
+        working = stallDepartPresentNpc(working, turn, name);
       }
       const npcId =
         (working.npcMemories ?? []).find((m) => mentionsName(m.npcName, name))?.npcId
@@ -934,8 +936,9 @@ function injectStallDevelopment(
       const stallEventId = `stall-npc-${turn}-${npcAct.npcId}`;
       s = appendDirectorFact(s, stallEventId, npcAct.fact);
       s = recordDevelopment(s, 'npc-acting', npcAct.npcId, npcAct.fact);
+      // TRAINLOOP4 A / T10RC3 — keep the agenda NPC seated for the Answer chip.
       if (placeNameOf(s) && !isJourneyUnderway(s) && !s.activeEncounter) {
-        s = stallDepartPresentNpc(s, turn, playerInput);
+        s = stallDepartPresentNpc(s, turn, npcAct.name);
       }
       return {
         state: s,
@@ -1090,11 +1093,15 @@ export function filterDirectorTravelChips(
   }
   for (let i = 0; i < chips.length; i++) {
     const chip = chips[i]!;
-    const dest = travelDestFromChip(chip);
-    if (!dest) {
+    const rawDest = travelDestFromChip(chip);
+    if (!rawDest) {
       out.push(chip);
       continue;
     }
+    // TRAINLOOP4 B — rewrite description destinations to registry names; drop if unresolvable.
+    const dest = canonicalTravelDest(state, rawDest);
+    if (!dest) continue;
+    const chipOut = dest.toLowerCase() === rawDest.toLowerCase() ? chip : `Travel toward ${dest}`;
     const destLow = dest.toLowerCase();
     const hub = matchHub(hubs, dest);
     const destId = (hub?.id ?? '').toLowerCase();
@@ -1123,9 +1130,23 @@ export function filterDirectorTravelChips(
         }
       }
     }
-    out.push(chip);
+    out.push(chipOut);
   }
   return out;
+}
+
+/** TRAINLOOP4 A — Honour is dead when the open commitment only keeps on quest-complete. */
+function isDeadHonourPromiseChip(state: GameState, chip: string): boolean {
+  const m = chip.match(/^Honour the promise:\s*(.+)$/i);
+  if (!m) return false;
+  const want = (m[1] ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  for (const c of state.commitments ?? []) {
+    if (c.status !== 'open') continue;
+    if (c.condition?.type !== 'quest-complete') continue;
+    const desc = (c.description ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (desc === want || want.includes(desc) || desc.includes(want)) return true;
+  }
+  return false;
 }
 
 /**
@@ -1336,19 +1357,20 @@ function chipSpecsFromNeed(
   if (need === 'travel' || (development?.kind === 'lead' && development.placeId)) {
     const dest = development?.placeId;
     if (dest) {
-      const hub = matchHub(hubsForBibleId(state.campaignBibleId), dest);
-      const label = hub?.name ?? dest;
+      // TRAINLOOP4 B — Travel label is the registry/hub place name only.
+      const label = canonicalTravelDest(state, dest);
+      const hub = label ? matchHub(hubsForBibleId(state.campaignBibleId), label) : null;
       const hereHub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
-      if (!hereHub || hereHub.id !== hub?.id) {
+      if (label && (!hereHub || hereHub.id !== hub?.id) && label.toLowerCase() !== placeNameOf(state).toLowerCase()) {
         chips.push({ label: `Travel toward ${label}`, reason: 'director-lead-travel' });
       } else {
         // Thread/lead is already HERE — offer a different hub so first-pad can leave the stall
         // (travel-to-here is illegal; injection alone is not progress).
         const alt = pickLeadFact(state);
         if (alt?.placeId) {
-          const altHub = matchHub(hubsForBibleId(state.campaignBibleId), alt.placeId);
-          const altLabel = altHub?.name ?? alt.placeId;
-          if (!hereHub || hereHub.id !== altHub?.id) {
+          const altLabel = canonicalTravelDest(state, alt.placeId);
+          const altHub = altLabel ? matchHub(hubsForBibleId(state.campaignBibleId), altLabel) : null;
+          if (altLabel && (!hereHub || hereHub.id !== altHub?.id)) {
             chips.push({ label: `Travel toward ${altLabel}`, reason: 'director-here-thread-lead' });
           }
         }
@@ -1359,7 +1381,12 @@ function chipSpecsFromNeed(
     const name =
       (state.npcMemories ?? []).find((m) => (m.npcId || `npc:${m.npcName}`) === development.npcId)?.npcName
       ?? 'them';
-    chips.push({ label: `Answer ${name}`, reason: 'director-npc-act' });
+    // TRAINLOOP4 A — Answer is dead when the NPC is not here to speak.
+    if (name && name !== 'them' && personIsHere(state, name)) {
+      chips.push({ label: `Answer ${name}`, reason: 'director-npc-act' });
+    } else {
+      chips.push({ label: 'Leave the scene', reason: 'director-npc-act-absent' });
+    }
   }
   // T10RC3/RC5 — Face the threat only to engage a parked/pending foe (not mid-round).
   // Face first so first-pad dry-run resolves the fight (progress) before a bounce Travel.
@@ -1738,6 +1765,13 @@ export function applyDirectorChipPolicy(
   let next = chips.filter((c) => (c ?? '').replace(/\s+/g, ' ').trim().length > 0);
   // T10RC5 — Face without an engine foe is never a legal pad (stale plan or compiler leftover).
   next = next.filter((c) => !/^Face the threat$/i.test(c) || facesThreatChipAllowed(state));
+  // TRAINLOOP4 A — drop Answer-to-absent and Honour-that-cannot-keep.
+  next = next.filter((c) => {
+    if (isDeadHonourPromiseChip(state, c)) return false;
+    const m = c.match(/^Answer\s+(.+)$/i);
+    if (!m) return true;
+    return personIsHere(state, (m[1] ?? '').trim());
+  });
   const noOp = opts.noOpChip ?? directorNoOpChip(state);
   next = filterDirectorTravelChips(state, next, opts.recentChips ?? []);
   next = replaceNoOpChip(state.directorPlan, next, noOp);
@@ -1758,20 +1792,32 @@ export function applyDirectorChipPolicy(
   if (blockTravel) next = next.filter(keepUnderThreat);
   // Prefer director plan chips first when stall need is active.
   const plan = state.directorPlan;
-  if (plan && plan.need !== 'none' && plan.chips.length) {
-    // T10RC5 — stale Face after foe cleared must not stay on the pad (live T193 Must-narrate only).
-    const prefer = plan.chips
+  /** TRAINLOOP4 A — Answer X is illegal when X is not speakable here. */
+  const planLabelOk = (l: string): boolean => {
+    const m = l.match(/^Answer\s+(.+)$/i);
+    if (!m) return true;
+    const who = (m[1] ?? '').trim();
+    return !!who && personIsHere(state, who);
+  };
+  const livePlanLabels = () =>
+    (plan?.chips ?? [])
       .map((c) => c.label)
       .filter((l) => (l ?? '').trim().length > 0)
       .filter((l) => !/^Face the threat$/i.test(l) || facesThreatChipAllowed(state))
+      .map((l) => (planLabelOk(l) ? l : 'Leave the scene'));
+  if (plan && plan.need !== 'none' && plan.chips.length) {
+    // T10RC5 — stale Face after foe cleared must not stay on the pad (live T193 Must-narrate only).
+    const prefer = livePlanLabels()
       .filter((l) => {
         if (journeyMover(l)) return next.includes(l);
         if (blockTravel && (isTravelPad(l) || !!travelDestFromChip(l))) return false;
+        // Leave the scene / Answer replacement may be injected even when not already on the pad.
+        if (/^leave(?:\s+the\s+scene)?\b/i.test(l)) return true;
         return next.includes(l) || (!blockTravel && !!travelDestFromChip(l)) || /^Face the threat$/i.test(l);
       });
     const merged = [...prefer];
     for (const c of next) {
-      if (!merged.includes(c)) merged.push(c);
+      if (!merged.includes(c) && planLabelOk(c)) merged.push(c);
     }
     next = filterDirectorTravelChips(state, merged, opts.recentChips ?? []);
     if (blockTravel) next = next.filter(keepUnderThreat);
@@ -1779,17 +1825,14 @@ export function applyDirectorChipPolicy(
   // Journey "Walk on" / bare continue is not a travelDest — under stall prefer a plan chip over it,
   // but TRAINLOOP2: never drop continue + turn-back while the journey is still underway.
   if (plan && plan.need !== 'none' && plan.chips.length) {
-    const planFirst = plan.chips
-      .map((c) => c.label)
-      .filter((l) => (l ?? '').trim().length > 0)
-      .filter((l) => !/^Face the threat$/i.test(l) || facesThreatChipAllowed(state))
+    const planFirst = livePlanLabels()
       .filter((l) => !(blockTravel && !journeyMover(l) && (isTravelPad(l) || !!travelDestFromChip(l))))
       .find((l) => (l ?? '').trim());
     if (planFirst) {
       const roadMovers = isJourneyUnderway(state) && !state.activeEncounter
         ? next.filter((c) => journeyMover(c))
         : [];
-      const withoutWalk = next.filter((c) => !journeyMover(c));
+      const withoutWalk = next.filter((c) => !journeyMover(c) && planLabelOk(c));
       // Keep turn-back toward a named plan dest when travel is legal (non-journey stall path).
       const turnBackOk = (blockTravel || roadMovers.length)
         ? []

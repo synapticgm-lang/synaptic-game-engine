@@ -14,6 +14,53 @@ function tidy(name: string | undefined | null): string {
   return (name ?? '').replace(/\s+/g, ' ').trim();
 }
 
+/** Quest/lead copy ("the village moot about the blight"), not an atmospheric HERE name. */
+function isQuestPlaceDescription(t: string): boolean {
+  return ` ${t.toLowerCase()} `.includes(' about ');
+}
+
+/**
+ * TRAINLOOP4 B — one owner for Travel destination display names.
+ * Hub / place registry first; then (description-shaped only) a shorter registry name
+ * contained in quest/lead copy ("the village moot about the blight" → "Village Moot").
+ * Never remaps atmospheric place names that merely contain a hub substring (West Wall).
+ * Null when nothing in the registry matches — Travel callers must not invent a label.
+ */
+export function canonicalTravelDest(state: GameState, raw: string | null | undefined): string | null {
+  const t = tidy(raw);
+  if (!t) return null;
+  const hubs = hubsForBibleId(state.campaignBibleId);
+  const hub = matchHub(hubs, t);
+  if (hub?.name) return hub.name;
+  const key = t.toLowerCase();
+  const desc = isQuestPlaceDescription(t);
+  const hit = { name: '', len: 0 };
+  if (desc) {
+    const consider = (name: string | undefined | null) => {
+      const n = tidy(name);
+      if (!n || n.length < 4) return;
+      const nl = n.toLowerCase();
+      if (nl === key) return;
+      if (key.includes(nl) && nl.length > hit.len) {
+        hit.name = n;
+        hit.len = nl.length;
+      }
+    };
+    for (let i = 0; i < hubs.length; i++) consider(hubs[i]!.name);
+    for (const p of state.places ?? []) {
+      if (p.closed || p.arcStatus === 'closed') continue;
+      consider(p.name);
+      for (const a of p.aliases ?? []) consider(a);
+      // Hubless story exits (Village Moot off Overgrown Station) count as registry names.
+      for (const ex of p.exits ?? []) consider(ex);
+    }
+    if (hit.len > 0) return hit.name;
+  }
+  const exact = resolvePlace(state.places, t);
+  if (exact?.name) return exact.name;
+  return null;
+}
+
 /** Parent from stored / opening-card place data / from-hub — never a label substring. */
 function parentHubOf(state: GameState, raw: string, from?: string): string {
   const hubs = hubsForBibleId(state.campaignBibleId);
@@ -210,23 +257,44 @@ export function placeExits(state: GameState, name?: string | null): string[] {
   return placeExitRows(state, name).map((row) => row.label);
 }
 
+/** Close a lead-copy place row once it remaps to a real registry place (FORDCAMP trap). */
+function closeRemappedDescriptionPlace(state: GameState, rawIn: string, canon: string): GameState {
+  if (!rawIn || !canon || rawIn.toLowerCase() === canon.toLowerCase()) return state;
+  let changed = false;
+  const places = (state.places ?? []).map((p) => {
+    if (tidy(p.name).toLowerCase() !== rawIn.toLowerCase()) return p;
+    if (p.closed || p.arcStatus === 'closed') return p;
+    changed = true;
+    return { ...p, closed: true, arcStatus: 'closed' as const };
+  });
+  return changed ? { ...state, places } : state;
+}
+
 /** Sole registration entry. No-op when closed or exits already filled. */
 export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: string | null): GameState {
-  const raw = tidy(name ?? state.currentLocation);
-  if (!raw || isRoadLabel(raw) || isTripHere(state, raw)) return state;
-  if (dungeonRoomPlace(state, raw)) return state;
-  const hubs = hubsForBibleId(state.campaignBibleId);
+  const rawIn = tidy(name ?? state.currentLocation);
+  if (!rawIn || isRoadLabel(rawIn) || isTripHere(state, rawIn)) return state;
+  if (dungeonRoomPlace(state, rawIn)) return state;
+  // TRAINLOOP4 B — description-shaped names only; atmospheric HERE keeps its own record.
+  const raw = isQuestPlaceDescription(rawIn)
+    ? (canonicalTravelDest(state, rawIn) ?? rawIn)
+    : rawIn;
+  let working = state;
+  if (isQuestPlaceDescription(rawIn) && raw.toLowerCase() !== rawIn.toLowerCase()) {
+    working = closeRemappedDescriptionPlace(working, rawIn, raw);
+  }
+  const hubs = hubsForBibleId(working.campaignBibleId);
   const hub = matchHub(hubs, raw);
   const hubName = hub?.name ?? raw;
-  const existing = resolvePlace(state.places, hubName) ?? resolvePlace(state.places, raw);
-  if (existing?.closed || existing?.arcStatus === 'closed') return state;
-  if (existing && (existing.exits?.length ?? 0) > 0) return state;
+  const existing = resolvePlace(working.places, hubName) ?? resolvePlace(working.places, raw);
+  if (existing?.closed || existing?.arcStatus === 'closed') return working;
+  if (existing && (existing.exits?.length ?? 0) > 0) return working;
 
-  const parentHub = hub ? '' : parentHubOf(state, raw, from ?? undefined);
+  const parentHub = hub ? '' : parentHubOf(working, raw, from ?? undefined);
   const parentHubRow = matchHub(hubs, parentHub);
   const indoorLocal = !hub && placeScale(raw) === 'indoor';
   const sealed = indoorLocal && (isDungeonHub(parentHubRow ?? parentHub) || !parentHub);
-  const exits = seedExitRows(state, raw, from ?? undefined).map((row) => row.label);
+  const exits = seedExitRows(working, raw, from ?? undefined).map((row) => row.label);
   const closed = sealed;
   // Never lock an open place as a built card with zero exits (Ford Camp hubless hole).
   const lockCard = closed || exits.length > 0;
@@ -235,13 +303,13 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
       ...existing,
       exits,
       ...(closed ? { closed: true, arcStatus: 'closed' as const } : {}),
-      ...(lockCard ? { cardBuiltTurn: state.turn ?? 0 } : {}),
+      ...(lockCard ? { cardBuiltTurn: working.turn ?? 0 } : {}),
       parentHub: hub ? existing.parentHub : existing.parentHub || parentHub || undefined,
       aliases: Array.from(new Set([...(existing.aliases ?? []), hubName, raw])).slice(0, 12),
     };
     return {
-      ...state,
-      places: (state.places ?? []).map((p) => (p.id === existing.id ? patched : p)),
+      ...working,
+      places: (working.places ?? []).map((p) => (p.id === existing.id ? patched : p)),
     };
   }
   const row: PlaceRecord = {
@@ -252,10 +320,10 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
     arcStatus: closed ? 'closed' : 'open',
     ...(closed ? { closed: true } : {}),
     exits,
-    ...(lockCard ? { cardBuiltTurn: state.turn ?? 0 } : {}),
+    ...(lockCard ? { cardBuiltTurn: working.turn ?? 0 } : {}),
     parentHub: hub ? undefined : parentHub || undefined,
   };
-  return { ...state, places: [...(state.places ?? []), row] };
+  return { ...working, places: [...(working.places ?? []), row] };
 }
 
 /** Validate exitsTo against the hub graph; register through ensurePlaceOnMap. */
