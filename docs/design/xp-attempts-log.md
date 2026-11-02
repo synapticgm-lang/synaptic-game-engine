@@ -219,3 +219,38 @@ Assumption: one XP event every 2.2 turns; 65% quest-shaped (2–3 step then comp
 
 Branch `xp/design`. LitRPG-only **Opening Rite**: one-step easy-win per scenario (`openingRiteTable.ts`); engine completes on accept chip / free-text accept / refuse→forced / turn-4 backstop; XP fill = L1 bar − current XP → Level 2 exactly (exempt from 60% event cap; one-level-per-apply stays). Writer facts via `openingRiteFacts.ts` + `completedEventPacket`; accept chip pinned first; System window shows quest + XP + Level 2; Fate `--player-profile quest`. Pace model: L2 at turns 1–3 with opening win, L3 15–25 later (no unitsPerLevel retune). Tabletop/RPG/PYOA unchanged. Report: `merge-logs/xp-design/open/OPEN-report.md`. Free-path T50 still owed after stamp/ship.
 
+### 2 Nov 2026 — LitRPG opening-rite attempt 2 (Registration timing + loop fix) results — MISS
+
+What changed (from `merge-logs/xp-design/open2/OPEN2-report.md`, commit `d5d4b6aa` on `xp/design`): SI Registration cover pin + backstop by rite-turn/save-turn ≥3 (was ≥4 → L2 on save turn 5); skip quest-step/complete/First-Steps on `opening-rite:*` so rite fill alone pays L1→L2; no Use chip for reward boxes / full-HP vials; `Use … Reward Box` settles as open; stall refill prefers untried and drops Use under `STALL_N`; quest profile skips last dead pick (`chipProgressScore ≤ 2`). Tabletop/RPG/PYOA untouched.
+
+Runs (build `2026-11-02a+35816572`, free writer DeepSeek via OpenRouter/gm-turn, no paid AI; seeds 7301–7304):
+- 7301 random summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T07-36-34-120Z_summoned-pact_cold-system_s7301`
+- 7302 random system-integration: `scripts/fate-autoplay/runs/2026-11-02T07-44-53-331Z_system-integration_cold-system_s7302`
+- 7303 quest summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T07-49-01-855Z_summoned-pact_cold-system_s7303_quest`
+- 7304 quest system-integration: `scripts/fate-autoplay/runs/2026-11-02T07-53-07-317Z_system-integration_cold-system_s7304_quest`
+
+Measured from `turns.jsonl` (`xpGained`, `XP Gained:` systemLog, `level`, `characterXp`, `progress`, offered/picked chips). Quest share = rite + quest steps + quest completes.
+
+| Run | Profile | Scenario | Rite turn / how | System notice / Check System | L2 | L3 | L2→L3 | Total XP | Rite | Steps | Completes | Fights | Ach/other | Quest share | Fight share | No-prog / max streak | LOOP STOP | Dead chip repeats (picks ≥2) | Zero-pay step | Farming |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7301 | random | summoned-pact | **2** refuse→forced (Refuse the offer) | System line yes (“seals the pact… Level 2”); Check System chip **never** | **2** | 41 | **39** | 448 | 150 | 195 | 63 | 29 | 11 | **91.1%** | **6.5%** | 9 / 1 | no (50/50) | Read/Analyze Orel Vane ×2 | 0 | none; rite ×1 |
+| 7302 | random | system-integration | **2** chip (Give your name and register) | System line yes (Registration complete… Level 2); Check System chip **never** | **2** | 14 | **12** | 531 | 150 | 117 | 221 | 0 | 43 | **91.9%** | **0%** | 10 / 1 | no (50/50) | Search dungeon signs ×2; Read Warden ×2 | 0 | none; rite ×1; bounty completes reduced on repeat title (63→32) |
+| 7303 | quest | summoned-pact | **2** chip (Accept the offer) | System line yes (Pact sealed… Level 2); Check System chip **never** | **2** | — | — (still L2 @ T51, 174 into bar) | 324 | 150 | 37 | 63 | 20 | 54 | **77.2%** | **6.2%** | 6 / 1 | no (50/50) | Open bronze box ×2; Search area ×2 | 0 | none; rite ×1 |
+| 7304 | quest | system-integration | **2** chip (Give your name and register) | System line yes (Registration complete… Level 2); Check System chip **never** | **2** | 32 | **30** | 345 | 150 | 69 | 63 | 20 | 43 | **81.7%** | **5.8%** | 9 / 1 | **no** (50/50) | Search area ×2; Search dungeon signs ×2 | 0 | none; rite ×1 |
+
+Per-profile averages: random L2 **2**, L2→L3 **25.5** (39/12), quest share **91.5%**, fight share **3.3%**, no-prog **9.5**, max streak **1**. Quest profile L2 **2**, L2→L3 **30** (one sample; 7303 no L3), quest share **79.5%**, fight share **6.0%**, no-prog **7.5**, max streak **1**. Overall: L2 **2**, L2→L3 avg **27** (n=3), quest share **85.5%**, fight share **4.6%**.
+
+Quest-profile chip mix: ~33/50 progress-family picks vs ~11–12 inventory/search/read; Search/Read/Analyze still **offered** 6–15× per label without effect (starve not fully closed on offers).
+
+**Vs 1 Nov OPEN baseline (same seeds):** 7301 L2@2 held (was 2); 7302 L2 **2 chip** (was **5** backstop) and L3@14 / span 12 (was L3@8 / span **3** early chain + rite XP 213 stacked); 7303 L2@2 held, L3 not reached this time (baseline L3@35); 7304 L2@2 chip (was rite@5 / L2@4) and **completed 50, no LOOP STOP** (baseline **LOOP STOP ~T37**, max no-prog streak **5**, Use Reward Box / Health Vial spam).
+
+**Vs targets:** Rite→L2 in turns 1–3 both scenarios **PASS**; never L3 from rite **PASS**; no L3 within ~3 turns of L2 **PASS** (OPEN2 closed 7302); L2→L3 15–25 **MISS** (12 / 39 / — / 30); quest share 60–70% (tol. 55–80%) **MISS** overall avg 85.5% (random over); fights 15–30% **MISS** avg 4.6%; no full-pay repeats **PASS**; rite once/save **PASS**; NO LOOP STOP + no 5+ no-prog streak **PASS**; quest profile prefers progress **partial** (picks OK-ish; dead Search/Read still offered repeatedly).
+
+OpenRouter: no balance or $ cost figure in logs or run meta (writerUsage has tokens only; teacher `deepseek/deepseek-v4.1-flash`).
+
+**Verdict: MISS** — offs: L2→L3 spans **12 / 39 / — / 30** (want 15–25); quest-share avg **85.5%** (want ≤80% tol.); fight-share avg **4.6%** (want 15–30%). OPEN2 timing/loop gates held.
+
+**Next attempt (one line):** After rite, bias free-path pads toward on-level fights / travel-to-threat and starve Search/Read/Analyze refill so fight share rises into 15–30% and L2→L3 lands in 15–25 without another early SI chain.
+
+Plain summary also at `merge-logs/xp-design/open2/T50-report.md`.
+
