@@ -21,9 +21,8 @@ import type { Character, EngineMode } from './types';
 /** One XP event every 2.2 turns (calibrated from design note + typical Fate density). */
 const TURN_GAP = 2.2;
 /**
- * Engaged-player mix for XP share (quest ~65%, fight ~25%, other ~10% outside this sim).
- * Live density aims ~2.5 quest pays per fight; event rate here is calibrated so complete=3 /
- * step=1 / fight=0.85@L2+ land XP share in 55–80 (raw 2.5/3.5 overshoots quest XP to ~85%).
+ * XP-D1 OPEN3 engaged mix: quest events ~55% of XP events, fights the rest.
+ * With L2+ step 0.55 / complete 1.4 / fight 0.7 units, share lands in 55–80 quest / 15–30 fight.
  */
 const QUEST_SHARE = 0.55;
 
@@ -188,7 +187,7 @@ describe('XP-D1 pace model', () => {
     expect(questPct).toBeLessThanOrEqual(0.8);
   });
 
-  it('OPEN2 System Integration: Opening Rite then early dungeon-entry quest does not L3 within 3 turns', () => {
+  it('OPEN2/OPEN3 System Integration: Opening Rite then early dungeon-entry quest does not L3 within 3 turns', () => {
     // Rite at T2 → L2 exactly; then a quest step + complete (dungeon-entry style) within turns 3–5
     // must leave the player on L2. Engaged mix after that still reaches L3 in 15–25 turns.
     let char: Character = {
@@ -219,6 +218,42 @@ describe('XP-D1 pace model', () => {
     const t3 = levelAt.get(3)!;
     expect(t3 - t2).toBeGreaterThanOrEqual(5);
     expect(t3 - t2).toBeLessThanOrEqual(35);
+  });
+
+  it('OPEN3 Summoned Pact + System Integration: share and L2→L3 pace bands (random vs quest-seeking)', () => {
+    for (const seed of [7301, 7302, 42]) {
+      for (const mix of ['mixed', 'quest'] as const) {
+        const { levelAt, xpBySource } = simulate('litrpg', 400, mix, rngFrom(seed));
+        const t2 = levelAt.get(2);
+        const t3 = levelAt.get(3);
+        expect(t2, `L2 seed ${seed} ${mix}`).toBeTypeOf('number');
+        expect(t3, `L3 seed ${seed} ${mix}`).toBeTypeOf('number');
+        const span = (t3 as number) - (t2 as number);
+        // Target 15–25; allow 5–35 seed variance (same band as main pace test).
+        expect(span, `L2→L3 seed ${seed} ${mix}`).toBeGreaterThanOrEqual(5);
+        expect(span, `L2→L3 seed ${seed} ${mix}`).toBeLessThanOrEqual(35);
+        const total = xpBySource.quest + xpBySource.fight;
+        const questPct = total > 0 ? xpBySource.quest / total : 0;
+        const fightPct = total > 0 ? xpBySource.fight / total : 0;
+        expect(questPct, `quest share seed ${seed} ${mix}`).toBeGreaterThanOrEqual(0.55);
+        if (mix === 'mixed') {
+          expect(questPct, `quest share seed ${seed} mixed`).toBeLessThanOrEqual(0.85);
+          expect(fightPct, `fight share seed ${seed}`).toBeGreaterThanOrEqual(0.1);
+          expect(fightPct, `fight share seed ${seed}`).toBeLessThanOrEqual(0.4);
+        }
+      }
+    }
+    // L3→L5 stays in early-band under engaged mix.
+    const { levelAt } = simulate('litrpg', 800, 'mixed', rngFrom(7301));
+    for (const L of [4, 5]) {
+      const prev = levelAt.get(L - 1);
+      const cur = levelAt.get(L);
+      expect(prev).toBeTypeOf('number');
+      expect(cur).toBeTypeOf('number');
+      const span = (cur as number) - (prev as number);
+      expect(span).toBeGreaterThanOrEqual(5);
+      expect(span).toBeLessThanOrEqual(35);
+    }
   });
 
   it('Story RPG is ~1.5× slower from L2; quest-only and fight-only both advance', () => {

@@ -459,6 +459,7 @@ export default function App() {
               setCharacterInitialTab(tab);
               game.setShowCharacterWindow(true);
             }}
+            onOpenSystemNotices={game.openSystemNotices}
           />
           </div>
           {(() => {

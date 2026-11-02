@@ -58,7 +58,13 @@ export const SANDBOX_XP = {
 
 export interface SandboxXpResult {
   xp: number;
+  /** STATUS XP lines (empty when housing hides experience). */
   notes: string[];
+  /**
+   * XP-D1 OPEN3 — same XP lines for the Check System inbox even when STATUS hides experience.
+   * Display only for the notice stack; engine awards still use `xp` / `notes`.
+   */
+  noticeNotes: string[];
   awardKeys: string[];
   places: GameState['places'];
   /** 29r — items granted this turn (settlement card finish). */
@@ -333,7 +339,8 @@ export function applySandboxXpAwards(
     }
   }
 
-  // Encounter end: victory or neutralised (parley). Escape / defeat / capture pay nothing.
+  // Encounter end: victory, parley, or engine-recognised alternative win (intimidate / spare / trap).
+  // Escape / defeat / capture pay nothing. Farm ladder is the one owner (fightRepeatKey).
   const ended = opts.endedEncounter ?? null;
   let wonThisTurn = opts.enemyKilled === true;
   let bossWon = false;
@@ -341,17 +348,32 @@ export function applySandboxXpAwards(
     const receipts = state.arcDirector?.encounterClearedReceipts ?? [];
     const rec = [...receipts].reverse().find((r) => r.name === ended.name && r.turn >= opts.turn - 2);
     const outcome = rec?.outcome ?? (opts.enemyKilled ? 'victory' : ended.terminalOutcome);
-    if (outcome === 'victory') wonThisTurn = true;
-    if (outcome === 'victory' && encounterKind(ended) === 'boss') bossWon = true;
-    if (outcome === 'victory' || outcome === 'parleyResolved') {
+    const reason = `${rec?.resolutionReason ?? ''} ${ended.terminalOutcome ?? ''}`.toLowerCase();
+    const altWin =
+      /\b(?:intimidat|scare(?:d)?\s+off|threaten(?:ed)?\s+away|spare(?:d)?|trap(?:ped)?|ambush(?:ed)?\s+clear)\b/.test(
+        reason
+      )
+      || /\b(?:intimidat|spare|trap)\b/.test((opts.playerAction ?? '').toLowerCase())
+        && (outcome === 'victory' || outcome === 'parleyResolved');
+    const paysFight =
+      outcome === 'victory' || outcome === 'parleyResolved' || (altWin && outcome !== 'escape' && outcome !== 'defeat' && outcome !== 'capture');
+    if (outcome === 'victory' || altWin) wonThisTurn = true;
+    if ((outcome === 'victory' || altWin) && encounterKind(ended) === 'boss') bossWon = true;
+    if (paysFight) {
       const placeId = placeIdFromName(loc ?? state.currentLocation ?? 'here');
       const farmKey = fightRepeatKey(placeId, ended.name);
       const farmN = mode === 'dnd' || mode === 'pyoa' ? 0 : countFightRepeats(awardKeys, farmKey);
       const farmShare = mode === 'dnd' || mode === 'pyoa' ? 1 : repeatShare(farmN);
+      const label =
+        outcome === 'victory' && !altWin
+          ? `defeated ${ended.name}`
+          : outcome === 'parleyResolved'
+            ? `resolved ${ended.name}`
+            : `resolved ${ended.name}`;
       pay(
         `encounter:${ended.encounterId ?? normalizeNpcKey(ended.name)}:${rec?.turn ?? opts.turn}`,
         encounterKind(ended),
-        `${outcome === 'victory' ? 'defeated' : 'resolved'} ${ended.name}`,
+        label,
         mode === 'dnd' ? realEncounterCr(ended) : ended.cr,
         ended.count,
         ended.level,
@@ -529,5 +551,15 @@ export function applySandboxXpAwards(
   }
 
   void opts.events;
-  return { xp, notes: xpHidden ? [] : xpNotes, awardKeys, places, items, lootNotes, npcRelationships };
+  // STATUS may hide XP lines (leftover_pocket); Check System inbox still needs the same lines.
+  return {
+    xp,
+    notes: xpHidden ? [] : xpNotes,
+    noticeNotes: xpNotes,
+    awardKeys,
+    places,
+    items,
+    lootNotes,
+    npcRelationships,
+  };
 }

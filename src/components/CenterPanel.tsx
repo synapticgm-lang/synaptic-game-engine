@@ -11,6 +11,7 @@ import {
   presentSystemNotices,
   usesSystemNoticeChip,
 } from '@/game/systemNotice';
+import { systemNoticeInboxOf } from '@/game/systemNoticeInbox';
 import { LitrpgSystemWindowPanel } from './LitrpgSystemWindow';
 import { CheckSystemChip } from './CheckSystemChip';
 import { SystemNoticeWindow } from './SystemNoticeWindow';
@@ -130,6 +131,8 @@ interface Props {
   onOpenCharacter: () => void;
   /** Opens CharacterWindow on the sheet tab (from System notice panel). */
   onOpenCharacterSheet?: (tab: 'sheet') => void;
+  /** XP-D1 OPEN3 — clear Check System unread (free; no turn). */
+  onOpenSystemNotices?: () => void;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
   onRetryMemorableImage?: (entryId: string) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
@@ -147,9 +150,10 @@ interface Props {
   onDismissWelcomeBack?: () => void;
 }
 
-export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onOpenCharacterSheet, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, showPlayerLines = false, onUseBuiltSheet, welcomeBackRecap = null, onDismissWelcomeBack }: Props) {
+export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onOpenCharacterSheet, onOpenSystemNotices, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, showPlayerLines = false, onUseBuiltSheet, welcomeBackRecap = null, onDismissWelcomeBack }: Props) {
   const [input, setInput] = useState('');
   const [sttNoticeOpen, setSttNoticeOpen] = useState(false);
+  const inbox = systemNoticeInboxOf(state);
   const [unreadSystemNotices, setUnreadSystemNotices] = useState(0);
   const [recentSystemNotices, setRecentSystemNotices] = useState<string[]>([]);
   const [systemNoticeOpen, setSystemNoticeOpen] = useState(false);
@@ -165,7 +169,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   const lastGmId = useMemo(() => [...state.log].reverse().find((e) => e.role === 'gm')?.id ?? null, [state.log]);
   const rollDisplay = useMemo(() => ({ mode: diceAnimation, newestEntryId: lastGmId }), [diceAnimation, lastGmId]);
 
-  // UI-only unread stack for LitRPG / RPG System notifications (not scene-choice pads, not save schema).
+  // XP-D1 OPEN3 — prefer engine inbox (survives housing-hidden XP); fall back to GM STATUS derive.
   useEffect(() => {
     setUnreadSystemNotices(0);
     setRecentSystemNotices([]);
@@ -175,6 +179,11 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
 
   useEffect(() => {
     if (!usesSystemNoticeChip(engineMode)) return;
+    if (inbox.unread > 0 || inbox.lines.length) {
+      setUnreadSystemNotices(inbox.unread);
+      setRecentSystemNotices(inbox.lines);
+      return;
+    }
     const lastGm = [...state.log].reverse().find((e) => e.role === 'gm');
     if (!lastGm || lastGm.id === lastCountedNoticeGmId.current) return;
     lastCountedNoticeGmId.current = lastGm.id;
@@ -185,7 +194,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     if (!notices.length) return;
     setRecentSystemNotices((prev) => [...prev, ...notices].slice(-40));
     setUnreadSystemNotices((n) => n + notices.length);
-  }, [state.log, engineMode]);
+  }, [state.log, engineMode, inbox.unread, inbox.lines]);
 
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [dismissedImage, setDismissedImage] = useState<string | null>(null);
@@ -590,6 +599,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               onOpen={() => {
                 setSystemNoticeOpen(true);
                 setUnreadSystemNotices(0);
+                onOpenSystemNotices?.();
               }}
             />
           )}

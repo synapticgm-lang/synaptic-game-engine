@@ -39,14 +39,14 @@ export const REPEAT_SHARES = [1, 0.5, 0.25, 0.1] as const;
  */
 const LITRPG_UNITS_PER_LEVEL: ReadonlyArray<{ maxLevel: number; units: number }> = [
   { maxLevel: 1, units: 3 },
-  { maxLevel: 2, units: 9 },
-  { maxLevel: 3, units: 11 },
-  { maxLevel: 4, units: 13 },
-  { maxLevel: 6, units: 15 },
-  { maxLevel: 9, units: 18 },
-  { maxLevel: 14, units: 26 },
-  { maxLevel: 19, units: 30 },
-  { maxLevel: Number.POSITIVE_INFINITY, units: 34 },
+  { maxLevel: 2, units: 8 },
+  { maxLevel: 3, units: 10 },
+  { maxLevel: 4, units: 11 },
+  { maxLevel: 6, units: 13 },
+  { maxLevel: 9, units: 15 },
+  { maxLevel: 14, units: 22 },
+  { maxLevel: 19, units: 26 },
+  { maxLevel: Number.POSITIVE_INFINITY, units: 30 },
 ];
 
 /** Award sizes in units of xpUnit (L1 unit = 50). Fractions allowed; pay rounds to whole XP. */
@@ -58,7 +58,7 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
   dungeonEntry: 0.5,
   roomCleared: 0.5,
   questStep: 1,
-  /** Completes 3 units; with steps 1 + fights 0.85@L2+ → ~65% quest / ~25% fight XP share. */
+  /** L1 snapshot; L2+ uses QUEST_COMPLETE_UNITS_L2_PLUS so quest share stays 60–70%. */
   questComplete: 3,
   significantPerson: 0.5,
   significantPlace: 0.5,
@@ -67,10 +67,13 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
 };
 
 /**
- * L2+ on-level fights: 0.85 unit so completes (3) + steps hold quest XP share near 60–70%.
- * L1 stays 1 (fight 50 + First Kill + bearings + step + First Steps → L2).
+ * XP-D1 OPEN3 — L2+ retune (rite / L1 untouched):
+ * - on-level fight ≈ 6–8% of the current bar (1 unit at L2 unitsPerLevel 9 → ~11% before grey; 0.7 ≈ 8%)
+ * - quest step / complete sized down so engaged mix hits 60–70% quest / 15–30% fight and L2→L3 ≈ 15–25 turns
  */
 export const ENCOUNTER_UNITS_L2_PLUS = 0.85;
+export const QUEST_STEP_UNITS_L2_PLUS = 0.65;
+export const QUEST_COMPLETE_UNITS_L2_PLUS = 1.6;
 
 /** One XP event may not exceed this share of the current level bar (LitRPG / Story RPG). */
 export const XP_EVENT_BAR_CAP = 0.6;
@@ -177,8 +180,11 @@ export function unitAwardFor(
   playerLevel?: number
 ): number {
   if (mode === 'rpg' && STORY_RPG_UNIT_ZERO.has(kind)) return 0;
-  if (kind === 'encounter' && Math.max(1, Math.floor(playerLevel ?? 1)) >= 2) {
-    return ENCOUNTER_UNITS_L2_PLUS;
+  const lvl = Math.max(1, Math.floor(playerLevel ?? 1));
+  if (lvl >= 2) {
+    if (kind === 'encounter') return ENCOUNTER_UNITS_L2_PLUS;
+    if (kind === 'questStep') return QUEST_STEP_UNITS_L2_PLUS;
+    if (kind === 'questComplete') return QUEST_COMPLETE_UNITS_L2_PLUS;
   }
   return XP_UNIT_AWARDS[kind] ?? 0;
 }

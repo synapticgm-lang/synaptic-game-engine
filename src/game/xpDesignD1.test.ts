@@ -4,7 +4,15 @@
 import { describe, expect, it } from 'vitest';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
-import { contentScale, greyGap, levelBar, questIdentity, skillLevelCap, xpUnit } from './rules/xpPace';
+import {
+  contentScale,
+  ENCOUNTER_UNITS_L2_PLUS,
+  greyGap,
+  levelBar,
+  questIdentity,
+  skillLevelCap,
+  xpUnit,
+} from './rules/xpPace';
 import { LITRPG_MILESTONE_XP, MODE_XP, crToXp, deedXp, milestoneXp } from './xpRules';
 import { settleSkillUse } from './rules/skillGrowth';
 import type { ActiveEncounter, Character, GameState, Quest } from './types';
@@ -354,13 +362,13 @@ describe('XP-D1 design', () => {
     expect(r.xp).not.toBe(99999);
   });
 
-  it('A2: L1 fight stays 50; L2+ encounter uses 0.85 unit; complete is 3 units (event-capped)', () => {
+  it('A2/OPEN3: L1 fight stays 50; L2+ encounter uses ENCOUNTER_UNITS_L2_PLUS; L1 complete event-capped', () => {
     expect(milestoneXp('litrpg', 'encounter', { level: 1, playerLevel: 1, foeLevel: 1 }).amount).toBe(50);
     // 3 units × 50 = 150, capped at 60% of L1 bar (90).
     expect(milestoneXp('litrpg', 'questComplete', { level: 1, playerLevel: 1, contentLevel: 1 }).amount).toBe(90);
     expect(LITRPG_MILESTONE_XP.questComplete).toBe(150);
     const l2Fight = milestoneXp('litrpg', 'encounter', { level: 2, playerLevel: 2, foeLevel: 2 }).amount;
     const l2Unit = xpUnit('litrpg', 2);
-    expect(l2Fight).toBe(Math.max(1, Math.round(0.85 * l2Unit)));
+    expect(l2Fight).toBe(Math.max(1, Math.round(ENCOUNTER_UNITS_L2_PLUS * l2Unit)));
   });
 });

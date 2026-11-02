@@ -162,6 +162,13 @@ import { countTurnReceipts, countRunReceipts, type ReceiptCounts } from './recei
 import type { RunManifest } from './runManifest';
 import { BUILD_ID, BUILD_STAMP } from './runManifest';
 import { applySandboxXpAwards } from './sandboxXp';
+import {
+  appendSystemNotices,
+  checkSystemOffered,
+  openSystemNotices,
+  unopenedSystemNotices,
+} from './systemNoticeInbox';
+import { usesSystemNoticeChip } from './systemNotice';
 import { applyCharacterXpGain, characterXpGainBetween } from './characterXp';
 import {
   applyGovernanceCommit,
@@ -393,6 +400,10 @@ export type TurnTelemetry = {
   level?: number;
   characterXp?: number;
   xpToNext?: number;
+  /** XP-D1 OPEN3 — Check System chip (outside scene pads); free open, no turn cost. */
+  checkSystemOffered?: boolean;
+  checkSystemOpened?: boolean;
+  unopenedSystemNotices?: number;
   /** 28b — every stored place card (hub revisit check: a card is built once, reused on return). */
   placeCards?: Array<{ name: string; cardBuiltTurn?: number; description?: string; exits?: string[] }>;
   loopFlags: { officialCount: number; atmosphereRepeat: boolean; strangerCount: number };
@@ -2304,13 +2315,22 @@ Do NOT print dice notation or CODE ENFORCED.
       events,
       encounterCleared: !!(state.activeEncounter && !working.activeEncounter),
       endedEncounter: state.activeEncounter ?? null,
-      enemyKilled: false,
+      enemyKilled:
+        !!(state.activeEncounter && !working.activeEncounter)
+        && ((state.arcDirector?.encounterClearedReceipts ?? []).some(
+          (r) =>
+            r.name === state.activeEncounter?.name
+            && r.turn >= nextTurn - 2
+            && (r.outcome === 'victory' || r.outcome === 'parleyResolved')
+        )
+          || state.sceneFacts?.lastKill?.outcome === 'victory'),
       turn: nextTurn,
     }
   );
   let character = working.character;
   let levelNotes: string[] = [];
   const sandboxNotes = [...sandboxXp.notes, ...sandboxXp.lootNotes];
+  const sandboxNoticeNotes = [...(sandboxXp.noticeNotes ?? sandboxXp.notes), ...sandboxXp.lootNotes];
   if (sandboxXp.items.length) working = { ...working, inventory: [...(working.inventory ?? []), ...sandboxXp.items] };
   const sandboxKeys = sandboxXp.awardKeys;
   if (sandboxXp.xp > 0) {
@@ -2473,6 +2493,24 @@ Do NOT print dice notation or CODE ENFORCED.
       const last = log[log.length - 1];
       if (last?.role === 'gm') log[log.length - 1] = { ...last, systemLog: [...(last.systemLog ?? []), ...granted.receipts] };
       governed = { ...governed, log };
+    }
+  }
+  // XP-D1 OPEN3 — stack Check System notices (STATUS + hidden XP notes); may open as a free action.
+  let checkSystemOpened = false;
+  let checkSystemWasOffered = false;
+  let unopenedBeforeOpen = 0;
+  if (usesSystemNoticeChip(state.engineMode)) {
+    governed = appendSystemNotices(
+      governed,
+      [...filteredSystemLog, ...arcStatusReceipts, ...sandboxNoticeNotes, ...levelNotes],
+      state.engineMode
+    );
+    unopenedBeforeOpen = unopenedSystemNotices(governed);
+    checkSystemWasOffered = checkSystemOffered(governed);
+    if (checkSystemWasOffered) {
+      // Harmless free action: costs no turn and no writer call.
+      governed = openSystemNotices(governed);
+      checkSystemOpened = true;
     }
   }
   if (typeof governed.character?.hp === 'number') {
@@ -2692,6 +2730,9 @@ Do NOT print dice notation or CODE ENFORCED.
       level: governed.character?.level,
       characterXp: governed.character?.xp,
       xpToNext: governed.character?.xpToNext,
+      checkSystemOffered: checkSystemWasOffered,
+      checkSystemOpened,
+      unopenedSystemNotices: unopenedBeforeOpen,
       placeCards: (governed.places ?? [])
         .filter((p) => p.cardBuiltTurn != null)
         .map((p) => ({ name: p.name, cardBuiltTurn: p.cardBuiltTurn, description: p.description, exits: p.exits })),

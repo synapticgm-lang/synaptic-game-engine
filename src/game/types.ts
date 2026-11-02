@@ -1159,6 +1159,11 @@ export interface GameState {
   activeDungeon?: ActiveDungeonState | null;
   /** 28j — anti-circling memory used by choiceRanking. */
   circling?: CirclingMemory;
+  /**
+   * XP-D1 OPEN3 — LitRPG / Story RPG Check System stack (unread badge + lines).
+   * Not a scene-choice pad; opening is free (no turn / no XP). Tabletop / PYOA unused.
+   */
+  systemNoticeInbox?: { unread: number; lines: string[] };
   worldLedger?: WorldLedger;
   /** Order K: promises, deals and agreements recorded from the turn record. */
   commitments?: Commitment[];
@@ -2126,6 +2131,13 @@ export interface CirclingMemory {
    * Pads that match demote next; free text is never rejected.
    */
   lastDeadActResult?: string;
+  /**
+   * XP-D1 OPEN3 — scene key when a Search/Read/Analyze/Open chip paid no progress.
+   * Matching filler chips stay suppressed until the scene key changes.
+   */
+  fillerBlockSceneKey?: string;
+  /** Filler action families blocked under fillerBlockSceneKey (search / open). */
+  fillerBlockedFamilies?: string[];
 }
 /** O1-C — compact cleared-interior record (map as walked + item deltas; no foes). */
 export interface ClearedSiteRecord {

@@ -254,3 +254,9 @@ OpenRouter: no balance or $ cost figure in logs or run meta (writerUsage has tok
 
 Plain summary also at `merge-logs/xp-design/open2/T50-report.md`.
 
+### 2 Nov 2026 — LitRPG XP attempt 3 (fight XP + share + Check System + filler chips) — in-tree
+
+What (from `merge-logs/xp-design/open3/OPEN3-report.md` on `xp/design`): L2+ quest step/complete sized down; on-level fight units kept meaningful (~4–12% of bar); Seek Fight chip offered on drought; alternate-win fight pay; Check System engine inbox + fate telemetry; Search/Read/Analyze/Open suppressed after one no-progress take until scene changes. Opening rite / L1→L2 untouched. Tabletop/RPG/PYOA content untouched (Story RPG shares unit path — covered by pace tests). Free-path T50 still owed after stamp/ship.
+
+Plain summary also at `merge-logs/xp-design/open3/OPEN3-report.md`.
+

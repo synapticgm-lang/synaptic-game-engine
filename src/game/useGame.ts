@@ -350,6 +350,7 @@ import {
   openVignetteFromHubBeat,
 } from './vignetteLock';
 import { applySandboxXpAwards } from './sandboxXp';
+import { appendSystemNotices, openSystemNotices } from './systemNoticeInbox';
 import { applyCharacterXpGain } from './characterXp';
 import { milestoneXp } from './xpRules';
 import {
@@ -3453,6 +3454,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         playerInput: sanitizedInput,
       });
       let workingState = structural.state;
+      /** XP-D1 OPEN3 — Check System feed (includes XP even when housing hides STATUS XP). */
+      let systemNoticeFeed: string[] = [];
       const parsedPanels = parsePanels(result.text);
       const newLoreCards = eventsToLoreCards(events, liveCurrent.turn + 1);
       const turnFrame = parseTurnFrame(result.text);
@@ -4599,6 +4602,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         );
         if (sandboxXp.npcRelationships) deedRelationships = sandboxXp.npcRelationships;
         const sandboxNotes = [...sandboxXp.notes];
+        systemNoticeFeed.push(...(sandboxXp.noticeNotes ?? sandboxXp.notes), ...sandboxXp.lootNotes);
         const sandboxKeys = sandboxXp.awardKeys;
         if (sandboxXp.xp > 0) {
           baseChar.xp = (baseChar.xp ?? 0) + sandboxXp.xp;
@@ -4623,6 +4627,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           Object.assign(baseChar, leveled.character);
           if (leveled.notes.length) {
             mergedSystemLog = [...mergedSystemLog, ...leveled.notes];
+            systemNoticeFeed.push(...leveled.notes);
           }
         }
         const xpVoice = xpGainVoiceAside(workingState, gained);
@@ -4769,6 +4774,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       let mergedState: GameState = advanceSceneLedger(liveCurrent, record.state);
       mergedState = stampSceneLedger(mergedState, cleanText, handedRefs(mergedState));
       mergedState = registerWriterIntroductions(mergedState, cleanText);
+      // XP-D1 OPEN3 — Check System inbox from STATUS + hidden XP notes (outside scene pads).
+      mergedState = appendSystemNotices(
+        mergedState,
+        [...mergedSystemLog, ...systemNoticeFeed, ...arcReceipts],
+        liveCurrent.engineMode
+      );
       // Engine grants this turn, read from the record (stateTx.commitTurnRecord), plus the arc receipts.
       {
         const allReceipts = [...arcReceipts, ...record.lines];
@@ -6263,6 +6274,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     outOfMemorableAdOffer,
     dismissOutOfMemorableAdOffer: () => setOutOfMemorableAdOffer(false),
     sendAction,
+    /** XP-D1 OPEN3 — Check System open clears unread; free (no turn / no XP). */
+    openSystemNotices: () => {
+      const s = stateRef.current;
+      if (!s) return;
+      const next = openSystemNotices(s);
+      setState(next);
+      stateRef.current = next;
+    },
     applyBuiltSheet,
     answerMainQuestEnd,
     cancelTurn: () => {

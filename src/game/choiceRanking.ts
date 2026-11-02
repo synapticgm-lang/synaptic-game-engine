@@ -190,11 +190,40 @@ export function actionFamily(input: string): string {
   if (/\b(look around|look over|survey|scout|scan)\b/.test(a)) return 'look';
   if (/\b(talk|ask|speak|greet|offer)\b/.test(a)) return 'talk';
   if (/\b(travel|go to|go back|head to|walk to|return to|enter|next unexplored|go through)\b/.test(a)) return 'move';
-  if (/\b(attack|fight|strike|flee|parley)\b/.test(a)) return 'fight';
-  // XP-D1 OPEN2 — System trail / scene-search repeats are the same no-progress family as search.
-  if (/\b(search|open|loot|read the system trail)\b/.test(a)) return 'search';
+  if (/\b(attack|fight|strike|flee|parley|face the|look for a fight)\b/.test(a)) return 'fight';
+  // XP-D1 OPEN3 — Read / Analyze / Open-box / Search share one no-progress filler family.
+  if (
+    /^(?:search|read|analyze|open)\b/.test(a)
+    || /\b(search|loot|read the system trail|open the .+ reward box)\b/.test(a)
+  ) {
+    return 'search';
+  }
   if (/^use\b/.test(a)) return 'use';
   return 'other';
+}
+
+/** Search / Read / Analyze / Open — no-progress filler (one owner with turnProgress). */
+export function isFillerNoProgressChip(chip: string): boolean {
+  return actionFamily(chip) === 'search';
+}
+
+/** Scene key for filler suppress: place + quest + fight + kit + XP (changes when something real moves). */
+export function fillerSceneKey(state: GameState): string {
+  const quest = (state.quests ?? [])
+    .map((q) => `${q.id}:${q.status}:${(q.objectives ?? []).filter((o) => o.completed).length}`)
+    .sort()
+    .join('|');
+  const enc = state.activeEncounter
+    ? `${state.activeEncounter.name}:${state.activeEncounter.hp ?? ''}`
+    : state.sceneFacts?.lastKill?.name ?? '-';
+  return [
+    placeKey(state),
+    quest,
+    enc,
+    String((state.inventory ?? []).length),
+    String(state.character?.xp ?? 0),
+    String(state.character?.level ?? 1),
+  ].join('#');
 }
 
 const LOITER = new Set(['inspect', 'wait', 'look']);
@@ -272,6 +301,17 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
   const left = offRoad
     ? before?.journey?.from || mem.lastLeg?.split('>')[0] || mem.prevPlace
     : mem.lastLocation;
+  // XP-D1 OPEN3 — one dead Search/Read/Analyze/Open on this scene blocks the filler family until the scene moves.
+  const sceneKey = fillerSceneKey(state);
+  let fillerBlockSceneKey = mem.fillerBlockSceneKey;
+  let fillerBlockedFamilies = mem.fillerBlockedFamilies ?? [];
+  if (progressed || (fillerBlockSceneKey && fillerBlockSceneKey !== sceneKey)) {
+    fillerBlockSceneKey = undefined;
+    fillerBlockedFamilies = [];
+  } else if (!progressed && (fam === 'search' || fam === 'use')) {
+    fillerBlockSceneKey = sceneKey;
+    if (!fillerBlockedFamilies.includes(fam)) fillerBlockedFamilies = [...fillerBlockedFamilies, fam];
+  }
   return {
     ...state,
     circling: {
@@ -290,6 +330,8 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
       shortReturnTurn: turnedBack ? state.turn ?? 0 : moved ? undefined : mem.shortReturnTurn,
       openingPlace: mem.openingPlace ?? (state.circling ? undefined : here || undefined),
       lastDeadActResult: progressed ? undefined : (deadKey || mem.lastDeadActResult),
+      fillerBlockSceneKey,
+      fillerBlockedFamilies,
     },
   };
 }
@@ -655,10 +697,39 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     list = list.filter((c) => actionFamily(c) !== 'use');
     if (list.length < before) notes.push('Stall: dropped no-progress Use chips');
   }
+  // XP-D1 OPEN3 — drop Search/Read/Analyze/Open (and Use) taken with no effect on this scene.
+  {
+    const sceneKey = fillerSceneKey(state);
+    const blocked =
+      mem?.fillerBlockSceneKey && mem.fillerBlockSceneKey === sceneKey
+        ? new Set(mem.fillerBlockedFamilies ?? [])
+        : null;
+    if (blocked && blocked.size) {
+      const before = list.length;
+      list = list.filter((c) => !blocked.has(actionFamily(c)));
+      if (list.length < before) notes.push('Scene: dropped no-progress Search/Read/Open filler');
+    }
+  }
   const exit = wayOnChip(state, list, story);
   if (exit && !list.some((c) => c.toLowerCase() === exit.toLowerCase())) {
     list = [exit, ...list];
     notes.push(`Stuck exit chip: ${exit.slice(0, 40)}`);
+  }
+  // XP-D1 OPEN3 — offer Look for a fight on drought only when no progress chip is already on offer
+  // (never steals the stuck-exit Travel slot; never forces violence).
+  {
+    const sinceCombat = state.arcDirector?.turnsSinceCombatReceipt ?? state.turn ?? 0;
+    const openingDone = state.openingEstablishment?.complete !== false;
+    const hasProgressPad = list.some((c) => movesOn(state, c, story) || isSeekFightChip(c));
+    if (
+      openingDone
+      && canSeekFight(state)
+      && sinceCombat >= 6
+      && !hasProgressPad
+    ) {
+      list = [SEEK_FIGHT_CHIP, ...list];
+      notes.push('Threat chip: Look for a fight');
+    }
   }
   if (list.some((c) => movesOn(state, c, story))) {
     const dropped = list.filter((c) => isRevisitChip(state, c) && !(story && c.toLowerCase() === story.toLowerCase()));
@@ -690,14 +761,20 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     kept.push(c);
   }
   // Never rest below three chips — but do not re-admit an exact no-progress repeat
-  // (inventory Use / search / System trail) just to fill the pad.
+  // (inventory Use / search / System trail) or scene-blocked filler just to fill the pad.
+  const sceneKeyNow = fillerSceneKey(state);
+  const fillerBlocked =
+    mem?.fillerBlockSceneKey && mem.fillerBlockSceneKey === sceneKeyNow
+      ? new Set(mem.fillerBlockedFamilies ?? [])
+      : null;
+  const isBlockedFiller = (c: string) => !!fillerBlocked?.has(actionFamily(c));
   while (kept.length < 3 && kept.length < list.length) {
-    const back = list.find((c) => !kept.includes(c) && triedAgo(state, c) == null);
+    const back = list.find((c) => !kept.includes(c) && triedAgo(state, c) == null && !isBlockedFiller(c));
     if (!back) break;
     kept.push(back);
   }
   while (kept.length < 3 && kept.length < list.length) {
-    const back = list.find((c) => !kept.includes(c));
+    const back = list.find((c) => !kept.includes(c) && !isBlockedFiller(c));
     if (!back) break;
     kept.push(back);
   }

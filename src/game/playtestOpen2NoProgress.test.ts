@@ -131,7 +131,7 @@ describe('XP-D1 OPEN2 no-progress chips', () => {
       'Read the System trail',
       'Travel toward Convenience Store Dungeon',
     ]).choices;
-    expect(offered.some((c) => /travel toward|ask |face the|fight /i.test(c))).toBe(true);
-    expect(offered[0]).toMatch(/travel toward|ask |face the|fight /i);
+    expect(offered.some((c) => /travel toward|ask |face the|fight |look for a fight/i.test(c))).toBe(true);
+    expect(offered[0]).toMatch(/travel toward|ask |face the|fight |look for a fight/i);
   });
 });
