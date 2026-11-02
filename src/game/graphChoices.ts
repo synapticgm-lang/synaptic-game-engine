@@ -10,7 +10,6 @@ import {
   edgesToChoiceLabels as beatEdgesToLabels,
 } from './choiceEdge';
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
-import { isOutdoorHubScene } from './outdoorHubs';
 import { placeExitRows } from './placeRegistry';
 import { excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
 import { isMetNpc, presentNpcRecords } from './npcRecords';
@@ -90,8 +89,10 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
     return edges.filter((e) => !isExcludedPadLabel(e.label, excluded));
   }
 
-  if (state.openingEstablishment?.complete && isOutdoorHubScene(state) && !excluded.has('travel')) {
-    // q50e — travel edges from placeExitRows. The place label is the destination; row.id is the entity id.
+  // q50e / FORDCAMP sibling — travel edges from placeExitRows (MAP2 owner), not hub-only outdoor.
+  // Hubless story places (Verdant Blight Overgrown Station, Millstone Ford Camp) register exits
+  // but areOutdoorHubScene is false without a hub bank; gating on that left MOVE chips dead.
+  if (state.openingEstablishment?.complete && !excluded.has('travel')) {
     const targets = placeExitRows(state, state.currentLocation);
     for (let i = 0; i < targets.length; i++) {
       const row = targets[i]!;

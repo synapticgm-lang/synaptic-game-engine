@@ -1996,6 +1996,30 @@ function withQuietRoadCast(commit: TravelCommit): TravelCommit {
   };
 }
 
+/**
+ * Hubless / story-place Travel toward X — destination from HERE's place.exits or an open
+ * registered place. Mirrors sceneAffordances.recordedExitTravelDest without importing it
+ * (placeRegistry ↔ travelJourney cycle).
+ */
+function storyPlaceTravelDest(state: GameState, input: string, here: string): string | null {
+  const name = input
+    .match(TYPED_DESTINATION)?.[1]
+    ?.replace(/[.!?]+$/, '')
+    .replace(/,\s*but\b.*$/i, '')
+    .trim();
+  if (!name) return null;
+  const hereKey = here.toLowerCase();
+  if (name.toLowerCase() === hereKey) return null;
+  const herePlace = resolvePlace(state.places, here);
+  for (const e of herePlace?.exits ?? []) {
+    if ((e ?? '').trim().toLowerCase() === name.toLowerCase()) return e.trim();
+  }
+  const hit = resolvePlace(state.places, name);
+  if (!hit || hit.closed || hit.arcStatus === 'closed') return null;
+  if (hit.name.toLowerCase() === hereKey) return null;
+  return hit.name;
+}
+
 /** Leaving a mapped place heads to another mapped place, never back into the room you came out of. */
 function leaveDestination(state: GameState, here: string): string | null {
   // s82 Root C — the road (or this trip's HERE words) is never a place to leave for.
@@ -2333,9 +2357,16 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
     ? journeyOrigin(state)
     : dungeonRoomPlace(state, state.currentLocation) ?? tidy(state.currentLocation);
   const hub = typedHub(input, state.campaignBibleId);
-  const spot = !hub && here && !parkedOnRoad ? withinPlaceSpot(input, state.sceneFacts?.lastBeat ?? '') : null;
+  // FORDCAMP sibling — hubless story-place exits (Village Moot from Overgrown Station) are on the
+  // place record, not the hub bank. Resolve them before within-place spots so Travel toward X moves.
+  const placeDest = !hub && here ? storyPlaceTravelDest(state, input, here) : null;
+  const spot =
+    !hub && !placeDest && here && !parkedOnRoad
+      ? withinPlaceSpot(input, state.sceneFacts?.lastBeat ?? '')
+      : null;
   if (spot) return moveWithinPlace(state, input, spot);
-  const dest = hub?.name ?? (isLeaveSceneAction(input) ? leaveDestination(state, here) : null);
+  const dest =
+    hub?.name ?? placeDest ?? (isLeaveSceneAction(input) ? leaveDestination(state, here) : null);
   if (parkedOnRoad && dest && here && dest.toLowerCase() === here.toLowerCase()) {
     return arrive(state, dest, STEP_HOURS, here);
   }

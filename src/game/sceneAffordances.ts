@@ -22,11 +22,12 @@ import {
 import { enumerateLegalEdges } from './graphChoices';
 import { exitPlaceNames } from './placeNames';
 import { placeExitRows } from './placeRegistry';
+import { resolvePlace } from './places';
 import { openRouteView, presentPersonForRoute } from './questRoutes';
 import { mainSpineQuest } from './questPlay';
 import { mentionsName, peopleHere } from './scenePresence';
 import { applyGraphExitTravel } from './mapEngine';
-import { parseTravelDestination } from './outdoorHubs';
+import { parseTravelDestination, travelDestinationLabel } from './outdoorHubs';
 import { isJourneyOnwardLine, isJourneyPad, isJourneyStepLine, isJourneyUnderway, isTripHere, mapGapBetween } from './travelJourney';
 import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant, stallPressureActive } from './openThreads';
@@ -86,15 +87,37 @@ export function isWayOut(chip: {
     id.startsWith('exit:')
   );
 }
+/**
+ * Destination name from a Travel/Return/Go-back chip when it matches a recorded exit
+ * (placeExitRows + open quest place via recordedTravelDestinations). Hubless story-place
+ * graphs (FORDCAMP sibling / TRAINLOOP) use this — parseTravelDestination only knows hubs.
+ * No regex in this file (C1-7 / OPT1-6); label parse lives in outdoorHubs.
+ */
+export function recordedExitTravelDest(state: GameState, label: string): string | null {
+  const target = travelDestinationLabel(label);
+  if (!target) return null;
+  const here = (state.currentLocation ?? '').trim().toLowerCase();
+  if (!here || target.toLowerCase() === here) return null;
+  if (!isPlaceOpenForExit(state, target)) return null;
+  const rows = recordedTravelDestinations(state);
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i]!;
+    if (row.label.toLowerCase() === target.toLowerCase()) return row.label;
+    if (exitEntityId(row).toLowerCase() === target.toLowerCase()) return row.label;
+  }
+  return null;
+}
+
 export function wayOutMovesPlayer(state: GameState, label: string): boolean {
   if (applyGraphExitTravel(state, label) !== state) return true;
   if (isJourneyUnderway(state) && isJourneyPad(state, label)) return true;
   const hub = parseTravelDestination(label, state.campaignBibleId);
-  if (!hub) return false;
+  const dest = hub?.name ?? recordedExitTravelDest(state, label);
+  if (!dest) return false;
   const here = (state.currentLocation ?? '').trim();
-  if (!here || hub.name.toLowerCase() === here.toLowerCase()) return false;
-  if (isTripHere(state, hub.name)) return false;
-  return mapGapBetween(state, here, hub.name).steps > 0;
+  if (!here || dest.toLowerCase() === here.toLowerCase()) return false;
+  if (isTripHere(state, dest)) return false;
+  return mapGapBetween(state, here, dest).steps > 0;
 }
 
 /** Sheet / hub id when the row has one; otherwise the place label. */
@@ -111,6 +134,17 @@ function exitEntityId(row: { id?: string; label?: string }): string {
  */
 export function recordedTravelDestinations(state: GameState): PlaceExitRow[] {
   const rows = placeExitRows(state, state.currentLocation);
+  // q44b Bare Room / sealed card: cardBuiltTurn + empty exits is intentional no-MOVE.
+  // Do not invent a quest-pin Travel toward while the place card is sealed empty.
+  const herePlace = resolvePlace(state.places, state.currentLocation);
+  if (
+    rows.length === 0
+    && herePlace
+    && herePlace.cardBuiltTurn != null
+    && (herePlace.exits?.length ?? 0) === 0
+  ) {
+    return [];
+  }
   const open = openRouteView(state);
   const dest = (open?.step.placeId ?? open?.step.place ?? '').trim();
   if (!dest) return rows;

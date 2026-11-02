@@ -458,7 +458,29 @@ export function hubTravelTargets(state: GameState): string[] {
   return picks.map((h) => h.name);
 }
 
-/** Parse "Travel toward X" / "Return to X" into a known hub when possible. */
+/**
+ * Destination name from a Travel/Return/Go/Walk chip label (no hub lookup).
+ * Shared by hub parse + hubless story-place exit resolve (FORDCAMP sibling / TRAINLOOP).
+ */
+export function travelDestinationLabel(action: string): string | null {
+  const a = (action ?? '').replace(/\s+/g, ' ').trim();
+  if (!a) return null;
+  const m = a.match(
+    /^(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:back\s+)?(?:toward|to|for)|go\s+(?:back\s+)?to|move\s+to|walk\s+(?:back\s+)?to)\s+(.+)$/i
+  );
+  if (m) {
+    // T10RC4 — strip stamped Extended Travel warn tails (", but each failed save…") from dest.
+    return m[1].replace(/[.!?]+$/, '').replace(/,\s*but\b.*$/i, '').trim() || null;
+  }
+  const loose = a.match(
+    /(?:travel(?:ing)?|go(?:ing)?|head(?:ing)?|walk(?:ing)?|move)\s+(?:back\s+)?(?:to|toward|into|for)\s+(.+)$/i
+  );
+  if (loose) {
+    return loose[1].replace(/[.!?]+$/, '').replace(/,\s*but\b.*$/i, '').trim() || null;
+  }
+  return null;
+}
+
 /**
  * Parse hub travel pads into a known hub.
  * 08d — also accepts "Travel to X" (graphChoices) not only "Travel toward X".
@@ -470,20 +492,8 @@ export function parseTravelDestination(
   const a = (action ?? '').replace(/\s+/g, ' ').trim();
   if (!a) return null;
   const hubs = hubsForBibleId(bibleId);
-  const m = a.match(
-    /^(?:travel\s+(?:toward|to|into)|return\s+to|head\s+(?:back\s+)?(?:toward|to|for)|go\s+(?:back\s+)?to|move\s+to|walk\s+(?:back\s+)?to)\s+(.+)$/i
-  );
-  if (m) {
-    // T10RC4 — strip stamped Extended Travel warn tails (", but each failed save…") from dest.
-    const name = m[1].replace(/[.!?]+$/, '').replace(/,\s*but\b.*$/i, '').trim();
-    const hit = matchHub(hubs, name);
-    if (hit) return hit;
-  }
-  const loose = a.match(
-    /(?:travel(?:ing)?|go(?:ing)?|head(?:ing)?|walk(?:ing)?|move)\s+(?:back\s+)?(?:to|toward|into|for)\s+(.+)$/i
-  );
-  if (loose) {
-    const name = loose[1].replace(/[.!?]+$/, '').replace(/,\s*but\b.*$/i, '').trim();
+  const name = travelDestinationLabel(a);
+  if (name) {
     const hit = matchHub(hubs, name);
     if (hit) return hit;
   }
