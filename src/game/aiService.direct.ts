@@ -21,12 +21,20 @@ import {
   openRouterChatHeaders,
   packGmCandidateTexts,
   readChatCompletion,
+  recordCompletedChatCall,
   rejectFireworksServed,
   stripReasoningBlocks,
 } from './openRouterChat';
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
 import { pinnedModel } from './modelIds';
 import { noteWriterRawIssue, noteWriterUsage } from './gmProxy';
+import {
+  currentTrainLogJob,
+  currentTrainLogMeta,
+  engineFactsFromState,
+  repairParentExtra,
+  withTrainLogJob,
+} from './trainLog';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
 const AI_MAX_OUTPUT_TOKENS = 4_096;
@@ -136,7 +144,18 @@ async function callGoogle(prompt: string, systemPrompt: string, apiKey: string, 
     throw new Error(errBody?.error?.message ?? `AI service error ${res.status}`);
   }
   const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  recordCompletedChatCall({
+    system: systemPrompt,
+    user: prompt,
+    assistant: text,
+    teacher_model: modelName,
+    provider: 'google',
+    latency_ms: elapsed,
+    finish_reason: data.candidates?.[0]?.finishReason ?? null,
+    job: currentTrainLogJob(),
+  });
+  return text;
 }
 
 async function callOpenRouter(
@@ -195,6 +214,22 @@ async function callOpenRouter(
   const data = await res.json();
   const cost = (data as { usage?: { cost?: unknown } })?.usage?.cost;
   const read = rejectFireworksServed(readChatCompletion(data));
+  const finish = (data as { choices?: Array<{ finish_reason?: unknown }> })?.choices?.[0]?.finish_reason ?? null;
+  const text = read.text || packGmCandidateTexts(extractChatCompletionTexts(data)) || extractChatCompletionText(data);
+  recordCompletedChatCall({
+    system: systemPrompt,
+    user: prompt,
+    assistant: text,
+    teacher_model: read.servedModel ?? modelName,
+    provider: read.servedProvider ?? 'openrouter',
+    tokens_in: read.usage?.tokensIn ?? null,
+    tokens_out: read.usage?.tokensOut ?? null,
+    tokens_cached: read.usage?.tokensCached ?? null,
+    cost: typeof cost === 'number' ? cost : null,
+    latency_ms: elapsed,
+    finish_reason: typeof finish === 'string' ? finish : null,
+    job: currentTrainLogJob(),
+  });
   noteWriterUsage({
     ...(read.usage ?? {}),
     modelCalls: 1,
@@ -207,7 +242,7 @@ async function callOpenRouter(
     noteWriterRawIssue('fireworks-served');
     throw new Error('Writer reply served by Fireworks — blocked.');
   }
-  return read.text || packGmCandidateTexts(extractChatCompletionTexts(data)) || extractChatCompletionText(data);
+  return text;
 }
 
 async function callAnthropic(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {
@@ -250,7 +285,18 @@ async function callAnthropic(prompt: string, systemPrompt: string, apiKey: strin
     throw new Error(errBody?.error?.message ?? `Anthropic error ${res.status}`);
   }
   const data = await res.json();
-  return data.content?.[0]?.text ?? '';
+  const text = data.content?.[0]?.text ?? '';
+  recordCompletedChatCall({
+    system: systemPrompt,
+    user: prompt,
+    assistant: text,
+    teacher_model: modelName,
+    provider: 'anthropic',
+    latency_ms: elapsed,
+    finish_reason: data.stop_reason ?? null,
+    job: currentTrainLogJob(),
+  });
+  return text;
 }
 
 async function callOpenAICompatible(
@@ -307,7 +353,20 @@ async function callOpenAICompatible(
     logResponse(`OpenAI-compat (${provider})`, res.status, false, elapsed, JSON.stringify(errBody));
     throw new Error(errBody?.error?.message ?? `API error ${res.status}`);
   }
-  return extractChatCompletionText(await res.json());
+  const data = await res.json();
+  const text = extractChatCompletionText(data);
+  const finish = (data as { choices?: Array<{ finish_reason?: unknown }> })?.choices?.[0]?.finish_reason ?? null;
+  recordCompletedChatCall({
+    system: systemPrompt,
+    user: prompt,
+    assistant: text,
+    teacher_model: modelName,
+    provider,
+    latency_ms: elapsed,
+    finish_reason: typeof finish === 'string' ? finish : null,
+    job: currentTrainLogJob(),
+  });
+  return text;
 }
 
 async function dispatchLlm(
@@ -363,12 +422,20 @@ function assembleSystemPrompt(state: GameState, settings: Settings, activeLoreCa
 /** Lap 13 — sentence repair on the direct path: plain prose, no Token Prose schema. */
 export async function callRepairDirect(state: GameState, request: string, settings: Settings): Promise<string> {
   const system = sentenceRepairSystemPrompt(state.character, settings.perspective);
-  return stripReasoningBlocks(await dispatchLlm(request, system, settings));
+  const run = async () => stripReasoningBlocks(await dispatchLlm(request, system, settings));
+  if (currentTrainLogMeta()?.job === 'repair') return run();
+  return withTrainLogJob(
+    'repair',
+    run,
+    repairParentExtra({ engine_facts: engineFactsFromState(state) })
+  );
 }
 
 /** M4 — clause check on the direct path: JSON claims vs FactSheet (system = CLAUSE_CHECK_SYS). */
 export async function callCheckDirect(_state: GameState, request: string, settings: Settings): Promise<string> {
-  return stripReasoningBlocks(await dispatchLlm(request, CLAUSE_CHECK_SYS, settings));
+  const run = async () => stripReasoningBlocks(await dispatchLlm(request, CLAUSE_CHECK_SYS, settings));
+  if (currentTrainLogMeta()?.job === 'check') return run();
+  return withTrainLogJob('check', run);
 }
 
 export async function callGmDirect(
@@ -381,14 +448,22 @@ export async function callGmDirect(
   const systemPrompt = assembleSystemPrompt(state, settings, activeLoreCards);
   const prompt = buildContextPrompt(state, playerInput, activeLoreCards, settings.perspective);
   const tokenSchema = tokenBeatSchemaFor(state);
-  let text = stripReasoningBlocks(await dispatchLlm(prompt, systemPrompt, settings, onRetry, tokenSchema));
-  if (!text) {
-    // 28l — same model, one re-ask with a no-reasoning hint (never a model switch).
-    noteWriterRawIssue('empty');
-    text = stripReasoningBlocks(
-      await dispatchLlm(prompt, `${systemPrompt}\n\n${NO_REASONING_HINT}`, settings, onRetry, tokenSchema)
-    );
+  const facts = engineFactsFromState(state);
+  const run = async (): Promise<GmResult> => {
+    let text = stripReasoningBlocks(await dispatchLlm(prompt, systemPrompt, settings, onRetry, tokenSchema));
+    if (!text) {
+      // 28l — same model, one re-ask with a no-reasoning hint (never a model switch).
+      noteWriterRawIssue('empty');
+      text = stripReasoningBlocks(
+        await dispatchLlm(prompt, `${systemPrompt}\n\n${NO_REASONING_HINT}`, settings, onRetry, tokenSchema)
+      );
+    }
+    if (!text) throw new Error('The AI provider returned no content.');
+    return processGmCompletion(text, state.engineMode);
+  };
+  // Rewrite path already pushed job:"rewrite"; do not overwrite with writer.
+  if (currentTrainLogMeta()?.job === 'rewrite' || currentTrainLogMeta()?.job === 'writer') {
+    return run();
   }
-  if (!text) throw new Error('The AI provider returned no content.');
-  return processGmCompletion(text, state.engineMode);
+  return withTrainLogJob('writer', run, { engine_facts: facts });
 }

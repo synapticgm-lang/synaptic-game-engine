@@ -34,6 +34,13 @@ import {
 } from '@/data/campaigns';
 import { callGm, callGmCheck, callGmRepair } from './aiService';
 import {
+  engineFactsFromState,
+  repairParentExtra,
+  setTrainLogFileAppend,
+  setTrainLogSession,
+  withTrainLogJob,
+} from './trainLog';
+import {
   checkAndRepairProse,
   clauseCheckerVerdicts,
   makeGmClauseChat,
@@ -1801,15 +1808,34 @@ Do NOT print dice notation or CODE ENFORCED.
       packet: writerPacket,
       check: { state: arcState, playerInput, intent, engineFact, previousGm: '' },
       rewrite: async (problem) => {
-        const again = await callGmWithRetries(arcState, `${payload}\n\n${problem}`, settings);
-        transportRetries += again.transportRetries;
-        return again.text;
+        return withTrainLogJob(
+          'rewrite',
+          async () => {
+            const again = await callGmWithRetries(arcState, `${payload}\n\n${problem}`, settings);
+            transportRetries += again.transportRetries;
+            return again.text;
+          },
+          { engine_facts: engineFactsFromState(arcState) }
+        );
       },
       repair: async (request) => {
         const started = Date.now();
         writerCallMeter.calls += 1;
+        const draftMatch = request.match(/Sentence:\s*"([\s\S]*?)"\n/);
+        const flagMatch = request.match(/Problem:\s*(.+)/);
+        const factMatch = request.match(/Engine fact:\s*([\s\S]*)$/);
         try {
-          return await callGmRepair(arcState, request, settings);
+          return await withTrainLogJob(
+            'repair',
+            async () => callGmRepair(arcState, request, settings),
+            repairParentExtra({
+              engine_facts: engineFactsFromState(arcState),
+              draft: draftMatch?.[1] ?? null,
+              flagged_error: flagMatch?.[1]?.trim() ?? null,
+              correct_fact: factMatch?.[1]?.trim() ?? null,
+              repair_pass: 1,
+            })
+          );
         } finally {
           writerCallMeter.ms += Date.now() - started;
         }
@@ -1848,8 +1874,21 @@ Do NOT print dice notation or CODE ENFORCED.
             repair: async (request) => {
               writerCallMeter.calls += 1;
               const started = Date.now();
+              const draftMatch = request.match(/Sentence:\s*"([\s\S]*?)"\n/);
+              const flagMatch = request.match(/Problem:\s*(.+)/);
+              const factMatch = request.match(/Engine fact:\s*([\s\S]*)$/);
               try {
-                return await callGmRepair(arcState, request, settings);
+                return await withTrainLogJob(
+                  'repair',
+                  async () => callGmRepair(arcState, request, settings),
+                  repairParentExtra({
+                    engine_facts: engineFactsFromState(arcState),
+                    draft: draftMatch?.[1] ?? null,
+                    flagged_error: flagMatch?.[1]?.trim() ?? null,
+                    correct_fact: factMatch?.[1]?.trim() ?? null,
+                    repair_pass: 1,
+                  })
+                );
               } finally {
                 writerCallMeter.ms += Date.now() - started;
               }
@@ -2921,10 +2960,30 @@ export async function runFateAutoplay(opts: {
   const routeTo = opts.routeTo?.trim() ?? '';
   let routeReached = false;
   const turnsPath = join(outDir, 'turns.jsonl');
+  const callsPath = join(outDir, 'calls.jsonl');
   const heartbeatPath = join(outDir, 'heartbeat.json');
   const crashPath = join(outDir, 'crash.log');
   // Truncate turns file once; append per turn so a mid-run kill keeps all completed turns.
   writeFileSync(turnsPath, '');
+  // q71-TRAINLOG — one calls.jsonl owner (client + hosted callLog rows share run_id / turn_no).
+  writeFileSync(callsPath, '');
+  setTrainLogFileAppend((path, line) => {
+    try {
+      appendFileSync(path, line, { encoding: 'utf8' });
+    } catch {
+      /* never throw into the game turn */
+    }
+  });
+  setTrainLogSession({
+    run_id: `${runId}_${slug}`,
+    save_id: state.saveId ?? null,
+    mode: state.engineMode ?? null,
+    genre: bible.id,
+    build_stamp: BUILD_STAMP,
+    // Real-player ai_traffic OFF; autoplay keeps OFF (personal-data gate).
+    aiTrafficEnabled: false,
+    callsPath,
+  });
   // 28j — GameState snapshot every 10 turns and at stop (resume with --resume-from <runDir>).
   const writeSnapshot = (loopIndex: number) =>
     writeFileSync(join(outDir, 'snapshot.json'), JSON.stringify({ loopIndex, turn: state.turn, savedAt: new Date().toISOString(), state }) + '\n');
@@ -2937,6 +2996,7 @@ export async function runFateAutoplay(opts: {
         break;
       }
       writerPromptSink.turn = turnNo;
+      setTrainLogSession({ turn_no: turnNo, save_id: state.saveId ?? null, mode: state.engineMode ?? null });
       writeFileSync(
         heartbeatPath,
         JSON.stringify(

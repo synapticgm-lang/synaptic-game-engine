@@ -11,6 +11,8 @@ export const GmTurnResponseSchema = z.looseObject({
   error: z.string().optional().catch(undefined),
   rawIssue: z.enum(['empty', 'reasoning-only', 'cut-off', 'fireworks-served']).optional().catch(undefined),
   usage: z.unknown().optional(),
+  /** q71-TRAINLOG — model-call rows only when the request carried trainLog (autoplay). */
+  callLog: z.array(z.unknown()).optional().catch(undefined),
   /** q50-MAP2 — structured places only; never mined from prose. */
   newPlaces: z
     .array(

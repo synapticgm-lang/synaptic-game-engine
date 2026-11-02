@@ -51,6 +51,7 @@ import {
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
+import { engineFactsFromState, repairParentExtra, withTrainLogJob } from './trainLog';
 import { checkAndRepairProse, makeGmClauseChat } from './clauseCheck';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
@@ -3143,8 +3144,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             engineFact,
             previousGm,
           },
-          rewrite: async (problem) => (await callGmDurable(`${gmPlayerPayload}\n\n${problem}`)).text,
-          repair: (request) => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
+          rewrite: async (problem) =>
+            withTrainLogJob(
+              'rewrite',
+              async () => (await callGmDurable(`${gmPlayerPayload}\n\n${problem}`)).text,
+              { engine_facts: engineFactsFromState(liveCurrent) }
+            ),
+          repair: (request) =>
+            withTrainLogJob(
+              'repair',
+              () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
+              repairParentExtra({ engine_facts: engineFactsFromState(liveCurrent), repair_pass: 1 })
+            ),
         });
         for (const r of [...(writerTurn.repairs ?? []), ...(writerTurn.answerRepair ? [writerTurn.answerRepair] : [])]) {
           debugLogger.record(r.bug ? 'ERROR' : 'INFO', r.bug ? 'Sentence repair failed' : 'Sentence repaired', {
@@ -3208,7 +3219,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   callGmCheck(liveCurrent, user, settingsRef.current, turnAbort.signal, gmTimeoutMs)
                 ),
                 repair: (request) =>
-                  callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
+                  withTrainLogJob(
+                    'repair',
+                    () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
+                    repairParentExtra({ engine_facts: engineFactsFromState(liveCurrent), repair_pass: 1 })
+                  ),
                 engineFact,
               });
               // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).

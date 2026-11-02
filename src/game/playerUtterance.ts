@@ -267,7 +267,8 @@ export async function interpretPlayerUtterance(params: {
         `Player said:\n${raw}`,
       ]
         .filter(Boolean)
-        .join('\n\n')
+        .join('\n\n'),
+      'interpret'
     );
     const json = text.replace(/^```(?:json)?\s*|\s*```$/g, '').trim();
     const parsed = JSON.parse(json.match(/\{[\s\S]*\}/)?.[0] ?? json) as Record<string, unknown>;

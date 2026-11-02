@@ -15,6 +15,9 @@ import type {
   StarterQuest,
 } from '@/data/campaigns/types';
 import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
+import { spinesForBible } from '@/data/quests/litrpgMainSpines';
+import { spinesForTabletopBible } from '@/data/quests/tabletopMainSpines';
+import { spinesForStoryRpgBible } from '@/data/quests/storyRpgMainSpines';
 import type { PlaceRecord } from './types';
 import { placeIdFromName } from './placeUtils';
 
@@ -175,8 +178,8 @@ function firstSentence(text: string | undefined): string {
 }
 
 /**
- * Place cards for a story that ships no hub bank: its own hook-card locations and world lore.
- * Marked `settlementKind: 'story-place'` so place-card exits can use them.
+ * Place cards for a story that ships no hub bank: its own hook-card locations, spine map pins, and world lore.
+ * Marked `settlementKind: 'story-place'` so place-card exits / ensurePlaceOnMap can use them.
  */
 export function storyPlacesForBible(bible: CampaignBible | undefined | null): PlaceRecord[] {
   if (!bible) return [];
@@ -198,6 +201,17 @@ export function storyPlacesForBible(bible: CampaignBible | undefined | null): Pl
       description: prev?.description || description || undefined,
     });
   };
+  // Quest / spine pins first so hubless worlds (Millstone Ford Camp) are on the travel graph.
+  const spines = [
+    ...spinesForBible(bible.id),
+    ...spinesForTabletopBible(bible.id),
+    ...spinesForStoryRpgBible(bible.id),
+  ];
+  for (const spine of spines) {
+    add(spine.mapPin, spine.title ?? '');
+    const site = 'site' in spine ? spine.site : undefined;
+    if (site?.place) add(site.place, site.objective ?? '');
+  }
   if (clean.startingLocation) add(clean.startingLocation, '');
   const deck = clean.openingHooks?.length ? clean.openingHooks : OPENING_HOOK_DECKS[bible.id] ?? [];
   for (const raw of deck) {
@@ -208,7 +222,7 @@ export function storyPlacesForBible(bible: CampaignBible | undefined | null): Pl
   for (const l of clean.loreSnippets) {
     if (l.category === 'world') add(l.title, firstSentence(l.body));
   }
-  return [...byId.values()].slice(0, 10);
+  return [...byId.values()].slice(0, 16);
 }
 
 /** Merge story places into `places` without overwriting existing records. */

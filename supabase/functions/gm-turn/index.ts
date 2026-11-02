@@ -11,6 +11,7 @@ import {
   openRouterChatHeaders,
   readChatCompletion,
   readChatUsage,
+  recordCompletedChatCall,
   rejectFireworksServed,
   stripReasoningBlocks,
   sumWriterUsage,
@@ -18,6 +19,14 @@ import {
   type ChatCompletionRead,
 } from '../_shared/gm/openRouterChat.ts';
 import { pinnedModel } from '../_shared/gm/modelIds.ts';
+import {
+  engineFactsFromState,
+  peekTrainLogRows,
+  pushTrainLogJob,
+  popTrainLogJob,
+  setTrainLogSession,
+  type TrainLogJob,
+} from '../_shared/gm/trainLog.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
 const CORS_HEADERS: Record<string, string> = {
@@ -37,6 +46,17 @@ interface GmRequestBody {
   clientApiKey?: string;
   /** The turn's strict Token Prose schema, built by the client from the REF ENUM. */
   tokenSchema?: Record<string, unknown>;
+  /** q71-TRAINLOG — autoplay/test-lab only; never set by real-player clients. */
+  trainLog?: boolean;
+  trainJob?: TrainLogJob;
+  /** Client session context so repair parent_id is scoped to this turn (edge isolates do not share maps). */
+  trainRunId?: string | null;
+  trainTurnNo?: number | null;
+  trainSaveId?: string | null;
+  trainMode?: string | null;
+  trainGenre?: string | null;
+  trainBuildStamp?: string | null;
+  trainParentId?: string | null;
 }
 
 /** A client schema is forwarded only when it is a plain object of sane size; otherwise the static schema stands. */
@@ -391,6 +411,38 @@ Deno.serve(async (req) => {
         }
       : undefined;
 
+  // q71-TRAINLOG — only when the autoplay harness set trainLog (never real players).
+  const wantCallLog = body.trainLog === true;
+  const trainJob: TrainLogJob =
+    body.trainJob === 'writer' ||
+    body.trainJob === 'repair' ||
+    body.trainJob === 'rewrite' ||
+    body.trainJob === 'interpret' ||
+    body.trainJob === 'chip_gapfill' ||
+    body.trainJob === 'judge' ||
+    body.trainJob === 'check'
+      ? body.trainJob
+      : mode === 'repair'
+        ? 'repair'
+        : mode === 'check'
+          ? 'check'
+          : 'writer';
+  const rowsBefore = wantCallLog ? peekTrainLogRows().length : 0;
+  if (wantCallLog) {
+    setTrainLogSession({
+      run_id: body.trainRunId ?? null,
+      turn_no: typeof body.trainTurnNo === 'number' ? body.trainTurnNo : null,
+      save_id: body.trainSaveId ?? null,
+      mode: body.trainMode ?? null,
+      genre: body.trainGenre ?? null,
+      build_stamp: body.trainBuildStamp ?? null,
+    });
+    pushTrainLogJob(trainJob, {
+      engine_facts: engineFactsFromState(body.state),
+      ...(body.trainParentId ? { parent_id: body.trainParentId } : {}),
+    });
+  }
+
   try {
     const runOnce = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
       if (provider === 'gemini') {
@@ -427,6 +479,7 @@ Deno.serve(async (req) => {
     // Any model: a thrown provider error (not 429) is the same case as an empty reply.
     let providerError = '';
     const tryCall = async (sys: string, maxTokens: number): Promise<ChatCompletionRead> => {
+      const started = Date.now();
       try {
         const read = await runOnce(sys, maxTokens);
         if (read.servedModel) {
@@ -442,6 +495,23 @@ Deno.serve(async (req) => {
           servedProvider: read.servedProvider ?? null,
           servedModel: read.servedModel ?? null,
         });
+        if (wantCallLog) {
+          recordCompletedChatCall({
+            system: sys,
+            user: userPrompt,
+            assistant: read.text ?? '',
+            teacher_model: read.servedModel ?? calledModel,
+            provider: read.servedProvider ?? provider,
+            tokens_in: read.usage?.tokensIn ?? null,
+            tokens_out: read.usage?.tokensOut ?? null,
+            tokens_cached: read.usage?.tokensCached ?? null,
+            latency_ms: Date.now() - started,
+            finish_reason: read.issue === 'cut-off' ? 'length' : null,
+            truncated: read.issue === 'cut-off',
+            job: trainJob,
+            engine_facts: engineFactsFromState(body.state),
+          });
+        }
         return read;
       } catch (err) {
         if ((err as { status?: number })?.status === 429) throw err;
@@ -462,12 +532,14 @@ Deno.serve(async (req) => {
     const rawIssue = first.issue ?? undefined;
 
     const usage = turnUsage();
+    const callLog = wantCallLog ? peekTrainLogRows().slice(rowsBefore) : undefined;
     if (!best.text) {
       return jsonResponse(
         {
           error: providerError || 'The AI provider returned no content.',
           rawIssue: rawIssue ?? 'empty',
           ...(usage ? { usage } : {}),
+          ...(callLog?.length ? { callLog } : {}),
         },
         502
       );
@@ -487,6 +559,7 @@ Deno.serve(async (req) => {
       ...(rawIssue ? { rawIssue } : {}),
       ...(usage ? { usage } : {}),
       ...(newPlaces ? { newPlaces } : {}),
+      ...(callLog?.length ? { callLog } : {}),
     });
   } catch (err) {
     const status = (err as { status?: number })?.status === 429 ? 429 : 502;
@@ -496,5 +569,7 @@ Deno.serve(async (req) => {
       status,
       status === 429 ? { 'Retry-After': '60' } : undefined
     );
+  } finally {
+    if (wantCallLog) popTrainLogJob();
   }
 });

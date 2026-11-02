@@ -961,76 +961,109 @@ No narrative, no preamble, no tags. Always output 3 or 4 choices.`;
 export async function callSmallModel(
   settings: Settings,
   systemPrompt: string,
-  userPrompt: string
+  userPrompt: string,
+  /** q71-TRAINLOG job tag (interpret | chip_gapfill). Required at the recorder; omit only fails the untagged test. */
+  trainJob?: 'interpret' | 'chip_gapfill'
 ): Promise<string> {
-  let provider: string = 'openrouter';
-  let apiKey = settings.openrouterApiKey || settings.geminiApiKey;
-  if ((settings.aiProvider === 'gemini' || !apiKey) && settings.openrouterApiKey) {
-    provider = 'openrouter';
-    apiKey = settings.openrouterApiKey;
-  }
-  let model =
-    settings.customModelId?.trim() ||
-    // Choices always use Free-tier cheap/fast model — never burn Mid/High writer on buttons
-    getTierDefinition('free').writerOpenRouterId;
-  if (settings.aiProvider === 'gemini' && !settings.openrouterApiKey) {
-    provider = 'gemini';
-    model = settings.customModelId?.trim() || getTierDefinition('free').writerGeminiId;
-  }
-  if (!apiKey) throw new Error('No API key configured for choice regeneration.');
+  const { withTrainLogJob, currentTrainLogJob } = await import('./trainLog');
+  const { recordCompletedChatCall } = await import('./openRouterChat');
+  const run = async (): Promise<string> => {
+    const job = trainJob ?? currentTrainLogJob();
+    let provider: string = 'openrouter';
+    let apiKey = settings.openrouterApiKey || settings.geminiApiKey;
+    if ((settings.aiProvider === 'gemini' || !apiKey) && settings.openrouterApiKey) {
+      provider = 'openrouter';
+      apiKey = settings.openrouterApiKey;
+    }
+    let model =
+      settings.customModelId?.trim() ||
+      // Choices always use Free-tier cheap/fast model — never burn Mid/High writer on buttons
+      getTierDefinition('free').writerOpenRouterId;
+    if (settings.aiProvider === 'gemini' && !settings.openrouterApiKey) {
+      provider = 'gemini';
+      model = settings.customModelId?.trim() || getTierDefinition('free').writerGeminiId;
+    }
+    if (!apiKey) throw new Error('No API key configured for choice regeneration.');
 
-  if (provider === 'gemini') {
-    const modelName = model || 'gemini-2.0-flash';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-    const res = await fetch(url, {
+    if (provider === 'gemini') {
+      const modelName = model || 'gemini-2.0-flash';
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      const started = Date.now();
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 512 },
+        }),
+      });
+      if (!res.ok) throw new Error(`Choice tier Gemini error ${res.status}`);
+      const data = await res.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+      recordCompletedChatCall({
+        system: systemPrompt,
+        user: userPrompt,
+        assistant: text,
+        teacher_model: modelName,
+        provider: 'google',
+        latency_ms: Date.now() - started,
+        finish_reason: data.candidates?.[0]?.finishReason ?? null,
+        job,
+      });
+      return text;
+    }
+
+    const base =
+      provider === 'openrouter'
+        ? settings.baseUrl?.trim() || 'https://openrouter.ai/api/v1'
+        : provider === 'groq'
+          ? 'https://api.groq.com/openai/v1'
+          : provider === 'ollama'
+            ? 'http://localhost:11434/v1'
+            : settings.baseUrl?.trim() || 'https://api.openai.com/v1';
+    const modelName =
+      model ||
+      (provider === 'openrouter'
+        ? pinnedModel('openrouter')
+        : provider === 'groq'
+          ? 'llama-3.3-70b-versatile'
+          : 'gpt-4o-mini');
+
+    const started = Date.now();
+    const res = await fetch(`${base}/chat/completions`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 512 },
+        model: modelName,
+        temperature: 0.4,
+        max_tokens: 512,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
       }),
     });
-    if (!res.ok) throw new Error(`Choice tier Gemini error ${res.status}`);
+    if (!res.ok) throw new Error(`Choice tier API error ${res.status}`);
     const data = await res.json();
-    return data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-  }
-
-  const base =
-    provider === 'openrouter'
-      ? settings.baseUrl?.trim() || 'https://openrouter.ai/api/v1'
-      : provider === 'groq'
-        ? 'https://api.groq.com/openai/v1'
-        : provider === 'ollama'
-          ? 'http://localhost:11434/v1'
-          : settings.baseUrl?.trim() || 'https://api.openai.com/v1';
-  const modelName =
-    model ||
-    (provider === 'openrouter'
-      ? pinnedModel('openrouter')
-      : provider === 'groq'
-        ? 'llama-3.3-70b-versatile'
-        : 'gpt-4o-mini');
-
-  const res = await fetch(`${base}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: modelName,
-      temperature: 0.4,
-      max_tokens: 512,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-    }),
-  });
-  if (!res.ok) throw new Error(`Choice tier API error ${res.status}`);
-  const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? '';
+    const text = data.choices?.[0]?.message?.content ?? '';
+    recordCompletedChatCall({
+      system: systemPrompt,
+      user: userPrompt,
+      assistant: text,
+      teacher_model: modelName,
+      provider: provider === 'openrouter' ? 'openrouter' : provider,
+      latency_ms: Date.now() - started,
+      finish_reason: data.choices?.[0]?.finish_reason ?? null,
+      job,
+    });
+    return text;
+  };
+  if (trainJob) return withTrainLogJob(trainJob, run);
+  return run();
 }
 
 async function regenerateChoices(
@@ -1050,7 +1083,8 @@ Generate 3-4 grounded choices now.`;
   const raw = await callSmallModel(
     settings,
     `${CHOICE_TIER_SYSTEM}\n\n${formatChoiceTierModeDna(state.engineMode)}\n\n${CHOICE_TIER_PROMPT_RULES}`,
-    userPrompt
+    userPrompt,
+    'chip_gapfill'
   );
   return extractChoiceLines(raw);
 }
