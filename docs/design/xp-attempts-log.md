@@ -305,3 +305,37 @@ Plain summary also at `merge-logs/xp-design/open3/T50-report.md`.
 - Fix D: one owner � meaningful filler scene key (place/quest/fight/kit/level, **not** raw XP); offer-count cap =2 per label until meaningful change; expand filler verbs (Examine/Inspect/Study/Listen/Investigate/Loot); freed slot ? progress chip. Fixture replay of 7304 chip stream.
 
 **Projected (pace model after retune, engaged):** L2@T2 (rite); L2?L3 **15�25**; quest share **60�70%** (tol 55�80%); fight share **15�30%** (aim ~20%); filler same-state offers =2. Live T50 still owed to the runner after this commit.
+
+### 2 Nov 2026 — LitRPG XP attempt 4 results (free path 4×T50) — MISS
+
+What changed (from `merge-logs/xp-design/open4/OPEN4-report.md`, build `2026-11-02c+5d8126d2` on `xp/design`): Seek Fight on drought even with a progress pad (filler/loiter slot only); L2+ `ENCOUNTER_UNITS_L2_PLUS=1.15`, `QUEST_STEP_UNITS_L2_PLUS=1.0`, `QUEST_COMPLETE_UNITS_L2_PLUS=2.4` (unitsPerLevel rising gaps kept); filler offer-count cap ≤2 with meaningful scene key (no raw XP); Inspect/Listen/Investigate/Loot in filler family. Opening rite L1→L2 untouched. Tabletop/RPG/PYOA untouched.
+
+Runs (free writer DeepSeek via OpenRouter/gm-turn, no paid AI; seeds 7301–7304):
+- 7301 random summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T10-59-00-402Z_summoned-pact_cold-system_s7301`
+- 7302 random system-integration: `scripts/fate-autoplay/runs/2026-11-02T11-06-38-351Z_system-integration_cold-system_s7302`
+- 7303 quest summoned-pact: `scripts/fate-autoplay/runs/2026-11-02T11-11-31-001Z_summoned-pact_cold-system_s7303_quest`
+- 7304 quest system-integration: `scripts/fate-autoplay/runs/2026-11-02T11-21-09-169Z_system-integration_cold-system_s7304_quest`
+
+Measured from `turns.jsonl` (`xpGained`, `XP Gained:` / inferred victory+quest lines, `level`, `characterXp`/`xpToNext`, Check System fields, `progress`, offered chips). Quest share = rite + steps + completes. Bars: L2 **187** → L3 **233** → L4 **291** (rising).
+
+| Run | Profile | Scenario | Rite | L2 | L3 | L4 | L2→L3 | L3→L4 | Total XP | Rite | Steps | Completes | Fights | Ach/other | Quest share | Fight share | Fights won | Check Sys off/open/max | Filler max same-state | No-prog / max | LOOP STOP | Zero-pay win | Farming |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 7301 | random | summoned-pact | **2** refuse→forced | **2** | 41 | — | **39** | — | 455 | 150 | 225 | 30 | 38 | 12 | **89.0%** | **8.4%** | 1×38 | **7 / 7 / 4** | **3** | 9 / 1 | no | 0 | none; rite ×1; Seek Fight 0 |
+| 7302 | random | system-integration | **2** chip | **2** | 14 | 47 | **12** | **33** | 649 | 150 | 163 | 220 | 30 | 86 | **82.1%** | **4.6%** | 1×30 | **15 / 15 / 3** | **5** | 9 / 1 | no | 0 | none; rite ×1; Seek Fight 0 |
+| 7303 | quest | summoned-pact | **2** chip | **2** | 46 | — | **44** | — | 369 | 150 | 76 | 55 | 29 | 59 | **76.2%** | **7.9%** | 1×29 | **12 / 12 / 5** | **4** | 3 / 1 | no | 0 | none; rite ×1; Seek Fight 0 |
+| 7304 | quest | system-integration | **2** chip | **2** | 29 | 50 | **27** | **21** | 647 | 150 | 182 | 227 | 29 | 59 | **86.4%** | **4.5%** | 1×29 | **21 / 21 / 4** | **7** | 4 / 1 | no | 0 | none; rite ×1; Seek Fight 0 |
+
+Per-profile averages: random L2 **2**, L2→L3 **25.5** (39/12), quest share **85.5%**, fight share **6.5%**, Check System offered **22**. Quest profile L2 **2**, L2→L3 **35.5** (44/27), quest share **81.3%**, fight share **6.2%**, Check System offered **33**. Overall: L2 **2**, L2→L3 avg **30.5**, quest share **83.4%**, fight share **6.3%**, Check System offered **55**, fights won **1/1/1/1**.
+
+**Vs open3 baseline (same seeds):** L2@T2 held; Check System **6/12/10/14 → 7/15/12/21**; quest share **77.5% → 83.4%** (left tolerance); fight share **9.0% → 6.3%** (Seek Fight still **0** offers); L2→L3 was —/18/—/—, now **39/12/44/27** (none in 15–25); filler max **2/3/3/11 → 3/5/4/7** (cap still missed); LOOP STOP still none; rising bars held.
+
+**Vs targets:** Rite→L2@T2 both scenarios **PASS**; quest share tol. **MISS** (83.4%); fights 15–30% **MISS** (6.3%); L2→L3 15–25 **MISS**; Check System offered **PASS**; filler ≤2 w/o state change **MISS**; no LOOP STOP / no 5+ streak **PASS**; no full-pay same-giver farm **PASS**; zero-pay fight wins **0**.
+
+OpenRouter: no balance or $ cost figure in logs or run meta (`costUsd` null; teacher `deepseek/deepseek-v4.1-flash`).
+
+**Verdict: MISS** — offs: L2→L3 **39 / 12 / 44 / 27** (want 15–25); fight-share avg **6.3%** (want 15–30%; Seek Fight 0); quest-share avg **83.4%** (want ≤80% tol.); filler same-state max **3 / 5 / 4 / 7** (want ≤2).
+
+**Next attempt (one line):** Prove `turnsSinceCombatReceipt` advances on the free path so Seek Fight actually offers (~every 8–12 turns) and harden offer-cap credit on every pad commit so same-scene Search/Read cannot exceed 2.
+
+Plain summary also at `merge-logs/xp-design/open4/T50-report.md`.
+
