@@ -185,16 +185,19 @@ export function creditCommittedProgress(recorded: GameState, after: GameState, p
 
 export function actionFamily(input: string): string {
   const a = (input ?? '').toLowerCase();
+  // Check System is chrome, never filler.
+  if (/^check system\b/.test(a)) return 'other';
+  // Keep inspect/examine/study as 'inspect' for loiter/stall (29x / 10c); filler cap still covers them.
   if (/\b(inspect|examine|study)\b/.test(a)) return 'inspect';
   if (/\b(wait|ready yourself|watch|hold still|keep watch)\b/.test(a)) return 'wait';
   if (/\b(look around|look over|survey|scout|scan)\b/.test(a)) return 'look';
   if (/\b(talk|ask|speak|greet|offer)\b/.test(a)) return 'talk';
   if (/\b(travel|go to|go back|head to|walk to|return to|enter|next unexplored|go through)\b/.test(a)) return 'move';
   if (/\b(attack|fight|strike|flee|parley|face the|look for a fight)\b/.test(a)) return 'fight';
-  // XP-D1 OPEN3 — Read / Analyze / Open-box / Search share one no-progress filler family.
+  // XP-D1 OPEN3/OPEN4 — Read / Analyze / Open-box / Search / Listen / Investigate / Loot.
   if (
-    /^(?:search|read|analyze|open)\b/.test(a)
-    || /\b(search|loot|read the system trail|open the .+ reward box)\b/.test(a)
+    /^(?:search|read|analyze|open|listen|investigate|loot)\b/.test(a)
+    || /\b(search|loot|read the system trail|open the .+ reward box|look inward)\b/.test(a)
   ) {
     return 'search';
   }
@@ -202,12 +205,16 @@ export function actionFamily(input: string): string {
   return 'other';
 }
 
-/** Search / Read / Analyze / Open — no-progress filler (one owner with turnProgress). */
+/** Search / Read / Analyze / Open / Inspect / Use — no-progress filler (one owner with turnProgress). */
 export function isFillerNoProgressChip(chip: string): boolean {
-  return actionFamily(chip) === 'search';
+  const fam = actionFamily(chip);
+  return fam === 'search' || fam === 'use' || fam === 'inspect';
 }
 
-/** Scene key for filler suppress: place + quest + fight + kit + XP (changes when something real moves). */
+/**
+ * Meaningful scene key for filler suppress (OPEN4): place + quest + fight + kit + level.
+ * Raw XP ticks do NOT clear the block (open3 leftover).
+ */
 export function fillerSceneKey(state: GameState): string {
   const quest = (state.quests ?? [])
     .map((q) => `${q.id}:${q.status}:${(q.objectives ?? []).filter((o) => o.completed).length}`)
@@ -216,14 +223,63 @@ export function fillerSceneKey(state: GameState): string {
   const enc = state.activeEncounter
     ? `${state.activeEncounter.name}:${state.activeEncounter.hp ?? ''}`
     : state.sceneFacts?.lastKill?.name ?? '-';
+  // NPC beat = met roster size (introSpoken), not flicker-prone present[] labels.
+  const npcBeat = (state.npcMemories ?? [])
+    .filter((n) => n.introSpoken)
+    .map((n) => (n.npcId || n.npcName || '').toLowerCase())
+    .sort()
+    .join(',');
   return [
     placeKey(state),
     quest,
     enc,
+    npcBeat,
     String((state.inventory ?? []).length),
-    String(state.character?.xp ?? 0),
     String(state.character?.level ?? 1),
   ].join('#');
+}
+
+const FILLER_OFFER_CAP = 2;
+
+/** Credit offered filler labels under the current meaningful scene (call once per committed pad). */
+export function creditFillerOffers(state: GameState, offered: string[]): GameState {
+  const mem = state.circling ?? { stale: {}, lastProgressTurn: state.turn ?? 0 };
+  const sceneKey = fillerSceneKey(state);
+  let offerSceneKey = mem.fillerOfferSceneKey;
+  let offerCounts = { ...(mem.fillerOfferCounts ?? {}) };
+  if (offerSceneKey && offerSceneKey !== sceneKey) {
+    offerSceneKey = sceneKey;
+    offerCounts = {};
+  }
+  if (!offerSceneKey) offerSceneKey = sceneKey;
+  for (const raw of offered) {
+    if (!isFillerNoProgressChip(raw)) continue;
+    if (isFreeInputChipLabel(raw)) continue;
+    const key = actionKey(raw);
+    if (!key) continue;
+    offerCounts[key] = (offerCounts[key] ?? 0) + 1;
+  }
+  return {
+    ...state,
+    circling: {
+      ...mem,
+      fillerOfferSceneKey: offerSceneKey,
+      fillerOfferCounts: offerCounts,
+    },
+  };
+}
+
+function isFreeInputChipLabel(chip: string): boolean {
+  return /^(?:say something|do something else)/i.test((chip ?? '').trim());
+}
+
+/** True when this filler label has already been offered FILLER_OFFER_CAP times without a meaningful scene change. */
+export function fillerOfferExhausted(state: GameState, chip: string): boolean {
+  if (!isFillerNoProgressChip(chip)) return false;
+  const mem = state.circling;
+  if (!mem?.fillerOfferSceneKey || mem.fillerOfferSceneKey !== fillerSceneKey(state)) return false;
+  const n = mem.fillerOfferCounts?.[actionKey(chip)] ?? 0;
+  return n >= FILLER_OFFER_CAP;
 }
 
 const LOITER = new Set(['inspect', 'wait', 'look']);
@@ -301,15 +357,27 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
   const left = offRoad
     ? before?.journey?.from || mem.lastLeg?.split('>')[0] || mem.prevPlace
     : mem.lastLocation;
-  // XP-D1 OPEN3 — one dead Search/Read/Analyze/Open on this scene blocks the filler family until the scene moves.
+  // XP-D1 OPEN3/OPEN4 — dead Search/Read/… take blocks the filler family until a *meaningful* scene change.
+  // Meaningful = fillerSceneKey (no raw XP). Social-only turnProgress does not clear the offer-cap scene.
   const sceneKey = fillerSceneKey(state);
   let fillerBlockSceneKey = mem.fillerBlockSceneKey;
   let fillerBlockedFamilies = mem.fillerBlockedFamilies ?? [];
-  if (progressed || (fillerBlockSceneKey && fillerBlockSceneKey !== sceneKey)) {
+  let fillerOfferSceneKey = mem.fillerOfferSceneKey;
+  let fillerOfferCounts = mem.fillerOfferCounts ?? {};
+  const meaningfulMoved = !fillerBlockSceneKey || fillerBlockSceneKey !== sceneKey;
+  const offerSceneMoved = !fillerOfferSceneKey || fillerOfferSceneKey !== sceneKey;
+  // Clear offer counts / family block only on meaningful scene change (place/quest/fight/kit/level/NPC beat).
+  if (fillerBlockSceneKey && meaningfulMoved) {
     fillerBlockSceneKey = undefined;
     fillerBlockedFamilies = [];
-  } else if (!progressed && (fam === 'search' || fam === 'use')) {
+  }
+  if (fillerOfferSceneKey && offerSceneMoved) {
+    fillerOfferSceneKey = undefined;
+    fillerOfferCounts = {};
+  }
+  if (!progressed && (fam === 'search' || fam === 'use')) {
     fillerBlockSceneKey = sceneKey;
+    // Family-block Search/Read/Analyze/Open/Use. Inspect/Study use offer-count + tried rest (T10WARDEN2).
     if (!fillerBlockedFamilies.includes(fam)) fillerBlockedFamilies = [...fillerBlockedFamilies, fam];
   }
   return {
@@ -332,6 +400,8 @@ export function recordCirclingTurn(state: GameState, playerInput: string, receip
       lastDeadActResult: progressed ? undefined : (deadKey || mem.lastDeadActResult),
       fillerBlockSceneKey,
       fillerBlockedFamilies,
+      fillerOfferSceneKey,
+      fillerOfferCounts,
     },
   };
 }
@@ -697,38 +767,54 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     list = list.filter((c) => actionFamily(c) !== 'use');
     if (list.length < before) notes.push('Stall: dropped no-progress Use chips');
   }
-  // XP-D1 OPEN3 — drop Search/Read/Analyze/Open (and Use) taken with no effect on this scene.
+  // XP-D1 OPEN3/OPEN4 — drop Search/Read/… taken with no effect, or offered ≥2× this meaningful scene.
   {
     const sceneKey = fillerSceneKey(state);
     const blocked =
       mem?.fillerBlockSceneKey && mem.fillerBlockSceneKey === sceneKey
         ? new Set(mem.fillerBlockedFamilies ?? [])
         : null;
-    if (blocked && blocked.size) {
-      const before = list.length;
-      list = list.filter((c) => !blocked.has(actionFamily(c)));
-      if (list.length < before) notes.push('Scene: dropped no-progress Search/Read/Open filler');
-    }
+    const before = list.length;
+    list = list.filter((c) => {
+      if (fillerOfferExhausted(state, c)) return false;
+      if (blocked && blocked.has(actionFamily(c))) return false;
+      return true;
+    });
+    if (list.length < before) notes.push('Scene: dropped no-progress / offer-capped filler');
   }
   const exit = wayOnChip(state, list, story);
   if (exit && !list.some((c) => c.toLowerCase() === exit.toLowerCase())) {
     list = [exit, ...list];
     notes.push(`Stuck exit chip: ${exit.slice(0, 40)}`);
   }
-  // XP-D1 OPEN3 — offer Look for a fight on drought only when no progress chip is already on offer
-  // (never steals the stuck-exit Travel slot; never forces violence).
+  // XP-D1 OPEN4 — Look for a fight on drought (~8–12 turn cadence) even when a progress pad is present.
+  // Replace a filler/social slot; never steal stuck-exit Travel or the quest progress chip; never force violence.
   {
-    const sinceCombat = state.arcDirector?.turnsSinceCombatReceipt ?? state.turn ?? 0;
+    // Only the ArcDirector drought counter — never fall back to raw turn (tests / early play).
+    const sinceCombat = state.arcDirector?.turnsSinceCombatReceipt;
     const openingDone = state.openingEstablishment?.complete !== false;
-    const hasProgressPad = list.some((c) => movesOn(state, c, story) || isSeekFightChip(c));
-    if (
-      openingDone
-      && canSeekFight(state)
-      && sinceCombat >= 6
-      && !hasProgressPad
-    ) {
-      list = [SEEK_FIGHT_CHIP, ...list];
-      notes.push('Threat chip: Look for a fight');
+    const alreadySeek = list.some((c) => isSeekFightChip(c));
+    const drought = typeof sinceCombat === 'number' && sinceCombat >= 8;
+    if (openingDone && canSeekFight(state) && drought && !alreadySeek) {
+      // Prefer a dead filler / loiter slot; never a quest/travel progress chip.
+      const fillerIdx = list.findIndex(
+        (c) => isFillerNoProgressChip(c) || (LOITER.has(actionFamily(c)) && !movesOn(state, c, story))
+      );
+      const progressIdx = list.findIndex((c) => movesOn(state, c, story) && !isSeekFightChip(c));
+      const exitIdx = exit ? list.findIndex((c) => c.toLowerCase() === exit.toLowerCase()) : -1;
+      if (fillerIdx >= 0 && fillerIdx !== progressIdx && fillerIdx !== exitIdx) {
+        list = list.map((c, i) => (i === fillerIdx ? SEEK_FIGHT_CHIP : c));
+        notes.push('Threat chip: Look for a fight (replaced filler/social)');
+      } else if (!list.some((c) => movesOn(state, c, story))) {
+        // No progress pad at all — prepend (OPEN3 path).
+        list = [SEEK_FIGHT_CHIP, ...list];
+        notes.push('Threat chip: Look for a fight');
+      } else {
+        // Progress present, no filler slot: insert after the first progress/exit chip.
+        const insertAt = Math.max(1, Math.min(list.length, (progressIdx >= 0 ? progressIdx : exitIdx) + 1));
+        list = [...list.slice(0, insertAt), SEEK_FIGHT_CHIP, ...list.slice(insertAt)];
+        notes.push('Threat chip: Look for a fight (beside progress)');
+      }
     }
   }
   if (list.some((c) => movesOn(state, c, story))) {
@@ -761,13 +847,14 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     kept.push(c);
   }
   // Never rest below three chips — but do not re-admit an exact no-progress repeat
-  // (inventory Use / search / System trail) or scene-blocked filler just to fill the pad.
+  // (inventory Use / search / System trail), scene-blocked filler, or offer-capped filler.
   const sceneKeyNow = fillerSceneKey(state);
   const fillerBlocked =
     mem?.fillerBlockSceneKey && mem.fillerBlockSceneKey === sceneKeyNow
       ? new Set(mem.fillerBlockedFamilies ?? [])
       : null;
-  const isBlockedFiller = (c: string) => !!fillerBlocked?.has(actionFamily(c));
+  const isBlockedFiller = (c: string) =>
+    !!fillerBlocked?.has(actionFamily(c)) || fillerOfferExhausted(state, c);
   while (kept.length < 3 && kept.length < list.length) {
     const back = list.find((c) => !kept.includes(c) && triedAgo(state, c) == null && !isBlockedFiller(c));
     if (!back) break;

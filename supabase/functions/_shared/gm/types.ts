@@ -2143,6 +2143,13 @@ export interface CirclingMemory {
   fillerBlockSceneKey?: string;
   /** Filler action families blocked under fillerBlockSceneKey (search / open). */
   fillerBlockedFamilies?: string[];
+  /**
+   * XP-D1 OPEN4 — meaningful scene key for filler *offer* counts (place/quest/fight/kit/level/NPC;
+   * not raw XP). Resets when the key changes.
+   */
+  fillerOfferSceneKey?: string;
+  /** Filler label actionKey → times offered under fillerOfferSceneKey (cap 2). */
+  fillerOfferCounts?: Record<string, number>;
 }
 /** O1-C — compact cleared-interior record (map as walked + item deltas; no foes). */
 export interface ClearedSiteRecord {

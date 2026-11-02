@@ -291,3 +291,17 @@ OpenRouter: no balance or $ cost figure in logs or run meta (`costUsd` null; tea
 
 Plain summary also at `merge-logs/xp-design/open3/T50-report.md`.
 
+
+### 2 Nov 2026 — LitRPG XP attempt 4 (plan) — fight reach + earning rate + filler offer cap
+
+**Found (open3 T50, build 2026-11-02b, seeds 7301–7304):**
+- Seek Fight offered **0** times in all four runs. OPEN3 gate !hasProgressPad blocks injection whenever any travel/quest/fight pad is present; quest-seeking (and most free-path turns) always have a progress pad, so drought never surfaces a fight chip. Wins stayed 1–2 per 50 turns; fight share avg **9.0%**.
+- Per-win pay ~20 XP (~11% of L2 bar) is fine *if* fights are reached; with 1–2 wins it cannot hit 15–30% share. Pace model used one XP event / 2.2 turns; live post-rite was ~one event / 8–10 turns — model optimistic ? projected 15–25 L2?L3 while live missed on 3/4.
+- Filler max same-state **2 / 3 / 3 / 11**. Seed 7304 label **"Read the signs of the report"** offered **11** times at the same cafe. OPEN3 illerBlockedFamilies only arms after a *dead take* of the search family; the player mostly picked Ask/Talk, so the label kept reappearing. progress=true on social turns also cleared the block. Scene key included raw XP (trivial tick risk). Verbs Study/Inspect stayed outside search family.
+
+**Will change (LitRPG engine only; rite untouched; tabletop/RPG/PYOA content untouched):**
+- Fix A: inject `Look for a fight` on drought (~every 8–12 turns) even when a progress pad is present — replace a filler/social slot, never the progress/stuck-exit Travel slot; never force violence; free text always answered. Slightly raise L2+ encounter units so engaged 4–6 wins land fight share near **20%** (band 15–30%); keep farm ladder + alt-win pay.
+- Fix B: do **not** flatten `unitsPerLevel` (gaps keep growing). Modest L2+ step/complete lift only if still needed after fight reach; calibrate pace model to **observed** open3 event rates (fight ~1/10 turns when engaged) so model?live gap is explained; assert non-decreasing turns-per-level L2?L3…L6?L7, L3?L4 and L4?L5 longer than L2?L3, L3 not within ~3 of L2.
+- Fix D: one owner — meaningful filler scene key (place/quest/fight/kit/level, **not** raw XP); offer-count cap =2 per label until meaningful change; expand filler verbs (Examine/Inspect/Study/Listen/Investigate/Loot); freed slot ? progress chip. Fixture replay of 7304 chip stream.
+
+**Projected (pace model after retune, engaged):** L2@T2 (rite); L2?L3 **15–25**; quest share **60–70%** (tol 55–80%); fight share **15–30%** (aim ~20%); filler same-state offers =2. Live T50 still owed to the runner after this commit.

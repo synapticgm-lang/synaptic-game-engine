@@ -13,11 +13,16 @@ import {
 } from './systemNoticeInbox';
 import {
   actionFamily,
+  creditFillerOffers,
   fillerSceneKey,
+  isFillerNoProgressChip,
   rankChoices,
   recordCirclingTurn,
+  SEEK_FIGHT_CHIP,
 } from './choiceRanking';
 import type { GameState } from './types';
+import fs from 'node:fs';
+import path from 'node:path';
 
 function lit(over: Partial<GameState> = {}): GameState {
   const s = createInitialState('Open3', 'litrpg') as GameState;
@@ -34,13 +39,13 @@ function lit(over: Partial<GameState> = {}): GameState {
 }
 
 describe('XP-D1 OPEN3 fight XP', () => {
-  it('same-level L2 fight pays a real chunk of the bar (about 4–8%)', () => {
+  it('same-level L2 fight pays a real chunk of the bar (OPEN4 ~10–18%)', () => {
     const bar = levelBar('litrpg', 2);
     const amt = unitMilestoneAmount('litrpg', 'encounter', { playerLevel: 2, foeLevel: 2 });
     const share = amt / bar;
     expect(amt).toBeGreaterThanOrEqual(1);
-    expect(share).toBeGreaterThanOrEqual(0.04);
-    expect(share).toBeLessThanOrEqual(0.12);
+    expect(share).toBeGreaterThanOrEqual(0.1);
+    expect(share).toBeLessThanOrEqual(0.18);
   });
 
   it('L2 quest complete is smaller than the OPEN2 3-unit lump', () => {
@@ -137,6 +142,7 @@ describe('XP-D1 OPEN3 no-progress filler chips', () => {
         'Look for a fight',
       ];
       const offered = rankChoices(state, pool).choices;
+      state = creditFillerOffers(state, offered);
       for (const c of offered) {
         if (!/^(Search|Read |Analyze|Open )/i.test(c)) continue;
         const key = `${scene}::${c}`;
@@ -152,6 +158,7 @@ describe('XP-D1 OPEN3 no-progress filler chips', () => {
             ...state,
             turn: t,
             currentLocation: t % 7 === 0 ? 'Lowmarket' : state.currentLocation,
+            // Trivial XP tick must NOT reset the filler offer scene (OPEN4).
             character: {
               ...state.character!,
               xp: (state.character?.xp ?? 0) + (t % 5 === 0 ? 5 : 0),
@@ -165,6 +172,105 @@ describe('XP-D1 OPEN3 no-progress filler chips', () => {
       }
     }
     for (const [key, n] of offerCounts) {
+      expect(n, key).toBeLessThanOrEqual(2);
+    }
+  });
+
+  it('OPEN4: Examine/Inspect/Study stay inspect for loiter but count as filler', () => {
+    expect(actionFamily('Examine the gouge marks')).toBe('inspect');
+    expect(actionFamily('Inspect cracked street')).toBe('inspect');
+    expect(actionFamily('Study the pact slate before you answer')).toBe('inspect');
+    expect(isFillerNoProgressChip('Study the pact slate before you answer')).toBe(true);
+    expect(actionFamily('Listen at the door')).toBe('search');
+    expect(actionFamily('Check System')).toBe('other');
+  });
+
+  it('OPEN4: Seek Fight injects beside a progress pad on drought (does not steal Travel)', () => {
+    const state = lit({
+      currentLocation: 'Cathedral Close',
+      turn: 20,
+      campaignBibleId: 'summoned-pact',
+      arcDirector: { turnsSinceCombatReceipt: 10 } as GameState['arcDirector'],
+      circling: { stale: {}, lastProgressTurn: 18 },
+    });
+    const ranked = rankChoices(state, [
+      'Travel toward Lowmarket',
+      'Ask Col Thatch about the lead',
+      'Search the area',
+      'Read the signs of the report',
+    ]);
+    expect(ranked.choices).toContain(SEEK_FIGHT_CHIP);
+    expect(ranked.choices[0]).not.toBe(SEEK_FIGHT_CHIP); // progress / travel stays first when present
+    expect(ranked.choices.some((c) => /travel toward lowmarket/i.test(c))).toBe(true);
+  });
+
+  it('OPEN4: same filler label offered at most twice without meaningful scene change', () => {
+    let state = lit({
+      currentLocation: 'a shop or cafe at Registration',
+      turn: 27,
+      circling: { stale: {}, lastProgressTurn: 24 },
+    });
+    const label = 'Read the signs of the report';
+    const pool = [label, 'Ask Marcus about the gate', 'Travel toward Cracked Street', 'Say something…'];
+    let offers = 0;
+    for (let i = 0; i < 6; i++) {
+      state = { ...state, turn: 27 + i };
+      const offered = rankChoices(state, pool).choices;
+      state = creditFillerOffers(state, offered);
+      if (offered.includes(label)) offers += 1;
+      // Player picks talk — social progress must not re-arm the filler forever.
+      state = recordCirclingTurn(state, 'Ask Marcus about the gate', [], state);
+    }
+    expect(offers).toBeLessThanOrEqual(2);
+  });
+
+  it('OPEN4: replay open3 seed 7304 filler stream — no label >2 without meaningful change', () => {
+    const rundir = path.resolve(
+      'scripts/fate-autoplay/runs/2026-11-02T10-06-25-036Z_system-integration_cold-system_s7304_quest/turns.jsonl'
+    );
+    if (!fs.existsSync(rundir)) return; // harness tape optional on clean checkouts
+    const turns = fs
+      .readFileSync(rundir, 'utf8')
+      .trim()
+      .split(/\n/)
+      .map((l) => JSON.parse(l) as { offeredChoices?: string[]; fatePick?: string; location?: string; snapshotGist?: { location?: string }; characterXp?: number; level?: number; progress?: boolean });
+    let state = lit({
+      currentLocation: 'a shop or cafe at Registration',
+      turn: 1,
+      campaignBibleId: 'system-integration',
+      character: { ...lit().character!, level: 2, xp: 150, xpToNext: levelBar('litrpg', 2) },
+      circling: { stale: {}, lastProgressTurn: 1 },
+    });
+    const counts = new Map<string, number>();
+    let scene = fillerSceneKey(state);
+    for (const t of turns) {
+      const loc = t.location || t.snapshotGist?.location || state.currentLocation;
+      state = { ...state, turn: (state.turn ?? 0) + 1, currentLocation: loc };
+      // Replay only the filler labels from the live offer list through rankChoices+credit.
+      const liveFillers = (t.offeredChoices ?? []).filter((c) =>
+        /^(Search|Read |Analyze|Open |Inspect|Examine|Study )/i.test(c)
+      );
+      if (!liveFillers.length) continue;
+      const pool = [
+        ...liveFillers,
+        'Travel toward Cracked Street',
+        'Ask a witness who knows the lead about the lead',
+      ];
+      const offered = rankChoices(state, pool).choices;
+      state = creditFillerOffers(state, offered);
+      const nextScene = fillerSceneKey(state);
+      if (nextScene !== scene) {
+        scene = nextScene;
+      }
+      for (const c of offered) {
+        if (!/^(Search|Read |Analyze|Open |Inspect|Examine|Study )/i.test(c)) continue;
+        const key = `${scene}::${c}`;
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+      }
+      const pick = t.fatePick || 'Ask a witness who knows the lead about the lead';
+      state = recordCirclingTurn(state, pick, [], state);
+    }
+    for (const [key, n] of counts) {
       expect(n, key).toBeLessThanOrEqual(2);
     }
   });

@@ -67,13 +67,14 @@ export const XP_UNIT_AWARDS: Readonly<Record<MilestoneKind, number>> = {
 };
 
 /**
- * XP-D1 OPEN3 — L2+ retune (rite / L1 untouched):
- * - on-level fight ≈ 6–8% of the current bar (1 unit at L2 unitsPerLevel 9 → ~11% before grey; 0.7 ≈ 8%)
- * - quest step / complete sized down so engaged mix hits 60–70% quest / 15–30% fight and L2→L3 ≈ 15–25 turns
+ * XP-D1 OPEN4 — L2+ retune (rite / L1 untouched; unitsPerLevel gaps keep growing):
+ * - on-level fight ≈ 14% of the L2 bar; 4–6 wins / 50 turns → fight share ~20% (band 15–30%)
+ * - quest step / complete lift less than fight so quest share stays 55–80% and L2→L3 ≈ 15–25
+ * OPEN3 live was ~3–4 XP/turn post-rite with 1–2 fights; engaged OPEN4 targets ~8–12 XP/turn.
  */
-export const ENCOUNTER_UNITS_L2_PLUS = 0.85;
-export const QUEST_STEP_UNITS_L2_PLUS = 0.65;
-export const QUEST_COMPLETE_UNITS_L2_PLUS = 1.6;
+export const ENCOUNTER_UNITS_L2_PLUS = 1.15;
+export const QUEST_STEP_UNITS_L2_PLUS = 1.0;
+export const QUEST_COMPLETE_UNITS_L2_PLUS = 2.4;
 
 /** One XP event may not exceed this share of the current level bar (LitRPG / Story RPG). */
 export const XP_EVENT_BAR_CAP = 0.6;

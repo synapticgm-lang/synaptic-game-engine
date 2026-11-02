@@ -39,6 +39,7 @@ import { displayAdventurerName } from './pcNameAuthority';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
+import { creditFillerOffers } from './choiceRanking';
 import { isJourneyOnwardLine, isJourneyUnderway } from './travelJourney';
 import { liveChips } from './chipLegality';
 import { roundCombatChips } from './tabletop/combatChips';
@@ -278,7 +279,9 @@ export function commitOfferedPad(state: GameState, gmEntryId?: string, storyPros
 export function commitOfferedTurn(state: GameState, gmEntryId?: string, storyProse = ''): GameState {
   const stamped = stampOfferedChipChecks(commitOfferedPad(state, gmEntryId, storyProse), storyProse);
   // efeb40bd: rebind after the stamp so a cooled label is not still on the stored pad.
-  return recordReplayHash(commitOfferedPad({ ...stamped, offeredPad: null }, gmEntryId, storyProse));
+  const rebound = recordReplayHash(commitOfferedPad({ ...stamped, offeredPad: null }, gmEntryId, storyProse));
+  // XP-D1 OPEN4 — credit filler offers once per committed pad (offer cap ≤2 / meaningful scene).
+  return creditFillerOffers(rebound, rebound.choices ?? rebound.offeredPad?.choices ?? []);
 }
 
 function slugFilenamePart(raw: string): string {

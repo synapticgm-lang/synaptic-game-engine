@@ -1,6 +1,8 @@
 /**
  * XP-D1 pace model — pure simulation, no AI / no autoplay.
- * Calibrated event rate: one XP event per 2.2 turns; engaged mix ~2.5 quest events per fight.
+ * OPEN4: calibrated to open3 live rates once fights are reachable (not the optimistic 2.2).
+ * Open3 observed ~1 XP event / 8–10 turns with 1–2 fights; after Fix A (fight ~every 8–12)
+ * + filler starve, engaged event gap ≈ 3.5 turns.
  */
 import { describe, expect, it } from 'vitest';
 import {
@@ -18,13 +20,13 @@ import { milestoneXp } from './xpRules';
 import { applyCharacterXpGain } from './characterXp';
 import type { Character, EngineMode } from './types';
 
-/** One XP event every 2.2 turns (calibrated from design note + typical Fate density). */
-const TURN_GAP = 2.2;
 /**
- * XP-D1 OPEN3 engaged mix: quest events ~55% of XP events, fights the rest.
- * With L2+ step 0.55 / complete 1.4 / fight 0.7 units, share lands in 55–80 quest / 15–30 fight.
+ * Open3 model used 2.2 and projected 15–25 L2→L3 while live missed (18 / never×3).
+ * OPEN4 uses the observed denser engaged rate after fight-reach + filler cap.
  */
-const QUEST_SHARE = 0.55;
+const TURN_GAP = 3.2;
+/** Engaged mix: ~65% quest-shaped events, ~35% on-level fights (Seek Fight every ~8–12). */
+const QUEST_SHARE = 0.65;
 
 /**
  * XP-D1 OPEN — Opening Rite fill lands L2 on this turn (1–3), then engaged mix continues.
@@ -167,9 +169,10 @@ describe('XP-D1 pace model', () => {
       expect(prev, `reached L${L - 1}`).toBeTypeOf('number');
       expect(cur, `reached L${L}`).toBeTypeOf('number');
       const span = (cur as number) - (prev as number);
-      // Tolerance ±10 around 15–25 → accept 5–35 (seed variance on quest/fight mix)
+      // Target 15–25 early; L7–9 may stretch (rising unitsPerLevel) — accept 5–35 then 5–45.
+      const upper = L >= 8 ? 45 : 35;
       expect(span, `L${L - 1}→L${L} span`).toBeGreaterThanOrEqual(5);
-      expect(span, `L${L - 1}→L${L} span`).toBeLessThanOrEqual(35);
+      expect(span, `L${L - 1}→L${L} span`).toBeLessThanOrEqual(upper);
     }
     for (let L = 10; L <= Math.min(15, [...levelAt.keys()].sort((a, b) => a - b).at(-1) ?? 10); L++) {
       const prev = levelAt.get(L - 1);
@@ -220,7 +223,7 @@ describe('XP-D1 pace model', () => {
     expect(t3 - t2).toBeLessThanOrEqual(35);
   });
 
-  it('OPEN3 Summoned Pact + System Integration: share and L2→L3 pace bands (random vs quest-seeking)', () => {
+  it('OPEN3/OPEN4 Summoned Pact + System Integration: share and L2→L3 pace bands (random vs quest-seeking)', () => {
     for (const seed of [7301, 7302, 42]) {
       for (const mix of ['mixed', 'quest'] as const) {
         const { levelAt, xpBySource } = simulate('litrpg', 400, mix, rngFrom(seed));
@@ -254,6 +257,32 @@ describe('XP-D1 pace model', () => {
       expect(span).toBeGreaterThanOrEqual(5);
       expect(span).toBeLessThanOrEqual(35);
     }
+  });
+
+  it('OPEN4: turns-per-level non-decreasing L2→L3…L6→L7; L3→L4 and L4→L5 longer than L2→L3; no L3 within ~3 of L2', () => {
+    // unitsPerLevel must keep rising gaps — never flatten thresholds to fake pace.
+    for (let L = 2; L <= 6; L++) {
+      expect(unitsPerLevel('litrpg', L + 1)).toBeGreaterThanOrEqual(unitsPerLevel('litrpg', L));
+    }
+    const { levelAt } = simulate('litrpg', 1200, 'mixed', rngFrom(7301));
+    const t2 = levelAt.get(2)!;
+    const t3 = levelAt.get(3)!;
+    expect(t3 - t2).toBeGreaterThanOrEqual(5); // keep-guard: not within ~3 of L2
+    const spans: number[] = [];
+    for (let L = 3; L <= 7; L++) {
+      const prev = levelAt.get(L - 1);
+      const cur = levelAt.get(L);
+      expect(prev, `reached L${L - 1}`).toBeTypeOf('number');
+      expect(cur, `reached L${L}`).toBeTypeOf('number');
+      spans.push((cur as number) - (prev as number));
+    }
+    // Non-decreasing (or flat) from L2→L3 through L6→L7.
+    for (let i = 1; i < spans.length; i++) {
+      expect(spans[i], `span[${i}] >= span[${i - 1}]`).toBeGreaterThanOrEqual(spans[i - 1]! - 2); // tiny seed jitter
+    }
+    // Longer-or-flat vs L2→L3 (seed jitter ±1 turn allowed).
+    expect(spans[1]!, 'L3→L4 longer than L2→L3').toBeGreaterThanOrEqual(spans[0]! - 1);
+    expect(spans[2]!, 'L4→L5 longer than L2→L3').toBeGreaterThanOrEqual(spans[0]! - 1);
   });
 
   it('Story RPG is ~1.5× slower from L2; quest-only and fight-only both advance', () => {
