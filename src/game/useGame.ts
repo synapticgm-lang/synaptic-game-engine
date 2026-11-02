@@ -51,7 +51,7 @@ import {
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
-import { engineFactsFromState, withTrainLogJob } from './trainLog';
+import { engineFactsFromState, repairParentExtra, withTrainLogJob } from './trainLog';
 import { checkAndRepairProse, makeGmClauseChat } from './clauseCheck';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
@@ -3129,7 +3129,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             withTrainLogJob(
               'repair',
               () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
-              { engine_facts: engineFactsFromState(liveCurrent), repair_pass: 1 }
+              repairParentExtra({ engine_facts: engineFactsFromState(liveCurrent), repair_pass: 1 })
             ),
         });
         for (const r of [...(writerTurn.repairs ?? []), ...(writerTurn.answerRepair ? [writerTurn.answerRepair] : [])]) {
@@ -3197,7 +3197,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   withTrainLogJob(
                     'repair',
                     () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
-                    { engine_facts: engineFactsFromState(liveCurrent), repair_pass: 1 }
+                    repairParentExtra({ engine_facts: engineFactsFromState(liveCurrent), repair_pass: 1 })
                   ),
                 engineFact,
               });

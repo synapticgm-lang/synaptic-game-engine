@@ -382,13 +382,16 @@ export function openRouterChatBody(
 
 /**
  * q71-TRAINLOG — chat-body recorder. Every completed model call emits one row through trainLog
- * (never a per-call-site patch). Job comes from withTrainLogJob / pushTrainLogJob; untagged otherwise.
+ * (never a per-call-site patch). `job` is a required compile-time parameter so a new call site
+ * cannot omit the tag (pass currentTrainLogJob() when inside withTrainLogJob).
  */
 export function recordCompletedChatCall(args: {
   system?: string | null;
   user?: string | null;
   messages?: Array<{ role: string; content: string }> | null;
   assistant: string;
+  /** Required — writer | repair | rewrite | interpret | chip_gapfill | judge | check (or untagged only in tests). */
+  job: TrainLogJob;
   teacher_model?: string | null;
   provider?: string | null;
   tokens_in?: number | null;
@@ -398,13 +401,12 @@ export function recordCompletedChatCall(args: {
   latency_ms?: number | null;
   finish_reason?: string | null;
   truncated?: boolean | null;
-  job?: TrainLogJob | null;
   engine_facts?: TrainLogEngineFacts | null;
 }): TrainLogRow | null {
   try {
     const meta = currentTrainLogMeta();
     return recordModelCall({
-      job: args.job ?? meta?.job ?? 'untagged',
+      job: args.job,
       system: args.system,
       user: args.user,
       messages: args.messages,

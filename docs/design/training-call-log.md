@@ -13,12 +13,22 @@ Fate autoplay creates `<run>/calls.jsonl` (UTF-8, no BOM, one JSON object per li
 | `writer` | `callGm` / `callGmDirect` / gm-turn `mode:turn` (and auto-fight) |
 | `rewrite` | Writer-turn rewrite callback (`withTrainLogJob('rewrite')`) |
 | `repair` | `callGmRepair` / gm-turn `mode:repair` |
+| `check` | Clause-check (`callGmCheck` / `callCheckDirect` / gm-turn `mode:check`) — user prompt opens `FACTS:` + WORLD FACTS |
 | `interpret` | `interpretPlayerUtterance` → `callSmallModel(..., 'interpret')` |
 | `chip_gapfill` | Choice regeneration → `callSmallModel(..., 'chip_gapfill')` |
-| `judge` | `autoThumbs.mjs` / dual-review judge HTTP call |
+| `judge` | `autoThumbs.mjs --notes` / dual-review judge HTTP call (not during plain autoplay) |
 | `untagged` | Call completed without a tag (tests fail if this appears on required paths) |
 
-Clause-check (`callGmCheck` / gm-turn `mode:check`) is **not** in the enum — those rows are `untagged` and are called out in the TRAINLOG report.
+`recordCompletedChatCall` requires a `job` argument at compile time (client + edge mirror). Call sites pass the tag or `currentTrainLogJob()` inside `withTrainLogJob`.
+
+## Judge rows (when they appear)
+
+Plain fate-autoplay (including the 4-turn tabletop verify on free/anon) does **not** run a judge — no `job:"judge"` rows and no `judge_scores` on writer rows. Judge calls run only when:
+
+- `autoThumbs.mjs --notes` (and optional `--pair`) after a run — each HTTP judge call is logged as `job:"judge"`, then scores merge onto the matching writer row; or
+- a dual-review / Gemini paste harness that separately scores transcripts.
+
+When those judge call sites run, they use the same `calls.jsonl` recorder (`job:"judge"`).
 
 ## Row shape (essentials)
 
@@ -64,9 +74,9 @@ Keys, Authorization headers, and emails must never appear in a row.
 
 ## Repair pairs
 
-A `job:"repair"` row carries:
+A `job:"repair"` (and rewrite) row carries:
 
-- `parent_id` — id of the writer row for that turn
+- `parent_id` — id of the **same turn's** writer row (scoped by `run_id` + `turn_no`; never a stale last-writer from another turn). Hosted Free: client sends `trainParentId` + turn context on the repair request; `appendTrainLogRows` re-binds to the client map. Missing same-turn writer → `parent_id: null` (reported; never silent stale).
 - `draft` — flagged sentence
 - `flagged_error` — why it failed
 - `correct_fact` — engine fact given to the repair
@@ -77,7 +87,7 @@ Reconstruct from `calls.jsonl` alone: find the repair row, then the writer row w
 
 ## Judge scores
 
-1. During the run: writer (and repair/rewrite) rows are appended.
+1. During the run: writer (and repair/rewrite/check) rows are appended.
 2. `autoThumbs --notes`: each judge HTTP call appends `job:"judge"`, then merges `{ criterion: score, …, overall }` onto the writer row for that `turn_no`.
 
 ## Real players (OFF)

@@ -14,12 +14,24 @@ import {
   mergeJudgeScoresOntoWriter,
   peekTrainLogRows,
   recordModelCall,
+  repairParentExtra,
   setTrainLogFileAppend,
   setTrainLogSession,
   withTrainLogJob,
+  type TrainLogJob,
   type TrainLogRow,
 } from './trainLog';
 import { recordCompletedChatCall } from './openRouterChat';
+
+const KNOWN_JOBS: TrainLogJob[] = [
+  'writer',
+  'repair',
+  'rewrite',
+  'interpret',
+  'chip_gapfill',
+  'judge',
+  'check',
+];
 
 const FIX = join(tmpdir(), `sgm-trainlog-${process.pid}`);
 
@@ -108,14 +120,22 @@ describe('q71-TRAINLOG trainLog', () => {
     expect(repair?.parent_id).toBe(lastWriterRowId('run-test', 1));
   });
 
-  it('C: interpret and chip_gapfill rows; no untagged when tagged', () => {
+  it('C: interpret, chip_gapfill, and check rows; no untagged when tagged', () => {
     installFileSink();
     recordModelCall({ job: 'interpret', system: 'i', user: 'u', assistant: '{}' });
     recordModelCall({ job: 'chip_gapfill', system: 'c', user: 'u', assistant: '1. Look' });
+    recordModelCall({
+      job: 'check',
+      system: 'You audit a narration against FACTS',
+      user: 'FACTS:\nWORLD FACTS (this turn):\nPlace: Ford Camp',
+      assistant: '{"claims":[]}',
+    });
     const jobs = peekTrainLogRows().map((r) => r.job);
     expect(jobs).toContain('interpret');
     expect(jobs).toContain('chip_gapfill');
+    expect(jobs).toContain('check');
     expect(jobs.every((j) => j !== 'untagged')).toBe(true);
+    for (const j of jobs) expect(KNOWN_JOBS).toContain(j);
   });
 
   it('D: no API key / Authorization / email in any row (regex scan)', () => {
@@ -283,9 +303,181 @@ describe('q71-TRAINLOG trainLog', () => {
     expect(drainTrainLogRows()).toHaveLength(0);
   });
 
-  it('untagged when job omitted', () => {
+  it('untagged when job omitted from recordModelCall', () => {
     installFileSink();
     const row = recordModelCall({ system: 's', user: 'u', assistant: 'a' });
     expect(row!.job).toBe('untagged');
+  });
+
+  it('recordCompletedChatCall requires job (compile-time); rejects silent omit via typed call', () => {
+    installFileSink();
+    // Runtime: job must be passed. Call sites use currentTrainLogJob() or an explicit tag.
+    const row = recordCompletedChatCall({
+      system: 's',
+      user: 'u',
+      assistant: 'a',
+      job: 'writer',
+    });
+    expect(row!.job).toBe('writer');
+  });
+
+  it('multi-turn: turn N repair parent_id equals turn N writer (not turn 1)', () => {
+    installFileSink();
+    setTrainLogSession({ run_id: 'run-mt', turn_no: 1, callsPath: join(FIX, 'calls.jsonl') });
+    const w1 = recordModelCall({ job: 'writer', system: 's', user: 'u1', assistant: 'a1' });
+    setTrainLogSession({ turn_no: 2 });
+    const w2 = recordModelCall({ job: 'writer', system: 's', user: 'u2', assistant: 'a2' });
+    setTrainLogSession({ turn_no: 3 });
+    const w3 = recordModelCall({ job: 'writer', system: 's', user: 'u3', assistant: 'a3' });
+    // Stale edge-style parent pointing at turn 1 must not win.
+    const repair = recordModelCall({
+      job: 'repair',
+      system: 'fix',
+      user: 'Sentence: "x"',
+      assistant: 'fixed',
+      parent_id: w1!.id,
+    });
+    expect(w3!.id).not.toBe(w1!.id);
+    expect(w3!.id).not.toBe(w2!.id);
+    expect(repair!.parent_id).toBe(w3!.id);
+    expect(repair!.parent_id).not.toBe(w1!.id);
+  });
+
+  it('repair with no same-turn writer reports parent_id null (never stale)', () => {
+    installFileSink();
+    setTrainLogSession({ run_id: 'run-mt', turn_no: 1, callsPath: join(FIX, 'calls.jsonl') });
+    const w1 = recordModelCall({ job: 'writer', system: 's', user: 'u1', assistant: 'a1' });
+    setTrainLogSession({ turn_no: 4 });
+    // Answer-repair style path with no writer row this turn — must not attach turn 1.
+    const repair = recordModelCall({
+      job: 'repair',
+      system: 'fix',
+      user: 'Your story left out the answer. Write ONE sentence…',
+      assistant: 'The innkeep nodded.',
+      parent_id: w1!.id, // stale claim from a warm isolate
+    });
+    expect(repair!.parent_id).toBeNull();
+    expect(repair!.parent_id).not.toBe(w1!.id);
+  });
+
+  it('answer-repair path gets parent via repairParentExtra when writer exists', async () => {
+    installFileSink();
+    const writer = recordModelCall({
+      job: 'writer',
+      system: 's',
+      user: 'u',
+      assistant: 'Jax looked.',
+    });
+    const repair = await withTrainLogJob(
+      'repair',
+      async () =>
+        recordModelCall({
+          job: 'repair',
+          system: 'fix',
+          user: 'Your story left out the answer. Write ONE sentence…',
+          assistant: 'The innkeep answered.',
+        }),
+      repairParentExtra({ repair_pass: 1, flagged_error: 'missing answer' })
+    );
+    expect(repair!.parent_id).toBe(writer!.id);
+  });
+
+  it('hosted-style turn: appendTrainLogRows (gm-turn callLog) has zero untagged; repair parent rebound', () => {
+    installFileSink();
+    setTrainLogSession({ run_id: 'hosted-run', turn_no: 3, mode: 'dnd', genre: 'millstone-road' });
+    // Simulate edge callLog for writer, then check, then repair with a STALE parent (turn 1 id).
+    const staleParent = '48b8d9a3-8049-4d00-87f4-d748dc753c0f';
+    appendTrainLogRows([
+      {
+        id: 'writer-t3',
+        created_at: new Date().toISOString(),
+        job: 'writer',
+        messages: [
+          { role: 'system', content: 'sys' },
+          { role: 'user', content: 'Narrate…' },
+          { role: 'assistant', content: 'Jax looked.' },
+        ],
+        teacher_model: 'm',
+        provider: 'openrouter',
+        turn_no: 3,
+        run_id: 'hosted-run',
+      },
+    ]);
+    appendTrainLogRows([
+      {
+        id: 'check-t3',
+        created_at: new Date().toISOString(),
+        job: 'check',
+        messages: [
+          { role: 'system', content: 'You audit…' },
+          {
+            role: 'user',
+            content: 'FACTS:\nWORLD FACTS (this turn):\nPlace: Ford Camp',
+          },
+          { role: 'assistant', content: '{"claims":[]}' },
+        ],
+        teacher_model: 'm',
+        provider: 'openrouter',
+        turn_no: 3,
+        run_id: 'hosted-run',
+      },
+    ]);
+    appendTrainLogRows([
+      {
+        id: 'repair-t3',
+        created_at: new Date().toISOString(),
+        job: 'repair',
+        messages: [
+          { role: 'system', content: 'fix' },
+          { role: 'user', content: 'Rewrite…' },
+          { role: 'assistant', content: 'fixed' },
+        ],
+        teacher_model: 'm',
+        provider: 'openrouter',
+        turn_no: 3,
+        run_id: 'hosted-run',
+        parent_id: staleParent,
+      },
+    ]);
+    const rows = peekTrainLogRows();
+    expect(rows.every((r) => r.job !== 'untagged')).toBe(true);
+    expect(rows.some((r) => r.job === 'check')).toBe(true);
+    const repair = rows.find((r) => r.id === 'repair-t3');
+    expect(repair!.parent_id).toBe('writer-t3');
+    expect(repair!.parent_id).not.toBe(staleParent);
+  });
+
+  it('edge path: mode:check maps to job check (not untagged)', () => {
+    // Mirrors gm-turn trainJob resolution for mode:check without a body.trainJob.
+    function resolveEdgeTrainJob(
+      mode: 'turn' | 'auto-fight' | 'repair' | 'check',
+      bodyJob?: TrainLogJob
+    ): TrainLogJob {
+      if (
+        bodyJob === 'writer' ||
+        bodyJob === 'repair' ||
+        bodyJob === 'rewrite' ||
+        bodyJob === 'interpret' ||
+        bodyJob === 'chip_gapfill' ||
+        bodyJob === 'judge' ||
+        bodyJob === 'check'
+      ) {
+        return bodyJob;
+      }
+      if (mode === 'repair') return 'repair';
+      if (mode === 'check') return 'check';
+      return 'writer';
+    }
+    expect(resolveEdgeTrainJob('check')).toBe('check');
+    expect(resolveEdgeTrainJob('check')).not.toBe('untagged');
+    installFileSink();
+    const row = recordModelCall({
+      job: resolveEdgeTrainJob('check'),
+      system: 'You audit…',
+      user: 'FACTS:\nWORLD FACTS (this turn):\nPlace: Ford Camp',
+      assistant: '{"claims":[]}',
+    });
+    expect(row!.job).toBe('check');
+    expect(peekTrainLogRows().every((r) => r.job !== 'untagged')).toBe(true);
   });
 });

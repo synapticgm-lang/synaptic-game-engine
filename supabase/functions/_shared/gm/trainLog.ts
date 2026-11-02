@@ -19,6 +19,8 @@ export type TrainLogJob =
   | 'interpret'
   | 'chip_gapfill'
   | 'judge'
+  /** Clause-check (`callGmCheck` / gm-turn `mode:check`) — audits prose vs FACTS. */
+  | 'check'
   | 'untagged';
 
 export type TrainLogMessage = { role: string; content: string };
@@ -183,8 +185,19 @@ const JOBS: ReadonlySet<string> = new Set([
   'interpret',
   'chip_gapfill',
   'judge',
+  'check',
   'untagged',
 ]);
+
+/** Extra meta for a repair/rewrite so parent_id is THIS turn's writer (never a stale cross-turn id). */
+export function repairParentExtra(
+  extra?: Omit<PendingCallMeta, 'job' | 'parent_id'>
+): Omit<PendingCallMeta, 'job'> {
+  return {
+    ...extra,
+    parent_id: lastWriterRowId() ?? null,
+  };
+}
 
 function newId(): string {
   try {
@@ -402,8 +415,32 @@ export function recordModelCall(input: TrainLogRecordInput): TrainLogRow | null 
     if (input.repaired_reply != null) row.repaired_reply = input.repaired_reply;
     if (typeof input.repair_pass === 'number') row.repair_pass = input.repair_pass;
 
+    if (job === 'repair' || job === 'rewrite') {
+      // Prefer the same-turn writer already recorded in THIS process.
+      // Explicit parent_id: if that id is already in `rows`, it must be THIS turn's writer
+      // (drop stale cross-turn ids). If not in `rows` (hosted edge isolate — writer lives on the
+      // client), trust trainParentId from the client. Never invent a parent.
+      const sameTurnWriter = lastWriterRowId(run_id, turn_no);
+      if (sameTurnWriter) {
+        row.parent_id = sameTurnWriter;
+      } else if (input.parent_id) {
+        const parent = rows.find((r) => r.id === input.parent_id);
+        if (!parent) {
+          row.parent_id = input.parent_id; // edge: writer not local
+        } else if (
+          parent.job === 'writer' &&
+          parent.run_id === run_id &&
+          parent.turn_no === turn_no
+        ) {
+          row.parent_id = input.parent_id;
+        } else {
+          row.parent_id = null; // reported missing — stale parent rejected
+        }
+      } else {
+        row.parent_id = null;
+      }
+    }
     if (job === 'repair') {
-      if (!row.parent_id) row.parent_id = lastWriterRowId(run_id, turn_no);
       // Assistant content is the repaired reply when the caller did not set it explicitly.
       if (row.repaired_reply == null) row.repaired_reply = String(input.assistant ?? '');
     }
@@ -462,8 +499,14 @@ export function appendTrainLogRows(incoming: unknown): TrainLogRow[] {
         ...(r.repaired_reply != null ? { repaired_reply: r.repaired_reply } : {}),
         ...(typeof r.repair_pass === 'number' ? { repair_pass: r.repair_pass } : {}),
       };
-      rows.push(row);
+      // Hosted callLog: repair/rewrite parent must be THIS turn's writer already on the client
+      // (edge isolates do not share lastWriterByTurn across HTTP requests).
       if (row.job === 'writer') lastWriterByTurn.set(turnKey(row.run_id, row.turn_no), row.id);
+      if (row.job === 'repair' || row.job === 'rewrite') {
+        const sameTurnWriter = lastWriterRowId(row.run_id, row.turn_no);
+        row.parent_id = sameTurnWriter; // null when no same-turn writer — never keep a stale edge id
+      }
+      rows.push(row);
       appendLine(row);
       maybeAiTraffic(row);
       out.push(row);

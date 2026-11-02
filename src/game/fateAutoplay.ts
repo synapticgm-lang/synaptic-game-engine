@@ -35,6 +35,7 @@ import {
 import { callGm, callGmCheck, callGmRepair } from './aiService';
 import {
   engineFactsFromState,
+  repairParentExtra,
   setTrainLogFileAppend,
   setTrainLogSession,
   withTrainLogJob,
@@ -1799,13 +1800,13 @@ Do NOT print dice notation or CODE ENFORCED.
           return await withTrainLogJob(
             'repair',
             async () => callGmRepair(arcState, request, settings),
-            {
+            repairParentExtra({
               engine_facts: engineFactsFromState(arcState),
               draft: draftMatch?.[1] ?? null,
               flagged_error: flagMatch?.[1]?.trim() ?? null,
               correct_fact: factMatch?.[1]?.trim() ?? null,
               repair_pass: 1,
-            }
+            })
           );
         } finally {
           writerCallMeter.ms += Date.now() - started;
@@ -1852,13 +1853,13 @@ Do NOT print dice notation or CODE ENFORCED.
                 return await withTrainLogJob(
                   'repair',
                   async () => callGmRepair(arcState, request, settings),
-                  {
+                  repairParentExtra({
                     engine_facts: engineFactsFromState(arcState),
                     draft: draftMatch?.[1] ?? null,
                     flagged_error: flagMatch?.[1]?.trim() ?? null,
                     correct_fact: factMatch?.[1]?.trim() ?? null,
                     repair_pass: 1,
-                  }
+                  })
                 );
               } finally {
                 writerCallMeter.ms += Date.now() - started;

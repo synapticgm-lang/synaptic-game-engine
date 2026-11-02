@@ -5,7 +5,13 @@ import { logger } from './logger';
 import { resolveWriterModel, getTierDefinition } from './subscriptionTiers';
 import { resolveHostedImageModel } from './hostedImageModel';
 import { effectiveWriterTier, isAutoplayTestLabSession, isTestLabEnabled } from './testLab';
-import { appendTrainLogRows, currentTrainLogJob } from './trainLog';
+import {
+  appendTrainLogRows,
+  currentTrainLogJob,
+  currentTrainLogMeta,
+  getTrainLogSession,
+  lastWriterRowId,
+} from './trainLog';
 import {
   BYOK_TEXT_KEY_REQUIRED,
   canConfigurePlayerAiKeys,
@@ -174,8 +180,13 @@ export async function invokeGmProxy(params: {
         : params.mode === 'repair'
           ? 'repair'
           : params.mode === 'check'
-            ? 'untagged'
+            ? 'check'
             : 'writer';
+    const tlSession = getTrainLogSession();
+    const trainParentId =
+      trainJob === 'repair' || trainJob === 'rewrite'
+        ? currentTrainLogMeta()?.parent_id ?? lastWriterRowId() ?? null
+        : null;
     const body = {
       mode: params.mode,
       playerInput: params.playerInput,
@@ -199,7 +210,19 @@ export async function invokeGmProxy(params: {
       clientApiKey: pickClientApiKey(params.settings) || undefined,
       // The turn's strict Token Prose schema (built with zod here; the edge only forwards the JSON).
       tokenSchema: params.mode === 'turn' ? tokenBeatSchemaFor(params.state) : undefined,
-      ...(trainLog ? { trainLog: true, trainJob } : {}),
+      ...(trainLog
+        ? {
+            trainLog: true,
+            trainJob,
+            trainRunId: tlSession.run_id ?? null,
+            trainTurnNo: tlSession.turn_no ?? null,
+            trainSaveId: tlSession.save_id ?? null,
+            trainMode: tlSession.mode ?? null,
+            trainGenre: tlSession.genre ?? null,
+            trainBuildStamp: tlSession.build_stamp ?? null,
+            ...(trainParentId ? { trainParentId } : {}),
+          }
+        : {}),
     };
 
     if (isByokTierWithoutHostedKeys(params.settings) && !body.clientApiKey) {

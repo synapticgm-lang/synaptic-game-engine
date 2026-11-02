@@ -24,6 +24,7 @@ import {
   peekTrainLogRows,
   pushTrainLogJob,
   popTrainLogJob,
+  setTrainLogSession,
   type TrainLogJob,
 } from '../_shared/gm/trainLog.ts';
 
@@ -48,6 +49,14 @@ interface GmRequestBody {
   /** q71-TRAINLOG — autoplay/test-lab only; never set by real-player clients. */
   trainLog?: boolean;
   trainJob?: TrainLogJob;
+  /** Client session context so repair parent_id is scoped to this turn (edge isolates do not share maps). */
+  trainRunId?: string | null;
+  trainTurnNo?: number | null;
+  trainSaveId?: string | null;
+  trainMode?: string | null;
+  trainGenre?: string | null;
+  trainBuildStamp?: string | null;
+  trainParentId?: string | null;
 }
 
 /** A client schema is forwarded only when it is a plain object of sane size; otherwise the static schema stands. */
@@ -410,16 +419,28 @@ Deno.serve(async (req) => {
     body.trainJob === 'rewrite' ||
     body.trainJob === 'interpret' ||
     body.trainJob === 'chip_gapfill' ||
-    body.trainJob === 'judge'
+    body.trainJob === 'judge' ||
+    body.trainJob === 'check'
       ? body.trainJob
       : mode === 'repair'
         ? 'repair'
         : mode === 'check'
-          ? 'untagged'
+          ? 'check'
           : 'writer';
   const rowsBefore = wantCallLog ? peekTrainLogRows().length : 0;
   if (wantCallLog) {
-    pushTrainLogJob(trainJob, { engine_facts: engineFactsFromState(body.state) });
+    setTrainLogSession({
+      run_id: body.trainRunId ?? null,
+      turn_no: typeof body.trainTurnNo === 'number' ? body.trainTurnNo : null,
+      save_id: body.trainSaveId ?? null,
+      mode: body.trainMode ?? null,
+      genre: body.trainGenre ?? null,
+      build_stamp: body.trainBuildStamp ?? null,
+    });
+    pushTrainLogJob(trainJob, {
+      engine_facts: engineFactsFromState(body.state),
+      ...(body.trainParentId ? { parent_id: body.trainParentId } : {}),
+    });
   }
 
   try {

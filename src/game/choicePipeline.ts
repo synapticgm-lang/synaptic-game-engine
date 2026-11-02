@@ -957,12 +957,13 @@ export async function callSmallModel(
   settings: Settings,
   systemPrompt: string,
   userPrompt: string,
-  /** q71-TRAINLOG job tag (interpret | chip_gapfill). Untagged when omitted. */
+  /** q71-TRAINLOG job tag (interpret | chip_gapfill). Required at the recorder; omit only fails the untagged test. */
   trainJob?: 'interpret' | 'chip_gapfill'
 ): Promise<string> {
-  const { withTrainLogJob } = await import('./trainLog');
+  const { withTrainLogJob, currentTrainLogJob } = await import('./trainLog');
   const { recordCompletedChatCall } = await import('./openRouterChat');
   const run = async (): Promise<string> => {
+    const job = trainJob ?? currentTrainLogJob();
     let provider: string = 'openrouter';
     let apiKey = settings.openrouterApiKey || settings.geminiApiKey;
     if ((settings.aiProvider === 'gemini' || !apiKey) && settings.openrouterApiKey) {
@@ -1003,7 +1004,7 @@ export async function callSmallModel(
         provider: 'google',
         latency_ms: Date.now() - started,
         finish_reason: data.candidates?.[0]?.finishReason ?? null,
-        job: trainJob ?? 'untagged',
+        job,
       });
       return text;
     }
@@ -1052,7 +1053,7 @@ export async function callSmallModel(
       provider: provider === 'openrouter' ? 'openrouter' : provider,
       latency_ms: Date.now() - started,
       finish_reason: data.choices?.[0]?.finish_reason ?? null,
-      job: trainJob ?? 'untagged',
+      job,
     });
     return text;
   };

@@ -28,7 +28,13 @@ import {
 import { tokenBeatSchemaFor } from './tokenBeatSchema';
 import { pinnedModel } from './modelIds';
 import { noteWriterRawIssue, noteWriterUsage } from './gmProxy';
-import { currentTrainLogMeta, engineFactsFromState, withTrainLogJob } from './trainLog';
+import {
+  currentTrainLogJob,
+  currentTrainLogMeta,
+  engineFactsFromState,
+  repairParentExtra,
+  withTrainLogJob,
+} from './trainLog';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
 const AI_MAX_OUTPUT_TOKENS = 4_096;
@@ -147,6 +153,7 @@ async function callGoogle(prompt: string, systemPrompt: string, apiKey: string, 
     provider: 'google',
     latency_ms: elapsed,
     finish_reason: data.candidates?.[0]?.finishReason ?? null,
+    job: currentTrainLogJob(),
   });
   return text;
 }
@@ -221,6 +228,7 @@ async function callOpenRouter(
     cost: typeof cost === 'number' ? cost : null,
     latency_ms: elapsed,
     finish_reason: typeof finish === 'string' ? finish : null,
+    job: currentTrainLogJob(),
   });
   noteWriterUsage({
     ...(read.usage ?? {}),
@@ -286,6 +294,7 @@ async function callAnthropic(prompt: string, systemPrompt: string, apiKey: strin
     provider: 'anthropic',
     latency_ms: elapsed,
     finish_reason: data.stop_reason ?? null,
+    job: currentTrainLogJob(),
   });
   return text;
 }
@@ -355,6 +364,7 @@ async function callOpenAICompatible(
     provider,
     latency_ms: elapsed,
     finish_reason: typeof finish === 'string' ? finish : null,
+    job: currentTrainLogJob(),
   });
   return text;
 }
@@ -414,13 +424,18 @@ export async function callRepairDirect(state: GameState, request: string, settin
   const system = sentenceRepairSystemPrompt(state.character, settings.perspective);
   const run = async () => stripReasoningBlocks(await dispatchLlm(request, system, settings));
   if (currentTrainLogMeta()?.job === 'repair') return run();
-  return withTrainLogJob('repair', run, { engine_facts: engineFactsFromState(state) });
+  return withTrainLogJob(
+    'repair',
+    run,
+    repairParentExtra({ engine_facts: engineFactsFromState(state) })
+  );
 }
 
 /** M4 — clause check on the direct path: JSON claims vs FactSheet (system = CLAUSE_CHECK_SYS). */
 export async function callCheckDirect(_state: GameState, request: string, settings: Settings): Promise<string> {
-  // Job not in the q71 enum (writer|repair|rewrite|interpret|chip_gapfill|judge) — records as untagged.
-  return stripReasoningBlocks(await dispatchLlm(request, CLAUSE_CHECK_SYS, settings));
+  const run = async () => stripReasoningBlocks(await dispatchLlm(request, CLAUSE_CHECK_SYS, settings));
+  if (currentTrainLogMeta()?.job === 'check') return run();
+  return withTrainLogJob('check', run);
 }
 
 export async function callGmDirect(
