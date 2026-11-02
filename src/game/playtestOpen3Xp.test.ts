@@ -199,7 +199,8 @@ describe('XP-D1 OPEN3 no-progress filler chips', () => {
       'Search the area',
       'Read the signs of the report',
     ]);
-    expect(ranked.choices).toContain(SEEK_FIGHT_CHIP);
+    // OPEN5: outdoors, Hunt takes over from Seek Fight on drought (one combat chip, never both).
+    expect(ranked.choices.some((c) => c === SEEK_FIGHT_CHIP || /^Hunt the wildlife nearby$/i.test(c))).toBe(true);
     expect(ranked.choices[0]).not.toBe(SEEK_FIGHT_CHIP); // progress / travel stays first when present
     expect(ranked.choices.some((c) => /travel toward lowmarket/i.test(c))).toBe(true);
   });

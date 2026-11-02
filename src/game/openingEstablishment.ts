@@ -2307,8 +2307,12 @@ export function isOpeningIdentityCover(state: GameState): boolean {
   return isOpeningCoverTurn(state);
 }
 export function isCombatFamilyPad(choice: string): boolean {
+  const t = choice ?? '';
+  // XP-D1 OPEN5 — drought Seek Fight / Hunt pads are engine invites, not live fight moves.
+  if (/^look for a fight$/i.test(t.trim())) return false;
+  if (/^hunt the (?:wildlife nearby|animal)\b/i.test(t.trim())) return false;
   return /\b(press the attack|attack|flee|parley|strike|engage|fight|keep running|try to flee)\b/i.test(
-    choice ?? ''
+    t
   );
 }
 /** No Attack/Flee/Parley (or mash) while covers / name-ask are still the job. */

@@ -271,6 +271,9 @@ export interface MilestoneXpOpts {
   repeatShare?: number;
   /** Settlement flat completes skip the per-event bar cap (29r/29s). */
   skipEventCap?: boolean;
+  /** OPEN5 — wilds table creature: WoW killScale on the creature's own level (see xpPace.unitMilestoneAmount). */
+  levelSource?: 'table' | 'rolled';
+  elite?: boolean;
 }
 
 /** Legacy constants — litrpg/rpg no longer apply these; kept so old imports compile. */
@@ -350,6 +353,8 @@ function milestoneXpBase(
       contentLevel: opts.contentLevel,
       areaLevel: opts.areaLevel,
       skipEventCap: opts.skipEventCap,
+      levelSource: opts.levelSource,
+      elite: opts.elite,
     });
     return { amount, detail: '' };
   }

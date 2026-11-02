@@ -12,6 +12,7 @@ import { magicItem, magicItemsAtRarity } from './rules/magicItems';
 import { SRD_MONSTERS } from './rules/srdMonsters';
 import { srdGearRow } from './tabletop/characterBuild';
 import { modeBuyGp } from './merchant';
+import { WORLD_MAX_CREATURE_LEVEL, itemLevelValueMult } from './rules/wildlifeConfig';
 
 export interface LootEntry {
   id: string;
@@ -583,6 +584,11 @@ export function rollLoot(input: {
   foeName?: string;
   firstKill?: boolean;
   rng?: () => number;
+  /**
+   * XP-D1 OPEN5 — the defeated table creature's level. LitRPG / Story RPG creature drops (mob / miniBoss / boss /
+   * rare*) get itemLevel = creatureLevel ± 2. Chests keep the area-level rule; tabletop ignores it.
+   */
+  creatureLevel?: number;
 }): LootRollResult {
   const { profile, state } = input;
   const row = LOOT_PROFILES[profile];
@@ -702,6 +708,26 @@ export function rollLoot(input: {
   if (rarities.some((r) => r === 'Epic' || r === 'Legendary')) pity = 0;
   if (row.resetsPity) pity = 0;
   for (const r of rarities) push(r);
+  // OPEN5 — a creature's drop is as strong as the creature: itemLevel = creatureLevel + d(-2..+2), value follows.
+  if (
+    input.creatureLevel != null
+    && Number.isFinite(input.creatureLevel)
+    && (state.engineMode === 'litrpg' || state.engineMode === 'rpg')
+    && (profile === 'mob' || profile === 'miniBoss' || profile === 'boss' || profile === 'rareSpawn' || profile === 'rareEncounter')
+  ) {
+    const base = Math.max(1, Math.floor(input.creatureLevel));
+    const cap = WORLD_MAX_CREATURE_LEVEL + 2;
+    for (let i = 0; i < items.length; i++) {
+      const jitter = rollDie(5, rng) - 3; // -2..+2
+      const itemLevel = Math.max(1, Math.min(cap, base + jitter));
+      const it = items[i]!;
+      items[i] = {
+        ...it,
+        itemLevel,
+        ...(typeof it.baseValue === 'number' ? { baseValue: Math.max(1, Math.round(it.baseValue * itemLevelValueMult(itemLevel))) } : {}),
+      };
+    }
+  }
   return result({
     displayLines: formatLootDisplayLines(items, row.boxLabel),
     nextPity: pity,

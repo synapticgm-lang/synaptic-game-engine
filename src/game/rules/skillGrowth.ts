@@ -17,6 +17,7 @@ import {
   evolutionOf,
   libraryEntry,
   matchBaseSkill,
+  type LibraryEntry,
   namedSkillsOf,
   sceneKey,
   techniqueReady,
@@ -50,6 +51,13 @@ export interface SkillUseOpts {
   d20?: number;
   longShotRoll?: number;
   craftAttempt?: { name: string; qty: number };
+  /**
+   * XP-D1 OPEN5 — a gathering trade (Herbalism / Mining / Skinning) ranks through this same path: same soft cap
+   * (2 x level + 3), same WoW grey rule (greyCutoff / useXpFor), trade XP only (character XP is never touched).
+   * A trade skips the typed-line matcher and the same-line repeat guard (node stock is its limiter) and needs
+   * `success` + `taskLevel` from the caller (the gather resolver rolls the outcome).
+   */
+  trade?: { id: string; name: string };
 }
 
 export function xpForLevel(L: number): number {
@@ -146,6 +154,11 @@ export function applyFailedCraftMaterials(state: GameState, materialName: string
  * Settle one turn of named-skill use before the writer. `rested`: a rest happened this turn, which refreshes
  * once-per-day techniques.
  */
+/** A thin library-shaped stand-in so a gathering trade rides the named-skill record (never shown as a library skill). */
+function tradeBase(trade: { id: string; name: string }): LibraryEntry {
+  return { identity: { id: trade.id, name: trade.name, other_names: [], kind: 'skill' }, balance: { tier: 1 } } as unknown as LibraryEntry;
+}
+
 export function settleSkillUse(state: GameState, input: string, opts: SkillUseOpts = {}): SkillSettle {
   const mode = state.engineMode;
   if ((mode !== 'litrpg' && mode !== 'rpg') || !state.character) return { state, receipts: [] };
@@ -155,21 +168,23 @@ export function settleSkillUse(state: GameState, input: string, opts: SkillUseOp
     recs = recs.map((r) => (r.usedAt && cooldownOf(libraryEntry(r.evolvedTo)) === 'day' ? { ...r, usedAt: undefined } : r));
     next = { ...next, character: { ...next.character, namedSkills: recs } };
   }
-  const base = matchBaseSkill(next, input);
+  const trade = opts.trade;
+  const base = trade ? tradeBase(trade) : matchBaseSkill(next, input);
   const t = (input ?? '').trim();
   const intent = parsePlayerIntent(t, next);
-  const ctx = base ? resolveCheckContext(next, intent, t) : null;
-  if (
-    !base
-    || !t
-    || isTravelPad(t)
-    || isJourneyStepLine(t)
-    || isLedgerReadAction(t)
-    || intent.kind === 'attack'
-    || !ctx
-    || ctx.autoSucceed
-    || ctx.dc <= 0
-  ) {
+  const ctx = !trade && base ? resolveCheckContext(next, intent, t) : null;
+  const skipUse = trade
+    ? opts.success === undefined
+    : !base
+      || !t
+      || isTravelPad(t)
+      || isJourneyStepLine(t)
+      || isLedgerReadAction(t)
+      || intent.kind === 'attack'
+      || !ctx
+      || ctx.autoSucceed
+      || ctx.dc <= 0;
+  if (skipUse || !base) {
     return { state: next, receipts: [] };
   }
 
@@ -198,10 +213,10 @@ export function settleSkillUse(state: GameState, input: string, opts: SkillUseOp
     }
   }
 
-  const repeat = was.lastUse?.line === line && was.lastUse?.scene === scene;
+  const repeat = !trade && was.lastUse?.line === line && was.lastUse?.scene === scene;
   if (!repeat) {
     rec.lastUse = { line, scene };
-    const tier = (opts.skillTier ?? ctx.skillTier) as SkillTierName | undefined;
+    const tier = (opts.skillTier ?? ctx?.skillTier) as SkillTierName | undefined;
     const taskLevel =
       opts.taskLevel != null && opts.taskLevel > 0
         ? Math.min(SKILL_LEVEL_CAP, Math.floor(opts.taskLevel))

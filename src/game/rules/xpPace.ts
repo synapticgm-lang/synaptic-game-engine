@@ -1,9 +1,21 @@
 /**
  * XP-D1 — one pace table for LitRPG and Story RPG character XP.
  * The AI never sets these numbers. Tabletop (dnd) and PYOA do not use this module.
+ *
+ * OPEN5 WoW Classic mob XP (S1 Mob experience / S2 Experience point):
+ * https://warcraft.wiki.gg/wiki/Mob_experience
+ * https://warcraft.wiki.gg/wiki/Experience_point
+ * Levels map 1:1 for the level DIFFERENCE; same-level pay stays OPEN4's unit award.
+ * Table creatures (levelSource 'table') use killScale; rolled road/drought foes keep clamp + contentScale.
  */
 import type { EngineMode, Quest } from '../types';
 import type { MilestoneKind } from '../xpRules';
+import {
+  WILDS_HUNT_BAR_SHARE,
+  WILDS_CHALLENGE_BAR_SHARE,
+} from './wildlifeConfig';
+
+export { WILDS_HUNT_BAR_SHARE, WILDS_CHALLENGE_BAR_SHARE };
 
 /** Level 1 → 2 bar stays 150; after that ×1.25 per step. */
 export const L1_BAR = 150;
@@ -27,6 +39,93 @@ export const TOUGH_FOE_BONUS_CAP = 1.3;
 
 /** Quest / fight farm ladder: 100% → 50% → 25% → 10% floor. */
 export const REPEAT_SHARES = [1, 0.5, 0.25, 0.1] as const;
+
+/** Zero Difference by character level (S1). */
+export function zeroDifference(charLevel: number): number {
+  const CL = Math.max(1, Math.floor(charLevel || 1));
+  if (CL <= 7) return 5;
+  if (CL <= 9) return 6;
+  if (CL <= 11) return 7;
+  if (CL <= 15) return 8;
+  if (CL <= 19) return 9;
+  if (CL <= 29) return 11;
+  if (CL <= 39) return 12;
+  if (CL <= 44) return 13;
+  if (CL <= 49) return 14;
+  if (CL <= 54) return 15;
+  if (CL <= 59) return 16;
+  return 17;
+}
+
+/** Gray mob level (at or below → 0 XP). S1/S2. Nothing gray at CL ≤ 5. */
+export function grayLevel(charLevel: number): number {
+  const CL = Math.max(1, Math.floor(charLevel || 1));
+  if (CL <= 5) return 0;
+  if (CL <= 39) return CL - Math.floor(CL / 10) - 5;
+  if (CL <= 59) return CL - Math.floor(CL / 5) - 1;
+  return CL - 9;
+}
+
+/** WoW base XP for a same-level kill at mob level M: (M×5)+45 (Azeroth). */
+export function wowBaseXp(mobLevel: number): number {
+  const M = Math.max(1, Math.floor(mobLevel || 1));
+  return M * 5 + 45;
+}
+
+/**
+ * R(P, M) = XP multiple of a same-level kill at P.
+ * R = [(45+5M)/(45+5P)] × diffFactor; elite applied by caller (×2).
+ */
+export function killScale(playerLevel: number, mobLevel: number): number {
+  const P = Math.max(1, Math.floor(playerLevel || 1));
+  const M = Math.max(1, Math.floor(mobLevel || 1));
+  if (M <= grayLevel(P)) return 0;
+  const baseRatio = wowBaseXp(M) / wowBaseXp(P);
+  let diff: number;
+  if (M >= P) {
+    diff = 1 + 0.05 * Math.min(M - P, 4);
+  } else {
+    diff = 1 - (P - M) / zeroDifference(P);
+  }
+  return Math.max(0, baseRatio * diff);
+}
+
+export type ConColor = 'red' | 'orange' | 'yellow' | 'green' | 'gray';
+
+export function conColor(playerLevel: number, mobLevel: number): ConColor {
+  const P = Math.max(1, Math.floor(playerLevel || 1));
+  const M = Math.max(1, Math.floor(mobLevel || 1));
+  if (M <= grayLevel(P)) return 'gray';
+  const d = M - P;
+  if (d >= 5) return 'red';
+  if (d >= 3) return 'orange';
+  if (d >= -2) return 'yellow';
+  return 'green';
+}
+
+export function conWord(playerLevel: number, mobLevel: number): string {
+  switch (conColor(playerLevel, mobLevel)) {
+    case 'red':
+      return 'much stronger';
+    case 'orange':
+      return 'stronger';
+    case 'yellow':
+      return 'even';
+    case 'green':
+      return 'weaker';
+    default:
+      return 'too weak to teach you anything';
+  }
+}
+
+export function isChallengeHuntKill(
+  playerLevel: number,
+  mobLevel: number,
+  flags?: { elite?: boolean; rare?: boolean }
+): boolean {
+  if (flags?.elite || flags?.rare) return true;
+  return Math.floor(mobLevel) >= Math.floor(playerLevel) + 3;
+}
 
 /**
  * Units of bar needed for one level (calibrated by xpPace.test.ts).
@@ -216,6 +315,14 @@ export function unitMilestoneAmount(
     areaLevel?: number | null;
     /** Settlement flat completes (29r/29s) keep the full unit award; main quest path stays capped. */
     skipEventCap?: boolean;
+    /**
+     * OPEN5 — 'table' = region creature table (WoW killScale, no ±3 clamp, no toughFoeScale stack).
+     * Default / 'rolled' keeps OPEN4 clamp + contentScale + toughFoeScale.
+     */
+    levelSource?: 'table' | 'rolled';
+    elite?: boolean;
+    /** When true, gray table kills may return 0 (STATUS explains). */
+    allowZero?: boolean;
   } = {}
 ): number {
   const playerLevel = Math.max(1, Math.floor(opts.playerLevel ?? 1));
@@ -228,18 +335,91 @@ export function unitMilestoneAmount(
   const rawContent = isFight
     ? (opts.foeLevel ?? opts.contentLevel ?? opts.areaLevel)
     : (opts.contentLevel ?? opts.areaLevel ?? opts.foeLevel);
-  // Grey uses the unclamped content level (same idea as old over-level raw area).
-  // Tough-foe bonus / missing level use the ±3 clamp.
   const unclamped =
     rawContent == null || !Number.isFinite(rawContent)
       ? playerLevel
       : Math.max(1, Math.floor(rawContent));
+
+  if (isFight && opts.levelSource === 'table') {
+    // sameLevelKill(P) × R(P,M) × (elite ? 2 : 1). Gray → 0.
+    const R = killScale(playerLevel, unclamped);
+    amount = Math.round(amount * R * (opts.elite ? 2 : 1));
+    if (amount <= 0) return opts.allowZero === false ? 0 : 0;
+    return opts.skipEventCap ? amount : capXpEventAmount(mode, playerLevel, amount);
+  }
+
+  // Grey uses the unclamped content level (same idea as old over-level raw area).
+  // Tough-foe bonus / missing level use the ±3 clamp.
   const clamped = clampContentLevel(playerLevel, rawContent);
   amount = Math.max(1, Math.round(amount * contentScale(playerLevel, unclamped)));
   if (isFight) {
     amount = Math.max(1, Math.round(amount * toughFoeScale(playerLevel, clamped)));
   }
   return opts.skipEventCap ? amount : capXpEventAmount(mode, playerLevel, amount);
+}
+
+/** Regular / challenge hunting budgets for the current player level (one owner). */
+export function wildsBudgetCaps(mode: EngineMode | undefined, playerLevel: number): {
+  regular: number;
+  challenge: number;
+} {
+  const bar = levelBar(mode, playerLevel);
+  return {
+    regular: Math.max(1, Math.floor(bar * WILDS_HUNT_BAR_SHARE)),
+    challenge: Math.max(1, Math.floor(bar * WILDS_CHALLENGE_BAR_SHARE)),
+  };
+}
+
+/**
+ * Apply wilds hunt ledger: after the budget is spent, non-gray kills pay CONTENT_SCALE_FLOOR
+ * of the same-level award; gray stays 0. Loot/resources are never capped here.
+ */
+export function applyWildsHuntBudget(
+  mode: EngineMode | undefined,
+  playerLevel: number,
+  rawAmount: number,
+  opts: {
+    challenge: boolean;
+    gray: boolean;
+    ledger?: { playerLevel: number; regularPaid: number; challengePaid: number };
+  }
+): {
+  amount: number;
+  ledger: { playerLevel: number; regularPaid: number; challengePaid: number };
+  capped: boolean;
+  status?: string;
+} {
+  const P = Math.max(1, Math.floor(playerLevel || 1));
+  let ledger = opts.ledger ?? { playerLevel: P, regularPaid: 0, challengePaid: 0 };
+  if (ledger.playerLevel !== P) {
+    ledger = { playerLevel: P, regularPaid: 0, challengePaid: 0 };
+  }
+  if (opts.gray || rawAmount <= 0) {
+    return {
+      amount: 0,
+      ledger,
+      capped: false,
+      status: opts.gray ? 'too weak to teach you anything' : undefined,
+    };
+  }
+  const caps = wildsBudgetCaps(mode, P);
+  const paid = opts.challenge ? ledger.challengePaid : ledger.regularPaid;
+  const cap = opts.challenge ? caps.challenge : caps.regular;
+  if (paid >= cap) {
+    const floor = Math.max(1, Math.round(unitsToXp(unitAwardFor(mode, 'encounter', P), xpUnit(mode, P)) * CONTENT_SCALE_FLOOR));
+    return {
+      amount: floor,
+      ledger,
+      capped: true,
+      status: 'you have learned what these lands can teach for now',
+    };
+  }
+  const room = cap - paid;
+  const amount = Math.min(rawAmount, room);
+  const next = opts.challenge
+    ? { ...ledger, challengePaid: ledger.challengePaid + amount }
+    : { ...ledger, regularPaid: ledger.regularPaid + amount };
+  return { amount, ledger: next, capped: amount < rawAmount };
 }
 
 export function repeatShare(completionIndex: number): number {

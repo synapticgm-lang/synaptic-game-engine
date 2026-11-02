@@ -94,7 +94,7 @@ Options:
   --typed-model ID          OpenRouter model for the typed player (default qwen/qwen3.7-flash; key = OPENROUTER_API_KEY_SYNAPTICGM or VITE_OPENROUTER_API_KEY)
   --route <place>           from turn 2, travel toward <place> until arrived, then normal picks
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
-  --player-profile random|quest  chip pick: random (default) or prefer pinned Opening Rite / A2 quest chip
+  --player-profile random|quest|hunt-gather  chip pick: random (default), prefer pinned Opening Rite / A2 quest chip, or hunt-gather (Hunt pad, then Gather, else quest chip)
   --modes-agents-300   4 modes × 3 AI agents × 300 turns → 4 mode Gemini packs + telemetry
   --worst-cells-only   With --modes-agents-300: only 27w worst cell per mode (4 runs)
   --alt-cells-only     With --modes-agents-300: 4 alternate flagships (≠ worst-cells bibles)

@@ -244,7 +244,11 @@ describe('playtest31wBatchW', () => {
         'Press for leverage'
       );
       expect(compiled.choices.some((c) => /^Press for leverage$/i.test(c))).toBe(false);
-      expect(compiled.choices.some((c) => /Talk to Wren Holt/i.test(c))).toBe(true);
+      // OPEN5: Hunt may take the social slot on an outdoor litrpg pad; either is a valid non-abstract pad.
+      expect(
+        compiled.choices.some((c) => /Talk to Wren Holt/i.test(c))
+          || compiled.choices.some((c) => /^Hunt the wildlife nearby$/i.test(c))
+      ).toBe(true);
     });
   });
 

@@ -57,6 +57,7 @@ import {
   weatherRuleOf,
 } from './rules/travelDay';
 import { modeProfile } from './rules/modeProfile';
+import { HUNT_ANIMAL_PAD, isHuntPad } from './rules/wildlifeConfig';
 import { commitDeath, isDead } from './rules/death';
 export { roadDeathBookProse, travelBeatFact } from './roadDeath';
 import { combineAdv, formatCheckRecord, proficiencyBonus, resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
@@ -428,6 +429,8 @@ function fightPad(enc: RoadEncounter): string | null {
 function answersMeeting(enc: RoadEncounter, input: string, turn: number, terrain: JourneyTerrain): RoadEncounter | null {
   if (fightPad(enc) || roadMeetingOver(enc)) return null;
   const said = meetingMoveBase(input).toLowerCase();
+  // OPEN5 — Hunt the animal is not "dealing with it": the hunt resolver (wildlifeActions) owns that meeting.
+  if (isHuntPad(said)) return null;
   const at = encounterPads(enc, terrain).findIndex((p) => p.toLowerCase() === said);
   if (at > 0 || (at === 0 && enc.kind === 'wildlife')) return { ...enc, escaped: true, escapedTurn: turn, closedTurn: turn };
   if (at === 0 && enc.kind === 'plea') return { ...enc, engaged: true, closedTurn: turn };
@@ -448,9 +451,10 @@ function helpPlea(state: GameState, enc: RoadEncounter): { state: GameState; enc
 export function roadMeetingOver(enc: RoadEncounter): boolean {
   return !!enc.engaged || !!enc.escaped || !!enc.lost;
 }
-function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain): string[] {
+function encounterPads(enc: RoadEncounter, terrain: JourneyTerrain, mode?: GameState['engineMode']): string[] {
   if (roadMeetingOver(enc)) return [];
-  if (enc.kind === 'wildlife') return [LIVES_PAD[terrain]];
+  // OPEN5 — "Hunt the animal" sits beside Deal-with (which still gives the animal room and escapes).
+  if (enc.kind === 'wildlife') return mode === 'litrpg' ? [LIVES_PAD[terrain], HUNT_ANIMAL_PAD] : [LIVES_PAD[terrain]];
   if (enc.kind === 'traveler') {
     // T10RC8 — Talk needs talking range (same seat list as peopleHere / ghost-chip).
     if (typeof enc.distanceFt === 'number' && enc.distanceFt > TALKING_RANGE_FT) return [];
@@ -597,7 +601,7 @@ export function journeyPads(
   if (pushSet.active && !laneBlocked(j.encounter)) {
     return pushSet.options;
   }
-  const met = j.encounter ? encounterPads(j.encounter, j.terrain) : [];
+  const met = j.encounter ? encounterPads(j.encounter, j.terrain, state.engineMode) : [];
   const spent = dayIsSpent(state, j);
   const forward = laneBlocked(j.encounter)
     ? []
@@ -624,10 +628,10 @@ export function journeyPads(
   return withMarchWarnPads(full, pads);
 }
 /** A ground-between chip: walk on / turn back, travel engine chip, or this stretch's meeting pads. */
-export function isJourneyPad(state: Pick<GameState, 'journey'>, choice: string): boolean {
+export function isJourneyPad(state: Pick<GameState, 'journey'> & Partial<Pick<GameState, 'engineMode'>>, choice: string): boolean {
   const t = meetingMoveBase(choice).toLowerCase();
   const j = state.journey;
-  const met = j?.encounter ? encounterPads(j.encounter, j.terrain) : [];
+  const met = j?.encounter ? encounterPads(j.encounter, j.terrain, state.engineMode) : [];
   return WALK_ON.test(t) || /^turn back toward\s+\S/i.test(t) || !!travelEngineChip(t) || met.some((p) => meetingMoveBase(p).toLowerCase() === t);
 }
 /** Meetings that can be faced as a fight. */

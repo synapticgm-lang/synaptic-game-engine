@@ -22,7 +22,9 @@ import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
 import { formatLootStatusLine } from './lootTableRegistry';
-import { isRoadFoe, meetingMoveBase, roadFoeForEngine, roadMeetingMove, settleRoadMeeting } from './travelJourney';
+import { isRoadFoe, meetingMoveBase, roadFoeForEngine, roadMeetingMove, roadMeetingOver, settleRoadMeeting } from './travelJourney';
+import { applyWildsHuntBudget, isChallengeHuntKill, killScale } from './rules/xpPace';
+import { applyWildsKillExtras } from './wildlifeActions';
 import { pushCombatStateTx } from './stateTx';
 import { hidesPart } from './systemHousing';
 import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
@@ -96,6 +98,7 @@ export function payEncounterXp(
   ];
   const awardKeys = [...(state.sandboxAwardKeys ?? []), ...keys];
   const partySize = 1 + (state.companions ?? []).filter(takesPartyShare).length;
+  const wilds = raw.levelSource === 'table' && (state.engineMode === 'litrpg' || state.engineMode === 'rpg');
   const r = milestoneXp(state.engineMode, encounterKind(raw), {
     level: state.character.level,
     partySize,
@@ -104,18 +107,40 @@ export function payEncounterXp(
     strictness: state.gmStrictness,
     foeLevel: raw.level,
     ...milestoneAreaOpts(state),
+    ...(wilds ? { levelSource: 'table' as const, elite: raw.elite } : {}),
   });
-  if (r.amount <= 0) {
-    const why = r.detail && !hidesPart(state.systemHousing, 'experience') ? [`XP: none (${label} — ${r.detail})`] : [];
-    return { state: { ...state, sandboxAwardKeys: awardKeys }, receipts: why };
+  // OPEN5 — wilds table kills: gray pays 0 (STATUS says why); a spent hunt budget pays the 5% floor.
+  let wildsLedger = state.wildsHuntLedger;
+  let wildsNote: string | undefined;
+  let amount = r.amount;
+  if (wilds) {
+    const P = state.character.level;
+    const budget = applyWildsHuntBudget(state.engineMode, P, r.amount, {
+      challenge: isChallengeHuntKill(P, raw.level, { elite: raw.elite, rare: raw.rare }),
+      gray: killScale(P, raw.level) <= 0,
+      ledger: state.wildsHuntLedger,
+    });
+    amount = budget.amount;
+    wildsLedger = budget.ledger;
+    wildsNote = budget.status;
   }
+  if (amount <= 0) {
+    const detail = wildsNote ?? r.detail;
+    const why = detail && !hidesPart(state.systemHousing, 'experience') ? [`XP: none (${label} — ${detail})`] : [];
+    return {
+      state: { ...state, sandboxAwardKeys: awardKeys, ...(wildsLedger ? { wildsHuntLedger: wildsLedger } : {}) },
+      receipts: why,
+    };
+  }
+  r.amount = amount;
+  if (wildsNote) r.detail = wildsNote;
   const leveled = applyCharacterXpGain(state.character, r.amount, state.engineMode, state.systemHousing);
   const dnd = state.engineMode === 'dnd';
   const companions = dnd ? payCompanionsFightXp(state.companions, r.amount) : state.companions;
   const character = dnd ? { ...leveled.character, summons: paySummonsFightXp(leveled.character.summons, r.amount) } : leveled.character;
   const xpLine = hidesPart(state.systemHousing, 'experience') ? [] : [`XP Gained: ${r.amount} (${label}${r.detail ? ` — ${r.detail}` : ''})`];
   return {
-    state: { ...state, character, companions, sandboxAwardKeys: awardKeys },
+    state: { ...state, character, companions, sandboxAwardKeys: awardKeys, ...(wildsLedger ? { wildsHuntLedger: wildsLedger } : {}) },
     receipts: [...xpLine, ...leveled.notes],
   };
 }
@@ -441,6 +466,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     goldReward: enc.goldReward,
     lootProfile: profileForEncounter(enc),
     cr: enc.cr,
+    // OPEN5 — a table creature's own level levels its drop (lootTableRegistry.rollLoot, LitRPG / Story RPG).
+    ...(enc.levelSource === 'table' ? { creatureLevel: enc.level } : {}),
   };
   // A failed flee/parley means the foe forced the fight: no opening strike from hiding.
   const used = (flee || parley) && approach.id === 'ambush' ? meleeApproach() : approach;
@@ -489,11 +516,19 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
     'Engine fight'
   );
   if (onRoad) next = settleRoadMeeting(next, result.victory ? 'victory' : 'defeat');
+  // OPEN5 — "Hunt the animal" on a road wildlife meeting: the hunt settles that meeting like any road fight.
+  else if (enc.levelSource === 'table' && state.journey?.encounter?.kind === 'wildlife' && !roadMeetingOver(state.journey.encounter)) {
+    next = settleRoadMeeting(next, result.victory ? 'victory' : 'defeat');
+  }
   let found = '';
   if (result.victory) {
     const paid = payEncounterXp(next, raw, `defeated ${enc.name}`);
     next = paid.state;
     receipts.push(...paid.receipts);
+    // OPEN5 — stock unit + hide drop (never XP-gated: gray / budget-capped kills still drop).
+    const wilds = applyWildsKillExtras(next, raw);
+    next = wilds.state;
+    receipts.push(...wilds.receipts);
     const money = lootMoneyText(result.goldGained, result.coinsGained);
     if (money) receipts.push(`Gold Gained: ${money}`);
     if (result.loot.length) {

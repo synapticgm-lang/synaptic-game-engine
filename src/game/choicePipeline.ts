@@ -257,6 +257,11 @@ export function threatChoiceWithoutSetup(
   state: GameState
 ): boolean {
   const cleaned = stripChoiceDecorators(choice);
+  // XP-D1 OPEN5 — engine drought / hunt pads are not "react to a visible foe" chips.
+  // OPEN4 injected "Look for a fight" in rankChoices, then liveChips dropped it here
+  // because \bfight\b matched with no threat in prose (open4 T50 Seek Fight offered 0).
+  if (/^look for a fight$/i.test(cleaned)) return false;
+  if (/^hunt the (?:wildlife nearby|animal)\b/i.test(cleaned)) return false;
   const isThreatReact =
     /\b(hide|sneak|ambush|creature|beast|monster|feline|goblin|retreat\s+from|flee\s+(?:the|from)|edge\s+toward.+cover|keep(?:ing)?\s+eyes?\s+on\s+the\s+(?:silhouette|figure|creature)|attack|fight|engage(?:\s+the)?|take\s+cover|draw\s+(?:your\s+)?weapon|charge(?:\s+the)?|strike\s+the|kill\s+the|nearest\s+enemy)\b/i.test(
       cleaned

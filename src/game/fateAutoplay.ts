@@ -240,6 +240,11 @@ import { hashCanonicalState } from './replayHash';
 import { commitTurnRecord } from './stateTx';
 import { validateEvalRun, type EvalHarnessResult } from './evalHarness';
 import { playerInputGateBlock } from './choiceCompiler';
+import { isGatherPad, isHuntPad } from './rules/wildlifeConfig';
+import { equipFromInput } from './gearEquip';
+
+/** Chip-pick profile: random (default), quest (pinned rite / A2 chip), hunt-gather (XP-D1 OPEN5 wilds loop). */
+export type FatePlayerProfile = 'random' | 'quest' | 'hunt-gather';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
 import { beatFingerprint, isSameBeat, isNearClone, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
 import {
@@ -330,7 +335,7 @@ export type FateAutoplayCliOpts = {
   mode: FateMode;
   aiAgentMode?: AiAgentMode;
   /** XP-D1 OPEN — `random` (default) or `quest` (prefer pinned rite / A2 story chip). */
-  playerProfile?: 'random' | 'quest';
+  playerProfile?: FatePlayerProfile;
   dryRun: boolean;
   matrix: boolean;
   /** Balanced matrix: 10 per test mode (LitRPG / tabletop / RPG). */
@@ -494,7 +499,7 @@ export type RunSummary = {
   dryRun: boolean;
   aiTier: HostedAiTier;
   aiAgentMode?: AiAgentMode;
-  playerProfile?: 'random' | 'quest';
+  playerProfile?: FatePlayerProfile;
   startedAt: string;
   endedAt: string;
   errorCount: number;
@@ -1057,8 +1062,11 @@ export function isLethalChipLabel(label: string, state?: GameState): boolean {
   return LETHAL_CHIP_RE.test(label);
 }
 let lastAutoPickWasLethal = false;
+/** hunt-gather profile memory: what the last wilds pad was (null = neither). */
+let lastWildsPick: 'hunt' | 'gather' | null = null;
 export function resetLethalPickStreak(): void {
   lastAutoPickWasLethal = false;
+  lastWildsPick = null;
 }
 export function avoidRepeatLethalPick(
   offered: string[],
@@ -1084,14 +1092,28 @@ function pickChipAvoidingLethalRepeat(
   state: GameState,
   mode: AiAgentMode,
   rng: Rng,
-  playerProfile: 'random' | 'quest' = 'random'
+  playerProfile: FatePlayerProfile = 'random'
 ): string {
   const set = pushOnChoiceSet(state);
   // Prefer the engine's push-on option set when that choice point is live.
   const pool = set.active && set.options.length ? set.options : offered;
   const candidates = chipsOnly(pool.length ? pool : offered);
+  // XP-D1 OPEN5 — hunt-gather: a wilds loop. Hunt when offered, Gather right after a Hunt, else the quest chip.
+  let huntGatherPick: string | undefined;
+  if (playerProfile === 'hunt-gather') {
+    const hunt = candidates.find((c) => isHuntPad(c));
+    const gather = candidates.find((c) => isGatherPad(c));
+    if (gather && lastWildsPick === 'hunt') huntGatherPick = gather;
+    else if (hunt) huntGatherPick = hunt;
+    else if (gather && lastWildsPick !== 'gather') huntGatherPick = gather;
+    lastWildsPick = huntGatherPick
+      ? (isHuntPad(huntGatherPick) ? 'hunt' : 'gather')
+      : null;
+  }
   const raw =
-    playerProfile === 'quest'
+    huntGatherPick
+      ? huntGatherPick
+      : playerProfile === 'quest' || playerProfile === 'hunt-gather'
       ? pickQuestProfileChoice(
           candidates,
           state,
@@ -1197,7 +1219,7 @@ export async function headlessFateTurn(
     mode: FateMode;
     aiAgentMode: AiAgentMode;
     dryRun: boolean;
-    playerProfile?: 'random' | 'quest';
+    playerProfile?: FatePlayerProfile;
     /** Typed human line (live-drive opening script). Skips chip pick. */
     playerInputOverride?: string;
   }
@@ -1353,6 +1375,12 @@ export async function headlessFateTurn(
   let arcState = withHouseRules(govInputState, settings);
   const gate = playerInputGateBlock(arcState, playerInput);
   arcState = gate.state;
+  // XP-D1 OPEN5 — typed "I put on / equip X" obeys the equip level rule (same owner as live useGame).
+  {
+    const equip = equipFromInput(arcState, playerInput);
+    if (equip?.ok) arcState = equip.state;
+    else if (equip?.blockedLine) repairNote = `${repairNote ? `${repairNote}; ` : ''}Gear: ${equip.blockedLine}`;
+  }
   // q76b / q77c — dry-run / stress: stub writer; fights + typed go through engine (not the writer).
   // Death saves stay on the usesRoundCombat path inside resolveEngineFight (main behaviour).
   if (meta.dryRun) {
@@ -2817,7 +2845,7 @@ export async function runFateAutoplay(opts: {
   aiTier: HostedAiTier;
   mode: FateMode;
   aiAgentMode?: AiAgentMode;
-  playerProfile?: 'random' | 'quest';
+  playerProfile?: FatePlayerProfile;
   dryRun: boolean;
   outRoot: string;
   characterName: string;
@@ -2874,8 +2902,9 @@ export async function runFateAutoplay(opts: {
   const rng = mulberry32(opts.seed);
   resetLethalPickStreak();
   const runId = new Date().toISOString().replace(/[:.]/g, '-');
-  const profile = opts.playerProfile === 'quest' ? 'quest' : 'random';
-  const slug = `${bible.id}_${personalityId}_s${opts.seed}${profile === 'quest' ? '_quest' : ''}`;
+  const profile: FatePlayerProfile =
+    opts.playerProfile === 'quest' || opts.playerProfile === 'hunt-gather' ? opts.playerProfile : 'random';
+  const slug = `${bible.id}_${personalityId}_s${opts.seed}${profile === 'quest' ? '_quest' : profile === 'hunt-gather' ? '_huntgather' : ''}`;
   const outDir = join(opts.outRoot, `${runId}_${slug}`);
   mkdirSync(outDir, { recursive: true });
   writerPromptSink.dir = join(outDir, 'writer-prompts');
@@ -3254,7 +3283,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
         : 'default';
     } else if (a === '--player-profile') {
       const m = next().trim().toLowerCase();
-      out.playerProfile = m === 'quest' ? 'quest' : 'random';
+      out.playerProfile = m === 'quest' ? 'quest' : m === 'hunt-gather' ? 'hunt-gather' : 'random';
     } else if (a === '--writer') {
       out.writer = parseAutoplayWriterKind(next());
     } else if (a === '--writer-model') out.writerModel = next().trim();

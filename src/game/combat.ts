@@ -24,6 +24,8 @@ export interface EnemyStats {
   lootProfile?: LootProfile;
   /** 28d — CR for D&D treasure bands. */
   cr?: string | number;
+  /** XP-D1 OPEN5 — wilds table creature level: drives the drop's itemLevel (LitRPG / Story RPG). */
+  creatureLevel?: number;
 }
 
 export interface CombatRound {
@@ -107,7 +109,7 @@ function rollLoot(enemy: EnemyStats, seed: string): Item[] {
 /** 28d — the engine loot roll on a win (lootTableRegistry.rollLoot): seeded, never the AI. */
 export function rollVictoryLoot(
   state: GameState,
-  enemy: Pick<EnemyStats, 'name' | 'goldReward' | 'lootTable' | 'lootProfile' | 'cr'>
+  enemy: Pick<EnemyStats, 'name' | 'goldReward' | 'lootTable' | 'lootProfile' | 'cr' | 'creatureLevel'>
 ): Pick<CombatResult, 'goldGained' | 'coinsGained' | 'loot' | 'lootLines' | 'lootPity'> {
   const firstKill = !(state.arcDirector?.encounterClearedReceipts ?? []).some((r) => r.name === enemy.name);
   const engineLoot = rollEngineLoot({
@@ -117,6 +119,7 @@ export function rollVictoryLoot(
     cr: enemy.cr ?? null,
     foeName: enemy.name,
     firstKill,
+    ...(enemy.creatureLevel != null ? { creatureLevel: enemy.creatureLevel } : {}),
   });
   return {
     goldGained: state.engineMode === 'dnd' && engineLoot ? engineLoot.gold : scaleTreasureGold(state, enemy.goldReward),

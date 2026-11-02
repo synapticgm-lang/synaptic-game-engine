@@ -255,7 +255,11 @@ describe('playtest31vBatchV', () => {
       expect(travel.some((c) => /Lowmarket|West Wall/i.test(c))).toBe(false);
       expect(compiled.choices.some((c) => /^Walk away|^Leave through/i.test(c))).toBe(false);
       // Lock B: Wall Sergeant is not CAST, so the world-moving pad is an inspect, not a talk.
-      expect(compiled.choices).toContain('Inspect the immediate surroundings');
+      // OPEN5: on an outdoor LitRPG pad the Hunt chip may take that world-moving slot instead.
+      expect(
+        compiled.choices.includes('Inspect the immediate surroundings')
+          || compiled.choices.some((c) => /^Hunt the wildlife nearby$/i.test(c))
+      ).toBe(true);
     });
   });
 

@@ -30,6 +30,14 @@ import { mainSpineQuest } from './questPlay';
 import { stallPressureActive } from './openThreads';
 import { directorNudgeIfStuck } from './director';
 import { STALL_N } from './directorConstants';
+import {
+  isOutdoorWildsPlace,
+  wildsHasStock,
+  hasNodeStock,
+  ensureWilds,
+} from './wilds';
+import { ensureRegionResources } from './regionLevels';
+import { gatherModeOk, huntModeOk } from './wildlifeActions';
 
 export type { CirclingMemory } from './types';
 
@@ -193,6 +201,8 @@ export function actionFamily(input: string): string {
   if (/\b(look around|look over|survey|scout|scan)\b/.test(a)) return 'look';
   if (/\b(talk|ask|speak|greet|offer)\b/.test(a)) return 'talk';
   if (/\b(travel|go to|go back|head to|walk to|return to|enter|next unexplored|go through)\b/.test(a)) return 'move';
+  if (/^hunt the\b/.test(a) || /^i go hunting\b/.test(a)) return 'fight';
+  if (/^gather\b/.test(a) || /^i look for (?:ore|herbs|resources)\b/.test(a)) return 'other';
   if (/\b(attack|fight|strike|flee|parley|face the|look for a fight)\b/.test(a)) return 'fight';
   // XP-D1 OPEN3/OPEN4 — Read / Analyze / Open-box / Search / Listen / Investigate / Loot.
   if (
@@ -241,12 +251,19 @@ export function fillerSceneKey(state: GameState): string {
 
 const FILLER_OFFER_CAP = 2;
 
+/** Family key for offer-cap (OPEN5: rotating Read/Analyze labels must share one budget). */
+function fillerOfferFamilyKey(chip: string): string {
+  return `fam:${actionFamily(chip)}`;
+}
+
 /** Credit offered filler labels under the current meaningful scene (call once per committed pad). */
 export function creditFillerOffers(state: GameState, offered: string[]): GameState {
   const mem = state.circling ?? { stale: {}, lastProgressTurn: state.turn ?? 0 };
   const sceneKey = fillerSceneKey(state);
   let offerSceneKey = mem.fillerOfferSceneKey;
   let offerCounts = { ...(mem.fillerOfferCounts ?? {}) };
+  let fillerBlockedFamilies = [...(mem.fillerBlockedFamilies ?? [])];
+  let fillerBlockSceneKey = mem.fillerBlockSceneKey;
   if (offerSceneKey && offerSceneKey !== sceneKey) {
     offerSceneKey = sceneKey;
     offerCounts = {};
@@ -255,9 +272,20 @@ export function creditFillerOffers(state: GameState, offered: string[]): GameSta
   for (const raw of offered) {
     if (!isFillerNoProgressChip(raw)) continue;
     if (isFreeInputChipLabel(raw)) continue;
+    // Hunt / Gather / Check System / Seek Fight are never filler.
+    if (/^hunt the\b|^gather\b|^look for a fight$|^check system\b/i.test((raw ?? '').trim())) continue;
     const key = actionKey(raw);
     if (!key) continue;
     offerCounts[key] = (offerCounts[key] ?? 0) + 1;
+    const famKey = fillerOfferFamilyKey(raw);
+    offerCounts[famKey] = (offerCounts[famKey] ?? 0) + 1;
+    // OPEN5 — after 2 offers of any search/read/analyze/… family label, block the whole family
+    // (OPEN4 per-label cap missed when the compiler rotated "signs of the rumor/report/proof").
+    const fam = actionFamily(raw);
+    if ((offerCounts[famKey] ?? 0) >= FILLER_OFFER_CAP && !fillerBlockedFamilies.includes(fam)) {
+      fillerBlockedFamilies = [...fillerBlockedFamilies, fam];
+      fillerBlockSceneKey = sceneKey;
+    }
   }
   return {
     ...state,
@@ -265,6 +293,8 @@ export function creditFillerOffers(state: GameState, offered: string[]): GameSta
       ...mem,
       fillerOfferSceneKey: offerSceneKey,
       fillerOfferCounts: offerCounts,
+      fillerBlockedFamilies,
+      fillerBlockSceneKey,
     },
   };
 }
@@ -273,13 +303,16 @@ function isFreeInputChipLabel(chip: string): boolean {
   return /^(?:say something|do something else)/i.test((chip ?? '').trim());
 }
 
-/** True when this filler label has already been offered FILLER_OFFER_CAP times without a meaningful scene change. */
+/** True when this filler label (or its family) has already been offered FILLER_OFFER_CAP times without a meaningful scene change. */
 export function fillerOfferExhausted(state: GameState, chip: string): boolean {
   if (!isFillerNoProgressChip(chip)) return false;
+  if (/^hunt the\b|^gather\b|^look for a fight$/i.test((chip ?? '').trim())) return false;
   const mem = state.circling;
   if (!mem?.fillerOfferSceneKey || mem.fillerOfferSceneKey !== fillerSceneKey(state)) return false;
   const n = mem.fillerOfferCounts?.[actionKey(chip)] ?? 0;
-  return n >= FILLER_OFFER_CAP;
+  if (n >= FILLER_OFFER_CAP) return true;
+  const famN = mem.fillerOfferCounts?.[fillerOfferFamilyKey(chip)] ?? 0;
+  return famN >= FILLER_OFFER_CAP;
 }
 
 const LOITER = new Set(['inspect', 'wait', 'look']);
@@ -622,9 +655,20 @@ export function chipProgressWeights(state: GameState, choices: string[]): number
 }
 
 export const SEEK_FIGHT_CHIP = 'Look for a fight';
+/** XP-D1 OPEN5 — player-chosen hunt (always-on in wilds; not drought-gated, not filler). */
+export const HUNT_WILDS_CHIP = 'Hunt the wildlife nearby';
+export const GATHER_WILDS_CHIP = 'Gather herbs and resources nearby';
 
 export function isSeekFightChip(input: string): boolean {
   return actionKey(input) === actionKey(SEEK_FIGHT_CHIP);
+}
+
+export function isHuntChip(input: string): boolean {
+  return /^hunt the (?:wildlife nearby|animal)\b/i.test((input ?? '').trim());
+}
+
+export function isGatherChip(input: string): boolean {
+  return /^gather herbs and resources nearby$/i.test((input ?? '').trim());
 }
 
 /** Visited this save: a place record with a visit turn, or a place the circling memory arrived at. */
@@ -787,16 +831,64 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
     list = [exit, ...list];
     notes.push(`Stuck exit chip: ${exit.slice(0, 40)}`);
   }
-  // XP-D1 OPEN4 — Look for a fight on drought (~8–12 turn cadence) even when a progress pad is present.
-  // Replace a filler/social slot; never steal stuck-exit Travel or the quest progress chip; never force violence.
+  // XP-D1 OPEN5 — Hunt every outdoor turn (stock permitting); not drought-gated; not filler; never steals
+  // quest-progress / Travel / Check System. When Hunt is available, drought Seek Fight hands over to it.
   {
-    // Only the ArcDirector drought counter — never fall back to raw turn (tests / early play).
+    const openingDone = state.openingEstablishment?.complete === true;
+    const outdoor = isOutdoorWildsPlace(state);
+    // Wilds pads: LitRPG + Story RPG may Gather; only LitRPG may Hunt (tabletop dnd / PYOA see neither).
+    const canWilds =
+      openingDone
+      && outdoor
+      && gatherModeOk(state)
+      && !state.activeEncounter
+      && !state.activeDungeon;
+    const canHunt = canWilds && huntModeOk(state);
+    let huntReady = false;
+    if (canWilds) {
+      const s = ensureRegionResources(ensureWilds(state));
+      huntReady = canHunt && wildsHasStock(s);
+      if (huntReady && !list.some((c) => isHuntChip(c))) {
+        // Least useful slot first: dead filler, then idle loiter, and only then a social chip.
+        const isIdleLoiter = (c: string) => LOITER.has(actionFamily(c)) && !movesOn(state, c, story);
+        let fillerIdx = list.findIndex((c) => isFillerNoProgressChip(c));
+        if (fillerIdx < 0) fillerIdx = list.findIndex((c) => isIdleLoiter(c));
+        if (fillerIdx < 0) fillerIdx = list.findIndex((c) => actionFamily(c) === 'talk');
+        const progressIdx = list.findIndex((c) => movesOn(state, c, story) && !isHuntChip(c));
+        const exitIdx = exit ? list.findIndex((c) => c.toLowerCase() === exit.toLowerCase()) : -1;
+        const systemIdx = list.findIndex((c) => /^check system\b/i.test(c));
+        if (fillerIdx >= 0 && fillerIdx !== progressIdx && fillerIdx !== exitIdx && fillerIdx !== systemIdx) {
+          list = list.map((c, i) => (i === fillerIdx ? HUNT_WILDS_CHIP : c));
+          notes.push('Wilds: Hunt the wildlife nearby (replaced filler/social)');
+        } else {
+          const insertAt = Math.max(
+            1,
+            Math.min(list.length, (progressIdx >= 0 ? progressIdx : exitIdx) + 1)
+          );
+          list = [...list.slice(0, insertAt), HUNT_WILDS_CHIP, ...list.slice(insertAt)];
+          notes.push('Wilds: Hunt the wildlife nearby');
+        }
+      }
+      // Gather when the region has resource nodes in stock.
+      const hasNodes = hasNodeStock(s);
+      if (hasNodes && outdoor && !list.some((c) => isGatherChip(c))) {
+        const gatherSlot = list.findIndex(
+          (c) => isFillerNoProgressChip(c) && !isHuntChip(c) && !movesOn(state, c, story)
+        );
+        if (gatherSlot >= 0) {
+          list = list.map((c, i) => (i === gatherSlot ? GATHER_WILDS_CHIP : c));
+          notes.push('Wilds: Gather herbs and resources nearby');
+        } else if (list.filter((c) => isHuntChip(c) || isGatherChip(c)).length < 2) {
+          list = [...list, GATHER_WILDS_CHIP];
+          notes.push('Wilds: Gather herbs and resources nearby (extra)');
+        }
+      }
+    }
+    // XP-D1 OPEN4 — Look for a fight on drought; OPEN5 hands over to Hunt when wilds are in reach.
     const sinceCombat = state.arcDirector?.turnsSinceCombatReceipt;
-    const openingDone = state.openingEstablishment?.complete !== false;
-    const alreadySeek = list.some((c) => isSeekFightChip(c));
+    const alreadySeek = list.some((c) => isSeekFightChip(c) || isHuntChip(c));
     const drought = typeof sinceCombat === 'number' && sinceCombat >= 8;
-    if (openingDone && canSeekFight(state) && drought && !alreadySeek) {
-      // Prefer a dead filler / loiter slot; never a quest/travel progress chip.
+    if (openingDone && canSeekFight(state) && drought && !alreadySeek && !huntReady) {
       const fillerIdx = list.findIndex(
         (c) => isFillerNoProgressChip(c) || (LOITER.has(actionFamily(c)) && !movesOn(state, c, story))
       );
@@ -806,11 +898,9 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
         list = list.map((c, i) => (i === fillerIdx ? SEEK_FIGHT_CHIP : c));
         notes.push('Threat chip: Look for a fight (replaced filler/social)');
       } else if (!list.some((c) => movesOn(state, c, story))) {
-        // No progress pad at all — prepend (OPEN3 path).
         list = [SEEK_FIGHT_CHIP, ...list];
         notes.push('Threat chip: Look for a fight');
       } else {
-        // Progress present, no filler slot: insert after the first progress/exit chip.
         const insertAt = Math.max(1, Math.min(list.length, (progressIdx >= 0 ? progressIdx : exitIdx) + 1));
         list = [...list.slice(0, insertAt), SEEK_FIGHT_CHIP, ...list.slice(insertAt)];
         notes.push('Threat chip: Look for a fight (beside progress)');

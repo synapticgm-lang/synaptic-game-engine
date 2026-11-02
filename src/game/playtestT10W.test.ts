@@ -85,7 +85,9 @@ describe('T10W origin session-zero (Story RPG)', () => {
       offeredPad: null,
     });
     expect(after.some((c) => /^Origin:/i.test(c) || c === ORIGIN_QUICK_START_CHIP)).toBe(false);
-    expect(after.some((c) => /look around|wait|ask/i.test(c))).toBe(true);
+    // OPEN5: outdoors the pad may carry a Gather chip (Story RPG) in place of a filler look/wait chip;
+    // it is still a scene chip, never an origin chip.
+    expect(after.some((c) => /look around|wait|ask|gather|search the area|inspect/i.test(c))).toBe(true);
   });
 
   it('typed origin name picks it (creationOnly); turn does not advance via settle', () => {

@@ -1,0 +1,132 @@
+{
+ "7301-random": {
+  "seed": 7301,
+  "profile": "random",
+  "bibleId": "summoned-pact",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "On the road between places",
+  "level": 3,
+  "outlineId": "spine-marches",
+  "openingEstablishment": {
+   "complete": true
+  },
+  "arcDirector": {
+   "turnsSinceCombatReceipt": 12,
+   "lastEncounterClearedTurn": 5
+  },
+  "sceneFacts": {
+   "pendingEncounter": null,
+   "lastKill": null
+  },
+  "circling": {
+   "recentFamilies": [
+    "move",
+    "other",
+    "move"
+   ],
+   "fillerBlockedFamilies": [],
+   "fillerBlockSceneKey": null,
+   "fillerOfferSceneKey": "on the road between places#gen-ds-trouble-40:completed:3|gen-ds-trouble-48:active:0|opening-rite:summoned-pact:completed:1|sp-quest-1:completed:3#-#sp-npc-1,sp-npc-2,sp-npc-4,sp-npc-5,sp-npc-ila-pellane,sp-npc-pell-wren,sp-npc-sister-pell,town-col-thatch,town-hobb-barrow,town-idra-dunmore,town-maud-merrow,town-nell-rudd,town-osric-marl#2#3",
+   "fillerOfferCounts": {}
+  }
+ },
+ "7302-random": {
+  "seed": 7302,
+  "profile": "random",
+  "bibleId": "system-integration",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "On the road between places",
+  "level": 4,
+  "outlineId": "grid-metro",
+  "openingEstablishment": {
+   "complete": true
+  },
+  "arcDirector": {
+   "turnsSinceCombatReceipt": 1,
+   "lastEncounterClearedTurn": 49
+  },
+  "sceneFacts": {
+   "pendingEncounter": null,
+   "lastKill": null
+  },
+  "circling": {
+   "recentFamilies": [
+    "search",
+    "fight",
+    "move"
+   ],
+   "fillerBlockedFamilies": [],
+   "fillerBlockSceneKey": null,
+   "fillerOfferSceneKey": "on the road between places#gen-ds-trouble-14:completed:3|gen-ds-trouble-41:completed:3|gen-ds-trouble-49:active:0|gen-ds-trouble-6:completed:3|opening-rite:system-integration:completed:1|si-spine-commuter-transit-wreck:completed:1#-#si-npc-1,town-agna-dunmore,town-brannoc-sallow,town-calamity-remnant,town-edda-fenwick,town-lisle-hollin,town-osric-merrow,town-sefa-hask,town-system-bounty,town-void-touched-scavenger#9#4",
+   "fillerOfferCounts": {}
+  }
+ },
+ "7303-quest": {
+  "seed": 7303,
+  "profile": "quest",
+  "bibleId": "summoned-pact",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "Cathedral Close",
+  "level": 3,
+  "outlineId": "shatter-coast",
+  "openingEstablishment": {
+   "complete": true
+  },
+  "arcDirector": {
+   "turnsSinceCombatReceipt": 10,
+   "lastEncounterClearedTurn": 13
+  },
+  "sceneFacts": {
+   "pendingEncounter": null,
+   "lastKill": null
+  },
+  "circling": {
+   "recentFamilies": [
+    "other",
+    "talk",
+    "talk"
+   ],
+   "fillerBlockedFamilies": [],
+   "fillerBlockSceneKey": null,
+   "fillerOfferSceneKey": "cathedral close#gen-ds-trouble-37:active:2|opening-rite:summoned-pact:completed:1|sp-quest-1:completed:3#-#sp-npc-1,sp-npc-10,sp-npc-14,sp-npc-2,sp-npc-4,sp-npc-5,sp-npc-9,town-brannoc-hask,town-col-thatch,town-cutha-coyne,town-hale-aske,town-hobb-barrow,town-idra-fenwick,town-maud-pike,town-merrit-dunmore,town-nell-rudd,town-osric-marl,town-tilde-crane,town-ysolde-merrow#9#3",
+   "fillerOfferCounts": {
+    "analyze high chanter orel vane": 1
+   }
+  }
+ },
+ "7304-quest": {
+  "seed": 7304,
+  "profile": "quest",
+  "bibleId": "system-integration",
+  "turn": 51,
+  "engineMode": "litrpg",
+  "currentLocation": "Convenience Store Dungeon",
+  "level": 4,
+  "outlineId": "grid-metro",
+  "openingEstablishment": {
+   "complete": true
+  },
+  "arcDirector": {
+   "turnsSinceCombatReceipt": 0,
+   "lastEncounterClearedTurn": 42
+  },
+  "sceneFacts": {
+   "pendingEncounter": null,
+   "lastKill": null
+  },
+  "circling": {
+   "recentFamilies": [
+    "talk",
+    "talk",
+    "search"
+   ],
+   "fillerBlockedFamilies": [],
+   "fillerBlockSceneKey": null,
+   "fillerOfferSceneKey": "convenience store dungeon#gen-ds-trouble-27:completed:3|gen-ds-trouble-40:completed:3|gen-ds-trouble-48:completed:3|opening-rite:system-integration:completed:1|si-quest-1:completed:5#-#si-npc-1,si-npc-2,town-agna-dunmore,town-bertil-brack,town-brannoc-sallow,town-calamity-remnant,town-edda-fenwick,town-lisle-hollin,town-merrit-wyle,town-osric-merrow,town-rosel-cotter#11#4",
+   "fillerOfferCounts": {}
+  }
+ }
+}

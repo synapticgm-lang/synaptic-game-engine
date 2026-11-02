@@ -76,6 +76,8 @@ import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
 import { autoFightSpawnPreface, markPendingSpawnPreface } from './combatAuthority';
 import { resolveEngineFight } from './engineFight';
+import { startGatherFromInput, startHuntFromInput } from './wildlifeActions';
+import { levelUpGearNotices } from './gearEquip';
 import { houseRulesOf, scaledCadence } from './rules/houseRules';
 import { parkedThreatHere, pendingThreatHere, syncPlaceThreat } from './placeThreats';
 import { commitTravel, isJourneyUnderway } from './travelJourney';
@@ -769,7 +771,7 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       const m = r.match(/Arc XP: \+(\d+) \((.+)\)/);
       if (m) lines.push(`XP Gained: ${m[1]} (arc: ${m[2]})`);
       else lines.push(r);
-    } else if (/^(?:Encounter(?: cleared| ended)?|Fight|Loot|XP(?: Gained)?|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats|Title|Companion|Remembered|Lifeline):/.test(r) || SKILL_NOTICE.test(r)) {
+    } else if (/^(?:Encounter(?: cleared| ended)?|Fight|Loot|Materials|Wilds|Gear|XP(?: Gained)?|Gold Gained|Flee check|Parley check|Rest|Hit Die|Class|Stats|Title|Companion|Remembered|Lifeline):/.test(r) || SKILL_NOTICE.test(r)) {
       // 28f — engine fight outcome on STATUS
       lines.push(r);
     } else if (r.startsWith('Social track:')) {
@@ -807,7 +809,16 @@ export function runArcDirectorBeforeGm(
 
   // 29a — tick / force-clear active encounter before new beat commits
   // 28f — fight / flee / parley: the engine settles the encounter this turn; the writer gets the facts once.
-  const engineFight = resolveEngineFight(working, playerInput);
+  // XP-D1 OPEN5 — a Hunt pad / "I go hunting": the engine picks the creature and opens its fight; the same
+  // engine fight below settles it this turn (payEncounterXp pays by the creature's own level).
+  // A Gather pad / "I look for ore" resolves first; a guard ambush on it becomes the same hunt fight.
+  const hunt = startGatherFromInput(working, playerInput) ?? startHuntFromInput(working, playerInput);
+  if (hunt) {
+    working = hunt.state;
+    systemReceipts.push(...hunt.receipts);
+    if (hunt.fact) mandates.push(`ENGINE RESULT (required fact — state it plainly): ${hunt.fact}`);
+  }
+  const engineFight = resolveEngineFight(working, hunt?.fightInput ?? playerInput);
   if (engineFight || working.activeEncounter) {
     const tick = engineFight ?? tickEncounterTerminal(working, playerInput);
     working = tick.state;
@@ -837,6 +848,13 @@ export function runArcDirectorBeforeGm(
       working = stale.state;
       systemReceipts.push(...stale.receipts);
     }
+  }
+
+  // XP-D1 OPEN5 — a level-up (this fight or an earlier turn) lights up bag gear: one System line per item.
+  {
+    const gear = levelUpGearNotices(working);
+    working = gear.state;
+    systemReceipts.push(...gear.notices);
   }
 
   {

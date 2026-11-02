@@ -416,6 +416,7 @@ import {
   markEngineRecoveryCommit,
 } from './sealedManifest';
 import { playerInputGateBlock } from './choiceCompiler';
+import { equipFromInput } from './gearEquip';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
@@ -2251,6 +2252,30 @@ export function useGame() {
       stateRef.current = current;
     }
     if (!openingPending) {
+      // XP-D1 OPEN5 — typed "I put on / equip X": the level rule is checked first; too high = STATUS line, no turn.
+      const equip = equipFromInput(current, sanitizedInput);
+      if (equip?.blockedLine) {
+        const line = `Gear: ${equip.blockedLine}`;
+        const next: GameState = {
+          ...current,
+          log: [
+            ...current.log,
+            { id: uid(), turn: current.turn, role: 'system', content: line, timestamp: Date.now(), systemLog: [line] },
+          ],
+        };
+        stateRef.current = next;
+        setState(next);
+        void persist(next);
+        setRestoreDraft('');
+        addToast(line, 'info');
+        refundSpentTextTurn();
+        turnInFlightRef.current = false;
+        return;
+      }
+      if (equip?.ok) {
+        current = equip.state;
+        stateRef.current = current;
+      }
       const gate = playerInputGateBlock(current, sanitizedInput);
       if (gate.state !== current) {
         current = gate.state;

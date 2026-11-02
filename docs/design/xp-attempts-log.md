@@ -292,19 +292,19 @@ OpenRouter: no balance or $ cost figure in logs or run meta (`costUsd` null; tea
 Plain summary also at `merge-logs/xp-design/open3/T50-report.md`.
 
 
-### 2 Nov 2026 — LitRPG XP attempt 4 (plan) — fight reach + earning rate + filler offer cap
+### 2 Nov 2026 ï¿½ LitRPG XP attempt 4 (plan) ï¿½ fight reach + earning rate + filler offer cap
 
-**Found (open3 T50, build 2026-11-02b, seeds 7301–7304):**
-- Seek Fight offered **0** times in all four runs. OPEN3 gate !hasProgressPad blocks injection whenever any travel/quest/fight pad is present; quest-seeking (and most free-path turns) always have a progress pad, so drought never surfaces a fight chip. Wins stayed 1–2 per 50 turns; fight share avg **9.0%**.
-- Per-win pay ~20 XP (~11% of L2 bar) is fine *if* fights are reached; with 1–2 wins it cannot hit 15–30% share. Pace model used one XP event / 2.2 turns; live post-rite was ~one event / 8–10 turns — model optimistic ? projected 15–25 L2?L3 while live missed on 3/4.
+**Found (open3 T50, build 2026-11-02b, seeds 7301ï¿½7304):**
+- Seek Fight offered **0** times in all four runs. OPEN3 gate !hasProgressPad blocks injection whenever any travel/quest/fight pad is present; quest-seeking (and most free-path turns) always have a progress pad, so drought never surfaces a fight chip. Wins stayed 1ï¿½2 per 50 turns; fight share avg **9.0%**.
+- Per-win pay ~20 XP (~11% of L2 bar) is fine *if* fights are reached; with 1ï¿½2 wins it cannot hit 15ï¿½30% share. Pace model used one XP event / 2.2 turns; live post-rite was ~one event / 8ï¿½10 turns ï¿½ model optimistic ? projected 15ï¿½25 L2?L3 while live missed on 3/4.
 - Filler max same-state **2 / 3 / 3 / 11**. Seed 7304 label **"Read the signs of the report"** offered **11** times at the same cafe. OPEN3 illerBlockedFamilies only arms after a *dead take* of the search family; the player mostly picked Ask/Talk, so the label kept reappearing. progress=true on social turns also cleared the block. Scene key included raw XP (trivial tick risk). Verbs Study/Inspect stayed outside search family.
 
 **Will change (LitRPG engine only; rite untouched; tabletop/RPG/PYOA content untouched):**
-- Fix A: inject `Look for a fight` on drought (~every 8–12 turns) even when a progress pad is present — replace a filler/social slot, never the progress/stuck-exit Travel slot; never force violence; free text always answered. Slightly raise L2+ encounter units so engaged 4–6 wins land fight share near **20%** (band 15–30%); keep farm ladder + alt-win pay.
-- Fix B: do **not** flatten `unitsPerLevel` (gaps keep growing). Modest L2+ step/complete lift only if still needed after fight reach; calibrate pace model to **observed** open3 event rates (fight ~1/10 turns when engaged) so model?live gap is explained; assert non-decreasing turns-per-level L2?L3…L6?L7, L3?L4 and L4?L5 longer than L2?L3, L3 not within ~3 of L2.
-- Fix D: one owner — meaningful filler scene key (place/quest/fight/kit/level, **not** raw XP); offer-count cap =2 per label until meaningful change; expand filler verbs (Examine/Inspect/Study/Listen/Investigate/Loot); freed slot ? progress chip. Fixture replay of 7304 chip stream.
+- Fix A: inject `Look for a fight` on drought (~every 8ï¿½12 turns) even when a progress pad is present ï¿½ replace a filler/social slot, never the progress/stuck-exit Travel slot; never force violence; free text always answered. Slightly raise L2+ encounter units so engaged 4ï¿½6 wins land fight share near **20%** (band 15ï¿½30%); keep farm ladder + alt-win pay.
+- Fix B: do **not** flatten `unitsPerLevel` (gaps keep growing). Modest L2+ step/complete lift only if still needed after fight reach; calibrate pace model to **observed** open3 event rates (fight ~1/10 turns when engaged) so model?live gap is explained; assert non-decreasing turns-per-level L2?L3ï¿½L6?L7, L3?L4 and L4?L5 longer than L2?L3, L3 not within ~3 of L2.
+- Fix D: one owner ï¿½ meaningful filler scene key (place/quest/fight/kit/level, **not** raw XP); offer-count cap =2 per label until meaningful change; expand filler verbs (Examine/Inspect/Study/Listen/Investigate/Loot); freed slot ? progress chip. Fixture replay of 7304 chip stream.
 
-**Projected (pace model after retune, engaged):** L2@T2 (rite); L2?L3 **15–25**; quest share **60–70%** (tol 55–80%); fight share **15–30%** (aim ~20%); filler same-state offers =2. Live T50 still owed to the runner after this commit.
+**Projected (pace model after retune, engaged):** L2@T2 (rite); L2?L3 **15ï¿½25**; quest share **60ï¿½70%** (tol 55ï¿½80%); fight share **15ï¿½30%** (aim ~20%); filler same-state offers =2. Live T50 still owed to the runner after this commit.
 
 ### 2 Nov 2026 â€” LitRPG XP attempt 4 results (free path 4Ã—T50) â€” MISS
 
@@ -339,3 +339,30 @@ OpenRouter: no balance or $ cost figure in logs or run meta (`costUsd` null; tea
 
 Plain summary also at `merge-logs/xp-design/open4/T50-report.md`.
 
+
+
+### 2 Nov 2026 - LitRPG XP attempt 5 (wilds, world creatures, gathering, equip level, OPEN4 misses) (plan)
+
+Branch xp/wildlife (from main c0616d7a, OPEN4 shipped as 2026-11-02c). Order: merge-logs/xp-design/open5-wildlife/XPD1-OPEN5-order.md. Results are appended by the runner after the T50 runs; this entry is the plan and the root causes found before the T50.
+
+**Found - why Seek Fight / Hunt was never offered (OPEN4: 0 offers in 7301-7304).** Real finals loaded through the Fate chip path (committed fixtures src/__tests__/fixtures/xp-open4-chipstreams/): 7301 turnsSinceCombatReceipt 12, 7303 10, litrpg, opening complete, no pendingEncounter, no lastKill. The drought gate was true; two other gates dropped the chip downstream:
+1. src/game/choicePipeline.ts `threatChoiceWithoutSetup` (line 254, called from liveChips at 370 and 862): "Look for a fight" matched `\b(fight|attack|...)\b` with no threat in the story prose, so it was dropped as an invented threat right after rankChoices injected it. Fix: Seek Fight and Hunt pads are engine chips, exempt (lines 263-264).
+2. src/game/choiceCompiler.ts `compileChoices` journey early-return (line 641): on the road ("On the road between places", where 7301 and 7303 ended) it returned withJourneyPads(...) and never ran rankChoices, so neither Seek Fight nor Hunt could inject. Fix: run rankChoices on the journey pads, then the director chip policy.
+
+**Found - why the OPEN4 filler cap of 2 did not hold (3 / 5 / 4 / 7).** src/game/choiceRanking.ts creditFillerOffers / fillerOfferExhausted counted offers per label (actionKey). The compiler rotates labels inside one family ("Read the signs of the report / rumor / proof", "Search the area / scene for signs", "Read <person>", "Analyze <person>"), so every new label had its own fresh count of 0. Replaying the four real streams: one search family was offered on 7-10 pads in a row at the same scene. Fix (one owner, no second copy): the budget is also keyed by family (`fam:<actionFamily>`, FILLER_OFFER_CAP 2, lines 252-312); reaching the cap blocks the whole family via fillerBlockedFamilies until the scene key changes (place / quest stage / fight / new NPC met / kit / level; never raw XP). Hunt, Gather, Seek Fight, Check System and the free-input chips are never filler budget.
+
+**Will change (LitRPG engine; Story RPG gets Gather only; tabletop (dnd branch of rollLoot) and PYOA untouched):**
+- Hunt pad "Hunt the wildlife nearby" every outdoor turn after the opening rite (engineMode litrpg only, stock permitting, not indoors, not in a dungeon, not in a fight). It takes the least useful slot (dead filler, then idle loiter, then a social chip); never the quest-progress chip, Travel or Check System. Seek Fight hands over to it when a wilds is in reach; Seek Fight stays the rescue chip.
+- Gather pad "Gather herbs and resources nearby" where the region has resource nodes in stock (LitRPG + Story RPG). Typed "I look for ore", "gather some herbs", "I go mining" are never rejected. Trade XP only (Herbalism, Mining ride the named-skill record, settleSkillUse, soft cap 2L+3, WoW grey rule); 0 character XP. Guards still alive ambush with GUARD_AMBUSH_BASE 0.35 x share alive and open a normal Hunt fight; cleared guards open a 24 world-hour grace ("the area is quiet" once).
+- Region level bands and creature tables (src/data/creatureTables.ts, src/game/regionLevels.ts), wilds stock and respawn (src/game/wilds.ts, 1 unit / 6 world hours, nodes 1 unit / 8 hours), creature-level drops with itemLevel, hides on every skinnable kill.
+- WoW equip rule: itemLevel <= playerLevel + EQUIP_LEVEL_MARGIN (2), LitRPG + Story RPG only; one owner src/game/rules/equipLevel.ts (canEquipAtLevel / equipBlockReason); refusal is one STATUS line, no turn cost, input never rejected; unlevelled kit has no requirement; level-up names newly wearable bag items once (src/game/gearEquip.ts).
+
+**WoW sources (public, read 2 Nov 2026; cited in xpPace.ts comments):** S1 Mob experience (warcraft.wiki.gg/wiki/Mob_experience): base (5M)+45, +5%/level above (cap +4, red pays as +4), 1-(P-M)/ZD below, ZD table, gray level, elite x2, con colours. S2 Experience point (gray table). S3 Experience to level (bar shape; read-only comparison, our bars are NOT changed). S4 Skinning (leather tier follows mob level; skill-up colours; 2011 hotfix: gray never ranks). S5 Mining 1-300 (Copper 1, Tin 65, Iron 125, Mithril 175, Thorium 250). S6 Herbalism (Peacebloom/Silverleaf 1 ... Sungrass 230).
+
+**Kill XP:** killXp = sameLevelKill(P) x R(P,M) x (elite ? 2 : 1), R = [(45+5M)/(45+5P)] x diff; table creatures use their real level (levelSource 'table', no +/-3 clamp, no toughFoeScale stack); gray pays 0; per-event cap 60% of bar kept. Worked R: P2: M4 1.30, M6 1.64. P5: M3 0.51, M9 1.54. P10: M6 0.34, M14 1.45. P20: M16 0.55, M24 1.37. P30: M26 0.60, M34 1.32.
+
+**Budgets and constants:** WILDS_HUNT_BAR_SHARE 0.30 (regular), WILDS_CHALLENGE_BAR_SHARE 0.15 (M >= P+3, elite or rare), then CONTENT_SCALE_FLOOR 5% floor; gray 0; loot and resources never capped. Worst case from hunting 0.45 of a level, reached only by beating things well above you; quests stay the main road (>= 50% under max farming). EQUIP_LEVEL_MARGIN 2. NODE respawn 8h, wilds respawn 6h, CLEAR_MINE_GRACE_HOURS 24, GATHER_TIER_UNLOCK_RANKS 1/11/21/29/38/48. This supersedes entry 8's q69 character-XP-per-gather idea (gathering pays trade XP only).
+
+**Projected (same-level kill under our bars; xpPace, litrpg, skipEventCap):** L2 bar 187, kill 26 (7.2 kills/level, WoW 16); L5 363 / 32 (11.3, WoW 40); L10 1103 / 57 (19.4, WoW 80); L20 10257 / 393 (26.1, WoW 160); L30 95518 / 3662 (26.1, WoW 243). Regular cap per level: L2 56 XP, L5 108, L10 330. Challenge cap: L2 28, L5 54, L10 165. Never-hunts mix: reach (Seek Fight + Hunt chips actually shown) is what lifts fight share from 6.3% toward 15-25% and cuts quest share from 83.4% toward 60-75%; L2->L3 15-25 turns is a TARGET, not yet measured (T50 owed to the runner). Hunt-gather profile judged separately; quests stay >= 50% by the budgets.
+
+Not done in this slice (still owed): Leatherworking craft pad, Brew at camp, gather-quest turn-ins, a road-meeting test for the Hunt the animal pad (pad is wired, LitRPG only), pace-model re-fit tests (mixes a-d), world-coverage tests for generated atlases, grep-level equip-only-reader test.

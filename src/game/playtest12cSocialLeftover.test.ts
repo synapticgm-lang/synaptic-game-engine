@@ -82,7 +82,8 @@ describe('playtest12c — social leftover', () => {
       'Ask about the mission board',
     ]);
     expect(compiled.choices.some((c) => /buy the iron stamp/i.test(c))).toBe(false);
-    expect(compiled.choices.some((c) => /mission board/i.test(c))).toBe(true);
+    // OPEN5: on an outdoor LitRPG pad Hunt may take the social slot; the starve is what this test pins.
+    expect(compiled.choices.some((c) => /mission board|^Hunt the wildlife nearby$/i.test(c))).toBe(true);
     expect(compiled.notes.some((n) => /Purchase memory drop/i.test(n))).toBe(true);
   });
 
@@ -161,7 +162,7 @@ describe('playtest12c — social leftover', () => {
       'Ask about the mission board',
     ]);
     expect(hard.choices.some((c) => /attack nemi/i.test(c))).toBe(false);
-    expect(hard.choices.some((c) => /mission board/i.test(c))).toBe(true);
+    expect(hard.choices.some((c) => /mission board|^Hunt the wildlife nearby$/i.test(c))).toBe(true);
   });
 
   it('does not fire during unfinished covers', () => {

@@ -787,6 +787,21 @@ export interface ActiveEncounter {
   caught?: boolean;
   /** How many stand in this fight (a group road meeting's rolled headcount). Unset is one foe. */
   count?: number;
+  /**
+   * XP-D1 OPEN5 — where `level` came from. 'table' = a wilds creature's own level (WoW killScale pay);
+   * 'rolled' / unset = road / drought foe sized from the area (OPEN4 clamp pay).
+   */
+  levelSource?: 'table' | 'rolled';
+  /** OPEN5 — table creature flags (elite pays ×2; elite/rare are challenge kills). */
+  elite?: boolean;
+  rare?: boolean;
+  /** OPEN5 — wilds species id (creatureTables row) this foe was drawn from. */
+  speciesId?: string;
+  /** OPEN5 — table creature kind / hide / place stock, so the kill pays resources + spends stock. */
+  creatureKind?: 'beast' | 'humanoid' | 'undead' | 'monster';
+  skinnable?: boolean;
+  /** Place the stock unit was drawn from (takeWildsKill key); unset = no stock to spend. */
+  wildsPlace?: string;
 }
 /** 29y — a threat remembered at one place (the existing encounter, parked while no fight is live). */
 export interface PlaceThreat {
@@ -1210,6 +1225,43 @@ export interface GameState {
    * null = closed story (typical PYOA) — no continent atlas.
    */
   worldAtlas?: WorldAtlasState | null;
+  /**
+   * XP-D1 OPEN5 — per-region creature level band, seeded once (regionLevels.ensureRegionBands).
+   * Absent = treat as { low: 1, high: 3 }. AI never sets bands.
+   */
+  regionLevelBands?: Record<string, { regionId: string; low: number; high: number }>;
+  /**
+   * XP-D1 OPEN5 — per-region ore/herb tiers (regionLevels.ensureRegionResources).
+   * Absent = no gathering resources known. null tier = none of that kind in the region.
+   */
+  regionResourceProfiles?: Record<
+    string,
+    {
+      regionId: string;
+      oreTier: number | null;
+      herbTier: number | null;
+      richWeak: boolean;
+      oreId?: string;
+      herbId?: string;
+    }
+  >;
+  /** XP-D1 OPEN5 — wilds creature stock per place id (WildsStock shape, see game/wilds.ts). Absent = not seeded yet. */
+  wildsByPlace?: Record<string, any>;
+  /** XP-D1 OPEN5 — gatherable node stock per place id. Absent = not seeded yet. */
+  nodeStockByPlace?: Record<
+    string,
+    {
+      placeId: string;
+      nodes: Array<{ id: string; kind: 'ore' | 'herb'; tier: number; stock: number; maxStock: number }>;
+      lastRefillHour: number;
+    }
+  >;
+  /** XP-D1 OPEN5 — wilds hunt XP paid at the current player level (resets on level-up). Absent = nothing paid. */
+  wildsHuntLedger?: { playerLevel: number; regularPaid: number; challengePaid: number };
+  /** XP-D1 OPEN5 — one-shot plain notices for the next STATUS beat; consumers clear after showing. Absent = none. */
+  wildlifeNotices?: string[];
+  /** XP-D1 OPEN5 — player level the last "you can now wear X" sweep ran at. Absent = not seen yet. */
+  gearNoticeLevel?: number;
   /** 29u — crossing a mapped gap: HERE is the ground between two places until the last leg. */
   journey?: TravelJourney | null;
   /** Named stops per route (key from the two ends), made once on the first trip and saved. */
@@ -2597,7 +2649,15 @@ export const RARITY_COLORS: Record<Rarity, string> = {
   Epic: '#a855f7',
   Legendary: '#f59e0b',
 };
-export type ProfessionType = 'Blacksmithing' | 'Tailoring' | 'Enchanting' | 'Leatherworking' | 'Engineering';
+export type ProfessionType =
+  | 'Blacksmithing'
+  | 'Tailoring'
+  | 'Enchanting'
+  | 'Leatherworking'
+  | 'Engineering'
+  | 'Herbalism'
+  | 'Skinning'
+  | 'Mining';
 export interface ProfessionSkill {
   type: ProfessionType;
   level: number;

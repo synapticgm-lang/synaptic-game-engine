@@ -635,12 +635,19 @@ export function compileChoices(
   if (isJourneyUnderway(state) && !state.activeEncounter) {
     // T10DIR2 — road continuation chips (Walk on / Turn back / Travel toward) go through
     // the director plan (ping-pong / no-op / stall next-step), not a parallel producer.
+    // XP-D1 OPEN5 — still run rankChoices so drought Seek Fight / always-on Hunt inject
+    // (OPEN4 miss: journey early-return skipped rankChoices while turnsSinceCombat ≥ 8 on the road).
     const recent = (state.circling?.recentPlaces ?? []).map((p) => `Travel toward ${p}`);
-    const pads = applyDirectorChipPolicy(state, withJourneyPads(state, choices), {
+    const journeyPads = withJourneyPads(state, choices);
+    const ranked = rankChoices(state, journeyPads);
+    const pads = applyDirectorChipPolicy(state, ranked.choices, {
       recentChips: recent,
       inFight: false,
     });
-    return { choices: pads, notes: ['Journey pads: ground between places', 'Director chip policy'] };
+    return {
+      choices: pads,
+      notes: ['Journey pads: ground between places', ...ranked.notes, 'Director chip policy'],
+    };
   }
   const turn = state.turn;
   const intentText = (playerInput ?? lastPlayerLine(state)).trim();
