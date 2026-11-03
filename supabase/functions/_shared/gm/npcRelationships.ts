@@ -371,31 +371,17 @@ export function presentNpcNames(state: GameState): string[] {
   // present: refs while WORLD FACTS says nobody. Trust sceneFacts.present + location-here records;
   // seat() keeps present:true in sync with that list (SRD Medicine stabilize still sees seated allies).
   // Quiet-road CAST honesty: commitTravel + presentNpcRecords + npcNamesAt(UNDERWAY)=[].
-  // FOURSLOT6 — when sceneFacts.present is a non-empty occupancy lock, location-stamped memories
-  // alone do not seat Talk/Ask targets (8103 T35 Grash while only Elara was present).
-  const occupancyLock = (state.sceneFacts?.present ?? [])
-    .map((n) => String(n ?? '').trim())
-    .filter(Boolean);
-  const lockedHere = (name: string): boolean => {
-    if (!occupancyLock.length) return true;
-    const low = name.toLowerCase();
-    return occupancyLock.some((p) => {
-      const pl = p.toLowerCase();
-      return pl === low || pl.includes(low) || low.includes(pl);
-    });
-  };
-  for (const n of occupancyLock) add(n);
+  // FOURSLOT6 gateFix9 — occupancy lock for Talk/Ask chips lives in fourSlotPads /
+  // graphChoices only. presentNpcNames stays the lives-here scan (T10RC5 / ttRole clerk /
+  // High Chanter at Close); locking it here starved seated speakers and place roles.
+  for (const n of state.sceneFacts?.present ?? []) add(n);
   for (const m of state.npcMemories ?? []) {
     if (m.present !== true) continue;
     // Flag alone is not a seat — require the same place fact presentNpcRecords already uses.
     if (!m.location || npcPlacedElsewhere(state, m.npcName)) continue;
-    if (!lockedHere(m.npcName)) continue;
     add(m.npcName);
   }
-  for (const m of presentNpcRecords(state)) {
-    if (!lockedHere(m.npcName)) continue;
-    add(m.npcName, true);
-  }
+  for (const m of presentNpcRecords(state)) add(m.npcName, true);
   const names = [...out.values()];
   presentNpcNamesByState.set(state, names);
   return names;

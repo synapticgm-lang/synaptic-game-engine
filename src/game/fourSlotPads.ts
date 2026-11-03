@@ -41,7 +41,7 @@ import { isDying } from './tabletop/roundFight';
 import { firstFightChoiceSet } from './rules/firstFightChoice';
 import { isJourneyOnwardLine, isJourneyPad, isJourneyUnderway, journeyPads } from './travelJourney';
 import { parkedThreatHere } from './placeThreats';
-import { travelPadBlocked } from './padUniverse';
+import { excludedPadFamilies, isLeaveFamilyPad, isTravelPad, travelPadBlocked } from './padUniverse';
 
 /** Turns after a HERE change where Travel back to the place just left is dead (FOURSLOT3). */
 const ARRIVAL_BOUNCE_TURNS = 2;
@@ -126,8 +126,16 @@ export function shouldSkipFourSlot(state: GameState): boolean {
   if (isDying(state)) return true;
   const ff = firstFightChoiceSet(state);
   if (ff.active && ff.options.length) return true;
-  // FOURSLOT6 — journey / parked meeting / box / stat pads always run four-slot assemble
-  // (8101 T15–26 shorts + T11–12 longs). Walk on / Face may lead; refill + trim to 4.
+  // FOURSLOT6 — traveler road meetings (journey.encounter) still fill four slots. Only a drought
+  // foe parked as pendingEncounter / parkedThreat keeps the exclusive Walk on / Face list (s85).
+  // Hurt still reshapes so Rest can land.
+  if (isJourneyUnderway(state) && !liveFight(state) && journeyPads(state).length > 0) {
+    if (state.sceneFacts?.pendingEncounter || parkedThreatHere(state)) {
+      const hp = state.character?.hp ?? 0;
+      const max = state.character?.maxHp ?? 0;
+      if (!isHurtHp(hp, max)) return true;
+    }
+  }
   return false;
 }
 
@@ -296,6 +304,14 @@ export function isNoDevelopmentRecentTravel(state: GameState, label: string): bo
 export function isFourSlotLegal(state: GameState, label: string): boolean {
   const raw = tidy(label);
   if (!raw || isFreeInputChip(raw)) return false;
+  // 02i/02w — closed pad universe: never refill Travel/Leave after starve (assemble runs after seal).
+  // Talk/use/ask stay on authoritativeTalkSeats / other gates — sealed-cast talk starve must not
+  // wipe present Talk chips (FOURSLOT unit "Talk only when NPC is present").
+  {
+    const excluded = excludedPadFamilies(state);
+    if (excluded.has('travel') && isTravelPad(raw)) return false;
+    if (excluded.has('leave') && isLeaveFamilyPad(raw)) return false;
+  }
   const t = low(raw);
 
   // Travel to HERE is always dead (OPEN9 / FOURSLOT2 canonicalPlaceKey).

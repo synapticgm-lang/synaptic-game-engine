@@ -1585,8 +1585,9 @@ export function padChoicesToCount(
   // XP-D1 OPEN7 — hard filler family cap ≤2 at the END of every pad path (journey / affordance /
   // hand-built). Free text never blocked. Hunt / Gather / Seek / Check System / quest / Travel stay.
   cappedEnd = enforceFillerFamilyCap(cappedEnd, state);
-  // FOURSLOT6 — seal/universe filters run BEFORE the four-slot refill so a post-filter strip
-  // cannot leave a short pad (8101 journey shorts / 8103 T38 lone Seek).
+  // FOURSLOT6 — seal before assemble so a post-filter strip cannot leave a short pad
+  // (8101 journey shorts / 8103 T38 lone Seek). Assemble refill honors excluded families
+  // via isFourSlotLegal (02i/02w — never re-birth Travel/Leave after starve).
   cappedEnd = sealPadUniverse(cappedEnd, state, excluded);
   cappedEnd = assembleFourSlotPads(state, cappedEnd);
   return cappedEnd;
