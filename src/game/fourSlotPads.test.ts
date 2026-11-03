@@ -165,8 +165,10 @@ describe('FOURSLOT unit slots', () => {
     expect(pads.some((c) => isFourSlotLegal(state, c) && /rest/i.test(c))).toBe(true);
   });
 
-  it('journey underway: exclusive road pad skips four-slot reshape (Walk on kept)', () => {
+  it('journey underway: four-slot owns the road pad (Walk on kept; Rest when hurt)', () => {
+    // FOURSLOT2 — journey is no longer exclusive; hurt Rest must land on road pads.
     const state = base({
+      character: { ...base().character!, hp: 9, maxHp: 31 },
       journey: {
         from: 'Living Ink Atelier',
         to: 'Quill Dormitory',
@@ -174,17 +176,19 @@ describe('FOURSLOT unit slots', () => {
         legsTotal: 3,
         hoursPerLeg: 2,
         terrain: 'road',
+        ground: 'road',
         encounter: null,
         quietStretches: 0,
       } as GameState['journey'],
       currentLocation: 'On the road between Living Ink Atelier and Quill Dormitory',
       sceneFacts: { ...emptySceneFacts(12), indoor: false, present: [] },
     });
-    expect(shouldSkipFourSlot(state)).toBe(true);
+    expect(shouldSkipFourSlot(state)).toBe(false);
     const raw = ['Walk on', 'Turn back toward Living Ink Atelier', 'Hunt the wildlife nearby'];
     const pads = assembleFourSlotPads(state, raw);
-    expect(pads).toEqual(raw);
+    assertFour(state, pads);
     expect(pads).toContain('Walk on');
+    expect(pads.some((c) => /rest|make camp/i.test(c))).toBe(true);
   });
 
   it('no repeat same family+target+state as previous turn', () => {

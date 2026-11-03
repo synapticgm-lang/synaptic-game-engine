@@ -312,6 +312,8 @@ export function isCrowdFillerToken(token: string): boolean {
   // Plural occupancy chrome only. Singular "the handler" is a role speaker (opening cast /
   // chromeSpeechAnchor) — handlers? would wrongly clear the opener-cast listener.
   const bare = t.replace(/^(?:the|a|an)\s+/i, '').trim();
+  // LitRPG opening aggregate — never a seated speaker / present[] person (FOURSLOT2 Talk-absent).
+  if (/^people who pulled you$/i.test(bare) || /^people here$/i.test(bare)) return true;
   if (/^(bystanders|handlers|onlookers|watchers|crowd|people|voices)$/i.test(bare)) return true;
   if (/\b(?:bystanders|handlers|onlookers|watchers|crowd|people|voices)\b/i.test(t)) return true;
   return false;
@@ -327,13 +329,16 @@ export function speakablePresentPeople(present: string[] | undefined): string[] 
     .filter((n) => n.length >= 2 && !isCrowdFillerToken(n));
 }
 
-/** Talk / Ask / Answer / Follow-up chips aimed only at crowd occupancy ("the people here"). */
+/** Talk / Ask / Answer / Follow-up chips aimed only at crowd occupancy ("the people here" / pulled-you). */
 export function isCrowdOnlyTalkPad(label: string): boolean {
   const t = (label ?? '').replace(/\s+/g, ' ').trim();
   if (!t) return false;
   if (/^(?:talk to|answer|ask|follow up with)\s+the people here\b/i.test(t)) return true;
+  if (/^(?:talk to|answer|ask|follow up with)\s+the people who pulled you\b/i.test(t)) return true;
   if (/^ask the people here\b/i.test(t)) return true;
+  if (/^ask the people who pulled you\b/i.test(t)) return true;
   if (/^follow up with the people here\b/i.test(t)) return true;
+  if (/^follow up with the people who pulled you\b/i.test(t)) return true;
   return false;
 }
 

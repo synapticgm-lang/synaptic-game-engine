@@ -24,20 +24,20 @@ import {
   isFillerNoProgressChip,
   fillerOfferExhausted,
 } from './choiceRanking';
-import { barePlaceKey, isTravelDestHere } from './placeRegistry';
+import { isTravelDestHere } from './placeRegistry';
 import { travelChipTarget } from './questPlay';
-import { canOutdoorShortRest, isSafeHubRest } from './recoveryRules';
-import { OUTDOOR_REST_CHIP, isHurtHp, isOutdoorRestPad } from './rules/wildlifeConfig';
+import { canOutdoorShortRest, isSafeHubRest, TABLETOP_SHORT_REST_CHIP } from './recoveryRules';
+import { OUTDOOR_CAMP_CHIP, OUTDOOR_REST_CHIP, isHurtHp, isOutdoorRestPad } from './rules/wildlifeConfig';
 import { canAddMaterials } from './inventory';
 import { hasNodeStock } from './wilds';
 import { gatherModeOk, huntModeOk } from './wildlifeActions';
-import { speakablePresentPeople } from './chromeAuthority';
+import { isCrowdOnlyTalkPad, speakablePresentPeople } from './chromeAuthority';
 import { peopleHere } from './scenePresence';
 import { hubsForBibleId, outdoorHubTravelChoices } from './outdoorHubs';
 import { originPad } from './rules/rpgOrigin';
 import { isDying } from './tabletop/roundFight';
 import { firstFightChoiceSet } from './rules/firstFightChoice';
-import { isJourneyOnwardLine, isJourneyUnderway, journeyPads } from './travelJourney';
+import { isJourneyOnwardLine } from './travelJourney';
 import { parkedThreatHere } from './placeThreats';
 
 export type FourSlotId = 'push' | 'engage' | 'own' | 'back';
@@ -61,9 +61,8 @@ export function shouldSkipFourSlot(state: GameState): boolean {
   if (isDying(state)) return true;
   const ff = firstFightChoiceSet(state);
   if (ff.active && ff.options.length) return true;
-  // Road journey owns the pad (Walk on / Face / Turn back). Reshaping invents Look/Inspect
-  // and drops onward chips — same exclusive class as origin / first-fight.
-  if (isJourneyUnderway(state) && !liveFight(state) && journeyPads(state).length > 0) return true;
+  // FOURSLOT2 — journey / road pads go through four-slot assembly so hurt Rest lands
+  // (Walk on → push, Face → engage, Hunt/Gather → own, Rest/Turn back → back).
   return false;
 }
 
@@ -86,7 +85,8 @@ function talkTargetPresent(state: GameState, label: string): boolean {
   const t = low(label);
   const seated = peopleHere(state);
   const speakable = speakablePresentPeople(state.sceneFacts?.present);
-  if (/^talk to the people here\b/.test(t) || /^ask the people here\b/.test(t)) {
+  // Crowd / pulled-you aggregates need a real seated listener — never the aggregate token itself.
+  if (isCrowdOnlyTalkPad(label)) {
     return seated.length > 0 || speakable.length > 0;
   }
   const people = speakable.length ? speakable : seated;
@@ -133,16 +133,9 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
   if (!raw || isFreeInputChip(raw)) return false;
   const t = low(raw);
 
-  // Travel to HERE is always dead (OPEN8 chapel-watch / OPEN9 place key).
+  // Travel to HERE is always dead (OPEN9 / FOURSLOT2 canonicalPlaceKey).
   const dest = travelDestOf(raw);
-  if (dest) {
-    if (isTravelDestHere(state, dest)) return false;
-    const hereBare = barePlaceKey(state.currentLocation);
-    const destBare = barePlaceKey(dest);
-    if (hereBare && destBare && (hereBare === destBare || hereBare.includes(destBare) || destBare.includes(hereBare))) {
-      return false;
-    }
-  }
+  if (dest && isTravelDestHere(state, dest)) return false;
   if (/^travel\b/.test(t) && !dest) return false;
 
   // Attack with no creature.
@@ -170,10 +163,13 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
   if (isHuntChip(raw) && !huntModeOk(state)) return false;
 
   // Rest: need a legal rest path when this is a rest chip.
-  if (isOutdoorRestPad(raw) || /^rest\b/.test(t) || /^make camp\b/.test(t)) {
+  if (isOutdoorRestPad(raw) || /^rest\b/.test(t) || /^make camp\b/.test(t) || /^take a short rest\b/.test(t)) {
     if (liveFight(state)) return false;
     if (state.engineMode === 'litrpg' || state.engineMode === 'rpg') {
       if (!canOutdoorShortRest(state, raw) && !isSafeHubRest(state, raw)) return false;
+    } else if (state.engineMode === 'dnd') {
+      // Tabletop: short rest at a safe hub only (SRD); never invent outdoor bind-wounds.
+      if (!isSafeHubRest(state, raw)) return false;
     }
   }
 
@@ -329,6 +325,22 @@ function lastPlayerAction(state: GameState): string {
   return '';
 }
 
+/** Families of the last N player lines — used to keep same-family streak ≤2. */
+function recentPlayerFamilies(state: GameState, n: number): Set<string> {
+  const out: string[] = [];
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0 && out.length < n; i--) {
+    if (log[i]?.role !== 'player') continue;
+    const fam = actionFamily(String(log[i]!.content ?? ''));
+    if (fam) out.push(fam);
+  }
+  // Only starve a family when the last N picks were ALL that family (streak ≥ n).
+  if (out.length < n) return new Set();
+  const first = out[0]!;
+  if (out.every((f) => f === first)) return new Set([first]);
+  return new Set();
+}
+
 function uniquePush(out: string[], seen: Set<string>, label: string): void {
   const k = low(label);
   if (!k || seen.has(k)) return;
@@ -443,8 +455,17 @@ export function fourSlotFallback(
     const hp = state.character?.hp ?? 0;
     const max = state.character?.maxHp ?? 0;
     if (isHurtHp(hp, max) && !fight) {
-      const rest = tryLabel(OUTDOOR_REST_CHIP) ?? tryLabel('Rest', { requireCandidate: true });
+      const rest =
+        tryLabel(OUTDOOR_REST_CHIP)
+        ?? tryLabel(OUTDOOR_CAMP_CHIP)
+        ?? tryLabel(TABLETOP_SHORT_REST_CHIP)
+        ?? tryLabel('Rest', { requireCandidate: true });
       if (rest) return rest;
+      // No legal Rest here — step-back is the valid route to a safe spot (never Travel-HERE).
+      for (const hub of outdoorHubTravelChoices(state, 6)) {
+        const hit = tryLabel(hub);
+        if (hit) return hit;
+      }
     }
     for (const hub of outdoorHubTravelChoices(state, 6)) {
       const hit = tryLabel(hub);
@@ -491,10 +512,27 @@ export function assembleFourSlotPads(
   // Prefer story chip / rest when hurt even if not in candidates.
   const story = storyChip(state);
   if (story) consider(story);
-  if (isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0) && !liveFight(state)) {
+  const hurt = isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0) && !liveFight(state);
+  if (hurt) {
     consider(OUTDOOR_REST_CHIP);
+    consider(OUTDOOR_CAMP_CHIP);
+    if (state.engineMode === 'dnd') consider(TABLETOP_SHORT_REST_CHIP);
+    // Eat when a food item is held (inventory consistency — Eat consumes one).
+    const food = (state.inventory ?? []).find((it) =>
+      /\b(?:meal|ration|rations|bread|food|stew|meat|cake|hardtack)\b/i.test(it.name ?? '')
+      && (it.quantity ?? 1) > 0
+    );
+    if (food?.name) consider(`Eat ${food.name}`);
   }
   for (const hub of outdoorHubTravelChoices(state, 4)) consider(hub);
+  // Live fight: ensure all four combat meanings are candidates.
+  if (liveFight(state)) {
+    consider('Press the attack');
+    consider('Defend');
+    consider('Use something');
+    consider('Disengage');
+    consider('Try to flee');
+  }
 
   // Own slot: person skill Read/Analyze before Hunt (OCD stamps person:…:skill); Hunt before Gather.
   pools.own.sort((a, b) => {
@@ -524,12 +562,29 @@ export function assembleFourSlotPads(
       (story && low(story) === low(x) ? 0 : isJourneyOnwardLine(x) ? 0 : isFillerPad(x) ? 2 : 1);
     return score(a) - score(b);
   });
-  // Back: Travel / Leave before Wait filler.
+  // Back: when hurt, Rest/camp/eat before Travel; else Travel / Leave before Wait.
+  // FOURSLOT2 — also sink a family that already streaked ≥2 in the last player lines.
+  const recentFamilies = recentPlayerFamilies(state, 2);
   pools.back.sort((a, b) => {
-    const score = (x: string) =>
-      (/^travel\b/i.test(x) || /^leave\b/i.test(x) || isOutdoorRestPad(x) ? 0 : isFillerPad(x) ? 2 : 1);
-    return score(a) - score(b);
+    const score = (x: string) => {
+      if (hurt && (isOutdoorRestPad(x) || /^rest\b/i.test(x) || /^make camp\b/i.test(x) || /^eat\b/i.test(x) || /^take a short rest\b/i.test(x))) {
+        return -1;
+      }
+      if (/^travel\b/i.test(x) || /^leave\b/i.test(x) || isOutdoorRestPad(x)) return 0;
+      if (isFillerPad(x)) return 2;
+      return 1;
+    };
+    const famPenalty = (x: string) => (recentFamilies.has(actionFamily(x)) ? 3 : 0);
+    return score(a) + famPenalty(a) - (score(b) + famPenalty(b));
   });
+  // Push / engage / own: sink families already used twice in a row (max streak target ≤2).
+  for (const slot of ['push', 'engage', 'own'] as FourSlotId[]) {
+    pools[slot].sort((a, b) => {
+      const pa = recentFamilies.has(actionFamily(a)) ? 1 : 0;
+      const pb = recentFamilies.has(actionFamily(b)) ? 1 : 0;
+      return pa - pb;
+    });
+  }
 
   const seen = new Set<string>();
   const picked: string[] = [];

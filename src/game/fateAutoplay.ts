@@ -278,6 +278,7 @@ import { scrubFalseArrivalWhenHere } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { engineResultFact } from './engineResult';
 import { applyStoryRpgTurn, romanceAllowed, stepOriginCreation } from './storyRpgProgress';
+import { originPad } from './rules/rpgOrigin';
 import { applyTabletopQuestTurn } from './tabletopQuestProgress';
 import { isDying } from './tabletop/roundFight';
 import { roundCombatChips } from './tabletop/combatChips';
@@ -1484,8 +1485,9 @@ export async function headlessFateTurn(
   {
     const originStep = stepOriginCreation(state, playerInput);
     if (originStep) {
+      // FOURSLOT2 — snapshot the origin pad the player actually saw (not the post-settle scene pad).
+      const seenOriginPad = originPad(state) ?? offered;
       const nextState = commitOfferedTurn({ ...originStep.state, offeredPad: null });
-      const nextOffered = resolveOfferedChoices(nextState);
       const ended = Date.now();
       return {
         state: nextState,
@@ -1499,8 +1501,8 @@ export async function headlessFateTurn(
           personalityId: meta.personalityId,
           seed: meta.seed,
           fatePick,
-          offeredChoices: nextOffered,
-          offeredChoiceIds: nextOffered.map((_, i) => `choice-${nextState.turn}-${i}`),
+          offeredChoices: seenOriginPad,
+          offeredChoiceIds: seenOriginPad.map((_, i) => `choice-${nextState.turn}-${i}`),
           playerInput,
           gmText: originStep.receipts.join('\n'),
           systemLog: originStep.receipts,

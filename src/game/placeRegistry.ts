@@ -20,27 +20,75 @@ export function barePlaceKey(name: string | undefined | null): string {
 }
 
 /**
- * OPEN9 — true when Travel dest is the current place (aliases / articles / canon names).
+ * FOURSLOT2 — single owner for "is this the same place?" across ids / aliases / opening synthetics.
+ * Resolves place_* ids, "where this tale opens", hub aliases, and place-record aliases to one
+ * display name (prefer registry name). Null only when raw is empty.
+ */
+export function canonicalPlaceKey(state: GameState, raw: string | null | undefined): string {
+  const t = tidy(raw);
+  if (!t) return '';
+  // place_* id → registry name.
+  if (/^place_/i.test(t)) {
+    const byId = (state.places ?? []).find((p) => p.id === t || p.id.toLowerCase() === t.toLowerCase());
+    if (byId?.name) return barePlaceKey(byId.name);
+  }
+  // Opening synthetic ("where this tale opens" / its place_ id) → recorded opening / card place.
+  const bare = barePlaceKey(t);
+  if (
+    bare === 'where this tale opens'
+    || /^place_where-this-tale-opens$/i.test(t)
+    || bare === 'where-this-tale-opens'
+  ) {
+    const open =
+      tidy(state.circling?.openingPlace)
+      || tidy(state.openingEstablishment?.card?.place)
+      || tidy(state.openingEstablishment?.answers?.where)
+      || tidy(state.currentLocation);
+    if (open && !/^where this tale opens$/i.test(open) && !/^place_where-this-tale-opens$/i.test(open)) {
+      return barePlaceKey(canonicalTravelDest(state, open) ?? open);
+    }
+    if (open) return barePlaceKey(open);
+  }
+  const canon = canonicalTravelDest(state, t);
+  if (canon) return barePlaceKey(canon);
+  const hit = resolvePlace(state.places, t);
+  if (hit?.name) return barePlaceKey(hit.name);
+  return bare;
+}
+
+/**
+ * OPEN9 / FOURSLOT2 — true when Travel dest is the current place (aliases / ids / articles / canon).
  * Used at chip emission and when a stale Travel chip is picked.
+ *
+ * Position model: two labels are the same place when they share a canonicalPlaceKey or the same
+ * place-record id. A registered sub-area (Trash Cans…) with a different id from its parent
+ * (Dark Alley) is a real change of position — Travel between them stays legal. Substring
+ * includes only apply when neither side resolves to a distinct registered place id.
  */
 export function isTravelDestHere(state: GameState, dest: string | null | undefined): boolean {
   const d = tidy(dest);
   const here = tidy(state.currentLocation);
   if (!d || !here) return false;
+  const hereKey = canonicalPlaceKey(state, here);
+  const destKey = canonicalPlaceKey(state, d);
+  if (hereKey && destKey && hereKey === destKey) return true;
+
+  const hereRec = resolvePlace(state.places, here) ?? resolvePlace(state.places, hereKey);
+  const destRec = resolvePlace(state.places, d) ?? resolvePlace(state.places, destKey);
+  if (hereRec?.id && destRec?.id && hereRec.id === destRec.id) return true;
+  // Distinct registered places (parent vs sub-area) → not HERE.
+  if (hereRec?.id && destRec?.id && hereRec.id !== destRec.id) return false;
+
   const dBare = barePlaceKey(d);
   const hereBare = barePlaceKey(here);
-  if (dBare && hereBare && (dBare === hereBare || dBare.includes(hereBare) || hereBare.includes(dBare))) {
+  if (dBare && hereBare && dBare === hereBare) return true;
+  // Unregistered fallback: substring only when one side fully contains the other as a place phrase.
+  if (dBare && hereBare && (dBare.includes(hereBare) || hereBare.includes(dBare))) {
     return true;
   }
-  const hereCanon = barePlaceKey(canonicalTravelDest(state, here) ?? here);
-  const destCanon = barePlaceKey(canonicalTravelDest(state, d) ?? d);
-  if (destCanon && hereCanon && destCanon === hereCanon) return true;
-  if (destCanon && hereBare && destCanon === hereBare) return true;
-  if (dBare && hereCanon && dBare === hereCanon) return true;
   // Place-record aliases for HERE.
-  const place = resolvePlace(state.places, here) ?? resolvePlace(state.places, hereCanon || here);
-  for (const a of place?.aliases ?? []) {
-    if (barePlaceKey(a) === dBare || barePlaceKey(a) === destCanon) return true;
+  for (const a of hereRec?.aliases ?? []) {
+    if (barePlaceKey(a) === dBare || barePlaceKey(a) === destKey) return true;
   }
   return false;
 }
@@ -60,6 +108,27 @@ function isQuestPlaceDescription(t: string): boolean {
 export function canonicalTravelDest(state: GameState, raw: string | null | undefined): string | null {
   const t = tidy(raw);
   if (!t) return null;
+  // place_* id → registry display name (FOURSLOT2).
+  if (/^place_/i.test(t)) {
+    const byId = (state.places ?? []).find((p) => p.id === t || p.id.toLowerCase() === t.toLowerCase());
+    if (byId?.name) return byId.name;
+  }
+  if (/^where this tale opens$/i.test(t) || /^place_where-this-tale-opens$/i.test(t)) {
+    const open =
+      tidy(state.circling?.openingPlace)
+      || tidy(state.openingEstablishment?.card?.place)
+      || tidy(state.openingEstablishment?.answers?.where);
+    // Never recurse into another "where this tale opens" (hero-awakening / blank openers).
+    if (open && !/^where this tale opens$/i.test(open) && !/^place_where-this-tale-opens$/i.test(open)) {
+      const hubs = hubsForBibleId(state.campaignBibleId);
+      const hub = matchHub(hubs, open);
+      if (hub?.name) return hub.name;
+      const exact = resolvePlace(state.places, open);
+      if (exact?.name) return exact.name;
+      return open;
+    }
+    if (open) return open;
+  }
   const hubs = hubsForBibleId(state.campaignBibleId);
   const hub = matchHub(hubs, t);
   if (hub?.name) return hub.name;

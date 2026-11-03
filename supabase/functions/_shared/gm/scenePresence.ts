@@ -4,7 +4,7 @@
  * opening-cast presence) bind to one module without a circular import.
  */
 import type { GameState } from './types.ts';
-import { isChromePersonToken, isEmptyRoomPersonSlot } from './chromeAuthority.ts';
+import { isChromePersonToken, isCrowdFillerToken, isEmptyRoomPersonSlot } from './chromeAuthority.ts';
 import { isNeverCastTitle } from './neverCast.ts';
 import { presentNpcRecords } from './npcRecords.ts';
 import { presentNpcNames } from './npcRelationships.ts';
@@ -97,7 +97,16 @@ export function peopleHere(state: GameState): string[] {
     const name = norm(n);
     // T10RC5 — quest/place concept titles (System bounty) are never seated speakers.
     // T10Q5R — empty-room subjects (Nobody / no one) are never seated speakers.
-    if (!name || isChromePersonToken(name) || isEmptyRoomPersonSlot(name) || isNeverCastTitle(name, state)) return;
+    // FOURSLOT2 — crowd / "people who pulled you" aggregates are occupancy chrome, not seats.
+    if (
+      !name
+      || isChromePersonToken(name)
+      || isCrowdFillerToken(name)
+      || isEmptyRoomPersonSlot(name)
+      || isNeverCastTitle(name, state)
+    ) {
+      return;
+    }
     const key = personKey(name);
     if (!key) return;
     const prev = out.get(key);
