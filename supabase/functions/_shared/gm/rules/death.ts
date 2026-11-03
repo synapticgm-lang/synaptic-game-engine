@@ -15,6 +15,7 @@ import type { Rng } from './dice.ts';
 import { houseRulesOf } from './houseRules.ts';
 import { advanceClock } from '../travelJourney.ts';
 import { hubsForBibleId, matchHub } from '../outdoorHubs.ts';
+import { isHublessSettlementRestPlace } from '../recoveryRules.ts';
 import { isWeakened, recoveryConfig } from './recoveryConfig.ts';
 
 export type DeathCause = 'danger' | 'self';
@@ -77,7 +78,9 @@ export function lifelineFor(mode: EngineMode | undefined): string | undefined {
 /** Named hub with no live/pending fight and no open dungeon — same place gate as isSafeHubRest. */
 export function isSafeHubPlace(state: GameState): boolean {
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter || state.activeDungeon) return false;
-  return !!matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
+  if (matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation)) return true;
+  // FOURSLOT4 — hubless settlement places share the Rest gate (isSafeHubRest).
+  return isHublessSettlementRestPlace(state);
 }
 
 /** Stamp lastSafeHub when the player is at a safe hub place. */

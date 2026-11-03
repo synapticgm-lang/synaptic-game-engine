@@ -66,7 +66,13 @@ import {
 } from './choicePipeline';
 import { postFilterGmOutput } from './contentPostFilter';
 import { FREE_INPUT_DO, FREE_INPUT_SAY } from './sceneAffordances';
-import { pickFromFourSlots, shouldSkipFourSlot } from './fourSlotPads';
+import {
+  consecutiveTravelFamilyPicks,
+  isTravelFamilyChip,
+  pickFromFourSlots,
+  shouldSkipFourSlot,
+  TRAVEL_STREAK_CAP,
+} from './fourSlotPads';
 import { createDefaultSettings, createInitialState, fitKitToHousing } from './defaults';
 /** AI agent goal modes for guided autoplay. */
 export type AiAgentMode = 'default' | 'maxlevel' | 'storyfollower' | 'completionist';
@@ -1089,21 +1095,40 @@ export function preferHurtRecoveryPick(offered: string[], pick: string, state: G
   const maxHp = state.character?.maxHp ?? 0;
   if (!isHurtHp(hp, maxHp)) return pick;
   const pool = offered.length ? offered : [pick];
-  // OPEN7B — Leave the scene still outranks Rest (dead-crowd progress). OPEN9 Rest beats Hunt/Travel/Search.
-  const leave = pool.find((c) => /^leave(?:\s+the\s+scene)?\b/i.test(c));
-  if (leave) return leave;
+  // FOURSLOT4 — Rest at a safe/settlement spot outranks Leave/Travel (hubless Travel loop at HP 1).
+  // OPEN7B Leave-over-Rest only when no Rest chip is on the pad.
   const rest = pool.find(
     (c) =>
       isOutdoorRestPad(c)
-      || /\b(?:rest|make camp|bind (?:your|my) wounds|heal|vial|potion|drink|bandage|flee|run away|withdraw)\b/i.test(c)
+      || /^take a short rest\b/i.test(c)
+      || /\b(?:rest|make camp|bind (?:your|my) wounds|heal|vial|potion|drink|bandage)\b/i.test(c)
   );
   if (rest) return rest;
+  // FOURSLOT4 — after consecutive Travel/Leave, do not force another Leave/Travel while a lead exists.
+  const travelStreak = consecutiveTravelFamilyPicks(state);
+  if (travelStreak >= 1) {
+    const lead = pool.find(
+      (c) =>
+        !isTravelFamilyChip(c)
+        && !/^(?:say something|do something else)/i.test(c)
+        && !/\bflee|run away|withdraw\b/i.test(c)
+    );
+    if (lead) return lead;
+  }
+  if (travelStreak >= TRAVEL_STREAK_CAP) {
+    const anyNonTravel = pool.find((c) => !isTravelFamilyChip(c) && !/^(?:say something|do something else)/i.test(c));
+    if (anyNonTravel) return anyNonTravel;
+  }
+  const leave = pool.find((c) => /^leave(?:\s+the\s+scene)?\b/i.test(c));
+  if (leave && travelStreak < TRAVEL_STREAK_CAP) return leave;
+  const flee = pool.find((c) => /\bflee|run away|withdraw|disengage\b/i.test(c));
+  if (flee) return flee;
   const travel = pool.find(
     (c) =>
-      /^travel\b/i.test(c)
-      || /^walk (?:back|on|toward)\b/i.test(c)
-      || /^go back\b/i.test(c)
-      || isOutdoorRestPad(c)
+      (/^travel\b/i.test(c)
+        || /^walk (?:back|on|toward)\b/i.test(c)
+        || /^go back\b/i.test(c))
+      && travelStreak < TRAVEL_STREAK_CAP
   );
   if (travel) return travel;
   // OPEN7B — do not spin on crowd-only Talk/Ask when Leave/Honour/Search can move the run on.

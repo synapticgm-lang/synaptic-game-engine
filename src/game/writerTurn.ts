@@ -265,7 +265,11 @@ export function runWriterTurn(opts: {
   // OPEN8 — crowd/role Talk must show an answer or acknowledged absence.
   const seated = dropUnseatedSpeakerLines(check.state, spoken.prose);
   const prose = ensureCrowdOrRoleTalkAnswered(
-    dropPlayerActEchoOpening(seated, check.playerInput),
+    dropInventedPcSpeechOnNonTalk(
+      dropPlayerActEchoOpening(seated, check.playerInput),
+      check.playerInput,
+      check.state.character?.name,
+    ),
     check.state,
     check.playerInput,
   );
@@ -300,6 +304,46 @@ export function dropUnseatedSpeakerLines(state: GameState, prose: string): strin
       if (!new RegExp(`\\b${escRe(n)}\\b`, 'i').test(s)) continue;
       if (speech.test(s)) return false;
     }
+    return true;
+  });
+  const next = kept.join(' ').replace(/\s+/g, ' ').trim();
+  return next || text;
+}
+
+/**
+ * FOURSLOT4 / 7902 — Gather / Wait / Look / Travel must not invent PC quoted speech
+ * (`Jax said, "…"`) when the player did not talk. Deterministic strip; no new AI path.
+ */
+export function dropInventedPcSpeechOnNonTalk(
+  prose: string,
+  playerInput: string,
+  pcName?: string | null,
+): string {
+  const text = (prose ?? '').replace(/\s+/g, ' ').trim();
+  const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  if (!text || !act) return text;
+  // Talk / ask / say / answer / tell keep PC voice.
+  if (
+    /^(?:talk|ask|answer|say|tell|speak|shout|whisper|reply|respond|press|follow up)\b/i.test(act)
+    || /\bsaid\b/i.test(act)
+    || /["\u201c]/.test(act)
+  ) {
+    return text;
+  }
+  const first = ((pcName ?? '').trim().split(/\s+/)[0] ?? 'you').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const who = first.length >= 2 ? `(?:${first}|you)` : 'you';
+  // Drop sentences whose only job is inventing PC dialogue attribution.
+  const sentences = splitProseSentences(text);
+  if (sentences.length <= 1) {
+    return text
+      .replace(new RegExp(`\\b${who}\\s+said,\\s*["\\u201c][^"\\u201d]*["\\u201d]?`, 'gi'), '')
+      .replace(new RegExp(`["\\u201c][^"\\u201d]{2,}["\\u201d]\\s*,?\\s*${who}\\s+said\\.?`, 'gi'), '')
+      .replace(/\s+/g, ' ')
+      .trim() || text;
+  }
+  const kept = sentences.filter((s) => {
+    if (new RegExp(`\\b${who}\\s+said\\b`, 'i').test(s) && /["\u201c]/.test(s)) return false;
+    if (new RegExp(`["\\u201c][^"\\u201d]{2,}["\\u201d]\\s*,?\\s*${who}\\s+said\\b`, 'i').test(s)) return false;
     return true;
   });
   const next = kept.join(' ').replace(/\s+/g, ' ').trim();
@@ -435,7 +479,11 @@ export async function runWriterTurnWithFightRetry(opts: {
   {
     const seated = dropUnseatedSpeakerLines(opts.check.state, done.prose);
     const sealed = ensureCrowdOrRoleTalkAnswered(
-      dropPlayerActEchoOpening(seated, opts.check.playerInput),
+      dropInventedPcSpeechOnNonTalk(
+        dropPlayerActEchoOpening(seated, opts.check.playerInput),
+        opts.check.playerInput,
+        opts.check.state.character?.name,
+      ),
       opts.check.state,
       opts.check.playerInput,
     );
@@ -550,7 +598,11 @@ export function sealPostWriterProse(
   const seated = dropUnseatedSpeakerLines(state, spoken.prose);
   return {
     prose: ensureCrowdOrRoleTalkAnswered(
-      dropPlayerActEchoOpening(seated, playerInput),
+      dropInventedPcSpeechOnNonTalk(
+        dropPlayerActEchoOpening(seated, playerInput),
+        playerInput,
+        state.character?.name,
+      ),
       state,
       playerInput,
     ),

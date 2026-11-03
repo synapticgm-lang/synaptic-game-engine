@@ -104,13 +104,20 @@ describe('FOURSLOT autoplay', () => {
     ];
     const pick = pickFromFourSlots(state, offered, () => 0.1);
     expect(/rest/i.test(pick)).toBe(true);
-    // preferHurtRecoveryPick still honors Leave when present.
+    // FOURSLOT4 — Rest on the pad outranks Leave (hubless Travel loop at HP≤50%).
+    // Old OPEN7B Leave-over-Rest only when Rest is absent.
     const withLeave = preferHurtRecoveryPick(
       [...offered, 'Leave the scene'],
       pick,
       state
     );
-    expect(withLeave).toBe('Leave the scene');
+    expect(withLeave).toBe(OUTDOOR_REST_CHIP);
+    const leaveOnly = preferHurtRecoveryPick(
+      ['Hunt the wildlife nearby', 'Talk to Professor Lin', 'Leave the scene'],
+      'Hunt the wildlife nearby',
+      state
+    );
+    expect(leaveOnly).toBe('Leave the scene');
   });
 
   it('fixture loop streams reshape to 4 valid distinct slots; filler family ≤ 2', () => {

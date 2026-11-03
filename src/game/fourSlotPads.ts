@@ -45,6 +45,8 @@ import { travelPadBlocked } from './padUniverse';
 
 /** Turns after a HERE change where Travel back to the place just left is dead (FOURSLOT3). */
 const ARRIVAL_BOUNCE_TURNS = 2;
+/** FOURSLOT4 — after this many consecutive Travel/Leave picks, Travel is illegal (engine loop guard). */
+export const TRAVEL_STREAK_CAP = 2;
 
 export type FourSlotId = 'push' | 'engage' | 'own' | 'back';
 
@@ -58,6 +60,40 @@ function tidy(s: string): string {
 
 function low(s: string): string {
   return tidy(s).toLowerCase();
+}
+
+/** Travel / Leave / Walk-on family — harness + engine streak share this. */
+export function isTravelFamilyChip(label: string): boolean {
+  const t = low(label);
+  if (!t) return false;
+  if (/^leave(?:\s+the\s+scene)?$/.test(t)) return true;
+  if (/^(?:travel|head toward|go to|return to|walk (?:on|toward|back|away)|turn back|make for|set out)\b/.test(t)) {
+    return true;
+  }
+  return false;
+}
+
+/** Consecutive Travel/Leave player picks at the end of the log (FOURSLOT4 loop guard). */
+export function consecutiveTravelFamilyPicks(state: GameState): number {
+  const log = state.log ?? [];
+  let n = 0;
+  for (let i = log.length - 1; i >= 0; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    if (isTravelFamilyChip(e.content ?? '')) n += 1;
+    else break;
+  }
+  return n;
+}
+
+/** Last Travel arrived and circling has not recorded progress since that move. */
+export function recentTravelNoDevelopment(state: GameState): boolean {
+  const moved = state.circling?.movedTurn;
+  if (moved == null) return false;
+  const turn = state.turn ?? 0;
+  if (turn - moved > 4) return false;
+  const lastProgress = state.circling?.lastProgressTurn ?? 0;
+  return lastProgress < moved;
 }
 
 /** Exclusive pads that must not be reshaped into four slots. */
@@ -158,6 +194,20 @@ export function isImmediateBounceTravel(state: GameState, label: string): boolea
   return samePlaceLabel(dest, prev);
 }
 
+/**
+ * FOURSLOT4 — Travel to a place already in the recent triangle/pair with no development since
+ * arrival (Stillroot Inn ↔ Graveyard ↔ Peat Camp; Choked ↔ Moot). Flee during a fight stays valid.
+ */
+export function isNoDevelopmentRecentTravel(state: GameState, label: string): boolean {
+  const dest = travelDestOf(label);
+  if (!dest) return false;
+  if (liveFight(state)) return false;
+  if (!recentTravelNoDevelopment(state) && consecutiveTravelFamilyPicks(state) < 1) return false;
+  const recent = state.circling?.recentPlaces ?? [];
+  if (!recent.length) return false;
+  return recent.some((p) => samePlaceLabel(dest, p));
+}
+
 /** True when this chip would be a dead / illegal action right now. */
 export function isFourSlotLegal(state: GameState, label: string): boolean {
   const raw = tidy(label);
@@ -172,6 +222,17 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
   if (dest && travelPadBlocked(state)) return false;
   // FOURSLOT3 — Travel back to the place just left is not the immediate default.
   if (dest && isImmediateBounceTravel(state, raw)) return false;
+  // FOURSLOT4 — engine loop guard: after TRAVEL_STREAK_CAP Travel/Leave picks, starve Travel/Leave
+  // (flee during a live fight stays valid via travelPadBlocked branch above failing first).
+  if (
+    !liveFight(state)
+    && isTravelFamilyChip(raw)
+    && consecutiveTravelFamilyPicks(state) >= TRAVEL_STREAK_CAP
+  ) {
+    return false;
+  }
+  // FOURSLOT4 — no-development recent-place Travel (triangle / pair treadmill).
+  if (dest && isNoDevelopmentRecentTravel(state, raw)) return false;
   // Dead Travel: label names a place but does not move the player (storyChip opener / zero-gap).
   if (dest && /^travel\b/.test(t) && !wayOutMovesPlayer(state, raw)) return false;
   // Mid-journey: Travel toward the trip destination is a duplicate of Walk on.
@@ -621,6 +682,29 @@ export function assembleFourSlotPads(
     );
     if (food?.name) consider(`Eat ${food.name}`);
   }
+  // FOURSLOT4 — when Travel is streak-starved or arrival had no development, force a real lead
+  // into the pools (quest step / Talk / fight / Look) so slot 1 is never empty Travel.
+  if (
+    !liveFight(state)
+    && (consecutiveTravelFamilyPicks(state) >= 1 || recentTravelNoDevelopment(state))
+  ) {
+    if (story && !isTravelFamilyChip(story)) consider(story);
+    for (const p of peopleHere(state)) {
+      if (!p || isCrowdOnlyTalkPad(`Talk to ${p}`)) continue;
+      consider(`Talk to ${p}`);
+    }
+    if (creaturePresent(state)) {
+      consider('Press the attack');
+      consider('Fight the writhing roots');
+      consider('Face the threat');
+    }
+    consider('Look around');
+    consider('Search the area');
+    if (hurt) {
+      consider(TABLETOP_SHORT_REST_CHIP);
+      consider(OUTDOOR_REST_CHIP);
+    }
+  }
   for (const hub of outdoorHubTravelChoices(state, 4)) consider(hub);
   // Real exits (Contract Hall → Cathedral Undercroft) — never let a dead story Travel starve MOVE.
   for (const row of recordedTravelDestinations(state)) {
@@ -846,6 +930,7 @@ export function fourSlotAssignments(
 /**
  * Autoplay: pick only from the four slots. When HP ≤ 50% and no fight (or retreat allowed),
  * prefer the Step-back rest chip. Otherwise weighted across the four.
+ * FOURSLOT4 — cap consecutive Travel/Leave; prefer slot-1 Engage/push when Travel would loop.
  */
 export function pickFromFourSlots(
   state: GameState,
@@ -856,18 +941,41 @@ export function pickFromFourSlots(
   if (!slots.length) return offered[0] ?? 'Wait';
   const fight = liveFight(state);
   const hurt = isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0);
+  const travelStreak = consecutiveTravelFamilyPicks(state);
+  const nonTravel = slots.filter((c) => !isTravelFamilyChip(c));
+  // Engine + harness: after TRAVEL_STREAK_CAP Travel picks, never pick another Travel/Leave.
+  if (travelStreak >= TRAVEL_STREAK_CAP && nonTravel.length) {
+    return nonTravel[0]!;
+  }
   if (hurt && (!fight || slots.some((c) => /\bflee|disengage|withdraw\b/i.test(c)))) {
-    const rest = slots.find((c) => isOutdoorRestPad(c) || /^rest\b/i.test(c) || /^make camp\b/i.test(c));
+    const rest = slots.find(
+      (c) =>
+        isOutdoorRestPad(c)
+        || /^rest\b/i.test(c)
+        || /^make camp\b/i.test(c)
+        || /^take a short rest\b/i.test(c)
+    );
     if (rest) return rest;
-    const flee = slots.find((c) => /\bflee|disengage|withdraw|leave\b/i.test(c));
+    // FOURSLOT4 — after ≥1 Travel while hurt, prefer a real lead (Fight/Talk/quest) over Leave/Travel.
+    if (travelStreak >= 1 && nonTravel.length) {
+      return nonTravel[0]!;
+    }
+    const flee = slots.find((c) => /\bflee|disengage|withdraw\b/i.test(c));
     if (flee) return flee;
-    // Prefer the back slot (index 3) when present.
-    if (slots[3]) return slots[3]!;
+    // Prefer the back slot (index 3) when present — but not when it is Travel after a streak.
+    if (slots[3] && !(travelStreak >= 1 && isTravelFamilyChip(slots[3]!))) return slots[3]!;
+    if (nonTravel.length) return nonTravel[0]!;
   }
   // Weighted: push slightly preferred, then engage, own, back.
-  const weights = [4, 3, 2, 2];
+  // FOURSLOT4 — zero Travel weight once a Travel was just picked (lazy player stops travelling).
+  const weights = slots.map((c, i) => {
+    const base = [4, 3, 2, 2][i] ?? 1;
+    if (travelStreak >= 1 && isTravelFamilyChip(c)) return 0.15;
+    return base;
+  });
   let total = 0;
-  for (let i = 0; i < slots.length; i++) total += weights[i] ?? 1;
+  for (const w of weights) total += w;
+  if (!(total > 0)) return nonTravel[0] ?? slots[0]!;
   let roll = rng() * total;
   for (let i = 0; i < slots.length; i++) {
     roll -= weights[i] ?? 1;

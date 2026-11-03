@@ -57,9 +57,21 @@ function nameParts(label: string, record?: NpcMemory): string[] {
   return [...new Set([...full, ...stems])];
 }
 
+const ROLE_TITLE_TOKEN =
+  /^(?:innkeep|innkeeper|baroness|baron|sister|brother|father|mother|child|sergeant|captain|clerk|guard|priest|handler|keeper)$/i;
+
 const sameSpeaker = (a: string, b: string) => {
   const bare = (s: string) => s.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
-  return !!bare(a) && bare(a) === bare(b);
+  const x = bare(a);
+  const y = bare(b);
+  if (!x || !y) return false;
+  if (x === y) return true;
+  // FOURSLOT4 — Innkeep Mara ↔ the innkeep / innkeep (title+given vs role alone).
+  const xt = x.split(/\s+/);
+  const yt = y.split(/\s+/);
+  if (xt.length >= 2 && ROLE_TITLE_TOKEN.test(xt[0]!) && yt.length === 1 && xt[0] === yt[0]) return true;
+  if (yt.length >= 2 && ROLE_TITLE_TOKEN.test(yt[0]!) && xt.length === 1 && yt[0] === xt[0]) return true;
+  return false;
 };
 
 function speakersHere(state: GameState): Speaker[] {
@@ -74,13 +86,23 @@ function speakersHere(state: GameState): Speaker[] {
     if (isCrowdFillerToken(label) || !isCleanName(label)) return;
     const key = label.replace(/^(?:the|a|an)\s+/i, '').trim().toLowerCase();
     if (!key || seen.has(key)) return;
+    // Merge role-alone with title+given already seated (Innkeep Mara before the innkeep).
+    const prior = out.findIndex((s) => sameSpeaker(s.label, label));
+    if (prior >= 0) {
+      const cur = out[prior]!;
+      // Prefer the named form (Innkeep Mara) over article role (the innkeep).
+      const named =
+        !/^(?:the|a|an)\s+/i.test(label) && /^(?:the|a|an)\s+/i.test(cur.label) ? label : cur.label;
+      if (named !== cur.label) {
+        out[prior] = { label: named, record: cur.record ?? record, names: nameParts(named, cur.record ?? record) };
+      }
+      seen.add(key);
+      return;
+    }
     seen.add(key);
     const rec = record ?? resolveNpcRecord(state, label) ?? undefined;
-    const prefer =
-      /^(?:the|a|an)\s+/i.test(label)
-        ? label
-        : (state.sceneFacts?.present ?? []).find((x) => sameSpeaker(x, label) && /^(?:the|a|an)\s+/i.test(x)) ?? label;
-    out.push({ label: prefer, record: rec, names: nameParts(prefer, rec) });
+    // FOURSLOT4 — keep Title+Given (Innkeep Mara); do not downgrade to "the innkeep".
+    out.push({ label, record: rec, names: nameParts(label, rec) });
   };
   for (const p of peopleHere(state)) push(p);
   for (const role of state.sceneFacts?.anonymousRoles ?? []) {

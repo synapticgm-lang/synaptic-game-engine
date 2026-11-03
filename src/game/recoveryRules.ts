@@ -46,11 +46,32 @@ const REST_RE = /\b(rest|wait|sleep|catch (?:your|my) breath|take a breather|rec
 const OUTDOOR_SHORT_REST_RE =
   /\b(?:rest and bind your wounds|make camp|i bind my wounds|bind (?:your|my) wounds|catch (?:your|my) breath|take a breather|short rest|take a short rest)\b/i;
 
+/**
+ * Hubless tabletop bibles (Verdant Blight / Stillroot Veil / …) have no hub bank, but SRD
+ * short rest still needs a quiet settlement. Inn / moot / camp / shrine / etc. count when
+ * there is no fight or open dungeon — never graveyard / crypt / road alone.
+ */
+const HUBLESS_SETTLEMENT_RE =
+  /\b(?:inn|tavern|moot|waystation|station|village|town|camp|palisade|hall|keep|temple|chapel|shrine|market|plaza|square|cafe|harbour|harbor)\b/i;
+const HUBLESS_UNSAFE_RE = /\b(?:graveyard|crypt|catacomb|ruin|wilds|road|lane|path|ford|bridge)\b/i;
+
+export function isHublessSettlementRestPlace(state: GameState): boolean {
+  if (state.engineMode !== 'dnd') return false;
+  const hubs = hubsForBibleId(state.campaignBibleId);
+  if (hubs.length > 0) return false;
+  const here = (state.currentLocation ?? '').trim();
+  if (!here || !HUBLESS_SETTLEMENT_RE.test(here)) return false;
+  if (HUBLESS_UNSAFE_RE.test(here)) return false;
+  return true;
+}
+
 /** Rest / wait at a named hub with no live or pending fight and no open dungeon. */
 export function isSafeHubRest(state: GameState, input: string): boolean {
   if (!REST_RE.test(input ?? '')) return false;
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter || state.activeDungeon) return false;
-  return !!matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
+  if (matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation)) return true;
+  // FOURSLOT4 — hubless tabletop settlements still allow SRD short rest (Rest never offered → Travel loop).
+  return isHublessSettlementRestPlace(state);
 }
 
 /**

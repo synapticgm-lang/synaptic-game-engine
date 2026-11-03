@@ -15,6 +15,10 @@ import { isOutOfTalkingRange, TALKING_RANGE_FT } from './hereSpot.ts';
 const norm = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
 const low = (s: string | undefined | null) => norm(s).toLowerCase();
 
+/** Title tokens that prose may use alone for "Title Given" (Innkeep Mara → the innkeep). */
+const ROLE_TITLE_TOKEN =
+  /^(?:innkeep|innkeeper|baroness|baron|sister|brother|father|mother|child|sergeant|captain|clerk|guard|priest|handler|keeper)$/i;
+
 export function mentionsName(text: string, name: string): boolean {
   const hay = low(text);
   if (!hay) return false;
@@ -26,7 +30,13 @@ export function mentionsName(text: string, name: string): boolean {
   if (!tokens.length) return false;
   const hit = (t: string) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(hay);
   // Multi-token names need every content token ("Nemi Salt" ≠ "salt-burners" via Salt alone).
-  return tokens.length >= 2 ? tokens.every(hit) : hit(tokens[0]!);
+  if (tokens.length >= 2) {
+    if (tokens.every(hit)) return true;
+    // FOURSLOT4 — "Talk to Innkeep Mara" answered as "the innkeep" still counts (7903 T3/T5).
+    if (ROLE_TITLE_TOKEN.test(tokens[0]!)) return hit(tokens[0]!);
+    return false;
+  }
+  return hit(tokens[0]!);
 }
 
 const ROAD_PEOPLE_KINDS = new Set(['traveler', 'meeting', 'thugs', 'camp', 'villain']);
