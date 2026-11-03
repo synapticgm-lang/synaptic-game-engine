@@ -146,9 +146,9 @@ export function peopleHere(state: GameState): string[] {
   presentNpcNames(state).forEach(add);
   (state.companions ?? []).forEach((c) => add(c.name));
   add(state.activeEncounter?.name);
-  // FOURSLOT3 — first-fight / pending threat is here to hear Talk (gate parks them off activeEncounter).
+  // FOURSLOT3 — first-fight triad seats the foe for named Talk (gate parks them off activeEncounter).
+  // Arrival-clock pendingEncounter stays threat-line only (s75 O) — not a seat / person ref / fight pad.
   add(state.pendingFirstFight?.encounter?.name);
-  add(state.sceneFacts?.pendingEncounter?.name);
   // Namespace read so vitest openingCastNames mocks stay live (no stale named binding).
   // Opening cast stays at the card place (T10AI). True empty occupancy is crowdDepartedByRecord
   // above (drops cast). Empty-room chips strip cast via listenersOnEmptyText -- do not starve
