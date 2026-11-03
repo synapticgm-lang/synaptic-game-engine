@@ -21,6 +21,7 @@ import { gateChipProblem } from './skillGates';
 import { chipHandlesSystemWindow, chipRepeatsAction, placeSaysEmpty } from './chipRules';
 import { crowdHere } from './sceneFacts';
 import { isSystemStatusChip } from './systemHousing';
+import { isCheckSystemChip } from './systemNotice';
 import { tabletopStepChip } from './tabletopQuestProgress';
 import { hasOpenAsk } from './questGiver';
 import { affordanceEntityPresent } from './sceneAffordances';
@@ -319,6 +320,10 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   }
   const gate = gateChipProblem(state, label);
   if (gate) return { kind: 'impossible-chip', detail: gate };
+  // FOURSLOT3 — Check System / Check notices is the notice-inbox chrome (real action), not a scene object.
+  if (isCheckSystemChip(label) || isSystemStatusChip(label)) {
+    return null;
+  }
   // The quest step taken at its own place is an engine fact, even when the beat never named its object.
   if (/^(?:inspect|examine|check|search|study|read|open|investigate|take|pick up)\b/i.test(label)
     && low(label) !== low(tabletopStepChip(state))

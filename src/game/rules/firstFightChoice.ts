@@ -118,10 +118,14 @@ export function firstFightChoiceSet(state: GameState): FirstFightChoiceSet {
   }
   const limit = choiceCountLimitOf(state);
   const warning = pending.warning || FIRST_FIGHT_WARNING;
+  const foe = (pending.encounter.name ?? 'the threat').trim() || 'the threat';
+  // FOURSLOT3 — named Talk so presence + spoken-answer owners bind the pending foe (bare "Talk" missed).
+  const talk = `Talk to ${foe}`;
+  const options = [BACK_OFF_CHIP, talk, FIGHT_CHIP].slice(0, limit);
   return {
     active: true,
-    options: FIRST_FIGHT_OPTIONS.slice(0, limit),
-    facts: [warning, `Threat: ${pending.encounter.name}.`],
+    options,
+    facts: [warning, `Threat: ${foe}.`],
     warning,
     encounter: pending.encounter,
   };
@@ -139,6 +143,7 @@ export function mapFirstFightIntent(raw: string): FirstFightIntent | null {
   }
   if (
     t === FIRST_FIGHT_TALK_CHIP.toLowerCase()
+    || /^talk to\b/.test(t)
     || /^(?:talk|speak|parley|negotiate|call out|greet|ask)\b/.test(t)
   ) {
     return 'talk';
@@ -221,16 +226,21 @@ export function resolveFirstFightChoice(state: GameState, raw: string): FirstFig
   }
   // Talk: seat the foe for the normal talk path; do not start the fight.
   // T10SM1 — present[] only via presentAuthority.seat.
+  // FOURSLOT3 — spoken quote so checkActionFollowed / ensureSpokenAnswer see an answer.
   const cleared = applyPresenceFacts(state, { pendingEncounter: undefined });
+  const foe = (enc.name ?? 'the threat').trim() || 'the threat';
   return {
     state: {
-      ...seat(cleared, enc.name),
+      ...seat(cleared, foe),
       firstFightGateDone: true,
       pendingFirstFight: null,
       activeEncounter: null,
     },
     handled: true,
-    receipts: [`You try to talk with ${enc.name}.`],
-    facts: [`You speak instead of drawing steel. ${enc.name} is still here.`],
+    receipts: [`You try to talk with ${foe}.`],
+    facts: [
+      `You speak instead of drawing steel. ${foe} is still here.`,
+      `${foe} answers you. "Hold — we can talk before this gets worse."`,
+    ],
   };
 }

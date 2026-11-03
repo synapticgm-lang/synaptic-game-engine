@@ -108,7 +108,11 @@ describe('T10TABFIGHT first-fight triad', () => {
     const set = firstFightChoiceSet(gated);
     expect(set.active).toBe(true);
     expect(set.warning).toBe(FIRST_FIGHT_WARNING);
-    expect(set.options).toEqual([...FIRST_FIGHT_OPTIONS]);
+    // FOURSLOT3 — Talk is named to the pending foe (presence + spoken-answer bind).
+    expect(set.options[0]).toBe(BACK_OFF_CHIP);
+    expect(set.options[1]).toMatch(/^Talk to /i);
+    expect(set.options[2]).toBe(FIGHT_CHIP);
+    expect(set.options.length).toBe(FIRST_FIGHT_OPTIONS.length);
     expect(set.options.length).toBeLessThanOrEqual(choiceCountLimitOf(gated));
     const chips = engineChips(gated).map((c) => c.label);
     expect(chips).toEqual(set.options);
@@ -139,9 +143,11 @@ describe('T10TABFIGHT first-fight triad', () => {
     const backed = resolveFirstFightChoice(gated, BACK_OFF_CHIP);
     expect(backed.state.activeEncounter).toBeNull();
     expect(backed.state.sceneFacts?.pendingEncounter).toBeUndefined();
-    const talked = resolveFirstFightChoice(gated, FIRST_FIGHT_TALK_CHIP);
+    const talkChip = firstFightChoiceSet(gated).options.find((o) => /^Talk to /i.test(o)) ?? FIRST_FIGHT_TALK_CHIP;
+    const talked = resolveFirstFightChoice(gated, talkChip);
     expect(talked.state.activeEncounter).toBeNull();
     expect(talked.state.sceneFacts?.present?.some((n) => n.toLowerCase() === softName.toLowerCase())).toBe(true);
+    expect(talked.facts.some((f) => /answers you/i.test(f))).toBe(true);
   });
 
   it('weaker first foe: Wilds Stalker softens into Easy/Medium SRD CR (≤ Moderate 75 XP)', () => {

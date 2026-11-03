@@ -41,6 +41,10 @@ import { isDying } from './tabletop/roundFight';
 import { firstFightChoiceSet } from './rules/firstFightChoice';
 import { isJourneyOnwardLine, isJourneyPad, isJourneyUnderway, journeyPads } from './travelJourney';
 import { parkedThreatHere } from './placeThreats';
+import { travelPadBlocked } from './padUniverse';
+
+/** Turns after a HERE change where Travel back to the place just left is dead (FOURSLOT3). */
+const ARRIVAL_BOUNCE_TURNS = 2;
 
 export type FourSlotId = 'push' | 'engage' | 'own' | 'back';
 
@@ -134,6 +138,26 @@ function travelDestOf(label: string): string | null {
   );
 }
 
+function samePlaceLabel(a: string, b: string): boolean {
+  const x = barePlaceKey(a);
+  const y = barePlaceKey(b);
+  if (!x || !y) return false;
+  return x === y || x.includes(y) || y.includes(x);
+}
+
+/** Just arrived (or mid-arrival window): Travel back to the place we left is a bounce loop. */
+export function isImmediateBounceTravel(state: GameState, label: string): boolean {
+  const dest = travelDestOf(label);
+  if (!dest) return false;
+  if (liveFight(state)) return false; // flee stays valid while the fight blocks ordinary Travel elsewhere
+  const movedTurn = state.circling?.movedTurn;
+  if (movedTurn == null) return false;
+  if ((state.turn ?? 0) - movedTurn > ARRIVAL_BOUNCE_TURNS) return false;
+  const prev = (state.circling?.prevPlace ?? state.previousLocationSheet?.name ?? '').trim();
+  if (!prev) return false;
+  return samePlaceLabel(dest, prev);
+}
+
 /** True when this chip would be a dead / illegal action right now. */
 export function isFourSlotLegal(state: GameState, label: string): boolean {
   const raw = tidy(label);
@@ -144,6 +168,10 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
   const dest = travelDestOf(raw);
   if (dest && isTravelDestHere(state, dest)) return false;
   if (/^travel\b/.test(t) && !dest) return false;
+  // FOURSLOT3 — never offer Travel while fight / dying blocks travel (T37 travel-blocked).
+  if (dest && travelPadBlocked(state)) return false;
+  // FOURSLOT3 — Travel back to the place just left is not the immediate default.
+  if (dest && isImmediateBounceTravel(state, raw)) return false;
   // Dead Travel: label names a place but does not move the player (storyChip opener / zero-gap).
   if (dest && /^travel\b/.test(t) && !wayOutMovesPlayer(state, raw)) return false;
   // Mid-journey: Travel toward the trip destination is a duplicate of Walk on.
@@ -227,8 +255,18 @@ export function isFourSlotRepeat(
   const prev = tidy(previousPlayerAction);
   if (!prev) return false;
   const a = tidy(label);
-  if (low(a) === low(prev)) return true;
+  if (low(a) === low(prev)) {
+    // Live fight: Attack / Defend / Use / Disengage may repeat every round (FOURSLOT3 T37).
+    if (liveFight(state) && /^(?:attack|press the attack|strike|defend|use|disengage|flee|try to flee)\b/i.test(a)) {
+      return false;
+    }
+    return true;
+  }
   if (actionFamily(a) !== actionFamily(prev)) return false;
+  // Live fight combat family is not a "repeat" that starves Attack out of push.
+  if (liveFight(state) && /^(?:attack|press the attack|strike|defend|use|disengage|flee|try to flee)\b/i.test(a)) {
+    return false;
+  }
   const destA = travelDestOf(a);
   const destB = travelDestOf(prev);
   if (destA || destB) return low(destA ?? '') === low(destB ?? '');
@@ -261,6 +299,8 @@ export function classifyFourSlot(state: GameState, label: string): FourSlotId | 
   const town = !fight && inSettlement(state);
 
   if (fight) {
+    // Travel toward a place is illegal while travelPadBlocked; never classify as fight push.
+    if (/^(?:travel|head toward|go to|return to)\b/.test(t)) return 'back';
     if (/\b(?:flee|disengage|withdraw|run away|retreat|back off|leave the fight)\b/.test(t)) return 'back';
     if (/\b(?:defend|help|protect|aid|cover|stabilis|guard)\b/.test(t)) return 'engage';
     if (
@@ -275,6 +315,16 @@ export function classifyFourSlot(state: GameState, label: string): FourSlotId | 
 
   // Journey onward is push-the-story, not step-back.
   if (isJourneyOnwardLine(raw)) return 'push';
+
+  // FOURSLOT3 — right after arrival, Travel is never the push lead (development/engage owns slot 1),
+  // even when storyChip is Travel-toward-quest-site (7803 bounce / cursed-keep arrival).
+  const justArrived =
+    !fight
+    && state.circling?.movedTurn != null
+    && (state.turn ?? 0) - state.circling.movedTurn <= ARRIVAL_BOUNCE_TURNS;
+  if (justArrived && /^(?:travel|head toward|go to|return to)\b/.test(t) && wayOutMovesPlayer(state, raw)) {
+    return 'back';
+  }
 
   const story = storyChip(state);
   if (story && low(story) === t) return 'push';

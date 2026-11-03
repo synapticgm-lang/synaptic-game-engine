@@ -3321,8 +3321,11 @@ export async function runFateAutoplay(opts: {
   const issueTurns = turns
     .filter((t) => t.error || t.failKind)
     .map((t) => ({ turn: t.turn, error: t.error, failKind: t.failKind }));
+  // FOURSLOT3 — do not count foe "went down" / "defeated X" victories as player deaths.
   const deathCount = turns.filter((t) =>
-    (t.systemLog ?? []).some((l) => /Fight:\s*DEFEAT|lifeline|went down|you were defeated/i.test(String(l)))
+    (t.systemLog ?? []).some((l) =>
+      /Fight:\s*DEFEAT|\b[Ll]ifeline:|you were defeated|went down, and the fight was lost/i.test(String(l))
+    )
   ).length;
   const summary: RunSummary = {
     runId,

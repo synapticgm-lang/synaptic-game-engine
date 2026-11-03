@@ -32,6 +32,7 @@ import { travelEngineChip } from './rules/travelDay';
 import { forwardThreadAffordance, isPlaceOpenForExit, npcChipWant, stallPressureActive } from './openThreads';
 import { isDying } from './tabletop/roundFight';
 import { originPad } from './rules/rpgOrigin';
+import { firstFightChoiceSet } from './rules/firstFightChoice';
 import { travelPadBlocked } from './padUniverse';
 import {
   capFightChips,
@@ -972,6 +973,41 @@ export function applyOptionCooldown<T extends OptionCooldownChip>(state: GameSta
       if (want.has(low)) kept.push({ ...chip, cooldownReturn: undefined });
     }
     return kept;
+  }
+  // FOURSLOT3 — first-fight triad owns the pad (Back off / Talk / Fight). Empty MOVE must not
+  // prepend Travel and starve Fight under choiceCountLimit (7803 T33).
+  {
+    const ff = firstFightChoiceSet(state);
+    if (ff.active && ff.options.length) {
+      const want = new Set(ff.options.map((o) => o.trim().toLowerCase()));
+      const kept: T[] = [];
+      for (let i = 0; i < pad.length; i++) {
+        const chip = pad[i]!;
+        const low = (chip.label ?? '').trim().toLowerCase();
+        const id = chip.actionId ?? '';
+        if (want.has(low) || id.startsWith('first-fight:')) {
+          kept.push({ ...chip, cooldownReturn: undefined });
+        }
+      }
+      // Mid-journey: keep journey continue/turn-back beside the triad (TRAINLOOP2).
+      const encPeek = state.activeEncounter;
+      const fightPeek =
+        !!encPeek && (encPeek.hp ?? 0) > 0 && encPeek.phase !== 'pending' && encPeek.phase !== 'terminal';
+      if (isJourneyUnderway(state) && !fightPeek) {
+        for (let i = 0; i < pad.length; i++) {
+          const chip = pad[i]!;
+          if (kept.includes(chip)) continue;
+          if (
+            chip.kind === 'journey'
+            || isJourneyPad(state, chip.label)
+            || !!travelEngineChip(chip.label)
+          ) {
+            kept.push({ ...chip, cooldownReturn: undefined });
+          }
+        }
+      }
+      return kept.length ? kept : pad;
+    }
   }
   // q75r: one availability source — fight / road lane / dying already covered by travelPadBlocked.
   const noTravel = travelPadBlocked(state);

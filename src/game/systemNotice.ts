@@ -92,6 +92,12 @@ export function checkSystemChipLabel(engineMode: EngineMode | undefined, unread:
   return unread > 0 ? `${base} (${unread})` : base;
 }
 
+/** LitRPG / Story RPG notice-inbox chip (not a scene object — FOURSLOT3 unrelated-chip exempt). */
+export function isCheckSystemChip(label: string | null | undefined): boolean {
+  const t = (label ?? '').replace(/\s+/g, ' ').trim();
+  return /^(?:check system|check notices)(?:\s*\(\d+\))?$/i.test(t);
+}
+
 /** Presented notification lines from a turn's STATUS (display derivation only). */
 export function deriveSystemNotifications(
   lines: string[],
