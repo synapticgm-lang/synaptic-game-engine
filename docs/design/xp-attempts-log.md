@@ -699,3 +699,28 @@ OpenRouter: no balance / `$` / nonzero `cost` in logs or run meta (`cost` null) 
 **Next attempt (one line):** Keep four chips on LitRPG arrival/journey pads; force prose to name Travel dest + answer offered innkeep/witness Talk; cap tavern Look/Wait/Read filler at 2.
 
 Plain summary also at `merge-logs/fourslot4/T50-report.md`.
+
+### 3 Nov 2026 — FOURSLOT5 tabletop travel-loop root-fix sample — MISS (travel loop + filler held)
+
+**Why:** FOURSLOT5 root-fixed FOURSLOT4 leftovers (LitRPG journey four-slot fill, dungeon-card floor-plan checker FP, RPG travel dest re-stamp, Talk silence→quote, hurt Rest force-in, tabletop filler streak cap 2 — see `merge-logs/fourslot5/FOURSLOT5-report.md`). This entry is the post-ship free-path measure only (no XP formula change; tabletop SRD untouched).
+
+**Build / worlds (single sample each):** stamp **`2026-11-03d+fb165ca4`**, branch `feat/fourslot5`.
+- 8101 random gatebreak-ward (LitRPG): `…T11-19-28-138Z_gatebreak-ward_cold-system_s8101`
+- 8102 random rainglass-case (Story RPG): `…T11-24-03-520Z_rainglass-case_chilled-gm_s8102`
+- 8103 broken-crown-keep (tabletop; rundir `none`): `…T11-29-29-242Z_broken-crown-keep_chilled-gm_s8103`
+
+| Run | Turns | LOOP | Travel→HERE | Hurt w/o Rest | Chips=4 | Deaths h/real | P0 | L2 / L3 | Quest% / Fight% | Slots |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 8101 | 50/50 | no | 0/0 | 0 (never ≤50%) | 38 (10 short + 2 long) | 0/0 | **0** | **2** / — | **73.8** / **23.8** | MISS |
+| 8102 | 50/50 | no | 0/0 | **5** (T16–17,24–26); Rest×5 | 49 (+origin 5) | 1/1 @T14 | 1 | **17** / — | **81.7** / **18.3** | PASS |
+| 8103 | 50/50 | **no** | 0/0 | 0 | 39 (11 short; T38 n=1) | 0/0 | 1 | — / — | n/a (SRD 25) | MISS |
+
+XP from `turns.jsonl` `XP Gained:` reasons (quest = rite+steps+completes+First Steps; fight = defeated/fight achievements). LitRPG end L2 **170/187**; RPG end L2 **68/187**. Tabletop Travel streak **0**; filler consecutive max **2** (was 5 on 8003); no LOOP/crash. FOURSLOT4 miss status: floor-plan P0 **fixed**; travel-prose **fixed**; innkeep never-came **fixed**; filler **fixed**; LitRPG shorts **still present**; RPG hurt-without-Rest **still present**. New stuck: 8103 T38 1-chip Look-for-a-fight; 8103 T34–35 Talk absent Grash.
+
+OpenRouter: no balance / `$` / nonzero `cost` in logs or run meta (`cost` null) at 2026-11-03T11:19–11:32Z.
+
+**Verdict: MISS** — travel-loop + filler + travel-prose + floor-plan **PASS**; offs = LitRPG short/long pads, RPG hurt Rest gaps, tabletop short pads / family streak 3.
+
+**Next attempt (one line):** Keep four chips after Choice Filter on LitRPG journey/box pads and tabletop talk pads; force Rest onto every hurt non-fight pad; starve Talk for absent Grash-style roles.
+
+Plain summary also at `merge-logs/fourslot5/T50-report.md`.
