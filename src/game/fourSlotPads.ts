@@ -47,6 +47,26 @@ import { travelPadBlocked } from './padUniverse';
 const ARRIVAL_BOUNCE_TURNS = 2;
 /** FOURSLOT4 — after this many consecutive Travel/Leave picks, Travel is illegal (engine loop guard). */
 export const TRAVEL_STREAK_CAP = 2;
+/** FOURSLOT5 — Look/Wait/Read/Inspect/Search filler streak cap (tabletop tavern loiter). */
+export const FILLER_STREAK_CAP = 2;
+
+function isFillerFamilyChip(label: string): boolean {
+  const fam = actionFamily(label);
+  return fam === 'look' || fam === 'wait' || fam === 'inspect' || fam === 'search' || fam === 'use';
+}
+
+/** Consecutive Look/Wait/Read/Inspect/Search player picks at the end of the log. */
+export function consecutiveFillerFamilyPicks(state: GameState): number {
+  const log = state.log ?? [];
+  let n = 0;
+  for (let i = log.length - 1; i >= 0; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    if (isFillerFamilyChip(e.content ?? '')) n += 1;
+    else break;
+  }
+  return n;
+}
 
 export type FourSlotId = 'push' | 'engage' | 'own' | 'back';
 
@@ -103,13 +123,9 @@ export function shouldSkipFourSlot(state: GameState): boolean {
   if (isDying(state)) return true;
   const ff = firstFightChoiceSet(state);
   if (ff.active && ff.options.length) return true;
-  // Road journey owns Walk on / Face / Turn back. Reshape only when hurt so Rest can land
-  // (FOURSLOT2); otherwise keep the exclusive road list (gateFix9 / s85 / transitStuck).
-  if (isJourneyUnderway(state) && !liveFight(state) && journeyPads(state).length > 0) {
-    const hp = state.character?.hp ?? 0;
-    const max = state.character?.maxHp ?? 0;
-    if (!isHurtHp(hp, max)) return true;
-  }
+  // FOURSLOT5 — journey / arrival / box / stat pads LEAD with their own chip but must still
+  // fill four legal slots (Walk on first, then engage/own/back). Only origin / dying /
+  // first-fight stay truly exclusive (forced state machines).
   return false;
 }
 
@@ -298,6 +314,12 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
     && isFillerNoProgressChip(raw)
     && fillerOfferExhausted(state, raw)
   ) {
+    return false;
+  }
+
+  // FOURSLOT5 — after FILLER_STREAK_CAP Look/Wait/Read picks, starve filler so slot 1 must be a
+  // real lead (all modes, including tabletop tavern loiter).
+  if (isFillerFamilyChip(raw) && consecutiveFillerFamilyPicks(state) >= FILLER_STREAK_CAP) {
     return false;
   }
 
@@ -684,11 +706,15 @@ export function assembleFourSlotPads(
   }
   // FOURSLOT4 — when Travel is streak-starved or arrival had no development, force a real lead
   // into the pools (quest step / Talk / fight / Look) so slot 1 is never empty Travel.
+  // FOURSLOT5 — same when filler streak is at the cap (tavern Look/Wait/Read loop).
+  const fillerStreak = consecutiveFillerFamilyPicks(state);
   if (
     !liveFight(state)
-    && (consecutiveTravelFamilyPicks(state) >= 1 || recentTravelNoDevelopment(state))
+    && (consecutiveTravelFamilyPicks(state) >= 1
+      || recentTravelNoDevelopment(state)
+      || fillerStreak >= FILLER_STREAK_CAP)
   ) {
-    if (story && !isTravelFamilyChip(story)) consider(story);
+    if (story && !isTravelFamilyChip(story) && !isFillerFamilyChip(story)) consider(story);
     for (const p of peopleHere(state)) {
       if (!p || isCrowdOnlyTalkPad(`Talk to ${p}`)) continue;
       consider(`Talk to ${p}`);
@@ -698,8 +724,16 @@ export function assembleFourSlotPads(
       consider('Fight the writhing roots');
       consider('Face the threat');
     }
-    consider('Look around');
-    consider('Search the area');
+    // After a filler streak, do not refill with Look — manufacture a real lead or Travel.
+    if (fillerStreak < FILLER_STREAK_CAP) {
+      consider('Look around');
+      consider('Search the area');
+    } else {
+      for (const hub of outdoorHubTravelChoices(state, 4)) consider(hub);
+      for (const row of recordedTravelDestinations(state)) {
+        consider(`Travel toward ${row.label}`);
+      }
+    }
     if (hurt) {
       consider(TABLETOP_SHORT_REST_CHIP);
       consider(OUTDOOR_REST_CHIP);
@@ -895,6 +929,45 @@ export function assembleFourSlotPads(
     uniquePush(four, fourSeen, g);
   }
 
+  // FOURSLOT5 — hurt + no fight: Rest must occupy a slot whenever it is legal (Leave is only
+  // the route when Rest is impossible). Replace Wait/Leave in slot 4 if needed.
+  if (hurt && !liveFight(state)) {
+    const hasRest = four.some(
+      (c) => isOutdoorRestPad(c) || /^rest\b/i.test(c) || /^make camp\b/i.test(c) || /^take a short rest\b/i.test(c)
+    );
+    if (!hasRest) {
+      const restChip =
+        (state.engineMode === 'dnd' ? TABLETOP_SHORT_REST_CHIP : null)
+        ?? OUTDOOR_REST_CHIP;
+      const campOk = canPad(OUTDOOR_CAMP_CHIP) ? OUTDOOR_CAMP_CHIP : null;
+      const pick =
+        (canPad(restChip) ? restChip : null)
+        ?? campOk
+        ?? (state.engineMode === 'dnd' && canPad(TABLETOP_SHORT_REST_CHIP) ? TABLETOP_SHORT_REST_CHIP : null);
+      if (pick) {
+        // Prefer replacing Wait / Keep watch / Leave in the last slot.
+        let replaced = false;
+        for (let i = four.length - 1; i >= 0; i--) {
+          const c = four[i]!;
+          if (/^(?:wait|keep watch|leave)\b/i.test(c) || isFillerPad(c)) {
+            fourSeen.delete(low(c));
+            four[i] = pick;
+            fourSeen.add(low(pick));
+            replaced = true;
+            break;
+          }
+        }
+        if (!replaced && four.length < 4) {
+          uniquePush(four, fourSeen, pick);
+        } else if (!replaced && four.length >= 4) {
+          fourSeen.delete(low(four[3]!));
+          four[3] = pick;
+          fourSeen.add(low(pick));
+        }
+      }
+    }
+  }
+
   // Free-input always offered off exclusive pads (never counts as a slot).
   // Hurt road still offers free text (FOURSLOT2 sweep); non-hurt road skips assemble entirely.
   const out = [...four.slice(0, 4)];
@@ -942,7 +1015,13 @@ export function pickFromFourSlots(
   const fight = liveFight(state);
   const hurt = isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0);
   const travelStreak = consecutiveTravelFamilyPicks(state);
+  const fillerStreak = consecutiveFillerFamilyPicks(state);
   const nonTravel = slots.filter((c) => !isTravelFamilyChip(c));
+  const nonFiller = slots.filter((c) => !isFillerFamilyChip(c));
+  // FOURSLOT5 — after FILLER_STREAK_CAP Look/Wait/Read, pick a real lead.
+  if (fillerStreak >= FILLER_STREAK_CAP && nonFiller.length) {
+    return nonFiller[0]!;
+  }
   // Engine + harness: after TRAVEL_STREAK_CAP Travel picks, never pick another Travel/Leave.
   if (travelStreak >= TRAVEL_STREAK_CAP && nonTravel.length) {
     return nonTravel[0]!;

@@ -968,8 +968,9 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
       && !state.sceneFacts?.pendingEncounter
     ) {
       list = list.filter((c) => !isHuntChip(c) && !isSeekFightChip(c) && !isCrowdOnlyTalkPad(c));
+      const restLegal = canOutdoorShortRest(state, OUTDOOR_REST_CHIP);
       if (
-        canOutdoorShortRest(state, OUTDOOR_REST_CHIP)
+        restLegal
         && !list.some((c) => isOutdoorRestPad(c) || /^rest and bind your wounds\b/i.test(c))
       ) {
         const systemIdx = list.findIndex((c) => /^check system\b/i.test(c));
@@ -981,6 +982,9 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
         list = [...list.slice(0, insertAt), OUTDOOR_REST_CHIP, ...list.slice(insertAt)];
         notes.push('OPEN9: Rest while hurt (safe spot, no fight)');
       }
+      const hasRest = list.some(
+        (c) => isOutdoorRestPad(c) || /^rest and bind your wounds\b/i.test(c) || /^take a short rest\b/i.test(c)
+      );
       const hasMove = list.some(
         (c) =>
           movesOn(state, c, story)
@@ -988,7 +992,9 @@ export function rankChoices(state: GameState, choices: string[]): { choices: str
           || /^travel\b/i.test(c)
           || /^walk (?:back|on|toward)\b/i.test(c)
       );
-      if (!hasMove && !isOutdoorWildsPlace(state)) {
+      // FOURSLOT5 — Leave is the route to a safe spot only when Rest is truly impossible here.
+      // When Rest is already on the pad (or legal), do not inject Leave over it.
+      if (!hasMove && !hasRest && !restLegal && !isOutdoorWildsPlace(state)) {
         list = ['Leave the scene', ...list];
         notes.push('OPEN7B: hurt indoors → Leave the scene');
       }

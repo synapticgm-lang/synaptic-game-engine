@@ -1097,16 +1097,6 @@ export function preferHurtRecoveryPick(offered: string[], pick: string, state: G
   if (!isHurtHp(hp, maxHp)) return pick;
   const pool = offered.length ? offered : [pick];
   const leave = pool.find((c) => /^leave(?:\s+the\s+scene)?\b/i.test(c));
-  // OPEN7B — dead-crowd (crowd-filler / corpse room, nobody speakable) Leave outranks Rest
-  // so the talk loop breaks. FOURSLOT4 Rest-first must not swallow that Leave pin.
-  const present = state.sceneFacts?.present ?? [];
-  const speakable =
-    speakablePresentPeople(peopleHere(state)).length
-    + speakablePresentPeople(present).length;
-  const deadCrowd =
-    speakable === 0
-    && (present.some((p) => isCrowdFillerToken(p)) || !!state.sceneFacts?.lastKill?.remains);
-  if (leave && deadCrowd) return leave;
   // FOURSLOT4 — Rest at a safe/settlement spot outranks Leave/Travel (hubless Travel loop at HP 1).
   const rest = pool.find(
     (c) =>
@@ -1114,6 +1104,16 @@ export function preferHurtRecoveryPick(offered: string[], pick: string, state: G
       || /^take a short rest\b/i.test(c)
       || /\b(?:rest|make camp|bind (?:your|my) wounds|heal|vial|potion|drink|bandage)\b/i.test(c)
   );
+  // OPEN7B — dead-crowd Leave outranks Rest only when Rest is not on the pad (Rest impossible /
+  // already starved). FOURSLOT5: when Rest is offered, take it even in a corpse room.
+  const present = state.sceneFacts?.present ?? [];
+  const speakable =
+    speakablePresentPeople(peopleHere(state)).length
+    + speakablePresentPeople(present).length;
+  const deadCrowd =
+    speakable === 0
+    && (present.some((p) => isCrowdFillerToken(p)) || !!state.sceneFacts?.lastKill?.remains);
+  if (leave && deadCrowd && !rest) return leave;
   if (rest) return rest;
   // FOURSLOT4 — after consecutive Travel/Leave, do not force another Leave/Travel while a lead exists.
   const travelStreak = consecutiveTravelFamilyPicks(state);

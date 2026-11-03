@@ -199,6 +199,15 @@ export function openingRestatesPlayerAct(prose: string, playerInput: string): bo
   const act = norm(playerInput);
   const raw = norm(prose);
   if (!act || !raw) return false;
+  // FOURSLOT5 — Travel / Leave / Walk-on chips often exceed 40 chars because the dest name is
+  // long. Arrival prose that names that dest is the required fact, not a free-text act echo.
+  if (
+    /^(?:travel|head (?:toward|to|for)|go to|return to|walk (?:on|to|toward|back)|turn back|leave(?:\s+the\s+scene)?)\b/i.test(
+      act,
+    )
+  ) {
+    return false;
+  }
   // Free-text evidence shape only: long line and/or a quoted say — not 2–4 word chips.
   const hasQuote = /["\u201c][^"\u201d]{6,}["\u201d]?/.test(act);
   if (!hasQuote && act.length < 40) return false;

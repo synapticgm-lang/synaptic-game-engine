@@ -417,8 +417,17 @@ export function ensureCrowdOrRoleTalkAnswered(
     present.find((p) => mentionsName(p, who) || mentionsName(who, p) || new RegExp(`\\b${escRe(who)}\\b`, 'i').test(p))
     ?? present[0]
     ?? '';
-  // Gate already passes when the addressee appears or someone quoted.
-  if (whoInProse || quoted) {
+  // FOURSLOT5 — naming the addressee without a quote / with "answer never came" is still unanswered
+  // (innkeep T29 / witness T39). Require a spoken reply or a gate-ok absence.
+  const silentNonAnswer =
+    !quoted
+    && (/\banswer never came\b/i.test(text)
+      || /\bsaid nothing\b/i.test(text)
+      || /\bno answer (?:came|followed|arrived)\b/i.test(text)
+      || /\bwaited for .{0,40} to answer\b/i.test(text)
+      || /\bkept (?:silent|quiet)\b/i.test(text));
+  // Gate already passes when the addressee appears with a real reply, or someone quoted.
+  if ((whoInProse || quoted) && !silentNonAnswer) {
     // Wrong absence while a speakable person is here: drop the telegram so the answer stays.
     if (absence && speaker) {
       return text
@@ -436,11 +445,13 @@ export function ensureCrowdOrRoleTalkAnswered(
     const line = crowdAim
       ? `${capitalizeTalkLabel(speaker)} spoke for the people here: "Not now."`
       : mentionsName(speaker, who) || mentionsName(who, speaker) || new RegExp(`\\b${escRe(who)}\\b`, 'i').test(speaker)
-        ? `${capitalizeTalkLabel(speaker)} answered, but kept it short.`
+        ? `${capitalizeTalkLabel(speaker)} answered: "Not now."`
         : `${capitalizeTalkLabel(speaker)} answered: "Not now."`;
     const cleaned = text
       .replace(/\bNo one (?:was|is) there to answer\.?/gi, ' ')
       .replace(/\bNobody here can answer(?:\s+that)?\.?/gi, ' ')
+      .replace(/\b(?:and )?the answer never came\.?/gi, ' ')
+      .replace(/\bwaited for .{0,40} to answer\.?/gi, ' ')
       .replace(/\s+/g, ' ')
       .trim();
     return cleaned ? `${cleaned} ${line}` : line;
@@ -596,16 +607,19 @@ export function sealPostWriterProse(
   // OPEN7B — strip act-echo openings on the sealed page too.
   // OPEN8 — crowd/role Talk answer seal on the sealed page.
   const seated = dropUnseatedSpeakerLines(state, spoken.prose);
-  return {
-    prose: ensureCrowdOrRoleTalkAnswered(
-      dropInventedPcSpeechOnNonTalk(
-        dropPlayerActEchoOpening(seated, playerInput),
-        playerInput,
-        state.character?.name,
-      ),
-      state,
+  const answered = ensureCrowdOrRoleTalkAnswered(
+    dropInventedPcSpeechOnNonTalk(
+      dropPlayerActEchoOpening(seated, playerInput),
       playerInput,
+      state.character?.name,
     ),
+    state,
+    playerInput,
+  );
+  // FOURSLOT5 — echo strip can peel the destination sentence after withMoveDestination;
+  // re-stamp so arrival prose always names the place (deterministic, no AI re-roll).
+  return {
+    prose: withMoveDestination(state, answered),
     spoken: spoken.answer,
   };
 }

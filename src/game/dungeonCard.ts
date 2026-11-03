@@ -26,7 +26,7 @@ import { createHashRng, turnRng } from './seededRng';
 import { encountersForMode, type EncounterSeed } from '@/data/encounters';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
-import { INTERIOR_MAP_BLUEPRINT, milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
+import { milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { gainLootMoney, lootMoneyText } from './rules/coins';
 import { openSeededLootable } from './looseItems';
@@ -507,9 +507,12 @@ export function previewDungeonCard(state: GameState, site: string): ActiveDungeo
   const card = findPlace(state, hubName)?.dungeonCard ?? buildDungeonCard(state, hubName);
   const entryId = card.nodes.find((n) => n.id === 'r0')?.id ?? card.currentNodeId;
   const entry = card.nodes.find((n) => n.id === entryId);
+  // FOURSLOT5 — keep DUNGEON_CARD_BLUEPRINT. Rebadging as INTERIOR_MAP_BLUEPRINT made the
+  // building floor-plan checker treat cave graphs (Cave Mouth / Echoing Tunnel / Deep Lair)
+  // as packed house rooms → false-positive floating-room P0s on First Tunnel Spur.
   return {
     ...card,
-    blueprintId: INTERIOR_MAP_BLUEPRINT,
+    blueprintId: DUNGEON_CARD_BLUEPRINT,
     siteName: site,
     currentNodeId: entryId,
     currentZLevel: entry?.zLevel ?? card.currentZLevel,

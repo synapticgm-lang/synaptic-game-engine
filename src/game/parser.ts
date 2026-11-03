@@ -291,11 +291,15 @@ export function stripChoiceList(text: string): string {
 /** Batch U — numbered choice / chip leak still present in GM body (commit reject). */
 export function hasNumberedChoiceLeak(text: string): boolean {
   if (!text?.trim()) return false;
-  if (stripChoiceList(text) !== text.trim()) return true;
+  // FOURSLOT5 — gather receipt "Materials: Peacebloom x1." is STATUS chrome, not a numbered menu
+  // (x1. before a quote / end was a false-positive choice-leak on RPG T26).
+  const withoutMaterials = text.replace(/\bMaterials:\s+[^\n.]+\sx\d+\.?/gi, ' ').replace(/\s+/g, ' ').trim();
+  if (!withoutMaterials) return false;
+  if (stripChoiceList(withoutMaterials) !== withoutMaterials.trim()) return true;
   return (
-    /\d+[.)]\s+["""][^"""\n]{4,}/.test(text)
-    || /\d+[.)]\s+(?:Meet|Descend|Re-approach|Observe|Scan|Inquire|Plunge|Turn to)\b/.test(text)
-    || /(?:^|[.!?]\s+)\d+[.)]\s+[A-Z][^.!?\n]{8,120}[.!?]?\s*$/.test(text.trim())
+    /\d+[.)]\s+["""][^"""\n]{4,}/.test(withoutMaterials)
+    || /\d+[.)]\s+(?:Meet|Descend|Re-approach|Observe|Scan|Inquire|Plunge|Turn to)\b/.test(withoutMaterials)
+    || /(?:^|[.!?]\s+)\d+[.)]\s+[A-Z][^.!?\n]{8,120}[.!?]?\s*$/.test(withoutMaterials.trim())
   );
 }
 

@@ -173,7 +173,7 @@ function compileOfferedChoices(state: GameState): string[] {
     const coverProse = lastGmStoryProse(state);
     const pads = coverContinuePads(state).filter((c) => !isCombatFamilyPad(c));
     const live = new Set(liveChips(state, pads, coverProse));
-    return pads.filter((c) => isNameCoverChip(c) || live.has(c)).slice(0, 3);
+    return pads.filter((c) => isNameCoverChip(c) || live.has(c)).slice(0, 6);
   }
   const starveCoverCombat = shouldStarveCombatPadsOnCover(state);
   const storyProse = lastGmStoryProse(state);
@@ -205,8 +205,6 @@ function compileOfferedChoices(state: GameState): string[] {
     );
     if (paddedAff.length) return paddedAff;
   }
-  if (legal.length >= 3) return legal.slice(0, 4);
-  if (legal.length && isJourneyUnderway(state) && !state.activeEncounter) return legal;
   const padded = final(
     padChoicesToCount(legal, state, storyProse, 3).filter((c) => !starveCoverCombat || !isCombatFamilyPad(c))
   );

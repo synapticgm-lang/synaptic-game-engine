@@ -214,7 +214,17 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
 
   if (isJourneyPad(state, label)) {
     if (!isJourneyUnderway(state)) {
-      return { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
+      // FOURSLOT5 — Make camp / Rest at a hub is recovery, not a road chip (T26 Make camp FP).
+      if (
+        /^make camp\b/i.test(label)
+        || /^rest\b/i.test(label)
+        || /^take a short rest\b/i.test(label)
+        || /\bbind (?:your|my) wounds\b/i.test(label)
+      ) {
+        // fall through
+      } else {
+        return { kind: 'impossible-chip', detail: `"${label}" is a road chip but no journey is underway` };
+      }
     }
     // T10RC8 — Walk / Face / Turn back stay legal on the journey. Talk-your-way and other
     // social journey pads still need a hearer on the seat list (same ghost rule below).
@@ -322,6 +332,13 @@ export function chipProblem(state: GameState, chip: string, storyProse = lastSto
   if (gate) return { kind: 'impossible-chip', detail: gate };
   // FOURSLOT3 — Check System / Check notices is the notice-inbox chrome (real action), not a scene object.
   if (isCheckSystemChip(label) || isSystemStatusChip(label)) {
+    return null;
+  }
+  // FOURSLOT5 — Take a short rest / Rest pads are recovery, not take-object (T46 Rest FP).
+  if (
+    /^(?:take a short rest|rest and bind your wounds|make camp|rest)\b/i.test(label)
+    || /\bbind (?:your|my) wounds\b/i.test(label)
+  ) {
     return null;
   }
   // The quest step taken at its own place is an engine fact, even when the beat never named its object.
