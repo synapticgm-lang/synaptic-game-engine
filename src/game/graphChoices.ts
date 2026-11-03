@@ -12,12 +12,12 @@ import {
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { placeExitRows } from './placeRegistry';
 import { excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
-import { isMetNpc, presentNpcRecords } from './npcRecords';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { isCatalogFoeTalkForbidden } from './encounterBible';
 import { npcShouldExit } from './npcMemory';
 import { isCombatFamilyPad, shouldStarveCombatPadsOnCover } from './openingEstablishment';
 import { fightApproachChips } from './fightApproach';
+import { peopleHere } from './scenePresence';
 
 export type EdgeType =
   | 'attack'
@@ -110,7 +110,22 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
 
   const lastKill = state.sceneFacts?.lastKill;
   if (!excluded.has('talk')) {
-    for (const npc of presentNpcRecords(state).filter(isMetNpc).map((r) => r.npcName)) {
+    // FOURSLOT6 — Talk edges from peopleHere, further clipped to sceneFacts.present when that
+    // occupancy lock is non-empty (opening-cast / location stamps must not resurrect absentees).
+    const lock = (state.sceneFacts?.present ?? [])
+      .map((n) => (n ?? '').replace(/\s+/g, ' ').trim())
+      .filter(Boolean);
+    const inLock = (npc: string) => {
+      if (!lock.length) return true;
+      const nl = npc.toLowerCase();
+      return lock.some((p) => {
+        const pl = p.toLowerCase();
+        return pl === nl || pl.includes(nl) || nl.includes(pl);
+      });
+    };
+    for (const npc of peopleHere(state)) {
+      if (!npc) continue;
+      if (!inLock(npc)) continue;
       if (matchesLastKillName(npc, lastKill)) continue;
       if (isCatalogFoeTalkForbidden(state, npc)) continue;
       if (npcShouldExit(state, npc)) continue;

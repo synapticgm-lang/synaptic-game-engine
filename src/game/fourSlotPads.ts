@@ -49,6 +49,8 @@ const ARRIVAL_BOUNCE_TURNS = 2;
 export const TRAVEL_STREAK_CAP = 2;
 /** FOURSLOT5 — Look/Wait/Read/Inspect/Search filler streak cap (tabletop tavern loiter). */
 export const FILLER_STREAK_CAP = 2;
+/** FOURSLOT6 — any same-family streak cap for slots 1–3 (talk / fight / move / …). */
+export const FAMILY_STREAK_CAP = 2;
 
 function isFillerFamilyChip(label: string): boolean {
   const fam = actionFamily(label);
@@ -119,20 +121,13 @@ export function recentTravelNoDevelopment(state: GameState): boolean {
 /** Exclusive pads that must not be reshaped into four slots. */
 export function shouldSkipFourSlot(state: GameState): boolean {
   if (state.playPhase === 'ended') return true;
+  // Forced session-zero / death-save / first-fight triad — only these stay exclusive.
   if (originPad(state)?.length) return true;
   if (isDying(state)) return true;
   const ff = firstFightChoiceSet(state);
   if (ff.active && ff.options.length) return true;
-  // FOURSLOT5 — plain road journey fills four slots (Walk on leads). When a drought foe is
-  // parked (pendingEncounter / journey meeting / parkedThreat), keep the exclusive road list
-  // so Walk on / Face stay the only chips (s85 / gateFix9). Hurt still reshapes so Rest can land.
-  if (isJourneyUnderway(state) && !liveFight(state) && journeyPads(state).length > 0) {
-    if (state.sceneFacts?.pendingEncounter || state.journey?.encounter || parkedThreatHere(state)) {
-      const hp = state.character?.hp ?? 0;
-      const max = state.character?.maxHp ?? 0;
-      if (!isHurtHp(hp, max)) return true;
-    }
-  }
+  // FOURSLOT6 — journey / parked meeting / box / stat pads always run four-slot assemble
+  // (8101 T15–26 shorts + T11–12 longs). Walk on / Face may lead; refill + trim to 4.
   return false;
 }
 
@@ -151,26 +146,92 @@ function inSettlement(state: GameState): boolean {
   });
 }
 
+/**
+ * Person / role token for a Talk/Ask/Answer/Read-person chip (FOURSLOT6 echo + presence).
+ * Strips "about …" / "regarding …" so Ask X about Y and Talk to X share a target.
+ */
+export function talkChipTarget(label: string): string | null {
+  const raw = tidy(label);
+  if (!raw) return null;
+  const m = raw.match(
+    /^(?:talk to|ask|answer|press|follow up with|follow up:|read|analyze)\s+(.+)$/i
+  );
+  if (!m?.[1]) return null;
+  let who = tidy(m[1]);
+  who = who
+    .replace(/\s+(?:about|regarding|re|for|on)\s+.+$/i, '')
+    .replace(/[:：].+$/, '')
+    .trim();
+  if (!who) return null;
+  // Bare surroundings reads are not person targets.
+  if (/^(?:the\s+)?(?:area|scene|room|signs?|board|panel|trail|report|threat signs)\b/i.test(who)) {
+    return null;
+  }
+  return who;
+}
+
+/**
+ * FOURSLOT6 — authoritative Talk/Ask seats: when sceneFacts.present is a non-empty occupancy
+ * lock, chips may only name those people (+ companions / live foe / road meeting). Opening-cast
+ * leftovers and location-stamped memories must not resurrect absent Talk targets (7903 / 8103).
+ */
+function authoritativeTalkSeats(state: GameState): string[] {
+  const lock = (state.sceneFacts?.present ?? []).map((n) => tidy(n)).filter(Boolean);
+  if (lock.length) {
+    const out = new Map<string, string>();
+    const add = (n?: string | null) => {
+      const name = tidy(n ?? '');
+      if (!name) return;
+      // Crowd / pulled-you aggregates are occupancy chrome, never Talk seats (FOURSLOT2).
+      if (!speakablePresentPeople([name]).length) return;
+      out.set(low(name), name);
+    };
+    for (const n of lock) add(n);
+    for (const c of state.companions ?? []) add(c.name);
+    add(state.activeEncounter?.name);
+    add(state.pendingFirstFight?.encounter?.name);
+    // Road meeting is a live seat even when present[] is the stretch cast.
+    if (isJourneyUnderway(state)) {
+      for (const p of peopleHere(state)) add(p);
+    }
+    return [...out.values()];
+  }
+  return peopleHere(state);
+}
+
+function nameMatchesSeat(seat: string, target: string): boolean {
+  const name = low(seat);
+  const tl = low(target);
+  if (!name || !tl) return false;
+  if (name === tl || name.includes(tl) || tl.includes(name)) return true;
+  const bare = name.replace(/^(?:the|a|an)\s+/, '');
+  const tb = tl.replace(/^(?:the|a|an)\s+/, '');
+  if (bare && (bare === tb || bare.includes(tb) || tb.includes(bare))) return true;
+  // "Innkeep Mara" ↔ "the innkeep" (role title token).
+  const seatTokens = bare.split(/[\s'’-]+/).filter(Boolean);
+  const targetTokens = tb.split(/[\s'’-]+/).filter(Boolean);
+  if (seatTokens[0] && targetTokens[0] && seatTokens[0] === targetTokens[0]) return true;
+  return false;
+}
+
 function talkTargetPresent(state: GameState, label: string): boolean {
   const t = low(label);
-  const seated = peopleHere(state);
-  const speakable = speakablePresentPeople(state.sceneFacts?.present);
-  // Crowd / pulled-you aggregates need a real seated listener — never the aggregate token itself.
+  const seated = authoritativeTalkSeats(state);
   if (isCrowdOnlyTalkPad(label)) {
-    return seated.length > 0 || speakable.length > 0;
+    // Aggregate Talk needs a real seated listener — never the aggregate token alone.
+    return peopleHere(state).length > 0 && speakablePresentPeople(state.sceneFacts?.present).length > 0;
   }
-  const people = speakable.length ? speakable : seated;
-  if (!people.length) return false;
-  for (const p of people) {
+  if (!seated.length) return false;
+  const target = talkChipTarget(label);
+  if (target) {
+    return seated.some((p) => nameMatchesSeat(p, target));
+  }
+  for (const p of seated) {
     const name = low(p);
     if (name && t.includes(name)) return true;
   }
-  // Role talk when that role string is seated.
-  for (const row of seated) {
-    if (row && t.includes(low(row))) return true;
-  }
   // Bare "Talk" / "Ask around" with no named target while someone is here.
-  if (/^(?:talk|ask|press|follow up)\s*$/.test(t)) return people.length > 0;
+  if (/^(?:talk|ask|press|follow up)\s*$/.test(t)) return seated.length > 0;
   // Specific Answer/Talk-to-Name for someone not seated is dead (leaving courier while Mara is here).
   return false;
 }
@@ -279,8 +340,11 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
     return false;
   }
 
-  // Talk / Answer for an absent NPC (specific name/role must be seated — not "any talk while Mara is here").
-  if (/^(?:talk|ask|answer|press|follow up with|follow up:)\b/.test(t)) {
+  // Talk / Answer / Read-person for an absent NPC (specific name/role must be seated).
+  if (
+    /^(?:talk|ask|answer|press|follow up with|follow up:)\b/.test(t)
+    || (/^(?:read|analyze)\s+\S/i.test(raw) && talkChipTarget(raw))
+  ) {
     if (!talkTargetPresent(state, raw)) return false;
   }
 
@@ -325,7 +389,8 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
   }
 
   // FOURSLOT5 — after FILLER_STREAK_CAP Look/Wait/Read picks, starve filler so slot 1 must be a
-  // real lead (all modes, including tabletop tavern loiter).
+  // real lead (all modes, including tabletop tavern loiter). Assemble last-resort may still
+  // plant one Look/Wait when no other legal chip can reach four (FOURSLOT6 only-legal-option).
   if (isFillerFamilyChip(raw) && consecutiveFillerFamilyPicks(state) >= FILLER_STREAK_CAP) {
     return false;
   }
@@ -342,9 +407,17 @@ export function isFourSlotRepeat(
   label: string,
   previousPlayerAction = ''
 ): boolean {
-  const prev = tidy(previousPlayerAction);
+  const prev = tidy(previousPlayerAction) || lastPlayerAction(state);
   if (!prev) return false;
   const a = tidy(label);
+  // FOURSLOT6 — Rest/camp while still hurt is never an echo starve (8102 after partial heal).
+  const hurtNow = isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0) && !liveFight(state);
+  if (
+    hurtNow
+    && (isOutdoorRestPad(a) || /^rest\b/i.test(a) || /^make camp\b/i.test(a) || /^take a short rest\b/i.test(a))
+  ) {
+    return false;
+  }
   if (low(a) === low(prev)) {
     // Live fight: Attack / Defend / Use / Disengage may repeat every round (FOURSLOT3 T37).
     if (liveFight(state) && /^(?:attack|press the attack|strike|defend|use|disengage|flee|try to flee)\b/i.test(a)) {
@@ -360,16 +433,36 @@ export function isFourSlotRepeat(
   const destA = travelDestOf(a);
   const destB = travelDestOf(prev);
   if (destA || destB) return low(destA ?? '') === low(destB ?? '');
-  // Talk target token after verb.
-  const talkA = a.match(/^(?:talk to|ask|answer|follow up with)\s+(.+)$/i)?.[1];
-  const talkB = prev.match(/^(?:talk to|ask|answer|follow up with)\s+(.+)$/i)?.[1];
-  if (talkA || talkB) return low(talkA ?? '') === low(talkB ?? '');
+  // FOURSLOT6 — Talk/Ask echo: same person target after strip of "about …" (8103 Ask Grash / 8102 Ask Idra).
+  const talkA = talkChipTarget(a);
+  const talkB = talkChipTarget(prev);
+  if (talkA || talkB) {
+    const x = low(talkA ?? '');
+    const y = low(talkB ?? '');
+    if (!x || !y) return false;
+    return x === y || x.includes(y) || y.includes(x);
+  }
   // Filler Search/Open/Read on same HERE counts as repeat.
   const fam = actionFamily(a);
   if (fam === 'search' || fam === 'look' || fam === 'inspect' || fam === 'use') {
     return true;
   }
   return false;
+}
+
+/** Consecutive player picks of one actionFamily at the end of the log (FOURSLOT6 streak cap). */
+export function consecutiveSameFamilyPicks(state: GameState, family: string): number {
+  const want = (family ?? '').toLowerCase();
+  if (!want) return 0;
+  const log = state.log ?? [];
+  let n = 0;
+  for (let i = log.length - 1; i >= 0; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    if (actionFamily(e.content ?? '') === want) n += 1;
+    else break;
+  }
+  return n;
 }
 
 function isFillerPad(label: string): boolean {
@@ -506,6 +599,25 @@ function recentPlayerFamilies(state: GameState, n: number): Set<string> {
   const first = out[0]!;
   if (out.every((f) => f === first)) return new Set([first]);
   return new Set();
+}
+
+/** FOURSLOT6 — families that must leave slots 1–3 after FAMILY_STREAK_CAP picks (live fight exempt). */
+function streakStarvedFamilies(state: GameState): Set<string> {
+  if (liveFight(state)) return new Set();
+  return recentPlayerFamilies(state, FAMILY_STREAK_CAP);
+}
+
+function familyStarvedForFrontSlots(state: GameState, label: string): boolean {
+  const starved = streakStarvedFamilies(state);
+  if (starved.size && starved.has(actionFamily(label))) return true;
+  // FOURSLOT5/6 — Look/Wait/Read/Inspect/Search leave slots 1–3 after FILLER_STREAK_CAP.
+  if (
+    consecutiveFillerFamilyPicks(state) >= FILLER_STREAK_CAP
+    && isFillerFamilyChip(label)
+  ) {
+    return true;
+  }
+  return false;
 }
 
 function uniquePush(out: string[], seen: Set<string>, label: string): void {
@@ -817,16 +929,21 @@ export function assembleFourSlotPads(
   const seen = new Set<string>();
   const picked: string[] = [];
   const picks: FourSlotPick[] = [];
+  const frontStarve = streakStarvedFamilies(state);
 
   for (const slot of FOUR_SLOT_ORDER) {
+    const starveFront = slot !== 'back' && frontStarve.size > 0;
     let chosen: string | null = null;
     for (const cand of pools[slot]) {
       if (seen.has(low(cand))) continue;
+      if (starveFront && familyStarvedForFrontSlots(state, cand)) continue;
       chosen = cand;
       break;
     }
     if (!chosen) {
-      chosen = fourSlotFallback(state, slot, seen, candList);
+      const fb = fourSlotFallback(state, slot, seen, candList);
+      if (fb && !(starveFront && familyStarvedForFrontSlots(state, fb))) chosen = fb;
+      else if (fb && !starveFront) chosen = fb;
     }
     // Last resort: any legal unused candidate (never invent a novel label).
     if (!chosen) {
@@ -834,9 +951,21 @@ export function assembleFourSlotPads(
         const label = tidy(c);
         if (!label || isFreeInputChip(label) || seen.has(low(label))) continue;
         if (!isFourSlotLegal(state, label)) continue;
+        if (starveFront && familyStarvedForFrontSlots(state, label)) continue;
         chosen = label;
         break;
       }
+    }
+    // Only-legal-option: allow a streaked family when nothing else fills the slot.
+    if (!chosen) {
+      for (const cand of pools[slot]) {
+        if (seen.has(low(cand))) continue;
+        chosen = cand;
+        break;
+      }
+    }
+    if (!chosen) {
+      chosen = fourSlotFallback(state, slot, seen, candList);
     }
     if (chosen) {
       uniquePush(picked, seen, chosen);
@@ -897,17 +1026,21 @@ export function assembleFourSlotPads(
   // Full-HP sealed openings never take this branch — transitStuck Leave-unbound stays fixed.
   const exitTravels = recordedTravelDestinations(state).map((r) => `Travel toward ${r.label}`);
   const leaveWhenHurtRoute = hurt ? ['Leave the scene'] : [];
+  // FOURSLOT6 — after filler/family streak, manufacture Talk / Travel / quest lead before Look/Wait.
+  const seatedTalk = peopleHere(state)
+    .filter((p) => p && !isCrowdOnlyTalkPad(`Talk to ${p}`))
+    .map((p) => `Talk to ${p}`);
+  const fillerStarved = consecutiveFillerFamilyPicks(state) >= FILLER_STREAK_CAP;
   const safeFill = roadUnderway
     ? [
         ...(huntModeOk(state) ? ['Hunt the wildlife nearby'] : []),
         ...(gatherModeOk(state) ? ['Gather herbs and resources nearby'] : []),
         ...(hurt ? [OUTDOOR_REST_CHIP, OUTDOOR_CAMP_CHIP] : []),
+        ...seatedTalk,
         ...(state.engineMode === 'litrpg' ? ['Check System'] : []),
       ]
     : [
-        'Look around',
-        'Wait and listen',
-        'Wait',
+        ...seatedTalk,
         ...exitTravels,
         ...outdoorHubTravelChoices(state, 4),
         ...leaveWhenHurtRoute,
@@ -915,8 +1048,10 @@ export function assembleFourSlotPads(
         OUTDOOR_REST_CHIP,
         OUTDOOR_CAMP_CHIP,
         ...(state.engineMode === 'dnd' ? [TABLETOP_SHORT_REST_CHIP] : []),
-        // Stall after Search: look/search repeats are starved — Keep watch is wait-family distinct wording.
-        'Keep watch',
+        // Look/Wait only when filler streak has not already starved them.
+        ...(!fillerStarved
+          ? ['Look around', 'Wait and listen', 'Wait', 'Keep watch']
+          : ['Study the report', 'Report back to the guide']),
       ];
   for (const g of safeFill) {
     if (four.length >= 4) break;
@@ -930,10 +1065,46 @@ export function assembleFourSlotPads(
       && !/^make camp\b/i.test(g)
       && !/^take a short rest\b/i.test(g)
       && !/^check system\b/i.test(g)
+      && !/^talk to\b/i.test(g)
+    ) {
+      continue;
+    }
+    // FOURSLOT6 — do not refill front slots with a streak-starved family unless only option.
+    if (
+      four.length < 3
+      && familyStarvedForFrontSlots(state, g)
+      && four.some((c) => !familyStarvedForFrontSlots(state, c))
     ) {
       continue;
     }
     uniquePush(four, fourSeen, g);
+  }
+  // Absolute last resort: any unused legal candidate / seated Talk / hub Travel to hit 4.
+  if (four.length < 4) {
+    const lastResort = [
+      ...seatedTalk,
+      ...outdoorHubTravelChoices(state, 6),
+      ...exitTravels,
+      ...candList,
+      'Study the report',
+      ...(state.engineMode === 'litrpg' ? ['Check System'] : []),
+    ];
+    for (const g of lastResort) {
+      if (four.length >= 4) break;
+      if (fourSeen.has(low(g)) || !canPad(g)) continue;
+      uniquePush(four, fourSeen, g);
+    }
+  }
+  // FOURSLOT6 — only-legal-option: when still short after every non-filler manufacture, allow one
+  // Look/Wait despite the filler streak (order: starve slots 1–3 unless only legal option).
+  if (four.length < 4 && consecutiveFillerFamilyPicks(state) >= FILLER_STREAK_CAP) {
+    for (const g of ['Look around', 'Wait and listen', 'Wait', 'Keep watch']) {
+      if (four.length >= 4) break;
+      if (fourSeen.has(low(g))) continue;
+      if (isFourSlotRepeat(state, g, prev)) continue;
+      if (isFreeInputChip(g)) continue;
+      uniquePush(four, fourSeen, g);
+    }
   }
 
   // FOURSLOT5 — hurt + no fight: Rest must occupy a slot whenever it is legal (Leave is only

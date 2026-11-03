@@ -86,11 +86,14 @@ export function canOutdoorShortRest(state: GameState, input: string): boolean {
   if (!OUTDOOR_SHORT_REST_RE.test(input ?? '') && !/^rest\b/i.test((input ?? '').trim())) return false;
   if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return false;
   // Quiet dungeon rooms may rest; a live dungeon card with pending fight already blocked above.
-  const until = state.outdoorShortRestCooldownUntilTurn;
-  if (typeof until === 'number' && (state.turn ?? 0) < until) return false;
   const max = state.character?.maxHp || state.character?.hp || 0;
   const hp = state.character?.hp ?? 0;
   if (max <= 0 || hp >= max) return false;
+  // FOURSLOT6 — cooldown must not starve Rest while still hurt (HP ≤ 50%). Partial heal + 3-turn
+  // cooldown left 8102 T16–17 / T24–26 without a Rest chip.
+  const hurt = max > 0 && hp * 2 <= max;
+  const until = state.outdoorShortRestCooldownUntilTurn;
+  if (!hurt && typeof until === 'number' && (state.turn ?? 0) < until) return false;
   return true;
 }
 
