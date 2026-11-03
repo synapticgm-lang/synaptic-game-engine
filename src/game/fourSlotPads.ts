@@ -186,8 +186,15 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
     if (!hasFood) return false;
   }
 
-  // OPEN6–9 filler family cap — never re-offer exhausted Search/Look/Inspect/Wait as a slot.
-  if (isFillerNoProgressChip(raw) && fillerOfferExhausted(state, raw)) return false;
+  // OPEN6–9 filler family cap — LitRPG / Story RPG only.
+  // Tabletop keeps REPEAT_COOLDOWN_TURNS.dnd === 0 (q44-OCD2 08:41); do not starve inspect/search there.
+  if (
+    (state.engineMode === 'litrpg' || state.engineMode === 'rpg')
+    && isFillerNoProgressChip(raw)
+    && fillerOfferExhausted(state, raw)
+  ) {
+    return false;
+  }
 
   return true;
 }
