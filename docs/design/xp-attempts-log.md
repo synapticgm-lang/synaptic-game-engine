@@ -649,3 +649,53 @@ OpenRouter: no balance or `$` cost figure in logs or run meta (`costUsd` null) a
 **Next attempt (one line):** Keep Rest on every hurt non-fight pad (including post-clear LitRPG); seal Travel→HERE for Story RPG place aliases; drop Open reward-box family to ≤2; pull L2→L3 under 25 via quest-step spacing.
 
 Plain summary also at `merge-logs/xp-design/open9/T50-report.md`.
+
+### 3 Nov 2026 — FOURSLOT4 tabletop travel-loop root-fix sample — MISS (travel loop held)
+
+**Why:** FOURSLOT2/3 tabletop T50s LOOP STOPPED on Travel treadmills (7803 Shrine↔Moot; 7903 Inn↔Graveyard↔Camp, 11-Travel streak) because hurt picker preferred Leave/Travel and hubless settlements never offered Rest. FOURSLOT4 root-fixed hubless Rest, travel-streak starve, harness Travel cap, Innkeep Mara speaker merge (see `merge-logs/fourslot4/FOURSLOT4-report.md`). This entry is the post-ship free-path measure only (no XP formula change; tabletop SRD untouched).
+
+**Build / worlds (single sample each):** stamp **`2026-11-03c+f0c357f5`**, branch `feat/fourslot4`.
+- 8001 random hollow-core (LitRPG): `…T10-03-12-059Z_hollow-core_cold-system_s8001`
+- 8002 random embercourt-oath (Story RPG): `…T10-08-24-923Z_embercourt-oath_chilled-gm_s8002`
+- 8003 millstone-road (tabletop; rundir `none`): `…T10-14-17-504Z_millstone-road_chilled-gm_s8003`
+
+| Run | Turns | LOOP | Travel→HERE | Hurt w/o Rest | Chips=4 | Deaths h/real | P0 | L2 / L3 | Quest% / Fight% | Slots |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 8001 | 50/50 | no | 0/0 | 0 (Rest×3, no food) | 34 (16 short) | 0/0 | 4 floor-plan | **2** / **22** | **78.4** / **19.0** | MISS |
+| 8002 | 50/50 | no | 0/0 | 1 (T45) | 49 (+origin 5) | 0/0 | 7 | **28** / — | **16.3** / **83.7** | PASS |
+| 8003 | 50/50 | **no** | 0/0 | 0 | 47 (+3 excl.) | 1/1 @T23 | 2 | — / — | n/a (0 XP) | PASS |
+
+XP from `turns.jsonl` `XP Gained:` reasons (quest = rite+steps+completes+First Steps; fight = defeated/resolved/fight achievements). LitRPG end L3 **20/233**; RPG end L2 **89/187**. Tabletop Travel streak max **1** (was 11 on 7903); same-pair **1**; no crash. Leftovers: LitRPG short journey pads; 8002 travel-prose naming P0s + witness Talk; 8003 innkeep Talk unanswered @T29 + filler family streak **5** @ tavern.
+
+OpenRouter: no balance / `$` / nonzero `cost` in logs or run meta (`cost` null) at 2026-11-03T10:03–10:19Z.
+
+**Verdict: MISS** — tabletop Travel loop **PASS**; offs = LitRPG short pads, P0s, tavern filler streak, unanswered innkeep/witness.
+
+**Next attempt (one line):** Keep four chips on LitRPG arrival/journey pads; force prose to name Travel dest + answer offered innkeep/witness Talk; cap tavern Look/Wait/Read filler at 2.
+
+Plain summary also at `merge-logs/fourslot4/T50-report.md`.
+
+### 3 Nov 2026 — FOURSLOT4 tabletop travel-loop root-fix sample — MISS (travel loop held)
+
+**Why:** FOURSLOT2/3 tabletop T50s LOOP STOPPED on Travel treadmills (7803 Shrine↔Moot; 7903 Inn↔Graveyard↔Camp, 11-Travel streak) because hurt picker preferred Leave/Travel and hubless settlements never offered Rest. FOURSLOT4 root-fixed hubless Rest, travel-streak starve, harness Travel cap, Innkeep Mara speaker merge (see `merge-logs/fourslot4/FOURSLOT4-report.md`). This entry is the post-ship free-path measure only (no XP formula change; tabletop SRD untouched).
+
+**Build / worlds (single sample each):** stamp **`2026-11-03c+f0c357f5`**, branch `feat/fourslot4`.
+- 8001 random hollow-core (LitRPG): `…T10-03-12-059Z_hollow-core_cold-system_s8001`
+- 8002 random embercourt-oath (Story RPG): `…T10-08-24-923Z_embercourt-oath_chilled-gm_s8002`
+- 8003 millstone-road (tabletop; rundir `none`): `…T10-14-17-504Z_millstone-road_chilled-gm_s8003`
+
+| Run | Turns | LOOP | Travel→HERE | Hurt w/o Rest | Chips=4 | Deaths h/real | P0 | L2 / L3 | Quest% / Fight% | Slots |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 8001 | 50/50 | no | 0/0 | 0 (Rest×3, no food) | 34 (16 short) | 0/0 | 4 floor-plan | **2** / **22** | **78.4** / **19.0** | MISS |
+| 8002 | 50/50 | no | 0/0 | 1 (T45) | 49 (+origin 5) | 0/0 | 7 | **28** / — | **16.3** / **83.7** | PASS |
+| 8003 | 50/50 | **no** | 0/0 | 0 | 47 (+3 excl.) | 1/1 @T23 | 2 | — / — | n/a (0 XP) | PASS |
+
+XP from `turns.jsonl` `XP Gained:` reasons (quest = rite+steps+completes+First Steps; fight = defeated/resolved/fight achievements). LitRPG end L3 **20/233**; RPG end L2 **89/187**. Tabletop Travel streak max **1** (was 11 on 7903); same-pair **1**; no crash. Leftovers: LitRPG short journey pads; 8002 travel-prose naming P0s + witness Talk; 8003 innkeep Talk unanswered @T29 + filler family streak **5** @ tavern.
+
+OpenRouter: no balance / `$` / nonzero `cost` in logs or run meta (`cost` null) at 2026-11-03T10:03–10:19Z.
+
+**Verdict: MISS** — tabletop Travel loop **PASS**; offs = LitRPG short pads, P0s, tavern filler streak, unanswered innkeep/witness.
+
+**Next attempt (one line):** Keep four chips on LitRPG arrival/journey pads; force prose to name Travel dest + answer offered innkeep/witness Talk; cap tavern Look/Wait/Read filler at 2.
+
+Plain summary also at `merge-logs/fourslot4/T50-report.md`.
