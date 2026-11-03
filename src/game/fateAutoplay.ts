@@ -73,6 +73,7 @@ import {
   shouldSkipFourSlot,
   TRAVEL_STREAK_CAP,
 } from './fourSlotPads';
+import { isCrowdFillerToken, speakablePresentPeople } from './chromeAuthority';
 import { createDefaultSettings, createInitialState, fitKitToHousing } from './defaults';
 /** AI agent goal modes for guided autoplay. */
 export type AiAgentMode = 'default' | 'maxlevel' | 'storyfollower' | 'completionist';
@@ -1095,8 +1096,18 @@ export function preferHurtRecoveryPick(offered: string[], pick: string, state: G
   const maxHp = state.character?.maxHp ?? 0;
   if (!isHurtHp(hp, maxHp)) return pick;
   const pool = offered.length ? offered : [pick];
+  const leave = pool.find((c) => /^leave(?:\s+the\s+scene)?\b/i.test(c));
+  // OPEN7B — dead-crowd (crowd-filler / corpse room, nobody speakable) Leave outranks Rest
+  // so the talk loop breaks. FOURSLOT4 Rest-first must not swallow that Leave pin.
+  const present = state.sceneFacts?.present ?? [];
+  const speakable =
+    speakablePresentPeople(peopleHere(state)).length
+    + speakablePresentPeople(present).length;
+  const deadCrowd =
+    speakable === 0
+    && (present.some((p) => isCrowdFillerToken(p)) || !!state.sceneFacts?.lastKill?.remains);
+  if (leave && deadCrowd) return leave;
   // FOURSLOT4 — Rest at a safe/settlement spot outranks Leave/Travel (hubless Travel loop at HP 1).
-  // OPEN7B Leave-over-Rest only when no Rest chip is on the pad.
   const rest = pool.find(
     (c) =>
       isOutdoorRestPad(c)
@@ -1119,7 +1130,6 @@ export function preferHurtRecoveryPick(offered: string[], pick: string, state: G
     const anyNonTravel = pool.find((c) => !isTravelFamilyChip(c) && !/^(?:say something|do something else)/i.test(c));
     if (anyNonTravel) return anyNonTravel;
   }
-  const leave = pool.find((c) => /^leave(?:\s+the\s+scene)?\b/i.test(c));
   if (leave && travelStreak < TRAVEL_STREAK_CAP) return leave;
   const flee = pool.find((c) => /\bflee|run away|withdraw|disengage\b/i.test(c));
   if (flee) return flee;

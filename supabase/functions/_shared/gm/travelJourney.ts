@@ -29,6 +29,19 @@ export function advanceClock(state: GameState, hours: number): { state: GameStat
   };
 }
 
+/**
+ * FOURSLOT4 gateFix — recoveryRules (synced) imports worldClock / wakeToNewDay.
+ * Thin stubs match client hour math so gm-turn boots; full roadDay / attunement stay client-side.
+ */
+type ClockState = Pick<GameState, 'worldHour' | 'worldDay' | 'roadDay'>;
+export function worldClock(state: ClockState): number {
+  const hour = typeof state.worldHour === 'number' ? state.worldHour : 12;
+  return (state.worldDay ?? 0) * 24 + hour;
+}
+export function wakeToNewDay<T extends ClockState>(state: T): T {
+  return { ...state, roadDay: { since: worldClock(state), hours: 0 } };
+}
+
 export const UNDERWAY_HERE = 'On the road between places';
 
 const tidy = (s: string | undefined | null) => (s ?? '').replace(/\s+/g, ' ').trim();
