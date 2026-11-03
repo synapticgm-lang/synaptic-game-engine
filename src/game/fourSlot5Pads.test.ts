@@ -15,16 +15,15 @@ import {
   pickFromFourSlots,
   shouldSkipFourSlot,
 } from './fourSlotPads';
-import { previewDungeonCard, DUNGEON_CARD_BLUEPRINT } from './dungeonCard';
-import { drawnPlanIssues } from './turnCheck';
-import { openingRestatesPlayerAct } from './turnCheck';
+import { previewDungeonCard } from './dungeonCard';
+import { drawnPlanIssues, openingRestatesPlayerAct } from './turnCheck';
 import { ensureCrowdOrRoleTalkAnswered, sealPostWriterProse, withMoveDestination } from './writerTurn';
 import { hasNumberedChoiceLeak } from './parser';
 import { chipProblem } from './chipLegality';
 import { emptySceneFacts } from './sceneFacts';
 import { settleOrigin, ORIGIN_QUICK_START_CHIP } from './rules/rpgOrigin';
 import { OUTDOOR_REST_CHIP } from './rules/wildlifeConfig';
-import { isInteriorMap } from './placeAuthority';
+import { INTERIOR_MAP_BLUEPRINT, isInteriorMap } from './placeAuthority';
 import type { EngineMode, GameState } from './types';
 
 const SWEEP_MS = 90_000;
@@ -182,7 +181,7 @@ describe('FOURSLOT5 LitRPG short pads (1a)', () => {
 });
 
 describe('FOURSLOT5 floor-plan connectivity (1b)', () => {
-  it('replay: First Tunnel Spur preview is dungeon-card not interior-plan (no floating-room FP)', () => {
+  it('replay: First Tunnel Spur preview is interior-plan; underground skips building FP', () => {
     const built = buildNewGameState({
       bibleId: 'hollow-core',
       characterName: 'Jax',
@@ -192,19 +191,18 @@ describe('FOURSLOT5 floor-plan connectivity (1b)', () => {
     });
     const opened = playReady(stampOpening(built.state));
     const preview = previewDungeonCard(opened, 'First Tunnel Spur');
-    expect(preview.blueprintId).toBe(DUNGEON_CARD_BLUEPRINT);
-    expect(isInteriorMap(preview)).toBe(false);
+    expect(preview.blueprintId).toBe(INTERIOR_MAP_BLUEPRINT);
+    expect(isInteriorMap(preview)).toBe(true);
+    expect(preview.nodes.some((n) => (n.tags ?? []).includes('underground'))).toBe(true);
     const withPreview: GameState = {
       ...opened,
       currentLocation: 'First Tunnel Spur',
-      // drawnMap peeks dungeon card / preview for underground sites
       places: (opened.places ?? []).map((p) =>
         /tunnel spur|first tunnel/i.test(p.name)
-          ? { ...p, dungeonCard: { ...preview, blueprintId: DUNGEON_CARD_BLUEPRINT } as typeof preview }
+          ? { ...p, dungeonCard: preview }
           : p
       ),
     };
-    // Ensure at least one place carries the card under the spur name.
     const hasSpur = (withPreview.places ?? []).some((p) => /tunnel spur/i.test(p.name));
     const state = hasSpur
       ? withPreview
@@ -227,7 +225,7 @@ describe('FOURSLOT5 floor-plan connectivity (1b)', () => {
     expect(issues.filter((i) => /floating-room/i.test(i))).toEqual([]);
   });
 
-  it('floor-plan connectivity sweep over litrpg premades (preview not building)', () => {
+  it('floor-plan connectivity sweep over litrpg premades (underground not building)', () => {
     const litrpg = ALL_CAMPAIGN_BIBLES.filter((b) =>
       /hollow|summoned|hero|inkbound|void|gatebreak|ascending|fabled|system|dungeon|integration/i.test(b.id)
     );
@@ -244,12 +242,19 @@ describe('FOURSLOT5 floor-plan connectivity (1b)', () => {
       const hubs = (opened.places ?? []).filter((p) => p.allowsDungeon || p.dungeonCard);
       for (const hub of hubs.slice(0, 4)) {
         const preview = previewDungeonCard(opened, hub.name);
-        if (preview.blueprintId !== DUNGEON_CARD_BLUEPRINT) {
+        if (preview.blueprintId !== INTERIOR_MAP_BLUEPRINT) {
           holes.push(`${bible.id}:${hub.name}:blueprint=${preview.blueprintId}`);
         }
-        if (isInteriorMap(preview)) {
-          holes.push(`${bible.id}:${hub.name}:still-interior`);
-        }
+        const issues = drawnPlanIssues({
+          ...opened,
+          currentLocation: hub.name,
+          places: [
+            ...(opened.places ?? []).filter((p) => p.name !== hub.name),
+            { ...hub, dungeonCard: preview, allowsDungeon: true },
+          ],
+        });
+        const floating = issues.filter((i) => /floating-room/i.test(i));
+        if (floating.length) holes.push(`${bible.id}:${hub.name}:${floating.join('|')}`);
       }
     }
     expect(holes, holes.join('\n')).toEqual([]);

@@ -19,7 +19,7 @@ import { extractNamedPlaces } from './questPlay';
 import { isLegalMapPlace } from './worldMapAuthority';
 import { resolvePlayAreaMap, type ActiveDungeonState } from './mapEngine';
 import { previewDungeonCard } from './dungeonCard';
-import { isExplorableDungeon, isInteriorMap } from './placeAuthority';
+import { isExplorableDungeon, isInteriorMap, isUndergroundPlace } from './placeAuthority';
 import {
   basementEstablished,
   chipAddressee,
@@ -939,7 +939,13 @@ export function checkLevelUpChanges(before: GameState, after: GameState): TurnCh
 export function drawnPlanIssues(state: GameState): string[] {
   const map = drawnMap(state);
   if (!map || !(isInteriorMap(map) || isExplorableDungeon(map))) return [];
-  return floorPlanIssues(map, { building: isInteriorMap(map), minRooms: 1 });
+  // FOURSLOT5 — underground cave/mine/crypt graphs are stamped interior-plan for Map UI (29z9h)
+  // but are not packed house rooms. building:true on Cave Mouth / Echoing Tunnel / Deep Lair
+  // was the floating-room false positive; keep building checks for real houses only.
+  const underground =
+    isUndergroundPlace(map.siteName ?? map.dungeonName ?? state.currentLocation)
+    || map.nodes.some((n) => (n.tags ?? []).includes('underground'));
+  return floorPlanIssues(map, { building: isInteriorMap(map) && !underground, minRooms: 1 });
 }
 
 /**

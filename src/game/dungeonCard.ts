@@ -26,7 +26,7 @@ import { createHashRng, turnRng } from './seededRng';
 import { encountersForMode, type EncounterSeed } from '@/data/encounters';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
-import { milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
+import { INTERIOR_MAP_BLUEPRINT, milestoneAreaOpts, tierToAreaLevel } from './placeAuthority';
 import { chestProfileForGrade, rollLoot } from './lootTableRegistry';
 import { gainLootMoney, lootMoneyText } from './rules/coins';
 import { openSeededLootable } from './looseItems';
@@ -507,12 +507,11 @@ export function previewDungeonCard(state: GameState, site: string): ActiveDungeo
   const card = findPlace(state, hubName)?.dungeonCard ?? buildDungeonCard(state, hubName);
   const entryId = card.nodes.find((n) => n.id === 'r0')?.id ?? card.currentNodeId;
   const entry = card.nodes.find((n) => n.id === entryId);
-  // FOURSLOT5 — keep DUNGEON_CARD_BLUEPRINT. Rebadging as INTERIOR_MAP_BLUEPRINT made the
-  // building floor-plan checker treat cave graphs (Cave Mouth / Echoing Tunnel / Deep Lair)
-  // as packed house rooms → false-positive floating-room P0s on First Tunnel Spur.
+  // Map UI stamps underground cards as interior-plan (29z9h). Floating-room FPs are owned by
+  // drawnPlanIssues (building:false when underground), not by rebadging the blueprint.
   return {
     ...card,
-    blueprintId: DUNGEON_CARD_BLUEPRINT,
+    blueprintId: INTERIOR_MAP_BLUEPRINT,
     siteName: site,
     currentNodeId: entryId,
     currentZLevel: entry?.zLevel ?? card.currentZLevel,

@@ -123,9 +123,16 @@ export function shouldSkipFourSlot(state: GameState): boolean {
   if (isDying(state)) return true;
   const ff = firstFightChoiceSet(state);
   if (ff.active && ff.options.length) return true;
-  // FOURSLOT5 — journey / arrival / box / stat pads LEAD with their own chip but must still
-  // fill four legal slots (Walk on first, then engage/own/back). Only origin / dying /
-  // first-fight stay truly exclusive (forced state machines).
+  // FOURSLOT5 — plain road journey fills four slots (Walk on leads). When a drought foe is
+  // parked (pendingEncounter / journey meeting / parkedThreat), keep the exclusive road list
+  // so Walk on / Face stay the only chips (s85 / gateFix9). Hurt still reshapes so Rest can land.
+  if (isJourneyUnderway(state) && !liveFight(state) && journeyPads(state).length > 0) {
+    if (state.sceneFacts?.pendingEncounter || state.journey?.encounter || parkedThreatHere(state)) {
+      const hp = state.character?.hp ?? 0;
+      const max = state.character?.maxHp ?? 0;
+      if (!isHurtHp(hp, max)) return true;
+    }
+  }
   return false;
 }
 
