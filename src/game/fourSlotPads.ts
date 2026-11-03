@@ -14,6 +14,8 @@ import {
   FREE_INPUT_DO,
   FREE_INPUT_SAY,
   isFreeInputChip,
+  recordedTravelDestinations,
+  wayOutMovesPlayer,
 } from './sceneAffordances';
 import {
   storyChip,
@@ -24,7 +26,7 @@ import {
   isFillerNoProgressChip,
   fillerOfferExhausted,
 } from './choiceRanking';
-import { isTravelDestHere } from './placeRegistry';
+import { barePlaceKey, isTravelDestHere } from './placeRegistry';
 import { travelChipTarget } from './questPlay';
 import { canOutdoorShortRest, isSafeHubRest, TABLETOP_SHORT_REST_CHIP } from './recoveryRules';
 import { OUTDOOR_CAMP_CHIP, OUTDOOR_REST_CHIP, isHurtHp, isOutdoorRestPad } from './rules/wildlifeConfig';
@@ -37,7 +39,7 @@ import { hubsForBibleId, outdoorHubTravelChoices } from './outdoorHubs';
 import { originPad } from './rules/rpgOrigin';
 import { isDying } from './tabletop/roundFight';
 import { firstFightChoiceSet } from './rules/firstFightChoice';
-import { isJourneyOnwardLine } from './travelJourney';
+import { isJourneyOnwardLine, isJourneyPad, isJourneyUnderway, journeyPads } from './travelJourney';
 import { parkedThreatHere } from './placeThreats';
 
 export type FourSlotId = 'push' | 'engage' | 'own' | 'back';
@@ -61,8 +63,13 @@ export function shouldSkipFourSlot(state: GameState): boolean {
   if (isDying(state)) return true;
   const ff = firstFightChoiceSet(state);
   if (ff.active && ff.options.length) return true;
-  // FOURSLOT2 — journey / road pads go through four-slot assembly so hurt Rest lands
-  // (Walk on → push, Face → engage, Hunt/Gather → own, Rest/Turn back → back).
+  // Road journey owns Walk on / Face / Turn back. Reshape only when hurt so Rest can land
+  // (FOURSLOT2); otherwise keep the exclusive road list (gateFix9 / s85 / transitStuck).
+  if (isJourneyUnderway(state) && !liveFight(state) && journeyPads(state).length > 0) {
+    const hp = state.character?.hp ?? 0;
+    const max = state.character?.maxHp ?? 0;
+    if (!isHurtHp(hp, max)) return true;
+  }
   return false;
 }
 
@@ -137,6 +144,19 @@ export function isFourSlotLegal(state: GameState, label: string): boolean {
   const dest = travelDestOf(raw);
   if (dest && isTravelDestHere(state, dest)) return false;
   if (/^travel\b/.test(t) && !dest) return false;
+  // Dead Travel: label names a place but does not move the player (storyChip opener / zero-gap).
+  if (dest && /^travel\b/.test(t) && !wayOutMovesPlayer(state, raw)) return false;
+  // Mid-journey: Travel toward the trip destination is a duplicate of Walk on.
+  if (
+    dest
+    && isJourneyUnderway(state)
+    && !liveFight(state)
+    && state.journey?.to
+    && (barePlaceKey(dest) === barePlaceKey(state.journey.to)
+      || isTravelDestHere({ ...state, currentLocation: state.journey.to }, dest))
+  ) {
+    return false;
+  }
 
   // Attack with no creature.
   if (
@@ -256,7 +276,17 @@ export function classifyFourSlot(state: GameState, label: string): FourSlotId | 
   // Journey onward is push-the-story, not step-back.
   if (isJourneyOnwardLine(raw)) return 'push';
 
-  // Step back first so Rest/Leave/Travel are never mis-filed as push.
+  const story = storyChip(state);
+  if (story && low(story) === t) return 'push';
+
+  // Moving Travel is push when hurt (Rest owns back) or when it is the story/quest lead.
+  // Otherwise Travel / Leave / Rest stay step-back.
+  const hurtNow = isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0) && !fight;
+  if (/^(?:travel|head toward|go to|return to)\b/.test(t) && wayOutMovesPlayer(state, raw)) {
+    if (hurtNow) return 'push';
+    if (story && /^travel\b/i.test(story) && !isFourSlotLegal(state, story)) return 'push';
+  }
+
   if (
     isOutdoorRestPad(raw)
     || /^(?:rest|make camp|leave|flee|withdraw|walk away|turn back|camp)\b/.test(t)
@@ -264,9 +294,6 @@ export function classifyFourSlot(state: GameState, label: string): FourSlotId | 
   ) {
     return 'back';
   }
-
-  const story = storyChip(state);
-  if (story && low(story) === t) return 'push';
   if (
     /^(?:honour|honor|follow up:|hear their reason|scout|continue the|resume|accept the|deliver|report)\b/.test(t)
     || /^follow the\b/.test(t)
@@ -471,7 +498,22 @@ export function fourSlotFallback(
       const hit = tryLabel(hub);
       if (hit) return hit;
     }
-    return tryLabel('Leave the scene') ?? tryLabel('Wait') ?? null;
+    // Prefer a real exit Travel; Leave only when hurt + unsealed (route to a safe spot).
+    for (const row of recordedTravelDestinations(state)) {
+      const hit = tryLabel(`Travel toward ${row.label}`);
+      if (hit) return hit;
+    }
+    for (const hub of outdoorHubTravelChoices(state, 4)) {
+      const hit = tryLabel(hub);
+      if (hit) return hit;
+    }
+    // Hurt + no Rest here (tabletop outdoor / closed camp): Leave is the route to a safe spot.
+    // Full-HP sealed openings do not hit this branch (transitStuck Leave-unbound).
+    if (isHurtHp(state.character?.hp ?? 0, state.character?.maxHp ?? 0)) {
+      const leave = tryLabel('Leave the scene');
+      if (leave) return leave;
+    }
+    return tryLabel('Wait') ?? null;
   }
 }
 
@@ -509,6 +551,11 @@ export function assembleFourSlotPads(
 
   const candList = candidates.map(tidy).filter(Boolean);
   for (const c of candidates) consider(c);
+  // Hurt journey: seed the exclusive road list so Walk on / Turn back survive Rest reshape.
+  const roadUnderway = isJourneyUnderway(state) && !liveFight(state);
+  if (roadUnderway) {
+    for (const p of journeyPads(state)) consider(p);
+  }
   // Prefer story chip / rest when hurt even if not in candidates.
   const story = storyChip(state);
   if (story) consider(story);
@@ -525,6 +572,12 @@ export function assembleFourSlotPads(
     if (food?.name) consider(`Eat ${food.name}`);
   }
   for (const hub of outdoorHubTravelChoices(state, 4)) consider(hub);
+  // Real exits (Contract Hall → Cathedral Undercroft) — never let a dead story Travel starve MOVE.
+  for (const row of recordedTravelDestinations(state)) {
+    const label = tidy(row.label);
+    if (!label) continue;
+    consider(`Travel toward ${label}`);
+  }
   // Live fight: ensure all four combat meanings are candidates.
   if (liveFight(state)) {
     consider('Press the attack');
@@ -664,23 +717,52 @@ export function assembleFourSlotPads(
     if (fourSeen.has(low(hub)) || !canPad(hub)) continue;
     uniquePush(four, fourSeen, hub);
   }
-  // Safe engine fallbacks to reach 4 (Look/Wait/Leave/Check System bind as fallback/system —
-  // never Browse/Talk-steward/Inspect invent). Skip exhausted filler.
-  const safeFill = [
-    'Look around',
-    'Wait and listen',
-    'Wait',
-    'Leave the scene',
-    ...(state.engineMode === 'litrpg' ? ['Check System'] : []),
-    OUTDOOR_REST_CHIP,
-  ];
+  // Safe engine fallbacks to reach 4 (Look/Wait/Check System / exit Travel).
+  // Leave when hurt needs a route to a safe spot (closed camp / tabletop outdoor Rest illegal).
+  // Full-HP sealed openings never take this branch — transitStuck Leave-unbound stays fixed.
+  const exitTravels = recordedTravelDestinations(state).map((r) => `Travel toward ${r.label}`);
+  const leaveWhenHurtRoute = hurt ? ['Leave the scene'] : [];
+  const safeFill = roadUnderway
+    ? [
+        ...(huntModeOk(state) ? ['Hunt the wildlife nearby'] : []),
+        ...(gatherModeOk(state) ? ['Gather herbs and resources nearby'] : []),
+        ...(hurt ? [OUTDOOR_REST_CHIP, OUTDOOR_CAMP_CHIP] : []),
+        ...(state.engineMode === 'litrpg' ? ['Check System'] : []),
+      ]
+    : [
+        'Look around',
+        'Wait and listen',
+        'Wait',
+        ...exitTravels,
+        ...outdoorHubTravelChoices(state, 4),
+        ...leaveWhenHurtRoute,
+        ...(state.engineMode === 'litrpg' ? ['Check System'] : []),
+        OUTDOOR_REST_CHIP,
+        OUTDOOR_CAMP_CHIP,
+        ...(state.engineMode === 'dnd' ? [TABLETOP_SHORT_REST_CHIP] : []),
+        // Stall after Search: look/search repeats are starved — Keep watch is wait-family distinct wording.
+        'Keep watch',
+      ];
   for (const g of safeFill) {
     if (four.length >= 4) break;
     if (fourSeen.has(low(g)) || !canPad(g)) continue;
+    // Hurt road: only keep chips the journey owner recognizes (or Rest/camp).
+    if (
+      roadUnderway
+      && !isJourneyPad(state, g)
+      && !isOutdoorRestPad(g)
+      && !/^rest\b/i.test(g)
+      && !/^make camp\b/i.test(g)
+      && !/^take a short rest\b/i.test(g)
+      && !/^check system\b/i.test(g)
+    ) {
+      continue;
+    }
     uniquePush(four, fourSeen, g);
   }
 
-  // Free-input always offered (never counts as a slot).
+  // Free-input always offered off exclusive pads (never counts as a slot).
+  // Hurt road still offers free text (FOURSLOT2 sweep); non-hurt road skips assemble entirely.
   const out = [...four.slice(0, 4)];
   if (!out.some((c) => isFreeInputChip(c))) {
     out.push(FREE_INPUT_SAY, FREE_INPUT_DO);
