@@ -77,7 +77,8 @@ describe('2 — factCheck reads the engine\'s records', () => {
     const page = [mod.pageOne(dir), ...rows.filter((r) => r.turn < turn).map((r) => r.gmText ?? '')].join('\n');
     return mod.checkTurn(rows.find((r) => r.turn === turn), existsSync(pf) ? readFileSync(pf, 'utf8') : '', page);
   };
-  const have = existsSync(join(RUNS, A)) && existsSync(join(RUNS, F));
+  // The fact check reads turns.jsonl. A snapshot alone is not that log.
+  const have = existsSync(join(RUNS, A, 'turns.jsonl')) && existsSync(join(RUNS, F, 'turns.jsonl'));
 
   it.skipIf(!have)('a lone traveller the HERE record does not hold is caught (packet "may be about" prose is not a record)', async () => {
     const flags = await flagsAt(A, 9);

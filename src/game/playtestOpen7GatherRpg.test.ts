@@ -4,6 +4,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'fs';
+import { resolve } from 'path';
 import {
   rankChoices,
   GATHER_WILDS_CHIP,
@@ -15,14 +16,19 @@ import { gatherModeOk, startGatherFromInput } from './wildlifeActions';
 import { canAddMaterials } from './inventory';
 import type { GameState } from './types';
 
-const SNAP7307 =
-  'C:/Users/littl/OneDrive/Documents/synapticgm/game/wt/XPWILDS2/scripts/fate-autoplay/runs/2026-11-02T17-52-22-554Z-redmesa-claim_chilled-gm_s7307/snapshot.json';
-// rundir path may use underscore form:
-const SNAP7307B =
-  'C:/Users/littl/OneDrive/Documents/synapticgm/game/wt/XPWILDS2/scripts/fate-autoplay/runs/2026-11-02T17-52-22-554Z_redmesa-claim_chilled-gm_s7307/snapshot.json';
+/** The recovered s7307 final is Twin Lanterns, not a Redmesa path. Untracked; never committed. */
+const REL7307 = 'scripts/fate-autoplay/runs/2026-11-02T14-58-47-531Z_twin-lanterns_chilled-gm_s7307/snapshot.json';
+
+function open7SnapshotPath(): string | null {
+  for (const root of [process.cwd(), resolve(__dirname, '../..')]) {
+    const p = resolve(root, REL7307);
+    if (existsSync(p)) return p;
+  }
+  return null;
+}
 
 function load7307(): GameState | null {
-  const path = existsSync(SNAP7307B) ? SNAP7307B : existsSync(SNAP7307) ? SNAP7307 : null;
+  const path = open7SnapshotPath();
   if (!path) return null;
   const snap = JSON.parse(readFileSync(path, 'utf8'));
   return snap.state as GameState;
@@ -127,7 +133,7 @@ describe('OPEN7 Story RPG Gather', () => {
     expect(out!.state.character.level).toBe(beforeLevel);
   });
 
-  it.skipIf(!existsSync(SNAP7307B) && !existsSync(SNAP7307))(
+  it.skipIf(!open7SnapshotPath())(
     'real 7307 final: Gather appears after pouch ensure at stocked campfire',
     () => {
       const loaded = load7307()!;
