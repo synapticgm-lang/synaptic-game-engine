@@ -127,34 +127,29 @@ export function deliverConsequence(
     }
   }
   
-  // Apply resource deltas
+  // Apply resource deltas. Health is the character's hp. The figure is the existing HP receipt.
   if (consequence.payload.resourceDeltas) {
     for (const delta of consequence.payload.resourceDeltas) {
-      receipts.push(`${delta.resourceId}: ${delta.delta > 0 ? '+' : ''}${delta.delta} (${delta.reason})`);
-      
-      // Apply to character resources
-      if (delta.resourceId === 'health') {
-        const hp = (next.character?.hitPoints ?? 0) + delta.delta;
-        next = {
-          ...next,
-          character: {
-            ...next.character,
-            hitPoints: Math.max(0, hp),
-          },
-        };
+      const id = delta.resourceId.trim().toLowerCase();
+      if (id === 'health' || id === 'hp') {
+        const before = Math.max(0, Math.floor(next.character?.hp ?? 0));
+        const after = Math.max(0, before + Math.trunc(delta.delta || 0));
+        next = { ...next, character: { ...next.character, hp: after } };
+        receipts.push(`HP: ${before} → ${after}`);
+      } else {
+        receipts.push(`${delta.resourceId}: ${delta.delta > 0 ? '+' : ''}${delta.delta} (${delta.reason})`);
       }
     }
   }
   
-  // Relationship deltas land on each person's stored record (a hidden score); the player and the
-  // writer get the remembered beat, never the number.
+  // Relationship deltas land on each person's stored record (a hidden score). The writer gets the
+  // beat only when one was stored. A blank beat is not filled in.
   if (consequence.payload.relationshipDeltas?.length) {
     let stored = next.arcDirector?.npcRelationships;
     for (const delta of consequence.payload.relationshipDeltas) {
       stored = shiftStoredRelationship(stored, delta.npcId, storedShiftFor(delta), next.turn).list;
     }
     next = { ...next, arcDirector: { ...next.arcDirector, npcRelationships: stored } };
-    receipts.push(`Remembered: ${consequence.payload.narrativeBeat}`);
   }
   
   // Unlock crisis
@@ -189,7 +184,8 @@ function buildConsequenceMandate(consequence: DelayedConsequence): string {
   const lines: string[] = ['DELAYED CONSEQUENCE DELIVERY'];
   lines.push(`Source: ${consequence.sourceCrisisId} (${consequence.sourceForkId})`);
   lines.push(`Type: ${consequence.type}`);
-  lines.push(`Narrative: ${consequence.payload.narrativeBeat}`);
+  const beat = consequence.payload.narrativeBeat?.trim();
+  if (beat) lines.push(`Narrative: ${beat}`);
   
   return lines.join('\n');
 }

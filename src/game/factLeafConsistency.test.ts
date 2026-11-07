@@ -115,6 +115,77 @@ describe('writer engine facts', () => {
     expect(engineResultFact(blank.receipts)).toBe('');
     expect(blank.receipts.some((line) => /the cold|the gate|remembered a/i.test(line))).toBe(false);
   });
+
+  it('stores a relationship when the beat is blank and does not publish an empty Remembered line', () => {
+    const state = { ...createInitialState('The Summoned Pact', 'pyoa'), turn: 8, arcDirector: {} };
+    const blank = deliverConsequence(
+      consequence(
+        {
+          relationshipDeltas: [{ npcId: 'Mira', aspect: 'trust', delta: 4, reason: 'kept their word' }],
+          narrativeBeat: '   ',
+          journalHint: '',
+        },
+        'relationship_shift'
+      ),
+      state
+    );
+    expect(blank.receipts.some((line) => line.startsWith('Remembered:'))).toBe(false);
+    expect(engineResultFact(blank.receipts)).toBe('');
+    expect(blank.state.arcDirector?.npcRelationships).toEqual(
+      expect.arrayContaining([expect.objectContaining({ npcName: 'Mira', trust: 4 })])
+    );
+
+    const told = deliverConsequence(
+      consequence(
+        {
+          relationshipDeltas: [{ npcId: 'Mira', aspect: 'trust', delta: 4, reason: 'kept their word' }],
+          narrativeBeat: 'Mira remembers your help.',
+          journalHint: 'Mira',
+        },
+        'relationship_shift'
+      ),
+      state
+    );
+    expect(told.receipts.filter((line) => line.startsWith('Remembered:'))).toEqual(['Remembered: Mira remembers your help.']);
+    expect(engineResultFact(told.receipts)).toContain('Mira remembers your help.');
+    expect(engineResultFact(told.receipts)).not.toMatch(/\btrust\b|\+4/i);
+  });
+
+  it('applies a health consequence to character hp and keeps the figure off the writer fact', () => {
+    const base = createInitialState('The Summoned Pact', 'pyoa');
+    const state = { ...base, turn: 8, character: { ...base.character, hp: 12 }, arcDirector: {} };
+    const told = deliverConsequence(
+      consequence(
+        {
+          resourceDeltas: [{ resourceId: 'health', delta: -3, reason: 'the old cut opens' }],
+          narrativeBeat: 'The old cut opens.',
+          journalHint: 'cut',
+        },
+        'penalty'
+      ),
+      state
+    );
+    expect(told.state.character.hp).toBe(9);
+    expect(told.state.character).not.toHaveProperty('hitPoints');
+    expect(told.receipts.some((line) => line.startsWith('HP:'))).toBe(true);
+    expect(isChromeReceipt(told.receipts.find((line) => line.startsWith('HP:'))!)).toBe(true);
+    expect(engineResultFact(told.receipts)).toContain('The old cut opens');
+    expect(engineResultFact(told.receipts)).not.toMatch(/health:|HP:/i);
+
+    const floored = deliverConsequence(
+      consequence(
+        {
+          resourceDeltas: [{ resourceId: 'hp', delta: -5, reason: 'the cut' }],
+          narrativeBeat: '   ',
+          journalHint: '',
+        },
+        'penalty'
+      ),
+      { ...state, character: { ...state.character, hp: 2 } }
+    );
+    expect(floored.state.character.hp).toBe(0);
+    expect(engineResultFact(floored.receipts)).toBe('');
+  });
 });
 
 describe('sheets the writer already has', () => {
