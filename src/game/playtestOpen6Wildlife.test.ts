@@ -23,12 +23,15 @@ import { canAddMaterials } from './inventory';
 import type { GameState } from './types';
 import type { WildsSlot as Slot } from './wilds';
 
-const RUN_7301 =
-  'C:/Users/littl/OneDrive/Documents/synapticgm/game/wt/XPWILDS/scripts/fate-autoplay/runs/2026-11-02T14-14-29-289Z_summoned-pact_cold-system_s7301';
+const REL = 'scripts/fate-autoplay/runs/2026-11-02T14-14-29-289Z_summoned-pact_cold-system_s7301/snapshot.json';
 
 function load7301(): GameState | null {
-  if (!existsSync(resolve(RUN_7301, 'snapshot.json'))) return null;
-  return JSON.parse(readFileSync(resolve(RUN_7301, 'snapshot.json'), 'utf8')).state as GameState;
+  for (const root of [process.cwd(), resolve(__dirname, '../..')]) {
+    const p = resolve(root, REL);
+    if (!existsSync(p)) continue;
+    return JSON.parse(readFileSync(p, 'utf8')).state as GameState;
+  }
+  return null;
 }
 
 function outdoorBase(snap: GameState): GameState {

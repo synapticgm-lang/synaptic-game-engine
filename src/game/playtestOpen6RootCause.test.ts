@@ -1,5 +1,5 @@
 ﻿import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import { compileChoices } from './choiceCompiler';
 import { padChoicesToCount } from './choicePipeline';
@@ -7,11 +7,18 @@ import { affordancesCoverGenerics } from './sceneAffordances';
 import { HUNT_WILDS_CHIP } from './choiceRanking';
 import type { GameState } from './types';
 
-const RUN =
-  'C:/Users/littl/OneDrive/Documents/synapticgm/game/wt/XPWILDS/scripts/fate-autoplay/runs/2026-11-02T14-14-29-289Z_summoned-pact_cold-system_s7301';
+const REL = 'scripts/fate-autoplay/runs/2026-11-02T14-14-29-289Z_summoned-pact_cold-system_s7301/snapshot.json';
+
+function open6SnapshotPath(): string {
+  for (const root of [process.cwd(), resolve(__dirname, '../..')]) {
+    const p = resolve(root, REL);
+    if (existsSync(p)) return p;
+  }
+  throw new Error(`OPEN6 snapshot is not in the untracked runs directory (${REL})`);
+}
 
 describe('OPEN6 root cause proof', () => {
-  const snap = JSON.parse(readFileSync(resolve(RUN, 'snapshot.json'), 'utf8')).state as GameState;
+  const snap = JSON.parse(readFileSync(open6SnapshotPath(), 'utf8')).state as GameState;
   const state = {
     ...snap,
     currentLocation: 'Kitchen Saint Alley',

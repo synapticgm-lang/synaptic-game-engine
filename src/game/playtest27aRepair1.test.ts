@@ -13,6 +13,7 @@ import { compileGraphChoiceLabels } from './graphChoices';
 import { sealedCastNames } from './beatContract';
 import { applyPresentTrimOnTravel } from './presentAuthority';
 import { ledgerSheetLine } from './litrpgSystemWindow';
+import { clampSystemHousing } from './systemHousing';
 import { openingCastLabel } from './openingEstablishment';
 import { applyCardCrowdToFacts } from './openingPointerCard';
 import { craftProgressionPolicy } from './craftBookCompiler';
@@ -144,10 +145,21 @@ describe('27b Repair 2', () => {
     expect(spokenTalkFallback(s, 'Ask a direct question')).not.toMatch(/direct question/i);
     expect(spokenTalkFallback(s, 'Talk to Pell Wren')).toMatch(/Pell Wren/);
 
-    const sheetState = pactState({ character: { ...pactState().character, level: 3, xp: 120, xpToNext: 450 } });
-    const sheet = ledgerSheetLine(sheetState);
-    expect(sheet).toMatch(/Level 3/);
-    expect(sheet).toMatch(/XP 120\/450/);
+    const character = { ...pactState().character, level: 3, xp: 120, xpToNext: 450 };
+    const visible = pactState({
+      character,
+      systemHousing: clampSystemHousing({ housing: 'private_window', parts: {} as never }),
+    });
+    const shown = ledgerSheetLine(visible);
+    expect(shown).toMatch(/Level 3/);
+    expect(shown).toMatch(/XP 120\/450/);
+    const hidden = pactState({
+      character,
+      systemHousing: clampSystemHousing({ housing: 'leftover_pocket', parts: {} as never }),
+    });
+    const pocket = ledgerSheetLine(hidden);
+    expect(pocket.startsWith('Pocket:')).toBe(true);
+    expect(pocket).not.toMatch(/Level 3|XP 120/);
   });
 });
 
