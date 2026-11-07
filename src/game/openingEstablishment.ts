@@ -1073,7 +1073,7 @@ export function hallTalkAsksWant(raw: string): boolean {
     || /\bwhat they want\b/i.test(t)
     || /\bwhat'?s going on\b/i.test(t)
     || /\bwhy should i(?: help)?\b/i.test(t)
-    || /\bwhy\b.{0,24}\bname\b/i.test(t)
+    || /\bwhy\b.{0,48}\bname\b/i.test(t)
     || /\bwhat(?:'s| is|s)\b.{0,24}\b(?:actual(?:ly)? )?deal\b/i.test(t)
     || /\bwhat(?:'s| is|s)\b.{0,24}\b(?:the )?pay\b/i.test(t)
     || /\b(?:the )?pay then\b/i.test(t)

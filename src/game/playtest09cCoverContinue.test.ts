@@ -14,6 +14,7 @@ import { renderDeterministicFallback, buildSealedManifest } from './sealedManife
 import { composeFreeMudTurn, mudDisplayBody } from './freeMudPresentation';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { createInitialState } from './defaults';
+import { systemHousingWriterSentence } from './systemHousing';
 import { runArcDirectorBeforeGm } from './arcDirector';
 import type { GameState } from './types';
 
@@ -89,21 +90,36 @@ describe('playtest09c — cover-continue + Silent receipts', () => {
         complete: true,
       },
     });
-    const text = stitchOpeningContinue(
-      named,
-      "Think in your head 'why does it need to know my name is Jax' search the room you are in for anything of use or intel"
-    );
+    const act = "Think in your head 'why does it need to know my name is Jax' search the room you are in for anything of use or intel";
+    const text = stitchOpeningContinue(named, act);
     expect(text).toMatch(/search|doorway|stone|dust/i);
-    expect(text).toMatch(/Jax/);
+    expect(text).toMatch(/The name Jax is already yours/);
     expect(text).not.toMatch(/Here is the narrative/i);
     expect(text).not.toMatch(/^\s*\d+\.\s/m);
+    expect(text).not.toMatch(/blue panel|The panel still shows/i);
+
+    const unhoused = stitchOpeningContinue({ ...named, systemHousing: undefined }, act);
+    expect(unhoused).toMatch(/search|doorway|stone|dust/i);
+    expect(unhoused).toMatch(/The panel still shows Jax/);
+
+    const searchOnly = stitchOpeningContinue(named, 'search the room');
+    expect(searchOnly).toMatch(/search|doorway|stone|dust/i);
+    expect(searchOnly).not.toMatch(/Jax|blue panel|The panel still shows/i);
   });
 
-  it('inspect panel is a panel beat, not a SNAPSHOT dump', () => {
-    const text = stitchOpeningContinue(aloneRuin(), 'Inspect the panel');
-    expect(text).toMatch(/panel/i);
-    expect(text).not.toMatch(/street empty|System panel is visible/i);
-    expect(text).not.toMatch(/At alone in/i);
+  it('inspect panel follows the housing, and is not a SNAPSHOT dump', () => {
+    const housedState = aloneRuin();
+    const housing = housedState.systemHousing?.housing;
+    expect(housing).toBeTruthy();
+    const housed = stitchOpeningContinue(housedState, 'Inspect the panel');
+    expect(housed).toContain(systemHousingWriterSentence(housing!));
+    expect(housed).not.toMatch(/street empty|System panel is visible/i);
+    expect(housed).not.toMatch(/At alone in/i);
+
+    const unhoused = stitchOpeningContinue(aloneRuin({ systemHousing: undefined }), 'Inspect the panel');
+    expect(unhoused).toMatch(/panel/i);
+    expect(unhoused).not.toMatch(/street empty|System panel is visible/i);
+    expect(unhoused).not.toMatch(/At alone in/i);
   });
 
   it('classifyOpeningContinue rejects packet instruction echo and empty HERE comma', () => {

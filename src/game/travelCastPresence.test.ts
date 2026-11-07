@@ -76,6 +76,20 @@ describe('travel cast presence', () => {
     const names = people(s);
     expect(names).toContain('Wren Holt');
     expect(names).not.toContain('Mira Quill');
+    const leftBehind = state({
+      currentLocation: 'Lowmarket',
+      previousLocationSheet: { name: 'Sevenfold Circle' } as GameState['previousLocationSheet'],
+      openingEstablishment: {
+        pending: [],
+        answers: { where: 'Sevenfold Circle' },
+        complete: true,
+        aloneArrival: false,
+        card: miraCard,
+        castNpcIds: ['mira'],
+      },
+      npcMemories: [{ ...memory('Mira Quill', 'Sevenfold Circle'), npcId: 'mira' }],
+    });
+    expect(people(leftBehind)).not.toContain('Mira Quill');
     expect(formatWriterFacingEvent(buildCompletedEventPacket(s, 'Talk to Wren Holt'))).toMatch(/"fn":"speech"/);
   });
 

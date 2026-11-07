@@ -347,10 +347,20 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
     const found = alone
       ? `You search ${here}. ${aloneRoom} Nothing useful has been left for you.`
       : `You look again ${here}. Nothing new has been left in reach.`;
+    const bits = [found];
     if (state.engineMode === 'litrpg' && !state.systemHousing) {
-      return name ? `${found} The panel still shows ${name}.` : `${found} The panel has not moved.`;
+      bits.push(name ? `The panel still shows ${name}.` : 'The panel has not moved.');
+    } else if ((asksWhy || asksWant) && name) {
+      bits.push(`The name ${name} is already yours.`);
     }
-    return found;
+    if (asksWhy || asksWant) {
+      const answer =
+        clauseAlreadySpoken(state, ledgerWant, 'want') || clauseAlreadySpoken(state, want, 'want')
+          ? alreadyToldWant
+          : want || 'They have not said what they want yet.';
+      if (answer) bits.push(answer);
+    }
+    return finalizeContinue(state, bits.join(' '));
   }
 
   if (gaveName && name) {

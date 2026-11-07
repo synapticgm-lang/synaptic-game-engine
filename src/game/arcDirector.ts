@@ -262,14 +262,17 @@ function committedSet(state: GameState): Set<string> {
 /** 29c / 12b — catalog drought names first; bible-aware fallback if catalog empty. */
 export function droughtSkirmishTable(state: GameState): string[] {
   const catalog = catalogDroughtNames(state);
-  if (catalog.length) return catalog;
   const id = (state.campaignBibleId ?? '').toLowerCase();
+  // A mode-wide catalog still contains other bibles. These coasts and keeps keep their own list.
   if (id.includes('shattered') || id.includes('coast') || id.includes('saltmar')) {
-    return ['Saltmar Raider', 'Coastal Wight', 'Brine Scout', 'Cliff Cutpurse'];
+    const local = catalog.filter((n) => /Saltmar|Coastal|Brine|Cliff/i.test(n));
+    return local.length ? local : ['Saltmar Raider', 'Coastal Wight', 'Brine Scout', 'Cliff Cutpurse'];
   }
   if (id.includes('cursed') || (id.includes('keep') && !id.includes('salt'))) {
-    return ['Keep Wraith', 'Crypt Shade', 'Gate Haunt', 'Chapel Shade'];
+    const local = catalog.filter((n) => /Keep Wraith|Crypt Shade|Gate Haunt|Chapel Shade/i.test(n));
+    return local.length ? local : ['Keep Wraith', 'Crypt Shade', 'Gate Haunt', 'Chapel Shade'];
   }
+  if (catalog.length) return catalog;
   if (state.engineMode === 'litrpg' || id.includes('hero') || id.includes('summoned') || id.includes('pact')) {
     return [
       'Pact-Hunter Skirmisher',
