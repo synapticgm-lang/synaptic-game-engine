@@ -214,7 +214,7 @@ function placeFeatures(state: GameState, packet: CompletedEventPacket): string[]
   return raw
     .map(norm)
     .filter(Boolean)
-    .filter((n) => !(state.systemHousing && isSystemWindowLabel(n)))
+    .filter((n) => !((packet.ledgerRead || state.systemHousing) && isSystemWindowLabel(n)))
     .filter((n, i, a) => a.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
 }
 

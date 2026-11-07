@@ -233,6 +233,15 @@ const LEDGER_READ_ACTION =
 export function isLedgerReadAction(action: string): boolean {
   return LEDGER_READ_ACTION.test((action ?? '').trim());
 }
+/** The floating panel is a ledger, not a prop, once the player is reading it. */
+function stateWithoutSystemWindowProp(state: GameState): GameState {
+  const props = state.sceneFacts?.props;
+  if (!props?.some((p) => isSystemWindowLabel(p))) return state;
+  return {
+    ...state,
+    sceneFacts: { ...state.sceneFacts!, props: props.filter((p) => !isSystemWindowLabel(p)) },
+  };
+}
 function writerHousingClause(block?: string): string {
   return systemHousingWriterClause(housingFromSystemBlock(block));
 }
@@ -998,15 +1007,16 @@ export function buildCompletedEventPacket(
   }
   const ledgerRead = !!ledgerSheetLine(state) && isLedgerReadAction(action);
   // A ledger read is not an act in the room: the System window is not a ref the writer can bind as
-  // an actor, a prop or a thing that answers.
+  // an actor, a prop or a thing that answers. Scene mentions were still copying the prop through.
   const refOpts = { hallTalk, engineResult: extras?.engineResult, action };
-  const sceneBlock = formatSceneBlock(state);
-  const sceneMentions = mentionFromScene(state);
+  const sceneForWriter = ledgerRead ? stateWithoutSystemWindowProp(state) : state;
+  const sceneBlock = formatSceneBlock(sceneForWriter);
+  const sceneMentions = mentionFromScene(sceneForWriter);
   const allowlist = [
     ...sceneMentions,
-    ...compileNounAllowlist(state, allowExtras, refOpts).filter((n) => !ledgerRead || !isSystemWindowLabel(n)),
+    ...compileNounAllowlist(state, allowExtras, refOpts),
   ].filter((n, i, arr) => {
-    if (state.systemHousing && isSystemWindowLabel(n)) return false;
+    if ((ledgerRead || state.systemHousing) && isSystemWindowLabel(n)) return false;
     return arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i;
   });
   const refEnum = compileRefEnum(state, allowExtras, refOpts)
