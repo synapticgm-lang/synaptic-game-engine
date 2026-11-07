@@ -1,0 +1,403 @@
+{
+  "schemaVersion": "1.0.0",
+  "commission": "WS-6",
+  "status": "proposed",
+  "measurementNotes": {
+    "turns": "Turn bands are design windows, not guaranteed scene boundaries.",
+    "counts": "All content quantities are incremental within the band unless a field is explicitly named cumulative.",
+    "uniqueDefinition": "First exposure to an authored node or semantic family in the run.",
+    "refreshedDefinition": "Reuse with at least two material changes, including state, stakes, affordance, or consequence.",
+    "staleDefinition": "Reuse with no more than one cosmetic or non-material change.",
+    "profileCaveat": "Named profiles are mappings for commission-mentioned bibles; generic profiles are implementation patterns, not claims about additional canonical bibles."
+  },
+  "sharedNoveltyPolicy": {
+    "T0-50": {"uniqueFloor": 0.8, "staleCeiling": 0.05, "maxStaleRepeatStreak": 1, "durableDeltaEveryTurns": 6, "maxDurableDeltaGap": 10},
+    "T51-100": {"uniqueFloor": 0.6, "staleCeiling": 0.15, "maxStaleRepeatStreak": 1, "durableDeltaEveryTurns": 8, "maxDurableDeltaGap": 12},
+    "T101-300": {"uniqueFloor": 0.4, "staleCeiling": 0.25, "maxStaleRepeatStreak": 1, "durableDeltaEveryTurns": 10, "maxDurableDeltaGap": 15}
+  },
+  "modes": [
+    {
+      "mode": "LitRPG",
+      "modeTargets": {
+        "cumulativeHubsByT100": [8, 12],
+        "additionalHubsT101T300": [5, 8],
+        "cumulativeResolvedEncountersByT100": [10, 15],
+        "additionalResolvedEncountersT101T300": [20, 30],
+        "cumulativeNamedNpcsByT100": [12, 16],
+        "meaningfulNamedNpcsByT300": [15, 20],
+        "levels": {"T25": 2, "T100": 5, "T300Minimum": 10},
+        "firstDungeonEnteredBy": 50
+      },
+      "profiles": [
+        {"profileId": "summoned_pact", "label": "Summoned Pact", "emphasis": "Contract obligations, sponsor factions, and social XP", "hubTargetByT100": [10, 12], "requiredDistinctives": ["registration authority", "summoner or patron hub", "rival contract holder", "pact-cost escalation"]},
+        {"profileId": "hero_awakening", "label": "Hero Awakening", "emphasis": "Build discovery, public recognition, and escalating threat", "hubTargetByT100": [8, 10], "requiredDistinctives": ["awakening site", "training or registration hub", "public test", "first dungeon"]},
+        {"profileId": "blank_canvas", "label": "Blank Canvas", "emphasis": "Launch-blocked until minimum authored world inventory exists", "hubTargetByT100": [8, 10], "requiredDistinctives": ["identity hook", "starter settlement", "progression institution", "first dungeon"], "releaseBlocker": "Do not ship at the commission-reported zero-hub baseline."}
+      ],
+      "bands": [
+        {
+          "bandId": "litrpg_T0_30",
+          "turns": [0, 30],
+          "purpose": "Create a durable build-and-world hook, establish the first social and progression institutions, apply natural combat pressure, and reach level 2 without padding.",
+          "quantities": {
+            "hubsOrZones": [2, 3],
+            "questTransitions": [3, 5],
+            "resolvedEncounters": [3, 4],
+            "namedNpcIntroductions": [5, 7],
+            "namedNpcRoleChangesOrExits": [1, 2],
+            "factionDeltas": [1, 2],
+            "optionalDiscoveries": [1, 2]
+          },
+          "milestones": [
+            {"id": "registration_or_equivalent", "targetTurns": [2, 7], "requires": [], "durableOutcomes": ["progression system legible", "starter goal accepted"]},
+            {"id": "opening_hub_committed", "targetTurns": [5, 12], "requires": ["registration_or_equivalent"], "durableOutcomes": ["first hub state saved", "two named contacts available"]},
+            {"id": "natural_combat_pressure", "targetTurns": [12, 20], "requires": ["starter goal accepted"], "durableOutcomes": ["combat grammar demonstrated", "threat family recorded"]},
+            {"id": "level_2", "targetTurns": [15, 25], "requires": ["durable XP sources completed"], "durableOutcomes": ["level = 2", "build choice or upgrade unlocked"]},
+            {"id": "dungeon_hook", "targetTurns": [22, 30], "requires": ["level_2"], "durableOutcomes": ["dungeon objective and access path known"]}
+          ],
+          "genreTelegraphs": ["visible level or stat risk", "enemy-family tactic cue", "reward and XP source preview", "build-dependent affordance"],
+          "antiLoopChecks": ["No semantic mob family more than three times in a rolling 20 turns.", "A defeated named enemy cannot respawn under the same entity and state IDs.", "Travel acknowledgements cannot satisfy hub or encounter counts.", "Registration exposition is once per fact state."],
+          "exitCondition": "Advance when level 2 is durable and the first dungeon objective is known; do not require dungeon entry before T30."
+        },
+        {
+          "bandId": "litrpg_T30_100",
+          "turns": [31, 100],
+          "purpose": "Complete Arc I by widening the map, differentiating factions and encounter families, clearing the first dungeon, and reaching level 5.",
+          "quantities": {
+            "hubsOrZones": [6, 9],
+            "questTransitions": [6, 10],
+            "resolvedEncounters": [7, 11],
+            "namedNpcIntroductions": [7, 9],
+            "namedNpcRoleChangesOrExits": [2, 4],
+            "factionDeltas": [3, 5],
+            "optionalDiscoveries": [2, 4]
+          },
+          "milestones": [
+            {"id": "first_dungeon_entered", "targetTurns": [35, 50], "requires": ["dungeon_hook"], "durableOutcomes": ["dungeon state active", "hub-to-dungeon route unlocked"]},
+            {"id": "first_dungeon_resolved", "targetTurns": [48, 70], "requires": ["first_dungeon_entered"], "durableOutcomes": ["boss or objective terminal", "reward changes build or faction state"]},
+            {"id": "faction_commitment", "targetTurns": [60, 85], "requires": ["two faction positions known"], "durableOutcomes": ["one relationship improves", "one opportunity narrows or changes"]},
+            {"id": "level_5", "targetTurns": [85, 100], "requires": ["XP curve on schedule"], "durableOutcomes": ["level >= 5", "second-tier ability or role unlocked"]},
+            {"id": "arc_I_resolution", "targetTurns": [92, 100], "requires": ["level_5", "first_dungeon_resolved"], "durableOutcomes": ["Arc I closed", "Arc II threat visible"]}
+          ],
+          "genreTelegraphs": ["pre-fight weakness or resistance cue", "faction-tagged objectives", "resource-pressure warning", "build-specific alternate resolution"],
+          "antiLoopChecks": ["No two consecutive stale encounters.", "Every unchanged hub revisit raises suppression weight.", "A repeated NPC scene requires a new demand, fact, relationship, or quest state.", "First-dungeon exit closes after terminal resolution."],
+          "exitCondition": "Advance only after level 5, first-dungeon terminal resolution, and at least one visible faction consequence; deadline is T100."
+        },
+        {
+          "bandId": "litrpg_T100_300",
+          "turns": [101, 300],
+          "purpose": "Deliver Arc II through faction escalation, multiple dungeons, late-build expression, controlled reuse, and a terminal confrontation rather than indefinite grinding.",
+          "quantities": {
+            "hubsOrZones": [5, 8],
+            "questTransitions": [12, 20],
+            "resolvedEncounters": [20, 30],
+            "namedNpcIntroductions": [4, 8],
+            "namedNpcRoleChangesOrExits": [6, 10],
+            "factionDeltas": [6, 10],
+            "optionalDiscoveries": [5, 8],
+            "additionalDungeons": [2, 4]
+          },
+          "milestones": [
+            {"id": "arc_II_reframe", "targetTurns": [105, 125], "requires": ["arc_I_resolution"], "durableOutcomes": ["new stakes", "old hub or NPC recontextualized"]},
+            {"id": "second_dungeon_resolved", "targetTurns": [130, 175], "requires": ["arc_II_reframe"], "durableOutcomes": ["faction advantage changes", "late-build component earned"]},
+            {"id": "faction_escalation_lock", "targetTurns": [175, 220], "requires": ["faction_commitment"], "durableOutcomes": ["ally and opponent locked", "one quest branch retired"]},
+            {"id": "level_10", "targetTurns": [225, 285], "requires": ["XP curve on schedule"], "durableOutcomes": ["level >= 10", "capstone or equivalent build payoff"]},
+            {"id": "terminal_confrontation", "targetTurns": [260, 295], "requires": ["faction_escalation_lock", "level_10"], "durableOutcomes": ["primary antagonist terminal", "world consequence selected"]},
+            {"id": "campaign_resolution", "targetTurns": [280, 300], "requires": ["terminal_confrontation"], "durableOutcomes": ["ending state persisted", "continuation requires explicit new arc"]}
+          ],
+          "genreTelegraphs": ["multi-stage boss intent", "faction escalation meter", "late-build synergy opportunity", "dungeon-specific tactical rule"],
+          "antiLoopChecks": ["No defeated boss re-entry without an authored transformation or resurrection contract.", "At least 40% of content-bearing beats remain first-exposure and stale beats stay below 25%.", "A mob family reused after cooldown must change objective plus tactics, stakes, or consequence.", "Campaign resolution cannot route back to an unresolved travel pad."],
+          "exitCondition": "Terminate by T300 after a durable antagonist, faction, and world-state resolution; endless play requires a new versioned arc contract."
+        }
+      ]
+    },
+    {
+      "mode": "DnD",
+      "modeTargets": {
+        "cumulativeFunctionalZonesByT100": [5, 8],
+        "additionalZonesT101T300": [3, 6],
+        "challengeScenesPer100Turns": [12, 18],
+        "nonCombatChallengeScenesPer100Turns": [4, 6],
+        "combatShareCeiling": 0.6,
+        "corePartySize": [3, 5],
+        "partyBeatEveryTurns": [8, 12],
+        "majorSetPieceEveryTurns": [35, 60]
+      },
+      "profiles": [
+        {"profileId": "cursed_keep", "label": "Cursed Keep", "emphasis": "Layered dungeon exploration, traps, moral curse resolution, and closed-wing progress", "requiredDistinctives": ["three or more dungeon wings", "environmental puzzle grammar", "curse-bearing faction choice", "terminal inner sanctum"]},
+        {"profileId": "salt_road", "label": "Salt Road", "emphasis": "Caravan travel, route hazards, settlements, and competing patrons", "requiredDistinctives": ["caravan party", "route map", "two patron factions", "destination consequence"]},
+        {"profileId": "generic_expedition", "label": "Generic Expedition", "emphasis": "Fallback tabletop spine for other bibles", "requiredDistinctives": ["party formation", "quest patron", "multi-zone expedition", "moral final choice"]}
+      ],
+      "bands": [
+        {
+          "bandId": "dnd_T0_30",
+          "turns": [0, 30],
+          "purpose": "Form the party, accept a quest, teach checks and positioning, and resolve the first dungeon wing or expedition obstacle without collapsing into generic combat.",
+          "quantities": {
+            "hubsOrZones": [2, 3],
+            "questTransitions": [3, 5],
+            "challengeScenes": [4, 6],
+            "nonCombatChallenges": [2, 3],
+            "namedNpcIntroductions": [5, 9],
+            "partyRelationshipDeltas": [2, 3],
+            "factionDeltas": [1, 2],
+            "optionalDiscoveries": [1, 3]
+          },
+          "milestones": [
+            {"id": "party_formed", "targetTurns": [1, 6], "requires": [], "durableOutcomes": ["3-5 party roles established", "one interpersonal tension recorded"]},
+            {"id": "quest_accepted", "targetTurns": [4, 10], "requires": ["party_formed"], "durableOutcomes": ["patron and stakes known", "success and failure conditions recorded"]},
+            {"id": "first_skill_gate", "targetTurns": [7, 15], "requires": ["quest_accepted"], "durableOutcomes": ["non-combat check consequence persists"]},
+            {"id": "first_wing_or_route_obstacle", "targetTurns": [12, 24], "requires": ["first_skill_gate"], "durableOutcomes": ["positioning grammar demonstrated", "resource cost or shortcut recorded"]},
+            {"id": "opening_set_piece", "targetTurns": [22, 30], "requires": ["first_wing_or_route_obstacle"], "durableOutcomes": ["wing or obstacle terminal", "next zone unlocked"]}
+          ],
+          "genreTelegraphs": ["declared DC or risk band", "available skill or tool approaches", "position and terrain cue", "party-member consequence preview"],
+          "antiLoopChecks": ["No identical skill-plus-DC-plus-consequence tuple within ten turns.", "Resolved wing exits are terminal unless a new state explicitly reopens them.", "At least one third of opening challenges must be non-combat.", "A failed check changes cost, position, information, or relationship rather than repeating unchanged."],
+          "exitCondition": "Advance when the party has a shared quest state, one persistent relationship delta, and a terminal first-wing or route-obstacle resolution."
+        },
+        {
+          "bandId": "dnd_T30_100",
+          "turns": [31, 100],
+          "purpose": "Develop two to three dungeon wings or expedition zones, diversify traps and checks, stage a boss, and force a party or faction choice.",
+          "quantities": {
+            "hubsOrZones": [3, 5],
+            "dungeonWingsOrExpeditionZones": [2, 3],
+            "questTransitions": [5, 9],
+            "challengeScenes": [8, 12],
+            "nonCombatChallenges": [3, 4],
+            "namedNpcIntroductionsOrRoleChanges": [4, 7],
+            "partyRelationshipDeltas": [6, 9],
+            "factionDeltas": [2, 4],
+            "optionalDiscoveries": [2, 4]
+          },
+          "milestones": [
+            {"id": "second_wing_opened", "targetTurns": [35, 48], "requires": ["opening_set_piece"], "durableOutcomes": ["new environmental rule", "new failure cost"]},
+            {"id": "party_fault_line", "targetTurns": [45, 65], "requires": ["recorded interpersonal tension"], "durableOutcomes": ["bond, rivalry, or departure risk changes"]},
+            {"id": "mid_arc_boss", "targetTurns": [55, 80], "requires": ["second_wing_opened"], "durableOutcomes": ["boss terminal", "quest interpretation changes"]},
+            {"id": "faction_choice", "targetTurns": [70, 92], "requires": ["two faction positions known"], "durableOutcomes": ["one route or ally changes", "moral cost persisted"]},
+            {"id": "arc_I_tabletop_resolution", "targetTurns": [90, 100], "requires": ["mid_arc_boss", "faction_choice"], "durableOutcomes": ["multiple quest states reconciled", "final arc route visible"]}
+          ],
+          "genreTelegraphs": ["trap tell before resolution", "initiative or positioning change", "party member volunteered approach", "faction-specific success cost"],
+          "antiLoopChecks": ["Combat cannot exceed 60% of challenge scenes.", "The same trap mechanism cannot recur without a changed detection and consequence pattern.", "A boss terminal state closes its encounter contract.", "Party beats require a relationship-state delta, not banter alone."],
+          "exitCondition": "Advance by T100 after resolving the mid-arc boss and a faction choice whose moral and route consequences are stored."
+        },
+        {
+          "bandId": "dnd_T100_300",
+          "turns": [101, 300],
+          "purpose": "Resolve the expedition through escalating zones, party consequences, multiple quest closures, and a final confrontation with morally differentiated outcomes.",
+          "quantities": {
+            "hubsOrZones": [3, 6],
+            "questTransitions": [12, 20],
+            "challengeScenes": [24, 36],
+            "nonCombatChallenges": [8, 12],
+            "namedNpcIntroductionsOrRoleChanges": [6, 12],
+            "partyRelationshipDeltas": [16, 24],
+            "factionDeltas": [6, 10],
+            "majorSetPieces": [3, 5],
+            "optionalDiscoveries": [4, 8]
+          },
+          "milestones": [
+            {"id": "consequence_return", "targetTurns": [105, 130], "requires": ["faction_choice"], "durableOutcomes": ["earlier moral cost becomes mechanical or relational"]},
+            {"id": "deep_zone_resolution", "targetTurns": [135, 180], "requires": ["consequence_return"], "durableOutcomes": ["second major set piece terminal", "party resource or role changes"]},
+            {"id": "party_crisis", "targetTurns": [175, 225], "requires": ["party fault line unresolved or transformed"], "durableOutcomes": ["bond, betrayal, sacrifice, or departure committed"]},
+            {"id": "final_approach", "targetTurns": [215, 260], "requires": ["deep_zone_resolution", "party_crisis"], "durableOutcomes": ["remaining quest resolutions enumerated", "final tactics and moral stakes known"]},
+            {"id": "final_confrontation", "targetTurns": [245, 285], "requires": ["final_approach"], "durableOutcomes": ["primary threat terminal", "faction outcome selected"]},
+            {"id": "tabletop_epilogues", "targetTurns": [270, 300], "requires": ["final_confrontation"], "durableOutcomes": ["party and quest consequences narrated from stored deltas", "campaign terminal"]}
+          ],
+          "genreTelegraphs": ["multi-solution encounter setup", "party-cost preview", "environmental rule escalation", "explicit moral tradeoff at final objective"],
+          "antiLoopChecks": ["No resolved wing, boss, or final confrontation can reopen without a versioned continuation arc.", "At least four of every twelve challenge scenes are non-combat.", "Reused rules grammar must change environment, stakes, and consequence.", "Every major set piece advances at least two quest, party, or faction states."],
+          "exitCondition": "Terminate by T300 after the final confrontation and party-specific epilogues resolve all critical quest states."
+        }
+      ]
+    },
+    {
+      "mode": "Story RPG",
+      "modeTargets": {
+        "cumulativeSocialHubsByT100": [6, 10],
+        "additionalOrRecontextualizedVenuesT101T300": [3, 5],
+        "socialConfrontationsPer100Turns": [8, 14],
+        "actionScenesPer100Turns": [2, 4],
+        "cumulativeNamedNpcsByT100": [12, 18],
+        "npcTurnoverEventsPer100Turns": [4, 8],
+        "leverageOrMoralBeatEveryTurns": [10, 15],
+        "factionShiftEveryTurns": [20, 35]
+      },
+      "profiles": [
+        {"profileId": "cape_district", "label": "Cape District", "emphasis": "Urban social venues, institutional leverage, betrayal, and public consequence", "requiredDistinctives": ["district crisis", "three competing factions", "public reputation", "non-combat climax route"]},
+        {"profileId": "generic_court_intrigue", "label": "Generic Court Intrigue", "emphasis": "Status, secrets, appointments, and relationship reversals", "requiredDistinctives": ["court venue network", "secret ledger", "appointment or exile stakes", "multiple social endings"]},
+        {"profileId": "generic_faction_drama", "label": "Generic Faction Drama", "emphasis": "Contested institutions and morally costly coalition choices", "requiredDistinctives": ["crisis", "leverage topics", "betrayal opportunity", "coalition resolution"]}
+      ],
+      "bands": [
+        {
+          "bandId": "story_rpg_T0_30",
+          "turns": [0, 30],
+          "purpose": "Open with a social crisis, establish leverage and factions, and force a first consequential alignment while making non-combat agency explicit.",
+          "quantities": {
+            "socialHubsOrVenues": [2, 3],
+            "questTransitions": [3, 5],
+            "socialConfrontations": [3, 4],
+            "actionOrCombatScenes": [0, 1],
+            "namedNpcIntroductions": [5, 7],
+            "npcRoleChangesOrExits": [1, 2],
+            "factionDeltas": [1, 2],
+            "leverageTopics": [2, 3],
+            "optionalDiscoveries": [1, 2]
+          },
+          "milestones": [
+            {"id": "opening_social_crisis", "targetTurns": [3, 10], "requires": [], "durableOutcomes": ["social stakes and threatened institution known"]},
+            {"id": "first_leverage", "targetTurns": [8, 16], "requires": ["opening_social_crisis"], "durableOutcomes": ["usable fact, obligation, evidence, or relationship token stored"]},
+            {"id": "first_faction_positions", "targetTurns": [12, 22], "requires": ["first_leverage"], "durableOutcomes": ["at least two incompatible demands visible"]},
+            {"id": "first_alignment", "targetTurns": [18, 30], "requires": ["first_faction_positions"], "durableOutcomes": ["reputation or relationship changes", "one future scene becomes harder, altered, or unavailable"]}
+          ],
+          "genreTelegraphs": ["speaker objective and pressure", "available leverage topic", "relationship or reputation risk", "non-combat resolution affordance"],
+          "antiLoopChecks": ["Each fact state can trigger its exposition bank once.", "A repeated NPC scene requires a new demand, leverage topic, relationship delta, or office/role state.", "No negotiation can return to the identical offer state after refusal.", "The first alignment must alter availability or cost within ten turns."],
+          "exitCondition": "Advance after a stored leverage asset and a visible faction or relationship consequence establish the campaign's social direction."
+        },
+        {
+          "bandId": "story_rpg_T30_100",
+          "turns": [31, 100],
+          "purpose": "Escalate three to five social standoffs, moral dilemmas, betrayal consequences, and faction shifts until the player makes a major commitment.",
+          "quantities": {
+            "socialHubsOrVenues": [4, 7],
+            "questTransitions": [6, 10],
+            "socialConfrontations": [5, 10],
+            "actionOrCombatScenes": [1, 3],
+            "namedNpcIntroductions": [7, 11],
+            "npcRoleChangesOrExits": [3, 5],
+            "factionDeltas": [2, 4],
+            "leverageTopics": [4, 7],
+            "moralWeightBeats": [4, 7],
+            "optionalDiscoveries": [2, 4]
+          },
+          "milestones": [
+            {"id": "betrayal_or_reversal", "targetTurns": [38, 58], "requires": ["first_alignment"], "durableOutcomes": ["NPC role or loyalty changes", "old leverage value changes"]},
+            {"id": "public_consequence", "targetTurns": [50, 72], "requires": ["betrayal_or_reversal"], "durableOutcomes": ["venue, office, reputation, or faction access changes"]},
+            {"id": "second_faction_shift", "targetTurns": [65, 88], "requires": ["public_consequence"], "durableOutcomes": ["coalition map changes", "one neutral actor commits or exits"]},
+            {"id": "major_social_commitment", "targetTurns": [85, 100], "requires": ["second_faction_shift"], "durableOutcomes": ["climax route selected", "opposing demand becomes terminal threat"]}
+          ],
+          "genreTelegraphs": ["leverage validity and cost", "audience or witness pressure", "relationship threshold", "faction reaction preview"],
+          "antiLoopChecks": ["No unchanged venue revisit counts as a social hub beat.", "Exposition retirement is keyed by fact state and audience.", "Betrayal must change an NPC role and at least one quest or faction state.", "At least half of major standoffs must support non-combat resolution."],
+          "exitCondition": "Advance by T100 when the major social commitment locks a climax route and has already produced a visible cost."
+        },
+        {
+          "bandId": "story_rpg_T100_300",
+          "turns": [101, 300],
+          "purpose": "Pay off alliances, betrayals, and moral debts through escalating social confrontations, a climax with non-combat routes, and differentiated consequence endings.",
+          "quantities": {
+            "newOrRecontextualizedVenues": [3, 5],
+            "questTransitions": [12, 20],
+            "socialConfrontations": [16, 28],
+            "actionOrCombatScenes": [4, 8],
+            "namedNpcIntroductions": [2, 6],
+            "npcRoleChangesOrExits": [8, 16],
+            "factionDeltas": [6, 10],
+            "leverageOrMoralWeightBeats": [14, 20],
+            "optionalDiscoveries": [4, 8],
+            "endingPatterns": [3, 5]
+          },
+          "milestones": [
+            {"id": "commitment_cost_returns", "targetTurns": [108, 135], "requires": ["major_social_commitment"], "durableOutcomes": ["ally demand or collateral harm materializes"]},
+            {"id": "coalition_rewrite", "targetTurns": [135, 185], "requires": ["commitment_cost_returns"], "durableOutcomes": ["at least two NPC roles change", "faction balance changes"]},
+            {"id": "moral_point_of_no_return", "targetTurns": [180, 235], "requires": ["coalition_rewrite"], "durableOutcomes": ["ending eligibility changes", "one leverage route expires"]},
+            {"id": "climax_confrontation", "targetTurns": [225, 285], "requires": ["moral_point_of_no_return"], "durableOutcomes": ["institutional or faction crisis terminal", "combat and non-combat routes resolved distinctly"]},
+            {"id": "consequence_endings", "targetTurns": [260, 300], "requires": ["climax_confrontation"], "durableOutcomes": ["NPC, faction, and player-status consequences persisted", "campaign terminal"]}
+          ],
+          "genreTelegraphs": ["coalition consequence preview", "leverage expiration", "witness and legitimacy stakes", "non-combat climax route", "moral debt callback"],
+          "antiLoopChecks": ["No leverage topic can be spent twice without a transformed fact state.", "Recurring NPCs must change demand, status, relationship, or available resolution.", "At least one ending dimension must derive from each of faction, relationship, and moral-choice ledgers.", "The climax cannot reset to pre-confrontation negotiation state."],
+          "exitCondition": "Terminate by T300 with differentiated NPC and faction consequences; continuation requires a new crisis and cannot replay resolved leverage banks."
+        }
+      ]
+    },
+    {
+      "mode": "PYOA",
+      "modeTargets": {
+        "cumulativeLocationsOrFramesByT100": [4, 7],
+        "majorCrisisEveryTurns": [30, 40],
+        "openingCrisisTurns": [5, 12],
+        "firstForkTurns": [15, 25],
+        "cumulativeMeaningfulForksByT100": [5, 8],
+        "delayedPayoffLatencyTurns": [20, 60],
+        "endingGateTurns": [100, 130],
+        "campaignEndBy": 150,
+        "postEndingRequirement": "Inert terminal state or explicit restart/new-campaign action through T300."
+      },
+      "profiles": [
+        {"profileId": "thornferry", "label": "Thornferry", "emphasis": "Place-bound crisis, exclusive local facts, and delayed civic consequences", "requiredDistinctives": ["opening local emergency", "two mutually exclusive alliances", "returned place state", "three or more endings"]},
+        {"profileId": "vesper_glass", "label": "Vesper Glass", "emphasis": "Mystery, identity, fragile evidence, and delayed revelation", "requiredDistinctives": ["exclusive clues", "trust fork", "false interpretation cost", "truth-state endings"]},
+        {"profileId": "generic_branching_crisis", "label": "Generic Branching Crisis", "emphasis": "Fallback PYOA spine for other bibles", "requiredDistinctives": ["opening crisis", "exclusive facts", "visible branch locks", "terminal crisis"]}
+      ],
+      "bands": [
+        {
+          "bandId": "pyoa_T0_30",
+          "turns": [0, 30],
+          "purpose": "Establish an opening crisis, exclusive facts, and a first fork whose costs and promised payoff are visible and cannot be erased by silent reconvergence.",
+          "quantities": {
+            "locationsOrFrames": [2, 3],
+            "majorCrises": [1, 1],
+            "meaningfulForks": [1, 2],
+            "exclusiveFacts": [2, 4],
+            "namedFigureIntroductions": [3, 5],
+            "relationshipOrAllegianceDeltas": [1, 2],
+            "delayedPayoffsScheduled": [1, 2]
+          },
+          "milestones": [
+            {"id": "opening_crisis", "targetTurns": [5, 12], "requires": [], "durableOutcomes": ["threat domain established", "failure clock or irreversible risk recorded"]},
+            {"id": "exclusive_facts", "targetTurns": [8, 18], "requires": ["opening_crisis"], "durableOutcomes": ["branch-specific facts stored", "at least one fact withheld from alternate branch"]},
+            {"id": "first_meaningful_fork", "targetTurns": [15, 25], "requires": ["exclusive_facts"], "durableOutcomes": ["branch lock visible", "relationship or resource changes", "payoff promise scheduled"]},
+            {"id": "fork_aftershock", "targetTurns": [22, 30], "requires": ["first_meaningful_fork"], "durableOutcomes": ["immediate consequence proves choice persistence"]}
+          ],
+          "genreTelegraphs": ["crisis clock or pressure", "exclusive-information marker", "irreversible-choice warning", "promised delayed consequence"],
+          "antiLoopChecks": ["The opening crisis threat domain is unique within the run.", "The first fork stores a branch-lock ID and cannot silently reconverge before payoff.", "No return to the exact pre-choice state.", "Exposition facts retire after delivery unless their truth state changes."],
+          "exitCondition": "Advance after the first fork produces an immediate durable aftershock and a delayed payoff due no later than sixty turns after the choice."
+        },
+        {
+          "bandId": "pyoa_T30_100",
+          "turns": [31, 100],
+          "purpose": "Deliver two additional crises, deepen branches through exclusive facts, and manifest delayed payoffs while making ending locks increasingly legible.",
+          "quantities": {
+            "locationsOrFrames": [2, 4],
+            "majorCrises": [2, 3],
+            "meaningfulForks": [4, 6],
+            "exclusiveFacts": [4, 8],
+            "namedFigureIntroductions": [3, 7],
+            "namedFigureRoleChangesOrExits": [2, 4],
+            "relationshipOrAllegianceDeltas": [2, 4],
+            "delayedPayoffsManifested": [2, 4]
+          },
+          "milestones": [
+            {"id": "first_delayed_payoff", "targetTurns": [35, 65], "requires": ["first_meaningful_fork"], "durableOutcomes": ["promised consequence manifests", "branch value changes"]},
+            {"id": "second_crisis", "targetTurns": [40, 65], "requires": ["fork_aftershock"], "durableOutcomes": ["new threat domain", "new branch pressure"]},
+            {"id": "deep_branch_lock", "targetTurns": [55, 80], "requires": ["second_crisis"], "durableOutcomes": ["at least one ending becomes eligible or impossible"]},
+            {"id": "third_crisis", "targetTurns": [72, 100], "requires": ["deep_branch_lock"], "durableOutcomes": ["distinct threat domain", "terminal stakes foreshadowed"]},
+            {"id": "convergence_check", "targetTurns": [90, 100], "requires": ["third_crisis"], "durableOutcomes": ["branch promises audited", "ending gate prerequisites known"]}
+          ],
+          "genreTelegraphs": ["distinct crisis-domain cue", "branch-lock visibility", "delayed-payoff callback", "ending eligibility preview"],
+          "antiLoopChecks": ["Major crises cannot share the same threat-domain ID.", "A convergence may share a location but must preserve branch facts, relationships, costs, and available choices.", "Every promised payoff has a due-turn and terminal outcome.", "A named figure cannot repeat identical crisis exposition."],
+          "exitCondition": "Advance at T100 only if all due payoffs have manifested or have explicit later due turns and the ending-gate prerequisites are visible."
+        },
+        {
+          "bandId": "pyoa_T100_150",
+          "turns": [101, 150],
+          "purpose": "Open the ending gate, resolve a final distinct crisis, and terminate the campaign with endings derived from preserved branch facts and costs.",
+          "quantities": {
+            "newLocationsOrFrames": [0, 1],
+            "majorCrises": [1, 1],
+            "meaningfulFinalChoices": [1, 2],
+            "newExclusiveFacts": [0, 2],
+            "namedFigureIntroductions": [0, 2],
+            "namedFigureRoleChangesOrExits": [2, 5],
+            "relationshipOrAllegianceDeltas": [1, 3],
+            "endingPatterns": [3, 5]
+          },
+          "milestones": [
+            {"id": "ending_gate_open", "targetTurns": [100, 130], "requires": ["convergence_check"], "durableOutcomes": ["eligible endings enumerated from state", "ineligible endings explain their lock"]},
+            {"id": "terminal_crisis", "targetTurns": [120, 145], "requires": ["ending_gate_open"], "durableOutcomes": ["final threat domain terminal", "last branch cost paid or transformed"]},
+            {"id": "campaign_ending", "targetTurns": [130, 150], "requires": ["terminal_crisis"], "durableOutcomes": ["ending ID persisted", "all active crisis and choice contracts closed"]},
+            {"id": "post_ending_inertness_check", "targetTurns": [151, 300], "requires": ["campaign_ending"], "durableOutcomes": ["no new story content without explicit restart", "no terminal-node re-entry"]}
+          ],
+          "genreTelegraphs": ["ending gate", "final branch-cost summary", "terminal-choice warning", "epilogue callbacks to exclusive facts"],
+          "antiLoopChecks": ["No crisis, branch, or exposition beat may spawn after the ending ID is persisted.", "Continue input returns terminal acknowledgement or offers explicit restart/new campaign only.", "The ending cannot route to an earlier crisis node.", "At least three ending patterns must differ by more than cosmetic prose."],
+          "exitCondition": "Persist a terminal ending by T150; from T151 through T300 the evaluator must observe inert acknowledgements or an explicit user-selected restart, otherwise the run fails."
+        }
+      ]
+    }
+  ]
+}
