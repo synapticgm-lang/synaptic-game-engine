@@ -1,21 +1,30 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   ADMISSION_NOT_WIRED,
+  DEFAULT_PLAYER_TRAINING_PREFERENCE,
+  FULL_PAYLOAD_EXPLANATION,
   PLAYER_CAPTURE_ENABLED,
   PLAYER_TURN_SCHEMA,
   UNVERIFIED_MODEL_ALIASES,
   admitTurn,
   approveBatch,
   featureRequestIsNotConsent,
+  grantPlayerTrainingOptIn,
   modelGate,
   pseudonymise,
+  recordConsentingPlayerCall,
+  revokePlayerTrainingOptIn,
   selectTrainingRows,
   sessionSplit,
+  setPlayerTrainingPreference,
+  shouldRequestTrainLog,
   tally,
   type ConsentRecord,
   type PlayerTurnCapture,
   type SelectionRow,
 } from './playerTurnAdmission';
+import { OPENROUTER_DEEPSEEK_V41_FLASH, OPENROUTER_GLM_53_FLASH } from './modelIds';
+import { clearTrainLogSession, engineFactsFromState, peekTrainLogRows, setTrainLogFileAppend, setTrainLogSession } from './trainLog';
 
 function consent(): ConsentRecord {
   return {
@@ -70,24 +79,29 @@ describe('player turn admission defaults', () => {
   it('capture is off and a feature request is not consent', () => {
     expect(PLAYER_CAPTURE_ENABLED).toBe(false);
     expect(featureRequestIsNotConsent('include player turns')).toBeNull();
-    expect(ADMISSION_NOT_WIRED.some((line) => /not connected/.test(line))).toBe(true);
+    expect(ADMISSION_NOT_WIRED.some((line) => /opted out/.test(line))).toBe(true);
   });
 
-  it('quarantines aliases and any served id that is not on the verified list', () => {
+  it('quarantines aliases and unknown ids, and accepts the two named corpus writers', () => {
     for (const alias of UNVERIFIED_MODEL_ALIASES) expect(modelGate(alias)).toBe('quarantine');
-    expect(modelGate('deepseek/deepseek-v4.1-flash')).toBe('quarantine');
+    expect(modelGate('deepseek/deepseek-chat')).toBe('quarantine');
     expect(modelGate('')).toBe('quarantine');
+    expect(modelGate(OPENROUTER_DEEPSEEK_V41_FLASH)).toBe('ok');
+    expect(modelGate(OPENROUTER_GLM_53_FLASH)).toBe('ok');
   });
 
   it('rejects a player turn without consent and a secret, and keeps a candidate only after the gates', () => {
-    const player = turn({ source: 'player', consentRef: 'consent-1', calls: turn().calls.map((c) => ({ ...c, model: 'verified-model' })) });
+    const player = turn({
+      source: 'player',
+      consentRef: 'consent-1',
+      calls: turn().calls.map((c) => ({ ...c, model: OPENROUTER_DEEPSEEK_V41_FLASH })),
+    });
     expect(admitTurn(player, null).status).toBe('rejected');
     expect(admitTurn({ ...player, inputText: 'sk-abcdefghij look' }, consent()).status).toBe('rejected');
-    const verified = new Set(['verified-model']);
-    expect(verified.has('verified-model')).toBe(true);
     const candidate = admitTurn(player, consent());
-    expect(candidate.status).toBe('quarantine');
+    expect(candidate.status).toBe('candidate');
     expect(candidate.gameplay).toBe(true);
+    expect(tally([{ rootId: player.rootId, source: 'player', mode: 'litrpg', world: 'summoned-pact', status: 'candidate', gameplay: true }], new Set()).approved).toBe(0);
   });
 
   it('does not approve by itself, and auto is not a reviewer', () => {
@@ -151,5 +165,140 @@ describe('player turn admission defaults', () => {
     const a = sessionSplit('session-a');
     expect(sessionSplit('session-a')).toBe(a);
     expect(['train', 'eval']).toContain(a);
+  });
+});
+
+describe('consenting player turns through the existing logger', () => {
+  const facts = engineFactsFromState({
+    currentLocation: 'Hall',
+    sceneFacts: { present: ['Mira'], location: 'Hall' },
+    character: { hp: 10, maxHp: 10 },
+    inventory: [{ name: 'Bag' }],
+    offeredChoices: ['Look around'],
+  })!;
+  const ack = { commercial: true, retention: true, withdraw: true, fullPayload: true };
+
+  beforeEach(() => {
+    clearTrainLogSession();
+    setTrainLogFileAppend(null);
+    setPlayerTrainingPreference(null);
+  });
+
+  it('stores one opted-in turn that can be read back, and does not mark it good', () => {
+    const pref = grantPlayerTrainingOptIn('2026-11-07T12:00:00Z', ack);
+    expect(pref?.optedIn).toBe(true);
+    expect(FULL_PAYLOAD_EXPLANATION).toMatch(/system prompt/);
+    setTrainLogSession({ run_id: 'run-p', turn_no: 4, mode: 'litrpg', callsPath: null });
+    const row = recordConsentingPlayerCall(pref, {
+      job: 'writer',
+      system: 'SYSTEM',
+      user: 'Look around',
+      assistant: 'The hall is quiet.',
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      provider: 'openrouter',
+      build_stamp: '2026-11-03e',
+      run_id: 'run-p',
+      turn_no: 4,
+      mode: 'litrpg',
+      engine_facts: facts,
+      finish_reason: 'stop',
+      accountIds: ['user-12345678'],
+    });
+    expect(row?.example_source).toBe('player');
+    expect(row?.judge_scores).toBeUndefined();
+    expect(recordConsentingPlayerCall(pref, {
+      job: 'writer',
+      system: 'SYSTEM',
+      user: 'Look around',
+      assistant: 'The hall is quiet.',
+      teacher_model: OPENROUTER_GLM_53_FLASH,
+      build_stamp: '2026-11-03e',
+      run_id: 'run-p',
+      turn_no: 4,
+      mode: 'rpg',
+      engine_facts: facts,
+      finish_reason: 'stop',
+    })).toBeNull();
+    expect(peekTrainLogRows().filter((r) => r.job === 'writer')).toHaveLength(1);
+    const rpg = recordConsentingPlayerCall(pref, {
+      job: 'writer',
+      system: 'SYSTEM',
+      user: 'Wait',
+      assistant: 'You wait.',
+      teacher_model: OPENROUTER_GLM_53_FLASH,
+      build_stamp: '2026-11-03e',
+      run_id: 'run-p',
+      turn_no: 5,
+      mode: 'rpg',
+      engine_facts: facts,
+      finish_reason: 'stop',
+    });
+    expect(rpg?.mode).toBe('rpg');
+    expect(rpg?.example_source).toBe('player');
+  });
+
+  it('stores nothing when opted out, revoked, truncated, unknown, or secret', () => {
+    expect(shouldRequestTrainLog({ labSession: false, preference: DEFAULT_PLAYER_TRAINING_PREFERENCE })).toBe(false);
+    expect(shouldRequestTrainLog({ labSession: true, preference: DEFAULT_PLAYER_TRAINING_PREFERENCE })).toBe(true);
+    const pref = grantPlayerTrainingOptIn('t', ack)!;
+    expect(recordConsentingPlayerCall(DEFAULT_PLAYER_TRAINING_PREFERENCE, {
+      assistant: 'no',
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      build_stamp: '2026-11-03e',
+      engine_facts: facts,
+      system: 'S',
+      user: 'U',
+    })).toBeNull();
+    expect(peekTrainLogRows()).toHaveLength(0);
+    const revoked = revokePlayerTrainingOptIn(pref, 'later');
+    expect(shouldRequestTrainLog({ labSession: false, preference: revoked })).toBe(false);
+    expect(recordConsentingPlayerCall(pref, {
+      assistant: 'cut',
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      build_stamp: '2026-11-03e',
+      engine_facts: facts,
+      system: 'S',
+      user: 'U',
+      truncated: true,
+      run_id: 'r',
+      turn_no: 1,
+    })).toBeNull();
+    expect(recordConsentingPlayerCall(pref, {
+      assistant: 'x',
+      teacher_model: 'DS4.1Flash',
+      build_stamp: '2026-11-03e',
+      engine_facts: facts,
+      system: 'S',
+      user: 'U',
+      run_id: 'r',
+      turn_no: 2,
+    })).toBeNull();
+    expect(recordConsentingPlayerCall(pref, {
+      assistant: 'key sk-abcdefghij',
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      build_stamp: '2026-11-03e',
+      engine_facts: facts,
+      system: 'S',
+      user: 'player@example.com user-abcdef12',
+      run_id: 'r',
+      turn_no: 3,
+      accountIds: ['user-abcdef12'],
+    })).toBeNull();
+    const clean = recordConsentingPlayerCall(pref, {
+      assistant: 'Hello',
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      build_stamp: '2026-11-03e',
+      engine_facts: facts,
+      system: 'S',
+      user: 'player@example.com said hello user-abcdef12',
+      run_id: 'r',
+      turn_no: 4,
+      accountIds: ['user-abcdef12'],
+    });
+    const packed = JSON.stringify(clean);
+    expect(packed).not.toContain('player@example.com');
+    expect(packed).not.toContain('user-abcdef12');
+    expect(packed).toContain('[redacted-email]');
+    expect(featureRequestIsNotConsent('include player turns')).toBeNull();
   });
 });

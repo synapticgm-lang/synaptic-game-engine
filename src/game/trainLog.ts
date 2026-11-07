@@ -76,6 +76,8 @@ export type TrainLogRow = {
   correct_fact?: string | null;
   repaired_reply?: string | null;
   repair_pass?: number | null;
+  /** player: a consenting gameplay turn. test: harness. Absent on older rows. */
+  example_source?: 'player' | 'test' | null;
 };
 
 export type TrainLogRecordInput = {
@@ -110,6 +112,7 @@ export type TrainLogRecordInput = {
   mode?: string | null;
   genre?: string | null;
   build_stamp?: string | null;
+  example_source?: 'player' | 'test' | null;
 };
 
 export type TrainLogSession = {
@@ -458,6 +461,7 @@ export function recordModelCall(input: TrainLogRecordInput): TrainLogRow | null 
     if (input.correct_fact != null) row.correct_fact = input.correct_fact;
     if (input.repaired_reply != null) row.repaired_reply = input.repaired_reply;
     if (typeof input.repair_pass === 'number') row.repair_pass = input.repair_pass;
+    if (input.example_source === 'player' || input.example_source === 'test') row.example_source = input.example_source;
 
     if (job === 'repair' || job === 'rewrite') {
       // Prefer the same-turn writer already recorded in THIS process.

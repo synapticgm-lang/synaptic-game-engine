@@ -5,6 +5,7 @@ import { logger } from './logger';
 import { resolveWriterModel, getTierDefinition } from './subscriptionTiers';
 import { resolveHostedImageModel } from './hostedImageModel';
 import { effectiveWriterTier, isAutoplayTestLabSession, isTestLabEnabled } from './testLab';
+import { getPlayerTrainingPreference, shouldRequestTrainLog } from './playerTurnAdmission';
 import {
   appendTrainLogRows,
   currentTrainLogJob,
@@ -172,7 +173,10 @@ export async function invokeGmProxy(params: {
         });
 
     // q71-TRAINLOG — narrow body flag only the autoplay/test-lab harness sets; never for real players.
-    const trainLog = isAutoplayTestLabSession();
+    const trainLog = shouldRequestTrainLog({
+      labSession: isAutoplayTestLabSession(),
+      preference: getPlayerTrainingPreference(),
+    });
     const stackJob = currentTrainLogJob();
     const trainJob =
       stackJob !== 'untagged'

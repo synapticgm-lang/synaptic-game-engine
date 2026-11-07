@@ -1,8 +1,18 @@
 /**
- * Local admission check for a future player-turn training set.
- * Capture stays off. This module does not record, export, or approve a live turn.
- * John's request to include player turns is not another player's consent.
+ * Local admission check for a player-turn training set.
+ * Other players stay opted out. John's request is not their consent.
+ * Recording uses the existing trainLog. A stored row is not an approved example.
  */
+import {
+  OPENROUTER_DEEPSEEK_V41_FLASH,
+  OPENROUTER_GLM_53_FLASH,
+} from './modelIds';
+import {
+  peekTrainLogRows,
+  recordModelCall,
+  type TrainLogRecordInput,
+  type TrainLogRow,
+} from './trainLog';
 export const PLAYER_TURN_SCHEMA = 'player-turn-admission/1';
 
 /** Live capture of other players. Stays false until a separate enable decision. */
@@ -22,7 +32,7 @@ export const UNVERIFIED_MODEL_ALIASES = ['DS4.1Flash', 'GLM5.3Flash'] as const;
 export const VERIFIED_TRAINING_MODEL_IDS: ReadonlySet<string> = new Set();
 
 export const ADMISSION_NOT_WIRED = [
-  'Live capture is not connected to the turn or to trainLog.',
+  'No settings control is mounted, so a normal session stays opted out.',
   'There is no other-player consent screen. A feature request is not that consent.',
   'DS4.1Flash and GLM5.3Flash have no verified served id or training licence here, so they stay in quarantine.',
   'Deleting a local row does not untrain a weight that was already trained.',
@@ -110,10 +120,76 @@ export function featureRequestIsNotConsent(_note: string): ConsentRecord | null 
   return null;
 }
 
+/** Served ids the 2 Nov corpus already treats as the two allowed writers. Aliases are not ids. */
+export const CORPUS_WRITER_IDS: ReadonlySet<string> = new Set([
+  OPENROUTER_DEEPSEEK_V41_FLASH,
+  OPENROUTER_GLM_53_FLASH,
+]);
+
 export function modelGate(model: string | null | undefined): 'ok' | 'quarantine' {
   const id = (model ?? '').trim();
-  if (!id || !VERIFIED_TRAINING_MODEL_IDS.has(id)) return 'quarantine';
-  return 'ok';
+  if (CORPUS_WRITER_IDS.has(id) || VERIFIED_TRAINING_MODEL_IDS.has(id)) return 'ok';
+  return 'quarantine';
+}
+
+export const FULL_PAYLOAD_EXPLANATION =
+  'Opting in stores this device\'s gameplay turns: the system prompt, what you typed or which button you pressed, the model reply, the served model id, and the engine facts. Those rows can be used as commercial training examples. You can turn this off, and later rows stop. Emails, account ids, and API keys are not kept. This does not delete a row already stored, and it does not untrain a weight.';
+
+export type PlayerTrainingPreference = {
+  optedIn: boolean;
+  consentRef: string | null;
+  explainedFullPayload: boolean;
+  revokedAt: string | null;
+};
+
+export const DEFAULT_PLAYER_TRAINING_PREFERENCE: PlayerTrainingPreference = {
+  optedIn: false,
+  consentRef: null,
+  explainedFullPayload: false,
+  revokedAt: null,
+};
+
+let activePreference: PlayerTrainingPreference = { ...DEFAULT_PLAYER_TRAINING_PREFERENCE };
+
+export function getPlayerTrainingPreference(): PlayerTrainingPreference {
+  return { ...activePreference };
+}
+
+export function setPlayerTrainingPreference(next: PlayerTrainingPreference | null): void {
+  activePreference = next ? { ...next } : { ...DEFAULT_PLAYER_TRAINING_PREFERENCE };
+}
+
+export function grantPlayerTrainingOptIn(
+  now: string,
+  ack: { commercial: boolean; retention: boolean; withdraw: boolean; fullPayload: boolean }
+): PlayerTrainingPreference | null {
+  if (!ack.commercial || !ack.retention || !ack.withdraw || !ack.fullPayload) return null;
+  const pref: PlayerTrainingPreference = {
+    optedIn: true,
+    consentRef: `consent_${fnv(now)}`,
+    explainedFullPayload: true,
+    revokedAt: null,
+  };
+  return pref;
+}
+
+export function revokePlayerTrainingOptIn(prev: PlayerTrainingPreference, now: string): PlayerTrainingPreference {
+  return { ...prev, optedIn: false, revokedAt: now };
+}
+
+export function playerTrainingCaptureAllowed(pref: PlayerTrainingPreference | null | undefined): boolean {
+  if (!pref?.optedIn || !pref.explainedFullPayload || !pref.consentRef) return false;
+  if (pref.revokedAt) return false;
+  return true;
+}
+
+/** Lab sessions keep their existing flag. A real player is included only by their own opt-in. */
+export function shouldRequestTrainLog(args: {
+  labSession: boolean;
+  preference?: PlayerTrainingPreference | null;
+}): boolean {
+  if (args.labSession) return true;
+  return playerTrainingCaptureAllowed(args.preference);
 }
 
 function blob(turn: PlayerTurnCapture): string {
@@ -270,4 +346,58 @@ export function tally(rows: readonly SelectionRow[], approvedIds: ReadonlySet<st
 export function sessionSplit(sessionId: string): 'train' | 'eval' {
   const n = Number.parseInt(fnv(sessionId).slice(0, 2), 16);
   return n % 5 === 0 ? 'eval' : 'train';
+}
+
+const EMAIL = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
+
+function scrubText(text: string, accountIds: readonly string[]): string | null {
+  if (SECRET.test(text) || PRIVATE_THOUGHT.test(text)) return null;
+  let next = text.replace(EMAIL, '[redacted-email]');
+  for (const id of accountIds) {
+    const raw = id.trim();
+    if (raw.length >= 8) next = next.split(raw).join('[redacted-account]');
+  }
+  return next;
+}
+
+/** One consenting gameplay call through the existing logger. Off, or a bad row, stores nothing. */
+export function recordConsentingPlayerCall(
+  pref: PlayerTrainingPreference | null,
+  input: TrainLogRecordInput & { accountIds?: string[] }
+): TrainLogRow | null {
+  if (!playerTrainingCaptureAllowed(pref)) return null;
+  const model = (input.teacher_model ?? '').trim();
+  if (!CORPUS_WRITER_IDS.has(model)) return null;
+  if (!input.build_stamp?.trim() || !input.engine_facts) return null;
+  if (input.truncated) return null;
+  if (/^(?:length|max_tokens|error|content_filter)$/i.test(input.finish_reason ?? '')) return null;
+  const job = input.job ?? 'writer';
+  if (job === 'writer' && peekTrainLogRows().some((r) => r.job === 'writer' && r.run_id === (input.run_id ?? null) && r.turn_no === (input.turn_no ?? null))) {
+    return null;
+  }
+  const accountIds = input.accountIds ?? [];
+  const system = input.system == null ? null : scrubText(input.system, accountIds);
+  const user = input.user == null ? null : scrubText(input.user, accountIds);
+  const assistant = scrubText(input.assistant, accountIds);
+  if (system === null || user === null || assistant === null) return null;
+  let messages = input.messages;
+  if (Array.isArray(messages)) {
+    const next = [];
+    for (const message of messages) {
+      const content = scrubText(message.content, accountIds);
+      if (content === null) return null;
+      next.push({ ...message, content });
+    }
+    messages = next;
+  }
+  const { accountIds: _accountIds, judge_scores: _judge, ...rest } = input;
+  return recordModelCall({
+    ...rest,
+    job,
+    system: system ?? undefined,
+    user: user ?? undefined,
+    assistant,
+    messages,
+    example_source: 'player',
+  });
 }
