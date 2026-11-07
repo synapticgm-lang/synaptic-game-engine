@@ -489,10 +489,18 @@ Rules:
  * Kit / SNAPSHOT / CRAFT / GROUND TRUTH inventory stay off this path (02z hole-close).
  * Beat card + last beats live in `buildContextPrompt`.
  */
+function factLeafMode(block: string): string {
+  return block
+    .replace(/【 TURN STRUCTURE TEMPLATE 】[\s\S]*?(?=【 |$)/g, '')
+    .replace(/2\. SYSTEM \(after prose, in <system> tags\)[\s\S]*?(?=\n【 )/g, '')
+    .replace(/<system-log> format:[\s\S]*?(?=\n【 )/g, '');
+}
+
 export function buildMasterPrompt(
   state: GameState,
   settings: Settings,
-  _activeLoreCards: LoreCard[] = []
+  _activeLoreCards: LoreCard[] = [],
+  opts?: { factLeaf?: boolean }
 ): string {
   const kidMode = settings.contentMode === 'kid';
   const nsfw = campaignIsNsfw(state);
@@ -504,7 +512,16 @@ export function buildMasterPrompt(
     rpg: MODE_RPG,
     pyoa: MODE_PYOA,
   }[state.engineMode] ?? MODE_RPG;
-  const modeBlock = storyExamplesInPov(modeBlockRaw, pov);
+  const factLeaf = opts?.factLeaf === true;
+  // The JSON fact leaf owns the reply shape. Numbered choices and state tags stay on the legacy prompt.
+  const leafMode = factLeaf ? factLeafMode(modeBlockRaw) : modeBlockRaw;
+  const modeBlock = storyExamplesInPov(leafMode, pov);
+  const directives = factLeaf
+    ? CRITICAL_DIRECTIVES.replace(
+        /\nEmit <item-gain> \/ <heal> \/ <damage> only when the beat actually changes those facts\./,
+        ''
+      )
+    : CRITICAL_DIRECTIVES;
 
   const contentRules = kidMode
     ? KID_MODE_RULES
@@ -517,7 +534,7 @@ export function buildMasterPrompt(
     { engineMode: state.engineMode, kidMode }
   );
 
-  const choiceDna = formatChoiceTierModeDna(state.engineMode);
+  const choiceDna = factLeaf ? '' : formatChoiceTierModeDna(state.engineMode);
   const playerRules = [
     state.engineMode === 'dnd' ? formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode) : '',
     formatSessionZeroForPrompt(state.sessionZero),
@@ -529,7 +546,7 @@ export function buildMasterPrompt(
  Critical → Mode → Safety. Facts live on the beat card, not a kit dump.
 ═══════════════════════════════════════════════════════════════════════════
 
-${CRITICAL_DIRECTIVES}
+${directives}
 【 RULE 4: POINT OF VIEW 】
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${formatPerspectiveRule(pov)}
@@ -543,13 +560,12 @@ ${modeBlock}
 ${formatGoldShapeForPrompt(state.engineMode)}
 ${formatLikedKeeperForPrompt(state.engineMode, state.craftKeepers)}
 
-${turnStructureFor(state.engineMode)}
+${factLeaf ? '' : turnStructureFor(state.engineMode)}
 
-${storyExamplesInPov(OUTPUT_FORMATTING, pov)}
+${factLeaf ? '' : storyExamplesInPov(OUTPUT_FORMATTING, pov)}
 
 ${voiceRail}
-
-${choiceDna}
+${factLeaf ? '' : choiceDna}
 
 ${playerRules}
 
@@ -557,6 +573,15 @@ ${contentRules}
 
 ${formatMaturityRules(settings, { nsfw })}
 `.trim();
+}
+
+/** System prompt for the engine-first Token Prose leaf. Legacy callers keep buildMasterPrompt. */
+export function buildFactLeafSystemPrompt(
+  state: GameState,
+  settings: Settings,
+  activeLoreCards: LoreCard[] = []
+): string {
+  return buildMasterPrompt(state, settings, activeLoreCards, { factLeaf: true });
 }
 
 // Re-export for compatibility

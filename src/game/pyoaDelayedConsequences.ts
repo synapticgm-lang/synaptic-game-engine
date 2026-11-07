@@ -166,6 +166,12 @@ export function deliverConsequence(
   if (consequence.payload.unlockEndingId) {
     receipts.push(`Ending unlocked: ${consequence.payload.unlockEndingId}`);
   }
+
+  // The beat is already on the payload. Id lines stay for the log; the writer reads this sentence.
+  const beat = consequence.payload.narrativeBeat?.trim();
+  if (beat && !receipts.some((line) => line.includes(beat))) {
+    receipts.push(`Remembered: ${beat}`);
+  }
   
   // Build mandate for GM
   const mandate = buildConsequenceMandate(consequence);

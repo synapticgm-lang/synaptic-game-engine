@@ -3,7 +3,7 @@
  * production builds with VITE_ALLOW_CLIENT_GM !== 'true' tree-shake this module out.
  */
 // Master Prompt v2.0 - Hierarchical architecture (docs/MASTER-PROMPT-ARCHITECTURE.md)
-import { buildSystemPrompt, buildContextPrompt } from './masterPrompt';
+import { buildFactLeafSystemPrompt, buildContextPrompt } from './masterPrompt';
 import { sentenceRepairSystemPrompt } from './narrativePov';
 import { CLAUSE_CHECK_SYS } from './clauseCheckPrompt';
 import type { GameState, Settings, LoreCard } from './types';
@@ -406,7 +406,7 @@ async function dispatchLlm(
 }
 
 function assembleSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[]): string {
-  let systemPrompt = buildSystemPrompt(state, settings, activeLoreCards);
+  let systemPrompt = buildFactLeafSystemPrompt(state, settings, activeLoreCards);
   if (settings.mapTriggerMode === 'immersive') {
     systemPrompt += `\n\n[MAP SYSTEM MODE: IMMERSIVE]\n- Focus on narrative immersion.\n- Output XML map tags (<dungeon-load>, <hex-move>, <map-floor-change>) ONLY when entering brand new regions, major landmarks, or changing floors. Avoid tag output for micro-steps within the same room.`;
   } else {

@@ -1,4 +1,4 @@
-import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
+import { buildFactLeafSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
 import { formatPerspectiveRule, pcPov, resolvePerspective, sentenceRepairSystemPrompt } from '../_shared/gm/narrativePov.ts';
 import { CLAUSE_CHECK_SYS } from '../_shared/gm/clauseCheckPrompt.ts';
@@ -85,7 +85,7 @@ function assembleSystemPrompt(
   loreCards: unknown[]
 ): string {
   // deno-lint-ignore no-explicit-any
-  let systemPrompt = buildSystemPrompt(state as any, settings as any, loreCards as any);
+  let systemPrompt = buildFactLeafSystemPrompt(state as any, settings as any, loreCards as any);
   const mapMode = settings.mapTriggerMode === 'immersive' ? 'immersive' : 'tactical';
   if (mapMode === 'immersive') {
     systemPrompt += `\n\n[MAP SYSTEM MODE: IMMERSIVE]\n- Focus on narrative immersion.\n- Output XML map tags (<dungeon-load>, <hex-move>, <map-floor-change>) ONLY when entering brand new regions, major landmarks, or changing floors. Avoid tag output for micro-steps within the same room.`;
