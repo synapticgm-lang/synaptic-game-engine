@@ -67,6 +67,13 @@ describe('factCheck held items', () => {
     expect(item(await check('Jax drew their sword.', 'You have no sword.'), 'sword')).toHaveLength(1);
     expect(item(await check('Jax drew their sword.', 'You are without a sword.'), 'sword')).toHaveLength(1);
     expect(item(await check('Jax drew their sword.', 'This is not a sword.'), 'sword')).toHaveLength(1);
+    expect(item(await check('Jax drew their sword.', 'You do not hold a sword.'), 'sword')).toHaveLength(1);
+  });
+
+  it('a denial outside the narration window still matches, and a bare mention is not newly rejected', async () => {
+    expect(item(await check('Jax drew their sword.', 'You do not currently hold a sword.'), 'sword')).toEqual([]);
+    expect(item(await check('Jax drew their sword.', 'The wraith hits you with a sword.'), 'sword')).toEqual([]);
+    expect(item(await check('Jax drew their sword.', 'The sign names a sword.'), 'sword')).toEqual([]);
   });
 
   it('inventory still covers a sword the engine fact denies', async () => {

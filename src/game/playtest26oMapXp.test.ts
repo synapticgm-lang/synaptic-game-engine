@@ -15,6 +15,7 @@ import {
   SUMMONED_PACT_HUBS,
 } from './outdoorHubs';
 import { applySandboxXpAwards, isLookAroundAction, SANDBOX_XP } from './sandboxXp';
+import { hidesPart, rollSystemHousing } from './systemHousing';
 import { reconcileXpStatusLines } from './systemLog';
 import { emptyWorldLedger } from './worldSim';
 
@@ -185,26 +186,13 @@ describe('26o XP — reasons + look-around suppress', () => {
   });
 
   it('a hub pays discover XP once only when a quest or a discovery check earns the place', () => {
-    const state = {
-      ...createInitialState('Act3', 'litrpg'),
-      campaignBibleId: 'summoned-pact',
-      places: seedOutdoorHubPlaces([], summonedPact),
-      sandboxAwardKeys: [] as string[],
-      worldLedger: emptyWorldLedger(),
-      currentLocation: BURNT_HUSK,
-    };
-    const unearned = applySandboxXpAwards(state, {
-      playerAction: 'Travel toward Lowmarket',
-      locationName: 'Lowmarket',
-      previousLocationName: BURNT_HUSK,
-      questsBefore: [],
-      questsAfter: [],
-      events: [],
-      turn: 3,
-    });
-    expect(unearned.xp).toBe(0);
-    expect(unearned.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(false);
-    expect(unearned.places.some((p) => /lowmarket/i.test(p.name))).toBe(true);
+    // hubxp-0 rolls private_window (experience on). hubxp-1 rolls leftover_pocket, which still pays and hides the line.
+    const shown = 'hubxp-0';
+    const hidden = 'hubxp-1';
+    expect(rollSystemHousing(shown).housing).toBe('private_window');
+    expect(hidesPart(rollSystemHousing(shown), 'experience')).toBe(false);
+    expect(rollSystemHousing(hidden).housing).toBe('leftover_pocket');
+    expect(hidesPart(rollSystemHousing(hidden), 'experience')).toBe(true);
 
     const quests = [
       {
@@ -217,29 +205,50 @@ describe('26o XP — reasons + look-around suppress', () => {
         objectives: [{ id: 'a', description: 'Reach Lowmarket', completed: false }],
       },
     ];
-    const earned = applySandboxXpAwards(state, {
-      playerAction: 'Travel toward Lowmarket',
-      locationName: 'Lowmarket',
-      previousLocationName: BURNT_HUSK,
-      questsBefore: quests,
-      questsAfter: quests,
-      events: [],
-      turn: 3,
-    });
-    expect(earned.xp).toBe(SANDBOX_XP.discoverHub);
-    expect(earned.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(true);
-    const again = applySandboxXpAwards(
-      { ...state, places: earned.places, sandboxAwardKeys: earned.awardKeys },
-      {
-        playerAction: 'Look around Lowmarket',
+    const arrive = (
+      seed: string,
+      over: { quests?: typeof quests; discovery?: boolean; keys?: string[]; places?: ReturnType<typeof seedOutdoorHubPlaces> } = {},
+    ) => {
+      const state = {
+        ...createInitialState('Act3', 'litrpg', undefined, seed),
+        campaignBibleId: 'summoned-pact',
+        places: over.places ?? seedOutdoorHubPlaces([], summonedPact),
+        sandboxAwardKeys: over.keys ?? [],
+        worldLedger: emptyWorldLedger(),
+        currentLocation: BURNT_HUSK,
+      };
+      return applySandboxXpAwards(state, {
+        playerAction: 'Travel toward Lowmarket',
         locationName: 'Lowmarket',
-        previousLocationName: 'Lowmarket',
-        questsBefore: quests,
-        questsAfter: quests,
+        previousLocationName: over.keys ? 'Lowmarket' : BURNT_HUSK,
+        questsBefore: over.quests ?? [],
+        questsAfter: over.quests ?? [],
         events: [],
-        turn: 4,
-      }
-    );
-    expect(again.xp).toBe(0);
+        turn: over.keys ? 5 : 3,
+        ...(over.discovery === undefined ? {} : { discoveryCheckSucceeded: over.discovery }),
+      });
+    };
+
+    for (const seed of [shown, hidden]) {
+      const unearned = arrive(seed);
+      expect(unearned.xp).toBe(0);
+      expect(unearned.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(false);
+      expect(unearned.places.some((p) => /lowmarket/i.test(p.name))).toBe(true);
+
+      const missed = arrive(seed, { discovery: false });
+      expect(missed.xp).toBe(0);
+
+      const earned = arrive(seed, { quests });
+      expect(earned.xp).toBe(SANDBOX_XP.discoverHub);
+      expect(earned.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(seed === shown);
+      const again = arrive(seed, { quests, keys: earned.awardKeys, places: earned.places });
+      expect(again.xp).toBe(0);
+
+      const found = arrive(seed, { discovery: true });
+      expect(found.xp).toBe(SANDBOX_XP.discoverHub);
+      expect(found.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(seed === shown);
+      const foundAgain = arrive(seed, { discovery: true, keys: found.awardKeys, places: found.places });
+      expect(foundAgain.xp).toBe(0);
+    }
   });
 });
