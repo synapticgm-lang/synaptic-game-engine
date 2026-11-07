@@ -82,9 +82,6 @@ const required = [
   'bible',
   'writerId',
   'writerModel',
-  'playerInput',
-  'location',
-  'prose',
   'good',
   'training_ok',
   'teacher_model',
@@ -106,16 +103,19 @@ if (!row.admission_reasons.includes('missing source') || !row.admission_reasons.
   console.error('audit reasons', row.admission_reasons);
   process.exit(1);
 }
-if (row.training_ok !== true) {
-  console.error('licence flag should stay visible on the audit row');
+if (row.training_ok === true) {
+  console.error('a turn with no writer call was given a trainable licence flag');
   process.exit(1);
 }
-// q71 must not require calls.jsonl fields on the dataset row.
-for (const banned of ['messages', 'job', 'judge_scores', 'engine_facts']) {
+for (const banned of ['messages', 'job', 'judge_scores', 'engine_facts', 'playerInput', 'prose', 'writerPacket', 'writerPacketFile', 'location']) {
   if (banned in row) {
-    console.error(`writerDataset row unexpectedly gained ${banned}`);
+    console.error(`audit row copied ${banned}`);
     process.exit(1);
   }
+}
+if (auditText.includes('Look around') || auditText.includes('You look.') || auditText.includes('packet')) {
+  console.error('audit row copied private text');
+  process.exit(1);
 }
 console.log('writerDataset row keys OK; source-less row stayed in audit');
 

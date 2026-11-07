@@ -14,19 +14,31 @@ import {
 
 export type TrainingImportRow = {
   example_source?: unknown;
+  /** Turn and writer call both name a source and they are not the same. */
+  sourceDisagrees?: boolean;
   consent?: unknown;
   consentRef?: unknown;
   historical?: unknown;
-  /** Served id recorded on this turn. Not the run's requested model. */
+  /** Served id on the writer call. A turn field is not this. */
   teacherModel?: string | null;
   servedIdDisagrees?: boolean;
   /** Licence flag already stored on the row. Never admission. */
   storedTrainingOk?: boolean | 'pending' | null;
+  /** build_stamp on the writer call. A run manifest is not this. */
   buildStamp?: string | null;
+  buildDisagrees?: boolean;
   mode?: string | null;
   excludedSourceId?: string | null;
   wellbeingFlagged?: boolean;
+  /** engine_facts object on the writer call. A prose fact string is not this. */
   hasFacts?: boolean;
+  /** No writer call with an id. */
+  callLinkMissing?: boolean;
+  /** Writer call id present but messages are missing. */
+  callMessagesMissing?: boolean;
+  callId?: string | null;
+  /** More than one writer call for the turn. */
+  duplicateWriter?: boolean;
   /** False when this turn has no fact-check row. */
   factcheckRow?: boolean;
   factFlags?: number;
@@ -72,9 +84,13 @@ export function trainingImportDecision(
   if (row.wellbeingFlagged) return { status: 'rejected', reasons: [WELLBEING_NOTE], gameplay: false };
 
   const source = row.example_source;
+  if (row.sourceDisagrees || (source != null && source !== '' && source !== 'player' && source !== 'test')) {
+    return { status: 'rejected', reasons: ['missing source'], gameplay: false };
+  }
   if (source !== 'player' && source !== 'test') {
     const reasons = ['missing source'];
     if (row.storedTrainingOk === true) reasons.push('stored training_ok is not consent');
+    if (row.callLinkMissing) reasons.push('call ? missing link');
     return { status: 'audit', reasons, gameplay: false };
   }
   if (row.historical === true) {
@@ -84,7 +100,12 @@ export function trainingImportDecision(
   if (source === 'player' && !consentMatches(row.consent, row.consentRef)) {
     return { status: 'rejected', reasons: ['player turn has no matching consent'], gameplay: false };
   }
-  if (!realBuildStamp(row.buildStamp)) {
+  if (row.duplicateWriter) return { status: 'rejected', reasons: ['duplicate root'], gameplay: false };
+  if (row.callLinkMissing) return { status: 'rejected', reasons: ['call ? missing link'], gameplay: false };
+  if (row.callMessagesMissing) {
+    return { status: 'rejected', reasons: [`call ${row.callId || '?'} missing messages`], gameplay: false };
+  }
+  if (row.buildDisagrees || !realBuildStamp(row.buildStamp)) {
     return { status: 'rejected', reasons: ['missing time or build'], gameplay: false };
   }
   if (row.servedIdDisagrees) return { status: 'rejected', reasons: ['served id disagrees'], gameplay: false };
@@ -108,29 +129,85 @@ export function trainingImportDecision(
   return { status: 'candidate', reasons: [], gameplay: true };
 }
 
-/** Candidate rows may be exported for a later human review. Nothing else is eligible, including approved. */
+/**
+ * The training file is only for a row approveBatch already marked approved.
+ * This module does not approve. A candidate stays out of that file.
+ */
 export function trainingImportSink(status: AdmissionStatus): 'eligible' | 'audit' {
-  return status === 'candidate' ? 'eligible' : 'audit';
+  return status === 'approved' ? 'eligible' : 'audit';
+}
+
+const AUDIT_KEYS = [
+  'training_ok',
+  'teacher_model',
+  'provider',
+  'judge_model',
+  'mode',
+  'training_note',
+  'admitted',
+  'admission_status',
+  'admission_reasons',
+  'pairKey',
+  'lap',
+  'runId',
+  'buildStamp',
+  'seed',
+  'turn',
+  'bible',
+  'writerId',
+  'writerModel',
+  'good',
+  'replyMs',
+  'writerCalls',
+  'inputTokens',
+  'outputTokens',
+  'cachedTokens',
+  'costUsd',
+  'costSource',
+  'factFlagCount',
+] as const;
+
+/** Reasons and licence flags only. Player text, prompts, and packets stay in the original run. */
+export function trainingAuditRecord(row: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of AUDIT_KEYS) {
+    if (key in row) out[key] = row[key];
+  }
+  const fact = row.factCheck;
+  if (fact && typeof fact === 'object' && !Array.isArray(fact)) {
+    const flags = (fact as { flags?: unknown }).flags;
+    out.factFlagCount = Array.isArray(flags) ? flags.length : 0;
+  }
+  return out;
 }
 
 function text(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-/** Read one autoplay or call-log shaped turn. Does not invent a source, a consent, or a served id. */
+function callModel(call: Record<string, unknown>): string {
+  return text(call.teacher_model) || text(call.model);
+}
+
+function callBuild(call: Record<string, unknown>): string {
+  return text(call.build_stamp) || text(call.buildStamp);
+}
+
+/**
+ * Read one turn plus the writer calls for that turn.
+ * Served id, build stamp, source, and engine_facts come from the writer call.
+ * A turn field or a run manifest does not fill a missing call field.
+ */
 export function trainingImportFields(input: {
   turn: Record<string, unknown>;
+  calls?: ReadonlyArray<Record<string, unknown>>;
+  /** Run manifest stamp. Compared with the call. Never used as the call stamp. */
   buildStamp?: unknown;
   mode?: unknown;
   excludedSourceId?: unknown;
   factcheckRow?: unknown;
 }): TrainingImportRow {
   const turn = input.turn;
-  const usage = turn.writerUsage;
-  const usageModel = usage && typeof usage === 'object'
-    ? text((usage as { modelId?: unknown }).modelId)
-    : '';
-  const teacher = text(turn.teacher_model);
   const checks = turn.turnCheck;
   const p0 = checks && typeof checks === 'object' && Array.isArray((checks as { p0?: unknown }).p0)
     ? (checks as { p0: unknown[] }).p0.length
@@ -138,27 +215,69 @@ export function trainingImportFields(input: {
   const flags = input.factcheckRow && typeof input.factcheckRow === 'object' && Array.isArray((input.factcheckRow as { flags?: unknown }).flags)
     ? (input.factcheckRow as { flags: unknown[] }).flags.length
     : 0;
-  const facts = turn.engine_facts;
-  const engineFact = text(turn.engineFact);
   const stored = turn.training_ok;
-  return {
-    example_source: turn.example_source,
+  const writers = (input.calls ?? []).filter((call) => call.job === 'writer');
+  const assertedModels = [text(turn.teacher_model), text(turn.writerUsage && typeof turn.writerUsage === 'object' ? (turn.writerUsage as { modelId?: unknown }).modelId : '')].filter(Boolean);
+  const assertedBuilds = [text(input.buildStamp), text(turn.build_stamp), text(turn.buildStamp)].filter(Boolean);
+  const base = {
     consent: turn.consent,
     consentRef: turn.consentRef,
     historical: turn.historical === true,
-    teacherModel: teacher && usageModel && teacher !== usageModel ? null : (teacher || usageModel || null),
-    servedIdDisagrees: !!(teacher && usageModel && teacher !== usageModel),
     storedTrainingOk: stored === true || stored === false || stored === 'pending' ? stored : null,
-    buildStamp: text(input.buildStamp) || text(turn.build_stamp) || text(turn.buildStamp) || null,
     mode: text(input.mode) || text(turn.mode) || text(turn.engineMode) || null,
     excludedSourceId: text(input.excludedSourceId) || null,
     wellbeingFlagged: turn.training_note === WELLBEING_NOTE,
-    hasFacts: (!!facts && typeof facts === 'object') || engineFact.length > 0,
     factcheckRow: input.factcheckRow != null,
     factFlags: flags,
     turnP0: p0,
     prose: typeof turn.gmText === 'string' ? turn.gmText : typeof turn.prose === 'string' ? turn.prose : '',
-    truncated: turn.truncated === true,
-    finishReason: text(turn.finish_reason) || null,
+  } satisfies Partial<TrainingImportRow>;
+
+  if (writers.length !== 1) {
+    const models = new Set([...assertedModels, ...writers.map(callModel)].filter(Boolean));
+    const callSources = writers
+      .map((call) => call.example_source)
+      .filter((source) => source != null && source !== '');
+    const uniqueSources = new Set(callSources.map((source) => String(source)));
+    const turnSource = turn.example_source;
+    return {
+      ...base,
+      example_source: uniqueSources.size === 1 ? callSources[0] : undefined,
+      sourceDisagrees: uniqueSources.size > 1
+        || (uniqueSources.size === 1 && turnSource != null && turnSource !== '' && turnSource !== callSources[0]),
+      teacherModel: null,
+      servedIdDisagrees: models.size > 1,
+      buildStamp: null,
+      buildDisagrees: new Set(assertedBuilds).size > 1,
+      hasFacts: false,
+      callLinkMissing: writers.length === 0,
+      duplicateWriter: writers.length > 1,
+    };
+  }
+
+  const call = writers[0]!;
+  const model = callModel(call);
+  const build = callBuild(call);
+  const callSource = call.example_source;
+  const turnSource = turn.example_source;
+  const sourceDisagrees = turnSource != null && turnSource !== '' && callSource != null && callSource !== '' && turnSource !== callSource;
+  const modelDisagrees = assertedModels.some((id) => id !== model) || (!model && assertedModels.length > 0);
+  const buildDisagrees = assertedBuilds.some((stamp) => stamp !== build);
+  const messages = Array.isArray(call.messages) ? call.messages : [];
+  const facts = call.engine_facts;
+  return {
+    ...base,
+    example_source: callSource != null && callSource !== '' ? callSource : undefined,
+    sourceDisagrees,
+    teacherModel: model || null,
+    servedIdDisagrees: modelDisagrees && assertedModels.some((id) => !model || id !== model),
+    buildStamp: build || null,
+    buildDisagrees,
+    hasFacts: !!facts && typeof facts === 'object',
+    callLinkMissing: !text(call.id),
+    callMessagesMissing: messages.length === 0,
+    callId: text(call.id) || null,
+    truncated: call.truncated === true,
+    finishReason: text(call.finish_reason) || text(call.finish) || null,
   };
 }

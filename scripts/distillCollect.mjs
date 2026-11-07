@@ -2,9 +2,10 @@
 /**
  * Distillation collector: keeps only checker-passing turns of fate-autoplay runs.
  * Each run needs factcheck.json (npm run fact-check) and thumbs.json from `autoThumbs --notes`.
- * A turn is copied only when the training-import gate returns a candidate.
+ * A turn is copied only when a person has already approved it. This script does not approve.
  * A stored training_ok flag is not enough. A missing example_source is not a test row.
- * This script does not approve a row and does not modify the run directory.
+ * Served id and build stamp come from the writer call, not from the turn's own claim.
+ * This script does not modify the run directory.
  * A candidate also needs no turnCheck P0, no factCheck flags, and a judge that
  * marked it (up or unmarked; never-marked and down fail). The thumbs row is a paired training_label
  * (RC-J1: absolute single-run notes are diagnostic only), and the thumbs row has no P0 or local down flag
@@ -16,7 +17,7 @@
 import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
 import { rowProvenance, WELLBEING_NOTE } from '../src/game/modelIds.ts';
-import { trainingImportDecision, trainingImportFields, trainingImportSink } from '../src/game/trainingImport.ts';
+import { trainingImportDecision, trainingImportFields } from '../src/game/trainingImport.ts';
 import { isWriterFlag } from './fate-autoplay/judgeNotes.mjs';
 
 const argv = process.argv.slice(2);
@@ -62,6 +63,10 @@ for (const dir of dirs) {
   const thumbsByTurn = new Map((thumbs.turns ?? []).map((o) => [o.turn, o]));
   const fc = JSON.parse(readFileSync(join(dir, 'factcheck.json'), 'utf8'));
   const fcByTurn = new Map((fc.perTurn ?? []).map((t) => [t.turn, t]));
+  const callsPath = join(dir, 'calls.jsonl');
+  const callRows = existsSync(callsPath)
+    ? readFileSync(callsPath, 'utf8').split(/\r?\n/).filter((l) => l.trim()).map((l) => JSON.parse(l))
+    : [];
   const turns = readFileSync(join(dir, 'turns.jsonl'), 'utf8')
     .split(/\r?\n/)
     .filter((l) => l.trim())
@@ -71,8 +76,11 @@ for (const dir of dirs) {
   for (const t of turns) {
     const th = thumbsByTurn.get(t.turn);
     const f = fcByTurn.get(t.turn);
+    const turnCalls = callRows.filter((call) => call.turn_no === t.turn || call.turn === t.turn);
+    const embedded = Array.isArray(t.calls) ? t.calls : [];
     const fields = trainingImportFields({
       turn: t,
+      calls: [...turnCalls, ...embedded],
       buildStamp: meta.runManifest?.buildStamp ?? null,
       mode: meta.engineMode,
       excludedSourceId: meta.source ?? meta.sourceId,
@@ -91,8 +99,9 @@ for (const dir of dirs) {
     attempted++;
     if (typeof t.writerUsage?.costUsd === 'number') writerCostUsd += t.writerUsage.costUsd;
     const why = [];
-    if (trainingImportSink(decision.status) !== 'eligible') why.push(...decision.reasons);
-    else if (prov.training_ok !== true) why.push('not training_ok');
+    if (decision.status !== 'approved') {
+      why.push(...(decision.reasons.length ? decision.reasons : ['a person must approve; auto is not approval']));
+    } else if (prov.training_ok !== true) why.push('not training_ok');
     if (!String(t.gmText ?? '').trim()) why.push('empty prose');
     if (t.error) why.push('turn error');
     if ((t.turnCheck?.p0 ?? []).length) why.push('turnCheck P0');

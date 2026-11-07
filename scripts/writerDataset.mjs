@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * Classify every turn of fate-autoplay runs. This does not approve a corpus.
- * A candidate (explicit test source, or a player source with matching consent, plus served id,
- * licence, provenance, and the existing quality gates) is appended to data/writer-dataset/turns.jsonl.
- * admitted is false on that line. A person still has to approve it.
- * Every other turn is appended to audit.jsonl with the reason. The run directory is not modified.
+ * Classify every turn of fate-autoplay runs. This script does not approve a corpus and does not
+ * append to turns.jsonl. approveBatch is a person. A candidate is not approved.
+ * audit.jsonl gets the reason and the licence flags only. Player text, the prompt packet, and
+ * the prose stay in the original run. The run directory is not modified.
+ * Served id, build stamp, example_source, and engine_facts are read from the writer call.
+ * A turn field does not fill a missing call field.
  * training_ok stays the licence flag. It is not consent and it is not admission.
  * A missing example_source is an audit row, not a test row.
  * One line per writer per turn. `pairKey` (bible:seed:turn) groups the same turn across writers.
@@ -17,7 +18,7 @@ import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
 import { excludedSourceReason, rowProvenance, WELLBEING_NOTE } from '../src/game/modelIds.ts';
 import { datasetWriterId } from '../src/game/autoplayWriter.ts';
-import { trainingImportDecision, trainingImportFields, trainingImportSink } from '../src/game/trainingImport.ts';
+import { trainingAuditRecord, trainingImportDecision, trainingImportFields } from '../src/game/trainingImport.ts';
 
 const OUT_DIR = resolve('data', 'writer-dataset');
 const OUT = join(OUT_DIR, 'turns.jsonl');
@@ -95,6 +96,10 @@ for (const dir of dirs) {
   // Seat identity is the resolved model id (kind names the route only; default stays 'default').
   const writerId = datasetWriterId(meta);
   const runId = basename(dir);
+  const callsPath = join(dir, 'calls.jsonl');
+  const callRows = existsSync(callsPath)
+    ? readFileSync(callsPath, 'utf8').split(/\r?\n/).filter((l) => l.trim()).map((l) => JSON.parse(l))
+    : [];
   const turns = readFileSync(join(dir, 'turns.jsonl'), 'utf8')
     .split(/\r?\n/)
     .filter((l) => l.trim())
@@ -110,8 +115,11 @@ for (const dir of dirs) {
     const p0 = t.turnCheck?.p0 ?? [];
     const isGood = fcFlags.length === 0 && p0.length === 0;
     const u = t.writerUsage ?? null;
+    const turnCalls = callRows.filter((call) => call.turn_no === t.turn || call.turn === t.turn);
+    const embedded = Array.isArray(t.calls) ? t.calls : [];
     const fields = trainingImportFields({
       turn: t,
+      calls: [...turnCalls, ...embedded],
       buildStamp: meta.runManifest?.buildStamp ?? null,
       mode: meta.engineMode,
       excludedSourceId: meta.source ?? meta.sourceId,
@@ -120,7 +128,7 @@ for (const dir of dirs) {
     const decision = trainingImportDecision(fields);
     if (decision.status === 'approved') {
       decision.status = 'audit';
-      decision.reasons = ['importer does not approve'];
+      decision.reasons = ['a person must approve; auto is not approval'];
     }
     const writerModel = fields.teacherModel;
     const { costUsd, costSource } = turnCost(u);
@@ -130,7 +138,6 @@ for (const dir of dirs) {
       judgeModel: thumbsByTurn.get(t.turn)?.judge_model ?? null,
       wellbeingFlagged: t.training_note === WELLBEING_NOTE,
     });
-    const sink = trainingImportSink(decision.status);
     const row = {
       ...prov,
       admitted: false,
@@ -162,10 +169,8 @@ for (const dir of dirs) {
       costUsd,
       costSource,
     };
-    appendFileSync(sink === 'eligible' ? OUT : AUDIT, JSON.stringify(row) + '\n');
+    appendFileSync(AUDIT, JSON.stringify(trainingAuditRecord(row)) + '\n');
     admission[decision.status] = (admission[decision.status] ?? 0) + 1;
-    if (sink === 'eligible') added += 1;
-    if (isGood && sink === 'eligible') good += 1;
     const ck = writerModel ?? writerId;
     const c = (perWriterCost[ck] ??= { turns: 0, ms: [], tin: [], tout: [], cost: [], costSources: new Set() });
     c.turns += 1;
@@ -176,7 +181,7 @@ for (const dir of dirs) {
       c.cost.push(costUsd);
       c.costSources.add(costSource);
     }
-    if (sink !== 'eligible') continue;
+    if (decision.status !== 'approved') continue;
     for (const r of [...(t.sentenceRepairs ?? []), ...(t.answerRepair ? [t.answerRepair] : [])]) {
       const rej = {
         ...prov,

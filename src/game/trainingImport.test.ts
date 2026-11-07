@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { OPENROUTER_DEEPSEEK_V41_FLASH, WELLBEING_NOTE } from './modelIds';
 import { PLAYER_CAPTURE_ENABLED, VERIFIED_TRAINING_MODEL_IDS, type ConsentRecord } from './playerTurnAdmission';
 import {
+  trainingAuditRecord,
   trainingImportDecision,
   trainingImportFields,
   trainingImportSink,
@@ -35,6 +36,30 @@ function ready(over: Partial<TrainingImportRow> = {}): TrainingImportRow {
     factFlags: 0,
     turnP0: 0,
     prose: 'The hall is quiet.',
+    callLinkMissing: false,
+    callMessagesMissing: false,
+    callId: 'call-1',
+    ...over,
+  };
+}
+
+function writerCall(over: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    id: 'call-1',
+    job: 'writer',
+    parent_id: null,
+    turn_no: 1,
+    messages: [
+      { role: 'system', content: 'SYSTEM' },
+      { role: 'user', content: 'Look around' },
+      { role: 'assistant', content: 'The hall is quiet.' },
+    ],
+    teacher_model: FLASH,
+    build_stamp: '2026-11-03e',
+    engine_facts: { location: 'Hall', inventory: ['map'] },
+    example_source: 'test',
+    truncated: false,
+    finish_reason: 'stop',
     ...over,
   };
 }
@@ -70,11 +95,12 @@ describe('training import gate', () => {
     expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
   });
 
-  it('accepts a test row only inside an isolated fixture allowlist', () => {
+  it('accepts a test row only inside an isolated fixture allowlist, and still does not call it approved', () => {
     const decision = trainingImportDecision(ready(), FIXTURE_IDS);
     expect(decision.status).toBe('candidate');
     expect(decision.reasons).toEqual([]);
-    expect(trainingImportSink(decision.status)).toBe('eligible');
+    expect(trainingImportSink(decision.status)).toBe('audit');
+    expect(trainingImportSink('approved')).toBe('eligible');
     expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
     expect(FIXTURE_IDS.has('accounts/fireworks/models/deepseek-v4p1-flash')).toBe(false);
   });
@@ -125,7 +151,104 @@ describe('training import gate', () => {
     expect(trainingImportDecision(ready({ buildStamp: 'trainlog' }), FIXTURE_IDS).reasons).toContain('missing time or build');
     expect(trainingImportDecision(ready({ truncated: true }), FIXTURE_IDS).reasons).toContain('truncated reply');
     expect(trainingImportDecision(ready({ servedIdDisagrees: true, teacherModel: null }), FIXTURE_IDS).reasons).toContain('served id disagrees');
-    expect(trainingImportSink('approved')).toBe('audit');
+  });
+
+  it('rejects tampered consent, an unknown source, a missing call, and a turn that only claims its own stamp', () => {
+    expect(trainingImportDecision(ready({
+      example_source: 'player',
+      consent: { ...consent(), ref: 'other-ref' },
+      consentRef: 'consent-1',
+    }), FIXTURE_IDS).status).toBe('rejected');
+    expect(trainingImportDecision(ready({
+      example_source: 'player',
+      consent: { ...consent(), commercialTraining: false },
+      consentRef: 'consent-1',
+    }), FIXTURE_IDS).reasons).toContain('player turn has no matching consent');
+    expect(trainingImportDecision(ready({ example_source: 'automated' })).status).toBe('rejected');
+    expect(trainingImportDecision(ready({ callLinkMissing: true, callId: null }), FIXTURE_IDS).reasons).toContain('call ? missing link');
+    expect(trainingImportDecision(ready({ callMessagesMissing: true }), FIXTURE_IDS).reasons).toContain('call call-1 missing messages');
+    expect(trainingImportDecision(ready({ duplicateWriter: true }), FIXTURE_IDS).reasons).toContain('duplicate root');
+    expect(trainingImportDecision(ready({ buildDisagrees: true }), FIXTURE_IDS).reasons).toContain('missing time or build');
+
+    const claimed = trainingImportFields({
+      turn: {
+        example_source: 'test',
+        teacher_model: FLASH,
+        training_ok: true,
+        gmText: 'The hall is quiet.',
+        engineFact: 'Place: Hall.',
+        build_stamp: '2026-11-03e',
+      },
+      buildStamp: '2026-11-03e',
+      mode: 'litrpg',
+      factcheckRow: { flags: [] },
+    });
+    expect(claimed.teacherModel).toBeNull();
+    expect(claimed.hasFacts).toBe(false);
+    expect(claimed.callLinkMissing).toBe(true);
+    expect(trainingImportDecision(claimed, FIXTURE_IDS).status).not.toBe('candidate');
+
+    const mismatched = trainingImportFields({
+      turn: { example_source: 'test', teacher_model: 'accounts/fireworks/models/deepseek-v4p1-flash', gmText: 'The hall is quiet.' },
+      calls: [writerCall()],
+      buildStamp: '2026-10-16d',
+      mode: 'litrpg',
+      factcheckRow: { flags: [] },
+    });
+    expect(mismatched.servedIdDisagrees).toBe(true);
+    expect(mismatched.buildDisagrees).toBe(true);
+    expect(trainingImportDecision(mismatched, FIXTURE_IDS).status).toBe('rejected');
+
+    const sourced = trainingImportFields({
+      turn: { example_source: 'player', gmText: 'The hall is quiet.', consent: consent(), consentRef: 'consent-1' },
+      calls: [writerCall({ example_source: 'test' })],
+      mode: 'litrpg',
+      factcheckRow: { flags: [] },
+    });
+    expect(sourced.sourceDisagrees).toBe(true);
+    expect(trainingImportDecision(sourced, FIXTURE_IDS).status).toBe('rejected');
+  });
+
+  it('reads a linked writer call and does not copy private text into an audit record', () => {
+    const fields = trainingImportFields({
+      turn: {
+        gmText: 'The hall is quiet.',
+        playerInput: 'Look around',
+        training_ok: true,
+        historical: false,
+      },
+      calls: [writerCall()],
+      buildStamp: '2026-11-03e',
+      mode: 'litrpg',
+      factcheckRow: { flags: [] },
+    });
+    expect(fields.example_source).toBe('test');
+    expect(fields.teacherModel).toBe(FLASH);
+    expect(fields.buildStamp).toBe('2026-11-03e');
+    expect(fields.hasFacts).toBe(true);
+    const decision = trainingImportDecision(fields, FIXTURE_IDS);
+    expect(decision.status).toBe('candidate');
+    const audit = trainingAuditRecord({
+      ...decision,
+      admission_status: decision.status,
+      admission_reasons: decision.reasons,
+      admitted: false,
+      training_ok: true,
+      teacher_model: FLASH,
+      playerInput: 'Look around',
+      prose: 'The hall is quiet.',
+      writerPacket: 'SYSTEM',
+      location: 'Hall',
+      factCheck: { flags: ['The hall is quiet.'], turnScore: 100 },
+    });
+    expect(audit.playerInput).toBeUndefined();
+    expect(audit.prose).toBeUndefined();
+    expect(audit.writerPacket).toBeUndefined();
+    expect(audit.location).toBeUndefined();
+    expect(JSON.stringify(audit)).not.toContain('Look around');
+    expect(JSON.stringify(audit)).not.toContain('The hall is quiet.');
+    expect(audit.factFlagCount).toBe(1);
+    expect(audit.admitted).toBe(false);
   });
 
   it('reads a turn without inventing a source or a served id', () => {
@@ -143,22 +266,19 @@ describe('training import gate', () => {
     });
     expect(fields.example_source).toBeUndefined();
     expect(fields.storedTrainingOk).toBe(true);
-    expect(fields.hasFacts).toBe(true);
+    expect(fields.hasFacts).toBe(false);
+    expect(fields.teacherModel).toBeNull();
     expect(trainingImportDecision(fields).status).toBe('audit');
     const split = trainingImportFields({
-      turn: {
-        example_source: 'test',
-        teacher_model: FLASH,
-        writerUsage: { modelId: 'openai/gpt-5-mini' },
-        gmText: 'A sentence.',
-        engineFact: 'Place: Hall.',
-      },
-      buildStamp: '2026-11-03e',
+      turn: { gmText: 'A sentence.' },
+      calls: [writerCall({ teacher_model: FLASH }), writerCall({ id: 'call-2', teacher_model: 'openai/gpt-5-mini' })],
       mode: 'litrpg',
       factcheckRow: { flags: [] },
     });
+    expect(split.duplicateWriter).toBe(true);
     expect(split.servedIdDisagrees).toBe(true);
     expect(split.teacherModel).toBeNull();
+    expect(trainingImportDecision(split, FIXTURE_IDS).reasons).toContain('duplicate root');
   });
 });
 
