@@ -8,6 +8,7 @@ import {
   trainingImportFields,
   trainingImportSink,
   type TrainingImportRow,
+  type TrainingRightsFixture,
 } from './trainingImport';
 
 const FLASH = OPENROUTER_DEEPSEEK_V41_FLASH;
@@ -95,10 +96,10 @@ describe('training import gate', () => {
     expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
   });
 
-  it('accepts a test row only inside an isolated fixture allowlist, and still does not call it approved', () => {
+  it('does not treat an isolated model allowlist as output-use proof', () => {
     const decision = trainingImportDecision(ready(), FIXTURE_IDS);
-    expect(decision.status).toBe('candidate');
-    expect(decision.reasons).toEqual([]);
+    expect(decision.status).toBe('rejected');
+    expect(decision.reasons).toContain('provider unknown');
     expect(trainingImportSink(decision.status)).toBe('audit');
     expect(trainingImportSink('approved')).toBe('eligible');
     expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
@@ -115,12 +116,13 @@ describe('training import gate', () => {
       consent: { optedIn: true, consentRef: 'consent-1', explainedFullPayload: true },
       consentRef: 'consent-1',
     }), FIXTURE_IDS).status).toBe('rejected');
-    const admitted = trainingImportDecision(ready({
+    const consented = trainingImportDecision(ready({
       example_source: 'player',
       consent: consent(),
       consentRef: 'consent-1',
     }), FIXTURE_IDS);
-    expect(admitted.status).toBe('candidate');
+    expect(consented.status).not.toBe('candidate');
+    expect(consented.reasons).toContain('provider unknown');
     expect(trainingImportDecision(ready({
       example_source: 'player',
       consent: consent(),
@@ -226,8 +228,9 @@ describe('training import gate', () => {
     expect(fields.teacherModel).toBe(FLASH);
     expect(fields.buildStamp).toBe('2026-11-03e');
     expect(fields.hasFacts).toBe(true);
+    expect(fields.contextStatus).toBe('unknown');
     const decision = trainingImportDecision(fields, FIXTURE_IDS);
-    expect(decision.status).toBe('candidate');
+    expect(decision.status).not.toBe('candidate');
     const audit = trainingAuditRecord({
       ...decision,
       admission_status: decision.status,
@@ -279,6 +282,90 @@ describe('training import gate', () => {
     expect(split.servedIdDisagrees).toBe(true);
     expect(split.teacherModel).toBeNull();
     expect(trainingImportDecision(split, FIXTURE_IDS).reasons).toContain('duplicate root');
+  });
+});
+
+describe('served route and context proof', () => {
+  const rights: TrainingRightsFixture = {
+    servedModelId: FLASH,
+    provider: 'fixture-host',
+    route: 'fixture-route',
+    outputUse: 'verified',
+    contextSources: ['player_action', 'engine_fact', 'test_prompt'],
+  };
+
+  function provenCall(over: Record<string, unknown> = {}): Record<string, unknown> {
+    return writerCall({
+      provider: 'fixture-host',
+      route: 'fixture-route',
+      engine_facts_provenance: 'request_state',
+      messages: [
+        { role: 'system', content: 'SYSTEM', provenance: 'test_prompt' },
+        { role: 'user', content: 'Look around', provenance: 'player_action' },
+        { role: 'assistant', content: 'The hall is quiet.', provenance: 'engine_fact' },
+      ],
+      ...over,
+    });
+  }
+
+  function provenFields(over: Record<string, unknown> = {}): TrainingImportRow {
+    return trainingImportFields({
+      turn: { gmText: 'The hall is quiet.' },
+      calls: [provenCall(over)],
+      buildStamp: '2026-11-03e',
+      mode: 'litrpg',
+      factcheckRow: { flags: [] },
+    });
+  }
+
+  it('does not accept an allowlisted MIT id without provider, route, and output-use proof', () => {
+    const decision = trainingImportDecision(ready(), FIXTURE_IDS);
+    expect(decision.status).not.toBe('candidate');
+    expect(decision.reasons.join(' ')).toMatch(/provider unknown|output terms unverified/);
+    expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
+  });
+
+  it('rejects a missing or contradictory provider and an unknown route', () => {
+    expect(trainingImportDecision(provenFields({ provider: undefined }), FIXTURE_IDS, rights).reasons)
+      .toContain('provider unknown');
+    expect(trainingImportDecision(provenFields({ provider: 'other-host' }), FIXTURE_IDS, rights).reasons)
+      .toContain('provider disagrees');
+    expect(trainingImportDecision(provenFields({ route: undefined }), FIXTURE_IDS, rights).reasons)
+      .toContain('route unknown');
+    expect(trainingImportDecision(provenFields(), FIXTURE_IDS).status).not.toBe('candidate');
+  });
+
+  it('rejects Gemini Apps or PYOA context copied into a later turn, including an engine-fact relabel', () => {
+    const copied = trainingImportDecision(provenFields({
+      messages: [
+        { role: 'user', content: 'Recap follows', provenance: 'pyoa' },
+        { role: 'assistant', content: 'The hall is quiet.', provenance: 'engine_fact' },
+      ],
+    }), FIXTURE_IDS, rights);
+    expect(copied.status).toBe('rejected');
+    expect(copied.reasons).toContain('restricted context');
+
+    const relabelled = trainingImportDecision(provenFields({
+      engine_facts: { location: 'Hall', origin: 'gemini-apps' },
+    }), FIXTURE_IDS, rights);
+    expect(relabelled.status).toBe('rejected');
+    expect(relabelled.reasons).toContain('restricted context');
+
+    const untagged = trainingImportDecision(provenFields({
+      messages: [
+        { role: 'user', content: 'Look around' },
+        { role: 'assistant', content: 'The hall is quiet.', provenance: 'engine_fact' },
+      ],
+    }), FIXTURE_IDS, rights);
+    expect(untagged.reasons).toContain('context provenance unknown');
+  });
+
+  it('accepts one synthetic candidate only when the fixture rights match and writes no training file', () => {
+    const decision = trainingImportDecision(provenFields(), FIXTURE_IDS, rights);
+    expect(decision.status).toBe('candidate');
+    expect(trainingImportSink(decision.status)).toBe('audit');
+    expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
+    expect(PLAYER_CAPTURE_ENABLED).toBe(false);
   });
 });
 

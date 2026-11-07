@@ -46,6 +46,14 @@ export type TrainingImportRow = {
   prose?: string | null;
   truncated?: boolean;
   finishReason?: string | null;
+  /** Provider recorded on the writer call. An id shape is not this. */
+  provider?: string | null;
+  /** Route recorded on the writer call. */
+  route?: string | null;
+  /** clear only when every message names a provenance and facts are request_state. */
+  contextStatus?: 'clear' | 'restricted' | 'unknown';
+  /** Provenance named by each writer message. */
+  contextSources?: string[];
 };
 
 const FALLBACK_BUILD_STAMP = 'trainlog';
@@ -69,6 +77,18 @@ function consentMatches(consent: unknown, consentRef: unknown): consent is Conse
 }
 
 /**
+ * Isolated test double for output-use and context-source proof.
+ * Production callers omit it. A stored row cannot supply it.
+ */
+export type TrainingRightsFixture = {
+  servedModelId: string;
+  provider: string;
+  route: string;
+  outputUse: 'verified';
+  contextSources: readonly string[];
+};
+
+/**
  * Eligible rows are candidates only. Approved is never returned.
  * The default allowlist is VERIFIED_TRAINING_MODEL_IDS, which is empty.
  * Pass a set only from an isolated test fixture.
@@ -76,6 +96,7 @@ function consentMatches(consent: unknown, consentRef: unknown): consent is Conse
 export function trainingImportDecision(
   row: TrainingImportRow,
   verifiedIds: ReadonlySet<string> = VERIFIED_TRAINING_MODEL_IDS,
+  rights?: TrainingRightsFixture,
 ): AdmissionDecision {
   const excluded = excludedSourceReason(
     typeof row.excludedSourceId === 'string' ? row.excludedSourceId : null,
@@ -125,6 +146,80 @@ export function trainingImportDecision(
   if (!String(row.prose ?? '').trim()) return { status: 'rejected', reasons: ['empty prose'], gameplay: false };
   if (row.truncated || /^(?:length|max_tokens|error|content_filter)$/i.test(row.finishReason ?? '')) {
     return { status: 'rejected', reasons: ['truncated reply'], gameplay: false };
+  }
+  return contextAndRouteDecision(row, model, rights);
+}
+
+const RESTRICTED_LABEL = /^(?:pyoa|gemini|gemini-apps|gemini_app|gemini-app)$/i;
+const RESTRICTED_PROVIDER = /^(?:fireworks|gemini-apps|google-gemini-apps)$/i;
+const RESTRICTED_ROUTE = /gemini\.google\.com\/app|accounts\/fireworks/i;
+
+function isRestrictedLabel(value: unknown): boolean {
+  return RESTRICTED_LABEL.test(text(value));
+}
+
+function objectRestricted(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  if (Array.isArray(value)) return value.some(objectRestricted);
+  const rec = value as Record<string, unknown>;
+  for (const key of ['origin', 'provenance', 'source', 'mode', 'provider', 'route']) {
+    if (isRestrictedLabel(rec[key])) return true;
+  }
+  return Object.values(rec).some(objectRestricted);
+}
+
+function messageProvenance(message: Record<string, unknown>): string {
+  return text(message.provenance) || text(message.source) || text(message.origin);
+}
+
+function contextOf(call: Record<string, unknown>): { status: 'clear' | 'restricted' | 'unknown'; sources: string[] } {
+  if (call.context_restricted === true || objectRestricted(call.engine_facts)) {
+    return { status: 'restricted', sources: [] };
+  }
+  const messages = Array.isArray(call.messages) ? call.messages : [];
+  const sources: string[] = [];
+  for (const message of messages) {
+    if (!message || typeof message !== 'object') return { status: 'unknown', sources };
+    const rec = message as Record<string, unknown>;
+    if (isRestrictedLabel(rec.provenance) || isRestrictedLabel(rec.source) || isRestrictedLabel(rec.origin) || isRestrictedLabel(rec.mode)) {
+      return { status: 'restricted', sources };
+    }
+    const provenance = messageProvenance(rec);
+    if (!provenance) return { status: 'unknown', sources };
+    sources.push(provenance);
+  }
+  if (messages.length === 0 || text(call.engine_facts_provenance) !== 'request_state') {
+    return { status: 'unknown', sources };
+  }
+  return { status: 'clear', sources };
+}
+
+/**
+ * MIT weight labels are not output-use proof. The rights argument is an
+ * isolated fixture. Production calls omit it, so this never returns candidate.
+ */
+function contextAndRouteDecision(
+  row: TrainingImportRow,
+  model: string,
+  rights?: TrainingRightsFixture,
+): AdmissionDecision {
+  const provider = text(row.provider);
+  const route = text(row.route);
+  if (!provider) return { status: 'rejected', reasons: ['provider unknown'], gameplay: false };
+  if (!route) return { status: 'rejected', reasons: ['route unknown'], gameplay: false };
+  if (RESTRICTED_PROVIDER.test(provider) || RESTRICTED_ROUTE.test(route) || RESTRICTED_ROUTE.test(provider)) {
+    return { status: 'rejected', reasons: ['restricted output route'], gameplay: false };
+  }
+  if (row.contextStatus === 'restricted') return { status: 'rejected', reasons: ['restricted context'], gameplay: false };
+  if (row.contextStatus !== 'clear') return { status: 'rejected', reasons: ['context provenance unknown'], gameplay: false };
+  const sources = row.contextSources ?? [];
+  if (!rights || rights.outputUse !== 'verified' || rights.servedModelId !== model) {
+    return { status: 'quarantine', reasons: ['output terms unverified'], gameplay: true };
+  }
+  if (rights.provider !== provider) return { status: 'rejected', reasons: ['provider disagrees'], gameplay: false };
+  if (rights.route !== route) return { status: 'rejected', reasons: ['route disagrees'], gameplay: false };
+  if (sources.length === 0 || sources.some((source) => !rights.contextSources.includes(source))) {
+    return { status: 'rejected', reasons: ['context provenance unknown'], gameplay: false };
   }
   return { status: 'candidate', reasons: [], gameplay: true };
 }
@@ -252,6 +347,10 @@ export function trainingImportFields(input: {
       hasFacts: false,
       callLinkMissing: writers.length === 0,
       duplicateWriter: writers.length > 1,
+      provider: null,
+      route: null,
+      contextStatus: 'unknown',
+      contextSources: [],
     };
   }
 
@@ -265,6 +364,7 @@ export function trainingImportFields(input: {
   const buildDisagrees = assertedBuilds.some((stamp) => stamp !== build);
   const messages = Array.isArray(call.messages) ? call.messages : [];
   const facts = call.engine_facts;
+  const context = contextOf(call);
   return {
     ...base,
     example_source: callSource != null && callSource !== '' ? callSource : undefined,
@@ -279,5 +379,9 @@ export function trainingImportFields(input: {
     callId: text(call.id) || null,
     truncated: call.truncated === true,
     finishReason: text(call.finish_reason) || text(call.finish) || null,
+    provider: text(call.provider) || null,
+    route: text(call.route) || null,
+    contextStatus: context.status,
+    contextSources: context.sources,
   };
 }
