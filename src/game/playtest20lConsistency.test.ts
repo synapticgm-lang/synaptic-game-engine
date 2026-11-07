@@ -69,14 +69,24 @@ What do you do?`;
         'Check the blue panel',
         'Call out to the voices outside — the crowd',
         'Inspect the speaker',
+        'Inspect the immediate surroundings',
         'What do you do?',
       ],
       story,
       state
     );
-    expect(kept.some((c) => /blue panel/i.test(c))).toBe(true);
+    // private_window has no panel prop. Prose is not a grounding record, so the chip stays off.
+    expect(kept.some((c) => /blue panel/i.test(c))).toBe(false);
+    expect(kept.some((c) => /immediate surroundings/i.test(c))).toBe(true);
     expect(kept.some((c) => /voices|speaker|crowd/i.test(c))).toBe(false);
     expect(rejected.length).toBeGreaterThanOrEqual(2);
+
+    const propped = {
+      ...state,
+      sceneFacts: { ...(state.sceneFacts ?? {}), props: ['blue panel'] },
+    };
+    const panel = filterChoicesToTurnFacts(['Check the blue panel'], story, propped);
+    expect(panel.kept.some((c) => /blue panel/i.test(c))).toBe(true);
 
     const padded = padChoicesToCount(['Check the blue panel'], state, story, 3);
     expect(padded.every((c) => !/voices|crowd|speaker|emblem/i.test(c))).toBe(true);

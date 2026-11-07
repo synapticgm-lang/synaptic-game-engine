@@ -257,9 +257,16 @@ describe('WS-4 Wave 1 — Encounter catalog (replaced the template registry in 1
     expect(selectCatalogEncounter(at({ turn: 5 }))).toBe(picked);
   });
 
-  it('late turns pick elite and a hub prefers its own row', () => {
-    expect(selectCatalogEncounter(at({ turn: 25 }))?.tier).toBe('elite');
-    expect(selectCatalogEncounter(at({ turn: 5, currentLocation: 'Mireglass reeds' }))?.hubId).toBe('sp-hub-mireglass');
+  it('a late blank place stays on free trash, and that hub late turn takes its elite', () => {
+    const nowhere = selectCatalogEncounter(at({ turn: 25 }));
+    expect(nowhere?.tier).toBe('trash');
+    expect(nowhere?.hubId).toBeUndefined();
+    const lateReeds = selectCatalogEncounter(at({ turn: 25, currentLocation: 'Mireglass reeds' }));
+    expect(lateReeds?.tier).toBe('elite');
+    expect(lateReeds?.hubId).toBe('sp-hub-mireglass');
+    const earlyReeds = selectCatalogEncounter(at({ turn: 5, currentLocation: 'Mireglass reeds' }));
+    expect(earlyReeds?.tier).toBe('trash');
+    expect(earlyReeds?.hubId).toBe('sp-hub-mireglass');
   });
 
   it('PYOA drought never picks a catalog foe', () => {

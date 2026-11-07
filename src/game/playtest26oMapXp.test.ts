@@ -184,7 +184,7 @@ describe('26o XP — reasons + look-around suppress', () => {
     expect(typedHello.notes).toEqual([]);
   });
 
-  it('travel to hub awards discover XP once with reason', () => {
+  it('a hub pays discover XP once only when a quest or a discovery check earns the place', () => {
     const state = {
       ...createInitialState('Act3', 'litrpg'),
       campaignBibleId: 'summoned-pact',
@@ -193,7 +193,7 @@ describe('26o XP — reasons + look-around suppress', () => {
       worldLedger: emptyWorldLedger(),
       currentLocation: BURNT_HUSK,
     };
-    const first = applySandboxXpAwards(state, {
+    const unearned = applySandboxXpAwards(state, {
       playerAction: 'Travel toward Lowmarket',
       locationName: 'Lowmarket',
       previousLocationName: BURNT_HUSK,
@@ -202,20 +202,44 @@ describe('26o XP — reasons + look-around suppress', () => {
       events: [],
       turn: 3,
     });
-    expect(first.xp).toBe(SANDBOX_XP.discoverHub);
-    expect(first.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(true);
-    const second = applySandboxXpAwards(
-      { ...state, places: first.places, sandboxAwardKeys: first.awardKeys },
+    expect(unearned.xp).toBe(0);
+    expect(unearned.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(false);
+    expect(unearned.places.some((p) => /lowmarket/i.test(p.name))).toBe(true);
+
+    const quests = [
+      {
+        id: 'bearings',
+        name: 'Bearings',
+        description: 'The road',
+        status: 'active' as const,
+        type: 'main' as const,
+        revealed: true,
+        objectives: [{ id: 'a', description: 'Reach Lowmarket', completed: false }],
+      },
+    ];
+    const earned = applySandboxXpAwards(state, {
+      playerAction: 'Travel toward Lowmarket',
+      locationName: 'Lowmarket',
+      previousLocationName: BURNT_HUSK,
+      questsBefore: quests,
+      questsAfter: quests,
+      events: [],
+      turn: 3,
+    });
+    expect(earned.xp).toBe(SANDBOX_XP.discoverHub);
+    expect(earned.notes.some((n) => /reached Lowmarket/i.test(n))).toBe(true);
+    const again = applySandboxXpAwards(
+      { ...state, places: earned.places, sandboxAwardKeys: earned.awardKeys },
       {
         playerAction: 'Look around Lowmarket',
         locationName: 'Lowmarket',
         previousLocationName: 'Lowmarket',
-        questsBefore: [],
-        questsAfter: [],
+        questsBefore: quests,
+        questsAfter: quests,
         events: [],
         turn: 4,
       }
     );
-    expect(second.xp).toBe(0);
+    expect(again.xp).toBe(0);
   });
 });

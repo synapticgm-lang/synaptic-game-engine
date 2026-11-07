@@ -50,6 +50,20 @@ describe('Pack 12 Fog-of-War', () => {
       expect(isLocationDiscovered(discovered, b!)).toBe(true);
       expect(isLocationDiscovered(discovered, c!)).toBe(true);
       expect(isLocationDiscovered(discovered, unseen!)).toBe(false);
+      expect(discovered.discoveredLocations).toEqual(
+        expect.arrayContaining(['lowgate-town', 'orchard-terrace', 'wayfort'])
+      );
+      expect(discovered.discoveredLocations).not.toContain('place_lowgate-town');
+      expect(discovered.discoveredLocations).not.toContain('ferry-crossing');
+    });
+
+    it('a nearby word does not discover Lowgate', () => {
+      const state = createInitialState('Test', 'litrpg', undefined, 'fog-0');
+      const bible = getCampaignBibleById('summoned-pact');
+      const withAtlas = seedWorldAtlas({ ...state, campaignBibleId: 'summoned-pact' }, bible!);
+      const discovered = detectAndDiscoverLocations(withAtlas, 'You stand at the gate and look down the road.');
+      expect(isLocationDiscovered(discovered, 'Lowgate')).toBe(false);
+      expect(discovered.discoveredLocations ?? []).not.toContain('lowgate-town');
     });
 
     it('a ward whose id is not its name is still discovered from the sentence', () => {
@@ -65,6 +79,17 @@ describe('Pack 12 Fog-of-War', () => {
       expect(isLocationDiscovered(discovered, b!)).toBe(true);
       expect(isLocationDiscovered(discovered, c!)).toBe(true);
       expect(isLocationDiscovered(discovered, unseen!)).toBe(false);
+      expect(discovered.discoveredLocations).toEqual(
+        expect.arrayContaining(['saltmar-city', 'saltmar-upper', 'saltmar-middle'])
+      );
+      expect(discovered.discoveredLocations).not.toContain('place_saltmar-city');
+      expect(discovered.discoveredLocations).not.toContain('saltmar-lower');
+
+      const cityOnly = detectAndDiscoverLocations(withAtlas, 'You are standing in Saltmar.');
+      expect(isLocationDiscovered(cityOnly, 'Saltmar')).toBe(true);
+      expect(isLocationDiscovered(cityOnly, 'Upper Ward')).toBe(false);
+      expect(cityOnly.discoveredLocations).toContain('saltmar-city');
+      expect(cityOnly.discoveredLocations).not.toContain('saltmar-upper');
     });
 
     it('only shows discovered settlements from world atlas', () => {
