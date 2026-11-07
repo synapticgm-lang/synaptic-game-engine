@@ -15,8 +15,10 @@ import type { ActiveEncounter, GameState } from './types';
 
 const SQUARE = 'Valespire peace-festival square';
 
-function jaxOnTheRoad(): GameState {
-  const base = createInitialState(undefined, 'litrpg');
+function jaxOnTheRoad(seed = 'phantom-0'): GameState {
+  // createInitialState otherwise draws Math.random for the save seed. The guide roll is
+  // hashed from that seed, and a failed guide adds a stretch, so one turn-back is not arrival.
+  const base = createInitialState(undefined, 'litrpg', undefined, seed);
   return {
     ...base,
     campaignBibleId: 'summoned-pact',
@@ -98,6 +100,17 @@ describe('phantom fight (s74 L)', () => {
     const post = ensureEncounterSpawnPreface(turn.state, 'Jax walked the open road back into the square.');
     expect(post.state.activeEncounter ?? null).toBeNull();
     expect((post.state.stateTxLog ?? []).some((t) => t.kind === 'combat')).toBe(false);
+  });
+
+  it('getting lost adds a stretch, so the same turn-back does not arrive and still opens no fight', () => {
+    const turn = preWriterTurn(jaxOnTheRoad('phantom-10'), `Turn back toward ${SQUARE}`);
+    expect(turn.travel.arrived).toBe(false);
+    expect(turn.travel.outcome).toBe('set out');
+    expect(turn.travel.receipt ?? '').toMatch(/leg 3 of 4/);
+    expect((turn.travel.facts ?? []).join(' ')).toMatch(/lost the way/i);
+    expect(turn.state.activeEncounter ?? null).toBeNull();
+    expect(turn.status.some((l) => /^Encounter:/.test(l))).toBe(false);
+    expect((turn.state.stateTxLog ?? []).some((t) => t.kind === 'combat')).toBe(false);
   });
 
   it('a road meeting is the threat the director sees: no second foe on the road', () => {
