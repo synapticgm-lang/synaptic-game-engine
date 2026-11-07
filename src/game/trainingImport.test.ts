@@ -229,6 +229,7 @@ describe('training import gate', () => {
     expect(fields.buildStamp).toBe('2026-11-03e');
     expect(fields.hasFacts).toBe(true);
     expect(fields.contextStatus).toBe('unknown');
+    expect(fields.contextMessages?.some((message) => message.content === 'Look around')).toBe(true);
     const decision = trainingImportDecision(fields, FIXTURE_IDS);
     expect(decision.status).not.toBe('candidate');
     const audit = trainingAuditRecord({
@@ -286,12 +287,19 @@ describe('training import gate', () => {
 });
 
 describe('served route and context proof', () => {
+  const pinnedMessages = [
+    { role: 'system', content: 'SYSTEM' },
+    { role: 'user', content: 'Look around' },
+    { role: 'assistant', content: 'The hall is quiet.' },
+  ];
+  const pinnedFacts = { location: 'Hall', inventory: ['map'] };
   const rights: TrainingRightsFixture = {
     servedModelId: FLASH,
     provider: 'fixture-host',
     route: 'fixture-route',
     outputUse: 'verified',
-    contextSources: ['player_action', 'engine_fact', 'test_prompt'],
+    messages: pinnedMessages,
+    facts: pinnedFacts,
   };
 
   function provenCall(over: Record<string, unknown> = {}): Record<string, unknown> {
@@ -353,11 +361,70 @@ describe('served route and context proof', () => {
 
     const untagged = trainingImportDecision(provenFields({
       messages: [
-        { role: 'user', content: 'Look around' },
+        { role: 'user', content: 'An untagged recap of an earlier scene.' },
+        { role: 'assistant', content: 'The hall is quiet.' },
+      ],
+    }), FIXTURE_IDS, rights);
+    expect(untagged.reasons).toContain('context lineage unpinned');
+  });
+
+  it('does not let a clean tag stand in for lineage', () => {
+    const prior = trainingImportDecision(provenFields({
+      messages: [
+        { role: 'system', content: 'SYSTEM', provenance: 'test_prompt' },
+        { role: 'assistant', content: 'Earlier Gemini recap of the book.', provenance: 'engine_fact' },
+        { role: 'user', content: 'Look around', provenance: 'player_action' },
         { role: 'assistant', content: 'The hall is quiet.', provenance: 'engine_fact' },
       ],
     }), FIXTURE_IDS, rights);
-    expect(untagged.reasons).toContain('context provenance unknown');
+    expect(prior.status).not.toBe('candidate');
+
+    const nested = trainingImportDecision(provenFields({
+      engine_facts: {
+        location: 'Hall',
+        inventory: ['map'],
+        summary: { origin: 'request_state', text: 'Book prose pasted into facts.' },
+      },
+      engine_facts_provenance: 'request_state',
+    }), FIXTURE_IDS, rights);
+    expect(nested.status).not.toBe('candidate');
+  });
+
+  it('rejects a restricted route or provider written in another case, even when the fixture repeats it', () => {
+    const geminiRoute = 'https://Gemini.Google.com/App';
+    const gemini = trainingImportDecision(
+      provenFields({ route: geminiRoute }),
+      FIXTURE_IDS,
+      { ...rights, route: geminiRoute },
+    );
+    expect(gemini.status).toBe('rejected');
+    expect(gemini.reasons).toContain('restricted output route');
+
+    const fireworks = 'Accounts/Fireworks/models/deepseek-v4p1-flash';
+    const hosted = trainingImportDecision(
+      provenFields({ provider: fireworks }),
+      FIXTURE_IDS,
+      { ...rights, provider: fireworks },
+    );
+    expect(hosted.status).toBe('rejected');
+    expect(hosted.reasons).toContain('restricted output route');
+  });
+
+  it('does not read output-use proof from the stored turn', () => {
+    const fields = trainingImportFields({
+      turn: {
+        gmText: 'The hall is quiet.',
+        outputUse: 'verified',
+        provider: 'fixture-host',
+        route: 'fixture-route',
+        training_ok: true,
+      },
+      calls: [provenCall()],
+      buildStamp: '2026-11-03e',
+      mode: 'litrpg',
+      factcheckRow: { flags: [] },
+    });
+    expect(trainingImportDecision(fields, FIXTURE_IDS).status).not.toBe('candidate');
   });
 
   it('accepts one synthetic candidate only when the fixture rights match and writes no training file', () => {

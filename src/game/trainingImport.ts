@@ -50,10 +50,12 @@ export type TrainingImportRow = {
   provider?: string | null;
   /** Route recorded on the writer call. */
   route?: string | null;
-  /** clear only when every message names a provenance and facts are request_state. */
-  contextStatus?: 'clear' | 'restricted' | 'unknown';
-  /** Provenance named by each writer message. */
-  contextSources?: string[];
+  /** Restricted label seen on a message or fact. A clean tag is not a clear status. */
+  contextStatus?: 'restricted' | 'unknown';
+  /** Role and content only. Provenance tags are not copied here. */
+  contextMessages?: TrainingContextMessage[];
+  /** Engine facts as stored. Not treated as a rights grant. */
+  contextFacts?: unknown;
 };
 
 const FALLBACK_BUILD_STAMP = 'trainlog';
@@ -80,12 +82,20 @@ function consentMatches(consent: unknown, consentRef: unknown): consent is Conse
  * Isolated test double for output-use and context-source proof.
  * Production callers omit it. A stored row cannot supply it.
  */
+export type TrainingContextMessage = { role: string; content: string };
+
+/**
+ * Isolated test double. Production callers omit it.
+ * `messages` and `facts` are the only context this fixture trusts.
+ * A provenance tag on the call is not proof, and this does not detect reworded text.
+ */
 export type TrainingRightsFixture = {
   servedModelId: string;
   provider: string;
   route: string;
   outputUse: 'verified';
-  contextSources: readonly string[];
+  messages: readonly TrainingContextMessage[];
+  facts: unknown;
 };
 
 /**
@@ -151,9 +161,6 @@ export function trainingImportDecision(
 }
 
 const RESTRICTED_LABEL = /^(?:pyoa|gemini|gemini-apps|gemini_app|gemini-app)$/i;
-const RESTRICTED_PROVIDER = /^(?:fireworks|gemini-apps|google-gemini-apps)$/i;
-const RESTRICTED_ROUTE = /gemini\.google\.com\/app|accounts\/fireworks/i;
-
 function isRestrictedLabel(value: unknown): boolean {
   return RESTRICTED_LABEL.test(text(value));
 }
@@ -168,30 +175,39 @@ function objectRestricted(value: unknown): boolean {
   return Object.values(rec).some(objectRestricted);
 }
 
-function messageProvenance(message: Record<string, unknown>): string {
-  return text(message.provenance) || text(message.source) || text(message.origin);
-}
-
-function contextOf(call: Record<string, unknown>): { status: 'clear' | 'restricted' | 'unknown'; sources: string[] } {
-  if (call.context_restricted === true || objectRestricted(call.engine_facts)) {
-    return { status: 'restricted', sources: [] };
-  }
+function contextOf(call: Record<string, unknown>): { status: 'restricted' | 'unknown'; messages: TrainingContextMessage[] } {
   const messages = Array.isArray(call.messages) ? call.messages : [];
-  const sources: string[] = [];
+  const view: TrainingContextMessage[] = [];
+  if (call.context_restricted === true || objectRestricted(call.engine_facts)) {
+    return { status: 'restricted', messages: view };
+  }
   for (const message of messages) {
-    if (!message || typeof message !== 'object') return { status: 'unknown', sources };
+    if (!message || typeof message !== 'object') return { status: 'unknown', messages: view };
     const rec = message as Record<string, unknown>;
     if (isRestrictedLabel(rec.provenance) || isRestrictedLabel(rec.source) || isRestrictedLabel(rec.origin) || isRestrictedLabel(rec.mode)) {
-      return { status: 'restricted', sources };
+      return { status: 'restricted', messages: view };
     }
-    const provenance = messageProvenance(rec);
-    if (!provenance) return { status: 'unknown', sources };
-    sources.push(provenance);
+    view.push({ role: text(rec.role), content: text(rec.content) });
   }
-  if (messages.length === 0 || text(call.engine_facts_provenance) !== 'request_state') {
-    return { status: 'unknown', sources };
+  return { status: 'unknown', messages: view };
+}
+
+function stable(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stable).join(',')}]`;
+  if (value && typeof value === 'object') {
+    const rec = value as Record<string, unknown>;
+    return `{${Object.keys(rec).sort().map((key) => `${JSON.stringify(key)}:${stable(rec[key])}`).join(',')}}`;
   }
-  return { status: 'clear', sources };
+  return JSON.stringify(value) ?? 'null';
+}
+
+function sameText(a: string, b: string): boolean {
+  return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
+function restrictedEndpoint(provider: string, route: string): boolean {
+  const blob = `${provider} ${route}`.trim().toLowerCase();
+  return blob.includes('fireworks') || blob.includes('gemini.google.com/app') || /\b(?:pyoa|gemini-apps|gemini_app|gemini-app)\b/.test(blob);
 }
 
 /**
@@ -207,20 +223,19 @@ function contextAndRouteDecision(
   const route = text(row.route);
   if (!provider) return { status: 'rejected', reasons: ['provider unknown'], gameplay: false };
   if (!route) return { status: 'rejected', reasons: ['route unknown'], gameplay: false };
-  if (RESTRICTED_PROVIDER.test(provider) || RESTRICTED_ROUTE.test(route) || RESTRICTED_ROUTE.test(provider)) {
+  if (restrictedEndpoint(provider, route)) {
     return { status: 'rejected', reasons: ['restricted output route'], gameplay: false };
   }
   if (row.contextStatus === 'restricted') return { status: 'rejected', reasons: ['restricted context'], gameplay: false };
-  if (row.contextStatus !== 'clear') return { status: 'rejected', reasons: ['context provenance unknown'], gameplay: false };
-  const sources = row.contextSources ?? [];
-  if (!rights || rights.outputUse !== 'verified' || rights.servedModelId !== model) {
+  if (!rights || rights.outputUse !== 'verified' || !sameText(rights.servedModelId, model)) {
     return { status: 'quarantine', reasons: ['output terms unverified'], gameplay: true };
   }
-  if (rights.provider !== provider) return { status: 'rejected', reasons: ['provider disagrees'], gameplay: false };
-  if (rights.route !== route) return { status: 'rejected', reasons: ['route disagrees'], gameplay: false };
-  if (sources.length === 0 || sources.some((source) => !rights.contextSources.includes(source))) {
-    return { status: 'rejected', reasons: ['context provenance unknown'], gameplay: false };
-  }
+  if (!sameText(rights.provider, provider)) return { status: 'rejected', reasons: ['provider disagrees'], gameplay: false };
+  if (!sameText(rights.route, route)) return { status: 'rejected', reasons: ['route disagrees'], gameplay: false };
+  const pinned = Array.isArray(rights.messages) && rights.messages.length > 0
+    && stable(rights.messages) === stable(row.contextMessages ?? [])
+    && stable(rights.facts) === stable(row.contextFacts);
+  if (!pinned) return { status: 'rejected', reasons: ['context lineage unpinned'], gameplay: false };
   return { status: 'candidate', reasons: [], gameplay: true };
 }
 
@@ -350,7 +365,8 @@ export function trainingImportFields(input: {
       provider: null,
       route: null,
       contextStatus: 'unknown',
-      contextSources: [],
+      contextMessages: [],
+      contextFacts: null,
     };
   }
 
@@ -382,6 +398,7 @@ export function trainingImportFields(input: {
     provider: text(call.provider) || null,
     route: text(call.route) || null,
     contextStatus: context.status,
-    contextSources: context.sources,
+    contextMessages: context.messages,
+    contextFacts: facts && typeof facts === 'object' ? facts : null,
   };
 }
