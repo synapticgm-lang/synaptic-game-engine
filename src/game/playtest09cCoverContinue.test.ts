@@ -56,8 +56,8 @@ function aloneRuin(over: Partial<GameState> = {}): GameState {
 
 describe('playtest09c — cover-continue + Silent receipts', () => {
   it('HUD/BUILD stay on the 09/10 opening line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
+    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

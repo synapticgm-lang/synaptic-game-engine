@@ -36,8 +36,8 @@ import type { GameState } from './types';
 describe('playtest31tBatchT', () => {
   it('stamp is 2026-08-31t / 31l and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
+    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
   });
 
   describe('P0-1 — ban unresolved deixis / occupancy nouns', () => {

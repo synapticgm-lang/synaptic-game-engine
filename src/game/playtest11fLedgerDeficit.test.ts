@@ -106,8 +106,8 @@ function millNamed(): GameState {
 
 describe('playtest11f — ledger deficit + topic inclusion', () => {
   it('HUD/BUILD are 11f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
+    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

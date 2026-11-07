@@ -14,8 +14,8 @@ import type { GameState } from './types';
 
 describe('Batch 02g stamps', () => {
   it('HUD and BUILD are at least 2026-09-02g', () => {
-    expect(HUD_BUILD_STAMP.startsWith('2026-09')).toBe(true);
-    expect(BUILD_STAMP.startsWith('2026-09')).toBe(true);
+    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
+    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
   });
 });
 

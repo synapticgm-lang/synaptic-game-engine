@@ -61,7 +61,7 @@ describe('playtest30w — site-wide player line + plate lock', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
     expect(BUILD_STAMP >= '2026-08-30p').toBe(true);
     const html = readFileSync(resolve(__dirname, '../../index.html'), 'utf8');
-    expect(html).toMatch(/sgm-build 2026-0[89]/);
+    expect(html).toContain(`sgm-build ${BUILD_STAMP}`);
   });
 
   it('typed physical lines stay on the log; flee intent still parses', () => {
