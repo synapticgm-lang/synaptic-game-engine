@@ -165,16 +165,36 @@ export function isOpeningCardActLine(raw: string): boolean {
   return /\b(sign the book|read the page|outline what the page says)\b/i.test(raw ?? '');
 }
 
+/** Same one-person test as the client. A plural group is not a cast name. */
+function edgeCastIsOnePerson(part: string): boolean {
+  const words = part.replace(/\s+/g, ' ').trim().replace(/^(?:the|a|an)\s+/i, '').split(' ');
+  if (!words[0] || /^(?:two|three|four|five|several|some|many|both|\d+)$/i.test(words[0])) return false;
+  const stop = words.findIndex(
+    (w, i) => i > 0 && /^(?:on|at|in|of|who|with|from|behind|beside|by|near|already|that|which|plus|for|to)$/i.test(w)
+  );
+  const head = (stop > 0 ? words.slice(0, stop) : words).slice(-1)[0] ?? '';
+  if (/^[A-Z]/.test(head)) return true;
+  return !/[^s]s$/i.test(head);
+}
+
 export function openingCastNames(state?: {
   sceneFacts?: { present?: string[] };
   openingEstablishment?: { pickedHook?: string };
 }): string[] {
-  const present = (state?.sceneFacts?.present ?? []).filter((n) => (n ?? '').trim().length > 1);
+  const present = (state?.sceneFacts?.present ?? [])
+    .map((n) => (n ?? '').trim())
+    .filter((n) => n.length > 1 && edgeCastIsOnePerson(n));
   if (present.length) return present;
   const who = (state?.openingEstablishment?.pickedHook ?? '').match(
     /Who is here[^:\n]*:\s*([^\n]+)/i
   );
-  return who?.[1] ? [who[1].replace(/\s+and\s+.*$/, '').trim()] : [];
+  if (!who?.[1]) return [];
+  const names: string[] = [];
+  for (const part of who[1].split(/\s+and\s+|,\s*/i)) {
+    const t = part.replace(/\s+/g, ' ').trim();
+    if (t && edgeCastIsOnePerson(t)) names.push(t);
+  }
+  return names;
 }
 
 export function openingCastStillHere(_state?: unknown): boolean {

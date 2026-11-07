@@ -156,6 +156,16 @@ describe('s77 Root D: the record is the story, not warden chrome', () => {
     const asked = applyOpeningOfferChoice(withRoute, 'Ask Mira Flint about the lead').state;
     expect(asked.npcMemories?.some((m) => m.npcName === 'Mira Flint' && (m.location ?? '') === place)).toBe(true);
     expect(formatSceneBlock(asked)).toMatch(/Mira Flint \(person\)/);
-    expect(formatSceneBlock(applyOpeningOfferChoice(withRoute, 'Refuse the offer').state)).toMatch(/the scavengers \(person\)/);
+    const refused = applyOpeningOfferChoice(withRoute, 'Refuse the offer').state;
+    expect(formatSceneBlock(refused)).not.toMatch(/scavengers \(person\)/);
+    expect(refused.timeline?.some((f) => f.kind === 'person' && /scavengers/i.test(f.name ?? ''))).toBe(false);
+    const named = applyOpeningOfferChoice({
+      ...withRoute,
+      openingEstablishment: {
+        ...withRoute.openingEstablishment,
+        card: { ...withRoute.openingEstablishment.card, cast: 'Archivist Lene Quill' },
+      },
+    }, 'Refuse the offer').state;
+    expect(formatSceneBlock(named)).toMatch(/Archivist Lene Quill \(person\)|Lene Quill \(person\)/);
   });
 });

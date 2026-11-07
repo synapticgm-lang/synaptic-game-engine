@@ -13,6 +13,7 @@ import {
   openingCastNames,
 } from './openingEstablishment';
 import { applyOpeningOfferChoice } from './openingOffer';
+import { formatSceneBlock } from './sceneBlock';
 import { buildInfoSheet } from './infoSheet';
 import { resolveOfferedChoices } from './playTranscript';
 import { hubsForBibleId } from './outdoorHubs';
@@ -70,6 +71,8 @@ describe('seed 77 infirmary card compiles its cast, offer and spine', () => {
     const refused = applyOpeningOfferChoice(s, 'Refuse the work');
     expect(refused.state.inventory).toEqual(s.inventory);
     expect(refused.receipts[0]).toMatch(/^Offer refused: Refuse the job/);
+    expect(refused.state.timeline?.some((f) => f.kind === 'person' && /chirurgeons/i.test(f.name ?? ''))).toBe(false);
+    expect(formatSceneBlock(refused.state)).not.toMatch(/chirurgeons \(person\)/);
     expect(coverContinuePads(refused.state)).not.toContain('Refuse the work');
   });
 

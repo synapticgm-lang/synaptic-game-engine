@@ -4,7 +4,7 @@
  */
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
-import { isAcceptOfferLine, openingCastLabel, openingCastNames, openOpeningOffer } from './openingEstablishment';
+import { isAcceptOfferLine, openingCastLabel, openingCastNames, openOpeningOffer, slotNamesOnePerson } from './openingEstablishment';
 import { seat } from './presentAuthority';
 import { openRouteView } from './questRoutes';
 import { applyStructuralEvents } from './structuralEvents';
@@ -23,11 +23,8 @@ export function applyOpeningOfferChoice(
 ): { state: GameState; receipts: string[] } {
   let seated = state;
   if (isOfferRefuseLine(playerInput)) {
-    const card = (seated.openingEstablishment?.card?.cast ?? '').trim();
-    const named = (card || openingCastNames(seated)[0] || '').trim();
-    const low = named.toLowerCase();
-    const who = !named || low === 'panel' || low === 'the panel' || low === 'the people here' || low === 'people here' || low === 'the people who pulled you' ? '' : named;
-    // T10RC1 — refuse seats the offer giver via presentAuthority (timeline tag alone is not a seat).
+    // A known person is seated. A group label stays attribution, not a person on the ledger.
+    const who = openingCastNames(seated).find((n) => slotNamesOnePerson(n)) ?? '';
     if (who) seated = seat(recordPersonSeen(seated, who, 'made the offer'), who);
   }
   const route = openRouteView(seated, playerInput)?.routeByLabel;

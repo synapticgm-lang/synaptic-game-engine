@@ -467,7 +467,7 @@ describe('q72-TIMELINETAGS', () => {
     expect(block.indexOf('PRESENT:')).toBeLessThan(block.indexOf('Only PRESENT people may speak'));
   });
 
-  it('q72r5 refuse seats the offer giver; their answer stands; an absent voice does not', () => {
+  it('q72r5 a group offer is not a person; a named route person is; an absent voice is not', () => {
     const place = 'a ruined empty circle outside the west wall';
     const s = baseState({
       turn: 3,
@@ -494,7 +494,7 @@ describe('q72-TIMELINETAGS', () => {
       } as GameState['quests'][number]],
     });
     const refused = applyOpeningOfferChoice(s, 'Refuse the offer').state;
-    expect(formatSceneBlock(refused)).toMatch(/PRESENT:.*the scavengers/);
+    expect(formatSceneBlock(refused)).not.toMatch(/scavengers \(person\)/);
     const check = {
       state: refused,
       playerInput: 'Refuse the offer',
@@ -505,7 +505,7 @@ describe('q72-TIMELINETAGS', () => {
     const answered = 'Jax turned the offer down beside the cracked stone. The scavengers said, "We will trade junk for whatever is in your pockets." The circle stayed quiet after that.';
     expect(writerDraftProblems(answered, check).some((p) => p.startsWith('Absent speaker:') || p.startsWith('Someone must answer'))).toBe(false);
     const silent = 'THEY REFUSED THE OFFER. THEY WALKED AWAY. THEY WALKED AWAY FROM THE STONES AND DID NOT LOOK BACK.';
-    expect(writerDraftProblems(silent, check).some((p) => p.startsWith('Someone must answer'))).toBe(true);
+    expect(writerDraftProblems(silent, check).some((p) => p.startsWith('Someone must answer'))).toBe(false);
     const absent = `${answered} King Pellane said, "Come to the camp tonight."`;
     expect(writerDraftProblems(absent, check).some((p) => p.startsWith('Absent speaker:'))).toBe(true);
     const asked = applyOpeningOfferChoice(s, 'Ask Mira Flint about the lead').state;

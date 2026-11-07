@@ -27,17 +27,34 @@ function people(state: GameState): Array<{ id: string; name: string }> {
     if (m.shouldExit) continue;
     if ((m.location ?? '').trim().toLowerCase() === here || (state.sceneFacts?.present ?? []).some((p) => p.toLowerCase() === m.npcName.toLowerCase())) push(m.npcId, m.npcName);
   }
-  for (const p of state.sceneFacts?.present ?? []) if (!left.has(p.toLowerCase()) && !seen.has(p.toLowerCase())) push(`present:${p.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, p);
+  for (const p of state.sceneFacts?.present ?? []) {
+    if (!castNameIsOnePerson(p)) continue;
+    if (!left.has(p.toLowerCase()) && !seen.has(p.toLowerCase())) push(`present:${p.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, p);
+  }
   const card = state.openingEstablishment?.card;
   const where = (state.openingEstablishment?.answers?.where ?? '').replace(WS, ' ').trim().toLowerCase();
   const travelled = (state.log ?? []).some((e) => e.role === 'player' && playerCommittedTravel(e.content));
   const still = !travelled && (state.openingEstablishment?.complete !== true || (!!where && where === here));
   if (still && card) {
     for (const n of [card.cast, ...(card.castNames ?? [])]) {
-      if (n && !left.has(n.toLowerCase())) push(`cast:${n.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, n);
+      // A group label is who is present, not one person who can be quoted.
+      if (n && castNameIsOnePerson(n) && !left.has(n.toLowerCase())) {
+        push(`cast:${n.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, n);
+      }
     }
   }
   return out.slice(0, CAP);
+}
+/** Matches slotNamesOnePerson. Kept local so the edge copy does not import the client opener. */
+function castNameIsOnePerson(part: string): boolean {
+  const words = part.replace(WS, ' ').trim().replace(/^(?:the|a|an)\s+/i, '').split(' ');
+  if (!words[0] || /^(?:two|three|four|five|several|some|many|both|\d+)$/i.test(words[0])) return false;
+  const stop = words.findIndex(
+    (w, i) => i > 0 && /^(?:on|at|in|of|who|with|from|behind|beside|by|near|already|that|which|plus|for|to)$/i.test(w)
+  );
+  const head = (stop > 0 ? words.slice(0, stop) : words).slice(-1)[0] ?? '';
+  if (/^[A-Z]/.test(head)) return true;
+  return !/[^s]s$/i.test(head);
 }
 function keyVisit(f: TimelineFact): boolean {
   if (!f.verb) return /person:|quest |gained item|died|met:|accepted:|step:|done:|failed:/i.test(f.text);
