@@ -401,10 +401,18 @@ export function lastWriterRowId(runId?: string | null, turnNo?: number | null): 
   return lastWriterByTurn.get(turnKey(runId ?? session.run_id, turnNo ?? session.turn_no)) ?? null;
 }
 
+/** Paths that already received an append. Clearing the in-memory session does not forget them. */
+const flushedCallsPaths = new Set<string>();
+
 function appendLine(row: TrainLogRow): void {
   const path = session.callsPath;
   if (!path || !fileAppend) return;
   fileAppend(path, `${JSON.stringify(row)}\n`);
+  flushedCallsPaths.add(path);
+}
+
+export function callsPathFlushed(path: string | null | undefined): boolean {
+  return !!path && flushedCallsPaths.has(path);
 }
 
 function maybeAiTraffic(row: TrainLogRow): void {

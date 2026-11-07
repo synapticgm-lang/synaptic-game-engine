@@ -1,3 +1,5 @@
+import { appendFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   ADMISSION_NOT_WIRED,
@@ -16,9 +18,12 @@ import {
   revokePlayerTrainingOptIn,
   selectTrainingRows,
   sessionSplit,
+  clearQuarantinedServedIds,
+  peekQuarantinedServedIds,
   setPlayerTrainingPreference,
   shouldRequestTrainLog,
   tally,
+  withdrawFlushedCapture,
   type ConsentRecord,
   type PlayerTurnCapture,
   type SelectionRow,
@@ -183,6 +188,7 @@ describe('consenting player turns through the existing logger', () => {
     clearTrainLogSession();
     setTrainLogFileAppend(null);
     setPlayerTrainingPreference(null);
+    clearQuarantinedServedIds();
   });
 
   it('stores one opted-in turn that can be read back, and does not mark it good', () => {
@@ -270,10 +276,12 @@ describe('consenting player turns through the existing logger', () => {
       build_stamp: '2026-11-03e',
       engine_facts: facts,
       system: 'S',
-      user: 'U',
+      user: 'the private line stays off disk',
       run_id: 'r',
       turn_no: 2,
     })).toBeNull();
+    expect(peekQuarantinedServedIds()).toEqual(['DS4.1Flash']);
+    expect(peekTrainLogRows()).toHaveLength(0);
     expect(recordConsentingPlayerCall(pref, {
       assistant: 'key sk-abcdefghij',
       teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
@@ -476,5 +484,52 @@ describe('consenting player turns through the existing logger', () => {
     expect(packed).not.toContain('stale-edge');
     expect(packed).toContain('[redacted-email]');
     expect(packed).toContain('[redacted-account]');
+    expect(peekQuarantinedServedIds()).toContain('DS4.1Flash');
+  });
+
+  it('withdrawal does not delete or rewrite a flushed calls file', () => {
+    const dir = join('/tmp', 'sge-flush-withdraw');
+    mkdirSync(dir, { recursive: true });
+    const path = join(dir, 'calls.jsonl');
+    setTrainLogFileAppend((file, line) => appendFileSync(file, line));
+    setTrainLogSession({ run_id: 'run-w', turn_no: 1, mode: 'litrpg', callsPath: path });
+    const pref = grantPlayerTrainingOptIn('2026-11-07T12:00:00Z', ack)!;
+    const stored = recordConsentingPlayerCall(pref, {
+      job: 'writer',
+      system: 'SYSTEM',
+      user: 'Look around',
+      assistant: 'The hall is quiet.',
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      build_stamp: '2026-11-03e',
+      run_id: 'run-w',
+      turn_no: 1,
+      mode: 'litrpg',
+      engine_facts: facts,
+      finish_reason: 'stop',
+    });
+    expect(stored?.example_source).toBe('player');
+    const flushed = readFileSync(path, 'utf8');
+    expect(flushed.length).toBeGreaterThan(0);
+    const stopped = withdrawFlushedCapture(pref, '2026-11-07T13:00:00Z', path);
+    expect(stopped.deleteFile).toBe(false);
+    expect(stopped.rewrite).toBe(false);
+    expect(stopped.laterCapture).toBe(false);
+    expect(stopped.flushed).toBe(true);
+    expect(stopped.preference.revokedAt).toBe('2026-11-07T13:00:00Z');
+    expect(recordConsentingPlayerCall(stopped.preference, {
+      job: 'writer',
+      system: 'SYSTEM',
+      user: 'Look again',
+      assistant: 'Still quiet.',
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      build_stamp: '2026-11-03e',
+      run_id: 'run-w',
+      turn_no: 2,
+      mode: 'litrpg',
+      engine_facts: facts,
+      finish_reason: 'stop',
+    })).toBeNull();
+    expect(readFileSync(path, 'utf8')).toBe(flushed);
+    expect(withdrawFlushedCapture(pref, 'later', join(dir, 'never-written.jsonl')).flushed).toBe(false);
   });
 });

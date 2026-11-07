@@ -2,6 +2,7 @@
  * 29z2 — tester turn check: ghost / impossible chips, prose that ignores the action, interior or extra
  * floors on open ground, quest places the scene never set up, broken lines. No live GM call.
  */
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -55,8 +56,16 @@ const gm = (turn: number, content: string): LogEntry => ({ id: `g${turn}`, turn,
 
 describe('29z2 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

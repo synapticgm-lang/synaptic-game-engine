@@ -3,6 +3,7 @@
  * Entity mad-lib collapse, UI/stitch bleed, combat catch/travel clear, dead abstract pads.
  * Mid writer OFF.
  */
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import {
@@ -41,8 +42,16 @@ import type { GameState } from './types';
 describe('playtest31wBatchW', () => {
   it('stamp is 2026-08-31w / 31o and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
   });
 
   describe('P0-1 — entity / role-label collapse', () => {

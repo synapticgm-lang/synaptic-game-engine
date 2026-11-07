@@ -2,6 +2,7 @@
  * Batch T — post–Batch-S Gemini T50 P0s (seed 42).
  * Root-cause ledger / compiler / warden — not CRAFT piles. Mid writer OFF.
  */
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import {
@@ -36,8 +37,16 @@ import type { GameState } from './types';
 describe('playtest31tBatchT', () => {
   it('stamp is 2026-08-31t / 31l and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
   });
 
   describe('P0-1 — ban unresolved deixis / occupancy nouns', () => {

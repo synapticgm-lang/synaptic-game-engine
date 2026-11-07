@@ -10,6 +10,7 @@ import {
 import {
   appendTrainLogRows,
   FALLBACK_BUILD_STAMP,
+  callsPathFlushed,
   peekTrainLogRows,
   recordModelCall,
   type TrainLogRecordInput,
@@ -177,6 +178,47 @@ export function grantPlayerTrainingOptIn(
 
 export function revokePlayerTrainingOptIn(prev: PlayerTrainingPreference, now: string): PlayerTrainingPreference {
   return { ...prev, optedIn: false, revokedAt: now };
+}
+
+/**
+ * Withdrawal stops later rows. A calls file that has already been appended is not deleted or rewritten.
+ * This does not untrain a weight.
+ */
+export function withdrawFlushedCapture(
+  pref: PlayerTrainingPreference,
+  now: string,
+  callsPath: string | null
+): {
+  preference: PlayerTrainingPreference;
+  deleteFile: false;
+  rewrite: false;
+  laterCapture: false;
+  flushed: boolean;
+} {
+  return {
+    preference: revokePlayerTrainingOptIn(pref, now),
+    deleteFile: false,
+    rewrite: false,
+    laterCapture: false,
+    flushed: callsPathFlushed(callsPath),
+  };
+}
+
+const quarantinedServedIds: string[] = [];
+
+/** An unsupported served id is recorded as quarantine and its payload is not stored. */
+export function noteUnsupportedServedId(model: string): { model: string; storedPayload: false } {
+  const id = model.trim();
+  quarantinedServedIds.push(id);
+  return { model: id, storedPayload: false };
+}
+
+export function peekQuarantinedServedIds(): readonly string[] {
+  return quarantinedServedIds;
+}
+
+export function clearQuarantinedServedIds(): void {
+  quarantinedServedIds.length = 0;
 }
 
 export function playerTrainingCaptureAllowed(pref: PlayerTrainingPreference | null | undefined): boolean {
@@ -406,7 +448,10 @@ export function recordConsentingPlayerCall(
 ): TrainLogRow | null {
   if (!playerTrainingCaptureAllowed(pref)) return null;
   const model = (input.teacher_model ?? '').trim();
-  if (!CORPUS_WRITER_IDS.has(model)) return null;
+  if (!CORPUS_WRITER_IDS.has(model)) {
+    noteUnsupportedServedId(model);
+    return null;
+  }
   if (!realBuildStamp(input.build_stamp) || !input.engine_facts) return null;
   if (input.truncated) return null;
   if (/^(?:length|max_tokens|error|content_filter)$/i.test(input.finish_reason ?? '')) return null;
@@ -473,7 +518,11 @@ export function appendConsentingCallLog(incoming: unknown, accountIds: readonly 
     if (row.truncated) continue;
     if (/^(?:length|max_tokens|error|content_filter)$/i.test(String(row.finish_reason ?? ''))) continue;
     if (!realBuildStamp(row.build_stamp) || !row.engine_facts) continue;
-    if (!CORPUS_WRITER_IDS.has(String(row.teacher_model ?? '').trim())) continue;
+    const served = String(row.teacher_model ?? '').trim();
+    if (!CORPUS_WRITER_IDS.has(served)) {
+      noteUnsupportedServedId(served);
+      continue;
+    }
     const facts = scrubValue(row.engine_facts, accountIds);
     if (facts === null) continue;
     const messages = Array.isArray(row.messages) ? row.messages : [];

@@ -23,12 +23,11 @@ import {
   resolveAutoplayWriter,
   type AutoplayWriterKind,
 } from '../../src/game/autoplayWriter';
+import { BUILD_STAMP } from '../../src/game/runManifest';
 import { STAGNATION_MID_WRITER_ENABLED } from '../../src/game/writerPolicy';
 import { enumeratePremadesOnce, type MatrixCombo } from '../../src/game/fateAutoplay';
 import { loadDotEnv } from './loadDotEnv';
 
-/** Keep in sync with Hud.tsx / index.html sgm-build. */
-const HUD_BUILD_STAMP = '2026-08-31n';
 const ROOT = resolve(process.cwd());
 
 type CellResult = {
@@ -386,7 +385,7 @@ async function main(): Promise<void> {
   const backupNote = {
     at: new Date().toISOString(),
     curriculumRoot: relative(ROOT, curriculumRoot),
-    hud: HUD_BUILD_STAMP,
+    hud: BUILD_STAMP,
     midWriter: STAGNATION_MID_WRITER_ENABLED,
     freeWriters: {
       harnessDefault: FLASH_LITE_OPENROUTER_MODEL,
@@ -406,7 +405,7 @@ async function main(): Promise<void> {
     if (w) {
       console.log(`[curriculum] writer ${w.route} ${w.model} — ${w.note}`);
     }
-    console.log(`[curriculum] mid writer OFF=${!STAGNATION_MID_WRITER_ENABLED} hud=${HUD_BUILD_STAMP}`);
+    console.log(`[curriculum] mid writer OFF=${!STAGNATION_MID_WRITER_ENABLED} hud=${BUILD_STAMP}`);
   }
 
   let cells = enumeratePremadesOnce(opts.seed);

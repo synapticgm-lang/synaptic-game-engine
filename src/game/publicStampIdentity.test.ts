@@ -6,8 +6,8 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { HUD_BUILD_STAMP } from '../components/Hud';
 import { parseDeployedPayload, shouldReloadClient } from './forceLatest';
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { BUILD_STAMP } from './runManifest';
 
 const root = resolve(__dirname, '../..');
@@ -30,12 +30,25 @@ function publicStamps(): { htmlComment: string; htmlMeta: string; versionHud: st
 
 describe('public stamp identity', () => {
   it('index.html and version.json match the JS BUILD_STAMP and the HUD stamp', () => {
-    const stamps = publicStamps();
-    expect(stamps.htmlComment).toBe(BUILD_STAMP);
-    expect(stamps.htmlMeta).toBe(BUILD_STAMP);
-    expect(stamps.versionHud).toBe(BUILD_STAMP);
-    expect(stamps.versionBuild).toBe(BUILD_STAMP);
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
+    const stamps = readPublicStampIdentity();
+    expect(stamps.build.length).toBeGreaterThan(0);
+    expect(stamps).toEqual({
+      hud: BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
+    expect(publicStamps()).toEqual({
+      htmlComment: stamps.htmlComment,
+      htmlMeta: stamps.htmlMeta,
+      versionHud: stamps.versionHud,
+      versionBuild: stamps.versionBuild,
+    });
+    expect(publicStampIdentityHolds(stamps)).toBe(true);
+    expect(publicStampIdentityHolds({ ...stamps, htmlMeta: '' })).toBe(false);
+    expect(publicStampIdentityHolds({ ...stamps, build: '' })).toBe(false);
   });
 
   it('a tab still advertising 2026-11-01a reloads when the page stamp is this build', () => {

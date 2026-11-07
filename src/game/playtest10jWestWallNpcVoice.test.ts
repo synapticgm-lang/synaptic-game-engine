@@ -1,6 +1,7 @@
 /**
  * 2026-09-10j — Hall questions spoken by scene CAST; no card-paragraph reprint.
  */
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { describe, expect, it } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
@@ -59,8 +60,16 @@ function westWall(over: Partial<GameState> = {}): GameState {
 
 describe('playtest10j — west wall NPC voice', () => {
   it('HUD/BUILD stay on the 10 line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

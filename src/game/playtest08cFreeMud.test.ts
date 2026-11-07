@@ -1,6 +1,7 @@
 /**
  * Batch 08c — Free MUD-modern receipt + micro-flavor gate + Tag & Trigger stub.
  */
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { describe, expect, it } from 'vitest';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import {
@@ -69,8 +70,16 @@ describe('08c — Free MUD presentation', () => {
     expect(shouldUseFreeMudPresentation('mid')).toBe(false);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
     // Stamp moved to 08d Silent Engine — mud path still on.
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
   });
 
   it('builds factual receipt from packet (no AI)', () => {

@@ -2,6 +2,7 @@
  * 2026-09-10f — Treaty tent: one-line lock was Silent + perpetual stitch.
  * Talk after covers must hit the writer. Receipt verbs stay Silent.
  */
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -96,8 +97,16 @@ function namedJax(over: Partial<GameState> = {}): GameState {
 
 describe('playtest10f — treaty tent one-line lock', () => {
   it('HUD/BUILD stay on the 10 line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

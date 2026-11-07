@@ -1,3 +1,4 @@
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { describe, expect, it } from 'vitest';
 import { getCampaignBibleById } from '@/data/campaigns';
 import { HUD_BUILD_STAMP } from '../components/Hud';
@@ -58,8 +59,16 @@ function stitchCard(bible: CampaignBible, mode: EngineMode, card: OpeningHookCar
 
 describe('playtest09b — page 1 is one authored paragraph', () => {
   it('HUD/BUILD stay on 2026-09-09, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

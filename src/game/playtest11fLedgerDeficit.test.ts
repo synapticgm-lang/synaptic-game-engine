@@ -2,6 +2,7 @@
  * 11f — ledger deficit trap: write unlocked name after covers;
  * hall topics by inclusion; leftover ask same turn.
  */
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import { describe, expect, it } from 'vitest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 import { BUILD_STAMP } from './runManifest';
@@ -106,8 +107,16 @@ function millNamed(): GameState {
 
 describe('playtest11f — ledger deficit + topic inclusion', () => {
   it('HUD/BUILD are 11f, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

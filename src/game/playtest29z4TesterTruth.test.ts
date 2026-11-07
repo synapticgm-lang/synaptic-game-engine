@@ -4,6 +4,7 @@
  * seed-66 prose causes are fixed: no canned who-line, no bare "streets" name, no kit glued after "worn",
  * "here" is the place just entered. No live GM or judge call.
  */
+import { publicStampIdentityHolds, readPublicStampIdentity } from './publicStampFiles';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -54,8 +55,16 @@ const kinds = (r: { p0: { kind: string }[]; down: { kind: string }[] }) => [...r
 
 describe('29z4 — stamp', () => {
   it('HUD/BUILD are 2026-10-14e, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe(BUILD_STAMP);
-    expect(BUILD_STAMP).toBe(HUD_BUILD_STAMP);
+    expect(readPublicStampIdentity().build.length).toBeGreaterThan(0);
+    expect(publicStampIdentityHolds()).toBe(true);
+    expect(readPublicStampIdentity()).toMatchObject({
+      hud: HUD_BUILD_STAMP,
+      build: BUILD_STAMP,
+      htmlComment: BUILD_STAMP,
+      htmlMeta: BUILD_STAMP,
+      versionHud: BUILD_STAMP,
+      versionBuild: BUILD_STAMP,
+    });
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
