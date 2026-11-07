@@ -37,7 +37,8 @@ import { CHEST_GRADE_LABELS, lootableLockedFor } from './dungeonSeed';
 import { resolveLockAttempt } from './lockAttempt';
 import { climbFloor } from './rules/litrpgFloors';
 import { BIOME_FAMILIES, HUB_TEXT_BIOMES, THREAT_MODIFIERS, biomeKey, type ThreatModifier } from '@/data/dungeonBiomes';
-import { siteClearWonHere } from './questHooks';
+import { ordinaryPlacement, rollLairShape, type LairKind } from './lairArchetype';
+import { mobIsDesignatedBoss, siteClearWonHere } from './questHooks';
 import {
   needsFirstFightSafety,
   openFirstFightGate,
@@ -252,17 +253,17 @@ export type DungeonCardProfile = {
 };
 
 /**
- * High-threat sites, and any site whose live quest asks for a clear or a boss, keep a boss
- * and foes in some rooms. Other sites are a boss delve a bit under half the time. The rest
- * are a cache hunt: a chest, a trap, and a secret, and no foes. A boss delve still has a
- * cache about half the time.
+ * One seeded draw from the `any` row in `LAIR_BOUNDS`. Danger does not force a boss.
+ * `forceCombat` does. `mobChance` is the ordinary-room fraction, not a fixed 0 or 0.55.
  */
 export function dungeonCardProfile(seed: string, danger: number, forceCombat: boolean): DungeonCardProfile {
-  const rng = createHashRng(seed, 'dungeon-profile');
-  const roll = rng();
-  const boss = forceCombat || danger >= 3 || roll < 0.45;
-  if (boss) return { needBoss: true, needCache: rng() < 0.5, mobChance: 0.55 };
-  return { needBoss: false, needCache: true, mobChance: 0 };
+  const shape = rollLairShape({
+    kind: 'any',
+    rng: createHashRng(seed, 'dungeon-profile'),
+    danger,
+    forceBoss: forceCombat,
+  });
+  return { needBoss: shape.boss, needCache: shape.sideChests > 0, mobChance: shape.mobFraction };
 }
 
 /** A live objective that can only be won by a fight at this site. */
@@ -283,7 +284,11 @@ export function siteNeedsFight(state: GameState, site: string): boolean {
 }
 
 /** Build the card for a site. Deterministic from the save seed + site name. */
-export function buildDungeonCard(state: GameState, site: string): ActiveDungeonState {
+export function buildDungeonCard(
+  state: GameState,
+  site: string,
+  explicit?: { lair?: LairKind }
+): ActiveDungeonState {
   const hub = siteHub(state, site);
   const name = hub?.name ?? site;
   const siteTheme = themeFor(`${name} ${hub?.blurb ?? ''}`);
@@ -297,7 +302,8 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
   const seed = `${state.seed ?? state.saveId ?? 'dungeon'}:${name}`;
   const rng = createHashRng(seed, 'dungeon-card');
   const danger = Math.max(1, Math.min(4, Math.floor(hub?.threatTier ?? 2))) as 1 | 2 | 3 | 4;
-  const level = Math.max(1, state.character?.level ?? 1);
+  // Site danger, not the visitor's level. The stored card keeps this level later.
+  const level = danger;
 
   const siteTag =
     ['crypt', 'mine', 'sewer', 'warehouse', 'engine', 'keep', 'cave', 'camp', 'any'][
@@ -307,19 +313,32 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
   // (stairs / ladders), seeded extra doors, optional secret room. Cached on the card / place record.
   const floors = siteTheme?.oneFloor ? 1 : danger >= 3 || MULTI_FLOOR_WORDS.test(`${name} ${hub?.blurb ?? ''}`) ? 2 : rng() < 0.3 ? 2 : 1;
   const camp = /\bcamp\b/i.test(name);
-  const profile = camp
-    ? { needBoss: true, needCache: true, mobChance: 1 }
-    : dungeonCardProfile(seed, danger, siteNeedsFight(state, name));
+  const kind: LairKind = explicit?.lair ?? hub?.lairArchetype ?? (siteTag as LairKind);
+  const shape = rollLairShape({
+    kind,
+    rng: createHashRng(seed, 'lair-shape'),
+    danger,
+    forceBoss: camp || siteNeedsFight(state, name),
+    camp,
+  });
   const gen = generateInterior({
     seed,
     key: name,
     kind: 'dungeon',
     tags: [siteTag],
     floors,
-    needBoss: profile.needBoss,
-    needCache: profile.needCache,
+    needBoss: shape.boss,
+    needCache: shape.sideChests > 0,
     secretChance: 0.6,
   });
+  // A template may already mark a boss room. That room counts only when this shape asked for a boss.
+  if (!shape.boss) {
+    for (const room of gen.rooms) if (room.role === 'boss') room.role = 'room';
+    for (const node of gen.nodes) {
+      if (node.tags?.includes('role:boss')) node.tags = node.tags.map((t) => (t === 'role:boss' ? 'role:room' : t));
+    }
+    gen.bossId = undefined;
+  }
   const secretOf = new Map(gen.secrets.map((x) => [x.fromId, x.id]));
 
   const middle = siteTheme ? [...theme.rooms, ...family.rooms] : [...theme.rooms];
@@ -374,7 +393,27 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
     );
   }
   const foeRooms = gen.rooms.filter((r) => r.role === 'room' && !r.landing);
-  const bronzeRoom = foeRooms.length ? foeRooms[Math.floor(rng() * foeRooms.length)]!.id : null;
+  const byMobOrder = [...foeRooms].sort(
+    (a, b) => createHashRng(seed, 'mob-order', a.id)() - createHashRng(seed, 'mob-order', b.id)()
+  );
+  const placed = ordinaryPlacement(shape, foeRooms.length);
+  // The lieutenant takes one ordinary slot inside the fraction, not a slot on top of it.
+  // miniBoss off the boss room is only used when a boss room exists, so floor-clear and boss
+  // objectives still key off that room. With no boss room the extra foe stays trash.
+  const miniHost = placed.lieutenant > 0 ? byMobOrder[0]?.id : undefined;
+  const lieutenantIsBossRole = !!miniHost && shape.boss;
+  const trashRooms = lieutenantIsBossRole ? byMobOrder.filter((r) => r.id !== miniHost) : byMobOrder;
+  const mobIds = new Set(trashRooms.slice(0, placed.trash + (lieutenantIsBossRole ? 0 : placed.lieutenant)).map((r) => r.id));
+  // Side chests follow the rolled count. Cache, then secret, then an ordinary room. Not one per generated room.
+  const sideHosts = new Set<string>();
+  for (const r of [
+    ...gen.rooms.filter((room) => room.role === 'cache'),
+    ...gen.rooms.filter((room) => room.role === 'secret'),
+    ...gen.rooms.filter((room) => room.role === 'room' && !room.landing),
+  ]) {
+    if (sideHosts.size >= shape.sideChests) break;
+    sideHosts.add(r.id);
+  }
 
   const nodes: MapNode[] = gen.nodes.map((g) => {
     const r = gen.rooms.find((x) => x.id === g.id)!;
@@ -387,9 +426,19 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
       for (const m of ctx.modifiers) tags.push(`threat:${m.tag}`);
     }
     if (r.role === 'room' && !r.landing) {
-      const hostile = rng() < profile.mobChance;
-      if (hostile) tags.push('combat');
-      if (hostile) {
+      if (id === miniHost && lieutenantIsBossRole) {
+        tags.push('combat');
+        const card = pick(elite, rng);
+        hidden.mobs.push({
+          id: `${id}__${card?.id ?? 'elite'}`,
+          name: eliteFromHub && card?.foeName ? card.foeName : creature('elite'),
+          // Same role table as the boss room (durability and XP kind). Not the designated boss.
+          level,
+          role: 'miniBoss',
+          spawned: false,
+        });
+      } else if (mobIds.has(id)) {
+        tags.push('combat');
         const card = pick(trash, rng);
         hidden.mobs.push({
           id: `${id}__${card?.id ?? 'foe'}`,
@@ -397,6 +446,14 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
           level,
           role: 'trash',
           spawned: false,
+        });
+      }
+      if (sideHosts.has(id)) {
+        hidden.lootables.push({
+          id: `${id}_chest`,
+          label: `${CHEST_GRADE_LABELS[shape.sideGrade]} chest`,
+          opened: false,
+          loot: { rarity: 'Common', qty: shape.sideGrade, grade: shape.sideGrade },
         });
       }
       if (rng() < 0.3) {
@@ -411,9 +468,6 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
       }
       if (!secretOf.has(id) && rng() < 0.35) {
         hidden.secrets.push({ id: `${id}_secret`, clue: 'a loose stone with a hollow behind it', revealed: false });
-      }
-      if (id === bronzeRoom) {
-        hidden.lootables.push({ id: `${id}_chest`, label: `${CHEST_GRADE_LABELS[1]} chest`, opened: false, loot: { rarity: 'Common', qty: 1, grade: 1 } });
       }
     }
     if (r.role === 'stair') {
@@ -432,18 +486,26 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
         revealed: false,
         disarmed: false,
       });
-      hidden.lootables.push({
-        id: `${id}_chest`,
-        label: `${CHEST_GRADE_LABELS[2]} chest`,
-        opened: false,
-        loot: { rarity: 'Common', qty: 2, grade: 2 },
-        lock: profile.needBoss ? { skill: 'thievery', rank: 1 } : undefined,
-      });
+      if (sideHosts.has(id)) {
+        hidden.lootables.push({
+          id: `${id}_chest`,
+          label: `${CHEST_GRADE_LABELS[shape.sideGrade]} chest`,
+          opened: false,
+          loot: { rarity: 'Common', qty: shape.sideGrade, grade: shape.sideGrade },
+        });
+      }
       if (!secretOf.has(id)) hidden.secrets.push({ id: `${id}_secret`, clue: 'a false panel behind the shelves', revealed: false });
     }
     if (r.role === 'secret') {
       tags.push('secret-room');
-      hidden.lootables.push({ id: `${id}_chest`, label: `${CHEST_GRADE_LABELS[2]} chest`, opened: false, loot: { rarity: 'Common', qty: 2, grade: 2 } });
+      if (sideHosts.has(id)) {
+        hidden.lootables.push({
+          id: `${id}_chest`,
+          label: `${CHEST_GRADE_LABELS[shape.sideGrade]} chest`,
+          opened: false,
+          loot: { rarity: 'Common', qty: shape.sideGrade, grade: shape.sideGrade },
+        });
+      }
     }
     if (r.role === 'boss') {
       tags.push('mini_boss');
@@ -451,11 +513,16 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
       hidden.mobs.push({
         id: `${id}__${card?.id ?? 'miniboss'}`,
         name: eliteFromHub && card?.foeName ? card.foeName : creature('elite'),
-        level: level + 1,
+        level: shape.foeLevel + 1,
         role: 'miniBoss',
         spawned: false,
       });
-      hidden.lootables.push({ id: `${id}_chest`, label: `${CHEST_GRADE_LABELS[3]} chest`, opened: false, loot: { rarity: 'Common', qty: 3, grade: 3 } });
+      hidden.lootables.push({
+        id: `${id}_chest`,
+        label: `${CHEST_GRADE_LABELS[shape.bossGrade]} chest`,
+        opened: false,
+        loot: { rarity: 'Common', qty: shape.bossGrade, grade: shape.bossGrade },
+      });
     }
     const hiddenRoomId = secretOf.get(id);
     if (hiddenRoomId) {
@@ -477,7 +544,9 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
     siteName: name,
     tier: 4,
     dangerTier: danger,
-    areaLevel: Math.max(level, tierToAreaLevel(danger)),
+    // Foe levels use the site tier. This field stays the first visitor or the tier, whichever is higher.
+    // The existing party ±3 clamp still runs when a chest opens. It is not retuned here.
+    areaLevel: Math.max(Math.max(1, Math.floor(state.character?.level ?? 1)), tierToAreaLevel(danger)),
     currentZLevel: entryZ,
     currentNodeId: gen.entryId,
     visitedNodeIds: [gen.entryId],
@@ -750,7 +819,7 @@ export function dungeonRoomFacts(state: GameState): string {
   const h = node.hidden;
   const bits: string[] = [`Dungeon room: ${node.name}, inside ${d.dungeonName}.`];
   const foe = liveFoe(node);
-  if (foe) bits.push(`${foe.name} is here${foe.role === 'miniBoss' ? ' (the mini-boss)' : ''}.`);
+  if (foe) bits.push(`${foe.name} is here${mobIsDesignatedBoss(d, node.id, foe.role) ? ' (the mini-boss)' : ''}.`);
   else if ((h?.mobs ?? []).length) bits.push('The room is cleared; its foe lies dead.');
   const ranks = skillRanksOf(state.character);
   for (const l of h?.lootables ?? []) {
@@ -868,7 +937,7 @@ export function advanceDungeonCard(
           mobs: h.mobs.map((m) => (m.id === foe.id ? { ...m, spawned: true, defeated: true, hpRemaining: null } : m)),
         })),
       };
-      if (foe.role === 'miniBoss') {
+      if (mobIsDesignatedBoss(d, node.id, foe.role)) {
         receipts.push(`Dungeon: the mini-boss ${foe.name} is down.`);
         const climbed = climbFloor(next, d.dungeonName, foe.name);
         next = climbed.state;

@@ -21,6 +21,8 @@ export interface OutdoorHub {
   threatTier: number;
   linkedQuestIds?: string[];
   aliases?: string[];
+  /** Explicit lair row. Never inferred from prose or a blurb. */
+  lairArchetype?: 'hoard';
 }
 
 export const SUMMONED_PACT_HUBS: OutdoorHub[] = [

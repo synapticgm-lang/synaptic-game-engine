@@ -52,6 +52,26 @@ export function applySiteClearObjectives(
   return changed ? next : quests;
 }
 
+/**
+ * A mini-boss on the designated boss node is the site boss.
+ * Another mini-boss in the same dungeon is not. Cards with no boss node keep the older
+ * "any mini-boss" reading, including when the recorded node does not itself hold one.
+ */
+export function mobIsDesignatedBoss(
+  dungeon: { dungeonRules?: { bossNode?: string }; nodes?: Array<{ id: string; hidden?: { mobs?: Array<{ role?: string }> } }> } | null | undefined,
+  nodeId: string,
+  role: string | undefined
+): boolean {
+  if (role !== 'boss' && role !== 'miniBoss') return false;
+  const designated = dungeon?.dungeonRules?.bossNode;
+  if (!designated) return true;
+  if (nodeId === designated) return true;
+  const holds = (dungeon?.nodes ?? []).some(
+    (n) => n.id === designated && (n.hidden?.mobs ?? []).some((m) => m.role === 'boss' || m.role === 'miniBoss')
+  );
+  return !holds;
+}
+
 /** Code-driven quest objective ticks from ledger events (idempotent). */
 export function applyQuestHooksFromLedger(
   quests: Quest[],
@@ -68,7 +88,7 @@ export function applyQuestHooksFromLedger(
         n.hidden?.mobs.some(
           (m) =>
             m.name.trim().toLowerCase() === combat.enemyName.trim().toLowerCase()
-            && (m.role === 'boss' || m.role === 'miniBoss')
+            && mobIsDesignatedBoss(state.activeDungeon, n.id, m.role)
         )
       ));
 
