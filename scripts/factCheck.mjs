@@ -219,7 +219,7 @@ function factsFor(row, packet) {
     // The engine's records: who is here (info-sheet HERE list, person refs, engine result, receipts) and what is
     // held (inventory, gear, kit and prop refs). Packet prose ("a traveler may be about") is not a record.
     peopleText: lower([packet.match(/^HERE:\n((?:- .*\n?)*)/m)?.[1] ?? '', ...people.flatMap((r) => [r.display, r.label]), ...(row.turnCheck?.presentNames ?? []), engineResult, receipts.join('\n')].join('\n')),
-    itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
+    itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), engineResult, ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
     placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
     // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels. The people present
     // count whole, so a short form of a present person's name ("Mayor Brask" for Mayor Helga Brask) is handed.
