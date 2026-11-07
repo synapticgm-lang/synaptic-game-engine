@@ -203,6 +203,8 @@ export function isOnCooldown(
   const cooldown = cooldowns.get(canonicalizeOption(choice));
   if (!cooldown) return { onCooldown: false };
   const turnsSinceLast = currentTurn - cooldown.lastOfferedTurn;
+  // The turn that wrote the offer is not itself cooled. commitOfferedTurn compiles the pad twice.
+  if (turnsSinceLast <= 0) return { onCooldown: false, cooldown };
   if (turnsSinceLast < cooldown.cooldownTurns) {
     return { onCooldown: true, turnsRemaining: cooldown.cooldownTurns - turnsSinceLast, cooldown };
   }

@@ -13,7 +13,9 @@ import type { GameState } from './types';
 import {
   FREE_INPUT_DO,
   FREE_INPUT_SAY,
+  computeOptionSceneKey,
   isFreeInputChip,
+  optionSceneKeyString,
   recordedTravelDestinations,
   wayOutMovesPlayer,
 } from './sceneAffordances';
@@ -33,6 +35,7 @@ import { OUTDOOR_CAMP_CHIP, OUTDOOR_REST_CHIP, isHurtHp, isOutdoorRestPad } from
 import { canAddMaterials } from './inventory';
 import { hasNodeStock } from './wilds';
 import { gatherModeOk, huntModeOk } from './wildlifeActions';
+import { isOnCooldown } from './optionDiversityContract';
 import { isCrowdOnlyTalkPad, speakablePresentPeople } from './chromeAuthority';
 import { peopleHere } from './scenePresence';
 import { hubsForBibleId, outdoorHubTravelChoices } from './outdoorHubs';
@@ -800,6 +803,13 @@ export function assembleFourSlotPads(
   }
 
   const prev = opts?.previousPlayerAction ?? lastPlayerAction(state);
+  // Option cooldown holds in the same scene. A scene change lets the chip return.
+  const offeredCooldown = new Map(Object.entries(state.qualityGovernance?.optionCooldowns ?? {}));
+  const sceneNow = optionSceneKeyString(computeOptionSceneKey(state));
+  const lastScene = (state.recentOfferedActions ?? []).at(-1)?.sceneKey ?? '';
+  const sameScene = !lastScene || lastScene === sceneNow;
+  const cooledHere = (label: string) =>
+    sameScene && isOnCooldown(label, state.turn ?? 0, offeredCooldown).onCooldown;
   const pools: Record<FourSlotId, string[]> = {
     push: [],
     engage: [],
@@ -810,6 +820,7 @@ export function assembleFourSlotPads(
   const consider = (raw: string) => {
     const label = tidy(raw);
     if (!label || isFreeInputChip(label)) return;
+    if (cooledHere(label)) return;
     if (!isFourSlotLegal(state, label)) return;
     if (isFourSlotRepeat(state, label, prev)) return;
     const slot = classifyFourSlot(state, label);
@@ -995,7 +1006,6 @@ export function assembleFourSlotPads(
     && !isFreeInputChip(label)
     && isFourSlotLegal(state, label)
     && !isFourSlotRepeat(state, label, prev);
-
   for (const hub of outdoorHubTravelChoices(state, 6)) {
     if (picked.length >= 4) break;
     if (!canPad(hub)) continue;
@@ -1071,7 +1081,7 @@ export function assembleFourSlotPads(
       ];
   for (const g of safeFill) {
     if (four.length >= 4) break;
-    if (fourSeen.has(low(g)) || !canPad(g)) continue;
+    if (fourSeen.has(low(g)) || !canPad(g) || cooledHere(g)) continue;
     // Hurt road: only keep chips the journey owner recognizes (or Rest/camp).
     if (
       roadUnderway
@@ -1107,7 +1117,7 @@ export function assembleFourSlotPads(
     ];
     for (const g of lastResort) {
       if (four.length >= 4) break;
-      if (fourSeen.has(low(g)) || !canPad(g)) continue;
+      if (fourSeen.has(low(g)) || !canPad(g) || cooledHere(g)) continue;
       uniquePush(four, fourSeen, g);
     }
   }

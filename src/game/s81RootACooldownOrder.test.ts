@@ -1,7 +1,8 @@
 /**
  * Root A (seed 81) — cooldowns are written from the list actually offered, after it is compiled.
  * The turn's compile reads the map as it stood before this turn, so no raw chip cools itself on the
- * turn it is first offered.
+ * turn it is first offered. The graph seats every named person. The offered pad keeps one talk chip
+ * and free text. Cooling Osric does not cool Maud, so the next turn can offer her.
  */
 import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
@@ -103,14 +104,16 @@ function commitInOrder(previous: GameState, next: GameState, input: string, gmId
 }
 
 describe('s81 Root A — cooldowns written from the offered list, after the compile', () => {
-  it('Lowmarket T21: the raw talk chips are offered, and the map then holds them at turn 21', () => {
+  it('Lowmarket T21: both people are legal, the offered pad keeps one talk chip, and only that chip is cooled', () => {
     const { previous, next } = lowmarketTurn21();
     expect(next.choices).toEqual(expect.arrayContaining(['Talk to Osric Coyne', 'Talk to Maud Pike']));
     const committed = commitInOrder(previous, next, 'Walk on', 'g21');
-    expect(committed.choices).toEqual(expect.arrayContaining(['Talk to Osric Coyne', 'Talk to Maud Pike']));
+    expect(committed.choices).toContain('Talk to Osric Coyne');
+    expect(committed.choices).not.toContain('Talk to Maud Pike');
+    expect(committed.choices).toEqual(expect.arrayContaining(['Say something…', 'Do something else…']));
     const map = committed.qualityGovernance?.optionCooldowns ?? {};
     expect(map['ask:osric coyne:gather_info']?.lastOfferedTurn).toBe(21);
-    expect(map['ask:maud pike:gather_info']?.lastOfferedTurn).toBe(21);
+    expect(map['ask:maud pike:gather_info']).toBeUndefined();
   });
 
   it('governance alone no longer writes this turn into the cooldown map', () => {
@@ -134,6 +137,7 @@ describe('s81 Root A — cooldowns written from the offered list, after the comp
     };
     const t22 = commitInOrder(t21, t22raw, 'Wait and watch', 'g22');
     expect(t22.choices).not.toContain('Talk to Osric Coyne');
-    expect(t22.choices).not.toContain('Talk to Maud Pike');
+    expect(t22.choices).toContain('Talk to Maud Pike');
+    expect(t22.choices).toEqual(expect.arrayContaining(['Say something…', 'Do something else…']));
   });
 });

@@ -3,7 +3,7 @@
  */
 import type { GameState } from './types';
 import { canonicalizeIntent, isTalkUltimatumExhausted } from './semanticLoopDetector';
-import { filterCooldownChoices, type OptionCooldown } from './optionDiversityContract';
+import { filterCooldownChoices, isOnCooldown, type OptionCooldown } from './optionDiversityContract';
 import {
   isTopicExhausted,
   talkChipAddressee,
@@ -12,9 +12,11 @@ import {
 } from './npcTopicFsm';
 import {
   affordancesCoverGenerics,
+  computeOptionSceneKey,
   FREE_INPUT_DO,
   FREE_INPUT_SAY,
   isFreeInputChip,
+  optionSceneKeyString,
 } from './sceneAffordances';
 import { isSearchTargetEmpty, normalizeSearchTarget } from './searchContinuity';
 import { isPyoaChipsOnly } from './pyoaChoiceLock';
@@ -660,6 +662,11 @@ export function compileChoices(
   const intent = classifyPlayerIntent(intentText);
   const fingerprints = state.arcDirector?.choiceFingerprints ?? [];
   const cooldownMap = new Map(Object.entries(optionCooldowns ?? state.qualityGovernance?.optionCooldowns ?? {}));
+  const sceneNow = optionSceneKeyString(computeOptionSceneKey(state));
+  const lastScene = (state.recentOfferedActions ?? []).at(-1)?.sceneKey ?? '';
+  const cooledInThisScene = (label: string) =>
+    (!lastScene || lastScene === sceneNow)
+    && isOnCooldown(label, turn, cooldownMap).onCooldown;
   const excluded = excludedPadFamilies(state);
   const craftPolicy = craftProgressionPolicy(state, playerInput);
   if (craftPolicy.note) notes.push(craftPolicy.note);
@@ -951,6 +958,7 @@ export function compileChoices(
   if (legalEdges.length >= 3) {
     for (const label of edgeLabels) {
       if (filtered.some((f) => f.toLowerCase() === label.toLowerCase())) continue;
+      if (cooledInThisScene(label)) continue;
       if (isExcludedPadLabel(label, excluded)) continue;
       if (engaged && isLookOrExamineRoomPad(label)) continue;
       if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, label)) continue;
@@ -962,6 +970,7 @@ export function compileChoices(
     const supplements: string[] = [];
     for (const label of edgeLabels) {
       if (isExcludedPadLabel(label, excluded)) continue;
+      if (cooledInThisScene(label)) continue;
       if (!filtered.some((f) => f.toLowerCase() === label.toLowerCase())) {
         if (engaged && isLookOrExamineRoomPad(label)) continue;
         if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, label)) continue;
@@ -1028,6 +1037,7 @@ export function compileChoices(
     }
     for (const label of edgeLabels) {
       if (isExcludedPadLabel(label, excluded)) continue;
+      if (cooledInThisScene(label)) continue;
       if (stripsFamily(classifyChoiceFamily(label))) continue;
       if (engaged && isLookOrExamineRoomPad(label)) continue;
       if (!interruptPads.some((p) => p.toLowerCase() === label.toLowerCase())) {
