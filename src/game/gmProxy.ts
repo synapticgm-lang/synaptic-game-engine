@@ -183,9 +183,10 @@ export async function invokeGmProxy(params: {
             ? 'check'
             : 'writer';
     const tlSession = getTrainLogSession();
+    const trainMeta = currentTrainLogMeta();
     const trainParentId =
       trainJob === 'repair' || trainJob === 'rewrite'
-        ? currentTrainLogMeta()?.parent_id ?? lastWriterRowId() ?? null
+        ? trainMeta?.parent_id ?? lastWriterRowId() ?? null
         : null;
     const body = {
       mode: params.mode,
@@ -221,6 +222,7 @@ export async function invokeGmProxy(params: {
             trainGenre: tlSession.genre ?? null,
             trainBuildStamp: tlSession.build_stamp ?? null,
             ...(trainParentId ? { trainParentId } : {}),
+            ...(trainMeta?.engine_facts ? { trainEngineFacts: trainMeta.engine_facts } : {}),
           }
         : {}),
     };

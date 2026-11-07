@@ -20,7 +20,7 @@ import {
 } from '../_shared/gm/openRouterChat.ts';
 import { pinnedModel } from '../_shared/gm/modelIds.ts';
 import {
-  engineFactsFromState,
+  engineFactsForTrainRow,
   peekTrainLogRows,
   pushTrainLogJob,
   popTrainLogJob,
@@ -57,6 +57,8 @@ interface GmRequestBody {
   trainGenre?: string | null;
   trainBuildStamp?: string | null;
   trainParentId?: string | null;
+  /** Facts captured with the packet. Repair rows must not re-read a later state. */
+  trainEngineFacts?: unknown;
 }
 
 /** A client schema is forwarded only when it is a plain object of sane size; otherwise the static schema stands. */
@@ -438,7 +440,7 @@ Deno.serve(async (req) => {
       build_stamp: body.trainBuildStamp ?? null,
     });
     pushTrainLogJob(trainJob, {
-      engine_facts: engineFactsFromState(body.state),
+      engine_facts: engineFactsForTrainRow(body.trainEngineFacts, body.state),
       ...(body.trainParentId ? { parent_id: body.trainParentId } : {}),
     });
   }
@@ -509,7 +511,7 @@ Deno.serve(async (req) => {
             finish_reason: read.issue === 'cut-off' ? 'length' : null,
             truncated: read.issue === 'cut-off',
             job: trainJob,
-            engine_facts: engineFactsFromState(body.state),
+            engine_facts: engineFactsForTrainRow(body.trainEngineFacts, body.state),
           });
         }
         return read;

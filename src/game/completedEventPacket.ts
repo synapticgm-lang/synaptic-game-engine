@@ -1336,6 +1336,91 @@ export function ledgerActionStitch(state: GameState, playerInput: string): strin
   };
   return [...lastLines].sort((a, b) => lastUse(b) - lastUse(a))[0] ?? stayLine;
 }
+function factToken(value: string): string {
+  return value.replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/**
+ * Writer-leaf copy of a block. Drops a line only when every fact on it is already on the FactSheet.
+ * A name, exit, scale, or quote the sheet does not carry stays. infoSheet and factSheet themselves are unchanged.
+ */
+export function writerLeafBlock(block: string, sheet: FactSheet | undefined): string {
+  if (!block) return block;
+  if (!sheet) return block;
+  const place = factToken(sheet.place.name);
+  const scale = factToken(sheet.place.scale ?? '');
+  const exits = new Set(sheet.place.exits.map(factToken));
+  const people = new Set(sheet.present.map((p) => factToken(p.name)));
+  const recent = new Set(sheet.recent.map((r) => r.replace(/\s+/g, ' ').trim()));
+  const lines = block.split('\n').flatMap((line) => {
+    const said = line.startsWith('SAID:') ? saidWithoutRepeatedTimeline(line, recent) : line;
+    const next = said.startsWith('NOW:') ? nowWithoutRepeatedPlace(said, place, scale) : said;
+    if (!next || leafLineRepeatsSheet(next, { place, exits, people })) return [];
+    return [next];
+  });
+  return lines.join('\n');
+}
+
+function saidWithoutRepeatedTimeline(line: string, recent: Set<string>): string {
+  const parts = line.slice('SAID:'.length).trim().split(/;\s+/).filter((part) => {
+    const text = part.replace(/\s+/g, ' ').trim();
+    return text && !recent.has(text);
+  });
+  return parts.length ? `SAID: ${parts.join('; ')}` : '';
+}
+
+function nowWithoutRepeatedPlace(line: string, place: string, scale: string): string {
+  const kept = line
+    .slice('NOW:'.length)
+    .split('·')
+    .map((part) => part.trim())
+    .filter((part) => {
+      const token = factToken(part);
+      if (!token) return false;
+      if (place && token === place) return false;
+      if (scale && token === scale) return false;
+      return true;
+    });
+  return kept.length ? `NOW: ${kept.join(' · ')}` : '';
+}
+
+function taggedName(bit: string): { name: string; tag: string } {
+  const match = bit.trim().match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+  if (!match) return { name: factToken(bit), tag: '' };
+  return { name: factToken(match[1] ?? ''), tag: factToken(match[2] ?? '') };
+}
+
+function leafLineRepeatsSheet(
+  line: string,
+  known: { place: string; exits: Set<string>; people: Set<string> }
+): boolean {
+  const location = line.match(/^Location:\s*(.+?)\.?\s*$/);
+  if (location) return factToken(location[1] ?? '') === known.place;
+  const places = line.match(/^PLACES:\s*(.+?)\s·\s*exits:\s*(.+)$/);
+  if (places) {
+    const here = factToken(places[1] ?? '');
+    const listed = (places[2] ?? '').split(',').map((exit) => factToken(exit)).filter(Boolean);
+    return here === known.place && listed.length > 0 && listed.every((exit) => known.exits.has(exit));
+  }
+  const noExits = line.match(/^PLACES:\s*(.+?)\s·\s*no named exits\s*$/i);
+  if (noExits) return factToken(noExits[1] ?? '') === known.place && known.exits.size === 0;
+  const present = line.match(/^PRESENT:\s*(.+)$/);
+  if (present) {
+    const body = (present[1] ?? '').trim();
+    if (body === '(none)') return known.people.size === 0;
+    const bits = body.split(',').map(taggedName).filter((bit) => bit.name);
+    return bits.length > 0 && bits.every((bit) => known.people.has(bit.name) && (bit.tag === '' || bit.tag === 'person'));
+  }
+  const sceneExits = line.match(/^EXITS:\s*(.+)$/);
+  if (sceneExits) {
+    const body = (sceneExits[1] ?? '').trim();
+    if (body === '(none)') return known.exits.size === 0;
+    const bits = body.split(',').map(taggedName).filter((bit) => bit.name);
+    return bits.length > 0 && bits.every((bit) => known.exits.has(bit.name) && (bit.tag === '' || bit.tag === 'road'));
+  }
+  return false;
+}
+
 /**
  * Short past-tense instruction + one FactSheet (M1). Facts only.
  * No SNAPSHOT/CRAFT essays. No "don't resurrect" lecture.
@@ -1394,7 +1479,8 @@ export function formatWriterFacingEvent(
   if (packet.systemBlock) lines.push(packet.systemBlock);
   if (packet.damage != null) lines.push(`Damage: ${packet.damage}.`);
   if (packet.hp) lines.push(`HP: ${packet.hp.current}/${packet.hp.max}.`);
-  lines.push(`Location: ${packet.location}.`);
+  const locationLine = writerLeafBlock(`Location: ${packet.location}.`, packet.factSheet);
+  if (locationLine) lines.push(locationLine);
   if (packet.movement) lines.push(packet.movement);
   if (packet.justKilled && packet.lastKill?.name) {
     lines.push(`Last kill: ${packet.lastKill.name} (corpse).`);
@@ -1406,7 +1492,8 @@ export function formatWriterFacingEvent(
   if (packet.witnesses.length) lines.push(`Witnesses: ${packet.witnesses.join(', ')}.`);
   // q72: one SCENE block replaces overlapping PEOPLE / INFO SHEETS / HOW THEY ARE NOW / MENTION dumps.
   if (packet.sceneBlock) {
-    lines.push(packet.sceneBlock);
+    const scene = writerLeafBlock(packet.sceneBlock, packet.factSheet);
+    if (scene) lines.push(scene);
     if (packet.refRecords) lines.push(packet.refRecords);
     // Townsfolk sheet lines are not a SCENE row (job, motive, fear, speech, never the secret).
     if (packet.townsfolk?.length) lines.push(packet.townsfolk.join('\n'));
@@ -1499,7 +1586,8 @@ export function formatWriterFacingEvent(
   }
   lines.push('');
   if (packet.infoSheet) {
-    lines.push(packet.infoSheet);
+    const info = writerLeafBlock(packet.infoSheet, packet.factSheet);
+    if (info) lines.push(info);
     const loiter = writerBeats.find((b) => b.startsWith('(HERE unchanged'));
     if (loiter) lines.push(`GM: ${loiter}`);
   } else if (writerBeats.length) {

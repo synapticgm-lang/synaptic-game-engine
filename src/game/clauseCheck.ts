@@ -124,10 +124,18 @@ function contentWords(text: string): string[] {
  * A claim belongs to a sentence only by a real overlap.
  * One word, or a dot, does not cover a sentence. No fallback onto the first sentence.
  */
+function utterance(text: string): string {
+  return claimText(text).replace(/[.!?…]+$/g, '').trim();
+}
+
 export function claimMatchesSentence(claim: string, sentence: string): boolean {
   const c = claimText(claim);
   const s = claimText(sentence);
   if (!c || !s) return false;
+  // A claim that is the whole sentence covers that sentence, including "Yes." and "She nods."
+  // A shorter fragment still needs two content words, so "Mira" or "." cannot cover a longer line.
+  const said = utterance(claim);
+  if (said.length >= 2 && said === utterance(sentence)) return true;
   const words = contentWords(c);
   if (words.length < 2) return false;
   if (s.includes(c)) return true;

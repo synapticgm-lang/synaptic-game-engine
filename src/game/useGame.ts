@@ -51,7 +51,7 @@ import {
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
-import { engineFactsFromState, repairParentExtra, withTrainLogJob } from './trainLog';
+import { captureTurnEngineFacts, repairParentExtra, withTrainLogJob } from './trainLog';
 import { checkAndRepairProse, makeGmClauseChat, storyAfterClauseCheck } from './clauseCheck';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
@@ -2918,6 +2918,7 @@ export function useGame() {
       });
       liveCurrent = preparedEvent.state;
       stateRef.current = liveCurrent;
+      const frozenEngineFacts = captureTurnEngineFacts(liveCurrent);
       const useMud = shouldUseSilentMudTurn({
         subscriptionTier: settingsRef.current.subscriptionTier,
         openingComplete: liveCurrent.openingEstablishment?.complete === true,
@@ -3148,13 +3149,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             withTrainLogJob(
               'rewrite',
               async () => (await callGmDurable(`${gmPlayerPayload}\n\n${problem}`)).text,
-              { engine_facts: engineFactsFromState(liveCurrent) }
+              { engine_facts: frozenEngineFacts }
             ),
           repair: (request) =>
             withTrainLogJob(
               'repair',
               () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
-              repairParentExtra({ engine_facts: engineFactsFromState(liveCurrent), repair_pass: 1 })
+              repairParentExtra({ engine_facts: frozenEngineFacts, repair_pass: 1 })
             ),
         });
         for (const r of [...(writerTurn.repairs ?? []), ...(writerTurn.answerRepair ? [writerTurn.answerRepair] : [])]) {
@@ -3224,7 +3225,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   withTrainLogJob(
                     'repair',
                     () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
-                    repairParentExtra({ engine_facts: engineFactsFromState(liveCurrent), repair_pass: 1 })
+                    repairParentExtra({ engine_facts: frozenEngineFacts, repair_pass: 1 })
                   ),
                 engineFact,
               });

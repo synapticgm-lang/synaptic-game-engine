@@ -36,7 +36,7 @@ import {
 } from '@/data/campaigns';
 import { callGm, callGmCheck, callGmRepair } from './aiService';
 import {
-  engineFactsFromState,
+  captureTurnEngineFacts,
   repairParentExtra,
   setTrainLogFileAppend,
   setTrainLogSession,
@@ -1937,6 +1937,7 @@ export async function headlessFateTurn(
     reader: readerFlags(settings),
   });
   arcState = preparedEvent.state;
+  const frozenEngineFacts = captureTurnEngineFacts(arcState);
   const useMud = shouldUseSilentMudTurn({
     subscriptionTier: settings.subscriptionTier,
     openingComplete: arcState.openingEstablishment?.complete === true,
@@ -2000,7 +2001,7 @@ Do NOT print dice notation or CODE ENFORCED.
             transportRetries += again.transportRetries;
             return again.text;
           },
-          { engine_facts: engineFactsFromState(arcState) }
+          { engine_facts: frozenEngineFacts }
         );
       },
       repair: async (request) => {
@@ -2014,7 +2015,7 @@ Do NOT print dice notation or CODE ENFORCED.
             'repair',
             async () => callGmRepair(arcState, request, settings),
             repairParentExtra({
-              engine_facts: engineFactsFromState(arcState),
+              engine_facts: frozenEngineFacts,
               draft: draftMatch?.[1] ?? null,
               flagged_error: flagMatch?.[1]?.trim() ?? null,
               correct_fact: factMatch?.[1]?.trim() ?? null,
@@ -2069,7 +2070,7 @@ Do NOT print dice notation or CODE ENFORCED.
                   'repair',
                   async () => callGmRepair(arcState, request, settings),
                   repairParentExtra({
-                    engine_facts: engineFactsFromState(arcState),
+                    engine_facts: frozenEngineFacts,
                     draft: draftMatch?.[1] ?? null,
                     flagged_error: flagMatch?.[1]?.trim() ?? null,
                     correct_fact: factMatch?.[1]?.trim() ?? null,

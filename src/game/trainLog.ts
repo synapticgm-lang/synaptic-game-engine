@@ -318,6 +318,25 @@ export function engineFactsFromState(state: unknown): TrainLogEngineFacts | null
   };
 }
 
+/**
+ * The engine facts for this turn's writer, repair, and train row.
+ * Taken once, when the packet is frozen. Later HP, XP, or present changes do not rewrite it.
+ */
+export function captureTurnEngineFacts(state: unknown): TrainLogEngineFacts | null {
+  const facts = engineFactsFromState(state);
+  if (!facts) return null;
+  return structuredClone(facts);
+}
+
+/** Prefer facts frozen with the packet. A missing or unshaped payload falls back to the state in hand. */
+export function engineFactsForTrainRow(sent: unknown, state: unknown): TrainLogEngineFacts | null {
+  if (sent && typeof sent === 'object' && !Array.isArray(sent)) {
+    const facts = sent as TrainLogEngineFacts;
+    if (facts.hp && typeof facts.hp === 'object' && Array.isArray(facts.npcs)) return facts;
+  }
+  return engineFactsFromState(state);
+}
+
 export function setTrainLogSession(next: Partial<TrainLogSession>): void {
   session = { ...session, ...next };
 }
