@@ -46,6 +46,7 @@ import {
   checkAndRepairProse,
   clauseCheckerVerdicts,
   makeGmClauseChat,
+  storyAfterClauseCheck,
   type ClauseCheckRecord,
 } from './clauseCheck';
 import {
@@ -207,7 +208,7 @@ import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
 import { planSceneThreads } from './openThreads';
 import { applyHostilePresentLeave } from './npcMemory';
 import { carryLimitOn, resolveInspirationReroll, withHouseRules } from './rules/houseRules';
-import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, pageWhenClauseWithheld, readerFlags } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
@@ -2045,11 +2046,13 @@ Do NOT print dice notation or CODE ENFORCED.
     // M4 — one clause check after the writer (FactSheet only; stubbable model).
     {
       const sheet = arcState.completedEvent?.factSheet ?? writerPacket.factSheet;
-      if (sheet && gmText.trim()) {
+      const draft = gmText;
+      if (sheet && draft.trim()) {
+        let clause: Awaited<ReturnType<typeof checkAndRepairProse>> | null = null;
         try {
-          const clause = await checkAndRepairProse({
+          clause = await checkAndRepairProse({
             factSheet: sheet,
-            prose: gmText,
+            prose: draft,
             player: {
               typed: playerInput,
               claimsNotTrue: sheet.player?.claimsNotTrue ?? [],
@@ -2079,6 +2082,20 @@ Do NOT print dice notation or CODE ENFORCED.
             },
             engineFact,
           });
+        } catch {
+          clause = null;
+        }
+        if (!clause || clause.withheld) {
+          const page = pageWhenClauseWithheld(arcState, writerPacket, playerInput);
+          const published = storyAfterClauseCheck({
+            clause: clause ?? { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 1 },
+            enginePage: page,
+            draft,
+          });
+          gmText = published.text;
+          clauseCheckRecords = [];
+          renderFallbackUsed = true;
+        } else {
           // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).
           // T10AK — re-seal destination + spoken answer after normalize (clause path skips ensureSpokenAnswer).
           gmText = sealPostWriterProse(
@@ -2096,8 +2113,6 @@ Do NOT print dice notation or CODE ENFORCED.
           if (clause.repaired) {
             writerCallMeter.calls += clause.checkPasses;
           }
-        } catch {
-          /* check unavailable (no proxy/key) — leave prose; TurnLog gets empty clauseChecks */
         }
       }
     }

@@ -7,6 +7,7 @@
 import type { GameState, NpcMemory } from './types';
 import type { CompletedEventPacket, LedgerRef, PacketBuildExtras } from './completedEventPacket';
 import { formatWriterFacingEvent, prepareRetrospectiveWriterInput } from './completedEventPacket';
+import { buildTalkEnvelope } from './talkEnvelope';
 import { presentNpcRecords } from './npcRecords';
 import { ensureNpcSheet, npcSheetWriterLine, pickNpcSheet, sheetPlaceFor, type SheetPlace } from './npcSheet';
 import { createHashRng } from './seededRng';
@@ -148,11 +149,14 @@ export function prepareWriterInputWithTownsfolk(
   const refs = prepared.packet.refEnum ?? [];
   const townsfolk = townsfolkWriterLines(prepared.state, refs);
   const stances = stanceLinesHere(prepared.state, refs);
-  if (!townsfolk.length && !stances.length) return prepared;
-  const packet = {
+  let packet: CompletedEventPacket = {
     ...prepared.packet,
     ...(townsfolk.length ? { townsfolk } : {}),
     ...(stances.length ? { stances } : {}),
   };
+  const spoke = packet.outcome === 'spoke' || packet.verb === 'spoke';
+  if (spoke && !packet.talkContext) {
+    packet = { ...packet, talkContext: buildTalkEnvelope(prepared.state, packet.playerAction, packet) };
+  }
   return { state: { ...prepared.state, completedEvent: packet }, packet, writerFacing: formatWriterFacingEvent(packet) };
 }

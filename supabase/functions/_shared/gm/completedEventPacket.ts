@@ -159,6 +159,11 @@ export interface CompletedEventPacket {
   pageOpeners?: string[];
   /** 29z9i — the diary the writer reads in place of raw recent turns (`infoSheet.ts`). */
   infoSheet?: string;
+  /**
+   * Talk envelope computed once on the client (`buildTalkEnvelope`) and stored on the packet.
+   * The edge prints this string. It does not rebuild it (the edge talk module is a stub).
+   */
+  talkContext?: string;
   /** q72 — one fixed SCENE block (PRESENT/CREATURES/ITEMS/EXITS/SAID/RECENT[/HERE SO FAR]). */
   sceneBlock?: string;
   /** q72 — REF <id> records only for ids referenced this turn (cap 3). */
@@ -1345,12 +1350,15 @@ export function formatWriterFacingEvent(
   const who = pcStorySubject(pov);
   const thirdPerson = narratesPcInThirdPerson(pov);
   const panelRead = !!packet.ledgerRead;
-  const lines: string[] = [
+  const lines: string[] = [];
+  const talk = (packet.talkContext ?? '').trim();
+  if (talk) lines.push(talk, '');
+  lines.push(
     thirdPerson
       ? `Narrate this completed event in past tense, close third person on ${who} (${pov.he}/${pov.him}/${pov.his}) — never "you" for ${who} in the story.`
       : 'Narrate this completed event in past tense.',
     '',
-  ];
+  );
   // M1 — FactSheet is the single facts block (settings slot reserved for 6b).
   // T10TURNS — writerLeaf omits short ENGINE RESULT only (long form below). Timeline stays on WORLD FACTS.
   if (packet.factSheet) {
@@ -2524,6 +2532,25 @@ export function lastResortStoryBody(
  * Writer outage on a talk or parley turn: the addressee's own card line, else '' so the caller paints
  * `bookBodyAfterWriterMiss`. Any other verb, or no one here to answer, is not a spoken turn.
  */
+/**
+ * Page to show when the clause check did not return a verdict.
+ * Built from the ledger only (empty writer text). Does not roll, award, or save.
+ */
+export function pageWhenClauseWithheld(
+  state: GameState,
+  packet: CompletedEventPacket | undefined,
+  playerInput: string
+): string {
+  const spoken = outageSpokenLine(state, packet?.verb, playerInput);
+  if (spoken.trim()) return spoken;
+  const painted = bookBodyAfterWriterMiss(state, packet, playerInput, '');
+  if (painted.prose.trim()) return painted.prose.trim();
+  const fact = (packet?.engineResult || packet?.factSheet?.beat.engineResult || '').trim();
+  if (fact) return fact;
+  const where = (packet?.location || state.currentLocation || 'this place').replace(/\s+/g, ' ').trim();
+  return `You stayed at ${where}. The engine had already settled the moment.`;
+}
+
 export function outageSpokenLine(state: GameState, verb: CompletedEventPacket['verb'] | undefined, playerInput: string): string {
   if (verb !== 'spoke' && verb !== 'parleyed') return '';
   const spoken = spokenTalkFallback(state, playerInput).replace(/\s+/g, ' ').trim();

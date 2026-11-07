@@ -229,10 +229,11 @@ export function formatTalkWriterFacing(
   state: GameState,
   opts?: { stricter?: boolean; perspective?: NarrativePerspective }
 ): string {
-  const base = formatWriterFacingEvent(packet, opts);
   const spoke = packet.outcome === 'spoke' || packet.verb === 'spoke';
-  if (!spoke) return base;
-  return `${buildTalkEnvelope(state, packet.playerAction, packet)}\n\n${base}`;
+  const talkContext =
+    (packet.talkContext ?? '').trim() || (spoke ? buildTalkEnvelope(state, packet.playerAction, packet) : '');
+  const stamped = talkContext ? { ...packet, talkContext } : packet;
+  return formatWriterFacingEvent(stamped, opts);
 }
 
 export function tallyResponsePaths(

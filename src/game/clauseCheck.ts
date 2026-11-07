@@ -108,6 +108,8 @@ export interface ClauseCheckPassResult {
   records: ClauseCheckRecord[];
   unsupported: ClauseClaim[];
   serious: ClauseClaim[];
+  /** Throw, empty payload, or no parseable claims. Not a pass. */
+  failed: boolean;
 }
 
 /** One offline-stubbable check pass against the FactSheet. */
@@ -123,12 +125,17 @@ export async function runClauseCheck(args: {
     player: args.player,
   });
   let out: { claims?: ClauseClaim[] } | null = null;
+  let failed = false;
   try {
     out = await args.chat({ system: CLAUSE_CHECK_SYS, user });
   } catch {
+    failed = true;
     out = null;
   }
-  const claims = parseClauseClaims(out);
+  if (out == null) failed = true;
+  const claims = failed ? [] : parseClauseClaims(out);
+  // A reply that names no clause did not check the draft. One attempt only.
+  if (!failed && splitProseSentences(args.prose).length > 0 && claims.length === 0) failed = true;
   const unsupported = unsupportedFacts(claims);
   const serious = unsupported.filter((u) => u.severity !== 'minor');
   return {
@@ -136,6 +143,7 @@ export async function runClauseCheck(args: {
     records: toClauseRecords(claims),
     unsupported,
     serious,
+    failed,
   };
 }
 
@@ -149,6 +157,11 @@ export interface ClauseCheckAndRepairResult {
   serious0: ClauseClaim[];
   /** Pass counts for TurnLog.ai role: check. */
   checkPasses: number;
+  /**
+   * True when the check threw, came back empty, or did not parse.
+   * `prose` is then empty — callers publish an engine page, never the draft.
+   */
+  withheld: boolean;
 }
 
 /**
@@ -170,6 +183,17 @@ export async function checkAndRepairProse(args: {
     player: args.player,
     chat: args.chat,
   });
+  if (first.failed) {
+    return {
+      prose: '',
+      records: [],
+      repaired: false,
+      serious0: [],
+      checkPasses: 1,
+      withheld: true,
+    };
+  }
+  const checkedDraft = args.prose;
   let prose = args.prose;
   let repaired = false;
   let records = first.records;
@@ -224,24 +248,32 @@ export async function checkAndRepairProse(args: {
         chat: args.chat,
       });
       checkPasses = 2;
-      // T10N — drop a rewrite only when the second check flags a claim that is *in* that rewrite
-      // (stale claims about the pre-repair sentence must not kill a clean colour line).
-      if (repairedLine) {
-        const lineL = repairedLine.toLowerCase();
-        const still = second.serious.find((u) => {
-          const c = (u.c || '').toLowerCase().replace(/^out of character:\s*/i, '').trim();
-          if (c.length < 8) return false;
-          const head = c.slice(0, Math.min(48, c.length));
-          return lineL.includes(head) || c.includes(lineL.slice(0, Math.min(48, lineL.length)));
-        });
-        if (still) {
-          const dropped = replaceDraftSentence(prose, repairedLine, '');
-          if (dropped.trim()) {
-            prose = dropped.replace(/\s+/g, ' ').trim();
+      if (second.failed) {
+        // The repair line was not checked. Keep the draft the first check already judged.
+        prose = checkedDraft;
+        records = first.records;
+        repaired = false;
+        repairedLine = '';
+      } else {
+        // T10N — drop a rewrite only when the second check flags a claim that is *in* that rewrite
+        // (stale claims about the pre-repair sentence must not kill a clean colour line).
+        if (repairedLine) {
+          const lineL = repairedLine.toLowerCase();
+          const still = second.serious.find((u) => {
+            const c = (u.c || '').toLowerCase().replace(/^out of character:\s*/i, '').trim();
+            if (c.length < 8) return false;
+            const head = c.slice(0, Math.min(48, c.length));
+            return lineL.includes(head) || c.includes(lineL.slice(0, Math.min(48, lineL.length)));
+          });
+          if (still) {
+            const dropped = replaceDraftSentence(prose, repairedLine, '');
+            if (dropped.trim()) {
+              prose = dropped.replace(/\s+/g, ' ').trim();
+            }
           }
         }
+        records = toClauseRecords(second.claims, repairedSet);
       }
-      records = toClauseRecords(second.claims, repairedSet);
     }
   }
 
@@ -251,7 +283,25 @@ export async function checkAndRepairProse(args: {
     repaired,
     serious0: first.serious,
     checkPasses,
+    withheld: false,
   };
+}
+
+/**
+ * Text that may be shown and saved. A withheld check never falls back to the writer draft.
+ * Does not roll dice, award XP, or write the save.
+ */
+export function storyAfterClauseCheck(args: {
+  clause: ClauseCheckAndRepairResult;
+  enginePage: string;
+  draft: string;
+}): { text: string; withheld: boolean } {
+  if (!args.clause.withheld) return { text: args.clause.prose, withheld: false };
+  const page = args.enginePage.trim();
+  // Empty engine page stays empty. Never substitute args.draft.
+  void args.draft;
+  if (!page) return { text: '', withheld: true };
+  return { text: page, withheld: true };
 }
 
 /**

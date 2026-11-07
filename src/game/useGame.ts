@@ -52,7 +52,7 @@ import {
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
 import { engineFactsFromState, repairParentExtra, withTrainLogJob } from './trainLog';
-import { checkAndRepairProse, makeGmClauseChat } from './clauseCheck';
+import { checkAndRepairProse, makeGmClauseChat, storyAfterClauseCheck } from './clauseCheck';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import { approachOpener, approachReceipt, bestFightApproach } from './fightApproach';
@@ -386,7 +386,7 @@ import {
 } from './arcDirector';
 import { applyQuestAddProposals, ensureQuestFloor } from './questGenerator';
 import { planSceneThreads } from './openThreads';
-import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, readerFlags } from './completedEventPacket';
+import { bookBodyAfterWriterMiss, handedRefs, isDroughtStubProse, isLastGmReprint, isUnaskedCombatClose, ledgerActionStitch, outageSpokenLine, pageWhenClauseWithheld, readerFlags } from './completedEventPacket';
 import type { LedgerRef, TokenUseRef } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { acceptTokenOrLedgerStory, looksLikeTokenJson, type SpokenLine } from './tokenProse';
@@ -3206,11 +3206,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         // M4 — one clause check after the writer (FactSheet only).
         {
           const sheet = writerPacket?.factSheet ?? liveCurrent.completedEvent?.factSheet;
-          if (sheet && result.text?.trim()) {
+          const draft = result.text ?? '';
+          if (sheet && draft.trim()) {
+            let clause: Awaited<ReturnType<typeof checkAndRepairProse>> | null = null;
             try {
-              const clause = await checkAndRepairProse({
+              clause = await checkAndRepairProse({
                 factSheet: sheet,
-                prose: result.text,
+                prose: draft,
                 player: {
                   typed: sanitizedInput,
                   claimsNotTrue: sheet.player?.claimsNotTrue ?? [],
@@ -3226,6 +3228,22 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   ),
                 engineFact,
               });
+            } catch {
+              clause = null;
+            }
+            if (!clause || clause.withheld) {
+              // Engine state already resolved. Do not reroll, retry the check, or keep the draft.
+              const page = pageWhenClauseWithheld(liveCurrent, writerPacket, sanitizedInput);
+              const published = storyAfterClauseCheck({
+                clause: clause ?? { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 1 },
+                enginePage: page,
+                draft,
+              });
+              result = { ...result, text: published.text };
+              debugLogger.record('WARN', 'Clause check withheld the writer draft', {
+                turn: liveCurrent.turn,
+              });
+            } else {
               // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).
               // T10AK — re-seal destination + spoken answer after normalize.
               result = {
@@ -3242,8 +3260,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   sanitizedInput,
                 ).prose,
               };
-            } catch {
-              /* check unavailable — keep writer prose */
             }
           }
         }
