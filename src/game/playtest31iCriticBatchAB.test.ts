@@ -103,6 +103,72 @@ describe('playtest31iCriticBatchAB', () => {
       expect(isBannedFallbackStub(prose)).toBe(false);
     });
 
+    it('names a live foe and where they stand, and does not invent a blow', () => {
+      const state = createInitialState(undefined, 'litrpg');
+      state.campaignBibleId = 'summoned-pact';
+      state.turn = 9;
+      state.currentLocation = 'Lowmarket';
+      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
+      state.activeEncounter = stubEncounter('Void-Touched Scavenger', 12, 20);
+      const arc = runArcDirectorBeforeGm(state, 'Press the attack');
+      const manifest = buildSealedManifest(arc.state, 'Press the attack', arc);
+      const prose = renderDeterministicFallback(manifest, {
+        ...arc.state,
+        activeEncounter: state.activeEncounter,
+      });
+      expect(prose).toMatch(/At Lowmarket, Void-Touched Scavenger is still engaged\. 12 of 20 remain\./);
+      expect(prose).not.toMatch(/closes in|something shifts|you strike|damage/i);
+      expect(isBannedFallbackStub(prose)).toBe(false);
+    });
+
+    it('a parked foe stays named and out of the fight', () => {
+      const state = createInitialState(undefined, 'litrpg');
+      state.campaignBibleId = 'summoned-pact';
+      state.turn = 9;
+      state.currentLocation = 'Lowmarket';
+      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
+      state.activeEncounter = null;
+      state.sceneFacts = {
+        ...(state.sceneFacts ?? { crowd: 'unknown', noise: 'unknown', present: [], props: [], lastBeat: '', updatedTurn: 9 }),
+        pendingEncounter: { ...stubEncounter('Void-Touched Scavenger', 20, 20), phase: 'pending', parkedTurn: 8 },
+      };
+      const arc = runArcDirectorBeforeGm(state, 'Wait and watch');
+      const manifest = buildSealedManifest(arc.state, 'Wait and watch', arc);
+      const prose = renderDeterministicFallback(manifest, {
+        ...arc.state,
+        activeEncounter: null,
+        placeThreats: {},
+        sceneFacts: state.sceneFacts,
+      });
+      expect(prose).toMatch(/Void-Touched Scavenger is parked and not in the fight/);
+      expect(prose).toMatch(/At Lowmarket/);
+      expect(prose).not.toMatch(/closes in|still engaged|12 of 20/i);
+      expect(isBannedFallbackStub(prose)).toBe(false);
+    });
+
+    it('no foe and an empty place invent nothing, and a second fallback fails closed', () => {
+      const state = createInitialState(undefined, 'litrpg');
+      state.campaignBibleId = 'summoned-pact';
+      state.turn = 10;
+      state.currentLocation = 'Lowmarket';
+      state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
+      state.activeEncounter = null;
+      const arc = runArcDirectorBeforeGm(state, 'Wait and watch');
+      const manifest = buildSealedManifest(arc.state, 'Wait and watch', arc);
+      const prose = renderDeterministicFallback(manifest, {
+        ...arc.state,
+        activeEncounter: null,
+        placeThreats: {},
+        sceneFacts: { ...arc.state.sceneFacts!, pendingEncounter: undefined },
+      });
+      expect(prose).toMatch(/At Lowmarket, no foe is here\. Nothing else has entered\./);
+      expect(prose).not.toMatch(/Scavenger|closes in|something shifts/i);
+      expect(isBannedFallbackStub(prose)).toBe(false);
+      const first = applyRenderFallback(manifest, arc.state, 'empty');
+      expect(first.manifestUpdated.fallbackUsed).toBe(true);
+      expect(() => applyRenderFallback(first.manifestUpdated, arc.state, 'empty')).toThrow(/max 1 retry/);
+    });
+
     it('applyRenderFallback keeps receipts in systemLog only', () => {
       const state = createInitialState(undefined, 'litrpg');
       state.campaignBibleId = 'summoned-pact';

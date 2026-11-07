@@ -7,7 +7,7 @@
 
 import { scrubProseControlTags, applyStatusFirewall } from './statusFirewall';
 import { getDiegeticFallback } from './diegeticFallbacks';
-import type { GameState } from './types';
+import type { ActiveEncounter, GameState } from './types';
 import type { ArcDirectorResult } from './arcDirector';
 import { contractForState } from './beatContract';
 import { hookForbiddenReversal, hookManifestFact, resolveHookLock } from './hookLock';
@@ -216,38 +216,47 @@ export function renderDeterministicFallback(
     !rawPlace || /^alone\b/i.test(rawPlace) || /,/.test(rawPlace) || rawPlace.length > 48
       ? shortRoomLabel(rawPlace, 'this room')
       : rawPlace;
-  const enc = state.activeEncounter;
-  const lastBeat = (state.sceneFacts?.lastBeat ?? '').replace(/\s+/g, ' ').trim();
-  const storyBeat =
-    lastBeat.length >= 24 &&
-    !/;/.test(lastBeat) &&
-    !/\b(?:street empty|it is quiet|System panel is visible|people are present|people are shouting)\b/i.test(
-      lastBeat,
-    );
-  const beatHint = storyBeat ? `${lastBeat.slice(0, 140).replace(/[.!?]?$/, '')}.` : '';
+  const enc = liveFallbackFoe(state);
+  const parked = enc ? null : parkedFallbackFoe(state);
   const action = (manifest.playerAction ?? '').toLowerCase();
   const inspectish = /\b(inspect|examine|search|look|panel)\b/i.test(action);
 
-  if (enc) {
+  if (enc?.name) {
     const hp = typeof enc.hp === 'number' ? enc.hp : null;
     const max = typeof enc.maxHp === 'number' ? enc.maxHp : null;
-    const hpBit = hp != null && max != null ? ` — ${hp}/${max} HP` : '';
-    return `At ${loc}, ${enc.name} is still engaged${hpBit}. Dust and breath hang between you; the next blow, flight, or word is yours.`;
+    const remain = hp != null && max != null ? ` ${hp} of ${max} remain.` : ' The fight has not ended.';
+    return `At ${loc}, ${enc.name} is still engaged.${remain}`;
+  }
+  if (parked?.name) {
+    return `At ${loc}, ${parked.name} is parked and not in the fight.`;
   }
   if (manifest.beatId?.includes('crisis') || manifest.beatId?.includes('branch')) {
-    return `At ${loc}, the crisis has not left the room. A choice still sits in front of you — delay will cost.`;
+    return `At ${loc}, the crisis has not left the room. A choice still sits in front of you. Delay will cost.`;
   }
   if (inspectish) {
     return getDiegeticFallback(state, 'inspect exhaust');
   }
   if (/quest stage|arc xp|encounter:/i.test(manifest.requiredFacts.join(' '))) {
-    const arcHint = beatHint || 'What the ledger already committed still stands.';
-    return `At ${loc}, ${arcHint}`;
+    return `At ${loc}, what the ledger already committed still stands.`;
   }
-  const ambient = beatHint
-    ? `What you last held onto still matters: ${beatHint}`
-    : 'Sound and light keep moving around you.';
-  return `At ${loc}, the beat does not freeze. ${ambient}`;
+  return `At ${loc}, no foe is here. Nothing else has entered.`;
+}
+
+function liveFallbackFoe(state: GameState): ActiveEncounter | null {
+  const enc = state.activeEncounter;
+  if (!enc?.name || enc.phase === 'pending' || enc.phase === 'terminal') return null;
+  return enc;
+}
+
+function parkedFallbackFoe(state: GameState): ActiveEncounter | null {
+  const pending = state.sceneFacts?.pendingEncounter;
+  if (pending?.name) return pending;
+  const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  for (const threat of Object.values(state.placeThreats ?? {})) {
+    const place = (threat?.place ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (threat?.encounter?.name && place && place === here) return threat.encounter;
+  }
+  return null;
 }
 
 /** 
