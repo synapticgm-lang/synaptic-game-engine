@@ -95,7 +95,8 @@ describe('tt-fix-5 N4 a step inside the keep does not tick from outside the gate
 
 describe('tt-fix-5 N1 escaping a room fight leaves the room', () => {
   it('the PC falls back out of the foe room; the foe stays', () => {
-    const opened = openDungeonCard(tabletop(), 'Keep Gate');
+    // An unseeded opener seed sometimes builds a Keep Gate card with no side-room foe.
+    const opened = openDungeonCard({ ...tabletop(), seed: 'gateflee-1' }, 'Keep Gate');
     const d = opened.activeDungeon!;
     const entry = d.currentNodeId;
     const foeRoom = d.nodes.find((n) => n.id !== entry && (n.hidden?.mobs ?? []).some((m) => !m.defeated));

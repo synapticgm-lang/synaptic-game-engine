@@ -219,9 +219,10 @@ function factsFor(row, packet) {
     // The engine's records: who is here (info-sheet HERE list, person refs, engine result, receipts) and what is
     // held (inventory, gear, kit and prop refs). Packet prose ("a traveler may be about") is not a record.
     peopleText: lower([packet.match(/^HERE:\n((?:- .*\n?)*)/m)?.[1] ?? '', ...people.flatMap((r) => [r.display, r.label]), ...(row.turnCheck?.presentNames ?? []), engineResult, receipts.join('\n')].join('\n')),
-    // Inventory and Equipped Gear stay the held list. The engine fact adds only the player's own weapon token
-    // ("with your greataxe") to this tail list. A foe's weapon, a negated clause, and any other word do not.
-    itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), engineHeldWeaponTokens(engineResult), ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
+    // Held items are the inventory, the gear, a loot or "On the body" list, and the player's own
+    // "with your" / "your … lights the fight" token. A denial counts only in that token's clause.
+    // A foe's weapon, a sign, or "you do not currently hold" is not one of those records.
+    itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), labeledLootText(engineResult, packet), enginePlayerItemTokens(engineResult), ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
     placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
     // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels. The people present
     // count whole, so a short form of a present person's name ("Mayor Brask" for Mayor Helga Brask) is handed.
@@ -230,25 +231,25 @@ function factsFor(row, packet) {
   };
 }
 
-/** A person is handed by the who-is-here records; a thing by the facts or an item record it names ("axe" is the greataxe). */
+/** A person is handed by the who-is-here records; a thing by an item record that names it ("axe" is the greataxe). */
 const inHanded = (facts, word, kind) => {
   const w = lower(word).replace(/s$/, '');
-  if (kind === 'item') {
-    // "You have no sword" names the word and denies it. That occurrence is not evidence the player holds it.
-    // A later affirmative occurrence, the inventory, the gear, or the "with your" token still is.
-    return handedItemWord(facts.handedText, w)
-      || facts.itemWords.some((x) => x.endsWith(w) || x.endsWith(`${w}s`));
-  }
+  if (kind === 'item') return facts.itemWords.some((x) => x.endsWith(w) || x.endsWith(`${w}s`));
   return new RegExp(`\\b${w}(?:s|es)?\\b`).test(kind === 'person' ? facts.peopleText : facts.handedText);
 };
 
-/** A whole item word in the handed text counts only where that occurrence is not denied. */
-function handedItemWord(text, word) {
-  const re = new RegExp(`\\b${word}(?:s|es)?\\b`, 'gi');
-  for (const m of String(text ?? '').matchAll(re)) {
-    if (!negated(text, m.index ?? 0)) return true;
+/** Loot lines and the corpse list. Other sentences are not a grant. */
+function labeledLootText(engineResult, packet) {
+  const out = [];
+  for (const blob of [String(engineResult ?? ''), String(packet ?? '')]) {
+    for (const raw of blob.split(/\n|(?<=[.!])\s+/)) {
+      const s = raw.trim();
+      if (/^Loot:/i.test(s)) out.push(s);
+      const body = s.match(/^On the body:\s*(.+)$/i);
+      if (body) out.push(body[1]);
+    }
   }
-  return false;
+  return out.join(' ');
 }
 /** The clauses of `sentence` with offsets, cut where the exit-clause split cuts (";", ":", ", and …"). */
 const clausesOf = (sentence) => {
@@ -263,19 +264,29 @@ const clausesOf = (sentence) => {
 };
 const negated = (sentence, idx) => /\b(?:no|not|without|never|nor|any)\s+(?:\w+\s+){0,2}$/i.test(sentence.slice(Math.max(0, idx - 30), idx));
 
-/** The weapon token in the engine's own "with your greataxe" slot. Nothing else in that fact is an item record. */
-function engineHeldWeaponTokens(engineResult) {
+/** A denial in an earlier sentence or an earlier ", but" clause does not reach this token. */
+function tokenClauseDenies(fact, at) {
+  const sentenceStart = Math.max(fact.lastIndexOf('.', at), fact.lastIndexOf('!', at), fact.lastIndexOf('?', at));
+  const head = fact.slice(sentenceStart + 1, at);
+  const bounds = [...head.matchAll(/[;:]\s*|,\s*(?=(?:and|but|while|as|though|yet)\b)/gi)];
+  const clause = bounds.length ? head.slice(bounds[bounds.length - 1].index + bounds[bounds.length - 1][0].length) : head;
+  return /\b(?:no|not|without|never|nor)\b/i.test(clause);
+}
+
+/** The player's own weapon and light tokens. A foe's "with a sword" and a sign do not match. */
+function enginePlayerItemTokens(engineResult) {
   const fact = String(engineResult ?? '');
   const out = [];
+  const take = (word, at) => {
+    if (!tokenClauseDenies(fact, at)) out.push(word);
+  };
   for (const m of fact.matchAll(/\bwith your ([a-z][a-z-]*)\b/gi)) {
     const word = m[1];
-    const at = (m.index ?? 0) + m[0].length - word.length;
-    const clauseStart = Math.max(
-      fact.lastIndexOf('.', at), fact.lastIndexOf('!', at), fact.lastIndexOf('?', at), fact.lastIndexOf(';', at), fact.lastIndexOf(':', at),
-    );
-    // The slot's own clause. "not" two words further back than the narration window still denies it.
-    if (/\b(?:no|not|without|never|nor)\b/i.test(fact.slice(clauseStart + 1, at))) continue;
-    out.push(word);
+    take(word, (m.index ?? 0) + m[0].length - word.length);
+  }
+  for (const m of fact.matchAll(/\byour ([a-z][a-z-]*) lights the fight\b/gi)) {
+    const word = m[1];
+    take(word, (m.index ?? 0) + m[0].length - word.length);
   }
   return out.join(' ');
 }
