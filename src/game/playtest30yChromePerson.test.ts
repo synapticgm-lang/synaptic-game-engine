@@ -113,7 +113,8 @@ describe('playtest30y — chrome is not a person', () => {
     );
     expect(extracted.present).not.toContain('blue panel');
     expect(extracted.present).not.toContain('Place');
-    expect(extracted.props).toContain('blue panel');
+    // Props come from the engine record, not from words in the sentence. The card seed above still holds the panel.
+    expect(extracted.props).not.toContain('blue panel');
 
     const committed = applyCommittedNarrative(
       withPresent(['blue panel', 'Place']),

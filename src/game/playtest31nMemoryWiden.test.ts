@@ -16,6 +16,7 @@ import {
   RECENT_LOG_WINDOW,
 } from './systemPrompt';
 import { formatCampaignMemoryForPrompt } from './campaignMemory';
+import { pageOpeners } from './completedEventPacket';
 
 function line(id: string, turn: number, role: LogEntry['role'], content: string): LogEntry {
   return { id, turn, role, content, timestamp: turn };
@@ -68,12 +69,15 @@ describe('playtest31nMemoryWiden', () => {
     expect(text).toMatch(/- T4 MARKER_KEEP_PLAYER_TWO I stand up → /);
     expect(text).toMatch(/- T2 MARKER_OLD_PLAYER_ONE look around → /);
     expect(text).not.toMatch(/T6 MARKER_KEEP_PLAYER_THREE/);
-    expect(text).toMatch(/ALREADY ON THE PAGE/);
-    expect(text).toMatch(/^- MARKER_KEEP_GM_TWO stone under your palms\.$/m);
-    expect(text).toMatch(/^- MARKER_KEEP_GM_THREE Orel waits at the ring\.$/m);
-    expect(text).not.toMatch(/MARKER_REST_TWO|MARKER_REST_THREE/);
-    expect(text).not.toMatch(/MARKER_OLD_GM_ONE/);
-    expect(text).toMatch(/PLAYER: ask the chanter/);
+    expect(text).not.toMatch(/ALREADY ON THE PAGE/);
+    expect(text).not.toMatch(/MARKER_KEEP_GM_TWO|MARKER_KEEP_GM_THREE|MARKER_REST_TWO|MARKER_REST_THREE|MARKER_OLD_GM_ONE/);
+    const openers = pageOpeners(stateWithLog(log), 'ask the chanter');
+    expect(openers).toEqual([
+      'MARKER_KEEP_GM_TWO stone under your palms.',
+      'MARKER_KEEP_GM_THREE Orel waits at the ring.',
+    ]);
+    expect(text).toMatch(/PLAYER: \(already shown in UI — do not restate\)/);
+    expect(text).not.toMatch(/PLAYER: ask the chanter/);
   });
 
   it('caps each raw line at 500 chars and never dumps last-15 summaries', () => {
@@ -105,9 +109,12 @@ describe('playtest31nMemoryWiden', () => {
     expect(text).not.toMatch(/last 15, full detail/);
     expect(text).not.toMatch(/MARKER_T15_DUMP_/);
     expect(text).not.toMatch(/T1: Beat number 1/);
-    expect(text.match(/MARKER_LONG/g) ?? []).toHaveLength(1);
-    expect(text).toMatch(/^- MARKER_LONG Y+/m);
+    expect(text).not.toMatch(/MARKER_LONG/);
     expect(text).not.toMatch(longTail);
+    const openers = pageOpeners(state, 'look around');
+    expect(openers.join('\n')).toMatch(/MARKER_LONG Y+/);
+    expect(openers.join('\n')).not.toMatch(longTail);
+    expect(openers.every((line) => line.length <= 500)).toBe(true);
     expect(text).toMatch(/INFO SHEET/);
 
     const memory = formatCampaignMemoryForPrompt(state, 'SITUATION', 'xyzzy', 4000);

@@ -15,6 +15,7 @@ import {
   collapseLoiterWriterBeats,
   formatWriterFacingEvent,
   nextLoiterStreaks,
+  pageOpeners,
   prepareRetrospectiveWriterInput,
 } from './completedEventPacket';
 import { initEncounterTerminal } from './encounterTerminalFsm';
@@ -134,8 +135,11 @@ describe('playtest10c — loiter stitch + writer strip', () => {
     expect(second.packet.inspectStreak).toBe(2);
     const facing = formatWriterFacingEvent(second.packet);
     expect(facing).toMatch(/HERE unchanged; inspect ×2/);
-    // s77 Root D — the essay's opening sentence is recorded fact; the essay body is not.
-    expect(facing).toMatch(/^- The loft walls were timber and wet plaster\.$/m);
+    // 29z9i / Order M — the writer packet does not paste the GM essay. pageOpeners keeps the first sentence.
+    const openers = pageOpeners(withEssay, 'Look around').join('\n');
+    expect(openers).toMatch(/^The loft walls were timber and wet plaster\.$/m);
+    expect(openers).not.toMatch(/Dust hung in the light/);
+    expect(facing).not.toMatch(/The loft walls were timber/);
     expect(facing).not.toMatch(/Dust hung in the light/);
     expect(facing).not.toMatch(/AUTHORITY:/);
     expect(collapseLoiterWriterBeats(second.packet)[0]).toMatch(/inspect ×2/);
