@@ -409,4 +409,72 @@ describe('consenting player turns through the existing logger', () => {
       turn_no: 8,
     })).toBeNull();
   });
+
+  it('a repair sent before its writer still links, and the reply fields stay scrubbed', () => {
+    const pref = grantPlayerTrainingOptIn('t4', ack)!;
+    setPlayerTrainingPreference(pref);
+    const leak = 'player@example.com user-abcdef12';
+    const common = {
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      finish_reason: 'stop',
+      run_id: 'run-link',
+      mode: 'litrpg' as const,
+      build_stamp: '2026-11-03e',
+      engine_facts: facts,
+    };
+    const stored = appendConsentingCallLog(
+      [
+        {
+          ...common,
+          id: 'repair-first',
+          job: 'repair' as const,
+          turn_no: 7,
+          parent_id: 'stale-edge',
+          messages: [{ role: 'assistant', content: 'You look.' }],
+          draft: leak,
+          repaired_reply: leak,
+          flagged_error: leak,
+          correct_fact: leak,
+          judge_scores: { voice: 5 },
+        },
+        {
+          ...common,
+          id: 'writer-second',
+          job: 'writer' as const,
+          turn_no: 7,
+          cost: 0.001,
+          messages: [
+            { role: 'user', content: leak },
+            { role: 'assistant', content: 'You look.' },
+          ],
+        },
+        {
+          ...common,
+          id: 'alias',
+          job: 'writer' as const,
+          turn_no: 8,
+          teacher_model: 'DS4.1Flash',
+          messages: [{ role: 'assistant', content: 'no' }],
+        },
+      ],
+      ['user-abcdef12'],
+    );
+    expect(stored.map((r) => r.job).sort()).toEqual(['repair', 'writer']);
+    const writer = stored.find((r) => r.job === 'writer');
+    const repair = stored.find((r) => r.job === 'repair');
+    expect(repair?.parent_id).toBe(writer?.id);
+    expect(writer?.example_source).toBe('player');
+    expect(repair?.example_source).toBe('player');
+    expect(writer?.judge_scores).toBeUndefined();
+    expect(repair?.judge_scores).toBeUndefined();
+    expect(writer?.cost).toBe(0.001);
+    expect(repair?.cost).toBeNull();
+    const packed = JSON.stringify(stored);
+    expect(packed).not.toContain('player@example.com');
+    expect(packed).not.toContain('user-abcdef12');
+    expect(packed).not.toContain('DS4.1Flash');
+    expect(packed).not.toContain('stale-edge');
+    expect(packed).toContain('[redacted-email]');
+    expect(packed).toContain('[redacted-account]');
+  });
 });

@@ -508,5 +508,10 @@ export function appendConsentingCallLog(incoming: unknown, accountIds: readonly 
       example_source: 'player',
     });
   }
+  // The repair linker reads the writer already stored for this turn. Writers go first.
+  kept.sort((a, b) => {
+    const rank = (job: unknown) => (job === 'writer' ? 0 : job === 'repair' || job === 'rewrite' ? 1 : 2);
+    return rank((a as { job?: unknown }).job) - rank((b as { job?: unknown }).job);
+  });
   return appendTrainLogRows(kept);
 }
