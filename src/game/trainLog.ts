@@ -4,6 +4,8 @@
  * Never throws into the game turn. Never stores keys/headers. Real-player message storage stays OFF.
  */
 
+import { OPENROUTER_DEEPSEEK_V41_FLASH, OPENROUTER_GLM_53_FLASH } from './modelIds';
+
 /** Same cut-off finish reasons as openRouterChat.isCutOffFinish (kept local to avoid import cycles). */
 function isCutOffFinish(reason: unknown): boolean {
   return /^(?:length|max_tokens|MAX_TOKENS)$/.test(String(reason ?? ''));
@@ -11,6 +13,13 @@ function isCutOffFinish(reason: unknown): boolean {
 
 /** Avoid importing runManifest (edge graph); session / caller may override. Not a real build. */
 export const FALLBACK_BUILD_STAMP = 'trainlog';
+
+/** Corpus served ids already named in the call log. Not a verified training licence. */
+const CORPUS_SERVED_IDS = new Set<string>([OPENROUTER_DEEPSEEK_V41_FLASH, OPENROUTER_GLM_53_FLASH]);
+
+function eligiblePlayerTrainingRow(model: string | null | undefined): boolean {
+  return CORPUS_SERVED_IDS.has((model ?? '').trim());
+}
 
 export type TrainLogJob =
   | 'writer'
@@ -501,6 +510,10 @@ export function recordModelCall(input: TrainLogRecordInput): TrainLogRow | null 
       if (row.repaired_reply == null) row.repaired_reply = String(input.assistant ?? '');
     }
 
+    // A player-labeled row for an unsupported served id is not an eligible training record.
+    // Operational rows (no player tag) still append. This does not delete a flushed file.
+    if (row.example_source === 'player' && !eligiblePlayerTrainingRow(row.teacher_model)) return null;
+
     rows.push(row);
     if (job === 'writer') lastWriterByTurn.set(turnKey(run_id, turn_no), row.id);
 
@@ -520,6 +533,7 @@ export function appendTrainLogRows(incoming: unknown): TrainLogRow[] {
     if (!raw || typeof raw !== 'object') continue;
     try {
       const r = raw as Partial<TrainLogRow>;
+      if (r.example_source === 'player' && !eligiblePlayerTrainingRow(r.teacher_model ?? null)) continue;
       const row: TrainLogRow = {
         id: typeof r.id === 'string' ? r.id : newId(),
         created_at: typeof r.created_at === 'string' ? r.created_at : new Date().toISOString(),

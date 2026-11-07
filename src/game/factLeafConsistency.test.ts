@@ -11,7 +11,7 @@ import { engineResultFact, isChromeReceipt } from './engineResult';
 import { buildFactSheet, formatFactSheetForWriter } from './factSheet';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { buildFactLeafSystemPrompt, buildMasterPrompt } from './masterPrompt';
-import { deliverConsequence } from './pyoaDelayedConsequences';
+import { buildDelayedConsequencesSituationSection, deliverConsequence } from './pyoaDelayedConsequences';
 import { buildSystemPrompt as legacySystemPrompt } from './systemPrompt';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import type { DelayedConsequence } from './pyoaTypes';
@@ -114,6 +114,13 @@ describe('writer engine facts', () => {
     expect(blank.receipts.some((line) => line.startsWith('Crisis unlocked:'))).toBe(true);
     expect(engineResultFact(blank.receipts)).toBe('');
     expect(blank.receipts.some((line) => /the cold|the gate|remembered a/i.test(line))).toBe(false);
+    const section = buildDelayedConsequencesSituationSection({
+      turn: 8,
+      arcDirector: { pyoaDelayedConsequences: [consequence({ narrativeBeat: '   ', journalHint: '' }, 'crisis_unlock')] },
+    } as GameState);
+    expect(section).toContain('crisis_unlock');
+    expect(section).not.toMatch(/crisis_unlock:\s+\.\.\./);
+    expect(section).not.toMatch(/the cold|the gate/i);
   });
 
   it('stores a relationship when the beat is blank and does not publish an empty Remembered line', () => {

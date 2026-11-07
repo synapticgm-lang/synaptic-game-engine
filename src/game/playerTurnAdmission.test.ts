@@ -1,4 +1,4 @@
-import { appendFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
@@ -29,7 +29,7 @@ import {
   type SelectionRow,
 } from './playerTurnAdmission';
 import { OPENROUTER_DEEPSEEK_V41_FLASH, OPENROUTER_GLM_53_FLASH } from './modelIds';
-import { clearTrainLogSession, engineFactsFromState, peekTrainLogRows, setTrainLogFileAppend, setTrainLogSession } from './trainLog';
+import { appendTrainLogRows, clearTrainLogSession, engineFactsFromState, peekTrainLogRows, setTrainLogFileAppend, setTrainLogSession } from './trainLog';
 import { appendConsentingCallLog } from './playerTurnAdmission';
 
 function consent(): ConsentRecord {
@@ -86,6 +86,7 @@ describe('player turn admission defaults', () => {
     expect(PLAYER_CAPTURE_ENABLED).toBe(false);
     expect(featureRequestIsNotConsent('include player turns')).toBeNull();
     expect(ADMISSION_NOT_WIRED.some((line) => /opted out/.test(line))).toBe(true);
+    expect(ADMISSION_NOT_WIRED.some((line) => /flushed calls file is not implemented/.test(line))).toBe(true);
   });
 
   it('quarantines aliases and unknown ids, and accepts the two named corpus writers', () => {
@@ -531,5 +532,39 @@ describe('consenting player turns through the existing logger', () => {
     })).toBeNull();
     expect(readFileSync(path, 'utf8')).toBe(flushed);
     expect(withdrawFlushedCapture(pref, 'later', join(dir, 'never-written.jsonl')).flushed).toBe(false);
+  });
+
+  it('a player-labeled row for an unsupported served id is not written to the call log', () => {
+    const dir = join('/tmp', 'sge-quarantine-log');
+    mkdirSync(dir, { recursive: true });
+    const path = join(dir, 'calls.jsonl');
+    writeFileSync(path, '');
+    setTrainLogFileAppend((file, line) => appendFileSync(file, line));
+    setTrainLogSession({ run_id: 'run-q', turn_no: 3, mode: 'litrpg', callsPath: path });
+    const secret = 'the private unsupported reply';
+    const stored = appendTrainLogRows([{
+      id: 'bad-player',
+      job: 'writer',
+      example_source: 'player',
+      teacher_model: 'DS4.1Flash',
+      messages: [{ role: 'assistant', content: secret }],
+      run_id: 'run-q',
+      turn_no: 3,
+      build_stamp: '2026-11-03e',
+    }]);
+    expect(stored).toEqual([]);
+    expect(peekTrainLogRows()).toHaveLength(0);
+    expect(readFileSync(path, 'utf8')).toBe('');
+    const operational = appendTrainLogRows([{
+      id: 'lab-row',
+      job: 'writer',
+      teacher_model: 'DS4.1Flash',
+      messages: [{ role: 'assistant', content: 'lab operational line' }],
+      run_id: 'run-q',
+      turn_no: 3,
+      build_stamp: '2026-11-03e',
+    }]);
+    expect(operational).toHaveLength(1);
+    expect(operational[0]?.example_source).toBeUndefined();
   });
 });

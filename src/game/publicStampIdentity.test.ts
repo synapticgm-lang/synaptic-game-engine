@@ -48,7 +48,12 @@ describe('public stamp identity', () => {
     });
     expect(publicStampIdentityHolds(stamps)).toBe(true);
     expect(publicStampIdentityHolds({ ...stamps, htmlMeta: '' })).toBe(false);
+    expect(publicStampIdentityHolds({ ...stamps, htmlComment: 'other' })).toBe(false);
+    expect(publicStampIdentityHolds({ ...stamps, versionHud: 'other' })).toBe(false);
+    expect(publicStampIdentityHolds({ ...stamps, versionBuild: 'other' })).toBe(false);
+    expect(publicStampIdentityHolds({ ...stamps, hud: 'other' })).toBe(false);
     expect(publicStampIdentityHolds({ ...stamps, build: '' })).toBe(false);
+    expect(publicStampIdentityHolds({ ...stamps, build: '   ' })).toBe(false);
   });
 
   it('a tab still advertising 2026-11-01a reloads when the page stamp is this build', () => {

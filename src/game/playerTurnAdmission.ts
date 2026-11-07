@@ -39,6 +39,7 @@ export const ADMISSION_NOT_WIRED = [
   'There is no other-player consent screen. A feature request is not that consent.',
   'DS4.1Flash and GLM5.3Flash have no verified served id or training licence here, so they stay in quarantine.',
   'Deleting a local row does not untrain a weight that was already trained.',
+  'Withdrawal stops later rows only. Deleting or rewriting a flushed calls file is not implemented.',
   'The 2500-turn goal is not filled by generating turns.',
   'Historical Cursed Keep, Salt Road Heist, and legacy rows are kept for audit and are not admitted until a review marks them.',
 ] as const;
@@ -181,8 +182,8 @@ export function revokePlayerTrainingOptIn(prev: PlayerTrainingPreference, now: s
 }
 
 /**
- * Withdrawal stops later rows. A calls file that has already been appended is not deleted or rewritten.
- * This does not untrain a weight.
+ * Withdrawal stops later rows. It does not delete or rewrite a flushed calls file, and it does not untrain a weight.
+ * File deletion remains unimplemented.
  */
 export function withdrawFlushedCapture(
   pref: PlayerTrainingPreference,

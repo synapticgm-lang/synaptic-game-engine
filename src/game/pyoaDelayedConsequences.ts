@@ -208,7 +208,8 @@ export function buildDelayedConsequencesSituationSection(
   if (due.length > 0) {
     lines.push('\n**Due now:**');
     for (const c of due) {
-      lines.push(`- ${c.type}: ${c.payload.narrativeBeat.slice(0, 60)}...`);
+      const beat = c.payload.narrativeBeat?.trim();
+      lines.push(beat ? `- ${c.type}: ${beat.slice(0, 60)}...` : `- ${c.type}`);
     }
   }
   
