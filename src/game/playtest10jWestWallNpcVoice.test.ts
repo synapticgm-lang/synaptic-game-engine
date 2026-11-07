@@ -14,7 +14,7 @@ import {
 } from './openingEstablishment';
 import { stitchOpeningContinue, stitchOpeningScene } from './openingStitch';
 import { applyErrorRepairs } from './errorRepairWarden';
-import type { GameState } from './types';
+import type { GameState, NpcMemory } from './types';
 
 const WEST_PAGE1 =
   'Cold wind over cracked brass rings outside Valespire’s west wall. The sky is open and grey. A blue panel hangs over the stone — private, yours. There are no priests and no rite still running; you are leftover from a circle that already failed. Distant wall-horns. A ragged scavenger stops on the gravel and stares. Two militia step out of the brush behind you. One levels a spear and barks for a name before they decide you are salvage. What name do you give them?';
@@ -122,5 +122,74 @@ describe('playtest10j — west wall NPC voice', () => {
     const text = stitchOpeningContinue(westWall(), 'Where am i');
     expect(text).toMatch(/You are in/i);
     expect(text).not.toMatch(/They already have the name Jax/i);
+  });
+
+  it('a nonspeaking group listed first does not take the bark, and nobody is seated', () => {
+    const scav: NpcMemory = {
+      npcId: 'scav',
+      npcName: 'the scavengers',
+      disposition: 'neutral',
+      facts: [],
+      lastSeenTurn: 1,
+    };
+    const mil: NpcMemory = {
+      npcId: 'mil',
+      npcName: 'the militia',
+      disposition: 'neutral',
+      facts: [],
+      lastSeenTurn: 1,
+    };
+    const state = westWall({
+      npcMemories: [scav, mil],
+      timeline: [],
+      openingEstablishment: {
+        ...westWall().openingEstablishment!,
+        castNpcIds: ['scav', 'mil'],
+      },
+    });
+    expect(openingCastLabel(state)).toBe('the militia');
+    const who = stitchOpeningContinue(state, 'Who are you');
+    expect(who).toMatch(/The militia answer you/);
+    expect(who).not.toMatch(/scavengers answer/i);
+    expect(state.npcMemories?.map((m) => m.npcId)).toEqual(['scav', 'mil']);
+    expect(state.timeline ?? []).toEqual([]);
+    expect(state.timeline?.some((f) => f.kind === 'person')).toBe(false);
+  });
+
+  it('a named person who speaks stays the speaker when a group is only present', () => {
+    const state = westWall({
+      openingEstablishment: {
+        ...westWall().openingEstablishment!,
+        card: { cast: 'Mira Quill', castNames: ['Mira Quill'], props: [], names: ['Mira', 'Quill'] },
+        pickedHookFallback: 'A ragged scavenger stops on the gravel and stares. Mira Quill asks who you are.',
+      },
+    });
+    expect(openingCastLabel(state)).toBe('Mira Quill');
+    expect(stitchOpeningContinue(state, 'Who are you')).toMatch(/Mira Quill/);
+    expect(stitchOpeningContinue(state, 'Who are you')).not.toMatch(/scavengers answer/i);
+  });
+
+  it('a named person who only stares yields to the group that barks, and is not seated', () => {
+    const state = westWall({
+      npcMemories: [],
+      timeline: [],
+      openingEstablishment: {
+        ...westWall().openingEstablishment!,
+        card: { cast: 'Mira Quill', castNames: ['Mira Quill'], props: [], names: ['Mira', 'Quill'] },
+        pickedHookFallback:
+          'Mira Quill stares at the rings. Two militia step out of the brush behind you. One barks for a name.',
+      },
+    });
+    expect(openingCastLabel(state)).toBe('the militia');
+    expect(stitchOpeningContinue(state, 'Who are you')).toMatch(/The militia answer you/);
+    expect(stitchOpeningContinue(state, 'Who are you')).not.toMatch(/Mira Quill answer/i);
+    expect(state.npcMemories ?? []).toEqual([]);
+    expect(state.timeline ?? []).toEqual([]);
+  });
+
+  it('free text keeps the card offer with the group that spoke, not the group that stared', () => {
+    const text = stitchOpeningContinue(westWall(), 'I wait');
+    expect(text).toMatch(/militia/i);
+    expect(text).not.toMatch(/scavenger/i);
   });
 });

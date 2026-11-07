@@ -132,15 +132,14 @@ describe('playtest10f — treaty tent one-line lock', () => {
     expect(text).not.toBe('They have the name Jax.');
     expect(text).toMatch(/treaty tent|Cinderflow/i);
     expect(text).toMatch(/pause in the war|named as theirs/i);
-    expect(openingCastLabel(treaty())).toMatch(/envoys at this table/i);
+    expect(openingCastLabel(treaty())).toBe('the Pellane and Ash Court envoys');
     expect(openingWantLine(treaty())).toMatch(/pause in the war/i);
     expect(openingWantLine(treaty())).toMatch(/banner|seat at the table/i);
   });
 
   it('Who are you uses plural envoys, not “people who pulled you is”', () => {
     const text = stitchOpeningContinue(namedJax(), 'Who are you');
-    expect(text).toMatch(/envoys at this table/i);
-    expect(text).toMatch(/answer you/i);
+    expect(text).toMatch(/Pellane and Ash Court envoys answer you/);
     // 29z4 — the envoys have no info sheet: no canned "we found you here" answer.
     expect(text).not.toMatch(/We are the ones who found you here/);
     expect(text).not.toMatch(/is the one asking|are the ones asking/i);

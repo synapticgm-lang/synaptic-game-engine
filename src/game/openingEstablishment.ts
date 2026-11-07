@@ -1418,8 +1418,101 @@ export function cardRoleStandIn(state: GameState): string {
   }
   return label && !/people who pulled you|^the people here$/i.test(label) ? label : 'the witness';
 }
+const PAGE_SPEECH_VERB =
+  /\b(?:barks?|says?|said|asks?|asked|shouts?|shouted|calls?|called|answers?|answered|tells?|told|demands?|demanded|warns?|warned|whispers?|whispered|snaps?|snapped)\b/i;
+const PAGE_CAST_ROLE =
+  /\b(militia|scavengers?|priests?|handlers?|envoys?|chanter|robed figures|innkeep)\b/i;
+/** The role a page sentence names, in the same label shape the haystack uses. */
+function pageRoleLabel(word: string): string {
+  const w = word.toLowerCase();
+  if (w === 'militia') return 'the militia';
+  if (w === 'scavengers') return 'the scavengers';
+  if (w === 'scavenger') return 'the scavenger';
+  if (w === 'priests') return 'the priests';
+  if (w === 'priest') return 'the priest';
+  // The haystack's giver is "the handler" even when the page says "Handlers" and one of them speaks.
+  if (w === 'handlers' || w === 'handler') return 'the handler';
+  if (w === 'envoys') return 'the envoys';
+  if (w === 'envoy') return 'the envoy';
+  if (w === 'chanter') return 'the chanter';
+  if (w === 'robed figures') return 'the robed figures';
+  if (w === 'innkeep') return 'the innkeep';
+  return '';
+}
+/**
+ * Who the page shows speaking. A stare, a stop, or a name earlier in the "who is here" list is presence.
+ * "One barks" keeps the group named in the sentence before it. No speech verb: no speaker invented.
+ */
+function authoritativePageSpeaker(hay: string): string {
+  let lastRole = '';
+  let speaker = '';
+  for (const sentence of (hay ?? '').split(/(?<=[.!?])\s+/)) {
+    const named = sentence.match(PAGE_CAST_ROLE)?.[1] ?? '';
+    if (named) lastRole = pageRoleLabel(named);
+    if (!PAGE_SPEECH_VERB.test(sentence)) continue;
+    if (named) speaker = pageRoleLabel(named);
+    else if (/^(?:one|they|he|she)\b/i.test(sentence.trim()) && lastRole) speaker = lastRole;
+  }
+  return speaker;
+}
+function sameCastParty(a: string, b: string): boolean {
+  const norm = (s: string) => s.toLowerCase().replace(/^(?:the|a|an)\s+/, '').replace(/s\b/g, '').trim();
+  const x = norm(a);
+  const y = norm(b);
+  if (!x || !y) return false;
+  return x === y || x.includes(y) || y.includes(x);
+}
+/** The page names this person and gives them no speech verb, while someone else does speak. */
+function pageShowsLeadSilent(hay: string, name: string): boolean {
+  const tokens = name
+    .replace(/^(?:the|a|an)\s+/i, '')
+    .split(/\s+/)
+    .filter((t) => t.length >= 3);
+  if (!tokens.length) return false;
+  let named = false;
+  for (const sentence of (hay ?? '').split(/(?<=[.!?])\s+/)) {
+    const mentions = tokens.some((t) => new RegExp(`\\b${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(sentence));
+    if (!mentions) continue;
+    named = true;
+    if (PAGE_SPEECH_VERB.test(sentence)) return false;
+  }
+  return named;
+}
+/**
+ * The label that speaks. A group listed first is presence, so the page's speaker takes the line.
+ * A named person stays unless the page shows that person silent while another group speaks.
+ * Nothing is written onto the ledger.
+ */
+/** The acted page, not the "who is here" list. A name on that list is presence, not silence. */
+function actedOpeningProse(state: GameState): string {
+  const page = state.openingEstablishment?.pickedHookFallback?.trim() ?? '';
+  if (page) return page;
+  const gm = (state.log ?? []).filter((e) => e.role === 'gm').map((e) => e.content ?? '').join(' ');
+  if (gm.trim()) return gm;
+  return openingSceneHay(state);
+}
+function speakingCastLabel(state: GameState): string {
+  const hay = actedOpeningProse(state);
+  const spoken = authoritativePageSpeaker(hay);
+  const records = openingCastRecords(state);
+  const lead = records[0];
+  const cardCast = openingCardRecord(state)?.cast ?? '';
+  const presence = lead?.npcName || cardCast;
+  if (!spoken) return presence;
+  if (presence && sameCastParty(presence, spoken)) return presence;
+  const namedLead = lead?.npcName && slotNamesOnePerson(lead.npcName)
+    ? lead.npcName
+    : cardCast && slotNamesOnePerson(cardCast)
+      ? cardCast
+      : '';
+  if (namedLead && !pageShowsLeadSilent(hay, namedLead)) return namedLead;
+  const recorded = records.find((m) => sameCastParty(m.npcName, spoken));
+  return recorded?.npcName || spoken;
+}
 /** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
 export function openingCastLabel(state: GameState): string {
+  const speaking = speakingCastLabel(state);
+  if (speaking) return speaking;
   const lead = openingCastRecords(state)[0];
   if (lead) return lead.npcName;
   const card = openingCardRecord(state);
@@ -1752,6 +1845,8 @@ export function slotNamesOnePerson(part: string): boolean {
   );
   const head = (stop > 0 ? words.slice(0, stop) : words).slice(-1)[0] ?? '';
   if (/^[A-Z]/.test(head)) return true;
+  // "militia" does not take a plural -s, and it is still a group, not a person to name.
+  if (/^(?:militia|people|folk|crowd|patrol)$/i.test(head)) return false;
   return !/[^s]s$/i.test(head);
 }
 function wantFromPickedHookBlob(blob?: string): string {
@@ -1843,7 +1938,7 @@ export function castSpeakVerb(who: string): 'answer' | 'answers' {
   const w = (who ?? '').replace(/\s+/g, ' ').trim();
   if (!w) return 'answer';
   if (/\band\b/i.test(w) || /^both\b/i.test(w)) return 'answer';
-  if (/\b(people|envoys|priests|handlers|sides|militia|figures|scouts|pickets|engineers|guards|chirurgeons)\b/i.test(w)) {
+  if (/\b(people|envoys|priests|handlers|sides|militia|scavengers|figures|scouts|pickets|engineers|guards|chirurgeons)\b/i.test(w)) {
     return 'answer';
   }
   return 'answers';

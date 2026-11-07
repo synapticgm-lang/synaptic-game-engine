@@ -103,7 +103,7 @@ describe('playtest10d — ash hall Silent break', () => {
 
   it('where + who + panel answers all three from this card', () => {
     const text = stitchOpeningContinue(
-      ashHall(),
+      ashHall({ systemHousing: undefined }),
       "Where am I? Who is it that asks for my name? What's the blue screen i can see?"
     );
     expect(text).toMatch(/Ash-adjacent ritual hall/i);
