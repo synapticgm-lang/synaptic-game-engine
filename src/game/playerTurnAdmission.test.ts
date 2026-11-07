@@ -363,12 +363,35 @@ describe('consenting player turns through the existing logger', () => {
       ],
       ['user-abcdef12'],
     );
-    const withReply = appendConsentingCallLog(
-      [{ ...base, id: 'hosted-reply', turn_no: 4, repaired_reply: 'noted user-abcdef12' }],
+    const leak = 'player@example.com user-abcdef12';
+    const repair = appendConsentingCallLog(
+      [{
+        ...base,
+        id: 'hosted-repair',
+        job: 'repair' as const,
+        turn_no: 4,
+        messages: [{ role: 'user', content: 'Look' }, { role: 'assistant', content: 'You look.' }],
+        draft: leak,
+        repaired_reply: leak,
+        flagged_error: leak,
+        correct_fact: leak,
+      }],
       ['user-abcdef12'],
     );
-    expect(JSON.stringify(withReply)).not.toContain('user-abcdef12');
-    expect(JSON.stringify(withReply)).toContain('[redacted-account]');
+    const repairPacked = JSON.stringify(repair);
+    expect(repair).toHaveLength(1);
+    expect(repairPacked).not.toContain('player@example.com');
+    expect(repairPacked).not.toContain('user-abcdef12');
+    expect(repairPacked).toContain('[redacted-email]');
+    expect(repairPacked).toContain('[redacted-account]');
+    expect(appendConsentingCallLog([{
+      ...base,
+      id: 'hosted-think',
+      job: 'repair' as const,
+      turn_no: 5,
+      messages: [{ role: 'assistant', content: 'You look.' }],
+      repaired_reply: '<think>hidden',
+    }])).toEqual([]);
     expect(stored.map((r) => r.turn_no)).toEqual([1, 2]);
     const packed = JSON.stringify(stored);
     expect(packed).not.toContain('player@example.com');

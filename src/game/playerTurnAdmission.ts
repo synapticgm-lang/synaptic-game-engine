@@ -412,7 +412,8 @@ export function recordConsentingPlayerCall(
   if (/^(?:length|max_tokens|error|content_filter)$/i.test(input.finish_reason ?? '')) return null;
   const job = input.job ?? 'writer';
   const turnKey = writerTurnKey(input.run_id, input.turn_no);
-  if (job === 'writer' && !turnKey) return null;
+  // A consent row without its own run and turn must not inherit the lab session.
+  if (!turnKey) return null;
   if (job === 'writer' && peekTrainLogRows().some((r) => r.job === 'writer' && writerTurnKey(r.run_id, r.turn_no) === turnKey)) {
     return null;
   }
@@ -484,20 +485,25 @@ export function appendConsentingCallLog(incoming: unknown, accountIds: readonly 
     });
     if (secret) continue;
     const turnKey = writerTurnKey(row.run_id, row.turn_no);
+    if (!turnKey) continue;
     if (row.job === 'writer') {
-      if (!turnKey || seenWriters.has(turnKey)) continue;
+      if (seenWriters.has(turnKey)) continue;
       if (peekTrainLogRows().some((r) => r.job === 'writer' && writerTurnKey(r.run_id, r.turn_no) === turnKey)) continue;
       seenWriters.add(turnKey);
     }
     const draft = scrubOptionalText(typeof row.draft === 'string' ? row.draft : undefined, accountIds);
     const repaired = scrubOptionalText(typeof row.repaired_reply === 'string' ? row.repaired_reply : undefined, accountIds);
-    if (draft === null || repaired === null) continue;
+    const flagged = scrubOptionalText(typeof row.flagged_error === 'string' ? row.flagged_error : undefined, accountIds);
+    const correct = scrubOptionalText(typeof row.correct_fact === 'string' ? row.correct_fact : undefined, accountIds);
+    if (draft === null || repaired === null || flagged === null || correct === null) continue;
     kept.push({
       ...row,
       messages: clean,
       engine_facts: facts,
       ...(draft !== undefined ? { draft } : {}),
       ...(repaired !== undefined ? { repaired_reply: repaired } : {}),
+      ...(flagged !== undefined ? { flagged_error: flagged } : {}),
+      ...(correct !== undefined ? { correct_fact: correct } : {}),
       judge_scores: undefined,
       example_source: 'player',
     });
