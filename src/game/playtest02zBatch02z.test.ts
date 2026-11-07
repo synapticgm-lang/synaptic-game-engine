@@ -19,6 +19,7 @@ import {
   sealedClosedFacts,
 } from './beatContract';
 import { buildContextPrompt } from './systemPrompt';
+import { buildCompletedEventPacket } from './completedEventPacket';
 import { buildSystemPrompt } from './masterPrompt';
 import { formatCraftSnapshotLines } from './craftBookCompiler';
 import { createDefaultSettings } from './defaults';
@@ -155,13 +156,37 @@ describe('Batch 02z — slim writer packet', () => {
       expect(text).toMatch(/PLAYER:/);
     }
     expect(formatCraftSnapshotLines(state)).toEqual([]);
-    // 29z9i — the writer reads the info sheet, not raw GM beat text.
-    // s77 Root D — only the opening sentence of each of the last two GM beats, as recorded fact.
+    // 29z9i — LAST is the engine receipt. The rain sentence and the empty-lane beat are not facts.
+    const built = buildCompletedEventPacket(state, 'Talk to Wren Holt');
     expect(packet).toMatch(/INFO SHEET/);
-    expect(packet).toMatch(/^- Rain drums the West Wall stones\.$/m);
-    expect(packet).toMatch(/^- The lane stays empty\.$/m);
-    expect(packet).not.toMatch(/no one else at the gate/);
+    expect(packet).toMatch(/T17 Look around → no engine result/);
+    expect(packet).toMatch(/West Wall/);
+    expect(packet).toMatch(/Wren Holt/);
+    expect(packet).toMatch(/"fn":"speech"/);
+    expect(packet).not.toMatch(/^- Rain drums the West Wall stones\.$/m);
+    expect(packet).not.toMatch(/lane stays empty|no one else at the gate/);
     expect(packet).not.toMatch(/Inventory \(/);
+    expect(built.pageOpeners).toEqual([
+      'Rain drums the West Wall stones.',
+      'The lane stays empty.',
+    ]);
+    expect(built.infoSheet).not.toMatch(/Rain drums|lane stays empty/);
+  });
+
+  it('an empty street does not demand a speaker', () => {
+    const state = litrpgState({
+      sceneFacts: emptySceneFacts(18),
+      log: [
+        { id: 'g1', role: 'gm', content: 'Rain drums the West Wall stones.', timestamp: 1, turn: 16 },
+        { id: 'p1', role: 'player', content: 'Look around', timestamp: 2, turn: 17 },
+        { id: 'g2', role: 'gm', content: 'The lane stays empty.', timestamp: 3, turn: 17 },
+      ],
+    });
+    const built = buildCompletedEventPacket(state, 'Look around');
+    const text = formatWriterFacingPacket(state, 'Look around');
+    expect(built.refEnum?.some((r) => r.klass === 'person')).toBe(false);
+    expect(text).not.toMatch(/"fn":"speech"/);
+    expect(text).not.toMatch(/Rain drums the West Wall stones/);
   });
 
   it('live system prompt drops kit dump and duplicate SNAPSHOT/CRAFT rails', () => {

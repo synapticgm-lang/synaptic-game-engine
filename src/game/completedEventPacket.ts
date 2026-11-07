@@ -529,7 +529,7 @@ export type NounAllowlistOpts = {
 function castMentionNames(state: GameState): string[] {
   if (state.openingEstablishment?.castNpcIds?.length) {
     // Card cast is a ref only at the card's place or while present; on the road they are not in the scene.
-    const atCard = atOpeningPlace(state);
+    const atCard = openingCastBelongsHere(state);
     const here = new Set(presentNpcRecords(state).map((r) => r.npcName));
     return openingCastRecords(state)
       .filter((r) => atCard || here.has(r.npcName))
@@ -547,9 +547,11 @@ function openingCastBelongsHere(state: GameState): boolean {
   if (!atOpeningPlace(state)) return false;
   const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
   const here = key(state.currentLocation);
+  const where = key(state.openingEstablishment?.answers?.where || state.openingEstablishment?.card?.place);
+  // Back at the opening, including a return from somewhere else. The previous sheet is the place left.
+  if (where && here && (where === here || where.includes(here) || here.includes(where))) return true;
   const prev = key(state.previousLocationSheet?.name);
   if (prev && here && prev !== here) return false;
-  const where = key(state.openingEstablishment?.answers?.where || state.openingEstablishment?.card?.place);
   if (where && here && where !== here && !where.includes(here) && !here.includes(where)) return false;
   return true;
 }
@@ -562,7 +564,7 @@ function atOpeningPlace(state: GameState): boolean {
 }
 /** Opening hall talk: at the card's place and nobody has moved yet. Only then does talk narrow the turn's names. */
 function beforeFirstMove(state: GameState): boolean {
-  return atOpeningPlace(state) && !state.circling?.prevPlace;
+  return openingCastBelongsHere(state) && !state.circling?.prevPlace;
 }
 /** Capitalised runs inside a place card description that do not open a sentence. */
 function placeCardNames(description: string | undefined): string[] {
