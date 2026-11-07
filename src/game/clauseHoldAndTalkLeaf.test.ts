@@ -287,6 +287,23 @@ describe('clause check fail-closed', () => {
     expect(out.prose).not.toMatch(/bathhouse/i);
   });
 
+  it('a one-word or punctuation claim does not cover every sentence', async () => {
+    const prose = 'Mira answers you by the lamp. UNCHECKED_VAULT_9f3c stays shut.';
+    const out = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose,
+      player: sheet().player,
+      chat: async () => ({
+        claims: [
+          { c: 'Mira', kind: 'colour' as const, support: '' },
+          { c: '.', kind: 'colour' as const, support: '' },
+        ],
+      }),
+    });
+    expect(out.withheld).toBe(true);
+    expect(out.prose).not.toContain('UNCHECKED_VAULT_9f3c');
+  });
+
   it('a nonempty claim list that skips a sentence is not a pass', async () => {
     const prose = 'Mira answers you. UNCHECKED_SENTENCE_9f3c opens the vault.';
     const out = await checkAndRepairProse({
@@ -299,6 +316,39 @@ describe('clause check fail-closed', () => {
     });
     expect(out.withheld).toBe(true);
     expect(out.prose).not.toContain('UNCHECKED_SENTENCE_9f3c');
+  });
+
+  it('a second flagged sentence is not kept when a later check calls it colour', async () => {
+    let checks = 0;
+    const out = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose: 'A dragon lands on the furnace. Mira hands you the hidden vault key.',
+      player: sheet().player,
+      chat: async () => {
+        checks += 1;
+        if (checks === 1) {
+          return {
+            claims: [
+              { c: 'A dragon lands on the furnace', kind: 'fact' as const, support: '', severity: 'serious' as const },
+              { c: 'Mira hands you the hidden vault key', kind: 'fact' as const, support: '', severity: 'serious' as const },
+            ],
+          };
+        }
+        if (checks === 2) {
+          return {
+            claims: [
+              { c: 'Steam curls off the furnace stones', kind: 'colour' as const, support: '' },
+              { c: 'Mira hands you the hidden vault key', kind: 'colour' as const, support: '' },
+            ],
+          };
+        }
+        return { claims: [{ c: 'Steam curls off the furnace stones', kind: 'colour' as const, support: '' }] };
+      },
+      repair: async () => 'Steam curls off the furnace stones.',
+    });
+    expect(out.prose).not.toMatch(/vault key/i);
+    expect(out.prose).not.toMatch(/dragon/i);
+    expect(checks).toBeLessThanOrEqual(3);
   });
 
   it('one repair that the second check clears is published, and only that repair runs', async () => {

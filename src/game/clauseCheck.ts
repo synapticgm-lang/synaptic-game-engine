@@ -120,16 +120,20 @@ function contentWords(text: string): string[] {
   return claimText(text).split(' ').filter((word) => word.length > 3);
 }
 
-/** A claim belongs to a sentence only by overlap. No fallback onto the first sentence. */
+/**
+ * A claim belongs to a sentence only by a real overlap.
+ * One word, or a dot, does not cover a sentence. No fallback onto the first sentence.
+ */
 export function claimMatchesSentence(claim: string, sentence: string): boolean {
   const c = claimText(claim);
   const s = claimText(sentence);
   if (!c || !s) return false;
-  if (s.includes(c) || (c.includes(s) && s.length >= 12)) return true;
   const words = contentWords(c);
-  if (!words.length) return false;
+  if (words.length < 2) return false;
+  if (s.includes(c)) return true;
+  if (c.includes(s) && s.length >= 12 && contentWords(s).length >= 2) return true;
   const hits = words.filter((word) => s.includes(word)).length;
-  return hits >= Math.min(3, words.length) && hits * 2 >= words.length;
+  return hits >= 2 && hits >= Math.min(3, words.length) && hits * 2 >= words.length;
 }
 
 /** Sentences the checker did not account for. A nonempty list can still leave some out. */
@@ -303,7 +307,10 @@ export async function checkAndRepairProse(args: {
       if (second.failed) return withheldResult(2, first.serious);
       const seriousHit = seriousStillInProse(prose, second.serious);
       const missed = uncoveredSentences(prose, second.claims);
-      if (!seriousHit.length && !missed.length) {
+      const stillFirst = splitProseSentences(prose).filter((sentence) =>
+        first.serious.some((claim) => claimMatchesSentence(claim.c, sentence))
+      );
+      if (!seriousHit.length && !missed.length && !stillFirst.length) {
         return {
           prose,
           records: recordsMarkedRepaired(toClauseRecords(second.claims, repairedSet), replacement),
@@ -315,6 +322,7 @@ export async function checkAndRepairProse(args: {
       }
       const originalSentences = splitProseSentences(args.prose);
       const drop = splitProseSentences(prose).filter((sentence) => {
+        if (stillFirst.includes(sentence)) return true;
         if (seriousHit.some((claim) => claimMatchesSentence(claim.c, sentence))) return true;
         if (!missed.includes(sentence)) return false;
         if (replacement && claimMatchesSentence(sentence, replacement)) return true;
