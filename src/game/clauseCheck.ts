@@ -74,33 +74,25 @@ export function toClauseRecords(
   }));
 }
 
-/** Find the prose sentence that best carries an unsupported claim (for one targeted repair). */
+/**
+ * The prose sentence a repair may replace. Never the first sentence by default.
+ * An exact whole sentence wins. A claim of at least three content words may name
+ * the longer sentence that contains it. A shorter fragment does not.
+ */
 export function sentenceForClaim(prose: string, claim: string): string | null {
   const sentences = splitProseSentences(prose);
-  if (!sentences.length) return null;
-  const needle = claim
-    .replace(/^OUT OF CHARACTER:\s*/i, '')
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .trim();
-  if (!needle) return sentences[0] ?? null;
-  let best: { s: string; score: number } | null = null;
-  for (const s of sentences) {
-    const hay = s.toLowerCase().replace(/\s+/g, ' ');
-    if (hay.includes(needle) || needle.includes(hay.slice(0, Math.min(hay.length, 80)))) {
-      const score = Math.min(hay.length, needle.length);
-      if (!best || score > best.score) best = { s, score };
-    }
+  const said = utterance(claim);
+  if (said.length < 2) return null;
+  const words = contentWords(claim);
+  let best: { sentence: string; rank: number } | null = null;
+  for (const sentence of sentences) {
+    const exact = said === utterance(sentence);
+    const carries = !exact && words.length >= 3 && utterance(sentence).includes(said);
+    if (!exact && !carries && !claimMatchesSentence(claim, sentence)) continue;
+    const rank = (exact ? 1000 : 0) + words.length;
+    if (!best || rank > best.rank) best = { sentence, rank };
   }
-  if (best) return best.s;
-  // Claim may be a paraphrase — fall back to the first sentence that shares ≥3 content words.
-  const words = needle.split(' ').filter((w) => w.length > 3);
-  for (const s of sentences) {
-    const hay = s.toLowerCase();
-    const hits = words.filter((w) => hay.includes(w)).length;
-    if (hits >= Math.min(3, words.length)) return s;
-  }
-  return sentences[0] ?? null;
+  return best?.sentence ?? null;
 }
 
 export interface ClauseCheckPassResult {
@@ -137,11 +129,16 @@ export function claimMatchesSentence(claim: string, sentence: string): boolean {
   const said = utterance(claim);
   if (said.length >= 2 && said === utterance(sentence)) return true;
   const words = contentWords(c);
-  if (words.length < 2) return false;
-  if (s.includes(c)) return true;
-  if (c.includes(s) && s.length >= 12 && contentWords(s).length >= 2) return true;
-  const hits = words.filter((word) => s.includes(word)).length;
-  return hits >= 2 && hits >= Math.min(3, words.length) && hits * 2 >= words.length;
+  const sentenceWords = contentWords(s);
+  // A one-word claim, or a sentence with one content word, only matches as the whole sentence.
+  if (words.length < 2 || sentenceWords.length < 2) return false;
+  const hits = words.filter((word) => sentenceWords.includes(word)).length;
+  // Extra content words in the sentence were not named by the claim.
+  const extras = sentenceWords.filter((word) => !words.includes(word));
+  return extras.length === 0
+    && hits >= 2
+    && hits >= Math.min(3, words.length)
+    && hits * 2 >= words.length;
 }
 
 /** Sentences the checker did not account for. A nonempty list can still leave some out. */

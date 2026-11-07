@@ -3149,13 +3149,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             withTrainLogJob(
               'rewrite',
               async () => (await callGmDurable(`${gmPlayerPayload}\n\n${problem}`)).text,
-              { engine_facts: frozenEngineFacts }
+              { engine_facts: frozenEngineFacts, engine_facts_provenance: 'packet' }
             ),
           repair: (request) =>
             withTrainLogJob(
               'repair',
               () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
-              repairParentExtra({ engine_facts: frozenEngineFacts, repair_pass: 1 })
+              repairParentExtra({ engine_facts: frozenEngineFacts, engine_facts_provenance: 'packet', repair_pass: 1 })
             ),
         });
         for (const r of [...(writerTurn.repairs ?? []), ...(writerTurn.answerRepair ? [writerTurn.answerRepair] : [])]) {
@@ -3225,7 +3225,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   withTrainLogJob(
                     'repair',
                     () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
-                    repairParentExtra({ engine_facts: frozenEngineFacts, repair_pass: 1 })
+                    repairParentExtra({ engine_facts: frozenEngineFacts, engine_facts_provenance: 'packet', repair_pass: 1 })
                   ),
                 engineFact,
               });

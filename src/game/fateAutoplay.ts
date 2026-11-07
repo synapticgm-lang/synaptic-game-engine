@@ -2001,7 +2001,7 @@ Do NOT print dice notation or CODE ENFORCED.
             transportRetries += again.transportRetries;
             return again.text;
           },
-          { engine_facts: frozenEngineFacts }
+          { engine_facts: frozenEngineFacts, engine_facts_provenance: 'packet' }
         );
       },
       repair: async (request) => {
@@ -2016,6 +2016,7 @@ Do NOT print dice notation or CODE ENFORCED.
             async () => callGmRepair(arcState, request, settings),
             repairParentExtra({
               engine_facts: frozenEngineFacts,
+              engine_facts_provenance: 'packet',
               draft: draftMatch?.[1] ?? null,
               flagged_error: flagMatch?.[1]?.trim() ?? null,
               correct_fact: factMatch?.[1]?.trim() ?? null,
@@ -2071,6 +2072,7 @@ Do NOT print dice notation or CODE ENFORCED.
                   async () => callGmRepair(arcState, request, settings),
                   repairParentExtra({
                     engine_facts: frozenEngineFacts,
+                    engine_facts_provenance: 'packet',
                     draft: draftMatch?.[1] ?? null,
                     flagged_error: flagMatch?.[1]?.trim() ?? null,
                     correct_fact: factMatch?.[1]?.trim() ?? null,

@@ -25,6 +25,9 @@ export type TrainLogJob =
 
 export type TrainLogMessage = { role: string; content: string };
 
+/** Where a train row's engine_facts came from. request_state is not the packet freeze. */
+export type EngineFactsProvenance = 'packet' | 'request_state' | 'absent';
+
 export type TrainLogEngineFacts = {
   location: string | null;
   npcs: Array<{ id: string | null; name: string }>;
@@ -64,6 +67,8 @@ export type TrainLogRow = {
   genre: string | null;
   build_stamp: string | null;
   engine_facts?: TrainLogEngineFacts | null;
+  /** packet: frozen with the turn. request_state: read from the call. absent: payload was not facts. */
+  engine_facts_provenance?: EngineFactsProvenance | null;
   judge_scores?: TrainLogJudgeScores | null;
   parent_id?: string | null;
   draft?: string | null;
@@ -89,6 +94,7 @@ export type TrainLogRecordInput = {
   finish_reason?: string | null;
   truncated?: boolean | null;
   engine_facts?: TrainLogEngineFacts | null;
+  engine_facts_provenance?: EngineFactsProvenance | null;
   judge_scores?: TrainLogJudgeScores | null;
   parent_id?: string | null;
   draft?: string | null;
@@ -139,6 +145,7 @@ const lastWriterByTurn = new Map<string, string>();
 type PendingCallMeta = {
   job: TrainLogJob;
   engine_facts?: TrainLogEngineFacts | null;
+  engine_facts_provenance?: EngineFactsProvenance | null;
   parent_id?: string | null;
   draft?: string | null;
   flagged_error?: string | null;
@@ -328,13 +335,30 @@ export function captureTurnEngineFacts(state: unknown): TrainLogEngineFacts | nu
   return structuredClone(facts);
 }
 
-/** Prefer facts frozen with the packet. A missing or unshaped payload falls back to the state in hand. */
-export function engineFactsForTrainRow(sent: unknown, state: unknown): TrainLogEngineFacts | null {
-  if (sent && typeof sent === 'object' && !Array.isArray(sent)) {
-    const facts = sent as TrainLogEngineFacts;
-    if (facts.hp && typeof facts.hp === 'object' && Array.isArray(facts.npcs)) return facts;
+/**
+ * Packet facts win when the caller sent them.
+ * A missing payload is the state on this request, labeled request_state — not a packet freeze.
+ * A payload that is not facts is absent. Mutable state is not copied in to fill the gap.
+ */
+export function engineFactsForTrainRow(
+  sent: unknown,
+  state: unknown
+): { engine_facts: TrainLogEngineFacts | null; engine_facts_provenance: EngineFactsProvenance } {
+  if (sent == null) {
+    return { engine_facts: engineFactsFromState(state), engine_facts_provenance: 'request_state' };
   }
-  return engineFactsFromState(state);
+  if (typeof sent === 'object' && !Array.isArray(sent)) {
+    const facts = sent as TrainLogEngineFacts;
+    if (
+      facts.hp &&
+      typeof facts.hp === 'object' &&
+      !Array.isArray(facts.hp) &&
+      Array.isArray(facts.npcs)
+    ) {
+      return { engine_facts: facts, engine_facts_provenance: 'packet' };
+    }
+  }
+  return { engine_facts: null, engine_facts_provenance: 'absent' };
 }
 
 export function setTrainLogSession(next: Partial<TrainLogSession>): void {
@@ -425,6 +449,7 @@ export function recordModelCall(input: TrainLogRecordInput): TrainLogRow | null 
 
     if (job === 'writer' || job === 'repair' || job === 'rewrite') {
       row.engine_facts = input.engine_facts ?? null;
+      if (input.engine_facts_provenance) row.engine_facts_provenance = input.engine_facts_provenance;
     }
     if (input.judge_scores) row.judge_scores = input.judge_scores;
     if (input.parent_id) row.parent_id = input.parent_id;
@@ -510,6 +535,11 @@ export function appendTrainLogRows(incoming: unknown): TrainLogRow[] {
         genre: r.genre ?? session.genre ?? null,
         build_stamp: r.build_stamp ?? session.build_stamp ?? FALLBACK_BUILD_STAMP,
         ...(r.engine_facts ? { engine_facts: r.engine_facts } : {}),
+        ...(r.engine_facts_provenance === 'packet' ||
+        r.engine_facts_provenance === 'request_state' ||
+        r.engine_facts_provenance === 'absent'
+          ? { engine_facts_provenance: r.engine_facts_provenance }
+          : {}),
         ...(r.judge_scores ? { judge_scores: r.judge_scores } : {}),
         ...(r.parent_id ? { parent_id: r.parent_id } : {}),
         ...(r.draft != null ? { draft: r.draft } : {}),

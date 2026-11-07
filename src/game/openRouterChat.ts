@@ -8,6 +8,7 @@ import { OPENROUTER_DEEPSEEK_V41_FLASH } from './modelIds';
 import {
   currentTrainLogMeta,
   recordModelCall,
+  type EngineFactsProvenance,
   type TrainLogEngineFacts,
   type TrainLogJob,
   type TrainLogRow,
@@ -402,6 +403,7 @@ export function recordCompletedChatCall(args: {
   finish_reason?: string | null;
   truncated?: boolean | null;
   engine_facts?: TrainLogEngineFacts | null;
+  engine_facts_provenance?: EngineFactsProvenance | null;
 }): TrainLogRow | null {
   try {
     const meta = currentTrainLogMeta();
@@ -421,6 +423,7 @@ export function recordCompletedChatCall(args: {
       finish_reason: args.finish_reason,
       truncated: args.truncated,
       engine_facts: args.engine_facts ?? meta?.engine_facts ?? null,
+      engine_facts_provenance: args.engine_facts_provenance ?? meta?.engine_facts_provenance ?? null,
       parent_id: meta?.parent_id,
       draft: meta?.draft,
       flagged_error: meta?.flagged_error,

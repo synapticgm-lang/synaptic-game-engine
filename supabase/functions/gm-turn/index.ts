@@ -430,6 +430,7 @@ Deno.serve(async (req) => {
           ? 'check'
           : 'writer';
   const rowsBefore = wantCallLog ? peekTrainLogRows().length : 0;
+  const loggedFacts = engineFactsForTrainRow(body.trainEngineFacts, body.state);
   if (wantCallLog) {
     setTrainLogSession({
       run_id: body.trainRunId ?? null,
@@ -440,7 +441,8 @@ Deno.serve(async (req) => {
       build_stamp: body.trainBuildStamp ?? null,
     });
     pushTrainLogJob(trainJob, {
-      engine_facts: engineFactsForTrainRow(body.trainEngineFacts, body.state),
+      engine_facts: loggedFacts.engine_facts,
+      engine_facts_provenance: loggedFacts.engine_facts_provenance,
       ...(body.trainParentId ? { parent_id: body.trainParentId } : {}),
     });
   }
@@ -511,7 +513,8 @@ Deno.serve(async (req) => {
             finish_reason: read.issue === 'cut-off' ? 'length' : null,
             truncated: read.issue === 'cut-off',
             job: trainJob,
-            engine_facts: engineFactsForTrainRow(body.trainEngineFacts, body.state),
+            engine_facts: loggedFacts.engine_facts,
+            engine_facts_provenance: loggedFacts.engine_facts_provenance,
           });
         }
         return read;

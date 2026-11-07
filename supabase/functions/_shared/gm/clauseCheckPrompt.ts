@@ -35,15 +35,23 @@ PLAYER claims_not_true narrated as true, remembered, or confirmed is kind "fact"
 Reply JSON {"claims":[{"c":"claim","kind":"colour|fact","support":"quoted FACTS text or empty","severity":"serious|minor"}]}.
 severity applies to unsupported facts: serious = changes what the player would believe about the world, people, quests, items, possessions or rules; minor = small specific with no later effect.`;
 
+function claimString(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const text = value.trim();
+  return text || null;
+}
+
 function normalizeClaim(raw: unknown): ClauseClaim | null {
-  if (!raw || typeof raw !== 'object') return null;
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
   const o = raw as Record<string, unknown>;
-  const c = String(o.c ?? o.claim ?? '').trim();
+  const c = claimString(o.c ?? o.claim);
   if (!c) return null;
-  const kindRaw = String(o.kind ?? '').toLowerCase();
+  // A missing or non-string kind is a fact. Only the words colour/color are colour.
+  const kindRaw = typeof o.kind === 'string' ? o.kind.trim().toLowerCase() : '';
   const kind: ClauseClaim['kind'] = kindRaw === 'colour' || kindRaw === 'color' ? 'colour' : 'fact';
-  const support = String(o.support ?? '').trim();
-  const sevRaw = String(o.severity ?? '').toLowerCase();
+  // Support is a quote from FACTS or empty. true, 1, and {} are not quotes.
+  const support = typeof o.support === 'string' ? o.support.trim() : '';
+  const sevRaw = typeof o.severity === 'string' ? o.severity.trim().toLowerCase() : '';
   const severity: ClauseClaim['severity'] =
     sevRaw === 'minor' ? 'minor' : sevRaw === 'serious' ? 'serious' : undefined;
   return { c, kind, support, ...(severity ? { severity } : {}) };
