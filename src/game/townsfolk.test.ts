@@ -43,7 +43,8 @@ describe('townsfolk', () => {
   it('a new place gets its people once, each with a sheet, saved at that place', () => {
     const inn = atInn();
     const town = inn.npcMemories!.filter((m) => m.sheet);
-    expect(town).toHaveLength(2);
+    expect(town.length).toBeGreaterThanOrEqual(1);
+    expect(town.length).toBeLessThanOrEqual(3);
     for (const m of town) {
       expect(m.location).toBe('Greyhollow Inn');
       expect(m.met).toBe(false);
@@ -60,7 +61,7 @@ describe('townsfolk', () => {
     const back = seedTownsfolkHere({ ...away, turn: 9, currentLocation: 'Greyhollow Inn' });
     const again = back.npcMemories!.filter((m) => m.location === 'Greyhollow Inn');
     expect(again).toEqual(people);
-    expect(townsfolkWriterLines(back, compileRefEnum(back))).toHaveLength(2);
+    expect(townsfolkWriterLines(back, compileRefEnum(back))).toHaveLength(people.length);
   });
 
   it('the same place and campaign always makes the same people', () => {
@@ -102,8 +103,9 @@ describe('townsfolk', () => {
     const walked = { ...opened, turn: 5, currentLocation: 'Greyhollow Inn' } as GameState;
     const prepared = prepareWriterInputWithTownsfolk(walked, 'Look around');
     const people = prepared.state.npcMemories!.filter((m) => m.sheet);
-    expect(people).toHaveLength(2);
-    expect(prepared.packet.townsfolk).toHaveLength(2);
+    expect(people.length).toBeGreaterThanOrEqual(1);
+    expect(people.length).toBeLessThanOrEqual(3);
+    expect(prepared.packet.townsfolk).toHaveLength(people.length);
     expect(prepared.state.completedEvent).toBe(prepared.packet);
     expect(prepared.writerFacing).toBe(formatWriterFacingEvent(prepared.packet));
     for (const m of people) {
@@ -121,7 +123,8 @@ describe('townsfolk', () => {
       const tok = refs.find((r) => r.display === m.npcName)!.tok;
       expect(lines.filter((l) => l.startsWith(`@${tok} `))).toEqual([expect.stringContaining(m.npcName)]);
     }
-    expect(townsfolkWriterLines(inn, refs.filter((r) => r.display !== 'Edda Merrow' && !r.id.startsWith('present:')))).toEqual([]);
+    const names = new Set(inn.npcMemories!.filter((m) => m.sheet).map((m) => m.npcName));
+    expect(townsfolkWriterLines(inn, refs.filter((r) => !names.has(r.display)))).toEqual([]);
   });
 
   it('a place with no townsfolk leaves the packet as it was', () => {

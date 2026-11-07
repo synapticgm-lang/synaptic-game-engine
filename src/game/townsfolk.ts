@@ -19,7 +19,21 @@ import { ensureNpcAgenda } from './npcMemory';
 import { applyCompanionOwnActions } from './companionAgency';
 import { peopleHere } from './chipLegality';
 
-const PEOPLE_PER_PLACE: Record<SheetPlace, number> = { cell: 1, dungeon: 0, road: 1, camp: 2, inn: 2, town: 2 };
+/** How many generated people a place can hold. Tuning, not a measured balance pass. A camp, inn, or town keeps at least one person; a cell or road may be empty. */
+export const PLACE_POPULATION: Record<SheetPlace, { min: number; max: number }> = {
+  cell: { min: 0, max: 1 },
+  dungeon: { min: 0, max: 0 },
+  road: { min: 0, max: 1 },
+  camp: { min: 1, max: 2 },
+  inn: { min: 1, max: 3 },
+  town: { min: 1, max: 3 },
+};
+
+export function populationFor(place: SheetPlace, rng: () => number): number {
+  const band = PLACE_POPULATION[place];
+  const span = band.max - band.min + 1;
+  return band.min + Math.floor(rng() * span);
+}
 
 function placeKey(place: string): string {
   return place.replace(/\s+/g, ' ').trim().toLowerCase();
@@ -54,12 +68,13 @@ export function seedTownsfolkHere(state: GameState): GameState {
   if (j && j.legsDone < j.legsTotal) return state;
 
   const place = sheetPlaceFor(here);
-  // A dungeon's rooms hold its foes and loot, not townsfolk.
-  if (state.activeDungeon || PEOPLE_PER_PLACE[place] === 0) return { ...state, townsfolkPlaces: [...done, key] };
   const rng = createHashRng('townsfolk', state.campaignBibleId ?? '', key);
+  const count = populationFor(place, rng);
+  // A dungeon's rooms hold its foes and loot, not townsfolk. An empty roll adds nobody.
+  if (state.activeDungeon || count === 0) return { ...state, townsfolkPlaces: [...done, key] };
   const taken = takenNames(state);
   const people: NpcMemory[] = [];
-  for (let i = 0; i < PEOPLE_PER_PLACE[place]; i++) {
+  for (let i = 0; i < count; i++) {
     const name = pickPersonName(rng, taken);
     if (!name) continue;
     const sheet = pickNpcSheet(name, place, { campaignId: state.campaignBibleId });

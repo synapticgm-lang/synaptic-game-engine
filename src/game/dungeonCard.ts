@@ -37,6 +37,7 @@ import { CHEST_GRADE_LABELS, lootableLockedFor } from './dungeonSeed';
 import { resolveLockAttempt } from './lockAttempt';
 import { climbFloor } from './rules/litrpgFloors';
 import { BIOME_FAMILIES, HUB_TEXT_BIOMES, THREAT_MODIFIERS, biomeKey, type ThreatModifier } from '@/data/dungeonBiomes';
+import { siteClearWonHere } from './questHooks';
 import {
   needsFirstFightSafety,
   openFirstFightGate,
@@ -242,6 +243,45 @@ function findPlace(state: GameState, site: string): PlaceRecord | undefined {
   );
 }
 
+/** Structural mix for one generated card. These rates are seeded defaults, not a measured balance pass. */
+export type DungeonCardProfile = {
+  needBoss: boolean;
+  needCache: boolean;
+  /** Share of ordinary rooms that hold one foe. Zero is a noncombat delve. */
+  mobChance: number;
+};
+
+/**
+ * High-threat sites, and any site whose live quest asks for a clear or a boss, keep a boss
+ * and foes in some rooms. Other sites are a boss delve a bit under half the time. The rest
+ * are a cache hunt: a chest, a trap, and a secret, and no foes. A boss delve still has a
+ * cache about half the time.
+ */
+export function dungeonCardProfile(seed: string, danger: number, forceCombat: boolean): DungeonCardProfile {
+  const rng = createHashRng(seed, 'dungeon-profile');
+  const roll = rng();
+  const boss = forceCombat || danger >= 3 || roll < 0.45;
+  if (boss) return { needBoss: true, needCache: rng() < 0.5, mobChance: 0.55 };
+  return { needBoss: false, needCache: true, mobChance: 0 };
+}
+
+/** A live objective that can only be won by a fight at this site. */
+export function siteNeedsFight(state: GameState, site: string): boolean {
+  const name = site.trim().toLowerCase();
+  if (!name) return false;
+  return (state.quests ?? []).some(
+    (q) =>
+      (q.status === 'active' || q.status === 'available') &&
+      (q.objectives ?? []).some((o) => {
+        if (o.completed) return false;
+        const text = o.description ?? '';
+        if (siteClearWonHere(text, site, 'a lurker', true)) return true;
+        const lower = text.toLowerCase();
+        return lower.includes(name) && /\b(boss|mini-boss|stockboy)\b/.test(lower);
+      })
+  );
+}
+
 /** Build the card for a site. Deterministic from the save seed + site name. */
 export function buildDungeonCard(state: GameState, site: string): ActiveDungeonState {
   const hub = siteHub(state, site);
@@ -266,7 +306,20 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
   // 28j — layout from the generic interior generator: seeded template pick, optional stacked floors
   // (stairs / ladders), seeded extra doors, optional secret room. Cached on the card / place record.
   const floors = siteTheme?.oneFloor ? 1 : danger >= 3 || MULTI_FLOOR_WORDS.test(`${name} ${hub?.blurb ?? ''}`) ? 2 : rng() < 0.3 ? 2 : 1;
-  const gen = generateInterior({ seed, key: name, kind: 'dungeon', tags: [siteTag], floors, needBoss: true, needCache: true, secretChance: 0.6 });
+  const camp = /\bcamp\b/i.test(name);
+  const profile = camp
+    ? { needBoss: true, needCache: true, mobChance: 1 }
+    : dungeonCardProfile(seed, danger, siteNeedsFight(state, name));
+  const gen = generateInterior({
+    seed,
+    key: name,
+    kind: 'dungeon',
+    tags: [siteTag],
+    floors,
+    needBoss: profile.needBoss,
+    needCache: profile.needCache,
+    secretChance: 0.6,
+  });
   const secretOf = new Map(gen.secrets.map((x) => [x.fromId, x.id]));
 
   const middle = siteTheme ? [...theme.rooms, ...family.rooms] : [...theme.rooms];
@@ -334,15 +387,18 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
       for (const m of ctx.modifiers) tags.push(`threat:${m.tag}`);
     }
     if (r.role === 'room' && !r.landing) {
-      tags.push('combat');
-      const card = pick(trash, rng);
-      hidden.mobs.push({
-        id: `${id}__${card?.id ?? 'foe'}`,
-        name: trashFromHub && card?.foeName ? card.foeName : creature('trash'),
-        level,
-        role: 'trash',
-        spawned: false,
-      });
+      const hostile = rng() < profile.mobChance;
+      if (hostile) tags.push('combat');
+      if (hostile) {
+        const card = pick(trash, rng);
+        hidden.mobs.push({
+          id: `${id}__${card?.id ?? 'foe'}`,
+          name: trashFromHub && card?.foeName ? card.foeName : creature('trash'),
+          level,
+          role: 'trash',
+          spawned: false,
+        });
+      }
       if (rng() < 0.3) {
         hidden.traps.push({
           id: `${id}_trap`,
@@ -381,7 +437,7 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
         label: `${CHEST_GRADE_LABELS[2]} chest`,
         opened: false,
         loot: { rarity: 'Common', qty: 2, grade: 2 },
-        lock: { skill: 'thievery', rank: 1 },
+        lock: profile.needBoss ? { skill: 'thievery', rank: 1 } : undefined,
       });
       if (!secretOf.has(id)) hidden.secrets.push({ id: `${id}_secret`, clue: 'a false panel behind the shelves', revealed: false });
     }
@@ -427,7 +483,7 @@ export function buildDungeonCard(state: GameState, site: string): ActiveDungeonS
     visitedNodeIds: [gen.entryId],
     clearedNodeIds: [],
     nodes,
-    dungeonRules: { bossNode: gen.bossId ?? nodes[nodes.length - 1]!.id },
+    dungeonRules: gen.bossId ? { bossNode: gen.bossId } : {},
   };
 }
 

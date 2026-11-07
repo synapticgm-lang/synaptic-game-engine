@@ -236,7 +236,8 @@ export function seedDungeonState(
   });
 
   let bossNode = dungeon.dungeonRules?.bossNode;
-  if (!bossNode && nodes.length) {
+  const hasBoss = nodes.some((n) => (n.hidden?.mobs ?? []).some((m) => m.role === 'boss' || m.role === 'miniBoss'));
+  if (!bossNode && hasBoss && nodes.length) {
     bossNode = nodes[nodes.length - 1].id;
   }
 
