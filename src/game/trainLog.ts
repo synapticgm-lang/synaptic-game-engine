@@ -9,8 +9,8 @@ function isCutOffFinish(reason: unknown): boolean {
   return /^(?:length|max_tokens|MAX_TOKENS)$/.test(String(reason ?? ''));
 }
 
-/** Avoid importing runManifest (edge graph); session / caller may override. */
-const FALLBACK_BUILD_STAMP = 'trainlog';
+/** Avoid importing runManifest (edge graph); session / caller may override. Not a real build. */
+export const FALLBACK_BUILD_STAMP = 'trainlog';
 
 export type TrainLogJob =
   | 'writer'

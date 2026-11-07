@@ -297,7 +297,7 @@ export async function invokeGmProxy(params: {
     if (trainLog && Array.isArray((payload as { callLog?: unknown }).callLog)) {
       const incoming = (payload as { callLog: unknown }).callLog;
       if (isAutoplayTestLabSession()) appendTrainLogRows(incoming);
-      else appendConsentingCallLog(incoming);
+      else appendConsentingCallLog(incoming, session?.user?.id ? [session.user.id] : []);
     }
     if (!res.ok) {
       // gm-turn already re-asked the same model once; the caller's plain-prose last resort takes over.

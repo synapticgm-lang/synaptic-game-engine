@@ -333,4 +333,51 @@ describe('consenting player turns through the existing logger', () => {
     setPlayerTrainingPreference(null);
     expect(appendConsentingCallLog([{ ...base, id: 'hosted-4', turn_no: 9 }])).toEqual([]);
   });
+
+  it('rejects the placeholder stamp, unkeyed writers, a same-batch twin, and scrubs the account id', () => {
+    const pref = grantPlayerTrainingOptIn('t3', ack)!;
+    setPlayerTrainingPreference(pref);
+    const base = {
+      id: 'hosted-a',
+      job: 'writer' as const,
+      messages: [
+        { role: 'user', content: 'player@example.com Look user-abcdef12' },
+        { role: 'assistant', content: 'You look.' },
+      ],
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      finish_reason: 'stop',
+      run_id: 'hosted-gate',
+      turn_no: 1,
+      mode: 'dnd' as const,
+      build_stamp: '2026-11-03e',
+      engine_facts: { ...facts, location: 'Hall user-abcdef12' },
+    };
+    expect(appendConsentingCallLog([{ ...base, build_stamp: 'trainlog' }])).toEqual([]);
+    expect(appendConsentingCallLog([{ ...base, id: 'no-run', run_id: null, turn_no: null }])).toEqual([]);
+    const stored = appendConsentingCallLog(
+      [
+        base,
+        { ...base, id: 'hosted-b' },
+        { ...base, id: 'hosted-c', turn_no: 2, messages: [{ role: 'user', content: 'Wait' }, { role: 'assistant', content: 'You wait.' }] },
+        { ...base, id: 'thought', turn_no: 3, messages: [{ role: 'assistant', content: '<think>hidden' }] },
+      ],
+      ['user-abcdef12'],
+    );
+    expect(stored.map((r) => r.turn_no)).toEqual([1, 2]);
+    const packed = JSON.stringify(stored);
+    expect(packed).not.toContain('player@example.com');
+    expect(packed).not.toContain('user-abcdef12');
+    expect(packed).toContain('[redacted-email]');
+    expect(packed).toContain('[redacted-account]');
+    expect(recordConsentingPlayerCall(pref, {
+      assistant: 'Hi',
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      build_stamp: 'trainlog',
+      engine_facts: facts,
+      system: 'S',
+      user: 'U',
+      run_id: 'r',
+      turn_no: 8,
+    })).toBeNull();
+  });
 });

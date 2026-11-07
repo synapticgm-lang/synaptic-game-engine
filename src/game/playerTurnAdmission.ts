@@ -9,6 +9,7 @@ import {
 } from './modelIds';
 import {
   appendTrainLogRows,
+  FALLBACK_BUILD_STAMP,
   peekTrainLogRows,
   recordModelCall,
   type TrainLogRecordInput,
@@ -361,6 +362,43 @@ function scrubText(text: string, accountIds: readonly string[]): string | null {
   return next;
 }
 
+function realBuildStamp(stamp: unknown): boolean {
+  const s = String(stamp ?? '').trim();
+  return s.length > 0 && s !== FALLBACK_BUILD_STAMP;
+}
+
+/** A writer turn needs a real run and turn. Null does not mean "the same turn". */
+function writerTurnKey(runId: unknown, turnNo: unknown): string | null {
+  if (typeof runId !== 'string' || !runId.trim()) return null;
+  if (typeof turnNo !== 'number' || !Number.isFinite(turnNo)) return null;
+  return `${runId.trim()}\0${turnNo}`;
+}
+
+function scrubValue(value: unknown, accountIds: readonly string[]): unknown | null {
+  if (value == null || typeof value !== 'object') {
+    return typeof value === 'string' ? scrubText(value, accountIds) : value;
+  }
+  if (Array.isArray(value)) {
+    const next = [];
+    for (const item of value) {
+      const clean = scrubValue(item, accountIds);
+      if (clean === null && item != null) return null;
+      next.push(clean);
+    }
+    return next;
+  }
+  if (value && typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [key, item] of Object.entries(value)) {
+      const clean = scrubValue(item, accountIds);
+      if (clean === null && item != null) return null;
+      out[key] = clean;
+    }
+    return out;
+  }
+  return value;
+}
+
 /** One consenting gameplay call through the existing logger. Off, or a bad row, stores nothing. */
 export function recordConsentingPlayerCall(
   pref: PlayerTrainingPreference | null,
@@ -369,14 +407,18 @@ export function recordConsentingPlayerCall(
   if (!playerTrainingCaptureAllowed(pref)) return null;
   const model = (input.teacher_model ?? '').trim();
   if (!CORPUS_WRITER_IDS.has(model)) return null;
-  if (!input.build_stamp?.trim() || !input.engine_facts) return null;
+  if (!realBuildStamp(input.build_stamp) || !input.engine_facts) return null;
   if (input.truncated) return null;
   if (/^(?:length|max_tokens|error|content_filter)$/i.test(input.finish_reason ?? '')) return null;
   const job = input.job ?? 'writer';
-  if (job === 'writer' && peekTrainLogRows().some((r) => r.job === 'writer' && r.run_id === (input.run_id ?? null) && r.turn_no === (input.turn_no ?? null))) {
+  const turnKey = writerTurnKey(input.run_id, input.turn_no);
+  if (job === 'writer' && !turnKey) return null;
+  if (job === 'writer' && peekTrainLogRows().some((r) => r.job === 'writer' && writerTurnKey(r.run_id, r.turn_no) === turnKey)) {
     return null;
   }
   const accountIds = input.accountIds ?? [];
+  const facts = scrubValue(input.engine_facts, accountIds);
+  if (facts === null) return null;
   const system = input.system == null ? null : scrubText(input.system, accountIds);
   const user = input.user == null ? null : scrubText(input.user, accountIds);
   const assistant = scrubText(input.assistant, accountIds);
@@ -399,36 +441,47 @@ export function recordConsentingPlayerCall(
     user: user ?? undefined,
     assistant,
     messages,
+    engine_facts: facts as TrainLogRecordInput['engine_facts'],
     example_source: 'player',
   });
 }
 
 /** Hosted callLog for a consenting player. Lab sessions keep appendTrainLogRows. */
-export function appendConsentingCallLog(incoming: unknown): TrainLogRow[] {
+export function appendConsentingCallLog(incoming: unknown, accountIds: readonly string[] = []): TrainLogRow[] {
   if (!playerTrainingCaptureAllowed(activePreference)) return [];
   if (!Array.isArray(incoming)) return [];
   const kept: unknown[] = [];
+  const seenWriters = new Set<string>();
   for (const raw of incoming) {
     if (!raw || typeof raw !== 'object') continue;
     const row = raw as Partial<TrainLogRow>;
     if (row.truncated) continue;
     if (/^(?:length|max_tokens|error|content_filter)$/i.test(String(row.finish_reason ?? ''))) continue;
-    if (!String(row.build_stamp ?? '').trim() || !row.engine_facts) continue;
+    if (!realBuildStamp(row.build_stamp) || !row.engine_facts) continue;
     if (!CORPUS_WRITER_IDS.has(String(row.teacher_model ?? '').trim())) continue;
+    const facts = scrubValue(row.engine_facts, accountIds);
+    if (facts === null) continue;
     const messages = Array.isArray(row.messages) ? row.messages : [];
     let secret = false;
     const clean = messages.map((m) => {
-      const content = scrubText(String(m?.content ?? ''), []);
+      const content = scrubText(String(m?.content ?? ''), accountIds);
       if (content === null) secret = true;
       return { role: String(m?.role ?? 'user'), content: content ?? '' };
     });
     if (secret) continue;
-    const packed = JSON.stringify(clean);
-    if (SECRET.test(packed) || PRIVATE_THOUGHT.test(packed)) continue;
-    if (row.job === 'writer' && peekTrainLogRows().some((r) => r.job === 'writer' && r.run_id === (row.run_id ?? null) && r.turn_no === (row.turn_no ?? null))) {
-      continue;
+    const turnKey = writerTurnKey(row.run_id, row.turn_no);
+    if (row.job === 'writer') {
+      if (!turnKey || seenWriters.has(turnKey)) continue;
+      if (peekTrainLogRows().some((r) => r.job === 'writer' && writerTurnKey(r.run_id, r.turn_no) === turnKey)) continue;
+      seenWriters.add(turnKey);
     }
-    kept.push({ ...row, messages: clean, judge_scores: undefined, example_source: 'player' });
+    kept.push({
+      ...row,
+      messages: clean,
+      engine_facts: facts,
+      judge_scores: undefined,
+      example_source: 'player',
+    });
   }
   return appendTrainLogRows(kept);
 }
