@@ -2,8 +2,11 @@
 /**
  * Distillation collector: keeps only checker-passing turns of fate-autoplay runs.
  * Each run needs factcheck.json (npm run fact-check) and thumbs.json from `autoThumbs --notes`.
- * A turn passes when: training_ok === true, turnCheck has no P0, factCheck has no flags, the judge
- * marked it (up or unmarked; never-marked and down fail), the thumbs row is a paired training_label
+ * A turn is copied only when the training-import gate returns a candidate.
+ * A stored training_ok flag is not enough. A missing example_source is not a test row.
+ * This script does not approve a row and does not modify the run directory.
+ * A candidate also needs no turnCheck P0, no factCheck flags, and a judge that
+ * marked it (up or unmarked; never-marked and down fail). The thumbs row is a paired training_label
  * (RC-J1: absolute single-run notes are diagnostic only), and the thumbs row has no P0 or local down flag
  * of a writer kind (judgeNotes WRITER_FLAG_KINDS; run pacing, chips and maps are not the writer's).
  *
@@ -13,6 +16,7 @@
 import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
 import { rowProvenance, WELLBEING_NOTE } from '../src/game/modelIds.ts';
+import { trainingImportDecision, trainingImportFields, trainingImportSink } from '../src/game/trainingImport.ts';
 import { isWriterFlag } from './fate-autoplay/judgeNotes.mjs';
 
 const argv = process.argv.slice(2);
@@ -67,8 +71,16 @@ for (const dir of dirs) {
   for (const t of turns) {
     const th = thumbsByTurn.get(t.turn);
     const f = fcByTurn.get(t.turn);
+    const fields = trainingImportFields({
+      turn: t,
+      buildStamp: meta.runManifest?.buildStamp ?? null,
+      mode: meta.engineMode,
+      excludedSourceId: meta.source ?? meta.sourceId,
+      factcheckRow: f,
+    });
+    const decision = trainingImportDecision(fields);
     const prov = rowProvenance({
-      teacherModel: t.teacher_model ?? t.writerUsage?.modelId ?? meta.writer?.model ?? null,
+      teacherModel: fields.teacherModel,
       mode: meta.engineMode,
       judgeModel: th?.judge_model ?? null,
       wellbeingFlagged: t.training_note === WELLBEING_NOTE,
@@ -79,7 +91,8 @@ for (const dir of dirs) {
     attempted++;
     if (typeof t.writerUsage?.costUsd === 'number') writerCostUsd += t.writerUsage.costUsd;
     const why = [];
-    if (prov.training_ok !== true) why.push('not training_ok');
+    if (trainingImportSink(decision.status) !== 'eligible') why.push(...decision.reasons);
+    else if (prov.training_ok !== true) why.push('not training_ok');
     if (!String(t.gmText ?? '').trim()) why.push('empty prose');
     if (t.error) why.push('turn error');
     if ((t.turnCheck?.p0 ?? []).length) why.push('turnCheck P0');
@@ -104,6 +117,9 @@ for (const dir of dirs) {
       OUT,
       JSON.stringify({
         ...prov,
+        admitted: false,
+        admission_status: decision.status,
+        admission_reasons: decision.reasons,
         batch: Number(batch),
         runId,
         buildStamp: meta.runManifest?.buildStamp ?? null,

@@ -32,6 +32,7 @@ writeFileSync(
     location: 'Hall',
     gmText: 'You look.',
     teacher_model: 'deepseek/deepseek-v4.1-flash',
+    training_ok: true,
     writerUsage: { tokensIn: 10, tokensOut: 5, tokensCached: 0, modelId: 'deepseek/deepseek-v4.1-flash' },
   }) + '\n'
 );
@@ -60,7 +61,18 @@ if (res.status !== 0) {
   process.exit(res.status ?? 1);
 }
 
-const line = readFileSync(outTurns, 'utf8').trim().split(/\r?\n/).pop();
+const outAudit = join(outDir, 'audit.jsonl');
+const accepted = existsSync(outTurns) ? readFileSync(outTurns, 'utf8').trim() : '';
+if (accepted) {
+  console.error('source-less fixture was written to the eligible file');
+  process.exit(1);
+}
+const auditText = existsSync(outAudit) ? readFileSync(outAudit, 'utf8').trim() : '';
+const line = auditText.split(/\r?\n/).filter(Boolean).pop();
+if (!line) {
+  console.error('source-less fixture produced no audit row');
+  process.exit(1);
+}
 const row = JSON.parse(line);
 const required = [
   'pairKey',
@@ -77,10 +89,25 @@ const required = [
   'training_ok',
   'teacher_model',
   'provider',
+  'admitted',
+  'admission_status',
+  'admission_reasons',
 ];
 const missing = required.filter((k) => !(k in row));
 if (missing.length) {
   console.error('writerDataset row missing keys:', missing.join(', '));
+  process.exit(1);
+}
+if (row.admitted !== false || row.admission_status !== 'audit') {
+  console.error('source-less fixture was admitted', row.admission_status);
+  process.exit(1);
+}
+if (!row.admission_reasons.includes('missing source') || !row.admission_reasons.includes('stored training_ok is not consent')) {
+  console.error('audit reasons', row.admission_reasons);
+  process.exit(1);
+}
+if (row.training_ok !== true) {
+  console.error('licence flag should stay visible on the audit row');
   process.exit(1);
 }
 // q71 must not require calls.jsonl fields on the dataset row.
@@ -90,9 +117,10 @@ for (const banned of ['messages', 'job', 'judge_scores', 'engine_facts']) {
     process.exit(1);
   }
 }
-console.log('writerDataset row keys OK; no new required trainLog fields');
+console.log('writerDataset row keys OK; source-less row stayed in audit');
 
 if (hadOut && existsSync(backup)) writeFileSync(outTurns, readFileSync(backup));
 else if (!hadOut && existsSync(outTurns)) writeFileSync(outTurns, '');
 if (existsSync(backup)) rmSync(backup);
+if (existsSync(outAudit)) rmSync(outAudit);
 rmSync(fixture, { recursive: true, force: true });

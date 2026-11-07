@@ -1,0 +1,174 @@
+import { spawnSync } from 'node:child_process';
+import { describe, expect, it } from 'vitest';
+import { OPENROUTER_DEEPSEEK_V41_FLASH, WELLBEING_NOTE } from './modelIds';
+import { PLAYER_CAPTURE_ENABLED, VERIFIED_TRAINING_MODEL_IDS, type ConsentRecord } from './playerTurnAdmission';
+import {
+  trainingImportDecision,
+  trainingImportFields,
+  trainingImportSink,
+  type TrainingImportRow,
+} from './trainingImport';
+
+const FLASH = OPENROUTER_DEEPSEEK_V41_FLASH;
+const FIXTURE_IDS = new Set([FLASH]);
+
+function consent(): ConsentRecord {
+  return {
+    ref: 'consent-1',
+    subject: 'this-player',
+    commercialTraining: true,
+    retentionExplained: true,
+    deleteExplained: true,
+    accessExplained: true,
+  };
+}
+
+function ready(over: Partial<TrainingImportRow> = {}): TrainingImportRow {
+  return {
+    example_source: 'test',
+    teacherModel: FLASH,
+    storedTrainingOk: true,
+    buildStamp: '2026-11-03e',
+    mode: 'litrpg',
+    hasFacts: true,
+    factcheckRow: true,
+    factFlags: 0,
+    turnP0: 0,
+    prose: 'The hall is quiet.',
+    ...over,
+  };
+}
+
+describe('training import gate', () => {
+  it('keeps capture off and the verified licence allowlist empty', () => {
+    expect(PLAYER_CAPTURE_ENABLED).toBe(false);
+    expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
+  });
+
+  it('keeps a stored licence flag with no source in audit', () => {
+    const decision = trainingImportDecision(ready({
+      example_source: undefined,
+      teacherModel: 'accounts/fireworks/models/deepseek-v4p1-flash',
+      storedTrainingOk: true,
+    }));
+    expect(decision.status).toBe('audit');
+    expect(decision.reasons).toContain('missing source');
+    expect(decision.reasons).toContain('stored training_ok is not consent');
+    expect(trainingImportSink(decision.status)).toBe('audit');
+  });
+
+  it('does not treat a missing player tag as a test row or as consent', () => {
+    const decision = trainingImportDecision(ready({ example_source: undefined }));
+    expect(decision.status).toBe('audit');
+    expect(decision.status).not.toBe('candidate');
+  });
+
+  it('quarantines a proven test row while the allowlist is empty', () => {
+    const decision = trainingImportDecision(ready());
+    expect(decision.status).toBe('quarantine');
+    expect(decision.reasons).toEqual(['served model has no verified training licence']);
+    expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
+  });
+
+  it('accepts a test row only inside an isolated fixture allowlist', () => {
+    const decision = trainingImportDecision(ready(), FIXTURE_IDS);
+    expect(decision.status).toBe('candidate');
+    expect(decision.reasons).toEqual([]);
+    expect(trainingImportSink(decision.status)).toBe('eligible');
+    expect(VERIFIED_TRAINING_MODEL_IDS.size).toBe(0);
+    expect(FIXTURE_IDS.has('accounts/fireworks/models/deepseek-v4p1-flash')).toBe(false);
+  });
+
+  it('rejects a player row without consent and accepts one only when the fixture licence also passes', () => {
+    expect(trainingImportDecision(ready({
+      example_source: 'player',
+      consentRef: 'consent-1',
+    }), FIXTURE_IDS).reasons).toContain('player turn has no matching consent');
+    expect(trainingImportDecision(ready({
+      example_source: 'player',
+      consent: { optedIn: true, consentRef: 'consent-1', explainedFullPayload: true },
+      consentRef: 'consent-1',
+    }), FIXTURE_IDS).status).toBe('rejected');
+    const admitted = trainingImportDecision(ready({
+      example_source: 'player',
+      consent: consent(),
+      consentRef: 'consent-1',
+    }), FIXTURE_IDS);
+    expect(admitted.status).toBe('candidate');
+    expect(trainingImportDecision(ready({
+      example_source: 'player',
+      consent: consent(),
+      consentRef: 'consent-1',
+    })).status).toBe('quarantine');
+  });
+
+  it('does not let the licence table or an alias through the empty allowlist', () => {
+    expect(trainingImportDecision(ready({
+      teacherModel: 'DS4.1Flash',
+    }), new Set(['DS4.1Flash'])).status).toBe('quarantine');
+    expect(trainingImportDecision(ready({
+      teacherModel: 'openai/gpt-5-mini',
+      storedTrainingOk: false,
+    }), new Set(['openai/gpt-5-mini'])).status).toBe('quarantine');
+  });
+
+  it('keeps historical, excluded, wellbeing, and quality failures out of the eligible file', () => {
+    expect(trainingImportDecision(ready({ historical: true }), FIXTURE_IDS).status).toBe('audit');
+    expect(trainingImportDecision(ready({ mode: 'pyoa' }), FIXTURE_IDS).reasons).toContain('PYOA is not a training mode');
+    expect(trainingImportDecision(ready({ excludedSourceId: 'community_mega' }), FIXTURE_IDS).reasons).toContain('copyrighted novel chapters');
+    expect(trainingImportDecision(ready({ wellbeingFlagged: true }), FIXTURE_IDS).reasons).toEqual([WELLBEING_NOTE]);
+    expect(trainingImportDecision(ready({ factFlags: 1 }), FIXTURE_IDS).reasons).toContain('factCheck flag');
+    expect(trainingImportDecision(ready({ factcheckRow: false }), FIXTURE_IDS).reasons).toContain('no factcheck row');
+    expect(trainingImportDecision(ready({ turnP0: 1 }), FIXTURE_IDS).reasons).toContain('turnCheck P0');
+    expect(trainingImportDecision(ready({ prose: '  ' }), FIXTURE_IDS).reasons).toContain('empty prose');
+    expect(trainingImportDecision(ready({ hasFacts: false }), FIXTURE_IDS).reasons).toContain('missing facts');
+    expect(trainingImportDecision(ready({ buildStamp: 'trainlog' }), FIXTURE_IDS).reasons).toContain('missing time or build');
+    expect(trainingImportDecision(ready({ truncated: true }), FIXTURE_IDS).reasons).toContain('truncated reply');
+    expect(trainingImportDecision(ready({ servedIdDisagrees: true, teacherModel: null }), FIXTURE_IDS).reasons).toContain('served id disagrees');
+    expect(trainingImportSink('approved')).toBe('audit');
+  });
+
+  it('reads a turn without inventing a source or a served id', () => {
+    const fields = trainingImportFields({
+      turn: {
+        teacher_model: 'accounts/fireworks/models/deepseek-v4p1-flash',
+        training_ok: true,
+        gmText: 'A sentence.',
+        engineFact: 'Place: Hall.',
+        writerUsage: { modelId: 'accounts/fireworks/models/deepseek-v4p1-flash' },
+      },
+      buildStamp: '2026-11-03e',
+      mode: 'litrpg',
+      factcheckRow: { flags: [] },
+    });
+    expect(fields.example_source).toBeUndefined();
+    expect(fields.storedTrainingOk).toBe(true);
+    expect(fields.hasFacts).toBe(true);
+    expect(trainingImportDecision(fields).status).toBe('audit');
+    const split = trainingImportFields({
+      turn: {
+        example_source: 'test',
+        teacher_model: FLASH,
+        writerUsage: { modelId: 'openai/gpt-5-mini' },
+        gmText: 'A sentence.',
+        engineFact: 'Place: Hall.',
+      },
+      buildStamp: '2026-11-03e',
+      mode: 'litrpg',
+      factcheckRow: { flags: [] },
+    });
+    expect(split.servedIdDisagrees).toBe(true);
+    expect(split.teacherModel).toBeNull();
+  });
+});
+
+describe('writerDataset script on a synthetic fixture', () => {
+  it('writes a source-less MIT row to audit and not to the eligible file', () => {
+    const res = spawnSync(process.execPath, ['scripts/check-writer-dataset-row.mjs'], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+    });
+    expect(res.status, res.stderr || res.stdout).toBe(0);
+    expect(res.stdout).toContain('source-less row stayed in audit');
+  });
+});

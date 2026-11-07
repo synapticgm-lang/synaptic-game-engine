@@ -6,7 +6,7 @@
 import {
   OPENROUTER_DEEPSEEK_V41_FLASH,
   OPENROUTER_GLM_53_FLASH,
-} from './modelIds';
+} from './modelIds.ts';
 import {
   appendTrainLogRows,
   FALLBACK_BUILD_STAMP,
@@ -15,7 +15,7 @@ import {
   recordModelCall,
   type TrainLogRecordInput,
   type TrainLogRow,
-} from './trainLog';
+} from './trainLog.ts';
 export const PLAYER_TURN_SCHEMA = 'player-turn-admission/1';
 
 /** Live capture of other players. Stays false until a separate enable decision. */

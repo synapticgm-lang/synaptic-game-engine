@@ -4,7 +4,7 @@
  * Never throws into the game turn. Never stores keys/headers. Real-player message storage stays OFF.
  */
 
-import { OPENROUTER_DEEPSEEK_V41_FLASH, OPENROUTER_GLM_53_FLASH } from './modelIds';
+import { OPENROUTER_DEEPSEEK_V41_FLASH, OPENROUTER_GLM_53_FLASH } from './modelIds.ts';
 
 /** Same cut-off finish reasons as openRouterChat.isCutOffFinish (kept local to avoid import cycles). */
 function isCutOffFinish(reason: unknown): boolean {

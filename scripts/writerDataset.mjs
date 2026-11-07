@@ -1,9 +1,15 @@
 #!/usr/bin/env node
 /**
- * Append every turn of fate-autoplay runs to data/writer-dataset/turns.jsonl (gitignored).
+ * Classify every turn of fate-autoplay runs. This does not approve a corpus.
+ * A candidate (explicit test source, or a player source with matching consent, plus served id,
+ * licence, provenance, and the existing quality gates) is appended to data/writer-dataset/turns.jsonl.
+ * admitted is false on that line. A person still has to approve it.
+ * Every other turn is appended to audit.jsonl with the reason. The run directory is not modified.
+ * training_ok stays the licence flag. It is not consent and it is not admission.
+ * A missing example_source is an audit row, not a test row.
  * One line per writer per turn. `pairKey` (bible:seed:turn) groups the same turn across writers.
  * Run `npm run fact-check -- <run>` first; a run without factcheck.json is refused.
- * Each commit-gate rejection (`sentenceRepairs` on a turn) and each missing talk answer (`answerRepair`) also goes to rejections.jsonl.
+ * Commit-gate rejections are copied only for candidates.
  *
  *   node scripts/writerDataset.mjs [--lap N] <run dir> [<run dir> ...]
  */
@@ -11,9 +17,11 @@ import { readFileSync, existsSync, mkdirSync, appendFileSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
 import { excludedSourceReason, rowProvenance, WELLBEING_NOTE } from '../src/game/modelIds.ts';
 import { datasetWriterId } from '../src/game/autoplayWriter.ts';
+import { trainingImportDecision, trainingImportFields, trainingImportSink } from '../src/game/trainingImport.ts';
 
 const OUT_DIR = resolve('data', 'writer-dataset');
 const OUT = join(OUT_DIR, 'turns.jsonl');
+const AUDIT = join(OUT_DIR, 'audit.jsonl');
 /** Lap 13 — one line per commit-gate rejection: the sentence, the flag, the fact, the repair. */
 const REJECTIONS = join(OUT_DIR, 'rejections.jsonl');
 const perWriter = {};
@@ -50,8 +58,9 @@ if (!dirs.length) {
 
 mkdirSync(OUT_DIR, { recursive: true });
 const seen = new Set();
-if (existsSync(OUT)) {
-  for (const line of readFileSync(OUT, 'utf8').split(/\r?\n/)) {
+for (const file of [OUT, AUDIT]) {
+  if (!existsSync(file)) continue;
+  for (const line of readFileSync(file, 'utf8').split(/\r?\n/)) {
     if (!line.trim()) continue;
     try {
       const j = JSON.parse(line);
@@ -64,6 +73,7 @@ if (existsSync(OUT)) {
 
 let added = 0;
 let good = 0;
+const admission = { candidate: 0, audit: 0, quarantine: 0, rejected: 0 };
 for (const dir of dirs) {
   const meta = JSON.parse(readFileSync(join(dir, 'meta.json'), 'utf8'));
   const refused = excludedSourceReason(meta.source ?? meta.sourceId);
@@ -84,7 +94,6 @@ for (const dir of dirs) {
   const fcByTurn = new Map(fc.perTurn.map((t) => [t.turn, t]));
   // Seat identity is the resolved model id (kind names the route only; default stays 'default').
   const writerId = datasetWriterId(meta);
-  const runModel = meta.writer?.model ?? meta.activeOverride?.model ?? null;
   const runId = basename(dir);
   const turns = readFileSync(join(dir, 'turns.jsonl'), 'utf8')
     .split(/\r?\n/)
@@ -101,7 +110,19 @@ for (const dir of dirs) {
     const p0 = t.turnCheck?.p0 ?? [];
     const isGood = fcFlags.length === 0 && p0.length === 0;
     const u = t.writerUsage ?? null;
-    const writerModel = t.teacher_model ?? u?.modelId ?? runModel;
+    const fields = trainingImportFields({
+      turn: t,
+      buildStamp: meta.runManifest?.buildStamp ?? null,
+      mode: meta.engineMode,
+      excludedSourceId: meta.source ?? meta.sourceId,
+      factcheckRow: f,
+    });
+    const decision = trainingImportDecision(fields);
+    if (decision.status === 'approved') {
+      decision.status = 'audit';
+      decision.reasons = ['importer does not approve'];
+    }
+    const writerModel = fields.teacherModel;
     const { costUsd, costSource } = turnCost(u);
     const prov = rowProvenance({
       teacherModel: writerModel,
@@ -109,8 +130,12 @@ for (const dir of dirs) {
       judgeModel: thumbsByTurn.get(t.turn)?.judge_model ?? null,
       wellbeingFlagged: t.training_note === WELLBEING_NOTE,
     });
+    const sink = trainingImportSink(decision.status);
     const row = {
       ...prov,
+      admitted: false,
+      admission_status: decision.status,
+      admission_reasons: decision.reasons,
       pairKey: `${meta.bibleId}:s${meta.seed}:t${t.turn}`,
       lap,
       runId,
@@ -137,9 +162,10 @@ for (const dir of dirs) {
       costUsd,
       costSource,
     };
-    appendFileSync(OUT, JSON.stringify(row) + '\n');
-    added += 1;
-    if (isGood) good += 1;
+    appendFileSync(sink === 'eligible' ? OUT : AUDIT, JSON.stringify(row) + '\n');
+    admission[decision.status] = (admission[decision.status] ?? 0) + 1;
+    if (sink === 'eligible') added += 1;
+    if (isGood && sink === 'eligible') good += 1;
     const ck = writerModel ?? writerId;
     const c = (perWriterCost[ck] ??= { turns: 0, ms: [], tin: [], tout: [], cost: [], costSources: new Set() });
     c.turns += 1;
@@ -150,6 +176,7 @@ for (const dir of dirs) {
       c.cost.push(costUsd);
       c.costSources.add(costSource);
     }
+    if (sink !== 'eligible') continue;
     for (const r of [...(t.sentenceRepairs ?? []), ...(t.answerRepair ? [t.answerRepair] : [])]) {
       const rej = {
         ...prov,
@@ -192,4 +219,4 @@ for (const [k, c] of Object.entries(perWriterCost)) {
     costSources: [...c.costSources],
   };
 }
-console.log(JSON.stringify({ out: OUT, added, good, rejections: REJECTIONS, perWriter, costByWriter, lapCostUsd }, null, 1));
+console.log(JSON.stringify({ out: OUT, audit: AUDIT, added, good, admission, rejections: REJECTIONS, perWriter, costByWriter, lapCostUsd }, null, 1));
