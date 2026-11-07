@@ -219,7 +219,10 @@ function factsFor(row, packet) {
     // The engine's records: who is here (info-sheet HERE list, person refs, engine result, receipts) and what is
     // held (inventory, gear, kit and prop refs). Packet prose ("a traveler may be about") is not a record.
     peopleText: lower([packet.match(/^HERE:\n((?:- .*\n?)*)/m)?.[1] ?? '', ...people.flatMap((r) => [r.display, r.label]), ...(row.turnCheck?.presentNames ?? []), engineResult, receipts.join('\n')].join('\n')),
-    itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), engineResult, ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
+    // Inventory and Equipped Gear stay the held list. The engine fact adds only the player's own weapon token
+    // ("with your greataxe") to this tail list. A foe's weapon, a negated clause, and any other word do not.
+    // A whole item word elsewhere in the fact is still read by handedText, as it was before this list existed.
+    itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), engineHeldWeaponTokens(engineResult), ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
     placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
     // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels. The people present
     // count whole, so a short form of a present person's name ("Mayor Brask" for Mayor Helga Brask) is handed.
@@ -246,6 +249,23 @@ const clausesOf = (sentence) => {
   return out;
 };
 const negated = (sentence, idx) => /\b(?:no|not|without|never|nor|any)\s+(?:\w+\s+){0,2}$/i.test(sentence.slice(Math.max(0, idx - 30), idx));
+
+/** The weapon token in the engine's own "with your greataxe" slot. Nothing else in that fact is an item record. */
+function engineHeldWeaponTokens(engineResult) {
+  const fact = String(engineResult ?? '');
+  const out = [];
+  for (const m of fact.matchAll(/\bwith your ([a-z][a-z-]*)\b/gi)) {
+    const word = m[1];
+    const at = (m.index ?? 0) + m[0].length - word.length;
+    const clauseStart = Math.max(
+      fact.lastIndexOf('.', at), fact.lastIndexOf('!', at), fact.lastIndexOf('?', at), fact.lastIndexOf(';', at), fact.lastIndexOf(':', at),
+    );
+    // The slot's own clause. "not" two words further back than the narration window still denies it.
+    if (/\b(?:no|not|without|never|nor)\b/i.test(fact.slice(clauseStart + 1, at))) continue;
+    out.push(word);
+  }
+  return out.join(' ');
+}
 
 /** `page`: the story already on the page before this turn (page 1 and earlier beats); a count it told is established. */
 export function checkTurn(row, packet, page = '') {
