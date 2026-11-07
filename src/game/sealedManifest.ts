@@ -216,16 +216,17 @@ export function renderDeterministicFallback(
     !rawPlace || /^alone\b/i.test(rawPlace) || /,/.test(rawPlace) || rawPlace.length > 48
       ? shortRoomLabel(rawPlace, 'this room')
       : rawPlace;
+  const ended = state.activeEncounter;
+  if (ended?.name && ended.phase === 'terminal') {
+    return `At ${loc}, ${ended.name} is no longer in the fight.`;
+  }
   const enc = liveFallbackFoe(state);
   const parked = enc ? null : parkedFallbackFoe(state);
   const action = (manifest.playerAction ?? '').toLowerCase();
   const inspectish = /\b(inspect|examine|search|look|panel)\b/i.test(action);
 
   if (enc?.name) {
-    const hp = typeof enc.hp === 'number' ? enc.hp : null;
-    const max = typeof enc.maxHp === 'number' ? enc.maxHp : null;
-    const remain = hp != null && max != null ? ` ${hp} of ${max} remain.` : ' The fight has not ended.';
-    return `At ${loc}, ${enc.name} is still engaged.${remain}`;
+    return `At ${loc}, ${enc.name} is still engaged. The fight has not ended.`;
   }
   if (parked?.name) {
     return `At ${loc}, ${parked.name} is parked and not in the fight.`;
@@ -244,11 +245,13 @@ export function renderDeterministicFallback(
 
 function liveFallbackFoe(state: GameState): ActiveEncounter | null {
   const enc = state.activeEncounter;
-  if (!enc?.name || enc.phase === 'pending' || enc.phase === 'terminal') return null;
+  if (!enc?.name || enc.phase === 'pending' || enc.phase === 'terminal' || enc.parkedTurn != null) return null;
   return enc;
 }
 
 function parkedFallbackFoe(state: GameState): ActiveEncounter | null {
+  const enc = state.activeEncounter;
+  if (enc?.name && (enc.phase === 'pending' || enc.parkedTurn != null)) return enc;
   const pending = state.sceneFacts?.pendingEncounter;
   if (pending?.name) return pending;
   const here = (state.currentLocation ?? '').replace(/\s+/g, ' ').trim().toLowerCase();

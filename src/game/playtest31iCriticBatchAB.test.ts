@@ -116,8 +116,8 @@ describe('playtest31iCriticBatchAB', () => {
         ...arc.state,
         activeEncounter: state.activeEncounter,
       });
-      expect(prose).toMatch(/At Lowmarket, Void-Touched Scavenger is still engaged\. 12 of 20 remain\./);
-      expect(prose).not.toMatch(/closes in|something shifts|you strike|damage/i);
+      expect(prose).toMatch(/At Lowmarket, Void-Touched Scavenger is still engaged\. The fight has not ended\./);
+      expect(prose).not.toMatch(/12 of 20|HP:|closes in|something shifts|you strike|damage/i);
       expect(isBannedFallbackStub(prose)).toBe(false);
     });
 
@@ -142,7 +142,23 @@ describe('playtest31iCriticBatchAB', () => {
       });
       expect(prose).toMatch(/Void-Touched Scavenger is parked and not in the fight/);
       expect(prose).toMatch(/At Lowmarket/);
-      expect(prose).not.toMatch(/closes in|still engaged|12 of 20/i);
+      expect(prose).not.toMatch(/closes in|still engaged|\d+ of \d+|HP:/i);
+
+      const elsewhere = renderDeterministicFallback(manifest, {
+        ...arc.state,
+        currentLocation: 'Contract Hall',
+        activeEncounter: null,
+        placeThreats: {
+          lowmarket: {
+            place: 'Lowmarket',
+            storedTurn: 8,
+            encounter: stubEncounter('Void-Touched Scavenger', 20, 20),
+          },
+        },
+        sceneFacts: { ...arc.state.sceneFacts!, pendingEncounter: undefined },
+      });
+      expect(elsewhere).toMatch(/At Contract Hall, no foe is here/);
+      expect(elsewhere).not.toMatch(/Scavenger/);
       expect(isBannedFallbackStub(prose)).toBe(false);
     });
 
@@ -163,6 +179,14 @@ describe('playtest31iCriticBatchAB', () => {
       });
       expect(prose).toMatch(/At Lowmarket, no foe is here\. Nothing else has entered\./);
       expect(prose).not.toMatch(/Scavenger|closes in|something shifts/i);
+      const ended = renderDeterministicFallback(manifest, {
+        ...arc.state,
+        activeEncounter: { ...stubEncounter('Void-Touched Scavenger', 0, 20), phase: 'terminal' },
+        placeThreats: {},
+        sceneFacts: { ...arc.state.sceneFacts!, pendingEncounter: undefined },
+      });
+      expect(ended).toMatch(/Void-Touched Scavenger is no longer in the fight/);
+      expect(ended).not.toMatch(/still engaged|\d+ of \d+|HP:/);
       expect(isBannedFallbackStub(prose)).toBe(false);
       const first = applyRenderFallback(manifest, arc.state, 'empty');
       expect(first.manifestUpdated.fallbackUsed).toBe(true);
