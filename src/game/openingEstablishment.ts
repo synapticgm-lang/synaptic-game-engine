@@ -1342,7 +1342,8 @@ export function openingCastNames(state: GameState): string[] {
     out.push(name);
   };
   const label = openingCastLabel(state);
-  push(label);
+  // A group label ("the pellane scouts") is who is present, not a person to name.
+  if (slotNamesOnePerson(label)) push(label);
   // Alias bits for chip/typed match only when they are multi-word proper tails (Lene Quill → Quill),
   // never a bare group noun that would double "the crew" as "crew" (T10Y).
   const bare = label.replace(/^(the|a|an)\s+/i, '').trim();

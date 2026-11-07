@@ -551,6 +551,7 @@ export function appendTrainLogRows(incoming: unknown): TrainLogRow[] {
         ...(r.correct_fact != null ? { correct_fact: r.correct_fact } : {}),
         ...(r.repaired_reply != null ? { repaired_reply: r.repaired_reply } : {}),
         ...(typeof r.repair_pass === 'number' ? { repair_pass: r.repair_pass } : {}),
+        ...(r.example_source === 'player' || r.example_source === 'test' ? { example_source: r.example_source } : {}),
       };
       // Hosted callLog: repair/rewrite parent must be THIS turn's writer already on the client
       // (edge isolates do not share lastWriterByTurn across HTTP requests).

@@ -8,6 +8,7 @@ import {
   OPENROUTER_GLM_53_FLASH,
 } from './modelIds';
 import {
+  appendTrainLogRows,
   peekTrainLogRows,
   recordModelCall,
   type TrainLogRecordInput,
@@ -400,4 +401,34 @@ export function recordConsentingPlayerCall(
     messages,
     example_source: 'player',
   });
+}
+
+/** Hosted callLog for a consenting player. Lab sessions keep appendTrainLogRows. */
+export function appendConsentingCallLog(incoming: unknown): TrainLogRow[] {
+  if (!playerTrainingCaptureAllowed(activePreference)) return [];
+  if (!Array.isArray(incoming)) return [];
+  const kept: unknown[] = [];
+  for (const raw of incoming) {
+    if (!raw || typeof raw !== 'object') continue;
+    const row = raw as Partial<TrainLogRow>;
+    if (row.truncated) continue;
+    if (/^(?:length|max_tokens|error|content_filter)$/i.test(String(row.finish_reason ?? ''))) continue;
+    if (!String(row.build_stamp ?? '').trim() || !row.engine_facts) continue;
+    if (!CORPUS_WRITER_IDS.has(String(row.teacher_model ?? '').trim())) continue;
+    const messages = Array.isArray(row.messages) ? row.messages : [];
+    let secret = false;
+    const clean = messages.map((m) => {
+      const content = scrubText(String(m?.content ?? ''), []);
+      if (content === null) secret = true;
+      return { role: String(m?.role ?? 'user'), content: content ?? '' };
+    });
+    if (secret) continue;
+    const packed = JSON.stringify(clean);
+    if (SECRET.test(packed) || PRIVATE_THOUGHT.test(packed)) continue;
+    if (row.job === 'writer' && peekTrainLogRows().some((r) => r.job === 'writer' && r.run_id === (row.run_id ?? null) && r.turn_no === (row.turn_no ?? null))) {
+      continue;
+    }
+    kept.push({ ...row, messages: clean, judge_scores: undefined, example_source: 'player' });
+  }
+  return appendTrainLogRows(kept);
 }

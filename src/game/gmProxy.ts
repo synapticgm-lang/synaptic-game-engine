@@ -5,7 +5,7 @@ import { logger } from './logger';
 import { resolveWriterModel, getTierDefinition } from './subscriptionTiers';
 import { resolveHostedImageModel } from './hostedImageModel';
 import { effectiveWriterTier, isAutoplayTestLabSession, isTestLabEnabled } from './testLab';
-import { getPlayerTrainingPreference, shouldRequestTrainLog } from './playerTurnAdmission';
+import { appendConsentingCallLog, getPlayerTrainingPreference, shouldRequestTrainLog } from './playerTurnAdmission';
 import {
   appendTrainLogRows,
   currentTrainLogJob,
@@ -295,7 +295,9 @@ export async function invokeGmProxy(params: {
     if (res.ok || payload?.rawIssue) noteWriterUsage(payload?.usage);
     // Hosted-Free call rows only when we asked for trainLog (autoplay marker).
     if (trainLog && Array.isArray((payload as { callLog?: unknown }).callLog)) {
-      appendTrainLogRows((payload as { callLog: unknown }).callLog);
+      const incoming = (payload as { callLog: unknown }).callLog;
+      if (isAutoplayTestLabSession()) appendTrainLogRows(incoming);
+      else appendConsentingCallLog(incoming);
     }
     if (!res.ok) {
       // gm-turn already re-asked the same model once; the caller's plain-prose last resort takes over.

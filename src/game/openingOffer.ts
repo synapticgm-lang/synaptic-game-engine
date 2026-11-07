@@ -4,7 +4,7 @@
  */
 import type { GameEvent } from './parser';
 import type { GameState } from './types';
-import { isAcceptOfferLine, openingCastNames, openOpeningOffer } from './openingEstablishment';
+import { isAcceptOfferLine, openingCastLabel, openingCastNames, openOpeningOffer } from './openingEstablishment';
 import { seat } from './presentAuthority';
 import { openRouteView } from './questRoutes';
 import { applyStructuralEvents } from './structuralEvents';
@@ -53,8 +53,8 @@ export function applyOpeningOfferChoice(
       lootSource: 'story',
     }));
     const granted = applyStructuralEvents(seated, events, { playerInput });
-    // Who made the offer is the card's cast; the card's terms ("they will unbar the door") are not settled here.
-    const who = openingCastNames(state)[0];
+    // A named person on the card, else the card's group label. A group is not added to the name list.
+    const who = openingCastNames(state)[0] || openingCastLabel(state);
     const from = who ? ` from ${who}` : '';
     return {
       state: { ...granted.state, openingEstablishment: { ...est, offerTaken: 'accepted' } },

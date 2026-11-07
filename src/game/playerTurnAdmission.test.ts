@@ -25,6 +25,7 @@ import {
 } from './playerTurnAdmission';
 import { OPENROUTER_DEEPSEEK_V41_FLASH, OPENROUTER_GLM_53_FLASH } from './modelIds';
 import { clearTrainLogSession, engineFactsFromState, peekTrainLogRows, setTrainLogFileAppend, setTrainLogSession } from './trainLog';
+import { appendConsentingCallLog } from './playerTurnAdmission';
 
 function consent(): ConsentRecord {
   return {
@@ -300,5 +301,36 @@ describe('consenting player turns through the existing logger', () => {
     expect(packed).not.toContain('user-abcdef12');
     expect(packed).toContain('[redacted-email]');
     expect(featureRequestIsNotConsent('include player turns')).toBeNull();
+  });
+
+  it('imports one opted-in hosted call and drops a truncated or secret twin', () => {
+    const pref = grantPlayerTrainingOptIn('t2', ack)!;
+    setPlayerTrainingPreference(pref);
+    const base = {
+      id: 'hosted-1',
+      job: 'writer',
+      messages: [{ role: 'system', content: 'SYSTEM' }, { role: 'user', content: 'Press the Look button' }, { role: 'assistant', content: 'You look.' }],
+      teacher_model: OPENROUTER_DEEPSEEK_V41_FLASH,
+      provider: 'openrouter',
+      finish_reason: 'stop',
+      truncated: false,
+      run_id: 'hosted',
+      turn_no: 1,
+      mode: 'dnd',
+      build_stamp: '2026-11-03e',
+      engine_facts: facts,
+    };
+    const stored = appendConsentingCallLog([
+      base,
+      { ...base, id: 'hosted-2', truncated: true, turn_no: 2 },
+      { ...base, id: 'hosted-3', turn_no: 3, messages: [{ role: 'user', content: 'sk-abcdefghij' }] },
+    ]);
+    expect(stored).toHaveLength(1);
+    expect(stored[0]?.judge_scores).toBeUndefined();
+    expect(stored[0]?.example_source).toBe('player');
+    expect(JSON.stringify(stored[0]?.messages)).toContain('Look button');
+    expect(appendConsentingCallLog([base])).toEqual([]);
+    setPlayerTrainingPreference(null);
+    expect(appendConsentingCallLog([{ ...base, id: 'hosted-4', turn_no: 9 }])).toEqual([]);
   });
 });
