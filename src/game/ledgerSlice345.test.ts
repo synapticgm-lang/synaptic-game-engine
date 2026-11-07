@@ -155,12 +155,8 @@ describe('ledger Slice 5 — playPhase + archive lock', () => {
     expect(isPlayInputLocked({ ...live, playPhase: 'ended' })).toBe(true);
   });
 
-  it('Q02/E01: LitRPG HP→0 goes down; story RPG goes ended + fails run-scoped quests', () => {
-    const lit = createInitialState('Test', 'litrpg');
-    const down = applyPlayPhaseAfterHp({ ...lit, character: { ...lit.character, hp: 0 } }, 0, 12);
-    expect(down.playPhase).toBe('down');
-
-    const story = createInitialState('Test', 'story');
+  it('Q02/E01: LitRPG and Story RPG at 0 HP stay live; a dead tabletop run ends', () => {
+    // Package A: LitRPG and Story RPG danger never sets playPhase down or ended.
     const quest: Quest = {
       id: 'q2',
       name: 'Survive',
@@ -168,10 +164,33 @@ describe('ledger Slice 5 — playPhase + archive lock', () => {
       revealed: true,
       runScoped: true,
     };
-    const ended = applyPlayPhaseAfterHp(
+    const lit = createInitialState('Test', 'litrpg');
+    const litLived = applyPlayPhaseAfterHp({ ...lit, character: { ...lit.character, hp: 0 }, quests: [quest] }, 0, 12);
+    expect(litLived.playPhase).toBe('live');
+    expect(litLived.character.hp).toBeGreaterThan(0);
+    expect(litLived.lifelineFiredTurn).toBe(12);
+    expect(litLived.quests?.[0].status).not.toBe('failed');
+
+    const story = createInitialState('Test', 'rpg');
+    const storyLived = applyPlayPhaseAfterHp(
       { ...story, character: { ...story.character, hp: 0 }, quests: [quest] },
       0,
       8
+    );
+    expect(storyLived.playPhase).toBe('live');
+    expect(storyLived.character.hp).toBeGreaterThan(0);
+    expect(storyLived.quests?.[0].status).not.toBe('failed');
+
+    const table = createInitialState('Test', 'dnd');
+    const ended = applyPlayPhaseAfterHp(
+      {
+        ...table,
+        character: { ...table.character, hp: 0 },
+        deathSaves: { successes: 0, failures: 3, stable: false, dead: true },
+        quests: [quest],
+      },
+      0,
+      9
     );
     expect(ended.playPhase).toBe('ended');
     expect(ended.quests?.[0].status).toBe('failed');

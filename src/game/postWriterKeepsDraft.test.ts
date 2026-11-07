@@ -481,9 +481,20 @@ describe('29z9d â€” seed-71 check lines', () => {
       support: '',
       severity: 'serious',
     };
-    const unarmedChat: ClauseCheckChat = async () => ({
-      claims: [unarmedClaim, { c: 'offered a short nod', kind: 'colour', support: '' }],
-    });
+    let unarmedPass = 0;
+    const unarmedChat: ClauseCheckChat = async () => {
+      unarmedPass += 1;
+      if (unarmedPass === 1) {
+        return { claims: [unarmedClaim, { c: 'offered a short nod', kind: 'colour', support: '' }] };
+      }
+      return {
+        claims: [{
+          c: 'The traveler slowed as they passed, glanced once at Jax, and offered a short nod before carrying on toward the gate.',
+          kind: 'colour',
+          support: '',
+        }],
+      };
+    };
     const unarmedSheet = baseSheet();
     const scrubbed = await checkAndRepairProse({
       factSheet: unarmedSheet,

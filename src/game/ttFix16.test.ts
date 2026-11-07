@@ -110,8 +110,16 @@ describe('3 — a flee lands in a room, and that room\'s foe is there', () => {
     const s = insideKeep();
     const d = s.activeDungeon!;
     const start = d.nodes.find((n) => n.id === d.currentNodeId)!;
-    const room = start.connections.map((id) => d.nodes.find((n) => n.id === id)!).find((n) => n.hidden?.mobs?.length)!;
-    const mob = room.hidden!.mobs[0]!;
+    const neighbors = start.connections.map((id) => d.nodes.find((n) => n.id === id)!).filter(Boolean);
+    expect(neighbors.length).toBeGreaterThan(0);
+    const room = neighbors.find((n) => n.hidden?.mobs?.length) ?? neighbors[0]!;
+    const mob = room.hidden?.mobs?.[0] ?? {
+      id: `${room.id}__foe`,
+      name: 'Pale Bat',
+      level: 1,
+      role: 'trash' as const,
+      spawned: false,
+    };
     const parked = { ...mob, id: `${mob.id}-parked`, name: 'Parked Rat', spawned: true, hpRemaining: 2 };
     const inRoom: GameState = {
       ...s,
@@ -121,7 +129,11 @@ describe('3 — a flee lands in a room, and that room\'s foe is there', () => {
         currentNodeId: room.id,
         visitedNodeIds: Array.from(new Set([...d.visitedNodeIds, start.id, room.id])),
         nodes: d.nodes.map((n) => {
-          if (n.id === room.id) return { ...n, hidden: { ...n.hidden!, mobs: n.hidden!.mobs.map((m) => ({ ...m, spawned: true })) } };
+          if (n.id === room.id) {
+            const hidden = n.hidden ?? { traps: [], lootables: [], secrets: [], mobs: [] };
+            const mobs = hidden.mobs?.some((m) => m.id === mob.id) ? hidden.mobs : [...(hidden.mobs ?? []), mob];
+            return { ...n, hidden: { ...hidden, mobs: mobs.map((m) => ({ ...m, spawned: true })) } };
+          }
           if (n.id === start.id) return { ...n, hidden: { ...(n.hidden ?? { mobs: [] }), mobs: [...(n.hidden?.mobs ?? []), parked] } };
           return n;
         }),

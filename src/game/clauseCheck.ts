@@ -141,10 +141,22 @@ export function claimMatchesSentence(claim: string, sentence: string): boolean {
     && hits * 2 >= words.length;
 }
 
+/**
+ * A supported fact quoted from inside a sentence means that sentence was checked.
+ * Colour, a dot, and a two-word fragment still do not cover a longer sentence.
+ */
+function supportedFactInsideSentence(claim: ClauseClaim, sentence: string): boolean {
+  if (claim.kind !== 'fact' || !claim.support.trim()) return false;
+  const said = utterance(claim.c);
+  const words = contentWords(claim.c);
+  if (words.length < 3 || said.length < 12) return false;
+  return utterance(sentence).includes(said);
+}
+
 /** Sentences the checker did not account for. A nonempty list can still leave some out. */
 export function uncoveredSentences(prose: string, claims: ClauseClaim[]): string[] {
   return splitProseSentences(prose).filter(
-    (sentence) => !claims.some((claim) => claimMatchesSentence(claim.c, sentence))
+    (sentence) => !claims.some((claim) => claimMatchesSentence(claim.c, sentence) || supportedFactInsideSentence(claim, sentence))
   );
 }
 
