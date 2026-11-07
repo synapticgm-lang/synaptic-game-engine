@@ -5,6 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
 import { commitOfferedPad } from './playTranscript';
+import { talkChipTopic } from './npcTopicFsm';
 import type { GameState, NpcMemory } from './types';
 
 function met(npcId: string, npcName: string, job: string): NpcMemory {
@@ -51,7 +52,7 @@ describe('s83 Root C — named people here keep a talk chip', () => {
     expect(offered.some((c) => /\b(fence|stall-hand|bystander)\b/i.test(c))).toBe(false);
   });
 
-  it('a person whose own topics are spent does not get the chip back', () => {
+  it('unrelated topic strings do not spend the named talk chip', () => {
     const s = atLowmarket();
     const spent: GameState = {
       ...s,
@@ -61,6 +62,21 @@ describe('s83 Root C — named people here keep a talk chip', () => {
       } as GameState['arcDirector'],
     };
     const offered = commitOfferedPad(spent).choices ?? [];
+    expect(offered.some((c) => /^Talk to (Osric Coyne|Maud Pike)$/.test(c))).toBe(true);
+  });
+
+  it('a person whose own talk-chip topic is spent does not get that chip back', () => {
+    const s = atLowmarket();
+    const topic = talkChipTopic('Talk to Osric Coyne', s.turn ?? 0);
+    const spent: GameState = {
+      ...s,
+      arcDirector: {
+        ...(s.arcDirector ?? {}),
+        npcTopics: { 'osric-coyne': [topic], 'maud-pike': [talkChipTopic('Talk to Maud Pike', s.turn ?? 0)] },
+      } as GameState['arcDirector'],
+    };
+    const offered = commitOfferedPad(spent).choices ?? [];
     expect(offered.some((c) => /^Talk to (Osric Coyne|Maud Pike)$/.test(c))).toBe(false);
+    expect(offered).toEqual(expect.arrayContaining(['Say something…', 'Do something else…']));
   });
 });

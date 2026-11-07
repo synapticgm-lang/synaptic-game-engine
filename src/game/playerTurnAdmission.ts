@@ -434,6 +434,11 @@ export function recordConsentingPlayerCall(
     messages = next;
   }
   const { accountIds: _accountIds, judge_scores: _judge, ...rest } = input;
+  const draft = scrubOptionalText(rest.draft, accountIds);
+  const repaired = scrubOptionalText(rest.repaired_reply, accountIds);
+  const flagged = scrubOptionalText(rest.flagged_error, accountIds);
+  const correct = scrubOptionalText(rest.correct_fact, accountIds);
+  if (draft === null || repaired === null || flagged === null || correct === null) return null;
   return recordModelCall({
     ...rest,
     job,
@@ -442,8 +447,17 @@ export function recordConsentingPlayerCall(
     assistant,
     messages,
     engine_facts: facts as TrainLogRecordInput['engine_facts'],
+    ...(draft !== undefined ? { draft } : {}),
+    ...(repaired !== undefined ? { repaired_reply: repaired } : {}),
+    ...(flagged !== undefined ? { flagged_error: flagged } : {}),
+    ...(correct !== undefined ? { correct_fact: correct } : {}),
     example_source: 'player',
   });
+}
+
+function scrubOptionalText(text: string | null | undefined, accountIds: readonly string[]): string | null | undefined {
+  if (text == null) return text;
+  return scrubText(text, accountIds);
 }
 
 /** Hosted callLog for a consenting player. Lab sessions keep appendTrainLogRows. */
@@ -475,10 +489,15 @@ export function appendConsentingCallLog(incoming: unknown, accountIds: readonly 
       if (peekTrainLogRows().some((r) => r.job === 'writer' && writerTurnKey(r.run_id, r.turn_no) === turnKey)) continue;
       seenWriters.add(turnKey);
     }
+    const draft = scrubOptionalText(typeof row.draft === 'string' ? row.draft : undefined, accountIds);
+    const repaired = scrubOptionalText(typeof row.repaired_reply === 'string' ? row.repaired_reply : undefined, accountIds);
+    if (draft === null || repaired === null) continue;
     kept.push({
       ...row,
       messages: clean,
       engine_facts: facts,
+      ...(draft !== undefined ? { draft } : {}),
+      ...(repaired !== undefined ? { repaired_reply: repaired } : {}),
       judge_scores: undefined,
       example_source: 'player',
     });

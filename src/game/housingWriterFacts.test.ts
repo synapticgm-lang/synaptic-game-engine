@@ -32,7 +32,8 @@ describe('housing writer facts', () => {
     const state = housed(config('leftover_pocket', []));
     const open = buildInfoSheet(state).open.join('\n');
     expect(open).toContain("The Crown's Meat Shield");
-    expect(open).toContain('Report to High Priest Arus');
+    // RC-N4 — the open writer line is the quest name. The raw step stays off that line.
+    expect(open).not.toContain('Report to High Priest Arus');
     expect(open).not.toMatch(/no live quest step/);
 
     const window = buildLitrpgSystemWindow(state)!;

@@ -134,6 +134,21 @@ export function isTopicExhausted(
   return topics.includes(topic);
 }
 
+/** The topic key a named talk chip is checked against. Unrelated strings do not match it. */
+export function talkChipTopic(label: string, turn = 0): string {
+  const canon = canonicalizeIntent(label, turn);
+  return `${canon.action}:${canon.target || 'general'}`.slice(0, 48);
+}
+
+/** True when this talk chip's own topic is already stored for the person it names. */
+export function namedTalkTopicSpent(state: GameState, label: string): boolean {
+  const chip = (label ?? '').trim();
+  if (!/^(?:talk to|speak(?:\s+(?:to|with))?|chat with|greet|ask)\b/i.test(chip)) return false;
+  const who = talkChipAddressee(state, chip, null);
+  if (!who) return false;
+  return isTopicExhausted(who, talkChipTopic(chip, state.turn ?? 0), state.arcDirector?.npcTopics);
+}
+
 export function recordNpcTopic(
   state: GameState,
   input: string

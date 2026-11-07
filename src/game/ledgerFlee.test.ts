@@ -67,7 +67,13 @@ describe('ledger flee (Slice 2)', () => {
 
   it('successful flee parks HP and clears encounter', () => {
     const state = combatState(7);
-    const check = runPlayerCheck(state, { kind: 'flee', label: 'Flee / disengage' }, 'run away', 18);
+    // LitRPG untrained stealth target is DC 20. Roll 18 + 1 totals 19 and stays.
+    const short = runPlayerCheck(state, { kind: 'flee', label: 'Flee / disengage' }, 'run away', 18);
+    expect(short.dc).toBe(20);
+    expect(short.isSuccess).toBe(false);
+    expect(resolveLedgerFlee(state, short)?.round.fled).toBe(false);
+    const check = runPlayerCheck(state, { kind: 'flee', label: 'Flee / disengage' }, 'run away', 19);
+    expect(check.isSuccess).toBe(true);
     const resolved = resolveLedgerFlee(state, check);
     expect(resolved?.round.fled).toBe(true);
     expect(resolved?.state.activeEncounter).toBeNull();

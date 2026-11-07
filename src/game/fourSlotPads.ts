@@ -36,6 +36,7 @@ import { canAddMaterials } from './inventory';
 import { hasNodeStock } from './wilds';
 import { gatherModeOk, huntModeOk } from './wildlifeActions';
 import { isOnCooldown } from './optionDiversityContract';
+import { namedTalkTopicSpent } from './npcTopicFsm';
 import { isCrowdOnlyTalkPad, speakablePresentPeople } from './chromeAuthority';
 import { peopleHere } from './scenePresence';
 import { hubsForBibleId, outdoorHubTravelChoices } from './outdoorHubs';
@@ -665,6 +666,7 @@ export function fourSlotFallback(
     if (opts?.requireCandidate && !candSet.has(low(t))) return null;
     if (!isFourSlotLegal(state, t)) return null;
     if (isFourSlotRepeat(state, t, lastPlayerAction(state))) return null;
+    if (namedTalkTopicSpent(state, t)) return null;
     return t;
   };
   // Prefer an unused legal candidate already classified for this slot.
@@ -820,7 +822,7 @@ export function assembleFourSlotPads(
   const consider = (raw: string) => {
     const label = tidy(raw);
     if (!label || isFreeInputChip(label)) return;
-    if (cooledHere(label)) return;
+    if (cooledHere(label) || namedTalkTopicSpent(state, label)) return;
     if (!isFourSlotLegal(state, label)) return;
     if (isFourSlotRepeat(state, label, prev)) return;
     const slot = classifyFourSlot(state, label);
@@ -1005,7 +1007,8 @@ export function assembleFourSlotPads(
     !!label
     && !isFreeInputChip(label)
     && isFourSlotLegal(state, label)
-    && !isFourSlotRepeat(state, label, prev);
+    && !isFourSlotRepeat(state, label, prev)
+    && !namedTalkTopicSpent(state, label);
   for (const hub of outdoorHubTravelChoices(state, 6)) {
     if (picked.length >= 4) break;
     if (!canPad(hub)) continue;
@@ -1081,7 +1084,7 @@ export function assembleFourSlotPads(
       ];
   for (const g of safeFill) {
     if (four.length >= 4) break;
-    if (fourSeen.has(low(g)) || !canPad(g) || cooledHere(g)) continue;
+    if (fourSeen.has(low(g)) || !canPad(g) || cooledHere(g) || namedTalkTopicSpent(state, g)) continue;
     // Hurt road: only keep chips the journey owner recognizes (or Rest/camp).
     if (
       roadUnderway
@@ -1117,7 +1120,7 @@ export function assembleFourSlotPads(
     ];
     for (const g of lastResort) {
       if (four.length >= 4) break;
-      if (fourSeen.has(low(g)) || !canPad(g) || cooledHere(g)) continue;
+      if (fourSeen.has(low(g)) || !canPad(g) || cooledHere(g) || namedTalkTopicSpent(state, g)) continue;
       uniquePush(four, fourSeen, g);
     }
   }

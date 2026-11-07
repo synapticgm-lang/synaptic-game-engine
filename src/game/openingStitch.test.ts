@@ -116,10 +116,14 @@ describe('openingStitch', () => {
       },
     };
     const text = stitchOpeningScene(state);
-    expect(text.startsWith(fallback)).toBe(true);
+    // A housed system removes the floating panel sentence from page 1.
+    expect(['private_window', 'worn_device', 'world_status', 'leftover_pocket']).toContain(state.systemHousing?.housing);
+    expect(text.startsWith('Light, then three other people on neighboring rings.')).toBe(true);
+    expect(text).toContain('Your Earth clothes are still on you.');
+    expect(text).not.toMatch(/blue panel/i);
     expect(text).not.toMatch(/Do not invent|Ruin level:|The camera stays HERE/i);
     expect(text).not.toMatch(/floor-joint|ears still ring from the pull|you are cargo/i);
-    expect(text).toMatch(/what name/i);
+    expect(text.match(/what name/gi)?.length).toBe(1);
   });
 
   it('continues after covers locally without rehashing locked name/look/kit', () => {

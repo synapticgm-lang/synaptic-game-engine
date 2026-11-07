@@ -363,6 +363,12 @@ describe('consenting player turns through the existing logger', () => {
       ],
       ['user-abcdef12'],
     );
+    const withReply = appendConsentingCallLog(
+      [{ ...base, id: 'hosted-reply', turn_no: 4, repaired_reply: 'noted user-abcdef12' }],
+      ['user-abcdef12'],
+    );
+    expect(JSON.stringify(withReply)).not.toContain('user-abcdef12');
+    expect(JSON.stringify(withReply)).toContain('[redacted-account]');
     expect(stored.map((r) => r.turn_no)).toEqual([1, 2]);
     const packed = JSON.stringify(stored);
     expect(packed).not.toContain('player@example.com');

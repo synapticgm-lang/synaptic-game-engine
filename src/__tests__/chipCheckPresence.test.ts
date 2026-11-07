@@ -84,9 +84,12 @@ describe('fight2d-PERSONTAG engine person tags for talk-to-someone chips', () =>
     s = recordPersonSeen(s, 'Cutha Hask', 'met on the road');
     const people = (s.timeline ?? []).filter((f) => f.kind === 'person');
     expect(people).toHaveLength(1);
-    expect(people[0]!.text).toBe('person: Cutha Hask - met on the road');
+    // renderTagText locks the verb line. The chip check reads kind, name, and place.
+    expect(people[0]!.text).toBe('met: Cutha Hask, met on the road');
+    expect(people[0]!.kind).toBe('person');
     expect(people[0]!.name).toBe('Cutha Hask');
     expect(people[0]!.detail).toBe('met on the road');
+    expect(checkChosenChip(s, 'Talk to someone in the street')).toEqual([]);
   });
 
   it('seed 20511 T4: person tag for Cutha Hask → Talk to someone in the street is not unrelated-chip', () => {

@@ -7,6 +7,8 @@ import { filterCooldownChoices, isOnCooldown, type OptionCooldown } from './opti
 import {
   isTopicExhausted,
   talkChipAddressee,
+  namedTalkTopicSpent,
+  talkChipTopic,
   shouldForceNpcStageAdvance,
   presentNpcForPads,
 } from './npcTopicFsm';
@@ -885,8 +887,7 @@ export function compileChoices(
       return false;
     }
     if (npc) {
-      const canon = canonicalizeIntent(c, turn);
-      const topic = `${canon.action}:${canon.target || 'general'}`.slice(0, 48);
+      const topic = talkChipTopic(c, turn);
       const addressee = talkChipAddressee(state, c, npc) ?? npc;
       if (
         isTopicExhausted(addressee, topic, state.arcDirector?.npcTopics)
@@ -958,7 +959,7 @@ export function compileChoices(
   if (legalEdges.length >= 3) {
     for (const label of edgeLabels) {
       if (filtered.some((f) => f.toLowerCase() === label.toLowerCase())) continue;
-      if (cooledInThisScene(label)) continue;
+      if (cooledInThisScene(label) || namedTalkTopicSpent(state, label)) continue;
       if (isExcludedPadLabel(label, excluded)) continue;
       if (engaged && isLookOrExamineRoomPad(label)) continue;
       if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, label)) continue;
@@ -970,7 +971,7 @@ export function compileChoices(
     const supplements: string[] = [];
     for (const label of edgeLabels) {
       if (isExcludedPadLabel(label, excluded)) continue;
-      if (cooledInThisScene(label)) continue;
+      if (cooledInThisScene(label) || namedTalkTopicSpent(state, label)) continue;
       if (!filtered.some((f) => f.toLowerCase() === label.toLowerCase())) {
         if (engaged && isLookOrExamineRoomPad(label)) continue;
         if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, label)) continue;
@@ -1037,7 +1038,7 @@ export function compileChoices(
     }
     for (const label of edgeLabels) {
       if (isExcludedPadLabel(label, excluded)) continue;
-      if (cooledInThisScene(label)) continue;
+      if (cooledInThisScene(label) || namedTalkTopicSpent(state, label)) continue;
       if (stripsFamily(classifyChoiceFamily(label))) continue;
       if (engaged && isLookOrExamineRoomPad(label)) continue;
       if (!interruptPads.some((p) => p.toLowerCase() === label.toLowerCase())) {
@@ -1475,7 +1476,7 @@ const TALK_CHIP = /^(?:talk to|speak (?:to|with)|chat with|greet|ask)\b/i;
  */
 function keepNamedTalkChip(state: GameState, choices: string[], offerable: (chip: string) => boolean): string[] {
   const people = enumerateGraphEdges(state)
-    .filter((e) => e.type === 'talk' && !!e.target && !shouldForceNpcStageAdvance(state, e.target))
+    .filter((e) => e.type === 'talk' && !!e.target && !shouldForceNpcStageAdvance(state, e.target) && !namedTalkTopicSpent(state, e.label))
     .map((e) => ({ name: e.target!, label: e.label }));
   if (!people.length) return choices;
   const kept = choices.filter((c) => !ROLE_TALK_CHIP.test(c.trim()));
