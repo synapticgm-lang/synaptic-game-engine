@@ -58,4 +58,28 @@ describe('factCheck held items', () => {
   it('a sword the records do not hold is still rejected', async () => {
     expect(item(await check('Jax drew their sword.'), 'sword')).toHaveLength(1);
   });
+
+  it('a loot grant of a hand axe still covers axe', async () => {
+    expect(item(await check('Jax swung their axe.', 'Loot: [Common] Hand Axe.'), 'axe')).toEqual([]);
+  });
+
+  it('an explicit denial is not evidence the sword is held', async () => {
+    expect(item(await check('Jax drew their sword.', 'You have no sword.'), 'sword')).toHaveLength(1);
+    expect(item(await check('Jax drew their sword.', 'You are without a sword.'), 'sword')).toHaveLength(1);
+    expect(item(await check('Jax drew their sword.', 'This is not a sword.'), 'sword')).toHaveLength(1);
+  });
+
+  it('inventory still covers a sword the engine fact denies', async () => {
+    expect(item(await check('Jax drew their sword.', 'You have no sword.', 'Inventory: Sword'), 'sword')).toEqual([]);
+  });
+
+  it('a denial and a later affirmative weapon slot both stand', async () => {
+    expect(item(await check('Jax drew their sword.', 'You have no sword. You attack the foe with your sword and miss.'), 'sword')).toEqual([]);
+  });
+
+  it('a denial of a sword leaves a hand-axe grant intact', async () => {
+    const flags = await check('Jax drew their sword. Jax swung their axe.', 'You have no sword. Loot: [Common] Hand Axe.');
+    expect(item(flags, 'sword')).toHaveLength(1);
+    expect(item(flags, 'axe')).toEqual([]);
+  });
 });

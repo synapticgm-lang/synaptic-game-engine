@@ -221,7 +221,6 @@ function factsFor(row, packet) {
     peopleText: lower([packet.match(/^HERE:\n((?:- .*\n?)*)/m)?.[1] ?? '', ...people.flatMap((r) => [r.display, r.label]), ...(row.turnCheck?.presentNames ?? []), engineResult, receipts.join('\n')].join('\n')),
     // Inventory and Equipped Gear stay the held list. The engine fact adds only the player's own weapon token
     // ("with your greataxe") to this tail list. A foe's weapon, a negated clause, and any other word do not.
-    // A whole item word elsewhere in the fact is still read by handedText, as it was before this list existed.
     itemWords: lower([line(packet, 'Inventory:'), line(packet, 'Equipped Gear:'), engineHeldWeaponTokens(engineResult), ...refs.flatMap((r) => (r.kind !== 'person' && r.kind !== 'place' ? [r.display] : []))].join(' ')).match(/[a-z]+/g) ?? [],
     placeWork: lower([...packet.matchAll(/^What it is:\s*(.+)$/gm)].map((m) => m[1]).join('\n')),
     // Sheet stats the packet hands with a number ("Level: 2", "XP: 15/225") are handed labels. The people present
@@ -234,9 +233,23 @@ function factsFor(row, packet) {
 /** A person is handed by the who-is-here records; a thing by the facts or an item record it names ("axe" is the greataxe). */
 const inHanded = (facts, word, kind) => {
   const w = lower(word).replace(/s$/, '');
-  return new RegExp(`\\b${w}(?:s|es)?\\b`).test(kind === 'person' ? facts.peopleText : facts.handedText)
-    || (kind === 'item' && facts.itemWords.some((x) => x.endsWith(w) || x.endsWith(`${w}s`)));
+  if (kind === 'item') {
+    // "You have no sword" names the word and denies it. That occurrence is not evidence the player holds it.
+    // A later affirmative occurrence, the inventory, the gear, or the "with your" token still is.
+    return handedItemWord(facts.handedText, w)
+      || facts.itemWords.some((x) => x.endsWith(w) || x.endsWith(`${w}s`));
+  }
+  return new RegExp(`\\b${w}(?:s|es)?\\b`).test(kind === 'person' ? facts.peopleText : facts.handedText);
 };
+
+/** A whole item word in the handed text counts only where that occurrence is not denied. */
+function handedItemWord(text, word) {
+  const re = new RegExp(`\\b${word}(?:s|es)?\\b`, 'gi');
+  for (const m of String(text ?? '').matchAll(re)) {
+    if (!negated(text, m.index ?? 0)) return true;
+  }
+  return false;
+}
 /** The clauses of `sentence` with offsets, cut where the exit-clause split cuts (";", ":", ", and …"). */
 const clausesOf = (sentence) => {
   const out = [];
