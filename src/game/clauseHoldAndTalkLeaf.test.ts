@@ -2,6 +2,8 @@
  * Fail-closed clause check, and one talk leaf for the client and the edge.
  * Model calls are stubs. No paid inference.
  */
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
@@ -160,6 +162,220 @@ describe('clause check fail-closed', () => {
     expect(published.text).not.toContain('DRAFT_MARKER_9f3c');
     const missed = bookBodyAfterWriterMiss(state, packet, 'hello Mira', '');
     expect(missed.prose).not.toContain('DRAFT_MARKER_9f3c');
+  });
+
+  it('a flagged fact is not published when the repair returns nothing', async () => {
+    let repairs = 0;
+    let checks = 0;
+    const prose = 'You open the last box. Musty oak fills the air.';
+    const out = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose,
+      player: sheet().player,
+      chat: async () => {
+        checks += 1;
+        return {
+          claims: [
+            { c: 'You open the last box', kind: 'fact' as const, support: '', severity: 'serious' as const },
+            { c: 'Musty oak fills the air', kind: 'colour' as const, support: '' },
+          ],
+        };
+      },
+      repair: async () => {
+        repairs += 1;
+        return '';
+      },
+    });
+    expect(repairs).toBe(1);
+    expect(checks).toBe(1);
+    expect(out.withheld).toBe(true);
+    expect(out.prose).not.toMatch(/last box/i);
+    expect(out.prose).not.toBe(prose);
+  });
+
+  it('an unchecked repair line is not published when the second check is empty', async () => {
+    let checks = 0;
+    const out = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose: 'A dragon lands on the furnace. The bathhouse waits.',
+      player: sheet().player,
+      chat: async () => {
+        checks += 1;
+        if (checks === 1) {
+          return {
+            claims: [
+              { c: 'A dragon lands on the furnace', kind: 'fact' as const, support: '', severity: 'serious' as const },
+              { c: 'The bathhouse waits', kind: 'colour' as const, support: '' },
+            ],
+          };
+        }
+        return { claims: [] };
+      },
+      repair: async () => 'Steam curls off the furnace stones.',
+    });
+    expect(checks).toBe(2);
+    expect(out.withheld).toBe(true);
+    expect(out.prose).not.toMatch(/dragon/i);
+    expect(out.prose).not.toMatch(/Steam curls/i);
+  });
+
+  it('a repair the second check still flags is dropped, and one recheck keeps only a cleared remainder', async () => {
+    let checks = 0;
+    const out = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose: 'A dragon lands on the furnace. The bathhouse waits.',
+      player: sheet().player,
+      chat: async () => {
+        checks += 1;
+        if (checks === 1) {
+          return {
+            claims: [
+              { c: 'A dragon lands on the furnace', kind: 'fact' as const, support: '', severity: 'serious' as const },
+              { c: 'The bathhouse waits', kind: 'colour' as const, support: '' },
+            ],
+          };
+        }
+        if (checks === 2) {
+          return {
+            claims: [
+              { c: 'Steam curls off the furnace stones', kind: 'fact' as const, support: '', severity: 'serious' as const },
+            ],
+          };
+        }
+        return { claims: [{ c: 'The bathhouse waits', kind: 'colour' as const, support: '' }] };
+      },
+      repair: async () => 'Steam curls off the furnace stones.',
+    });
+    expect(checks).toBe(3);
+    expect(out.withheld).toBe(false);
+    expect(out.prose).not.toMatch(/Steam curls/i);
+    expect(out.prose).not.toMatch(/dragon/i);
+    expect(out.prose).toMatch(/bathhouse waits/i);
+  });
+
+  it('a dropped repair whose recheck is empty is withheld', async () => {
+    let checks = 0;
+    const out = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose: 'A dragon lands on the furnace. The bathhouse waits.',
+      player: sheet().player,
+      chat: async () => {
+        checks += 1;
+        if (checks === 1) {
+          return {
+            claims: [
+              { c: 'A dragon lands on the furnace', kind: 'fact' as const, support: '', severity: 'serious' as const },
+              { c: 'The bathhouse waits', kind: 'colour' as const, support: '' },
+            ],
+          };
+        }
+        if (checks === 2) {
+          return {
+            claims: [
+              { c: 'Steam curls off the furnace stones', kind: 'fact' as const, support: '', severity: 'serious' as const },
+            ],
+          };
+        }
+        return { claims: [] };
+      },
+      repair: async () => 'Steam curls off the furnace stones.',
+    });
+    expect(checks).toBe(3);
+    expect(out.withheld).toBe(true);
+    expect(out.prose).not.toMatch(/Steam curls/i);
+    expect(out.prose).not.toMatch(/dragon/i);
+    expect(out.prose).not.toMatch(/bathhouse/i);
+  });
+
+  it('a nonempty claim list that skips a sentence is not a pass', async () => {
+    const prose = 'Mira answers you. UNCHECKED_SENTENCE_9f3c opens the vault.';
+    const out = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose,
+      player: sheet().player,
+      chat: async () => ({
+        claims: [{ c: 'Mira answers you', kind: 'fact' as const, support: 'Present: Mira' }],
+      }),
+    });
+    expect(out.withheld).toBe(true);
+    expect(out.prose).not.toContain('UNCHECKED_SENTENCE_9f3c');
+  });
+
+  it('one repair that the second check clears is published, and only that repair runs', async () => {
+    let checks = 0;
+    let repairs = 0;
+    const out = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose: 'A dragon lands on the furnace. The bathhouse waits.',
+      player: sheet().player,
+      chat: async () => {
+        checks += 1;
+        if (checks === 1) {
+          return {
+            claims: [
+              { c: 'A dragon lands on the furnace', kind: 'fact' as const, support: '', severity: 'serious' as const },
+              { c: 'The bathhouse waits', kind: 'colour' as const, support: '' },
+            ],
+          };
+        }
+        return {
+          claims: [
+            { c: 'Steam curls off the furnace stones', kind: 'colour' as const, support: '' },
+            { c: 'The bathhouse waits', kind: 'colour' as const, support: '' },
+          ],
+        };
+      },
+      repair: async () => {
+        repairs += 1;
+        return 'Steam curls off the furnace stones.';
+      },
+    });
+    expect(repairs).toBe(1);
+    expect(checks).toBe(2);
+    expect(out.withheld).toBe(false);
+    expect(out.repaired).toBe(true);
+    expect(out.prose).toContain('Steam curls off the furnace stones');
+    expect(out.prose).not.toMatch(/dragon/i);
+    expect(out.prose).toContain('The bathhouse waits');
+  });
+
+  it('live and Fate keep the engine page once when a flagged repair does not land', async () => {
+    const state = baseState();
+    const packet = buildCompletedEventPacket(state, 'hello Mira');
+    const before = { hp: state.character.hp, xp: state.character.xp, gold: state.gold };
+    const draft = 'You open the last box. Musty oak fills the air.';
+    const clause = await checkAndRepairProse({
+      factSheet: sheet(),
+      prose: draft,
+      player: sheet().player,
+      chat: async () => ({
+        claims: [
+          { c: 'You open the last box', kind: 'fact' as const, support: '', severity: 'serious' as const },
+          { c: 'Musty oak fills the air', kind: 'colour' as const, support: '' },
+        ],
+      }),
+      repair: async () => '',
+    });
+    const enginePage = pageWhenClauseWithheld(state, packet, 'hello Mira');
+    const published = storyAfterClauseCheck({ clause, enginePage, draft });
+    const again = storyAfterClauseCheck({ clause, enginePage, draft });
+    expect(clause.withheld).toBe(true);
+    expect(published.withheld).toBe(true);
+    expect(published.text).toBe(enginePage);
+    expect(again.text).toBe(enginePage);
+    expect(published.text.split(enginePage).length - 1).toBe(1);
+    expect(published.text).not.toMatch(/last box/i);
+    expect(state.character.hp).toBe(before.hp);
+    expect(state.character.xp).toBe(before.xp);
+    expect(state.gold).toBe(before.gold);
+    const live = readFileSync(resolve(__dirname, './useGame.ts'), 'utf8');
+    const fate = readFileSync(resolve(__dirname, './fateAutoplay.ts'), 'utf8');
+    expect(live).toContain('storyAfterClauseCheck');
+    expect(fate).toContain('storyAfterClauseCheck');
+    expect(live).toContain('pageWhenClauseWithheld');
+    expect(fate).toContain('pageWhenClauseWithheld');
+    expect(live).not.toContain('keep writer prose');
+    expect(fate).not.toContain('leave prose');
   });
 });
 

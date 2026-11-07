@@ -87,11 +87,21 @@ describe('M4 clause check (stubbed model)', () => {
       { c: 'The bathhouse waits', kind: 'colour', support: '' },
     ];
     let repairCalls = 0;
+    let passes = 0;
     const out = await checkAndRepairProse({
       factSheet: sheet(),
       prose,
       player: sheet().player,
-      chat: stubChat(claims),
+      chat: async () => {
+        passes += 1;
+        if (passes === 1) return { claims };
+        return {
+          claims: [
+            { c: 'Steam curls off the furnace stones', kind: 'colour', support: '' },
+            { c: 'The bathhouse waits', kind: 'colour', support: '' },
+          ],
+        };
+      },
       repair: async () => {
         repairCalls += 1;
         return 'Steam curls off the furnace stones.';
@@ -128,8 +138,9 @@ describe('M4 clause check (stubbed model)', () => {
       repair: async () => '',
     });
     expect(out.repaired).toBe(false);
-    expect(out.prose).toBe(prose);
-    expect(out.prose).toMatch(/musty oak/i);
+    expect(out.withheld).toBe(true);
+    expect(out.prose).not.toMatch(/last box/i);
+    expect(out.prose).not.toBe(prose);
     // T10TURNS — failed repair must not burn a second clause-check model call.
     expect(chatPasses).toBe(1);
     expect(out.checkPasses).toBe(1);

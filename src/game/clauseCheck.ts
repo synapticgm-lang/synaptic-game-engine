@@ -112,6 +112,60 @@ export interface ClauseCheckPassResult {
   failed: boolean;
 }
 
+function claimText(claim: string): string {
+  return claim.replace(/^out of character:\s*/i, '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function contentWords(text: string): string[] {
+  return claimText(text).split(' ').filter((word) => word.length > 3);
+}
+
+/** A claim belongs to a sentence only by overlap. No fallback onto the first sentence. */
+export function claimMatchesSentence(claim: string, sentence: string): boolean {
+  const c = claimText(claim);
+  const s = claimText(sentence);
+  if (!c || !s) return false;
+  if (s.includes(c) || (c.includes(s) && s.length >= 12)) return true;
+  const words = contentWords(c);
+  if (!words.length) return false;
+  const hits = words.filter((word) => s.includes(word)).length;
+  return hits >= Math.min(3, words.length) && hits * 2 >= words.length;
+}
+
+/** Sentences the checker did not account for. A nonempty list can still leave some out. */
+export function uncoveredSentences(prose: string, claims: ClauseClaim[]): string[] {
+  return splitProseSentences(prose).filter(
+    (sentence) => !claims.some((claim) => claimMatchesSentence(claim.c, sentence))
+  );
+}
+
+/** Serious unsupported claims that still describe a sentence in this prose. */
+export function seriousStillInProse(prose: string, serious: ClauseClaim[]): ClauseClaim[] {
+  const sentences = splitProseSentences(prose);
+  return serious.filter((claim) => sentences.some((sentence) => claimMatchesSentence(claim.c, sentence)));
+}
+
+function recordsMarkedRepaired(records: ClauseCheckRecord[], replacement: string): ClauseCheckRecord[] {
+  if (!replacement) return records;
+  const marked = records.map((record) =>
+    claimMatchesSentence(record.clause, replacement) ? { ...record, repaired: true } : record
+  );
+  return marked.some((record) => record.repaired)
+    ? marked
+    : [...marked, { clause: replacement, kind: 'fact', support: '', severity: 'serious', repaired: true }];
+}
+
+function withheldResult(checkPasses: number, serious0: ClauseClaim[]): ClauseCheckAndRepairResult {
+  return {
+    prose: '',
+    records: [],
+    repaired: false,
+    serious0,
+    checkPasses,
+    withheld: true,
+  };
+}
+
 /** One offline-stubbable check pass against the FactSheet. */
 export async function runClauseCheck(args: {
   factSheet: FactSheet;
@@ -193,14 +247,12 @@ export async function checkAndRepairProse(args: {
       withheld: true,
     };
   }
-  const checkedDraft = args.prose;
   let prose = args.prose;
   let repaired = false;
+  let replacement = '';
   let records = first.records;
   let checkPasses = 1;
   const repairedSet = new Set<string>();
-
-  let repairedLine = '';
   if (first.serious.length && args.repair) {
     const target = first.serious[0]!;
     const sentence = sentenceForClaim(prose, target.c);
@@ -233,13 +285,13 @@ export async function checkAndRepairProse(args: {
         if (kept) {
           prose = next;
           repaired = true;
-          repairedLine = line;
+          replacement = line;
           repairedSet.add(target.c);
         }
       }
     }
-    // T10TURNS — second clause pass only when a repair landed. A failed/empty repair leaves the
-    // first-pass records; re-checking the same prose burns a model call for no new gate work.
+    // T10TURNS — second clause pass only when a repair landed.
+    // If that pass still flags the rewrite, drop those sentences and recheck the remainder once.
     if (repaired) {
       const second = await runClauseCheck({
         factSheet: args.factSheet,
@@ -248,39 +300,65 @@ export async function checkAndRepairProse(args: {
         chat: args.chat,
       });
       checkPasses = 2;
-      if (second.failed) {
-        // The repair line was not checked. Keep the draft the first check already judged.
-        prose = checkedDraft;
-        records = first.records;
-        repaired = false;
-        repairedLine = '';
-      } else {
-        // T10N — drop a rewrite only when the second check flags a claim that is *in* that rewrite
-        // (stale claims about the pre-repair sentence must not kill a clean colour line).
-        if (repairedLine) {
-          const lineL = repairedLine.toLowerCase();
-          const still = second.serious.find((u) => {
-            const c = (u.c || '').toLowerCase().replace(/^out of character:\s*/i, '').trim();
-            if (c.length < 8) return false;
-            const head = c.slice(0, Math.min(48, c.length));
-            return lineL.includes(head) || c.includes(lineL.slice(0, Math.min(48, lineL.length)));
-          });
-          if (still) {
-            const dropped = replaceDraftSentence(prose, repairedLine, '');
-            if (dropped.trim()) {
-              prose = dropped.replace(/\s+/g, ' ').trim();
-            }
-          }
-        }
-        records = toClauseRecords(second.claims, repairedSet);
+      if (second.failed) return withheldResult(2, first.serious);
+      const seriousHit = seriousStillInProse(prose, second.serious);
+      const missed = uncoveredSentences(prose, second.claims);
+      if (!seriousHit.length && !missed.length) {
+        return {
+          prose,
+          records: recordsMarkedRepaired(toClauseRecords(second.claims, repairedSet), replacement),
+          repaired: true,
+          serious0: first.serious,
+          checkPasses,
+          withheld: false,
+        };
       }
+      const originalSentences = splitProseSentences(args.prose);
+      const drop = splitProseSentences(prose).filter((sentence) => {
+        if (seriousHit.some((claim) => claimMatchesSentence(claim.c, sentence))) return true;
+        if (!missed.includes(sentence)) return false;
+        if (replacement && claimMatchesSentence(sentence, replacement)) return true;
+        const coveredBefore = originalSentences.some(
+          (original) => original === sentence || claimMatchesSentence(original, sentence)
+        );
+        return !coveredBefore;
+      });
+      const kept = splitProseSentences(prose).filter((sentence) => !drop.includes(sentence));
+      if (!kept.length) return withheldResult(2, first.serious);
+      const remainder = kept.join(' ');
+      const third = await runClauseCheck({
+        factSheet: args.factSheet,
+        prose: remainder,
+        player: args.player,
+        chat: args.chat,
+      });
+      checkPasses = 3;
+      if (
+        third.failed
+        || seriousStillInProse(remainder, third.serious).length
+        || uncoveredSentences(remainder, third.claims).length
+      ) {
+        return withheldResult(3, first.serious);
+      }
+      return {
+        prose: remainder,
+        records: toClauseRecords(third.claims, repairedSet),
+        repaired: true,
+        serious0: first.serious,
+        checkPasses,
+        withheld: false,
+      };
     }
   }
 
+  // Repair missing or it did not land: the flagged draft is known-invalid.
+  if (first.serious.length) return withheldResult(checkPasses, first.serious);
+  // A claim list that skips a sentence did not check that sentence.
+  if (uncoveredSentences(prose, first.claims).length) return withheldResult(checkPasses, first.serious);
   return {
     prose,
     records,
-    repaired,
+    repaired: false,
     serious0: first.serious,
     checkPasses,
     withheld: false,
