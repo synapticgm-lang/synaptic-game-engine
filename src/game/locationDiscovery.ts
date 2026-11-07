@@ -74,6 +74,7 @@ export function discoverLocation(
   // Check settlement
   const settlement = state.worldAtlas?.settlements?.find(
     (s) =>
+      s.id === locationNameOrId ||
       s.name.toLowerCase() === normalized ||
       s.aliases?.some((a) => a.toLowerCase() === normalized)
   );
@@ -83,6 +84,7 @@ export function discoverLocation(
     // Check place registry
     const place = state.places?.find(
       (p) =>
+        p.id === locationNameOrId ||
         p.name.toLowerCase() === normalized ||
         p.aliases?.some((a) => a.toLowerCase() === normalized)
     );

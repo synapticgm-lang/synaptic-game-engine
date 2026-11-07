@@ -35,7 +35,8 @@ describe('Pack 12 Fog-of-War', () => {
     });
 
     it('detects locations mentioned in narrative', () => {
-      const state = createInitialState('Test', 'litrpg');
+      // Unseeded createInitialState draws Math.random. Lowgate's id is lowgate-town, not the name.
+      const state = createInitialState('Test', 'litrpg', undefined, 'fog-0');
       const bible = getCampaignBibleById('summoned-pact');
       const withAtlas = seedWorldAtlas({ ...state, campaignBibleId: 'summoned-pact' }, bible!);
       
@@ -45,6 +46,21 @@ describe('Pack 12 Fog-of-War', () => {
       
       const discovered = detectAndDiscoverLocations(withAtlas, narrative);
       
+      expect(isLocationDiscovered(discovered, a!)).toBe(true);
+      expect(isLocationDiscovered(discovered, b!)).toBe(true);
+      expect(isLocationDiscovered(discovered, c!)).toBe(true);
+      expect(isLocationDiscovered(discovered, unseen!)).toBe(false);
+    });
+
+    it('a ward whose id is not its name is still discovered from the sentence', () => {
+      const state = createInitialState('Test', 'litrpg', undefined, 'fog-2');
+      const bible = getCampaignBibleById('summoned-pact');
+      const withAtlas = seedWorldAtlas({ ...state, campaignBibleId: 'summoned-pact' }, bible!);
+      const [a, b, c, unseen] = withAtlas.worldAtlas!.settlements.map((x) => x.name);
+      expect(a).toBe('Saltmar');
+      expect(b).toBe('Upper Ward');
+      const narrative = `You are standing in ${a}. ${b} is visible to the north, and you can hear the sounds of ${c} in the distance.`;
+      const discovered = detectAndDiscoverLocations(withAtlas, narrative);
       expect(isLocationDiscovered(discovered, a!)).toBe(true);
       expect(isLocationDiscovered(discovered, b!)).toBe(true);
       expect(isLocationDiscovered(discovered, c!)).toBe(true);
