@@ -43,3 +43,5 @@ G015,flair,keep,Outside rain ticks against the glass while you remain safe indoo
 G019,flair,keep,A safe is bolted beneath the desk though the danger remains high.
 G028,flair,keep,Your travel bag smells faintly of cedar.
 X021,flair,keep,The street seems to whisper beneath the wind.
+A004,gate,block,I hand over the ruby.
+E002,gate,skip,Check what you carry

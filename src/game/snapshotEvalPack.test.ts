@@ -149,9 +149,10 @@ describe('snapshot eval pack subset (Manus 2026-08-25 / live 25b)', () => {
 
 /**
  * Deferred Manus rows — do not assert against live 25b yet.
- * A004/C003 hand-over verbs are not in findHardItemUseClaims.
+ * A004 and E002 are in the offline subset: the hard gate matches the pack. This skip is not that check.
+ * C003 hand-over still does not block.
  * A005/A006/B013/E006 "dog"/"knight" do not match COMPANION_REFERENCE.
- * A021/B007/E002 info-skip needs a live "or"/panel pattern.
+ * A021/B007 "What are my options?" still allows; the pack expects skip. E002 is not that gap.
  * D003/D024 empty/all-alone phrasing is narrower than the pack.
  * D006 "enter the building" does not match the indoor-transition regex.
  * D008/D009 festival-over / was-not-always-so live in sceneFacts TIME_PASSED, not applyProseWarden.

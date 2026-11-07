@@ -805,4 +805,38 @@ export const SNAPSHOT_EVAL_SUBSET: SnapshotEvalRow[] = [
     }),
     keepPhrases: ['seems to whisper'],
   },
+  // Offline hard gate only. Not a live writer evaluation. Pack rows whose gate decision matches today.
+  {
+    id: 'A004',
+    suite: 'gate',
+    expect: 'block',
+    playerInput: 'I hand over the ruby.',
+    lastGmStory: 'The merchant waits.',
+    snapshot: snap('Cobblestone Street', {
+      crowd: 'present',
+      crowdSize: 10,
+      indoor: false,
+      exits: ['north alley'],
+      props: ['wooden barrel'],
+      present: ['Thorn'],
+      inventory: ['iron dagger', 'map'],
+    }),
+  },
+  {
+    id: 'E002',
+    suite: 'gate',
+    expect: 'skip',
+    playerInput: 'Check what you carry',
+    lastGmStory: 'You enter the dusty archive.',
+    snapshot: snap('archive room', {
+      crowd: 'none',
+      crowdSize: 0,
+      indoor: true,
+      timeOfDay: 'morning',
+      exits: ['north door'],
+      props: ['desk'],
+      inventory: ['pen'],
+      aloneArrival: true,
+    }),
+  },
 ];
