@@ -328,6 +328,12 @@ function factLines(state: GameState, turns: { player: LogEntry; gm: LogEntry }[]
   if (kill?.name && typeof kill.turn === 'number') {
     facts.push({ turn: kill.turn, text: `${kill.name} ${kill.outcome === 'victory' ? 'killed' : kill.outcome ?? 'ended'}` });
   }
+  const prevPlace = norm(state.previousLocationSheet?.name);
+  const herePlace = norm(state.currentLocation);
+  if (prevPlace && herePlace && prevPlace.toLowerCase() !== herePlace.toLowerCase()) {
+    const travel = [...(state.log ?? [])].reverse().find((e) => e.role === 'player' && /\btravel\b/i.test(e.content ?? ''));
+    facts.push({ turn: travel?.turn ?? state.turn ?? 0, text: `left ${prevPlace} for ${herePlace}` });
+  }
   const gear = gearAuthorityLine(state);
   if (gear) facts.push({ turn: state.turn ?? 0, text: gear });
   for (const m of state.npcMemories ?? []) {

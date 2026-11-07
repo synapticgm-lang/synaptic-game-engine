@@ -537,7 +537,21 @@ function castMentionNames(state: GameState): string[] {
   }
   // 29y — a card role label with no NPC record ("the innkeep") belongs to the opening place only;
   // offered elsewhere it stood in for a priest, a weapon or a trap.
-  return atOpeningPlace(state) ? openingCastNames(state) : [];
+  return openingCastBelongsHere(state) ? openingCastNames(state) : [];
+}
+/**
+ * No circling record still means "at the opening" to atOpeningPlace. A different previous place
+ * means the move already happened, so a seed card's people are not this street's cast.
+ */
+function openingCastBelongsHere(state: GameState): boolean {
+  if (!atOpeningPlace(state)) return false;
+  const key = (s: string | undefined) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const here = key(state.currentLocation);
+  const prev = key(state.previousLocationSheet?.name);
+  if (prev && here && prev !== here) return false;
+  const where = key(state.openingEstablishment?.answers?.where || state.openingEstablishment?.card?.place);
+  if (where && here && where !== here && !where.includes(here) && !here.includes(where)) return false;
+  return true;
 }
 function atOpeningPlace(state: GameState): boolean {
   const c = state.circling;

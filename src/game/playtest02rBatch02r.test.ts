@@ -11,6 +11,7 @@ import { createInitialState } from './defaults';
 import { emptySceneFacts } from './sceneFacts';
 import type { GameState, LogEntry } from './types';
 import { buildContextPrompt } from './systemPrompt';
+import { buildCompletedEventPacket } from './completedEventPacket';
 import { factClosedViolationReason, classifyBeatCommit } from './beatCommitGate';
 import {
   selectRecentLogForContext,
@@ -67,12 +68,17 @@ describe('Batch 02r — scene context tail', () => {
     expect(text).toMatch(/MARKER_TRAVEL/);
     expect(text).toMatch(/MARKER_STREET/);
     const prompt = buildContextPrompt(state, 'ask the stall-hand');
+    const packet = buildCompletedEventPacket(state, 'ask the stall-hand');
     expect(prompt).not.toMatch(/MARKER_VAULT/);
-    // 29z9i — the writer reads the info sheet; the travel line is on it.
-    // s77 Root D — the post-travel beat's opening sentence is recorded fact; the pre-travel vault beat is not.
+    expect(prompt).not.toMatch(/holds its breath|handler waits/);
+    // 29z9i — LAST is the engine receipt, not a pasted GM sentence. The street opener stays on pageOpeners.
+    expect(packet.pageOpeners).toContain('MARKER_STREET Rain hits the Lowmarket stalls.');
     expect(prompt).toMatch(/INFO SHEET/);
     expect(prompt).toMatch(/MARKER_TRAVEL Travel toward Lowmarket/);
-    expect(prompt).toMatch(/^- MARKER_STREET Rain hits the Lowmarket stalls\.$/m);
+    expect(prompt).toMatch(/left The Sevenfold Circle under Valespire Cathedral for Lowmarket/);
+    expect(prompt).toMatch(/SCENE T10 - Lowmarket/);
+    expect(packet.refEnum?.some((r) => r.klass === 'person')).toBe(false);
+    expect(prompt).not.toMatch(/"fn":"speech"/);
   });
 
   it('keeps last 4 when the camera has not moved', () => {
