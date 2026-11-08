@@ -41,8 +41,10 @@ describe('replay bank new rules: companions act as their own NPCs', () => {
     expect(X.receiptText(T.order)).not.toMatch(new RegExp(`${A}[^\\n]*(obeys|complies) without`, 'i'));
   });
 
-  it('own wants: a choice that serves one costs the other (attitude moves apart)', () => {
-    const d = (n: string) => ((npc(X.after(T.split), n) as any)?.attitude ?? 0) - ((npc(X.before(T.split), n) as any)?.attitude ?? 0);
+  it('own wants: a choice that serves one costs the other (relationship trust moves apart)', () => {
+    // attitude is the string band friendly | indifferent | hostile. The number that moves is persona.rel.trust.
+    const trustOf = (state: ReturnType<Replay['before']>, n: string) => npc(state, n)?.persona?.rel?.trust ?? 0;
+    const d = (n: string) => trustOf(X.after(T.split), n) - trustOf(X.before(T.split), n);
     expect(Math.sign(d(A)) * Math.sign(d(B)), 'opposite or one unmoved').toBeLessThanOrEqual(0);
     expect(d(A) !== 0 || d(B) !== 0).toBe(true);
   });

@@ -1,6 +1,7 @@
 /**
- * M7 / Order 8 — two companions with distinct seeds for offline tests.
- * Being a companion is a relationship row; each person keeps their own agenda + persona.
+ * M7 / Order 8 — development stress fixture. Two recruited rows are planted by hand.
+ * Unsupported as a live party: PARTY_CAP is 1, and settleCompanions refuses the second recruit.
+ * Not a recorded run and not proof of a paid model.
  */
 import { createInitialState } from '../defaults';
 import type { Companion, GameState, NpcMemory } from '../types';
