@@ -6,7 +6,7 @@ John asked for fast-forward across visited places and across ordinary work: trav
 
 **Current** means the code does this today. **Proposed** means the adapter and the server ledger this spec describes. They are not built.
 
-Out of scope: mid-visit implementation, friendly NPCs, edits to PYOA book files, and pull requests 1 and 2. Skipping the batch when `engineMode === 'pyoa'` is a **proposed scope choice**. Authored PYOA books do not spend text turns today (`isAuthoredPyoaBook` in the live send path). That fact does not prove every PYOA save was approved for exclusion. Book files stay untouched either way.
+Out of scope: mid-visit implementation, friendly NPCs, edits to PYOA book files, and pull requests 1 and 2. Whether a PYOA save is included is an open product scope gate. No written mode decision was found. Until one exists, the batch does not start when `engineMode === 'pyoa'`. Authored books already skip the text spend (`isAuthoredPyoaBook`). That is not an approval to exclude the mode. Book files stay untouched.
 
 The player does not have to approve a key name, a taxonomy, or a numeric conversion. The request carries the goal, the max, and the presentation. The default presentation is funded story. A receipt-only telling is an optional choice on that same request, not a silent replacement.
 
@@ -58,10 +58,19 @@ This is the tree a fast-forward index uses when it asks for story. It adds no ca
 - `callGmDurable` in `useGame` loops `attempt <= TURN_TRANSPORT_MAX_AUTO_RETRIES` (`src/game/errorRepairWarden.ts`, value 2) for timeout, network, empty, unknown, and rate limit.
 - Each `callGm` goes through `invokeGmProxy` (`src/game/gmProxy.ts`). A failed fetch retries once. `withRetry` (`src/game/aiServiceShared.ts`) retries up to `MAX_RETRIES` (4) on 429 only, with the cited backoff.
 - `gm-turn` (`supabase/functions/gm-turn/index.ts`) calls the same model once at `AI_MAX_OUTPUT_TOKENS` (4096). On an empty, reasoning-only, or cut-off reply it re-asks that same model once at `WRITER_REASK_MAX_TOKENS` (8192). It does not switch model.
-- Worst case of completions that can reach the model: 3 transport attempts × 5 `withRetry` entries × 2 fetches × 2 edge completions. A fetch that throws before the edge is not a completion. The reserve covers the worst case and releases what the index did not use.
-- Memorable and illustrated calls are not in this tree. Training rows are requested only for the autoplay or test-lab harness (`shouldRequestTrainLog`). This batch does not set that flag. The live writer id is the tier's OpenRouter id in `subscriptionTiers`. This spec does not call `writerGeminiId` and does not choose Fireworks.
+- The same tree is the only paid path. Nested retries do not open a second budget. Memorable and illustrated calls are not in it. Training rows stay off. This spec does not call `writerGeminiId` and does not choose Fireworks. `WRITER_REASK_MAX_TOKENS` (8192) is the existing re-ask cap. It is not a concise-prose policy.
 
-Money and token price for that tree are **not measured**. No figure is stated. The calibration gate stays open until a later measured reading. The stop rule does not need that reading: the server will not start an index whose worst-case tree cannot be reserved.
+Money for that tree is **not measured**. This file states no price and does not call a pricing or balance API.
+
+## Calibration gate
+
+**Proposed. Narrated launch is off until this gate passes.** A later server configuration must hold the current model, route, and price, and a bound on input tokens and output tokens for every nested attempt and re-ask. Their aggregate worst case must fit a server-funded compute budget. That budget is reserved before any paid dispatch. It is independent of the text-turn allowance. Both reservations are required.
+
+One envelope covers the index. Transport retry, the 429 loop, and the edge re-ask spend that same envelope. A layer does not receive a fresh one. A timeout or an unknown outcome stays inside it, because the request may already have cost money.
+
+A stale or unknown price, or a change of route, context size, or retry ceiling, fails closed. The index does not launch until the configuration is validated again. No guessed conversion is used.
+
+`receipts` sends no model call, so it does not wait on this gate. `story` does. Story remains the default the player asked for. It does not launch while the gate is shut.
 
 ## Approaches
 
@@ -98,7 +107,7 @@ The baseline is part of the immutable job. Resume uses it. A total goal that is 
 
 The max is the cap on underlying actions, not a second clock. Travel also quotes world hours. The effective cap is the smaller of the max and the number of actions whose envelopes the account can still reserve.
 
-Opening incomplete: the hunt and gather resolvers already return without a fight. The batch does not start. PYOA mode: the batch does not start, under the disclosed scope choice.
+Opening incomplete: the hunt and gather resolvers already return without a fight. The batch does not start. PYOA mode: the batch does not start. That mode gate is still open. It is not a written yes.
 
 ## Travel quote and batch
 
@@ -109,11 +118,24 @@ The quote uses `mapGapBetween` and `hoursAtPace` from the current place to a pla
 1. Reserve the envelope.
 2. Call `goTo` for the first action, or `stepAlong` for a later leg. Do not call `travelOn`.
 3. Commit that result, including a death or an encounter `rollStretch` attached.
-4. If the result is death, an open encounter, a lane block, a rare spawn, or a camp mini-boss, stop after that commit. The player's next sentence is a normal turn against that state. The spawn is not charged again.
+4. If the result is death, a lane block, a rare spawn, a camp mini-boss, or any meeting that is not ordinary wildlife on a kill-along-route job, stop after that commit. The player's next sentence is a normal turn against that state. The spawn is not charged again. Manual map travel stays that normal sentence. It is not this batch.
 
 Preflight, before the reserve: goal already met; max already used; envelope cannot be reserved; `playPhase` ended or dying; a push-on confirm or first-fight gate is open; `journey.encounter` is set and `roadMeetingOver` is false; the next leg would make `dayIsSpent` true; `areaTier >= 3`; haunted. Those stops charge nothing. The "fewer than two legs remain" clause of `canTravelOn` is not copied. The last legs still walk unless a stop above applies.
 
 `stepAlong` today will still march a dangerous or haunted leg. The adapter pauses before calling it. That is the difference.
+
+## Wildlife on the chosen route
+
+John's 2 Nov request is travel to a place and kill wildlife on the way, including the woods or swamp the route already crosses, and to kill what that route presents. The 8 Nov rule still limits the destination to a visited place and charges each underlying action. This section uses those closed rules. It does not replace them with a hunt that never leaves the current spot.
+
+**Proposed.** The job may ask for both the destination and on-route wildlife. The quote is still `mapGapBetween`: the terrain already on that path, not a new detour. Each index is one existing action.
+
+- A leg is one `goTo` or one `stepAlong`.
+- After that leg commits an encounter whose kind is `wildlife`, and that foe is not rare and not above party level + 1, the next index may call `resolveEngineFight` on that road foe. One charge. A kill counts only on victory. `payEncounterXp` may pay 0. No second charge for the rounds inside `simulateCombat`.
+- Thugs, undead, a monster, a villain, a camp champion, a rare spawn, haunted ground, and tier 3 or higher pause once after the leg that created them. The batch does not fight them.
+- A quiet leg adds no kill. The batch does not invent a wildlife spawn to fill the goal. `startHuntFromInput` remains the separate wilds job. It is not called on the road in place of `rollStretch`.
+
+"Kill everything" is therefore only the ordinary wildlife the road resolver already produces, one fight index at a time. It is not an automatic win, and it is not every hostile kind. Where the road rolls no wildlife, the request is not fully automated. That limit is the engine's encounter roll, not a claim that the 2 Nov request is entirely closed.
 
 ## Hunt, gather, kills, drops, and level
 
@@ -137,21 +159,21 @@ Account spendable text is today's subscription cap, plus ad bonus, plus pack bal
 
 One job record is immutable after the player confirms the quote: `jobId`, account id, `saveId`, save revision, quote, max, goal kind, target, baseline quantities, presentation, and the place or skill ids. A later edit is a new job.
 
-Each index:
+Each index reserves one allowance action. A `story` index also reserves the compute envelope, and only after the calibration gate. A `receipts` index reserves no model call. The hold stores an owner token and an expiry. Disconnect does not release it.
 
-- Reserve one allowance action and, for `story`, the worst-case completion tree above. For `receipts`, reserve one allowance action and zero model calls.
-- The hold stores an owner token and an expiry later than one index of the cited retry delays. Disconnect does not release it.
-- Commit requires that token, an unexpired active hold, and a compare-and-swap on the save revision. The outcome record stores the engine receipts, victory or defeat, quantities, level, and the `hashUnit` or `turnRng` key the resolver used. A replay of that index returns the record and does not roll again.
-- A cancelled or expired hold cannot commit. A late worker is rejected. The unused reserve returns to the account.
-- Resume continues at the first index that has no outcome record.
+An attempt record is `idle`, `launched`, `settled`, or `unknown`. Dispatch sets `launched` before the provider request. Settlement stores the save outcome and the engine key (`hashUnit` or `turnRng`). Commit of the save still requires the owner token, an active unexpired hold, and a compare-and-swap on the save revision. A replay of a `settled` attempt returns that record and does not roll again.
 
-**Proposed concurrency.** One live job per save. A second job on that save does not start. A job on another save may reserve only what the account has left after holds. A normal sentence preempts an index that has not committed: that hold is released, the sentence is reserved as a normal turn, and the text stays in the log. An index that has already committed stays committed. The sentence then runs at the next save revision. If the account cannot reserve the sentence, the draft is restored and the batch is unchanged. The sentence is not deleted.
+Cancel, expiry, and preemption stop a new launch and fence the save commit. They do not undo a request already sent. Funds for a `launched` or `unknown` attempt stay reserved at the worst case until that attempt is reconciled. Spent or still-liable compute is not refunded. Only an attempt that is still `idle` can return its unused compute reserve.
+
+Resume reads the attempt. `launched` or `unknown` is reconciled or waited out. It is not dispatched again. A genuinely new index reserves additional allowance and, for story, additional compute, before it launches. A missing save outcome does not mean no paid work happened.
+
+**Proposed concurrency.** One live job per save. A second job on that save does not start. Another save may reserve only what remains after holds, including liable compute. A normal sentence may preempt an index whose attempt is still `idle`: that unused hold returns, the sentence takes its own reservation, and the text stays in the log. If the attempt is `launched` or `unknown`, preemption does not release the compute hold and does not start the sentence on those funds. The draft is restored if the sentence cannot reserve. The batch is not described as unchanged after a hold release when a launch record exists. An index whose save commit already landed stays landed. The sentence then runs at the next save revision.
 
 Until this ledger exists, the feature stays unshipped. This document does not add the table or a price.
 
 ## Presentation
 
-`story`, the default: each committed index may show one GM beat from the writer tree above. Retry attempts are not extra beats. After the last committed index, the log also shows the engine receipts already stored for those indexes. That closing list is not another model call.
+`story`, the default, launches only after the calibration gate. Each committed index shows one beat whose size is a later configured finite context and beat budget. The 8192 re-ask cap is not that budget. Retry text is not shown. Receipts for the batch are a bounded, paginated list of the engine lines already stored. That list is not another model call. Until the beat budget and the price configuration exist, story does not launch.
 
 `receipts`, optional on the request: no writer call. Each index shows its engine receipt (`Travel:`, `Fight:`, `Wilds:`, `Materials:`). The closing list is those receipts, aggregated in order, still one line of record per index. Allowance is still one action per index, because the action happened. This choice is not the approved telling unless the player selected it.
 
@@ -162,7 +184,7 @@ Either way the log does not grow by the hidden retries, and it does not replace 
 1. Keep the player's sentence. A fast-forward control is not that sentence.
 2. Preflight. Reserve, or restore the draft and stop.
 3. Resolve one existing action.
-4. On a normal turn, the writer tree may run inside the reserved envelope, and the mid-visit gate may accept one offer. On a `receipts` index, skip the writer and skip that gate. On a `story` index, the writer narrates the engine outcome and does not run the mid-visit gate.
+4. On a normal turn, the writer tree may run only inside the one reserved compute envelope, after the calibration gate, and the mid-visit gate may accept one offer. On a `receipts` index, skip the writer and skip that gate. On a `story` index, narration starts only when that gate is open, then uses the same envelope, and does not run the mid-visit gate.
 5. Commit under the lease, or reject the late commit.
 6. A pause ends the batch. The next sentence is a normal turn.
 
@@ -170,14 +192,14 @@ Either way the log does not grow by the hidden retries, and it does not replace 
 
 - A visited destination quotes `steps` allowance actions and `steps * hoursPerLeg` world hours for that terrain and pace. A street step and a mountain leg do not quote the same hours. Neither quote uses a turns-per-day constant. `travelOn` is not the implementation of that quote.
 - A place with no `lastVisitedTurn`, a road label, and the current place do not start and do not reserve.
-- Four quiet ordinary legs commit four actions, four clock advances, and four receipts. The leg that rolls an encounter commits once, then pauses. The next typed sentence is a normal turn. That encounter is not charged a second time. A tier-3 gap, haunted ground, an already-open meeting, and a spent road day pause before the call and charge nothing.
+- Four quiet ordinary legs commit four actions, four clock advances, and four receipts. A leg that rolls ordinary wildlife, on a job that asked to kill wildlife on the way, commits once, then the next index may fight that foe under `resolveEngineFight`. A rare, special, or high-level meeting commits once and pauses. It is not charged again and it is not auto-won. A tier-3 gap, haunted ground, an already-open meeting, and a spent road day pause before the call and charge nothing. A typed travel sentence is still a normal turn.
 - Death on the road stops on the death state after that one commit.
 - A litrpg hunt of an ordinary foe charges one action, calls `resolveEngineFight`, and counts a kill only on victory. A defeat counts no kill, pays no victory XP, and stops on the cooldown state. A rare, elite, or above-party foe commits the spawn, charges once, and does not auto-resolve.
 - "Until I have 10 hides," with 10 already in the pack, stops before a charge. With 7 in the pack, the baseline is 7 and the job finishes at quantity 10, including hides already owned. "Gather 10 more" from 7 finishes at 17. Resume keeps the baseline. A nothing-roll charges and does not move the count. A full pouch commits the refusal and pauses.
 - "Until level 4," with character level 2, continues only while hunts can be reserved. A gray victory that pays 0 does not bump the level and does not get replacement XP. When the next reserve would pass the account balance or the max, the batch stops below 4. Skill XP does not satisfy this goal. A skill-level request does not move character XP.
-- Two batches and one normal sentence on the same account cannot reserve more than the spendable balance minus holds. The sentence preempts an uncommitted index and remains in the log. A second job on the same save does not start.
-- A dropped connection before commit leaves the hold owned until expiry, then releases it, and no outcome exists. A late commit after cancel or expiry is rejected. A replay of a committed index returns the stored outcome and does not re-roll. Resume continues at the next index without an outcome.
-- A `story` index that cannot reserve the worst-case writer tree does not start. A `receipts` index reserves no model call. No image call, training row, Gemini call, or Fireworks route is added.
+- Two batches and one normal sentence cannot reserve more allowance or compute than the account has after holds. A sentence preempts only an `idle` attempt. After a provider dispatch, the compute hold stays and the sentence is not started on it. A second job on the same save does not start.
+- Disconnect, cancel, or preemption after dispatch leaves the attempt `launched` or `unknown`. Resume does not dispatch it again. A late save commit is rejected. Spent or still-liable compute is not refunded. A new index reserves additional funds before a new dispatch. Total liability for that attempt stays inside the reserved envelope.
+- A `story` index does not launch while price, route, or the beat budget is missing or stale. A `receipts` index reserves no model call. No image call, training row, Gemini call, or Fireworks route is added.
 - A normal turn's mid-visit accept still obeys the visit cap across a room change and a reload.
 
 ## Not in this proposal

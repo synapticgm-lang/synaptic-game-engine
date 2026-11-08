@@ -6,7 +6,7 @@ John approved the goal: during a visit the game may accept a new quest, includin
 
 Lines marked **current** describe the code today. Lines marked **proposed** are the adapter this spec asks a later build to add. Proposed facts are not on the save today.
 
-Out of scope: friendly-NPC and rescue work, fast-forward implementation, training capture, provider or billing changes, and pull requests 1 and 2. PYOA book files stay untouched. Refusing new mid-visit quests when `engineMode === 'pyoa'` is a **proposed scope choice**, disclosed here. It is not evidence that every PYOA feature was approved for exclusion. A later spec can host these contracts on a PYOA save without editing book files first.
+Out of scope: friendly-NPC and rescue work, fast-forward implementation, training capture, provider or billing changes, and pull requests 1 and 2. Whether these features include a PYOA save is an open product scope gate. No written mode decision was found. This file keeps them off `engineMode === 'pyoa'` until that decision exists. That is not an approval. Book files stay untouched. A later spec can host these contracts on a PYOA save without editing book files first.
 
 ## Preserved guards
 
@@ -92,20 +92,35 @@ Each accepted quest stores one objective and one outcome record. The objective c
 | --- | --- | --- | --- | --- |
 | find | The task is to recover or locate a named object, and nothing else must become true | That object, where it already is. A node it already has is the spot. A place it already has, with no node, is the spot only while the player is at that place. `placeQuestTarget` is not called, so a missed room word cannot move it. No place and no node is `no-binding` | **Current** item rules of `findQuestTargets` at that spot. **Proposed** outcome `{ kind: 'found', objectId, nodeId, turn }` written in the same step | A search somewhere else. Naming the title when the object name was not what was said. Any new room chosen for it |
 | meet | The task is to speak with a named person, and no concession is required | That existing person. They must already be seated, or already have a location. They are not created and not moved | **Current** person rules of `findQuestTargets`. **Proposed** outcome `{ kind: 'met', personId, turn }` | A search. Talking to someone else |
-| investigate | The task is to learn a stated claim from a source | The existing person, object, or place the description names as the source. The claim must already be text on that record (an NPC fact, the object's text, or the place text). A question with no such text is `no-binding` | **Proposed.** The player takes the source's existing action at its real spot: search or observe on an object or place, talk on a person, or a `search` check from `runPlayerCheck` when the task is study. The adapter writes `{ kind: 'learned', claim, sourceId, turn }` and the claim is that pre-existing text, not a sentence composed at accept | Any search of a different source. Naming the object without being at its spot. A glance that is treated as discovering a fact the source did not hold. The writer saying the answer in prose |
+| investigate | The task is to learn a stated claim from a source | The existing person, object, or place the description names as the source. The claim must already be text on that record. A question with no such text is `no-binding` | **Proposed.** Reading text that is already on the source needs no check: search, observe, or talk at that source copies that text into `{ kind: 'learned', claim, sourceId }`. A study task that asks for a check writes `learned` only when `runPlayerCheck` succeeds for that source. The same commit stores the outcome. A failed check stores nothing | A different source. A failed or unrelated check. A study task completed with no successful resolution |
 | explore | The task is to survey a named place or room | That place or reachable node, already on the card or map | **Proposed.** The player is on that node or place and the action is search or observe. Arrival alone does not write the record. Outcome `{ kind: 'surveyed', placeId, nodeId, turn }` | A random room. A find of an stand-in item. Leaving the site |
-| negotiate | The task states a concession: an agreement, a price refused, a way opened, terms accepted | The one seated giver, who is the counterparty. The concession text is stored at accept | **Proposed.** `resolveEngineFight` records a successful parley against that person, or `runPlayerCheck` records a CHA success against them (the same success `useGame` already passes as `socialCheckSucceeded`). The adapter writes `{ kind: 'concession', personId, terms, turn }`. Terms are the stored concession. They do not move gold, mint an item, or create a person | Talk with no successful check. A parley against someone else. A concession that needs new gold, a new item, or a new person (`no-mint`) |
-| obstacle | The task is to clear a named barrier, lock, or blocked way | That existing feature at its real node | **Proposed.** The player is on that node and `runPlayerCheck` succeeds for `lock` (pick) or `athletics` (force, climb, clear), using `taskRung` and `ladderDc`. Outcome `{ kind: 'cleared', nodeId, task, turn }`. A failed check leaves the objective open | A search. A check in another room. Relocating the barrier |
+| negotiate | The task names a change the world can already make | The offer still needs exactly one seated giver. The counterparty is bound separately: a present person, who may be that giver or another person already seated, or the live road encounter those words name. A missing counterparty is `no-binding` | **Proposed.** One commit applies an existing transition and the outcome. See World transition. A check or a parley that does not apply that transition does not complete the quest | Talk alone. A success against a different person. A terms record with no change to gold, passage, or access |
+| obstacle | The task is to open or clear one named feature | That feature's existing id: a secret with `unlocksNodeId`, or a trap on that node. No such id is `unsupported-transition` at accept | **Proposed.** The player is on that node, the check for that feature succeeds, and the same commit sets the secret `revealed` or the trap `disarmed`. Outcome `{ kind: 'cleared', featureId, from, to }` | A check on another feature. A failed check. A success that leaves the feature unchanged |
 
 A description that still matches two families after this assignment is `unsupported-task`. Search or examine of a place, with no separate claim to learn, is explore. Search or examine of a source in order to learn a claim is investigate. A concession verb together with a second claim is two tasks and is rejected.
 
 Defeat, deliver, recover, protect, escort, and kill are `unsupported-task` on this path. They are floor-template strategies or combat. This visit does not acquire them by disguising them as a find.
 
+## World transition
+
+**Proposed.** Accept stores `featureId` or `counterpartyId`, the transition the offer promises, and the resulting state. Completion is one commit of that state and the outcome. If the engine has no transition for the promise, accept rejects `unsupported-transition` and stores no quest.
+
+Transitions the code already performs:
+
+- A secret door: `unlockInteriorSecretOnNodes` (`src/game/mapEngine.ts`) sets that secret `revealed` and opens `unlocksNodeId`. The bound id is that secret. A door with no secret record is rejected at accept.
+- A lock or barrier that is already a trap: a successful `lock` or `athletics` check for that trap id sets `disarmed`. Another trap, or a failed check, does not.
+- A road toll or purse demand: `resolveRoadPassage` (`src/game/travelJourney.ts`) subtracts the gold it already computes, `max(1, round(encounter.level))`, and settles that meeting so the way is clear. The counterparty is that live encounter. An offer whose price is not that cost is rejected at accept. The quest does not invent a second price. If `state.gold` is below the cost, the existing path opens a fight and the way stays blocked. The quest does not complete. This spends gold the player already has. It does not mint gold.
+- Giving the locked character name for a name demand settles that same meeting. The bound encounter must be the one asking.
+
+A CHA success or a parley that does not apply one of those transitions leaves the door shut, the trap armed, the toll unpaid, and the quest open. Copying the offer's words into a terms field is not the transition.
+
+An offer to move an arbitrary sum, to pay a person who has no toll demand, or to change a price list the save does not store, is `unsupported-transition`. It is rejected at accept. It is not described as minting. Minting remains rejected when the offer would create gold or an item the writer named.
+
 ## Accept order
 
 1. Gen-bind as today. Leave the rewritten tag in the list. Stop.
 2. Remove the writer tag from the list `eventsToQuestUpdates` will see.
-3. Build the proposal record. Reject, log `unbound quest`, and leave quests unchanged when the giver, type, duplicate, crisis, cap, mode choice, entailment, or bind fails, or when the family is `unsupported-task`, or when negotiate would mint.
+3. Build the proposal record. Reject, log `unbound quest`, and leave quests unchanged when the giver, type, duplicate, crisis, cap, mode choice, entailment, or bind fails, when the family is `unsupported-task`, when the promised transition has no existing feature or counterparty, or when the offer would mint gold or an item.
 4. On accept, append the side quest `active` and `revealed`, one objective, the outcome slot empty, no `routes`, no rewards copied from the tag. Append one visit-log event on the place id. Append one `stateTxLog` row, `kind: 'quest_reveal'`, summary `Mid-visit proposal: <title>`.
 
 The place is the open dungeon card's site name, or the current place record's name when no card is open.
@@ -117,17 +132,19 @@ A normal turn keeps the player's sentence and takes one account reservation unde
 ## Design acceptance tests
 
 - A tag that names a `gen-` giver still binds, adds no `mid-` quest, does not pay a second time, and the rewritten tag is the one `eventsToQuestUpdates` sees.
-- "Examine the cellar mark and learn what it records," with the mark already in a real room, the record already holding the text, and one seated giver, stores family `investigate` and completes only when the player searches or studies that mark there. The outcome claim is the text the mark already held. Searching the door does not complete it. A mark with no text is `no-binding`. The title may be "The cellar mark" without being rejected and without being the proof.
+- "Examine the cellar mark and learn what it records," with the mark already holding that text, completes when the player reads that mark there. The outcome claim is that text. A study wording completes only when the check against that mark succeeds. A failed check, and a check against the door, leave it unread. A mark with no text is `no-binding`. The title may be "The cellar mark" without being the proof.
 - "Survey the cellar," with a reachable room whose name is that cellar, completes only on a search or observe while standing in that room. A different room does not complete it. No object is created to stand in for the room.
-- "Persuade <giver> to open the side door," with that giver seated and the door already on the card, completes only after a successful parley or CHA check against that giver, and the outcome terms are the stored concession. Talk alone does not complete it. No gold and no item are created. `significantPerson` and the quest tick are not the same key paid twice for one flip.
-- "Pick the lock on the cellar door," with that door on a real node, completes only after a successful `lock` check on that node. A failed check leaves it open. A search does not complete it.
+- "Persuade the guard to open the side door," with one seated giver and the guard also seated, binds the guard as counterparty and the side door's secret id as the feature. It completes only when that secret becomes `revealed` in the same commit. A CHA success that leaves the secret shut does not complete it. A door with no secret id is rejected at accept.
+- "Pay the toll," while that encounter's demand is `toll`, completes only when `resolveRoadPassage` subtracts its own cost from `state.gold` and settles that meeting. A different price is rejected at accept. Too little gold does not complete it. No gold is created.
+- "Hand over 50 gold" with no toll or purse demand is `unsupported-transition`.
+- "Pick the lock on the cellar door," bound to that door's trap id, completes only when that trap becomes `disarmed` in the same commit as the outcome. A failed check, and a successful check on another trap, leave it armed. A search does not complete it.
 - "Find the cellar mark," with the mark already placed, completes under the current item ticker at that node and writes `found`. The mark is not moved to another room.
 - "Speak with <giver>" completes under the current person ticker and writes `met`. A search does not.
 - "Learn how the radio works," family investigate, valid giver, on a tabletop save with medieval tokens and no radio noun on the save or bible, is rejected `genre`. No quest remains.
 - "Learn the harbour code," with no person, object, or place on the save or bible that can be the source, is `genre-unknown` or `no-binding`. No quest remains.
 - "Persuade <giver> to hand over 50 gold" is `no-mint`.
 - "Kill the wolf" is `unsupported-task`.
-- A PYOA-mode save is rejected `genre` under the disclosed scope choice. No book file changes.
+- A PYOA-mode save is outside this proposal until a written mode decision includes it. That exclusion is not a yes. No book file changes.
 - No named giver, a person who is not seated, and two seated names are rejected. No memory is created.
 - A completed or failed title, a resolved crisis, and an active duplicate are rejected.
 - The same tag twice in one turn adds one quest.
