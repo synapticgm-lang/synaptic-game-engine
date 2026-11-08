@@ -368,11 +368,30 @@ export function shouldAutoCloseDungeon(state: GameState): boolean {
   return true;
 }
 
+/** An open quest step still looks for something in this dungeon, so the card is not finished. */
+function holdsUnfoundTarget(state: GameState): boolean {
+  const d = state.activeDungeon;
+  const site = (d?.siteName ?? d?.dungeonName ?? '').trim().toLowerCase();
+  if (!site) return false;
+  for (const q of state.quests ?? []) {
+    if (q.status === 'completed' || q.status === 'failed') continue;
+    for (const step of q.objectives ?? []) {
+      const target = step.target;
+      if (!target || target.foundTurn != null) continue;
+      const place = (target.place ?? step.place ?? '').trim().toLowerCase();
+      if (place === site) return true;
+    }
+  }
+  return false;
+}
+
 /**
  * O1-C — when every foe is down, mark cleared / condense. Legacy path no longer discards the layout.
  * Card sites: mark cleared in place (player leaves by choice); parkDungeonCard writes clearedSites.
+ * A card that still holds an unfound quest target stays open (tt-build item 3).
  */
 export function maybeAutoCloseDungeon(state: GameState): GameState {
+  if (holdsUnfoundTarget(state)) return state;
   if (!shouldAutoCloseDungeon(state)) return state;
   const d = state.activeDungeon;
   if (!d) return state;

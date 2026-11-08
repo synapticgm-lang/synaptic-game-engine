@@ -184,6 +184,46 @@ describe('2 — a step ticks only on find / meet', () => {
 });
 
 describe('3 — a dungeon holding an unfound target keeps its state', () => {
+  it('a card with no remaining foe is not marked cleared while its quest target is unfound', () => {
+    const activeDungeon = {
+      blueprintId: 'dungeon-card',
+      dungeonName: 'Keep Gate',
+      siteName: 'Keep Gate',
+      nodes: [
+        { id: 'r0', name: 'Gate', connections: ['r1'], tags: ['entry'], hidden: { mobs: [], lootables: [], traps: [], secrets: [] } },
+        { id: 'r1', name: 'Hall', connections: ['r0'], hidden: { mobs: [], lootables: [], traps: [], secrets: [] } },
+      ],
+      clearedNodeIds: ['r1'],
+      visitedNodeIds: ['r0', 'r1'],
+      currentNodeId: 'r0',
+      cleared: false,
+    };
+    const unfound = ck({
+      seed: 'unfound-keep',
+      currentLocation: 'Keep Gate',
+      activeDungeon,
+      quests: [{
+        ...plea,
+        objectives: plea.objectives.map((o) =>
+          o.id === 'p2'
+            ? { ...o, target: { kind: 'item' as const, name: 'signs of Lina', place: 'Keep Gate', nodeId: 'r1' } }
+            : o,
+        ),
+      }],
+    } as Partial<GameState>);
+    expect(maybeAutoCloseDungeon(unfound).activeDungeon).toBe(unfound.activeDungeon);
+    const found = {
+      ...unfound,
+      quests: unfound.quests!.map((q) => ({
+        ...q,
+        objectives: q.objectives!.map((o) =>
+          o.id === 'p2' ? { ...o, completed: true, target: { ...o.target!, foundTurn: 9 } } : o,
+        ),
+      })),
+    } as GameState;
+    expect(maybeAutoCloseDungeon(found).activeDungeon?.cleared).toBe(true);
+  });
+
   it('leaving parks the card with rooms cleared and the target unfound; it never auto-closes and reopens as left', () => {
     const placed = placeTabletopQuestTargets(ck({ quests: [plea], currentLocation: 'Keep Gate' } as Partial<GameState>));
     const inside = openDungeonCard(placed, 'Keep Gate');
