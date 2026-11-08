@@ -180,6 +180,59 @@ describe('engine-tagged timeline facts', () => {
     ]);
   });
 
+  it('does not call a room cleared because a move tag named it', () => {
+    const crypt = {
+      blueprintId: 'dungeon-card',
+      dungeonName: 'Grey Crypt',
+      currentNodeId: 'r0',
+      clearedNodeIds: [] as string[],
+      nodes: [
+        { id: 'r0', name: 'Gate' },
+        { id: 'r1', name: 'Cellar' },
+      ],
+    } as GameState['activeDungeon'];
+    const before = state({ activeDungeon: crypt, currentLocation: 'Grey Crypt — Gate', timeline: [
+      { id: 'old', turn: 1, verb: 'cleared', kind: 'place', name: 'Old Well', text: 'cleared: Old Well', at: 1 },
+    ] });
+    const facts = collect(before, { activeDungeon: crypt, currentLocation: 'Grey Crypt — Gate' }, [
+      { type: 'dungeon-move', nodeId: 'r1' },
+    ]);
+    expect(facts.some((f) => f.verb === 'cleared')).toBe(false);
+    expect(facts.some((f) => f.name === 'r1' || f.name === 'Cellar')).toBe(false);
+    const kept = applyCollectedFacts(before, facts);
+    expect(kept.timeline?.some((f) => f.name === 'Old Well' && f.verb === 'cleared')).toBe(true);
+    expect(kept.timeline?.some((f) => f.verb === 'cleared' && f.name === 'Cellar')).toBe(false);
+  });
+
+  it('records arrival from a resolved room change, and clearance only from cleared rooms', () => {
+    const nodes = [
+      { id: 'r0', name: 'Gate' },
+      { id: 'r1', name: 'Cellar' },
+    ];
+    const beforeCard = {
+      blueprintId: 'dungeon-card',
+      dungeonName: 'Grey Crypt',
+      currentNodeId: 'r0',
+      clearedNodeIds: [] as string[],
+      nodes,
+    } as GameState['activeDungeon'];
+    const moved = { ...beforeCard!, currentNodeId: 'r1', clearedNodeIds: [] };
+    const before = state({ activeDungeon: beforeCard, currentLocation: 'Grey Crypt — Gate' });
+    const walked = collect(before, { activeDungeon: moved, currentLocation: 'Grey Crypt — Gate' }, [
+      { type: 'dungeon-move', nodeId: 'r9' },
+    ]);
+    expect(walked.some((f) => f.verb === 'cleared')).toBe(false);
+    expect(walked.some((f) => f.verb === 'arrived' && f.name === 'Cellar')).toBe(true);
+    const clearedCard = { ...moved, clearedNodeIds: ['r1'] };
+    const cleared = collect(
+      { ...before, activeDungeon: moved, currentLocation: 'Grey Crypt — Cellar' },
+      { activeDungeon: clearedCard, currentLocation: 'Grey Crypt — Cellar' },
+      [{ type: 'dungeon-move', nodeId: 'r1' }]
+    );
+    expect(cleared.some((f) => f.verb === 'cleared' && f.name === 'Cellar')).toBe(true);
+    expect(cleared.some((f) => f.verb === 'arrived')).toBe(false);
+  });
+
   it('records a leave and an HP drop from state when the narrator sent no such tag', () => {
     const crypt = { blueprintId: 'dungeon-card', dungeonName: 'Grey Crypt' } as GameState['activeDungeon'];
     const before = state({ activeDungeon: crypt });

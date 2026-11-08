@@ -203,8 +203,46 @@ export function collectTurnTimelineFacts(params: {
       pushTagged(facts, { id: `place:${e.dungeonName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, turn, verb: 'arrived', kind: 'place', name: e.dungeonName, detail: 'dungeon', text: renderTagText('arrived', 'place', e.dungeonName, 'dungeon'), at: Date.now() });
     }
     if (e.type === 'dungeon-exit') noteLeave();
-    if (e.type === 'dungeon-move' && e.nodeId) {
-      pushTagged(facts, { id: `place:${e.nodeId}`, turn, verb: 'cleared', kind: 'place', name: e.nodeId, detail: 'room', text: renderTagText('cleared', 'place', e.nodeId, 'room'), at: Date.now() });
+  }
+  const beforeCard = stateBefore.activeDungeon;
+  const afterCard = stateAfter.activeDungeon;
+  const roomName = (id: string | undefined): string => {
+    if (!id) return '';
+    const card = afterCard ?? beforeCard;
+    const node = card?.nodes?.find((n) => n.id === id);
+    return (node?.name ?? '').replace(WS, ' ').trim();
+  };
+  const already = new Set(beforeCard?.clearedNodeIds ?? []);
+  for (const id of afterCard?.clearedNodeIds ?? []) {
+    if (already.has(id)) continue;
+    const name = roomName(id);
+    if (!name) continue;
+    pushTagged(facts, {
+      id: `place:${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+      turn,
+      verb: 'cleared',
+      kind: 'place',
+      name,
+      detail: 'room',
+      text: renderTagText('cleared', 'place', name, 'room'),
+      at: Date.now(),
+    });
+  }
+  const beforeNode = beforeCard?.currentNodeId ?? '';
+  const afterNode = afterCard?.currentNodeId ?? '';
+  const locChanged = !!stateAfter.currentLocation && stateAfter.currentLocation !== stateBefore.currentLocation;
+  if (afterNode && afterNode !== beforeNode && !locChanged) {
+    const name = roomName(afterNode);
+    if (name) {
+      pushTagged(facts, {
+        id: `place:${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        turn,
+        verb: 'arrived',
+        kind: 'place',
+        name,
+        text: renderTagText('arrived', 'place', name),
+        at: Date.now(),
+      });
     }
   }
   noteHp();

@@ -1,6 +1,6 @@
 /** q72 — SCENE block + per-place visit log. Budget: SCENE <=200 tok; scene part <=300. */
 import { isSystemWindowLabel } from './chromeAuthority.ts';
-import { sheetMemoryLine } from './npcRecords.ts';
+import { presentNpcRecords, sheetMemoryLine } from './npcRecords.ts';
 import { exitPlaceNames } from './placeNames.ts';
 import { playerCommittedTravel } from './travelAuthority.ts';
 import type { GameState, PlaceVisitLog, TimelineFact } from './types.ts';
@@ -44,6 +44,18 @@ function people(state: GameState): Array<{ id: string; name: string }> {
     }
   }
   return out.slice(0, CAP);
+}
+
+/** Companions the presence record already seats, and whose hit points say they are up. */
+function companionsHere(state: GameState): Array<{ name: string; animal: boolean }> {
+  const seated = new Set(presentNpcRecords(state).map((m) => m.npcName.toLowerCase()));
+  const out: Array<{ name: string; animal: boolean }> = [];
+  for (const c of state.companions ?? []) {
+    const name = (c?.name ?? '').trim();
+    if (!name || (c.hp ?? 0) <= 0 || !seated.has(name.toLowerCase())) continue;
+    out.push({ name, animal: c.type === 'beast' || c.type === 'mount' });
+  }
+  return out;
 }
 /** Matches slotNamesOnePerson. Kept local so the edge copy does not import the client opener. */
 function castNameIsOnePerson(part: string): boolean {
@@ -118,8 +130,26 @@ export function formatSceneBlock(state: GameState): string {
     if (meetingName && p.name.toLowerCase() === meetingName.toLowerCase()) continue;
     present.push(p);
   }
+  const withYou = companionsHere(state);
+  for (let i = present.length - 1; i >= 0; i--) {
+    const name = present[i]!.name.toLowerCase();
+    if (withYou.some((c) => c.animal && c.name.toLowerCase() === name)) present.splice(i, 1);
+    else if (withYou.every((c) => c.name.toLowerCase() !== name) && (state.companions ?? []).some((c) => (c.name ?? '').toLowerCase() === name && (c.hp ?? 0) <= 0)) {
+      present.splice(i, 1);
+    }
+  }
+  for (const c of withYou) {
+    if (c.animal || present.some((p) => p.name.toLowerCase() === c.name.toLowerCase())) continue;
+    if (present.length >= CAP) break;
+    present.push({ id: `companion:${c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, name: c.name });
+  }
   const creatures: string[] = [];
   if (state.activeEncounter?.name) creatures.push(`${state.activeEncounter.name} (foe)`);
+  for (const c of withYou) {
+    if (!c.animal || creatures.length >= CAP) continue;
+    if (creatures.some((line) => line.toLowerCase().startsWith(c.name.toLowerCase()))) continue;
+    creatures.push(c.name);
+  }
   for (const rec of Object.values(state.entityRecords ?? {})) {
     if (rec.kind !== 'creature' || creatures.length >= CAP) continue;
     if (rec.place && state.currentLocation && rec.place.toLowerCase() !== state.currentLocation.toLowerCase()) continue;
