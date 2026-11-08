@@ -280,6 +280,25 @@ describe('q75-ROUNDTYPED', () => {
     expect(atDead!.state.roundCombat?.foes[0]?.hp ?? wolfHp).toBe(wolfHp);
   });
 
+  it('an explicit target the engine cannot resolve does not hit whoever is already fighting', () => {
+    const s = fightState();
+    const before = s.roundCombat!.foes[0]!.hp;
+    for (const line of ['Attack Zephyr', 'attack zephyr', 'Attack the grey warden', 'fight Zephyr', 'Negotiate with Zephyr', 'bargain with Zephyr']) {
+      const plan = interpretRoundTyped(s, line);
+      expect(plan.accepted, line).toBe(true);
+      expect(plan.clauses.some((c) => c.kind === 'srd' && c.action === 'attack'), line).toBe(false);
+      expect(plan.clauses.some((c) => c.kind === 'influence'), line).toBe(false);
+      expect(plan.facts.join(' '), line).toMatch(/not here/i);
+      expect(plan.facts.join(' '), line).toMatch(/no strike lands/i);
+      const fought = resolveEngineFight(s, line);
+      expect(fought!.state.roundCombat?.foes[0]?.hp ?? before, line).toBe(before);
+    }
+    expect(interpretRoundTyped(s, 'Attack').clauses[0]).toMatchObject({ kind: 'srd', action: 'attack' });
+    expect(interpretRoundTyped(s, 'cast Sacred Flame').clauses[0]).toMatchObject({ kind: 'srd', action: 'cast' });
+    const live = interpretRoundTyped(s, 'Negotiate with the Blind Crawler: stand down and let us pass');
+    expect(live.clauses.some((c) => c.kind === 'influence')).toBe(true);
+  });
+
   it('typed Attack maps to the SRD Attack action', () => {
     const s = fightState();
     const plan = interpretRoundTyped(s, 'Attack with the Dagger');

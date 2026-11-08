@@ -67,8 +67,32 @@ function knownPersonBucket(state: GameState, name: string): RoundSpeechRole | nu
 
 /**
  * Who a mechanical line is aimed at, using the step reader (quote bodies are not addressees).
- * A spell or a carried item is not a person. A capital word the engine does not know is not a person.
+ * A spell or a carried item is not a person. An explicit attack or bargain object the engine
+ * cannot place is still a target: it must not fall through onto a different live actor.
  */
+/** Object of an attack or bargain. "with a dagger" is a weapon, not a person. No name means no explicit target. */
+function grammaticalObject(line: string, kind: 'attack' | 'bargain'): string | null {
+  if (kind === 'attack') {
+    const hit = line.match(/\b(?:lash out|loose an arrow|attack|fight|strike|engage|slash|stab|shoot|punch|swing|hit|thrust|cut|charge)\b\s*(.*)$/i);
+    if (!hit) return null;
+    let rest = (hit[1] ?? '').trim().replace(/^(?:at|toward|towards)\s+/i, '');
+    if (!rest || /^with\b/i.test(rest)) return null;
+    rest = rest.replace(/^(?:the|a|an)\s+/i, '');
+    const withAt = rest.search(/\s+with\s+/i);
+    if (withAt >= 0) rest = rest.slice(0, withAt).trim();
+    rest = rest.replace(/[.!?]+$/, '').trim();
+    return rest || null;
+  }
+  const hit = line.match(/\b(?:negotiate|persuade|convince|intimidate|threaten|bargain|bribe|deceive|bluff)\b\s*(.*)$/i);
+  if (!hit) return null;
+  let rest = (hit[1] ?? '').trim().replace(/^with\s+/i, '').replace(/^(?:the|a|an)\s+/i, '');
+  if (!rest) return null;
+  const cut = rest.search(/\s+(?:to|and)\s+|:/i);
+  if (cut >= 0) rest = rest.slice(0, cut).trim();
+  rest = rest.replace(/[.!?]+$/, '').trim();
+  return rest || null;
+}
+
 function aimedPerson(state: GameState, line: string): { name: string; role: RoundSpeechRole } | null {
   if (spellInInput(line)) return null;
   const vocative = line.match(/^([A-Za-z][\w'-]*)\s*[,!]/);
@@ -97,6 +121,13 @@ function aimedPerson(state: GameState, line: string): { name: string; role: Roun
     const lowLine = line.toLowerCase();
     for (let i = 0; i < known.length; i++) {
       if (lowLine.includes(known[i]!.trim().toLowerCase())) { name = known[i]!.trim(); break; }
+    }
+  }
+  if (!name && (step.action === 'attack' || step.action === 'persuade' || step.action === 'intimidate' || step.action === 'deceive')) {
+    const spoken = grammaticalObject(line, step.action === 'attack' ? 'attack' : 'bargain');
+    if (spoken && !ctx.items.some((item) => sameEntity(item, spoken))) {
+      const role = knownPersonBucket(state, spoken);
+      return { name: spoken, role: role ?? 'none' };
     }
   }
   if (!name) return null;
