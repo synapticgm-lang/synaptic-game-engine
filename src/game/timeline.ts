@@ -12,7 +12,6 @@ export {
 
 const MAX = 40;
 const WS = /\s+/g;
-function uid(): string { return crypto.randomUUID(); }
 
 function pushTagged(facts: TimelineFact[], fact: TimelineFact): void {
   const cleaned = fact.text.replace(WS, ' ').trim();
@@ -23,11 +22,27 @@ function pushTagged(facts: TimelineFact[], fact: TimelineFact): void {
   }
   facts.push({ ...fact, text: cleaned });
 }
-function pushFact(facts: TimelineFact[], turn: number, kind: TimelineFactKind, text: string): void {
-  const cleaned = text.replace(WS, ' ').trim();
-  if (!cleaned) return;
-  for (let i = 0; i < facts.length; i++) if (facts[i]!.turn === turn && facts[i]!.text === cleaned) return;
-  facts.push({ id: uid(), turn, kind, text: cleaned, at: Date.now() });
+/** Same turn, kind, name, and detail is one row. Used for HP, which has no verb. */
+function pushNamed(facts: TimelineFact[], fact: TimelineFact): void {
+  const cleaned = fact.text.replace(WS, ' ').trim();
+  if (!cleaned || !fact.name) return;
+  for (let i = 0; i < facts.length; i++) {
+    const f = facts[i]!;
+    if (f.turn === fact.turn && f.kind === fact.kind && f.name === fact.name && (f.detail ?? '') === (fact.detail ?? '') && (f.verb ?? '') === (fact.verb ?? '')) return;
+  }
+  facts.push({ ...fact, text: cleaned });
+}
+
+function wholeHp(n: number | null | undefined): number | null {
+  return typeof n === 'number' && Number.isInteger(n) ? n : null;
+}
+
+function characterName(state: { character?: { name?: string } }): string {
+  return (state.character?.name ?? '').replace(WS, ' ').trim();
+}
+
+function dungeonLabel(d: { dungeonName?: string } | null | undefined): string {
+  return (d?.dungeonName ?? '').replace(WS, ' ').trim();
 }
 
 function touchEntity(state: GameState, kind: TimelineTagKind, ref: { id: string; name: string }, detail?: string): GameState {
@@ -119,8 +134,50 @@ export function collectTurnTimelineFacts(params: {
   stateAfter: Pick<GameState, 'currentLocation' | 'activeEncounter' | 'activeDungeon' | 'character' | 'quests'>;
   events: GameEvent[]; systemLog: string[]; newItemNames: string[]; wardenNotes?: string[]; sceneBeat?: string;
 }): TimelineFact[] {
-  const { turn, stateBefore, stateAfter, events, newItemNames, wardenNotes = [], sceneBeat } = params;
+  const { turn, stateBefore, stateAfter, events, newItemNames } = params;
+  // Warden notes and the narrator beat are not engine events. Callers may still pass them.
+  void params.wardenNotes;
+  void params.sceneBeat;
   const facts: TimelineFact[] = [];
+  const beforeHp = wholeHp(stateBefore.character?.hp);
+  const afterHp = wholeHp(stateAfter.character?.hp);
+  const hpDelta = beforeHp != null && afterHp != null ? afterHp - beforeHp : null;
+  const who = characterName(stateAfter) || characterName(stateBefore);
+  const leftName = dungeonLabel(stateBefore.activeDungeon);
+  const stayedName = dungeonLabel(stateAfter.activeDungeon);
+  const leftDungeon = !!leftName && leftName !== stayedName;
+  let hpNoted = false;
+  let leaveNoted = false;
+  const noteHp = () => {
+    if (hpNoted || hpDelta == null || hpDelta === 0 || !who) return;
+    hpNoted = true;
+    const kind: TimelineFactKind = hpDelta < 0 ? 'damage' : 'heal';
+    const amount = String(Math.abs(hpDelta));
+    const slug = who.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    pushNamed(facts, {
+      id: `${kind}:${slug}:${amount}`,
+      turn,
+      kind,
+      name: who,
+      detail: amount,
+      text: `${who}, ${amount}`,
+      at: Date.now(),
+    });
+  };
+  const noteLeave = () => {
+    if (leaveNoted || !leftDungeon) return;
+    leaveNoted = true;
+    const slug = leftName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    pushTagged(facts, {
+      id: `place:${slug}`,
+      turn,
+      verb: 'left',
+      kind: 'place',
+      name: leftName,
+      text: renderTagText('left', 'place', leftName),
+      at: Date.now(),
+    });
+  };
   if (stateAfter.currentLocation && stateAfter.currentLocation !== stateBefore.currentLocation) {
     const place = stateAfter.currentLocation;
     pushTagged(facts, { id: `place:${place.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, turn, verb: 'arrived', kind: 'place', name: place, text: renderTagText('arrived', 'place', place), place, at: Date.now() });
@@ -133,8 +190,7 @@ export function collectTurnTimelineFacts(params: {
       const name = stateBefore.activeEncounter?.name ?? 'enemy';
       pushTagged(facts, { id: `combat:${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, turn, verb: 'died', kind: 'combat', name, text: renderTagText('died', 'combat', name), at: Date.now() });
     }
-    if (e.type === 'damage' && e.amount) pushFact(facts, turn, 'damage', `Player took ${e.amount} damage`);
-    if (e.type === 'heal' && e.amount) pushFact(facts, turn, 'heal', `Player healed ${e.amount} HP`);
+    if (e.type === 'damage' || e.type === 'heal') noteHp();
     if (e.type === 'quest-add' && e.name) {
       pushTagged(facts, { id: `quest:${e.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, turn, verb: 'accepted', kind: 'quest', name: e.name, text: renderTagText('accepted', 'quest', e.name), at: Date.now() });
     }
@@ -146,24 +202,25 @@ export function collectTurnTimelineFacts(params: {
     if (e.type === 'dungeon-load' && e.dungeonName) {
       pushTagged(facts, { id: `place:${e.dungeonName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, turn, verb: 'arrived', kind: 'place', name: e.dungeonName, detail: 'dungeon', text: renderTagText('arrived', 'place', e.dungeonName, 'dungeon'), at: Date.now() });
     }
-    if (e.type === 'dungeon-exit') pushFact(facts, turn, 'dungeon', 'Exited dungeon');
+    if (e.type === 'dungeon-exit') noteLeave();
     if (e.type === 'dungeon-move' && e.nodeId) {
       pushTagged(facts, { id: `place:${e.nodeId}`, turn, verb: 'cleared', kind: 'place', name: e.nodeId, detail: 'room', text: renderTagText('cleared', 'place', e.nodeId, 'room'), at: Date.now() });
     }
-    if (e.type === 'lore-card' && e.name) pushFact(facts, turn, 'discovery', `Lore noted: ${e.name}`);
-    if (e.type === 'world-deal' && e.name) pushFact(facts, turn, 'world', `Deal sealed: ${e.name}`);
-    if (e.type === 'world-holding' && e.name) pushFact(facts, turn, 'world', `Holding claimed: ${e.name}`);
-    if (e.type === 'world-order' && (e.name || e.order)) pushFact(facts, turn, 'world', `Standing order: ${e.name ?? 'holding'} → ${e.order ?? 'profit'}`);
-    if (e.type === 'world-clock' && e.name) pushFact(facts, turn, 'world', `Rival clock: ${e.name}`);
-    if (e.type === 'world-actor' && e.name) pushFact(facts, turn, 'world', `Off-screen actor: ${e.name}`);
-    if (e.type === 'time-pass' && e.amount) pushFact(facts, turn, 'world', `Time passed: ${e.amount} day${e.amount === 1 ? '' : 's'}`);
   }
+  noteHp();
+  noteLeave();
   for (const name of newItemNames) {
     pushTagged(facts, { id: `item:${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, turn, verb: 'gained', kind: 'item', name, text: renderTagText('gained', 'item', name), at: Date.now() });
   }
-  for (const note of wardenNotes) pushFact(facts, turn, 'other', `Warden: ${note}`);
-  if (sceneBeat) pushFact(facts, turn, 'scene', sceneBeat);
   return facts;
+}
+
+function timelineHasNamed(existing: TimelineFact[] | undefined, fact: TimelineFact): boolean {
+  if (!fact.name) return false;
+  for (const f of existing ?? []) {
+    if (f.turn === fact.turn && f.kind === fact.kind && f.name === fact.name && (f.detail ?? '') === (fact.detail ?? '') && (f.verb ?? '') === (fact.verb ?? '')) return true;
+  }
+  return false;
 }
 
 export function mergeTimeline(existing: TimelineFact[] | undefined, incoming: TimelineFact[]): TimelineFact[] {
@@ -179,6 +236,7 @@ export function applyCollectedFacts(state: GameState, facts: TimelineFact[]): Ga
       next = tag(next, f.verb, f.kind as TimelineTagKind, { id: f.id, name: f.name }, f.detail);
     } else legacy.push(f);
   }
-  if (legacy.length) next = { ...next, timeline: mergeTimeline(next.timeline, legacy) };
+  const fresh = legacy.filter((f) => !timelineHasNamed(next.timeline, f));
+  if (fresh.length) next = { ...next, timeline: mergeTimeline(next.timeline, fresh) };
   return next;
 }

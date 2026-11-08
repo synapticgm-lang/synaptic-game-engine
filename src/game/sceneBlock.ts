@@ -154,10 +154,16 @@ export function formatSceneBlock(state: GameState): string {
     if (f.kind !== 'said' || !f.name || !f.detail) continue;
     if (!said.some((o) => o.toLowerCase().startsWith(f.name!.toLowerCase() + ':'))) said.push(`${f.name}: ${clip(f.detail, 15)}`);
   }
-  const recent = (state.timeline ?? []).filter((f) => f.verb && f.name).slice(-6).map((f) => {
-    const body = f.verb === 'said' ? `${f.name}` : f.verb === 'step' ? `${f.name}${f.detail ? ` ${f.detail}` : ''}` : `${f.name}${f.detail ? `, ${f.detail}` : ''}`;
-    return `T${f.turn} ${f.verb}: ${body}`;
-  });
+  const recent: string[] = [];
+  for (const f of state.timeline ?? []) {
+    if (f.verb && f.name) {
+      const body = f.verb === 'said' ? `${f.name}` : f.verb === 'step' ? `${f.name}${f.detail ? ` ${f.detail}` : ''}` : `${f.name}${f.detail ? `, ${f.detail}` : ''}`;
+      recent.push(`T${f.turn} ${f.verb}: ${body}`);
+    } else if ((f.kind === 'damage' || f.kind === 'heal') && f.name && f.detail && /^\d+$/.test(f.detail)) {
+      recent.push(`T${f.turn} ${f.kind}: ${f.name}, ${f.detail}`);
+    }
+  }
+  const recentShown = recent.slice(-6);
   const presentLabels: string[] = [];
   const known: string[] = [];
   for (const p of present) {
@@ -174,7 +180,7 @@ export function formatSceneBlock(state: GameState): string {
     `ITEMS: ${items.length ? items.join(', ') : '(none)'}`,
     `EXITS: ${exitLabels.length ? exitLabels.join(', ') : '(none)'}`,
     `SAID: ${said.length ? said.slice(0, CAP).join('; ') : '(none)'}`,
-    `RECENT: ${recent.length ? recent.join(' | ') : '(none)'}`,
+    `RECENT: ${recentShown.length ? recentShown.join(' | ') : '(none)'}`,
   ];
   if (meetingName) lines.push(`EVENT: ${meetingName} (meeting on the road)`);
   if (known.length) lines.push(`KNOWN: ${known.slice(0, 4).join(' | ')}`);

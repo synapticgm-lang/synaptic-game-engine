@@ -139,7 +139,7 @@ describe('Gap 1 — voice notes and warden notes are not memories', () => {
       newItemNames: [],
       wardenNotes: ['Writer words kept: applyGovernanceToProse would change "Jax asked Ilyra Fen about the glass…"'],
     });
-    expect(facts.some((f) => f.text.startsWith('Warden:'))).toBe(true);
+    expect(facts.some((f) => f.text.startsWith('Warden:') || /Ilyra Fen/.test(f.text))).toBe(false);
     const merged = mergeNpcMemoriesFromTurn(before, [], facts, 4);
     const ilyra = merged.find((m) => m.npcName === 'Ilyra Fen')!;
     expect(ilyra.facts.some((f) => /Warden:/.test(f))).toBe(false);
