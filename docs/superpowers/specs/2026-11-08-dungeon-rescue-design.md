@@ -64,10 +64,21 @@ They become present only while the player is in their node and, for a secret roo
 
 What does not change status: talk, a thank-you, stance `grateful`, a friendly disposition, naming them, or searching the room.
 
-What opens `held` to `released`, and only at their node:
+What opens `held` to `released`, and only at their node, is that captive's matching key or a successful pick of a pickable lock. A failed attempt leaves `held`. It does not complete the quest and it does not pay quest XP or lock-picking XP. The captive is not the key.
 
-- A successful existing `lock` or `athletics` check against the restraint in that room (`runPlayerCheck`, `taskRung`, `ladderDc`). A failure leaves `held`.
-- Or using a key that is already a loot record on this card, in the player's inventory. The quest does not create that key, and the captive is not the key.
+## Keys and locks
+
+**Proposed.** John, 8 Nov 2026, 13:31 GMT. The quest defines the keys. A key opens only the restraint the quest matched to it. No key opens every lock.
+
+- Ten prisoners and ten keys: each key is found on its own and is consumed when it releases its one captive. The key must already be an authoritative item, placed by the quest design, before it is used. The writer does not invent it at the moment of the unlock.
+- One jailer's key: defeating the jailer boss yields that one key. It stays in the inventory and releases every captive the quest bound to it. It is not consumed by the first use.
+- The quest may bind those keys when it is designed. They are not a generic loot roll discovered at the lock. A lock with no matching key path in that design is not allowed. The quest is not an unsolvable lock.
+
+**Proposed.** John, same decision, with the 13:31 exception that follows. Every lock records a required lock-picking skill level. On a pickable lock, a lower skill does not forbid the attempt. A very high lock still accepts a low-skill attempt. John described the extreme mismatch as roughly one in a million. This file does not set the rest of the curve, and it does not claim that today's d20 check already implements that chance. The exact curve is a later calibration. Until then, the rule that stands is that a pickable lock can be attempted.
+
+A success on a very hard pickable lock grants bonus XP to the lock-picking skill, not to character level. John pointed at crafting as the design intent: a hard success advances the skill. The bonus amount is not set here and is not claimed to be a formula already in the crafting code. Failed picks and retries pay neither that bonus nor the quest.
+
+**Proposed.** John, 8 Nov 2026, 13:31 GMT, the exception. Some locks are unpickable. That is a deliberate flag on the quest's lock, used sparingly, not a very high skill requirement. Lock picking cannot be attempted. Athletics or forcing cannot open it either. The only way from `held` to `released` is the matching key. The quest design that sets the flag also provides that key, so the lock is not invented without a way through.
 
 `out` is written when a `released` person is in the escort set and the player takes the entry exit or leaves the site. The escort set is the released people who are present and whom the player's action is leading. That action is the player's turn. It does not grant the NPC a turn and does not call a model for them.
 
@@ -100,7 +111,12 @@ An order the engine already resolves — recruit, or a companion already in a fi
 - A new card whose rooms include a sealed niche and a vault can seed two distinct captives, one quest, and no mob entries for them. A card with no holding-room name seeds no captive and no rescue quest.
 - An ordinary room with no mob can seed an inhabitant. They are not hostile and not a remaining foe. A room that already has a trash mob does not also receive them.
 - Reopening the site and reloading the save return the same ids, rooms, and statuses. No new person appears on a later turn.
-- Talk, and a grateful stance, leave a captive `held`. A failed lock check leaves `held`. A successful lock check at their node sets `released` and does not complete the quest.
+- Talk, and a grateful stance, leave a captive `held`. A failed pick leaves `held` and pays no quest XP and no lock-picking XP. A successful pick of that captive's pickable lock sets `released` and does not by itself complete the quest.
+- A quest for ten prisoners binds ten keys. Each is found on its own. Using one consumes it and releases only its captive. Another captive's key does not open that lock.
+- A quest to defeat the jailer binds one jailer key. After that boss is defeated, the key is in the inventory, and using it releases each bound captive without being consumed.
+- A pickable lock with a high required skill still accepts a low-skill attempt. This file does not state a full probability curve. The extreme mismatch John named is roughly one in a million, and that figure is not claimed to be today's d20.
+- A success on a very hard pickable lock grants bonus XP to lock picking only. The amount is not set here. Character XP does not move because of that bonus.
+- An unpickable lock accepts no pick and no athletics or forcing attempt. Only its matching key opens it. The quest that flags it also provides that key. Unpickable locks are sparse quest choices, not the default high lock.
 - Leading that `released` person out the entry sets `out`. With a second captive still `held`, the quest stays active and pays nothing yet. When the second is also `out`, the objective flips once and the quest id pays once.
 - Searching the niche, or naming the captive, does not complete the quest and does not create an item target.
 - Leaving before anyone is `released`, then returning, finds them `held` in the same rooms.
