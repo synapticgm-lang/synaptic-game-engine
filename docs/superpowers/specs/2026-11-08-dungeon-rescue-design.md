@@ -37,7 +37,7 @@ Two kinds:
 - `inhabitant`: a friendly or neutral person. Not a captive. Not a foe. No rescue objective.
 - `captive`: a person held in one real room. The rescue quest names them.
 
-Neither kind is written into `hidden.mobs`. Neither counts toward remaining foes. Neither is forced hostile. A friendly or neutral inhabitant stays that disposition. A captive's disposition may be afraid or neutral. Stance `grateful` is allowed after they are out. It is not the status that frees them.
+Neither kind is written into `hidden.mobs`. Neither counts toward remaining foes. Neither is forced hostile. A friendly or neutral inhabitant stays that disposition. A captive's disposition may be afraid or neutral. Stance `grateful` is allowed after they are `released`. It is not the status that frees them.
 
 The draw fits the card's own rooms.
 
@@ -55,16 +55,22 @@ They become present only while the player is in their node and, for a secret roo
 
 | Status | Meaning |
 | --- | --- |
-| `held` | In the seeded node. Not free to leave it. |
-| `released` | The restraint is open. Still inside the site. Not yet out. |
-| `out` | They have left the holding site by the entry, or the player left the site with them in the escort set. |
+| `held` | In the seeded node. Not free to leave it. The quest concern for this captive is still open. |
+| `released` | The restraint is open. The quest concern for this captive is resolved. They may still be inside the site. They are not lost and not dead. |
+| `out` | Optional later movement. They have left the holding site by the entry, or the player left the site with them in the escort set. Not required to resolve them. |
 | `lost` | The player's committed action harmed them (`stance` kind `harmed` aimed at their id). |
 
-`released` and `out` are real before the quest objective flips. A group can have one person `out` while another is still `held`. The person who is `out` is no longer held. Their `npcMemories` location is the entry or the place outside. They are not seated in the holding room.
+`released` resolves that captive. `out` does not. A group can have one person `released` while another is still `held`. The person who is `released` needs no further rescue attention. Their `npcMemories` location stays the node they occupy unless a later optional escort moves them.
 
 What does not change status: talk, a thank-you, stance `grateful`, a friendly disposition, naming them, or searching the room.
 
-What opens `held` to `released`, and only at their node, is that captive's matching key or a successful pick of a pickable lock. A failed attempt leaves `held`. It does not complete the quest and it does not pay quest XP or lock-picking XP. The captive is not the key.
+What can open the restraint, and only at their node, is still that captive's matching key or a successful pick of a pickable lock. Those lock rules are unchanged. A failed attempt leaves `held`. It does not resolve that captive and it does not pay quest XP or lock-picking XP. The captive is not the key. The status does not become `released` until the clear gate below also passes, and, only when this quest stores it, the heal gate passes. A consumable key is consumed only on that committed release.
+
+**Proposed.** John, 8 Nov 2026, 13:40 GMT, corrected the same day: "Freed captives are resolved and require no further attention, whether injured or not." Once a captive moves from `held` to `released`, the quest concern for that captive is resolved. No escort, no exit from the site, and no later visit is required to resolve them. Injury does not change this. Leaving them behind does not set `lost` and does not kill them. A `released` captive who is being escorted does not disappear. This decision does not classify the quest when another captive is still `held`.
+
+**Proposed.** John, 8 Nov 2026, 13:42 GMT. The dungeon is cleared before any captive is released, so the way out is safe. Cleared is mechanical. It means no mob on the stored card has `mobCountsAsRemaining` true. A sentence that the halls are empty does not clear the card. While any such mob remains, the release does not commit: the captive stays `held`, a consumable key is not consumed, a pick is not applied, and no lock-picking XP is paid. After the release commits, no remaining card mob can attack that captive inside the site, because none remains. This file adds no respawn. They are free to go. Escort and a later return are not required.
+
+The same decision makes the extra requirements per quest, stored on that quest when it is designed. The writer does not add them at the door. A healer twist is one of those variables, not a rule for every rescue. When the quest stores `requireHeal`, the release commits only after the existing lock path and a committed heal of that captive. The heal is so they can leave safely. It is an engine heal recorded on that captive, not a line that they look better. When the quest does not store `requireHeal`, healing is not required. Making the captive safe is the clear gate. Injury alone does not set `lost`, does not kill them, and does not turn on `requireHeal`. The twist does not replace the matching key, the consumption rule, a pickable lock, or an unpickable lock.
 
 ## Keys and locks
 
@@ -80,19 +86,19 @@ A success on a very hard pickable lock grants bonus XP to the lock-picking skill
 
 **Proposed.** John, 8 Nov 2026, 13:31 GMT, the exception. Some locks are unpickable. That is a deliberate flag on the quest's lock, used sparingly, not a very high skill requirement. Lock picking cannot be attempted. Athletics or forcing cannot open it either. The only way from `held` to `released` is the matching key. The quest design that sets the flag also provides that key, so the lock is not invented without a way through.
 
-`out` is written when a `released` person is in the escort set and the player takes the entry exit or leaves the site. The escort set is the released people who are present and whom the player's action is leading. That action is the player's turn. It does not grant the NPC a turn and does not call a model for them.
+`out` may be written when a `released` person is in the escort set and the player takes the entry exit or leaves the site. That walk is optional. A captive released on a cleared card is already free to go without it. The walk is not required to resolve them, and it does not resolve them a second time. The escort set is the released people who are present and whom the player's action is leading. That action is the player's turn. It does not grant the NPC a turn and does not call a model for them.
 
-If the player stops leading, or a fight starts and the person is not brought, status returns to `released` at the last node they occupied. That is escort loss. It is not `out` and not `lost`.
+If the player stops leading, or a fight starts and the person is not brought, they stay `released` at the last node they occupied. Their rescue concern stays resolved. They are not `lost`. They do not disappear.
 
-Leaving the site while someone is still `held` or `released` leaves them on the stored card. Coming back finds the same people in the same rooms. A reload does the same. The player's death uses the existing death rules. It does not roll the card again and does not free or kill the captives by itself.
+Leaving the site while someone is still `held` leaves that person `held` on the stored card. Coming back finds them in the same room. A captive already `released` needs no return. Leaving them does not delete them, set `lost`, or kill them. A reload does the same. The player's death uses the existing death rules. It does not roll the card again and does not free or kill the captives by itself.
 
-`lost` closes that person. They cannot later become `out`. The quest fails, with no success pay, only when every bound captive is `lost`. If at least one is `out` and every other bound captive is `out` or `lost`, the objective flips once and the quest completes. Nobody left `held` or `released` is ignored.
+`lost` closes that person. They cannot later become `released`. The quest fails, with no success pay, only when every bound captive is `lost`. Whether the one quest completes or stays open while any captive is still `held` is not settled here.
 
 ## The rescue quest
 
-**Proposed.** If the card seeded one or more captives, it also stores one quest. One id: `card-rescue:` plus the site id. Type `side`. One objective. The objective names every captive id. It has no `QuestTarget`. `findQuestTargets` does not tick it. The objective flips to completed when every bound captive is `out` or `lost` and at least one is `out`. Status then becomes `completed`.
+**Proposed.** If the card seeded one or more captives, it also stores one quest. One id: `card-rescue:` plus the site id. Type `side`. One objective. The objective names every captive id. It has no `QuestTarget`. `findQuestTargets` does not tick it. Each named captive's concern is resolved when that captive is `released`. The 13:40 decision does not state when that one objective flips if another named captive is still `held`.
 
-`sandboxXp` then pays one `quest-tick` for that objective and one `quest-complete` for that quest id. It does not pay once per person. A second quest for the same group is not created. Giver may be empty. `questIdentity` then uses `unknown-giver`. That is still one pay.
+`sandboxXp` pays one `quest-tick` for that objective and one `quest-complete` for that quest id, not once per person. A second quest for the same group is not created. Giver may be empty. `questIdentity` then uses `unknown-giver`. When that single pay fires, if another captive is still `held`, is not settled by the 13:40 decision.
 
 The quest is not a find-item task. The journal text is that these named people are held in the named rooms. Searching a room does not complete it. A grateful line does not complete it.
 
@@ -104,24 +110,25 @@ An inhabitant never adds a rescue objective.
 
 A present dweller can be spoken to with the player's normal sentence. That sentence stays a normal turn. Their reply uses the existing sheet and persona path. This spec adds no model call and no NPC price.
 
-An order the engine already resolves — recruit, or a companion already in a fight — remains that one player action. A spoken order that is only talk does not release, escort, or spend a second turn. Escort and a lock attempt are player actions and consume the player's turn. The NPC does not act on a free turn.
+An order the engine already resolves — recruit, or a companion already in a fight — remains that one player action. A spoken order that is only talk does not release, escort, heal, clear the card, or spend a second turn. Escort, a lock attempt, and a heal are player actions and consume the player's turn. The NPC does not act on a free turn. Saying the dungeon is safe does not set the clear gate.
 
 ## Acceptance tests
 
 - A new card whose rooms include a sealed niche and a vault can seed two distinct captives, one quest, and no mob entries for them. A card with no holding-room name seeds no captive and no rescue quest.
 - An ordinary room with no mob can seed an inhabitant. They are not hostile and not a remaining foe. A room that already has a trash mob does not also receive them.
 - Reopening the site and reloading the save return the same ids, rooms, and statuses. No new person appears on a later turn.
-- Talk, and a grateful stance, leave a captive `held`. A failed pick leaves `held` and pays no quest XP and no lock-picking XP. A successful pick of that captive's pickable lock sets `released` and does not by itself complete the quest.
-- A quest for ten prisoners binds ten keys. Each is found on its own. Using one consumes it and releases only its captive. Another captive's key does not open that lock.
-- A quest to defeat the jailer binds one jailer key. After that boss is defeated, the key is in the inventory, and using it releases each bound captive without being consumed.
+- Talk, and a grateful stance, leave a captive `held`. A failed pick leaves `held` and pays no quest XP and no lock-picking XP. On a quest that does not store `requireHeal`, a successful pick of that captive's pickable lock, used only once no mob on the card has `mobCountsAsRemaining` true, sets `released` and resolves that captive, injured or not. No escort is required. The same pick while a mob still counts as remaining does not set `released`, does not consume a key, and pays no lock-picking XP.
+- A quest for ten prisoners binds ten keys. Each is found on its own. Using one consumes it and releases only its captive, and only when that release commits on a clear card. A use while a mob still counts as remaining does not consume it and leaves that captive `held`. Another captive's key does not open that lock.
+- A quest to defeat the jailer binds one jailer key. After that boss is defeated, the key is in the inventory. Using it releases each bound captive without being consumed only once the card is clear. It does not release anyone while a mob still counts as remaining, and that refused use does not consume it.
 - A pickable lock with a high required skill still accepts a low-skill attempt. This file does not state a full probability curve. The extreme mismatch John named is roughly one in a million, and that figure is not claimed to be today's d20.
 - A success on a very hard pickable lock grants bonus XP to lock picking only. The amount is not set here. Character XP does not move because of that bonus.
 - An unpickable lock accepts no pick and no athletics or forcing attempt. Only its matching key opens it. The quest that flags it also provides that key. Unpickable locks are sparse quest choices, not the default high lock.
-- Leading that `released` person out the entry sets `out`. With a second captive still `held`, the quest stays active and pays nothing yet. When the second is also `out`, the objective flips once and the quest id pays once.
-- Searching the niche, or naming the captive, does not complete the quest and does not create an item target.
+- Freeing a captive on a cleared card resolves that captive. They are not attacked inside the site by a card mob after that, and they are free to go. Leading them out may set `out`. That walk is not required. Leaving them inside after `released` does not set `lost` and does not kill them. Injury alone does not set `lost`. This decision does not class the quest while another captive is still `held`.
+- A quest that stores `requireHeal` does not set `released` until the existing lock path and a committed heal of that captive have both happened, and the card is already clear. A quest that does not store `requireHeal` does not require a heal. A spoken claim does not set either variable or the clear gate.
+- Searching the niche, or naming the captive, does not resolve them and does not create an item target.
 - Leaving before anyone is `released`, then returning, finds them `held` in the same rooms.
-- Stopping an escort returns that person to `released` at the last node. They are not `out`.
-- A committed harm against a captive sets `lost`. If every captive is `lost`, the quest fails and pays nothing. If one is `lost` and the others are `out`, the quest completes once and pays once.
+- Stopping an escort leaves that person `released`. They stay resolved. They are not `lost` and they do not disappear.
+- A committed harm against a captive sets `lost`. If every captive is `lost`, the quest fails and pays nothing. Injury without that harm does not set `lost`.
 - A secret holding room does not seat its captive until the existing secret is revealed.
 - A card saved with no `dwell` list gains none when opened.
 - Road-camp mobs stay mobs. `PARTY_CAP` is unchanged. No book file changes.
