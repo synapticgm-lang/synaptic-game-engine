@@ -368,18 +368,28 @@ export function shouldAutoCloseDungeon(state: GameState): boolean {
   return true;
 }
 
-/** An open quest step still looks for something in this dungeon, so the card is not finished. */
+/**
+ * A dungeon card still has an unfinished step looking for something here.
+ * Cards only. A completed step, a closed quest, or foundTurn 0 is not unfinished.
+ * The place may be the card's site name or its dungeon name.
+ */
 function holdsUnfoundTarget(state: GameState): boolean {
   const d = state.activeDungeon;
-  const site = (d?.siteName ?? d?.dungeonName ?? '').trim().toLowerCase();
-  if (!site) return false;
+  if (!d || d.blueprintId !== 'dungeon-card') return false;
+  const labels = new Set<string>();
+  for (const raw of [d.siteName, d.dungeonName]) {
+    const label = (raw ?? '').trim().toLowerCase();
+    if (label) labels.add(label);
+  }
+  if (!labels.size) return false;
   for (const q of state.quests ?? []) {
     if (q.status === 'completed' || q.status === 'failed') continue;
     for (const step of q.objectives ?? []) {
+      if (step.completed) continue;
       const target = step.target;
       if (!target || target.foundTurn != null) continue;
       const place = (target.place ?? step.place ?? '').trim().toLowerCase();
-      if (place === site) return true;
+      if (place && labels.has(place)) return true;
     }
   }
   return false;
@@ -388,7 +398,8 @@ function holdsUnfoundTarget(state: GameState): boolean {
 /**
  * O1-C — when every foe is down, mark cleared / condense. Legacy path no longer discards the layout.
  * Card sites: mark cleared in place (player leaves by choice); parkDungeonCard writes clearedSites.
- * A card that still holds an unfound quest target stays open (tt-build item 3).
+ * A dungeon card that still holds an unfinished quest target stays open (tt-build item 3).
+ * shouldAutoCloseDungeon stays the foe check. closeDungeon does not use this hold.
  */
 export function maybeAutoCloseDungeon(state: GameState): GameState {
   if (holdsUnfoundTarget(state)) return state;
