@@ -180,9 +180,20 @@ describe('q75-ROUNDTYPED', () => {
   });
 
   it('a named swing or bargain at someone who is not here does not hit the foe', () => {
-    const s = fightState();
+    const s = fightState({
+      npcMemories: [{
+        npcId: 'maud',
+        npcName: 'Maud',
+        disposition: 'neutral',
+        facts: [],
+        lastSeenTurn: 1,
+        location: 'Greyhollow Inn',
+        present: false,
+        aliases: ['Maudie'],
+      }],
+    });
     const before = s.roundCombat!.foes[0]!.hp;
-    const attack = interpretRoundTyped(s, 'Attack Maud');
+    const attack = interpretRoundTyped(s, 'attack maud');
     expect(attack.accepted).toBe(true);
     expect(attack.clauses.some((c) => c.kind === 'srd' && c.action === 'attack')).toBe(false);
     expect(attack.facts.join(' ')).not.toMatch(/Maud may reply|Maud is here|may act on that instruction/i);
@@ -191,6 +202,8 @@ describe('q75-ROUNDTYPED', () => {
     expect(swung!.state.roundCombat?.foes[0]?.hp ?? before).toBe(before);
     expect(swung!.facts).not.toMatch(/dealt|damage|Maud may reply/i);
 
+    expect(interpretRoundTyped(s, 'Attack the Maud').clauses.some((c) => c.kind === 'srd')).toBe(false);
+    expect(interpretRoundTyped(s, 'Attack Maudie').clauses.some((c) => c.kind === 'srd')).toBe(false);
     const talk = interpretRoundTyped(s, 'Negotiate with Maud to stand down');
     expect(talk.accepted).toBe(true);
     expect(talk.clauses.some((c) => c.kind === 'influence')).toBe(false);
@@ -200,12 +213,71 @@ describe('q75-ROUNDTYPED', () => {
   });
 
   it('shouting at someone who is not here stays speech and does not bring them in', () => {
-    const s = fightState();
+    const s = fightState({
+      npcMemories: [{
+        npcId: 'maud',
+        npcName: 'Maud',
+        disposition: 'neutral',
+        facts: [],
+        lastSeenTurn: 1,
+        location: 'Greyhollow Inn',
+        present: false,
+      }],
+    });
     const plan = interpretRoundTyped(s, 'Maud, you coward, where are you?');
     expect(plan.accepted).toBe(true);
     expect(plan.freeSpeechOnly).toBe(true);
     expect(plan.clauses[0]).toMatchObject({ kind: 'speech', reaction: 'none' });
     expect(plan.facts.join(' ')).not.toMatch(/Maud may reply|is here|present/i);
+  });
+
+  it('a spell, a weapon, and talk about someone else still resolve on the people who are here', () => {
+    const s = fightState({
+      inventory: [{ id: 'dagger', name: 'Dagger', qty: 1 }],
+      npcMemories: [{
+        npcId: 'maud',
+        npcName: 'Maud',
+        disposition: 'neutral',
+        facts: [],
+        lastSeenTurn: 1,
+        location: 'Greyhollow Inn',
+        present: false,
+      }],
+      sceneFacts: {
+        present: ['Rook', 'Bramble'],
+        props: ['cart'],
+        crowd: 'none',
+        noise: 'quiet',
+        lastBeat: '',
+        updatedTurn: 164,
+      },
+    });
+    expect(interpretRoundTyped(s, 'cast Sacred Flame').clauses[0]).toMatchObject({ kind: 'srd', action: 'cast' });
+    expect(interpretRoundTyped(s, 'Attack with Dagger').clauses[0]).toMatchObject({ kind: 'srd', action: 'attack' });
+    const told = interpretRoundTyped(s, 'I tell Rook that Maud lied');
+    expect(told.freeSpeechOnly).toBe(true);
+    expect(told.clauses[0]).toMatchObject({ kind: 'speech', role: 'ally', reaction: 'ally-may-act' });
+    expect(told.facts.join(' ')).not.toMatch(/no one answers/i);
+    const about = interpretRoundTyped(s, 'Blind Crawler, Maud lied to you');
+    expect(about.clauses[0]).toMatchObject({ kind: 'speech', role: 'foe', reaction: 'foe-may-react' });
+    expect(about.facts.join(' ')).not.toMatch(/no one answers/i);
+    const before = s.roundCombat!.foes[0]!.hp;
+    const animal = resolveEngineFight(s, 'Attack Bramble');
+    expect(animal!.state.roundCombat?.foes[0]?.hp ?? before).toBe(before);
+    expect(animal!.facts).toMatch(/Bramble/);
+    expect(animal!.facts).not.toMatch(/not here/i);
+    const dead = fightState({
+      roundCombat: {
+        ...s.roundCombat!,
+        foes: [
+          s.roundCombat!.foes[0]!,
+          { id: 'f2', name: 'Ash Wolf', blockId: 'wolf', hp: 0, maxHp: 11, initiative: 4, conditions: [] },
+        ],
+      },
+    });
+    const wolfHp = dead.roundCombat!.foes[0]!.hp;
+    const atDead = resolveEngineFight(dead, 'Attack Ash Wolf');
+    expect(atDead!.state.roundCombat?.foes[0]?.hp ?? wolfHp).toBe(wolfHp);
   });
 
   it('typed Attack maps to the SRD Attack action', () => {

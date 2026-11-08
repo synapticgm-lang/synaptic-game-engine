@@ -8,9 +8,10 @@
  */
 import type { GameState } from '../types';
 import { isContestedSocialAction, runPlayerCheck, type PlayerCheckResult } from '../checkMath';
-import { isSpeechOrProtest, parsePlayerIntent, type PlayerIntent } from '../intentParser';
+import { isSpeechOrProtest, parsePlayerIntent, parsePlayerSteps, sheetContextFromState, type PlayerIntent } from '../intentParser';
 import { presentNpcNames } from '../npcRelationships';
 import type { RoundAction } from '../rules/roundCombat';
+import { spellInInput } from '../rules/spells';
 import { classifyRoundAction } from './roundActionClass';
 
 export type RoundSpeechRole = 'ally' | 'foe' | 'present' | 'none';
@@ -33,38 +34,77 @@ export interface RoundTypedPlan {
   receipts: string[];
 }
 
-/** A capital name in the line that is not a live foe, ally, or someone already here. */
-function absentName(state: GameState, line: string): string | null {
-  const known = new Set<string>();
-  const add = (name?: string | null) => {
-    const t = (name ?? '').trim().toLowerCase();
-    if (!t) return;
-    known.add(t);
-    const bits = t.split(' ');
-    for (let i = 0; i < bits.length; i++) if (bits[i]!.length >= 3) known.add(bits[i]!);
-  };
-  add(state.character?.name);
-  add(state.activeEncounter?.name);
+function sameEntity(a: string, b: string): boolean {
+  const x = a.trim().toLowerCase();
+  const y = b.trim().toLowerCase();
+  return !!x && x === y;
+}
+
+/** Live foe, living ally, someone already here, or a known person who is not. Unknown words are not people. */
+function knownPersonBucket(state: GameState, name: string): RoundSpeechRole | null {
   const foes = state.roundCombat?.foes ?? [];
-  for (let i = 0; i < foes.length; i++) if (foes[i]!.hp > 0) add(foes[i]!.name);
+  for (let i = 0; i < foes.length; i++) {
+    if (!sameEntity(foes[i]!.name, name)) continue;
+    return foes[i]!.hp > 0 ? 'foe' : 'none';
+  }
+  if (state.activeEncounter && sameEntity(state.activeEncounter.name, name)) return 'foe';
   const comps = state.companions ?? [];
-  for (let i = 0; i < comps.length; i++) if ((comps[i]!.hp ?? 0) > 0) add(comps[i]!.name);
+  for (let i = 0; i < comps.length; i++) {
+    if (!sameEntity(comps[i]!.name ?? '', name)) continue;
+    return (comps[i]!.hp ?? 0) > 0 ? 'ally' : 'none';
+  }
   const present = presentNpcNames(state);
-  for (let i = 0; i < present.length; i++) add(present[i]);
-  const parts = line.split(' ');
-  for (let i = 0; i < parts.length; i++) {
-    const rawTok = parts[i]!;
-    if (i === 0 && !rawTok.includes(',')) continue;
-    const bare = rawTok.replace(/^[^A-Za-z]+|[^A-Za-z'-]+$/g, '');
-    if (bare.length < 3) continue;
-    const first = bare.charAt(0);
-    if (first !== first.toUpperCase() || first === first.toLowerCase()) continue;
-    const prev = (parts[i - 1] ?? '').toLowerCase().replace(/[^a-z]/g, '');
-    if (prev === 'the' || prev === 'a' || prev === 'an' || prev === 'my' || prev === 'your') continue;
-    if (known.has(bare.toLowerCase())) continue;
-    return bare;
+  for (let i = 0; i < present.length; i++) if (sameEntity(present[i]!, name)) return 'present';
+  const memories = state.npcMemories ?? [];
+  for (let i = 0; i < memories.length; i++) {
+    const m = memories[i]!;
+    const hit = sameEntity(m.npcName, name) || (m.aliases ?? []).some((a) => sameEntity(a, name));
+    if (!hit) continue;
+    return m.present === true ? 'present' : 'none';
   }
   return null;
+}
+
+/**
+ * Who a mechanical line is aimed at, using the step reader (quote bodies are not addressees).
+ * A spell or a carried item is not a person. A capital word the engine does not know is not a person.
+ */
+function aimedPerson(state: GameState, line: string): { name: string; role: RoundSpeechRole } | null {
+  if (spellInInput(line)) return null;
+  const vocative = line.match(/^([A-Za-z][\w'-]*)\s*[,!]/);
+  if (vocative) {
+    const vocRole = knownPersonBucket(state, vocative[1]!);
+    if (vocRole === 'none') return { name: vocative[1]!, role: 'none' };
+  }
+  const ctx = sheetContextFromState(state);
+  const extra: string[] = [];
+  const foes = state.roundCombat?.foes ?? [];
+  for (let i = 0; i < foes.length; i++) extra.push(foes[i]!.name);
+  const memories = state.npcMemories ?? [];
+  for (let i = 0; i < memories.length; i++) {
+    const aliases = memories[i]!.aliases ?? [];
+    for (let a = 0; a < aliases.length; a++) extra.push(aliases[a]!);
+  }
+  const read = parsePlayerSteps(line, { ...ctx, people: [...ctx.people, ...extra] });
+  const step = read.steps[0];
+  if (!step) return null;
+  const mechanical = step.action === 'attack' || step.action === 'cast' || step.action === 'persuade'
+    || step.action === 'intimidate' || step.action === 'deceive';
+  let name = (mechanical ? (step.target || step.addressee) : step.addressee)?.trim() ?? '';
+  if (!name && mechanical) {
+    const known = [...extra, ...ctx.people].filter((n) => n.trim().length >= 3);
+    known.sort((a, b) => b.length - a.length);
+    const lowLine = line.toLowerCase();
+    for (let i = 0; i < known.length; i++) {
+      if (lowLine.includes(known[i]!.trim().toLowerCase())) { name = known[i]!.trim(); break; }
+    }
+  }
+  if (!name) return null;
+  if (ctx.items.some((item) => sameEntity(item, name))) return null;
+  const role = knownPersonBucket(state, name);
+  if (!role) return null;
+  if (!mechanical && step.action !== 'talk') return null;
+  return { name, role };
 }
 
 /** Map a typed line to SRD round resolution. Speech is always accepted. */
@@ -202,10 +242,13 @@ export function interpretRoundTyped(state: GameState, input: string): RoundTyped
       }
     }
 
-    const missing = role === 'none' ? absentName(state, trimmed) : null;
+    const aim = aimedPerson(state, trimmed);
     let clause: RoundTypedClause;
-    if (missing && (srd === 'attack' || srd === 'cast' || srd === 'help' || srd === 'other' || isContestedSocialAction(intent, trimmed))) {
-      clause = { kind: 'speech', text: trimmed, addressed: missing, role: 'none', reaction: 'none' };
+    if (aim && aim.role === 'none' && (srd === 'attack' || srd === 'cast' || srd === 'help' || srd === 'other' || isContestedSocialAction(intent, trimmed))) {
+      clause = { kind: 'speech', text: trimmed, addressed: aim.name, role: 'none', reaction: 'none' };
+    } else if (aim && aim.role !== 'foe' && (srd === 'attack' || srd === 'cast')) {
+      const reaction: RoundSpeechReaction = aim.role === 'ally' ? 'ally-may-act' : 'present-may-reply';
+      clause = { kind: 'speech', text: trimmed, addressed: aim.name, role: aim.role, reaction };
     } else if (srd !== 'other') {
       clause = { kind: 'srd', text: trimmed, action: srd };
     } else if (isContestedSocialAction(intent, trimmed)) {
