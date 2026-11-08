@@ -179,6 +179,35 @@ describe('q75-ROUNDTYPED', () => {
     expect(fight!.facts.length).toBeGreaterThan(5);
   });
 
+  it('a named swing or bargain at someone who is not here does not hit the foe', () => {
+    const s = fightState();
+    const before = s.roundCombat!.foes[0]!.hp;
+    const attack = interpretRoundTyped(s, 'Attack Maud');
+    expect(attack.accepted).toBe(true);
+    expect(attack.clauses.some((c) => c.kind === 'srd' && c.action === 'attack')).toBe(false);
+    expect(attack.facts.join(' ')).not.toMatch(/Maud may reply|Maud is here|may act on that instruction/i);
+    const swung = resolveEngineFight(s, 'Attack Maud');
+    expect(swung).toBeTruthy();
+    expect(swung!.state.roundCombat?.foes[0]?.hp ?? before).toBe(before);
+    expect(swung!.facts).not.toMatch(/dealt|damage|Maud may reply/i);
+
+    const talk = interpretRoundTyped(s, 'Negotiate with Maud to stand down');
+    expect(talk.accepted).toBe(true);
+    expect(talk.clauses.some((c) => c.kind === 'influence')).toBe(false);
+    expect(talk.freeSpeechOnly).toBe(true);
+    expect(talk.facts.join(' ')).toMatch(/not here/i);
+    expect(talk.facts.join(' ')).not.toMatch(/Maud may reply|foe may stand down/i);
+  });
+
+  it('shouting at someone who is not here stays speech and does not bring them in', () => {
+    const s = fightState();
+    const plan = interpretRoundTyped(s, 'Maud, you coward, where are you?');
+    expect(plan.accepted).toBe(true);
+    expect(plan.freeSpeechOnly).toBe(true);
+    expect(plan.clauses[0]).toMatchObject({ kind: 'speech', reaction: 'none' });
+    expect(plan.facts.join(' ')).not.toMatch(/Maud may reply|is here|present/i);
+  });
+
   it('typed Attack maps to the SRD Attack action', () => {
     const s = fightState();
     const plan = interpretRoundTyped(s, 'Attack with the Dagger');

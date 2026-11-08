@@ -33,6 +33,40 @@ export interface RoundTypedPlan {
   receipts: string[];
 }
 
+/** A capital name in the line that is not a live foe, ally, or someone already here. */
+function absentName(state: GameState, line: string): string | null {
+  const known = new Set<string>();
+  const add = (name?: string | null) => {
+    const t = (name ?? '').trim().toLowerCase();
+    if (!t) return;
+    known.add(t);
+    const bits = t.split(' ');
+    for (let i = 0; i < bits.length; i++) if (bits[i]!.length >= 3) known.add(bits[i]!);
+  };
+  add(state.character?.name);
+  add(state.activeEncounter?.name);
+  const foes = state.roundCombat?.foes ?? [];
+  for (let i = 0; i < foes.length; i++) if (foes[i]!.hp > 0) add(foes[i]!.name);
+  const comps = state.companions ?? [];
+  for (let i = 0; i < comps.length; i++) if ((comps[i]!.hp ?? 0) > 0) add(comps[i]!.name);
+  const present = presentNpcNames(state);
+  for (let i = 0; i < present.length; i++) add(present[i]);
+  const parts = line.split(' ');
+  for (let i = 0; i < parts.length; i++) {
+    const rawTok = parts[i]!;
+    if (i === 0 && !rawTok.includes(',')) continue;
+    const bare = rawTok.replace(/^[^A-Za-z]+|[^A-Za-z'-]+$/g, '');
+    if (bare.length < 3) continue;
+    const first = bare.charAt(0);
+    if (first !== first.toUpperCase() || first === first.toLowerCase()) continue;
+    const prev = (parts[i - 1] ?? '').toLowerCase().replace(/[^a-z]/g, '');
+    if (prev === 'the' || prev === 'a' || prev === 'an' || prev === 'my' || prev === 'your') continue;
+    if (known.has(bare.toLowerCase())) continue;
+    return bare;
+  }
+  return null;
+}
+
 /** Map a typed line to SRD round resolution. Speech is always accepted. */
 export function interpretRoundTyped(state: GameState, input: string): RoundTypedPlan {
   // Collapse whitespace without a regex literal (ruleCount).
@@ -168,8 +202,11 @@ export function interpretRoundTyped(state: GameState, input: string): RoundTyped
       }
     }
 
+    const missing = role === 'none' ? absentName(state, trimmed) : null;
     let clause: RoundTypedClause;
-    if (srd !== 'other') {
+    if (missing && (srd === 'attack' || srd === 'cast' || srd === 'help' || srd === 'other' || isContestedSocialAction(intent, trimmed))) {
+      clause = { kind: 'speech', text: trimmed, addressed: missing, role: 'none', reaction: 'none' };
+    } else if (srd !== 'other') {
       clause = { kind: 'srd', text: trimmed, action: srd };
     } else if (isContestedSocialAction(intent, trimmed)) {
       const talkIntent: PlayerIntent =
@@ -218,8 +255,11 @@ export function interpretRoundTyped(state: GameState, input: string): RoundTyped
     const c = clauses[i]!;
     if (c.kind !== 'speech') freeSpeechOnly = false;
     if (c.kind === 'speech') {
-      const who = c.addressed ? ` to ${c.addressed}` : '';
+      const who = c.addressed && c.role !== 'none' ? ` to ${c.addressed}` : '';
       facts.push(`You speak freely${who} (no Action): "${c.text}"`);
+      if (c.role === 'none' && c.addressed) {
+        facts.push(`${c.addressed} is not here, so no one answers and no strike lands.`);
+      }
       if (c.reaction === 'ally-may-act') facts.push(`${c.addressed} may act on that instruction on its own turn.`);
       else if (c.reaction === 'foe-may-react') facts.push(`${c.addressed} may ignore, answer, or react in character.`);
       else if (c.reaction === 'present-may-reply') facts.push(`${c.addressed} may reply, ignore, or react.`);
