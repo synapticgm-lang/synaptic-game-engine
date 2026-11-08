@@ -12,6 +12,7 @@ import {
   dungeonRoomFacts,
   ensureDungeonCard,
   openDungeonCard,
+  parkDungeonCard,
 } from './dungeonCard';
 import { LAIR_BOUNDS, ordinaryPlacement, rollLairShape, shapeWithinBounds, type LairKind } from './lairArchetype';
 import { applyQuestHooksFromLedger } from './questHooks';
@@ -408,6 +409,16 @@ describe('dungeon card variety', () => {
     expect(loot?.opened).toBe(true);
     expect(again.activeDungeon!.currentNodeId).toBe(deepId);
     expect(again.places?.find((p) => p.name === 'Plain Shed')?.dungeonCard?.nodes.flatMap((n) => n.hidden?.lootables ?? []).find((l) => l.id === chest!.id)?.opened).toBe(true);
+    const loaded = openDungeonCard(JSON.parse(JSON.stringify(progressed)) as GameState, 'Plain Shed');
+    expect(loaded.activeDungeon!.currentNodeId).toBe(deepId);
+    expect(loaded.activeDungeon!.nodes.flatMap((n) => n.hidden?.lootables ?? []).find((l) => l.id === chest!.id)?.opened).toBe(true);
+    const left = parkDungeonCard(progressed, { toSite: true });
+    expect(left.activeDungeon ?? null).toBeNull();
+    const back = openDungeonCard(left, 'Plain Shed');
+    expect(back.activeDungeon!.currentNodeId).toBe('r0');
+    expect(back.activeDungeon!.nodes.flatMap((n) => n.hidden?.lootables ?? []).find((l) => l.id === chest!.id)?.opened).toBe(true);
+    const backAgain = openDungeonCard(back, 'Plain Shed');
+    expect(backAgain.activeDungeon!.nodes.flatMap((n) => n.hidden?.lootables ?? []).find((l) => l.id === chest!.id)?.opened).toBe(true);
   });
 
   it('reuses a stored card and does not rescale an older foe', () => {

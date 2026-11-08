@@ -41,6 +41,25 @@ export function atPlace(state: GameState, place: string): boolean {
  * Place a step's target. One inside a place goes into a room of its dungeon card: the room its anchor names
  * ("hall"), else a seeded room past the entry, so walking in never finds it.
  */
+/** Rooms you can walk to from the entry. A secret with no door is not one of them. */
+function reachableRoomIds(card: NonNullable<GameState['activeDungeon']>): Set<string> {
+  const entry = card.nodes.find((n) => (n.tags ?? []).includes('entry'))?.id
+    ?? card.nodes.find((n) => n.id === 'r0')?.id
+    ?? card.currentNodeId;
+  const seen = new Set<string>([entry]);
+  const queue = [entry];
+  while (queue.length) {
+    const id = queue.shift()!;
+    for (const next of card.nodes.find((n) => n.id === id)?.connections ?? []) {
+      if (!seen.has(next)) {
+        seen.add(next);
+        queue.push(next);
+      }
+    }
+  }
+  return seen;
+}
+
 export function placeQuestTarget(
   state: GameState,
   quest: Quest,
@@ -49,7 +68,10 @@ export function placeQuestTarget(
 ): { state: GameState; target: QuestTarget } {
   if (!step.room || !target.place) return { state, target };
   const { state: next, card } = ensureDungeonCard(state, target.place);
-  const rooms = card.nodes.filter((n) => n.id !== card.currentNodeId && !(n.tags ?? []).some((t) => t === 'entry' || t === 'stair'));
+  const open = reachableRoomIds(card);
+  const rooms = card.nodes.filter(
+    (n) => open.has(n.id) && n.id !== card.currentNodeId && !(n.tags ?? []).some((t) => t === 'entry' || t === 'stair')
+  );
   const named = step.room === 'inside' ? [] : rooms.filter((n) => words(n.name ?? '').includes(` ${step.room!.toLowerCase()} `));
   const pool = named.length ? named : rooms;
   const rng = createHashRng(`${state.seed ?? state.saveId ?? 'quest'}:${quest.id}:${step.id}`, 'quest-target');

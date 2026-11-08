@@ -69,6 +69,22 @@ const silas = { npcId: 'silas', npcName: 'Silas Thorne', disposition: 'neutral',
 
 const keepCard = (s: GameState) => s.places!.find((p) => p.name === 'Keep Gate')!.dungeonCard!;
 
+function reachableFromEntry(card: NonNullable<GameState['activeDungeon']>): Set<string> {
+  const entry = card.nodes.find((n) => (n.tags ?? []).includes('entry'))?.id ?? card.nodes.find((n) => n.id === 'r0')?.id ?? card.currentNodeId;
+  const seen = new Set<string>([entry]);
+  const queue = [entry];
+  while (queue.length) {
+    const id = queue.shift()!;
+    for (const next of card.nodes.find((n) => n.id === id)?.connections ?? []) {
+      if (!seen.has(next)) {
+        seen.add(next);
+        queue.push(next);
+      }
+    }
+  }
+  return seen;
+}
+
 describe('1 — targets placed when the quest is made', () => {
   it('every open step gets a target; inside steps of two quests land in rooms of the one Keep Gate card', () => {
     const s = placeTabletopQuestTargets(ck({ quests: [spineQuest('ck-spine-scholars-folly', 1), plea], currentLocation: 'Greyhollow Inn', npcMemories: [silas] } as Partial<GameState>));
@@ -78,6 +94,7 @@ describe('1 — targets placed when the quest is made', () => {
     expect(s.places!.filter((p) => p.name === 'Keep Gate' && p.dungeonCard)).toHaveLength(1);
     const card = keepCard(s);
     for (const t of inside) {
+      expect(reachableFromEntry(card).has(t.nodeId!), t.nodeId).toBe(true);
       expect(t.place).toBe(card.siteName ?? card.dungeonName);
       expect(card.nodes.some((n) => n.id === t.nodeId)).toBe(true);
       expect(t.nodeId).not.toBe('r0');

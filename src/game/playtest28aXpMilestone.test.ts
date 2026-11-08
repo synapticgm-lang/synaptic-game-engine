@@ -51,6 +51,43 @@ describe('28a xpRules — verified 5e tables', () => {
 });
 
 describe('28a milestone XP — no drip', () => {
+  it('a finished quest step pays once across a repeated action and a save-load', () => {
+    const base = {
+      ...createInitialState('Jax', 'litrpg'),
+      campaignBibleId: 'summoned-pact',
+      currentLocation: 'iron-bar cell',
+      sandboxAwardKeys: [] as string[],
+      places: [],
+      quests: quest(false),
+    };
+    const opts = {
+      playerAction: 'Talk to the fence',
+      locationName: 'iron-bar cell',
+      previousLocationName: 'iron-bar cell',
+      events: [] as [],
+    };
+    const first = applySandboxXpAwards(base, {
+      ...opts,
+      questsBefore: quest(false),
+      questsAfter: quest(true),
+      turn: 3,
+    });
+    expect(first.xp).toBeGreaterThan(0);
+    const again = applySandboxXpAwards(
+      { ...base, sandboxAwardKeys: first.awardKeys },
+      { ...opts, questsBefore: quest(false), questsAfter: quest(true), turn: 4 }
+    );
+    expect(again.xp).toBe(0);
+    const loaded = JSON.parse(JSON.stringify({ ...base, sandboxAwardKeys: first.awardKeys })) as GameState;
+    const afterLoad = applySandboxXpAwards(loaded, {
+      ...opts,
+      questsBefore: quest(true),
+      questsAfter: quest(true),
+      turn: 5,
+    });
+    expect(afterLoad.xp).toBe(0);
+  });
+
   it('talk / look / inspect / browse at a non-hub pay nothing', () => {
     const state = {
       ...createInitialState('Jax', 'litrpg'),
