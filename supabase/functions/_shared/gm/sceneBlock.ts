@@ -46,13 +46,23 @@ function people(state: GameState): Array<{ id: string; name: string }> {
   return out.slice(0, CAP);
 }
 
-/** Companions the presence record already seats, and whose hit points say they are up. */
+/**
+ * Companions the presence record already seats.
+ * Hit points are not absence: 0 does not say dead versus unconscious.
+ * A memory with no location is seated only when the scene's present list already names them.
+ */
 function companionsHere(state: GameState): Array<{ name: string; animal: boolean }> {
   const seated = new Set(presentNpcRecords(state).map((m) => m.npcName.toLowerCase()));
+  const listed = new Set((state.sceneFacts?.present ?? []).map((n) => n.trim().toLowerCase()));
   const out: Array<{ name: string; animal: boolean }> = [];
   for (const c of state.companions ?? []) {
     const name = (c?.name ?? '').trim();
-    if (!name || (c.hp ?? 0) <= 0 || !seated.has(name.toLowerCase())) continue;
+    if (!name || !seated.has(name.toLowerCase())) continue;
+    const mem = (state.npcMemories ?? []).find(
+      (m) => m.npcName.toLowerCase() === name.toLowerCase() || (m.aliases ?? []).some((a) => a.toLowerCase() === name.toLowerCase()),
+    );
+    if (!mem) continue;
+    if (!(mem.location ?? '').trim() && !listed.has(name.toLowerCase())) continue;
     out.push({ name, animal: c.type === 'beast' || c.type === 'mount' });
   }
   return out;
@@ -134,9 +144,6 @@ export function formatSceneBlock(state: GameState): string {
   for (let i = present.length - 1; i >= 0; i--) {
     const name = present[i]!.name.toLowerCase();
     if (withYou.some((c) => c.animal && c.name.toLowerCase() === name)) present.splice(i, 1);
-    else if (withYou.every((c) => c.name.toLowerCase() !== name) && (state.companions ?? []).some((c) => (c.name ?? '').toLowerCase() === name && (c.hp ?? 0) <= 0)) {
-      present.splice(i, 1);
-    }
   }
   for (const c of withYou) {
     if (c.animal || present.some((p) => p.name.toLowerCase() === c.name.toLowerCase())) continue;

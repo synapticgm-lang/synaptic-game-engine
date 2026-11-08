@@ -1,6 +1,6 @@
 /**
- * A companion is on the scene list only when the existing presence record says they are here
- * and their hit points say they are up. A row with no record is not given a place.
+ * A companion is on the scene list only when a presence record already seats them.
+ * Hit points do not remove them. A memory with no location is seated only if the scene list names them.
  */
 import { describe, expect, it } from 'vitest';
 import { createInitialState } from './defaults';
@@ -66,16 +66,33 @@ describe('companion animals on the scene list', () => {
     expect(scene).toMatch(/PRESENT:.*Vessa \(person\)/);
   });
 
-  it('leaves out a hound who stayed behind, one who is down, and one with no record', () => {
+  it('keeps a hound at 0 HP when the record places them here', () => {
+    const down = base();
+    down.companions = [beast(0)];
+    down.npcMemories = [memory('Grey Yard', 'neutral')];
+    const scene = formatSceneBlock(down);
+    expect(scene).toMatch(/CREATURES:.*Bramble/);
+    expect(scene).not.toMatch(/Bramble \(person\)/);
+  });
+
+  it('does not invent a place for a memory with no location unless the scene list already names them', () => {
+    const blank = base();
+    blank.companions = [beast(8)];
+    blank.npcMemories = [{ ...memory('', 'neutral'), location: undefined }];
+    expect(formatSceneBlock(blank)).not.toMatch(/Bramble/);
+
+    const named = base();
+    named.companions = [beast(8)];
+    named.npcMemories = [{ ...memory('', 'neutral'), location: undefined }];
+    named.sceneFacts = { ...named.sceneFacts!, present: ['Bramble'] };
+    expect(formatSceneBlock(named)).toMatch(/CREATURES:.*Bramble/);
+  });
+
+  it('leaves out a hound who stayed behind and one with no record', () => {
     const stayed = base();
     stayed.companions = [beast(8)];
     stayed.npcMemories = [memory('Saltford', 'hostile')];
     expect(formatSceneBlock(stayed)).not.toMatch(/Bramble/);
-
-    const down = base();
-    down.companions = [beast(0)];
-    down.npcMemories = [memory('Grey Yard', 'neutral')];
-    expect(formatSceneBlock(down)).not.toMatch(/Bramble/);
 
     const unplaced = base();
     unplaced.companions = [beast(8)];
