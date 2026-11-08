@@ -184,6 +184,124 @@ describe('2 — a step ticks only on find / meet', () => {
 });
 
 describe('3 — a dungeon holding an unfound target keeps its state', () => {
+  it('a card with no remaining foe is not marked cleared while its quest target is unfound', () => {
+    const activeDungeon = {
+      blueprintId: 'dungeon-card',
+      dungeonName: 'Keep Gate',
+      siteName: 'Keep Gate',
+      nodes: [
+        { id: 'r0', name: 'Gate', connections: ['r1'], tags: ['entry'], hidden: { mobs: [], lootables: [], traps: [], secrets: [] } },
+        { id: 'r1', name: 'Hall', connections: ['r0'], hidden: { mobs: [], lootables: [], traps: [], secrets: [] } },
+      ],
+      clearedNodeIds: ['r1'],
+      visitedNodeIds: ['r0', 'r1'],
+      currentNodeId: 'r0',
+      cleared: false,
+    };
+    const unfound = ck({
+      seed: 'unfound-keep',
+      currentLocation: 'Keep Gate',
+      activeDungeon,
+      quests: [{
+        ...plea,
+        objectives: plea.objectives.map((o) =>
+          o.id === 'p2'
+            ? { ...o, target: { kind: 'item' as const, name: 'signs of Lina', place: 'Keep Gate', nodeId: 'r1' } }
+            : o,
+        ),
+      }],
+    } as Partial<GameState>);
+    expect(maybeAutoCloseDungeon(unfound).activeDungeon).toBe(unfound.activeDungeon);
+    const found = {
+      ...unfound,
+      quests: unfound.quests!.map((q) => ({
+        ...q,
+        objectives: q.objectives!.map((o) =>
+          o.id === 'p2' ? { ...o, completed: true, target: { ...o.target!, foundTurn: 9 } } : o,
+        ),
+      })),
+    } as GameState;
+    expect(maybeAutoCloseDungeon(found).activeDungeon?.cleared).toBe(true);
+  });
+
+  it('does not hold a card for a done step, another site, a closed quest, or foundTurn 0', () => {
+    const card = {
+      blueprintId: 'dungeon-card',
+      dungeonName: 'Keep Gate Interior',
+      siteName: 'Keep Gate',
+      nodes: [
+        { id: 'r0', name: 'Gate', connections: ['r1'], tags: ['entry'], hidden: { mobs: [], lootables: [], traps: [], secrets: [] } },
+        { id: 'r1', name: 'Hall', connections: ['r0'], hidden: { mobs: [], lootables: [], traps: [], secrets: [] } },
+      ],
+      clearedNodeIds: ['r1'],
+      visitedNodeIds: ['r0', 'r1'],
+      currentNodeId: 'r0',
+      cleared: false,
+    };
+    const target = { kind: 'item' as const, name: 'signs of Lina', place: 'Keep Gate', nodeId: 'r1' };
+    const stateFor = (quest: Quest) => ck({
+      seed: 'unfound-keep',
+      currentLocation: 'Keep Gate',
+      activeDungeon: card,
+      quests: [quest],
+    } as Partial<GameState>);
+    const doneStep = stateFor({
+      ...plea,
+      objectives: plea.objectives.map((o) => o.id === 'p2' ? { ...o, completed: true, target } : o),
+    });
+    expect(maybeAutoCloseDungeon(doneStep).activeDungeon?.cleared).toBe(true);
+    const elsewhere = stateFor({
+      ...plea,
+      objectives: plea.objectives.map((o) => o.id === 'p2'
+        ? { ...o, target: { ...target, place: 'Greyhollow Inn', nodeId: 'yard' } }
+        : o),
+    });
+    expect(maybeAutoCloseDungeon(elsewhere).activeDungeon?.cleared).toBe(true);
+    for (const status of ['completed', 'failed'] as const) {
+      const closed = stateFor({ ...plea, status, objectives: plea.objectives.map((o) => o.id === 'p2' ? { ...o, target } : o) });
+      expect(maybeAutoCloseDungeon(closed).activeDungeon?.cleared, status).toBe(true);
+    }
+    const turnZero = stateFor({
+      ...plea,
+      objectives: plea.objectives.map((o) => o.id === 'p2' ? { ...o, target: { ...target, foundTurn: 0 } } : o),
+    });
+    expect(maybeAutoCloseDungeon(turnZero).activeDungeon?.cleared).toBe(true);
+    const byDungeonName = stateFor({
+      ...plea,
+      objectives: plea.objectives.map((o) => o.id === 'p2'
+        ? { ...o, target: { ...target, place: 'Keep Gate Interior' } }
+        : o),
+    });
+    expect(maybeAutoCloseDungeon(byDungeonName).activeDungeon).toBe(byDungeonName.activeDungeon);
+  });
+
+  it('a legacy interior still condenses when every foe is down, even with an unfound target at the site', () => {
+    const legacy = ck({
+      seed: 'legacy-interior',
+      currentLocation: 'Keep Gate',
+      activeDungeon: {
+        blueprintId: 'interior-plan',
+        dungeonName: 'Keep Gate Interior',
+        siteName: 'Keep Gate',
+        nodes: [
+          { id: 'r0', name: 'Gate', connections: ['r1'], hidden: { mobs: [], lootables: [], traps: [], secrets: [] } },
+          { id: 'r1', name: 'Hall', connections: ['r0'], hidden: { mobs: [], lootables: [], traps: [], secrets: [] } },
+        ],
+        clearedNodeIds: ['r1'],
+        visitedNodeIds: ['r0', 'r1'],
+        currentNodeId: 'r0',
+        cleared: false,
+      },
+      quests: [{
+        ...plea,
+        objectives: plea.objectives.map((o) => o.id === 'p2'
+          ? { ...o, target: { kind: 'item' as const, name: 'signs of Lina', place: 'Keep Gate', nodeId: 'r1' } }
+          : o),
+      }],
+    } as Partial<GameState>);
+    expect(maybeAutoCloseDungeon(legacy).activeDungeon ?? null).toBeNull();
+  });
+
   it('leaving parks the card with rooms cleared and the target unfound; it never auto-closes and reopens as left', () => {
     const placed = placeTabletopQuestTargets(ck({ quests: [plea], currentLocation: 'Keep Gate' } as Partial<GameState>));
     const inside = openDungeonCard(placed, 'Keep Gate');
