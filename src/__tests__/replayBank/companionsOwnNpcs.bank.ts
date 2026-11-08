@@ -1,8 +1,7 @@
 /**
- * Replay bank, new rules (Order 8): companions are their own people, like any other NPC. Drop at:
- * src/__tests__/replayBank/companionsOwnNpcs.bank.ts. Needs one recorded run (>= 20 turns, after Order 8 lands)
- * with two companions, where the scripted player lines include (README): an order the companion's agenda opposes,
- * a choice that serves one companion's want and costs the other's, and a callback 8+ turns later to something said.
+ * Replay bank, Order 8. One real recording, still unfilled (RUN stays empty until that tape exists).
+ * Legal party: A is the one recruited companion. B is another named NPC present at the beats, not a
+ * second recruit. The memory beat is the player's own earlier line, not an NPC quote.
  */
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -10,13 +9,14 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Replay, npc } from './bank';
 import { replayWhole, RUNS_ROOT } from './replayRun';
 import { storedRelationshipFor } from '../../game/npcRelationships';
+import { PARTY_CAP, recruitedCompanions } from '../../game/rules/companions';
 import type { GameState } from '../../game/types';
 
 vi.mock('../../game/aiService', async (orig) => (await import('./writerQueue')).mockAiService(await orig()));
 
 const RUN = '';                       // ORDER-NAMED: recorded run dir
 const T = { order: 0, split: 0, said: 0, recall: 0 };   // ORDER-NAMED: harness turns of the four scripted beats
-const A = '', B = '';                 // ORDER-NAMED: the two companion names
+const A = '', B = '';                 // ORDER-NAMED: A recruited companion, B the other NPC
 
 let X: Replay;
 beforeAll(async () => {
@@ -24,8 +24,11 @@ beforeAll(async () => {
   X = new Replay(await replayWhole(RUN));
 }, 1_800_000);
 
-describe('replay bank new rules: companions act as their own NPCs', () => {
-  it('each companion has its own agenda, wants and memory record, like any NPC', () => {
+describe('replay bank new rules: a companion and another NPC act as their own people', () => {
+  it('the party holds one recruit, and the other NPC has a different agenda', () => {
+    expect(recruitedCompanions(X.before(T.order)).length).toBeLessThanOrEqual(PARTY_CAP);
+    expect(recruitedCompanions(X.before(T.order)).map((c) => c.name)).toContain(A);
+    expect(recruitedCompanions(X.before(T.order)).map((c) => c.name)).not.toContain(B);
     for (const name of [A, B]) {
       const r = npc(X.before(T.order), name);
       expect(r, name).toBeTruthy();

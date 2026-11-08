@@ -14,11 +14,13 @@ the engine rolls dice.
 These need runs that don't exist yet. After the order lands, record them with the usual fate-autoplay script and
 writer (never OpenRouter), then fill the `// ORDER-NAMED` constants (run dirs, beat turns, names, block headers):
 - 7 runs, >= 12 turns: one per preset plus Custom. The Balanced Tale run moves one slider mid-run.
-- 1 companion run, >= 20 turns, two companions, with these scripted beats: an order against an agenda, a split
-  choice, a line said, and a callback to it 8+ turns later. The split beat reads persona.rel.trust
-  (the relationship number). npc.attitude is a string band and is not subtracted. A live party still
-  recruits one companion (PARTY_CAP). Two recruited companions remain this recorded-bank request;
-  development scenarios cover the legal party of one without filling RUN.
+- 1 companion run, >= 20 turns, on Story RPG or LitRPG. Recruit one companion (A). Keep a second
+  named NPC (B) present and not recruited. PARTY_CAP stays 1; do not put both in the party. Scripted
+  beats: an order the companion's agenda opposes; a choice that moves A's stored relationship trust
+  while B's stored trust does not move the same way; a player line of at least four words (T.said);
+  and, 8+ turns later, a callback that repeats that player line's first four words. The memory check
+  is that earlier player line in the writer packet (`EARLIER PLAYER`), not the NPC quote callback.
+  Development scenarios cover this without a tape. Fill RUN only from a real recording.
 - 1 check run: a failure, the same retry word for word, a new angle, and one injected writer failure on a check turn.
 
 Missing runs fail loudly; they never skip. Fix only `ORDER-NAMED` or `check name` imports and fields, and never

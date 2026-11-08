@@ -134,6 +134,14 @@ function callbackWords(text: string): string[] {
   return text.toLowerCase().replace(/[^a-z0-9']+/g, ' ').split(/\s+/).filter(Boolean);
 }
 
+/** This turn repeats the first four complete words of an earlier line. */
+export function matchesOpeningWords(playerInput: string, earlier: string): boolean {
+  const ask = callbackWords(playerInput ?? '');
+  const words = callbackWords(earlier ?? '');
+  if (!ask.length || words.length < 4) return false;
+  return hasWordRun(ask, words.slice(0, 4));
+}
+
 function hasWordRun(hay: string[], needle: string[]): boolean {
   if (!needle.length || hay.length < needle.length) return false;
   for (let i = 0; i <= hay.length - needle.length; i++) {
@@ -190,8 +198,7 @@ export function recalledSaidLines(state: GameState, playerInput: string): string
     const named = hasWordRun(ask, callbackWords(m.npcName));
     for (const s of said) {
       if (shown.has(s.line) || turn - s.turn < 8) continue;
-      const words = callbackWords(s.line);
-      if (words.length < 4 || !hasWordRun(ask, words.slice(0, 4))) continue;
+      if (!matchesOpeningWords(playerInput ?? '', s.line)) continue;
       const quote = s.line.replace(WS, ' ').trim();
       hits.push({
         named,

@@ -111,6 +111,37 @@ describe('development scenarios: one legal companion', () => {
     expect(JSON.stringify(bram.goal ?? null)).not.toBe(JSON.stringify(mara.goal));
   });
 
+  it('a recruited companion and another present NPC keep different agendas, and the companion trust move leaves the other NPC unmoved', () => {
+    const joined = settleCompanions(begun('rpg'), 'Ask Mara to join you');
+    const sheeted = prepareWriterInputWithTownsfolk(joined.state, 'Look around');
+    expect(recruitedCompanions(sheeted.state).map((c) => c.name)).toEqual(['Mara']);
+    const mara = sheeted.state.npcMemories!.find((m) => m.npcName === 'Mara')!;
+    const bram = sheeted.state.npcMemories!.find((m) => m.npcName === 'Bram Holt')!;
+    expect(mara.goal?.motivation && mara.goal.target).toBeTruthy();
+    expect(bram.goal?.motivation && bram.goal.target).toBeTruthy();
+    expect(JSON.stringify(mara.goal)).not.toBe(JSON.stringify(bram.goal));
+    expect(isStaleCompanionDefault(mara)).toBe(false);
+    expect(isStaleCompanionDefault(bram)).toBe(false);
+    const beforeBram = trust(sheeted.state, 'Bram Holt');
+    const harmed = settleCompanions(sheeted.state, 'Strike Mara', { outcome: { harmed: ['Mara'] } });
+    expect(trust(harmed.state, 'Mara') - trust(sheeted.state, 'Mara')).toBe(APPROVAL_SHIFT.harmCompanion.trust);
+    expect(trust(harmed.state, 'Bram Holt')).toBe(beforeBram);
+
+    const left = settleCompanions(
+      settleCompanions(
+        settleCompanions(harmed.state, 'Strike Mara', { outcome: { harmed: ['Mara'] } }).state,
+        'Strike Mara',
+        { outcome: { harmed: ['Mara'] } },
+      ).state,
+      'Strike Mara',
+      { outcome: { harmed: ['Mara'] } },
+    );
+    expect(recruitedCompanions(left.state)).toEqual([]);
+    const next = settleCompanions(left.state, 'Ask Bram Holt to join you');
+    expect(recruitedCompanions(next.state).map((c) => c.name)).toEqual(['Bram Holt']);
+    expect(recruitedCompanions(next.state)).toHaveLength(PARTY_CAP);
+  });
+
   it('one harm moves stored relationship trust by the approval shift, and persona trust by a different nudge', () => {
     const joined = settleCompanions(begun('rpg'), 'Ask Mara to join you');
     const beforeStored = trust(joined.state, 'Mara');
@@ -302,6 +333,39 @@ describe('development scenarios: quote callback boundaries', () => {
     expect(blank.sceneBlock ?? '').not.toContain(quote);
     const typed = buildCompletedEventPacket(state, 'the March keeps what falls into it');
     expect(typed.sceneBlock ?? '').toContain('RECALLED: Ilyra Fen');
+  });
+
+  it('an earlier player line is a separate callback from an NPC quote, eight turns later and not at seven', () => {
+    const earlier = 'Remember the blue glass vow tonight';
+    const tooSoon = 'Bring the blue lantern down the stair';
+    const npcQuote = 'The March keeps what falls into it.';
+    const state = begun('rpg');
+    state.turn = 12;
+    state.npcMemories = [saidRow('Ilyra Fen', npcQuote, 3)];
+    state.sceneFacts = { ...state.sceneFacts!, present: ['Ilyra Fen'] };
+    state.log = [3, 5, 8, 9, 10, 11].map((turn) => ({
+      id: `p${turn}`,
+      turn,
+      role: 'player' as const,
+      content: turn === 3 ? earlier : turn === 5 ? tooSoon : `Look around the room at turn ${turn}`,
+      timestamp: turn,
+    }));
+    const quiet = prepareWriterInputWithTownsfolk(state, 'Look at the water');
+    expect(quiet.writerFacing).not.toContain('Remember the blue glass');
+    expect(quiet.writerFacing).not.toContain('EARLIER PLAYER');
+
+    const callback = prepareWriterInputWithTownsfolk(
+      state,
+      'Remember the blue glass vow tonight, and the March keeps whatever',
+    );
+    expect(callback.writerFacing).toContain('EARLIER PLAYER (T3): "Remember the blue glass vow tonight"');
+    expect(callback.writerFacing).not.toContain('EARLIER PLAYER (T5)');
+    expect(callback.writerFacing).not.toContain('RECALLED:');
+    const firstFour = earlier.slice(0, 40).split(' ').slice(0, 4).join(' ');
+    expect(callback.writerFacing).toContain(firstFour);
+
+    const blank = buildCompletedEventPacket(state, '');
+    expect(blank.sceneBlock ?? '').not.toContain('EARLIER PLAYER');
   });
 
   it('collapses a newline inside a recalled quote onto one packet line', () => {
