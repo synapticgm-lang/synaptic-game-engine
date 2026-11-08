@@ -1026,7 +1026,7 @@ export function buildCompletedEventPacket(
   // an actor, a prop or a thing that answers. Scene mentions were still copying the prop through.
   const refOpts = { hallTalk, engineResult: extras?.engineResult, action };
   const sceneForWriter = ledgerRead ? stateWithoutSystemWindowProp(state) : state;
-  const sceneBlock = [formatSceneBlock(sceneForWriter), ...recalledSaidLines(sceneForWriter, action)]
+  const sceneBlock = [formatSceneBlock(sceneForWriter), ...recalledSaidLines(sceneForWriter, playerInput ?? '')]
     .filter(Boolean)
     .join('\n');
   const sceneMentions = mentionFromScene(sceneForWriter);

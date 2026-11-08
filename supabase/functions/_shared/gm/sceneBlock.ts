@@ -129,36 +129,30 @@ export function compressVisitLog(events: TimelineFact[], limit = 220): string {
   return text || '(quiet stay)';
 }
 
-/**
- * A stored quote the last-three SAID lines no longer show, when this turn calls it back
- * at least eight turns later. At most two lines. Newer hidden quotes stay out.
- */
-export function recalledSaidLines(state: GameState, playerInput: string): string[] {
-  const turn = state.turn ?? 0;
-  const ask = (playerInput ?? '').replace(WS, ' ').trim().toLowerCase();
-  if (!ask) return [];
-  const out: string[] = [];
-  for (const m of state.npcMemories ?? []) {
-    const said = (m.said ?? []).filter((s, i, all) => all.findIndex((o) => o.line === s.line) === i);
-    const shown = new Set(said.slice(-3).map((s) => s.line));
-    for (const s of said) {
-      if (shown.has(s.line) || turn - s.turn < 8) continue;
-      const words = s.line.replace(WS, ' ').trim().split(' ').filter(Boolean);
-      if (words.length < 4) continue;
-      const key = words.slice(0, 4).join(' ').toLowerCase();
-      if (!ask.includes(key)) continue;
-      out.push(`RECALLED: ${m.npcName} already said (${s.topic}, T${s.turn}): "${s.line}"`);
-      if (out.length >= 2) return out;
-    }
-  }
-  return out;
+/** Words for a callback match: punctuation and line breaks are not part of a word. */
+function callbackWords(text: string): string[] {
+  return text.toLowerCase().replace(/[^a-z0-9']+/g, ' ').split(/\s+/).filter(Boolean);
 }
 
-export function formatSceneBlock(state: GameState): string {
-  const turn = state.turn ?? 0;
-  const place = (state.currentLocation ?? 'somewhere').replace(WS, ' ').trim() || 'somewhere';
-  const pl = placeOf(state);
-  const kind = state.activeDungeon ? 'dungeon' : state.journey ? 'road' : pl?.settlementKind || (pl?.roadCamp ? 'camp' : 'place');
+function hasWordRun(hay: string[], needle: string[]): boolean {
+  if (!needle.length || hay.length < needle.length) return false;
+  for (let i = 0; i <= hay.length - needle.length; i++) {
+    let same = true;
+    for (let j = 0; j < needle.length; j++) {
+      if (hay[i + j] !== needle[j]) {
+        same = false;
+        break;
+      }
+    }
+    if (same) return true;
+  }
+  return false;
+}
+
+/**
+ * People the SCENE block may quote. Same list formatSceneBlock prints as PRESENT.
+ */
+function scenePresentPeople(state: GameState): Array<{ id: string; name: string }> {
   const meetingName = (state.journey?.encounter?.name ?? '').trim();
   const present: Array<{ id: string; name: string }> = [];
   for (const p of people(state)) {
@@ -175,6 +169,48 @@ export function formatSceneBlock(state: GameState): string {
     if (present.length >= CAP) break;
     present.push({ id: `companion:${c.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`, name: c.name });
   }
+  return present;
+}
+
+/**
+ * A stored quote the last-three SAID lines no longer show, when this turn's own words
+ * repeat its first four complete words at least eight turns later. At most two lines,
+ * and only from people present in the scene. A named person is kept ahead of an unnamed one.
+ */
+export function recalledSaidLines(state: GameState, playerInput: string): string[] {
+  const turn = state.turn ?? 0;
+  const ask = callbackWords(playerInput ?? '');
+  if (!ask.length) return [];
+  const here = new Set(scenePresentPeople(state).map((p) => p.name.toLowerCase()));
+  const hits: { line: string; named: boolean }[] = [];
+  for (const m of state.npcMemories ?? []) {
+    if (!here.has(m.npcName.toLowerCase())) continue;
+    const said = (m.said ?? []).filter((s, i, all) => all.findIndex((o) => o.line === s.line) === i);
+    const shown = new Set(said.slice(-3).map((s) => s.line));
+    const named = hasWordRun(ask, callbackWords(m.npcName));
+    for (const s of said) {
+      if (shown.has(s.line) || turn - s.turn < 8) continue;
+      const words = callbackWords(s.line);
+      if (words.length < 4 || !hasWordRun(ask, words.slice(0, 4))) continue;
+      const quote = s.line.replace(WS, ' ').trim();
+      hits.push({
+        named,
+        line: `RECALLED: ${m.npcName} already said (${s.topic}, T${s.turn}): "${quote}"`,
+      });
+    }
+  }
+  hits.sort((a, b) => Number(b.named) - Number(a.named));
+  return hits.slice(0, 2).map((hit) => hit.line);
+}
+
+export function formatSceneBlock(state: GameState): string {
+  const turn = state.turn ?? 0;
+  const place = (state.currentLocation ?? 'somewhere').replace(WS, ' ').trim() || 'somewhere';
+  const pl = placeOf(state);
+  const kind = state.activeDungeon ? 'dungeon' : state.journey ? 'road' : pl?.settlementKind || (pl?.roadCamp ? 'camp' : 'place');
+  const meetingName = (state.journey?.encounter?.name ?? '').trim();
+  const present = scenePresentPeople(state);
+  const withYou = companionsHere(state);
   const creatures: string[] = [];
   if (state.activeEncounter?.name) creatures.push(`${state.activeEncounter.name} (foe)`);
   for (const c of withYou) {

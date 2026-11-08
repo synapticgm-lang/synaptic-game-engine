@@ -9,6 +9,8 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Replay, npc } from './bank';
 import { replayWhole, RUNS_ROOT } from './replayRun';
+import { storedRelationshipFor } from '../../game/npcRelationships';
+import type { GameState } from '../../game/types';
 
 vi.mock('../../game/aiService', async (orig) => (await import('./writerQueue')).mockAiService(await orig()));
 
@@ -42,8 +44,8 @@ describe('replay bank new rules: companions act as their own NPCs', () => {
   });
 
   it('own wants: a choice that serves one costs the other (relationship trust moves apart)', () => {
-    // attitude is the string band friendly | indifferent | hostile. The number that moves is persona.rel.trust.
-    const trustOf = (state: ReturnType<Replay['before']>, n: string) => npc(state, n)?.persona?.rel?.trust ?? 0;
+    // Stored relationship trust is the approval number. persona.rel.trust is a separate nudge.
+    const trustOf = (state: GameState, n: string) => storedRelationshipFor(state, n)?.trust ?? 0;
     const d = (n: string) => trustOf(X.after(T.split), n) - trustOf(X.before(T.split), n);
     expect(Math.sign(d(A)) * Math.sign(d(B)), 'opposite or one unmoved').toBeLessThanOrEqual(0);
     expect(d(A) !== 0 || d(B) !== 0).toBe(true);

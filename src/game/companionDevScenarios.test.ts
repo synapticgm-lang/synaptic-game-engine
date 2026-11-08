@@ -15,8 +15,10 @@ import {
   recruitedCompanions,
   settleCompanions,
 } from './rules/companions';
+import { recalledSaidLines } from './sceneBlock';
+import { buildCompletedEventPacket } from './completedEventPacket';
 import { prepareWriterInputWithTownsfolk } from './townsfolk';
-import type { GameState, NpcMemory } from './types';
+import type { GameState, LogEntry, NpcMemory } from './types';
 
 const PLACE = 'The Weighing Cup';
 
@@ -109,32 +111,49 @@ describe('development scenarios: one legal companion', () => {
     expect(JSON.stringify(bram.goal ?? null)).not.toBe(JSON.stringify(mara.goal));
   });
 
-  it('harm moves stored trust by the approval shift; subtracting the attitude string does not', () => {
+  it('one harm moves stored relationship trust by the approval shift, and persona trust by a different nudge', () => {
     const joined = settleCompanions(begun('rpg'), 'Ask Mara to join you');
-    const beforeTrust = trust(joined.state, 'Mara');
+    const beforeStored = trust(joined.state, 'Mara');
+    const beforePersona = joined.state.npcMemories!.find((m) => m.npcName === 'Mara')?.persona?.rel?.trust;
     const beforeAttitude = joined.state.npcMemories!.find((m) => m.npcName === 'Mara')?.attitude;
     const harmed = settleCompanions(joined.state, 'Strike Mara', { outcome: { harmed: ['Mara'] } });
-    const afterTrust = trust(harmed.state, 'Mara');
-    const afterAttitude = harmed.state.npcMemories!.find((m) => m.npcName === 'Mara')?.attitude;
-    expect(afterTrust - beforeTrust).toBe(APPROVAL_SHIFT.harmCompanion.trust);
-    expect(afterTrust - beforeTrust).not.toBe(0);
-    const attitudeDelta = ((afterAttitude as unknown as number) ?? 0) - ((beforeAttitude as unknown as number) ?? 0);
-    expect(attitudeDelta).not.toBe(afterTrust - beforeTrust);
-    expect(afterAttitude === undefined || typeof afterAttitude === 'string').toBe(true);
-    expect(typeof harmed.state.npcMemories!.find((m) => m.npcName === 'Mara')?.persona?.rel?.trust).toBe('number');
+    const after = harmed.state.npcMemories!.find((m) => m.npcName === 'Mara')!;
+    const storedDelta = trust(harmed.state, 'Mara') - beforeStored;
+    const personaDelta = after.persona!.rel.trust - beforePersona!;
+    expect(storedDelta).toBe(APPROVAL_SHIFT.harmCompanion.trust);
+    expect(personaDelta).not.toBe(storedDelta);
+    expect(typeof after.persona!.rel.trust).toBe('number');
+    expect(typeof after.attitude).toBe('string');
+    expect(after.attitude).toBe(beforeAttitude);
   });
 
-  it('an order to a companion who has been harmed reaches the writer packet as a refusal, and an order to a bystander does not', () => {
+  it('three harms make the companion disagree; refusal is a later persona threshold, and a bystander is not ordered', () => {
     let state = settleCompanions(begun('rpg'), 'Ask Mara to join you').state;
     for (let i = 0; i < 3; i++) {
       state = settleCompanions(state, 'Strike Mara', { outcome: { harmed: ['Mara'] } }).state;
     }
-    const ordered = prepareWriterInputWithTownsfolk(state, 'Mara, guard the door');
-    expect(ordered.writerFacing).toMatch(/Mara[^\n]*(refuses|disagrees)/i);
-    expect(ordered.writerFacing).not.toMatch(/Mara[^\n]*obeys without/i);
+    expect(recruitedCompanions(state).map((c) => c.name)).toEqual(['Mara']);
+    const disagreed = prepareWriterInputWithTownsfolk(state, 'Mara, guard the door');
+    expect(disagreed.writerFacing).toMatch(/Mara disagrees and will not go along quietly/);
+    expect(disagreed.writerFacing).not.toMatch(/Mara refuses the order/);
+
+    const left = settleCompanions(state, 'Strike Mara', { outcome: { harmed: ['Mara'] } });
+    expect(left.receipts.some((r) => /Mara left your party/.test(r))).toBe(true);
+    const afterLeaving = prepareWriterInputWithTownsfolk(left.state, 'Mara, guard the door');
+    expect(afterLeaving.writerFacing).not.toMatch(/Mara refuses the order/);
+
+    const stillHere = settleCompanions(begun('rpg'), 'Ask Mara to join you').state;
+    stillHere.npcMemories = stillHere.npcMemories!.map((m) =>
+      m.npcName === 'Mara' && m.persona
+        ? { ...m, persona: { ...m.persona, rel: { ...m.persona.rel, trust: -30 } } }
+        : m,
+    );
+    const refused = prepareWriterInputWithTownsfolk(stillHere, 'Mara, guard the door');
+    expect(refused.writerFacing).toMatch(/Mara refuses the order/);
+    expect(refused.writerFacing).not.toMatch(/Mara disagrees and will not go along quietly/);
 
     const bystander = prepareWriterInputWithTownsfolk(begun('rpg'), 'Bram Holt, guard the door');
-    expect(bystander.writerFacing).not.toMatch(/Bram Holt[^\n]*(refuses the order|disagrees and will not)/i);
+    expect(bystander.writerFacing).not.toMatch(/Bram Holt (refuses the order|disagrees and will not)/);
   });
 
   it('a quote eight turns old returns through the writer packet only when the player calls it back', () => {
@@ -177,5 +196,122 @@ describe('development scenarios: one legal companion', () => {
     expect(callback.writerFacing).toContain(older);
     expect(callback.writerFacing).toContain('T3');
     expect(callback.writerFacing).not.toContain(tooSoon);
+  });
+});
+
+function saidRow(name: string, line: string, turn: number, over: Partial<NpcMemory> = {}): NpcMemory {
+  return {
+    ...person(name, 'guide'),
+    location: PLACE,
+    said: [
+      { topic: 'other', turn, line },
+      { topic: 'other', turn: turn + 6, line: 'One newer line about the door.' },
+      { topic: 'other', turn: turn + 7, line: 'Two newer line about the lamp.' },
+      { topic: 'other', turn: turn + 8, line: 'Three newer line about the stair.' },
+    ],
+    ...over,
+  };
+}
+
+describe('development scenarios: quote callback boundaries', () => {
+  it('matches four complete words after punctuation, and rejects a longer fourth word, a short quote, and a three-word prefix', () => {
+    const quote = 'The March keeps what falls into it.';
+    const punctuated = 'No, I will not open it tonight.';
+    const state = begun('rpg');
+    state.turn = 12;
+    state.npcMemories = [
+      saidRow('Ilyra Fen', quote, 3),
+      saidRow('Sefa Crane', punctuated, 4),
+      saidRow('Mara', 'Stop now please', 3),
+    ];
+    state.sceneFacts = { ...state.sceneFacts!, present: ['Ilyra Fen', 'Sefa Crane', 'Mara'] };
+
+    const prefix = recalledSaidLines(state, 'The March keeps whatever the rain brings');
+    expect(prefix.join('\n')).not.toContain(quote);
+
+    const short = recalledSaidLines(state, 'Stop now please');
+    expect(short.join('\n')).not.toContain('Stop now');
+
+    const three = recalledSaidLines(state, 'The March keeps');
+    expect(three.join('\n')).not.toContain(quote);
+
+    const exact = recalledSaidLines(state, 'You said the March keeps what falls into it');
+    expect(exact.join('\n')).toContain('RECALLED: Ilyra Fen already said (other, T3): "The March keeps what falls into it."');
+    expect(exact.join('\n')).not.toContain('Sefa Crane');
+
+    const commas = recalledSaidLines(state, 'No, I will not open the door');
+    expect(commas.join('\n')).toContain('RECALLED: Sefa Crane already said (other, T4): "No, I will not open it tonight."');
+  });
+
+  it('age 7 stays out, age 8 returns, and a quote still inside the last three said lines is not repeated', () => {
+    const aged = 'The March keeps what falls into it.';
+    const stillShown = 'Count seven never eight tonight please.';
+    const state = begun('rpg');
+    state.turn = 11;
+    state.npcMemories = [{
+      ...person('Ilyra Fen', 'guide'),
+      said: [
+        { topic: 'other', turn: 3, line: aged },
+        { topic: 'other', turn: 4, line: 'Bring the blue lantern down the stair.' },
+        { topic: 'other', turn: 5, line: 'One filler about the west road.' },
+        { topic: 'other', turn: 7, line: 'Two filler about the west road.' },
+        { topic: 'other', turn: 9, line: stillShown },
+      ],
+    }];
+    state.sceneFacts = { ...state.sceneFacts!, present: ['Ilyra Fen'] };
+    const lines = recalledSaidLines(
+      state,
+      'the March keeps what falls, bring the blue lantern down, and count seven never eight',
+    ).join('\n');
+    expect(lines).toContain(aged);
+    expect(lines).not.toContain('Bring the blue lantern');
+    expect(lines).not.toContain(stillShown);
+  });
+
+  it('keeps at most two present speakers, prefers the person named this turn, and does not spend a slot on someone who left', () => {
+    const wren = 'The vault key is under the third stair.';
+    const ilyra = 'The March keeps what falls into it.';
+    const sefa = 'Count the lamps along the west wall.';
+    const state = begun('rpg');
+    state.turn = 20;
+    state.currentLocation = PLACE;
+    state.npcMemories = [
+      { ...saidRow('Wren Holt', wren, 4), shouldExit: true, location: 'Far Keep' },
+      saidRow('Sefa Crane', sefa, 4),
+      saidRow('Ilyra Fen', ilyra, 4),
+    ];
+    state.sceneFacts = { ...state.sceneFacts!, present: ['Sefa Crane', 'Ilyra Fen'] };
+    const ask = 'Ilyra Fen said the March keeps what falls, the vault key is under, and count the lamps along';
+    const lines = recalledSaidLines(state, ask);
+    expect(lines).toHaveLength(2);
+    expect(lines[0]).toContain('Ilyra Fen');
+    expect(lines[0]).toContain(ilyra);
+    expect(lines.join('\n')).not.toContain('Wren Holt');
+    expect(lines.join('\n')).toContain('Sefa Crane');
+  });
+
+  it('a blank current line does not treat an older player log line as this turn\'s callback', () => {
+    const quote = 'The March keeps what falls into it.';
+    const state = begun('rpg');
+    state.turn = 12;
+    state.npcMemories = [saidRow('Ilyra Fen', quote, 3)];
+    state.sceneFacts = { ...state.sceneFacts!, present: ['Ilyra Fen'] };
+    state.log = [{ id: 'p1', turn: 4, role: 'player', content: 'the March keeps what falls', timestamp: 4 } as LogEntry];
+    const blank = buildCompletedEventPacket(state, '');
+    expect(blank.sceneBlock ?? '').not.toContain('RECALLED:');
+    expect(blank.sceneBlock ?? '').not.toContain(quote);
+    const typed = buildCompletedEventPacket(state, 'the March keeps what falls into it');
+    expect(typed.sceneBlock ?? '').toContain('RECALLED: Ilyra Fen');
+  });
+
+  it('collapses a newline inside a recalled quote onto one packet line', () => {
+    const state = begun('rpg');
+    state.turn = 12;
+    state.npcMemories = [saidRow('Ilyra Fen', 'The March keeps what\nfalls into it.', 3)];
+    state.sceneFacts = { ...state.sceneFacts!, present: ['Ilyra Fen'] };
+    const lines = recalledSaidLines(state, 'the March keeps what falls');
+    expect(lines).toEqual([
+      'RECALLED: Ilyra Fen already said (other, T3): "The March keeps what falls into it."',
+    ]);
   });
 });
