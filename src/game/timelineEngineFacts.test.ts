@@ -3,7 +3,9 @@
  * Narrator tags, warden notes, and the scene beat are not facts and do not add people.
  */
 import { describe, expect, it } from 'vitest';
+import type { CompletedEventPacket } from './completedEventPacket';
 import { createInitialState } from './defaults';
+import { buildFactSheet } from './factSheet';
 import type { GameEvent } from './parser';
 import { formatSceneBlock } from './sceneBlock';
 import { applyCollectedFacts, collectTurnTimelineFacts } from './timeline';
@@ -106,6 +108,37 @@ describe('engine-tagged timeline facts', () => {
     expect(scene).toMatch(/left: Grey Crypt/);
     expect(scene).not.toMatch(/Mara|Player took|Exited dungeon/);
     expect(formatTimelineForPrompt(applied.timeline)).toMatch(/\[damage\] Brin, 4/);
+  });
+
+  it('names a heal and a hit on the writer fact sheet, and keeps only the net when both happen', () => {
+    const before = state();
+    const healed = applyCollectedFacts(
+      before,
+      collect(before, { character: { ...before.character, hp: 12 } }, [])
+    );
+    const hurt = applyCollectedFacts(
+      before,
+      collect(
+        before,
+        { character: { ...before.character, hp: 7 } },
+        [{ type: 'damage', amount: 8 }, { type: 'heal', amount: 5 }]
+      )
+    );
+    const sheet = (s: GameState) =>
+      buildFactSheet(s, {
+        location: 'Grey Yard',
+        turn: 4,
+        verb: 'wait',
+        outcome: 'done',
+        witnesses: [],
+      } as unknown as CompletedEventPacket);
+    expect(sheet(healed).recent.join('\n')).toMatch(/heal: Brin, 2/);
+    expect(sheet(healed).recent.join('\n')).not.toBe('Brin, 2');
+    const net = hurt.timeline?.filter((f) => f.kind === 'damage' || f.kind === 'heal') ?? [];
+    expect(net).toHaveLength(1);
+    expect(net[0]).toMatchObject({ kind: 'damage', name: 'Brin', detail: '3' });
+    expect(sheet(hurt).recent.join('\n')).toMatch(/damage: Brin, 3/);
+    expect(sheet(hurt).recent.join('\n')).not.toMatch(/\b8\b|\b5\b/);
   });
 
   it('records a heal from the HP rise and skips a rise with no character name', () => {

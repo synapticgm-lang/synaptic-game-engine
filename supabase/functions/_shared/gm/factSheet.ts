@@ -200,6 +200,9 @@ function recentTimeline(state: GameState): string[] {
             : `${f.verb}: ${f.name}${f.detail ? `, ${f.detail}` : ''}`;
         return clip(norm(body), 160);
       }
+      if ((f.kind === 'damage' || f.kind === 'heal') && f.name && f.detail && /^\d+$/.test(f.detail)) {
+        return clip(`${f.kind}: ${f.name}, ${f.detail}`, 160);
+      }
       return clip(norm(f.text), 160);
     })
     .filter(Boolean);
