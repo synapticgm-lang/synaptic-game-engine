@@ -5,6 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import type { CampaignBible } from '@/data/campaigns/types';
 import { createInitialState } from './defaults';
+import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
 import { formatSceneBlock } from './sceneBlock';
 import {
   applySocialLedgerTurn,
@@ -110,6 +111,46 @@ describe('Gap 1 — every quoted line lands in said', () => {
     const gm = 'Tekk Reed did not move from the water\'s edge, but he spoke without turning his head. "Watch needs eyes, not boasts."';
     const out = recordSpokenTopics([person('Tekk Reed')], ['Tekk Reed'], ['who'], gm, 2);
     expect(out[0]!.said).toEqual([{ topic: 'who', turn: 2, line: 'Watch needs eyes, not boasts.' }]);
+  });
+});
+
+describe('Gap 1 — a callback eight turns later still reaches the writer', () => {
+  it('a quote pushed out of the last three said lines returns when the player calls it back, and stays out otherwise', () => {
+    const older = 'The March keeps what falls into it.';
+    const tooSoon = 'Bring the blue lantern down the stair.';
+    const recent = [
+      'Count seven, never eight.',
+      'Nobody leaves the glass by the way they came.',
+      'Watch needs eyes, not boasts.',
+    ];
+    const state = base({
+      turn: 11,
+      npcMemories: [{
+        ...person('Ilyra Fen'),
+        said: [
+          { topic: 'other', turn: 3, line: older },
+          { topic: 'other', turn: 4, line: tooSoon },
+          { topic: 'other', turn: 5, line: recent[0]! },
+          { topic: 'other', turn: 7, line: recent[1]! },
+          { topic: 'other', turn: 9, line: recent[2]! },
+        ],
+      }],
+      sceneFacts: { present: ['Ilyra Fen'] } as GameState['sceneFacts'],
+    });
+    expect(formatSceneBlock(state)).not.toContain(older);
+    expect(formatSceneBlock(state)).not.toContain(tooSoon);
+    expect(formatSceneBlock(state)).toContain(recent[2]!);
+
+    const quiet = formatWriterFacingEvent(buildCompletedEventPacket(state, 'Look at the water'));
+    expect(quiet).not.toContain(older);
+    expect(quiet).toContain(recent[2]!);
+
+    const callback = formatWriterFacingEvent(
+      buildCompletedEventPacket(state, 'You said the March keeps what falls into it, and bring the blue lantern down the stair'),
+    );
+    expect(callback).toContain(older);
+    expect(callback).toContain('T3');
+    expect(callback).not.toContain(tooSoon);
   });
 });
 

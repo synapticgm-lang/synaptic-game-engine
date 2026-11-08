@@ -129,6 +129,31 @@ export function compressVisitLog(events: TimelineFact[], limit = 220): string {
   return text || '(quiet stay)';
 }
 
+/**
+ * A stored quote the last-three SAID lines no longer show, when this turn calls it back
+ * at least eight turns later. At most two lines. Newer hidden quotes stay out.
+ */
+export function recalledSaidLines(state: GameState, playerInput: string): string[] {
+  const turn = state.turn ?? 0;
+  const ask = (playerInput ?? '').replace(WS, ' ').trim().toLowerCase();
+  if (!ask) return [];
+  const out: string[] = [];
+  for (const m of state.npcMemories ?? []) {
+    const said = (m.said ?? []).filter((s, i, all) => all.findIndex((o) => o.line === s.line) === i);
+    const shown = new Set(said.slice(-3).map((s) => s.line));
+    for (const s of said) {
+      if (shown.has(s.line) || turn - s.turn < 8) continue;
+      const words = s.line.replace(WS, ' ').trim().split(' ').filter(Boolean);
+      if (words.length < 4) continue;
+      const key = words.slice(0, 4).join(' ').toLowerCase();
+      if (!ask.includes(key)) continue;
+      out.push(`RECALLED: ${m.npcName} already said (${s.topic}, T${s.turn}): "${s.line}"`);
+      if (out.length >= 2) return out;
+    }
+  }
+  return out;
+}
+
 export function formatSceneBlock(state: GameState): string {
   const turn = state.turn ?? 0;
   const place = (state.currentLocation ?? 'somewhere').replace(WS, ' ').trim() || 'somewhere';

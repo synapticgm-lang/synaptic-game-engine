@@ -11,7 +11,7 @@ import { isCrowdFillerToken, isSystemWindowLabel, realPresentPeople } from './ch
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { formatInfoSheet } from './infoSheet.ts';
 import { buildFactSheet, formatFactSheetForWriter, type FactSheet } from './factSheet.ts';
-import { formatRefRecords, formatSceneBlock, mentionFromScene } from './sceneBlock.ts';
+import { formatRefRecords, formatSceneBlock, mentionFromScene, recalledSaidLines } from './sceneBlock.ts';
 import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import {
@@ -1026,7 +1026,9 @@ export function buildCompletedEventPacket(
   // an actor, a prop or a thing that answers. Scene mentions were still copying the prop through.
   const refOpts = { hallTalk, engineResult: extras?.engineResult, action };
   const sceneForWriter = ledgerRead ? stateWithoutSystemWindowProp(state) : state;
-  const sceneBlock = formatSceneBlock(sceneForWriter);
+  const sceneBlock = [formatSceneBlock(sceneForWriter), ...recalledSaidLines(sceneForWriter, action)]
+    .filter(Boolean)
+    .join('\n');
   const sceneMentions = mentionFromScene(sceneForWriter);
   const allowlist = [
     ...sceneMentions,
