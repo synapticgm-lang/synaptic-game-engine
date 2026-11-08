@@ -567,6 +567,26 @@ export function openDungeonCard(state: GameState, site: string): GameState {
   const place = findPlace(state, hubName);
   const id = place?.id ?? placeIdFromName(hubName);
   const cleared = state.clearedSites?.[id] ?? state.clearedSites?.[placeIdFromName(hubName)];
+  const active = state.activeDungeon;
+  if (isDungeonCard(active) && (active.siteName ?? active.dungeonName) === hubName) {
+    const places = place
+      ? (state.places ?? []).map((p) =>
+          p.id === place.id ? { ...p, allowsDungeon: true, dungeonRef: active.dungeonName, dungeonCard: active } : p
+        )
+      : [
+          ...(state.places ?? []),
+          {
+            id,
+            name: hubName,
+            allowsDungeon: true,
+            dungeonRef: active.dungeonName,
+            dungeonCard: active,
+            arcStatus: (cleared ? 'cleared' : 'open') as const,
+            mapScale: 'street' as const,
+          },
+        ];
+    return { ...state, places, activeDungeon: active };
+  }
   let card: ActiveDungeonState;
   if (cleared) {
     card = place?.dungeonCard
@@ -585,10 +605,10 @@ export function openDungeonCard(state: GameState, site: string): GameState {
     if (card.cleared) card = stripDungeonFoes(card);
   }
   const places = place
-    ? (state.places ?? []).map((p) => (p.id === place.id ? { ...p, allowsDungeon: true, dungeonRef: card.dungeonName, dungeonCard: cleared ? card : p.dungeonCard } : p))
+    ? (state.places ?? []).map((p) => (p.id === place.id ? { ...p, allowsDungeon: true, dungeonRef: card.dungeonName, dungeonCard: card } : p))
     : [
         ...(state.places ?? []),
-        { id, name: hubName, allowsDungeon: true, dungeonRef: card.dungeonName, arcStatus: (cleared ? 'cleared' : 'open') as const, mapScale: 'street' as const, ...(cleared ? { dungeonCard: card } : {}) },
+        { id, name: hubName, allowsDungeon: true, dungeonRef: card.dungeonName, dungeonCard: card, arcStatus: (cleared ? 'cleared' : 'open') as const, mapScale: 'street' as const },
       ];
   return {
     ...state,

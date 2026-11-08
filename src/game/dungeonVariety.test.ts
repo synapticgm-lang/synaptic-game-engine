@@ -377,6 +377,39 @@ describe('dungeon card variety', () => {
     expect(trashCounts.size).toBeGreaterThan(1);
   });
 
+  it('keeps an in-progress card when enter runs again, and stores it on the place', () => {
+    const base = { ...createInitialState('The Summoned Pact', 'litrpg'), seed: 'persist-entry' };
+    const entered = openDungeonCard(base, 'Plain Shed');
+    const card = entered.activeDungeon!;
+    const chest = card.nodes.flatMap((n) => n.hidden?.lootables ?? []).find((l) => !l.opened);
+    expect(chest).toBeTruthy();
+    const deepId = card.nodes[card.nodes.length - 1]!.id;
+    const progressed = {
+      ...entered,
+      activeDungeon: {
+        ...card,
+        visitedNodeIds: card.nodes.map((n) => n.id),
+        currentNodeId: deepId,
+        nodes: card.nodes.map((n) =>
+          n.hidden
+            ? {
+                ...n,
+                hidden: {
+                  ...n.hidden,
+                  lootables: (n.hidden.lootables ?? []).map((l) => (l.id === chest!.id ? { ...l, opened: true } : l)),
+                },
+              }
+            : n
+        ),
+      },
+    } as GameState;
+    const again = openDungeonCard(progressed, 'Plain Shed');
+    const loot = again.activeDungeon!.nodes.flatMap((n) => n.hidden?.lootables ?? []).find((l) => l.id === chest!.id);
+    expect(loot?.opened).toBe(true);
+    expect(again.activeDungeon!.currentNodeId).toBe(deepId);
+    expect(again.places?.find((p) => p.name === 'Plain Shed')?.dungeonCard?.nodes.flatMap((n) => n.hidden?.lootables ?? []).find((l) => l.id === chest!.id)?.opened).toBe(true);
+  });
+
   it('reuses a stored card and does not rescale an older foe', () => {
     const base = createInitialState('The Summoned Pact', 'litrpg');
     const first = ensureDungeonCard({ ...base, seed: 'stored-card' }, 'Plain Shed');
