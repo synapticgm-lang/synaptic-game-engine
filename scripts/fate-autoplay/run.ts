@@ -84,6 +84,7 @@ Options:
                        without --bible picks summoned-pact / cursed-keep / salt-road-heist.
                        PYOA is never tested.
   --ai-tier free|mid|high
+  --diagnostic-replay       Hosted default writer, training request left off. Turn tape only.
   --writer default|flash-lite|openrouter|gateway
                        flash-lite/openrouter/gateway = OpenRouter (needs OPENROUTER_API_KEY or VITE_OPENROUTER_API_KEY)
                        default = hosted Free via edge gm-turn
@@ -425,6 +426,7 @@ async function main(): Promise<void> {
         characterName: opts.characterName,
         writer: opts.writer,
         writerModel: opts.writerModel,
+        diagnosticReplay: opts.diagnosticReplay,
         inputs: opts.inputs,
         routeTo: opts.routeTo,
         resumeFrom: opts.resumeFrom,

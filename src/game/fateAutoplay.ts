@@ -42,6 +42,7 @@ import {
   setTrainLogSession,
   withTrainLogJob,
 } from './trainLog';
+import { disableDiagnosticReplay, enableDiagnosticReplay } from './diagnosticReplay';
 import {
   checkAndRepairProse,
   clauseCheckerVerdicts,
@@ -394,6 +395,8 @@ export type FateAutoplayCliOpts = {
   writer?: AutoplayWriterKind;
   /** `--writer-model <provider/model>` — OpenRouter model id; default Flash Lite. */
   writerModel?: string;
+  /** Hosted replay tape with the training request left off. Not a training admission. */
+  diagnosticReplay?: boolean;
 };
 export type MatrixCombo = {
   engineMode: EngineMode;
@@ -3103,6 +3106,8 @@ export async function runFateAutoplay(opts: {
   writer?: AutoplayWriterKind;
   /** OpenRouter model id for the client writer; default Flash Lite. */
   writerModel?: string;
+  /** Hosted replay tape with the training request left off. Not a training admission. */
+  diagnosticReplay?: boolean;
   /** 28b — scripted player lines per turn (harness only); a blank entry = normal pick. */
   inputs?: string[];
   /** `--route <place>` — from turn 2, travel toward this place until arrived, then normal picks. */
@@ -3115,6 +3120,8 @@ export async function runFateAutoplay(opts: {
   resumeFrom?: string;
 }): Promise<RunSummary> {
   enableAutoplayTestLab(opts.aiTier);
+  if (opts.diagnosticReplay) enableDiagnosticReplay();
+  else disableDiagnosticReplay();
   setActiveSubscriptionTier(opts.aiTier);
   const writerKind = opts.writer ?? 'default';
   const writerOverride = enableAutoplayWriter(writerKind, opts.writerModel);
@@ -3177,24 +3184,29 @@ export async function runFateAutoplay(opts: {
   // Truncate turns file once; append per turn so a mid-run kill keeps all completed turns.
   writeFileSync(turnsPath, '');
   // q71-TRAINLOG — one calls.jsonl owner (client + hosted callLog rows share run_id / turn_no).
-  writeFileSync(callsPath, '');
-  setTrainLogFileAppend((path, line) => {
-    try {
-      appendFileSync(path, line, { encoding: 'utf8' });
-    } catch {
-      /* never throw into the game turn */
-    }
-  });
-  setTrainLogSession({
-    run_id: `${runId}_${slug}`,
-    save_id: state.saveId ?? null,
-    mode: state.engineMode ?? null,
-    genre: bible.id,
-    build_stamp: BUILD_STAMP,
-    // Real-player ai_traffic OFF; autoplay keeps OFF (personal-data gate).
-    aiTrafficEnabled: false,
-    callsPath,
-  });
+  // A diagnostic replay keeps the turn tape and does not open that training file.
+  if (!opts.diagnosticReplay) {
+    writeFileSync(callsPath, '');
+    setTrainLogFileAppend((path, line) => {
+      try {
+        appendFileSync(path, line, { encoding: 'utf8' });
+      } catch {
+        /* never throw into the game turn */
+      }
+    });
+    setTrainLogSession({
+      run_id: `${runId}_${slug}`,
+      save_id: state.saveId ?? null,
+      mode: state.engineMode ?? null,
+      genre: bible.id,
+      build_stamp: BUILD_STAMP,
+      // Real-player ai_traffic OFF; autoplay keeps OFF (personal-data gate).
+      aiTrafficEnabled: false,
+      callsPath,
+    });
+  } else {
+    setTrainLogFileAppend(null);
+  }
   // 28j — GameState snapshot every 10 turns and at stop (resume with --resume-from <runDir>).
   const writeSnapshot = (loopIndex: number) =>
     writeFileSync(join(outDir, 'snapshot.json'), JSON.stringify({ loopIndex, turn: state.turn, savedAt: new Date().toISOString(), state }) + '\n');
@@ -3368,6 +3380,7 @@ export async function runFateAutoplay(opts: {
     }
   } finally {
     writerPromptSink.dir = undefined;
+    disableDiagnosticReplay();
     // Keep Test Lab override for matrix multi-run; caller clears at process end.
   }
   const endedAt = new Date().toISOString();
@@ -3530,6 +3543,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     outRoot: join(process.cwd(), 'scripts', 'fate-autoplay', 'runs'),
     characterName: 'Jax',
     writer: 'default',
+    diagnosticReplay: false,
   };
   const out = { ...defaults };
   let bibleGiven = false;
@@ -3562,9 +3576,10 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     } else if (a === '--player-profile') {
       const m = next().trim().toLowerCase();
       out.playerProfile = m === 'quest' ? 'quest' : m === 'hunt-gather' ? 'hunt-gather' : 'random';
-    } else if (a === '--writer') {
+    }     else if (a === '--writer') {
       out.writer = parseAutoplayWriterKind(next());
-    } else if (a === '--writer-model') out.writerModel = next().trim();
+    } else if (a === '--diagnostic-replay') out.diagnosticReplay = true;
+    else if (a === '--writer-model') out.writerModel = next().trim();
     else if (a === '--seat') {
       const seat = next().trim().toLowerCase();
       if (!(seat in TRAINING_SEATS)) throw new Error(`Unknown --seat "${seat}" (use ${Object.keys(TRAINING_SEATS).join(' | ')}).`);

@@ -5,6 +5,7 @@ import { logger } from './logger';
 import { resolveWriterModel, getTierDefinition } from './subscriptionTiers';
 import { resolveHostedImageModel } from './hostedImageModel';
 import { effectiveWriterTier, isAutoplayTestLabSession, isTestLabEnabled } from './testLab';
+import { isDiagnosticReplay } from './diagnosticReplay';
 import { appendConsentingCallLog, getPlayerTrainingPreference, shouldRequestTrainLog } from './playerTurnAdmission';
 import {
   appendTrainLogRows,
@@ -173,10 +174,13 @@ export async function invokeGmProxy(params: {
         });
 
     // q71-TRAINLOG — narrow body flag only the autoplay/test-lab harness sets; never for real players.
-    const trainLog = shouldRequestTrainLog({
-      labSession: isAutoplayTestLabSession(),
-      preference: getPlayerTrainingPreference(),
-    });
+    // A diagnostic replay keeps the lab session but does not ask for a training row.
+    const trainLog = isDiagnosticReplay()
+      ? false
+      : shouldRequestTrainLog({
+          labSession: isAutoplayTestLabSession(),
+          preference: getPlayerTrainingPreference(),
+        });
     const stackJob = currentTrainLogJob();
     const trainJob =
       stackJob !== 'untagged'
