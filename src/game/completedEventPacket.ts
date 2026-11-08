@@ -288,9 +288,18 @@ export interface TokenUseRef {
 }
 const WRITER_RHYTHM_WINDOW = 2;
 const WRITER_RHYTHM_CHAR_CAP = 500;
+/** Same character bound as a stored NPC quote (recordSpokenTopics). The ellipsis matches the info-sheet clip. */
+const EARLIER_PLAYER_CHARS = 180;
+
+function renderEarlierPlayer(raw: string): string {
+  if (raw.length <= EARLIER_PLAYER_CHARS) return raw;
+  return `${raw.slice(0, EARLIER_PLAYER_CHARS - 1).trimEnd()}…`;
+}
+
 /**
  * A player line from at least eight turns ago, when this turn repeats its first four words.
  * Separate from NPC quote recall. Blank input does not read the log. At most two lines.
+ * The embedded line keeps its opening and is cut at the NPC quote bound.
  */
 export function recalledPlayerLines(state: GameState, playerInput: string): string[] {
   const turn = state.turn ?? 0;
@@ -304,7 +313,7 @@ export function recalledPlayerLines(state: GameState, playerInput: string): stri
     const key = raw.toLowerCase();
     if (!raw || seen.has(key) || !matchesOpeningWords(playerInput ?? '', raw)) continue;
     seen.add(key);
-    out.push(`EARLIER PLAYER (T${saidTurn}): "${raw}"`);
+    out.push(`EARLIER PLAYER (T${saidTurn}): "${renderEarlierPlayer(raw)}"`);
     if (out.length >= 2) break;
   }
   return out;

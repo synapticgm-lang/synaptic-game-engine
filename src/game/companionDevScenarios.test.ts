@@ -368,6 +368,27 @@ describe('development scenarios: quote callback boundaries', () => {
     expect(blank.sceneBlock ?? '').not.toContain('EARLIER PLAYER');
   });
 
+  it('clips a long earlier player line to the NPC quote character bound and keeps the opening words', () => {
+    const opening = 'Remember the blue glass vow tonight';
+    const tail = 'TAILMARKER_END';
+    const earlier = `${opening} ${'pad '.repeat(500)}${tail}`;
+    expect(earlier.length).toBeGreaterThan(2046);
+    const state = begun('rpg');
+    state.turn = 12;
+    state.log = [{ id: 'p3', turn: 3, role: 'player', content: earlier, timestamp: 3 }];
+    const facing = prepareWriterInputWithTownsfolk(state, `${opening}, I meant that vow`);
+    const shown = facing.writerFacing.match(/EARLIER PLAYER \(T3\): "([^"]*)"/);
+    expect(shown?.[1]?.length ?? 0).toBeLessThanOrEqual(180);
+    expect(shown?.[1]?.endsWith('…')).toBe(true);
+    expect(facing.writerFacing).toContain(opening.slice(0, 40).split(' ').slice(0, 4).join(' '));
+    expect(facing.writerFacing).not.toContain(tail);
+    const exact = buildCompletedEventPacket(
+      { ...state, log: [{ id: 'p3', turn: 3, role: 'player', content: opening, timestamp: 3 }] },
+      `${opening} again`,
+    );
+    expect(exact.sceneBlock ?? '').toContain(`EARLIER PLAYER (T3): "${opening}"`);
+  });
+
   it('collapses a newline inside a recalled quote onto one packet line', () => {
     const state = begun('rpg');
     state.turn = 12;
