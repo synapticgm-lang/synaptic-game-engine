@@ -5,13 +5,14 @@
  */
 import { describe, expect, it } from 'vitest';
 import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
+import { createInitialState } from './defaults';
 import { buildNewGameState, stampOpening } from './fateAutoplay';
 import { buildDungeonCard } from './dungeonCard';
 import { buildInteriorFloorPlan, type MapNode } from './mapEngine';
 import { exitPlaceNames } from './placeNames';
 import { placeScale } from './placeAuthority';
 import { resolvePlace } from './places';
-import { ensurePlaceOnMap, placeExits } from './placeRegistry';
+import { ensurePlaceOnMap, placeExitRows, placeExits } from './placeRegistry';
 import { recordedTravelDestinations, wayOutMovesPlayer } from './sceneAffordances';
 import type { GameState } from './types';
 
@@ -155,4 +156,62 @@ describe('every reachable place has a way out', () => {
     expect(holes, `seeds=${seeds} places=${places}\n${holes.slice(0, 30).join('\n')}`).toEqual([]);
     console.log(`way-out property: seeds=${seeds} places=${places}`);
   }, 180000);
+
+  it('a built card with no exits and no closed flag reads the same exits it would be given', () => {
+    const base = createInitialState('Alcove', 'dnd') as GameState;
+    const state: GameState = {
+      ...base,
+      turn: 4,
+      campaignBibleId: 'millstone-road',
+      currentLocation: 'Story Alcove',
+      openingEstablishment: { pending: [], answers: {}, complete: true },
+      places: [
+        { id: 'alcove', name: 'Story Alcove', cardBuiltTurn: 4, exits: [], parentHub: 'Story House', arcStatus: 'open' },
+        { id: 'hall', name: 'Hall', exits: ['Story Alcove'], parentHub: 'Story House', arcStatus: 'open' },
+        { id: 'far', name: 'Far Spire', exits: [], regionId: 'other', arcStatus: 'open' },
+      ],
+    };
+    const read = placeExitRows(state, 'Story Alcove').map((row) => row.label);
+    const written = ensurePlaceOnMap(state, 'Story Alcove');
+    const stored = resolvePlace(written.places, 'Story Alcove')?.exits ?? [];
+    expect(read).toContain('Hall');
+    expect(read).not.toContain('Far Spire');
+    expect(stored).toEqual(read);
+    expect(placeExits(written, 'Story Alcove')).toEqual(read);
+    const shown = exitPlaceNames({ ...written, currentLocation: 'Story Alcove' });
+    const buttons = movingButtons({ ...written, currentLocation: 'Story Alcove' });
+    expect(shown.map((n) => n.toLowerCase()).sort()).toEqual(buttons.map((n) => n.toLowerCase()).sort());
+  });
+
+  it('a closed place strands nobody who is standing in it without a scripted way out', () => {
+    const base = createInitialState('Vault', 'dnd') as GameState;
+    const closed = {
+      ...base,
+      turn: 6,
+      campaignBibleId: 'millstone-road',
+      currentLocation: 'Sealed Vault',
+      openingEstablishment: { pending: [], answers: {}, complete: true },
+      places: [
+        { id: 'vault', name: 'Sealed Vault', closed: true, arcStatus: 'closed' as const, exits: [] as string[], parentHub: 'Lowmarket' },
+        { id: 'low', name: 'Lowmarket', arcStatus: 'open' as const, exits: ['Sealed Vault'] },
+      ],
+    } as GameState;
+    expect(placeExits(closed, 'Sealed Vault').length).toBeGreaterThan(0);
+    expect(placeExits({ ...closed, currentLocation: 'Lowmarket' }, 'Sealed Vault')).toEqual([]);
+    const scripted = {
+      ...closed,
+      quests: [{
+        id: 'q',
+        name: 'The vault lock',
+        description: 'Open it.',
+        status: 'active' as const,
+        type: 'side' as const,
+        location: 'Sealed Vault',
+        objectives: [{ id: 'o', description: 'Open the lock', completed: false, place: 'Sealed Vault' }],
+      }],
+    } as GameState;
+    expect(placeExits(scripted, 'Sealed Vault')).toEqual([]);
+    const opening = { ...scripted, turn: 0 } as GameState;
+    expect(placeExits(opening, 'Sealed Vault').length).toBeGreaterThan(0);
+  });
 });

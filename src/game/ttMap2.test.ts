@@ -183,10 +183,21 @@ describe('q50e-MAP2 read-through exits', () => {
     expect(enumerateLegalEdges(loaded).some((e) => e.type === 'travel')).toBe(true);
   });
 
-  it('(d) a closed place offers no exits', () => {
+  it('(d) a closed place with a scripted way through offers no travel exits', () => {
     const state = {
       ...openedBare(),
+      turn: 6,
       currentLocation: 'Sealed Vault',
+      openingEstablishment: { pending: [], answers: {}, complete: true },
+      quests: [{
+        id: 'q-vault',
+        name: 'Open the vault',
+        description: 'The lock is the way out.',
+        status: 'active' as const,
+        type: 'side' as const,
+        location: 'Sealed Vault',
+        objectives: [{ id: 'o', description: 'Open the vault lock', completed: false, place: 'Sealed Vault' }],
+      }],
       places: [
         {
           id: 'vault',

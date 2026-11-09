@@ -111,19 +111,17 @@ describe('FORDCAMP registered places always have a way on', () => {
     expect(placeExits(opened, 'Ford Camp').length).toBeGreaterThan(0);
     expect(checkRegisteredPlace(opened)).toEqual([]);
 
-    // Snapshot-shaped hole from train-run 00: empty exits + cardBuiltTurn heals via ensurePlaceOnMap
-    // (the one registration owner) — placeExitRows keeps the built-card contract until then.
+    // A built card with an empty exit list is not sealed. The reader and the writer agree.
     const broken: GameState = {
       ...opened,
       places: (opened.places ?? []).map((p) =>
         p.name === 'Ford Camp' ? { ...p, exits: [], cardBuiltTurn: 0, parentHub: undefined } : p
       ),
     };
-    expect(placeExits(broken, 'Ford Camp')).toEqual([]);
-    const healed = ensurePlaceOnMap(broken, 'Ford Camp', 'Millstone Ford');
-    const healedPlace = resolvePlace(healed.places, 'Ford Camp');
-    expect((healedPlace?.exits ?? []).length).toBeGreaterThan(0);
-    expect(placeExits(healed, 'Ford Camp')).toContain('Millstone Ford');
+    const read = placeExits(broken, 'Ford Camp');
+    expect(read.length).toBeGreaterThan(0);
+    const healed = ensurePlaceOnMap(broken, 'Ford Camp');
+    expect(placeExits(healed, 'Ford Camp')).toEqual(read);
     expect(checkRegisteredPlace(healed)).toEqual([]);
   });
 });

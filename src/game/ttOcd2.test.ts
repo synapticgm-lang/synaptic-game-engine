@@ -259,7 +259,18 @@ describe('q44-OCD2 pad cooldown', () => {
     ];
     const bare = {
       ...s,
-      places: [{ id: 'camp', name: 'Camp', cardBuiltTurn: 1, exits: [] }],
+      currentLocation: 'Camp',
+      openingEstablishment: { ...(s.openingEstablishment ?? { pending: [], answers: {} }), complete: true },
+      quests: [{
+        id: 'q-camp',
+        name: 'Stay the watch',
+        description: 'The watch is the way on.',
+        status: 'active' as const,
+        type: 'side' as const,
+        location: 'Camp',
+        objectives: [{ id: 'o', description: 'Keep the watch', completed: false, place: 'Camp' }],
+      }],
+      places: [{ id: 'camp', name: 'Camp', cardBuiltTurn: 1, exits: [], closed: true, arcStatus: 'closed' as const }],
       locationSheet: { ...s.locationSheet!, exits: [] },
       sceneFacts: { ...s.sceneFacts!, indoor: true },
     };
@@ -310,8 +321,19 @@ describe('q44b-OCD2x way out', () => {
   it('a place with no exits and no travel adds nothing', () => {
     const s = {
       ...base('litrpg'),
+      turn: 4,
+      openingEstablishment: { pending: [], answers: {}, complete: true },
       currentLocation: 'Bare Room',
-      places: [{ id: 'bare', name: 'Bare Room', cardBuiltTurn: 1, exits: [] }],
+      quests: [{
+        id: 'q-bare',
+        name: 'Wait for the door',
+        description: 'The door opens on the bell.',
+        status: 'active' as const,
+        type: 'side' as const,
+        location: 'Bare Room',
+        objectives: [{ id: 'o', description: 'Wait for the bell', completed: false, place: 'Bare Room' }],
+      }],
+      places: [{ id: 'bare', name: 'Bare Room', cardBuiltTurn: 1, exits: [], closed: true, arcStatus: 'closed' as const }],
       locationSheet: { name: 'Bare Room', interactables: [], exits: [], presentNpcIds: [] },
       sceneFacts: { crowd: 'alone', noise: 'quiet', present: [], props: [], lastBeat: '', updatedTurn: 1, indoor: true },
     } as unknown as GameState;
