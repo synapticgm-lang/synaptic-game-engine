@@ -807,43 +807,120 @@ describe('fact gate', () => {
     expect(prompt).toMatch(/listed or unlisted/i);
   });
 
-  it('drops a pocket when the key appears only in a denial', async () => {
-    const denied = sheet({
+  it('drops a pocket when the key is only in free sheet text', async () => {
+    const prose = 'Mira — the soup is too salty.\n\nJax pocketed the cellar key.';
+    const denials = [
+      'Jax stayed in the bathhouse. Jax does not hold the cellar key. Jax is not at the quay.',
+      'The cellar key is not held.',
+      'Jax arrived without the cellar key.',
+      'Jax lost the cellar key.',
+      'not only the key but the sunblade',
+    ];
+    for (const engineResult of denials) {
+      const out = await applyFactGate({
+        prose,
+        sheet: sheet({
+          beat: {
+            verb: 'looked',
+            outcome: 'looked',
+            engineResult,
+            steps: [{ outcome: 'stayed', detail: 'No move this turn. Not at the quay. No cellar key.' }],
+          },
+          player: { typed: 'look around', claimsNotTrue: ['Jax holds the cellar key', 'Jax is at the quay'] },
+        }),
+        pcName: 'Jax',
+        thirdPerson: true,
+        factCheckEnabled: true,
+        factCheck: async ({ lines }) => lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const })),
+      });
+      const pocket = out.spans.find((span) => /pocketed/i.test(span.text));
+      expect(pocket?.speech, engineResult).not.toBe(true);
+      expect(pocket?.verdict, engineResult).toBe('new/wrong');
+      expect(pocket?.reason, engineResult).toMatch(/unlisted item/i);
+      expect(out.prose, engineResult).toMatch(/soup/i);
+      expect(out.prose, engineResult).not.toMatch(/pocketed|cellar key/i);
+    }
+
+    const carried = sheet({
+      gear: { worn: [], carrying: ['cellar key'], inHand: 'nothing' },
       beat: {
         verb: 'looked',
         outcome: 'looked',
-        engineResult: 'Jax stayed in the bathhouse. Jax does not hold the cellar key. Jax is not at the quay.',
-        steps: [{ outcome: 'stayed', detail: 'No move this turn. Not at the quay. No cellar key.' }],
+        engineResult: 'Jax does not hold the cellar key.',
+        steps: [{ outcome: 'stayed', detail: 'No cellar key.' }],
       },
-      player: { typed: 'look around', claimsNotTrue: ['Jax holds the cellar key', 'Jax is at the quay'] },
     });
-    const prose = 'Mira — the soup is too salty.\n\nJax pocketed the cellar key.';
-    const out = await applyFactGate({
-      prose,
-      sheet: denied,
-      pcName: 'Jax',
-      thirdPerson: true,
-      factCheckEnabled: true,
-      factCheck: async ({ lines }) => lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const })),
-    });
-    const pocket = out.spans.find((span) => /pocketed/i.test(span.text));
-    expect(pocket?.speech).not.toBe(true);
-    expect(pocket?.verdict).toBe('new/wrong');
-    expect(pocket?.reason).toMatch(/unlisted item/i);
-    expect(out.prose).toMatch(/soup/i);
-    expect(out.prose).not.toMatch(/pocketed|cellar key/i);
-
-    const carried = sheet({
-      ...denied,
-      gear: { worn: [], carrying: ['cellar key'], inHand: 'nothing' },
-    });
-    const kept = await applyFactGate({
-      prose,
-      sheet: carried,
-      pcName: 'Jax',
-      thirdPerson: true,
-    });
+    const kept = await applyFactGate({ prose, sheet: carried, pcName: 'Jax', thirdPerson: true });
     expect(kept.prose).toMatch(/pocketed the cellar key/i);
+
+    const granted = sheet({
+      gear: { worn: [], carrying: ['sunblade'], inHand: 'nothing' },
+      beat: {
+        verb: 'looked',
+        outcome: 'looked',
+        engineResult: 'not only the key but the sunblade',
+        steps: [],
+      },
+    });
+    const blade = await applyFactGate({
+      prose: 'Jax pocketed the sunblade.',
+      sheet: granted,
+      pcName: 'Jax',
+    });
+    expect(blade.spans.find((span) => /sunblade/i.test(span.text))?.verdict).toBe('allowed');
+    expect(blade.prose).toMatch(/sunblade/i);
+
+    const proseOnly = sheet({
+      beat: {
+        verb: 'looked',
+        outcome: 'looked',
+        engineResult: 'not only the key but the sunblade',
+        steps: [],
+      },
+    });
+    const invented = await applyFactGate({
+      prose: 'Jax pocketed the sunblade.',
+      sheet: proseOnly,
+      pcName: 'Jax',
+    });
+    expect(invented.spans.find((span) => /sunblade/i.test(span.text))?.verdict).toBe('new/wrong');
+    expect(invented.prose).not.toMatch(/sunblade/i);
+
+    const prop = sheet({
+      place: { name: 'Valespire Bathhouse', exits: ['street'], features: ['cold plunge', 'furnace', 'cloak', 'cellar key'] },
+      beat: {
+        verb: 'looked',
+        outcome: 'looked',
+        engineResult: 'The cellar key is not held.',
+        steps: [],
+      },
+    });
+    const fromProp = await applyFactGate({ prose, sheet: prop, pcName: 'Jax', thirdPerson: true });
+    expect(fromProp.prose).toMatch(/pocketed the cellar key/i);
+
+    const named = await applyFactGate({
+      prose: 'Brim nodded from the steam.',
+      sheet: sheet({ present: [{ name: 'Mira' }, { name: 'Brim' }] }),
+      pcName: 'Jax',
+    });
+    expect(named.spans.some((span) => /name not on the sheet/i.test(span.reason))).toBe(false);
+    expect(named.prose).toMatch(/Brim/i);
+
+    const signed = sheet({
+      present: [{ name: 'Mira', signature: 'sunblade' }],
+      beat: {
+        verb: 'looked',
+        outcome: 'looked',
+        engineResult: 'not only the key but the sunblade',
+        steps: [],
+      },
+    });
+    const fromNpc = await applyFactGate({
+      prose: 'Jax pocketed the sunblade.',
+      sheet: signed,
+      pcName: 'Jax',
+    });
+    expect(fromNpc.spans.find((span) => /sunblade/i.test(span.text))?.verdict).toBe('allowed');
   });
 
   it('sends every quoted span to the checker as speech', async () => {

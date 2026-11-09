@@ -98,16 +98,25 @@ function norm(s: string): string {
   return (s ?? '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-/** A denial does not list the noun it refuses. "does not hold the cellar key" adds no key. */
-function proseWithoutDenials(text: string): string {
-  return text.replace(
-    /\b(?:do|does|did|is|are|was|were|has|have|had|can|could|will|would|should)\s+not\b[^.,;]*|\b(?:don't|doesn't|didn't|isn't|aren't|wasn't|weren't|hasn't|haven't|hadn't|can't|cannot|won't|wouldn't|shouldn't|never|not|no)\b[^.,;]*/gi,
-    ' ',
-  );
+function wordSet(parts: string[]): Set<string> {
+  const words = new Set<string>();
+  for (const item of parts) {
+    for (const w of norm(item).split(' ')) {
+      if (w.length >= 3) words.add(w);
+    }
+  }
+  return words;
 }
 
 function allowWords(sheet: FactSheet, pcName?: string, allowNames?: string[]): Set<string> {
-  const prose = [
+  return wordSet([
+    sheet.place?.name ?? '',
+    ...(sheet.place?.exits ?? []),
+    ...(sheet.place?.features ?? []),
+    ...(sheet.present ?? []).flatMap((p) => [p.name, p.role ?? '', ...(p.carried ?? []), p.signature ?? '']),
+    ...(sheet.gear?.worn ?? []),
+    ...(sheet.gear?.carrying ?? []),
+    sheet.gear?.inHand ?? '',
     ...(sheet.openLedger ?? []).map((e) => e.line),
     ...(sheet.quests ?? []).flatMap((q) => [q.title, q.step ?? '']),
     sheet.beat?.engineResult ?? '',
@@ -115,26 +124,20 @@ function allowWords(sheet: FactSheet, pcName?: string, allowNames?: string[]): S
     ...(sheet.beat?.steps ?? []).flatMap((s) => [s.detail ?? '', s.outcome]),
     sheet.player?.typed ?? '',
     ...(sheet.recent ?? []),
-  ].map(proseWithoutDenials);
-  const blob: string[] = [
-    sheet.place?.name ?? '',
-    ...(sheet.place?.exits ?? []),
-    ...(sheet.place?.features ?? []),
-    ...(sheet.present ?? []).flatMap((p) => [p.name, p.role ?? '']),
+    pcName ?? '',
+    ...(allowNames ?? []),
+  ]);
+}
+
+/** Current holdings and presence only. Beat prose, denials, and other free text do not list an item. */
+function holdingWords(sheet: FactSheet): Set<string> {
+  return wordSet([
     ...(sheet.gear?.worn ?? []),
     ...(sheet.gear?.carrying ?? []),
     sheet.gear?.inHand ?? '',
-    ...prose,
-    pcName ?? '',
-    ...(allowNames ?? []),
-  ];
-  const words = new Set<string>();
-  for (const item of blob) {
-    for (const w of norm(item).split(' ')) {
-      if (w.length >= 3) words.add(w);
-    }
-  }
-  return words;
+    ...(sheet.place?.features ?? []),
+    ...(sheet.present ?? []).flatMap((p) => [p.name, ...(p.carried ?? []), p.signature ?? '']),
+  ]);
 }
 
 function packetBlob(sheet: FactSheet, pcName?: string, allowNames?: string[]): string {
@@ -436,6 +439,7 @@ function classifySpan(
   span: string,
   sheet: FactSheet,
   words: Set<string>,
+  holdings: Set<string>,
   blob: string,
   pcName?: string,
   thirdPerson?: boolean
@@ -492,10 +496,10 @@ function classifySpan(
   if (playerTransfer(span, pcName) || partyPossession(span, pcName)) {
     const nouns = itemNouns(span);
     if (!nouns.length) return { verdict: 'UNSURE', reason: 'possession change with no named item' };
-    const listed = nouns.filter((noun) => heldItem(noun, words));
+    const listed = nouns.filter((noun) => heldItem(noun, holdings));
     if (listed.length !== nouns.length) {
       if (listed.length > 0) return { verdict: 'colour', reason: 'gain not fully listed' };
-      return { verdict: 'new/wrong', reason: `unlisted item: ${nouns.find((noun) => !heldItem(noun, words))}` };
+      return { verdict: 'new/wrong', reason: `unlisted item: ${nouns.find((noun) => !heldItem(noun, holdings))}` };
     }
     if (/\b(dropped|lost)\b/i.test(span)) return { verdict: 'new/wrong', reason: 'possession change the beat did not grant' };
     return { verdict: 'allowed', reason: 'item is on the sheet' };
@@ -792,6 +796,7 @@ export async function applyFactGate(args: {
   factCheckEnabled?: boolean;
 }): Promise<FactGateResult> {
   const words = allowWords(args.sheet, args.pcName, args.allowNames);
+  const holdings = holdingWords(args.sheet);
   const blob = packetBlob(args.sheet, args.pcName, args.allowNames);
   const judge = (text: string, id: string): FactSpan => {
     const role = speechRole(text);
@@ -807,7 +812,7 @@ export async function applyFactGate(args: {
       };
     }
     const body = role === 'narration' ? narrationOnly(text) : text;
-    const judged = classifySpan(body, args.sheet, words, blob, args.pcName, args.thirdPerson);
+    const judged = classifySpan(body, args.sheet, words, holdings, blob, args.pcName, args.thirdPerson);
     return {
       id,
       text,
