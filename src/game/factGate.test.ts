@@ -38,26 +38,31 @@ describe('fact gate', () => {
     expect(out.prose).not.toMatch(/vault/i);
   });
 
-  it('removes a pocketed key that is not in the gear', async () => {
-    const out = await applyFactGate({
-      prose: 'She quietly pockets the key.',
+  it('removes a key the player pockets and a sunblade handed to the player', async () => {
+    const pocket = await applyFactGate({
+      prose: 'You pocket the key. Mira stays by the furnace.',
       sheet: sheet(),
+      pcName: 'Jax',
     });
-    expect(out.prose).not.toMatch(/key/i);
-    expect(out.spans.some((s) => s.verdict === 'new/wrong')).toBe(true);
+    expect(pocket.prose).not.toMatch(/key/i);
+    expect(pocket.prose).toMatch(/furnace/i);
+    const handed = await applyFactGate({
+      prose: 'She hands you the sunblade. Mira stays by the furnace.',
+      sheet: sheet(),
+      pcName: 'Jax',
+    });
+    expect(handed.prose).not.toMatch(/sunblade/i);
+    expect(handed.prose).toMatch(/furnace/i);
   });
 
-  it('treats possession of a sheet item as allowed and an unlisted one as new/wrong', async () => {
+  it('keeps an item the sheet already names when the player receives it', async () => {
     const held = await applyFactGate({
-      prose: 'Mira has the cloak.',
+      prose: 'You pocket the cloak.',
       sheet: sheet(),
+      pcName: 'Jax',
     });
-    expect(held.prose).toContain('cloak');
-    const stolen = await applyFactGate({
-      prose: 'Mira has the room key.',
-      sheet: sheet(),
-    });
-    expect(stolen.prose).not.toMatch(/key/i);
+    expect(held.prose).toMatch(/cloak/i);
+    expect(held.spans.filter((s) => s.verdict === 'new/wrong')).toEqual([]);
   });
 
   it('drops a dragon and keeps the bathhouse', async () => {
@@ -200,27 +205,71 @@ describe('fact gate', () => {
     expect(arrived.withheld).toBe(true);
   });
 
-  it('flags lowercase invented items and allows the same items in any case on the sheet', async () => {
-    const invented = await applyFactGate({
-      prose: 'Mira draws a sunblade. She drinks a health tonic. A pile of treasure waits. Steam curls off the furnace.',
+  it('keeps scenery items and only flags a transfer to the player', async () => {
+    const scenery = [
+      'An old sword rusted above the hearth.',
+      'She has a coin in her palm.',
+      'A chest of treasure waited in the story he told.',
+      'A blade of grass clung to his boot.',
+      'Steam curled off the cold plunge.',
+      'The crowd smelled of rain and iron.',
+      'Mira watched the door and said nothing.',
+      'A gray cloak hung on the peg.',
+      'Lamplight moved across the floor.',
+      'Someone laughed in the next room.',
+      'The bathhouse waited.',
+      'Dust lay along the windowsill.',
+      'Her hands were still.',
+      'The fire popped once.',
+      'Rain ticked on the glass.',
+      'He looked at the floor.',
+      'A chair scraped back an inch.',
+      'The room did not change.',
+      'Smoke hung under the beams.',
+      'Her cup sat between them.',
+      'The night was quiet.',
+      'Footsteps faded down the hall.',
+    ];
+    expect(scenery).toHaveLength(22);
+    for (const line of scenery) {
+      const out = await applyFactGate({ prose: line, sheet: sheet(), pcName: 'Jax' });
+      expect(out.prose, line).toBe(line);
+      expect(out.spans.filter((s) => s.verdict === 'new/wrong' || s.verdict === 'UNSURE'), line).toEqual([]);
+    }
+  });
+
+  it('flags a lowercase title and name, and a destination that is not an exit', async () => {
+    const named = await applyFactGate({
+      prose: 'captain bramble nods once. Mira stays by the furnace.',
       sheet: sheet(),
     });
-    expect(invented.prose).not.toMatch(/sunblade/i);
-    expect(invented.prose).not.toMatch(/health tonic/i);
-    expect(invented.prose).not.toMatch(/treasure/i);
-    expect(invented.prose).toMatch(/furnace/i);
+    expect(named.prose).not.toMatch(/bramble/i);
+    expect(named.prose).toMatch(/furnace/i);
+    const known = await applyFactGate({
+      prose: 'Mira nods once.',
+      sheet: sheet(),
+    });
+    expect(known.prose).toMatch(/Mira nods once/);
 
-    const listed = await applyFactGate({
-      prose: 'Mira draws a sunblade. She drinks a health tonic. A pile of treasure waits. Steam curls off the furnace.',
+    const quay = await applyFactGate({
+      prose: 'Mira slipped out toward the spice quay. Mira stays by the furnace.',
+      sheet: sheet(),
+    });
+    expect(quay.prose).not.toMatch(/spice quay/i);
+    expect(quay.prose).toMatch(/furnace/i);
+    const inside = await applyFactGate({
+      prose: 'Mira walked toward the furnace.',
       sheet: sheet({
-        gear: { worn: [], carrying: ['Health Tonic'], inHand: 'Sunblade' },
-        openLedger: [{ kind: 'offer', line: 'treasure' }],
+        beat: { verb: 'looked', outcome: 'looked', engineResult: 'Mira stayed.', steps: [] },
       }),
     });
-    expect(listed.prose).toMatch(/sunblade/i);
-    expect(listed.prose).toMatch(/health tonic/i);
-    expect(listed.prose).toMatch(/treasure/i);
-    expect(listed.spans.filter((s) => s.verdict === 'new/wrong')).toEqual([]);
+    expect(inside.prose).toBe('Mira walked toward the furnace.');
+  });
+
+  it('keeps an and-clause exactly as written', async () => {
+    const line = 'The crowd smelled of rain and iron.';
+    const out = await applyFactGate({ prose: line, sheet: sheet() });
+    expect(out.prose).toBe(line);
   });
 
   it('does not treat Whatever, They, or Roads inside a quote as new names', async () => {

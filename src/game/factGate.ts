@@ -30,13 +30,10 @@ export interface UnsureVerdict {
 
 const MOVE = /\b(set out for|arrived at|walked toward|headed (?:for|toward)|travell?ed to|went to|stepped out|the trail lay open)\b/i;
 const OBEY = /\b(obeyed|agreed to|complied|went to guard|went along)\b/i;
-const GAIN = /\b(pockets|pocketed|picked up|stole|took the|handed|hands\s+(?:you|him|her|them)\s+the|received|has|holds|carries|keeps)\b/i;
 const IMPLIED = /\b(worth|secret|trade|killed|owns|never tells)\b/i;
 const ACTION = /\b(walked|said|told|attacked|struck|ran|opened|joined)\b/i;
 const ITEMISH = /\b(health tonic|[a-z]*blade|[a-z]*sword|tonic|treasure|potion|key|knife|ring|letter|cloak|bag|vault)\b/i;
 const LOOSE_ITEM = /\b(coin|coins|gold)\b/i;
-const FALSE_EXIT = /\b(?:out|through|into|down)\s+(?:the\s+)?([a-z]{4,})\b/i;
-const EXIT_NOUNS = new Set(['alley', 'lane', 'road', 'cellar', 'yard', 'gate', 'stair', 'stairs', 'tunnel', 'path', 'trail', 'square', 'bridge', 'passage', 'street']);
 const COMMON = new Set([
   'whatever', 'they', 'them', 'their', 'roads', 'road', 'the', 'and', 'but', 'she', 'her', 'his',
   'you', 'your', 'yours', 'that', 'this', 'then', 'there', 'when', 'where', 'what', 'which',
@@ -132,19 +129,33 @@ function splitAndOutsideQuotes(sentence: string): string[] {
   return parts;
 }
 
+type Piece = { text: string; start: number; end: number };
+
 /** Sentences, then a split on " and " outside quotes so one true clause cannot cover the next. */
 export function segmentFactSpans(prose: string): string[] {
-  const out: string[] = [];
+  return segmentPieces(prose).map((p) => p.text);
+}
+
+function segmentPieces(prose: string): Piece[] {
+  const out: Piece[] = [];
+  let cursor = 0;
   for (const sentence of splitProseSentences(prose)) {
+    const at = prose.indexOf(sentence, cursor);
+    const start = at >= 0 ? at : cursor;
+    const end = start + sentence.length;
     const parts = splitAndOutsideQuotes(sentence);
     if (parts.length <= 1) {
-      if (sentence.trim()) out.push(sentence.trim());
-      continue;
+      if (sentence.trim()) out.push({ text: sentence, start, end });
+    } else {
+      let local = 0;
+      for (const part of parts) {
+        const rel = sentence.indexOf(part, local);
+        const from = rel >= 0 ? rel : local;
+        out.push({ text: sentence.slice(from, from + part.length), start: start + from, end: start + from + part.length });
+        local = from + part.length;
+      }
     }
-    parts.forEach((part, i) => {
-      const text = i === parts.length - 1 && /[.!?…]$/.test(sentence) && !/[.!?…]$/.test(part) ? part : part.replace(/[.!?…]+$/, '');
-      out.push(text);
-    });
+    cursor = end;
   }
   return out;
 }
@@ -210,23 +221,21 @@ function classifySpan(
   }
   const outsider = nameOutside(span, words, pcName);
   if (outsider) return { verdict: 'new/wrong', reason: `name not on the sheet: ${outsider}` };
-  const exitWord = span.match(FALSE_EXIT)?.[1]?.toLowerCase();
-  if (exitWord && EXIT_NOUNS.has(exitWord) && !words.has(exitWord)) {
-    return { verdict: 'new/wrong', reason: `exit not on the sheet: ${exitWord}` };
+  const titled = span.match(/\b(?:captain|ser|sir|lord|lady|dame|king|queen|prince|princess|master)\s+([a-z][a-z'-]{2,})\b/i);
+  if (titled && !words.has(titled[1]!.toLowerCase()) && !COMMON.has(titled[1]!.toLowerCase())) {
+    return { verdict: 'new/wrong', reason: `name not on the sheet: ${titled[1]}` };
   }
-  const itemWord = span.match(ITEMISH)?.[1]?.toLowerCase();
-  if (itemWord && !heldItem(itemWord, words)) return { verdict: 'new/wrong', reason: `unlisted item: ${itemWord}` };
-  if (GAIN.test(span)) {
-    const loose = span.match(LOOSE_ITEM)?.[1]?.toLowerCase();
-    if (loose && !heldItem(loose.replace(/s$/, ''), words)) {
-      return { verdict: 'new/wrong', reason: `unlisted item: ${loose}` };
-    }
-    const item = itemWord;
-    if (item && !heldItem(item, words)) {
-      return { verdict: 'new/wrong', reason: `unlisted item: ${item}` };
-    }
-    if (!item && /\b(it|them|that)\b/i.test(span)) return { verdict: 'UNSURE', reason: 'transfer of an unnamed object' };
-    if (item) return { verdict: 'allowed', reason: 'item is on the sheet' };
+  const agent = span.match(/(?:^|\.\s+)([a-z][a-z'-]{2,})\s+(?:nods|says|said|walks|asks|smiles|steps|whispers)\b/);
+  if (agent && !words.has(agent[1]!.toLowerCase()) && !COMMON.has(agent[1]!.toLowerCase())) {
+    return { verdict: 'new/wrong', reason: `name not on the sheet: ${agent[1]}` };
+  }
+  const dest = falseDestination(span, words);
+  if (dest) return { verdict: 'new/wrong', reason: `exit not on the sheet: ${dest}` };
+  if (playerTransfer(span, pcName)) {
+    const item = span.match(ITEMISH)?.[1] ?? span.match(LOOSE_ITEM)?.[1];
+    if (item && !heldItem(item, words)) return { verdict: 'new/wrong', reason: `unlisted item: ${item}` };
+    if (!item) return { verdict: 'UNSURE', reason: 'transfer of an unnamed object' };
+    return { verdict: 'allowed', reason: 'item is on the sheet' };
   }
   if (/\b(opens|opened|kills|killed)\b/i.test(span) || /\blands on\b/i.test(span)) {
     const stop = new Set(['with', 'from', 'that', 'this', 'they', 'them', 'then', 'into', 'onto', 'over', 'upon']);
@@ -241,17 +250,47 @@ function classifySpan(
   return { verdict: 'colour', reason: 'no new fact' };
 }
 
-function finish(spans: FactSpan[], recentProse: string[]): FactGateResult {
+function falseDestination(span: string, words: Set<string>): string | null {
+  if (!/\b(set out|arrived|walked|headed|went|slipped|stepped|ran|travell?ed)\b/i.test(span)) return null;
+  const preps = [...span.matchAll(/\b(?:toward|towards|into|through|across|down|up|at|for|to|out of|out)\s+(?:the\s+)?([a-z][a-z'’-]*(?:\s+[a-z][a-z'’-]*){0,3})/gi)];
+  if (!preps.length) return null;
+  const dest = preps[preps.length - 1]![1]!.replace(/[.!?…]+$/, '').trim();
+  const bits = norm(dest).split(' ').filter((w) => w.length >= 4 && !COMMON.has(w));
+  if (!bits.length || bits.every((w) => words.has(w))) return null;
+  return dest;
+}
+
+function playerTransfer(span: string, pcName?: string): boolean {
+  const pc = pcName?.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const who = pc ? `(?:you|your|${pc})` : '(?:you|your)';
+  const give = new RegExp(`\\b(?:hands|gives|offers|sells|passes)\\s+${who}\\b`, 'i');
+  const take = new RegExp(`\\b${who}\\b[^.!?]{0,48}\\b(?:pocket|pockets|pocketed|picked up|took|stole|draws|draw|drinks|drink|uses|use)\\b`, 'i');
+  return give.test(span) || take.test(span);
+}
+
+function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse: string[]): FactGateResult {
   const recent = new Set(recentProse.flatMap((p) => segmentFactSpans(p).map((s) => norm(s))).filter(Boolean));
-  let kept = spans.filter((s) => s.verdict === 'colour' || s.verdict === 'allowed');
-  if (kept.length > 1) {
-    kept = kept.filter((s) => !recent.has(norm(s.text)));
+  let kept = spans.map((s, i) => ({ s, i })).filter(({ s }) => s.verdict === 'colour' || s.verdict === 'allowed');
+  if (kept.length > 1) kept = kept.filter(({ s }) => !recent.has(norm(s.text)));
+  let prose = '';
+  let prev: Piece | null = null;
+  for (const { i } of kept) {
+    const piece = pieces[i]!;
+    const span = spans[i]!;
+    if (span.reason === 'repaired') {
+      if (prose && !/\s$/.test(prose)) prose += ' ';
+      prose += span.text;
+      prev = piece;
+      continue;
+    }
+    if (prev) prose += source.slice(prev.end, piece.start);
+    prose += source.slice(piece.start, piece.end);
+    prev = piece;
   }
-  const prose = kept.map((s) => s.text.replace(/[.!?…]+$/, '')).filter(Boolean).join('. ').replace(/\s+/g, ' ').trim();
-  const published = prose ? (/[.!?…]$/.test(prose) ? prose : `${prose}.`) : '';
+  prose = prose.trim();
   return {
-    prose: published,
-    withheld: !published,
+    prose,
+    withheld: !prose,
     spans,
     removed: spans.filter((s) => s.verdict === 'new/wrong' || s.verdict === 'UNSURE').length,
     unsure: spans.filter((s) => s.verdict === 'UNSURE').length,
@@ -277,7 +316,8 @@ export async function applyFactGate(args: {
     text,
     ...classifySpan(text, args.sheet, words, blob, args.pcName, args.thirdPerson),
   });
-  const spans: FactSpan[] = segmentFactSpans(args.prose).map((text, i) => judge(text, `s${i + 1}`));
+  const pieces = segmentPieces(args.prose);
+  const spans: FactSpan[] = pieces.map((piece, i) => judge(piece.text, `s${i + 1}`));
   if (args.repair) {
     const bad = spans.filter((s) => s.verdict === 'new/wrong');
     if (bad.length) {
@@ -321,5 +361,5 @@ export async function applyFactGate(args: {
       }
     }
   }
-  return finish(spans, args.recentProse ?? []);
+  return finish(args.prose, spans, pieces, args.recentProse ?? []);
 }
