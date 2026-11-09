@@ -3,7 +3,8 @@
  */
 import { describe, expect, it, afterEach } from 'vitest';
 import { ensureNpcSheet } from './npcSheet';
-import { heirloomDraw, isDurableRole, transferHeirloom } from './heirlooms';
+import { heirloomDraw, isDurableRole, lootHeirloomOf, transferHeirloom } from './heirlooms';
+import { resolveTypedFreeText } from './typedFreeText';
 import { buildFactSheet } from './factSheet';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { applyFactGate } from './factGate';
@@ -142,6 +143,41 @@ describe('heirlooms', () => {
     });
     expect(mention.spans.some((span) => /unlisted item/i.test(span.reason))).toBe(false);
     expect(mention.prose).toMatch(/old campaign blade/i);
+    const pocket = await applyFactGate({
+      prose: 'Jax pocketed the old campaign blade.',
+      sheet: buildFactSheet(before, buildCompletedEventPacket(before, 'look'), 'look'),
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(pocket.prose).not.toMatch(/old campaign blade/i);
+    const moved = transferHeirloom(before, id, 'gift');
+    const afterSheet = buildFactSheet(moved, buildCompletedEventPacket(moved, 'look'), 'look');
+    const held = await applyFactGate({
+      prose: 'Jax pocketed the old campaign blade.',
+      sheet: afterSheet,
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(held.prose).toMatch(/old campaign blade/i);
+
+    const gone = {
+      ...before,
+      sceneFacts: { ...before.sceneFacts!, present: [] },
+    };
+    pinDice(() => 0.99);
+    const away = resolveStealAttempt(gone, `I steal the ${label}`, { action: 'take', target: label, clause: `I steal the ${label}` });
+    expect(away.taken).toBe(true);
+    expect(away.state.npcMemories?.find((m) => m.npcId === id)?.heirloom?.holderId).toBe('player');
+    expect(away.state.stateTxLog?.some((t) => /Heirloom steal/i.test(t.summary))).toBe(true);
+
+    const traded = resolveTypedFreeText(before, 'I trade with Sheriff Brann');
+    expect(traded.state?.npcMemories?.find((m) => m.npcId === id)?.heirloom?.holderId).toBe('player');
+    expect(traded.state?.stateTxLog?.some((t) => /Heirloom trade/i.test(t.summary))).toBe(true);
+    const gifted = resolveTypedFreeText(before, 'I ask a favour of Sheriff Brann');
+    expect(gifted.state?.stateTxLog?.some((t) => /Heirloom gift/i.test(t.summary))).toBe(true);
+    const looted = lootHeirloomOf(before, 'Sheriff Brann');
+    expect(looted.npcMemories?.find((m) => m.npcId === id)?.heirloom?.holderId).toBe('player');
+    expect(looted.stateTxLog?.some((t) => /Heirloom loot/i.test(t.summary))).toBe(true);
   });
 
   it('a roster NPC keeps only a listed signature, and a boast files nothing', () => {

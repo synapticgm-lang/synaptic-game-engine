@@ -97,6 +97,8 @@ export interface FactSheet {
   recent: string[];
   /** T10DIR — stall / world-pressure fact the writer must show this beat (also on timeline). */
   stallPressure?: string;
+  /** Item names an engine transfer moved to the player this turn. */
+  granted?: string[];
   /** Reserved for order 6b — do not fill here. */
   settingsSlot: null;
 }
@@ -320,6 +322,9 @@ export function buildFactSheet(
     recent: recentTimeline(state),
     stallPressure:
       (state.sceneFacts?.stallWorldFact ?? state.sceneFacts?.placeWorldFact ?? '').trim() || undefined,
+    granted: (state.stateTxLog ?? [])
+      .filter((t) => t.turn === (state.turn ?? 0) && /^Heirloom /.test(t.summary) && t.entity)
+      .map((t) => t.entity),
     settingsSlot: null,
   };
 }

@@ -10,6 +10,7 @@ import { rollVictoryLoot } from '../combat';
 import { profileForEncounter } from '../lootTableRegistry';
 import { formatCheckRecord, growWeaponFamiliarity, resolveCheckRecord, weaponCategory } from '../checkRules';
 import { pushCombatStateTx } from '../stateTx';
+import { lootHeirloomOf } from '../heirlooms';
 import { formatLootStatusLine } from '../lootTableRegistry';
 import { tickEncounterTerminal } from '../encounterTerminalFsm';
 import { registerFightRoundRules } from '../fightRoundRules';
@@ -533,6 +534,7 @@ export function resolveRoundFight(
     receipts.push(`Fight: VICTORY vs ${enc.name} in ${roundsText}. The fight is over: ${enc.name} ${down} and cannot fight on.`, `Encounter cleared: ${enc.name} (victory)`);
     next = pushCombatStateTx(next, `Fight vs ${enc.name}: victory in ${roundsText}`, enc.name, 'Engine fight');
     if (onRoad) next = settleRoadMeeting(next, 'victory');
+    next = lootHeirloomOf(next, enc.name);
     const xpRaw: ActiveEncounter = { ...raw, cr: blockCr, count: setup.combat.foes.length };
     const paid = payEncounterXp(next, xpRaw, `defeated ${enc.name}`);
     next = paid.state;

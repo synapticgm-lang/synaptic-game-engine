@@ -143,7 +143,8 @@ function holdingWords(sheet: FactSheet): Set<string> {
     ...(sheet.gear?.carrying ?? []),
     sheet.gear?.inHand ?? '',
     ...(sheet.place?.features ?? []),
-    ...(sheet.present ?? []).flatMap((p) => [p.name, ...(p.carried ?? []), p.signature ?? '']),
+    ...(sheet.present ?? []).flatMap((p) => [p.name]),
+    ...(sheet.granted ?? []),
   ]);
 }
 

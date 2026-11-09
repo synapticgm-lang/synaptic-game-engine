@@ -109,16 +109,36 @@ export function maybeGrantHeirloom(state: GameState, memory: NpcMemory, location
   return { ...memory, heirloom };
 }
 
+function holdsNamedItem(memory: NpcMemory, needle: string): boolean {
+  const held = memory.heirloom;
+  if (!held || held.holderId !== memory.npcId) return false;
+  const label = held.label.toLowerCase();
+  return label === needle || ` ${label} `.includes(` ${needle} `) || ` ${needle} `.includes(` ${label} `);
+}
+
+function ownerIsPresent(state: GameState, memory: NpcMemory): boolean {
+  return (state.sceneFacts?.present ?? []).some((name) => name.toLowerCase() === memory.npcName.toLowerCase());
+}
+
 export function heirloomOwnerPresent(state: GameState, item: string): NpcMemory | undefined {
   const needle = item.trim().toLowerCase();
   if (!needle) return undefined;
-  return (state.npcMemories ?? []).find((m) => {
-    const held = m.heirloom;
-    if (!held || held.holderId !== m.npcId) return false;
-    const label = held.label.toLowerCase();
-    if (!(label === needle || ` ${label} `.includes(` ${needle} `) || ` ${needle} `.includes(` ${label} `))) return false;
-    return (state.sceneFacts?.present ?? []).some((name) => name.toLowerCase() === m.npcName.toLowerCase());
-  });
+  return (state.npcMemories ?? []).find((m) => holdsNamedItem(m, needle) && ownerIsPresent(state, m));
+}
+
+/** The owner still has it, and they are not in the room. */
+export function heirloomHeldAway(state: GameState, item: string): NpcMemory | undefined {
+  const needle = item.trim().toLowerCase();
+  if (!needle) return undefined;
+  return (state.npcMemories ?? []).find((m) => holdsNamedItem(m, needle) && !ownerIsPresent(state, m));
+}
+
+export function lootHeirloomOf(state: GameState, deadName: string): GameState {
+  const key = deadName.trim().toLowerCase();
+  if (!key) return state;
+  const memory = (state.npcMemories ?? []).find((m) => m.npcName.toLowerCase() === key && m.heirloom?.holderId === m.npcId);
+  if (!memory) return state;
+  return transferHeirloom(state, memory.npcId, 'loot');
 }
 
 export type HeirloomTransfer = 'steal' | 'gift' | 'trade' | 'loot';
