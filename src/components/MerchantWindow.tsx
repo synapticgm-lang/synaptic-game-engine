@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import type { GameState, Item, CraftingMaterial } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
-import { buyItem, buyPriceLabel, canAfford, getMaterialSellPrice, merchantHere, merchantStock, sellItem, sellMaterial, sellPriceLabel } from '@/game/merchant';
+import { buyItem, buyPriceLabel, canAfford, ensuredShelf, getMaterialSellPrice, merchantHere, modeBuyGp, MODE_SHOP_STOCK, sellItem, sellMaterial, sellPriceLabel } from '@/game/merchant';
 import { usesPurse, wealthLine } from '@/game/rules/coins';
 import { salvageItem, checkSalvageRequirement, getSalvageRequirement } from '@/game/salvage';
 import { computeInventoryCapacity } from '@/game/inventory';
@@ -28,8 +28,19 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
   );
 
   const capacity = useMemo(() => computeInventoryCapacity(state), [state]);
-  // shop-b: buying needs a merchant here in tabletop; the stock is the SRD 5.2.1 town list.
-  const stock = useMemo(() => merchantStock(), []);
+  const stock = useMemo(() => {
+    const mode = state.engineMode === 'litrpg' || state.engineMode === 'rpg' ? state.engineMode : null;
+    if (mode) {
+      return MODE_SHOP_STOCK[mode].map((row) => ({
+        name: row.name,
+        cp: (modeBuyGp(mode, row.itemType, row.rarity) ?? 0) * 100,
+        section: 'mode',
+      }));
+    }
+    return (ensuredShelf(state)?.rows ?? [])
+      .filter((row) => row.name.trim() && row.quantity > 0)
+      .map((row) => ({ name: row.name, cp: row.price, section: row.source }));
+  }, [state]);
   const merchant = useMemo(() => merchantHere(state), [state]);
   const canBuy = state.engineMode !== 'dnd' || !!merchant;
 
@@ -132,7 +143,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
                 <p className="text-slate-400 text-sm italic">Nobody here is selling. Find a merchant to buy gear.</p>
               ) : (
                 <>
-                  {merchant && <p className="text-xs text-slate-400">Trading with {merchant.npcName}. Prices are the SRD list price.</p>}
+                  {merchant && <p className="text-xs text-slate-400">Trading with {merchant.npcName}. Prices are today's shelf.</p>}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {stock.map((row) => {
                       const affordable = canAfford(state, row.cp);

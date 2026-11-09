@@ -443,15 +443,67 @@ function heldItem(item: string, words: Set<string>): boolean {
   return false;
 }
 
-function unlistedWare(span: string, sheet: FactSheet): string | null {
-  const shops = (sheet.present ?? []).filter((p) => Array.isArray(p.stock));
-  if (!shops.length) return null;
+function stockLabels(stock: FactSheet['present'][number]['stock']): string[] {
+  if (!Array.isArray(stock)) return [];
+  const out: string[] = [];
+  for (const item of stock) {
+    const name = typeof item === 'string'
+      ? item
+      : item && typeof item === 'object' && typeof item.name === 'string'
+        ? item.name
+        : '';
+    if (name.trim()) out.push(name.trim());
+  }
+  return out;
+}
+
+function saleWares(span: string): string[] | null {
   if (!/\b(sells|sold|offers|offered|for sale)\b/i.test(span)) return null;
-  const named = span.match(/\b(?:sells|offers|offered|sold)\s+(?:a|an|the)\s+([a-z][a-z' -]*?)(?:\s+for sale|\s+from\b|[.,]|$)/i)?.[1]?.trim();
-  if (!named) return null;
-  const stock = shops.flatMap((p) => p.stock ?? []);
-  const ok = stock.some((name) => name.toLowerCase() === named.toLowerCase());
-  return ok ? null : named;
+  const body = span.match(/\b(?:sells|offers|offered|sold)\s+(.+?)(?=\s+for sale\b|\s+from\b|[.]|$)/i)?.[1];
+  if (!body) return null;
+  const parts = body.split(/\s*,\s*|\s+and\s+/i)
+    .map((part) => part.replace(/^(?:a|an|the)\s+/i, '').trim())
+    .filter((part) => part.length > 0);
+  return parts.length ? parts : null;
+}
+
+/** Unlisted sale names. A blank stock entry is skipped. Throws never leave this function. */
+function unlistedWare(span: string, sheet: FactSheet): string | null {
+  try {
+    const shops = (sheet.present ?? []).filter((p) => Array.isArray(p.stock));
+    if (!shops.length) return null;
+    const wares = saleWares(span);
+    if (!wares) return null;
+    const stock = shops.flatMap((p) => stockLabels(p.stock));
+    const missing = wares.filter((name) => !stock.some((have) => have.toLowerCase() === name.toLowerCase()));
+    if (!missing.length || missing.length < wares.length) return null;
+    return missing[0] ?? null;
+  } catch {
+    return 'unknown ware';
+  }
+}
+
+/** Drop unlisted conjuncts from a sale list and keep the wares that are on the shelf. */
+export function proseWithoutUnlistedWares(span: string, sheet: FactSheet): { text: string; changed: boolean } {
+  try {
+    const shops = (sheet.present ?? []).filter((p) => Array.isArray(p.stock));
+    const wares = saleWares(span);
+    if (!shops.length || !wares || wares.length < 2) return { text: span, changed: false };
+    const stock = shops.flatMap((p) => stockLabels(p.stock));
+    const missing = wares.filter((name) => !stock.some((have) => have.toLowerCase() === name.toLowerCase()));
+    const kept = wares.filter((name) => stock.some((have) => have.toLowerCase() === name.toLowerCase()));
+    if (!missing.length || !kept.length) return { text: span, changed: false };
+    let text = span;
+    for (const name of missing) {
+      const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      text = text.replace(new RegExp(`\\s*(?:,|and)\\s+(?:a|an|the)\\s+${esc}\\b`, 'i'), '');
+      text = text.replace(new RegExp(`\\b(?:a|an|the)\\s+${esc}\\b\\s*(?:,|and)?\\s*`, 'i'), '');
+    }
+    text = text.replace(/\s+/g, ' ').replace(/\s+([.,])/g, '$1').trim();
+    return { text, changed: text !== span };
+  } catch {
+    return { text: span, changed: false };
+  }
 }
 
 function classifySpan(
@@ -839,14 +891,15 @@ export async function applyFactGate(args: {
       };
     }
     const body = role === 'narration' ? narrationOnly(text) : text;
-    const judged = classifySpan(body, args.sheet, words, holdings, blob, args.pcName, args.thirdPerson);
-    const route = routeSpan(body, judged.verdict, judged.reason, args.sheet, args.pcName, words);
-    const objectOnly = route === 'colour' && isPlacedIndefinite(body);
+    const trimmed = proseWithoutUnlistedWares(body, args.sheet);
+    const judged = classifySpan(trimmed.text, args.sheet, words, holdings, blob, args.pcName, args.thirdPerson);
+    const route = routeSpan(trimmed.text, judged.verdict, judged.reason, args.sheet, args.pcName, words);
+    const objectOnly = route === 'colour' && isPlacedIndefinite(trimmed.text);
     return {
       id,
-      text,
+      text: trimmed.changed ? trimmed.text : text,
       verdict: judged.verdict,
-      reason: judged.reason,
+      reason: trimmed.changed && judged.verdict !== 'new/wrong' ? 'repaired' : judged.reason,
       speech: false,
       objectOnly,
       route: objectOnly ? 'candidate' : route,

@@ -19,6 +19,8 @@ export interface ShelfInput {
   higher: boolean;
   /** World day the previous import arrived. -1 if none yet. */
   lastImportDay: number;
+  /** Days since the shelf was last projected. Defaults to one day. */
+  daysMade?: number;
 }
 
 const STAPLES: Array<{ name: string; maker: keyof ShopProducers; rate: number; cap: number; price: number }> = [
@@ -39,9 +41,14 @@ function hash32(text: string): number {
   return h >>> 0;
 }
 
-/** world xor merchant xor day, as specified. */
+/** world xor merchant xor day, kept in the unsigned 32-bit range. */
 export function shelfSalt(seed: string, merchantId: string, worldDay: number): number {
-  return hash32(seed) ^ hash32(merchantId) ^ hash32(String(worldDay));
+  return (hash32(seed) ^ hash32(merchantId) ^ hash32(String(worldDay))) >>> 0;
+}
+
+function umod(n: number, m: number): number {
+  if (m <= 0) return 0;
+  return ((n % m) + m) % m;
 }
 
 export function stapleQty(rate: number, cap: number, daysMade: number, alive: boolean, carried = 0): number {
@@ -87,7 +94,8 @@ export function projectShelf(input: ShelfInput, carried: ShopStockRow[] = []): S
   const rows: ShopStockRow[] = [];
   for (const staple of STAPLES) {
     const prev = carried.find((r) => r.name === staple.name && r.source === 'staple');
-    const qty = stapleQty(staple.rate, staple.cap, 1, input.producers[staple.maker], prev?.quantity ?? 0);
+    const days = input.daysMade ?? 1;
+    const qty = stapleQty(staple.rate, staple.cap, days, input.producers[staple.maker], prev?.quantity ?? 0);
     if (qty <= 0 && !input.producers[staple.maker] && !(prev && prev.quantity > 0)) continue;
     rows.push({
       name: staple.name,
@@ -99,11 +107,11 @@ export function projectShelf(input: ShelfInput, carried: ShopStockRow[] = []): S
       earnFree: 'craft',
     });
   }
-  const count = 2 + (salt % 2);
+  const count = 2 + umod(salt, 2);
   const used = new Set<string>();
   for (let i = 0; i < count; i++) {
-    const name = ROTATE[(salt + i * 3) % ROTATE.length]!;
-    if (used.has(name)) continue;
+    const name = ROTATE[umod(salt + i, ROTATE.length)]!;
+    if (!name || used.has(name)) continue;
     used.add(name);
     rows.push({
       name,
@@ -118,7 +126,7 @@ export function projectShelf(input: ShelfInput, carried: ShopStockRow[] = []): S
   const wait = importWaitDays(input.band.high, input.band.high + 6);
   const due = input.lastImportDay < 0 ? wait : input.lastImportDay + wait;
   if (input.higher && offersRareSlot(input.merchantId) && input.worldDay >= due) {
-    const name = IMPORTS[salt % IMPORTS.length]!;
+    const name = IMPORTS[umod(salt, IMPORTS.length)]!;
     rows.push({
       name,
       quantity: 1,
@@ -165,24 +173,84 @@ export function sellToShelf(rows: ShopStockRow[], item: { name: string; rarity: 
   };
 }
 
-export function stockForMerchant(state: GameState, merchantId: string, settlement: string): string[] {
-  const day = state.worldDay ?? 0;
-  const saved = state.shopShelves?.[merchantId];
-  if (saved && saved.worldDay === day) return stockNames(saved.rows);
+export interface ShelfListing {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+/** A travelling merchant's hubs. Null when this person stays in one place. */
+export function travellingCircuit(state: GameState, merchantId: string): Circuit | null {
+  const mem = (state.npcMemories ?? []).find((m) => m.npcId === merchantId);
+  if (!mem) return null;
+  const job = `${mem.roleHint ?? ''} ${mem.sheet?.job ?? ''}`;
+  if (!/\btravell?ing\b/i.test(job)) return null;
+  const hubs = [...new Set((state.places ?? []).map((p) => (p.name || p.id || '').trim()).filter(Boolean))];
+  if (hubs.length < 2) return null;
+  return { id: merchantId, hubs, daysPerHop: 4 };
+}
+
+function bandHere(state: GameState, settlement: string): { low: number; high: number } {
   const place = (state.places ?? []).find((p) => p.name?.toLowerCase() === settlement.toLowerCase() || p.id?.toLowerCase() === settlement.toLowerCase());
   const band = place?.regionId && state.regionLevelBands?.[place.regionId]
     ? state.regionLevelBands[place.regionId]!
     : { low: 1, high: 3 };
+  return { low: band.low, high: band.high };
+}
+
+/** Last day an import arrived, or -1 when the next due is still the first wait. */
+export function lastImportArrival(saved: { worldDay: number; rows: ShopStockRow[]; importDueDay: number } | undefined, wait: number): number {
+  if (!saved) return -1;
+  if (saved.rows.some((r) => r.source === 'import')) return saved.worldDay;
+  if (saved.importDueDay > wait) return saved.importDueDay - wait;
+  return -1;
+}
+
+function shelfInput(state: GameState, merchantId: string, settlement: string): { input: ShelfInput; wait: number; band: { low: number; high: number } } | null {
+  const day = state.worldDay ?? 0;
+  const circuit = travellingCircuit(state, merchantId);
+  if (circuit && !merchantOnCircuit(circuit, day, settlement)) return null;
+  const band = bandHere(state, settlement);
+  const wait = importWaitDays(band.high, band.high + 6);
+  const saved = state.shopShelves?.[merchantId];
   const higher = Object.values(state.regionLevelBands ?? {}).some((b) => b.high > band.high) || band.high <= 3;
-  return stockNames(projectShelf({
-    seed: state.seed ?? 'seed',
-    merchantId,
-    worldDay: day,
-    band: { low: band.low, high: band.high },
-    producers: producersHere(state, settlement),
-    higher,
-    lastImportDay: saved?.importDueDay ?? -1,
-  }, saved?.rows ?? []));
+  return {
+    band,
+    wait,
+    input: {
+      seed: state.seed ?? 'seed',
+      merchantId,
+      worldDay: day,
+      band,
+      producers: producersHere(state, settlement),
+      higher,
+      lastImportDay: lastImportArrival(saved, wait),
+      daysMade: saved ? Math.max(0, day - saved.worldDay) : 1,
+    },
+  };
+}
+
+export function stockForMerchant(state: GameState, merchantId: string, settlement: string): ShelfListing[] {
+  const day = state.worldDay ?? 0;
+  const saved = state.shopShelves?.[merchantId];
+  if (saved && saved.worldDay === day) return listings(saved.rows);
+  const ctx = shelfInput(state, merchantId, settlement);
+  if (!ctx) return [];
+  return listings(projectShelf(ctx.input, saved?.rows ?? []));
+}
+
+export function shelfOfferLine(opts: { seed?: string; merchantId?: string; worldDay?: number } = {}): string {
+  const rows = projectShelf({
+    seed: opts.seed || 'seed',
+    merchantId: opts.merchantId || 'merchant',
+    worldDay: opts.worldDay ?? 0,
+    band: { low: 1, high: 3 },
+    producers: { smith: true, herbalist: true },
+    higher: true,
+    lastImportDay: -1,
+    daysMade: 1,
+  });
+  return listings(rows).map((r) => `${r.name} x${r.quantity} (${r.price}cp)`).join('; ');
 }
 
 export function producersHere(state: GameState, settlement: string): ShopProducers {
@@ -200,20 +268,9 @@ export function ensureMerchantShelf(state: GameState, merchantId: string, settle
   const day = state.worldDay ?? 0;
   const saved = state.shopShelves?.[merchantId];
   if (saved && saved.worldDay === day) return state;
-  const place = (state.places ?? []).find((p) => p.name?.toLowerCase() === settlement.toLowerCase() || p.id?.toLowerCase() === settlement.toLowerCase());
-  const band = place?.regionId && state.regionLevelBands?.[place.regionId]
-    ? state.regionLevelBands[place.regionId]!
-    : { low: 1, high: 3 };
-  const higher = Object.values(state.regionLevelBands ?? {}).some((b) => b.high > band.high);
-  const rows = projectShelf({
-    seed: state.seed ?? 'seed',
-    merchantId,
-    worldDay: day,
-    band: { low: band.low, high: band.high },
-    producers: producersHere(state, settlement),
-    higher: higher || band.high <= 3,
-    lastImportDay: saved?.importDueDay != null && saved.worldDay != null ? saved.worldDay : -1,
-  }, saved?.rows ?? []);
+  const ctx = shelfInput(state, merchantId, settlement);
+  if (!ctx) return state;
+  const rows = projectShelf(ctx.input, saved?.rows ?? []);
   const importRow = rows.find((r) => r.source === 'import');
   return {
     ...state,
@@ -222,12 +279,18 @@ export function ensureMerchantShelf(state: GameState, merchantId: string, settle
       [merchantId]: {
         worldDay: day,
         rows,
-        importDueDay: importRow ? day + importWaitDays(band.high, band.high + 6) : (saved?.importDueDay ?? day),
+        importDueDay: importRow ? day + ctx.wait : (saved?.importDueDay ?? ctx.wait),
       },
     },
   };
 }
 
 export function stockNames(rows: ShopStockRow[]): string[] {
-  return rows.filter((r) => r.quantity > 0).map((r) => r.name);
+  return listings(rows).map((r) => r.name);
+}
+
+function listings(rows: ShopStockRow[]): ShelfListing[] {
+  return rows
+    .filter((r) => r.quantity > 0 && typeof r.name === 'string' && r.name.trim().length > 0)
+    .map((r) => ({ name: r.name.trim(), quantity: r.quantity, price: r.price }));
 }

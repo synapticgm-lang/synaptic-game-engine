@@ -6,6 +6,7 @@ import { NPC_ROLE_REGISTRY } from './npcRoleRegistry';
 import type { SpokenLine } from './tokenProse';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { authoredTopicsFor, merchantStockFactFor, roleVoiceFactFor } from './manusTopicBanks';
+import { shelfOfferLine } from './shopStock';
 import { pickDataswornCharacterSeed } from './dataswornCharacterSeeds';
 import { isMetNpc, syncNpcPresence } from './npcRecords';
 import { isStaleCompanionDefault, personalAgendaFromSeed } from './companionAgency';
@@ -19,8 +20,8 @@ import {
 const MAX_FACTS_PER_NPC = 10;
 const MAX_NPC_MEMORIES = 80;
 
-/** Merchant offer is its stock (OPT3-1). */
-export const MERCHANT_OFFER_STOCK = 'Health Tonic; Iron Nail; Reed Salve';
+/** Merchant offer is today's shelf, not a fixed list (OPT3-1). */
+export const MERCHANT_OFFER_STOCK = shelfOfferLine();
 
 type RoleAgendaTemplate = {
   motivation: DoranMotivation;
@@ -97,7 +98,9 @@ export function agendaFromRole(src: {
   }
   const t = ROLE_AGENDA_TEMPLATES[role as AgendaTemplateRole];
   const target = (src.bindTarget ?? '').trim() || t.target;
-  const offer = role === 'merchant' ? MERCHANT_OFFER_STOCK : t.offer;
+  const offer = role === 'merchant'
+    ? shelfOfferLine({ seed: src.seed, merchantId: src.npcId || src.npcName, worldDay: 0 })
+    : t.offer;
   const attitude: NpcAttitude =
     src.disposition === 'friendly' || src.disposition === 'allied' || src.disposition === 'romanced'
       ? 'friendly'
@@ -612,7 +615,11 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
     const extras: string[] = [];
     const voice = roleVoiceFactFor(role);
     if (voice) extras.push(voice);
-    const stock = merchantStockFactFor(role, name);
+    const stock = merchantStockFactFor(role, name, shelfOfferLine({
+      seed: state.seed,
+      merchantId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
+      worldDay: state.worldDay ?? 0,
+    }));
     if (stock) extras.push(stock);
     const authored = authoredTopicsFor(name);
     if (authored[0]?.line) extras.push(`Authored line: ${authored[0].line}`);
@@ -642,7 +649,14 @@ export function seedBibleNpcRoster(state: GameState, bible: CampaignBible | unde
         } as NpcMemory,
         false
       ),
-      { role, disposition, bindTarget: bindTarget || undefined },
+      {
+        role,
+        disposition,
+        bindTarget: bindTarget || undefined,
+        npcId: npc.id || `roster-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
+        npcName: name,
+        seed: state.seed,
+      },
     );
     // OPT-3 Datasworn seeds: LitRPG/RPG take descriptor as a trait; tabletop flavour only (fact line).
     let salt = 0;

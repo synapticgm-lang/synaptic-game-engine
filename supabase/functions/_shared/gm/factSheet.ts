@@ -32,8 +32,8 @@ export interface FactSheetPerson {
   carried?: string[];
   /** One engine-recorded signature item. Display name only. */
   signature?: string;
-  /** Names this person sells today. Absent when they are not a merchant. */
-  stock?: string[];
+  /** What this person sells today. Absent when they are not a merchant. */
+  stock?: Array<{ name: string; quantity: number; price: number }>;
 }
 
 /** One open ledger entry the writer may show (loan / promise / offer). */

@@ -5,18 +5,23 @@ import { describe, expect, it } from 'vitest';
 import { applyFactGate } from './factGate';
 import { buildFactSheet } from './factSheet';
 import { buildCompletedEventPacket } from './completedEventPacket';
+import { buyItem, merchantHere, sellItem } from './merchant';
 import {
   buyFromShelf,
   circuitHub,
+  ensureMerchantShelf,
   importWaitDays,
   merchantOnCircuit,
   offersRareSlot,
   projectShelf,
   sellToShelf,
+  shelfSalt,
   stapleQty,
+  stockForMerchant,
   type ShelfInput,
 } from './shopStock';
 import type { FactSheet } from './factSheet';
+import { createInitialState } from './defaults';
 import type { GameState } from './types';
 
 const base = (day: number, lastImportDay = -1): ShelfInput => ({
@@ -30,6 +35,25 @@ const base = (day: number, lastImportDay = -1): ShelfInput => ({
 });
 
 describe('shop stock', () => {
+  it('keeps an unsigned salt and distinct rotating picks across seeds and days', () => {
+    const seeds = ['world-seed', 'a', 'shop', 'zzz'];
+    const merchants = ['mira', 'town-merchant', 'hale'];
+    for (const seed of seeds) {
+      for (const merchantId of merchants) {
+        for (let day = 0; day < 40; day++) {
+          const salt = shelfSalt(seed, merchantId, day);
+          expect(salt).toBeGreaterThanOrEqual(0);
+          expect(salt).toBeLessThan(2 ** 32);
+          const rows = projectShelf({ ...base(day), seed, merchantId });
+          expect(rows.every((r) => r.name.trim().length > 0)).toBe(true);
+          const picks = rows.filter((r) => r.source === 'rotate').map((r) => r.name);
+          expect(new Set(picks).size).toBe(picks.length);
+          expect(picks.length).toBeGreaterThanOrEqual(2);
+        }
+      }
+    }
+  });
+
   it('replays the same shelf for the same world, merchant, and day', () => {
     const a = projectShelf(base(4));
     const b = projectShelf(base(4));
@@ -41,6 +65,10 @@ describe('shop stock', () => {
     expect(rotate(a)).not.toEqual(rotate(next));
     expect(a.filter((r) => r.source === 'rotate').length).toBeGreaterThanOrEqual(2);
     expect(a.filter((r) => r.source === 'rotate').length).toBeLessThanOrEqual(3);
+    const day21 = projectShelf(base(21));
+    expect(day21.every((r) => typeof r.name === 'string' && r.name.trim().length > 0)).toBe(true);
+    const picks = day21.filter((r) => r.source === 'rotate').map((r) => r.name);
+    expect(new Set(picks).size).toBe(picks.length);
     expect(a.every((r) => r.earnFree === 'craft' || r.earnFree === 'dungeon' || r.earnFree === 'cart')).toBe(true);
   });
 
@@ -55,6 +83,8 @@ describe('shop stock', () => {
     expect(rows.find((r) => r.name === 'Iron Nail')?.quantity).toBe(2);
     rows = projectShelf(base(2), projectShelf(base(1)));
     expect(rows.find((r) => r.name === 'Iron Nail')?.quantity).toBe(4);
+    const jumped = projectShelf({ ...base(4), daysMade: 3 }, projectShelf(base(1)));
+    expect(jumped.find((r) => r.name === 'Iron Nail')?.quantity).toBe(6);
 
     const wait = importWaitDays(3, 9);
     expect(wait).toBe(6);
@@ -83,7 +113,7 @@ describe('shop stock', () => {
     const sheet: FactSheet = {
       turn: 2,
       place: { name: 'Lowmarket', exits: [], features: [] },
-      present: [{ name: 'Mira', role: 'merchant', stock }],
+      present: [{ name: 'Mira', role: 'merchant', stock: stock.map((name) => ({ name, quantity: 1, price: 5 })) }],
       openLedger: [],
       gear: { worn: [], carrying: [], inHand: 'nothing' },
       beat: { verb: 'looked', outcome: 'looked', steps: [] },
@@ -107,6 +137,22 @@ describe('shop stock', () => {
     });
     expect(good.prose).toMatch(/Reed Salve/i);
     expect(good.prose).toMatch(/forge/i);
+    const mixed = await applyFactGate({
+      prose: 'Mira offered a reed salve and a sunblade for sale. The forge smelled of hot iron.',
+      sheet,
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(mixed.prose).toMatch(/reed salve/i);
+    expect(mixed.prose).not.toMatch(/sunblade/i);
+    expect(mixed.prose).toMatch(/forge/i);
+    const blank = await applyFactGate({
+      prose: 'Mira offered a reed salve for sale.',
+      sheet: { ...sheet, present: [{ name: 'Mira', role: 'merchant', stock: [null as never, { name: 'Reed Salve', quantity: 1, price: 8 }] }] },
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(blank.prose).toMatch(/reed salve/i);
   });
 
   it('puts today\'s stock on the merchant row and walks a travelling cart by its circuit', () => {
@@ -126,12 +172,54 @@ describe('shop stock', () => {
       places: [{ id: 'lowmarket', name: 'Lowmarket' }],
     } as GameState;
     const row = buildFactSheet(s, buildCompletedEventPacket(s, 'look'), 'look').present.find((p) => p.name === 'Mira');
-    expect(row?.stock).toEqual(projectShelf({ ...base(2), merchantId: 'mira' }).map((r) => r.name));
+    const listed = stockForMerchant(s, 'mira', 'Lowmarket');
+    expect(row?.stock).toEqual(listed);
+    expect(listed.every((item) => item.quantity > 0 && item.price > 0 && item.name.trim())).toBe(true);
 
     const circuit = { id: 'tinker', hubs: ['Lowmarket', 'Highcity'], daysPerHop: 4 };
     expect(merchantOnCircuit(circuit, 0, 'Lowmarket')).toBe(true);
     expect(merchantOnCircuit(circuit, 0, 'Highcity')).toBe(false);
     expect(circuitHub(circuit, 4)).toBe('Highcity');
     expect(merchantOnCircuit(circuit, 8, 'Lowmarket')).toBe(true);
+
+    const away = {
+      ...s,
+      worldDay: 0,
+      currentLocation: 'Highcity',
+      places: [{ id: 'lowmarket', name: 'Lowmarket' }, { id: 'highcity', name: 'Highcity' }],
+      sceneFacts: { ...s.sceneFacts!, present: ['Mira'] },
+      npcMemories: (s.npcMemories ?? []).map((m) => m.npcId === 'mira'
+        ? { ...m, roleHint: 'travelling merchant', location: 'Highcity' }
+        : m),
+    } as GameState;
+    expect(merchantHere(away)).toBeNull();
+    expect(stockForMerchant(away, 'mira', 'Highcity')).toEqual([]);
+    expect(ensureMerchantShelf(away, 'mira', 'Highcity').shopShelves?.mira).toBeUndefined();
+    const home = {
+      ...createInitialState('Shop test', 'dnd'),
+      worldDay: 0,
+      seed: 'world-seed',
+      currentLocation: 'Lowmarket',
+      gold: 10,
+      places: [{ id: 'lowmarket', name: 'Lowmarket' }, { id: 'highcity', name: 'Highcity' }],
+      sceneFacts: { present: ['Mira'], props: [], crowd: 'sparse', noise: 'quiet', lastBeat: '', updatedTurn: 0 },
+      npcMemories: [
+        { npcId: 'mira', npcName: 'Mira', roleHint: 'merchant', disposition: 'neutral', facts: [], lastSeenTurn: 1, location: 'Lowmarket' },
+        { npcId: 'smith', npcName: 'Holt', roleHint: 'smith', disposition: 'neutral', facts: [], lastSeenTurn: 1, location: 'Lowmarket' },
+        { npcId: 'herb', npcName: 'Nia', roleHint: 'herbalist', disposition: 'neutral', facts: [], lastSeenTurn: 1, location: 'Lowmarket' },
+      ],
+    } as GameState;
+    const bought = buyItem(home, 'Iron Nail');
+    expect(bought.ok, bought.reason).toBe(true);
+    expect(bought.receipt?.cp).toBe(5);
+    const left = bought.newState?.shopShelves?.mira?.rows.find((r) => r.name === 'Iron Nail');
+    expect(left?.quantity).toBe(1);
+    expect(buyItem(bought.newState!, 'Sunblade').ok).toBe(false);
+    const sold = sellItem({
+      ...bought.newState!,
+      inventory: [{ id: 'ring', name: 'Copper Ring', rarity: 'Common', quantity: 1, itemLevel: 1 }],
+    }, 'ring');
+    expect(sold.ok).toBe(true);
+    expect(sold.newState?.shopShelves?.mira?.rows.some((r) => r.name === 'Copper Ring')).toBe(true);
   });
 });

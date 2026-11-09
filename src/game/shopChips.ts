@@ -3,9 +3,9 @@ import {
   buyItem,
   buyPriceLabel,
   canAfford,
+  ensuredShelf,
   getSellPrice,
   merchantHere,
-  merchantStock,
   modeBuyGp,
   MODE_SHOP_STOCK,
   sellItem,
@@ -36,7 +36,9 @@ export function shopChips(state: GameState): ShopChip[] {
   if (!merchant) return [];
   const out: ShopChip[] = [];
   const mode = state.engineMode === 'litrpg' || state.engineMode === 'rpg' ? state.engineMode : null;
-  const raw: StockRow[] = mode ? [] : merchantStock();
+  const raw: StockRow[] = mode ? [] : (ensuredShelf(state)?.rows ?? [])
+    .filter((row) => row.name.trim() && row.quantity > 0)
+    .map((row) => ({ name: row.name, cp: row.price, section: row.source }));
   if (mode) {
     for (const r of MODE_SHOP_STOCK[mode]) {
       const gp = modeBuyGp(mode, r.itemType, r.rarity) ?? 0;
