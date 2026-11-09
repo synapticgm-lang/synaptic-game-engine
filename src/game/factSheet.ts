@@ -266,11 +266,14 @@ export function buildFactSheet(
   }
   const present: FactSheetPerson[] = presentPeople.map((r) => {
     const { manner, mannerCause } = mannerOf(state, r);
+    const held = r.heirloom?.holderId === r.npcId ? r.heirloom.label : undefined;
+    const signature = held || r.listedSignature;
     return {
       name: r.npcName,
       role: r.sheet?.job || r.roleHint || undefined,
       manner,
       mannerCause,
+      ...(signature ? { signature, carried: [signature] } : {}),
     };
   });
   // Anonymous / opening cast labels on the packet witnesses that lack a memory row.
