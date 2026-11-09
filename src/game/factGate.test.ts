@@ -921,7 +921,20 @@ describe('fact gate', () => {
       sheet: signed,
       pcName: 'Jax',
     });
-    expect(fromNpc.spans.find((span) => /sunblade/i.test(span.text))?.verdict).toBe('allowed');
+    expect(fromNpc.spans.find((span) => /sunblade/i.test(span.text))?.verdict).toBe('new/wrong');
+    const looked = await applyFactGate({
+      prose: 'Jax looked at the sunblade.',
+      sheet: signed,
+      pcName: 'Jax',
+    });
+    expect(looked.spans.find((span) => /sunblade/i.test(span.text))?.verdict).not.toBe('new/wrong');
+    const moved = sheet({ granted: ['sunblade'] });
+    const taken = await applyFactGate({
+      prose: 'Jax pocketed the sunblade.',
+      sheet: moved,
+      pcName: 'Jax',
+    });
+    expect(taken.spans.find((span) => /sunblade/i.test(span.text))?.verdict).toBe('allowed');
   });
 
   it('sends every quoted span to the checker as speech', async () => {
