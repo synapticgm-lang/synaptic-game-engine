@@ -1050,6 +1050,48 @@ describe('fact gate', () => {
     expect(out.spans[0]?.speech).not.toBe(true);
   });
 
+  it('ends dash speech at a single newline before narration, including CRLF', async () => {
+    for (const nl of ['\n', '\r\n']) {
+      const named = `Mira — The soup is too salty.${nl}Jax pocketed the cellar key.`;
+      const namedOut = await applyFactGate({
+        prose: named,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines }) => {
+          expect(lines.some((entry) => entry.speech && /pocketed/i.test(entry.text)), nl).toBe(false);
+          expect(lines.some((entry) => entry.speech && /soup/i.test(entry.text)), nl).toBe(true);
+          return lines.map((entry) => ({ n: entry.n, verdict: entry.speech ? 'keep' as const : 'remove' as const }));
+        },
+      });
+      expect(namedOut.prose, nl).toMatch(/soup/i);
+      expect(namedOut.prose, nl).not.toMatch(/pocketed/i);
+
+      const pronoun = `Mira — The soup is too salty.${nl}He set the bowl down.`;
+      const pronounOut = await applyFactGate({
+        prose: pronoun,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines }) => lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const })),
+      });
+      expect(pronounOut.spans.some((s) => s.speech && /set the bowl/i.test(s.text)), nl).toBe(false);
+      expect(pronounOut.spans.some((s) => s.speech && /soup/i.test(s.text)), nl).toBe(true);
+      expect(pronounOut.prose, nl).toMatch(/soup/i);
+      expect(pronounOut.prose, nl).toMatch(/set the bowl/i);
+    }
+  });
+
+  it('ends a kept clause with the sentence stop when a later and-clause is removed', async () => {
+    const out = await applyFactGate({
+      prose: 'Jax pocketed the cloak and then walked toward the alley.',
+      sheet: sheet(),
+      pcName: 'Jax',
+    });
+    expect(out.prose).toBe('Jax pocketed the cloak.');
+    expect(out.prose).not.toMatch(/alley/i);
+  });
+
   it('removes a departure when the beat says there was no move', async () => {
     const out = await applyFactGate({
       prose: 'Jax set out for the street. Mira stays by the furnace.',

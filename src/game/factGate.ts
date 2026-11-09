@@ -185,6 +185,24 @@ function speakerBefore(text: string, i: number): boolean {
 }
 
 /** Quoted speech and em-dash speech. Apostrophes are not quotes. Ranges are [start, end). */
+function lineBreakAt(text: string, i: number): number {
+  if (text[i] === '\r' && text[i + 1] === '\n') return 2;
+  if (text[i] === '\n' || text[i] === '\r') return 1;
+  return 0;
+}
+
+/** A new line continues dash speech only when that line opens with a dash or a quote. */
+function nextLineContinuesSpeech(text: string, i: number): boolean {
+  const br = lineBreakAt(text, i);
+  if (!br) return false;
+  let k = i + br;
+  if (lineBreakAt(text, k)) return false;
+  while (k < text.length && /[ \t]/.test(text[k]!)) k += 1;
+  const ch = text[k] ?? '';
+  if (ch === '\u2014' || (ch === '-' && text[k + 1] === '-')) return true;
+  return ch === '"' || ch === '\u201c' || ch === '\u2018' || ch === "'";
+}
+
 function isNarrationCue(rest: string, names: string[]): boolean {
   const match = rest.match(/^(He|She|They|[A-Z][a-z'’.-]+(?:\s+[A-Z][a-z'’.-]+)?)\s+\S/);
   if (!match) return false;
@@ -207,16 +225,24 @@ function speechRanges(prose: string, names: string[] = []): Array<[number, numbe
     if (dash && speakerBefore(prose, i)) {
       let j = i + dash;
       while (j < prose.length) {
-        if (prose[j] === '\n' && prose[j + 1] === '\n') break;
+        if (lineBreakAt(prose, j)) {
+          if (!nextLineContinuesSpeech(prose, j)) break;
+          j += lineBreakAt(prose, j);
+          continue;
+        }
         if (/[.!?\u2026]/.test(prose[j]!)) {
           let k = j + 1;
           while (k < prose.length && /[.!?\u2026"'”’)\]]/.test(prose[k]!)) k += 1;
-          while (k < prose.length && /[ \t]/.test(prose[k]!)) k += 1;
-          if (k >= prose.length || (prose[k] === '\n' && prose[k + 1] === '\n')) {
+          while (k < prose.length && /[ \t\r\n]/.test(prose[k]!)) {
+            if (lineBreakAt(prose, k) && lineBreakAt(prose, k + lineBreakAt(prose, k))) break;
+            k += 1;
+          }
+          if (k >= prose.length) {
             j = k;
             break;
           }
-          if (isNarrationCue(prose.slice(k), names)) break;
+          if (lineBreakAt(prose, k) && !nextLineContinuesSpeech(prose, k)) break;
+          if (isNarrationCue(prose.slice(k).replace(/^\s+/, ''), names)) break;
         }
         j += 1;
       }
@@ -664,7 +690,17 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
       else if (prose && !/[.!?…]\s*$/.test(prose)) prose += '. ';
       else if (prose && !/\s$/.test(prose)) prose += ' ';
     }
-    const slice = source.slice(piece.start, piece.end);
+    let slice = source.slice(piece.start, piece.end);
+    let termAt = -1;
+    for (let p = piece.end; p < source.length; p++) {
+      if (/[.!?…]/.test(source[p]!)) {
+        termAt = p;
+        break;
+      }
+      if (source[p] === '\n') break;
+    }
+    const laterKept = [...kept].some(({ i: k }) => k > i && termAt >= 0 && pieces[k]!.start <= termAt);
+    if (!laterKept && termAt >= 0 && !/[.!?…]$/.test(slice.trim())) slice += source[termAt]!;
     prose += adjacent ? slice : capStart(slice);
     prev = piece;
     prevIndex = i;
