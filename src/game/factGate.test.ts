@@ -312,14 +312,21 @@ describe('fact gate', () => {
 
   it('keeps an NPC quote that only tells a story', async () => {
     const line = 'Mara Vell said, "The rite misfired into an inn, not a cathedral. They need a name before the close hears you arrived in a taproom. Stay as a guest and they will issue a room-key and a traveler\'s cloak."';
+    let speech = false;
     const out = await applyFactGate({
       prose: line,
       sheet: sheet({ present: [{ name: 'Mira' }, { name: 'Mara Vell' }] }),
       pcName: 'Jax',
       thirdPerson: true,
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        speech = lines.length > 0 && lines.every((entry) => entry.speech);
+        return lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const }));
+      },
     });
+    expect(speech).toBe(true);
     expect(out.prose).toBe(line);
-    expect(out.spans.every((s) => s.route !== 'candidate' && s.verdict !== 'new/wrong')).toBe(true);
+    expect(out.spans.every((s) => s.route === 'candidate' && s.speech)).toBe(true);
   });
 
   it('does not treat Whatever, They, or Roads inside a quote as new names', async () => {
@@ -767,9 +774,55 @@ describe('fact gate', () => {
     });
     expect(prompt).toMatch(/\[speech\]/);
     expect(prompt).toMatch(/\[narration\]/);
-    expect(prompt).toMatch(/rumour|rumor|opinion/i);
+    expect(prompt).toMatch(/opinion/i);
+    expect(prompt).toMatch(/rumour|rumor/i);
+    expect(prompt).toMatch(/legend/i);
+    expect(prompt).toMatch(/commands/i);
+    expect(prompt).toMatch(/offers/i);
+    expect(prompt).toMatch(/refusals/i);
+    expect(prompt).toMatch(/lies/i);
+    expect(prompt).toMatch(/already true/i);
+    expect(prompt).toMatch(/possessions/i);
+    expect(prompt).toMatch(/location/i);
+    expect(prompt).toMatch(/obedience/i);
     expect(prompt).toMatch(/other(?:s)?'? hands|someone else's hands/i);
     expect(prompt).toMatch(/scenery/i);
+  });
+
+  it('sends every quoted span to the checker as speech', async () => {
+    const lines = [
+      'Mira said, "Pocket the cellar key, and take the quay."',
+      'Pike said, "Hold the tin cup. I am not handing you the rifle."',
+      'Mira said, "Folks say a dragon sleeps under the bathhouse."',
+      'Mira said, "Legend says the quay was built on a whale."',
+      'Mira said, "Guard the door and do not follow me."',
+      'Mira said, "I can sell you a sunblade if you want one."',
+      'Mira said, "No. I will not go with you."',
+      'Mira said, "Last winter you killed the king with a spoon."',
+      'Mira said, "You are holding the cellar key right now."',
+      'Pike said, "Take the tin cup. The rifle stays with me."',
+    ];
+    expect(lines).toHaveLength(10);
+    let misses = 0;
+    for (const line of lines) {
+      let marked = false;
+      const out = await applyFactGate({
+        prose: line,
+        sheet: sheet({ present: [{ name: 'Mira' }, { name: 'Pike' }] }),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines: numbered }) => {
+          marked = numbered.length > 0 && numbered.every((entry) => entry.speech === true);
+          return numbered.map((entry) => ({ n: entry.n, verdict: 'keep' as const }));
+        },
+      });
+      const routed = out.spans.some((s) => s.route === 'candidate' && s.speech);
+      if (!routed || !marked) misses += 1;
+      expect(routed, line).toBe(true);
+      expect(marked, line).toBe(true);
+      expect(out.prose, line).toBe(line);
+    }
+    expect(misses).toBe(0);
   });
 
   it('removes a departure when the beat says there was no move', async () => {

@@ -361,25 +361,8 @@ function playerTransfer(span: string, pcName?: string): boolean {
   return give.test(span) || take.test(span);
 }
 
-function isSpeech(span: string): boolean {
-  if (!/["“]/.test(span)) return false;
-  const narration = span.replace(/["“][^"”]*["”]/g, ' ').trim();
-  if (!narration) return true;
-  if (playerTransfer(narration) || partyPossession(narration) || MOVE.test(narration)) return false;
-  if (falseDestination(narration, new Set())) return false;
-  const words = narration
-    .replace(/[^A-Za-z' ]/g, ' ')
-    .split(/\s+/)
-    .filter((w) => w && !/^(said|says|asked|whispered|told|replied|answers|answered|called)$/i.test(w));
-  return words.length <= 6;
-}
-
-function mechanicalNow(span: string): boolean {
-  const quoted = [...span.matchAll(/["“]([^"”]*)["”]/g)].map((m) => m[1] ?? '').join(' ');
-  const claim = quoted || span;
-  return /\byou(?:'re| are) (?:dead|wounded|holding|carrying)\b/i.test(claim)
-    || /\byou (?:now )?(?:hold|have|carry|pocket|receive|die)\b/i.test(claim)
-    || /\byour (?:hp|health|hit points)\b/i.test(claim);
+function hasQuote(span: string): boolean {
+  return /["“]/.test(span);
 }
 
 function mentionsFactAgent(span: string, sheet: FactSheet, pcName?: string): boolean {
@@ -412,7 +395,8 @@ export function formatFactCheckRequest(input: {
   return [
     'Fact check. One verdict for every numbered line: keep, remove, or repair-once.',
     'A line marked [narration] is the narrator. A line marked [speech] is an NPC talking.',
-    'Speech may be rumour, opinion, or a story: keep those. Remove a speech line only when it states that the player, the party, or someone present gains an object, goes somewhere, or obeys.',
+    'Speech may contain opinion, rumour, legend, commands, offers, refusals and lies. Keep it unless the quote states as already true a change to the player, the party, or a present NPC\'s possessions, location, or obedience that the sheet lacks.',
+    'Words outside the quotation marks are narration.',
     'Objects held in someone else\'s hands, or lying in the scenery, are allowed unless the player or the party gains them.',
     'keep = scenery, harmless speech, or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
     'Reply as JSON: [{"n":1,"verdict":"keep"}]. A repair-once row may include "text".',
@@ -511,21 +495,6 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
   };
 }
 
-function quotedText(span: string): string {
-  return [...span.matchAll(/["“]([^"”]*)["”]/g)].map((m) => m[1] ?? '').join(' ');
-}
-
-function quoteAssertsChange(span: string, sheet: FactSheet, pcName?: string): boolean {
-  const quoted = quotedText(span);
-  if (!quoted.trim()) return false;
-  if (playerTransfer(quoted, pcName) || partyPossession(quoted, pcName)) return true;
-  const person = partySubject(quoted, sheet, pcName) || /\byou\b/i.test(quoted);
-  if (/\b(did as (?:she|he|they) (?:was|were) told|nodded and agreed|obeyed|went along quietly|complied|agreed to)\b/i.test(quoted) && person) {
-    return true;
-  }
-  return (motionCue(quoted) || MOVE.test(quoted)) && partySubject(quoted, sheet, pcName);
-}
-
 function confidentScenery(span: string, known: Set<string>): boolean {
   const narration = span.replace(/["“][^"”]*["”]/g, ' ');
   const tokens = narration.toLowerCase().split(/[^a-z0-9']+/).filter(Boolean);
@@ -548,8 +517,7 @@ function routeSpan(
   pcName: string | undefined,
   known: Set<string>,
 ): FactRoute {
-  if (isSpeech(text) && quoteAssertsChange(text, sheet, pcName)) return 'candidate';
-  if (isSpeech(text) && !mechanicalNow(text)) return 'colour';
+  if (hasQuote(text)) return 'candidate';
   if (verdict === 'new/wrong') return 'new/wrong';
   if (verdict === 'allowed' && reason === 'item is on the sheet') return 'allowed';
   if (verdict === 'UNSURE' || mentionsFactAgent(text, sheet, pcName) || possessionCue(text) || motionCue(text)) {
@@ -579,17 +547,14 @@ export async function applyFactGate(args: {
   const blob = packetBlob(args.sheet, args.pcName, args.allowNames);
   const judge = (text: string, id: string): FactSpan => {
     const judged = classifySpan(text, args.sheet, words, blob, args.pcName, args.thirdPerson);
-    const talk = isSpeech(text);
-    const claim = talk && quoteAssertsChange(text, args.sheet, args.pcName);
-    const verdict = talk && !claim ? 'colour' : judged.verdict;
-    const reason = claim ? 'speech claim' : talk ? 'speech' : judged.reason;
+    const talk = hasQuote(text);
     return {
       id,
       text,
-      verdict,
-      reason,
-      speech: claim,
-      route: routeSpan(text, verdict, reason, args.sheet, args.pcName, words),
+      verdict: talk ? 'colour' : judged.verdict,
+      reason: talk ? 'speech' : judged.reason,
+      speech: talk,
+      route: routeSpan(text, talk ? 'colour' : judged.verdict, talk ? 'speech' : judged.reason, args.sheet, args.pcName, words),
     };
   };
   const pieces = segmentPieces(args.prose);
