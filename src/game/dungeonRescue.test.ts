@@ -238,10 +238,52 @@ describe('dungeon rescue', () => {
       },
     };
     state = findRescueKey(state, state.activeDungeon!.rescue!.keys[0]!.id);
+    const keyId = state.activeDungeon!.rescue!.keys[0]!.id;
     const locked = commitRescueAction(state, `Use the key and free ${captive.name}`);
-    expect(locked.state.activeDungeon!.dwell!.find((d) => d.id === captive.id)!.status).toBe('held');
+    const staged = locked.state.activeDungeon!.dwell!.find((d) => d.id === captive.id)!;
+    expect(staged.status).toBe('held');
+    expect(staged.lockOpen).not.toBe(true);
+    expect(locked.state.inventory?.find((i) => i.id === `rescue-key:${keyId}`)?.quantity).toBe(1);
     const healed = commitRescueAction(locked.state, `Heal ${captive.name}`);
     expect(healed.released).toBe(true);
+    expect(healed.state.inventory?.find((i) => i.id === `rescue-key:${keyId}`)?.quantity).toBe(0);
+    const after = commitRescueAction(healed.state, `I attack ${captive.name}`);
+    expect(after.state.activeDungeon!.dwell!.find((d) => d.id === captive.id)!.status).toBe('released');
+  });
+
+  it('pays lock-picking XP only when a hard pick and the heal both commit the release', () => {
+    let state = clearMobs(play(card([node('r0', 'Stair'), node('a', 'Offering Vault')])));
+    const captive = state.activeDungeon!.dwell!.find((d) => d.kind === 'captive')!;
+    state = {
+      ...state,
+      character: { ...state.character, namedSkills: [{ id: 'lockpicking', level: 1, xp: 0, rank: 0, uses: 0 }] },
+      activeDungeon: {
+        ...state.activeDungeon!,
+        currentNodeId: captive.nodeId,
+        rescue: {
+          ...state.activeDungeon!.rescue!,
+          requireHeal: true,
+          locks: state.activeDungeon!.rescue!.locks.map((l) =>
+            l.captiveId === captive.id ? { ...l, requiredLevel: 2, unpickable: false } : l
+          ),
+        },
+      },
+    };
+    let staged = state;
+    let found = false;
+    for (let turn = 0; turn < 30 && !found; turn++) {
+      const out = commitRescueAction({ ...state, turn, seed: `hard-${turn}` }, `Pick the lock holding ${captive.name}`);
+      if (out.note === 'the pick failed') continue;
+      staged = out.state;
+      found = true;
+    }
+    expect(found).toBe(true);
+    expect(staged.activeDungeon!.dwell!.find((d) => d.id === captive.id)!.status).toBe('held');
+    expect(staged.character.namedSkills?.find((s) => s.id === 'lockpicking')?.xp ?? 0).toBe(0);
+    const freed = commitRescueAction(staged, `Heal ${captive.name}`);
+    expect(freed.released).toBe(true);
+    expect(freed.state.character.namedSkills?.find((s) => s.id === 'lockpicking')?.xp ?? 0).toBeGreaterThan(0);
+    expect(freed.state.character.xp).toBe(state.character.xp);
   });
 
   it('keeps a freed captive resolved, and loses one only on committed harm', () => {

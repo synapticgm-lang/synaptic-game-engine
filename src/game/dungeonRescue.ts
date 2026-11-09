@@ -334,28 +334,32 @@ function commitOne(
   }
   const lock = rescue.locks.find((l) => l.captiveId === captive.id);
   const key = rescue.keys.find((k) => k.id === lock?.keyId);
-  let lockOpen = !!captive.lockOpen;
+  let pending = captive.pendingUnlock;
+  let hard = !!captive.pendingHardPick;
   let healed = !!captive.healed;
   let nextState = state;
   let keys = rescue.keys;
   if (how === 'heal') healed = true;
-  if (how === 'force' || (how === 'pick' && lock?.unpickable)) {
+  if (how === 'force' || (how === 'pick' && lock?.unpickable && !pending)) {
     return { state, released: false, refused: true, note: 'that lock cannot be forced' };
   }
-  if (how === 'pick' && lock && !lockOpen) {
+  if (how === 'pick' && lock && !pending) {
     const skill = lockpickLevel(state);
     const chance = rescuePickChance(skill, lock.requiredLevel);
     const roll = hashUnit(`${state.seed ?? ''}|${captive.id}|pick|${state.turn ?? 0}`);
     if (roll >= chance) return { state, released: false, refused: false, note: 'the pick failed' };
-    lockOpen = true;
-    if (skill < lock.requiredLevel) nextState = addLockpickXp(state);
+    pending = 'pick';
+    hard = skill < lock.requiredLevel;
   }
-  if (how === 'key' && key && !lockOpen) {
+  if (how === 'key' && key && !pending) {
     if (!holdsKey(nextState, key) || !key.captiveIds.includes(captive.id)) {
       return { state: nextState, released: false, refused: true, note: 'that key does not fit' };
     }
-    lockOpen = true;
-    if (key.consumable) {
+    pending = 'key';
+  }
+  const ready = !!pending && (!rescue.requireHeal || healed);
+  if (ready) {
+    if (pending === 'key' && key?.consumable) {
       keys = keys.map((k) => (k.id === key.id ? { ...k, held: false } : k));
       nextState = {
         ...nextState,
@@ -364,10 +368,19 @@ function commitOne(
         ),
       };
     }
+    if (pending === 'pick' && hard) nextState = addLockpickXp(nextState);
   }
-  const ready = lockOpen && (!rescue.requireHeal || healed);
   const dwell = (card.dwell ?? []).map((d) =>
-    d.id === captive.id ? { ...d, lockOpen, healed, status: ready ? 'released' as const : d.status } : d
+    d.id === captive.id
+      ? {
+          ...d,
+          healed,
+          pendingUnlock: ready ? undefined : pending,
+          pendingHardPick: ready ? undefined : hard,
+          lockOpen: ready ? true : d.lockOpen,
+          status: ready ? 'released' as const : d.status,
+        }
+      : d
   );
   const nextCard = { ...card, dwell, rescue: { ...rescue, keys } };
   let patched = patchCard(nextState, nextCard);
@@ -401,6 +414,9 @@ export function commitRescueAction(state: GameState, input: string): RescueCommi
   }
   if (!captive) return { state: state1, released: false, refused: false, note: '' };
   if (/\b(attack|strike|hit|stab|harm|kill)\b/.test(text)) {
+    if (captive.status !== 'held') {
+      return { state: state1, released: false, refused: true, note: `${captive.name} is already free` };
+    }
     const dwell = card.dwell.map((d) => (d.id === captive.id ? { ...d, status: 'lost' as const } : d));
     const nextCard = { ...card, dwell };
     return { state: finishQuest(patchCard(state1, nextCard), nextCard), released: false, refused: false, note: `${captive.name} is lost` };

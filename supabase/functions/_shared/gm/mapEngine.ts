@@ -189,6 +189,9 @@ export interface DungeonDwell {
   disposition: 'neutral' | 'friendly';
   lockOpen?: boolean;
   healed?: boolean;
+  /** Unlock is staged until the release itself commits. */
+  pendingUnlock?: 'key' | 'pick';
+  pendingHardPick?: boolean;
 }
 
 export interface RescueLock {
