@@ -1039,6 +1039,8 @@ export interface GameState {
   entityRecords?: Record<string, TimelineEntityRecord>;
   /** q72 — open visit log for the place the player is in now (whole stay). */
   placeVisitLog?: PlaceVisitLog | null;
+  /** Optional story-beat checkpoints. Loading one drops every later turn. */
+  storySavePoints?: StorySavePoint[];
   /** Campaign bible id when seeded from GM Library / archetype match. */
   campaignBibleId?: string | null;
   /**
@@ -1849,6 +1851,15 @@ export interface TimelineEntityRecord {
   notes: string[];
 }
 /** q72 — whole-stay visit log for the current place (outside the 40-cap / RECENT window). */
+export interface StorySavePoint {
+  id: string;
+  beat: string;
+  turn: number;
+  location: string;
+  /** Turns kept. Anything later is gone after a load. */
+  logTurn: number;
+}
+
 export interface PlaceVisitLog {
   placeId: string;
   placeName: string;

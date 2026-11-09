@@ -18,6 +18,7 @@
  * personal favours with standing stakes. Route thirds follow OPT-4 (skill/system | contact/standing).
  */
 import type { DoranMotivation, GameState, NpcMemory, Quest, QuestObjective, QuestRoute } from './types';
+import { evaluateMidVisitProposal } from './midVisitProposal';
 import type { GameEvent } from './parser';
 import { validateQuestStepRoutes } from './questRoutes';
 import { DC_LADDER } from './rules/exploration';
@@ -411,7 +412,21 @@ export function applyQuestAddProposals(
       }
     }
     if (!bound) {
-      notes.push('unbound quest');
+      if (state.engineMode !== 'pyoa' && (e.name ?? '').trim()) {
+        const decision = evaluateMidVisitProposal(state, {
+          kind: 'side',
+          title: e.name ?? '',
+          summary: e.description ?? '',
+        });
+        if (decision.ok) {
+          notes.push(`mid-visit accepted: ${decision.quest?.id ?? e.name}`);
+          state = decision.state;
+          continue;
+        }
+        notes.push(decision.detail);
+      } else {
+        notes.push('unbound quest');
+      }
       unboundLog.push(`turn ${state.turn ?? 0}: ${e.name ?? e.id ?? '?'}`);
       continue;
     }
