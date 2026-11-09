@@ -15,6 +15,7 @@
  */
 import type { GameState, Item, NpcMemory } from './types';
 import { matchRoomProp, propStats, removeRoomProp, sealedLootName } from './roomProps';
+import { heirloomHeldAway, heirloomOwnerPresent, transferHeirloom } from './heirlooms';
 import { resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
 import { abilityModOf, statBlockForEncounter } from './rules/srdMonsters';
 import { deriveTabletopSheet } from './tabletop/characterBuild';
@@ -281,12 +282,14 @@ export function resolveStealAttempt(
   });
   const sealed = !filed && !legacy && sealedLootName(state, item);
   const fixedHold = !!filed && !filed.takeable;
-  const guardedHold = success && !fixedHold && !sealed && isGuardedQuestItem(state, item);
+  const ownerHere = heirloomOwnerPresent(state, item);
+  const heirloomAway = heirloomHeldAway(state, item);
+  const guardedHold = (success && !fixedHold && !sealed && isGuardedQuestItem(state, item)) || (success && !!ownerHere);
   const ownedHere = !!filed && filed.owner !== 'place' && (state.sceneFacts?.present ?? []).some((name) => {
     const mem = (state.npcMemories ?? []).find((m) => (m.npcName ?? '').toLowerCase() === name.toLowerCase());
     return name.toLowerCase() === filed.owner.toLowerCase() || mem?.npcId === filed.owner;
   });
-  const canTake = !!filed?.takeable || !!legacy;
+  const canTake = !!filed?.takeable || !!legacy || !!heirloomAway;
   const taken = success && canTake && !guardedHold && !sealed && !fixedHold;
   const noticed = !success || (taken && ownedHere);
 
@@ -297,7 +300,10 @@ export function resolveStealAttempt(
   ];
 
   let next = state;
-  if (taken) {
+  if (taken && heirloomAway) {
+    next = transferHeirloom(next, heirloomAway.npcId, 'steal');
+    facts.push(`Took the ${heirloomAway.heirloom?.label ?? item} unnoticed.`);
+  } else if (taken) {
     const grantedName = filed?.label ?? legacy ?? item;
     const stats = filed
       ? { level: filed.level, rarity: filed.rarity }
@@ -329,7 +335,9 @@ export function resolveStealAttempt(
     facts.push(`There is no ${item} here to take.`);
   } else if (guardedHold) {
     facts.push(
-      `Sleight of Hand beat Passive Perception ${dc}, but the guardian still holds the ${item}; it was not taken.`,
+      ownerHere
+        ? `${ownerHere.npcName} still holds the ${item}; it was not taken.`
+        : `Sleight of Hand beat Passive Perception ${dc}, but the guardian still holds the ${item}; it was not taken.`,
     );
     next = pushOtherTx(
       next,

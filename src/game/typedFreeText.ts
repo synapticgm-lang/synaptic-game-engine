@@ -34,6 +34,7 @@ import {
   resolvePersonThreatAttempt,
   resolveStealAttempt,
 } from './stealParley';
+import { clauseNamesHeirloom, transferHeirloom } from './heirlooms';
 import { engageAddressedInHereSpot } from './hereSpot';
 import { isLedgerReadAction } from './completedEventPacket';
 import { ledgerChangeFact, ledgerReadChanges, ledgerSheetLine } from './litrpgSystemWindow';
@@ -240,6 +241,7 @@ function threatTargetKey(who: string): string {
  * Compound slam+grab+quote used to parse into intimidate|take|talk and re-roll twice.
  */
 function personThreatTarget(step: IntentStep, clause: string, state: GameState): string {
+  if (step.action === 'deal' && (step.deal?.kind === 'trade' || step.deal?.kind === 'favour')) return '';
   const threatTarget = step.addressee?.trim() || step.target?.trim() || '';
   if (!threatTarget) return '';
   const grabThreat =
@@ -336,13 +338,27 @@ function resolveOneStep(state: GameState, step: IntentStep, fullText: string): S
   if (step.action === 'deal' && step.deal) {
     const who = step.addressee?.trim() || 'someone here';
     const d = step.deal;
-    const fact = `Deal attempted: ${d.kind}${d.amount != null ? ` ${d.amount}` : ''} with ${who}${d.dueDays != null ? ` due in ${d.dueDays} days` : ''}.`;
+    let next = state;
+    let fact = `Deal attempted: ${d.kind}${d.amount != null ? ` ${d.amount}` : ''} with ${who}${d.dueDays != null ? ` due in ${d.dueDays} days` : ''}.`;
+    if (d.kind === 'trade' || d.kind === 'favour') {
+      const holder = (state.npcMemories ?? []).find((m) =>
+        m.heirloom?.holderId === m.npcId
+        && clause.toLowerCase().includes(m.npcName.toLowerCase())
+        && !!m.heirloom
+        && clauseNamesHeirloom(clause, m.heirloom.label),
+      );
+      if (holder?.heirloom) {
+        next = transferHeirloom(state, holder.npcId, d.kind === 'trade' ? 'trade' : 'gift');
+        fact = `${holder.npcName} ${d.kind === 'trade' ? 'traded' : 'gave'} the ${holder.heirloom.label}.`;
+      }
+    }
     return {
       tried,
       done: true,
       reason: 'deal recorded',
       engineResult: fact,
       economySlot: slot,
+      state: next,
     };
   }
 

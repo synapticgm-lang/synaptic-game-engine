@@ -22,6 +22,7 @@ import { createHashRng, keyedRng } from './seededRng';
 import { roadMeetingSpeaker } from './travelJourney';
 import type { SpokenLine } from './tokenProse';
 import { agendaFromRole, ensureNpcAgenda } from './npcMemory';
+import { maybeGrantHeirloom } from './heirlooms';
 
 type Archetype = {
   id: string;
@@ -204,25 +205,24 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     campaignId: state.campaignBibleId,
     roleHint: memory?.roleHint,
   });
+  const where = location ?? state.currentLocation;
   if (memory) {
+    const saved = maybeGrantHeirloom(state, ensureNpcAgenda({
+      ...memory,
+      sheet,
+      goal: memory.goal ?? sheet.goal,
+      need: memory.need ?? sheet.need,
+      offer: memory.offer ?? sheet.offer,
+      attitude: memory.attitude ?? sheet.attitude,
+      traits: memory.traits?.length ? memory.traits : sheet.traits,
+      speechRegister: memory.speechRegister ?? sheet.speechRegister,
+    }), where);
     return {
       ...state,
-      npcMemories: list.map((m) =>
-        m === memory
-          ? ensureNpcAgenda({
-              ...m,
-              sheet,
-              goal: m.goal ?? sheet.goal,
-              need: m.need ?? sheet.need,
-              offer: m.offer ?? sheet.offer,
-              attitude: m.attitude ?? sheet.attitude,
-              traits: m.traits?.length ? m.traits : sheet.traits,
-              speechRegister: m.speechRegister ?? sheet.speechRegister,
-            })
-          : m),
+      npcMemories: list.map((m) => (m === memory ? saved : m)),
     };
   }
-  const fresh = ensureNpcAgenda({
+  const fresh = maybeGrantHeirloom(state, ensureNpcAgenda({
     npcId: `town-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
     npcName: name.trim(),
     disposition: 'unknown',
@@ -236,7 +236,7 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     attitude: sheet.attitude,
     traits: sheet.traits,
     speechRegister: sheet.speechRegister,
-  });
+  }), where);
   return { ...state, npcMemories: [...list, fresh] };
 }
 

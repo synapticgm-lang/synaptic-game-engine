@@ -1984,6 +1984,19 @@ export interface SituationPacket {
 }
 export type NpcMood = 'friendly' | 'angry' | 'scared' | 'sad' | 'cautious' | 'neutral' | 'unknown';
 /** Per-NPC memory so knowledge does not bleed across characters. */
+export type HeirloomReason = 'retired-higher-band' | 'family-relic' | 'war-trophy' | 'temple-charge';
+
+/** One engine-owned weapon. Level may sit above the town's band. */
+export interface NpcHeirloom {
+  label: string;
+  reason: HeirloomReason;
+  level: number;
+  rarity: Rarity;
+  /** `npcId` while they hold it, or `player` after an engine transfer. */
+  holderId: string;
+  settlementId: string;
+}
+
 export interface NpcMemory {
   npcId: string;
   npcName: string;
@@ -2011,6 +2024,10 @@ export interface NpcMemory {
   relationshipStatus?: 'stranger' | 'acquaintance' | 'ally' | 'rival' | 'friend' | 'enemy';
   /** 12c — bible / inferred role (merchant stays; quest-patron may exit). */
   roleHint?: string;
+  /** Engine-rolled heirloom. One per durable NPC, at most one in a settlement. */
+  heirloom?: NpcHeirloom;
+  /** Authored roster signature. Not rolled, and never joined by a second famous item. */
+  listedSignature?: string;
   /** 12c — item names this merchant already sold the player. */
   purchases?: string[];
   /** 12c — quest-giver function complete; drop from CAST / Talk. */

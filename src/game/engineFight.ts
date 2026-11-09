@@ -27,6 +27,7 @@ import { applyWildsHuntBudget, isChallengeHuntKill, killScale } from './rules/xp
 import { HUNT_DEATH_COOLDOWN_TURNS } from './rules/wildlifeConfig';
 import { applyWildsKillExtras } from './wildlifeActions';
 import { pushCombatStateTx } from './stateTx';
+import { lootHeirloomOf } from './heirlooms';
 import { hidesPart } from './systemHousing';
 import { classifyRoundAction, isDying, resolveDeathSaveTurn, resolveRoundFight, usesRoundCombat } from './tabletop/roundFight';
 import { isFightCast } from './tabletop/spellCasting';
@@ -506,6 +507,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
       : next.lootPity,
   };
   next = gainLootMoney(next, result.goldGained, result.coinsGained);
+  if (result.victory) next = lootHeirloomOf(next, enc.name);
   next = growWeaponFamiliarity(
     next,
     used.id === 'ranged' ? weaponCategory(used.source) : weaponCategory(equippedWeaponName(next))
