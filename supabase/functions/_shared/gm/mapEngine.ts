@@ -1,4 +1,4 @@
-import type { Character, Item, Location3D, MapTier, Rarity } from './types.ts';
+import type { Character, Item, Location3D, MapTier, PlaceProp, Rarity } from './types.ts';
 import { skillRanksOf } from './skillRanks.ts';
 import {
   INTERIOR_MAP_BLUEPRINT,
@@ -128,6 +128,8 @@ export interface MapNode {
   subMapId?: string; // Link to nested tier map inside this node
   /** Engine-seeded traps/loot/secrets/mobs — set by dungeonSeed, not the LLM. */
   hidden?: NodeHidden;
+  /** Objects described in this room and kept by the fact check. */
+  roomProps?: PlaceProp[];
 }
 
 export interface MapBlueprint {
@@ -1344,7 +1346,13 @@ export function applyGraphExitTravel<T extends {
   if (updatedDungeon.currentNodeId === state.activeDungeon.currentNodeId) return state;
   const node = updatedDungeon.nodes.find((n) => n.id === updatedDungeon.currentNodeId);
   const placeName = node ? dungeonHereLabel(updatedDungeon.dungeonName, node.name) : hit.name;
-  return { ...state, activeDungeon: updatedDungeon, currentLocation: placeName };
+  const facts = (state as { sceneFacts?: { roomProps?: PlaceProp[] } }).sceneFacts;
+  return {
+    ...state,
+    activeDungeon: updatedDungeon,
+    currentLocation: placeName,
+    ...(facts ? { sceneFacts: { ...facts, roomProps: [...(node?.roomProps ?? [])] } } : {}),
+  };
 }
 
 /** Prompt authority: exits from the current room with door vs gap language. */

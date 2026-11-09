@@ -14,6 +14,7 @@
  * Idea only from docs/orders/merge/proto/engine.mjs — not a code copy.
  */
 import type { GameState, Item, NpcMemory } from './types';
+import { matchRoomProp, propStats, removeRoomProp, sealedLootName } from './roomProps';
 import { resolveCheckRecord, type CheckMod, type CheckResultRecord } from './checkRules';
 import { abilityModOf, statBlockForEncounter } from './rules/srdMonsters';
 import { deriveTabletopSheet } from './tabletop/characterBuild';
@@ -189,7 +190,10 @@ export function isGuardedQuestItem(state: GameState, item: string): boolean {
     /guardian|keeper/i.test(`${m.roleHint ?? ''} ${m.npcName ?? ''}`),
   );
   if (!guardianLives && !guardRole) return false;
-  const props = (state.sceneFacts?.props ?? []).map((p) => p.toLowerCase());
+  const props = [
+    ...(state.sceneFacts?.props ?? []),
+    ...(state.sceneFacts?.roomProps ?? []).map((p) => p.label),
+  ].map((p) => p.toLowerCase());
   if (props.some((p) => p.includes(needle) || needle.includes(p))) return true;
   for (const q of state.quests ?? []) {
     if (q.status === 'completed' || q.status === 'failed') continue;
@@ -212,7 +216,7 @@ function extractStealItem(text: string, step?: IntentStep | null, state?: GameSt
   const m =
     text.match(/\b(?:steal|filch|swipe|palm|pickpocket|lift|take)\s+(?:the|a|an)\s+([^,.!?]{2,40}?)(?:\s+from\b|$)/i)
     ?? text.match(/\b(?:the|a|an)\s+([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,3})\s+from\b/i);
-  const item = (m?.[1] ?? 'purse').replace(/\s+/g, ' ').trim();
+  const item = (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
   if (/^(?:sip|drink|swig|gulp|bite|taste|puff|drag|whiff|breath)$/i.test(item)) return '';
   if (isNonLootableTakeTarget(item, state)) return '';
   return item;
@@ -269,9 +273,22 @@ export function resolveStealAttempt(
   rec.spec = { kind: 'skill', ability: 'DEX', skill: 'sleight of hand', dc, dcShown: true, adv: 'normal' };
 
   const success = rec.outcome === 'success';
-  const guardedHold = success && isGuardedQuestItem(state, item);
-  const taken = success && !guardedHold;
-  const noticed = !success;
+  const filed = matchRoomProp(state, item);
+  const legacy = !filed && (state.sceneFacts?.props ?? []).find((p) => {
+    const name = p.toLowerCase();
+    const needle = item.toLowerCase();
+    return name === needle || ` ${name} `.includes(` ${needle} `) || ` ${needle} `.includes(` ${name} `);
+  });
+  const sealed = !filed && !legacy && sealedLootName(state, item);
+  const fixedHold = !!filed && !filed.takeable;
+  const guardedHold = success && !fixedHold && !sealed && isGuardedQuestItem(state, item);
+  const ownedHere = !!filed && filed.owner !== 'place' && (state.sceneFacts?.present ?? []).some((name) => {
+    const mem = (state.npcMemories ?? []).find((m) => (m.npcName ?? '').toLowerCase() === name.toLowerCase());
+    return name.toLowerCase() === filed.owner.toLowerCase() || mem?.npcId === filed.owner;
+  });
+  const canTake = !!filed?.takeable || !!legacy;
+  const taken = success && canTake && !guardedHold && !sealed && !fixedHold;
+  const noticed = !success || (taken && ownedHere);
 
   const facts: string[] = [];
   const receipts: string[] = [
@@ -281,21 +298,35 @@ export function resolveStealAttempt(
 
   let next = state;
   if (taken) {
+    const grantedName = filed?.label ?? legacy ?? item;
+    const stats = filed
+      ? { level: filed.level, rarity: filed.rarity }
+      : propStats(state, state.currentLocation ?? 'place', grantedName);
     const inv: Item[] = [...(next.inventory ?? [])];
-    const id = `steal-${(next.turn ?? 0)}-${item.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`;
-    inv.push({ id, name: item, quantity: 1, equipped: false, rarity: 'Common' });
+    const id = `steal-${(next.turn ?? 0)}-${grantedName.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`;
+    inv.push({ id, name: grantedName, quantity: 1, equipped: false, rarity: stats.rarity, itemLevel: stats.level });
     next = { ...next, inventory: inv };
-    facts.push(`Took the ${item} unnoticed.`);
-    next = pushOtherTx(next, `Stole ${item}`, item, `Sleight of Hand ${rec.total} vs Passive Perception ${dc}`);
+    facts.push(ownedHere ? `Took the ${grantedName}; the owner noticed.` : `Took the ${grantedName} unnoticed.`);
+    next = pushOtherTx(next, `Stole ${grantedName}`, grantedName, `Sleight of Hand ${rec.total} vs Passive Perception ${dc}`);
     const given = new Set([...(next.sceneFacts?.givenAway ?? [])]);
-    // Item left the scene props when taken.
-    const props = (next.sceneFacts?.props ?? []).filter((p) => p.toLowerCase() !== item.toLowerCase());
-    next = {
-      ...next,
-      sceneFacts: next.sceneFacts
-        ? { ...next.sceneFacts, props, givenAway: [...given] }
-        : next.sceneFacts,
-    };
+    next = removeRoomProp(next, grantedName);
+    if (next.sceneFacts) {
+      next = {
+        ...next,
+        sceneFacts: {
+          ...next.sceneFacts,
+          props: (next.sceneFacts.props ?? []).filter((p) => p.toLowerCase() !== grantedName.toLowerCase()),
+          givenAway: [...given],
+        },
+      };
+    }
+  } else if (fixedHold) {
+    facts.push(`The ${filed!.label} is part of the room.`);
+    receipts.push(`The ${filed!.label} is part of the room.`);
+  } else if (sealed) {
+    facts.push(`The ${item} is seeded loot, not a loose prop.`);
+  } else if (!canTake && !guardedHold) {
+    facts.push(`There is no ${item} here to take.`);
   } else if (guardedHold) {
     facts.push(
       `Sleight of Hand beat Passive Perception ${dc}, but the guardian still holds the ${item}; it was not taken.`,

@@ -3,6 +3,8 @@
  * Anything uncertain is a candidate for one batched hosted check.
  */
 import type { FactSheet } from './factSheet';
+import type { FactObjectNote, FactObjectTag } from './roomProps';
+import { readObjectTag } from './roomProps';
 
 export type FactVerdict = 'colour' | 'allowed' | 'new/wrong' | 'UNSURE';
 
@@ -27,6 +29,8 @@ export interface FactGateResult {
   spans: FactSpan[];
   removed: number;
   unsure: number;
+  /** Object tags from kept narration spans. Empty when the check did not run. */
+  objectNotes: FactObjectNote[];
 }
 
 export interface UnsureVerdict {
@@ -87,6 +91,7 @@ export interface CandidateCheck {
   n: number;
   verdict: 'keep' | 'remove' | 'repair-once';
   text?: string;
+  objects?: FactObjectTag[];
 }
 
 export type FactChecker = (input: {
@@ -628,7 +633,8 @@ export function formatFactCheckRequest(input: {
     'Objects held in someone else\'s hands, or lying in the scenery, are allowed unless the player or the party gains them.',
     'A scare-quoted or so-called object that is only turned over, looked at, or described is not a gain. Keep that sentence unless it states that someone now newly holds a real item, listed or unlisted.',
     'keep = scenery, harmless speech, or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
-    'Reply as JSON: [{"n":1,"verdict":"keep"}]. A repair-once row may include "text".',
+    'On a kept [narration] line, add "objects" for physical things in the place: [{"label":"old rusty sword","kind":"furniture|armour|weapon|tool|coin|other","mount":"fixed|hung|loose","owner":"place"}]. The label must use words from that line. Do not put objects on a [speech] or [writing] line.',
+    'Reply as JSON: [{"n":1,"verdict":"keep"}]. A repair-once row may include "text". A kept narration row may include "objects".',
     'SHEET:',
     JSON.stringify(input.sheet),
     'LINES:',
@@ -650,15 +656,19 @@ export function parseFactCheckReply(text: string): CandidateCheck[] {
         const rows: CandidateCheck[] = [];
         for (const row of parsed) {
           if (!row || typeof row !== 'object') continue;
-          const rec = row as { n?: unknown; verdict?: unknown; text?: unknown };
+          const rec = row as { n?: unknown; verdict?: unknown; text?: unknown; objects?: unknown };
           const n = Number(rec.n);
           const verdict = String(rec.verdict ?? '').toLowerCase();
           if (!Number.isInteger(n)) continue;
           if (verdict !== 'keep' && verdict !== 'remove' && verdict !== 'repair-once') continue;
+          const objects = Array.isArray(rec.objects)
+            ? rec.objects.map(readObjectTag).filter((tag): tag is FactObjectTag => !!tag)
+            : undefined;
           rows.push({
             n,
             verdict,
             text: typeof rec.text === 'string' ? rec.text : undefined,
+            objects,
           });
         }
         return rows;
@@ -744,6 +754,7 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
     spans,
     removed: spans.filter((s) => s.verdict === 'new/wrong' || s.verdict === 'UNSURE').length,
     unsure: spans.filter((s) => s.verdict === 'UNSURE').length,
+    objectNotes: [],
   };
 }
 
@@ -826,6 +837,7 @@ export async function applyFactGate(args: {
   const pieces = segmentPieces(args.prose, people);
   const spans: FactSpan[] = pieces.map((piece, i) => judge(piece.text, `s${i + 1}`));
   const factOn = (args.factCheckEnabled ?? isFactCheckEnabled()) && !!args.factCheck;
+  const objectNotes: FactObjectNote[] = [];
   if (factOn && args.factCheck) {
     const candidates = spans.filter((s) => s.route === 'candidate');
     if (candidates.length) {
@@ -870,6 +882,17 @@ export async function applyFactGate(args: {
         }
         span.verdict = 'new/wrong';
         span.reason = 'checker removed';
+      });
+      candidates.forEach((span, i) => {
+        const row = reply.find((r) => r.n === i + 1);
+        const kept = span.verdict === 'colour' || span.verdict === 'allowed';
+        objectNotes.push({
+          text: span.text,
+          speech: !!span.speech,
+          writing: !!span.writing,
+          kept,
+          objects: kept ? row?.objects ?? [] : [],
+        });
       });
     }
   }
@@ -916,5 +939,7 @@ export async function applyFactGate(args: {
       }
     }
   }
-  return finish(args.prose, spans, pieces, args.recentProse ?? [], people);
+  const result = finish(args.prose, spans, pieces, args.recentProse ?? [], people);
+  result.objectNotes = objectNotes;
+  return result;
 }

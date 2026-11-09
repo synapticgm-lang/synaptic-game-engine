@@ -48,6 +48,7 @@ import {
   type ClauseCheckRecord,
 } from './clauseCheck';
 import { applyFactGate, isFactCheckEnabled, makeHostedFactChecker } from './factGate';
+import { fileKeptRoomProps } from './roomProps';
 import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import {
   enableAutoplayWriter,
@@ -2063,6 +2064,7 @@ Do NOT print dice notation or CODE ENFORCED.
             ? makeHostedFactChecker((payload) => callGmCheck(arcState, payload, settings))
             : undefined,
         });
+        if (gate.objectNotes.length) arcState = fileKeptRoomProps(arcState, gate.objectNotes);
         if (gate.withheld) {
           const page = pageWhenClauseWithheld(arcState, writerPacket, playerInput);
           const published = storyAfterClauseCheck({

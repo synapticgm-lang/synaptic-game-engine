@@ -54,6 +54,7 @@ import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
 import { captureTurnEngineFacts, repairParentExtra, withTrainLogJob } from './trainLog';
 import { storyAfterClauseCheck } from './clauseCheck';
 import { applyFactGate, isFactCheckEnabled, makeHostedFactChecker } from './factGate';
+import { fileKeptRoomProps } from './roomProps';
 import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
@@ -3224,6 +3225,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                 ? makeHostedFactChecker((payload) => callGmCheck(liveCurrent, payload, settingsRef.current))
                 : undefined,
             });
+            if (gate.objectNotes.length) {
+              liveCurrent = fileKeptRoomProps(liveCurrent, gate.objectNotes);
+              stateRef.current = liveCurrent;
+            }
             if (gate.withheld) {
               const page = pageWhenClauseWithheld(liveCurrent, writerPacket, sanitizedInput);
               const published = storyAfterClauseCheck({
