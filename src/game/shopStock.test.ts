@@ -95,6 +95,16 @@ describe('shop stock', () => {
     const due = projectShelf({ ...base(wait, 0), merchantId: id, higher: true });
     expect(due.filter((r) => r.source === 'import')).toHaveLength(1);
     expect(due.find((r) => r.source === 'import')!.level).toBeGreaterThan(3);
+
+    const arrived = projectShelf({ ...base(6, -1), merchantId: 'cart-3', higher: true });
+    const tonic = arrived.find((r) => r.source === 'import');
+    expect(tonic?.name).toBe('Far-city Tonic');
+    const nextDay = projectShelf({ ...base(7, 6), merchantId: 'cart-3', higher: true }, arrived);
+    expect(nextDay.find((r) => r.name === 'Far-city Tonic')?.quantity).toBe(1);
+    const bought = buyFromShelf(nextDay, 'Far-city Tonic');
+    expect(bought.ok).toBe(true);
+    const after = projectShelf({ ...base(8, 6), merchantId: 'cart-3', higher: true }, bought.rows);
+    expect(after.some((r) => r.name === 'Far-city Tonic')).toBe(false);
   });
 
   it('buying removes a row and selling adds an area-band good, not a legendary', () => {
@@ -146,6 +156,36 @@ describe('shop stock', () => {
     expect(mixed.prose).toMatch(/reed salve/i);
     expect(mixed.prose).not.toMatch(/sunblade/i);
     expect(mixed.prose).toMatch(/forge/i);
+
+    const day21 = projectShelf({ ...base(21), seed: 'world-seed', merchantId: 'mira' });
+    const named = day21.map((r) => ({ name: r.name, quantity: r.quantity, price: r.price }));
+    expect(named.map((r) => r.name)).toEqual(expect.arrayContaining(['Reed Salve', 'Iron Nail', 'Waterskin']));
+    const shelfSheet: FactSheet = {
+      ...sheet,
+      present: [{ name: 'Mira', role: 'merchant', stock: named }],
+    };
+    const salve = await applyFactGate({
+      prose: 'Mira offered a Reed Salve for sale.',
+      sheet: shelfSheet,
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(salve.prose).toBe('Mira offered a Reed Salve for sale.');
+    const nail = await applyFactGate({
+      prose: 'Mira sells an Iron Nail.',
+      sheet: shelfSheet,
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(nail.prose).toBe('Mira sells an Iron Nail.');
+    const both = await applyFactGate({
+      prose: 'Mira sells a Waterskin and a sunblade.',
+      sheet: shelfSheet,
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(both.prose).toMatch(/Waterskin/);
+    expect(both.prose).not.toMatch(/sunblade/i);
     const blank = await applyFactGate({
       prose: 'Mira offered a reed salve for sale.',
       sheet: { ...sheet, present: [{ name: 'Mira', role: 'merchant', stock: [null as never, { name: 'Reed Salve', quantity: 1, price: 8 }] }] },

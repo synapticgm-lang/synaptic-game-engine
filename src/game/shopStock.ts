@@ -125,7 +125,10 @@ export function projectShelf(input: ShelfInput, carried: ShopStockRow[] = []): S
   }
   const wait = importWaitDays(input.band.high, input.band.high + 6);
   const due = input.lastImportDay < 0 ? wait : input.lastImportDay + wait;
-  if (input.higher && offersRareSlot(input.merchantId) && input.worldDay >= due) {
+  const unsoldImport = carried.filter((r) => r.source === 'import' && r.quantity > 0 && r.name.trim());
+  if (unsoldImport.length) {
+    rows.push(...unsoldImport.map((r) => ({ ...r })));
+  } else if (input.higher && offersRareSlot(input.merchantId) && input.worldDay >= due) {
     const name = IMPORTS[umod(salt, IMPORTS.length)]!;
     rows.push({
       name,
@@ -137,7 +140,7 @@ export function projectShelf(input: ShelfInput, carried: ShopStockRow[] = []): S
       earnFree: 'cart',
     });
   }
-  return rows.filter((r) => r.quantity > 0);
+  return rows.filter((r) => r.quantity > 0 && r.name.trim());
 }
 
 export function buyFromShelf(rows: ShopStockRow[], name: string, qty = 1): { ok: boolean; rows: ShopStockRow[] } {
@@ -198,10 +201,10 @@ function bandHere(state: GameState, settlement: string): { low: number; high: nu
   return { low: band.low, high: band.high };
 }
 
-/** Last day an import arrived, or -1 when the next due is still the first wait. */
+/** Last day an import arrived, or -1 when the next due is still the first wait.
+ * An unsold import still on the shelf does not move that day forward. */
 export function lastImportArrival(saved: { worldDay: number; rows: ShopStockRow[]; importDueDay: number } | undefined, wait: number): number {
   if (!saved) return -1;
-  if (saved.rows.some((r) => r.source === 'import')) return saved.worldDay;
   if (saved.importDueDay > wait) return saved.importDueDay - wait;
   return -1;
 }
@@ -272,6 +275,7 @@ export function ensureMerchantShelf(state: GameState, merchantId: string, settle
   if (!ctx) return state;
   const rows = projectShelf(ctx.input, saved?.rows ?? []);
   const importRow = rows.find((r) => r.source === 'import');
+  const carriedImport = (saved?.rows ?? []).some((r) => r.source === 'import' && r.quantity > 0);
   return {
     ...state,
     shopShelves: {
@@ -279,7 +283,7 @@ export function ensureMerchantShelf(state: GameState, merchantId: string, settle
       [merchantId]: {
         worldDay: day,
         rows,
-        importDueDay: importRow ? day + ctx.wait : (saved?.importDueDay ?? ctx.wait),
+        importDueDay: importRow && !carriedImport ? day + ctx.wait : (saved?.importDueDay ?? ctx.wait),
       },
     },
   };
