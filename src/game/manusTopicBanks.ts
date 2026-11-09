@@ -107,9 +107,10 @@ const BANKS: Record<string, AuthoredTopicLine[]> = {
   ],
 };
 
-/** Vendor leftover: named stock on existing merchants — no new currency FSM. */
-export const MERCHANT_STOCK_FACT =
-  'Sells: Health Tonic; Iron Nail; Reed Salve (copper prices; same item already bought starves the Buy pad).';
+/** Vendor leftover: the live shelf line, not a fixed three-name list. */
+export function merchantShelfFact(shelfLine: string): string {
+  return `Sells: ${shelfLine} (copper prices; same item already bought starves the Buy pad).`;
+}
 
 const ROLE_VOICE_FACT: Array<{ role: RegExp; fact: string }> = [
   { role: /ruler|magistrate|mayor/, fact: 'Speech: formal, short sentences, corrects sloppy titles.' },
@@ -133,9 +134,10 @@ export function authoredTopicsFor(npcName: string): AuthoredTopicLine[] {
   return BANKS[bankKey(npcName)] ?? [];
 }
 
-export function merchantStockFactFor(roleHint: string, npcName: string): string | '' {
+export function merchantStockFactFor(roleHint: string, npcName: string, shelfLine = ''): string | '' {
+  if (!shelfLine.trim()) return '';
   if (/merchant|broker|quartermaster|fence|vendor|trader/.test(`${roleHint} ${npcName}`.toLowerCase())) {
-    return MERCHANT_STOCK_FACT;
+    return merchantShelfFact(shelfLine);
   }
   return '';
 }

@@ -1,6 +1,6 @@
 import type { GameState, Item, ItemType, NpcMemory, Rarity } from './types';
-import srdShopGear from '../data/srd/srdShopGear.json';
 import modeShopData from '../data/modeShopPrices.json';
+import { buyFromShelf, ensureMerchantShelf, merchantOnCircuit, projectShelf, sellToShelf, travellingCircuit } from './shopStock';
 import { presentNpcRecords } from './npcRecords';
 import { addItem, getItemValue, removeItem } from './inventory';
 import { changeFor, formatCp, formatPurse, gainCoins, payCoins, purseGold, purseOf, shopPriceCp, srdSaleCp, usesPurse } from './rules/coins';
@@ -92,10 +92,25 @@ export function withShopReceipt(state: GameState, receipt: ShopReceipt): GameSta
  * Null when nobody here trades.
  */
 export function merchantHere(state: GameState): NpcMemory | null {
-  return presentNpcRecords(state).find((m) => {
-    const job = m.roleHint ?? m.sheet?.job;
-    return job === 'merchant';
+  const found = presentNpcRecords(state).find((m) => {
+    const job = `${m.roleHint ?? ''} ${m.sheet?.job ?? ''}`;
+    return /\bmerchant\b/i.test(job);
   }) ?? null;
+  if (!found) return null;
+  const circuit = travellingCircuit(state, found.npcId);
+  const hub = found.location || state.currentLocation || '';
+  if (circuit && !merchantOnCircuit(circuit, state.worldDay ?? 0, hub)) return null;
+  return found;
+}
+
+export function ensuredShelf(state: GameState): { state: GameState; merchantId: string; rows: import('./types').ShopStockRow[] } | null {
+  const merchant = merchantHere(state);
+  if (!merchant) return null;
+  const settlement = merchant.location || state.currentLocation || '';
+  const next = ensureMerchantShelf(state, merchant.npcId, settlement);
+  const shelf = next.shopShelves?.[merchant.npcId];
+  if (!shelf) return null;
+  return { state: next, merchantId: merchant.npcId, rows: shelf.rows };
 }
 
 export interface StockRow { name: string; cp: number; section: string }
@@ -104,18 +119,16 @@ export interface StockRow { name: string; cp: number; section: string }
  * What a town merchant stocks: tools, adventuring gear and food. Mounts, ships and services stay off this list.
  * The copper price is shopPriceCp, the same lookup buyItem uses.
  */
-export function merchantStock(): StockRow[] {
-  const data = srdShopGear as unknown as Record<string, Array<{ name: string; cp: number }>>;
-  const rows: StockRow[] = [];
-  for (const section of Object.keys(data)) {
-    if (section !== 'tools' && section !== 'adventuring_gear' && section !== 'food_drink_lodging') continue;
-    for (const row of data[section] ?? []) {
-      const cp = shopPriceCp(row.name);
-      if (cp == null || typeof row.name !== 'string') continue;
-      rows.push({ name: row.name, cp, section });
-    }
-  }
-  return rows;
+export function merchantStock(seed = 'shop', merchantId = 'town-merchant', worldDay = 0): StockRow[] {
+  return projectShelf({
+    seed,
+    merchantId,
+    worldDay,
+    band: { low: 1, high: 3 },
+    producers: { smith: true, herbalist: true },
+    higher: true,
+    lastImportDay: -1,
+  }).map((row) => ({ name: row.name, cp: row.price, section: row.source }));
 }
 
 /** Whether the player can pay this copper price with the same coins buyItem would use. */
@@ -150,7 +163,8 @@ export function buyPriceLabel(state: GameState, name: string, quantity = 1): str
     if (gp == null || gp <= 0) return null;
     return `${gp * qty}g`;
   }
-  const cp = shopPriceCp(name);
+  const live = ensuredShelf(state)?.rows.find((row) => row.name.toLowerCase() === name.trim().toLowerCase());
+  const cp = live?.price ?? (merchantHere(state) ? null : shopPriceCp(name));
   if (cp == null) return null;
   const total = cp * qty;
   return usesPurse(state) ? formatCp(total) : `${Math.ceil(total / 100)} gold`;
@@ -195,28 +209,47 @@ export function buyItem(state: GameState, name: string, quantity = 1): BuyResult
     };
     return { ok: true, receipt, newState: withShopReceipt(added.state, receipt) };
   }
-  const cp = shopPriceCp(name);
+  const live = ensuredShelf(state);
+  const listed = live?.rows.find((row) => row.name.toLowerCase() === name.trim().toLowerCase() && row.quantity >= qty);
+  if (live && !listed) return { ok: false, reason: `${name} is not for sale here.` };
+  const cp = listed?.price ?? (live ? null : shopPriceCp(name));
   if (cp == null) return { ok: false, reason: `${name} is not for sale here.` };
   const total = cp * qty;
+  const baseState = live?.state ?? state;
   let paid: GameState;
-  if (usesPurse(state)) {
-    const left = payCoins(purseOf(state) ?? {}, total);
+  if (usesPurse(baseState)) {
+    const left = payCoins(purseOf(baseState) ?? {}, total);
     if (!left) return { ok: false, reason: `Not enough coin for ${name}.` };
     const gold = purseGold(left);
-    paid = { ...state, gold, purse: { coins: left, gold } };
+    paid = { ...baseState, gold, purse: { coins: left, gold } };
   } else {
     const gp = Math.ceil(total / 100);
-    if ((state.gold ?? 0) < gp) return { ok: false, reason: `Not enough gold for ${name}.` };
-    paid = { ...state, gold: (state.gold ?? 0) - gp };
+    if ((baseState.gold ?? 0) < gp) return { ok: false, reason: `Not enough gold for ${name}.` };
+    paid = { ...baseState, gold: (baseState.gold ?? 0) - gp };
   }
   const added = addItem(paid, {
-    id: `buy-${priceKeyId(name)}-${state.log.length}`,
+    id: `buy-${priceKeyId(name)}-${baseState.log?.length ?? 0}`,
     name,
-    rarity: 'Common',
+    rarity: listed?.rarity ?? 'Common',
     quantity: qty,
+    itemLevel: listed?.level,
     provenance: 'Bought from a merchant',
   });
   if (!added.ok) return { ok: false, reason: added.reason ?? 'No room to carry it.' };
+  let carried = added.state;
+  if (live && listed) {
+    const bought = buyFromShelf(live.rows, name, qty);
+    const shelf = carried.shopShelves?.[live.merchantId];
+    if (bought.ok && shelf) {
+      carried = {
+        ...carried,
+        shopShelves: {
+          ...(carried.shopShelves ?? {}),
+          [live.merchantId]: { ...shelf, rows: bought.rows },
+        },
+      };
+    }
+  }
   const priceText = usesPurse(state) ? formatCp(total) : `${Math.ceil(total / 100)} gold`;
   const receipt: ShopReceipt = {
     kind: 'buy',
@@ -225,7 +258,7 @@ export function buyItem(state: GameState, name: string, quantity = 1): BuyResult
     cp: total,
     text: `Bought ${qty > 1 ? `${qty} ` : ''}${name} for ${priceText}.`,
   };
-  return { ok: true, receipt, newState: withShopReceipt(added.state, receipt) };
+  return { ok: true, receipt, newState: withShopReceipt(carried, receipt) };
 }
 
 export function sellItem(state: GameState, itemId: string): SellResult {
@@ -244,7 +277,7 @@ export function sellItem(state: GameState, itemId: string): SellResult {
       cp,
       text: `Sold ${item.name} for ${soldFor}.`,
     };
-    const next = withShopReceipt(gainCoins(removeItem(state, itemId), coins), receipt);
+    const next = putOnShelf(withShopReceipt(gainCoins(removeItem(state, itemId), coins), receipt), item);
     return { ok: true, goldGained: (next.gold ?? 0) - (state.gold ?? 0), soldFor, newState: next };
   }
 
@@ -262,7 +295,23 @@ export function sellItem(state: GameState, itemId: string): SellResult {
     ok: true,
     goldGained: price,
     soldFor: `${price} gold`,
-    newState: withShopReceipt(paid, receipt),
+    newState: putOnShelf(withShopReceipt(paid, receipt), item),
+  };
+}
+
+function putOnShelf(state: GameState, item: Item): GameState {
+  const live = ensuredShelf(state);
+  if (!live) return state;
+  const sold = sellToShelf(live.rows, { name: item.name, rarity: item.rarity, level: item.itemLevel ?? 1 });
+  if (!sold.ok) return state;
+  const shelf = live.state.shopShelves?.[live.merchantId];
+  if (!shelf) return state;
+  return {
+    ...state,
+    shopShelves: {
+      ...(live.state.shopShelves ?? {}),
+      [live.merchantId]: { ...shelf, rows: sold.rows },
+    },
   };
 }
 

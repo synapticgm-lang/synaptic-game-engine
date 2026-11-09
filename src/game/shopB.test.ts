@@ -46,12 +46,12 @@ describe('shop-b: merchant present gates trading (records + role, not prose)', (
 });
 
 describe('shop-b: stock and affordability', () => {
-  it('town stock is tools, gear and food from the SRD list; no mounts or ships', () => {
+  it('town stock is the engine shelf, not a fixed catalogue of mounts', () => {
     const st = merchantStock();
     const names = st.map((r) => r.name);
-    expect(names).toContain('Rope');
-    expect(names).toContain('Rations');
-    expect(st.every((r) => ['tools', 'adventuring_gear', 'food_drink_lodging'].includes(r.section))).toBe(true);
+    expect(names).toContain('Iron Nail');
+    expect(names).toContain('Reed Salve');
+    expect(st.every((r) => ['staple', 'rotate', 'import'].includes(r.section))).toBe(true);
     expect(names).not.toContain('Camel');
   });
   it('affordability matches what buying does', () => {

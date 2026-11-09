@@ -9,6 +9,7 @@ import { cursedKeep } from '../data/campaigns/cursedKeep';
 import { summonedPact } from '../data/campaigns/summonedPact';
 import { saltRoadHeist } from '../data/campaigns/premades';
 import { createInitialState } from './defaults';
+import { shelfOfferLine } from './shopStock';
 import {
   MERCHANT_OFFER_STOCK,
   agendaFromRole,
@@ -89,7 +90,7 @@ describe('OPT-3 fields (q37-OPT3f)', () => {
     const merchants = (seeded.npcMemories ?? []).filter((m) => m.roleHint === 'merchant');
     expect(merchants.length).toBeGreaterThan(0);
     for (const m of merchants) {
-      expect(m.offer).toBe(MERCHANT_OFFER_STOCK);
+      expect(m.offer).toBe(shelfOfferLine({ seed: seeded.seed, merchantId: m.npcId, worldDay: seeded.worldDay ?? 0 }));
     }
     const patrons = (seeded.npcMemories ?? []).filter((m) => m.roleHint === 'quest-patron');
     expect(patrons.length).toBeGreaterThan(0);

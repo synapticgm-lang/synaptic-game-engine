@@ -16,6 +16,7 @@ import { activeHereSpot } from './hereSpot.ts';
 import { placeScale } from './placeAuthority.ts';
 import { isSystemWindowLabel } from './chromeAuthority.ts';
 import type { PlaceProp } from './types.ts';
+import { stockForMerchant } from './shopStock.ts';
 import { personaMannerLine } from './npcPersona.ts';
 import { parsePlayerSteps, sheetContextFromState } from './intentParser.ts';
 
@@ -31,6 +32,8 @@ export interface FactSheetPerson {
   carried?: string[];
   /** One engine-recorded signature item. Display name only. */
   signature?: string;
+  /** What this person sells today. Absent when they are not a merchant. */
+  stock?: Array<{ name: string; quantity: number; price: number }>;
 }
 
 /** One open ledger entry the writer may show (loan / promise / offer). */
@@ -320,12 +323,15 @@ export function buildFactSheet(
     const { manner, mannerCause } = mannerOf(state, r);
     const held = r.heirloom?.holderId === r.npcId ? r.heirloom.label : undefined;
     const signature = held || r.listedSignature;
+    const job = `${r.sheet?.job ?? ''} ${r.roleHint ?? ''}`;
+    const stock = /\bmerchant\b/i.test(job) ? stockForMerchant(state, r.npcId, r.location ?? placeName) : undefined;
     return {
       name: r.npcName,
       role: r.sheet?.job || r.roleHint || undefined,
       manner,
       mannerCause,
       ...(signature ? { signature, carried: [signature] } : {}),
+      ...(stock ? { stock } : {}),
     };
   });
   // Anonymous / opening cast labels on the packet witnesses that lack a memory row.

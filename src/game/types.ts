@@ -4,6 +4,24 @@ import type { ActiveDungeonState } from './mapEngine';
 import type { ComicTextAnchor } from '../types/comicScript';
 export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary';
 
+export interface ShopStockRow {
+  name: string;
+  quantity: number;
+  level: number;
+  rarity: Rarity;
+  price: number;
+  source: 'staple' | 'rotate' | 'import';
+  /** In-game way to earn the same good without real money. */
+  earnFree: 'craft' | 'dungeon' | 'cart';
+}
+
+export interface ShopShelf {
+  worldDay: number;
+  rows: ShopStockRow[];
+  /** World day the next import may arrive. */
+  importDueDay: number;
+}
+
 export type RoomPropKind = 'furniture' | 'armour' | 'weapon' | 'tool' | 'coin' | 'object' | 'other';
 
 /** A filed room object. Old saves still store a plain string in `props`. */
@@ -1305,6 +1323,8 @@ export interface GameState {
   worldHour?: number;
   /** Whole days passed on the world clock; with worldHour it is the game's one clock. */
   worldDay?: number;
+  /** Engine-owned shop shelves, keyed by merchant id. Buying and selling edit the rows. */
+  shopShelves?: Record<string, ShopShelf>;
   /** This waking day's road hours (SRD Extended Travel) and whether a day's food was found; `since` is the world-clock hour the day began. */
   roadDay?: { since: number; hours: number; fed?: boolean };
   /** World-clock hour the last long rest began (SRD: one long rest per 24 hours). */

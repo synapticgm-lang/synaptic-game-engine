@@ -402,7 +402,33 @@ function segmentPieces(prose: string, names: string[] = []): Piece[] {
   return out;
 }
 
-function nameOutside(span: string, words: Set<string>, pcName?: string): string | null {
+function stockPhrases(sheet: FactSheet): string[] {
+  const out: string[] = [];
+  for (const person of sheet.present ?? []) {
+    for (const name of stockLabels(person.stock)) {
+      const phrase = norm(name);
+      if (phrase) out.push(phrase);
+    }
+  }
+  return out;
+}
+
+/** A stock label counts only as the whole name, not as each of its words. A one-word label counts only after a/an/the. */
+function stockNamePhrase(raw: string, before: string, phrases: string[]): boolean {
+  const phrase = norm(raw);
+  if (!phrase || !phrases.includes(phrase)) return false;
+  if (phrase.includes(' ')) return true;
+  return /\b(?:a|an|the)\s+$/i.test(before);
+}
+
+/** Drop a leading capitalised article. "The" and "An" are long enough to be scanned as part of the name. */
+function stripLeadingArticle(raw: string): { name: string; article: boolean } {
+  const match = /^(?:A|An|The)\s+(.+)$/.exec(raw);
+  if (!match?.[1]) return { name: raw, article: false };
+  return { name: match[1], article: true };
+}
+
+function nameOutside(span: string, words: Set<string>, pcName?: string, phrases: string[] = []): string | null {
   const quoted = span.replace(/["“][^"”]*["”]/g, ' ');
   const quotes = span.match(/["“][^"”]*["”]/g) ?? [];
   const chunks = [quoted, ...quotes.map((q) => q.slice(1, -1))];
@@ -411,10 +437,13 @@ function nameOutside(span: string, words: Set<string>, pcName?: string): string 
       const raw = m[1]!;
       const atStart = (m.index ?? 0) < 2;
       if (atStart && !raw.includes(' ')) continue;
-      if (pcName && norm(raw) === norm(pcName)) continue;
-      const parts = norm(raw).split(' ').filter((w) => w.length >= 3 && !COMMON.has(w));
+      const { name, article } = stripLeadingArticle(raw);
+      const before = article ? 'the ' : chunk.slice(0, m.index ?? 0);
+      if (pcName && norm(name) === norm(pcName)) continue;
+      if (stockNamePhrase(name, before, phrases)) continue;
+      const parts = norm(name).split(' ').filter((w) => w.length >= 3 && !COMMON.has(w));
       if (!parts.length) continue;
-      if (parts.some((w) => !words.has(w))) return raw;
+      if (parts.some((w) => !words.has(w))) return name;
     }
   }
   return null;
@@ -443,6 +472,69 @@ function heldItem(item: string, words: Set<string>): boolean {
   return false;
 }
 
+function stockLabels(stock: FactSheet['present'][number]['stock']): string[] {
+  if (!Array.isArray(stock)) return [];
+  const out: string[] = [];
+  for (const item of stock) {
+    const name = typeof item === 'string'
+      ? item
+      : item && typeof item === 'object' && typeof item.name === 'string'
+        ? item.name
+        : '';
+    if (name.trim()) out.push(name.trim());
+  }
+  return out;
+}
+
+function saleWares(span: string): string[] | null {
+  if (!/\b(sells|sold|offers|offered|for sale)\b/i.test(span)) return null;
+  const body = span.match(/\b(?:sells|offers|offered|sold)\s+(.+?)(?=\s+for sale\b|\s+from\b|[.]|$)/i)?.[1];
+  if (!body) return null;
+  const parts = body.split(/\s*,\s*|\s+and\s+/i)
+    .map((part) => part.replace(/^(?:a|an|the)\s+/i, '').trim())
+    .filter((part) => part.length > 0);
+  return parts.length ? parts : null;
+}
+
+/** Unlisted sale names. A blank stock entry is skipped. Throws never leave this function. */
+function unlistedWare(span: string, sheet: FactSheet): string | null {
+  try {
+    const shops = (sheet.present ?? []).filter((p) => Array.isArray(p.stock));
+    if (!shops.length) return null;
+    const wares = saleWares(span);
+    if (!wares) return null;
+    const stock = shops.flatMap((p) => stockLabels(p.stock));
+    const missing = wares.filter((name) => !stock.some((have) => have.toLowerCase() === name.toLowerCase()));
+    if (!missing.length || missing.length < wares.length) return null;
+    return missing[0] ?? null;
+  } catch {
+    return 'unknown ware';
+  }
+}
+
+/** Drop unlisted conjuncts from a sale list and keep the wares that are on the shelf. */
+export function proseWithoutUnlistedWares(span: string, sheet: FactSheet): { text: string; changed: boolean } {
+  try {
+    const shops = (sheet.present ?? []).filter((p) => Array.isArray(p.stock));
+    const wares = saleWares(span);
+    if (!shops.length || !wares || wares.length < 2) return { text: span, changed: false };
+    const stock = shops.flatMap((p) => stockLabels(p.stock));
+    const missing = wares.filter((name) => !stock.some((have) => have.toLowerCase() === name.toLowerCase()));
+    const kept = wares.filter((name) => stock.some((have) => have.toLowerCase() === name.toLowerCase()));
+    if (!missing.length || !kept.length) return { text: span, changed: false };
+    let text = span;
+    for (const name of missing) {
+      const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      text = text.replace(new RegExp(`\\s*(?:,|and)\\s+(?:a|an|the)\\s+${esc}\\b`, 'i'), '');
+      text = text.replace(new RegExp(`\\b(?:a|an|the)\\s+${esc}\\b\\s*(?:,|and)?\\s*`, 'i'), '');
+    }
+    text = text.replace(/\s+/g, ' ').replace(/\s+([.,])/g, '$1').trim();
+    return { text, changed: text !== span };
+  } catch {
+    return { text: span, changed: false };
+  }
+}
+
 function classifySpan(
   span: string,
   sheet: FactSheet,
@@ -452,6 +544,8 @@ function classifySpan(
   pcName?: string,
   thirdPerson?: boolean
 ): Pick<FactSpan, 'verdict' | 'reason'> {
+  const offShelf = unlistedWare(span, sheet);
+  if (offShelf) return { verdict: 'new/wrong', reason: `not in stock: ${offShelf}` };
   if (thirdPerson) {
     const outside = span.replace(/["“][^"”]*["”]/g, ' ');
     if (/\b(you|your|yours)\b/i.test(outside)) return { verdict: 'new/wrong', reason: 'narrator you' };
@@ -487,7 +581,7 @@ function classifySpan(
   if (/\b(?=[A-Z0-9_]*[0-9_])[A-Z][A-Za-z0-9_]{5,}\b/.test(span)) {
     return { verdict: 'new/wrong', reason: 'invented token' };
   }
-  const outsider = nameOutside(span, words, pcName);
+  const outsider = nameOutside(span, words, pcName, stockPhrases(sheet));
   if (outsider) return { verdict: 'new/wrong', reason: `name not on the sheet: ${outsider}` };
   const titled = span.match(/\b(?:captain|ser|sir|lord|lady|dame|king|queen|prince|princess|master)\s+([a-z][a-z'-]{2,})\b/i);
   if (titled && !words.has(titled[1]!.toLowerCase()) && !COMMON.has(titled[1]!.toLowerCase())) {
@@ -826,14 +920,15 @@ export async function applyFactGate(args: {
       };
     }
     const body = role === 'narration' ? narrationOnly(text) : text;
-    const judged = classifySpan(body, args.sheet, words, holdings, blob, args.pcName, args.thirdPerson);
-    const route = routeSpan(body, judged.verdict, judged.reason, args.sheet, args.pcName, words);
-    const objectOnly = route === 'colour' && isPlacedIndefinite(body);
+    const trimmed = proseWithoutUnlistedWares(body, args.sheet);
+    const judged = classifySpan(trimmed.text, args.sheet, words, holdings, blob, args.pcName, args.thirdPerson);
+    const route = routeSpan(trimmed.text, judged.verdict, judged.reason, args.sheet, args.pcName, words);
+    const objectOnly = route === 'colour' && isPlacedIndefinite(trimmed.text);
     return {
       id,
-      text,
+      text: trimmed.changed ? trimmed.text : text,
       verdict: judged.verdict,
-      reason: judged.reason,
+      reason: trimmed.changed && judged.verdict !== 'new/wrong' ? 'repaired' : judged.reason,
       speech: false,
       objectOnly,
       route: objectOnly ? 'candidate' : route,
