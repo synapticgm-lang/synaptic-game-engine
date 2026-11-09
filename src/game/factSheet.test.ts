@@ -4,6 +4,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
+import { prepareWriterInputWithTownsfolk } from './townsfolk';
+import { applyFactGate } from './factGate';
 import { buildFactSheet, formatFactSheetForWriter, hashFactSheet } from './factSheet';
 import { buildTurnLog, diceRollsFromReceipts, sliceState } from './turnLog';
 import type { GameState } from './types';
@@ -124,5 +126,61 @@ describe('M1 factSheet', () => {
     expect(log.v).toBe(1);
     expect(log.diceRolls[0]?.dc ?? log.diceRolls[0]?.total).toBeTruthy();
     expect(log.factSheetHash).toBe(hashFactSheet(sheet));
+  });
+
+  it('keeps a 13th carried item on the sheet when this turn gained it', async () => {
+    const older = Array.from({ length: 12 }, (_, i) => ({
+      id: `old-${i}`,
+      name: `Nail ${i + 1}`,
+      quantity: 1,
+    }));
+    const state = baseState({
+      inventory: [...older, { id: 'key', name: 'Cellar Key', quantity: 1 }],
+    });
+    const capped = buildFactSheet(state, buildCompletedEventPacket(state, 'Look around'), 'Look around');
+    expect(capped.gear.carrying).toHaveLength(12);
+    expect(capped.gear.carrying).not.toContain('Cellar Key');
+    const dropped = await applyFactGate({
+      prose: 'Jax pocketed the cellar key.',
+      sheet: capped,
+      pcName: 'Jax',
+    });
+    expect(dropped.prose).not.toMatch(/cellar key/i);
+
+    const gained = buildFactSheet(
+      state,
+      buildCompletedEventPacket(state, 'Take the cellar key', { loot: ['Cellar Key'] }),
+      'Take the cellar key',
+    );
+    expect(gained.gear.carrying).toContain('Cellar Key');
+    const kept = await applyFactGate({
+      prose: 'Jax pocketed the cellar key.',
+      sheet: gained,
+      pcName: 'Jax',
+    });
+    expect(kept.prose).toMatch(/pocketed the cellar key/i);
+  });
+
+  it('a live turn keeps a newly gained 13th item without a hand-written loot extra', async () => {
+    const older = Array.from({ length: 12 }, (_, i) => ({
+      id: `old-${i}`,
+      name: `Nail ${i + 1}`,
+      quantity: 1,
+    }));
+    const before = baseState({ inventory: older });
+    const after = baseState({
+      inventory: [...older, { id: 'key', name: 'Cellar Key', quantity: 1 }],
+    });
+    const prepared = prepareWriterInputWithTownsfolk(after, 'Take the cellar key', {
+      priorState: before,
+    });
+    expect(prepared.packet.loot).toContain('Cellar Key');
+    expect(prepared.packet.factSheet?.gear.carrying).toContain('Cellar Key');
+    const kept = await applyFactGate({
+      prose: 'Jax pocketed the cellar key.',
+      sheet: prepared.packet.factSheet!,
+      pcName: 'Jax',
+    });
+    expect(kept.prose).toMatch(/pocketed the cellar key/i);
   });
 });

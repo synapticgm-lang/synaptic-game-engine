@@ -1416,6 +1416,10 @@ export async function headlessFateTurn(
   }
 ): Promise<{ state: GameState; telemetry: TurnTelemetry }> {
   const started = Date.now();
+  const priorStateForGear: GameState = {
+    ...state,
+    inventory: (state.inventory ?? []).map((item) => ({ ...item })),
+  };
   const startedAt = new Date(started).toISOString();
   writerCallMeter.calls = 0;
   writerCallMeter.ms = 0;
@@ -1935,6 +1939,7 @@ export async function headlessFateTurn(
     readerStepResults: readerStepResults.length ? readerStepResults : undefined,
     travel: travelOutcome(travelCommit, hereBeforeMove, arcState),
     reader: readerFlags(settings),
+    priorState: priorStateForGear,
   });
   arcState = preparedEvent.state;
   const frozenEngineFacts = captureTurnEngineFacts(arcState);
