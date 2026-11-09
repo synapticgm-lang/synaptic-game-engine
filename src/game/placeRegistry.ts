@@ -4,7 +4,7 @@
  */
 import type { GameState, PlaceExitRow, PlaceRecord } from './types';
 import { dungeonRoomPlace, placeIdFromName, resolvePlace } from './places';
-import { hubTravelTargets, hubsForBibleId, isDungeonHub, matchHub } from './outdoorHubs';
+import { hubTravelTargets, hubsForBibleId, matchHub } from './outdoorHubs';
 import { isRoadLabel, isTripHere } from './travelJourney';
 import { placeScale } from './placeAuthority';
 
@@ -207,6 +207,8 @@ function pushExit(out: PlaceExitRow[], seen: Set<string>, state: GameState, labe
   const e = tidy(label);
   const key = e.toLowerCase();
   if (!e || seen.has(key)) return;
+  const place = resolvePlace(state.places, e);
+  if (place && (place.closed || place.arcStatus === 'closed')) return;
   seen.add(key);
   const id = sourceId(state, e, explicit);
   out.push({ id: id || e, label: e });
@@ -285,21 +287,6 @@ function atlasNeighborLabels(state: GameState, raw: string): string[] {
   return [...same, ...near];
 }
 
-/**
- * Indoor under a dungeon hub stays sealed. A hubless story room (Static House kitchen)
- * has sibling places, so it is not a dead end.
- */
-function placeIsSealedInterior(state: GameState, raw: string, from?: string): boolean {
-  const hubs = hubsForBibleId(state.campaignBibleId);
-  if (matchHub(hubs, raw)) return false;
-  if (placeScale(raw) !== 'indoor') return false;
-  const parentHub = parentHubOf(state, raw, from);
-  const parentHubRow = matchHub(hubs, parentHub);
-  if (isDungeonHub(parentHubRow ?? parentHub)) return true;
-  const storySiblings = !hubs.length && storyPlaceExitLabels(state, raw, raw).length > 0;
-  return !parentHub && !storySiblings;
-}
-
 function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRow[] {
   const hubs = hubsForBibleId(state.campaignBibleId);
   const hub = matchHub(hubs, raw);
@@ -309,7 +296,6 @@ function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRo
   const parentHub = hub ? '' : parentHubOf(state, raw, from);
   const indoorLocal = !hub && placeScale(raw) === 'indoor';
   const storySiblings = !hubs.length && storyPlaceExitLabels(state, raw, hubName).length > 0;
-  if (placeIsSealedInterior(state, raw, from)) return [];
   const out: PlaceExitRow[] = [];
   const seen = new Set<string>();
   const notHere = (n: string) => {
@@ -347,9 +333,10 @@ function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRo
     }
     if (out.length) return out.slice(0, 5);
   }
-  if (indoorLocal && !storySiblings) {
-    if (notHere(parentHub)) pushExit(out, seen, state, parentHub);
-    return out.slice(0, 5);
+  // A room under a parent keeps that door. No parent: fall through to a hub, a sibling, or any other open place.
+  if (indoorLocal && !storySiblings && notHere(parentHub)) {
+    pushExit(out, seen, state, parentHub);
+    if (out.length) return out.slice(0, 5);
   }
   if (!hubs.length) {
     // 28p / MAP2: hubless worlds keep the story-place graph (Ford Camp → other Millstone places).
@@ -433,6 +420,9 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
   let working = state;
   if (isQuestPlaceDescription(rawIn) && raw.toLowerCase() !== rawIn.toLowerCase()) {
     working = closeRemappedDescriptionPlace(working, rawIn, raw);
+    if (tidy(working.currentLocation).toLowerCase() === rawIn.toLowerCase()) {
+      working = { ...working, currentLocation: raw };
+    }
   }
   const hubs = hubsForBibleId(working.campaignBibleId);
   const hub = matchHub(hubs, raw);
@@ -442,16 +432,13 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
   if (existing && (existing.exits?.length ?? 0) > 0) return working;
 
   const parentHub = hub ? '' : parentHubOf(working, raw, from ?? undefined);
-  const sealed = placeIsSealedInterior(working, raw, from ?? undefined);
   const exits = seedExitRows(working, raw, from ?? undefined).map((row) => row.label);
-  const closed = sealed;
   // Never lock an open place as a built card with zero exits (Ford Camp hubless hole).
-  const lockCard = closed || exits.length > 0;
+  const lockCard = exits.length > 0;
   if (existing) {
     const patched: PlaceRecord = {
       ...existing,
       exits,
-      ...(closed ? { closed: true, arcStatus: 'closed' as const } : {}),
       ...(lockCard ? { cardBuiltTurn: working.turn ?? 0 } : {}),
       parentHub: hub ? existing.parentHub : existing.parentHub || parentHub || undefined,
       aliases: Array.from(new Set([...(existing.aliases ?? []), hubName, raw])).slice(0, 12),
@@ -466,8 +453,7 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
     name: hubName,
     aliases: Array.from(new Set([hubName, raw])).slice(0, 12),
     mapScale: 'street',
-    arcStatus: closed ? 'closed' : 'open',
-    ...(closed ? { closed: true } : {}),
+    arcStatus: 'open',
     exits,
     ...(lockCard ? { cardBuiltTurn: working.turn ?? 0 } : {}),
     parentHub: hub ? undefined : parentHub || undefined,

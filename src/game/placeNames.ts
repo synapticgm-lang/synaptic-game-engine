@@ -11,7 +11,8 @@ import { playerFacingLocation, underwayHereLabel } from './locationName';
 import { dungeonRoomPlace } from './places';
 import { isInteriorPlace } from './placeAuthority';
 import { dungeonRoomWays } from './dungeonCard';
-import { placeExits } from './placeRegistry';
+import { canonicalTravelDest, isTravelDestHere, placeExits } from './placeRegistry';
+import { wayOutMovesPlayer } from './sceneAffordances';
 import { matchLitRpgMainSpine } from '@/data/quests/litrpgMainSpines';
 import { matchTabletopMainSpine } from '@/data/quests/tabletopMainSpines';
 import { matchStoryRpgMainSpine } from '@/data/quests/storyRpgMainSpines';
@@ -182,7 +183,15 @@ export function exitPlaceNames(state: GameState): string[] {
     const ways = dungeonRoomWays(state);
     if (ways) return ways;
   }
-  return placeExits(state, playerFacingLocation(state));
+  const out: string[] = [];
+  for (const raw of placeExits(state, playerFacingLocation(state))) {
+    const label = canonicalTravelDest(state, raw) ?? raw;
+    if (!label || isTravelDestHere(state, label)) continue;
+    if (!wayOutMovesPlayer(state, `Travel toward ${label}`)) continue;
+    if (out.some((n) => n.toLowerCase() === label.toLowerCase())) continue;
+    out.push(label);
+  }
+  return out;
 }
 
 /**
