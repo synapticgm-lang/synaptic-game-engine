@@ -102,6 +102,10 @@ function contradictsDecided(state: GameState, p: MidVisitProposal): string | nul
     return `contradicts decided fact: "${p.title}" already settled`;
   }
   for (const q of state.quests ?? []) {
+    if (q.status !== 'active') continue;
+    if ((q.name ?? '').trim().toLowerCase() === title) return `repeats the open quest "${q.name}"`;
+  }
+  for (const q of state.quests ?? []) {
     if (q.status !== 'completed' && q.status !== 'failed') continue;
     const n = (q.name ?? '').toLowerCase();
     if (n && (title.includes(n) || summary.includes(n))) {
@@ -132,8 +136,25 @@ function genreOk(state: GameState, p: MidVisitProposal): string | null {
  * Validate and optionally commit a mid-visit proposal.
  * Stub-friendly: tests pass a proposal object; live path can harvest writer `<quest-add>` later.
  */
+const NOT_IN_MEDIEVAL = /\b(radio|firearm|pistol|rifle|spacecraft|spaceship|motorcar|automobile)\b/i;
+
+/** A modern device with no record on a medieval save is not a quest. PYOA never accepts one. */
+function genreNounFail(state: GameState, p: MidVisitProposal): string | null {
+  if (state.engineMode === 'pyoa') return 'pyoa is a fixed story and does not take mid-visit quests';
+  const tokens = settingGenreTokens(state);
+  const modern = tokens.includes('modern') || tokens.includes('scifi') || tokens.includes('litrpg');
+  if (modern) return null;
+  const word = `${p.title} ${p.summary}`.match(NOT_IN_MEDIEVAL)?.[0]?.toLowerCase();
+  if (!word) return null;
+  const known = `${JSON.stringify(state.inventory ?? [])} ${JSON.stringify(state.places ?? [])} ${(state.npcMemories ?? []).map((m) => m.npcName).join(' ')}`.toLowerCase();
+  if (known.includes(word)) return null;
+  return `genre: ${word} is not in this setting`;
+}
+
 export function evaluateMidVisitProposal(state: GameState, proposal: MidVisitProposal): MidVisitDecision {
   const place = placeKey(state, proposal.place);
+  const pyoaOrNoun = genreNounFail(state, proposal);
+  if (pyoaOrNoun) return { ok: false, reason: 'genre', detail: pyoaOrNoun, state };
   const genreFail = genreOk(state, proposal);
   if (genreFail) return { ok: false, reason: 'genre', detail: genreFail, state };
 

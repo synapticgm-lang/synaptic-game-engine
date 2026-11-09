@@ -137,8 +137,14 @@ describe('OPT-2 quest generator (q38-OPT2)', () => {
     ];
     const unbound = applyQuestAddProposals(unboundEv, filled);
     expect(unbound.events.length).toBe(0);
-    expect(unbound.notes).toContain('unbound quest');
-    expect((unbound.state.questGen?.unboundLog ?? []).length).toBeGreaterThan(0);
+    expect(unbound.notes.some((n) => n.startsWith('mid-visit accepted'))).toBe(true);
+    expect(unbound.state.quests?.some((q) => q.name === 'Invented Side Job')).toBe(true);
+    const radio = applyQuestAddProposals(
+      [{ type: 'quest-add', id: 'radio', name: 'Learn the radio', questType: 'side', description: 'Learn how the radio works.' }],
+      filled,
+    );
+    expect(radio.state.quests?.some((q) => q.name === 'Learn the radio')).toBe(false);
+    expect(radio.notes.some((n) => n.startsWith('genre'))).toBe(true);
   });
 
   it('OPT2-4: spacing window ≤1 new quest; open quests ≥1 on ≥90% of turns', () => {
