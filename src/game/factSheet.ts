@@ -152,13 +152,33 @@ function questRows(state: GameState): FactSheetQuest[] {
     });
 }
 
-function gearOf(state: GameState): FactSheetGear {
+/**
+ * The sheet lists at most `cap` carried names, and also any of those names gained this turn.
+ * A 13th older item stays off the sheet. A 13th item gained this turn stays on it, so the fact
+ * gate does not treat that gain as unlisted and drop the sentence.
+ */
+export function carryingForSheet(names: string[], gainedThisTurn: readonly string[] = [], cap = 12): string[] {
+  const listed = names.slice(0, cap);
+  const have = new Set(listed.map((name) => name.trim().toLowerCase()).filter(Boolean));
+  const held = new Set(names.map((name) => name.trim().toLowerCase()).filter(Boolean));
+  for (const raw of gainedThisTurn) {
+    const name = raw.trim();
+    const key = name.toLowerCase();
+    if (!key || have.has(key) || !held.has(key)) continue;
+    const display = names.find((item) => item.trim().toLowerCase() === key) ?? name;
+    listed.push(display);
+    have.add(key);
+  }
+  return listed;
+}
+
+function gearOf(state: GameState, gainedThisTurn: readonly string[] = []): FactSheetGear {
   const kit = writerFacts(state);
   const worn = kit.carried.filter((i) => i.equipped).map((i) => i.name);
   const carrying = kit.carried.filter((i) => !i.equipped).map((i) => i.name);
   return {
     worn,
-    carrying: carrying.slice(0, 12),
+    carrying: carryingForSheet(carrying, gainedThisTurn),
     inHand: weaponInHand(state),
     gold: typeof state.gold === 'number' ? state.gold : undefined,
   };
@@ -287,7 +307,7 @@ export function buildFactSheet(
     },
     present,
     openLedger,
-    gear: gearOf(state),
+    gear: gearOf(state, packet.loot ?? []),
     beat: {
       verb: packet.verb,
       outcome: packet.outcome,
