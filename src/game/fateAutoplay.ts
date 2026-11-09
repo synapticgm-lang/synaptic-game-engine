@@ -34,7 +34,7 @@ import {
   isNsfwCampaign,
   type CampaignBible,
 } from '@/data/campaigns';
-import { callGm, callGmRepair } from './aiService';
+import { callGm, callGmCheck, callGmRepair } from './aiService';
 import {
   captureTurnEngineFacts,
   repairParentExtra,
@@ -47,7 +47,7 @@ import {
   storyAfterClauseCheck,
   type ClauseCheckRecord,
 } from './clauseCheck';
-import { applyFactGate } from './factGate';
+import { applyFactGate, isFactCheckEnabled, makeHostedFactChecker } from './factGate';
 import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import {
   enableAutoplayWriter,
@@ -2050,6 +2050,7 @@ Do NOT print dice notation or CODE ENFORCED.
       const sheet = arcState.completedEvent?.factSheet ?? writerPacket.factSheet;
       const draft = gmText;
       if (sheet && draft.trim()) {
+        const factCheckOn = isFactCheckEnabled();
         const gate = await applyFactGate({
           prose: draft,
           sheet,
@@ -2057,6 +2058,10 @@ Do NOT print dice notation or CODE ENFORCED.
           allowNames: writerPacket.allowlist,
           recentProse: recentGmBeatTexts(arcState),
           thirdPerson: narratesPcInThirdPerson(pcPov(arcState.character, settings.perspective)),
+          factCheckEnabled: factCheckOn,
+          factCheck: factCheckOn
+            ? makeHostedFactChecker((payload) => callGmCheck(arcState, payload, settings))
+            : undefined,
         });
         if (gate.withheld) {
           const page = pageWhenClauseWithheld(arcState, writerPacket, playerInput);

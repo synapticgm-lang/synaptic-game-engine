@@ -50,10 +50,10 @@ import {
   gameStateToLocalSlot,
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
-import { callGm, callGmRepair, type GmResult } from './aiService';
+import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
 import { captureTurnEngineFacts, repairParentExtra, withTrainLogJob } from './trainLog';
 import { storyAfterClauseCheck } from './clauseCheck';
-import { applyFactGate } from './factGate';
+import { applyFactGate, isFactCheckEnabled, makeHostedFactChecker } from './factGate';
 import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
@@ -3211,6 +3211,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           const sheet = writerPacket?.factSheet ?? liveCurrent.completedEvent?.factSheet;
           const draft = result.text ?? '';
           if (sheet && draft.trim()) {
+            const factCheckOn = isFactCheckEnabled();
             const gate = await applyFactGate({
               prose: draft,
               sheet,
@@ -3218,6 +3219,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               allowNames: writerPacket?.allowlist,
               recentProse: recentGmBeatTexts(liveCurrent),
               thirdPerson: narratesPcInThirdPerson(pcPov(liveCurrent.character, settingsRef.current.perspective)),
+              factCheckEnabled: factCheckOn,
+              factCheck: factCheckOn
+                ? makeHostedFactChecker((payload) => callGmCheck(liveCurrent, payload, settingsRef.current))
+                : undefined,
             });
             if (gate.withheld) {
               const page = pageWhenClauseWithheld(liveCurrent, writerPacket, sanitizedInput);

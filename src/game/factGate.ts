@@ -8,10 +8,14 @@ import { splitProseSentences } from './proseSentences';
 
 export type FactVerdict = 'colour' | 'allowed' | 'new/wrong' | 'UNSURE';
 
+export type FactRoute = 'colour' | 'allowed' | 'new/wrong' | 'candidate';
+
 export interface FactSpan {
   id: string;
   text: string;
   verdict: FactVerdict;
+  /** How code routed the span before any checker. */
+  route: FactRoute;
   reason: string;
 }
 
@@ -45,6 +49,30 @@ const COMMON = new Set([
 export function isUnsureFactCheckEnabled(): boolean {
   return process.env.SGM_UNSURE_FACT_CHECK === 'on';
 }
+
+/**
+ * The batched fact check uses the hosted gm-turn path.
+ * SGM_FACT_CHECK=off keeps the code verdicts. The test runner stays offline
+ * unless a test passes its own checker.
+ */
+export function isFactCheckEnabled(): boolean {
+  const flag = process.env.SGM_FACT_CHECK ?? (import.meta.env?.VITE_SGM_FACT_CHECK as string | undefined);
+  if (flag === 'off') return false;
+  if (flag === 'on') return true;
+  if (process.env.VITEST === 'true' || import.meta.env?.MODE === 'test') return false;
+  return true;
+}
+
+export interface CandidateCheck {
+  n: number;
+  verdict: 'keep' | 'remove' | 'repair-once';
+  text?: string;
+}
+
+export type FactChecker = (input: {
+  sheet: FactSheet;
+  lines: Array<{ n: number; text: string }>;
+}) => Promise<CandidateCheck[]>;
 
 function norm(s: string): string {
   return (s ?? '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -314,6 +342,116 @@ function playerTransfer(span: string, pcName?: string): boolean {
   return give.test(span) || take.test(span);
 }
 
+function isSpeech(span: string): boolean {
+  if (!/["“]/.test(span)) return false;
+  const narration = span.replace(/["“][^"”]*["”]/g, ' ').trim();
+  if (!narration) return true;
+  if (playerTransfer(narration) || partyPossession(narration) || MOVE.test(narration)) return false;
+  if (falseDestination(narration, new Set())) return false;
+  const words = narration
+    .replace(/[^A-Za-z' ]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w && !/^(said|says|asked|whispered|told|replied|answers|answered|called)$/i.test(w));
+  return words.length <= 6;
+}
+
+function mechanicalNow(span: string): boolean {
+  const quoted = [...span.matchAll(/["“]([^"”]*)["”]/g)].map((m) => m[1] ?? '').join(' ');
+  const claim = quoted || span;
+  return /\byou(?:'re| are) (?:dead|wounded|holding|carrying)\b/i.test(claim)
+    || /\byou (?:now )?(?:hold|have|carry|pocket|receive|die)\b/i.test(claim)
+    || /\byour (?:hp|health|hit points)\b/i.test(claim);
+}
+
+function mentionsFactAgent(span: string, sheet: FactSheet, pcName?: string): boolean {
+  if (/\byou(?:r|rs)?\b/i.test(span.replace(/["“][^"”]*["”]/g, ' '))) return true;
+  if (partySubject(span, sheet, pcName)) return true;
+  return deadNames(sheet).some((name) => new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(span));
+}
+
+function possessionCue(span: string): boolean {
+  if (!/\b(has|have|holds|hold|holding|carries|carry|carrying|keeps|kept|pockets|pocketed|hands|gives|gave|offers|sells|takes|took|taken|found|receives|received|owns)\b/i.test(span)) {
+    return false;
+  }
+  return ITEMISH.test(span) || LOOSE_ITEM.test(span);
+}
+
+function motionCue(span: string): boolean {
+  const moves = /\b(set out|arrived|walked|headed|went|slipped|stepped|ran|travell?ed|moved|crept|hurried|strode)\b/i.test(span);
+  const toward = /\b(toward|towards|into|through|across|past|beside|along|around|over|under|down|up|at|for|to)\b/i.test(span);
+  return MOVE.test(span) || (moves && toward);
+}
+
+function capStart(text: string): string {
+  return text.replace(/^(\s*)([a-z])/, (_, space: string, ch: string) => space + ch.toUpperCase());
+}
+
+export function formatFactCheckRequest(input: {
+  sheet: FactSheet;
+  lines: Array<{ n: number; text: string }>;
+}): string {
+  return [
+    'Fact check. One verdict for every numbered line: keep, remove, or repair-once.',
+    'keep = scenery or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
+    'Words inside quotation marks are speech. Remove a quote only if it states a mechanical outcome for the player right now.',
+    'Reply as JSON: [{"n":1,"verdict":"keep"}]. A repair-once row may include "text".',
+    'SHEET:',
+    JSON.stringify(input.sheet),
+    'LINES:',
+    ...input.lines.map((line) => `${line.n}. ${line.text}`),
+  ].join('\n');
+}
+
+export function parseFactCheckReply(text: string): CandidateCheck[] {
+  const trimmed = (text ?? '').trim();
+  const start = trimmed.indexOf('[');
+  const end = trimmed.lastIndexOf(']');
+  if (start >= 0 && end > start) {
+    try {
+      const parsed = JSON.parse(trimmed.slice(start, end + 1)) as unknown;
+      if (Array.isArray(parsed)) {
+        const rows: CandidateCheck[] = [];
+        for (const row of parsed) {
+          if (!row || typeof row !== 'object') continue;
+          const rec = row as { n?: unknown; verdict?: unknown; text?: unknown };
+          const n = Number(rec.n);
+          const verdict = String(rec.verdict ?? '').toLowerCase();
+          if (!Number.isInteger(n)) continue;
+          if (verdict !== 'keep' && verdict !== 'remove' && verdict !== 'repair-once') continue;
+          rows.push({
+            n,
+            verdict,
+            text: typeof rec.text === 'string' ? rec.text : undefined,
+          });
+        }
+        return rows;
+      }
+    } catch {
+      /* A broken JSON blob fails closed per span below. */
+    }
+  }
+  const rows: CandidateCheck[] = [];
+  for (const line of trimmed.split('\n')) {
+    const match = line.match(/^\s*(\d+)\s*[:.)-]?\s*(keep|remove|repair-once)\b(?:\s*:\s*(.+))?/i);
+    if (!match) continue;
+    const verdict = match[2]!.toLowerCase() as CandidateCheck['verdict'];
+    rows.push({ n: Number(match[1]), verdict, text: match[3]?.trim() });
+  }
+  return rows;
+}
+
+export function makeHostedFactChecker(call: (payload: string) => Promise<string>): FactChecker {
+  return async (input) => parseFactCheckReply(await call(formatFactCheckRequest(input)));
+}
+
+export function estimateFactCheckTokens(sheet: FactSheet, lines: string[]): { input: number; output: number } {
+  const body = formatFactCheckRequest({
+    sheet,
+    lines: lines.map((text, i) => ({ n: i + 1, text })),
+  });
+  return { input: Math.ceil(body.length / 4), output: Math.max(8, lines.length * 12) };
+}
+
 function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse: string[]): FactGateResult {
   const recent = new Set(recentProse.flatMap((p) => segmentFactSpans(p).map((s) => norm(s))).filter(Boolean));
   let kept = spans.map((s, i) => ({ s, i })).filter(({ s }) => s.verdict === 'colour' || s.verdict === 'allowed');
@@ -331,13 +469,14 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
       prevIndex = i;
       continue;
     }
+    const adjacent = !prev || i === prevIndex + 1;
     if (prev) {
-      const adjacent = i === prevIndex + 1;
       if (adjacent) prose += source.slice(prev.end, piece.start);
       else if (prose && !/[.!?…]\s*$/.test(prose)) prose += '. ';
       else if (prose && !/\s$/.test(prose)) prose += ' ';
     }
-    prose += source.slice(piece.start, piece.end);
+    const slice = source.slice(piece.start, piece.end);
+    prose += adjacent ? slice : capStart(slice);
     prev = piece;
     prevIndex = i;
   }
@@ -351,6 +490,16 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
   };
 }
 
+function routeSpan(text: string, verdict: FactVerdict, reason: string, sheet: FactSheet, pcName?: string): FactRoute {
+  if (isSpeech(text) && !mechanicalNow(text)) return 'colour';
+  if (verdict === 'new/wrong') return 'new/wrong';
+  if (verdict === 'allowed' && reason === 'item is on the sheet') return 'allowed';
+  if (verdict === 'UNSURE' || mentionsFactAgent(text, sheet, pcName) || possessionCue(text) || motionCue(text)) {
+    return 'candidate';
+  }
+  return 'colour';
+}
+
 export async function applyFactGate(args: {
   prose: string;
   sheet: FactSheet;
@@ -362,18 +511,71 @@ export async function applyFactGate(args: {
   repair?: (spans: FactSpan[]) => Promise<string>;
   /** Close third person: narrator "you" outside quotes is a wrong fact. */
   thirdPerson?: boolean;
+  /** One batched check for candidate spans. Tests pass a fake. */
+  factCheck?: FactChecker;
+  /** Defaults to isFactCheckEnabled(). Off: candidates keep the code verdict. */
+  factCheckEnabled?: boolean;
 }): Promise<FactGateResult> {
   const words = allowWords(args.sheet, args.pcName, args.allowNames);
   const blob = packetBlob(args.sheet, args.pcName, args.allowNames);
-  const judge = (text: string, id: string): FactSpan => ({
-    id,
-    text,
-    ...classifySpan(text, args.sheet, words, blob, args.pcName, args.thirdPerson),
-  });
+  const judge = (text: string, id: string): FactSpan => {
+    const judged = classifySpan(text, args.sheet, words, blob, args.pcName, args.thirdPerson);
+    const speech = isSpeech(text) && !mechanicalNow(text);
+    return {
+      id,
+      text,
+      verdict: speech ? 'colour' : judged.verdict,
+      reason: speech ? 'speech' : judged.reason,
+      route: routeSpan(text, speech ? 'colour' : judged.verdict, speech ? 'speech' : judged.reason, args.sheet, args.pcName),
+    };
+  };
   const pieces = segmentPieces(args.prose);
   const spans: FactSpan[] = pieces.map((piece, i) => judge(piece.text, `s${i + 1}`));
+  const factOn = (args.factCheckEnabled ?? isFactCheckEnabled()) && !!args.factCheck;
+  if (factOn && args.factCheck) {
+    const candidates = spans.filter((s) => s.route === 'candidate');
+    if (candidates.length) {
+      let reply: CandidateCheck[] = [];
+      try {
+        const got = await args.factCheck({
+          sheet: args.sheet,
+          lines: candidates.map((s, i) => ({ n: i + 1, text: s.text })),
+        });
+        reply = Array.isArray(got) ? got : [];
+      } catch {
+        reply = [];
+      }
+      candidates.forEach((span, i) => {
+        const got = reply.find((row) => row.n === i + 1);
+        if (!got || (got.verdict !== 'keep' && got.verdict !== 'remove' && got.verdict !== 'repair-once')) {
+          span.verdict = 'new/wrong';
+          span.reason = 'checker missed this line';
+          return;
+        }
+        if (got.verdict === 'keep') {
+          if (span.verdict !== 'allowed') span.verdict = 'colour';
+          span.reason = 'checker kept';
+          return;
+        }
+        if (got.verdict === 'repair-once' && got.text?.trim()) {
+          const again = judge(got.text.trim(), span.id);
+          if (again.verdict === 'new/wrong') {
+            span.verdict = 'new/wrong';
+            span.reason = 'checker repair still wrong';
+            return;
+          }
+          span.text = got.text.trim();
+          span.verdict = again.verdict === 'allowed' ? 'allowed' : 'colour';
+          span.reason = 'repaired';
+          return;
+        }
+        span.verdict = 'new/wrong';
+        span.reason = 'checker removed';
+      });
+    }
+  }
   if (args.repair) {
-    const bad = spans.filter((s) => s.verdict === 'new/wrong');
+    const bad = spans.filter((s) => s.verdict === 'new/wrong' && !s.reason.startsWith('checker'));
     if (bad.length) {
       const raw = (await args.repair(bad)) ?? '';
       const repaired = segmentFactSpans(raw).map((text, i) => judge(text, `r${i + 1}`));

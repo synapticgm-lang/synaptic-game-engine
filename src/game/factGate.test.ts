@@ -2,7 +2,7 @@
  * Code-first fact gate. No model calls. The checker and repair hooks are stubs.
  */
 import { describe, expect, it } from 'vitest';
-import { applyFactGate, isUnsureFactCheckEnabled } from './factGate';
+import { applyFactGate, estimateFactCheckTokens, isFactCheckEnabled, isUnsureFactCheckEnabled, parseFactCheckReply } from './factGate';
 import type { FactSheet } from './factSheet';
 
 function sheet(partial?: Partial<FactSheet>): FactSheet {
@@ -284,7 +284,8 @@ describe('fact gate', () => {
     });
     expect(mid.prose).not.toMatch(/sunblade/i);
     expect(mid.prose).toMatch(/furnace/);
-    expect(mid.prose).toMatch(/bathhouse waits/);
+    expect(mid.prose).toMatch(/The bathhouse waits/);
+    expect(mid.prose).not.toMatch(/\. the bathhouse/);
 
     const first = await applyFactGate({
       prose: 'She hands you the sunblade and the bathhouse waits.',
@@ -307,6 +308,18 @@ describe('fact gate', () => {
     const line = 'The crowd smelled of rain and iron.';
     const out = await applyFactGate({ prose: line, sheet: sheet() });
     expect(out.prose).toBe(line);
+  });
+
+  it('keeps an NPC quote that only tells a story', async () => {
+    const line = 'Mara Vell said, "The rite misfired into an inn, not a cathedral. They need a name before the close hears you arrived in a taproom. Stay as a guest and they will issue a room-key and a traveler\'s cloak."';
+    const out = await applyFactGate({
+      prose: line,
+      sheet: sheet({ present: [{ name: 'Mira' }, { name: 'Mara Vell' }] }),
+      pcName: 'Jax',
+      thirdPerson: true,
+    });
+    expect(out.prose).toBe(line);
+    expect(out.spans.every((s) => s.route !== 'candidate' && s.verdict !== 'new/wrong')).toBe(true);
   });
 
   it('does not treat Whatever, They, or Roads inside a quote as new names', async () => {
@@ -455,6 +468,226 @@ describe('fact gate', () => {
       expect(colour, line.prose).toBe(false);
     }
     expect(misses).toBe(0);
+  });
+
+  it('sends fact-like spans in one batch and fails closed per span', async () => {
+    let calls = 0;
+    const out = await applyFactGate({
+      prose: 'Steam curls off the cold plunge. Jax considered the quiet. Mira stays by the furnace.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        calls += 1;
+        expect(lines.map((line) => line.n)).toEqual([1, 2]);
+        expect(lines[0]?.text).toMatch(/Jax considered/);
+        return [{ n: 1, verdict: 'keep' }];
+      },
+    });
+    expect(calls).toBe(1);
+    expect(out.prose).toMatch(/Steam curls/);
+    expect(out.prose).toMatch(/Jax considered/);
+    expect(out.prose).not.toMatch(/Mira stays/);
+    expect(out.withheld).toBe(false);
+
+    let exploded = 0;
+    const blown = await applyFactGate({
+      prose: 'Steam curls off the cold plunge. Jax considered the quiet.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async () => {
+        exploded += 1;
+        throw new Error('checker down');
+      },
+    });
+    expect(exploded).toBe(1);
+    expect(blown.prose).toMatch(/Steam curls/);
+    expect(blown.prose).not.toMatch(/considered/);
+
+    const quiet = await applyFactGate({
+      prose: 'Steam curls off the cold plunge.',
+      sheet: sheet(),
+      factCheckEnabled: true,
+      factCheck: async () => {
+        throw new Error('should not be called');
+      },
+    });
+    expect(quiet.prose).toMatch(/Steam curls/);
+  });
+
+  it('repairs a candidate once when the checker asks, and leaves it out when the flag is off', async () => {
+    const repaired = await applyFactGate({
+      prose: 'Jax quietly came to hold the cellar key.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async () => [{ n: 1, verdict: 'repair-once', text: 'Steam curls off the furnace.' }],
+    });
+    expect(repaired.prose).toMatch(/Steam curls/);
+    expect(repaired.prose).not.toMatch(/cellar key/i);
+
+    const previous = process.env.SGM_FACT_CHECK;
+    process.env.SGM_FACT_CHECK = 'off';
+    let calls = 0;
+    try {
+      const off = await applyFactGate({
+        prose: 'Jax quietly came to hold the cellar key.',
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheck: async () => {
+          calls += 1;
+          return [{ n: 1, verdict: 'remove' }];
+        },
+      });
+      expect(isFactCheckEnabled()).toBe(false);
+      expect(calls).toBe(0);
+      expect(off.prose).toMatch(/cellar key/i);
+      expect(off.spans.some((s) => s.route === 'candidate')).toBe(true);
+    } finally {
+      if (previous === undefined) delete process.env.SGM_FACT_CHECK;
+      else process.env.SGM_FACT_CHECK = previous;
+    }
+  });
+
+  it('reads a numbered checker reply and estimates the extra call', () => {
+    expect(parseFactCheckReply('note [{"n":1,"verdict":"keep"},{"n":2,"verdict":"repair-once","text":"Steam."}]')).toEqual([
+      { n: 1, verdict: 'keep', text: undefined },
+      { n: 2, verdict: 'repair-once', text: 'Steam.' },
+    ]);
+    expect(parseFactCheckReply('not json')).toEqual([]);
+    const estimate = estimateFactCheckTokens(sheet(), ['Jax considered the quiet.']);
+    expect(estimate.input).toBeGreaterThan(0);
+    expect(estimate.output).toBeGreaterThan(0);
+  });
+
+  it('keeps the scenery battery, and counts how many lines need a check', async () => {
+    const scenery = [
+      'An old sword rusted above the hearth.',
+      'She has a coin in her palm.',
+      'A chest of treasure waited in the story he told.',
+      'A blade of grass clung to his boot.',
+      'Steam curled off the cold plunge.',
+      'The crowd smelled of rain and iron.',
+      'Mira watched the door and said nothing.',
+      'A gray cloak hung on the peg.',
+      'Lamplight moved across the floor.',
+      'Someone laughed in the next room.',
+      'The bathhouse waited.',
+      'Dust lay along the windowsill.',
+      'Her hands were still.',
+      'The fire popped once.',
+      'Rain ticked on the glass.',
+      'He looked at the floor.',
+      'A chair scraped back an inch.',
+      'The room did not change.',
+      'Smoke hung under the beams.',
+      'Her cup sat between them.',
+      'The night was quiet.',
+      'Footsteps faded down the hall.',
+      'The hearth smelled of ash.',
+      'Her sleeve was damp.',
+      'A moth circled the lamp.',
+      'The boards creaked underfoot.',
+      'Shadow pooled in the corner.',
+      'The air was warm.',
+      'He closed his eyes.',
+      'Nothing in the room stirred.',
+      'The story he told was only a story.',
+      'Wax pooled at the candle foot.',
+      'The air smelled of wet stone.',
+      'Light sat in a thin band.',
+      'A hinge ticked as it cooled.',
+      'The window fogged at the edges.',
+      'Warmth pooled near the floor.',
+      'A drip counted itself somewhere.',
+      'The boards held their quiet.',
+      'Soot marked the stone.',
+      'The lamp burned low and even.',
+      'Cloth shifted in a draft.',
+      'The room kept its hush.',
+      'Glass held a dull shine.',
+      'A crack ran through the plaster.',
+      'The corner stayed dim.',
+      'Water beaded on the tile.',
+      'The scent of soap lingered.',
+      'A rope of steam rose.',
+      'The latch sat where it always sat.',
+      'Night pressed on the glass.',
+      'The ceiling was low and dark.',
+      'Embers settled without a sound.',
+      'A pale mark crossed the wall.',
+      'The floor was cool underfoot.',
+      'Silence filled the pause.',
+      'The curtain hung in a fold.',
+      'A faint ring marked the table.',
+      'The air did not stir.',
+      'Wood grain showed in the light.',
+      'The doorway was only a doorway.',
+      'Heat lived in the stones.',
+      'A dull gleam sat on the brass.',
+      'The hour felt late.',
+    ];
+    expect(scenery).toHaveLength(64);
+    let candidates = 0;
+    let removed = 0;
+    const candidateLines: string[] = [];
+    for (const line of scenery) {
+      const out = await applyFactGate({
+        prose: line,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines }) => lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const })),
+      });
+      if (out.prose !== line) removed += 1;
+      const hit = out.spans.filter((s) => s.route === 'candidate');
+      if (hit.length) candidateLines.push(hit.map((s) => s.text).join(' | '));
+      candidates += hit.length;
+    }
+    expect(removed).toBe(0);
+    expect(candidateLines).toEqual([
+      'She has a coin in her palm.',
+      'Mira watched the door',
+      'Lamplight moved across the floor.',
+      'A crack ran through the plaster.',
+    ]);
+    expect(candidates).toBe(4);
+  });
+
+  it('routes paraphrased facts to the checker instead of calling them colour', async () => {
+    const lines = Array.from({ length: 55 }, (_, i) => {
+      const n = i + 1;
+      const forms = [
+        `Jax quietly came to hold mark${n}.`,
+        `Mira let mark${n} pass without agreeing.`,
+        `Jax was already beside mark${n} before the beat.`,
+        `The mark${n} token rested in Jax's keeping.`,
+        `Mira treated mark${n} as already done.`,
+      ];
+      return forms[i % 5]!;
+    });
+    expect(lines).toHaveLength(55);
+    let misses = 0;
+    let calls = 0;
+    for (const line of lines) {
+      const out = await applyFactGate({
+        prose: line,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines: numbered }) => {
+          calls += 1;
+          return numbered.map((entry) => ({ n: entry.n, verdict: 'remove' as const }));
+        },
+      });
+      const routed = out.spans.some((s) => s.route === 'candidate');
+      if (!routed || new RegExp(`mark\\d+`).test(out.prose)) misses += 1;
+      expect(routed, line).toBe(true);
+      expect(out.prose, line).not.toMatch(/mark\d+/);
+    }
+    expect(misses).toBe(0);
+    expect(calls).toBe(55);
   });
 
   it('removes a departure when the beat says there was no move', async () => {
