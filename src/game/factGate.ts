@@ -944,7 +944,10 @@ export async function applyFactGate(args: {
     if (!kept || span.speech || span.writing) continue;
     const existing = objectNotes.find((note) => note.text === span.text);
     if (existing?.objects.length) continue;
-    const objects = tagsFromPlacedSpan(span.text);
+    const objects = tagsFromPlacedSpan(span.text, {
+      features: args.sheet.place?.features ?? [],
+      skip: new Set([...SAFE, ...COMMON]),
+    });
     if (!objects.length) continue;
     if (existing) existing.objects = objects;
     else objectNotes.push({ text: span.text, speech: false, writing: false, kept: true, objects });

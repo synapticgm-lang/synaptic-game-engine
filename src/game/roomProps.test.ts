@@ -190,7 +190,7 @@ describe('filing without checker tags', () => {
     };
     let called = false;
     const colour = await applyFactGate({
-      prose: 'A cloak hangs by the furnace.',
+      prose: 'A cloak hangs against the furnace.',
       sheet: colourSheet,
       pcName: 'Jax',
       factCheckEnabled: true,
@@ -244,6 +244,33 @@ describe('filing without checker tags', () => {
       factCheckEnabled: false,
     });
     expect(fileKeptRoomProps(roomState(), speech.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
+  });
+
+  it('does not file a hung abstract with no physical anchor', async () => {
+    for (const prose of [
+      'A heavy silence hung in the room.',
+      'A long pause hung over the table.',
+      'A tight tension hung in the hall.',
+      'A sour smell hung in the air.',
+    ]) {
+      const gate = await applyFactGate({
+        prose,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: false,
+      });
+      expect(fileKeptRoomProps(roomState(), gate.objectNotes).sceneFacts?.roomProps ?? [], prose).toEqual([]);
+    }
+    const cloth = await applyFactGate({
+      prose: 'A linen cloth hung on the wall.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    const filed = fileKeptRoomProps(roomState(), cloth.objectNotes).sceneFacts?.roomProps ?? [];
+    expect(filed.map((p) => p.label)).toEqual(['linen cloth']);
+    expect(filed[0]?.kind).toBe('object');
+    expect(filed[0]?.takeable).toBe(false);
   });
 
   it('does not skip a second high-tier name', () => {

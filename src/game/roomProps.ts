@@ -6,11 +6,12 @@ import type { GameState, PlaceProp, Rarity, RoomPropKind } from './types';
 import { regionBand } from './regionLevels';
 import { tierToAreaLevel } from './placeAuthority';
 import type { MapNode } from './mapEngine';
+import { SRD_ARMOR, SRD_WEAPONS } from './rules/srdGear';
 
 /** Same words the warden already blocks on an item-gain. Not a new list. */
 export const HIGH_TIER_ITEM_WORDS = /\b(legendary|mythic|artifact|relic|unique|god(?:like)?|excalibur|vorpal|holy avenger)\b/i;
 
-const KINDS = new Set<RoomPropKind>(['furniture', 'armour', 'weapon', 'tool', 'coin', 'other']);
+const KINDS = new Set<RoomPropKind>(['furniture', 'armour', 'weapon', 'tool', 'coin', 'object', 'other']);
 const MOUNTS = new Set(['fixed', 'hung', 'loose']);
 const CAP = 24;
 
@@ -66,27 +67,51 @@ export function placedPropLabels(page: string): string[] {
   return out;
 }
 
-export function tagsFromPlacedSpan(text: string): FactObjectTag[] {
-  const hung = /\b(hangs|hung)\b/i.test(text);
-  const stood = /\b(stands|stood)\b/i.test(text);
-  return placedPropLabels(text).map((label) => {
-    const coin = /\bcoins?\b/i.test(label);
-    const weapon = /\b([a-z]*sword|[a-z]*blade|knife|axe)\b/i.test(label) || hung;
-    const armour = /\barmou?r\b/i.test(label);
-    let kind: RoomPropKind = 'furniture';
-    let mount: FactObjectTag['mount'] = stood || !hung ? 'fixed' : 'hung';
-    if (coin) {
-      kind = 'coin';
-      mount = 'loose';
-    } else if (armour) {
-      kind = 'armour';
-      mount = 'fixed';
-    } else if (weapon) {
-      kind = 'weapon';
-      mount = hung ? 'hung' : 'loose';
-    }
-    return { label, kind, mount, owner: 'place' };
-  });
+export function tagsFromPlacedSpan(
+  text: string,
+  opts?: { features?: string[]; skip?: ReadonlySet<string> },
+): FactObjectTag[] {
+  const re = new RegExp(
+    `\\b(?:a|an)\\s+((?:[a-z][a-z'’-]+\\s+){0,2}?[a-z][a-z'’-]{2,}(?:\\s+of\\s+[a-z][a-z'’-]{2,})?)\\s+(${PLACED_VERBS})\\s+(?:on|from|against)\\s+(?:the\\s+|a\\s+|an\\s+)?([a-z][a-z'’-]{2,}(?:\\s+[a-z][a-z'’-]{2,}){0,3})`,
+    'gi',
+  );
+  const out: FactObjectTag[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text))) {
+    const label = (match[1] ?? '').toLowerCase().trim();
+    const verb = (match[2] ?? '').toLowerCase();
+    const anchor = (match[3] ?? '').toLowerCase().trim();
+    if (!label || !physicalAnchor(anchor, opts?.features ?? [], opts?.skip) || out.some((tag) => tag.label === label)) continue;
+    const kind = kindFromCatalogue(label);
+    const hung = verb === 'hangs' || verb === 'hung';
+    const carried = kind === 'weapon' || kind === 'tool' || kind === 'coin';
+    const mount: FactObjectTag['mount'] = carried ? (hung ? 'hung' : 'loose') : 'fixed';
+    out.push({ label, kind, mount, owner: 'place' });
+  }
+  return out;
+}
+
+function physicalAnchor(anchor: string, features: string[], skip?: ReadonlySet<string>): boolean {
+  const words = anchor.split(/[^a-z']+/).filter((w) => w.length >= 3);
+  const head = words.at(-1) ?? '';
+  if (!head) return false;
+  const known = features.flatMap((f) => f.toLowerCase().split(/[^a-z']+/)).filter((w) => w.length >= 3);
+  if (known.includes(head)) return true;
+  return !skip?.has(head);
+}
+
+/** Kind comes from the weapon and armour tables. Anything else is a plain object. */
+function kindFromCatalogue(label: string): RoomPropKind {
+  const words = label.toLowerCase().replace(/armour/g, 'armor').split(/[^a-z]+/).filter((w) => w.length >= 3);
+  const hit = (names: string[]) => words.some((word) => names.some((name) => {
+    const parts = name.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+    const head = parts.at(-1) ?? '';
+    if (name.toLowerCase() === word || head === word) return true;
+    return head.endsWith(word) && head.length > word.length && word.length >= 3;
+  }));
+  if (hit(Object.keys(SRD_WEAPONS))) return 'weapon';
+  if (hit(Object.keys(SRD_ARMOR))) return 'armour';
+  return 'object';
 }
 
 function flagsFor(kind: RoomPropKind, mount: 'fixed' | 'hung' | 'loose'): { fixed: boolean; takeable: boolean } {

@@ -4,7 +4,7 @@ import type { ActiveDungeonState } from './mapEngine';
 import type { ComicTextAnchor } from '../types/comicScript';
 export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary';
 
-export type RoomPropKind = 'furniture' | 'armour' | 'weapon' | 'tool' | 'coin' | 'other';
+export type RoomPropKind = 'furniture' | 'armour' | 'weapon' | 'tool' | 'coin' | 'object' | 'other';
 
 /** A filed room object. Old saves still store a plain string in `props`. */
 export interface PlaceProp {
