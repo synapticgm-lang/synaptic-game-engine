@@ -134,7 +134,7 @@ describe('29z8 — open on what changed; a repeated question gets a new spoken l
   it('HERE already on the page and nobody moved: the shape has no place line', () => {
     const facing = formatWriterFacingEvent(withAldous({ recentBeats: ['Jax stood at the lip of Midnight Well.'], movement: undefined }));
     expect(facing).not.toMatch(/"fn":"place"/);
-    expect(facing).toMatch(/Do not describe it again/);
+    expect(facing).toMatch(/Do not narrate an arrival the beat did not grant/);
   });
   it('a "No move this turn" packet is still nobody moved: no place line', () => {
     const facing = formatWriterFacingEvent(withAldous({
@@ -142,7 +142,7 @@ describe('29z8 — open on what changed; a repeated question gets a new spoken l
       movement: 'No move this turn: at Midnight Well before and after. Do not narrate leaving, travelling or arriving.',
     }));
     expect(facing).not.toMatch(/"fn":"place"/);
-    expect(facing).toMatch(/Do not describe it again/);
+    expect(facing).toMatch(/Do not narrate an arrival the beat did not grant/);
   });
   it('a move keeps the place line', () => {
     const facing = formatWriterFacingEvent(withAldous({

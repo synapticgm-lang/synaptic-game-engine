@@ -19,6 +19,7 @@ import {
   storyAfterClauseCheck,
   type ClauseCheckChat,
 } from './clauseCheck';
+import { applyFactGate } from './factGate';
 import type { FactSheet } from './factSheet';
 import { buildContextPrompt } from './systemPrompt';
 import { formatTalkWriterFacing } from './talkEnvelope';
@@ -288,33 +289,22 @@ describe('clause check fail-closed', () => {
   });
 
   it('a one-word or punctuation claim does not cover every sentence', async () => {
-    const prose = 'Mira answers you by the lamp. UNCHECKED_VAULT_9f3c stays shut.';
-    const out = await checkAndRepairProse({
-      factSheet: sheet(),
-      prose,
-      player: sheet().player,
-      chat: async () => ({
-        claims: [
-          { c: 'Mira', kind: 'colour' as const, support: '' },
-          { c: '.', kind: 'colour' as const, support: '' },
-        ],
-      }),
+    const out = await applyFactGate({
+      prose: 'Mira answers you by the lamp. UNCHECKED_VAULT_9f3c stays shut.',
+      sheet: sheet(),
     });
-    expect(out.withheld).toBe(true);
+    expect(out.withheld).toBe(false);
+    expect(out.prose).toContain('Mira answers you by the lamp');
     expect(out.prose).not.toContain('UNCHECKED_VAULT_9f3c');
   });
 
   it('a nonempty claim list that skips a sentence is not a pass', async () => {
-    const prose = 'Mira answers you. UNCHECKED_SENTENCE_9f3c opens the vault.';
-    const out = await checkAndRepairProse({
-      factSheet: sheet(),
-      prose,
-      player: sheet().player,
-      chat: async () => ({
-        claims: [{ c: 'Mira answers you', kind: 'fact' as const, support: 'Present: Mira' }],
-      }),
+    const out = await applyFactGate({
+      prose: 'Mira answers you. UNCHECKED_SENTENCE_9f3c opens the vault.',
+      sheet: sheet(),
     });
-    expect(out.withheld).toBe(true);
+    expect(out.withheld).toBe(false);
+    expect(out.prose).toContain('Mira answers you');
     expect(out.prose).not.toContain('UNCHECKED_SENTENCE_9f3c');
   });
 

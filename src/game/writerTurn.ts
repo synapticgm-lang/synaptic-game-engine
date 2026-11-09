@@ -127,30 +127,11 @@ export function writerDraftProblems(prose: string, check: DraftCheck): string[] 
   if (!text) return ['No usable story came back.'];
   if (playerAsksRepeat(check.playerInput)) return [];
   const out: string[] = [];
-  if (storySentences(text) < 2) out.push('Too thin: write 4–6 full sentences.');
   const why = unresolvedActionReason(check.playerInput, text, check.intent, check.previousGm, check.engineFact);
   if (why) out.push(unresolvedProblem(why, check.playerInput, check.engineFact));
   const gate = classifyBeatCommit(check.state, text, check.playerInput);
   if (!gate.accept) out.push(...(gate.details?.length ? gate.details : gate.reasons));
-  const fps = check.state.recentBeatFingerprints ?? [];
-  const recent = recentGmBeatTexts(check.state);
-  const collage = detectLeadingCollage(text, recent);
-  if (
-    isNearClone(text, fps)
-    || shouldRetryUnaskedCollage(text, recent, check.playerInput)
-    || (isSameBeat(text, fps) && !playerAsksContinuation(check.playerInput))
-    || (collage.hit && !collage.tailHasNewContent)
-    || detectAtmosphereReprint(text, recent)
-    || detectSameRoomEssayHard(text, recent, check.playerInput)
-  ) {
-    const reused = recycledSentencesIn(text, recent, undefined, check.state.character?.name).slice(0, 3);
-    out.push(
-      reused.length
-        ? `Repeats an earlier beat: write what is new this turn. Do not reuse these lines: ${reused.map((s) => `"${s.slice(0, 110)}"`).join(' ')}`
-        : 'Repeats an earlier beat: write what is new this turn.'
-    );
-  }
-  if (check.previousGm && isLastGmReprint(text, check.previousGm)) out.push('Same text as the last beat: write a new one.');
+  // Exact-repeat trim lives on the fact gate. This check no longer rewrites a page for collage or a thin beat.
   if (isUnaskedCombatClose(text, check.playerInput)) out.push('Do not end or restart a fight the engine did not settle this turn.');
   const here = peopleHere(check.state);
   // q73-DYING: engine dying/dead flags plus the existing verb stem (chipRules.stemHit). No new word list.

@@ -34,7 +34,7 @@ import {
   isNsfwCampaign,
   type CampaignBible,
 } from '@/data/campaigns';
-import { callGm, callGmCheck, callGmRepair } from './aiService';
+import { callGm, callGmRepair } from './aiService';
 import {
   captureTurnEngineFacts,
   repairParentExtra,
@@ -43,12 +43,11 @@ import {
   withTrainLogJob,
 } from './trainLog';
 import {
-  checkAndRepairProse,
   clauseCheckerVerdicts,
-  makeGmClauseChat,
   storyAfterClauseCheck,
   type ClauseCheckRecord,
 } from './clauseCheck';
+import { applyFactGate } from './factGate';
 import {
   enableAutoplayWriter,
   getAutoplayWriterOverride,
@@ -214,7 +213,7 @@ import { applyGraphExitTravel } from './mapEngine';
 import { maybeEnterInteriorDungeon } from './enterInterior';
 import { advanceDungeonCard } from './dungeonCard';
 import { tokenLineVerdicts } from './tokenProse';
-import { normalizeCommittedProse, runWriterTurnWithFightRetry, sealPostWriterProse, writerTurnIssues, type WriterTurnRetryResult } from './writerTurn';
+import { runWriterTurnWithFightRetry, sealPostWriterProse, writerTurnIssues, type WriterTurnRetryResult } from './writerTurn';
 import { drainWriterRawIssues, drainWriterUsage } from './gmProxy';
 import {
   classifyResponsePath,
@@ -2045,53 +2044,22 @@ Do NOT print dice notation or CODE ENFORCED.
         completedEvent: { ...arcState.completedEvent, tokenRefs: writerTurn.refs },
       };
     }
-    // M4 — one clause check after the writer (FactSheet only; stubbable model).
+    // Fact gate — code reads the draft. No model check unless the unsure flag is on.
     {
       const sheet = arcState.completedEvent?.factSheet ?? writerPacket.factSheet;
       const draft = gmText;
       if (sheet && draft.trim()) {
-        let clause: Awaited<ReturnType<typeof checkAndRepairProse>> | null = null;
-        try {
-          clause = await checkAndRepairProse({
-            factSheet: sheet,
-            prose: draft,
-            player: {
-              typed: playerInput,
-              claimsNotTrue: sheet.player?.claimsNotTrue ?? [],
-            },
-            chat: makeGmClauseChat((user) => callGmCheck(arcState, user, settings)),
-            repair: async (request) => {
-              writerCallMeter.calls += 1;
-              const started = Date.now();
-              const draftMatch = request.match(/Sentence:\s*"([\s\S]*?)"\n/);
-              const flagMatch = request.match(/Problem:\s*(.+)/);
-              const factMatch = request.match(/Engine fact:\s*([\s\S]*)$/);
-              try {
-                return await withTrainLogJob(
-                  'repair',
-                  async () => callGmRepair(arcState, request, settings),
-                  repairParentExtra({
-                    engine_facts: frozenEngineFacts,
-                    engine_facts_provenance: 'packet',
-                    draft: draftMatch?.[1] ?? null,
-                    flagged_error: flagMatch?.[1]?.trim() ?? null,
-                    correct_fact: factMatch?.[1]?.trim() ?? null,
-                    repair_pass: 1,
-                  })
-                );
-              } finally {
-                writerCallMeter.ms += Date.now() - started;
-              }
-            },
-            engineFact,
-          });
-        } catch {
-          clause = null;
-        }
-        if (!clause || clause.withheld) {
+        const gate = await applyFactGate({
+          prose: draft,
+          sheet,
+          pcName: arcState.character?.name,
+          allowNames: writerPacket.allowlist,
+          recentProse: recentGmBeatTexts(arcState),
+        });
+        if (gate.withheld) {
           const page = pageWhenClauseWithheld(arcState, writerPacket, playerInput);
           const published = storyAfterClauseCheck({
-            clause: clause ?? { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 1 },
+            clause: { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 0 },
             enginePage: page,
             draft,
           });
@@ -2099,23 +2067,8 @@ Do NOT print dice notation or CODE ENFORCED.
           clauseCheckRecords = [];
           renderFallbackUsed = true;
         } else {
-          // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).
-          // T10AK — re-seal destination + spoken answer after normalize (clause path skips ensureSpokenAnswer).
-          gmText = sealPostWriterProse(
-            arcState,
-            normalizeCommittedProse(clause.prose, {
-              state: arcState,
-              playerInput,
-              intent,
-              engineFact,
-              previousGm: '',
-            }, writerPacket),
-            playerInput,
-          ).prose;
-          clauseCheckRecords = clause.records;
-          if (clause.repaired) {
-            writerCallMeter.calls += clause.checkPasses;
-          }
+          gmText = sealPostWriterProse(arcState, gate.prose, playerInput).prose;
+          clauseCheckRecords = [];
         }
       }
     }
