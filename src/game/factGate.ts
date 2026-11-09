@@ -17,6 +17,8 @@ export interface FactSpan {
   reason: string;
   /** True when this span is an NPC quote the checker must judge as speech. */
   speech?: boolean;
+  /** True when this span is a notice, sign, or page. It is not a fact. */
+  writing?: boolean;
 }
 
 export interface FactGateResult {
@@ -89,7 +91,7 @@ export interface CandidateCheck {
 
 export type FactChecker = (input: {
   sheet: FactSheet;
-  lines: Array<{ n: number; text: string; speech?: boolean }>;
+  lines: Array<{ n: number; text: string; speech?: boolean; writing?: boolean }>;
 }) => Promise<CandidateCheck[]>;
 
 function norm(s: string): string {
@@ -183,7 +185,20 @@ function speakerBefore(text: string, i: number): boolean {
 }
 
 /** Quoted speech and em-dash speech. Apostrophes are not quotes. Ranges are [start, end). */
-function speechRanges(prose: string): Array<[number, number]> {
+function isNarrationCue(rest: string, names: string[]): boolean {
+  const match = rest.match(/^(He|She|They|[A-Z][a-z'’.-]+(?:\s+[A-Z][a-z'’.-]+)?)\s+\S/);
+  if (!match) return false;
+  const who = match[1]!;
+  if (/^(He|She|They)$/.test(who)) return true;
+  const got = who.toLowerCase();
+  return names.some((name) => {
+    const full = name.trim().toLowerCase();
+    const first = full.split(/\s+/)[0] ?? full;
+    return got === full || got === first;
+  });
+}
+
+function speechRanges(prose: string, names: string[] = []): Array<[number, number]> {
   const ranges: Array<[number, number]> = [];
   let i = 0;
   while (i < prose.length) {
@@ -191,9 +206,22 @@ function speechRanges(prose: string): Array<[number, number]> {
     const dash = ch === '\u2014' ? 1 : ch === '-' && prose[i + 1] === '-' ? 2 : 0;
     if (dash && speakerBefore(prose, i)) {
       let j = i + dash;
-      while (j < prose.length && !(prose[j] === '\n' && prose[j + 1] === '\n')) j += 1;
+      while (j < prose.length) {
+        if (prose[j] === '\n' && prose[j + 1] === '\n') break;
+        if (/[.!?\u2026]/.test(prose[j]!)) {
+          let k = j + 1;
+          while (k < prose.length && /[.!?\u2026"'”’)\]]/.test(prose[k]!)) k += 1;
+          while (k < prose.length && /[ \t]/.test(prose[k]!)) k += 1;
+          if (k >= prose.length || (prose[k] === '\n' && prose[k + 1] === '\n')) {
+            j = k;
+            break;
+          }
+          if (isNarrationCue(prose.slice(k), names)) break;
+        }
+        j += 1;
+      }
       ranges.push([i, j]);
-      i = j;
+      i = Math.max(j, i + dash);
       continue;
     }
     if (ch === '"' || ch === '\u201c') {
@@ -273,6 +301,11 @@ function sentencePieces(prose: string, ranges: Array<[number, number]>): Piece[]
   return out;
 }
 
+function hasOwnVerb(fragment: string): boolean {
+  if (MOVE.test(fragment) || OBEY.test(fragment) || SPEECH_VERB.test(fragment)) return true;
+  return /\b(is|are|was|were|be|been|do|does|did|has|have|had|waits?|stays?|sits?|lies|lay|said|went|took|made|came|left|sat|rose|gave|kept|held|set|put|turned|opened|closed|watched|looked|nodded|smelled|popped|hung|curled|moved|ran|walked|hands?|gives?|received|pocket(?:s|ed)?|found|lost|dropped|grabbed)\b/i.test(fragment);
+}
+
 function splitAndOutsideSpeech(prose: string, sentence: Piece, ranges: Array<[number, number]>): Piece[] {
   if (/nodded and agreed|did as (?:she|he|they) (?:was|were) told|went along quietly/i.test(sentence.text)) {
     return [sentence];
@@ -282,6 +315,10 @@ function splitAndOutsideSpeech(prose: string, sentence: Piece, ranges: Array<[nu
   for (let i = sentence.start; i < sentence.end - 4; i++) {
     if (inSpeech(ranges, i)) continue;
     if (prose.slice(i, i + 5).toLowerCase() !== ' and ') continue;
+    const after = prose.slice(i + 5, sentence.end);
+    const nextAnd = after.search(/ and /i);
+    const conjunct = nextAnd >= 0 ? after.slice(0, nextAnd) : after;
+    if (!hasOwnVerb(conjunct)) continue;
     const piece = trimPiece(prose, start, i);
     if (piece) parts.push(piece);
     start = i + 5;
@@ -292,8 +329,8 @@ function splitAndOutsideSpeech(prose: string, sentence: Piece, ranges: Array<[nu
   return parts.length ? parts : [sentence];
 }
 
-function segmentPieces(prose: string): Piece[] {
-  const ranges = speechRanges(prose);
+function segmentPieces(prose: string, names: string[] = []): Piece[] {
+  const ranges = speechRanges(prose, names);
   const out: Piece[] = [];
   for (const sentence of sentencePieces(prose, ranges)) {
     out.push(...splitAndOutsideSpeech(prose, sentence, ranges));
@@ -461,8 +498,13 @@ function playerTransfer(span: string, pcName?: string): boolean {
 
 const SPEECH_VERB = /\b(said|says|asked|whispered|told|replied|answered|answers)\b/i;
 
-/** speech: the span is talk. narration: a short quote inside a sentence. none: no quote. */
-function speechRole(text: string): 'speech' | 'narration' | 'none' {
+function isWrittenText(text: string): boolean {
+  return /\b(?:notice|sign|letter|page|note|placard|inscription|poster)\b[^.!?\n]{0,60}\b(?:read|reads|said|says)\b/i.test(text);
+}
+
+/** speech: the span is talk. writing: a sign or notice. narration: a short quote inside a sentence. none: no quote. */
+function speechRole(text: string): 'speech' | 'writing' | 'narration' | 'none' {
+  if (isWrittenText(text) && speechRanges(text).length > 0) return 'writing';
   const ranges = speechRanges(text);
   const dash = /[A-Z][A-Za-z'’.-]*(?:\s+[A-Z][A-Za-z'’.-]*)?\s+(?:\u2014|--)/.test(text);
   if (!ranges.length && !dash) return 'none';
@@ -518,11 +560,11 @@ function capStart(text: string): string {
 
 export function formatFactCheckRequest(input: {
   sheet: FactSheet;
-  lines: Array<{ n: number; text: string; speech?: boolean }>;
+  lines: Array<{ n: number; text: string; speech?: boolean; writing?: boolean }>;
 }): string {
   return [
     'Fact check. One verdict for every numbered line: keep, remove, or repair-once.',
-    'A line marked [narration] is the narrator. A line marked [speech] is an NPC talking.',
+    'A line marked [narration] is the narrator. A line marked [speech] is an NPC talking. A line marked [writing] is a notice, sign, letter, or page: keep it as text someone read, and do not treat it as what is now true.',
     'Keep speech that recounts past events, backstory, rumour, legend, opinion, or the speaker\'s own view. Commands, offers, refusals, and lies about what already happened stay.',
     'Remove speech only when it claims that the player, the party, or a present NPC now holds something, or is now somewhere else, and that claim contradicts the sheet.',
     'Words outside the quotation marks are narration.',
@@ -532,7 +574,10 @@ export function formatFactCheckRequest(input: {
     'SHEET:',
     JSON.stringify(input.sheet),
     'LINES:',
-    ...input.lines.map((line) => `${line.n}. ${line.speech ? '[speech]' : '[narration]'} ${line.text}`),
+    ...input.lines.map((line) => {
+      const tag = line.writing ? '[writing]' : line.speech ? '[speech]' : '[narration]';
+      return `${line.n}. ${tag} ${line.text}`;
+    }),
   ].join('\n');
 }
 
@@ -586,11 +631,11 @@ export function estimateFactCheckTokens(sheet: FactSheet, lines: string[]): { in
   return { input: Math.ceil(body.length / 4), output: Math.max(8, lines.length * 12) };
 }
 
-function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse: string[]): FactGateResult {
+function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse: string[], names: string[] = []): FactGateResult {
   const recent = new Set(recentProse.flatMap((p) => segmentFactSpans(p).map((s) => norm(s))).filter(Boolean));
   let kept = spans.map((s, i) => ({ s, i })).filter(({ s }) => s.verdict === 'colour' || s.verdict === 'allowed');
   if (kept.length > 1) kept = kept.filter(({ s }) => !recent.has(norm(s.text)));
-  const speech = speechRanges(source);
+  const speech = speechRanges(source, names);
   if (speech.length) {
     const ids = new Set(kept.map(({ i }) => i));
     const doomed = new Set<number>();
@@ -686,8 +731,16 @@ export async function applyFactGate(args: {
   const blob = packetBlob(args.sheet, args.pcName, args.allowNames);
   const judge = (text: string, id: string): FactSpan => {
     const role = speechRole(text);
-    if (role === 'speech') {
-      return { id, text, verdict: 'colour', reason: 'speech', speech: true, route: 'candidate' };
+    if (role === 'speech' || role === 'writing') {
+      return {
+        id,
+        text,
+        verdict: 'colour',
+        reason: role,
+        speech: role === 'speech',
+        writing: role === 'writing',
+        route: 'candidate',
+      };
     }
     const body = role === 'narration' ? narrationOnly(text) : text;
     const judged = classifySpan(body, args.sheet, words, blob, args.pcName, args.thirdPerson);
@@ -700,7 +753,8 @@ export async function applyFactGate(args: {
       route: routeSpan(body, judged.verdict, judged.reason, args.sheet, args.pcName, words),
     };
   };
-  const pieces = segmentPieces(args.prose);
+  const people = [args.pcName ?? '', ...(args.sheet.present ?? []).map((p) => p.name)].filter((n) => n.trim().length >= 2);
+  const pieces = segmentPieces(args.prose, people);
   const spans: FactSpan[] = pieces.map((piece, i) => judge(piece.text, `s${i + 1}`));
   const factOn = (args.factCheckEnabled ?? isFactCheckEnabled()) && !!args.factCheck;
   if (factOn && args.factCheck) {
@@ -712,8 +766,9 @@ export async function applyFactGate(args: {
           sheet: args.sheet,
           lines: candidates.map((s, i) => ({
             n: i + 1,
-            text: s.speech ? s.text : withInlineSpeech(s.text),
+            text: s.writing || s.speech ? s.text : withInlineSpeech(s.text),
             speech: s.speech,
+            writing: s.writing,
           })),
         });
         reply = Array.isArray(got) ? got : [];
@@ -792,5 +847,5 @@ export async function applyFactGate(args: {
       }
     }
   }
-  return finish(args.prose, spans, pieces, args.recentProse ?? []);
+  return finish(args.prose, spans, pieces, args.recentProse ?? [], people);
 }

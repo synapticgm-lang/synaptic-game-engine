@@ -653,9 +653,9 @@ describe('fact gate', () => {
       candidates += hit.length;
     }
     expect(removed).toBe(0);
-    // 61 of 64 lines are uncertain (an object or a word that is not pure scenery). 63 spans.
+    // 61 of 64 lines are uncertain. A coordinated noun list stays one span, so the span count is 62.
     expect(candidateLines).toHaveLength(61);
-    expect(candidates).toBe(63);
+    expect(candidates).toBe(62);
   });
 
   it('routes paraphrased facts to the checker instead of calling them colour', async () => {
@@ -977,6 +977,77 @@ describe('fact gate', () => {
     });
     expect(out.prose).toBe(line);
     expect(out.spans.some((s) => s.verdict === 'new/wrong')).toBe(false);
+  });
+
+  it('keeps a coordinated object list on its gain verb', async () => {
+    const line = 'Jax pocketed the cloak and the key.';
+    const out = await applyFactGate({
+      prose: line,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        expect(lines).toHaveLength(1);
+        expect(lines[0]?.text).toMatch(/cloak/i);
+        expect(lines[0]?.text).toMatch(/key/i);
+        return [{ n: 1, verdict: 'remove' as const }];
+      },
+    });
+    expect(out.spans).toHaveLength(1);
+    expect(out.spans[0]?.route).toBe('candidate');
+    expect(out.prose).not.toMatch(/cloak|key/i);
+  });
+
+  it('ends dash speech when narration starts with a known name or a pronoun verb', async () => {
+    const named = 'Mira — The soup is too salty. Jax pocketed the cellar key.';
+    const namedOut = await applyFactGate({
+      prose: named,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        expect(lines.some((entry) => entry.speech && /pocketed/i.test(entry.text))).toBe(false);
+        expect(lines.some((entry) => entry.speech && /soup/i.test(entry.text))).toBe(true);
+        return lines.map((entry) => ({ n: entry.n, verdict: entry.speech ? 'keep' as const : 'remove' as const }));
+      },
+    });
+    expect(namedOut.prose).toMatch(/soup/i);
+    expect(namedOut.prose).not.toMatch(/pocketed|cellar key/i);
+
+    const pronoun = 'Mira — The soup is too salty. She set the bowl down.';
+    const pronounOut = await applyFactGate({
+      prose: pronoun,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        expect(lines.some((entry) => entry.speech && /set the bowl/i.test(entry.text))).toBe(false);
+        return lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const }));
+      },
+    });
+    expect(pronounOut.prose).toMatch(/soup/i);
+    expect(pronounOut.prose).toMatch(/set the bowl/i);
+    expect(pronounOut.spans.some((s) => s.speech && /set the bowl/i.test(s.text))).toBe(false);
+  });
+
+  it('sends a notice as written text so the words do not become a fact', async () => {
+    const line = 'The notice read "Jax pocketed the cellar key."';
+    const out = await applyFactGate({
+      prose: line,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        expect(lines).toHaveLength(1);
+        expect(lines[0]?.speech).not.toBe(true);
+        expect(lines[0]?.writing).toBe(true);
+        expect(lines[0]?.text).toMatch(/cellar key/i);
+        return [{ n: 1, verdict: 'remove' as const }];
+      },
+    });
+    expect(out.prose).not.toMatch(/cellar key/i);
+    expect(out.spans[0]?.route).toBe('candidate');
+    expect(out.spans[0]?.speech).not.toBe(true);
   });
 
   it('removes a departure when the beat says there was no move', async () => {
