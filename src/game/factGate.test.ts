@@ -781,10 +781,12 @@ describe('fact gate', () => {
     expect(prompt).toMatch(/offers/i);
     expect(prompt).toMatch(/refusals/i);
     expect(prompt).toMatch(/lies/i);
-    expect(prompt).toMatch(/already true/i);
-    expect(prompt).toMatch(/possessions/i);
-    expect(prompt).toMatch(/location/i);
-    expect(prompt).toMatch(/obedience/i);
+    expect(prompt).toMatch(/past events/i);
+    expect(prompt).toMatch(/backstory/i);
+    expect(prompt).toMatch(/speaker/i);
+    expect(prompt).toMatch(/now holds/i);
+    expect(prompt).toMatch(/now somewhere else/i);
+    expect(prompt).toMatch(/contradict/i);
     expect(prompt).toMatch(/other(?:s)?'? hands|someone else's hands/i);
     expect(prompt).toMatch(/scenery/i);
   });
@@ -823,6 +825,63 @@ describe('fact gate', () => {
       expect(out.prose, line).toBe(line);
     }
     expect(misses).toBe(0);
+  });
+
+  it('keeps single quotes, curly quotes, and em-dash speech as one span', async () => {
+    const quoted = [
+      "Mira said, 'Pocket the cellar key and take the quay.'",
+      'Mira said, \u2018Pocket the cellar key and take the quay.\u2019',
+      "Mira said, 'Hold the tin cup. Take the quay.'",
+      'Mira \u2014 the soup is too salty and the quay is shut.',
+    ];
+    for (const line of quoted) {
+      let seen = '';
+      const out = await applyFactGate({
+        prose: line,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines }) => {
+          expect(lines, line).toHaveLength(1);
+          expect(lines[0]?.speech, line).toBe(true);
+          seen = lines[0]?.text ?? '';
+          return [{ n: 1, verdict: 'keep' as const }];
+        },
+      });
+      expect(seen, line).toBe(line);
+      expect(out.prose, line).toBe(line);
+      expect(out.spans.some((s) => s.verdict === 'new/wrong'), line).toBe(false);
+    }
+
+    const mixed = "Mira said, 'Pocket the cellar key and take the quay.' The bathhouse waits.";
+    const dropped = await applyFactGate({
+      prose: mixed,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => lines.map((entry) => ({ n: entry.n, verdict: entry.speech ? 'remove' as const : 'keep' as const })),
+    });
+    expect(dropped.prose).toMatch(/The bathhouse waits/);
+    expect(dropped.prose).not.toMatch(/Pocket|quay/);
+    expect(dropped.prose).not.toMatch(/'|"/);
+  });
+
+  it('does not treat apostrophes in narration as quotation marks', async () => {
+    const line = 'The men\u2019s cloak didn\u2019t fit at four o\u2019clock, and the furnace stayed warm.';
+    let speech = 0;
+    const out = await applyFactGate({
+      prose: line,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        speech = lines.filter((entry) => entry.speech).length;
+        return lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const }));
+      },
+    });
+    expect(speech).toBe(0);
+    expect(out.prose).toBe(line);
+    expect(out.spans.some((s) => s.speech)).toBe(false);
   });
 
   it('removes a departure when the beat says there was no move', async () => {

@@ -3,7 +3,6 @@
  * Anything uncertain is a candidate for one batched hosted check.
  */
 import type { FactSheet } from './factSheet';
-import { splitProseSentences } from './proseSentences';
 
 export type FactVerdict = 'colour' | 'allowed' | 'new/wrong' | 'UNSURE';
 
@@ -166,23 +165,64 @@ function deadNames(sheet: FactSheet): string[] {
   return found;
 }
 
-function splitAndOutsideQuotes(sentence: string): string[] {
-  const parts: string[] = [];
-  let buf = '';
-  let quoted = false;
-  for (let i = 0; i < sentence.length; i++) {
-    const ch = sentence[i]!;
-    if (ch === '"' || ch === '\u201c' || ch === '\u201d') quoted = !quoted;
-    if (!quoted && sentence.slice(i, i + 5).toLowerCase() === ' and ') {
-      if (buf.trim()) parts.push(buf.trim());
-      buf = '';
-      i += 4;
+function isLetter(ch: string | undefined): boolean {
+  return !!ch && /[A-Za-z]/.test(ch);
+}
+
+function isSingleQuote(ch: string): boolean {
+  return ch === "'" || ch === '\u2018' || ch === '\u2019';
+}
+
+/** don't, Mara's, o'clock. Not an opening or closing quote. */
+function isApostrophe(text: string, i: number): boolean {
+  return isLetter(text[i - 1]) && isLetter(text[i + 1]);
+}
+
+function speakerBefore(text: string, i: number): boolean {
+  return /([A-Z][A-Za-z'’.-]*(?:\s+[A-Z][A-Za-z'’.-]*)?)\s+$/.test(text.slice(0, i));
+}
+
+/** Quoted speech and em-dash speech. Apostrophes are not quotes. Ranges are [start, end). */
+function speechRanges(prose: string): Array<[number, number]> {
+  const ranges: Array<[number, number]> = [];
+  let i = 0;
+  while (i < prose.length) {
+    const ch = prose[i]!;
+    const dash = ch === '\u2014' ? 1 : ch === '-' && prose[i + 1] === '-' ? 2 : 0;
+    if (dash && speakerBefore(prose, i)) {
+      let j = i + dash;
+      while (j < prose.length && !/[.!?\u2026]/.test(prose[j]!)) j += 1;
+      ranges.push([i, j]);
+      i += dash;
       continue;
     }
-    buf += ch;
+    if (ch === '"' || ch === '\u201c') {
+      const end = prose.indexOf(ch === '\u201c' ? '\u201d' : '"', i + 1);
+      ranges.push([i, end >= 0 ? end + 1 : prose.length]);
+      i = end >= 0 ? end + 1 : prose.length;
+      continue;
+    }
+    if (isSingleQuote(ch) && !isApostrophe(prose, i) && !isLetter(prose[i - 1])) {
+      let j = i + 1;
+      let closed = -1;
+      while (j < prose.length) {
+        if (isSingleQuote(prose[j]!) && !isApostrophe(prose, j) && !isLetter(prose[j + 1])) {
+          closed = j;
+          break;
+        }
+        j += 1;
+      }
+      ranges.push([i, closed >= 0 ? closed + 1 : prose.length]);
+      i = closed >= 0 ? closed + 1 : prose.length;
+      continue;
+    }
+    i += 1;
   }
-  if (buf.trim()) parts.push(buf.trim());
-  return parts;
+  return ranges;
+}
+
+function inSpeech(ranges: Array<[number, number]>, i: number): boolean {
+  return ranges.some(([start, end]) => i >= start && i < end);
 }
 
 type Piece = { text: string; start: number; end: number };
@@ -192,28 +232,62 @@ export function segmentFactSpans(prose: string): string[] {
   return segmentPieces(prose).map((p) => p.text);
 }
 
-function segmentPieces(prose: string): Piece[] {
+function trimPiece(prose: string, start: number, end: number): Piece | null {
+  let a = start;
+  let b = end;
+  while (a < b && /\s/.test(prose[a]!)) a += 1;
+  while (b > a && /\s/.test(prose[b - 1]!)) b -= 1;
+  if (a >= b) return null;
+  return { text: prose.slice(a, b), start: a, end: b };
+}
+
+function sentencePieces(prose: string, ranges: Array<[number, number]>): Piece[] {
   const out: Piece[] = [];
-  let cursor = 0;
-  for (const sentence of splitProseSentences(prose)) {
-    const at = prose.indexOf(sentence, cursor);
-    const start = at >= 0 ? at : cursor;
-    const end = start + sentence.length;
-    const parts = /nodded and agreed|did as (?:she|he|they) (?:was|were) told|went along quietly/i.test(sentence)
-      ? [sentence]
-      : splitAndOutsideQuotes(sentence);
-    if (parts.length <= 1) {
-      if (sentence.trim()) out.push({ text: sentence, start, end });
-    } else {
-      let local = 0;
-      for (const part of parts) {
-        const rel = sentence.indexOf(part, local);
-        const from = rel >= 0 ? rel : local;
-        out.push({ text: sentence.slice(from, from + part.length), start: start + from, end: start + from + part.length });
-        local = from + part.length;
-      }
-    }
-    cursor = end;
+  let start = 0;
+  for (let i = 0; i < prose.length; i++) {
+    const ch = prose[i]!;
+    if (!/[.!?\u2026]/.test(ch)) continue;
+    let j = i + 1;
+    while (j < prose.length && /[.!?\u2026]/.test(prose[j]!)) j += 1;
+    while (j < prose.length && /["'\u201c\u201d\u2018\u2019)\]]/.test(prose[j]!)) j += 1;
+    const stillInside = ranges.some(([a, b]) => i >= a && i < b && b > j);
+    const next = prose.slice(j).match(/^\s*(\S)/)?.[1];
+    const ends = !stillInside && (j >= prose.length || (prose[j] === ' ' && !!next && !/[a-z]/.test(next)));
+    if (!ends) continue;
+    const piece = trimPiece(prose, start, j);
+    if (piece) out.push(piece);
+    start = j;
+    i = j - 1;
+  }
+  const tail = trimPiece(prose, start, prose.length);
+  if (tail) out.push(tail);
+  return out;
+}
+
+function splitAndOutsideSpeech(prose: string, sentence: Piece, ranges: Array<[number, number]>): Piece[] {
+  if (/nodded and agreed|did as (?:she|he|they) (?:was|were) told|went along quietly/i.test(sentence.text)) {
+    return [sentence];
+  }
+  const parts: Piece[] = [];
+  let start = sentence.start;
+  for (let i = sentence.start; i < sentence.end - 4; i++) {
+    if (inSpeech(ranges, i)) continue;
+    if (prose.slice(i, i + 5).toLowerCase() !== ' and ') continue;
+    const piece = trimPiece(prose, start, i);
+    if (piece) parts.push(piece);
+    start = i + 5;
+    i += 4;
+  }
+  const tail = trimPiece(prose, start, sentence.end);
+  if (tail) parts.push(tail);
+  return parts.length ? parts : [sentence];
+}
+
+function segmentPieces(prose: string): Piece[] {
+  const ranges = speechRanges(prose);
+  const out: Piece[] = [];
+  for (const sentence of sentencePieces(prose, ranges)) {
+    out.push(...splitAndOutsideSpeech(prose, sentence, ranges));
   }
   return out;
 }
@@ -362,7 +436,7 @@ function playerTransfer(span: string, pcName?: string): boolean {
 }
 
 function hasQuote(span: string): boolean {
-  return /["“]/.test(span);
+  return speechRanges(span).length > 0;
 }
 
 function mentionsFactAgent(span: string, sheet: FactSheet, pcName?: string): boolean {
@@ -395,7 +469,8 @@ export function formatFactCheckRequest(input: {
   return [
     'Fact check. One verdict for every numbered line: keep, remove, or repair-once.',
     'A line marked [narration] is the narrator. A line marked [speech] is an NPC talking.',
-    'Speech may contain opinion, rumour, legend, commands, offers, refusals and lies. Keep it unless the quote states as already true a change to the player, the party, or a present NPC\'s possessions, location, or obedience that the sheet lacks.',
+    'Keep speech that recounts past events, backstory, rumour, legend, opinion, or the speaker\'s own view. Commands, offers, refusals, and lies about what already happened stay.',
+    'Remove speech only when it claims that the player, the party, or a present NPC now holds something, or is now somewhere else, and that claim contradicts the sheet.',
     'Words outside the quotation marks are narration.',
     'Objects held in someone else\'s hands, or lying in the scenery, are allowed unless the player or the party gains them.',
     'keep = scenery, harmless speech, or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
@@ -461,6 +536,16 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
   const recent = new Set(recentProse.flatMap((p) => segmentFactSpans(p).map((s) => norm(s))).filter(Boolean));
   let kept = spans.map((s, i) => ({ s, i })).filter(({ s }) => s.verdict === 'colour' || s.verdict === 'allowed');
   if (kept.length > 1) kept = kept.filter(({ s }) => !recent.has(norm(s.text)));
+  const speech = speechRanges(source);
+  if (speech.length) {
+    const ids = new Set(kept.map(({ i }) => i));
+    const doomed = new Set<number>();
+    for (const [start, end] of speech) {
+      const involved = pieces.map((piece, index) => ({ piece, index })).filter(({ piece }) => piece.start < end && start < piece.end);
+      if (involved.some(({ index }) => !ids.has(index))) involved.forEach(({ index }) => doomed.add(index));
+    }
+    kept = kept.filter(({ i }) => !doomed.has(i));
+  }
   let prose = '';
   let prev: Piece | null = null;
   let prevIndex = -1;
