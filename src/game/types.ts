@@ -3,6 +3,24 @@ import type { AccessibilitySettings } from './accessibility';
 import type { ActiveDungeonState } from './mapEngine';
 import type { ComicTextAnchor } from '../types/comicScript';
 export type Rarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary';
+
+export type RoomPropKind = 'furniture' | 'armour' | 'weapon' | 'tool' | 'coin' | 'object' | 'other';
+
+/** A filed room object. Old saves still store a plain string in `props`. */
+export interface PlaceProp {
+  label: string;
+  /** `place`, or the id or name of a present NPC. */
+  owner: string;
+  fixed: boolean;
+  takeable: boolean;
+  level: number;
+  rarity: Rarity;
+  turn: number;
+  kind: RoomPropKind;
+  /** Folded clutter. Not takeable. */
+  summary?: boolean;
+  folded?: string[];
+}
 export interface Item {
   id: string;
   name: string;
@@ -1806,6 +1824,8 @@ export interface SceneFacts {
   /** Where the player stands inside the current place after a move that did not leave it. */
   hereSpot?: HereSpot;
   props: string[];
+  /** Structured objects filed from kept narration. The string `props` list stays for windows and old saves. */
+  roomProps?: PlaceProp[];
   lastBeat: string;
   updatedTurn: number;
   // Pack 12 Extended Tracking
@@ -2304,6 +2324,8 @@ export interface PlaceRecord {
   closed?: boolean;
   /** 29z9j — objects seen at this place (the HERE props it had when the player last left it). */
   props?: string[];
+  /** Structured room objects parked with the place. */
+  roomProps?: PlaceProp[];
   /** 28i — dungeon card: generated once at first entry (rooms, foes, mini-boss, chests, traps, secrets), reused on return. */
   dungeonCard?: ActiveDungeonState;
   /**

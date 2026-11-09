@@ -341,12 +341,18 @@ function movePropsWithPlace(state: GameState, fromLocation: string, toLocation: 
   const left = props.filter((p) => !isSystemWindowLabel(p));
   const from = resolvePlace(state.places, owner);
   const to = resolvePlace(state.places, toLocation);
-  const places = (state.places ?? []).map((p) => (from && p.id === from.id ? { ...p, props: left } : p));
+  const places = (state.places ?? []).map((p) => {
+    if (!from || p.id !== from.id) return p;
+    return state.activeDungeon ? { ...p, props: left } : { ...p, props: left, roomProps: facts.roomProps ?? [] };
+  });
   const arrived = to && to.id !== from?.id ? to.props ?? [] : [];
+  const arrivedRoom = state.activeDungeon
+    ? (facts.roomProps ?? [])
+    : (to && to.id !== from?.id ? to.roomProps ?? [] : []);
   return {
     ...state,
     places,
-    sceneFacts: presenceFactsPatch(facts, { props: [...carried, ...arrived], propsPlace: toLocation }),
+    sceneFacts: presenceFactsPatch(facts, { props: [...carried, ...arrived], roomProps: arrivedRoom, propsPlace: toLocation }),
   };
 }
 

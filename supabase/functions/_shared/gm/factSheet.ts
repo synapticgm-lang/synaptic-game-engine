@@ -15,6 +15,7 @@ import { writerFacts } from './systemHousing.ts';
 import { activeHereSpot } from './hereSpot.ts';
 import { placeScale } from './placeAuthority.ts';
 import { isSystemWindowLabel } from './chromeAuthority.ts';
+import type { PlaceProp } from './types.ts';
 import { personaMannerLine } from './npcPersona.ts';
 import { parsePlayerSteps, sheetContextFromState } from './intentParser.ts';
 
@@ -263,9 +264,19 @@ function recentTimeline(state: GameState): string[] {
 }
 
 /** Scene props the writer may name — chrome windows drop when a housing replaces the floating panel. */
+function filedPropLabels(props: PlaceProp[] | undefined): string[] {
+  if (!props?.length) return [];
+  const takeable = props.filter((p) => p.takeable && !p.summary).sort((a, b) => b.turn - a.turn);
+  const fixed = props.filter((p) => !p.takeable && !p.summary);
+  return [...takeable, ...fixed].slice(0, 6).map((p) => p.label);
+}
+
 function placeFeatures(state: GameState, packet: CompletedEventPacket): string[] {
+  const filed = filedPropLabels(state.activeDungeon
+    ? state.activeDungeon.nodes.find((n) => n.id === state.activeDungeon?.currentNodeId)?.roomProps ?? state.sceneFacts?.roomProps
+    : state.sceneFacts?.roomProps);
   const raw = [
-    ...(state.sceneFacts?.props ?? []).slice(0, 6),
+    ...(filed.length ? filed : (state.sceneFacts?.props ?? []).slice(0, 6)),
     ...(packet.focusNoun ? [packet.focusNoun] : []),
   ];
   return raw
