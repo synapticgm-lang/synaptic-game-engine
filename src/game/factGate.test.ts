@@ -229,8 +229,18 @@ describe('fact gate', () => {
       'Her cup sat between them.',
       'The night was quiet.',
       'Footsteps faded down the hall.',
+      'The hearth smelled of ash.',
+      'Her sleeve was damp.',
+      'A moth circled the lamp.',
+      'The boards creaked underfoot.',
+      'Shadow pooled in the corner.',
+      'The air was warm.',
+      'He closed his eyes.',
+      'Nothing in the room stirred.',
+      'The story he told was only a story.',
+      'Wax pooled at the candle foot.',
     ];
-    expect(scenery).toHaveLength(22);
+    expect(scenery).toHaveLength(32);
     for (const line of scenery) {
       const out = await applyFactGate({ prose: line, sheet: sheet(), pcName: 'Jax' });
       expect(out.prose, line).toBe(line);
@@ -264,6 +274,33 @@ describe('fact gate', () => {
       }),
     });
     expect(inside.prose).toBe('Mira walked toward the furnace.');
+  });
+
+  it('drops a rejected span in the middle, at the start, or at the end without reprinting it', async () => {
+    const mid = await applyFactGate({
+      prose: 'Mira stays by the furnace and she hands you the sunblade and the bathhouse waits.',
+      sheet: sheet(),
+      pcName: 'Jax',
+    });
+    expect(mid.prose).not.toMatch(/sunblade/i);
+    expect(mid.prose).toMatch(/furnace/);
+    expect(mid.prose).toMatch(/bathhouse waits/);
+
+    const first = await applyFactGate({
+      prose: 'She hands you the sunblade and the bathhouse waits.',
+      sheet: sheet(),
+      pcName: 'Jax',
+    });
+    expect(first.prose).not.toMatch(/sunblade/i);
+    expect(first.prose).toMatch(/bathhouse waits/);
+
+    const last = await applyFactGate({
+      prose: 'The bathhouse waits and she hands you the sunblade.',
+      sheet: sheet(),
+      pcName: 'Jax',
+    });
+    expect(last.prose).not.toMatch(/sunblade/i);
+    expect(last.prose).toMatch(/bathhouse waits/);
   });
 
   it('keeps an and-clause exactly as written', async () => {
@@ -325,6 +362,99 @@ describe('fact gate', () => {
     });
     expect(obeys.prose).not.toMatch(/went along/i);
     expect(obeys.prose).toMatch(/furnace/i);
+
+    const deadSheet = sheet({
+      beat: { verb: 'fought', outcome: 'won', engineResult: 'Sera is dead.', steps: [] },
+    });
+    const smiled = await applyFactGate({ prose: 'Sera smiled at the furnace.', sheet: deadSheet });
+    expect(smiled.prose).not.toMatch(/Sera/i);
+    const still = await applyFactGate({ prose: 'Sera lies still.', sheet: deadSheet });
+    expect(still.prose).toMatch(/lies still/);
+
+    for (const line of ['Mara did as she was told.', 'Mara nodded and agreed.', 'Mara obeyed.']) {
+      const out = await applyFactGate({
+        prose: line,
+        sheet: sheet({
+          present: [{ name: 'Mira' }, { name: 'Mara' }],
+          beat: {
+            verb: 'ordered',
+            outcome: 'refused',
+            engineResult: 'Mara disagrees and will not go along quietly.',
+            steps: [{ outcome: 'disagree', detail: 'Mara disagrees and will not go along quietly.' }],
+          },
+        }),
+      });
+      expect(out.prose, line).toBe('');
+      expect(out.spans.some((s) => s.verdict === 'new/wrong'), line).toBe(true);
+    }
+
+    const named = await applyFactGate({
+      prose: 'A stranger named pell stood by the furnace. Mira stays quiet.',
+      sheet: sheet(),
+    });
+    expect(named.prose).not.toMatch(/\bpell\b/i);
+    expect(named.prose).toMatch(/Mira stays quiet/);
+  });
+
+  it('catches the adversarial fact lines and does not call them colour', async () => {
+    const quiet = sheet({
+      beat: { verb: 'looked', outcome: 'looked', engineResult: 'Mira stayed.', steps: [] },
+    });
+    const dead = sheet({
+      beat: { verb: 'fought', outcome: 'won', engineResult: 'Sera is dead.', steps: [] },
+    });
+    const no = sheet({
+      present: [{ name: 'Mira' }, { name: 'Mara' }],
+      beat: {
+        verb: 'ordered',
+        outcome: 'refused',
+        engineResult: 'Mara disagrees and will not go along quietly.',
+        steps: [{ outcome: 'disagree', detail: 'Mara disagrees and will not go along quietly.' }],
+      },
+    });
+    const lines: Array<{ prose: string; sheet: FactSheet; banned: RegExp }> = [
+      { prose: 'captain bramble nods once.', sheet: quiet, banned: /bramble/i },
+      { prose: 'A woman named pell stood nearby.', sheet: quiet, banned: /\bpell\b/i },
+      { prose: 'They called him vex.', sheet: quiet, banned: /\bvex\b/i },
+      { prose: 'lord harness smiled.', sheet: quiet, banned: /harness/i },
+      { prose: 'Sera smiled at the lamp.', sheet: dead, banned: /Sera/i },
+      { prose: 'Sera sang one note.', sheet: dead, banned: /Sera/i },
+      { prose: 'Sera pushed the door.', sheet: dead, banned: /Sera/i },
+      { prose: 'Mara did as she was told.', sheet: no, banned: /told/i },
+      { prose: 'Mara nodded and agreed.', sheet: no, banned: /agreed/i },
+      { prose: 'Mara obeyed.', sheet: no, banned: /obeyed/i },
+      { prose: 'Mara went along quietly.', sheet: no, banned: /went along/i },
+      { prose: 'Mira slipped out toward the spice quay.', sheet: quiet, banned: /quay/i },
+      { prose: 'Jax walked past the spice market.', sheet: quiet, banned: /market/i },
+      { prose: 'Mira went beside the old mill.', sheet: quiet, banned: /mill/i },
+      { prose: 'Jax stepped around the chapel.', sheet: quiet, banned: /chapel/i },
+      { prose: 'Jax ran over the bridge.', sheet: quiet, banned: /bridge/i },
+      { prose: 'Mira moved under the arch.', sheet: quiet, banned: /arch/i },
+      { prose: 'Jax crept along the river road.', sheet: quiet, banned: /river/i },
+      { prose: 'You pocket the key.', sheet: quiet, banned: /key/i },
+      { prose: 'She hands you the sunblade.', sheet: quiet, banned: /sunblade/i },
+      { prose: 'Jax found a health tonic.', sheet: quiet, banned: /tonic/i },
+      { prose: 'Jax picked up the treasure.', sheet: quiet, banned: /treasure/i },
+      { prose: 'Jax grabbed the ring.', sheet: quiet, banned: /ring/i },
+      { prose: 'Jax dropped the letter.', sheet: quiet, banned: /letter/i },
+      { prose: 'Jax lost the potion.', sheet: quiet, banned: /potion/i },
+      { prose: 'Jax received a dagger.', sheet: quiet, banned: /dagger/i },
+      { prose: 'The knife feels reassuring in Jax\'s grip.', sheet: quiet, banned: /knife/i },
+      { prose: 'Mira offers you a potion.', sheet: quiet, banned: /potion/i },
+      { prose: 'Jax took the coin from the table.', sheet: quiet, banned: /coin/i },
+      { prose: 'Jax headed across the salt marsh.', sheet: quiet, banned: /marsh/i },
+    ];
+    expect(lines).toHaveLength(30);
+    let misses = 0;
+    for (const line of lines) {
+      const out = await applyFactGate({ prose: line.prose, sheet: line.sheet, pcName: 'Jax' });
+      const published = line.banned.test(out.prose);
+      const colour = out.spans.every((s) => s.verdict === 'colour' || s.verdict === 'allowed');
+      if (published || colour) misses += 1;
+      expect(published, line.prose).toBe(false);
+      expect(colour, line.prose).toBe(false);
+    }
+    expect(misses).toBe(0);
   });
 
   it('removes a departure when the beat says there was no move', async () => {

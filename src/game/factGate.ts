@@ -95,6 +95,15 @@ function noMove(sheet: FactSheet): boolean {
   return /No move this turn|Do not narrate leaving/i.test(text);
 }
 
+function disagreeActors(sheet: FactSheet): string[] {
+  const text = `${sheet.beat?.engineResult ?? ''} ${(sheet.beat?.steps ?? []).map((s) => s.detail ?? '').join(' ')}`;
+  const found: string[] = [];
+  for (const m of text.matchAll(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+disagrees\b/g)) {
+    if (m[1]) found.push(m[1]);
+  }
+  return found;
+}
+
 function disagrees(sheet: FactSheet): boolean {
   const text = `${sheet.beat?.engineResult ?? ''} ${(sheet.beat?.steps ?? []).map((s) => `${s.outcome} ${s.detail ?? ''}`).join(' ')}`;
   return /disagrees/i.test(text);
@@ -143,7 +152,9 @@ function segmentPieces(prose: string): Piece[] {
     const at = prose.indexOf(sentence, cursor);
     const start = at >= 0 ? at : cursor;
     const end = start + sentence.length;
-    const parts = splitAndOutsideQuotes(sentence);
+    const parts = /nodded and agreed|did as (?:she|he|they) (?:was|were) told|went along quietly/i.test(sentence)
+      ? [sentence]
+      : splitAndOutsideQuotes(sentence);
     if (parts.length <= 1) {
       if (sentence.trim()) out.push({ text: sentence, start, end });
     } else {
@@ -212,9 +223,23 @@ function classifySpan(
   }
   if (disagrees(sheet) && OBEY.test(span)) return { verdict: 'new/wrong', reason: 'obeys while the beat says disagrees' };
   for (const dead of deadNames(sheet)) {
-    if (new RegExp(`\\b${dead}\\b`, 'i').test(span) && ACTION.test(span)) {
+    const named = new RegExp(`\\b${dead}\\b`, 'i').test(span);
+    if (!named) continue;
+    if (/\b(lies|lie|lay|lays|rests|rested|remains|remained)\b/i.test(span)) continue;
+    if (new RegExp(`\\b${dead}\\b\\s+\\w+`, 'i').test(span)) {
       return { verdict: 'new/wrong', reason: 'dead foe acts' };
     }
+  }
+  for (const actor of disagreeActors(sheet)) {
+    if (!new RegExp(`\\b${actor}\\b`, 'i').test(span)) continue;
+    if (/\b(did as (?:she|he|they) (?:was|were) told|nodded and agreed|obeyed|went along quietly|complied|agreed to)\b/i.test(span)) {
+      return { verdict: 'new/wrong', reason: 'obeys while the beat says disagrees' };
+    }
+  }
+  const invented = span.match(/\bnamed\s+([a-z][a-z'-]{2,})\b|\bcalled\s+(?:him|her|them)\s+([a-z][a-z'-]{2,})\b/i);
+  const inventedName = (invented?.[1] ?? invented?.[2] ?? '').toLowerCase();
+  if (inventedName && !words.has(inventedName) && !COMMON.has(inventedName)) {
+    return { verdict: 'new/wrong', reason: `name not on the sheet: ${inventedName}` };
   }
   if (/\b(?=[A-Z0-9_]*[0-9_])[A-Z][A-Za-z0-9_]{5,}\b/.test(span)) {
     return { verdict: 'new/wrong', reason: 'invented token' };
@@ -229,12 +254,15 @@ function classifySpan(
   if (agent && !words.has(agent[1]!.toLowerCase()) && !COMMON.has(agent[1]!.toLowerCase())) {
     return { verdict: 'new/wrong', reason: `name not on the sheet: ${agent[1]}` };
   }
-  const dest = falseDestination(span, words);
-  if (dest) return { verdict: 'new/wrong', reason: `exit not on the sheet: ${dest}` };
-  if (playerTransfer(span, pcName)) {
+  if (partySubject(span, sheet, pcName)) {
+    const dest = falseDestination(span, words);
+    if (dest) return { verdict: 'new/wrong', reason: `exit not on the sheet: ${dest}` };
+  }
+  if (playerTransfer(span, pcName) || partyPossession(span, pcName)) {
     const item = span.match(ITEMISH)?.[1] ?? span.match(LOOSE_ITEM)?.[1];
     if (item && !heldItem(item, words)) return { verdict: 'new/wrong', reason: `unlisted item: ${item}` };
-    if (!item) return { verdict: 'UNSURE', reason: 'transfer of an unnamed object' };
+    if (!item) return { verdict: 'UNSURE', reason: 'possession change with no named item' };
+    if (/\b(dropped|lost)\b/i.test(span)) return { verdict: 'new/wrong', reason: 'possession change the beat did not grant' };
     return { verdict: 'allowed', reason: 'item is on the sheet' };
   }
   if (/\b(opens|opened|kills|killed)\b/i.test(span) || /\blands on\b/i.test(span)) {
@@ -250,14 +278,32 @@ function classifySpan(
   return { verdict: 'colour', reason: 'no new fact' };
 }
 
+function partySubject(span: string, sheet: FactSheet, pcName?: string): boolean {
+  if (/^\s*you\b/i.test(span)) return true;
+  const names = [pcName ?? '', ...(sheet.present ?? []).map((p) => p.name)].filter((n) => n.length >= 2);
+  return names.some((name) => new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(span));
+}
+
 function falseDestination(span: string, words: Set<string>): string | null {
-  if (!/\b(set out|arrived|walked|headed|went|slipped|stepped|ran|travell?ed)\b/i.test(span)) return null;
-  const preps = [...span.matchAll(/\b(?:toward|towards|into|through|across|down|up|at|for|to|out of|out)\s+(?:the\s+)?([a-z][a-z'’-]*(?:\s+[a-z][a-z'’-]*){0,3})/gi)];
+  if (!/\b(set out|arrived|walked|headed|went|slipped|stepped|ran|travell?ed|moved|crept|hurried|strode)\b/i.test(span)) return null;
+  const preps = [...span.matchAll(/\b(?:toward|towards|into|through|across|past|beside|along|around|over|under|down|up|at|for|to|out of|out)\s+(?:the\s+)?([a-z][a-z'’-]*(?:\s+[a-z][a-z'’-]*){0,3})/gi)];
   if (!preps.length) return null;
   const dest = preps[preps.length - 1]![1]!.replace(/[.!?…]+$/, '').trim();
   const bits = norm(dest).split(' ').filter((w) => w.length >= 4 && !COMMON.has(w));
-  if (!bits.length || bits.every((w) => words.has(w))) return null;
+  if (!bits.length) return 'unclear route';
+  if (bits.every((w) => words.has(w))) return null;
   return dest;
+}
+
+function partyPossession(span: string, pcName?: string): boolean {
+  const pc = pcName?.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const who = pc ? `(?:you|your|${pc})` : '(?:you|your)';
+  const change = new RegExp(
+    `\\b${who}\\b[^.!?]{0,40}\\b(?:found|picked up|dropped|lost|took|received|grabbed)\\b|\\b(?:found|picked up|dropped|lost|took|received|grabbed)\\b[^.!?]{0,40}\\b${who}\\b`,
+    'i'
+  );
+  const grip = new RegExp(`\\b(?:in\\s+)?${who}'s\\s+(?:grip|hands|hand|pack|pocket)\\b`, 'i');
+  return change.test(span) || grip.test(span);
 }
 
 function playerTransfer(span: string, pcName?: string): boolean {
@@ -274,6 +320,7 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
   if (kept.length > 1) kept = kept.filter(({ s }) => !recent.has(norm(s.text)));
   let prose = '';
   let prev: Piece | null = null;
+  let prevIndex = -1;
   for (const { i } of kept) {
     const piece = pieces[i]!;
     const span = spans[i]!;
@@ -281,11 +328,18 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
       if (prose && !/\s$/.test(prose)) prose += ' ';
       prose += span.text;
       prev = piece;
+      prevIndex = i;
       continue;
     }
-    if (prev) prose += source.slice(prev.end, piece.start);
+    if (prev) {
+      const adjacent = i === prevIndex + 1;
+      if (adjacent) prose += source.slice(prev.end, piece.start);
+      else if (prose && !/[.!?…]\s*$/.test(prose)) prose += '. ';
+      else if (prose && !/\s$/.test(prose)) prose += ' ';
+    }
     prose += source.slice(piece.start, piece.end);
     prev = piece;
+    prevIndex = i;
   }
   prose = prose.trim();
   return {
