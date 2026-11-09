@@ -54,6 +54,7 @@ import { callGm, callGmRepair, type GmResult } from './aiService';
 import { captureTurnEngineFacts, repairParentExtra, withTrainLogJob } from './trainLog';
 import { storyAfterClauseCheck } from './clauseCheck';
 import { applyFactGate } from './factGate';
+import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import { approachOpener, approachReceipt, bestFightApproach } from './fightApproach';
@@ -3216,6 +3217,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               pcName: liveCurrent.character?.name,
               allowNames: writerPacket?.allowlist,
               recentProse: recentGmBeatTexts(liveCurrent),
+              thirdPerson: narratesPcInThirdPerson(pcPov(liveCurrent.character, settingsRef.current.perspective)),
             });
             if (gate.withheld) {
               const page = pageWhenClauseWithheld(liveCurrent, writerPacket, sanitizedInput);

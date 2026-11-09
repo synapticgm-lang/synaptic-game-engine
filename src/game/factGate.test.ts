@@ -200,6 +200,84 @@ describe('fact gate', () => {
     expect(arrived.withheld).toBe(true);
   });
 
+  it('flags lowercase invented items and allows the same items in any case on the sheet', async () => {
+    const invented = await applyFactGate({
+      prose: 'Mira draws a sunblade. She drinks a health tonic. A pile of treasure waits. Steam curls off the furnace.',
+      sheet: sheet(),
+    });
+    expect(invented.prose).not.toMatch(/sunblade/i);
+    expect(invented.prose).not.toMatch(/health tonic/i);
+    expect(invented.prose).not.toMatch(/treasure/i);
+    expect(invented.prose).toMatch(/furnace/i);
+
+    const listed = await applyFactGate({
+      prose: 'Mira draws a sunblade. She drinks a health tonic. A pile of treasure waits. Steam curls off the furnace.',
+      sheet: sheet({
+        gear: { worn: [], carrying: ['Health Tonic'], inHand: 'Sunblade' },
+        openLedger: [{ kind: 'offer', line: 'treasure' }],
+      }),
+    });
+    expect(listed.prose).toMatch(/sunblade/i);
+    expect(listed.prose).toMatch(/health tonic/i);
+    expect(listed.prose).toMatch(/treasure/i);
+    expect(listed.spans.filter((s) => s.verdict === 'new/wrong')).toEqual([]);
+  });
+
+  it('does not treat Whatever, They, or Roads inside a quote as new names', async () => {
+    const out = await applyFactGate({
+      prose: 'Mara said, "Whatever. They waited. Roads bend past the bathhouse."',
+      sheet: sheet({ present: [{ name: 'Mira' }, { name: 'Mara' }] }),
+    });
+    expect(out.prose).toMatch(/Whatever/);
+    expect(out.prose).toMatch(/They waited/);
+    expect(out.prose).toMatch(/Roads bend/);
+    expect(out.spans.filter((s) => s.verdict === 'new/wrong')).toEqual([]);
+  });
+
+  it('removes narrator you in third person, a lowercase false exit, and going along when the beat disagrees', async () => {
+    const you = await applyFactGate({
+      prose: 'You look at the furnace. Mira stays quiet.',
+      sheet: sheet(),
+      thirdPerson: true,
+    });
+    expect(you.prose).not.toMatch(/\bYou look\b/);
+    expect(you.prose).toMatch(/Mira stays quiet/);
+
+    const quoted = await applyFactGate({
+      prose: 'Mira said, "You should stay."',
+      sheet: sheet(),
+      thirdPerson: true,
+    });
+    expect(quoted.prose).toMatch(/You should stay/);
+
+    const alley = await applyFactGate({
+      prose: 'Mira slipped out the alley. Mira stays by the furnace.',
+      sheet: sheet(),
+    });
+    expect(alley.prose).not.toMatch(/alley/i);
+    expect(alley.prose).toMatch(/furnace/i);
+    const street = await applyFactGate({
+      prose: 'Mira slipped out the street.',
+      sheet: sheet(),
+    });
+    expect(street.prose).toMatch(/street/i);
+
+    const obeys = await applyFactGate({
+      prose: 'Mara went along quietly. Mira stays by the furnace.',
+      sheet: sheet({
+        present: [{ name: 'Mira' }, { name: 'Mara' }],
+        beat: {
+          verb: 'ordered',
+          outcome: 'refused',
+          engineResult: 'Mara disagrees and will not go along quietly.',
+          steps: [{ outcome: 'disagree', detail: 'Mara disagrees and will not go along quietly.' }],
+        },
+      }),
+    });
+    expect(obeys.prose).not.toMatch(/went along/i);
+    expect(obeys.prose).toMatch(/furnace/i);
+  });
+
   it('removes a departure when the beat says there was no move', async () => {
     const out = await applyFactGate({
       prose: 'Jax set out for the street. Mira stays by the furnace.',

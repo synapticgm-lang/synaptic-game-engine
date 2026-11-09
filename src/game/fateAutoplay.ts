@@ -48,6 +48,7 @@ import {
   type ClauseCheckRecord,
 } from './clauseCheck';
 import { applyFactGate } from './factGate';
+import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import {
   enableAutoplayWriter,
   getAutoplayWriterOverride,
@@ -2055,6 +2056,7 @@ Do NOT print dice notation or CODE ENFORCED.
           pcName: arcState.character?.name,
           allowNames: writerPacket.allowlist,
           recentProse: recentGmBeatTexts(arcState),
+          thirdPerson: narratesPcInThirdPerson(pcPov(arcState.character, settings.perspective)),
         });
         if (gate.withheld) {
           const page = pageWhenClauseWithheld(arcState, writerPacket, playerInput);

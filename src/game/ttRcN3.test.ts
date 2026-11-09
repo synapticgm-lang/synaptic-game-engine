@@ -56,6 +56,19 @@ describe('RC-N3 blocking draft rewrite', () => {
     expect(turn.prose).not.toMatch(/cracked font/);
   });
 
+  it('a hard miss does not swap the writer draft for the engine page', async () => {
+    const state = lookState();
+    const draft = 'Vessa said, "Hello." WRITER_MARKER_9f3c.';
+    const turn = await runWriterTurnWithFightRetry({
+      firstRaw: draft,
+      packet: state.completedEvent!,
+      check: check(state),
+      rewrite: async () => draft,
+    });
+    expect(turn.path).not.toBe('last-resort');
+    expect(turn.prose).toContain('WRITER_MARKER_9f3c');
+  });
+
   it('a thin second draft is not replaced by the engine page for length', async () => {
     const state = lookState();
     const asked: string[] = [];

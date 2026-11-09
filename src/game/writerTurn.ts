@@ -558,19 +558,23 @@ export async function runWriterTurnWithFightRetry(opts: {
   ) {
     return { ...done, draftRetry: 'retried', fightDraft };
   }
-  // T10AL — lastResortStoryBody already finishes with ensureSpokenAnswer (one owner per beat).
-  const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
-  return {
-    ...done,
-    prose: painted.prose,
-    path: 'last-resort',
-    refs: undefined,
-    speech: undefined,
-    remaining: writerDraftProblems(painted.prose, opts.check),
-    problems: [...new Set([...done.problems, 'blocking draft fell back to engine-fact page'])],
-    draftRetry: 'painted',
-    fightDraft,
-  };
+  // The fact gate owns the page. A hard miss keeps the writer draft; the engine page
+  // is used only when that gate leaves nothing, or the writer draft itself is empty.
+  if (!done.prose.trim()) {
+    const painted = lastResortStoryBody(opts.check.state, opts.packet, opts.check.playerInput);
+    return {
+      ...done,
+      prose: painted.prose,
+      path: 'last-resort',
+      refs: undefined,
+      speech: undefined,
+      remaining: writerDraftProblems(painted.prose, opts.check),
+      problems: [...new Set([...done.problems, 'blocking draft fell back to engine-fact page'])],
+      draftRetry: 'painted',
+      fightDraft,
+    };
+  }
+  return { ...done, draftRetry: 'retried', fightDraft };
 }
 /**
  * T10AK — after post-writer stages (clause normalize / warden / words-guard) can drop a destination
