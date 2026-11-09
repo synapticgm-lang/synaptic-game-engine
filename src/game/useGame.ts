@@ -3206,7 +3206,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...(writerTurn.combatLog ? [writerTurn.combatLog] : []),
           ],
         };
-        // Fact gate — code reads the draft. No model check unless the unsure flag is on.
+        // Fact gate. Confident scenery stays. Other spans go through one batched check unless SGM_FACT_CHECK=off.
         {
           const sheet = writerPacket?.factSheet ?? liveCurrent.completedEvent?.factSheet;
           const draft = result.text ?? '';

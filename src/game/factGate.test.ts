@@ -2,7 +2,7 @@
  * Code-first fact gate. No model calls. The checker and repair hooks are stubs.
  */
 import { describe, expect, it } from 'vitest';
-import { applyFactGate, estimateFactCheckTokens, isFactCheckEnabled, isUnsureFactCheckEnabled, parseFactCheckReply } from './factGate';
+import { applyFactGate, estimateFactCheckTokens, formatFactCheckRequest, isFactCheckEnabled, isUnsureFactCheckEnabled, parseFactCheckReply } from './factGate';
 import type { FactSheet } from './factSheet';
 
 function sheet(partial?: Partial<FactSheet>): FactSheet {
@@ -646,13 +646,9 @@ describe('fact gate', () => {
       candidates += hit.length;
     }
     expect(removed).toBe(0);
-    expect(candidateLines).toEqual([
-      'She has a coin in her palm.',
-      'Mira watched the door',
-      'Lamplight moved across the floor.',
-      'A crack ran through the plaster.',
-    ]);
-    expect(candidates).toBe(4);
+    // 61 of 64 lines are uncertain (an object or a word that is not pure scenery). 63 spans.
+    expect(candidateLines).toHaveLength(61);
+    expect(candidates).toBe(63);
   });
 
   it('routes paraphrased facts to the checker instead of calling them colour', async () => {
@@ -688,6 +684,92 @@ describe('fact gate', () => {
     }
     expect(misses).toBe(0);
     expect(calls).toBe(55);
+  });
+
+  it('sends uncertain names, objects, obedience, and action quotes to the checker', async () => {
+    const review = [
+      'A ruby the size of a thumb sat in the ash.',
+      'She nodded and did as she was told.',
+      'old nan taps the tub.',
+      'A clerk called brim waited by the stair.',
+      'harrow nodded from the steam.',
+      'then bramble cleared his throat.',
+      'mistress yelna pours from the kettle.',
+      'Mira said, "Jax pocketed the cellar key and left for the quay."',
+    ];
+    const fresh = [
+      'brim waited under the stair.',
+      'yelna poured without a word.',
+      'harrow coughed once from the steam.',
+      'the ash hid a ruby.',
+      'nan tapped the tub twice.',
+      'a clerk stood where brim had been.',
+      'the kettle was yelna\'s.',
+      'bramble looked up from the steam.',
+      'mistress yelna kept the spare in the kettle.',
+      'Mira said, "Jax walked out toward the quay with the key."',
+    ];
+    const lines = [...review, ...fresh];
+    let misses = 0;
+    for (const line of lines) {
+      let speech = false;
+      const out = await applyFactGate({
+        prose: line,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines: numbered }) => {
+          speech = numbered.some((entry) => entry.speech);
+          return numbered.map((entry) => ({ n: entry.n, verdict: 'remove' as const }));
+        },
+      });
+      const routed = out.spans.some((s) => s.route === 'candidate');
+      if (!routed) misses += 1;
+      expect(routed, line).toBe(true);
+      expect(out.prose, line).not.toMatch(/ruby|nan|brim|harrow|bramble|yelna|quay|told|kettle|tub/i);
+      if (line.includes('"')) expect(speech, line).toBe(true);
+    }
+    expect(misses).toBe(0);
+  });
+
+  it('fails a span closed when the same number gets two verdicts', async () => {
+    const clash = await applyFactGate({
+      prose: 'Steam curls off the cold plunge. A ruby the size of a thumb sat in the ash.',
+      sheet: sheet(),
+      factCheckEnabled: true,
+      factCheck: async () => [
+        { n: 1, verdict: 'keep' },
+        { n: 1, verdict: 'remove' },
+      ],
+    });
+    expect(clash.prose).toMatch(/Steam curls/);
+    expect(clash.prose).not.toMatch(/ruby/i);
+
+    const agreed = await applyFactGate({
+      prose: 'Steam curls off the cold plunge. A ruby the size of a thumb sat in the ash.',
+      sheet: sheet(),
+      factCheckEnabled: true,
+      factCheck: async () => [
+        { n: 1, verdict: 'keep' },
+        { n: 1, verdict: 'keep' },
+      ],
+    });
+    expect(agreed.prose).toMatch(/ruby/i);
+  });
+
+  it('tells the checker that speech is talk and that objects in other hands are scenery', () => {
+    const prompt = formatFactCheckRequest({
+      sheet: sheet(),
+      lines: [
+        { n: 1, text: 'Jax pocketed the cellar key.', speech: true },
+        { n: 2, text: 'Steam curls off the cold plunge.' },
+      ],
+    });
+    expect(prompt).toMatch(/\[speech\]/);
+    expect(prompt).toMatch(/\[narration\]/);
+    expect(prompt).toMatch(/rumour|rumor|opinion/i);
+    expect(prompt).toMatch(/other(?:s)?'? hands|someone else's hands/i);
+    expect(prompt).toMatch(/scenery/i);
   });
 
   it('removes a departure when the beat says there was no move', async () => {

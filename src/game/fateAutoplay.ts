@@ -2045,7 +2045,7 @@ Do NOT print dice notation or CODE ENFORCED.
         completedEvent: { ...arcState.completedEvent, tokenRefs: writerTurn.refs },
       };
     }
-    // Fact gate — code reads the draft. No model check unless the unsure flag is on.
+    // Fact gate. Confident scenery stays. Other spans go through one batched check unless SGM_FACT_CHECK=off.
     {
       const sheet = arcState.completedEvent?.factSheet ?? writerPacket.factSheet;
       const draft = gmText;

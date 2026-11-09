@@ -1,7 +1,6 @@
 /**
- * Code-first fact gate. One verdict per span, no model call unless the unsure flag is on.
- * Colour and allowed facts stay. A new or wrong span is repaired once or removed.
- * An unsure span is removed unless SGM_UNSURE_FACT_CHECK=on (or the call opts in).
+ * Hybrid fact gate. A span is colour only when every word is scenery or already on the sheet.
+ * Anything uncertain is a candidate for one batched hosted check.
  */
 import type { FactSheet } from './factSheet';
 import { splitProseSentences } from './proseSentences';
@@ -17,6 +16,8 @@ export interface FactSpan {
   /** How code routed the span before any checker. */
   route: FactRoute;
   reason: string;
+  /** True when this span is an NPC quote the checker must judge as speech. */
+  speech?: boolean;
 }
 
 export interface FactGateResult {
@@ -38,6 +39,24 @@ const IMPLIED = /\b(worth|secret|trade|killed|owns|never tells)\b/i;
 const ACTION = /\b(walked|said|told|attacked|struck|ran|opened|joined)\b/i;
 const ITEMISH = /\b(health tonic|[a-z]*blade|[a-z]*sword|tonic|treasure|potion|key|knife|ring|letter|cloak|bag|vault)\b/i;
 const LOOSE_ITEM = /\b(coin|coins|gold)\b/i;
+/** Closed sensory and grammar words. A word outside this set and the sheet is uncertain. */
+const SAFE = new Set([
+  'steam', 'curl', 'curls', 'curled', 'curling', 'air', 'warm', 'warmth', 'cold', 'hot', 'cool',
+  'light', 'lights', 'dark', 'quiet', 'silence', 'still', 'soft', 'damp', 'wet', 'dry', 'pale',
+  'dull', 'thin', 'low', 'even', 'smell', 'smelled', 'smells', 'scent', 'hung', 'hang', 'hangs',
+  'sat', 'sit', 'sits', 'sitting', 'lay', 'lies', 'lying', 'rose', 'rise', 'rises', 'pooled',
+  'pool', 'pools', 'faded', 'fade', 'ticked', 'tick', 'ticks', 'creaked', 'creak', 'burned',
+  'burn', 'burns', 'shifted', 'shift', 'pressed', 'press', 'filled', 'fill', 'showed', 'show',
+  'lingered', 'linger', 'settled', 'settle', 'beaded', 'bead', 'fogged', 'fog', 'cooled',
+  'night', 'shadow', 'shadows', 'smoke', 'dust', 'rain', 'fire', 'water', 'heat', 'glow',
+  'gleam', 'hush', 'draft', 'sound', 'late', 'early', 'slow', 'faint', 'deep', 'high', 'small',
+  'old', 'gray', 'grey', 'black', 'white', 'once', 'back', 'inch', 'its', 'own', 'their',
+  'them', 'they', 'who', 'how', 'all', 'one', 'some', 'any', 'each', 'both', 'more', 'most',
+  'other', 'another', 'around', 'along', 'through', 'without', 'within', 'between', 'among',
+  'against', 'during', 'until', 'onto', 'inside', 'outside', 'below', 'behind', 'again',
+  'away', 'down', 'very', 'too', 'also', 'than', 'then', 'off', 'did', 'does',
+]);
+
 const COMMON = new Set([
   'whatever', 'they', 'them', 'their', 'roads', 'road', 'the', 'and', 'but', 'she', 'her', 'his',
   'you', 'your', 'yours', 'that', 'this', 'then', 'there', 'when', 'where', 'what', 'which',
@@ -71,7 +90,7 @@ export interface CandidateCheck {
 
 export type FactChecker = (input: {
   sheet: FactSheet;
-  lines: Array<{ n: number; text: string }>;
+  lines: Array<{ n: number; text: string; speech?: boolean }>;
 }) => Promise<CandidateCheck[]>;
 
 function norm(s: string): string {
@@ -388,17 +407,19 @@ function capStart(text: string): string {
 
 export function formatFactCheckRequest(input: {
   sheet: FactSheet;
-  lines: Array<{ n: number; text: string }>;
+  lines: Array<{ n: number; text: string; speech?: boolean }>;
 }): string {
   return [
     'Fact check. One verdict for every numbered line: keep, remove, or repair-once.',
-    'keep = scenery or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
-    'Words inside quotation marks are speech. Remove a quote only if it states a mechanical outcome for the player right now.',
+    'A line marked [narration] is the narrator. A line marked [speech] is an NPC talking.',
+    'Speech may be rumour, opinion, or a story: keep those. Remove a speech line only when it states that the player, the party, or someone present gains an object, goes somewhere, or obeys.',
+    'Objects held in someone else\'s hands, or lying in the scenery, are allowed unless the player or the party gains them.',
+    'keep = scenery, harmless speech, or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
     'Reply as JSON: [{"n":1,"verdict":"keep"}]. A repair-once row may include "text".',
     'SHEET:',
     JSON.stringify(input.sheet),
     'LINES:',
-    ...input.lines.map((line) => `${line.n}. ${line.text}`),
+    ...input.lines.map((line) => `${line.n}. ${line.speech ? '[speech]' : '[narration]'} ${line.text}`),
   ].join('\n');
 }
 
@@ -490,13 +511,51 @@ function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse:
   };
 }
 
-function routeSpan(text: string, verdict: FactVerdict, reason: string, sheet: FactSheet, pcName?: string): FactRoute {
+function quotedText(span: string): string {
+  return [...span.matchAll(/["“]([^"”]*)["”]/g)].map((m) => m[1] ?? '').join(' ');
+}
+
+function quoteAssertsChange(span: string, sheet: FactSheet, pcName?: string): boolean {
+  const quoted = quotedText(span);
+  if (!quoted.trim()) return false;
+  if (playerTransfer(quoted, pcName) || partyPossession(quoted, pcName)) return true;
+  const person = partySubject(quoted, sheet, pcName) || /\byou\b/i.test(quoted);
+  if (/\b(did as (?:she|he|they) (?:was|were) told|nodded and agreed|obeyed|went along quietly|complied|agreed to)\b/i.test(quoted) && person) {
+    return true;
+  }
+  return (motionCue(quoted) || MOVE.test(quoted)) && partySubject(quoted, sheet, pcName);
+}
+
+function confidentScenery(span: string, known: Set<string>): boolean {
+  const narration = span.replace(/["“][^"”]*["”]/g, ' ');
+  const tokens = narration.toLowerCase().split(/[^a-z0-9']+/).filter(Boolean);
+  return tokens.every((token) => token.length < 3 || SAFE.has(token) || COMMON.has(token) || known.has(token));
+}
+
+function oneVerdict(reply: CandidateCheck[], n: number): CandidateCheck | null {
+  const rows = reply.filter((row) => row.n === n && (row.verdict === 'keep' || row.verdict === 'remove' || row.verdict === 'repair-once'));
+  if (!rows.length) return null;
+  const kinds = new Set(rows.map((row) => row.verdict));
+  if (kinds.size !== 1) return null;
+  return rows[rows.length - 1] ?? null;
+}
+
+function routeSpan(
+  text: string,
+  verdict: FactVerdict,
+  reason: string,
+  sheet: FactSheet,
+  pcName: string | undefined,
+  known: Set<string>,
+): FactRoute {
+  if (isSpeech(text) && quoteAssertsChange(text, sheet, pcName)) return 'candidate';
   if (isSpeech(text) && !mechanicalNow(text)) return 'colour';
   if (verdict === 'new/wrong') return 'new/wrong';
   if (verdict === 'allowed' && reason === 'item is on the sheet') return 'allowed';
   if (verdict === 'UNSURE' || mentionsFactAgent(text, sheet, pcName) || possessionCue(text) || motionCue(text)) {
     return 'candidate';
   }
+  if (!confidentScenery(text, known)) return 'candidate';
   return 'colour';
 }
 
@@ -520,13 +579,17 @@ export async function applyFactGate(args: {
   const blob = packetBlob(args.sheet, args.pcName, args.allowNames);
   const judge = (text: string, id: string): FactSpan => {
     const judged = classifySpan(text, args.sheet, words, blob, args.pcName, args.thirdPerson);
-    const speech = isSpeech(text) && !mechanicalNow(text);
+    const talk = isSpeech(text);
+    const claim = talk && quoteAssertsChange(text, args.sheet, args.pcName);
+    const verdict = talk && !claim ? 'colour' : judged.verdict;
+    const reason = claim ? 'speech claim' : talk ? 'speech' : judged.reason;
     return {
       id,
       text,
-      verdict: speech ? 'colour' : judged.verdict,
-      reason: speech ? 'speech' : judged.reason,
-      route: routeSpan(text, speech ? 'colour' : judged.verdict, speech ? 'speech' : judged.reason, args.sheet, args.pcName),
+      verdict,
+      reason,
+      speech: claim,
+      route: routeSpan(text, verdict, reason, args.sheet, args.pcName, words),
     };
   };
   const pieces = segmentPieces(args.prose);
@@ -539,15 +602,15 @@ export async function applyFactGate(args: {
       try {
         const got = await args.factCheck({
           sheet: args.sheet,
-          lines: candidates.map((s, i) => ({ n: i + 1, text: s.text })),
+          lines: candidates.map((s, i) => ({ n: i + 1, text: s.text, speech: s.speech })),
         });
         reply = Array.isArray(got) ? got : [];
       } catch {
         reply = [];
       }
       candidates.forEach((span, i) => {
-        const got = reply.find((row) => row.n === i + 1);
-        if (!got || (got.verdict !== 'keep' && got.verdict !== 'remove' && got.verdict !== 'repair-once')) {
+        const got = oneVerdict(reply, i + 1);
+        if (!got) {
           span.verdict = 'new/wrong';
           span.reason = 'checker missed this line';
           return;
