@@ -1,9 +1,13 @@
 /**
- * Replay bank, Order 8. One real recording, still unfilled (RUN stays empty until that tape exists).
- * Legal party: A is the one recruited companion. B is another named NPC present at the beats, not a
- * second recruit. The memory beat is the player's own earlier line, not an NPC quote.
+ * Replay bank, Order 8. One private recording (not in git).
+ * A is the only recruited companion. B is present and not recruited.
+ * On this tape A's stored trust goes from no row to 10, and B has no stored row, so the
+ * predicate's missing-row zero is not a second stored number moving the other way.
+ * 21 of 22 committed pages are the engine line after the writer gate. This file does not
+ * claim prose quality or a green full bank.
  */
-import { existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { Replay, npc } from './bank';
@@ -14,13 +18,27 @@ import type { GameState } from '../../game/types';
 
 vi.mock('../../game/aiService', async (orig) => (await import('./writerQueue')).mockAiService(await orig()));
 
-const RUN = '';                       // ORDER-NAMED: recorded run dir
-const T = { order: 0, split: 0, said: 0, recall: 0 };   // ORDER-NAMED: harness turns of the four scripted beats
-const A = '', B = '';                 // ORDER-NAMED: A recruited companion, B the other NPC
+const RUN = '2026-11-08T23-52-11-338Z_summoned-pact_chilled-gm_s36';
+const T = { order: 3, split: 2, said: 4, recall: 13 };
+const A = 'Mara Vell', B = 'Innkeep Mara';
+const TAPE_SHA256 = {
+  'turns.jsonl': '639e17cf15fd06e9719d24c5fcd1f943ac85413a9d056125a248176a7e76f6d0',
+  'meta.json': '1e7af7ba21fc9ce185ce4050e9b58b87dc368b7734624731a2c7b23463c0cbfe',
+} as const;
 
 let X: Replay;
 beforeAll(async () => {
-  if (!RUN || !existsSync(join(RUNS_ROOT, RUN))) throw new Error('record the companion run first (see README)');
+  const dir = join(RUNS_ROOT, RUN);
+  if (!existsSync(dir)) {
+    throw new Error(
+      `companion tape missing at ${dir}. Restore private turns.jsonl and meta.json `
+      + `(sha256 ${TAPE_SHA256['turns.jsonl']} and ${TAPE_SHA256['meta.json']}). Do not commit them.`
+    );
+  }
+  for (const name of ['turns.jsonl', 'meta.json'] as const) {
+    const got = createHash('sha256').update(readFileSync(join(dir, name))).digest('hex');
+    if (got !== TAPE_SHA256[name]) throw new Error(`${name} sha256 ${got} != ${TAPE_SHA256[name]}`);
+  }
   X = new Replay(await replayWhole(RUN));
 }, 1_800_000);
 
