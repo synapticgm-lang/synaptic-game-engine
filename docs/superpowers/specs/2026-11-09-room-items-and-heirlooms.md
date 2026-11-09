@@ -21,7 +21,7 @@ Fixed things (a desk, armour on a stand) stay in the room. Loose or hung weapons
 
 An heirloom is the exception. A durable NPC can roll one, once, from the save seed and their id. About one in twelve. At most one in a settlement. The reason is one of four engine phrases: retired from a higher band, family relic, war trophy, temple charge. The item is on that NPC's fact-sheet row, guarded while they are in the room, and moves only when the engine records a transfer. Roster NPCs keep the signature item they were authored with, and do not roll a second one.
 
-Shops (local production and travel-time stock) and the legends sheet are out of this spec. They are named so they are not quietly built here.
+Shops and the legends registry are specified in `docs/superpowers/specs/2026-11-09-shops-and-legends.md`, on this same change. This file does not build them.
 
 Merging this file to `main` would still publish the client, because Vercel builds production from `main`. The spec has no runtime effect. Do not merge it until the text is accepted.
 
@@ -175,12 +175,11 @@ Until the fact check is in the game, this section does not add a prose word list
 
 ## 7. Shops and legends
 
-Deferred. Not designed here.
+Designed in the sibling spec `docs/superpowers/specs/2026-11-09-shops-and-legends.md`.
 
-- Shops. John's local-production and travel-time stock is a different change. `merchantStock` (`src/game/merchant.ts:107`) stays as it is. A room prop is not shop stock. Selling an heirloom to a shop is out of scope.
-- Legends. A legend sheet, if it is built later, may record that a story is told. It does not create a prop or an heirloom. Section 5 already says speech does not create the sword.
+A room prop is not shop stock. An heirloom is not listed for sale unless that sibling's engine transfer says so. A legend does not create a prop or an heirloom by being told. Section 5 still says speech does not create the sword.
 
-**Licence.** Leaving these out is scope, not a new restriction on prose.
+**Licence.** Pointing at the sibling is scope. The restrictions live there, each with its own licence note.
 
 ## 8. Tests, old saves, tapes
 
@@ -224,7 +223,7 @@ Replay tapes:
 | Heirloom roll, one in twelve, one per settlement, four reasons | Boasting stays legal. The weapon exists only when the roll said so. | No. A town without a roll is an ordinary town. |
 | Roster NPCs keep their signature item only | Their authored gear stays the fact. | No. |
 | High-level description only from the sheet | Same as any other missing fact. | No. |
-| Shops and legends deferred | No new prose ban. | No. |
+| Shops and legends | Designed in the sibling spec, not here. | See that file. |
 | No backfill from old tapes | Old text is not re-interpreted as inventory. | No. |
 
 ## What this spec will not do
@@ -232,5 +231,5 @@ Replay tapes:
 - No new noun list, verb list, or rarity-adjective list in the engine.
 - No second model call. Tags ride the fact check the turn already makes, once that check exists.
 - No heirloom from dialogue.
-- No shop-stock redesign and no legend sheet.
+- No shop or legend implementation in this file. The design is the sibling spec.
 - No edit to the fact-gate draft in this change. The tag field is specified here so that draft can grow it later, in its own change.
