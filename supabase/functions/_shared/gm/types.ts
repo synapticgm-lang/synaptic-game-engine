@@ -562,6 +562,8 @@ export interface Quest {
   failOnDeath?: boolean;
   /** Fail reason when status is failed. */
   failReason?: string;
+  /** Designer-set switches. A rescue stores requireHeal here when that quest needs a heal. */
+  variables?: { requireHeal?: boolean };
   rewards?: {
     xp?: number;
     gold?: number;

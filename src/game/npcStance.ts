@@ -7,6 +7,7 @@
 import type { GameState, NpcMemory, NpcStance } from './types';
 import { stanceActionKind } from './npcMemory';
 import { presentNpcRecords } from './npcRecords';
+import { dungeonCaptiveStillHeld } from './dungeonRescue';
 
 export type StanceEventKind = 'rescued' | 'helped' | 'threatened' | 'harmed';
 
@@ -114,7 +115,9 @@ export function stanceEventFromAction(
   const target = stanceTarget(state, playerInput);
   if (!target) return null;
   const kind: StanceEventKind | null =
-    act === 'free' ? (isCaptive(target) ? 'rescued' : null) : act === 'harm' ? 'harmed' : act === 'threat' ? 'threatened' : 'helped';
+    act === 'free'
+      ? (isCaptive(target) && !dungeonCaptiveStillHeld(state, target.npcId) ? 'rescued' : null)
+      : act === 'harm' ? 'harmed' : act === 'threat' ? 'threatened' : 'helped';
   if (!kind) return null;
   const pc = state.character?.name?.trim() || 'the player';
   const where = kind === 'rescued' && state.currentLocation ? ` at ${state.currentLocation}` : '';

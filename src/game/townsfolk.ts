@@ -12,6 +12,7 @@ import { presentNpcRecords } from './npcRecords';
 import { ensureNpcSheet, npcSheetWriterLine, pickNpcSheet, sheetPlaceFor, type SheetPlace } from './npcSheet';
 import { createHashRng } from './seededRng';
 import { recordStanceFromAction } from './npcStance';
+import { commitRescueAction, seatRescueDwellers } from './dungeonRescue';
 import { recordPersonaFromAction, personaStanceWriterLine, decayPlaceMoods } from './npcPersona';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import { nameWords, pickPersonName } from './personNames';
@@ -137,7 +138,7 @@ export function prepareWriterInputWithTownsfolk(
   playerInput: string,
   extras?: PacketBuildExtras,
 ): { state: GameState; packet: CompletedEventPacket; writerFacing: string } {
-  const seeded = decayPlaceMoods(seedTownsfolkHere(state));
+  const seeded = decayPlaceMoods(seedTownsfolkHere(seatRescueDwellers(commitRescueAction(state, playerInput).state)));
   // T10AA — road walkers / harvested companions get a sheet so spoken answers have motive content
   // (seedTownsfolkHere skips journeys; harvest alone left Hale/Wenna without lines).
   let sheeted = seeded;
