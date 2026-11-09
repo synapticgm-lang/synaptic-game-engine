@@ -191,15 +191,19 @@ function speechRanges(prose: string): Array<[number, number]> {
     const dash = ch === '\u2014' ? 1 : ch === '-' && prose[i + 1] === '-' ? 2 : 0;
     if (dash && speakerBefore(prose, i)) {
       let j = i + dash;
-      while (j < prose.length && !/[.!?\u2026]/.test(prose[j]!)) j += 1;
+      while (j < prose.length && !(prose[j] === '\n' && prose[j + 1] === '\n')) j += 1;
       ranges.push([i, j]);
-      i += dash;
+      i = j;
       continue;
     }
     if (ch === '"' || ch === '\u201c') {
       const end = prose.indexOf(ch === '\u201c' ? '\u201d' : '"', i + 1);
-      ranges.push([i, end >= 0 ? end + 1 : prose.length]);
-      i = end >= 0 ? end + 1 : prose.length;
+      if (end < 0) {
+        i += 1;
+        continue;
+      }
+      ranges.push([i, end + 1]);
+      i = end + 1;
       continue;
     }
     if (isSingleQuote(ch) && !isApostrophe(prose, i) && !isLetter(prose[i - 1])) {
@@ -212,8 +216,12 @@ function speechRanges(prose: string): Array<[number, number]> {
         }
         j += 1;
       }
-      ranges.push([i, closed >= 0 ? closed + 1 : prose.length]);
-      i = closed >= 0 ? closed + 1 : prose.length;
+      if (closed < 0) {
+        i += 1;
+        continue;
+      }
+      ranges.push([i, closed + 1]);
+      i = closed + 1;
       continue;
     }
     i += 1;
@@ -252,7 +260,8 @@ function sentencePieces(prose: string, ranges: Array<[number, number]>): Piece[]
     while (j < prose.length && /["'\u201c\u201d\u2018\u2019)\]]/.test(prose[j]!)) j += 1;
     const stillInside = ranges.some(([a, b]) => i >= a && i < b && b > j);
     const next = prose.slice(j).match(/^\s*(\S)/)?.[1];
-    const ends = !stillInside && (j >= prose.length || (prose[j] === ' ' && !!next && !/[a-z]/.test(next)));
+    const boundary = j >= prose.length || (/\s/.test(prose[j] ?? '') && !!next && !/[a-z]/.test(next));
+    const ends = !stillInside && boundary;
     if (!ends) continue;
     const piece = trimPiece(prose, start, j);
     if (piece) out.push(piece);
@@ -308,6 +317,17 @@ function nameOutside(span: string, words: Set<string>, pcName?: string): string 
     }
   }
   return null;
+}
+
+function itemNouns(span: string): string[] {
+  const out: string[] = [];
+  for (const match of span.matchAll(/\b(health tonic|[a-z]*blade|[a-z]*sword|tonic|treasure|potion|key|knife|ring|letter|cloak|bag|vault)\b/gi)) {
+    out.push(match[1] ?? match[0]);
+  }
+  for (const match of span.matchAll(/\b(coin|coins|gold)\b/gi)) {
+    out.push(match[1] ?? match[0]);
+  }
+  return out;
 }
 
 function heldItem(item: string, words: Set<string>): boolean {
@@ -380,9 +400,13 @@ function classifySpan(
     if (dest) return { verdict: 'new/wrong', reason: `exit not on the sheet: ${dest}` };
   }
   if (playerTransfer(span, pcName) || partyPossession(span, pcName)) {
-    const item = span.match(ITEMISH)?.[1] ?? span.match(LOOSE_ITEM)?.[1];
-    if (item && !heldItem(item, words)) return { verdict: 'new/wrong', reason: `unlisted item: ${item}` };
-    if (!item) return { verdict: 'UNSURE', reason: 'possession change with no named item' };
+    const nouns = itemNouns(span);
+    if (!nouns.length) return { verdict: 'UNSURE', reason: 'possession change with no named item' };
+    const listed = nouns.filter((noun) => heldItem(noun, words));
+    if (listed.length !== nouns.length) {
+      if (listed.length > 0) return { verdict: 'colour', reason: 'gain not fully listed' };
+      return { verdict: 'new/wrong', reason: `unlisted item: ${nouns.find((noun) => !heldItem(noun, words))}` };
+    }
     if (/\b(dropped|lost)\b/i.test(span)) return { verdict: 'new/wrong', reason: 'possession change the beat did not grant' };
     return { verdict: 'allowed', reason: 'item is on the sheet' };
   }
@@ -435,8 +459,38 @@ function playerTransfer(span: string, pcName?: string): boolean {
   return give.test(span) || take.test(span);
 }
 
-function hasQuote(span: string): boolean {
-  return speechRanges(span).length > 0;
+const SPEECH_VERB = /\b(said|says|asked|whispered|told|replied|answered|answers)\b/i;
+
+/** speech: the span is talk. narration: a short quote inside a sentence. none: no quote. */
+function speechRole(text: string): 'speech' | 'narration' | 'none' {
+  const ranges = speechRanges(text);
+  const dash = /[A-Z][A-Za-z'’.-]*(?:\s+[A-Z][A-Za-z'’.-]*)?\s+(?:\u2014|--)/.test(text);
+  if (!ranges.length && !dash) return 'none';
+  if (dash || SPEECH_VERB.test(text)) return 'speech';
+  const quoted = ranges.reduce((n, [start, end]) => n + (end - start), 0);
+  if (quoted * 2 >= text.trim().length) return 'speech';
+  return 'narration';
+}
+
+function narrationOnly(span: string): string {
+  const chars = span.split('');
+  for (const [start, end] of speechRanges(span)) {
+    for (let i = start; i < end && i < chars.length; i++) chars[i] = ' ';
+  }
+  return chars.join('');
+}
+
+function withInlineSpeech(text: string): string {
+  const ranges = speechRanges(text);
+  if (!ranges.length) return text;
+  let out = '';
+  let cursor = 0;
+  for (const [start, end] of ranges) {
+    if (start < cursor) continue;
+    out += text.slice(cursor, start) + `[speech]${text.slice(start, end)}[/speech]`;
+    cursor = end;
+  }
+  return out + text.slice(cursor);
 }
 
 function mentionsFactAgent(span: string, sheet: FactSheet, pcName?: string): boolean {
@@ -602,7 +656,7 @@ function routeSpan(
   pcName: string | undefined,
   known: Set<string>,
 ): FactRoute {
-  if (hasQuote(text)) return 'candidate';
+  if (reason === 'gain not fully listed' || reason === 'speech') return 'candidate';
   if (verdict === 'new/wrong') return 'new/wrong';
   if (verdict === 'allowed' && reason === 'item is on the sheet') return 'allowed';
   if (verdict === 'UNSURE' || mentionsFactAgent(text, sheet, pcName) || possessionCue(text) || motionCue(text)) {
@@ -631,15 +685,19 @@ export async function applyFactGate(args: {
   const words = allowWords(args.sheet, args.pcName, args.allowNames);
   const blob = packetBlob(args.sheet, args.pcName, args.allowNames);
   const judge = (text: string, id: string): FactSpan => {
-    const judged = classifySpan(text, args.sheet, words, blob, args.pcName, args.thirdPerson);
-    const talk = hasQuote(text);
+    const role = speechRole(text);
+    if (role === 'speech') {
+      return { id, text, verdict: 'colour', reason: 'speech', speech: true, route: 'candidate' };
+    }
+    const body = role === 'narration' ? narrationOnly(text) : text;
+    const judged = classifySpan(body, args.sheet, words, blob, args.pcName, args.thirdPerson);
     return {
       id,
       text,
-      verdict: talk ? 'colour' : judged.verdict,
-      reason: talk ? 'speech' : judged.reason,
-      speech: talk,
-      route: routeSpan(text, talk ? 'colour' : judged.verdict, talk ? 'speech' : judged.reason, args.sheet, args.pcName, words),
+      verdict: judged.verdict,
+      reason: judged.reason,
+      speech: false,
+      route: routeSpan(body, judged.verdict, judged.reason, args.sheet, args.pcName, words),
     };
   };
   const pieces = segmentPieces(args.prose);
@@ -652,7 +710,11 @@ export async function applyFactGate(args: {
       try {
         const got = await args.factCheck({
           sheet: args.sheet,
-          lines: candidates.map((s, i) => ({ n: i + 1, text: s.text, speech: s.speech })),
+          lines: candidates.map((s, i) => ({
+            n: i + 1,
+            text: s.speech ? s.text : withInlineSpeech(s.text),
+            speech: s.speech,
+          })),
         });
         reply = Array.isArray(got) ? got : [];
       } catch {

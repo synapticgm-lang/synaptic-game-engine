@@ -884,6 +884,101 @@ describe('fact gate', () => {
     expect(out.spans.some((s) => s.speech)).toBe(false);
   });
 
+  it('keeps a second dash-speech sentence for the checker and does not delete it in code', async () => {
+    const line = 'Mira — the soup is too salty. You left for the quay.';
+    const out = await applyFactGate({
+      prose: line,
+      sheet: sheet(),
+      pcName: 'Jax',
+      thirdPerson: true,
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        expect(lines).toHaveLength(1);
+        expect(lines[0]?.speech).toBe(true);
+        expect(lines[0]?.text).toMatch(/quay/);
+        expect(lines[0]?.text).toMatch(/soup/);
+        return [{ n: 1, verdict: 'keep' as const }];
+      },
+    });
+    expect(out.prose).toBe(line);
+    expect(out.spans.some((s) => s.verdict === 'new/wrong')).toBe(false);
+
+    const split = 'Mira — the soup is too salty.\n\nThe bathhouse waits.';
+    const parked = await applyFactGate({
+      prose: split,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => lines.map((entry) => ({
+        n: entry.n,
+        verdict: entry.speech ? 'remove' as const : 'keep' as const,
+      })),
+    });
+    expect(parked.prose).toMatch(/The bathhouse waits/);
+    expect(parked.prose).not.toMatch(/soup/);
+  });
+
+  it('does not let an unclosed quote swallow the following narration', async () => {
+    const line = 'Mira said, "The soup is salty. The bathhouse waits.';
+    const out = await applyFactGate({
+      prose: line,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        expect(lines.some((entry) => entry.speech && /bathhouse/i.test(entry.text))).toBe(false);
+        return lines.map((entry) => ({ n: entry.n, verdict: entry.speech ? 'remove' as const : 'keep' as const }));
+      },
+    });
+    expect(out.prose).toMatch(/The bathhouse waits/);
+  });
+
+  it('sends a scare quote as narration with the quoted words inline', async () => {
+    const line = 'He set the so-called "key" on the furnace.';
+    const out = await applyFactGate({
+      prose: line,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        expect(lines.every((entry) => entry.speech !== true)).toBe(true);
+        expect(lines.map((entry) => entry.text).join(' ')).toMatch(/\[speech\].*key/);
+        return lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const }));
+      },
+    });
+    expect(out.prose).toBe(line);
+    expect(out.spans.some((s) => s.verdict === 'new/wrong')).toBe(false);
+  });
+
+  it('sends a gain to the checker when any item noun is off the sheet', async () => {
+    const out = await applyFactGate({
+      prose: 'Jax received a bag of treasure.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => {
+        expect(lines.some((entry) => /treasure/i.test(entry.text))).toBe(true);
+        expect(lines.every((entry) => entry.speech !== true)).toBe(true);
+        return lines.map((entry) => ({ n: entry.n, verdict: 'remove' as const }));
+      },
+    });
+    expect(out.prose).not.toMatch(/treasure/i);
+    expect(out.spans.some((s) => s.route === 'candidate')).toBe(true);
+  });
+
+  it('keeps an opinion about where someone is', async () => {
+    const line = 'I think Mira is down on the quay.';
+    const out = await applyFactGate({
+      prose: line,
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const })),
+    });
+    expect(out.prose).toBe(line);
+    expect(out.spans.some((s) => s.verdict === 'new/wrong')).toBe(false);
+  });
+
   it('removes a departure when the beat says there was no move', async () => {
     const out = await applyFactGate({
       prose: 'Jax set out for the street. Mira stays by the furnace.',
