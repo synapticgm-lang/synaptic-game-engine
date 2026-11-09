@@ -33,10 +33,20 @@ export interface ClauseCheckPlayer {
  * Injectable model call (writer/critic plumbing). Tests stub this — never hit a paid API.
  * Production wires through callGmCheck / OpenRouter the same way as writer/repair.
  */
+/** Why a withheld check dropped the draft. The gate still drops it in every one of these cases. */
+export type ClauseWithholdCause =
+  | 'threw'
+  | 'empty'
+  | 'parse'
+  | 'no-clauses'
+  | 'serious'
+  | 'uncovered'
+  | 'repair-dropped';
+
 export type ClauseCheckChat = (args: {
   system: string;
   user: string;
-}) => Promise<{ claims?: ClauseClaim[] } | null>;
+}) => Promise<{ claims?: ClauseClaim[]; diagnostic?: ClauseWithholdCause } | null>;
 
 export function buildClauseCheckUser(args: {
   factSheet: FactSheet;
@@ -102,6 +112,8 @@ export interface ClauseCheckPassResult {
   serious: ClauseClaim[];
   /** Throw, empty payload, or no parseable claims. Not a pass. */
   failed: boolean;
+  /** Set when `failed`. Callers that withhold for a later local rule set their own cause. */
+  failCause?: ClauseWithholdCause;
 }
 
 function claimText(claim: string): string {
@@ -176,7 +188,11 @@ function recordsMarkedRepaired(records: ClauseCheckRecord[], replacement: string
     : [...marked, { clause: replacement, kind: 'fact', support: '', severity: 'serious', repaired: true }];
 }
 
-function withheldResult(checkPasses: number, serious0: ClauseClaim[]): ClauseCheckAndRepairResult {
+function withheldResult(
+  checkPasses: number,
+  serious0: ClauseClaim[],
+  withholdCause: ClauseWithholdCause
+): ClauseCheckAndRepairResult {
   return {
     prose: '',
     records: [],
@@ -184,6 +200,7 @@ function withheldResult(checkPasses: number, serious0: ClauseClaim[]): ClauseChe
     serious0,
     checkPasses,
     withheld: true,
+    withholdCause,
   };
 }
 
@@ -199,18 +216,26 @@ export async function runClauseCheck(args: {
     prose: args.prose,
     player: args.player,
   });
-  let out: { claims?: ClauseClaim[] } | null = null;
+  let out: { claims?: ClauseClaim[]; diagnostic?: ClauseWithholdCause } | null = null;
   let failed = false;
+  let failCause: ClauseWithholdCause | undefined;
   try {
     out = await args.chat({ system: CLAUSE_CHECK_SYS, user });
   } catch {
     failed = true;
+    failCause = 'threw';
     out = null;
   }
-  if (out == null) failed = true;
+  if (out == null) {
+    failed = true;
+    failCause = failCause ?? 'empty';
+  }
   const claims = failed ? [] : parseClauseClaims(out);
   // A reply that names no clause did not check the draft. One attempt only.
-  if (!failed && splitProseSentences(args.prose).length > 0 && claims.length === 0) failed = true;
+  if (!failed && splitProseSentences(args.prose).length > 0 && claims.length === 0) {
+    failed = true;
+    failCause = out?.diagnostic ?? 'no-clauses';
+  }
   const unsupported = unsupportedFacts(claims);
   const serious = unsupported.filter((u) => u.severity !== 'minor');
   return {
@@ -219,6 +244,7 @@ export async function runClauseCheck(args: {
     unsupported,
     serious,
     failed,
+    ...(failCause ? { failCause } : {}),
   };
 }
 
@@ -237,6 +263,8 @@ export interface ClauseCheckAndRepairResult {
    * `prose` is then empty — callers publish an engine page, never the draft.
    */
   withheld: boolean;
+  /** Which withhold branch dropped the draft. Absent when the draft is kept. */
+  withholdCause?: ClauseWithholdCause;
 }
 
 /**
@@ -266,6 +294,7 @@ export async function checkAndRepairProse(args: {
       serious0: [],
       checkPasses: 1,
       withheld: true,
+      withholdCause: first.failCause ?? 'empty',
     };
   }
   let prose = args.prose;
@@ -321,7 +350,7 @@ export async function checkAndRepairProse(args: {
         chat: args.chat,
       });
       checkPasses = 2;
-      if (second.failed) return withheldResult(2, first.serious);
+      if (second.failed) return withheldResult(2, first.serious, second.failCause ?? 'repair-dropped');
       const seriousHit = seriousStillInProse(prose, second.serious);
       const missed = uncoveredSentences(prose, second.claims);
       const stillFirst = splitProseSentences(prose).filter((sentence) =>
@@ -349,7 +378,7 @@ export async function checkAndRepairProse(args: {
         return !coveredBefore;
       });
       const kept = splitProseSentences(prose).filter((sentence) => !drop.includes(sentence));
-      if (!kept.length) return withheldResult(2, first.serious);
+      if (!kept.length) return withheldResult(2, first.serious, 'repair-dropped');
       const remainder = kept.join(' ');
       const third = await runClauseCheck({
         factSheet: args.factSheet,
@@ -363,7 +392,7 @@ export async function checkAndRepairProse(args: {
         || seriousStillInProse(remainder, third.serious).length
         || uncoveredSentences(remainder, third.claims).length
       ) {
-        return withheldResult(3, first.serious);
+        return withheldResult(3, first.serious, third.failCause ?? 'repair-dropped');
       }
       return {
         prose: remainder,
@@ -377,9 +406,9 @@ export async function checkAndRepairProse(args: {
   }
 
   // Repair missing or it did not land: the flagged draft is known-invalid.
-  if (first.serious.length) return withheldResult(checkPasses, first.serious);
+  if (first.serious.length) return withheldResult(checkPasses, first.serious, 'serious');
   // A claim list that skips a sentence did not check that sentence.
-  if (uncoveredSentences(prose, first.claims).length) return withheldResult(checkPasses, first.serious);
+  if (uncoveredSentences(prose, first.claims).length) return withheldResult(checkPasses, first.serious, 'uncovered');
   return {
     prose,
     records,
@@ -415,9 +444,34 @@ export function makeGmClauseChat(
   callCheck: (userPayload: string) => Promise<string>
 ): ClauseCheckChat {
   return async ({ user }) => {
-    const text = await callCheck(user);
-    return { claims: parseClauseClaims(text) };
+    const text = (await callCheck(user)) ?? '';
+    if (!text.trim()) return { claims: [], diagnostic: 'empty' };
+    const trimmed = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+    let body: unknown;
+    try {
+      body = JSON.parse(trimmed);
+    } catch {
+      return { claims: [], diagnostic: 'parse' };
+    }
+    const claims = parseClauseClaims(body);
+    if (claims.length) return { claims };
+    const list = Array.isArray(body)
+      ? body
+      : body && typeof body === 'object'
+        ? (body as { claims?: unknown }).claims
+        : undefined;
+    if (Array.isArray(list) && list.length === 0) return { claims: [], diagnostic: 'no-clauses' };
+    return { claims: [], diagnostic: 'parse' };
   };
+}
+
+/** One TurnLog row for a diagnostic replay. A normal session records nothing here. */
+export function diagnosticClauseWithholdVerdict(
+  cause: ClauseWithholdCause | undefined,
+  diagnosticReplay: boolean
+): Array<{ checker: 'clauseWithhold'; verdict: 'fail'; detail: ClauseWithholdCause }> {
+  if (!diagnosticReplay || !cause) return [];
+  return [{ checker: 'clauseWithhold', verdict: 'fail', detail: cause }];
 }
 
 /** TurnLog checkerVerdicts from clause records. */

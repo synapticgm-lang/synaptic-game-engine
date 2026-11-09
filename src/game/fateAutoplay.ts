@@ -42,13 +42,15 @@ import {
   setTrainLogSession,
   withTrainLogJob,
 } from './trainLog';
-import { disableDiagnosticReplay, enableDiagnosticReplay } from './diagnosticReplay';
+import { disableDiagnosticReplay, enableDiagnosticReplay, isDiagnosticReplay } from './diagnosticReplay';
 import {
   checkAndRepairProse,
   clauseCheckerVerdicts,
+  diagnosticClauseWithholdVerdict,
   makeGmClauseChat,
   storyAfterClauseCheck,
   type ClauseCheckRecord,
+  type ClauseWithholdCause,
 } from './clauseCheck';
 import {
   enableAutoplayWriter,
@@ -1986,6 +1988,7 @@ Do NOT print dice notation or CODE ENFORCED.
   // 29z8 — one writer pass: the first draft is the beat; code checks are logged, never re-asked.
   let writerTurn: WriterTurnRetryResult | null = null;
   let clauseCheckRecords: ClauseCheckRecord[] = [];
+  let clauseWithholdCause: ClauseWithholdCause | undefined;
   const stageTrace: { stage: string; text: string }[] = [];
   const traceStage = (stage: string, text: string) => {
     if (stageTrace[stageTrace.length - 1]?.text !== text) stageTrace.push({ stage, text });
@@ -2092,6 +2095,7 @@ Do NOT print dice notation or CODE ENFORCED.
           clause = null;
         }
         if (!clause || clause.withheld) {
+          clauseWithholdCause = clause?.withholdCause ?? 'threw';
           const page = pageWhenClauseWithheld(arcState, writerPacket, playerInput);
           const published = storyAfterClauseCheck({
             clause: clause ?? { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 1 },
@@ -2961,6 +2965,7 @@ Do NOT print dice notation or CODE ENFORCED.
             detail: String(p).slice(0, 160),
           })),
           ...clauseCheckerVerdicts(clauseCheckRecords),
+          ...diagnosticClauseWithholdVerdict(clauseWithholdCause, isDiagnosticReplay()),
         ],
         clauseChecks: clauseCheckRecords.length ? clauseCheckRecords : undefined,
         finalProse: mudBody,

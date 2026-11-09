@@ -94,13 +94,18 @@ describe('diagnostic replay does not request training', () => {
     expect(summary.completedTurns).toBeGreaterThan(0);
     const turns = await import('node:fs').then((fs) => fs.readFileSync(join(summary.outDir, 'turns.jsonl'), 'utf8'));
     expect(turns.trim().length).toBeGreaterThan(0);
+    const row = JSON.parse(turns.trim().split('\n')[0]) as {
+      turnLog?: { checkerVerdicts?: Array<{ checker: string; verdict: string; detail?: string }> };
+    };
+    const withhold = (row.turnLog?.checkerVerdicts ?? []).filter((v) => v.checker === 'clauseWithhold');
+    expect(withhold).toEqual([{ checker: 'clauseWithhold', verdict: 'fail', detail: 'parse' }]);
     expect(await import('node:fs').then((fs) => fs.existsSync(join(summary.outDir, 'calls.jsonl')))).toBe(false);
   }, 120_000);
 
   it('a lab run without the diagnostic flag still requests trainLog', async () => {
     installFetch();
     const outRoot = mkdtempSync(join(tmpdir(), 'lab-replay-'));
-    await runFateAutoplay({
+    const summary = await runFateAutoplay({
       turns: 1,
       seed: 1,
       bibleId: 'summoned-pact',
@@ -113,6 +118,12 @@ describe('diagnostic replay does not request training', () => {
       writer: 'default',
     });
     expect(bodies.some((body) => body.trainLog === true)).toBe(true);
+    const fs = await import('node:fs');
+    const tape = fs.readFileSync(join(summary.outDir, 'turns.jsonl'), 'utf8');
+    const row = JSON.parse(tape.trim().split('\n')[0]) as {
+      turnLog?: { checkerVerdicts?: Array<{ checker: string }> };
+    };
+    expect((row.turnLog?.checkerVerdicts ?? []).some((v) => v.checker === 'clauseWithhold')).toBe(false);
     expect(shouldRequestTrainLog({ labSession: true, preference: DEFAULT_PLAYER_TRAINING_PREFERENCE })).toBe(true);
     expect(PLAYER_CAPTURE_ENABLED).toBe(false);
   }, 120_000);
