@@ -1850,16 +1850,16 @@ export interface TimelineEntityRecord {
   place?: string;
   notes: string[];
 }
-/** q72 — whole-stay visit log for the current place (outside the 40-cap / RECENT window). */
+/** A checkpoint at a story beat. The snapshot is a size-capped save file of the whole game. */
 export interface StorySavePoint {
   id: string;
   beat: string;
   turn: number;
-  location: string;
-  /** Turns kept. Anything later is gone after a load. */
-  logTurn: number;
+  /** A save-file snapshot of the whole game at this beat, size-capped. */
+  snapshot: string;
 }
 
+/** q72 — whole-stay visit log for the current place (outside the 40-cap / RECENT window). */
 export interface PlaceVisitLog {
   placeId: string;
   placeName: string;

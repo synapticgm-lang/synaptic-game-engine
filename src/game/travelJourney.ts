@@ -304,6 +304,23 @@ export function mapGapBetween(state: GameState, from: string, to: string): MapGa
     haunted,
   };
 }
+
+/** Allowance cost of each stretch. Only a stretch whose own ground is mountain costs the extra turn. */
+export function stretchTurnCosts(state: GameState, from: string, to: string): number[] {
+  const gap = mapGapBetween(state, from, to);
+  if (!gap.steps) return [];
+  const a = endpointFor(state, from);
+  const b = endpointFor(state, to);
+  const atlas = state.worldAtlas;
+  const path = atlas && a.regionId && b.regionId ? regionPath(atlas, a.regionId, b.regionId) : null;
+  const terrains: JourneyTerrain[] = [];
+  if (path && path.length >= 2 && atlas) {
+    terrains.push(terrainFromText(regionText(atlas, path[0]!)));
+    for (let i = 1; i < path.length; i++) terrains.push(terrainFromText(regionText(atlas, path[i]!)));
+  }
+  while (terrains.length < gap.steps) terrains.push(gap.terrain);
+  return terrains.slice(0, gap.steps).map((terrain) => 1 + (terrain === 'mountain' ? 1 : 0));
+}
 const SLOT_START: Record<Exclude<TimeOfDay, 'unknown'>, number> = {
   dawn: 5,
   morning: 8,
