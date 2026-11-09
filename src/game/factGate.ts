@@ -191,7 +191,18 @@ function lineBreakAt(text: string, i: number): number {
   return 0;
 }
 
-/** A new line continues dash speech only when that line opens with a dash or a quote. */
+/** The line before this break ends in . ! ? or an ellipsis, ignoring a closing quote. */
+function previousLineEnded(text: string, newlineAt: number): boolean {
+  let k = newlineAt - 1;
+  while (k >= 0 && /[ \t]/.test(text[k]!)) k -= 1;
+  while (k >= 0 && /["'\u201c\u201d\u2018\u2019)\]]/.test(text[k]!)) k -= 1;
+  return k >= 0 && /[.!?\u2026]/.test(text[k]!);
+}
+
+/**
+ * After one newline, dash speech continues when the next line opens with a dash
+ * or a quote, or when the previous line did not end (a wrapped sentence).
+ */
 function nextLineContinuesSpeech(text: string, i: number): boolean {
   const br = lineBreakAt(text, i);
   if (!br) return false;
@@ -200,7 +211,8 @@ function nextLineContinuesSpeech(text: string, i: number): boolean {
   while (k < text.length && /[ \t]/.test(text[k]!)) k += 1;
   const ch = text[k] ?? '';
   if (ch === '\u2014' || (ch === '-' && text[k + 1] === '-')) return true;
-  return ch === '"' || ch === '\u201c' || ch === '\u2018' || ch === "'";
+  if (ch === '"' || ch === '\u201c' || ch === '\u2018' || ch === "'") return true;
+  return !previousLineEnded(text, i);
 }
 
 function isNarrationCue(rest: string, names: string[]): boolean {
@@ -233,16 +245,18 @@ function speechRanges(prose: string, names: string[] = []): Array<[number, numbe
         if (/[.!?\u2026]/.test(prose[j]!)) {
           let k = j + 1;
           while (k < prose.length && /[.!?\u2026"'”’)\]]/.test(prose[k]!)) k += 1;
-          while (k < prose.length && /[ \t\r\n]/.test(prose[k]!)) {
-            if (lineBreakAt(prose, k) && lineBreakAt(prose, k + lineBreakAt(prose, k))) break;
-            k += 1;
+          let t = k;
+          while (t < prose.length && /[ \t]/.test(prose[t]!)) t += 1;
+          if (lineBreakAt(prose, t)) {
+            if (!nextLineContinuesSpeech(prose, t)) break;
+            j = t + lineBreakAt(prose, t);
+            continue;
           }
-          if (k >= prose.length) {
-            j = k;
+          if (t >= prose.length) {
+            j = t;
             break;
           }
-          if (lineBreakAt(prose, k) && !nextLineContinuesSpeech(prose, k)) break;
-          if (isNarrationCue(prose.slice(k).replace(/^\s+/, ''), names)) break;
+          if (isNarrationCue(prose.slice(t), names)) break;
         }
         j += 1;
       }
@@ -313,8 +327,10 @@ function sentencePieces(prose: string, ranges: Array<[number, number]>): Piece[]
     while (j < prose.length && /[.!?\u2026]/.test(prose[j]!)) j += 1;
     while (j < prose.length && /["'\u201c\u201d\u2018\u2019)\]]/.test(prose[j]!)) j += 1;
     const stillInside = ranges.some(([a, b]) => i >= a && i < b && b > j);
-    const next = prose.slice(j).match(/^\s*(\S)/)?.[1];
-    const boundary = j >= prose.length || (/\s/.test(prose[j] ?? '') && !!next && !/[a-z]/.test(next));
+    const rest = prose.slice(j);
+    const next = rest.match(/^\s*(\S)/)?.[1];
+    const newlineAfter = /^(?:[ \t]*(?:\r\n|\n|\r))/.test(rest);
+    const boundary = j >= prose.length || newlineAfter || (/\s/.test(prose[j] ?? '') && !!next && !/[a-z]/.test(next));
     const ends = !stillInside && boundary;
     if (!ends) continue;
     const piece = trimPiece(prose, start, j);

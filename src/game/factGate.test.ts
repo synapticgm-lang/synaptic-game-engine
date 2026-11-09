@@ -1082,6 +1082,65 @@ describe('fact gate', () => {
     }
   });
 
+  it('treats a lowercase line after a finished dash sentence as narration, including CRLF', async () => {
+    for (const nl of ['\n', '\r\n']) {
+      const pocket = `Mira — The soup is too salty.${nl}jax pocketed the cellar key.`;
+      const pocketOut = await applyFactGate({
+        prose: pocket,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines }) => {
+          expect(lines.some((entry) => entry.speech && /pocketed/i.test(entry.text)), nl).toBe(false);
+          expect(lines.some((entry) => entry.speech && /soup/i.test(entry.text)), nl).toBe(true);
+          return lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const }));
+        },
+      });
+      const pocketSpan = pocketOut.spans.find((s) => /pocketed/i.test(s.text));
+      expect(pocketSpan?.speech, nl).not.toBe(true);
+      expect(pocketSpan?.text, nl).not.toMatch(/soup/i);
+      expect(pocketSpan?.verdict, nl).toBe('new/wrong');
+      expect(pocketSpan?.reason, nl).toMatch(/unlisted item/i);
+      expect(pocketOut.prose, nl).toMatch(/soup/i);
+      expect(pocketOut.prose, nl).not.toMatch(/pocketed|cellar key/i);
+
+      const hand = `Mira — The soup is too salty.${nl}the key went into his hand.`;
+      const handOut = await applyFactGate({
+        prose: hand,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines }) => {
+          expect(lines.some((entry) => /went into his hand/i.test(entry.text) && entry.speech), nl).toBe(false);
+          expect(lines.some((entry) => /went into his hand/i.test(entry.text) && !entry.speech && !entry.writing), nl).toBe(true);
+          return lines.map((entry) => ({ n: entry.n, verdict: entry.speech ? 'keep' as const : 'remove' as const }));
+        },
+      });
+      const handSpan = handOut.spans.find((s) => /went into his hand/i.test(s.text));
+      expect(handSpan?.speech, nl).not.toBe(true);
+      expect(handSpan?.text, nl).not.toMatch(/soup/i);
+      expect(handOut.prose, nl).toMatch(/soup/i);
+      expect(handOut.prose, nl).not.toMatch(/went into his hand/i);
+
+      const wrap = `Mira — the soup is${nl}too salty.`;
+      const wrapOut = await applyFactGate({
+        prose: wrap,
+        sheet: sheet(),
+        pcName: 'Jax',
+        factCheckEnabled: true,
+        factCheck: async ({ lines }) => {
+          expect(lines, nl).toHaveLength(1);
+          expect(lines[0]?.speech, nl).toBe(true);
+          expect(lines[0]?.text, nl).toMatch(/too salty/i);
+          return [{ n: 1, verdict: 'keep' as const }];
+        },
+      });
+      expect(wrapOut.spans.filter((s) => /salty/i.test(s.text)), nl).toHaveLength(1);
+      expect(wrapOut.spans[0]?.speech, nl).toBe(true);
+      expect(wrapOut.prose, nl).toMatch(/too salty/i);
+    }
+  });
+
   it('ends a kept clause with the sentence stop when a later and-clause is removed', async () => {
     const out = await applyFactGate({
       prose: 'Jax pocketed the cloak and then walked toward the alley.',
