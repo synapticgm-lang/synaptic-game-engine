@@ -8,6 +8,7 @@ import { buildFactSheet, formatFactSheetForWriter } from './factSheet';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { attachDungeonLegend, knowLegends, REGION_CAP, retireQuietLegends, seedWorldLegends, WORLD_CAP } from './legends';
 import { ensureNpcSheet } from './npcSheet';
+import { advanceClock } from './travelJourney';
 import { seedWorldAtlas } from './worldAtlas';
 import type { FactSheet, GameState, NpcMemory } from './types';
 
@@ -137,7 +138,7 @@ describe('legends', () => {
     expect(place && item).toBeTruthy();
     state = {
       ...state,
-      worldDay: (place?.lastToldTurn ?? 0) + 12,
+      worldDay: (place?.lastToldDay ?? 0) + 12,
       npcMemories: [{
         npcId: 'mira',
         npcName: 'Mira',
@@ -159,6 +160,92 @@ describe('legends', () => {
     }, buildCompletedEventPacket(retired, 'look'), 'look').rumours ?? [];
     expect(lines.some((line) => line.includes(place!.target.label))).toBe(false);
     expect(lines.some((line) => line.includes('iron chest'))).toBe(false);
+  });
+
+  it('teaches a roster NPC when a legend arrives, and does not re-roll what they know', () => {
+    const blank = {
+      npcId: 'mira',
+      npcName: 'Mira',
+      disposition: 'neutral' as const,
+      facts: ['Bible roster: innkeeper of Lowmarket.'],
+      lastSeenTurn: 0,
+      sheet: 'Innkeeper of Lowmarket.',
+      knownLegendIds: [] as string[],
+    };
+    const quiet = knowLegends({ ...createInitialState('Legends', 'dnd'), legends: [] } as GameState, blank);
+    expect(quiet).toBe(blank);
+
+    let state = {
+      ...createInitialState('Legends', 'dnd'),
+      worldAtlas: {
+        outlineId: 't', outlineName: 'T', description: '', currentRegionId: 'r',
+        regions: [], settlements: [],
+      },
+      npcMemories: [{ ...blank, location: '' }],
+    } as GameState;
+    state = ensureNpcSheet(state, 'Mira');
+    state = attachDungeonLegend(state, {
+      dungeonName: 'Ash Vault',
+      areaLevel: 2,
+      nodes: [{ hidden: { lootables: [{ id: 'c', label: 'iron chest' }] } }],
+    });
+    state = ensureNpcSheet(state, 'Mira');
+    const before = state.npcMemories?.find((m) => m.npcId === 'mira')?.knownLegendIds ?? [];
+    expect(before).toContain('legend-dungeon-ash-vault');
+    const kept = [...before];
+    state = attachDungeonLegend(state, {
+      dungeonName: 'Moon Crypt',
+      areaLevel: 3,
+      nodes: [{ hidden: { lootables: [{ id: 'd', label: 'stone chest' }] } }],
+    });
+    state = ensureNpcSheet(state, 'Mira');
+    const after = state.npcMemories?.find((m) => m.npcId === 'mira')?.knownLegendIds ?? [];
+    expect(after.slice(0, kept.length)).toEqual(kept);
+    expect(after).toContain('legend-dungeon-moon-crypt');
+  });
+
+  it('retires an untold place rumour when the world day advances', () => {
+    let state = seedWorldAtlas(createInitialState('Legends', 'dnd') as GameState);
+    const place = state.legends?.find((row) => row.target.kind === 'place');
+    expect(place).toBeTruthy();
+    state = {
+      ...state,
+      worldDay: 0,
+      currentLocation: 'Lowmarket',
+      sceneFacts: state.sceneFacts
+        ? { ...state.sceneFacts, present: [] }
+        : state.sceneFacts,
+      npcMemories: [{
+        npcId: 'mira',
+        npcName: 'Mira',
+        disposition: 'neutral',
+        facts: [],
+        lastSeenTurn: 0,
+        knownLegendIds: [place!.id],
+        location: 'Highmarket',
+      }],
+    };
+    const later = advanceClock(state, 24 * 12).state;
+    expect(later.legends?.some((row) => row.id === place!.id)).toBe(false);
+    expect(later.legendArchive?.some((row) => row.id === place!.id)).toBe(true);
+
+    const told = advanceClock({ ...state, currentLocation: 'Highmarket' }, 24 * 12).state;
+    expect(told.legends?.some((row) => row.id === place!.id)).toBe(true);
+    expect(told.legends?.find((row) => row.id === place!.id)?.lastToldDay).toBe(told.worldDay);
+  });
+
+  it('drops an unlisted ruin from speech and keeps ordinary talk', async () => {
+    const state = createInitialState('Legends', 'dnd') as GameState;
+    const speech = await applyFactGate({
+      prose: 'Mira said, "The Moon Spire is real and the vorpal sleeps there." Mira said, "I once fought a great beast."',
+      sheet: buildFactSheet(state, buildCompletedEventPacket(state, 'look'), 'look'),
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(speech.prose).not.toMatch(/Moon Spire/);
+    expect(speech.prose).toMatch(/vorpal sleeps there/);
+    expect(speech.prose).toMatch(/I once fought a great beast/);
+    expect(state.legends ?? []).toHaveLength(0);
   });
 
   it('stops at the region cap', () => {

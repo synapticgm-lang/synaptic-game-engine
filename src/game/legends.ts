@@ -52,6 +52,7 @@ function makeRow(args: {
   kind: LegendRecord['target']['kind'];
   level?: number;
   turn: number;
+  day: number;
   origin: LegendRecord['origin'];
   salt: number;
 }): LegendRecord {
@@ -66,7 +67,7 @@ function makeRow(args: {
     status: 'rumour',
     links: [],
     createdTurn: args.turn,
-    lastToldTurn: args.turn,
+    lastToldDay: args.day,
     origin: args.origin,
   };
 }
@@ -91,6 +92,7 @@ export function seedWorldLegends(state: GameState): GameState {
       targetId: place.id,
       kind: 'place',
       turn: state.turn ?? 0,
+      day: state.worldDay ?? 0,
       origin: 'world',
       salt,
     }));
@@ -120,22 +122,68 @@ export function attachDungeonLegend(state: GameState, site: DungeonLegendSite): 
     kind: chest ? 'item' : 'dungeon',
     level: chest ? area + 8 : undefined,
     turn: state.turn ?? 0,
+    day: state.worldDay ?? 0,
     origin: 'dungeon',
     salt,
   }));
   return { ...state, legends: list };
 }
 
-/** Once, when the sheet is first saved. Does not learn the whole registry. */
+function regionFor(state: GameState, memory: NpcMemory): string | undefined {
+  const loc = (memory.location || state.currentLocation || '').trim().toLowerCase();
+  const place = (state.worldAtlas?.settlements ?? []).find((s) => s.name.toLowerCase() === loc || s.id.toLowerCase() === loc);
+  return place?.regionId || state.worldAtlas?.currentRegionId;
+}
+
+function poolFor(state: GameState, memory: NpcMemory): LegendRecord[] {
+  const region = regionFor(state, memory);
+  return live(state.legends ?? []).filter((row) => !region || row.regionId === region);
+}
+
+/**
+ * Learn legends in this person's region. An empty list is not "already taught".
+ * Ids they already have stay. A legend that appears later in the registry is added.
+ */
 export function knowLegends(state: GameState, memory: NpcMemory): NpcMemory {
-  if (memory.knownLegendIds) return memory;
-  const region = state.worldAtlas?.currentRegionId;
-  const pool = live(state.legends ?? []).filter((row) => !region || row.regionId === region || row.origin === 'dungeon');
-  if (!pool.length) return { ...memory, knownLegendIds: [] };
-  const start = hash32(`${state.seed ?? 'seed'}|${memory.npcId}`) % pool.length;
-  const ids = [pool[start]!.id];
-  if (pool.length > 1) ids.push(pool[(start + 1) % pool.length]!.id);
-  return { ...memory, knownLegendIds: ids };
+  const pool = poolFor(state, memory);
+  const known = memory.knownLegendIds ?? [];
+  if (!pool.length) return memory;
+  if (!known.length) {
+    const start = hash32(`${state.seed ?? 'seed'}|${memory.npcId}`) % pool.length;
+    const ids = [pool[start]!.id];
+    if (pool.length > 1) ids.push(pool[(start + 1) % pool.length]!.id);
+    return { ...memory, knownLegendIds: ids };
+  }
+  const order = state.legends ?? [];
+  const indexOf = (id: string) => order.findIndex((row) => row.id === id);
+  const taughtIndex = Math.max(-1, ...known.map(indexOf));
+  const newcomers = pool.filter((row) => !known.includes(row.id) && indexOf(row.id) > taughtIndex);
+  if (!newcomers.length) return memory;
+  return { ...memory, knownLegendIds: [...known, ...newcomers.map((row) => row.id)] };
+}
+
+/** Rumours that would appear on the sheet were told today. World day, not the turn counter. */
+export function noteLegendsTold(state: GameState, presentIds: string[]): GameState {
+  const day = state.worldDay ?? 0;
+  const shown = new Set<string>();
+  const byId = new Map((state.legends ?? []).map((row) => [row.id, row]));
+  for (const id of presentIds) {
+    const memory = (state.npcMemories ?? []).find((m) => m.npcId === id);
+    for (const legendId of memory?.knownLegendIds ?? []) {
+      if (shown.size >= SHEET_CAP || shown.has(legendId)) continue;
+      const row = byId.get(legendId);
+      if (!row || row.quiet) continue;
+      shown.add(legendId);
+    }
+  }
+  if (!shown.size) return state;
+  let changed = false;
+  const legends = (state.legends ?? []).map((row) => {
+    if (!shown.has(row.id) || row.lastToldDay === day) return row;
+    changed = true;
+    return { ...row, lastToldDay: day };
+  });
+  return changed ? { ...state, legends } : state;
 }
 
 /** A long-quiet place rumour leaves the live list. A dungeon or item legend only goes quiet. */
@@ -145,7 +193,7 @@ export function retireQuietLegends(state: GameState): GameState {
   if (!list.length) return state;
   const archive = [...(state.legendArchive ?? [])];
   const next = list.flatMap((row) => {
-    const idle = row.status === 'rumour' && day - row.lastToldTurn >= QUIET_DAYS;
+    const idle = row.status === 'rumour' && day - (row.lastToldDay ?? 0) >= QUIET_DAYS;
     if (!idle || row.quiet) return [row];
     if (row.target.kind === 'dungeon' || row.target.kind === 'item') return [{ ...row, quiet: true }];
     archive.push({ id: row.id, regionId: row.regionId, publicRumour: row.publicRumour, targetLabel: row.target.label });

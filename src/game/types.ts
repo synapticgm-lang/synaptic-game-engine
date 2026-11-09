@@ -1602,7 +1602,8 @@ export interface LegendRecord {
   status: LegendStatus;
   links: string[];
   createdTurn: number;
-  lastToldTurn: number;
+  /** World day this rumour was last on the sheet for someone present. */
+  lastToldDay: number;
   origin: 'world' | 'dungeon' | 'quest';
   /** Still in the registry, but not on the sheet. */
   quiet?: boolean;

@@ -190,7 +190,7 @@ export function pickNpcSheet(name: string, place: SheetPlace, opts?: { campaignI
 
 /**
  * First meet: pick and save a sheet on this person's memory. Later turns keep the saved sheet.
- * Authored people are returned unchanged.
+ * Authored people keep their sheet. Legend knowledge still refreshes when a new legend enters their region.
  */
 export function ensureNpcSheet(state: GameState, name: string, location?: string | null): GameState {
   const key = name.trim().toLowerCase();
@@ -200,6 +200,11 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
   const memory = list.find(
     (m) => m.npcName.toLowerCase() === key || (m.aliases ?? []).some((a) => a.toLowerCase() === key),
   );
+  if ((isAuthored(name, memory) || memory?.sheet) && memory) {
+    const taught = knowLegends(state, memory);
+    if (taught === memory) return state;
+    return { ...state, npcMemories: list.map((m) => (m === memory ? taught : m)) };
+  }
   if (isAuthored(name, memory)) return state;
   if (memory?.sheet) return state;
   const sheet = pickNpcSheet(name, sheetPlaceFor(location ?? state.currentLocation), {
