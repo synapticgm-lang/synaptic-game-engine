@@ -7,7 +7,7 @@ import type { FactSheet } from './factSheet';
 import { buildFactSheet } from './factSheet';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { applyPresentTrimOnTravel } from './presentAuthority';
-import { fileKeptRoomProps, focusDungeonRoom, HIGH_TIER_ITEM_WORDS, isHighTierItemName, sheetPropLabels } from './roomProps';
+import { fileKeptRoomProps, focusDungeonRoom, HIGH_TIER_ITEM_WORDS, isHighTierItemName, placedNounKind, sheetPropLabels } from './roomProps';
 import { resolveStealAttempt } from './stealParley';
 import { pinDice } from './seededRng';
 import type { ActiveDungeonState, GameState } from './types';
@@ -186,11 +186,11 @@ describe('filing without checker tags', () => {
   it('files a colour line, a check that is off, and a keep with no tags', async () => {
     const colourSheet: FactSheet = {
       ...sheet(),
-      place: { name: 'Valespire Bathhouse', exits: ['street'], features: ['cloak', 'furnace'] },
+      place: { name: 'Valespire Bathhouse', exits: ['street'], features: ['lantern', 'furnace'] },
     };
     let called = false;
     const colour = await applyFactGate({
-      prose: 'A cloak hangs against the furnace.',
+      prose: 'A lantern hangs against the furnace.',
       sheet: colourSheet,
       pcName: 'Jax',
       factCheckEnabled: true,
@@ -202,7 +202,7 @@ describe('filing without checker tags', () => {
     expect(called).toBe(false);
     expect(colour.spans[0]?.route).toBe('colour');
     const fromColour = fileKeptRoomProps(roomState(), colour.objectNotes);
-    expect(fromColour.sceneFacts?.roomProps?.map((p) => p.label)).toContain('cloak');
+    expect(fromColour.sceneFacts?.roomProps?.map((p) => p.label)).toContain('lantern');
 
     const offline = await applyFactGate({
       prose: 'An old rusty sword hung on the wall.',
@@ -246,31 +246,47 @@ describe('filing without checker tags', () => {
     expect(fileKeptRoomProps(roomState(), speech.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
   });
 
-  it('does not file a hung abstract with no physical anchor', async () => {
-    for (const prose of [
+  it('files only a placed noun the gear tables already name', async () => {
+    const junk = [
+      'A smile hung on her lips.',
+      'A tension hung against the door.',
+      'A heavy silence hung on the room.',
+      'A fear hung on his words.',
+      'A wisp of smoke hung from the rafters.',
+      'A smile hung on the cloak.',
       'A heavy silence hung in the room.',
       'A long pause hung over the table.',
       'A tight tension hung in the hall.',
       'A sour smell hung in the air.',
-    ]) {
+    ];
+    for (const prose of junk) {
+      const gate = await applyFactGate({
+        prose,
+        sheet: { ...sheet(), place: { name: 'Valespire Bathhouse', exits: ['street'], features: ['cloak'] } },
+        pcName: 'Jax',
+        factCheckEnabled: false,
+      });
+      expect(fileKeptRoomProps(roomState(), gate.objectNotes).sceneFacts?.roomProps ?? [], prose).toEqual([]);
+    }
+    for (const [prose, head] of [
+      ['A lantern hung from a hook.', 'lantern'],
+      ['A cloak hung on a peg.', 'cloak'],
+    ] as const) {
       const gate = await applyFactGate({
         prose,
         sheet: sheet(),
         pcName: 'Jax',
         factCheckEnabled: false,
       });
-      expect(fileKeptRoomProps(roomState(), gate.objectNotes).sceneFacts?.roomProps ?? [], prose).toEqual([]);
+      const props = fileKeptRoomProps(roomState(), gate.objectNotes).sceneFacts?.roomProps ?? [];
+      const kind = placedNounKind(head);
+      if (kind) {
+        expect(props.map((p) => p.label), prose).toEqual([head]);
+        expect(props[0]?.kind, prose).toBe(kind);
+      } else {
+        expect(props, prose).toEqual([]);
+      }
     }
-    const cloth = await applyFactGate({
-      prose: 'A linen cloth hung on the wall.',
-      sheet: sheet(),
-      pcName: 'Jax',
-      factCheckEnabled: false,
-    });
-    const filed = fileKeptRoomProps(roomState(), cloth.objectNotes).sceneFacts?.roomProps ?? [];
-    expect(filed.map((p) => p.label)).toEqual(['linen cloth']);
-    expect(filed[0]?.kind).toBe('object');
-    expect(filed[0]?.takeable).toBe(false);
   });
 
   it('does not skip a second high-tier name', () => {

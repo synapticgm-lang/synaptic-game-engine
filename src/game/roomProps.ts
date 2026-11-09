@@ -7,6 +7,8 @@ import { regionBand } from './regionLevels';
 import { tierToAreaLevel } from './placeAuthority';
 import type { MapNode } from './mapEngine';
 import { SRD_ARMOR, SRD_WEAPONS } from './rules/srdGear';
+import { ITEM_COST_CP } from './rules/coins';
+import { MAGIC_ITEMS } from './rules/magicItems';
 
 /** Same words the warden already blocks on an item-gain. Not a new list. */
 export const HIGH_TIER_ITEM_WORDS = /\b(legendary|mythic|artifact|relic|unique|god(?:like)?|excalibur|vorpal|holy avenger)\b/i;
@@ -67,12 +69,33 @@ export function placedPropLabels(page: string): string[] {
   return out;
 }
 
-export function tagsFromPlacedSpan(
-  text: string,
-  opts?: { features?: string[]; skip?: ReadonlySet<string> },
-): FactObjectTag[] {
+function catalogueHead(name: string): string {
+  const beforeComma = name.toLowerCase().replace(/armour/g, 'armor').replace(/[’‘]/g, "'").split(',')[0]!.trim();
+  const beforeOf = beforeComma.split(/\s+of\s+/)[0]!.trim();
+  return beforeOf.split(/[^a-z0-9']+/).filter((w) => w.length >= 3).at(-1) ?? '';
+}
+
+function headMatches(head: string, name: string): boolean {
+  const cat = catalogueHead(name);
+  if (!cat || !head) return false;
+  if (cat === head) return true;
+  return cat.endsWith(head) && cat.length > head.length && head.length >= 4;
+}
+
+/** Kind of a placed noun's head, or null when no weapon, armour, or equipment table names it. */
+export function placedNounKind(label: string): RoomPropKind | null {
+  const head = catalogueHead(label);
+  if (!head) return null;
+  if (Object.keys(SRD_WEAPONS).some((name) => headMatches(head, name))) return 'weapon';
+  if (Object.keys(SRD_ARMOR).some((name) => headMatches(head, name))) return 'armour';
+  const gear = [...Object.keys(ITEM_COST_CP), ...Object.keys(MAGIC_ITEMS)];
+  if (gear.some((name) => headMatches(head, name))) return 'tool';
+  return null;
+}
+
+export function tagsFromPlacedSpan(text: string): FactObjectTag[] {
   const re = new RegExp(
-    `\\b(?:a|an)\\s+((?:[a-z][a-z'’-]+\\s+){0,2}?[a-z][a-z'’-]{2,}(?:\\s+of\\s+[a-z][a-z'’-]{2,})?)\\s+(${PLACED_VERBS})\\s+(?:on|from|against)\\s+(?:the\\s+|a\\s+|an\\s+)?([a-z][a-z'’-]{2,}(?:\\s+[a-z][a-z'’-]{2,}){0,3})`,
+    `\\b(?:a|an)\\s+((?:[a-z][a-z'’-]+\\s+){0,2}?[a-z][a-z'’-]{2,}(?:\\s+of\\s+[a-z][a-z'’-]{2,})?)\\s+(${PLACED_VERBS})\\b`,
     'gi',
   );
   const out: FactObjectTag[] = [];
@@ -80,38 +103,14 @@ export function tagsFromPlacedSpan(
   while ((match = re.exec(text))) {
     const label = (match[1] ?? '').toLowerCase().trim();
     const verb = (match[2] ?? '').toLowerCase();
-    const anchor = (match[3] ?? '').toLowerCase().trim();
-    if (!label || !physicalAnchor(anchor, opts?.features ?? [], opts?.skip) || out.some((tag) => tag.label === label)) continue;
-    const kind = kindFromCatalogue(label);
+    const kind = placedNounKind(label);
+    if (!kind || out.some((tag) => tag.label === label)) continue;
     const hung = verb === 'hangs' || verb === 'hung';
     const carried = kind === 'weapon' || kind === 'tool' || kind === 'coin';
     const mount: FactObjectTag['mount'] = carried ? (hung ? 'hung' : 'loose') : 'fixed';
     out.push({ label, kind, mount, owner: 'place' });
   }
   return out;
-}
-
-function physicalAnchor(anchor: string, features: string[], skip?: ReadonlySet<string>): boolean {
-  const words = anchor.split(/[^a-z']+/).filter((w) => w.length >= 3);
-  const head = words.at(-1) ?? '';
-  if (!head) return false;
-  const known = features.flatMap((f) => f.toLowerCase().split(/[^a-z']+/)).filter((w) => w.length >= 3);
-  if (known.includes(head)) return true;
-  return !skip?.has(head);
-}
-
-/** Kind comes from the weapon and armour tables. Anything else is a plain object. */
-function kindFromCatalogue(label: string): RoomPropKind {
-  const words = label.toLowerCase().replace(/armour/g, 'armor').split(/[^a-z]+/).filter((w) => w.length >= 3);
-  const hit = (names: string[]) => words.some((word) => names.some((name) => {
-    const parts = name.toLowerCase().split(/[^a-z]+/).filter(Boolean);
-    const head = parts.at(-1) ?? '';
-    if (name.toLowerCase() === word || head === word) return true;
-    return head.endsWith(word) && head.length > word.length && word.length >= 3;
-  }));
-  if (hit(Object.keys(SRD_WEAPONS))) return 'weapon';
-  if (hit(Object.keys(SRD_ARMOR))) return 'armour';
-  return 'object';
 }
 
 function flagsFor(kind: RoomPropKind, mount: 'fixed' | 'hung' | 'loose'): { fixed: boolean; takeable: boolean } {
