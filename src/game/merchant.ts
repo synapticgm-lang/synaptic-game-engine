@@ -1,6 +1,6 @@
 import type { GameState, Item, ItemType, NpcMemory, Rarity } from './types';
-import srdShopGear from '../data/srd/srdShopGear.json';
 import modeShopData from '../data/modeShopPrices.json';
+import { projectShelf } from './shopStock';
 import { presentNpcRecords } from './npcRecords';
 import { addItem, getItemValue, removeItem } from './inventory';
 import { changeFor, formatCp, formatPurse, gainCoins, payCoins, purseGold, purseOf, shopPriceCp, srdSaleCp, usesPurse } from './rules/coins';
@@ -104,18 +104,16 @@ export interface StockRow { name: string; cp: number; section: string }
  * What a town merchant stocks: tools, adventuring gear and food. Mounts, ships and services stay off this list.
  * The copper price is shopPriceCp, the same lookup buyItem uses.
  */
-export function merchantStock(): StockRow[] {
-  const data = srdShopGear as unknown as Record<string, Array<{ name: string; cp: number }>>;
-  const rows: StockRow[] = [];
-  for (const section of Object.keys(data)) {
-    if (section !== 'tools' && section !== 'adventuring_gear' && section !== 'food_drink_lodging') continue;
-    for (const row of data[section] ?? []) {
-      const cp = shopPriceCp(row.name);
-      if (cp == null || typeof row.name !== 'string') continue;
-      rows.push({ name: row.name, cp, section });
-    }
-  }
-  return rows;
+export function merchantStock(seed = 'shop', merchantId = 'town-merchant', worldDay = 0): StockRow[] {
+  return projectShelf({
+    seed,
+    merchantId,
+    worldDay,
+    band: { low: 1, high: 3 },
+    producers: { smith: true, herbalist: true },
+    higher: true,
+    lastImportDay: -1,
+  }).map((row) => ({ name: row.name, cp: row.price, section: row.source }));
 }
 
 /** Whether the player can pay this copper price with the same coins buyItem would use. */
@@ -195,7 +193,8 @@ export function buyItem(state: GameState, name: string, quantity = 1): BuyResult
     };
     return { ok: true, receipt, newState: withShopReceipt(added.state, receipt) };
   }
-  const cp = shopPriceCp(name);
+  const listed = merchantStock().find((row) => row.name.toLowerCase() === name.trim().toLowerCase());
+  const cp = shopPriceCp(name) ?? listed?.cp ?? null;
   if (cp == null) return { ok: false, reason: `${name} is not for sale here.` };
   const total = cp * qty;
   let paid: GameState;

@@ -12,7 +12,7 @@ import {
   sellPriceLabel,
   type StockRow,
 } from './merchant';
-import { srdSaleCp, usesPurse } from './rules/coins';
+import { formatCp, srdSaleCp, usesPurse } from './rules/coins';
 import { hashSeed } from './seededRng';
 
 /**
@@ -51,7 +51,8 @@ export function shopChips(state: GameState): ShopChip[] {
     const start = hashSeed(`${merchant.npcName}|${state.currentLocation ?? ''}`) % stock.length;
     for (let i = 0; i < Math.min(BUY_ROWS, stock.length); i++) {
       const row = stock[(start + i * 7) % stock.length]!;
-      const price = buyPriceLabel(state, row.name);
+      const price = buyPriceLabel(state, row.name)
+        ?? (usesPurse(state) ? formatCp(row.cp) : `${Math.max(1, Math.ceil(row.cp / 100))} gold`);
       let dup = false;
       for (const c of out) if (c.item === row.name) dup = true;
       if (price && !dup) out.push({ label: `Buy ${row.name} for ${price}`, kind: 'buy', item: row.name });

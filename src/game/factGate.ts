@@ -443,6 +443,17 @@ function heldItem(item: string, words: Set<string>): boolean {
   return false;
 }
 
+function unlistedWare(span: string, sheet: FactSheet): string | null {
+  const shops = (sheet.present ?? []).filter((p) => Array.isArray(p.stock));
+  if (!shops.length) return null;
+  if (!/\b(sells|sold|offers|offered|for sale)\b/i.test(span)) return null;
+  const named = span.match(/\b(?:sells|offers|offered|sold)\s+(?:a|an|the)\s+([a-z][a-z' -]*?)(?:\s+for sale|\s+from\b|[.,]|$)/i)?.[1]?.trim();
+  if (!named) return null;
+  const stock = shops.flatMap((p) => p.stock ?? []);
+  const ok = stock.some((name) => name.toLowerCase() === named.toLowerCase());
+  return ok ? null : named;
+}
+
 function classifySpan(
   span: string,
   sheet: FactSheet,
@@ -452,6 +463,8 @@ function classifySpan(
   pcName?: string,
   thirdPerson?: boolean
 ): Pick<FactSpan, 'verdict' | 'reason'> {
+  const offShelf = unlistedWare(span, sheet);
+  if (offShelf) return { verdict: 'new/wrong', reason: `not in stock: ${offShelf}` };
   if (thirdPerson) {
     const outside = span.replace(/["“][^"”]*["”]/g, ' ');
     if (/\b(you|your|yours)\b/i.test(outside)) return { verdict: 'new/wrong', reason: 'narrator you' };
