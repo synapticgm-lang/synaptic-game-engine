@@ -258,6 +258,48 @@ function storyPlaceExitLabels(state: GameState, raw: string, hubName: string): s
  * Hubless bible → story-place pool (+ way back). Else the hub-graph seed.
  * Open outdoor places never seed empty when any linked place exists.
  */
+/** Same-region and neighboring atlas settlements. Not the bible's hub list. */
+function atlasNeighborLabels(state: GameState, raw: string): string[] {
+  const settlements = state.worldAtlas?.settlements ?? [];
+  if (!settlements.length) return [];
+  const key = raw.toLowerCase();
+  const here = settlements.find(
+    (s) =>
+      s.name.toLowerCase() === key
+      || s.id.toLowerCase() === key
+      || (s.aliases ?? []).some((a) => a.toLowerCase() === key)
+  );
+  if (!here) return [];
+  const region = state.worldAtlas?.regions?.find((r) => r.id === here.regionId);
+  const regionIds = new Set([here.regionId, ...(region?.connections ?? [])]);
+  const same: string[] = [];
+  const near: string[] = [];
+  for (const s of settlements) {
+    if (s.name.toLowerCase() === here.name.toLowerCase()) continue;
+    if (!regionIds.has(s.regionId)) continue;
+    if (s.regionId === here.regionId) same.push(s.name);
+    else near.push(s.name);
+  }
+  same.sort();
+  near.sort();
+  return [...same, ...near];
+}
+
+/**
+ * Indoor under a dungeon hub stays sealed. A hubless story room (Static House kitchen)
+ * has sibling places, so it is not a dead end.
+ */
+function placeIsSealedInterior(state: GameState, raw: string, from?: string): boolean {
+  const hubs = hubsForBibleId(state.campaignBibleId);
+  if (matchHub(hubs, raw)) return false;
+  if (placeScale(raw) !== 'indoor') return false;
+  const parentHub = parentHubOf(state, raw, from);
+  const parentHubRow = matchHub(hubs, parentHub);
+  if (isDungeonHub(parentHubRow ?? parentHub)) return true;
+  const storySiblings = !hubs.length && storyPlaceExitLabels(state, raw, raw).length > 0;
+  return !parentHub && !storySiblings;
+}
+
 function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRow[] {
   const hubs = hubsForBibleId(state.campaignBibleId);
   const hub = matchHub(hubs, raw);
@@ -265,10 +307,9 @@ function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRo
   const existing = resolvePlace(state.places, hubName) ?? resolvePlace(state.places, raw);
   if (existing?.closed || existing?.arcStatus === 'closed') return [];
   const parentHub = hub ? '' : parentHubOf(state, raw, from);
-  const parentHubRow = matchHub(hubs, parentHub);
   const indoorLocal = !hub && placeScale(raw) === 'indoor';
-  const sealed = indoorLocal && (isDungeonHub(parentHubRow ?? parentHub) || !parentHub);
-  if (sealed) return [];
+  const storySiblings = !hubs.length && storyPlaceExitLabels(state, raw, hubName).length > 0;
+  if (placeIsSealedInterior(state, raw, from)) return [];
   const out: PlaceExitRow[] = [];
   const seen = new Set<string>();
   const notHere = (n: string) => {
@@ -278,6 +319,16 @@ function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRo
   // Way back from travel / opening always links first when it is a real other place.
   const back = tidy(from);
   if (notHere(back)) pushExit(out, seen, state, back);
+  // Atlas towns (Port Crescent) travel to their own region, not the bible hub list.
+  const atlas = atlasNeighborLabels(state, raw);
+  if (atlas.length) {
+    for (let i = 0; i < atlas.length; i++) {
+      const n = atlas[i] ?? '';
+      if (!notHere(n)) continue;
+      pushExit(out, seen, state, n);
+    }
+    if (out.length) return out.slice(0, 5);
+  }
   if (hub) {
     const names = hubTravelTargets({ ...state, currentLocation: hub.name });
     for (let i = 0; i < names.length; i++) {
@@ -296,7 +347,7 @@ function seedExitRows(state: GameState, raw: string, from?: string): PlaceExitRo
     }
     if (out.length) return out.slice(0, 5);
   }
-  if (indoorLocal) {
+  if (indoorLocal && !storySiblings) {
     if (notHere(parentHub)) pushExit(out, seen, state, parentHub);
     return out.slice(0, 5);
   }
@@ -391,9 +442,7 @@ export function ensurePlaceOnMap(state: GameState, name?: string | null, from?: 
   if (existing && (existing.exits?.length ?? 0) > 0) return working;
 
   const parentHub = hub ? '' : parentHubOf(working, raw, from ?? undefined);
-  const parentHubRow = matchHub(hubs, parentHub);
-  const indoorLocal = !hub && placeScale(raw) === 'indoor';
-  const sealed = indoorLocal && (isDungeonHub(parentHubRow ?? parentHub) || !parentHub);
+  const sealed = placeIsSealedInterior(working, raw, from ?? undefined);
   const exits = seedExitRows(working, raw, from ?? undefined).map((row) => row.label);
   const closed = sealed;
   // Never lock an open place as a built card with zero exits (Ford Camp hubless hole).
