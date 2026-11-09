@@ -6,9 +6,6 @@ import type { GameState, PlaceProp, Rarity, RoomPropKind } from './types';
 import { regionBand } from './regionLevels';
 import { tierToAreaLevel } from './placeAuthority';
 import type { MapNode } from './mapEngine';
-import { SRD_ARMOR, SRD_WEAPONS } from './rules/srdGear';
-import { ITEM_COST_CP } from './rules/coins';
-import { MAGIC_ITEMS } from './rules/magicItems';
 
 /** Same words the warden already blocks on an item-gain. Not a new list. */
 export const HIGH_TIER_ITEM_WORDS = /\b(legendary|mythic|artifact|relic|unique|god(?:like)?|excalibur|vorpal|holy avenger)\b/i;
@@ -52,8 +49,14 @@ export function stripGloryWords(label: string): string {
     .trim();
 }
 
-/** Same placing verbs as the opening card. A new regex each call, so lastIndex cannot stick. */
-const PLACED_VERBS = 'sits|sat|hangs|hung|lies|lay|rests|rested|waits|waited|stands|stood|leans|leaned';
+/** Same placing verbs as the opening card, plus propped. A new regex each call, so lastIndex cannot stick. */
+const PLACED_VERBS = 'sits|sat|hangs|hung|lies|lay|rests|rested|waits|waited|stands|stood|leans|leaned|propped';
+
+/** Narration that names something with a/an and a placing verb. The checker decides whether it is a thing. */
+export function isPlacedIndefinite(text: string): boolean {
+  if (!/\b(?:a|an)\s+[a-z]/i.test(text)) return false;
+  return new RegExp(`\\b(?:${PLACED_VERBS})\\b`, 'i').test(text);
+}
 
 export function placedPropLabels(page: string): string[] {
   const out: string[] = [];
@@ -65,50 +68,6 @@ export function placedPropLabels(page: string): string[] {
   while ((match = re.exec(page))) {
     const label = (match[1] ?? '').toLowerCase().trim();
     if (label && !out.includes(label)) out.push(label);
-  }
-  return out;
-}
-
-function catalogueHead(name: string): string {
-  const beforeComma = name.toLowerCase().replace(/armour/g, 'armor').replace(/[’‘]/g, "'").split(',')[0]!.trim();
-  const beforeOf = beforeComma.split(/\s+of\s+/)[0]!.trim();
-  return beforeOf.split(/[^a-z0-9']+/).filter((w) => w.length >= 3).at(-1) ?? '';
-}
-
-function headMatches(head: string, name: string): boolean {
-  const cat = catalogueHead(name);
-  if (!cat || !head) return false;
-  if (cat === head) return true;
-  return cat.endsWith(head) && cat.length > head.length && head.length >= 4;
-}
-
-/** Kind of a placed noun's head, or null when no weapon, armour, or equipment table names it. */
-export function placedNounKind(label: string): RoomPropKind | null {
-  const head = catalogueHead(label);
-  if (!head) return null;
-  if (Object.keys(SRD_WEAPONS).some((name) => headMatches(head, name))) return 'weapon';
-  if (Object.keys(SRD_ARMOR).some((name) => headMatches(head, name))) return 'armour';
-  const gear = [...Object.keys(ITEM_COST_CP), ...Object.keys(MAGIC_ITEMS)];
-  if (gear.some((name) => headMatches(head, name))) return 'tool';
-  return null;
-}
-
-export function tagsFromPlacedSpan(text: string): FactObjectTag[] {
-  const re = new RegExp(
-    `\\b(?:a|an)\\s+((?:[a-z][a-z'’-]+\\s+){0,2}?[a-z][a-z'’-]{2,}(?:\\s+of\\s+[a-z][a-z'’-]{2,})?)\\s+(${PLACED_VERBS})\\b`,
-    'gi',
-  );
-  const out: FactObjectTag[] = [];
-  let match: RegExpExecArray | null;
-  while ((match = re.exec(text))) {
-    const label = (match[1] ?? '').toLowerCase().trim();
-    const verb = (match[2] ?? '').toLowerCase();
-    const kind = placedNounKind(label);
-    if (!kind || out.some((tag) => tag.label === label)) continue;
-    const hung = verb === 'hangs' || verb === 'hung';
-    const carried = kind === 'weapon' || kind === 'tool' || kind === 'coin';
-    const mount: FactObjectTag['mount'] = carried ? (hung ? 'hung' : 'loose') : 'fixed';
-    out.push({ label, kind, mount, owner: 'place' });
   }
   return out;
 }

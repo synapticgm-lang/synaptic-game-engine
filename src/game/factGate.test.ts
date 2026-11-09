@@ -565,7 +565,8 @@ describe('fact gate', () => {
     expect(parseFactCheckReply('not json')).toEqual([]);
     const estimate = estimateFactCheckTokens(sheet(), ['Jax considered the quiet.']);
     expect(estimate.input).toBeGreaterThan(0);
-    expect(estimate.output).toBeGreaterThanOrEqual(28);
+    expect(estimate.output).toBeGreaterThanOrEqual(48);
+    expect(formatFactCheckRequest({ sheet: sheet(), lines: [{ n: 1, text: 'A cloak hung on the peg.' }] })).toMatch(/nothing is filed/i);
   });
 
   it('keeps the scenery battery, and counts how many lines need a check', async () => {
@@ -653,7 +654,7 @@ describe('fact gate', () => {
       candidates += hit.length;
     }
     expect(removed).toBe(0);
-    // 61 of 64 lines are uncertain. A coordinated noun list stays one span, so the span count is 62.
+    // 61 of 64 lines are uncertain (62 spans: one line splits). Placed a/an lines in this set were already candidates, so the object route adds 0.
     expect(candidateLines).toHaveLength(61);
     expect(candidates).toBe(62);
   });

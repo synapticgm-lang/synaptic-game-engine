@@ -4,7 +4,7 @@
  */
 import type { FactSheet } from './factSheet';
 import type { FactObjectNote, FactObjectTag } from './roomProps';
-import { readObjectTag, tagsFromPlacedSpan } from './roomProps';
+import { isPlacedIndefinite, readObjectTag } from './roomProps';
 
 export type FactVerdict = 'colour' | 'allowed' | 'new/wrong' | 'UNSURE';
 
@@ -21,6 +21,8 @@ export interface FactSpan {
   speech?: boolean;
   /** True when this span is a notice, sign, or page. It is not a fact. */
   writing?: boolean;
+  /** True when the only reason this span is a candidate is a placed a/an noun. No tag keeps the prose. */
+  objectOnly?: boolean;
 }
 
 export interface FactGateResult {
@@ -633,7 +635,7 @@ export function formatFactCheckRequest(input: {
     'Objects held in someone else\'s hands, or lying in the scenery, are allowed unless the player or the party gains them.',
     'A scare-quoted or so-called object that is only turned over, looked at, or described is not a gain. Keep that sentence unless it states that someone now newly holds a real item, listed or unlisted.',
     'keep = scenery, harmless speech, or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
-    'On a kept [narration] line, add "objects" for physical things in the place: [{"label":"old rusty sword","kind":"furniture|armour|weapon|tool|coin|other","mount":"fixed|hung|loose","owner":"place"}]. The label must use words from that line. Do not put objects on a [speech] or [writing] line.',
+    'On a kept [narration] line, add "objects" only for a real portable or fixed physical thing in the place: [{"label":"old rusty sword","kind":"furniture|armour|weapon|tool|coin|other","mount":"fixed|hung|loose","owner":"place"}]. The label must use words from that line. Do not put objects on a [speech] or [writing] line. A line may be here only because it places something. Leaving "objects" off does not remove that line: the sentence stays and nothing is filed.',
     'Reply as JSON: [{"n":1,"verdict":"keep"}]. A repair-once row may include "text". A kept narration row may include "objects".',
     'SHEET:',
     JSON.stringify(input.sheet),
@@ -696,7 +698,7 @@ export function estimateFactCheckTokens(sheet: FactSheet, lines: string[]): { in
     sheet,
     lines: lines.map((text, i) => ({ n: i + 1, text })),
   });
-  return { input: Math.ceil(body.length / 4), output: Math.max(16, lines.length * 28) };
+  return { input: Math.ceil(body.length / 4), output: Math.max(40, lines.length * 48) };
 }
 
 function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse: string[], names: string[] = []): FactGateResult {
@@ -824,13 +826,16 @@ export async function applyFactGate(args: {
     }
     const body = role === 'narration' ? narrationOnly(text) : text;
     const judged = classifySpan(body, args.sheet, words, holdings, blob, args.pcName, args.thirdPerson);
+    const route = routeSpan(body, judged.verdict, judged.reason, args.sheet, args.pcName, words);
+    const objectOnly = route === 'colour' && isPlacedIndefinite(body);
     return {
       id,
       text,
       verdict: judged.verdict,
       reason: judged.reason,
       speech: false,
-      route: routeSpan(body, judged.verdict, judged.reason, args.sheet, args.pcName, words),
+      objectOnly,
+      route: objectOnly ? 'candidate' : route,
     };
   };
   const people = [args.pcName ?? '', ...(args.sheet.present ?? []).map((p) => p.name)].filter((n) => n.trim().length >= 2);
@@ -858,6 +863,19 @@ export async function applyFactGate(args: {
       }
       candidates.forEach((span, i) => {
         const got = oneVerdict(reply, i + 1);
+        const row = reply.find((r) => r.n === i + 1);
+        if (span.objectOnly) {
+          span.verdict = 'colour';
+          span.reason = got?.verdict === 'keep' && row?.objects?.length ? 'checker tagged objects' : 'object candidate, no tag';
+          objectNotes.push({
+            text: span.text,
+            speech: false,
+            writing: false,
+            kept: true,
+            objects: got?.verdict === 'keep' ? row?.objects ?? [] : [],
+          });
+          return;
+        }
         if (!got) {
           span.verdict = 'new/wrong';
           span.reason = 'checker missed this line';
@@ -884,6 +902,7 @@ export async function applyFactGate(args: {
         span.reason = 'checker removed';
       });
       candidates.forEach((span, i) => {
+        if (span.objectOnly) return;
         const row = reply.find((r) => r.n === i + 1);
         const kept = span.verdict === 'colour' || span.verdict === 'allowed';
         objectNotes.push({
@@ -938,16 +957,6 @@ export async function applyFactGate(args: {
         span.reason = 'checker cleared';
       }
     }
-  }
-  for (const span of spans) {
-    const kept = span.verdict === 'colour' || span.verdict === 'allowed';
-    if (!kept || span.speech || span.writing) continue;
-    const existing = objectNotes.find((note) => note.text === span.text);
-    if (existing?.objects.length) continue;
-    const objects = tagsFromPlacedSpan(span.text);
-    if (!objects.length) continue;
-    if (existing) existing.objects = objects;
-    else objectNotes.push({ text: span.text, speech: false, writing: false, kept: true, objects });
   }
   const result = finish(args.prose, spans, pieces, args.recentProse ?? [], people);
   result.objectNotes = objectNotes;

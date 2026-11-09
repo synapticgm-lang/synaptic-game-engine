@@ -7,7 +7,7 @@ import type { FactSheet } from './factSheet';
 import { buildFactSheet } from './factSheet';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { applyPresentTrimOnTravel } from './presentAuthority';
-import { fileKeptRoomProps, focusDungeonRoom, HIGH_TIER_ITEM_WORDS, isHighTierItemName, placedNounKind, sheetPropLabels } from './roomProps';
+import { fileKeptRoomProps, focusDungeonRoom, HIGH_TIER_ITEM_WORDS, isHighTierItemName, sheetPropLabels } from './roomProps';
 import { resolveStealAttempt } from './stealParley';
 import { pinDice } from './seededRng';
 import type { ActiveDungeonState, GameState } from './types';
@@ -182,72 +182,24 @@ describe('room props from a kept narration', () => {
   });
 });
 
-describe('filing without checker tags', () => {
-  it('files a colour line, a check that is off, and a keep with no tags', async () => {
-    const colourSheet: FactSheet = {
-      ...sheet(),
-      place: { name: 'Valespire Bathhouse', exits: ['street'], features: ['lantern', 'furnace'] },
-    };
-    let called = false;
-    const colour = await applyFactGate({
-      prose: 'A lantern hangs against the furnace.',
-      sheet: colourSheet,
-      pcName: 'Jax',
-      factCheckEnabled: true,
-      factCheck: async () => {
-        called = true;
-        return [];
-      },
-    });
-    expect(called).toBe(false);
-    expect(colour.spans[0]?.route).toBe('colour');
-    const fromColour = fileKeptRoomProps(roomState(), colour.objectNotes);
-    expect(fromColour.sceneFacts?.roomProps?.map((p) => p.label)).toContain('lantern');
+describe('filing from checker tags', () => {
+  const keep = async ({ lines }: { lines: { n: number }[] }) => lines.map((line) => ({ n: line.n, verdict: 'keep' as const }));
 
-    const offline = await applyFactGate({
-      prose: 'An old rusty sword hung on the wall.',
-      sheet: sheet(),
-      pcName: 'Jax',
-      factCheckEnabled: false,
-    });
-    const fromOff = fileKeptRoomProps(roomState(), offline.objectNotes);
-    expect(fromOff.sceneFacts?.roomProps?.find((p) => /sword/i.test(p.label))?.takeable).toBe(true);
-
-    const kept = await applyFactGate({
-      prose: 'An old rusty sword hung on the wall.',
-      sheet: sheet(),
-      pcName: 'Jax',
-      factCheckEnabled: true,
-      factCheck: async ({ lines }) => lines.map((line) => ({ n: line.n, verdict: 'keep' as const })),
-    });
-    const fromKeep = fileKeptRoomProps(roomState(), kept.objectNotes);
-    expect(fromKeep.sceneFacts?.roomProps?.some((p) => /sword/i.test(p.label))).toBe(true);
-
-    const tagged = await applyFactGate({
-      prose: 'An old rusty sword hung on the wall.',
-      sheet: sheet(),
-      pcName: 'Jax',
-      factCheckEnabled: true,
-      factCheck: async ({ lines }) => lines.map((line) => ({
-        n: line.n,
-        verdict: 'keep' as const,
-        objects: [{ label: 'wall sword', kind: 'weapon' as const, mount: 'hung' as const, owner: 'place' }],
-      })),
-    });
-    const fromTag = fileKeptRoomProps(roomState(), tagged.objectNotes);
-    expect(fromTag.sceneFacts?.roomProps?.map((p) => p.label)).toEqual(['wall sword']);
-
-    const speech = await applyFactGate({
-      prose: 'Mira said, "An old rusty sword hung on the wall."',
-      sheet: sheet(),
-      pcName: 'Jax',
-      factCheckEnabled: false,
-    });
-    expect(fileKeptRoomProps(roomState(), speech.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
-  });
-
-  it('files only a placed noun the gear tables already name', async () => {
+  it('keeps junk prose and files nothing when the checker sends no tag', async () => {
     const junk = [
+      'A ring of guards stood in the yard.',
+      'A staff of servants leaned on the wall.',
+      'A shield of cloud hung on the wall.',
+      'A robe of office hung on a peg.',
+      'A lightning rod stood in the yard.',
+      'A chain of events lay on the table.',
+      'A net of lies hung on the wall.',
+      'A lock of hair lay on the table.',
+      'A horse stood in the yard.',
+      'A ship lay against the quay.',
+      'A long day sat on the town.',
+      'A cold water sat in the cup.',
+      'A cooking fire stood in the hearth.',
       'A smile hung on her lips.',
       'A tension hung against the door.',
       'A heavy silence hung on the room.',
@@ -264,29 +216,70 @@ describe('filing without checker tags', () => {
         prose,
         sheet: { ...sheet(), place: { name: 'Valespire Bathhouse', exits: ['street'], features: ['cloak'] } },
         pcName: 'Jax',
-        factCheckEnabled: false,
+        factCheckEnabled: true,
+        factCheck: keep,
       });
+      expect(gate.prose, prose).toBe(prose);
       expect(fileKeptRoomProps(roomState(), gate.objectNotes).sceneFacts?.roomProps ?? [], prose).toEqual([]);
     }
-    for (const [prose, head] of [
-      ['A lantern hung from a hook.', 'lantern'],
-      ['A cloak hung on a peg.', 'cloak'],
-    ] as const) {
+    const ring = await applyFactGate({
+      prose: 'A ring of guards stood in the yard.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async () => [{ n: 1, verdict: 'keep' as const }],
+    });
+    expect(ring.prose).toBe('A ring of guards stood in the yard.');
+    expect(fileKeptRoomProps(roomState(), ring.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
+  });
+
+  it('files a tagged sword, lantern, and cloak as takeable, and files nothing when the check is off', async () => {
+    const tagged = [
+      ['An old rusty sword hung on the wall.', 'old rusty sword', 'weapon'],
+      ['A lantern hung from a hook.', 'lantern', 'tool'],
+      ['A cloak hung on a peg.', 'cloak', 'tool'],
+    ] as const;
+    for (const [prose, label, kind] of tagged) {
       const gate = await applyFactGate({
         prose,
         sheet: sheet(),
         pcName: 'Jax',
-        factCheckEnabled: false,
+        factCheckEnabled: true,
+        factCheck: async () => [{
+          n: 1,
+          verdict: 'keep' as const,
+          objects: [{ label, kind, mount: 'hung' as const, owner: 'place' }],
+        }],
       });
-      const props = fileKeptRoomProps(roomState(), gate.objectNotes).sceneFacts?.roomProps ?? [];
-      const kind = placedNounKind(head);
-      if (kind) {
-        expect(props.map((p) => p.label), prose).toEqual([head]);
-        expect(props[0]?.kind, prose).toBe(kind);
-      } else {
-        expect(props, prose).toEqual([]);
-      }
+      expect(gate.prose, prose).toBe(prose);
+      const prop = fileKeptRoomProps(roomState(), gate.objectNotes).sceneFacts?.roomProps?.find((p) => p.label === label);
+      expect(prop?.takeable, prose).toBe(true);
+      expect(prop?.kind, prose).toBe(kind);
+      const off = await applyFactGate({ prose, sheet: sheet(), pcName: 'Jax', factCheckEnabled: false });
+      expect(fileKeptRoomProps(roomState(), off.objectNotes).sceneFacts?.roomProps ?? [], prose).toEqual([]);
     }
+    const missed = await applyFactGate({
+      prose: 'A lantern hangs against the furnace.',
+      sheet: { ...sheet(), place: { name: 'Valespire Bathhouse', exits: ['street'], features: ['lantern', 'furnace'] } },
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async () => [],
+    });
+    expect(missed.prose).toBe('A lantern hangs against the furnace.');
+    expect(missed.spans[0]?.objectOnly).toBe(true);
+    expect(fileKeptRoomProps(roomState(), missed.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
+    const speech = await applyFactGate({
+      prose: 'Mira said, "An old rusty sword hung on the wall."',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async () => [{
+        n: 1,
+        verdict: 'keep' as const,
+        objects: [{ label: 'old rusty sword', kind: 'weapon' as const, mount: 'hung' as const, owner: 'place' }],
+      }],
+    });
+    expect(fileKeptRoomProps(roomState(), speech.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
   });
 
   it('does not skip a second high-tier name', () => {
