@@ -168,6 +168,52 @@ export interface ActiveDungeonState {
   runFloorMet?: boolean;
   /** 29e — marked cleared before close */
   cleared?: boolean;
+  /**
+   * Friendly people seeded with this card. Absent on cards built before rescue.
+   * An empty list means the build ran and seeded nobody.
+   */
+  dwell?: DungeonDwell[];
+  rescue?: CardRescue;
+}
+
+export type DwellKind = 'inhabitant' | 'captive';
+export type DwellStatus = 'held' | 'released' | 'out' | 'lost';
+
+export interface DungeonDwell {
+  id: string;
+  name: string;
+  kind: DwellKind;
+  nodeId: string;
+  status: DwellStatus;
+  /** Afraid captives use neutral; the stance line carries the fear. */
+  disposition: 'neutral' | 'friendly';
+  lockOpen?: boolean;
+  healed?: boolean;
+}
+
+export interface RescueLock {
+  captiveId: string;
+  requiredLevel: number;
+  unpickable: boolean;
+  keyId: string;
+}
+
+export interface RescueKeyDef {
+  id: string;
+  label: string;
+  captiveIds: string[];
+  consumable: boolean;
+  source: 'found' | 'jailer';
+  held: boolean;
+  nodeId?: string;
+}
+
+export interface CardRescue {
+  /** Set when the quest is designed. Not a rule for every rescue. */
+  requireHeal: boolean;
+  locks: RescueLock[];
+  keys: RescueKeyDef[];
+  questId: string;
 }
 
 export const CORE_BLUEPRINTS: MapBlueprint[] = [

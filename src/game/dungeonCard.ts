@@ -12,6 +12,7 @@ import type { ActiveEncounter, GameState, PlaceRecord } from './types';
 import type { ActiveDungeonState, MapNode, NodeHidden } from './mapEngine';
 import { dungeonHereLabel, isDoorLockedFor, moveToNode } from './mapEngine';
 import { attachDungeonLegend } from './legends';
+import { seedDungeonRescue, seatRescueDwellers } from './dungeonRescue';
 import {
   applyClearedSiteRecord,
   dungeonFromClearedRecord,
@@ -539,7 +540,7 @@ export function buildDungeonCard(
   });
 
   const entryZ = nodes.find((n) => n.id === gen.entryId)?.zLevel ?? -1;
-  return {
+  const built: ActiveDungeonState = {
     blueprintId: DUNGEON_CARD_BLUEPRINT,
     dungeonName: name,
     siteName: name,
@@ -555,6 +556,7 @@ export function buildDungeonCard(
     nodes,
     dungeonRules: gen.bossId ? { bossNode: gen.bossId } : {},
   };
+  return seedDungeonRescue(built, `${state.seed ?? state.saveId ?? 'dungeon'}:${name}`);
 }
 
 function hereLabel(d: ActiveDungeonState): string {
@@ -624,7 +626,7 @@ export function openDungeonCard(state: GameState, site: string): GameState {
     sceneFacts: { ...(state.sceneFacts ?? {}), indoor: true } as GameState['sceneFacts'],
   };
   if (built) next = attachDungeonLegend(next, card);
-  return next;
+  return seatRescueDwellers(next);
 }
 
 /**
