@@ -143,6 +143,16 @@ export function lootHeirloomOf(state: GameState, deadName: string): GameState {
 
 export type HeirloomTransfer = 'steal' | 'gift' | 'trade' | 'loot';
 
+/** The clause names this heirloom: the full label, or its head noun. */
+export function clauseNamesHeirloom(clause: string, label: string): boolean {
+  const name = label.toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!name) return false;
+  if (clause.toLowerCase().includes(name)) return true;
+  const head = name.split(/[^a-z0-9']+/).filter((w) => w.length >= 3).at(-1);
+  if (!head) return false;
+  return new RegExp(`\\b${head}\\b`, 'i').test(clause);
+}
+
 /** Engine-recorded change of hands. Speech never calls this. */
 export function transferHeirloom(state: GameState, npcId: string, how: HeirloomTransfer): GameState {
   const memory = (state.npcMemories ?? []).find((m) => m.npcId === npcId && m.heirloom?.holderId === m.npcId);

@@ -170,10 +170,11 @@ describe('heirlooms', () => {
     expect(away.state.npcMemories?.find((m) => m.npcId === id)?.heirloom?.holderId).toBe('player');
     expect(away.state.stateTxLog?.some((t) => /Heirloom steal/i.test(t.summary))).toBe(true);
 
-    const traded = resolveTypedFreeText(before, 'I trade with Sheriff Brann');
-    expect(traded.state?.npcMemories?.find((m) => m.npcId === id)?.heirloom?.holderId).toBe('player');
-    expect(traded.state?.stateTxLog?.some((t) => /Heirloom trade/i.test(t.summary))).toBe(true);
-    const gifted = resolveTypedFreeText(before, 'I ask a favour of Sheriff Brann');
+    const traded = resolveTypedFreeText(before, 'I trade with Sheriff Brann for rope');
+    expect(traded.state?.npcMemories?.find((m) => m.npcId === id)?.heirloom?.holderId).toBe(id);
+    expect(traded.state?.stateTxLog?.some((t) => /Heirloom /i.test(t.summary))).toBeFalsy();
+    const gifted = resolveTypedFreeText(before, 'I ask Sheriff Brann for his old blade as a favour');
+    expect(gifted.state?.npcMemories?.find((m) => m.npcId === id)?.heirloom?.holderId).toBe('player');
     expect(gifted.state?.stateTxLog?.some((t) => /Heirloom gift/i.test(t.summary))).toBe(true);
     const looted = lootHeirloomOf(before, 'Sheriff Brann');
     expect(looted.npcMemories?.find((m) => m.npcId === id)?.heirloom?.holderId).toBe('player');
