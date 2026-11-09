@@ -46,7 +46,7 @@ describe('28l writer turn (29z8: one pass)', () => {
       check: { state, playerInput: input, intent: LOOK, engineFact: '', previousGm: '' },
     });
     expect(r.outcome).toBe('accepted');
-    expect(r.problems.length).toBeGreaterThan(0);
+    expect(r.problems.some((p) => /Too thin/.test(p))).toBe(false);
     expect(r.prose).toMatch(/dust/);
   });
 

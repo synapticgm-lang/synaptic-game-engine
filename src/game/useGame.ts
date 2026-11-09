@@ -52,7 +52,9 @@ import {
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, callGmCheck, callGmRepair, type GmResult } from './aiService';
 import { captureTurnEngineFacts, repairParentExtra, withTrainLogJob } from './trainLog';
-import { checkAndRepairProse, makeGmClauseChat, storyAfterClauseCheck } from './clauseCheck';
+import { storyAfterClauseCheck } from './clauseCheck';
+import { applyFactGate, isFactCheckEnabled, makeHostedFactChecker } from './factGate';
+import { narratesPcInThirdPerson, pcPov } from './narrativePov';
 import { drainWriterRawIssues, drainWriterUsage, gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import { approachOpener, approachReceipt, bestFightApproach } from './fightApproach';
@@ -169,7 +171,7 @@ import {
   openingInventBudgetZero,
 } from './openingPointerCard';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
-import { normalizeCommittedProse, runWriterTurnWithFightRetry, sealPostWriterProse, writerTurnIssues } from './writerTurn';
+import { runWriterTurnWithFightRetry, sealPostWriterProse, writerTurnIssues } from './writerTurn';
 import { scrubOneCameraFight } from './oneCameraFight';
 import { commitTravel, pinClockTimeOfDay, roadDeathBookProse, travelEngineLines, travelOutcome } from './travelJourney';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
@@ -3204,62 +3206,37 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...(writerTurn.combatLog ? [writerTurn.combatLog] : []),
           ],
         };
-        // M4 — one clause check after the writer (FactSheet only).
+        // Fact gate. Confident scenery stays. Other spans go through one batched check unless SGM_FACT_CHECK=off.
         {
           const sheet = writerPacket?.factSheet ?? liveCurrent.completedEvent?.factSheet;
           const draft = result.text ?? '';
           if (sheet && draft.trim()) {
-            let clause: Awaited<ReturnType<typeof checkAndRepairProse>> | null = null;
-            try {
-              clause = await checkAndRepairProse({
-                factSheet: sheet,
-                prose: draft,
-                player: {
-                  typed: sanitizedInput,
-                  claimsNotTrue: sheet.player?.claimsNotTrue ?? [],
-                },
-                chat: makeGmClauseChat((user) =>
-                  callGmCheck(liveCurrent, user, settingsRef.current, turnAbort.signal, gmTimeoutMs)
-                ),
-                repair: (request) =>
-                  withTrainLogJob(
-                    'repair',
-                    () => callGmRepair(liveCurrent, request, settingsRef.current, turnAbort.signal, gmTimeoutMs),
-                    repairParentExtra({ engine_facts: frozenEngineFacts, engine_facts_provenance: 'packet', repair_pass: 1 })
-                  ),
-                engineFact,
-              });
-            } catch {
-              clause = null;
-            }
-            if (!clause || clause.withheld) {
-              // Engine state already resolved. Do not reroll, retry the check, or keep the draft.
+            const factCheckOn = isFactCheckEnabled();
+            const gate = await applyFactGate({
+              prose: draft,
+              sheet,
+              pcName: liveCurrent.character?.name,
+              allowNames: writerPacket?.allowlist,
+              recentProse: recentGmBeatTexts(liveCurrent),
+              thirdPerson: narratesPcInThirdPerson(pcPov(liveCurrent.character, settingsRef.current.perspective)),
+              factCheckEnabled: factCheckOn,
+              factCheck: factCheckOn
+                ? makeHostedFactChecker((payload) => callGmCheck(liveCurrent, payload, settingsRef.current))
+                : undefined,
+            });
+            if (gate.withheld) {
               const page = pageWhenClauseWithheld(liveCurrent, writerPacket, sanitizedInput);
               const published = storyAfterClauseCheck({
-                clause: clause ?? { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 1 },
+                clause: { prose: '', withheld: true, records: [], repaired: false, serious0: [], checkPasses: 0 },
                 enginePage: page,
                 draft,
               });
               result = { ...result, text: published.text };
-              debugLogger.record('WARN', 'Clause check withheld the writer draft', {
-                turn: liveCurrent.turn,
-              });
+              debugLogger.record('WARN', 'Fact gate left no prose', { turn: liveCurrent.turn });
             } else {
-              // T10H — clause repair can restate the same event; normalize once more (PC quote + same-beat dedupe).
-              // T10AK — re-seal destination + spoken answer after normalize.
               result = {
                 ...result,
-                text: sealPostWriterProse(
-                  liveCurrent,
-                  normalizeCommittedProse(clause.prose, {
-                    state: liveCurrent,
-                    playerInput: sanitizedInput,
-                    intent: intentForMandate,
-                    engineFact,
-                    previousGm: '',
-                  }, writerPacket),
-                  sanitizedInput,
-                ).prose,
+                text: sealPostWriterProse(liveCurrent, gate.prose, sanitizedInput).prose,
               };
             }
           }

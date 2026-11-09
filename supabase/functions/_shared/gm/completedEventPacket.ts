@@ -1589,14 +1589,9 @@ export function formatWriterFacingEvent(
   const bodyLines = placeGiven
     ? `{"fn":"action","text":"<sentence: ${didWhat} — the first thing that changed>"},${answerLine},${hookLine}`
     : `{"fn":"place","text":"<sentence: ${whereWas}${placeTok ? `, using @${placeTok}` : ''}>"},{"fn":"action","text":"<sentence: ${didWhat}>"},${answerLine},${hookLine}`;
-  lines.push(placeGiven
-    ? 'Write 3–5 lines. Each line is one full sentence of at least 8 words.'
-    : 'Write 4–6 lines. Each line is one full sentence of at least 8 words. A bare place name is not a line.');
   if (packet.engineMode === 'dnd') lines.push(`The whole beat is at most ${TABLETOP_BEAT_WORDS} words.`);
   if (placeGiven) {
-    lines.push(packet.infoSheet
-      ? 'HERE is already on the page (see INFO SHEET below). Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures from earlier turns are spent — use a new detail or none.'
-      : 'HERE is already on the page in the GM lines below. Do not describe it again: open on what changed this turn. Smells, light, sounds and gestures already written there are spent — use a new detail or none.');
+    lines.push('HERE is already on the page. Open on what changed this turn. Do not narrate an arrival the beat did not grant.');
   }
   if (askedBefore) {
     lines.push('The player has asked this before. The answer is a new quoted line said now, in new words — not "they told" or "they said" about an earlier answer.');

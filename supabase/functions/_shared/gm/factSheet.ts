@@ -26,6 +26,10 @@ export interface FactSheetPerson {
   manner?: string;
   /** Why they are that way, when the engine recorded a cause. */
   mannerCause?: string;
+  /** Items this person is carrying now. Display names only. */
+  carried?: string[];
+  /** One engine-recorded signature item. Display name only. */
+  signature?: string;
 }
 
 /** One open ledger entry the writer may show (loan / promise / offer). */

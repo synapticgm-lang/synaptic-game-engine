@@ -39,7 +39,7 @@ function check(state: GameState) {
 }
 
 describe('RC-N3 blocking draft rewrite', () => {
-  it('a one-sentence accepted draft triggers exactly one rewrite with Too thin', async () => {
+  it('a one-sentence draft is not rewritten for length', async () => {
     const state = lookState();
     const asked: string[] = [];
     const turn = await runWriterTurnWithFightRetry({
@@ -51,15 +51,25 @@ describe('RC-N3 blocking draft rewrite', () => {
         return THICK;
       },
     });
-    expect(asked).toHaveLength(1);
-    expect(asked[0]).toMatch(/Too thin/);
-    expect(turn.draftRetry).toBe('retried');
+    expect(asked.some((p) => /Too thin/.test(p))).toBe(false);
     expect(turn.path).not.toBe('last-resort');
-    expect(turn.prose).toMatch(/cracked font/);
-    expect(turn.prose).not.toBe(THIN);
+    expect(turn.prose).not.toMatch(/cracked font/);
   });
 
-  it('a second thin draft falls back and is logged, never shipped as-is', async () => {
+  it('a hard miss does not swap the writer draft for the engine page', async () => {
+    const state = lookState();
+    const draft = 'Vessa said, "Hello." WRITER_MARKER_9f3c.';
+    const turn = await runWriterTurnWithFightRetry({
+      firstRaw: draft,
+      packet: state.completedEvent!,
+      check: check(state),
+      rewrite: async () => draft,
+    });
+    expect(turn.path).not.toBe('last-resort');
+    expect(turn.prose).toContain('WRITER_MARKER_9f3c');
+  });
+
+  it('a thin second draft is not replaced by the engine page for length', async () => {
     const state = lookState();
     const asked: string[] = [];
     const turn = await runWriterTurnWithFightRetry({
@@ -71,12 +81,7 @@ describe('RC-N3 blocking draft rewrite', () => {
         return 'Dust only.';
       },
     });
-    expect(asked).toHaveLength(1);
-    expect(asked[0]).toMatch(/Too thin/);
-    expect(turn.draftRetry).toBe('painted');
-    expect(turn.path).toBe('last-resort');
-    expect(turn.prose).not.toBe(THIN);
-    expect(turn.prose).not.toBe('Dust only.');
-    expect(turn.problems.some((p) => p.includes('fell back to engine-fact page'))).toBe(true);
+    expect(asked.some((p) => /Too thin/.test(p))).toBe(false);
+    expect(turn.path).not.toBe('last-resort');
   });
 });

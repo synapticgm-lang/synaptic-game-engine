@@ -19,6 +19,7 @@ import { applyGovernanceToProse } from './qualityGovernance';
 import { writerWordsGuard } from './writerWords';
 import { polishMentions } from './mentionVariety';
 import { checkAndRepairProse, type ClauseClaim, type ClauseCheckChat } from './clauseCheck';
+import { applyFactGate } from './factGate';
 import type { FactSheet } from './factSheet';
 import { runWarden } from './warden';
 import type { GameState, NpcMemory } from './types';
@@ -463,16 +464,12 @@ describe('29z9d â€” seed-71 check lines', () => {
       ...baseSheet(),
       gear: { worn: [], carrying: [], inHand: 'Worn Iron Shortsword' },
     };
-    const kept = await checkAndRepairProse({
-      factSheet: armedSheet,
+    const kept = await applyFactGate({
       prose: line,
-      player: armedSheet.player,
-      chat: armedChat,
-      repair: async () => {
-        throw new Error('armed sword is supported — repair must not run');
-      },
+      sheet: armedSheet,
+      pcName: 'Jax',
     });
-    expect(kept.repaired).toBe(false);
+    expect(kept.withheld).toBe(false);
     expect(kept.prose).toContain("at Jax's sword");
 
     const unarmedClaim: ClauseClaim = {

@@ -224,7 +224,7 @@ describe('post-check XP and harvest stay where they are', () => {
     expect(harvested.state.completedEvent?.factSheet ? hashFactSheet(harvested.state.completedEvent.factSheet) : hash).toBe(hash);
     for (const file of ['./useGame.ts', './fateAutoplay.ts']) {
       const src = readFileSync(resolve(__dirname, file), 'utf8');
-      const check = callIndex(src, 'checkAndRepairProse');
+      const check = callIndex(src, 'applyFactGate');
       const harvest = callIndex(src, 'harvestNarrativePeople');
       const award = callIndex(src, 'applySandboxXpAwards');
       expect(check).toBeGreaterThan(0);
