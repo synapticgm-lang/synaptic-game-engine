@@ -120,13 +120,7 @@ function allowWords(sheet: FactSheet, pcName?: string, allowNames?: string[]): S
     sheet.place?.name ?? '',
     ...(sheet.place?.exits ?? []),
     ...(sheet.place?.features ?? []),
-    ...(sheet.present ?? []).flatMap((p) => [
-      p.name,
-      p.role ?? '',
-      ...(p.carried ?? []),
-      p.signature ?? '',
-      ...stockLabels(p.stock),
-    ]),
+    ...(sheet.present ?? []).flatMap((p) => [p.name, p.role ?? '', ...(p.carried ?? []), p.signature ?? '']),
     ...(sheet.gear?.worn ?? []),
     ...(sheet.gear?.carrying ?? []),
     sheet.gear?.inHand ?? '',
@@ -408,7 +402,26 @@ function segmentPieces(prose: string, names: string[] = []): Piece[] {
   return out;
 }
 
-function nameOutside(span: string, words: Set<string>, pcName?: string): string | null {
+function stockPhrases(sheet: FactSheet): string[] {
+  const out: string[] = [];
+  for (const person of sheet.present ?? []) {
+    for (const name of stockLabels(person.stock)) {
+      const phrase = norm(name);
+      if (phrase) out.push(phrase);
+    }
+  }
+  return out;
+}
+
+/** A stock label counts only as the whole name, not as each of its words. A one-word label counts only after a/an/the. */
+function stockNamePhrase(raw: string, before: string, phrases: string[]): boolean {
+  const phrase = norm(raw);
+  if (!phrase || !phrases.includes(phrase)) return false;
+  if (phrase.includes(' ')) return true;
+  return /\b(?:a|an|the)\s+$/i.test(before);
+}
+
+function nameOutside(span: string, words: Set<string>, pcName?: string, phrases: string[] = []): string | null {
   const quoted = span.replace(/["“][^"”]*["”]/g, ' ');
   const quotes = span.match(/["“][^"”]*["”]/g) ?? [];
   const chunks = [quoted, ...quotes.map((q) => q.slice(1, -1))];
@@ -418,6 +431,7 @@ function nameOutside(span: string, words: Set<string>, pcName?: string): string 
       const atStart = (m.index ?? 0) < 2;
       if (atStart && !raw.includes(' ')) continue;
       if (pcName && norm(raw) === norm(pcName)) continue;
+      if (stockNamePhrase(raw, chunk.slice(0, m.index ?? 0), phrases)) continue;
       const parts = norm(raw).split(' ').filter((w) => w.length >= 3 && !COMMON.has(w));
       if (!parts.length) continue;
       if (parts.some((w) => !words.has(w))) return raw;
@@ -558,7 +572,7 @@ function classifySpan(
   if (/\b(?=[A-Z0-9_]*[0-9_])[A-Z][A-Za-z0-9_]{5,}\b/.test(span)) {
     return { verdict: 'new/wrong', reason: 'invented token' };
   }
-  const outsider = nameOutside(span, words, pcName);
+  const outsider = nameOutside(span, words, pcName, stockPhrases(sheet));
   if (outsider) return { verdict: 'new/wrong', reason: `name not on the sheet: ${outsider}` };
   const titled = span.match(/\b(?:captain|ser|sir|lord|lady|dame|king|queen|prince|princess|master)\s+([a-z][a-z'-]{2,})\b/i);
   if (titled && !words.has(titled[1]!.toLowerCase()) && !COMMON.has(titled[1]!.toLowerCase())) {

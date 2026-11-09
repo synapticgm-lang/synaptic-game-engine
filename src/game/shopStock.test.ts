@@ -184,8 +184,17 @@ describe('shop stock', () => {
       pcName: 'Jax',
       factCheckEnabled: false,
     });
-    expect(both.prose).toMatch(/Waterskin/);
+    expect(both.prose).toBe('Mira sells a Waterskin.');
     expect(both.prose).not.toMatch(/sunblade/i);
+    for (const prose of ['Mira watched Reed.', 'Then Iron smiled.', 'Mira watched Candle.']) {
+      const person = await applyFactGate({
+        prose,
+        sheet: shelfSheet,
+        pcName: 'Jax',
+        factCheckEnabled: false,
+      });
+      expect(person.prose, prose).toBe('');
+    }
     const blank = await applyFactGate({
       prose: 'Mira offered a reed salve for sale.',
       sheet: { ...sheet, present: [{ name: 'Mira', role: 'merchant', stock: [null as never, { name: 'Reed Salve', quantity: 1, price: 8 }] }] },
