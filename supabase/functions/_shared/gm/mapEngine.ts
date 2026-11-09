@@ -1113,6 +1113,62 @@ function fitLayoutToPlace(specs: InteriorRoomSpec[], place: string): InteriorRoo
   });
 }
 
+/**
+ * A non-secret room whose only door is a secret, or whose door was filtered off,
+ * gets a door to the nearest room already reachable from the entry.
+ */
+export function connectOrphanRooms(
+  rooms: Array<{ id: string; x: number; y: number; z: number; secret?: boolean; entry?: boolean }>,
+  links: Array<[string, string]>,
+): Array<[string, string]> {
+  const open = rooms.filter((r) => !r.secret);
+  if (open.length <= 1) return links;
+  const adj = new Map<string, Set<string>>();
+  for (const r of open) adj.set(r.id, new Set());
+  const add = (a: string, b: string) => {
+    if (!adj.has(a) || !adj.has(b) || a === b) return;
+    adj.get(a)!.add(b);
+    adj.get(b)!.add(a);
+  };
+  for (const [a, b] of links) add(a, b);
+  const entry = open.find((r) => r.entry)?.id ?? open[0]!.id;
+  const reach = () => {
+    const seen = new Set<string>([entry]);
+    const q = [entry];
+    while (q.length) {
+      const id = q.pop()!;
+      for (const n of adj.get(id) ?? []) {
+        if (!seen.has(n)) {
+          seen.add(n);
+          q.push(n);
+        }
+      }
+    }
+    return seen;
+  };
+  let seen = reach();
+  const next = links.map((pair) => [pair[0], pair[1]] as [string, string]);
+  let guard = open.length;
+  while (open.some((r) => !seen.has(r.id)) && guard > 0) {
+    guard -= 1;
+    const room = open.find((r) => !seen.has(r.id))!;
+    let best = open.find((r) => seen.has(r.id)) ?? open[0]!;
+    let bestD = Number.POSITIVE_INFINITY;
+    for (const other of open) {
+      if (!seen.has(other.id)) continue;
+      const d = (room.x - other.x) ** 2 + (room.y - other.y) ** 2 + (room.z - other.z) ** 2 * 64;
+      if (d < bestD) {
+        bestD = d;
+        best = other;
+      }
+    }
+    next.push([room.id, best.id]);
+    add(room.id, best.id);
+    seen = reach();
+  }
+  return next;
+}
+
 function pickInteriorLayout(seed: string, place: string, rooms: string[] = []): InteriorRoomSpec[] {
   const rng = createHashRng(seed || 'interior', place || 'place', 'floor-plan');
   const scale = interiorBuildingScale(place);

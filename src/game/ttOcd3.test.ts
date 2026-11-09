@@ -211,7 +211,18 @@ describe('q45b-SLOT one chip per slot', () => {
   it('6 unchanged turns: ACT rotates, then the least recent returns with cooldownReturn', () => {
     const bare = {
       ...base('litrpg'),
-      places: [{ id: 'camp', name: 'Trail Camp', cardBuiltTurn: 1, exits: [] }],
+      currentLocation: 'Trail Camp',
+      openingEstablishment: { pending: [], answers: {}, complete: true },
+      quests: [{
+        id: 'q-camp',
+        name: 'Keep the camp',
+        description: 'The watch is the way on.',
+        status: 'active' as const,
+        type: 'side' as const,
+        location: 'Trail Camp',
+        objectives: [{ id: 'o', description: 'Keep the watch', completed: false, place: 'Trail Camp' }],
+      }],
+      places: [{ id: 'camp', name: 'Trail Camp', cardBuiltTurn: 1, exits: [], closed: true, arcStatus: 'closed' as const }],
       locationSheet: {
         name: 'Trail Camp',
         interactables: [],
@@ -236,7 +247,7 @@ describe('q45b-SLOT one chip per slot', () => {
     let s = bare;
     const actSlot: string[] = [];
     const actBack: boolean[] = [];
-    for (let t = 1; t <= 6; t++) {
+    for (let t = 4; t <= 9; t++) {
       s = { ...s, turn: t };
       const cooled = applyOptionCooldown(s, pad);
       const acts = cooled.filter((c) => c.slotCategory === 'act');

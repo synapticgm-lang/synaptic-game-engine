@@ -18,6 +18,7 @@ import {
   GRAND_LAYOUTS,
   RUIN_LAYOUTS,
   SHED_LAYOUTS,
+  connectOrphanRooms,
   generateProceduralBlueprint,
   type InteriorRoomSpec,
 } from './mapEngine';
@@ -300,6 +301,19 @@ export function generateInterior(opts: GenerateInteriorOptions): GeneratedInteri
       secrets.push({ id, fromId: host.id });
     }
   }
+  const healedLinks = connectOrphanRooms(
+    spec.map((n) => ({
+      id: n.id,
+      x: n.x,
+      y: n.y,
+      z: n.z,
+      secret: rooms.find((r) => r.id === n.id)?.role === 'secret',
+      entry: n.id === entryId,
+    })),
+    links,
+  );
+  links.length = 0;
+  links.push(...healedLinks);
   const secretIds = new Set(secrets.map((s) => s.id));
   for (const s of secrets) edgeKinds.set(`${s.fromId}>${s.id}`, 'secret');
   // Doors between the open map and a secret room stay shut until found; rooms behind a secret keep theirs.

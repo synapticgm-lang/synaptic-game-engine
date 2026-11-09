@@ -128,6 +128,8 @@ export function recordedExitTravelDest(state: GameState, label: string): string 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]!;
     if (row.label.toLowerCase() === target.toLowerCase()) return row.label;
+    const canon = canonicalTravelDest(state, row.label);
+    if (canon && canon.toLowerCase() === target.toLowerCase()) return canon;
     if (exitEntityId(row).toLowerCase() === target.toLowerCase()) return row.label;
   }
   return null;
@@ -140,7 +142,7 @@ export function wayOutMovesPlayer(state: GameState, label: string): boolean {
   const dest = hub?.name ?? recordedExitTravelDest(state, label);
   if (!dest) return false;
   const here = (state.currentLocation ?? '').trim();
-  if (!here || dest.toLowerCase() === here.toLowerCase()) return false;
+  if (!here || dest.toLowerCase() === here.toLowerCase() || isTravelDestHere(state, dest)) return false;
   if (isTripHere(state, dest)) return false;
   return mapGapBetween(state, here, dest).steps > 0;
 }
