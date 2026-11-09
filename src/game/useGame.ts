@@ -2364,6 +2364,10 @@ export function useGame() {
     void persist(optimisticState);
     hydratePlayFromLog({ persist: false });
       let liveCurrent = stateRef.current;
+      const priorStateForGear: GameState = {
+        ...liveCurrent,
+        inventory: (liveCurrent.inventory ?? []).map((item) => ({ ...item })),
+      };
       if (!liveCurrent) return;
       liveCurrent = withHouseRules(liveCurrent, settingsRef.current);
       const questsAtTurnStart = liveCurrent.quests ?? [];
@@ -2917,6 +2921,7 @@ export function useGame() {
         readerStepResults: readerStepResults.length ? readerStepResults : undefined,
         travel: travelOutcome(travelCommit, hereBeforeMove, liveCurrent),
         reader: readerFlags(settingsRef.current),
+        priorState: priorStateForGear,
       });
       liveCurrent = preparedEvent.state;
       stateRef.current = liveCurrent;

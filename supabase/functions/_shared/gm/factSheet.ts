@@ -157,6 +157,36 @@ function questRows(state: GameState): FactSheetQuest[] {
  * A 13th older item stays off the sheet. A 13th item gained this turn stays on it, so the fact
  * gate does not treat that gain as unlisted and drop the sentence.
  */
+/** Names whose carried quantity rose this turn. Worn-only stacks are not gains for the sheet. */
+export function inventoryGainedThisTurn(before: GameState | undefined, after: GameState): string[] {
+  if (!before) return [];
+  const qty = (items: GameState['inventory'] | undefined) => {
+    const totals = new Map<string, { name: string; qty: number; carried: boolean }>();
+    for (const item of items ?? []) {
+      const name = (item.name ?? '').trim();
+      const key = name.toLowerCase();
+      if (!key) continue;
+      const count = item.quantity ?? 1;
+      const prev = totals.get(key);
+      if (!prev) totals.set(key, { name, qty: count, carried: !item.equipped });
+      else {
+        prev.qty += count;
+        if (!item.equipped) prev.carried = true;
+      }
+    }
+    return totals;
+  };
+  const prior = qty(before.inventory);
+  const now = qty(after.inventory);
+  const gained: string[] = [];
+  for (const [key, row] of now) {
+    if (!row.carried) continue;
+    if (row.qty <= (prior.get(key)?.qty ?? 0)) continue;
+    gained.push(row.name);
+  }
+  return gained;
+}
+
 export function carryingForSheet(names: string[], gainedThisTurn: readonly string[] = [], cap = 12): string[] {
   const listed = names.slice(0, cap);
   const have = new Set(listed.map((name) => name.trim().toLowerCase()).filter(Boolean));

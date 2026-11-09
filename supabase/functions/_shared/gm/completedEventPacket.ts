@@ -10,7 +10,7 @@ import { cleanPlaceLabel, playerFacingLocation, proseRoomPlace, underwayHereLabe
 import { isCrowdFillerToken, isSystemWindowLabel, realPresentPeople } from './chromeAuthority.ts';
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { formatInfoSheet } from './infoSheet.ts';
-import { buildFactSheet, formatFactSheetForWriter, type FactSheet } from './factSheet.ts';
+import { buildFactSheet, formatFactSheetForWriter, inventoryGainedThisTurn, type FactSheet } from './factSheet.ts';
 import { formatRefRecords, formatSceneBlock, mentionFromScene } from './sceneBlock.ts';
 import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
@@ -466,6 +466,8 @@ export type PacketBuildExtras = {
   };
   damage?: number;
   loot?: string[];
+  /** Inventory before this turn's commits. Gains are derived; callers do not hand-write loot. */
+  priorState?: GameState;
 };
 function liveEncounterHp(state: GameState): { current: number; max: number } | undefined {
   const enc = state.activeEncounter;
@@ -1074,7 +1076,7 @@ export function buildCompletedEventPacket(
     outcome,
     damage: extras?.damage,
     hp,
-    loot: extras?.loot ?? [],
+    loot: [...new Set([...(extras?.loot ?? []), ...inventoryGainedThisTurn(extras?.priorState, state)].map((name) => name.trim()).filter(Boolean))],
     xp,
     witnesses,
     knownBy: presentNpcRecords(state)

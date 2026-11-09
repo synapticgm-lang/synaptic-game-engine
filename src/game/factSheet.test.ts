@@ -4,6 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
+import { prepareWriterInputWithTownsfolk } from './townsfolk';
 import { applyFactGate } from './factGate';
 import { buildFactSheet, formatFactSheetForWriter, hashFactSheet } from './factSheet';
 import { buildTurnLog, diceRollsFromReceipts, sliceState } from './turnLog';
@@ -155,6 +156,29 @@ describe('M1 factSheet', () => {
     const kept = await applyFactGate({
       prose: 'Jax pocketed the cellar key.',
       sheet: gained,
+      pcName: 'Jax',
+    });
+    expect(kept.prose).toMatch(/pocketed the cellar key/i);
+  });
+
+  it('a live turn keeps a newly gained 13th item without a hand-written loot extra', async () => {
+    const older = Array.from({ length: 12 }, (_, i) => ({
+      id: `old-${i}`,
+      name: `Nail ${i + 1}`,
+      quantity: 1,
+    }));
+    const before = baseState({ inventory: older });
+    const after = baseState({
+      inventory: [...older, { id: 'key', name: 'Cellar Key', quantity: 1 }],
+    });
+    const prepared = prepareWriterInputWithTownsfolk(after, 'Take the cellar key', {
+      priorState: before,
+    });
+    expect(prepared.packet.loot).toContain('Cellar Key');
+    expect(prepared.packet.factSheet?.gear.carrying).toContain('Cellar Key');
+    const kept = await applyFactGate({
+      prose: 'Jax pocketed the cellar key.',
+      sheet: prepared.packet.factSheet!,
       pcName: 'Jax',
     });
     expect(kept.prose).toMatch(/pocketed the cellar key/i);
