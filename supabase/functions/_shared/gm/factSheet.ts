@@ -17,6 +17,7 @@ import { placeScale } from './placeAuthority.ts';
 import { isSystemWindowLabel } from './chromeAuthority.ts';
 import type { PlaceProp } from './types.ts';
 import { stockForMerchant } from './shopStock.ts';
+import { sheetRumours } from './legends.ts';
 import { personaMannerLine } from './npcPersona.ts';
 import { parsePlayerSteps, sheetContextFromState } from './intentParser.ts';
 
@@ -102,6 +103,12 @@ export interface FactSheet {
   stallPressure?: string;
   /** Item names an engine transfer moved to the player this turn. */
   granted?: string[];
+  /** Public rumours the people here may retell. At most three. Hidden truth is not here. */
+  rumours?: string[];
+  /** Whole labels of those rumours' engine-placed targets. */
+  legendLabels?: string[];
+  /** Hidden truths, only after the engine marks the legend found or resolved. */
+  hiddenTruths?: string[];
   /** Reserved for order 6b — do not fill here. */
   settingsSlot: null;
 }
@@ -347,6 +354,7 @@ export function buildFactSheet(
   const openLedger = [...commitments, ...openOffers(state)];
 
   const typed = norm(playerInput ?? packet.playerAction);
+  const rumours = sheetRumours(state, presentPeople.map((r) => r.npcId));
 
   return {
     turn: packet.turn ?? state.turn ?? 0,
@@ -381,6 +389,9 @@ export function buildFactSheet(
     granted: (state.stateTxLog ?? [])
       .filter((t) => t.turn === (state.turn ?? 0) && /^Heirloom /.test(t.summary) && t.entity)
       .map((t) => t.entity),
+    rumours: rumours.lines.length ? rumours.lines : undefined,
+    legendLabels: rumours.labels.length ? rumours.labels : undefined,
+    hiddenTruths: rumours.truths.length ? rumours.truths : undefined,
     settingsSlot: null,
   };
 }
@@ -425,6 +436,8 @@ export function formatFactSheetForWriter(sheet: FactSheet, opts?: FormatFactShee
   ];
   if (sheet.place.exits.length) lines.push(`Roads/exits: ${sheet.place.exits.join('; ')}.`);
   if (sheet.place.features.length) lines.push(`Features: ${sheet.place.features.join(', ')}.`);
+  if (sheet.rumours?.length) lines.push('Rumours:', ...sheet.rumours.map((line) => `  - ${line}`));
+  if (sheet.hiddenTruths?.length) lines.push('Found:', ...sheet.hiddenTruths.map((line) => `  - ${line}`));
   if (sheet.present.length) {
     lines.push(
       'Present:',

@@ -410,6 +410,10 @@ function stockPhrases(sheet: FactSheet): string[] {
       if (phrase) out.push(phrase);
     }
   }
+  for (const label of sheet.legendLabels ?? []) {
+    const phrase = norm(label);
+    if (phrase) out.push(phrase);
+  }
   return out;
 }
 
@@ -426,6 +430,40 @@ function stripLeadingArticle(raw: string): { name: string; article: boolean } {
   const match = /^(?:A|An|The)\s+(.+)$/.exec(raw);
   if (!match?.[1]) return { name: raw, article: false };
   return { name: match[1], article: true };
+}
+
+function speechClauses(inner: string): string[] {
+  return inner.split(/\s+and\s+|(?<=[.!?])\s+/i).map((part) => part.trim()).filter(Boolean);
+}
+
+/** Drop quoted clauses that assert an unlisted proper name. Ordinary talk with no new name stays. */
+function speechWithoutUnlistedNames(
+  text: string,
+  words: Set<string>,
+  pcName: string | undefined,
+  phrases: string[],
+): { text: string; changed: boolean; empty: boolean } {
+  const ranges = speechRanges(text);
+  if (!ranges.length) return { text, changed: false, empty: false };
+  let out = text;
+  let changed = false;
+  let anyKept = false;
+  for (const [start, end] of [...ranges].reverse()) {
+    const body = text.slice(start, end);
+    const open = body[0] === '"' || body[0] === '\u201c' ? body[0] : '';
+    const close = open === '"' ? '"' : open === '\u201c' ? '\u201d' : '';
+    const inner = open ? body.slice(1, close && body.endsWith(close) ? -1 : undefined) : body;
+    const clauses = speechClauses(inner);
+    const kept = clauses.filter((clause) => !nameOutside(clause, words, pcName, phrases));
+    if (kept.length) anyKept = true;
+    if (kept.length === clauses.length) continue;
+    changed = true;
+    const nextInner = kept.join(' and ').replace(/\s+/g, ' ').trim();
+    const next = nextInner ? `${open}${nextInner}${close}` : '';
+    out = out.slice(0, start) + next + out.slice(end);
+  }
+  out = out.replace(/\s+/g, ' ').replace(/\s+([.,])/g, '$1').trim();
+  return { text: out, changed, empty: changed && !anyKept };
 }
 
 function nameOutside(span: string, words: Set<string>, pcName?: string, phrases: string[] = []): string | null {
@@ -908,14 +946,34 @@ export async function applyFactGate(args: {
   const blob = packetBlob(args.sheet, args.pcName, args.allowNames);
   const judge = (text: string, id: string): FactSpan => {
     const role = speechRole(text);
-    if (role === 'speech' || role === 'writing') {
+    if (role === 'writing') {
       return {
         id,
         text,
         verdict: 'colour',
         reason: role,
-        speech: role === 'speech',
-        writing: role === 'writing',
+        writing: true,
+        route: 'candidate',
+      };
+    }
+    if (role === 'speech') {
+      const fixed = speechWithoutUnlistedNames(text, words, args.pcName, stockPhrases(args.sheet));
+      if (fixed.empty) {
+        return {
+          id,
+          text,
+          verdict: 'new/wrong',
+          reason: 'unlisted name in speech',
+          speech: true,
+          route: 'new/wrong',
+        };
+      }
+      return {
+        id,
+        text: fixed.changed ? fixed.text : text,
+        verdict: 'colour',
+        reason: fixed.changed ? 'repaired' : role,
+        speech: true,
         route: 'candidate',
       };
     }

@@ -23,6 +23,7 @@ import { roadMeetingSpeaker } from './travelJourney';
 import type { SpokenLine } from './tokenProse';
 import { agendaFromRole, ensureNpcAgenda } from './npcMemory';
 import { maybeGrantHeirloom } from './heirlooms';
+import { knowLegends } from './legends';
 
 type Archetype = {
   id: string;
@@ -189,7 +190,7 @@ export function pickNpcSheet(name: string, place: SheetPlace, opts?: { campaignI
 
 /**
  * First meet: pick and save a sheet on this person's memory. Later turns keep the saved sheet.
- * Authored people are returned unchanged.
+ * Authored people keep their sheet. Legend knowledge still refreshes when a new legend enters their region.
  */
 export function ensureNpcSheet(state: GameState, name: string, location?: string | null): GameState {
   const key = name.trim().toLowerCase();
@@ -199,6 +200,11 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
   const memory = list.find(
     (m) => m.npcName.toLowerCase() === key || (m.aliases ?? []).some((a) => a.toLowerCase() === key),
   );
+  if ((isAuthored(name, memory) || memory?.sheet) && memory) {
+    const taught = knowLegends(state, memory);
+    if (taught === memory) return state;
+    return { ...state, npcMemories: list.map((m) => (m === memory ? taught : m)) };
+  }
   if (isAuthored(name, memory)) return state;
   if (memory?.sheet) return state;
   const sheet = pickNpcSheet(name, sheetPlaceFor(location ?? state.currentLocation), {
@@ -207,7 +213,7 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
   });
   const where = location ?? state.currentLocation;
   if (memory) {
-    const saved = maybeGrantHeirloom(state, ensureNpcAgenda({
+    const saved = knowLegends(state, maybeGrantHeirloom(state, ensureNpcAgenda({
       ...memory,
       sheet,
       goal: memory.goal ?? sheet.goal,
@@ -216,13 +222,13 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
       attitude: memory.attitude ?? sheet.attitude,
       traits: memory.traits?.length ? memory.traits : sheet.traits,
       speechRegister: memory.speechRegister ?? sheet.speechRegister,
-    }), where);
+    }), where));
     return {
       ...state,
       npcMemories: list.map((m) => (m === memory ? saved : m)),
     };
   }
-  const fresh = maybeGrantHeirloom(state, ensureNpcAgenda({
+  const fresh = knowLegends(state, maybeGrantHeirloom(state, ensureNpcAgenda({
     npcId: `town-${key.replace(/[^a-z0-9]+/g, '-').slice(0, 24)}`,
     npcName: name.trim(),
     disposition: 'unknown',
@@ -236,7 +242,7 @@ export function ensureNpcSheet(state: GameState, name: string, location?: string
     attitude: sheet.attitude,
     traits: sheet.traits,
     speechRegister: sheet.speechRegister,
-  }), where);
+  }), where));
   return { ...state, npcMemories: [...list, fresh] };
 }
 

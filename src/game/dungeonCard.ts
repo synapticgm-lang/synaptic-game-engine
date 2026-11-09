@@ -11,6 +11,7 @@
 import type { ActiveEncounter, GameState, PlaceRecord } from './types';
 import type { ActiveDungeonState, MapNode, NodeHidden } from './mapEngine';
 import { dungeonHereLabel, isDoorLockedFor, moveToNode } from './mapEngine';
+import { attachDungeonLegend } from './legends';
 import {
   applyClearedSiteRecord,
   dungeonFromClearedRecord,
@@ -588,6 +589,7 @@ export function openDungeonCard(state: GameState, site: string): GameState {
     return { ...state, places, activeDungeon: active };
   }
   let card: ActiveDungeonState;
+  let built = false;
   if (cleared) {
     card = place?.dungeonCard
       ? applyClearedSiteRecord(place.dungeonCard, cleared)
@@ -599,6 +601,7 @@ export function openDungeonCard(state: GameState, site: string): GameState {
     };
   } else {
     const stored = place?.dungeonCard;
+    built = !stored;
     card = stored
       ? { ...stored, currentNodeId: 'r0', currentZLevel: stored.nodes.find((n) => n.id === 'r0')?.zLevel ?? -1 }
       : buildDungeonCard(state, hubName);
@@ -610,7 +613,7 @@ export function openDungeonCard(state: GameState, site: string): GameState {
         ...(state.places ?? []),
         { id, name: hubName, allowsDungeon: true, dungeonRef: card.dungeonName, dungeonCard: card, arcStatus: (cleared ? 'cleared' : 'open') as const, mapScale: 'street' as const },
       ];
-  return {
+  let next: GameState = {
     ...state,
     activeDungeon: card,
     places,
@@ -620,6 +623,8 @@ export function openDungeonCard(state: GameState, site: string): GameState {
       : state.locationSheet,
     sceneFacts: { ...(state.sceneFacts ?? {}), indoor: true } as GameState['sceneFacts'],
   };
+  if (built) next = attachDungeonLegend(next, card);
+  return next;
 }
 
 /**
@@ -640,7 +645,7 @@ export function ensureDungeonCard(state: GameState, site: string): { state: Game
         ...(state.places ?? []),
         { id: placeIdFromName(hubName), name: hubName, allowsDungeon: true, dungeonRef: card.dungeonName, dungeonCard: card, arcStatus: 'open' as const, mapScale: 'street' as const },
       ];
-  return { state: { ...state, places }, card };
+  return { state: attachDungeonLegend({ ...state, places }, card), card };
 }
 
 /**

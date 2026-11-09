@@ -1266,6 +1266,10 @@ export interface GameState {
    * null = closed story (typical PYOA) — no continent atlas.
    */
   worldAtlas?: WorldAtlasState | null;
+  /** Capped live legends. Speech never appends to this list. */
+  legends?: LegendRecord[];
+  /** Rumours that left the live list. Their places stay in the world. */
+  legendArchive?: LegendArchiveLine[];
   /**
    * XP-D1 OPEN5 — per-region creature level band, seeded once (regionLevels.ensureRegionBands).
    * Absent = treat as { low: 1, high: 3 }. AI never sets bands.
@@ -1587,6 +1591,36 @@ export interface WorldAtlasSettlement {
   allowsDungeon?: boolean;
   questTags?: string[];
 }
+export type LegendAccuracy = 'truth' | 'half' | 'false';
+export type LegendStatus = 'rumour' | 'lead' | 'found' | 'resolved' | 'debunked';
+export type LegendTargetKind = 'item' | 'place' | 'npc' | 'dungeon';
+
+/** One engine-owned legend. The target is a record the engine already placed. */
+export interface LegendRecord {
+  id: string;
+  regionId: string;
+  publicRumour: string;
+  accuracy: LegendAccuracy;
+  /** Off the fact sheet until status is found or resolved. */
+  hiddenTruth: string;
+  target: { kind: LegendTargetKind; id: string; label: string; level?: number };
+  status: LegendStatus;
+  links: string[];
+  createdTurn: number;
+  /** World day this rumour was last on the sheet for someone present. */
+  lastToldDay: number;
+  origin: 'world' | 'dungeon' | 'quest';
+  /** Still in the registry, but not on the sheet. */
+  quiet?: boolean;
+}
+
+export interface LegendArchiveLine {
+  id: string;
+  regionId: string;
+  publicRumour: string;
+  targetLabel: string;
+}
+
 export interface WorldAtlasState {
   outlineId: string;
   outlineName: string;
@@ -2048,6 +2082,8 @@ export interface NpcMemory {
   heirloom?: NpcHeirloom;
   /** Authored roster signature. Not rolled, and never joined by a second famous item. */
   listedSignature?: string;
+  /** Legend ids this person may retell. Seeded once with the sheet. */
+  knownLegendIds?: string[];
   /** 12c — item names this merchant already sold the player. */
   purchases?: string[];
   /** 12c — quest-giver function complete; drop from CAST / Talk. */
