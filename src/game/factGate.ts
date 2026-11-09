@@ -98,7 +98,24 @@ function norm(s: string): string {
   return (s ?? '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+/** A denial does not list the noun it refuses. "does not hold the cellar key" adds no key. */
+function proseWithoutDenials(text: string): string {
+  return text.replace(
+    /\b(?:do|does|did|is|are|was|were|has|have|had|can|could|will|would|should)\s+not\b[^.,;]*|\b(?:don't|doesn't|didn't|isn't|aren't|wasn't|weren't|hasn't|haven't|hadn't|can't|cannot|won't|wouldn't|shouldn't|never|not|no)\b[^.,;]*/gi,
+    ' ',
+  );
+}
+
 function allowWords(sheet: FactSheet, pcName?: string, allowNames?: string[]): Set<string> {
+  const prose = [
+    ...(sheet.openLedger ?? []).map((e) => e.line),
+    ...(sheet.quests ?? []).flatMap((q) => [q.title, q.step ?? '']),
+    sheet.beat?.engineResult ?? '',
+    sheet.beat?.outcome ?? '',
+    ...(sheet.beat?.steps ?? []).flatMap((s) => [s.detail ?? '', s.outcome]),
+    sheet.player?.typed ?? '',
+    ...(sheet.recent ?? []),
+  ].map(proseWithoutDenials);
   const blob: string[] = [
     sheet.place?.name ?? '',
     ...(sheet.place?.exits ?? []),
@@ -107,13 +124,7 @@ function allowWords(sheet: FactSheet, pcName?: string, allowNames?: string[]): S
     ...(sheet.gear?.worn ?? []),
     ...(sheet.gear?.carrying ?? []),
     sheet.gear?.inHand ?? '',
-    ...(sheet.openLedger ?? []).map((e) => e.line),
-    ...(sheet.quests ?? []).flatMap((q) => [q.title, q.step ?? '']),
-    sheet.beat?.engineResult ?? '',
-    sheet.beat?.outcome ?? '',
-    ...(sheet.beat?.steps ?? []).flatMap((s) => [s.detail ?? '', s.outcome]),
-    sheet.player?.typed ?? '',
-    ...(sheet.recent ?? []),
+    ...prose,
     pcName ?? '',
     ...(allowNames ?? []),
   ];
@@ -611,6 +622,7 @@ export function formatFactCheckRequest(input: {
     'Remove speech only when it claims that the player, the party, or a present NPC now holds something, or is now somewhere else, and that claim contradicts the sheet.',
     'Words outside the quotation marks are narration.',
     'Objects held in someone else\'s hands, or lying in the scenery, are allowed unless the player or the party gains them.',
+    'A scare-quoted or so-called object that is only turned over, looked at, or described is not a gain. Keep that sentence unless it states that someone now newly holds a real item, listed or unlisted.',
     'keep = scenery, harmless speech, or a fact already on the sheet. remove = a new or wrong fact. repair-once = replace that line once.',
     'Reply as JSON: [{"n":1,"verdict":"keep"}]. A repair-once row may include "text".',
     'SHEET:',

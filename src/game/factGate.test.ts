@@ -791,6 +791,61 @@ describe('fact gate', () => {
     expect(prompt).toMatch(/scenery/i);
   });
 
+  it('tells the checker a so-called object is not a gain', () => {
+    const prompt = formatFactCheckRequest({
+      sheet: sheet(),
+      lines: [{ n: 1, text: 'Jax turned the so-called "key" over in his hand.' }],
+    });
+    expect(prompt).toMatch(/scare-quoted/i);
+    expect(prompt).toMatch(/so-called/i);
+    expect(prompt).toMatch(/turned over/i);
+    expect(prompt).toMatch(/looked at/i);
+    expect(prompt).toMatch(/described/i);
+    expect(prompt).toMatch(/not a gain/i);
+    expect(prompt).toMatch(/keep that sentence/i);
+    expect(prompt).toMatch(/newly holds/i);
+    expect(prompt).toMatch(/listed or unlisted/i);
+  });
+
+  it('drops a pocket when the key appears only in a denial', async () => {
+    const denied = sheet({
+      beat: {
+        verb: 'looked',
+        outcome: 'looked',
+        engineResult: 'Jax stayed in the bathhouse. Jax does not hold the cellar key. Jax is not at the quay.',
+        steps: [{ outcome: 'stayed', detail: 'No move this turn. Not at the quay. No cellar key.' }],
+      },
+      player: { typed: 'look around', claimsNotTrue: ['Jax holds the cellar key', 'Jax is at the quay'] },
+    });
+    const prose = 'Mira — the soup is too salty.\n\nJax pocketed the cellar key.';
+    const out = await applyFactGate({
+      prose,
+      sheet: denied,
+      pcName: 'Jax',
+      thirdPerson: true,
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => lines.map((entry) => ({ n: entry.n, verdict: 'keep' as const })),
+    });
+    const pocket = out.spans.find((span) => /pocketed/i.test(span.text));
+    expect(pocket?.speech).not.toBe(true);
+    expect(pocket?.verdict).toBe('new/wrong');
+    expect(pocket?.reason).toMatch(/unlisted item/i);
+    expect(out.prose).toMatch(/soup/i);
+    expect(out.prose).not.toMatch(/pocketed|cellar key/i);
+
+    const carried = sheet({
+      ...denied,
+      gear: { worn: [], carrying: ['cellar key'], inHand: 'nothing' },
+    });
+    const kept = await applyFactGate({
+      prose,
+      sheet: carried,
+      pcName: 'Jax',
+      thirdPerson: true,
+    });
+    expect(kept.prose).toMatch(/pocketed the cellar key/i);
+  });
+
   it('sends every quoted span to the checker as speech', async () => {
     const lines = [
       'Mira said, "Pocket the cellar key, and take the quay."',
