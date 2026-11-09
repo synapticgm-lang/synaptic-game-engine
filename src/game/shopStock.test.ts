@@ -195,6 +195,38 @@ describe('shop stock', () => {
       });
       expect(person.prose, prose).toBe('');
     }
+    for (const prose of [
+      'The Waterskin hung on the peg.',
+      'The Reed Salve sat on the counter.',
+      'An Iron Nail sat on the counter.',
+      'The Candle burned low.',
+    ]) {
+      const goods = await applyFactGate({
+        prose,
+        sheet: shelfSheet,
+        pcName: 'Jax',
+        factCheckEnabled: false,
+      });
+      expect(goods.prose, prose).toBe(prose);
+    }
+    const withHolt: FactSheet = {
+      ...shelfSheet,
+      present: [...shelfSheet.present, { name: 'Holt' }],
+    };
+    const holt = await applyFactGate({
+      prose: 'The Holt watched.',
+      sheet: withHolt,
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(holt.prose).toBe('The Holt watched.');
+    const stranger = await applyFactGate({
+      prose: 'The Holt watched.',
+      sheet: shelfSheet,
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(stranger.prose).toBe('');
     const blank = await applyFactGate({
       prose: 'Mira offered a reed salve for sale.',
       sheet: { ...sheet, present: [{ name: 'Mira', role: 'merchant', stock: [null as never, { name: 'Reed Salve', quantity: 1, price: 8 }] }] },

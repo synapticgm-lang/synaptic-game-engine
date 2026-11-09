@@ -421,6 +421,13 @@ function stockNamePhrase(raw: string, before: string, phrases: string[]): boolea
   return /\b(?:a|an|the)\s+$/i.test(before);
 }
 
+/** Drop a leading capitalised article. "The" and "An" are long enough to be scanned as part of the name. */
+function stripLeadingArticle(raw: string): { name: string; article: boolean } {
+  const match = /^(?:A|An|The)\s+(.+)$/.exec(raw);
+  if (!match?.[1]) return { name: raw, article: false };
+  return { name: match[1], article: true };
+}
+
 function nameOutside(span: string, words: Set<string>, pcName?: string, phrases: string[] = []): string | null {
   const quoted = span.replace(/["“][^"”]*["”]/g, ' ');
   const quotes = span.match(/["“][^"”]*["”]/g) ?? [];
@@ -430,11 +437,13 @@ function nameOutside(span: string, words: Set<string>, pcName?: string, phrases:
       const raw = m[1]!;
       const atStart = (m.index ?? 0) < 2;
       if (atStart && !raw.includes(' ')) continue;
-      if (pcName && norm(raw) === norm(pcName)) continue;
-      if (stockNamePhrase(raw, chunk.slice(0, m.index ?? 0), phrases)) continue;
-      const parts = norm(raw).split(' ').filter((w) => w.length >= 3 && !COMMON.has(w));
+      const { name, article } = stripLeadingArticle(raw);
+      const before = article ? 'the ' : chunk.slice(0, m.index ?? 0);
+      if (pcName && norm(name) === norm(pcName)) continue;
+      if (stockNamePhrase(name, before, phrases)) continue;
+      const parts = norm(name).split(' ').filter((w) => w.length >= 3 && !COMMON.has(w));
       if (!parts.length) continue;
-      if (parts.some((w) => !words.has(w))) return raw;
+      if (parts.some((w) => !words.has(w))) return name;
     }
   }
   return null;
