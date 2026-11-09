@@ -410,6 +410,10 @@ function stockPhrases(sheet: FactSheet): string[] {
       if (phrase) out.push(phrase);
     }
   }
+  for (const label of sheet.legendLabels ?? []) {
+    const phrase = norm(label);
+    if (phrase) out.push(phrase);
+  }
   return out;
 }
 

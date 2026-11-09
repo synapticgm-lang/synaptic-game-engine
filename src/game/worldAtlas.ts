@@ -2,6 +2,7 @@ import { pickWorldOutline, type WorldOutlineDef } from '@/data/worldOutlines';
 import type { CampaignBible } from '@/data/campaigns/types';
 import type { GameState, WorldAtlasState } from './types';
 import { attachSettlementsToAtlas } from './worldMapAuthority';
+import { seedWorldLegends } from './legends';
 
 export function instantiateWorldAtlas(outline: WorldOutlineDef): WorldAtlasState {
   const base: WorldAtlasState = {
@@ -37,7 +38,7 @@ export function seedWorldAtlas(
   if (!outline) {
     return { ...state, worldAtlas: null };
   }
-  return { ...state, worldAtlas: instantiateWorldAtlas(outline) };
+  return seedWorldLegends({ ...state, worldAtlas: instantiateWorldAtlas(outline) });
 }
 
 /** Reveal a region (and optionally its neighbors) when the player arrives. */
