@@ -4,7 +4,7 @@
  */
 import type { FactSheet } from './factSheet';
 import type { FactObjectNote, FactObjectTag } from './roomProps';
-import { readObjectTag } from './roomProps';
+import { readObjectTag, tagsFromPlacedSpan } from './roomProps';
 
 export type FactVerdict = 'colour' | 'allowed' | 'new/wrong' | 'UNSURE';
 
@@ -696,7 +696,7 @@ export function estimateFactCheckTokens(sheet: FactSheet, lines: string[]): { in
     sheet,
     lines: lines.map((text, i) => ({ n: i + 1, text })),
   });
-  return { input: Math.ceil(body.length / 4), output: Math.max(8, lines.length * 12) };
+  return { input: Math.ceil(body.length / 4), output: Math.max(16, lines.length * 28) };
 }
 
 function finish(source: string, spans: FactSpan[], pieces: Piece[], recentProse: string[], names: string[] = []): FactGateResult {
@@ -938,6 +938,16 @@ export async function applyFactGate(args: {
         span.reason = 'checker cleared';
       }
     }
+  }
+  for (const span of spans) {
+    const kept = span.verdict === 'colour' || span.verdict === 'allowed';
+    if (!kept || span.speech || span.writing) continue;
+    const existing = objectNotes.find((note) => note.text === span.text);
+    if (existing?.objects.length) continue;
+    const objects = tagsFromPlacedSpan(span.text);
+    if (!objects.length) continue;
+    if (existing) existing.objects = objects;
+    else objectNotes.push({ text: span.text, speech: false, writing: false, kept: true, objects });
   }
   const result = finish(args.prose, spans, pieces, args.recentProse ?? [], people);
   result.objectNotes = objectNotes;

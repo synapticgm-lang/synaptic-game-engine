@@ -7,7 +7,7 @@ import type { FactSheet } from './factSheet';
 import { buildFactSheet } from './factSheet';
 import { buildCompletedEventPacket } from './completedEventPacket';
 import { applyPresentTrimOnTravel } from './presentAuthority';
-import { fileKeptRoomProps, focusDungeonRoom, sheetPropLabels } from './roomProps';
+import { fileKeptRoomProps, focusDungeonRoom, HIGH_TIER_ITEM_WORDS, isHighTierItemName, sheetPropLabels } from './roomProps';
 import { resolveStealAttempt } from './stealParley';
 import { pinDice } from './seededRng';
 import type { ActiveDungeonState, GameState } from './types';
@@ -179,6 +179,77 @@ describe('room props from a kept narration', () => {
     const features = buildFactSheet(state, packet, 'look around').place.features;
     const coins = features.filter((f) => /coin /i.test(f));
     expect(coins.length).toBeLessThanOrEqual(6);
+  });
+});
+
+describe('filing without checker tags', () => {
+  it('files a colour line, a check that is off, and a keep with no tags', async () => {
+    const colourSheet: FactSheet = {
+      ...sheet(),
+      place: { name: 'Valespire Bathhouse', exits: ['street'], features: ['cloak', 'furnace'] },
+    };
+    let called = false;
+    const colour = await applyFactGate({
+      prose: 'A cloak hangs by the furnace.',
+      sheet: colourSheet,
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async () => {
+        called = true;
+        return [];
+      },
+    });
+    expect(called).toBe(false);
+    expect(colour.spans[0]?.route).toBe('colour');
+    const fromColour = fileKeptRoomProps(roomState(), colour.objectNotes);
+    expect(fromColour.sceneFacts?.roomProps?.map((p) => p.label)).toContain('cloak');
+
+    const offline = await applyFactGate({
+      prose: 'An old rusty sword hung on the wall.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    const fromOff = fileKeptRoomProps(roomState(), offline.objectNotes);
+    expect(fromOff.sceneFacts?.roomProps?.find((p) => /sword/i.test(p.label))?.takeable).toBe(true);
+
+    const kept = await applyFactGate({
+      prose: 'An old rusty sword hung on the wall.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => lines.map((line) => ({ n: line.n, verdict: 'keep' as const })),
+    });
+    const fromKeep = fileKeptRoomProps(roomState(), kept.objectNotes);
+    expect(fromKeep.sceneFacts?.roomProps?.some((p) => /sword/i.test(p.label))).toBe(true);
+
+    const tagged = await applyFactGate({
+      prose: 'An old rusty sword hung on the wall.',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: true,
+      factCheck: async ({ lines }) => lines.map((line) => ({
+        n: line.n,
+        verdict: 'keep' as const,
+        objects: [{ label: 'wall sword', kind: 'weapon' as const, mount: 'hung' as const, owner: 'place' }],
+      })),
+    });
+    const fromTag = fileKeptRoomProps(roomState(), tagged.objectNotes);
+    expect(fromTag.sceneFacts?.roomProps?.map((p) => p.label)).toEqual(['wall sword']);
+
+    const speech = await applyFactGate({
+      prose: 'Mira said, "An old rusty sword hung on the wall."',
+      sheet: sheet(),
+      pcName: 'Jax',
+      factCheckEnabled: false,
+    });
+    expect(fileKeptRoomProps(roomState(), speech.objectNotes).sceneFacts?.roomProps ?? []).toEqual([]);
+  });
+
+  it('does not skip a second high-tier name', () => {
+    expect(HIGH_TIER_ITEM_WORDS.flags.includes('g')).toBe(false);
+    expect(isHighTierItemName('legendary sword')).toBe(true);
+    expect(isHighTierItemName('vorpal blade')).toBe(true);
   });
 });
 

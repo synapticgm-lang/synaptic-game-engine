@@ -3,6 +3,7 @@ import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, LogEntry, OpeningCardRecord, OpeningEstablishment, OpeningOfferRecord, Settings } from './types';
+import { placedPropLabels } from './roomProps';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
 import { stampPremiseOrigin } from './writerIntroductions';
@@ -1608,14 +1609,7 @@ function slotGroupLabel(part: string, names: string[]): string {
 }
 /** Things the page sets in the scene: the subject of a placing verb ("A wrapped relic sits on the altar"). */
 function cardPlacedProps(page: string): string[] {
-  const out: string[] = [];
-  const re = /\b(?:a|an)\s+((?:[a-z][a-z'’-]+\s+){0,2}?[a-z][a-z'’-]+(?:\s+of\s+[a-z][a-z'’-]+)?)\s+(?:sits|hangs|lies|rests|waits|stands|leans)\b/gi;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(page))) {
-    const p = (m[1] ?? '').toLowerCase().trim();
-    if (p && !out.includes(p)) out.push(p);
-  }
-  return out;
+  return placedPropLabels(page);
 }
 /**
  * Compile a picked card once: HERE from its own head noun (hub as parent), cast from its "Who is here"

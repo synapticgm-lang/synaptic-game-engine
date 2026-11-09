@@ -565,7 +565,7 @@ describe('fact gate', () => {
     expect(parseFactCheckReply('not json')).toEqual([]);
     const estimate = estimateFactCheckTokens(sheet(), ['Jax considered the quiet.']);
     expect(estimate.input).toBeGreaterThan(0);
-    expect(estimate.output).toBeGreaterThan(0);
+    expect(estimate.output).toBeGreaterThanOrEqual(28);
   });
 
   it('keeps the scenery battery, and counts how many lines need a check', async () => {

@@ -18,7 +18,7 @@ import { findManifestInventions } from './sceneManifest';
 import { continuityStrict } from './opsKillSwitches';
 import { buildBindingConstraints, detectConstraintViolations, repairConstraintViolations } from './bindingConstraints';
 import { compileRefEnum } from './completedEventPacket';
-import { HIGH_TIER_ITEM_WORDS } from './roomProps';
+import { isHighTierItemName } from './roomProps';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -104,7 +104,7 @@ export async function runWarden(
       if (
         !seededRarity
         && level < 8
-        && HIGH_TIER_ITEM_WORDS.test(name)
+        && isHighTierItemName(name)
       ) {
         notes.push(`Blocked high-tier item-gain at level ${level}: ${name}`);
         systemLogExtra.push('Action failed: that gear is not available yet.');

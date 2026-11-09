@@ -38,11 +38,55 @@ function hash32(text: string): number {
   return h >>> 0;
 }
 
+export function isHighTierItemName(name: string): boolean {
+  return new RegExp(HIGH_TIER_ITEM_WORDS.source, 'i').test(name);
+}
+
 export function stripGloryWords(label: string): string {
   return label
     .replace(new RegExp(HIGH_TIER_ITEM_WORDS.source, 'gi'), ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/** Same placing verbs as the opening card. A new regex each call, so lastIndex cannot stick. */
+const PLACED_VERBS = 'sits|sat|hangs|hung|lies|lay|rests|rested|waits|waited|stands|stood|leans|leaned';
+
+export function placedPropLabels(page: string): string[] {
+  const out: string[] = [];
+  const re = new RegExp(
+    `\\b(?:a|an)\\s+((?:[a-z][a-z'’-]+\\s+){0,2}?[a-z][a-z'’-]{2,}(?:\\s+of\\s+[a-z][a-z'’-]{2,})?)\\s+(?:${PLACED_VERBS})\\b`,
+    'gi',
+  );
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(page))) {
+    const label = (match[1] ?? '').toLowerCase().trim();
+    if (label && !out.includes(label)) out.push(label);
+  }
+  return out;
+}
+
+export function tagsFromPlacedSpan(text: string): FactObjectTag[] {
+  const hung = /\b(hangs|hung)\b/i.test(text);
+  const stood = /\b(stands|stood)\b/i.test(text);
+  return placedPropLabels(text).map((label) => {
+    const coin = /\bcoins?\b/i.test(label);
+    const weapon = /\b([a-z]*sword|[a-z]*blade|knife|axe)\b/i.test(label) || hung;
+    const armour = /\barmou?r\b/i.test(label);
+    let kind: RoomPropKind = 'furniture';
+    let mount: FactObjectTag['mount'] = stood || !hung ? 'fixed' : 'hung';
+    if (coin) {
+      kind = 'coin';
+      mount = 'loose';
+    } else if (armour) {
+      kind = 'armour';
+      mount = 'fixed';
+    } else if (weapon) {
+      kind = 'weapon';
+      mount = hung ? 'hung' : 'loose';
+    }
+    return { label, kind, mount, owner: 'place' };
+  });
 }
 
 function flagsFor(kind: RoomPropKind, mount: 'fixed' | 'hung' | 'loose'): { fixed: boolean; takeable: boolean } {
