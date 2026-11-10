@@ -188,8 +188,40 @@ export async function fatePicks(runFolder: string, state: GameState, rngSeeds: n
   return picks;
 }
 
+/**
+ * Saved rows start at harness turn 2. Turn 1 is the opening page already on that row's `before`
+ * (`stampOpening` sets `state.turn` to 1 and does not write a turns.jsonl row).
+ */
+function openingPage(steps: ReplayStep[]): ReplayStep | undefined {
+  const first = steps[0];
+  if (!first || first.recorded.turn <= 1) return undefined;
+  const state = first.before;
+  if ((state.turn ?? 0) !== 1) return undefined;
+  const gm = [...(state.log ?? [])].reverse().find((e) => e.role === 'gm');
+  return {
+    before: state,
+    after: state,
+    recorded: { ...first.recorded, turn: 1, playerInput: '', fatePick: '', writerRaw: '' },
+    telemetry: {
+      ...first.telemetry,
+      turn: 1,
+      playerInput: '',
+      fatePick: '',
+      gmText: gm?.content ?? '',
+      offeredChoices: [...(state.choices ?? [])],
+      offeredChoiceIds: [],
+      systemLog: [],
+    },
+    writerPackets: [],
+  };
+}
+
 export function stepAt(steps: ReplayStep[], turn: number): ReplayStep {
   const s = steps.find((x) => x.recorded.turn === turn);
-  if (!s) throw new Error(`replay bank: turn ${turn} not reached`);
-  return s;
+  if (s) return s;
+  if (turn === 1) {
+    const opening = openingPage(steps);
+    if (opening) return opening;
+  }
+  throw new Error(`replay bank: turn ${turn} not reached`);
 }
