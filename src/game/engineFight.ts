@@ -18,7 +18,8 @@ import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, resolveCheckRecord, weaponCategory } from './checkRules';
 import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
-import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
+import { earlyEnemyAttack, fightHpFromResult } from './recoveryRules';
+import { applyPlayPhaseAfterHp } from './playPhase';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
 import { formatLootStatusLine } from './lootTableRegistry';
@@ -492,8 +493,8 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   const approachLine = approachReceipt(used);
   if (approachLine) receipts.push(approachLine);
   const hpBefore = working.character.hp;
-  // 28g — some HP back on a win; a defeat never leaves the character at 1 HP (recoveryRules).
-  const hpAfter = hpAfterFight(working, result.victory, result.finalPlayerHp);
+  // Damage taken reduces HP. A defeat that reaches 0 is the lifeline / death rule, not a silent heal.
+  const hpAfter = fightHpFromResult(working, result.victory, result.finalPlayerHp, result.damageReceived ?? 0);
   let next = commitAutoFightLedger(working, { victory: result.victory, finalPlayerHp: result.finalPlayerHp });
   next = result.victory
     ? tag(next, 'died', 'creature', { id: `creature:${nameKey(enc.name)}`, name: enc.name }, 'down')
@@ -507,7 +508,18 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
       : next.lootPity,
   };
   next = gainLootMoney(next, result.goldGained, result.coinsGained);
-  if (result.victory) next = lootHeirloomOf(next, enc.name);
+  if (result.victory) {
+    next = lootHeirloomOf(next, enc.name);
+    const names = [...new Set([...(next.arcDirector?.clearedFoeNames ?? []), enc.name])];
+    next = {
+      ...next,
+      arcDirector: {
+        ...(next.arcDirector ?? {}),
+        clearedFoeNames: names,
+        lastEncounterClearedTurn: next.turn ?? working.turn,
+      },
+    };
+  }
   next = growWeaponFamiliarity(
     next,
     used.id === 'ranged' ? weaponCategory(used.source) : weaponCategory(equippedWeaponName(next))
@@ -525,6 +537,11 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
       : []),
     `Encounter cleared: ${enc.name} (${result.victory ? 'victory' : 'defeat'})`
   );
+  if (!result.victory && (next.character.hp ?? 0) <= 0) {
+    const phased = applyPlayPhaseAfterHp(next, 0, next.turn ?? working.turn ?? 0);
+    next = { ...phased, lifelineReceipts: undefined };
+    for (const line of phased.lifelineReceipts ?? []) receipts.push(line);
+  }
   if (side && result.ally) next = afterFightCompanion(next, side.companion.id, result.ally.hpAfter);
   next = pushCombatStateTx(
     next,

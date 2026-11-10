@@ -1,0 +1,155 @@
+{
+  "runId": "2026-11-10T10-56-02-460Z",
+  "bibleId": "summoned-pact",
+  "bibleTitle": "The Summoned Pact",
+  "engineMode": "litrpg",
+  "personalityId": "cold-system",
+  "seed": 884214,
+  "requestedTurns": 40,
+  "completedTurns": 40,
+  "dryRun": true,
+  "aiTier": "free",
+  "playerProfile": "random",
+  "startedAt": "2026-11-10T10:56:02.460Z",
+  "endedAt": "2026-11-10T10:56:38.013Z",
+  "errorCount": 0,
+  "timeoutCount": 0,
+  "transportRetryCount": 0,
+  "latencyMs": {
+    "p50": 185,
+    "p95": 3930,
+    "mean": 749
+  },
+  "issueTurns": [],
+  "outDir": "docs/playtests/2026-11-10-engine40-fix/2026-11-10T10-56-02-460Z_summoned-pact_cold-system_s884214",
+  "runManifest": {
+    "buildStamp": "2026-11-03e+e98c490b",
+    "seed": "884214",
+    "saveId": "fate-884214-summoned-pact-1794308162123",
+    "engineMode": "litrpg",
+    "bibleId": "summoned-pact",
+    "createdAt": 1794308163246,
+    "eventSeq": 1
+  },
+  "receiptTotals": {
+    "combat": 13,
+    "questStage": 1,
+    "beatCommit": 1,
+    "crisis": 0,
+    "total": 15
+  },
+  "finalReplayHash": "54c35de6",
+  "pathCounts": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "E": 40,
+    "E_accepted": 0,
+    "E_retry": 0,
+    "E_fallback": 0
+  },
+  "deathCount": 5,
+  "evalHarness": {
+    "manifestBound": true,
+    "livenessGates": {
+      "combatByT8": true
+    }
+  },
+  "readabilityGate": {
+    "pass": false,
+    "p0Count": 15,
+    "p1Count": 0,
+    "violations": [
+      {
+        "kind": "turn-levelup-no-change",
+        "turn": 2,
+        "quote": "level 1 → 2 changed nothing the player can do (no new skill rank, lock or option)"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 14,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 16,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 18,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 20,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 22,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 24,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 26,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 28,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 30,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 33,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 36,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Skip ahead to Lowmarket\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 37,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 40,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Turn back toward Lowmarket\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 41,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      }
+    ]
+  },
+  "training_ok": false,
+  "teacher_model": null,
+  "provider": null,
+  "judge_model": null,
+  "mode": "litrpg",
+  "capacity": "autoplay Test Lab override (unlimited text/memorable for this process only)",
+  "note": "For review + optional StoryForge/SFT ingest. Not auto-trained into live GM.",
+  "writer": {
+    "kind": "default",
+    "model": null,
+    "route": "gm-turn",
+    "note": "No --writer override; model is the id gm-turn reported for the turns it wrote (null when none came back)."
+  },
+  "activeOverride": null
+}

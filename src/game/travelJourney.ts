@@ -2154,7 +2154,19 @@ function commitTravelStep(state: GameState, raw: string): TravelCommit {
   const input = stripMarchWarn((raw ?? '').replace(/\s+/g, ' ').trim());
   // q73-DYING: same flag as isDying (roundFight). A death-save turn does not move.
   const ds = state.deathSaves;
-  if (state.playPhase === 'ended' || (state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable) || (state.engineMode === 'dnd' && !!ds?.dead)) {
+  const dying = state.playPhase === 'ended' || (state.engineMode === 'dnd' && !!ds && !ds.dead && !ds.stable) || (state.engineMode === 'dnd' && !!ds?.dead);
+  if (dying) {
+    const enc = state.journey?.encounter;
+    const note = state.journey && enc && (enc.lost || enc.escaped || enc.engaged) ? encounterNote(state.journey) : '';
+    if (note) {
+      return {
+        state,
+        handled: true,
+        arrived: false,
+        outcome: 'blocked',
+        receipt: `Travel: still on the road${note}`,
+      };
+    }
     return unchanged(state);
   }
   if (!input || state.activeEncounter) return unchanged(state);

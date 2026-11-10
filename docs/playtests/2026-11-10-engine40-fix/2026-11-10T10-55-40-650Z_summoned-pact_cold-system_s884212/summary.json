@@ -1,0 +1,141 @@
+{
+  "runId": "2026-11-10T10-55-40-650Z",
+  "bibleId": "summoned-pact",
+  "bibleTitle": "The Summoned Pact",
+  "engineMode": "litrpg",
+  "personalityId": "cold-system",
+  "seed": 884212,
+  "requestedTurns": 40,
+  "completedTurns": 40,
+  "dryRun": true,
+  "aiTier": "free",
+  "playerProfile": "random",
+  "startedAt": "2026-11-10T10:55:40.650Z",
+  "endedAt": "2026-11-10T10:55:56.684Z",
+  "errorCount": 0,
+  "timeoutCount": 0,
+  "transportRetryCount": 0,
+  "latencyMs": {
+    "p50": 271,
+    "p95": 604,
+    "mean": 330
+  },
+  "issueTurns": [],
+  "outDir": "docs/playtests/2026-11-10-engine40-fix/2026-11-10T10-55-40-650Z_summoned-pact_cold-system_s884212",
+  "runManifest": {
+    "buildStamp": "2026-11-03e+e98c490b",
+    "seed": "884212",
+    "saveId": "fate-884212-summoned-pact-1794308140190",
+    "engineMode": "litrpg",
+    "bibleId": "summoned-pact",
+    "createdAt": 1794308142003,
+    "eventSeq": 1
+  },
+  "receiptTotals": {
+    "combat": 14,
+    "questStage": 1,
+    "beatCommit": 1,
+    "crisis": 0,
+    "total": 16
+  },
+  "finalReplayHash": "793681cc",
+  "pathCounts": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "E": 40,
+    "E_accepted": 0,
+    "E_retry": 0,
+    "E_fallback": 0
+  },
+  "deathCount": 2,
+  "evalHarness": {
+    "manifestBound": true,
+    "livenessGates": {
+      "combatByT8": true
+    }
+  },
+  "readabilityGate": {
+    "pass": false,
+    "p0Count": 15,
+    "p1Count": 0,
+    "violations": [
+      {
+        "kind": "turn-ignored-action",
+        "turn": 2,
+        "quote": "player chose \"Refuse the offer\"; nobody here answers in the prose"
+      },
+      {
+        "kind": "turn-levelup-no-change",
+        "turn": 2,
+        "quote": "level 1 → 2 changed nothing the player can do (no new skill rank, lock or option)"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 12,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 14,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 20,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 22,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 24,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 26,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 29,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 33,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Read High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 34,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Analyze High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 35,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Talk to High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 39,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-levelup-no-change",
+        "turn": 39,
+        "quote": "level 2 → 3 changed nothing the player can do (no new skill rank, lock or option)"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 40,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Analyze High Chanter Orel Vane\""
+      }
+    ]
+  }
+}

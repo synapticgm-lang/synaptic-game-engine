@@ -15,6 +15,7 @@
     "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs",
     "check:gm-edge": "node scripts/sync-gm-edge-shared.mjs --check",
     "fate-autoplay": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/run.ts --",
+    "option-audit": "node scripts/option-audit.mjs",
     "replay-bank": "vitest run --config vitest.replayBank.config.ts",
     "writer-quality": "vitest run --config vitest.writerQuality.config.ts",
     "fact-check": "node scripts/factCheck.mjs",

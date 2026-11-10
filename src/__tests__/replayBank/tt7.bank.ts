@@ -60,7 +60,9 @@ describe('replay bank tt-build-7 (one engine, three presenters)', () => {
     const lit = applyCharacterXpGain(b.character, xp, 'litrpg');
     const table = applyCharacterXpGain(b.character, xp, 'dnd');
     expect(lit.character.maxHp).toBe(b.character.maxHp + gain);
-    expect(lit.notes).toEqual(['Level Up! Now level 2']);
+    expect(lit.notes).toHaveLength(1);
+    expect(lit.notes[0]).toMatch(/^Level Up! Now level 2 — HP \d+ → \d+/);
+    expect(lit.notes[0]).toMatch(/1 stat point to spend/);
     if (table.levelsGained) expect(table.character.maxHp).toBe(lit.character.maxHp);
   });
 

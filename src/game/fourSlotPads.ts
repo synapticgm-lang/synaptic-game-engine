@@ -869,7 +869,8 @@ export function assembleFourSlotPads(
     }
     if (creaturePresent(state)) {
       consider('Press the attack');
-      consider('Fight the writhing roots');
+      const foeName = state.activeEncounter?.name ?? state.sceneFacts?.pendingEncounter?.name ?? '';
+      if (/root/i.test(foeName)) consider('Fight the writhing roots');
       consider('Face the threat');
     }
     // After a filler streak, do not refill with Look — manufacture a real lead or Travel.

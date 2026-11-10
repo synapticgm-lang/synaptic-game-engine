@@ -914,6 +914,11 @@ export function dungeonCardChoices(state: GameState): string[] {
     if (!searched && (node?.id !== 'r0' || (node?.hidden?.secrets ?? []).some((x) => !x.revealed))) out.push(`Search the ${node?.name}`);
   }
   if (nearestUnexploredStep(d, skillRanksOf(state.character))) out.push('Next unexplored room');
+  for (const dweller of d.dwell ?? []) {
+    if (dweller.kind === 'captive' && dweller.status === 'held' && dweller.nodeId === node?.id) {
+      out.push(`Free ${dweller.name}`);
+    }
+  }
   out.push('Head back to the exit');
   return out;
 }

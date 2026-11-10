@@ -565,7 +565,7 @@ function commitStallDevelopment(
   // threat — park a real engine foe + seat a visible person; never empty the room this turn.
   // T10RC5 — dnd: only when pickStallKind chose threat (npc/lead must not fall through into a foe).
   // litrpg/rpg: allow threat fallthrough so stall still commits fight progress for first-pad dry-run.
-  if (kind === 'threat' || state.engineMode !== 'dnd') {
+  if ((kind === 'threat' || state.engineMode !== 'dnd') && working.arcDirector?.lastEncounterClearedTurn !== (working.turn ?? 0)) {
     const threatWhere = hereName || 'this place';
     // T10RC5fix — already-parked/pending foe: keep Face chip; do not wake into activeEncounter
     // (live activeEncounter is Attack-owned; Face engages pending via resolveEngineFight).
@@ -944,11 +944,22 @@ function injectStallDevelopment(
 
   const roadEnc = working.journey?.encounter;
   const roadOpen = !!roadEnc && !roadMeetingOver(roadEnc);
+  // The player's own travel this turn already spent a leg. Don't finish the trip
+  // in the same turn — that puts them at the destination while the receipt still says it is ahead.
+  const started = working.journey?.startedTurn;
+  const legsDone = working.journey?.legsDone ?? 0;
+  const legsTotal = working.journey?.legsTotal ?? 1;
+  // The turn a journey starts must not also auto-walk the last leg. That arrives
+  // while the player's own receipt still says the place is ahead.
+  const justSetOut = typeof started === 'number' && started === (working.turn ?? 0) && legsDone + 1 >= legsTotal;
+  const playerAlreadyTraveling = /^(?:walk on|travel\b|skip ahead|leave the scene|turn back|push on|wait|look|search|follow|answer|talk|ask|face|parley|hunt|flee|try to flee|head back)\b/i.test(playerInput);
   if (
     isJourneyUnderway(working)
     && !working.activeEncounter
     && !working.sceneFacts?.pendingEncounter
     && !roadOpen
+    && !justSetOut
+    && !playerAlreadyTraveling
   ) {
     // Advance the road, then commit a real development so Camp↔Waystation ping-pong
     // cannot burn the LOOP STOP window (leg advance alone is often not movedOn).

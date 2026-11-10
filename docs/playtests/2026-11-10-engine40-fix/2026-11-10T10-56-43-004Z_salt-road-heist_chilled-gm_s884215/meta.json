@@ -1,0 +1,150 @@
+{
+  "runId": "2026-11-10T10-56-43-004Z",
+  "bibleId": "salt-road-heist",
+  "bibleTitle": "Salt Road Heist",
+  "engineMode": "rpg",
+  "personalityId": "chilled-gm",
+  "seed": 884215,
+  "requestedTurns": 40,
+  "completedTurns": 40,
+  "dryRun": true,
+  "aiTier": "free",
+  "playerProfile": "random",
+  "startedAt": "2026-11-10T10:56:43.004Z",
+  "endedAt": "2026-11-10T10:56:51.561Z",
+  "errorCount": 0,
+  "timeoutCount": 0,
+  "transportRetryCount": 0,
+  "latencyMs": {
+    "p50": 187,
+    "p95": 257,
+    "mean": 179
+  },
+  "issueTurns": [],
+  "outDir": "docs/playtests/2026-11-10-engine40-fix/2026-11-10T10-56-43-004Z_salt-road-heist_chilled-gm_s884215",
+  "runManifest": {
+    "buildStamp": "2026-11-03e+e98c490b",
+    "seed": "884215",
+    "saveId": "fate-884215-salt-road-heist-1794308202966",
+    "engineMode": "rpg",
+    "bibleId": "salt-road-heist",
+    "createdAt": 1794308203223,
+    "eventSeq": 3
+  },
+  "receiptTotals": {
+    "combat": 15,
+    "questStage": 0,
+    "beatCommit": 3,
+    "crisis": 1,
+    "total": 19
+  },
+  "finalReplayHash": "d82e9d30",
+  "pathCounts": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "E": 40,
+    "E_accepted": 0,
+    "E_retry": 0,
+    "E_fallback": 0
+  },
+  "deathCount": 0,
+  "evalHarness": {
+    "manifestBound": true,
+    "livenessGates": {
+      "combatByT8": true
+    }
+  },
+  "readabilityGate": {
+    "pass": false,
+    "p0Count": 14,
+    "p1Count": 0,
+    "violations": [
+      {
+        "kind": "turn-ignored-action",
+        "turn": 7,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Press your standing with Vessa\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 10,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-levelup-no-change",
+        "turn": 10,
+        "quote": "level 1 → 2 changed nothing the player can do (no new skill rank, lock or option)"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 11,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Call on Vessa: Pick an approach\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 13,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 14,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 17,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Parley\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 19,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Ask what they want\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 21,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 22,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Lock the score at the safehouse\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 23,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 26,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Parley\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 30,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Parley\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 34,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Parley\""
+      }
+    ]
+  },
+  "training_ok": false,
+  "teacher_model": null,
+  "provider": null,
+  "judge_model": null,
+  "mode": "rpg",
+  "capacity": "autoplay Test Lab override (unlimited text/memorable for this process only)",
+  "note": "For review + optional StoryForge/SFT ingest. Not auto-trained into live GM.",
+  "writer": {
+    "kind": "default",
+    "model": null,
+    "route": "gm-turn",
+    "note": "No --writer override; model is the id gm-turn reported for the turns it wrote (null when none came back)."
+  },
+  "activeOverride": null
+}

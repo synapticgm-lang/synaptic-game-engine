@@ -293,6 +293,8 @@ import { roundCombatChips } from './tabletop/combatChips';
 import { resolveEngineFight } from './engineFight';
 import { runTurnSpine } from './turnSpine';
 import { resolveShopChip } from './shopChips';
+import { runFastForward } from './fastForward';
+import { shapeLiveTurnPad } from './playerOptions';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
@@ -1430,7 +1432,10 @@ export async function headlessFateTurn(
   // q45-OCD3: record the pad the player saw this turn (not the post-commit next pad).
   const offeredPadAtStart = state.offeredPad;
   const offeredChipsAtStart = offeredPadAtStart?.chips;
-  const offered = (offeredPadAtStart?.choices?.length ? offeredPadAtStart.choices : resolveOfferedChoices(state));
+  const offered = shapeLiveTurnPad(
+    state,
+    offeredPadAtStart?.choices?.length ? offeredPadAtStart.choices : resolveOfferedChoices(state),
+  );
   const fatePick =
     meta.playerInputOverride?.trim()
       ? meta.playerInputOverride.trim()
@@ -1623,12 +1628,66 @@ export async function headlessFateTurn(
         }
       }
     }
-    const graphMoved = dyingTurn || isDying(arcState) ? arcState : applyGraphExitTravel(arcState, playerInput);
-    const travelCommit = dyingTurn || isDying(arcState) || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
+    if (arcState.openingEstablishment?.complete) {
+      const arc = runArcDirectorBeforeGm(arcState, playerInput);
+      arcState = arc.state;
+      for (const line of formatArcStatusReceipts(arc)) {
+        if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+      }
+    }
+    {
+      const offerTurn = applyOpeningOfferChoice(arcState, playerInput);
+      arcState = offerTurn.state;
+      for (const line of offerTurn.receipts) {
+        if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+      }
+      const riteTurn = applyOpeningRiteTurn(arcState, playerInput);
+      arcState = riteTurn.state;
+      for (const line of riteTurn.receipts) {
+        if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+      }
+    }
+    const skipTo = playerInput.match(/^skip ahead to\s+(.+?)\.?$/i)?.[1]?.trim();
+    const fast = !dyingTurn && !isDying(arcState) && skipTo
+      ? runFastForward(arcState, { destination: skipTo, maxTurns: 6 })
+      : null;
+    const fastMoved = !!(fast && !fast.refused);
+    if (fastMoved && fast) {
+      arcState = fast.state;
+      for (const line of fast.receipts) {
+        if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+      }
+    }
+    const graphMoved = dyingTurn || isDying(arcState) || fastMoved ? arcState : applyGraphExitTravel(arcState, playerInput);
+    const travelCommit = dyingTurn || isDying(arcState) || fastMoved || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
     arcState = travelCommit?.state ?? graphMoved;
     if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
     arcState = syncSheetToMovedHere(arcState, state.currentLocation);
-    if (!dyingTurn && !isDying(arcState)) arcState = maybeEnterInteriorDungeon(arcState, playerInput);
+    if (!dyingTurn && !isDying(arcState)) {
+      arcState = maybeEnterInteriorDungeon(arcState, playerInput);
+      const dungeonTurn = advanceDungeonCard(arcState, playerInput, arcStatusReceipts);
+      arcState = dungeonTurn.state;
+      for (const line of dungeonTurn.receipts) {
+        if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+      }
+      const storyTurn = applyStoryRpgTurn(arcState, playerInput, { romance: romanceAllowed(settings) });
+      arcState = storyTurn.state;
+      for (const line of storyTurn.receipts) {
+        if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+      }
+      const tabletopTurn = applyTabletopQuestTurn(arcState, playerInput, hereBeforeMove);
+      arcState = tabletopTurn.state;
+      for (const line of [...tabletopTurn.receipts, ...(tabletopTurn.facts ?? [])]) {
+        if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+      }
+      const shopTurn = resolveShopChip(arcState, playerInput);
+      if (shopTurn) {
+        arcState = shopTurn.state;
+        for (const line of [...shopTurn.receipts, ...shopTurn.facts]) {
+          if (line && !arcStatusReceipts.includes(line)) arcStatusReceipts.push(line);
+        }
+      }
+    }
     if (arcState.currentLocation && arcState.currentLocation !== hereBeforeMove) {
       arcState = applyPresentTrimOnTravel(arcState, hereBeforeMove, arcState.currentLocation);
       arcState = ensurePlaceOnMap(arcState, arcState.currentLocation, hereBeforeMove);
@@ -1644,6 +1703,10 @@ export async function headlessFateTurn(
       if (arcState.sceneFacts?.stallProgressReceipt) {
         const sp = arcState.sceneFacts.stallProgressReceipt;
         if (!arcStatusReceipts.includes(sp)) arcStatusReceipts = [...arcStatusReceipts, sp];
+        arcState = {
+          ...arcState,
+          sceneFacts: { ...arcState.sceneFacts, stallProgressReceipt: undefined },
+        };
       }
     }
     arcState = recordCirclingTurn(arcState, playerInput, arcStatusReceipts, state);
@@ -1785,16 +1848,15 @@ export async function headlessFateTurn(
         if (travel) nextChoices = [travel, ...nextChoices.filter((c) => c !== travel)];
       }
     }
+    nextChoices = shapeLiveTurnPad(arcState, nextChoices);
     const midBase: GameState = { ...arcState, turn: nextTurn, log: [...prevLog, playerEntry, gmBase] };
     const gm: LogEntry = { ...gmBase, offeredChoices: nextChoices };
-    const next: GameState = {
+    // Same pad commit as live play (useGame): stamp chips, four-slot, replay hash.
+    const next = commitOfferedTurn({
       ...midBase,
       log: [...prevLog, playerEntry, gm],
       choices: nextChoices,
-      offeredPad: state.offeredPad
-        ? { ...state.offeredPad, turn: midBase.turn, choices: nextChoices }
-        : { turn: midBase.turn, choices: nextChoices },
-    };
+    }, gm.id);
     const ended = Date.now();
     const choiceIds: string[] = [];
     for (let i = 0; i < offered.length; i++) choiceIds.push(`choice-${next.turn}-${i}`);
@@ -1839,6 +1901,10 @@ export async function headlessFateTurn(
     if (arcState.sceneFacts?.stallProgressReceipt) {
       const sp = arcState.sceneFacts.stallProgressReceipt;
       if (!arcStatusReceipts.includes(sp)) arcStatusReceipts = [...arcStatusReceipts, sp];
+      arcState = {
+        ...arcState,
+        sceneFacts: { ...arcState.sceneFacts, stallProgressReceipt: undefined },
+      };
     }
   }
   // 08c Tag & Trigger — consume claim pad before packet/writer.
@@ -1860,8 +1926,15 @@ export async function headlessFateTurn(
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const dyingTurn = isDying(govInputState);
   const hereBeforeMove = arcState.currentLocation ?? '';
-  const graphMoved = dyingTurn ? arcState : applyGraphExitTravel(arcState, playerInput);
-  const travelCommit = dyingTurn || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
+  const skipTo = playerInput.match(/^skip ahead to\s+(.+?)\.?$/i)?.[1]?.trim();
+  const fast = !dyingTurn && skipTo ? runFastForward(arcState, { destination: skipTo, maxTurns: 6 }) : null;
+  const fastMoved = !!(fast && !fast.refused);
+  if (fastMoved && fast) {
+    arcState = fast.state;
+    arcStatusReceipts = [...arcStatusReceipts, ...fast.receipts];
+  }
+  const graphMoved = dyingTurn || fastMoved ? arcState : applyGraphExitTravel(arcState, playerInput);
+  const travelCommit = dyingTurn || fastMoved || graphMoved !== arcState ? null : commitTravel(arcState, playerInput);
   arcState = travelCommit?.state ?? graphMoved;
   if (travelCommit?.receipt) arcStatusReceipts = [...arcStatusReceipts, travelCommit.receipt, ...(travelCommit.extra ?? [])];
   arcState = syncSheetToMovedHere(arcState, state.currentLocation);
@@ -2834,6 +2907,10 @@ Do NOT print dice notation or CODE ENFORCED.
     governed = { ...governed, choices: finalChoices };
   }
   governed = creditFillerOffers(governed, finalChoices);
+  if (!authoredBook) {
+    finalChoices = shapeLiveTurnPad(governed, finalChoices);
+    governed = { ...governed, choices: finalChoices };
+  }
   // q43-OCD: same shared pad commit as useGame (pad → stamp → replay hash). Writes recentOfferedActions
   // so LitRPG/RPG cooldown and tabletop 08:41 repeat suppression work in fate-autoplay.
   governed = commitOfferedTurn({ ...governed, choices: finalChoices }, gm.id);

@@ -364,6 +364,9 @@ function commitClear(
     ...(state.arcDirector?.encounterCooldownUntil ?? {}),
     [spawnKey]: state.turn + ENCOUNTER_REENGAGE_COOLDOWN,
   };
+  const clearedFoeNames = outcome === 'victory'
+    ? [...new Set([...(state.arcDirector?.clearedFoeNames ?? []), enc.name])]
+    : state.arcDirector?.clearedFoeNames;
   const receipts = [
     `Encounter cleared: ${enc.name} (${outcome})`,
     statusLine,
@@ -379,6 +382,7 @@ function commitClear(
         turnsSinceCombatReceipt: 0,
         lastEncounterClearedTurn: state.turn,
         encounterCooldownUntil: cooldownKeys,
+        ...(clearedFoeNames ? { clearedFoeNames } : {}),
       },
     },
     cleared: receipt,

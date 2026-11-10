@@ -345,7 +345,37 @@ export function resolveCheckContext(
   if (intent.kind === 'rest') {
     return { label: 'Survival', attr: 'CON', skill: 'survival', ...taskDc(state, 'survival'), critFailHpRisk: 0 };
   }
-  return { label: 'General check', attr: 'STR', skill: 'athletics', ...taskDc(state, 'general'), critFailHpRisk: 0 };
+  if (intent.kind === 'use_item' || /^use\b/i.test(t)) {
+    return { label: 'Use item', attr: 'WIS', skill: 'insight', dc: 0, critFailHpRisk: 0, autoSucceed: true };
+  }
+  if (/\b(who are you|what do you want|ask|answer|talk|tell|persuade|parley|follow up)\b/i.test(t)) {
+    return {
+      label: 'Persuasion',
+      attr: 'CHA',
+      skill: 'persuasion',
+      ...taskDc(state, 'social-minor'),
+      critFailHpRisk: 0,
+    };
+  }
+  if (/\b(review|examine|study|search|inspect|read)\b/i.test(t)) {
+    return {
+      label: 'Investigation',
+      attr: 'INT',
+      skill: 'investigation',
+      ...taskDc(state, 'search'),
+      critFailHpRisk: 0,
+    };
+  }
+  if (/\b(wait|listen|look)\b/i.test(t)) {
+    return {
+      label: 'Perception',
+      attr: 'WIS',
+      skill: 'perception',
+      ...taskDc(state, 'notice'),
+      critFailHpRisk: 0,
+    };
+  }
+  return { label: 'General check', attr: 'WIS', skill: 'insight', ...taskDc(state, 'notice'), critFailHpRisk: 0 };
 }
 
 export function runPlayerCheck(

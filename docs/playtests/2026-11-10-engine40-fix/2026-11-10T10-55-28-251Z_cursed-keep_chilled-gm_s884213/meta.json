@@ -1,0 +1,177 @@
+{
+  "runId": "2026-11-10T10-55-28-251Z",
+  "bibleId": "cursed-keep",
+  "bibleTitle": "Cursed Keep",
+  "engineMode": "dnd",
+  "personalityId": "chilled-gm",
+  "seed": 884213,
+  "requestedTurns": 40,
+  "completedTurns": 40,
+  "dryRun": true,
+  "aiTier": "free",
+  "playerProfile": "random",
+  "startedAt": "2026-11-10T10:55:28.251Z",
+  "endedAt": "2026-11-10T10:55:34.843Z",
+  "errorCount": 0,
+  "timeoutCount": 0,
+  "transportRetryCount": 0,
+  "latencyMs": {
+    "p50": 145,
+    "p95": 213,
+    "mean": 136
+  },
+  "issueTurns": [],
+  "outDir": "docs/playtests/2026-11-10-engine40-fix/2026-11-10T10-55-28-251Z_cursed-keep_chilled-gm_s884213",
+  "runManifest": {
+    "buildStamp": "2026-11-03e+e98c490b",
+    "seed": "884213",
+    "saveId": "fate-884213-cursed-keep-1794308128132",
+    "engineMode": "dnd",
+    "bibleId": "cursed-keep",
+    "createdAt": 1794308128360,
+    "eventSeq": 3
+  },
+  "receiptTotals": {
+    "combat": 0,
+    "questStage": 1,
+    "beatCommit": 3,
+    "crisis": 0,
+    "total": 5
+  },
+  "finalReplayHash": "6ec7bc27",
+  "pathCounts": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "E": 40,
+    "E_accepted": 0,
+    "E_retry": 0,
+    "E_fallback": 0
+  },
+  "deathCount": 0,
+  "evalHarness": {
+    "manifestBound": true,
+    "livenessGates": {
+      "combatByT8": false
+    }
+  },
+  "readabilityGate": {
+    "pass": false,
+    "p0Count": 19,
+    "p1Count": 0,
+    "violations": [
+      {
+        "kind": "turn-ignored-action",
+        "turn": 5,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 9,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 11,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Answer Mayor Helga Brask\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 14,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Walk on\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 15,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Talk to Mayor Helga Brask\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 17,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Examine the graverobbers in the keep\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 19,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Walk on\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 20,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Answer Mayor Helga Brask\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 23,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Walk on\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 24,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Mayor Helga Brask\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 27,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Walk on\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 28,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Answer Mayor Helga Brask\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 31,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Make camp\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 34,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Walk on\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 35,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Answer Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 36,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Answer Oskar the Woodcutter\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 39,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 40,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Talk to Father Aldous\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 41,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Answer Mayor Helga Brask\""
+      }
+    ]
+  },
+  "training_ok": false,
+  "teacher_model": null,
+  "provider": null,
+  "judge_model": null,
+  "mode": "dnd",
+  "tabletopCreation": true,
+  "tabletopBuild": "pregen: Rogue / halfling / criminal / standard-array / kit A · scores STR 8 DEX 17 CON 15 INT 13 WIS 12 CHA 10 · HP 10 AC 14",
+  "capacity": "autoplay Test Lab override (unlimited text/memorable for this process only)",
+  "note": "For review + optional StoryForge/SFT ingest. Not auto-trained into live GM.",
+  "writer": {
+    "kind": "default",
+    "model": null,
+    "route": "gm-turn",
+    "note": "No --writer override; model is the id gm-turn reported for the turns it wrote (null when none came back)."
+  },
+  "activeOverride": null
+}

@@ -228,7 +228,8 @@ describe('replay bank tt-build-3 (tabletop level-up and spells)', () => {
       const c = { ...st.character, hp: 1 };
       const up = applyCharacterXpGain(c, 100_000, st.engineMode);
       expect(up.character.level).toBeGreaterThan(1);
-      expect(up.notes.every((n) => /^Level Up! Now level \d+$/.test(n))).toBe(true);
+      expect(up.notes).toHaveLength(1);
+      expect(up.notes[0]).toMatch(/^Level Up! Now level \d+ — HP \d+ → \d+/);
       expect(up.character.srd).toBeUndefined();
       // tt-build-7: d8 at its fixed value (5) + CON modifier per level, added to max and current HP (no full heal).
       const perLevel = Math.max(1, 5 + Math.floor(((st.character.attributes?.CON ?? 10) - 10) / 2));
