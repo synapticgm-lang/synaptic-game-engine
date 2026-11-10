@@ -11,7 +11,7 @@ import { isCrowdFillerToken, isSystemWindowLabel, realPresentPeople } from './ch
 import { selectRecentLogForContext } from './sceneContextTail.ts';
 import { formatInfoSheet } from './infoSheet.ts';
 import { buildFactSheet, formatFactSheetForWriter, inventoryGainedThisTurn, type FactSheet } from './factSheet.ts';
-import { formatRefRecords, formatSceneBlock, mentionFromScene } from './sceneBlock.ts';
+import { formatRefRecords, formatSceneBlock, matchesOpeningWords, mentionFromScene, recalledSaidLines } from './sceneBlock.ts';
 import { splitProseSentences } from './proseSentences.ts';
 import { graphExitPads, matchGraphExitPad, shortRoomLabel } from './mapEngine.ts';
 import {
@@ -288,6 +288,37 @@ export interface TokenUseRef {
 }
 const WRITER_RHYTHM_WINDOW = 2;
 const WRITER_RHYTHM_CHAR_CAP = 500;
+/** Same character bound as a stored NPC quote (recordSpokenTopics). The ellipsis matches the info-sheet clip. */
+const EARLIER_PLAYER_CHARS = 180;
+
+function renderEarlierPlayer(raw: string): string {
+  if (raw.length <= EARLIER_PLAYER_CHARS) return raw;
+  return `${raw.slice(0, EARLIER_PLAYER_CHARS - 1).trimEnd()}…`;
+}
+
+/**
+ * A player line from at least eight turns ago, when this turn repeats its first four words.
+ * Separate from NPC quote recall. Blank input does not read the log. At most two lines.
+ * The embedded line keeps its opening and is cut at the NPC quote bound.
+ */
+export function recalledPlayerLines(state: GameState, playerInput: string): string[] {
+  const turn = state.turn ?? 0;
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const entry of state.log ?? []) {
+    if (entry.role !== 'player') continue;
+    const saidTurn = entry.turn ?? 0;
+    if (turn - saidTurn < 8) continue;
+    const raw = String(entry.content ?? '').replace(/\s+/g, ' ').trim();
+    const key = raw.toLowerCase();
+    if (!raw || seen.has(key) || !matchesOpeningWords(playerInput ?? '', raw)) continue;
+    seen.add(key);
+    out.push(`EARLIER PLAYER (T${saidTurn}): "${renderEarlierPlayer(raw)}"`);
+    if (out.length >= 2) break;
+  }
+  return out;
+}
+
 function lastPlayerAction(state: GameState, playerInput?: string): string {
   const typed = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   if (typed) return typed;
@@ -1028,7 +1059,13 @@ export function buildCompletedEventPacket(
   // an actor, a prop or a thing that answers. Scene mentions were still copying the prop through.
   const refOpts = { hallTalk, engineResult: extras?.engineResult, action };
   const sceneForWriter = ledgerRead ? stateWithoutSystemWindowProp(state) : state;
-  const sceneBlock = formatSceneBlock(sceneForWriter);
+  const sceneBlock = [
+    formatSceneBlock(sceneForWriter),
+    ...recalledSaidLines(sceneForWriter, playerInput ?? ''),
+    ...recalledPlayerLines(sceneForWriter, playerInput ?? ''),
+  ]
+    .filter(Boolean)
+    .join('\n');
   const sceneMentions = mentionFromScene(sceneForWriter);
   const allowlist = [
     ...sceneMentions,
