@@ -294,7 +294,7 @@ import { resolveEngineFight } from './engineFight';
 import { runTurnSpine } from './turnSpine';
 import { resolveShopChip } from './shopChips';
 import { runFastForward } from './fastForward';
-import { shapePlayerOptions } from './playerOptions';
+import { shapeLiveTurnPad } from './playerOptions';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, isBlockedPaint, notesForCommittedBody, repairRejectedBeat, sentenceRejectedInDraft } from './beatCommitGate';
 import { scrubOneCameraFight } from './oneCameraFight';
@@ -1432,7 +1432,7 @@ export async function headlessFateTurn(
   // q45-OCD3: record the pad the player saw this turn (not the post-commit next pad).
   const offeredPadAtStart = state.offeredPad;
   const offeredChipsAtStart = offeredPadAtStart?.chips;
-  const offered = shapePlayerOptions(
+  const offered = shapeLiveTurnPad(
     state,
     offeredPadAtStart?.choices?.length ? offeredPadAtStart.choices : resolveOfferedChoices(state),
   );
@@ -1848,7 +1848,7 @@ export async function headlessFateTurn(
         if (travel) nextChoices = [travel, ...nextChoices.filter((c) => c !== travel)];
       }
     }
-    nextChoices = shapePlayerOptions(arcState, nextChoices);
+    nextChoices = shapeLiveTurnPad(arcState, nextChoices);
     const midBase: GameState = { ...arcState, turn: nextTurn, log: [...prevLog, playerEntry, gmBase] };
     const gm: LogEntry = { ...gmBase, offeredChoices: nextChoices };
     const next: GameState = {
@@ -2909,6 +2909,10 @@ Do NOT print dice notation or CODE ENFORCED.
     governed = { ...governed, choices: finalChoices };
   }
   governed = creditFillerOffers(governed, finalChoices);
+  if (!authoredBook) {
+    finalChoices = shapeLiveTurnPad(governed, finalChoices);
+    governed = { ...governed, choices: finalChoices };
+  }
   // q43-OCD: same shared pad commit as useGame (pad → stamp → replay hash). Writes recentOfferedActions
   // so LitRPG/RPG cooldown and tabletop 08:41 repeat suppression work in fate-autoplay.
   governed = commitOfferedTurn({ ...governed, choices: finalChoices }, gm.id);

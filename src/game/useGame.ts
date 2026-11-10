@@ -111,7 +111,7 @@ import { buildVisualConsistencyBlock } from './visualConsistency';
 import { playerFacingImageFailLine, prepareKidSafeImagePrompt } from './visualCanon';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
 import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
-import { applyShapedLivePad, shapeLiveTurnPad } from './playerOptions';
+import { shapeLiveTurnPad } from './playerOptions';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import {
@@ -4954,10 +4954,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       mergedState = creditFillerOffers(mergedState, heardChoices);
       // q43-OCD: one shared pad commit (pad → stamp offered chips / recentOfferedActions → replay hash).
+      // Do not reshape after this: commitOfferedTurn already owns the legal pad.
       mergedState = commitOfferedTurn({ ...mergedState, choices: heardChoices }, gmEntry.id);
-      if (!authoredBook) {
-        mergedState = applyShapedLivePad(mergedState, gmEntry.id);
-      }
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();
       if (imagesKilled()) {

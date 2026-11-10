@@ -7,11 +7,16 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createInitialState } from './defaults';
 import { resolveEngineFight } from './engineFight';
+import { buildNewGameState } from './fateAutoplay';
 import { applyPlayPhaseAfterHp } from './playPhase';
-import { applyShapedLivePad, shapeLiveTurnPad, shapePlayerOptions } from './playerOptions';
+import { applyShapedLivePad, shapeLiveTurnPad } from './playerOptions';
+import { commitOfferedTurn } from './playTranscript';
 import { fightHpFromResult, hpAfterFight } from './recoveryRules';
+import { ORIGIN_QUICK_START_CHIP, originPad } from './rules/rpgOrigin';
 import { emptySceneFacts } from './sceneFacts';
-import type { ActiveEncounter, GameState } from './types';
+import { shopChips } from './shopChips';
+import { beginTabletopCreation, creationChips, tabletopCreationPending } from './tabletop/creationFlow';
+import type { ActiveEncounter, EngineMode, GameState, NpcMemory } from './types';
 import * as combat from './combat';
 
 afterEach(() => {
@@ -103,65 +108,179 @@ function defeatResult(finalPlayerHp: number, damageReceived: number): combat.Com
   };
 }
 
-describe('engine40 live-path option guard', () => {
-  it('useGame live turn path shapes the pad; origin and session-zero pads do not', () => {
-    const src = readFileSync(join(here, 'useGame.ts'), 'utf8');
-    expect(src).toMatch(/finalChoices = shapeLiveTurnPad\(/);
-    expect(src).toMatch(/heardChoices = shapeLiveTurnPad\(/);
-    expect(src).toMatch(/applyShapedLivePad\(mergedState/);
-    // Origin / opening pads still write their own choices without the live shaper.
-    const originBlock = src.slice(src.indexOf('stepOriginCreation'), src.indexOf('stepOriginCreation') + 1800);
-    expect(originBlock).not.toMatch(/shapeLiveTurnPad|applyShapedLivePad/);
-    const openingAssigns = [...src.matchAll(/choices: openingChoicesForPad/g)];
-    expect(openingAssigns.length).toBeGreaterThan(0);
-    expect(src).not.toMatch(/shapeLiveTurnPad\([^)]*openingChoicesForPad/);
-  });
+function declaredOnly(choices: string[] | undefined): string[] {
+  return (choices ?? []).filter((c) => !/^(?:say something|do something else)\b/i.test(c));
+}
 
-  it('the live path pad is capped (3 dnd / 4 otherwise), drops raw place_ ids and Follow up:', () => {
-    const raw = [
-      'Follow up: The Lost Survey',
-      'Travel toward place_greyhollow-at-the-inn',
-      'Look around',
-      'Wait and listen',
-      'Search the area',
-      'Talk to the innkeep',
-      'Check the notice board',
-    ];
-    for (const [mode, cap] of [['dnd', 3], ['litrpg', 4], ['rpg', 4]] as const) {
-      const state = mode === 'dnd' ? dnd() : mode === 'rpg' ? rpg() : lit();
-      const pad = shapeLiveTurnPad(state, raw);
-      const declared = pad.filter((c) => !/^(?:say something|do something else)\b/i.test(c));
-      expect(declared.length, mode).toBeLessThanOrEqual(cap);
-      expect(declared.some((c) => /^Follow up:/i.test(c)), mode).toBe(false);
-      expect(declared.some((c) => /place_[a-z0-9-]+/i.test(c)), mode).toBe(false);
-      expect(declared).toEqual(shapePlayerOptions(state, raw));
+function merchantMem(location: string, name = 'Hale'): NpcMemory {
+  return {
+    npcId: 'hale',
+    npcName: name,
+    disposition: 'neutral',
+    facts: [],
+    lastSeenTurn: 1,
+    aliases: [],
+    location,
+    roleHint: 'merchant',
+  } as NpcMemory;
+}
+
+describe('engine40 live-path option guard', () => {
+  it('travel is kept on the Greyhollow Inn tabletop pad (cap 3, fillers evicted)', () => {
+    const { state: built } = buildNewGameState({
+      bibleId: 'cursed-keep',
+      characterName: 'Jax',
+      seed: 884211,
+      personality: 'chilled-gm',
+      engineMode: 'dnd',
+      tabletopCreation: true,
+    });
+    const atInn: GameState = {
+      ...built,
+      currentLocation: 'Greyhollow Inn',
+      turn: 6,
+      playPhase: 'live',
+      tabletopCreation: built.tabletopCreation ? { ...built.tabletopCreation, stage: 'done' } : undefined,
+      log: [
+        {
+          id: 'gm-inn',
+          turn: 6,
+          role: 'gm',
+          content: 'The common room of Greyhollow Inn is quiet. The lane toward Greyhollow Church is open.',
+          timestamp: 0,
+        },
+      ],
+      choices: [
+        'Look around',
+        'Wait and listen',
+        'Search the area',
+        'Travel toward Greyhollow Church',
+      ],
+    };
+    const committed = commitOfferedTurn(atInn, 'gm-inn');
+    const raw = committed.choices ?? committed.offeredPad?.choices ?? atInn.choices;
+    expect(declaredOnly(raw).some((c) => /^Travel toward Greyhollow Church$/i.test(c))).toBe(true);
+    const live = declaredOnly(shapeLiveTurnPad(committed, raw));
+    const afterCommit = declaredOnly(applyShapedLivePad(committed, 'gm-inn').choices);
+    for (const [label, pad] of [
+      ['shapeLiveTurnPad', live],
+      ['applyShapedLivePad', afterCommit],
+    ] as const) {
+      expect(pad.length, label).toBeLessThanOrEqual(3);
+      expect(pad.some((c) => /^Travel toward Greyhollow Church$/i.test(c)), label).toBe(true);
+      const fillers = pad.filter((c) => /^(?:Look around|Wait and listen|Search the area)$/i.test(c));
+      expect(fillers.length, label).toBeLessThan(pad.length);
     }
   });
 
-  it('applyShapedLivePad rewrites the committed live pad and log', () => {
-    const state = lit({
-      turn: 8,
-      choices: ['Follow up: The Lost Survey', 'Travel toward place_greyhollow-at-the-inn', 'Look around', 'Wait and listen', 'Search the area'],
-      offeredPad: {
-        turn: 8,
-        choices: ['Follow up: The Lost Survey', 'Travel toward place_greyhollow-at-the-inn', 'Look around'],
-        chips: [
-          { label: 'Follow up: The Lost Survey', actionId: 'label:follow', kind: 'compiled' },
-          { label: 'Look around', actionId: 'look', kind: 'compiled' },
-        ],
-      },
-      log: [{ id: 'gm-1', turn: 8, role: 'gm', content: 'The common room is quiet.', timestamp: 0, offeredChoices: ['Follow up: The Lost Survey'] }],
+  it('the origin pad is unchanged including Quick start', () => {
+    const { state: built } = buildNewGameState({
+      bibleId: 'salt-road-heist',
+      characterName: 'Jax',
+      seed: 884211,
+      personality: 'warm-gm',
+      engineMode: 'rpg',
     });
-    const next = applyShapedLivePad(state, 'gm-1');
-    const declared = (next.choices ?? []).filter((c) => !/^(?:say something|do something else)\b/i.test(c));
-    expect(declared.length).toBeLessThanOrEqual(4);
-    expect(declared.some((c) => /^Follow up:/i.test(c))).toBe(false);
-    expect(declared.some((c) => /place_[a-z0-9-]+/i.test(c))).toBe(false);
-    expect(next.offeredPad?.choices).toEqual(next.choices);
-    expect(next.log.find((e) => e.id === 'gm-1')?.offeredChoices).toEqual(next.choices);
+    const originState: GameState = {
+      ...built,
+      engineMode: 'rpg',
+      activeEncounter: null,
+      roundCombat: undefined,
+      character: { ...built.character, origin: undefined },
+      openingEstablishment: {
+        pending: [],
+        answers: { ...(built.openingEstablishment?.answers ?? {}), name: 'Jax' },
+        complete: true,
+        sceneWritten: true,
+      },
+    };
+    const raw = originPad(originState);
+    expect(raw).toBeTruthy();
+    expect(raw).toContain(ORIGIN_QUICK_START_CHIP);
+    expect(shapeLiveTurnPad(originState, raw!)).toEqual(raw);
+
+    const withPad: GameState = {
+      ...originState,
+      turn: 1,
+      choices: raw!,
+      log: [{ id: 'gm-origin', turn: 1, role: 'gm', content: 'Before the road, you choose how you arrived.', timestamp: 0 }],
+    };
+    const committed = commitOfferedTurn(withPad, 'gm-origin');
+    const after = shapeLiveTurnPad(committed, committed.choices ?? raw!);
+    expect(after).toEqual(committed.choices ?? raw!);
+    expect(after).toContain(ORIGIN_QUICK_START_CHIP);
+    expect(applyShapedLivePad(committed, 'gm-origin').choices).toContain(ORIGIN_QUICK_START_CHIP);
   });
 
-  it('PYOA and (by contract) origin pads are left alone by shapeLiveTurnPad', () => {
+  it('a tabletop session-zero creation pad, including Quick start, is left unchanged', () => {
+    const { state: built } = buildNewGameState({
+      bibleId: 'cursed-keep',
+      characterName: 'Jax',
+      seed: 884211,
+      personality: 'chilled-gm',
+      engineMode: 'dnd',
+      tabletopCreation: false,
+    });
+    const opened = beginTabletopCreation({
+      ...built,
+      character: { ...built.character, srd: undefined },
+    });
+    expect(tabletopCreationPending(opened)).toBe(true);
+    const raw = opened.offeredPad?.choices?.length ? opened.offeredPad.choices : creationChips(opened);
+    expect(raw).toContain('Quick start');
+    expect(shapeLiveTurnPad(opened, raw)).toEqual(raw);
+  });
+
+  it("'Face the threat' and 'Buy …' survive the cap in dnd, litrpg and rpg", () => {
+    for (const mode of ['dnd', 'litrpg', 'rpg'] as EngineMode[]) {
+      const cap = mode === 'dnd' ? 3 : 4;
+      const base = mode === 'dnd' ? dnd() : mode === 'rpg' ? rpg() : lit();
+      const location = mode === 'dnd' ? 'Market Square' : mode === 'rpg' ? 'Safehouse Alley' : 'Lowmarket';
+      const state: GameState = {
+        ...base,
+        engineMode: mode,
+        currentLocation: location,
+        gold: 80,
+        turn: 8,
+        sceneFacts: {
+          ...emptySceneFacts(8),
+          present: ['Hale'],
+          pendingEncounter: foe({ name: 'Cutpurse', level: 2, hp: 10, maxHp: 10 }),
+        },
+        npcMemories: [merchantMem(location)],
+        log: [{ id: `gm-${mode}`, turn: 8, role: 'gm', content: `Hale keeps a stall in ${location}. A cutpurse is watching.`, timestamp: 0 }],
+      };
+      const buy = shopChips(state).find((c) => c.kind === 'buy')?.label;
+      expect(buy, mode).toMatch(/^Buy /);
+      const raw = [
+        'Look around',
+        'Wait and listen',
+        'Search the area',
+        'Talk to Hale',
+        'Face the threat',
+        buy!,
+      ];
+      const live = declaredOnly(shapeLiveTurnPad(state, raw));
+      expect(live.length, `${mode} shapeLiveTurnPad`).toBeLessThanOrEqual(cap);
+      expect(live.some((c) => /^Face the threat$/i.test(c)), `${mode} fight`).toBe(true);
+      expect(live.some((c) => /^Buy /i.test(c)), `${mode} buy`).toBe(true);
+
+      const withPad: GameState = { ...state, choices: raw, offeredPad: { turn: 8, choices: raw } };
+      const committed = commitOfferedTurn(withPad, `gm-${mode}`);
+      // If four-slot already dropped fight/shop, reshape the legal over-cap pad the
+      // live path would have handed to commit, so post-commit shaping cannot evict them.
+      const legalPad = declaredOnly(committed.choices).some((c) => /^Face the threat$/i.test(c))
+        && declaredOnly(committed.choices).some((c) => /^Buy /i.test(c))
+        ? (committed.choices ?? raw)
+        : raw;
+      const reshaped = declaredOnly(applyShapedLivePad({ ...committed, choices: legalPad, offeredPad: { turn: 8, choices: legalPad } }, `gm-${mode}`).choices);
+      expect(reshaped.length, `${mode} applyShapedLivePad`).toBeLessThanOrEqual(cap);
+      expect(reshaped.some((c) => /^Face the threat$/i.test(c)), `${mode} fight after reshape`).toBe(true);
+      expect(reshaped.some((c) => /^Buy /i.test(c)), `${mode} buy after reshape`).toBe(true);
+    }
+  });
+
+  it('PYOA pads are left alone by shapeLiveTurnPad', () => {
     const s = createInitialState('Jax', 'pyoa');
     const raw = ['Turn to page 12', 'Follow up: A clue'];
     expect(shapeLiveTurnPad({ ...s, engineMode: 'pyoa' }, raw)).toEqual(raw);

@@ -13,6 +13,8 @@ import { recruitPad } from './rules/companions';
 import { hubsForBibleId } from './outdoorHubs';
 import { roundCombatChips } from './tabletop/combatChips';
 import { canSkipAheadTo } from './fastForward';
+import { originPad } from './rules/rpgOrigin';
+import { tabletopCreationPending } from './tabletop/creationFlow';
 
 function displayChip(state: GameState, label: string): string | null {
   const m = label.match(/^(Travel toward|Skip ahead to|Head toward|Go to)\s+(.+)$/i);
@@ -28,6 +30,43 @@ function displayChip(state: GameState, label: string): string | null {
 
 function declaredCap(state: GameState): number {
   return state.engineMode === 'dnd' ? 3 : 4;
+}
+
+const FILLER_LABELS = new Set(['look around', 'wait and listen', 'search the area']);
+
+function normLabel(label: string): string {
+  return label.replace(/\s+/g, ' ').trim();
+}
+
+function isFillerOption(label: string): boolean {
+  return FILLER_LABELS.has(normLabel(label).toLowerCase());
+}
+
+/** Fight, death-save, travel, dungeon, shop, recruit, and skip-ahead stay ahead of fillers at the cap. */
+function isProtectedOption(label: string): boolean {
+  const l = normLabel(label);
+  if (!l || isFillerOption(l)) return false;
+  if (/^face the threat$/i.test(l)) return true;
+  if (/^(?:attack|fight|press the attack|hunt)\b/i.test(l)) return true;
+  if (/fight for breath|stabilise|drink the/i.test(l)) return true;
+  if (/^(?:travel toward|skip ahead to|head toward|go to|walk on|travel on|turn back toward|leave the scene)\b/i.test(l)) return true;
+  if (isJourneyOnwardLine(l)) return true;
+  if (/^next unexplored room$/i.test(l) || /^open the\b/i.test(l) || /^head back to the exit$/i.test(l)) return true;
+  if (/^buy\b/i.test(l) || /^sell\b/i.test(l)) return true;
+  if (/^ask .+ to join you$/i.test(l)) return true;
+  return false;
+}
+
+function trimToCap(engine: string[], cap: number): string[] {
+  const protectedChips: string[] = [];
+  const other: string[] = [];
+  const fillers: string[] = [];
+  for (const label of engine) {
+    if (isFillerOption(label)) fillers.push(label);
+    else if (isProtectedOption(label)) protectedChips.push(label);
+    else other.push(label);
+  }
+  return [...protectedChips, ...other, ...fillers].slice(0, cap);
 }
 
 /** Drop raw ids, unreachable travel, and thread chips that only restate. Keep the cap. */
@@ -74,31 +113,47 @@ export function shapePlayerOptions(state: GameState, raw: string[]): string[] {
     if (/^skip ahead to\s+/i.test(label) && !canSkipAheadTo(state, label.replace(/^skip ahead to\s+/i, '').replace(/\.+$/, ''))) continue;
     const problem = chipProblem(state, label);
     if (problem && (problem.kind === 'impossible-chip' || problem.kind === 'ghost-chip')) continue;
-    if (!chipKindOf(state, label) && !isJourneyOnwardLine(label) && !isCheckSystemChip(label) && !/^skip ahead to\b/i.test(label) && !/^ask .+ to join you$/i.test(label) && !/^free\b/i.test(label) && !/^next unexplored room$/i.test(label) && !/^open the\b/i.test(label) && !/^head back to the exit$/i.test(label)) {
+    if (
+      !chipKindOf(state, label)
+      && !isJourneyOnwardLine(label)
+      && !isCheckSystemChip(label)
+      && !/^skip ahead to\b/i.test(label)
+      && !/^ask .+ to join you$/i.test(label)
+      && !/^free\b/i.test(label)
+      && !/^next unexplored room$/i.test(label)
+      && !/^open the\b/i.test(label)
+      && !/^head back to the exit$/i.test(label)
+      && !isProtectedOption(label)
+    ) {
       continue;
     }
     seen.add(low);
     engine.push(label);
-    if (engine.length >= declaredCap(state)) break;
   }
   const fillers = ['Look around', 'Wait and listen', 'Search the area'];
   for (const filler of fillers) {
-    if (engine.length >= declaredCap(state)) break;
     if (seen.has(filler.toLowerCase())) continue;
     if (chipProblem(state, filler)) continue;
     if (!chipKindOf(state, filler)) continue;
     seen.add(filler.toLowerCase());
     engine.push(filler);
   }
-  return [...engine, ...free];
+  return [...trimToCap(engine, declaredCap(state)), ...free];
 }
 
 /**
- * The pad a live turn offers the player. Origin and session-zero pads are owned by their
- * own flows in useGame and must not be rewritten here.
+ * Origin, tabletop inn-book (session-zero), and authored PYOA pads are owned by their
+ * own flows and must not be rewritten here.
  */
+export function isLivePadExempt(state: GameState): boolean {
+  if (state.engineMode === 'pyoa') return true;
+  if (originPad(state)?.length) return true;
+  if (tabletopCreationPending(state)) return true;
+  return false;
+}
+
 export function shapeLiveTurnPad(state: GameState, raw: string[]): string[] {
-  if (state.engineMode === 'pyoa') return raw;
+  if (isLivePadExempt(state)) return raw;
   return shapePlayerOptions(state, raw);
 }
 
