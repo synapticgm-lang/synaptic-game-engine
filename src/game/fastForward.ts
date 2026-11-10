@@ -4,7 +4,7 @@
  * An encounter stops the skip. Only the stretches already taken are charged.
  * PYOA does not start. No model call.
  */
-import type { GameState } from './types';
+import type { GameState, RoadEncounter } from './types';
 import { commitTravel, rollRoadEncounter, stretchTurnCosts } from './travelJourney';
 import type { StretchContext } from './travelJourney';
 
@@ -34,8 +34,51 @@ function visitedPlace(state: GameState, name: string) {
   });
 }
 
+/** Endurance Stride takes one allowance turn off a stretch, and never below the base cost of 1. */
+function enduranceOffset(state: GameState): number {
+  const skill = (state.character?.namedSkills ?? []).find((row) => row.id === 'endurance_stride');
+  if (!skill) return 0;
+  return (skill.level ?? skill.rank ?? 0) >= 1 ? 1 : 0;
+}
+
+function pricedStretches(state: GameState, destination: string): number[] {
+  const offset = enduranceOffset(state);
+  return stretchTurnCosts(state, state.currentLocation ?? '', destination).map((cost) => Math.max(1, cost - offset));
+}
+
 export function fastForwardTurnCost(state: GameState, destination: string): number[] {
-  return stretchTurnCosts(state, state.currentLocation ?? '', destination);
+  return pricedStretches(state, destination);
+}
+
+function meetingOver(enc: RoadEncounter): boolean {
+  return !!enc.engaged || !!enc.escaped || !!enc.lost;
+}
+
+/**
+ * A no-choice lone attack: one mugger, or ordinary wildlife.
+ * A choice, a group, an elite, or a rare meeting is not this.
+ */
+export function loneSkipAttack(enc: RoadEncounter | null | undefined): boolean {
+  if (!enc || meetingOver(enc) || enc.rare || enc.miniBoss || enc.dangerous) return false;
+  if ((enc.count ?? 1) > 1) return false;
+  return enc.kind === 'thugs' || enc.kind === 'wildlife';
+}
+
+function stopsSkip(enc: RoadEncounter | null | undefined): boolean {
+  if (!enc || meetingOver(enc)) return false;
+  return !loneSkipAttack(enc);
+}
+
+function fightLabel(enc: RoadEncounter): string {
+  return enc.kind === 'thugs' ? 'Fought: a lone mugger.' : 'Fought: ordinary wildlife.';
+}
+
+function markFought(state: GameState, enc: RoadEncounter): GameState {
+  if (!state.journey) return state;
+  return {
+    ...state,
+    journey: { ...state.journey, encounter: { ...enc, engaged: true } },
+  };
 }
 
 function clip(line: string | undefined): string {
@@ -57,7 +100,7 @@ export function runFastForward(state: GameState, request: FastForwardRequest): F
   if (!Number.isInteger(request.maxTurns) || request.maxTurns < 1) return empty('refused');
   const place = visitedPlace(state, request.destination);
   if (!place) return empty('refused');
-  const costs = stretchTurnCosts(state, state.currentLocation ?? '', place.name);
+  const costs = pricedStretches(state, place.name);
   if (!costs.length) return empty('refused');
   let next = state;
   let charged = 0;
@@ -65,9 +108,29 @@ export function runFastForward(state: GameState, request: FastForwardRequest): F
   const taken: number[] = [];
   const receipts: string[] = [];
   let stopped: FastForwardResult['stopped'] = 'allowance';
-  while (leg < costs.length && charged + costs[leg]! <= request.maxTurns) {
-    if (next.journey?.encounter) {
+  const fightIfLone = (): boolean => {
+    const enc = next.journey?.encounter;
+    if (!loneSkipAttack(enc)) return false;
+    if (charged + 1 > request.maxTurns) {
+      stopped = 'allowance';
+      return true;
+    }
+    charged += 1;
+    taken.push(1);
+    receipts.push(clip(fightLabel(enc!)));
+    next = markFought(next, enc!);
+    return false;
+  };
+  while (leg < costs.length) {
+    const pending = next.journey?.encounter;
+    if (stopsSkip(pending)) {
       stopped = 'encounter';
+      break;
+    }
+    if (fightIfLone()) break;
+    const cost = costs[leg]!;
+    if (charged + cost > request.maxTurns) {
+      stopped = 'allowance';
       break;
     }
     const cmd = next.journey && next.journey.to.toLowerCase() === place.name.toLowerCase()
@@ -75,18 +138,19 @@ export function runFastForward(state: GameState, request: FastForwardRequest): F
       : `Travel toward ${place.name}`;
     const commit = commitTravel(next, cmd);
     if (!commit.handled && !commit.arrived) break;
-    const cost = costs[leg]!;
     charged += cost;
     taken.push(cost);
     leg += 1;
     if (commit.receipt) receipts.push(clip(commit.receipt));
     next = commit.state;
-    if (next.journey?.encounter || commit.event === 'meeting' || commit.outcome === 'fight opened') {
+    const met = next.journey?.encounter;
+    if (stopsSkip(met) || commit.outcome === 'fight opened') {
       stopped = 'encounter';
       break;
     }
     if (commit.arrived || !next.journey) {
-      stopped = 'arrived';
+      const unpaid = fightIfLone();
+      if (!unpaid) stopped = 'arrived';
       break;
     }
   }

@@ -8,7 +8,7 @@ import { evaluateMidVisitProposal } from './midVisitProposal';
 import { fastForwardTurnCost, runFastForward, stretchEncounter } from './fastForward';
 import { LOAD_LOSES_LATER, loadStorySavePoint, markStorySavePoint, storySnapshot } from './storySave';
 import { saveFileProblem } from './schemas';
-import type { GameState } from './types';
+import type { GameState, RoadEncounter } from './types';
 
 function visited(name: string, regionId: string, turn = 1) {
   return { id: name.toLowerCase(), name, regionId, lastVisitedTurn: turn, arcStatus: 'open' as const, mapScale: 'street' as const };
@@ -102,22 +102,65 @@ describe('main game lane', () => {
     expect(stretchEncounter(road, 1, 0.99, 0.2)).toBeNull();
   });
 
-  it('an encounter stops the skip after the stretches already taken', () => {
+  it('fights a lone mugger or ordinary wildlife as its own charge, and stops for choice, group, elite, and rare meetings', () => {
+    const partial = runFastForward(travelState(), { destination: 'Wayfort', maxTurns: 1 });
+    const journey = partial.state.journey;
+    expect(journey).toBeTruthy();
+    const hold = (enc: Partial<RoadEncounter>) => ({
+      ...partial.state,
+      journey: {
+        ...journey!,
+        encounter: { kind: 'thugs' as const, level: 1, stretch: 1, dangerous: false, ...enc },
+      },
+    });
+
+    const mugger = runFastForward(hold({ kind: 'thugs' }), { destination: 'Wayfort', maxTurns: 8 });
+    expect(mugger.stretchCosts[0]).toBe(1);
+    expect(mugger.receipts.some((line) => /lone mugger/i.test(line))).toBe(true);
+    expect(mugger.stopped).not.toBe('encounter');
+    expect(mugger.charged).toBeGreaterThan(1);
+
+    const animal = runFastForward(hold({ kind: 'wildlife', dangerous: false }), { destination: 'Wayfort', maxTurns: 8 });
+    expect(animal.receipts.some((line) => /ordinary wildlife/i.test(line))).toBe(true);
+    expect(animal.stopped).not.toBe('encounter');
+
+    const group = runFastForward(hold({ kind: 'thugs', count: 3 }), { destination: 'Wayfort', maxTurns: 8 });
+    expect(group.charged).toBe(0);
+    expect(group.stopped).toBe('encounter');
+
+    const choice = runFastForward(hold({ kind: 'plea' }), { destination: 'Wayfort', maxTurns: 8 });
+    expect(choice.charged).toBe(0);
+    expect(choice.stopped).toBe('encounter');
+
+    const elite = runFastForward(hold({ kind: 'monster' }), { destination: 'Wayfort', maxTurns: 8 });
+    expect(elite.charged).toBe(0);
+    expect(elite.stopped).toBe('encounter');
+
+    const rare = runFastForward(hold({ kind: 'wildlife', rare: true }), { destination: 'Wayfort', maxTurns: 8 });
+    expect(rare.charged).toBe(0);
+    expect(rare.stopped).toBe('encounter');
+
+    const dangerous = runFastForward(hold({ kind: 'wildlife', dangerous: true }), { destination: 'Wayfort', maxTurns: 8 });
+    expect(dangerous.charged).toBe(0);
+    expect(dangerous.stopped).toBe('encounter');
+
+    expect(runFastForward(travelState('pyoa'), { destination: 'Wayfort', maxTurns: 4 }).refused).toBe(true);
+  });
+
+  it('one endurance-stride offset never prices a stretch below 1', () => {
     const state = travelState();
-    const first = runFastForward(state, { destination: 'Wayfort', maxTurns: 8 });
-    if (first.stopped === 'encounter') {
-      expect(first.charged).toBe(first.stretchCosts.reduce((sum, n) => sum + n, 0));
-      expect(first.charged).toBeLessThan(8);
-      return;
-    }
-    const held = {
-      ...first.state,
-      journey: first.state.journey
-        ? { ...first.state.journey, encounter: { kind: 'thugs' as const, level: 1, stretch: 1, dangerous: false } }
-        : first.state.journey,
+    expect(fastForwardTurnCost(state, 'Wayfort')).toEqual([1, 2]);
+    const skilled = {
+      ...state,
+      character: {
+        ...state.character,
+        namedSkills: [{ id: 'endurance_stride', rank: 1, uses: 0, level: 1 }],
+      },
     };
-    const next = runFastForward(held, { destination: 'Wayfort', maxTurns: 8 });
-    if (held.journey?.encounter) expect(next.charged).toBe(0);
+    expect(fastForwardTurnCost(skilled, 'Wayfort')).toEqual([1, 1]);
+    const walked = runFastForward(skilled, { destination: 'Wayfort', maxTurns: 2 });
+    expect(walked.stretchCosts.every((n) => n >= 1)).toBe(true);
+    expect(walked.charged).toBeLessThanOrEqual(2);
   });
 
   it('a story save restores the whole game, and the load says later progress is lost', () => {
