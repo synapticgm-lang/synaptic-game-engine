@@ -1,0 +1,212 @@
+{
+  "runId": "2026-11-10T08-57-24-590Z",
+  "bibleId": "summoned-pact",
+  "bibleTitle": "The Summoned Pact",
+  "engineMode": "litrpg",
+  "personalityId": "cold-system",
+  "seed": 884212,
+  "requestedTurns": 40,
+  "completedTurns": 40,
+  "dryRun": true,
+  "aiTier": "free",
+  "playerProfile": "random",
+  "startedAt": "2026-11-10T08:57:24.590Z",
+  "endedAt": "2026-11-10T08:57:44.188Z",
+  "errorCount": 0,
+  "timeoutCount": 0,
+  "transportRetryCount": 0,
+  "latencyMs": {
+    "p50": 118,
+    "p95": 558,
+    "mean": 256
+  },
+  "issueTurns": [],
+  "outDir": "docs/playtests/2026-11-10-engine40/2026-11-10T08-57-24-590Z_summoned-pact_cold-system_s884212",
+  "receiptTotals": {
+    "combat": 8,
+    "questStage": 0,
+    "beatCommit": 0,
+    "crisis": 0,
+    "total": 8
+  },
+  "finalReplayHash": "ee47c65f",
+  "pathCounts": {
+    "A": 0,
+    "B": 0,
+    "C": 0,
+    "D": 0,
+    "E": 40,
+    "E_accepted": 0,
+    "E_retry": 0,
+    "E_fallback": 0
+  },
+  "deathCount": 2,
+  "evalHarness": {
+    "manifestBound": false,
+    "livenessGates": {
+      "combatByT8": true
+    }
+  },
+  "readabilityGate": {
+    "pass": false,
+    "p0Count": 31,
+    "p1Count": 0,
+    "violations": [
+      {
+        "kind": "turn-ignored-action",
+        "turn": 2,
+        "quote": "player chose \"Refuse the offer\"; nobody here answers in the prose"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 3,
+        "quote": "player chose \"Refuse the offer\"; nobody here answers in the prose"
+      },
+      {
+        "kind": "turn-impossible-chip",
+        "turn": 4,
+        "quote": "\"Travel toward place_the-sevenfold-circle-under-valespire-cathedral\" names a destination the travel engine cannot reach from here"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 4,
+        "quote": "player chose \"Accept the offer\"; nobody here answers in the prose"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 5,
+        "quote": "player chose \"Accept the offer\"; nobody here answers in the prose"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 5,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Accept the offer\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 7,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 8,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Follow up: High Chanter Orel Vane: a secret worth selling\""
+      },
+      {
+        "kind": "turn-echo-player-act",
+        "turn": 8,
+        "quote": "opening restates the player's act (already shown in UI): \"Follow up: High Chanter Orel Vane: a secret worth selling\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 10,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Talk to High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 11,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Follow up: High Chanter Orel Vane: a secret worth selling\""
+      },
+      {
+        "kind": "turn-echo-player-act",
+        "turn": 11,
+        "quote": "opening restates the player's act (already shown in UI): \"Follow up: High Chanter Orel Vane: a secret worth selling\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 12,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Read High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 14,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 17,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Talk to High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 18,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Talk to High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 21,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-levelup-no-change",
+        "turn": 21,
+        "quote": "level 1 → 2 changed nothing the player can do (no new skill rank, lock or option)"
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 22,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 26,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Walk on\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 27,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 28,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Read High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 29,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 31,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Walk on\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 32,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Talk to High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 36,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 37,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Talk to High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 38,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Read High Chanter Orel Vane\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 39,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Leave the scene\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 40,
+        "quote": "the beat restates an earlier beat (100% of its lines) instead of doing \"Face the threat\""
+      },
+      {
+        "kind": "turn-ignored-action",
+        "turn": 41,
+        "quote": "the beat restates an earlier beat (67% of its lines) instead of doing \"Read High Chanter Orel Vane\""
+      }
+    ]
+  }
+}
