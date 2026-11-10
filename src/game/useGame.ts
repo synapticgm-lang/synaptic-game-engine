@@ -14,6 +14,7 @@ import { creditCommittedProgress, creditFillerOffers, nudgeIfStuck, recordCircli
 import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
 import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked, setPlayPhase } from './playPhase';
+import { fightHpFromResult } from './recoveryRules';
 import { isDying } from './tabletop/roundFight';
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
@@ -110,6 +111,7 @@ import { buildVisualConsistencyBlock } from './visualConsistency';
 import { playerFacingImageFailLine, prepareKidSafeImagePrompt } from './visualCanon';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
 import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
+import { applyShapedLivePad, shapeLiveTurnPad } from './playerOptions';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import {
@@ -3589,6 +3591,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const book = authoredPageText(suggestionState) || authoredBeat;
         if (book) cleanText = book;
         finalChoices = spineChoiceLabels(ensurePyoaSpine(suggestionState));
+      } else {
+        // Live turn pad only — origin / session-zero / opening pads are set elsewhere.
+        finalChoices = shapeLiveTurnPad(suggestionState, finalChoices);
       }
       if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
         debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
@@ -4729,6 +4734,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         log: [...liveCurrent.log, gmLogEntryBase],
       };
       let heardChoices = dropAbsentListenerChips(committedTurnState, committedChoices, cleanText);
+      if (!authoredBook) {
+        heardChoices = shapeLiveTurnPad(committedTurnState, heardChoices);
+      }
       const gmLogEntry = withLitrpgSystemWindow(
         withOfferedChoices(gmLogEntryBase, { ...committedTurnState, choices: heardChoices }),
         { ...workingState, ...updates, character: baseChar },
@@ -4941,9 +4949,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const { enforceFillerFamilyCap } = await import('./choicePipeline');
         heardChoices = enforceFillerFamilyCap(heardChoices, mergedState);
       }
+      if (!authoredBook) {
+        heardChoices = shapeLiveTurnPad(mergedState, heardChoices);
+      }
       mergedState = creditFillerOffers(mergedState, heardChoices);
       // q43-OCD: one shared pad commit (pad → stamp offered chips / recentOfferedActions → replay hash).
       mergedState = commitOfferedTurn({ ...mergedState, choices: heardChoices }, gmEntry.id);
+      if (!authoredBook) {
+        mergedState = applyShapedLivePad(mergedState, gmEntry.id);
+      }
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();
       if (imagesKilled()) {
@@ -5893,6 +5907,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         canSpend('memorable')
       );
       offerMemorableAdIfCapHit(autoMemorable.skippedForCapacity);
+      const hpAfter = fightHpFromResult(liveCurrent, result.victory, result.finalPlayerHp, result.damageReceived ?? 0);
       const playerEntry: LogEntry = {
         id: uid(),
         turn: newTurn,
@@ -5912,7 +5927,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           `Rounds: ${result.rounds}`,
           `Damage Dealt: ${result.damageDealt}`,
           `Damage Received: ${result.damageReceived}`,
-          `Player HP: ${liveCurrent.character.hp} -> ${result.finalPlayerHp}`,
+          `Player HP: ${liveCurrent.character.hp} -> ${hpAfter}`,
           ...(autoXp.amount > 0 ? [`XP Gained: ${autoXp.amount} (defeated ${enemy.name}${autoXp.detail ? ` — ${autoXp.detail}` : ''})`] : []),
           `Gold Gained: ${lootMoneyText(result.goldGained, result.coinsGained) ?? 0}`,
           ...(result.loot.length > 0 ? [`Loot: ${result.loot.map(l => `[${l.rarity}] ${l.name}`).join(', ')}`] : []),
@@ -5920,7 +5935,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ],
         ...memorableLogFields(autoMemorable),
       };
-      const updatedCharacter = { ...liveCurrent.character, hp: result.finalPlayerHp, mp: result.finalPlayerMp };
+      const updatedCharacter = { ...liveCurrent.character, hp: hpAfter, mp: result.finalPlayerMp };
       Object.assign(
         updatedCharacter,
         applyCharacterXpGain(updatedCharacter, autoXp.amount, liveCurrent.engineMode).character

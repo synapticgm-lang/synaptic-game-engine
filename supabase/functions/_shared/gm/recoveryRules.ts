@@ -428,6 +428,23 @@ export function hpAfterFight(state: GameState, victory: boolean, finalHp: number
   return fallen;
 }
 
+/**
+ * HP written after simulateCombat. A defeat never rises above the starting HP, and
+ * damage taken is the ceiling — 0 HP is then the caller's lifeline / death-save job.
+ */
+export function fightHpFromResult(
+  state: GameState,
+  victory: boolean,
+  finalHp: number,
+  damageReceived = 0,
+): number {
+  const start = Math.max(0, state.character.hp ?? 0);
+  const damaged = Math.max(0, start - Math.max(0, damageReceived));
+  return victory
+    ? hpAfterFight(state, true, Math.min(start, finalHp))
+    : Math.min(hpAfterFight(state, false, finalHp), damaged);
+}
+
 /** Early fights: for player level 1–3 an enemy's attack is capped at 1 + level (Easy −1, Hard +1). */
 export function earlyEnemyAttack(state: GameState, baseAttack: number): number {
   const level = state.character.level ?? 1;

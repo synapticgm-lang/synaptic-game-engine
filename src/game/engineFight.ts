@@ -18,7 +18,7 @@ import { applyCharacterXpGain } from './characterXp';
 import { equippedWeaponName } from './ledgerCombat';
 import { growWeaponFamiliarity, resolveCheckRecord, weaponCategory } from './checkRules';
 import { formatBreakAwayStatus, outcomeFactFromRecord } from './rules/rollView';
-import { earlyEnemyAttack, hpAfterFight } from './recoveryRules';
+import { earlyEnemyAttack, fightHpFromResult } from './recoveryRules';
 import { applyPlayPhaseAfterHp } from './playPhase';
 import { approachFromInput, approachOpener, approachReceipt, meleeApproach } from './fightApproach';
 import { parkedThreatHere, wakeParkedThreat } from './placeThreats';
@@ -494,10 +494,7 @@ export function resolveEngineFight(state: GameState, playerInput: string): Engin
   if (approachLine) receipts.push(approachLine);
   const hpBefore = working.character.hp;
   // Damage taken reduces HP. A defeat that reaches 0 is the lifeline / death rule, not a silent heal.
-  const damaged = Math.max(0, hpBefore - (result.damageReceived ?? 0));
-  const hpAfter = result.victory
-    ? hpAfterFight(working, true, Math.min(hpBefore, result.finalPlayerHp))
-    : Math.min(hpAfterFight(working, false, result.finalPlayerHp), damaged);
+  const hpAfter = fightHpFromResult(working, result.victory, result.finalPlayerHp, result.damageReceived ?? 0);
   let next = commitAutoFightLedger(working, { victory: result.victory, finalPlayerHp: result.finalPlayerHp });
   next = result.victory
     ? tag(next, 'died', 'creature', { id: `creature:${nameKey(enc.name)}`, name: enc.name }, 'down')

@@ -92,3 +92,36 @@ export function shapePlayerOptions(state: GameState, raw: string[]): string[] {
   }
   return [...engine, ...free];
 }
+
+/**
+ * The pad a live turn offers the player. Origin and session-zero pads are owned by their
+ * own flows in useGame and must not be rewritten here.
+ */
+export function shapeLiveTurnPad(state: GameState, raw: string[]): string[] {
+  if (state.engineMode === 'pyoa') return raw;
+  return shapePlayerOptions(state, raw);
+}
+
+/** After commitOfferedTurn, keep the stored pad (choices, chips, log) on the shaped list. */
+export function applyShapedLivePad(state: GameState, gmEntryId?: string): GameState {
+  const raw = state.choices ?? state.offeredPad?.choices ?? [];
+  const choices = shapeLiveTurnPad(state, raw);
+  if (choices.length === raw.length && choices.every((c, i) => c === raw[i])) return state;
+  const byLow = new Map((state.offeredPad?.chips ?? []).map((c) => [c.label.trim().toLowerCase(), c]));
+  const chips = choices.map((label) => {
+    const prev = byLow.get(label.trim().toLowerCase());
+    return prev ?? { label, actionId: 'label:' + label.trim().toLowerCase(), kind: 'compiled' as const };
+  });
+  const log = [...(state.log ?? [])];
+  const byId = gmEntryId ? log.findIndex((e) => e?.role === 'gm' && e.id === gmEntryId) : -1;
+  let at = byId;
+  for (let i = log.length - 1; at < 0 && i >= 0; i--) if (log[i]?.role === 'gm') at = i;
+  if (at >= 0) log[at] = { ...log[at]!, offeredChoices: choices, offeredChips: chips };
+  return {
+    ...state,
+    log,
+    choices,
+    offeredPad: { turn: state.offeredPad?.turn ?? state.turn ?? 0, choices, chips },
+  };
+}
+

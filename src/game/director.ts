@@ -565,7 +565,7 @@ function commitStallDevelopment(
   // threat — park a real engine foe + seat a visible person; never empty the room this turn.
   // T10RC5 — dnd: only when pickStallKind chose threat (npc/lead must not fall through into a foe).
   // litrpg/rpg: allow threat fallthrough so stall still commits fight progress for first-pad dry-run.
-    if ((kind === 'threat' || state.engineMode !== 'dnd') && working.arcDirector?.lastEncounterClearedTurn !== (working.turn ?? 0)) {
+  if ((kind === 'threat' || state.engineMode !== 'dnd') && working.arcDirector?.lastEncounterClearedTurn !== (working.turn ?? 0)) {
     const threatWhere = hereName || 'this place';
     // T10RC5fix — already-parked/pending foe: keep Face chip; do not wake into activeEncounter
     // (live activeEncounter is Attack-owned; Face engages pending via resolveEngineFight).
